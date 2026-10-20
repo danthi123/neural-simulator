@@ -7,8 +7,10 @@ and 2), or the shape-3 `X is [a|an] REL_of Y` reading, ONLY if its row below is 
 and a relation with no row at all, gets none: every shape-1/2/3 sentence on it is rejected, with the class in the reason.
 
 THE MEANING TEST (build 2, controller ruling after the round-3 blind hunt kept "X sports Y", "X conflicts Y", "X instruments Y"): a relation
-keeps its readings only if a native reader would paraphrase "SUBJ <reading> OBJ" back to EXACTLY the triple's meaning, for EVERY reading in
-its row. Keeping the subject's role is not enough. When unsure: MEANING_DRIFT (or ROLE_REVERSING when the roles are the problem).
+keeps a reading only if a native reader would paraphrase "SUBJ <reading> OBJ" back to EXACTLY the triple's meaning. Keeping the subject's
+role is not enough. The test is per READING (controller ruling 2026-10-20): a reading that fails it is listed in DROPPED_READINGS and gets no
+verb reading while the row's passing readings stay; a row is MEANING_DRIFT when its own-label readings fail. When unsure: MEANING_DRIFT (or
+ROLE_REVERSING when the roles are the problem).
   VERB_SAFE       the reading is an English verb phrase (finite, or a reduced passive such as "X named after Y") that paraphrases to the triple.
   NOT_A_VERB      the reading is a noun phrase or the property label read telegraphically ("X place of birth Y" -> "X was born in Y"); no form
                   is an English verb with another meaning. A participle INSIDE a label ("award received", "position held") modifies the noun;
@@ -242,9 +244,9 @@ RELATIONS = {
     'chase': Row(VERB_SAFE, ('tiny_demo',), 0,
         ('chase', 'chased', 'chasees', 'chases', 'chasing', 'pursue', 'pursued', 'pursues', 'pursuing'),
         '"X chases Y" is the triple verbatim; the table synonym "X pursues Y" -> "X chases Y" = the triple'),
-    'eat': Row(MEANING_DRIFT, ('tiny_demo',), 0,
+    'eat': Row(VERB_SAFE, ('tiny_demo',), 0,
         ('ate', 'consume', 'consumed', 'consumes', 'consuming', 'devour', 'devoured', 'devouring', 'devours', 'eat', 'eated', 'eaten', 'eates', 'eating', 'eats'),
-        'conservative: the table synonyms "X devours Y" (eats greedily) and "X consumes Y" (also: uses up) are not exactly "X eats Y"'),
+        '"X eats Y" is the triple verbatim; the table synonyms "X devours Y" (eats greedily) and "X consumes Y" (also: uses up) fail the meaning test and are DROPPED_READINGS'),
     'learn': Row(VERB_SAFE, ('tiny_demo',), 0,
         ('learn', 'learned', 'learnes', 'learning', 'learns'),
         '"X learns Y" is the triple verbatim (the slug is the English verb)'),
@@ -372,6 +374,18 @@ RELATIONS = {
         ('located_in', 'located_ined', 'located_ines', 'located_ining', 'located_ins'),
         '"X located in Y" -> "X is located in Y" = the triple ("locate" needs an object, so only the reduced passive reads)'),
 }
+
+
+# per-reading meaning test: readings of a VERB_SAFE / NOT_A_VERB row that fail it (today only table synonyms). Each is rejected like a
+# MEANING_DRIFT reading, with that class in the reason; the row's other readings stay.
+DROPPED_READINGS = {
+    'eat': frozenset(('consume', 'consumed', 'consumes', 'consuming', 'devour', 'devoured', 'devouring', 'devours')),
+}
+
+
+def reading_dropped(rel, tok):
+    """True iff `tok` is a reading of `rel` that failed the per-reading meaning test."""
+    return tok in DROPPED_READINGS.get(rel, ())
 
 
 def relation_class(rel):

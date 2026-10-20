@@ -509,14 +509,13 @@ _MD = sorted(r for r, row in T.RELATIONS.items() if row.cls == T.MEANING_DRIFT)
 
 def test_the_meaning_drift_relations():
     """Build 2's MEANING test: the reviewed MEANING-DRIFT rows (a change here is a change of the reviewed table)."""
-    assert _MD == ["conflict", "eat", "instrument", "sport", "spouse"]
+    assert _MD == ["conflict", "instrument", "sport", "spouse"]
     assert T.MEANING_DRIFT in T.NO_READING_CLASSES and T.MEANING_DRIFT not in T.VERB_READING_CLASSES
 
 
 @pytest.mark.parametrize("rel", _MD)
 def test_no_reading_of_a_meaning_drift_relation_is_ever_kept(rel):
-    """Every reading in the row (incl. the table synonyms of eat: consumes, devours), shapes 1 and 2, any spelling; reason names the
-    class."""
+    """Every reading in the row, shapes 1 and 2, any spelling; reason names the class."""
     g = [["red_fox", rel, "canid_group"], ["red_fox", rel, "blue_jay"]]
     for tok in T.RELATIONS[rel].readings:
         for p in ("Red Fox %s Canid Group." % tok, "The red_fox %s the canid_group." % tok,
@@ -856,3 +855,20 @@ def test_pure_function_is_seed_free():
     assert A.allowlist_keep("Spain shares border with France.", _ES) == (True, "ok")
     assert A.allowlist_keep("Spain shares border with Italy.", _ES)[0] is False
     assert A.allowlist_keep("Spain shares border with France.", []) == (False, "allowlist: nothing gathered")
+
+
+def test_the_meaning_test_is_per_reading_eat_keeps_eats_and_drops_its_synonyms():
+    """Controller ruling 2026-10-20: a reading that fails the meaning test is dropped, the row's passing readings stay. (cat, eat, fish):
+    "eats"/"ate" kept; the table synonyms "devours"/"consumes" (eats greedily / uses up) rejected with MEANING-DRIFT in the reason."""
+    assert T.RELATIONS["eat"].cls == T.VERB_SAFE and set(T.DROPPED_READINGS) == {"eat"}
+    g = [["cat", "eat", "fish"]]
+    for p in ("The cat eats fish.", "The cat ate fish.", "Cat eats fish."):
+        keep, why = A.allowlist_keep(p, g)
+        assert keep, (p, why)
+    for tok in sorted(T.DROPPED_READINGS["eat"]):
+        for p in ("The cat %s fish." % tok, "Cat %s fish." % tok):
+            keep, why = A.allowlist_keep(p, g)
+            assert not keep and T.MEANING_DRIFT in why, (p, why)
+    for tok in ("pursues", "pursued"):                                  # chase's synonym passes the meaning test and stays
+        keep, why = A.allowlist_keep("The fox %s the rabbit." % tok, [["fox", "chase", "rabbit"]])
+        assert keep, (tok, why)

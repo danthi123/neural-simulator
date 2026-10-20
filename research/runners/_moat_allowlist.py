@@ -66,7 +66,7 @@ import os
 import re
 import unicodedata
 
-from research.runners._moat_allowlist_relations import has_verb_reading, relation_class
+from research.runners._moat_allowlist_relations import MEANING_DRIFT, has_verb_reading, reading_dropped, relation_class
 from research.runners._moat_claim_entailment_derisk import NEG_MARKERS, VERB_SYNONYMS, ClaimEntailmentVerifier, _build_inflection_map
 
 ALLOWLIST_ENV = "BRAIN_MOAT_ALLOWLIST"
@@ -191,7 +191,7 @@ class _Lexicon:
         if _HAS_ALNUM.search(tok) is None:
             return None
         kind, val = self._classify(tok)
-        return val if kind == "verb" and val in self.verb_ok else None
+        return val if kind == "verb" and val in self.verb_ok and not reading_dropped(val, tok) else None
 
     def blocked_rel(self, tok):
         """-> (relation, class) when `tok` is a reading of a GATHERED relation that the table denies a verb reading, else None."""
@@ -200,6 +200,8 @@ class _Lexicon:
         kind, val = self._classify(tok)
         if kind == "verb" and val in self.verbs and val not in self.verb_ok:
             return val, relation_class(val)
+        if kind == "verb" and val in self.verb_ok and reading_dropped(val, tok):      # a reading that failed the per-reading test
+            return val, MEANING_DRIFT
         if tok in self.verbs and tok not in self.verb_ok:                  # e.g. an unclassified `_of` slug after "is"
             return tok, relation_class(tok)
         return None
