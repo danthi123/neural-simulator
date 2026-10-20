@@ -88,7 +88,9 @@ class _Lexicon:
         self.synonyms = dict(VERB_SYNONYMS)
         self.inflect = _build_inflection_map(sorted(self.verbs))
         self.slug_norm = True                       # the B2h readings of `_base_verb` / `_classify` / `_normalise_slugs`
-        slugs = {t for f in self.gated for t in f if "_" in t}
+        # (a slug with no letter or digit, e.g. a degenerate "_", would compile to an empty pattern that matches everywhere; it
+        # can never be a SUBJ/OBJ/VERB here, so it is left out of the spellings)
+        slugs = {t for f in self.gated for t in f if "_" in t and _HAS_ALNUM.search(t)}
         self._slug_pats = [(s, _slug_phrase_re(s)) for s in sorted(slugs, key=lambda x: (-len(x), x))]
         # shape-3 relation nouns: a gathered relation slug ending in "_of" with a real noun before it
         self.of_relations = frozenset(r for r in self.verbs if r.endswith("_of") and _HAS_ALNUM.search(r[:-3]))
@@ -98,6 +100,8 @@ class _Lexicon:
 
     def verb_rel(self, tok):
         """-> the gathered relation `tok` is a verb form of, or None."""
+        if _HAS_ALNUM.search(tok) is None:
+            return None
         kind, val = self._classify(tok)
         return val if kind == "verb" and val in self.verbs else None
 
