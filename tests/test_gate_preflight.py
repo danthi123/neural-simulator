@@ -22,6 +22,12 @@ def test_classify_clean_needs_a_defined_cell_and_only_coverage_gaps():
     assert G.classify('{"verdict": "UNDEFINED (INCOMPLETE)"}')[0] == "FLAGGED"          # no DEFINED cell at all
 
 
+def test_classify_reads_the_b2d_defined_count():
+    # b2d_score.py's read: a positive n_defined is a defined cell (the 2026-10-20 LBF pre-flight); zero is none
+    assert G.classify('{"verdict": "COMPLETE", "counts": {"n_defined": 82, "n_defined_all_scored": 0}}') == ("CLEAN", [])
+    assert G.classify('{"verdict": "INCOMPLETE", "counts": {"n_defined": 0}}')[0] == "FLAGGED"
+
+
 def test_classify_flags_instrument_failures():
     for bad in ('{"7": {"state": "UNDEFINED:engagement-route-word_role_commit:intact_a_x.json"}} DEFINED',
                 '{"7": {"state": "UNDEFINED:engagement-lesion-flag:lesion_x.json"}} DEFINED',

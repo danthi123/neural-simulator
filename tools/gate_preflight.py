@@ -50,6 +50,9 @@ COLS = ("date", "prereg", "revision", "verdict", "detail", "log", "command")
 COVERAGE = re.compile(r"missing|incomplete|no-shard|no_shard|no-arm-files|unmeasured|not run|fewer than", re.I)
 UNDEF = re.compile(r"UNDEFINED[^\n]*")
 DEFINED = re.compile(r"(?<![A-Za-z_])DEFINED(?![A-Za-z_])")
+# tools/b2d_score.py prints no DEFINED word, only a count: `"n_defined": 82` (RULING lbf-preflight-ack-1020: its CLEAN
+# dev read was FLAGGED "no DEFINED cell" until this). A zero count is still no defined cell.
+DEFINED_COUNT = re.compile(r'"n_defined"\s*:\s*[1-9][0-9]*')
 
 
 def _rev9(r):
@@ -68,7 +71,7 @@ def classify(text):
         line = m.group(0)[:200]
         if not COVERAGE.search(line):
             bad.append(line)
-    if not DEFINED.search(text):
+    if not (DEFINED.search(text) or DEFINED_COUNT.search(text)):
         bad.append("no DEFINED cell anywhere in the read (did the scorer read the dev seed?)")
     return ("FLAGGED" if bad else "CLEAN"), bad
 
