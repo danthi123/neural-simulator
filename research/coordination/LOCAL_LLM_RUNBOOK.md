@@ -2213,3 +2213,16 @@ pA points straddle the cliff and decide the continuation; re-pick/re-design stay
   (cells nest `stn<cur>/sN/sN/*.json`; I counted only the first level). TRUE new-point
   census: stn32 s9:7 s10:7 s11:7 s12:7 s13:7 s14:7 s15:7 s16:4; stn34 s9:4 s10:3 s11:2 s12:0 s13:0; stn36 not-started; stn38 not-started. Queue figure (313 = 19 STN + 294 LBF) was read from
   `wc -l` and is unaffected. Everything else in the 15:10 entry stands.
+
+- 2026-10-20 15:45 — ran the same-cycle doc-sync (Check I) for the
+  preset-het-1020/-1020b landing (6 commits, tip 185b788e8) per the ruling. VERDICT: no
+  summary doc carries a stale claim about the RS-centred overwrite — greps of
+  GAP_CLOSURE_MISSION.md / ROADMAP.md / 2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md /
+  CLAUDE.md / docs/WRITING.md / docs/mastery-census.md return only unrelated historical
+  heterogeneity text (seed-trap, GNW het organ, homeostasis lever); the 06-18 organ-lift
+  finding's 'latent bug' text = a finding record, not a summary doc (unchanged by W1).
+  Census draft accessible at docs/drafts/preset-centred-het/CENSUS.md; AUTONOMOUS_STATE
+  superseded banner intact; Check J `tools/check_docs.py` rc=0 (W1/W2 pass). Board row +
+  its .vikunja_sync stamp = Claude's per the ruling (Hermes does not touch the board).
+  Census: stn32 8/8 complete (7 json each); stn34 6 seeds in flight (s14 not started);
+  stn36/38 not started; queue 309 = 15 STN + 294 LBF (0 dispatched).
