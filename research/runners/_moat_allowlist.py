@@ -52,6 +52,18 @@ once per process. A slug with no row (an entity outside the store, a conversatio
 unreadable table allows none either (fail closed, said in the reason). Tokens outside the spans (a determiner before the span, the
 copula "is", "and") are not read.
 
+FOLD TO FIND, EXACT TO ACCEPT (build 4, after round 5: build 3 kept 24 of 89 U cases, every one ACCEPTED by fold-equality, e.g. "George V"
++ U+013A reads as George VI but folds to george_v; "1-500 m" folds to 1_500_m). The store fold above now only FINDS which gathered slug a
+span could be. After a sentence parses, every proposition is gathered and the case rule passes, `_exact_violation` requires, for every
+parse: each SUBJ/OBJ span's `surface_form` (NFC, lowercase, ASCII whitespace runs -> one space, stripped; nothing else) is exactly one of
+the slug's canonical surfaces (the slug verbatim, as the stub mouth renders it; its de-slugged form; or one of the entity's own store names
+whose sanitize() is the slug, from the committed exceptions table research/findings/raw/_moat_allowlist_names/names_table.json made by
+research/runners/_moat_allowlist_names_build.py); each relation span is written exactly as the token the relation table read (verbatim or
+with underscores as spaces: no hyphen, no fold); and no non-ASCII character appears outside the accepted SUBJ/OBJ spans. Any difference
+rejects, naming the span and the slug. A missing or unreadable table accepts only the slug and its de-slugged form (fail closed, said in
+the reason). Store names holding an apostrophe or ASCII punctuation are in the table but unreachable: the finder keeps that punctuation
+structural (the apostrophe pre-check, ",", ".").
+
 NOTHING IS DROPPED. A token outside the shape (pronoun, adverb, "just", "also", hedge, negation, subordinator, a comma that
 opens a clause, a digit not inside a gathered slug, "!", "?", ":", "-", a second ".") leaves the shape unmatched and the
 sentence is rejected. Any apostrophe (possessive 's, contraction) rejects the sentence BEFORE normalisation, because the B2h
