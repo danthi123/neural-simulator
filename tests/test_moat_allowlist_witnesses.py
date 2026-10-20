@@ -8,8 +8,10 @@ behavioural and hold on build 3's code. One verdict changed legitimately since b
 (m32's witness) is rejected by build 3's case rule (CC is all-caps and b_cc is not a store entity), so the slug-order pin uses "A B Cc".
 One behaviour was a crash in the original and is now a clean reject (m96: a malformed gathered frozenset).
 Build 4 (fold to find, exact to accept): four witnesses keep an accented span of a slug that is no store entity (m23, m16, m111). They pin
-how the fold FINDS a span, so they run with those names added to the names table as if they were store names (`WITNESS_NAMES`); without
-them, build 4 rejects each with the span named (test_build4_rejects_the_fold_witnesses_without_a_store_name).
+how the fold FINDS a span, so ONLY their own test (test_the_fold_witnesses_keep_when_their_name_is_injected) adds those names to a copy of
+the names table as if they were store names (`WITNESS_NAMES`, injected explicitly in that test); without them, build 4 rejects each with
+the span named (test_build4_rejects_the_fold_witnesses_without_a_store_name). Every other test reads the COMMITTED table (review ruling F5:
+no autouse injection).
 
 Run: CUDA_VISIBLE_DEVICES="" SIM_BACKEND=numpy .venv/bin/python -m pytest tests/test_moat_allowlist_witnesses.py -q
 """
@@ -48,18 +50,23 @@ def _clean_flags(monkeypatch):
 WITNESS_NAMES = {"rue_mile": ["Rue Émile"], "montr_cole": ["Montr École"], "mo_x": ["Moﬁ X"], "x1_y": ["X1é Y"]}
 
 
-@pytest.fixture(autouse=True)
-def _witness_names(request, monkeypatch):
-    if request.node.get_closest_marker("no_witness_names"):
-        return
+def inject_witness_names(monkeypatch, slug):
+    """F5: the ONE place a synthetic store name enters: a copy of the committed table with WITNESS_NAMES[slug] added, for the calling
+    test only (monkeypatch undoes it)."""
     t = A._NamesTable(A.NAMES_TABLE_PATH)
     assert t.error is None, t.error
-    for slug, names in WITNESS_NAMES.items():
-        t.entities[slug] = t.entities.get(slug, frozenset()) | frozenset(A.surface_form(n) for n in names)
+    assert slug not in t.entities, "the witness slug %s became a real store row: re-pin it" % slug
+    t.entities[slug] = frozenset(A.surface_form(n) for n in WITNESS_NAMES[slug])
     monkeypatch.setattr(A, "names_table", lambda: t)
 
 
-@pytest.mark.no_witness_names
+def test_the_witness_tests_run_on_the_committed_table():
+    """F5: no fixture replaces the names table; it is the committed file, read once per process."""
+    t = A.names_table()
+    assert t.path == A.NAMES_TABLE_PATH and t.error is None and A.names_table() is t
+    assert not any(slug in t.entities for slug in WITNESS_NAMES)
+
+
 @pytest.mark.parametrize("sentence,slug", [("Rue Émile borders Canada.", "rue_mile"), ("Montr École borders Canada.", "montr_cole"),
                                            ("Moﬁ X borders Y.", "mo_x"), ("X1é Y borders Canada.", "x1_y")])
 def test_build4_rejects_the_fold_witnesses_without_a_store_name(sentence, slug):
@@ -112,9 +119,6 @@ WITNESSES = [
     ("m11", "France founded in 1904.", [["france", "founded_in", "1904"], ["france", "instance_of", "national_team"],
                                         ["france", "participant_of", "world_championship_football_2010"]], True, "shape1",
      [["france", "founded_in", "1904"]]),                                                      # a digit-only slug is a noun
-    ("m23", "Rue Émile borders Canada.", [["rue_mile", "borders", "canada"]], True, "shape1", [["rue_mile", "borders", "canada"]]),
-    ("m23", "Montr École borders Canada.", [["montr_cole", "borders", "canada"]], True, "shape1",
-     [["montr_cole", "borders", "canada"]]),                                                   # a word-initial accented letter
     ("m32", "A B Cc borders Z.", [["a_b", "borders", "z"], ["b_cc", "borders", "z"]], True, "shape1",
      [["b_cc", "borders", "z"]]),                                                              # longest slug first: Det + b_cc
     ("t_drop_chase", "The cat chases the dog.", [["cat", "chase", "dog"]], True, "shape1", [["cat", "chase", "dog"]]),
@@ -125,7 +129,6 @@ WITNESSES = [
     ("m109", "Spain shares border with Canadá", ES, False, None, None),
     # ---- low
     ("m16", "ſpain shares border with France.", ES, False, None, None),                    # long s is not s (no NFKC)
-    ("m16", "Moﬁ X borders Y.", [["mo_x", "borders", "y"]], True, "shape1", [["mo_x", "borders", "y"]]),
     ("m16", "Moﬁ X borders Y.", [["mofi_x", "borders", "y"]], False, None, None),
     ("m17", "Montré不al borders Canada.", [["montr_al", "borders", "canada"]], False, None, None),   # mixed Latin + CJK run
     ("m25", "Montr\U00017000al borders Canada.", [["montr_al", "borders", "canada"]], False, None, None),    # a nameless code point
@@ -139,7 +142,6 @@ WITNESSES = [
     ("m48", S, [["spain", "shares_border_with", "france", "x"]], False, None, None),
     ("m49", "A borders B.", [["a", "borders", "b"], ["c", "borders", None]], True, "shape1", [["a", "borders", "b"]]),
     ("m50", "A borders B.", [["a", "borders", "b"], 5], True, "shape1", [["a", "borders", "b"]]),
-    ("m111", "X1é Y borders Canada.", [["x1_y", "borders", "canada"]], True, "shape1", [["x1_y", "borders", "canada"]]),
     ("m115", "Portugal shares border with France.", ES, False, "shape1", None),                 # the shape of a not-gathered reject
     ("m76", S, ES, True, "shape1", [["spain", "shares_border_with", "france"]]),
     ("m76", "Spain shares border with France and Portugal.", ES, True, "shape2",
@@ -147,8 +149,17 @@ WITNESSES = [
 ]
 
 
-@pytest.mark.parametrize("wid,sentence,gathered,keep,shape,props", WITNESSES, ids=["%s:%s" % (w[0].split()[0], w[1][:40]) for w in WITNESSES])
-def test_the_original_verdict_on_each_mutation_witness(wid, sentence, gathered, keep, shape, props):
+# the four witnesses that keep an accented span of a slug with no store row: pinned with the name injected by their own test only
+WITNESSES_SYNTHETIC = [
+    ("m23", "Rue Émile borders Canada.", [["rue_mile", "borders", "canada"]], True, "shape1", [["rue_mile", "borders", "canada"]]),
+    ("m23", "Montr École borders Canada.", [["montr_cole", "borders", "canada"]], True, "shape1",
+     [["montr_cole", "borders", "canada"]]),                                                   # a word-initial accented letter
+    ("m16", "Moﬁ X borders Y.", [["mo_x", "borders", "y"]], True, "shape1", [["mo_x", "borders", "y"]]),
+    ("m111", "X1é Y borders Canada.", [["x1_y", "borders", "canada"]], True, "shape1", [["x1_y", "borders", "canada"]]),
+]
+
+
+def _check_witness(wid, sentence, gathered, keep, shape, props):
     r = A.allowlist_check(sentence, gathered)                     # never an exception
     assert r["keep"] is keep, (wid, r["reason"])
     assert r["shape"] == shape, (wid, r["shape"], r["reason"])
@@ -159,6 +170,18 @@ def test_the_original_verdict_on_each_mutation_witness(wid, sentence, gathered, 
     v = A.allowlist_verify(sentence, gathered)
     assert v["accepted"] is keep, (wid, v["reject_reason"])
     assert A.allowlist_keep(sentence, gathered) == (keep, r["reason"])
+
+
+@pytest.mark.parametrize("wid,sentence,gathered,keep,shape,props", WITNESSES_SYNTHETIC,
+                         ids=["%s:%s" % (w[0], w[1][:40]) for w in WITNESSES_SYNTHETIC])
+def test_the_fold_witnesses_keep_when_their_name_is_injected(monkeypatch, wid, sentence, gathered, keep, shape, props):
+    inject_witness_names(monkeypatch, gathered[0][0])
+    _check_witness(wid, sentence, gathered, keep, shape, props)
+
+
+@pytest.mark.parametrize("wid,sentence,gathered,keep,shape,props", WITNESSES, ids=["%s:%s" % (w[0].split()[0], w[1][:40]) for w in WITNESSES])
+def test_the_original_verdict_on_each_mutation_witness(wid, sentence, gathered, keep, shape, props):
+    _check_witness(wid, sentence, gathered, keep, shape, props)
 
 
 @pytest.mark.parametrize("sentence,gathered", [

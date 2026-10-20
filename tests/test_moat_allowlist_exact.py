@@ -173,22 +173,48 @@ def test_hyphen_for_space_is_rejected_unless_a_store_name_has_the_hyphen():
         assert not keep and ("entity span %r" % span) in why and slug in why, (p, why)
 
 
-def test_whitespace_runs_collapse_inside_an_entity_span_but_not_outside():
-    """'every run of whitespace collapsed to one ASCII space' reads whitespace as Python does (str.isspace): a no-break, thin or
-    ideographic space inside a name is a space. A zero-width character is not whitespace, so it stays and rejects. Outside the entity
-    spans every character must be ASCII, so the same spaces between the relation words, or before a name, reject."""
+def test_only_the_four_display_identical_spaces_collapse_inside_an_entity_span():
+    """F3: inside an entity span U+0020 and exactly U+00A0, U+2007, U+2009, U+202F count as one space; outside the spans only U+0020."""
     g = [["george_v", "member_of", "british_royal_society"]]
     assert A.allowlist_keep("George  V is a member of British Royal Society.", g) == (True, "ok")
-    for ws in (chr(0xA0), chr(0x2009), chr(0x202F), chr(0x3000), " \t"):
-        assert A.allowlist_keep("George%sV is a member of British%sRoyal Society." % (ws, ws), g) == (True, "ok"), repr(ws)
-        if ws.isascii():                                                       # ASCII whitespace between words is just a space
-            assert A.allowlist_keep("George V is a member%sof British Royal Society." % ws, g) == (True, "ok")
-            continue
-        for p in ("George V is a member%sof British Royal Society." % ws, "George V is%sa member of British Royal Society." % ws):
+    assert A.allowlist_keep("George V  is  a member of British Royal Society.", g) == (True, "ok")       # U+0020 runs outside
+    for ws in SPAN_SPACES:
+        assert A.allowlist_keep("George%sV is a member of British%sRoyal Society." % (ws, ws), g) == (True, "ok"), hex(ord(ws))
+        for p in ("George V is a member%sof British Royal Society." % ws, "George V is%sa member of British Royal Society." % ws,
+                  "George V%sis a member of British Royal Society." % ws):
             keep, why = A.allowlist_keep(p, g)
-            assert not keep and "non-ASCII character" in why, (repr(ws), why)
+            assert not keep and "non-ASCII character" in why, (hex(ord(ws)), why)
     for zw in (chr(0x200B), chr(0x200C), chr(0x2060), chr(0xFEFF)):           # zero-width: not whitespace
         assert not A.allowlist_keep("George%s V is a member of British Royal Society." % zw, g)[0], hex(ord(zw))
+
+
+# F3: every listed character, and more of "the rest" (other Zs spaces, CR, LF, NUL, DEL, C1 controls)
+SPAN_SPACES = (chr(0xA0), chr(0x2007), chr(0x2009), chr(0x202F))
+F3_LISTED = ["\t", "\x0b", "\x0c", "\x1c", "\x1d", "\x1e", "\x1f", "\x85", "\u1680", "\u2028", "\u2029", "\u3000"]
+F3_REST = ["\r", "\n", "\x00", "\x7f", "\x9f", "\u2002", "\u2003", "\u200a", "\u205f", "\u2000", "\u2001", "\u2008"]
+
+
+@pytest.mark.parametrize("ch", F3_LISTED + F3_REST, ids=["U+%04X" % ord(c) for c in F3_LISTED + F3_REST])
+def test_any_other_whitespace_or_control_character_rejects_inside_or_outside_a_span(ch):
+    g = [["george_v", "member_of", "british_royal_society"]]
+    for p in ("George%sV is a member of British Royal Society." % ch,          # inside the SUBJ span
+              "George V is a member of British%sRoyal Society." % ch,          # inside the OBJ span
+              "George V is a member%sof British Royal Society." % ch,          # inside the relation words
+              "George V%sis a member of British Royal Society." % ch,          # between a name and the copula
+              "The%sGeorge V is a member of British Royal Society." % ch):     # between the determiner and a name
+        r = A.allowlist_check(p, g)
+        assert not r["keep"] and r["reason"].startswith("allowlist: whitespace or control character"), (hex(ord(ch)), p, r["reason"])
+        assert ("U+%04X" % ord(ch)) in r["reason"]
+        v = A.allowlist_verify(p, g)                                          # the production entry: same reject (mid-sentence)
+        assert v["accepted"] is False and "whitespace or control character" in v["reject_reason"], (hex(ord(ch)), v["reject_reason"])
+
+
+def test_sentence_splitting_is_unchanged_by_f3():
+    """Whitespace after a sentence-final '.' is consumed by the splitter (unchanged), and each piece is stripped."""
+    g = ES
+    assert A.split_sentences("Spain shares border with France.\tSpain is a member of the European Union.") == [
+        "Spain shares border with France.", "Spain is a member of the European Union."]
+    assert A.allowlist_verify("Spain shares border with France.\u3000Spain is a member of the European Union.", g)["accepted"] is True
 
 
 # ========================================================================================= no fold on relation words, ASCII outside
@@ -201,7 +227,7 @@ def test_whitespace_runs_collapse_inside_an_entity_span_but_not_outside():
     ("Spain" + chr(0xA0) + "shares border with France.", ES, "non-ASCII character"),
     ("Spain shares border with the" + chr(0xA0) + "France.", ES, "non-ASCII character"),
     ("Spain shares border" + chr(0xA0) + "with France.", ES, "non-ASCII character"),
-    ("Spain shares border with France." + chr(0x3000), ES, "non-ASCII character"),
+    ("Spain shares border with France." + chr(0x3000), ES, "whitespace or control character"),        # F3
     ("Spain shаres border with France.", ES, "non-Latin"),                    # Cyrillic a
     ("Spain shares border with thé France.", ES, "no shape"),
     ("Spain shares border with France．", ES, "no shape"),                    # fullwidth full stop
@@ -266,9 +292,126 @@ def test_the_names_table_is_small_exceptions_only_and_spells_its_slugs():
 
 
 def test_surface_form_is_only_nfc_lower_and_whitespace():
-    assert A.surface_form("  Koninkrijk\tBelgie" + chr(0x308) + "  ") == "koninkrijk belgië"
-    assert A.surface_form("A" + chr(0xA0) + chr(0x2009) + "B") == "a b"
+    assert A.surface_form("  Koninkrijk" + chr(0xA0) + "Belgie" + chr(0x308) + "  ") == "koninkrijk belgië"
+    assert A.surface_form("A" + chr(0xA0) + chr(0x2009) + chr(0x2007) + chr(0x202F) + "B") == "a b"
+    assert A.surface_form("A\tB") == "a\tb" and A.surface_form("A" + chr(0x3000) + "B") == "a" + chr(0x3000) + "b"   # F3: not collapsed
     assert A.surface_form("A" + chr(0x200B) + "B") == "a" + chr(0x200B) + "b"      # zero-width is not whitespace
     assert A.surface_form("Auvergne-Rhône") == "auvergne-rhône"
     assert A.surface_form("ﬁ") == "ﬁ"                      # no NFKC
     assert A.deslug("1_500_m") == "1 500 m"
+
+
+# ============================================================================== F1: one carrier id per row (no re-imported fold)
+J = ["j_n", "language_of_work_or_name", "slenska_language"]
+SC = ["saint_cloud", "country", "u_s_of_a"]
+F1_LEAKS = [   # (sentence, gathered, the span that must be named, its slug): review 2026-10-20, kept by the first build-4 table
+    ("Ján language of work or name Íslenska language.", [J], "Ján", "j_n"),
+    ("Ján language of work or name slenska_language.", [J], "Ján", "j_n"),
+    ("Saint-Cloud country u s of a.", [SC], "Saint-Cloud", "saint_cloud"),
+    ("Ján language of work or name Íslenska language.", [J, ["jean_marie", "language_of_work_or_name", "french_language"]], "Ján", "j_n"),
+    ("Ján language of work or name slenska_language.", [J, ["jean_marie", "language_of_work_or_name", "french_language"]], "Ján", "j_n"),
+    ("Saint-Cloud country u s of a.", [SC, ["bernard_blier", "place_of_death", "saint_cloud"]], "Saint-Cloud", "saint_cloud"),
+]
+
+
+def _composer_entry(chat, surface, gathered):
+    from research.runners.rich_answer_composer import RichAnswerComposer
+    comp = RichAnswerComposer.__new__(RichAnswerComposer)
+    comp.chat = chat
+    os.environ[FLAG] = "1"
+    try:
+        chat._claim_verifier_cache = {}
+        return comp._verify_rendered(surface, None, tuple(gathered[0]), gathered)
+    finally:
+        os.environ.pop(FLAG, None)
+
+
+@pytest.mark.parametrize("sentence,gathered,span,slug", F1_LEAKS, ids=["L%d" % i for i in range(len(F1_LEAKS))])
+def test_every_f1_leak_is_rejected_at_all_seven_seeds_through_both_entries(seed_chats, sentence, gathered, span, slug):
+    r = A.allowlist_check(sentence, gathered)
+    assert not r["keep"] and ("entity span %r" % span) in r["reason"] and (" %s " % slug) in r["reason"], r["reason"]
+    got = _gate_all_seeds(seed_chats, sentence, gathered)
+    assert all(acc is False and r["reason"] in why for acc, why in got), got
+    assert [_composer_entry(seed_chats[sd], sentence, gathered) for sd in SEEDS] == [False] * len(SEEDS)
+
+
+def test_the_merged_slugs_accept_only_their_slug_and_de_slugged_form():
+    """F1: j_n (Jan with an acute, Q6319579; Jon with an acute, Q1715043) and saint_cloud (the French commune Q189153 and St. Cloud,
+    Minnesota Q736834) carry store facts from two ids, so neither has a row."""
+    t = A.names_table()
+    for slug in ("j_n", "saint_cloud"):
+        assert slug not in t.entities and t.surfaces(slug) == frozenset((slug, A.deslug(slug)))
+    assert A.allowlist_keep("Saint Cloud country u s of a.", [SC]) == (True, "ok")
+    assert A.allowlist_keep("j n language of work or name slenska_language.", [J]) == (True, "ok")
+    assert not A.allowlist_keep("Jón language of work or name slenska_language.", [J])[0]
+
+
+def test_the_table_records_its_carrier_ids_and_no_row_comes_from_a_multi_id_slug():
+    """F1, from the generator's own id data: every row names exactly one carrier id, no row slug is a multi-id slug, and the two
+    demonstrated merges are recorded with both ids."""
+    doc = json.loads(Path(A.NAMES_TABLE_PATH).read_text(encoding="utf-8"))
+    ents, row_ids, multi = doc["entities"], doc["row_ids"], doc["multi_id_slugs"]
+    assert set(row_ids) == set(ents)
+    assert all(isinstance(v, str) and re.fullmatch(r"Q\d+", v) for v in row_ids.values())
+    assert not set(ents) & set(multi)
+    assert all(len(v) >= 2 and v == sorted(set(v)) for v in multi.values())
+    assert {"Q6319579", "Q1715043"} <= set(multi["j_n"]) and {"Q189153", "Q736834"} <= set(multi["saint_cloud"])
+    rep = doc["reproduction"]
+    assert rep["identical"] and rep["carriers_cover_every_store_slug"] and rep["carrier_winners_rebuild_the_store"]
+    assert doc["steps"]["n_multi_id_slugs"] == len(multi) and doc["steps"]["no_carrier"] == []
+    assert doc["steps"]["f1_f4_f2"] == {"rows": doc["n_rows"], "surfaces": doc["n_surfaces"]}
+
+
+ENTITY_TXT = "/home/dant123/Projects/sim-data/wikidata5m/wikidata5m_entity.txt"
+
+
+def test_every_row_surface_is_a_name_of_its_one_carrier_id():
+    """F1 + F2 + F4 against the source: each surface is the surface_form of a name of row_ids[slug] (sanitize() == slug, no Cf/Cc
+    character), or that form with ', ' written ' '."""
+    if not os.path.exists(ENTITY_TXT):
+        pytest.skip("LOUD SKIP: %s is absent on this node; the id data was still checked in "
+                    "test_the_table_records_its_carrier_ids_and_no_row_comes_from_a_multi_id_slug" % ENTITY_TXT)
+    from research.runners._moat_allowlist_caps_build import names_of
+    from research.runners._moat_allowlist_names_build import comma_derived, has_format_or_control
+    doc = json.loads(Path(A.NAMES_TABLE_PATH).read_text(encoding="utf-8"))
+    names = names_of(ENTITY_TXT, set(doc["row_ids"].values()))
+    for slug, forms in doc["entities"].items():
+        own = {A.surface_form(n) for n in names[doc["row_ids"][slug]] if sanitize(n) == slug and not has_format_or_control(n)}
+        own |= {comma_derived(f) for f in own if ", " in f}
+        assert set(forms) <= own, (slug, sorted(set(forms) - own))
+
+
+def test_build_rows_takes_names_only_from_a_single_carrier():
+    """The generator's row rule on a synthetic merge (no data needed): two ids under one slug -> no row; one carrier among two ids
+    named by the alias map -> only that id's names."""
+    from research.runners._moat_allowlist_names_build import build_rows
+    names = {"Q1": ["Ján", "Jan"], "Q2": ["Jón", "Jon"], "Q3": ["Saint-Cloud"], "Q4": ["St. Cloud", "Saint Cloud"],
+             "Q5": ["Sète, France", "Sete"], "Q6": ["Tier" + chr(0x200E) + "park", "Tier park"]}
+    ents = {"j_n", "saint_cloud", "s_te_france", "tier_park"}
+    carriers = {"j_n": {"Q1", "Q2"}, "saint_cloud": {"Q4"}, "s_te_france": {"Q5"}, "tier_park": {"Q6"}}
+    all_ids = {"j_n": {"Q1", "Q2"}, "saint_cloud": {"Q3", "Q4"}, "s_te_france": {"Q5"}, "tier_park": {"Q6"}}
+    entities, row_ids, multi, steps = build_rows(ents, carriers, names, all_ids)
+    assert multi == {"j_n": ["Q1", "Q2"]} and "j_n" not in entities
+    assert "saint_cloud" not in entities                       # Q3's "Saint-Cloud" carries no fact; Q4 has no exception name
+    assert entities["s_te_france"] == ["sète france", "sète, france"] and row_ids["s_te_france"] == "Q5"   # F2
+    assert "tier_park" not in entities and steps["n_f4_names_excluded"] == 1                                 # F4
+    assert steps["before_f1"] == {"rows": 4, "surfaces": 5} and steps["n_f2_surfaces_added"] == 1
+
+
+# ============================================================================== F2: ", " -> " " rows; F4: no Cf/Cc surfaces
+def test_z39_the_accented_name_without_its_comma_is_kept():
+    g = [["s_te_france", "located_in_time_zone", "rome_time"], ["s_te_france", "country", "franzoesische_republik"],
+         ["s_te_france", "instance_of", "communes_in_france"], ["s_te_france", "located_in_the_administrative_territoria",
+                                                                "department_of_herault"]]
+    assert "sète france" in A.names_table().entities["s_te_france"]
+    assert A.allowlist_keep("Sète France is an instance of communes in France.", g) == (True, "ok")
+    assert not A.allowlist_keep("Sète, France is an instance of communes in France.", g)[0]      # the comma stays structural
+    assert not A.allowlist_keep("Séte France is an instance of communes in France.", g)[0]        # still exact
+
+
+def test_no_table_surface_holds_a_format_or_control_character():
+    doc = json.loads(Path(A.NAMES_TABLE_PATH).read_text(encoding="utf-8"))
+    bad = [(slug, f) for slug, forms in doc["entities"].items() for f in forms
+           if any(unicodedata.category(c) in ("Cf", "Cc") for c in f)]
+    assert bad == []
+    assert doc["steps"]["n_f4_names_excluded"] == len(doc["steps"]["f4_names_excluded"])

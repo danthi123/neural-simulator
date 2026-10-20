@@ -55,14 +55,21 @@ copula "is", "and") are not read.
 FOLD TO FIND, EXACT TO ACCEPT (build 4, after round 5: build 3 kept 24 of 89 U cases, every one ACCEPTED by fold-equality, e.g. "George V"
 + U+013A reads as George VI but folds to george_v; "1-500 m" folds to 1_500_m). The store fold above now only FINDS which gathered slug a
 span could be. After a sentence parses, every proposition is gathered and the case rule passes, `_exact_violation` requires, for every
-parse: each SUBJ/OBJ span's `surface_form` (NFC, lowercase, whitespace runs -> one space, stripped; nothing else) is exactly one of
-the slug's canonical surfaces (the slug verbatim, as the stub mouth renders it; its de-slugged form; or one of the entity's own store names
-whose sanitize() is the slug, from the committed exceptions table research/findings/raw/_moat_allowlist_names/names_table.json made by
+parse: each SUBJ/OBJ span's `surface_form` (NFC, lowercase, runs of U+0020 / U+00A0 / U+2007 / U+2009 / U+202F -> one space, stripped;
+nothing else) is exactly one of the slug's canonical surfaces (the slug verbatim, as the stub mouth renders it; its de-slugged form; or a
+row of the committed exceptions table research/findings/raw/_moat_allowlist_names/names_table.json made by
 research/runners/_moat_allowlist_names_build.py); each relation span is written exactly as the token the relation table read (verbatim or
 with underscores as spaces: no hyphen, no fold); and no non-ASCII character appears outside the accepted SUBJ/OBJ spans. Any difference
 rejects, naming the span and the slug. A missing or unreadable table accepts only the slug and its de-slugged form (fail closed, said in
-the reason). Store names holding an apostrophe or ASCII punctuation are in the table but unreachable: the finder keeps that punctuation
-structural (the apostrophe pre-check, ",", ".").
+the reason). The table (review rulings F1, F2, F4): a slug has rows only when the store facts under it come from EXACTLY ONE Wikidata id
+(by the generator's reproduction of the store's 78,857 facts), and then only that id's names whose sanitize() is the slug, minus any name
+holding a Unicode format (Cf) or control (Cc) character; a name with ", " also gives the same name with every ", " written " " (a table
+row, compared exactly; nothing is normalised at run time). A slug merged from two or more ids (j_n: Jan and Jon; saint_cloud: the French
+commune and the Minnesota city) has no row, so only its de-slugged form and the slug itself are accepted. Store names holding an
+apostrophe or other ASCII punctuation are in the table but unreachable: the finder keeps that punctuation structural.
+WHITESPACE (F3): between tokens only U+0020; inside an entity span U+0020 and the four display-identical spaces above; every other
+whitespace or control character (TAB, VT, FF, U+001C-U+001F, U+0085, U+1680, U+2028, U+2029, U+3000, ...) anywhere rejects the sentence
+before matching (`_bad_space`). Sentence splitting (`split_sentences`) is unchanged.
 
 NOTHING IS DROPPED. A token outside the shape (pronoun, adverb, "just", "also", hedge, negation, subordinator, a comma that
 opens a clause, a digit not inside a gathered slug, "!", "?", ":", "-", a second ".") leaves the shape unmatched and the
@@ -119,7 +126,20 @@ _TOKEN = re.compile(r"[a-z0-9_]+|[^\sa-z0-9_]")
 _HAS_ALNUM = re.compile(r"[a-z0-9]")
 _SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+")
 _ASCII_ALNUM = re.compile(r"[a-z0-9]")
-_WS = re.compile(r"\s+")               # Unicode whitespace (str.isspace): space, tab, no-break / thin / ideographic space, ...
+# build 4 F3: the only whitespace a sentence may hold is U+0020 between tokens; inside an entity span U+0020 and exactly these four
+# display-identical spaces (no-break, figure, thin, narrow no-break) count as one space. Every other whitespace or control character
+# (TAB, VT, FF, U+001C-U+001F, U+0085, U+1680, U+2028, U+2029, U+3000, ...) anywhere rejects the sentence (`_bad_space`).
+SPAN_SPACES = " \u00a0\u2007\u2009\u202f"
+_WS = re.compile("[%s]+" % SPAN_SPACES)
+
+
+def _bad_space(text):
+    """-> (index, char) of the first whitespace or control character of `text` that is not U+0020 or one of the four span spaces
+    (str.isspace, or Unicode category Cc / Zs / Zl / Zp), else None."""
+    for k, ch in enumerate(text):
+        if ch not in SPAN_SPACES and (ch.isspace() or unicodedata.category(ch) in ("Cc", "Zs", "Zl", "Zp")):
+            return k, ch
+    return None
 
 
 def _nonascii_word_runs(t):
@@ -265,8 +285,9 @@ def _case_violation(parses, origs):
 # ---- build 4: fold to find, exact to accept ----------------------------------------------------------------------------------
 def surface_form(text):
     """The ONLY normalisation an entity span's displayed text gets before the exact comparison (build 4): NFC, then `str.lower()`,
-    then every run of whitespace (Unicode, `str.isspace`: a no-break or thin space is a space) -> one ASCII space, leading/trailing
-    space stripped. A zero-width character is not whitespace and stays. No hyphen/space equivalence, no NFKC, no
+    then every run of U+0020 / U+00A0 / U+2007 / U+2009 / U+202F (F3: the display-identical spaces) -> one ASCII space,
+    leading/trailing space stripped. Any other whitespace stays (and `_bad_space` has already rejected a sentence holding it); a
+    zero-width character is not whitespace and stays. No hyphen/space equivalence, no NFKC, no
     accent stripping, no confusable mapping. Shared by the matcher and the table generator
     (research/runners/_moat_allowlist_names_build.py), so both compare by one rule."""
     return _WS.sub(" ", unicodedata.normalize("NFC", text).lower()).strip(" ")
@@ -563,6 +584,12 @@ def allowlist_check(sentence, gathered):
         return res
     if not isinstance(sentence, str) or not sentence.strip():
         res["reason"] = "allowlist: empty sentence"
+        return res
+    bad_space = _bad_space(sentence)
+    if bad_space is not None:            # build 4 F3: only U+0020 between words (and four display-identical spaces inside a name)
+        k, ch = bad_space
+        res["reason"] = ("allowlist: whitespace or control character %r (U+%04X) at %d: only U+0020 separates words (U+00A0, U+2007, "
+                         "U+2009, U+202F also inside an entity name)" % (ch, ord(ch), k))
         return res
     if _APOSTROPHES.search(sentence):
         res["reason"] = "allowlist: apostrophe (possessive or contraction) in %r" % sentence
