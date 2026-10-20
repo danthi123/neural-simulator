@@ -27,7 +27,9 @@ THE SHAPES (after normalisation; N = one gathered slug, Det = a | an | the, dire
 NOTHING IS DROPPED. A token outside the shape (pronoun, adverb, "just", "also", hedge, negation, subordinator, a comma that
 opens a clause, a digit not inside a gathered slug, "!", "?", ":", "-", a second ".") leaves the shape unmatched and the
 sentence is rejected. Any apostrophe (possessive 's, contraction) rejects the sentence BEFORE normalisation, because the B2h
-slug regex would otherwise swallow a possessive 's. A negation word rejects even when it is also a gathered slug.
+slug regex would otherwise swallow a possessive 's; so does non-ASCII text other than an accented Latin letter inside a Latin
+word (`_foreign_text`: B2h would read a free-standing non-Latin word between two slug words as a separator). A negation word
+rejects even when it is also a gathered slug.
 ONE SENTENCE, ONE SHAPE. The surface is split into sentences first; each sentence must match a shape on its own. If two parses
 of one sentence exist, every parse must encode only gathered triples (an ambiguous sentence with any ungathered reading is
 rejected). The production verdict on a rendered candidate (`allowlist_verify`) keeps it only if EVERY sentence is kept: the
@@ -49,9 +51,10 @@ from __future__ import annotations
 import functools
 import os
 import re
+import unicodedata
 
 from research.runners._moat_claim_entailment_derisk import (
-    NEG_MARKERS, VERB_SYNONYMS, ClaimEntailmentVerifier, _build_inflection_map, _slug_phrase_re)
+    _NONASCII_ALNUM_RUN, NEG_MARKERS, VERB_SYNONYMS, ClaimEntailmentVerifier, _build_inflection_map, _slug_phrase_re)
 
 ALLOWLIST_ENV = "BRAIN_MOAT_ALLOWLIST"
 DETERMINERS = frozenset(("a", "an", "the"))
@@ -64,6 +67,24 @@ _APOSTROPHES = re.compile(r"['`‘’‛ʼ′]")
 _TOKEN = re.compile(r"[a-z0-9_]+|[^\sa-z0-9_]")
 _HAS_ALNUM = re.compile(r"[a-z0-9]")
 _SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+")
+_ASCII_ALNUM = re.compile(r"[a-z0-9]")
+
+
+def _foreign_text(text):
+    r"""B2h maps every non-ASCII letter/digit run to "_" (the store's slug form: "Montréal" -> montr_al), and its slug spelling
+    joins slug words with [\s\-_]+, so a free-standing non-ASCII word BETWEEN two slug words ("shares 不 border with", 不 = not)
+    would be swallowed as a separator. Allowed here: a run of LATIN letters attached to an ASCII letter/digit (an accented letter
+    inside a Latin word: Montréal, República, José). Anything else (non-Latin script, a free-standing accented word such as "à",
+    a non-ASCII digit) -> that run, so the sentence is rejected before normalisation."""
+    t = unicodedata.normalize("NFC", text).lower()
+    for m in _NONASCII_ALNUM_RUN.finditer(t):
+        run = m.group(0)
+        latin = all(unicodedata.name(ch, "").startswith("LATIN ") for ch in run)
+        before = t[m.start() - 1] if m.start() > 0 else ""
+        after = t[m.end()] if m.end() < len(t) else ""
+        if not latin or not (_ASCII_ALNUM.match(before) or _ASCII_ALNUM.match(after)):
+            return run
+    return None
 
 
 def allowlist_enabled():
@@ -218,6 +239,10 @@ def allowlist_check(sentence, gathered):
         return res
     if _APOSTROPHES.search(sentence):
         res["reason"] = "allowlist: apostrophe (possessive or contraction) in %r" % sentence
+        return res
+    foreign = _foreign_text(sentence)
+    if foreign is not None:
+        res["reason"] = "allowlist: non-Latin or free-standing non-ASCII text %r" % foreign
         return res
     lex = _lexicon(key)
     toks = _TOKEN.findall(lex._normalise_slugs(sentence))

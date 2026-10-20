@@ -1,0 +1,595 @@
+"""Pins for `BRAIN_MOAT_ALLOWLIST`, the default-OFF STRICT allowlist claim checker on the scaffold mouth
+(research/runners/_moat_allowlist.py; spec docs/drafts/moat-allowlist/SPEC.md; bars in
+research/findings/2026-10-20-moat-allowlist-claim-checker-PREREGISTRATION.md).
+
+A sentence is kept only if ONE exact proposition shape consumes every token and every proposition it encodes is a gathered
+triple of this turn; everything else is rejected. These tests pin:
+  - flag OFF: the production claim gate is byte-identical to the unmodified verifier (golden), the call sites route as before,
+    and the three flag readers share one truthy contract;
+  - flag ON: the matcher owns the whole path (the stock clause parser, `_noun_is_before`, the role-permutation guard and the
+    substrate role parse are never consulted; no fallback to the single-triple `_verify`);
+  - MUST REJECT: every expect-U case of the B2h verify-go leak hunts and the sweep_real templates over the 90 held-out gathered
+    sets (tests/fixtures/moat_allowlist_bank.json), plus the board holes #265 (a mutual shares_border_with pair made the stock
+    verifier unbuildable) and #266 (a subject slug that starts with the relation's first three letters);
+  - MUST KEEP: the supported twins of cases_b.py (the twin clause as its own sentence; the literal ", and" twin is two
+    subjects in one sentence, a multi-clause shape the spec excludes, pinned as an expected loss) and every F-labelled S1/S3
+    sentence B2h kept that grounds exactly one triple (tests/fixtures/moat_allowlist_must_keep.json), except the listed losses;
+  - shape 3 cannot reverse roles; nothing is dropped; one sentence, one shape.
+The matcher is a pure host function: its verdict cannot depend on the parser seed. Where a test goes through the production
+`ChatBrain` (which carries a seeded BridgeParser) it runs at all seven parser seeds 42, 43, 44, 100, 101, 102, 1.
+
+Run: CUDA_VISIBLE_DEVICES="" SIM_BACKEND=numpy .venv/bin/python -m pytest tests/test_moat_allowlist.py -q
+"""
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+from pathlib import Path
+
+os.environ.setdefault("SIM_BACKEND", "numpy")
+
+import pytest
+
+from research.runners import _moat_allowlist as A
+from research.runners import _moat_claim_entailment_derisk as M
+from research.runners.brain_conversational_agent import BridgeParser
+
+pytestmark = pytest.mark.filterwarnings("ignore")
+
+FIX = Path(__file__).parent / "fixtures"
+GOLDEN = json.loads((FIX / "moat_claim_entailment_golden.json").read_text())
+BANK = json.loads((FIX / "moat_allowlist_bank.json").read_text())
+KEEP = json.loads((FIX / "moat_allowlist_must_keep.json").read_text())
+SEEDS = (42, 43, 44, 100, 101, 102, 1)        # parser seeds of one deterministic build: one replicate per seed, not draws
+FLAG = "BRAIN_MOAT_ALLOWLIST"
+SLUG = "BRAIN_MOAT_SLUG_NORM"
+
+
+@pytest.fixture(autouse=True)
+def _clean_flags(monkeypatch):
+    for k in (FLAG, SLUG, "BRAIN_CLAIM_MOAT"):
+        monkeypatch.delenv(k, raising=False)
+
+
+@pytest.fixture(scope="module")
+def seed_chats():
+    """One production ChatBrain method set per parser seed (real BridgeParser, without the heavy ChatBrain.__init__)."""
+    from research.runners.brain_chat_tui import ChatBrain
+    out = {}
+    for sd in SEEDS:
+        chat = ChatBrain.__new__(ChatBrain)
+        chat.inner = BridgeParser(seed=sd)
+        out[sd] = chat
+    return out
+
+
+@pytest.fixture(scope="module")
+def golden_chat():
+    from research.runners.brain_chat_tui import ChatBrain
+    chat = ChatBrain.__new__(ChatBrain)
+    chat.inner = BridgeParser(seed=GOLDEN["seed"])
+    return chat
+
+
+def _on(chat, surface, gathered):
+    """The production claim gate with the flag ON -> (accepted, result)."""
+    os.environ[FLAG] = "1"
+    try:
+        return chat._verify_claim_set(surface, gathered)
+    finally:
+        os.environ.pop(FLAG, None)
+
+
+def _on_all_seeds(seed_chats, surface, gathered):
+    return [_on(seed_chats[sd], surface, gathered)[0] for sd in SEEDS]
+
+
+def _digest(res):
+    return hashlib.sha256(json.dumps(res, sort_keys=True, default=str).encode()).hexdigest()[:20]
+
+
+# =========================================================================================================== flag OFF
+@pytest.mark.parametrize("val", [None, "0", "", "off", "false", "no", "garbage"])
+def test_flag_off_production_claim_gate_matches_the_unmodified_verifier_golden(golden_chat, monkeypatch, val):
+    """ChatBrain._verify_claim_set (the production gate) with the allowlist flag unset/falsy reproduces the golden captured from
+    the UNMODIFIED verifier at 9cf4ec708 (accepted, reject_reason, hash of the full result incl. trace) on all 318 real-world
+    sentences (178 real-Qwen + stub + smuggling mutations)."""
+    if val is not None:
+        monkeypatch.setenv(FLAG, val)
+    golden_chat._claim_verifier_cache = {}
+    bad = []
+    for e in GOLDEN["world"]:
+        acc, res = golden_chat._verify_claim_set(e["s"], GOLDEN["gated_sets"][e["g"]])
+        if acc is None:
+            if e["a"] is not None:
+                bad.append((e["s"], "unbuildable now, golden", e["a"]))
+            continue
+        if (acc, res["reject_reason"], _digest(res)) != (e["a"], e["r"], e["h"]):
+            bad.append((e["src"], e["s"], acc, res["reject_reason"]))
+    assert not bad, bad[:3]
+    assert all(not getattr(v, "allowlist", False) for v in golden_chat._claim_verifier_cache.values() if v is not None)
+
+
+def test_the_three_flag_readers_agree_and_default_off(monkeypatch):
+    from research.runners.brain_chat_tui import ChatBrain
+    from research.runners.rich_answer_composer import _moat_allowlist_enabled
+    for val in (None, "", "0", "1", "true", "True", " yes ", "on", "ON", "off", "false", "no", "2", "enable", "y"):
+        if val is None:
+            monkeypatch.delenv(FLAG, raising=False)
+        else:
+            monkeypatch.setenv(FLAG, val)
+        got = {A.allowlist_enabled(), ChatBrain._moat_allowlist_enabled(), _moat_allowlist_enabled()}
+        assert len(got) == 1, (val, got)
+        assert got == {val is not None and val.strip().lower() in ("1", "true", "on", "yes")}, val
+    monkeypatch.delenv(FLAG, raising=False)
+    assert A.allowlist_enabled() is False
+    assert A.ALLOWLIST_ENV == FLAG
+
+
+class _RecordingChat:
+    """What RichAnswerComposer._verify_rendered touches: records which verifier it is sent to and with which set."""
+
+    def __init__(self, claim=(True, {})):
+        self.calls, self.sets = [], []
+        self._claim = claim
+
+    def _verify(self, surface, asserted, svo):
+        self.calls.append("single")
+        return True
+
+    def _verify_claim_set(self, surface, gated):
+        self.calls.append("claim")
+        self.sets.append(gated)
+        return self._claim
+
+
+def _composer(chat):
+    from research.runners.rich_answer_composer import RichAnswerComposer
+    comp = RichAnswerComposer.__new__(RichAnswerComposer)
+    comp.chat = chat
+    return comp
+
+
+_SVO = ["angora_turkey", "instance_of", "city_work"]
+_ANGORA = [["angora_turkey", "located_in_time_zone", "kaliningrad_time"], _SVO,
+           ["angora_turkey", "country", "the_republic_of_turkey"], ["angora_turkey", "twinned_administrative_body", "washington_dc"]]
+
+
+@pytest.mark.parametrize("val", [None, "0", "off", "garbage"])
+def test_flag_off_composer_routes_exactly_as_before(monkeypatch, val):
+    if val is not None:
+        monkeypatch.setenv(FLAG, val)
+    chat = _RecordingChat()
+    assert _composer(chat)._verify_rendered("s", None, _SVO, [_SVO]) is True
+    assert chat.calls == ["single"]                                           # one-fact turn: the single-triple _verify
+    chat = _RecordingChat()
+    _composer(chat)._verify_rendered("s", None, _SVO, _ANGORA)
+    assert chat.calls == ["claim"]                                            # multi-fact turn: the claim gate
+    chat = _RecordingChat(claim=(None, None))
+    assert _composer(chat)._verify_rendered("s", None, _SVO, _ANGORA) is True
+    assert chat.calls == ["claim", "single"]                                  # unbuildable -> the old fallback
+    chat = _RecordingChat()
+    assert _composer(chat)._verify_rendered("s", None, _SVO, None) is True
+    assert chat.calls == ["single"]                                           # no gathered set -> _verify, as before
+
+
+def test_flag_off_builds_the_stock_verifier_with_the_old_cache_key(golden_chat):
+    golden_chat._claim_verifier_cache = {}
+    ver = golden_chat._build_claim_verifier(_ANGORA)
+    assert isinstance(ver, M.ClaimEntailmentVerifier) and ver.slug_norm is False
+    assert list(golden_chat._claim_verifier_cache) == [frozenset(tuple(f) for f in _ANGORA)]
+
+
+# =========================================================================================================== flag ON wiring
+@pytest.mark.parametrize("val", ["1", "true", "TRUE", " on ", "yes"])
+def test_flag_on_routes_every_turn_to_the_allowlist_with_no_fallback(monkeypatch, val):
+    monkeypatch.setenv(FLAG, val)
+    for gated in ([_SVO], _ANGORA):
+        chat = _RecordingChat(claim=(False, {"reject_reason": "x"}))
+        assert _composer(chat)._verify_rendered("s", None, _SVO, gated) is False          # its verdict is final
+        assert chat.calls == ["claim"]
+        chat = _RecordingChat(claim=(None, None))                                          # nothing buildable -> REJECT
+        assert _composer(chat)._verify_rendered("s", None, _SVO, gated) is False
+        assert chat.calls == ["claim"]                                                     # never the single-triple re-parse
+    chat = _RecordingChat()
+    assert _composer(chat)._verify_rendered("s", None, _SVO, None) is True
+    assert chat.calls == ["claim"] and chat.sets == [[_SVO]]                               # no set given -> [svo]
+
+
+def test_flag_on_builds_an_always_buildable_allowlist_verifier_under_its_own_cache_key(golden_chat, monkeypatch):
+    golden_chat._claim_verifier_cache = {}
+    off = golden_chat._build_claim_verifier(_ANGORA)
+    monkeypatch.setenv(FLAG, "1")
+    on = golden_chat._build_claim_verifier(_ANGORA)
+    assert isinstance(on, A.AllowlistClaimVerifier) and on is not off
+    assert (frozenset(tuple(f) for f in _ANGORA), "allowlist") in golden_chat._claim_verifier_cache
+    assert golden_chat._build_claim_verifier(_ANGORA) is on
+    monkeypatch.setenv(SLUG, "1")                                    # the allowlist takes precedence over B2h
+    assert golden_chat._build_claim_verifier(_ANGORA) is on
+    monkeypatch.delenv(FLAG)
+    assert golden_chat._build_claim_verifier(_ANGORA).slug_norm is True
+    monkeypatch.delenv(SLUG)
+    assert golden_chat._build_claim_verifier(_ANGORA) is off        # the OFF cache entry is reused
+
+
+def test_flag_on_ignores_the_claim_moat_escape_but_flag_off_keeps_it(golden_chat, monkeypatch):
+    monkeypatch.setenv("BRAIN_CLAIM_MOAT", "0")
+    assert golden_chat._verify_claim_set("Angora turkey is an instance of city work.", _ANGORA) == (None, None)
+    monkeypatch.setenv(FLAG, "1")
+    acc, res = golden_chat._verify_claim_set("Angora turkey is an instance of city work.", _ANGORA)
+    assert acc is True and res["allowlist"] is True
+
+
+def test_flag_on_consults_neither_the_stock_parser_nor_the_substrate(seed_chats, monkeypatch):
+    """The flag owns the whole path: break every stock/B2h parser entry point and the substrate role parse, and the
+    allowlist verdicts are unchanged (so they cannot come from those)."""
+    cases = [("Angora turkey is an instance of city work.", True), ("City work is an instance of angora turkey.", False),
+             ("The county_of_inyo countrys u_s_of_a.", True), ("Angora turkey country washington dc.", False)]
+    gathered = _ANGORA + [["county_of_inyo", "country", "u_s_of_a"]]
+    before = [[_on(seed_chats[sd], s, gathered)[0] for s, _ in cases] for sd in SEEDS]
+
+    def boom(*a, **k):
+        raise AssertionError("consulted under BRAIN_MOAT_ALLOWLIST")
+    for name in ("verify", "_clauses", "_clauses_slug_norm", "_noun_is_before", "_noun_before_verb", "_svo", "_content",
+                 "_article_relation_guard", "__init__"):
+        monkeypatch.setattr(M.ClaimEntailmentVerifier, name, boom)
+    monkeypatch.setattr(BridgeParser, "parse", boom)
+    for sd in SEEDS:
+        seed_chats[sd]._claim_verifier_cache = {}
+        monkeypatch.setattr(seed_chats[sd], "_verify", boom)
+    after = [[_on(seed_chats[sd], s, gathered)[0] for s, _ in cases] for sd in SEEDS]
+    assert before == after == [[exp for _, exp in cases]] * len(SEEDS)
+
+
+# =========================================================================================================== MUST REJECT: the bank
+def test_bank_is_the_full_port_and_nontrivial():
+    """Anti-vacuity + port completeness: every source is present with its sha256, and the expect-U counts are the ones the
+    builder ported (any later edit of a source file shows up as a sha mismatch when the builder is re-run)."""
+    by = {}
+    for c in BANK["cases"]:
+        by.setdefault(c["source"], {}).setdefault(c["expect"], 0)
+        by[c["source"]][c["expect"]] += 1
+    assert by == BANK["counts_by_source"]
+    assert {s: by[s].get("U", 0) for s in by} == {"leak_hunt.py": 57, "leak_hunt2.py": 19, "cases_a.py": 105, "cases_b.py": 68,
+                                                   "sweep_real.py": 1329}
+    assert set(BANK["sources"]) == {"leak_hunt.py", "leak_hunt2.py", "cases_a.py", "cases_b.py", "sweep_real.py"}
+    assert len({c["gathered"] for c in BANK["cases"] if c["source"] == "sweep_real.py"}) == 90
+
+
+@pytest.mark.parametrize("source", ["leak_hunt.py", "leak_hunt2.py", "cases_a.py", "cases_b.py", "sweep_real.py"])
+def test_every_expect_u_bank_case_is_rejected_at_every_seed(seed_chats, source):
+    leaks = []
+    for c in BANK["cases"]:
+        if c["source"] != source or c["expect"] != "U":
+            continue
+        got = _on_all_seeds(seed_chats, c["prose"], BANK["gathered_sets"][c["gathered"]])
+        if any(a is not False for a in got):
+            leaks.append((c["id"], c["prose"], got))
+    assert not leaks, leaks[:5]
+
+
+def test_the_bank_can_see_a_leak_the_b2h_arm_accepts_some_of_it(seed_chats, monkeypatch):
+    """Power control: the same expect-U inputs DO get through the refuted slug-aware arm (B2h, flag BRAIN_MOAT_SLUG_NORM), so a
+    0 under the allowlist is the matcher's doing, not a bank that nothing could pass."""
+    monkeypatch.setenv(SLUG, "1")
+    chat = seed_chats[42]
+    chat._claim_verifier_cache = {}
+    passed = [c["id"] for c in BANK["cases"] if c["expect"] == "U" and c["source"] in ("cases_a.py", "cases_b.py")
+              and chat._verify_claim_set(c["prose"], BANK["gathered_sets"][c["gathered"]])[0]]
+    assert len(passed) >= 5, passed
+
+
+# ---- board hole #265: a mutual shares_border_with pair
+_MUTUAL = [["shawano_county", "shares_border_with", "menominee_county"], ["menominee_county", "shares_border_with", "shawano_county"],
+           ["shawano_county", "instance_of", "county_of_wisconsin"]]
+
+
+def test_board_265_mutual_pair_is_unbuildable_for_the_stock_verifier_control(golden_chat):
+    golden_chat._claim_verifier_cache = {}
+    assert golden_chat._build_claim_verifier(_MUTUAL) is None
+    assert golden_chat._verify_claim_set("Shawano County shares border with Menominee County.", _MUTUAL) == (None, None)
+
+
+@pytest.mark.parametrize("prose,keep", [
+    ("Shawano County shares border with Menominee County.", True),
+    ("Menominee County shares border with Shawano County.", True),
+    ("Shawano County is an instance of county of Wisconsin.", True),
+    ("Menominee County is an instance of county of Wisconsin.", False),
+    ("Shawano County shares border with county of Wisconsin.", False),
+    ("Shawano County shares border with Menominee County and county of Wisconsin.", False),
+    ("Menominee County shares border with Shawano County, which is an instance of county of Wisconsin.", False),
+])
+def test_board_265_mutual_pair_under_the_flag(seed_chats, prose, keep):
+    assert _on_all_seeds(seed_chats, prose, _MUTUAL) == [keep] * len(SEEDS), prose
+
+
+def test_board_265_composer_decides_the_mutual_pair_without_the_single_triple_fallback(seed_chats, monkeypatch):
+    monkeypatch.setenv(FLAG, "1")
+    for sd in SEEDS:
+        chat = seed_chats[sd]
+        chat._claim_verifier_cache = {}
+        monkeypatch.setattr(chat, "_verify", lambda *a, **k: (_ for _ in ()).throw(AssertionError("fallback")))
+        comp = _composer(chat)
+        assert comp._verify_rendered("Shawano County shares border with Menominee County.", None, _MUTUAL[0], _MUTUAL) is True
+        assert comp._verify_rendered("Shawano County shares border with Wausau.", None, _MUTUAL[0], _MUTUAL) is False
+
+
+# ---- board hole #266: a subject slug that starts with the relation's first three letters
+_PREFIX = [("county_of_inyo", "country", "u_s_of_a"), ("sporting_benevento", "sport", "association_football_club"),
+           ("gene_wolf", "genre", "sciene_fiction"), ("shawano_county", "shares_border_with", "wausau_wi_msa"),
+           ("suburban_train", "subclass_of", "public_transportation"),
+           ("insulin_dependent_diabetes_mellitus", "instance_of", "organic_cause"),
+           ("headington_united_fc", "headquarters_location", "city_of_dreaming_spires")]
+
+
+def _stub(svo):
+    from research.runners.brain_chat_tui import StubRenderer
+    return StubRenderer().render_svo(*svo)[0]
+
+
+def test_board_266_the_stock_three_letter_match_loses_the_subject_control(golden_chat):
+    """Control: the stock verifier's `_noun_is_before` reads 'county_of_inyo' as the verb 'country' (same first 3 letters), so
+    the subject is lost and the one-fact stub sentence is rejected ('no resolvable subject')."""
+    golden_chat._claim_verifier_cache = {}
+    acc, res = golden_chat._verify_claim_set(_stub(_PREFIX[0]), [list(_PREFIX[0])])
+    assert acc is False and "no resolvable subject" in res["reject_reason"]
+
+
+@pytest.mark.parametrize("fact", _PREFIX, ids=lambda f: f[1])
+def test_board_266_prefix_subject_under_the_flag(seed_chats, fact):
+    s, r, o = fact
+    title = lambda x: " ".join(w.capitalize() for w in x.split("_"))
+    rel = r.replace("_", " ")
+    gathered = [list(fact), ["alpha", "shares_border_with" if r != "shares_border_with" else "instance_of", "beta"],
+                [s, "shares_border_with" if r != "shares_border_with" else "instance_of", "beta"]]
+    first = "Alpha shares border with Beta" if r != "shares_border_with" else "Alpha instance of beta"
+    keep = [_stub(fact), "%s %s %s." % (title(s), rel, title(o)), "%s. %s %s %s." % (first, title(s), rel, title(o))]
+    reject = ["%s %s %s." % (title(o), rel, title(s)),                                  # role swap
+              "%s %s %s." % (title(s), rel, "Mexico"),                                   # object not gathered
+              "%s, and %s %s Beta." % (first, title(s), rel),                            # borrowed-subject form, (s, r, beta) not gathered
+              "%s. %s %s Beta." % (first, title(s), rel)]
+    for p in keep:
+        assert _on_all_seeds(seed_chats, p, gathered) == [True] * len(SEEDS), p
+    for p in reject:
+        assert _on_all_seeds(seed_chats, p, gathered) == [False] * len(SEEDS), p
+
+
+# =========================================================================================================== MUST KEEP
+_TWINS = [c for c in BANK["cases"] if c["source"] == "cases_b.py" and c["expect"] == "S" and c["id"].startswith("pc")]
+
+
+def test_the_twins_are_all_there():
+    assert len(_TWINS) == 26 and all(c["id"].endswith("c") for c in _TWINS)
+
+
+@pytest.mark.parametrize("case", _TWINS, ids=lambda c: c["id"])
+def test_cases_b_supported_twin_is_kept_as_its_own_sentence(seed_chats, case):
+    """The twin's purpose (cases_b.py): show the clause about the prefix-colliding subject is not simply rejected. Its clause, as
+    a sentence of its own or after the first clause's own sentence, is KEPT at every seed. The literal twin ("<first>, and <S R
+    o1>.") puts two subjects in one sentence -- a multi-clause shape the spec excludes -- so it is rejected (an expected loss,
+    never loosened for)."""
+    g = BANK["gathered_sets"][case["gathered"]]
+    first, second = case["prose"].rstrip(".").split(", and ", 1)
+    for p in (second + ".", first + ". " + second + "."):
+        assert _on_all_seeds(seed_chats, p, g) == [True] * len(SEEDS), p
+    assert _on_all_seeds(seed_chats, case["prose"], g) == [False] * len(SEEDS), case["prose"]
+
+
+def test_must_keep_set_is_nontrivial_and_from_the_held_out_strata():
+    assert KEEP["parser_seed"] == 42
+    assert KEEP["n_single_triple"] == len(KEEP["single_triple"]) >= 30
+    assert {r["stratum"] for r in KEEP["single_triple"]} == {"S1", "S3"}
+    assert all(len(r["b2h_grounded"]) == 1 for r in KEEP["single_triple"])
+
+
+def test_every_single_triple_f_sentence_b2h_kept_is_kept_except_the_listed_losses(seed_chats):
+    """Prereg bar 4 at the matcher level: every F-labelled S1/S3 sentence B2h kept at seed 42 that grounds exactly one triple is
+    kept by the allowlist at every seed, except `allowlist_losses` (single-clause sentences outside shapes 1-3: a past-tense
+    copula, 'is located in time zone', 'X sport is Y'). The losses are pinned exactly, so the list cannot grow silently."""
+    losses = {(x["turn"], x["surface"]): x["reason"] for x in KEEP["allowlist_losses"]}
+    kept, rejected = [], {}
+    for r in KEEP["single_triple"]:
+        g = KEEP["gathered_sets"][r["gathered"]]
+        got = _on_all_seeds(seed_chats, r["surface"], g)
+        assert len(set(got)) == 1, (r["surface"], got)                      # seed-independent
+        if got[0]:
+            kept.append(r)
+            # the kept sentence encodes exactly the triple B2h grounded
+            res = A.allowlist_check(r["surface"], g)
+            assert sorted(map(tuple, res["props"])) == sorted(map(tuple, r["b2h_grounded"])), r["surface"]
+        else:
+            rejected[(r["turn"], r["surface"])] = A.allowlist_keep(r["surface"], g)[1]
+    assert rejected == losses
+    assert len(kept) == len(KEEP["single_triple"]) - len(losses)
+
+
+def test_no_multi_triple_f_sentence_was_kept_by_b2h():
+    """Recorded so a change in the strata shows up: B2h kept no F sentence that grounds more than one triple at seed 42."""
+    assert KEEP["n_multi_triple"] == 0 and KEEP["multi_triple"] == []
+
+
+@pytest.mark.parametrize("fact", KEEP["stub_one_per_relation"], ids=lambda f: f[1])
+def test_the_stub_mouth_sentence_of_every_store_relation_is_kept_and_its_role_swap_is_not(fact):
+    """One real fact per relation of the production LTM store (60 relations): the template stub's one-fact sentence is kept (the
+    stock path keeps all of them, so a rejection here would be a stub HURTS), and the same sentence with the roles swapped is
+    rejected."""
+    s, r, o = fact
+    assert A.allowlist_verify(_stub(fact), [fact])["accepted"], _stub(fact)
+    assert not A.allowlist_verify(_stub([o, r, s]), [fact])["accepted"], _stub([o, r, s])
+
+
+# =========================================================================================================== shape 3
+_OF_RELATIONS = sorted({f[1] for f in KEEP["stub_one_per_relation"] if f[1].endswith("_of")})
+_OTHER_RELATIONS = sorted({f[1] for f in KEEP["stub_one_per_relation"] if not f[1].endswith("_of")})
+
+
+def test_the_store_relations_that_take_shape_3():
+    assert _OF_RELATIONS == ["instance_of", "is_a_list_of", "member_of", "part_of", "participant_of", "subclass_of"]
+    assert len(_OTHER_RELATIONS) == 54
+
+
+@pytest.mark.parametrize("rel", _OF_RELATIONS)
+def test_shape3_reads_subject_first_and_cannot_reverse_roles(rel):
+    g = [["red_fox", rel, "canid_group"]]
+    noun = rel[:-3].replace("_", " ")
+    for det in ("", "a ", "an ", "the "):
+        for sdet in ("", "The "):
+            ok = "%sRed Fox is %s%s of %sCanid Group." % (sdet, det, noun, det)
+            rev = "%sCanid Group is %s%s of %sRed Fox." % (sdet, det, noun, det)
+            res = A.allowlist_check(ok, g)                 # (is_a_list_of reads "Red Fox is is a list of Canid Group")
+            assert res["keep"] and res["shape"] == "shape3" and res["props"] == [["red_fox", rel, "canid_group"]], ok
+            assert not A.allowlist_keep(rev, g)[0], rev
+    # the reversed triple is the only thing that could license the reversed sentence -- and then it is the true reading
+    both = g + [["canid_group", rel, "red_fox"]]
+    assert A.allowlist_keep("Canid Group is a %s of Red Fox." % noun, both)[0]
+
+
+@pytest.mark.parametrize("rel", _OTHER_RELATIONS)
+def test_shape3_never_applies_to_a_relation_without_of(rel):
+    """'Ankara is the capital of Turkey' means (turkey, capital, ankara): a relation whose slug does not end in _of must never
+    take the 'X is the R of Y' shape, in either direction, whichever way the triple is gathered."""
+    noun = rel.replace("_", " ")
+    for g in ([["turkey_x", rel, "ankara_y"]], [["ankara_y", rel, "turkey_x"]]):
+        for p in ("Ankara Y is the %s of Turkey X." % noun, "Turkey X is the %s of Ankara Y." % noun,
+                  "Ankara Y is %s of Turkey X." % noun, "Turkey X is a %s of Ankara Y." % noun):
+            assert not A.allowlist_keep(p, g)[0], (g, p)
+
+
+def test_shape3_needs_the_copula_is_and_only_one_object():
+    g = [["spain", "member_of", "european_union"], ["spain", "member_of", "nato_x"]]
+    assert A.allowlist_keep("Spain is a member of the European Union.", g)[0]
+    for p in ("Spain was a member of the European Union.", "Spain are a member of the European Union.",
+              "Spain is a member of the European Union and Nato X.", "Spain is a member of European Union, Nato X.",
+              "Spain is also a member of the European Union.", "Spain is a member of the European Union too."):
+        assert not A.allowlist_keep(p, g)[0], p
+
+
+# =========================================================================================================== nothing dropped
+_ES = [["spain", "shares_border_with", "france"], ["spain", "shares_border_with", "portugal"],
+       ["spain", "member_of", "european_union"], ["portugal", "member_of", "european_union"]]
+_BASE = ["Spain", "shares", "border", "with", "France"]
+
+
+@pytest.mark.parametrize("word", ["just", "also", "only", "not", "never", "no", "perhaps", "maybe", "might", "it", "its", "they",
+                                  "which", "that", "because", "although", "and", "or", "but", "1998", "42", "very", "too", ",",
+                                  ":", ";", "-", "(", ")", "!", "?", "—", "安", "this", "those", "some", "every",
+                                  "a", "the", "is", "was", "in", "of", "by"])
+def test_any_extra_token_anywhere_rejects_the_sentence(word):
+    assert A.allowlist_keep(" ".join(_BASE) + ".", _ES)[0]
+    for i in range(len(_BASE) + 1):
+        toks = _BASE[:i] + [word] + _BASE[i:]
+        p = " ".join(toks) + "."
+        keep, why = A.allowlist_keep(p, _ES)
+        legal = ((word in ("a", "the") and i in (0, 4))                      # a determiner directly before SUBJ / OBJ
+                 or (word == "-" and i in (2, 3)))                           # a hyphen INSIDE one slug's words is its spelling
+        assert keep is legal, (p, why)
+
+
+@pytest.mark.parametrize("prose", ["Spain's shares border with France.", "Spain shares border with France's.",
+                                   "Spain shares border with France’s.", "Spain shares border with Fr'ance.",
+                                   "Spain doesn't share border with France.", "Spain shares border with `France`."])
+def test_any_apostrophe_rejects(prose):
+    keep, why = A.allowlist_keep(prose, _ES)
+    assert not keep and "apostrophe" in why, prose
+
+
+@pytest.mark.parametrize("prose,keep", [
+    ("Spain shares border with France and Portugal.", True),
+    ("Spain shares border with France, and Portugal.", True),
+    ("Spain shares border with the France and the Portugal.", True),
+    ("Spain shares border with France, Portugal, and France.", True),
+    ("Spain shares border with France and Italy.", False),                    # every object must be gathered
+    ("Spain shares border with France, Portugal.", False),                    # a list must end with "and OBJn"
+    ("Spain shares border with France and Portugal and.", False),
+    ("Spain and Portugal shares border with France.", False),                 # no subject coordination
+    ("Spain shares border with France and is a member of the European Union.", False),
+    ("Spain shares border with France and Portugal is a member of the European Union.", False),
+])
+def test_shape2_object_lists(prose, keep):
+    assert A.allowlist_keep(prose, _ES)[0] is keep, prose
+
+
+def test_one_sentence_one_shape_and_the_turn_keeps_its_other_sentences():
+    good, bad = "Spain shares border with France.", "It is a member of the European Union."
+    res = A.allowlist_verify(good + " " + bad, _ES)
+    assert not res["accepted"] and "[sentence 2 of 2]" in res["reject_reason"]
+    assert [t["keep"] for t in res["trace"]] == [True, False]
+    assert A.allowlist_verify(good + " Portugal is a member of the European Union.", _ES)["accepted"]
+    for p in ("Spain shares border with France. Portugal.", "Spain shares border with France.France.", "", "   ", ".",
+              "Spain shares border with France!", "Does Spain share border with France?"):
+        assert not A.allowlist_verify(p, _ES)["accepted"], p
+
+
+def test_composer_paragraph_keeps_the_other_facts_sentences(seed_chats, monkeypatch):
+    """Production composer path (sequential render): one gathered fact renders to a kept sentence, the other to a rejected one;
+    the turn keeps the first and drops only the second."""
+    monkeypatch.setenv(FLAG, "1")
+    for k in ("BRAIN_RICH_BATCH_RENDER", "BRAIN_TOUCHPOINT_A_FACT_CLAUSE"):
+        monkeypatch.delenv(k, raising=False)
+    surfaces = {("spain", "shares_border_with", "france"): "Spain shares border with France.",
+                ("spain", "member_of", "european_union"): "Spain is a member of the European Union, just like Portugal."}
+
+    class R:
+        def render_svo(self, a, v, p):
+            return surfaces[(a, v, p)], None
+    for sd in SEEDS:
+        chat = seed_chats[sd]
+        chat._claim_verifier_cache = {}
+        monkeypatch.setattr(chat, "raw_mode", False, raising=False)
+        monkeypatch.setattr(chat, "renderer", R(), raising=False)
+        monkeypatch.setattr(chat, "spiking_recall_surface", lambda a, v, p: None, raising=False)
+        facts = [list(k) for k in surfaces]
+        para, kept, dropped = _composer(chat).render_paragraph(facts)
+        assert para == "Spain shares border with France." and kept == [facts[0]] and dropped == [facts[1]], (sd, para)
+
+
+# =========================================================================================================== normalisation
+def test_slug_spellings_and_the_store_accent_form():
+    g = [["ha_noi_vietnam", "twinned_administrative_body", "montr_al_canada"], ["united_states_virgin_islands", "capital", "charlotte_amalie"],
+         ["united_states", "shares_border_with", "canada"]]
+    for p in ("Ha noi vietnam twinned administrative body Montréal Canada.",
+              "Ha noi vietnam twinned administrative body Montréal Canada.",
+              "HA-NOI-VIETNAM twinned_administrative_body montr_al_canada.",
+              "United States Virgin Islands capital Charlotte Amalie.", "United States shares border with Canada."):
+        assert A.allowlist_keep(p, g)[0], p
+    for p in ("Ha noi vietnam twinned administrative body Montreal Canada.", "United States capital Charlotte Amalie.",
+              "United States Virgin Islands shares border with Canada.", "Ha noi vietnam twinned administrative body 安 Canada."):
+        assert not A.allowlist_keep(p, g)[0], p
+
+
+@pytest.mark.parametrize("prose", ["Spain shares \u4e0d border with France.", "Spain shares\u4e0dborder with France.",
+                                   "Spain shares \u00e0 border with France.", "Spain shares border with \u0444 France.",
+                                   "Spain shares border with France \u0663.", "Spain shares border with France\u00b2.",
+                                   "Spain shares border \u00e9 with France.", "\u4e0d Spain shares border with France."])
+def test_non_latin_or_free_standing_non_ascii_text_cannot_hide_between_slug_words(prose):
+    """B2h's slug spelling joins slug words with [\\s\\-_]+ AFTER mapping non-ASCII runs to "_", so a free-standing non-Latin word
+    between two slug words (\u4e0d = 'not') would vanish into the relation's spelling. Rejected before normalisation."""
+    keep, why = A.allowlist_keep(prose, _ES)
+    assert not keep and "non-ASCII" in why, (prose, why)
+
+
+def test_accented_latin_inside_a_word_still_reads_as_the_store_slug():
+    g = [["jos_mar_a_aznar", "member_of", "partido_popular"], ["rep_blica_del_paraguay", "member_of", "united_nations"]]
+    for p in ("Jos\u00e9 Mar\u00eda Aznar is a member of Partido Popular.", "Rep\u00fablica del Paraguay is a member of the United Nations.",
+              "REP\u00daBLICA DEL PARAGUAY member of united nations."):
+        assert A.allowlist_keep(p, g)[0], p
+
+
+def test_a_letterless_slug_never_matches_anything():
+    g = [["alpha", "borders", "_"], ["alpha", "instance_of", "region"], ["alpha", "_", "beta"]]
+    assert A.allowlist_keep("Alpha instance of region.", g)[0]
+    for p in ("Alpha borders 安.", "Alpha 安 beta.", "Alpha borders _.", "Alpha _ beta."):
+        assert not A.allowlist_keep(p, g)[0], p
+
+
+def test_a_negation_word_is_never_a_noun_even_when_gathered():
+    g = [["alpha", "genre", "none"], ["may", "instance_of", "month"]]
+    assert not A.allowlist_keep("Alpha genre none.", g)[0]
+    assert A.allowlist_keep("May instance of month.", g)[0]                  # a hedge-looking gathered noun is a noun
+
+
+def test_pure_function_is_seed_free():
+    assert A.allowlist_keep("Spain shares border with France.", _ES) == (True, "ok")
+    assert A.allowlist_keep("Spain shares border with Italy.", _ES)[0] is False
+    assert A.allowlist_keep("Spain shares border with France.", []) == (False, "allowlist: nothing gathered")
