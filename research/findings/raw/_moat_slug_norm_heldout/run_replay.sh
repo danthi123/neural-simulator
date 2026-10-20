@@ -28,6 +28,7 @@ elif [ "$ARM" = off ]; then export DRIVE_ENV='{}'
 else echo "unknown arm $ARM" >&2; exit 2; fi
 until bash tools/mem_ok.sh "$CAP"; do echo "[replay] waiting for RAM"; timeout 60 tail -f /dev/null; done
 if [ "${RMODE:-replay}" = stub ]; then RARGS="--renderer stub"; else RARGS="--renderer replay --replay-corpus $CORPUS"; fi
-bash tools/memcap.sh "$CAP" -- .venv/bin/python -u $H/drive_memo.py --out "$OUT" $RARGS --seed 1 \
+# REPLAY_TIMEOUT=<seconds> (optional, smokes): the time limit runs INSIDE the memcap scope, so it ends the job itself
+bash tools/memcap.sh "$CAP" -- ${REPLAY_TIMEOUT:+timeout $REPLAY_TIMEOUT} .venv/bin/python -u $H/drive_memo.py --out "$OUT" $RARGS --seed 1 \
   --labels "$LABELS" --extra "$EXTRA"
 echo "rc=$?"

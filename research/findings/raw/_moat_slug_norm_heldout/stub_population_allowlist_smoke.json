@@ -1,0 +1,49 @@
+{
+ "_doc": "exhaustive one-fact stub-mouth population, stock _verify vs the BRAIN_MOAT_SLUG_NORM claim gate and the BRAIN_MOAT_ALLOWLIST claim gate (module docstring)",
+ "arms": [
+  "allowlist",
+  "b2h"
+ ],
+ "limit": 300,
+ "n_population": 78857,
+ "elapsed_s": 16.4,
+ "backend": "numpy",
+ "device": "cpu",
+ "host": "dant123-wk",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-allow/research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive.py",
+  "research/findings/raw/_moat_slug_norm_heldout/stub_population_allowlist_smoke.json",
+  "1",
+  "--arms",
+  "b2h,allowlist",
+  "--limit",
+  "300"
+ ],
+ "parser_seed": 1,
+ "n_facts": 300,
+ "cells(stock_ok,flag_on_ok)": {
+  "(True, True)": 300
+ },
+ "stock_answer_rate": 1.0,
+ "flag_on_answer_rate": 1.0,
+ "HURTS": 0,
+ "HELPS": 0,
+ "flag_on_fallback_to_single_triple": 0,
+ "hurts_reasons": {},
+ "hurts_by_relation": {},
+ "composer_sample_agreement": null,
+ "cells(stock_ok,allowlist_ok)": {
+  "(True, True)": 300
+ },
+ "allowlist_answer_rate": 1.0,
+ "HURTS_allowlist": 0,
+ "HELPS_allowlist": 0,
+ "allowlist_unbuildable_rejected": 0,
+ "allowlist_hurts_reasons": {},
+ "allowlist_hurts_by_relation": {},
+ "hurts_rows": [],
+ "helps_rows": [],
+ "allowlist_hurts_rows": [],
+ "allowlist_helps_rows": []
+}
