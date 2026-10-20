@@ -694,8 +694,9 @@ def test_any_extra_token_anywhere_rejects_the_sentence(word):
         toks = _BASE[:i] + [word] + _BASE[i:]
         p = " ".join(toks) + "."
         keep, why = A.allowlist_keep(p, _ES)
-        legal = ((word in ("a", "the") and i in (0, 4))                      # a determiner directly before SUBJ / OBJ
-                 or (word == "-" and i in (2, 3)))                           # a hyphen INSIDE one slug's words is its spelling
+        # a determiner directly before SUBJ / OBJ. Build 4 (no fold on relation words): a hyphen inside the relation's words
+        # ("shares - border with") is no longer its spelling, so it rejects too
+        legal = word in ("a", "the") and i in (0, 4)
         assert keep is legal, (p, why)
 
 
@@ -761,14 +762,22 @@ def test_composer_paragraph_keeps_the_other_facts_sentences(seed_chats, monkeypa
 def test_slug_spellings_and_the_store_accent_form():
     g = [["ha_noi_vietnam", "twinned_administrative_body", "montr_al_canada"], ["united_states_virgin_islands", "capital", "charlotte_amalie"],
          ["united_states", "shares_border_with", "canada"]]
-    for p in ("Ha noi vietnam twinned administrative body Montréal Canada.",
-              "Ha noi vietnam twinned administrative body Montréal Canada.",
-              "Ha-Noi-Vietnam twinned_administrative_body montr_al_canada.",
+    for p in ("Ha noi vietnam twinned administrative body Montr al Canada.",
+              "ha_noi_vietnam twinned_administrative_body montr_al_canada.",
               "United States Virgin Islands capital Charlotte Amalie.", "United States shares border with Canada."):
         assert A.allowlist_keep(p, g)[0], p
     for p in ("Ha noi vietnam twinned administrative body Montreal Canada.", "United States capital Charlotte Amalie.",
               "United States Virgin Islands shares border with Canada.", "Ha noi vietnam twinned administrative body 安 Canada."):
         assert not A.allowlist_keep(p, g)[0], p
+    # build 4 (fold to find, exact to accept): the fold still FINDS these spans, but each is rejected because its text is not an
+    # exact canonical surface (montr_al_canada's store name is "Montréal, Canada", with a comma; NFC makes the decomposed spelling
+    # the same text; no hyphen/space equivalence; no fold on relation words)
+    for p, span in (("Ha noi vietnam twinned administrative body Montréal Canada.", "'Montréal Canada'"),
+                    ("Ha noi vietnam twinned administrative body Montre\u0301al Canada.", "'Montréal Canada'"),
+                    ("Ha-Noi-Vietnam twinned administrative body montr_al_canada.", "'Ha-Noi-Vietnam'"),
+                    ("Ha noi vietnam twinned-administrative-body montr_al_canada.", "'twinned-administrative-body'")):
+        keep, why = A.allowlist_keep(p, g)
+        assert not keep and span in why, (p, why)
     # build 3 (no invented acronyms): HA / NOI / VIETNAM are not written in capitals in any store name of ha_noi_vietnam
     keep, why = A.allowlist_keep("HA-NOI-VIETNAM twinned_administrative_body montr_al_canada.", g)
     assert not keep and "'HA'" in why and "ha_noi_vietnam" in why, why
@@ -792,9 +801,13 @@ def test_non_latin_or_free_standing_non_ascii_text_cannot_hide_between_slug_word
 
 def test_accented_latin_inside_a_word_still_reads_as_the_store_slug():
     g = [["jos_mar_a_aznar", "member_of", "partido_popular"], ["rep_blica_del_paraguay", "member_of", "united_nations"]]
-    for p in ("Jos\u00e9 Mar\u00eda Aznar is a member of Partido Popular.", "Rep\u00fablica del Paraguay is a member of the United Nations.",
-              "Rep\u00dablica del Paraguay member of united nations."):
+    # rep_blica_del_paraguay is a store entity whose store name "Rep\u00fablica del Paraguay" is in the build-4 names table
+    for p in ("Rep\u00fablica del Paraguay is a member of the United Nations.", "Rep\u00dablica del Paraguay member of united nations."):
         assert A.allowlist_keep(p, g)[0], p
+    # build 4: jos_mar_a_aznar is no store entity, so the accented spelling is found by the fold but is no exact surface of it
+    keep, why = A.allowlist_keep("Jos\u00e9 Mar\u00eda Aznar is a member of Partido Popular.", g)
+    assert not keep and "'Jos\u00e9 Mar\u00eda Aznar'" in why and "jos_mar_a_aznar" in why, why
+    assert A.allowlist_keep("Jos mar a Aznar is a member of Partido Popular.", g)[0]
     # build 3 (no invented acronyms): an all-caps rendering is held to the store names of rep_blica_del_paraguay (ISO, PAR, PY only)
     keep, why = A.allowlist_keep("REP\u00daBLICA DEL PARAGUAY member of united nations.", g)
     assert not keep and "'REP\u00daBLICA'" in why and "rep_blica_del_paraguay" in why, why
@@ -808,17 +821,42 @@ _STORE_RULE_NAMES = ["Montr\u00e9al Canada", "Rep\u00fablica del Paraguay", "\u0
                      "Jos\u00e9 Mar\u00eda Aznar", "Stra\u00dfe des 17 Juni"]
 
 
+# of these, the build-4 names table holds exactly these as store names spelling their slug (the rest are not store entities)
+_STORE_RULE_NAMES_IN_TABLE = {"Rep\u00fablica del Paraguay", "\u00c9cole Sup\u00e9rieur des Beaux-Arts", "The weather in Bod\u00f8",
+                              "Koninkrijk Belgi\u00eb", "\u0130stanbul Ba\u015fak\u015fehir", "Historia Regum Britanni\u00e6", "Canon Yaound\u00e9"}
+
+
+def _with_names(monkeypatch, extra):
+    """Make `names_table()` the committed table plus `extra` ({slug: [name, ...]}): a hypothetical store name, so a test can pin that
+    the fold FINDS the span and only the exact check decides."""
+    base = A._NamesTable(A.NAMES_TABLE_PATH)
+    assert base.error is None, base.error
+    for slug, names in extra.items():
+        base.entities[slug] = base.entities.get(slug, frozenset()) | frozenset(A.surface_form(n) for n in names)
+    monkeypatch.setattr(A, "names_table", lambda: base)
+
+
 @pytest.mark.parametrize("name", _STORE_RULE_NAMES)
-def test_an_accented_name_spells_the_slug_the_store_rule_makes_of_it(name):
+def test_an_accented_name_spells_the_slug_the_store_rule_makes_of_it(name, monkeypatch):
     """Spec: SUBJ / OBJ in 'the store's slug form for accented names'. The store's slugs were made by `sanitize`
     (research/runners/_knowledge_core_curate.py, which built wikidata_100k): lowercase, every run outside [a-z0-9] -> '_', strip '_'.
-    An accented letter is a separator, and at the start or end of a name it vanishes."""
+    An accented letter is a separator, and at the start or end of a name it vanishes. Build 4 (fold to find, exact to accept): the
+    fold FINDS the slug; the span is ACCEPTED only when the name is one of that slug's own store names (the names table) or its
+    de-slugged form, so an accented name of a slug outside the store is found and rejected, with the span and slug named."""
     from research.runners._knowledge_core_curate import sanitize
     slug = sanitize(name)
-    assert A.allowlist_keep("%s has part Zeta Q." % name, [[slug, "has_part", "zeta_q"]])[0], (name, slug)
-    assert A.allowlist_keep("Zeta Q has part %s." % name, [["zeta_q", "has_part", slug]])[0], (name, slug)
+    in_table = A.surface_form(name) in A.names_table().surfaces(slug)
+    assert in_table == (name in _STORE_RULE_NAMES_IN_TABLE), (name, slug)
+    for p, g in (("%s has part Zeta Q." % name, [[slug, "has_part", "zeta_q"]]), ("Zeta Q has part %s." % name, [["zeta_q", "has_part", slug]])):
+        keep, why = A.allowlist_keep(p, g)
+        assert keep is in_table, (p, why)
+        if not in_table:
+            assert ("entity span %r" % name) in why and slug in why, why
     other = slug + "_x"                                    # not the store's slug of this name: never spelled by it
     assert not A.allowlist_keep("%s has part Zeta Q." % name, [[other, "has_part", "zeta_q"]])[0]
+    _with_names(monkeypatch, {slug: [name]})                # as if it were a store name: the fold finds it, the exact check keeps it
+    assert A.allowlist_keep("%s has part Zeta Q." % name, [[slug, "has_part", "zeta_q"]]) == (True, "ok"), (name, slug)
+    assert A.allowlist_keep("Zeta Q has part %s." % name, [["zeta_q", "has_part", slug]]) == (True, "ok"), (name, slug)
 
 
 def test_universitat_des_saarlandes_follows_the_store_rule_not_a_transliteration():

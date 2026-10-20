@@ -239,7 +239,7 @@ def test_a_slug_outside_the_table_allows_no_all_caps_token():
     assert not keep and "'NATO'" in why and "nato_x" in why
 
 
-def test_an_accented_out_of_store_name_with_capitals_is_rejected():
+def test_an_accented_out_of_store_name_with_capitals_is_rejected(monkeypatch):
     """São Paulo FC spells s_o_paulo_fc by the store rule, but that slug is not a store entity, so its "FC" is not allowed (the
     accent-placement pin in tests/test_moat_allowlist.py uses "São Paulo Futebol Clube" since build 3)."""
     from research.runners._knowledge_core_curate import sanitize
@@ -247,7 +247,17 @@ def test_an_accented_out_of_store_name_with_capitals_is_rejected():
     assert slug not in TABLE["entities"]
     keep, why = A.allowlist_keep("S\u00e3o Paulo FC has part Zeta Q.", [[slug, "has_part", "zeta_q"]])
     assert not keep and "'FC'" in why and slug in why, why
-    assert A.allowlist_keep("S\u00e3o Paulo Fc has part Zeta Q.", [[slug, "has_part", "zeta_q"]]) == (True, "ok")
+    # build 4 (fold to find, exact to accept): the mixed-case form passes the case rule but is no exact surface of an out-of-store
+    # slug (its only surfaces are the slug and its de-slugged form), so it is rejected by the exact check, not by the case rule; as if
+    # "São Paulo Fc" were one of its store names, it is kept
+    keep, why = A.allowlist_keep("São Paulo Fc has part Zeta Q.", [[slug, "has_part", "zeta_q"]])
+    assert not keep and "'FC'" not in why and "entity span 'São Paulo Fc'" in why and slug in why, why
+    t = A._NamesTable(A.NAMES_TABLE_PATH)
+    t.entities[slug] = frozenset({"são paulo fc"})
+    monkeypatch.setattr(A, "names_table", lambda: t)
+    assert A.allowlist_keep("São Paulo Fc has part Zeta Q.", [[slug, "has_part", "zeta_q"]]) == (True, "ok")
+    keep, why = A.allowlist_keep("São Paulo FC has part Zeta Q.", [[slug, "has_part", "zeta_q"]])
+    assert not keep and "'FC'" in why, why                 # the case rule still applies on top
 
 
 def test_a_missing_table_fails_closed(monkeypatch, tmp_path):

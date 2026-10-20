@@ -7,6 +7,9 @@ an input exists on which the mutant's verdict, output field or exception differs
 behavioural and hold on build 3's code. One verdict changed legitimately since build 1 and is pinned with its reason: "A B CC borders Z."
 (m32's witness) is rejected by build 3's case rule (CC is all-caps and b_cc is not a store entity), so the slug-order pin uses "A B Cc".
 One behaviour was a crash in the original and is now a clean reject (m96: a malformed gathered frozenset).
+Build 4 (fold to find, exact to accept): four witnesses keep an accented span of a slug that is no store entity (m23, m16, m111). They pin
+how the fold FINDS a span, so they run with those names added to the names table as if they were store names (`WITNESS_NAMES`); without
+them, build 4 rejects each with the span named (test_build4_rejects_the_fold_witnesses_without_a_store_name).
 
 Run: CUDA_VISIBLE_DEVICES="" SIM_BACKEND=numpy .venv/bin/python -m pytest tests/test_moat_allowlist_witnesses.py -q
 """
@@ -39,6 +42,30 @@ S = "Spain shares border with France."
 def _clean_flags(monkeypatch):
     for k in (FLAG, "BRAIN_MOAT_SLUG_NORM", "BRAIN_CLAIM_MOAT"):
         monkeypatch.delenv(k, raising=False)
+
+
+# build 4: hypothetical store names of the fictional slugs some witnesses keep (see the module docstring)
+WITNESS_NAMES = {"rue_mile": ["Rue Émile"], "montr_cole": ["Montr École"], "mo_x": ["Moﬁ X"], "x1_y": ["X1é Y"]}
+
+
+@pytest.fixture(autouse=True)
+def _witness_names(request, monkeypatch):
+    if request.node.get_closest_marker("no_witness_names"):
+        return
+    t = A._NamesTable(A.NAMES_TABLE_PATH)
+    assert t.error is None, t.error
+    for slug, names in WITNESS_NAMES.items():
+        t.entities[slug] = t.entities.get(slug, frozenset()) | frozenset(A.surface_form(n) for n in names)
+    monkeypatch.setattr(A, "names_table", lambda: t)
+
+
+@pytest.mark.no_witness_names
+@pytest.mark.parametrize("sentence,slug", [("Rue Émile borders Canada.", "rue_mile"), ("Montr École borders Canada.", "montr_cole"),
+                                           ("Moﬁ X borders Y.", "mo_x"), ("X1é Y borders Canada.", "x1_y")])
+def test_build4_rejects_the_fold_witnesses_without_a_store_name(sentence, slug):
+    g = [[slug, "borders", "canada" if "Canada" in sentence else "y"]]
+    r = A.allowlist_check(sentence, g)
+    assert not r["keep"] and ("entity span %r" % sentence.split(" borders")[0]) in r["reason"] and slug in r["reason"], r["reason"]
 
 
 @pytest.fixture(scope="module")
