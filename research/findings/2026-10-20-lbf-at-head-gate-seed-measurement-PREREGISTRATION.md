@@ -57,3 +57,17 @@ at HEAD. This registers that measurement so the gate seeds can run. It has no pa
 - **No capability verdict.** A number below or above any target is a measurement, not a GO or NO-GO. A drop against an
   earlier reading is reported with the faculties that moved.
 - **Seeds are one build each.** Each seed is one deterministic build; the six seeds are the replication.
+
+## AMENDMENT 1 (2026-10-20, Claude; filed before any gate-seed shard of this battery exists)
+
+Two operational corrections, both found by the scorer pre-flight (`tools/gate_preflight.py`) before a single gate line
+was queued. No arm, job list, output path, report item or claim changes.
+
+1. **Scorer pin.** `tools/b2d_score.py` compares each sidecar's `git_sha` with `--pin` exactly, so the 9-character
+   pin written in section 2 reads every cell as MISSING (the first pre-flight read). The registered scorer command
+   is therefore `tools/b2d_score.py --tag b2d1018 --pin f2885df70cfb99a8715c376bca12ac3c2134ef46 --seeds 42 43 44
+   100 101 102`. With the full pin the dev read reproduces the [lbf-head] numbers: verdict COMPLETE, robust core 33
+   of 40 <!--derived-->.
+2. **Memory.** The 34.6 MiB in section 1 came from a smoke shard that ran no lesion pair. Three real b2d1018 shards
+   printed PEAK_RSS_KB 5910744, 5875500 and 5971268 (5.6 to 5.7 GiB; runbook WORKLOG 10-19) <!--derived-->, so each
+   gate line is queued at mem_ok 8 / memcap 8 (the largest peak x 1.3 = 7.4 GiB, rounded up).
