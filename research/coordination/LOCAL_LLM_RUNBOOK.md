@@ -2228,3 +2228,15 @@ pA points straddle the cliff and decide the continuation; re-pick/re-design stay
   its .vikunja_sync stamp = Claude's per the ruling (Hermes does not touch the board).
   Census: stn32 8/8 complete (7 json each); stn34 6 seeds in flight (s14 not started);
   stn36/38 not started; queue 309 = 15 STN + 294 LBF (0 dispatched).
+- 2026-10-20 16:06 [bg-tonic-loop-0] STOP: step 0a blocked: agent_sync_branch exit 2, lane_builds.jsonl conflict (8 drive-only / 4 main-only rows; union safe). research/bg-tonic-loop cut at 8177576ae, unmerged. Whitelist or resolve; detail in WORKLOG.
+
+- 2026-10-20 16:02 — step 0a per RULING bg-tonic-loop-1020: cut
+  research/bg-tonic-loop at 8177576ae (worktree .claude/worktrees/bg-tonic-loop).
+  `agent_sync_branch.sh` refused (exit 2): **lane_builds.jsonl conflicts** — it
+  auto-resolves only the runbook (main's copy), FAILURE_LOG and *WORKLOG (union), and its
+  contract says report other conflicts as NEEDS-CLAUDE. Evidence: merge base 719d61290;
+  drive 35 rows (8 drive-only), main 31 (4 main-only) — the mismatched pairs are the same
+  lane rows re-recorded with different `started` timestamps, so a union of unique lines
+  loses nothing. Branch left unchanged (sync aborts cleanly); entry assert (42747441e
+  ancestor) pending the merge. NEEDS STOP [bg-tonic-loop-0] filed; no switch code written
+  yet (the flag-off golden must capture the MERGED tree). Step 0b untouched.
