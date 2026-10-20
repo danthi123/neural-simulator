@@ -1,0 +1,43 @@
+{
+ "_doc": "Claude adjudication of the round-3 hunt labels, 2026-10-20, written BEFORE any case is run through any checker. The skeptic labelled these U and flagged them as arguable; Claude moves them to B (counted in the strict reading only).",
+ "relabel_to_B": {
+  "T01": "U->B",
+  "T02": "U->B",
+  "T03": "U->B",
+  "L01": "U->B",
+  "L02": "U->B",
+  "L03": "U->B",
+  "L04": "U->B",
+  "D07": "U->B",
+  "D08": "U->B",
+  "D12": "U->B",
+  "E01": "U->B",
+  "E02": "U->B"
+ },
+ "reasons": {
+  "T01-T03": "definite article before the relation noun implies uniqueness; the spec's own Det slot allows it",
+  "L01-L04": "past tense implies the relation no longer holds; the fact itself is supported",
+  "D07,D08,D12": "a question asserts no proposition",
+  "E01,E02": "scare quotes imply doubt about a supported claim"
+ },
+ "split_rule": {
+  "ids": [
+   "V01",
+   "V02",
+   "V03",
+   "V04",
+   "V05"
+  ],
+  "rule": "a split-trick case counts as a lenient leak only if the checker keeps a span whose reading within the whole input is denied, hedged or reported; Claude reads each kept span and records the call in score.json before computing totals"
+ },
+ "F_retention_note": "an F twin rejected only because its verb form is outside the verb-form table is a retention loss, not a label error",
+ "shape2_note": "the store has one object per (subject, relation), so no coordinated-objects sentence over it is supported: any kept shape-2 sentence is a leak",
+ "provenance": {
+  "author": "Claude (main loop, hand-adjudicated)",
+  "date": "2026-10-20",
+  "written_before_any_run": true,
+  "cases_sha256_prefix": "629956780b48b1ee"
+ },
+ "backend": "none (hand-written labels; no computation)",
+ "device": "none"
+}

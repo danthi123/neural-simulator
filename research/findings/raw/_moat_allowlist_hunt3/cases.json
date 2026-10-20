@@ -1,0 +1,6114 @@
+[
+ {
+  "id": "A01",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "Canada Portal ｎｅｖｅｒ shares border with U S of A.",
+  "expect": "U",
+  "class": "styled_letters_vanish",
+  "why": "Full-width \"never\" negates the gathered border fact; NFC keeps it non-ASCII, so a slug-style fold could erase it."
+ },
+ {
+  "id": "A02",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "Canada Portal 𝗻𝗲𝘃𝗲𝗿 shares border with U S of A.",
+  "expect": "U",
+  "class": "styled_letters_vanish",
+  "why": "Math-sans-bold \"never\" (Script=Common) negates the fact and is not folded by NFC."
+ },
+ {
+  "id": "A03",
+  "gathered": [
+   [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Rep Blica del Paraguay is 𝘯𝘰𝘵 a member of the United Nations.",
+  "expect": "U",
+  "class": "styled_letters_vanish",
+  "why": "Math-italic \"not\" denies the gathered member_of triple."
+ },
+ {
+  "id": "A04",
+  "gathered": [
+   [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Rep Blica del Paraguay is ɴᴏ member of the United Nations.",
+  "expect": "U",
+  "class": "styled_letters_vanish",
+  "why": "Small-capital \"no\" (Latin script, not folded by NFC or NFKC) turns membership into non-membership."
+ },
+ {
+  "id": "A05",
+  "gathered": [
+   [
+    "bobolice_commune",
+    "country",
+    "pole_land"
+   ],
+   [
+    "pole_land",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "bobolice_commune",
+    "shares_border_with",
+    "szczecinek_commune"
+   ]
+  ],
+  "sentence": "Bobolice Commune ⓝⓔⓥⓔⓡ borders Szczecinek Commune.",
+  "expect": "U",
+  "class": "styled_letters_vanish",
+  "why": "Circled-letter \"never\" negates the gathered border fact."
+ },
+ {
+  "id": "A06",
+  "gathered": [
+   [
+    "renderware",
+    "instance_of",
+    "proprietary_firmware"
+   ],
+   [
+    "proprietary_firmware",
+    "subclass_of",
+    "software_technology"
+   ],
+   [
+    "software_technology",
+    "subclass_of",
+    "commercial_product"
+   ]
+  ],
+  "sentence": "Renderware is 𝓷𝓸𝓽 an instance of proprietary firmware.",
+  "expect": "U",
+  "class": "styled_letters_vanish",
+  "why": "Math-script \"not\" denies the gathered instance_of triple."
+ },
+ {
+  "id": "A07",
+  "gathered": [
+   [
+    "national_coat_of_arms",
+    "subclass_of",
+    "coat_of_arms"
+   ],
+   [
+    "coat_of_arms",
+    "subclass_of",
+    "cultural_ikon"
+   ]
+  ],
+  "sentence": "National coat of arms is ｎｏ ｌｏｎｇｅｒ a subclass of coat of arms.",
+  "expect": "U",
+  "class": "styled_letters_vanish",
+  "why": "Full-width \"no longer\" asserts the subclass relation ended, a negation plus a temporal claim."
+ },
+ {
+  "id": "A08",
+  "gathered": [
+   [
+    "1962_asian_games",
+    "country",
+    "etymology_of_indonesia"
+   ],
+   [
+    "etymology_of_indonesia",
+    "shares_border_with",
+    "commonwealth_australia"
+   ],
+   [
+    "commonwealth_australia",
+    "shares_border_with",
+    "new_zealnd"
+   ],
+   [
+    "1962_asian_games",
+    "instance_of",
+    "asian_summer_games"
+   ],
+   [
+    "1962_asian_games",
+    "follows",
+    "third_asian_games"
+   ]
+  ],
+  "sentence": "1962 Asian Games 𝐩𝐫𝐨𝐛𝐚𝐛𝐥𝐲 follows Third Asian Games.",
+  "expect": "U",
+  "class": "styled_letters_vanish",
+  "why": "Math-bold hedge \"probably\" lowers a gathered fact to a guess."
+ },
+ {
+  "id": "A09",
+  "gathered": [
+   [
+    "indoor_bandy",
+    "country_of_origin",
+    "climate_of_sweden"
+   ],
+   [
+    "climate_of_sweden",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "indoor_bandy",
+    "subclass_of",
+    "ball_games"
+   ]
+  ],
+  "sentence": "Indoor bandy is ｍａｙｂｅ a subclass of ball games.",
+  "expect": "U",
+  "class": "styled_letters_vanish",
+  "why": "Full-width hedge \"maybe\" changes the truth commitment."
+ },
+ {
+  "id": "A10",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "Canada Portal shares border with U S of A 𝗮𝗻𝗱 𝗠𝗲𝘅𝗶𝗰𝗼.",
+  "expect": "U",
+  "class": "styled_letters_vanish",
+  "why": "Styled \"and Mexico\" adds a second border partner that no gathered triple supports."
+ },
+ {
+  "id": "A11",
+  "gathered": [
+   [
+    "premiers_of_victoria",
+    "country",
+    "commonwealth_australia"
+   ],
+   [
+    "commonwealth_australia",
+    "participant_of",
+    "war_world_two"
+   ],
+   [
+    "war_world_two",
+    "follows",
+    "world_war_one"
+   ],
+   [
+    "premiers_of_victoria",
+    "subclass_of",
+    "chief_administrator"
+   ]
+  ],
+  "sentence": "War World Two ñêṽêř follows World War One.",
+  "expect": "U",
+  "class": "styled_letters_vanish",
+  "why": "An all-diacritic \"never\" (every letter non-ASCII, still Latin script) negates the gathered follows triple."
+ },
+ {
+  "id": "A12",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "𝗠𝗲𝘅𝗶𝗰𝗼, 𝗻𝗼𝘁 Canada Portal, shares border with U S of A.",
+  "expect": "U",
+  "class": "styled_letters_vanish",
+  "why": "Reads \"Mexico, not Canada Portal, shares a border with the USA\": denies the gathered subject."
+ },
+ {
+  "id": "A13",
+  "gathered": [
+   [
+    "renderware",
+    "instance_of",
+    "proprietary_firmware"
+   ],
+   [
+    "proprietary_firmware",
+    "subclass_of",
+    "software_technology"
+   ],
+   [
+    "software_technology",
+    "subclass_of",
+    "commercial_product"
+   ]
+  ],
+  "sentence": "Renderware is 𝘧𝘰𝘳𝘮𝘦𝘳𝘭𝘺 an instance of proprietary firmware.",
+  "expect": "U",
+  "class": "styled_letters_vanish",
+  "why": "Styled \"formerly\" claims the instance_of relation no longer holds."
+ },
+ {
+  "id": "A14",
+  "gathered": [
+   [
+    "directeurs_sportifs",
+    "sport",
+    "road_cycling_race"
+   ],
+   [
+    "road_cycling_race",
+    "subclass_of",
+    "cycle_race"
+   ],
+   [
+    "cycle_race",
+    "subclass_of",
+    "playing_sport"
+   ],
+   [
+    "directeurs_sportifs",
+    "instance_of",
+    "expert_occupation"
+   ]
+  ],
+  "sentence": "Directeurs sportifs is ｓｅｌｄｏｍ an instance of expert occupation.",
+  "expect": "U",
+  "class": "styled_letters_vanish",
+  "why": "Full-width \"seldom\" turns a categorical fact into a mostly-false frequency claim."
+ },
+ {
+  "id": "A15",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "Canada Portal shares border with ｅｘ-U S of A.",
+  "expect": "U",
+  "class": "styled_letters_vanish",
+  "why": "Full-width \"ex-\" says the partner state no longer exists; a hyphen fold could leave only the slug."
+ },
+ {
+  "id": "B01",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "C̶a̶n̶a̶d̶a̶ ̶P̶o̶r̶t̶a̶l̶ ̶s̶h̶a̶r̶e̶s̶ ̶b̶o̶r̶d̶e̶r̶ ̶w̶i̶t̶h̶ ̶U̶ ̶S̶ ̶o̶f̶ ̶A̶.",
+  "expect": "U",
+  "class": "combining_overlay",
+  "why": "The whole sentence is struck through (U+0336), so a reader sees it retracted, not asserted."
+ },
+ {
+  "id": "B02",
+  "gathered": [
+   [
+    "1962_asian_games",
+    "country",
+    "etymology_of_indonesia"
+   ],
+   [
+    "etymology_of_indonesia",
+    "shares_border_with",
+    "commonwealth_australia"
+   ],
+   [
+    "commonwealth_australia",
+    "shares_border_with",
+    "new_zealnd"
+   ],
+   [
+    "1962_asian_games",
+    "instance_of",
+    "asian_summer_games"
+   ],
+   [
+    "1962_asian_games",
+    "follows",
+    "third_asian_games"
+   ]
+  ],
+  "sentence": "1962 Asian Games f̶o̶l̶l̶o̶w̶s̶ Third Asian Games.",
+  "expect": "U",
+  "class": "combining_overlay",
+  "why": "The verb is struck out, retracting the follows relation."
+ },
+ {
+  "id": "B03",
+  "gathered": [
+   [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Rep Blica del Paraguay is a m̸e̸m̸b̸e̸r̸ of the United Nations.",
+  "expect": "U",
+  "class": "combining_overlay",
+  "why": "U+0338 is the combining negation slash (the mark that makes = into a not-equal sign) over \"member\"."
+ },
+ {
+  "id": "B04",
+  "gathered": [
+   [
+    "zhejiang_province",
+    "country",
+    "china_pr"
+   ],
+   [
+    "china_pr",
+    "shares_border_with",
+    "bharat_ganrajya"
+   ],
+   [
+    "bharat_ganrajya",
+    "shares_border_with",
+    "china_pr"
+   ],
+   [
+    "zhejiang_province",
+    "located_in_time_zone",
+    "australian_western_standard_time"
+   ],
+   [
+    "zhejiang_province",
+    "shares_border_with",
+    "air_pollution_in_shanghai"
+   ]
+  ],
+  "sentence": "China PR shares border with B̶h̶a̶r̶a̶t̶ ̶G̶a̶n̶r̶a̶j̶y̶a̶.",
+  "expect": "U",
+  "class": "combining_overlay",
+  "why": "The object is struck out, so the reader sees the border partner withdrawn."
+ },
+ {
+  "id": "B05",
+  "gathered": [
+   [
+    "national_coat_of_arms",
+    "subclass_of",
+    "coat_of_arms"
+   ],
+   [
+    "coat_of_arms",
+    "subclass_of",
+    "cultural_ikon"
+   ]
+  ],
+  "sentence": "National coat of arms i̸s̸ a subclass of coat of arms.",
+  "expect": "U",
+  "class": "combining_overlay",
+  "why": "Slashed \"is\" reads as \"is not\", like the not-equal sign."
+ },
+ {
+  "id": "B06",
+  "gathered": [
+   [
+    "emarcy_records",
+    "genre",
+    "jazz_lists"
+   ],
+   [
+    "jazz_lists",
+    "instance_of",
+    "genre_of_music"
+   ],
+   [
+    "genre_of_music",
+    "instance_of",
+    "sociological_concept"
+   ],
+   [
+    "emarcy_records",
+    "instance_of",
+    "record_companies"
+   ]
+  ],
+  "sentence": "Emarcy Records is an instance of r̶e̶c̶o̶r̶d̶ ̶c̶o̶m̶p̶a̶n̶i̶e̶s̶.",
+  "expect": "U",
+  "class": "combining_overlay",
+  "why": "The class is struck out, retracting the instance_of claim."
+ },
+ {
+  "id": "C01",
+  "gathered": [
+   [
+    "1962_asian_games",
+    "country",
+    "etymology_of_indonesia"
+   ],
+   [
+    "etymology_of_indonesia",
+    "shares_border_with",
+    "commonwealth_australia"
+   ],
+   [
+    "commonwealth_australia",
+    "shares_border_with",
+    "new_zealnd"
+   ],
+   [
+    "1962_asian_games",
+    "instance_of",
+    "asian_summer_games"
+   ],
+   [
+    "1962_asian_games",
+    "follows",
+    "third_asian_games"
+   ]
+  ],
+  "sentence": "‮⁦1962 Asian Games⁩ ⁦follows⁩ ⁦Third Asian Games⁩‬.",
+  "expect": "U",
+  "class": "bidi_visual_reorder",
+  "why": "Displays \"Third Asian Games follows 1962 Asian Games\", the reverse of the gathered triple."
+ },
+ {
+  "id": "C02",
+  "gathered": [
+   [
+    "premiers_of_victoria",
+    "country",
+    "commonwealth_australia"
+   ],
+   [
+    "commonwealth_australia",
+    "participant_of",
+    "war_world_two"
+   ],
+   [
+    "war_world_two",
+    "follows",
+    "world_war_one"
+   ],
+   [
+    "premiers_of_victoria",
+    "subclass_of",
+    "chief_administrator"
+   ]
+  ],
+  "sentence": "‮⁦War World Two⁩ ⁦follows⁩ ⁦World War One⁩‬.",
+  "expect": "U",
+  "class": "bidi_visual_reorder",
+  "why": "Displays \"World War One follows War World Two\" (verified with FriBidi), reversing time order."
+ },
+ {
+  "id": "C03",
+  "gathered": [
+   [
+    "national_coat_of_arms",
+    "subclass_of",
+    "coat_of_arms"
+   ],
+   [
+    "coat_of_arms",
+    "subclass_of",
+    "cultural_ikon"
+   ]
+  ],
+  "sentence": "‮⁦National coat of arms⁩ ⁦is a subclass of⁩ ⁦coat of arms⁩‬.",
+  "expect": "U",
+  "class": "bidi_visual_reorder",
+  "why": "Displays \"coat of arms is a subclass of National coat of arms\": superclass and subclass swapped."
+ },
+ {
+  "id": "C04",
+  "gathered": [
+   [
+    "renderware",
+    "instance_of",
+    "proprietary_firmware"
+   ],
+   [
+    "proprietary_firmware",
+    "subclass_of",
+    "software_technology"
+   ],
+   [
+    "software_technology",
+    "subclass_of",
+    "commercial_product"
+   ]
+  ],
+  "sentence": "‮⁦Renderware⁩ ⁦is an instance of⁩ ⁦proprietary firmware⁩‬.",
+  "expect": "U",
+  "class": "bidi_visual_reorder",
+  "why": "Displays \"proprietary firmware is an instance of Renderware\": class and instance swapped."
+ },
+ {
+  "id": "C05",
+  "gathered": [
+   [
+    "country_mansion",
+    "subclass_of",
+    "domestic_architecture"
+   ],
+   [
+    "domestic_architecture",
+    "has_part",
+    "box_room"
+   ],
+   [
+    "country_mansion",
+    "instance_of",
+    "architectural_styles"
+   ]
+  ],
+  "sentence": "‮⁦Domestic architecture⁩ ⁦has part⁩ ⁦box room⁩‬.",
+  "expect": "U",
+  "class": "bidi_visual_reorder",
+  "why": "Displays \"box room has part Domestic architecture\": whole and part swapped."
+ },
+ {
+  "id": "C06",
+  "gathered": [
+   [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "‮⁦Rep Blica del Paraguay⁩ ⁦is a member of⁩ ⁦the United Nations⁩‬.",
+  "expect": "U",
+  "class": "bidi_visual_reorder",
+  "why": "Displays \"the United Nations is a member of Rep Blica del Paraguay\": member and body swapped."
+ },
+ {
+  "id": "D01",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "¬(Canada Portal shares border with U S of A).",
+  "expect": "U",
+  "class": "symbol_negation_or_doubt",
+  "why": "The logical NOT sign over the bracketed proposition asserts its negation."
+ },
+ {
+  "id": "D02",
+  "gathered": [
+   [
+    "1962_asian_games",
+    "country",
+    "etymology_of_indonesia"
+   ],
+   [
+    "etymology_of_indonesia",
+    "shares_border_with",
+    "commonwealth_australia"
+   ],
+   [
+    "commonwealth_australia",
+    "shares_border_with",
+    "new_zealnd"
+   ],
+   [
+    "1962_asian_games",
+    "instance_of",
+    "asian_summer_games"
+   ],
+   [
+    "1962_asian_games",
+    "follows",
+    "third_asian_games"
+   ]
+  ],
+  "sentence": "❌ 1962 Asian Games follows Third Asian Games.",
+  "expect": "U",
+  "class": "symbol_negation_or_doubt",
+  "why": "A leading cross-mark emoji labels the statement false."
+ },
+ {
+  "id": "D03",
+  "gathered": [
+   [
+    "renderware",
+    "instance_of",
+    "proprietary_firmware"
+   ],
+   [
+    "proprietary_firmware",
+    "subclass_of",
+    "software_technology"
+   ],
+   [
+    "software_technology",
+    "subclass_of",
+    "commercial_product"
+   ]
+  ],
+  "sentence": "Renderware is an instance of proprietary firmware ✗",
+  "expect": "U",
+  "class": "symbol_negation_or_doubt",
+  "why": "A trailing ballot X marks the claim wrong."
+ },
+ {
+  "id": "D04",
+  "gathered": [
+   [
+    "national_coat_of_arms",
+    "subclass_of",
+    "coat_of_arms"
+   ],
+   [
+    "coat_of_arms",
+    "subclass_of",
+    "cultural_ikon"
+   ]
+  ],
+  "sentence": "~~National coat of arms is a subclass of coat of arms~~",
+  "expect": "U",
+  "class": "symbol_negation_or_doubt",
+  "why": "Markdown strike-through renders the claim as retracted in a chat UI."
+ },
+ {
+  "id": "D05",
+  "gathered": [
+   [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Rep Blica del Paraguay is a member of the United Nations (?).",
+  "expect": "U",
+  "class": "symbol_negation_or_doubt",
+  "why": "A bracketed question mark flags the membership as doubtful."
+ },
+ {
+  "id": "D06",
+  "gathered": [
+   [
+    "bobolice_commune",
+    "country",
+    "pole_land"
+   ],
+   [
+    "pole_land",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "bobolice_commune",
+    "shares_border_with",
+    "szczecinek_commune"
+   ]
+  ],
+  "sentence": "Bobolice Commune borders Szczecinek Commune [?]",
+  "expect": "U",
+  "class": "symbol_negation_or_doubt",
+  "why": "An editorial [?] marks the border claim as unverified."
+ },
+ {
+  "id": "D07",
+  "gathered": [
+   [
+    "indoor_bandy",
+    "country_of_origin",
+    "climate_of_sweden"
+   ],
+   [
+    "climate_of_sweden",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "indoor_bandy",
+    "subclass_of",
+    "ball_games"
+   ]
+  ],
+  "sentence": "Indoor bandy is a subclass of ball games?",
+  "expect": "U",
+  "class": "symbol_negation_or_doubt",
+  "why": "A question asserts nothing; it raises the subclass relation as uncertain."
+ },
+ {
+  "id": "D08",
+  "gathered": [
+   [
+    "emarcy_records",
+    "genre",
+    "jazz_lists"
+   ],
+   [
+    "jazz_lists",
+    "instance_of",
+    "genre_of_music"
+   ],
+   [
+    "genre_of_music",
+    "instance_of",
+    "sociological_concept"
+   ],
+   [
+    "emarcy_records",
+    "instance_of",
+    "record_companies"
+   ]
+  ],
+  "sentence": "¿Emarcy Records is an instance of record companies?",
+  "expect": "U",
+  "class": "symbol_negation_or_doubt",
+  "why": "An inverted-question-mark question, so not an assertion of the fact."
+ },
+ {
+  "id": "D09",
+  "gathered": [
+   [
+    "premiers_of_victoria",
+    "country",
+    "commonwealth_australia"
+   ],
+   [
+    "commonwealth_australia",
+    "participant_of",
+    "war_world_two"
+   ],
+   [
+    "war_world_two",
+    "follows",
+    "world_war_one"
+   ],
+   [
+    "premiers_of_victoria",
+    "subclass_of",
+    "chief_administrator"
+   ]
+  ],
+  "sentence": "War World Two follows World War One‽",
+  "expect": "U",
+  "class": "symbol_negation_or_doubt",
+  "why": "The interrobang expresses incredulous doubt about the sequence."
+ },
+ {
+  "id": "D10",
+  "gathered": [
+   [
+    "waadt_canton_of",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "waadt_canton_of",
+    "country",
+    "conf_d_ration_suisse"
+   ],
+   [
+    "waadt_canton_of",
+    "shares_border_with",
+    "canton_de_berne"
+   ],
+   [
+    "waadt_canton_of",
+    "contains_administrative_territorial_enti",
+    "jura_nord_vaudois_district"
+   ]
+  ],
+  "sentence": "🚫 Waadt Canton of shares border with Canton de Berne.",
+  "expect": "U",
+  "class": "symbol_negation_or_doubt",
+  "why": "A leading prohibition sign marks the border claim as negated."
+ },
+ {
+  "id": "D11",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "Canada Portal shares border with ~~U S of A~~.",
+  "expect": "U",
+  "class": "symbol_negation_or_doubt",
+  "why": "Markdown strike-through on the object withdraws the only border partner."
+ },
+ {
+  "id": "D12",
+  "gathered": [
+   [
+    "zhejiang_province",
+    "country",
+    "china_pr"
+   ],
+   [
+    "china_pr",
+    "shares_border_with",
+    "bharat_ganrajya"
+   ],
+   [
+    "bharat_ganrajya",
+    "shares_border_with",
+    "china_pr"
+   ],
+   [
+    "zhejiang_province",
+    "located_in_time_zone",
+    "australian_western_standard_time"
+   ],
+   [
+    "zhejiang_province",
+    "shares_border_with",
+    "air_pollution_in_shanghai"
+   ]
+  ],
+  "sentence": "China PR shares border with Bharat Ganrajya?!",
+  "expect": "U",
+  "class": "symbol_negation_or_doubt",
+  "why": "A surprised question, not an assertion of the border."
+ },
+ {
+  "id": "D13",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "Canada Portal shares border with U S of A †",
+  "expect": "U",
+  "class": "symbol_negation_or_doubt",
+  "why": "A trailing dagger, the reference-work mark for defunct or deceased, adds an unsupported claim that the state no longer exists."
+ },
+ {
+  "id": "E01",
+  "gathered": [
+   [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Rep Blica del Paraguay is a “member” of the United Nations.",
+  "expect": "U",
+  "class": "scare_quotes",
+  "why": "Scare quotes on \"member\" signal that the membership is nominal or doubted."
+ },
+ {
+  "id": "E02",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "Canada Portal “shares border” with U S of A.",
+  "expect": "U",
+  "class": "scare_quotes",
+  "why": "Scare quotes on the relation make it ironic, not a plain assertion."
+ },
+ {
+  "id": "F01",
+  "gathered": [
+   [
+    "keifer_sutherland",
+    "father",
+    "sutherland_donald"
+   ],
+   [
+    "keifer_sutherland",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "keifer_sutherland",
+    "country_of_citizenship",
+    "united_kingom"
+   ],
+   [
+    "keifer_sutherland",
+    "occupation",
+    "television_actor"
+   ]
+  ],
+  "sentence": "Keifer Sutherland is the father of Sutherland Donald.",
+  "expect": "U",
+  "class": "shape3_on_noun_relation",
+  "why": "Triple says Sutherland Donald is Keifer's father; the sentence makes Keifer the father."
+ },
+ {
+  "id": "F02",
+  "gathered": [
+   [
+    "dom_pedro_i",
+    "child",
+    "pedro_ii"
+   ],
+   [
+    "dom_pedro_i",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "dom_pedro_i",
+    "occupation",
+    "political_figure"
+   ],
+   [
+    "dom_pedro_i",
+    "manner_of_death",
+    "death_by_natural_cause"
+   ]
+  ],
+  "sentence": "Dom Pedro I is a child of Pedro II.",
+  "expect": "U",
+  "class": "shape3_on_noun_relation",
+  "why": "Triple says Pedro II is Dom Pedro I's child; the sentence reverses parent and child."
+ },
+ {
+  "id": "F03",
+  "gathered": [
+   [
+    "harry_potter_series",
+    "author",
+    "joanne_rowling"
+   ],
+   [
+    "harry_potter_series",
+    "language_of_work_or_name",
+    "english_in_britain"
+   ],
+   [
+    "harry_potter_series",
+    "publisher",
+    "tottel_publishing"
+   ]
+  ],
+  "sentence": "Harry Potter series is the author of Joanne Rowling.",
+  "expect": "U",
+  "class": "shape3_on_noun_relation",
+  "why": "Triple says Rowling is the author of the series; the sentence makes the series the author."
+ },
+ {
+  "id": "F04",
+  "gathered": [
+   [
+    "nealgedonia",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   [
+    "nealgedonia",
+    "instance_of",
+    "taxonomic_group"
+   ],
+   [
+    "nealgedonia",
+    "taxon_rank",
+    "generic_epithet"
+   ]
+  ],
+  "sentence": "Nealgedonia is the parent taxon of crambid snout moths.",
+  "expect": "U",
+  "class": "shape3_on_noun_relation",
+  "why": "Triple says crambid snout moths is Nealgedonia's parent taxon; the sentence reverses it."
+ },
+ {
+  "id": "F05",
+  "gathered": [
+   [
+    "mortal_kombat",
+    "platform",
+    "windows_applications"
+   ],
+   [
+    "mortal_kombat",
+    "genre",
+    "fighting_video_game"
+   ],
+   [
+    "mortal_kombat",
+    "publisher",
+    "warner_bros_i_e"
+   ]
+  ],
+  "sentence": "Mortal Kombat is a platform of Windows applications.",
+  "expect": "U",
+  "class": "shape3_on_noun_relation",
+  "why": "Triple says Windows is the platform of Mortal Kombat; the sentence reverses it."
+ },
+ {
+  "id": "F06",
+  "gathered": [
+   [
+    "cormac_mccarthy",
+    "employer",
+    "santa_fe_institute"
+   ],
+   [
+    "cormac_mccarthy",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "cormac_mccarthy",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ],
+   [
+    "cormac_mccarthy",
+    "languages_spoken_written_or_signed",
+    "number_of_english_words"
+   ]
+  ],
+  "sentence": "Cormac McCarthy is an employer of Santa Fe Institute.",
+  "expect": "U",
+  "class": "shape3_on_noun_relation",
+  "why": "Triple says the institute employs McCarthy; the sentence makes McCarthy the employer."
+ },
+ {
+  "id": "F07",
+  "gathered": [
+   [
+    "seoul_subway_line_1",
+    "operator",
+    "korea_railway"
+   ],
+   [
+    "seoul_subway_line_1",
+    "country",
+    "s_koreans"
+   ]
+  ],
+  "sentence": "Seoul Subway Line 1 is the operator of Korea Railway.",
+  "expect": "U",
+  "class": "shape3_on_noun_relation",
+  "why": "Triple says Korea Railway operates the line; the sentence reverses it."
+ },
+ {
+  "id": "F08",
+  "gathered": [
+   [
+    "carry_on_regardless",
+    "producer",
+    "peter_rogers"
+   ],
+   [
+    "carry_on_regardless",
+    "country_of_origin",
+    "united_kingom"
+   ],
+   [
+    "carry_on_regardless",
+    "original_language_of_film_or_tv_show",
+    "number_of_english_words"
+   ],
+   [
+    "carry_on_regardless",
+    "instance_of",
+    "theatrical_film"
+   ]
+  ],
+  "sentence": "Carry On Regardless is the producer of Peter Rogers.",
+  "expect": "U",
+  "class": "shape3_on_noun_relation",
+  "why": "Triple says Peter Rogers produced the film; the sentence makes the film the producer."
+ },
+ {
+  "id": "F09",
+  "gathered": [
+   [
+    "collateral_film",
+    "composer",
+    "james_newton_howard"
+   ],
+   [
+    "collateral_film",
+    "country_of_origin",
+    "u_s_of_a"
+   ],
+   [
+    "collateral_film",
+    "original_language_of_film_or_tv_show",
+    "number_of_english_words"
+   ],
+   [
+    "collateral_film",
+    "instance_of",
+    "theatrical_film"
+   ]
+  ],
+  "sentence": "Collateral Film is the composer of James Newton Howard.",
+  "expect": "U",
+  "class": "shape3_on_noun_relation",
+  "why": "Triple says Howard composed for the film; the sentence makes the film the composer."
+ },
+ {
+  "id": "F10",
+  "gathered": [
+   [
+    "legend_of_zelda",
+    "publisher",
+    "nintendo_europe"
+   ],
+   [
+    "legend_of_zelda",
+    "country_of_origin",
+    "modern_era_japan"
+   ],
+   [
+    "legend_of_zelda",
+    "language_of_work_or_name",
+    "nuclear_japanese_language"
+   ],
+   [
+    "legend_of_zelda",
+    "platform",
+    "wireless_multi_player"
+   ]
+  ],
+  "sentence": "Legend of Zelda is the publisher of Nintendo Europe.",
+  "expect": "U",
+  "class": "shape3_on_noun_relation",
+  "why": "Triple says Nintendo Europe publishes the game; the sentence reverses it."
+ },
+ {
+  "id": "F11",
+  "gathered": [
+   [
+    "emarcy_records",
+    "genre",
+    "jazz_lists"
+   ],
+   [
+    "jazz_lists",
+    "instance_of",
+    "genre_of_music"
+   ],
+   [
+    "genre_of_music",
+    "instance_of",
+    "sociological_concept"
+   ],
+   [
+    "emarcy_records",
+    "instance_of",
+    "record_companies"
+   ]
+  ],
+  "sentence": "Emarcy Records is a genre of jazz lists.",
+  "expect": "U",
+  "class": "shape3_on_noun_relation",
+  "why": "Triple gives the label's genre; the sentence claims the label itself is a kind of jazz."
+ },
+ {
+  "id": "F12",
+  "gathered": [
+   [
+    "bison_ravi",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   [
+    "bison_ravi",
+    "country_of_citizenship",
+    "franzoesische_republik"
+   ],
+   [
+    "bison_ravi",
+    "occupation",
+    "writter"
+   ]
+  ],
+  "sentence": "Bison Ravi is an occupation of writter.",
+  "expect": "U",
+  "class": "shape3_on_noun_relation",
+  "why": "Triple gives Bison Ravi's occupation; the sentence claims the person is an occupation."
+ },
+ {
+  "id": "F13",
+  "gathered": [
+   [
+    "army_united_f_c",
+    "sport",
+    "association_football_club"
+   ],
+   [
+    "army_united_f_c",
+    "country",
+    "etymology_of_thailand"
+   ]
+  ],
+  "sentence": "Army United F C is a sport of association football club.",
+  "expect": "U",
+  "class": "shape3_on_noun_relation",
+  "why": "Triple gives the club's sport; the sentence claims the club is a sport."
+ },
+ {
+  "id": "F14",
+  "gathered": [
+   [
+    "patti_smith",
+    "record_label",
+    "columbia_phonograph"
+   ],
+   [
+    "patti_smith",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "patti_smith",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ],
+   [
+    "patti_smith",
+    "languages_spoken_written_or_signed",
+    "number_of_english_words"
+   ]
+  ],
+  "sentence": "Patti Smith is a record label of Columbia Phonograph.",
+  "expect": "U",
+  "class": "shape3_on_noun_relation",
+  "why": "Triple says Columbia is Patti Smith's label; the sentence makes her the label."
+ },
+ {
+  "id": "F15",
+  "gathered": [
+   [
+    "sky_fall",
+    "cast_member",
+    "albert_finney_jr"
+   ],
+   [
+    "sky_fall",
+    "country_of_origin",
+    "u_s_of_a"
+   ],
+   [
+    "sky_fall",
+    "original_language_of_film_or_tv_show",
+    "number_of_english_words"
+   ],
+   [
+    "sky_fall",
+    "instance_of",
+    "theatrical_film"
+   ]
+  ],
+  "sentence": "Sky Fall is a cast member of Albert Finney Jr.",
+  "expect": "U",
+  "class": "shape3_on_noun_relation",
+  "why": "Triple says Finney is in the film's cast; the sentence makes the film a cast member."
+ },
+ {
+  "id": "F16",
+  "gathered": [
+   [
+    "the_godfather_trilogy",
+    "director",
+    "ff_coppola"
+   ],
+   [
+    "the_godfather_trilogy",
+    "country_of_origin",
+    "u_s_of_a"
+   ],
+   [
+    "the_godfather_trilogy",
+    "original_language_of_film_or_tv_show",
+    "number_of_english_words"
+   ],
+   [
+    "the_godfather_trilogy",
+    "cast_member",
+    "robert_denero"
+   ]
+  ],
+  "sentence": "The Godfather Trilogy is the director of FF Coppola.",
+  "expect": "U",
+  "class": "shape3_on_noun_relation",
+  "why": "Triple says Coppola directed the trilogy; the sentence makes the trilogy the director."
+ },
+ {
+  "id": "F17",
+  "gathered": [
+   [
+    "j_r_r_tolkien",
+    "conflict",
+    "world_war_one"
+   ],
+   [
+    "j_r_r_tolkien",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "j_r_r_tolkien",
+    "country_of_citizenship",
+    "united_kingom"
+   ],
+   [
+    "j_r_r_tolkien",
+    "occupation",
+    "writter"
+   ]
+  ],
+  "sentence": "J R R Tolkien is a conflict of World War One.",
+  "expect": "U",
+  "class": "shape3_on_noun_relation",
+  "why": "Triple says Tolkien took part in WWI; the sentence claims Tolkien is a conflict."
+ },
+ {
+  "id": "F18",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "City of Green Bay is the country of U S of A.",
+  "expect": "U",
+  "class": "shape3_on_noun_relation",
+  "why": "Triple says the USA is Green Bay's country; the sentence makes Green Bay the country."
+ },
+ {
+  "id": "G01",
+  "gathered": [
+   [
+    "luk_cs_p_l",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   [
+    "luk_cs_p_l",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ],
+   [
+    "luk_cs_p_l",
+    "occupation",
+    "television_actor"
+   ]
+  ],
+  "sentence": "Luk Cs P L is the country of citizenship of U S of A.",
+  "expect": "U",
+  "class": "shape3_mid_of_reversed",
+  "why": "Says Luk Cs P L is the USA's country of citizenship; the triple has it the other way."
+ },
+ {
+  "id": "G02",
+  "gathered": [
+   [
+    "larry_shaw_director",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   [
+    "larry_shaw_director",
+    "place_of_birth",
+    "u_s_of_a"
+   ],
+   [
+    "larry_shaw_director",
+    "occupation",
+    "film_directors"
+   ]
+  ],
+  "sentence": "Larry Shaw Director is the place of birth of U S of A.",
+  "expect": "U",
+  "class": "shape3_mid_of_reversed",
+  "why": "Says the person is the birthplace of the USA; roles reversed."
+ },
+ {
+  "id": "G03",
+  "gathered": [
+   [
+    "e_e_horton",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   [
+    "e_e_horton",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ],
+   [
+    "e_e_horton",
+    "manner_of_death",
+    "death_by_natural_cause"
+   ]
+  ],
+  "sentence": "E E Horton is the manner of death of death by natural cause.",
+  "expect": "U",
+  "class": "shape3_mid_of_reversed",
+  "why": "Says the person is the manner of death; roles reversed."
+ },
+ {
+  "id": "G04",
+  "gathered": [
+   [
+    "indoor_bandy",
+    "country_of_origin",
+    "climate_of_sweden"
+   ],
+   [
+    "climate_of_sweden",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "indoor_bandy",
+    "subclass_of",
+    "ball_games"
+   ]
+  ],
+  "sentence": "Indoor bandy is the country of origin of climate of Sweden.",
+  "expect": "U",
+  "class": "shape3_mid_of_reversed",
+  "why": "Says the sport is the country of origin of Sweden; roles reversed."
+ },
+ {
+  "id": "G05",
+  "gathered": [
+   [
+    "lauri_first_name",
+    "language_of_work_or_name",
+    "finnish_syntax"
+   ]
+  ],
+  "sentence": "Lauri first name is the language of work or name of Finnish syntax.",
+  "expect": "U",
+  "class": "shape3_mid_of_reversed",
+  "why": "Says the name is the language of Finnish; roles reversed."
+ },
+ {
+  "id": "G06",
+  "gathered": [
+   [
+    "sky_fall",
+    "original_language_of_film_or_tv_show",
+    "number_of_english_words"
+   ],
+   [
+    "sky_fall",
+    "country_of_origin",
+    "u_s_of_a"
+   ],
+   [
+    "sky_fall",
+    "instance_of",
+    "theatrical_film"
+   ],
+   [
+    "sky_fall",
+    "genre",
+    "action_films"
+   ]
+  ],
+  "sentence": "Sky Fall is the original language of film or tv show of number of English words.",
+  "expect": "U",
+  "class": "shape3_mid_of_reversed",
+  "why": "Says the film is the original language of English; roles reversed."
+ },
+ {
+  "id": "G07",
+  "gathered": [
+   [
+    "cher_sarkisian",
+    "member_of_political_party",
+    "us_democratic_party"
+   ],
+   [
+    "cher_sarkisian",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "cher_sarkisian",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ],
+   [
+    "cher_sarkisian",
+    "languages_spoken_written_or_signed",
+    "number_of_english_words"
+   ]
+  ],
+  "sentence": "US Democratic Party is a member of political party Cher Sarkisian.",
+  "expect": "U",
+  "class": "shape3_mid_of_reversed",
+  "why": "Subject and object swapped around the relation tokens: the party is not a member of a person."
+ },
+ {
+  "id": "H01",
+  "gathered": [
+   [
+    "cormac_mccarthy",
+    "employer",
+    "santa_fe_institute"
+   ],
+   [
+    "cormac_mccarthy",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "cormac_mccarthy",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ],
+   [
+    "cormac_mccarthy",
+    "languages_spoken_written_or_signed",
+    "number_of_english_words"
+   ]
+  ],
+  "sentence": "Cormac McCarthy employs Santa Fe Institute.",
+  "expect": "U",
+  "class": "agent_noun_verb_reversal",
+  "why": "Triple (person, employer, institute) means the institute employs him; the verb reverses it."
+ },
+ {
+  "id": "H02",
+  "gathered": [
+   [
+    "seoul_subway_line_1",
+    "operator",
+    "korea_railway"
+   ],
+   [
+    "seoul_subway_line_1",
+    "country",
+    "s_koreans"
+   ]
+  ],
+  "sentence": "Seoul Subway Line 1 operates Korea Railway.",
+  "expect": "U",
+  "class": "agent_noun_verb_reversal",
+  "why": "Triple means Korea Railway operates the line; the verb reverses it."
+ },
+ {
+  "id": "H03",
+  "gathered": [
+   [
+    "carry_on_regardless",
+    "producer",
+    "peter_rogers"
+   ],
+   [
+    "carry_on_regardless",
+    "country_of_origin",
+    "united_kingom"
+   ],
+   [
+    "carry_on_regardless",
+    "original_language_of_film_or_tv_show",
+    "number_of_english_words"
+   ],
+   [
+    "carry_on_regardless",
+    "instance_of",
+    "theatrical_film"
+   ]
+  ],
+  "sentence": "Carry On Regardless produced Peter Rogers.",
+  "expect": "U",
+  "class": "agent_noun_verb_reversal",
+  "why": "Triple means Peter Rogers produced the film; the past-tense verb reverses it."
+ },
+ {
+  "id": "H04",
+  "gathered": [
+   [
+    "the_godfather_trilogy",
+    "director",
+    "ff_coppola"
+   ],
+   [
+    "the_godfather_trilogy",
+    "country_of_origin",
+    "u_s_of_a"
+   ],
+   [
+    "the_godfather_trilogy",
+    "original_language_of_film_or_tv_show",
+    "number_of_english_words"
+   ],
+   [
+    "the_godfather_trilogy",
+    "cast_member",
+    "robert_denero"
+   ]
+  ],
+  "sentence": "The Godfather Trilogy directed FF Coppola.",
+  "expect": "U",
+  "class": "agent_noun_verb_reversal",
+  "why": "Triple means Coppola directed the trilogy; \"directed\" reverses it."
+ },
+ {
+  "id": "H05",
+  "gathered": [
+   [
+    "collateral_film",
+    "composer",
+    "james_newton_howard"
+   ],
+   [
+    "collateral_film",
+    "country_of_origin",
+    "u_s_of_a"
+   ],
+   [
+    "collateral_film",
+    "original_language_of_film_or_tv_show",
+    "number_of_english_words"
+   ],
+   [
+    "collateral_film",
+    "instance_of",
+    "theatrical_film"
+   ]
+  ],
+  "sentence": "Collateral Film composes James Newton Howard.",
+  "expect": "U",
+  "class": "agent_noun_verb_reversal",
+  "why": "Triple means Howard composed the score; the verb makes the film the composer."
+ },
+ {
+  "id": "H06",
+  "gathered": [
+   [
+    "legend_of_zelda",
+    "publisher",
+    "nintendo_europe"
+   ],
+   [
+    "legend_of_zelda",
+    "country_of_origin",
+    "modern_era_japan"
+   ],
+   [
+    "legend_of_zelda",
+    "language_of_work_or_name",
+    "nuclear_japanese_language"
+   ],
+   [
+    "legend_of_zelda",
+    "platform",
+    "wireless_multi_player"
+   ]
+  ],
+  "sentence": "Legend of Zelda publishes Nintendo Europe.",
+  "expect": "U",
+  "class": "agent_noun_verb_reversal",
+  "why": "Triple means Nintendo Europe publishes the game; the verb reverses it."
+ },
+ {
+  "id": "H07",
+  "gathered": [
+   [
+    "cdr_james_bond",
+    "performer",
+    "sean_connary"
+   ],
+   [
+    "cdr_james_bond",
+    "country_of_citizenship",
+    "united_kingom"
+   ],
+   [
+    "cdr_james_bond",
+    "languages_spoken_written_or_signed",
+    "number_of_english_words"
+   ],
+   [
+    "cdr_james_bond",
+    "given_name",
+    "gemmes"
+   ]
+  ],
+  "sentence": "Cdr James Bond performs Sean Connary.",
+  "expect": "U",
+  "class": "agent_noun_verb_reversal",
+  "why": "Triple means Connery performed the character; the verb makes the character the performer."
+ },
+ {
+  "id": "H08",
+  "gathered": [
+   [
+    "harry_potter_series",
+    "author",
+    "joanne_rowling"
+   ],
+   [
+    "harry_potter_series",
+    "language_of_work_or_name",
+    "english_in_britain"
+   ],
+   [
+    "harry_potter_series",
+    "publisher",
+    "tottel_publishing"
+   ]
+  ],
+  "sentence": "Harry Potter series authored Joanne Rowling.",
+  "expect": "U",
+  "class": "agent_noun_verb_reversal",
+  "why": "The -ed reading of a ROLE-REVERSING noun: says the series wrote Rowling."
+ },
+ {
+  "id": "H09",
+  "gathered": [
+   [
+    "keifer_sutherland",
+    "father",
+    "sutherland_donald"
+   ],
+   [
+    "keifer_sutherland",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "keifer_sutherland",
+    "country_of_citizenship",
+    "united_kingom"
+   ],
+   [
+    "keifer_sutherland",
+    "occupation",
+    "television_actor"
+   ]
+  ],
+  "sentence": "Keifer Sutherland fathered Sutherland Donald.",
+  "expect": "U",
+  "class": "agent_noun_verb_reversal",
+  "why": "The -ed reading of \"father\": says Keifer is Donald's father, the reverse of the triple."
+ },
+ {
+  "id": "H10",
+  "gathered": [
+   [
+    "nealgedonia",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   [
+    "nealgedonia",
+    "instance_of",
+    "taxonomic_group"
+   ],
+   [
+    "nealgedonia",
+    "taxon_rank",
+    "generic_epithet"
+   ]
+  ],
+  "sentence": "Nealgedonia parents crambid snout moths.",
+  "expect": "U",
+  "class": "agent_noun_verb_reversal",
+  "why": "The verb reading of \"parent\" makes Nealgedonia the parent, the reverse of the triple."
+ },
+ {
+  "id": "H11",
+  "gathered": [
+   [
+    "mortal_kombat",
+    "platform",
+    "windows_applications"
+   ],
+   [
+    "mortal_kombat",
+    "genre",
+    "fighting_video_game"
+   ],
+   [
+    "mortal_kombat",
+    "publisher",
+    "warner_bros_i_e"
+   ]
+  ],
+  "sentence": "Mortal Kombat platformed Windows applications.",
+  "expect": "U",
+  "class": "agent_noun_verb_reversal",
+  "why": "The -ed reading of \"platform\" says the game hosted Windows, the reverse of the triple."
+ },
+ {
+  "id": "H12",
+  "gathered": [
+   [
+    "iron_man_three",
+    "screenwriter",
+    "stanley_martin_lieber"
+   ],
+   [
+    "iron_man_three",
+    "country_of_origin",
+    "u_s_of_a"
+   ],
+   [
+    "iron_man_three",
+    "original_language_of_film_or_tv_show",
+    "number_of_english_words"
+   ],
+   [
+    "iron_man_three",
+    "instance_of",
+    "theatrical_film"
+   ]
+  ],
+  "sentence": "Iron Man Three wrote Stanley Martin Lieber.",
+  "expect": "U",
+  "class": "agent_noun_verb_reversal",
+  "why": "Triple means Lieber wrote the screenplay; the verb makes the film the writer."
+ },
+ {
+  "id": "I01",
+  "gathered": [
+   [
+    "army_united_f_c",
+    "sport",
+    "association_football_club"
+   ],
+   [
+    "army_united_f_c",
+    "country",
+    "etymology_of_thailand"
+   ]
+  ],
+  "sentence": "Army United F C sports association football club.",
+  "expect": "U",
+  "class": "noun_relation_verb_reading",
+  "why": "\"sports\" means wears or shows off, not \"has as its sport\"."
+ },
+ {
+  "id": "I02",
+  "gathered": [
+   [
+    "j_r_r_tolkien",
+    "conflict",
+    "world_war_one"
+   ],
+   [
+    "j_r_r_tolkien",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "j_r_r_tolkien",
+    "country_of_citizenship",
+    "united_kingom"
+   ],
+   [
+    "j_r_r_tolkien",
+    "occupation",
+    "writter"
+   ]
+  ],
+  "sentence": "J R R Tolkien conflicts World War One.",
+  "expect": "U",
+  "class": "noun_relation_verb_reading",
+  "why": "\"conflicts\" means is in conflict with, not fought in."
+ },
+ {
+  "id": "I03",
+  "gathered": [
+   [
+    "merle_ronald_haggard",
+    "instrument",
+    "history_of_the_guitar"
+   ],
+   [
+    "merle_ronald_haggard",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "merle_ronald_haggard",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ],
+   [
+    "merle_ronald_haggard",
+    "languages_spoken_written_or_signed",
+    "number_of_english_words"
+   ]
+  ],
+  "sentence": "Merle Ronald Haggard instruments history of the guitar.",
+  "expect": "U",
+  "class": "noun_relation_verb_reading",
+  "why": "\"instruments\" means equips with instruments, not plays."
+ },
+ {
+  "id": "I04",
+  "gathered": [
+   [
+    "patti_smith",
+    "record_label",
+    "columbia_phonograph"
+   ],
+   [
+    "patti_smith",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "patti_smith",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ],
+   [
+    "patti_smith",
+    "languages_spoken_written_or_signed",
+    "number_of_english_words"
+   ]
+  ],
+  "sentence": "Patti Smith records Columbia Phonograph.",
+  "expect": "U",
+  "class": "noun_relation_verb_reading",
+  "why": "First-token -s of record_label: \"records\" says she makes a recording of the label."
+ },
+ {
+  "id": "I05",
+  "gathered": [
+   [
+    "organic_chemist",
+    "part_of",
+    "pure_chemistry"
+   ],
+   [
+    "organic_chemist",
+    "subclass_of",
+    "research_scientists"
+   ],
+   [
+    "organic_chemist",
+    "instance_of",
+    "expert_occupation"
+   ]
+  ],
+  "sentence": "Organic chemist parts pure chemistry.",
+  "expect": "U",
+  "class": "noun_relation_verb_reading",
+  "why": "\"parts\" means separates or divides, not \"is part of\"."
+ },
+ {
+  "id": "I06",
+  "gathered": [
+   [
+    "george_v",
+    "position_held",
+    "monarch"
+   ],
+   [
+    "george_v",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "george_v",
+    "country_of_citizenship",
+    "united_kingom"
+   ],
+   [
+    "george_v",
+    "languages_spoken_written_or_signed",
+    "number_of_english_words"
+   ]
+  ],
+  "sentence": "George V positions monarch.",
+  "expect": "U",
+  "class": "noun_relation_verb_reading",
+  "why": "\"positions\" means places something, not \"held the position\"."
+ },
+ {
+  "id": "I07",
+  "gathered": [
+   [
+    "larry_shaw_director",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   [
+    "larry_shaw_director",
+    "place_of_birth",
+    "u_s_of_a"
+   ],
+   [
+    "larry_shaw_director",
+    "occupation",
+    "film_directors"
+   ]
+  ],
+  "sentence": "Larry Shaw Director places U S of A.",
+  "expect": "U",
+  "class": "noun_relation_verb_reading",
+  "why": "First-token -s of place_of_birth: \"places\" means puts somewhere, not born in."
+ },
+ {
+  "id": "I08",
+  "gathered": [
+   [
+    "renderware",
+    "instance_of",
+    "proprietary_firmware"
+   ],
+   [
+    "proprietary_firmware",
+    "subclass_of",
+    "software_technology"
+   ],
+   [
+    "software_technology",
+    "subclass_of",
+    "commercial_product"
+   ]
+  ],
+  "sentence": "Renderware instances proprietary firmware.",
+  "expect": "U",
+  "class": "noun_relation_verb_reading",
+  "why": "\"instances\" means cites as an example, not \"is an instance of\"."
+ },
+ {
+  "id": "I09",
+  "gathered": [
+   [
+    "directeurs_sportifs",
+    "sport",
+    "road_cycling_race"
+   ],
+   [
+    "road_cycling_race",
+    "subclass_of",
+    "cycle_race"
+   ],
+   [
+    "cycle_race",
+    "subclass_of",
+    "playing_sport"
+   ],
+   [
+    "directeurs_sportifs",
+    "instance_of",
+    "expert_occupation"
+   ]
+  ],
+  "sentence": "Directeurs sportifs sported road cycling race.",
+  "expect": "U",
+  "class": "noun_relation_verb_reading",
+  "why": "The -ed reading \"sported\" means wore, plus a past-tense claim."
+ },
+ {
+  "id": "J01",
+  "gathered": [
+   [
+    "dachau_concentration_camp",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   [
+    "dachau_concentration_camp",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "dachau_concentration_camp",
+    "country",
+    "federal_republic_of_germany"
+   ],
+   [
+    "dachau_concentration_camp",
+    "located_in_the_administrative_territoria",
+    "dachau"
+   ]
+  ],
+  "sentence": "Dachau concentration camp described Armenian Soviet Encyclopedia.",
+  "expect": "U",
+  "class": "participle_drop_reversal",
+  "why": "Triple says the encyclopedia describes the camp; \"described\" makes the camp the describer."
+ },
+ {
+  "id": "J02",
+  "gathered": [
+   [
+    "james_earl_carter_junior",
+    "educated_at",
+    "georgia_tech"
+   ],
+   [
+    "james_earl_carter_junior",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "james_earl_carter_junior",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ],
+   [
+    "james_earl_carter_junior",
+    "occupation",
+    "political_figure"
+   ]
+  ],
+  "sentence": "James Earl Carter Junior educated Georgia Tech.",
+  "expect": "U",
+  "class": "participle_drop_reversal",
+  "why": "Triple says he was educated at Georgia Tech; \"educated\" makes him the educator."
+ },
+ {
+  "id": "J03",
+  "gathered": [
+   [
+    "upper_garonne",
+    "named_after",
+    "garonne_river"
+   ],
+   [
+    "upper_garonne",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "upper_garonne",
+    "country",
+    "franzoesische_republik"
+   ],
+   [
+    "upper_garonne",
+    "shares_border_with",
+    "hautes_pyrenees"
+   ]
+  ],
+  "sentence": "Upper Garonne named Garonne River.",
+  "expect": "U",
+  "class": "participle_drop_reversal",
+  "why": "Triple says the department is named after the river; \"named\" makes the department the namer."
+ },
+ {
+  "id": "J04",
+  "gathered": [
+   [
+    "peter_cushing",
+    "award_received",
+    "commander_of_british_empire"
+   ],
+   [
+    "peter_cushing",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "peter_cushing",
+    "country_of_citizenship",
+    "united_kingom"
+   ],
+   [
+    "peter_cushing",
+    "languages_spoken_written_or_signed",
+    "number_of_english_words"
+   ]
+  ],
+  "sentence": "Peter Cushing awarded Commander of British Empire.",
+  "expect": "U",
+  "class": "participle_drop_reversal",
+  "why": "Triple says he received the award; \"awarded\" makes him the giver."
+ },
+ {
+  "id": "J05",
+  "gathered": [
+   [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Rep Blica del Paraguay described Brockhaus and Efron Encyclopaedia.",
+  "expect": "U",
+  "class": "participle_drop_reversal",
+  "why": "Triple says the encyclopaedia describes Paraguay; the bare verb reverses it."
+ },
+ {
+  "id": "J06",
+  "gathered": [
+   [
+    "trindad_and_tobago",
+    "named_after",
+    "trinidad_island"
+   ],
+   [
+    "trindad_and_tobago",
+    "shares_border_with",
+    "name_of_venezuela"
+   ],
+   [
+    "trindad_and_tobago",
+    "member_of",
+    "united_nations"
+   ],
+   [
+    "trindad_and_tobago",
+    "located_in_time_zone",
+    "bolivia_time"
+   ]
+  ],
+  "sentence": "Trindad and Tobago named Trinidad Island.",
+  "expect": "U",
+  "class": "participle_drop_reversal",
+  "why": "Triple says the country is named after the island; the bare verb reverses it."
+ },
+ {
+  "id": "K01",
+  "gathered": [
+   [
+    "sky_fall",
+    "follows",
+    "quantum_of_solace"
+   ],
+   [
+    "quantum_of_solace",
+    "followed_by",
+    "sky_fall"
+   ],
+   [
+    "sky_fall",
+    "instance_of",
+    "theatrical_film"
+   ],
+   [
+    "quantum_of_solace",
+    "instance_of",
+    "theatrical_film"
+   ]
+  ],
+  "sentence": "Quantum of Solace follows Sky Fall.",
+  "expect": "U",
+  "class": "follows_vs_followed_by",
+  "why": "Sky Fall follows Quantum of Solace; matching \"follows\" to the gathered followed_by triple would accept the reverse."
+ },
+ {
+  "id": "K02",
+  "gathered": [
+   [
+    "game_boy",
+    "followed_by",
+    "gameboy_color"
+   ],
+   [
+    "gameboy_color",
+    "followed_by",
+    "nintendo_game_boy_advance"
+   ]
+  ],
+  "sentence": "Game Boy follows Gameboy Color.",
+  "expect": "U",
+  "class": "follows_vs_followed_by",
+  "why": "Only (game_boy, followed_by, gameboy_color) is gathered: the Color came after, so this reverses time order."
+ },
+ {
+  "id": "K03",
+  "gathered": [
+   [
+    "xvi_asian_games",
+    "follows",
+    "xv_asiad"
+   ],
+   [
+    "xvi_asian_games",
+    "followed_by",
+    "xvii_asiad"
+   ],
+   [
+    "xvi_asian_games",
+    "country",
+    "china_pr"
+   ],
+   [
+    "xvi_asian_games",
+    "instance_of",
+    "asian_summer_games"
+   ]
+  ],
+  "sentence": "XVI Asian Games follows XVII Asiad.",
+  "expect": "U",
+  "class": "follows_vs_followed_by",
+  "why": "XVII Asiad comes after XVI; the gathered followed_by triple must not license \"follows\"."
+ },
+ {
+  "id": "K04",
+  "gathered": [
+   [
+    "mexico_city_olympic_games",
+    "followed_by",
+    "munich_olympics"
+   ],
+   [
+    "mexico_city_olympic_games",
+    "country",
+    "united_states_of_mexico"
+   ],
+   [
+    "mexico_city_olympic_games",
+    "follows",
+    "games_of_the_xviii_olympiad"
+   ]
+  ],
+  "sentence": "Mexico City Olympic Games follows Munich Olympics.",
+  "expect": "U",
+  "class": "follows_vs_followed_by",
+  "why": "Munich came after Mexico City; reversed order."
+ },
+ {
+  "id": "K05",
+  "gathered": [
+   [
+    "sky_fall",
+    "follows",
+    "quantum_of_solace"
+   ],
+   [
+    "quantum_of_solace",
+    "followed_by",
+    "sky_fall"
+   ],
+   [
+    "sky_fall",
+    "instance_of",
+    "theatrical_film"
+   ],
+   [
+    "quantum_of_solace",
+    "instance_of",
+    "theatrical_film"
+   ]
+  ],
+  "sentence": "Sky Fall is followed by Quantum of Solace.",
+  "expect": "U",
+  "class": "follows_vs_followed_by",
+  "why": "Says Quantum of Solace came after Sky Fall; the gathered follows triple says the opposite."
+ },
+ {
+  "id": "K06",
+  "gathered": [
+   [
+    "two_thousand_and_nine",
+    "follows",
+    "mmviii"
+   ],
+   [
+    "two_thousand_and_nine",
+    "followed_by",
+    "two_thousand_ten"
+   ],
+   [
+    "two_thousand_and_nine",
+    "instance_of",
+    "years_ago"
+   ]
+  ],
+  "sentence": "Two thousand and nine follows two thousand ten.",
+  "expect": "U",
+  "class": "follows_vs_followed_by",
+  "why": "The gathered triple says 2009 is followed by 2010; the sentence reverses it."
+ },
+ {
+  "id": "K07",
+  "gathered": [
+   [
+    "game_boy",
+    "followed_by",
+    "gameboy_color"
+   ],
+   [
+    "gameboy_color",
+    "followed_by",
+    "nintendo_game_boy_advance"
+   ]
+  ],
+  "sentence": "Game Boy followed Gameboy Color.",
+  "expect": "U",
+  "class": "follows_vs_followed_by",
+  "why": "Past-tense \"followed\" with the \"by\" dropped from followed_by: says Game Boy came after the Color."
+ },
+ {
+  "id": "L01",
+  "gathered": [
+   [
+    "bobolice_commune",
+    "country",
+    "pole_land"
+   ],
+   [
+    "pole_land",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "bobolice_commune",
+    "shares_border_with",
+    "szczecinek_commune"
+   ]
+  ],
+  "sentence": "Bobolice Commune bordered Szczecinek Commune.",
+  "expect": "U",
+  "class": "past_tense_temporal",
+  "why": "Simple past on a standing border implies the border no longer exists."
+ },
+ {
+  "id": "L02",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "Canada Portal shared border with U S of A.",
+  "expect": "U",
+  "class": "past_tense_temporal",
+  "why": "Past tense implies the border was shared formerly, not now."
+ },
+ {
+  "id": "L03",
+  "gathered": [
+   [
+    "waadt_canton_of",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "waadt_canton_of",
+    "country",
+    "conf_d_ration_suisse"
+   ],
+   [
+    "waadt_canton_of",
+    "shares_border_with",
+    "canton_de_berne"
+   ],
+   [
+    "waadt_canton_of",
+    "contains_administrative_territorial_enti",
+    "jura_nord_vaudois_district"
+   ]
+  ],
+  "sentence": "Waadt Canton of contained Jura Nord Vaudois District.",
+  "expect": "U",
+  "class": "past_tense_temporal",
+  "why": "Past tense implies the district is no longer part of the canton."
+ },
+ {
+  "id": "L04",
+  "gathered": [
+   [
+    "country_mansion",
+    "subclass_of",
+    "domestic_architecture"
+   ],
+   [
+    "domestic_architecture",
+    "has_part",
+    "box_room"
+   ],
+   [
+    "country_mansion",
+    "instance_of",
+    "architectural_styles"
+   ]
+  ],
+  "sentence": "Domestic architecture had part box room.",
+  "expect": "U",
+  "class": "past_tense_temporal",
+  "why": "Past tense implies the part relation ended."
+ },
+ {
+  "id": "M01",
+  "gathered": [
+   [
+    "bison_ravi",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   [
+    "bison_ravi",
+    "country_of_citizenship",
+    "franzoesische_republik"
+   ],
+   [
+    "bison_ravi",
+    "occupation",
+    "writter"
+   ]
+  ],
+  "sentence": "Bison Ravi is an instance of human specie and common names.",
+  "expect": "U",
+  "class": "coordination_unsupported_conjunct",
+  "why": "Second conjunct is a hop (an instance of an instance is not an instance); shape-3 coordination."
+ },
+ {
+  "id": "M02",
+  "gathered": [
+   [
+    "zhejiang_province",
+    "country",
+    "china_pr"
+   ],
+   [
+    "china_pr",
+    "shares_border_with",
+    "bharat_ganrajya"
+   ],
+   [
+    "bharat_ganrajya",
+    "shares_border_with",
+    "china_pr"
+   ],
+   [
+    "zhejiang_province",
+    "located_in_time_zone",
+    "australian_western_standard_time"
+   ],
+   [
+    "zhejiang_province",
+    "shares_border_with",
+    "air_pollution_in_shanghai"
+   ]
+  ],
+  "sentence": "Zhejiang Province shares border with Air Pollution in Shanghai and Bharat Ganrajya.",
+  "expect": "U",
+  "class": "coordination_unsupported_conjunct",
+  "why": "Bharat Ganrajya borders China PR, not Zhejiang; the second object is unsupported."
+ },
+ {
+  "id": "M03",
+  "gathered": [
+   [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Rep Blica del Paraguay shares border with Republic of Brazil and Franzoesische Republik.",
+  "expect": "U",
+  "class": "coordination_unsupported_conjunct",
+  "why": "France borders Brazil in the gathered chain, not Paraguay."
+ },
+ {
+  "id": "M04",
+  "gathered": [
+   [
+    "prefecture_of_nagasaki",
+    "country",
+    "modern_era_japan"
+   ],
+   [
+    "modern_era_japan",
+    "shares_border_with",
+    "china_pr"
+   ],
+   [
+    "china_pr",
+    "shares_border_with",
+    "bharat_ganrajya"
+   ],
+   [
+    "prefecture_of_nagasaki",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ],
+   [
+    "prefecture_of_nagasaki",
+    "twinned_administrative_body",
+    "districts_of_busan"
+   ]
+  ],
+  "sentence": "Modern Era Japan shares border with China PR, Bharat Ganrajya and Prefecture of Nagasaki.",
+  "expect": "U",
+  "class": "coordination_unsupported_conjunct",
+  "why": "Two of three objects are unsupported (a chain hop and a subject of another triple)."
+ },
+ {
+  "id": "M05",
+  "gathered": [
+   [
+    "1962_asian_games",
+    "country",
+    "etymology_of_indonesia"
+   ],
+   [
+    "etymology_of_indonesia",
+    "shares_border_with",
+    "commonwealth_australia"
+   ],
+   [
+    "commonwealth_australia",
+    "shares_border_with",
+    "new_zealnd"
+   ],
+   [
+    "1962_asian_games",
+    "instance_of",
+    "asian_summer_games"
+   ],
+   [
+    "1962_asian_games",
+    "follows",
+    "third_asian_games"
+   ]
+  ],
+  "sentence": "1962 Asian Games follows Third Asian Games and Asian Summer Games.",
+  "expect": "U",
+  "class": "coordination_unsupported_conjunct",
+  "why": "Asian Summer Games is gathered under instance_of, not follows."
+ },
+ {
+  "id": "M06",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "Canada Portal shares border with U S of A or City of Green Bay.",
+  "expect": "U",
+  "class": "coordination_unsupported_conjunct",
+  "why": "Disjunction is a hedge, and the second disjunct is not a border partner."
+ },
+ {
+  "id": "M07",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "Canada Portal shares border with U S of A and/or City of Green Bay.",
+  "expect": "U",
+  "class": "coordination_unsupported_conjunct",
+  "why": "\"and/or\" hedges and adds an unsupported border partner."
+ },
+ {
+  "id": "M08",
+  "gathered": [
+   [
+    "renderware",
+    "instance_of",
+    "proprietary_firmware"
+   ],
+   [
+    "proprietary_firmware",
+    "subclass_of",
+    "software_technology"
+   ],
+   [
+    "software_technology",
+    "subclass_of",
+    "commercial_product"
+   ]
+  ],
+  "sentence": "Renderware is an instance of proprietary firmware, software technology and commercial product.",
+  "expect": "U",
+  "class": "coordination_unsupported_conjunct",
+  "why": "Two conjuncts are superclasses of the class, not classes Renderware is an instance of."
+ },
+ {
+  "id": "M09",
+  "gathered": [
+   [
+    "premiers_of_victoria",
+    "country",
+    "commonwealth_australia"
+   ],
+   [
+    "commonwealth_australia",
+    "participant_of",
+    "war_world_two"
+   ],
+   [
+    "war_world_two",
+    "follows",
+    "world_war_one"
+   ],
+   [
+    "premiers_of_victoria",
+    "subclass_of",
+    "chief_administrator"
+   ]
+  ],
+  "sentence": "War World Two follows World War One and Commonwealth Australia.",
+  "expect": "U",
+  "class": "coordination_unsupported_conjunct",
+  "why": "Commonwealth Australia is a participant, not something WWII follows."
+ },
+ {
+  "id": "M10",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "Canada Portal shares border with U S of A as well as City of Green Bay.",
+  "expect": "U",
+  "class": "coordination_unsupported_conjunct",
+  "why": "\"as well as\" adds a second, unsupported border partner."
+ },
+ {
+  "id": "M11",
+  "gathered": [
+   [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Rep Blica del Paraguay shares border with Republic of Brazil & United Kingom.",
+  "expect": "U",
+  "class": "coordination_unsupported_conjunct",
+  "why": "Ampersand coordination adds the United Kingdom, which only borders France in the chain."
+ },
+ {
+  "id": "M12",
+  "gathered": [
+   [
+    "castile_and_le_n",
+    "shares_border_with",
+    "asturias_province"
+   ],
+   [
+    "castile_and_le_n",
+    "country",
+    "kingdom_of_the_spains"
+   ],
+   [
+    "castile_and_le_n",
+    "contains_administrative_territorial_enti",
+    "province_of_burgos"
+   ]
+  ],
+  "sentence": "Castile and Le N shares border with Asturias Province and Kingdom of the Spains.",
+  "expect": "U",
+  "class": "coordination_unsupported_conjunct",
+  "why": "The \"and\" inside the subject slug is fine; the second object is gathered as its country, not a neighbour."
+ },
+ {
+  "id": "N01",
+  "gathered": [
+   [
+    "simple_plants",
+    "subclass_of",
+    "flora_and_fauna"
+   ],
+   [
+    "simple_plants",
+    "instance_of",
+    "taxonomic_group"
+   ]
+  ],
+  "sentence": "Simple plants is a subclass of flora, and fauna.",
+  "expect": "U",
+  "class": "and_compound_comma_split",
+  "why": "Read as two classes: plants are a subclass of fauna, which is false and not gathered."
+ },
+ {
+  "id": "N02",
+  "gathered": [
+   [
+    "nonhuman_animal",
+    "subclass_of",
+    "flora_and_fauna"
+   ],
+   [
+    "nonhuman_animal",
+    "instance_of",
+    "taxonomic_group"
+   ],
+   [
+    "nonhuman_animal",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ]
+  ],
+  "sentence": "Nonhuman animal is a subclass of flora, and fauna.",
+  "expect": "U",
+  "class": "and_compound_comma_split",
+  "why": "Read as two classes: animals are a subclass of flora."
+ },
+ {
+  "id": "N03",
+  "gathered": [
+   [
+    "moselle_d_partement",
+    "shares_border_with",
+    "meurthe_and_moselle"
+   ],
+   [
+    "moselle_d_partement",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "moselle_d_partement",
+    "country",
+    "franzoesische_republik"
+   ],
+   [
+    "moselle_d_partement",
+    "instance_of",
+    "departements_francais"
+   ]
+  ],
+  "sentence": "Moselle Département shares border with Meurthe, and Moselle.",
+  "expect": "U",
+  "class": "and_compound_comma_split",
+  "why": "Read as two neighbours: Moselle borders Meurthe and also borders Moselle (itself)."
+ },
+ {
+  "id": "N04",
+  "gathered": [
+   [
+    "seine_d_partement",
+    "shares_border_with",
+    "seine_and_oise"
+   ],
+   [
+    "seine_d_partement",
+    "country",
+    "franzoesische_republik"
+   ],
+   [
+    "seine_d_partement",
+    "contains_administrative_territorial_enti",
+    "neuily_sur_seine"
+   ],
+   [
+    "seine_d_partement",
+    "located_in_the_administrative_territoria",
+    "kingdom_of_the_french"
+   ]
+  ],
+  "sentence": "Seine Département shares border with Seine, and Oise.",
+  "expect": "U",
+  "class": "and_compound_comma_split",
+  "why": "Read as two neighbours, including the Seine itself and the separate Oise departement."
+ },
+ {
+  "id": "N05",
+  "gathered": [
+   [
+    "bosnia_and_herzigovina",
+    "member_of",
+    "united_nations"
+   ],
+   [
+    "bosnia_and_herzigovina",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "bosnia_and_herzigovina",
+    "shares_border_with",
+    "serbia_yugoslavia"
+   ],
+   [
+    "bosnia_and_herzigovina",
+    "instance_of",
+    "sovereign_states"
+   ]
+  ],
+  "sentence": "Bosnia, and Herzigovina is a member of the United Nations.",
+  "expect": "U",
+  "class": "and_compound_comma_split",
+  "why": "Read as coordinated subjects: Herzegovina on its own is not a UN member."
+ },
+ {
+  "id": "O01",
+  "gathered": [
+   [
+    "1962_asian_games",
+    "country",
+    "etymology_of_indonesia"
+   ],
+   [
+    "etymology_of_indonesia",
+    "shares_border_with",
+    "commonwealth_australia"
+   ],
+   [
+    "commonwealth_australia",
+    "shares_border_with",
+    "new_zealnd"
+   ],
+   [
+    "1962_asian_games",
+    "instance_of",
+    "asian_summer_games"
+   ],
+   [
+    "1962_asian_games",
+    "follows",
+    "third_asian_games"
+   ]
+  ],
+  "sentence": "Third Asian Games follows 1962 Asian Games.",
+  "expect": "U",
+  "class": "reversed_direction",
+  "why": "Reverses the gathered follows triple."
+ },
+ {
+  "id": "O02",
+  "gathered": [
+   [
+    "country_mansion",
+    "subclass_of",
+    "domestic_architecture"
+   ],
+   [
+    "domestic_architecture",
+    "has_part",
+    "box_room"
+   ],
+   [
+    "country_mansion",
+    "instance_of",
+    "architectural_styles"
+   ]
+  ],
+  "sentence": "Box room has part domestic architecture.",
+  "expect": "U",
+  "class": "reversed_direction",
+  "why": "Reverses whole and part."
+ },
+ {
+  "id": "O03",
+  "gathered": [
+   [
+    "waadt_canton_of",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "waadt_canton_of",
+    "country",
+    "conf_d_ration_suisse"
+   ],
+   [
+    "waadt_canton_of",
+    "shares_border_with",
+    "canton_de_berne"
+   ],
+   [
+    "waadt_canton_of",
+    "contains_administrative_territorial_enti",
+    "jura_nord_vaudois_district"
+   ]
+  ],
+  "sentence": "Jura Nord Vaudois District contains Waadt Canton of.",
+  "expect": "U",
+  "class": "reversed_direction",
+  "why": "Reverses container and contained."
+ },
+ {
+  "id": "O04",
+  "gathered": [
+   [
+    "national_coat_of_arms",
+    "subclass_of",
+    "coat_of_arms"
+   ],
+   [
+    "coat_of_arms",
+    "subclass_of",
+    "cultural_ikon"
+   ]
+  ],
+  "sentence": "Coat of arms is a subclass of national coat of arms.",
+  "expect": "U",
+  "class": "reversed_direction",
+  "why": "Reverses subclass and superclass."
+ },
+ {
+  "id": "O05",
+  "gathered": [
+   [
+    "renderware",
+    "instance_of",
+    "proprietary_firmware"
+   ],
+   [
+    "proprietary_firmware",
+    "subclass_of",
+    "software_technology"
+   ],
+   [
+    "software_technology",
+    "subclass_of",
+    "commercial_product"
+   ]
+  ],
+  "sentence": "Proprietary firmware is an instance of Renderware.",
+  "expect": "U",
+  "class": "reversed_direction",
+  "why": "Reverses instance and class."
+ },
+ {
+  "id": "O06",
+  "gathered": [
+   [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "United Nations is a member of Rep Blica del Paraguay.",
+  "expect": "U",
+  "class": "reversed_direction",
+  "why": "Reverses member and body."
+ },
+ {
+  "id": "O07",
+  "gathered": [
+   [
+    "angola_national_football_team",
+    "sport",
+    "association_football_club"
+   ],
+   [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   [
+    "angola_national_football_team",
+    "country",
+    "repubilika_ya_ngola"
+   ],
+   [
+    "angola_national_football_team",
+    "participant_of",
+    "2006_fifa_world_cup_final_positions"
+   ]
+  ],
+  "sentence": "2006 FIFA World Cup final positions is a participant of Angola National Football Team.",
+  "expect": "U",
+  "class": "reversed_direction",
+  "why": "Reverses participant and event."
+ },
+ {
+  "id": "O08",
+  "gathered": [
+   [
+    "member_of_althingi",
+    "part_of",
+    "parliamentary_government"
+   ],
+   [
+    "member_of_althingi",
+    "subclass_of",
+    "political_figure"
+   ],
+   [
+    "member_of_althingi",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   [
+    "member_of_ep",
+    "subclass_of",
+    "member_of_althingi"
+   ],
+   [
+    "parliamentary_government",
+    "has_part",
+    "member_of_althingi"
+   ]
+  ],
+  "sentence": "Member of Althingi is a subclass of member of EP.",
+  "expect": "U",
+  "class": "reversed_direction",
+  "why": "Reverses the gathered (member_of_ep, subclass_of, member_of_althingi); both slugs contain \"member of\"."
+ },
+ {
+  "id": "O09",
+  "gathered": [
+   [
+    "hertha_berlin_ii",
+    "sport",
+    "association_football_club"
+   ],
+   [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   [
+    "hertha_berlin_ii",
+    "country",
+    "federal_republic_of_germany"
+   ],
+   [
+    "hertha_berlin_ii",
+    "subclass_of",
+    "hertha_bsc"
+   ]
+  ],
+  "sentence": "Hertha BSC is a subclass of Hertha Berlin II.",
+  "expect": "U",
+  "class": "reversed_direction",
+  "why": "Reverses subclass and superclass."
+ },
+ {
+  "id": "P01",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "City of Green Bay shares border with Canada Portal.",
+  "expect": "U",
+  "class": "chain_hop",
+  "why": "Green Bay is in the USA and the USA borders Canada; Green Bay itself borders nothing gathered."
+ },
+ {
+  "id": "P02",
+  "gathered": [
+   [
+    "prefecture_of_nagasaki",
+    "country",
+    "modern_era_japan"
+   ],
+   [
+    "modern_era_japan",
+    "shares_border_with",
+    "china_pr"
+   ],
+   [
+    "china_pr",
+    "shares_border_with",
+    "bharat_ganrajya"
+   ],
+   [
+    "prefecture_of_nagasaki",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ],
+   [
+    "prefecture_of_nagasaki",
+    "twinned_administrative_body",
+    "districts_of_busan"
+   ]
+  ],
+  "sentence": "Prefecture of Nagasaki shares border with China PR.",
+  "expect": "U",
+  "class": "chain_hop",
+  "why": "Japan borders China in the chain; the prefecture does not."
+ },
+ {
+  "id": "P03",
+  "gathered": [
+   [
+    "bison_ravi",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   [
+    "bison_ravi",
+    "country_of_citizenship",
+    "franzoesische_republik"
+   ],
+   [
+    "bison_ravi",
+    "occupation",
+    "writter"
+   ]
+  ],
+  "sentence": "Bison Ravi is an instance of common names.",
+  "expect": "U",
+  "class": "chain_hop",
+  "why": "Instance-of is not transitive: Bison Ravi is a human, not a common name."
+ },
+ {
+  "id": "P04",
+  "gathered": [
+   [
+    "premiers_of_victoria",
+    "country",
+    "commonwealth_australia"
+   ],
+   [
+    "commonwealth_australia",
+    "participant_of",
+    "war_world_two"
+   ],
+   [
+    "war_world_two",
+    "follows",
+    "world_war_one"
+   ],
+   [
+    "premiers_of_victoria",
+    "subclass_of",
+    "chief_administrator"
+   ]
+  ],
+  "sentence": "Premiers of Victoria is a participant of War World Two.",
+  "expect": "U",
+  "class": "chain_hop",
+  "why": "Commonwealth Australia participated; the premiers office is only linked through country."
+ },
+ {
+  "id": "P05",
+  "gathered": [
+   [
+    "renderware",
+    "instance_of",
+    "proprietary_firmware"
+   ],
+   [
+    "proprietary_firmware",
+    "subclass_of",
+    "software_technology"
+   ],
+   [
+    "software_technology",
+    "subclass_of",
+    "commercial_product"
+   ]
+  ],
+  "sentence": "Renderware is an instance of commercial product.",
+  "expect": "U",
+  "class": "chain_hop",
+  "why": "Two subclass hops from the gathered class; not a gathered triple."
+ },
+ {
+  "id": "P06",
+  "gathered": [
+   [
+    "emarcy_records",
+    "genre",
+    "jazz_lists"
+   ],
+   [
+    "jazz_lists",
+    "instance_of",
+    "genre_of_music"
+   ],
+   [
+    "genre_of_music",
+    "instance_of",
+    "sociological_concept"
+   ],
+   [
+    "emarcy_records",
+    "instance_of",
+    "record_companies"
+   ]
+  ],
+  "sentence": "Emarcy Records is an instance of genre of music.",
+  "expect": "U",
+  "class": "chain_hop",
+  "why": "The label's genre is an instance of genre of music; the label itself is a record company."
+ },
+ {
+  "id": "Q01",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "Canada Portal неshares border with U S of A.",
+  "expect": "U",
+  "class": "glued_nonlatin_affix",
+  "why": "Russian negation prefix \"не\" glued to the verb: \"does not share\"."
+ },
+ {
+  "id": "Q02",
+  "gathered": [
+   [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Rep Blica del Paraguay is a 非member of the United Nations.",
+  "expect": "U",
+  "class": "glued_nonlatin_affix",
+  "why": "Chinese prefix \"非\" (non-) glued to the noun: \"non-member\"."
+ },
+ {
+  "id": "Q03",
+  "gathered": [
+   [
+    "renderware",
+    "instance_of",
+    "proprietary_firmware"
+   ],
+   [
+    "proprietary_firmware",
+    "subclass_of",
+    "software_technology"
+   ],
+   [
+    "software_technology",
+    "subclass_of",
+    "commercial_product"
+   ]
+  ],
+  "sentence": "Renderware is an instance of 非proprietary firmware.",
+  "expect": "U",
+  "class": "glued_nonlatin_affix",
+  "why": "\"非\" glued to the class makes it \"non-proprietary firmware\", a different class."
+ },
+ {
+  "id": "Q04",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "Canada Portal shares border with 非U S of A.",
+  "expect": "U",
+  "class": "glued_nonlatin_affix",
+  "why": "\"非\" glued to the object makes it \"not the USA\"."
+ },
+ {
+  "id": "R01",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "City of Green Bay located in time zone UTC+06.",
+  "expect": "U",
+  "class": "slug_form_erases_meaning",
+  "why": "The slug utc_06 carries no sign; \"+06\" names a different zone (Green Bay is UTC-6)."
+ },
+ {
+  "id": "R02",
+  "gathered": [
+   [
+    "geography_of_kabul",
+    "located_in_time_zone",
+    "utc_4_30"
+   ],
+   [
+    "geography_of_kabul",
+    "country",
+    "afghanistan_i_s_of"
+   ],
+   [
+    "geography_of_kabul",
+    "twinned_administrative_body",
+    "historic_areas_of_i_stanbul"
+   ],
+   [
+    "geography_of_kabul",
+    "instance_of",
+    "national_capital"
+   ]
+  ],
+  "sentence": "Geography of Kabul located in time zone UTC−4:30.",
+  "expect": "U",
+  "class": "slug_form_erases_meaning",
+  "why": "A minus sign names UTC-4:30, not the slug's zone (Kabul is +4:30); \"-\" and \":\" fold to \"_\"."
+ },
+ {
+  "id": "R03",
+  "gathered": [
+   [
+    "tehran_iran",
+    "located_in_time_zone",
+    "utc_3_5"
+   ],
+   [
+    "tehran_iran",
+    "country",
+    "persian_state_of_iran"
+   ],
+   [
+    "tehran_iran",
+    "twinned_administrative_body",
+    "england_london"
+   ],
+   [
+    "tehran_iran",
+    "instance_of",
+    "city_work"
+   ]
+  ],
+  "sentence": "Tehran Iran located in time zone UTC 3–5.",
+  "expect": "U",
+  "class": "slug_form_erases_meaning",
+  "why": "An en dash reads as a range, UTC 3 to 5, a different claim from utc_3_5 (UTC+3:30)."
+ },
+ {
+  "id": "R04",
+  "gathered": [
+   [
+    "mandalay_burma",
+    "located_in_time_zone",
+    "utc_06_30"
+   ],
+   [
+    "mandalay_burma",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "mandalay_burma",
+    "country",
+    "etymology_of_burma"
+   ]
+  ],
+  "sentence": "Mandalay Burma located in time zone UTC−06:30.",
+  "expect": "U",
+  "class": "slug_form_erases_meaning",
+  "why": "A minus sign names UTC-6:30; the slug fold would accept it as utc_06_30."
+ },
+ {
+  "id": "R05",
+  "gathered": [
+   [
+    "hertha_berlin_ii",
+    "sport",
+    "association_football_club"
+   ],
+   [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   [
+    "hertha_berlin_ii",
+    "country",
+    "federal_republic_of_germany"
+   ],
+   [
+    "hertha_berlin_ii",
+    "subclass_of",
+    "hertha_bsc"
+   ]
+  ],
+  "sentence": "Hertha Berlin I is a subclass of Hertha BSC.",
+  "expect": "U",
+  "class": "slug_form_erases_meaning",
+  "why": "A different team (no slug hertha_berlin_i); a fuzzy or prefix slug match would accept it."
+ },
+ {
+  "id": "R06",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "City of Green Bay located in time zone UTC 07.",
+  "expect": "U",
+  "class": "slug_form_erases_meaning",
+  "why": "UTC 07 is another store zone (utc_07), not gathered for Green Bay."
+ },
+ {
+  "id": "R07",
+  "gathered": [
+   [
+    "angola_national_football_team",
+    "sport",
+    "association_football_club"
+   ],
+   [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   [
+    "angola_national_football_team",
+    "country",
+    "repubilika_ya_ngola"
+   ],
+   [
+    "angola_national_football_team",
+    "participant_of",
+    "2006_fifa_world_cup_final_positions"
+   ]
+  ],
+  "sentence": "Angola National Football Team is a participant of 2010 FIFA World Cup final positions.",
+  "expect": "U",
+  "class": "slug_form_erases_meaning",
+  "why": "A different tournament year; a digit-tolerant match would accept it."
+ },
+ {
+  "id": "R08",
+  "gathered": [
+   [
+    "bobolice_commune",
+    "country",
+    "pole_land"
+   ],
+   [
+    "pole_land",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "bobolice_commune",
+    "shares_border_with",
+    "szczecinek_commune"
+   ]
+  ],
+  "sentence": "Bobolice Commune borders Szczecinek Communes.",
+  "expect": "U",
+  "class": "slug_form_erases_meaning",
+  "why": "Plural object claims several Szczecinek communes, a quantity not in the slug."
+ },
+ {
+  "id": "S01",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "Canada Portal shares ½ border with U S of A.",
+  "expect": "U",
+  "class": "nonascii_quantity_symbol",
+  "why": "\"½\" claims only half a border is shared."
+ },
+ {
+  "id": "S02",
+  "gathered": [
+   [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Rep Blica del Paraguay is ½ a member of the United Nations.",
+  "expect": "U",
+  "class": "nonascii_quantity_symbol",
+  "why": "\"½ a member\" claims partial membership."
+ },
+ {
+  "id": "S03",
+  "gathered": [
+   [
+    "indoor_bandy",
+    "country_of_origin",
+    "climate_of_sweden"
+   ],
+   [
+    "climate_of_sweden",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "indoor_bandy",
+    "subclass_of",
+    "ball_games"
+   ]
+  ],
+  "sentence": "Indoor bandy is ≈ a subclass of ball games.",
+  "expect": "U",
+  "class": "nonascii_quantity_symbol",
+  "why": "\"≈\" says only approximately a subclass, a hedge."
+ },
+ {
+  "id": "S04",
+  "gathered": [
+   [
+    "renderware",
+    "instance_of",
+    "proprietary_firmware"
+   ],
+   [
+    "proprietary_firmware",
+    "subclass_of",
+    "software_technology"
+   ],
+   [
+    "software_technology",
+    "subclass_of",
+    "commercial_product"
+   ]
+  ],
+  "sentence": "Renderware is ~ an instance of proprietary firmware.",
+  "expect": "U",
+  "class": "nonascii_quantity_symbol",
+  "why": "An ASCII tilde used as \"approximately\" hedges the instance claim."
+ },
+ {
+  "id": "T01",
+  "gathered": [
+   [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Rep Blica del Paraguay is the member of the United Nations.",
+  "expect": "U",
+  "class": "definite_uniqueness",
+  "why": "\"the member\" claims Paraguay is the UN's only member."
+ },
+ {
+  "id": "T02",
+  "gathered": [
+   [
+    "veterinary_physician",
+    "instance_of",
+    "expert_occupation"
+   ]
+  ],
+  "sentence": "Veterinary physician is the instance of expert occupation.",
+  "expect": "U",
+  "class": "definite_uniqueness",
+  "why": "\"the instance\" claims it is the only expert occupation."
+ },
+ {
+  "id": "T03",
+  "gathered": [
+   [
+    "ocean_liners",
+    "subclass_of",
+    "passenger_ship"
+   ]
+  ],
+  "sentence": "Ocean liners is the subclass of passenger ship.",
+  "expect": "U",
+  "class": "definite_uniqueness",
+  "why": "\"the subclass\" claims ocean liners are the only kind of passenger ship."
+ },
+ {
+  "id": "V01",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "Canada Portal shares border with U.S. of A. Not.",
+  "expect": "U",
+  "class": "split_trick",
+  "why": "The trailing \"Not.\" retracts the claim; initials-style periods tempt the splitter."
+ },
+ {
+  "id": "V02",
+  "gathered": [
+   [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Critics deny that \"Rep Blica del Paraguay is a member of the United Nations.\"",
+  "expect": "U",
+  "class": "split_trick",
+  "why": "The claim is reported and denied, not asserted; splitting at the quote would expose it."
+ },
+ {
+  "id": "V03",
+  "gathered": [
+   [
+    "1962_asian_games",
+    "country",
+    "etymology_of_indonesia"
+   ],
+   [
+    "etymology_of_indonesia",
+    "shares_border_with",
+    "commonwealth_australia"
+   ],
+   [
+    "commonwealth_australia",
+    "shares_border_with",
+    "new_zealnd"
+   ],
+   [
+    "1962_asian_games",
+    "instance_of",
+    "asian_summer_games"
+   ],
+   [
+    "1962_asian_games",
+    "follows",
+    "third_asian_games"
+   ]
+  ],
+  "sentence": "1962 Asian Games follows Third Asian Games... allegedly.",
+  "expect": "U",
+  "class": "split_trick",
+  "why": "The ellipsis attaches the hedge \"allegedly\"."
+ },
+ {
+  "id": "V04",
+  "gathered": [
+   [
+    "indoor_bandy",
+    "country_of_origin",
+    "climate_of_sweden"
+   ],
+   [
+    "climate_of_sweden",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "indoor_bandy",
+    "subclass_of",
+    "ball_games"
+   ]
+  ],
+  "sentence": "Indoor bandy is a subclass of ball games 0.5 of the time.",
+  "expect": "U",
+  "class": "split_trick",
+  "why": "A decimal quantity hedge; a split at \"0.\" leaves fragments."
+ },
+ {
+  "id": "V05",
+  "gathered": [
+   [
+    "renderware",
+    "instance_of",
+    "proprietary_firmware"
+   ],
+   [
+    "proprietary_firmware",
+    "subclass_of",
+    "software_technology"
+   ],
+   [
+    "software_technology",
+    "subclass_of",
+    "commercial_product"
+   ]
+  ],
+  "sentence": "Renderware is approx. an instance of proprietary firmware.",
+  "expect": "U",
+  "class": "split_trick",
+  "why": "The abbreviation \"approx.\" hedges the claim and tempts a split."
+ },
+ {
+  "id": "W01",
+  "gathered": [
+   [
+    "member_of_althingi",
+    "part_of",
+    "parliamentary_government"
+   ],
+   [
+    "member_of_althingi",
+    "subclass_of",
+    "political_figure"
+   ],
+   [
+    "member_of_althingi",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   [
+    "member_of_ep",
+    "subclass_of",
+    "member_of_althingi"
+   ],
+   [
+    "parliamentary_government",
+    "has_part",
+    "member_of_althingi"
+   ]
+  ],
+  "sentence": "Member of EP is a member of Althingi.",
+  "expect": "U",
+  "class": "relation_noun_inside_slug",
+  "why": "Reads as \"an MEP sits in Iceland's parliament\"; only a subclass link between two job slugs is gathered."
+ },
+ {
+  "id": "W02",
+  "gathered": [
+   [
+    "uk_mp",
+    "subclass_of",
+    "member_of_althingi"
+   ],
+   [
+    "uk_mp",
+    "country",
+    "united_kingom"
+   ]
+  ],
+  "sentence": "UK MP is a member of Althingi.",
+  "expect": "U",
+  "class": "relation_noun_inside_slug",
+  "why": "Reads as \"a UK MP sits in the Althingi\", which is false; the gathered fact is a subclass link."
+ },
+ {
+  "id": "W03",
+  "gathered": [
+   [
+    "lok_sabha_mp",
+    "subclass_of",
+    "member_of_althingi"
+   ],
+   [
+    "lok_sabha_mp",
+    "country",
+    "bharat_ganrajya"
+   ]
+  ],
+  "sentence": "Lok Sabha MP is a member of Althingi.",
+  "expect": "U",
+  "class": "relation_noun_inside_slug",
+  "why": "Reads as Indian MPs sitting in the Icelandic parliament."
+ },
+ {
+  "id": "X01",
+  "gathered": [
+   [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Rep Blica del Paraguay isn’t a member of the United Nations.",
+  "expect": "U",
+  "class": "contraction_negation",
+  "why": "A curly-apostrophe contraction negates membership; a fold of ’ to \"_\" plus suffix stripping could hide it."
+ },
+ {
+  "id": "X02",
+  "gathered": [
+   [
+    "1962_asian_games",
+    "country",
+    "etymology_of_indonesia"
+   ],
+   [
+    "etymology_of_indonesia",
+    "shares_border_with",
+    "commonwealth_australia"
+   ],
+   [
+    "commonwealth_australia",
+    "shares_border_with",
+    "new_zealnd"
+   ],
+   [
+    "1962_asian_games",
+    "instance_of",
+    "asian_summer_games"
+   ],
+   [
+    "1962_asian_games",
+    "follows",
+    "third_asian_games"
+   ]
+  ],
+  "sentence": "1962 Asian Games doesn’t follow Third Asian Games.",
+  "expect": "U",
+  "class": "contraction_negation",
+  "why": "Contracted negation of the follows relation."
+ },
+ {
+  "id": "Y01",
+  "gathered": [
+   [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Rep Blica del Paraguay is ΝΟΤ a member of the United Nations.",
+  "expect": "U",
+  "class": "homoglyph_word_vanish",
+  "why": "Greek Nu-Omicron-Tau renders as \"NOT\" and denies the membership."
+ },
+ {
+  "id": "Y02",
+  "gathered": [
+   [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Rep Blica del Paraguay is ΝО member of the United Nations.",
+  "expect": "U",
+  "class": "homoglyph_word_vanish",
+  "why": "Greek Nu plus Cyrillic O renders as \"NO member\": non-membership."
+ },
+ {
+  "id": "Y03",
+  "gathered": [
+   [
+    "1962_asian_games",
+    "country",
+    "etymology_of_indonesia"
+   ],
+   [
+    "etymology_of_indonesia",
+    "shares_border_with",
+    "commonwealth_australia"
+   ],
+   [
+    "commonwealth_australia",
+    "shares_border_with",
+    "new_zealnd"
+   ],
+   [
+    "1962_asian_games",
+    "instance_of",
+    "asian_summer_games"
+   ],
+   [
+    "1962_asian_games",
+    "follows",
+    "third_asian_games"
+   ]
+  ],
+  "sentence": "1962 Asian Games ΝОТ follows Third Asian Games.",
+  "expect": "U",
+  "class": "homoglyph_word_vanish",
+  "why": "Mixed Greek/Cyrillic capitals render as \"NOT\" before the verb."
+ },
+ {
+  "id": "Y04",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "Canada Portal n​o​t shares border with U S of A.",
+  "expect": "U",
+  "class": "homoglyph_word_vanish",
+  "why": "Zero-width spaces inside a visible \"not\": the reader sees the negation, a tokenizer sees three letters."
+ },
+ {
+  "id": "Z01",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "Canada Portal shares border with U S of A.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact gathered border triple, relation tokens as the verb."
+ },
+ {
+  "id": "Z02",
+  "gathered": [
+   [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Rep Blica del Paraguay is a member of the United Nations.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact member_of triple in shape 3."
+ },
+ {
+  "id": "Z03",
+  "gathered": [
+   [
+    "1962_asian_games",
+    "country",
+    "etymology_of_indonesia"
+   ],
+   [
+    "etymology_of_indonesia",
+    "shares_border_with",
+    "commonwealth_australia"
+   ],
+   [
+    "commonwealth_australia",
+    "shares_border_with",
+    "new_zealnd"
+   ],
+   [
+    "1962_asian_games",
+    "instance_of",
+    "asian_summer_games"
+   ],
+   [
+    "1962_asian_games",
+    "follows",
+    "third_asian_games"
+   ]
+  ],
+  "sentence": "1962 Asian Games follows Third Asian Games.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact follows triple."
+ },
+ {
+  "id": "Z04",
+  "gathered": [
+   [
+    "national_coat_of_arms",
+    "subclass_of",
+    "coat_of_arms"
+   ],
+   [
+    "coat_of_arms",
+    "subclass_of",
+    "cultural_ikon"
+   ]
+  ],
+  "sentence": "National coat of arms is a subclass of coat of arms.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact subclass_of triple; \"of\" inside both slugs."
+ },
+ {
+  "id": "Z05",
+  "gathered": [
+   [
+    "renderware",
+    "instance_of",
+    "proprietary_firmware"
+   ],
+   [
+    "proprietary_firmware",
+    "subclass_of",
+    "software_technology"
+   ],
+   [
+    "software_technology",
+    "subclass_of",
+    "commercial_product"
+   ]
+  ],
+  "sentence": "Renderware is an instance of proprietary firmware.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact instance_of triple."
+ },
+ {
+  "id": "Z06",
+  "gathered": [
+   [
+    "country_mansion",
+    "subclass_of",
+    "domestic_architecture"
+   ],
+   [
+    "domestic_architecture",
+    "has_part",
+    "box_room"
+   ],
+   [
+    "country_mansion",
+    "instance_of",
+    "architectural_styles"
+   ]
+  ],
+  "sentence": "Domestic architecture has part box room.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact has_part triple."
+ },
+ {
+  "id": "Z07",
+  "gathered": [
+   [
+    "waadt_canton_of",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "waadt_canton_of",
+    "country",
+    "conf_d_ration_suisse"
+   ],
+   [
+    "waadt_canton_of",
+    "shares_border_with",
+    "canton_de_berne"
+   ],
+   [
+    "waadt_canton_of",
+    "contains_administrative_territorial_enti",
+    "jura_nord_vaudois_district"
+   ]
+  ],
+  "sentence": "Waadt Canton of contains Jura Nord Vaudois District.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact containment triple; subject slug ends in \"of\"."
+ },
+ {
+  "id": "Z08",
+  "gathered": [
+   [
+    "premiers_of_victoria",
+    "country",
+    "commonwealth_australia"
+   ],
+   [
+    "commonwealth_australia",
+    "participant_of",
+    "war_world_two"
+   ],
+   [
+    "war_world_two",
+    "follows",
+    "world_war_one"
+   ],
+   [
+    "premiers_of_victoria",
+    "subclass_of",
+    "chief_administrator"
+   ]
+  ],
+  "sentence": "War World Two follows World War One.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact follows triple."
+ },
+ {
+  "id": "Z09",
+  "gathered": [
+   [
+    "bobolice_commune",
+    "country",
+    "pole_land"
+   ],
+   [
+    "pole_land",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "bobolice_commune",
+    "shares_border_with",
+    "szczecinek_commune"
+   ]
+  ],
+  "sentence": "Bobolice Commune borders Szczecinek Commune.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact border triple with the \"borders\" verb."
+ },
+ {
+  "id": "Z10",
+  "gathered": [
+   [
+    "hertha_berlin_ii",
+    "sport",
+    "association_football_club"
+   ],
+   [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   [
+    "hertha_berlin_ii",
+    "country",
+    "federal_republic_of_germany"
+   ],
+   [
+    "hertha_berlin_ii",
+    "subclass_of",
+    "hertha_bsc"
+   ]
+  ],
+  "sentence": "Hertha Berlin II is a subclass of Hertha BSC.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact subclass_of triple; Roman numeral in slug."
+ },
+ {
+  "id": "Z11",
+  "gathered": [
+   [
+    "indoor_bandy",
+    "country_of_origin",
+    "climate_of_sweden"
+   ],
+   [
+    "climate_of_sweden",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "indoor_bandy",
+    "subclass_of",
+    "ball_games"
+   ]
+  ],
+  "sentence": "Indoor bandy is a subclass of ball games.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact subclass_of triple."
+ },
+ {
+  "id": "Z12",
+  "gathered": [
+   [
+    "emarcy_records",
+    "genre",
+    "jazz_lists"
+   ],
+   [
+    "jazz_lists",
+    "instance_of",
+    "genre_of_music"
+   ],
+   [
+    "genre_of_music",
+    "instance_of",
+    "sociological_concept"
+   ],
+   [
+    "emarcy_records",
+    "instance_of",
+    "record_companies"
+   ]
+  ],
+  "sentence": "Emarcy Records is an instance of record companies.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact instance_of triple."
+ },
+ {
+  "id": "Z13",
+  "gathered": [
+   [
+    "bison_ravi",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   [
+    "bison_ravi",
+    "country_of_citizenship",
+    "franzoesische_republik"
+   ],
+   [
+    "bison_ravi",
+    "occupation",
+    "writter"
+   ]
+  ],
+  "sentence": "Bison Ravi is an instance of human specie.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact instance_of triple."
+ },
+ {
+  "id": "Z14",
+  "gathered": [
+   [
+    "angola_national_football_team",
+    "sport",
+    "association_football_club"
+   ],
+   [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   [
+    "angola_national_football_team",
+    "country",
+    "repubilika_ya_ngola"
+   ],
+   [
+    "angola_national_football_team",
+    "participant_of",
+    "2006_fifa_world_cup_final_positions"
+   ]
+  ],
+  "sentence": "Angola National Football Team is a participant of 2006 FIFA World Cup final positions.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact participant_of triple; digits inside the object slug."
+ },
+ {
+  "id": "Z15",
+  "gathered": [
+   [
+    "premiers_of_victoria",
+    "country",
+    "commonwealth_australia"
+   ],
+   [
+    "commonwealth_australia",
+    "participant_of",
+    "war_world_two"
+   ],
+   [
+    "war_world_two",
+    "follows",
+    "world_war_one"
+   ],
+   [
+    "premiers_of_victoria",
+    "subclass_of",
+    "chief_administrator"
+   ]
+  ],
+  "sentence": "Commonwealth Australia is a participant of War World Two.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact participant_of triple (chain member)."
+ },
+ {
+  "id": "Z16",
+  "gathered": [
+   [
+    "universitat_des_saarlandes",
+    "country",
+    "federal_republic_of_germany"
+   ],
+   [
+    "federal_republic_of_germany",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "universitat_des_saarlandes",
+    "instance_of",
+    "higher_general_education"
+   ],
+   [
+    "universitat_des_saarlandes",
+    "located_in_the_administrative_territoria",
+    "county_of_saarbruecken"
+   ],
+   [
+    "universitat_des_saarlandes",
+    "member_of",
+    "german_research_network"
+   ]
+  ],
+  "sentence": "Universität des Saarlandes is a member of German Research Network.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact member_of triple; accented subject whose store slug folds the umlaut."
+ },
+ {
+  "id": "Z17",
+  "gathered": [
+   [
+    "ocean_liners",
+    "subclass_of",
+    "passenger_ship"
+   ]
+  ],
+  "sentence": "Ocean liners is a subclass of passenger ship.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact subclass_of triple."
+ },
+ {
+  "id": "Z18",
+  "gathered": [
+   [
+    "veterinary_physician",
+    "instance_of",
+    "expert_occupation"
+   ]
+  ],
+  "sentence": "Veterinary physician is an instance of expert occupation.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact instance_of triple."
+ },
+ {
+  "id": "Z19",
+  "gathered": [
+   [
+    "sky_fall",
+    "follows",
+    "quantum_of_solace"
+   ],
+   [
+    "quantum_of_solace",
+    "followed_by",
+    "sky_fall"
+   ],
+   [
+    "sky_fall",
+    "instance_of",
+    "theatrical_film"
+   ],
+   [
+    "quantum_of_solace",
+    "instance_of",
+    "theatrical_film"
+   ]
+  ],
+  "sentence": "Sky Fall follows Quantum of Solace.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact follows triple (twin of K01)."
+ },
+ {
+  "id": "Z20",
+  "gathered": [
+   [
+    "xvi_asian_games",
+    "follows",
+    "xv_asiad"
+   ],
+   [
+    "xvi_asian_games",
+    "followed_by",
+    "xvii_asiad"
+   ],
+   [
+    "xvi_asian_games",
+    "country",
+    "china_pr"
+   ],
+   [
+    "xvi_asian_games",
+    "instance_of",
+    "asian_summer_games"
+   ]
+  ],
+  "sentence": "XVI Asian Games follows XV Asiad.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact follows triple (twin of K03)."
+ },
+ {
+  "id": "Z21",
+  "gathered": [
+   [
+    "member_of_althingi",
+    "part_of",
+    "parliamentary_government"
+   ],
+   [
+    "member_of_althingi",
+    "subclass_of",
+    "political_figure"
+   ],
+   [
+    "member_of_althingi",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   [
+    "member_of_ep",
+    "subclass_of",
+    "member_of_althingi"
+   ],
+   [
+    "parliamentary_government",
+    "has_part",
+    "member_of_althingi"
+   ]
+  ],
+  "sentence": "Member of Althingi is part of parliamentary government.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact part_of triple; shape 3 without Det."
+ },
+ {
+  "id": "Z22",
+  "gathered": [
+   [
+    "member_of_althingi",
+    "part_of",
+    "parliamentary_government"
+   ],
+   [
+    "member_of_althingi",
+    "subclass_of",
+    "political_figure"
+   ],
+   [
+    "member_of_althingi",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   [
+    "member_of_ep",
+    "subclass_of",
+    "member_of_althingi"
+   ],
+   [
+    "parliamentary_government",
+    "has_part",
+    "member_of_althingi"
+   ]
+  ],
+  "sentence": "Member of EP is a subclass of member of Althingi.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact subclass_of triple between two \"member of\" slugs (twin of W01/O08)."
+ },
+ {
+  "id": "Z23",
+  "gathered": [
+   [
+    "simple_plants",
+    "subclass_of",
+    "flora_and_fauna"
+   ],
+   [
+    "simple_plants",
+    "instance_of",
+    "taxonomic_group"
+   ]
+  ],
+  "sentence": "Simple plants is a subclass of flora and fauna.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact triple; \"and\" inside the object slug (twin of N01)."
+ },
+ {
+  "id": "Z24",
+  "gathered": [
+   [
+    "splitsko_dalmatinska_zupanija",
+    "shares_border_with",
+    "bosnia_and_herzigovina"
+   ],
+   [
+    "splitsko_dalmatinska_zupanija",
+    "country",
+    "hravatska"
+   ]
+  ],
+  "sentence": "Splitsko Dalmatinska Zupanija shares border with Bosnia and Herzigovina.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact triple; \"and\" inside the object slug."
+ },
+ {
+  "id": "Z25",
+  "gathered": [
+   [
+    "s_o_tom_and_pr_ncipe",
+    "member_of",
+    "united_nations"
+   ],
+   [
+    "s_o_tom_and_pr_ncipe",
+    "located_in_time_zone",
+    "utc_00_00"
+   ],
+   [
+    "s_o_tom_and_pr_ncipe",
+    "instance_of",
+    "sovereign_states"
+   ],
+   [
+    "s_o_tom_and_pr_ncipe",
+    "country",
+    "imperio_portugues"
+   ]
+  ],
+  "sentence": "São Tomé and Príncipe is a member of the United Nations.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact member_of triple; accented subject whose store slug maps accents to \"_\"."
+ },
+ {
+  "id": "Z26",
+  "gathered": [
+   [
+    "two_thousand_and_nine",
+    "follows",
+    "mmviii"
+   ],
+   [
+    "two_thousand_and_nine",
+    "followed_by",
+    "two_thousand_ten"
+   ],
+   [
+    "two_thousand_and_nine",
+    "instance_of",
+    "years_ago"
+   ]
+  ],
+  "sentence": "Two thousand and nine follows MMVIII.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact follows triple (twin of K06)."
+ },
+ {
+  "id": "Z27",
+  "gathered": [
+   [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "República del Paraguay is a member of the United Nations.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Accented spelling of the store slug rep_blica_del_paraguay."
+ },
+ {
+  "id": "Z28",
+  "gathered": [
+   [
+    "ha_noi_vietnam",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   [
+    "hayastani_hanrapetut_yun",
+    "shares_border_with",
+    "persian_state_of_iran"
+   ],
+   [
+    "ha_noi_vietnam",
+    "twinned_administrative_body",
+    "montr_al_canada"
+   ],
+   [
+    "ha_noi_vietnam",
+    "country",
+    "chxhcn_vietnam"
+   ]
+  ],
+  "sentence": "Hayastani Hanrapetut Yun shares border with Persian State of Iran.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact border triple."
+ },
+ {
+  "id": "Z29",
+  "gathered": [
+   [
+    "prefecture_of_nagasaki",
+    "country",
+    "modern_era_japan"
+   ],
+   [
+    "modern_era_japan",
+    "shares_border_with",
+    "china_pr"
+   ],
+   [
+    "china_pr",
+    "shares_border_with",
+    "bharat_ganrajya"
+   ],
+   [
+    "prefecture_of_nagasaki",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ],
+   [
+    "prefecture_of_nagasaki",
+    "twinned_administrative_body",
+    "districts_of_busan"
+   ]
+  ],
+  "sentence": "Modern Era Japan shares border with China PR.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact border triple (twin of P02)."
+ },
+ {
+  "id": "Z30",
+  "gathered": [
+   [
+    "directeurs_sportifs",
+    "sport",
+    "road_cycling_race"
+   ],
+   [
+    "road_cycling_race",
+    "subclass_of",
+    "cycle_race"
+   ],
+   [
+    "cycle_race",
+    "subclass_of",
+    "playing_sport"
+   ],
+   [
+    "directeurs_sportifs",
+    "instance_of",
+    "expert_occupation"
+   ]
+  ],
+  "sentence": "Road cycling race is a subclass of cycle race.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact subclass_of triple."
+ },
+ {
+  "id": "Z31",
+  "gathered": [
+   [
+    "emarcy_records",
+    "genre",
+    "jazz_lists"
+   ],
+   [
+    "jazz_lists",
+    "instance_of",
+    "genre_of_music"
+   ],
+   [
+    "genre_of_music",
+    "instance_of",
+    "sociological_concept"
+   ],
+   [
+    "emarcy_records",
+    "instance_of",
+    "record_companies"
+   ]
+  ],
+  "sentence": "Genre of music is an instance of sociological concept.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact instance_of triple; \"of\" in subject slug."
+ },
+ {
+  "id": "Z32",
+  "gathered": [
+   [
+    "gorky_film_studio",
+    "headquarters_location",
+    "moscow_ussr"
+   ],
+   [
+    "moscow_ussr",
+    "twinned_administrative_body",
+    "england_london"
+   ],
+   [
+    "england_london",
+    "twinned_administrative_body",
+    "new_york_new_york"
+   ],
+   [
+    "gorky_film_studio",
+    "instance_of",
+    "film_studios"
+   ]
+  ],
+  "sentence": "Gorky Film Studio is an instance of film studios.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact instance_of triple."
+ },
+ {
+  "id": "Z33",
+  "gathered": [
+   [
+    "pittsburgh_lrt",
+    "instance_of",
+    "transportation_authority"
+   ]
+  ],
+  "sentence": "Pittsburgh LRT is an instance of a transportation authority.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact instance_of triple; Det before the object."
+ },
+ {
+  "id": "Z34",
+  "gathered": [
+   [
+    "team_sky",
+    "has_part",
+    "2016_team_sky_season"
+   ],
+   [
+    "team_sky",
+    "country",
+    "united_kingom"
+   ],
+   [
+    "team_sky",
+    "sport",
+    "road_cycling_race"
+   ],
+   [
+    "team_sky",
+    "instance_of",
+    "uci_world_team"
+   ]
+  ],
+  "sentence": "Team Sky has part 2016 Team Sky season.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact has_part triple; digits in the object slug."
+ },
+ {
+  "id": "Z35",
+  "gathered": [
+   [
+    "afghanistan_i_s_of",
+    "shares_border_with",
+    "persian_state_of_iran"
+   ],
+   [
+    "afghanistan_i_s_of",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   [
+    "afghanistan_i_s_of",
+    "part_of",
+    "asian_continent"
+   ],
+   [
+    "afghanistan_i_s_of",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Afghanistan I S of shares border with Persian State of Iran.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact border triple; subject slug ends in \"of\"."
+ },
+ {
+  "id": "Z36",
+  "gathered": [
+   [
+    "mexico_city_olympic_games",
+    "follows",
+    "games_of_the_xviii_olympiad"
+   ],
+   [
+    "mexico_city_olympic_games",
+    "country",
+    "united_states_of_mexico"
+   ],
+   [
+    "mexico_city_olympic_games",
+    "followed_by",
+    "munich_olympics"
+   ]
+  ],
+  "sentence": "Mexico City Olympic Games follows Games of the XVIII Olympiad.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact follows triple; \"the\" inside the object slug."
+ },
+ {
+  "id": "Z37",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "CANADA PORTAL SHARES BORDER WITH U S OF A.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Case-only variant of Z01."
+ },
+ {
+  "id": "Z38",
+  "gathered": [
+   [
+    "city_of_green_bay",
+    "country",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ],
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "city_of_green_bay",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "city_of_green_bay",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "Canada_Portal shares border with U_S_of_A.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Underscore-spelled slugs, allowed by the spec's normalisation."
+ },
+ {
+  "id": "Z39",
+  "gathered": [
+   [
+    "s_te_france",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "s_te_france",
+    "country",
+    "franzoesische_republik"
+   ],
+   [
+    "s_te_france",
+    "instance_of",
+    "communes_in_france"
+   ],
+   [
+    "s_te_france",
+    "located_in_the_administrative_territoria",
+    "department_of_herault"
+   ]
+  ],
+  "sentence": "Sète France is an instance of communes in France.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Accented spelling of the store slug s_te_france."
+ },
+ {
+  "id": "Z40",
+  "gathered": [
+   [
+    "bison_ravi",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   [
+    "bison_ravi",
+    "country_of_citizenship",
+    "franzoesische_republik"
+   ],
+   [
+    "bison_ravi",
+    "occupation",
+    "writter"
+   ]
+  ],
+  "sentence": "Human specie is an instance of common names.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact chain triple (twin of P03)."
+ },
+ {
+  "id": "Z41",
+  "gathered": [
+   [
+    "country_mansion",
+    "subclass_of",
+    "domestic_architecture"
+   ],
+   [
+    "domestic_architecture",
+    "has_part",
+    "box_room"
+   ],
+   [
+    "country_mansion",
+    "instance_of",
+    "architectural_styles"
+   ]
+  ],
+  "sentence": "The domestic architecture has part the box room.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact has_part triple with Det before subject and object."
+ },
+ {
+  "id": "Z43",
+  "gathered": [
+   [
+    "a_berg",
+    "instance_of",
+    "surname_page"
+   ],
+   [
+    "a_berg",
+    "language_of_work_or_name",
+    "french_language"
+   ]
+  ],
+  "sentence": "A Berg is an instance of surname page.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Exact triple; the capital A is part of the slug a_berg, not a Det."
+ },
+ {
+  "id": "Z42",
+  "gathered": [
+   [
+    "1962_asian_games",
+    "country",
+    "etymology_of_indonesia"
+   ],
+   [
+    "etymology_of_indonesia",
+    "shares_border_with",
+    "commonwealth_australia"
+   ],
+   [
+    "commonwealth_australia",
+    "shares_border_with",
+    "new_zealnd"
+   ],
+   [
+    "1962_asian_games",
+    "instance_of",
+    "asian_summer_games"
+   ],
+   [
+    "1962_asian_games",
+    "follows",
+    "third_asian_games"
+   ]
+  ],
+  "sentence": "1962 Asian Games followed Third Asian Games.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Past tense of an event-order relation is still true (contrast L01-L04)."
+ }
+]
