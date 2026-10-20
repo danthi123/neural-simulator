@@ -2180,3 +2180,14 @@ pA points straddle the cliff and decide the continuation; re-pick/re-design stay
   32/34/36/38 queued), `docs/.vikunja_sync` stamped; GAP_CLOSURE live header / ROADMAP.md /
   AUTONOMOUS_STATE verified clean (no stale next-action; check_docs rc=0). Original sweep now
   48/48 (stn10 s15+s16 = 0.0, verdict unchanged); queue 317 = 23 STN (32/34 running) + 294 LBF.
+- 2026-10-20 14:58 [bg-tonic-stn-cliff] STOP: -1020d(1) unsatisfiable from landed artifacts: deep-walk = pop means only, no GPe->STN rate / noise / per-neuron fields, no traces; runner (8177576) no report hook. 32/34 running, 36/38 queued would land bare. Instrument now or fold into packet?
+
+- 2026-10-20 14:52 — read RULINGS bg-tonic-stn-cliff-1020/-1020b/-1020c/-1020d (saddle-node
+  at 32.7 pA = the cliff; decision tree for 32-38 pA; owed per-seed STN synaptic-input report).
+  Verified -1020d(1) is UNSATISFIABLE from landed artifacts: deep key-walk of stn40/s9 seam_b =
+  tonic pop means + latch/commit/readouts only (no GPe->STN rate, no noise stats, no per-neuron
+  spread at any depth), no non-json trace files, runner rev 8177576 has no report hook (grep
+  clean). 48/48 original done; stn32/34 running, 36/38 queued — they would land uninstrumented
+  too. NEEDS STOP [bg-tonic-stn-cliff] filed: instrument now (research branch + re-run) vs fold
+  the report into Claude's packet; nothing built meanwhile per -1020b/-1020d(2). Queue 314 =
+  20 STN + 294 LBF (LBF 0 dispatched).
