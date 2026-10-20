@@ -1,0 +1,715 @@
+{
+ "instrument": "host_share_bg_seam",
+ "seed": 14,
+ "arm": "seam_readout",
+ "mode": "readout",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "BRAIN_CHAT_RENDERER": "stub",
+  "SIM_DISABLE_LLM": "1",
+  "CUDA_VISIBLE_DEVICES": "",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "NUMEXPR_NUM_THREADS": "1",
+  "BRAIN_LTM_SHIP_DEFAULT": "1",
+  "BRAIN_BG_NEURAL_SEAM": "1",
+  "BRAIN_GNW_UNIQUE_IGNITION_READ": "1",
+  "BRAIN_CHAT_SEED": "14",
+  "BRAIN_BG_NEURAL_SEAM_LESION": "",
+  "BRAIN_BG_COMMIT": "1",
+  "BRAIN_BG_COMMIT_OP": "",
+  "BRAIN_BG_COMMIT_LESION": ""
+ },
+ "amendment": "2026-10-14-bg-live-seam-commit",
+ "pythonhashseed_ok": true,
+ "responses": {
+  "hsb_empty1": {
+   "answer": "(Holding \u2014 nothing salient to add to that.)",
+   "abstained": true,
+   "recalled_svo": null,
+   "verified": false,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": false,
+   "activity": null,
+   "affect": null,
+   "bg_select": {
+    "on": true,
+    "action": "STAY_SILENT",
+    "winner": 1,
+    "speak_salience": null,
+    "silent_salience": null,
+    "decision_step": null,
+    "lesioned": false
+   }
+  },
+  "hsb_q": {
+   "answer": "the dog chases the cat the cat eats the fish",
+   "abstained": false,
+   "recalled_svo": [
+    "dog",
+    "chase",
+    "cat"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "derived_svo": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 2,
+   "supporting_facts": [
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    [
+     "cat",
+     "eat",
+     "fish"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "cat",
+      "confidence": 1.0,
+      "margin": 0.5186871091935636,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "cat"
+     },
+     {
+      "role": "action",
+      "word": "eat",
+      "confidence": 1.0,
+      "margin": 0.6899651705596523,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "eat"
+     },
+     {
+      "role": "patient",
+      "word": "fish",
+      "confidence": 1.0,
+      "margin": 0.7182593016204336,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": "chase",
+      "confidence": 1.0,
+      "margin": 0.09509758074660808,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9144001359764227,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 4,
+    "n_facts_scanned": 5,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 41161.152769540735
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": null,
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0947545098230192,
+    "threshold": 0.06083344360237039,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.08082610465358973,
+     "min_hi": 0.06789094658315062,
+     "mean_lo": 0.03773303148952463,
+     "max_lo": 0.05377594062159016,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.5872818596193361
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 2,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 2,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 1,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.0002500000000000002,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 14,
+    "vplus_rate": 0.041291666666666664,
+    "vminus_rate": 0.041541666666666664,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 2,
+    "topic": "dog",
+    "swapped": false,
+    "held_topic_before": null,
+    "held_topic": "dog",
+    "evicted_topic": null,
+    "reason": "first_thought",
+    "seed": 14,
+    "lesioned": false,
+    "proposed_slot": 0,
+    "held_slot": 0,
+    "winner_slot": 0,
+    "n_ignited_post": 1,
+    "held_rate_post": 0.3333333333333333,
+    "mm_peak": 0.022222222222222223,
+    "boost_max": 0.011111111111111112,
+    "on": true,
+    "lead": "",
+    "new_topic": null,
+    "reason_lead": "first_thought"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "dog",
+    "slot": 0,
+    "decision": "introduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.0,
+    "introduce_rate": 0.05,
+    "evidence_rate": 0.0,
+    "margin": -0.05,
+    "lesioned": false,
+    "lead": "",
+    "reason_lead": "introduce"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 1,
+    "lesioned": false,
+    "turn_engagement": 0.46296296296296297,
+    "ema_engagement": 0.2777777777777778,
+    "afferent_pA": 388.8888888888889,
+    "da_level": 0.4975965526505583,
+    "snc_firing": 0.07333333333333329,
+    "mode": "neutral",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 14,
+    "shared_salience": {
+     "raw": 0.6793103448275861,
+     "want_hz": 19.44444444444444,
+     "normalized": 0.46296296296296297,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 39.58333333333333,
+      "want_familiar_hz": 2.083333333333333,
+      "threshold_hz": 20.833333333333332,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.9655172413793103,
+     "n_tokens": 2,
+     "per_word_freshness": [
+      0.9310344827586207,
+      1.0
+     ],
+     "fresh_ref": 29.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.690675875678342,
+    "da_level": 0.4975965526505583,
+    "lesioned": false
+   },
+   "d6_hebbian": {
+    "on": true,
+    "wrote_this_turn": true,
+    "encode": {
+     "frozen": false,
+     "steps": 208,
+     "block": 4,
+     "phase_lock_steps": 184,
+     "n_saturated": 128,
+     "mean_abs_w": 1.0,
+     "min_abs_w": 0.9999999999999997
+    },
+    "held": {
+     "block": 4,
+     "readout": 207.99880626216714,
+     "floor": 0.001,
+     "held": true
+    }
+   }
+  },
+  "hsb_empty2": {
+   "answer": "(Holding \u2014 nothing salient to add to that.)",
+   "abstained": true,
+   "recalled_svo": null,
+   "verified": false,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": false,
+   "activity": null,
+   "affect": null,
+   "bg_select": {
+    "on": true,
+    "action": "STAY_SILENT",
+    "winner": 1,
+    "speak_salience": null,
+    "silent_salience": null,
+    "decision_step": null,
+    "lesioned": false
+   }
+  },
+  "hsb_hi": {
+   "answer": "(Holding \u2014 nothing salient to add to that.)",
+   "abstained": true,
+   "recalled_svo": null,
+   "verified": false,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": false,
+   "activity": null,
+   "affect": null,
+   "bg_select": {
+    "on": true,
+    "action": "STAY_SILENT",
+    "winner": 1,
+    "speak_salience": null,
+    "silent_salience": null,
+    "decision_step": null,
+    "lesioned": false
+   }
+  }
+ },
+ "events": {
+  "hsb_empty1": [
+   {
+    "kind": "bg_neural",
+    "winner": 1,
+    "latch_rates": [
+     0.0,
+     0.091
+    ],
+    "readouts": {
+     "latch_rate_x0.5": 1,
+     "latch_rate_x2": 1,
+     "first_to_12_motor (production rule)": 1,
+     "first_to_6_motor": 1,
+     "first_to_24_motor": 1,
+     "motor_majority_drive_window": 1
+    },
+    "v_range": [
+     -93.22097778320312,
+     39.74623107910156
+    ],
+    "commit": {
+     "winner": 1,
+     "on": [
+      1
+     ],
+     "co_commit": false,
+     "threshold": 18.0,
+     "read_variants": {
+      "x0.5": 1,
+      "x2": 1
+     },
+     "read_invariant": true,
+     "slot_counts": [
+      0,
+      86
+     ],
+     "gate_counts_drive": [
+      0,
+      207
+     ],
+     "gate_counts_hold": [
+      0,
+      80
+     ],
+     "motor_counts_hold": [
+      0,
+      181
+     ],
+     "slot_carry": [
+      0,
+      0
+     ],
+     "latch_onset_ms": [
+      null,
+      177
+     ],
+     "old_latch_winner": 1,
+     "old_latch_rates": [
+      0.0,
+      0.091
+     ],
+     "old_latch_variants": {
+      "x0.5": 1,
+      "x2": 1
+     },
+     "op": 4,
+     "lesion": null,
+     "organ_seed": 14
+    },
+    "tonic_rates_hz": {
+     "gpe_0": 27.92,
+     "gpe_1": 26.25,
+     "selector_stn": 41.5,
+     "window": "drive",
+     "drive_steps": 300
+    }
+   },
+   {
+    "kind": "bg_readout",
+    "applied": true,
+    "latch_winner": 1,
+    "alt_winner": 1
+   }
+  ],
+  "hsb_q": [
+   {
+    "kind": "bg_neural",
+    "winner": 0,
+    "latch_rates": [
+     0.09,
+     0.0
+    ],
+    "readouts": {
+     "latch_rate_x0.5": 0,
+     "latch_rate_x2": 0,
+     "first_to_12_motor (production rule)": 0,
+     "first_to_6_motor": 0,
+     "first_to_24_motor": 0,
+     "motor_majority_drive_window": 0
+    },
+    "v_range": [
+     -117.24210357666016,
+     39.9865837097168
+    ],
+    "commit": {
+     "winner": 0,
+     "on": [
+      0
+     ],
+     "co_commit": false,
+     "threshold": 18.0,
+     "read_variants": {
+      "x0.5": 0,
+      "x2": 0
+     },
+     "read_invariant": true,
+     "slot_counts": [
+      87,
+      0
+     ],
+     "gate_counts_drive": [
+      304,
+      0
+     ],
+     "gate_counts_hold": [
+      140,
+      0
+     ],
+     "motor_counts_hold": [
+      364,
+      0
+     ],
+     "slot_carry": [
+      0,
+      0
+     ],
+     "latch_onset_ms": [
+      141,
+      null
+     ],
+     "old_latch_winner": 0,
+     "old_latch_rates": [
+      0.09,
+      0.0
+     ],
+     "old_latch_variants": {
+      "x0.5": 0,
+      "x2": 0
+     },
+     "op": 4,
+     "lesion": null,
+     "organ_seed": 14
+    },
+    "tonic_rates_hz": {
+     "gpe_0": 31.88,
+     "gpe_1": 28.54,
+     "selector_stn": 42.33,
+     "window": "drive",
+     "drive_steps": 300
+    }
+   },
+   {
+    "kind": "bg_readout",
+    "applied": true,
+    "latch_winner": 0,
+    "alt_winner": 0
+   },
+   {
+    "kind": "bus",
+    "committed": "cat",
+    "n_ignited": 1,
+    "rates": [
+     0.33333,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "variants": {
+     "argmax_thr (production)": "cat",
+     "argmax_thr_x0.5": "cat",
+     "argmax_thr_x1.5": "cat",
+     "unique": "cat",
+     "unique_thr_x0.5": "cat",
+     "unique_thr_x1.5": "cat"
+    }
+   }
+  ],
+  "hsb_empty2": [
+   {
+    "kind": "bg_neural",
+    "winner": 1,
+    "latch_rates": [
+     0.0,
+     0.0953
+    ],
+    "readouts": {
+     "latch_rate_x0.5": 1,
+     "latch_rate_x2": 1,
+     "first_to_12_motor (production rule)": 1,
+     "first_to_6_motor": 1,
+     "first_to_24_motor": 1,
+     "motor_majority_drive_window": 1
+    },
+    "v_range": [
+     -93.0499267578125,
+     39.879764556884766
+    ],
+    "commit": {
+     "winner": 1,
+     "on": [
+      1
+     ],
+     "co_commit": false,
+     "threshold": 18.0,
+     "read_variants": {
+      "x0.5": 1,
+      "x2": 1
+     },
+     "read_invariant": true,
+     "slot_counts": [
+      0,
+      87
+     ],
+     "gate_counts_drive": [
+      0,
+      166
+     ],
+     "gate_counts_hold": [
+      0,
+      82
+     ],
+     "motor_counts_hold": [
+      0,
+      159
+     ],
+     "slot_carry": [
+      0,
+      0
+     ],
+     "latch_onset_ms": [
+      null,
+      210
+     ],
+     "old_latch_winner": 1,
+     "old_latch_rates": [
+      0.0,
+      0.0953
+     ],
+     "old_latch_variants": {
+      "x0.5": 1,
+      "x2": 1
+     },
+     "op": 4,
+     "lesion": null,
+     "organ_seed": 14
+    },
+    "tonic_rates_hz": {
+     "gpe_0": 31.25,
+     "gpe_1": 25.62,
+     "selector_stn": 39.0,
+     "window": "drive",
+     "drive_steps": 300
+    }
+   },
+   {
+    "kind": "bg_readout",
+    "applied": true,
+    "latch_winner": 1,
+    "alt_winner": 1
+   }
+  ],
+  "hsb_hi": [
+   {
+    "kind": "bg_neural",
+    "winner": null,
+    "latch_rates": [
+     0.0,
+     0.0
+    ],
+    "readouts": {
+     "latch_rate_x0.5": null,
+     "latch_rate_x2": null,
+     "first_to_12_motor (production rule)": 1,
+     "first_to_6_motor": 1,
+     "first_to_24_motor": 1,
+     "motor_majority_drive_window": 1
+    },
+    "v_range": [
+     -81.38433837890625,
+     39.97037124633789
+    ],
+    "commit": {
+     "winner": null,
+     "on": [],
+     "co_commit": false,
+     "threshold": 18.0,
+     "read_variants": {
+      "x0.5": null,
+      "x2": null
+     },
+     "read_invariant": true,
+     "slot_counts": [
+      0,
+      0
+     ],
+     "gate_counts_drive": [
+      0,
+      101
+     ],
+     "gate_counts_hold": [
+      29,
+      42
+     ],
+     "motor_counts_hold": [
+      79,
+      37
+     ],
+     "slot_carry": [
+      0,
+      0
+     ],
+     "latch_onset_ms": [
+      null,
+      240
+     ],
+     "old_latch_winner": null,
+     "old_latch_rates": [
+      0.0,
+      0.0
+     ],
+     "old_latch_variants": {
+      "x0.5": null,
+      "x2": null
+     },
+     "op": 4,
+     "lesion": null,
+     "organ_seed": 14
+    },
+    "tonic_rates_hz": {
+     "gpe_0": 30.83,
+     "gpe_1": 25.0,
+     "selector_stn": 39.83,
+     "window": "drive",
+     "drive_steps": 300
+    }
+   },
+   {
+    "kind": "bg_readout",
+    "applied": true,
+    "latch_winner": null,
+    "alt_winner": 1
+   }
+  ]
+ },
+ "wall_seconds": 480.5
+}

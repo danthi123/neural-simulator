@@ -53,6 +53,18 @@ For a DETERMINISTIC routing/parsing property, don't rebuild the brain per case a
 method + a mock `self` (pure parsing, seconds, ~0 RAM) and confirm recall separately with the already-6-seed-GO
 primitive. Arm a `free -m` watchdog (fires below ~4GB) when fanning out many concurrent agents.
 
+**Size every pool line's mem_ok/memcap from a MEASURED peak of the WHOLE job, x1.3, never a round number.** It went
+wrong five times between 10-17 and 10-20, in both directions:
+- mem_ok 16/memcap 17 on 16 GB nodes, which could never dispatch;
+- memcap 12 for a 27 MB runner, which left pool41/42 idle for about 30 h, because the dispatcher refuses a node with
+  no per-node limit SILENTLY;
+- memcap 1 from ONE process's peak, when each cell runs 4 processes, which OOM-killed 12 lines;
+- memcap 4 from a 2.9 GB anchor, still under the cell's measured plateau of 6.1 GiB (the right cut was 8);
+- and in a prereg, 34.6 MiB from a smoke shard that ran no lesion pair, when real shards peak at 5.7 GiB (memcap 8).
+Read the peak from a landed line of the same runner doing the SAME work (a smoke that skips the heavy arm undercounts;
+sidecar or log: VmHWM / PEAK_RSS of the whole cell), check it against the target nodes' free memory, and treat `tools/status.sh` "idle node(s) with N queued" as this defect until
+shown otherwise (RULINGS pool-stall-1020/-1020b, stn-relaunch-1020).
+
 ## Lever 3 — main-loop discipline (the priciest stream)
 The main Opus loop is the most expensive token stream in the session. Reason tersely; do not re-derive
 established facts; offload mechanical reads/edits to a haiku agent or the engine. Session **effort** (ultracode /

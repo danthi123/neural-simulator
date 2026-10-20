@@ -19,6 +19,25 @@ source "$ROOT/tools/pool_nodes.sh"
 # worktree reads the same queue on whichever host holds the checkout (was the workstation path until the
 # 2026-09-30 move of the project home to the server, docs/plans/2026-09-30-home-to-server-MIGRATION.md).
 SHARED_ROOT=$ROOT; _GC=$(git -C "$ROOT" rev-parse --path-format=absolute --git-common-dir 2>/dev/null) && SHARED_ROOT=$(dirname "$_GC")
+
+# HISTORICAL-PIN MEASUREMENT (2026-10-20, RULING lbf-gate-pin-1020). The gate-seed guard below wants the prereg to
+# exist IN the job's pinned tree, so the prereg provably came before the code that produces the verdict. A
+# measurement of an OLDER revision (the LBF at a pinned main, registered after that main) can never satisfy that, and
+# needs no such proof: code that predates the prereg cannot have been tuned to its gate result. Accepted only when
+# all hold: the prereg is committed at HEAD, declares `flip: no` (it moves no default), names the FULL pinned sha,
+# and the pin is an ancestor of the commit that first added the prereg. Prints the reason either way.
+historical_pin_prereg_ok() {   # historical_pin_prereg_ok <pinned-rev> <prereg-path>
+  local rev="$1" path="$2" full added body
+  full=$(git -C "$ROOT" rev-parse --verify -q "${rev}^{commit}" 2>/dev/null) || { echo "pinned revision $rev is not a commit here"; return 1; }
+  body=$(git -C "$ROOT" show "HEAD:$path" 2>/dev/null) || { echo "the prereg is not committed at HEAD"; return 1; }
+  printf '%s\n' "$body" | grep -qiE '^flip:[[:space:]]*no([^a-z]|$)' || { echo "the prereg does not declare 'flip: no'"; return 1; }
+  printf '%s\n' "$body" | grep -qF "$full" || { echo "the prereg does not name the full pinned sha $full"; return 1; }
+  added=$(git -C "$ROOT" log --diff-filter=A --format=%H HEAD -- "$path" 2>/dev/null | tail -1)
+  [ -n "$added" ] || { echo "no commit on HEAD's history adds the prereg"; return 1; }
+  git -C "$ROOT" merge-base --is-ancestor "$full" "$added" 2>/dev/null \
+    || { echo "the pinned revision is not an ancestor of ${added:0:9}, the commit that added the prereg"; return 1; }
+  echo "flip: no; names $full; first added at ${added:0:9}, after the pin"
+}
 Q="${POOL_QUEUE_PATH:-$SHARED_ROOT/research/queue/pool.queue}"
 mkdir -p "$(dirname "$Q")"; touch "$Q"
 # AWS-AS-EXTRA-POOL-NODE (2026-09-23) -- same repo-local, gitignored ssh config as pool_autodispatch.sh /
@@ -232,9 +251,14 @@ case "${1:-list}" in
              exit 2
            fi
            if ! git -C "$ROOT" cat-file -e "$GS_PINNED_REV:$PREREG_PATH" 2>/dev/null; then
-             echo "⛔ REFUSED: prereg '$PREREG_PATH' does not exist at pinned revision $GS_PINNED_REV (git cat-file -e failed)." >&2
-             echo "   Commit the prereg at that revision, or point --checked at the correct path/sha." >&2
-             exit 2
+             if HP_WHY=$(historical_pin_prereg_ok "$GS_PINNED_REV" "$PREREG_PATH"); then
+               echo "note: prereg '$PREREG_PATH' postdates pinned revision $GS_PINNED_REV; accepted as a measurement of that older pin ($HP_WHY)" >&2
+             else
+               echo "⛔ REFUSED: prereg '$PREREG_PATH' does not exist at pinned revision $GS_PINNED_REV (git cat-file -e failed)." >&2
+               echo "   Commit the prereg at that revision, or point --checked at the correct path/sha." >&2
+               echo "   A measurement of an OLDER pin is accepted only if the committed prereg says 'flip: no', names the full pinned sha and was added after the pin; here: $HP_WHY." >&2
+               exit 2
+             fi
            fi
            # POOL-CANARY GUARD (2026-09-30, tools/pool_canary.sh). ~470 gate-seed lines for eight runner families
            # were queued on 2026-09-29 after workstation dev-seed checks only; run for real on pool41/pool42, every

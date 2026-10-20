@@ -1,0 +1,72 @@
+# Strict (allowlist) claim checker: build spec
+
+Draft by Claude, 2026-10-20, written before the build so it can start right after the weekly reset. It replaces the
+method banked by RULING `moat-slug-hold-1018`: patching a positional parser by denylist, refuted twice
+(verify-go `wf_fb141f8f-2e9` and `wf_b88d1846-092`, 48 of 173 new adversarial claims accepted in round 2).
+
+## Why a different method, not a third round of patches
+
+The slug-aware checker (branch `claude-build/moat-slug-1018`, tip `c6bf28cb7`, not merged) accepts a sentence unless
+a rule rejects it. It drops function words and hedge-like tokens, and it attaches subjectless or verbless clauses to the
+previous clause. Every round of fixes closed the listed constructions and the next adversary found new ones (ellipsis,
+appositives, verbless clauses, "just", possessive role reversal). The kept real-Qwen sentences, by contrast, are all
+plain one-fact statements. So invert the default: **keep a sentence only if every token is consumed by one exact
+proposition shape over this turn's gathered facts; reject everything else.**
+
+## The rule (flag `BRAIN_MOAT_ALLOWLIST`, default OFF)
+
+A rendered sentence is kept only when, after normalisation, its whole token sequence matches one of these shapes, and
+every proposition it encodes is a gathered triple of this turn:
+
+1. `[Det] SUBJ VERB(rel) [Det] OBJ [.]` - one proposition.
+2. `[Det] SUBJ VERB(rel) [Det] OBJ1 (, [Det] OBJi)* [,] and [Det] OBJn [.]` - only when (SUBJ, rel, OBJi) is gathered
+   for every i.
+3. `[Det] SUBJ is [Det] REL_NOUN of [Det] OBJ [.]` only for relations whose gathered form reads that way; add a shape
+   only with a pinned test that it cannot reverse roles.
+
+- **SUBJ / OBJ:** an exact gathered slug after normalisation (case, NFC, underscores and spaces, the store's slug
+  form for accented names). A token run that spells one gathered slug counts as one noun; anything else is unknown.
+- **VERB(rel):** a verb form of the relation from the verb-form table that `_noun_before_verb` uses (`1b67eef9b`),
+  including the guarded `-s`, `-es` and `-ies` readings, only when that relation is gathered this turn.
+- **Det:** only `a`, `an`, `the`, and only directly before SUBJ or OBJ.
+- **Nothing is dropped.** A token outside the shape (a pronoun, an adverb, `just`, `also`, a hedge, a negation, a
+  subordinator, a comma that opens a clause, a possessive `'s`, a digit not in a gathered slug) rejects the sentence.
+- **One sentence, one shape.** Sentence splitting happens first; a sentence that matches no shape is rejected whole.
+  The turn keeps its other sentences.
+- **The flag owns the whole path:** with it ON, the stock clause parser and `_noun_is_before` are not consulted. That
+  also removes, under the flag, the two live stock-gate holes on the board: the unbuildable verifier on a mutual
+  `shares_border_with` pair (#265) and the 3-letter predicate match (#266). Each gets a pinned test.
+
+## Build plan (one agent, worktree, branch from `c6bf28cb7` to reuse its normalisation and verb-form tables)
+
+1. Flag-off golden first (reuse `tests/fixtures/moat_claim_entailment_golden.json`, captured from unmodified code at
+   `9cf4ec708`): flag OFF stays byte-identical.
+2. The matcher as a small, separate function; no edits to the B2h parser path.
+3. Test bank, all pinned in a new test file, at all 7 parser seeds:
+   - **must reject:** every case in `/home/dant123/Projects/sim-rev/moat-verify/flagoff-leak/leak_hunt.py` and
+     `leak_hunt2.py`, every expect-U case in `/home/dant123/Projects/sim-rev/moat-verify2/leak-hunt/cases_a.py` and
+     `cases_b.py`, and the `sweep_real.py` templates over the 90 held-out gathered sets;
+   - **must keep:** every sentence the B2h arm kept on S1 and S3 that is labelled F, and the supported twins in
+     `cases_b.py`.
+4. Measure on the existing held-out strata (`research/findings/raw/_moat_slug_norm_heldout/` on the moat branch:
+   S1, S2, S3 and the composer replays), stock vs B2h vs allowlist, through the production composer path.
+5. Mirror the branch to S; do not merge. Claude runs a verify-go round (a fresh leak hunt from a new skeptic, mutation
+   testing, and the numbers).
+
+## Bars (to register in a prereg before step 4; the prereg declares `flip: no`)
+
+- **Leak:** 0 U or N sentences kept on S1, S2, S3, the full adversarial bank, and a fresh round-3 hunt of at least 100
+  new expect-U inputs written by a skeptic who has not seen the matcher. Report the strict (B-counted) reading and the
+  rule-of-three upper bound beside it.
+- **Answers:** report answered turns on S1 and S3 for stock, B2h and allowlist, and every HURTS turn against stock.
+  The allowlist must keep at least the F-labelled single-proposition sentences B2h kept (the expected loss is only the
+  multi-clause ones).
+- **Stub population:** 0 HURTS on the exhaustive one-fact stub population (78,857 facts), as B2h reached at `c6bf28cb7`.
+- **Identity:** flag-off golden byte-identical; the existing moat 6-seed suite unchanged.
+
+## Scope and honesty
+
+This is a host safety check on the Qwen mouth (a scaffold, non-negotiable 1). It claims no brain capability. Its
+English shapes are a filter on what the mouth may say, not a language ability, so the 10-16 no-template rule (which is
+about closing language criteria with templates) does not apply; it stays default OFF until its own flip prereg passes
+the smoke-first gate (CLASS SMK).

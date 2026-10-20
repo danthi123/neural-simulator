@@ -67,9 +67,15 @@ for n in $NODES; do
     run="${1:-0}"; fail="${2:-0}"
     echo "  $n: running=$run fail24h=$fail"
     [ "$run" -gt 0 ] && POOL_TEXT="$POOL_TEXT $n:running"
+    [ "$run" -eq 0 ] && POOL_IDLE="${POOL_IDLE:-}${POOL_IDLE:+ }$n"
     [ "$fail" -gt 0 ] && POOL_FAIL_ARR+=("  $n: $fail non-zero job(s) in job_status.log (last 24h)")
   fi
 done
+# Idle node next to queued work (2026-10-20, RULING pool-stall-1020: pool41/pool42 sat idle ~30 h with 32 lines queued
+# because every line reserved memcap 12 GB, above their free memory; the dispatcher refuses such a node silently).
+if [[ "$QDEPTH" =~ ^[0-9]+$ ]] && [ "$QDEPTH" -gt 0 ] && [ -n "${POOL_IDLE:-}" ]; then
+  echo "  ⚠ idle node(s) with $QDEPTH queued: ${POOL_IDLE} -- check each queued line's memcap against the node's free memory (size it from the measured peak x1.3)"
+fi
 
 # ---- AWS spend vs cap + instance count (tools/aws_budget.sh; describe-instances is a read-only AWS call) --------
 echo "-- AWS --"

@@ -11,7 +11,9 @@
 #   3. it merges with --no-ff --no-commit and concludes with `git commit`, so every gate runs on the merge result;
 #   4. it resolves a conflict ONLY in append-only coordination files: research/coordination/LOCAL_LLM_RUNBOOK.md
 #      takes main's copy (main's runbook is the live one); research/FAILURE_LOG.md and any *WORKLOG.md (append-only
-#      packet logs, Claude 2026-10-10 after three sync STOPs on worklogs) keep both sides' lines. Any other
+#      packet logs, Claude 2026-10-10 after three sync STOPs on worklogs) and research/coordination/lane_builds.jsonl
+#      (append-only lane registrations, read row by row by gates/lane_starvation; Claude 2026-10-20 after the
+#      [bg-tonic-loop-0] STOP) keep both sides' lines. Any other
 #      conflict, a local change the merge would overwrite, or a failing gate aborts and leaves the branch as it was.
 # Exit 0 = merged, or already contains main; 2 = refused (reason printed; report it as NEEDS-CLAUDE); else git error.
 set -uo pipefail
@@ -68,7 +70,7 @@ if ! git merge -q --no-ff --no-commit "$main" >/dev/null 2>&1; then
     case "$f" in
       research/coordination/LOCAL_LLM_RUNBOOK.md)
         git checkout --theirs -- "$f" && git add -- "$f" || bad+=("$f") ;;
-      research/FAILURE_LOG.md|*WORKLOG.md)
+      research/FAILURE_LOG.md|*WORKLOG.md|research/coordination/lane_builds.jsonl)
         if git cat-file -e ":2:$f" 2>/dev/null && git cat-file -e ":3:$f" 2>/dev/null; then
           base=$(mktemp); ours=$(mktemp); theirs=$(mktemp)
           { git show ":1:$f" 2>/dev/null || true; } > "$base"
