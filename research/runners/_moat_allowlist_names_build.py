@@ -24,14 +24,14 @@ THE ROWS (review rulings 2026-10-20):
      "sète france"); it is compared exactly, nothing is normalised at run time.
   Only rows that differ from the de-slugged form are stored.
 
-OUTPUT (default research/findings/raw/_moat_allowlist_names/names_table.json; refuses to overwrite): `entities` (slug -> sorted
+OUTPUT (default research/findings/raw/_moat_allowlist_names/names_table.json; refuses to overwrite unless --overwrite): `entities` (slug -> sorted
 surfaces), `row_ids` (slug -> the one carrier id its rows came from), `multi_id_slugs` (slug -> its carrier ids, every store slug with
 two or more), and the per-step counts (`steps`). The matcher reads only `entities`, once per process (`_moat_allowlist.names_table`); a
 missing or unreadable table accepts only the slug and its de-slugged form (fail closed).
 
 usage (cwd = worktree, as a module so the provenance door stamps the table):
   bash tools/memcap.sh 4 -- .venv/bin/python -m research.runners._moat_allowlist_names_build \
-      --out research/findings/raw/_moat_allowlist_names/names_table.json
+      --out research/findings/raw/_moat_allowlist_names/names_table.json --overwrite
 """
 import research.runners  # noqa: F401  (the provenance door; stdlib-only, must be first)
 
@@ -163,11 +163,13 @@ def main(argv=None):
     ap.add_argument("--store-dir", default=DEFAULT_STORE)
     ap.add_argument("--data-dir", default=DEFAULT_DATA)
     ap.add_argument("--out", default=DEFAULT_OUT)
+    ap.add_argument("--overwrite", action="store_true",
+                    help="replace an existing table (to regenerate the committed one at a clean HEAD, so the sidecar is not +dirty)")
     ap.add_argument("--n-facts", type=int, default=100000,
                     help="the curate cap; wikidata_100k had fewer candidates than this, so every candidate was kept")
     a = ap.parse_args(argv)
-    if os.path.exists(a.out):
-        print("refusing to overwrite %s" % a.out, file=sys.stderr)
+    if os.path.exists(a.out) and not a.overwrite:
+        print("refusing to overwrite %s (pass --overwrite)" % a.out, file=sys.stderr)
         return 2
     t0 = time.time()
     with open(os.path.join(a.store_dir, "curation_report.json"), "r", encoding="utf-8") as fh:
