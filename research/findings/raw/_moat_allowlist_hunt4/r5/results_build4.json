@@ -23,7 +23,7 @@
  "xp": "numpy",
  "device": "cpu (numpy)",
  "cuda_visible_devices": "",
- "elapsed_seconds": 141.1,
+ "elapsed_seconds": 144.4,
  "exit_code": 0,
  "construction": {
   "real_constructors": "BrainConversationalAgent(seed, composer=KBHolder), ChatBrain(agent), RichAnswerComposer(chat)",
@@ -720,20 +720,22 @@
    "VALID": true,
    "reject_reason_tags": {
     "gate": {
-     "no shape": 707,
+     "no shape": 700,
      "entity span": 182,
      "apostrophe": 49,
      "all-caps token": 28,
      "non-Latin or free-standing non-ASCII text": 21,
-     "whitespace or control character": 7
+     "whitespace or control character": 7,
+     "whitespace or control character U+2028 between sentences or at an edge of the reply": 7
     },
     "composer": {
-     "no shape": 707,
+     "no shape": 700,
      "entity span": 182,
      "apostrophe": 49,
      "all-caps token": 28,
      "non-Latin or free-standing non-ASCII text": 21,
-     "whitespace or control character": 7
+     "whitespace or control character": 7,
+     "whitespace or control character U+2028 between sentences or at an edge of the reply": 7
     }
    }
   }
@@ -25582,37 +25584,37 @@
      {
       "v": false,
       "src": "claim",
-      "reason": "allowlist: no shape: at token 1 'next' expected a gathered slug after the determiner [sentence 1 of 2]"
+      "reason": "allowlist: whitespace or control character U+2028 between sentences or at an edge of the reply (only U+0020, LF and CR are allowed there)"
      },
      {
       "v": false,
       "src": "claim",
-      "reason": "allowlist: no shape: at token 1 'next' expected a gathered slug after the determiner [sentence 1 of 2]"
+      "reason": "allowlist: whitespace or control character U+2028 between sentences or at an edge of the reply (only U+0020, LF and CR are allowed there)"
      },
      {
       "v": false,
       "src": "claim",
-      "reason": "allowlist: no shape: at token 1 'next' expected a gathered slug after the determiner [sentence 1 of 2]"
+      "reason": "allowlist: whitespace or control character U+2028 between sentences or at an edge of the reply (only U+0020, LF and CR are allowed there)"
      },
      {
       "v": false,
       "src": "claim",
-      "reason": "allowlist: no shape: at token 1 'next' expected a gathered slug after the determiner [sentence 1 of 2]"
+      "reason": "allowlist: whitespace or control character U+2028 between sentences or at an edge of the reply (only U+0020, LF and CR are allowed there)"
      },
      {
       "v": false,
       "src": "claim",
-      "reason": "allowlist: no shape: at token 1 'next' expected a gathered slug after the determiner [sentence 1 of 2]"
+      "reason": "allowlist: whitespace or control character U+2028 between sentences or at an edge of the reply (only U+0020, LF and CR are allowed there)"
      },
      {
       "v": false,
       "src": "claim",
-      "reason": "allowlist: no shape: at token 1 'next' expected a gathered slug after the determiner [sentence 1 of 2]"
+      "reason": "allowlist: whitespace or control character U+2028 between sentences or at an edge of the reply (only U+0020, LF and CR are allowed there)"
      },
      {
       "v": false,
       "src": "claim",
-      "reason": "allowlist: no shape: at token 1 'next' expected a gathered slug after the determiner [sentence 1 of 2]"
+      "reason": "allowlist: whitespace or control character U+2028 between sentences or at an edge of the reply (only U+0020, LF and CR are allowed there)"
      }
     ]
    },
@@ -25695,37 +25697,37 @@
      {
       "v": false,
       "src": "claim",
-      "reason": "allowlist: no shape: at token 1 'next' expected a gathered slug after the determiner [sentence 1 of 2]"
+      "reason": "allowlist: whitespace or control character U+2028 between sentences or at an edge of the reply (only U+0020, LF and CR are allowed there)"
      },
      {
       "v": false,
       "src": "claim",
-      "reason": "allowlist: no shape: at token 1 'next' expected a gathered slug after the determiner [sentence 1 of 2]"
+      "reason": "allowlist: whitespace or control character U+2028 between sentences or at an edge of the reply (only U+0020, LF and CR are allowed there)"
      },
      {
       "v": false,
       "src": "claim",
-      "reason": "allowlist: no shape: at token 1 'next' expected a gathered slug after the determiner [sentence 1 of 2]"
+      "reason": "allowlist: whitespace or control character U+2028 between sentences or at an edge of the reply (only U+0020, LF and CR are allowed there)"
      },
      {
       "v": false,
       "src": "claim",
-      "reason": "allowlist: no shape: at token 1 'next' expected a gathered slug after the determiner [sentence 1 of 2]"
+      "reason": "allowlist: whitespace or control character U+2028 between sentences or at an edge of the reply (only U+0020, LF and CR are allowed there)"
      },
      {
       "v": false,
       "src": "claim",
-      "reason": "allowlist: no shape: at token 1 'next' expected a gathered slug after the determiner [sentence 1 of 2]"
+      "reason": "allowlist: whitespace or control character U+2028 between sentences or at an edge of the reply (only U+0020, LF and CR are allowed there)"
      },
      {
       "v": false,
       "src": "claim",
-      "reason": "allowlist: no shape: at token 1 'next' expected a gathered slug after the determiner [sentence 1 of 2]"
+      "reason": "allowlist: whitespace or control character U+2028 between sentences or at an edge of the reply (only U+0020, LF and CR are allowed there)"
      },
      {
       "v": false,
       "src": "claim",
-      "reason": "allowlist: no shape: at token 1 'next' expected a gathered slug after the determiner [sentence 1 of 2]"
+      "reason": "allowlist: whitespace or control character U+2028 between sentences or at an edge of the reply (only U+0020, LF and CR are allowed there)"
      }
     ]
    }
