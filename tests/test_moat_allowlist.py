@@ -17,7 +17,11 @@ triple of this turn; everything else is rejected. These tests pin:
   - shape 3 cannot reverse roles; nothing is dropped; one sentence, one shape;
   - the reviewed per-relation verb-reading table (research/runners/_moat_allowlist_relations.py, prereg AMENDMENT 1 item 2): every
     store relation has a row, the rows' readings are the live verb-form table's, and a ROLE-REVERSING relation (author, father,
-    child, parent_taxon, platform) or an unclassified one takes no verb reading and no shape 3.
+    child, parent_taxon, platform), a MEANING-DRIFT relation (build 2: sport, conflict, instrument, spouse, eat) or an unclassified
+    one takes no verb reading and no shape 3;
+  - build 2: shape 3 takes only a / an or no determiner before the relation noun ("X is the member of Y" asserts uniqueness), and
+    SUBJ / OBJ are spelled by the store's own slug rule (`sanitize` in research/runners/_knowledge_core_curate.py), including an
+    accented letter at the start or end of a name.
 The matcher is a pure host function: its verdict cannot depend on the parser seed. Where a test goes through the production
 `ChatBrain` (which carries a seeded BridgeParser) it runs at all seven parser seeds 42, 43, 44, 100, 101, 102, 1.
 
@@ -353,8 +357,13 @@ def test_board_266_prefix_subject_under_the_flag(seed_chats, fact):
               "%s %s %s." % (title(s), rel, "Mexico"),                                   # object not gathered
               "%s, and %s %s Beta." % (first, title(s), rel),                            # borrowed-subject form, (s, r, beta) not gathered
               "%s. %s %s Beta." % (first, title(s), rel)]
+    # a relation the table gives no verb reading (build 2: sport is MEANING-DRIFT) takes none, so its sentences are rejected and the
+    # hole cannot open; the stub sentence's reason names the class
+    want = T.has_verb_reading(r)
     for p in keep:
-        assert _on_all_seeds(seed_chats, p, gathered) == [True] * len(SEEDS), p
+        assert _on_all_seeds(seed_chats, p, gathered) == [want] * len(SEEDS), p
+    if not want:
+        assert T.relation_class(r) in A.allowlist_keep(_stub(fact), gathered)[1]
     for p in reject:
         assert _on_all_seeds(seed_chats, p, gathered) == [False] * len(SEEDS), p
 
@@ -375,9 +384,31 @@ def test_cases_b_supported_twin_is_kept_as_its_own_sentence(seed_chats, case):
     never loosened for)."""
     g = BANK["gathered_sets"][case["gathered"]]
     first, second = case["prose"].rstrip(".").split(", and ", 1)
+    # build 2: a twin whose relation the table denies a verb reading (MEANING-DRIFT / ROLE-REVERSING) is rejected by that rule
+    # over the whole table, not per case; which twins those are is pinned in test_twins_lost_to_the_relation_table
+    want = case["id"] not in _TWINS_LOST_TO_THE_TABLE
     for p in (second + ".", first + ". " + second + "."):
-        assert _on_all_seeds(seed_chats, p, g) == [True] * len(SEEDS), p
+        assert _on_all_seeds(seed_chats, p, g) == [want] * len(SEEDS), p
+    if not want:
+        why = A.allowlist_keep(second + ".", g)[1]
+        assert any(c in why for c in T.NO_READING_CLASSES), why
     assert _on_all_seeds(seed_chats, case["prose"], g) == [False] * len(SEEDS), case["prose"]
+
+
+_TWINS_LOST_TO_THE_TABLE = {"pc12c": "sport", "pc13c": "sport"}
+
+
+def test_twins_lost_to_the_relation_table():
+    """Exactly the twins whose clause reads a MEANING-DRIFT / ROLE-REVERSING relation (sport is MEANING-DRIFT in build 2: 'X sport Y'
+    shares its row with 'X sports Y' = X wears Y). 24 of 26 twins are kept."""
+    lost = {}
+    for c in _TWINS:
+        second = c["prose"].rstrip(".").split(", and ", 1)[1] + "."
+        res = A.allowlist_check(second, BANK["gathered_sets"][c["gathered"]])
+        if not res["keep"]:
+            lost[c["id"]] = next(r for r in T.RELATIONS if r in res["reason"].split("reads ", 1)[-1].split(",")[0].split())
+    assert lost == _TWINS_LOST_TO_THE_TABLE
+    assert all(T.relation_class(r) in T.NO_READING_CLASSES for r in lost.values())
 
 
 def test_must_keep_set_is_nontrivial_and_from_the_held_out_strata():
@@ -422,8 +453,8 @@ def test_the_stub_mouth_sentence_of_every_store_relation_is_kept_iff_its_relatio
     s, r, o = fact
     res = A.allowlist_verify(_stub(fact), [fact])
     assert res["accepted"] == T.has_verb_reading(r), (_stub(fact), res["reject_reason"])
-    if T.relation_class(r) == T.ROLE_REVERSING:
-        assert "ROLE-REVERSING" in res["reject_reason"], res["reject_reason"]
+    if T.relation_class(r) in T.NO_READING_CLASSES:
+        assert T.relation_class(r) in res["reject_reason"], res["reject_reason"]
     assert not A.allowlist_verify(_stub([o, r, s]), [fact])["accepted"], _stub([o, r, s])
 
 
@@ -471,6 +502,43 @@ def test_the_role_reversing_relations():
     """The reviewed ROLE-REVERSING rows (a change here is a change of the reviewed table, not of a test)."""
     assert _RR == ["author", "child", "father", "parent_taxon", "platform"]
     assert all("store" in T.RELATIONS[r].sources for r in _RR)
+
+
+_MD = sorted(r for r, row in T.RELATIONS.items() if row.cls == T.MEANING_DRIFT)
+
+
+def test_the_meaning_drift_relations():
+    """Build 2's MEANING test: the reviewed MEANING-DRIFT rows (a change here is a change of the reviewed table)."""
+    assert _MD == ["conflict", "eat", "instrument", "sport", "spouse"]
+    assert T.MEANING_DRIFT in T.NO_READING_CLASSES and T.MEANING_DRIFT not in T.VERB_READING_CLASSES
+
+
+@pytest.mark.parametrize("rel", _MD)
+def test_no_reading_of_a_meaning_drift_relation_is_ever_kept(rel):
+    """Every reading in the row (incl. the table synonyms of eat: consumes, devours), shapes 1 and 2, any spelling; reason names the
+    class."""
+    g = [["red_fox", rel, "canid_group"], ["red_fox", rel, "blue_jay"]]
+    for tok in T.RELATIONS[rel].readings:
+        for p in ("Red Fox %s Canid Group." % tok, "The red_fox %s the canid_group." % tok,
+                  "Red Fox %s Canid Group and Blue Jay." % tok, "Red Fox %s Canid Group, and Blue Jay." % tok,
+                  "Red Fox %s Canid Group." % tok.replace("_", " ")):
+            keep, why = A.allowlist_keep(p, g)
+            assert not keep and T.MEANING_DRIFT in why, (p, why)
+
+
+@pytest.mark.parametrize("fact,prose", [
+    (["sporting_benevento", "sport", "association_football_club"], "Sporting Benevento sports association football club."),
+    (["sporting_benevento", "sport", "association_football_club"], "Sporting Benevento sported association football club."),
+    (["james_whitmore", "conflict", "war_world_two"], "James Whitmore conflicts War World Two."),
+    (["merle_haggard", "instrument", "electric_guitar"], "Merle Haggard instruments electric guitar."),
+    (["victoria_of_england", "spouse", "albert_prince_consort"], "Victoria of England spoused Albert Prince Consort."),
+])
+def test_role_safe_but_meaning_drifting_verb_readings_are_rejected_at_every_seed(seed_chats, fact, prose):
+    """'X sports Y' (wears), 'X conflicts Y' (contradicts), 'X instruments Y' (equips), 'X spoused Y' (archaic: married) keep X as
+    subject but assert another relation: rejected through the production gate at every parser seed."""
+    for sd in SEEDS:
+        acc, res = _on(seed_chats[sd], prose, [fact])
+        assert acc is False and T.MEANING_DRIFT in res["reject_reason"], (sd, res["reject_reason"])
 
 
 _FATHER = ["albert_prince_of_wales", "father", "albert_prince_consort"]
@@ -554,13 +622,14 @@ def test_the_store_relations_that_take_shape_3():
 def test_shape3_reads_subject_first_and_cannot_reverse_roles(rel):
     g = [["red_fox", rel, "canid_group"]]
     noun = rel[:-3].replace("_", " ")
-    for det in ("", "a ", "an ", "the "):
-        for sdet in ("", "The "):
-            ok = "%sRed Fox is %s%s of %sCanid Group." % (sdet, det, noun, det)
-            rev = "%sCanid Group is %s%s of %sRed Fox." % (sdet, det, noun, det)
-            res = A.allowlist_check(ok, g)                 # (is_a_list_of reads "Red Fox is is a list of Canid Group")
-            assert res["keep"] and res["shape"] == "shape3" and res["props"] == [["red_fox", rel, "canid_group"]], ok
-            assert not A.allowlist_keep(rev, g)[0], rev
+    for det in ("", "a ", "an "):                          # before the relation noun: a / an / nothing (build 2)
+        for odet in ("", "the ", "a "):
+            for sdet in ("", "The "):
+                ok = "%sRed Fox is %s%s of %sCanid Group." % (sdet, det, noun, odet)
+                rev = "%sCanid Group is %s%s of %sRed Fox." % (sdet, det, noun, odet)
+                res = A.allowlist_check(ok, g)             # (is_a_list_of reads "Red Fox is is a list of Canid Group")
+                assert res["keep"] and res["shape"] == "shape3" and res["props"] == [["red_fox", rel, "canid_group"]], ok
+                assert not A.allowlist_keep(rev, g)[0], rev
     # the reversed triple is the only thing that could license the reversed sentence -- and then it is the true reading
     both = g + [["canid_group", rel, "red_fox"]]
     assert A.allowlist_keep("Canid Group is a %s of Red Fox." % noun, both)[0]
@@ -575,6 +644,25 @@ def test_shape3_never_applies_to_a_relation_without_of(rel):
         for p in ("Ankara Y is the %s of Turkey X." % noun, "Turkey X is the %s of Ankara Y." % noun,
                   "Ankara Y is %s of Turkey X." % noun, "Turkey X is a %s of Ankara Y." % noun):
             assert not A.allowlist_keep(p, g)[0], (g, p)
+
+
+@pytest.mark.parametrize("rel", _OF_RELATIONS)
+def test_shape3_the_before_the_relation_noun_is_rejected(rel):
+    """'X is THE member of Y' asserts that X is Y's only member: the triple does not say so (build 2, controller ruling)."""
+    g = [["red_fox", rel, "canid_group"]]
+    noun = rel[:-3].replace("_", " ")
+    for odet in ("", "the "):
+        for sdet in ("", "The "):
+            for the in ("the", "The", "THE"):
+                p = "%sRed Fox is %s %s of %sCanid Group." % (sdet, the, noun, odet)
+                keep, why = A.allowlist_keep(p, g)
+                assert not keep and "uniqueness" in why, (p, why)
+
+
+def test_shape3_the_rule_holds_through_the_production_gate(seed_chats):
+    g = [["rep_blica_del_paraguay", "member_of", "united_nations"]]
+    assert _on_all_seeds(seed_chats, "Rep Blica del Paraguay is the member of the United Nations.", g) == [False] * len(SEEDS)
+    assert _on_all_seeds(seed_chats, "Rep Blica del Paraguay is a member of the United Nations.", g) == [True] * len(SEEDS)
 
 
 def test_shape3_needs_the_copula_is_and_only_one_object():
@@ -700,6 +788,55 @@ def test_accented_latin_inside_a_word_still_reads_as_the_store_slug():
     for p in ("Jos\u00e9 Mar\u00eda Aznar is a member of Partido Popular.", "Rep\u00fablica del Paraguay is a member of the United Nations.",
               "REP\u00daBLICA DEL PARAGUAY member of united nations."):
         assert A.allowlist_keep(p, g)[0], p
+
+
+# names chosen to cover each place an accented letter can sit (middle, start, end, whole first word, a combining mark after
+# lowercasing, a ligature); the slug each one must spell is computed by the STORE's own function, not written here
+_STORE_RULE_NAMES = ["Montr\u00e9al Canada", "Rep\u00fablica del Paraguay", "\u00c9cole Sup\u00e9rieur des Beaux-Arts",
+                     "The weather in Bod\u00f8", "Koninkrijk Belgi\u00eb", "\u0130stanbul Ba\u015fak\u015fehir", "Historia Regum Britanni\u00e6",
+                     "Universit\u00e4t des Saarlandes", "Canon Yaound\u00e9", "\u00c5l", "\u00cele de France", "S\u00e3o Paulo FC",
+                     "Jos\u00e9 Mar\u00eda Aznar", "Stra\u00dfe des 17 Juni"]
+
+
+@pytest.mark.parametrize("name", _STORE_RULE_NAMES)
+def test_an_accented_name_spells_the_slug_the_store_rule_makes_of_it(name):
+    """Spec: SUBJ / OBJ in 'the store's slug form for accented names'. The store's slugs were made by `sanitize`
+    (research/runners/_knowledge_core_curate.py, which built wikidata_100k): lowercase, every run outside [a-z0-9] -> '_', strip '_'.
+    An accented letter is a separator, and at the start or end of a name it vanishes."""
+    from research.runners._knowledge_core_curate import sanitize
+    slug = sanitize(name)
+    assert A.allowlist_keep("%s has part Zeta Q." % name, [[slug, "has_part", "zeta_q"]])[0], (name, slug)
+    assert A.allowlist_keep("Zeta Q has part %s." % name, [["zeta_q", "has_part", slug]])[0], (name, slug)
+    other = slug + "_x"                                    # not the store's slug of this name: never spelled by it
+    assert not A.allowlist_keep("%s has part Zeta Q." % name, [[other, "has_part", "zeta_q"]])[0]
+
+
+def test_universitat_des_saarlandes_follows_the_store_rule_not_a_transliteration():
+    """The store's universitat_des_saarlandes was made from the ASCII alias 'Universitat des Saarlandes' (Q700758, the alias
+    `pick_clean_alias` chose); by the store's rule 'Universit\u00e4t des Saarlandes' is universit_t_des_saarlandes. Folding \u00e4 -> a
+    is not the store's rule, so the accented spelling does not spell that slug."""
+    from research.runners._knowledge_core_curate import sanitize
+    assert sanitize("Universit\u00e4t des Saarlandes") == "universit_t_des_saarlandes"
+    g = [["universitat_des_saarlandes", "member_of", "german_research_network"]]
+    assert not A.allowlist_keep("Universit\u00e4t des Saarlandes is a member of German Research Network.", g)[0]
+    assert A.allowlist_keep("Universitat des Saarlandes is a member of German Research Network.", g)[0]
+
+
+@pytest.mark.parametrize("prose", ["\u00e0 Spain shares border with France.", "Spain shares border with France \u00e0.",
+                                   "Spain shares border \u00e9 with France.", "Spain shares border with-\u00e9 France.",
+                                   "Spain shares\u0301 border with France.", "Spain shares \u0301 border with France.",
+                                   "Spain shares border with Fran\u00e7e.", "Sp\u00e4in shares border with France."])
+def test_the_store_fold_never_hides_a_free_standing_accent_or_changes_a_spelled_name(prose):
+    """Edge absorption is only the store's strip('_') of a NAME: a free-standing accented word, a combining mark between words, or
+    an accent inside a gathered name's word (a different name by the store's rule) is still rejected."""
+    assert not A.allowlist_keep(prose, _ES)[0], prose
+
+
+@pytest.mark.parametrize("prose", ["Imperial\u2013Royal Institute has part Zeta Q.", "Imperial \u00d7 Royal Institute has part Zeta Q."])
+def test_non_letter_separators_the_store_also_folded_are_not_folded(prose):
+    """Out of scope (spec: only accented names): the store's rule also folds an en dash or a times sign, but the matcher keeps every
+    non-letter character structural, so such a spelling is rejected (a recorded divergence on the reject side)."""
+    assert not A.allowlist_keep(prose, [["imperial_royal_institute", "has_part", "zeta_q"]])[0]
 
 
 def test_a_letterless_slug_never_matches_anything():

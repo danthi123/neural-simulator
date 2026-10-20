@@ -10,10 +10,11 @@ previous clause, so every round of denylist fixes was followed by a new construc
 This module inverts the default: a sentence is KEPT only when ONE exact proposition shape consumes EVERY token and every
 proposition it encodes is a gathered triple of this turn. Everything else is rejected.
 
-THE SHAPES (after normalisation; N = one gathered slug, Det = a | an | the, directly before N or, in shape 3, the relation noun):
+THE SHAPES (after normalisation; N = one gathered slug, Det = a | an | the, directly before N; in shape 3 the relation noun takes only
+a | an or nothing, because "X is THE member of Y" asserts that X is Y's only member, which the triple does not say):
   1. [Det] SUBJ VERB(rel) [Det] OBJ [.]                                          -> (SUBJ, rel, OBJ)
   2. [Det] SUBJ VERB(rel) [Det] OBJ1 (, [Det] OBJi)* [,] and [Det] OBJn [.]       -> (SUBJ, rel, OBJi) for EVERY i
-  3. [Det] SUBJ is [Det] REL_of [Det] OBJ [.]                                    -> (SUBJ, REL_of, OBJ)
+  3. [Det] SUBJ is [a|an] REL_of [Det] OBJ [.]                                    -> (SUBJ, REL_of, OBJ)
      only for a gathered relation whose slug ENDS in `_of` (instance_of, subclass_of, member_of, part_of, participant_of,
      is_a_list_of in the store): its slug reads subject-first ("X is an instance of Y" = (X, instance_of, Y)), so the shape
      cannot reverse roles. A relation without `_of` ("capital": "Ankara is the capital of Turkey" means (turkey, capital,
@@ -22,16 +23,24 @@ THE SHAPES (after normalisation; N = one gathered slug, Det = a | an | the, dire
   VERB(rel) = a token whose `_classify` reading is ('verb', rel) for a relation gathered THIS turn: the same verb-form table
   `_noun_before_verb` uses (stock inflections, the tight synonyms, the guarded -es / -ies readings of commit 1b67eef9b), and ONLY for
   a relation classified VERB-SAFE or NOT-A-VERB in the reviewed table research/runners/_moat_allowlist_relations.py (prereg
-  AMENDMENT 1 item 2). A ROLE-REVERSING relation ("The book authors Moses." for (book, author, moses)) and a relation with no row
-  take no verb reading and no shape 3, so every sentence on them is rejected (reason names the class).
-  SUBJ / OBJ = a token equal to a gathered subject/object slug after B2h normalisation (`_normalise_slugs`: case, NFC, spaces /
-  hyphens / underscores, the store's "_" for accented letters). A token made only of underscores is never a noun.
+  AMENDMENT 1 item 2; build 2's MEANING test: "SUBJ <reading> OBJ" must paraphrase back to exactly the triple). A ROLE-REVERSING
+  relation ("The book authors Moses." for (book, author, moses)), a MEANING-DRIFT relation ("X sports Y" = X wears Y) and a relation
+  with no row take no verb reading and no shape 3, so every sentence on them is rejected (reason names the class).
+  SUBJ / OBJ = a span that spells a gathered subject/object slug by THE STORE'S OWN SLUG RULE (`_store_fold` below; the rule is
+  `sanitize` in research/runners/_knowledge_core_curate.py, which built wikidata_100k: lowercase, every run of characters outside
+  [a-z0-9] -> "_", leading/trailing "_" stripped). After NFC and lowercasing, an accented Latin letter (or a combining mark) is a
+  separator, and one at the START or END of a name vanishes from the slug as the store's strip("_") made it vanish: "Île de
+  France" spells le_de_france, "Bodø" spells bod, "İstanbul" spells i_stanbul, and "Universität des Saarlandes" spells
+  universit_t_des_saarlandes (the store's universitat_des_saarlandes was made from the ASCII alias "Universitat des Saarlandes" of
+  Q700758, so the accented spelling is NOT that slug by the store's rule). Spaces, hyphens and underscores separate words as before. Other characters the store also treated as separators
+  (ASCII punctuation, apostrophes, en dashes, the 40-character cut) are NOT folded: they keep their structural role here or
+  reject the sentence. A token made only of underscores is never a noun.
 
 NOTHING IS DROPPED. A token outside the shape (pronoun, adverb, "just", "also", hedge, negation, subordinator, a comma that
 opens a clause, a digit not inside a gathered slug, "!", "?", ":", "-", a second ".") leaves the shape unmatched and the
 sentence is rejected. Any apostrophe (possessive 's, contraction) rejects the sentence BEFORE normalisation, because the B2h
-slug regex would otherwise swallow a possessive 's; so does non-ASCII text other than an accented Latin letter inside a Latin
-word (`_foreign_text`: B2h would read a free-standing non-Latin word between two slug words as a separator). A negation word
+slug regex would otherwise swallow a possessive 's; so does non-ASCII text other than accented Latin letters (or combining marks)
+attached to a Latin word (`_foreign_text`: a free-standing non-Latin word between two slug words would fold into a separator). A negation word
 rejects even when it is also a gathered slug.
 ONE SENTENCE, ONE SHAPE. The surface is split into sentences first; each sentence must match a shape on its own. If two parses
 of one sentence exist, every parse must encode only gathered triples (an ambiguous sentence with any ungathered reading is
@@ -39,8 +48,9 @@ rejected). The production verdict on a rendered candidate (`allowlist_verify`) k
 composer emits candidates whole, so a candidate holding a rejected sentence is not emitted (the turn keeps its OTHER
 candidates, each verified on its own). Partial emission would change the composer's output path and is out of scope.
 
-NO EDIT TO THE B2h PARSER PATH. The B2h helpers (`_normalise_slugs`, `_base_verb`, `_classify`) are REUSED unchanged by binding
-them onto a small lexicon object; no `ClaimEntailmentVerifier` is constructed, so its role-permutation guard cannot make a
+NO EDIT TO THE B2h PARSER PATH. The B2h helpers (`_base_verb`, `_classify`) are REUSED unchanged by binding them onto a small
+lexicon object (build 2 replaces only the use of B2h's `_normalise_slugs` by `_store_fold`, which reproduces the store's slug rule at
+the edges of a name where B2h's did not; B2h itself is untouched); no `ClaimEntailmentVerifier` is constructed, so its role-permutation guard cannot make a
 mutual pair unbuildable (board #265), and neither the stock clause parser nor `_noun_is_before` (the 3-letter predicate match,
 board #266) is consulted. The substrate role parser is not used either: roles come from the shape, and the proposition is
 adjudicated by set membership.
@@ -57,14 +67,14 @@ import re
 import unicodedata
 
 from research.runners._moat_allowlist_relations import has_verb_reading, relation_class
-from research.runners._moat_claim_entailment_derisk import (
-    _NONASCII_ALNUM_RUN, NEG_MARKERS, VERB_SYNONYMS, ClaimEntailmentVerifier, _build_inflection_map, _slug_phrase_re)
+from research.runners._moat_claim_entailment_derisk import NEG_MARKERS, VERB_SYNONYMS, ClaimEntailmentVerifier, _build_inflection_map
 
 ALLOWLIST_ENV = "BRAIN_MOAT_ALLOWLIST"
 DETERMINERS = frozenset(("a", "an", "the"))
+REL_NOUN_DETERMINERS = frozenset(("a", "an"))           # shape 3, before REL_of: "the" would assert uniqueness
 COPULA = "is"
 # straight, curly, modifier-letter and prime apostrophes, and the backtick: any of them rejects the sentence (possessive /
-# contraction). Checked on the RAW sentence, before `_normalise_slugs` could read "X's" as the slug X.
+# contraction). Checked on the RAW sentence, before folding could read "X's" as the slug X.
 _APOSTROPHES = re.compile(r"['`‘’‛ʼ′]")
 # after normalisation: a word is a run of [a-z0-9_]; every other non-space character is a token of its own (so it can never be
 # consumed by a shape except "," and the one sentence-final ".")
@@ -74,21 +84,64 @@ _SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+")
 _ASCII_ALNUM = re.compile(r"[a-z0-9]")
 
 
+def _nonascii_word_runs(t):
+    """Maximal runs of non-ASCII letters, marks and digits (Unicode categories L*, M*, N*) in `t` -> [(start, end)]."""
+    runs, start = [], None
+    for i, ch in enumerate(t):
+        word = ord(ch) > 127 and unicodedata.category(ch)[0] in "LMN"
+        if word and start is None:
+            start = i
+        elif not word and start is not None:
+            runs.append((start, i)); start = None
+    if start is not None:
+        runs.append((start, len(t)))
+    return runs
+
+
+def _prepare(text):
+    """NFC, then lowercase: the order the store's alias -> slug step sees an alias (wikidata5m aliases are NFC; `sanitize`
+    lowercases)."""
+    return unicodedata.normalize("NFC", text).lower()
+
+
 def _foreign_text(text):
-    r"""B2h maps every non-ASCII letter/digit run to "_" (the store's slug form: "Montréal" -> montr_al), and its slug spelling
-    joins slug words with [\s\-_]+, so a free-standing non-ASCII word BETWEEN two slug words ("shares 不 border with", 不 = not)
-    would be swallowed as a separator. Allowed here: a run of LATIN letters attached to an ASCII letter/digit (an accented letter
-    inside a Latin word: Montréal, República, José). Anything else (non-Latin script, a free-standing accented word such as "à",
-    a non-ASCII digit) -> that run, so the sentence is rejected before normalisation."""
-    t = unicodedata.normalize("NFC", text).lower()
-    for m in _NONASCII_ALNUM_RUN.finditer(t):
-        run = m.group(0)
-        latin = all(unicodedata.name(ch, "").startswith("LATIN ") for ch in run)
-        before = t[m.start() - 1] if m.start() > 0 else ""
-        after = t[m.end()] if m.end() < len(t) else ""
+    r"""The store's slug rule makes every non-ASCII letter a separator ("Montréal" -> montr_al), and slug words are joined by
+    [\s\-_]+, so a free-standing non-ASCII word BETWEEN two slug words ("shares 不 border with", 不 = not) would fold into a
+    separator and vanish. Allowed here: a run of LATIN letters and combining marks attached to an ASCII letter/digit (an accented
+    letter inside or at the edge of a Latin word: Montréal, República, Île, Bodø, the dot of a lowercased İ). Anything else
+    (non-Latin script, a free-standing accented word such as "à", a non-ASCII digit) -> that run, so the sentence is rejected
+    before folding."""
+    t = _prepare(text)
+    for a, b in _nonascii_word_runs(t):
+        run = t[a:b]
+        latin = all(unicodedata.name(ch, "").startswith("LATIN ") or unicodedata.category(ch) == "Mn" for ch in run)
+        before = t[a - 1] if a > 0 else ""
+        after = t[b] if b < len(t) else ""
         if not latin or not (_ASCII_ALNUM.match(before) or _ASCII_ALNUM.match(after)):
             return run
     return None
+
+
+def _store_fold(text):
+    """The store's slug rule on the characters it folds (research/runners/_knowledge_core_curate.py `sanitize`: lowercase, every
+    run of characters outside [a-z0-9] -> "_"): NFC + lowercase, then every run of non-ASCII letters / marks / digits -> "_". The
+    leading/trailing strip("_") of `sanitize` is applied per slug by `_store_slug_re`. Spaces, hyphens and underscores stay (they
+    separate slug words); ASCII punctuation is left alone (it is structure here: ",", ".", or a rejecting token)."""
+    t = _prepare(text)
+    out, last = [], 0
+    for a, b in _nonascii_word_runs(t):
+        out.append(t[last:a]); out.append("_"); last = b
+    out.append(t[last:])
+    return "".join(out)
+
+
+def _store_slug_re(slug):
+    """Any space / hyphen / underscore spelling of `slug`'s words, with the store's strip("_") at both ends: a folded accented
+    letter at the start or end of the name ("_le de france", "bod_") is part of the span, because `sanitize` dropped it from the
+    slug. Bounded so it never matches inside a longer word or an already-substituted slug token."""
+    words = [w for w in slug.split("_") if w]
+    body = r"[\s\-_]+".join(re.escape(w) for w in words)
+    return re.compile(r"(?<![a-z0-9_])_*" + body + r"_*(?![a-z0-9_])")
 
 
 def allowlist_enabled():
@@ -101,7 +154,6 @@ def allowlist_enabled():
 class _Lexicon:
     """This turn's gathered vocabulary, read by the B2h helpers REUSED UNCHANGED (bound here as plain functions)."""
 
-    _normalise_slugs = ClaimEntailmentVerifier._normalise_slugs
     _base_verb = ClaimEntailmentVerifier._base_verb
     _classify = ClaimEntailmentVerifier._classify
 
@@ -112,16 +164,24 @@ class _Lexicon:
         self.verbs = {f[1] for f in self.gated}
         self.synonyms = dict(VERB_SYNONYMS)
         self.inflect = _build_inflection_map(sorted(self.verbs))
-        self.slug_norm = True                       # the B2h readings of `_base_verb` / `_classify` / `_normalise_slugs`
-        # (a slug with no letter or digit, e.g. a degenerate "_", would compile to an empty pattern that matches everywhere; it
-        # can never be a SUBJ/OBJ/VERB here, so it is left out of the spellings)
-        slugs = {t for f in self.gated for t in f if "_" in t and _HAS_ALNUM.search(t)}
-        self._slug_pats = [(s, _slug_phrase_re(s)) for s in sorted(slugs, key=lambda x: (-len(x), x))]
+        self.slug_norm = True                       # the B2h readings of `_base_verb` / `_classify`
+        # every gathered slug (one word or several) is spelled by the store's rule (`_store_slug_re`). A slug with no letter or
+        # digit, e.g. a degenerate "_", would compile to a pattern that matches bare underscores; it can never be a SUBJ/OBJ/VERB
+        # here, so it is left out of the spellings.
+        slugs = {t for f in self.gated for t in f if _HAS_ALNUM.search(t)}
+        self._slug_pats = [(s, _store_slug_re(s)) for s in sorted(slugs, key=lambda x: (-len(x), x))]
         # the gathered relations allowed a verb reading / shape 3 (the reviewed table: VERB-SAFE or NOT-A-VERB; a ROLE-REVERSING or
         # unclassified relation gets none)
         self.verb_ok = frozenset(r for r in self.verbs if has_verb_reading(r))
         # shape-3 relation nouns: a gathered, verb-reading relation slug ending in "_of" with a real noun before it
         self.of_relations = frozenset(r for r in self.verb_ok if r.endswith("_of") and _HAS_ALNUM.search(r[:-3]))
+
+    def normalise(self, sentence):
+        """The store's fold, then every spelling of a gathered slug -> the slug token itself."""
+        t = _store_fold(sentence)
+        for slug, rx in self._slug_pats:
+            t = rx.sub(" " + slug + " ", t)
+        return t
 
     def is_noun(self, tok):
         return tok in self.nouns and tok not in NEG_MARKERS and _HAS_ALNUM.search(tok) is not None
@@ -235,7 +295,10 @@ def _parses(toks, lex, fail):
                 else:
                     fail.at(end, "end of sentence, or ', OBJ' / 'and OBJ' (shape 2)")
         if toks[j] == COPULA:                                             # shape 3
-            r_at = [j + 1] + ([j + 2] if j + 1 < n and toks[j + 1] in DETERMINERS else [])
+            # the relation noun takes "a" / "an" or nothing: "X is THE member of Y" asserts uniqueness
+            r_at = [j + 1] + ([j + 2] if j + 1 < n and toks[j + 1] in REL_NOUN_DETERMINERS else [])
+            if j + 1 < n and toks[j + 1] in DETERMINERS and toks[j + 1] not in REL_NOUN_DETERMINERS:
+                fail.at(j + 1, "'a' / 'an' or no determiner before the relation noun (shape 3: %r asserts uniqueness)" % toks[j + 1])
             for ri in r_at:
                 if ri < n and toks[ri] in lex.of_relations:
                     for obj, end in _np(toks, ri + 1, lex, fail):
@@ -272,7 +335,7 @@ def allowlist_check(sentence, gathered):
         res["reason"] = "allowlist: non-Latin or free-standing non-ASCII text %r" % foreign
         return res
     lex = _lexicon(key)
-    toks = _TOKEN.findall(lex._normalise_slugs(sentence))
+    toks = _TOKEN.findall(lex.normalise(sentence))
     if toks and toks[-1] == ".":
         toks = toks[:-1]
     res["tokens"] = list(toks)

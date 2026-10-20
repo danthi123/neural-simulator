@@ -1250,7 +1250,7 @@
    "stratum": "S3",
    "turn": "s3b07",
    "surface": "Defensive secondary sport is us_football.",
-   "reason": "allowlist: no shape: at token 2 'is' expected a gathered slug (SUBJ/OBJ)"
+   "reason": "allowlist: no shape: at token 1 'sport' expected a relation with a verb reading ('sport' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading)"
   }
  ],
  "stub_one_per_relation_doc": "the first AFFIRM fact of each relation of the production LTM store (/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k/facts.json), for the per-relation stub-mouth pins",
