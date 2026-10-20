@@ -643,7 +643,10 @@ def test_shape3_never_applies_to_a_relation_without_of(rel):
     noun = rel.replace("_", " ")
     for g in ([["turkey_x", rel, "ankara_y"]], [["ankara_y", rel, "turkey_x"]]):
         for p in ("Ankara Y is the %s of Turkey X." % noun, "Turkey X is the %s of Ankara Y." % noun,
-                  "Ankara Y is %s of Turkey X." % noun, "Turkey X is a %s of Ankara Y." % noun):
+                  "Ankara Y is %s of Turkey X." % noun, "Turkey X is a %s of Ankara Y." % noun,
+                  # without a literal "of" that no shape consumes (the four above reject even if shape 3 took any relation:
+                  # mutation report m35 / m74); "Ankara Y is capital Turkey X." is the report's witness
+                  "Ankara Y is %s Turkey X." % noun, "Turkey X is %s Ankara Y." % noun, "Ankara Y is a %s Turkey X." % noun):
             assert not A.allowlist_keep(p, g)[0], (g, p)
 
 

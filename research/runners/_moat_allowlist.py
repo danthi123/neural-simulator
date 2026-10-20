@@ -462,7 +462,9 @@ def _parses(toks, lex, fail):
 def allowlist_check(sentence, gathered):
     """ONE sentence against this turn's gathered triples -> dict(keep, reason, shape, props, tokens). Pure (no substrate,
     no parser seed): the same input gives the same verdict at every parser seed."""
-    key = gathered if isinstance(gathered, frozenset) else _key_of(gathered)
+    # every input is filtered to well-formed (str, str, str) triples, a frozenset too: a malformed frozenset passed directly used to
+    # raise IndexError (mutation witness m96); a filtered key comes back equal, so the lexicon cache is unchanged
+    key = _key_of(gathered)
     res = {"sentence": sentence, "keep": False, "reason": None, "shape": None, "props": [], "tokens": None}
     if not key:
         res["reason"] = "allowlist: nothing gathered"
