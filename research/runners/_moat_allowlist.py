@@ -55,7 +55,7 @@ copula "is", "and") are not read.
 FOLD TO FIND, EXACT TO ACCEPT (build 4, after round 5: build 3 kept 24 of 89 U cases, every one ACCEPTED by fold-equality, e.g. "George V"
 + U+013A reads as George VI but folds to george_v; "1-500 m" folds to 1_500_m). The store fold above now only FINDS which gathered slug a
 span could be. After a sentence parses, every proposition is gathered and the case rule passes, `_exact_violation` requires, for every
-parse: each SUBJ/OBJ span's `surface_form` (NFC, lowercase, ASCII whitespace runs -> one space, stripped; nothing else) is exactly one of
+parse: each SUBJ/OBJ span's `surface_form` (NFC, lowercase, whitespace runs -> one space, stripped; nothing else) is exactly one of
 the slug's canonical surfaces (the slug verbatim, as the stub mouth renders it; its de-slugged form; or one of the entity's own store names
 whose sanitize() is the slug, from the committed exceptions table research/findings/raw/_moat_allowlist_names/names_table.json made by
 research/runners/_moat_allowlist_names_build.py); each relation span is written exactly as the token the relation table read (verbatim or
@@ -119,7 +119,7 @@ _TOKEN = re.compile(r"[a-z0-9_]+|[^\sa-z0-9_]")
 _HAS_ALNUM = re.compile(r"[a-z0-9]")
 _SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+")
 _ASCII_ALNUM = re.compile(r"[a-z0-9]")
-_ASCII_WS = re.compile(r"[ \t\n\r\f\v]+")
+_WS = re.compile(r"\s+")               # Unicode whitespace (str.isspace): space, tab, no-break / thin / ideographic space, ...
 
 
 def _nonascii_word_runs(t):
@@ -265,10 +265,11 @@ def _case_violation(parses, origs):
 # ---- build 4: fold to find, exact to accept ----------------------------------------------------------------------------------
 def surface_form(text):
     """The ONLY normalisation an entity span's displayed text gets before the exact comparison (build 4): NFC, then `str.lower()`,
-    then every run of ASCII whitespace -> one ASCII space, leading/trailing space stripped. No hyphen/space equivalence, no NFKC, no
+    then every run of whitespace (Unicode, `str.isspace`: a no-break or thin space is a space) -> one ASCII space, leading/trailing
+    space stripped. A zero-width character is not whitespace and stays. No hyphen/space equivalence, no NFKC, no
     accent stripping, no confusable mapping. Shared by the matcher and the table generator
     (research/runners/_moat_allowlist_names_build.py), so both compare by one rule."""
-    return _ASCII_WS.sub(" ", unicodedata.normalize("NFC", text).lower()).strip(" ")
+    return _WS.sub(" ", unicodedata.normalize("NFC", text).lower()).strip(" ")
 
 
 def deslug(slug):
@@ -307,7 +308,7 @@ def names_table():
 def _exact_violation(parses, toks, origs, offs, src):
     """Build 4 (fold to find, exact to accept) -> a reason string for the first violation over every parse, or None:
       - a SUBJ/OBJ span whose `surface_form` is not one of its slug's canonical surfaces (`names_table().surfaces`);
-      - a relation span whose displayed text, lowercased with ASCII whitespace collapsed, is not the token the relation table read
+      - a relation span whose displayed text, lowercased with whitespace collapsed, is not the token the relation table read
         (a single verb form as written, or the relation slug verbatim or with underscores as single spaces): no fold of any kind;
       - a non-ASCII character anywhere outside the accepted SUBJ/OBJ spans (determiners, relation words, "is", "and", commas, the
         final period, the space between words)."""

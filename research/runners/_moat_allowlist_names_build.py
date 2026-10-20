@@ -1,7 +1,7 @@
 """Generator of the allowlist claim checker's EXACT-SURFACE table (build 4, `BRAIN_MOAT_ALLOWLIST`, default OFF).
 
 Build 4 rule, FOLD TO FIND, EXACT TO ACCEPT: the store's lossy slug fold may still FIND which gathered slug a token run could be, but
-a SUBJ/OBJ span is ACCEPTED only if its displayed text, compared by `surface_form` (NFC, lowercase, ASCII whitespace runs -> one space,
+a SUBJ/OBJ span is ACCEPTED only if its displayed text, compared by `surface_form` (NFC, lowercase, whitespace runs -> one space,
 stripped), equals one of that slug's canonical surfaces: the de-slugged form (underscores -> spaces), or one of that entity's own store
 names (canonical label or alias in wikidata5m, the source the store was built from) whose `sanitize()` equals the slug. Round 5 leaked
 24 sentences through acceptance by fold-equality ("George V" + U+013A folds to george_v while it reads as George VI).
@@ -81,7 +81,7 @@ def main(argv=None):
 
     doc = {
         "_doc": ("Exact-surface table of the allowlist claim checker (build 4, BRAIN_MOAT_ALLOWLIST: fold to find, exact to accept). "
-                 "entity slug -> the surface forms (research/runners/_moat_allowlist.surface_form: NFC, lowercase, ASCII whitespace runs "
+                 "entity slug -> the surface forms (research/runners/_moat_allowlist.surface_form: NFC, lowercase, whitespace runs "
                  "collapsed) of that entity's store names with sanitize(name) == slug that differ from the de-slugged form. Only these "
                  "exceptions are stored: a slug with no row accepts only its de-slugged form."),
         "runner": "research/runners/_moat_allowlist_names_build.py",

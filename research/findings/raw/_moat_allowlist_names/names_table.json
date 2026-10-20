@@ -1,5 +1,5 @@
 {
- "_doc": "Exact-surface table of the allowlist claim checker (build 4, BRAIN_MOAT_ALLOWLIST: fold to find, exact to accept). entity slug -> the surface forms (research/runners/_moat_allowlist.surface_form: NFC, lowercase, ASCII whitespace runs collapsed) of that entity's store names with sanitize(name) == slug that differ from the de-slugged form. Only these exceptions are stored: a slug with no row accepts only its de-slugged form.",
+ "_doc": "Exact-surface table of the allowlist claim checker (build 4, BRAIN_MOAT_ALLOWLIST: fold to find, exact to accept). entity slug -> the surface forms (research/runners/_moat_allowlist.surface_form: NFC, lowercase, whitespace runs collapsed) of that entity's store names with sanitize(name) == slug that differ from the de-slugged form. Only these exceptions are stored: a slug with no row accepts only its de-slugged form.",
  "runner": "research/runners/_moat_allowlist_names_build.py",
  "source": {
   "store_dir": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",

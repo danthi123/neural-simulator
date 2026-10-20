@@ -3,7 +3,7 @@
 Round 5 (research/findings/raw/_moat_allowlist_hunt4/r5/) kept 24 of 89 adjudicated-U cases at all seven seeds on build 3. Every one went
 through ONE step: a SUBJ/OBJ span was accepted because the store's lossy slug fold mapped it onto a gathered slug ("George V" + U+013A
 reads as George VI but folds to george_v; "1-500 m" folds to 1_500_m). Build 4 keeps the fold only to FIND which gathered slug a token
-run could be. A span is ACCEPTED only if its displayed text, by `surface_form` (NFC, lowercase, ASCII whitespace runs -> one space,
+run could be. A span is ACCEPTED only if its displayed text, by `surface_form` (NFC, lowercase, whitespace runs -> one space,
 stripped), equals one of the slug's canonical surfaces: the slug verbatim, its de-slugged form, or one of that entity's own store names
 whose sanitize() is the slug (research/findings/raw/_moat_allowlist_names/names_table.json, made by
 research/runners/_moat_allowlist_names_build.py). Relation words are matched with no fold, and a non-ASCII character outside the accepted
@@ -173,12 +173,22 @@ def test_hyphen_for_space_is_rejected_unless_a_store_name_has_the_hyphen():
         assert not keep and ("entity span %r" % span) in why and slug in why, (p, why)
 
 
-def test_double_spaces_collapse_but_other_whitespace_is_not_a_space():
+def test_whitespace_runs_collapse_inside_an_entity_span_but_not_outside():
+    """'every run of whitespace collapsed to one ASCII space' reads whitespace as Python does (str.isspace): a no-break, thin or
+    ideographic space inside a name is a space. A zero-width character is not whitespace, so it stays and rejects. Outside the entity
+    spans every character must be ASCII, so the same spaces between the relation words, or before a name, reject."""
     g = [["george_v", "member_of", "british_royal_society"]]
     assert A.allowlist_keep("George  V is a member of British Royal Society.", g) == (True, "ok")
-    for ws in (chr(0xA0), chr(0x2009), chr(0x3000)):                      # no-break, thin, ideographic space: not ASCII whitespace
-        keep, why = A.allowlist_keep("George%sV is a member of British Royal Society." % ws, g)
-        assert not keep, (hex(ord(ws)), why)
+    for ws in (chr(0xA0), chr(0x2009), chr(0x202F), chr(0x3000), " \t"):
+        assert A.allowlist_keep("George%sV is a member of British%sRoyal Society." % (ws, ws), g) == (True, "ok"), repr(ws)
+        if ws.isascii():                                                       # ASCII whitespace between words is just a space
+            assert A.allowlist_keep("George V is a member%sof British Royal Society." % ws, g) == (True, "ok")
+            continue
+        for p in ("George V is a member%sof British Royal Society." % ws, "George V is%sa member of British Royal Society." % ws):
+            keep, why = A.allowlist_keep(p, g)
+            assert not keep and "non-ASCII character" in why, (repr(ws), why)
+    for zw in (chr(0x200B), chr(0x200C), chr(0x2060), chr(0xFEFF)):           # zero-width: not whitespace
+        assert not A.allowlist_keep("George%s V is a member of British Royal Society." % zw, g)[0], hex(ord(zw))
 
 
 # ========================================================================================= no fold on relation words, ASCII outside
@@ -190,7 +200,7 @@ def test_double_spaces_collapse_but_other_whitespace_is_not_a_space():
     ("Spain shares-border-with France.", ES, "relation span 'shares-border-with'"),
     ("Spain" + chr(0xA0) + "shares border with France.", ES, "non-ASCII character"),
     ("Spain shares border with the" + chr(0xA0) + "France.", ES, "non-ASCII character"),
-    ("Spain shares border" + chr(0xA0) + "with France.", ES, "relation span"),
+    ("Spain shares border" + chr(0xA0) + "with France.", ES, "non-ASCII character"),
     ("Spain shares border with France." + chr(0x3000), ES, "non-ASCII character"),
     ("Spain shаres border with France.", ES, "non-Latin"),                    # Cyrillic a
     ("Spain shares border with thé France.", ES, "no shape"),
@@ -255,9 +265,10 @@ def test_the_names_table_is_small_exceptions_only_and_spells_its_slugs():
     assert A.names_table() is A.names_table()
 
 
-def test_surface_form_is_only_nfc_lower_and_ascii_whitespace():
+def test_surface_form_is_only_nfc_lower_and_whitespace():
     assert A.surface_form("  Koninkrijk\tBelgie" + chr(0x308) + "  ") == "koninkrijk belgië"
-    assert A.surface_form("A" + chr(0xA0) + "B") == "a" + chr(0xA0) + "b"
+    assert A.surface_form("A" + chr(0xA0) + chr(0x2009) + "B") == "a b"
+    assert A.surface_form("A" + chr(0x200B) + "B") == "a" + chr(0x200B) + "b"      # zero-width is not whitespace
     assert A.surface_form("Auvergne-Rhône") == "auvergne-rhône"
     assert A.surface_form("ﬁ") == "ﬁ"                      # no NFKC
     assert A.deslug("1_500_m") == "1 500 m"
