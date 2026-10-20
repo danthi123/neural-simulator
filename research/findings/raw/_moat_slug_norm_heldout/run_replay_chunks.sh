@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Run run_replay.sh over a label list in sequential chunks of N turns (one process per chunk): a single process that builds ~20 fresh-session
 # brains grows past a 12 GB memcap and is OOM-killed, losing its whole batch (seen 2026-10-18, rc=137).  Output: <out_prefix>_<k>.json.
-# usage (cwd = worktree): [RMODE=stub] bash .../run_replay_chunks.sh <s1|s3> <on|off> <out_prefix> <labels,csv> [chunk=7] [memcap_gb=16]
+# usage (cwd = worktree): [RMODE=stub] bash .../run_replay_chunks.sh <s1|s3> <on|off|allowlist> <out_prefix> <labels,csv> [chunk=7] [memcap_gb=16]
 set -uo pipefail
 STRATUM="${1:?}"; ARM="${2:?}"; PREFIX="${3:?}"; LABELS="${4:?}"; N="${5:-7}"; CAP="${6:-16}"
 H=research/findings/raw/_moat_slug_norm_heldout
