@@ -280,3 +280,21 @@ def test_a_python_crash_of_the_watcher_is_unavailable_not_a_stall_report(tmp_pat
     res = _run_status(tmp_path, extra_env={"STALL_WATCH_CMD": str(stalled)})
     section = res.stdout.split("-- Stalls --")[1].split("-- Recent failures (24h) --")[0]
     assert res.returncode == 0 and "STALL pool41-x node=pool41" in section and "UNAVAILABLE" not in section
+
+
+def _idle_ssh(tmp_path: Path) -> Path:
+    p = tmp_path / "idle_ssh"
+    p.write_text("#!/usr/bin/env bash\ncat >/dev/null\necho '0 0'\n")
+    p.chmod(0o755)
+    return p
+
+
+def test_status_flags_idle_nodes_next_to_queued_work(tmp_path):
+    # RULING pool-stall-1020: pool41/pool42 sat idle ~30 h beside 32 queued lines (memcap above their free memory).
+    r = _run_status(tmp_path, ssh_bin=_idle_ssh(tmp_path))
+    assert "idle node(s)" not in r.stdout                       # empty queue: idle nodes are normal
+    (tmp_path / "pool.queue").write_text("1792451543\techo a\n1792451544\techo b\n")
+    r = _run_status(tmp_path, ssh_bin=_idle_ssh(tmp_path))
+    assert r.returncode == 0
+    line = [ln for ln in r.stdout.splitlines() if "idle node(s)" in ln]
+    assert len(line) == 1 and "fakenode1 fakenode2" in line[0] and "memcap" in line[0], r.stdout
