@@ -99,3 +99,51 @@ build test fixture. Both defects are fixed here, before the measurement runs.
    - Bar 5 then counts, separately from HURTS, the stub-population facts whose stock-kept sentence is a role-reversed
      English reading. They are listed by relation with counts, as stock leaks, not as answers lost. The stub renderer's
      reversed sentences are filed as their own defect.
+
+## AMENDMENT 2 (2026-10-20, Claude; filed after build 1's round-3 hunt and build 2's build, before any build-2 measurement)
+
+**Build 1 fails bar 3 as registered.** The round-3 blind hunt (`research/findings/raw/_moat_allowlist_hunt3/`, cases and label
+adjudication committed at `1ee51881e` before the run) has 158 U cases after adjudication. Build 1 kept 4 of them at all seven seeds,
+through both the claim gate and the composer entry: I01 and I09 (`sport`), I02 (`conflict`), I03 (`instrument`). <!--derived-->
+- Build 1 is a NO-GO on bar 3. Its other measurements (bars 1, 2, 4, 5) run to completion and are reported in its verdict section as
+  registered, with this NO-GO beside them.
+- The B cases T01-T03 ("X is the member of Y") were also kept. They are reported, not counted against the lenient bar.
+
+**Root cause, and what build 2 changes.** Amendment 1's table tested only the subject's ROLE. A reading that keeps the role but asserts a
+different relation passed: "X sports Y" asserts that X wears Y, not that X's sport is Y. Build 2 (`7b8e9c27b`, `0914eb8dc`, `98f3d59eb`)
+makes three changes:
+1. **A MEANING test, applied per reading.** A reading is kept only if "SUBJ <reading> OBJ" paraphrases back to exactly the triple.
+   - A relation whose own-label readings fail is classed MEANING-DRIFT and gets no verb reading and no shape 3. This applies to sport,
+     conflict and instrument, and conservatively to spouse.
+   - A single failing reading of an otherwise safe row is dropped (`DROPPED_READINGS`): eat keeps "eats" and drops "devours" and
+     "consumes".
+   - The other 56 store relations were re-reviewed under the meaning test. Their class changes are in the table's commit.
+2. **Shape 3 takes only "a", "an" or no determiner before the relation noun.** "The" asserts uniqueness.
+3. **SUBJ and OBJ are spelled by the store's own slug rule** (`sanitize` in `research/runners/_knowledge_core_curate.py`).
+
+The round-3 cases shaped build 2, so they are no longer blind. Build 2 is re-run on them and reported, but they are no longer a bar.
+
+**Bars for build 2.** Sections 2.1-2.6 apply as amended by Amendment 1, with these changes:
+- **Bar 3 applies to a NEW round-4 hunt.**
+  - At least 100 new expect-U inputs, each gathered triple an exact store triple, plus supported twins.
+  - Written by a fresh skeptic under round 3's blindness rule. The skeptic may read SPEC.md, this prereg with both amendments, the
+    held-out corpora, the store, and the round-3 `cases.json`, so as not to repeat its inputs.
+  - The skeptic may NOT read any matcher code, its tests, its relation table, or any results file.
+  - Every case is new: no round-3 sentence is reused.
+  - Labels, and Claude's adjudication of arguable labels, are committed before the run.
+  - Bar 3 holds if build 2 keeps 0 U cases at all seven seeds, through both entries. Retention of the supported twins is reported beside
+    it.
+- **Arm validity on any hunt run.** An arm that records errors on any case (round 3's stock arm recorded 245, B2h 203) is reported as
+  UNDEFINED for those cases, never as "kept 0". <!--derived-->
+  - The round-4 runner must run stock and B2h with zero errors, or its comparison columns are void.
+  - The allowlist arm must record zero errors for bar 3 to be read at all.
+- **Bar 5 accounting.** A stock-kept stub sentence on a MEANING-DRIFT relation is counted as a stock leak, not as HURTS. The same holds for
+  a dropped reading. Such sentences are listed by relation, beside the role-reversed ones.
+  - Justification: the stub mouth renders "The X sports Y.", which in plain English asserts something the triple does not.
+  - To keep the cost visible, the bar-5 verdict line also quotes three numbers side by side: the allowlist's answer rate on the stub
+    population, stock's answer rate, and how many one-fact stubs become unvoiceable under the flag. A HURTS count of 0 must never be read
+    as "no answer loss".
+- **Bar 4 is re-reported.** The must-keep set is 31 of 38, the same 7 losses. <!--derived-->
+
+**If build 2 misses any bar, it is a NO-GO.** The method continues with the next build and a fresh round-5 hunt (no defer). No case of a
+hunt that has been run is ever used to tune the build it scores.
