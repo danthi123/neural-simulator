@@ -1,0 +1,3991 @@
+{
+ "_doc": "exhaustive one-fact stub-mouth population, stock _verify vs the BRAIN_MOAT_SLUG_NORM claim gate and the BRAIN_MOAT_ALLOWLIST claim gate (module docstring)",
+ "arms": [
+  "allowlist",
+  "b2h"
+ ],
+ "limit": null,
+ "n_population": 78857,
+ "elapsed_s": 4577.9,
+ "backend": "numpy",
+ "device": "cpu",
+ "host": "dant123-wk",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-allow/research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive.py",
+  "research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive_allowlist.json",
+  "1",
+  "research/findings/raw/_moat_slug_norm_heldout/composer_stub_sweep_3000_after.json",
+  "--arms",
+  "b2h,allowlist"
+ ],
+ "parser_seed": 1,
+ "n_facts": 78857,
+ "cells(stock_ok,flag_on_ok)": {
+  "(True, True)": 78857
+ },
+ "stock_answer_rate": 1.0,
+ "flag_on_answer_rate": 1.0,
+ "HURTS": 0,
+ "HELPS": 0,
+ "flag_on_fallback_to_single_triple": 0,
+ "hurts_reasons": {},
+ "hurts_by_relation": {},
+ "composer_sample_agreement": {
+  "sample_n": 3000,
+  "composer_hurts": 0,
+  "population_hurts_within_sample": 0,
+  "composer_sample_agrees": true
+ },
+ "cells(stock_ok,allowlist_ok)": {
+  "(True, True)": 78421,
+  "(True, False)": 436
+ },
+ "allowlist_answer_rate": 0.9944710044764574,
+ "HURTS_allowlist": 0,
+ "HELPS_allowlist": 0,
+ "allowlist_unbuildable_rejected": 0,
+ "allowlist_hurts_reasons": {},
+ "allowlist_hurts_by_relation": {},
+ "allowlist_role_reversed_stock_leaks": 436,
+ "allowlist_role_reversed_by_relation": {
+  "parent_taxon": 182,
+  "father": 125,
+  "child": 81,
+  "author": 27,
+  "platform": 21
+ },
+ "allowlist_role_reversed_stock_rejected_by_relation": {},
+ "relation_table": "research/runners/_moat_allowlist_relations.py",
+ "relation_table_sha256": "37bf3563ed36d449ce2a66b6a823c294d1bba4616590350ee52ba0c14a2d3ba2",
+ "allowlist_role_reversed_rows": [
+  {
+   "svo": [
+    "jaya_badhuri",
+    "child",
+    "abishek_bachchan"
+   ],
+   "surface": "The jaya_badhuri childs abishek_bachchan.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "albert_prince_of_wales",
+    "child",
+    "george_v"
+   ],
+   "surface": "The albert_prince_of_wales childs george_v.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "albert_prince_of_wales",
+    "father",
+    "albert_prince_consort"
+   ],
+   "surface": "The albert_prince_of_wales fathers albert_prince_consort.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "sheetweaver_spider",
+    "parent_taxon",
+    "egg_sac"
+   ],
+   "surface": "The sheetweaver_spider parent_taxons egg_sac.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "book_of_gen",
+    "author",
+    "moshe_rabbenu"
+   ],
+   "surface": "The book_of_gen authors moshe_rabbenu.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "the_avengers_united",
+    "author",
+    "stanley_martin_lieber"
+   ],
+   "surface": "The the_avengers_united authors stanley_martin_lieber.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "mutaib_bin_abdul_aziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The mutaib_bin_abdul_aziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "bomber_men",
+    "platform",
+    "world_of_spectrum"
+   ],
+   "surface": "The bomber_men platforms world_of_spectrum.",
+   "reject": "allowlist: no shape: at token 2 'platforms' expected a relation with a verb reading ('platforms' reads platform, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "oenopota",
+    "parent_taxon",
+    "cone_shell"
+   ],
+   "surface": "The oenopota parent_taxons cone_shell.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "liptena",
+    "parent_taxon",
+    "gossamer_winged_butterflies"
+   ],
+   "surface": "The liptena parent_taxons gossamer_winged_butterflies.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "taxonomy_of_cossidae",
+    "parent_taxon",
+    "evolution_of_lepidoptera"
+   ],
+   "surface": "The taxonomy_of_cossidae parent_taxons evolution_of_lepidoptera.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "saluri_rajeshwara_rao",
+    "child",
+    "koti_music_director"
+   ],
+   "surface": "The saluri_rajeshwara_rao childs koti_music_director.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "anacampsis_karmeliella",
+    "parent_taxon",
+    "twirler_moth"
+   ],
+   "surface": "The anacampsis_karmeliella parent_taxons twirler_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "mashhur_bin_abdul_aziz_al_saud",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The mashhur_bin_abdul_aziz_al_saud fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "nothing_but_wind",
+    "child",
+    "yuvan_shankar_raja_discography"
+   ],
+   "surface": "The nothing_but_wind childs yuvan_shankar_raja_discography.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "relbunium",
+    "parent_taxon",
+    "madder_family"
+   ],
+   "surface": "The relbunium parent_taxons madder_family.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "nadigar_thilagam",
+    "child",
+    "prabhu_ganesan"
+   ],
+   "surface": "The nadigar_thilagam childs prabhu_ganesan.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "cymorrhiza",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The cymorrhiza parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "tyrant_flycatcher",
+    "parent_taxon",
+    "passerine_bird"
+   ],
+   "surface": "The tyrant_flycatcher parent_taxons passerine_bird.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "dasyspoudaea",
+    "parent_taxon",
+    "owlet_moth"
+   ],
+   "surface": "The dasyspoudaea parent_taxons owlet_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "george_v",
+    "father",
+    "albert_prince_of_wales"
+   ],
+   "surface": "The george_v fathers albert_prince_of_wales.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "caelostomus",
+    "parent_taxon",
+    "ground_beetle"
+   ],
+   "surface": "The caelostomus parent_taxons ground_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "exoria",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The exoria parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "jane_birkin",
+    "child",
+    "charlotte_gainesbourg"
+   ],
+   "surface": "The jane_birkin childs charlotte_gainesbourg.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "archduke_john_of_austria",
+    "father",
+    "leopold_ii_of_hungary"
+   ],
+   "surface": "The archduke_john_of_austria fathers leopold_ii_of_hungary.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "rat",
+    "parent_taxon",
+    "old_world_mouse"
+   ],
+   "surface": "The rat parent_taxons old_world_mouse.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "hyllisia",
+    "parent_taxon",
+    "longhorn_beetles"
+   ],
+   "surface": "The hyllisia parent_taxons longhorn_beetles.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "new_testiment",
+    "author",
+    "peter_the_disciple"
+   ],
+   "surface": "The new_testiment authors peter_the_disciple.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "richmond_reed_carradine",
+    "child",
+    "john_arthur_carradine"
+   ],
+   "surface": "The richmond_reed_carradine childs john_arthur_carradine.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "cryptophasa",
+    "parent_taxon",
+    "concealer_moth"
+   ],
+   "surface": "The cryptophasa parent_taxons concealer_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "substenodes",
+    "parent_taxon",
+    "tortrix_moth"
+   ],
+   "surface": "The substenodes parent_taxons tortrix_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "gymnoscelis",
+    "parent_taxon",
+    "canker_worm"
+   ],
+   "surface": "The gymnoscelis parent_taxons canker_worm.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "bushbrown",
+    "parent_taxon",
+    "brush_footed_butterflies"
+   ],
+   "surface": "The bushbrown parent_taxons brush_footed_butterflies.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "prosomura",
+    "parent_taxon",
+    "concealer_moth"
+   ],
+   "surface": "The prosomura parent_taxons concealer_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "yuvan_shankar_raja_discography",
+    "father",
+    "nothing_but_wind"
+   ],
+   "surface": "The yuvan_shankar_raja_discography fathers nothing_but_wind.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "saad_bin_abdulaziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The saad_bin_abdulaziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "ms_windows_seven",
+    "platform",
+    "x64_edition"
+   ],
+   "surface": "The ms_windows_seven platforms x64_edition.",
+   "reject": "allowlist: no shape: at token 2 'platforms' expected a relation with a verb reading ('platforms' reads platform, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "ulysses_podcast",
+    "author",
+    "james_augustine_aloysius_joyce"
+   ],
+   "surface": "The ulysses_podcast authors james_augustine_aloysius_joyce.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "paripatra_sukhumbhand",
+    "father",
+    "king_rama_v_chulangkorn"
+   ],
+   "surface": "The paripatra_sukhumbhand fathers king_rama_v_chulangkorn.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "pyrenomycetous_fungi",
+    "parent_taxon",
+    "loculoascomycetes"
+   ],
+   "surface": "The pyrenomycetous_fungi parent_taxons loculoascomycetes.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "prince_bandar",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The prince_bandar fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "jean_renoir",
+    "father",
+    "pierre_august_renoir"
+   ],
+   "surface": "The jean_renoir fathers pierre_august_renoir.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "charles_ii_of_scotland",
+    "father",
+    "charles_i_of_england"
+   ],
+   "surface": "The charles_ii_of_scotland fathers charles_i_of_england.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "mythology_jupiter",
+    "child",
+    "aphrodite_acidalia"
+   ],
+   "surface": "The mythology_jupiter childs aphrodite_acidalia.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "garnet_os",
+    "platform",
+    "arm_hardfloat"
+   ],
+   "surface": "The garnet_os platforms arm_hardfloat.",
+   "reject": "allowlist: no shape: at token 2 'platforms' expected a relation with a verb reading ('platforms' reads platform, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "apache_software_licence",
+    "author",
+    "the_apache_software_foundation"
+   ],
+   "surface": "The apache_software_licence authors the_apache_software_foundation.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "chrysobothris",
+    "parent_taxon",
+    "metallic_wood_boring_beetle"
+   ],
+   "surface": "The chrysobothris parent_taxons metallic_wood_boring_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "king_abdulaziz",
+    "child",
+    "salman_bin_abdul_aziz_al_saud"
+   ],
+   "surface": "The king_abdulaziz childs salman_bin_abdul_aziz_al_saud.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "big_headed_ant",
+    "parent_taxon",
+    "worker_ant"
+   ],
+   "surface": "The big_headed_ant parent_taxons worker_ant.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "aphrodite_acidalia",
+    "father",
+    "mythology_jupiter"
+   ],
+   "surface": "The aphrodite_acidalia fathers mythology_jupiter.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "eoophyla",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The eoophyla parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "sultana_bint_abdulaziz_al_saud",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The sultana_bint_abdulaziz_al_saud fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "labeo",
+    "parent_taxon",
+    "cyprinid_fish"
+   ],
+   "surface": "The labeo parent_taxons cyprinid_fish.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "cymindis",
+    "parent_taxon",
+    "ground_beetle"
+   ],
+   "surface": "The cymindis parent_taxons ground_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "clepsis_antigona",
+    "parent_taxon",
+    "tortrix_moth"
+   ],
+   "surface": "The clepsis_antigona parent_taxons tortrix_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "julio_iglesias",
+    "child",
+    "enrique_iglesias"
+   ],
+   "surface": "The julio_iglesias childs enrique_iglesias.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "khaz_modan",
+    "platform",
+    "windows_applications"
+   ],
+   "surface": "The khaz_modan platforms windows_applications.",
+   "reject": "allowlist: no shape: at token 2 'platforms' expected a relation with a verb reading ('platforms' reads platform, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "mitromorpha",
+    "parent_taxon",
+    "cone_shell"
+   ],
+   "surface": "The mitromorpha parent_taxons cone_shell.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "john_huston",
+    "child",
+    "huston_anjelica"
+   ],
+   "surface": "The john_huston childs huston_anjelica.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "john_huston",
+    "father",
+    "walter_thomas_huston"
+   ],
+   "surface": "The john_huston fathers walter_thomas_huston.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "cao_mengde",
+    "child",
+    "tsao_pi"
+   ],
+   "surface": "The cao_mengde childs tsao_pi.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "astatia",
+    "parent_taxon",
+    "tortrix_moth"
+   ],
+   "surface": "The astatia parent_taxons tortrix_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "nayef_bin_abdul_aziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The nayef_bin_abdul_aziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "yesh_chopra",
+    "child",
+    "yrf_music"
+   ],
+   "surface": "The yesh_chopra childs yrf_music.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "filatima",
+    "parent_taxon",
+    "twirler_moth"
+   ],
+   "surface": "The filatima parent_taxons twirler_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "galileo_horse",
+    "father",
+    "sadler_s_wells_horse"
+   ],
+   "surface": "The galileo_horse fathers sadler_s_wells_horse.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "orthocomotis",
+    "parent_taxon",
+    "tortrix_moth"
+   ],
+   "surface": "The orthocomotis parent_taxons tortrix_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "deuterollyta_albiferalis",
+    "parent_taxon",
+    "pyralid_moth"
+   ],
+   "surface": "The deuterollyta_albiferalis parent_taxons pyralid_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "fahd_bin_abdul_aziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The fahd_bin_abdul_aziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "deltaornix",
+    "parent_taxon",
+    "phyllocnistidae"
+   ],
+   "surface": "The deltaornix parent_taxons phyllocnistidae.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "firefox_roadmap",
+    "platform",
+    "ebp_register"
+   ],
+   "surface": "The firefox_roadmap platforms ebp_register.",
+   "reject": "allowlist: no shape: at token 2 'platforms' expected a relation with a verb reading ('platforms' reads platform, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "nasser_bin_abdulaziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The nasser_bin_abdulaziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "yrf_music",
+    "father",
+    "yesh_chopra"
+   ],
+   "surface": "The yrf_music fathers yesh_chopra.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "latifa_bint_abdulaziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The latifa_bint_abdulaziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "xestia",
+    "parent_taxon",
+    "owlet_moth"
+   ],
+   "surface": "The xestia parent_taxons owlet_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "polygrammodes",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The polygrammodes parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "rasbora",
+    "parent_taxon",
+    "cyprinid_fish"
+   ],
+   "surface": "The rasbora parent_taxons cyprinid_fish.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "eulima_monmouthensis",
+    "parent_taxon",
+    "stiliferidae"
+   ],
+   "surface": "The eulima_monmouthensis parent_taxons stiliferidae.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "sinocyclocheilus",
+    "parent_taxon",
+    "cyprinid_fish"
+   ],
+   "surface": "The sinocyclocheilus parent_taxons cyprinid_fish.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "mansour_bin_abdulaziz_al_saud",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The mansour_bin_abdulaziz_al_saud fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "heliophanus",
+    "parent_taxon",
+    "jumping_spiders"
+   ],
+   "surface": "The heliophanus parent_taxons jumping_spiders.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "mario_luigi",
+    "platform",
+    "iphone_operating_system"
+   ],
+   "surface": "The mario_luigi platforms iphone_operating_system.",
+   "reject": "allowlist: no shape: at token 2 'platforms' expected a relation with a verb reading ('platforms' reads platform, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "francis_ii_of_austria",
+    "father",
+    "leopold_ii_of_hungary"
+   ],
+   "surface": "The francis_ii_of_austria fathers leopold_ii_of_hungary.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "ogenos",
+    "father",
+    "ouranos"
+   ],
+   "surface": "The ogenos fathers ouranos.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "keifer_sutherland",
+    "father",
+    "sutherland_donald"
+   ],
+   "surface": "The keifer_sutherland fathers sutherland_donald.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "eugenia_buxifolia",
+    "parent_taxon",
+    "myrtle_tree"
+   ],
+   "surface": "The eugenia_buxifolia parent_taxons myrtle_tree.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "banksias",
+    "parent_taxon",
+    "proteaceous"
+   ],
+   "surface": "The banksias parent_taxons proteaceous.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "ranbir_raj_prithviraj_kapoor",
+    "child",
+    "rishi_kapoor"
+   ],
+   "surface": "The ranbir_raj_prithviraj_kapoor childs rishi_kapoor.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "king_faisal_bin_abdul_aziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The king_faisal_bin_abdul_aziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "desmia_sextalis",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The desmia_sextalis parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "hank_williams_jr",
+    "father",
+    "hiram_king_williams_sr"
+   ],
+   "surface": "The hank_williams_jr fathers hiram_king_williams_sr.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "akkineni_nagarjuna",
+    "father",
+    "akkineni_nageshwara_rao"
+   ],
+   "surface": "The akkineni_nagarjuna fathers akkineni_nageshwara_rao.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "sutherland_donald",
+    "child",
+    "keifer_sutherland"
+   ],
+   "surface": "The sutherland_donald childs keifer_sutherland.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "crab_spider",
+    "parent_taxon",
+    "egg_sac"
+   ],
+   "surface": "The crab_spider parent_taxons egg_sac.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "metius_genus",
+    "parent_taxon",
+    "ground_beetle"
+   ],
+   "surface": "The metius_genus parent_taxons ground_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "macrobathra",
+    "parent_taxon",
+    "cosmet_moth"
+   ],
+   "surface": "The macrobathra parent_taxons cosmet_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "urophora",
+    "parent_taxon",
+    "tephritid_fruit_fly"
+   ],
+   "surface": "The urophora parent_taxons tephritid_fruit_fly.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "ciliate_blues",
+    "parent_taxon",
+    "gossamer_winged_butterflies"
+   ],
+   "surface": "The ciliate_blues parent_taxons gossamer_winged_butterflies.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "rob_reiner_filmography",
+    "father",
+    "reiner_carl"
+   ],
+   "surface": "The rob_reiner_filmography fathers reiner_carl.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "recilia",
+    "parent_taxon",
+    "leaf_hopper"
+   ],
+   "surface": "The recilia parent_taxons leaf_hopper.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "solariella",
+    "parent_taxon",
+    "top_snail"
+   ],
+   "surface": "The solariella parent_taxons top_snail.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "j_m_jarre",
+    "father",
+    "maurice_jarre"
+   ],
+   "surface": "The j_m_jarre fathers maurice_jarre.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "david_newman_composer",
+    "father",
+    "alfred_newman_composer"
+   ],
+   "surface": "The david_newman_composer fathers alfred_newman_composer.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "anisoctena",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The anisoctena parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "heterachthes",
+    "parent_taxon",
+    "longhorn_beetles"
+   ],
+   "surface": "The heterachthes parent_taxons longhorn_beetles.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "muqran_bin_abdul_aziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The muqran_bin_abdul_aziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "prince_nawwaf_bin_abdul_aziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The prince_nawwaf_bin_abdul_aziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "neocollyris",
+    "parent_taxon",
+    "ground_beetle"
+   ],
+   "surface": "The neocollyris parent_taxons ground_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "mera_bharat_mahan",
+    "father",
+    "dharmendra_singh_deol"
+   ],
+   "surface": "The mera_bharat_mahan fathers dharmendra_singh_deol.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "trypeta",
+    "parent_taxon",
+    "tephritid_fruit_fly"
+   ],
+   "surface": "The trypeta parent_taxons tephritid_fruit_fly.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "miley_mandy",
+    "father",
+    "william_billy_ray_cyrus"
+   ],
+   "surface": "The miley_mandy fathers william_billy_ray_cyrus.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "ferdinand_i_of_germany",
+    "child",
+    "emperor_maximilian_ii"
+   ],
+   "surface": "The ferdinand_i_of_germany childs emperor_maximilian_ii.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "petrophile",
+    "parent_taxon",
+    "proteaceous"
+   ],
+   "surface": "The petrophile parent_taxons proteaceous.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "chakrabongse_bhuvanarth",
+    "father",
+    "king_rama_v_chulangkorn"
+   ],
+   "surface": "The chakrabongse_bhuvanarth fathers king_rama_v_chulangkorn.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "mordella",
+    "parent_taxon",
+    "pintail_beetle"
+   ],
+   "surface": "The mordella parent_taxons pintail_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "all_new_all_different_x_men",
+    "author",
+    "stanley_martin_lieber"
+   ],
+   "surface": "The all_new_all_different_x_men authors stanley_martin_lieber.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "labdia",
+    "parent_taxon",
+    "cosmet_moth"
+   ],
+   "surface": "The labdia parent_taxons cosmet_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "la_com_die_humaine",
+    "author",
+    "lord_r_hoone"
+   ],
+   "surface": "The la_com_die_humaine authors lord_r_hoone.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "mangelia",
+    "parent_taxon",
+    "cone_shell"
+   ],
+   "surface": "The mangelia parent_taxons cone_shell.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "diadegma",
+    "parent_taxon",
+    "scorpion_wasp"
+   ],
+   "surface": "The diadegma parent_taxons scorpion_wasp.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "hamoud_bin_abdulaziz_al_saud",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The hamoud_bin_abdulaziz_al_saud fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "lepidochrysops",
+    "parent_taxon",
+    "gossamer_winged_butterflies"
+   ],
+   "surface": "The lepidochrysops parent_taxons gossamer_winged_butterflies.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "apple_siri",
+    "platform",
+    "apple_macintosh"
+   ],
+   "surface": "The apple_siri platforms apple_macintosh.",
+   "reject": "allowlist: no shape: at token 2 'platforms' expected a relation with a verb reading ('platforms' reads platform, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "abhinay_vaddi",
+    "child",
+    "rekha_ganesan"
+   ],
+   "surface": "The abhinay_vaddi childs rekha_ganesan.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "henry_fonda",
+    "child",
+    "jayne_seymour_fonda"
+   ],
+   "surface": "The henry_fonda childs jayne_seymour_fonda.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "k_savithri",
+    "child",
+    "rekha_ganesan"
+   ],
+   "surface": "The k_savithri childs rekha_ganesan.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "mound_ants",
+    "parent_taxon",
+    "worker_ant"
+   ],
+   "surface": "The mound_ants parent_taxons worker_ant.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "carl_laemmle",
+    "child",
+    "carl_laemmle_jr"
+   ],
+   "surface": "The carl_laemmle childs carl_laemmle_jr.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "valve_developer_community",
+    "platform",
+    "playstation_iii"
+   ],
+   "surface": "The valve_developer_community platforms playstation_iii.",
+   "reject": "allowlist: no shape: at token 2 'platforms' expected a relation with a verb reading ('platforms' reads platform, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "raccoon_city_outbreak",
+    "platform",
+    "windows_applications"
+   ],
+   "surface": "The raccoon_city_outbreak platforms windows_applications.",
+   "reject": "allowlist: no shape: at token 2 'platforms' expected a relation with a verb reading ('platforms' reads platform, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "king_ferdinand_of_naples",
+    "child",
+    "francis_i_of_naples"
+   ],
+   "surface": "The king_ferdinand_of_naples childs francis_i_of_naples.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "janet_leigh",
+    "child",
+    "jamie_lee_curtis"
+   ],
+   "surface": "The janet_leigh childs jamie_lee_curtis.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "john_vincent_voight",
+    "child",
+    "maddox_jolie_pitt"
+   ],
+   "surface": "The john_vincent_voight childs maddox_jolie_pitt.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "victoria_of_england",
+    "child",
+    "albert_prince_of_wales"
+   ],
+   "surface": "The victoria_of_england childs albert_prince_of_wales.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "bruce_dern",
+    "child",
+    "laura_elizabeth_dern_harper"
+   ],
+   "surface": "The bruce_dern childs laura_elizabeth_dern_harper.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "alutefa",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The alutefa parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "khaled_of_saudi_arabia",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The khaled_of_saudi_arabia fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "vanessa_redgrave",
+    "father",
+    "michael_redgrave"
+   ],
+   "surface": "The vanessa_redgrave fathers michael_redgrave.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "snow_carp",
+    "parent_taxon",
+    "cyprinid_fish"
+   ],
+   "surface": "The snow_carp parent_taxons cyprinid_fish.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "harry_carey_jr",
+    "father",
+    "h_d_carey"
+   ],
+   "surface": "The harry_carey_jr fathers h_d_carey.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "trechus_rivularis",
+    "parent_taxon",
+    "ground_beetle"
+   ],
+   "surface": "The trechus_rivularis parent_taxons ground_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "shakespeare_s_sonnet",
+    "author",
+    "shakspere_william"
+   ],
+   "surface": "The shakespeare_s_sonnet authors shakspere_william.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "legend_of_zelda",
+    "platform",
+    "wireless_multi_player"
+   ],
+   "surface": "The legend_of_zelda platforms wireless_multi_player.",
+   "reject": "allowlist: no shape: at token 2 'platforms' expected a relation with a verb reading ('platforms' reads platform, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "hiram_king_williams_sr",
+    "child",
+    "hank_williams_jr"
+   ],
+   "surface": "The hiram_king_williams_sr childs hank_williams_jr.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "jeff_bridges",
+    "father",
+    "lloyd_bridges"
+   ],
+   "surface": "The jeff_bridges fathers lloyd_bridges.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "fiery_searcher",
+    "parent_taxon",
+    "ground_beetle"
+   ],
+   "surface": "The fiery_searcher parent_taxons ground_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "lesticus",
+    "parent_taxon",
+    "ground_beetle"
+   ],
+   "surface": "The lesticus parent_taxons ground_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "notagonum",
+    "parent_taxon",
+    "ground_beetle"
+   ],
+   "surface": "The notagonum parent_taxons ground_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "elaphropus",
+    "parent_taxon",
+    "ground_beetle"
+   ],
+   "surface": "The elaphropus parent_taxons ground_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "goodnight_sweet_prince",
+    "author",
+    "shakspere_william"
+   ],
+   "surface": "The goodnight_sweet_prince authors shakspere_william.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "huston_anjelica",
+    "father",
+    "john_huston"
+   ],
+   "surface": "The huston_anjelica fathers john_huston.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "hazloul_bin_abdul_aziz_al_saud",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The hazloul_bin_abdul_aziz_al_saud fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "majid_bin_abdulaziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The majid_bin_abdulaziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "usb_core",
+    "platform",
+    "ebp_register"
+   ],
+   "surface": "The usb_core platforms ebp_register.",
+   "reject": "allowlist: no shape: at token 2 'platforms' expected a relation with a verb reading ('platforms' reads platform, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "alice_s_tales_in_wonderland",
+    "author",
+    "lewis_carroll_dodgson"
+   ],
+   "surface": "The alice_s_tales_in_wonderland authors lewis_carroll_dodgson.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "musaid_bin_abdul_aziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The musaid_bin_abdul_aziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "miaenia",
+    "parent_taxon",
+    "longhorn_beetles"
+   ],
+   "surface": "The miaenia parent_taxons longhorn_beetles.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "white_mimics",
+    "parent_taxon",
+    "gossamer_winged_butterflies"
+   ],
+   "surface": "The white_mimics parent_taxons gossamer_winged_butterflies.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "bacchisa",
+    "parent_taxon",
+    "flat_faced_longhorn_beetle"
+   ],
+   "surface": "The bacchisa parent_taxons flat_faced_longhorn_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "talal_ibn_abdulaziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The talal_ibn_abdulaziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "reproductive_systems_of_mammals",
+    "parent_taxon",
+    "evolutionary_history_of_synapsids"
+   ],
+   "surface": "The reproductive_systems_of_mammals parent_taxons evolutionary_history_of_synapsids.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "george_w_bush",
+    "father",
+    "george_bush_senior"
+   ],
+   "surface": "The george_w_bush fathers george_bush_senior.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "eulimella",
+    "parent_taxon",
+    "pyramidellidae"
+   ],
+   "surface": "The eulimella parent_taxons pyramidellidae.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "mother_of_god",
+    "child",
+    "the_christ"
+   ],
+   "surface": "The mother_of_god childs the_christ.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "mordellistena_beetles_list",
+    "parent_taxon",
+    "pintail_beetle"
+   ],
+   "surface": "The mordellistena_beetles_list parent_taxons pintail_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "walter_thomas_huston",
+    "child",
+    "john_huston"
+   ],
+   "surface": "The walter_thomas_huston childs john_huston.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "the_mit_license",
+    "author",
+    "mit_ranking"
+   ],
+   "surface": "The the_mit_license authors mit_ranking.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "douglas_fairbanks_sr",
+    "child",
+    "douglas_fairbanks_jnr"
+   ],
+   "surface": "The douglas_fairbanks_sr childs douglas_fairbanks_jnr.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "turki_the_sudairi",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The turki_the_sudairi fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "pediasia",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The pediasia parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "lon_chaney",
+    "child",
+    "lon_chaney_jr"
+   ],
+   "surface": "The lon_chaney childs lon_chaney_jr.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "maris_peer",
+    "parent_taxon",
+    "artorhiza"
+   ],
+   "surface": "The maris_peer parent_taxons artorhiza.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "featherflowers",
+    "parent_taxon",
+    "myrtle_tree"
+   ],
+   "surface": "The featherflowers parent_taxons myrtle_tree.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "princess_bahurat_manimay",
+    "father",
+    "king_rama_v_chulangkorn"
+   ],
+   "surface": "The princess_bahurat_manimay fathers king_rama_v_chulangkorn.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "st_joseph_the_worker",
+    "child",
+    "the_christ"
+   ],
+   "surface": "The st_joseph_the_worker childs the_christ.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "al_bandari_bint_abdulaziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The al_bandari_bint_abdulaziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "open_bsd",
+    "platform",
+    "amiga_peripherals"
+   ],
+   "surface": "The open_bsd platforms amiga_peripherals.",
+   "reject": "allowlist: no shape: at token 2 'platforms' expected a relation with a verb reading ('platforms' reads platform, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "the_buddenbrooks",
+    "author",
+    "mann_thomas"
+   ],
+   "surface": "The the_buddenbrooks authors mann_thomas.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "olethreutinae",
+    "parent_taxon",
+    "tortrix_moth"
+   ],
+   "surface": "The olethreutinae parent_taxons tortrix_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "agyneta",
+    "parent_taxon",
+    "sheetweaver_spider"
+   ],
+   "surface": "The agyneta parent_taxons sheetweaver_spider.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "ropica_genus",
+    "parent_taxon",
+    "longhorn_beetles"
+   ],
+   "surface": "The ropica_genus parent_taxons longhorn_beetles.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "sunil_dutt",
+    "child",
+    "sanjay_dutt"
+   ],
+   "surface": "The sunil_dutt childs sanjay_dutt.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "michael_redgrave",
+    "child",
+    "vanessa_redgrave"
+   ],
+   "surface": "The michael_redgrave childs vanessa_redgrave.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "jerome_s_de_viris_illustribus",
+    "author",
+    "eusebius_hieronymous"
+   ],
+   "surface": "The jerome_s_de_viris_illustribus authors eusebius_hieronymous.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "s_d_burman",
+    "child",
+    "rahul_burman"
+   ],
+   "surface": "The s_d_burman childs rahul_burman.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "mishaal_bin_abdul_aziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The mishaal_bin_abdul_aziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "lord_of_the_rings",
+    "author",
+    "j_r_r_tolkien"
+   ],
+   "surface": "The lord_of_the_rings authors j_r_r_tolkien.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "george_william_frederick_hanover",
+    "child",
+    "king_william_iv"
+   ],
+   "surface": "The george_william_frederick_hanover childs king_william_iv.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "water_berry",
+    "parent_taxon",
+    "myrtle_tree"
+   ],
+   "surface": "The water_berry parent_taxons myrtle_tree.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "koti_music_director",
+    "father",
+    "saluri_rajeshwara_rao"
+   ],
+   "surface": "The koti_music_director fathers saluri_rajeshwara_rao.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "tony_curtiss",
+    "child",
+    "jamie_lee_curtis"
+   ],
+   "surface": "The tony_curtiss childs jamie_lee_curtis.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "stomylia",
+    "parent_taxon",
+    "twirler_moth"
+   ],
+   "surface": "The stomylia parent_taxons twirler_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "ms_windows_ten",
+    "platform",
+    "x64_edition"
+   ],
+   "surface": "The ms_windows_ten platforms x64_edition.",
+   "reject": "allowlist: no shape: at token 2 'platforms' expected a relation with a verb reading ('platforms' reads platform, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "windows_whistler",
+    "platform",
+    "x64_edition"
+   ],
+   "surface": "The windows_whistler platforms x64_edition.",
+   "reject": "allowlist: no shape: at token 2 'platforms' expected a relation with a verb reading ('platforms' reads platform, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "francis_i_of_naples",
+    "father",
+    "king_ferdinand_of_naples"
+   ],
+   "surface": "The francis_i_of_naples fathers king_ferdinand_of_naples.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "gnu_free_documentation_lisence",
+    "author",
+    "play_ogg"
+   ],
+   "surface": "The gnu_free_documentation_lisence authors play_ogg.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "geraldine_chaplin",
+    "father",
+    "s_c_li_sa_plin"
+   ],
+   "surface": "The geraldine_chaplin fathers s_c_li_sa_plin.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "maureen_o_sullivan",
+    "child",
+    "mia_farrow"
+   ],
+   "surface": "The maureen_o_sullivan childs mia_farrow.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "tsao_pi",
+    "father",
+    "cao_mengde"
+   ],
+   "surface": "The tsao_pi fathers cao_mengde.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "telchinia",
+    "parent_taxon",
+    "brush_footed_butterflies"
+   ],
+   "surface": "The telchinia parent_taxons brush_footed_butterflies.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "muhammad_ibn_abdul_aziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The muhammad_ibn_abdul_aziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "dom_pedro_i",
+    "child",
+    "pedro_ii"
+   ],
+   "surface": "The dom_pedro_i childs pedro_ii.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "vajirunhis",
+    "father",
+    "king_rama_v_chulangkorn"
+   ],
+   "surface": "The vajirunhis fathers king_rama_v_chulangkorn.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "diadelia",
+    "parent_taxon",
+    "longhorn_beetles"
+   ],
+   "surface": "The diadelia parent_taxons longhorn_beetles.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "zodarion",
+    "parent_taxon",
+    "ant_spider"
+   ],
+   "surface": "The zodarion parent_taxons ant_spider.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "gaia_goddess",
+    "child",
+    "ogenos"
+   ],
+   "surface": "The gaia_goddess childs ogenos.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "agonum",
+    "parent_taxon",
+    "ground_beetle"
+   ],
+   "surface": "The agonum parent_taxons ground_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "fawwaz_bin_abdul_aziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The fawwaz_bin_abdul_aziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "phyllocnistis",
+    "parent_taxon",
+    "phyllocnistidae"
+   ],
+   "surface": "The phyllocnistis parent_taxons phyllocnistidae.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "transtillaspis",
+    "parent_taxon",
+    "tortricinae"
+   ],
+   "surface": "The transtillaspis parent_taxons tortricinae.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "mishari_bin_abdulaziz_al_saud",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The mishari_bin_abdulaziz_al_saud fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "timia_mellina",
+    "parent_taxon",
+    "otitid_fly"
+   ],
+   "surface": "The timia_mellina parent_taxons otitid_fly.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "sylvidae",
+    "parent_taxon",
+    "passerine_bird"
+   ],
+   "surface": "The sylvidae parent_taxons passerine_bird.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "lesser_gpl",
+    "author",
+    "play_ogg"
+   ],
+   "surface": "The lesser_gpl authors play_ogg.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "abdul_muhsin_bin_abdulaziz_al_saud",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The abdul_muhsin_bin_abdulaziz_al_saud fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "hedilepta",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The hedilepta parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "trent_reznor",
+    "platform",
+    "windows_applications"
+   ],
+   "surface": "The trent_reznor platforms windows_applications.",
+   "reject": "allowlist: no shape: at token 2 'platforms' expected a relation with a verb reading ('platforms' reads platform, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "pincushion_tree",
+    "parent_taxon",
+    "proteaceous"
+   ],
+   "surface": "The pincushion_tree parent_taxons proteaceous.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "eucamptognathus",
+    "parent_taxon",
+    "ground_beetle"
+   ],
+   "surface": "The eucamptognathus parent_taxons ground_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "greek_god_of_war",
+    "father",
+    "mythology_jupiter"
+   ],
+   "surface": "The greek_god_of_war fathers mythology_jupiter.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "chudadhuj_dharadilok",
+    "father",
+    "king_rama_v_chulangkorn"
+   ],
+   "surface": "The chudadhuj_dharadilok fathers king_rama_v_chulangkorn.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "king_george_iv",
+    "father",
+    "george_william_frederick_hanover"
+   ],
+   "surface": "The king_george_iv fathers george_william_frederick_hanover.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "charles_i_of_england",
+    "child",
+    "charles_ii_of_scotland"
+   ],
+   "surface": "The charles_i_of_england childs charles_ii_of_scotland.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "argyrotaenia",
+    "parent_taxon",
+    "tortrix_moth"
+   ],
+   "surface": "The argyrotaenia parent_taxons tortrix_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "omoglymmius",
+    "parent_taxon",
+    "ground_beetle"
+   ],
+   "surface": "The omoglymmius parent_taxons ground_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "luluwah_bint_abdulaziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The luluwah_bint_abdulaziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "frances_ethel_gumm",
+    "child",
+    "lisa_minelli"
+   ],
+   "surface": "The frances_ethel_gumm childs lisa_minelli.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "trematarcha",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The trematarcha parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "rhodoporus",
+    "parent_taxon",
+    "pored_mushroom"
+   ],
+   "surface": "The rhodoporus parent_taxons pored_mushroom.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "windows_applications",
+    "platform",
+    "ebp_register"
+   ],
+   "surface": "The windows_applications platforms ebp_register.",
+   "reject": "allowlist: no shape: at token 2 'platforms' expected a relation with a verb reading ('platforms' reads platform, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "hardy_boys",
+    "author",
+    "franklin_w_dixon"
+   ],
+   "surface": "The hardy_boys authors franklin_w_dixon.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "euxesta",
+    "parent_taxon",
+    "otitid_fly"
+   ],
+   "surface": "The euxesta parent_taxons otitid_fly.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "carl_laemmle_jr",
+    "father",
+    "carl_laemmle"
+   ],
+   "surface": "The carl_laemmle_jr fathers carl_laemmle.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "comb_footed_spider",
+    "parent_taxon",
+    "egg_sac"
+   ],
+   "surface": "The comb_footed_spider parent_taxons egg_sac.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "reiner_carl",
+    "child",
+    "rob_reiner_filmography"
+   ],
+   "surface": "The reiner_carl childs rob_reiner_filmography.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "gnu_license",
+    "author",
+    "play_ogg"
+   ],
+   "surface": "The gnu_license authors play_ogg.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "aloysius_vincent",
+    "child",
+    "jayanan_vincent"
+   ],
+   "surface": "The aloysius_vincent childs jayanan_vincent.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "claude_espinasse",
+    "father",
+    "pierre_albert_espinasse"
+   ],
+   "surface": "The claude_espinasse fathers pierre_albert_espinasse.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "mortal_kombat",
+    "platform",
+    "windows_applications"
+   ],
+   "surface": "The mortal_kombat platforms windows_applications.",
+   "reject": "allowlist: no shape: at token 2 'platforms' expected a relation with a verb reading ('platforms' reads platform, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "bubaloceras",
+    "parent_taxon",
+    "cosmet_moth"
+   ],
+   "surface": "The bubaloceras parent_taxons cosmet_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "mia_farrow",
+    "father",
+    "john_farrow"
+   ],
+   "surface": "The mia_farrow fathers john_farrow.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "flat_faced_longhorn_beetle",
+    "parent_taxon",
+    "longhorn_beetles"
+   ],
+   "surface": "The flat_faced_longhorn_beetle parent_taxons longhorn_beetles.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "narathura",
+    "parent_taxon",
+    "gossamer_winged_butterflies"
+   ],
+   "surface": "The narathura parent_taxons gossamer_winged_butterflies.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "h_d_carey",
+    "child",
+    "harry_carey_jr"
+   ],
+   "surface": "The h_d_carey childs harry_carey_jr.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "nymphicula",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The nymphicula parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "odostomia",
+    "parent_taxon",
+    "pyramidellidae"
+   ],
+   "surface": "The odostomia parent_taxons pyramidellidae.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "saud_of_saudi_arabia",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The saud_of_saudi_arabia fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "greek_hero_hercules",
+    "father",
+    "mythology_jupiter"
+   ],
+   "surface": "The greek_hero_hercules fathers mythology_jupiter.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "salman_bin_abdul_aziz_al_saud",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The salman_bin_abdul_aziz_al_saud fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "al_jawhara_bint_abd_al_aziz_bin_abdul_ra",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The al_jawhara_bint_abd_al_aziz_bin_abdul_ra fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "endotricha",
+    "parent_taxon",
+    "pyralid_moth"
+   ],
+   "surface": "The endotricha parent_taxons pyralid_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "copelatus",
+    "parent_taxon",
+    "water_tiger"
+   ],
+   "surface": "The copelatus parent_taxons water_tiger.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "harpagosauria",
+    "parent_taxon",
+    "discovery_of_dinosaurs"
+   ],
+   "surface": "The harpagosauria parent_taxons discovery_of_dinosaurs.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "glipa",
+    "parent_taxon",
+    "pintail_beetle"
+   ],
+   "surface": "The glipa parent_taxons pintail_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "prince_frederick_henry",
+    "father",
+    "willem_the_silent"
+   ],
+   "surface": "The prince_frederick_henry fathers willem_the_silent.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "laura_elizabeth_dern_harper",
+    "father",
+    "bruce_dern"
+   ],
+   "surface": "The laura_elizabeth_dern_harper fathers bruce_dern.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "shivaraj_kumar",
+    "father",
+    "dr_rajkumar"
+   ],
+   "surface": "The shivaraj_kumar fathers dr_rajkumar.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "notonomus",
+    "parent_taxon",
+    "ground_beetle"
+   ],
+   "surface": "The notonomus parent_taxons ground_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "pierre_august_renoir",
+    "child",
+    "jean_renoir"
+   ],
+   "surface": "The pierre_august_renoir childs jean_renoir.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "oxigrapha",
+    "parent_taxon",
+    "tortrix_moth"
+   ],
+   "surface": "The oxigrapha parent_taxons tortrix_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "anopina",
+    "parent_taxon",
+    "tortrix_moth"
+   ],
+   "surface": "The anopina parent_taxons tortrix_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "sharmila_tagore",
+    "child",
+    "saif_ali_khan"
+   ],
+   "surface": "The sharmila_tagore childs saif_ali_khan.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "tollia",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The tollia parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "long_horned_moth",
+    "parent_taxon",
+    "evolution_of_lepidoptera"
+   ],
+   "surface": "The long_horned_moth parent_taxons evolution_of_lepidoptera.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "sonic_the_hedgehog_series",
+    "platform",
+    "windows_applications"
+   ],
+   "surface": "The sonic_the_hedgehog_series platforms windows_applications.",
+   "reject": "allowlist: no shape: at token 2 'platforms' expected a relation with a verb reading ('platforms' reads platform, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "abdul_rahman_bin_abdul_aziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The abdul_rahman_bin_abdul_aziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "solaricida",
+    "parent_taxon",
+    "top_snail"
+   ],
+   "surface": "The solaricida parent_taxons top_snail.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "caryocolum",
+    "parent_taxon",
+    "twirler_moth"
+   ],
+   "surface": "The caryocolum parent_taxons twirler_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "mahidol_adulyadej",
+    "father",
+    "king_rama_v_chulangkorn"
+   ],
+   "surface": "The mahidol_adulyadej fathers king_rama_v_chulangkorn.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "melanocossus",
+    "parent_taxon",
+    "taxonomy_of_cossidae"
+   ],
+   "surface": "The melanocossus parent_taxons taxonomy_of_cossidae.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "lamphosema",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The lamphosema parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "mamdouh_bin_abdulaziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The mamdouh_bin_abdulaziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "enrique_iglesias",
+    "father",
+    "julio_iglesias"
+   ],
+   "surface": "The enrique_iglesias fathers julio_iglesias.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "hypsopygia",
+    "parent_taxon",
+    "pyralid_moth"
+   ],
+   "surface": "The hypsopygia parent_taxons pyralid_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "rekha_ganesan",
+    "father",
+    "abhinay_vaddi"
+   ],
+   "surface": "The rekha_ganesan fathers abhinay_vaddi.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "willem_the_silent",
+    "child",
+    "prince_frederick_henry"
+   ],
+   "surface": "The willem_the_silent childs prince_frederick_henry.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "apollo_agyieus",
+    "father",
+    "mythology_jupiter"
+   ],
+   "surface": "The apollo_agyieus fathers mythology_jupiter.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "frea_genus",
+    "parent_taxon",
+    "longhorn_beetles"
+   ],
+   "surface": "The frea_genus parent_taxons longhorn_beetles.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "rishi_kapoor",
+    "father",
+    "ranbir_raj_prithviraj_kapoor"
+   ],
+   "surface": "The rishi_kapoor fathers ranbir_raj_prithviraj_kapoor.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "king_william_iv",
+    "father",
+    "george_william_frederick_hanover"
+   ],
+   "surface": "The king_william_iv fathers george_william_frederick_hanover.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "emperor_maximilian_ii",
+    "father",
+    "ferdinand_i_of_germany"
+   ],
+   "surface": "The emperor_maximilian_ii fathers ferdinand_i_of_germany.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "helotiaceae",
+    "parent_taxon",
+    "helotiales"
+   ],
+   "surface": "The helotiaceae parent_taxons helotiales.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "pierre_albert_espinasse",
+    "child",
+    "claude_espinasse"
+   ],
+   "surface": "The pierre_albert_espinasse childs claude_espinasse.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "hoplisa",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The hoplisa parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "the_christ",
+    "father",
+    "st_joseph_the_worker"
+   ],
+   "surface": "The the_christ fathers st_joseph_the_worker.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "call_of_duty",
+    "platform",
+    "windows_applications"
+   ],
+   "surface": "The call_of_duty platforms windows_applications.",
+   "reject": "allowlist: no shape: at token 2 'platforms' expected a relation with a verb reading ('platforms' reads platform, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "manes_father_of_atys",
+    "father",
+    "mythology_jupiter"
+   ],
+   "surface": "The manes_father_of_atys fathers mythology_jupiter.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "chicoreus",
+    "parent_taxon",
+    "murex_snail"
+   ],
+   "surface": "The chicoreus parent_taxons murex_snail.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "jamie_lee_curtis",
+    "father",
+    "tony_curtiss"
+   ],
+   "surface": "The jamie_lee_curtis fathers tony_curtiss.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "blepisanis",
+    "parent_taxon",
+    "flat_faced_longhorn_beetle"
+   ],
+   "surface": "The blepisanis parent_taxons flat_faced_longhorn_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "lasionycta",
+    "parent_taxon",
+    "owlet_moth"
+   ],
+   "surface": "The lasionycta parent_taxons owlet_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "cleptometopus",
+    "parent_taxon",
+    "longhorn_beetles"
+   ],
+   "surface": "The cleptometopus parent_taxons longhorn_beetles.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "pantoeocome",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The pantoeocome parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "abdul_majeed_bin_abdul_aziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The abdul_majeed_bin_abdul_aziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "parargyractis",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The parargyractis parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "william_billy_ray_cyrus",
+    "child",
+    "miley_mandy"
+   ],
+   "surface": "The william_billy_ray_cyrus childs miley_mandy.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "dioryctria",
+    "parent_taxon",
+    "pyralid_moth"
+   ],
+   "surface": "The dioryctria parent_taxons pyralid_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "king_rama_v_chulangkorn",
+    "child",
+    "rama_vi"
+   ],
+   "surface": "The king_rama_v_chulangkorn childs rama_vi.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "john_arthur_carradine",
+    "father",
+    "richmond_reed_carradine"
+   ],
+   "surface": "The john_arthur_carradine fathers richmond_reed_carradine.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "rahul_burman",
+    "father",
+    "s_d_burman"
+   ],
+   "surface": "The rahul_burman fathers s_d_burman.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "eumorphanthus",
+    "parent_taxon",
+    "madder_family"
+   ],
+   "surface": "The eumorphanthus parent_taxons madder_family.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "keith_carradine",
+    "father",
+    "richmond_reed_carradine"
+   ],
+   "surface": "The keith_carradine fathers richmond_reed_carradine.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "newman_thomas",
+    "father",
+    "alfred_newman_composer"
+   ],
+   "surface": "The newman_thomas fathers alfred_newman_composer.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "ouranos",
+    "child",
+    "aphrodite_acidalia"
+   ],
+   "surface": "The ouranos childs aphrodite_acidalia.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "northern_dancer",
+    "child",
+    "sadler_s_wells_horse"
+   ],
+   "surface": "The northern_dancer childs sadler_s_wells_horse.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "cyphita",
+    "parent_taxon",
+    "pyralid_moth"
+   ],
+   "surface": "The cyphita parent_taxons pyralid_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "michael_dougless",
+    "father",
+    "kurt_douglas"
+   ],
+   "surface": "The michael_dougless fathers kurt_douglas.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "thamir_bin_abdulaziz_al_saud",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The thamir_bin_abdulaziz_al_saud fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "charles_iv_of_luxembourg",
+    "child",
+    "king_sigismund"
+   ],
+   "surface": "The charles_iv_of_luxembourg childs king_sigismund.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "sadler_s_wells_horse",
+    "child",
+    "galileo_horse"
+   ],
+   "surface": "The sadler_s_wells_horse childs galileo_horse.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "sadler_s_wells_horse",
+    "father",
+    "northern_dancer"
+   ],
+   "surface": "The sadler_s_wells_horse fathers northern_dancer.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "king_prajadhipok_of_thailand",
+    "father",
+    "king_rama_v_chulangkorn"
+   ],
+   "surface": "The king_prajadhipok_of_thailand fathers king_rama_v_chulangkorn.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "george_bush_senior",
+    "child",
+    "george_w_bush"
+   ],
+   "surface": "The george_bush_senior childs george_w_bush.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "maurice_jarre",
+    "child",
+    "j_m_jarre"
+   ],
+   "surface": "The maurice_jarre childs j_m_jarre.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "polypoetes_moth",
+    "parent_taxon",
+    "notodontidae"
+   ],
+   "surface": "The polypoetes_moth parent_taxons notodontidae.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "dr_rajkumar",
+    "child",
+    "shivaraj_kumar"
+   ],
+   "surface": "The dr_rajkumar childs shivaraj_kumar.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "sattam_bin_abdulaziz_al_saud",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The sattam_bin_abdulaziz_al_saud fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "nikolai_ii_of_russia",
+    "father",
+    "alexander_iii_russian_emperor"
+   ],
+   "surface": "The nikolai_ii_of_russia fathers alexander_iii_russian_emperor.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "pygmaepterys",
+    "parent_taxon",
+    "murex_snail"
+   ],
+   "surface": "The pygmaepterys parent_taxons murex_snail.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "leopold_ii_of_hungary",
+    "child",
+    "francis_ii_of_austria"
+   ],
+   "surface": "The leopold_ii_of_hungary childs francis_ii_of_austria.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "badr_bin_abdul_aziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The badr_bin_abdul_aziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "amitabh_harivansh_bachchan",
+    "child",
+    "abishek_bachchan"
+   ],
+   "surface": "The amitabh_harivansh_bachchan childs abishek_bachchan.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "dr_d_ramanaidu",
+    "child",
+    "venkatesh_daggubati"
+   ],
+   "surface": "The dr_d_ramanaidu childs venkatesh_daggubati.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "leimonia",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The leimonia parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "rama_vi",
+    "father",
+    "king_rama_v_chulangkorn"
+   ],
+   "surface": "The rama_vi fathers king_rama_v_chulangkorn.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "honeycombed_lichen",
+    "parent_taxon",
+    "parmeliaceae"
+   ],
+   "surface": "The honeycombed_lichen parent_taxons parmeliaceae.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "ingrid_rossellini",
+    "child",
+    "isabella_rosallini"
+   ],
+   "surface": "The ingrid_rossellini childs isabella_rosallini.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "blennidus",
+    "parent_taxon",
+    "ground_beetle"
+   ],
+   "surface": "The blennidus parent_taxons ground_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "butleria_cypselides",
+    "parent_taxon",
+    "skipper_butterflies"
+   ],
+   "surface": "The butleria_cypselides parent_taxons skipper_butterflies.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "eugivira",
+    "parent_taxon",
+    "taxonomy_of_cossidae"
+   ],
+   "surface": "The eugivira parent_taxons taxonomy_of_cossidae.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "sailer_butterflies",
+    "parent_taxon",
+    "brush_footed_butterflies"
+   ],
+   "surface": "The sailer_butterflies parent_taxons brush_footed_butterflies.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "translations_from_the_elvish",
+    "author",
+    "j_r_r_tolkien"
+   ],
+   "surface": "The translations_from_the_elvish authors j_r_r_tolkien.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "autoneda",
+    "parent_taxon",
+    "twirler_moth"
+   ],
+   "surface": "The autoneda parent_taxons twirler_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "paperbark_tree",
+    "parent_taxon",
+    "myrtle_tree"
+   ],
+   "surface": "The paperbark_tree parent_taxons myrtle_tree.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "charlotte_gainesbourg",
+    "father",
+    "cerge_gainsbourge"
+   ],
+   "surface": "The charlotte_gainesbourg fathers cerge_gainsbourge.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "deva_music_director",
+    "child",
+    "srikanth_deva"
+   ],
+   "surface": "The deva_music_director childs srikanth_deva.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "bond_james_bond",
+    "author",
+    "ian_flemming"
+   ],
+   "surface": "The bond_james_bond authors ian_flemming.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "street_fighter",
+    "platform",
+    "windows_applications"
+   ],
+   "surface": "The street_fighter platforms windows_applications.",
+   "reject": "allowlist: no shape: at token 2 'platforms' expected a relation with a verb reading ('platforms' reads platform, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "calamotropha",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The calamotropha parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "batrachorhina",
+    "parent_taxon",
+    "flat_faced_longhorn_beetle"
+   ],
+   "surface": "The batrachorhina parent_taxons flat_faced_longhorn_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "androdes",
+    "parent_taxon",
+    "owlet_moth"
+   ],
+   "surface": "The androdes parent_taxons owlet_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "alexander_iii_russian_emperor",
+    "child",
+    "nikolai_ii_of_russia"
+   ],
+   "surface": "The alexander_iii_russian_emperor childs nikolai_ii_of_russia.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "dagger_moth",
+    "parent_taxon",
+    "owlet_moth"
+   ],
+   "surface": "The dagger_moth parent_taxons owlet_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "zabrus",
+    "parent_taxon",
+    "ground_beetle"
+   ],
+   "surface": "The zabrus parent_taxons ground_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "tricholoma",
+    "parent_taxon",
+    "tricholomataceae"
+   ],
+   "surface": "The tricholoma parent_taxons tricholomataceae.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "clanculus",
+    "parent_taxon",
+    "top_snail"
+   ],
+   "surface": "The clanculus parent_taxons top_snail.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "lloyd_bridges",
+    "child",
+    "jeff_bridges"
+   ],
+   "surface": "The lloyd_bridges childs jeff_bridges.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "dermateaceae",
+    "parent_taxon",
+    "helotiales"
+   ],
+   "surface": "The dermateaceae parent_taxons helotiales.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "james_vii_of_scots",
+    "father",
+    "charles_i_of_england"
+   ],
+   "surface": "The james_vii_of_scots fathers charles_i_of_england.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "snotty_gobble",
+    "parent_taxon",
+    "proteaceous"
+   ],
+   "surface": "The snotty_gobble parent_taxons proteaceous.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "pothyne",
+    "parent_taxon",
+    "longhorn_beetles"
+   ],
+   "surface": "The pothyne parent_taxons longhorn_beetles.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "akkineni_nageshwara_rao",
+    "child",
+    "akkineni_nagarjuna"
+   ],
+   "surface": "The akkineni_nageshwara_rao childs akkineni_nagarjuna.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "balakrishna_nandamuri",
+    "father",
+    "nandamuri_taraka_rama_rao"
+   ],
+   "surface": "The balakrishna_nandamuri fathers nandamuri_taraka_rama_rao.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "calydia",
+    "parent_taxon",
+    "owlet_moth"
+   ],
+   "surface": "The calydia parent_taxons owlet_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "reynolds_debbie",
+    "child",
+    "carrie_frances_fisher"
+   ],
+   "surface": "The reynolds_debbie childs carrie_frances_fisher.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "albert_prince_consort",
+    "child",
+    "albert_prince_of_wales"
+   ],
+   "surface": "The albert_prince_consort childs albert_prince_of_wales.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "sir_frederick_william_herschel",
+    "child",
+    "john_herschell"
+   ],
+   "surface": "The sir_frederick_william_herschel childs john_herschell.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "alfred_newman_composer",
+    "child",
+    "david_newman_composer"
+   ],
+   "surface": "The alfred_newman_composer childs david_newman_composer.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "carfax_abbey",
+    "author",
+    "stoker_bram"
+   ],
+   "surface": "The carfax_abbey authors stoker_bram.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "holy_roman_empress_maria",
+    "child",
+    "leopold_ii_of_hungary"
+   ],
+   "surface": "The holy_roman_empress_maria childs leopold_ii_of_hungary.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "jayne_seymour_fonda",
+    "father",
+    "henry_fonda"
+   ],
+   "surface": "The jayne_seymour_fonda fathers henry_fonda.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "the_three_musketeers",
+    "author",
+    "alexander_dumas"
+   ],
+   "surface": "The the_three_musketeers authors alexander_dumas.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "nebria_gebleri_siskiyouensis",
+    "parent_taxon",
+    "ground_beetle"
+   ],
+   "surface": "The nebria_gebleri_siskiyouensis parent_taxons ground_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "house_connington",
+    "author",
+    "george_rr_martin"
+   ],
+   "surface": "The house_connington authors george_rr_martin.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "malageudonia",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The malageudonia parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "maria_karolina_von_sterreich",
+    "child",
+    "francis_i_of_naples"
+   ],
+   "surface": "The maria_karolina_von_sterreich childs francis_i_of_naples.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "valaya_alongkorn",
+    "father",
+    "king_rama_v_chulangkorn"
+   ],
+   "surface": "The valaya_alongkorn fathers king_rama_v_chulangkorn.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "epactoctena",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The epactoctena parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "roku_netflix",
+    "platform",
+    "http_clients"
+   ],
+   "surface": "The roku_netflix platforms http_clients.",
+   "reject": "allowlist: no shape: at token 2 'platforms' expected a relation with a verb reading ('platforms' reads platform, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "orthogonius",
+    "parent_taxon",
+    "ground_beetle"
+   ],
+   "surface": "The orthogonius parent_taxons ground_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "peter_fonda",
+    "father",
+    "henry_fonda"
+   ],
+   "surface": "The peter_fonda fathers henry_fonda.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "tetragonoderus",
+    "parent_taxon",
+    "ground_beetle"
+   ],
+   "surface": "The tetragonoderus parent_taxons ground_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "brachyzancla",
+    "parent_taxon",
+    "twirler_moth"
+   ],
+   "surface": "The brachyzancla parent_taxons twirler_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "netechma",
+    "parent_taxon",
+    "tortricinae"
+   ],
+   "surface": "The netechma parent_taxons tortricinae.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "hessa_al_shaalan",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The hessa_al_shaalan fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "charles_irwin_sheen",
+    "father",
+    "ram_n_antonio_gerardo_est_vez"
+   ],
+   "surface": "The charles_irwin_sheen fathers ram_n_antonio_gerardo_est_vez.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "tortricinae",
+    "parent_taxon",
+    "tortrix_moth"
+   ],
+   "surface": "The tortricinae parent_taxons tortrix_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "syllepte",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The syllepte parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "ahmed_bin_abdul_aziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The ahmed_bin_abdul_aziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "aplomastix",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The aplomastix parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "emmalocera",
+    "parent_taxon",
+    "pyralid_moth"
+   ],
+   "surface": "The emmalocera parent_taxons pyralid_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "haya_bint_abdulaziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The haya_bint_abdulaziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "pedro_ii",
+    "father",
+    "dom_pedro_i"
+   ],
+   "surface": "The pedro_ii fathers dom_pedro_i.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "flamingo_flower",
+    "parent_taxon",
+    "arum_family"
+   ],
+   "surface": "The flamingo_flower parent_taxons arum_family.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "cerge_gainsbourge",
+    "child",
+    "charlotte_gainesbourg"
+   ],
+   "surface": "The cerge_gainsbourge childs charlotte_gainesbourg.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "mecyclothorax",
+    "parent_taxon",
+    "ground_beetle"
+   ],
+   "surface": "The mecyclothorax parent_taxons ground_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "rhagoletis",
+    "parent_taxon",
+    "tephritid_fruit_fly"
+   ],
+   "surface": "The rhagoletis parent_taxons tephritid_fruit_fly.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "king_sigismund",
+    "father",
+    "charles_iv_of_luxembourg"
+   ],
+   "surface": "The king_sigismund fathers charles_iv_of_luxembourg.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "discworld_books",
+    "author",
+    "terry_prattchet"
+   ],
+   "surface": "The discworld_books authors terry_prattchet.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "turki_al_awwal",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The turki_al_awwal fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "stenalia",
+    "parent_taxon",
+    "pintail_beetle"
+   ],
+   "surface": "The stenalia parent_taxons pintail_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "chrysallida",
+    "parent_taxon",
+    "pyramidellidae"
+   ],
+   "surface": "The chrysallida parent_taxons pyramidellidae.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "abishek_bachchan",
+    "father",
+    "amitabh_harivansh_bachchan"
+   ],
+   "surface": "The abishek_bachchan fathers amitabh_harivansh_bachchan.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "ditomoptera",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The ditomoptera parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "funepistis",
+    "parent_taxon",
+    "owlet_moth"
+   ],
+   "surface": "The funepistis parent_taxons owlet_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "nandamuri_taraka_rama_rao",
+    "child",
+    "balakrishna_nandamuri"
+   ],
+   "surface": "The nandamuri_taraka_rama_rao childs balakrishna_nandamuri.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "dharmendra_singh_deol",
+    "child",
+    "mera_bharat_mahan"
+   ],
+   "surface": "The dharmendra_singh_deol childs mera_bharat_mahan.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "phalonia",
+    "parent_taxon",
+    "tortricinae"
+   ],
+   "surface": "The phalonia parent_taxons tortricinae.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "elizabeth_ii_of_guyana",
+    "child",
+    "hrh_the_prince_charles"
+   ],
+   "surface": "The elizabeth_ii_of_guyana childs hrh_the_prince_charles.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "turbonilla",
+    "parent_taxon",
+    "pyramidellidae"
+   ],
+   "surface": "The turbonilla parent_taxons pyramidellidae.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "ram_n_antonio_gerardo_est_vez",
+    "child",
+    "charles_irwin_sheen"
+   ],
+   "surface": "The ram_n_antonio_gerardo_est_vez childs charles_irwin_sheen.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "beau_bridges",
+    "father",
+    "lloyd_bridges"
+   ],
+   "surface": "The beau_bridges fathers lloyd_bridges.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "s_c_li_sa_plin",
+    "child",
+    "geraldine_chaplin"
+   ],
+   "surface": "The s_c_li_sa_plin childs geraldine_chaplin.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "prince_abdulillah",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The prince_abdulillah fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "douglas_fairbanks_jnr",
+    "father",
+    "douglas_fairbanks_sr"
+   ],
+   "surface": "The douglas_fairbanks_jnr fathers douglas_fairbanks_sr.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "maddox_jolie_pitt",
+    "father",
+    "john_vincent_voight"
+   ],
+   "surface": "The maddox_jolie_pitt fathers john_vincent_voight.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "harry_potter_series",
+    "author",
+    "joanne_rowling"
+   ],
+   "surface": "The harry_potter_series authors joanne_rowling.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "brachmia_robustella",
+    "parent_taxon",
+    "twirler_moth"
+   ],
+   "surface": "The brachmia_robustella parent_taxons twirler_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "lon_chaney_jr",
+    "father",
+    "lon_chaney"
+   ],
+   "surface": "The lon_chaney_jr fathers lon_chaney.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "john_herschell",
+    "father",
+    "sir_frederick_william_herschel"
+   ],
+   "surface": "The john_herschell fathers sir_frederick_william_herschel.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "anarsia",
+    "parent_taxon",
+    "twirler_moth"
+   ],
+   "surface": "The anarsia parent_taxons twirler_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "echinomyia",
+    "parent_taxon",
+    "tachina_flies"
+   ],
+   "surface": "The echinomyia parent_taxons tachina_flies.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "seeta_bint_abdul_aziz",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The seeta_bint_abdul_aziz fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "nealgedonia",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The nealgedonia parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "sanjay_dutt",
+    "father",
+    "sunil_dutt"
+   ],
+   "surface": "The sanjay_dutt fathers sunil_dutt.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "daddy_longlegs_spider",
+    "parent_taxon",
+    "egg_sac"
+   ],
+   "surface": "The daddy_longlegs_spider parent_taxons egg_sac.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "sod_webworm",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The sod_webworm parent_taxons crambid_snout_moths.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "venkatesh_daggubati",
+    "father",
+    "dr_d_ramanaidu"
+   ],
+   "surface": "The venkatesh_daggubati fathers dr_d_ramanaidu.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "jayanan_vincent",
+    "father",
+    "aloysius_vincent"
+   ],
+   "surface": "The jayanan_vincent fathers aloysius_vincent.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "souf_pahk",
+    "author",
+    "randolph_parker"
+   ],
+   "surface": "The souf_pahk authors randolph_parker.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "sherlock_holmes_canon",
+    "author",
+    "arthur_conan_doyle"
+   ],
+   "surface": "The sherlock_holmes_canon authors arthur_conan_doyle.",
+   "reject": "allowlist: no shape: at token 2 'authors' expected a relation with a verb reading ('authors' reads author, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "prabhu_ganesan",
+    "father",
+    "nadigar_thilagam"
+   ],
+   "surface": "The prabhu_ganesan fathers nadigar_thilagam.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "abd_al_aziz_al_sa_ud",
+    "father",
+    "king_abdulaziz"
+   ],
+   "surface": "The abd_al_aziz_al_sa_ud fathers king_abdulaziz.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "corymbia",
+    "parent_taxon",
+    "myrtle_tree"
+   ],
+   "surface": "The corymbia parent_taxons myrtle_tree.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "spotted_barbs",
+    "parent_taxon",
+    "cyprinid_fish"
+   ],
+   "surface": "The spotted_barbs parent_taxons cyprinid_fish.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "srikanth_deva",
+    "father",
+    "deva_music_director"
+   ],
+   "surface": "The srikanth_deva fathers deva_music_director.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "john_farrow",
+    "child",
+    "mia_farrow"
+   ],
+   "surface": "The john_farrow childs mia_farrow.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "sawfin_shiner",
+    "parent_taxon",
+    "cyprinid_fish"
+   ],
+   "surface": "The sawfin_shiner parent_taxons cyprinid_fish.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "agapanthia",
+    "parent_taxon",
+    "flat_faced_longhorn_beetle"
+   ],
+   "surface": "The agapanthia parent_taxons flat_faced_longhorn_beetle.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "saint_anne",
+    "child",
+    "mother_of_god"
+   ],
+   "surface": "The saint_anne childs mother_of_god.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "glider",
+    "parent_taxon",
+    "brush_footed_butterflies"
+   ],
+   "surface": "The glider parent_taxons brush_footed_butterflies.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "kurt_douglas",
+    "child",
+    "michael_dougless"
+   ],
+   "surface": "The kurt_douglas childs michael_dougless.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "synathedon",
+    "parent_taxon",
+    "clearwing_moth"
+   ],
+   "surface": "The synathedon parent_taxons clearwing_moth.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "gymnobela",
+    "parent_taxon",
+    "cone_shell"
+   ],
+   "surface": "The gymnobela parent_taxons cone_shell.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "doditheomycetes",
+    "parent_taxon",
+    "loculoascomycetes"
+   ],
+   "surface": "The doditheomycetes parent_taxons loculoascomycetes.",
+   "reject": "allowlist: no shape: at token 2 'parent_taxons' expected a relation with a verb reading ('parent_taxons' reads parent_taxon, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "santiago_wanderers",
+    "child",
+    "cd_everton"
+   ],
+   "surface": "The santiago_wanderers childs cd_everton.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  }
+ ],
+ "hurts_rows": [],
+ "helps_rows": [],
+ "allowlist_hurts_rows": [],
+ "allowlist_helps_rows": []
+}
