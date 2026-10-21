@@ -1,0 +1,94 @@
+{
+ "_doc": "exhaustive one-fact stub-mouth population, stock _verify vs the BRAIN_MOAT_SLUG_NORM claim gate and the BRAIN_MOAT_ALLOWLIST claim gate (module docstring)",
+ "arms": [
+  "allowlist"
+ ],
+ "limit": null,
+ "n_population": 78857,
+ "elapsed_s": 2523.2,
+ "backend": "numpy",
+ "device": "cpu",
+ "host": "dant123-wk",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-allow6/research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive.py",
+  "research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive_allowlist6.json",
+  "1",
+  "--arms",
+  "allowlist"
+ ],
+ "parser_seed": 1,
+ "n_facts": 78857,
+ "cells(stock_ok,flag_on_ok)": null,
+ "stock_answer_rate": 1.0,
+ "flag_on_answer_rate": null,
+ "HURTS": null,
+ "HELPS": null,
+ "flag_on_fallback_to_single_triple": null,
+ "hurts_reasons": {},
+ "hurts_by_relation": {},
+ "composer_sample_agreement": null,
+ "cells(stock_ok,allowlist_ok)": {
+  "(True, True)": 78857
+ },
+ "allowlist_answer_rate": 1.0,
+ "HURTS_allowlist": 0,
+ "HELPS_allowlist": 0,
+ "allowlist_unbuildable_rejected": 0,
+ "allowlist_hurts_reasons": {},
+ "allowlist_hurts_by_relation": {},
+ "allowlist_role_reversed_stock_leaks": 0,
+ "allowlist_role_reversed_by_relation": {},
+ "allowlist_role_reversed_stock_rejected_by_relation": {},
+ "allowlist_meaning_drift_stock_leaks": 0,
+ "allowlist_meaning_drift_by_relation": {},
+ "allowlist_meaning_drift_stock_rejected_by_relation": {},
+ "allowlist_surface_rendered_under_flag": true,
+ "allowlist_surface_changed": 5444,
+ "allowlist_kept_by_no_reading_relation": {
+  "author": [
+   27,
+   27
+  ],
+  "child": [
+   81,
+   81
+  ],
+  "conflict": [
+   280,
+   280
+  ],
+  "father": [
+   125,
+   125
+  ],
+  "instrument": [
+   410,
+   410
+  ],
+  "parent_taxon": [
+   182,
+   182
+  ],
+  "platform": [
+   21,
+   21
+  ],
+  "sport": [
+   4116,
+   4116
+  ],
+  "spouse": [
+   202,
+   202
+  ]
+ },
+ "relation_table": "research/runners/_moat_allowlist_relations.py",
+ "relation_table_sha256": "c5aebcc66820721793ea9f9d5a7d97dc21ed6204fcd34fa99241c2b69e7a288c",
+ "allowlist_role_reversed_rows": [],
+ "allowlist_meaning_drift_rows": [],
+ "hurts_rows": [],
+ "helps_rows": [],
+ "allowlist_hurts_rows": [],
+ "allowlist_helps_rows": []
+}
