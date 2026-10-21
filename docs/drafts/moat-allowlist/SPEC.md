@@ -80,13 +80,18 @@ every proposition it encodes is a gathered triple of this turn:
   the hypothesis paths, the spiking recall surface, the BRAIN_ONE_BRAIN deferred mouth); the composer checks each
   sentence alone, then keeps the longest prefix of sentences whose JOINED text passes against the union of the turn's
   gathered triples (no sentence passing: the normal abstain); Touchpoint A, which had no check, gets the matcher; the
-  one-brain substitution is checked joined. A candidate with no terminal punctuation gets "." before the check
+  one-brain substitution is checked joined: the whole mouth paragraph (every composer sentence the turn recorded, not
+  only the deferred-mouth calls) with the substitution, against the union of every triple those sentences were checked
+  against (review fix). A candidate with no terminal punctuation gets "." before the check
   (token-neutral; it also fixes the spiking run-on "the dog chases the cat the cat eats the fish"). Declared non-claims,
   pinned verbatim: the spiking mood marker {"!", ".", ""} appended after the check (curt and neutral both read "."
   under the flag; a Qwen "!" still rejects), the leading "perhaps " of a spiking hypothesis, the host guess frames and
   the abstain strings. Not mouth output and not filtered: the raw-triple fallback of `ChatBrain.render`, the derived-
-  answer lead and the server's host decoration layer. BRAIN_OPEN_ENDED is out of scope (a startup warning when both
-  are on).
+  answer lead and the server's host decoration layer. Out of scope, each default OFF and required OFF by the flip
+  prereg (a startup warning naming them when any is on with the flag): BRAIN_OPEN_ENDED (the free-reply Qwen path) and
+  BRAIN_OPEN_ENDED_GATED (`webapp/open_ended_gated_turn.py` replaces the composer's answer after the allowlist:
+  `ltm_render` speaks a `render_fact_sentence` clause, `offkb_render` free Qwen text, under their own filters). A
+  census test covers every mouth call in `brain_chat_tui.py`, `rich_answer_composer.py` and `webapp/*.py`.
   (B) Shape 4, one reviewed wording per no-reading relation: `[Det] A PHRASE [Det] B [.]`, PHRASE the exact tokens of
   the relation's row in `PHRASE_READINGS` (`_moat_allowlist_relations.py`), FWD = (A, rel, B), INV = (B, rel, A):
   sport "is a sport of" INV, instrument "plays" FWD, conflict "participated in" FWD, spouse "is a spouse of" INV

@@ -1098,6 +1098,12 @@ def test_open_ended_is_warned_out_of_scope_at_startup():
     assert moat_allowlist_scope_warning({FLAG: "1"}) is None
     assert moat_allowlist_scope_warning({"BRAIN_OPEN_ENDED": "1"}) is None
     assert "BRAIN_OPEN_ENDED" in moat_allowlist_scope_warning({FLAG: "1", "BRAIN_OPEN_ENDED": "yes"})
+    # build-6 review (doc): BRAIN_OPEN_ENDED_GATED replaces the composer's answer after the allowlist too
+    assert moat_allowlist_scope_warning({"BRAIN_OPEN_ENDED_GATED": "1"}) is None
+    w = moat_allowlist_scope_warning({FLAG: "1", "BRAIN_OPEN_ENDED_GATED": "on"})
+    assert w and "BRAIN_OPEN_ENDED_GATED" in w and "BRAIN_OPEN_ENDED and" not in w
+    w = moat_allowlist_scope_warning({FLAG: "1", "BRAIN_OPEN_ENDED": "1", "BRAIN_OPEN_ENDED_GATED": "1"})
+    assert "BRAIN_OPEN_ENDED and BRAIN_OPEN_ENDED_GATED" in w
 
 
 # ---- the census: every mouth call in the two modules sits in a registered function
@@ -1124,6 +1130,45 @@ CENSUS = {
 }
 MOUTH_CALLS = {"render_svo", "render_svo_batch", "render_svo_regen", "render_svo_regen_batch", "render_fact_sentence",
                "_spiking_recall_mouth", "_spiking_broca_producer", "emit", "spiking_recall_surface", "spiking_recall_parts", "render"}
+
+
+# the webapp side (build-6 review): every mouth / generator call in webapp/*.py sits in a registered function with its status
+WEBAPP_MOUTH_CALLS = {"render_svo", "render_svo_batch", "render_svo_regen", "render_svo_regen_batch", "render_svo_manner",
+                      "render_fact_sentence", "get_generator", "get_warm_faculty"}
+WEBAPP_CENSUS = {
+    ("one_brain.py", "DeferredMouth._record"): "the template articulation (StubRenderer), verified inside the turn like any stub",
+    ("one_brain.py", "DeferredMouth.generate"): "BRAIN_ONE_BRAIN deferred mouth: substituted only through articulate's verify + joined check",
+    ("open_ended_chat.py", "answer_turn"): "OUT OF SCOPE: BRAIN_OPEN_ENDED (startup warning)",
+    ("wkv_mouth_generator.py", "generate._run"): "OUT OF SCOPE: reached only from BRAIN_OPEN_ENDED's answer_turn",
+    ("open_ended_gated_turn.py", "ltm_render"): "OUT OF SCOPE: BRAIN_OPEN_ENDED_GATED (startup warning)",
+    ("open_ended_gated_turn.py", "offkb_render"): "OUT OF SCOPE: BRAIN_OPEN_ENDED_GATED (startup warning)",
+}
+
+
+def test_every_webapp_mouth_call_is_in_the_census():
+    import ast
+    from webapp.server import MOAT_ALLOWLIST_OUT_OF_SCOPE
+    root = Path(__file__).resolve().parents[1] / "webapp"
+    found = set()
+
+    def walk(fname, node, stack):
+        for ch in ast.iter_child_nodes(node):
+            if isinstance(ch, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                walk(fname, ch, stack + [ch.name])
+                continue
+            if isinstance(ch, ast.Call):
+                f = ch.func
+                name = f.attr if isinstance(f, ast.Attribute) else (f.id if isinstance(f, ast.Name) else None)
+                if name in WEBAPP_MOUTH_CALLS:
+                    found.add((fname, ".".join(stack)))
+            walk(fname, ch, stack)
+    for path in sorted(root.glob("*.py")):
+        walk(path.name, ast.parse(path.read_text(encoding="utf-8")), [])
+    unregistered = sorted(found - set(WEBAPP_CENSUS))
+    assert not unregistered, "webapp mouth calls outside the census (register them with their flag-on status): %s" % unregistered
+    for (_f, _fn), status in WEBAPP_CENSUS.items():
+        if status.startswith("OUT OF SCOPE"):
+            assert any(k in status for k in MOAT_ALLOWLIST_OUT_OF_SCOPE), status
 
 
 def test_every_mouth_call_is_in_the_census():

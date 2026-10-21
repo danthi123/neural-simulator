@@ -125,7 +125,9 @@ user only if this matcher kept it against the triple(s) it was generated for AND
   - the composer (`render_paragraph`, the batched path) checks each sentence alone, then keeps the LONGEST PREFIX of sentences whose
     joined text passes (`RichAnswerComposer._join_verified`); no sentence passing -> the composer's normal abstain path;
   - Touchpoint A (which had no check) gets the matcher; the one-brain substitution is checked joined (`one_brain.articulate`'s
-    `verify_reply`);
+    `verify_reply`): the WHOLE mouth paragraph (every composer sentence the turn recorded, spiking and Touchpoint A included, with the
+    substitution) against the union of every triple those sentences were checked against (review fix: the call texts alone left a
+    non-call sentence out);
   - a candidate with no terminal punctuation gets "." before the check (token-neutral; it also fixes the spiking run-on join);
   - DECLARED NON-CLAIMS, exempt by construction and pinned verbatim in tests/test_moat_allowlist_build6.py: the spiking mood marker
     {"!", ".", ""} appended after the check (tracked structurally; a Qwen "!" still rejects), the leading "perhaps " of a spiking
@@ -135,8 +137,12 @@ KNOWN NON-MOUTH PATHS (not mouth output; the flag does not filter them): the raw
 ("<a> <v> <p>   [unverified render -> spoke the brain's raw fact]", the brain's own store triple), the composer's raw/no-renderer path,
 the derived-answer lead (`frame_derived_answer`), `ChatBrain._discourse_turn` / `_maybe_generate` (host templates, the brain's own
 decode), and the host decoration layer of webapp/server.py (source lead, pmem, worldmodel, pragmatic, surprise and reconsolidation
-read-outs, about 25 prefix/suffix sites). OUT OF SCOPE: BRAIN_OPEN_ENDED's free-reply Qwen path (one warning at server startup when it
-is on with this flag).
+read-outs, about 25 prefix/suffix sites). OUT OF SCOPE (each default OFF; one warning at server startup naming them when any is on with
+this flag; `webapp.server.MOAT_ALLOWLIST_OUT_OF_SCOPE`; the flip prereg requires them OFF): BRAIN_OPEN_ENDED's free-reply Qwen path, and
+BRAIN_OPEN_ENDED_GATED (webapp/open_ended_gated_turn.py), which REPLACES the composer's answer after the allowlist ran (`ltm_render`: a
+`render_fact_sentence` clause under open_ended_chat.post_filter; `offkb_render`: free Qwen text under the honesty and phenomenal-claim
+filters). tests/test_moat_allowlist_build6.py keeps a census of every mouth call in brain_chat_tui.py, rich_answer_composer.py AND
+webapp/*.py, so a new path fails loudly.
 BUILD 6 also adds shape 4 (above), `_name_reading_violation` (names that read as a description or a clause) and `_points_back` (a
 'the' span that points back across sentences).
 """

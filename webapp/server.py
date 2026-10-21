@@ -1727,14 +1727,24 @@ def _scan_for_orphans() -> int:
     return new_count
 
 
+# build 6: the default-OFF paths that replace or produce reply text OUTSIDE the allowlist (their own post-filters apply, not the strict
+# claim checker): BRAIN_OPEN_ENDED (the free-reply Qwen path, webapp/open_ended_chat.py) and BRAIN_OPEN_ENDED_GATED (webapp/
+# open_ended_gated_turn.py: `ltm_render` speaks a `render_fact_sentence` clause under open_ended_chat.post_filter and `offkb_render` free
+# Qwen text under the honesty and phenomenal-claim filters, both replacing the composer's answer via apply_rich after the allowlist ran)
+MOAT_ALLOWLIST_OUT_OF_SCOPE = ("BRAIN_OPEN_ENDED", "BRAIN_OPEN_ENDED_GATED")
+
+
 def moat_allowlist_scope_warning(env=None):
-    """Build 6: `BRAIN_MOAT_ALLOWLIST` owns the MOUTH path (docs/drafts/moat-allowlist/SPEC.md); the BRAIN_OPEN_ENDED free-reply Qwen path
-    (default OFF) is out of its scope. With both on, log one warning at startup and return it (None otherwise)."""
+    """Build 6: `BRAIN_MOAT_ALLOWLIST` owns the MOUTH path (docs/drafts/moat-allowlist/SPEC.md); the paths in MOAT_ALLOWLIST_OUT_OF_SCOPE
+    (each default OFF) are out of its scope. With the flag and any of them on, log one warning at startup naming them and return it
+    (None otherwise)."""
     env = os.environ if env is None else env
     on = lambda k: str(env.get(k, "0")).strip().lower() in ("1", "true", "on", "yes")
-    if on("BRAIN_MOAT_ALLOWLIST") and on("BRAIN_OPEN_ENDED"):
-        msg = ("[webapp] WARNING: BRAIN_MOAT_ALLOWLIST is on but BRAIN_OPEN_ENDED's free-reply Qwen path is OUT of the allowlist's scope "
-               "(its own post-filter applies, not the strict claim checker); keep BRAIN_OPEN_ENDED off for a strict-mouth run")
+    hit = [k for k in MOAT_ALLOWLIST_OUT_OF_SCOPE if on(k)]
+    if on("BRAIN_MOAT_ALLOWLIST") and hit:
+        msg = ("[webapp] WARNING: BRAIN_MOAT_ALLOWLIST is on but %s %s OUT of the allowlist's scope (reply text from %s is checked by its "
+               "own post-filter, not the strict claim checker); keep %s off for a strict-mouth run"
+               % (" and ".join(hit), "is" if len(hit) == 1 else "are", "that path" if len(hit) == 1 else "those paths", " and ".join(hit)))
         print(msg, flush=True)
         return msg
     return None
