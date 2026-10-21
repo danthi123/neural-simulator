@@ -289,3 +289,169 @@ def test_stub_and_matcher_agree_on_every_store_fact_of_the_nine(monkeypatch):
     assert not bad, bad[:5]
     rev = [f for f in nine[::7] if f[0] != f[2] and keep(stub.render_svo(f[2], f[1], f[0])[0], [f])]
     assert not rev, rev[:5]
+
+
+# =================================================================================================================== C. the two leak classes
+# Claude rulings 2026-10-21 on preflip topic 3: (C1) first- AND second-person subject names in spaced form reject in any casing (the
+# honesty boundary); the verbatim slug stays sayable. (C2) in a multi-sentence reply, a later entity span led by "the" whose words are a
+# subset of an earlier span's words (a different slug) rejects that later sentence. (C3) lower-case names with a lexical verb stay open.
+# The design's position-independent rules (a), (b1'), (b2) are built as designed.
+G_WAKE = [("rick_wakeman", "member_of", "yes_band"), ("the_band", "award_received", "grammy_lifetime_achievement_award")]
+WAKE1 = "Rick Wakeman is a member of Yes band."
+
+
+def _r6():
+    from pathlib import Path
+    p = Path(__file__).resolve().parent.parent / "research" / "findings" / "raw" / "_moat_allowlist_hunt4" / "r6" / "cases.json"
+    return {c["id"]: c for c in json.loads(p.read_text(encoding="utf-8"))}
+
+
+@pytest.mark.parametrize("sentence,gathered,why", [
+    # (a) a definite description
+    (WAKE1 + " The band award received Grammy lifetime achievement award.", G_WAKE, "opens with 'the' and a lower-case word"),
+    ("The band award received Grammy lifetime achievement award.", G_WAKE, "opens with 'the' and a lower-case word"),
+    ("the band award received grammy lifetime achievement award.", G_WAKE, "opens with 'the' and a lower-case word"),
+    ("The_band award received Grammy lifetime achievement award.", G_WAKE, "opens with 'the' and a lower-case word"),
+    ("Trabzon Province country the republic of turkey.", [("trabzon_province", "country", "the_republic_of_turkey")], "description"),
+    ("The weather in Ottawa shares border with Gatineau Quebec.", [("the_weather_in_ottawa", "shares_border_with", "gatineau_quebec")],
+     "description"),
+    ("The u country u_s_of_a.", [("the_u", "country", "u_s_of_a")], "description"),
+    # (b1) first / second person, any case
+    ("I need a beat genre hip hop music.", [("i_need_a_beat", "genre", "hip_hop_music")], "first- or second-person subject"),
+    ("I Need a Beat genre hip hop music.", [("i_need_a_beat", "genre", "hip_hop_music")], "first- or second-person subject"),
+    ("Louis the alligator composer I heart tuesdays.", [("louis_the_alligator", "composer", "i_heart_tuesdays")], "subject"),
+    ("Louis the Alligator composer I Heart Tuesdays.", [("louis_the_alligator", "composer", "i_heart_tuesdays")], "subject"),
+    ("You Know Who genre rock.", [("you_know_who", "genre", "rock")], "first- or second-person subject"),
+    ("you know who genre rock.", [("you_know_who", "genre", "rock")], "first- or second-person subject"),
+    ("YOU Know Who genre rock.", [("you_know_who", "genre", "rock")], ""),                                   # all-caps: caps table
+    ("We Are Scientists genre indie rock.", [("we_are_scientists", "genre", "indie_rock")], ""),
+    # (b1') a one-word pronoun span not after a determiner
+    ("i language of work or name French language.", [("i", "language_of_work_or_name", "french_language")], "reads as the pronoun"),
+    ("I language of work or name French language.", [("i", "language_of_work_or_name", "french_language")], "reads as the pronoun"),
+    ("Abc genre you.", [("abc", "genre", "you")], "reads as the pronoun"),
+    # (b2) a modal / pronoun / focus word written as prose
+    ("will hurt award received theatre world awards.", [("will_hurt", "award_received", "theatre_world_awards")], "written as prose"),
+    ("Will hurt award received Theatre World Awards.", [("will_hurt", "award_received", "theatre_world_awards")], "written as prose"),
+    ("brian may country of citizenship united kingom.", [("brian_may", "country_of_citizenship", "united_kingom")], "written as prose"),
+    ("John Swithen place of birth Portland me.", [("john_swithen", "place_of_birth", "portland_me")], "written as prose"),
+    ("Fire walk with me country of origin u_s_of_a.", [("fire_walk_with_me", "country_of_origin", "u_s_of_a")], "written as prose"),
+    ("lifting you country of citizenship u_s_of_a.", [("lifting_you", "country_of_citizenship", "u_s_of_a")], "written as prose"),
+    ("just keep walking country of origin commonwealth_australia.",
+     [("just_keep_walking", "country_of_origin", "commonwealth_australia")], "written as prose"),
+    ("Yule Brenner place of birth Port may city.", [("yule_brenner", "place_of_birth", "port_may_city")], "written as prose"),
+])
+def test_names_that_read_as_a_description_or_a_clause_reject(seed_chats, sentence, gathered, why):
+    res = A.allowlist_verify(sentence, [list(g) for g in gathered])
+    assert not res["accepted"], sentence
+    assert why in res["reject_reason"], res["reject_reason"]
+    for sd in (42, 1):
+        assert _on(seed_chats[sd], sentence, [list(g) for g in gathered])[0] is False, (sd, sentence)
+
+
+@pytest.mark.parametrize("case_id", ["R6-MC02", "R6-LC03"])
+def test_round6_b_cases_named_by_the_design_now_reject(case_id):
+    """Topic 3 measured 3 round-6 B cases newly rejected (R6-DP06 'the cruellest month', R6-MC02 'the wHO', R6-LC03 'will hurt');
+    the two whose span the rule reads directly are pinned here (R6-DP06's description is in the object)."""
+    c = _r6()[case_id]
+    assert not A.allowlist_verify(c["sentence"], c["gathered"])["accepted"], c["sentence"]
+
+
+@pytest.mark.parametrize("sentence,gathered", [
+    # the slug written verbatim (the stub's form): one identifier
+    ("The the_band award_receiveds grammy_lifetime_achievement_award.", G_WAKE),
+    ("the_band award received Grammy lifetime achievement award.", G_WAKE),
+    ("i_need_a_beat genre hip hop music.", [("i_need_a_beat", "genre", "hip_hop_music")]),
+    ("Louis the Alligator composer i_heart_tuesdays.", [("louis_the_alligator", "composer", "i_heart_tuesdays")]),
+    ("will_hurt award received theatre world awards.", [("will_hurt", "award_received", "theatre_world_awards")]),
+    ("The i language_of_work_or_names french_language.", [("i", "language_of_work_or_name", "french_language")]),   # Det before i
+    # real names: a capital after 'the', 'the' not first, a capital mid-sentence, a digit, an abbreviation, a Roman numeral
+    ("The Who genre symphonic hard rock.", [("the_who", "genre", "symphonic_hard_rock")]),
+    ("the Who genre symphonic hard rock.", [("the_who", "genre", "symphonic_hard_rock")]),
+    ("The Band award received Grammy lifetime achievement award.", G_WAKE),          # a one-sentence 'The Band' reply
+    ("The Rolling Stones country of origin United Kingom.", [("the_rolling_stones", "country_of_origin", "united_kingom")]),
+    ("Sheila Marie Ryan place of birth the Bronx.", [("sheila_marie_ryan", "place_of_birth", "the_bronx")]),
+    ("The U country u_s_of_a.", [("the_u", "country", "u_s_of_a")]),
+    ("Le X located in the administrative territoria The 7th arrondissement of Paris.",
+     [("le_x", "located_in_the_administrative_territoria", "the_7th_arrondissement_of_paris")]),
+    ("Real Valladolid CF country Kingdom of the Spains.", [("real_valladolid_cf", "country", "kingdom_of_the_spains")]),
+    ("Peter the Disciple occupation assistant priest.", [("peter_the_disciple", "occupation", "assistant_priest")]),
+    ("Louis the alligator country of origin u_s_of_a.", [("louis_the_alligator", "country_of_origin", "u_s_of_a")]),
+    ("Brian May country of citizenship united kingom.", [("brian_may", "country_of_citizenship", "united_kingom")]),
+    ("June follows May sickness.", [("june", "follows", "may_sickness")]),                                       # R6-F48
+    ("Will Munny country of origin u_s_of_a.", [("will_munny", "country_of_origin", "u_s_of_a")]),
+    ("Will Hurt award received Theatre World Awards.", [("will_hurt", "award_received", "theatre_world_awards")]),
+    ("John Swithen place of birth Portland ME.", [("john_swithen", "place_of_birth", "portland_me")]),
+    ("Clinton Rodham member of political party Republican Party US.",
+     [("clinton_rodham", "member_of_political_party", "republican_party_us")]),
+    ("Charles I of England occupation political figure.", [("charles_i_of_england", "occupation", "political_figure")]),
+    ("Cold War I has part united soviets socialist republic.", [("cold_war_i", "has_part", "united_soviets_socialist_republic")]),
+    ("Lom Norway shares border with Vang i Valdres.", [("lom_norway", "shares_border_with", "vang_i_valdres")]),
+    ("Fire Walk with Me country of origin u_s_of_a.", [("fire_walk_with_me", "country_of_origin", "u_s_of_a")]),
+    ("Only Fools and Horses country of origin united kingom.", [("only_fools_and_horses", "country_of_origin", "united_kingom")]),
+    ("Lifting You country of citizenship u_s_of_a.", [("lifting_you", "country_of_citizenship", "u_s_of_a")]),
+    ("Feel Your Heart Beat genre pop starlets.", [("feel_your_heart_beat", "genre", "pop_starlets")]),
+    ("If Chins Could Kill occupation television actor.", [("if_chins_could_kill", "occupation", "television_actor")]),
+    ("Yule Brenner place of birth Port May City.", [("yule_brenner", "place_of_birth", "port_may_city")]),
+    ("Trabzon Province country the Republic of Turkey.", [("trabzon_province", "country", "the_republic_of_turkey")]),
+    ("Steve Threw Up record label XL Recordings.", [("steve_threw_up", "record_label", "xl_recordings")]),
+])
+def test_real_names_and_verbatim_slugs_stay_kept(sentence, gathered):
+    res = A.allowlist_verify(sentence, [list(g) for g in gathered])
+    assert res["accepted"], (sentence, res["reject_reason"])
+
+
+@pytest.mark.parametrize("sentence,gathered", [
+    # C3: lower-case names with a lexical verb stay open (known B residue; no verb lexicon, no proper-name bit in the store)
+    ("steve threw up record label xl recordings.", [("steve_threw_up", "record_label", "xl_recordings")]),
+])
+def test_known_b_residue_stays_kept(sentence, gathered):
+    """Pinned so a later change is visible: the next blind round adjudicates it."""
+    assert A.allowlist_verify(sentence, [list(g) for g in gathered])["accepted"]
+
+
+# ---- C2: a definite description that points back (cross-sentence, in allowlist_verify)
+@pytest.mark.parametrize("reply,gathered,bad_sentence", [
+    (WAKE1 + " The Band award received Grammy lifetime achievement award.", G_WAKE, 2),           # Title case: (a) keeps, C2 rejects
+    (WAKE1 + " the Band award received Grammy lifetime achievement award.", G_WAKE, 2),
+    # a 'the' determiner before a different, shorter slug
+    (WAKE1 + " The band genre rock.", [G_WAKE[0], ("band", "genre", "rock")], 2),
+    # the earlier span may be an object or a subject; the later span may be an object
+    ("Yes band record label Atlantic jazz. Rick Wakeman is a member of the Band.",
+     [("yes_band", "record_label", "atlantic_jazz"), ("rick_wakeman", "member_of", "the_band")], 2),
+    # a real different entity whose name is among the earlier name's words: the rule is conservative (it cannot tell)
+    ("Yes band record label Atlantic jazz. The Band genre rock musician.",
+     [("yes_band", "record_label", "atlantic_jazz"), ("the_band", "genre", "rock_musician")], 2),
+])
+def test_a_later_the_span_pointing_back_rejects_that_sentence(reply, gathered, bad_sentence):
+    res = A.allowlist_verify(reply, [list(g) for g in gathered])
+    assert not res["accepted"], reply
+    assert "points back" in res["reject_reason"] and ("[sentence %d of" % bad_sentence) in res["reject_reason"], res["reject_reason"]
+    # each sentence alone is kept: the rule is cross-sentence
+    assert all(A.allowlist_verify(s, [list(g) for g in gathered])["accepted"] for s in A.split_sentences(reply))
+
+
+@pytest.mark.parametrize("reply,gathered", [
+    ("The Band award received Grammy lifetime achievement award.", G_WAKE),                          # one sentence: nothing earlier
+    ("The Band award received Grammy lifetime achievement award. " + WAKE1, G_WAKE),                  # the 'the' span comes FIRST
+    (WAKE1 + " The Who genre symphonic hard rock.", [G_WAKE[0], ("the_who", "genre", "symphonic_hard_rock")]),   # unrelated 'the X'
+    (WAKE1 + " Sheila Marie Ryan place of birth the Bronx.", [G_WAKE[0], ("sheila_marie_ryan", "place_of_birth", "the_bronx")]),
+    # the same slug named again is the same thing
+    ("The Who genre symphonic hard rock. The Who record label Decca music group.",
+     [("the_who", "genre", "symphonic_hard_rock"), ("the_who", "record_label", "decca_music_group")]),
+    ("The dog chases cat. The cat eats fish.", [("dog", "chase", "cat"), ("cat", "eat", "fish")]),
+    ("The dog chases the cat. The cat eats the fish.", [("dog", "chase", "cat"), ("cat", "eat", "fish")]),
+    # the later span holds a word the earlier one does not
+    ("Rick Wakeman is a member of the Band. The Yes band record label Atlantic jazz.",
+     [("rick_wakeman", "member_of", "the_band"), ("yes_band", "record_label", "atlantic_jazz")]),
+])
+def test_one_sentence_unrelated_and_repeated_names_stay_kept(reply, gathered):
+    res = A.allowlist_verify(reply, [list(g) for g in gathered])
+    assert res["accepted"], (reply, res["reject_reason"])
+
+
+def test_the_build6_name_rules_only_add_rejections():
+    """Monotone: a sentence build 6 keeps parses as before and passes every build-5 check (the new checks run after them)."""
+    import inspect
+    src = inspect.getsource(A.allowlist_check)
+    assert src.index("_structure_word_violation(parses") < src.index("_name_reading_violation(parses")
+    assert "_points_back(trace)" in inspect.getsource(A.allowlist_verify)

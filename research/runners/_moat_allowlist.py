@@ -443,6 +443,78 @@ def _structure_word_violation(parses, origs):
     return None
 
 
+# ---- build 6: names that read as a description or a clause (preflip topic 3; Claude rulings 2026-10-21) ------------------------------
+# English uses capitals to tell a name from a description or a clause, except for a sentence's first word. A SUBJ/OBJ span written with
+# spaces (not the lower-case slug verbatim) is rejected when its words read as a description or a clause:
+#   (a) a definite description: the span opens with "the" (any case) and the next word starts with a lower-case letter ("The band", "the
+#       band"; "The Band", "the Bronx", "The 7th arrondissement" and "Louis the Alligator" stay);
+#   (b1) a first- or second-person subject: the span opens with "I", "we" or "you" in ANY case and has another word ("I need a beat", "I
+#       Heart Tuesdays"): the honesty boundary (non-negotiable 5) -- the mouth must never make a first- or second-person claim the brain
+#       did not make; the slug written verbatim stays sayable;
+#   (b1') a one-word span "I" / "we" / "you" (any case, also the slug verbatim) not directly after a determiner reads as the pronoun;
+#   (b2) a modal, a first- or second-person pronoun or a focus/imperative word (CASED_CLAUSE_WORDS) inside the span, written in lower case
+#       anywhere, or as the span's first word at the very start of the sentence with a lower-case next word ("Will hurt award received
+#       ..."); an all-caps abbreviation of 2+ letters (US, ME) is not the word.
+# Lower-case names holding a LEXICAL verb ("steve threw up record label xl recordings.") stay open (known B residue: no verb lexicon and no
+# proper-name bit in the store).
+CASED_CLAUSE_WORDS = frozenset(("will", "would", "can", "could", "shall", "should", "may", "might", "must",
+                                "me", "my", "mine", "myself", "we", "us", "our", "ours", "ourselves",
+                                "you", "your", "yours", "yourself", "yourselves", "just", "only", "also", "even", "please", "let"))
+SUBJECT_PRONOUNS = frozenset(("i", "we", "you"))
+
+
+def _name_reading_violation(parses, toks, origs, offs, src):
+    """Build 6 -> a reason string for the first SUBJ/OBJ span, over every parse, whose words read as a description or a clause (rules (a),
+    (b1), (b1'), (b2) above), else None. `toks` / `origs` / `offs` / `src` are `normalise_tracked`'s; token i - 1 is the determiner slot
+    of the noun at i (`_np` puts Det directly before the noun)."""
+    lead = len(src) - len(src.lstrip())
+    for _shape, _props, spans in parses:
+        for kind, i, slug in spans:
+            if kind != "ent":
+                continue
+            orig = unicodedata.normalize("NFC", origs[i]).strip(SPAN_SPACES)
+            if orig.lower() in SUBJECT_PRONOUNS and not (i > 0 and toks[i - 1] in DETERMINERS):
+                return "entity span %r of %s reads as the pronoun %r" % (origs[i], slug, orig)
+            if orig == slug:                                   # the slug verbatim in lower case is one identifier
+                continue
+            words = [w for w in _WORD_BREAK.split(orig) if w]
+            if len(words) < 2:
+                continue
+            if words[0].lower() == "the" and words[1][:1].islower():
+                return ("entity span %r of %s opens with 'the' and a lower-case word: a description, not a name" % (origs[i], slug))
+            if words[0].lower() in SUBJECT_PRONOUNS:
+                return ("entity span %r of %s opens with the first- or second-person subject %r (any case: the honesty boundary)"
+                        % (origs[i], slug, words[0]))
+            initial = offs[i][0] == lead
+            for k, w in enumerate(words):
+                if w.lower() in CASED_CLAUSE_WORDS and caps_tokens(w) != [w]:
+                    nxt = words[k + 1] if k + 1 < len(words) else ""
+                    if w[:1].islower() or (initial and k == 0 and nxt[:1].islower()):
+                        return ("entity span %r of %s holds %r written as prose: read as a modal / pronoun / focus word"
+                                % (origs[i], slug, w))
+    return None
+
+
+def _ent_span_words(parses, toks, origs):
+    """Build 6, for the cross-sentence rule in `allowlist_verify` -> [(slug, words, led_by_the)] for every SUBJ/OBJ span of every parse:
+    words = the span's displayed text split on spaces AND underscores, lower case; led_by_the = the span's first word is "the" (then
+    dropped from words) or a "the" determiner stands directly before it."""
+    out = []
+    for _shape, _props, spans in parses:
+        for kind, i, slug in spans:
+            if kind != "ent":
+                continue
+            words = [w.lower() for w in _WORD_BREAK.split(unicodedata.normalize("NFC", origs[i]).strip(SPAN_SPACES)) if w]
+            led = bool(words) and words[0] == "the" and len(words) > 1
+            if led:
+                words = words[1:]
+            led = led or (i > 0 and toks[i - 1] == "the")
+            item = (slug, tuple(words), led)
+            if item not in out:
+                out.append(item)
+    return out
+
+
 def _repeated_proposition(parses):
     """Build 5 -> a reason string when a parse lists one proposition twice, else None. A coordinated list ("A and B", shape 2) asserts
     distinct things, so "Take That has part Robbie Williams and a Robbie Williams" asserts a second Robbie Williams that the one
@@ -761,13 +833,16 @@ def allowlist_check(sentence, gathered):
         res["shape"] = parses[0][0]
         return res
     # build 5: no finite auxiliary or negation word inside a spaced entity name; a list names distinct things
-    late = _structure_word_violation(parses, tr[2]) or _repeated_proposition(parses)
+    # build 6: no name that reads as a description or a first/second-person clause (after the build-5 checks, so it only adds rejections)
+    late = (_structure_word_violation(parses, tr[2]) or _name_reading_violation(parses, tr[1], tr[2], tr[3], tr[4])
+            or _repeated_proposition(parses))
     if late is not None:
         res["reason"] = "allowlist: " + late
         res["shape"] = parses[0][0]
         return res
     shape, props, _spans = parses[0]
-    res.update(keep=True, reason="ok", shape=shape, props=[list(p) for p in props])
+    res.update(keep=True, reason="ok", shape=shape, props=[list(p) for p in props],
+               ent_spans=[list(x) for x in _ent_span_words(parses, tr[1], tr[2])])
     return res
 
 
@@ -823,8 +898,31 @@ def allowlist_verify(surface, gathered):
                     seen[p] = k
                 if reason is not None:
                     break
+        if reason is None:                   # build 6: a definite description that points back
+            reason = _points_back(trace)
     return {"accepted": reason is None, "reject_reason": reason, "grounded": grounded, "hypotheses": [], "trace": trace,
             "allowlist": True}
+
+
+def _points_back(trace):
+    """Build 6 (Claude ruling 2026-10-21, preflip topic 3 C2) -> a reason, or None. In a reply of 2+ kept sentences, a later sentence is
+    rejected when one of its SUBJ/OBJ spans is led by "the" (the span's own first word, or a "the" determiner directly before it) and its
+    remaining words are a subset of the words of a SUBJ/OBJ span of an EARLIER sentence that names a DIFFERENT slug: "Rick Wakeman is a
+    member of Yes band. The band award received ..." reads "The band" as Yes, an ungathered claim about Yes. The same slug named again
+    is the same thing and stays kept; a one-sentence reply has nothing to point back to."""
+    earlier = []
+    for k, t in enumerate(trace):
+        spans = [tuple(x) for x in t.get("ent_spans") or ()]
+        for slug, words, led in spans:
+            if not led or not words:
+                continue
+            for k0, slug0, words0 in earlier:
+                if slug0 != slug and set(words) <= set(words0):
+                    return ("allowlist: sentence %d: entity span %r of %s is led by 'the' and its words are among those of %s in sentence %d:"
+                            " a definite description that points back to a different thing [sentence %d of %d]"
+                            % (k + 1, " ".join(words), slug, slug0, k0 + 1, k + 1, len(trace)))
+        earlier.extend((k, slug, words) for slug, words, _led in spans)
+    return None
 
 
 class AllowlistClaimVerifier:
