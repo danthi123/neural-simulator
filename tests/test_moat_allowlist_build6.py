@@ -403,6 +403,11 @@ def test_real_names_and_verbatim_slugs_stay_kept(sentence, gathered):
 @pytest.mark.parametrize("sentence,gathered", [
     # C3: lower-case names with a lexical verb stay open (known B residue; no verb lexicon, no proper-name bit in the store)
     ("steve threw up record label xl recordings.", [("steve_threw_up", "record_label", "xl_recordings")]),
+    # build-6 review (doc): a first-person "I" that is not the name's first word; open because every such store name is a Roman numeral
+    # or a non-English "i" (synthetic slugs here: no store witness; round 8 probes conversation-taught names)
+    ("Baby I Love You performer the Ramones.", [("baby_i_love_you", "performer", "the_ramones")]),
+    ("And i love her performer the Beatles.", [("and_i_love_her", "performer", "the_beatles")]),
+    ("Vang i Valdres country Norway.", [("vang_i_valdres", "country", "norway")]),          # a real name: a deliberate keep
 ])
 def test_known_b_residue_stays_kept(sentence, gathered):
     """Pinned so a later change is visible: the next blind round adjudicates it."""
@@ -447,6 +452,56 @@ def test_a_later_the_span_pointing_back_rejects_that_sentence(reply, gathered, b
 def test_one_sentence_unrelated_and_repeated_names_stay_kept(reply, gathered):
     res = A.allowlist_verify(reply, [list(g) for g in gathered])
     assert res["accepted"], (reply, res["reject_reason"])
+
+
+# ---- C2 review fix (build-6 review, leak-B): a hyphenated names-table surface of the antecedent ("boy-band", "norway u-21") split on
+# spaces and underscores only stayed one word, so the later 'the' span was not a subset; the word split is now every non-alphanumeric run
+TT_BOY = ("take_that", "instance_of", "boy_band")
+BAND_CO = ("the_band", "country_of_origin", "canada_portal")
+NOR21 = ("norway_u_21", "sport", "association_football_club")
+THE_U = ("the_u", "country", "u_s_of_a")
+
+
+@pytest.mark.parametrize("reply,gathered", [
+    ("Take That is an instance of boy-band. The Band country of origin Canada portal.", [TT_BOY, BAND_CO]),
+    ("Take That is an instance of boy-band. the_band country of origin canada_portal.", [TT_BOY, BAND_CO]),
+    ("Take That is an instance of boy-band. The the_band country_of_origins canada_portal.", [TT_BOY, BAND_CO]),
+    ("Association football club is a sport of Norway u-21. The U country U S of A.", [NOR21, THE_U]),
+    # the space-spelled twins (already rejected before the fix)
+    ("Take That is an instance of boy band. The Band country of origin Canada portal.", [TT_BOY, BAND_CO]),
+    ("Association football club is a sport of Norway u 21. The U country U S of A.", [NOR21, THE_U]),
+])
+def test_a_hyphen_surface_of_the_antecedent_does_not_hide_it(seed_chats, reply, gathered):
+    g = [list(x) for x in gathered]
+    res = A.allowlist_verify(reply, g)
+    assert not res["accepted"] and "points back" in (res["reject_reason"] or ""), (reply, res["reject_reason"])
+    assert all(A.allowlist_verify(s, g)["accepted"] for s in A.split_sentences(reply)), "each sentence alone is kept"
+    for sd, chat in seed_chats.items():
+        assert _on(chat, reply, g)[0] is False, (sd, reply)
+
+
+def test_the_span_word_split_breaks_on_every_non_alphanumeric_run():
+    toks = ["x"]
+    for orig, words in (("boy-band", ("boy", "band")), ("Norway u-21", ("norway", "u", "21")), ("the_band", ("band",)),
+                        ("The\u00a0Band", ("band",)), ("Bod\u00f8", ("bod\u00f8",)), ("a.b/c", ("a", "b", "c"))):
+        got = A._ent_span_words([(1, [], [("ent", 0, "s")])], toks, [orig])
+        assert got[0][1] == words, (orig, got)
+
+
+# ---- known B residue (build-6 review): a hypernym definite description whose noun is NOT a word of the antecedent's name. The subset
+# rule cannot see it ("The Band" after "the Rolling Stones" reads as the Stones). Pinned KEPT so a change is visible; round 8 targets
+# hypernym and question-supplied antecedents.
+KR = ("keith_richards", "member_of", "the_rolling_stones")
+
+
+@pytest.mark.parametrize("reply", [
+    "Keith Richards is a member of the Rolling Stones. The Band country of origin Canada portal.",
+    "Keith Richards is a member of the Rolling Stones. The BAnd country of origin Canada portal.",
+    "Keith Richards is a member of the Rolling Stones. the_band country of origin canada_portal.",
+])
+def test_known_b_residue_hypernym_definite_description_stays_kept(reply):
+    res = A.allowlist_verify(reply, [list(KR), list(BAND_CO)])
+    assert res["accepted"], res["reject_reason"]
 
 
 def test_the_build6_name_rules_only_add_rejections():

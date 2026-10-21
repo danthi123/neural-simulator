@@ -99,8 +99,14 @@ every proposition it encodes is a gathered triple of this turn:
   verbatim slug stays sayable); a one-word "I"/"we"/"you" not after a determiner; a modal, pronoun or focus word written
   as prose ("will hurt", "brian may"). Across sentences: a later SUBJ/OBJ span led by "the" (its own first word or a
   "the" determiner) whose words are a subset of an earlier sentence's span of a different slug rejects that later
-  sentence ("Rick Wakeman is a member of Yes band. The Band award received ..."). Open, known B residue: lower-case
-  names holding a lexical verb ("steve threw up record label xl recordings.").
+  sentence ("Rick Wakeman is a member of Yes band. The Band award received ..."). Span words split on every
+  non-alphanumeric run, hyphens included (review fix: "boy-band", "norway u-21" hid the antecedent). Open, known B
+  residue (each pinned kept, so a change is visible; round 8 targets them): lower-case names holding a lexical verb
+  ("steve threw up record label xl recordings."); a hypernym definite description whose noun is not a word of the
+  antecedent's name ("Keith Richards is a member of the Rolling Stones. The Band country of origin Canada portal."), and
+  an antecedent that only the user's question supplied; a first-person "I" that is not a name's first word ("and i love
+  her", "Baby I Love You"), left open because every such store name is a Roman numeral or a non-English "i" ("Vang i
+  Valdres"), with no store witness of a first-person clause (a conversation-taught name could add one).
 - **VERB(rel):** a verb form of the relation from the verb-form table that `_noun_before_verb` uses (`1b67eef9b`),
   including the guarded `-s`, `-es` and `-ies` readings, only when that relation is gathered this turn.
 - **Case fidelity of entity spans (build 3, controller ruling 2026-10-20: no invented acronyms).** The store's slug

@@ -180,6 +180,9 @@ SPAN_SPACES = " \u00a0\u2007\u2009\u202f"
 # build 5: a true sign before a digit (U+2212 minus, plus, plus-minus; not the hyphen-minus, which in store names is mostly a joiner such
 # as "under-21") that is not between two digits
 _WORD_BREAK = re.compile("[_%s]+" % SPAN_SPACES)
+# build 6 (review fix): the word split of the cross-sentence points-back rule (`_ent_span_words`): every run of characters that are not
+# Unicode letters or digits (str.isalnum; "_" included as a breaker), so hyphens and other joiners separate words too
+_NON_ALNUM_RUN = re.compile(r"[\W_]+")
 _SIGNED_NUMBER = re.compile("(?<![0-9])[\u2212+\u00b1][0-9]")
 _WS = re.compile("[%s]+" % SPAN_SPACES)
 
@@ -481,6 +484,11 @@ def _structure_word_violation(parses, origs):
 #       ..."); an all-caps abbreviation of 2+ letters (US, ME) is not the word.
 # Lower-case names holding a LEXICAL verb ("steve threw up record label xl recordings.") stay open (known B residue: no verb lexicon and no
 # proper-name bit in the store).
+# Also open (build-6 review, documented, not closed): a first-person "I" that is NOT the span's first word ("and i love her", "Baby I
+# Love You"). Rule (b1) reads only the first word, and (b2) leaves "i" out of CASED_CLAUSE_WORDS on purpose: in the store every
+# non-initial "i" word is a Roman numeral ("Charles I of England") or a non-English preposition or accent fold ("Vang i Valdres",
+# i_stanbul), so closing it would reject real names. No store slug carries a first-person clause there (scan of every slug with a
+# non-initial "i" word); a conversation-taught name could, so round 8 probes it with conversation-taught names.
 CASED_CLAUSE_WORDS = frozenset(("will", "would", "can", "could", "shall", "should", "may", "might", "must",
                                 "me", "my", "mine", "myself", "we", "us", "our", "ours", "ourselves",
                                 "you", "your", "yours", "yourself", "yourselves", "just", "only", "also", "even", "please", "let"))
@@ -521,14 +529,16 @@ def _name_reading_violation(parses, toks, origs, offs, src):
 
 def _ent_span_words(parses, toks, origs):
     """Build 6, for the cross-sentence rule in `allowlist_verify` -> [(slug, words, led_by_the)] for every SUBJ/OBJ span of every parse:
-    words = the span's displayed text split on spaces AND underscores, lower case; led_by_the = the span's first word is "the" (then
-    dropped from words) or a "the" determiner stands directly before it."""
+    words = the span's displayed text (NFC, lower case) split on EVERY run of non-alphanumeric characters (spaces, underscores, hyphens,
+    any punctuation; build-6 fix after review: a names-table hyphen surface such as "boy-band" or "norway u-21" split on spaces and
+    underscores only stayed one word, so a later "The Band" / "The U" was no longer a subset of it); led_by_the = the span's first word
+    is "the" (then dropped from words) or a "the" determiner stands directly before it."""
     out = []
     for _shape, _props, spans in parses:
         for kind, i, slug in spans:
             if kind != "ent":
                 continue
-            words = [w.lower() for w in _WORD_BREAK.split(unicodedata.normalize("NFC", origs[i]).strip(SPAN_SPACES)) if w]
+            words = [w for w in _NON_ALNUM_RUN.split(unicodedata.normalize("NFC", origs[i]).lower()) if w]
             led = bool(words) and words[0] == "the" and len(words) > 1
             if led:
                 words = words[1:]
@@ -933,7 +943,13 @@ def _points_back(trace):
     rejected when one of its SUBJ/OBJ spans is led by "the" (the span's own first word, or a "the" determiner directly before it) and its
     remaining words are a subset of the words of a SUBJ/OBJ span of an EARLIER sentence that names a DIFFERENT slug: "Rick Wakeman is a
     member of Yes band. The band award received ..." reads "The band" as Yes, an ungathered claim about Yes. The same slug named again
-    is the same thing and stays kept; a one-sentence reply has nothing to point back to."""
+    is the same thing and stays kept; a one-sentence reply has nothing to point back to. Words are split on every non-alphanumeric run
+    (`_ent_span_words`), so a hyphenated antecedent ("boy-band", "norway u-21") is seen too.
+    KNOWN B RESIDUE (build-6 review, documented, not closed): a HYPERNYM definite description, whose noun is not a word of the antecedent's
+    name ("Keith Richards is a member of the Rolling Stones. The Band country of origin Canada portal." reads "The Band" as the Stones),
+    and an antecedent supplied by the user's question rather than an earlier mouth sentence. Telling them apart would need a class lexicon
+    of every name (no such bit in the store); the subset rule cannot see them. Pinned kept in tests/test_moat_allowlist_build6.py so a
+    later change is visible; round 8 targets them. The same-slug Det+class-noun anaphora is exempt by design (the same thing)."""
     earlier = []
     for k, t in enumerate(trace):
         spans = [tuple(x) for x in t.get("ent_spans") or ()]
