@@ -109,10 +109,9 @@ every proposition it encodes is a gathered triple of this turn:
   residue (each pinned kept, so a change is visible; round 8 targets them): lower-case names holding a lexical verb
   ("steve threw up record label xl recordings."); a hypernym definite description whose noun is not a word of the
   antecedent's name ("Keith Richards is a member of the Rolling Stones. The Band country of origin Canada portal."), and
-  an antecedent that only the user's question supplied; a first-person "I" that is not a name's first word ("and i love
-  her", "Baby I Love You"), left open because every such store name is a Roman numeral or a non-English "i" ("Vang i
-  Valdres"), with no store witness of a first-person clause (a conversation-taught name could add one; round 8 found
-  five, and build 7, next bullet, closes them in part).
+  an antecedent that only the user's question supplied. A first-person "I" that is not a name's first word was listed
+  here at build 6; build 7 (next bullet) closes it in part: "and i love her" now rejects (R7b), while the title-case
+  clause "Baby I Love You" stays open and pinned kept.
 - **Build 7: two narrow name rules (round-8 blind hunt, Claude rulings 2026-10-21; branch `claude-build/moat-allowlist-1021g`,
   cut from `claude-build/moat-allowlist-1021f`).** English marks a name by its capitals, except at a sentence's first
   word; the rules add rejections only, inside `_name_reading_violation` after every build-6 check, so nothing outside the
@@ -145,6 +144,32 @@ every proposition it encodes is a gathered triple of this turn:
   verbatim stays sayable (it has no names-table row, so its de-slugged form is its only other canonical surface and
   rejects too). The stub renders slugs verbatim and is unaffected by R7b. Pinned in `tests/test_moat_allowlist_build7.py`,
   each rule with a mutation check (R7b(2)'s widening included: restricted back to "I", "Sometimes i lie" is kept).
+  The R7b word split is spaces and underscores, so a hyphen-joined store surface ("hilal-i-imtiaz") is one word to it.
+- **Build 7 review fixes (two reviewers of a05a6c91d, 2026-10-21).** All still add rejections only, inside the build-7
+  pass. R7a: the class adds thee, thou, thy, thine, thyself, ye, u, ya, yall, youse, yinz, ur, em, themself, ourself,
+  oneself and meself, and the apostrophe-less contractions im, ive, youre, youve, youll, youd, theyre and theyve read
+  the same way (ill, id, well and hes are ordinary words and are left out); a spelling that is neither lower case, title
+  case nor all-caps ("mE", "uS", "thEm") rejects anywhere; the title reading of a capitalised mid-sentence word needs a
+  relation where a title can stand, so in a person or place relation (spouse, father, child, sibling,
+  shares_border_with, place_of_birth, country and the like) "Me" / "Him" rejects ("Van Morrison is a member of Them."
+  and "an author of Mine." stay). R7b: the conjunctions add plus, yet, then, than, versus, vs and "amp", and "as well
+  as" counts as one; a lone "l" after a conjunction reads like "I"; when a capital or a digit follows the "i" / "I" the
+  name must be capitalised consistently ("So I Married an axe murderer", "honey i Shrunk the kids" reject; "Honey I
+  Shrunk the Kids" and "Historic Areas of i Stanbul" stay). New R7c, in a spaced name: a pronoun or determiner opener
+  (this, that, his, her, its, their, my, thou, him, ...; not u, us, ya, ye or ur, which open sentence-case store names)
+  before a lower-case word ("This book", "His song", "him and her"), or a span of pronouns and conjunctions only with
+  one in lower case ("Us and them"); an archaic or colloquial form in lower case anywhere ("tis thee"), or a
+  second-person one opening the span in any case ("Thou Art"); an apostrophe-less contraction before a lower-case word,
+  after a conjunction or in a span with no capital ("So Im married"; "Freiburg im Breisgau" stays). The points-back rule
+  reads spans led by this, that, these, those, his, her, its, their, my, our, your and thy like spans led by "the".
+  Measured against the reviewed build 7 (`_moat_allowlist_build7/matcher_diff_fix.json`): no change on the stub
+  population, the held-out corpora, hunt rounds 3-8 or any natural cased spelling of a store name; the sentence-case
+  spelling of 9 store slugs (28 facts) and the all-lower-case spelling of 7 (23 facts) newly reject (accepted costs,
+  listed in the module comment). Still open: title-case clauses ("Baby I Love You", "As I Lay Dying", "Us and Them",
+  "Me Myself"); "n" before "I" (an accent-fold residue in store names); sentence-case openers u, us, ya, ye, ur; who,
+  whom and one (real names, an owner ruling would add them); a determiner before a one-word class slug ("The thou ...",
+  like "The me"); lower-case names holding a lexical verb. Each fix is pinned at all seven parser seeds with a mutation
+  check per new branch.
 - **VERB(rel):** a verb form of the relation from the verb-form table that `_noun_before_verb` uses (`1b67eef9b`),
   including the guarded `-s`, `-es` and `-ies` readings, only when that relation is gathered this turn.
 - **Case fidelity of entity spans (build 3, controller ruling 2026-10-20: no invented acronyms).** The store's slug
