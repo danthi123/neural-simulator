@@ -782,6 +782,77 @@ def test_the_mood_marker_is_a_declared_non_claim_added_after_the_check(monkeypat
     assert not chat._verify("The dog chases the cat!", None, DOG)
 
 
+# ---- build-6 review (test-gap): the joined check on the BATCHED path (BRAIN_RICH_BATCH_RENDER, renderer with batch methods)
+PROG_ = ["progressive_rock", "has_part", "band"]
+
+
+def _batched(facts, table, level=0):
+    chat = _chat(Prose(table, regen=table, batch=True), level=level)
+    comp = _comp(chat)
+    para, kept, dropped = comp.render_paragraph([list(f) for f in facts])
+    return para, kept, dropped
+
+
+def _whole_ok(para, facts):
+    return A.allowlist_verify(para.replace("!", "."), [list(f) for f in facts])["accepted"]
+
+
+def test_batched_path_joins_terminates_and_cuts(monkeypatch):
+    monkeypatch.setenv(FLAG, "1")
+    monkeypatch.setenv("BRAIN_RICH_BATCH_RENDER", "1")
+    monkeypatch.setenv("BRAIN_SPIKING_MOUTH_RECALL", "0")
+    # unterminated Qwen sentences: no run-on, 'A. B.'
+    para, kept, dropped = _batched([DOG, CAT], {tuple(DOG): "The dog chases the cat", tuple(CAT): "The cat eats the fish"})
+    assert para == "The dog chases the cat. The cat eats the fish." and kept == [DOG, CAT] and dropped == [], para
+    assert _whole_ok(para, [DOG, CAT])
+    # a duplicate proposition: the later sentence is cut and listed in dropped
+    f1, f2 = ["spain", "shares_border_with", "france"], ["spain", "shares_border_with", "portugal"]
+    para, kept, dropped = _batched([f1, f2], {tuple(f1): "Spain shares border with France and Portugal.",
+                                              tuple(f2): "Spain shares border with Portugal."})
+    assert para == "Spain shares border with France and Portugal." and kept == [f1] and dropped == [f2], para
+    # points back: the later sentence is cut
+    g = [list(x) for x in G_WAKE]
+    para, kept, dropped = _batched(g, {tuple(g[0]): WAKE1, tuple(g[1]): "The Band award received Grammy lifetime achievement award."})
+    assert para == WAKE1 and kept == [g[0]] and dropped == [g[1]], para
+    assert _whole_ok(para, g)
+
+
+def test_batched_path_warm_spiking_marker_is_added_after_the_check(monkeypatch):
+    monkeypatch.setenv(FLAG, "1")
+    monkeypatch.setenv("BRAIN_RICH_BATCH_RENDER", "1")
+    para, kept, dropped = _batched([DOG, PROG_], {tuple(PROG_): "Progressive rock has part band"}, level=2)
+    assert para == "the dog chases the cat! Progressive rock has part band." and kept == [DOG, PROG_] and dropped == [], para
+    assert not A.allowlist_verify(para, [DOG, PROG_])["accepted"]          # the '!' is a declared non-claim, added after the check
+    assert _whole_ok(para, [DOG, PROG_])
+
+
+@pytest.mark.parametrize("seed", range(40))
+def test_batched_and_sequential_paragraphs_pass_whole(monkeypatch, seed):
+    """Property (the reviewer's join_e2e.py, compact): random fact orders, terminated or not, hostile or faithful prose, warm or not;
+    every emitted paragraph (with '!' read back as '.') passes allowlist_verify against the gathered union, on both paths."""
+    rnd = random.Random(seed)
+    pool = [list(DOG), list(CAT), list(BRAIN), PROG_, list(G_WAKE[0]), list(G_WAKE[1]),
+            ["spain", "shares_border_with", "france"], ["spain", "shares_border_with", "portugal"]]
+    faithful = {tuple(DOG): "The dog chases the cat", tuple(CAT): "The cat eats the fish.", tuple(BRAIN): "The brain uses spikes",
+                tuple(PROG_): "Progressive rock has part the band.", G_WAKE[0]: WAKE1,
+                G_WAKE[1]: "The Band award received Grammy lifetime achievement award",
+                ("spain", "shares_border_with", "france"): "Spain shares border with France and Portugal.",
+                ("spain", "shares_border_with", "portugal"): "Spain shares border with Portugal"}
+    facts = rnd.sample(pool, rnd.randint(2, 5))
+    table = {k: (rnd.choice(HOSTILE) if rnd.random() < 0.2 else v) for k, v in faithful.items()}
+    monkeypatch.setenv(FLAG, "1")
+    if rnd.random() < 0.5:
+        monkeypatch.setenv("BRAIN_SPIKING_MOUTH_RECALL", "0")
+    level = rnd.choice((0, 2, -2))
+    for batch in ("1", "0"):
+        monkeypatch.setenv("BRAIN_RICH_BATCH_RENDER", batch)
+        para, kept, dropped = _batched(facts, table, level=level)
+        assert sorted(map(tuple, kept + dropped)) == sorted(map(tuple, facts))
+        if para:
+            assert _whole_ok(para, facts), (batch, para)
+            assert para.endswith((".", "!")) and "  " not in para
+
+
 # ---- the hypothesis path
 FRAME = " -- that's a guess from what I've learned, not something I was taught."
 SPK_SUFFIX = "  [a guess from what I've learned -- not something I was taught]"
@@ -814,6 +885,34 @@ def test_hypothesis_qwen_branch_checks_the_spoken_body(monkeypatch):
             assert (surface, fluent) == ("Maybe the dog eats the fish" + FRAME, True), prose
         else:
             assert (surface, fluent) == ("perhaps dog eat fish" + SPK_SUFFIX, False), prose
+
+
+def test_hypothesis_qwen_spoken_body_is_exactly_the_checked_body(monkeypatch):
+    """Build-6 review (test-gap): the first-word case can flip the matcher verdict. 'Will Hurt award received Theatre World Awards.' is
+    kept, but `_frame_guess` would speak 'will Hurt ...' (a modal-as-prose name, rejected). So the checked body must be the spoken body,
+    and this surface falls to the raw flagged template."""
+    monkeypatch.setenv(FLAG, "1")
+    monkeypatch.setenv("BRAIN_SPIKING_MOUTH", "0")
+    hyp = ["will_hurt", "award_received", "theatre_world_awards"]
+    prose = "Will Hurt award received Theatre World Awards."
+    assert A.allowlist_verify(prose, [hyp])["accepted"]
+    assert not A.allowlist_verify("will Hurt award received Theatre World Awards.", [hyp])["accepted"]
+    chat = _chat(Prose({tuple(hyp): prose}, regen={tuple(hyp): prose}))
+    seen = []
+    orig = chat._verify
+    chat._verify = lambda surface, asserted, svo: seen.append(surface) or orig(surface, asserted, svo)
+    surface, fluent = chat.render_hypothesis_verified(hyp)
+    assert (surface, fluent) == ("perhaps will_hurt award_received theatre_world_awards" + SPK_SUFFIX, False), surface
+    assert seen and all(x == "will Hurt award received Theatre World Awards" for x in seen), seen
+    # the checked body is the spoken body for every accepted candidate: capitalised first letter and a trailing '.' are equivalent
+    hyp2 = ["dog", "eat", "fish"]
+    for p2 in ("The dog eats the fish.", "The dog eats the fish", "the dog eats the fish.", "  The dog eats the fish.  "):
+        chat = _chat(Prose({tuple(hyp2): p2}, regen={tuple(hyp2): p2}))
+        seen = []
+        orig = chat._verify
+        chat._verify = lambda surface, asserted, svo, _o=orig: seen.append(surface) or _o(surface, asserted, svo)
+        surface, fluent = chat.render_hypothesis_verified(hyp2)
+        assert fluent and surface == "Maybe " + seen[-1] + FRAME == "Maybe the dog eats the fish" + FRAME, (p2, surface, seen)
 
 
 class FakeBroca:
