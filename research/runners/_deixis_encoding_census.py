@@ -878,41 +878,40 @@ def run_w3(items, seed):
 def run_w4(items, seed):
     """W4a: pure extract_assertion over the probe set.
     W4b: the reconsolidation in-place rewrite with a LIVE surprise
-    window: store (agent, action, p_stored) on the rf composer (tiny
-    demo, dev seed), assert a deictic-corrected patient, record the
-    window decision + the exact string match _reactivate_idx used."""
+    window — TWO ARMS (RULING deixis-271-s0b):
+      * ``W4_reconsolidation`` — the in-codebook pairs (every word the
+        tiny-demo codebook knows), one shared composer.
+      * ``w4_demos_uncoded`` — the ORIGINAL pairs (north→south,
+        jazz→rock, likes→jazz), each on a FRESH composer: a writer
+        raising on a word it has never coded is census data (measure 4:
+        a heard fact silently dropped), recorded as ``raised_type`` /
+        ``raised_msg`` — the canary scanner reads only exact keys
+        ``error`` / ``_error`` as job failure (tools/pool_canary.sh
+        172–174) and must not be changed. Nothing is caught-and-dropped;
+        per-arm counts record how many raised.
+    """
     import research.runners.surprise_production_organ as SPO
     extract = {it["id"]: SPO.extract_assertion(it["text"]) for it in items}
 
     import research.runners.reconsolidation_production_organ as RPO
     from research.runners.brain_chat_tui import _build_tiny_demo
-    built = _build_tiny_demo(
-        seed, use_multiturn=False, enable_neural_render=False,
-        composer_kind="rf")
-    if len(built) == 4:
-        agent_obj, _aliases, n_facts, src = built
-    else:
-        agent_obj, _aliases, n_facts = built
-        src = "tiny-demo rf (dev seed %d)" % seed
-    composer = getattr(agent_obj, "composer", None) or getattr(
-        getattr(agent_obj, "agent", None), "composer", None)
-    if composer is None:
-        return {"W4_extract": extract, "W4_reconsolidation": [],
-                "W4_composer_source": "NOT FOUND on tiny demo",
-                "W4_composer_facts": -1,
-                "W4_error": "no composer attribute on tiny demo agent"}
+
+    def build_composer():
+        built = _build_tiny_demo(
+            seed, use_multiturn=False, enable_neural_render=False,
+            composer_kind="rf")
+        if len(built) == 4:
+            agent_obj, _aliases, n_facts, src = built
+        else:
+            agent_obj, _aliases, n_facts = built
+            src = "tiny-demo rf (dev seed %d)" % seed
+        comp = getattr(agent_obj, "composer", None) or getattr(
+            getattr(agent_obj, "agent", None), "composer", None)
+        return comp, src, int(n_facts)
+
     org = RPO.get_organ(seed=seed)
-    demos = []
-    # All words must exist in the tiny-demo codebook: earlier pairs with
-    # uncoded patients (south/rock) raised KeyError inside window_open and
-    # the canary's error scan treats any nested `error` as job failure.
-    # Facts 2-3 rewrite EXISTING kb facts (kb[3]/kb[4]); the deictic
-    # defect fact (my/cousin/likes) runs FIRST on the pristine composer
-    # (p_new=brain is kb[0]'s agent; jazz only worked pre-mutation).
-    pairs = [("my", "cousin", "likes", "brain"),
-             ("dog", "chase", "cat", "fish"),
-             ("cat", "eat", "fish", "spikes")]
-    for (a, act, p_old, p_new) in pairs:
+
+    def one_demo(composer, a, act, p_old, p_new):
         try:
             # store the old fact through the composer's own path
             if hasattr(composer, "store"):
@@ -923,22 +922,67 @@ def run_w4(items, seed):
             idx = org._reactivate_idx(composer, a, act)
             opened, sj = org.window_open(a, act, p_old, p_new)
             res = org.reconsolidate(composer, a, act, p_old, p_new, sj=sj)
-            demos.append({
+            return {
                 "asserted": [a, act, p_new], "reactivate_idx": idx,
                 "string_match": ("composer.kb[%s].agent==%r and "
-                                 ".action==%r" % (idx, a, act)) if idx is
-                not None else None,
+                                 ".action==%r" % (idx, a, act)) if idx
+                is not None else None,
                 "window_open": bool(opened),
                 "surprise": {k: sj.get(k) for k in
                              ("surprised", "sj", "hz") if isinstance(sj, dict)
                              } if isinstance(sj, dict) else str(sj),
                 "action": res.get("action"), "wrote": res.get("wrote"),
-                "stored_before": p_old, "error": None})
+                "stored_before": p_old,
+                "raised_type": None, "raised_msg": None}
         except Exception as e:
-            demos.append({"asserted": [a, act, p_new], "error":
-                          "%s: %s" % (type(e).__name__, e)})
+            # census DATA (uncoded word a writer could not handle);
+            # never the keys `error`/`_error` the scanner reads.
+            return {"asserted": [a, act, p_new], "stored_before": None,
+                    "raised_type": type(e).__name__, "raised_msg": str(e)}
+
+    composer, src, n_facts = build_composer()
+    if composer is None:
+        return {"W4_extract": extract, "W4_reconsolidation": [],
+                "w4_demos_uncoded": [],
+                "w4_demos_counts": {"coded": {"n": 0, "raised": 0},
+                                    "uncoded": {"n": 0, "raised": 0}},
+                "W4_composer_source": "NOT FOUND on tiny demo",
+                "W4_composer_facts": -1,
+                "W4_error": "no composer attribute on tiny demo agent"}
+
+    # arm 1: in-codebook pairs on ONE shared composer (RULING s0b: these
+    # may stay, but cannot replace the original pairs).
+    # Facts 2-3 rewrite EXISTING kb facts (kb[3]/kb[4]); the deictic
+    # defect fact (my/cousin/likes) runs FIRST on the pristine composer.
+    pairs = [("my", "cousin", "likes", "brain"),
+             ("dog", "chase", "cat", "fish"),
+             ("cat", "eat", "fish", "spikes")]
+    demos = [one_demo(composer, a, act, p_old, p_new)
+             for (a, act, p_old, p_new) in pairs]
+
+    # arm 2: the ORIGINAL uncoded pairs, each on a FRESH composer.
+    uncoded_pairs = [("kofi", "chase", "north", "south"),
+                     ("i", "like", "jazz", "rock"),
+                     ("my", "cousin", "likes", "jazz")]
+    uncoded = []
+    for (a, act, p_old, p_new) in uncoded_pairs:
+        comp_u, _src_u, _nf_u = build_composer()
+        if comp_u is None:
+            uncoded.append({"asserted": [a, act, p_new],
+                            "raised_type": "ComposerMissing",
+                            "raised_msg": "no composer on fresh tiny demo"})
+            continue
+        uncoded.append(one_demo(comp_u, a, act, p_old, p_new))
+
+    counts = {
+        "coded": {"n": len(demos),
+                  "raised": sum(1 for d in demos if d.get("raised_type"))},
+        "uncoded": {"n": len(uncoded),
+                    "raised": sum(1 for d in uncoded
+                                  if d.get("raised_type"))}}
     return {"W4_extract": extract, "W4_reconsolidation": demos,
-            "W4_composer_source": src, "W4_composer_facts": int(n_facts)}
+            "w4_demos_uncoded": uncoded, "w4_demos_counts": counts,
+            "W4_composer_source": src, "W4_composer_facts": n_facts}
 
 
 # ---------------------------------------------------------------- measures
@@ -1129,6 +1173,10 @@ def build_record(args):
     measures["W4_extract_defects"] = m1_deictic_as_name(
         oracle, items, w4get)
     measures["W4_reconsolidation"] = w4["W4_reconsolidation"]
+    measures["w4_demos_uncoded"] = w4.get("w4_demos_uncoded", [])
+    measures["w4_demos_counts"] = w4.get(
+        "w4_demos_counts", {"coded": {"n": 0, "raised": 0},
+                            "uncoded": {"n": 0, "raised": 0}})
     measures["6_questions"] = m6_questions()
     measures["7_slug_scan"] = m7_slug_scan(probe)
 
