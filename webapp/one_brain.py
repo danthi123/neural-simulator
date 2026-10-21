@@ -207,6 +207,8 @@ CHAT_CONTEXT_ATTRS = (
     "_last_gnw_bus", "_last_gnw_delib", "_last_gnw_multistep", "_last_gnw_stop", "_last_two_organ",
     "_last_three_organ", "_last_category_inherit", "_last_open_ended_gated", "_ci_last_observe", "_ci_last_extract",
     "_oeg_calls", "_oeg_rng_state", "_oeg_seed",          # open-ended gated turn record + its RNG (default-off route)
+    "_moat_joined_replies",                                # build 6 (BRAIN_MOAT_ALLOWLIST): this turn's composer paragraphs, opened
+                                                           # and closed inside the locked turn (begin/take_joined_record)
 )
 # brain-level (B): one copy shared by every conversation (installed once, or learned)
 CHAT_BRAIN_ATTRS = (
