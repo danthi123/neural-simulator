@@ -640,17 +640,6 @@ def main():
         print("    posctl commits %s/%s pass=%s"
               % (pc.get("commits"), pc.get("n"), pc.get("pass")), flush=True)
 
-    # attribution (gate attribution-required): whose is the b-vs-i1
-    # difference?  treatment = b mention intact, control = i1 ment_gate
-    # lesioned; K4 expects identical wins, i.e. 0% attributable to the
-    # gate -- reported as numbers, not assumed.
-    b_w = float(sum((r.get("clauses") or {}).get("b", {}).get("wins", 0)
-                    for r in results))
-    i1_w = float(sum((r.get("clauses") or {}).get("i1", {}).get("wins", 0)
-                     for r in results))
-    out["attribution_mention_gate"] = attributable_to(
-        "mention gate (b intact vs i1 lesion)", b_w, i1_w)
-
     all_seeds_all_clauses = all(
         all(v.get("pass") for v in r["clauses"].values()) for r in results)
     v = Verdict("cs-race step 1: F1 feasibility clause table")
@@ -685,6 +674,16 @@ def main():
                "engram written alone, full cue, no competitor, >=9/10 "
                "commits per dev seed; control-failed row = UNDEFINED"},
            "wall_s": round(time.time() - t0, 1)}
+    # attribution (gate attribution-required): whose is the b-vs-i1
+    # difference?  treatment = b mention intact, control = i1 ment_gate
+    # lesioned; K4 expects identical wins, i.e. 0% attributable to the
+    # gate -- reported as numbers, not assumed.
+    b_w = float(sum((r.get("clauses") or {}).get("b", {}).get("wins", 0)
+                    for r in results))
+    i1_w = float(sum((r.get("clauses") or {}).get("i1", {}).get("wins", 0)
+                     for r in results))
+    out["attribution_mention_gate"] = attributable_to(
+        "mention gate (b intact vs i1 lesion)", b_w, i1_w)
     if not args.out:
         args.out = ("research/findings/raw/_cs_race/f1/row%d/seed%s.json"
                     % (args.grid_row, "-".join(str(s) for s in seeds)))
