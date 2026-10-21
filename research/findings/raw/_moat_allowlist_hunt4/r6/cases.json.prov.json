@@ -1,0 +1,25 @@
+{
+ "run_id": "1792543469-3042423",
+ "runner": "research/findings/raw/_moat_allowlist_hunt4/r6/build_cases.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-hunt6/research/findings/raw/_moat_allowlist_hunt4/r6/build_cases.py"
+ ],
+ "git_sha": "a631f7084",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-20T20:44:29",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 15273.8,
+ "corpus_check_query": "claim checker span matcher accepts Unicode confusable letters and separator characters because it compares spans through a lossy slug fold (sanitize) instead of exact canonical surface forms",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_moat_allowlist_hunt4/r6/cases.json"
+}

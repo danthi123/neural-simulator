@@ -1,0 +1,3400 @@
+[
+ {
+  "id": "R6-AN01",
+  "gathered": [
+   [
+    "emperor_of_abyssinia",
+    "instance_of",
+    "monarch"
+   ],
+   [
+    "monarch",
+    "part_of",
+    "dynastic_state"
+   ]
+  ],
+  "sentence": "Emperor of Abyssinia is an instance of monarch. The monarch is part of dynastic state.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the monarch' refers back to the Emperor of Abyssinia, so the reply also asserts that the Emperor of Abyssinia is part of dynastic state; that triple is not gathered"
+ },
+ {
+  "id": "R6-AN02",
+  "gathered": [
+   [
+    "council_of_five_hundred",
+    "instance_of",
+    "lower_house"
+   ],
+   [
+    "lower_house",
+    "part_of",
+    "bicameral_legislature"
+   ]
+  ],
+  "sentence": "Council of Five Hundred is an instance of lower house. The lower house is part of bicameral legislature.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the lower house' refers back to the Council of Five Hundred, so the reply also asserts that the Council of Five Hundred is part of bicameral legislature; that triple is not gathered"
+ },
+ {
+  "id": "R6-AN03",
+  "gathered": [
+   [
+    "federation_council",
+    "instance_of",
+    "first_chamber"
+   ],
+   [
+    "first_chamber",
+    "part_of",
+    "bicameral_legislature"
+   ]
+  ],
+  "sentence": "Federation Council is an instance of first chamber.\nThe first chamber is part of bicameral legislature.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the first chamber' refers back to the Federation Council, so the reply also asserts that the Federation Council is part of bicameral legislature; that triple is not gathered (line-feed separator)"
+ },
+ {
+  "id": "R6-AN04",
+  "gathered": [
+   [
+    "doge_of_venice",
+    "instance_of",
+    "head_of_nation"
+   ],
+   [
+    "head_of_nation",
+    "part_of",
+    "political_state"
+   ]
+  ],
+  "sentence": "Doge of Venice is an instance of head of nation. The head of nation is part of political state.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the head of nation' refers back to the Doge of Venice, so the reply also asserts that the Doge of Venice is part of political state; that triple is not gathered"
+ },
+ {
+  "id": "R6-AN05",
+  "gathered": [
+   [
+    "henry_e_eccles_library",
+    "instance_of",
+    "university_campus"
+   ],
+   [
+    "university_campus",
+    "part_of",
+    "higher_general_education"
+   ]
+  ],
+  "sentence": "Henry E Eccles Library is an instance of university campus. The university campus is part of higher general education.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the university campus' refers back to the Henry E Eccles Library, so the reply also asserts that the Henry E Eccles Library is part of higher general education; that triple is not gathered"
+ },
+ {
+  "id": "R6-AN06",
+  "gathered": [
+   [
+    "apple_ii",
+    "instance_of",
+    "personal_computer"
+   ],
+   [
+    "personal_computer",
+    "has_part",
+    "multimedia_keyboard"
+   ]
+  ],
+  "sentence": "Apple II is an instance of personal computer. The personal computer has part multimedia keyboard.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the personal computer' refers back to the Apple II, so the reply also asserts that the Apple II has a multimedia keyboard as a part; that triple is not gathered; the Apple II had no multimedia keyboard"
+ },
+ {
+  "id": "R6-AN07",
+  "gathered": [
+   [
+    "bologna_university",
+    "instance_of",
+    "building_structure"
+   ],
+   [
+    "building_structure",
+    "has_part",
+    "wall_railings"
+   ]
+  ],
+  "sentence": "Bologna University is an instance of building structure. The building structure has part wall railings.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the building structure' refers back to Bologna University, so the reply also asserts that Bologna University has part wall railings; that triple is not gathered"
+ },
+ {
+  "id": "R6-AN08",
+  "gathered": [
+   [
+    "british_and_irish_lions",
+    "instance_of",
+    "sports_team"
+   ],
+   [
+    "sports_team",
+    "has_part",
+    "sports_player"
+   ]
+  ],
+  "sentence": "British and Irish Lions is an instance of sports team. The sports team has part sports player.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the sports team' refers back to the British and Irish Lions, so the reply also asserts that the British and Irish Lions has part sports player; that triple is not gathered"
+ },
+ {
+  "id": "R6-AN09",
+  "gathered": [
+   [
+    "st_lawrence_valley",
+    "instance_of",
+    "middle_course"
+   ],
+   [
+    "middle_course",
+    "has_part",
+    "hydrogen_hydroxide"
+   ]
+  ],
+  "sentence": "St Lawrence Valley is an instance of middle course. The middle course has part hydrogen hydroxide.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the middle course' refers back to St Lawrence Valley, so the reply also asserts that St Lawrence Valley has part hydrogen hydroxide; that triple is not gathered"
+ },
+ {
+  "id": "R6-AN10",
+  "gathered": [
+   [
+    "lord_of_the_rings",
+    "instance_of",
+    "book_series"
+   ],
+   [
+    "book_series",
+    "has_part",
+    "wikipedia_books"
+   ]
+  ],
+  "sentence": "Lord of the Rings is an instance of book series. The book series has part Wikipedia books.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the book series' refers back to Lord of the Rings, so the reply also asserts that Lord of the Rings has part Wikipedia books; that triple is not gathered"
+ },
+ {
+  "id": "R6-AN11",
+  "gathered": [
+   [
+    "order_of_the_nile",
+    "instance_of",
+    "honorific_order"
+   ],
+   [
+    "honorific_order",
+    "has_part",
+    "military_awards_decorations"
+   ]
+  ],
+  "sentence": "Order of the Nile is an instance of honorific order. The honorific order has part military awards decorations.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the honorific order' refers back to the Order of the Nile, so the reply also asserts that the Order of the Nile has part military awards decorations; that triple is not gathered"
+ },
+ {
+  "id": "R6-AN12",
+  "gathered": [
+   [
+    "academy_award_for_makeup",
+    "instance_of",
+    "oscar_award"
+   ],
+   [
+    "oscar_award",
+    "has_part",
+    "oscar_for_best_film"
+   ]
+  ],
+  "sentence": "Academy Award for makeup is an instance of Oscar award. The Oscar award has part Oscar for best film.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the Oscar award' refers back to the makeup award, so the reply also asserts that the makeup award has the best-film Oscar as a part; that triple is not gathered"
+ },
+ {
+  "id": "R6-AN13",
+  "gathered": [
+   [
+    "hindsale_illinois",
+    "instance_of",
+    "village_president"
+   ],
+   [
+    "village_president",
+    "part_of",
+    "rural_sector"
+   ]
+  ],
+  "sentence": "Hindsale Illinois is an instance of village president. The village president is part of rural sector.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the village president' refers back to Hindsale Illinois, so the reply also asserts that Hindsale Illinois is part of rural sector; that triple is not gathered"
+ },
+ {
+  "id": "R6-AN14",
+  "gathered": [
+   [
+    "seventh_day_adventism",
+    "instance_of",
+    "christian_denomination"
+   ],
+   [
+    "christian_denomination",
+    "part_of",
+    "al_masihiyya"
+   ]
+  ],
+  "sentence": "Seventh Day Adventism is an instance of Christian denomination. The Christian denomination is part of al Masihiyya.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the Christian denomination' refers back to Seventh Day Adventism, so the reply also asserts that Seventh Day Adventism is part of al Masihiyya; that triple is not gathered"
+ },
+ {
+  "id": "R6-AN15",
+  "gathered": [
+   [
+    "brazilian_portuguese",
+    "instance_of",
+    "dialect_cluster"
+   ],
+   [
+    "dialect_cluster",
+    "part_of",
+    "human_culture"
+   ]
+  ],
+  "sentence": "Brazilian Portuguese is an instance of dialect cluster. The dialect cluster is part of human culture.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the dialect cluster' refers back to Brazilian Portuguese, so the reply also asserts that Brazilian Portuguese is part of human culture; that triple is not gathered"
+ },
+ {
+  "id": "R6-AN16",
+  "gathered": [
+   [
+    "android_os",
+    "instance_of",
+    "operating_system"
+   ],
+   [
+    "operating_system",
+    "has_part",
+    "file_access"
+   ]
+  ],
+  "sentence": "Android OS is an instance of operating system. The operating system has part file access.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the operating system' refers back to Android OS, so the reply also asserts that Android OS has part file access; that triple is not gathered"
+ },
+ {
+  "id": "R6-AN17",
+  "gathered": [
+   [
+    "rat",
+    "instance_of",
+    "taxonomic_group"
+   ],
+   [
+    "taxonomic_group",
+    "has_part",
+    "flora_and_fauna"
+   ]
+  ],
+  "sentence": "Rat is an instance of taxonomic group. The taxonomic group has part flora and fauna.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the taxonomic group' refers back to the genus Rat, so the reply also asserts that the genus Rat has part flora and fauna; that triple is not gathered; false of a rodent genus"
+ },
+ {
+  "id": "R6-AN18",
+  "gathered": [
+   [
+    "bitmap_editors",
+    "instance_of",
+    "software_enhancement"
+   ],
+   [
+    "software_enhancement",
+    "part_of",
+    "software_technology"
+   ]
+  ],
+  "sentence": "Bitmap editors is an instance of software enhancement. The software enhancement is part of software technology.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the software enhancement' refers back to bitmap editors, so the reply also asserts that bitmap editors is part of software technology; that triple is not gathered"
+ },
+ {
+  "id": "R6-AN19",
+  "gathered": [
+   [
+    "the_po_river",
+    "instance_of",
+    "middle_course"
+   ],
+   [
+    "middle_course",
+    "has_part",
+    "hydrogen_hydroxide"
+   ]
+  ],
+  "sentence": "The Po River is an instance of middle course\nThe middle course has part hydrogen hydroxide",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the middle course' refers back to the Po River, so the reply also asserts that the Po River has part hydrogen hydroxide; that triple is not gathered (line feed, no final periods)"
+ },
+ {
+  "id": "R6-AN20",
+  "gathered": [
+   [
+    "sanders_park",
+    "instance_of",
+    "town"
+   ],
+   [
+    "town",
+    "subclass_of",
+    "populated_places"
+   ]
+  ],
+  "sentence": "Sanders Park is an instance of town. The town is a subclass of populated places.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the town' refers back to Sanders Park, so the reply also asserts that Sanders Park is a subclass (not an instance) of populated places; that triple is not gathered"
+ },
+ {
+  "id": "R6-AN21",
+  "gathered": [
+   [
+    "monza_motor_circuit",
+    "instance_of",
+    "circuit_racing"
+   ],
+   [
+    "circuit_racing",
+    "part_of",
+    "racing_unassisted_human"
+   ]
+  ],
+  "sentence": "Monza motor circuit is an instance of circuit racing. The circuit racing is part of racing unassisted human.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the circuit racing' refers back to the Monza circuit, so the reply also asserts that the Monza circuit is part of racing unassisted human; that triple is not gathered"
+ },
+ {
+  "id": "R6-AN22",
+  "gathered": [
+   [
+    "federation_council",
+    "instance_of",
+    "first_chamber"
+   ],
+   [
+    "council_of_five_hundred",
+    "instance_of",
+    "lower_house"
+   ],
+   [
+    "first_chamber",
+    "part_of",
+    "bicameral_legislature"
+   ],
+   [
+    "lower_house",
+    "part_of",
+    "bicameral_legislature"
+   ]
+  ],
+  "sentence": "Federation Council is an instance of first chamber. Council of Five Hundred is an instance of lower house. The first chamber is part of bicameral legislature. The lower house is part of bicameral legislature.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "four gathered triples; the two 'the' sentences read as being about the two councils named just before, so the reply asserts that each council is part of bicameral legislature, which is not gathered"
+ },
+ {
+  "id": "R6-AN23",
+  "gathered": [
+   [
+    "aug",
+    "instance_of",
+    "nodical_month"
+   ],
+   [
+    "nodical_month",
+    "part_of",
+    "years_ago"
+   ]
+  ],
+  "sentence": "Aug is an instance of nodical month. The nodical month is part of years ago.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the nodical month' refers back to August, so the reply also asserts that August is part of years ago; that triple is not gathered"
+ },
+ {
+  "id": "R6-AN24",
+  "gathered": [
+   [
+    "corail_intercit_s",
+    "instance_of",
+    "passenger_trains"
+   ],
+   [
+    "passenger_trains",
+    "has_part",
+    "railway_locomotive"
+   ]
+  ],
+  "sentence": "Corail Intercit S is an instance of passenger trains. The passenger trains has part railway locomotive.",
+  "expect": "U",
+  "class": "anaphoric_class_noun_composite",
+  "why": "each sentence is a gathered triple, but in context 'the passenger trains' refers back to Corail Intercites, so the reply also asserts that Corail Intercites has part railway locomotive; that triple is not gathered"
+ },
+ {
+  "id": "R6-AC01",
+  "gathered": [
+   [
+    "funabashi_chiba",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ],
+   [
+    "funabashi_chiba",
+    "instance_of",
+    "city_of_japan"
+   ],
+   [
+    "city_of_japan",
+    "located_in_time_zone",
+    "japan_standard_time"
+   ]
+  ],
+  "sentence": "Funabashi Chiba is located in time zone Korea standard time. Funabashi Chiba is an instance of city of Japan. The city of Japan is located in time zone Japan standard time.",
+  "expect": "U",
+  "class": "anaphoric_composite_contradiction",
+  "why": "Funabashi Chiba is gathered as being in Korea standard time; 'the city of Japan' reads as Funabashi Chiba, so the reply also asserts that Funabashi Chiba is in Japan standard time, which is not gathered and contradicts the gathered triple"
+ },
+ {
+  "id": "R6-AC02",
+  "gathered": [
+   [
+    "kushiro_city",
+    "instance_of",
+    "city_of_japan"
+   ],
+   [
+    "city_of_japan",
+    "located_in_time_zone",
+    "japan_standard_time"
+   ],
+   [
+    "kushiro_city",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ]
+  ],
+  "sentence": "Kushiro City is an instance of city of Japan. The city of Japan is located in time zone Japan standard time.",
+  "expect": "U",
+  "class": "anaphoric_composite_contradiction",
+  "why": "Kushiro City is gathered as being in Korea standard time; 'the city of Japan' reads as Kushiro City, so the reply also asserts that Kushiro City is in Japan standard time, which is not gathered and contradicts the gathered triple"
+ },
+ {
+  "id": "R6-AC03",
+  "gathered": [
+   [
+    "kamakura_japan",
+    "instance_of",
+    "city_of_japan"
+   ],
+   [
+    "city_of_japan",
+    "located_in_time_zone",
+    "japan_standard_time"
+   ],
+   [
+    "kamakura_japan",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ]
+  ],
+  "sentence": "Kamakura Japan is an instance of city of Japan\nThe city of Japan is located in time zone Japan standard time",
+  "expect": "U",
+  "class": "anaphoric_composite_contradiction",
+  "why": "Kamakura is gathered as being in Korea standard time; 'the city of Japan' reads as Kamakura, so the reply also asserts that Kamakura is in Japan standard time, which is not gathered and contradicts the gathered triple (line feed, no periods)"
+ },
+ {
+  "id": "R6-AC04",
+  "gathered": [
+   [
+    "hirosaki_aomori",
+    "instance_of",
+    "city_of_japan"
+   ],
+   [
+    "city_of_japan",
+    "located_in_time_zone",
+    "japan_standard_time"
+   ],
+   [
+    "hirosaki_aomori",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ]
+  ],
+  "sentence": "Hirosaki Aomori is an instance of city of Japan. The city of Japan is located in time zone Japan standard time. Hirosaki Aomori is located in time zone Korea standard time.",
+  "expect": "U",
+  "class": "anaphoric_composite_contradiction",
+  "why": "Hirosaki Aomori is gathered as being in Korea standard time; 'the city of Japan' reads as Hirosaki Aomori, so the reply also asserts that Hirosaki Aomori is in Japan standard time, which is not gathered and contradicts the gathered triple; the reply then states both zones for one city"
+ },
+ {
+  "id": "R6-AC05",
+  "gathered": [
+   [
+    "morioka_city",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ],
+   [
+    "city_of_japan",
+    "located_in_time_zone",
+    "japan_standard_time"
+   ],
+   [
+    "morioka_city",
+    "instance_of",
+    "city_of_japan"
+   ]
+  ],
+  "sentence": "Morioka City is located in time zone Korea standard time. The city of Japan is located in time zone Japan standard time.",
+  "expect": "U",
+  "class": "anaphoric_composite_contradiction",
+  "why": "no instance sentence: 'the city of Japan' right after a sentence about Morioka City reads as Morioka City, giving it a second, ungathered time zone"
+ },
+ {
+  "id": "R6-AC06",
+  "gathered": [
+   [
+    "chiba_chiba",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ],
+   [
+    "chiba_chiba",
+    "instance_of",
+    "city_of_japan"
+   ],
+   [
+    "city_of_japan",
+    "located_in_time_zone",
+    "japan_standard_time"
+   ]
+  ],
+  "sentence": "Chiba Chiba is located in time zone Korea standard time.\nChiba Chiba is an instance of city of Japan.\nThe city of Japan is located in time zone Japan standard time.",
+  "expect": "U",
+  "class": "anaphoric_composite_contradiction",
+  "why": "Chiba is gathered as being in Korea standard time; 'the city of Japan' reads as Chiba, so the reply also asserts that Chiba is in Japan standard time, which is not gathered and contradicts the gathered triple (line feeds)"
+ },
+ {
+  "id": "R6-AC07",
+  "gathered": [
+   [
+    "hachi_ji_tokyo",
+    "instance_of",
+    "city_of_japan"
+   ],
+   [
+    "city_of_japan",
+    "located_in_time_zone",
+    "japan_standard_time"
+   ],
+   [
+    "hachi_ji_tokyo",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ]
+  ],
+  "sentence": "Hachiōji Tokyo is an instance of city of Japan. The city of Japan is located in time zone Japan standard time.",
+  "expect": "U",
+  "class": "anaphoric_composite_contradiction",
+  "why": "Hachioji is gathered as being in Korea standard time; 'the city of Japan' reads as Hachioji, so the reply also asserts that Hachioji is in Japan standard time, which is not gathered and contradicts the gathered triple; the subject uses the accented, comma-dropped store name"
+ },
+ {
+  "id": "R6-AC08",
+  "gathered": [
+   [
+    "plauen",
+    "instance_of",
+    "grosse_kreisstadt"
+   ],
+   [
+    "grosse_kreisstadt",
+    "located_in_the_administrative_territoria",
+    "bayern_germany"
+   ],
+   [
+    "plauen",
+    "located_in_the_administrative_territoria",
+    "vogtland_district"
+   ]
+  ],
+  "sentence": "Plauen is an instance of Grosse Kreisstadt. The Grosse Kreisstadt is located in Bayern Germany.",
+  "expect": "U",
+  "class": "anaphoric_composite_contradiction",
+  "why": "Plauen is gathered as located in Vogtland District; 'the Grosse Kreisstadt' reads as Plauen, so the reply also asserts Plauen is in Bayern Germany (Bavaria), which is not gathered and is false: Plauen is in Saxony"
+ },
+ {
+  "id": "R6-AC09",
+  "gathered": [
+   [
+    "budyssin",
+    "located_in_the_administrative_territoria",
+    "bautzen_district"
+   ],
+   [
+    "budyssin",
+    "instance_of",
+    "grosse_kreisstadt"
+   ],
+   [
+    "grosse_kreisstadt",
+    "located_in_the_administrative_territoria",
+    "bayern_germany"
+   ]
+  ],
+  "sentence": "Budyssin is located in Bautzen District. Budyssin is an instance of Grosse Kreisstadt. The Grosse Kreisstadt is located in Bayern Germany.",
+  "expect": "U",
+  "class": "anaphoric_composite_contradiction",
+  "why": "Budyssin (Bautzen) is gathered as located in Bautzen District; 'the Grosse Kreisstadt' reads as Budyssin (Bautzen), so the reply also asserts Budyssin (Bautzen) is in Bayern Germany (Bavaria), which is not gathered and is false: Budyssin (Bautzen) is in Saxony"
+ },
+ {
+  "id": "R6-AC10",
+  "gathered": [
+   [
+    "freiberg_saxony",
+    "instance_of",
+    "grosse_kreisstadt"
+   ],
+   [
+    "grosse_kreisstadt",
+    "located_in_the_administrative_territoria",
+    "bayern_germany"
+   ]
+  ],
+  "sentence": "Freiberg Saxony is an instance of Grosse Kreisstadt. The Grosse Kreisstadt is located in Bayern Germany.",
+  "expect": "U",
+  "class": "anaphoric_composite_contradiction",
+  "why": "'the Grosse Kreisstadt' reads as Freiberg, so the reply asserts that Freiberg Saxony is in Bavaria; not gathered, and the subject's own name says Saxony"
+ },
+ {
+  "id": "R6-AC11",
+  "gathered": [
+   [
+    "history_of_zittau",
+    "instance_of",
+    "grosse_kreisstadt"
+   ],
+   [
+    "grosse_kreisstadt",
+    "located_in_the_administrative_territoria",
+    "bayern_germany"
+   ],
+   [
+    "history_of_zittau",
+    "located_in_the_administrative_territoria",
+    "landkreis_g_rlitz"
+   ]
+  ],
+  "sentence": "History of Zittau is an instance of Grosse Kreisstadt.\r\nThe Grosse Kreisstadt is located in Bayern Germany.",
+  "expect": "U",
+  "class": "anaphoric_composite_contradiction",
+  "why": "Zittau is gathered as located in Landkreis Goerlitz; 'the Grosse Kreisstadt' reads as Zittau, so the reply also asserts Zittau is in Bayern Germany (Bavaria), which is not gathered and is false: Zittau is in Saxony (CRLF separator)"
+ },
+ {
+  "id": "R6-AC12",
+  "gathered": [
+   [
+    "house_of_saxe_meissen",
+    "instance_of",
+    "grosse_kreisstadt"
+   ],
+   [
+    "grosse_kreisstadt",
+    "located_in_the_administrative_territoria",
+    "bayern_germany"
+   ],
+   [
+    "house_of_saxe_meissen",
+    "located_in_the_administrative_territoria",
+    "mei_en_rural_district"
+   ]
+  ],
+  "sentence": "House of Saxe Meissen is an instance of Grosse Kreisstadt. The Grosse Kreisstadt is located in Bayern Germany.",
+  "expect": "U",
+  "class": "anaphoric_composite_contradiction",
+  "why": "Meissen is gathered as located in Meissen Rural District; 'the Grosse Kreisstadt' reads as Meissen, so the reply also asserts Meissen is in Bayern Germany (Bavaria), which is not gathered and is false: Meissen is in Saxony"
+ },
+ {
+  "id": "R6-AC13",
+  "gathered": [
+   [
+    "belarusian_soviet_republic",
+    "instance_of",
+    "united_nations_member_states"
+   ],
+   [
+    "united_nations_member_states",
+    "member_of",
+    "united_nations"
+   ],
+   [
+    "belarusian_soviet_republic",
+    "member_of",
+    "united_soviets_socialist_republic"
+   ]
+  ],
+  "sentence": "Belarusian Soviet Republic is an instance of United Nations member states. The United Nations member states is a member of the United Nations.",
+  "expect": "U",
+  "class": "anaphoric_composite_contradiction",
+  "why": "the gathered membership of the Belarusian SSR is the USSR; the anaphoric 'the United Nations member states' reads as the Belarusian SSR and adds a second, ungathered membership (of the United Nations)"
+ },
+ {
+  "id": "R6-AC14",
+  "gathered": [
+   [
+    "paris_law_faculty",
+    "instance_of",
+    "faculty_of_natural_science"
+   ],
+   [
+    "faculty_of_natural_science",
+    "part_of",
+    "higher_general_education"
+   ],
+   [
+    "paris_law_faculty",
+    "part_of",
+    "paris_university_of"
+   ]
+  ],
+  "sentence": "Paris law faculty is an instance of faculty of natural science. The faculty of natural science is part of higher general education.",
+  "expect": "U",
+  "class": "anaphoric_composite_contradiction",
+  "why": "the gathered part_of for the Paris law faculty is the University of Paris; 'the faculty of natural science' reads as the Paris law faculty and adds a second, ungathered part_of (higher general education)"
+ },
+ {
+  "id": "R6-AC15",
+  "gathered": [
+   [
+    "theravaada_buddhism",
+    "instance_of",
+    "religions_denominations"
+   ],
+   [
+    "religions_denominations",
+    "part_of",
+    "religious_tradition"
+   ],
+   [
+    "theravaada_buddhism",
+    "part_of",
+    "buddhism_in_asia"
+   ]
+  ],
+  "sentence": "Theravaada Buddhism is an instance of religions denominations. The religions denominations is part of religious tradition.",
+  "expect": "U",
+  "class": "anaphoric_composite_contradiction",
+  "why": "anaphoric 'the religions denominations' (singular verb) reads as Theravada; the reply then gives Theravada a second part_of beside the gathered Buddhism in Asia"
+ },
+ {
+  "id": "R6-AC16",
+  "gathered": [
+   [
+    "etienne_suvasa",
+    "instance_of",
+    "operating_system"
+   ],
+   [
+    "operating_system",
+    "has_part",
+    "file_access"
+   ],
+   [
+    "etienne_suvasa",
+    "has_part",
+    "gimp_tool_kit"
+   ]
+  ],
+  "sentence": "Etienne Suvasa is an instance of operating system. The operating system has part file access.",
+  "expect": "U",
+  "class": "anaphoric_composite_contradiction",
+  "why": "'the operating system' reads as Etienne Suvasa, giving it the ungathered part 'file access' beside its gathered part GIMP Tool Kit"
+ },
+ {
+  "id": "R6-AC17",
+  "gathered": [
+   [
+    "yamaguti_yamaguti",
+    "instance_of",
+    "city_of_japan"
+   ],
+   [
+    "city_of_japan",
+    "located_in_time_zone",
+    "japan_standard_time"
+   ],
+   [
+    "yamaguti_yamaguti",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ]
+  ],
+  "sentence": "Yamaguti Yamaguti is an instance of city of Japan. The city of Japan is located in time zone Japan standard time. Yamaguti Yamaguti is located in time zone Korea standard time.",
+  "expect": "U",
+  "class": "anaphoric_composite_contradiction",
+  "why": "Yamaguchi is gathered as being in Korea standard time; 'the city of Japan' reads as Yamaguchi, so the reply also asserts that Yamaguchi is in Japan standard time, which is not gathered and contradicts the gathered triple; the reply then states both zones"
+ },
+ {
+  "id": "R6-AC18",
+  "gathered": [
+   [
+    "hukusima_hukusima",
+    "instance_of",
+    "city_of_japan"
+   ],
+   [
+    "city_of_japan",
+    "located_in_time_zone",
+    "japan_standard_time"
+   ],
+   [
+    "hukusima_hukusima",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ]
+  ],
+  "sentence": "Hukusima Hukusima is an instance of city of Japan. The city of Japan is located in time zone Japan standard time.",
+  "expect": "U",
+  "class": "anaphoric_composite_contradiction",
+  "why": "Fukushima is gathered as being in Korea standard time; 'the city of Japan' reads as Fukushima, so the reply also asserts that Fukushima is in Japan standard time, which is not gathered and contradicts the gathered triple"
+ },
+ {
+  "id": "R6-AC19",
+  "gathered": [
+   [
+    "matudo_tiba",
+    "shares_border_with",
+    "history_of_ichikawa_chiba"
+   ],
+   [
+    "matudo_tiba",
+    "instance_of",
+    "city_of_japan"
+   ],
+   [
+    "history_of_ichikawa_chiba",
+    "instance_of",
+    "city_of_japan"
+   ],
+   [
+    "city_of_japan",
+    "located_in_time_zone",
+    "japan_standard_time"
+   ]
+  ],
+  "sentence": "Matudo Tiba shares border with History of Ichikawa Chiba. The city of Japan is located in time zone Japan standard time.",
+  "expect": "U",
+  "class": "anaphoric_composite_contradiction",
+  "why": "after a sentence naming two cities of Japan, 'the city of Japan' reads as one of them, so the reply asserts a time zone for Matsudo or Ichikawa; no such triple is gathered (the store puts both in Korea standard time)"
+ },
+ {
+  "id": "R6-AC20",
+  "gathered": [
+   [
+    "history_of_g_rlitz",
+    "instance_of",
+    "grosse_kreisstadt"
+   ],
+   [
+    "grosse_kreisstadt",
+    "located_in_the_administrative_territoria",
+    "bayern_germany"
+   ],
+   [
+    "history_of_g_rlitz",
+    "located_in_the_administrative_territoria",
+    "landkreis_g_rlitz"
+   ]
+  ],
+  "sentence": "History of G Rlitz is an instance of Grosse Kreisstadt. The Grosse Kreisstadt is located in Bayern Germany.",
+  "expect": "U",
+  "class": "anaphoric_composite_contradiction",
+  "why": "Goerlitz is gathered as located in Landkreis Goerlitz; 'the Grosse Kreisstadt' reads as Goerlitz, so the reply also asserts Goerlitz is in Bayern Germany (Bavaria), which is not gathered and is false: Goerlitz is in Saxony"
+ },
+ {
+  "id": "R6-AC21",
+  "gathered": [
+   [
+    "fujisawa_kanagawa",
+    "instance_of",
+    "city_of_japan"
+   ],
+   [
+    "city_of_japan",
+    "located_in_time_zone",
+    "japan_standard_time"
+   ],
+   [
+    "fujisawa_kanagawa",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ]
+  ],
+  "sentence": "Fujisawa Kanagawa is an instance of city of Japan.\rThe city of Japan is located in time zone Japan standard time.",
+  "expect": "U",
+  "class": "anaphoric_composite_contradiction",
+  "why": "Fujisawa is gathered as being in Korea standard time; 'the city of Japan' reads as Fujisawa, so the reply also asserts that Fujisawa is in Japan standard time, which is not gathered and contradicts the gathered triple (bare CR separator)"
+ },
+ {
+  "id": "R6-AS01",
+  "gathered": [
+   [
+    "general_major",
+    "subclass_of",
+    "subofficial_mayor"
+   ],
+   [
+    "subofficial_mayor",
+    "follows",
+    "teniente_general"
+   ],
+   [
+    "general_major",
+    "follows",
+    "brig_general"
+   ]
+  ],
+  "sentence": "General major is a subclass of subofficial mayor. The subofficial mayor follows teniente general.",
+  "expect": "U",
+  "class": "anaphoric_subclass_composite",
+  "why": "gathered: general major follows brig general; 'the subofficial mayor' read as the general major just named makes it follow teniente general instead"
+ },
+ {
+  "id": "R6-AS02",
+  "gathered": [
+   [
+    "brig_general",
+    "follows",
+    "acting_colonel"
+   ],
+   [
+    "brig_general",
+    "subclass_of",
+    "subofficial_mayor"
+   ],
+   [
+    "subofficial_mayor",
+    "follows",
+    "teniente_general"
+   ]
+  ],
+  "sentence": "Brig general follows acting colonel. Brig general is a subclass of subofficial mayor. The subofficial mayor follows teniente general.",
+  "expect": "U",
+  "class": "anaphoric_subclass_composite",
+  "why": "the third sentence reads as continuing the story of the brig general, so the reply says it follows both acting colonel and teniente general; only the first is gathered"
+ },
+ {
+  "id": "R6-AS03",
+  "gathered": [
+   [
+    "monarch",
+    "subclass_of",
+    "head_of_nation"
+   ],
+   [
+    "head_of_nation",
+    "part_of",
+    "political_state"
+   ],
+   [
+    "monarch",
+    "part_of",
+    "dynastic_state"
+   ]
+  ],
+  "sentence": "Monarch is a subclass of head of nation. The head of nation is part of political state.",
+  "expect": "U",
+  "class": "anaphoric_subclass_composite",
+  "why": "gathered: monarch is part of dynastic state; 'the head of nation' read as the monarch just named adds an ungathered part_of (political state)"
+ },
+ {
+  "id": "R6-AS04",
+  "gathered": [
+   [
+    "feminist_art",
+    "subclass_of",
+    "art_form"
+   ],
+   [
+    "art_form",
+    "part_of",
+    "human_culture"
+   ],
+   [
+    "feminist_art",
+    "part_of",
+    "female_rights_movement"
+   ]
+  ],
+  "sentence": "Feminist art is a subclass of art form. The art form is part of human culture.",
+  "expect": "U",
+  "class": "anaphoric_subclass_composite",
+  "why": "'the art form' reads as feminist art, adding an ungathered part_of beside the gathered female rights movement"
+ },
+ {
+  "id": "R6-AS05",
+  "gathered": [
+   [
+    "book_chapter",
+    "subclass_of",
+    "literary_text"
+   ],
+   [
+    "literary_text",
+    "part_of",
+    "spoken_words"
+   ],
+   [
+    "book_chapter",
+    "part_of",
+    "wikipedia_books"
+   ]
+  ],
+  "sentence": "Book chapter is a subclass of literary text. The literary text is part of spoken words.",
+  "expect": "U",
+  "class": "anaphoric_subclass_composite",
+  "why": "'the literary text' reads as the book chapter, adding an ungathered part_of (spoken words)"
+ },
+ {
+  "id": "R6-AS06",
+  "gathered": [
+   [
+    "velodrome",
+    "subclass_of",
+    "circuit_racing"
+   ],
+   [
+    "circuit_racing",
+    "part_of",
+    "racing_unassisted_human"
+   ],
+   [
+    "velodrome",
+    "part_of",
+    "track_cycling"
+   ]
+  ],
+  "sentence": "Velodrome is a subclass of circuit racing. The circuit racing is part of racing unassisted human.",
+  "expect": "U",
+  "class": "anaphoric_subclass_composite",
+  "why": "'the circuit racing' reads as the velodrome, adding an ungathered part_of beside the gathered track cycling"
+ },
+ {
+  "id": "R6-AS07",
+  "gathered": [
+   [
+    "acting_mayor",
+    "subclass_of",
+    "chief_administrator"
+   ],
+   [
+    "chief_administrator",
+    "part_of",
+    "political_taxonomy"
+   ],
+   [
+    "acting_mayor",
+    "part_of",
+    "incorporated_community"
+   ]
+  ],
+  "sentence": "Acting mayor is a subclass of chief administrator. The chief administrator is part of political taxonomy.",
+  "expect": "U",
+  "class": "anaphoric_subclass_composite",
+  "why": "'the chief administrator' reads as the acting mayor, adding an ungathered part_of"
+ },
+ {
+  "id": "R6-AO01",
+  "gathered": [
+   [
+    "federation_council",
+    "instance_of",
+    "first_chamber"
+   ],
+   [
+    "national_senate",
+    "subclass_of",
+    "first_chamber"
+   ]
+  ],
+  "sentence": "Federation Council is an instance of first chamber. National Senate is a subclass of the first chamber.",
+  "expect": "U",
+  "class": "anaphoric_object_det",
+  "why": "'the first chamber' reads as the Federation Council just named, so the reply says the National Senate is a subclass of the Federation Council"
+ },
+ {
+  "id": "R6-AO02",
+  "gathered": [
+   [
+    "council_of_five_hundred",
+    "instance_of",
+    "lower_house"
+   ],
+   [
+    "bicameral_legislature",
+    "has_part",
+    "lower_house"
+   ]
+  ],
+  "sentence": "Council of Five Hundred is an instance of lower house. Bicameral legislature has part the lower house.",
+  "expect": "U",
+  "class": "anaphoric_object_det",
+  "why": "'the lower house' reads as the Council of Five Hundred, so the reply asserts bicameral legislature has the Council of Five Hundred as a part; not gathered"
+ },
+ {
+  "id": "R6-AO03",
+  "gathered": [
+   [
+    "apple_ii",
+    "instance_of",
+    "personal_computer"
+   ],
+   [
+    "video_graphics_controller",
+    "instance_of",
+    "personal_computer"
+   ]
+  ],
+  "sentence": "Apple II is an instance of personal computer. Video graphics controller is an instance of the personal computer.",
+  "expect": "U",
+  "class": "anaphoric_object_det",
+  "why": "'the personal computer' reads as the Apple II: the reply says the video graphics controller is an instance of the Apple II"
+ },
+ {
+  "id": "R6-AO04",
+  "gathered": [
+   [
+    "kushiro_city",
+    "instance_of",
+    "city_of_japan"
+   ],
+   [
+    "morioka_city",
+    "instance_of",
+    "city_of_japan"
+   ]
+  ],
+  "sentence": "Kushiro City is an instance of city of Japan. Morioka City is an instance of the city of Japan.",
+  "expect": "U",
+  "class": "anaphoric_object_det",
+  "why": "'the city of Japan' reads as Kushiro City (or as one definite city), so Morioka is said to be an instance of it"
+ },
+ {
+  "id": "R6-AO05",
+  "gathered": [
+   [
+    "order_of_the_nile",
+    "instance_of",
+    "honorific_order"
+   ],
+   [
+    "lenin_medal",
+    "instance_of",
+    "honorific_order"
+   ]
+  ],
+  "sentence": "Order of the Nile is an instance of honorific order. Lenin medal is an instance of the honorific order.",
+  "expect": "U",
+  "class": "anaphoric_object_det",
+  "why": "'the honorific order' reads as the Order of the Nile, so the Lenin Medal is said to be an instance of the Order of the Nile"
+ },
+ {
+  "id": "R6-S201",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Take That has part Robbie Williams and a Robbie Williams.",
+  "expect": "U",
+  "class": "shape2_det_second_entity",
+  "why": "'and a Robbie Williams' adds a second, different Robbie Williams as an extra object; only one Robbie Williams is gathered"
+ },
+ {
+  "id": "R6-S202",
+  "gathered": [
+   [
+    "the_who",
+    "has_part",
+    "peter_dennis_blandford_townshend"
+   ]
+  ],
+  "sentence": "The Who has part Peter Dennis Blandford Townshend and a Peter Dennis Blandford Townshend.",
+  "expect": "U",
+  "class": "shape2_det_second_entity",
+  "why": "'and a Peter Townshend' adds a second, different Peter Townshend as an extra object; only one Peter Townshend is gathered"
+ },
+ {
+  "id": "R6-S203",
+  "gathered": [
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ]
+  ],
+  "sentence": "U S of A shares border with Canada Portal and a Canada Portal.",
+  "expect": "U",
+  "class": "shape2_det_second_entity",
+  "why": "'and a Canada Portal' adds a second, different Canada Portal as an extra object; only one Canada Portal is gathered"
+ },
+ {
+  "id": "R6-S204",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Ukraine shares border with Pole Land and a Pole Land.",
+  "expect": "U",
+  "class": "shape2_det_second_entity",
+  "why": "'and a Pole Land' adds a second, different Pole Land as an extra object; only one Pole Land is gathered"
+ },
+ {
+  "id": "R6-S205",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ]
+  ],
+  "sentence": "Jul follows June and a June.",
+  "expect": "U",
+  "class": "shape2_det_second_entity",
+  "why": "'and a June' adds a second June that July also follows; only one predecessor is gathered"
+ },
+ {
+  "id": "R6-S206",
+  "gathered": [
+   [
+    "johnny_and_the_moondogs",
+    "has_part",
+    "james_paul_mccartney"
+   ]
+  ],
+  "sentence": "Johnny and the Moondogs has part James Paul McCartney and a James Paul McCartney.",
+  "expect": "U",
+  "class": "shape2_det_second_entity",
+  "why": "'and a James Paul McCartney' adds a second, different James Paul McCartney as an extra object; only one James Paul McCartney is gathered"
+ },
+ {
+  "id": "R6-S207",
+  "gathered": [
+   [
+    "genesis_band",
+    "has_part",
+    "phil_colins"
+   ]
+  ],
+  "sentence": "Genesis band has part Phil Colins, a Phil Colins and the Phil Colins.",
+  "expect": "U",
+  "class": "shape2_det_second_entity",
+  "why": "three-item list over one gathered member: reads as three members, two of them extra"
+ },
+ {
+  "id": "R6-S208",
+  "gathered": [
+   [
+    "castile_and_le_n",
+    "contains_administrative_territorial_enti",
+    "province_of_burgos"
+   ]
+  ],
+  "sentence": "Castile and Le N contains Province of Burgos and a Province of Burgos.",
+  "expect": "U",
+  "class": "shape2_det_second_entity",
+  "why": "'and a Province of Burgos' adds a second, different Province of Burgos as an extra object; only one Province of Burgos is gathered"
+ },
+ {
+  "id": "R6-S209",
+  "gathered": [
+   [
+    "the_rolling_stones",
+    "has_part",
+    "michael_philip_jagger"
+   ]
+  ],
+  "sentence": "The Rolling Stones has part a Michael Philip Jagger and Michael Philip Jagger.",
+  "expect": "U",
+  "class": "shape2_det_second_entity",
+  "why": "the indefinite first conjunct names some other Michael Philip Jagger, then the gathered one: two members"
+ },
+ {
+  "id": "R6-S210",
+  "gathered": [
+   [
+    "second_chromosome",
+    "follows",
+    "first_chromosome"
+   ]
+  ],
+  "sentence": "Second chromosome follows first chromosome and a first chromosome.",
+  "expect": "U",
+  "class": "shape2_det_second_entity",
+  "why": "'and a first chromosome' adds another first chromosome as a second predecessor"
+ },
+ {
+  "id": "R6-S211",
+  "gathered": [
+   [
+    "nine_inch_nails",
+    "has_part",
+    "trent_reznor"
+   ]
+  ],
+  "sentence": "Nine Inch Nails has part Trent Reznor and Trent Reznor.",
+  "expect": "U",
+  "class": "shape2_det_second_entity",
+  "why": "plain duplicate conjunct: a list of two reads as two members; may be read as a harmless repetition",
+  "arguable": true
+ },
+ {
+  "id": "R6-S212",
+  "gathered": [
+   [
+    "the_wailers",
+    "has_part",
+    "nesta_marley"
+   ]
+  ],
+  "sentence": "The Wailers has part Nesta Marley and nesta_marley.",
+  "expect": "U",
+  "class": "shape2_det_second_entity",
+  "why": "the slug spelled verbatim beside the name reads as a second, separately named member; may be read as a repetition",
+  "arguable": true
+ },
+ {
+  "id": "R6-S213",
+  "gathered": [
+   [
+    "sault_ste_marie_on",
+    "shares_border_with",
+    "geography_of_greater_sudbury"
+   ]
+  ],
+  "sentence": "Sault Ste Marie ON shares border with Geography of Greater Sudbury and geography of greater sudbury.",
+  "expect": "U",
+  "class": "shape2_det_second_entity",
+  "why": "case-variant duplicate: two neighbours listed, one gathered; may be read as a repetition",
+  "arguable": true
+ },
+ {
+  "id": "R6-DP01",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "A Robbie Williams is a member of Take That.",
+  "expect": "U",
+  "class": "det_indefinite_proper_name",
+  "why": "'A Robbie Williams' turns the gathered entity into some unspecified person called Robbie Williams, so the claim is about a different individual"
+ },
+ {
+  "id": "R6-DP02",
+  "gathered": [
+   [
+    "wladimir_puttin",
+    "participant_of",
+    "second_chechen_war"
+   ]
+  ],
+  "sentence": "A Wladimir Puttin is a participant of Second Chechen War.",
+  "expect": "U",
+  "class": "det_indefinite_proper_name",
+  "why": "'A Wladimir Puttin' turns the gathered entity into some unspecified namesake, so the claim is about a different individual"
+ },
+ {
+  "id": "R6-DP03",
+  "gathered": [
+   [
+    "lincoln",
+    "instance_of",
+    "theatrical_film"
+   ]
+  ],
+  "sentence": "A Lincoln is an instance of theatrical film.",
+  "expect": "U",
+  "class": "det_indefinite_proper_name",
+  "why": "'a Lincoln' reads as a Lincoln car (or someone named Lincoln), not the film Lincoln"
+ },
+ {
+  "id": "R6-DP04",
+  "gathered": [
+   [
+    "reader",
+    "instance_of",
+    "theatrical_film"
+   ]
+  ],
+  "sentence": "A reader is an instance of theatrical film.",
+  "expect": "U",
+  "class": "det_indefinite_proper_name",
+  "why": "'a reader' is any person who reads, not the film The Reader"
+ },
+ {
+  "id": "R6-DP05",
+  "gathered": [
+   [
+    "june",
+    "follows",
+    "may_sickness"
+   ]
+  ],
+  "sentence": "June follows a May sickness.",
+  "expect": "U",
+  "class": "det_indefinite_proper_name",
+  "why": "'a May sickness' reads as an illness in May, not the month the slug names"
+ },
+ {
+  "id": "R6-DP06",
+  "gathered": [
+   [
+    "may_sickness",
+    "follows",
+    "the_cruellest_month"
+   ]
+  ],
+  "sentence": "A May sickness follows the cruellest month.",
+  "expect": "U",
+  "class": "det_indefinite_proper_name",
+  "why": "'a May sickness' reads as some illness occurring in May following April; the triple orders two months"
+ },
+ {
+  "id": "R6-DP07",
+  "gathered": [
+   [
+    "john_cale",
+    "part_of",
+    "the_velvet_underground"
+   ]
+  ],
+  "sentence": "A John Cale is part of the Velvet Underground.",
+  "expect": "U",
+  "class": "det_indefinite_proper_name",
+  "why": "'A John Cale' turns the gathered entity into some unspecified namesake, so the claim is about a different individual"
+ },
+ {
+  "id": "R6-DP08",
+  "gathered": [
+   [
+    "george_v",
+    "member_of",
+    "british_royal_society"
+   ]
+  ],
+  "sentence": "A George V is a member of British Royal Society.",
+  "expect": "U",
+  "class": "det_indefinite_proper_name",
+  "why": "'A George V' turns the gathered entity into some unspecified George V (a ship, hotel or other bearer of the name), so the claim is about a different individual"
+ },
+ {
+  "id": "R6-DP09",
+  "gathered": [
+   [
+    "niehls_bohr",
+    "participant_of",
+    "manhatten_project"
+   ]
+  ],
+  "sentence": "A Niehls Bohr is a participant of Manhatten Project.",
+  "expect": "U",
+  "class": "det_indefinite_proper_name",
+  "why": "'A Niehls Bohr' turns the gathered entity into some unspecified namesake, so the claim is about a different individual"
+ },
+ {
+  "id": "R6-DP10",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Take That has part a Robbie Williams.",
+  "expect": "U",
+  "class": "det_indefinite_proper_name",
+  "why": "the object becomes some person named Robbie Williams, not the gathered one"
+ },
+ {
+  "id": "R6-DP11",
+  "gathered": [
+   [
+    "charles_ii_of_scotland",
+    "sibling",
+    "james_vii_of_scots"
+   ]
+  ],
+  "sentence": "Charles II of Scotland is a sibling of a James VII of Scots.",
+  "expect": "U",
+  "class": "det_indefinite_proper_name",
+  "why": "'a James VII of Scots' is some bearer of that title, not the gathered brother"
+ },
+ {
+  "id": "R6-DP12",
+  "gathered": [
+   [
+    "harvey_winesteen",
+    "sibling",
+    "bob_weinstein"
+   ]
+  ],
+  "sentence": "A Harvey Winesteen is a sibling of Bob Weinstein.",
+  "expect": "U",
+  "class": "det_indefinite_proper_name",
+  "why": "'A Harvey Winesteen' turns the gathered entity into some unspecified namesake, so the claim is about a different individual"
+ },
+ {
+  "id": "R6-DP13",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Robbie Williams is a member of Take That. A Robbie Williams is a member of Take That.",
+  "expect": "U",
+  "class": "det_indefinite_proper_name",
+  "why": "two sentences: the second, indefinite one introduces another Robbie Williams as a second member"
+ },
+ {
+  "id": "R6-DP14",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Ukraine shares border with Pole Land. Ukraine shares border with a Pole Land.",
+  "expect": "U",
+  "class": "det_indefinite_proper_name",
+  "why": "the second sentence adds another, indefinite Pole Land as a second neighbour"
+ },
+ {
+  "id": "R6-DP15",
+  "gathered": [
+   [
+    "serena_williams",
+    "participant_of",
+    "tennis_at_the_2016_summer_olympics_women"
+   ]
+  ],
+  "sentence": "A Serena Williams is a participant of Tennis at the 2016 Summer Olympics women.",
+  "expect": "U",
+  "class": "det_indefinite_proper_name",
+  "why": "'A Serena Williams' turns the gathered entity into some unspecified namesake, so the claim is about a different individual"
+ },
+ {
+  "id": "R6-DP16",
+  "gathered": [
+   [
+    "wacko_jacko",
+    "member_of",
+    "the_jackson_five"
+   ]
+  ],
+  "sentence": "A Wacko Jacko is a member of the Jackson Five.",
+  "expect": "U",
+  "class": "det_indefinite_proper_name",
+  "why": "'A Wacko Jacko' turns the gathered entity into some unspecified person with that nickname, so the claim is about a different individual"
+ },
+ {
+  "id": "R6-DP17",
+  "gathered": [
+   [
+    "peter_sagan",
+    "participant_of",
+    "xxx_olympic_games"
+   ]
+  ],
+  "sentence": "A Peter Sagan is a participant of XXX Olympic Games.",
+  "expect": "U",
+  "class": "det_indefinite_proper_name",
+  "why": "'A Peter Sagan' turns the gathered entity into some unspecified namesake, so the claim is about a different individual"
+ },
+ {
+  "id": "R6-DP18",
+  "gathered": [
+   [
+    "first_lady_of_song",
+    "member_of",
+    "alpha_kappa_alpha"
+   ]
+  ],
+  "sentence": "A first lady of song is a member of Alpha Kappa Alpha.",
+  "expect": "U",
+  "class": "det_indefinite_proper_name",
+  "why": "with the indefinite article the epithet becomes a description of any female star singer; the triple names one person (Ella Fitzgerald)"
+ },
+ {
+  "id": "R6-DC01",
+  "gathered": [
+   [
+    "american",
+    "subclass_of",
+    "railway_locomotive"
+   ]
+  ],
+  "sentence": "An American is a subclass of railway locomotive.",
+  "expect": "U",
+  "class": "det_forces_common_noun",
+  "why": "'an American' is a person from the United States; the slug names the 4-4-0 'American' wheel arrangement"
+ },
+ {
+  "id": "R6-DC02",
+  "gathered": [
+   [
+    "mogul",
+    "subclass_of",
+    "railway_locomotive"
+   ]
+  ],
+  "sentence": "A mogul is a subclass of railway locomotive.",
+  "expect": "U",
+  "class": "det_forces_common_noun",
+  "why": "'a mogul' is a magnate; the slug names the 2-6-0 'Mogul' locomotive type"
+ },
+ {
+  "id": "R6-DC03",
+  "gathered": [
+   [
+    "consolidation",
+    "instance_of",
+    "wheel_arrangement"
+   ]
+  ],
+  "sentence": "A consolidation is an instance of wheel arrangement.",
+  "expect": "U",
+  "class": "det_forces_common_noun",
+  "why": "'a consolidation' is a merger or strengthening; the slug names the 2-8-0 'Consolidation' type"
+ },
+ {
+  "id": "R6-DC04",
+  "gathered": [
+   [
+    "glider",
+    "instance_of",
+    "taxonomic_group"
+   ]
+  ],
+  "sentence": "A glider is an instance of taxonomic group.",
+  "expect": "U",
+  "class": "det_forces_common_noun",
+  "why": "'a glider' is an aircraft; the slug names a butterfly genus"
+ },
+ {
+  "id": "R6-DC05",
+  "gathered": [
+   [
+    "rat",
+    "instance_of",
+    "taxonomic_group"
+   ]
+  ],
+  "sentence": "A rat is an instance of taxonomic group.",
+  "expect": "U",
+  "class": "det_forces_common_noun",
+  "why": "'a rat' is one animal, which is not a taxonomic group; the triple is about the genus Rattus"
+ },
+ {
+  "id": "R6-DC06",
+  "gathered": [
+   [
+    "rajahs",
+    "instance_of",
+    "taxonomic_group"
+   ]
+  ],
+  "sentence": "The rajahs is an instance of taxonomic group.",
+  "expect": "U",
+  "class": "det_forces_common_noun",
+  "why": "'the rajahs' are Indian princes; the slug names a butterfly genus"
+ },
+ {
+  "id": "R6-DC07",
+  "gathered": [
+   [
+    "brig",
+    "subclass_of",
+    "career_soldier"
+   ]
+  ],
+  "sentence": "A brig is a subclass of career soldier.",
+  "expect": "U",
+  "class": "det_forces_common_noun",
+  "why": "'a brig' is a two-masted ship or a military prison; the slug abbreviates brigadier"
+ },
+ {
+  "id": "R6-DC08",
+  "gathered": [
+   [
+    "people",
+    "has_part",
+    "human_specie"
+   ]
+  ],
+  "sentence": "A people has part human specie.",
+  "expect": "U",
+  "class": "det_forces_common_noun",
+  "why": "'a people' is one nation or ethnic group; the slug names the general concept 'people'"
+ },
+ {
+  "id": "R6-DC09",
+  "gathered": [
+   [
+    "treasurer",
+    "instance_of",
+    "expert_occupation"
+   ]
+  ],
+  "sentence": "A treasurer is an instance of expert occupation.",
+  "expect": "U",
+  "class": "det_forces_common_noun",
+  "why": "'a treasurer' is a person holding the post; the triple classifies the occupation itself"
+ },
+ {
+  "id": "R6-OR01",
+  "gathered": [
+   [
+    "second_chromosome",
+    "follows",
+    "first_chromosome"
+   ]
+  ],
+  "sentence": "A second chromosome follows first chromosome.",
+  "expect": "U",
+  "class": "ordinal_name_indefinite_det",
+  "why": "'a second chromosome' means another (any further) chromosome, not chromosome 2"
+ },
+ {
+  "id": "R6-OR02",
+  "gathered": [
+   [
+    "second_baku",
+    "located_in_time_zone",
+    "georgia_standard_time"
+   ]
+  ],
+  "sentence": "A second Baku is located in time zone Georgia standard time.",
+  "expect": "U",
+  "class": "ordinal_name_indefinite_det",
+  "why": "'a second Baku' reads as another city like Baku (or Baku itself), not the town named Second Baku"
+ },
+ {
+  "id": "R6-OR03",
+  "gathered": [
+   [
+    "second_city_of_spain",
+    "shares_border_with",
+    "l_hospitalet_de_llobregat"
+   ]
+  ],
+  "sentence": "A second city of Spain shares border with L Hospitalet de Llobregat.",
+  "expect": "U",
+  "class": "ordinal_name_indefinite_det",
+  "why": "'a second city of Spain' is some other Spanish city; the slug names Barcelona ('the second city')"
+ },
+ {
+  "id": "R6-OR04",
+  "gathered": [
+   [
+    "second_commonwealth_of_poland",
+    "follows",
+    "imperial_germany"
+   ]
+  ],
+  "sentence": "A second Commonwealth of Poland follows Imperial Germany.",
+  "expect": "U",
+  "class": "ordinal_name_indefinite_det",
+  "why": "'a second Commonwealth' reads as another, new commonwealth, not the interwar state the slug names"
+ },
+ {
+  "id": "R6-OR05",
+  "gathered": [
+   [
+    "first_caliphate",
+    "follows",
+    "byzantine_empire"
+   ]
+  ],
+  "sentence": "A first caliphate follows Byzantine Empire.",
+  "expect": "U",
+  "class": "ordinal_name_indefinite_det",
+  "why": "'a first caliphate' is an indefinite, generic first caliphate, not the gathered Rashidun state"
+ },
+ {
+  "id": "R6-OR06",
+  "gathered": [
+   [
+    "third_asian_games",
+    "follows",
+    "second_asian_games"
+   ]
+  ],
+  "sentence": "A third Asian Games follows Second Asian Games.",
+  "expect": "U",
+  "class": "ordinal_name_indefinite_det",
+  "why": "'a third Asian Games' reads as yet another Asian Games; the slug names the 1958 edition"
+ },
+ {
+  "id": "R6-CF01",
+  "gathered": [
+   [
+    "solomon_is",
+    "located_in_time_zone",
+    "kosrae_time"
+   ]
+  ],
+  "sentence": "Solomon is located in time zone Kosrae time.",
+  "expect": "U",
+  "class": "copula_fusion_slug_edge",
+  "why": "the store's 'Solomon Is' (Solomon Islands) plus the copula-less relation reads as 'Solomon is located ...': a different subject, Solomon"
+ },
+ {
+  "id": "R6-CF02",
+  "gathered": [
+   [
+    "marshall_is",
+    "located_in_time_zone",
+    "fiji_standard_time"
+   ]
+  ],
+  "sentence": "Marshall is located in time zone Fiji standard time.",
+  "expect": "U",
+  "class": "copula_fusion_slug_edge",
+  "why": "'Marshall Is' (Marshall Islands) fused with the relation reads as a person or place called Marshall"
+ },
+ {
+  "id": "R6-CF03",
+  "gathered": [
+   [
+    "solomon_is",
+    "located_in_time_zone",
+    "kosrae_time"
+   ]
+  ],
+  "sentence": "Solomon Is located in time zone Kosrae time.",
+  "expect": "U",
+  "class": "copula_fusion_slug_edge",
+  "why": "capitalised 'Is' still reads as the copula after 'Solomon'; subject Solomon"
+ },
+ {
+  "id": "R6-CF04",
+  "gathered": [
+   [
+    "orgryte_is",
+    "headquarters_location",
+    "geography_of_gothenburg"
+   ]
+  ],
+  "sentence": "Orgryte is headquartered in Geography of Gothenburg.",
+  "expect": "U",
+  "class": "copula_fusion_slug_edge",
+  "why": "'Orgryte IS' (the sports club) fused with a participle relation reads as 'Orgryte is headquartered in': the subject becomes the district Orgryte"
+ },
+ {
+  "id": "R6-CF05",
+  "gathered": [
+   [
+    "marshall_is",
+    "member_of",
+    "united_nations"
+   ],
+   [
+    "marshall_is",
+    "located_in_time_zone",
+    "fiji_standard_time"
+   ]
+  ],
+  "sentence": "Marshall Is is a member of the United Nations. Marshall is located in time zone Fiji standard time.",
+  "expect": "U",
+  "class": "copula_fusion_slug_edge",
+  "why": "the first sentence names 'Marshall Is'; the second reads as a different subject, Marshall"
+ },
+ {
+  "id": "R6-CF06",
+  "gathered": [
+   [
+    "marshall_is",
+    "located_in_time_zone",
+    "fiji_standard_time"
+   ]
+  ],
+  "sentence": "Marshall is located in time zone Fiji standard time",
+  "expect": "U",
+  "class": "copula_fusion_slug_edge",
+  "why": "as CF02 without the final period"
+ },
+ {
+  "id": "R6-CF07",
+  "gathered": [
+   [
+    "biel_be",
+    "located_in_the_administrative_territoria",
+    "canton_de_berne"
+   ]
+  ],
+  "sentence": "Biel be located in Canton de Berne.",
+  "expect": "U",
+  "class": "copula_fusion_slug_edge",
+  "why": "'Biel BE' (BE = canton of Bern) fused with 'located in' reads as a subjunctive or command ('let Biel be located in ...'), not an assertion",
+  "arguable": true
+ },
+ {
+  "id": "R6-QN01",
+  "gathered": [
+   [
+    "no_limit_label",
+    "instance_of",
+    "record_companies"
+   ]
+  ],
+  "sentence": "No limit label is an instance of record companies.",
+  "expect": "U",
+  "class": "quantifier_or_negation_name_initial",
+  "why": "reads as the negative universal 'no limit label is a record company'; the triple says No Limit (the label) is one"
+ },
+ {
+  "id": "R6-QN02",
+  "gathered": [
+   [
+    "no_l",
+    "instance_of",
+    "unisex_name"
+   ]
+  ],
+  "sentence": "No l is an instance of unisex name.",
+  "expect": "U",
+  "class": "quantifier_or_negation_name_initial",
+  "why": "the de-accented store slug of 'Noel' reads as 'no l(etter L) is a unisex name', a negative claim"
+ },
+ {
+  "id": "R6-QN03",
+  "gathered": [
+   [
+    "every_little_thing_band",
+    "instance_of",
+    "pop_rock_band"
+   ]
+  ],
+  "sentence": "Every little thing band is an instance of pop rock band.",
+  "expect": "U",
+  "class": "quantifier_or_negation_name_initial",
+  "why": "reads as a universal over 'little thing bands'; the triple is about the band Every Little Thing"
+ },
+ {
+  "id": "R6-QN04",
+  "gathered": [
+   [
+    "all_whites",
+    "participant_of",
+    "world_championship_football_2010"
+   ]
+  ],
+  "sentence": "All whites is a participant of world championship football 2010.",
+  "expect": "U",
+  "class": "quantifier_or_negation_name_initial",
+  "why": "in lower case reads as a claim about all white people; the triple is about the New Zealand team"
+ },
+ {
+  "id": "R6-QN05",
+  "gathered": [
+   [
+    "nothing_records",
+    "instance_of",
+    "record_companies"
+   ]
+  ],
+  "sentence": "Nothing records is an instance of record companies.",
+  "expect": "U",
+  "class": "quantifier_or_negation_name_initial",
+  "why": "'nothing' in subject position reads as a negative quantifier; the triple is about the label Nothing Records"
+ },
+ {
+  "id": "R6-QN06",
+  "gathered": [
+   [
+    "not_list",
+    "part_of",
+    "literature_by_region"
+   ]
+  ],
+  "sentence": "Not list is part of literature by region.",
+  "expect": "U",
+  "class": "quantifier_or_negation_name_initial",
+  "why": "sentence-initial 'Not' reads as a negation ('not [a] list is part of ...'), not the store's name for the novel"
+ },
+ {
+  "id": "R6-QN07",
+  "gathered": [
+   [
+    "short_fiction",
+    "subclass_of",
+    "not_list"
+   ]
+  ],
+  "sentence": "Short fiction is a subclass of not list.",
+  "expect": "U",
+  "class": "quantifier_or_negation_name_initial",
+  "why": "'a subclass of not list' reads as 'of what is not a list', a negated class"
+ },
+ {
+  "id": "R6-CN01",
+  "gathered": [
+   [
+    "greater_eugene",
+    "shares_border_with",
+    "albany_lebanon_or_sa"
+   ]
+  ],
+  "sentence": "Greater Eugene shares border with Albany Lebanon or SA.",
+  "expect": "U",
+  "class": "connective_word_lowercase_in_slug",
+  "why": "lower-case 'or' reads as a disjunction: Greater Eugene borders Albany Lebanon or (else) SA; the triple names one area (Albany-Lebanon, Oregon)"
+ },
+ {
+  "id": "R6-CN02",
+  "gathered": [
+   [
+    "greater_eugene",
+    "shares_border_with",
+    "albany_lebanon_or_sa"
+   ]
+  ],
+  "sentence": "Greater Eugene shares border with Albany Lebanon or sa.",
+  "expect": "U",
+  "class": "connective_word_lowercase_in_slug",
+  "why": "as CN01, with no capital token for the caps rule to check"
+ },
+ {
+  "id": "R6-CN03",
+  "gathered": [
+   [
+    "albany_lebanon_or_sa",
+    "located_in_time_zone",
+    "pacific_daylight_time"
+   ]
+  ],
+  "sentence": "Albany Lebanon or SA is located in time zone Pacific daylight time.",
+  "expect": "U",
+  "class": "connective_word_lowercase_in_slug",
+  "why": "subject reads as a disjunction ('Albany Lebanon or SA is ...'): a hedged claim about one of two places"
+ },
+ {
+  "id": "R6-CN04",
+  "gathered": [
+   [
+    "albany_lebanon_or_sa",
+    "located_in_the_administrative_territoria",
+    "demographics_of_oregon"
+   ]
+  ],
+  "sentence": "Albany Lebanon or Sa is located in Demographics of Oregon.",
+  "expect": "U",
+  "class": "connective_word_lowercase_in_slug",
+  "why": "disjunctive subject; mixed-case 'Sa' avoids the all-caps check"
+ },
+ {
+  "id": "R6-CN05",
+  "gathered": [
+   [
+    "uk_of_gb_and_i",
+    "follows",
+    "kingdom_of_great_britian"
+   ]
+  ],
+  "sentence": "UK of GB and I follows Kingdom of Great Britian.",
+  "expect": "U",
+  "class": "connective_word_lowercase_in_slug",
+  "why": "'... and I' can read as a coordination with the speaker ('the UK of GB and I follow ...')",
+  "arguable": true
+ },
+ {
+  "id": "R6-CN06",
+  "gathered": [
+   [
+    "wales_u_k",
+    "located_in_the_administrative_territoria",
+    "uk_of_gb_and_i"
+   ]
+  ],
+  "sentence": "Wales U K is located in UK of GB and I.",
+  "expect": "U",
+  "class": "connective_word_lowercase_in_slug",
+  "why": "sentence-final 'and I' reads as the speaker being added",
+  "arguable": true
+ },
+ {
+  "id": "R6-CN07",
+  "gathered": [
+   [
+    "ringo_star",
+    "part_of",
+    "johnny_and_the_moondogs"
+   ]
+  ],
+  "sentence": "Ringo Star is part of johnny and the moondogs.",
+  "expect": "U",
+  "class": "connective_word_lowercase_in_slug",
+  "why": "in lower case the band name reads as a coordination: part of Johnny and of the moondogs",
+  "arguable": true
+ },
+ {
+  "id": "R6-CN08",
+  "gathered": [
+   [
+    "hammarby_if_ff",
+    "part_of",
+    "hammarby_if"
+   ]
+  ],
+  "sentence": "Hammarby if FF is part of Hammarby if.",
+  "expect": "U",
+  "class": "connective_word_lowercase_in_slug",
+  "why": "lower-case 'if' (Swedish IF, a sports club) reads as a conditional",
+  "arguable": true
+ },
+ {
+  "id": "R6-MC01",
+  "gathered": [
+   [
+    "peter_dennis_blandford_townshend",
+    "member_of",
+    "the_who"
+   ]
+  ],
+  "sentence": "Peter Dennis Blandford Townshend is a member of the WHo.",
+  "expect": "U",
+  "class": "mixed_case_acronym_evasion",
+  "why": "'the WHo' reads as the World Health Organization with a typo; the triple is about the band The Who"
+ },
+ {
+  "id": "R6-MC02",
+  "gathered": [
+   [
+    "roger_daltrey_filmography",
+    "member_of",
+    "the_who"
+   ]
+  ],
+  "sentence": "Roger Daltrey Filmography is a member of the wHO.",
+  "expect": "U",
+  "class": "mixed_case_acronym_evasion",
+  "why": "'wHO' reads as WHO; not all capitals, so an all-caps rule does not apply"
+ },
+ {
+  "id": "R6-MC03",
+  "gathered": [
+   [
+    "the_who",
+    "has_part",
+    "peter_dennis_blandford_townshend"
+   ]
+  ],
+  "sentence": "The WhO has part Peter Dennis Blandford Townshend.",
+  "expect": "U",
+  "class": "mixed_case_acronym_evasion",
+  "why": "'The WhO' reads as the organization WHO having Townshend as a part"
+ },
+ {
+  "id": "R6-MC04",
+  "gathered": [
+   [
+    "mit_ibaraki",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ]
+  ],
+  "sentence": "MiT Ibaraki is located in time zone Korea standard time.",
+  "expect": "U",
+  "class": "mixed_case_acronym_evasion",
+  "why": "'MiT' reads as MIT (a university campus in Ibaraki); the slug is the city of Mito"
+ },
+ {
+  "id": "R6-MC05",
+  "gathered": [
+   [
+    "mit_ibaraki",
+    "located_in_the_administrative_territoria",
+    "ibaraki_prefecture"
+   ]
+  ],
+  "sentence": "MIt Ibaraki is located in Ibaraki Prefecture.",
+  "expect": "U",
+  "class": "mixed_case_acronym_evasion",
+  "why": "'MIt' reads as MIT, a different entity"
+ },
+ {
+  "id": "R6-MC06",
+  "gathered": [
+   [
+    "doctor_who_universe",
+    "instance_of",
+    "fictional_worlds"
+   ]
+  ],
+  "sentence": "Doctor wHO universe is an instance of fictional worlds.",
+  "expect": "U",
+  "class": "mixed_case_acronym_evasion",
+  "why": "'wHO' reads as the WHO: a doctor of the World Health Organization"
+ },
+ {
+  "id": "R6-GP01",
+  "gathered": [
+   [
+    "goldfinger_pre_title_sequence",
+    "follows",
+    "from_russia_with_love_movie"
+   ]
+  ],
+  "sentence": "Goldfinger pre title sequence follows from Russia with love movie.",
+  "expect": "U",
+  "class": "garden_path_follows_from",
+  "why": "with the object's first word in lower case, 'follows from' reads as 'is a consequence of' (or travels from Russia); the triple orders two items of a film series"
+ },
+ {
+  "id": "R6-CR01",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Robbie Williams is a member of Take That.\rNot true.",
+  "expect": "U",
+  "class": "split_context_carriage_return",
+  "why": "the supported clause is followed, after a bare carriage return, by a denial"
+ },
+ {
+  "id": "R6-CR02",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ]
+  ],
+  "sentence": "Jul follows June.\r\rFalse.",
+  "expect": "U",
+  "class": "split_context_carriage_return",
+  "why": "two bare carriage returns, then 'False.'"
+ },
+ {
+  "id": "R6-CR03",
+  "gathered": [
+   [
+    "solomon_is",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Solomon Is is a member of the United Nations.\r\nRetracted.",
+  "expect": "U",
+  "class": "split_context_carriage_return",
+  "why": "CRLF, then a retraction"
+ },
+ {
+  "id": "R6-CR04",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Untrue:\rUkraine shares border with Pole Land.",
+  "expect": "U",
+  "class": "split_context_carriage_return",
+  "why": "a label before a bare CR frames the clause as untrue"
+ },
+ {
+  "id": "R6-CR05",
+  "gathered": [
+   [
+    "nine_inch_nails",
+    "has_part",
+    "trent_reznor"
+   ]
+  ],
+  "sentence": "Nine Inch Nails has part Trent Reznor.\rNo.",
+  "expect": "U",
+  "class": "split_context_carriage_return",
+  "why": "a bare CR then 'No.'; in a terminal 'No.' overprints the start of the claim"
+ },
+ {
+  "id": "R6-CR06",
+  "gathered": [
+   [
+    "june",
+    "follows",
+    "may_sickness"
+   ]
+  ],
+  "sentence": "June follows May sickness.\n?",
+  "expect": "U",
+  "class": "split_context_carriage_return",
+  "why": "a lone question mark on the next line questions the claim"
+ },
+ {
+  "id": "R6-CR07",
+  "gathered": [
+   [
+    "the_who",
+    "has_part",
+    "peter_dennis_blandford_townshend"
+   ]
+  ],
+  "sentence": "The Who has part Peter Dennis Blandford Townshend.\rWrong.",
+  "expect": "U",
+  "class": "split_context_carriage_return",
+  "why": "a bare CR then 'Wrong.'"
+ },
+ {
+  "id": "R6-DX01",
+  "gathered": [
+   [
+    "emperor_of_abyssinia",
+    "instance_of",
+    "monarch"
+   ],
+   [
+    "monarch",
+    "part_of",
+    "dynastic_state"
+   ]
+  ],
+  "sentence": "Emperor of Abyssinia is an instance of monarch. This monarch is part of dynastic state.",
+  "expect": "U",
+  "class": "det_outside_allowlist",
+  "why": "'this monarch' is explicitly the emperor; the reply asserts he is part of dynastic state"
+ },
+ {
+  "id": "R6-DX02",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "No Robbie Williams is a member of Take That.",
+  "expect": "U",
+  "class": "det_outside_allowlist",
+  "why": "negative quantifier: denies the gathered membership"
+ },
+ {
+  "id": "R6-DX03",
+  "gathered": [
+   [
+    "city_of_japan",
+    "located_in_time_zone",
+    "japan_standard_time"
+   ],
+   [
+    "kushiro_city",
+    "instance_of",
+    "city_of_japan"
+   ],
+   [
+    "kushiro_city",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ]
+  ],
+  "sentence": "Every city of Japan is located in time zone Japan standard time.",
+  "expect": "U",
+  "class": "det_outside_allowlist",
+  "why": "universal claim over all cities; the gathered Kushiro City is a city of Japan in Korea standard time"
+ },
+ {
+  "id": "R6-DX04",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Take That has part another Robbie Williams.",
+  "expect": "U",
+  "class": "det_outside_allowlist",
+  "why": "'another Robbie Williams' is explicitly a different person"
+ },
+ {
+  "id": "R6-DX05",
+  "gathered": [
+   [
+    "council_of_five_hundred",
+    "instance_of",
+    "lower_house"
+   ],
+   [
+    "lower_house",
+    "part_of",
+    "bicameral_legislature"
+   ]
+  ],
+  "sentence": "Council of Five Hundred is an instance of lower house. That lower house is part of bicameral legislature.",
+  "expect": "U",
+  "class": "det_outside_allowlist",
+  "why": "'that lower house' is the council; the reply asserts it is part of bicameral legislature"
+ },
+ {
+  "id": "R6-DX06",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ]
+  ],
+  "sentence": "Jul follows some June.",
+  "expect": "U",
+  "class": "det_outside_allowlist",
+  "why": "'some June' is an unspecified June"
+ },
+ {
+  "id": "R6-DX07",
+  "gathered": [
+   [
+    "monarch",
+    "part_of",
+    "dynastic_state"
+   ]
+  ],
+  "sentence": "No monarch is part of dynastic state.",
+  "expect": "U",
+  "class": "det_outside_allowlist",
+  "why": "negative quantifier denies the gathered triple"
+ },
+ {
+  "id": "R6-DX08",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Every Robbie Williams is a member of Take That.",
+  "expect": "U",
+  "class": "det_outside_allowlist",
+  "why": "universal over everyone named Robbie Williams; one membership is gathered"
+ },
+ {
+  "id": "R6-LC01",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "take that has part robbie williams.",
+  "expect": "U",
+  "class": "lowercase_clause_name",
+  "why": "in lower case 'take that' reads as an imperative; the band reading needs capitals",
+  "arguable": true
+ },
+ {
+  "id": "R6-LC02",
+  "gathered": [
+   [
+    "religion_is_dead",
+    "instance_of",
+    "pop_rock_band"
+   ]
+  ],
+  "sentence": "religion is dead is an instance of pop rock band.",
+  "expect": "U",
+  "class": "lowercase_clause_name",
+  "why": "the subject reads as the embedded claim 'religion is dead'",
+  "arguable": true
+ },
+ {
+  "id": "R6-LC03",
+  "gathered": [
+   [
+    "will_hurt",
+    "instance_of",
+    "human_specie"
+   ]
+  ],
+  "sentence": "will hurt is an instance of human specie.",
+  "expect": "U",
+  "class": "lowercase_clause_name",
+  "why": "'will hurt' reads as a future-tense verb phrase, not the actor's name",
+  "arguable": true
+ },
+ {
+  "id": "R6-LC04",
+  "gathered": [
+   [
+    "not_wanted",
+    "instance_of",
+    "human_specie"
+   ]
+  ],
+  "sentence": "not wanted is an instance of human specie.",
+  "expect": "U",
+  "class": "lowercase_clause_name",
+  "why": "reads as 'not wanted', a negated participle, rather than the store's name for a person",
+  "arguable": true
+ },
+ {
+  "id": "R6-F01",
+  "gathered": [
+   [
+    "emperor_of_abyssinia",
+    "instance_of",
+    "monarch"
+   ],
+   [
+    "monarch",
+    "part_of",
+    "dynastic_state"
+   ]
+  ],
+  "sentence": "The monarch is part of dynastic state. Emperor of Abyssinia is an instance of monarch.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "reversed order of AN01: 'the monarch' has no antecedent and reads generically"
+ },
+ {
+  "id": "R6-F02",
+  "gathered": [
+   [
+    "council_of_five_hundred",
+    "instance_of",
+    "lower_house"
+   ],
+   [
+    "lower_house",
+    "part_of",
+    "bicameral_legislature"
+   ]
+  ],
+  "sentence": "Lower house is part of bicameral legislature. Council of Five Hundred is an instance of lower house.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "reversed order of AN02, no article"
+ },
+ {
+  "id": "R6-F03",
+  "gathered": [
+   [
+    "city_of_japan",
+    "located_in_time_zone",
+    "japan_standard_time"
+   ]
+  ],
+  "sentence": "City of Japan is located in time zone Japan standard time.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "the class triple alone"
+ },
+ {
+  "id": "R6-F04",
+  "gathered": [
+   [
+    "funabashi_chiba",
+    "instance_of",
+    "city_of_japan"
+   ],
+   [
+    "funabashi_chiba",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ]
+  ],
+  "sentence": "Funabashi Chiba is an instance of city of Japan. Funabashi Chiba is located in time zone Korea standard time.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "two gathered triples about one subject, no anaphor"
+ },
+ {
+  "id": "R6-F05",
+  "gathered": [
+   [
+    "plauen",
+    "instance_of",
+    "grosse_kreisstadt"
+   ],
+   [
+    "plauen",
+    "located_in_the_administrative_territoria",
+    "vogtland_district"
+   ]
+  ],
+  "sentence": "Plauen is an instance of Grosse Kreisstadt. Plauen is located in Vogtland District.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "no anaphor"
+ },
+ {
+  "id": "R6-F06",
+  "gathered": [
+   [
+    "apple_ii",
+    "instance_of",
+    "personal_computer"
+   ],
+   [
+    "personal_computer",
+    "has_part",
+    "multimedia_keyboard"
+   ]
+  ],
+  "sentence": "Personal computer has part multimedia keyboard. Apple II is an instance of personal computer.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "reversed order of AN06, no article"
+ },
+ {
+  "id": "R6-F07",
+  "gathered": [
+   [
+    "doge_of_venice",
+    "instance_of",
+    "head_of_nation"
+   ],
+   [
+    "monarch",
+    "subclass_of",
+    "head_of_nation"
+   ]
+  ],
+  "sentence": "Doge of Venice is an instance of head of nation. Monarch is a subclass of head of nation.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "AO-style pair without the anaphoric article"
+ },
+ {
+  "id": "R6-F08",
+  "gathered": [
+   [
+    "federation_council",
+    "instance_of",
+    "first_chamber"
+   ],
+   [
+    "national_senate",
+    "subclass_of",
+    "first_chamber"
+   ]
+  ],
+  "sentence": "National Senate is a subclass of first chamber. Federation Council is an instance of first chamber.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "no article, class mentioned first"
+ },
+ {
+  "id": "R6-F09",
+  "gathered": [
+   [
+    "rat",
+    "instance_of",
+    "taxonomic_group"
+   ],
+   [
+    "taxonomic_group",
+    "has_part",
+    "flora_and_fauna"
+   ]
+  ],
+  "sentence": "Taxonomic group has part flora and fauna. Rat is an instance of taxonomic group.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "reversed order of AN17"
+ },
+ {
+  "id": "R6-F10",
+  "gathered": [
+   [
+    "general_major",
+    "follows",
+    "brig_general"
+   ],
+   [
+    "general_major",
+    "subclass_of",
+    "subofficial_mayor"
+   ]
+  ],
+  "sentence": "General major follows brig general. General major is a subclass of subofficial mayor.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "no anaphor"
+ },
+ {
+  "id": "R6-F11",
+  "gathered": [
+   [
+    "no_l",
+    "instance_of",
+    "unisex_name"
+   ]
+  ],
+  "sentence": "Noël is an instance of unisex name.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "accented store name (row of the names table if present)"
+ },
+ {
+  "id": "R6-F12",
+  "gathered": [
+   [
+    "sa_a",
+    "instance_of",
+    "unisex_name"
+   ]
+  ],
+  "sentence": "Saša is an instance of unisex name.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "accented name"
+ },
+ {
+  "id": "R6-F13",
+  "gathered": [
+   [
+    "province_of_l_on",
+    "shares_border_with",
+    "asturias_province"
+   ]
+  ],
+  "sentence": "Province of Léon shares border with Asturias Province.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "accented name; folds to province_of_l_on"
+ },
+ {
+  "id": "R6-F14",
+  "gathered": [
+   [
+    "count_of_besan_on",
+    "located_in_time_zone",
+    "rome_time"
+   ]
+  ],
+  "sentence": "Count of Besançon is located in time zone Rome time.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "accented name"
+ },
+ {
+  "id": "R6-F15",
+  "gathered": [
+   [
+    "house_of_bragan_a",
+    "instance_of",
+    "european_royal_houses"
+   ]
+  ],
+  "sentence": "House of Bragança is an instance of European royal houses.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "accented name"
+ },
+ {
+  "id": "R6-F16",
+  "gathered": [
+   [
+    "castile_and_le_n",
+    "shares_border_with",
+    "asturias_province"
+   ]
+  ],
+  "sentence": "Castile and León shares border with Asturias Province.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "accented name; 'and' inside a singular subject name"
+ },
+ {
+  "id": "R6-F17",
+  "gathered": [
+   [
+    "2014_vuelta_a_espa_a",
+    "follows",
+    "2013_vuelta_a_espa_a"
+   ]
+  ],
+  "sentence": "2014 Vuelta a España follows 2013 Vuelta a España.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "accented names with an internal 'a'"
+ },
+ {
+  "id": "R6-F18",
+  "gathered": [
+   [
+    "no_limit_label",
+    "instance_of",
+    "record_companies"
+   ]
+  ],
+  "sentence": "No_Limit_Label is an instance of record_companies.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "slugs written verbatim (case-insensitive); the underscores block the quantifier reading of QN01"
+ },
+ {
+  "id": "R6-F19",
+  "gathered": [
+   [
+    "solomon_is",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Solomon_Is is a member of united_nations.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "slugs verbatim"
+ },
+ {
+  "id": "R6-F20",
+  "gathered": [
+   [
+    "greater_eugene",
+    "shares_border_with",
+    "albany_lebanon_or_sa"
+   ]
+  ],
+  "sentence": "Greater Eugene shares border with albany_lebanon_or_sa.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "verbatim slug blocks the disjunction reading of CN01"
+ },
+ {
+  "id": "R6-F21",
+  "gathered": [
+   [
+    "roger_daltrey_filmography",
+    "member_of",
+    "the_who"
+   ]
+  ],
+  "sentence": "Roger Daltrey Filmography is a member of the_who.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "verbatim slug"
+ },
+ {
+  "id": "R6-F22",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Take That has part Robbie Williams.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "no-break space inside a name"
+ },
+ {
+  "id": "R6-F23",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Robbie Williams is a member of Take That.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "thin and narrow no-break spaces inside names"
+ },
+ {
+  "id": "R6-F24",
+  "gathered": [
+   [
+    "second_city_of_spain",
+    "shares_border_with",
+    "l_hospitalet_de_llobregat"
+   ]
+  ],
+  "sentence": "Second city of Spain shares border with L Hospitalet de Llobregat.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "figure space inside a name"
+ },
+ {
+  "id": "R6-F25",
+  "gathered": [
+   [
+    "kushiro_city",
+    "instance_of",
+    "city_of_japan"
+   ]
+  ],
+  "sentence": "Kushiro City is an instance of city of Japan.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "KELVIN SIGN, which NFC maps to ASCII K; displays as Kushiro"
+ },
+ {
+  "id": "R6-F26",
+  "gathered": [
+   [
+    "kamakura_japan",
+    "instance_of",
+    "city_of_japan"
+   ]
+  ],
+  "sentence": "Kamakura Japan is an instance of city of Japan.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "KELVIN SIGN, as F25"
+ },
+ {
+  "id": "R6-F27",
+  "gathered": [
+   [
+    "solomon_is",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Solomon Is is a member of the United Nations.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "the store name 'Solomon Is' with its own copula; no fusion"
+ },
+ {
+  "id": "R6-F28",
+  "gathered": [
+   [
+    "marshall_is",
+    "instance_of",
+    "sovereign_states"
+   ]
+  ],
+  "sentence": "Marshall Is is an instance of sovereign states.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "as F27"
+ },
+ {
+  "id": "R6-F29",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ],
+   [
+    "aug",
+    "follows",
+    "jul"
+   ]
+  ],
+  "sentence": "Jul follows June. Aug follows Jul.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "two-sentence composite, nothing beyond the two triples"
+ },
+ {
+  "id": "R6-F30",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ],
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Take That has part Robbie Williams. Robbie Williams is a member of Take That.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "two triples"
+ },
+ {
+  "id": "R6-F31",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ],
+   [
+    "aug",
+    "follows",
+    "jul"
+   ]
+  ],
+  "sentence": "Jul follows June.\rAug follows Jul.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "bare carriage return between two supported sentences (allowed separator)"
+ },
+ {
+  "id": "R6-F32",
+  "gathered": [
+   [
+    "solomon_is",
+    "member_of",
+    "united_nations"
+   ],
+   [
+    "solomon_is",
+    "located_in_time_zone",
+    "kosrae_time"
+   ]
+  ],
+  "sentence": "Solomon Is is a member of the United Nations.\r\nSolomon Is is located in time zone Kosrae time.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "CRLF between two supported sentences; the second keeps its own copula"
+ },
+ {
+  "id": "R6-F33",
+  "gathered": [
+   [
+    "the_who",
+    "has_part",
+    "peter_dennis_blandford_townshend"
+   ]
+  ],
+  "sentence": "The Who has part Peter Dennis Blandford Townshend.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "plain"
+ },
+ {
+  "id": "R6-F34",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Robbie Williams is a member of Take That.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "plain"
+ },
+ {
+  "id": "R6-F35",
+  "gathered": [
+   [
+    "second_city_of_spain",
+    "shares_border_with",
+    "l_hospitalet_de_llobregat"
+   ]
+  ],
+  "sentence": "The second city of Spain shares border with L Hospitalet de Llobregat.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "definite article: 'the second city of Spain' is Barcelona, the entity the slug names"
+ },
+ {
+  "id": "R6-F36",
+  "gathered": [
+   [
+    "second_chromosome",
+    "follows",
+    "first_chromosome"
+   ]
+  ],
+  "sentence": "Second chromosome follows first chromosome.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "plain"
+ },
+ {
+  "id": "R6-F37",
+  "gathered": [
+   [
+    "michael_kenji_shinoda",
+    "member_of",
+    "link_and_park"
+   ]
+  ],
+  "sentence": "Michael Kenji Shinoda is a member of Link and Park.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "store name with internal 'and', title case"
+ },
+ {
+  "id": "R6-F38",
+  "gathered": [
+   [
+    "ringo_star",
+    "part_of",
+    "johnny_and_the_moondogs"
+   ]
+  ],
+  "sentence": "Ringo Star is part of Johnny and the Moondogs.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "title case band name"
+ },
+ {
+  "id": "R6-F39",
+  "gathered": [
+   [
+    "emperor_of_abyssinia",
+    "instance_of",
+    "monarch"
+   ]
+  ],
+  "sentence": "Emperor of Abyssinia is an instance of monarch.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "single triple"
+ },
+ {
+  "id": "R6-F40",
+  "gathered": [
+   [
+    "albany_lebanon_or_sa",
+    "located_in_time_zone",
+    "pacific_daylight_time"
+   ]
+  ],
+  "sentence": "Albany Lebanon OR SA is located in time zone Pacific daylight time.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "capital OR reads as Oregon, as in the store's own name"
+ },
+ {
+  "id": "R6-F41",
+  "gathered": [
+   [
+    "anti_treaty_sinn_fein",
+    "instance_of",
+    "party_member"
+   ]
+  ],
+  "sentence": "Anti-Treaty Sinn Fein is an instance of party member.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "hyphenated store name"
+ },
+ {
+  "id": "R6-F42",
+  "gathered": [
+   [
+    "reading_uk",
+    "located_in_time_zone",
+    "utc_00_00"
+   ]
+  ],
+  "sentence": "Reading UK is located in time zone UTC±00:00.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "the zone's own name with a plus-minus sign; folds to utc_00_00"
+ },
+ {
+  "id": "R6-F43",
+  "gathered": [
+   [
+    "yangon_myanmar",
+    "located_in_time_zone",
+    "utc_06_30"
+   ]
+  ],
+  "sentence": "Yangon Myanmar is located in time zone UTC+06:30.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "the zone's own name with its correct sign"
+ },
+ {
+  "id": "R6-F44",
+  "gathered": [
+   [
+    "mit_ibaraki",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ]
+  ],
+  "sentence": "Mit Ibaraki is located in time zone Korea standard time.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "title case, no acronym reading"
+ },
+ {
+  "id": "R6-F45",
+  "gathered": [
+   [
+    "peter_dennis_blandford_townshend",
+    "member_of",
+    "the_who"
+   ]
+  ],
+  "sentence": "Peter Dennis Blandford Townshend is a member of the Who.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "lower-case article before the band name"
+ },
+ {
+  "id": "R6-F46",
+  "gathered": [
+   [
+    "from_russia_with_love_movie",
+    "follows",
+    "dr_no_film"
+   ]
+  ],
+  "sentence": "From Russia with Love movie follows Dr No film.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "plain"
+ },
+ {
+  "id": "R6-F47",
+  "gathered": [
+   [
+    "wladimir_puttin",
+    "participant_of",
+    "second_chechen_war"
+   ]
+  ],
+  "sentence": "Wladimir Puttin is a participant of Second Chechen War.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "plain"
+ },
+ {
+  "id": "R6-F48",
+  "gathered": [
+   [
+    "june",
+    "follows",
+    "may_sickness"
+   ]
+  ],
+  "sentence": "June follows May sickness.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "plain"
+ },
+ {
+  "id": "R6-F49",
+  "gathered": [
+   [
+    "glider",
+    "instance_of",
+    "taxonomic_group"
+   ]
+  ],
+  "sentence": "Glider is an instance of taxonomic group.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "no article, so the genus reading stands"
+ },
+ {
+  "id": "R6-F50",
+  "gathered": [
+   [
+    "second_baku",
+    "located_in_time_zone",
+    "georgia_standard_time"
+   ]
+  ],
+  "sentence": "Second Baku is located in time zone Georgia standard time.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "no article"
+ },
+ {
+  "id": "R6-F51",
+  "gathered": [
+   [
+    "lincoln",
+    "instance_of",
+    "theatrical_film"
+   ]
+  ],
+  "sentence": "Lincoln is an instance of theatrical film.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "no article"
+ },
+ {
+  "id": "R6-F52",
+  "gathered": [
+   [
+    "american",
+    "subclass_of",
+    "railway_locomotive"
+   ]
+  ],
+  "sentence": "American is a subclass of railway locomotive.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "no article"
+ },
+ {
+  "id": "R6-F53",
+  "gathered": [
+   [
+    "funabashi_chiba",
+    "instance_of",
+    "city_of_japan"
+   ],
+   [
+    "city_of_japan",
+    "located_in_time_zone",
+    "japan_standard_time"
+   ]
+  ],
+  "sentence": "City of Japan is located in time zone Japan standard time.\nFunabashi Chiba is an instance of city of Japan.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "reversed order of AC01's last two sentences; no anaphor"
+ }
+]
