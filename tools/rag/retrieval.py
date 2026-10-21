@@ -28,6 +28,16 @@ def _source_intent(query: str, node_with_score) -> int:
     # Preserve compact version identifiers (v3/v4) and years. Dropping them
     # made a newer v5 finding outrank an explicitly requested v4 source.
     token_pattern = r"[a-z]+\d+|\d{4}|[a-z]{4,}"
+    # A runbook ruling's label is its key slug ("word-role-credit-path"), built of ordinary words; matching those
+    # words one by one let a ruling that merely shares "word", "role" and "path" with the query outrank the one the
+    # reranker scored highest (2026-10-21). A ruling counts as named only when the query spells out its whole key.
+    metadata = node_with_score.node.metadata or {}
+    source = node_source(node_with_score)
+    if metadata.get("source_type") == "coord" and " § " in source:
+        key = source.split(" § ", 1)[1].strip()
+        key = key[len("RULING "):] if key.startswith("RULING ") else key
+        key = key.strip("[]").strip().lower()
+        return 1 if len(key) >= 6 and key in query.lower() else 0
     query_terms = set(re.findall(token_pattern, query.lower()))
     source_terms = set(re.findall(token_pattern, node_source(node_with_score).lower()))
     generic = {"book", "full", "paper", "review", "finding", "gate", "smoke"}
