@@ -13,7 +13,25 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-16 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-21 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+
+**Date:** 2026-10-21. **North star:** unchanged. **Calendar:** Stage-2 exit attempt by 11-21 (pool window 11-03..11-10);
+Stage 1 passed 10-16 with four caveats (the 10-16 section below, verbatim; never cite it without them).
+**Live lanes (Hermes drives; Claude rules on NEEDS):**
+- The first live seam: the BG commit with the tonic pallidal drive (Part B cells, Part C positive control); `[bg-tonic-loop-0]`
+  is due 10-23. Under it, the 10-20 substrate fault (global heterogeneity made the cell types regular-spiking hybrids) has a
+  fix merged default OFF.
+- Word-role frame method: step 0 GO (RULINGS `wrc-frame-0-1021`, `-1021b`); the organ-level prereg is due 10-27, else
+  word-role stays OFF at the 11-01 pin.
+- Content-selection race: the F1 grid is VOID (the race never committed; RULING `cs-race-f1-void-1021`); step 1b adds a
+  positive control and reruns the grid.
+- The reply-level LBF at HEAD on the gate seeds: prereg `04ca8ccf8`, 294 lines.
+- The strict claim checker on the mouth: build 5 GO on every registered bar, merged default OFF (`33c17026e`; VERDICTS in
+  `research/findings/2026-10-20-moat-allowlist-claim-checker-PREREGISTRATION.md`); build 6 (pre-flip fixes) under review,
+  then Amendment 6 and blind round 8. The B2d mouth arm needs it ON, through a flip prereg (CLASS SMK).
+**Next command (Hermes, on S):** `bash tools/status.sh`, then runbook section 6 RULINGs newest first, then section 4 in order.
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-16 (history; superseded by 2026-10-21 above) — PHASE: PROVE WHO OWNS THE COMPUTATION
 
 **Date:** 2026-10-16. **North star:** unchanged — a sim-brain that converses genuinely; Qwen stays the mouth; the
 #1 metric is the load-bearing fraction, with host-decision share (by intervention) beside it.

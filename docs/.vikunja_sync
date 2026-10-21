@@ -311,3 +311,6 @@ verbatim. Board: #244 closed + milestone #264 added by Claude same cycle (RULING
 
 ## 2026-10-21  claude-board-1021
 #260 word-role: step-0 deadlock read GO (near-tie, not the gate), step 1 next, prereg due 10-27. #269 strict check: build 5 round-7 result + verify-go caveats, build 6 under review; stays off.
+
+## 2026-10-21  claude-moat-b5-landed
+#269 build 5 GO merged 33c17026e (switched off; build 6 under review); #265/#266/#267 closed under the strict check only, open until it is switched on.
