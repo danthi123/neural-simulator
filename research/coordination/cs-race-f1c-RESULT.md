@@ -1,5 +1,15 @@
 # [cs-race-f1c] RESULT — the ruled WTA lever space does not make the symmetric race commit (27 cells, 0 passing)
 
+**AMENDMENT (2026-10-21; RULING cs-race-f1d-1021) — the read-out below is partly void; where they disagree, this block is the record.**
+1. The decisive "non-commits" are CO-COMMITS: rows 3-4 (18 cells, 1,440 decisive draws) held 1,158 draws with BOTH latches ON, 282 with exactly one, 0 with none. `latch_read` returns winner None for both co_commit and none, so the tally merged them — "0 decisive commits" means "0 single-winner reads".
+2. Ignition is cue-locked and near-simultaneous: the two first gate spikes land a median 3-4 ms apart; a gap of 8 ms or less never gave a commit (0 of about 1,056 draws); single commits need about 9 ms or more, or one gate that never fires. Seeds 2, 3, 6 (earliest-gate step SD 1.3-1.7 ms) never commit.
+3. The step-3 Vm table is a measurement artefact: the engram -69.5 mV was read at t = 600 ms, after ignition (about 160-210 ms) and after the occupancy pool hyperpolarises everything (no-latch draws read about -60 mV); the `thr` field is the unused homeostasis array (spike criterion = vpeak 35 mV; regenerative saddle about -42.9 mV). "Engrams sit ~30 mV below threshold, the levers are inert" is VOID as a mechanism claim.
+4. The NMDA arm (`nmda_grid_n3`) is VOID as evidence — instrument failure, not a result about NMDA: its latches were ON before the cue (80/80 decisive) and its engrams fired 0 spikes during the cue.
+- Under-drive was recomputed and REFUTED: decisive cue spikes per window average 33.75 against 28.9 for posctl, both engrams fire about 18 spikes, both gates fire on every failing draw, cue weights are not split by the paired write.
+- Disclosure: a Claude research agent ran UNRECORDED scratch probes on dev seeds 1-24 and on gate seeds with W_GIS 30-90; W_GIS=30 is a peeked value, confirmed only on the fresh CONFIRM block (seeds 25-40).
+- What survives: the control bars, posctl 8/8 everywhere, and the commit-rate tables as counts of single-winner reads; the negative verdict stands under its corrected name — the ruled levers produce CO-COMMIT, not silence. Measurement M (step 1d) supersedes the mechanism readings below.
+
+
 **Status:** PROVISIONAL (agent-filed; Claude's gates/rulings ratify). Rulings: `cs-race-f1b-1021` (assigns step 1c), `cs-race-f1b-1021c` (its spec: control into the probe before any run; two-lever grid; NMDA arm only if the record supports it; Vm at each stage; F1 rerun only where BOTH controls hold 8/8; then post the commit-rate table and STOP), `cs-race-f1-void-1021` (f1 void — its banner line landed as `5a25634d0`).
 
 **preconditions:**
