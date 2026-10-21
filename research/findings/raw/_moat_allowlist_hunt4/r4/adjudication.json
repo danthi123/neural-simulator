@@ -1,0 +1,1837 @@
+{
+ "_doc": "Claude adjudication of the round-4 hunt labels, 2026-10-20, written BEFORE any case is run through any checker. Two blind sonnet judges per case (a LITERAL copy-editor lens and an ORDINARY-reader lens) labelled every case U/F/B from an anonymised, shuffled, label-free copy (workflow wf_a8450b08-493). 139 of 177 were unanimous with the skeptic. The rule, fixed before any run and applied mechanically: a U case becomes B if the skeptic flagged it arguable, or EITHER judge read it as supported (F), or BOTH judges read it as either-way (B); an F case becomes B if either judge read it as unsupported or both read it as either-way; every other case keeps the skeptic's label (so a U case with one judge U and one judge B stays U). B is counted in the strict reading only, as in round 3.",
+ "relabel_to_B": {
+  "R4-VD01": "U->B",
+  "R4-VD02": "U->B",
+  "R4-VD08": "U->B",
+  "R4-VD11": "U->B",
+  "R4-VD12": "U->B",
+  "R4-VD13": "U->B",
+  "R4-VD14": "U->B",
+  "R4-VD15": "U->B",
+  "R4-VD20": "U->B",
+  "R4-VD22": "U->B",
+  "R4-VD23": "U->B",
+  "R4-S3M01": "U->B",
+  "R4-S3M04": "U->B",
+  "R4-S3M06": "U->B",
+  "R4-S3M08": "U->B",
+  "R4-S3N08": "U->B",
+  "R4-DT03": "U->B",
+  "R4-MK03": "U->B",
+  "R4-AR01": "U->B",
+  "R4-AR02": "U->B",
+  "R4-AR03": "U->B",
+  "R4-AR04": "U->B",
+  "R4-AR05": "U->B",
+  "R4-F43": "F->B"
+ },
+ "reasons": {
+  "R4-VD01": "both blind judges: either way",
+  "R4-VD02": "both blind judges: either way",
+  "R4-VD08": "both blind judges: either way",
+  "R4-VD11": "a blind judge read it as supported (literal B, ordinary F)",
+  "R4-VD12": "a blind judge read it as supported (literal B, ordinary F)",
+  "R4-VD13": "both blind judges: either way",
+  "R4-VD14": "a blind judge read it as supported (literal F, ordinary F)",
+  "R4-VD15": "a blind judge read it as supported (literal B, ordinary F)",
+  "R4-VD20": "both blind judges: either way",
+  "R4-VD22": "both blind judges: either way",
+  "R4-VD23": "a blind judge read it as supported (literal B, ordinary F)",
+  "R4-S3M01": "a blind judge read it as supported (literal B, ordinary F)",
+  "R4-S3M04": "a blind judge read it as supported (literal B, ordinary F)",
+  "R4-S3M06": "a blind judge read it as supported (literal B, ordinary F)",
+  "R4-S3M08": "a blind judge read it as supported (literal B, ordinary F)",
+  "R4-S3N08": "a blind judge read it as supported (literal B, ordinary F)",
+  "R4-DT03": "skeptic flagged arguable",
+  "R4-MK03": "both blind judges: either way",
+  "R4-AR01": "skeptic flagged arguable",
+  "R4-AR02": "skeptic flagged arguable",
+  "R4-AR03": "skeptic flagged arguable",
+  "R4-AR04": "skeptic flagged arguable",
+  "R4-AR05": "skeptic flagged arguable",
+  "R4-F43": "blind judges literal B, ordinary B"
+ },
+ "final_counts": {
+  "U": 110,
+  "B": 24,
+  "F": 43
+ },
+ "split_rule": "round 3's split rule applies to the split_context_retraction class: a case counts as a lenient leak if the checker keeps a span whose reading within the whole input is denied, hedged or reported",
+ "blindness_note": "the skeptic's README discloses two directory listings that showed result-file names (none opened) and one grep that printed lines after `sanitize`; Claude judges these do not reveal the matcher's rules",
+ "judge_labels": {
+  "R4-S3M01": {
+   "literal": [
+    "B",
+    "Read literally, 'is a country of citizenship of U S of A' makes Wright himself a country of citizenship; stilted, but the intended triple is recoverable."
+   ],
+   "ordinary": [
+    "F",
+    "Stilted template phrasing, but a reader still comes away believing the USA is his country of citizenship, which is the triple."
+   ]
+  },
+  "R4-S3M06": {
+   "literal": [
+    "B",
+    "Grammar says 'Mads given name' is a 'language of work or name of' Danish, which is garbled, though a reader may recover the property triple."
+   ],
+   "ordinary": [
+    "F",
+    "Awkward, but conveys that Danish is the language of work or name for the given name Mads."
+   ]
+  },
+  "R4-DT02": {
+   "literal": [
+    "U",
+    "All-caps 'the WHO' reads as the World Health Organization, not the band The Who."
+   ],
+   "ordinary": [
+    "U",
+    "Capitalised 'the WHO' reads as the World Health Organization, not the band The Who."
+   ]
+  },
+  "R4-S3M04": {
+   "literal": [
+    "B",
+    "'Is a manner of death of unintentional injury' wrongly makes the person a manner of death, but the property and value are plainly stated."
+   ],
+   "ordinary": [
+    "F",
+    "Stilted, but the reader understands the manner of death was unintentional injury."
+   ]
+  },
+  "R4-F23": {
+   "literal": [
+    "F",
+    "States instance_of for profit plainly with nothing added."
+   ],
+   "ordinary": [
+    "F",
+    "Plain restatement of instance_of for-profit."
+   ]
+  },
+  "R4-HG08": {
+   "literal": [
+    "U",
+    "The full-width X displays as 'XVI' (16th), while the triple concerns the 6th Games following the 5th."
+   ],
+   "ordinary": [
+    "U",
+    "Full-width 'Ｘ' displays as 'XVI', so the sentence names the XVI Games, which is a different entity from the VI Games."
+   ]
+  },
+  "R4-F05": {
+   "literal": [
+    "F",
+    "X Commonwealth Games follows IX Commonwealth Games, which is exactly the triple."
+   ],
+   "ordinary": [
+    "F",
+    "Exactly the follows triple."
+   ]
+  },
+  "R4-F40": {
+   "literal": [
+    "F",
+    "Headquartered in Linz an der Donau is exactly headquarters_location."
+   ],
+   "ordinary": [
+    "F",
+    "Headquartered in Linz an der Donau matches the triple."
+   ]
+  },
+  "R4-DG04": {
+   "literal": [
+    "U",
+    "The added Devanagari digits display as '2017', which names a specific edition, and an edition is not a subclass of stage race."
+   ],
+   "ordinary": [
+    "U",
+    "Devanagari digits read as '2017', so the sentence is about the 2017 edition, not the Giro d'Italia generally."
+   ]
+  },
+  "R4-CT04": {
+   "literal": [
+    "U",
+    "The object is extended to 'Sozialdemokratische Partei Deutschlands der DDR', a different entity from the gathered one."
+   ],
+   "ordinary": [
+    "U",
+    "'der DDR' names a different party (the East German SPD) than the gathered entity."
+   ]
+  },
+  "R4-AF03": {
+   "literal": [
+    "U",
+    "It says 'pro-government revolt', but the triple says anti-government revolt."
+   ],
+   "ordinary": [
+    "U",
+    "The sentence says 'pro-government revolt', contradicting the anti-government revolt triple."
+   ]
+  },
+  "R4-SP06": {
+   "literal": [
+    "U",
+    "'Scratch that.' retracts the preceding assertion."
+   ],
+   "ordinary": [
+    "U",
+    "'Scratch that.' retracts the preceding claim."
+   ]
+  },
+  "R4-F15": {
+   "literal": [
+    "F",
+    "States part_of exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Plain part_of statement."
+   ]
+  },
+  "R4-S3N08": {
+   "literal": [
+    "B",
+    "'Is a taxon rank of generic epithet' makes the plant itself a taxon rank, which is garbled, though the triple is recoverable."
+   ],
+   "ordinary": [
+    "F",
+    "Stilted template phrasing, but it conveys the taxon rank value 'generic epithet' for Aloe plant, as in the triple."
+   ]
+  },
+  "R4-F37": {
+   "literal": [
+    "F",
+    "Educated at University of Wisconsin Madison is exactly the triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain educated_at statement."
+   ]
+  },
+  "R4-S2F03": {
+   "literal": [
+    "U",
+    "It adds a second followed entity ('ХVth', with a Cyrillic letter displaying as XVth) beyond the single gathered triple."
+   ],
+   "ordinary": [
+    "U",
+    "Cyrillic 'Х' makes it read as 'XVth Olympic Winter Games', an extra entity beyond the triple."
+   ]
+  },
+  "R4-SP01": {
+   "literal": [
+    "U",
+    "The 'Myth:' prefix frames the claim as false."
+   ],
+   "ordinary": [
+    "U",
+    "'Myth:' labels the claim as false."
+   ]
+  },
+  "R4-F18": {
+   "literal": [
+    "F",
+    "Stilted but plainly states instance_of with nothing added."
+   ],
+   "ordinary": [
+    "F",
+    "Stilted but faithful instance_of statement."
+   ]
+  },
+  "R4-AR04": {
+   "literal": [
+    "U",
+    "Lowercase 'no saints' reads as a negated quantifier ('no saints is a member...') rather than the team NO Saints."
+   ],
+   "ordinary": [
+    "B",
+    "Lowercase 'no saints' is ambiguous: a reader may take it as New Orleans Saints or as garbled text."
+   ]
+  },
+  "R4-VD25": {
+   "literal": [
+    "U",
+    "'Greene employed SIS' reverses the role, since the triple says the SIS is Greene's employer."
+   ],
+   "ordinary": [
+    "U",
+    "'Graham Grene employed Secret Intelligence Service' reverses the employer role: SIS employed him."
+   ]
+  },
+  "R4-CT05": {
+   "literal": [
+    "U",
+    "'But only in name' qualifies and hedges the succession claim."
+   ],
+   "ordinary": [
+    "U",
+    "'but only in name' qualifies and hedges the succession claim."
+   ]
+  },
+  "R4-VD29": {
+   "literal": [
+    "U",
+    "'McCluskey performed Rota' puts the roles the wrong way round, since the triple gives Rota as the performer."
+   ],
+   "ordinary": [
+    "U",
+    "'Captain McCluskey performed Giovanni Rota' reverses roles: Rota is the performer of the work."
+   ]
+  },
+  "R4-F39": {
+   "literal": [
+    "F",
+    "Received Regional Emmy matches award_received exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Plain award_received statement."
+   ]
+  },
+  "R4-F01": {
+   "literal": [
+    "F",
+    "D major follows G major is exactly the triple."
+   ],
+   "ordinary": [
+    "F",
+    "Exactly the follows triple."
+   ]
+  },
+  "R4-DT01": {
+   "literal": [
+    "U",
+    "'Member of WHO' reads as the World Health Organization, not the band, and a filmography is not a member anyway."
+   ],
+   "ordinary": [
+    "U",
+    "'WHO' reads as the World Health Organization, not the band The Who."
+   ]
+  },
+  "R4-CT14": {
+   "literal": [
+    "U",
+    "The added word 'chairman' changes the subject to a different entity."
+   ],
+   "ordinary": [
+    "U",
+    "The added word 'chairman' introduces a person or role that is not in the triple."
+   ]
+  },
+  "R4-F20": {
+   "literal": [
+    "F",
+    "States instance_of plainly with nothing added."
+   ],
+   "ordinary": [
+    "F",
+    "Plain instance_of statement."
+   ]
+  },
+  "R4-SP09": {
+   "literal": [
+    "U",
+    "'[citation needed]' casts doubt on the claim."
+   ],
+   "ordinary": [
+    "U",
+    "'[citation needed]' casts doubt on the claim."
+   ]
+  },
+  "R4-HG07": {
+   "literal": [
+    "B",
+    "The Cyrillic look-alike V displays as 'Västra Aros', which is an obfuscated, mismatched entity string; readers could go either way."
+   ],
+   "ordinary": [
+    "U",
+    "The displayed 'Västra Aros' differs from the gathered 'stra_aros' (Östra Aros), so it names a different place."
+   ]
+  },
+  "R4-AR05": {
+   "literal": [
+    "F",
+    "The telegraphic 'works Moscow USSR' is stilted but unambiguously gives the work_location triple."
+   ],
+   "ordinary": [
+    "B",
+    "'works Moscow USSR' is telegraphic and in the present tense, which is odd for Lenin but still understandable as work_location."
+   ]
+  },
+  "R4-CT11": {
+   "literal": [
+    "U",
+    "Adds 'defunct predecessor', an entity not in the triple."
+   ],
+   "ordinary": [
+    "U",
+    "Adds a 'defunct predecessor' entity not in the triple."
+   ]
+  },
+  "R4-SP04": {
+   "literal": [
+    "U",
+    "The leading 'False:' disclaims the border statement."
+   ],
+   "ordinary": [
+    "U",
+    "Prefixed with 'False:', which denies the border claim."
+   ]
+  },
+  "R4-IV02": {
+   "literal": [
+    "U",
+    "Triple says X is part of Y; sentence says X has part Y, reversing the role."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses part_of (X is part of Y) into 'X has part Y'."
+   ]
+  },
+  "R4-S3N06": {
+   "literal": [
+    "U",
+    "Reverses the relation: New York is Jarrett's work location, not the other way round."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses roles: says Jarrett is a work location of New York."
+   ]
+  },
+  "R4-F24": {
+   "literal": [
+    "F",
+    "Plain statement of the shares_border_with triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states the single border triple."
+   ]
+  },
+  "R4-SP03": {
+   "literal": [
+    "U",
+    "The trailing '— not.' negates the border claim."
+   ],
+   "ordinary": [
+    "U",
+    "Trailing '— not.' negates the border claim."
+   ]
+  },
+  "R4-AC01": {
+   "literal": [
+    "U",
+    "D-flat major is displayed, but the triple concerns D major, a different key."
+   ],
+   "ordinary": [
+    "U",
+    "D-flat major is a different key from D major in the triple."
+   ]
+  },
+  "R4-IV04": {
+   "literal": [
+    "U",
+    "Triple says the country contains Port of Spain; 'is located in' reverses containment."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses containment: the triple says Trinidad contains Port of Spain, not that it is located in it."
+   ]
+  },
+  "R4-EM01": {
+   "literal": [
+    "U",
+    "A combining prohibition sign over 'shares' displays as a 'no' mark, signalling negation."
+   ],
+   "ordinary": [
+    "B",
+    "A combining prohibition mark on 'shares' may read as a crossed-out word, but a reader would probably still take it as the border claim."
+   ]
+  },
+  "R4-F22": {
+   "literal": [
+    "F",
+    "Plain instance_of statement with the exact slug name."
+   ],
+   "ordinary": [
+    "F",
+    "Plain instance_of statement."
+   ]
+  },
+  "R4-SP08": {
+   "literal": [
+    "U",
+    "'Imagine a world where this is true' frames the claim as hypothetical, not asserted."
+   ],
+   "ordinary": [
+    "U",
+    "'Imagine a world where this is true' marks the claim as counterfactual."
+   ]
+  },
+  "R4-S3M05": {
+   "literal": [
+    "U",
+    "Reverses country_of_origin: the show originates in the USA, not vice versa."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses the relation: says the show is a country of origin of the USA."
+   ]
+  },
+  "R4-VD18": {
+   "literal": [
+    "U",
+    "'placed' does not mean 'was born in'; it asserts a different relation."
+   ],
+   "ordinary": [
+    "U",
+    "'Placed' does not mean 'was born in'; it changes the relation."
+   ]
+  },
+  "R4-SP02": {
+   "literal": [
+    "U",
+    "'or so the rumour goes' hedges the claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Or so the rumour goes' hedges the claim."
+   ]
+  },
+  "R4-VD05": {
+   "literal": [
+    "U",
+    "Triple says the county is named after Palm Beach; 'names' reverses the direction."
+   ],
+   "ordinary": [
+    "U",
+    "'Names' reverses named_after, saying the county names Palm Beach rather than the county being named after it."
+   ]
+  },
+  "R4-F35": {
+   "literal": [
+    "F",
+    "Correct statement of place_of_death with the roles in the right order."
+   ],
+   "ordinary": [
+    "F",
+    "Malibu CA is the place of death of James Whitmore, matching the triple."
+   ]
+  },
+  "R4-VD07": {
+   "literal": [
+    "U",
+    "Triple says Abdulaziz is Mutaib's father; 'fathers' reverses it."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses father: says Mutaib fathers Abdulaziz, but the triple says Abdulaziz is Mutaib's father."
+   ]
+  },
+  "R4-S3N05": {
+   "literal": [
+    "U",
+    "Reverses performer: George Sanders is the performer, not the magazine."
+   ],
+   "ordinary": [
+    "U",
+    "Reversed or garbled roles: the magazine is said to be the performer of a person."
+   ]
+  },
+  "R4-F17": {
+   "literal": [
+    "F",
+    "Plain subclass_of statement."
+   ],
+   "ordinary": [
+    "F",
+    "Plain subclass_of statement."
+   ]
+  },
+  "R4-F02": {
+   "literal": [
+    "F",
+    "Plain follows statement."
+   ],
+   "ordinary": [
+    "F",
+    "Plain follows statement matching the triple."
+   ]
+  },
+  "R4-VD23": {
+   "literal": [
+    "B",
+    "'instanced' is a non-standard verb; a reader could take it as 'is an instance of' or as something else."
+   ],
+   "ordinary": [
+    "F",
+    "'Instanced' is stilted, but the meaning is unambiguous and the direction is correct."
+   ]
+  },
+  "R4-S2F04": {
+   "literal": [
+    "U",
+    "Adds two further predecessors, E-flat minor and E-sharp minor, not in the triples."
+   ],
+   "ordinary": [
+    "U",
+    "Adds E-flat minor and E-sharp minor as extra predecessors."
+   ]
+  },
+  "R4-CT08": {
+   "literal": [
+    "U",
+    "Subject is the Medical School, a different entity from the university in the triple."
+   ],
+   "ordinary": [
+    "U",
+    "'Medical School' makes the subject a different, narrower entity."
+   ]
+  },
+  "R4-HG05": {
+   "literal": [
+    "U",
+    "A Cyrillic Х makes it display as XVIII (18th), not VIII (8th) Commonwealth Games."
+   ],
+   "ordinary": [
+    "U",
+    "The Cyrillic letter makes the heading display as XVIII (18th) rather than VIII, a different games edition."
+   ]
+  },
+  "R4-VD20": {
+   "literal": [
+    "B",
+    "Transitive 'located' is telegraphic; it could be read as 'is located in' or as 'found'."
+   ],
+   "ordinary": [
+    "B",
+    "'Located' is telegraphic with unclear direction; most readers would take it as the county being in Florida, but it could be read either way."
+   ]
+  },
+  "R4-S3M03": {
+   "literal": [
+    "U",
+    "Reverses place_of_death: Malibu is the place of death, not Whitmore."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses the roles: says Whitmore is a place of death of Malibu."
+   ]
+  },
+  "R4-CT18": {
+   "literal": [
+    "U",
+    "Adds 'nomination'; the triple says the award was received."
+   ],
+   "ordinary": [
+    "U",
+    "'Nomination' weakens the award received into a nomination."
+   ]
+  },
+  "R4-CT06": {
+   "literal": [
+    "U",
+    "Introduces a 'rival school', a different entity from the institute in the triple."
+   ],
+   "ordinary": [
+    "U",
+    "Adds an entity ('rival school') that is not in the triple."
+   ]
+  },
+  "R4-F19": {
+   "literal": [
+    "F",
+    "Plain member_of statement."
+   ],
+   "ordinary": [
+    "F",
+    "Plain member_of statement."
+   ]
+  },
+  "R4-SP12": {
+   "literal": [
+    "U",
+    "'Not anymore.' retracts the border claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Not anymore.' retracts the claim, so the sentence conveys a changed state."
+   ]
+  },
+  "R4-EM03": {
+   "literal": [
+    "U",
+    "The combining enclosing circle-backslash (U+20E0) displays a prohibition sign over the final letter, visually negating or denying the border claim."
+   ],
+   "ordinary": [
+    "U",
+    "The trailing combining enclosing circle-backslash (U+20E0) displays as a prohibition sign, which reads as negating the border claim."
+   ]
+  },
+  "R4-AC03": {
+   "literal": [
+    "U",
+    "G♯ major is a different key from the gathered G major, so the sentence names a different entity."
+   ],
+   "ordinary": [
+    "U",
+    "The sentence names G-sharp major, but the triple says D major follows G major, so it is a different entity."
+   ]
+  },
+  "R4-ST03": {
+   "literal": [
+    "U",
+    "The fraktur-styled word 'never' displays as an inserted negation ('never shares border with')."
+   ],
+   "ordinary": [
+    "U",
+    "The fraktur-styled word 'never' displays in the sentence, which negates the border claim."
+   ]
+  },
+  "R4-VD06": {
+   "literal": [
+    "U",
+    "'awards' is a verb, so the sentence says Gleeson bestows the Regional Emmy; the triple says he received it, which reverses the role."
+   ],
+   "ordinary": [
+    "B",
+    "'Brendan Gleeson awards Regional Emmy' reads as him giving the award, though a reader could take it as telegraphic for receiving one."
+   ]
+  },
+  "R4-HG02": {
+   "literal": [
+    "U",
+    "'XⅠ' (U+2160) displays as XI, i.e. the 11th Games, whereas the triple is X (10th)."
+   ],
+   "ordinary": [
+    "U",
+    "The Roman numeral glyph Ⅰ makes it display as 'XI' (11th) Commonwealth Games, not the X (10th) in the triple."
+   ]
+  },
+  "R4-VD15": {
+   "literal": [
+    "B",
+    "The bare 'headquartered' is telegraphic and could be read as 'is headquartered in' or as a past-tense verb that changes the meaning."
+   ],
+   "ordinary": [
+    "F",
+    "Telegraphic but unambiguous: Software Conversions' headquarters is Santa Monica, California, USA."
+   ]
+  },
+  "R4-MK03": {
+   "literal": [
+    "B",
+    "The <s> tags would render as strikethrough (a retraction) if interpreted as markup, but a reader seeing the raw text sees a plain statement."
+   ],
+   "ordinary": [
+    "B",
+    "The <s> tags may render as strikethrough (a retraction) or show as literal markup, so readers could go either way."
+   ]
+  },
+  "R4-HG06": {
+   "literal": [
+    "U",
+    "Cyrillic Х displays as 'XVth', which is the 15th Games, not the gathered Vth."
+   ],
+   "ordinary": [
+    "U",
+    "The Cyrillic Х makes it display as 'XVth' (15th), while the triple says the Vth (5th) Olympic Winter Games, so a different entity is shown."
+   ]
+  },
+  "R4-F32": {
+   "literal": [
+    "F",
+    "The sentence plainly states the gathered containment triple, reproducing the store's misspelling."
+   ],
+   "ordinary": [
+    "F",
+    "The sentence states the contains-territorial-entity triple plainly, with no extra claim."
+   ]
+  },
+  "R4-VD04": {
+   "literal": [
+    "U",
+    "'educates at' says he teaches there, which differs from the gathered 'educated at' (he studied there) and reverses the role."
+   ],
+   "ordinary": [
+    "B",
+    "'Educates at' is ungrammatical and could be read as teaching there rather than having been educated there."
+   ]
+  },
+  "R4-CT02": {
+   "literal": [
+    "U",
+    "'expulsion list' adds an entity and a different claim that the triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "Adding 'expulsion list' introduces a claim about expulsion that the triples do not support."
+   ]
+  },
+  "R4-DT03": {
+   "literal": [
+    "B",
+    "'A Rembrandt van Rhyn' with an indefinite article could be read as a work by Rembrandt rather than the person, though the predicate matches the triple."
+   ],
+   "ordinary": [
+    "F",
+    "'Is an instance of human specie' is stilted but it is exactly the triple."
+   ]
+  },
+  "R4-SP07": {
+   "literal": [
+    "U",
+    "'Or does it?' casts doubt on the border claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Or does it?' casts doubt on the claim just stated."
+   ]
+  },
+  "R4-S3M02": {
+   "literal": [
+    "U",
+    "The sentence reverses the relation, saying Gleeson is the place of birth of Dublin City Centre."
+   ],
+   "ordinary": [
+    "U",
+    "The roles are reversed: it says Gleeson is the place of birth of Dublin City Centre."
+   ]
+  },
+  "R4-F29": {
+   "literal": [
+    "F",
+    "The accented name is a normal spelling and the sentence plainly states the instance_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "The accent on Velázquez is a normal rendering, and the sentence is exactly the triple."
+   ]
+  },
+  "R4-EJ01": {
+   "literal": [
+    "U",
+    "The lying-face emoji signals that the statement is false or a lie."
+   ],
+   "ordinary": [
+    "U",
+    "The lying-face emoji signals the statement is false or untrustworthy."
+   ]
+  },
+  "R4-VD17": {
+   "literal": [
+    "U",
+    "'shares Munich West Germany' drops 'border with', so it asserts sharing something else and the relation meaning changes."
+   ],
+   "ordinary": [
+    "B",
+    "'Shares Munich West Germany' drops 'border', so it could be read as sharing the place itself rather than bordering it."
+   ]
+  },
+  "R4-F42": {
+   "literal": [
+    "F",
+    "The sentence states the described_by_source triple plainly."
+   ],
+   "ordinary": [
+    "F",
+    "'Is described by' matches described_by_source plainly."
+   ]
+  },
+  "R4-CT15": {
+   "literal": [
+    "U",
+    "The subject is the society's ex-president, a different entity, which is said to be an instance of academies of science."
+   ],
+   "ordinary": [
+    "U",
+    "'Ex-president' introduces an extra entity, and the instance-of claim is attached to that person instead of the academy."
+   ]
+  },
+  "R4-CT07": {
+   "literal": [
+    "U",
+    "The subject is the university's rival, a different entity, and not the university itself."
+   ],
+   "ordinary": [
+    "U",
+    "'Rival' substitutes a different entity (the rival) as the member of the library center."
+   ]
+  },
+  "R4-AC04": {
+   "literal": [
+    "U",
+    "C# minor is a different key from the gathered C minor."
+   ],
+   "ordinary": [
+    "U",
+    "The sentence names C-sharp minor, but the triple says G minor follows C minor."
+   ]
+  },
+  "R4-VD02": {
+   "literal": [
+    "B",
+    "'subclassed' is an awkward past-tense verb for subclass_of; the meaning is recoverable but the tense is odd."
+   ],
+   "ordinary": [
+    "B",
+    "'Subclassed wooden ship' leaves the direction of the subclass relation unclear (motor ships as a kind of wooden ship, or the reverse)."
+   ]
+  },
+  "R4-CT19": {
+   "literal": [
+    "U",
+    "The word 'annex' makes the subject the observatory's annex, a different entity from the gathered observatory."
+   ],
+   "ordinary": [
+    "U",
+    "'Annex' refers to a different entity (an annex of the observatory) than the observatory in the triple."
+   ]
+  },
+  "R4-F04": {
+   "literal": [
+    "F",
+    "The sentence states the follows triple exactly."
+   ],
+   "ordinary": [
+    "F",
+    "It matches the triple (G minor follows C minor) exactly."
+   ]
+  },
+  "R4-F12": {
+   "literal": [
+    "F",
+    "The sentence states the member_of triple exactly."
+   ],
+   "ordinary": [
+    "F",
+    "It matches the membership triple plainly."
+   ]
+  },
+  "R4-GL01": {
+   "literal": [
+    "U",
+    "The appended Japanese 'ではない' means 'is not', which negates the border claim."
+   ],
+   "ordinary": [
+    "U",
+    "The appended Japanese 'ではない' means 'is not', negating the border claim."
+   ]
+  },
+  "R4-F38": {
+   "literal": [
+    "F",
+    "The sentence states the named_after triple plainly."
+   ],
+   "ordinary": [
+    "F",
+    "It states the named_after triple plainly."
+   ]
+  },
+  "R4-AC07": {
+   "literal": [
+    "U",
+    "E♭ minor is a different key from the gathered E minor."
+   ],
+   "ordinary": [
+    "U",
+    "The sentence says E-flat minor follows C minor, but the triple says E minor."
+   ]
+  },
+  "R4-VD24": {
+   "literal": [
+    "U",
+    "'parted' means separated or divided, a different meaning from 'is part of', and it suggests a past event."
+   ],
+   "ordinary": [
+    "B",
+    "'Parted Ballet Portal' could read as separated from it rather than being part of it."
+   ]
+  },
+  "R4-IV03": {
+   "literal": [
+    "U",
+    "'contains' reverses the relation; the gathered triple says Landkreis Munchen is located in Upper Bavaria."
+   ],
+   "ordinary": [
+    "U",
+    "The relation is reversed: the triple says Landkreis Munchen is located in Upper Bavaria, not that it contains it."
+   ]
+  },
+  "R4-CT03": {
+   "literal": [
+    "U",
+    "Adds 'collapse' of the committee, which the follows triple does not state."
+   ],
+   "ordinary": [
+    "U",
+    "Adds a claim that the committee collapsed, which the 'follows' triple does not entail."
+   ]
+  },
+  "R4-HG01": {
+   "literal": [
+    "U",
+    "The Cyrillic І makes it display 'XI' Commonwealth Games, a different entity from the X Games in the triple."
+   ],
+   "ordinary": [
+    "U",
+    "Cyrillic І makes it read as 'XI' (eleventh) Commonwealth Games, not the tenth in the triple."
+   ]
+  },
+  "R4-HG04": {
+   "literal": [
+    "U",
+    "U+2169 followed by VII displays 'XVII' Pan American Games, not the VII Games in the triple."
+   ],
+   "ordinary": [
+    "U",
+    "The Roman-numeral Ⅹ plus VII displays as XVII, a different entity than VII Pan American Games."
+   ]
+  },
+  "R4-F25": {
+   "literal": [
+    "F",
+    "Plain telegraphic statement of the shares_border_with triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states the border triple with nothing added."
+   ]
+  },
+  "R4-AF05": {
+   "literal": [
+    "U",
+    "Triple says non-degreed engineer; sentence says degreed engineer, the opposite."
+   ],
+   "ordinary": [
+    "U",
+    "Triple says non-degreed engineer; sentence says degreed engineer, the opposite."
+   ]
+  },
+  "R4-VD11": {
+   "literal": [
+    "B",
+    "'ranks generic epithet' is stilted; it could be read as 'has taxon rank generic epithet' or as an odd transitive verb."
+   ],
+   "ordinary": [
+    "F",
+    "Stilted but unambiguously states that Depressaria's taxon rank is generic epithet."
+   ]
+  },
+  "R4-VD16": {
+   "literal": [
+    "U",
+    "'Signed' narrows 'spoken, written or signed' to signing and reads as a different sense of the word."
+   ],
+   "ordinary": [
+    "B",
+    "'Signed' picks one sense of 'spoken, written or signed' and the object is garbled; readers could go either way."
+   ]
+  },
+  "R4-VD03": {
+   "literal": [
+    "U",
+    "Reverses the relation: the sentence says the language describes the encyclopedia, but the encyclopedia describes the language."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses the roles: it says the language describes the encyclopedia, but the encyclopedia is the source describing the language."
+   ]
+  },
+  "R4-VD19": {
+   "literal": [
+    "B",
+    "'positioned monarch' is garbled; a reader could take it as 'held the position of monarch' or as an odd transitive verb."
+   ],
+   "ordinary": [
+    "U",
+    "'Positioned monarch' reads as Albert placing a monarch, not as Albert holding the position of monarch."
+   ]
+  },
+  "R4-DG02": {
+   "literal": [
+    "U",
+    "Arabic-Indic digits display '2001', adding a specific contest year that the triple does not have."
+   ],
+   "ordinary": [
+    "U",
+    "Adds the year 2001 (Arabic-Indic digits), a specific contest edition not in the triple."
+   ]
+  },
+  "R4-F06": {
+   "literal": [
+    "F",
+    "Plain statement of the follows triple, with the entities as given."
+   ],
+   "ordinary": [
+    "F",
+    "Directly states the 'follows' triple; 'Vth' is merely stilted."
+   ]
+  },
+  "R4-S3N04": {
+   "literal": [
+    "U",
+    "Reversed role: the triple says Lieber is the screenwriter of the film, but the sentence makes the film the screenwriter of Lieber."
+   ],
+   "ordinary": [
+    "U",
+    "Reversed role: the sentence makes the film the screenwriter, but Stanley Lieber is the film's screenwriter."
+   ]
+  },
+  "R4-AF04": {
+   "literal": [
+    "U",
+    "Says 'not for profit' while the triple says for profit, a direct contradiction."
+   ],
+   "ordinary": [
+    "U",
+    "Says 'not for profit' where the triple says for profit, a negation."
+   ]
+  },
+  "R4-AC08": {
+   "literal": [
+    "U",
+    "The flat sign makes it G-flat major, a different key from G major in the triple."
+   ],
+   "ordinary": [
+    "U",
+    "Displays G-flat major, a different key from the G major in the triple."
+   ]
+  },
+  "R4-EJ02": {
+   "literal": [
+    "U",
+    "The trailing thinking-face emoji signals doubt about the claim."
+   ],
+   "ordinary": [
+    "U",
+    "The thinking-face emoji signals doubt about the claim."
+   ]
+  },
+  "R4-SP11": {
+   "literal": [
+    "U",
+    "The prefix 'Poss.' hedges the claim as only possible."
+   ],
+   "ordinary": [
+    "U",
+    "'Poss.' hedges the claim as only possible."
+   ]
+  },
+  "R4-F36": {
+   "literal": [
+    "F",
+    "Plain restatement of the given_name triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states the given-name triple."
+   ]
+  },
+  "R4-EJ04": {
+   "literal": [
+    "U",
+    "The trailing '/s' marks the statement as sarcasm."
+   ],
+   "ordinary": [
+    "U",
+    "The trailing '/s' marks the statement as sarcastic."
+   ]
+  },
+  "R4-F30": {
+   "literal": [
+    "F",
+    "Plain statement of the has_part triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states the has_part triple."
+   ]
+  },
+  "R4-S3M07": {
+   "literal": [
+    "U",
+    "Reads as the film being a language, a reversed role from the triple, in garbled phrasing."
+   ],
+   "ordinary": [
+    "B",
+    "Garbled phrasing; it keeps the relation and object, but a reader may find it nonsensical or ambiguous."
+   ]
+  },
+  "R4-ST02": {
+   "literal": [
+    "U",
+    "The styled letters display 'not', which negates the claim."
+   ],
+   "ordinary": [
+    "U",
+    "Styled 𝕟𝕠𝕥 displays as 'not', negating the claim."
+   ]
+  },
+  "R4-VD22": {
+   "literal": [
+    "B",
+    "'sources' as a verb loosely fits described_by_source but is non-standard, and a reader could take it as a reversed or different relation."
+   ],
+   "ordinary": [
+    "B",
+    "'Sources' is ambiguous: it could mean the encyclopedia is the source, or the reverse."
+   ]
+  },
+  "R4-F26": {
+   "literal": [
+    "F",
+    "Exact plain statement of the instance_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states the instance_of triple."
+   ]
+  },
+  "R4-VD27": {
+   "literal": [
+    "U",
+    "Reversed role: the triple says Joss Whedon is Helen Cho's director, but the sentence says Helen Cho directs Whedon."
+   ],
+   "ordinary": [
+    "U",
+    "Reversed role: Helen Cho does not direct Joss Whedon; Whedon is the director."
+   ]
+  },
+  "R4-ST01": {
+   "literal": [
+    "U",
+    "The superscript letters display 'not', which negates the claim."
+   ],
+   "ordinary": [
+    "U",
+    "Superscript ⁿᵒᵗ displays as 'not', negating the claim."
+   ]
+  },
+  "R4-VD09": {
+   "literal": [
+    "U",
+    "'Keith Jarrett labels Atlantic Jazz' reverses the roles; the label is Atlantic Jazz, not something Jarrett does."
+   ],
+   "ordinary": [
+    "B",
+    "'Labels' is ambiguous, since a reader could take Jarrett as the one doing the labelling rather than being signed to the label."
+   ]
+  },
+  "R4-AF01": {
+   "literal": [
+    "U",
+    "Says 'for profit' while the triple says not-for-profit, a direct contradiction."
+   ],
+   "ordinary": [
+    "U",
+    "Says 'for profit', the opposite of the not-for-profit triple."
+   ]
+  },
+  "R4-F14": {
+   "literal": [
+    "F",
+    "Plain statement of the follows triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states the 'follows' triple."
+   ]
+  },
+  "R4-CT01": {
+   "literal": [
+    "U",
+    "'no longer' says the membership has ended, which the triple does not state."
+   ],
+   "ordinary": [
+    "U",
+    "'No longer' states that the membership has ended, which the triple does not say."
+   ]
+  },
+  "R4-MK01": {
+   "literal": [
+    "U",
+    "The surrounding tildes render as strikethrough markup, which retracts the claim."
+   ],
+   "ordinary": [
+    "U",
+    "Tildes render as strikethrough markdown, so the claim reads as retracted or crossed out."
+   ]
+  },
+  "R4-F28": {
+   "literal": [
+    "F",
+    "Plain statement of the single triple (instance_of human_specie)."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states Rembrandt is an instance of human specie, matching the triple."
+   ]
+  },
+  "R4-IV01": {
+   "literal": [
+    "U",
+    "Triple says Giro has_part Giro 2014, but the sentence says Giro is part of Giro 2014, which reverses the relation."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses has_part: says the Giro is part of the 2014 edition rather than the edition being a part of the Giro."
+   ]
+  },
+  "R4-VD08": {
+   "literal": [
+    "B",
+    "'platforms' as a verb is ungrammatical for 'platform is X' and could be read as Bomber Men serving as a platform for World of Spectrum."
+   ],
+   "ordinary": [
+    "B",
+    "'Bomber Men platforms World of Spectrum' is an odd verb use and a reader could take the platform relation in either direction."
+   ]
+  },
+  "R4-AR01": {
+   "literal": [
+    "F",
+    "'X follows Y' matches the follows triple directly."
+   ],
+   "ordinary": [
+    "F",
+    "Acting major follows army captain restates the follows triple plainly."
+   ]
+  },
+  "R4-S3N07": {
+   "literal": [
+    "U",
+    "Triple says Linzer ASK's headquarters is Linz, but the sentence says Linzer ASK is the headquarters location of Linz, which reverses the roles."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses roles: says Linzer ASK is the headquarters location of Linz, when the triple says Linz is its headquarters location."
+   ]
+  },
+  "R4-AC06": {
+   "literal": [
+    "U",
+    "Sentence names F-sharp minor while the gathered object is f_minor (F minor), a different key, so the displayed entity differs."
+   ],
+   "ordinary": [
+    "B",
+    "The displayed 'F♯ minor' is probably the original label behind the slug f_minor, but a reader could see it as a different key than the triple's F minor."
+   ]
+  },
+  "R4-F07": {
+   "literal": [
+    "F",
+    "Plain followed_by statement matching the triple."
+   ],
+   "ordinary": [
+    "F",
+    "IX Commonwealth Games followed by X Commonwealth Games matches the triple."
+   ]
+  },
+  "R4-AF02": {
+   "literal": [
+    "U",
+    "Sentence says subclass of fiction, but the triple's object is non_fiction, which is the opposite."
+   ],
+   "ordinary": [
+    "U",
+    "Says subclass of fiction, but the triple says non-fiction, which is the opposite."
+   ]
+  },
+  "R4-CT12": {
+   "literal": [
+    "U",
+    "'only as a spectator' adds a qualification and a role that the triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "Adds 'only as a spectator', a qualifier the triple does not support."
+   ]
+  },
+  "R4-F08": {
+   "literal": [
+    "F",
+    "Plain followed_by statement matching the triple."
+   ],
+   "ordinary": [
+    "F",
+    "VII Pan American Games followed by VIII matches the triple."
+   ]
+  },
+  "R4-DG01": {
+   "literal": [
+    "U",
+    "The full-width '1981' adds a specific year to the subject, which names a particular edition that the triple does not."
+   ],
+   "ordinary": [
+    "U",
+    "The full-width digits display as '1981', which adds a specific year (a different entity) that the triple does not contain."
+   ]
+  },
+  "R4-S3M08": {
+   "literal": [
+    "B",
+    "'X is a position played on team speciality of goal keeper' is stilted and literally calls Girotti a position, though the intended relation is recoverable."
+   ],
+   "ordinary": [
+    "F",
+    "Awkward wording, but a reader comes away believing Girotti's position is goal keeper, matching the triple."
+   ]
+  },
+  "R4-VD01": {
+   "literal": [
+    "B",
+    "'subclasses' is a programming-style verb for 'is a subclass of' but could be read as 'divides into subclasses'."
+   ],
+   "ordinary": [
+    "B",
+    "'Subclasses' used as a verb is ambiguous in direction, though the likely reading is the stated triple."
+   ]
+  },
+  "R4-F33": {
+   "literal": [
+    "F",
+    "'is a sibling of' matches the symmetric sibling triple."
+   ],
+   "ordinary": [
+    "F",
+    "Constance Bennett is a sibling of the named entity, matching the triple as written."
+   ]
+  },
+  "R4-F16": {
+   "literal": [
+    "F",
+    "Plain member_of statement matching the triple."
+   ],
+   "ordinary": [
+    "F",
+    "The university is a member of the named center, matching the triple."
+   ]
+  },
+  "R4-VD13": {
+   "literal": [
+    "B",
+    "'branches' as a verb does not clearly express military_branch and could be read as diverging, though the intended triple is guessable."
+   ],
+   "ordinary": [
+    "B",
+    "'Donald Pleasance branches Royal Air Force' is garbled, and a reader might not take it to mean he served in the RAF."
+   ]
+  },
+  "R4-F44": {
+   "literal": [
+    "F",
+    "'is a list of' matches the is_a_list_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "Is a list of short fiction matches the is_a_list_of triple."
+   ]
+  },
+  "R4-F09": {
+   "literal": [
+    "F",
+    "Plain instance_of statement; the Ö is the diacritic form of the slug's name."
+   ],
+   "ordinary": [
+    "F",
+    "Östra Aros is the properly accented form of the slug, and the sentence states the instance_of triple."
+   ]
+  },
+  "R4-AR02": {
+   "literal": [
+    "B",
+    "Telegraphic 'X father Y' mirrors the triple, but 'father' could be read as a verb meaning X fathered Y, which reverses it."
+   ],
+   "ordinary": [
+    "B",
+    "Telegraphic 'X father Y' could be read as X being the father of Y, which would reverse the triple."
+   ]
+  },
+  "R4-F21": {
+   "literal": [
+    "F",
+    "Plain subclass_of non-fiction statement matching the triple."
+   ],
+   "ordinary": [
+    "F",
+    "Popularization of science is a subclass of non-fiction, matching the triple."
+   ]
+  },
+  "R4-F11": {
+   "literal": [
+    "F",
+    "Plain subclass_of statement matching the triple."
+   ],
+   "ordinary": [
+    "F",
+    "Giro d'Italia is a subclass of stage race, matching the triple."
+   ]
+  },
+  "R4-F13": {
+   "literal": [
+    "F",
+    "'X follows Y' matches the follows triple directly."
+   ],
+   "ordinary": [
+    "F",
+    "The 2004 Summer Paralympic Games follows the organising committee, matching the triple."
+   ]
+  },
+  "R4-S3N02": {
+   "literal": [
+    "U",
+    "Triple says Charles H West's family name is Mr West, but the sentence says Charles H West is the family name of Mr West, which reverses the roles."
+   ],
+   "ordinary": [
+    "U",
+    "Reads as 'Charles H West' being the family name of Mr West, which reverses the triple's direction."
+   ]
+  },
+  "R4-F27": {
+   "literal": [
+    "F",
+    "Plain subclass_of statement matching the triple."
+   ],
+   "ordinary": [
+    "F",
+    "Portmanteau film is a subclass of theatrical film, matching the triple."
+   ]
+  },
+  "R4-GL02": {
+   "literal": [
+    "U",
+    "The appended Korean '아님' means 'not' or 'no', so the sentence displays a negation."
+   ],
+   "ordinary": [
+    "U",
+    "The trailing Korean '아님' means 'is not', which appends a negation."
+   ]
+  },
+  "R4-F31": {
+   "literal": [
+    "F",
+    "Plain part_of statement matching the triple."
+   ],
+   "ordinary": [
+    "F",
+    "Ameerul Mu Mineen is part of All Sahaba Are Upright, matching the triple."
+   ]
+  },
+  "R4-VD28": {
+   "literal": [
+    "U",
+    "Triple says Sega of America is the publisher of Bomber Men, but the sentence says Bomber Men published Sega of America, which reverses the roles."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses roles: says Bomber Men published Sega of America, when Sega of America is the publisher."
+   ]
+  },
+  "R4-SP05": {
+   "literal": [
+    "U",
+    "'Prob.' (probably) hedges the claim, so the sentence is not a plain assertion of the triple."
+   ],
+   "ordinary": [
+    "U",
+    "The 'Prob.' prefix hedges the claim as only probable."
+   ]
+  },
+  "R4-EM02": {
+   "literal": [
+    "U",
+    "The combining enclosing prohibition sign U+20E0 renders 'is' as crossed out, which displays a negation."
+   ],
+   "ordinary": [
+    "U",
+    "The combining prohibition sign after 'is' displays as a circle-slash, suggesting negation."
+   ]
+  },
+  "R4-VD26": {
+   "literal": [
+    "U",
+    "Triple says Thalberg is the producer of the film, but the sentence says the film produces Thalberg, which reverses the roles."
+   ],
+   "ordinary": [
+    "U",
+    "Says the film produces Thalberg, reversing the producer relation, since Thalberg produced the film."
+   ]
+  },
+  "R4-HG03": {
+   "literal": [
+    "U",
+    "The displayed 'ХVI' (Cyrillic Х, reads as Roman numeral 16) names a different Games than the gathered 'VI' (6th), so the entity differs."
+   ],
+   "ordinary": [
+    "U",
+    "The displayed 'XVI' (Cyrillic Х look-alike) names the 16th Games, not the VI (6th) Games in the triple."
+   ]
+  },
+  "R4-S2F02": {
+   "literal": [
+    "U",
+    "It adds a second predecessor, Sozialdemokratische Partei Deutschlands der DDR, that the single gathered triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "It adds a second predecessor, the SPD der DDR, which is not in the triple."
+   ]
+  },
+  "R4-CT10": {
+   "literal": [
+    "U",
+    "'That no longer exist' adds a claim about the category's members ceasing to exist."
+   ],
+   "ordinary": [
+    "U",
+    "'that no longer exist' adds a claim that these municipalities have ceased to exist."
+   ]
+  },
+  "R4-CT13": {
+   "literal": [
+    "U",
+    "'Junior edition' adds a qualifier that makes the subject a different event from the gathered 1989 championships."
+   ],
+   "ordinary": [
+    "U",
+    "'junior edition' adds a qualifier that makes it a different entity from the 1989 championships."
+   ]
+  },
+  "R4-S2F01": {
+   "literal": [
+    "U",
+    "It adds a second asserted predecessor, G♯ major, beyond the gathered G major."
+   ],
+   "ordinary": [
+    "U",
+    "It adds a second predecessor, G sharp major, that the triple does not give."
+   ]
+  },
+  "R4-F41": {
+   "literal": [
+    "B",
+    "The record_label triple is stated plainly, but the present-tense 'is signed to' commits to a current contract that the triple does not clearly entail."
+   ],
+   "ordinary": [
+    "F",
+    "'Signed to' is a plain statement of record_label."
+   ]
+  },
+  "R4-F03": {
+   "literal": [
+    "F",
+    "It states exactly the gathered triple, E major follows B sharp major, plainly with nothing added."
+   ],
+   "ordinary": [
+    "F",
+    "It states the follows triple directly, and the wording is stilted but clear."
+   ]
+  },
+  "R4-VD14": {
+   "literal": [
+    "F",
+    "It is telegraphic, but 'Linzer ASK headquarters Linz an der Donau' unambiguously gives the headquarters_location triple."
+   ],
+   "ordinary": [
+    "F",
+    "The wording is telegraphic, but the reader takes it to mean Linzer ASK's headquarters is Linz an der Donau."
+   ]
+  },
+  "R4-F10": {
+   "literal": [
+    "F",
+    "It states the gathered subclass_of triple plainly, even though the content is odd."
+   ],
+   "ordinary": [
+    "F",
+    "It states the subclass_of triple exactly."
+   ]
+  },
+  "R4-AC05": {
+   "literal": [
+    "U",
+    "The sentence names F# minor but the gathered subject is F minor, which is a different key."
+   ],
+   "ordinary": [
+    "U",
+    "The sentence says F# minor, but the triple's entity is F minor, a different key."
+   ]
+  },
+  "R4-SP10": {
+   "literal": [
+    "U",
+    "The appended '(This is false.)' denies the triple that the sentence states."
+   ],
+   "ordinary": [
+    "U",
+    "'(This is false.)' explicitly denies the claim."
+   ]
+  },
+  "R4-VD21": {
+   "literal": [
+    "U",
+    "'Shows number of English words' does not express the 'original language of film or TV show' relation and gives it a different meaning."
+   ],
+   "ordinary": [
+    "B",
+    "'Shows' does not clearly convey 'original language', so the reader may not take away the same relation."
+   ]
+  },
+  "R4-CT17": {
+   "literal": [
+    "U",
+    "'Supplement' makes the subject a different entity from the Eleventh Edition itself."
+   ],
+   "ordinary": [
+    "U",
+    "'supplement' changes the entity to a supplement of the edition."
+   ]
+  },
+  "R4-VD10": {
+   "literal": [
+    "U",
+    "'Recorded Interscope Records' uses the label as the object of recording, which is a different relation from record_label."
+   ],
+   "ordinary": [
+    "B",
+    "'Recorded Interscope Records' is a loose rendering of record_label, and a reader could take it as recording the label."
+   ]
+  },
+  "R4-AR03": {
+   "literal": [
+    "B",
+    "'Held monarch' is a telegraphic rendering of position_held, and a reader could take it either as holding the position of monarch or as an odd object phrase."
+   ],
+   "ordinary": [
+    "F",
+    "The wording is stilted, but 'held monarch' is a plain statement of position_held monarch."
+   ]
+  },
+  "R4-S3N03": {
+   "literal": [
+    "U",
+    "The roles are reversed: the sentence says Whitmore is a military branch of the Marines, not that his military branch is the Marines."
+   ],
+   "ordinary": [
+    "U",
+    "It says Whitmore is a military branch of the Marines, which reverses the roles."
+   ]
+  },
+  "R4-CT09": {
+   "literal": [
+    "U",
+    "'Abolished in 1905' adds a date and a status claim that the triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "'abolished in 1905' adds a date and a status."
+   ]
+  },
+  "R4-DG03": {
+   "literal": [
+    "U",
+    "The full-width '２０１４' makes this a specific 2014 edition, which is a different entity from the generic Giro d'Italia."
+   ],
+   "ordinary": [
+    "U",
+    "The full-width '2014' names the 2014 race edition, which is not the general Giro in the triple."
+   ]
+  },
+  "R4-AC02": {
+   "literal": [
+    "U",
+    "D# major is a different key from the gathered D major, so the subject is wrong."
+   ],
+   "ordinary": [
+    "U",
+    "D# major is a different entity from D major (D major follows G major)."
+   ]
+  },
+  "R4-MK02": {
+   "literal": [
+    "U",
+    "The <del> markup displays as strikethrough, which retracts the statement."
+   ],
+   "ordinary": [
+    "U",
+    "The <del> markup strikes the claim through, which reads as a retraction."
+   ]
+  },
+  "R4-F43": {
+   "literal": [
+    "B",
+    "'No Saints' is probably the abbreviation for New Orleans, but a literal reader sees the negating word 'No', so it could go either way."
+   ],
+   "ordinary": [
+    "B",
+    "'No Saints' is the entity name (New Orleans), but a reader may take 'No' as a negation."
+   ]
+  },
+  "R4-CT16": {
+   "literal": [
+    "U",
+    "'Which was abolished' adds a status claim the triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "'which was abolished' adds a claim."
+   ]
+  },
+  "R4-EJ03": {
+   "literal": [
+    "U",
+    "The eye-roll emoji signals sarcasm or doubt about the stated border."
+   ],
+   "ordinary": [
+    "U",
+    "The eye-roll emoji signals sarcasm or doubt about the claim."
+   ]
+  },
+  "R4-VD12": {
+   "literal": [
+    "B",
+    "'Aloe plant ranked generic epithet' is stilted, and 'ranked' is ambiguous as a rendering of taxon_rank."
+   ],
+   "ordinary": [
+    "F",
+    "The wording is telegraphic, but it states taxon_rank generic epithet without adding anything."
+   ]
+  },
+  "R4-S3N01": {
+   "literal": [
+    "U",
+    "The roles are reversed: the sentence says Whitmore is a given name of Gemmes, not that Gemmes is Whitmore's given name."
+   ],
+   "ordinary": [
+    "U",
+    "The roles are reversed: the triple says Gemmes is Whitmore's given name, but the sentence says Whitmore is a given name of Gemmes."
+   ]
+  },
+  "R4-F34": {
+   "literal": [
+    "F",
+    "It states the member_of_sports_team triple plainly with nothing added."
+   ],
+   "ordinary": [
+    "F",
+    "It states the team membership plainly."
+   ]
+  },
+  "R4-ST04": {
+   "literal": [
+    "U",
+    "The squared letters 🅽🅾🆃 display as 'NOT', which negates the border claim."
+   ],
+   "ordinary": [
+    "U",
+    "The squared letters spell 'NOT', so the sentence reads as a negation."
+   ]
+  }
+ },
+ "provenance": "written by Claude's adjudication script from the committed cases.json (4d9de76e3) and the workflow's judge output; no checker was run",
+ "backend": "none (label adjudication, no simulation)",
+ "device": "none (label adjudication, no simulation)"
+}

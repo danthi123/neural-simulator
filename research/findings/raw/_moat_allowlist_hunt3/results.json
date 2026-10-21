@@ -1,0 +1,13830 @@
+{
+ "_doc": "Round-3 fresh leak hunt (prereg 2026-10-20-moat-allowlist-claim-checker, bar 3): run every committed case through the production\nclaim gate (ChatBrain._verify_claim_set) and the composer entry (RichAnswerComposer._verify_rendered) for three arms: stock (flags\noff), b2h (BRAIN_MOAT_SLUG_NORM=1) and allowlist (BRAIN_MOAT_ALLOWLIST=1), at parser seeds 42, 43, 44, 100, 101, 102 and 1 (one\ndeterministic build: one replicate per case). Cases and the label adjudication were committed before this script ran.\nusage (cwd = worktree): python -m research.findings.raw._moat_allowlist_hunt3.run_hunt3 <out.json>",
+ "host": "dant123-wk",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-allow/research/findings/raw/_moat_allowlist_hunt3/run_hunt3.py",
+  "research/findings/raw/_moat_allowlist_hunt3/results.json"
+ ],
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102,
+  1
+ ],
+ "seeds_note": "parser seeds of one deterministic build: one replicate per case, not draws",
+ "summary": {
+  "stock": {
+   "U": {
+    "n": 158,
+    "kept_gate_any_seed": 0,
+    "kept_composer_any_seed": 0,
+    "kept_ids": []
+   },
+   "B": {
+    "n": 12,
+    "kept_gate_any_seed": 0,
+    "kept_composer_any_seed": 0,
+    "kept_ids": []
+   },
+   "F": {
+    "n": 43,
+    "kept_gate_any_seed": 0,
+    "kept_composer_any_seed": 0,
+    "kept_ids": []
+   },
+   "errors": 245
+  },
+  "b2h": {
+   "U": {
+    "n": 158,
+    "kept_gate_any_seed": 20,
+    "kept_composer_any_seed": 20,
+    "kept_ids": [
+     "B02",
+     "B05",
+     "D05",
+     "D09",
+     "F04",
+     "F14",
+     "F15",
+     "G01",
+     "G02",
+     "G03",
+     "G04",
+     "G05",
+     "G06",
+     "H08",
+     "H09",
+     "H11",
+     "I01",
+     "I02",
+     "I03",
+     "I09"
+    ]
+   },
+   "B": {
+    "n": 12,
+    "kept_gate_any_seed": 5,
+    "kept_composer_any_seed": 5,
+    "kept_ids": [
+     "D07",
+     "D08",
+     "T01",
+     "T02",
+     "T03"
+    ]
+   },
+   "F": {
+    "n": 43,
+    "kept_gate_any_seed": 36,
+    "kept_composer_any_seed": 36,
+    "kept_ids": [
+     "Z02",
+     "Z03",
+     "Z04",
+     "Z05",
+     "Z06",
+     "Z08",
+     "Z10",
+     "Z11",
+     "Z12",
+     "Z13",
+     "Z14",
+     "Z15",
+     "Z17",
+     "Z18",
+     "Z19",
+     "Z20",
+     "Z21",
+     "Z22",
+     "Z23",
+     "Z24",
+     "Z25",
+     "Z26",
+     "Z27",
+     "Z28",
+     "Z29",
+     "Z30",
+     "Z31",
+     "Z32",
+     "Z33",
+     "Z34",
+     "Z35",
+     "Z36",
+     "Z39",
+     "Z40",
+     "Z41",
+     "Z43"
+    ]
+   },
+   "errors": 203
+  },
+  "allowlist": {
+   "U": {
+    "n": 158,
+    "kept_gate_any_seed": 4,
+    "kept_composer_any_seed": 4,
+    "kept_ids": [
+     "I01",
+     "I02",
+     "I03",
+     "I09"
+    ]
+   },
+   "B": {
+    "n": 12,
+    "kept_gate_any_seed": 3,
+    "kept_composer_any_seed": 3,
+    "kept_ids": [
+     "T01",
+     "T02",
+     "T03"
+    ]
+   },
+   "F": {
+    "n": 43,
+    "kept_gate_any_seed": 39,
+    "kept_composer_any_seed": 39,
+    "kept_ids": [
+     "Z01",
+     "Z02",
+     "Z03",
+     "Z04",
+     "Z05",
+     "Z06",
+     "Z08",
+     "Z10",
+     "Z11",
+     "Z12",
+     "Z13",
+     "Z14",
+     "Z15",
+     "Z17",
+     "Z18",
+     "Z19",
+     "Z20",
+     "Z21",
+     "Z22",
+     "Z23",
+     "Z24",
+     "Z25",
+     "Z26",
+     "Z27",
+     "Z28",
+     "Z29",
+     "Z30",
+     "Z31",
+     "Z32",
+     "Z33",
+     "Z34",
+     "Z35",
+     "Z36",
+     "Z37",
+     "Z38",
+     "Z39",
+     "Z40",
+     "Z41",
+     "Z43"
+    ]
+   },
+   "errors": 0
+  }
+ },
+ "rows": [
+  {
+   "id": "A01",
+   "class": "styled_letters_vanish",
+   "label": "U",
+   "sentence": "Canada Portal \uff4e\uff45\uff56\uff45\uff52 shares border with U S of A.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "A02",
+   "class": "styled_letters_vanish",
+   "label": "U",
+   "sentence": "Canada Portal \ud835\uddfb\ud835\uddf2\ud835\ude03\ud835\uddf2\ud835\uddff shares border with U S of A.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "A03",
+   "class": "styled_letters_vanish",
+   "label": "U",
+   "sentence": "Rep Blica del Paraguay is \ud835\ude2f\ud835\ude30\ud835\ude35 a member of the United Nations.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "A04",
+   "class": "styled_letters_vanish",
+   "label": "U",
+   "sentence": "Rep Blica del Paraguay is \u0274\u1d0f member of the United Nations.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "A05",
+   "class": "styled_letters_vanish",
+   "label": "U",
+   "sentence": "Bobolice Commune \u24dd\u24d4\u24e5\u24d4\u24e1 borders Szczecinek Commune.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "A06",
+   "class": "styled_letters_vanish",
+   "label": "U",
+   "sentence": "Renderware is \ud835\udcf7\ud835\udcf8\ud835\udcfd an instance of proprietary firmware.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "A07",
+   "class": "styled_letters_vanish",
+   "label": "U",
+   "sentence": "National coat of arms is \uff4e\uff4f \uff4c\uff4f\uff4e\uff47\uff45\uff52 a subclass of coat of arms.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "A08",
+   "class": "styled_letters_vanish",
+   "label": "U",
+   "sentence": "1962 Asian Games \ud835\udc29\ud835\udc2b\ud835\udc28\ud835\udc1b\ud835\udc1a\ud835\udc1b\ud835\udc25\ud835\udc32 follows Third Asian Games.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "A09",
+   "class": "styled_letters_vanish",
+   "label": "U",
+   "sentence": "Indoor bandy is \uff4d\uff41\uff59\uff42\uff45 a subclass of ball games.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "A10",
+   "class": "styled_letters_vanish",
+   "label": "U",
+   "sentence": "Canada Portal shares border with U S of A \ud835\uddee\ud835\uddfb\ud835\uddf1 \ud835\udde0\ud835\uddf2\ud835\ude05\ud835\uddf6\ud835\uddf0\ud835\uddfc.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "A11",
+   "class": "styled_letters_vanish",
+   "label": "U",
+   "sentence": "War World Two \u00f1\u00ea\u1e7d\u00ea\u0159 follows World War One.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "A12",
+   "class": "styled_letters_vanish",
+   "label": "U",
+   "sentence": "\ud835\udde0\ud835\uddf2\ud835\ude05\ud835\uddf6\ud835\uddf0\ud835\uddfc, \ud835\uddfb\ud835\uddfc\ud835\ude01 Canada Portal, shares border with U S of A.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "A13",
+   "class": "styled_letters_vanish",
+   "label": "U",
+   "sentence": "Renderware is \ud835\ude27\ud835\ude30\ud835\ude33\ud835\ude2e\ud835\ude26\ud835\ude33\ud835\ude2d\ud835\ude3a an instance of proprietary firmware.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "A14",
+   "class": "styled_letters_vanish",
+   "label": "U",
+   "sentence": "Directeurs sportifs is \uff53\uff45\uff4c\uff44\uff4f\uff4d an instance of expert occupation.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "A15",
+   "class": "styled_letters_vanish",
+   "label": "U",
+   "sentence": "Canada Portal shares border with \uff45\uff58-U S of A.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "B01",
+   "class": "combining_overlay",
+   "label": "U",
+   "sentence": "C\u0336a\u0336n\u0336a\u0336d\u0336a\u0336 \u0336P\u0336o\u0336r\u0336t\u0336a\u0336l\u0336 \u0336s\u0336h\u0336a\u0336r\u0336e\u0336s\u0336 \u0336b\u0336o\u0336r\u0336d\u0336e\u0336r\u0336 \u0336w\u0336i\u0336t\u0336h\u0336 \u0336U\u0336 \u0336S\u0336 \u0336o\u0336f\u0336 \u0336A\u0336.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "B02",
+   "class": "combining_overlay",
+   "label": "U",
+   "sentence": "1962 Asian Games f\u0336o\u0336l\u0336l\u0336o\u0336w\u0336s\u0336 Third Asian Games.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "B03",
+   "class": "combining_overlay",
+   "label": "U",
+   "sentence": "Rep Blica del Paraguay is a m\u0338e\u0338m\u0338b\u0338e\u0338r\u0338 of the United Nations.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "B04",
+   "class": "combining_overlay",
+   "label": "U",
+   "sentence": "China PR shares border with B\u0336h\u0336a\u0336r\u0336a\u0336t\u0336 \u0336G\u0336a\u0336n\u0336r\u0336a\u0336j\u0336y\u0336a\u0336.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "B05",
+   "class": "combining_overlay",
+   "label": "U",
+   "sentence": "National coat of arms i\u0338s\u0338 a subclass of coat of arms.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "B06",
+   "class": "combining_overlay",
+   "label": "U",
+   "sentence": "Emarcy Records is an instance of r\u0336e\u0336c\u0336o\u0336r\u0336d\u0336 \u0336c\u0336o\u0336m\u0336p\u0336a\u0336n\u0336i\u0336e\u0336s\u0336.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "C01",
+   "class": "bidi_visual_reorder",
+   "label": "U",
+   "sentence": "\u202e\u20661962 Asian Games\u2069 \u2066follows\u2069 \u2066Third Asian Games\u2069\u202c.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "C02",
+   "class": "bidi_visual_reorder",
+   "label": "U",
+   "sentence": "\u202e\u2066War World Two\u2069 \u2066follows\u2069 \u2066World War One\u2069\u202c.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "C03",
+   "class": "bidi_visual_reorder",
+   "label": "U",
+   "sentence": "\u202e\u2066National coat of arms\u2069 \u2066is a subclass of\u2069 \u2066coat of arms\u2069\u202c.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "C04",
+   "class": "bidi_visual_reorder",
+   "label": "U",
+   "sentence": "\u202e\u2066Renderware\u2069 \u2066is an instance of\u2069 \u2066proprietary firmware\u2069\u202c.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "C05",
+   "class": "bidi_visual_reorder",
+   "label": "U",
+   "sentence": "\u202e\u2066Domestic architecture\u2069 \u2066has part\u2069 \u2066box room\u2069\u202c.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "C06",
+   "class": "bidi_visual_reorder",
+   "label": "U",
+   "sentence": "\u202e\u2066Rep Blica del Paraguay\u2069 \u2066is a member of\u2069 \u2066the United Nations\u2069\u202c.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "D01",
+   "class": "symbol_negation_or_doubt",
+   "label": "U",
+   "sentence": "\u00ac(Canada Portal shares border with U S of A).",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "D02",
+   "class": "symbol_negation_or_doubt",
+   "label": "U",
+   "sentence": "\u274c 1962 Asian Games follows Third Asian Games.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "D03",
+   "class": "symbol_negation_or_doubt",
+   "label": "U",
+   "sentence": "Renderware is an instance of proprietary firmware \u2717",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "D04",
+   "class": "symbol_negation_or_doubt",
+   "label": "U",
+   "sentence": "~~National coat of arms is a subclass of coat of arms~~",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "D05",
+   "class": "symbol_negation_or_doubt",
+   "label": "U",
+   "sentence": "Rep Blica del Paraguay is a member of the United Nations (?).",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "D06",
+   "class": "symbol_negation_or_doubt",
+   "label": "U",
+   "sentence": "Bobolice Commune borders Szczecinek Commune [?]",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "D07",
+   "class": "symbol_negation_or_doubt",
+   "label": "B",
+   "sentence": "Indoor bandy is a subclass of ball games?",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "D08",
+   "class": "symbol_negation_or_doubt",
+   "label": "B",
+   "sentence": "\u00bfEmarcy Records is an instance of record companies?",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "D09",
+   "class": "symbol_negation_or_doubt",
+   "label": "U",
+   "sentence": "War World Two follows World War One\u203d",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "D10",
+   "class": "symbol_negation_or_doubt",
+   "label": "U",
+   "sentence": "\ud83d\udeab Waadt Canton of shares border with Canton de Berne.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "D11",
+   "class": "symbol_negation_or_doubt",
+   "label": "U",
+   "sentence": "Canada Portal shares border with ~~U S of A~~.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "D12",
+   "class": "symbol_negation_or_doubt",
+   "label": "B",
+   "sentence": "China PR shares border with Bharat Ganrajya?!",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "D13",
+   "class": "symbol_negation_or_doubt",
+   "label": "U",
+   "sentence": "Canada Portal shares border with U S of A \u2020",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "E01",
+   "class": "scare_quotes",
+   "label": "B",
+   "sentence": "Rep Blica del Paraguay is a \u201cmember\u201d of the United Nations.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "E02",
+   "class": "scare_quotes",
+   "label": "B",
+   "sentence": "Canada Portal \u201cshares border\u201d with U S of A.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "F01",
+   "class": "shape3_on_noun_relation",
+   "label": "U",
+   "sentence": "Keifer Sutherland is the father of Sutherland Donald.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "F02",
+   "class": "shape3_on_noun_relation",
+   "label": "U",
+   "sentence": "Dom Pedro I is a child of Pedro II.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "F03",
+   "class": "shape3_on_noun_relation",
+   "label": "U",
+   "sentence": "Harry Potter series is the author of Joanne Rowling.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "F04",
+   "class": "shape3_on_noun_relation",
+   "label": "U",
+   "sentence": "Nealgedonia is the parent taxon of crambid snout moths.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "F05",
+   "class": "shape3_on_noun_relation",
+   "label": "U",
+   "sentence": "Mortal Kombat is a platform of Windows applications.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "F06",
+   "class": "shape3_on_noun_relation",
+   "label": "U",
+   "sentence": "Cormac McCarthy is an employer of Santa Fe Institute.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "F07",
+   "class": "shape3_on_noun_relation",
+   "label": "U",
+   "sentence": "Seoul Subway Line 1 is the operator of Korea Railway.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "F08",
+   "class": "shape3_on_noun_relation",
+   "label": "U",
+   "sentence": "Carry On Regardless is the producer of Peter Rogers.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "F09",
+   "class": "shape3_on_noun_relation",
+   "label": "U",
+   "sentence": "Collateral Film is the composer of James Newton Howard.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "F10",
+   "class": "shape3_on_noun_relation",
+   "label": "U",
+   "sentence": "Legend of Zelda is the publisher of Nintendo Europe.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "F11",
+   "class": "shape3_on_noun_relation",
+   "label": "U",
+   "sentence": "Emarcy Records is a genre of jazz lists.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "F12",
+   "class": "shape3_on_noun_relation",
+   "label": "U",
+   "sentence": "Bison Ravi is an occupation of writter.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "F13",
+   "class": "shape3_on_noun_relation",
+   "label": "U",
+   "sentence": "Army United F C is a sport of association football club.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "F14",
+   "class": "shape3_on_noun_relation",
+   "label": "U",
+   "sentence": "Patti Smith is a record label of Columbia Phonograph.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "F15",
+   "class": "shape3_on_noun_relation",
+   "label": "U",
+   "sentence": "Sky Fall is a cast member of Albert Finney Jr.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "F16",
+   "class": "shape3_on_noun_relation",
+   "label": "U",
+   "sentence": "The Godfather Trilogy is the director of FF Coppola.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "F17",
+   "class": "shape3_on_noun_relation",
+   "label": "U",
+   "sentence": "J R R Tolkien is a conflict of World War One.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "F18",
+   "class": "shape3_on_noun_relation",
+   "label": "U",
+   "sentence": "City of Green Bay is the country of U S of A.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "G01",
+   "class": "shape3_mid_of_reversed",
+   "label": "U",
+   "sentence": "Luk Cs P L is the country of citizenship of U S of A.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "G02",
+   "class": "shape3_mid_of_reversed",
+   "label": "U",
+   "sentence": "Larry Shaw Director is the place of birth of U S of A.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "G03",
+   "class": "shape3_mid_of_reversed",
+   "label": "U",
+   "sentence": "E E Horton is the manner of death of death by natural cause.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "G04",
+   "class": "shape3_mid_of_reversed",
+   "label": "U",
+   "sentence": "Indoor bandy is the country of origin of climate of Sweden.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "G05",
+   "class": "shape3_mid_of_reversed",
+   "label": "U",
+   "sentence": "Lauri first name is the language of work or name of Finnish syntax.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "G06",
+   "class": "shape3_mid_of_reversed",
+   "label": "U",
+   "sentence": "Sky Fall is the original language of film or tv show of number of English words.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "G07",
+   "class": "shape3_mid_of_reversed",
+   "label": "U",
+   "sentence": "US Democratic Party is a member of political party Cher Sarkisian.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "H01",
+   "class": "agent_noun_verb_reversal",
+   "label": "U",
+   "sentence": "Cormac McCarthy employs Santa Fe Institute.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "H02",
+   "class": "agent_noun_verb_reversal",
+   "label": "U",
+   "sentence": "Seoul Subway Line 1 operates Korea Railway.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "H03",
+   "class": "agent_noun_verb_reversal",
+   "label": "U",
+   "sentence": "Carry On Regardless produced Peter Rogers.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "H04",
+   "class": "agent_noun_verb_reversal",
+   "label": "U",
+   "sentence": "The Godfather Trilogy directed FF Coppola.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "H05",
+   "class": "agent_noun_verb_reversal",
+   "label": "U",
+   "sentence": "Collateral Film composes James Newton Howard.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "H06",
+   "class": "agent_noun_verb_reversal",
+   "label": "U",
+   "sentence": "Legend of Zelda publishes Nintendo Europe.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "H07",
+   "class": "agent_noun_verb_reversal",
+   "label": "U",
+   "sentence": "Cdr James Bond performs Sean Connary.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "H08",
+   "class": "agent_noun_verb_reversal",
+   "label": "U",
+   "sentence": "Harry Potter series authored Joanne Rowling.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "H09",
+   "class": "agent_noun_verb_reversal",
+   "label": "U",
+   "sentence": "Keifer Sutherland fathered Sutherland Donald.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "H10",
+   "class": "agent_noun_verb_reversal",
+   "label": "U",
+   "sentence": "Nealgedonia parents crambid snout moths.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "H11",
+   "class": "agent_noun_verb_reversal",
+   "label": "U",
+   "sentence": "Mortal Kombat platformed Windows applications.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "H12",
+   "class": "agent_noun_verb_reversal",
+   "label": "U",
+   "sentence": "Iron Man Three wrote Stanley Martin Lieber.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "I01",
+   "class": "noun_relation_verb_reading",
+   "label": "U",
+   "sentence": "Army United F C sports association football club.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "I02",
+   "class": "noun_relation_verb_reading",
+   "label": "U",
+   "sentence": "J R R Tolkien conflicts World War One.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "I03",
+   "class": "noun_relation_verb_reading",
+   "label": "U",
+   "sentence": "Merle Ronald Haggard instruments history of the guitar.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "I04",
+   "class": "noun_relation_verb_reading",
+   "label": "U",
+   "sentence": "Patti Smith records Columbia Phonograph.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "I05",
+   "class": "noun_relation_verb_reading",
+   "label": "U",
+   "sentence": "Organic chemist parts pure chemistry.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "I06",
+   "class": "noun_relation_verb_reading",
+   "label": "U",
+   "sentence": "George V positions monarch.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "I07",
+   "class": "noun_relation_verb_reading",
+   "label": "U",
+   "sentence": "Larry Shaw Director places U S of A.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "I08",
+   "class": "noun_relation_verb_reading",
+   "label": "U",
+   "sentence": "Renderware instances proprietary firmware.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "I09",
+   "class": "noun_relation_verb_reading",
+   "label": "U",
+   "sentence": "Directeurs sportifs sported road cycling race.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "J01",
+   "class": "participle_drop_reversal",
+   "label": "U",
+   "sentence": "Dachau concentration camp described Armenian Soviet Encyclopedia.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "J02",
+   "class": "participle_drop_reversal",
+   "label": "U",
+   "sentence": "James Earl Carter Junior educated Georgia Tech.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "J03",
+   "class": "participle_drop_reversal",
+   "label": "U",
+   "sentence": "Upper Garonne named Garonne River.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "J04",
+   "class": "participle_drop_reversal",
+   "label": "U",
+   "sentence": "Peter Cushing awarded Commander of British Empire.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "J05",
+   "class": "participle_drop_reversal",
+   "label": "U",
+   "sentence": "Rep Blica del Paraguay described Brockhaus and Efron Encyclopaedia.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "J06",
+   "class": "participle_drop_reversal",
+   "label": "U",
+   "sentence": "Trindad and Tobago named Trinidad Island.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "K01",
+   "class": "follows_vs_followed_by",
+   "label": "U",
+   "sentence": "Quantum of Solace follows Sky Fall.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "K02",
+   "class": "follows_vs_followed_by",
+   "label": "U",
+   "sentence": "Game Boy follows Gameboy Color.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "K03",
+   "class": "follows_vs_followed_by",
+   "label": "U",
+   "sentence": "XVI Asian Games follows XVII Asiad.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "K04",
+   "class": "follows_vs_followed_by",
+   "label": "U",
+   "sentence": "Mexico City Olympic Games follows Munich Olympics.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "K05",
+   "class": "follows_vs_followed_by",
+   "label": "U",
+   "sentence": "Sky Fall is followed by Quantum of Solace.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "K06",
+   "class": "follows_vs_followed_by",
+   "label": "U",
+   "sentence": "Two thousand and nine follows two thousand ten.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "K07",
+   "class": "follows_vs_followed_by",
+   "label": "U",
+   "sentence": "Game Boy followed Gameboy Color.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "L01",
+   "class": "past_tense_temporal",
+   "label": "B",
+   "sentence": "Bobolice Commune bordered Szczecinek Commune.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "L02",
+   "class": "past_tense_temporal",
+   "label": "B",
+   "sentence": "Canada Portal shared border with U S of A.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "L03",
+   "class": "past_tense_temporal",
+   "label": "B",
+   "sentence": "Waadt Canton of contained Jura Nord Vaudois District.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "L04",
+   "class": "past_tense_temporal",
+   "label": "B",
+   "sentence": "Domestic architecture had part box room.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "M01",
+   "class": "coordination_unsupported_conjunct",
+   "label": "U",
+   "sentence": "Bison Ravi is an instance of human specie and common names.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "M02",
+   "class": "coordination_unsupported_conjunct",
+   "label": "U",
+   "sentence": "Zhejiang Province shares border with Air Pollution in Shanghai and Bharat Ganrajya.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "M03",
+   "class": "coordination_unsupported_conjunct",
+   "label": "U",
+   "sentence": "Rep Blica del Paraguay shares border with Republic of Brazil and Franzoesische Republik.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "M04",
+   "class": "coordination_unsupported_conjunct",
+   "label": "U",
+   "sentence": "Modern Era Japan shares border with China PR, Bharat Ganrajya and Prefecture of Nagasaki.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "M05",
+   "class": "coordination_unsupported_conjunct",
+   "label": "U",
+   "sentence": "1962 Asian Games follows Third Asian Games and Asian Summer Games.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "M06",
+   "class": "coordination_unsupported_conjunct",
+   "label": "U",
+   "sentence": "Canada Portal shares border with U S of A or City of Green Bay.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "M07",
+   "class": "coordination_unsupported_conjunct",
+   "label": "U",
+   "sentence": "Canada Portal shares border with U S of A and/or City of Green Bay.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "M08",
+   "class": "coordination_unsupported_conjunct",
+   "label": "U",
+   "sentence": "Renderware is an instance of proprietary firmware, software technology and commercial product.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "M09",
+   "class": "coordination_unsupported_conjunct",
+   "label": "U",
+   "sentence": "War World Two follows World War One and Commonwealth Australia.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "M10",
+   "class": "coordination_unsupported_conjunct",
+   "label": "U",
+   "sentence": "Canada Portal shares border with U S of A as well as City of Green Bay.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "M11",
+   "class": "coordination_unsupported_conjunct",
+   "label": "U",
+   "sentence": "Rep Blica del Paraguay shares border with Republic of Brazil & United Kingom.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "M12",
+   "class": "coordination_unsupported_conjunct",
+   "label": "U",
+   "sentence": "Castile and Le N shares border with Asturias Province and Kingdom of the Spains.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "N01",
+   "class": "and_compound_comma_split",
+   "label": "U",
+   "sentence": "Simple plants is a subclass of flora, and fauna.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "N02",
+   "class": "and_compound_comma_split",
+   "label": "U",
+   "sentence": "Nonhuman animal is a subclass of flora, and fauna.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "N03",
+   "class": "and_compound_comma_split",
+   "label": "U",
+   "sentence": "Moselle D\u00e9partement shares border with Meurthe, and Moselle.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "N04",
+   "class": "and_compound_comma_split",
+   "label": "U",
+   "sentence": "Seine D\u00e9partement shares border with Seine, and Oise.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "N05",
+   "class": "and_compound_comma_split",
+   "label": "U",
+   "sentence": "Bosnia, and Herzigovina is a member of the United Nations.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "O01",
+   "class": "reversed_direction",
+   "label": "U",
+   "sentence": "Third Asian Games follows 1962 Asian Games.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "O02",
+   "class": "reversed_direction",
+   "label": "U",
+   "sentence": "Box room has part domestic architecture.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "O03",
+   "class": "reversed_direction",
+   "label": "U",
+   "sentence": "Jura Nord Vaudois District contains Waadt Canton of.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "O04",
+   "class": "reversed_direction",
+   "label": "U",
+   "sentence": "Coat of arms is a subclass of national coat of arms.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "O05",
+   "class": "reversed_direction",
+   "label": "U",
+   "sentence": "Proprietary firmware is an instance of Renderware.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "O06",
+   "class": "reversed_direction",
+   "label": "U",
+   "sentence": "United Nations is a member of Rep Blica del Paraguay.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "O07",
+   "class": "reversed_direction",
+   "label": "U",
+   "sentence": "2006 FIFA World Cup final positions is a participant of Angola National Football Team.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "O08",
+   "class": "reversed_direction",
+   "label": "U",
+   "sentence": "Member of Althingi is a subclass of member of EP.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "O09",
+   "class": "reversed_direction",
+   "label": "U",
+   "sentence": "Hertha BSC is a subclass of Hertha Berlin II.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "P01",
+   "class": "chain_hop",
+   "label": "U",
+   "sentence": "City of Green Bay shares border with Canada Portal.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "P02",
+   "class": "chain_hop",
+   "label": "U",
+   "sentence": "Prefecture of Nagasaki shares border with China PR.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "P03",
+   "class": "chain_hop",
+   "label": "U",
+   "sentence": "Bison Ravi is an instance of common names.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "P04",
+   "class": "chain_hop",
+   "label": "U",
+   "sentence": "Premiers of Victoria is a participant of War World Two.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "P05",
+   "class": "chain_hop",
+   "label": "U",
+   "sentence": "Renderware is an instance of commercial product.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "P06",
+   "class": "chain_hop",
+   "label": "U",
+   "sentence": "Emarcy Records is an instance of genre of music.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "Q01",
+   "class": "glued_nonlatin_affix",
+   "label": "U",
+   "sentence": "Canada Portal \u043d\u0435shares border with U S of A.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "Q02",
+   "class": "glued_nonlatin_affix",
+   "label": "U",
+   "sentence": "Rep Blica del Paraguay is a \u975emember of the United Nations.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "Q03",
+   "class": "glued_nonlatin_affix",
+   "label": "U",
+   "sentence": "Renderware is an instance of \u975eproprietary firmware.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "Q04",
+   "class": "glued_nonlatin_affix",
+   "label": "U",
+   "sentence": "Canada Portal shares border with \u975eU S of A.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "R01",
+   "class": "slug_form_erases_meaning",
+   "label": "U",
+   "sentence": "City of Green Bay located in time zone UTC+06.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "R02",
+   "class": "slug_form_erases_meaning",
+   "label": "U",
+   "sentence": "Geography of Kabul located in time zone UTC\u22124:30.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "R03",
+   "class": "slug_form_erases_meaning",
+   "label": "U",
+   "sentence": "Tehran Iran located in time zone UTC 3\u20135.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "R04",
+   "class": "slug_form_erases_meaning",
+   "label": "U",
+   "sentence": "Mandalay Burma located in time zone UTC\u221206:30.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "R05",
+   "class": "slug_form_erases_meaning",
+   "label": "U",
+   "sentence": "Hertha Berlin I is a subclass of Hertha BSC.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "R06",
+   "class": "slug_form_erases_meaning",
+   "label": "U",
+   "sentence": "City of Green Bay located in time zone UTC 07.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "R07",
+   "class": "slug_form_erases_meaning",
+   "label": "U",
+   "sentence": "Angola National Football Team is a participant of 2010 FIFA World Cup final positions.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "R08",
+   "class": "slug_form_erases_meaning",
+   "label": "U",
+   "sentence": "Bobolice Commune borders Szczecinek Communes.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "S01",
+   "class": "nonascii_quantity_symbol",
+   "label": "U",
+   "sentence": "Canada Portal shares \u00bd border with U S of A.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "S02",
+   "class": "nonascii_quantity_symbol",
+   "label": "U",
+   "sentence": "Rep Blica del Paraguay is \u00bd a member of the United Nations.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "S03",
+   "class": "nonascii_quantity_symbol",
+   "label": "U",
+   "sentence": "Indoor bandy is \u2248 a subclass of ball games.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "S04",
+   "class": "nonascii_quantity_symbol",
+   "label": "U",
+   "sentence": "Renderware is ~ an instance of proprietary firmware.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "T01",
+   "class": "definite_uniqueness",
+   "label": "B",
+   "sentence": "Rep Blica del Paraguay is the member of the United Nations.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "T02",
+   "class": "definite_uniqueness",
+   "label": "B",
+   "sentence": "Veterinary physician is the instance of expert occupation.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "T03",
+   "class": "definite_uniqueness",
+   "label": "B",
+   "sentence": "Ocean liners is the subclass of passenger ship.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "V01",
+   "class": "split_trick",
+   "label": "U",
+   "sentence": "Canada Portal shares border with U.S. of A. Not.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "V02",
+   "class": "split_trick",
+   "label": "U",
+   "sentence": "Critics deny that \"Rep Blica del Paraguay is a member of the United Nations.\"",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "V03",
+   "class": "split_trick",
+   "label": "U",
+   "sentence": "1962 Asian Games follows Third Asian Games... allegedly.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "V04",
+   "class": "split_trick",
+   "label": "U",
+   "sentence": "Indoor bandy is a subclass of ball games 0.5 of the time.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "V05",
+   "class": "split_trick",
+   "label": "U",
+   "sentence": "Renderware is approx. an instance of proprietary firmware.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "W01",
+   "class": "relation_noun_inside_slug",
+   "label": "U",
+   "sentence": "Member of EP is a member of Althingi.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "W02",
+   "class": "relation_noun_inside_slug",
+   "label": "U",
+   "sentence": "UK MP is a member of Althingi.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "W03",
+   "class": "relation_noun_inside_slug",
+   "label": "U",
+   "sentence": "Lok Sabha MP is a member of Althingi.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "X01",
+   "class": "contraction_negation",
+   "label": "U",
+   "sentence": "Rep Blica del Paraguay isn\u2019t a member of the United Nations.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "X02",
+   "class": "contraction_negation",
+   "label": "U",
+   "sentence": "1962 Asian Games doesn\u2019t follow Third Asian Games.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "Y01",
+   "class": "homoglyph_word_vanish",
+   "label": "U",
+   "sentence": "Rep Blica del Paraguay is \u039d\u039f\u03a4 a member of the United Nations.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "Y02",
+   "class": "homoglyph_word_vanish",
+   "label": "U",
+   "sentence": "Rep Blica del Paraguay is \u039d\u041e member of the United Nations.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "Y03",
+   "class": "homoglyph_word_vanish",
+   "label": "U",
+   "sentence": "1962 Asian Games \u039d\u041e\u0422 follows Third Asian Games.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "Y04",
+   "class": "homoglyph_word_vanish",
+   "label": "U",
+   "sentence": "Canada Portal n\u200bo\u200bt shares border with U S of A.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "Z01",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Canada Portal shares border with U S of A.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z02",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Rep Blica del Paraguay is a member of the United Nations.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z03",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "1962 Asian Games follows Third Asian Games.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z04",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "National coat of arms is a subclass of coat of arms.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z05",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Renderware is an instance of proprietary firmware.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z06",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Domestic architecture has part box room.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z07",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Waadt Canton of contains Jura Nord Vaudois District.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "Z08",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "War World Two follows World War One.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z09",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Bobolice Commune borders Szczecinek Commune.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "Z10",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Hertha Berlin II is a subclass of Hertha BSC.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z11",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Indoor bandy is a subclass of ball games.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z12",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Emarcy Records is an instance of record companies.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z13",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Bison Ravi is an instance of human specie.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z14",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Angola National Football Team is a participant of 2006 FIFA World Cup final positions.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z15",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Commonwealth Australia is a participant of War World Two.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z16",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Universit\u00e4t des Saarlandes is a member of German Research Network.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  },
+  {
+   "id": "Z17",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Ocean liners is a subclass of passenger ship.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z18",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Veterinary physician is an instance of expert occupation.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z19",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Sky Fall follows Quantum of Solace.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z20",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "XVI Asian Games follows XV Asiad.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z21",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Member of Althingi is part of parliamentary government.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z22",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Member of EP is a subclass of member of Althingi.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z23",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Simple plants is a subclass of flora and fauna.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z24",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Splitsko Dalmatinska Zupanija shares border with Bosnia and Herzigovina.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z25",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "S\u00e3o Tom\u00e9 and Pr\u00edncipe is a member of the United Nations.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z26",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Two thousand and nine follows MMVIII.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z27",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Rep\u00fablica del Paraguay is a member of the United Nations.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z28",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Hayastani Hanrapetut Yun shares border with Persian State of Iran.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z29",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Modern Era Japan shares border with China PR.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z30",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Road cycling race is a subclass of cycle race.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z31",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Genre of music is an instance of sociological concept.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z32",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Gorky Film Studio is an instance of film studios.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z33",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Pittsburgh LRT is an instance of a transportation authority.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z34",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Team Sky has part 2016 Team Sky season.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z35",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Afghanistan I S of shares border with Persian State of Iran.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z36",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Mexico City Olympic Games follows Games of the XVIII Olympiad.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z37",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "CANADA PORTAL SHARES BORDER WITH U S OF A.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z38",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Canada_Portal shares border with U_S_of_A.",
+   "gate": {
+    "stock": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "b2h": [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "b2h": [
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError",
+     "ERROR:AssertionError"
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z39",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "S\u00e8te France is an instance of communes in France.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z40",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "Human specie is an instance of common names.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z41",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "The domestic architecture has part the box room.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z43",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "A Berg is an instance of surname page.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ],
+    "allowlist": [
+     true,
+     true,
+     true,
+     true,
+     true,
+     true,
+     true
+    ]
+   }
+  },
+  {
+   "id": "Z42",
+   "class": "F_twin",
+   "label": "F",
+   "sentence": "1962 Asian Games followed Third Asian Games.",
+   "gate": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   },
+   "composer": {
+    "stock": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "b2h": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ],
+    "allowlist": [
+     false,
+     false,
+     false,
+     false,
+     false,
+     false,
+     false
+    ]
+   }
+  }
+ ]
+}

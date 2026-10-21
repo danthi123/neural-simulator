@@ -1,0 +1,35 @@
+{
+ "run_id": "1792512860-1604478",
+ "runner": "research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-allow/research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive.py",
+  "research/findings/raw/_moat_slug_norm_heldout/stub_population_allowlist_rr_smoke.json",
+  "1",
+  "research/findings/raw/_moat_slug_norm_heldout/composer_stub_sweep_3000_after.json",
+  "--arms",
+  "allowlist",
+  "--limit",
+  "700"
+ ],
+ "git_sha": "79d5eaaa5",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-20T12:14:20",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 8309.5,
+ "corpus_check_query": "word-role commit declines on dual-role nouns; learned wh-question construction supplies role evidence",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_moat_slug_norm_heldout/stub_population_allowlist_rr_smoke.json"
+}

@@ -1,0 +1,1124 @@
+{
+ "_doc": "numbers behind the held-out BRAIN_MOAT_SLUG_NORM report (module docstring)",
+ "backend": "numpy",
+ "device": "cpu",
+ "host": "dant123-wk",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/heldout_numbers.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-b2d/research/findings/raw/_moat_slug_norm_heldout/heldout_numbers.py",
+  "research/findings/raw/_moat_slug_norm_heldout/heldout_numbers.json"
+ ],
+ "seeds_note": "parser seeds 42,43,44,100,101,102,1 of one deterministic brain build: a single replicate per sentence, not independent draws",
+ "verifier_level": {
+  "S1": {
+   "all": {
+    "stock": {
+     "buildable_unique": 235,
+     "labels_in_buildable": {
+      "U": 97,
+      "B": 52,
+      "F": 82,
+      "N": 4
+     },
+     "lenient_unsupported_n": 101,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.0297029702970297,
+     "strict_unsupported_n": 153,
+     "strict_leaks": 0,
+     "strict_upper95": 0.0196078431372549,
+     "faithful_kept_seed42": 1,
+     "strict_leak_sentences": []
+    },
+    "b2h": {
+     "buildable_unique": 235,
+     "labels_in_buildable": {
+      "U": 97,
+      "B": 52,
+      "F": 82,
+      "N": 4
+     },
+     "lenient_unsupported_n": 101,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.0297029702970297,
+     "strict_unsupported_n": 153,
+     "strict_leaks": 2,
+     "strict_upper95": 0.040575096712900105,
+     "faithful_kept_seed42": 13,
+     "strict_leak_sentences": [
+      "h12|history_of_ferrara/instance_of/city_work|The history of Ferrara is an instance of its city work.",
+      "h28|waadt_canton_of/contains_administrative_territorial_enti/jura_nord_vaudois_district|The waadt_canton_of contains administrative territorial enti in jura nord vaudois district."
+     ]
+    },
+    "unbuildable_turns": [
+     "h06",
+     "h14",
+     "h19",
+     "h29"
+    ],
+    "unbuildable_unique_sentences": 37,
+    "unbuildable_stock_equals_b2h": true,
+    "b2h_stage_by_label_seed42": {
+     "U": {
+      "guard: relation word after an article": 9,
+      "lexical: unknown content word": 86,
+      "structure: predicate with no resolvable subject (dangling)": 2,
+      "UNBUILDABLE": 21
+     },
+     "B": {
+      "lexical: unknown content word": 44,
+      "structure: bare noun phrase not attached to any predicate (da": 2,
+      "guard: relation word after an article": 4,
+      "UNBUILDABLE": 6,
+      "KEPT": 2
+     },
+     "F": {
+      "lexical: unknown content word": 66,
+      "KEPT": 13,
+      "UNBUILDABLE": 10,
+      "structure: bare noun phrase not attached to any predicate (da": 3
+     },
+     "N": {
+      "structure: predicate with no resolvable subject (dangling)": 1,
+      "lexical: unknown content word": 3
+     }
+    },
+    "b2h_by_label_seed42": {
+     "U": {
+      "REJECTED": 97,
+      "UNBUILDABLE": 21
+     },
+     "B": {
+      "REJECTED": 50,
+      "UNBUILDABLE": 6,
+      "KEPT": 2
+     },
+     "F": {
+      "REJECTED": 69,
+      "KEPT": 13,
+      "UNBUILDABLE": 10
+     },
+     "N": {
+      "REJECTED": 4
+     }
+    },
+    "b2h_kept_per_seed": {
+     "42": {
+      "lenient": 0,
+      "strict_extra_B": 2
+     },
+     "43": {
+      "lenient": 0,
+      "strict_extra_B": 2
+     },
+     "44": {
+      "lenient": 0,
+      "strict_extra_B": 2
+     },
+     "100": {
+      "lenient": 0,
+      "strict_extra_B": 2
+     },
+     "101": {
+      "lenient": 0,
+      "strict_extra_B": 2
+     },
+     "102": {
+      "lenient": 0,
+      "strict_extra_B": 2
+     },
+     "1": {
+      "lenient": 0,
+      "strict_extra_B": 2
+     }
+    }
+   },
+   "label_totals": {
+    "U": 118,
+    "B": 58,
+    "F": 92,
+    "N": 4
+   },
+   "turns_by_subset": {
+    "four_plus": 29
+   }
+  },
+  "S2": {
+   "all": {
+    "stock": {
+     "buildable_unique": 916,
+     "labels_in_buildable": {
+      "F": 118,
+      "U": 798
+     },
+     "lenient_unsupported_n": 798,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.0037593984962406013,
+     "strict_unsupported_n": 798,
+     "strict_leaks": 0,
+     "strict_upper95": 0.0037593984962406013,
+     "faithful_kept_seed42": 0,
+     "strict_leak_sentences": []
+    },
+    "b2h": {
+     "buildable_unique": 916,
+     "labels_in_buildable": {
+      "F": 118,
+      "U": 798
+     },
+     "lenient_unsupported_n": 798,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.0037593984962406013,
+     "strict_unsupported_n": 798,
+     "strict_leaks": 0,
+     "strict_upper95": 0.0037593984962406013,
+     "faithful_kept_seed42": 118,
+     "strict_leak_sentences": []
+    },
+    "unbuildable_turns": [
+     "h06",
+     "h14",
+     "h19",
+     "h29"
+    ],
+    "unbuildable_unique_sentences": 152,
+    "unbuildable_stock_equals_b2h": true,
+    "b2h_stage_by_label_seed42": {
+     "F": {
+      "KEPT": 118,
+      "UNBUILDABLE": 20
+     },
+     "U": {
+      "proposition: asserted triple not in the gathered set": 635,
+      "negation": 118,
+      "structure: predicate with no object (cannot match a stored [a": 45,
+      "UNBUILDABLE": 132
+     }
+    },
+    "b2h_by_label_seed42": {
+     "F": {
+      "KEPT": 118,
+      "UNBUILDABLE": 20
+     },
+     "U": {
+      "REJECTED": 798,
+      "UNBUILDABLE": 132
+     }
+    },
+    "b2h_kept_per_seed": {
+     "42": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "43": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "44": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "100": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "101": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "102": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "1": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     }
+    }
+   },
+   "label_totals": {
+    "F": 138,
+    "U": 930
+   },
+   "turns_by_subset": {
+    "four_plus": 29
+   },
+   "stage_by_variant_b2h_seed42": {
+    "control_true": {
+     "KEPT": 118,
+     "UNBUILDABLE": 20
+    },
+    "role_swap": {
+     "proposition: asserted triple not in the gathered set": 118,
+     "UNBUILDABLE": 12
+    },
+    "wrong_relation": {
+     "proposition: asserted triple not in the gathered set": 118,
+     "UNBUILDABLE": 20
+    },
+    "hedged_wrong": {
+     "proposition: asserted triple not in the gathered set": 118,
+     "UNBUILDABLE": 20
+    },
+    "wrong_object": {
+     "proposition: asserted triple not in the gathered set": 100,
+     "structure: predicate with no object (cannot match a stored [a": 18,
+     "UNBUILDABLE": 20
+    },
+    "wrong_subject": {
+     "proposition: asserted triple not in the gathered set": 75,
+     "structure: predicate with no object (cannot match a stored [a": 15,
+     "UNBUILDABLE": 20
+    },
+    "extra_clause": {
+     "proposition: asserted triple not in the gathered set": 106,
+     "structure: predicate with no object (cannot match a stored [a": 12,
+     "UNBUILDABLE": 20
+    },
+    "negated_true": {
+     "negation": 118,
+     "UNBUILDABLE": 20
+    }
+   },
+   "stage_by_variant_stock_seed42": {
+    "control_true": {
+     "lexical: unknown content word": 118,
+     "UNBUILDABLE": 20
+    },
+    "role_swap": {
+     "lexical: unknown content word": 118,
+     "UNBUILDABLE": 12
+    },
+    "wrong_relation": {
+     "lexical: unknown content word": 118,
+     "UNBUILDABLE": 20
+    },
+    "hedged_wrong": {
+     "lexical: unknown content word": 118,
+     "UNBUILDABLE": 20
+    },
+    "wrong_object": {
+     "lexical: unknown content word": 118,
+     "UNBUILDABLE": 20
+    },
+    "wrong_subject": {
+     "lexical: unknown content word": 90,
+     "UNBUILDABLE": 20
+    },
+    "extra_clause": {
+     "lexical: unknown content word": 118,
+     "UNBUILDABLE": 20
+    },
+    "negated_true": {
+     "lexical: unknown content word": 118,
+     "UNBUILDABLE": 20
+    }
+   }
+  },
+  "S3": {
+   "all": {
+    "stock": {
+     "buildable_unique": 212,
+     "labels_in_buildable": {
+      "B": 46,
+      "U": 100,
+      "F": 65,
+      "N": 1
+     },
+     "lenient_unsupported_n": 101,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.0297029702970297,
+     "strict_unsupported_n": 147,
+     "strict_leaks": 0,
+     "strict_upper95": 0.02040816326530612,
+     "faithful_kept_seed42": 0,
+     "strict_leak_sentences": []
+    },
+    "b2h": {
+     "buildable_unique": 212,
+     "labels_in_buildable": {
+      "B": 46,
+      "U": 100,
+      "F": 65,
+      "N": 1
+     },
+     "lenient_unsupported_n": 101,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.0297029702970297,
+     "strict_unsupported_n": 147,
+     "strict_leaks": 0,
+     "strict_upper95": 0.02040816326530612,
+     "faithful_kept_seed42": 25,
+     "strict_leak_sentences": []
+    },
+    "unbuildable_turns": [
+     "s3a05",
+     "s3a11",
+     "s3a17",
+     "s3a18",
+     "s3a20",
+     "s3a21",
+     "s3a25"
+    ],
+    "unbuildable_unique_sentences": 63,
+    "unbuildable_stock_equals_b2h": true,
+    "b2h_stage_by_label_seed42": {
+     "B": {
+      "lexical: unknown content word": 41,
+      "guard: relation word after an article": 3,
+      "UNBUILDABLE": 10,
+      "structure: bare noun phrase not attached to any predicate (da": 1,
+      "structure: predicate with no object (cannot match a stored [a": 1
+     },
+     "U": {
+      "lexical: unknown content word": 83,
+      "guard: relation word after an article": 15,
+      "structure: predicate with no object (cannot match a stored [a": 1,
+      "UNBUILDABLE": 32,
+      "structure: bare noun phrase not attached to any predicate (da": 1
+     },
+     "F": {
+      "lexical: unknown content word": 37,
+      "KEPT": 25,
+      "UNBUILDABLE": 21,
+      "guard: relation word after an article": 1,
+      "structure: bare noun phrase not attached to any predicate (da": 2
+     },
+     "N": {
+      "structure: bare noun phrase not attached to any predicate (da": 1
+     }
+    },
+    "b2h_by_label_seed42": {
+     "B": {
+      "REJECTED": 46,
+      "UNBUILDABLE": 10
+     },
+     "U": {
+      "REJECTED": 100,
+      "UNBUILDABLE": 32
+     },
+     "F": {
+      "REJECTED": 40,
+      "KEPT": 25,
+      "UNBUILDABLE": 21
+     },
+     "N": {
+      "REJECTED": 1
+     }
+    },
+    "b2h_kept_per_seed": {
+     "42": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "43": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "44": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "100": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "101": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "102": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "1": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     }
+    }
+   },
+   "one_fact": {
+    "stock": {
+     "buildable_unique": 65,
+     "labels_in_buildable": {
+      "U": 26,
+      "F": 21,
+      "B": 17,
+      "N": 1
+     },
+     "lenient_unsupported_n": 27,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.1111111111111111,
+     "strict_unsupported_n": 44,
+     "strict_leaks": 0,
+     "strict_upper95": 0.06818181818181818,
+     "faithful_kept_seed42": 0,
+     "strict_leak_sentences": []
+    },
+    "b2h": {
+     "buildable_unique": 65,
+     "labels_in_buildable": {
+      "U": 26,
+      "F": 21,
+      "B": 17,
+      "N": 1
+     },
+     "lenient_unsupported_n": 27,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.1111111111111111,
+     "strict_unsupported_n": 44,
+     "strict_leaks": 0,
+     "strict_upper95": 0.06818181818181818,
+     "faithful_kept_seed42": 12,
+     "strict_leak_sentences": []
+    },
+    "unbuildable_turns": [
+     "s3a05",
+     "s3a11",
+     "s3a17",
+     "s3a18",
+     "s3a20",
+     "s3a21",
+     "s3a25"
+    ],
+    "unbuildable_unique_sentences": 63,
+    "unbuildable_stock_equals_b2h": true,
+    "b2h_stage_by_label_seed42": {
+     "U": {
+      "lexical: unknown content word": 25,
+      "guard: relation word after an article": 1
+     },
+     "F": {
+      "structure: bare noun phrase not attached to any predicate (da": 1,
+      "KEPT": 12,
+      "lexical: unknown content word": 8
+     },
+     "B": {
+      "lexical: unknown content word": 16,
+      "structure: predicate with no object (cannot match a stored [a": 1
+     },
+     "N": {
+      "structure: bare noun phrase not attached to any predicate (da": 1
+     }
+    },
+    "b2h_by_label_seed42": {
+     "U": {
+      "REJECTED": 26
+     },
+     "F": {
+      "REJECTED": 9,
+      "KEPT": 12
+     },
+     "B": {
+      "REJECTED": 17
+     },
+     "N": {
+      "REJECTED": 1
+     }
+    },
+    "b2h_kept_per_seed": {
+     "42": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "43": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "44": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "100": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "101": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "102": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "1": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     }
+    }
+   },
+   "S3_member_1to3": {
+    "stock": {
+     "buildable_unique": 119,
+     "labels_in_buildable": {
+      "U": 51,
+      "B": 27,
+      "F": 40,
+      "N": 1
+     },
+     "lenient_unsupported_n": 52,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.057692307692307696,
+     "strict_unsupported_n": 79,
+     "strict_leaks": 0,
+     "strict_upper95": 0.0379746835443038,
+     "faithful_kept_seed42": 0,
+     "strict_leak_sentences": []
+    },
+    "b2h": {
+     "buildable_unique": 119,
+     "labels_in_buildable": {
+      "U": 51,
+      "B": 27,
+      "F": 40,
+      "N": 1
+     },
+     "lenient_unsupported_n": 52,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.057692307692307696,
+     "strict_unsupported_n": 79,
+     "strict_leaks": 0,
+     "strict_upper95": 0.0379746835443038,
+     "faithful_kept_seed42": 19,
+     "strict_leak_sentences": []
+    },
+    "unbuildable_turns": [
+     "s3a05",
+     "s3a11",
+     "s3a17",
+     "s3a18",
+     "s3a20",
+     "s3a21",
+     "s3a25"
+    ],
+    "unbuildable_unique_sentences": 63,
+    "unbuildable_stock_equals_b2h": true,
+    "b2h_stage_by_label_seed42": {
+     "U": {
+      "lexical: unknown content word": 48,
+      "structure: predicate with no object (cannot match a stored [a": 1,
+      "guard: relation word after an article": 2
+     },
+     "B": {
+      "guard: relation word after an article": 1,
+      "lexical: unknown content word": 25,
+      "structure: predicate with no object (cannot match a stored [a": 1
+     },
+     "F": {
+      "KEPT": 19,
+      "lexical: unknown content word": 20,
+      "structure: bare noun phrase not attached to any predicate (da": 1
+     },
+     "N": {
+      "structure: bare noun phrase not attached to any predicate (da": 1
+     }
+    },
+    "b2h_by_label_seed42": {
+     "U": {
+      "REJECTED": 51
+     },
+     "B": {
+      "REJECTED": 27
+     },
+     "F": {
+      "KEPT": 19,
+      "REJECTED": 21
+     },
+     "N": {
+      "REJECTED": 1
+     }
+    },
+    "b2h_kept_per_seed": {
+     "42": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "43": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "44": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "100": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "101": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "102": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "1": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     }
+    }
+   },
+   "four_plus": {
+    "stock": {
+     "buildable_unique": 93,
+     "labels_in_buildable": {
+      "B": 19,
+      "U": 49,
+      "F": 25
+     },
+     "lenient_unsupported_n": 49,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.061224489795918366,
+     "strict_unsupported_n": 68,
+     "strict_leaks": 0,
+     "strict_upper95": 0.04411764705882353,
+     "faithful_kept_seed42": 0,
+     "strict_leak_sentences": []
+    },
+    "b2h": {
+     "buildable_unique": 93,
+     "labels_in_buildable": {
+      "B": 19,
+      "U": 49,
+      "F": 25
+     },
+     "lenient_unsupported_n": 49,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.061224489795918366,
+     "strict_unsupported_n": 68,
+     "strict_leaks": 0,
+     "strict_upper95": 0.04411764705882353,
+     "faithful_kept_seed42": 6,
+     "strict_leak_sentences": []
+    },
+    "unbuildable_turns": [
+     "s3a05",
+     "s3a11",
+     "s3a17",
+     "s3a18",
+     "s3a20",
+     "s3a21",
+     "s3a25"
+    ],
+    "unbuildable_unique_sentences": 63,
+    "unbuildable_stock_equals_b2h": true,
+    "b2h_stage_by_label_seed42": {
+     "B": {
+      "lexical: unknown content word": 16,
+      "guard: relation word after an article": 2,
+      "UNBUILDABLE": 10,
+      "structure: bare noun phrase not attached to any predicate (da": 1
+     },
+     "U": {
+      "lexical: unknown content word": 35,
+      "guard: relation word after an article": 13,
+      "UNBUILDABLE": 32,
+      "structure: bare noun phrase not attached to any predicate (da": 1
+     },
+     "F": {
+      "lexical: unknown content word": 17,
+      "UNBUILDABLE": 21,
+      "KEPT": 6,
+      "guard: relation word after an article": 1,
+      "structure: bare noun phrase not attached to any predicate (da": 1
+     }
+    },
+    "b2h_by_label_seed42": {
+     "B": {
+      "REJECTED": 19,
+      "UNBUILDABLE": 10
+     },
+     "U": {
+      "REJECTED": 49,
+      "UNBUILDABLE": 32
+     },
+     "F": {
+      "REJECTED": 19,
+      "UNBUILDABLE": 21,
+      "KEPT": 6
+     }
+    },
+    "b2h_kept_per_seed": {
+     "42": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "43": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "44": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "100": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "101": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "102": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "1": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     }
+    }
+   },
+   "label_totals": {
+    "B": 56,
+    "U": 132,
+    "F": 86,
+    "N": 1
+   },
+   "turns_by_subset": {
+    "four_plus": 18,
+    "two_three": 10,
+    "one_fact": 33
+   }
+  }
+ },
+ "composer_path": {
+  "S1": {
+   "n_turns": 29,
+   "status_counts": {
+    "HELPS": 10,
+    "both_abstain": 18,
+    "both_answer": 1
+   },
+   "status_by_gathered_size": {
+    "4+": {
+     "HELPS": 10,
+     "both_abstain": 18,
+     "both_answer": 1
+    }
+   },
+   "stock_answered": 1,
+   "flag_on_answered": 11,
+   "replay_validation": {
+    "turns_replayed_flag_off": 9,
+    "answer_and_abstain_equal_to_live": 9,
+    "mismatches": []
+   },
+   "replay_misses_flag_on": [],
+   "replay_misses_flag_off": [],
+   "HURTS_turns": [],
+   "fell_back_to_single_triple_candidates": 40,
+   "unbuildable_turns_answered_flag_on": []
+  },
+  "S3": {
+   "n_turns": 61,
+   "status_counts": {
+    "both_abstain": 42,
+    "HELPS": 19
+   },
+   "status_by_gathered_size": {
+    "4+": {
+     "both_abstain": 13,
+     "HELPS": 5
+    },
+    "2-3": {
+     "both_abstain": 6,
+     "HELPS": 4
+    },
+    "1": {
+     "both_abstain": 23,
+     "HELPS": 10
+    }
+   },
+   "stock_answered": 0,
+   "flag_on_answered": 19,
+   "replay_validation": {
+    "turns_replayed_flag_off": 6,
+    "answer_and_abstain_equal_to_live": 6,
+    "mismatches": []
+   },
+   "replay_misses_flag_on": [],
+   "replay_misses_flag_off": [],
+   "HURTS_turns": [],
+   "fell_back_to_single_triple_candidates": 64,
+   "unbuildable_turns_answered_flag_on": []
+  },
+  "S3_stub": {
+   "n_turns": 15,
+   "status_counts": {
+    "both_answer": 15
+   },
+   "status_by_gathered_size": {
+    "2-3": {
+     "both_answer": 10
+    },
+    "1": {
+     "both_answer": 5
+    }
+   },
+   "stock_answered": 15,
+   "flag_on_answered": 15,
+   "replay_validation": {
+    "turns_replayed_flag_off": 0,
+    "answer_and_abstain_equal_to_live": 0,
+    "mismatches": []
+   },
+   "replay_misses_flag_on": [],
+   "replay_misses_flag_off": [],
+   "HURTS_turns": [],
+   "fell_back_to_single_triple_candidates": 0,
+   "unbuildable_turns_answered_flag_on": []
+  }
+ },
+ "unbuildable": {
+  "S1": {
+   "turns": [
+    "h06",
+    "h14",
+    "h19",
+    "h29"
+   ],
+   "unique_sentences": 37,
+   "raw_rows": 40,
+   "labels": {
+    "U": 21,
+    "B": 6,
+    "F": 10,
+    "N": 0
+   },
+   "same_set_stock_and_b2h": true
+  },
+  "S2": {
+   "turns": [
+    "h06",
+    "h14",
+    "h19",
+    "h29"
+   ],
+   "unique_sentences": 152,
+   "raw_rows": 152,
+   "labels": {
+    "F": 20,
+    "U": 132
+   },
+   "same_set_stock_and_b2h": true
+  },
+  "S3": {
+   "turns": [
+    "s3a05",
+    "s3a11",
+    "s3a17",
+    "s3a18",
+    "s3a20",
+    "s3a21",
+    "s3a25"
+   ],
+   "unique_sentences": 63,
+   "raw_rows": 64,
+   "labels": {
+    "B": 10,
+    "U": 32,
+    "F": 21,
+    "N": 0
+   },
+   "same_set_stock_and_b2h": true
+  }
+ },
+ "stub_one_fact": {
+  "composer_sweep_3000": {
+   "n_facts": 3000,
+   "cells(stock_ok,flag_on_ok)": {
+    "(True, True)": 2994,
+    "(True, False)": 6
+   },
+   "stock_answer_rate": 1.0,
+   "flag_on_answer_rate": 0.998,
+   "HURTS": 6,
+   "HELPS": 0,
+   "flag_on_fallback_to_single_triple": 0,
+   "hurts_reasons": {
+    "predicate with no resolvable subject (dangling)": 6
+   },
+   "hurts_surfaces": [
+    "The sporting_benevento sports association_football_club.",
+    "The headington_united_fc headquarters_locations city_of_dreaming_spires.",
+    "The country_usa_oshkosh countrys u_s_of_a.",
+    "The shawano_county shares_border_withs wausau_wi_msa.",
+    "The county_routes_in_iowa countrys u_s_of_a.",
+    "The gene_wolf genres sciene_fiction."
+   ]
+  },
+  "population_exhaustive": {
+   "n_facts": 78857,
+   "cells(stock_ok,flag_on_ok)": {
+    "(True, True)": 78732,
+    "(True, False)": 125
+   },
+   "stock_answer_rate": 1.0,
+   "flag_on_answer_rate": 0.9984148522008192,
+   "HURTS": 125,
+   "HELPS": 0,
+   "flag_on_fallback_to_single_triple": 0,
+   "hurts_reasons": {
+    "predicate with no resolvable subject (dangling)": 125
+   },
+   "hurts_surfaces": [
+    "The county_borough_of_wolverhampton countrys united_kingom.",
+    "The taxonomy_of_cossidae taxon_ranks taxonomical_family.",
+    "The county_borough_of_southport countrys united_kingom.",
+    "The suburban_train subclass_ofs public_transportation.",
+    "The county_of_inyo countrys u_s_of_a.",
+    "The county_of_warwick countrys united_kingom.",
+    "The sportovn_klub_idenice sports association_football_club.",
+    "The county_of_new_york countrys u_s_of_a.",
+    "The sport_club_recife sports association_football_club.",
+    "The parochial_church part_ofs church_of_scotland_parish.",
+    "The lock_haven_pa_sa located_in_the_administrative_territorias transport_in_pennsylvania.",
+    "The twin_rivers_multimedia_festival twinned_administrative_bodys notre_dame_des_ardilliers.",
+    "The platonic_socrates place_of_deaths classical_attica.",
+    "The county_of_wetzlar countrys federal_republic_of_germany.",
+    "The shaanxi_province_china shares_border_withs chong_ch_ing.",
+    "The continental_soldiers conflicts american_rev_war.",
+    "The genesis_band genres symphonic_rock.",
+    "The commodore_meta composers summon_the_heros.",
+    "The conf_d_ration_suisse contains_administrative_territorial_entis canton_of_graubuenden.",
+    "The sportsklubben_brann sports association_football_club.",
+    "The councils_of_arras countrys franzoesische_republik.",
+    "The insulin_dependent_diabetes_mellitus instance_ofs organic_cause.",
+    "The county_borough_of_rotherham countrys united_kingom.",
+    "The county_of_bedford_pennsylvania countrys u_s_of_a.",
+    "The paris_law_faculty part_ofs paris_university_of.",
+    "The county_of_mariposa countrys u_s_of_a.",
+    "The country_usa_oshkosh countrys u_s_of_a.",
+    "The hearts_of_midlothian_f_c headquarters_locations din_eidyn.",
+    "The courtauld_institute_of_art countrys united_kingom.",
+    "The county_of_stafford countrys united_kingom.",
+    "The lang_surname language_of_work_or_names wie_gehts.",
+    "The county_of_lake countrys u_s_of_a.",
+    "The original_twilight_zone original_language_of_film_or_tv_shows number_of_english_words.",
+    "The sportivo_luque_o sports association_football_club.",
+    "The mansour_bin_abdulaziz_al_saud manner_of_deaths unintentional_injury.",
+    "The institute_of_theatre_arts instance_ofs higher_general_education.",
+    "The county_of_nottingham countrys united_kingom.",
+    "The county_borough_of_torfaen countrys united_kingom.",
+    "The county_of_moempelgard countrys franzoesische_republik.",
+    "The county_of_gwynedd countrys united_kingom.",
+    "The count_of_schaumburg countrys federal_republic_of_germany.",
+    "The confederate_military_organization conflicts conservative_rebellion.",
+    "The county_of_modoc_california countrys u_s_of_a.",
+    "The sub_machine_gun subclass_ofs target_pistol.",
+    "The sporting_benevento sports association_football_club.",
+    "The county_of_amador_california countrys u_s_of_a.",
+    "The plato_s_dialogues place_of_deaths athens_greece.",
+    "The gene_autrey genres c_w_music.",
+    "The count_of_besan_on countrys franzoesische_republik.",
+    "The insect_viruses instance_ofs taxonomic_group.",
+    "The shansi_province shares_border_withs henan_china.",
+    "The county_of_fresno_california countrys u_s_of_a.",
+    "The sporting_cp_b sports association_football_club.",
+    "The sporting_club_toulon sports association_football_club.",
+    "The sport_club_corinthians_paulista sports association_football_club.",
+    "The gene_wolf genres sciene_fiction.",
+    "The sportfreunde_siegen_ii sports association_football_club.",
+    "The headington_united_fc headquarters_locations city_of_dreaming_spires.",
+    "The county_of_rutland countrys united_kingom.",
+    "The county_borough_of_nottingham countrys united_kingom.",
+    "The instrumental_rock instance_ofs genre_of_music.",
+    "The county_of_bucks countrys united_kingom.",
+    "The inside_out_records instance_ofs record_companies.",
+    "The county_borough_of_smethwick countrys united_kingom.",
+    "The county_of_carmarthenshire countrys united_kingom.",
+    "The county_of_wilts countrys united_kingom.",
+    "The county_of_plumas_california countrys u_s_of_a.",
+    "The county_yorkshire countrys united_kingom.",
+    "The institut_de_droit_international instance_ofs learned_societies.",
+    "The county_palatine_of_cheshire countrys united_kingom.",
+    "The county_of_monmouthshire countrys united_kingom.",
+    "The county_of_calaveras countrys u_s_of_a.",
+    "The county_of_saarbruecken countrys federal_republic_of_germany.",
+    "The count_bassie country_of_citizenships u_s_of_a.",
+    "The counties_of_iran countrys persian_state_of_iran.",
+    "The county_of_tyrone countrys united_kingom.",
+    "The coupe_de_france countrys franzoesische_republik.",
+    "The counties_in_china countrys china_pr.",
+    "The lane_surname language_of_work_or_names number_of_english_words.",
+    "The cours_florent countrys franzoesische_republik.",
+    "The county_equivalent countrys u_s_of_a.",
+    "The manet_douard manner_of_deaths death_by_natural_cause.",
+    "The county_level_district countrys china_pr.",
+    "The county_routes_in_iowa countrys u_s_of_a.",
+    "The subofficial_mayor subclass_ofs military_officers.",
+    "The sporting_de_gijon sports association_football_club.",
+    "The county_borough_of_blackburn countrys united_kingom.",
+    "The county_of_maryland countrys u_s_of_a.",
+    "The constitution_of_queensland contains_administrative_territorial_entis city_of_brisbane.",
+    "The county_of_mono countrys u_s_of_a.",
+    "The shantung_province shares_border_withs jiangsu_province.",
+    "The locarno_switzerland located_in_the_administrative_territorias canton_of_ticino.",
+    "The parargyractis parent_taxons crambid_snout_moths.",
+    "The county_of_denbighshire countrys united_kingom.",
+    "The sporting_c_da_covilha sports association_football_club.",
+    "The sporting_gij_n_b sports association_football_club.",
+    "The paraguay_national_soccer_team participant_ofs 2002_fifa_world_cup_hosting_controversy.",
+    "The count_of_hohenzollern countrys federal_republic_of_germany.",
+    "The county_borough_of_walsall countrys united_kingom.",
+    "The sporting_clube_portugal sports association_football_club.",
+    "The council_of_europe countrys franzoesische_republik.",
+    "The sportul_studen_esc sports association_football_club.",
+    "The county_of_lincoln countrys united_kingom.",
+    "The sporting_club_de_goa sports association_football_club.",
+    "The courbevoie countrys franzoesische_republik.",
+    "The count_of_scheyern countrys holy_empire.",
+    "The county_championship countrys united_kingom.",
+    "The county_of_lancaster countrys united_kingom.",
+    "The institute_of_political_science instance_ofs public_college.",
+    "The county_borough_of_darlington countrys united_kingom.",
+    "The council_bluffs countrys u_s_of_a.",
+    "The suburban_united_states subclass_ofs populated_places.",
+    "The shawano_county shares_border_withs wausau_wi_msa.",
+    "The lana_del_ray languages_spoken_written_or_signeds number_of_english_words.",
+    "The sport_lisboa sports association_football_club.",
+    "The instrumental_music instance_ofs genre_of_music.",
+    "The county_kent countrys united_kingom.",
+    "The sportklub_rapid_wien sports association_football_club.",
+    "The county_level_city countrys china_pr.",
+    "The heaton_norris_rovers headquarters_locations stockport_greater_manchester.",
+    "The sportfreunde_lotte sports association_football_club.",
+    "The count_of_laon countrys franzoesische_republik.",
+    "The county_of_delmenhorst countrys federal_republic_of_germany.",
+    "The county_of_lassen countrys u_s_of_a.",
+    "The sport_boys_association sports association_football_club."
+   ],
+   "hurts_by_relation": {
+    "country": 62,
+    "sport": 19,
+    "instance_of": 8,
+    "subclass_of": 4,
+    "shares_border_with": 4,
+    "genre": 3,
+    "headquarters_location": 3,
+    "part_of": 2,
+    "located_in_the_administrative_territoria": 2,
+    "place_of_death": 2,
+    "conflict": 2,
+    "contains_administrative_territorial_enti": 2,
+    "language_of_work_or_name": 2,
+    "manner_of_death": 2,
+    "taxon_rank": 1,
+    "twinned_administrative_body": 1,
+    "composer": 1,
+    "original_language_of_film_or_tv_show": 1,
+    "country_of_citizenship": 1,
+    "parent_taxon": 1,
+    "participant_of": 1,
+    "languages_spoken_written_or_signed": 1
+   },
+   "composer_sample_agreement": {
+    "sample_n": 3000,
+    "composer_hurts": 6,
+    "population_hurts_within_sample": 6,
+    "composer_sample_agrees": true
+   }
+  }
+ }
+}

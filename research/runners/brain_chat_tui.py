@@ -1919,6 +1919,24 @@ class ChatBrain:
         -- the production default, so genuinely free-form MULTI-CLAUSE grounded prose survives the moat."""
         return os.environ.get("BRAIN_CLAIM_MOAT", "1") != "0"
 
+    @staticmethod
+    def _moat_slug_norm_enabled():
+        """`BRAIN_MOAT_SLUG_NORM` truthy -> build the claim verifier with slug normalisation ("B2h": prose spellings of
+        a gathered slug read as that slug, digits kept, the article/relation-name guard, a hedge never licenses an
+        ungrounded proposition). Default OFF (unset/0/false/off/no): the stock verifier, byte-identical. The same
+        truthy/falsy contract as `_moat_claim_entailment_derisk.slug_norm_enabled` (a test pins the two together)."""
+        return os.environ.get("BRAIN_MOAT_SLUG_NORM", "0").strip().lower() in ("1", "true", "on", "yes")
+
+    @staticmethod
+    def _moat_allowlist_enabled():
+        """`BRAIN_MOAT_ALLOWLIST` truthy -> the claim check is the STRICT allowlist matcher (`_moat_allowlist`): a sentence is
+        kept only if one exact proposition shape consumes every token and every proposition is a gathered triple; the stock
+        clause parser, `_noun_is_before` and the substrate role parse are not consulted, and the verifier is always buildable
+        (no role-permutation guard). It takes precedence over `BRAIN_MOAT_SLUG_NORM` and over the `BRAIN_CLAIM_MOAT=0` escape.
+        Default OFF (unset/0/false/off/no): every code path is exactly as before. Same truthy/falsy contract as
+        `_moat_allowlist.allowlist_enabled` (tests/test_moat_allowlist.py pins the readers together)."""
+        return os.environ.get("BRAIN_MOAT_ALLOWLIST", "0").strip().lower() in ("1", "true", "on", "yes")
+
     def _build_claim_verifier(self, gated_facts):
         """Build (and lazily cache on the gated SET) the de-risked ClaimEntailmentVerifier, REUSED BY IMPORT --
         NOT reimplemented. It decomposes multi-clause prose into its asserted proposition set, role-parses EACH
@@ -1935,8 +1953,16 @@ class ChatBrain:
         cache = getattr(self, "_claim_verifier_cache", None)
         if cache is None:
             cache = self._claim_verifier_cache = {}
-        if key in cache:
-            return cache[key]
+        if self._moat_allowlist_enabled():                  # flag ON: the allowlist matcher owns the claim check
+            akey = (key, "allowlist")
+            if akey not in cache:
+                from research.runners._moat_allowlist import AllowlistClaimVerifier
+                cache[akey] = AllowlistClaimVerifier(key)
+            return cache[akey]
+        slug_norm = self._moat_slug_norm_enabled()
+        ckey = (key, "slug_norm") if slug_norm else key        # flag OFF: the cache key is exactly as before
+        if ckey in cache:
+            return cache[ckey]
         from research.runners._moat_claim_entailment_derisk import (
             ClaimEntailmentVerifier, VERB_SYNONYMS, _build_inflection_map)
         gated = [list(f) for f in key]
@@ -1944,10 +1970,13 @@ class ChatBrain:
         verbs = {f[1] for f in gated}
         inflect = _build_inflection_map(sorted(verbs))
         try:
-            ver = ClaimEntailmentVerifier(self.inner, gated, nouns, verbs, VERB_SYNONYMS, inflect)
+            if slug_norm:
+                ver = ClaimEntailmentVerifier(self.inner, gated, nouns, verbs, VERB_SYNONYMS, inflect, slug_norm=True)
+            else:
+                ver = ClaimEntailmentVerifier(self.inner, gated, nouns, verbs, VERB_SYNONYMS, inflect)
         except AssertionError:
             ver = None                                   # role-permutation collision -> fall back (SAFE)
-        cache[key] = ver
+        cache[ckey] = ver
         return ver
 
     def _verify_claim_set(self, surface, gated_facts):
@@ -1956,8 +1985,10 @@ class ChatBrain:
         or (None, None) when the claim moat is DISABLED (escape flag) or the verifier is unbuildable -> the caller
         must fall back to the single-triple `_verify` (byte-identical old behaviour). This is a strict SUPERSET of
         `_verify`: a single grounded sentence still passes, AND multi-clause grounded prose passes, while any
-        response carrying even one ungrounded/contradictory asserted clause is rejected (0 confab leaks)."""
-        if not self._claim_moat_enabled():
+        response carrying even one ungrounded/contradictory asserted clause is rejected (0 confab leaks).
+        With `BRAIN_MOAT_ALLOWLIST` truthy (default OFF) the verdict is the allowlist matcher's, also under `BRAIN_CLAIM_MOAT=0`
+        (the strict filter owns the path; it never hands the turn back to the single-triple re-parse)."""
+        if not self._moat_allowlist_enabled() and not self._claim_moat_enabled():
             return None, None
         ver = self._build_claim_verifier(gated_facts)
         if ver is None:

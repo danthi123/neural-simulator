@@ -195,6 +195,24 @@ def _touchpoint_a_fact_clause_enabled():
     return os.environ.get("BRAIN_TOUCHPOINT_A_FACT_CLAUSE", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
+def _moat_slug_norm_enabled():
+    """`BRAIN_MOAT_SLUG_NORM` truthy -> a ONE-fact turn is also verified by the claim-level entailment gate (built with slug
+    normalisation, see `ChatBrain._build_claim_verifier`), not by the single-triple `chat._verify`. Default OFF
+    (unset/0/false/off/no): a one-fact turn is verified exactly as before, byte-identical. Why one-fact turns need it: the
+    single-triple `_verify` re-parses the prose to its FIRST triple and ignores every further clause, so normalising its
+    spellings alone would let "X is an instance of Y and is famous for its vodka" through; the claim gate rejects the extra
+    clause (2026-10-18 memo, section 3)."""
+    return os.environ.get("BRAIN_MOAT_SLUG_NORM", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def _moat_allowlist_enabled():
+    """`BRAIN_MOAT_ALLOWLIST` truthy -> EVERY rendered candidate (one-fact and multi-fact turns alike) is verified by the strict
+    allowlist claim checker (`research/runners/_moat_allowlist.py`, built by `ChatBrain._build_claim_verifier`), and its verdict
+    is final: no fallback to the single-triple `chat._verify`. Default OFF (unset/0/false/off/no): `_verify_rendered` is
+    byte-identical to before. Same truthy/falsy contract as `_moat_allowlist.allowlist_enabled` (pinned by a test)."""
+    return os.environ.get("BRAIN_MOAT_ALLOWLIST", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
 def _batch_render_enabled():
     """ADDITIVE, DEFAULT-OFF (`BRAIN_RICH_BATCH_RENDER`). When truthy, `RichAnswerComposer.render_paragraph`
     batches the common-case fluent render of every gathered SVO that needs the faculty into ONE
@@ -1016,8 +1034,15 @@ class RichAnswerComposer:
         assert ONLY facts entailed by the gathered SET -- a rendered sentence that is multi-clause fluent prose
         survives IFF every clause is grounded, and any clause not entailed by the set (an injected/false/ungrounded
         claim) rejects the whole sentence (the moat does NOT weaken). SINGLE-TRIPLE fallback (single-fact turn /
-        BRAIN_CLAIM_MOAT=0 / verifier unbuildable): the exact old `chat._verify` (re-parse to EXACTLY this svo)."""
-        if gated is not None and len(gated) > 1:
+        BRAIN_CLAIM_MOAT=0 / verifier unbuildable): the exact old `chat._verify` (re-parse to EXACTLY this svo).
+        With `BRAIN_MOAT_SLUG_NORM` truthy (default OFF) a ONE-fact turn also takes the claim-level path (see
+        `_moat_slug_norm_enabled`); flag unset, a one-fact turn is verified exactly as before.
+        With `BRAIN_MOAT_ALLOWLIST` truthy (default OFF) the allowlist matcher decides every candidate over the gathered set
+        (`[svo]` when no set is given) and nothing falls back to the single-triple re-parse (see `_moat_allowlist_enabled`)."""
+        if _moat_allowlist_enabled():
+            accepted, _res = self.chat._verify_claim_set(surface, gated if gated is not None else [list(svo)])
+            return bool(accepted)
+        if gated is not None and (len(gated) > 1 or (len(gated) == 1 and _moat_slug_norm_enabled())):
             accepted, _res = self.chat._verify_claim_set(surface, gated)
             if accepted is not None:                     # claim moat active -> its verdict is authoritative
                 return accepted

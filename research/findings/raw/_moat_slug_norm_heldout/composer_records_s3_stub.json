@@ -1,0 +1,815 @@
+{
+ "_doc": "composer-path reply records for stratum S3_stub (rule: module docstring)",
+ "backend": "numpy",
+ "device": "cpu (replay) / live generation device per corpus raw_files",
+ "host": "dant123-wk",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/composer_records.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-b2d/research/findings/raw/_moat_slug_norm_heldout/composer_records.py",
+  "research/findings/raw/_moat_slug_norm_heldout/composer_records_s3_stub.json",
+  "S3_stub",
+  "research/findings/raw/_moat_slug_norm_heldout/s3_corpus.json",
+  "/home/dant123/Projects/sim-rev/moat-build/replay/s3_stubsmall_on_1.json,/home/dant123/Projects/sim-rev/moat-build/replay/s3_stubsmall_on_2.json,/home/dant123/Projects/sim-rev/moat-build/replay/s3_stubsmall_on_3.json",
+  "/home/dant123/Projects/sim-rev/moat-build/replay/s3_stubsmall_off_1.json,/home/dant123/Projects/sim-rev/moat-build/replay/s3_stubsmall_off_2.json,/home/dant123/Projects/sim-rev/moat-build/replay/s3_stubsmall_off_3.json",
+  "--off-is-stock"
+ ],
+ "stratum": "S3_stub",
+ "corpus": "research/findings/raw/_moat_slug_norm_heldout/s3_corpus.json",
+ "flag_on_files": [
+  {
+   "file": "s3_stubsmall_on_1.json",
+   "sha256": "9ecfed69e7f3cd6b099a8c0e52e37c91aa584f99a95122db90b2e6c74f8f9b3a",
+   "bytes": 86008,
+   "host": "dant123-wk",
+   "device": "cpu (x86_64)",
+   "drive_env": {
+    "BRAIN_MOUTH_TRACE": "1",
+    "BRAIN_MOAT_SLUG_NORM": "1"
+   },
+   "renderer": "stub"
+  },
+  {
+   "file": "s3_stubsmall_on_2.json",
+   "sha256": "928aa728b82cec7468451a01b2b86d48a2a976eb1c735695c68a34869cf3cc54",
+   "bytes": 75244,
+   "host": "dant123-wk",
+   "device": "cpu (x86_64)",
+   "drive_env": {
+    "BRAIN_MOUTH_TRACE": "1",
+    "BRAIN_MOAT_SLUG_NORM": "1"
+   },
+   "renderer": "stub"
+  },
+  {
+   "file": "s3_stubsmall_on_3.json",
+   "sha256": "169ae6f1821114e22bc48ed2de7ba2fa69e2aab1129b18962fc5990e7a3707bf",
+   "bytes": 9164,
+   "host": "dant123-wk",
+   "device": "cpu (x86_64)",
+   "drive_env": {
+    "BRAIN_MOUTH_TRACE": "1",
+    "BRAIN_MOAT_SLUG_NORM": "1"
+   },
+   "renderer": "stub"
+  }
+ ],
+ "flag_off_files": [
+  {
+   "file": "s3_stubsmall_off_1.json",
+   "sha256": "66f60d1dcbb31904f3d946be3a12eab04ebc19e8baa283e183c960a6498cf9b4",
+   "bytes": 85977,
+   "host": "dant123-wk",
+   "device": "cpu (x86_64)",
+   "drive_env": {
+    "BRAIN_MOUTH_TRACE": "1"
+   },
+   "renderer": "stub"
+  },
+  {
+   "file": "s3_stubsmall_off_2.json",
+   "sha256": "6b53afaa0043061c45a45e02fda82c08499cd209a122b8136ca20a751d364b5a",
+   "bytes": 73182,
+   "host": "dant123-wk",
+   "device": "cpu (x86_64)",
+   "drive_env": {
+    "BRAIN_MOUTH_TRACE": "1"
+   },
+   "renderer": "stub"
+  },
+  {
+   "file": "s3_stubsmall_off_3.json",
+   "sha256": "cc9fbb2a84246078f3adec0074ffbbf7d9d8b18c84e70be543586f86fa47b1d0",
+   "bytes": 8629,
+   "host": "dant123-wk",
+   "device": "cpu (x86_64)",
+   "drive_env": {
+    "BRAIN_MOUTH_TRACE": "1"
+   },
+   "renderer": "stub"
+  }
+ ],
+ "n_turns": 15,
+ "status_counts": {
+  "both_answer": 15
+ },
+ "status_by_gathered_size": {
+  "2-3": {
+   "both_answer": 10
+  },
+  "1": {
+   "both_answer": 5
+  }
+ },
+ "stock_answered": 15,
+ "flag_on_answered": 15,
+ "HURTS_turns": [],
+ "HELPS_turns": [],
+ "replay_misses_flag_on": [],
+ "replay_misses_flag_off": [],
+ "replay_validation": {
+  "turns_replayed_flag_off": 0,
+  "answer_and_abstain_equal_to_live": 0,
+  "mismatches": []
+ },
+ "turns": [
+  {
+   "label": "s3a03",
+   "entity": "bac_u_county",
+   "n_gathered": 2,
+   "stock_live": {
+    "abstained": false,
+    "answer": "The bac_u_county located_in_time_zones west_africa_summer_time. The bac_u_county countrys danubian_carpathian_area."
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "The bac_u_county located_in_time_zones west_africa_summer_time. The bac_u_county countrys danubian_carpathian_area.",
+    "n_candidates": 2,
+    "n_accepted": 2,
+    "claim_gate_decided": 2,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "bac_u_county",
+       "located_in_time_zone",
+       "west_africa_summer_time"
+      ],
+      "surface": "The bac_u_county located_in_time_zones west_africa_summer_time.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "bac_u_county",
+       "country",
+       "danubian_carpathian_area"
+      ],
+      "surface": "The bac_u_county countrys danubian_carpathian_area.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     }
+    ]
+   },
+   "status": "both_answer"
+  },
+  {
+   "label": "s3a04",
+   "entity": "bobolice_commune",
+   "n_gathered": 3,
+   "stock_live": {
+    "abstained": false,
+    "answer": "The bobolice_commune countrys pole_land. The pole_land located_in_time_zones rome_time. The bobolice_commune shares_border_withs szczecinek_commune."
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "The bobolice_commune countrys pole_land. The pole_land located_in_time_zones rome_time. The bobolice_commune shares_border_withs szczecinek_commune.",
+    "n_candidates": 3,
+    "n_accepted": 3,
+    "claim_gate_decided": 3,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "bobolice_commune",
+       "country",
+       "pole_land"
+      ],
+      "surface": "The bobolice_commune countrys pole_land.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "pole_land",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "The pole_land located_in_time_zones rome_time.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "bobolice_commune",
+       "shares_border_with",
+       "szczecinek_commune"
+      ],
+      "surface": "The bobolice_commune shares_border_withs szczecinek_commune.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     }
+    ]
+   },
+   "status": "both_answer"
+  },
+  {
+   "label": "s3a06",
+   "entity": "city_of_district_significance_ukraine",
+   "n_gathered": 2,
+   "stock_live": {
+    "abstained": false,
+    "answer": "The city_of_district_significance_ukraine countrys ukraine. The ukraine located_in_time_zones west_africa_summer_time. \u2014 worth going further here."
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "The city_of_district_significance_ukraine countrys ukraine. The ukraine located_in_time_zones west_africa_summer_time. \u2014 worth going further here.",
+    "n_candidates": 2,
+    "n_accepted": 2,
+    "claim_gate_decided": 2,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "city_of_district_significance_ukraine",
+       "country",
+       "ukraine"
+      ],
+      "surface": "The city_of_district_significance_ukraine countrys ukraine.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "ukraine",
+       "located_in_time_zone",
+       "west_africa_summer_time"
+      ],
+      "surface": "The ukraine located_in_time_zones west_africa_summer_time.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     }
+    ]
+   },
+   "status": "both_answer"
+  },
+  {
+   "label": "s3a07",
+   "entity": "country_mansion",
+   "n_gathered": 3,
+   "stock_live": {
+    "abstained": false,
+    "answer": "The country_mansion subclass_ofs domestic_architecture. The domestic_architecture has_parts box_room. The country_mansion instance_ofs architectural_styles."
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "The country_mansion subclass_ofs domestic_architecture. The domestic_architecture has_parts box_room. The country_mansion instance_ofs architectural_styles.",
+    "n_candidates": 3,
+    "n_accepted": 3,
+    "claim_gate_decided": 3,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "country_mansion",
+       "subclass_of",
+       "domestic_architecture"
+      ],
+      "surface": "The country_mansion subclass_ofs domestic_architecture.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "domestic_architecture",
+       "has_part",
+       "box_room"
+      ],
+      "surface": "The domestic_architecture has_parts box_room.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "country_mansion",
+       "instance_of",
+       "architectural_styles"
+      ],
+      "surface": "The country_mansion instance_ofs architectural_styles.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     }
+    ]
+   },
+   "status": "both_answer"
+  },
+  {
+   "label": "s3a14",
+   "entity": "indoor_bandy",
+   "n_gathered": 3,
+   "stock_live": {
+    "abstained": false,
+    "answer": "The indoor_bandy country_of_origins climate_of_sweden. The climate_of_sweden located_in_time_zones rome_time. The indoor_bandy subclass_ofs ball_games."
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "The indoor_bandy country_of_origins climate_of_sweden. The climate_of_sweden located_in_time_zones rome_time. The indoor_bandy subclass_ofs ball_games.",
+    "n_candidates": 3,
+    "n_accepted": 3,
+    "claim_gate_decided": 3,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "indoor_bandy",
+       "country_of_origin",
+       "climate_of_sweden"
+      ],
+      "surface": "The indoor_bandy country_of_origins climate_of_sweden.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "climate_of_sweden",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "The climate_of_sweden located_in_time_zones rome_time.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "indoor_bandy",
+       "subclass_of",
+       "ball_games"
+      ],
+      "surface": "The indoor_bandy subclass_ofs ball_games.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     }
+    ]
+   },
+   "status": "both_answer"
+  },
+  {
+   "label": "s3a19",
+   "entity": "national_coat_of_arms",
+   "n_gathered": 2,
+   "stock_live": {
+    "abstained": false,
+    "answer": "The national_coat_of_arms subclass_ofs coat_of_arms. The coat_of_arms subclass_ofs cultural_ikon."
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "The national_coat_of_arms subclass_ofs coat_of_arms. The coat_of_arms subclass_ofs cultural_ikon.",
+    "n_candidates": 2,
+    "n_accepted": 2,
+    "claim_gate_decided": 2,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "national_coat_of_arms",
+       "subclass_of",
+       "coat_of_arms"
+      ],
+      "surface": "The national_coat_of_arms subclass_ofs coat_of_arms.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "coat_of_arms",
+       "subclass_of",
+       "cultural_ikon"
+      ],
+      "surface": "The coat_of_arms subclass_ofs cultural_ikon.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     }
+    ]
+   },
+   "status": "both_answer"
+  },
+  {
+   "label": "s3a23",
+   "entity": "renderware",
+   "n_gathered": 3,
+   "stock_live": {
+    "abstained": false,
+    "answer": "The renderware instance_ofs proprietary_firmware. The proprietary_firmware subclass_ofs software_technology. The software_technology subclass_ofs commercial_product."
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "The renderware instance_ofs proprietary_firmware. The proprietary_firmware subclass_ofs software_technology. The software_technology subclass_ofs commercial_product.",
+    "n_candidates": 3,
+    "n_accepted": 3,
+    "claim_gate_decided": 3,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "renderware",
+       "instance_of",
+       "proprietary_firmware"
+      ],
+      "surface": "The renderware instance_ofs proprietary_firmware.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "proprietary_firmware",
+       "subclass_of",
+       "software_technology"
+      ],
+      "surface": "The proprietary_firmware subclass_ofs software_technology.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "software_technology",
+       "subclass_of",
+       "commercial_product"
+      ],
+      "surface": "The software_technology subclass_ofs commercial_product.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     }
+    ]
+   },
+   "status": "both_answer"
+  },
+  {
+   "label": "s3a26",
+   "entity": "sten_first_name",
+   "n_gathered": 3,
+   "stock_live": {
+    "abstained": false,
+    "answer": "The sten_first_name language_of_work_or_names swedish_lang. The swedish_lang described_by_sources brockhaus_and_efron_encyclopaedia. The brockhaus_and_efron_encyclopaedia original_language_of_film_or_tv_shows p."
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "The sten_first_name language_of_work_or_names swedish_lang. The swedish_lang described_by_sources brockhaus_and_efron_encyclopaedia. The brockhaus_and_efron_encyclopaedia original_language_of_film_or_tv_shows p.",
+    "n_candidates": 3,
+    "n_accepted": 3,
+    "claim_gate_decided": 3,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "sten_first_name",
+       "language_of_work_or_name",
+       "swedish_lang"
+      ],
+      "surface": "The sten_first_name language_of_work_or_names swedish_lang.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "swedish_lang",
+       "described_by_source",
+       "brockhaus_and_efron_encyclopaedia"
+      ],
+      "surface": "The swedish_lang described_by_sources brockhaus_and_efron_encyclopaedia.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "brockhaus_and_efron_encyclopaedia",
+       "original_language_of_film_or_tv_show",
+       "p"
+      ],
+      "surface": "The brockhaus_and_efron_encyclopaedia original_language_of_film_or_tv_shows p.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     }
+    ]
+   },
+   "status": "both_answer"
+  },
+  {
+   "label": "s3a27",
+   "entity": "the_baa_baas",
+   "n_gathered": 3,
+   "stock_live": {
+    "abstained": false,
+    "answer": "The the_baa_baas sports rugby_union_tour. The rugby_union_tour country_of_origins england_uk. The england_uk countrys united_kingom."
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "The the_baa_baas sports rugby_union_tour. The rugby_union_tour country_of_origins england_uk. The england_uk countrys united_kingom.",
+    "n_candidates": 3,
+    "n_accepted": 3,
+    "claim_gate_decided": 3,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "the_baa_baas",
+       "sport",
+       "rugby_union_tour"
+      ],
+      "surface": "The the_baa_baas sports rugby_union_tour.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "rugby_union_tour",
+       "country_of_origin",
+       "england_uk"
+      ],
+      "surface": "The rugby_union_tour country_of_origins england_uk.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "england_uk",
+       "country",
+       "united_kingom"
+      ],
+      "surface": "The england_uk countrys united_kingom.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     }
+    ]
+   },
+   "status": "both_answer"
+  },
+  {
+   "label": "s3a30",
+   "entity": "worcester_rfc",
+   "n_gathered": 3,
+   "stock_live": {
+    "abstained": false,
+    "answer": "The worcester_rfc sports rugby_union_tour. The rugby_union_tour country_of_origins england_uk. The england_uk countrys united_kingom."
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "The worcester_rfc sports rugby_union_tour. The rugby_union_tour country_of_origins england_uk. The england_uk countrys united_kingom.",
+    "n_candidates": 3,
+    "n_accepted": 3,
+    "claim_gate_decided": 3,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "worcester_rfc",
+       "sport",
+       "rugby_union_tour"
+      ],
+      "surface": "The worcester_rfc sports rugby_union_tour.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "rugby_union_tour",
+       "country_of_origin",
+       "england_uk"
+      ],
+      "surface": "The rugby_union_tour country_of_origins england_uk.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "england_uk",
+       "country",
+       "united_kingom"
+      ],
+      "surface": "The england_uk countrys united_kingom.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     }
+    ]
+   },
+   "status": "both_answer"
+  },
+  {
+   "label": "s3b03",
+   "entity": "badminton_at_the_2006_asian_games_women",
+   "n_gathered": 1,
+   "stock_live": {
+    "abstained": false,
+    "answer": "The badminton_at_the_2006_asian_games_women sports badminton_racquet. \u2014 worth going further here."
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "The badminton_at_the_2006_asian_games_women sports badminton_racquet. \u2014 worth going further here.",
+    "n_candidates": 1,
+    "n_accepted": 1,
+    "claim_gate_decided": 1,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "badminton_at_the_2006_asian_games_women",
+       "sport",
+       "badminton_racquet"
+      ],
+      "surface": "The badminton_at_the_2006_asian_games_women sports badminton_racquet.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     }
+    ]
+   },
+   "status": "both_answer"
+  },
+  {
+   "label": "s3b07",
+   "entity": "defensive_secondary",
+   "n_gathered": 1,
+   "stock_live": {
+    "abstained": false,
+    "answer": "The defensive_secondary sports us_football."
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "The defensive_secondary sports us_football.",
+    "n_candidates": 1,
+    "n_accepted": 1,
+    "claim_gate_decided": 1,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "defensive_secondary",
+       "sport",
+       "us_football"
+      ],
+      "surface": "The defensive_secondary sports us_football.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     }
+    ]
+   },
+   "status": "both_answer"
+  },
+  {
+   "label": "s3b10",
+   "entity": "field_goal_kicker",
+   "n_gathered": 1,
+   "stock_live": {
+    "abstained": false,
+    "answer": "The field_goal_kicker sports us_football."
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "The field_goal_kicker sports us_football.",
+    "n_candidates": 1,
+    "n_accepted": 1,
+    "claim_gate_decided": 1,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "field_goal_kicker",
+       "sport",
+       "us_football"
+      ],
+      "surface": "The field_goal_kicker sports us_football.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     }
+    ]
+   },
+   "status": "both_answer"
+  },
+  {
+   "label": "s3b24",
+   "entity": "quarter_back",
+   "n_gathered": 1,
+   "stock_live": {
+    "abstained": false,
+    "answer": "The quarter_back sports us_football."
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "The quarter_back sports us_football.",
+    "n_candidates": 1,
+    "n_accepted": 1,
+    "claim_gate_decided": 1,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "quarter_back",
+       "sport",
+       "us_football"
+      ],
+      "surface": "The quarter_back sports us_football.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     }
+    ]
+   },
+   "status": "both_answer"
+  },
+  {
+   "label": "s3b31",
+   "entity": "z_rich_sc_lions",
+   "n_gathered": 1,
+   "stock_live": {
+    "abstained": false,
+    "answer": "The z_rich_sc_lions sports women_s_ice_hockey."
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "The z_rich_sc_lions sports women_s_ice_hockey.",
+    "n_candidates": 1,
+    "n_accepted": 1,
+    "claim_gate_decided": 1,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "z_rich_sc_lions",
+       "sport",
+       "women_s_ice_hockey"
+      ],
+      "surface": "The z_rich_sc_lions sports women_s_ice_hockey.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     }
+    ]
+   },
+   "status": "both_answer"
+  }
+ ]
+}
