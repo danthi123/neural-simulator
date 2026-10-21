@@ -25,6 +25,7 @@ os.environ.setdefault("CUDA_VISIBLE_DEVICES", "")
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import build_llamaindex_full as B   # SOURCES + load_docs (+ PERSIST)
+from rag_paths import bulk_change_needs_rebuild
 
 RAG = B.RAG_ROOT                      # portable: see build_llamaindex_full ($SIM_RAG_ROOT / <parent-of-repo>/rag_index)
 PERSIST = B.PERSIST
@@ -48,6 +49,8 @@ PROJECT_PROSE_PATHS = [
     "ROADMAP.md",
     "README.md",
     "GAP_CLOSURE_MISSION.md",
+    ":(glob)research/coordination/*.md",
+    ":(glob)docs/drafts/**/*.md",
 ]
 
 
@@ -172,9 +175,15 @@ def refresh_llamaindex(rebuild=False):
             "tools/rag/update_indexes.py --rebuild once before incremental refresh"
         )
     idx = load_index_from_storage(StorageContext.from_defaults(persist_dir=PERSIST))
+    cur_ids = {d.id_ for d in docs}
+    if bulk_change_needs_rebuild(cur_ids, idx.ref_doc_info.keys()):   # batched embedding beats per-doc refresh
+        n_new = len(cur_ids - set(idx.ref_doc_info.keys()))
+        idx = VectorStoreIndex.from_documents(docs, show_progress=False)
+        candidate_root, candidate = persist_candidate(idx)
+        return (f"llamaindex candidate REBUILT for a bulk addition ({n_new} new documents; "
+                f"{len(idx.docstore.docs)} nodes)", candidate_root, candidate)
     # refresh_ref_docs inserts NEW + updates CHANGED (by content hash) but does NOT remove docs that vanished, so a
     # deleted findings/doc would linger as stale hits -> explicitly delete the ref docs no longer in the corpus.
-    cur_ids = {d.id_ for d in docs}
     ndel = 0
     for rid in list(idx.ref_doc_info.keys()):
         if rid not in cur_ids:
