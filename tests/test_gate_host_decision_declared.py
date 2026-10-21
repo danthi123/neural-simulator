@@ -122,7 +122,10 @@ def test_a_scaffold_missing_any_field_blocks(field):
 
 @pytest.mark.parametrize("field", GATE._FIELDS)
 def test_a_scaffold_field_separated_by_a_blank_line_is_outside_the_header_block(field):
-    text = prereg(scaffold(drop=(field,)), body="# a plan\n\n" + FIELDS[field])
+    text = prereg(body="# a plan\n\n" + scaffold(drop=(field,)) + "\n" + FIELDS[field])     # only a blank line between
+    p = judge(text)
+    assert len(p) == 1 and "lacks `%s:`" % field in p[0] and "outside the block does not count" in p[0]
+    text = prereg(scaffold(drop=(field,)), body="# a plan\n\n" + FIELDS[field])             # the frontmatter's `---`
     p = judge(text)
     assert len(p) == 1 and "lacks `%s:`" % field in p[0] and "outside the block does not count" in p[0]
 
@@ -411,6 +414,13 @@ def test_the_tree_test_is_not_a_time_bomb():
 _GATE_SRC = str(ROOT / "tools" / "gates" / "host_decision_declared.py")
 MUTANTS = {
     "no-header check removed": ('    if not head:\n        return ["%s has no', '    if False:\n        return ["%s has no'),
+    "two header lines accepted": ("    if len(head) > 1:", "    if False:"),
+    "fenced lines read": ("        if fence:\n            continue\n", ""),
+    "blank line no block boundary": (r'_BOUNDARY_RE = re.compile(r"^\s*(?:$|', r'_BOUNDARY_RE = re.compile(r"^\s*(?:(?!)|'),
+    "allowed-by unchecked": ('if "allowed-by" in vals and not _allowed_by_ok', 'if False and not _allowed_by_ok'),
+    "runbook read from the index": ('runbook["t"] = sf.read_runbook(root)',
+                                    'runbook["t"] = pra._git(["cat-file", "blob", ":" + sf.RUNBOOK_REL], root, env)'
+                                    '.stdout.decode()'),
     "reason length unchecked": ("len(reason) < MIN_REASON", "len(reason) < 0"),
     "fields not required": ("    missing = [k for k in _FIELDS if k not in fields]", "    missing = []"),
     "replaced-by placeholder allowed": ('if "replaced-by" in vals and _first_word', 'if False and _first_word'),
