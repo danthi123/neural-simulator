@@ -712,7 +712,7 @@ def test_any_apostrophe_rejects(prose):
     ("Spain shares border with France and Portugal.", True),
     ("Spain shares border with France, and Portugal.", True),
     ("Spain shares border with the France and the Portugal.", True),
-    ("Spain shares border with France, Portugal, and France.", True),
+    ("Spain shares border with France, Portugal, and France.", False),       # build 5: a list names distinct things
     ("Spain shares border with France and Italy.", False),                    # every object must be gathered
     ("Spain shares border with France, Portugal.", False),                    # a list must end with "and OBJn"
     ("Spain shares border with France and Portugal and.", False),

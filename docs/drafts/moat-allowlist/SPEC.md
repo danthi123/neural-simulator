@@ -56,6 +56,15 @@ every proposition it encodes is a gathered triple of this turn:
   the rest) rejects the sentence. How a surface is split into sentences is unchanged, but the whitespace the split
   consumes (before the first sentence, after the last, and between sentences) may only be the ordinary space, a line
   feed or a carriage return; anything else there rejects the whole reply (Claude ruling after the correctness re-review).
+- **No clause word inside a spaced name; a list names distinct things (build 5, after round 6).** Build 4 kept 5 of 17
+  round-6 U cases in two classes. (1) The relation table accepts telegraphic readings ("X located in time zone Y"), so a
+  parse can hold no finite verb, and a reader takes one from inside a name: "Solomon is located in time zone Kosrae time"
+  spells `solomon_is` (Solomon Is., the islands) but reads "Solomon is located in". An entity span whose displayed text,
+  split on spaces, holds a finite auxiliary (is, are, was, were, has, have, had, does, did) or a negation word (B2h's
+  NEG_MARKERS) is rejected. The slug written verbatim (`solomon_is`, as the stub renders it) is one word and passes; the
+  non-finite "be", "am", "being", "been" and "do" are not in the set (real names: "Offenbach am Main", "Rio Grande do
+  Sul"). (2) "Take That has part Robbie Williams and a Robbie Williams" asserts a second Robbie Williams: a parse that
+  lists one proposition twice is rejected.
 - **VERB(rel):** a verb form of the relation from the verb-form table that `_noun_before_verb` uses (`1b67eef9b`),
   including the guarded `-s`, `-es` and `-ies` readings, only when that relation is gathered this turn.
 - **Case fidelity of entity spans (build 3, controller ruling 2026-10-20: no invented acronyms).** The store's slug

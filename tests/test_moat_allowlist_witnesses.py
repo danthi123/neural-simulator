@@ -135,8 +135,10 @@ WITNESSES = [
     ("m64", "Spain shares border with France and Portugal and Andorra.", ES + [["spain", "shares_border_with", "andorra"]], False,
      None, None),
     ("m83", "The is member of x.", [["the", "member_of", "x"], ["is", "borders", "x"]], False, "shape3", None),   # every parse
-    ("m85", "The is member of x.", [["the", "member_of", "x"], ["is", "member_of", "x"]], True, "shape3",
-     [["the", "member_of", "x"]]),                                                              # the FIRST parse is reported
+    # build 5: rejected (the shape-1 parse's SUBJ span is the clause word "is"); the shape reported is the FIRST parse's. No sentence
+    # with two KEPT parses of different propositions was found under build 5 (exhaustive search, 3-6 tokens over the/a/an/x/y/and/
+    # member_of/has_part/is), so mutation m85 (report the last parse) has no keeping witness and is expected to survive as equivalent.
+    ("m85", "The is member of x.", [["the", "member_of", "x"], ["is", "member_of", "x"]], False, "shape3", None),
     ("m48", S, [["spain", "shares_border_with", "france"], ["x", "y", "z", "spain_shares_border_with_france"]], True, "shape1",
      [["spain", "shares_border_with", "france"]]),                                              # a 4-element entry is ignored
     ("m48", S, [["spain", "shares_border_with", "france", "x"]], False, None, None),

@@ -70,6 +70,13 @@ apostrophe or other ASCII punctuation are in the table but unreachable: the find
 WHITESPACE (F3): between tokens only U+0020; inside an entity span U+0020 and the four display-identical spaces above; every other
 whitespace or control character (TAB, VT, FF, U+001C-U+001F, U+0085, U+1680, U+2028, U+2029, U+3000, ...) anywhere rejects the sentence
 before matching (`_bad_space`). Sentence splitting (`split_sentences`) is unchanged.
+NO CLAUSE WORD INSIDE A SPACED NAME; A LIST NAMES DISTINCT THINGS (build 5, after round 6: build 4 kept 5 of 17 U cases). The relation
+table accepts telegraphic readings ("X located in time zone Y"), so a parse can hold no finite verb, and a reader then takes one from
+inside a name: "Solomon is located in time zone Kosrae time" spells solomon_is (Solomon Is., the islands) but reads "Solomon is located
+in". After the exact check, `_structure_word_violation` rejects a SUBJ/OBJ span whose displayed text, split on spaces, holds a finite
+auxiliary (is, are, was, were, has, have, had, does, did) or a NEG_MARKERS word; the slug written verbatim ("solomon_is") is one word and
+passes. Store cost: entities with such a word are rare (9 slugs with "is", 5 with "not", 8 with "no"), and each stays sayable as its
+slug. `_repeated_proposition` rejects a parse that lists one proposition twice: "X has part A and a A" asserts a second A.
 
 NOTHING IS DROPPED. A token outside the shape (pronoun, adverb, "just", "also", hedge, negation, subordinator, a comma that
 opens a clause, a digit not inside a gathered slug, "!", "?", ":", "-", a second ".") leaves the shape unmatched and the
@@ -356,6 +363,45 @@ def _exact_violation(parses, toks, origs, offs, src):
     return None
 
 
+# ---- build 5: no clause word inside a spaced name; a list names distinct things --------------------------------------------------
+# A finite auxiliary (the copula and the other finite be / have / do forms) or a negation word (B2h's NEG_MARKERS, which the matcher
+# already refuses as a whole token) inside an entity span written with spaces. English reads such a word as the clause's verb or its
+# negation, so the name is cut there: "Solomon is located in time zone Kosrae time" is read as "Solomon" + "is located in", not as
+# solomon_is (Solomon Is., the islands) + the telegraphic relation label (round-6 cases R6-CF01, R6-CF02, kept by build 4). Non-finite
+# forms ("be", "am", "being", "been", "do") are not in the set: a reader does not take them as a third-person verb, and they are
+# common inside real names ("Offenbach am Main", "Rio Grande do Sul", "Biel BE").
+STRUCTURE_WORDS = frozenset(("is", "are", "was", "were", "has", "have", "had", "does", "did")) | frozenset(NEG_MARKERS)
+
+
+def _structure_word_violation(parses, origs):
+    """Build 5 -> a reason string for the first SUBJ/OBJ span, over every parse, whose displayed text holds a word of
+    STRUCTURE_WORDS once split on spaces (`surface_form`, so the four display-identical spaces split too), else None. The slug written
+    verbatim ("solomon_is", as the stub mouth renders it) is one word and is not split: underscores are not English word breaks."""
+    for _shape, _props, spans in parses:
+        for kind, i, slug in spans:
+            if kind != "ent":
+                continue
+            words = surface_form(origs[i]).split(" ")
+            hit = [w for w in words if w in STRUCTURE_WORDS]
+            if hit:
+                return ("entity span %r of %s holds the clause word %r: written with spaces, English reads it as the verb or a negation "
+                        "and cuts the name there (write the name without it, or as the slug %s)" % (origs[i], slug, hit[0], slug))
+    return None
+
+
+def _repeated_proposition(parses):
+    """Build 5 -> a reason string when a parse lists one proposition twice, else None. A coordinated list ("A and B", shape 2) asserts
+    distinct things, so "Take That has part Robbie Williams and a Robbie Williams" asserts a second Robbie Williams that the one
+    gathered triple does not (round-6 cases R6-S201, R6-S203, R6-S210, kept by build 4)."""
+    for shape, props, _spans in parses:
+        seen = set()
+        for p in props:
+            if p in seen:
+                return ("%s lists (%s, %s, %s) twice: a coordinated list asserts distinct things" % ((shape,) + tuple(p)))
+            seen.add(p)
+    return None
+
+
 def _store_slug_re(slug):
     """Any space / hyphen / underscore spelling of `slug`'s words, with the store's strip("_") at both ends: a folded accented
     letter at the start or end of the name ("_le de france", "bod_") is part of the span, because `sanitize` dropped it from the
@@ -637,6 +683,12 @@ def allowlist_check(sentence, gathered):
     exact = _exact_violation(parses, tr[1], tr[2], tr[3], tr[4])
     if exact is not None:
         res["reason"] = "allowlist: " + exact
+        res["shape"] = parses[0][0]
+        return res
+    # build 5: no finite auxiliary or negation word inside a spaced entity name; a list names distinct things
+    late = _structure_word_violation(parses, tr[2]) or _repeated_proposition(parses)
+    if late is not None:
+        res["reason"] = "allowlist: " + late
         res["shape"] = parses[0][0]
         return res
     shape, props, _spans = parses[0]

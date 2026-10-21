@@ -215,10 +215,11 @@ def test_a_relation_label_written_with_capitals_keeps_them_and_only_them():
 
 
 @pytest.mark.parametrize("prose", ["Spain IS a member of the European Union.", "Spain is A member of THE European Union.",
-                                   "THE Spain shares border with France.", "Spain shares border with France AND France."])
+                                   "THE Spain shares border with France.", "Spain shares border with France AND Portugal."])
 def test_tokens_outside_the_spans_are_not_read(prose):
-    """The ruling covers the SUBJ/OBJ spans and the relation span; a determiner, the copula and "and" are outside them."""
-    assert A.allowlist_keep(prose, _ES) == (True, "ok"), prose
+    """The ruling covers the SUBJ/OBJ spans and the relation span; a determiner, the copula and "and" are outside them. (Build 5: the
+    list names two distinct gathered objects; "France AND France" now rejects as a repeated list.)"""
+    assert A.allowlist_keep(prose, _ES + [["spain", "shares_border_with", "portugal"]]) == (True, "ok"), prose
 
 
 def test_every_parse_of_an_ambiguous_sentence_is_case_checked():
@@ -226,9 +227,12 @@ def test_every_parse_of_an_ambiguous_sentence_is_case_checked():
     copula (outside every span), and shape 1 (is, member_of, x), where "IS" is the SUBJ span of the slug is (no row: no all-caps token
     allowed). The sentence is kept only if EVERY parse passes, so it is rejected naming 'IS' (a check of the first parse only keeps it)."""
     g = [["the", "member_of", "x"], ["is", "member_of", "x"]]
-    assert A.allowlist_keep("The is member of x.", g) == (True, "ok")
     keep, why = A.allowlist_keep("The IS member of x.", g)
     assert not keep and "'IS'" in why and " of is:" in why, why
+    # build 5: the lower-case sentence is rejected too, by the clause-word rule on the shape-1 parse's SUBJ span "is" (the case check
+    # runs first, so the all-caps sentence above still names 'IS')
+    keep, why = A.allowlist_keep("The is member of x.", g)
+    assert not keep and "holds the clause word 'is'" in why, why
 
 
 def test_a_slug_outside_the_table_allows_no_all_caps_token():
