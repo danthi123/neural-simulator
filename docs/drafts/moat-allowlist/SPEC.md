@@ -204,10 +204,11 @@ every proposition it encodes is a gathered triple of this turn:
   Declared residue: "u" as a pointing lead in title case ("U Abbey"). Adding it would reject 47 store pairs that share
   a fact or a neighbour, such as "U Iowa" after "State of Iowa". The lower-case "u abbey" rejects under R7c(1c). Also
   residue: a title-case class word inside a name before a capital ("Trevor Said Her Song"); a title-case span of class
-  words and conjunctions only ("Us and Them", "His and Hers"); imma, ima, lemme and gimme (an owner ruling would add
-  them); and a title-case contraction mid-sentence where a title can stand ("an author of Weve.", like "Mine."). Each
+  words and conjunctions only ("Us and Them", "His and Hers"); and a title-case contraction mid-sentence where a title can stand ("an author of Weve.", like "Mine."). Each
   change is pinned in `tests/test_moat_allowlist_build7.py` at all seven parser seeds, with a mutation check for each
   new branch and exemption and one points-back case per lead word.
+- **Build 7, Claude ruling 2026-10-21:** imma, ima, lemme and gimme (first-person contractions) join
+  CONTRACTED_SUBJECTS; no store slug holds any of them as a word, so the stub and the store scans do not change.
 - **VERB(rel):** a verb form of the relation from the verb-form table that `_noun_before_verb` uses (`1b67eef9b`),
   including the guarded `-s`, `-es` and `-ies` readings, only when that relation is gathered this turn.
 - **Case fidelity of entity spans (build 3, controller ruling 2026-10-20: no invented acronyms).** The store's slug

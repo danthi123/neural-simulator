@@ -233,7 +233,7 @@ CLASS = ("me my mine myself us our ours ourselves your yours yourself yourselves
          "they them their theirs themselves this that these those "
          # build-7 review fix: archaic, colloquial and impersonal forms
          "thee thou thy thine thyself ye u ya yall youse yinz ur em themself ourself oneself meself").split()
-CONTRACTIONS = "im ive youre youve youll youd theyre theyve weve shes thats".split()   # weve / shes / thats: second fix round
+CONTRACTIONS = "im ive youre youve youll youd theyre theyve weve shes thats imma ima lemme gimme".split()   # weve / shes / thats: second fix round; imma / ima / lemme / gimme: Claude ruling 10-21
 
 
 def test_the_pronoun_class_is_the_ruled_one():
@@ -953,6 +953,11 @@ SECOND_FIX_LEAKS = [
      "the pronoun 'Weve' (word 3) directly after the conjunction 'and'"),
     ("Alice Feeney is an author of shes the one.", [("shes_the_one", "author", "alice_feeney")], "the contraction 'shes' (word 1)"),
     ("Alice Feeney is an author of thats all.", [("thats_all", "author", "alice_feeney")], "the contraction 'thats' (word 1)"),
+    # imma / ima / lemme / gimme (Claude ruling 2026-10-21)
+    ("Taylor Swift is a spouse of imma.", [("imma", "spouse", "taylor_swift")], "reads as the pronoun 'imma' (written in lower case"),
+    ("Alice Feeney is an author of ima fan.", [("ima_fan", "author", "alice_feeney")], "the contraction 'ima' (word 1)"),
+    ("Alice Feeney is an author of lemme go.", [("lemme_go", "author", "alice_feeney")], "the contraction 'lemme' (word 1)"),
+    ("Gimme is an instance of theatrical film.", [("gimme", "instance_of", "theatrical_film")], "reads as the pronoun 'Gimme' (the first word"),
     # R7a: the object side of the person relations (leak-B)
     ("Strawberry Hill Boys has part Me.", [("strawberry_hill_boys", "has_part", "me")], "the person / place relation 'has_part'"),
     ("Strawberry Hill Boys has part Us.", [("strawberry_hill_boys", "has_part", "us")], "the person / place relation 'has_part'"),
@@ -1182,6 +1187,10 @@ BRANCH_MUTANTS_2 = [
      "Alice Feeney is an author of shes the one.", [("shes_the_one", "author", "alice_feeney")]),
     ("thats", [], {"CONTRACTED_SUBJECTS": frozenset(CONTRACTIONS[:8]), "R7A_WORDS": frozenset(CLASS) | frozenset(CONTRACTIONS[:8])},
      "Alice Feeney is an author of thats all.", [("thats_all", "author", "alice_feeney")]),
+    ("imma", [], {"CONTRACTED_SUBJECTS": frozenset(CONTRACTIONS[:11]), "R7A_WORDS": frozenset(CLASS) | frozenset(CONTRACTIONS[:11])},
+     "Taylor Swift is a spouse of imma.", [("imma", "spouse", "taylor_swift")]),
+    ("lemme", [], {"CONTRACTED_SUBJECTS": frozenset(CONTRACTIONS[:11]), "R7A_WORDS": frozenset(CLASS) | frozenset(CONTRACTIONS[:11])},
+     "Alice Feeney is an author of lemme go.", [("lemme_go", "author", "alice_feeney")]),
     ("_points_back antecedent keeps its lead", [('            words6 = words[1:] if led and words[0] == "the" else words',
                                                  "            words6 = words[1:] if led else words")], {},
      "Foo Bar is an author of Her Majesty Ship. The Ship Her performer Bar.",

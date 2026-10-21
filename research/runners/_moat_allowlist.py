@@ -619,7 +619,7 @@ SUBJECT_PRONOUNS = frozenset(("i", "we", "you"))
 # bit in the store). Second fix round, declared open: "u" as a pointing lead in title case ("... Carfax Abbey. U Abbey is ...": 41 store slugs are
 # "U <place>" university names and 47 store pairs that share a fact or a neighbour would reject, "U Iowa" after "State of Iowa"; lower case "u
 # abbey" rejects under R7c(1c)); a title-case class word after the first word before a capital ("Trevor Said Her Song"; a capitalised name word);
-# imma / ima / lemme / gimme (an owner ruling would add them); and a title-case contraction mid-sentence in a relation where a title can stand
+# and a title-case contraction mid-sentence in a relation where a title can stand (imma / ima / lemme / gimme: ruled in, see CONTRACTED_SUBJECTS)
 # ("Foo Bar is an author of Weve.", like "Mine.").
 PRONOUN_NAME_CLASS = frozenset(("me", "my", "mine", "myself", "us", "our", "ours", "ourselves", "your", "yours", "yourself", "yourselves",
                                 "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself",
@@ -630,7 +630,10 @@ PRONOUN_NAME_CLASS = frozenset(("me", "my", "mine", "myself", "us", "our", "ours
 # build-7 fix: first- and second-person contractions written without the apostrophe (pronoun + verb; "ill", "id", "well", "hes" are left out:
 # each is an ordinary English word too). R7a reads them as one-word names like the class; R7c(3) reads them inside a spaced name.
 # second fix round (2026-10-21): "weve" (we've), and the third-person "shes" (she's) and "thats" (that's), which point at something unnamed
-CONTRACTED_SUBJECTS = frozenset(("im", "ive", "youre", "youve", "youll", "youd", "theyre", "theyve", "weve", "shes", "thats"))
+# Claude ruling 2026-10-21 (closes the residue the second fix round left for a ruling): imma, ima, lemme and gimme are first-person
+# contractions ("I'm going to", "let me", "give me") and join the set; no store slug holds any of them as a word.
+CONTRACTED_SUBJECTS = frozenset(("im", "ive", "youre", "youve", "youll", "youd", "theyre", "theyve", "weve", "shes", "thats",
+                                 "imma", "ima", "lemme", "gimme"))
 R7A_WORDS = PRONOUN_NAME_CLASS | CONTRACTED_SUBJECTS
 # R7b(3): a conjunction directly before the "I" ("&" cannot sit in a slug span, so it only matters for a hand-built word list; "amp" is the
 # HTML-entity residue of "&"). Left out, as declared residue: "n" (an accent-fold residue in store names: `ayd_n_i_li_province_turkey`, title
