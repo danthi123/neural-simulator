@@ -5158,7 +5158,8 @@ def _one_brain_articulate(resp, pending):
         body = json.loads(bytes(resp.body))
         from webapp.brain_turn_lock import brain_turn as _bt
         kw = {}
-        if chat._moat_allowlist_enabled():
+        from research.runners._moat_allowlist import allowlist_enabled as _allowlist_on
+        if _allowlist_on():
             # build 6 (BRAIN_MOAT_ALLOWLIST): the per-prose check is the allowlist (the `_verify` chokepoint) and the substituted reply
             # is checked JOINED against the union of the calls' triples
             kw["verify_reply"] = lambda texts, svos: bool(chat._verify_claim_set(" ".join(texts), svos)[0])

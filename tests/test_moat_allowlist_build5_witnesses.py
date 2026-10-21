@@ -262,9 +262,21 @@ def test_every_negative_stem_followed_by_a_lone_t_is_apostrophe_residue(stem):
 def test_a_pair_outside_the_reviewed_sets_is_kept(sentence, slug):
     """pr_s_add_* pr_aux_add_who ar_add_t ns_add_* (RECORDED BOUNDARY, not an endorsement: "Who ll" is "Who'll" in English, but the
     reviewed 'll set is I / you / we / they / he / she / it). A name that is not one of the reviewed pronoun + residue pairs is kept; the
-    exact-set test above is what makes a change to a set a deliberate one."""
+    exact-set test above is what makes a change to a set a deliberate one.
+    Build 6 (legitimate flip, listed in the build-6 report): five of these names now read as a clause or a description under the build-6
+    name rules ('My'/'Will' at the sentence start before a lower-case word, 'The' + a lower-case word, 'I'/'We' as a subject): they are
+    rejected by THAT rule, never by the build-5 residue rule this test pins."""
+    if slug in _BUILD6_NAME_FLIPS:
+        r = A.allowlist_check(sentence, _u(slug))
+        assert not r["keep"] and _BUILD6_NAME_FLIPS[slug] in r["reason"] and "dropped apostrophe" not in r["reason"], r["reason"]
+        return
     r = _kept(sentence, _u(slug))
     assert r["props"] == [[slug, "uses", "baz"]]
+
+
+_BUILD6_NAME_FLIPS = {"my_s_dream": "written as prose", "the_s_dream": "a description, not a name",
+                      "i_t_dream": "first- or second-person subject", "will_t_dream": "written as prose",
+                      "we_s_dream": "first- or second-person subject"}
 
 
 # ========================================================================================================== the verbatim slug (sw52)

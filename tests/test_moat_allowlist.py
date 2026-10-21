@@ -437,8 +437,13 @@ def test_every_single_triple_f_sentence_b2h_kept_is_kept_except_the_listed_losse
             assert sorted(map(tuple, res["props"])) == sorted(map(tuple, r["b2h_grounded"])), r["surface"]
         else:
             rejected[(r["turn"], r["surface"])] = A.allowlist_keep(r["surface"], g)[1]
+    # build 6 (legitimate flip, predicted by preflip topic 3): h26 "The weather in Stavenger ..." (the store's Stavanger conflation;
+    # a reader takes 'The weather' as weather) is rejected by the description rule
+    b6 = {k: v for k, v in rejected.items() if k not in losses}
+    assert sorted(t for t, _s in b6) == ["h26"] and all("a description, not a name" in v for v in b6.values()), b6
+    rejected = {k: v for k, v in rejected.items() if k in losses}
     assert rejected == losses
-    assert len(kept) == len(KEEP["single_triple"]) - len(losses)
+    assert len(kept) == len(KEEP["single_triple"]) - len(losses) - len(b6)
 
 
 def test_no_multi_triple_f_sentence_was_kept_by_b2h():
@@ -861,12 +866,19 @@ def test_an_accented_name_spells_the_slug_the_store_rule_makes_of_it(name, monke
     assert in_table == (name in _STORE_RULE_NAMES_IN_TABLE), (name, slug)
     for p, g in (("%s has part Zeta Q." % name, [[slug, "has_part", "zeta_q"]]), ("Zeta Q has part %s." % name, [["zeta_q", "has_part", slug]])):
         keep, why = A.allowlist_keep(p, g)
+        if in_table and name == "The weather in Bod\u00f8":
+            # build 6 (legitimate flip): found and exact, but 'The' + a lower-case word reads as a description (rule (a))
+            assert not keep and "a description, not a name" in why, (p, why)
+            continue
         assert keep is in_table, (p, why)
         if not in_table:
             assert ("entity span %r" % name) in why and slug in why, why
     other = slug + "_x"                                    # not the store's slug of this name: never spelled by it
     assert not A.allowlist_keep("%s has part Zeta Q." % name, [[other, "has_part", "zeta_q"]])[0]
     _with_names(monkeypatch, {slug: [name]})                # as if it were a store name: the fold finds it, the exact check keeps it
+    if name == "The weather in Bod\u00f8":                   # build 6 (legitimate flip): rule (a) rejects it after the exact check
+        assert "a description, not a name" in A.allowlist_keep("%s has part Zeta Q." % name, [[slug, "has_part", "zeta_q"]])[1]
+        return
     assert A.allowlist_keep("%s has part Zeta Q." % name, [[slug, "has_part", "zeta_q"]]) == (True, "ok"), (name, slug)
     assert A.allowlist_keep("Zeta Q has part %s." % name, [["zeta_q", "has_part", slug]]) == (True, "ok"), (name, slug)
 
