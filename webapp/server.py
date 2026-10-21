@@ -1727,6 +1727,24 @@ def _scan_for_orphans() -> int:
     return new_count
 
 
+def moat_allowlist_scope_warning(env=None):
+    """Build 6: `BRAIN_MOAT_ALLOWLIST` owns the MOUTH path (docs/drafts/moat-allowlist/SPEC.md); the BRAIN_OPEN_ENDED free-reply Qwen path
+    (default OFF) is out of its scope. With both on, log one warning at startup and return it (None otherwise)."""
+    env = os.environ if env is None else env
+    on = lambda k: str(env.get(k, "0")).strip().lower() in ("1", "true", "on", "yes")
+    if on("BRAIN_MOAT_ALLOWLIST") and on("BRAIN_OPEN_ENDED"):
+        msg = ("[webapp] WARNING: BRAIN_MOAT_ALLOWLIST is on but BRAIN_OPEN_ENDED's free-reply Qwen path is OUT of the allowlist's scope "
+               "(its own post-filter applies, not the strict claim checker); keep BRAIN_OPEN_ENDED off for a strict-mouth run")
+        print(msg, flush=True)
+        return msg
+    return None
+
+
+@app.on_event("startup")
+async def _moat_allowlist_scope_check() -> None:
+    moat_allowlist_scope_warning()
+
+
 @app.on_event("startup")
 async def recover_orphan_runs() -> None:
     """Initial orphan scan at server start. Periodic re-scan is in
@@ -5139,9 +5157,14 @@ def _one_brain_articulate(resp, pending):
     try:
         body = json.loads(bytes(resp.body))
         from webapp.brain_turn_lock import brain_turn as _bt
+        kw = {}
+        if chat._moat_allowlist_enabled():
+            # build 6 (BRAIN_MOAT_ALLOWLIST): the per-prose check is the allowlist (the `_verify` chokepoint) and the substituted reply
+            # is checked JOINED against the union of the calls' triples
+            kw["verify_reply"] = lambda texts, svos: bool(chat._verify_claim_set(" ".join(texts), svos)[0])
         ans, rec = _OB.articulate(body.get("answer"), calls, mouth,
                                   verify=lambda prose, svo: bool(chat._verify(prose, None, svo)),
-                                  relock=lambda: _bt("mouth_verify"))
+                                  relock=lambda: _bt("mouth_verify"), **kw)
         body["answer"] = ans
         body["one_brain_mouth"] = rec
         return JSONResponse(body)

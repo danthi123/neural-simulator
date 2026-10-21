@@ -848,6 +848,17 @@ class QuestionRouter:
 # Both expose `render_svo(a, v, p) -> (surface, asserted_svo_or_None)`; the TUI gate->constrain->verify wraps them.
 # ============================================================================================================
 
+def _moat_terminate(surface):
+    """Build 6 (BRAIN_MOAT_ALLOWLIST only): a candidate with no terminal punctuation gets "." (token-neutral for the allowlist matcher,
+    which strips one final "."; it keeps two joined sentences from running on: "the dog chases the cat the cat eats the fish"). A
+    candidate ending in "!" or "?" is left as it is (the matcher rejects it). Only trailing U+0020 / LF / CR (the whitespace a reply edge
+    may hold) is removed first; any other character stays, so what is spoken is what was checked. Non-strings pass through."""
+    if not isinstance(surface, str):
+        return surface
+    s = surface.rstrip(" \n\r")
+    return s if not s or s.endswith((".", "!", "?")) else s + "."
+
+
 class StubRenderer:
     """The GPU-FREE template-stub faculty (the P3 `TemplateStubFaculty`): renders a gated SVO into a fluent
     surface form CONSTRAINED to the fact's own words, and exposes the canonical content SVO it asserts (what
@@ -1899,17 +1910,27 @@ class ChatBrain:
             return spk
         surface, asserted = self.renderer.render_svo(a, v, p)
         if self._verify(surface, asserted, gate_svo):
-            return surface
+            return _moat_terminate(surface) if self._moat_allowlist_enabled() else surface
         # a generative renderer can DRIFT: try a tighter re-prompt once (if supported), else speak the raw fact
         if hasattr(self.renderer, "render_svo_regen"):
             surface2, asserted2 = self.renderer.render_svo_regen(a, v, p)
             if self._verify(surface2, asserted2, gate_svo):
-                return surface2
+                return _moat_terminate(surface2) if self._moat_allowlist_enabled() else surface2
+        # the brain's own store triple (not mouth text): kept under the flag too (build 6, a declared non-mouth path)
         return self._raw(gate_svo) + "   [unverified render -> spoke the brain's raw fact]"
 
     def _verify(self, surface, asserted, gate_svo):
         """VERIFY: re-parse the rendered content back into an SVO and require it to MATCH the gated fact. For the
-        stub, `asserted` is the canonical content SVO; for Qwen, `asserted` is None -> re-parse the PROSE."""
+        stub, `asserted` is the canonical content SVO; for Qwen, `asserted` is None -> re-parse the PROSE.
+
+        BUILD 6 (`BRAIN_MOAT_ALLOWLIST` truthy, default OFF): the ONE chokepoint of every single-fact mouth check (ChatBrain.render, the
+        hypothesis paths, the spiking recall surface, webapp/server.py's one-brain articulate). The verdict is the allowlist matcher's over
+        the one gathered triple: kept only if the PROSE (terminated, `_moat_terminate`) states exactly that triple. `asserted` is ignored
+        (the stub's canonical SVO is never trusted over its prose); an empty or malformed triple fails closed. Flag OFF: the stock re-parse
+        below, byte-identical."""
+        if self._moat_allowlist_enabled():
+            accepted, _res = self._verify_claim_set(_moat_terminate(surface), [list(gate_svo)])
+            return bool(accepted)
         if asserted is None:
             from research.runners._grounded_lang_integration_derisk import _extract_svo_from_prose
             asserted = _extract_svo_from_prose(surface, self.agents_set, self.actions_set,
@@ -2046,14 +2067,25 @@ class ChatBrain:
         if self.raw_mode or self.renderer is None:
             return template, False                    # GPU-free / --raw: the honest raw flagged guess
         surface, asserted = self.renderer.render_svo(a, v, p)
-        if self._verify(surface, asserted, hyp):
+        if self._verify(self._hyp_checked_body(surface), asserted, hyp):
             return self._frame_guess(surface), True
         # a generative mouth can DRIFT: one tighter re-prompt (if supported), else the raw flagged template
         if hasattr(self.renderer, "render_svo_regen"):
             surface2, asserted2 = self.renderer.render_svo_regen(a, v, p)
-            if self._verify(surface2, asserted2, hyp):
+            if self._verify(self._hyp_checked_body(surface2), asserted2, hyp):
                 return self._frame_guess(surface2), True
         return template, False                        # mouth swapped/garbled the content -> honest flagged fallback
+
+    def _hyp_checked_body(self, surface):
+        """BUILD 6 (flag ON): the exact body `_frame_guess` will speak inside its frame ('Maybe <body> -- that's a guess ...'), so what
+        is spoken equals what was checked; the frame strings are declared non-claims (an epistemic disclaimer, pinned verbatim in
+        tests/test_moat_allowlist_build6.py). Flag OFF: `surface` unchanged."""
+        if not self._moat_allowlist_enabled() or not isinstance(surface, str):
+            return surface
+        g = surface.strip().rstrip(".")
+        if g[:1].isupper():
+            g = g[0].lower() + g[1:]
+        return g
 
     @staticmethod
     def _hypothesis_template(a, v, p):
@@ -2116,7 +2148,12 @@ class ChatBrain:
         a, v, p = hyp
         dctx = {"subject": a, "verb_3sg": emerge_v3(v), "object": p}
         surface = " ".join(self._spiking_broca_producer().emit(HEDGED_TRANSITIVE, dctx))
-        if self._verify(surface, None, hyp):           # the moat: the spiking sentence must recover THIS (a, v, p)
+        body = surface
+        if self._moat_allowlist_enabled():
+            # BUILD 6: the leading "perhaps " is the hedge slot of HEDGED_TRANSITIVE, a declared non-claim (a hedge only weakens the claim);
+            # the body after it must state exactly the hypothesis. A "perhaps" anywhere else stays in the body and rejects.
+            body = surface[len("perhaps "):] if surface.startswith("perhaps ") else surface
+        if self._verify(body, None, hyp):              # the moat: the spiking sentence must recover THIS (a, v, p)
             return self._frame_guess_spiking(surface)
         return None                                    # verify miss -> caller falls back to the flagged template
 
@@ -2160,10 +2197,46 @@ class ChatBrain:
             return None                                   # GPU-free / --raw: keep the brain's raw triple path
         if not recall_mouth_enabled() or not frame_supported(a, v, p):
             return None                                   # flag OFF / open prose -> byte-identical fallback
+        if self._moat_allowlist_enabled():                # BUILD 6: the allowlist checks the terminated sentence; the marker is added after
+            parts = self.spiking_recall_parts(a, v, p)
+            return None if parts is None else (parts[0][:-1] + "!" if parts[1] else parts[0])
         surface = self._spiking_recall_mouth().render(a, v, p)
         if self._verify(surface, None, [a, v, p]):        # the moat: the spiking sentence must recover THIS (a, v, p)
             return self._apply_mouth_mood_tone(surface)
         return None                                       # verify miss -> caller falls back (NEVER a leak)
+
+    def _spiking_recall_checked(self, a, v, p):
+        """BUILD 6 (flag ON only): the spiking recall sentence with a terminal "." (the mouth emits none), kept only if the allowlist
+        (the `_verify` chokepoint over the one triple) keeps it; None on a miss, raw mode, no renderer or an unsupported frame."""
+        from research.runners.spiking_mouth_recall_prod import recall_mouth_enabled, frame_supported
+        if self.raw_mode or self.renderer is None or not recall_mouth_enabled() or not frame_supported(a, v, p):
+            return None
+        text = _moat_terminate(self._spiking_recall_mouth().render(a, v, p))
+        if not text.endswith(".") or not self._verify(text, None, [a, v, p]):
+            return None
+        return text
+
+    def spiking_recall_parts(self, a, v, p):
+        """BUILD 6 (flag ON only) -> (checked_text, warm) or None. `checked_text` ends in "." and is exactly what the allowlist kept; `warm`
+        is True when this turn's spiking tone marker is "!". MOOD MARKER RULING (Claude 2026-10-21): the closed set {"!", ".", ""} appended
+        to a spiking sentence after verification is a declared non-claim (the brain's own tone read-out, not a world fact): the body is
+        checked without it, "!" replaces the final "." when warm, and "." / "" leave the checked text as it is (curt and neutral read the
+        same under the flag). Tracked structurally (this boolean), never inferred from text: a Qwen sentence ending "!" still rejects."""
+        text = self._spiking_recall_checked(a, v, p)
+        if text is None:
+            return None
+        return text, self._mouth_tone_marker() == "!"
+
+    def _mouth_tone_marker(self):
+        """The spiking tone marker of this turn ('!' / '.' / ''): '' at level 0, with the mood lesion (BRAIN_SPIKING_MOUTH_MOOD=0) or when
+        the read did not separate. Factored out of `_apply_mouth_mood_tone` (build 6), behaviour-identical."""
+        level = int(getattr(self, "_mood_tone_level", 0) or 0)
+        if level == 0:
+            return ""                                     # neutral / never set -> no spiking read
+        from research.runners.spiking_mouth_recall_prod import mouth_mood_enabled, mouth_tone_marker
+        if not mouth_mood_enabled():
+            return ""                                     # lesion escape -> mood-BLIND
+        return mouth_tone_marker(level, seed=int(getattr(self.inner, "seed", 42))) or ""
 
     def _apply_mouth_mood_tone(self, surface):
         """LOAD-BEARING mood coupling on the spiking mouth's OWN surface (2026-08-27 fix). Closes a cross-faculty
@@ -2178,13 +2251,7 @@ class ChatBrain:
         not a host if/else on the mood float -- which appends '!' (warm) / '.' (curt) / '' (undecided, safe no-op).
         Escape: `BRAIN_SPIKING_MOUTH_MOOD=0` reverts to mood-BLIND (today's regressed surface) even with the recall
         mouth itself ON."""
-        level = int(getattr(self, "_mood_tone_level", 0) or 0)
-        if level == 0:
-            return surface                                # neutral / never set -> byte-identical, no spiking read
-        from research.runners.spiking_mouth_recall_prod import mouth_mood_enabled, mouth_tone_marker
-        if not mouth_mood_enabled():
-            return surface                                # lesion escape -> mood-BLIND, byte-identical
-        marker = mouth_tone_marker(level, seed=int(getattr(self.inner, "seed", 42)))
+        marker = self._mouth_tone_marker()                # build 6: factored out, behaviour-identical (the flag-off golden pins it)
         return surface + marker if marker else surface
 
     # --- discourse event tracking (who is doing it now / who was doing it before) ---

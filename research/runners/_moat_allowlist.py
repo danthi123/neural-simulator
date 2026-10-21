@@ -115,6 +115,30 @@ adjudicated by set membership.
 Wiring (flag ON): `ChatBrain._build_claim_verifier` returns an `AllowlistClaimVerifier`, `ChatBrain._verify_claim_set` uses it
 even when `BRAIN_CLAIM_MOAT=0`, and `RichAnswerComposer._verify_rendered` routes EVERY turn (one fact or many) to it with no
 fallback to the single-triple `chat._verify`. Flag OFF: both call sites are byte-identical to before.
+
+BUILD 6: THE FLAG OWNS THE WHOLE MOUTH PATH (Claude rulings 2026-10-21; preflip topic 1). Under the flag a mouth sentence reaches the
+user only if this matcher kept it against the triple(s) it was generated for AND the joined mouth text of the reply passed
+`allowlist_verify` against the union of the turn's gathered triples:
+  - `ChatBrain._verify` is the one chokepoint of every single-fact check (ChatBrain.render's Qwen/stub branch, the hypothesis paths,
+    the spiking recall surface, webapp/server.py's BRAIN_ONE_BRAIN `_one_brain_articulate`): the matcher over the one triple, the
+    stub's asserted SVO ignored;
+  - the composer (`render_paragraph`, the batched path) checks each sentence alone, then keeps the LONGEST PREFIX of sentences whose
+    joined text passes (`RichAnswerComposer._join_verified`); no sentence passing -> the composer's normal abstain path;
+  - Touchpoint A (which had no check) gets the matcher; the one-brain substitution is checked joined (`one_brain.articulate`'s
+    `verify_reply`);
+  - a candidate with no terminal punctuation gets "." before the check (token-neutral; it also fixes the spiking run-on join);
+  - DECLARED NON-CLAIMS, exempt by construction and pinned verbatim in tests/test_moat_allowlist_build6.py: the spiking mood marker
+    {"!", ".", ""} appended after the check (tracked structurally; a Qwen "!" still rejects), the leading "perhaps " of a spiking
+    hypothesis, the host guess frames ("Maybe ... -- that's a guess ...", "  [a guess from what I've learned -- not something I was
+    taught]") and the abstain strings.
+KNOWN NON-MOUTH PATHS (not mouth output; the flag does not filter them): the raw-triple fallback of `ChatBrain.render`
+("<a> <v> <p>   [unverified render -> spoke the brain's raw fact]", the brain's own store triple), the composer's raw/no-renderer path,
+the derived-answer lead (`frame_derived_answer`), `ChatBrain._discourse_turn` / `_maybe_generate` (host templates, the brain's own
+decode), and the host decoration layer of webapp/server.py (source lead, pmem, worldmodel, pragmatic, surprise and reconsolidation
+read-outs, about 25 prefix/suffix sites). OUT OF SCOPE: BRAIN_OPEN_ENDED's free-reply Qwen path (one warning at server startup when it
+is on with this flag).
+BUILD 6 also adds shape 4 (above), `_name_reading_violation` (names that read as a description or a clause) and `_points_back` (a
+'the' span that points back across sentences).
 """
 from __future__ import annotations
 

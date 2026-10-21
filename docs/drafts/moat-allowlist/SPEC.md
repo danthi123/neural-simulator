@@ -71,6 +71,36 @@ every proposition it encodes is a gathered triple of this turn:
   underscores ("Marshall_Is", "No_Saints"); "be" joins the clause words, and a lone lower-case "s" ending a name or "t"
   after a negative stem ("Saint Alban s", "don t") rejects as a dropped apostrophe; the de-slugged form of a signed number
   ("utc 06" for UTC-06) is not accepted.
+- **Build 6: pre-flip fixes (Claude rulings 2026-10-21, brief `sim-rev/preflip/BUILD6_BRIEF.md`; branch
+  `claude-build/moat-allowlist-1021f`, cut from `fde5e739e`).** The flag stays default OFF and every edit sits behind
+  it; a flag-off golden of every touched mouth path, captured at the base before any edit
+  (`tests/fixtures/moat_mouthpath_flagoff_golden.json`), pins the identity. Three parts, all pinned in
+  `tests/test_moat_allowlist_build6.py`:
+  (A) The flag owns the whole MOUTH path. `ChatBrain._verify` is the one chokepoint of every single-fact check (render,
+  the hypothesis paths, the spiking recall surface, the BRAIN_ONE_BRAIN deferred mouth); the composer checks each
+  sentence alone, then keeps the longest prefix of sentences whose JOINED text passes against the union of the turn's
+  gathered triples (no sentence passing: the normal abstain); Touchpoint A, which had no check, gets the matcher; the
+  one-brain substitution is checked joined. A candidate with no terminal punctuation gets "." before the check
+  (token-neutral; it also fixes the spiking run-on "the dog chases the cat the cat eats the fish"). Declared non-claims,
+  pinned verbatim: the spiking mood marker {"!", ".", ""} appended after the check (curt and neutral both read "."
+  under the flag; a Qwen "!" still rejects), the leading "perhaps " of a spiking hypothesis, the host guess frames and
+  the abstain strings. Not mouth output and not filtered: the raw-triple fallback of `ChatBrain.render`, the derived-
+  answer lead and the server's host decoration layer. BRAIN_OPEN_ENDED is out of scope (a startup warning when both
+  are on).
+  (B) Shape 4, one reviewed wording per no-reading relation: `[Det] A PHRASE [Det] B [.]`, PHRASE the exact tokens of
+  the relation's row in `PHRASE_READINGS` (`_moat_allowlist_relations.py`), FWD = (A, rel, B), INV = (B, rel, A):
+  sport "is a sport of" INV, instrument "plays" FWD, conflict "participated in" FWD, spouse "is a spouse of" INV
+  (orientation-exact), parent_taxon "is the parent taxon of" INV, father "is the father of" INV, child "is a child of"
+  INV, author "is an author of" INV, platform "is a platform for" INV. The nine keep no verb reading; each row's
+  role-reversed sentence rejects (pinned). The stub writes the phrase under the flag only.
+  (C) Two leak classes. A spaced SUBJ/OBJ span is rejected when it reads as a description or a clause: it opens with
+  "the" and a lower-case word ("The band"); it opens with a first- or second-person subject ("I", "we", "you") in any
+  casing (the honesty boundary: the mouth never makes a first- or second-person claim the brain did not make; the
+  verbatim slug stays sayable); a one-word "I"/"we"/"you" not after a determiner; a modal, pronoun or focus word written
+  as prose ("will hurt", "brian may"). Across sentences: a later SUBJ/OBJ span led by "the" (its own first word or a
+  "the" determiner) whose words are a subset of an earlier sentence's span of a different slug rejects that later
+  sentence ("Rick Wakeman is a member of Yes band. The Band award received ..."). Open, known B residue: lower-case
+  names holding a lexical verb ("steve threw up record label xl recordings.").
 - **VERB(rel):** a verb form of the relation from the verb-form table that `_noun_before_verb` uses (`1b67eef9b`),
   including the guarded `-s`, `-es` and `-ies` readings, only when that relation is gathered this turn.
 - **Case fidelity of entity spans (build 3, controller ruling 2026-10-20: no invented acronyms).** The store's slug

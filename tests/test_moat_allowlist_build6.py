@@ -455,3 +455,460 @@ def test_the_build6_name_rules_only_add_rejections():
     src = inspect.getsource(A.allowlist_check)
     assert src.index("_structure_word_violation(parses") < src.index("_name_reading_violation(parses")
     assert "_points_back(trace)" in inspect.getsource(A.allowlist_verify)
+
+
+# =================================================================================================================== A. the whole mouth path
+# Under the flag a mouth sentence reaches the user only if the allowlist kept it against the triple(s) it was generated for, AND the joined
+# mouth text of the reply passed `allowlist_verify` against the union of the turn's gathered triples. Declared non-claims: the spiking
+# mood marker {"!", ".", ""}, the leading "perhaps " of a spiking hypothesis, the host guess frames and abstain strings (pinned verbatim
+# below). Flag OFF: every path equals the golden captured at fde5e739e before any build-6 edit.
+from pathlib import Path  # noqa: E402
+
+from tests import _moat_mouthpath_harness as H  # noqa: E402
+
+GOLDEN6 = json.loads((Path(__file__).parent / "fixtures" / "moat_mouthpath_flagoff_golden.json").read_text())
+DOG, CAT, BRAIN = ["dog", "chase", "cat"], ["cat", "eat", "fish"], ["brain", "use", "spikes"]
+
+
+@pytest.mark.parametrize("val", [None, "0", "off", "garbage"])
+def test_flag_off_mouth_paths_equal_the_base_golden(monkeypatch, val):
+    """render_paragraph / _render_one_verified / _render_paragraph_batched (scripted matrix: call sequences included) and the real
+    ChatBrain render / hypothesis / spiking recall / mood tone / _verify paths, with the flag unset or falsy, equal the golden."""
+    if val is not None:
+        monkeypatch.setenv(FLAG, val)
+    got = json.loads(json.dumps(H.run_all()))
+    assert set(got["composer"]) == set(GOLDEN6["composer"])
+    bad = [k for k in GOLDEN6["composer"] if got["composer"][k] != GOLDEN6["composer"][k]]
+    bad += [k for k in GOLDEN6["chatbrain"] if got["chatbrain"].get(k) != GOLDEN6["chatbrain"][k]]
+    assert not bad, bad[:5]
+
+
+class FakeMouth:
+    """A stand-in SpikingRecallMouth (the cached `_spk_recall_mouth`): scripted surface per svo, else the faithful spiking frame."""
+
+    def __init__(self, table=None):
+        self.table = table or {}
+
+    def render(self, a, v, p):
+        return self.table.get((a, v, p), "the %s %ss the %s" % (a, v, p))
+
+
+_BASE = {}
+
+
+def _chat(renderer="stub", mouth=None, level=0):
+    """A fresh ChatBrain on the tiny-demo facts (one shared BridgeParser, seed 42: under the flag it is never consulted)."""
+    from research.runners.brain_chat_tui import ChatBrain, StubRenderer
+    if "chat" not in _BASE:
+        _BASE["chat"] = H.tiny_chat("stub")
+    chat = ChatBrain.__new__(ChatBrain)
+    chat.__dict__.update({k: v for k, v in _BASE["chat"].__dict__.items()
+                          if k in ("inner", "stored_facts", "agents_set", "actions_set", "patients_set", "inflect", "raw_mode")})
+    chat.renderer = StubRenderer() if renderer == "stub" else renderer
+    chat._spk_recall_mouth = mouth or FakeMouth()
+    chat._mood_tone_level = level
+    chat._claim_verifier_cache = {}
+    return chat
+
+
+def _comp(chat):
+    from research.runners.rich_answer_composer import RichAnswerComposer
+    comp = RichAnswerComposer.__new__(RichAnswerComposer)
+    comp.chat = chat
+    return comp
+
+
+class Prose:
+    """A Qwen-like renderer (asserted None) with optional regen and batch methods, scripted per svo; records its calls."""
+
+    name = "scripted"
+
+    def __init__(self, table, regen=None, batch=False):
+        self.table, self.regen, self.calls = table, regen, []
+        if batch:
+            self.render_svo_batch = lambda svos: ([self.render_svo(*s) for s in svos], 0.0)
+            self.render_svo_regen_batch = lambda svos: ([self.render_svo_regen(*s) for s in svos], 0.0)
+
+    def render_svo(self, a, v, p):
+        self.calls.append(("render_svo", a, v, p))
+        return self.table.get((a, v, p), "The %s %ss the %s." % (a, v, p)), None
+
+    def render_svo_regen(self, a, v, p):
+        self.calls.append(("render_svo_regen", a, v, p))
+        return (self.regen or {}).get((a, v, p), "The %s %ss the %s." % (a, v, p)), None
+
+
+HOSTILE = ["The dog chases the cat and is famous for its vodka.", "The cat chases the dog.", "It chases the cat.",
+           "The dog chases the cat!", "The dog chases the cat, perhaps.", "The dog chases the cat. The dog chases the cat."]
+
+
+def _no_hostile(text):
+    t = text or ""
+    return not any(w in t for w in ("vodka", "cat chases the dog", "It chases", "cat!", "perhaps.")) and t.count("chases") <= 1
+
+
+@pytest.mark.parametrize("hostile", HOSTILE)
+@pytest.mark.parametrize("path", ["sequential", "batched", "render", "tpa"])
+def test_hostile_mouth_text_never_reaches_the_reply(monkeypatch, path, hostile):
+    """The key end-to-end pin, flag ON: a hostile render on each mouth path never appears in the output, and the faithful render on
+    the same path IS emitted (counter-case, so the test cannot pass by rejecting everything)."""
+    monkeypatch.setenv(FLAG, "1")
+    monkeypatch.setenv("BRAIN_SPIKING_MOUTH_RECALL", "0")                  # the renderer path, not the spiking surface
+    for text, faithful in ((hostile, False), ("The dog chases the cat.", True)):
+        ren = Prose({tuple(DOG): text}, regen={tuple(DOG): text}, batch=(path == "batched"))
+        chat = _chat(ren)
+        if path == "render":
+            out = chat.render(list(DOG))
+            assert (out == "The dog chases the cat.") is faithful, out
+            assert _no_hostile(out) or faithful, out
+            continue
+        if path == "tpa":
+            monkeypatch.setenv("BRAIN_TOUCHPOINT_A_FACT_CLAUSE", "1")
+            with H.fake_touchpoint_a({tuple(DOG): text}):
+                bird = "The dog chases the cat and the bird."
+                para, kept, _d = _comp(_chat(Prose({tuple(DOG): bird}, regen={tuple(DOG): bird}))).render_paragraph([list(DOG)])
+            assert (para == "The dog chases the cat.") is faithful and (kept == [DOG]) is faithful, para
+            continue
+        if path == "batched":
+            monkeypatch.setenv("BRAIN_RICH_BATCH_RENDER", "1")
+        para, kept, dropped = _comp(chat).render_paragraph([list(DOG), list(CAT)])
+        assert _no_hostile(para), para
+        assert para.startswith("The dog chases the cat.") is faithful, para
+        assert "The cat eats the fish." in para and (DOG in kept) is faithful, para        # the other fact's sentence stays
+
+
+def test_the_spiking_recall_surface_is_checked_by_the_allowlist(monkeypatch):
+    monkeypatch.setenv(FLAG, "1")
+    for bad in ("the cat chases the dog", "the dog chases the cat and the fish", "the dog chases the cat the", "it chases the cat"):
+        chat = _chat(mouth=FakeMouth({tuple(DOG): bad}))
+        assert chat.spiking_recall_surface(*DOG) is None, bad
+        assert chat.spiking_recall_parts(*DOG) is None, bad
+    chat = _chat()
+    assert chat.spiking_recall_surface(*DOG) == "the dog chases the cat."
+    assert chat.spiking_recall_parts(*DOG) == ("the dog chases the cat.", False)
+
+
+def test_two_spiking_facts_join_with_a_terminal_period(monkeypatch):
+    """Flag ON: 'the dog chases the cat. the cat eats the fish.'; flag OFF (golden) the unterminated run-on, which the matcher
+    rejects as a joined string (the defect is real)."""
+    para, kept, dropped = _comp(_chat()).render_paragraph([list(DOG), list(CAT)])
+    assert para == "the dog chases the cat the cat eats the fish"                          # flag off: today's run-on
+    assert GOLDEN6["composer"]["spiking_hit"]["render_paragraph"]["result"][0] == "the dog chases the cat the cat eats the fish"
+    assert not A.allowlist_verify(para, [DOG, CAT])["accepted"]
+    monkeypatch.setenv(FLAG, "1")
+    para, kept, dropped = _comp(_chat()).render_paragraph([list(DOG), list(CAT)])
+    assert para == "the dog chases the cat. the cat eats the fish." and kept == [DOG, CAT] and dropped == []
+    assert A.allowlist_verify(para, [DOG, CAT])["accepted"]
+
+
+# ---- the joined reply check
+class Spy:
+    def __init__(self, chat):
+        self.chat, self.sets = chat, []
+        orig = chat._verify_claim_set
+
+        def spy(surface, gated):
+            self.sets.append((surface, [list(g) for g in gated]))
+            return orig(surface, gated)
+        chat._verify_claim_set = spy
+
+
+def test_joined_check_keeps_clean_replies_byte_equal(monkeypatch):
+    monkeypatch.setenv(FLAG, "1")
+    monkeypatch.setenv("BRAIN_SPIKING_MOUTH_RECALL", "0")
+    facts = [list(DOG), list(CAT), list(BRAIN), ["brain", "learn", "words"]]
+    for n in range(1, 5):
+        chat = _chat(Prose({}))
+        para, kept, dropped = _comp(chat).render_paragraph(facts[:n])
+        want = " ".join("The %s %ss the %s." % tuple(f) for f in facts[:n])
+        assert para == want and kept == facts[:n] and dropped == [], (n, para)
+    # an unterminated Qwen candidate followed by another sentence: terminated, both kept
+    chat = _chat(Prose({tuple(DOG): "The dog chases the cat"}))
+    para, kept, _d = _comp(chat).render_paragraph([list(DOG), list(CAT)])
+    assert para == "The dog chases the cat. The cat eats the fish." and kept == [DOG, CAT]
+
+
+def test_joined_check_cuts_at_the_first_later_sentence_that_fails_together(monkeypatch):
+    """A later sentence that states an earlier proposition again (here a shape-2 list then one of its objects) or points back is cut,
+    and with it every sentence after it (the LONGEST PASSING PREFIX, ruling A1); the cut facts go to `dropped`, not `kept`."""
+    monkeypatch.setenv(FLAG, "1")
+    monkeypatch.setenv("BRAIN_SPIKING_MOUTH_RECALL", "0")
+    f1, f2, f3, f4 = ["spain", "shares_border_with", "france"], ["spain", "shares_border_with", "portugal"], \
+        ["spain", "member_of", "european_union"], ["spain", "country", "europe"]
+    ren = Prose({tuple(f1): "Spain shares border with France and Portugal.", tuple(f2): "Spain shares border with Portugal.",
+                 tuple(f3): "Spain is a member of the European Union.", tuple(f4): "Spain country Europe."})
+    chat = _chat(ren)
+    comp = _comp(chat)
+    para, kept, dropped = comp.render_paragraph([f1, f2, f3, f4])
+    assert para == "Spain shares border with France and Portugal." and kept == [f1] and dropped == [f2, f3, f4], para
+    assert comp._last_reply_rejects and comp._last_reply_rejects[0]["svo"] == f2
+    assert "both state" in comp._last_reply_rejects[0]["reject_reason"]
+    # points back (C2) through the composer
+    g = [list(x) for x in G_WAKE]
+    ren = Prose({tuple(g[0]): WAKE1, tuple(g[1]): "The Band award received Grammy lifetime achievement award."})
+    para, kept, dropped = _comp(_chat(ren)).render_paragraph(g)
+    assert para == WAKE1 and kept == [g[0]] and dropped == [g[1]], para
+
+
+def test_joined_check_invariants(monkeypatch):
+    """(i) the emitted paragraph ('!' restored to '.') is accepted by allowlist_verify against the gathered set; (ii) every sentence
+    prefix of it is accepted too; (iii) kept keeps gathered order; (iv) every joint check is against exactly the gathered set."""
+    monkeypatch.setenv(FLAG, "1")
+    monkeypatch.setenv("BRAIN_SPIKING_MOUTH_RECALL", "0")
+    rnd = random.Random(6)
+    pool = [list(DOG), list(CAT), list(BRAIN), ["brain", "learn", "words"], ["brain", "store", "memory"]]
+    kinds = ["The %s %ss the %s.", "The %s %ss the %s", "The %s %ss the %s and is famous.", "The %s %ss the %s. The %s %ss the %s."]
+    for _ in range(40):
+        facts = rnd.sample(pool, rnd.randint(1, 4))
+        table = {}
+        for f in facts:
+            k = rnd.choice(kinds)
+            table[tuple(f)] = k % (tuple(f) * (k.count("%s") // 3))
+        chat = _chat(Prose(table))
+        spy = Spy(chat)
+        para, kept, dropped = _comp(chat).render_paragraph(facts)
+        gated = [list(f) for f in facts]
+        assert all(s == gated for _t, s in spy.sets)
+        if kept:
+            assert A.allowlist_verify(para.replace("!", "."), gated)["accepted"], para
+            sents = A.split_sentences(para)
+            for k in range(1, len(sents) + 1):
+                assert A.allowlist_verify(" ".join(sents[:k]), gated)["accepted"]
+        assert kept == [f for f in facts if f in kept] and sorted(map(tuple, kept + dropped)) == sorted(map(tuple, facts))
+
+
+def test_every_sentence_failing_abstains_through_the_existing_branch(monkeypatch):
+    monkeypatch.setenv(FLAG, "1")
+    monkeypatch.setenv("BRAIN_SPIKING_MOUTH_RECALL", "0")
+    chat = _chat(Prose({tuple(DOG): HOSTILE[0], tuple(CAT): "The fish eats the cat."}, regen={tuple(DOG): HOSTILE[0],
+                                                                                              tuple(CAT): "The fish eats the cat."}))
+    comp = _comp(chat)
+    comp.gather = lambda q, followup=False: ("dog", [list(DOG), list(CAT)])
+    out = comp.answer("tell me about the dog")
+    assert out["abstained"] is True and out["answer"] == "I don't know about that." and out["facts"] == []
+
+
+def test_raw_mode_and_no_renderer_are_unchanged_by_the_flag(monkeypatch):
+    for attr in ("raw_mode", "renderer"):
+        outs = []
+        for val in (None, "1"):
+            if val:
+                monkeypatch.setenv(FLAG, val)
+            chat = _chat()
+            if attr == "raw_mode":
+                chat.raw_mode = True
+            else:
+                chat.renderer = None
+            outs.append(_comp(chat).render_paragraph([list(DOG), list(CAT)]))
+        assert outs[0] == outs[1] == ("dog chase cat cat eat fish", [DOG, CAT], [])
+
+
+# ---- the mood marker
+def test_the_mood_marker_is_a_declared_non_claim_added_after_the_check(monkeypatch):
+    monkeypatch.setenv(FLAG, "1")
+    for level, want in ((2, "the dog chases the cat!"), (-2, "the dog chases the cat."), (0, "the dog chases the cat.")):
+        chat = _chat(level=level)
+        spy = Spy(chat)
+        assert chat.spiking_recall_surface(*DOG) == want, level
+        assert spy.sets and all(s == "the dog chases the cat." for s, _g in spy.sets)       # the checker saw the body with "."
+        para, kept, _d = _comp(_chat(level=level)).render_paragraph([list(DOG)])
+        assert para == want and kept == [DOG]
+    assert _chat(level=2).spiking_recall_parts(*DOG)[1] is True
+    assert _chat(level=-2).spiking_recall_parts(*DOG)[1] is False                           # curt collapses to neutral (declared)
+    monkeypatch.setenv("BRAIN_SPIKING_MOUTH_MOOD", "0")
+    assert _chat(level=2).spiking_recall_surface(*DOG) == "the dog chases the cat."          # mood lesion: '.' only
+    monkeypatch.delenv("BRAIN_SPIKING_MOUTH_MOOD")
+    # the affect lesion still changes this surface (level 0 vs +2)
+    assert _chat(level=0).spiking_recall_surface(*DOG) != _chat(level=2).spiking_recall_surface(*DOG)
+    # the exemption is structural, not textual: a Qwen sentence ending '!' rejects
+    monkeypatch.setenv("BRAIN_SPIKING_MOUTH_RECALL", "0")
+    chat = _chat(Prose({tuple(DOG): "The dog chases the cat!"}, regen={tuple(DOG): "The dog chases the cat!"}))
+    assert chat.render(list(DOG)).endswith("[unverified render -> spoke the brain's raw fact]")
+    assert not chat._verify("The dog chases the cat!", None, DOG)
+
+
+# ---- the hypothesis path
+FRAME = " -- that's a guess from what I've learned, not something I was taught."
+SPK_SUFFIX = "  [a guess from what I've learned -- not something I was taught]"
+
+
+def test_the_declared_frame_and_abstain_strings_are_pinned_verbatim():
+    """A future edit that adds a claim to a declared non-claim string trips this test."""
+    from research.runners.brain_chat_tui import ChatBrain
+    assert ChatBrain._frame_guess("The dog eats the fish.") == "Maybe the dog eats the fish" + FRAME
+    assert ChatBrain._frame_guess_spiking("perhaps the dog eats the fish") == "perhaps the dog eats the fish" + SPK_SUFFIX
+    assert ChatBrain._hypothesis_template("dog", "eat", "fish") == "perhaps dog eat fish" + SPK_SUFFIX
+    import inspect
+    from research.runners import brain_chat_tui, rich_answer_composer
+    src = inspect.getsource(brain_chat_tui) + inspect.getsource(rich_answer_composer)
+    for s in ('"I don\'t know about that."', '"I don\'t have anything more to add on that."',
+              '"   [unverified render -> spoke the brain\'s raw fact]"'):
+        assert s in src, s
+
+
+def test_hypothesis_qwen_branch_checks_the_spoken_body(monkeypatch):
+    monkeypatch.setenv(FLAG, "1")
+    monkeypatch.setenv("BRAIN_SPIKING_MOUTH", "0")
+    hyp = ["dog", "eat", "fish"]
+    for prose, ok in (("The dog eats the fish.", True), ("the dog eats the fish", True),
+                      ("The dog eats the fish and is famous for its vodka.", False), ("The fish eats the dog.", False),
+                      ("The dog chases the cat.", False), ("Perhaps the dog eats the fish.", False)):
+        chat = _chat(Prose({tuple(hyp): prose}, regen={tuple(hyp): prose}))
+        surface, fluent = chat.render_hypothesis_verified(hyp)
+        if ok:
+            assert (surface, fluent) == ("Maybe the dog eats the fish" + FRAME, True), prose
+        else:
+            assert (surface, fluent) == ("perhaps dog eat fish" + SPK_SUFFIX, False), prose
+
+
+class FakeBroca:
+    def __init__(self, words):
+        self.words = words
+
+    def emit(self, frame, dctx):
+        return list(self.words)
+
+
+def test_hypothesis_spiking_branch_exempts_only_the_leading_hedge(monkeypatch):
+    monkeypatch.setenv(FLAG, "1")
+    hyp = ["dog", "eat", "fish"]
+    for words, want in ((["perhaps", "the", "dog", "eats", "the", "fish"], "perhaps the dog eats the fish" + SPK_SUFFIX),
+                        (["the", "dog", "perhaps", "eats", "the", "fish"], None),
+                        (["perhaps", "the", "fish", "eats", "the", "dog"], None),
+                        (["perhaps", "the", "dog", "eats", "the", "fish", "and", "the", "cat"], None)):
+        chat = _chat()
+        chat._spk_producer = FakeBroca(words)
+        assert chat._render_hypothesis_spiking(hyp) == want, words
+        surface, fluent = chat.render_hypothesis_verified(hyp)
+        assert fluent is (want is not None) and (surface == want if want else surface == "perhaps dog eat fish" + SPK_SUFFIX)
+
+
+# ---- Touchpoint A, ChatBrain.render, the one-brain articulate, the open-ended warning
+def test_touchpoint_a_gets_the_allowlist_under_the_flag(monkeypatch):
+    monkeypatch.setenv("BRAIN_TOUCHPOINT_A_FACT_CLAUSE", "1")
+    monkeypatch.setenv("BRAIN_SPIKING_MOUTH_RECALL", "0")
+    f = ["rick_wakeman", "member_of", "yes_band"]
+    for val, fc, want_para, qwen_called in (
+            ("1", "the rick_wakeman is a member of the yes_band", "the rick_wakeman is a member of the yes_band.", False),
+            ("1", "the rick_wakeman is located in the yes_band.", "Rick Wakeman is a member of Yes band.", True),
+            (None, "the rick_wakeman is located in the yes_band.", "the rick_wakeman is located in the yes_band.", False)):
+        if val:
+            monkeypatch.setenv(FLAG, val)
+        else:
+            monkeypatch.delenv(FLAG, raising=False)
+        ren = Prose({tuple(f): "Rick Wakeman is a member of Yes band."})
+        with H.fake_touchpoint_a({tuple(f): fc}):
+            para, kept, _d = _comp(_chat(ren)).render_paragraph([f])
+        assert para == want_para and kept == [f], (val, para)
+        assert bool(ren.calls) is qwen_called, (val, ren.calls)
+
+
+def test_chatbrain_render_under_the_flag(monkeypatch):
+    monkeypatch.setenv(FLAG, "1")
+    monkeypatch.setenv("BRAIN_SPIKING_MOUTH_RECALL", "0")
+    assert _chat(Prose({})).render(list(DOG)) == "The dog chases the cat."
+    out = _chat(Prose({tuple(DOG): HOSTILE[0]}, regen={tuple(DOG): HOSTILE[0]})).render(list(DOG))
+    assert out == "dog chase cat   [unverified render -> spoke the brain's raw fact]"
+    # the stub's asserted SVO is never trusted over its prose
+    from research.runners.brain_chat_tui import StubRenderer
+
+    class Liar(StubRenderer):
+        def render_svo(self, a, v, p):
+            return "The %s %ss %s." % (p, v, a), [a, v, p]
+    assert _chat(Liar()).render(list(DOG)).endswith("[unverified render -> spoke the brain's raw fact]")
+    monkeypatch.delenv(FLAG)
+    assert _chat(Liar()).render(list(DOG)) == "The cat chases dog."                         # flag off: the stock hole, as before
+
+
+def test_one_brain_articulate_checks_the_substituted_reply(monkeypatch):
+    from webapp import one_brain as OB
+    import contextlib
+
+    class Mouth:
+        def __init__(self, table):
+            self.table = table
+
+        def generate(self, c):
+            return self.table.get(tuple(c["svo"]))
+    monkeypatch.setenv(FLAG, "1")
+    chat = _chat()
+    t1, t2 = "The dog chases cat.", "The cat eats fish."
+    calls = [{"svo": DOG, "template": t1, "method": "render_svo", "manner": ""},
+             {"svo": CAT, "template": t2, "method": "render_svo", "manner": ""}]
+    verify = lambda prose, svo: bool(chat._verify(prose, None, svo))
+    reply = lambda texts, svos: bool(chat._verify_claim_set(" ".join(texts), svos)[0])
+    relock = contextlib.nullcontext
+    # a second clause: the template stays
+    ans, rec = OB.articulate(t1 + " " + t2, calls, Mouth({tuple(DOG): HOSTILE[0]}), verify, relock, verify_reply=reply)
+    assert ans == t1 + " " + t2 and rec["n_verified"] == 0
+    # a faithful sentence (unterminated: terminated): substituted
+    ans, rec = OB.articulate(t1 + " " + t2, calls, Mouth({tuple(DOG): "The dog chases the cat", tuple(CAT): "The cat eats the fish."}),
+                             verify, relock, verify_reply=reply)
+    assert ans == "The dog chases the cat. The cat eats the fish." and rec["n_verified"] == 2
+    # each prose alone faithful, but the joined reply repeats a proposition: the later substitution keeps its template
+    calls2 = [{"svo": ["spain", "shares_border_with", "france"], "template": "The spain shares_border_withs france.",
+               "method": "render_svo", "manner": ""},
+              {"svo": ["spain", "shares_border_with", "portugal"], "template": "The spain shares_border_withs portugal.",
+               "method": "render_svo", "manner": ""}]
+    m = Mouth({("spain", "shares_border_with", "france"): "Spain shares border with France.",
+               ("spain", "shares_border_with", "portugal"): "Spain shares border with France."})
+    ans, rec = OB.articulate("The spain shares_border_withs france. The spain shares_border_withs portugal.", calls2, m,
+                             lambda prose, svo: True, relock, verify_reply=reply)
+    assert ans == "Spain shares border with France. The spain shares_border_withs portugal." and rec["n_reply_rejected"] == 1
+    # without verify_reply: exactly as before
+    ans, rec = OB.articulate(t1 + " " + t2, calls, Mouth({tuple(DOG): HOSTILE[0]}), lambda prose, svo: True, relock)
+    assert ans.startswith(HOSTILE[0]) and "n_reply_rejected" not in rec
+
+
+def test_open_ended_is_warned_out_of_scope_at_startup():
+    from webapp.server import moat_allowlist_scope_warning
+    assert moat_allowlist_scope_warning({}) is None
+    assert moat_allowlist_scope_warning({FLAG: "1"}) is None
+    assert moat_allowlist_scope_warning({"BRAIN_OPEN_ENDED": "1"}) is None
+    assert "BRAIN_OPEN_ENDED" in moat_allowlist_scope_warning({FLAG: "1", "BRAIN_OPEN_ENDED": "yes"})
+
+
+# ---- the census: every mouth call in the two modules sits in a registered function
+CENSUS = {
+    # brain_chat_tui.py
+    ("ChatBrain", "render"): "C10: spiking (C2) then render_svo / regen through the _verify chokepoint; raw fallback is the brain's triple",
+    ("ChatBrain", "render_hypothesis_verified"): "C7: Qwen branch, the spoken body through the chokepoint",
+    ("ChatBrain", "_render_hypothesis_spiking"): "C7: spiking branch, the body after the declared hedge through the chokepoint",
+    ("ChatBrain", "_spiking_broca_producer"): "builds the hypothesis producer (no text)",
+    ("ChatBrain", "spiking_recall_surface"): "C2: flag ON routes through spiking_recall_parts",
+    ("ChatBrain", "_spiking_recall_checked"): "C2: the allowlist over the terminated sentence",
+    ("ChatBrain", "spiking_recall_parts"): "C2: checked text + structural mood marker",
+    ("ChatBrain", "_spiking_recall_mouth"): "builds the recall mouth (no text)",
+    ("StubRenderer", "render_svo"): "the stub mouth itself",
+    ("QwenRenderer", "render_svo"): "the Qwen mouth itself",
+    ("QwenRenderer", "render_svo_regen"): "the Qwen mouth itself",
+    ("QwenRenderer", "render_svo_batch"): "the Qwen mouth itself",
+    ("QwenRenderer", "render_svo_regen_batch"): "the Qwen mouth itself",
+    # rich_answer_composer.py
+    ("RichAnswerComposer", "render_paragraph"): "C5/C6: per-fact allowlist then the joined check",
+    ("RichAnswerComposer", "_render_paragraph_batched"): "C3: spiking parts, batch + regen via _verify_rendered, joined check",
+    ("RichAnswerComposer", "_render_one_verified_ex"): "C2/C4/C5: spiking parts, Touchpoint A and Qwen/stub via _verify_rendered",
+    ("_ConfabOneRenderer", "render_svo"): "the composer smoke's adversarial confabulating mouth (a test renderer, not production)",
+}
+MOUTH_CALLS = {"render_svo", "render_svo_batch", "render_svo_regen", "render_svo_regen_batch", "render_fact_sentence",
+               "_spiking_recall_mouth", "_spiking_broca_producer", "emit", "spiking_recall_surface", "spiking_recall_parts", "render"}
+
+
+def test_every_mouth_call_is_in_the_census():
+    """Fails loudly when a new mouth call appears outside a registered function (a new path the flag would not own)."""
+    import ast
+    import inspect
+    from research.runners import brain_chat_tui, rich_answer_composer
+    found = set()
+    for mod in (brain_chat_tui, rich_answer_composer):
+        tree = ast.parse(inspect.getsource(mod))
+        for cls in [n for n in tree.body if isinstance(n, ast.ClassDef)]:
+            for fn in [n for n in cls.body if isinstance(n, ast.FunctionDef)]:
+                for node in ast.walk(fn):
+                    if isinstance(node, ast.Call):
+                        f = node.func
+                        name = f.attr if isinstance(f, ast.Attribute) else (f.id if isinstance(f, ast.Name) else None)
+                        if name in MOUTH_CALLS and not (name == "render" and cls.name in ("ChatBrain",) and fn.name == "answer"):
+                            found.add((cls.name, fn.name))
+    unregistered = sorted(found - set(CENSUS) - {("ChatBrain", "answer"), ("ChatBrain", "render_hypothesis")})
+    assert not unregistered, "mouth calls outside the census (register them with their flag-on check): %s" % unregistered

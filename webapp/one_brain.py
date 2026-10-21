@@ -307,10 +307,12 @@ class DeferredMouth:
     No batch methods: the rich composer then renders per fact through `render_svo`."""
 
     def __init__(self, base):
-        from research.runners._grounded_lang_p3_derisk import TemplateStubFaculty
+        # the template articulation is the template stub's (build 6: through StubRenderer, which equals TemplateStubFaculty with
+        # BRAIN_MOAT_ALLOWLIST off and writes a relation's reviewed shape-4 phrase with it on)
+        from research.runners.brain_chat_tui import StubRenderer
         self.base = base
         self.name = getattr(base, "name", "renderer")
-        self._tmpl = TemplateStubFaculty()
+        self._tmpl = StubRenderer()
         self.calls = []
 
     def _record(self, method, a, v, p, manner):
@@ -348,9 +350,16 @@ class DeferredMouth:
         return surface if isinstance(surface, str) else None
 
 
-def articulate(answer, calls, mouth, verify, relock):
+def articulate(answer, calls, mouth, verify, relock, verify_reply=None):
     """Run the deferred mouth after the turn lock. `verify(surface, svo) -> bool` is the brain's re-parse, run inside
-    `relock()` (a context manager that takes the turn lock). Returns (answer, record)."""
+    `relock()` (a context manager that takes the turn lock). Returns (answer, record).
+
+    `verify_reply(texts, svos) -> bool` (build 6, passed only with BRAIN_MOAT_ALLOWLIST on): the JOINED reply check. The call surfaces
+    that reached the answer, in answer order, are the reply's mouth sentences; a substitution is kept only if, with it (its prose
+    "."-terminated), the joined sentences pass against the union of the calls' triples; otherwise that call keeps its template (which
+    the composer's own joined check already passed). The last state kept was checked whole. Without it: exactly as before."""
+    if verify_reply is not None:
+        return _articulate_joined(answer, calls, mouth, verify, relock, verify_reply)
     rec = {"n_calls": len(calls), "n_spoken": 0, "n_verified": 0, "n_kept_template": 0, "seconds": 0.0}
     if not isinstance(answer, str) or not calls:
         return answer, rec
@@ -369,6 +378,41 @@ def articulate(answer, calls, mouth, verify, relock):
                     rec["n_verified"] += 1
                 else:
                     rec["n_kept_template"] += 1
+    rec["seconds"] = round(time.perf_counter() - t0, 3)
+    return answer, rec
+
+
+def _articulate_joined(answer, calls, mouth, verify, relock, verify_reply):
+    """`articulate` under BRAIN_MOAT_ALLOWLIST (build 6): per-call `verify`, then the joined reply check (see `articulate`)."""
+    from research.runners.brain_chat_tui import _moat_terminate
+    rec = {"n_calls": len(calls), "n_spoken": 0, "n_verified": 0, "n_kept_template": 0, "n_reply_rejected": 0, "seconds": 0.0}
+    if not isinstance(answer, str) or not calls:
+        return answer, rec
+    t0 = time.perf_counter()
+    spoken = [c for c in calls if c.get("template") and c["template"] in answer]
+    spoken.sort(key=lambda c: answer.find(c["template"]))
+    todo = []
+    for c in spoken:
+        rec["n_spoken"] += 1
+        todo.append((c, mouth.generate(c)))
+    if todo:
+        cur = {id(c): c["template"] for c in spoken}
+        svos = [list(c["svo"]) for c in spoken]
+        with relock():
+            for c, prose in todo:
+                text = _moat_terminate(prose) if isinstance(prose, str) else prose
+                if not (text and prose != c["template"] and verify(text, c["svo"]) and c["template"] in answer):
+                    rec["n_kept_template"] += 1
+                    continue
+                trial = dict(cur)
+                trial[id(c)] = text
+                if verify_reply([trial[id(x)] for x in spoken], svos):
+                    answer = answer.replace(c["template"], text, 1)
+                    cur = trial
+                    rec["n_verified"] += 1
+                else:
+                    rec["n_kept_template"] += 1
+                    rec["n_reply_rejected"] += 1
     rec["seconds"] = round(time.perf_counter() - t0, 3)
     return answer, rec
 
