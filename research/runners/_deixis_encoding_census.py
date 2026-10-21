@@ -903,9 +903,15 @@ def run_w4(items, seed):
                 "W4_error": "no composer attribute on tiny demo agent"}
     org = RPO.get_organ(seed=seed)
     demos = []
-    pairs = [("kofi", "chase", "north", "south"),
-             ("i", "like", "jazz", "rock"),
-             ("my", "cousin", "likes", "jazz")]
+    # All words must exist in the tiny-demo codebook: earlier pairs with
+    # uncoded patients (south/rock) raised KeyError inside window_open and
+    # the canary's error scan treats any nested `error` as job failure.
+    # Facts 2-3 rewrite EXISTING kb facts (kb[3]/kb[4]); the deictic
+    # defect fact (my/cousin/likes) runs FIRST on the pristine composer
+    # (p_new=brain is kb[0]'s agent; jazz only worked pre-mutation).
+    pairs = [("my", "cousin", "likes", "brain"),
+             ("dog", "chase", "cat", "fish"),
+             ("cat", "eat", "fish", "spikes")]
     for (a, act, p_old, p_new) in pairs:
         try:
             # store the old fact through the composer's own path
