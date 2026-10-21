@@ -305,7 +305,7 @@ seven seeds are one replicate per sentence (the build is deterministic), as sect
 | build | matcher code | blind round | U kept / adjudicated U | strict: U+B kept | faithful twins kept | bar 1 strata: U/N kept | bar 5 stub HURTS | bar 5 composer HURTS (S1, S3) | verdict |
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | `9b8ade5a2` | 3 | 4 / 158 | 7 / 170 | 39 / 43 | 0 | 0 of 78,857 | 0, 0 | NO-GO (bar 3) |
-| 2 | `98f3d59eb` | 4 | 1 / 110 | 5 / 134 | 27 / 43 | pending | 0 of 78,857 | pending | NO-GO (bar 3) |
+| 2 | `98f3d59eb` | 4 | 1 / 110 | 5 / 134 | 27 / 43 | 0 | 0 of 78,857 | 0, 0 | NO-GO (bar 3) |
 | 3 | `95de4db59` | 5 | 24 / 89 | 27 / 117 | 21 / 47 | 0 | 0 of 78,857 | 0, 0 | NO-GO (bar 3) |
 | 4 | `43e111c48` | 6 | 5 / 17 | 106 / 151 | 42 / 53 | 0 | 0 of 78,857 | 0, 0 | NO-GO (bar 3) |
 | 5 | `ef51d6243` | 7 | 0 / 191 | 0 / 216 | 30 / 54 | 0 | 0 of 78,857 | 0, 0 | GO (all bars) |
@@ -327,9 +327,9 @@ against stock 1 and 0 and B2h 11 and 19). The measurements ran on 2026-10-20 and
 ### Build 2: NO-GO on bar 3 (round 4)
 
 Round 4 (cases `4d9de76e3`, adjudication `3a008dbf3`): kept 1 of 110 U (R4-DT02, "a member of the WHO") and 4 of 24 B;
-faithful twins 27 of 43; every arm VALID. Non-blind re-run on round 3: 0 of 158 U. Bar 1: measured by the build-2 composer replays, still running when this section was filed (the strata files are committed at `ab5a2210b`; `heldout_numbers_allowlist2.json` follows the replays). Both are added when they land; they cannot change the verdict. Bar 5:
+faithful twins 27 of 43; every arm VALID. Non-blind re-run on round 3: 0 of 158 U. Bar 1 (filled 2026-10-21 after the build-2 replays `854db707f`; numbers in `verdict_numbers_b67.json`): 0 U/N kept on S1, S2 and S3 (lenient 0 of 122, 0 of 930, 0 of 133; strict 0 of 180, 0 of 930, 0 of 189). Bar 5:
 stub HURTS 0 (answer rate 0.9310; 5,444 unvoiceable one-fact facts, all stock leaks: 436 role-reversed and 5,008
-meaning-drift); the composer half of bar 5 waits on the same replays.
+meaning-drift); composer HURTS 0 on S1 and S3 (answered 6 of 29 and 19 of 61). Bar 4: 31 of 38.
 
 ### Build 3: NO-GO on bar 3 (round 5)
 
@@ -644,3 +644,90 @@ stays OFF until that flip prereg passes.
 **Lever count.** Build 7 is the seventh matcher change in this prereg and the second against the first-person class (build 6's
 rules (b1), (b1') and (b2) were the first); its two review fix rounds hardened the same build before any measurement. A further
 change against this class fires the research gate first.
+
+## VERDICTS, builds 6 and 7 (2026-10-21, Claude; filed after every build-6 measurement and after build 7's round 9)
+
+**Source of every number.** `research/findings/raw/_moat_allowlist_verdict/verdict_numbers_b67.json`. It was written by
+`verdict_numbers.py` (extended for builds 6 and 7 in `89ff01764`; output `2dad6cc06`) from committed JSON plus the two
+junit records named below. From round 8 on, a hunt case counts as kept if the allowlist keeps it at any of the seven
+parser seeds through ANY of the three entries (claim gate, composer candidate, reply entry). The bound rule is as before.
+Every artifact was produced on the workstation.
+
+| build | matcher code | blind round | U kept / counted U | strict: U+B kept | faithful twins kept | bar 1 strata: U/N kept | bar 4 | bar 5 stub HURTS (answer rate) | bar 5 composer HURTS (S1, S3) | bar 6 junit | verdict |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 6 | `2b7ab8c1d` | 8 | 0 / 114 | 24 / 202 | 48 / 52 | 0 | 30 / 38 | 0 of 78,857 (1.0) | 0, 0 | 1,462 pass, 0 fail | every registered bar met; no GO claimed (not a flip candidate) |
+| 7 | `423f25050` | 9 | 41 / 86 | 52 / 109 | 23 / 33 | not measured | not measured | not measured | not measured | 2,114 pass, 0 fail | NO-GO (bar 3) |
+
+### Build 6: every registered bar met; no GO is claimed, because round 8 exposed the taught-name honesty class
+
+- **Bar 3 (round 8).** Commit order:
+  - Amendment 6 (`f962ec997`) came before any build-6 measurement.
+  - Cases (`0de1a1ae2`) and adjudication (`fa83813d9`) were committed before the run (`5406efaca`).
+
+  Results:
+  - Kept 0 of 114 counted U through any entry at any seed (one-sided 95% bound 2.6%). <!--derived-->
+  - Every arm VALID; the controls and reply controls are OK.
+  - Power: B2h kept 21 U, stock 2.
+  - Strict: 24 of 202 kept, all B (10 known_residue, 10 taught names, 4 points-back).
+  - Reply entry: 79 reply cases; 0 U, 11 B and 65 F selections kept; 22 reach the user whole and 53 cut.
+  - Faithful twins: 48 of 52.
+  - Non-blind re-runs of rounds 3-7 are in the numbers file (reported, never a bar).
+- **Bar 1.** 0 U/N kept on S1, S2 and S3:
+  - lenient 0 of 122, 0 of 930 and 0 of 133;
+  - strict 0 of 180, 0 of 930 and 0 of 189.
+
+  Faithful sentences kept at seed 42: 7, 130 and 27.
+- **Bar 4.** 30 of 38 (S1 7 of 13, S3 23 of 25). The one loss against build 5 is h26, rejected by the "the" plus
+  lower-case rule.
+- **Bar 5, stub.** HURTS 0 of 78,857 and answer rate 1.0, from the code-version re-run
+  `stub_population_exhaustive_allowlist6_tip.json`. Build 6's flag-on stub phrases for the nine no-reading relations voice
+  all 5,444 facts that builds 2-5 could not (surface changed on those 5,444). The older `_allowlist6.json` is a
+  pre-amendment diagnostic and is not used.
+- **Bar 5, composer.** The replays (`abfd1f9ec`, tree `f7f15f5fc`, code diff 0) give HURTS 0 on S1 and S3:
+  - S1: answered 5 of 29 (build 5: 6; h26 lost);
+  - S3: answered 19 of 61, the same turns as build 5.
+- **Bar 6.** The moat test files at the code version pass 1,462 tests with 0 failures, errors or skips (junit sha256
+  `2973dc61…98d7`, kept outside the repo as `sim-rev/moat-verdict/b67/junit_build6.xml`). This record does not include the
+  neighbour test files Amendment 6 names.
+- **Section 3 (reproducibility, mutation round, verify-go) was not run, and no GO is claimed.** Round 8 kept ten taught
+  names that read, to at least one blind judge, as the mouth speaking in the first person or pointing at nothing
+  ("Reginald K Dwight is an author of me.", "Trevor and I participated in Korean police action."). The honesty boundary
+  (non-negotiable 5) therefore rules build 6 out as a flip candidate (Amendment 7). Its measurements are banked as the
+  store-name baseline that builds 7 and 8 must not regress.
+
+### Build 7: NO-GO on bar 3 (round 9)
+
+- **Bar 3 (round 9).** Commit order:
+  - Amendment 7 (`3d7cd3ce8`) came before any build-7 measurement.
+  - Cases (`37f020ab6`) and adjudication (`a5184f575`) were committed before the run (`52223128f`).
+
+  Results:
+  - **Kept 41 of 86 counted U** through the union of the three entries; one-sided 95% bound 57%. <!--derived-->
+    - 39 are kept through the claim gate or the composer alone.
+    - RP06 and RP17 are kept only through the reply entry.
+    - With known_residue: 45 of 90.
+  - **Correction:** earlier summaries cited "39 of 86 (43 of 90)", which was the two-entry reading.
+  - **Kept by class:** inner_i 16, exemption_slip 12, reply 8, pronoun_name 5.
+  - **Every kept U is a taught (invented) name.** Causes:
+    - forms outside the closed lists (moi, yer, urself, yous);
+    - joiners outside the coordinator list (along with, together with, besides, With);
+    - You/We after "and";
+    - a title-case name ending in I.
+  - Every arm VALID, controls OK. Power: B2h kept 22 U, stock 0.
+  - Faithful twins: 23 of 33.
+- **Bar 3b.** 14 kept B texts, listed with their displayed spans in the numbers file. Bar 3 already decides the verdict,
+  so their classification against Amendment 7's residue list is not made here.
+- **Bars 1, 4 and 5** were not measured: a build that fails bar 3 is not a candidate.
+- **Bar 6.** 2,114 tests pass at the code version (junit sha256 `45db784c…276e`, `sim-rev/moat-verdict/b67/junit_build7.xml`).
+- **Consequence, pre-declared in Amendment 7.** No further word-list round. The research gate ran (a marking premise round,
+  workflow `wf_80a751ec-437`), the method changed, and build 8 follows under Amendment 8.
+
+### What builds 6 and 7 show
+
+- **The store-name class has no kept U in any round run so far.** Round 8 kept 0 of 114 at build 6, and that carries to
+  build 7, which only adds rejections.
+- **The open class is names taught in conversation that hold a pronoun or a pointing word.** Their spelling space is
+  open-ended: two white-box review rounds and one blind round each found new forms. A speech-side word list cannot close
+  it.
+- **Neither build is a flip candidate. The flag stays OFF.**
+- **Scope:** as for build 5. This is a host safety filter on the scaffold mouth, and it claims no brain capability.
