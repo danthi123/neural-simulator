@@ -1,0 +1,3848 @@
+{
+ "_doc": "flag-OFF golden of the build-6 mouth paths, captured by tests/_moat_mouthpath_harness.py at the build-5 verdict tip fde5e739e before any build-6 edit",
+ "backend": "numpy",
+ "chatbrain": {
+  "_verify": [
+   [
+    "The brain uses spikes.",
+    [
+     "brain",
+     "use",
+     "spikes"
+    ],
+    [
+     "brain",
+     "use",
+     "spikes"
+    ],
+    true
+   ],
+   [
+    "The brain uses spikes.",
+    null,
+    [
+     "brain",
+     "use",
+     "spikes"
+    ],
+    true
+   ],
+   [
+    "The spikes uses brain.",
+    null,
+    [
+     "brain",
+     "use",
+     "spikes"
+    ],
+    false
+   ],
+   [
+    "The spikes uses brain.",
+    [
+     "brain",
+     "use",
+     "spikes"
+    ],
+    [
+     "brain",
+     "use",
+     "spikes"
+    ],
+    true
+   ],
+   [
+    "The brain uses spikes and is famous for its vodka.",
+    null,
+    [
+     "brain",
+     "use",
+     "spikes"
+    ],
+    true
+   ],
+   [
+    "the brain uses the spikes",
+    null,
+    [
+     "brain",
+     "use",
+     "spikes"
+    ],
+    true
+   ],
+   [
+    "perhaps the brain uses the spikes",
+    null,
+    [
+     "brain",
+     "use",
+     "spikes"
+    ],
+    true
+   ],
+   [
+    "The brain uses spikes.",
+    [
+     "spikes",
+     "use",
+     "brain"
+    ],
+    [
+     "brain",
+     "use",
+     "spikes"
+    ],
+    false
+   ],
+   [
+    "The brain learns words.",
+    [
+     "brain",
+     "learn",
+     "words"
+    ],
+    [
+     "brain",
+     "learn",
+     "words"
+    ],
+    true
+   ],
+   [
+    "The brain learns words.",
+    null,
+    [
+     "brain",
+     "learn",
+     "words"
+    ],
+    true
+   ],
+   [
+    "The words learns brain.",
+    null,
+    [
+     "brain",
+     "learn",
+     "words"
+    ],
+    false
+   ],
+   [
+    "The words learns brain.",
+    [
+     "brain",
+     "learn",
+     "words"
+    ],
+    [
+     "brain",
+     "learn",
+     "words"
+    ],
+    true
+   ],
+   [
+    "The brain learns words and is famous for its vodka.",
+    null,
+    [
+     "brain",
+     "learn",
+     "words"
+    ],
+    true
+   ],
+   [
+    "the brain learns the words",
+    null,
+    [
+     "brain",
+     "learn",
+     "words"
+    ],
+    true
+   ],
+   [
+    "perhaps the brain learns the words",
+    null,
+    [
+     "brain",
+     "learn",
+     "words"
+    ],
+    true
+   ],
+   [
+    "The brain learns words.",
+    [
+     "words",
+     "learn",
+     "brain"
+    ],
+    [
+     "brain",
+     "learn",
+     "words"
+    ],
+    false
+   ],
+   [
+    "The brain stores memory.",
+    [
+     "brain",
+     "store",
+     "memory"
+    ],
+    [
+     "brain",
+     "store",
+     "memory"
+    ],
+    true
+   ],
+   [
+    "The brain stores memory.",
+    null,
+    [
+     "brain",
+     "store",
+     "memory"
+    ],
+    true
+   ],
+   [
+    "The memory stores brain.",
+    null,
+    [
+     "brain",
+     "store",
+     "memory"
+    ],
+    false
+   ],
+   [
+    "The memory stores brain.",
+    [
+     "brain",
+     "store",
+     "memory"
+    ],
+    [
+     "brain",
+     "store",
+     "memory"
+    ],
+    true
+   ],
+   [
+    "The brain stores memory and is famous for its vodka.",
+    null,
+    [
+     "brain",
+     "store",
+     "memory"
+    ],
+    true
+   ],
+   [
+    "the brain stores the memory",
+    null,
+    [
+     "brain",
+     "store",
+     "memory"
+    ],
+    true
+   ],
+   [
+    "perhaps the brain stores the memory",
+    null,
+    [
+     "brain",
+     "store",
+     "memory"
+    ],
+    true
+   ],
+   [
+    "The brain stores memory.",
+    [
+     "memory",
+     "store",
+     "brain"
+    ],
+    [
+     "brain",
+     "store",
+     "memory"
+    ],
+    false
+   ],
+   [
+    "The dog chases cat.",
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    true
+   ],
+   [
+    "The dog chases cat.",
+    null,
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    true
+   ],
+   [
+    "The cat chases dog.",
+    null,
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    false
+   ],
+   [
+    "The cat chases dog.",
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    true
+   ],
+   [
+    "The dog chases cat and is famous for its vodka.",
+    null,
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    true
+   ],
+   [
+    "the dog chases the cat",
+    null,
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    true
+   ],
+   [
+    "perhaps the dog chases the cat",
+    null,
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    true
+   ],
+   [
+    "The dog chases cat.",
+    [
+     "cat",
+     "chase",
+     "dog"
+    ],
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    false
+   ],
+   [
+    "The cat eats fish.",
+    [
+     "cat",
+     "eat",
+     "fish"
+    ],
+    [
+     "cat",
+     "eat",
+     "fish"
+    ],
+    true
+   ],
+   [
+    "The cat eats fish.",
+    null,
+    [
+     "cat",
+     "eat",
+     "fish"
+    ],
+    true
+   ],
+   [
+    "The fish eats cat.",
+    null,
+    [
+     "cat",
+     "eat",
+     "fish"
+    ],
+    false
+   ],
+   [
+    "The fish eats cat.",
+    [
+     "cat",
+     "eat",
+     "fish"
+    ],
+    [
+     "cat",
+     "eat",
+     "fish"
+    ],
+    true
+   ],
+   [
+    "The cat eats fish and is famous for its vodka.",
+    null,
+    [
+     "cat",
+     "eat",
+     "fish"
+    ],
+    true
+   ],
+   [
+    "the cat eats the fish",
+    null,
+    [
+     "cat",
+     "eat",
+     "fish"
+    ],
+    true
+   ],
+   [
+    "perhaps the cat eats the fish",
+    null,
+    [
+     "cat",
+     "eat",
+     "fish"
+    ],
+    true
+   ],
+   [
+    "The cat eats fish.",
+    [
+     "fish",
+     "eat",
+     "cat"
+    ],
+    [
+     "cat",
+     "eat",
+     "fish"
+    ],
+    false
+   ],
+   [
+    "The dog eats fish.",
+    [
+     "dog",
+     "eat",
+     "fish"
+    ],
+    [
+     "dog",
+     "eat",
+     "fish"
+    ],
+    true
+   ],
+   [
+    "The dog eats fish.",
+    null,
+    [
+     "dog",
+     "eat",
+     "fish"
+    ],
+    true
+   ],
+   [
+    "The fish eats dog.",
+    null,
+    [
+     "dog",
+     "eat",
+     "fish"
+    ],
+    false
+   ],
+   [
+    "The fish eats dog.",
+    [
+     "dog",
+     "eat",
+     "fish"
+    ],
+    [
+     "dog",
+     "eat",
+     "fish"
+    ],
+    true
+   ],
+   [
+    "The dog eats fish and is famous for its vodka.",
+    null,
+    [
+     "dog",
+     "eat",
+     "fish"
+    ],
+    true
+   ],
+   [
+    "the dog eats the fish",
+    null,
+    [
+     "dog",
+     "eat",
+     "fish"
+    ],
+    true
+   ],
+   [
+    "perhaps the dog eats the fish",
+    null,
+    [
+     "dog",
+     "eat",
+     "fish"
+    ],
+    true
+   ],
+   [
+    "The dog eats fish.",
+    [
+     "fish",
+     "eat",
+     "dog"
+    ],
+    [
+     "dog",
+     "eat",
+     "fish"
+    ],
+    false
+   ]
+  ],
+  "hyp|prose_noregen|sm=0|big_dog/eat/fish": [
+   "perhaps big_dog eat fish  [a guess from what I've learned -- not something I was taught]",
+   false
+  ],
+  "hyp|prose_noregen|sm=0|cat/chase/bird": [
+   "perhaps cat chase bird  [a guess from what I've learned -- not something I was taught]",
+   false
+  ],
+  "hyp|prose_noregen|sm=0|dog/chase/cat": [
+   "Maybe the dog chases the cat and the bird -- that's a guess from what I've learned, not something I was taught.",
+   true
+  ],
+  "hyp|prose_noregen|sm=0|dog/eat/fish": [
+   "Maybe the dog eats the fish -- that's a guess from what I've learned, not something I was taught.",
+   true
+  ],
+  "hyp|prose_noregen|sm=None|big_dog/eat/fish": [
+   "perhaps big_dog eat fish  [a guess from what I've learned -- not something I was taught]",
+   false
+  ],
+  "hyp|prose_noregen|sm=None|cat/chase/bird": [
+   "perhaps cat chase bird  [a guess from what I've learned -- not something I was taught]",
+   false
+  ],
+  "hyp|prose_noregen|sm=None|dog/chase/cat": [
+   "perhaps the dog chases the cat  [a guess from what I've learned -- not something I was taught]",
+   true
+  ],
+  "hyp|prose_noregen|sm=None|dog/eat/fish": [
+   "perhaps the dog eats the fish  [a guess from what I've learned -- not something I was taught]",
+   true
+  ],
+  "hyp|prose|sm=0|big_dog/eat/fish": [
+   "perhaps big_dog eat fish  [a guess from what I've learned -- not something I was taught]",
+   false
+  ],
+  "hyp|prose|sm=0|cat/chase/bird": [
+   "perhaps cat chase bird  [a guess from what I've learned -- not something I was taught]",
+   false
+  ],
+  "hyp|prose|sm=0|dog/chase/cat": [
+   "Maybe the dog chases the cat and is famous for its vodka -- that's a guess from what I've learned, not something I was taught.",
+   true
+  ],
+  "hyp|prose|sm=0|dog/eat/fish": [
+   "Maybe the dog eats the fish -- that's a guess from what I've learned, not something I was taught.",
+   true
+  ],
+  "hyp|prose|sm=None|big_dog/eat/fish": [
+   "perhaps big_dog eat fish  [a guess from what I've learned -- not something I was taught]",
+   false
+  ],
+  "hyp|prose|sm=None|cat/chase/bird": [
+   "perhaps cat chase bird  [a guess from what I've learned -- not something I was taught]",
+   false
+  ],
+  "hyp|prose|sm=None|dog/chase/cat": [
+   "perhaps the dog chases the cat  [a guess from what I've learned -- not something I was taught]",
+   true
+  ],
+  "hyp|prose|sm=None|dog/eat/fish": [
+   "perhaps the dog eats the fish  [a guess from what I've learned -- not something I was taught]",
+   true
+  ],
+  "hyp|stub|sm=0|big_dog/eat/fish": [
+   "Maybe the big_dog eats fish -- that's a guess from what I've learned, not something I was taught.",
+   true
+  ],
+  "hyp|stub|sm=0|cat/chase/bird": [
+   "Maybe the cat chases bird -- that's a guess from what I've learned, not something I was taught.",
+   true
+  ],
+  "hyp|stub|sm=0|dog/chase/cat": [
+   "Maybe the dog chases cat -- that's a guess from what I've learned, not something I was taught.",
+   true
+  ],
+  "hyp|stub|sm=0|dog/eat/fish": [
+   "Maybe the dog eats fish -- that's a guess from what I've learned, not something I was taught.",
+   true
+  ],
+  "hyp|stub|sm=None|big_dog/eat/fish": [
+   "Maybe the big_dog eats fish -- that's a guess from what I've learned, not something I was taught.",
+   true
+  ],
+  "hyp|stub|sm=None|cat/chase/bird": [
+   "perhaps cat chase bird  [a guess from what I've learned -- not something I was taught]",
+   false
+  ],
+  "hyp|stub|sm=None|dog/chase/cat": [
+   "perhaps the dog chases the cat  [a guess from what I've learned -- not something I was taught]",
+   true
+  ],
+  "hyp|stub|sm=None|dog/eat/fish": [
+   "perhaps the dog eats the fish  [a guess from what I've learned -- not something I was taught]",
+   true
+  ],
+  "recall|mood=0|level=-1|brain/use/spikes": "the brain uses the spikes",
+  "recall|mood=0|level=-1|cat/eat/fish": "the cat eats the fish",
+  "recall|mood=0|level=-1|dog/chase/cat": "the dog chases the cat",
+  "recall|mood=0|level=-2|brain/use/spikes": "the brain uses the spikes",
+  "recall|mood=0|level=-2|cat/eat/fish": "the cat eats the fish",
+  "recall|mood=0|level=-2|dog/chase/cat": "the dog chases the cat",
+  "recall|mood=0|level=-3|brain/use/spikes": "the brain uses the spikes",
+  "recall|mood=0|level=-3|cat/eat/fish": "the cat eats the fish",
+  "recall|mood=0|level=-3|dog/chase/cat": "the dog chases the cat",
+  "recall|mood=0|level=0|brain/use/spikes": "the brain uses the spikes",
+  "recall|mood=0|level=0|cat/eat/fish": "the cat eats the fish",
+  "recall|mood=0|level=0|dog/chase/cat": "the dog chases the cat",
+  "recall|mood=0|level=1|brain/use/spikes": "the brain uses the spikes",
+  "recall|mood=0|level=1|cat/eat/fish": "the cat eats the fish",
+  "recall|mood=0|level=1|dog/chase/cat": "the dog chases the cat",
+  "recall|mood=0|level=2|brain/use/spikes": "the brain uses the spikes",
+  "recall|mood=0|level=2|cat/eat/fish": "the cat eats the fish",
+  "recall|mood=0|level=2|dog/chase/cat": "the dog chases the cat",
+  "recall|mood=0|level=3|brain/use/spikes": "the brain uses the spikes",
+  "recall|mood=0|level=3|cat/eat/fish": "the cat eats the fish",
+  "recall|mood=0|level=3|dog/chase/cat": "the dog chases the cat",
+  "recall|mood=None|level=-1|brain/use/spikes": "the brain uses the spikes.",
+  "recall|mood=None|level=-1|cat/eat/fish": "the cat eats the fish.",
+  "recall|mood=None|level=-1|dog/chase/cat": "the dog chases the cat.",
+  "recall|mood=None|level=-2|brain/use/spikes": "the brain uses the spikes.",
+  "recall|mood=None|level=-2|cat/eat/fish": "the cat eats the fish.",
+  "recall|mood=None|level=-2|dog/chase/cat": "the dog chases the cat.",
+  "recall|mood=None|level=-3|brain/use/spikes": "the brain uses the spikes.",
+  "recall|mood=None|level=-3|cat/eat/fish": "the cat eats the fish.",
+  "recall|mood=None|level=-3|dog/chase/cat": "the dog chases the cat.",
+  "recall|mood=None|level=0|brain/use/spikes": "the brain uses the spikes",
+  "recall|mood=None|level=0|cat/eat/fish": "the cat eats the fish",
+  "recall|mood=None|level=0|dog/chase/cat": "the dog chases the cat",
+  "recall|mood=None|level=1|brain/use/spikes": "the brain uses the spikes!",
+  "recall|mood=None|level=1|cat/eat/fish": "the cat eats the fish!",
+  "recall|mood=None|level=1|dog/chase/cat": "the dog chases the cat!",
+  "recall|mood=None|level=2|brain/use/spikes": "the brain uses the spikes!",
+  "recall|mood=None|level=2|cat/eat/fish": "the cat eats the fish!",
+  "recall|mood=None|level=2|dog/chase/cat": "the dog chases the cat!",
+  "recall|mood=None|level=3|brain/use/spikes": "the brain uses the spikes!",
+  "recall|mood=None|level=3|cat/eat/fish": "the cat eats the fish!",
+  "recall|mood=None|level=3|dog/chase/cat": "the dog chases the cat!",
+  "render|prose_noregen|recall=0|big_dog/chase/cat": "big_dog chase cat   [unverified render -> spoke the brain's raw fact]",
+  "render|prose_noregen|recall=0|brain/learn/words": "The brain learns the words.",
+  "render|prose_noregen|recall=0|brain/store/memory": "The brain stores the memory.",
+  "render|prose_noregen|recall=0|brain/use/spikes": "The brain uses the spikes.",
+  "render|prose_noregen|recall=0|cat/eat/fish": "The cat eats the fish.",
+  "render|prose_noregen|recall=0|dog/chase/cat": "The dog chases the cat and the bird.",
+  "render|prose_noregen|recall=0|dog/eat/fish": "The dog eats the fish.",
+  "render|prose_noregen|recall=None|big_dog/chase/cat": "big_dog chase cat   [unverified render -> spoke the brain's raw fact]",
+  "render|prose_noregen|recall=None|brain/learn/words": "the brain learns the words",
+  "render|prose_noregen|recall=None|brain/store/memory": "the brain stores the memory",
+  "render|prose_noregen|recall=None|brain/use/spikes": "the brain uses the spikes",
+  "render|prose_noregen|recall=None|cat/eat/fish": "the cat eats the fish",
+  "render|prose_noregen|recall=None|dog/chase/cat": "the dog chases the cat",
+  "render|prose_noregen|recall=None|dog/eat/fish": "the dog eats the fish",
+  "render|prose|recall=0|big_dog/chase/cat": "big_dog chase cat   [unverified render -> spoke the brain's raw fact]",
+  "render|prose|recall=0|brain/learn/words": "The brain learns the words.",
+  "render|prose|recall=0|brain/store/memory": "The brain stores the memory.",
+  "render|prose|recall=0|brain/use/spikes": "The brain uses spikes.",
+  "render|prose|recall=0|cat/eat/fish": "The cat eats the fish!",
+  "render|prose|recall=0|dog/chase/cat": "The dog chases the cat and is famous for its vodka.",
+  "render|prose|recall=0|dog/eat/fish": "The dog eats the fish.",
+  "render|prose|recall=None|big_dog/chase/cat": "big_dog chase cat   [unverified render -> spoke the brain's raw fact]",
+  "render|prose|recall=None|brain/learn/words": "the brain learns the words",
+  "render|prose|recall=None|brain/store/memory": "the brain stores the memory",
+  "render|prose|recall=None|brain/use/spikes": "the brain uses the spikes",
+  "render|prose|recall=None|cat/eat/fish": "the cat eats the fish",
+  "render|prose|recall=None|dog/chase/cat": "the dog chases the cat",
+  "render|prose|recall=None|dog/eat/fish": "the dog eats the fish",
+  "render|stub|recall=0|big_dog/chase/cat": "The big_dog chases cat.",
+  "render|stub|recall=0|brain/learn/words": "The brain learns words.",
+  "render|stub|recall=0|brain/store/memory": "The brain stores memory.",
+  "render|stub|recall=0|brain/use/spikes": "The brain uses spikes.",
+  "render|stub|recall=0|cat/eat/fish": "The cat eats fish.",
+  "render|stub|recall=0|dog/chase/cat": "The dog chases cat.",
+  "render|stub|recall=0|dog/eat/fish": "The dog eats fish.",
+  "render|stub|recall=None|big_dog/chase/cat": "The big_dog chases cat.",
+  "render|stub|recall=None|brain/learn/words": "the brain learns the words",
+  "render|stub|recall=None|brain/store/memory": "the brain stores the memory",
+  "render|stub|recall=None|brain/use/spikes": "the brain uses the spikes",
+  "render|stub|recall=None|cat/eat/fish": "the cat eats the fish",
+  "render|stub|recall=None|dog/chase/cat": "the dog chases the cat",
+  "render|stub|recall=None|dog/eat/fish": "the dog eats the fish",
+  "tone|mood=0|level=-1|brain/use/spikes": "the brain uses the spikes",
+  "tone|mood=0|level=-1|cat/eat/fish": "the cat eats the fish",
+  "tone|mood=0|level=-1|dog/chase/cat": "the dog chases the cat",
+  "tone|mood=0|level=-2|brain/use/spikes": "the brain uses the spikes",
+  "tone|mood=0|level=-2|cat/eat/fish": "the cat eats the fish",
+  "tone|mood=0|level=-2|dog/chase/cat": "the dog chases the cat",
+  "tone|mood=0|level=-3|brain/use/spikes": "the brain uses the spikes",
+  "tone|mood=0|level=-3|cat/eat/fish": "the cat eats the fish",
+  "tone|mood=0|level=-3|dog/chase/cat": "the dog chases the cat",
+  "tone|mood=0|level=0|brain/use/spikes": "the brain uses the spikes",
+  "tone|mood=0|level=0|cat/eat/fish": "the cat eats the fish",
+  "tone|mood=0|level=0|dog/chase/cat": "the dog chases the cat",
+  "tone|mood=0|level=1|brain/use/spikes": "the brain uses the spikes",
+  "tone|mood=0|level=1|cat/eat/fish": "the cat eats the fish",
+  "tone|mood=0|level=1|dog/chase/cat": "the dog chases the cat",
+  "tone|mood=0|level=2|brain/use/spikes": "the brain uses the spikes",
+  "tone|mood=0|level=2|cat/eat/fish": "the cat eats the fish",
+  "tone|mood=0|level=2|dog/chase/cat": "the dog chases the cat",
+  "tone|mood=0|level=3|brain/use/spikes": "the brain uses the spikes",
+  "tone|mood=0|level=3|cat/eat/fish": "the cat eats the fish",
+  "tone|mood=0|level=3|dog/chase/cat": "the dog chases the cat",
+  "tone|mood=None|level=-1|brain/use/spikes": "the brain uses the spikes.",
+  "tone|mood=None|level=-1|cat/eat/fish": "the cat eats the fish.",
+  "tone|mood=None|level=-1|dog/chase/cat": "the dog chases the cat.",
+  "tone|mood=None|level=-2|brain/use/spikes": "the brain uses the spikes.",
+  "tone|mood=None|level=-2|cat/eat/fish": "the cat eats the fish.",
+  "tone|mood=None|level=-2|dog/chase/cat": "the dog chases the cat.",
+  "tone|mood=None|level=-3|brain/use/spikes": "the brain uses the spikes.",
+  "tone|mood=None|level=-3|cat/eat/fish": "the cat eats the fish.",
+  "tone|mood=None|level=-3|dog/chase/cat": "the dog chases the cat.",
+  "tone|mood=None|level=0|brain/use/spikes": "the brain uses the spikes",
+  "tone|mood=None|level=0|cat/eat/fish": "the cat eats the fish",
+  "tone|mood=None|level=0|dog/chase/cat": "the dog chases the cat",
+  "tone|mood=None|level=1|brain/use/spikes": "the brain uses the spikes!",
+  "tone|mood=None|level=1|cat/eat/fish": "the cat eats the fish!",
+  "tone|mood=None|level=1|dog/chase/cat": "the dog chases the cat!",
+  "tone|mood=None|level=2|brain/use/spikes": "the brain uses the spikes!",
+  "tone|mood=None|level=2|cat/eat/fish": "the cat eats the fish!",
+  "tone|mood=None|level=2|dog/chase/cat": "the dog chases the cat!",
+  "tone|mood=None|level=3|brain/use/spikes": "the brain uses the spikes!",
+  "tone|mood=None|level=3|cat/eat/fish": "the cat eats the fish!",
+  "tone|mood=None|level=3|dog/chase/cat": "the dog chases the cat!"
+ },
+ "composer": {
+  "batched_good": {
+   "_render_one_verified": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify_claim_set",
+      "The dog chases cat.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "render_svo",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "render_svo",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "_verify_claim_set",
+      "The brain uses spikes.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ]
+    ],
+    "result": [
+     [
+      "The dog chases cat.",
+      true
+     ],
+     [
+      "The cat eats fish.",
+      true
+     ],
+     [
+      "The brain uses spikes.",
+      true
+     ]
+    ]
+   },
+   "render_paragraph": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "spiking_recall_surface",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "spiking_recall_surface",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "render_svo_batch",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "_verify_claim_set",
+      "The dog chases cat.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "_verify_claim_set",
+      "The brain uses spikes.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ]
+    ],
+    "result": [
+     "The dog chases cat. The cat eats fish. The brain uses spikes.",
+     [
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ],
+      [
+       "brain",
+       "use",
+       "spikes"
+      ]
+     ],
+     []
+    ]
+   }
+  },
+  "batched_no_regen_batch": {
+   "_render_one_verified": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify_claim_set",
+      "The dog chases cat.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "render_svo",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish and is famous for its vodka.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ]
+      ]
+     ],
+     [
+      "render_svo_regen",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ]
+      ]
+     ]
+    ],
+    "result": [
+     [
+      "The dog chases cat.",
+      true
+     ],
+     [
+      "The cat eats fish.",
+      true
+     ]
+    ]
+   },
+   "render_paragraph": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "spiking_recall_surface",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "render_svo_batch",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ]
+      ]
+     ],
+     [
+      "_verify_claim_set",
+      "The dog chases cat.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ]
+      ]
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish and is famous for its vodka.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "render_svo",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish and is famous for its vodka.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ]
+      ]
+     ],
+     [
+      "render_svo_regen",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ]
+      ]
+     ]
+    ],
+    "result": [
+     "The dog chases cat. The cat eats fish.",
+     [
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ]
+     ],
+     []
+    ]
+   }
+  },
+  "batched_regen": {
+   "_render_one_verified": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify_claim_set",
+      "The dog chases cat.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "render_svo",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish and is famous for its vodka.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "render_svo_regen",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "render_svo",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "_verify_claim_set",
+      "The spikes uses brain.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "render_svo_regen",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "_verify_claim_set",
+      "The brain uses spikes and is famous for its vodka.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ]
+    ],
+    "result": [
+     [
+      "The dog chases cat.",
+      true
+     ],
+     [
+      "The cat eats fish.",
+      true
+     ],
+     [
+      null,
+      false
+     ]
+    ]
+   },
+   "render_paragraph": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "spiking_recall_surface",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "spiking_recall_surface",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "render_svo_batch",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "_verify_claim_set",
+      "The dog chases cat.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish and is famous for its vodka.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "_verify_claim_set",
+      "The spikes uses brain.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "render_svo_regen_batch",
+      [
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "_verify_claim_set",
+      "The brain uses spikes and is famous for its vodka.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ]
+    ],
+    "result": [
+     "The dog chases cat. The cat eats fish.",
+     [
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ]
+     ],
+     [
+      [
+       "brain",
+       "use",
+       "spikes"
+      ]
+     ]
+    ]
+   }
+  },
+  "batched_spiking": {
+   "_render_one_verified": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "spiking_recall_surface",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "render_svo",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "render_svo",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "_verify_claim_set",
+      "The brain uses spikes and is famous for its vodka.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "render_svo_regen",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "_verify_claim_set",
+      "The brain uses spikes",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ]
+    ],
+    "result": [
+     [
+      "the dog chases the cat",
+      true
+     ],
+     [
+      "The cat eats fish.",
+      true
+     ],
+     [
+      "The brain uses spikes",
+      true
+     ]
+    ]
+   },
+   "render_paragraph": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "spiking_recall_surface",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "spiking_recall_surface",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "render_svo_batch",
+      [
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "_verify_claim_set",
+      "The brain uses spikes and is famous for its vodka.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "render_svo_regen_batch",
+      [
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "_verify_claim_set",
+      "The brain uses spikes",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ]
+    ],
+    "result": [
+     "the dog chases the cat The cat eats fish. The brain uses spikes",
+     [
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ],
+      [
+       "brain",
+       "use",
+       "spikes"
+      ]
+     ],
+     []
+    ]
+   }
+  },
+  "four_good": {
+   "_render_one_verified": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify_claim_set",
+      "The dog chases cat.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ],
+       [
+        "brain",
+        "learn",
+        "words"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "render_svo",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ],
+       [
+        "brain",
+        "learn",
+        "words"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "render_svo",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "_verify_claim_set",
+      "The brain uses spikes.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ],
+       [
+        "brain",
+        "learn",
+        "words"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "brain",
+      "learn",
+      "words"
+     ],
+     [
+      "render_svo",
+      "brain",
+      "learn",
+      "words"
+     ],
+     [
+      "_verify_claim_set",
+      "The brain learns words.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ],
+       [
+        "brain",
+        "learn",
+        "words"
+       ]
+      ]
+     ]
+    ],
+    "result": [
+     [
+      "The dog chases cat.",
+      true
+     ],
+     [
+      "The cat eats fish.",
+      true
+     ],
+     [
+      "The brain uses spikes.",
+      true
+     ],
+     [
+      "The brain learns words.",
+      true
+     ]
+    ]
+   },
+   "render_paragraph": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify_claim_set",
+      "The dog chases cat.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ],
+       [
+        "brain",
+        "learn",
+        "words"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "render_svo",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ],
+       [
+        "brain",
+        "learn",
+        "words"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "render_svo",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "_verify_claim_set",
+      "The brain uses spikes.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ],
+       [
+        "brain",
+        "learn",
+        "words"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "brain",
+      "learn",
+      "words"
+     ],
+     [
+      "render_svo",
+      "brain",
+      "learn",
+      "words"
+     ],
+     [
+      "_verify_claim_set",
+      "The brain learns words.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ],
+       [
+        "brain",
+        "learn",
+        "words"
+       ]
+      ]
+     ]
+    ],
+    "result": [
+     "The dog chases cat. The cat eats fish. The brain uses spikes. The brain learns words.",
+     [
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ],
+      [
+       "brain",
+       "use",
+       "spikes"
+      ],
+      [
+       "brain",
+       "learn",
+       "words"
+      ]
+     ],
+     []
+    ]
+   }
+  },
+  "no_renderer": {
+   "_render_one_verified": {
+    "calls": [],
+    "result": [
+     [
+      "dog chase cat",
+      true
+     ],
+     [
+      "cat eat fish",
+      true
+     ]
+    ]
+   },
+   "render_paragraph": {
+    "calls": [],
+    "result": [
+     "dog chase cat cat eat fish",
+     [
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ]
+     ],
+     []
+    ]
+   }
+  },
+  "one_bang": {
+   "_render_one_verified": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify",
+      "The dog chases cat!",
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ]
+    ],
+    "result": [
+     [
+      null,
+      false
+     ]
+    ]
+   },
+   "render_paragraph": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify",
+      "The dog chases cat!",
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ]
+    ],
+    "result": [
+     "",
+     [],
+     [
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ]
+    ]
+   }
+  },
+  "one_extra_no_regen": {
+   "_render_one_verified": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify",
+      "The dog chases cat and is famous for its vodka.",
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ]
+    ],
+    "result": [
+     [
+      null,
+      false
+     ]
+    ]
+   },
+   "render_paragraph": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify",
+      "The dog chases cat and is famous for its vodka.",
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ]
+    ],
+    "result": [
+     "",
+     [],
+     [
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ]
+    ]
+   }
+  },
+  "one_extra_regen_extra": {
+   "_render_one_verified": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify",
+      "The dog chases cat and is famous for its vodka.",
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ],
+     [
+      "render_svo_regen",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify",
+      "The dog chases cat and is famous for its vodka.",
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ]
+    ],
+    "result": [
+     [
+      null,
+      false
+     ]
+    ]
+   },
+   "render_paragraph": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify",
+      "The dog chases cat and is famous for its vodka.",
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ],
+     [
+      "render_svo_regen",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify",
+      "The dog chases cat and is famous for its vodka.",
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ]
+    ],
+    "result": [
+     "",
+     [],
+     [
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ]
+    ]
+   }
+  },
+  "one_extra_regen_good": {
+   "_render_one_verified": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify",
+      "The dog chases cat and is famous for its vodka.",
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ],
+     [
+      "render_svo_regen",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify",
+      "The dog chases cat.",
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ]
+    ],
+    "result": [
+     [
+      "The dog chases cat.",
+      true
+     ]
+    ]
+   },
+   "render_paragraph": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify",
+      "The dog chases cat and is famous for its vodka.",
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ],
+     [
+      "render_svo_regen",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify",
+      "The dog chases cat.",
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ]
+    ],
+    "result": [
+     "The dog chases cat.",
+     [
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ],
+     []
+    ]
+   }
+  },
+  "one_good": {
+   "_render_one_verified": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify",
+      "The dog chases cat.",
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ]
+    ],
+    "result": [
+     [
+      "The dog chases cat.",
+      true
+     ]
+    ]
+   },
+   "render_paragraph": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify",
+      "The dog chases cat.",
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ]
+    ],
+    "result": [
+     "The dog chases cat.",
+     [
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ],
+     []
+    ]
+   }
+  },
+  "one_swap": {
+   "_render_one_verified": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify",
+      "The cat chases dog.",
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ],
+     [
+      "render_svo_regen",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify",
+      "The cat chases dog.",
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ]
+    ],
+    "result": [
+     [
+      null,
+      false
+     ]
+    ]
+   },
+   "render_paragraph": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify",
+      "The cat chases dog.",
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ],
+     [
+      "render_svo_regen",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify",
+      "The cat chases dog.",
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ]
+    ],
+    "result": [
+     "",
+     [],
+     [
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ]
+    ]
+   }
+  },
+  "one_unterm": {
+   "_render_one_verified": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify",
+      "The dog chases cat",
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ]
+    ],
+    "result": [
+     [
+      "The dog chases cat",
+      true
+     ]
+    ]
+   },
+   "render_paragraph": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify",
+      "The dog chases cat",
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ]
+    ],
+    "result": [
+     "The dog chases cat",
+     [
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ],
+     []
+    ]
+   }
+  },
+  "raw_mode": {
+   "_render_one_verified": {
+    "calls": [],
+    "result": [
+     [
+      "dog chase cat",
+      true
+     ],
+     [
+      "cat eat fish",
+      true
+     ]
+    ]
+   },
+   "render_paragraph": {
+    "calls": [],
+    "result": [
+     "dog chase cat cat eat fish",
+     [
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ]
+     ],
+     []
+    ]
+   }
+  },
+  "spiking_hit": {
+   "_render_one_verified": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "spiking_recall_surface",
+      "cat",
+      "eat",
+      "fish"
+     ]
+    ],
+    "result": [
+     [
+      "the dog chases the cat",
+      true
+     ],
+     [
+      "the cat eats the fish",
+      true
+     ]
+    ]
+   },
+   "render_paragraph": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "spiking_recall_surface",
+      "cat",
+      "eat",
+      "fish"
+     ]
+    ],
+    "result": [
+     "the dog chases the cat the cat eats the fish",
+     [
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ]
+     ],
+     []
+    ]
+   }
+  },
+  "spiking_one_miss": {
+   "_render_one_verified": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "spiking_recall_surface",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "render_svo",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "_verify_claim_set",
+      "The brain uses spikes and is famous for its vodka.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "render_svo_regen",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "_verify_claim_set",
+      "The brain uses spikes.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ]
+    ],
+    "result": [
+     [
+      "the dog chases the cat",
+      true
+     ],
+     [
+      "The brain uses spikes.",
+      true
+     ]
+    ]
+   },
+   "render_paragraph": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "spiking_recall_surface",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "render_svo",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "_verify_claim_set",
+      "The brain uses spikes and is famous for its vodka.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "render_svo_regen",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "_verify_claim_set",
+      "The brain uses spikes.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ]
+    ],
+    "result": [
+     "the dog chases the cat The brain uses spikes.",
+     [
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "brain",
+       "use",
+       "spikes"
+      ]
+     ],
+     []
+    ]
+   }
+  },
+  "three_mixed": {
+   "_render_one_verified": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify_claim_set",
+      "The dog chases cat.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "render_svo",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish and is famous for its vodka.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "render_svo_regen",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "_verify_claim_set",
+      "The fish eats cat.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "render_svo",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "_verify_claim_set",
+      "The brain uses spikes.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ]
+    ],
+    "result": [
+     [
+      "The dog chases cat.",
+      true
+     ],
+     [
+      null,
+      false
+     ],
+     [
+      "The brain uses spikes.",
+      true
+     ]
+    ]
+   },
+   "render_paragraph": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify_claim_set",
+      "The dog chases cat.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "render_svo",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish and is famous for its vodka.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "render_svo_regen",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "_verify_claim_set",
+      "The fish eats cat.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "render_svo",
+      "brain",
+      "use",
+      "spikes"
+     ],
+     [
+      "_verify_claim_set",
+      "The brain uses spikes.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ],
+       [
+        "brain",
+        "use",
+        "spikes"
+       ]
+      ]
+     ]
+    ],
+    "result": [
+     "The dog chases cat. The brain uses spikes.",
+     [
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "brain",
+       "use",
+       "spikes"
+      ]
+     ],
+     [
+      [
+       "cat",
+       "eat",
+       "fish"
+      ]
+     ]
+    ]
+   }
+  },
+  "tpa_hit": {
+   "_render_one_verified": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ]
+    ],
+    "result": [
+     [
+      "the dog is located in the cat.",
+      true
+     ]
+    ]
+   },
+   "render_paragraph": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ]
+    ],
+    "result": [
+     "the dog is located in the cat.",
+     [
+      [
+       "dog",
+       "chase",
+       "cat"
+      ]
+     ],
+     []
+    ]
+   }
+  },
+  "tpa_miss": {
+   "_render_one_verified": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify_claim_set",
+      "The dog chases cat.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "render_svo",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ]
+      ]
+     ]
+    ],
+    "result": [
+     [
+      "The dog chases cat.",
+      true
+     ],
+     [
+      "The cat eats fish.",
+      true
+     ]
+    ]
+   },
+   "render_paragraph": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify_claim_set",
+      "The dog chases cat.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "render_svo",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ]
+      ]
+     ]
+    ],
+    "result": [
+     "The dog chases cat. The cat eats fish.",
+     [
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ]
+     ],
+     []
+    ]
+   }
+  },
+  "two_good": {
+   "_render_one_verified": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify_claim_set",
+      "The dog chases cat.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "render_svo",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ]
+      ]
+     ]
+    ],
+    "result": [
+     [
+      "The dog chases cat.",
+      true
+     ],
+     [
+      "The cat eats fish.",
+      true
+     ]
+    ]
+   },
+   "render_paragraph": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify_claim_set",
+      "The dog chases cat.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "render_svo",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish.",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ]
+      ]
+     ]
+    ],
+    "result": [
+     "The dog chases cat. The cat eats fish.",
+     [
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ]
+     ],
+     []
+    ]
+   }
+  },
+  "two_unterm": {
+   "_render_one_verified": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify_claim_set",
+      "The dog chases cat",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "render_svo",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ]
+      ]
+     ]
+    ],
+    "result": [
+     [
+      "The dog chases cat",
+      true
+     ],
+     [
+      "The cat eats fish",
+      true
+     ]
+    ]
+   },
+   "render_paragraph": {
+    "calls": [
+     [
+      "spiking_recall_surface",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "render_svo",
+      "dog",
+      "chase",
+      "cat"
+     ],
+     [
+      "_verify_claim_set",
+      "The dog chases cat",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ]
+      ]
+     ],
+     [
+      "spiking_recall_surface",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "render_svo",
+      "cat",
+      "eat",
+      "fish"
+     ],
+     [
+      "_verify_claim_set",
+      "The cat eats fish",
+      [
+       [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       [
+        "cat",
+        "eat",
+        "fish"
+       ]
+      ]
+     ]
+    ],
+    "result": [
+     "The dog chases cat The cat eats fish",
+     [
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ]
+     ],
+     []
+    ]
+   }
+  }
+ },
+ "device": "cpu"
+}
