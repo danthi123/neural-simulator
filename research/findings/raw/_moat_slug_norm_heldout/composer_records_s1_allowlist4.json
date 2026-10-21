@@ -1,0 +1,5478 @@
+{
+ "_doc": "composer-path reply records for stratum S1 (rule: module docstring)",
+ "arm": "allowlist",
+ "flag_on_env": "BRAIN_MOAT_ALLOWLIST=1",
+ "backend": "numpy",
+ "device": "cpu (replay) / live generation device per corpus raw_files",
+ "host": "dant123-wk",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/composer_records.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-allow4/research/findings/raw/_moat_slug_norm_heldout/composer_records.py",
+  "research/findings/raw/_moat_slug_norm_heldout/composer_records_s1_allowlist4.json",
+  "S1",
+  "research/findings/raw/_moat_slug_norm_heldout/corpus.json",
+  "/home/dant123/Projects/sim-rev/moat-build4m/replay/s1_al4_1.json,/home/dant123/Projects/sim-rev/moat-build4m/replay/s1_al4_2.json,/home/dant123/Projects/sim-rev/moat-build4m/replay/s1_al4_3.json,/home/dant123/Projects/sim-rev/moat-build4m/replay/s1_al4_4.json,/home/dant123/Projects/sim-rev/moat-build4m/replay/s1_al4_5.json",
+  "/home/dant123/Projects/sim-rev/moat-build/replay/s1_off_val.json,/home/dant123/Projects/sim-rev/moat-build/replay/s1_off_val2.json",
+  "--arm",
+  "allowlist",
+  "--b2h-records",
+  "research/findings/raw/_moat_slug_norm_heldout/composer_records_s1.json"
+ ],
+ "stratum": "S1",
+ "corpus": "research/findings/raw/_moat_slug_norm_heldout/corpus.json",
+ "flag_on_files": [
+  {
+   "file": "s1_al4_1.json",
+   "sha256": "79460d458a67de74c96e1654cd5c47249003988e4a5926675b1bec053ead11fc",
+   "bytes": 194773,
+   "host": "dant123-wk",
+   "device": "cpu (x86_64)",
+   "drive_env": {
+    "BRAIN_MOUTH_TRACE": "1",
+    "BRAIN_MOAT_ALLOWLIST": "1"
+   },
+   "renderer": "replay"
+  },
+  {
+   "file": "s1_al4_2.json",
+   "sha256": "2d6769939bbfc1fc7a184eda2b1b87d3c43941e1d1bd2dc50426f5abb59cafd9",
+   "bytes": 188095,
+   "host": "dant123-wk",
+   "device": "cpu (x86_64)",
+   "drive_env": {
+    "BRAIN_MOUTH_TRACE": "1",
+    "BRAIN_MOAT_ALLOWLIST": "1"
+   },
+   "renderer": "replay"
+  },
+  {
+   "file": "s1_al4_3.json",
+   "sha256": "30f66ead26477fb2afd86e1ac792d647ff3bcfb3433e007889952ef8180090e3",
+   "bytes": 191274,
+   "host": "dant123-wk",
+   "device": "cpu (x86_64)",
+   "drive_env": {
+    "BRAIN_MOUTH_TRACE": "1",
+    "BRAIN_MOAT_ALLOWLIST": "1"
+   },
+   "renderer": "replay"
+  },
+  {
+   "file": "s1_al4_4.json",
+   "sha256": "8d74c32871c1841c8de1359c7dff2dd5258bcdf4318b272c9baad85d24259e81",
+   "bytes": 187450,
+   "host": "dant123-wk",
+   "device": "cpu (x86_64)",
+   "drive_env": {
+    "BRAIN_MOUTH_TRACE": "1",
+    "BRAIN_MOAT_ALLOWLIST": "1"
+   },
+   "renderer": "replay"
+  },
+  {
+   "file": "s1_al4_5.json",
+   "sha256": "e1a377e289241bba1538c22377dd3d36d60a1f0ed02f421c8b408ca9332aa9cb",
+   "bytes": 28847,
+   "host": "dant123-wk",
+   "device": "cpu (x86_64)",
+   "drive_env": {
+    "BRAIN_MOUTH_TRACE": "1",
+    "BRAIN_MOAT_ALLOWLIST": "1"
+   },
+   "renderer": "replay"
+  }
+ ],
+ "flag_off_files": [
+  {
+   "file": "s1_off_val.json",
+   "sha256": "bb84873b32fd9a307953bb9ab89af751da91e33975dfe2b82276572fb73c3f51",
+   "bytes": 154406,
+   "host": "dant123-wk",
+   "device": "cpu (x86_64)",
+   "drive_env": {
+    "BRAIN_MOUTH_TRACE": "1"
+   },
+   "renderer": "replay"
+  },
+  {
+   "file": "s1_off_val2.json",
+   "sha256": "d833f93f123f75ba7eeea5afcb08712f666f320ee84afa0e4fb68e6356b2b502",
+   "bytes": 69857,
+   "host": "dant123-wk",
+   "device": "cpu (x86_64)",
+   "drive_env": {
+    "BRAIN_MOUTH_TRACE": "1"
+   },
+   "renderer": "replay"
+  }
+ ],
+ "n_turns": 29,
+ "status_counts": {
+  "both_abstain": 23,
+  "HELPS": 5,
+  "both_answer": 1
+ },
+ "status_by_gathered_size": {
+  "4+": {
+   "both_abstain": 23,
+   "HELPS": 5,
+   "both_answer": 1
+  }
+ },
+ "stock_answered": 1,
+ "flag_on_answered": 6,
+ "HURTS_turns": [],
+ "HELPS_turns": [
+  {
+   "label": "h10",
+   "entity": "geography_of_adana",
+   "n_gathered": 4,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about geography yet: what can you tell me about geography?"
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "The geography of Adana is an instance of a city work.",
+    "n_candidates": 7,
+    "n_accepted": 1,
+    "claim_gate_decided": 7,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "geography_of_adana",
+       "located_in_time_zone",
+       "kaliningrad_time"
+      ],
+      "surface": "Located in Kaliningrad Time, Adana is situated within its geographical location.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'located' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "geography_of_adana",
+       "located_in_time_zone",
+       "kaliningrad_time"
+      ],
+      "surface": "Geography of Adana is located in time zone Kaliningrad's time.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"Geography of Adana is located in time zone Kaliningrad's time.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "geography_of_adana",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The geography of Adana is an instance of a city work.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "geography_of_adana",
+       "country",
+       "the_republic_of_turkey"
+      ],
+      "surface": "The geography of Adana is in Turkey.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'in' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "geography_of_adana",
+       "country",
+       "the_republic_of_turkey"
+      ],
+      "surface": "The geography of Adana is part of Turkey's country.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"The geography of Adana is part of Turkey's country.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "geography_of_adana",
+       "twinned_administrative_body",
+       "saint_petersburg_city"
+      ],
+      "surface": "The geography of Adana is twin to Saint Petersburg City.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'twin' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "geography_of_adana",
+       "twinned_administrative_body",
+       "saint_petersburg_city"
+      ],
+      "surface": "Geography_of_adana and Saint_Petersburg_city have been twinned for administrative purposes since their creation in 1",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'and' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "HELPS",
+   "b2h_replay": {
+    "abstained": false,
+    "answer": "The geography of Adana is an instance of a city work."
+   },
+   "status_vs_b2h": "both_answer",
+   "flag_off_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about geography yet: what can you tell me about geography?",
+    "equals_live": true
+   }
+  },
+  {
+   "label": "h11",
+   "entity": "ha_noi_vietnam",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about ha yet: what can you tell me about ha?"
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "Hayastani Hanrapetut Yun shares border with Persian State of Iran.",
+    "n_candidates": 10,
+    "n_accepted": 1,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "ha_noi_vietnam",
+       "described_by_source",
+       "armenian_soviet_encyclopedia"
+      ],
+      "surface": "The Vietnam War was described in the Armenian Soviet Encyclopedia.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'vietnam' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ha_noi_vietnam",
+       "described_by_source",
+       "armenian_soviet_encyclopedia"
+      ],
+      "surface": "Ha noi vietnam was described by source Armenian Soviet Encyclopedia.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'was' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "armenian_soviet_encyclopedia",
+       "country",
+       "hayastani_hanrapetut_yun"
+      ],
+      "surface": "The Armenian Soviet Encyclopedia is in Hayastani Hanrapetut Yun.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'in' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "armenian_soviet_encyclopedia",
+       "country",
+       "hayastani_hanrapetut_yun"
+      ],
+      "surface": "Armenian-Soviet Encyclopedia has country Hayastani-Hayyary language content.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'has' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "hayastani_hanrapetut_yun",
+       "shares_border_with",
+       "persian_state_of_iran"
+      ],
+      "surface": "The Persian Empire shared its border with the Sassanid Persia of Iran.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'persian' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "hayastani_hanrapetut_yun",
+       "shares_border_with",
+       "persian_state_of_iran"
+      ],
+      "surface": "Hayastani Hanrapetut Yun shares border with Persian State of Iran.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "ha_noi_vietnam",
+       "twinned_administrative_body",
+       "montr_al_canada"
+      ],
+      "surface": "The twinned administrative body is Montr\u00e9al and Ottawa.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'twinned_administrative_body' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ha_noi_vietnam",
+       "twinned_administrative_body",
+       "montr_al_canada"
+      ],
+      "surface": "Ha noi vietnam twinned administrative body Montrer al canada.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'montrer' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ha_noi_vietnam",
+       "country",
+       "chxhcn_vietnam"
+      ],
+      "surface": "The Ha Noi Vietnam is a country.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 4 'country' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ha_noi_vietnam",
+       "country",
+       "chxhcn_vietnam"
+      ],
+      "surface": "Ha noi vietnam is a country in China.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'country' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "HELPS",
+   "b2h_replay": {
+    "abstained": false,
+    "answer": "Ha noi vietnam was described by source Armenian Soviet Encyclopedia. Hayastani Hanrapetut Yun shares border with Persian State of Iran."
+   },
+   "status_vs_b2h": "both_answer"
+  },
+  {
+   "label": "h17",
+   "entity": "luk_cs_p_l",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about luk yet: what can you tell me about luk?"
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "Luk_cs_p_l is an instance of human_specie.",
+    "n_candidates": 10,
+    "n_accepted": 1,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "luk_cs_p_l",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "The triple (luk_cs_p_l, instance_of, human_specie).",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'triple' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "luk_cs_p_l",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Luk_cs_p_l is an instance of human_specie.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "The entity is human.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'entity' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "Human species is an example of the common names system.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'human' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "Commonly known as subclasses of names",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'commonly' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "Common names are subclasses of meanings of names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'are' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "luk_cs_p_l",
+       "country_of_citizenship",
+       "u_s_of_a"
+      ],
+      "surface": "The United States of America is the country of citizenship for Luk CS P L.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'united' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "luk_cs_p_l",
+       "country_of_citizenship",
+       "u_s_of_a"
+      ],
+      "surface": "Luk_cs_p_l is from the country of citizenship U.S.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'from' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "luk_cs_p_l",
+       "occupation",
+       "television_actor"
+      ],
+      "surface": "Occupation is a television actor.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'occupation' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "luk_cs_p_l",
+       "occupation",
+       "television_actor"
+      ],
+      "surface": "Luk Cs P L is a television actor.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'television_actor' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "HELPS",
+   "b2h_replay": {
+    "abstained": false,
+    "answer": "Luk_cs_p_l is an instance of human_specie."
+   },
+   "status_vs_b2h": "both_answer"
+  },
+  {
+   "label": "h22",
+   "entity": "rep_blica_del_paraguay",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about rep yet: what can you tell me about rep? \u2014 worth going further here."
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "Rep Blica del Paraguay shares border with the Republic of Brazil. Rep_blica_del_paraguay is a member of the United Nations. \u2014 worth going further here.",
+    "n_candidates": 10,
+    "n_accepted": 2,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "rep_blica_del_paraguay",
+       "shares_border_with",
+       "republic_of_brazil"
+      ],
+      "surface": "The Republic of Brazil has shares bordering Paraguay.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'has' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "rep_blica_del_paraguay",
+       "shares_border_with",
+       "republic_of_brazil"
+      ],
+      "surface": "Rep Blica del Paraguay shares border with the Republic of Brazil.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "republic_of_brazil",
+       "shares_border_with",
+       "franzoesische_republik"
+      ],
+      "surface": "The republic of Brazil shares borders with the Federal Republic of Germany.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'shares' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "republic_of_brazil",
+       "shares_border_with",
+       "franzoesische_republik"
+      ],
+      "surface": "The Republic of Brazil shares borders with France's Republic.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"The Republic of Brazil shares borders with France's Republic.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "franzoesische_republik",
+       "shares_border_with",
+       "united_kingom"
+      ],
+      "surface": "The French Republic shares its border with the United Kingdom.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'french' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "franzoesische_republik",
+       "shares_border_with",
+       "united_kingom"
+      ],
+      "surface": "The German federal republic shares borders with the United Kingdom.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'german' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "rep_blica_del_paraguay",
+       "described_by_source",
+       "brockhaus_and_efron_encyclopaedia"
+      ],
+      "surface": "The Repartition of Paraguay was described by Broccohaus and Efron Encyclopedia.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'repartition' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "rep_blica_del_paraguay",
+       "described_by_source",
+       "brockhaus_and_efron_encyclopaedia"
+      ],
+      "surface": "Replica of Paraguay described by source Brockhaus & Efron Encyclopedie.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'replica' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "rep_blica_del_paraguay",
+       "member_of",
+       "united_nations"
+      ],
+      "surface": "Rep Blica del Paraguay es parte de la Uni\u00f3n Nacional.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'es' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "rep_blica_del_paraguay",
+       "member_of",
+       "united_nations"
+      ],
+      "surface": "Rep_blica_del_paraguay is a member of the United Nations.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     }
+    ]
+   },
+   "status": "HELPS",
+   "b2h_replay": {
+    "abstained": false,
+    "answer": "Rep Blica del Paraguay shares border with the Republic of Brazil. Rep_blica_del_paraguay is a member of the United Nations. \u2014 worth going further here."
+   },
+   "status_vs_b2h": "both_answer"
+  },
+  {
+   "label": "h26",
+   "entity": "the_weather_in_stavenger",
+   "n_gathered": 4,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about weather yet: what can you tell me about weather?"
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "The weather in Stavenger is an instance of the city work.",
+    "n_candidates": 7,
+    "n_accepted": 1,
+    "claim_gate_decided": 7,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "the_weather_in_stavenger",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "The weather in Stavenger is located in Rome time.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'located' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "the_weather_in_stavenger",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "The weather in Stavenger is similar to Rome's time zone.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"The weather in Stavenger is similar to Rome's time zone.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "the_weather_in_stavenger",
+       "country",
+       "royal_kingdom_of_norway"
+      ],
+      "surface": "The weather in Stavanger is in the royal kingdom of Norway.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'weather' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "the_weather_in_stavenger",
+       "country",
+       "royal_kingdom_of_norway"
+      ],
+      "surface": "The weather in Stavershavn's country, the Royal Kingdom of Norway, is typically mild and sunny throughout the year",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"The weather in Stavershavn's country, the Royal Kingdom of Norway, is typically mild and sunny throughout the year\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "the_weather_in_stavenger",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The weather in Stavenger is an instance of the city work.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "the_weather_in_stavenger",
+       "twinned_administrative_body",
+       "city_of_houston_texas"
+      ],
+      "surface": "The weather in Stavenger is similar to Houston's administrative body.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"The weather in Stavenger is similar to Houston's administrative body.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "the_weather_in_stavenger",
+       "twinned_administrative_body",
+       "city_of_houston_texas"
+      ],
+      "surface": "The weather in Houston, Texas was characterized as mild to warm, which was mirrored by the administrative body's decision to implement",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"The weather in Houston, Texas was characterized as mild to warm, which was mirrored by the administrative body's decision to implement\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "HELPS",
+   "b2h_replay": {
+    "abstained": false,
+    "answer": "The weather in Stavenger is an instance of the city work."
+   },
+   "status_vs_b2h": "both_answer",
+   "flag_off_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about weather yet: what can you tell me about weather?",
+    "equals_live": true
+   }
+  }
+ ],
+ "b2h_records": "research/findings/raw/_moat_slug_norm_heldout/composer_records_s1.json",
+ "b2h_answered": 11,
+ "turns_without_b2h_record": [],
+ "LOSES_vs_b2h_turns": [
+  {
+   "label": "h01",
+   "b2h_answer": "The 1962 Asian Games were an instance of the Asian Summer Games.",
+   "candidates": [
+    {
+     "svo": [
+      "1962_asian_games",
+      "country",
+      "etymology_of_indonesia"
+     ],
+     "surface": "The country of Indonesia is Asian Games.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 1 'country' expected a gathered slug after the determiner [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "1962_asian_games",
+      "country",
+      "etymology_of_indonesia"
+     ],
+     "surface": "The year 1962 Asian Games was likely named after Indonesia's history or culture, given its association with Asia",
+     "claim": false,
+     "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"The year 1962 Asian Games was likely named after Indonesia's history or culture, given its association with Asia\" [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "etymology_of_indonesia",
+      "shares_border_with",
+      "commonwealth_australia"
+     ],
+     "surface": "The etymology of Indonesia shares borders with Australia and New Zealand.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 2 'shares' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "etymology_of_indonesia",
+      "shares_border_with",
+      "commonwealth_australia"
+     ],
+     "surface": "The etymology of Indonesia shares its borders with Australia's continent.",
+     "claim": false,
+     "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"The etymology of Indonesia shares its borders with Australia's continent.\" [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "commonwealth_australia",
+      "shares_border_with",
+      "new_zealnd"
+     ],
+     "surface": "The shares of Commonwealth Australia border New Zealand.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 1 'shares' expected a gathered slug after the determiner [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "commonwealth_australia",
+      "shares_border_with",
+      "new_zealnd"
+     ],
+     "surface": "The Commonwealth of Australia shares borders with New Zealand.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 1 'commonwealth' expected a gathered slug after the determiner [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "1962_asian_games",
+      "instance_of",
+      "asian_summer_games"
+     ],
+     "surface": "The triple (1962_asian_summer_games) refers to an instance of the 1962",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 1 'triple' expected a gathered slug after the determiner [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "1962_asian_games",
+      "instance_of",
+      "asian_summer_games"
+     ],
+     "surface": "The 1962 Asian Games were an instance of the Asian Summer Games.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 2 'were' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "1962_asian_games",
+      "follows",
+      "third_asian_games"
+     ],
+     "surface": "The 3rd Asian Games followed closely on the heels of the 1962 Asian Games.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 1 '3rd' expected a gathered slug after the determiner [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "1962_asian_games",
+      "follows",
+      "third_asian_games"
+     ],
+     "surface": "In 1962, Asian Games followed Third Asian Games.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 0 'in' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    }
+   ]
+  },
+  {
+   "label": "h12",
+   "b2h_answer": "The history of Ferrara is an instance of its city work. The history of Ferrara was described by source Nordisk familjebok.",
+   "candidates": [
+    {
+     "svo": [
+      "history_of_ferrara",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "The history of Ferrara is located in Rome time zone.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 3 'located' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "history_of_ferrara",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "History_of_Ferrara is located in the Time_Zone of_Rome_Time.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 2 'located' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "history_of_ferrara",
+      "country",
+      "italian_republic"
+     ],
+     "surface": "The history of Ferrara is Italian.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 3 'italian' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "history_of_ferrara",
+      "country",
+      "italian_republic"
+     ],
+     "surface": "The history of Ferrara, a city in Italy, was influenced by the Italian Republic.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 2 ',' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "history_of_ferrara",
+      "instance_of",
+      "city_work"
+     ],
+     "surface": "The history of Ferrara is an instance of its city work.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 5 'its' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "history_of_ferrara",
+      "instance_of",
+      "city_work"
+     ],
+     "surface": "History_of_Ferrara is an instance of Ferrara's work.",
+     "claim": false,
+     "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"History_of_Ferrara is an instance of Ferrara's work.\" [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "history_of_ferrara",
+      "described_by_source",
+      "nordisk_familjebok"
+     ],
+     "surface": "The history of Ferrara was described by Nordisk familjebok.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 2 'was' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "history_of_ferrara",
+      "described_by_source",
+      "nordisk_familjebok"
+     ],
+     "surface": "The history of Ferrara was described by source Nordisk familjebok.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 2 'was' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    }
+   ]
+  },
+  {
+   "label": "h21",
+   "b2h_answer": "The prefecture of Nagasaki is located in time zone Korea Standard Time.",
+   "candidates": [
+    {
+     "svo": [
+      "prefecture_of_nagasaki",
+      "country",
+      "modern_era_japan"
+     ],
+     "surface": "Nagasaki is located in Japan.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 0 'nagasaki' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "prefecture_of_nagasaki",
+      "country",
+      "modern_era_japan"
+     ],
+     "surface": "Prefectures of Nagasaki in the modern era of Japan.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 0 'prefectures' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "modern_era_japan",
+      "shares_border_with",
+      "china_pr"
+     ],
+     "surface": "China's border with Japan is shared with Taiwan Province of China.",
+     "claim": false,
+     "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"China's border with Japan is shared with Taiwan Province of China.\" [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "modern_era_japan",
+      "shares_border_with",
+      "china_pr"
+     ],
+     "surface": "Modern-era Japan shares borders with China Pr.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 1 'shares' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "china_pr",
+      "shares_border_with",
+      "bharat_ganrajya"
+     ],
+     "surface": "China shares borders with Bharat Ganjamya.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 0 'china' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "china_pr",
+      "shares_border_with",
+      "bharat_ganrajya"
+     ],
+     "surface": "China's share of India's total stock market is about 15%.",
+     "claim": false,
+     "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"China's share of India's total stock market is about 15%.\" [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "prefecture_of_nagasaki",
+      "located_in_time_zone",
+      "korea_standard_time"
+     ],
+     "surface": "The prefecture of Nagasaki is located in time zone Korea Standard Time.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 3 'located_in_time_zone' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "prefecture_of_nagasaki",
+      "located_in_time_zone",
+      "korea_standard_time"
+     ],
+     "surface": "The prefecture of Nagasaki is located in the Korea Standard Time time zone.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 3 'located' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "prefecture_of_nagasaki",
+      "twinned_administrative_body",
+      "districts_of_busan"
+     ],
+     "surface": "Nagasaki Prefecture and Busan Districts of Busan have been twinned administratively since their establishment.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 0 'nagasaki' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "prefecture_of_nagasaki",
+      "twinned_administrative_body",
+      "districts_of_busan"
+     ],
+     "surface": "The prefecture of Nagasaki has partnered with Busan to establish a twinned administrative body for their districts.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 2 'has' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    }
+   ]
+  },
+  {
+   "label": "h27",
+   "b2h_answer": "The federal republic of germany is located in time zone rome time.",
+   "candidates": [
+    {
+     "svo": [
+      "universitat_des_saarlandes",
+      "country",
+      "federal_republic_of_germany"
+     ],
+     "surface": "The University of Saarland is a federal republic of Germany.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 1 'university' expected a gathered slug after the determiner [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "universitat_des_saarlandes",
+      "country",
+      "federal_republic_of_germany"
+     ],
+     "surface": "Universitetsdagsasaila saarela eesti kehitys.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 0 'universitetsdagsasaila' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "federal_republic_of_germany",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "The federal republic of germany is located in time zone Rome.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 3 'located_in_time_zone' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "federal_republic_of_germany",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "The federal republic of germany is located in time zone rome time.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 3 'located_in_time_zone' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "universitat_des_saarlandes",
+      "instance_of",
+      "higher_general_education"
+     ],
+     "surface": "Universit\u00e4t f\u00fcr Schiedsrichter ist eine Instanz der h\u00f6heren allgemeinen Bildung.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 0 'universit_t' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "universitat_des_saarlandes",
+      "instance_of",
+      "higher_general_education"
+     ],
+     "surface": "Universit\u0103\u021bii de Saarbr\u00fccken se afl\u0103 \u00een classificarea unei institu\u021biilor de",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 0 'universit_ii' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "universitat_des_saarlandes",
+      "located_in_the_administrative_territoria",
+      "county_of_saarbruecken"
+     ],
+     "surface": "The university is located in the administrative territory of Saarbruecken.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 1 'university' expected a gathered slug after the determiner [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "universitat_des_saarlandes",
+      "located_in_the_administrative_territoria",
+      "county_of_saarbruecken"
+     ],
+     "surface": "Universitetsgeb\u00e4\u00fc in der administrat\u00fcrreiton der Stadt Saarbr\u00fccken.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 0 'universitetsgeb_' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "universitat_des_saarlandes",
+      "member_of",
+      "german_research_network"
+     ],
+     "surface": "The university of Saarland is a member of the German Research Network.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 1 'university' expected a gathered slug after the determiner [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "universitat_des_saarlandes",
+      "member_of",
+      "german_research_network"
+     ],
+     "surface": "Universit\u00e4t des Saarlandes is a member of the German Research Network.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 0 'universit_t' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    }
+   ]
+  },
+  {
+   "label": "h28",
+   "b2h_answer": "The waadt_canton_of contains administrative territorial enti in jura nord vaudois district.",
+   "candidates": [
+    {
+     "svo": [
+      "waadt_canton_of",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "The Rome time zone is located in the Canton of Italy.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 2 'zone' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "waadt_canton_of",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "Waaad ta'asana waad ta'asana wuxuu laakiin la xaar ah Rome",
+     "claim": false,
+     "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"Waaad ta'asana waad ta'asana wuxuu laakiin la xaar ah Rome\" [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "waadt_canton_of",
+      "country",
+      "conf_d_ration_suisse"
+     ],
+     "surface": "The capital city of Canton is Switzerland.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 1 'capital' expected a gathered slug after the determiner [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "waadt_canton_of",
+      "country",
+      "conf_d_ration_suisse"
+     ],
+     "surface": "Waadt Canton of Switzerland is a canton in the Confederation of Switzerland.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 1 'switzerland' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "waadt_canton_of",
+      "shares_border_with",
+      "canton_de_berne"
+     ],
+     "surface": "Canton de Berne shares its border with Canton of Switzerland.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 1 'shares' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "waadt_canton_of",
+      "shares_border_with",
+      "canton_de_berne"
+     ],
+     "surface": "Waadt Canton of shares borders with Canton de Berne.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 1 'shares' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "waadt_canton_of",
+      "contains_administrative_territorial_enti",
+      "jura_nord_vaudois_district"
+     ],
+     "surface": "The waadt_canton_of contains administrative territorial enti in jura nord vaudois district.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 3 'in' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    },
+    {
+     "svo": [
+      "waadt_canton_of",
+      "contains_administrative_territorial_enti",
+      "jura_nord_vaudois_district"
+     ],
+     "surface": "The Waadt Canton of contains administrative territorial jurisdiction in Nord-Vaud district.",
+     "claim": false,
+     "claim_reject": "allowlist: no shape: at token 2 'contains' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+     "single_triple": "not_called",
+     "ok": false
+    }
+   ]
+  }
+ ],
+ "replay_misses_flag_on": [],
+ "replay_misses_flag_off": [],
+ "replay_validation": {
+  "turns_replayed_flag_off": 9,
+  "answer_and_abstain_equal_to_live": 9,
+  "mismatches": []
+ },
+ "turns": [
+  {
+   "label": "h01",
+   "entity": "1962_asian_games",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about asian yet: what can you tell me about asian?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about asian yet: what can you tell me about asian?",
+    "n_candidates": 10,
+    "n_accepted": 0,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "1962_asian_games",
+       "country",
+       "etymology_of_indonesia"
+      ],
+      "surface": "The country of Indonesia is Asian Games.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'country' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "1962_asian_games",
+       "country",
+       "etymology_of_indonesia"
+      ],
+      "surface": "The year 1962 Asian Games was likely named after Indonesia's history or culture, given its association with Asia",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"The year 1962 Asian Games was likely named after Indonesia's history or culture, given its association with Asia\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "etymology_of_indonesia",
+       "shares_border_with",
+       "commonwealth_australia"
+      ],
+      "surface": "The etymology of Indonesia shares borders with Australia and New Zealand.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'shares' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "etymology_of_indonesia",
+       "shares_border_with",
+       "commonwealth_australia"
+      ],
+      "surface": "The etymology of Indonesia shares its borders with Australia's continent.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"The etymology of Indonesia shares its borders with Australia's continent.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "commonwealth_australia",
+       "shares_border_with",
+       "new_zealnd"
+      ],
+      "surface": "The shares of Commonwealth Australia border New Zealand.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'shares' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "commonwealth_australia",
+       "shares_border_with",
+       "new_zealnd"
+      ],
+      "surface": "The Commonwealth of Australia shares borders with New Zealand.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'commonwealth' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "1962_asian_games",
+       "instance_of",
+       "asian_summer_games"
+      ],
+      "surface": "The triple (1962_asian_summer_games) refers to an instance of the 1962",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'triple' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "1962_asian_games",
+       "instance_of",
+       "asian_summer_games"
+      ],
+      "surface": "The 1962 Asian Games were an instance of the Asian Summer Games.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'were' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "1962_asian_games",
+       "follows",
+       "third_asian_games"
+      ],
+      "surface": "The 3rd Asian Games followed closely on the heels of the 1962 Asian Games.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 '3rd' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "1962_asian_games",
+       "follows",
+       "third_asian_games"
+      ],
+      "surface": "In 1962, Asian Games followed Third Asian Games.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'in' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": false,
+    "answer": "The 1962 Asian Games were an instance of the Asian Summer Games."
+   },
+   "status_vs_b2h": "LOSES",
+   "flag_off_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about asian yet: what can you tell me about asian?",
+    "equals_live": true
+   }
+  },
+  {
+   "label": "h02",
+   "entity": "almer_a_spain",
+   "n_gathered": 4,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about almer yet: what can you tell me about almer?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about almer yet: what can you tell me about almer?",
+    "n_candidates": 8,
+    "n_accepted": 0,
+    "claim_gate_decided": 8,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "almer_a_spain",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "The Almera is located in Rome time zone.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'almera' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "almer_a_spain",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "Almer A Spain is located in the Time Zone of Rome Time.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'located' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "almer_a_spain",
+       "country",
+       "kingdom_of_the_spains"
+      ],
+      "surface": "Almer A from Spain is the country of the Kingdom of Spain.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'almer' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "almer_a_spain",
+       "country",
+       "kingdom_of_the_spains"
+      ],
+      "surface": "Almera Spain is a country within the Kingdom of the Spains.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'almera' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "almer_a_spain",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "Almera is an instance of a city in Spain.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'almera' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "almer_a_spain",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "Almera A is an instance of a city-work.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'almera' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "almer_a_spain",
+       "twinned_administrative_body",
+       "buenos_aires_city"
+      ],
+      "surface": "Almer is twinned with Barcelona in Spain.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'almer' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "almer_a_spain",
+       "twinned_administrative_body",
+       "buenos_aires_city"
+      ],
+      "surface": "Almera, a city in Spain, has been twinned with Buenos Aires City.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'almera' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about almer yet: what can you tell me about almer?"
+   },
+   "status_vs_b2h": "both_abstain",
+   "flag_off_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about almer yet: what can you tell me about almer?",
+    "equals_live": true
+   }
+  },
+  {
+   "label": "h03",
+   "entity": "aus_fb_a_league_br",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about aus yet: what can you tell me about aus?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about aus yet: what can you tell me about aus?",
+    "n_candidates": 10,
+    "n_accepted": 0,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "aus_fb_a_league_br",
+       "sport",
+       "association_football_club"
+      ],
+      "surface": "Sport is an association football club.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'sport' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "aus_fb_a_league_br",
+       "sport",
+       "association_football_club"
+      ],
+      "surface": "The Aus FB A League Br sports association football club is based in London.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "association_football_club",
+       "described_by_source",
+       "armenian_soviet_encyclopedia"
+      ],
+      "surface": "The Armenian Soviet Encyclopedia is described by association football club.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'described' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "association_football_club",
+       "described_by_source",
+       "armenian_soviet_encyclopedia"
+      ],
+      "surface": "The Armenian Soviet Encyclopedia is associated with the description of the association football club in its sources.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'associated' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "armenian_soviet_encyclopedia",
+       "country",
+       "hayastani_hanrapetut_yun"
+      ],
+      "surface": "The Armenian Soviet Encyclopedia is in Hayastani Hanrapetut Yun.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'in' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "armenian_soviet_encyclopedia",
+       "country",
+       "hayastani_hanrapetut_yun"
+      ],
+      "surface": "Armenian-Soviet Encyclopedia has country Hayastani-Hayyary language content.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'has' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "aus_fb_a_league_br",
+       "country",
+       "commonwealth_australia"
+      ],
+      "surface": "The Commonwealth of Australia is a country.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'commonwealth' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "aus_fb_a_league_br",
+       "country",
+       "commonwealth_australia"
+      ],
+      "surface": "Australia is a Commonwealth member and AusFB is a league in Australia.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'australia' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "aus_fb_a_league_br",
+       "located_in_the_administrative_territoria",
+       "constitution_of_queensland"
+      ],
+      "surface": "The constitution of Queensland is located in the administrative territory.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'located' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "aus_fb_a_league_br",
+       "located_in_the_administrative_territoria",
+       "constitution_of_queensland"
+      ],
+      "surface": "Aus Facebook League is located in the administrative territory of Queensland's constitution.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"Aus Facebook League is located in the administrative territory of Queensland's constitution.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about aus yet: what can you tell me about aus?"
+   },
+   "status_vs_b2h": "both_abstain",
+   "flag_off_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about aus yet: what can you tell me about aus?",
+    "equals_live": true
+   }
+  },
+  {
+   "label": "h04",
+   "entity": "bison_ravi",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about bison yet: what can you tell me about bison?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about bison yet: what can you tell me about bison?",
+    "n_candidates": 10,
+    "n_accepted": 0,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "bison_ravi",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Bison Ravi is of the human species.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'of' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "bison_ravi",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Bison Ravi is an instance of the human species.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 5 'human' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "The human species has common names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'human' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "Human species is an instance of common names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'human' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "The common names subclass of the subclass of meanings of names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 4 'subclass_of' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "Common names are subclasses of meanings of names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'are' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "bison_ravi",
+       "country_of_citizenship",
+       "franzoesische_republik"
+      ],
+      "surface": "The bison ravi lives in the country of the franzoesische republic.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'lives' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "bison_ravi",
+       "country_of_citizenship",
+       "franzoesische_republik"
+      ],
+      "surface": "Bison Ravi lives in the country of Franzosenische Republik.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'lives' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "bison_ravi",
+       "occupation",
+       "writter"
+      ],
+      "surface": "The bison ravi is a writer.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 4 'writer' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "bison_ravi",
+       "occupation",
+       "writter"
+      ],
+      "surface": "Bison Ravi, the famous writer of bison stories, is known for his unique style in writing.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 ',' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about bison yet: what can you tell me about bison?"
+   },
+   "status_vs_b2h": "both_abstain",
+   "flag_off_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about bison yet: what can you tell me about bison?",
+    "equals_live": true
+   }
+  },
+  {
+   "label": "h05",
+   "entity": "carl_lamarc",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about carl yet: what can you tell me about carl?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about carl yet: what can you tell me about carl?",
+    "n_candidates": 10,
+    "n_accepted": 0,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "carl_lamarc",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Carl Lamarc is a human species.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'human' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "carl_lamarc",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Carl Lamarc is an instance of the human species.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 5 'human' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "The human species has common names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'human' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "Human species is an instance of common names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'human' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "The common names subclass of the subclass of meanings of names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 4 'subclass_of' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "Common names are subclasses of meanings of names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'are' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "carl_lamarc",
+       "occupation",
+       "television_actor"
+      ],
+      "surface": "Carl Lamarc is an actor in television.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'actor' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "carl_lamarc",
+       "occupation",
+       "television_actor"
+      ],
+      "surface": "Carl Lamarc is an actor known for his work in television.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'actor' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "carl_lamarc",
+       "languages_spoken_written_or_signed",
+       "wie_gehts"
+      ],
+      "surface": "Languages spoken written or signed.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'languages_spoken_written_or_signed' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "carl_lamarc",
+       "languages_spoken_written_or_signed",
+       "wie_gehts"
+      ],
+      "surface": "The German language spoken in Germany is written or signed using Latin alphabet characters.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'german' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about carl yet: what can you tell me about carl?"
+   },
+   "status_vs_b2h": "both_abstain"
+  },
+  {
+   "label": "h06",
+   "entity": "city_of_green_bay",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about city yet: what can you tell me about city?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about city yet: what can you tell me about city?",
+    "n_candidates": 10,
+    "n_accepted": 0,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "city_of_green_bay",
+       "country",
+       "u_s_of_a"
+      ],
+      "surface": "The city of Green Bay is in the United States of America.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'in' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "city_of_green_bay",
+       "country",
+       "u_s_of_a"
+      ],
+      "surface": "The city of Green Bay is in the United States of America.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'in' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "u_s_of_a",
+       "shares_border_with",
+       "canada_portal"
+      ],
+      "surface": "The share bordering Canada is u_s_of_a.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'share' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "u_s_of_a",
+       "shares_border_with",
+       "canada_portal"
+      ],
+      "surface": "The U.S. stock market borders Canada's portal portal.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'u' expected a gathered slug after the determiner [sentence 1 of 2]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "canada_portal",
+       "shares_border_with",
+       "u_s_of_a"
+      ],
+      "surface": "Canada's border is shared with the United States.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"Canada's border is shared with the United States.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "canada_portal",
+       "shares_border_with",
+       "u_s_of_a"
+      ],
+      "surface": "Canada Portal shares borders with the United States of America.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'shares' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "city_of_green_bay",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The city of Green Bay is an instance of a city.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 6 'city' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "city_of_green_bay",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "CityOfGreenBay is an instance of CityWork.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'cityofgreenbay' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "city_of_green_bay",
+       "located_in_time_zone",
+       "utc_06"
+      ],
+      "surface": "The city of Green Bay is located in the time zone of UTC 06.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'located' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "city_of_green_bay",
+       "located_in_time_zone",
+       "utc_06"
+      ],
+      "surface": "The city of Green Bay is located in the time zone UTC 06.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'located' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about city yet: what can you tell me about city?"
+   },
+   "status_vs_b2h": "both_abstain",
+   "flag_off_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about city yet: what can you tell me about city?",
+    "equals_live": true
+   }
+  },
+  {
+   "label": "h07",
+   "entity": "danny_lanois",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about danny yet: what can you tell me about danny?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about danny yet: what can you tell me about danny?",
+    "n_candidates": 10,
+    "n_accepted": 0,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "danny_lanois",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Danny Lanois is a human-specie.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'human_specie' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "danny_lanois",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Danny Lanois is an instance of the human species.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 5 'human' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "The human species has common names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'human' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "Human species is an instance of common names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'human' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "The common names subclass of the subclass of meanings of names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 4 'subclass_of' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "Common names are subclasses of meanings of names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'are' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "danny_lanois",
+       "country_of_citizenship",
+       "canada_portal"
+      ],
+      "surface": "Canada is Danny's country of citizenship.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"Canada is Danny's country of citizenship.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "danny_lanois",
+       "country_of_citizenship",
+       "canada_portal"
+      ],
+      "surface": "Danny Lanois is from Canada's country of citizenship, where he operates his portal.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"Danny Lanois is from Canada's country of citizenship, where he operates his portal.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "danny_lanois",
+       "occupation",
+       "non_degreed_engineer"
+      ],
+      "surface": "Danny Lanois is an experienced non-degreed engineer.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'experienced' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "danny_lanois",
+       "occupation",
+       "non_degreed_engineer"
+      ],
+      "surface": "Danny Lanois is an engineer who works without a degree.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'engineer' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about danny yet: what can you tell me about danny?"
+   },
+   "status_vs_b2h": "both_abstain"
+  },
+  {
+   "label": "h08",
+   "entity": "e_e_horton",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about horton yet: what can you tell me about horton?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about horton yet: what can you tell me about horton?",
+    "n_candidates": 10,
+    "n_accepted": 0,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "e_e_horton",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "The entity \"e\" is an example of the species \"human\".",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'entity' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "e_e_horton",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Ee Horton is an instance of human species.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'ee' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "The human species has common names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'human' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "Human species is an instance of common names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'human' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "The common names subclass of the subclass of meanings of names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 4 'subclass_of' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "Common names are subclasses of meanings of names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'are' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "e_e_horton",
+       "country_of_citizenship",
+       "u_s_of_a"
+      ],
+      "surface": "The country of citizenship is e_s_horton.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'country_of_citizenship' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "e_e_horton",
+       "country_of_citizenship",
+       "u_s_of_a"
+      ],
+      "surface": "The United States of America is the country of citizenship for all citizens in Ee Horton country.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'united' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "e_e_horton",
+       "manner_of_death",
+       "death_by_natural_cause"
+      ],
+      "surface": "The manner of death is natural cause.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'manner_of_death' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "e_e_horton",
+       "manner_of_death",
+       "death_by_natural_cause"
+      ],
+      "surface": "E-E Horton's manner of death was through natural causes.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"E-E Horton's manner of death was through natural causes.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about horton yet: what can you tell me about horton?"
+   },
+   "status_vs_b2h": "both_abstain"
+  },
+  {
+   "label": "h09",
+   "entity": "fernand_joseph_desire_contandin",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about fernand yet: what can you tell me about fernand? \u2014 worth going further here."
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about fernand yet: what can you tell me about fernand? \u2014 worth going further here.",
+    "n_candidates": 10,
+    "n_accepted": 0,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "fernand_joseph_desire_contandin",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Fernand Joseph Desire Contandin is of the human species.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'of' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "fernand_joseph_desire_contandin",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Fernand Joseph Desire Contandin is an instance of human species.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 4 'human' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "The human species has common names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'human' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "Human species is an instance of common names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'human' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "The common names subclass of the subclass of meanings of names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 4 'subclass_of' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "Common names are subclasses of meanings of names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'are' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "fernand_joseph_desire_contandin",
+       "country_of_citizenship",
+       "franzoesische_republik"
+      ],
+      "surface": "fernand joseph desire to belong to the franzoesische republic.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'fernand' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "fernand_joseph_desire_contandin",
+       "country_of_citizenship",
+       "franzoesische_republik"
+      ],
+      "surface": "Fernand Joseph Desire Contandin is a citizen of the Federal Republic of Germany.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'citizen' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "fernand_joseph_desire_contandin",
+       "occupation",
+       "television_actor"
+      ],
+      "surface": "Fernando Joseph Desire Contandin is an television actor.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'fernando' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "fernand_joseph_desire_contandin",
+       "occupation",
+       "television_actor"
+      ],
+      "surface": "Fernand Joseph Desire Contandin is an actor known for his work in television.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'actor' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about fernand yet: what can you tell me about fernand? \u2014 worth going further here."
+   },
+   "status_vs_b2h": "both_abstain"
+  },
+  {
+   "label": "h10",
+   "entity": "geography_of_adana",
+   "n_gathered": 4,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about geography yet: what can you tell me about geography?"
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "The geography of Adana is an instance of a city work.",
+    "n_candidates": 7,
+    "n_accepted": 1,
+    "claim_gate_decided": 7,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "geography_of_adana",
+       "located_in_time_zone",
+       "kaliningrad_time"
+      ],
+      "surface": "Located in Kaliningrad Time, Adana is situated within its geographical location.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'located' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "geography_of_adana",
+       "located_in_time_zone",
+       "kaliningrad_time"
+      ],
+      "surface": "Geography of Adana is located in time zone Kaliningrad's time.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"Geography of Adana is located in time zone Kaliningrad's time.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "geography_of_adana",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The geography of Adana is an instance of a city work.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "geography_of_adana",
+       "country",
+       "the_republic_of_turkey"
+      ],
+      "surface": "The geography of Adana is in Turkey.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'in' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "geography_of_adana",
+       "country",
+       "the_republic_of_turkey"
+      ],
+      "surface": "The geography of Adana is part of Turkey's country.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"The geography of Adana is part of Turkey's country.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "geography_of_adana",
+       "twinned_administrative_body",
+       "saint_petersburg_city"
+      ],
+      "surface": "The geography of Adana is twin to Saint Petersburg City.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'twin' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "geography_of_adana",
+       "twinned_administrative_body",
+       "saint_petersburg_city"
+      ],
+      "surface": "Geography_of_adana and Saint_Petersburg_city have been twinned for administrative purposes since their creation in 1",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'and' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "HELPS",
+   "b2h_replay": {
+    "abstained": false,
+    "answer": "The geography of Adana is an instance of a city work."
+   },
+   "status_vs_b2h": "both_answer",
+   "flag_off_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about geography yet: what can you tell me about geography?",
+    "equals_live": true
+   }
+  },
+  {
+   "label": "h11",
+   "entity": "ha_noi_vietnam",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about ha yet: what can you tell me about ha?"
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "Hayastani Hanrapetut Yun shares border with Persian State of Iran.",
+    "n_candidates": 10,
+    "n_accepted": 1,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "ha_noi_vietnam",
+       "described_by_source",
+       "armenian_soviet_encyclopedia"
+      ],
+      "surface": "The Vietnam War was described in the Armenian Soviet Encyclopedia.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'vietnam' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ha_noi_vietnam",
+       "described_by_source",
+       "armenian_soviet_encyclopedia"
+      ],
+      "surface": "Ha noi vietnam was described by source Armenian Soviet Encyclopedia.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'was' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "armenian_soviet_encyclopedia",
+       "country",
+       "hayastani_hanrapetut_yun"
+      ],
+      "surface": "The Armenian Soviet Encyclopedia is in Hayastani Hanrapetut Yun.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'in' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "armenian_soviet_encyclopedia",
+       "country",
+       "hayastani_hanrapetut_yun"
+      ],
+      "surface": "Armenian-Soviet Encyclopedia has country Hayastani-Hayyary language content.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'has' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "hayastani_hanrapetut_yun",
+       "shares_border_with",
+       "persian_state_of_iran"
+      ],
+      "surface": "The Persian Empire shared its border with the Sassanid Persia of Iran.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'persian' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "hayastani_hanrapetut_yun",
+       "shares_border_with",
+       "persian_state_of_iran"
+      ],
+      "surface": "Hayastani Hanrapetut Yun shares border with Persian State of Iran.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "ha_noi_vietnam",
+       "twinned_administrative_body",
+       "montr_al_canada"
+      ],
+      "surface": "The twinned administrative body is Montr\u00e9al and Ottawa.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'twinned_administrative_body' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ha_noi_vietnam",
+       "twinned_administrative_body",
+       "montr_al_canada"
+      ],
+      "surface": "Ha noi vietnam twinned administrative body Montrer al canada.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'montrer' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ha_noi_vietnam",
+       "country",
+       "chxhcn_vietnam"
+      ],
+      "surface": "The Ha Noi Vietnam is a country.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 4 'country' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ha_noi_vietnam",
+       "country",
+       "chxhcn_vietnam"
+      ],
+      "surface": "Ha noi vietnam is a country in China.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'country' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "HELPS",
+   "b2h_replay": {
+    "abstained": false,
+    "answer": "Ha noi vietnam was described by source Armenian Soviet Encyclopedia. Hayastani Hanrapetut Yun shares border with Persian State of Iran."
+   },
+   "status_vs_b2h": "both_answer"
+  },
+  {
+   "label": "h12",
+   "entity": "history_of_ferrara",
+   "n_gathered": 4,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about history yet: what can you tell me about history?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about history yet: what can you tell me about history?",
+    "n_candidates": 8,
+    "n_accepted": 0,
+    "claim_gate_decided": 8,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "history_of_ferrara",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "The history of Ferrara is located in Rome time zone.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'located' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "history_of_ferrara",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "History_of_Ferrara is located in the Time_Zone of_Rome_Time.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'located' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "history_of_ferrara",
+       "country",
+       "italian_republic"
+      ],
+      "surface": "The history of Ferrara is Italian.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'italian' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "history_of_ferrara",
+       "country",
+       "italian_republic"
+      ],
+      "surface": "The history of Ferrara, a city in Italy, was influenced by the Italian Republic.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 ',' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "history_of_ferrara",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The history of Ferrara is an instance of its city work.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 5 'its' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "history_of_ferrara",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "History_of_Ferrara is an instance of Ferrara's work.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"History_of_Ferrara is an instance of Ferrara's work.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "history_of_ferrara",
+       "described_by_source",
+       "nordisk_familjebok"
+      ],
+      "surface": "The history of Ferrara was described by Nordisk familjebok.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'was' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "history_of_ferrara",
+       "described_by_source",
+       "nordisk_familjebok"
+      ],
+      "surface": "The history of Ferrara was described by source Nordisk familjebok.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'was' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": false,
+    "answer": "The history of Ferrara is an instance of its city work. The history of Ferrara was described by source Nordisk familjebok."
+   },
+   "status_vs_b2h": "LOSES"
+  },
+  {
+   "label": "h13",
+   "entity": "ida_lundgren",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about ida yet: what can you tell me about ida?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about ida yet: what can you tell me about ida?",
+    "n_candidates": 10,
+    "n_accepted": 0,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "ida_lundgren",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "The ida lundgren is an instance of a human species.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 6 'human' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ida_lundgren",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Ida Lundgren is an instance of a human species.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 5 'human' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "The human species has common names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'human' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "Human species is an instance of common names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'human' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "The common names subclass of the subclass of meanings of names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 4 'subclass_of' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "Common names are subclasses of meanings of names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'are' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ida_lundgren",
+       "occupation",
+       "television_actor"
+      ],
+      "surface": "Ida Lundgren is a television actor.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'television_actor' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ida_lundgren",
+       "occupation",
+       "television_actor"
+      ],
+      "surface": "Ida Lundgren is an occupation television actor.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'occupation' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ida_lundgren",
+       "country_of_citizenship",
+       "climate_of_sweden"
+      ],
+      "surface": "Sweden is a country of citizenship.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'sweden' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ida_lundgren",
+       "country_of_citizenship",
+       "climate_of_sweden"
+      ],
+      "surface": "Ida Lundgren is from Sweden's climate of peace and stability.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"Ida Lundgren is from Sweden's climate of peace and stability.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about ida yet: what can you tell me about ida?"
+   },
+   "status_vs_b2h": "both_abstain"
+  },
+  {
+   "label": "h14",
+   "entity": "ji_nan_city",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about ji yet: what can you tell me about ji?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about ji yet: what can you tell me about ji?",
+    "n_candidates": 10,
+    "n_accepted": 0,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "ji_nan_city",
+       "country",
+       "china_pr"
+      ],
+      "surface": "China is located in Japan.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'china' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ji_nan_city",
+       "country",
+       "china_pr"
+      ],
+      "surface": "The Ji Nan City is located in China's country.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"The Ji Nan City is located in China's country.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "china_pr",
+       "shares_border_with",
+       "bharat_ganrajya"
+      ],
+      "surface": "China shares border with Bharat Ganjariya.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'china' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "china_pr",
+       "shares_border_with",
+       "bharat_ganrajya"
+      ],
+      "surface": "China Pr shares borders with Bharat Ganjera.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'shares' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "bharat_ganrajya",
+       "shares_border_with",
+       "china_pr"
+      ],
+      "surface": "Bharat Ganjariya shares border with China Pr.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'bharat' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "bharat_ganrajya",
+       "shares_border_with",
+       "china_pr"
+      ],
+      "surface": "Bharat Ganjariya shares border with China Pr.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'bharat' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ji_nan_city",
+       "located_in_time_zone",
+       "australian_western_standard_time"
+      ],
+      "surface": "The city of Ji Nan is located in Australian Western Standard Time.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'city' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ji_nan_city",
+       "located_in_time_zone",
+       "australian_western_standard_time"
+      ],
+      "surface": "The Ji Nan City is located in the Australian Western Standard Time zone.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'located' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ji_nan_city",
+       "twinned_administrative_body",
+       "ciudad_aztl_n"
+      ],
+      "surface": "The city of Ji-Nan has its own administrative body.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'city' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ji_nan_city",
+       "twinned_administrative_body",
+       "ciudad_aztl_n"
+      ],
+      "surface": "The city of Ji-Nan is twinned with Ciudad Aztl\u00e1n, which is an administrative body in Mexico.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'city' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about ji yet: what can you tell me about ji?"
+   },
+   "status_vs_b2h": "both_abstain",
+   "flag_off_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about ji yet: what can you tell me about ji?",
+    "equals_live": true
+   }
+  },
+  {
+   "label": "h15",
+   "entity": "keifer_sutherland",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about keifer yet: what can you tell me about keifer?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about keifer yet: what can you tell me about keifer?",
+    "n_candidates": 10,
+    "n_accepted": 0,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "keifer_sutherland",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Keifer Sutherland is of human species.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'of' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "keifer_sutherland",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Keifer Sutherland is an instance of the human species.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 5 'human' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "The human species has common names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'human' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "Human species is an instance of common names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'human' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "The common names subclass of the subclass of meanings of names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 4 'subclass_of' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "Common names are subclasses of meanings of names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'are' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "keifer_sutherland",
+       "country_of_citizenship",
+       "united_kingom"
+      ],
+      "surface": "The country of citizenship for Keifer Sutherland is United Kingdom.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'country_of_citizenship' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "keifer_sutherland",
+       "country_of_citizenship",
+       "united_kingom"
+      ],
+      "surface": "Keifer Sutherland's citizenship is in the United Kingdom of Great Britain and Northern Ireland.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"Keifer Sutherland's citizenship is in the United Kingdom of Great Britain and Northern Ireland.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "keifer_sutherland",
+       "occupation",
+       "television_actor"
+      ],
+      "surface": "Keifer Sutherland is an actor.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'actor' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "keifer_sutherland",
+       "occupation",
+       "television_actor"
+      ],
+      "surface": "Keifer Sutherland is an actor who has appeared in numerous television shows and films.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'actor' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about keifer yet: what can you tell me about keifer?"
+   },
+   "status_vs_b2h": "both_abstain"
+  },
+  {
+   "label": "h16",
+   "entity": "larry_shaw_director",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about larry yet: what can you tell me about larry?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about larry yet: what can you tell me about larry?",
+    "n_candidates": 10,
+    "n_accepted": 0,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "larry_shaw_director",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Larry Shaw is an instance of a human species.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'larry' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "larry_shaw_director",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Larry Shaw is an instance of the human species.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'larry' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "The human species has common names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'human' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "Human species is an instance of common names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'human' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "The common names subclass of the subclass of meanings of names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 4 'subclass_of' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "Common names are subclasses of meanings of names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'are' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "larry_shaw_director",
+       "place_of_birth",
+       "u_s_of_a"
+      ],
+      "surface": "Larry Shaw was born in the United States.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'larry' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "larry_shaw_director",
+       "place_of_birth",
+       "u_s_of_a"
+      ],
+      "surface": "Larry Shaw was born in the United States.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'larry' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "larry_shaw_director",
+       "occupation",
+       "film_directors"
+      ],
+      "surface": "Larry Shaw is an occupation in the film directors' field.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"Larry Shaw is an occupation in the film directors' field.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "larry_shaw_director",
+       "occupation",
+       "film_directors"
+      ],
+      "surface": "Larry Shaw was an occupation for film directors.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'larry' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about larry yet: what can you tell me about larry?"
+   },
+   "status_vs_b2h": "both_abstain"
+  },
+  {
+   "label": "h17",
+   "entity": "luk_cs_p_l",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about luk yet: what can you tell me about luk?"
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "Luk_cs_p_l is an instance of human_specie.",
+    "n_candidates": 10,
+    "n_accepted": 1,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "luk_cs_p_l",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "The triple (luk_cs_p_l, instance_of, human_specie).",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'triple' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "luk_cs_p_l",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Luk_cs_p_l is an instance of human_specie.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "The entity is human.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'entity' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "Human species is an example of the common names system.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'human' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "Commonly known as subclasses of names",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'commonly' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "Common names are subclasses of meanings of names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'are' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "luk_cs_p_l",
+       "country_of_citizenship",
+       "u_s_of_a"
+      ],
+      "surface": "The United States of America is the country of citizenship for Luk CS P L.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'united' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "luk_cs_p_l",
+       "country_of_citizenship",
+       "u_s_of_a"
+      ],
+      "surface": "Luk_cs_p_l is from the country of citizenship U.S.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'from' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "luk_cs_p_l",
+       "occupation",
+       "television_actor"
+      ],
+      "surface": "Occupation is a television actor.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'occupation' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "luk_cs_p_l",
+       "occupation",
+       "television_actor"
+      ],
+      "surface": "Luk Cs P L is a television actor.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'television_actor' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "HELPS",
+   "b2h_replay": {
+    "abstained": false,
+    "answer": "Luk_cs_p_l is an instance of human_specie."
+   },
+   "status_vs_b2h": "both_answer"
+  },
+  {
+   "label": "h18",
+   "entity": "merano_italy",
+   "n_gathered": 4,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about merano yet: what can you tell me about merano?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about merano yet: what can you tell me about merano?",
+    "n_candidates": 8,
+    "n_accepted": 0,
+    "claim_gate_decided": 8,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "merano_italy",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "The city of Rome is located in the time zone of Italy.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'city' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "merano_italy",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "Merano, Italy is located in the time zone of Rome.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'merano' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "merano_italy",
+       "country",
+       "italian_republic"
+      ],
+      "surface": "Merano is located in Italy.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'merano' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "merano_italy",
+       "country",
+       "italian_republic"
+      ],
+      "surface": "Merano, Italy is the country's Italian republic.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"Merano, Italy is the country's Italian republic.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "merano_italy",
+       "instance_of",
+       "italian_communes"
+      ],
+      "surface": "The Merano is an Italian commune.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'merano' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "merano_italy",
+       "instance_of",
+       "italian_communes"
+      ],
+      "surface": "Merano, Italy is an instance of Italian Communes.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'merano' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "merano_italy",
+       "twinned_administrative_body",
+       "historic_centre_of_salzburg"
+      ],
+      "surface": "The historic centre of Salzburg and its twinned administrative body were both tamed in 1972.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'and' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "merano_italy",
+       "twinned_administrative_body",
+       "historic_centre_of_salzburg"
+      ],
+      "surface": "Merano, Italy, has two administrative bodies: the Municipality of Merano and the Historic Centre of Salzburg.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'merano' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about merano yet: what can you tell me about merano?"
+   },
+   "status_vs_b2h": "both_abstain"
+  },
+  {
+   "label": "h19",
+   "entity": "nc_arts",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about nc yet: what can you tell me about nc?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about nc yet: what can you tell me about nc?",
+    "n_candidates": 10,
+    "n_accepted": 0,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "nc_arts",
+       "country",
+       "u_s_of_a"
+      ],
+      "surface": "The country of China is the United States.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'country' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "nc_arts",
+       "country",
+       "u_s_of_a"
+      ],
+      "surface": "The United States of America is known as the \"NC-Artists\" country.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'united' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "u_s_of_a",
+       "shares_border_with",
+       "canada_portal"
+      ],
+      "surface": "The number of shares in Canada is u_s_of_a.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'number' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "u_s_of_a",
+       "shares_border_with",
+       "canada_portal"
+      ],
+      "surface": "Shares of a company bordering Canada at the Port of Vancouver",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'shares' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "canada_portal",
+       "shares_border_with",
+       "u_s_of_a"
+      ],
+      "surface": "Canada's border is shared with the United States of America.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"Canada's border is shared with the United States of America.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "canada_portal",
+       "shares_border_with",
+       "u_s_of_a"
+      ],
+      "surface": "Canada's portal shares borders with the United States of America.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"Canada's portal shares borders with the United States of America.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "nc_arts",
+       "instance_of",
+       "higher_general_education"
+      ],
+      "surface": "The NCAT is an instance of higher general education.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'ncat' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "nc_arts",
+       "instance_of",
+       "higher_general_education"
+      ],
+      "surface": "Ancillary college or university is an example of a higher general education institution.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'ancillary' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "nc_arts",
+       "located_in_the_administrative_territoria",
+       "the_tar_heel_state"
+      ],
+      "surface": "The Tar Heel State is located in the administrative territory of the United States.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'located' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "nc_arts",
+       "located_in_the_administrative_territoria",
+       "the_tar_heel_state"
+      ],
+      "surface": "The NC-ARTS is located in the administrative territory of the Tarheel State.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'located' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about nc yet: what can you tell me about nc?"
+   },
+   "status_vs_b2h": "both_abstain"
+  },
+  {
+   "label": "h20",
+   "entity": "ousepachan",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about ousepachan yet: what can you tell me about ousepachan?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about ousepachan yet: what can you tell me about ousepachan?",
+    "n_candidates": 10,
+    "n_accepted": 0,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "ousepachan",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Use a human species as an instance of the use.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'use' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ousepachan",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "The instance_of human_specie is a unique species within its own domain.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'instance_of' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "The entity is human.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'entity' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "Human species is an example of the common names system.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'human' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "Commonly known as subclasses of names",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'commonly' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "Common names are subclasses of meanings of names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'are' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ousepachan",
+       "country_of_citizenship",
+       "bharat_ganrajya"
+      ],
+      "surface": "Bharat Ganjam is the country of citizenship for India.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'bharat' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ousepachan",
+       "country_of_citizenship",
+       "bharat_ganrajya"
+      ],
+      "surface": "Bharat Ganjira is a country of citizenship in India.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'bharat' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ousepachan",
+       "occupation",
+       "music_composer"
+      ],
+      "surface": "Occupied musician.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'occupied' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "ousepachan",
+       "occupation",
+       "music_composer"
+      ],
+      "surface": "Pechan, a musician, is also an occupation who creates music compositions.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'pechan' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about ousepachan yet: what can you tell me about ousepachan?"
+   },
+   "status_vs_b2h": "both_abstain"
+  },
+  {
+   "label": "h21",
+   "entity": "prefecture_of_nagasaki",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about prefecture yet: what can you tell me about prefecture?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about prefecture yet: what can you tell me about prefecture?",
+    "n_candidates": 10,
+    "n_accepted": 0,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "prefecture_of_nagasaki",
+       "country",
+       "modern_era_japan"
+      ],
+      "surface": "Nagasaki is located in Japan.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'nagasaki' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "prefecture_of_nagasaki",
+       "country",
+       "modern_era_japan"
+      ],
+      "surface": "Prefectures of Nagasaki in the modern era of Japan.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'prefectures' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "modern_era_japan",
+       "shares_border_with",
+       "china_pr"
+      ],
+      "surface": "China's border with Japan is shared with Taiwan Province of China.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"China's border with Japan is shared with Taiwan Province of China.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "modern_era_japan",
+       "shares_border_with",
+       "china_pr"
+      ],
+      "surface": "Modern-era Japan shares borders with China Pr.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'shares' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "china_pr",
+       "shares_border_with",
+       "bharat_ganrajya"
+      ],
+      "surface": "China shares borders with Bharat Ganjamya.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'china' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "china_pr",
+       "shares_border_with",
+       "bharat_ganrajya"
+      ],
+      "surface": "China's share of India's total stock market is about 15%.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"China's share of India's total stock market is about 15%.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "prefecture_of_nagasaki",
+       "located_in_time_zone",
+       "korea_standard_time"
+      ],
+      "surface": "The prefecture of Nagasaki is located in time zone Korea Standard Time.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'located_in_time_zone' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "prefecture_of_nagasaki",
+       "located_in_time_zone",
+       "korea_standard_time"
+      ],
+      "surface": "The prefecture of Nagasaki is located in the Korea Standard Time time zone.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'located' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "prefecture_of_nagasaki",
+       "twinned_administrative_body",
+       "districts_of_busan"
+      ],
+      "surface": "Nagasaki Prefecture and Busan Districts of Busan have been twinned administratively since their establishment.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'nagasaki' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "prefecture_of_nagasaki",
+       "twinned_administrative_body",
+       "districts_of_busan"
+      ],
+      "surface": "The prefecture of Nagasaki has partnered with Busan to establish a twinned administrative body for their districts.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'has' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": false,
+    "answer": "The prefecture of Nagasaki is located in time zone Korea Standard Time."
+   },
+   "status_vs_b2h": "LOSES"
+  },
+  {
+   "label": "h22",
+   "entity": "rep_blica_del_paraguay",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about rep yet: what can you tell me about rep? \u2014 worth going further here."
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "Rep Blica del Paraguay shares border with the Republic of Brazil. Rep_blica_del_paraguay is a member of the United Nations. \u2014 worth going further here.",
+    "n_candidates": 10,
+    "n_accepted": 2,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "rep_blica_del_paraguay",
+       "shares_border_with",
+       "republic_of_brazil"
+      ],
+      "surface": "The Republic of Brazil has shares bordering Paraguay.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'has' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "rep_blica_del_paraguay",
+       "shares_border_with",
+       "republic_of_brazil"
+      ],
+      "surface": "Rep Blica del Paraguay shares border with the Republic of Brazil.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "republic_of_brazil",
+       "shares_border_with",
+       "franzoesische_republik"
+      ],
+      "surface": "The republic of Brazil shares borders with the Federal Republic of Germany.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'shares' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "republic_of_brazil",
+       "shares_border_with",
+       "franzoesische_republik"
+      ],
+      "surface": "The Republic of Brazil shares borders with France's Republic.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"The Republic of Brazil shares borders with France's Republic.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "franzoesische_republik",
+       "shares_border_with",
+       "united_kingom"
+      ],
+      "surface": "The French Republic shares its border with the United Kingdom.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'french' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "franzoesische_republik",
+       "shares_border_with",
+       "united_kingom"
+      ],
+      "surface": "The German federal republic shares borders with the United Kingdom.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'german' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "rep_blica_del_paraguay",
+       "described_by_source",
+       "brockhaus_and_efron_encyclopaedia"
+      ],
+      "surface": "The Repartition of Paraguay was described by Broccohaus and Efron Encyclopedia.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'repartition' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "rep_blica_del_paraguay",
+       "described_by_source",
+       "brockhaus_and_efron_encyclopaedia"
+      ],
+      "surface": "Replica of Paraguay described by source Brockhaus & Efron Encyclopedie.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'replica' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "rep_blica_del_paraguay",
+       "member_of",
+       "united_nations"
+      ],
+      "surface": "Rep Blica del Paraguay es parte de la Uni\u00f3n Nacional.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'es' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "rep_blica_del_paraguay",
+       "member_of",
+       "united_nations"
+      ],
+      "surface": "Rep_blica_del_paraguay is a member of the United Nations.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     }
+    ]
+   },
+   "status": "HELPS",
+   "b2h_replay": {
+    "abstained": false,
+    "answer": "Rep Blica del Paraguay shares border with the Republic of Brazil. Rep_blica_del_paraguay is a member of the United Nations. \u2014 worth going further here."
+   },
+   "status_vs_b2h": "both_answer"
+  },
+  {
+   "label": "h23",
+   "entity": "s_te_france",
+   "n_gathered": 4,
+   "stock_live": {
+    "abstained": false,
+    "answer": "The S_Te_France instance_of communes_in_france."
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "The S_Te_France instance_of communes_in_france.",
+    "n_candidates": 8,
+    "n_accepted": 1,
+    "claim_gate_decided": 8,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "s_te_france",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "The person is located in time zone Rome.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'person' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "s_te_france",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "S_Te_France is located in Rome's time zone.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"S_Te_France is located in Rome's time zone.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "s_te_france",
+       "country",
+       "franzoesische_republik"
+      ],
+      "surface": "The country of France is the country of the French Republic.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'country' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "s_te_france",
+       "country",
+       "franzoesische_republik"
+      ],
+      "surface": "France is a country in Europe, known as the \"country\" of Germany's republic.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in 'France is a country in Europe, known as the \"country\" of Germany\\'s republic.' [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "s_te_france",
+       "instance_of",
+       "communes_in_france"
+      ],
+      "surface": "The French commune of Montmartre is an instance of a historical district in Paris.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'french' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "s_te_france",
+       "instance_of",
+       "communes_in_france"
+      ],
+      "surface": "The S_Te_France instance_of communes_in_france.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "s_te_france",
+       "located_in_the_administrative_territoria",
+       "department_of_herault"
+      ],
+      "surface": "The S\u00e8te is located in Herault's administrative territory.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"The S\u00e8te is located in Herault's administrative territory.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "s_te_france",
+       "located_in_the_administrative_territoria",
+       "department_of_herault"
+      ],
+      "surface": "S_T_E_France is located in the administrative territory of the Department of Herault.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 's_t_e_france' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_answer",
+   "b2h_replay": {
+    "abstained": false,
+    "answer": "The S_Te_France instance_of communes_in_france."
+   },
+   "status_vs_b2h": "both_answer",
+   "flag_off_replay": {
+    "abstained": false,
+    "answer": "The S_Te_France instance_of communes_in_france.",
+    "equals_live": true
+   }
+  },
+  {
+   "label": "h24",
+   "entity": "shelley_winters",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about shelley yet: what can you tell me about shelley?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about shelley yet: what can you tell me about shelley?",
+    "n_candidates": 10,
+    "n_accepted": 0,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "shelley_winters",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Shelley winters is an instance of human species.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 4 'human' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "shelley_winters",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Shelly Winters is an instance of a human species.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'shelly' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "The entity is human.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'entity' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "Human species is an example of the common names system.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'human' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "Commonly known as subclasses of names",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'commonly' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "Common names are subclasses of meanings of names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'are' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "shelley_winters",
+       "country_of_citizenship",
+       "u_s_of_a"
+      ],
+      "surface": "Shellieth winters lives in the United States of America.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'shellieth' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "shelley_winters",
+       "country_of_citizenship",
+       "u_s_of_a"
+      ],
+      "surface": "Shelli Winter's citizenship is in the United States of America (U.S.).",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"Shelli Winter's citizenship is in the United States of America (U.S.).\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "shelley_winters",
+       "occupation",
+       "writter"
+      ],
+      "surface": "Shelli Winter's occupation is a writer.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"Shelli Winter's occupation is a writer.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "shelley_winters",
+       "occupation",
+       "writter"
+      ],
+      "surface": "Shelly Winter's occupation is a writer.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"Shelly Winter's occupation is a writer.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about shelley yet: what can you tell me about shelley?"
+   },
+   "status_vs_b2h": "both_abstain"
+  },
+  {
+   "label": "h25",
+   "entity": "steven_lipson",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about steven yet: what can you tell me about steven?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about steven yet: what can you tell me about steven?",
+    "n_candidates": 10,
+    "n_accepted": 0,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "steven_lipson",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Steven Lipson is an instance of a human species.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 5 'human' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "steven_lipson",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Steven Lipson is an instance of human species.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 4 'human' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "The entity is human.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'entity' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "human_specie",
+       "instance_of",
+       "common_names"
+      ],
+      "surface": "Human species is an example of the common names system.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'human' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "Commonly known as subclasses of names",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'commonly' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "common_names",
+       "subclass_of",
+       "meaning_of_names"
+      ],
+      "surface": "Common names are subclasses of meanings of names.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'are' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "steven_lipson",
+       "country_of_citizenship",
+       "u_s_of_a"
+      ],
+      "surface": "Steven Lipson is from the United States of America.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'from' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "steven_lipson",
+       "country_of_citizenship",
+       "u_s_of_a"
+      ],
+      "surface": "Steven Lipson is from the United States of America (U.S.).",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'from' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "steven_lipson",
+       "occupation",
+       "non_degreed_engineer"
+      ],
+      "surface": "Steven Lipson is an engineer.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'engineer' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "steven_lipson",
+       "occupation",
+       "non_degreed_engineer"
+      ],
+      "surface": "Steven Lipson is an engineer who has not completed a degree.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'engineer' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about steven yet: what can you tell me about steven?"
+   },
+   "status_vs_b2h": "both_abstain"
+  },
+  {
+   "label": "h26",
+   "entity": "the_weather_in_stavenger",
+   "n_gathered": 4,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about weather yet: what can you tell me about weather?"
+   },
+   "flag_on_replay": {
+    "abstained": false,
+    "answer": "The weather in Stavenger is an instance of the city work.",
+    "n_candidates": 7,
+    "n_accepted": 1,
+    "claim_gate_decided": 7,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "the_weather_in_stavenger",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "The weather in Stavenger is located in Rome time.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'located' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "the_weather_in_stavenger",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "The weather in Stavenger is similar to Rome's time zone.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"The weather in Stavenger is similar to Rome's time zone.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "the_weather_in_stavenger",
+       "country",
+       "royal_kingdom_of_norway"
+      ],
+      "surface": "The weather in Stavanger is in the royal kingdom of Norway.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'weather' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "the_weather_in_stavenger",
+       "country",
+       "royal_kingdom_of_norway"
+      ],
+      "surface": "The weather in Stavershavn's country, the Royal Kingdom of Norway, is typically mild and sunny throughout the year",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"The weather in Stavershavn's country, the Royal Kingdom of Norway, is typically mild and sunny throughout the year\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "the_weather_in_stavenger",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The weather in Stavenger is an instance of the city work.",
+      "claim": true,
+      "claim_reject": null,
+      "single_triple": "not_called",
+      "ok": true
+     },
+     {
+      "svo": [
+       "the_weather_in_stavenger",
+       "twinned_administrative_body",
+       "city_of_houston_texas"
+      ],
+      "surface": "The weather in Stavenger is similar to Houston's administrative body.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"The weather in Stavenger is similar to Houston's administrative body.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "the_weather_in_stavenger",
+       "twinned_administrative_body",
+       "city_of_houston_texas"
+      ],
+      "surface": "The weather in Houston, Texas was characterized as mild to warm, which was mirrored by the administrative body's decision to implement",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"The weather in Houston, Texas was characterized as mild to warm, which was mirrored by the administrative body's decision to implement\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "HELPS",
+   "b2h_replay": {
+    "abstained": false,
+    "answer": "The weather in Stavenger is an instance of the city work."
+   },
+   "status_vs_b2h": "both_answer",
+   "flag_off_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about weather yet: what can you tell me about weather?",
+    "equals_live": true
+   }
+  },
+  {
+   "label": "h27",
+   "entity": "universitat_des_saarlandes",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about universitat yet: what can you tell me about universitat?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about universitat yet: what can you tell me about universitat?",
+    "n_candidates": 10,
+    "n_accepted": 0,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "universitat_des_saarlandes",
+       "country",
+       "federal_republic_of_germany"
+      ],
+      "surface": "The University of Saarland is a federal republic of Germany.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'university' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "universitat_des_saarlandes",
+       "country",
+       "federal_republic_of_germany"
+      ],
+      "surface": "Universitetsdagsasaila saarela eesti kehitys.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'universitetsdagsasaila' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "federal_republic_of_germany",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "The federal republic of germany is located in time zone Rome.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'located_in_time_zone' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "federal_republic_of_germany",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "The federal republic of germany is located in time zone rome time.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'located_in_time_zone' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "universitat_des_saarlandes",
+       "instance_of",
+       "higher_general_education"
+      ],
+      "surface": "Universit\u00e4t f\u00fcr Schiedsrichter ist eine Instanz der h\u00f6heren allgemeinen Bildung.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'universit_t' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "universitat_des_saarlandes",
+       "instance_of",
+       "higher_general_education"
+      ],
+      "surface": "Universit\u0103\u021bii de Saarbr\u00fccken se afl\u0103 \u00een classificarea unei institu\u021biilor de",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'universit_ii' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "universitat_des_saarlandes",
+       "located_in_the_administrative_territoria",
+       "county_of_saarbruecken"
+      ],
+      "surface": "The university is located in the administrative territory of Saarbruecken.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'university' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "universitat_des_saarlandes",
+       "located_in_the_administrative_territoria",
+       "county_of_saarbruecken"
+      ],
+      "surface": "Universitetsgeb\u00e4\u00fc in der administrat\u00fcrreiton der Stadt Saarbr\u00fccken.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'universitetsgeb_' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "universitat_des_saarlandes",
+       "member_of",
+       "german_research_network"
+      ],
+      "surface": "The university of Saarland is a member of the German Research Network.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'university' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "universitat_des_saarlandes",
+       "member_of",
+       "german_research_network"
+      ],
+      "surface": "Universit\u00e4t des Saarlandes is a member of the German Research Network.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'universit_t' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": false,
+    "answer": "The federal republic of germany is located in time zone rome time."
+   },
+   "status_vs_b2h": "LOSES"
+  },
+  {
+   "label": "h28",
+   "entity": "waadt_canton_of",
+   "n_gathered": 4,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about waadt yet: what can you tell me about waadt?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about waadt yet: what can you tell me about waadt?",
+    "n_candidates": 8,
+    "n_accepted": 0,
+    "claim_gate_decided": 8,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "waadt_canton_of",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "The Rome time zone is located in the Canton of Italy.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'zone' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "waadt_canton_of",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "Waaad ta'asana waad ta'asana wuxuu laakiin la xaar ah Rome",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"Waaad ta'asana waad ta'asana wuxuu laakiin la xaar ah Rome\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "waadt_canton_of",
+       "country",
+       "conf_d_ration_suisse"
+      ],
+      "surface": "The capital city of Canton is Switzerland.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'capital' expected a gathered slug after the determiner [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "waadt_canton_of",
+       "country",
+       "conf_d_ration_suisse"
+      ],
+      "surface": "Waadt Canton of Switzerland is a canton in the Confederation of Switzerland.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'switzerland' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "waadt_canton_of",
+       "shares_border_with",
+       "canton_de_berne"
+      ],
+      "surface": "Canton de Berne shares its border with Canton of Switzerland.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'shares' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "waadt_canton_of",
+       "shares_border_with",
+       "canton_de_berne"
+      ],
+      "surface": "Waadt Canton of shares borders with Canton de Berne.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'shares' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "waadt_canton_of",
+       "contains_administrative_territorial_enti",
+       "jura_nord_vaudois_district"
+      ],
+      "surface": "The waadt_canton_of contains administrative territorial enti in jura nord vaudois district.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'in' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "waadt_canton_of",
+       "contains_administrative_territorial_enti",
+       "jura_nord_vaudois_district"
+      ],
+      "surface": "The Waadt Canton of contains administrative territorial jurisdiction in Nord-Vaud district.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'contains' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": false,
+    "answer": "The waadt_canton_of contains administrative territorial enti in jura nord vaudois district."
+   },
+   "status_vs_b2h": "LOSES"
+  },
+  {
+   "label": "h29",
+   "entity": "zhejiang_province",
+   "n_gathered": 5,
+   "stock_live": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about zhejiang yet: what can you tell me about zhejiang?"
+   },
+   "flag_on_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about zhejiang yet: what can you tell me about zhejiang?",
+    "n_candidates": 10,
+    "n_accepted": 0,
+    "claim_gate_decided": 10,
+    "fell_back_to_single_triple": 0,
+    "accepted_by_fallback": 0,
+    "candidates": [
+     {
+      "svo": [
+       "zhejiang_province",
+       "country",
+       "china_pr"
+      ],
+      "surface": "Zhejiang Province is a country in China.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'country' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "zhejiang_province",
+       "country",
+       "china_pr"
+      ],
+      "surface": "Zhejiang Province is a country in China.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 3 'country' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "china_pr",
+       "shares_border_with",
+       "bharat_ganrajya"
+      ],
+      "surface": "China shares borders with Bharat Ganjamya.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'china' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "china_pr",
+       "shares_border_with",
+       "bharat_ganrajya"
+      ],
+      "surface": "China's share of India's total stock market is about 15%.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"China's share of India's total stock market is about 15%.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "bharat_ganrajya",
+       "shares_border_with",
+       "china_pr"
+      ],
+      "surface": "Bharat Ganjariyan, shares border with China Pr.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'bharat' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "bharat_ganrajya",
+       "shares_border_with",
+       "china_pr"
+      ],
+      "surface": "Bihar shares border with China Prussia",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 0 'bihar' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "zhejiang_province",
+       "located_in_time_zone",
+       "australian_western_standard_time"
+      ],
+      "surface": "Zhejiang province is located in time zone Australia's Western Standard Time.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"Zhejiang province is located in time zone Australia's Western Standard Time.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "zhejiang_province",
+       "located_in_time_zone",
+       "australian_western_standard_time"
+      ],
+      "surface": "Zhejiang Province is located in the Time Zone of Australia's Western Standard Time.",
+      "claim": false,
+      "claim_reject": "allowlist: apostrophe (possessive or contraction) in \"Zhejiang Province is located in the Time Zone of Australia's Western Standard Time.\" [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "zhejiang_province",
+       "shares_border_with",
+       "air_pollution_in_shanghai"
+      ],
+      "surface": "Zhejiang Province shares air pollution with Shanghai.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 1 'shares' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     },
+     {
+      "svo": [
+       "zhejiang_province",
+       "shares_border_with",
+       "air_pollution_in_shanghai"
+      ],
+      "surface": "Zhejiang Province shares border with Shanghai for air pollution.",
+      "claim": false,
+      "claim_reject": "allowlist: no shape: at token 2 'shanghai' expected a gathered slug (SUBJ/OBJ) [sentence 1 of 1]",
+      "single_triple": "not_called",
+      "ok": false
+     }
+    ]
+   },
+   "status": "both_abstain",
+   "b2h_replay": {
+    "abstained": true,
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about zhejiang yet: what can you tell me about zhejiang?"
+   },
+   "status_vs_b2h": "both_abstain"
+  }
+ ]
+}
