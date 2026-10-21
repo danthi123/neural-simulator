@@ -22,6 +22,15 @@ compute node (GPU queue, local model serving), and Claude Code inspects occasion
   real answers. A review found that it reads one sentence at a time and that four routes to the mouth skip it; attempt 6
   fixes those, is under review, and then faces its own blind round. Switching it on needs its own test.
   (VERDICTS in `research/findings/2026-10-20-moat-allowlist-claim-checker-PREREGISTRATION.md`, merge `33c17026e`.)
+- **Later on 10-21: the strict check meets a honesty problem it cannot solve by reading words.** Attempt 6 let none of 114
+  made-up sentences through, but its blind round showed that when a user teaches the brain a name holding "I", "me" or
+  "you" (a band called "Trevor and I"), the mouth can say it as if the brain were talking about itself. Attempt 7 tried
+  word lists and failed its blind round (41 of 86 kept): such words can be spelled endlessly. A reading test then showed
+  that quoting the fact as someone's words fixes names like "So I Married ..." but not a stored name that is itself a
+  pointing word or pronoun ("the latter", "moi"), because what the person meant was lost when the fact was stored. So
+  attempt 8 decides per fact (with the switch on, only facts from the brain's declared build knowledge are spoken), and
+  the real fix moves to where a fact is heard: the brain should learn who "I" and "you" mean (task #271; its first step,
+  a census of today's encoding, has started). (VERDICTS for builds 6 and 7, merge `359e8ff63`.)
 - **A fault under the cell types (10-20).** A global randomization step overwrote each region's own neuron parameters
   with jitter centred on one regular-spiking type, so the specialised cell types were hybrids. The fix is merged
   switched off; the basal-ganglia seam test waits on measuring that organ on the real cell types.

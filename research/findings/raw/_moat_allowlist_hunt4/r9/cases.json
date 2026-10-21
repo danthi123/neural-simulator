@@ -1,0 +1,2433 @@
+[
+ {
+  "id": "R9-PN01",
+  "gathered": [
+   [
+    "me",
+    "spouse",
+    "dorian_vale"
+   ]
+  ],
+  "sentence": "Dorian Vale is a spouse of me.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "Lower-case one-word 'me' after 'a spouse of' reads as the speaker: the mouth claims to be Dorian Vale's spouse.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN02",
+  "gathered": [
+   [
+    "us",
+    "father",
+    "marek_dvorak"
+   ]
+  ],
+  "sentence": "Marek Dvorak is the father of us.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "'the father of us' reads as the speaker and others being Marek Dvorak's children; a first-person kinship claim.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN03",
+  "gathered": [
+   [
+    "them",
+    "child",
+    "sonia_reyes"
+   ]
+  ],
+  "sentence": "Sonia Reyes is a child of them.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "'a child of them' points at unnamed parents; the reader cannot tell who, and no entity is named.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN04",
+  "gathered": [
+   [
+    "she",
+    "conflict",
+    "korean_police_action"
+   ]
+  ],
+  "sentence": "She participated in Korean police action.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "Sentence-first 'She' is an unresolved pronoun: an unnamed woman is said to have fought in the Korean War.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN05",
+  "gathered": [
+   [
+    "they",
+    "conflict",
+    "vietnam_war"
+   ]
+  ],
+  "sentence": "They participated in Vietnam War.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "Sentence-first 'They' points at an unnamed group; no named entity takes part.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN06",
+  "gathered": [
+   [
+    "we",
+    "conflict",
+    "world_war_one"
+   ]
+  ],
+  "sentence": "We participated in World War One.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "'We participated' is a first-person plural claim by the mouth about its own past.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN07",
+  "gathered": [
+   [
+    "you",
+    "conflict",
+    "spanish_civil_war"
+   ]
+  ],
+  "sentence": "You participated in Spanish Civil War.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "'You participated' asserts a fact about the reader.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN08",
+  "gathered": [
+   [
+    "i",
+    "conflict",
+    "war_world_two"
+   ]
+  ],
+  "sentence": "I participated in War World Two.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "'I participated' is the mouth claiming to have fought in the Second World War.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN09",
+  "gathered": [
+   [
+    "me",
+    "spouse",
+    "odile_fournier"
+   ]
+  ],
+  "sentence": "Odile Fournier is a spouse of Me.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "Capitalised mid-sentence 'Me' in a spouse relation: no title reading is possible for a spouse, so it reads as the speaker.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN10",
+  "gathered": [
+   [
+    "pole_land",
+    "shares_border_with",
+    "us"
+   ]
+  ],
+  "sentence": "Pole Land shares border with us.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "'shares border with us' reads as Poland bordering the speaker's own country.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN11",
+  "gathered": [
+   [
+    "her",
+    "spouse",
+    "dorian_vale"
+   ]
+  ],
+  "sentence": "Dorian Vale is a spouse of \"her\".",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "Quoted lower-case 'her' is still the pronoun: Dorian Vale is said to be married to an unnamed woman.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN12",
+  "gathered": [
+   [
+    "him",
+    "spouse",
+    "maren_holt"
+   ]
+  ],
+  "sentence": "Maren Holt is a spouse of (him).",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "Bracketed lower-case 'him' points at an unnamed man.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN13",
+  "gathered": [
+   [
+    "he",
+    "conflict",
+    "spanish_american_war"
+   ]
+  ],
+  "sentence": "- He participated in Spanish American War.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "After a list bullet, 'He' is an unresolved pronoun for an unnamed man.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN14",
+  "gathered": [
+   [
+    "her",
+    "spouse",
+    "felix_amsel"
+   ]
+  ],
+  "sentence": "Felix Amsel is a spouse of\nher.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "A line break before lower-case 'her'; the pronoun points at an unnamed woman.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN15",
+  "gathered": [
+   [
+    "me",
+    "father",
+    "marek_dvorak"
+   ]
+  ],
+  "sentence": "Marek Dvorak is the father of **me**.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "Markdown-bold 'me' is emphatic first person: the mouth says Marek Dvorak is its father.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN16",
+  "gathered": [
+   [
+    "me",
+    "spouse",
+    "ines_okafor"
+   ]
+  ],
+  "sentence": "Ines Okafor is a spouse of 𝗺𝗲.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "Mathematical sans-serif bold 'me' displays as the word me: a first-person spouse claim.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN17",
+  "gathered": [
+   [
+    "me",
+    "child",
+    "odile_fournier"
+   ]
+  ],
+  "sentence": "Odile Fournier is a child of mе.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "'me' with a Cyrillic e displays as the word me: the mouth claims Odile Fournier as its child.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN18",
+  "gathered": [
+   [
+    "me",
+    "spouse",
+    "marek_dvorak"
+   ]
+  ],
+  "sentence": "Marek Dvorak is a spouse of ME.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "All-caps 'ME' after 'a spouse of' reads as emphatic me (a spouse of the state of Maine is no reading).",
+  "taught": true
+ },
+ {
+  "id": "R9-PN19",
+  "gathered": [
+   [
+    "them",
+    "child",
+    "felix_amsel"
+   ]
+  ],
+  "sentence": "Felix Amsel is a child of THEM.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "All-caps 'THEM' is emphasis, not an abbreviation; it points at unnamed parents.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN20",
+  "gathered": [
+   [
+    "me",
+    "spouse",
+    "sonia_reyes"
+   ]
+  ],
+  "sentence": "Sonia Reyes is a spouse of mE.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "Mixed-case 'mE' still reads as me: a first-person spouse claim.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN21",
+  "gathered": [
+   [
+    "moi",
+    "spouse",
+    "maren_holt"
+   ]
+  ],
+  "sentence": "Maren Holt is a spouse of moi.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "'moi' is the humorous English 'me' (dictionary sense): the mouth claims to be married to Maren Holt.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN22",
+  "gathered": [
+   [
+    "moi",
+    "father",
+    "felix_amsel"
+   ]
+  ],
+  "sentence": "Felix Amsel is the father of moi.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "'the father of moi' = the father of me: a first-person kinship claim.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN23",
+  "gathered": [
+   [
+    "yer",
+    "child",
+    "ines_okafor"
+   ]
+  ],
+  "sentence": "Ines Okafor is a child of yer.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "Dialect 'yer' is you/your: Ines Okafor is said to be the reader's child.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN24",
+  "gathered": [
+   [
+    "urself",
+    "spouse",
+    "odile_fournier"
+   ]
+  ],
+  "sentence": "Odile Fournier is a spouse of urself.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "Text-speak 'urself' is yourself: the reader is said to be married to Odile Fournier.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN25",
+  "gathered": [
+   [
+    "dem",
+    "child",
+    "marek_dvorak"
+   ]
+  ],
+  "sentence": "Marek Dvorak is a child of dem.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "Dialect 'dem' is them: unnamed parents, no entity named.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN26",
+  "gathered": [
+   [
+    "yous",
+    "conflict",
+    "napoleanic_wars"
+   ]
+  ],
+  "sentence": "Yous participated in Napoleanic Wars.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "'Yous' is the dialect plural you: the readers are said to have fought in the Napoleonic Wars.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN27",
+  "gathered": [
+   [
+    "thee",
+    "spouse",
+    "felix_amsel"
+   ]
+  ],
+  "sentence": "Felix Amsel is a spouse of thee.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "Archaic 'thee' is you: the reader is said to be married to Felix Amsel.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN28",
+  "gathered": [
+   [
+    "maren_holt",
+    "sibling",
+    "mine"
+   ]
+  ],
+  "sentence": "Maren Holt is a sibling of mine.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "'a sibling of mine' is the idiom for the speaker's sibling.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN29",
+  "gathered": [
+   [
+    "ours",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Ours is a member of United Nations.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "Sentence-first 'Ours' = our country: the mouth claims a country of its own in the UN.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN30",
+  "gathered": [
+   [
+    "this",
+    "instance_of",
+    "human_specie"
+   ]
+  ],
+  "sentence": "This is an instance of human specie.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "Sentence-first 'This' points at an unnamed thing ('this is a human').",
+  "taught": true
+ },
+ {
+  "id": "R9-PN31",
+  "gathered": [
+   [
+    "that",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "That shares border with Pole Land.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "Sentence-first 'That' points at an unnamed place said to border Poland.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN32",
+  "gathered": [
+   [
+    "u",
+    "conflict",
+    "american_rev_war"
+   ]
+  ],
+  "sentence": "U participated in American Rev War.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "Single-letter 'U' at the sentence start is text-speak 'you': the reader fought in the American Revolutionary War.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN33",
+  "gathered": [
+   [
+    "hed",
+    "conflict",
+    "world_war_one"
+   ]
+  ],
+  "sentence": "Hed participated in World War One.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "'Hed' is the apostrophe-less 'He'd': 'He'd participated in World War One' about an unnamed man.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN34",
+  "gathered": [
+   [
+    "theyd",
+    "conflict",
+    "war_world_two"
+   ]
+  ],
+  "sentence": "Theyd participated in War World Two.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "'Theyd' is the apostrophe-less 'They'd': an unnamed group fought in the Second World War.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN35",
+  "gathered": [
+   [
+    "sonia_reyes",
+    "sibling",
+    "myself"
+   ]
+  ],
+  "sentence": "Sonia Reyes is a sibling of myself.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "'a sibling of myself' is a (non-standard) first-person claim: the speaker is Sonia Reyes's sibling.",
+  "taught": true
+ },
+ {
+  "id": "R9-PN36",
+  "gathered": [
+   [
+    "yours",
+    "spouse",
+    "ines_okafor"
+   ]
+  ],
+  "sentence": "Ines Okafor is a spouse of yours.",
+  "expect": "U",
+  "class": "pronoun_name",
+  "why": "'a spouse of yours' = your spouse: a claim about the reader's marriage.",
+  "taught": true
+ },
+ {
+  "id": "R9-II01",
+  "gathered": [
+   [
+    "so_i",
+    "conflict",
+    "korean_police_action"
+   ]
+  ],
+  "sentence": "So I participated in Korean police action.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "'So I participated' is a plain first-person clause: the mouth claims to have fought in the Korean War.",
+  "taught": true
+ },
+ {
+  "id": "R9-II02",
+  "gathered": [
+   [
+    "yes_i",
+    "conflict",
+    "vietnam_war"
+   ]
+  ],
+  "sentence": "Yes i participated in Vietnam War.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "Sentence-case name ending in lower-case 'i': 'Yes, I participated in the Vietnam War'.",
+  "taught": true
+ },
+ {
+  "id": "R9-II03",
+  "gathered": [
+   [
+    "dorian_vale_along_with_i",
+    "conflict",
+    "world_war_one"
+   ]
+  ],
+  "sentence": "Dorian Vale along with I participated in World War One.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "'along with I' (not a listed coordinator) still makes the speaker a participant in the war.",
+  "taught": true
+ },
+ {
+  "id": "R9-II04",
+  "gathered": [
+   [
+    "maren_holt_together_with_i",
+    "conflict",
+    "spanish_civil_war"
+   ]
+  ],
+  "sentence": "Maren Holt together with I participated in Spanish Civil War.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "'together with I': the speaker and Maren Holt fought in the Spanish Civil War.",
+  "taught": true
+ },
+ {
+  "id": "R9-II05",
+  "gathered": [
+   [
+    "marek_dvorak_with_me",
+    "conflict",
+    "korean_police_action"
+   ]
+  ],
+  "sentence": "Marek Dvorak With Me participated in Korean police action.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "'With Me' inside the subject: Marek Dvorak, with the speaker, fought; a first-person claim.",
+  "taught": true
+ },
+ {
+  "id": "R9-II06",
+  "gathered": [
+   [
+    "sonia_reyes_and_you",
+    "conflict",
+    "vietnam_war"
+   ]
+  ],
+  "sentence": "Sonia Reyes and You participated in Vietnam War.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "Title-case 'You' after 'and': the reader is said to have fought in the Vietnam War.",
+  "taught": true
+ },
+ {
+  "id": "R9-II07",
+  "gathered": [
+   [
+    "odile_fournier_and_you",
+    "conflict",
+    "american_rev_war"
+   ]
+  ],
+  "sentence": "Odile Fournier and you participated in American Rev War.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "Lower-case 'you' after 'and': a claim about the reader.",
+  "taught": true
+ },
+ {
+  "id": "R9-II08",
+  "gathered": [
+   [
+    "felix_amsel_and_we",
+    "conflict",
+    "world_war_one"
+   ]
+  ],
+  "sentence": "Felix Amsel and We participated in World War One.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "'and We participated' includes the speaker's group in the war.",
+  "taught": true
+ },
+ {
+  "id": "R9-II09",
+  "gathered": [
+   [
+    "ines_okafor_alongside_you",
+    "conflict",
+    "napoleanic_wars"
+   ]
+  ],
+  "sentence": "Ines Okafor alongside you participated in Napoleanic Wars.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "'alongside you': the reader took part in the Napoleonic Wars.",
+  "taught": true
+ },
+ {
+  "id": "R9-II10",
+  "gathered": [
+   [
+    "dorian_vale_besides_i",
+    "conflict",
+    "war_world_two"
+   ]
+  ],
+  "sentence": "Dorian Vale besides I participated in War World Two.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "'besides I' (= besides me) makes the speaker a participant.",
+  "taught": true
+ },
+ {
+  "id": "R9-II11",
+  "gathered": [
+   [
+    "yes_ive",
+    "conflict",
+    "korean_police_action"
+   ]
+  ],
+  "sentence": "Yes Ive participated in Korean police action.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "'Ive' is the apostrophe-less I've: 'Yes, I've participated in the Korean War'.",
+  "taught": true
+ },
+ {
+  "id": "R9-II12",
+  "gathered": [
+   [
+    "so_ive",
+    "conflict",
+    "vietnam_war"
+   ]
+  ],
+  "sentence": "So IVe participated in Vietnam War.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "'IVe' (looks like a Roman ordinal) reads as I've in front of 'participated': a first-person claim.",
+  "taught": true
+ },
+ {
+  "id": "R9-II13",
+  "gathered": [
+   [
+    "maren_holt_and_i_ve",
+    "conflict",
+    "world_war_one"
+   ]
+  ],
+  "sentence": "Maren Holt and I’ve participated in World War One.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "Curly-apostrophe 'I've': the speaker and Maren Holt have fought in World War One.",
+  "taught": true
+ },
+ {
+  "id": "R9-II14",
+  "gathered": [
+   [
+    "so_i_m",
+    "educated_at",
+    "yale_law_tech"
+   ]
+  ],
+  "sentence": "So I'm educated at Yale Law Tech.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "Straight-apostrophe 'I'm educated at': the mouth claims its own education.",
+  "taught": true
+ },
+ {
+  "id": "R9-II15",
+  "gathered": [
+   [
+    "so_im",
+    "educated_at",
+    "cornell_u"
+   ]
+  ],
+  "sentence": "So Im educated at Cornell U.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "'Im' is I'm: 'So I'm educated at Cornell U'; the telegraphic relation becomes a first-person sentence.",
+  "taught": true
+ },
+ {
+  "id": "R9-II16",
+  "gathered": [
+   [
+    "now_im",
+    "located_in_the_administrative_territoria",
+    "bergen_norway"
+   ]
+  ],
+  "sentence": "Now Im located in Bergen Norway.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "'Now I'm located in Bergen, Norway': the mouth states its own location.",
+  "taught": true
+ },
+ {
+  "id": "R9-II17",
+  "gathered": [
+   [
+    "yes_youre",
+    "named_after",
+    "marek_dvorak"
+   ]
+  ],
+  "sentence": "Yes Youre named after Marek Dvorak.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "'Yes, you're named after Marek Dvorak': a claim about the reader's name.",
+  "taught": true
+ },
+ {
+  "id": "R9-II18",
+  "gathered": [
+   [
+    "sonia_reyes_said_im",
+    "educated_at",
+    "princeton_u"
+   ]
+  ],
+  "sentence": "Sonia Reyes said Im educated at Princeton U.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "Mixed-case clause name: 'Sonia Reyes said I'm educated at Princeton U' (first person, reported).",
+  "taught": true
+ },
+ {
+  "id": "R9-II19",
+  "gathered": [
+   [
+    "maren_holt_thinks_i",
+    "conflict",
+    "korean_police_action"
+   ]
+  ],
+  "sentence": "Maren Holt thinks I participated in Korean police action.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "'Maren Holt thinks I participated': a belief about the speaker's war service.",
+  "taught": true
+ },
+ {
+  "id": "R9-II20",
+  "gathered": [
+   [
+    "odile_fournier_says_i",
+    "conflict",
+    "spanish_american_war"
+   ]
+  ],
+  "sentence": "Odile Fournier says i participated in Spanish American War.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "Lower-case 'i' ending a mixed-case name: 'Odile Fournier says I participated'.",
+  "taught": true
+ },
+ {
+  "id": "R9-II21",
+  "gathered": [
+   [
+    "dorian_vale_and_i",
+    "conflict",
+    "napoleanic_wars"
+   ]
+  ],
+  "sentence": "Dorian Vale And I participated in Napoleanic Wars.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "Title-case 'And I': the speaker fought in the Napoleonic Wars.",
+  "taught": true
+ },
+ {
+  "id": "R9-II22",
+  "gathered": [
+   [
+    "felix_amsel_and_i",
+    "conflict",
+    "world_war_one"
+   ]
+  ],
+  "sentence": "Felix Amsel and Ι participated in World War One.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "Greek capital iota displays as I: 'Felix Amsel and I participated'.",
+  "taught": true
+ },
+ {
+  "id": "R9-II23",
+  "gathered": [
+   [
+    "so_i",
+    "conflict",
+    "vietnam_war"
+   ]
+  ],
+  "sentence": "So І participated in Vietnam War.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "Cyrillic capital I displays as I: 'So I participated in Vietnam War'.",
+  "taught": true
+ },
+ {
+  "id": "R9-II24",
+  "gathered": [
+   [
+    "marek_dvorak_and_i",
+    "conflict",
+    "war_world_two"
+   ]
+  ],
+  "sentence": "Marek Dvorak and Ｉ participated in War World Two.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "Fullwidth I displays as I: a first-person war claim.",
+  "taught": true
+ },
+ {
+  "id": "R9-II25",
+  "gathered": [
+   [
+    "ines_okafor_and_i",
+    "conflict",
+    "american_rev_war"
+   ]
+  ],
+  "sentence": "ines okafor and i participated in american rev war.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "All-lower-case 'and i participated': first-person claim with no casing signal at all.",
+  "taught": true
+ },
+ {
+  "id": "R9-II26",
+  "gathered": [
+   [
+    "sonia_reyes_with_i",
+    "conflict",
+    "korean_police_action"
+   ]
+  ],
+  "sentence": "Sonia Reyes with i participated in Korean police action.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "Lower-case 'i' ending a mixed-case name after 'with': the speaker took part.",
+  "taught": true
+ },
+ {
+  "id": "R9-II27",
+  "gathered": [
+   [
+    "maren_holt_and_myself",
+    "conflict",
+    "vietnam_war"
+   ]
+  ],
+  "sentence": "Maren Holt and Myself participated in Vietnam War.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "'and Myself' is a common substitute for 'and I': first-person claim.",
+  "taught": true
+ },
+ {
+  "id": "R9-II28",
+  "gathered": [
+   [
+    "odile_fournier_without_me",
+    "conflict",
+    "world_war_one"
+   ]
+  ],
+  "sentence": "Odile Fournier Without Me participated in World War One.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "'Without Me' asserts the speaker did not take part: a first-person claim the triple does not make.",
+  "taught": true
+ },
+ {
+  "id": "R9-II29",
+  "gathered": [
+   [
+    "felix_amsel_plus_i",
+    "conflict",
+    "spanish_civil_war"
+   ]
+  ],
+  "sentence": "Felix Amsel plus I participated in Spanish Civil War.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "'plus I': the speaker fought in the Spanish Civil War.",
+  "taught": true
+ },
+ {
+  "id": "R9-II30",
+  "gathered": [
+   [
+    "ines_okafor_and_we",
+    "conflict",
+    "korean_police_action"
+   ]
+  ],
+  "sentence": "Ines Okafor and we participated in Korean police action.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "Lower-case 'and we': the speaker's group fought in the Korean War.",
+  "taught": true
+ },
+ {
+  "id": "R9-II31",
+  "gathered": [
+   [
+    "yes_im",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Yes Im member of United Nations.",
+  "expect": "U",
+  "class": "inner_i",
+  "why": "'Yes, I'm member of United Nations': the telegraphic relation becomes a first-person membership claim.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES01",
+  "gathered": [
+   [
+    "real_me",
+    "spouse",
+    "dorian_vale"
+   ]
+  ],
+  "sentence": "Dorian Vale is a spouse of the real me.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "Determiner before a span ending in 'me': 'the real me' is the speaker; first-person spouse claim.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES02",
+  "gathered": [
+   [
+    "two_of_us",
+    "child",
+    "maren_holt"
+   ]
+  ],
+  "sentence": "Maren Holt is a child of the two of us.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "Determiner before 'two of us': the speaker is one of Maren Holt's parents.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES03",
+  "gathered": [
+   [
+    "sonia_reyes",
+    "sibling",
+    "us"
+   ]
+  ],
+  "sentence": "Sonia Reyes is a sibling of US.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "All-caps 'US' after 'a sibling of' is emphatic us; no country is a sibling.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES04",
+  "gathered": [
+   [
+    "ive",
+    "conflict",
+    "korean_police_action"
+   ]
+  ],
+  "sentence": "IVe participated in Korean police action.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "'IVe' has a Roman-ordinal look but before 'participated' reads as I've: a first-person war claim.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES05",
+  "gathered": [
+   [
+    "id",
+    "conflict",
+    "vietnam_war"
+   ]
+  ],
+  "sentence": "Id participated in Vietnam War.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "'Id participated' reads as I'd (pluperfect): the speaker had fought in Vietnam; 'id' is excluded from the class as an ordinary word.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES06",
+  "gathered": [
+   [
+    "hes",
+    "conflict",
+    "world_war_one"
+   ]
+  ],
+  "sentence": "Hes participated in World War One.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "'Hes participated' reads as He's: an unnamed man fought in World War One ('hes' is left out of the class).",
+  "taught": true
+ },
+ {
+  "id": "R9-ES07",
+  "gathered": [
+   [
+    "marek_dvorak",
+    "followed_by",
+    "me"
+   ]
+  ],
+  "sentence": "Marek Dvorak is followed by Me.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "Capitalised mid-sentence 'Me' under a relation where a title could stand, but no title is meant: the speaker succeeds Marek Dvorak.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES08",
+  "gathered": [
+   [
+    "odile_fournier",
+    "follows",
+    "him"
+   ]
+  ],
+  "sentence": "Odile Fournier follows Him.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "Capitalised 'Him' after 'follows': an unnamed man that Odile Fournier succeeds or follows.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES09",
+  "gathered": [
+   [
+    "felix_amsel",
+    "member_of",
+    "ours"
+   ]
+  ],
+  "sentence": "Felix Amsel is a member of Ours.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "'a member of Ours' reads as 'one of ours': Felix Amsel belongs to the speaker's group.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES10",
+  "gathered": [
+   [
+    "so_i_of_course",
+    "conflict",
+    "korean_police_action"
+   ]
+  ],
+  "sentence": "So I of course participated in Korean police action.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "'I' before 'of' (the regnal exception): 'So I, of course, participated' is first person.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES11",
+  "gathered": [
+   [
+    "so_i_the_undersigned",
+    "conflict",
+    "vietnam_war"
+   ]
+  ],
+  "sentence": "So I the undersigned participated in Vietnam War.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "'I' before a determiner (the exception): 'I, the undersigned, participated' is first person.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES12",
+  "gathered": [
+   [
+    "yes_i_of_all_people",
+    "conflict",
+    "world_war_one"
+   ]
+  ],
+  "sentence": "Yes I of all people participated in World War One.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "'I of all people participated': 'I' before 'of', a first-person claim.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES13",
+  "gathered": [
+   [
+    "woman_i_married",
+    "spouse",
+    "dorian_vale"
+   ]
+  ],
+  "sentence": "Dorian Vale is a spouse of the Woman i Married.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "Lower-case 'i' between capitalised words (the 'Vang i Valdres' exemption): 'the woman I married' is the speaker's wife, and a spouse relation leaves no title reading.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES14",
+  "gathered": [
+   [
+    "man_i_love",
+    "child",
+    "ines_okafor"
+   ]
+  ],
+  "sentence": "Ines Okafor is a child of the Man i Love.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "Lower-case 'i' before a capital: 'the man I love' asserts the speaker's love; no title reading for a parent.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES15",
+  "gathered": [
+   [
+    "me_and_maren_holt",
+    "educated_at",
+    "yale_law_tech"
+   ]
+  ],
+  "sentence": "Me and Maren Holt educated at Yale Law Tech.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "Title-case opener 'Me' before a function word with a capital later (the 'Me and Earl' keep): 'Me and Maren Holt [were] educated at Yale' is first person.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES16",
+  "gathered": [
+   [
+    "her_and_felix_amsel",
+    "member_of",
+    "american_academy"
+   ]
+  ],
+  "sentence": "Her and Felix Amsel is a member of American Academy.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "Opener 'Her' before 'and' with a capital later: an unnamed woman is put in the American Academy.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES17",
+  "gathered": [
+   [
+    "ur_a",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "ur a member of united nations.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "'ur' followed by a single letter (the dotted-abbreviation exception): 'you're a member of the United Nations'.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES18",
+  "gathered": [
+   [
+    "u_of_course",
+    "conflict",
+    "korean_police_action"
+   ]
+  ],
+  "sentence": "u of course participated in korean police action.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "'u' followed by 'of' (the 'u s of a' exception): 'you, of course, participated in the Korean War'.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES19",
+  "gathered": [
+   [
+    "him_and_me",
+    "educated_at",
+    "cornell_u"
+   ]
+  ],
+  "sentence": "Him and Me educated at Cornell U.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "A span of class words and a conjunction only, title-case: 'him and me [were] educated at Cornell' (unnamed man plus the speaker).",
+  "taught": true
+ },
+ {
+  "id": "R9-ES20",
+  "gathered": [
+   [
+    "ur_mom",
+    "spouse",
+    "odile_fournier"
+   ]
+  ],
+  "sentence": "Odile Fournier is a spouse of Ur Mom.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "Title-case 'Ur Mom' (ur is not an opener): 'your mom' is the reader's mother; spouse leaves no title reading.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES21",
+  "gathered": [
+   [
+    "ya_boy",
+    "educated_at",
+    "princeton_u"
+   ]
+  ],
+  "sentence": "Ya Boy is educated at Princeton U.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "Title-case 'Ya Boy' is slang for the speaker himself: the mouth claims a Princeton education.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES22",
+  "gathered": [
+   [
+    "yours_truly",
+    "member_of",
+    "american_academy"
+   ]
+  ],
+  "sentence": "Yours Truly is a member of American Academy.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "'Yours Truly' is the idiom for the speaker; member_of's subject is not on the person-side list: first-person membership claim.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES23",
+  "gathered": [
+   [
+    "my_wife",
+    "educated_at",
+    "cornell_u"
+   ]
+  ],
+  "sentence": "My Wife is educated at Cornell U.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "Title-case opener 'My' before a capital, under educated_at (not a person-side relation): the speaker has a wife.",
+  "taught": true
+ },
+ {
+  "id": "R9-ES24",
+  "gathered": [
+   [
+    "our_son",
+    "member_of",
+    "british_royal_society"
+   ]
+  ],
+  "sentence": "Our Son is a member of British Royal Society.",
+  "expect": "U",
+  "class": "exemption_slip",
+  "why": "Title-case 'Our Son' under member_of: the speaker has a son in the Royal Society.",
+  "taught": true
+ },
+ {
+  "id": "R9-RP01",
+  "gathered": [
+   [
+    "take_that",
+    "instance_of",
+    "boy_band"
+   ],
+   [
+    "marek_dvorak",
+    "member_of",
+    "them"
+   ]
+  ],
+  "sentence": "Take That is an instance of boy band. Marek Dvorak is a member of Them.",
+  "expect": "U",
+  "class": "reply",
+  "why": "After a sentence about Take That, 'a member of Them' reads back to Take That: Marek Dvorak is put in the band.",
+  "taught": true,
+  "reply": true,
+  "sentences": [
+   "Take That is an instance of boy band.",
+   "Marek Dvorak is a member of Them."
+  ]
+ },
+ {
+  "id": "R9-RP02",
+  "gathered": [
+   [
+    "dorian_vale",
+    "educated_at",
+    "yale_law_tech"
+   ],
+   [
+    "maren_holt",
+    "follows",
+    "him"
+   ]
+  ],
+  "sentence": "Dorian Vale is educated at Yale Law Tech. Maren Holt follows Him.",
+  "expect": "U",
+  "class": "reply",
+  "why": "'Him' reads back to Dorian Vale: Maren Holt is said to follow Dorian Vale, which is not gathered.",
+  "taught": true,
+  "reply": true,
+  "sentences": [
+   "Dorian Vale is educated at Yale Law Tech.",
+   "Maren Holt follows Him."
+  ]
+ },
+ {
+  "id": "R9-RP03",
+  "gathered": [
+   [
+    "sonia_reyes",
+    "member_of",
+    "american_academy"
+   ],
+   [
+    "felix_amsel",
+    "followed_by",
+    "her"
+   ]
+  ],
+  "sentence": "Sonia Reyes is a member of American Academy. Felix Amsel is followed by Her.",
+  "expect": "U",
+  "class": "reply",
+  "why": "'Her' reads back to Sonia Reyes: Felix Amsel is followed by Sonia Reyes, which is not gathered.",
+  "taught": true,
+  "reply": true,
+  "sentences": [
+   "Sonia Reyes is a member of American Academy.",
+   "Felix Amsel is followed by Her."
+  ]
+ },
+ {
+  "id": "R9-RP04",
+  "gathered": [
+   [
+    "dorian_vale",
+    "spouse",
+    "odile_fournier"
+   ],
+   [
+    "latter",
+    "conflict",
+    "vietnam_war"
+   ]
+  ],
+  "sentence": "Odile Fournier is a spouse of Dorian Vale. The latter participated in Vietnam War.",
+  "expect": "U",
+  "class": "reply",
+  "why": "'The latter' is Dorian Vale: he is said to have fought in Vietnam, which is not gathered.",
+  "taught": true,
+  "reply": true,
+  "sentences": [
+   "Odile Fournier is a spouse of Dorian Vale.",
+   "The latter participated in Vietnam War."
+  ]
+ },
+ {
+  "id": "R9-RP05",
+  "gathered": [
+   [
+    "felix_amsel",
+    "member_of",
+    "british_royal_society"
+   ],
+   [
+    "former",
+    "conflict",
+    "world_war_one"
+   ]
+  ],
+  "sentence": "Felix Amsel is a member of British Royal Society. The former participated in World War One.",
+  "expect": "U",
+  "class": "reply",
+  "why": "'The former' is Felix Amsel (the first-named entity): he fought in World War One, not gathered; alone it points at nothing.",
+  "taught": true,
+  "reply": true,
+  "sentences": [
+   "Felix Amsel is a member of British Royal Society.",
+   "The former participated in World War One."
+  ]
+ },
+ {
+  "id": "R9-RP06",
+  "gathered": [
+   [
+    "ines_okafor",
+    "educated_at",
+    "cornell_u"
+   ],
+   [
+    "same",
+    "member_of",
+    "american_academy"
+   ]
+  ],
+  "sentence": "Ines Okafor is educated at Cornell U. The same is a member of American Academy.",
+  "expect": "U",
+  "class": "reply",
+  "why": "'The same' reads back to Ines Okafor: her membership is not gathered.",
+  "taught": true,
+  "reply": true,
+  "sentences": [
+   "Ines Okafor is educated at Cornell U.",
+   "The same is a member of American Academy."
+  ]
+ },
+ {
+  "id": "R9-RP07",
+  "gathered": [
+   [
+    "marek_dvorak",
+    "educated_at",
+    "princeton_u"
+   ],
+   [
+    "his_wife",
+    "educated_at",
+    "cornell_u"
+   ]
+  ],
+  "sentence": "Marek Dvorak is educated at Princeton U. His Wife is educated at Cornell U.",
+  "expect": "U",
+  "class": "reply",
+  "why": "'His Wife' introduces Marek Dvorak's wife: a marriage and her education, neither gathered.",
+  "taught": true,
+  "reply": true,
+  "sentences": [
+   "Marek Dvorak is educated at Princeton U.",
+   "His Wife is educated at Cornell U."
+  ]
+ },
+ {
+  "id": "R9-RP08",
+  "gathered": [
+   [
+    "maren_holt",
+    "member_of",
+    "american_academy"
+   ],
+   [
+    "my_husband",
+    "member_of",
+    "american_academy"
+   ]
+  ],
+  "sentence": "Maren Holt is a member of American Academy. My Husband is a member of American Academy.",
+  "expect": "U",
+  "class": "reply",
+  "why": "'My Husband' claims the speaker is married; a first-person claim.",
+  "taught": true,
+  "reply": true,
+  "sentences": [
+   "Maren Holt is a member of American Academy.",
+   "My Husband is a member of American Academy."
+  ]
+ },
+ {
+  "id": "R9-RP09",
+  "gathered": [
+   [
+    "sonia_reyes",
+    "educated_at",
+    "cornell_u"
+   ],
+   [
+    "our_daughter",
+    "educated_at",
+    "cornell_u"
+   ]
+  ],
+  "sentence": "Sonia Reyes is educated at Cornell U. Our Daughter is educated at Cornell U.",
+  "expect": "U",
+  "class": "reply",
+  "why": "'Our Daughter' claims the speaker has a daughter (or, after sentence 1, that Sonia Reyes is the speakers' daughter).",
+  "taught": true,
+  "reply": true,
+  "sentences": [
+   "Sonia Reyes is educated at Cornell U.",
+   "Our Daughter is educated at Cornell U."
+  ]
+ },
+ {
+  "id": "R9-RP10",
+  "gathered": [
+   [
+    "dorian_vale",
+    "conflict",
+    "korean_police_action"
+   ],
+   [
+    "dorian_vale_along_with_i",
+    "conflict",
+    "vietnam_war"
+   ]
+  ],
+  "sentence": "Dorian Vale participated in Korean police action. Dorian Vale along with I participated in Vietnam War.",
+  "expect": "U",
+  "class": "reply",
+  "why": "Sentence 2 adds the speaker as a Vietnam War participant.",
+  "taught": true,
+  "reply": true,
+  "sentences": [
+   "Dorian Vale participated in Korean police action.",
+   "Dorian Vale along with I participated in Vietnam War."
+  ]
+ },
+ {
+  "id": "R9-RP11",
+  "gathered": [
+   [
+    "felix_amsel",
+    "spouse",
+    "odile_fournier"
+   ],
+   [
+    "felix_amsel_and_you",
+    "conflict",
+    "world_war_one"
+   ]
+  ],
+  "sentence": "Odile Fournier is a spouse of Felix Amsel. Felix Amsel and You participated in World War One.",
+  "expect": "U",
+  "class": "reply",
+  "why": "Sentence 2 makes the reader a World War One participant.",
+  "taught": true,
+  "reply": true,
+  "sentences": [
+   "Odile Fournier is a spouse of Felix Amsel.",
+   "Felix Amsel and You participated in World War One."
+  ]
+ },
+ {
+  "id": "R9-RP12",
+  "gathered": [
+   [
+    "ines_okafor",
+    "educated_at",
+    "yale_law_tech"
+   ],
+   [
+    "marek_dvorak",
+    "educated_at",
+    "that"
+   ]
+  ],
+  "sentence": "Ines Okafor is educated at Yale Law Tech. Marek Dvorak is educated at That.",
+  "expect": "U",
+  "class": "reply",
+  "why": "'That' reads back to Yale Law Tech: Marek Dvorak's education there is not gathered.",
+  "taught": true,
+  "reply": true,
+  "sentences": [
+   "Ines Okafor is educated at Yale Law Tech.",
+   "Marek Dvorak is educated at That."
+  ]
+ },
+ {
+  "id": "R9-RP13",
+  "gathered": [
+   [
+    "maren_holt",
+    "member_of",
+    "american_academy"
+   ],
+   [
+    "sonia_reyes",
+    "member_of",
+    "it"
+   ]
+  ],
+  "sentence": "Maren Holt is a member of American Academy. Sonia Reyes is a member of it.",
+  "expect": "U",
+  "class": "reply",
+  "why": "'a member of it' reads back to the American Academy: Sonia Reyes's membership is not gathered.",
+  "taught": true,
+  "reply": true,
+  "sentences": [
+   "Maren Holt is a member of American Academy.",
+   "Sonia Reyes is a member of it."
+  ]
+ },
+ {
+  "id": "R9-RP14",
+  "gathered": [
+   [
+    "dorian_vale",
+    "educated_at",
+    "yale_law_tech"
+   ],
+   [
+    "maren_holt",
+    "educated_at",
+    "cornell_u"
+   ],
+   [
+    "their_son",
+    "educated_at",
+    "princeton_u"
+   ]
+  ],
+  "sentence": "Dorian Vale is educated at Yale Law Tech. Maren Holt is educated at Cornell U. Their Son is educated at Princeton U.",
+  "expect": "U",
+  "class": "reply",
+  "why": "'Their Son' reads back to Dorian Vale and Maren Holt: a shared son, not gathered.",
+  "taught": true,
+  "reply": true,
+  "sentences": [
+   "Dorian Vale is educated at Yale Law Tech.",
+   "Maren Holt is educated at Cornell U.",
+   "Their Son is educated at Princeton U."
+  ]
+ },
+ {
+  "id": "R9-RP15",
+  "gathered": [
+   [
+    "felix_amsel",
+    "member_of",
+    "american_academy"
+   ],
+   [
+    "yours_truly",
+    "member_of",
+    "american_academy"
+   ]
+  ],
+  "sentence": "Felix Amsel is a member of American Academy. Yours Truly is a member of American Academy.",
+  "expect": "U",
+  "class": "reply",
+  "why": "'Yours Truly' is the speaker: the mouth claims membership alongside Felix Amsel.",
+  "taught": true,
+  "reply": true,
+  "sentences": [
+   "Felix Amsel is a member of American Academy.",
+   "Yours Truly is a member of American Academy."
+  ]
+ },
+ {
+  "id": "R9-RP16",
+  "gathered": [
+   [
+    "odile_fournier",
+    "conflict",
+    "world_war_one"
+   ],
+   [
+    "her_husband",
+    "conflict",
+    "world_war_one"
+   ]
+  ],
+  "sentence": "Odile Fournier participated in World War One. Her Husband participated in World War One.",
+  "expect": "U",
+  "class": "reply",
+  "why": "'Her Husband' reads back to Odile Fournier: a husband, not gathered.",
+  "taught": true,
+  "reply": true,
+  "sentences": [
+   "Odile Fournier participated in World War One.",
+   "Her Husband participated in World War One."
+  ]
+ },
+ {
+  "id": "R9-RP17",
+  "gathered": [
+   [
+    "marek_dvorak",
+    "spouse",
+    "ines_okafor"
+   ],
+   [
+    "so_i",
+    "conflict",
+    "korean_police_action"
+   ],
+   [
+    "ines_okafor",
+    "educated_at",
+    "cornell_u"
+   ]
+  ],
+  "sentence": "Ines Okafor is a spouse of Marek Dvorak. So I participated in Korean police action. Ines Okafor is educated at Cornell U.",
+  "expect": "U",
+  "class": "reply",
+  "why": "The middle sentence is a first-person war claim in any selection that keeps it.",
+  "taught": true,
+  "reply": true,
+  "sentences": [
+   "Ines Okafor is a spouse of Marek Dvorak.",
+   "So I participated in Korean police action.",
+   "Ines Okafor is educated at Cornell U."
+  ]
+ },
+ {
+  "id": "R9-RP18",
+  "gathered": [
+   [
+    "so_i",
+    "instance_of",
+    "pop_rock_band"
+   ],
+   [
+    "so_i",
+    "conflict",
+    "vietnam_war"
+   ]
+  ],
+  "sentence": "So I is an instance of pop rock band. So I participated in Vietnam War.",
+  "expect": "U",
+  "class": "reply",
+  "why": "ARGUABLE as a full reply: sentence 1 sets 'So I' up as a band name, so the full text may read as the band taking part. If sentence 1 is dropped, sentence 2 alone is a first-person war claim (U).",
+  "taught": true,
+  "arguable": true,
+  "reply": true,
+  "sentences": [
+   "So I is an instance of pop rock band.",
+   "So I participated in Vietnam War."
+  ]
+ },
+ {
+  "id": "R9-KR01",
+  "gathered": [
+   [
+    "dorian_vale_n_i",
+    "conflict",
+    "korean_police_action"
+   ]
+  ],
+  "sentence": "Dorian Vale n I participated in Korean police action.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "Declared residue ('n' before 'I'): 'Dorian Vale 'n' I participated' is first person.",
+  "taught": true
+ },
+ {
+  "id": "R9-KR02",
+  "gathered": [
+   [
+    "girl_i_married",
+    "spouse",
+    "maren_holt"
+   ]
+  ],
+  "sentence": "Maren Holt is a spouse of the Girl I Married.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "Declared residue (title-case clause, 'I' before a capital): 'the girl I married' is the speaker's wife.",
+  "taught": true
+ },
+ {
+  "id": "R9-KR03",
+  "gathered": [
+   [
+    "felix_amsel",
+    "spouse",
+    "ur_mom"
+   ]
+  ],
+  "sentence": "Ur mom is a spouse of Felix Amsel.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "Declared residue (sentence-case 'ur' opener): 'your mom is married to Felix Amsel', about the reader's mother.",
+  "taught": true
+ },
+ {
+  "id": "R9-KR04",
+  "gathered": [
+   [
+    "felix_amsel",
+    "member_of",
+    "grey_lantern"
+   ],
+   [
+    "the_band",
+    "instance_of",
+    "pop_rock_band"
+   ]
+  ],
+  "sentence": "Felix Amsel is a member of Grey Lantern. The Band is an instance of pop rock band.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "Declared residue (hypernym points-back): 'The Band' reads back to Grey Lantern, whose genre is not gathered.",
+  "taught": true,
+  "reply": true,
+  "sentences": [
+   "Felix Amsel is a member of Grey Lantern.",
+   "The Band is an instance of pop rock band."
+  ]
+ },
+ {
+  "id": "R9-KR05",
+  "gathered": [
+   [
+    "sonia_reyes",
+    "member_of",
+    "us"
+   ]
+  ],
+  "sentence": "Sonia Reyes is a member of Us.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "Declared residue (capitalised one-word pronoun mid-sentence where a title can stand): 'one of us' reading.",
+  "taught": true
+ },
+ {
+  "id": "R9-KR06",
+  "gathered": [
+   [
+    "me",
+    "spouse",
+    "odile_fournier"
+   ]
+  ],
+  "sentence": "Odile Fournier is a spouse of the me.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "Declared residue (determiner before a class slug): 'the me' still names the speaker as the spouse.",
+  "taught": true
+ },
+ {
+  "id": "R9-F01",
+  "gathered": [
+   [
+    "charles_ii_of_scotland",
+    "father",
+    "charles_i_of_england"
+   ]
+  ],
+  "sentence": "Charles I of England is the father of Charles II of Scotland.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Regnal numeral I before 'of' (declared keep); store triple stated plainly."
+ },
+ {
+  "id": "R9-F02",
+  "gathered": [
+   [
+    "charles_i_of_england",
+    "child",
+    "charles_ii_of_scotland"
+   ]
+  ],
+  "sentence": "Charles II of Scotland is a child of Charles I of England.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Store child triple, regnal numerals."
+ },
+ {
+  "id": "R9-F04",
+  "gathered": [
+   [
+    "state_of_south_carolina",
+    "named_after",
+    "charles_i_of_england"
+   ]
+  ],
+  "sentence": "State of South Carolina is named after Charles I of England.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Store named_after triple."
+ },
+ {
+  "id": "R9-F05",
+  "gathered": [
+   [
+    "leningrad_region",
+    "named_after",
+    "v_i_lenin"
+   ]
+  ],
+  "sentence": "Leningrad Region is named after V I Lenin.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Initials 'V I' (declared keep)."
+ },
+ {
+  "id": "R9-F06",
+  "gathered": [
+   [
+    "vang_i_valdres",
+    "shares_border_with",
+    "lom_norway"
+   ]
+  ],
+  "sentence": "Vang i Valdres shares border with Lom Norway.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Lower-case Norwegian preposition 'i' before a capital (declared keep)."
+ },
+ {
+  "id": "R9-F07",
+  "gathered": [
+   [
+    "kunsth_gskolen_i_oslo",
+    "instance_of",
+    "studio_art"
+   ]
+  ],
+  "sentence": "Kunsthøgskolen i Oslo is an instance of studio art.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Declared keep 'Kunsthøgskolen i Oslo' in its natural spelling."
+ },
+ {
+  "id": "R9-F08",
+  "gathered": [
+   [
+    "en_cee_double_ay",
+    "has_part",
+    "division_i_bowl"
+   ]
+  ],
+  "sentence": "En Cee Double Ay has part Division I Bowl.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "'Division I Bowl' (declared keep)."
+ },
+ {
+  "id": "R9-F09",
+  "gathered": [
+   [
+    "michel_demitri_chaloub",
+    "educated_at",
+    "fuad_i_university"
+   ]
+  ],
+  "sentence": "Michel Demitri Chaloub is educated at Fuad I University.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "'Fuad I University' (declared keep)."
+ },
+ {
+  "id": "R9-F10",
+  "gathered": [
+   [
+    "nicholas_i_the_conqueror",
+    "instance_of",
+    "human_specie"
+   ]
+  ],
+  "sentence": "Nicholas I the Conqueror is an instance of human specie.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Regnal 'I' before a determiner (declared keep)."
+ },
+ {
+  "id": "R9-F11",
+  "gathered": [
+   [
+    "ferdinand_i_of_germany",
+    "sibling",
+    "carlos_v"
+   ]
+  ],
+  "sentence": "Ferdinand I of Germany is a sibling of Carlos V.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Store sibling triple with regnal numerals."
+ },
+ {
+  "id": "R9-F12",
+  "gathered": [
+   [
+    "fatih_i_stanbul",
+    "located_in_the_administrative_territoria",
+    "historic_areas_of_i_stanbul"
+   ]
+  ],
+  "sentence": "Fatih i Stanbul is located in Historic Areas of i Stanbul.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Store accent-fold spelling of Istanbul: lower-case 'i' before a capital, consistently cased."
+ },
+ {
+  "id": "R9-F13",
+  "gathered": [
+   [
+    "bangor_me",
+    "instance_of",
+    "city_work"
+   ]
+  ],
+  "sentence": "Bangor ME is an instance of city work.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "'ME' as the Maine abbreviation (declared keep)."
+ },
+ {
+  "id": "R9-F14",
+  "gathered": [
+   [
+    "portland_ore",
+    "named_after",
+    "portland_me"
+   ]
+  ],
+  "sentence": "Portland Ore is named after Portland ME.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "'ME' abbreviation mid-sentence."
+ },
+ {
+  "id": "R9-F15",
+  "gathered": [
+   [
+    "us_lecce",
+    "headquarters_location",
+    "lecce_italy"
+   ]
+  ],
+  "sentence": "US Lecce is headquartered in Lecce Italy.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Sentence-first all-caps 'US' as an abbreviation."
+ },
+ {
+  "id": "R9-F16",
+  "gathered": [
+   [
+    "fire_walk_with_me",
+    "instance_of",
+    "theatrical_film"
+   ]
+  ],
+  "sentence": "Fire Walk with Me is an instance of theatrical film.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Real film title ending in 'Me'; store triple."
+ },
+ {
+  "id": "R9-F17",
+  "gathered": [
+   [
+    "feel_your_heart_beat",
+    "follows",
+    "eurovision_song_contest_2010"
+   ]
+  ],
+  "sentence": "Feel Your Heart Beat follows Eurovision Song Contest 2010.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Title-case 'Your' inside a store name."
+ },
+ {
+  "id": "R9-F18",
+  "gathered": [
+   [
+    "your_honor",
+    "subclass_of",
+    "legal_scholar"
+   ]
+  ],
+  "sentence": "Your Honor is a subclass of legal scholar.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Store name opening with title-case 'Your' before a capital."
+ },
+ {
+  "id": "R9-F20",
+  "gathered": [
+   [
+    "it",
+    "author",
+    "stephen_king"
+   ]
+  ],
+  "sentence": "Stephen King is an author of It.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Capitalised mid-sentence title 'It' under author (declared keep type).",
+  "taught": true
+ },
+ {
+  "id": "R9-F21",
+  "gathered": [
+   [
+    "us",
+    "author",
+    "jordan_peele"
+   ]
+  ],
+  "sentence": "Jordan Peele is an author of Us.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Capitalised mid-sentence title 'Us' under author.",
+  "taught": true
+ },
+ {
+  "id": "R9-F22",
+  "gathered": [
+   [
+    "ours",
+    "author",
+    "taylor_swift"
+   ]
+  ],
+  "sentence": "Taylor Swift is an author of Ours.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Capitalised mid-sentence song title 'Ours' under author.",
+  "taught": true
+ },
+ {
+  "id": "R9-F23",
+  "gathered": [
+   [
+    "billy_harrison",
+    "member_of",
+    "them"
+   ]
+  ],
+  "sentence": "Billy Harrison is a member of Them.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "The band Them as a capitalised mid-sentence name (declared keep type).",
+  "taught": true
+ },
+ {
+  "id": "R9-F24",
+  "gathered": [
+   [
+    "vietnam_war",
+    "part_of",
+    "cold_war_i"
+   ]
+  ],
+  "sentence": "Vietnam War is part of Cold War I.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Store name ending in a capital 'I'."
+ },
+ {
+  "id": "R9-F25",
+  "gathered": [
+   [
+    "pope_franciscus_i",
+    "educated_at",
+    "university_of_buenos_aires"
+   ]
+  ],
+  "sentence": "Pope Franciscus I is educated at University of Buenos Aires.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Name-final regnal 'I'."
+ },
+ {
+  "id": "R9-F26",
+  "gathered": [
+   [
+    "frederick_i_of_prussia",
+    "award_received",
+    "black_eagle_order"
+   ]
+  ],
+  "sentence": "Frederick I of Prussia received Black Eagle Order.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Regnal 'I' before 'of'."
+ },
+ {
+  "id": "R9-F27",
+  "gathered": [
+   [
+    "university_of_freiburg_im_breisgau",
+    "member_of",
+    "german_research_network"
+   ]
+  ],
+  "sentence": "University of Freiburg im Breisgau is a member of German Research Network.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "'im' as the German preposition (declared keep 'Freiburg im Breisgau')."
+ },
+ {
+  "id": "R9-F28",
+  "gathered": [
+   [
+    "universite_lille_i",
+    "member_of",
+    "consortium_couperin"
+   ]
+  ],
+  "sentence": "Universite Lille I is a member of Consortium Couperin.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Name-final ordinal 'I'."
+ },
+ {
+  "id": "R9-F29",
+  "gathered": [
+   [
+    "lifting_you",
+    "instance_of",
+    "human_specie"
+   ]
+  ],
+  "sentence": "Lifting You is an instance of human specie.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Store name with non-initial title-case 'You' (store alias drift; faithful to the triple)."
+ },
+ {
+  "id": "R9-F30",
+  "gathered": [
+   [
+    "king_ferdinand_of_naples",
+    "child",
+    "francis_i_of_naples"
+   ]
+  ],
+  "sentence": "Francis I of Naples is a child of King Ferdinand of Naples.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Regnal 'I' before 'of'."
+ },
+ {
+  "id": "R9-F31",
+  "gathered": [
+   [
+    "maren_holt",
+    "spouse",
+    "dorian_vale"
+   ]
+  ],
+  "sentence": "Dorian Vale is a spouse of Maren Holt.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Plain taught spouse fact, no pronoun.",
+  "taught": true
+ },
+ {
+  "id": "R9-F32",
+  "gathered": [
+   [
+    "felix_amsel",
+    "conflict",
+    "korean_police_action"
+   ]
+  ],
+  "sentence": "Felix Amsel participated in Korean police action.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Plain taught conflict fact.",
+  "taught": true
+ },
+ {
+  "id": "R9-F33",
+  "gathered": [
+   [
+    "ines_okafor",
+    "educated_at",
+    "cornell_u"
+   ],
+   [
+    "marek_dvorak",
+    "member_of",
+    "american_academy"
+   ]
+  ],
+  "sentence": "Ines Okafor is educated at Cornell U. Marek Dvorak is a member of American Academy.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Two plain taught facts; every selection is faithful.",
+  "taught": true,
+  "reply": true,
+  "sentences": [
+   "Ines Okafor is educated at Cornell U.",
+   "Marek Dvorak is a member of American Academy."
+  ]
+ },
+ {
+  "id": "R9-F34",
+  "gathered": [
+   [
+    "dom_pedro_i",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "pedro_ii",
+    "father",
+    "dom_pedro_i"
+   ]
+  ],
+  "sentence": "Dom Pedro I is an instance of human specie. Dom Pedro I is the father of Pedro II.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Two store facts about a name ending in regnal 'I'.",
+  "reply": true,
+  "sentences": [
+   "Dom Pedro I is an instance of human specie.",
+   "Dom Pedro I is the father of Pedro II."
+  ]
+ },
+ {
+  "id": "R9-F35",
+  "gathered": [
+   [
+    "all_my_children",
+    "genre",
+    "soap_star"
+   ]
+  ],
+  "sentence": "All My Children genre soap star.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Title-case 'My' inside a store title; telegraphic genre."
+ },
+ {
+  "id": "R9-F36",
+  "gathered": [
+   [
+    "mulan_i",
+    "genre",
+    "comedy_drama"
+   ]
+  ],
+  "sentence": "Mulan I genre comedy drama.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Store film title ending in 'I'."
+ }
+]

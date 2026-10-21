@@ -71,6 +71,144 @@ every proposition it encodes is a gathered triple of this turn:
   underscores ("Marshall_Is", "No_Saints"); "be" joins the clause words, and a lone lower-case "s" ending a name or "t"
   after a negative stem ("Saint Alban s", "don t") rejects as a dropped apostrophe; the de-slugged form of a signed number
   ("utc 06" for UTC-06) is not accepted.
+- **Build 6: pre-flip fixes (Claude rulings 2026-10-21, brief `sim-rev/preflip/BUILD6_BRIEF.md`; branch
+  `claude-build/moat-allowlist-1021f`, cut from `fde5e739e`).** The flag stays default OFF and every edit sits behind
+  it; a flag-off golden of every touched mouth path, captured at the base before any edit
+  (`tests/fixtures/moat_mouthpath_flagoff_golden.json`), pins the identity. Three parts, all pinned in
+  `tests/test_moat_allowlist_build6.py`:
+  (A) The flag owns the whole MOUTH path. `ChatBrain._verify` is the one chokepoint of every single-fact check (render,
+  the hypothesis paths, the spiking recall surface, the BRAIN_ONE_BRAIN deferred mouth); the composer checks each
+  sentence alone, then keeps the longest prefix of sentences whose JOINED text passes against the union of the turn's
+  gathered triples (no sentence passing: the normal abstain); Touchpoint A, which had no check, gets the matcher; the
+  one-brain substitution is checked joined: the whole mouth paragraph (every composer sentence the turn recorded, not
+  only the deferred-mouth calls) with the substitution, against the union of every triple those sentences were checked
+  against (review fix). A candidate with no terminal punctuation gets "." before the check
+  (token-neutral; it also fixes the spiking run-on "the dog chases the cat the cat eats the fish"). Declared non-claims,
+  pinned verbatim: the spiking mood marker {"!", ".", ""} appended after the check (curt and neutral both read "."
+  under the flag; a Qwen "!" still rejects), the leading "perhaps " of a spiking hypothesis, the host guess frames and
+  the abstain strings. Not mouth output and not filtered: the raw-triple fallback of `ChatBrain.render`, the derived-
+  answer lead and the server's host decoration layer. Out of scope, each default OFF and required OFF by the flip
+  prereg (a startup warning naming them when any is on with the flag): BRAIN_OPEN_ENDED (the free-reply Qwen path) and
+  BRAIN_OPEN_ENDED_GATED (`webapp/open_ended_gated_turn.py` replaces the composer's answer after the allowlist:
+  `ltm_render` speaks a `render_fact_sentence` clause, `offkb_render` free Qwen text, under their own filters). A
+  census test covers every mouth call in `brain_chat_tui.py`, `rich_answer_composer.py` and `webapp/*.py`.
+  (B) Shape 4, one reviewed wording per no-reading relation: `[Det] A PHRASE [Det] B [.]`, PHRASE the exact tokens of
+  the relation's row in `PHRASE_READINGS` (`_moat_allowlist_relations.py`), FWD = (A, rel, B), INV = (B, rel, A):
+  sport "is a sport of" INV, instrument "plays" FWD, conflict "participated in" FWD, spouse "is a spouse of" INV
+  (orientation-exact), parent_taxon "is the parent taxon of" INV, father "is the father of" INV, child "is a child of"
+  INV, author "is an author of" INV, platform "is a platform for" INV. The nine keep no verb reading; each row's
+  role-reversed sentence rejects (pinned). The stub writes the phrase under the flag only.
+  (C) Two leak classes. A spaced SUBJ/OBJ span is rejected when it reads as a description or a clause: it opens with
+  "the" and a lower-case word ("The band"); it opens with a first- or second-person subject ("I", "we", "you") in any
+  casing (the honesty boundary: the mouth never makes a first- or second-person claim the brain did not make; the
+  verbatim slug stays sayable); a one-word "I"/"we"/"you" not after a determiner; a modal, pronoun or focus word written
+  as prose ("will hurt", "brian may"). Across sentences: a later SUBJ/OBJ span led by "the" (its own first word or a
+  "the" determiner) whose words are a subset of an earlier sentence's span of a different slug rejects that later
+  sentence ("Rick Wakeman is a member of Yes band. The Band award received ..."). Span words split on every
+  non-alphanumeric run, hyphens included (review fix: "boy-band", "norway u-21" hid the antecedent). Open, known B
+  residue (each pinned kept, so a change is visible; round 8 targets them): lower-case names holding a lexical verb
+  ("steve threw up record label xl recordings."); a hypernym definite description whose noun is not a word of the
+  antecedent's name ("Keith Richards is a member of the Rolling Stones. The Band country of origin Canada portal."), and
+  an antecedent that only the user's question supplied. A first-person "I" that is not a name's first word was listed
+  here at build 6; build 7 (next bullet) closes it in part: "and i love her" now rejects (R7b), while the title-case
+  clause "Baby I Love You" stays open and pinned kept.
+- **Build 7: two narrow name rules (round-8 blind hunt, Claude rulings 2026-10-21; branch `claude-build/moat-allowlist-1021g`,
+  cut from `claude-build/moat-allowlist-1021f`).** English marks a name by its capitals, except at a sentence's first
+  word; the rules add rejections only, inside `_name_reading_violation` after every build-6 check, so nothing outside the
+  allowlist module changes and the flag-off path is unchanged by construction. R7a: a one-word SUBJ/OBJ span whose word,
+  case-folded, is in a closed pronoun class (me, my, mine, myself, us, our, ours, ourselves, your, yours, yourself,
+  yourselves, he, him, his, himself, she, her, hers, herself, it, its, itself, they, them, their, theirs, themselves,
+  this, that, these, those; "i", "we", "you" stay under (b1'), any case) rejects when it is written in lower case or is
+  the sentence's first word, unless a determiner stands directly before it or it is written all-caps with 2+ letters
+  (US, ME, IT are abbreviations). It runs before the slug-verbatim skip, so a one-word slug written verbatim is the
+  pronoun ("Reginald K Dwight is an author of me.", "Canada portal shares border with us.", "It is an instance of
+  theatrical film."). A capitalised one-word span that is not the sentence's first word stays sayable ("Taylor Swift is
+  an author of Mine."). R7b: in a spaced span (2+ words, not the slug verbatim) a word "i" / "I" at position k > 0 reads
+  as the first-person pronoun, and the span rejects, when (1) it is lower-case "i" and no word of the span starts with an
+  upper-case letter ("honey i shrunk the kids", "and i love her"); or (2) it is "i" or "I" (either case; widened from "I"
+  alone by the coordinator's ruling of 2026-10-21) and the next word starts with a lower-case letter and is neither "of"
+  nor a determiner ("So I married an axe murderer", "Sometimes i lie", "Fatih i stanbul"); or (3) the word directly
+  before it, case-folded, is and / or / nor / but / "&" ("Trevor and I"; case-folded on purpose, so "Trevor And I"
+  rejects too). Stays sayable, each pinned: "Charles I of England", "Charles i of England", "Nicholas I the Conqueror",
+  "Dom Pedro I", "Dom Pedro i", "World War I", "Division I Bowl", "Fuad I University", "V I Lenin", "Vang i Valdres",
+  "Kunsthøgskolen i Oslo" (a lower-case "i" before a capitalised word is a preposition), and the title-case "Baby I Love
+  You", a deliberate keep (title case reads as a title). Open, documented: a title-case clause whose "I" is followed by
+  a capital; a first-person "i" / "I" that ends a mixed-case name or precedes "of" / a determiner (real names, kept on
+  purpose); a pronoun-class word inside a longer capitalised name; lower-case names holding a lexical verb. Known answer
+  costs, accepted by the coordinator's rulings of 2026-10-21 and measured in `research/findings/raw/_moat_allowlist_build7/`:
+  under (1) the all-lower-case de-slugged spelling of the 64 store slugs with a non-initial "i" word (355 store facts
+  touch one: "charles i of england", "v i lenin") rejects, since an all-lower-case display carries no casing signal (the
+  slug written verbatim and the title-case spelling stay sayable; a sentence-case spelling rejects under (2) when a
+  lower-case word follows the "i"); under (3) `uk_of_gb_and_i` (21 store facts) rejects in every spaced spelling, because
+  "UK of GB and I" reads as a first-person coordination (round-6 case R6-CN05, label B), and only the slug written
+  verbatim stays sayable (it has no names-table row, so its de-slugged form is its only other canonical surface and
+  rejects too). The stub renders slugs verbatim and is unaffected by R7b. Pinned in `tests/test_moat_allowlist_build7.py`,
+  each rule with a mutation check (R7b(2)'s widening included: restricted back to "I", "Sometimes i lie" is kept).
+  The R7b word split is spaces and underscores, so a hyphen-joined store surface ("hilal-i-imtiaz") is one word to it.
+- **Build 7 review fixes (two reviewers of a05a6c91d, 2026-10-21).** All still add rejections only, inside the build-7
+  pass. R7a: the class adds thee, thou, thy, thine, thyself, ye, u, ya, yall, youse, yinz, ur, em, themself, ourself,
+  oneself and meself, and the apostrophe-less contractions im, ive, youre, youve, youll, youd, theyre and theyve read
+  the same way (ill, id, well and hes are ordinary words and are left out); a spelling that is neither lower case, title
+  case nor all-caps ("mE", "uS", "thEm") rejects anywhere; the title reading of a capitalised mid-sentence word needs a
+  relation where a title can stand, so in a person or place relation (spouse, father, child, sibling,
+  shares_border_with, place_of_birth, country and the like) "Me" / "Him" rejects ("Van Morrison is a member of Them."
+  and "an author of Mine." stay). R7b: the conjunctions add plus, yet, then, than, versus, vs and "amp", and "as well
+  as" counts as one; a lone "l" after a conjunction reads like "I"; when a capital or a digit follows the "i" / "I" the
+  name must be capitalised consistently ("So I Married an axe murderer", "honey i Shrunk the kids" reject; "Honey I
+  Shrunk the Kids" and "Historic Areas of i Stanbul" stay). New R7c, in a spaced name: a pronoun or determiner opener
+  (this, that, his, her, its, their, my, thou, him, ...; not u, us, ya, ye or ur, which open sentence-case store names)
+  before a lower-case word ("This book", "His song", "him and her"), or a span of pronouns and conjunctions only with
+  one in lower case ("Us and them"); an archaic or colloquial form in lower case anywhere ("tis thee"), or a
+  second-person one opening the span in any case ("Thou Art"); an apostrophe-less contraction before a lower-case word,
+  after a conjunction or in a span with no capital ("So Im married"; "Freiburg im Breisgau" stays). The points-back rule
+  reads spans led by this, that, these, those, his, her, its, their, my, our, your and thy like spans led by "the".
+  Measured against the reviewed build 7 (`_moat_allowlist_build7/matcher_diff_fix.json`): no change on the stub
+  population, the held-out corpora, hunt rounds 3-8 or any natural cased spelling of a store name; the sentence-case
+  spelling of 9 store slugs (28 facts) and the all-lower-case spelling of 7 (23 facts) newly reject (accepted costs,
+  listed in the module comment). Still open: title-case clauses ("Baby I Love You", "As I Lay Dying", "Us and Them",
+  "Me Myself"); "n" before "I" (an accent-fold residue in store names); sentence-case openers u, us, ya, ye, ur; who,
+  whom and one (real names, an owner ruling would add them); a determiner before a one-word class slug ("The thou ...",
+  like "The me"); lower-case names holding a lexical verb. Each fix is pinned at all seven parser seeds with a mutation
+  check per new branch. (The second review found fourteen surviving mutants against that claim: the abbreviation test in
+  R7c(1) and R7c(2), the `if low:` guard and each non-"the" pointing lead. The second fix round pins each of them.)
+- **Build 7 second fix round (second review of b76421436, 2026-10-21).** Still additions to build 6 only, inside the
+  build-7 pass and `_points_back`. The abbreviation test is now an all-caps word (the build-3 caps rule) or a Roman
+  ordinal ("IVe"), not any word with two leading capitals, and R7c(0) rejects a pronoun-class word or contraction in
+  mixed case anywhere in a spaced name ("THis book", "HIs song", "YOure the one"). R7c(1) reads a digit after the
+  opener as uncapitalised ("her 2 sons", "this 1"). On a person side of a gathered fact (spouse, father, child and the
+  other kin relations; the person of author, composer, director, producer, screenwriter, performer and cast_member; the
+  subject of place_of_birth, place_of_death, country_of_citizenship, work_location and conflict) an opener rejects
+  whatever follows ("a spouse of My Husband", "the father of Our Son", "Yours Truly"). A span with no capital that opens
+  with u, us, ya, ye or ur rejects unless the next word is "of" or a single letter other than r or n, which is the
+  store's fold of a dotted abbreviation ("u s of a" stays; "ya boy", "u guys", "ye all", "u know" reject). New R7c(4): a
+  class word or contraction directly after a conjunction rejects unless it is all-caps or the span holds only class
+  words and conjunctions ("Trevor and Me", "Trevor or Me", "Trevor and IVe"). New R7c(5): after the first word, a
+  pointing word in lower case rejects ("Trevor and his song", "Songs of her own", "Sell this book"), and so does a
+  title-case one before a lower-case word that is not a function word ("Beatles For Sale My song"). The contractions add
+  weve, shes and thats. R7a's title block also covers the object side of has_part, composer, director, producer,
+  screenwriter, performer, cast_member, named_after and employer ("Strawberry Hill Boys has part Me."). The pointing
+  leads add ye, ur, thine and mine. Two over-rejects are fixed. A title-case name keeps its opener before a function
+  word when a capital follows later ("Me and Earl and the Dying Girl", "Her in the Dark", "It of the Night"). A
+  lower-case "ur" between two capitalised words stays ("Atta ur Rahman"). Correctness: `_points_back` now compares a
+  later span against the earlier span's build-6 words, so only a leading "the" is dropped. The first fix round dropped
+  every pointing lead from earlier spans too, so "... Her Majesty Ship. The Ship Her ..." was kept although build 6
+  rejected it.
+  Measured against b76421436 (`_moat_allowlist_build7/matcher_diff_fix2.json`): no change on the stub population, the
+  held-out corpora, hunt rounds 3-5, 7 and 8, the 64-slug scan or any natural cased spelling of a store name. In round 6
+  "take that has part robbie williams." (R6-LC01, adjudicated B) now rejects. Accepted costs: the sentence-case spelling
+  of 6 more store slugs (35 facts touch one) under R7c(5) ("Take that", "Stood on his head", "Play it once sam"), and
+  the all-lower-case spelling of 18 more (86 facts). Those 18 are the same 6 plus 10 `u_*` university names ("u iowa"),
+  "ya literature" and "ye yo". Two costs are off the store. A one-word track title in has_part ("Speak Now has part
+  Mine.") rejects. "Your Honor" after "Honor Civilian of Tirana" rejects under points-back: 1 store pair of 109
+  lead/name pairs shares a fact or a neighbour.
+  Declared residue: "u" as a pointing lead in title case ("U Abbey"). Adding it would reject 47 store pairs that share
+  a fact or a neighbour, such as "U Iowa" after "State of Iowa". The lower-case "u abbey" rejects under R7c(1c). Also
+  residue: a title-case class word inside a name before a capital ("Trevor Said Her Song"); a title-case span of class
+  words and conjunctions only ("Us and Them", "His and Hers"); and a title-case contraction mid-sentence where a title can stand ("an author of Weve.", like "Mine."). Each
+  change is pinned in `tests/test_moat_allowlist_build7.py` at all seven parser seeds, with a mutation check for each
+  new branch and exemption and one points-back case per lead word.
+- **Build 7, Claude ruling 2026-10-21:** imma, ima, lemme and gimme (first-person contractions) join
+  CONTRACTED_SUBJECTS; no store slug holds any of them as a word, so the stub and the store scans do not change.
 - **VERB(rel):** a verb form of the relation from the verb-form table that `_noun_before_verb` uses (`1b67eef9b`),
   including the guarded `-s`, `-es` and `-ies` readings, only when that relation is gathered this turn.
 - **Case fidelity of entity spans (build 3, controller ruling 2026-10-20: no invented acronyms).** The store's slug

@@ -1,0 +1,25 @@
+{
+ "run_id": "1792602380-1057554",
+ "runner": "research/findings/raw/_moat_allowlist_hunt4/r9/drop_r8_repeats.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-hunt9/research/findings/raw/_moat_allowlist_hunt4/r9/drop_r8_repeats.py"
+ ],
+ "git_sha": "55a241d9f",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-21T13:06:20",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 13672.6,
+ "corpus_check_query": "claim checker keeps a one-word pronoun used as an entity name (me, mine, us, it, her) so the mouth makes a first-person or pointing-back claim",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_moat_allowlist_hunt4/r9/cases.json"
+}

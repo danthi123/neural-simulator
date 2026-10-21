@@ -26,9 +26,12 @@ Stage 1 passed 10-16 with four caveats (the 10-16 section below, verbatim; never
 - Content-selection race: the F1 grid is VOID (the race never committed; RULING `cs-race-f1-void-1021`); step 1b adds a
   positive control and reruns the grid.
 - The reply-level LBF at HEAD on the gate seeds: prereg `04ca8ccf8`, 294 lines.
-- The strict claim checker on the mouth: build 5 GO on every registered bar, merged default OFF (`33c17026e`; VERDICTS in
-  `research/findings/2026-10-20-moat-allowlist-claim-checker-PREREGISTRATION.md`); build 6 (pre-flip fixes) under review,
-  then Amendment 6 and blind round 8. The B2d mouth arm needs it ON, through a flip prereg (CLASS SMK).
+- The strict claim checker on the mouth (VERDICTS in `research/findings/2026-10-20-moat-allowlist-claim-checker-PREREGISTRATION.md`,
+  merge `359e8ff63`): build 5 GO; build 6 meets every bar (round 8: 0 of 114 U) but is no flip candidate (taught names
+  holding I/me/you read as the brain speaking); build 7 (word lists) NO-GO, round 9 kept 41 of 86. Method changed: build 8
+  = per-FACT declared-provenance floor (Claude branch claude-build/moat-allowlist-1021h, in build/review); a frame premise
+  round found no quotation frame fixes a stored name that IS a pointing word or pronoun, so #271 (deixis at encoding) is
+  the path to voicing taught facts: Hermes runs its stage-0 census (RULING deixis-271-s0). Flip via CLASS SMK prereg.
 **Next command (Hermes, on S):** `bash tools/status.sh`, then runbook section 6 RULINGs newest first, then section 4 in order.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-16 (history; superseded by 2026-10-21 above) — PHASE: PROVE WHO OWNS THE COMPUTATION
