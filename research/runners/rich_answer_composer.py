@@ -1035,8 +1035,16 @@ class RichAnswerComposer:
                 break
             acc = items[:n]
         self._last_reply_rejects = rejects
-        paragraph = " ".join((t[:-1] + "!") if w and t.endswith(".") else t for _s, t, w in acc)
+        spoken = [(t[:-1] + "!") if w and t.endswith(".") else t for _s, t, w in acc]
+        paragraph = " ".join(spoken)
         kept = [svo for svo, _t, _w in acc]
+        # build-6 review fix: when a caller opened a record on the chat (webapp/one_brain.begin_joined_record, the BRAIN_ONE_BRAIN deferred
+        # mouth), the emitted paragraph is recorded with its checked sentences and the gathered union, so the later substitution re-checks
+        # the WHOLE mouth paragraph (every composer sentence, not only the deferred-mouth calls). No record open: nothing is stored.
+        record = getattr(self.chat, "_moat_joined_replies", None)
+        if isinstance(record, list) and acc:
+            record.append({"spoken": spoken, "checked": [t for _s, t, _w in acc],
+                           "gated": [list(g) for g in (gated or ())] + [list(svo) for svo in kept]})
         dropped = [svo for svo, _t, _w in items[len(acc):]]
         return paragraph, kept, dropped
 

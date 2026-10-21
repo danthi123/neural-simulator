@@ -915,6 +915,84 @@ def test_one_brain_articulate_checks_the_substituted_reply(monkeypatch):
     assert ans.startswith(HOSTILE[0]) and "n_reply_rejected" not in rec
 
 
+# build-6 review fix (test-gap): the one-brain substitution re-checks the WHOLE mouth paragraph, not only the deferred-mouth calls
+W_YES = ["rick_wakeman", "member_of", "yes_band"]
+PROG = ["progressive_rock", "has_part", "band"]
+
+
+class _ScriptedMouth:
+    def __init__(self, table):
+        self.table = table
+
+    def generate(self, c):
+        return self.table.get(tuple(c["svo"]))
+
+
+def test_one_brain_articulate_checks_the_whole_mouth_paragraph(monkeypatch):
+    """A non-call mouth sentence (the spiking recall surface, Touchpoint A) before a call: a substitution that adds a 'the' pointing back
+    to it ('Progressive rock has part the band.' after '... Yes band.') passes alone and against the calls alone, but not whole."""
+    from webapp import one_brain as OB
+    from research.runners.brain_chat_tui import StubRenderer
+    import contextlib
+    monkeypatch.setenv(FLAG, "1")
+    chat = _chat()
+    tmpl = StubRenderer().render_svo(*PROG)[0]
+    assert tmpl == "The progressive_rock has_parts band."
+    call = {"svo": PROG, "template": tmpl, "method": "render_svo", "manner": ""}
+    verify = lambda prose, svo: bool(chat._verify(prose, None, svo))
+    reply = lambda texts, svos: bool(chat._verify_claim_set(" ".join(texts), svos)[0])
+    relock = contextlib.nullcontext
+    bad, good = "Progressive rock has part the band.", "Progressive rock has part band."
+    assert verify(bad, PROG) and verify(good, PROG)                                   # each prose alone is faithful
+    assert A.allowlist_verify(WAKE1 + " " + tmpl, [W_YES, PROG])["accepted"]       # the template paragraph passes whole
+    assert not A.allowlist_verify(WAKE1 + " " + bad, [W_YES, PROG])["accepted"]    # the substituted one does not
+    for lead, tail in (("", ""), ("Someone told me: ", " (Someone told me part of this.)")):
+        answer = lead + WAKE1 + " " + tmpl + tail
+        replies = [{"spoken": [WAKE1, tmpl], "checked": [WAKE1, tmpl], "gated": [W_YES, PROG]}]
+        ans, rec = OB.articulate(answer, [dict(call)], _ScriptedMouth({tuple(PROG): bad}), verify, relock, verify_reply=reply,
+                                 replies=replies)
+        assert ans == answer and rec["n_verified"] == 0 and rec["n_reply_rejected"] == 1, ans
+        ans, rec = OB.articulate(answer, [dict(call)], _ScriptedMouth({tuple(PROG): good}), verify, relock, verify_reply=reply,
+                                 replies=replies)
+        assert ans == lead + WAKE1 + " " + good + tail and rec["n_verified"] == 1, ans
+        # what is emitted passes whole
+        assert A.allowlist_verify(ans[len(lead):len(ans) - len(tail)], [W_YES, PROG])["accepted"]
+    # without the record only the call texts are checked: the substitution the record catches goes through (why the record exists)
+    ans, _rec = OB.articulate(WAKE1 + " " + tmpl, [dict(call)], _ScriptedMouth({tuple(PROG): bad}), verify, relock, verify_reply=reply)
+    assert ans == WAKE1 + " " + bad
+
+
+def test_composer_records_its_paragraph_for_the_one_brain_mouth(monkeypatch):
+    """End to end on the real composer: a warm spiking sentence (non-call, spoken '!', checked '.') before a deferred-mouth call. The
+    record carries both forms and the gathered union; the substitution lands at the call's position and the '!' stays."""
+    from webapp import one_brain as OB
+    import contextlib
+    monkeypatch.setenv(FLAG, "1")
+    mouth = OB.DeferredMouth(Prose({}))
+    chat = _chat(mouth, level=2)
+    comp = _comp(chat)
+    para, kept, dropped = comp.render_paragraph([list(DOG), list(PROG)])
+    assert not hasattr(chat, "_moat_joined_replies")                                   # no record open: nothing stored
+    mouth.take_calls()
+    OB.begin_joined_record(chat)
+    para, kept, dropped = comp.render_paragraph([list(DOG), list(PROG)])
+    rec_ = OB.take_joined_record(chat)
+    assert not hasattr(chat, "_moat_joined_replies") and OB.take_joined_record(chat) == []
+    tmpl = "The progressive_rock has_parts band."
+    assert para == "the dog chases the cat! " + tmpl and kept == [DOG, PROG] and dropped == [], para
+    assert rec_ == [{"spoken": ["the dog chases the cat!", tmpl], "checked": ["the dog chases the cat.", tmpl],
+                     "gated": [DOG, PROG, DOG, PROG]}]
+    calls = mouth.take_calls()
+    assert [c["svo"] for c in calls] == [PROG]                                        # the spiking sentence is not a call
+    verify = lambda prose, svo: bool(chat._verify(prose, None, svo))
+    reply = lambda texts, svos: bool(chat._verify_claim_set(" ".join(texts), svos)[0])
+    seen = []
+    ans, rec = OB.articulate(para, calls, _ScriptedMouth({tuple(PROG): "Progressive rock has part band"}), verify,
+                             contextlib.nullcontext, verify_reply=lambda t, s: seen.append(list(t)) or reply(t, s), replies=rec_)
+    assert ans == "the dog chases the cat! Progressive rock has part band." and rec["n_verified"] == 1, ans
+    assert seen == [["the dog chases the cat.", "Progressive rock has part band."]]    # the whole paragraph, in its checked form
+
+
 def test_open_ended_is_warned_out_of_scope_at_startup():
     from webapp.server import moat_allowlist_scope_warning
     assert moat_allowlist_scope_warning({}) is None

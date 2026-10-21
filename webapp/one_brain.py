@@ -350,16 +350,35 @@ class DeferredMouth:
         return surface if isinstance(surface, str) else None
 
 
-def articulate(answer, calls, mouth, verify, relock, verify_reply=None):
+def begin_joined_record(chat):
+    """Build 6 (BRAIN_MOAT_ALLOWLIST): open this turn's record of the composer's joined mouth paragraphs on `chat` (filled by
+    `RichAnswerComposer._join_verified`); `take_joined_record` closes it. Called around the locked turn by webapp/server.py."""
+    chat._moat_joined_replies = []
+
+
+def take_joined_record(chat):
+    """-> the paragraphs recorded since `begin_joined_record` ([] when none), and closes the record."""
+    out = getattr(chat, "_moat_joined_replies", None)
+    try:
+        del chat._moat_joined_replies
+    except AttributeError:
+        pass
+    return list(out) if isinstance(out, list) else []
+
+
+def articulate(answer, calls, mouth, verify, relock, verify_reply=None, replies=None):
     """Run the deferred mouth after the turn lock. `verify(surface, svo) -> bool` is the brain's re-parse, run inside
     `relock()` (a context manager that takes the turn lock). Returns (answer, record).
 
-    `verify_reply(texts, svos) -> bool` (build 6, passed only with BRAIN_MOAT_ALLOWLIST on): the JOINED reply check. The call surfaces
-    that reached the answer, in answer order, are the reply's mouth sentences; a substitution is kept only if, with it (its prose
-    "."-terminated), the joined sentences pass against the union of the calls' triples; otherwise that call keeps its template (which
-    the composer's own joined check already passed). The last state kept was checked whole. Without it: exactly as before."""
+    `verify_reply(texts, svos) -> bool` (build 6, passed only with BRAIN_MOAT_ALLOWLIST on): the JOINED reply check. The reply's mouth
+    sentences, in answer order, are EVERY sentence of the composer paragraphs in `replies` (`take_joined_record`: the spiking recall
+    surface, Touchpoint A and the template sentences alike, each in the "."-form it was checked in) plus any call surface that reached the
+    answer outside them; a substitution is kept only if, with it (its prose "."-terminated), the joined sentences pass against the union
+    of every triple those sentences were checked against; otherwise that call keeps its template (which the composer's own joined check
+    already passed). So the last state kept was checked whole (build-6 review fix: the call texts alone left a non-call sentence of the
+    same answer out of the check). Without `verify_reply`: exactly as before."""
     if verify_reply is not None:
-        return _articulate_joined(answer, calls, mouth, verify, relock, verify_reply)
+        return _articulate_joined(answer, calls, mouth, verify, relock, verify_reply, replies)
     rec = {"n_calls": len(calls), "n_spoken": 0, "n_verified": 0, "n_kept_template": 0, "seconds": 0.0}
     if not isinstance(answer, str) or not calls:
         return answer, rec
@@ -382,8 +401,36 @@ def articulate(answer, calls, mouth, verify, relock, verify_reply=None):
     return answer, rec
 
 
-def _articulate_joined(answer, calls, mouth, verify, relock, verify_reply):
-    """`articulate` under BRAIN_MOAT_ALLOWLIST (build 6): per-call `verify`, then the joined reply check (see `articulate`)."""
+def _mouth_units(answer, spoken, replies):
+    """Build 6: the reply's mouth sentences in answer order -> [{"pos", "span", "text", "calls"}]. A sentence of a recorded composer
+    paragraph that reached the answer is a unit (its checked "."-form); a spoken call is attached to the unit at its template's position,
+    or is a unit of its own when no recorded sentence sits there. `span` is the answer text the unit occupies."""
+    from research.runners.brain_chat_tui import _moat_terminate
+    units = {}
+    for r in replies or ():
+        sp, ck = list(r.get("spoken") or ()), list(r.get("checked") or ())
+        base = answer.find(" ".join(sp)) if sp and len(sp) == len(ck) else -1
+        if base < 0:
+            continue                                   # this paragraph did not reach the answer
+        off = base
+        for spoken_text, checked in zip(sp, ck):
+            pos = answer.find(spoken_text, off)
+            off = pos + len(spoken_text)
+            units.setdefault(pos, {"pos": pos, "span": spoken_text, "text": checked, "calls": []})
+    for c in spoken:
+        t = c["template"]
+        pos = answer.find(t)
+        u = units.get(pos)
+        if u is None:
+            span = t + "." if (not t.endswith((".", "!", "?")) and answer.startswith(t + ".", pos)) else t
+            u = units[pos] = {"pos": pos, "span": span, "text": _moat_terminate(t), "calls": []}
+        u["calls"].append(c)
+    return [units[k] for k in sorted(units)]
+
+
+def _articulate_joined(answer, calls, mouth, verify, relock, verify_reply, replies=None):
+    """`articulate` under BRAIN_MOAT_ALLOWLIST (build 6): per-call `verify`, then the joined check of the WHOLE mouth paragraph
+    (see `articulate`)."""
     from research.runners.brain_chat_tui import _moat_terminate
     rec = {"n_calls": len(calls), "n_spoken": 0, "n_verified": 0, "n_kept_template": 0, "n_reply_rejected": 0, "seconds": 0.0}
     if not isinstance(answer, str) or not calls:
@@ -391,28 +438,42 @@ def _articulate_joined(answer, calls, mouth, verify, relock, verify_reply):
     t0 = time.perf_counter()
     spoken = [c for c in calls if c.get("template") and c["template"] in answer]
     spoken.sort(key=lambda c: answer.find(c["template"]))
-    todo = []
+    prose_of = {}
     for c in spoken:
         rec["n_spoken"] += 1
-        todo.append((c, mouth.generate(c)))
-    if todo:
-        cur = {id(c): c["template"] for c in spoken}
-        svos = [list(c["svo"]) for c in spoken]
+        prose_of[id(c)] = mouth.generate(c)
+    if spoken:
+        units = _mouth_units(answer, spoken, replies)
+        union = []
+        for r in replies or ():
+            for g in r.get("gated") or ():
+                if list(g) not in union:
+                    union.append(list(g))
+        for c in spoken:
+            if list(c["svo"]) not in union:
+                union.append(list(c["svo"]))
+        cur = [u["text"] for u in units]
+        new_span = {}
         with relock():
-            for c, prose in todo:
-                text = _moat_terminate(prose) if isinstance(prose, str) else prose
-                if not (text and prose != c["template"] and verify(text, c["svo"]) and c["template"] in answer):
-                    rec["n_kept_template"] += 1
-                    continue
-                trial = dict(cur)
-                trial[id(c)] = text
-                if verify_reply([trial[id(x)] for x in spoken], svos):
-                    answer = answer.replace(c["template"], text, 1)
-                    cur = trial
-                    rec["n_verified"] += 1
-                else:
-                    rec["n_kept_template"] += 1
-                    rec["n_reply_rejected"] += 1
+            for k, u in enumerate(units):
+                for c in u["calls"]:
+                    prose = prose_of[id(c)]
+                    text = _moat_terminate(prose) if isinstance(prose, str) else prose
+                    if k in new_span or not (text and prose != c["template"] and verify(text, c["svo"])):
+                        rec["n_kept_template"] += 1
+                        continue
+                    trial = list(cur)
+                    trial[k] = text
+                    if verify_reply(trial, union):
+                        cur = trial
+                        new_span[k] = text
+                        rec["n_verified"] += 1
+                    else:
+                        rec["n_kept_template"] += 1
+                        rec["n_reply_rejected"] += 1
+        for k in sorted(new_span, reverse=True):       # right to left, so earlier positions stay valid
+            u = units[k]
+            answer = answer[:u["pos"]] + new_span[k] + answer[u["pos"] + len(u["span"]):]
     rec["seconds"] = round(time.perf_counter() - t0, 3)
     return answer, rec
 

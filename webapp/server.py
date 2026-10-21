@@ -5101,14 +5101,21 @@ def _one_brain_turn(req, cache_key, renderer, ctx) -> JSONResponse:
     mouth = _deferred_mouth(chat)
     if mouth is not None:
         mouth.take_calls()                                  # nothing from an earlier turn
+    from research.runners._moat_allowlist import allowlist_enabled as _allowlist_on
+    joined = mouth is not None and _allowlist_on()
+    if joined:
+        _OB.begin_joined_record(chat)                       # build 6: the composer records its joined mouth paragraphs
     before = _OB.learned_triples(chat)
-    resp = brain_reply(chat, req, source, cache_key)
+    try:
+        resp = brain_reply(chat, req, source, cache_key)
+    finally:
+        replies = _OB.take_joined_record(chat) if joined else None
     _ONE_BRAIN.note_taught(bk, before, _OB.learned_triples(chat), ctx.conversation_id)
     resp = _one_brain_source_frame(resp, bk, ctx.conversation_id)
     if mouth is not None:
         calls = mouth.take_calls()
         if calls:
-            resp._one_brain_mouth = (mouth, calls, chat)    # type: ignore[attr-defined]
+            resp._one_brain_mouth = (mouth, calls, chat) if replies is None else (mouth, calls, chat, replies)  # type: ignore
     return resp
 
 
@@ -5153,7 +5160,8 @@ def _one_brain_articulate(resp, pending):
     whose template surface reached the answer, VERIFY each prose surface under a short re-take of the turn lock (the
     brain's on-substrate re-parse), substitute the verified prose. Never raises: on any failure the template answer,
     which the brain already verified, is returned."""
-    mouth, calls, chat = pending
+    mouth, calls, chat = pending[:3]
+    replies = pending[3] if len(pending) > 3 else None
     try:
         body = json.loads(bytes(resp.body))
         from webapp.brain_turn_lock import brain_turn as _bt
@@ -5161,8 +5169,10 @@ def _one_brain_articulate(resp, pending):
         from research.runners._moat_allowlist import allowlist_enabled as _allowlist_on
         if _allowlist_on():
             # build 6 (BRAIN_MOAT_ALLOWLIST): the per-prose check is the allowlist (the `_verify` chokepoint) and the substituted reply
-            # is checked JOINED against the union of the calls' triples
+            # is checked JOINED: every composer sentence of the answer (recorded during the turn) with the substitution, against the
+            # union of every triple those sentences were checked against
             kw["verify_reply"] = lambda texts, svos: bool(chat._verify_claim_set(" ".join(texts), svos)[0])
+            kw["replies"] = replies or []
         ans, rec = _OB.articulate(body.get("answer"), calls, mouth,
                                   verify=lambda prose, svo: bool(chat._verify(prose, None, svo)),
                                   relock=lambda: _bt("mouth_verify"), **kw)
