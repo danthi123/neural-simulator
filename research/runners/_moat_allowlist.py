@@ -519,26 +519,38 @@ SUBJECT_PRONOUNS = frozenset(("i", "we", "you"))
 #        sayable, because English reads it as a title: "Taylor Swift is an author of Mine.", "Spike Jonze ... Her."
 #   R7b. In a spaced span (2+ words, not the slug verbatim) a word "i" / "I" at position k > 0 reads as the first-person pronoun, and the
 #        span rejects, when ANY of: (1) it is lower-case "i" and no word of the span starts with an upper-case letter (an all-lower-case
-#        display carries no casing signal: "honey i shrunk the kids", "sometimes i lie"); (2) it is upper-case "I" and the next word starts
-#        with a lower-case letter and is neither "of" nor a determiner ("So I married an axe murderer"); (3) it is "i" or "I" and the word
-#        directly before it, case-folded, is a coordinating conjunction (and, or, nor, but, "&"): "Trevor and I", "Me and I". (3) is read
-#        case-folded on purpose: a capitalised "And" before an "I" is still the conjunction ("And i love her" is rejected here).
-#        Stays sayable (each pinned in tests/test_moat_allowlist_build7.py): a Roman numeral ("Charles I of England", "Nicholas I the
-#        Conqueror": "of" / a determiner follows; "Dom Pedro I", "World War I": nothing follows; "Division I Bowl", "Fuad I University", "V I
-#        Lenin": a capital follows), a lower-case "i" between capitalised words ("Vang i Valdres": the Norwegian / Swedish preposition, not
-#        English), a title-case clause ("Baby I Love You": title case reads as a title, a DELIBERATE keep), and the slug written verbatim.
-# Cost, by construction: the stub renders every slug verbatim, so R7b (spaced spans only) cannot fire on a stub sentence, and R7a fires on
-# one only for a one-word pronoun-class slug in an object position (no determiner there). The cost falls on natural spellings: the de-slugged
-# lower-case form of a Roman-numeral name ("charles i of england") has no casing signal and rejects under R7b(1). Both are measured, not
-# claimed here, in research/findings/raw/_moat_allowlist_build7/.
-# Still open (documented, not closed): a title-case clause whose "I" is followed by a capital ("Baby I Love You"); a lower-case "i" in a
-# name that has some capital but is not a title ("Sometimes i lie": rule (1) needs no capital anywhere); a pronoun-class word inside a
-# longer capitalised name ("Taylor Swift is an author of Me Myself"); and lower-case names holding a LEXICAL verb ("steve threw up
-# record label xl recordings.", no verb lexicon and no proper-name bit in the store).
+#        display carries no casing signal: "honey i shrunk the kids", "sometimes i lie"); (2) it is "i" OR "I" (CLAUSE_I_FORMS, either
+#        case) and the next word starts with a lower-case letter and is neither "of" nor a determiner ("So I married an axe murderer",
+#        "Sometimes i lie", "Fatih i stanbul"; widened from "I" alone by the coordinator's ruling of 2026-10-21, which closed the mixed-case
+#        "Sometimes i lie"); (3) it is "i" or "I" and the word directly before it, case-folded, is a coordinating conjunction (and, or, nor,
+#        but, "&"): "Trevor and I", "Me and I". (3) is read case-folded on purpose: a capitalised "And" before an "I" is still the
+#        conjunction ("Trevor And I" is rejected here).
+#        Stays sayable (each pinned in tests/test_moat_allowlist_build7.py): a Roman numeral ("Charles I of England", "Charles i of England",
+#        "Nicholas I the Conqueror": "of" / a determiner follows; "Dom Pedro I", "Dom Pedro i", "World War I": nothing follows; "Division I
+#        Bowl", "Fuad I University", "V I Lenin": a capital follows), a lower-case "i" before a capitalised word ("Vang i Valdres",
+#        "Kunsthogskolen i Oslo": the Norwegian / Swedish preposition, not English), a title-case clause ("Baby I Love You": title case reads
+#        as a title, a DELIBERATE keep), and the slug written verbatim.
+# KNOWN ANSWER COSTS (accepted by the coordinator's rulings of 2026-10-21; measured, not assumed, in research/findings/raw/_moat_allowlist_build7/):
+#   - R7b(1): the all-lower-case de-slugged spelling of the 64 store slugs that hold a non-initial "i" word (355 store facts touch one) rejects
+#     ("charles i of england", "v i lenin", "universit paris i panth on sorbonne"): an all-lower-case display carries no casing signal. The slug
+#     written verbatim (the stub's form) stays sayable, and so does a title-case spelling (63 of the 64 keep it; the one exception is the (3) case
+#     below). A sentence-case spelling ("Vang i valdres") rejects under (2) when a lower-case word follows the "i" and is kept when the "i" ends the
+#     name or precedes "of" / a determiner ("Dom pedro i", "Charles i of england": 27 of 64 keep it with a lower-case "i", 28 with "I").
+#   - R7b(3): `uk_of_gb_and_i` (the United Kingdom of Great Britain and Ireland; 21 store facts, 3 as subject and 18 as object): "UK of GB and I"
+#     reads as a first-person coordination, so every spaced spelling of it rejects (round-6 case R6-CN05, label B, is this name). Only the slug
+#     written verbatim stays sayable: the slug has no names-table row, so its canonical surfaces are the slug and its de-slugged form, and the
+#     de-slugged form rejects too.
+# Cost on the stub, by construction: the stub renders every slug verbatim, so R7b (spaced spans only) cannot fire on a stub sentence, and R7a fires
+# on one only for a one-word pronoun-class slug in an object position (no determiner there); the store has no such slug.
+# Still open (documented, not closed): a title-case clause whose "I" is followed by a capital ("Baby I Love You"); a first-person "i" / "I" that ends
+# a mixed-case name or precedes "of" / a determiner ("Dom Pedro i", "Charles i of England" are real names and stay sayable on purpose); a
+# pronoun-class word inside a longer capitalised name ("Taylor Swift is an author of Me Myself"); and lower-case names holding a LEXICAL verb
+# ("steve threw up record label xl recordings.", no verb lexicon and no proper-name bit in the store).
 PRONOUN_NAME_CLASS = frozenset(("me", "my", "mine", "myself", "us", "our", "ours", "ourselves", "your", "yours", "yourself", "yourselves",
                                 "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself",
                                 "they", "them", "their", "theirs", "themselves", "this", "that", "these", "those"))
 NAME_CONJUNCTIONS = frozenset(("and", "or", "nor", "but", "&"))
+CLAUSE_I_FORMS = frozenset(("i", "I"))              # R7b(2): the forms of the pronoun that a lower-case word after them turns into a clause
 
 
 def _pronoun_name_reading(word, initial, after_determiner):
@@ -562,8 +574,8 @@ def _inner_first_person_reading(words):
         if w == "i" and not any(x[:1].isupper() for x in words):
             return "a lower-case 'i' (word %d) in a name with no capital letter: English reads the first-person pronoun" % (k + 1)
         nxt = words[k + 1] if k + 1 < len(words) else ""
-        if w == "I" and nxt[:1].islower() and nxt != "of" and nxt not in DETERMINERS:
-            return "'I' (word %d) before the lower-case word %r: English reads the first-person pronoun and a clause" % (k + 1, nxt)
+        if w in CLAUSE_I_FORMS and nxt[:1].islower() and nxt != "of" and nxt not in DETERMINERS:
+            return "%r (word %d) before the lower-case word %r: English reads the first-person pronoun and a clause" % (w, k + 1, nxt)
         if words[k - 1].lower() in NAME_CONJUNCTIONS:
             return "a conjunction before 'I' (%r %r): English reads a first-person subject" % (words[k - 1], w)
     return None

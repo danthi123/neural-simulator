@@ -6,8 +6,9 @@ build-7 bullet; rules in the comment block above `PRONOUN_NAME_CLASS` in researc
        sentence's first word, unless a determiner stands directly before it or it is written all-caps with 2+ letters. It runs before the
        slug-verbatim skip.
   R7b. In a spaced span (2+ words, not the slug verbatim) a word "i" / "I" at position k > 0 reads as the first-person pronoun when
-       (1) it is lower-case "i" and no word of the span starts with an upper-case letter; (2) it is "I", the next word starts with a
-       lower-case letter and is neither "of" nor a determiner; (3) the word directly before it, case-folded, is and / or / nor / but / "&".
+       (1) it is lower-case "i" and no word of the span starts with an upper-case letter; (2) it is "i" OR "I" (either case, widened by the
+       coordinator's ruling of 2026-10-21), the next word starts with a lower-case letter and is neither "of" nor a determiner; (3) the word
+       directly before it, case-folded, is and / or / nor / but / "&".
 
 The matcher is pure: its verdict cannot depend on the parser seed. Where a test goes through the production `ChatBrain` (a seeded
 BridgeParser) it runs at all seven parser seeds 42, 43, 44, 100, 101, 102, 1, as the build-6 tests do. The ten round-8 cases are copied
@@ -176,8 +177,12 @@ R7B_BRANCH = [
     (["Trevor", "but", "I"], "a conjunction before 'I' ('but' 'I')"),
     (["Trevor", "&", "I"], "a conjunction before 'I' ('&' 'I')"),
     (["Trevor", "And", "I"], "a conjunction before 'I' ('And' 'I')"),                                                          # case-folded
-    (["And", "i", "love", "her"], "a conjunction before 'I' ('And' 'i')"),                                                      # case-folded
-    (["Sometimes", "I", "lie"], "'I' (word 2) before the lower-case word 'lie'"),
+    (["Trevor", "And", "i"], "a conjunction before 'I' ('And' 'i')"),                                                           # case-folded
+    (["Sometimes", "I", "lie"], "'I' (word 2) before the lower-case word 'lie'"),                                               # (2), "I"
+    (["Sometimes", "i", "lie"], "'i' (word 2) before the lower-case word 'lie'"),                                               # (2), "i": widened
+    (["Fatih", "i", "stanbul"], "'i' (word 2) before the lower-case word 'stanbul'"),
+    (["Vang", "i", "valdres"], "'i' (word 2) before the lower-case word 'valdres'"),
+    (["And", "i", "love", "her"], "'i' (word 2) before the lower-case word 'love'"),            # (2) is checked before (3): a lower-case word follows
     (["x", "y", "i", "z"], "a lower-case 'i' (word 3) in a name with no capital letter"),
 ]
 
@@ -199,7 +204,11 @@ def test_r7b_branches_name_themselves(words, why):
     ["Vang", "i", "Valdres"],                         # a lower-case "i" between capitalised words
     ["Baby", "I", "Love", "You"],                     # title case reads as a title: a DELIBERATE keep
     ["Honey", "I", "Shrunk", "The", "Kids"],
-    ["Sometimes", "i", "lie"],                        # DOCUMENTED RESIDUE: a capital somewhere, so rule (1) does not apply
+    ["Charles", "i", "of", "England"],                # (2): "of" follows, in either case of the "i"
+    ["Charles", "i", "the", "Conqueror"],             # (2): a determiner follows
+    ["Kunsthøgskolen", "i", "Oslo"],                  # a lower-case "i" before a capitalised word: the preposition
+    ["Dom", "Pedro", "i"],                            # a lower-case "i" last, after capitalised words: nothing follows
+    ["Charles", "i", "2nd"],                          # the next word starts with a digit, not a lower-case letter
     ["I", "need", "a", "beat"],                       # position 0 is rule (b1)'s, not R7b's
     ["Charles", "I", "2nd"],                          # next word starts with a digit, not a lower-case letter
     ["Android", "ia", "I", "Dom"],
@@ -213,7 +222,7 @@ def test_r7b_reports_the_first_hit_and_skips_position_zero():
     assert A._inner_first_person_reading(["i", "x"]) is None and A._inner_first_person_reading(["I", "x"]) is None
     assert A._inner_first_person_reading(["I"]) is None and A._inner_first_person_reading([]) is None
     # a capital anywhere in the span (even a leading "I" at position 0) means rule (1) has no casing-free display to read
-    assert A._inner_first_person_reading(["I", "x", "i", "y"]) is None
+    assert A._inner_first_person_reading(["I", "x", "i"]) is None
 
 
 # ------------------------------------------------------------------------------------------------------------ R7a, the helper
@@ -262,6 +271,11 @@ STORE_KEEPS = [
     ("V I Lenin occupation political figure.", [("v_i_lenin", "occupation", "political_figure")]),
     ("Lom Norway shares border with Vang i Valdres.", [("lom_norway", "shares_border_with", "vang_i_valdres")]),
     ("Vang i Valdres shares border with Lom Norway.", [("vang_i_valdres", "shares_border_with", "lom_norway")]),
+    # the coordinator's ruling of 2026-10-21: a lower-case "i" before a capitalised word, and a lower-case "i" last after capitalised words
+    ("Kunsth\u00f8gskolen i Oslo is an instance of studio art.", [("kunsth_gskolen_i_oslo", "instance_of", "studio_art")]),
+    ("Kunsth\u00f8gskolen i Oslo country Royal Kingdom of Norway.", [("kunsth_gskolen_i_oslo", "country", "royal_kingdom_of_norway")]),
+    ("Dom Pedro i is an instance of human specie.", [("dom_pedro_i", "instance_of", "human_specie")]),
+    ("Dom Pedro i occupation political figure.", [("dom_pedro_i", "occupation", "political_figure")]),
 ]
 TAUGHT_KEEPS = [
     # a Roman numeral with nothing after it; no store slug (taught triple)
@@ -280,8 +294,6 @@ TAUGHT_KEEPS = [
     ("Taylor Swift is an author of the mine.", [("mine", "author", "taylor_swift")]),
     ("The It is an instance of theatrical film.", [("it", "instance_of", "theatrical_film")]),
     ("The her is an instance of theatrical film.", [("her", "instance_of", "theatrical_film")]),
-    # DOCUMENTED RESIDUE (rule (1) needs no capital anywhere in the name): kept, pinned so a change is visible
-    ("Alice Feeney is an author of Sometimes i lie.", [("sometimes_i_lie", "author", "alice_feeney")]),
     # a lower-case "i" between capitalised words is the preposition; a Roman numeral followed by a capital
     ("Charles i of England is an instance of human specie.", [("charles_i_of_england", "instance_of", "human_specie")]),
     ("Charles I Of England is an instance of human specie.", [("charles_i_of_england", "instance_of", "human_specie")]),
@@ -371,7 +383,88 @@ def test_other_class_words_reject_as_the_rule_reads_them(sentence, gathered, why
 def test_further_first_person_forms_reject(sentence, gathered):
     res = verdict(sentence, gathered)
     assert not res["accepted"], sentence
-    assert any(t in res["reject_reason"] for t in ("'I' (word", "a lower-case 'i' (word", "a conjunction before 'I'")), res["reject_reason"]
+    assert any(t in res["reject_reason"] for t in ("'I' (word", "'i' (word", "a conjunction before 'I'")), res["reject_reason"]
+
+
+# ---- the widened rule R7b(2): "i" as well as "I" before a lower-case word (coordinator's ruling of 2026-10-21; closes "Sometimes i lie")
+WIDENED = [
+    ("Alice Feeney is an author of Sometimes i lie.", [("sometimes_i_lie", "author", "alice_feeney")], "'i' (word 2) before the lower-case word 'lie'"),
+    ("Fatih i stanbul country the Republic of Turkey.", [("fatih_i_stanbul", "country", "the_republic_of_turkey")],
+     "'i' (word 2) before the lower-case word 'stanbul'"),
+    ("Lom Norway shares border with Vang i valdres.", [("lom_norway", "shares_border_with", "vang_i_valdres")],
+     "'i' (word 2) before the lower-case word 'valdres'"),
+    ("And i love her follows If I Fell.", [("and_i_love_her", "follows", "if_i_fell")], "'i' (word 2) before the lower-case word 'love'"),
+]
+
+
+@pytest.mark.parametrize("sentence,gathered,why", WIDENED)
+def test_the_widened_rule_rejects_a_lower_case_i_before_a_lower_case_word_at_every_parser_seed(seed_chats, sentence, gathered, why):
+    res = verdict(sentence, gathered)
+    assert not res["accepted"] and why in res["reject_reason"], (sentence, res["reject_reason"])
+    for sd in SEEDS:
+        acc, r = _on(seed_chats[sd], sentence, gathered)
+        assert acc is False and why in r["reject_reason"], (sd, sentence)
+
+
+@pytest.mark.parametrize("sentence,gathered,why", WIDENED[:3])
+def test_mutation_restricting_rule_7b2_back_to_upper_case_I_makes_the_widened_cases_kept(monkeypatch, sentence, gathered, why):
+    """The first build 7 read rule (2) on an upper-case "I" only. Restrict `CLAUSE_I_FORMS` back to it (monkeypatch): the widened cases are
+    KEPT again (the first build 7's verdict), while the "I" half of rule (2) is untouched (R8-TA10 "So I married an axe murderer" still
+    rejects), so these tests guard the widening."""
+    assert not keep(sentence, gathered)
+    ta10 = LEAKS["R8-TA10"]
+    with monkeypatch.context() as m:
+        m.setattr(A, "CLAUSE_I_FORMS", frozenset(("I",)))
+        res = verdict(sentence, gathered)
+        assert res["accepted"], (sentence, res["reject_reason"])
+        assert not keep(ta10[0], ta10[1])
+
+
+def test_mutation_and_i_love_her_stays_rejected_without_the_widening_but_by_rule_3(monkeypatch):
+    """"And i love her" has a capitalised "And", so rule (1) does not read it; with (2) restricted to "I" it is still rejected, by rule (3)
+    (a conjunction before the "i", case-folded) -- the first build 7's reason for it."""
+    sentence, gathered, why = WIDENED[3]
+    monkeypatch.setattr(A, "CLAUSE_I_FORMS", frozenset(("I",)))
+    res = verdict(sentence, gathered)
+    assert not res["accepted"] and "a conjunction before 'I' ('And' 'i')" in res["reject_reason"], res["reject_reason"]
+
+
+def test_mutation_the_widening_is_the_only_difference_for_sometimes_i_lie(monkeypatch):
+    sentence, gathered = "Alice Feeney is an author of Sometimes i lie.", [("sometimes_i_lie", "author", "alice_feeney")]
+    assert A.CLAUSE_I_FORMS == frozenset(("i", "I"))
+    assert not keep(sentence, gathered)
+    monkeypatch.setattr(A, "CLAUSE_I_FORMS", frozenset(("I",)))
+    assert keep(sentence, gathered)                                  # the first build 7's verdict: the documented residue
+    for words in (["Sometimes", "i", "lie"], ["Fatih", "i", "stanbul"], ["Vang", "i", "valdres"]):
+        assert A._inner_first_person_reading(words) is None, words
+    assert A._inner_first_person_reading(["Sometimes", "I", "lie"])  # the upper-case half is unchanged
+
+
+# ---- KNOWN ANSWER COSTS (accepted by the coordinator's rulings of 2026-10-21; recorded in the module comment)
+def test_known_answer_cost_the_all_lower_case_deslugged_name_rejects_but_the_slug_and_title_case_stay():
+    for slug, lower, title, fact in [("v_i_lenin", "v i lenin", "V I Lenin", ("v_i_lenin", "instance_of", "human_specie")),
+                                     ("charles_i_of_england", "charles i of england", "Charles I of England",
+                                      ("charles_i_of_england", "instance_of", "human_specie")),
+                                     ("dom_pedro_i", "dom pedro i", "Dom Pedro I", ("dom_pedro_i", "instance_of", "human_specie"))]:
+        rej = verdict("%s is an instance of human specie." % lower, [fact])
+        assert not rej["accepted"] and "a lower-case 'i' (word" in rej["reject_reason"], (slug, rej["reject_reason"])
+        assert keep("%s is an instance of human specie." % title, [fact]), title
+        assert keep("The %s instance_ofs human_specie." % slug, [fact]), slug
+
+
+def test_known_answer_cost_uk_of_gb_and_i_rejects_in_every_spaced_spelling_and_only_the_slug_stays():
+    r6 = ("UK of GB and I follows Kingdom of Great Britian.", [("uk_of_gb_and_i", "follows", "kingdom_of_great_britian")])     # R6-CN05 (B)
+    chuck = ("Chuck Darwin country of citizenship UK of GB and I.", [("chuck_darwin", "country_of_citizenship", "uk_of_gb_and_i")])
+    for sentence, gathered in (r6, chuck):
+        res = verdict(sentence, gathered)
+        assert not res["accepted"] and "a conjunction before 'I' ('and' 'I')" in res["reject_reason"], (sentence, res["reject_reason"])
+    for spelling in ("UK of GB and I", "Uk Of Gb And I", "uk of gb and i", "UK Of GB And I"):
+        assert not keep("%s follows Kingdom of Great Britian." % spelling, r6[1]), spelling
+    assert keep("uk_of_gb_and_i follows Kingdom of Great Britian.", r6[1])                       # the slug written verbatim
+    assert keep("Chuck Darwin country of citizenship uk_of_gb_and_i.", chuck[1])
+    # the slug has no names-table row: its canonical surfaces are the slug and its de-slugged form only
+    table = A.names_table()
+    assert not table.entities.get("uk_of_gb_and_i") and table.surfaces("uk_of_gb_and_i") == frozenset(("uk_of_gb_and_i", "uk of gb and i"))
 
 
 # ---- the stub renders every slug verbatim: the consequence of "a one-word slug written verbatim is the pronoun" is pinned both ways

@@ -126,17 +126,25 @@ every proposition it encodes is a gathered triple of this turn:
   theatrical film."). A capitalised one-word span that is not the sentence's first word stays sayable ("Taylor Swift is
   an author of Mine."). R7b: in a spaced span (2+ words, not the slug verbatim) a word "i" / "I" at position k > 0 reads
   as the first-person pronoun, and the span rejects, when (1) it is lower-case "i" and no word of the span starts with an
-  upper-case letter ("honey i shrunk the kids", "sometimes i lie", "and i love her"); or (2) it is "I" and the next word
-  starts with a lower-case letter and is neither "of" nor a determiner ("So I married an axe murderer"); or (3) the word
-  directly before it, case-folded, is and / or / nor / but / "&" ("Trevor and I"; case-folded on purpose, so "And i love
-  her" rejects too). Stays sayable, each pinned: "Charles I of England", "Nicholas I the Conqueror", "Dom Pedro I",
-  "World War I", "Division I Bowl", "Fuad I University", "V I Lenin", "Vang i Valdres" (a lower-case "i" between
-  capitalised words is a preposition), and the title-case "Baby I Love You", a deliberate keep (title case reads as a
-  title). Open, documented: a title-case clause whose "I" is followed by a capital; a lower-case "i" in a name that has
-  some capital but is not a title ("Sometimes i lie"); lower-case names holding a lexical verb. Cost: the de-slugged
-  lower-case form of a Roman-numeral name ("charles i of england") has no casing signal and rejects under (1); the stub
-  renders slugs verbatim and is unaffected by R7b. Pinned in `tests/test_moat_allowlist_build7.py`, each rule with a
-  mutation check.
+  upper-case letter ("honey i shrunk the kids", "and i love her"); or (2) it is "i" or "I" (either case; widened from "I"
+  alone by the coordinator's ruling of 2026-10-21) and the next word starts with a lower-case letter and is neither "of"
+  nor a determiner ("So I married an axe murderer", "Sometimes i lie", "Fatih i stanbul"); or (3) the word directly
+  before it, case-folded, is and / or / nor / but / "&" ("Trevor and I"; case-folded on purpose, so "Trevor And I"
+  rejects too). Stays sayable, each pinned: "Charles I of England", "Charles i of England", "Nicholas I the Conqueror",
+  "Dom Pedro I", "Dom Pedro i", "World War I", "Division I Bowl", "Fuad I University", "V I Lenin", "Vang i Valdres",
+  "Kunsthøgskolen i Oslo" (a lower-case "i" before a capitalised word is a preposition), and the title-case "Baby I Love
+  You", a deliberate keep (title case reads as a title). Open, documented: a title-case clause whose "I" is followed by
+  a capital; a first-person "i" / "I" that ends a mixed-case name or precedes "of" / a determiner (real names, kept on
+  purpose); a pronoun-class word inside a longer capitalised name; lower-case names holding a lexical verb. Known answer
+  costs, accepted by the coordinator's rulings of 2026-10-21 and measured in `research/findings/raw/_moat_allowlist_build7/`:
+  under (1) the all-lower-case de-slugged spelling of the 64 store slugs with a non-initial "i" word (355 store facts
+  touch one: "charles i of england", "v i lenin") rejects, since an all-lower-case display carries no casing signal (the
+  slug written verbatim and the title-case spelling stay sayable; a sentence-case spelling rejects under (2) when a
+  lower-case word follows the "i"); under (3) `uk_of_gb_and_i` (21 store facts) rejects in every spaced spelling, because
+  "UK of GB and I" reads as a first-person coordination (round-6 case R6-CN05, label B), and only the slug written
+  verbatim stays sayable (it has no names-table row, so its de-slugged form is its only other canonical surface and
+  rejects too). The stub renders slugs verbatim and is unaffected by R7b. Pinned in `tests/test_moat_allowlist_build7.py`,
+  each rule with a mutation check (R7b(2)'s widening included: restricted back to "I", "Sometimes i lie" is kept).
 - **VERB(rel):** a verb form of the relation from the verb-form table that `_noun_before_verb` uses (`1b67eef9b`),
   including the guarded `-s`, `-es` and `-ies` readings, only when that relation is gathered this turn.
 - **Case fidelity of entity spans (build 3, controller ruling 2026-10-20: no invented acronyms).** The store's slug
