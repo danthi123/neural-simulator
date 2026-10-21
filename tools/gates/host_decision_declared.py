@@ -440,11 +440,16 @@ def _repo(bad):
 
         def blocks(label, want=True):
             g("add", "-A")
-            got = check([], root=td, invocation="commit")
+            try:
+                got = check([], root=td, invocation="commit")
+            except Exception as e:                               # noqa: BLE001 -- a raise is a selftest failure
+                got, want = ["RAISED %s: %s" % (type(e).__name__, e)], not want
             if bool(got) != want:
                 bad.append("%s: expected %s, got %s" % (label, "a block" if want else "a pass", got or "a pass"))
             g("reset", "-q")
 
+        if not check([], root=os.path.join(td, "missing"), invocation="commit"):     # git cannot run there
+            bad.append("did NOT fail CLOSED when git could not read the commit")
         g("init", "-q", "-b", "main")
         g("config", "user.email", "gate-selftest@example.invalid")
         g("config", "user.name", "gate selftest")
