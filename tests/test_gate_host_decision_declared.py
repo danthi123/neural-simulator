@@ -318,6 +318,27 @@ def test_gate_blocks_an_old_prereg_edited_without_the_header(repo):
     assert repo.staged_check() == []
 
 
+def test_new_or_old_follows_smks_date_rule_the_later_of_git_date_and_file_name_date(repo):
+    """Both must declare when touched; the date words the message (new since the cutoff vs touch it, declare it)."""
+    late = "research/findings/2026-10-01-backdated-PREREGISTRATION.md"        # an old file-name date, added after
+    lane = "docs/drafts/new-lane/PACKET.md"                                    # no file-name date, added after
+    early = "research/findings/2026-10-25-forward-PREREGISTRATION.md"         # a later file-name date, git date before
+    repo.w(late, prereg())
+    repo.w(lane, "# a packet\n")
+    repo.commit("added after the cutoff", date="2026-10-22")
+    repo.w(early, prereg())
+    repo.commit("committer date before the cutoff", date="2026-10-02")
+    for rel in (late, lane, early):
+        repo.w(rel, prereg(body="# edited\n"))
+        p = repo.staged_check()
+        assert len(p) == 1 and "new: first added on or after 2026-10-21" in p[0], (rel, p)
+        repo.git("reset", "-q")
+        repo.git("checkout", "--", rel)
+    repo.w(OLD, prereg(body="# edited\n"))
+    p = repo.staged_check()
+    assert len(p) == 1 and "touch it, declare it" in p[0] and "new:" not in p[0]
+
+
 def test_an_old_prereg_untouched_passes_and_a_clean_tree_passes(repo):
     assert repo.staged_check() == []
     repo.w("research/findings/2026-10-22-unrelated-RESULT.md", "# a result, no header\n")
