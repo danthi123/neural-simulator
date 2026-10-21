@@ -83,7 +83,8 @@ state the same proposition (the list rule across sentences); (3) a CR between se
 on a terminal); (4) the slug verbatim in lower case is one identifier, but any other casing of an underscore spelling ("Marshall_Is",
 "No_Saints") is prose and its underscores split words; (5) "be" joins the clause words, and a lone lower-case "s" ending a name or "t"
 after a negative stem ("Saint Alban s", "don t") is the residue of a dropped apostrophe and rejects; (6) when every table row of a slug
-writes a sign before a digit ("utc-06"), its de-slugged form ("utc 06", read as UTC+06) is not accepted. A one-word slug that is itself
+writes a true sign before a digit ("utc+06:30", or U+2212), its de-slugged form ("utc 06", read as UTC+06) is not accepted; a
+pronoun followed by "s", "ll", "re", "ve", "d" or "m" is also apostrophe residue ("He s dead Jim", "I ll cry later"). A one-word slug that is itself
 a clause word is rejected even verbatim (the 100k store has none).
 
 NOTHING IS DROPPED. A token outside the shape (pronoun, adverb, "just", "also", hedge, negation, subordinator, a comma that
@@ -117,7 +118,7 @@ import os
 import re
 import unicodedata
 
-from research.runners._moat_allowlist_relations import MEANING_DRIFT, has_verb_reading, reading_dropped, relation_class
+from research.runners._moat_allowlist_relations import DROPPED_READINGS, MEANING_DRIFT, has_verb_reading, reading_dropped, relation_class
 from research.runners._moat_claim_entailment_derisk import NEG_MARKERS, VERB_SYNONYMS, ClaimEntailmentVerifier, _build_inflection_map
 
 ALLOWLIST_ENV = "BRAIN_MOAT_ALLOWLIST"
@@ -145,9 +146,10 @@ _ASCII_ALNUM = re.compile(r"[a-z0-9]")
 # display-identical spaces (no-break, figure, thin, narrow no-break) count as one space. Every other whitespace or control character
 # (TAB, VT, FF, U+001C-U+001F, U+0085, U+1680, U+2028, U+2029, U+3000, ...) anywhere rejects the sentence (`_bad_space`).
 SPAN_SPACES = " \u00a0\u2007\u2009\u202f"
-# build 5: a sign before a digit (hyphen-minus, U+2212 minus, plus, plus-minus) that is not a range or joiner between two digits
+# build 5: a true sign before a digit (U+2212 minus, plus, plus-minus; not the hyphen-minus, which in store names is mostly a joiner such
+# as "under-21") that is not between two digits
 _WORD_BREAK = re.compile("[_%s]+" % SPAN_SPACES)
-_SIGNED_NUMBER = re.compile("(?<![0-9])[-\u2212+\u00b1][0-9]")
+_SIGNED_NUMBER = re.compile("(?<![0-9])[\u2212+\u00b1][0-9]")
 _WS = re.compile("[%s]+" % SPAN_SPACES)
 
 
@@ -334,11 +336,11 @@ class _NamesTable:
 
     def surfaces(self, slug):
         """The slug's canonical surfaces: the slug itself as written (the stub mouth renders slugs verbatim; it is the store's own
-        identifier, [a-z0-9_] only, so no fold is involved), its de-slugged form, and its table rows. Build 5 (review 2026-10-20): when
-        EVERY table row of the slug writes a sign before a digit (a minus or plus not preceded by a digit: "utc-06", "utc−06"), the
-        de-slugged form, which lost the sign ("utc 06" reads as UTC+06), is not accepted."""
+        identifier, [a-z0-9_] only, so no fold is involved), its de-slugged form, and its table rows. Build 5 (review 2026-10-20): when a
+        table row of the slug writes a true sign before a digit ("utc" U+2212 "06", "utc+06:30"; 7 store slugs, all UTC/GMT offsets),
+        the de-slugged form, which lost the sign ("utc 06" reads as UTC+06), is not accepted."""
         rows = self.entities.get(slug, frozenset())
-        if rows and all(_SIGNED_NUMBER.search(r) for r in rows):
+        if any(_SIGNED_NUMBER.search(r) for r in rows):
             return frozenset((slug,)) | rows
         return frozenset((slug, deslug(slug))) | rows
 
@@ -394,6 +396,12 @@ STRUCTURE_WORDS = frozenset(("is", "are", "was", "were", "be", "has", "have", "h
 # located") and a lone "t" right after a negative stem ("You don t arrest Voltaire" reads "don't"). A lone "s" or "t" elsewhere is the
 # residue of a folded accent or period ("universit t zu berlin", "u s of a") and reads as no word.
 CONTRACTION_RESIDUE = frozenset(("s", "t"))
+# re-review (2026-10-20): after a pronoun, "s" (either case) is "'s" = is ("He s dead Jim", "That s all folks") and "ll" / "re" / "ve" /
+# "d" / "m" are "'ll" / "'re" / "'ve" / "'d" / "'m" ("I ll cry later"); a "t" after a negative stem is residue in either case ("Don T")
+PRONOUNS_S = frozenset(("he", "she", "it", "that", "there", "here", "what", "who", "where", "someone", "somebody", "everyone",
+                        "everybody", "everything", "something", "nobody", "nothing", "let"))
+PRONOUNS_AUX = frozenset(("i", "you", "we", "they", "he", "she", "it"))
+AUX_RESIDUE = frozenset(("ll", "re", "ve", "d", "m"))
 NEGATIVE_STEMS = frozenset(("don", "doesn", "didn", "isn", "aren", "wasn", "weren", "won", "can", "couldn", "wouldn", "shouldn",
                             "hasn", "haven", "hadn", "ain", "mustn", "needn"))
 
@@ -416,11 +424,12 @@ def _structure_word_violation(parses, origs):
                 return ("entity span %r of %s holds the clause word %r: English reads it as the verb or a negation and cuts the name "
                         "there" % (origs[i], slug, hit[0]))
             res = None
-            if len(shown) > 1 and shown[-1] == "s":
+            if len(shown) > 1 and shown[-1] == "s" and "_" not in orig:     # a spaced name only: "andr_s" is the accent fold of Andras
                 res = "s"
             for k in range(1, len(shown)):
-                if shown[k] == "t" and shown[k - 1].lower() in NEGATIVE_STEMS:
-                    res = "t"
+                prev, w = shown[k - 1].lower(), shown[k].lower()
+                if (w == "t" and prev in NEGATIVE_STEMS) or (w == "s" and prev in PRONOUNS_S) or (w in AUX_RESIDUE and prev in PRONOUNS_AUX):
+                    res = shown[k]
             if res:
                 return ("entity span %r of %s holds a lone lower-case %r, the residue of a dropped apostrophe: English reads it as a "
                         "contraction (\"'s\" = is, \"n't\" = not)" % (origs[i], slug, res))
@@ -534,7 +543,9 @@ class _Lexicon:
         if kind == "verb" and val in self.verbs and val not in self.verb_ok:
             return val, relation_class(val)
         if kind == "verb" and val in self.verb_ok and reading_dropped(val, tok):      # a reading that failed the per-reading test
-            return val, MEANING_DRIFT
+            # build 5: a multi-word relation's underscore inflection other than the stub's token is dropped whatever the row's class
+            return val, (MEANING_DRIFT if tok in DROPPED_READINGS.get(val, ()) else "a dropped multi-word inflection (only the slug and "
+                         "the stub token are readings)")
         if tok in self.verbs and tok not in self.verb_ok:                  # e.g. an unclassified `_of` slug after "is"
             return tok, relation_class(tok)
         return None

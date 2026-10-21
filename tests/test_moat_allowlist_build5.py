@@ -273,7 +273,7 @@ def test_a_capitalised_underscore_slug_without_a_clause_word_is_kept():
 @pytest.mark.parametrize("sentence,svo", [
     ("Thun be located in the administrative territoria Canton de Berne.", ["thun_be", "located_in_the_administrative_territoria", "canton_de_berne"]),
     ("Biel be country Switzerland.", ["biel_be", "country", "switzerland"]),
-    ("Saint Alban s located in time zone UTC 00 00.", ["saint_alban_s", "located_in_time_zone", "utc_00_00"]),
+    ("Saint Alban s located in time zone utc_00_00.", ["saint_alban_s", "located_in_time_zone", "utc_00_00"]),
     ("You don t arrest Voltaire genre essay.", ["you_don_t_arrest_voltaire", "genre", "essay"]),
 ])
 def test_be_and_the_residue_of_a_dropped_apostrophe_reject(sentence, svo):
@@ -292,10 +292,42 @@ def test_a_capital_initial_and_a_fold_residue_are_not_contraction_residue():
 def test_a_signed_numbers_de_slugged_form_is_not_accepted():
     g = [["puebla_city", "located_in_time_zone", "utc_06"]]
     rows = A.names_table().entities["utc_06"]
-    assert rows and all(A._SIGNED_NUMBER.search(r) for r in rows), rows
+    assert any(A._SIGNED_NUMBER.search(r) for r in rows), rows
     r = _keep("Puebla City located in time zone UTC 06.", g)
     assert not r["keep"] and "utc_06" in r["reason"], r["reason"]
     assert "utc-06" in rows                                                              # the ASCII store spelling is kept
     assert _keep("Puebla City located in time zone UTC-06.", g)["keep"]
     assert _keep("puebla_city located_in_time_zone utc_06.", g)["keep"]                 # the slug verbatim
-    assert not A._SIGNED_NUMBER.search("1971-72 cypriot cup") and not A._SIGNED_NUMBER.search("0-6-0dh")   # ranges and joiners
+    for joined in ("1971-72 cypriot cup", "0-6-0dh", "under-21", "europe-1", "u-17"):        # hyphen joiners and ranges: not a sign
+        assert not A._SIGNED_NUMBER.search(joined), joined
+    assert _keep("Europe 1 is a member of European Broadcasting Union.", [["europe_1", "member_of", "european_broadcasting_union"]])["keep"]
+    signed = sorted(k for k, rows in A.names_table().entities.items() if any(A._SIGNED_NUMBER.search(r) for r in rows))
+    assert signed == ["gmt_5_45", "utc_00_00", "utc_06", "utc_06_30", "utc_07", "utc_3_5", "utc_4_30"], signed
+
+
+@pytest.mark.parametrize("sentence,svo", [
+    ("He s dead Jim occupation doctor behaviour.", ["he_s_dead_jim", "occupation", "doctor_behaviour"]),
+    ("Someone s waiting for you country of origin U S of A.", ["someone_s_waiting_for_you", "country_of_origin", "u_s_of_a"]),
+    ("That S all folks genre comedy.", ["that_s_all_folks", "genre", "comedy"]),
+    ("I ll cry later country of origin U S of A.", ["i_ll_cry_later", "country_of_origin", "u_s_of_a"]),
+    ("You Don T Arrest Voltaire country of citizenship France.", ["you_don_t_arrest_voltaire", "country_of_citizenship", "france"]),
+    ("He_s_dead_jim occupation doctor_behaviour.", ["he_s_dead_jim", "occupation", "doctor_behaviour"]),
+])
+def test_apostrophe_residue_after_a_pronoun_or_a_negative_stem_rejects(sentence, svo):
+    r = _keep(sentence, [svo])
+    assert not r["keep"] and "dropped apostrophe" in r["reason"], r["reason"]
+
+
+@pytest.mark.parametrize("sentence,svo", [
+    ("Louis_de_fun_s is an instance of human_specie.", ["louis_de_fun_s", "instance_of", "human_specie"]),   # Funes: an accent fold
+    ("Club_deportivo_legan_s country spain.", ["club_deportivo_legan_s", "country", "spain"]),
+    ("he_s_dead_jim occupation doctor_behaviour.", ["he_s_dead_jim", "occupation", "doctor_behaviour"]),     # the slug verbatim, as the stub writes it
+])
+def test_an_underscored_accent_fold_and_the_verbatim_slug_are_kept(sentence, svo):
+    r = _keep(sentence, [svo])
+    assert r["keep"], r["reason"]
+
+
+def test_a_dropped_multi_word_inflection_is_named_as_such():
+    r = _keep("Nine Inch Nails has_parted Trent Reznor.", HP)
+    assert "dropped multi-word inflection" in r["reason"] and "MEANING-DRIFT" not in r["reason"], r["reason"]
