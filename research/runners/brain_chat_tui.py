@@ -2191,15 +2191,27 @@ class ChatBrain:
 
         MOOD-TONE COUPLING (2026-08-27 fix): once verified, `_apply_mouth_mood_tone` may append a spiking-read tone
         marker so the Gate-B mood signal stays load-bearing on THIS mouth too (see `spiking_mouth_recall_prod`'s
-        module docstring). A neutral / absent mood is a no-op -> byte-identical to the pre-fix surface."""
+        module docstring). A neutral / absent mood is a no-op -> byte-identical to the pre-fix surface.
+
+        BUILD 6 (BRAIN_MOAT_ALLOWLIST, default OFF): the sentence is CHECKED "."-terminated (`spiking_recall_marked`), and what this
+        method returns is exactly what the flag-off path speaks for the same body and marker: the mouth sentence (trailing
+        U+0020 / LF / CR stripped, as `_moat_terminate` does) plus the three-state tone marker, "!" warm, "." curt, "" undecided
+        (neutral, the mood lesion, or a read that did not separate). All three states stay distinct, so a mood lesion changes a
+        curt reply. This is safe because the matcher strips exactly one final "." (token-neutral): the spoken text equals the
+        checked text up to that one final period, and the marker is the brain's own tone read-out, a declared non-claim. The mouth
+        emits alphabetic words only, so the final "." of the checked text is always the terminator's; a mouth sentence that itself
+        ended in "." would be spoken without it (the spoken form is always the checked text minus its one final "." plus the
+        marker). Inside a multi-sentence composer join (`RichAnswerComposer._join_verified`, which consumes `spiking_recall_parts`)
+        the curt and undecided markers both read "." (a run-on would be misread); that join, and a composer reply that is a single
+        spiking sentence, are NOT touched by this rule (declared)."""
         from research.runners.spiking_mouth_recall_prod import recall_mouth_enabled, frame_supported
         if self.raw_mode or self.renderer is None:
             return None                                   # GPU-free / --raw: keep the brain's raw triple path
         if not recall_mouth_enabled() or not frame_supported(a, v, p):
             return None                                   # flag OFF / open prose -> byte-identical fallback
-        if ChatBrain._moat_allowlist_enabled():                # BUILD 6: the allowlist checks the terminated sentence; the marker is added after
-            parts = self.spiking_recall_parts(a, v, p)
-            return None if parts is None else (parts[0][:-1] + "!" if parts[1] else parts[0])
+        if ChatBrain._moat_allowlist_enabled():                # BUILD 6: checked "."-terminated; spoken = body + marker, as flag off
+            marked = self.spiking_recall_marked(a, v, p)
+            return None if marked is None else marked[0][:-1] + marked[1]
         surface = self._spiking_recall_mouth().render(a, v, p)
         if self._verify(surface, None, [a, v, p]):        # the moat: the spiking sentence must recover THIS (a, v, p)
             return self._apply_mouth_mood_tone(surface)
@@ -2216,16 +2228,32 @@ class ChatBrain:
             return None
         return text
 
-    def spiking_recall_parts(self, a, v, p):
-        """BUILD 6 (flag ON only) -> (checked_text, warm) or None. `checked_text` ends in "." and is exactly what the allowlist kept; `warm`
-        is True when this turn's spiking tone marker is "!". MOOD MARKER RULING (Claude 2026-10-21): the closed set {"!", ".", ""} appended
-        to a spiking sentence after verification is a declared non-claim (the brain's own tone read-out, not a world fact): the body is
-        checked without it, "!" replaces the final "." when warm, and "." / "" leave the checked text as it is (curt and neutral read the
-        same under the flag). Tracked structurally (this boolean), never inferred from text: a Qwen sentence ending "!" still rejects."""
+    def spiking_recall_marked(self, a, v, p):
+        """BUILD 6 (flag ON only) -> (checked_text, marker) or None. `checked_text` ends in "." and is exactly what the allowlist kept;
+        `marker` is this turn's spiking tone read-out, one of "!" (warm), "." (curt) or "" (undecided: neutral, the mood lesion, or a
+        read that did not separate). MOOD MARKER RULING (Claude 2026-10-21): the closed set {"!", ".", ""} appended to a spiking
+        sentence after verification is a declared non-claim (the brain's own tone read-out, not a world fact), so the body is checked
+        without it. The single-sentence spoken surface (`spiking_recall_surface`) is `checked_text[:-1] + marker`, the same string the
+        flag-off path speaks for this body and marker; all three states stay distinct. Tracked structurally (this return value),
+        never inferred from text: a Qwen sentence ending "!" still rejects."""
         text = self._spiking_recall_checked(a, v, p)
         if text is None:
             return None
-        return text, self._mouth_tone_marker() == "!"
+        return text, self._mouth_tone_marker()
+
+    def spiking_recall_parts(self, a, v, p):
+        """BUILD 6 (flag ON only) -> (checked_text, warm) or None, the form the composer join consumes: `checked_text` is exactly what the
+        allowlist kept (ends in ".") and `warm` is True when this turn's spiking tone marker is "!" (see `spiking_recall_marked`, which
+        carries the marker itself). In a multi-sentence composer join (`RichAnswerComposer._join_verified`) a warm sentence's final "."
+        becomes "!" after the joined check and every other sentence keeps its "." (a run-on would be misread: "the dog chases the cat
+        the cat eats the fish"), so INSIDE A MULTI-SENTENCE JOIN THE CURT AND UNDECIDED MARKERS BOTH READ ".". The three-state rule of
+        `spiking_recall_surface` governs the ChatBrain single-sentence path only; a composer reply that is a single spiking sentence
+        also keeps "." (declared and left unchanged: the composer carries the mood as a boolean per item and `answer()` may frame the
+        paragraph after the join, so "a single sentence and nothing else" is not known at the join)."""
+        marked = self.spiking_recall_marked(a, v, p)
+        if marked is None:
+            return None
+        return marked[0], marked[1] == "!"
 
     def _mouth_tone_marker(self):
         """The spiking tone marker of this turn ('!' / '.' / ''): '' at level 0, with the mood lesion (BRAIN_SPIKING_MOUTH_MOOD=0) or when

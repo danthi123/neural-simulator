@@ -639,8 +639,12 @@ def test_the_spiking_recall_surface_is_checked_by_the_allowlist(monkeypatch):
         assert chat.spiking_recall_surface(*DOG) is None, bad
         assert chat.spiking_recall_parts(*DOG) is None, bad
     chat = _chat()
-    assert chat.spiking_recall_surface(*DOG) == "the dog chases the cat."
+    # build-6 mood-marker fix (Claude 2026-10-21): level 0 is the undecided state, whose flag-off surface is the body with NO marker; the
+    # flag-on surface is now that same string (it used to be "the dog chases the cat." here, which collapsed undecided into curt). The
+    # CHECKED text (parts / marked) is still the "."-terminated form.
+    assert chat.spiking_recall_surface(*DOG) == "the dog chases the cat"
     assert chat.spiking_recall_parts(*DOG) == ("the dog chases the cat.", False)
+    assert chat.spiking_recall_marked(*DOG) == ("the dog chases the cat.", "")
 
 
 def test_two_spiking_facts_join_with_a_terminal_period(monkeypatch):
@@ -759,19 +763,38 @@ def test_raw_mode_and_no_renderer_are_unchanged_by_the_flag(monkeypatch):
 
 
 # ---- the mood marker
+TONE = ((2, "!", "the dog chases the cat!"), (-2, ".", "the dog chases the cat."), (0, "", "the dog chases the cat"))   # level, marker, spoken
+CHECKED = "the dog chases the cat."
+
+
+def _flag_off(monkeypatch, fn):
+    """Evaluate `fn()` with the flag unset (the stock path), then put the flag back to whatever it was."""
+    was = os.environ.pop(FLAG, None)
+    try:
+        return fn()
+    finally:
+        if was is not None:
+            monkeypatch.setenv(FLAG, was)
+
+
 def test_the_mood_marker_is_a_declared_non_claim_added_after_the_check(monkeypatch):
+    """The marker is the brain's own tone read-out, added AFTER the check: the checker sees the "."-terminated body in every state.
+    Build-6 mood-marker fix (Claude 2026-10-21): this test used to pin level 0 and the curt level to the SAME surface ("...cat."),
+    the collapse of one state of `_mouth_tone_marker`; the ChatBrain surface now keeps all three states (see
+    `test_single_sentence_surface_keeps_all_three_tone_states`). The composer paragraph of one spiking fact is unchanged (declared)."""
     monkeypatch.setenv(FLAG, "1")
-    for level, want in ((2, "the dog chases the cat!"), (-2, "the dog chases the cat."), (0, "the dog chases the cat.")):
+    for level, marker, spoken in TONE:
         chat = _chat(level=level)
         spy = Spy(chat)
-        assert chat.spiking_recall_surface(*DOG) == want, level
-        assert spy.sets and all(s == "the dog chases the cat." for s, _g in spy.sets)       # the checker saw the body with "."
+        assert chat.spiking_recall_surface(*DOG) == spoken, level
+        assert spy.sets and all(s == CHECKED for s, _g in spy.sets)                          # the checker saw the body with "."
+        # the composer join keeps "!" for warm and "." for every other state (declared: curt and undecided both read ".")
         para, kept, _d = _comp(_chat(level=level)).render_paragraph([list(DOG)])
-        assert para == want and kept == [DOG]
+        assert para == (CHECKED[:-1] + "!" if marker == "!" else CHECKED) and kept == [DOG]
     assert _chat(level=2).spiking_recall_parts(*DOG)[1] is True
-    assert _chat(level=-2).spiking_recall_parts(*DOG)[1] is False                           # curt collapses to neutral (declared)
+    assert _chat(level=-2).spiking_recall_parts(*DOG)[1] is False        # parts' boolean is "warm" only; the surface keeps curt apart
     monkeypatch.setenv("BRAIN_SPIKING_MOUTH_MOOD", "0")
-    assert _chat(level=2).spiking_recall_surface(*DOG) == "the dog chases the cat."          # mood lesion: '.' only
+    assert _chat(level=2).spiking_recall_surface(*DOG) == "the dog chases the cat"           # mood lesion: the undecided surface
     monkeypatch.delenv("BRAIN_SPIKING_MOUTH_MOOD")
     # the affect lesion still changes this surface (level 0 vs +2)
     assert _chat(level=0).spiking_recall_surface(*DOG) != _chat(level=2).spiking_recall_surface(*DOG)
@@ -780,6 +803,86 @@ def test_the_mood_marker_is_a_declared_non_claim_added_after_the_check(monkeypat
     chat = _chat(Prose({tuple(DOG): "The dog chases the cat!"}, regen={tuple(DOG): "The dog chases the cat!"}))
     assert chat.render(list(DOG)).endswith("[unverified render -> spoke the brain's raw fact]")
     assert not chat._verify("The dog chases the cat!", None, DOG)
+
+
+def test_single_sentence_surface_keeps_all_three_tone_states(monkeypatch):
+    """Build-6 mood-marker fix: on the ChatBrain single-sentence path the spoken surface under the flag is exactly what the flag-off
+    path speaks for the same body and marker (body + "!" warm / "." curt / "" undecided), the three states are pairwise distinct, and
+    the text the allowlist checked is the "."-terminated form in all three."""
+    surfaces = {}
+    for level, marker, spoken in TONE:
+        monkeypatch.setenv(FLAG, "1")
+        chat = _chat(level=level)
+        spy = Spy(chat)
+        assert chat._mouth_tone_marker() == marker, level
+        on = chat.spiking_recall_surface(*DOG)
+        assert on == spoken, (level, on)
+        assert spy.sets == [(CHECKED, [DOG])], (level, spy.sets)                              # checked = the terminated form, one triple
+        assert chat.spiking_recall_marked(*DOG) == (CHECKED, marker)
+        assert chat.spiking_recall_parts(*DOG) == (CHECKED, marker == "!")                    # the composer's form is unchanged
+        assert _chat(level=level).render(list(DOG)) == spoken                                  # the user-facing single-fact path
+        off = _flag_off(monkeypatch, lambda: _chat(level=level).spiking_recall_surface(*DOG))
+        assert off == on == "the dog chases the cat" + marker, (level, off, on)               # equal to the flag-off surface
+        surfaces[marker] = on
+    assert len(set(surfaces.values())) == 3, surfaces                                          # warm, curt and undecided stay distinct
+
+
+def test_single_sentence_surface_spoken_equals_checked_up_to_one_final_period(monkeypatch):
+    """The spoken body is the checked text minus its ONE final ".", so the matcher (which strips exactly one final ".") saw the same
+    tokens that are spoken. Trailing U+0020 / LF / CR on the mouth sentence is stripped, as `_moat_terminate` does; a mouth sentence that
+    itself ends in "." is spoken without it (declared edge; the real mouth emits alphabetic words only)."""
+    monkeypatch.setenv(FLAG, "1")
+    for raw in ("the dog chases the cat", "the dog chases the cat \n", "the dog chases the cat\r\n  ", "the dog chases the cat."):
+        for level, marker, _spoken in TONE:
+            chat = _chat(mouth=FakeMouth({tuple(DOG): raw}), level=level)
+            spy = Spy(chat)
+            spoken = chat.spiking_recall_surface(*DOG)
+            assert spoken == "the dog chases the cat" + marker, (raw, level, spoken)
+            assert spy.sets == [(CHECKED, [DOG])], (raw, spy.sets)
+            assert A.allowlist_verify(spoken.rstrip("!."), [DOG])["accepted"] and A.allowlist_verify(CHECKED, [DOG])["accepted"]
+
+
+def test_mood_lesion_gives_the_undecided_surface_and_differs_from_curt(monkeypatch):
+    """BRAIN_SPIKING_MOUTH_MOOD=0 reads as undecided under the flag, and that surface differs from the intact curt surface, so a mood
+    lesion changes a curt reply (before the fix both read "the dog chases the cat." and the lesion was invisible)."""
+    monkeypatch.setenv(FLAG, "1")
+    intact = {lvl: _chat(level=lvl).spiking_recall_surface(*DOG) for lvl in (2, -2, 0)}
+    assert intact == {2: "the dog chases the cat!", -2: "the dog chases the cat.", 0: "the dog chases the cat"}
+    monkeypatch.setenv("BRAIN_SPIKING_MOUTH_MOOD", "0")
+    for lvl in (2, -2):
+        chat = _chat(level=lvl)
+        assert chat._mouth_tone_marker() == ""
+        lesioned = chat.spiking_recall_surface(*DOG)
+        assert lesioned == "the dog chases the cat" == intact[0], lvl                          # the undecided surface
+        assert lesioned != intact[-2] and lesioned != intact[2], lvl                             # the lesion engages (curt and warm)
+        assert chat.render(list(DOG)) == lesioned
+        assert lesioned == _flag_off(monkeypatch, lambda: _chat(level=lvl).spiking_recall_surface(*DOG))   # and equals the flag-off one
+
+
+@pytest.mark.parametrize("bad", ["the dog chases the cat!", "the dog chases the cat?", "the dog chases the cat ! ", "the dog chases the cat?\n"])
+def test_a_mouth_sentence_ending_in_bang_or_question_still_rejects_under_the_flag(monkeypatch, bad):
+    """The marker is added to a checked sentence, never read from the mouth's own text: a spiking sentence that itself ends in "!" or
+    "?" is rejected in every tone state, as before the fix."""
+    monkeypatch.setenv(FLAG, "1")
+    for level in (2, -2, 0):
+        chat = _chat(mouth=FakeMouth({tuple(DOG): bad}), level=level)
+        assert chat.spiking_recall_surface(*DOG) is None, (bad, level)
+        assert chat.spiking_recall_marked(*DOG) is None and chat.spiking_recall_parts(*DOG) is None, (bad, level)
+
+
+def test_the_composer_join_keeps_curt_and_undecided_as_a_period_declared(monkeypatch):
+    """Declared in the docstrings of `spiking_recall_parts` / `spiking_recall_surface`: inside a multi-sentence composer join a warm
+    sentence ends "!" and the curt and undecided ones both end "." (a run-on would be misread); the composer reply of a single
+    spiking sentence is unchanged by the ChatBrain three-state rule."""
+    monkeypatch.setenv(FLAG, "1")
+    monkeypatch.setenv("BRAIN_RICH_BATCH_RENDER", "0")
+    for level, marker, _spoken in TONE:
+        para, kept, dropped = _comp(_chat(level=level)).render_paragraph([list(DOG), list(CAT)])
+        want = "the dog chases the cat! the cat eats the fish!" if marker == "!" else "the dog chases the cat. the cat eats the fish."
+        assert para == want and kept == [DOG, CAT] and dropped == [], (level, para)
+    monkeypatch.setenv("BRAIN_SPIKING_MOUTH_MOOD", "0")
+    para, _k, _d = _comp(_chat(level=2)).render_paragraph([list(DOG), list(CAT)])
+    assert para == "the dog chases the cat. the cat eats the fish."
 
 
 # ---- build-6 review (test-gap): the joined check on the BATCHED path (BRAIN_RICH_BATCH_RENDER, renderer with batch methods)
@@ -1113,9 +1216,10 @@ CENSUS = {
     ("ChatBrain", "render_hypothesis_verified"): "C7: Qwen branch, the spoken body through the chokepoint",
     ("ChatBrain", "_render_hypothesis_spiking"): "C7: spiking branch, the body after the declared hedge through the chokepoint",
     ("ChatBrain", "_spiking_broca_producer"): "builds the hypothesis producer (no text)",
-    ("ChatBrain", "spiking_recall_surface"): "C2: flag ON routes through spiking_recall_parts",
+    ("ChatBrain", "spiking_recall_surface"): "C2: flag ON routes through spiking_recall_marked (checked text + three-state marker)",
     ("ChatBrain", "_spiking_recall_checked"): "C2: the allowlist over the terminated sentence",
-    ("ChatBrain", "spiking_recall_parts"): "C2: checked text + structural mood marker",
+    ("ChatBrain", "spiking_recall_marked"): "C2: checked text + the structural tone marker (the three-state single-sentence surface)",
+    ("ChatBrain", "spiking_recall_parts"): "C2: checked text + warm boolean for the composer join (via spiking_recall_marked)",
     ("ChatBrain", "_spiking_recall_mouth"): "builds the recall mouth (no text)",
     ("StubRenderer", "render_svo"): "the stub mouth itself",
     ("QwenRenderer", "render_svo"): "the Qwen mouth itself",
@@ -1129,7 +1233,8 @@ CENSUS = {
     ("_ConfabOneRenderer", "render_svo"): "the composer smoke's adversarial confabulating mouth (a test renderer, not production)",
 }
 MOUTH_CALLS = {"render_svo", "render_svo_batch", "render_svo_regen", "render_svo_regen_batch", "render_fact_sentence",
-               "_spiking_recall_mouth", "_spiking_broca_producer", "emit", "spiking_recall_surface", "spiking_recall_parts", "render"}
+               "_spiking_recall_mouth", "_spiking_broca_producer", "emit", "spiking_recall_surface", "spiking_recall_parts",
+               "spiking_recall_marked", "render"}
 
 
 # the webapp side (build-6 review): every mouth / generator call in webapp/*.py sits in a registered function with its status

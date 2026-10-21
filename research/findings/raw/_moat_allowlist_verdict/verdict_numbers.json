@@ -3095,8 +3095,88 @@
     "relabelled_to_B": 25
    },
    "strata": {
-    "heldout_numbers": null,
-    "note": "heldout_numbers_allowlist5.json not in this tree yet"
+    "heldout_numbers": "research/findings/raw/_moat_slug_norm_heldout/heldout_numbers_allowlist5.json",
+    "sha256": "87531ce5c8ede2740485c800a4149d808b6e8da9f360ae3d2544e54f02b29237",
+    "measured_at": "fde5e739e",
+    "S1": {
+     "buildable_unique": 272,
+     "lenient_unsupported_n": 122,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.02459016393442623,
+     "strict_unsupported_n": 180,
+     "strict_leaks": 0,
+     "strict_upper95": 0.016666666666666666,
+     "faithful_kept_seed42": 8,
+     "stock_faithful_kept_seed42": 1,
+     "b2h_faithful_kept_seed42": 13
+    },
+    "S2": {
+     "buildable_unique": 1068,
+     "lenient_unsupported_n": 930,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.0032258064516129032,
+     "strict_unsupported_n": 930,
+     "strict_leaks": 0,
+     "strict_upper95": 0.0032258064516129032,
+     "faithful_kept_seed42": 136,
+     "stock_faithful_kept_seed42": 0,
+     "b2h_faithful_kept_seed42": 118
+    },
+    "S3": {
+     "buildable_unique": 275,
+     "lenient_unsupported_n": 133,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.022556390977443608,
+     "strict_unsupported_n": 189,
+     "strict_leaks": 0,
+     "strict_upper95": 0.015873015873015872,
+     "faithful_kept_seed42": 27,
+     "stock_faithful_kept_seed42": 0,
+     "b2h_faithful_kept_seed42": 25
+    },
+    "composer": {
+     "S1": {
+      "n_turns": 29,
+      "stock_answered": 1,
+      "b2h_answered": 11,
+      "allowlist_answered": 6,
+      "HURTS": 0,
+      "LOSES_vs_b2h": 5,
+      "replay_misses": 0,
+      "status_counts": {
+       "both_abstain": 23,
+       "HELPS": 5,
+       "both_answer": 1
+      }
+     },
+     "S3": {
+      "n_turns": 61,
+      "stock_answered": 0,
+      "b2h_answered": 19,
+      "allowlist_answered": 19,
+      "HURTS": 0,
+      "LOSES_vs_b2h": 2,
+      "replay_misses": 0,
+      "status_counts": {
+       "both_abstain": 42,
+       "HELPS": 19
+      }
+     }
+    },
+    "bar4": {
+     "S1": {
+      "n": 13,
+      "kept": 8
+     },
+     "S2": {
+      "n": 118,
+      "kept": 117
+     },
+     "S3": {
+      "n": 25,
+      "kept": 23
+     }
+    }
    },
    "stub": {
     "file": "research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive_allowlist5.json",
