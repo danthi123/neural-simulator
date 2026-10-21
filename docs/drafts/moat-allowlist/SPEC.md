@@ -111,7 +111,32 @@ every proposition it encodes is a gathered triple of this turn:
   antecedent's name ("Keith Richards is a member of the Rolling Stones. The Band country of origin Canada portal."), and
   an antecedent that only the user's question supplied; a first-person "I" that is not a name's first word ("and i love
   her", "Baby I Love You"), left open because every such store name is a Roman numeral or a non-English "i" ("Vang i
-  Valdres"), with no store witness of a first-person clause (a conversation-taught name could add one).
+  Valdres"), with no store witness of a first-person clause (a conversation-taught name could add one; round 8 found
+  five, and build 7, next bullet, closes them in part).
+- **Build 7: two narrow name rules (round-8 blind hunt, Claude rulings 2026-10-21; branch `claude-build/moat-allowlist-1021g`,
+  cut from `claude-build/moat-allowlist-1021f`).** English marks a name by its capitals, except at a sentence's first
+  word; the rules add rejections only, inside `_name_reading_violation` after every build-6 check, so nothing outside the
+  allowlist module changes and the flag-off path is unchanged by construction. R7a: a one-word SUBJ/OBJ span whose word,
+  case-folded, is in a closed pronoun class (me, my, mine, myself, us, our, ours, ourselves, your, yours, yourself,
+  yourselves, he, him, his, himself, she, her, hers, herself, it, its, itself, they, them, their, theirs, themselves,
+  this, that, these, those; "i", "we", "you" stay under (b1'), any case) rejects when it is written in lower case or is
+  the sentence's first word, unless a determiner stands directly before it or it is written all-caps with 2+ letters
+  (US, ME, IT are abbreviations). It runs before the slug-verbatim skip, so a one-word slug written verbatim is the
+  pronoun ("Reginald K Dwight is an author of me.", "Canada portal shares border with us.", "It is an instance of
+  theatrical film."). A capitalised one-word span that is not the sentence's first word stays sayable ("Taylor Swift is
+  an author of Mine."). R7b: in a spaced span (2+ words, not the slug verbatim) a word "i" / "I" at position k > 0 reads
+  as the first-person pronoun, and the span rejects, when (1) it is lower-case "i" and no word of the span starts with an
+  upper-case letter ("honey i shrunk the kids", "sometimes i lie", "and i love her"); or (2) it is "I" and the next word
+  starts with a lower-case letter and is neither "of" nor a determiner ("So I married an axe murderer"); or (3) the word
+  directly before it, case-folded, is and / or / nor / but / "&" ("Trevor and I"; case-folded on purpose, so "And i love
+  her" rejects too). Stays sayable, each pinned: "Charles I of England", "Nicholas I the Conqueror", "Dom Pedro I",
+  "World War I", "Division I Bowl", "Fuad I University", "V I Lenin", "Vang i Valdres" (a lower-case "i" between
+  capitalised words is a preposition), and the title-case "Baby I Love You", a deliberate keep (title case reads as a
+  title). Open, documented: a title-case clause whose "I" is followed by a capital; a lower-case "i" in a name that has
+  some capital but is not a title ("Sometimes i lie"); lower-case names holding a lexical verb. Cost: the de-slugged
+  lower-case form of a Roman-numeral name ("charles i of england") has no casing signal and rejects under (1); the stub
+  renders slugs verbatim and is unaffected by R7b. Pinned in `tests/test_moat_allowlist_build7.py`, each rule with a
+  mutation check.
 - **VERB(rel):** a verb form of the relation from the verb-form table that `_noun_before_verb` uses (`1b67eef9b`),
   including the guarded `-s`, `-es` and `-ies` readings, only when that relation is gathered this turn.
 - **Case fidelity of entity spans (build 3, controller ruling 2026-10-20: no invented acronyms).** The store's slug

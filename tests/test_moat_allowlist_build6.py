@@ -404,9 +404,10 @@ def test_real_names_and_verbatim_slugs_stay_kept(sentence, gathered):
     # C3: lower-case names with a lexical verb stay open (known B residue; no verb lexicon, no proper-name bit in the store)
     ("steve threw up record label xl recordings.", [("steve_threw_up", "record_label", "xl_recordings")]),
     # build-6 review (doc): a first-person "I" that is not the name's first word; open because every such store name is a Roman numeral
-    # or a non-English "i" (synthetic slugs here: no store witness; round 8 probes conversation-taught names)
+    # or a non-English "i" (synthetic slugs here: no store witness; round 8 probes conversation-taught names). BUILD 7 closes the
+    # lower-case and conjunction forms ("And i love her performer the Beatles." moved to tests/test_moat_allowlist_build7.py, where it
+    # now rejects); the title-case clause and the real name stay kept
     ("Baby I Love You performer the Ramones.", [("baby_i_love_you", "performer", "the_ramones")]),
-    ("And i love her performer the Beatles.", [("and_i_love_her", "performer", "the_beatles")]),
     ("Vang i Valdres country Norway.", [("vang_i_valdres", "country", "norway")]),          # a real name: a deliberate keep
 ])
 def test_known_b_residue_stays_kept(sentence, gathered):
