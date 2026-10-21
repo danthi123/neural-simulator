@@ -213,6 +213,13 @@ def _moat_allowlist_enabled():
     return os.environ.get("BRAIN_MOAT_ALLOWLIST", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
+def _terminate(surface):
+    """Build 6 (flag ON only): "." after a candidate with no terminal punctuation (token-neutral for the matcher; prevents the run-on
+    join "the dog chases the cat the cat eats the fish"). The TUI's `_moat_terminate`, one rule."""
+    from research.runners.brain_chat_tui import _moat_terminate
+    return _moat_terminate(surface)
+
+
 def _batch_render_enabled():
     """ADDITIVE, DEFAULT-OFF (`BRAIN_RICH_BATCH_RENDER`). When truthy, `RichAnswerComposer.render_paragraph`
     batches the common-case fluent render of every gathered SVO that needs the faculty into ONE
@@ -873,6 +880,18 @@ class RichAnswerComposer:
         if (_batch_render_enabled() and len(facts) > 1 and not self.chat.raw_mode
                 and self.chat.renderer is not None and hasattr(self.chat.renderer, "render_svo_batch")):
             return self._render_paragraph_batched(facts, gated)
+        if _moat_allowlist_enabled() and not self.chat.raw_mode and self.chat.renderer is not None:
+            # BUILD 6: every sentence kept alone, then the JOINED reply checked against the union of the gathered triples
+            items, dropped = [], []
+            for svo in facts:
+                sent, verified, warm = self._render_one_verified_ex(svo, gated=gated)
+                if verified and sent:
+                    items.append((svo, _terminate(sent), warm))
+                else:
+                    dropped.append(svo)
+            paragraph, kept, dropped2 = self._join_verified(items, gated)
+            dropped_set = {id(x) for x in dropped + dropped2}
+            return paragraph, kept, [svo for svo in facts if id(svo) in dropped_set]
         kept, dropped, sentences = [], [], []
         for svo in facts:
             sent, verified = self._render_one_verified(svo, gated=gated)
@@ -913,9 +932,17 @@ class RichAnswerComposer:
         order = list(facts)
         surface_by_idx = {}
         need_render_idx, need_render_svo = [], []
+        allow = _moat_allowlist_enabled()                # BUILD 6: (text, warm) per index, joined check at the end
+        warm_by_idx = {}
         for i, svo in enumerate(order):
             a, v, p = svo
-            spk = self.chat.spiking_recall_surface(a, v, p)
+            if allow:
+                parts = self.chat.spiking_recall_parts(a, v, p)
+                spk = parts[0] if parts is not None else None
+                if parts is not None:
+                    warm_by_idx[i] = parts[1]
+            else:
+                spk = self.chat.spiking_recall_surface(a, v, p)
             if spk is not None:
                 surface_by_idx[i] = spk
             else:
@@ -963,10 +990,20 @@ class RichAnswerComposer:
             for i in regen_idx:
                 if need_full_fallback:
                     svo = order[i]
-                    sent, verified = self._render_one_verified(svo, gated=gated)
+                    if allow:
+                        sent, verified, warm = self._render_one_verified_ex(svo, gated=gated)
+                        warm_by_idx[i] = warm
+                    else:
+                        sent, verified = self._render_one_verified(svo, gated=gated)
                     if verified and sent:
                         surface_by_idx[i] = sent
                 # else: genuinely tried both batched stages and failed VERIFY both times -> DROP, no retry.
+        if allow:                                        # BUILD 6: the joined reply check, in gathered order
+            items = [(svo, _terminate(surface_by_idx[i]), warm_by_idx.get(i, False)) for i, svo in enumerate(order)
+                     if surface_by_idx.get(i)]
+            paragraph, kept, _d2 = self._join_verified(items, gated)
+            kept_ids = {id(x) for x in kept}
+            return paragraph, kept, [svo for svo in order if id(svo) not in kept_ids]
         kept, dropped, sentences = [], [], []
         for i, svo in enumerate(order):
             surface = surface_by_idx.get(i)
@@ -979,7 +1016,41 @@ class RichAnswerComposer:
         return paragraph, kept, dropped
 
     def _render_one_verified(self, svo, gated=None):
-        """Render ONE gathered SVO and report (sentence, verified). VERIFY re-parses the prose and DROPS the
+        """(sentence, verified) of `_render_one_verified_ex` (build 6 split; flag off the values are exactly as before)."""
+        sent, ok, _warm = self._render_one_verified_ex(svo, gated=gated)
+        return sent, ok
+
+    def _join_verified(self, items, gated):
+        """BUILD 6 (flag ON only): the JOINED reply check. `items` = [(svo, text, warm)] in gathered order, each text already kept alone
+        and "."-terminated. Keeps the LONGEST PREFIX of items whose joined text `allowlist_verify` (through `chat._verify_claim_set`)
+        accepts against `gated`, the union of the turn's gathered triples each sentence was checked against (Claude ruling A1: the rules
+        that cross sentences, a repeated proposition and a 'the' span that points back, reject a LATER sentence, so a passing prefix stays
+        passing). Returns (paragraph, kept_svos, dropped_svos); the warm items' final "." becomes "!" AFTER the check (the declared mood
+        marker). The reject reasons of the items cut are recorded on `self._last_reply_rejects`."""
+        acc, rejects = [], []
+        for n in range(1, len(items) + 1):
+            ok, res = self.chat._verify_claim_set(" ".join(t for _s, t, _w in items[:n]), gated)
+            if not ok:
+                rejects.append({"svo": list(items[n - 1][0]), "reject_reason": (res or {}).get("reject_reason")})
+                break
+            acc = items[:n]
+        self._last_reply_rejects = rejects
+        spoken = [(t[:-1] + "!") if w and t.endswith(".") else t for _s, t, w in acc]
+        paragraph = " ".join(spoken)
+        kept = [svo for svo, _t, _w in acc]
+        # build-6 review fix: when a caller opened a record on the chat (webapp/one_brain.begin_joined_record, the BRAIN_ONE_BRAIN deferred
+        # mouth), the emitted paragraph is recorded with its checked sentences and the gathered union, so the later substitution re-checks
+        # the WHOLE mouth paragraph (every composer sentence, not only the deferred-mouth calls). No record open: nothing is stored.
+        record = getattr(self.chat, "_moat_joined_replies", None)
+        if isinstance(record, list) and acc:
+            record.append({"spoken": spoken, "checked": [t for _s, t, _w in acc],
+                           "gated": [list(g) for g in (gated or ())] + [list(svo) for svo in kept]})
+        dropped = [svo for svo, _t, _w in items[len(acc):]]
+        return paragraph, kept, dropped
+
+    def _render_one_verified_ex(self, svo, gated=None):
+        """Render ONE gathered SVO and report (sentence, verified, warm); `warm` (build 6, flag ON only) marks a spiking sentence whose
+        mood marker is "!" (appended after the joined check by `_join_verified`). VERIFY re-parses the prose and DROPS the
         sentence if it is not brain-grounded, so an unsupported/drifted sentence never enters the paragraph.
         When the claim-level moat is enabled and the turn gathered >1 fact, VERIFY is the CLAIM-LEVEL entailment
         gate over the gathered set (`chat._verify_claim_set`) -- multi-clause fluent prose survives IFF every
@@ -988,15 +1059,20 @@ class RichAnswerComposer:
         if self.chat.raw_mode or self.chat.renderer is None:
             # no fluent renderer (raw mode / --no-renderer): the raw triple IS the verified content (it came
             # straight from the brain's store), so emit it as a plain sentence.
-            return self.chat._raw(svo), True
+            return self.chat._raw(svo), True, False
         # BRAIN-NATIVE SPIKING MOUTH (recall/rich surface): a bounded transitive-SVO sentence renders ON SPIKES
         # (word order = the per-pool spiking-RATE ranking), verify-gated by the ChatBrain's own re-parse moat.
         # Flag BRAIN_SPIKING_MOUTH_RECALL (default OFF) / open prose / a verify miss -> None -> falls straight
         # through to the Qwen/template render below (BYTE-IDENTICAL). A returned spiking sentence carries EXACTLY
         # this gathered SVO (verify passed), so it is within the gathered set and the multi-sentence moat holds.
-        spk = self.chat.spiking_recall_surface(a, v, p)
-        if spk is not None:
-            return spk, True
+        if _moat_allowlist_enabled():                    # BUILD 6: the checked text and its structural mood marker
+            parts = self.chat.spiking_recall_parts(a, v, p)
+            if parts is not None:
+                return parts[0], True, parts[1]
+        else:
+            spk = self.chat.spiking_recall_surface(a, v, p)
+            if spk is not None:
+                return spk, True, False
         # ONE-BRAIN STAGE-2 BUILD-AHEAD (BRAIN_TOUCHPOINT_A_FACT_CLAUSE, default OFF -- see the flag block
         # above `_touchpoint_a_fact_clause_enabled`): one more brain-based attempt on a Touchpoint-A miss,
         # reusing Surface B's already-6-seed-GO fact-clause render (moat-safe by construction: the ONE-item
@@ -1017,17 +1093,22 @@ class RichAnswerComposer:
                 fc_surface = _RNG.run(fc_seed, lambda: render_fact_sentence([svo], seed=fc_seed))
             except Exception:
                 fc_surface = None                         # never let this attempt crash a turn -- degrade below
-            if fc_surface:
-                return fc_surface, True
+            if _moat_allowlist_enabled():
+                # BUILD 6: Touchpoint A had no check at all; under the flag its sentence must pass the allowlist like any mouth
+                # sentence, else the turn falls through to the renderer below
+                if fc_surface and self._verify_rendered(_terminate(fc_surface), None, svo, gated):
+                    return _terminate(fc_surface), True, False
+            elif fc_surface:
+                return fc_surface, True, False
         surface, asserted = self.chat.renderer.render_svo(a, v, p)
         if self._verify_rendered(surface, asserted, svo, gated):
-            return surface, True
+            return surface, True, False
         # one tighter regenerate (if the renderer supports it), as the TUI does
         if hasattr(self.chat.renderer, "render_svo_regen"):
             surface2, asserted2 = self.chat.renderer.render_svo_regen(a, v, p)
             if self._verify_rendered(surface2, asserted2, svo, gated):
-                return surface2, True
-        return None, False
+                return surface2, True, False
+        return None, False, False
 
     def _verify_rendered(self, surface, asserted, svo, gated):
         """VERIFY a rendered sentence. CLAIM-LEVEL path (default, multi-fact turn): require the rendered PROSE to
@@ -1040,7 +1121,8 @@ class RichAnswerComposer:
         With `BRAIN_MOAT_ALLOWLIST` truthy (default OFF) the allowlist matcher decides every candidate over the gathered set
         (`[svo]` when no set is given) and nothing falls back to the single-triple re-parse (see `_moat_allowlist_enabled`)."""
         if _moat_allowlist_enabled():
-            accepted, _res = self.chat._verify_claim_set(surface, gated if gated is not None else [list(svo)])
+            # build 6: the candidate is checked "."-terminated (`_terminate`), as it will be joined and spoken
+            accepted, _res = self.chat._verify_claim_set(_terminate(surface), gated if gated is not None else [list(svo)])
             return bool(accepted)
         if gated is not None and (len(gated) > 1 or (len(gated) == 1 and _moat_slug_norm_enabled())):
             accepted, _res = self.chat._verify_claim_set(surface, gated)

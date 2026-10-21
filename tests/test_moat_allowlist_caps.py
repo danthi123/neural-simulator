@@ -93,6 +93,12 @@ def test_r4_dt02_is_rejected_through_the_production_gate_and_the_composer_at_all
 @pytest.mark.parametrize("obj", ["The Who", "the who", "the Who", "The who"])
 def test_the_band_written_in_its_own_case_is_kept_at_all_seven_seeds(seed_chats, obj):
     s = "Peter Dennis Blandford Townshend is a member of %s." % obj
+    if obj in ("the who", "The who"):
+        # build 6 (legitimate flip, listed in the build-6 report): 'the' + a lower-case word reads as a description ("the who"), not
+        # the band; only the capitalised forms stay kept
+        keep, why = A.allowlist_keep(s, DT02_G)
+        assert not keep and "a description, not a name" in why, why
+        return
     assert A.allowlist_keep(s, DT02_G) == (True, "ok")
     assert [_gate(seed_chats[sd], s, DT02_G)[0] for sd in SEEDS] == [True] * len(SEEDS)
     assert [_composer_entry(seed_chats[sd], s, DT02_G) for sd in SEEDS] == [True] * len(SEEDS)
@@ -103,7 +109,8 @@ def test_an_all_caps_word_inside_the_band_span_is_rejected_naming_it(obj, tok):
     s = "Peter Dennis Blandford Townshend is a member of %s." % obj
     keep, why = A.allowlist_keep(s, DT02_G)
     if tok is None:                                        # "wHO" is not written entirely in capitals: untouched by the rule
-        assert keep, why
+        # build 6 (legitimate flip): R6-MC02 "the wHO" is now rejected by the description rule ('the' + a lower-case word), not caps
+        assert not keep and "a description, not a name" in why and "all-caps" not in why, why
     else:
         assert not keep and "%r" % tok in why and "the_who" in why, (s, why)
 

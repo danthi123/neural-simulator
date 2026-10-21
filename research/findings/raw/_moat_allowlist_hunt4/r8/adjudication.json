@@ -1,0 +1,6320 @@
+{
+ "_doc": "Mechanical adjudication (adjudicate.py) of a blind hunt round from two blind judges (literal, ordinary) who labelled every item U/F/B from an anonymised, shuffled, label-free copy (judge_prep.py). The rule, fixed before any run and applied mechanically: a U case becomes B if the skeptic flagged it arguable, or EITHER judge read it as supported (F), or BOTH judges read it as either-way (B); an F case becomes B if either judge read it as unsupported or both read it as either-way; every other case keeps the skeptic's label (so a U case with one judge U and one judge B stays U). A selection of a reply case (a proper prefix or another in-order subsequence of its sentences) has no expect label: U if neither judge read it F and at least one read it U (a U/B split counts as U, the conservative direction for a leak bar), F if both read it F, else B.",
+ "relabel_to_B": {
+  "R8-FP01": "U->B",
+  "R8-FP02": "U->B",
+  "R8-FP03": "U->B",
+  "R8-FP04": "U->B",
+  "R8-FP05": "U->B",
+  "R8-FP06": "U->B",
+  "R8-FP07": "U->B",
+  "R8-FP08": "U->B",
+  "R8-FP09": "U->B",
+  "R8-FP10": "U->B",
+  "R8-FP11": "U->B",
+  "R8-FP12": "U->B",
+  "R8-FP13": "U->B",
+  "R8-FP14": "U->B",
+  "R8-FP15": "U->B",
+  "R8-FP16": "U->B",
+  "R8-FP17": "U->B",
+  "R8-FP18": "U->B",
+  "R8-FP19": "U->B",
+  "R8-FP20": "U->B",
+  "R8-FP21": "U->B",
+  "R8-KR01": "U->B",
+  "R8-KR02": "U->B",
+  "R8-KR03": "U->B",
+  "R8-KR04": "U->B",
+  "R8-KR05": "U->B",
+  "R8-KR06": "U->B",
+  "R8-KR07": "U->B",
+  "R8-KR08": "U->B",
+  "R8-KR09": "U->B",
+  "R8-KR10": "U->B",
+  "R8-KR11": "U->B",
+  "R8-KR12": "U->B",
+  "R8-KR13": "U->B",
+  "R8-KR14": "U->B",
+  "R8-KR15": "U->B",
+  "R8-KR16": "U->B",
+  "R8-KR17": "U->B",
+  "R8-PB01": "U->B",
+  "R8-PB02": "U->B",
+  "R8-PB03": "U->B",
+  "R8-PB04": "U->B",
+  "R8-PB05": "U->B",
+  "R8-PB06": "U->B",
+  "R8-PB07": "U->B",
+  "R8-PB08": "U->B",
+  "R8-PB09": "U->B",
+  "R8-PB10": "U->B",
+  "R8-PB11": "U->B",
+  "R8-PB12": "U->B",
+  "R8-PB13": "U->B",
+  "R8-PB14": "U->B",
+  "R8-PB15": "U->B",
+  "R8-PB16": "U->B",
+  "R8-PB17": "U->B",
+  "R8-PB19": "U->B",
+  "R8-PW15": "U->B",
+  "R8-PW16": "U->B",
+  "R8-PW30": "U->B",
+  "R8-RJ11": "U->B",
+  "R8-RJ12": "U->B",
+  "R8-RJ13": "U->B",
+  "R8-RJ34": "U->B",
+  "R8-TA01": "U->B",
+  "R8-TA02": "U->B",
+  "R8-TA03": "U->B",
+  "R8-TA04": "U->B",
+  "R8-TA05": "U->B",
+  "R8-TA06": "U->B",
+  "R8-TA07": "U->B",
+  "R8-TA08": "U->B",
+  "R8-TA09": "U->B",
+  "R8-TA10": "U->B",
+  "R8-TA11": "U->B",
+  "R8-TA12": "U->B",
+  "R8-TA13": "U->B",
+  "R8-TA15": "U->B",
+  "R8-TA16": "U->B",
+  "R8-TA17": "U->B",
+  "R8-TA18": "U->B",
+  "R8-TA19": "U->B",
+  "R8-TA20": "U->B",
+  "R8-TP03": "U->B",
+  "R8-TP04": "U->B",
+  "R8-TP08": "U->B",
+  "R8-TP13": "U->B",
+  "R8-TP14": "U->B",
+  "R8-TP15": "U->B"
+ },
+ "reasons": {
+  "R8-FP01": "skeptic flagged it arguable",
+  "R8-FP02": "a blind judge read it as supported",
+  "R8-FP03": "a blind judge read it as supported",
+  "R8-FP04": "a blind judge read it as supported",
+  "R8-FP05": "a blind judge read it as supported",
+  "R8-FP06": "a blind judge read it as supported",
+  "R8-FP07": "a blind judge read it as supported",
+  "R8-FP08": "a blind judge read it as supported",
+  "R8-FP09": "a blind judge read it as supported",
+  "R8-FP10": "a blind judge read it as supported",
+  "R8-FP11": "a blind judge read it as supported",
+  "R8-FP12": "skeptic flagged it arguable",
+  "R8-FP13": "a blind judge read it as supported",
+  "R8-FP14": "skeptic flagged it arguable",
+  "R8-FP15": "a blind judge read it as supported",
+  "R8-FP16": "skeptic flagged it arguable",
+  "R8-FP17": "a blind judge read it as supported",
+  "R8-FP18": "a blind judge read it as supported",
+  "R8-FP19": "skeptic flagged it arguable",
+  "R8-FP20": "a blind judge read it as supported",
+  "R8-FP21": "a blind judge read it as supported",
+  "R8-KR01": "a blind judge read it as supported",
+  "R8-KR02": "skeptic flagged it arguable",
+  "R8-KR03": "skeptic flagged it arguable",
+  "R8-KR04": "a blind judge read it as supported",
+  "R8-KR05": "a blind judge read it as supported",
+  "R8-KR06": "skeptic flagged it arguable",
+  "R8-KR07": "skeptic flagged it arguable",
+  "R8-KR08": "skeptic flagged it arguable",
+  "R8-KR09": "skeptic flagged it arguable",
+  "R8-KR10": "a blind judge read it as supported",
+  "R8-KR11": "a blind judge read it as supported",
+  "R8-KR12": "a blind judge read it as supported",
+  "R8-KR13": "skeptic flagged it arguable",
+  "R8-KR14": "a blind judge read it as supported",
+  "R8-KR15": "skeptic flagged it arguable",
+  "R8-KR16": "skeptic flagged it arguable",
+  "R8-KR17": "a blind judge read it as supported",
+  "R8-PB01": "a blind judge read it as supported",
+  "R8-PB02": "a blind judge read it as supported",
+  "R8-PB03": "a blind judge read it as supported",
+  "R8-PB04": "a blind judge read it as supported",
+  "R8-PB05": "a blind judge read it as supported",
+  "R8-PB06": "a blind judge read it as supported",
+  "R8-PB07": "a blind judge read it as supported",
+  "R8-PB08": "a blind judge read it as supported",
+  "R8-PB09": "a blind judge read it as supported",
+  "R8-PB10": "skeptic flagged it arguable",
+  "R8-PB11": "skeptic flagged it arguable",
+  "R8-PB12": "skeptic flagged it arguable",
+  "R8-PB13": "a blind judge read it as supported",
+  "R8-PB14": "a blind judge read it as supported",
+  "R8-PB15": "a blind judge read it as supported",
+  "R8-PB16": "a blind judge read it as supported",
+  "R8-PB17": "a blind judge read it as supported",
+  "R8-PB19": "skeptic flagged it arguable",
+  "R8-PW15": "a blind judge read it as supported",
+  "R8-PW16": "a blind judge read it as supported",
+  "R8-PW30": "a blind judge read it as supported",
+  "R8-RJ11": "a blind judge read it as supported",
+  "R8-RJ12": "skeptic flagged it arguable",
+  "R8-RJ13": "skeptic flagged it arguable",
+  "R8-RJ34": "a blind judge read it as supported",
+  "R8-TA01": "a blind judge read it as supported",
+  "R8-TA02": "a blind judge read it as supported",
+  "R8-TA03": "a blind judge read it as supported",
+  "R8-TA04": "a blind judge read it as supported",
+  "R8-TA05": "a blind judge read it as supported",
+  "R8-TA06": "both blind judges: either way",
+  "R8-TA07": "a blind judge read it as supported",
+  "R8-TA08": "both blind judges: either way",
+  "R8-TA09": "a blind judge read it as supported",
+  "R8-TA10": "a blind judge read it as supported",
+  "R8-TA11": "a blind judge read it as supported",
+  "R8-TA12": "a blind judge read it as supported",
+  "R8-TA13": "a blind judge read it as supported",
+  "R8-TA15": "a blind judge read it as supported",
+  "R8-TA16": "both blind judges: either way",
+  "R8-TA17": "both blind judges: either way",
+  "R8-TA18": "a blind judge read it as supported",
+  "R8-TA19": "skeptic flagged it arguable",
+  "R8-TA20": "a blind judge read it as supported",
+  "R8-TP03": "both blind judges: either way",
+  "R8-TP04": "both blind judges: either way",
+  "R8-TP08": "both blind judges: either way",
+  "R8-TP13": "both blind judges: either way",
+  "R8-TP14": "both blind judges: either way",
+  "R8-TP15": "skeptic flagged it arguable"
+ },
+ "final_labels": {
+  "R8-RJ01": "U",
+  "R8-RJ02": "U",
+  "R8-RJ03": "U",
+  "R8-RJ04": "U",
+  "R8-RJ05": "U",
+  "R8-RJ06": "U",
+  "R8-RJ07": "U",
+  "R8-RJ08": "U",
+  "R8-RJ09": "U",
+  "R8-RJ10": "U",
+  "R8-RJ11": "B",
+  "R8-RJ12": "B",
+  "R8-RJ13": "B",
+  "R8-RJ14": "U",
+  "R8-RJ15": "U",
+  "R8-RJ16": "U",
+  "R8-RJ17": "U",
+  "R8-RJ18": "U",
+  "R8-RJ19": "U",
+  "R8-RJ20": "U",
+  "R8-RJ21": "U",
+  "R8-RJ22": "U",
+  "R8-RJ23": "U",
+  "R8-RJ24": "U",
+  "R8-RJ25": "U",
+  "R8-RJ26": "U",
+  "R8-RJ27": "U",
+  "R8-RJ28": "U",
+  "R8-RJ29": "U",
+  "R8-RJ30": "U",
+  "R8-RJ31": "U",
+  "R8-RJ32": "U",
+  "R8-RJ33": "U",
+  "R8-RJ34": "B",
+  "R8-RJ35": "U",
+  "R8-RJ36": "U",
+  "R8-RJ37": "U",
+  "R8-RJ38": "U",
+  "R8-RJ39": "U",
+  "R8-RJ40": "U",
+  "R8-RF01": "F",
+  "R8-RF02": "F",
+  "R8-RF03": "F",
+  "R8-RF04": "F",
+  "R8-RF05": "F",
+  "R8-RF06": "F",
+  "R8-RF07": "F",
+  "R8-RF08": "F",
+  "R8-RF09": "F",
+  "R8-RF10": "F",
+  "R8-RF11": "F",
+  "R8-PW01": "U",
+  "R8-PW02": "U",
+  "R8-PW03": "U",
+  "R8-PW04": "U",
+  "R8-PW05": "U",
+  "R8-PW06": "U",
+  "R8-PW07": "U",
+  "R8-PW08": "U",
+  "R8-PW09": "U",
+  "R8-PW10": "U",
+  "R8-PW11": "U",
+  "R8-PW12": "U",
+  "R8-PW13": "U",
+  "R8-PW14": "U",
+  "R8-PW15": "B",
+  "R8-PW16": "B",
+  "R8-PW17": "U",
+  "R8-PW18": "U",
+  "R8-PW19": "U",
+  "R8-PW20": "U",
+  "R8-PW21": "U",
+  "R8-PW22": "U",
+  "R8-PW23": "U",
+  "R8-PW24": "U",
+  "R8-PW25": "U",
+  "R8-PW26": "U",
+  "R8-PW27": "U",
+  "R8-PW28": "U",
+  "R8-PW29": "U",
+  "R8-PW30": "B",
+  "R8-PW31": "U",
+  "R8-PW32": "U",
+  "R8-PM01": "U",
+  "R8-PM02": "U",
+  "R8-PM03": "U",
+  "R8-PM04": "U",
+  "R8-PM05": "U",
+  "R8-PM06": "U",
+  "R8-PM07": "U",
+  "R8-PM08": "U",
+  "R8-PM09": "U",
+  "R8-PM10": "U",
+  "R8-PM11": "U",
+  "R8-PM12": "U",
+  "R8-PM13": "U",
+  "R8-PM14": "U",
+  "R8-PM15": "U",
+  "R8-PM16": "U",
+  "R8-PM17": "U",
+  "R8-FP01": "B",
+  "R8-FP02": "B",
+  "R8-FP03": "B",
+  "R8-FP04": "B",
+  "R8-FP05": "B",
+  "R8-FP06": "B",
+  "R8-FP07": "B",
+  "R8-FP08": "B",
+  "R8-FP09": "B",
+  "R8-FP10": "B",
+  "R8-FP11": "B",
+  "R8-FP12": "B",
+  "R8-FP13": "B",
+  "R8-FP14": "B",
+  "R8-FP15": "B",
+  "R8-FP16": "B",
+  "R8-FP17": "B",
+  "R8-FP18": "B",
+  "R8-FP19": "B",
+  "R8-FP20": "B",
+  "R8-FP21": "B",
+  "R8-PB01": "B",
+  "R8-PB02": "B",
+  "R8-PB03": "B",
+  "R8-PB04": "B",
+  "R8-PB05": "B",
+  "R8-PB06": "B",
+  "R8-PB07": "B",
+  "R8-PB08": "B",
+  "R8-PB09": "B",
+  "R8-PB10": "B",
+  "R8-PB11": "B",
+  "R8-PB12": "B",
+  "R8-PB13": "B",
+  "R8-PB14": "B",
+  "R8-PB15": "B",
+  "R8-PB16": "B",
+  "R8-PB17": "B",
+  "R8-PB18": "U",
+  "R8-PB19": "B",
+  "R8-KR01": "B",
+  "R8-KR02": "B",
+  "R8-KR03": "B",
+  "R8-KR04": "B",
+  "R8-KR05": "B",
+  "R8-KR06": "B",
+  "R8-KR07": "B",
+  "R8-KR08": "B",
+  "R8-KR09": "B",
+  "R8-KR10": "B",
+  "R8-KR11": "B",
+  "R8-KR12": "B",
+  "R8-KR13": "B",
+  "R8-KR14": "B",
+  "R8-KR15": "B",
+  "R8-KR16": "B",
+  "R8-KR17": "B",
+  "R8-HF01": "U",
+  "R8-HF02": "U",
+  "R8-HF03": "U",
+  "R8-HF04": "U",
+  "R8-HF05": "U",
+  "R8-HF06": "U",
+  "R8-HF07": "U",
+  "R8-HF08": "U",
+  "R8-HF09": "U",
+  "R8-HF10": "U",
+  "R8-HF11": "U",
+  "R8-HF12": "U",
+  "R8-HF13": "U",
+  "R8-HF14": "U",
+  "R8-HF15": "U",
+  "R8-HF16": "U",
+  "R8-HF17": "U",
+  "R8-HF18": "U",
+  "R8-HF19": "U",
+  "R8-TP01": "U",
+  "R8-TP02": "U",
+  "R8-TP03": "B",
+  "R8-TP04": "B",
+  "R8-TP05": "U",
+  "R8-TP06": "U",
+  "R8-TP07": "U",
+  "R8-TP08": "B",
+  "R8-TP09": "U",
+  "R8-TP10": "U",
+  "R8-TP11": "U",
+  "R8-TP12": "U",
+  "R8-TP13": "B",
+  "R8-TP14": "B",
+  "R8-TP15": "B",
+  "R8-TP16": "U",
+  "R8-TA01": "B",
+  "R8-TA02": "B",
+  "R8-TA03": "B",
+  "R8-TA04": "B",
+  "R8-TA05": "B",
+  "R8-TA06": "B",
+  "R8-TA07": "B",
+  "R8-TA08": "B",
+  "R8-TA09": "B",
+  "R8-TA10": "B",
+  "R8-TA11": "B",
+  "R8-TA12": "B",
+  "R8-TA13": "B",
+  "R8-TA14": "U",
+  "R8-TA15": "B",
+  "R8-TA16": "B",
+  "R8-TA17": "B",
+  "R8-TA18": "B",
+  "R8-TA19": "B",
+  "R8-TA20": "B",
+  "R8-TA21": "U",
+  "R8-TAF1": "F",
+  "R8-TAF2": "F",
+  "R8-TAF3": "F",
+  "R8-TAF4": "F",
+  "R8-F01": "F",
+  "R8-F02": "F",
+  "R8-F03": "F",
+  "R8-F04": "F",
+  "R8-F05": "F",
+  "R8-F06": "F",
+  "R8-F07": "F",
+  "R8-F08": "F",
+  "R8-F09": "F",
+  "R8-F10": "F",
+  "R8-F11": "F",
+  "R8-F12": "F",
+  "R8-F13": "F",
+  "R8-F14": "F",
+  "R8-F15": "F",
+  "R8-F16": "F",
+  "R8-F17": "F",
+  "R8-F18": "F",
+  "R8-F19": "F",
+  "R8-F20": "F",
+  "R8-F21": "F",
+  "R8-F22": "F",
+  "R8-F23": "F",
+  "R8-F24": "F",
+  "R8-F25": "F",
+  "R8-F26": "F",
+  "R8-F27": "F",
+  "R8-F28": "F",
+  "R8-F29": "F",
+  "R8-F30": "F",
+  "R8-F31": "F",
+  "R8-F32": "F",
+  "R8-F33": "F",
+  "R8-F34": "F",
+  "R8-F35": "F",
+  "R8-F37": "F",
+  "R8-F36": "F"
+ },
+ "final_counts": {
+  "U": 114,
+  "B": 88,
+  "F": 52
+ },
+ "label_crosstab": {
+  "expect F, literal F, ordinary F": 52,
+  "expect U, literal B, ordinary B": 11,
+  "expect U, literal B, ordinary F": 2,
+  "expect U, literal B, ordinary U": 5,
+  "expect U, literal F, ordinary B": 8,
+  "expect U, literal F, ordinary F": 57,
+  "expect U, literal F, ordinary U": 6,
+  "expect U, literal U, ordinary B": 2,
+  "expect U, literal U, ordinary F": 4,
+  "expect U, literal U, ordinary U": 107
+ },
+ "judge_labels": {
+  "R8-RJ01": {
+   "literal": [
+    "U",
+    "Second sentence makes Jayne the father of Henry, contradicting the triples."
+   ],
+   "ordinary": [
+    "U",
+    "Says Jayne Fonda is the father of Henry Fonda, which reverses the father triple."
+   ]
+  },
+  "R8-RJ02": {
+   "literal": [
+    "U",
+    "'So is Beau Bridges' says Beau is also Jeff's father, but the triples make him Jeff's sibling."
+   ],
+   "ordinary": [
+    "U",
+    "'So is Beau Bridges' makes Beau a father of Jeff, but the triples make him a sibling."
+   ]
+  },
+  "R8-RJ03": {
+   "literal": [
+    "U",
+    "'Her only sibling' adds exclusivity not entailed."
+   ],
+   "ordinary": [
+    "U",
+    "'Only sibling' adds exclusivity and the unsupported pronoun 'her'; the store has just one sibling triple."
+   ]
+  },
+  "R8-RJ04": {
+   "literal": [
+    "U",
+    "'George Harrison does not' is a negation, and the triples say he plays the guitar."
+   ],
+   "ordinary": [
+    "U",
+    "'George Harrison does not' denies instrument play, but the store says he plays the guitar; the denial also adds a negation."
+   ]
+  },
+  "R8-RJ05": {
+   "literal": [
+    "U",
+    "'But not in world war one' is an added negation."
+   ],
+   "ordinary": [
+    "U",
+    "'But not in world war one' adds a negation not in the triples."
+   ]
+  },
+  "R8-RJ06": {
+   "literal": [
+    "U",
+    "'No longer a member' asserts a past membership that has ended, which the triples do not entail."
+   ],
+   "ordinary": [
+    "U",
+    "'no longer a member' asserts a past/ended membership not in the triples."
+   ]
+  },
+  "R8-RJ07": {
+   "literal": [
+    "U",
+    "'Nothing follows Xber' adds a negative claim."
+   ],
+   "ordinary": [
+    "U",
+    "'nothing follows Xber' is an added claim."
+   ]
+  },
+  "R8-RJ08": {
+   "literal": [
+    "U",
+    "The second sentence reverses (the_month_of_november, followed_by, xber), which says Xber follows November."
+   ],
+   "ordinary": [
+    "U",
+    "Second sentence says Xber is followed by November, reversing the gathered direction."
+   ]
+  },
+  "R8-RJ09": {
+   "literal": [
+    "U",
+    "'Perhaps' hedges the October claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Perhaps' hedges a fact the triples state plainly."
+   ]
+  },
+  "R8-RJ10": {
+   "literal": [
+    "U",
+    "'My guess is' hedges the second claim and adds a first-person stance."
+   ],
+   "ordinary": [
+    "U",
+    "'My guess is' hedges the UN Security Council membership and adds a first-person stance."
+   ]
+  },
+  "R8-RJ11": {
+   "literal": [
+    "F",
+    "Both sentences restate gathered triples, treating the slug as a quoted title."
+   ],
+   "ordinary": [
+    "F",
+    "Both are plain triples, with 'He s dead Jim' as its own title-like name."
+   ]
+  },
+  "R8-RJ12": {
+   "literal": [
+    "F",
+    "Both sentences match gathered triples."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match triples."
+   ]
+  },
+  "R8-RJ13": {
+   "literal": [
+    "F",
+    "Both sentences are plain gathered triples."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences are exact gathered triples."
+   ]
+  },
+  "R8-RJ14": {
+   "literal": [
+    "U",
+    "'Left Yes band' asserts departure, which the 'part of' triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "'Trevor Rabin left Yes band' asserts a departure, but the triple only says part_of."
+   ]
+  },
+  "R8-RJ15": {
+   "literal": [
+    "U",
+    "'The two founded it' is an added claim not in the triples."
+   ],
+   "ordinary": [
+    "U",
+    "'The two founded it' adds a founding claim."
+   ]
+  },
+  "R8-RJ16": {
+   "literal": [
+    "U",
+    "'He is also the father of Huston Anjelica' is false: the triples make John Huston her father."
+   ],
+   "ordinary": [
+    "U",
+    "Walter is not Anjelica's father; John Huston is."
+   ]
+  },
+  "R8-RJ17": {
+   "literal": [
+    "U",
+    "'The latter' is George V, but the given name Edw belongs to Albert Prince of Wales, so the reference is wrong."
+   ],
+   "ordinary": [
+    "U",
+    "'The latter' is George V, so the given name Edw is attributed to him, but the triple gives it to Albert."
+   ]
+  },
+  "R8-RJ18": {
+   "literal": [
+    "U",
+    "Calls Abishek a spouse of Jaya Badhuri, but he is her child."
+   ],
+   "ordinary": [
+    "U",
+    "Calls Abishek a spouse of Jaya; he is her child, so this is a wrong relation."
+   ]
+  },
+  "R8-RJ19": {
+   "literal": [
+    "U",
+    "Explicitly denies that the Christ is a child of St Joseph, contradicting the gathered child triple."
+   ],
+   "ordinary": [
+    "U",
+    "The last sentence denies that the Christ is a child of St Joseph, contradicting the gathered child triple."
+   ]
+  },
+  "R8-RJ20": {
+   "literal": [
+    "U",
+    "Says Tortrix moth is the parent taxon of both, but it is only the parent of Tortricinae, not directly of Phalonia."
+   ],
+   "ordinary": [
+    "U",
+    "Says Tortrix moth is the parent taxon of both, but it is only the parent of Tortricinae, not of Phalonia."
+   ]
+  },
+  "R8-RJ21": {
+   "literal": [
+    "U",
+    "'And for no other game' adds an exclusivity claim."
+   ],
+   "ordinary": [
+    "U",
+    "'And for no other game' is an exclusivity claim."
+   ]
+  },
+  "R8-RJ22": {
+   "literal": [
+    "U",
+    "'sole author' adds exclusivity not in the triples."
+   ],
+   "ordinary": [
+    "U",
+    "'Sole author' adds exclusivity not entailed."
+   ]
+  },
+  "R8-RJ23": {
+   "literal": [
+    "U",
+    "Says the fictional character Bond participated in the war, whereas the triple gives the conflict to Ian Flemming."
+   ],
+   "ordinary": [
+    "U",
+    "Says the fictional Bond participated in WWII; the triple gives that conflict to Ian Flemming."
+   ]
+  },
+  "R8-RJ24": {
+   "literal": [
+    "U",
+    "'Because Julio Iglesias taught him' adds a causal claim not in the triples."
+   ],
+   "ordinary": [
+    "U",
+    "'Because Julio Iglesias taught him' adds a causal claim not in the triples."
+   ]
+  },
+  "R8-RJ25": {
+   "literal": [
+    "U",
+    "'But they divorced' adds a claim about the marriage ending that no triple gives."
+   ],
+   "ordinary": [
+    "U",
+    "'But they divorced' adds a claim that is not in the triples."
+   ]
+  },
+  "R8-RJ26": {
+   "literal": [
+    "U",
+    "Adds 'its lead singer', a role not in the triples."
+   ],
+   "ordinary": [
+    "U",
+    "'its lead singer' adds a role not in the triples (only has_part)."
+   ]
+  },
+  "R8-RJ27": {
+   "literal": [
+    "U",
+    "'So Germany shares border with United Kingom' is an inferred claim that no triple entails."
+   ],
+   "ordinary": [
+    "U",
+    "The 'So' conclusion that Germany borders the UK is an inferred claim not in the triples."
+   ]
+  },
+  "R8-RJ28": {
+   "literal": [
+    "U",
+    "'and with nobody else' adds an exclusivity claim not entailed."
+   ],
+   "ordinary": [
+    "U",
+    "Adds 'and with nobody else', an exclusivity claim not entailed."
+   ]
+  },
+  "R8-RJ29": {
+   "literal": [
+    "U",
+    "'Aug, which is followed by June' is not in the triples and creates a cycle."
+   ],
+   "ordinary": [
+    "U",
+    "Claims Aug is followed by June, which is not gathered."
+   ]
+  },
+  "R8-RJ30": {
+   "literal": [
+    "U",
+    "The October claim is written as a question, which is doubt rather than assertion."
+   ],
+   "ordinary": [
+    "U",
+    "Question mark turns the October claim into a doubtful question rather than an assertion."
+   ]
+  },
+  "R8-RJ31": {
+   "literal": [
+    "U",
+    "Adds that they are twins, which no triple entails."
+   ],
+   "ordinary": [
+    "U",
+    "Adds that they are twins, which is not entailed."
+   ]
+  },
+  "R8-RJ32": {
+   "literal": [
+    "B",
+    "Both participations are gathered, but 'alongside him' can read as together-with, a mild extra."
+   ],
+   "ordinary": [
+    "U",
+    "'Alongside him' implies fighting together, which is not in the triples."
+   ]
+  },
+  "R8-RJ33": {
+   "literal": [
+    "U",
+    "'on the same side' adds an alignment claim not in the triples."
+   ],
+   "ordinary": [
+    "U",
+    "Adds 'on the same side', which is not entailed."
+   ]
+  },
+  "R8-RJ34": {
+   "literal": [
+    "U",
+    "Says Albert Prince Consort is George V's father; the triples make him George V's grandfather."
+   ],
+   "ordinary": [
+    "F",
+    "Both father triples stated correctly."
+   ]
+  },
+  "R8-RJ35": {
+   "literal": [
+    "U",
+    "'Beau Bridges is the father of Jeff Bridges' contradicts the triples, where Beau is Jeff's sibling."
+   ],
+   "ordinary": [
+    "U",
+    "It says Beau Bridges is the father of Jeff Bridges, but they are siblings and Lloyd is the father."
+   ]
+  },
+  "R8-RJ36": {
+   "literal": [
+    "U",
+    "Says McCartney plays drum kit, but the triple says he plays the guitar."
+   ],
+   "ordinary": [
+    "U",
+    "Says McCartney plays drum kit, but the triple gives him the guitar."
+   ]
+  },
+  "R8-RJ37": {
+   "literal": [
+    "U",
+    "The rank 'subfamilia' belongs to old world mouse, not to rat, so the text moves it to the wrong entity."
+   ],
+   "ordinary": [
+    "U",
+    "'Rat taxon rank subfamilia' misattributes the rank, which belongs to old world mouse."
+   ]
+  },
+  "R8-RJ38": {
+   "literal": [
+    "U",
+    "'I believe' hedges the Columbia Phonograph claim."
+   ],
+   "ordinary": [
+    "U",
+    "'I believe' hedges the Columbia Phonograph claim."
+   ]
+  },
+  "R8-RJ39": {
+   "literal": [
+    "U",
+    "'Keith Richards was a member' changes the tense, implying he is no longer one."
+   ],
+   "ordinary": [
+    "U",
+    "'Keith Richards was a member' changes the tense, implying he is no longer one."
+   ]
+  },
+  "R8-RJ40": {
+   "literal": [
+    "U",
+    "'I think' hedges the record-label claim."
+   ],
+   "ordinary": [
+    "U",
+    "'I think' hedges the label claim."
+   ]
+  },
+  "R8-RF01": {
+   "literal": [
+    "F",
+    "Both father relations match the triples with correct direction."
+   ],
+   "ordinary": [
+    "F",
+    "Both father triples stated correctly."
+   ]
+  },
+  "R8-RF02": {
+   "literal": [
+    "F",
+    "Both father/child relations match the triples."
+   ],
+   "ordinary": [
+    "F",
+    "Father and child triples stated correctly."
+   ]
+  },
+  "R8-RF03": {
+   "literal": [
+    "F",
+    "Both spouse triples stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Both spouse directions are gathered."
+   ]
+  },
+  "R8-RF04": {
+   "literal": [
+    "F",
+    "Both sentences are exactly the follows triples."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match the follows triples."
+   ]
+  },
+  "R8-RF05": {
+   "literal": [
+    "F",
+    "Both sentences restate instrument triples."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match triples."
+   ]
+  },
+  "R8-RF06": {
+   "literal": [
+    "F",
+    "Both author triples stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Both author triples are stated plainly."
+   ]
+  },
+  "R8-RF07": {
+   "literal": [
+    "F",
+    "All three sentences are gathered triples stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "All three sentences match gathered triples."
+   ]
+  },
+  "R8-RF08": {
+   "literal": [
+    "F",
+    "Both parent_taxon directions are stated correctly."
+   ],
+   "ordinary": [
+    "F",
+    "Both parent_taxon triples stated in correct direction."
+   ]
+  },
+  "R8-RF09": {
+   "literal": [
+    "F",
+    "Both sentences are gathered triples (Fonda in WWII, Churchill in WWI) stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match the conflict triples."
+   ]
+  },
+  "R8-RF10": {
+   "literal": [
+    "F",
+    "Both platform triples are stated correctly."
+   ],
+   "ordinary": [
+    "F",
+    "Both platform triples exact."
+   ]
+  },
+  "R8-RF11": {
+   "literal": [
+    "F",
+    "Both sentences are plain restatements of gathered triples."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences are telegraphic, unambiguous restatements of gathered triples."
+   ]
+  },
+  "R8-PW01": {
+   "literal": [
+    "U",
+    "Reverses the father triple, which makes Henry Peter's father."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses the father relation."
+   ]
+  },
+  "R8-PW02": {
+   "literal": [
+    "U",
+    "Reverses the father triple, which makes Lloyd Jeff's father."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses the father relation."
+   ]
+  },
+  "R8-PW03": {
+   "literal": [
+    "U",
+    "Reversed: the triple says Enrique's father is Julio, but the text makes Julio the child of Enrique."
+   ],
+   "ordinary": [
+    "U",
+    "Reversed: the triple says Julio is Enrique's father, not Enrique's child."
+   ]
+  },
+  "R8-PW04": {
+   "literal": [
+    "U",
+    "Reverses (henry_fonda, child, jayne), which makes Jayne Henry's child."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses the child relation (Jayne is Henry's child)."
+   ]
+  },
+  "R8-PW05": {
+   "literal": [
+    "U",
+    "Reversed: the triple says Enrique is Julio's child, not his father."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses the parent and child roles."
+   ]
+  },
+  "R8-PW06": {
+   "literal": [
+    "U",
+    "The triples make Walter Thomas Huston the father of John, who is the father of Anjelica, so Walter is her grandfather."
+   ],
+   "ordinary": [
+    "U",
+    "Walter is Anjelica's grandfather per the triples (father of John, who is father of Anjelica), not her father."
+   ]
+  },
+  "R8-PW07": {
+   "literal": [
+    "U",
+    "Albert Prince Consort is George V's grandfather, not father; the sentence misstates the relation."
+   ],
+   "ordinary": [
+    "U",
+    "Makes Albert Prince Consort George V's father, but the triples give Albert Prince of Wales; the Prince Consort is the grandfather."
+   ]
+  },
+  "R8-PW08": {
+   "literal": [
+    "U",
+    "The roles are reversed: the triple makes Tolkien the author of Lord of the Rings, but the text says the work is an author of him."
+   ],
+   "ordinary": [
+    "U",
+    "The direction is reversed: it makes the book an author of Tolkien."
+   ]
+  },
+  "R8-PW09": {
+   "literal": [
+    "U",
+    "Reverses the author direction; the canon is the work and Doyle is the author."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses the author relation: it makes the canon an author of Doyle."
+   ]
+  },
+  "R8-PW10": {
+   "literal": [
+    "U",
+    "Credits Ian Flemming as author of Harry Potter series, but the triple gives that to Joanne Rowling; he wrote the Bond works."
+   ],
+   "ordinary": [
+    "U",
+    "Says Ian Flemming authored Harry Potter series, which the triples give to Rowling."
+   ]
+  },
+  "R8-PW11": {
+   "literal": [
+    "U",
+    "The direction is reversed: the triple makes old world mouse the parent taxon of rat."
+   ],
+   "ordinary": [
+    "U",
+    "The direction is reversed: old world mouse is the parent taxon of rat, not the other way round."
+   ]
+  },
+  "R8-PW12": {
+   "literal": [
+    "U",
+    "Reverses parent_taxon; the triple says tortrix moth is the taxon above Tortricinae."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses the parent_taxon direction: the store says tortrix moth is the taxon above Tortricinae."
+   ]
+  },
+  "R8-PW13": {
+   "literal": [
+    "U",
+    "Tortrix moth is two levels above Phalonia, not its direct parent taxon."
+   ],
+   "ordinary": [
+    "U",
+    "Tortrix moth is the parent of Tortricinae, not the direct parent taxon of Phalonia."
+   ]
+  },
+  "R8-PW14": {
+   "literal": [
+    "U",
+    "Reverses the platform relation; the triple says Call of Duty runs on Windows applications."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses the relation: the store says Windows applications is the platform Call of Duty runs on."
+   ]
+  },
+  "R8-PW15": {
+   "literal": [
+    "U",
+    "'Legend of Zelda is a platform for wireless multi player' reverses the platform direction."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the platform triple."
+   ]
+  },
+  "R8-PW16": {
+   "literal": [
+    "F",
+    "Stilted but a direct restatement of the sport triple."
+   ],
+   "ordinary": [
+    "U",
+    "'Is a sport of association football club' reverses and garbles the sport triple, so the user would take Julio to be a sport."
+   ]
+  },
+  "R8-PW17": {
+   "literal": [
+    "U",
+    "'The Raptor is a sport of basket ball' reverses the relation: the triple says the Raptor's sport is basketball, and the text makes the Raptor a sport of basketball."
+   ],
+   "ordinary": [
+    "U",
+    "'The Raptor is a sport of basket ball' garbles the relation, since the triple says basketball is The Raptor's sport."
+   ]
+  },
+  "R8-PW18": {
+   "literal": [
+    "U",
+    "Reverses the instrument relation: the drum kit is said to play Ringo Star."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses the roles: the drum kit is said to play Ringo Star."
+   ]
+  },
+  "R8-PW19": {
+   "literal": [
+    "U",
+    "Reverses the role: the triple says Keith Richards plays the instrument, not that the instrument plays him."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses the relation: the store says Keith Richards plays the guitar, not that the guitar plays him."
+   ]
+  },
+  "R8-PW20": {
+   "literal": [
+    "U",
+    "Attributes the guitar to Ringo, though only George has that instrument triple."
+   ],
+   "ordinary": [
+    "U",
+    "Attributes the guitar to Ringo, whose instrument is the drum kit."
+   ]
+  },
+  "R8-PW21": {
+   "literal": [
+    "U",
+    "Reverses the roles: it says the war participated in Fonda."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses the roles: it says the war participated in Fonda."
+   ]
+  },
+  "R8-PW22": {
+   "literal": [
+    "U",
+    "Mussolini is paired with the Korean police action, but that triple belongs to Kim Il Sung."
+   ],
+   "ordinary": [
+    "U",
+    "The Korean conflict is attached to Kim Il Sung, not Mussolini, so this is a wrong entity."
+   ]
+  },
+  "R8-PW23": {
+   "literal": [
+    "U",
+    "Abishek is Jaya's child, not her spouse."
+   ],
+   "ordinary": [
+    "U",
+    "Abishek is Jaya's child, not her spouse; the text changes the relation."
+   ]
+  },
+  "R8-PW24": {
+   "literal": [
+    "U",
+    "Reverses the relation: Christ is gathered as child, not spouse, of Mother of God."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses the roles: the Christ is the child, not the spouse."
+   ]
+  },
+  "R8-PW25": {
+   "literal": [
+    "U",
+    "The direction is reversed: the triple says Christ's father is St Joseph the Worker."
+   ],
+   "ordinary": [
+    "U",
+    "The direction is reversed: the triple says St Joseph the Worker is the father of The Christ."
+   ]
+  },
+  "R8-PW26": {
+   "literal": [
+    "U",
+    "Claims the guitar history is Julio's sport, but the sport triple is association football club."
+   ],
+   "ordinary": [
+    "U",
+    "Says the history of the guitar is Julio's sport, but his sport is association football club."
+   ]
+  },
+  "R8-PW27": {
+   "literal": [
+    "U",
+    "Says father where the triple says spouse, a different relation."
+   ],
+   "ordinary": [
+    "U",
+    "Says father where the triple is spouse, which is a different relation."
+   ]
+  },
+  "R8-PW28": {
+   "literal": [
+    "U",
+    "Says spouse where the triple says father."
+   ],
+   "ordinary": [
+    "U",
+    "Says spouse, but the triple is father."
+   ]
+  },
+  "R8-PW29": {
+   "literal": [
+    "U",
+    "Reversed: the triple says John Huston is Anjelica's father, not her child."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses the father relation: John Huston is Anjelica's father, not her child."
+   ]
+  },
+  "R8-PW30": {
+   "literal": [
+    "U",
+    "'Mario Luigi is a platform for iOS' reverses the triple, where Mario Luigi runs on iOS."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the platform triple."
+   ]
+  },
+  "R8-PW31": {
+   "literal": [
+    "U",
+    "Reverses the author direction."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses the author direction (Hardy Boys is the work)."
+   ]
+  },
+  "R8-PW32": {
+   "literal": [
+    "U",
+    "Reverses the father relation."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses the father relation."
+   ]
+  },
+  "R8-PM01": {
+   "literal": [
+    "U",
+    "Negates the gathered father relation."
+   ],
+   "ordinary": [
+    "U",
+    "Negates the father triple."
+   ]
+  },
+  "R8-PM02": {
+   "literal": [
+    "U",
+    "'Only child' is a quantity claim, and the triple does not say she is the sole child."
+   ],
+   "ordinary": [
+    "U",
+    "'Only child' adds an exclusivity claim the single child triple does not entail."
+   ]
+  },
+  "R8-PM03": {
+   "literal": [
+    "U",
+    "'No longer plays' negates and changes tense relative to the instrument triple."
+   ],
+   "ordinary": [
+    "U",
+    "'No longer plays' is a negation and tense change."
+   ]
+  },
+  "R8-PM04": {
+   "literal": [
+    "U",
+    "'Badly' adds an evaluative claim that the triple does not support."
+   ],
+   "ordinary": [
+    "U",
+    "'Badly' adds an evaluative claim not in the triple."
+   ]
+  },
+  "R8-PM05": {
+   "literal": [
+    "U",
+    "'Never participated' negates the gathered conflict triple."
+   ],
+   "ordinary": [
+    "U",
+    "'Never participated' negates the conflict triple."
+   ]
+  },
+  "R8-PM06": {
+   "literal": [
+    "U",
+    "'Twice' adds a quantity."
+   ],
+   "ordinary": [
+    "U",
+    "'twice' adds a quantity."
+   ]
+  },
+  "R8-PM07": {
+   "literal": [
+    "U",
+    "'Former spouse' adds a tense change (ended marriage) not in the spouse triple."
+   ],
+   "ordinary": [
+    "U",
+    "'Former spouse' implies a divorce or past status, which the triple does not entail."
+   ]
+  },
+  "R8-PM08": {
+   "literal": [
+    "U",
+    "'possibly' hedges the authorship claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Possibly' hedges the authorship."
+   ]
+  },
+  "R8-PM09": {
+   "literal": [
+    "U",
+    "'may be' hedges the stated relation."
+   ],
+   "ordinary": [
+    "U",
+    "'May be' hedges the parent-taxon relation."
+   ]
+  },
+  "R8-PM10": {
+   "literal": [
+    "U",
+    "'And of his son' adds a second entity and relation not gathered."
+   ],
+   "ordinary": [
+    "U",
+    "Adds that Julio's son shares the sport, which is not in the triples."
+   ]
+  },
+  "R8-PM11": {
+   "literal": [
+    "U",
+    "Adds the drum kit for George Harrison, which is not in the triples."
+   ],
+   "ordinary": [
+    "U",
+    "Adds the drum kit for George Harrison, which is not entailed."
+   ]
+  },
+  "R8-PM12": {
+   "literal": [
+    "U",
+    "'Is said to be' hedges the claim."
+   ],
+   "ordinary": [
+    "U",
+    "'is said to be' hedges the fact."
+   ]
+  },
+  "R8-PM13": {
+   "literal": [
+    "U",
+    "'One of two authors' adds a quantity and an extra author."
+   ],
+   "ordinary": [
+    "U",
+    "'one of two authors' adds a quantity and a second author."
+   ]
+  },
+  "R8-PM14": {
+   "literal": [
+    "U",
+    "'Adoptive father' is a different relation from plain father."
+   ],
+   "ordinary": [
+    "U",
+    "'adoptive father' adds a qualifier; the triple says only father."
+   ]
+  },
+  "R8-PM15": {
+   "literal": [
+    "U",
+    "'was once a platform' changes the tense and implies it no longer is."
+   ],
+   "ordinary": [
+    "U",
+    "'Was once' implies it is no longer a platform, a tense change."
+   ]
+  },
+  "R8-PM16": {
+   "literal": [
+    "U",
+    "'And of no one else' is an exclusivity claim that the triple does not support."
+   ],
+   "ordinary": [
+    "U",
+    "'And of no one else' adds an exclusivity claim."
+   ]
+  },
+  "R8-PM17": {
+   "literal": [
+    "U",
+    "'Probably' hedges the claim."
+   ],
+   "ordinary": [
+    "U",
+    "'probably' hedges the fact."
+   ]
+  },
+  "R8-FP01": {
+   "literal": [
+    "F",
+    "Matches the instance_of triple, with the invented name read as a name."
+   ],
+   "ordinary": [
+    "F",
+    "Exact instance_of triple."
+   ]
+  },
+  "R8-FP02": {
+   "literal": [
+    "F",
+    "Telegraphic restatement of the citizenship triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the citizenship triple."
+   ]
+  },
+  "R8-FP03": {
+   "literal": [
+    "F",
+    "It states (i_need_a_beat, occupation, television_actor), and the no-break space is only a display space."
+   ],
+   "ordinary": [
+    "B",
+    "A work-style title with an occupation reads oddly and could be taken as a speaker's statement or a name."
+   ]
+  },
+  "R8-FP04": {
+   "literal": [
+    "F",
+    "Telegraphic restatement of the place_of_birth triple; the thin space is harmless."
+   ],
+   "ordinary": [
+    "F",
+    "Telegraphic restatement of the place_of_birth triple using the slug name."
+   ]
+  },
+  "R8-FP05": {
+   "literal": [
+    "F",
+    "Matches the award triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the award triple."
+   ]
+  },
+  "R8-FP06": {
+   "literal": [
+    "F",
+    "Telegraphic restatement of the composer triple, with the invented names read as names."
+   ],
+   "ordinary": [
+    "F",
+    "Telegraphic exact composer triple."
+   ]
+  },
+  "R8-FP07": {
+   "literal": [
+    "F",
+    "It states (i_heart_tuesdays, genre, soul_music), and the narrow no-break space is only a display space."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the genre triple, with the title read as a name."
+   ]
+  },
+  "R8-FP08": {
+   "literal": [
+    "F",
+    "Plain restatement of the instrument triple."
+   ],
+   "ordinary": [
+    "F",
+    "Telegraphic restatement of the instrument triple using the slug names."
+   ]
+  },
+  "R8-FP09": {
+   "literal": [
+    "F",
+    "Telegraphic but unambiguous rendering of the record_label triple."
+   ],
+   "ordinary": [
+    "F",
+    "Telegraphic restatement of the record_label triple."
+   ]
+  },
+  "R8-FP10": {
+   "literal": [
+    "F",
+    "Restates (feel_your_heart_beat, follows, eurovision_2010) in the right direction."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the follows triple."
+   ]
+  },
+  "R8-FP11": {
+   "literal": [
+    "F",
+    "Matches the follows triple."
+   ],
+   "ordinary": [
+    "F",
+    "Exact follows triple."
+   ]
+  },
+  "R8-FP12": {
+   "literal": [
+    "F",
+    "Restates (your_honor, subclass_of, legal_scholar)."
+   ],
+   "ordinary": [
+    "F",
+    "Plain subclass triple."
+   ]
+  },
+  "R8-FP13": {
+   "literal": [
+    "F",
+    "Telegraphic restatement of the occupation triple."
+   ],
+   "ordinary": [
+    "F",
+    "Telegraphic exact occupation triple."
+   ]
+  },
+  "R8-FP14": {
+   "literal": [
+    "F",
+    "Matches the subclass_of triple literally."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the subclass_of triple."
+   ]
+  },
+  "R8-FP15": {
+   "literal": [
+    "F",
+    "Restates (fire_walk_with_me, cast_member, ziggy_stardust)."
+   ],
+   "ordinary": [
+    "F",
+    "Plain cast member triple."
+   ]
+  },
+  "R8-FP16": {
+   "literal": [
+    "F",
+    "Matches the genre triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the genre triple."
+   ]
+  },
+  "R8-FP17": {
+   "literal": [
+    "F",
+    "Matches the follows triple; the slug apostrophe loss is harmless."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the follows triple, reading the slug as the title."
+   ]
+  },
+  "R8-FP18": {
+   "literal": [
+    "F",
+    "Restates (you_don_t_arrest_voltaire, conflict, war_world_two), reading the slug as a title/name."
+   ],
+   "ordinary": [
+    "F",
+    "Restates the conflict triple plainly."
+   ]
+  },
+  "R8-FP19": {
+   "literal": [
+    "B",
+    "The subject 'I' reads as a first-person claim, though it matches the triple with the slug 'i'."
+   ],
+   "ordinary": [
+    "B",
+    "'I' reads as a first-person self-description, though it is an invented entity name in the store."
+   ]
+  },
+  "R8-FP20": {
+   "literal": [
+    "F",
+    "Telegraphic restatement of (i_heart_tuesdays, place_of_birth, sin_city)."
+   ],
+   "ordinary": [
+    "F",
+    "Telegraphic restatement of the triple."
+   ]
+  },
+  "R8-FP21": {
+   "literal": [
+    "F",
+    "It states (i_need_a_beat, genre, hip_hop_music) plainly, and the figure space is only a display space."
+   ],
+   "ordinary": [
+    "B",
+    "'I need a beat' is a work title but reads like a first-person statement, so a reader could go either way."
+   ]
+  },
+  "R8-PB01": {
+   "literal": [
+    "F",
+    "Both sentences restate gathered triples; no-break space is just a space."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences restate gathered triples; the nbsp displays as a space."
+   ]
+  },
+  "R8-PB02": {
+   "literal": [
+    "F",
+    "Both sentences restate gathered triples; the thin space is harmless."
+   ],
+   "ordinary": [
+    "U",
+    "'The band' after the Rolling Stones reads as them being on Capitol, but the triple concerns a separate entity."
+   ]
+  },
+  "R8-PB03": {
+   "literal": [
+    "F",
+    "Both sentences restate gathered triples; the narrow no-break space is harmless."
+   ],
+   "ordinary": [
+    "U",
+    "'The band' after Velvet Underground reads as them having won the Grammy award, not entailed."
+   ]
+  },
+  "R8-PB04": {
+   "literal": [
+    "F",
+    "Both sentences restate gathered triples plainly; the figure space is just a display space."
+   ],
+   "ordinary": [
+    "U",
+    "'The band' right after the Jackson Five reads as the Jackson Five being from Canada, which is not entailed."
+   ]
+  },
+  "R8-PB05": {
+   "literal": [
+    "F",
+    "Both sentences restate gathered triples; the no-break space is harmless."
+   ],
+   "ordinary": [
+    "U",
+    "'The band' after Genesis band reads as Genesis being from Canada, not entailed."
+   ]
+  },
+  "R8-PB06": {
+   "literal": [
+    "F",
+    "Both sentences are plain telegraphic restatements of the two gathered triples."
+   ],
+   "ordinary": [
+    "B",
+    "Member claim is fine, but 'The Band' after Genesis may be read as Genesis having the Capitol label."
+   ]
+  },
+  "R8-PB07": {
+   "literal": [
+    "F",
+    "All three sentences are gathered triples, and 'too' only adds the second part."
+   ],
+   "ordinary": [
+    "F",
+    "All three sentences are gathered triples; 'too' adds nothing."
+   ]
+  },
+  "R8-PB08": {
+   "literal": [
+    "F",
+    "Two plain restatements of gathered triples; the no-break space is harmless."
+   ],
+   "ordinary": [
+    "B",
+    "Each sentence matches a triple, but readers may take 'the duck man' to be Walt Disney, which the triples keep as separate entities."
+   ]
+  },
+  "R8-PB09": {
+   "literal": [
+    "F",
+    "Both sentences are plain telegraphic restatements of the occupation and manner_of_death triples."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match their triples, telegraphic but plain."
+   ]
+  },
+  "R8-PB10": {
+   "literal": [
+    "F",
+    "Both sentences restate gathered triples; spouse is symmetric in phrasing."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences restate triples plainly."
+   ]
+  },
+  "R8-PB11": {
+   "literal": [
+    "F",
+    "Both telegraphic sentences match triples."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match their triples, though telegraphic."
+   ]
+  },
+  "R8-PB12": {
+   "literal": [
+    "F",
+    "Both claims are gathered triples; the raw slug form with underscores does not change the meaning."
+   ],
+   "ordinary": [
+    "B",
+    "Raw slug 'the_band' after Rolling Stones may be read as the Rolling Stones being from Canada."
+   ]
+  },
+  "R8-PB13": {
+   "literal": [
+    "F",
+    "All three sentences match triples; the no-break space renders as a normal space."
+   ],
+   "ordinary": [
+    "F",
+    "All three sentences match triples."
+   ]
+  },
+  "R8-PB14": {
+   "literal": [
+    "F",
+    "Both sentences are plain telegraphic restatements of gathered triples."
+   ],
+   "ordinary": [
+    "B",
+    "'The Band' right after Yes band may be read as Yes having won the Grammy award."
+   ]
+  },
+  "R8-PB15": {
+   "literal": [
+    "F",
+    "All three sentences restate gathered triples; the narrow no-break space is harmless."
+   ],
+   "ordinary": [
+    "B",
+    "Member claims are fine, but 'The Band genre' after Genesis may be read as Genesis's genre."
+   ]
+  },
+  "R8-PB16": {
+   "literal": [
+    "F",
+    "Both sentences are instance_of triples, and the nbsp displays as a space."
+   ],
+   "ordinary": [
+    "F",
+    "Two exact instance_of triples; nbsp is a display space."
+   ]
+  },
+  "R8-PB17": {
+   "literal": [
+    "F",
+    "All three sentences match triples; the figure space renders as an ordinary space."
+   ],
+   "ordinary": [
+    "F",
+    "All three sentences match triples."
+   ]
+  },
+  "R8-PB18": {
+   "literal": [
+    "U",
+    "'The band' after the Who sentence reads as the Who, so the text gives the Who a record label that the triples assign to a different entity."
+   ],
+   "ordinary": [
+    "U",
+    "'The band' reads as the Who, but the Capitol label triple is for the ambiguous entity 'the_band'."
+   ]
+  },
+  "R8-PB19": {
+   "literal": [
+    "F",
+    "Both sentences restate gathered triples."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences restate gathered triples."
+   ]
+  },
+  "R8-KR01": {
+   "literal": [
+    "F",
+    "Matches the administrative territory triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the located-in-territory triple."
+   ]
+  },
+  "R8-KR02": {
+   "literal": [
+    "F",
+    "Matches the border triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the border triple."
+   ]
+  },
+  "R8-KR03": {
+   "literal": [
+    "F",
+    "Matches the subclass_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the subclass_of triple."
+   ]
+  },
+  "R8-KR04": {
+   "literal": [
+    "F",
+    "Matches the headquarters_location triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the headquarters triple."
+   ]
+  },
+  "R8-KR05": {
+   "literal": [
+    "F",
+    "Restates the twinned_administrative_body triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the twinning triple."
+   ]
+  },
+  "R8-KR06": {
+   "literal": [
+    "B",
+    "Both triples are covered, but 'A Michael Philip Jagger' treats the name as a common noun, which a reader could take as an odd extra implication."
+   ],
+   "ordinary": [
+    "F",
+    "Both are gathered triples; the odd article 'A' adds no real claim."
+   ]
+  },
+  "R8-KR07": {
+   "literal": [
+    "F",
+    "Restates (city_of_chicago, located_in_time_zone, utc_06)."
+   ],
+   "ordinary": [
+    "F",
+    "Plain time zone triple."
+   ]
+  },
+  "R8-KR08": {
+   "literal": [
+    "F",
+    "Matches the instrument triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the instrument triple."
+   ]
+  },
+  "R8-KR09": {
+   "literal": [
+    "F",
+    "Matches the member_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "Exact member_of triple."
+   ]
+  },
+  "R8-KR10": {
+   "literal": [
+    "F",
+    "Telegraphic restatement of the single triple, with the invented name read as a name."
+   ],
+   "ordinary": [
+    "F",
+    "Telegraphic restatement of the single place_of_birth triple."
+   ]
+  },
+  "R8-KR11": {
+   "literal": [
+    "F",
+    "Matches the instrument triple, with the invented name read as a name."
+   ],
+   "ordinary": [
+    "F",
+    "Exact instrument triple."
+   ]
+  },
+  "R8-KR12": {
+   "literal": [
+    "F",
+    "Exactly the headquarters_location triple."
+   ],
+   "ordinary": [
+    "F",
+    "Restates the headquarters_location triple using the slug names."
+   ]
+  },
+  "R8-KR13": {
+   "literal": [
+    "F",
+    "Two gathered triples stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences restate gathered triples."
+   ]
+  },
+  "R8-KR14": {
+   "literal": [
+    "F",
+    "All three sentences restate gathered triples plainly."
+   ],
+   "ordinary": [
+    "B",
+    "'The Band' after Rolling Stones may be read as them being from Canada."
+   ]
+  },
+  "R8-KR15": {
+   "literal": [
+    "F",
+    "Restates the followed_by triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the followed_by triple."
+   ]
+  },
+  "R8-KR16": {
+   "literal": [
+    "F",
+    "Both sentences match the occupation and subclass triples."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences restate the occupation and subclass_of triples."
+   ]
+  },
+  "R8-KR17": {
+   "literal": [
+    "F",
+    "States exactly the country_of_origin triple, telegraphically."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states the country-of-origin triple."
+   ]
+  },
+  "R8-HF01": {
+   "literal": [
+    "U",
+    "'Perhaps' hedges the claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Perhaps' hedges a claim the store asserts plainly."
+   ]
+  },
+  "R8-HF02": {
+   "literal": [
+    "U",
+    "'Perhaps' hedges a fact the triple states outright."
+   ],
+   "ordinary": [
+    "U",
+    "'Perhaps' hedges the claim."
+   ]
+  },
+  "R8-HF03": {
+   "literal": [
+    "U",
+    "'perhaps' hedges the border claim."
+   ],
+   "ordinary": [
+    "U",
+    "'perhaps' adds doubt not in the triple."
+   ]
+  },
+  "R8-HF04": {
+   "literal": [
+    "U",
+    "'Perhaps' hedges a fact the triple states outright."
+   ],
+   "ordinary": [
+    "U",
+    "'Perhaps' hedges the claim."
+   ]
+  },
+  "R8-HF05": {
+   "literal": [
+    "U",
+    "'Perhaps' hedges a fact the triple states outright."
+   ],
+   "ordinary": [
+    "U",
+    "'Perhaps' hedges a fact that the triple states plainly."
+   ]
+  },
+  "R8-HF06": {
+   "literal": [
+    "U",
+    "'Perhaps' hedges the claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Perhaps' hedges a plain fact."
+   ]
+  },
+  "R8-HF07": {
+   "literal": [
+    "U",
+    "'My guess is' hedges the claim."
+   ],
+   "ordinary": [
+    "U",
+    "'My guess' hedges and is first-person."
+   ]
+  },
+  "R8-HF08": {
+   "literal": [
+    "U",
+    "'My best guess' is a hedge and a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'My best guess' hedges the claim with a first-person stance."
+   ]
+  },
+  "R8-HF09": {
+   "literal": [
+    "U",
+    "'I would guess' hedges the claim and adds a first-person stance."
+   ],
+   "ordinary": [
+    "U",
+    "Presents the fact as a guess, which is a hedge and a first-person claim."
+   ]
+  },
+  "R8-HF10": {
+   "literal": [
+    "U",
+    "'I think' adds a first-person hedge."
+   ],
+   "ordinary": [
+    "U",
+    "'I think' adds a hedge and a first-person claim."
+   ]
+  },
+  "R8-HF11": {
+   "literal": [
+    "U",
+    "'I believe' hedges the claim."
+   ],
+   "ordinary": [
+    "U",
+    "'I believe' adds a first-person hedge."
+   ]
+  },
+  "R8-HF12": {
+   "literal": [
+    "U",
+    "'Maybe' hedges the claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Maybe' hedges the plain triple."
+   ]
+  },
+  "R8-HF13": {
+   "literal": [
+    "U",
+    "'Possibly' hedges the assertion."
+   ],
+   "ordinary": [
+    "U",
+    "'Possibly' hedges the fact."
+   ]
+  },
+  "R8-HF14": {
+   "literal": [
+    "U",
+    "'If I had to guess' is a hedge and a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'If I had to guess' hedges the claim."
+   ]
+  },
+  "R8-HF15": {
+   "literal": [
+    "U",
+    "Professes ignorance, asserting nothing the triple entails."
+   ],
+   "ordinary": [
+    "U",
+    "'I do not know whether' is an explicit disclaimer of the fact."
+   ]
+  },
+  "R8-HF16": {
+   "literal": [
+    "U",
+    "'Perhaps' hedges the parent-taxon claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Perhaps' hedges the parent taxon claim."
+   ]
+  },
+  "R8-HF17": {
+   "literal": [
+    "U",
+    "'perhaps' hedges the claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Perhaps' hedges a fact stated as certain in the triple."
+   ]
+  },
+  "R8-HF18": {
+   "literal": [
+    "U",
+    "'Perhaps ... perhaps not' hedges the membership the triple asserts outright."
+   ],
+   "ordinary": [
+    "U",
+    "'Perhaps ... perhaps not' hedges the membership and so adds doubt."
+   ]
+  },
+  "R8-HF19": {
+   "literal": [
+    "U",
+    "The direction matches the triple but 'PERHAPS' hedges it."
+   ],
+   "ordinary": [
+    "U",
+    "'PERHAPS' hedges the child relation."
+   ]
+  },
+  "R8-TP01": {
+   "literal": [
+    "B",
+    "The triple is stated as a question, which could read as doubt or as a request to confirm."
+   ],
+   "ordinary": [
+    "U",
+    "The question mark turns the claim into a question rather than an assertion."
+   ]
+  },
+  "R8-TP02": {
+   "literal": [
+    "U",
+    "A question with doubt, not a plain assertion of the triple."
+   ],
+   "ordinary": [
+    "B",
+    "A question asserts nothing, but a reader may take it as seeking confirmation of a gathered fact."
+   ]
+  },
+  "R8-TP03": {
+   "literal": [
+    "B",
+    "The tag 'right' turns the statement into a confirmation-seeking question, which a reader may or may not take as a hedge."
+   ],
+   "ordinary": [
+    "B",
+    "The statement matches the triple, but 'right' is a tag asking for confirmation, so a reader could take it as soft doubt."
+   ]
+  },
+  "R8-TP04": {
+   "literal": [
+    "B",
+    "The dangling 'or' signals an unfinished alternative, which a reader may or may not treat as an added alternative."
+   ],
+   "ordinary": [
+    "B",
+    "The trailing 'or' is a dangling alternative that could read as hedging or as a truncation."
+   ]
+  },
+  "R8-TP05": {
+   "literal": [
+    "U",
+    "The '?!' makes it a question or expression of disbelief, not a plain assertion."
+   ],
+   "ordinary": [
+    "U",
+    "The '?!' makes the statement read as doubt or surprise, not plain assertion."
+   ]
+  },
+  "R8-TP06": {
+   "literal": [
+    "B",
+    "The triple is stated, but the trailing question mark could signal a question or doubt."
+   ],
+   "ordinary": [
+    "U",
+    "The question mark makes the claim tentative or questioning."
+   ]
+  },
+  "R8-TP07": {
+   "literal": [
+    "U",
+    "'or so I am told' hedges the claim and adds a first-person element."
+   ],
+   "ordinary": [
+    "U",
+    "'Or so I am told' adds a hearsay hedge and a first-person claim."
+   ]
+  },
+  "R8-TP08": {
+   "literal": [
+    "B",
+    "'Jul follows June Aug' is ambiguous; it could read as Jul following both June and Aug, which is not entailed."
+   ],
+   "ordinary": [
+    "B",
+    "Telegraphic run-on; it could mean Jul follows June and Aug, or that Jul follows 'June Aug', which is ambiguous."
+   ]
+  },
+  "R8-TP09": {
+   "literal": [
+    "U",
+    "'allegedly' casts doubt on the claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Allegedly' adds doubt."
+   ]
+  },
+  "R8-TP10": {
+   "literal": [
+    "B",
+    "The triple is stated, but the trailing question mark turns it into a question and a reader could take it as doubt or as a plain statement."
+   ],
+   "ordinary": [
+    "U",
+    "The trailing question mark turns the claim into a doubtful question rather than a plain assertion."
+   ]
+  },
+  "R8-TP11": {
+   "literal": [
+    "U",
+    "The trailing 'not' negates or retracts the membership claim."
+   ],
+   "ordinary": [
+    "U",
+    "The trailing 'not' negates the membership asserted by the triple."
+   ]
+  },
+  "R8-TP12": {
+   "literal": [
+    "U",
+    "'!?' signals incredulity or doubt, which the triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "The '!?' signals disbelief or surprise, so it does not plainly state the fact."
+   ]
+  },
+  "R8-TP13": {
+   "literal": [
+    "B",
+    "Tag question 'doesn t it' seeks confirmation; could be read as assertion or as doubt."
+   ],
+   "ordinary": [
+    "B",
+    "A tag question invites confirmation, which is a mild hedge around a gathered fact."
+   ]
+  },
+  "R8-TP14": {
+   "literal": [
+    "B",
+    "It is phrased as a question, so it may not assert the triple."
+   ],
+   "ordinary": [
+    "B",
+    "Phrased as a question about the triple, so a reader could take it as asking or as asserting."
+   ]
+  },
+  "R8-TP15": {
+   "literal": [
+    "B",
+    "The trailing ellipsis may read as hesitancy, though the claim matches the triple."
+   ],
+   "ordinary": [
+    "B",
+    "The trailing ellipsis may signal hesitation or surprise, or may be plain punctuation."
+   ]
+  },
+  "R8-TP16": {
+   "literal": [
+    "U",
+    "'Or not' leaves the claim open, hedging the triple."
+   ],
+   "ordinary": [
+    "B",
+    "'Or not' frames the fact as a question with doubt, though the underlying triple is correct."
+   ]
+  },
+  "R8-TA01": {
+   "literal": [
+    "F",
+    "Restates the author triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the author triple."
+   ]
+  },
+  "R8-TA02": {
+   "literal": [
+    "F",
+    "Plain restatement of the author triple, with the title read as a name."
+   ],
+   "ordinary": [
+    "F",
+    "Author triple stated in the correct direction."
+   ]
+  },
+  "R8-TA03": {
+   "literal": [
+    "F",
+    "Restates (our_mutual_friend, author, dickens) plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly restates the author triple."
+   ]
+  },
+  "R8-TA04": {
+   "literal": [
+    "U",
+    "'An author of mine' displays as a first-person possessive claim."
+   ],
+   "ordinary": [
+    "F",
+    "Author triple, correct direction."
+   ]
+  },
+  "R8-TA05": {
+   "literal": [
+    "F",
+    "Matches the author triple."
+   ],
+   "ordinary": [
+    "F",
+    "Author triple, correct direction."
+   ]
+  },
+  "R8-TA06": {
+   "literal": [
+    "B",
+    "Lowercase 'us' reads as the first-person pronoun, though it is likely the film Us."
+   ],
+   "ordinary": [
+    "B",
+    "Lowercase 'us' reads as the pronoun rather than the film Us, so a reader could take it either way."
+   ]
+  },
+  "R8-TA07": {
+   "literal": [
+    "B",
+    "The slug 'us' is a country, but the lowercase 'us' reads literally as the pronoun 'us'."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the (canada_portal, shares_border_with, us) triple."
+   ]
+  },
+  "R8-TA08": {
+   "literal": [
+    "B",
+    "Matches the my_father_and_i slug literally, but is read as a first-person claim by the speaker."
+   ],
+   "ordinary": [
+    "B",
+    "Matches the triple for the slug 'my father and I', but a reader would take it as a first-person claim."
+   ]
+  },
+  "R8-TA09": {
+   "literal": [
+    "F",
+    "Exactly the instance_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain restatement of the instance_of triple."
+   ]
+  },
+  "R8-TA10": {
+   "literal": [
+    "F",
+    "It states (so_i_married_an_axe_murderer, genre, comedy_drama) exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the genre triple, with the title read as a name."
+   ]
+  },
+  "R8-TA11": {
+   "literal": [
+    "F",
+    "Alice Feeney is author of the work, matching the author triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the author triple with the right direction."
+   ]
+  },
+  "R8-TA12": {
+   "literal": [
+    "F",
+    "Restates the author triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the author triple."
+   ]
+  },
+  "R8-TA13": {
+   "literal": [
+    "F",
+    "Matches the author triple."
+   ],
+   "ordinary": [
+    "F",
+    "Author triple, correct direction."
+   ]
+  },
+  "R8-TA14": {
+   "literal": [
+    "B",
+    "Both are gathered triples, but 'She' right after the Rowling sentence reads as Rowling, not the work named 'she'."
+   ],
+   "ordinary": [
+    "U",
+    "Following the Rowling sentence, 'She' reads as Rowling being followed by Ayesha, which is not entailed."
+   ]
+  },
+  "R8-TA15": {
+   "literal": [
+    "F",
+    "Both sentences restate gathered triples; 'It' has the stated antecedent."
+   ],
+   "ordinary": [
+    "U",
+    "'It' after Carfax Abbey reads as Carfax Abbey being a theatrical film, not entailed."
+   ]
+  },
+  "R8-TA16": {
+   "literal": [
+    "B",
+    "Both sentences match triples, but capitalised 'Her' reads as a pronoun for Johansson rather than the film 'her', and the object is odd."
+   ],
+   "ordinary": [
+    "B",
+    "Birthplace is fine, but 'Her original language...' is garbled and a reader may attach 'Her' to Scarlett Johansson."
+   ]
+  },
+  "R8-TA17": {
+   "literal": [
+    "B",
+    "'Trevor and I participated' reads as a first-person claim, though the slug trevor_and_i is a name."
+   ],
+   "ordinary": [
+    "B",
+    "'Trevor and I participated' reads as a first-person claim, though the store has an invented entity 'trevor_and_i' with that conflict triple."
+   ]
+  },
+  "R8-TA18": {
+   "literal": [
+    "F",
+    "Matches the conflict triple in a stilted but clear way."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the conflict triple."
+   ]
+  },
+  "R8-TA19": {
+   "literal": [
+    "F",
+    "Matches the performer triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the performer triple."
+   ]
+  },
+  "R8-TA20": {
+   "literal": [
+    "F",
+    "Restates the follows triple in the right direction."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the follows triple."
+   ]
+  },
+  "R8-TA21": {
+   "literal": [
+    "U",
+    "'I think' hedges the claim that Haggard wrote She."
+   ],
+   "ordinary": [
+    "U",
+    "'I think' hedges the Haggard authorship."
+   ]
+  },
+  "R8-TAF1": {
+   "literal": [
+    "F",
+    "It states (the_jewel_of_seven_stars, author, stoker_bram) correctly."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the (jewel_of_seven_stars, author, stoker_bram) triple."
+   ]
+  },
+  "R8-TAF2": {
+   "literal": [
+    "F",
+    "Exactly the instance_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain restatement of (get_out, instance_of, theatrical_film)."
+   ]
+  },
+  "R8-TAF3": {
+   "literal": [
+    "F",
+    "Restates the instance_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the instance_of triple."
+   ]
+  },
+  "R8-TAF4": {
+   "literal": [
+    "F",
+    "Matches (she, author, sir_henry_haggard)."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the author triple."
+   ]
+  },
+  "R8-F01": {
+   "literal": [
+    "F",
+    "Matches the father triple in the correct direction."
+   ],
+   "ordinary": [
+    "F",
+    "Correctly states Henry Fonda is Peter Fonda's father."
+   ]
+  },
+  "R8-F02": {
+   "literal": [
+    "F",
+    "Correct father direction."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the father triple."
+   ]
+  },
+  "R8-F03": {
+   "literal": [
+    "F",
+    "Correct child statement."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the child triple."
+   ]
+  },
+  "R8-F04": {
+   "literal": [
+    "F",
+    "Correct child direction."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the child triple."
+   ]
+  },
+  "R8-F05": {
+   "literal": [
+    "F",
+    "Matches the author triple."
+   ],
+   "ordinary": [
+    "F",
+    "Restates the author triple correctly."
+   ]
+  },
+  "R8-F06": {
+   "literal": [
+    "F",
+    "Correct author direction."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the author triple."
+   ]
+  },
+  "R8-F07": {
+   "literal": [
+    "F",
+    "Matches (rat, parent_taxon, old_world_mouse) with the correct direction."
+   ],
+   "ordinary": [
+    "F",
+    "Correct parent_taxon direction."
+   ]
+  },
+  "R8-F08": {
+   "literal": [
+    "F",
+    "It states (phalonia, parent_taxon, tortricinae) correctly."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the (phalonia, parent_taxon, tortricinae) triple."
+   ]
+  },
+  "R8-F09": {
+   "literal": [
+    "F",
+    "Matches the platform triple."
+   ],
+   "ordinary": [
+    "F",
+    "Exact platform triple."
+   ]
+  },
+  "R8-F10": {
+   "literal": [
+    "F",
+    "Restates (julio_iglesias, sport, association_football_club) plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Stilted but exactly the Julio Iglesias sport triple."
+   ]
+  },
+  "R8-F11": {
+   "literal": [
+    "F",
+    "Restates the sport triple in passive-possessive form."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the sport triple."
+   ]
+  },
+  "R8-F12": {
+   "literal": [
+    "F",
+    "It states (ringo_star, instrument, drum_kit) exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the (ringo_star, instrument, drum_kit) triple."
+   ]
+  },
+  "R8-F13": {
+   "literal": [
+    "F",
+    "Matches the instrument triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the instrument triple."
+   ]
+  },
+  "R8-F14": {
+   "literal": [
+    "F",
+    "Restates (henry_fonda, conflict, war_world_two)."
+   ],
+   "ordinary": [
+    "F",
+    "Plain conflict triple."
+   ]
+  },
+  "R8-F15": {
+   "literal": [
+    "F",
+    "It states (kim_il_sung, conflict, korean_police_action) exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the (kim_il_sung, conflict, korean_police_action) triple."
+   ]
+  },
+  "R8-F16": {
+   "literal": [
+    "F",
+    "Correct spouse statement."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the spouse triple."
+   ]
+  },
+  "R8-F17": {
+   "literal": [
+    "F",
+    "Matches the child triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches (mother_of_god, child, the_christ)."
+   ]
+  },
+  "R8-F18": {
+   "literal": [
+    "F",
+    "Restates (shania_twain, spouse, robert_john_mutt_lange)."
+   ],
+   "ordinary": [
+    "F",
+    "Plain spouse triple."
+   ]
+  },
+  "R8-F19": {
+   "literal": [
+    "F",
+    "'Spouse of' is symmetric and matches (shania_twain, spouse, lange)."
+   ],
+   "ordinary": [
+    "F",
+    "Spouse relation stated symmetrically, same meaning."
+   ]
+  },
+  "R8-F20": {
+   "literal": [
+    "F",
+    "Matches the instrument triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the instrument triple."
+   ]
+  },
+  "R8-F21": {
+   "literal": [
+    "F",
+    "It states (mortal_kombat, platform, windows_applications) correctly."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the (mortal_kombat, platform, windows_applications) triple."
+   ]
+  },
+  "R8-F22": {
+   "literal": [
+    "F",
+    "Matches the father triple in the correct direction."
+   ],
+   "ordinary": [
+    "F",
+    "Jupiter is the father of Aphrodite Acidalia, matching the father triple."
+   ]
+  },
+  "R8-F23": {
+   "literal": [
+    "F",
+    "Plainly restates the genre triple."
+   ],
+   "ordinary": [
+    "F",
+    "Telegraphic but matches the genre triple."
+   ]
+  },
+  "R8-F24": {
+   "literal": [
+    "F",
+    "Matches the conflict triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the conflict triple."
+   ]
+  },
+  "R8-F25": {
+   "literal": [
+    "F",
+    "Telegraphic restatement of the award triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the award triple."
+   ]
+  },
+  "R8-F26": {
+   "literal": [
+    "F",
+    "Matches the father triple with the correct direction."
+   ],
+   "ordinary": [
+    "F",
+    "Matches (james_vii_of_scots, father, charles_i_of_england) in the correct direction."
+   ]
+  },
+  "R8-F27": {
+   "literal": [
+    "F",
+    "It states (pedro_ii, father, dom_pedro_i) with the correct direction."
+   ],
+   "ordinary": [
+    "F",
+    "Dom Pedro I is Pedro II's father, which matches the triple."
+   ]
+  },
+  "R8-F28": {
+   "literal": [
+    "F",
+    "Matches (sadler_s_wells_horse, father, northern_dancer) with the correct direction."
+   ],
+   "ordinary": [
+    "F",
+    "Correct father direction."
+   ]
+  },
+  "R8-F29": {
+   "literal": [
+    "F",
+    "Matches the child triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the child triple."
+   ]
+  },
+  "R8-F30": {
+   "literal": [
+    "F",
+    "Correct author statement."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the author triple."
+   ]
+  },
+  "R8-F31": {
+   "literal": [
+    "F",
+    "'Http clients is a platform for Roku Netflix' says Roku Netflix runs on that platform, matching the triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the platform triple."
+   ]
+  },
+  "R8-F32": {
+   "literal": [
+    "F",
+    "Restates the genre triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the genre triple."
+   ]
+  },
+  "R8-F33": {
+   "literal": [
+    "F",
+    "Correct parent_taxon direction."
+   ],
+   "ordinary": [
+    "F",
+    "Exact parent_taxon triple."
+   ]
+  },
+  "R8-F34": {
+   "literal": [
+    "F",
+    "Plain restatement of the conflict triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the conflict triple."
+   ]
+  },
+  "R8-F35": {
+   "literal": [
+    "F",
+    "Matches the platform triple with the correct direction."
+   ],
+   "ordinary": [
+    "F",
+    "Correct direction: the platform is a platform for Legend of Zelda."
+   ]
+  },
+  "R8-F37": {
+   "literal": [
+    "F",
+    "It states (jayne_seymour_fonda, father, henry_fonda) correctly, and the exclamation mark adds no claim."
+   ],
+   "ordinary": [
+    "F",
+    "Henry Fonda is Jayne Fonda's father, which matches the triple."
+   ]
+  },
+  "R8-F36": {
+   "literal": [
+    "F",
+    "Restates the child triple in the correct direction."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the child triple."
+   ]
+  }
+ },
+ "subset_labels": {
+  "R8-RJ01": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R8-RJ02": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R8-RJ03": {
+   "1": "F",
+   "2": "F",
+   "3": "U",
+   "1+2": "F",
+   "1+3": "U",
+   "2+3": "U",
+   "1+2+3": "U"
+  },
+  "R8-RJ04": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R8-RJ05": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R8-RJ06": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R8-RJ07": {
+   "1": "F",
+   "2": "F",
+   "3": "U",
+   "1+2": "F",
+   "1+3": "U",
+   "2+3": "U",
+   "1+2+3": "U"
+  },
+  "R8-RJ08": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R8-RJ09": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R8-RJ10": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R8-RJ11": {
+   "1": "F",
+   "2": "F",
+   "1+2": "B"
+  },
+  "R8-RJ12": {
+   "1": "F",
+   "2": "F",
+   "1+2": "B"
+  },
+  "R8-RJ13": {
+   "1": "F",
+   "2": "F",
+   "1+2": "B"
+  },
+  "R8-RJ14": {
+   "1": "F",
+   "2": "U",
+   "3": "F",
+   "1+2": "U",
+   "1+3": "F",
+   "2+3": "U",
+   "1+2+3": "U"
+  },
+  "R8-RJ15": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R8-RJ16": {
+   "1": "F",
+   "2": "B",
+   "1+2": "U"
+  },
+  "R8-RJ17": {
+   "1": "F",
+   "2": "B",
+   "1+2": "U"
+  },
+  "R8-RJ18": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R8-RJ19": {
+   "1": "F",
+   "2": "F",
+   "3": "U",
+   "1+2": "F",
+   "1+3": "U",
+   "2+3": "U",
+   "1+2+3": "U"
+  },
+  "R8-RJ20": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R8-RJ21": {
+   "1": "F",
+   "2": "F",
+   "3": "U",
+   "1+2": "F",
+   "1+3": "U",
+   "2+3": "U",
+   "1+2+3": "U"
+  },
+  "R8-RJ22": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R8-RJ23": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R8-RJ24": {
+   "1": "F",
+   "2": "F",
+   "3": "U",
+   "1+2": "F",
+   "1+3": "U",
+   "2+3": "U",
+   "1+2+3": "U"
+  },
+  "R8-RJ25": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R8-RJ26": {
+   "1": "F",
+   "2": "F",
+   "3": "U",
+   "1+2": "F",
+   "1+3": "U",
+   "2+3": "U",
+   "1+2+3": "U"
+  },
+  "R8-RJ27": {
+   "1": "F",
+   "2": "F",
+   "3": "U",
+   "1+2": "F",
+   "1+3": "U",
+   "2+3": "U",
+   "1+2+3": "U"
+  },
+  "R8-RJ28": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R8-RJ29": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R8-RJ30": {
+   "1": "F",
+   "2": "B",
+   "1+2": "U"
+  },
+  "R8-RJ31": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R8-RJ32": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R8-RJ33": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R8-RJ34": {
+   "1": "F",
+   "2": "B",
+   "1+2": "B"
+  },
+  "R8-RJ35": {
+   "1": "F",
+   "2": "F",
+   "3": "U",
+   "1+2": "F",
+   "1+3": "U",
+   "2+3": "U",
+   "1+2+3": "U"
+  },
+  "R8-RJ36": {
+   "1": "F",
+   "2": "F",
+   "3": "U",
+   "1+2": "F",
+   "1+3": "U",
+   "2+3": "U",
+   "1+2+3": "U"
+  },
+  "R8-RJ37": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R8-RJ38": {
+   "1": "F",
+   "2": "U",
+   "3": "F",
+   "1+2": "U",
+   "1+3": "U",
+   "2+3": "U",
+   "1+2+3": "U"
+  },
+  "R8-RJ39": {
+   "1": "F",
+   "2": "U",
+   "3": "F",
+   "1+2": "U",
+   "1+3": "F",
+   "2+3": "U",
+   "1+2+3": "U"
+  },
+  "R8-RJ40": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R8-RF01": {
+   "1": "F",
+   "2": "F",
+   "1+2": "F"
+  },
+  "R8-RF02": {
+   "1": "F",
+   "2": "F",
+   "1+2": "F"
+  },
+  "R8-RF03": {
+   "1": "F",
+   "2": "F",
+   "1+2": "F"
+  },
+  "R8-RF04": {
+   "1": "F",
+   "2": "F",
+   "1+2": "F"
+  },
+  "R8-RF05": {
+   "1": "F",
+   "2": "F",
+   "1+2": "F"
+  },
+  "R8-RF06": {
+   "1": "F",
+   "2": "F",
+   "1+2": "F"
+  },
+  "R8-RF07": {
+   "1": "F",
+   "2": "F",
+   "3": "F",
+   "1+2": "F",
+   "1+3": "F",
+   "2+3": "F",
+   "1+2+3": "F"
+  },
+  "R8-RF08": {
+   "1": "F",
+   "2": "F",
+   "1+2": "F"
+  },
+  "R8-RF09": {
+   "1": "F",
+   "2": "F",
+   "1+2": "F"
+  },
+  "R8-RF10": {
+   "1": "F",
+   "2": "F",
+   "1+2": "F"
+  },
+  "R8-RF11": {
+   "1": "F",
+   "2": "F",
+   "1+2": "F"
+  },
+  "R8-PB01": {
+   "1": "F",
+   "2": "F",
+   "1+2": "B"
+  },
+  "R8-PB02": {
+   "1": "F",
+   "2": "F",
+   "1+2": "B"
+  },
+  "R8-PB03": {
+   "1": "F",
+   "2": "F",
+   "1+2": "B"
+  },
+  "R8-PB04": {
+   "1": "F",
+   "2": "F",
+   "1+2": "B"
+  },
+  "R8-PB05": {
+   "1": "F",
+   "2": "B",
+   "1+2": "B"
+  },
+  "R8-PB06": {
+   "1": "F",
+   "2": "F",
+   "1+2": "B"
+  },
+  "R8-PB07": {
+   "1": "F",
+   "2": "F",
+   "3": "F",
+   "1+2": "F",
+   "1+3": "U",
+   "2+3": "F",
+   "1+2+3": "B"
+  },
+  "R8-PB08": {
+   "1": "F",
+   "2": "F",
+   "1+2": "B"
+  },
+  "R8-PB09": {
+   "1": "F",
+   "2": "F",
+   "1+2": "B"
+  },
+  "R8-PB10": {
+   "1": "F",
+   "2": "F",
+   "1+2": "B"
+  },
+  "R8-PB11": {
+   "1": "F",
+   "2": "F",
+   "1+2": "B"
+  },
+  "R8-PB12": {
+   "1": "F",
+   "2": "F",
+   "1+2": "B"
+  },
+  "R8-PB13": {
+   "1": "F",
+   "2": "F",
+   "3": "F",
+   "1+2": "F",
+   "1+3": "U",
+   "2+3": "F",
+   "1+2+3": "B"
+  },
+  "R8-PB14": {
+   "1": "F",
+   "2": "F",
+   "1+2": "B"
+  },
+  "R8-PB15": {
+   "1": "F",
+   "2": "F",
+   "3": "F",
+   "1+2": "F",
+   "1+3": "F",
+   "2+3": "U",
+   "1+2+3": "B"
+  },
+  "R8-PB16": {
+   "1": "F",
+   "2": "F",
+   "1+2": "B"
+  },
+  "R8-PB17": {
+   "1": "F",
+   "2": "F",
+   "3": "F",
+   "1+2": "F",
+   "1+3": "B",
+   "2+3": "F",
+   "1+2+3": "B"
+  },
+  "R8-PB18": {
+   "1": "F",
+   "2": "F",
+   "1+2": "U"
+  },
+  "R8-PB19": {
+   "1": "F",
+   "2": "F",
+   "1+2": "B"
+  },
+  "R8-KR06": {
+   "1": "F",
+   "2": "B",
+   "1+2": "B"
+  },
+  "R8-KR13": {
+   "1": "F",
+   "2": "F",
+   "1+2": "B"
+  },
+  "R8-KR14": {
+   "1": "F",
+   "2": "F",
+   "3": "F",
+   "1+2": "F",
+   "1+3": "F",
+   "2+3": "F",
+   "1+2+3": "B"
+  },
+  "R8-KR16": {
+   "1": "F",
+   "2": "F",
+   "1+2": "B"
+  },
+  "R8-TA14": {
+   "1": "F",
+   "2": "F",
+   "1+2": "U"
+  },
+  "R8-TA15": {
+   "1": "F",
+   "2": "F",
+   "1+2": "B"
+  },
+  "R8-TA16": {
+   "1": "F",
+   "2": "F",
+   "1+2": "B"
+  },
+  "R8-TA17": {
+   "1": "F",
+   "2": "U",
+   "1+2": "B"
+  },
+  "R8-TA21": {
+   "1": "F",
+   "2": "U",
+   "3": "F",
+   "1+2": "U",
+   "1+3": "U",
+   "2+3": "U",
+   "1+2+3": "U"
+  }
+ },
+ "subset_judge_labels": {
+  "R8-RJ01": {
+   "1": {
+    "literal": [
+     "F",
+     "Correct father direction."
+    ],
+    "ordinary": [
+     "F",
+     "Entailed by (peter_fonda, father, henry_fonda)."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "The direction is reversed: Henry Fonda is Jayne's father, not the other way round."
+    ],
+    "ordinary": [
+     "U",
+     "The direction is reversed: Henry is Jayne's father, not the other way round."
+    ]
+   }
+  },
+  "R8-RJ02": {
+   "1": {
+    "literal": [
+     "F",
+     "Jeff's father is Lloyd, so the sentence is entailed."
+    ],
+    "ordinary": [
+     "F",
+     "Matches (jeff_bridges, father, lloyd_bridges)."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'So is Beau Bridges' elliptically asserts an unspecified shared property that is not entailed (no Beau-child-of-Lloyd triple)."
+    ],
+    "ordinary": [
+     "U",
+     "'So is Beau Bridges' has no antecedent and implies an unstated claim that is not a gathered triple."
+    ]
+   }
+  },
+  "R8-RJ03": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches (henry_fonda, child, jayne_seymour_fonda)."
+    ],
+    "ordinary": [
+     "F",
+     "Plain child triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Matches (peter_fonda, father, henry_fonda)."
+    ],
+    "ordinary": [
+     "F",
+     "The triple (peter_fonda, father, henry_fonda) gives this direction."
+    ]
+   },
+   "3": {
+    "literal": [
+     "U",
+     "'Only sibling' adds exclusivity, and 'her' is an unresolved pronoun."
+    ],
+    "ordinary": [
+     "U",
+     "'only sibling' adds exclusivity."
+    ]
+   },
+   "1+2": {
+    "literal": [
+     "F",
+     "Both sentences match gathered triples with correct direction."
+    ],
+    "ordinary": [
+     "F",
+     "Both sentences match triples."
+    ]
+   },
+   "1+3": {
+    "literal": [
+     "U",
+     "'Her only sibling' is a quantity or exclusivity claim that the triples do not give."
+    ],
+    "ordinary": [
+     "U",
+     "'Her only sibling' adds an exclusivity claim."
+    ]
+   },
+   "2+3": {
+    "literal": [
+     "U",
+     "'her only sibling' adds exclusivity, and the pronoun 'her' is not in the triples."
+    ],
+    "ordinary": [
+     "U",
+     "'Her only sibling' adds exclusivity and a female referent not in the triples."
+    ]
+   }
+  },
+  "R8-RJ04": {
+   "1": {
+    "literal": [
+     "F",
+     "Restates (ringo_star, instrument, drum_kit)."
+    ],
+    "ordinary": [
+     "F",
+     "Plain instrument triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'George Harrison does not' is a negation, and its referent is unresolved."
+    ],
+    "ordinary": [
+     "U",
+     "Negation; the triples say Harrison plays guitar."
+    ]
+   }
+  },
+  "R8-RJ05": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the conflict triple for W Churchill."
+    ],
+    "ordinary": [
+     "F",
+     "Restates (w_churchill, conflict, world_war_one)."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "Denies participation in World War One, which the triples do not support."
+    ],
+    "ordinary": [
+     "U",
+     "Adds a negation that De Gaulle did not take part in WWI."
+    ]
+   }
+  },
+  "R8-RJ06": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the has_part triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the has_part triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'No longer a member' negates and changes tense, contradicting the member_of triple."
+    ],
+    "ordinary": [
+     "U",
+     "'No longer a member' asserts a tense change and negation, contradicting the triple."
+    ]
+   }
+  },
+  "R8-RJ07": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches (october, follows, mean_fomhair)."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the 'follows' triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Restates (november, follows, october) plainly."
+    ],
+    "ordinary": [
+     "F",
+     "Matches (november, follows, october)."
+    ]
+   },
+   "3": {
+    "literal": [
+     "U",
+     "'Nothing follows Xber' is an added universal negative not entailed by the triples."
+    ],
+    "ordinary": [
+     "U",
+     "First half is entailed, but 'nothing follows Xber' is an added claim."
+    ]
+   },
+   "1+2": {
+    "literal": [
+     "F",
+     "Both sentences are gathered follows triples with correct direction."
+    ],
+    "ordinary": [
+     "F",
+     "Both sentences match 'follows' triples."
+    ]
+   },
+   "1+3": {
+    "literal": [
+     "U",
+     "'Nothing follows Xber' is a negative closure claim that is not entailed."
+    ],
+    "ordinary": [
+     "U",
+     "'Nothing follows Xber' is an added negative claim."
+    ]
+   },
+   "2+3": {
+    "literal": [
+     "U",
+     "'Nothing follows Xber' is an added universal negative not in the triples."
+    ],
+    "ordinary": [
+     "U",
+     "'Nothing follows Xber' is a negative claim not entailed by the triples."
+    ]
+   }
+  },
+  "R8-RJ08": {
+   "1": {
+    "literal": [
+     "F",
+     "Restates the followed_by triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the followed_by triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "Reverses the order: November is followed by Xber, not the reverse."
+    ],
+    "ordinary": [
+     "U",
+     "Reverses followed_by: the triple says Xber follows November."
+    ]
+   }
+  },
+  "R8-RJ09": {
+   "1": {
+    "literal": [
+     "F",
+     "Restates the follows triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the follows triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'Perhaps' hedges the claim."
+    ],
+    "ordinary": [
+     "U",
+     "'Perhaps' hedges the stated relation."
+    ]
+   }
+  },
+  "R8-RJ10": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the shares_border_with triple."
+    ],
+    "ordinary": [
+     "F",
+     "Plain restatement of the shares_border_with triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'My guess is' hedges the Security Council membership claim."
+    ],
+    "ordinary": [
+     "U",
+     "'My guess' hedges and is first-person."
+    ]
+   }
+  },
+  "R8-RJ11": {
+   "1": {
+    "literal": [
+     "F",
+     "Restates the conflict triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the conflict triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "It states (he_s_dead_jim, occupation, doctor_behaviour) as a telegraphic triple."
+    ],
+    "ordinary": [
+     "F",
+     "Stilted, but it matches the (he_s_dead_jim, occupation, doctor_behaviour) triple."
+    ]
+   }
+  },
+  "R8-RJ12": {
+   "1": {
+    "literal": [
+     "F",
+     "Plain restatement of the conflict triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the Churchill conflict triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Telegraphic restatement of the given_name triple."
+    ],
+    "ordinary": [
+     "F",
+     "Telegraphic exact given_name triple."
+    ]
+   }
+  },
+  "R8-RJ13": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the member_of triple."
+    ],
+    "ordinary": [
+     "F",
+     "Exact member_of triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Restates (not_wanted, instance_of, human_specie) as a name per the slug."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the instance_of triple, reading 'Not wanted' as a name."
+    ]
+   }
+  },
+  "R8-RJ14": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches (trevor_horn, member_of, yes_band)."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the member_of triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'Left' asserts departure, which 'part of' does not entail and tense-wise implies she is no longer a member."
+    ],
+    "ordinary": [
+     "U",
+     "'Left' asserts a departure, but the triple only says part_of."
+    ]
+   },
+   "3": {
+    "literal": [
+     "F",
+     "Restates the genre triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the genre triple."
+    ]
+   },
+   "1+2": {
+    "literal": [
+     "U",
+     "'Trevor Rabin left Yes band' asserts departure, but part_of says only that he is part of the band."
+    ],
+    "ordinary": [
+     "U",
+     "'Trevor Rabin left Yes band' asserts departure; triple is only part_of."
+    ]
+   },
+   "1+3": {
+    "literal": [
+     "F",
+     "Both sentences are gathered triples stated plainly: Trevor Horn is a member of Yes, and Yes has genre symphonic rock."
+    ],
+    "ordinary": [
+     "F",
+     "Both sentences match the Trevor Horn membership and Yes genre triples."
+    ]
+   },
+   "2+3": {
+    "literal": [
+     "U",
+     "'Trevor Rabin left Yes band' asserts departure, whereas the triple only says he is part of Yes band."
+    ],
+    "ordinary": [
+     "U",
+     "'Left Yes band' asserts departure, not the plain part_of relation."
+    ]
+   }
+  },
+  "R8-RJ15": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the has_part triple."
+    ],
+    "ordinary": [
+     "F",
+     "Exact has_part triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'The two founded it' asserts founding, which no triple entails."
+    ],
+    "ordinary": [
+     "U",
+     "Adds that Keith Richards and Jagger founded the band, which no triple states."
+    ]
+   }
+  },
+  "R8-RJ16": {
+   "1": {
+    "literal": [
+     "F",
+     "(john_huston, father, walter) means Walter is John's father, as written."
+    ],
+    "ordinary": [
+     "F",
+     "Correct reading of john_huston father walter_thomas_huston."
+    ]
+   },
+   "2": {
+    "literal": [
+     "B",
+     "'He' has no antecedent in the text and 'also' presupposes an earlier statement; the fact itself matches the triple if 'he' is John Huston."
+    ],
+    "ordinary": [
+     "B",
+     "'He' has no referent in the text and 'also' implies context; the content fits (huston_anjelica, father, john_huston), but a reader could not be sure who 'he' is."
+    ]
+   }
+  },
+  "R8-RJ17": {
+   "1": {
+    "literal": [
+     "F",
+     "Correct father direction."
+    ],
+    "ordinary": [
+     "F",
+     "Entailed by (george_v, father, albert)."
+    ]
+   },
+   "2": {
+    "literal": [
+     "B",
+     "'The latter' has no antecedent, so the subject of the given name is unclear, though it likely means Albert Prince of Wales."
+    ],
+    "ordinary": [
+     "B",
+     "'The latter' has no clear referent, and the given name Edw is stated for Albert, so a reader could assign it to either person."
+    ]
+   }
+  },
+  "R8-RJ18": {
+   "1": {
+    "literal": [
+     "F",
+     "Spouse relation stated correctly."
+    ],
+    "ordinary": [
+     "F",
+     "Exact spouse triple (symmetric wording)."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "Says Abishek is Jaya's spouse, but the triples give him as her child."
+    ],
+    "ordinary": [
+     "U",
+     "Calls Abishek a spouse of Jaya, but he is her child."
+    ]
+   }
+  },
+  "R8-RJ19": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches (mother_of_god, spouse, st_joseph_the_worker); spouse is symmetric in reading."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the spouse triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Matches the child triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the child triple."
+    ]
+   },
+   "3": {
+    "literal": [
+     "U",
+     "Negates a gathered triple."
+    ],
+    "ordinary": [
+     "U",
+     "Negates a gathered child triple."
+    ]
+   },
+   "1+2": {
+    "literal": [
+     "F",
+     "Both sentences restate gathered triples."
+    ],
+    "ordinary": [
+     "F",
+     "Both sentences restate gathered triples."
+    ]
+   },
+   "1+3": {
+    "literal": [
+     "U",
+     "'The Christ is not a child of St Joseph' negates a gathered child triple."
+    ],
+    "ordinary": [
+     "U",
+     "The second sentence denies that the Christ is a child of St Joseph, which contradicts the gathered child triple."
+    ]
+   },
+   "2+3": {
+    "literal": [
+     "U",
+     "Explicitly denies that the Christ is a child of St Joseph, contradicting the triple."
+    ],
+    "ordinary": [
+     "U",
+     "Second sentence negates a gathered child triple."
+    ]
+   }
+  },
+  "R8-RJ20": {
+   "1": {
+    "literal": [
+     "F",
+     "It states (phalonia, parent_taxon, tortricinae) with the correct direction."
+    ],
+    "ordinary": [
+     "F",
+     "Tortricinae is the direct parent taxon of Phalonia, as the triple says."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'Parent taxon of both' includes Phalonia, whose direct parent is Tortricinae, and 'both' has no referent."
+    ],
+    "ordinary": [
+     "U",
+     "Claims tortrix moth is the parent taxon of both, but only Tortricinae has it as its direct parent; Phalonia's parent is Tortricinae."
+    ]
+   }
+  },
+  "R8-RJ21": {
+   "1": {
+    "literal": [
+     "F",
+     "It states (call_of_duty, platform, windows_applications) correctly."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the (call_of_duty, platform, windows_applications) triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Matches (mortal_kombat, platform, windows_applications)."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the platform triple for mortal_kombat."
+    ]
+   },
+   "3": {
+    "literal": [
+     "U",
+     "'and for no other game' adds an exclusivity claim contradicted by the Call of Duty and Mortal Kombat triples."
+    ],
+    "ordinary": [
+     "U",
+     "'For no other game' is an exclusivity claim contradicted by the Call of Duty and Mortal Kombat triples."
+    ]
+   },
+   "1+2": {
+    "literal": [
+     "F",
+     "Both sentences match platform triples."
+    ],
+    "ordinary": [
+     "F",
+     "Both sentences match platform triples."
+    ]
+   },
+   "1+3": {
+    "literal": [
+     "U",
+     "'And for no other game' adds exclusivity, and it also omits Mortal Kombat."
+    ],
+    "ordinary": [
+     "U",
+     "'And for no other game' is an exclusivity claim, and Mortal Kombat is in the store."
+    ]
+   },
+   "2+3": {
+    "literal": [
+     "U",
+     "'And for no other game' adds an exclusivity claim that the triples contradict (Call of Duty is also on that platform)."
+    ],
+    "ordinary": [
+     "U",
+     "'And for no other game' is an exclusivity claim, and the store also lists Call of Duty."
+    ]
+   }
+  },
+  "R8-RJ22": {
+   "1": {
+    "literal": [
+     "F",
+     "Tolkien as author of Lord of the Rings matches the author triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the author triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'Sole author' adds exclusivity the triple does not entail."
+    ],
+    "ordinary": [
+     "U",
+     "'Sole author' is an exclusivity claim the triple does not entail."
+    ]
+   }
+  },
+  "R8-RJ23": {
+   "1": {
+    "literal": [
+     "F",
+     "Y is an author of X matches (bond_james_bond, author, ian_flemming)."
+    ],
+    "ordinary": [
+     "F",
+     "Restates (bond_james_bond, author, ian_flemming) in the correct direction."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "Attributes Ian Fleming's war participation to the character Bond."
+    ],
+    "ordinary": [
+     "U",
+     "Attributes Ian Fleming's war participation to the character Bond."
+    ]
+   }
+  },
+  "R8-RJ24": {
+   "1": {
+    "literal": [
+     "F",
+     "Restates the instrument triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the instrument triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "It states (enrique_iglesias, father, julio_iglesias) exactly and adds nothing."
+    ],
+    "ordinary": [
+     "F",
+     "Julio is Enrique's father, which is exactly the (enrique, father, julio) triple."
+    ]
+   },
+   "3": {
+    "literal": [
+     "U",
+     "'Because Julio Iglesias taught him' adds an unentailed causal and teaching claim."
+    ],
+    "ordinary": [
+     "U",
+     "Adds a causal claim that Julio taught Enrique, which is not in the triples."
+    ]
+   },
+   "1+2": {
+    "literal": [
+     "F",
+     "Both sentences match gathered triples with correct direction."
+    ],
+    "ordinary": [
+     "F",
+     "Both sentences match triples."
+    ]
+   },
+   "1+3": {
+    "literal": [
+     "U",
+     "'Because Julio Iglesias taught him' adds a causal claim that is not in the triples."
+    ],
+    "ordinary": [
+     "U",
+     "'Because Julio Iglesias taught him' adds a causal claim."
+    ]
+   },
+   "2+3": {
+    "literal": [
+     "U",
+     "'because Julio Iglesias taught him' adds a causal claim not in the triples."
+    ],
+    "ordinary": [
+     "U",
+     "'Because Julio Iglesias taught him' adds a causal claim not in the triples."
+    ]
+   }
+  },
+  "R8-RJ25": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the spouse triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the spouse triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'But they divorced' adds a claim about the marriage ending."
+    ],
+    "ordinary": [
+     "U",
+     "'they divorced' is an added claim."
+    ]
+   }
+  },
+  "R8-RJ26": {
+   "1": {
+    "literal": [
+     "F",
+     "It states (take_that, instance_of, boy_band) exactly."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the (take_that, instance_of, boy_band) triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Telegraphic restatement of the genre triple."
+    ],
+    "ordinary": [
+     "F",
+     "Telegraphic but matches the genre triple."
+    ]
+   },
+   "3": {
+    "literal": [
+     "U",
+     "'Its lead singer' adds a role not in the triples."
+    ],
+    "ordinary": [
+     "U",
+     "Adds 'its lead singer', which is not in the triples."
+    ]
+   },
+   "1+2": {
+    "literal": [
+     "F",
+     "Both sentences restate gathered triples."
+    ],
+    "ordinary": [
+     "F",
+     "Both sentences restate gathered triples."
+    ]
+   },
+   "1+3": {
+    "literal": [
+     "U",
+     "Adds 'its lead singer', a role not in the has_part triple."
+    ],
+    "ordinary": [
+     "U",
+     "Adds 'its lead singer', which is not in the triples."
+    ]
+   },
+   "2+3": {
+    "literal": [
+     "U",
+     "'Its lead singer' adds a role not entailed by has_part."
+    ],
+    "ordinary": [
+     "U",
+     "Adds that Robbie Williams is the lead singer, which is not in the triples."
+    ]
+   }
+  },
+  "R8-RJ27": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the shares_border_with triple."
+    ],
+    "ordinary": [
+     "F",
+     "Exact shares_border_with triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Matches the shares_border_with triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the shares_border_with triple."
+    ]
+   },
+   "3": {
+    "literal": [
+     "U",
+     "Germany bordering the UK is not a gathered triple; it is an inferred transitive step from two other borders."
+    ],
+    "ordinary": [
+     "U",
+     "Germany bordering the UK is an inferred claim not among the triples."
+    ]
+   },
+   "1+2": {
+    "literal": [
+     "F",
+     "Both sentences are gathered border triples stated plainly."
+    ],
+    "ordinary": [
+     "F",
+     "Both sentences match the border triples."
+    ]
+   },
+   "1+3": {
+    "literal": [
+     "U",
+     "The conclusion that Germany borders the UK is not a gathered triple."
+    ],
+    "ordinary": [
+     "U",
+     "'So' Germany borders the UK is an inferred conclusion, not entailed."
+    ]
+   },
+   "2+3": {
+    "literal": [
+     "U",
+     "'So Germany shares border with UK' is an invalid inference not entailed by any triple."
+    ],
+    "ordinary": [
+     "U",
+     "The 'So' conclusion that Germany borders the UK is an inference not in the triples."
+    ]
+   }
+  },
+  "R8-RJ28": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the shares_border_with triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the border triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'With nobody else' adds an exclusivity claim."
+    ],
+    "ordinary": [
+     "U",
+     "'and with nobody else' adds an exclusivity claim not in the triples."
+    ]
+   }
+  },
+  "R8-RJ29": {
+   "1": {
+    "literal": [
+     "F",
+     "It states (june, followed_by, jul) exactly."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the (june, followed_by, jul) triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "Claims Aug is followed by June, but the triples only give June->Jul and Jul->Aug."
+    ],
+    "ordinary": [
+     "U",
+     "Claims Aug is followed by June, which no triple states; the store only has June to Jul to Aug."
+    ]
+   }
+  },
+  "R8-RJ30": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the follows triple."
+    ],
+    "ordinary": [
+     "F",
+     "Exact follows triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "B",
+     "A question rather than an assertion; a reader could treat it as asking or as asserting."
+    ],
+    "ordinary": [
+     "B",
+     "A question rather than an assertion; a reader could see it as asking or as stating."
+    ]
+   }
+  },
+  "R8-RJ31": {
+   "1": {
+    "literal": [
+     "F",
+     "Restates the sibling triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the sibling triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'They are twins' adds a claim not in the triples."
+    ],
+    "ordinary": [
+     "U",
+     "'They are twins' is an added claim."
+    ]
+   }
+  },
+  "R8-RJ32": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the conflict triple."
+    ],
+    "ordinary": [
+     "F",
+     "Exact conflict triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'Alongside him' with unresolved 'him' implies joint participation not in the triples."
+    ],
+    "ordinary": [
+     "U",
+     "'Alongside him' implies the two served together, which is not in the triples."
+    ]
+   }
+  },
+  "R8-RJ33": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the conflict triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the conflict triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'On the same side' adds a claim about alignment that the triples do not entail."
+    ],
+    "ordinary": [
+     "U",
+     "'On the same side' is an extra claim; the triples only say both took part in the war."
+    ]
+   }
+  },
+  "R8-RJ34": {
+   "1": {
+    "literal": [
+     "F",
+     "(albert_prince_of_wales, father, albert_prince_consort) is stated in the right direction."
+    ],
+    "ordinary": [
+     "F",
+     "Exact father triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "Albert Prince Consort is the father of Albert Prince of Wales, not of George V directly; 'as well' also implies an earlier claim."
+    ],
+    "ordinary": [
+     "F",
+     "Plain father triple; 'as well' adds nothing false."
+    ]
+   }
+  },
+  "R8-RJ35": {
+   "1": {
+    "literal": [
+     "F",
+     "Jeff Bridges is a child of Lloyd Bridges, matching the triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the child triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Beau's father is Lloyd, so Lloyd is the father of Beau is entailed."
+    ],
+    "ordinary": [
+     "F",
+     "Matches (beau_bridges, father, lloyd_bridges)."
+    ]
+   },
+   "3": {
+    "literal": [
+     "U",
+     "Reverses the relation: the triples say Lloyd Bridges is the father, and Jeff and Beau are siblings."
+    ],
+    "ordinary": [
+     "U",
+     "Reverses roles: Beau is Jeff's sibling and Lloyd is the father."
+    ]
+   },
+   "1+2": {
+    "literal": [
+     "F",
+     "Both sentences follow from the child and father triples."
+    ],
+    "ordinary": [
+     "F",
+     "Both are gathered triples in correct direction."
+    ]
+   },
+   "1+3": {
+    "literal": [
+     "U",
+     "Second sentence says Beau is Jeff's father, which is not entailed (they are siblings)."
+    ],
+    "ordinary": [
+     "U",
+     "Says Beau is Jeff's father, but Lloyd is the father of Beau and Jeff's sibling is Beau."
+    ]
+   },
+   "2+3": {
+    "literal": [
+     "U",
+     "'Beau Bridges is the father of Jeff Bridges' contradicts the triples, where they are siblings."
+    ],
+    "ordinary": [
+     "U",
+     "It says Beau Bridges is the father of Jeff Bridges, but they are siblings."
+    ]
+   }
+  },
+  "R8-RJ36": {
+   "1": {
+    "literal": [
+     "F",
+     "Restates the instrument triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the instrument triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "George Harrison instrument triple stated plainly."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the George Harrison instrument triple."
+    ]
+   },
+   "3": {
+    "literal": [
+     "U",
+     "Says McCartney plays drum kit, but the triple gives the guitar."
+    ],
+    "ordinary": [
+     "U",
+     "Says McCartney plays the drum kit, but the store says history_of_the_guitar."
+    ]
+   },
+   "1+2": {
+    "literal": [
+     "F",
+     "Both sentences match instrument triples in the right direction."
+    ],
+    "ordinary": [
+     "F",
+     "Both sentences match instrument triples."
+    ]
+   },
+   "1+3": {
+    "literal": [
+     "U",
+     "Says McCartney plays drum kit, but the triple gives the guitar."
+    ],
+    "ordinary": [
+     "U",
+     "McCartney is said to play the drum kit, but the store says history_of_the_guitar."
+    ]
+   },
+   "2+3": {
+    "literal": [
+     "U",
+     "Says McCartney plays drum kit 'too', but that instrument is gathered for Ringo."
+    ],
+    "ordinary": [
+     "U",
+     "Gives McCartney the drum kit, which is Ringo's instrument in the triples."
+    ]
+   }
+  },
+  "R8-RJ37": {
+   "1": {
+    "literal": [
+     "F",
+     "It states the triple (rat, parent_taxon, old_world_mouse) with the correct direction."
+    ],
+    "ordinary": [
+     "F",
+     "Old world mouse is the parent taxon of rat, as the triple says."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "The subfamilia rank belongs to old_world_mouse, not rat."
+    ],
+    "ordinary": [
+     "U",
+     "Gives the rank subfamilia to rat, but the triple gives it to old world mouse."
+    ]
+   }
+  },
+  "R8-RJ38": {
+   "1": {
+    "literal": [
+     "F",
+     "Exactly the member_of triple."
+    ],
+    "ordinary": [
+     "F",
+     "Plain restatement of Keith Richards's membership."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'I believe' is a hedge and a first-person claim."
+    ],
+    "ordinary": [
+     "U",
+     "'I believe' hedges the claim and adds a first-person stance."
+    ]
+   },
+   "3": {
+    "literal": [
+     "F",
+     "Restates (the_band, record_label, capitol_records_inc)."
+    ],
+    "ordinary": [
+     "F",
+     "Standalone record_label statement matching the_band triple."
+    ]
+   },
+   "1+2": {
+    "literal": [
+     "U",
+     "'I believe' hedges the record label claim and adds a first-person stance."
+    ],
+    "ordinary": [
+     "U",
+     "'I believe' hedges the Columbia Phonograph label claim."
+    ]
+   },
+   "1+3": {
+    "literal": [
+     "U",
+     "'The band' reads as the Rolling Stones, whose triple gives Columbia Phonograph, so the text asserts a different label."
+    ],
+    "ordinary": [
+     "U",
+     "'The band' reads as the Rolling Stones, whose gathered label is Columbia Phonograph, not Capitol, so the reader is misled."
+    ]
+   },
+   "2+3": {
+    "literal": [
+     "U",
+     "'I believe' hedges the Rolling Stones record-label claim."
+    ],
+    "ordinary": [
+     "U",
+     "'I believe' hedges the Rolling Stones label claim."
+    ]
+   }
+  },
+  "R8-RJ39": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the member_of triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the member_of triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'Was a member' changes tense and implies membership has ended."
+    ],
+    "ordinary": [
+     "U",
+     "'Was a member' implies he no longer is, a tense change."
+    ]
+   },
+   "3": {
+    "literal": [
+     "F",
+     "Restates (the_band, award_received, grammy_lifetime_achievement_award)."
+    ],
+    "ordinary": [
+     "F",
+     "Standalone award statement matching the_band triple."
+    ]
+   },
+   "1+2": {
+    "literal": [
+     "U",
+     "'Keith Richards was a member' changes the tense, implying he is no longer one."
+    ],
+    "ordinary": [
+     "U",
+     "'Keith Richards was a member' changes the tense, implying past membership only."
+    ]
+   },
+   "1+3": {
+    "literal": [
+     "F",
+     "Both sentences match triples; the thin space is only a display space."
+    ],
+    "ordinary": [
+     "F",
+     "Both sentences match triples."
+    ]
+   },
+   "2+3": {
+    "literal": [
+     "U",
+     "'Was a member' changes the tense, and 'The band' reads as the Rolling Stones, who have no gathered award triple."
+    ],
+    "ordinary": [
+     "U",
+     "'Was a member' adds past tense, and 'the band' is read as the Rolling Stones for an award triple about 'the_band'."
+    ]
+   }
+  },
+  "R8-RJ40": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the member_of triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the member_of triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'I think' hedges, and the record_label claim is not in the gathered triples for Genesis, with a first-person stance."
+    ],
+    "ordinary": [
+     "U",
+     "'I think' hedges the claim."
+    ]
+   }
+  },
+  "R8-RF01": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches (john_huston, father, walter_thomas_huston)."
+    ],
+    "ordinary": [
+     "F",
+     "Correct father triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Matches (huston_anjelica, father, john_huston) with the right direction."
+    ],
+    "ordinary": [
+     "F",
+     "The triple (huston_anjelica, father, john_huston) gives John Huston as her father, as stated."
+    ]
+   }
+  },
+  "R8-RF02": {
+   "1": {
+    "literal": [
+     "F",
+     "(george_v, father, albert) means Albert is George V's father, as stated."
+    ],
+    "ordinary": [
+     "F",
+     "Entailed by (george_v, father, albert) and the child triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "(albert_prince_of_wales, child, george_v) entails that George V is a child of Albert."
+    ],
+    "ordinary": [
+     "F",
+     "Child-of is the inverse of the gathered father/child triples."
+    ]
+   }
+  },
+  "R8-RF03": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the spouse triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches (helena_bonham_carter, spouse, tim_burton)."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Matches the spouse triple (symmetric triples exist)."
+    ],
+    "ordinary": [
+     "F",
+     "Matches (tim_burton, spouse, helena_bonham_carter)."
+    ]
+   }
+  },
+  "R8-RF04": {
+   "1": {
+    "literal": [
+     "F",
+     "Restates the follows triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the follows triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Matches (october, follows, mean_fomhair)."
+    ],
+    "ordinary": [
+     "F",
+     "Matches (october, follows, mean_fomhair)."
+    ]
+   }
+  },
+  "R8-RF05": {
+   "1": {
+    "literal": [
+     "F",
+     "Ringo Star plays drum kit matches the triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the Ringo Star instrument triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Matches the instrument triple."
+    ],
+    "ordinary": [
+     "F",
+     "Plain restatement of George Harrison's instrument triple."
+    ]
+   }
+  },
+  "R8-RF06": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the author triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the author triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Plainly restates (lord_of_the_rings, author, j_r_r_tolkien)."
+    ],
+    "ordinary": [
+     "F",
+     "Plain authorship triple."
+    ]
+   }
+  },
+  "R8-RF07": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the member_of triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the member_of triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Matches the has_part triple."
+    ],
+    "ordinary": [
+     "F",
+     "Exact has_part triple."
+    ]
+   },
+   "3": {
+    "literal": [
+     "F",
+     "It states (the_rolling_stones, genre, rock_musician) exactly."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the (rolling_stones, genre, rock_musician) triple."
+    ]
+   },
+   "1+2": {
+    "literal": [
+     "F",
+     "Both sentences match the member_of and has_part triples."
+    ],
+    "ordinary": [
+     "F",
+     "Both sentences match triples."
+    ]
+   },
+   "1+3": {
+    "literal": [
+     "F",
+     "Both sentences restate gathered triples."
+    ],
+    "ordinary": [
+     "F",
+     "Both sentences restate gathered triples."
+    ]
+   },
+   "2+3": {
+    "literal": [
+     "F",
+     "Both sentences are gathered triples."
+    ],
+    "ordinary": [
+     "F",
+     "Both sentences are exact gathered triples."
+    ]
+   }
+  },
+  "R8-RF08": {
+   "1": {
+    "literal": [
+     "F",
+     "Correct parent_taxon direction."
+    ],
+    "ordinary": [
+     "F",
+     "Exact parent_taxon triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Parent taxon direction is correct."
+    ],
+    "ordinary": [
+     "F",
+     "Matches (tortricinae, parent_taxon, tortrix_moth) with the direction correct."
+    ]
+   }
+  },
+  "R8-RF09": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the conflict triple."
+    ],
+    "ordinary": [
+     "F",
+     "Exact conflict triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Matches the W Churchill conflict triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the conflict triple for W Churchill."
+    ]
+   }
+  },
+  "R8-RF10": {
+   "1": {
+    "literal": [
+     "F",
+     "It states (call_of_duty, platform, windows_applications) correctly."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the (call_of_duty, platform, windows_applications) triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Matches (legend_of_zelda, platform, wireless_multi_player) in the correct direction."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the platform triple for legend_of_zelda."
+    ]
+   }
+  },
+  "R8-RF11": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the country_of_origin triple telegraphically."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the country_of_origin triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Restates the member_of triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the member_of triple."
+    ]
+   }
+  },
+  "R8-PB01": {
+   "1": {
+    "literal": [
+     "F",
+     "Exactly the member_of triple."
+    ],
+    "ordinary": [
+     "F",
+     "Plain statement of the member_of triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Restates (the_band, country_of_origin, canada_portal)."
+    ],
+    "ordinary": [
+     "F",
+     "Standalone country_of_origin statement matching the_band triple."
+    ]
+   }
+  },
+  "R8-PB02": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the member_of triple."
+    ],
+    "ordinary": [
+     "F",
+     "Plain restatement of the member_of triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Thin space reads as a plain space; restates the_band record_label Capitol Records Inc."
+    ],
+    "ordinary": [
+     "F",
+     "The thin space displays as an ordinary space; the text restates the record_label triple."
+    ]
+   }
+  },
+  "R8-PB03": {
+   "1": {
+    "literal": [
+     "F",
+     "It states (lewis_allan_reed, member_of, the_velvet_underground) exactly."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the (lewis_allan_reed, member_of, velvet_underground) triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "The narrow no-break space renders as a normal space; the text restates the award triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the award triple for 'the band'."
+    ]
+   }
+  },
+  "R8-PB04": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the has_part triple."
+    ],
+    "ordinary": [
+     "F",
+     "Plain restatement of the has_part triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Telegraphic restatement of (the_band, country_of_origin, canada_portal); the figure space only widens the gap."
+    ],
+    "ordinary": [
+     "F",
+     "Standalone telegraphic restatement of the_band country_of_origin triple."
+    ]
+   }
+  },
+  "R8-PB05": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the member_of triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the member_of triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "It states (the_band, country_of_origin, canada_portal) with no prior antecedent to change the reference."
+    ],
+    "ordinary": [
+     "B",
+     "'The band' has no antecedent in the text, so it matches the triple's entity but a reader cannot tell which band is meant."
+    ]
+   }
+  },
+  "R8-PB06": {
+   "1": {
+    "literal": [
+     "F",
+     "Exactly the member_of triple, stated plainly."
+    ],
+    "ordinary": [
+     "F",
+     "Plainly restates (peter_gabriel, member_of, genesis_band)."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Restates the_band record_label triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the record_label triple."
+    ]
+   }
+  },
+  "R8-PB07": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches (trevor_horn, member_of, yes_band)."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the member_of triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Matches the has_part triple; 'too' is harmless."
+    ],
+    "ordinary": [
+     "F",
+     "Restates (yes_band, has_part, rick_wakeman)."
+    ]
+   },
+   "3": {
+    "literal": [
+     "F",
+     "Telegraphic restatement of the country_of_origin triple, and the thin space displays as an ordinary space."
+    ],
+    "ordinary": [
+     "F",
+     "Thin space is just a display space; exact country_of_origin triple."
+    ]
+   },
+   "1+2": {
+    "literal": [
+     "F",
+     "Both sentences are gathered triples, and 'too' is consistent with the two facts."
+    ],
+    "ordinary": [
+     "F",
+     "Both sentences match gathered triples, and 'too' adds nothing false."
+    ]
+   },
+   "1+3": {
+    "literal": [
+     "U",
+     "'The band' after the Yes sentence reads as Yes, so the text attributes Canadian origin to Yes, which the triples do not give."
+    ],
+    "ordinary": [
+     "U",
+     "Right after the Yes sentence, 'the band' reads as Yes, so a reader would think Yes is from Canada, which the triples do not say."
+    ]
+   },
+   "2+3": {
+    "literal": [
+     "F",
+     "Both sentences are triples; 'too' is consistent with Trevor Horn also being a member."
+    ],
+    "ordinary": [
+     "F",
+     "Both sentences restate gathered triples; 'too' is consistent with Trevor Horn also being in Yes band."
+    ]
+   }
+  },
+  "R8-PB08": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches (walt_disney, conflict, world_war_one)."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the Walt Disney conflict triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "It states (the_duck_man, award_received, inkpot_award), and the no-break space is only a display space."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the (the_duck_man, award_received, inkpot_award) triple."
+    ]
+   }
+  },
+  "R8-PB09": {
+   "1": {
+    "literal": [
+     "F",
+     "Restates (walt_disney, occupation, writter)."
+    ],
+    "ordinary": [
+     "F",
+     "Plain occupation triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Telegraphic restatement of (the_duck_man, manner_of_death, death_by_natural_cause)."
+    ],
+    "ordinary": [
+     "F",
+     "Plain restatement of the manner_of_death triple."
+    ]
+   }
+  },
+  "R8-PB10": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches (penny_cruz, spouse, bardem_javier) in the correct direction."
+    ],
+    "ordinary": [
+     "F",
+     "Matches (penny_cruz, spouse, bardem_javier) with the spouse symmetric in meaning."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "It states (cruz, language_of_work_or_name, modern_spanish) as a plain telegraphic triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the (cruz, language_of_work_or_name, modern_spanish) triple."
+    ]
+   }
+  },
+  "R8-PB11": {
+   "1": {
+    "literal": [
+     "F",
+     "Telegraphic but unambiguous place_of_birth triple."
+    ],
+    "ordinary": [
+     "F",
+     "Telegraphic but exact place_of_birth triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Telegraphic restatement of the language_of_work_or_name triple."
+    ],
+    "ordinary": [
+     "F",
+     "Telegraphic restatement of the Johansson language triple."
+    ]
+   }
+  },
+  "R8-PB12": {
+   "1": {
+    "literal": [
+     "F",
+     "It states (keith_richards, member_of, the_rolling_stones) exactly."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the (keith_richards, member_of, the_rolling_stones) triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Restates (the_band, country_of_origin, canada_portal) in raw slug form."
+    ],
+    "ordinary": [
+     "F",
+     "Standalone raw-slug restatement of the country_of_origin triple."
+    ]
+   }
+  },
+  "R8-PB13": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the member_of triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the member_of triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Keith Richards instrument history_of_the_guitar is a gathered triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the Keith Richards instrument triple."
+    ]
+   },
+   "3": {
+    "literal": [
+     "F",
+     "Plain restatement of the record_label triple; the nbsp is harmless."
+    ],
+    "ordinary": [
+     "F",
+     "Restates the record_label triple; the non-breaking space is only whitespace."
+    ]
+   },
+   "1+2": {
+    "literal": [
+     "F",
+     "Both sentences are plain triples, and the odd instrument slug is read as a name."
+    ],
+    "ordinary": [
+     "F",
+     "Both are exact triples."
+    ]
+   },
+   "1+3": {
+    "literal": [
+     "U",
+     "'The band' follows the Rolling Stones, so a reader takes it as the Stones' label, but the triple is about a different entity 'the_band'."
+    ],
+    "ordinary": [
+     "U",
+     "'The band' reads as the Rolling Stones, so the user would believe the Stones' label is Capitol, but the triple is for the generic 'the_band'."
+    ]
+   },
+   "2+3": {
+    "literal": [
+     "F",
+     "Both sentences restate gathered triples plainly."
+    ],
+    "ordinary": [
+     "F",
+     "Both sentences are plain triples, with no band named for 'The band' to attach to."
+    ]
+   }
+  },
+  "R8-PB14": {
+   "1": {
+    "literal": [
+     "F",
+     "Restates the member_of triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the member_of triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Restates (the_band, award_received, grammy_lifetime_achievement_award)."
+    ],
+    "ordinary": [
+     "F",
+     "Standalone award statement matching the_band triple."
+    ]
+   }
+  },
+  "R8-PB15": {
+   "1": {
+    "literal": [
+     "F",
+     "Restates the member_of triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the member_of triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Matches the member_of triple."
+    ],
+    "ordinary": [
+     "F",
+     "Exact member_of triple."
+    ]
+   },
+   "3": {
+    "literal": [
+     "F",
+     "Telegraphic restatement of the genre triple; the narrow nbsp is harmless."
+    ],
+    "ordinary": [
+     "F",
+     "Telegraphic restatement of the genre triple."
+    ]
+   },
+   "1+2": {
+    "literal": [
+     "F",
+     "Two member_of triples stated plainly."
+    ],
+    "ordinary": [
+     "F",
+     "Both member_of triples are stated plainly."
+    ]
+   },
+   "1+3": {
+    "literal": [
+     "F",
+     "Both sentences match triples; the narrow no-break space renders as a space."
+    ],
+    "ordinary": [
+     "F",
+     "Both sentences match triples."
+    ]
+   },
+   "2+3": {
+    "literal": [
+     "U",
+     "'The Band' after the Genesis sentence reads as Genesis, so the text gives Genesis a genre that the triples assign to a different entity."
+    ],
+    "ordinary": [
+     "U",
+     "'The Band genre rock musician' after Genesis reads as Genesis's genre, but the triple is about a different entity."
+    ]
+   }
+  },
+  "R8-PB16": {
+   "1": {
+    "literal": [
+     "F",
+     "Plain instance_of triple, stilted but unambiguous."
+    ],
+    "ordinary": [
+     "F",
+     "Matches (take_that, instance_of, boy_band)."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Restates (the_band, instance_of, pop_rock_band) exactly."
+    ],
+    "ordinary": [
+     "F",
+     "Standalone instance_of statement matching the_band triple."
+    ]
+   }
+  },
+  "R8-PB17": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the member_of triple."
+    ],
+    "ordinary": [
+     "F",
+     "Plain restatement of Lewis Allan Reed's membership."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Matches the part_of triple."
+    ],
+    "ordinary": [
+     "F",
+     "Exact part_of triple."
+    ]
+   },
+   "3": {
+    "literal": [
+     "F",
+     "Telegraphic country_of_origin triple, and the figure space displays as a space."
+    ],
+    "ordinary": [
+     "F",
+     "Figure space is a display space; exact triple."
+    ]
+   },
+   "1+2": {
+    "literal": [
+     "F",
+     "member_of and part_of triples each stated plainly."
+    ],
+    "ordinary": [
+     "F",
+     "Both member and part-of triples are stated plainly."
+    ]
+   },
+   "1+3": {
+    "literal": [
+     "F",
+     "Both sentences restate gathered triples; the figure space is harmless."
+    ],
+    "ordinary": [
+     "U",
+     "'The band' after Velvet Underground reads as them being from Canada, not entailed."
+    ]
+   },
+   "2+3": {
+    "literal": [
+     "F",
+     "Both sentences restate gathered triples; the figure space is just a display space."
+    ],
+    "ordinary": [
+     "F",
+     "Both sentences restate gathered triples; the figure space displays as a space."
+    ]
+   }
+  },
+  "R8-PB18": {
+   "1": {
+    "literal": [
+     "F",
+     "Matches the member_of triple for the slug."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the member_of triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "The thin space just renders as an ordinary space, and the text restates the record_label triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the record_label triple for 'the band'."
+    ]
+   }
+  },
+  "R8-PB19": {
+   "1": {
+    "literal": [
+     "F",
+     "Restates (king_abdulaziz, child, salman) plainly."
+    ],
+    "ordinary": [
+     "F",
+     "Plain statement of the child triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Matches (monarch, part_of, dynastic_state) plainly."
+    ],
+    "ordinary": [
+     "F",
+     "Matches (monarch, part_of, dynastic_state)."
+    ]
+   }
+  },
+  "R8-KR06": {
+   "1": {
+    "literal": [
+     "F",
+     "It states (the_rolling_stones, has_part, michael_philip_jagger) exactly."
+    ],
+    "ordinary": [
+     "F",
+     "Stilted, but it matches the (stones, has_part, jagger) triple exactly."
+    ]
+   },
+   "2": {
+    "literal": [
+     "B",
+     "The indefinite 'A Michael Philip Jagger' implies one of several people so named, but could be read as just the member."
+    ],
+    "ordinary": [
+     "B",
+     "The odd article 'A' could read as one of several people with that name, though the triple is stated."
+    ]
+   }
+  },
+  "R8-KR13": {
+   "1": {
+    "literal": [
+     "F",
+     "Restates the member_of triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the member_of triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Telegraphic but unambiguous restatement of the record_label triple."
+    ],
+    "ordinary": [
+     "F",
+     "Telegraphic but unambiguous restatement of (the_band, record_label, capitol_records_inc)."
+    ]
+   }
+  },
+  "R8-KR14": {
+   "1": {
+    "literal": [
+     "F",
+     "Restates the member_of triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the member_of triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Matches the genre triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the genre triple."
+    ]
+   },
+   "3": {
+    "literal": [
+     "F",
+     "Restates (the_band, country_of_origin, canada_portal)."
+    ],
+    "ordinary": [
+     "F",
+     "Standalone country_of_origin statement matching the_band triple."
+    ]
+   },
+   "1+2": {
+    "literal": [
+     "F",
+     "Both sentences restate gathered triples."
+    ],
+    "ordinary": [
+     "F",
+     "Both sentences are plain triples."
+    ]
+   },
+   "1+3": {
+    "literal": [
+     "F",
+     "Both sentences restate gathered triples."
+    ],
+    "ordinary": [
+     "F",
+     "Both sentences restate gathered triples."
+    ]
+   },
+   "2+3": {
+    "literal": [
+     "F",
+     "Both sentences are plain gathered triples."
+    ],
+    "ordinary": [
+     "F",
+     "Both sentences are exact gathered triples."
+    ]
+   }
+  },
+  "R8-KR16": {
+   "1": {
+    "literal": [
+     "F",
+     "Telegraphic restatement of the occupation triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the occupation triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Restates (monarch, subclass_of, head_of_nation) plainly."
+    ],
+    "ordinary": [
+     "F",
+     "Plain subclass triple."
+    ]
+   }
+  },
+  "R8-TA14": {
+   "1": {
+    "literal": [
+     "F",
+     "Joanne Rowling is author of Harry Potter series, matching the triple."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the author triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Restates the followed_by triple, with 'She' as the subject slug."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the followed_by triple for 'she'."
+    ]
+   }
+  },
+  "R8-TA15": {
+   "1": {
+    "literal": [
+     "F",
+     "Plainly restates (carfax_abbey, author, stoker_bram)."
+    ],
+    "ordinary": [
+     "F",
+     "Plain authorship triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Restates (it, instance_of, theatrical_film) exactly."
+    ],
+    "ordinary": [
+     "F",
+     "Standalone instance_of statement matching the 'it' triple."
+    ]
+   }
+  },
+  "R8-TA16": {
+   "1": {
+    "literal": [
+     "F",
+     "Telegraphic but matches the place_of_birth triple."
+    ],
+    "ordinary": [
+     "F",
+     "Telegraphic but matches the place_of_birth triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Awkward but a plain restatement of the original-language triple."
+    ],
+    "ordinary": [
+     "F",
+     "Odd phrasing but matches the original-language triple for 'her'."
+    ]
+   }
+  },
+  "R8-TA17": {
+   "1": {
+    "literal": [
+     "F",
+     "Plainly restates (trevor_horn, member_of, yes_band)."
+    ],
+    "ordinary": [
+     "F",
+     "Plain member_of triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "B",
+     "The slug trevor_and_i matches the text, but a reader would take 'Trevor and I' as a first-person claim."
+    ],
+    "ordinary": [
+     "U",
+     "A reader takes 'Trevor and I' as a first-person claim by the speaker, which the triples do not support."
+    ]
+   }
+  },
+  "R8-TA21": {
+   "1": {
+    "literal": [
+     "F",
+     "Correct author statement."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the author triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'I think' hedges the claim and adds a first-person stance."
+    ],
+    "ordinary": [
+     "U",
+     "'I think' hedges the authorship claim."
+    ]
+   },
+   "3": {
+    "literal": [
+     "F",
+     "Matches (she, followed_by, ayesha), with 'She' read as the work's name."
+    ],
+    "ordinary": [
+     "F",
+     "Matches the triple she followed_by ayesha, with 'She' as the work's name."
+    ]
+   },
+   "1+2": {
+    "literal": [
+     "U",
+     "'I think' hedges the second claim."
+    ],
+    "ordinary": [
+     "U",
+     "'I think' hedges the Haggard claim."
+    ]
+   },
+   "1+3": {
+    "literal": [
+     "U",
+     "'She' reads as Rowling, so 'followed by Ayesha' attaches to the wrong entity (it belongs to the book She)."
+    ],
+    "ordinary": [
+     "U",
+     "'She' reads as Rowling, so the user would believe Rowling is followed by Ayesha, but the triple is about the novel She."
+    ]
+   },
+   "2+3": {
+    "literal": [
+     "U",
+     "'I think' hedges the authorship claim."
+    ],
+    "ordinary": [
+     "U",
+     "'I think' hedges the authorship claim."
+    ]
+   }
+  }
+ },
+ "subset_counts": {
+  "F": 161,
+  "U": 66,
+  "B": 7
+ },
+ "prefix_labels": {
+  "R8-RJ01": [
+   "F",
+   "U"
+  ],
+  "R8-RJ02": [
+   "F",
+   "U"
+  ],
+  "R8-RJ03": [
+   "F",
+   "F",
+   "U"
+  ],
+  "R8-RJ04": [
+   "F",
+   "U"
+  ],
+  "R8-RJ05": [
+   "F",
+   "U"
+  ],
+  "R8-RJ06": [
+   "F",
+   "U"
+  ],
+  "R8-RJ07": [
+   "F",
+   "F",
+   "U"
+  ],
+  "R8-RJ08": [
+   "F",
+   "U"
+  ],
+  "R8-RJ09": [
+   "F",
+   "U"
+  ],
+  "R8-RJ10": [
+   "F",
+   "U"
+  ],
+  "R8-RJ11": [
+   "F",
+   "B"
+  ],
+  "R8-RJ12": [
+   "F",
+   "B"
+  ],
+  "R8-RJ13": [
+   "F",
+   "B"
+  ],
+  "R8-RJ14": [
+   "F",
+   "U",
+   "U"
+  ],
+  "R8-RJ15": [
+   "F",
+   "U"
+  ],
+  "R8-RJ16": [
+   "F",
+   "U"
+  ],
+  "R8-RJ17": [
+   "F",
+   "U"
+  ],
+  "R8-RJ18": [
+   "F",
+   "U"
+  ],
+  "R8-RJ19": [
+   "F",
+   "F",
+   "U"
+  ],
+  "R8-RJ20": [
+   "F",
+   "U"
+  ],
+  "R8-RJ21": [
+   "F",
+   "F",
+   "U"
+  ],
+  "R8-RJ22": [
+   "F",
+   "U"
+  ],
+  "R8-RJ23": [
+   "F",
+   "U"
+  ],
+  "R8-RJ24": [
+   "F",
+   "F",
+   "U"
+  ],
+  "R8-RJ25": [
+   "F",
+   "U"
+  ],
+  "R8-RJ26": [
+   "F",
+   "F",
+   "U"
+  ],
+  "R8-RJ27": [
+   "F",
+   "F",
+   "U"
+  ],
+  "R8-RJ28": [
+   "F",
+   "U"
+  ],
+  "R8-RJ29": [
+   "F",
+   "U"
+  ],
+  "R8-RJ30": [
+   "F",
+   "U"
+  ],
+  "R8-RJ31": [
+   "F",
+   "U"
+  ],
+  "R8-RJ32": [
+   "F",
+   "U"
+  ],
+  "R8-RJ33": [
+   "F",
+   "U"
+  ],
+  "R8-RJ34": [
+   "F",
+   "B"
+  ],
+  "R8-RJ35": [
+   "F",
+   "F",
+   "U"
+  ],
+  "R8-RJ36": [
+   "F",
+   "F",
+   "U"
+  ],
+  "R8-RJ37": [
+   "F",
+   "U"
+  ],
+  "R8-RJ38": [
+   "F",
+   "U",
+   "U"
+  ],
+  "R8-RJ39": [
+   "F",
+   "U",
+   "U"
+  ],
+  "R8-RJ40": [
+   "F",
+   "U"
+  ],
+  "R8-RF01": [
+   "F",
+   "F"
+  ],
+  "R8-RF02": [
+   "F",
+   "F"
+  ],
+  "R8-RF03": [
+   "F",
+   "F"
+  ],
+  "R8-RF04": [
+   "F",
+   "F"
+  ],
+  "R8-RF05": [
+   "F",
+   "F"
+  ],
+  "R8-RF06": [
+   "F",
+   "F"
+  ],
+  "R8-RF07": [
+   "F",
+   "F",
+   "F"
+  ],
+  "R8-RF08": [
+   "F",
+   "F"
+  ],
+  "R8-RF09": [
+   "F",
+   "F"
+  ],
+  "R8-RF10": [
+   "F",
+   "F"
+  ],
+  "R8-RF11": [
+   "F",
+   "F"
+  ],
+  "R8-PB01": [
+   "F",
+   "B"
+  ],
+  "R8-PB02": [
+   "F",
+   "B"
+  ],
+  "R8-PB03": [
+   "F",
+   "B"
+  ],
+  "R8-PB04": [
+   "F",
+   "B"
+  ],
+  "R8-PB05": [
+   "F",
+   "B"
+  ],
+  "R8-PB06": [
+   "F",
+   "B"
+  ],
+  "R8-PB07": [
+   "F",
+   "F",
+   "B"
+  ],
+  "R8-PB08": [
+   "F",
+   "B"
+  ],
+  "R8-PB09": [
+   "F",
+   "B"
+  ],
+  "R8-PB10": [
+   "F",
+   "B"
+  ],
+  "R8-PB11": [
+   "F",
+   "B"
+  ],
+  "R8-PB12": [
+   "F",
+   "B"
+  ],
+  "R8-PB13": [
+   "F",
+   "F",
+   "B"
+  ],
+  "R8-PB14": [
+   "F",
+   "B"
+  ],
+  "R8-PB15": [
+   "F",
+   "F",
+   "B"
+  ],
+  "R8-PB16": [
+   "F",
+   "B"
+  ],
+  "R8-PB17": [
+   "F",
+   "F",
+   "B"
+  ],
+  "R8-PB18": [
+   "F",
+   "U"
+  ],
+  "R8-PB19": [
+   "F",
+   "B"
+  ],
+  "R8-KR06": [
+   "F",
+   "B"
+  ],
+  "R8-KR13": [
+   "F",
+   "B"
+  ],
+  "R8-KR14": [
+   "F",
+   "F",
+   "B"
+  ],
+  "R8-KR16": [
+   "F",
+   "B"
+  ],
+  "R8-TA14": [
+   "F",
+   "U"
+  ],
+  "R8-TA15": [
+   "F",
+   "B"
+  ],
+  "R8-TA16": [
+   "F",
+   "B"
+  ],
+  "R8-TA17": [
+   "F",
+   "B"
+  ],
+  "R8-TA21": [
+   "F",
+   "U",
+   "U"
+  ]
+ },
+ "selections": "all",
+ "backend": "none (label adjudication, no simulation)",
+ "device": "none (label adjudication, no simulation)",
+ "provenance": "written by adjudicate.py from research/findings/raw/_moat_allowlist_hunt4/r8/cases.json (sha256 5cb969052366), the judge key /home/dant123/Projects/sim-rev/moat-allow6/judge8_key/key.json and the judge files {'literal': ['/home/dant123/Projects/sim-rev/moat-allow6/judge8_out/literal_chunk_01.json', '/home/dant123/Projects/sim-rev/moat-allow6/judge8_out/literal_chunk_02.json', '/home/dant123/Projects/sim-rev/moat-allow6/judge8_out/literal_chunk_03.json', '/home/dant123/Projects/sim-rev/moat-allow6/judge8_out/literal_chunk_04.json', '/home/dant123/Projects/sim-rev/moat-allow6/judge8_out/literal_chunk_05.json', '/home/dant123/Projects/sim-rev/moat-allow6/judge8_out/literal_chunk_06.json', '/home/dant123/Projects/sim-rev/moat-allow6/judge8_out/literal_chunk_07.json'], 'ordinary': ['/home/dant123/Projects/sim-rev/moat-allow6/judge8_out/ordinary_chunk_01.json', '/home/dant123/Projects/sim-rev/moat-allow6/judge8_out/ordinary_chunk_02.json', '/home/dant123/Projects/sim-rev/moat-allow6/judge8_out/ordinary_chunk_03.json', '/home/dant123/Projects/sim-rev/moat-allow6/judge8_out/ordinary_chunk_04.json', '/home/dant123/Projects/sim-rev/moat-allow6/judge8_out/ordinary_chunk_05.json', '/home/dant123/Projects/sim-rev/moat-allow6/judge8_out/ordinary_chunk_06.json', '/home/dant123/Projects/sim-rev/moat-allow6/judge8_out/ordinary_chunk_07.json']}; no checker was run",
+ "bar3_count_note": "The skeptic wrote 202 expect-U inputs (AMENDMENT 6: at least 100). After this adjudication 114 cases are U (AMENDMENT 6: at least 50, else a supplementary batch before the run), 88 are B and 52 F. By class, U: reply_joined 36, phrase_wording 29, hypothesis_frame 19, phrase_modifier 17, terminal_punctuation 10, taught 2, points_back_description 1; the judges made every first_second_person (21) and known_residue (17) case B, and 18 of 19 points_back_description and 19 of 25 taught cases B. Those classes are therefore tested only by the strict reading (every kept B case), reported beside bar 3. Bar 3 is 0 of the 114 U kept at all seven seeds through every entry (claim gate, composer candidate, and for the 79 reply cases the reply entry, where the emitted selection's label counts), every arm VALID. The reply cases' selections: 161 F, 66 U, 7 B (subset_labels).",
+ "split_rule": "No round-3 split_context_retraction class in round 8. For reply cases, AMENDMENT 6's rule replaces it: what reaches the user through the reply entry is an in-order selection of the reply's sentences, and that selection's own label (subset_labels) decides kept-U; the gate and composer-candidate entries judge the whole reply text by the case's label.",
+ "blindness_note": "The skeptic's README discloses reading the store builder's sanitize and the first part of pick_clean_alias (as rounds 6-7), the round-3 to round-5 sentences through its repeat-check validator and one regex search, and round 6's README, its adjudication record (final counts, crosstab, relabel set and both judges' labels without reasons for the expect-U rows) and its expect-U case rows, all on the allowed list; no matcher, test, harness, result or design-note file. The judges read only their anonymised chunk (/home/dant123/Projects/sim-rev/moat-allow6/judge8/chunk_0N.json, workflow wf_d75d7a7b-e5d); the jid key was moved out of their directory before judging. Claude judges none of this reveals the matcher's rules."
+}

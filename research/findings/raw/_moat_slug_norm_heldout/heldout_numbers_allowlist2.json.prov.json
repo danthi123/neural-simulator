@@ -1,0 +1,29 @@
+{
+ "run_id": "1792594730-732760",
+ "runner": "research/findings/raw/_moat_slug_norm_heldout/heldout_numbers.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-allow2/research/findings/raw/_moat_slug_norm_heldout/heldout_numbers.py",
+  "research/findings/raw/_moat_slug_norm_heldout/heldout_numbers_allowlist2.json",
+  "--allowlist",
+  "--suffix",
+  "_allowlist2"
+ ],
+ "git_sha": "ab5a2210b",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-21T10:58:50",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 6022.1,
+ "corpus_check_query": "claim checker keeps a one-word pronoun used as an entity name (me, mine, us, it, her) so the mouth makes a first-person or pointing-back claim",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_moat_slug_norm_heldout/heldout_numbers_allowlist2.json"
+}

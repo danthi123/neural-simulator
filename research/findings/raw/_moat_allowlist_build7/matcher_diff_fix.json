@@ -1,0 +1,5283 @@
+{
+ "_doc": "Build-7 REVIEW-FIX DIAGNOSTIC (non-blind; report only, not a pass): the pure matcher's verdict (`allowlist_verify`, no substrate, no parser\nseed) at THREE code versions, each read from git (or this worktree) and executed as its own module object with `__file__` set to this worktree's\npath so the committed caps / names tables resolve the same way: build 6 (commit 2b7ab8c1d), the REVIEWED build 7 (commit a05a6c91d, R7b(2) widened;\nthe version the two build-7 reviewers examined) and this worktree's `research/runners/_moat_allowlist.py` (build 7 after the review fixes: R7a\nmixed case + a widened class + the person/place title block, R7b(2b) + more conjunctions + the \"l\" homoglyph, the new R7c, and `_points_back`\non spans led by this/that/its/his/...). The key \"first_build7\" in rows and summaries below names the REVIEWED build 7 (a05a6c91d), kept so the\nrow format matches matcher_diff_widened.json. Populations as in matcher_diff_widened.py ((1) stub, (2) held-out corpora, (3) hunt rounds 3-8,\n(4) the six-spelling scan of the 64 store slugs with a non-initial \"i\" word), plus (5) a NATURAL-CASED spelling scan of EVERY store slug (the\nsubject or object of one store fact, in the stub's sentence with the slug's spelling swapped in): English title case (every word capitalised\nexcept the English small words a/an/the/and/but/or/nor/for/so/yet/of/in/on/at/to/by/up/as/via/per/vs after the first word), the same with a\nlone \"i\" word kept lower case, full title case (every word capitalised), and every names-table surface of the slug in English title case; and,\nfor the cost record only (not natural casing for a name, but the mouth writes store names so: held-out S2), sentence case and all lower case.\nIdentity of the build-7 module: its sha256 (the git_dirty flag of a provenance sidecar only says the tree had other uncommitted files).",
+ "backend": "numpy",
+ "device": "cpu",
+ "host": "dant123-wk",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-allow7/research/findings/raw/_moat_allowlist_build7/matcher_diff_fix.py",
+  "research/findings/raw/_moat_allowlist_build7/matcher_diff_fix.json"
+ ],
+ "build6_module": "research/runners/_moat_allowlist.py at git 2b7ab8c1d",
+ "build6_source_sha256": "d244c0042ee4f4a93e971aeea562777949f975ba145c6c2eea2927d18d5090fd",
+ "first_build7_module": "REVIEWED build 7: research/runners/_moat_allowlist.py at git a05a6c91d",
+ "first_build7_source_sha256": "14f7fc1288456a218bd8fbc463fa9cb1280dfed2a74f2b9b6cb5a036ea66ce7b",
+ "build7_module_sha256": "b4c348c78df5823aa7d2297ad7faad94e8bd9e733be583d96d0b3d54ab7fbd82",
+ "r8_dir": "/home/dant123/Projects/sim-rev/wt-hunt8/research/findings/raw/_moat_allowlist_hunt4/r8",
+ "stub_population": {
+  "n": 78857,
+  "vs_build6": {
+   "cells(build6_kept,build7_kept)": {
+    "(True, True)": 78857
+   },
+   "n_changed": 0,
+   "n_rejected_by_build7": 0,
+   "n_kept_by_build7": 0,
+   "changed_by_rule": {},
+   "changed_rows": []
+  },
+  "vs_first_build7": {
+   "cells(first_build7_kept,build7_kept)": {
+    "(True, True)": 78857
+   },
+   "n_changed": 0,
+   "n_rejected_by_build7": 0,
+   "n_kept_by_build7": 0,
+   "changed_by_rule": {},
+   "changed_rows": []
+  },
+  "n_population": 78857,
+  "cross_check_committed_build6": {
+   "file": "research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive_allowlist6.json",
+   "committed_n_facts": 78857,
+   "committed_kept_count": 78857,
+   "this_run_build6_kept_count": 78857,
+   "this_run_build7_kept_count": 78857
+  }
+ },
+ "heldout_corpora": {
+  "S1 corpus.json": {
+   "n": 272,
+   "vs_build6": {
+    "cells(build6_kept,build7_kept)": {
+     "(False, False)": 265,
+     "(True, True)": 7
+    },
+    "n_changed": 0,
+    "n_rejected_by_build7": 0,
+    "n_kept_by_build7": 0,
+    "changed_by_rule": {},
+    "changed_rows": []
+   },
+   "vs_first_build7": {
+    "cells(first_build7_kept,build7_kept)": {
+     "(False, False)": 265,
+     "(True, True)": 7
+    },
+    "n_changed": 0,
+    "n_rejected_by_build7": 0,
+    "n_kept_by_build7": 0,
+    "changed_by_rule": {},
+    "changed_rows": []
+   },
+   "cells(label,build6_kept,build7_kept)": {
+    "('B', False, False)": 58,
+    "('F', False, False)": 85,
+    "('F', True, True)": 7,
+    "('N', False, False)": 4,
+    "('U', False, False)": 118
+   }
+  },
+  "S2 s2_corpus.json": {
+   "n": 1068,
+   "vs_build6": {
+    "cells(build6_kept,build7_kept)": {
+     "(False, False)": 938,
+     "(True, True)": 130
+    },
+    "n_changed": 0,
+    "n_rejected_by_build7": 0,
+    "n_kept_by_build7": 0,
+    "changed_by_rule": {},
+    "changed_rows": []
+   },
+   "vs_first_build7": {
+    "cells(first_build7_kept,build7_kept)": {
+     "(False, False)": 938,
+     "(True, True)": 130
+    },
+    "n_changed": 0,
+    "n_rejected_by_build7": 0,
+    "n_kept_by_build7": 0,
+    "changed_by_rule": {},
+    "changed_rows": []
+   },
+   "cells(label,build6_kept,build7_kept)": {
+    "('F', False, False)": 8,
+    "('F', True, True)": 130,
+    "('U', False, False)": 930
+   }
+  },
+  "S3 s3_corpus.json": {
+   "n": 275,
+   "vs_build6": {
+    "cells(build6_kept,build7_kept)": {
+     "(False, False)": 248,
+     "(True, True)": 27
+    },
+    "n_changed": 0,
+    "n_rejected_by_build7": 0,
+    "n_kept_by_build7": 0,
+    "changed_by_rule": {},
+    "changed_rows": []
+   },
+   "vs_first_build7": {
+    "cells(first_build7_kept,build7_kept)": {
+     "(False, False)": 248,
+     "(True, True)": 27
+    },
+    "n_changed": 0,
+    "n_rejected_by_build7": 0,
+    "n_kept_by_build7": 0,
+    "changed_by_rule": {},
+    "changed_rows": []
+   },
+   "cells(label,build6_kept,build7_kept)": {
+    "('B', False, False)": 56,
+    "('F', False, False)": 59,
+    "('F', True, True)": 27,
+    "('N', False, False)": 1,
+    "('U', False, False)": 132
+   }
+  }
+ },
+ "hunt_rounds": {
+  "r3": {
+   "n": 213,
+   "vs_build6": {
+    "cells(build6_kept,build7_kept)": {
+     "(False, False)": 175,
+     "(True, True)": 38
+    },
+    "n_changed": 0,
+    "n_rejected_by_build7": 0,
+    "n_kept_by_build7": 0,
+    "changed_by_rule": {},
+    "changed_rows": []
+   },
+   "vs_first_build7": {
+    "cells(first_build7_kept,build7_kept)": {
+     "(False, False)": 175,
+     "(True, True)": 38
+    },
+    "n_changed": 0,
+    "n_rejected_by_build7": 0,
+    "n_kept_by_build7": 0,
+    "changed_by_rule": {},
+    "changed_rows": []
+   },
+   "cells(label,build6_kept,build7_kept)": {
+    "('B', False, False)": 12,
+    "('F', False, False)": 5,
+    "('F', True, True)": 38,
+    "('U', False, False)": 158
+   },
+   "files": {
+    "cases": "research/findings/raw/_moat_allowlist_hunt3/cases.json",
+    "results_build6": "research/findings/raw/_moat_allowlist_hunt4/r3_rerun_build6.json",
+    "labels_from": "research/findings/raw/_moat_allowlist_hunt4/r3_rerun_build6.json",
+    "cases_sha256": "629956780b48b1eefd8d67e7588596266924179e8085db06fca0233af821a8bc"
+   },
+   "cross_check_committed_build6_verdict_disagreements": []
+  },
+  "r4": {
+   "n": 177,
+   "vs_build6": {
+    "cells(build6_kept,build7_kept)": {
+     "(False, False)": 150,
+     "(True, True)": 27
+    },
+    "n_changed": 0,
+    "n_rejected_by_build7": 0,
+    "n_kept_by_build7": 0,
+    "changed_by_rule": {},
+    "changed_rows": []
+   },
+   "vs_first_build7": {
+    "cells(first_build7_kept,build7_kept)": {
+     "(False, False)": 150,
+     "(True, True)": 27
+    },
+    "n_changed": 0,
+    "n_rejected_by_build7": 0,
+    "n_kept_by_build7": 0,
+    "changed_by_rule": {},
+    "changed_rows": []
+   },
+   "cells(label,build6_kept,build7_kept)": {
+    "('B', False, False)": 22,
+    "('B', True, True)": 2,
+    "('F', False, False)": 18,
+    "('F', True, True)": 25,
+    "('U', False, False)": 110
+   },
+   "files": {
+    "cases": "research/findings/raw/_moat_allowlist_hunt4/r4/cases.json",
+    "results_build6": "research/findings/raw/_moat_allowlist_hunt4/r4/results_build6.json",
+    "labels_from": "research/findings/raw/_moat_allowlist_hunt4/r4/results_build6.json",
+    "cases_sha256": "6081eab2359303ea121a1afae791d7205a2d4313124aebdea4c32ddd18f239b8"
+   },
+   "cross_check_committed_build6_verdict_disagreements": []
+  },
+  "r5": {
+   "n": 164,
+   "vs_build6": {
+    "cells(build6_kept,build7_kept)": {
+     "(False, False)": 142,
+     "(True, True)": 22
+    },
+    "n_changed": 0,
+    "n_rejected_by_build7": 0,
+    "n_kept_by_build7": 0,
+    "changed_by_rule": {},
+    "changed_rows": []
+   },
+   "vs_first_build7": {
+    "cells(first_build7_kept,build7_kept)": {
+     "(False, False)": 142,
+     "(True, True)": 22
+    },
+    "n_changed": 0,
+    "n_rejected_by_build7": 0,
+    "n_kept_by_build7": 0,
+    "changed_by_rule": {},
+    "changed_rows": []
+   },
+   "cells(label,build6_kept,build7_kept)": {
+    "('B', False, False)": 27,
+    "('B', True, True)": 1,
+    "('F', False, False)": 26,
+    "('F', True, True)": 21,
+    "('U', False, False)": 89
+   },
+   "files": {
+    "cases": "research/findings/raw/_moat_allowlist_hunt4/r5/cases.json",
+    "results_build6": "research/findings/raw/_moat_allowlist_hunt4/r5/results_build6.json",
+    "labels_from": "research/findings/raw/_moat_allowlist_hunt4/r5/results_build6.json",
+    "cases_sha256": "dfb4aabe718f5e6cc66c5a35b56d35fe08b798b62e2643fec96d35dfc02522f8"
+   },
+   "cross_check_committed_build6_verdict_disagreements": []
+  },
+  "r6": {
+   "n": 204,
+   "vs_build6": {
+    "cells(build6_kept,build7_kept)": {
+     "(False, False)": 91,
+     "(True, False)": 1,
+     "(True, True)": 112
+    },
+    "n_changed": 1,
+    "n_rejected_by_build7": 1,
+    "n_kept_by_build7": 0,
+    "changed_by_rule": {
+     "R7b(3) conjunction then I": 1
+    },
+    "changed_rows": [
+     {
+      "id": "R6-CN05",
+      "label": "B",
+      "class": "connective_word_lowercase_in_slug",
+      "sentence": "UK of GB and I follows Kingdom of Great Britian.",
+      "build6_kept": true,
+      "first_build7_kept": false,
+      "build7_kept": false,
+      "build7_rule": "R7b(3) conjunction then I",
+      "build7_reason": "allowlist: entity span 'UK of GB and I' of uk_of_gb_and_i holds a conjunction before 'I' ('and' 'I'): English reads a first-person subject (the honesty boundary) [sentence 1 of 1]"
+     }
+    ]
+   },
+   "vs_first_build7": {
+    "cells(first_build7_kept,build7_kept)": {
+     "(False, False)": 92,
+     "(True, True)": 112
+    },
+    "n_changed": 0,
+    "n_rejected_by_build7": 0,
+    "n_kept_by_build7": 0,
+    "changed_by_rule": {},
+    "changed_rows": []
+   },
+   "cells(label,build6_kept,build7_kept)": {
+    "('B', False, False)": 57,
+    "('B', True, False)": 1,
+    "('B', True, True)": 76,
+    "('F', False, False)": 17,
+    "('F', True, True)": 36,
+    "('U', False, False)": 17
+   },
+   "files": {
+    "cases": "research/findings/raw/_moat_allowlist_hunt4/r6/cases.json",
+    "results_build6": "research/findings/raw/_moat_allowlist_hunt4/r6/results_build6.json",
+    "labels_from": "research/findings/raw/_moat_allowlist_hunt4/r6/results_build6.json",
+    "cases_sha256": "3f3cda7c2e45df34326f08d061ef843d023710be767575e8fa045fefb124b8a3"
+   },
+   "cross_check_committed_build6_verdict_disagreements": []
+  },
+  "r7": {
+   "n": 270,
+   "vs_build6": {
+    "cells(build6_kept,build7_kept)": {
+     "(False, False)": 240,
+     "(True, True)": 30
+    },
+    "n_changed": 0,
+    "n_rejected_by_build7": 0,
+    "n_kept_by_build7": 0,
+    "changed_by_rule": {},
+    "changed_rows": []
+   },
+   "vs_first_build7": {
+    "cells(first_build7_kept,build7_kept)": {
+     "(False, False)": 240,
+     "(True, True)": 30
+    },
+    "n_changed": 0,
+    "n_rejected_by_build7": 0,
+    "n_kept_by_build7": 0,
+    "changed_by_rule": {},
+    "changed_rows": []
+   },
+   "cells(label,build6_kept,build7_kept)": {
+    "('B', False, False)": 25,
+    "('F', False, False)": 24,
+    "('F', True, True)": 30,
+    "('U', False, False)": 191
+   },
+   "files": {
+    "cases": "research/findings/raw/_moat_allowlist_hunt4/r7/cases.json",
+    "results_build6": "research/findings/raw/_moat_allowlist_hunt4/r7/results_build6.json",
+    "labels_from": "research/findings/raw/_moat_allowlist_hunt4/r7/results_build6.json",
+    "cases_sha256": "39dd24a91aa12e0ec4fb2e90549c3c558fc658b93426dd96da09adfb33e763dc"
+   },
+   "cross_check_committed_build6_verdict_disagreements": []
+  },
+  "r8": {
+   "n": 254,
+   "vs_build6": {
+    "cells(build6_kept,build7_kept)": {
+     "(False, False)": 182,
+     "(True, False)": 10,
+     "(True, True)": 62
+    },
+    "n_changed": 10,
+    "n_rejected_by_build7": 10,
+    "n_kept_by_build7": 0,
+    "changed_by_rule": {
+     "R7a one-word pronoun name, lower case": 3,
+     "R7b(1) lower-case i, no capital in the name": 3,
+     "R7b(2) upper-case I then a lower-case word": 1,
+     "R7a one-word pronoun name, sentence-initial": 2,
+     "R7b(3) conjunction then I": 1
+    },
+    "changed_rows": [
+     {
+      "id": "R8-TA01",
+      "label": "B",
+      "class": "taught",
+      "sentence": "Reginald K Dwight is an author of me.",
+      "build6_kept": true,
+      "first_build7_kept": false,
+      "build7_kept": false,
+      "build7_rule": "R7a one-word pronoun name, lower case",
+      "build7_reason": "allowlist: entity span 'me' of me reads as the pronoun 'me' (written in lower case, no determiner before it) [sentence 1 of 1]"
+     },
+     {
+      "id": "R8-TA04",
+      "label": "B",
+      "class": "taught",
+      "sentence": "Taylor Alison Swift is an author of mine.",
+      "build6_kept": true,
+      "first_build7_kept": false,
+      "build7_kept": false,
+      "build7_rule": "R7a one-word pronoun name, lower case",
+      "build7_reason": "allowlist: entity span 'mine' of mine reads as the pronoun 'mine' (written in lower case, no determiner before it) [sentence 1 of 1]"
+     },
+     {
+      "id": "R8-TA07",
+      "label": "B",
+      "class": "taught",
+      "sentence": "Canada portal shares border with us.",
+      "build6_kept": true,
+      "first_build7_kept": false,
+      "build7_kept": false,
+      "build7_rule": "R7a one-word pronoun name, lower case",
+      "build7_reason": "allowlist: entity span 'us' of us reads as the pronoun 'us' (written in lower case, no determiner before it) [sentence 1 of 1]"
+     },
+     {
+      "id": "R8-TA09",
+      "label": "B",
+      "class": "taught",
+      "sentence": "honey i shrunk the kids is an instance of theatrical film.",
+      "build6_kept": true,
+      "first_build7_kept": false,
+      "build7_kept": false,
+      "build7_rule": "R7b(1) lower-case i, no capital in the name",
+      "build7_reason": "allowlist: entity span 'honey i shrunk the kids' of honey_i_shrunk_the_kids holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+     },
+     {
+      "id": "R8-TA10",
+      "label": "B",
+      "class": "taught",
+      "sentence": "So I married an axe murderer genre comedy drama.",
+      "build6_kept": true,
+      "first_build7_kept": false,
+      "build7_kept": false,
+      "build7_rule": "R7b(2) upper-case I then a lower-case word",
+      "build7_reason": "allowlist: entity span 'So I married an axe murderer' of so_i_married_an_axe_murderer holds 'I' (word 2) before the lower-case word 'married': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+     },
+     {
+      "id": "R8-TA11",
+      "label": "B",
+      "class": "taught",
+      "sentence": "Alice Feeney is an author of sometimes i lie.",
+      "build6_kept": true,
+      "first_build7_kept": false,
+      "build7_kept": false,
+      "build7_rule": "R7b(1) lower-case i, no capital in the name",
+      "build7_reason": "allowlist: entity span 'sometimes i lie' of sometimes_i_lie holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+     },
+     {
+      "id": "R8-TA15",
+      "label": "B",
+      "class": "taught",
+      "sentence": "Stoker Bram is an author of Carfax Abbey. It is an instance of theatrical film.",
+      "build6_kept": true,
+      "first_build7_kept": false,
+      "build7_kept": false,
+      "build7_rule": "R7a one-word pronoun name, sentence-initial",
+      "build7_reason": "allowlist: entity span 'It' of it reads as the pronoun 'It' (the first word of the sentence, no determiner before it) [sentence 2 of 2]"
+     },
+     {
+      "id": "R8-TA16",
+      "label": "B",
+      "class": "taught",
+      "sentence": "Scarlett Johansson place of birth New York New York. Her original language of film or TV show number of English words.",
+      "build6_kept": true,
+      "first_build7_kept": false,
+      "build7_kept": false,
+      "build7_rule": "R7a one-word pronoun name, sentence-initial",
+      "build7_reason": "allowlist: entity span 'Her' of her reads as the pronoun 'Her' (the first word of the sentence, no determiner before it) [sentence 2 of 2]"
+     },
+     {
+      "id": "R8-TA17",
+      "label": "B",
+      "class": "taught",
+      "sentence": "Trevor Horn is a member of Yes band. Trevor and I participated in Korean police action.",
+      "build6_kept": true,
+      "first_build7_kept": false,
+      "build7_kept": false,
+      "build7_rule": "R7b(3) conjunction then I",
+      "build7_reason": "allowlist: entity span 'Trevor and I' of trevor_and_i holds a conjunction before 'I' ('and' 'I'): English reads a first-person subject (the honesty boundary) [sentence 2 of 2]"
+     },
+     {
+      "id": "R8-TA20",
+      "label": "B",
+      "class": "taught",
+      "sentence": "and i love her follows if i fell.",
+      "build6_kept": true,
+      "first_build7_kept": false,
+      "build7_kept": false,
+      "build7_rule": "R7b(1) lower-case i, no capital in the name",
+      "build7_reason": "allowlist: entity span 'and i love her' of and_i_love_her holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+     }
+    ]
+   },
+   "vs_first_build7": {
+    "cells(first_build7_kept,build7_kept)": {
+     "(False, False)": 192,
+     "(True, True)": 62
+    },
+    "n_changed": 0,
+    "n_rejected_by_build7": 0,
+    "n_kept_by_build7": 0,
+    "changed_by_rule": {},
+    "changed_rows": []
+   },
+   "cells(label,build6_kept,build7_kept)": {
+    "('B', False, False)": 64,
+    "('B', True, False)": 10,
+    "('B', True, True)": 14,
+    "('F', False, False)": 4,
+    "('F', True, True)": 48,
+    "('U', False, False)": 114
+   },
+   "files": {
+    "cases": "/home/dant123/Projects/sim-rev/wt-hunt8/research/findings/raw/_moat_allowlist_hunt4/r8/cases.json",
+    "results_build6": "/home/dant123/Projects/sim-rev/wt-hunt8/research/findings/raw/_moat_allowlist_hunt4/r8/results_build6.json",
+    "labels_from": "/home/dant123/Projects/sim-rev/wt-hunt8/research/findings/raw/_moat_allowlist_hunt4/r8/adjudication.json",
+    "cases_sha256": "5cb9690523661b549e347327e02a398ec99610ea21ba18dc0f06b2d07e600489"
+   },
+   "cross_check_committed_build6_verdict_disagreements": []
+  }
+ },
+ "extra_natural_spelling_cost_scan": {
+  "n_slugs": 64,
+  "spellings": {
+   "slug": {
+    "n": 64,
+    "vs_build6": {
+     "cells(build6_kept,build7_kept)": {
+      "(True, True)": 64
+     },
+     "n_changed": 0,
+     "n_rejected_by_build7": 0,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {},
+     "changed_rows": []
+    },
+    "vs_first_build7": {
+     "cells(first_build7_kept,build7_kept)": {
+      "(True, True)": 64
+     },
+     "n_changed": 0,
+     "n_rejected_by_build7": 0,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {},
+     "changed_rows": []
+    }
+   },
+   "deslugged_lower": {
+    "n": 64,
+    "vs_build6": {
+     "cells(build6_kept,build7_kept)": {
+      "(True, False)": 64
+     },
+     "n_changed": 64,
+     "n_rejected_by_build7": 64,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {
+      "R7b(1) lower-case i, no capital in the name": 64
+     },
+     "changed_rows": [
+      {
+       "slug": "1st_parliament_of_george_i",
+       "svo": [
+        "1st_parliament_of_george_i",
+        "follows",
+        "4th_parliament_of_great_britain"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The 1st parliament of george i followses 4th_parliament_of_great_britain.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span '1st parliament of george i' of 1st_parliament_of_george_i holds a lower-case 'i' (word 5) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "a_r_c_h_i_e",
+       "svo": [
+        "archie_shepp",
+        "given_name",
+        "a_r_c_h_i_e"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The archie_shepp given_names a r c h i e.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'a r c h i e' of a_r_c_h_i_e holds a lower-case 'i' (word 5) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "abd_l_mecid_i",
+       "svo": [
+        "abd_l_mecid_i",
+        "instance_of",
+        "human_specie"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The abd l mecid i instance_ofs human_specie.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'abd l mecid i' of abd_l_mecid_i holds a lower-case 'i' (word 4) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "afghanistan_i_s_of",
+       "svo": [
+        "bagram_theater_detention_facility",
+        "country",
+        "afghanistan_i_s_of"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The bagram_theater_detention_facility countrys afghanistan i s of.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'afghanistan i s of' of afghanistan_i_s_of holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "ayd_n_i_li_province_turkey",
+       "svo": [
+        "ayd_n_i_li_province_turkey",
+        "country",
+        "the_republic_of_turkey"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The ayd n i li province turkey countrys the_republic_of_turkey.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'ayd n i li province turkey' of ayd_n_i_li_province_turkey holds a lower-case 'i' (word 3) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "b_i",
+       "svo": [
+        "b_i",
+        "instance_of",
+        "surname_page"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The b i instance_ofs surname_page.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'b i' of b_i holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "bursaspor_kul_b_derne_i",
+       "svo": [
+        "bursaspor_kul_b_derne_i",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The association_football_club is a sport of bursaspor kul b derne i.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'bursaspor kul b derne i' of bursaspor_kul_b_derne_i holds a lower-case 'i' (word 5) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "busan_i_cons",
+       "svo": [
+        "busan_i_cons",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The association_football_club is a sport of busan i cons.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'busan i cons' of busan_i_cons holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "calara_i_county",
+       "svo": [
+        "calara_i_county",
+        "located_in_time_zone",
+        "west_africa_summer_time"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The calara i county located_in_time_zones west_africa_summer_time.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'calara i county' of calara_i_county holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "cern_u_i",
+       "svo": [
+        "cern_u_i",
+        "located_in_time_zone",
+        "west_africa_summer_time"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The cern u i located_in_time_zones west_africa_summer_time.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'cern u i' of cern_u_i holds a lower-case 'i' (word 3) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "charles_i_of_england",
+       "svo": [
+        "charles_ii_of_scotland",
+        "father",
+        "charles_i_of_england"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The charles i of england is the father of charles_ii_of_scotland.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'charles i of england' of charles_i_of_england holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "cold_war_i",
+       "svo": [
+        "indochina_war",
+        "part_of",
+        "cold_war_i"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The indochina_war part_ofs cold war i.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'cold war i' of cold_war_i holds a lower-case 'i' (word 3) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "csms_ia_i",
+       "svo": [
+        "csms_ia_i",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The association_football_club is a sport of csms ia i.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'csms ia i' of csms_ia_i holds a lower-case 'i' (word 3) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "division_i_bowl",
+       "svo": [
+        "en_cee_double_ay",
+        "has_part",
+        "division_i_bowl"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The en_cee_double_ay has_parts division i bowl.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'division i bowl' of division_i_bowl holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "dom_pedro_i",
+       "svo": [
+        "dom_pedro_i",
+        "instance_of",
+        "human_specie"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The dom pedro i instance_ofs human_specie.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'dom pedro i' of dom_pedro_i holds a lower-case 'i' (word 3) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "f_royska_f_tb_ltsmanslandsli_i",
+       "svo": [
+        "f_royska_f_tb_ltsmanslandsli_i",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The association_football_club is a sport of f royska f tb ltsmanslandsli i.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'f royska f tb ltsmanslandsli i' of f_royska_f_tb_ltsmanslandsli_i holds a lower-case 'i' (word 6) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "fatih_i_stanbul",
+       "svo": [
+        "fatih_i_stanbul",
+        "located_in_time_zone",
+        "kaliningrad_time"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The fatih i stanbul located_in_time_zones kaliningrad_time.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'fatih i stanbul' of fatih_i_stanbul holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "fc_zarya_b_l_i",
+       "svo": [
+        "fc_zarya_b_l_i",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The association_football_club is a sport of fc zarya b l i.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'fc zarya b l i' of fc_zarya_b_l_i holds a lower-case 'i' (word 5) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "ferdinand_i_of_germany",
+       "svo": [
+        "ferdinand_i_of_germany",
+        "instance_of",
+        "human_specie"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The ferdinand i of germany instance_ofs human_specie.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'ferdinand i of germany' of ferdinand_i_of_germany holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "fk_sutjeska_nik_i",
+       "svo": [
+        "fk_sutjeska_nik_i",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The association_football_club is a sport of fk sutjeska nik i.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'fk sutjeska nik i' of fk_sutjeska_nik_i holds a lower-case 'i' (word 4) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "francis_i_of_naples",
+       "svo": [
+        "king_ferdinand_of_naples",
+        "child",
+        "francis_i_of_naples"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The francis i of naples is a child of king_ferdinand_of_naples.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'francis i of naples' of francis_i_of_naples holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "frederick_i_of_prussia",
+       "svo": [
+        "frederick_i_of_prussia",
+        "instance_of",
+        "human_specie"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The frederick i of prussia instance_ofs human_specie.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'frederick i of prussia' of frederick_i_of_prussia holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "freiburg_i_ue",
+       "svo": [
+        "hockey_club_fribourg_gott_ron",
+        "located_in_the_administrative_territoria",
+        "freiburg_i_ue"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The hockey_club_fribourg_gott_ron located_in_the_administrative_territorias freiburg i ue.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'freiburg i ue' of freiburg_i_ue holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "fuad_i_university",
+       "svo": [
+        "fuad_i_university",
+        "instance_of",
+        "higher_general_education"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The fuad i university instance_ofs higher_general_education.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'fuad i university' of fuad_i_university holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "gala_i_romania",
+       "svo": [
+        "history_of_hammond_indiana",
+        "twinned_administrative_body",
+        "gala_i_romania"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The history_of_hammond_indiana twinned_administrative_bodys gala i romania.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'gala i romania' of gala_i_romania holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "greater_i_stanbul",
+       "svo": [
+        "historic_areas_of_i_stanbul",
+        "located_in_the_administrative_territoria",
+        "greater_i_stanbul"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The historic_areas_of_i_stanbul located_in_the_administrative_territorias greater i stanbul.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'greater i stanbul' of greater_i_stanbul holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "helsingborgs_i_f",
+       "svo": [
+        "helsingborgs_i_f",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The association_football_club is a sport of helsingborgs i f.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'helsingborgs i f' of helsingborgs_i_f holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "hilal_i_imtiaz",
+       "svo": [
+        "hilal_i_imtiaz",
+        "country",
+        "pakistani_nation_state"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The hilal i imtiaz countrys pakistani_nation_state.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'hilal i imtiaz' of hilal_i_imtiaz holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "historic_areas_of_i_stanbul",
+       "svo": [
+        "kartal_sc",
+        "headquarters_location",
+        "historic_areas_of_i_stanbul"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The kartal_sc headquarters_locations historic areas of i stanbul.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'historic areas of i stanbul' of historic_areas_of_i_stanbul holds a lower-case 'i' (word 4) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "history_of_gala_i_county",
+       "svo": [
+        "history_of_gala_i_county",
+        "located_in_time_zone",
+        "west_africa_summer_time"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The history of gala i county located_in_time_zones west_africa_summer_time.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'history of gala i county' of history_of_gala_i_county holds a lower-case 'i' (word 4) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "hubei_o_i_t",
+       "svo": [
+        "hubei_o_i_t",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The association_football_club is a sport of hubei o i t.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'hubei o i t' of hubei_o_i_t holds a lower-case 'i' (word 3) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "ia_i_county",
+       "svo": [
+        "ia_i_county",
+        "located_in_time_zone",
+        "west_africa_summer_time"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The ia i county located_in_time_zones west_africa_summer_time.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'ia i county' of ia_i_county holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "int_j_i_ek_stud",
+       "svo": [
+        "int_j_i_ek_stud",
+        "instance_of",
+        "human_specie"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The int j i ek stud instance_ofs human_specie.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'int j i ek stud' of int_j_i_ek_stud holds a lower-case 'i' (word 3) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "john_i_of_england",
+       "svo": [
+        "john_i_of_england",
+        "instance_of",
+        "human_specie"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The john i of england instance_ofs human_specie.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'john i of england' of john_i_of_england holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "kaua_i_county_hawai_i",
+       "svo": [
+        "kaua_i_county_hawai_i",
+        "country",
+        "u_s_of_a"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The kaua i county hawai i countrys u_s_of_a.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'kaua i county hawai i' of kaua_i_county_hawai_i holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "kf_la_i",
+       "svo": [
+        "kf_la_i",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The association_football_club is a sport of kf la i.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'kf la i' of kf_la_i holds a lower-case 'i' (word 3) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "kozhikode_i",
+       "svo": [
+        "ms_baburaj",
+        "place_of_birth",
+        "kozhikode_i"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The ms_baburaj place_of_births kozhikode i.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'kozhikode i' of kozhikode_i holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "kungl_musikh_gskolan_i_stockholm",
+       "svo": [
+        "kungl_musikh_gskolan_i_stockholm",
+        "country",
+        "climate_of_sweden"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The kungl musikh gskolan i stockholm countrys climate_of_sweden.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'kungl musikh gskolan i stockholm' of kungl_musikh_gskolan_i_stockholm holds a lower-case 'i' (word 4) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "kunsth_gskolen_i_oslo",
+       "svo": [
+        "kunsth_gskolen_i_oslo",
+        "country",
+        "royal_kingdom_of_norway"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The kunsth gskolen i oslo countrys royal_kingdom_of_norway.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'kunsth gskolen i oslo' of kunsth_gskolen_i_oslo holds a lower-case 'i' (word 3) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "lo_pu_i_de_doma",
+       "svo": [
+        "riom",
+        "located_in_the_administrative_territoria",
+        "lo_pu_i_de_doma"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The riom located_in_the_administrative_territorias lo pu i de doma.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'lo pu i de doma' of lo_pu_i_de_doma holds a lower-case 'i' (word 3) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "maximilian_i_of_burgundy",
+       "svo": [
+        "maximilian_i_of_burgundy",
+        "instance_of",
+        "human_specie"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The maximilian i of burgundy instance_ofs human_specie.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'maximilian i of burgundy' of maximilian_i_of_burgundy holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "mehedin_i_county",
+       "svo": [
+        "mehedin_i_county",
+        "located_in_time_zone",
+        "west_africa_summer_time"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The mehedin i county located_in_time_zones west_africa_summer_time.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'mehedin i county' of mehedin_i_county holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "mersin_i_dmanyurdu",
+       "svo": [
+        "mersin_i_dmanyurdu",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The association_football_club is a sport of mersin i dmanyurdu.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'mersin i dmanyurdu' of mersin_i_dmanyurdu holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "monk_p_i",
+       "svo": [
+        "monk_p_i",
+        "country_of_origin",
+        "u_s_of_a"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The monk p i country_of_origins u_s_of_a.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'monk p i' of monk_p_i holds a lower-case 'i' (word 3) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "mulan_i",
+       "svo": [
+        "mulan_i",
+        "country_of_origin",
+        "u_s_of_a"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The mulan i country_of_origins u_s_of_a.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'mulan i' of mulan_i holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "municipiul_b_l_i",
+       "svo": [
+        "municipiul_b_l_i",
+        "instance_of",
+        "city_work"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The municipiul b l i instance_ofs city_work.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'municipiul b l i' of municipiul_b_l_i holds a lower-case 'i' (word 4) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "nicholas_i_the_conqueror",
+       "svo": [
+        "nicholas_i_the_conqueror",
+        "instance_of",
+        "human_specie"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The nicholas i the conqueror instance_ofs human_specie.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'nicholas i the conqueror' of nicholas_i_the_conqueror holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "norges_kvinnelandslag_i_fotball",
+       "svo": [
+        "norges_kvinnelandslag_i_fotball",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The association_football_club is a sport of norges kvinnelandslag i fotball.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'norges kvinnelandslag i fotball' of norges_kvinnelandslag_i_fotball holds a lower-case 'i' (word 3) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "ob_i",
+       "svo": [
+        "ob_i",
+        "sport",
+        "women_s_ice_hockey"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The women_s_ice_hockey is a sport of ob i.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'ob i' of ob_i holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "oosterhoff_type_i",
+       "svo": [
+        "oosterhoff_type_i",
+        "part_of",
+        "colonization_of_other_galaxies"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The oosterhoff type i part_ofs colonization_of_other_galaxies.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'oosterhoff type i' of oosterhoff_type_i holds a lower-case 'i' (word 3) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "orszagos_bajnoksag_i",
+       "svo": [
+        "orszagos_bajnoksag_i",
+        "country",
+        "magyar_k_zt_rsas_g"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The orszagos bajnoksag i countrys magyar_k_zt_rsas_g.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'orszagos bajnoksag i' of orszagos_bajnoksag_i holds a lower-case 'i' (word 3) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "p_i_tschaikovsky",
+       "svo": [
+        "moscow_state_conservatoire",
+        "named_after",
+        "p_i_tschaikovsky"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The moscow_state_conservatoire named_afters p i tschaikovsky.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'p i tschaikovsky' of p_i_tschaikovsky holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "patriarch_of_i_stanbul",
+       "svo": [
+        "patriarch_of_i_stanbul",
+        "subclass_of",
+        "archbishop_emeritus"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The patriarch of i stanbul subclass_ofs archbishop_emeritus.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'patriarch of i stanbul' of patriarch_of_i_stanbul holds a lower-case 'i' (word 3) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "pope_franciscus_i",
+       "svo": [
+        "pope_franciscus_i",
+        "instance_of",
+        "human_specie"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The pope franciscus i instance_ofs human_specie.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'pope franciscus i' of pope_franciscus_i holds a lower-case 'i' (word 3) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "sk_botostroj_i_zl_n",
+       "svo": [
+        "sk_botostroj_i_zl_n",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The association_football_club is a sport of sk botostroj i zl n.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'sk botostroj i zl n' of sk_botostroj_i_zl_n holds a lower-case 'i' (word 3) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "sk_dar_i_stanbul",
+       "svo": [
+        "sk_dar_i_stanbul",
+        "located_in_time_zone",
+        "kaliningrad_time"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The sk dar i stanbul located_in_time_zones kaliningrad_time.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'sk dar i stanbul' of sk_dar_i_stanbul holds a lower-case 'i' (word 3) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "stromsgodset_i_f",
+       "svo": [
+        "stromsgodset_i_f",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The association_football_club is a sport of stromsgodset i f.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'stromsgodset i f' of stromsgodset_i_f holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "uk_of_gb_and_i",
+       "svo": [
+        "wales_u_k",
+        "located_in_the_administrative_territoria",
+        "uk_of_gb_and_i"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The wales_u_k located_in_the_administrative_territorias uk of gb and i.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'uk of gb and i' of uk_of_gb_and_i holds a lower-case 'i' (word 5) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "universit_paris_i_panth_on_sorbonne",
+       "svo": [
+        "universit_paris_i_panth_on_sorbonne",
+        "country",
+        "franzoesische_republik"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The universit paris i panth on sorbonne countrys franzoesische_republik.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'universit paris i panth on sorbonne' of universit_paris_i_panth_on_sorbonne holds a lower-case 'i' (word 3) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "universite_lille_i",
+       "svo": [
+        "universite_lille_i",
+        "country",
+        "franzoesische_republik"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The universite lille i countrys franzoesische_republik.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'universite lille i' of universite_lille_i holds a lower-case 'i' (word 3) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "v_i_lenin",
+       "svo": [
+        "v_i_lenin",
+        "instance_of",
+        "human_specie"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The v i lenin instance_ofs human_specie.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'v i lenin' of v_i_lenin holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "vang_i_valdres",
+       "svo": [
+        "lom_norway",
+        "shares_border_with",
+        "vang_i_valdres"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The lom_norway shares_border_withs vang i valdres.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'vang i valdres' of vang_i_valdres holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "viktorka_i_kov",
+       "svo": [
+        "viktorka_i_kov",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The association_football_club is a sport of viktorka i kov.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'viktorka i kov' of viktorka_i_kov holds a lower-case 'i' (word 2) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "warner_bros_i_e",
+       "svo": [
+        "warner_bros_i_e",
+        "country",
+        "u_s_of_a"
+       ],
+       "spelling": "deslugged_lower",
+       "sentence": "The warner bros i e countrys u_s_of_a.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span 'warner bros i e' of warner_bros_i_e holds a lower-case 'i' (word 3) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      }
+     ]
+    },
+    "vs_first_build7": {
+     "cells(first_build7_kept,build7_kept)": {
+      "(False, False)": 64
+     },
+     "n_changed": 0,
+     "n_rejected_by_build7": 0,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {},
+     "changed_rows": []
+    }
+   },
+   "title_with_I": {
+    "n": 64,
+    "vs_build6": {
+     "cells(build6_kept,build7_kept)": {
+      "(True, False)": 1,
+      "(True, True)": 63
+     },
+     "n_changed": 1,
+     "n_rejected_by_build7": 1,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {
+      "R7b(3) conjunction then I": 1
+     },
+     "changed_rows": [
+      {
+       "slug": "uk_of_gb_and_i",
+       "svo": [
+        "wales_u_k",
+        "located_in_the_administrative_territoria",
+        "uk_of_gb_and_i"
+       ],
+       "spelling": "title_with_I",
+       "sentence": "The wales_u_k located_in_the_administrative_territorias Uk Of Gb And I.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(3) conjunction then I",
+       "build7_reason": "allowlist: entity span 'Uk Of Gb And I' of uk_of_gb_and_i holds a conjunction before 'I' ('And' 'I'): English reads a first-person subject (the honesty boundary) [sentence 1 of 1]"
+      }
+     ]
+    },
+    "vs_first_build7": {
+     "cells(first_build7_kept,build7_kept)": {
+      "(False, False)": 1,
+      "(True, True)": 63
+     },
+     "n_changed": 0,
+     "n_rejected_by_build7": 0,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {},
+     "changed_rows": []
+    }
+   },
+   "title_with_i": {
+    "n": 64,
+    "vs_build6": {
+     "cells(build6_kept,build7_kept)": {
+      "(True, False)": 1,
+      "(True, True)": 63
+     },
+     "n_changed": 1,
+     "n_rejected_by_build7": 1,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {
+      "R7b(3) conjunction then I": 1
+     },
+     "changed_rows": [
+      {
+       "slug": "uk_of_gb_and_i",
+       "svo": [
+        "wales_u_k",
+        "located_in_the_administrative_territoria",
+        "uk_of_gb_and_i"
+       ],
+       "spelling": "title_with_i",
+       "sentence": "The wales_u_k located_in_the_administrative_territorias Uk Of Gb And i.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(3) conjunction then I",
+       "build7_reason": "allowlist: entity span 'Uk Of Gb And i' of uk_of_gb_and_i holds a conjunction before 'I' ('And' 'i'): English reads a first-person subject (the honesty boundary) [sentence 1 of 1]"
+      }
+     ]
+    },
+    "vs_first_build7": {
+     "cells(first_build7_kept,build7_kept)": {
+      "(False, False)": 1,
+      "(True, True)": 63
+     },
+     "n_changed": 0,
+     "n_rejected_by_build7": 0,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {},
+     "changed_rows": []
+    }
+   },
+   "sentence_with_I": {
+    "n": 64,
+    "vs_build6": {
+     "cells(build6_kept,build7_kept)": {
+      "(True, False)": 36,
+      "(True, True)": 28
+     },
+     "n_changed": 36,
+     "n_rejected_by_build7": 36,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {
+      "R7b(2) upper-case I then a lower-case word": 35,
+      "R7b(3) conjunction then I": 1
+     },
+     "changed_rows": [
+      {
+       "slug": "a_r_c_h_i_e",
+       "svo": [
+        "archie_shepp",
+        "given_name",
+        "a_r_c_h_i_e"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The archie_shepp given_names A r c h I e.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'A r c h I e' of a_r_c_h_i_e holds 'I' (word 5) before the lower-case word 'e': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "afghanistan_i_s_of",
+       "svo": [
+        "bagram_theater_detention_facility",
+        "country",
+        "afghanistan_i_s_of"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The bagram_theater_detention_facility countrys Afghanistan I s of.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Afghanistan I s of' of afghanistan_i_s_of holds 'I' (word 2) before the lower-case word 's': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "ayd_n_i_li_province_turkey",
+       "svo": [
+        "ayd_n_i_li_province_turkey",
+        "country",
+        "the_republic_of_turkey"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The Ayd n I li province turkey countrys the_republic_of_turkey.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Ayd n I li province turkey' of ayd_n_i_li_province_turkey holds 'I' (word 3) before the lower-case word 'li': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "busan_i_cons",
+       "svo": [
+        "busan_i_cons",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The association_football_club is a sport of Busan I cons.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Busan I cons' of busan_i_cons holds 'I' (word 2) before the lower-case word 'cons': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "calara_i_county",
+       "svo": [
+        "calara_i_county",
+        "located_in_time_zone",
+        "west_africa_summer_time"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The Calara I county located_in_time_zones west_africa_summer_time.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Calara I county' of calara_i_county holds 'I' (word 2) before the lower-case word 'county': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "division_i_bowl",
+       "svo": [
+        "en_cee_double_ay",
+        "has_part",
+        "division_i_bowl"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The en_cee_double_ay has_parts Division I bowl.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Division I bowl' of division_i_bowl holds 'I' (word 2) before the lower-case word 'bowl': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "fatih_i_stanbul",
+       "svo": [
+        "fatih_i_stanbul",
+        "located_in_time_zone",
+        "kaliningrad_time"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The Fatih I stanbul located_in_time_zones kaliningrad_time.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Fatih I stanbul' of fatih_i_stanbul holds 'I' (word 2) before the lower-case word 'stanbul': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "freiburg_i_ue",
+       "svo": [
+        "hockey_club_fribourg_gott_ron",
+        "located_in_the_administrative_territoria",
+        "freiburg_i_ue"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The hockey_club_fribourg_gott_ron located_in_the_administrative_territorias Freiburg I ue.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Freiburg I ue' of freiburg_i_ue holds 'I' (word 2) before the lower-case word 'ue': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "fuad_i_university",
+       "svo": [
+        "fuad_i_university",
+        "instance_of",
+        "higher_general_education"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The Fuad I university instance_ofs higher_general_education.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Fuad I university' of fuad_i_university holds 'I' (word 2) before the lower-case word 'university': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "gala_i_romania",
+       "svo": [
+        "history_of_hammond_indiana",
+        "twinned_administrative_body",
+        "gala_i_romania"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The history_of_hammond_indiana twinned_administrative_bodys Gala I romania.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Gala I romania' of gala_i_romania holds 'I' (word 2) before the lower-case word 'romania': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "greater_i_stanbul",
+       "svo": [
+        "historic_areas_of_i_stanbul",
+        "located_in_the_administrative_territoria",
+        "greater_i_stanbul"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The historic_areas_of_i_stanbul located_in_the_administrative_territorias Greater I stanbul.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Greater I stanbul' of greater_i_stanbul holds 'I' (word 2) before the lower-case word 'stanbul': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "helsingborgs_i_f",
+       "svo": [
+        "helsingborgs_i_f",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The association_football_club is a sport of Helsingborgs I f.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Helsingborgs I f' of helsingborgs_i_f holds 'I' (word 2) before the lower-case word 'f': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "hilal_i_imtiaz",
+       "svo": [
+        "hilal_i_imtiaz",
+        "country",
+        "pakistani_nation_state"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The Hilal I imtiaz countrys pakistani_nation_state.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Hilal I imtiaz' of hilal_i_imtiaz holds 'I' (word 2) before the lower-case word 'imtiaz': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "historic_areas_of_i_stanbul",
+       "svo": [
+        "kartal_sc",
+        "headquarters_location",
+        "historic_areas_of_i_stanbul"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The kartal_sc headquarters_locations Historic areas of I stanbul.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Historic areas of I stanbul' of historic_areas_of_i_stanbul holds 'I' (word 4) before the lower-case word 'stanbul': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "history_of_gala_i_county",
+       "svo": [
+        "history_of_gala_i_county",
+        "located_in_time_zone",
+        "west_africa_summer_time"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The History of gala I county located_in_time_zones west_africa_summer_time.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'History of gala I county' of history_of_gala_i_county holds 'I' (word 4) before the lower-case word 'county': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "hubei_o_i_t",
+       "svo": [
+        "hubei_o_i_t",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The association_football_club is a sport of Hubei o I t.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Hubei o I t' of hubei_o_i_t holds 'I' (word 3) before the lower-case word 't': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "ia_i_county",
+       "svo": [
+        "ia_i_county",
+        "located_in_time_zone",
+        "west_africa_summer_time"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The Ia I county located_in_time_zones west_africa_summer_time.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Ia I county' of ia_i_county holds 'I' (word 2) before the lower-case word 'county': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "int_j_i_ek_stud",
+       "svo": [
+        "int_j_i_ek_stud",
+        "instance_of",
+        "human_specie"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The Int j I ek stud instance_ofs human_specie.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Int j I ek stud' of int_j_i_ek_stud holds 'I' (word 3) before the lower-case word 'ek': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "kaua_i_county_hawai_i",
+       "svo": [
+        "kaua_i_county_hawai_i",
+        "country",
+        "u_s_of_a"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The Kaua I county hawai I countrys u_s_of_a.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Kaua I county hawai I' of kaua_i_county_hawai_i holds 'I' (word 2) before the lower-case word 'county': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "kungl_musikh_gskolan_i_stockholm",
+       "svo": [
+        "kungl_musikh_gskolan_i_stockholm",
+        "country",
+        "climate_of_sweden"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The Kungl musikh gskolan I stockholm countrys climate_of_sweden.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Kungl musikh gskolan I stockholm' of kungl_musikh_gskolan_i_stockholm holds 'I' (word 4) before the lower-case word 'stockholm': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "kunsth_gskolen_i_oslo",
+       "svo": [
+        "kunsth_gskolen_i_oslo",
+        "country",
+        "royal_kingdom_of_norway"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The Kunsth gskolen I oslo countrys royal_kingdom_of_norway.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Kunsth gskolen I oslo' of kunsth_gskolen_i_oslo holds 'I' (word 3) before the lower-case word 'oslo': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "lo_pu_i_de_doma",
+       "svo": [
+        "riom",
+        "located_in_the_administrative_territoria",
+        "lo_pu_i_de_doma"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The riom located_in_the_administrative_territorias Lo pu I de doma.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Lo pu I de doma' of lo_pu_i_de_doma holds 'I' (word 3) before the lower-case word 'de': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "mehedin_i_county",
+       "svo": [
+        "mehedin_i_county",
+        "located_in_time_zone",
+        "west_africa_summer_time"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The Mehedin I county located_in_time_zones west_africa_summer_time.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Mehedin I county' of mehedin_i_county holds 'I' (word 2) before the lower-case word 'county': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "mersin_i_dmanyurdu",
+       "svo": [
+        "mersin_i_dmanyurdu",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The association_football_club is a sport of Mersin I dmanyurdu.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Mersin I dmanyurdu' of mersin_i_dmanyurdu holds 'I' (word 2) before the lower-case word 'dmanyurdu': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "norges_kvinnelandslag_i_fotball",
+       "svo": [
+        "norges_kvinnelandslag_i_fotball",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The association_football_club is a sport of Norges kvinnelandslag I fotball.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Norges kvinnelandslag I fotball' of norges_kvinnelandslag_i_fotball holds 'I' (word 3) before the lower-case word 'fotball': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "p_i_tschaikovsky",
+       "svo": [
+        "moscow_state_conservatoire",
+        "named_after",
+        "p_i_tschaikovsky"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The moscow_state_conservatoire named_afters P I tschaikovsky.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'P I tschaikovsky' of p_i_tschaikovsky holds 'I' (word 2) before the lower-case word 'tschaikovsky': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "patriarch_of_i_stanbul",
+       "svo": [
+        "patriarch_of_i_stanbul",
+        "subclass_of",
+        "archbishop_emeritus"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The Patriarch of I stanbul subclass_ofs archbishop_emeritus.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Patriarch of I stanbul' of patriarch_of_i_stanbul holds 'I' (word 3) before the lower-case word 'stanbul': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "sk_botostroj_i_zl_n",
+       "svo": [
+        "sk_botostroj_i_zl_n",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The association_football_club is a sport of Sk botostroj I zl n.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Sk botostroj I zl n' of sk_botostroj_i_zl_n holds 'I' (word 3) before the lower-case word 'zl': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "sk_dar_i_stanbul",
+       "svo": [
+        "sk_dar_i_stanbul",
+        "located_in_time_zone",
+        "kaliningrad_time"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The Sk dar I stanbul located_in_time_zones kaliningrad_time.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Sk dar I stanbul' of sk_dar_i_stanbul holds 'I' (word 3) before the lower-case word 'stanbul': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "stromsgodset_i_f",
+       "svo": [
+        "stromsgodset_i_f",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The association_football_club is a sport of Stromsgodset I f.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Stromsgodset I f' of stromsgodset_i_f holds 'I' (word 2) before the lower-case word 'f': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "uk_of_gb_and_i",
+       "svo": [
+        "wales_u_k",
+        "located_in_the_administrative_territoria",
+        "uk_of_gb_and_i"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The wales_u_k located_in_the_administrative_territorias Uk of gb and I.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(3) conjunction then I",
+       "build7_reason": "allowlist: entity span 'Uk of gb and I' of uk_of_gb_and_i holds a conjunction before 'I' ('and' 'I'): English reads a first-person subject (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "universit_paris_i_panth_on_sorbonne",
+       "svo": [
+        "universit_paris_i_panth_on_sorbonne",
+        "country",
+        "franzoesische_republik"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The Universit paris I panth on sorbonne countrys franzoesische_republik.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Universit paris I panth on sorbonne' of universit_paris_i_panth_on_sorbonne holds 'I' (word 3) before the lower-case word 'panth': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "v_i_lenin",
+       "svo": [
+        "v_i_lenin",
+        "instance_of",
+        "human_specie"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The V I lenin instance_ofs human_specie.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'V I lenin' of v_i_lenin holds 'I' (word 2) before the lower-case word 'lenin': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "vang_i_valdres",
+       "svo": [
+        "lom_norway",
+        "shares_border_with",
+        "vang_i_valdres"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The lom_norway shares_border_withs Vang I valdres.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Vang I valdres' of vang_i_valdres holds 'I' (word 2) before the lower-case word 'valdres': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "viktorka_i_kov",
+       "svo": [
+        "viktorka_i_kov",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The association_football_club is a sport of Viktorka I kov.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Viktorka I kov' of viktorka_i_kov holds 'I' (word 2) before the lower-case word 'kov': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "warner_bros_i_e",
+       "svo": [
+        "warner_bros_i_e",
+        "country",
+        "u_s_of_a"
+       ],
+       "spelling": "sentence_with_I",
+       "sentence": "The Warner bros I e countrys u_s_of_a.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) upper-case I then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Warner bros I e' of warner_bros_i_e holds 'I' (word 3) before the lower-case word 'e': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      }
+     ]
+    },
+    "vs_first_build7": {
+     "cells(first_build7_kept,build7_kept)": {
+      "(False, False)": 36,
+      "(True, True)": 28
+     },
+     "n_changed": 0,
+     "n_rejected_by_build7": 0,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {},
+     "changed_rows": []
+    }
+   },
+   "sentence_with_i": {
+    "n": 64,
+    "vs_build6": {
+     "cells(build6_kept,build7_kept)": {
+      "(True, False)": 37,
+      "(True, True)": 27
+     },
+     "n_changed": 37,
+     "n_rejected_by_build7": 37,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {
+      "R7b(1) lower-case i, no capital in the name": 1,
+      "R7b(2) lower-case i then a lower-case word": 35,
+      "R7b(3) conjunction then I": 1
+     },
+     "changed_rows": [
+      {
+       "slug": "1st_parliament_of_george_i",
+       "svo": [
+        "1st_parliament_of_george_i",
+        "follows",
+        "4th_parliament_of_great_britain"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The 1st parliament of george i followses 4th_parliament_of_great_britain.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(1) lower-case i, no capital in the name",
+       "build7_reason": "allowlist: entity span '1st parliament of george i' of 1st_parliament_of_george_i holds a lower-case 'i' (word 5) in a name with no capital letter: English reads the first-person pronoun (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "a_r_c_h_i_e",
+       "svo": [
+        "archie_shepp",
+        "given_name",
+        "a_r_c_h_i_e"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The archie_shepp given_names A r c h i e.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'A r c h i e' of a_r_c_h_i_e holds 'i' (word 5) before the lower-case word 'e': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "afghanistan_i_s_of",
+       "svo": [
+        "bagram_theater_detention_facility",
+        "country",
+        "afghanistan_i_s_of"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The bagram_theater_detention_facility countrys Afghanistan i s of.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Afghanistan i s of' of afghanistan_i_s_of holds 'i' (word 2) before the lower-case word 's': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "ayd_n_i_li_province_turkey",
+       "svo": [
+        "ayd_n_i_li_province_turkey",
+        "country",
+        "the_republic_of_turkey"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The Ayd n i li province turkey countrys the_republic_of_turkey.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Ayd n i li province turkey' of ayd_n_i_li_province_turkey holds 'i' (word 3) before the lower-case word 'li': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "busan_i_cons",
+       "svo": [
+        "busan_i_cons",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The association_football_club is a sport of Busan i cons.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Busan i cons' of busan_i_cons holds 'i' (word 2) before the lower-case word 'cons': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "calara_i_county",
+       "svo": [
+        "calara_i_county",
+        "located_in_time_zone",
+        "west_africa_summer_time"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The Calara i county located_in_time_zones west_africa_summer_time.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Calara i county' of calara_i_county holds 'i' (word 2) before the lower-case word 'county': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "division_i_bowl",
+       "svo": [
+        "en_cee_double_ay",
+        "has_part",
+        "division_i_bowl"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The en_cee_double_ay has_parts Division i bowl.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Division i bowl' of division_i_bowl holds 'i' (word 2) before the lower-case word 'bowl': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "fatih_i_stanbul",
+       "svo": [
+        "fatih_i_stanbul",
+        "located_in_time_zone",
+        "kaliningrad_time"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The Fatih i stanbul located_in_time_zones kaliningrad_time.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Fatih i stanbul' of fatih_i_stanbul holds 'i' (word 2) before the lower-case word 'stanbul': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "freiburg_i_ue",
+       "svo": [
+        "hockey_club_fribourg_gott_ron",
+        "located_in_the_administrative_territoria",
+        "freiburg_i_ue"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The hockey_club_fribourg_gott_ron located_in_the_administrative_territorias Freiburg i ue.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Freiburg i ue' of freiburg_i_ue holds 'i' (word 2) before the lower-case word 'ue': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "fuad_i_university",
+       "svo": [
+        "fuad_i_university",
+        "instance_of",
+        "higher_general_education"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The Fuad i university instance_ofs higher_general_education.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Fuad i university' of fuad_i_university holds 'i' (word 2) before the lower-case word 'university': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "gala_i_romania",
+       "svo": [
+        "history_of_hammond_indiana",
+        "twinned_administrative_body",
+        "gala_i_romania"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The history_of_hammond_indiana twinned_administrative_bodys Gala i romania.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Gala i romania' of gala_i_romania holds 'i' (word 2) before the lower-case word 'romania': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "greater_i_stanbul",
+       "svo": [
+        "historic_areas_of_i_stanbul",
+        "located_in_the_administrative_territoria",
+        "greater_i_stanbul"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The historic_areas_of_i_stanbul located_in_the_administrative_territorias Greater i stanbul.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Greater i stanbul' of greater_i_stanbul holds 'i' (word 2) before the lower-case word 'stanbul': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "helsingborgs_i_f",
+       "svo": [
+        "helsingborgs_i_f",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The association_football_club is a sport of Helsingborgs i f.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Helsingborgs i f' of helsingborgs_i_f holds 'i' (word 2) before the lower-case word 'f': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "hilal_i_imtiaz",
+       "svo": [
+        "hilal_i_imtiaz",
+        "country",
+        "pakistani_nation_state"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The Hilal i imtiaz countrys pakistani_nation_state.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Hilal i imtiaz' of hilal_i_imtiaz holds 'i' (word 2) before the lower-case word 'imtiaz': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "historic_areas_of_i_stanbul",
+       "svo": [
+        "kartal_sc",
+        "headquarters_location",
+        "historic_areas_of_i_stanbul"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The kartal_sc headquarters_locations Historic areas of i stanbul.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Historic areas of i stanbul' of historic_areas_of_i_stanbul holds 'i' (word 4) before the lower-case word 'stanbul': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "history_of_gala_i_county",
+       "svo": [
+        "history_of_gala_i_county",
+        "located_in_time_zone",
+        "west_africa_summer_time"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The History of gala i county located_in_time_zones west_africa_summer_time.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'History of gala i county' of history_of_gala_i_county holds 'i' (word 4) before the lower-case word 'county': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "hubei_o_i_t",
+       "svo": [
+        "hubei_o_i_t",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The association_football_club is a sport of Hubei o i t.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Hubei o i t' of hubei_o_i_t holds 'i' (word 3) before the lower-case word 't': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "ia_i_county",
+       "svo": [
+        "ia_i_county",
+        "located_in_time_zone",
+        "west_africa_summer_time"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The Ia i county located_in_time_zones west_africa_summer_time.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Ia i county' of ia_i_county holds 'i' (word 2) before the lower-case word 'county': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "int_j_i_ek_stud",
+       "svo": [
+        "int_j_i_ek_stud",
+        "instance_of",
+        "human_specie"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The Int j i ek stud instance_ofs human_specie.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Int j i ek stud' of int_j_i_ek_stud holds 'i' (word 3) before the lower-case word 'ek': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "kaua_i_county_hawai_i",
+       "svo": [
+        "kaua_i_county_hawai_i",
+        "country",
+        "u_s_of_a"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The Kaua i county hawai i countrys u_s_of_a.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Kaua i county hawai i' of kaua_i_county_hawai_i holds 'i' (word 2) before the lower-case word 'county': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "kungl_musikh_gskolan_i_stockholm",
+       "svo": [
+        "kungl_musikh_gskolan_i_stockholm",
+        "country",
+        "climate_of_sweden"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The Kungl musikh gskolan i stockholm countrys climate_of_sweden.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Kungl musikh gskolan i stockholm' of kungl_musikh_gskolan_i_stockholm holds 'i' (word 4) before the lower-case word 'stockholm': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "kunsth_gskolen_i_oslo",
+       "svo": [
+        "kunsth_gskolen_i_oslo",
+        "country",
+        "royal_kingdom_of_norway"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The Kunsth gskolen i oslo countrys royal_kingdom_of_norway.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Kunsth gskolen i oslo' of kunsth_gskolen_i_oslo holds 'i' (word 3) before the lower-case word 'oslo': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "lo_pu_i_de_doma",
+       "svo": [
+        "riom",
+        "located_in_the_administrative_territoria",
+        "lo_pu_i_de_doma"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The riom located_in_the_administrative_territorias Lo pu i de doma.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Lo pu i de doma' of lo_pu_i_de_doma holds 'i' (word 3) before the lower-case word 'de': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "mehedin_i_county",
+       "svo": [
+        "mehedin_i_county",
+        "located_in_time_zone",
+        "west_africa_summer_time"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The Mehedin i county located_in_time_zones west_africa_summer_time.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Mehedin i county' of mehedin_i_county holds 'i' (word 2) before the lower-case word 'county': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "mersin_i_dmanyurdu",
+       "svo": [
+        "mersin_i_dmanyurdu",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The association_football_club is a sport of Mersin i dmanyurdu.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Mersin i dmanyurdu' of mersin_i_dmanyurdu holds 'i' (word 2) before the lower-case word 'dmanyurdu': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "norges_kvinnelandslag_i_fotball",
+       "svo": [
+        "norges_kvinnelandslag_i_fotball",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The association_football_club is a sport of Norges kvinnelandslag i fotball.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Norges kvinnelandslag i fotball' of norges_kvinnelandslag_i_fotball holds 'i' (word 3) before the lower-case word 'fotball': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "p_i_tschaikovsky",
+       "svo": [
+        "moscow_state_conservatoire",
+        "named_after",
+        "p_i_tschaikovsky"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The moscow_state_conservatoire named_afters P i tschaikovsky.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'P i tschaikovsky' of p_i_tschaikovsky holds 'i' (word 2) before the lower-case word 'tschaikovsky': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "patriarch_of_i_stanbul",
+       "svo": [
+        "patriarch_of_i_stanbul",
+        "subclass_of",
+        "archbishop_emeritus"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The Patriarch of i stanbul subclass_ofs archbishop_emeritus.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Patriarch of i stanbul' of patriarch_of_i_stanbul holds 'i' (word 3) before the lower-case word 'stanbul': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "sk_botostroj_i_zl_n",
+       "svo": [
+        "sk_botostroj_i_zl_n",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The association_football_club is a sport of Sk botostroj i zl n.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Sk botostroj i zl n' of sk_botostroj_i_zl_n holds 'i' (word 3) before the lower-case word 'zl': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "sk_dar_i_stanbul",
+       "svo": [
+        "sk_dar_i_stanbul",
+        "located_in_time_zone",
+        "kaliningrad_time"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The Sk dar i stanbul located_in_time_zones kaliningrad_time.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Sk dar i stanbul' of sk_dar_i_stanbul holds 'i' (word 3) before the lower-case word 'stanbul': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "stromsgodset_i_f",
+       "svo": [
+        "stromsgodset_i_f",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The association_football_club is a sport of Stromsgodset i f.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Stromsgodset i f' of stromsgodset_i_f holds 'i' (word 2) before the lower-case word 'f': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "uk_of_gb_and_i",
+       "svo": [
+        "wales_u_k",
+        "located_in_the_administrative_territoria",
+        "uk_of_gb_and_i"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The wales_u_k located_in_the_administrative_territorias Uk of gb and i.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(3) conjunction then I",
+       "build7_reason": "allowlist: entity span 'Uk of gb and i' of uk_of_gb_and_i holds a conjunction before 'I' ('and' 'i'): English reads a first-person subject (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "universit_paris_i_panth_on_sorbonne",
+       "svo": [
+        "universit_paris_i_panth_on_sorbonne",
+        "country",
+        "franzoesische_republik"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The Universit paris i panth on sorbonne countrys franzoesische_republik.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Universit paris i panth on sorbonne' of universit_paris_i_panth_on_sorbonne holds 'i' (word 3) before the lower-case word 'panth': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "v_i_lenin",
+       "svo": [
+        "v_i_lenin",
+        "instance_of",
+        "human_specie"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The V i lenin instance_ofs human_specie.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'V i lenin' of v_i_lenin holds 'i' (word 2) before the lower-case word 'lenin': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "vang_i_valdres",
+       "svo": [
+        "lom_norway",
+        "shares_border_with",
+        "vang_i_valdres"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The lom_norway shares_border_withs Vang i valdres.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Vang i valdres' of vang_i_valdres holds 'i' (word 2) before the lower-case word 'valdres': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "viktorka_i_kov",
+       "svo": [
+        "viktorka_i_kov",
+        "sport",
+        "association_football_club"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The association_football_club is a sport of Viktorka i kov.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Viktorka i kov' of viktorka_i_kov holds 'i' (word 2) before the lower-case word 'kov': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "warner_bros_i_e",
+       "svo": [
+        "warner_bros_i_e",
+        "country",
+        "u_s_of_a"
+       ],
+       "spelling": "sentence_with_i",
+       "sentence": "The Warner bros i e countrys u_s_of_a.",
+       "build6_kept": true,
+       "first_build7_kept": false,
+       "build7_kept": false,
+       "build7_rule": "R7b(2) lower-case i then a lower-case word",
+       "build7_reason": "allowlist: entity span 'Warner bros i e' of warner_bros_i_e holds 'i' (word 3) before the lower-case word 'e': English reads the first-person pronoun and a clause (the honesty boundary) [sentence 1 of 1]"
+      }
+     ]
+    },
+    "vs_first_build7": {
+     "cells(first_build7_kept,build7_kept)": {
+      "(False, False)": 37,
+      "(True, True)": 27
+     },
+     "n_changed": 0,
+     "n_rejected_by_build7": 0,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {},
+     "changed_rows": []
+    }
+   }
+  },
+  "verdict_by_slug": {
+   "1st_parliament_of_george_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "a_r_c_h_i_e": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "abd_l_mecid_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "afghanistan_i_s_of": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "ayd_n_i_li_province_turkey": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "b_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "bursaspor_kul_b_derne_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "busan_i_cons": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "calara_i_county": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "cern_u_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "charles_i_of_england": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "cold_war_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "csms_ia_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "division_i_bowl": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "dom_pedro_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "f_royska_f_tb_ltsmanslandsli_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "fatih_i_stanbul": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "fc_zarya_b_l_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "ferdinand_i_of_germany": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "fk_sutjeska_nik_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "francis_i_of_naples": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "frederick_i_of_prussia": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "freiburg_i_ue": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "fuad_i_university": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "gala_i_romania": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "greater_i_stanbul": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "helsingborgs_i_f": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "hilal_i_imtiaz": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "historic_areas_of_i_stanbul": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "history_of_gala_i_county": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "hubei_o_i_t": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "ia_i_county": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "int_j_i_ek_stud": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "john_i_of_england": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "kaua_i_county_hawai_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "kf_la_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "kozhikode_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "kungl_musikh_gskolan_i_stockholm": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "kunsth_gskolen_i_oslo": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "lo_pu_i_de_doma": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "maximilian_i_of_burgundy": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "mehedin_i_county": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "mersin_i_dmanyurdu": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "monk_p_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "mulan_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "municipiul_b_l_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "nicholas_i_the_conqueror": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "norges_kvinnelandslag_i_fotball": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "ob_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "oosterhoff_type_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "orszagos_bajnoksag_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "p_i_tschaikovsky": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "patriarch_of_i_stanbul": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "pope_franciscus_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "sk_botostroj_i_zl_n": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "sk_dar_i_stanbul": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "stromsgodset_i_f": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "uk_of_gb_and_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "universit_paris_i_panth_on_sorbonne": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "universite_lille_i": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    }
+   },
+   "v_i_lenin": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "vang_i_valdres": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "viktorka_i_kov": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   },
+   "warner_bros_i_e": {
+    "slug": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "deslugged_lower": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "title_with_I": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "title_with_i": {
+     "build6": true,
+     "first_build7": true,
+     "build7": true
+    },
+    "sentence_with_I": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    },
+    "sentence_with_i": {
+     "build6": true,
+     "first_build7": false,
+     "build7": false
+    }
+   }
+  }
+ },
+ "extra_store_natural_cased_scan": {
+  "n_slugs": 23854,
+  "spellings": {
+   "english_title_I": {
+    "n": 23854,
+    "vs_build6": {
+     "cells(build6_kept,build7_kept)": {
+      "(False, False)": 85,
+      "(True, False)": 1,
+      "(True, True)": 23768
+     },
+     "n_changed": 1,
+     "n_rejected_by_build7": 1,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {
+      "R7b(3) conjunction then I": 1
+     },
+     "changed_rows_note": "rows omitted (counts above); the rows that changed against the reviewed build 7 are listed"
+    },
+    "vs_first_build7": {
+     "cells(first_build7_kept,build7_kept)": {
+      "(False, False)": 86,
+      "(True, True)": 23768
+     },
+     "n_changed": 0,
+     "n_rejected_by_build7": 0,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {},
+     "changed_rows": []
+    }
+   },
+   "english_title_i": {
+    "n": 23854,
+    "vs_build6": {
+     "cells(build6_kept,build7_kept)": {
+      "(False, False)": 85,
+      "(True, False)": 1,
+      "(True, True)": 23768
+     },
+     "n_changed": 1,
+     "n_rejected_by_build7": 1,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {
+      "R7b(3) conjunction then I": 1
+     },
+     "changed_rows_note": "rows omitted (counts above); the rows that changed against the reviewed build 7 are listed"
+    },
+    "vs_first_build7": {
+     "cells(first_build7_kept,build7_kept)": {
+      "(False, False)": 86,
+      "(True, True)": 23768
+     },
+     "n_changed": 0,
+     "n_rejected_by_build7": 0,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {},
+     "changed_rows": []
+    }
+   },
+   "full_title": {
+    "n": 23854,
+    "vs_build6": {
+     "cells(build6_kept,build7_kept)": {
+      "(False, False)": 85,
+      "(True, False)": 1,
+      "(True, True)": 23768
+     },
+     "n_changed": 1,
+     "n_rejected_by_build7": 1,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {
+      "R7b(3) conjunction then I": 1
+     },
+     "changed_rows_note": "rows omitted (counts above); the rows that changed against the reviewed build 7 are listed"
+    },
+    "vs_first_build7": {
+     "cells(first_build7_kept,build7_kept)": {
+      "(False, False)": 86,
+      "(True, True)": 23768
+     },
+     "n_changed": 0,
+     "n_rejected_by_build7": 0,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {},
+     "changed_rows": []
+    }
+   },
+   "names_table_english_title": {
+    "n": 10006,
+    "vs_build6": {
+     "cells(build6_kept,build7_kept)": {
+      "(False, False)": 7256,
+      "(True, True)": 2750
+     },
+     "n_changed": 0,
+     "n_rejected_by_build7": 0,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {},
+     "changed_rows_note": "rows omitted (counts above); the rows that changed against the reviewed build 7 are listed"
+    },
+    "vs_first_build7": {
+     "cells(first_build7_kept,build7_kept)": {
+      "(False, False)": 7256,
+      "(True, True)": 2750
+     },
+     "n_changed": 0,
+     "n_rejected_by_build7": 0,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {},
+     "changed_rows": []
+    }
+   },
+   "sentence_case": {
+    "n": 23854,
+    "vs_build6": {
+     "cells(build6_kept,build7_kept)": {
+      "(False, False)": 418,
+      "(True, False)": 46,
+      "(True, True)": 23390
+     },
+     "n_changed": 46,
+     "n_rejected_by_build7": 46,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {
+      "R7b(1) lower-case i, no capital in the name": 1,
+      "R7b(2) lower-case i then a lower-case word": 35,
+      "other: allowlist: entity span 'Akademia teatralna im aleksandra zelwero' of akademia_te": 1,
+      "other: allowlist: entity span 'Give it to em' of give_it_to_em the pronoun 'em' (word 4": 1,
+      "other: allowlist: entity span 'Her majesty s prison service' of her_majesty_s_prison_se": 1,
+      "other: allowlist: entity span 'His netherlands majesty s ship' of his_netherlands_majes": 1,
+      "other: allowlist: entity span 'Ive arrondissement of paris' of ive_arrondissement_of_pa": 1,
+      "other: allowlist: entity span 'My n' of my_n opens with the pronoun / determiner 'My' a": 1,
+      "other: allowlist: entity span 'Ried im innkreis district' of ried_im_innkreis_district ": 1,
+      "R7b(3) conjunction then I": 1,
+      "other: allowlist: entity span 'University of freiburg im breisgau' of university_of_fre": 1,
+      "other: allowlist: entity span 'Your honor' of your_honor opens with the pronoun / deter": 1
+     },
+     "changed_rows_note": "rows omitted (counts above); the rows that changed against the reviewed build 7 are listed"
+    },
+    "vs_first_build7": {
+     "cells(first_build7_kept,build7_kept)": {
+      "(False, False)": 455,
+      "(True, False)": 9,
+      "(True, True)": 23390
+     },
+     "n_changed": 9,
+     "n_rejected_by_build7": 9,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {
+      "other: allowlist: entity span 'Akademia teatralna im aleksandra zelwero' of akademia_te": 1,
+      "other: allowlist: entity span 'Give it to em' of give_it_to_em the pronoun 'em' (word 4": 1,
+      "other: allowlist: entity span 'Her majesty s prison service' of her_majesty_s_prison_se": 1,
+      "other: allowlist: entity span 'His netherlands majesty s ship' of his_netherlands_majes": 1,
+      "other: allowlist: entity span 'Ive arrondissement of paris' of ive_arrondissement_of_pa": 1,
+      "other: allowlist: entity span 'My n' of my_n opens with the pronoun / determiner 'My' a": 1,
+      "other: allowlist: entity span 'Ried im innkreis district' of ried_im_innkreis_district ": 1,
+      "other: allowlist: entity span 'University of freiburg im breisgau' of university_of_fre": 1,
+      "other: allowlist: entity span 'Your honor' of your_honor opens with the pronoun / deter": 1
+     },
+     "changed_rows": [
+      {
+       "slug": "akademia_teatralna_im_aleksandra_zelwero",
+       "svo": [
+        "akademia_teatralna_im_aleksandra_zelwero",
+        "country",
+        "pole_land"
+       ],
+       "spelling": "sentence_case",
+       "spelled": "Akademia teatralna im aleksandra zelwero",
+       "sentence": "The Akademia teatralna im aleksandra zelwero countrys pole_land.",
+       "build6_kept": true,
+       "first_build7_kept": true,
+       "build7_kept": false,
+       "build7_rule": "other: allowlist: entity span 'Akademia teatralna im aleksandra zelwero' of akademia_te",
+       "build7_reason": "allowlist: entity span 'Akademia teatralna im aleksandra zelwero' of akademia_teatralna_im_aleksandra_zelwero the contraction 'im' (word 3) without its apostrophe: English reads a pronoun and a verb (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "give_it_to_em",
+       "svo": [
+        "give_it_to_em",
+        "instance_of",
+        "human_specie"
+       ],
+       "spelling": "sentence_case",
+       "spelled": "Give it to em",
+       "sentence": "The Give it to em instance_ofs human_specie.",
+       "build6_kept": true,
+       "first_build7_kept": true,
+       "build7_kept": false,
+       "build7_rule": "other: allowlist: entity span 'Give it to em' of give_it_to_em the pronoun 'em' (word 4",
+       "build7_reason": "allowlist: entity span 'Give it to em' of give_it_to_em the pronoun 'em' (word 4) written as prose (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "her_majesty_s_prison_service",
+       "svo": [
+        "her_majesty_s_prison_service",
+        "country",
+        "united_kingom"
+       ],
+       "spelling": "sentence_case",
+       "spelled": "Her majesty s prison service",
+       "sentence": "The Her majesty s prison service countrys united_kingom.",
+       "build6_kept": true,
+       "first_build7_kept": true,
+       "build7_kept": false,
+       "build7_rule": "other: allowlist: entity span 'Her majesty s prison service' of her_majesty_s_prison_se",
+       "build7_reason": "allowlist: entity span 'Her majesty s prison service' of her_majesty_s_prison_service opens with the pronoun / determiner 'Her' and a lower-case word: a pronoun phrase or a description pointing at something unnamed, not a name (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "his_netherlands_majesty_s_ship",
+       "svo": [
+        "his_netherlands_majesty_s_ship",
+        "country",
+        "netherlands_the"
+       ],
+       "spelling": "sentence_case",
+       "spelled": "His netherlands majesty s ship",
+       "sentence": "The His netherlands majesty s ship countrys netherlands_the.",
+       "build6_kept": true,
+       "first_build7_kept": true,
+       "build7_kept": false,
+       "build7_rule": "other: allowlist: entity span 'His netherlands majesty s ship' of his_netherlands_majes",
+       "build7_reason": "allowlist: entity span 'His netherlands majesty s ship' of his_netherlands_majesty_s_ship opens with the pronoun / determiner 'His' and a lower-case word: a pronoun phrase or a description pointing at something unnamed, not a name (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "ive_arrondissement_of_paris",
+       "svo": [
+        "ive_arrondissement_of_paris",
+        "country",
+        "franzoesische_republik"
+       ],
+       "spelling": "sentence_case",
+       "spelled": "Ive arrondissement of paris",
+       "sentence": "The Ive arrondissement of paris countrys franzoesische_republik.",
+       "build6_kept": true,
+       "first_build7_kept": true,
+       "build7_kept": false,
+       "build7_rule": "other: allowlist: entity span 'Ive arrondissement of paris' of ive_arrondissement_of_pa",
+       "build7_reason": "allowlist: entity span 'Ive arrondissement of paris' of ive_arrondissement_of_paris the contraction 'Ive' (word 1) without its apostrophe: English reads a pronoun and a verb (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "my_n",
+       "svo": [
+        "my_n",
+        "country",
+        "s_koreans"
+       ],
+       "spelling": "sentence_case",
+       "spelled": "My n",
+       "sentence": "The My n countrys s_koreans.",
+       "build6_kept": true,
+       "first_build7_kept": true,
+       "build7_kept": false,
+       "build7_rule": "other: allowlist: entity span 'My n' of my_n opens with the pronoun / determiner 'My' a",
+       "build7_reason": "allowlist: entity span 'My n' of my_n opens with the pronoun / determiner 'My' and a lower-case word: a pronoun phrase or a description pointing at something unnamed, not a name (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "ried_im_innkreis_district",
+       "svo": [
+        "ried_im_innkreis_district",
+        "country",
+        "etymology_of_austria"
+       ],
+       "spelling": "sentence_case",
+       "spelled": "Ried im innkreis district",
+       "sentence": "The Ried im innkreis district countrys etymology_of_austria.",
+       "build6_kept": true,
+       "first_build7_kept": true,
+       "build7_kept": false,
+       "build7_rule": "other: allowlist: entity span 'Ried im innkreis district' of ried_im_innkreis_district ",
+       "build7_reason": "allowlist: entity span 'Ried im innkreis district' of ried_im_innkreis_district the contraction 'im' (word 2) without its apostrophe: English reads a pronoun and a verb (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "university_of_freiburg_im_breisgau",
+       "svo": [
+        "university_of_freiburg_im_breisgau",
+        "country",
+        "federal_republic_of_germany"
+       ],
+       "spelling": "sentence_case",
+       "spelled": "University of freiburg im breisgau",
+       "sentence": "The University of freiburg im breisgau countrys federal_republic_of_germany.",
+       "build6_kept": true,
+       "first_build7_kept": true,
+       "build7_kept": false,
+       "build7_rule": "other: allowlist: entity span 'University of freiburg im breisgau' of university_of_fre",
+       "build7_reason": "allowlist: entity span 'University of freiburg im breisgau' of university_of_freiburg_im_breisgau the contraction 'im' (word 4) without its apostrophe: English reads a pronoun and a verb (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "your_honor",
+       "svo": [
+        "your_honor",
+        "described_by_source",
+        "armenian_soviet_encyclopedia"
+       ],
+       "spelling": "sentence_case",
+       "spelled": "Your honor",
+       "sentence": "The Your honor described_by_sources armenian_soviet_encyclopedia.",
+       "build6_kept": true,
+       "first_build7_kept": true,
+       "build7_kept": false,
+       "build7_rule": "other: allowlist: entity span 'Your honor' of your_honor opens with the pronoun / deter",
+       "build7_reason": "allowlist: entity span 'Your honor' of your_honor opens with the pronoun / determiner 'Your' and a lower-case word: a pronoun phrase or a description pointing at something unnamed, not a name (the honesty boundary) [sentence 1 of 1]"
+      }
+     ]
+    }
+   },
+   "deslugged_lower": {
+    "n": 23854,
+    "vs_build6": {
+     "cells(build6_kept,build7_kept)": {
+      "(False, False)": 453,
+      "(True, False)": 71,
+      "(True, True)": 23330
+     },
+     "n_changed": 71,
+     "n_rejected_by_build7": 71,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {
+      "R7b(1) lower-case i, no capital in the name": 64,
+      "other: allowlist: entity span 'akademia teatralna im aleksandra zelwero' of akademia_te": 1,
+      "other: allowlist: entity span 'give it to em' of give_it_to_em the pronoun 'em' (word 4": 1,
+      "other: allowlist: entity span 'her majesty s prison service' of her_majesty_s_prison_se": 1,
+      "other: allowlist: entity span 'his netherlands majesty s ship' of his_netherlands_majes": 1,
+      "other: allowlist: entity span 'ive arrondissement of paris' of ive_arrondissement_of_pa": 1,
+      "other: allowlist: entity span 'ried im innkreis district' of ried_im_innkreis_district ": 1,
+      "other: allowlist: entity span 'university of freiburg im breisgau' of university_of_fre": 1
+     },
+     "changed_rows_note": "rows omitted (counts above); the rows that changed against the reviewed build 7 are listed"
+    },
+    "vs_first_build7": {
+     "cells(first_build7_kept,build7_kept)": {
+      "(False, False)": 517,
+      "(True, False)": 7,
+      "(True, True)": 23330
+     },
+     "n_changed": 7,
+     "n_rejected_by_build7": 7,
+     "n_kept_by_build7": 0,
+     "changed_by_rule": {
+      "other: allowlist: entity span 'akademia teatralna im aleksandra zelwero' of akademia_te": 1,
+      "other: allowlist: entity span 'give it to em' of give_it_to_em the pronoun 'em' (word 4": 1,
+      "other: allowlist: entity span 'her majesty s prison service' of her_majesty_s_prison_se": 1,
+      "other: allowlist: entity span 'his netherlands majesty s ship' of his_netherlands_majes": 1,
+      "other: allowlist: entity span 'ive arrondissement of paris' of ive_arrondissement_of_pa": 1,
+      "other: allowlist: entity span 'ried im innkreis district' of ried_im_innkreis_district ": 1,
+      "other: allowlist: entity span 'university of freiburg im breisgau' of university_of_fre": 1
+     },
+     "changed_rows": [
+      {
+       "slug": "akademia_teatralna_im_aleksandra_zelwero",
+       "svo": [
+        "akademia_teatralna_im_aleksandra_zelwero",
+        "country",
+        "pole_land"
+       ],
+       "spelling": "deslugged_lower",
+       "spelled": "akademia teatralna im aleksandra zelwero",
+       "sentence": "The akademia teatralna im aleksandra zelwero countrys pole_land.",
+       "build6_kept": true,
+       "first_build7_kept": true,
+       "build7_kept": false,
+       "build7_rule": "other: allowlist: entity span 'akademia teatralna im aleksandra zelwero' of akademia_te",
+       "build7_reason": "allowlist: entity span 'akademia teatralna im aleksandra zelwero' of akademia_teatralna_im_aleksandra_zelwero the contraction 'im' (word 3) without its apostrophe: English reads a pronoun and a verb (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "give_it_to_em",
+       "svo": [
+        "give_it_to_em",
+        "instance_of",
+        "human_specie"
+       ],
+       "spelling": "deslugged_lower",
+       "spelled": "give it to em",
+       "sentence": "The give it to em instance_ofs human_specie.",
+       "build6_kept": true,
+       "first_build7_kept": true,
+       "build7_kept": false,
+       "build7_rule": "other: allowlist: entity span 'give it to em' of give_it_to_em the pronoun 'em' (word 4",
+       "build7_reason": "allowlist: entity span 'give it to em' of give_it_to_em the pronoun 'em' (word 4) written as prose (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "her_majesty_s_prison_service",
+       "svo": [
+        "her_majesty_s_prison_service",
+        "country",
+        "united_kingom"
+       ],
+       "spelling": "deslugged_lower",
+       "spelled": "her majesty s prison service",
+       "sentence": "The her majesty s prison service countrys united_kingom.",
+       "build6_kept": true,
+       "first_build7_kept": true,
+       "build7_kept": false,
+       "build7_rule": "other: allowlist: entity span 'her majesty s prison service' of her_majesty_s_prison_se",
+       "build7_reason": "allowlist: entity span 'her majesty s prison service' of her_majesty_s_prison_service opens with the pronoun / determiner 'her' and a lower-case word: a pronoun phrase or a description pointing at something unnamed, not a name (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "his_netherlands_majesty_s_ship",
+       "svo": [
+        "his_netherlands_majesty_s_ship",
+        "country",
+        "netherlands_the"
+       ],
+       "spelling": "deslugged_lower",
+       "spelled": "his netherlands majesty s ship",
+       "sentence": "The his netherlands majesty s ship countrys netherlands_the.",
+       "build6_kept": true,
+       "first_build7_kept": true,
+       "build7_kept": false,
+       "build7_rule": "other: allowlist: entity span 'his netherlands majesty s ship' of his_netherlands_majes",
+       "build7_reason": "allowlist: entity span 'his netherlands majesty s ship' of his_netherlands_majesty_s_ship opens with the pronoun / determiner 'his' and a lower-case word: a pronoun phrase or a description pointing at something unnamed, not a name (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "ive_arrondissement_of_paris",
+       "svo": [
+        "ive_arrondissement_of_paris",
+        "country",
+        "franzoesische_republik"
+       ],
+       "spelling": "deslugged_lower",
+       "spelled": "ive arrondissement of paris",
+       "sentence": "The ive arrondissement of paris countrys franzoesische_republik.",
+       "build6_kept": true,
+       "first_build7_kept": true,
+       "build7_kept": false,
+       "build7_rule": "other: allowlist: entity span 'ive arrondissement of paris' of ive_arrondissement_of_pa",
+       "build7_reason": "allowlist: entity span 'ive arrondissement of paris' of ive_arrondissement_of_paris the contraction 'ive' (word 1) without its apostrophe: English reads a pronoun and a verb (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "ried_im_innkreis_district",
+       "svo": [
+        "ried_im_innkreis_district",
+        "country",
+        "etymology_of_austria"
+       ],
+       "spelling": "deslugged_lower",
+       "spelled": "ried im innkreis district",
+       "sentence": "The ried im innkreis district countrys etymology_of_austria.",
+       "build6_kept": true,
+       "first_build7_kept": true,
+       "build7_kept": false,
+       "build7_rule": "other: allowlist: entity span 'ried im innkreis district' of ried_im_innkreis_district ",
+       "build7_reason": "allowlist: entity span 'ried im innkreis district' of ried_im_innkreis_district the contraction 'im' (word 2) without its apostrophe: English reads a pronoun and a verb (the honesty boundary) [sentence 1 of 1]"
+      },
+      {
+       "slug": "university_of_freiburg_im_breisgau",
+       "svo": [
+        "university_of_freiburg_im_breisgau",
+        "country",
+        "federal_republic_of_germany"
+       ],
+       "spelling": "deslugged_lower",
+       "spelled": "university of freiburg im breisgau",
+       "sentence": "The university of freiburg im breisgau countrys federal_republic_of_germany.",
+       "build6_kept": true,
+       "first_build7_kept": true,
+       "build7_kept": false,
+       "build7_rule": "other: allowlist: entity span 'university of freiburg im breisgau' of university_of_fre",
+       "build7_reason": "allowlist: entity span 'university of freiburg im breisgau' of university_of_freiburg_im_breisgau the contraction 'im' (word 4) without its apostrophe: English reads a pronoun and a verb (the honesty boundary) [sentence 1 of 1]"
+      }
+     ]
+    }
+   }
+  }
+ },
+ "elapsed_s": 138.5
+}
