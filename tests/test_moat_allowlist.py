@@ -647,6 +647,14 @@ def test_shape3_never_applies_to_a_relation_without_of(rel):
                   # without a literal "of" that no shape consumes (the four above reject even if shape 3 took any relation:
                   # mutation report m35 / m74); "Ankara Y is capital Turkey X." is the report's witness
                   "Ankara Y is %s Turkey X." % noun, "Turkey X is %s Ankara Y." % noun, "Ankara Y is a %s Turkey X." % noun):
+            # build 6 (legitimate flip, listed in the build-6 report): a sentence that IS a relation's reviewed shape-4 phrase in
+            # that row's orientation (PHRASE_READINGS: "Turkey X is a spouse of Ankara Y." for (ankara_y, spouse, turkey_x)) is kept
+            # by shape 4, never by shape 3; every other sentence here still rejects
+            chk = A.allowlist_check(p, g)
+            if chk["keep"]:
+                row = T.phrase_reading(rel)
+                assert row is not None and chk["shape"] == "shape4" and (" %s " % row.text) in p, (g, p)
+                continue
             assert not A.allowlist_keep(p, g)[0], (g, p)
 
 

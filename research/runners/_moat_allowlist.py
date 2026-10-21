@@ -20,6 +20,12 @@ a | an or nothing, because "X is THE member of Y" asserts that X is Y's only mem
      cannot reverse roles. A relation without `_of` ("capital": "Ankara is the capital of Turkey" means (turkey, capital,
      ankara)) never takes shape 3, so the reversal that sentence would need is impossible. Pinned in
      tests/test_moat_allowlist.py (test_shape3_*).
+  4. [Det] A PHRASE [Det] B [.]  (build 6)                                         -> (A, rel, B) if the row is FWD, (B, rel, A) if INV
+     only for a gathered relation with a row in the reviewed PHRASE_READINGS table (research/runners/_moat_allowlist_relations.py):
+     PHRASE is that row's exact token sequence (normalised like the sentence), one object, no list, no other determiner or tense. The
+     nine ROLE-REVERSING / MEANING-DRIFT relations keep no verb reading and no shape 3; the row is their only wording ("Carl Laemmle
+     is the father of Carl Laemmle Jr." = (carl_laemmle_jr, father, carl_laemmle); "Sir Cliff Richard plays history of the guitar.").
+     Every phrase token is a relation span (the case and exact checks apply, no fold), and every check after parsing applies.
   VERB(rel) = a token whose `_classify` reading is ('verb', rel) for a relation gathered THIS turn: the same verb-form table
   `_noun_before_verb` uses (stock inflections, the tight synonyms, the guarded -es / -ies readings of commit 1b67eef9b), and ONLY for
   a relation classified VERB-SAFE or NOT-A-VERB in the reviewed table research/runners/_moat_allowlist_relations.py (prereg
@@ -118,7 +124,8 @@ import os
 import re
 import unicodedata
 
-from research.runners._moat_allowlist_relations import DROPPED_READINGS, MEANING_DRIFT, has_verb_reading, reading_dropped, relation_class
+from research.runners._moat_allowlist_relations import (DROPPED_READINGS, FWD, MEANING_DRIFT, has_verb_reading, phrase_reading,
+                                                         reading_dropped, relation_class)
 from research.runners._moat_claim_entailment_derisk import NEG_MARKERS, VERB_SYNONYMS, ClaimEntailmentVerifier, _build_inflection_map
 
 ALLOWLIST_ENV = "BRAIN_MOAT_ALLOWLIST"
@@ -489,6 +496,10 @@ class _Lexicon:
         self.verb_ok = frozenset(r for r in self.verbs if has_verb_reading(r))
         # shape-3 relation nouns: a gathered, verb-reading relation slug ending in "_of" with a real noun before it
         self.of_relations = frozenset(r for r in self.verb_ok if r.endswith("_of") and _HAS_ALNUM.search(r[:-3]))
+        # build 6, shape 4: the reviewed relation phrase of every gathered relation that has a PHRASE_READINGS row, normalised by THIS
+        # turn's slug substitution like the sentence ("is the parent taxon of" -> is the parent_taxon of), so both tokenise alike
+        self.phrases = [(r, tuple(_TOKEN.findall(self.normalise(row.text))), row.orientation)
+                        for r in sorted(self.verbs) for row in [phrase_reading(r)] if row is not None]
 
     def normalise(self, sentence):
         """The store's fold, then every spelling of a gathered slug -> the slug token itself."""
@@ -664,6 +675,21 @@ def _parses(toks, lex, fail):
             blocked = lex.blocked_rel(toks[j])
             fail.at(j, _no_reading(toks[j], blocked) if blocked
                     else "a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3)")
+        # build 6, shape 4: [Det] A PHRASE [Det] B, PHRASE = the exact tokens of a gathered relation's reviewed row; one object, no list.
+        # FWD encodes (A, rel, B), INV encodes (B, rel, A). Every phrase token is a 'rel' span (case + exact checks, no fold).
+        for rel4, ph, ori in lex.phrases:
+            if tuple(toks[j:j + len(ph)]) != ph:
+                k = next((k for k in range(len(ph)) if j + k >= n or toks[j + k] != ph[k]), len(ph))
+                if k:                   # only a sentence that started the phrase reports it (other reasons stay as in build 5)
+                    fail.at(j + k, "the reviewed relation phrase %r of %s (shape 4)" % (" ".join(ph), rel4))
+                continue
+            for obj, end in _np(toks, j + len(ph), lex, fail):
+                if end == n:
+                    prop = (subj, rel4, obj) if ori == FWD else (obj, rel4, subj)
+                    out.append(("shape4", [prop], [("ent", j - 1, subj)] + [("rel", j + k, rel4) for k in range(len(ph))]
+                                + [("ent", end - 1, obj)]))
+                else:
+                    fail.at(end, "end of sentence (shape 4: one object, no list)")
     return out
 
 

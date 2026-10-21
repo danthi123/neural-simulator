@@ -43,6 +43,14 @@ needs rows here first; until then every sentence on those relations is rejected.
 
 `readings` is the exact set of tokens the verb-form table maps to the relation when it is gathered (pinned against the live table in
 tests/test_moat_allowlist.py, so this file cannot go stale silently). Classified by Claude (build agent) 2026-10-20 for controller review.
+
+BUILD 6: ONE REVIEWED PHRASE PER NO-READING RELATION (Claude rulings 2026-10-21, preflip topic 2). The nine ROLE-REVERSING / MEANING-DRIFT
+relations still have NO VERB reading (shapes 1-3 reject "X sports Y", "X fathers Y", "X is a child of Y" read through shape 3), but a row of
+PHRASE_READINGS voices each of them through the matcher's shape 4, "[Det] A PHRASE [Det] B [.]": PHRASE is the exact token sequence of the
+row, FWD reads (A, rel, B) and INV reads (B, rel, A). One wording per relation, present tense as for every relation; "the" only where the
+property is functional (father: single-best-value; parent_taxon: "closest parent taxon"), "a"/"an" everywhere else (the shape-3 rule that
+"the" asserts uniqueness). Spouse stays orientation-exact (no symmetric reading). A relation without a row keeps no reading. Every row has
+pinned role-reversal tests in tests/test_moat_allowlist_build6.py (the reversed sentence rejects).
 """
 from __future__ import annotations
 
@@ -55,7 +63,8 @@ MEANING_DRIFT = "MEANING-DRIFT"
 CLASSES = (VERB_SAFE, ROLE_REVERSING, NOT_A_VERB, MEANING_DRIFT)
 # the classes that keep their verb reading (shapes 1/2) and, for an `_of` relation, shape 3
 VERB_READING_CLASSES = frozenset((VERB_SAFE, NOT_A_VERB))
-# the classes whose stock-kept stub sentences are counted as stock leaks, apart from HURTS (stub_population_exhaustive.py)
+# the classes whose stock-kept stub sentences are counted as stock leaks, apart from HURTS (stub_population_exhaustive.py). They have no VERB
+# reading; build 6: a PHRASE_READINGS row (below) can still voice them through shape 4, and the stub writes that phrase under the flag.
 NO_READING_CLASSES = (ROLE_REVERSING, MEANING_DRIFT)
 UNCLASSIFIED = "UNCLASSIFIED"
 STORE_FACTS = "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k/facts.json"
@@ -376,6 +385,45 @@ RELATIONS = {
         ('located_in', 'located_ined', 'located_ines', 'located_ining', 'located_ins'),
         '"X located in Y" -> "X is located in Y" = the triple ("locate" needs an object, so only the reduced passive reads)'),
 }
+
+
+# build 6: the reviewed relation phrases of shape 4 (one per no-reading relation; module docstring). `text` is the exact phrase, lower-case
+# ASCII; `orientation` FWD = "A PHRASE B" encodes (A, rel, B), INV = it encodes (B, rel, A); `why` quotes the Wikidata property description.
+FWD = "FWD"
+INV = "INV"
+PhraseRow = namedtuple("PhraseRow", "text orientation why")
+
+PHRASE_READINGS = {
+    'sport': PhraseRow('is a sport of', INV,
+        'P641 "sport that the subject participates or participated in or is associated with" (can have one or more values): '
+        '"Y is a sport of X" for (X, sport, Y); "the sport of" would assert the only sport'),
+    'instrument': PhraseRow('plays', FWD,
+        'P1303 "musical instrument that a person plays or teaches or used in a music occupation": "X plays Y" for (X, instrument, Y) '
+        '(the description\'s own verb; present tense as for every relation; "Y is an instrument of X" drifts to a tool/agent of X)'),
+    'conflict': PhraseRow('participated in', FWD,
+        'P607, label "participated in conflict": "battles, wars or other military engagements in which the person or item participated"; '
+        '"X participated in Y" for (X, conflict, Y) ("fought in" adds combat)'),
+    'spouse': PhraseRow('is a spouse of', INV,
+        'P26 (symmetric, multi-valued): "Y is a spouse of X" for (X, spouse, Y); orientation-exact by ruling (no symmetric reading); "the" '
+        'would assert the only spouse, "wife"/"husband" adds gender'),
+    'parent_taxon': PhraseRow('is the parent taxon of', INV,
+        'P171 "closest parent taxon of the taxon in question": "Y is the parent taxon of X" for (X, parent_taxon, Y); "the" rests on '
+        '"closest" (functional)'),
+    'father': PhraseRow('is the father of', INV,
+        'P22 "male parent of the subject" (single-best-value constraint): "Y is the father of X" for (X, father, Y); "a father of" is wrong'),
+    'child': PhraseRow('is a child of', INV,
+        'P40 (multi-valued): "Y is a child of X" for (X, child, Y); "the child" asserts an only child, "son"/"daughter" adds gender'),
+    'author': PhraseRow('is an author of', INV,
+        'P50 (multi-valued): "Y is an author of X" for (X, author, Y); "the author" is false for a store row such as '
+        '(new_testiment, author, peter_the_disciple)'),
+    'platform': PhraseRow('is a platform for', INV,
+        'P400 "platform for which a work was developed or released": "Y is a platform for X" for (X, platform, Y)'),
+}
+
+
+def phrase_reading(rel):
+    """-> the reviewed shape-4 PhraseRow of `rel`, or None (no row: no phrase reading)."""
+    return PHRASE_READINGS.get(rel)
 
 
 # per-reading meaning test: readings of a VERB_SAFE / NOT_A_VERB row that fail it (today only table synonyms). Each is rejected like a

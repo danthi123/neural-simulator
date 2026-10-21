@@ -15,6 +15,10 @@ English ("The book_of_gen authors moshe_rabbenu."). When stock keeps it and the 
 allowlist_role_reversed_stock_leaks (by relation, with rows), NOT under HURTS_allowlist; the table file's sha256 is recorded.
 MEANING-DRIFT STOCK LEAKS (build 2): the same for a MEANING-DRIFT relation (sport, conflict, instrument, spouse, eat: "The X sports Y." = X
 wears Y): counted under allowlist_meaning_drift_stock_leaks, beside the role-reversed ones, not under HURTS_allowlist.
+BUILD 6 (2026-10-21): the allowlist arm RE-RENDERS each fact with BRAIN_MOAT_ALLOWLIST=1 set, so it decides what production says under the
+flag (the stub writes a reviewed shape-4 phrase for the nine no-reading relations under the flag only); the stock arm keeps the flag-off
+surface. For builds 1-5 the two renders are identical, so earlier results are unchanged by this. Recorded: allowlist_surface_changed (facts
+whose flag-on surface differs) and allowlist_kept_by_no_reading_relation (kept facts of the ROLE-REVERSING / MEANING-DRIFT relations).
 usage (cwd = worktree, as a module; refuses to overwrite an existing <out.json>):
   python -m research.findings.raw._moat_slug_norm_heldout.stub_population_exhaustive <out.json> [parser_seed=1] [composer_sweep_sample.json] [--arms b2h,allowlist] [--limit N]
 """
@@ -26,7 +30,7 @@ sys.path.insert(0, os.getcwd())
 import research.runners  # noqa: F401,E402  (provenance door)
 from research.runners.brain_chat_tui import ChatBrain, StubRenderer           # noqa: E402
 from research.runners.brain_conversational_agent import BridgeParser          # noqa: E402
-from research.runners._moat_allowlist_relations import MEANING_DRIFT, ROLE_REVERSING, relation_class   # noqa: E402
+from research.runners._moat_allowlist_relations import MEANING_DRIFT, NO_READING_CLASSES, ROLE_REVERSING, relation_class   # noqa: E402
 
 RELATION_TABLE = "research/runners/_moat_allowlist_relations.py"
 
@@ -54,6 +58,7 @@ def main(out_path, seed=1, sample_path=SAMPLE, arms=("b2h", "allowlist"), limit=
     acells = collections.Counter(); ahurts = []; ahelps = []; awhy = collections.Counter(); aby_rel = collections.Counter(); anone = 0
     arr = []; arr_rel = collections.Counter(); arr_stock_rejected = collections.Counter()
     amd = []; amd_rel = collections.Counter(); amd_stock_rejected = collections.Counter()
+    asurf_changed = 0; ano_reading_kept = collections.Counter(); ano_reading_total = collections.Counter()
     t0 = time.time()
     for i, svo in enumerate(aff):
         surf, asserted = stub.render_svo(*svo)
@@ -77,13 +82,18 @@ def main(out_path, seed=1, sample_path=SAMPLE, arms=("b2h", "allowlist"), limit=
                 helps.append({"svo": list(svo), "surface": surf})
         if do_al:
             os.environ[ALLOW] = "1"
-            aacc, ares = chat._verify_claim_set(surf, [list(svo)])
+            asurf, _aasserted = stub.render_svo(*svo)          # build 6: what the stub says under the flag
+            aacc, ares = chat._verify_claim_set(asurf, [list(svo)])
             os.environ.pop(ALLOW, None)
+            asurf_changed += asurf != surf
             if aacc is None:
                 anone += 1                                 # flag on: no fallback, the composer rejects
             aon = bool(aacc)
             acells[(off, aon)] += 1
             cls = relation_class(svo[1])
+            if cls in NO_READING_CLASSES:
+                ano_reading_total[svo[1]] += 1
+                ano_reading_kept[svo[1]] += aon
             if cls == ROLE_REVERSING and not off:
                 arr_stock_rejected[svo[1]] += 1
             if cls == MEANING_DRIFT and not off:
@@ -91,14 +101,14 @@ def main(out_path, seed=1, sample_path=SAMPLE, arms=("b2h", "allowlist"), limit=
             if off and not aon:
                 r = (ares or {}).get("reject_reason") or "?"
                 if cls == ROLE_REVERSING:                  # a stock leak (reversed English reading), not an answer lost
-                    arr.append({"svo": list(svo), "surface": surf, "reject": r}); arr_rel[svo[1]] += 1
+                    arr.append({"svo": list(svo), "surface": asurf, "reject": r}); arr_rel[svo[1]] += 1
                 elif cls == MEANING_DRIFT:                 # a stock leak (an English reading of another relation), not an answer lost
-                    amd.append({"svo": list(svo), "surface": surf, "reject": r}); amd_rel[svo[1]] += 1
+                    amd.append({"svo": list(svo), "surface": asurf, "reject": r}); amd_rel[svo[1]] += 1
                 else:
-                    ahurts.append({"svo": list(svo), "surface": surf, "reject": r})
+                    ahurts.append({"svo": list(svo), "surface": asurf, "reject": r})
                     awhy[r[:70]] += 1; aby_rel[svo[1]] += 1
             elif aon and not off:
-                ahelps.append({"svo": list(svo), "surface": surf})
+                ahelps.append({"svo": list(svo), "surface": asurf})
         if (i + 1) % 10000 == 0:
             print("[pop] %d/%d t=%.0fs cells %s allowlist cells %s" % (i + 1, len(aff), time.time() - t0, dict(cells), dict(acells)),
                   flush=True)
@@ -134,6 +144,9 @@ def main(out_path, seed=1, sample_path=SAMPLE, arms=("b2h", "allowlist"), limit=
            "allowlist_meaning_drift_stock_leaks": len(amd) if do_al else None,
            "allowlist_meaning_drift_by_relation": dict(amd_rel.most_common()),
            "allowlist_meaning_drift_stock_rejected_by_relation": dict(amd_stock_rejected.most_common()),
+           "allowlist_surface_rendered_under_flag": True if do_al else None,
+           "allowlist_surface_changed": asurf_changed if do_al else None,
+           "allowlist_kept_by_no_reading_relation": {r: [ano_reading_kept[r], ano_reading_total[r]] for r in sorted(ano_reading_total)},
            "relation_table": RELATION_TABLE, "relation_table_sha256": hashlib.sha256(open(RELATION_TABLE, "rb").read()).hexdigest(),
            "allowlist_role_reversed_rows": arr, "allowlist_meaning_drift_rows": amd,
            "hurts_rows": hurts, "helps_rows": helps[:200], "allowlist_hurts_rows": ahurts, "allowlist_helps_rows": ahelps[:200]}

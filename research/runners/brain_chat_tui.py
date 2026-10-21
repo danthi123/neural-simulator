@@ -861,6 +861,15 @@ class StubRenderer:
 
     def render_svo(self, a, v, p):
         surface, asserted = self._fac.render_svo(a, v, p)
+        if ChatBrain._moat_allowlist_enabled():
+            # build 6 (BRAIN_MOAT_ALLOWLIST, default OFF): a relation with no verb reading but a reviewed shape-4 phrase row
+            # (research/runners/_moat_allowlist_relations.py PHRASE_READINGS) is written with that phrase in its row's orientation
+            # ("The carl_laemmle is the father of carl_laemmle_jr." for (carl_laemmle_jr, father, carl_laemmle)). `asserted` stays
+            # [a, v, p]. Flag OFF: the TemplateStubFaculty surface, byte-identical.
+            from research.runners._moat_allowlist_relations import FWD, phrase_reading
+            row = phrase_reading(v)
+            if row is not None:
+                surface = "The %s %s %s." % ((a, row.text, p) if row.orientation == FWD else (p, row.text, a))
         return surface, asserted
 
 
