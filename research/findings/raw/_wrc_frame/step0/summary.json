@@ -1,0 +1,63 @@
+{
+  "backend": "numpy",
+  "chance": null,
+  "device": "cpu",
+  "disabled_processes": [],
+  "go": true,
+  "go_rule": ">= 14 of 15 dev seeds: a role-layer B_min exists at pos=None with B_false >= 2 x B_min (absent B_false = infinite margin = pass) AND every single-role word commits its own role at pos=None. Gate-layer-only window -> entry moves to the gate layer. Single-role failures >= 2 seeds -> STOP, pos-free path not viable as written; post the counts.",
+  "label": "wrc-frame step 0 deadlock read (GO rule in this probe)",
+  "n_gate_go": 14,
+  "n_role_go": 14,
+  "n_seeds": 15,
+  "n_singles_ok": 14,
+  "preconditions": [
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "15 dev seeds run",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "backend numpy",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "GO rule: >= 14/15 role-layer windows",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "STOP branch not triggered (singles failures < 2)",
+      "note": "",
+      "ok": true
+    }
+  ],
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "status": "GO",
+  "undefined_reasons": [],
+  "verdict": "GO: role-layer entry (14/15 seeds)"
+}

@@ -1,0 +1,1658 @@
+{
+  "a_production": {
+    "items": [
+      {
+        "gate_counts": {
+          "action": 0,
+          "agent": 33,
+          "patient": 0
+        },
+        "gate_inh_counts": {
+          "action": 0,
+          "agent": 25,
+          "patient": 0
+        },
+        "pos": 0,
+        "role_counts": {
+          "action": 0,
+          "agent": 18,
+          "patient": 3
+        },
+        "role_inh_counts": {
+          "action": 0,
+          "agent": 35,
+          "patient": 12
+        },
+        "slot_counts": {
+          "action": 0,
+          "agent": 96,
+          "patient": 0
+        },
+        "word": "cat"
+      },
+      {
+        "gate_counts": {
+          "action": 65,
+          "agent": 0,
+          "patient": 0
+        },
+        "gate_inh_counts": {
+          "action": 46,
+          "agent": 0,
+          "patient": 0
+        },
+        "pos": 1,
+        "role_counts": {
+          "action": 30,
+          "agent": 0,
+          "patient": 0
+        },
+        "role_inh_counts": {
+          "action": 74,
+          "agent": 0,
+          "patient": 0
+        },
+        "slot_counts": {
+          "action": 93,
+          "agent": 94,
+          "patient": 0
+        },
+        "word": "eat"
+      }
+    ],
+    "read": {
+      "co_commit": 0,
+      "filled": {
+        "action": 1,
+        "agent": 0
+      },
+      "latched_at_end": [
+        "action",
+        "agent"
+      ],
+      "per_item": [
+        {
+          "new": [
+            "agent"
+          ],
+          "role": "agent"
+        },
+        {
+          "new": [
+            "action"
+          ],
+          "role": "action"
+        }
+      ],
+      "relatch": 0,
+      "threshold": 18.0
+    }
+  },
+  "b_excl_lesion": {
+    "attributable": 0.3333333333333333,
+    "items": [
+      {
+        "gate_counts": {
+          "action": 0,
+          "agent": 33,
+          "patient": 0
+        },
+        "gate_inh_counts": {
+          "action": 0,
+          "agent": 25,
+          "patient": 0
+        },
+        "pos": 0,
+        "role_counts": {
+          "action": 0,
+          "agent": 18,
+          "patient": 3
+        },
+        "role_inh_counts": {
+          "action": 0,
+          "agent": 35,
+          "patient": 12
+        },
+        "slot_counts": {
+          "action": 0,
+          "agent": 96,
+          "patient": 0
+        },
+        "word": "cat"
+      },
+      {
+        "gate_counts": {
+          "action": 65,
+          "agent": 0,
+          "patient": 0
+        },
+        "gate_inh_counts": {
+          "action": 46,
+          "agent": 0,
+          "patient": 0
+        },
+        "pos": 1,
+        "role_counts": {
+          "action": 30,
+          "agent": 0,
+          "patient": 0
+        },
+        "role_inh_counts": {
+          "action": 74,
+          "agent": 0,
+          "patient": 0
+        },
+        "slot_counts": {
+          "action": 93,
+          "agent": 94,
+          "patient": 0
+        },
+        "word": "eat"
+      }
+    ],
+    "read": {
+      "co_commit": 0,
+      "filled": {
+        "action": 1,
+        "agent": 0
+      },
+      "latched_at_end": [
+        "action",
+        "agent"
+      ],
+      "per_item": [
+        {
+          "new": [
+            "agent"
+          ],
+          "role": "agent"
+        },
+        {
+          "new": [
+            "action"
+          ],
+          "role": "action"
+        }
+      ],
+      "relatch": 0,
+      "threshold": 18.0
+    },
+    "right_intact": 2,
+    "right_lesioned": 3,
+    "singles_intact": {
+      "cat@0": {
+        "co_commit": 0,
+        "filled": {
+          "agent": 0
+        },
+        "latched_at_end": [
+          "agent"
+        ],
+        "per_item": [
+          {
+            "new": [
+              "agent"
+            ],
+            "role": "agent"
+          }
+        ],
+        "relatch": 0,
+        "threshold": 18.0
+      },
+      "cat@2": {
+        "co_commit": 0,
+        "filled": {},
+        "latched_at_end": [],
+        "per_item": [
+          {
+            "new": [],
+            "role": null
+          }
+        ],
+        "relatch": 0,
+        "threshold": 18.0
+      },
+      "fish@0": {
+        "co_commit": 0,
+        "filled": {},
+        "latched_at_end": [],
+        "per_item": [
+          {
+            "new": [],
+            "role": null
+          }
+        ],
+        "relatch": 0,
+        "threshold": 18.0
+      },
+      "fish@2": {
+        "co_commit": 0,
+        "filled": {
+          "patient": 0
+        },
+        "latched_at_end": [
+          "patient"
+        ],
+        "per_item": [
+          {
+            "new": [
+              "patient"
+            ],
+            "role": "patient"
+          }
+        ],
+        "relatch": 0,
+        "threshold": 18.0
+      }
+    },
+    "singles_lesioned": {
+      "cat@0": {
+        "co_commit": 0,
+        "filled": {
+          "agent": 0
+        },
+        "latched_at_end": [
+          "agent"
+        ],
+        "per_item": [
+          {
+            "new": [
+              "agent"
+            ],
+            "role": "agent"
+          }
+        ],
+        "relatch": 0,
+        "threshold": 18.0
+      },
+      "cat@2": {
+        "co_commit": 0,
+        "filled": {
+          "patient": 0
+        },
+        "latched_at_end": [
+          "patient"
+        ],
+        "per_item": [
+          {
+            "new": [
+              "patient"
+            ],
+            "role": "patient"
+          }
+        ],
+        "relatch": 0,
+        "threshold": 18.0
+      },
+      "fish@0": {
+        "co_commit": 0,
+        "filled": {},
+        "latched_at_end": [],
+        "per_item": [
+          {
+            "new": [],
+            "role": null
+          }
+        ],
+        "relatch": 0,
+        "threshold": 18.0
+      },
+      "fish@2": {
+        "co_commit": 0,
+        "filled": {
+          "patient": 0
+        },
+        "latched_at_end": [
+          "patient"
+        ],
+        "per_item": [
+          {
+            "new": [
+              "patient"
+            ],
+            "role": "patient"
+          }
+        ],
+        "relatch": 0,
+        "threshold": 18.0
+      }
+    }
+  },
+  "backend": "numpy",
+  "c_pos_none_singles": {
+    "brain": {
+      "got": "agent",
+      "new": [
+        "agent"
+      ],
+      "ok": true,
+      "own_role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 92,
+        "patient": 0
+      }
+    },
+    "chase": {
+      "got": "action",
+      "new": [
+        "action"
+      ],
+      "ok": true,
+      "own_role": "action",
+      "slot_counts": {
+        "action": 96,
+        "agent": 0,
+        "patient": 0
+      }
+    },
+    "deer": {
+      "got": "patient",
+      "new": [
+        "patient"
+      ],
+      "ok": true,
+      "own_role": "patient",
+      "slot_counts": {
+        "action": 0,
+        "agent": 0,
+        "patient": 99
+      }
+    },
+    "dog": {
+      "got": "agent",
+      "new": [
+        "agent"
+      ],
+      "ok": true,
+      "own_role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 95,
+        "patient": 0
+      }
+    },
+    "eat": {
+      "got": "action",
+      "new": [
+        "action"
+      ],
+      "ok": true,
+      "own_role": "action",
+      "slot_counts": {
+        "action": 95,
+        "agent": 0,
+        "patient": 0
+      }
+    },
+    "fish": {
+      "got": "patient",
+      "new": [
+        "patient"
+      ],
+      "ok": true,
+      "own_role": "patient",
+      "slot_counts": {
+        "action": 0,
+        "agent": 0,
+        "patient": 105
+      }
+    },
+    "hunt": {
+      "got": "action",
+      "new": [
+        "action"
+      ],
+      "ok": true,
+      "own_role": "action",
+      "slot_counts": {
+        "action": 94,
+        "agent": 0,
+        "patient": 0
+      }
+    },
+    "memory": {
+      "got": "patient",
+      "new": [
+        "patient"
+      ],
+      "ok": true,
+      "own_role": "patient",
+      "slot_counts": {
+        "action": 0,
+        "agent": 0,
+        "patient": 97
+      }
+    },
+    "spikes": {
+      "got": "patient",
+      "new": [
+        "patient"
+      ],
+      "ok": true,
+      "own_role": "patient",
+      "slot_counts": {
+        "action": 0,
+        "agent": 0,
+        "patient": 101
+      }
+    },
+    "use": {
+      "got": "action",
+      "new": [
+        "action"
+      ],
+      "ok": true,
+      "own_role": "action",
+      "slot_counts": {
+        "action": 95,
+        "agent": 0,
+        "patient": 0
+      }
+    },
+    "wolf": {
+      "got": "agent",
+      "new": [
+        "agent"
+      ],
+      "ok": true,
+      "own_role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 94,
+        "patient": 0
+      }
+    },
+    "words": {
+      "got": "patient",
+      "new": [
+        "patient"
+      ],
+      "ok": true,
+      "own_role": "patient",
+      "slot_counts": {
+        "action": 0,
+        "agent": 0,
+        "patient": 94
+      }
+    }
+  },
+  "d_derived": {
+    "B_false_gate": 200,
+    "B_false_gate_hits": [
+      {
+        "got": "agent",
+        "target": "gate_agent",
+        "word": "deer"
+      },
+      {
+        "got": "agent",
+        "target": "gate_agent",
+        "word": "spikes"
+      },
+      {
+        "got": "agent",
+        "target": "gate_agent",
+        "word": "memory"
+      },
+      {
+        "got": "agent",
+        "target": "gate_agent",
+        "word": "words"
+      },
+      {
+        "got": "agent",
+        "target": "gate_agent",
+        "word": "fish"
+      },
+      {
+        "got": "agent",
+        "target": "gate_agent",
+        "word": "eat"
+      },
+      {
+        "got": "agent",
+        "target": "gate_agent",
+        "word": "zorp"
+      }
+    ],
+    "B_false_role": 100,
+    "B_false_role_hits": [
+      {
+        "got": "agent",
+        "target": "role_agent",
+        "word": "zorp"
+      }
+    ],
+    "B_min_gate_per_target": {
+      "gate_agent": 50
+    },
+    "B_min_gate_posNone": 50,
+    "B_min_role_per_target": {
+      "role_agent": 50,
+      "role_patient": 50
+    },
+    "B_min_role_posNone": 50,
+    "false_probes": {
+      "gate_agent/B0/deer": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "gate_agent/B0/eat": {
+        "new": [
+          "action"
+        ],
+        "role": "action"
+      },
+      "gate_agent/B0/fish": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "gate_agent/B0/memory": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "gate_agent/B0/spikes": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "gate_agent/B0/words": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "gate_agent/B0/zorp": {
+        "new": [],
+        "role": null
+      },
+      "gate_agent/B100/deer": {
+        "new": [],
+        "role": null
+      },
+      "gate_agent/B100/eat": {
+        "new": [
+          "action"
+        ],
+        "role": "action"
+      },
+      "gate_agent/B100/fish": {
+        "new": [],
+        "role": null
+      },
+      "gate_agent/B100/memory": {
+        "new": [],
+        "role": null
+      },
+      "gate_agent/B100/spikes": {
+        "new": [],
+        "role": null
+      },
+      "gate_agent/B100/words": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "gate_agent/B100/zorp": {
+        "new": [],
+        "role": null
+      },
+      "gate_agent/B200/deer": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "gate_agent/B200/eat": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "gate_agent/B200/fish": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "gate_agent/B200/memory": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "gate_agent/B200/spikes": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "gate_agent/B200/words": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "gate_agent/B200/zorp": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "gate_agent/B400/deer": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "gate_agent/B400/eat": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "gate_agent/B400/fish": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "gate_agent/B400/memory": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "gate_agent/B400/spikes": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "gate_agent/B400/words": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "gate_agent/B400/zorp": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "gate_agent/B50/deer": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "gate_agent/B50/eat": {
+        "new": [
+          "action"
+        ],
+        "role": "action"
+      },
+      "gate_agent/B50/fish": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "gate_agent/B50/memory": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "gate_agent/B50/spikes": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "gate_agent/B50/words": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "gate_agent/B50/zorp": {
+        "new": [],
+        "role": null
+      },
+      "gate_agent/B800/deer": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "gate_agent/B800/eat": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "gate_agent/B800/fish": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "gate_agent/B800/memory": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "gate_agent/B800/spikes": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "gate_agent/B800/words": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "gate_agent/B800/zorp": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B0/deer": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_agent/B0/eat": {
+        "new": [
+          "action"
+        ],
+        "role": "action"
+      },
+      "role_agent/B0/fish": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_agent/B0/memory": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_agent/B0/spikes": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_agent/B0/words": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_agent/B0/zorp": {
+        "new": [],
+        "role": null
+      },
+      "role_agent/B100/deer": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_agent/B100/eat": {
+        "new": [
+          "action"
+        ],
+        "role": "action"
+      },
+      "role_agent/B100/fish": {
+        "new": [],
+        "role": null
+      },
+      "role_agent/B100/memory": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_agent/B100/spikes": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_agent/B100/words": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_agent/B100/zorp": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B200/deer": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B200/eat": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B200/fish": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B200/memory": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B200/spikes": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B200/words": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B200/zorp": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B400/deer": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B400/eat": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B400/fish": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B400/memory": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B400/spikes": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B400/words": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B400/zorp": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B50/deer": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_agent/B50/eat": {
+        "new": [
+          "action"
+        ],
+        "role": "action"
+      },
+      "role_agent/B50/fish": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_agent/B50/memory": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_agent/B50/spikes": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_agent/B50/words": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_agent/B50/zorp": {
+        "new": [],
+        "role": null
+      },
+      "role_agent/B800/deer": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B800/eat": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B800/fish": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B800/memory": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B800/spikes": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B800/words": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_agent/B800/zorp": {
+        "new": [
+          "agent"
+        ],
+        "role": "agent"
+      },
+      "role_patient/B0/deer": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_patient/B0/eat": {
+        "new": [
+          "action"
+        ],
+        "role": "action"
+      },
+      "role_patient/B0/fish": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_patient/B0/memory": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_patient/B0/spikes": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_patient/B0/words": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_patient/B0/zorp": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B100/deer": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B100/eat": {
+        "new": [
+          "action"
+        ],
+        "role": "action"
+      },
+      "role_patient/B100/fish": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B100/memory": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B100/spikes": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B100/words": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B100/zorp": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B200/deer": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B200/eat": {
+        "new": [
+          "action"
+        ],
+        "role": "action"
+      },
+      "role_patient/B200/fish": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B200/memory": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B200/spikes": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B200/words": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B200/zorp": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B400/deer": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B400/eat": {
+        "new": [
+          "action"
+        ],
+        "role": "action"
+      },
+      "role_patient/B400/fish": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B400/memory": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B400/spikes": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B400/words": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B400/zorp": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B50/deer": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B50/eat": {
+        "new": [
+          "action"
+        ],
+        "role": "action"
+      },
+      "role_patient/B50/fish": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B50/memory": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_patient/B50/spikes": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_patient/B50/words": {
+        "new": [
+          "patient"
+        ],
+        "role": "patient"
+      },
+      "role_patient/B50/zorp": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B800/deer": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B800/eat": {
+        "new": [
+          "action"
+        ],
+        "role": "action"
+      },
+      "role_patient/B800/fish": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B800/memory": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B800/spikes": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B800/words": {
+        "new": [],
+        "role": null
+      },
+      "role_patient/B800/zorp": {
+        "new": [],
+        "role": null
+      }
+    }
+  },
+  "d_titration_cat": {
+    "gate_agent/B0/pos0": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 96,
+        "patient": 0
+      }
+    },
+    "gate_agent/B0/posNone": {
+      "new": [],
+      "role": null,
+      "slot_counts": {
+        "action": 0,
+        "agent": 0,
+        "patient": 0
+      }
+    },
+    "gate_agent/B100/pos0": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 90,
+        "patient": 0
+      }
+    },
+    "gate_agent/B100/posNone": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 92,
+        "patient": 0
+      }
+    },
+    "gate_agent/B200/pos0": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 89,
+        "patient": 0
+      }
+    },
+    "gate_agent/B200/posNone": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 93,
+        "patient": 0
+      }
+    },
+    "gate_agent/B400/pos0": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 88,
+        "patient": 0
+      }
+    },
+    "gate_agent/B400/posNone": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 89,
+        "patient": 0
+      }
+    },
+    "gate_agent/B50/pos0": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 93,
+        "patient": 0
+      }
+    },
+    "gate_agent/B50/posNone": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 93,
+        "patient": 0
+      }
+    },
+    "gate_agent/B800/pos0": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 89,
+        "patient": 0
+      }
+    },
+    "gate_agent/B800/posNone": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 86,
+        "patient": 0
+      }
+    },
+    "role_agent/B0/pos0": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 96,
+        "patient": 0
+      }
+    },
+    "role_agent/B0/posNone": {
+      "new": [],
+      "role": null,
+      "slot_counts": {
+        "action": 0,
+        "agent": 0,
+        "patient": 0
+      }
+    },
+    "role_agent/B100/pos0": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 89,
+        "patient": 0
+      }
+    },
+    "role_agent/B100/posNone": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 91,
+        "patient": 0
+      }
+    },
+    "role_agent/B200/pos0": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 88,
+        "patient": 0
+      }
+    },
+    "role_agent/B200/posNone": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 89,
+        "patient": 0
+      }
+    },
+    "role_agent/B400/pos0": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 88,
+        "patient": 0
+      }
+    },
+    "role_agent/B400/posNone": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 89,
+        "patient": 0
+      }
+    },
+    "role_agent/B50/pos0": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 90,
+        "patient": 0
+      }
+    },
+    "role_agent/B50/posNone": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 93,
+        "patient": 0
+      }
+    },
+    "role_agent/B800/pos0": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 89,
+        "patient": 0
+      }
+    },
+    "role_agent/B800/posNone": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 92,
+        "patient": 0
+      }
+    },
+    "role_patient/B0/pos0": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 96,
+        "patient": 0
+      }
+    },
+    "role_patient/B0/posNone": {
+      "new": [],
+      "role": null,
+      "slot_counts": {
+        "action": 0,
+        "agent": 0,
+        "patient": 0
+      }
+    },
+    "role_patient/B100/pos0": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 91,
+        "patient": 0
+      }
+    },
+    "role_patient/B100/posNone": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 93,
+        "patient": 0
+      }
+    },
+    "role_patient/B200/pos0": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 91,
+        "patient": 0
+      }
+    },
+    "role_patient/B200/posNone": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 94,
+        "patient": 0
+      }
+    },
+    "role_patient/B400/pos0": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 91,
+        "patient": 0
+      }
+    },
+    "role_patient/B400/posNone": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 94,
+        "patient": 0
+      }
+    },
+    "role_patient/B50/pos0": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 90,
+        "patient": 0
+      }
+    },
+    "role_patient/B50/posNone": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 93,
+        "patient": 0
+      }
+    },
+    "role_patient/B800/pos0": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 91,
+        "patient": 0
+      }
+    },
+    "role_patient/B800/posNone": {
+      "new": [
+        "agent"
+      ],
+      "role": "agent",
+      "slot_counts": {
+        "action": 0,
+        "agent": 94,
+        "patient": 0
+      }
+    }
+  },
+  "device": "cpu",
+  "e_eat_agent_bias": {
+    "B0": {
+      "ok_action": true,
+      "role": "action"
+    },
+    "B100": {
+      "ok_action": true,
+      "role": "action"
+    },
+    "B200": {
+      "ok_action": false,
+      "role": "agent"
+    },
+    "B400": {
+      "ok_action": false,
+      "role": "agent"
+    },
+    "B50": {
+      "ok_action": true,
+      "role": "action"
+    },
+    "B800": {
+      "ok_action": false,
+      "role": "agent"
+    }
+  },
+  "f_weights": {
+    "cat": {
+      "action": 0.05,
+      "agent": 11.5423,
+      "patient": 11.5286
+    },
+    "fish": {
+      "action": 0.05,
+      "agent": 0.05,
+      "patient": 8.5773
+    }
+  },
+  "go": {
+    "gate_window": true,
+    "role_window": true,
+    "seed_gate_go": true,
+    "seed_role_go": true,
+    "singles_ok": true
+  },
+  "seed": 13
+}

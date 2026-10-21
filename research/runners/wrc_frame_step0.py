@@ -46,7 +46,9 @@ if _HERE not in sys.path:
 import numpy as np  # noqa: E402
 
 from research.runners import word_role_parser_organ as W  # noqa: E402
-from tools.lab import attributable_to  # noqa: E402
+from research.runners import declare_output  # noqa: E402
+from tools.lab import assert_backend, attributable_to  # noqa: E402
+from tools.verdict import Verdict  # noqa: E402
 
 FACTS = [
     ("brain", "use", "spikes"),
@@ -389,6 +391,8 @@ def main(argv=None):
     ap.add_argument("--out",
                     default="research/findings/raw/_wrc_frame/step0")
     args = ap.parse_args(argv)
+    backend = assert_backend("numpy", note="wrc-frame step 0 official run")
+    device = "cpu"
     if "-" in args.seeds and "," not in args.seeds:
         a, b = args.seeds.split("-", 1)
         seeds = list(range(int(a), int(b) + 1))
@@ -399,9 +403,12 @@ def main(argv=None):
     recs: list = []
     for seed in seeds:
         rec = seed_probe(seed)
+        rec["backend"] = backend
+        rec["device"] = device
         path = os.path.join(out, "seed%d.json" % seed)
         with open(path, "w") as fh:
             json.dump(rec, fh, indent=2, sort_keys=True)
+        declare_output(path)
         recs.append(rec)
         g = rec["go"]
         d = rec["d_derived"]
@@ -413,8 +420,25 @@ def main(argv=None):
                  "GO" if g["seed_role_go"] else "no"))
     summary = evaluate(recs)
     summary["seeds"] = seeds
-    with open(os.path.join(out, "summary.json"), "w") as fh:
+    summary["backend"] = backend
+    summary["device"] = device
+    # The verdict-preconditions gate: a summary that asserts a verdict must
+    # carry the preconditions that earned it (tools.verdict.Verdict).
+    n_fail = len(recs) - summary["n_singles_ok"]
+    v = Verdict("wrc-frame step 0 deadlock read (GO rule in this probe)")
+    v.require("15 dev seeds run", len(recs) == 15)
+    v.require("backend numpy", backend == "numpy")
+    v.require("GO rule: >= 14/15 role-layer windows",
+              summary["n_role_go"] >= GO_MIN_SEEDS)
+    v.require("STOP branch not triggered (singles failures < 2)",
+              n_fail < 2)
+    dec = v.decide(go=summary["n_role_go"] >= GO_MIN_SEEDS,
+                   verbose=False)
+    summary.update(dec)
+    summary_path = os.path.join(out, "summary.json")
+    with open(summary_path, "w") as fh:
         json.dump(summary, fh, indent=2, sort_keys=True)
+    declare_output(summary_path)
     print("VERDICT:", summary["verdict"])
     return 0
 
