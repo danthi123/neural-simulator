@@ -155,6 +155,8 @@ def test_mutation_the_ruling_rule_off_makes_the_leak_kept_and_the_other_rule_doe
         assert not keep(reply, gathered), cid
     with monkeypatch.context() as m:
         m.setattr(A, own, _noop)
+        if cid == "R8-TA20":         # second fix round: R7c(5) also reads the lower-case "her" inside "and i love her"
+            m.setattr(A, "_pronoun_phrase_reading", _noop)
         res = verdict(reply, gathered)
         assert res["accepted"], (cid, res["reject_reason"])
 
@@ -162,6 +164,7 @@ def test_mutation_the_ruling_rule_off_makes_the_leak_kept_and_the_other_rule_doe
 def test_mutation_both_rules_off_all_ten_are_kept_as_build6_kept_them(monkeypatch):
     monkeypatch.setattr(A, "_pronoun_name_reading", _noop)
     monkeypatch.setattr(A, "_inner_first_person_reading", _noop)
+    monkeypatch.setattr(A, "_pronoun_phrase_reading", _noop)     # second fix round: R7c(5) holds "and i love her" too
     bad = [cid for cid, (reply, gathered, _r, _w) in LEAKS.items() if not keep(reply, gathered)]
     assert not bad, bad
 
@@ -230,7 +233,7 @@ CLASS = ("me my mine myself us our ours ourselves your yours yourself yourselves
          "they them their theirs themselves this that these those "
          # build-7 review fix: archaic, colloquial and impersonal forms
          "thee thou thy thine thyself ye u ya yall youse yinz ur em themself ourself oneself meself").split()
-CONTRACTIONS = "im ive youre youve youll youd theyre theyve".split()
+CONTRACTIONS = "im ive youre youve youll youd theyre theyve weve shes thats".split()   # weve / shes / thats: second fix round
 
 
 def test_the_pronoun_class_is_the_ruled_one():
@@ -626,7 +629,7 @@ REVIEW_LEAKS = [
     ("Trevor and Im here participated in Korean police action.", [("trevor_and_im_here", "conflict", "korean_police_action")],
      "the contraction 'Im' (word 3)"),
     ("Trevor and Im participated in Korean police action.", [("trevor_and_im", "conflict", "korean_police_action")],
-     "the contraction 'Im' (word 3)"),
+     "the pronoun 'Im' (word 3) directly after the conjunction 'and'"),     # R7c(4) since the second fix round
     ("Canada portal shares border with trevor im.", [("canada_portal", "shares_border_with", "trevor_im")], "the contraction 'im' (word 2)"),
     # R7b(3): more conjunctions, "as well as", the "l" homoglyph (leak-B 5, leak-B 8)
     ("Trevor plus I participated in Korean police action.", [("trevor_plus_i", "conflict", "korean_police_action")],
@@ -720,24 +723,25 @@ BRANCH_MUTANTS = [
      "So I Married an axe murderer genre comedy drama.", [("so_i_married_an_axe_murderer", "genre", "comedy_drama")]),
     ("R7b(3) more conjunctions", [], {"NAME_CONJUNCTIONS": frozenset(("and", "or", "nor", "but", "&"))},
      "Trevor plus I participated in Korean police action.", [("trevor_plus_i", "conflict", "korean_police_action")]),
-    ("R7b(3) as well as", [(' or [x.lower() for x in words[max(0, k - 3):k]] == ["as", "well", "as"]', '')], {},
+    ("R7b(3) as well as", [('        conj = words[k - 1].lower() in NAME_CONJUNCTIONS or [x.lower() for x in words[max(0, k - 3):k]] == ["as", "well", "as"]',
+                            '        conj = words[k - 1].lower() in NAME_CONJUNCTIONS')], {},
      "Trevor as well as I participated in Korean police action.", [("trevor_as_well_as_i", "conflict", "korean_police_action")]),
     ("R7b(3) the l homoglyph", [('        if w == "l" and conj:', '        if False:')], {},
      "Trevor and l participated in Korean police action.", [("trevor_and_l", "conflict", "korean_police_action")]),
     ("R7c(1) opener", [('    if w0.lower() in POINTING_OPENERS and', '    if False and')], {},
      "His song is an instance of theatrical film.", [("his_song", "instance_of", "theatrical_film")]),
+    # (second fix round: R7c(5) also reads the lower-case "them" of "Us and them" and the "thee" of "tis thee", so each branch is shown on a
+    # case only it rejects: "ye And Them" (the carve-out opener, a title-case rest) and "em Up" (a lower-case form opening the span))
     ("R7c(1) pronouns and conjunctions only", [('        if low:  ', '        if False:  ')], {},
-     "Taylor Swift is an author of Us and them.", [("us_and_them", "author", "taylor_swift")]),
+     "Taylor Swift is an author of ye And Them.", [("ye_and_them", "author", "taylor_swift")]),
     ("R7c(2) lower-case form", [('(w.islower() or (k == 0 and lw in SECOND_PERSON_OPENERS))', '(k == 0 and lw in SECOND_PERSON_OPENERS)')], {},
-     "Alice Feeney is an author of tis thee.", [("tis_thee", "author", "alice_feeney")]),
+     "Alice Feeney is an author of em Up.", [("em_up", "author", "alice_feeney")]),
     ("R7c(2) second-person opener in any case", [(' or (k == 0 and lw in SECOND_PERSON_OPENERS))', ')')], {},
      "Thou Art is an instance of theatrical film.", [("thou_art", "instance_of", "theatrical_film")]),
-    ("R7c(3) contraction before a lower-case word", [('            if nxt[:1].islower() or conj or', '            if conj or')], {},
+    ("R7c(3) contraction before a lower-case word", [('            if nxt[:1].islower() or not has_cap:', '            if not has_cap:')], {},
      "So Im married genre comedy drama.", [("so_im_married", "genre", "comedy_drama")]),
-    ("R7c(3) contraction after a conjunction", [('            if nxt[:1].islower() or conj or', '            if nxt[:1].islower() or')], {},
-     "Trevor and Im participated in Korean police action.", [("trevor_and_im", "conflict", "korean_police_action")]),
-    ("R7c(3) contraction in a name with no capital", [(' or not any(x[:1].isupper() for x in words):\n                return "the contraction',
-                                                       ':\n                return "the contraction')], {},
+    # (the contraction after a conjunction is R7c(4) since the second fix round: BRANCH_MUTANTS_2 below)
+    ("R7c(3) contraction in a name with no capital", [('            if nxt[:1].islower() or not has_cap:', '            if nxt[:1].islower():')], {},
      "Canada portal shares border with trevor im.", [("canada_portal", "shares_border_with", "trevor_im")]),
     ("_points_back pointing leads", [], {"POINTING_LEADS": frozenset(("the",))},
      "Stoker Bram is an author of Carfax Abbey. This Abbey is an instance of theatrical film.",
@@ -817,11 +821,16 @@ def test_the_review_store_keeps_use_real_store_facts():
 
 
 def test_mutation_the_abbreviation_test_keeps_the_roman_ordinal():
-    """"IVe arrondissement of Paris": the first two letters are capitals (a Roman ordinal), so R7c(3) does not read the contraction "Ive";
-    without `_abbrev` it would."""
+    """"IVe arrondissement of Paris": a Roman ordinal (ROMAN_ORDINAL, second fix round; the first fix round read any two leading capitals),
+    so neither R7c(0) (mixed case) nor R7c(3) reads the contraction "Ive"; without the Roman-ordinal test R7c(0) reads "IVe" as mixed case,
+    and with no abbreviation test at all R7c(3) reads the contraction."""
     sentence, gathered = _review_keep("IVe arrondissement")
     assert sentence.startswith("IVe") and keep(sentence, gathered)
-    m = _mutant([("    return word[:2].isupper() and len(word) >= 2", "    return False")])
+    m = _mutant([("    return caps_tokens(word) == [word] or bool(ROMAN_ORDINAL.fullmatch(word))", "    return caps_tokens(word) == [word]")])
+    res = m.allowlist_verify(sentence, [list(g) for g in gathered])
+    assert not res["accepted"] and "'IVe' (word 1) written in mixed case" in res["reject_reason"], res["reject_reason"]
+    m = _mutant([("    return caps_tokens(word) == [word] or bool(ROMAN_ORDINAL.fullmatch(word))", "    return False"),
+                 ("    return not word.islower() and word != word.capitalize() and not _abbrev(word)", "    return False")])
     res = m.allowlist_verify(sentence, [list(g) for g in gathered])
     assert not res["accepted"] and "the contraction 'IVe'" in res["reject_reason"], res["reject_reason"]
 
@@ -900,3 +909,397 @@ def test_the_build7_pass_strips_edge_spaces_before_the_slug_verbatim_test():
     m = _mutant([(old, old.replace(".strip(SPAN_SPACES)", ""))])
     why = m._name_reading_violation(parses, toks, origs, offs, src)
     assert why and "a lower-case 'i' (word 2)" in why, why
+
+
+# =========================================================================================================== build-7 second fix round
+# The second review examined build 7 after its first fix round (b76421436). Every leak it listed is pinned here at all seven parser seeds
+# (leak-U: closed; leak-B: closed where the closing rule rejects no store fact in a natural cased spelling and none of the declared keeps,
+# research/findings/raw/_moat_allowlist_build7/matcher_diff_fix2.json; the rest is declared residue in the module comment and the SPEC).
+SECOND_FIX_LEAKS = [
+    # `_abbrev` is all-caps or a Roman ordinal; R7c(0) a mixed-case class word anywhere (leak-U: "THis", "HIs", "THeir", "HEr", "YOure", "THou")
+    ("Stoker Bram is an author of Carfax Abbey. THis book is an instance of theatrical film.",
+     [("carfax_abbey", "author", "stoker_bram"), ("this_book", "instance_of", "theatrical_film")], "'THis' (word 1) written in mixed case"),
+    ("Taylor Swift is an author of HIs song.", [("his_song", "author", "taylor_swift")], "'HIs' (word 1) written in mixed case"),
+    ("Taylor Swift is an author of HIs Song.", [("his_song", "author", "taylor_swift")], "'HIs' (word 1) written in mixed case"),
+    ("Reginald K Dwight is the father of THeir son.", [("their_son", "father", "reginald_k_dwight")], "'THeir' (word 1) written in mixed case"),
+    ("Taylor Swift is a spouse of HEr own.", [("her_own", "spouse", "taylor_swift")], "'HEr' (word 1) written in mixed case"),
+    ("YOure the one is an instance of theatrical film.", [("youre_the_one", "instance_of", "theatrical_film")],
+     "'YOure' (word 1) written in mixed case"),
+    ("THou art is an instance of theatrical film.", [("thou_art", "instance_of", "theatrical_film")], "'THou' (word 1) written in mixed case"),
+    # R7c(1): a digit after the opener reads as uncapitalised (leak-U)
+    ("Stoker Bram is an author of this 1.", [("this_1", "author", "stoker_bram")], "opens with the pronoun / determiner 'this' and a lower-case"),
+    ("Canada portal shares border with these 2.", [("canada_portal", "shares_border_with", "these_2")],
+     "opens with the pronoun / determiner 'these' and a lower-case"),
+    ("Foo Bar is an author of his 2nd song.", [("his_2nd_song", "author", "foo_bar")], "opens with the pronoun / determiner 'his' and a lower-case"),
+    ("Foo Bar is an author of My 2nd song.", [("my_2nd_song", "author", "foo_bar")], "opens with the pronoun / determiner 'My' and a lower-case"),
+    ("Reginald K Dwight is the father of her 2 sons.", [("her_2_sons", "father", "reginald_k_dwight")],
+     "opens with the pronoun / determiner 'her' in the person relation 'father'"),
+    # R7c(1c): a span with no capital opening with u / ya / ye (leak-U)
+    ("Taylor Swift is a spouse of ya boy.", [("ya_boy", "spouse", "taylor_swift")], "opens with the pronoun 'ya' in a name with no capital"),
+    ("Taylor Swift is a spouse of u guys.", [("u_guys", "spouse", "taylor_swift")], "opens with the pronoun 'u' in a name with no capital"),
+    ("Taylor Swift is a spouse of ye all.", [("ye_all", "spouse", "taylor_swift")], "opens with the pronoun 'ye' in a name with no capital"),
+    ("Alice Feeney is an author of u know.", [("u_know", "author", "alice_feeney")], "opens with the pronoun 'u' in a name with no capital"),
+    ("Canada portal shares border with u r cool.", [("canada_portal", "shares_border_with", "u_r_cool")],
+     "opens with the pronoun 'u' in a name with no capital"),
+    ("Stoker Bram is an author of Carfax Abbey. Canada portal shares border with ye abbey.",
+     [("carfax_abbey", "author", "stoker_bram"), ("canada_portal", "shares_border_with", "ye_abbey")],
+     "opens with the pronoun 'ye' in a name with no capital"),
+    # weve / shes / thats (leak-U, leak-B)
+    ("Taylor Swift is a spouse of weve.", [("weve", "spouse", "taylor_swift")], "reads as the pronoun 'weve' (written in lower case"),
+    ("Weve is an instance of theatrical film.", [("weve", "instance_of", "theatrical_film")], "reads as the pronoun 'Weve' (the first word"),
+    ("Alice Feeney is an author of weve got this.", [("weve_got_this", "author", "alice_feeney")], "the contraction 'weve' (word 1)"),
+    ("Foo Bar is an author of Weve got mail.", [("weve_got_mail", "author", "foo_bar")], "the contraction 'Weve' (word 1)"),
+    ("Trevor and Weve participated in Korean police action.", [("trevor_and_weve", "conflict", "korean_police_action")],
+     "the pronoun 'Weve' (word 3) directly after the conjunction 'and'"),
+    ("Alice Feeney is an author of shes the one.", [("shes_the_one", "author", "alice_feeney")], "the contraction 'shes' (word 1)"),
+    ("Alice Feeney is an author of thats all.", [("thats_all", "author", "alice_feeney")], "the contraction 'thats' (word 1)"),
+    # R7a: the object side of the person relations (leak-B)
+    ("Strawberry Hill Boys has part Me.", [("strawberry_hill_boys", "has_part", "me")], "the person / place relation 'has_part'"),
+    ("Strawberry Hill Boys has part Us.", [("strawberry_hill_boys", "has_part", "us")], "the person / place relation 'has_part'"),
+    ("Django Unchained composer Me.", [("django_unchained", "composer", "me")], "the person / place relation 'composer'"),
+    ("Ben Hur 1925 film director Me.", [("ben_hur_1925_film", "director", "me")], "the person / place relation 'director'"),
+    ("Iron Man One cast member Me.", [("iron_man_one", "cast_member", "me")], "the person / place relation 'cast_member'"),
+    # R7c(1) on a person side, whatever follows (leak-B)
+    ("Taylor Swift is a spouse of My Husband.", [("my_husband", "spouse", "taylor_swift")],
+     "opens with the pronoun / determiner 'My' in the person relation 'spouse'"),
+    ("Reginald K Dwight is the father of Our Son.", [("our_son", "father", "reginald_k_dwight")],
+     "opens with the pronoun / determiner 'Our' in the person relation 'father'"),
+    ("Taylor Swift is a spouse of Yours Truly.", [("yours_truly", "spouse", "taylor_swift")],
+     "opens with the pronoun / determiner 'Yours' in the person relation 'spouse'"),
+    ("Taylor Swift is a spouse of Me and Earl.", [("me_and_earl", "spouse", "taylor_swift")],
+     "opens with the pronoun / determiner 'Me' in the person relation 'spouse'"),
+    # R7c(4): a class word or contraction after a conjunction (leak-B; "IVe": the Roman ordinal is not exempt there)
+    ("Trevor and Me participated in Korean police action.", [("trevor_and_me", "conflict", "korean_police_action")],
+     "the pronoun 'Me' (word 3) directly after the conjunction 'and'"),
+    ("Trevor and Us participated in Korean police action.", [("trevor_and_us", "conflict", "korean_police_action")],
+     "the pronoun 'Us' (word 3) directly after the conjunction 'and'"),
+    ("Trevor or Me participated in Korean police action.", [("trevor_or_me", "conflict", "korean_police_action")],
+     "the pronoun 'Me' (word 3) directly after the conjunction 'or'"),
+    ("Trevor and IVe participated in Korean police action.", [("trevor_and_ive", "conflict", "korean_police_action")],
+     "the pronoun 'IVe' (word 3) directly after the conjunction 'and'"),
+    ("Trevor as well as Me participated in Korean police action.", [("trevor_as_well_as_me", "conflict", "korean_police_action")],
+     "the pronoun 'Me' (word 5) directly after the conjunction 'as'"),
+    ("Foo Bar is an author of Trevor and Their song.", [("trevor_and_their_song", "author", "foo_bar")],
+     "the pronoun 'Their' (word 3) directly after the conjunction 'and'"),
+    # R7c(5): a pointing word after the first word (leak-B)
+    ("Foo Bar is an author of Songs of her own.", [("songs_of_her_own", "author", "foo_bar")], "'her' (word 3) written in lower case inside"),
+    ("Foo Bar is an author of Songs of her.", [("songs_of_her", "author", "foo_bar")], "'her' (word 3) written in lower case inside"),
+    ("Foo Bar is an author of Tell him and her.", [("tell_him_and_her", "author", "foo_bar")], "'him' (word 2) written in lower case inside"),
+    ("Foo Bar is an author of Give them this.", [("give_them_this", "author", "foo_bar")], "'them' (word 2) written in lower case inside"),
+    ("Foo Bar is an author of Sell this book.", [("sell_this_book", "author", "foo_bar")], "'this' (word 2) written in lower case inside"),
+    ("Foo Bar is an author of Beatles For Sale My song.", [("beatles_for_sale_my_song", "author", "foo_bar")],
+     "'My' (word 4) before the lower-case word 'song'"),
+    ("Foo Bar is an author of Songs of Her own.", [("songs_of_her_own", "author", "foo_bar")], "'Her' (word 3) before the lower-case word 'own'"),
+    # _points_back: the new pointing leads (leak-B) and the antecedent's build-6 words (correctness)
+    ("Stoker Bram is an author of Carfax Abbey. Ye Abbey is an instance of theatrical film.",
+     [("carfax_abbey", "author", "stoker_bram"), ("ye_abbey", "instance_of", "theatrical_film")], "points back to a different thing"),
+    ("Stoker Bram is an author of Carfax Abbey. Ur Abbey is an instance of theatrical film.",
+     [("carfax_abbey", "author", "stoker_bram"), ("ur_abbey", "instance_of", "theatrical_film")], "points back to a different thing"),
+    ("Stoker Bram is an author of Carfax Abbey. Mine Abbey is an instance of theatrical film.",
+     [("carfax_abbey", "author", "stoker_bram"), ("mine_abbey", "instance_of", "theatrical_film")], "points back to a different thing"),
+    ("Foo Bar is an author of Her Majesty Ship. The Ship Her performer Bar.",
+     [("her_majesty_ship", "author", "foo_bar"), ("ship_her", "performer", "bar")], "its words are among those of her_majesty_ship"),
+]
+
+
+@pytest.mark.parametrize("reply,gathered,why", SECOND_FIX_LEAKS)
+def test_each_second_review_leak_rejects_at_every_parser_seed(seed_chats, reply, gathered, why):
+    res = verdict(reply, gathered)
+    assert not res["accepted"] and why in res["reject_reason"], (reply, res["reject_reason"])
+    for sd in SEEDS:
+        acc, r = _on(seed_chats[sd], reply, gathered)
+        assert acc is False and why in r["reject_reason"], (sd, reply, r["reject_reason"])
+
+
+def _module_at(sha):
+    """`_moat_allowlist.py` at git `sha` as its own module object (the diagnostics' loader), or skip when git cannot show it."""
+    import importlib.util
+    import subprocess
+    try:
+        src = subprocess.check_output(["git", "show", "%s:research/runners/_moat_allowlist.py" % sha], stderr=subprocess.DEVNULL,
+                                      cwd=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))).decode("utf-8")
+    except Exception as exc:                  # a shallow clone or an export without history
+        pytest.skip("git cannot show %s: %s" % (sha, exc))
+    spec = importlib.util.spec_from_loader("research.runners._moat_allowlist_at_%s" % sha, loader=None)
+    mod = importlib.util.module_from_spec(spec)
+    mod.__file__ = A.__file__
+    exec(compile(src, "<_moat_allowlist.py at %s>" % sha, "exec"), mod.__dict__)
+    return mod
+
+
+@pytest.fixture(scope="module")
+def first_fix_round():
+    return _module_at("b76421436")
+
+
+# rejected by the first fix round too (R7c(1): "Me" before the lower-case "and"); pinned above because the second round's title-case
+# function-word exemption would keep it outside a person relation, so the person branch is what holds it now
+HELD_BY_THE_FIRST_FIX_ROUND = ("Taylor Swift is a spouse of Me and Earl.",)
+
+
+@pytest.mark.parametrize("reply,gathered,_why", [x for x in SECOND_FIX_LEAKS if x[0] not in HELD_BY_THE_FIRST_FIX_ROUND])
+def test_each_second_review_leak_was_kept_by_the_first_fix_round(first_fix_round, reply, gathered, _why):
+    """Each pin guards a change of the second fix round: build 7 after its first fix round (b76421436) KEPT every one of them."""
+    assert first_fix_round.allowlist_verify(reply, [list(g) for g in gathered])["accepted"], reply
+
+
+def test_the_person_branch_holds_what_the_function_word_exemption_would_keep(first_fix_round):
+    reply, gathered, _why = next(x for x in SECOND_FIX_LEAKS if x[0] in HELD_BY_THE_FIRST_FIX_ROUND)
+    assert not first_fix_round.allowlist_verify(reply, [list(g) for g in gathered])["accepted"]
+    m = _mutant([("        if person_rel:  ", "        if False:  ")])
+    assert m.allowlist_verify(reply, [list(g) for g in gathered])["accepted"]
+
+
+# ------------------------------------------------------------------------------------------------ what stays sayable after the second round
+SECOND_FIX_KEEPS = [
+    # over-reject fixes: a title-case name whose opener is followed by a function word and, later, a capital; "X ur Y" names
+    ("Foo Bar is an author of Me and Earl and the Dying Girl.", [("me_and_earl_and_the_dying_girl", "author", "foo_bar")]),
+    ("Foo Bar is an author of Her in the Dark.", [("her_in_the_dark", "author", "foo_bar")]),
+    ("Foo Bar is an author of It of the Night.", [("it_of_the_night", "author", "foo_bar")]),
+    ("Foo Bar is an author of His and Hers.", [("his_and_hers", "author", "foo_bar")]),
+    ("Foo Bar is an author of Them and Us.", [("them_and_us", "author", "foo_bar")]),
+    ("Foo Bar is an author of Them or Us.", [("them_or_us", "author", "foo_bar")]),
+    ("Foo Bar is an author of Us And Them.", [("us_and_them", "author", "foo_bar")]),
+    ("Foo Bar is an author of Atta ur Rahman.", [("atta_ur_rahman", "author", "foo_bar")]),
+    ("Foo Bar is an author of Fazl ur Rehman.", [("fazl_ur_rehman", "author", "foo_bar")]),
+    # a title-case class word mid-name before a function word or a capital (R7c(5) stays quiet)
+    ("Foo Bar is an author of Take Me to the River.", [("take_me_to_the_river", "author", "foo_bar")]),
+    ("Foo Bar is an author of Give It up For Love.", [("give_it_up_for_love", "author", "foo_bar")]),
+    # a work on the subject side of an object-side person relation keeps its title reading
+    ("Foo Bar is an author of Her.", [("her", "author", "foo_bar")]),
+    # store names in natural casing (store facts)
+    ("Take That genre pop starlets.", [("take_that", "genre", "pop_starlets")]),
+    ("Stood on His Head subclass of goal keeper.", [("stood_on_his_head", "subclass_of", "goal_keeper")]),
+    ("Play It Once Sam country of origin u s of a.", [("play_it_once_sam", "country_of_origin", "u_s_of_a")]),
+    ("U Iowa country u s of a.", [("u_iowa", "country", "u_s_of_a")]),
+    ("Ya Literature instance of literacy genre.", [("ya_literature", "instance_of", "literacy_genre")]),
+    ("Ya literature instance of literacy genre.", [("ya_literature", "instance_of", "literacy_genre")]),
+    ("Your Honor described by source Armenian Soviet Encyclopedia.", [("your_honor", "described_by_source", "armenian_soviet_encyclopedia")]),
+]
+SECOND_FIX_STORE_KEEPS = ("Take That genre", "Stood on His Head", "Play It Once Sam", "U Iowa", "Ya Literature", "Ya literature", "Your Honor")
+
+
+@pytest.mark.parametrize("sentence,gathered", SECOND_FIX_KEEPS)
+def test_what_stays_sayable_after_the_second_fix_round_at_every_parser_seed(seed_chats, sentence, gathered):
+    res = verdict(sentence, gathered)
+    assert res["accepted"], (sentence, res["reject_reason"])
+    for sd in SEEDS:
+        assert _on(seed_chats[sd], sentence, gathered)[0] is True, (sd, sentence)
+
+
+def test_the_second_round_store_keeps_use_real_store_facts():
+    if not os.path.exists(STORE_FACTS):
+        pytest.skip("production store not on this machine")
+    have = {(r["fact"]["agent"], r["fact"]["action"], r["fact"]["patient"]) for r in json.load(open(STORE_FACTS))
+            if r["fact"].get("polarity") == "AFFIRM"}
+    store = [g for s, gs in SECOND_FIX_KEEPS for g in gs if s.startswith(SECOND_FIX_STORE_KEEPS)]
+    missing = [g for g in store if tuple(g) not in have]
+    assert not missing and len(store) == 7, (missing, len(store))
+
+
+def test_the_object_side_title_block_leaves_the_subject_side_alone():
+    """R7a's PERSON_OBJECT_RELATIONS block reads the OBJECT of the fact only: a capitalised class word that is the SUBJECT of `director`
+    (the film "Her") keeps its title reading, the same word as the OBJECT ("... director Me.") rejects. Hand-built parse (the mouth renders
+    the subject of `director` first, where R7a's sentence-initial rule already rules)."""
+    toks = ["ben", "director", "her"]
+    origs = ["Ben", "director", "Her"]
+    offs = [(0, 3), (4, 12), (13, 16)]
+    src = " ".join(origs)
+    as_subject = [("shape1", [("her", "director", "ben")], [("ent", 0, "ben"), ("rel", 1, "director"), ("ent", 2, "her")])]
+    as_object = [("shape1", [("ben", "director", "her")], [("ent", 0, "ben"), ("rel", 1, "director"), ("ent", 2, "her")])]
+    assert A._name_reading_violation(as_subject, toks, origs, offs, src) is None
+    why = A._name_reading_violation(as_object, toks, origs, offs, src)
+    assert why and "the person / place relation 'director'" in why, why
+    m = _mutant([("            or (slug == p and v in PERSON_OBJECT_RELATIONS)), None)", "            or (slug in (a, p) and v in PERSON_OBJECT_RELATIONS)), None)")])
+    assert m._name_reading_violation(as_subject, toks, origs, offs, src), "the object-side test is what keeps the subject side"
+
+
+# ------------------------------------------------------------------------------------------------ measured costs, pinned so a change is visible
+SECOND_FIX_COSTS = [
+    # R7c(5): the sentence-case spelling of store names holding a lower-case pointing word (6 slugs, 35 facts; title case stays)
+    ("Take that genre pop starlets.", [("take_that", "genre", "pop_starlets")], "'that' (word 2) written in lower case inside"),
+    ("Stood on his head subclass of goal keeper.", [("stood_on_his_head", "subclass_of", "goal_keeper")], "'his' (word 3) written in lower case"),
+    # R7c(1c): the all-lower-case spelling of the u_* university names, ya_literature and ye_yo (12 slugs)
+    ("u iowa country u s of a.", [("u_iowa", "country", "u_s_of_a")], "opens with the pronoun 'u' in a name with no capital"),
+    ("ya literature instance of literacy genre.", [("ya_literature", "instance_of", "literacy_genre")], "opens with the pronoun 'ya'"),
+    # off the store: a one-word track title in has_part; "Your Honor" after "Honor Civilian of Tirana" (1 store pair)
+    ("Speak Now has part Mine.", [("speak_now", "has_part", "mine")], "the person / place relation 'has_part'"),
+    ("Honor Civilian of Tirana described by source Armenian Soviet Encyclopedia. Your Honor described by source Armenian Soviet Encyclopedia.",
+     [("honor_civilian_of_tirana", "described_by_source", "armenian_soviet_encyclopedia"),
+      ("your_honor", "described_by_source", "armenian_soviet_encyclopedia")], "its words are among those of honor_civilian_of_tirana"),
+]
+
+
+@pytest.mark.parametrize("reply,gathered,why", SECOND_FIX_COSTS)
+def test_the_second_rounds_measured_costs_reject(reply, gathered, why):
+    res = verdict(reply, gathered)
+    assert not res["accepted"] and why in res["reject_reason"], (reply, res["reject_reason"])
+
+
+def test_the_your_honor_cost_is_the_pair_only():
+    reply = SECOND_FIX_COSTS[-1][0]
+    assert all(keep(s, SECOND_FIX_COSTS[-1][1][k:k + 1]) for k, s in enumerate(A.split_sentences(reply)))
+
+
+# ------------------------------------------------------------------------------------------------ one mutation per new branch
+BRANCH_MUTANTS_2 = [
+    ("_abbrev all-caps or Roman ordinal", [("    return caps_tokens(word) == [word] or bool(ROMAN_ORDINAL.fullmatch(word))",
+                                            "    return word[:2].isupper() and len(word) >= 2")], {},
+     "Stoker Bram is an author of Carfax Abbey. THis book is an instance of theatrical film.",
+     [("carfax_abbey", "author", "stoker_bram"), ("this_book", "instance_of", "theatrical_film")]),
+    ("R7c(0) mixed case", [("        if w.lower() in R7A_WORDS and _mixed_case(w):", "        if False:")], {},
+     "Taylor Swift is an author of HIs Song.", [("his_song", "author", "taylor_swift")]),
+    ("R7c(1) a digit is uncapitalised", [("        if not w1[:1].isupper() and not titled:", "        if w1[:1].islower() and not titled:")], {},
+     "Stoker Bram is an author of this 1.", [("this_1", "author", "stoker_bram")]),
+    ("R7c(1) person side", [("        if person_rel:  ", "        if False:  ")], {},
+     "Taylor Swift is a spouse of My Husband.", [("my_husband", "spouse", "taylor_swift")]),
+    ("R7c(1) PERSON_SIDES", [], {"PERSON_SIDES": {}},
+     "Reginald K Dwight is the father of Our Son.", [("our_son", "father", "reginald_k_dwight")]),
+    ("R7c(1c) no-capital carve-out", [("    if w0.lower() in OPENER_CARVEOUT and not has_cap and not _letter_fold(w1):", "    if False:")], {},
+     "Taylor Swift is a spouse of ya boy.", [("ya_boy", "spouse", "taylor_swift")]),
+    ("R7c(1c) not r / n", [('    return word == "of" or (len(word) == 1 and word.isalpha() and word not in ("r", "n"))',
+                           '    return word == "of" or (len(word) == 1 and word.isalpha())')], {},
+     "Canada portal shares border with u r cool.", [("canada_portal", "shares_border_with", "u_r_cool")]),
+    ("R7c(4) class word after a conjunction", [("        if _conj_before(words, k) and not pronoun_only and caps_tokens(w) != [w]:", "        if False:")],
+     {}, "Trevor and Me participated in Korean police action.", [("trevor_and_me", "conflict", "korean_police_action")]),
+    ("R7c(4) contraction after a conjunction", [("        if _conj_before(words, k) and not pronoun_only and caps_tokens(w) != [w]:",
+                                                 "        if False:")], {},
+     "Trevor and Im participated in Korean police action.", [("trevor_and_im", "conflict", "korean_police_action")]),
+    ("R7c(4) as well as", [('    return words[k - 1].lower() in NAME_CONJUNCTIONS or [x.lower() for x in words[max(0, k - 3):k]] == ["as", "well", "as"]',
+                            '    return words[k - 1].lower() in NAME_CONJUNCTIONS')], {},
+     "Trevor as well as Me participated in Korean police action.", [("trevor_as_well_as_me", "conflict", "korean_police_action")]),
+    ("R7c(4) a Roman ordinal is not exempt", [("and not pronoun_only and caps_tokens(w) != [w]:", "and not pronoun_only and not _abbrev(w):")], {},
+     "Trevor and IVe participated in Korean police action.", [("trevor_and_ive", "conflict", "korean_police_action")]),
+    ("R7c(5) lower case inside the name", [("            if w.islower():                                        # \"Trevor", "            if False:  # \"Trevor")],
+     {}, "Foo Bar is an author of Songs of her.", [("songs_of_her", "author", "foo_bar")]),
+    ("R7c(5) title case before a lower-case word", [("            if nxt[:1].islower() and nxt not in OPENER_FUNCTION_WORDS:", "            if False:")],
+     {}, "Foo Bar is an author of Beatles For Sale My song.", [("beatles_for_sale_my_song", "author", "foo_bar")]),
+    ("R7a object-side relations", [], {"PERSON_OBJECT_RELATIONS": frozenset()},
+     "Strawberry Hill Boys has part Me.", [("strawberry_hill_boys", "has_part", "me")]),
+    ("weve", [], {"CONTRACTED_SUBJECTS": frozenset(CONTRACTIONS[:8]), "R7A_WORDS": frozenset(CLASS) | frozenset(CONTRACTIONS[:8])},
+     "Taylor Swift is a spouse of weve.", [("weve", "spouse", "taylor_swift")]),
+    ("shes", [], {"CONTRACTED_SUBJECTS": frozenset(CONTRACTIONS[:8]), "R7A_WORDS": frozenset(CLASS) | frozenset(CONTRACTIONS[:8])},
+     "Alice Feeney is an author of shes the one.", [("shes_the_one", "author", "alice_feeney")]),
+    ("thats", [], {"CONTRACTED_SUBJECTS": frozenset(CONTRACTIONS[:8]), "R7A_WORDS": frozenset(CLASS) | frozenset(CONTRACTIONS[:8])},
+     "Alice Feeney is an author of thats all.", [("thats_all", "author", "alice_feeney")]),
+    ("_points_back antecedent keeps its lead", [('            words6 = words[1:] if led and words[0] == "the" else words',
+                                                 "            words6 = words[1:] if led else words")], {},
+     "Foo Bar is an author of Her Majesty Ship. The Ship Her performer Bar.",
+     [("her_majesty_ship", "author", "foo_bar"), ("ship_her", "performer", "bar")]),
+]
+
+
+@pytest.mark.parametrize("name,edits,attrs,reply,gathered", BRANCH_MUTANTS_2, ids=[b[0] for b in BRANCH_MUTANTS_2])
+def test_mutation_each_second_round_branch_is_what_rejects_its_case(name, edits, attrs, reply, gathered):
+    assert not keep(reply, gathered), name
+    m = _mutant(edits)
+    for k, val in attrs.items():
+        setattr(m, k, val)
+    res = m.allowlist_verify(reply, [list(g) for g in gathered])
+    assert res["accepted"], (name, res["reject_reason"])
+
+
+# the keeps the second round's exemptions hold: without the exemption the keep rejects
+KEEP_MUTANTS_2 = [
+    ("R7c(1) title-case function-word exemption", [("        if not w1[:1].isupper() and not titled:", "        if not w1[:1].isupper():")],
+     "Foo Bar is an author of Me and Earl and the Dying Girl."),
+    ("R7c(1c) letter fold", [('    return word == "of" or (len(word) == 1 and word.isalpha() and word not in ("r", "n"))', "    return False")],
+     "Play It Once Sam country of origin u s of a."),
+    ("R7c(2) X ur Y", [('            if not (lw == "ur" and 0 < k < len(words) - 1 and words[k - 1][:1].isupper() and nxt[:1].isupper()):',
+                        "            if True:")],
+     "Foo Bar is an author of Atta ur Rahman."),
+    ("R7c(4) pronouns and conjunctions only", [("        if _conj_before(words, k) and not pronoun_only and", "        if _conj_before(words, k) and")],
+     "Foo Bar is an author of Them and Us."),
+    ("R7c(5) function word after the class word", [("            if nxt[:1].islower() and nxt not in OPENER_FUNCTION_WORDS:",
+                                                     "            if nxt[:1].islower():")],
+     "Foo Bar is an author of Take Me to the River."),
+]
+
+
+@pytest.mark.parametrize("name,edits,sentence", KEEP_MUTANTS_2, ids=[b[0] for b in KEEP_MUTANTS_2])
+def test_mutation_each_second_round_exemption_is_what_keeps_its_case(name, edits, sentence):
+    gathered = next(g for s, g in SECOND_FIX_KEEPS if s == sentence)
+    assert keep(sentence, gathered), name
+    res = _mutant(edits).allowlist_verify(sentence, [list(g) for g in gathered])
+    assert not res["accepted"], name
+
+
+def test_a_title_case_span_of_pronouns_and_conjunctions_only_runs_the_guard_without_error():
+    """test-gap: the `if low:` guard of R7c(1b) on a span with no lower-case class word ("Us And Them") returns None, not an IndexError."""
+    for words in (["Us", "And", "Them"], ["Them", "and", "Us"], ["His", "and", "Hers"], ["Me", "Myself"]):
+        assert A._pronoun_phrase_reading(words) is None, words
+
+
+# ------------------------------------------------------------------------------------------------ the abbreviation test (test-gap)
+@pytest.mark.parametrize("words,old,new", [
+    (["IT", "crowd"], "    if w0.lower() in POINTING_OPENERS and not _abbrev(w0):", "    if w0.lower() in POINTING_OPENERS:"),
+    (["THY", "Kingdom"], "        if lw in LOWER_PRONOUN_FORMS and not _abbrev(w) and", "        if lw in LOWER_PRONOUN_FORMS and"),
+    (["Trevor", "IT", "crowd"], "        if lw in POINTING_OPENERS and not _abbrev(w):  ", "        if lw in POINTING_OPENERS:  "),
+    (["IM", "here"], "        if lw in CONTRACTED_SUBJECTS and not _abbrev(w):", "        if lw in CONTRACTED_SUBJECTS:"),
+])
+def test_an_all_caps_abbreviation_is_not_read_by_r7c_and_the_test_is_what_keeps_it(words, old, new):
+    assert A._pronoun_phrase_reading(words) is None, words
+    assert _mutant([(old, new)])._pronoun_phrase_reading(words), words
+
+
+# ------------------------------------------------------------------------------------------------ one points-back case per lead word (test-gap)
+def _trace(*spans):
+    """One trace entry per sentence from (slug, displayed span) pairs, through `_ent_span_words` (one span per sentence)."""
+    return [{"ent_spans": [list(x) for x in A._ent_span_words([(1, [], [("ent", 0, slug)])], ["x"], [orig])]} for slug, orig in spans]
+
+
+@pytest.mark.parametrize("lead", sorted(A.POINTING_LEADS))
+def test_each_pointing_lead_points_back_and_is_what_rejects(lead):
+    tr = _trace(("carfax_abbey", "Carfax Abbey"), (lead + "_abbey", lead.capitalize() + " Abbey"))
+    why = A._points_back(tr)
+    assert why and "its words are among those of carfax_abbey" in why, (lead, why)
+    m = _mutant([])
+    m.POINTING_LEADS = A.POINTING_LEADS - {lead}
+    tr_m = [{"ent_spans": [list(x) for x in m._ent_span_words([(1, [], [("ent", 0, slug)])], ["x"], [orig])]}
+            for slug, orig in (("carfax_abbey", "Carfax Abbey"), (lead + "_abbey", lead.capitalize() + " Abbey"))]
+    assert m._points_back(tr_m) is None, lead
+
+
+def test_the_pointing_leads_are_the_ruled_ones():
+    assert A.POINTING_LEADS == frozenset("the this that these those his her its their my our your thy ye ur thine mine".split())
+    assert "u" not in A.POINTING_LEADS          # declared residue: 41 store "U <place>" names, 47 co-occurring store pairs
+
+
+def test_an_antecedents_pointing_lead_stays_one_of_its_words():
+    """correctness: the earlier span keeps build 6's words (only a leading "the" dropped), the later span drops its pointing lead."""
+    got = A._ent_span_words([(1, [], [("ent", 0, "s")])], ["x"], ["Her Majesty Ship"])
+    assert got[0][1] == ("her", "majesty", "ship") and got[0][3] == ("majesty", "ship") and got[0][2] is True, got
+    got = A._ent_span_words([(1, [], [("ent", 0, "s")])], ["x"], ["The Band"])
+    assert got[0][1] == ("band",) and got[0][3] == ("band",), got
+
+
+# ------------------------------------------------------------------------------------------------ the composer and the stub
+@pytest.mark.parametrize("batch", [False, True], ids=["sequential", "batched"])
+@pytest.mark.parametrize("second", [
+    (("her_2_sons", "father", "reginald_k_dwight"), "Reginald K Dwight is the father of her 2 sons."),
+    (("ya_boy", "spouse", "taylor_swift"), "Taylor Swift is a spouse of ya boy."),
+    (("weve", "spouse", "taylor_swift"), "Taylor Swift is a spouse of weve."),
+    (("my_husband", "spouse", "taylor_swift"), "Taylor Swift is a spouse of My Husband."),
+    (("ye_abbey", "instance_of", "theatrical_film"), "Ye Abbey is an instance of theatrical film."),
+    (("this_book", "instance_of", "theatrical_film"), "THis book is an instance of theatrical film."),
+])
+def test_the_composer_drops_the_second_round_leaks_and_keeps_the_true_sentence(monkeypatch, batch, second):
+    import tests.test_moat_allowlist_build6 as T6
+    monkeypatch.setenv(FLAG, "1")
+    monkeypatch.setenv("BRAIN_SPIKING_MOUTH_RECALL", "0")
+    if batch:
+        monkeypatch.setenv("BRAIN_RICH_BATCH_RENDER", "1")
+    ca = ("carfax_abbey", "author", "stoker_bram")
+    table = {ca: "Stoker Bram is an author of Carfax Abbey.", second[0]: second[1]}
+    para, kept, dropped = T6._comp(T6._chat(T6.Prose(table, regen=table, batch=batch))).render_paragraph([list(ca), list(second[0])])
+    assert para == "Stoker Bram is an author of Carfax Abbey." and len(kept) == 1 and len(dropped) == 1, (para, kept, dropped)
+
+
+@pytest.mark.parametrize("svo", [("canada_portal", "shares_border_with", "weve"), ("canada_portal", "shares_border_with", "shes"),
+                                 ("canada_portal", "shares_border_with", "thats")])
+def test_the_stubs_verbatim_one_word_contraction_slugs_reject_in_object_position(monkeypatch, svo):
+    from research.runners.brain_chat_tui import StubRenderer
+    monkeypatch.setenv(FLAG, "1")
+    surf = StubRenderer().render_svo(*svo)[0]
+    res = verdict(surf, [svo])
+    assert not res["accepted"] and "reads as the pronoun %r" % svo[2] in res["reject_reason"], (surf, res["reject_reason"])
