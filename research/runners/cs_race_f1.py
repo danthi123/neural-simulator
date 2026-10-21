@@ -197,7 +197,9 @@ class RaceCircuit(ReplayCircuit):
             for w, role_word in ((agent, "agent"), (action, "action")):
                 i = CUE_WORDS.index(w)
                 plan["cue_%s_%d" % (role_word, k)] = SC.dense(
-                    self.cue[i], self.eng[k], W_CUE, conn_type="E_TO_E")
+                    self.cue[i], self.eng[k], float(p.get("W_CUE",
+                                                       W_CUE)),
+                    conn_type="E_TO_E")
             # role-free mention -> E_k if fact k contains the word
             for w in FACTS[k]:
                 i = MENTION_WORDS.index(w)
@@ -246,6 +248,7 @@ class RaceCircuit(ReplayCircuit):
     # ── the race itself ────────────────────────────────────────────────
     def race(self, *, seed, cue_words, mention_words=(), encode=("B",),
              steer_pa=0.0, steer_target=None, steer_from_step=None,
+             steer_stage="engram",
              nonselective=False, ment_gate=True, excl_gate=True,
              precue_ms=PRECUE_WINDOW_MS):
         """One turn: optional encode pulses + context mention, then the cue
@@ -342,9 +345,13 @@ class RaceCircuit(ReplayCircuit):
                 if cue_idx.size:
                     cur[cue_idx] += float(CUE_PA)
                 if steer_pa and (flip_step is None or t >= flip_step):
-                    tgt = (np.concatenate([self.eng[k] for k in range(K)])
-                           if nonselective else
-                           self.eng[int(steer_target or 0)])
+                    if steer_stage == "gate":
+                        tgt = self.lay["gate"][int(steer_target or 0)]
+                    elif nonselective:
+                        tgt = np.concatenate([self.eng[k]
+                                              for k in range(K)])
+                    else:
+                        tgt = self.eng[int(steer_target or 0)]
                     cur[tgt] += float(steer_pa)
             step_with(cur)
             f = np.asarray(to_host(b.cp_firing_states)).astype(bool)
@@ -407,7 +414,8 @@ class RaceCircuit(ReplayCircuit):
                 "cue_spikes": cue_spk}
 
 
-def run_clauses(circ, seed, draws, grid_tag, controls_only=False):
+def run_clauses(circ, seed, draws, grid_tag, controls_only=False,
+                steer_pa=0.0, steer_stage="engram", steer_target=0):
     """All clauses (a)-(i) for ONE dev seed x `draws` noise draws.
     controls_only=True stops after the two controls (step 1c lever
     grid cells need the controls, not the full clause battery)."""
@@ -475,7 +483,9 @@ def run_clauses(circ, seed, draws, grid_tag, controls_only=False):
     # race must COMMIT to one of them on >= 9/10 draws per seed, each
     # candidate winning 2-8 of 10 (a race, not a fixed winner).
     d_rows = winners(tag="decisive", cue_words=list(CUE_OF[1]),
-                     encode=("ABsim",))
+                     encode=("ABsim",),
+                     steer_pa=float(steer_pa), steer_stage=steer_stage,
+                     steer_target=int(steer_target))
     d_err = sum(1 for r in d_rows
                 if isinstance(r.get("winner"), str)
                 and str(r.get("winner")).startswith("ERROR"))
@@ -494,6 +504,11 @@ def run_clauses(circ, seed, draws, grid_tag, controls_only=False):
         "pass": bool(d_err == 0 and d_commits >= 9
                      and 2 <= d_frog <= draws - 2
                      and 2 <= d_vole <= draws - 2)}
+    if steer_pa:
+        out["decisive_control"]["steer_host_probe"] = {
+            "pa": float(steer_pa), "stage": steer_stage,
+            "target": int(steer_target),
+            "note": "host steer = measurement probe, never a mechanism"}
     if controls_only:
         out["subset"] = ("controls-only: posctl + decisive "
                          "(cs-race-f1b-1021c lever grid)")
@@ -658,6 +673,20 @@ def main():
                     help="slow NMDA recurrent weight (0 = off)")
     ap.add_argument("--w-ie", type=float, default=None,
                     help="override W_IE, exclusion (lateral) inhibition")
+    ap.add_argument("--w-xg", type=float, default=None,
+                    help="override W_XG, engram->gate drive")
+    ap.add_argument("--w-gs", type=float, default=None,
+                    help="override W_GS, gate->slot drive")
+    ap.add_argument("--w-cue", type=float, default=None,
+                    help="override W_CUE, cue->engram synapse weight")
+    ap.add_argument("--steer-pa", type=float, default=0.0,
+                    help="host steer current pA on the decisive control "
+                         "(measurement probe; record = steer_host_probe)")
+    ap.add_argument("--steer-stage", choices=("engram", "gate"),
+                    default="engram",
+                    help="which stage receives the host steer")
+    ap.add_argument("--steer-target", type=int, default=0,
+                    help="engram/gate index k receiving the host steer")
     args = ap.parse_args()
     global _F1_GRID_ROW
     _F1_GRID_ROW = dict(F1_GRID[args.grid_row])
@@ -676,6 +705,12 @@ def main():
         base["W_EE"] = float(args.w_ee)
     if args.w_ie is not None:
         base["W_IE"] = float(args.w_ie)
+    if args.w_xg is not None:
+        base["W_XG"] = float(args.w_xg)
+    if args.w_gs is not None:
+        base["W_GS"] = float(args.w_gs)
+    if args.w_cue is not None:
+        base["W_CUE"] = float(args.w_cue)
     if args.w_nmda:
         base["W_NMDA"] = float(args.w_nmda)
     results = []
@@ -688,7 +723,9 @@ def main():
                _F1_GRID_ROW["tau_f"], _F1_GRID_ROW["NE"],
                base["W_EE"], base["W_IE"],
                base.get("W_NMDA", 0.0)),
-            controls_only=args.controls_only)
+            controls_only=args.controls_only,
+            steer_pa=args.steer_pa, steer_stage=args.steer_stage,
+            steer_target=args.steer_target)
         results.append(res)
         passed = sorted(k for k, v in res["clauses"].items() if v.get("pass"))
         print("seed %d: %d/%d clauses pass (%s)"
@@ -722,11 +759,10 @@ def main():
     dec_ok = all(r.get("decisive_control", {}).get("pass")
                  for r in results)
     if args.controls_only:
-        v.require("decisiveness control (two writes together, one "
-                  "shared cue, no recency/mention): commits >= 9/10 "
-                  "and each winner 2-8 of 10 on every seed", dec_ok,
-                  note="RULING cs-race-f1b-1021c step 2")
-        v.decide(pc_ok and dec_ok)
+        # RULING cs-race-f1d-1021 step 1a: the positive control stays a
+        # require (instrument); the decisiveness control is the DECIDED
+        # criterion, so its failure reads NO-GO, not UNDEFINED.
+        v.decide(bool(dec_ok))
     else:
         v.decide(all_seeds_all_clauses)
 
