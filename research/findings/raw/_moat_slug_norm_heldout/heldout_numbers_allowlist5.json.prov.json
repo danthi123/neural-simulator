@@ -1,0 +1,29 @@
+{
+ "run_id": "1792580755-137728",
+ "runner": "research/findings/raw/_moat_slug_norm_heldout/heldout_numbers.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-allow5/research/findings/raw/_moat_slug_norm_heldout/heldout_numbers.py",
+  "research/findings/raw/_moat_slug_norm_heldout/heldout_numbers_allowlist5.json",
+  "--allowlist",
+  "--suffix",
+  "_allowlist5"
+ ],
+ "git_sha": "fde5e739e",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-21T07:05:55",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 36591.3,
+ "corpus_check_query": "allowlist claim checker accepts a copula absorbed into an entity span (slug ending in 'is') before a participial relation, and a coordinated object list naming the same entity twice",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_moat_slug_norm_heldout/heldout_numbers_allowlist5.json"
+}
