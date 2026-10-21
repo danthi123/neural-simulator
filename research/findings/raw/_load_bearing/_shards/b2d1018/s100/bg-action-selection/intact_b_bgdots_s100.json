@@ -1,0 +1,23 @@
+{
+  "bgdots": {
+    "answer": "(Holding \u2014 nothing salient to add to that.)",
+    "abstained": true,
+    "recalled_svo": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": null,
+    "affect": null,
+    "bg_select": {
+      "on": true,
+      "action": "STAY_SILENT",
+      "winner": 1,
+      "speak_salience": 0.0,
+      "silent_salience": 1.0,
+      "decision_step": 88,
+      "lesioned": false
+    }
+  }
+}
