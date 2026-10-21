@@ -145,7 +145,14 @@ def test_the_real_names_cover_accent_hyphen_and_both():
 @pytest.mark.parametrize("slug,name,variant", REAL, ids=[r[0] for r in REAL])
 def test_the_de_slugged_form_and_the_slug_verbatim_are_kept(slug, name, variant):
     for text in (A.deslug(slug), A.deslug(slug).title(), slug):
-        assert A.allowlist_keep("%s has part Zeta Q." % text, [[slug, "has_part", "zeta_q"]]) == (True, "ok"), text
+        got = A.allowlist_keep("%s has part Zeta Q." % text, [[slug, "has_part", "zeta_q"]])
+        if text == A.deslug(slug) and "i" in text.split()[1:]:
+            # BUILD 7, rule R7b(1) (a ruled cost, not a regression to fix here): an all-lower-case display with an "i" that is not the
+            # first word carries no casing signal, so the de-slugged lower-case form of a Roman-numeral name ("universit paris i panth
+            # on sorbonne") rejects; its title-case form and the slug verbatim (the other two texts) stay kept
+            assert not got[0] and "a lower-case 'i' (word" in got[1], (text, got)
+            continue
+        assert got == (True, "ok"), text
 
 
 def test_a_slug_with_no_row_accepts_only_its_de_slugged_form_and_itself():
