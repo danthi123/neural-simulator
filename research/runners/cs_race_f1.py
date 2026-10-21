@@ -170,6 +170,9 @@ class RaceCircuit(ReplayCircuit):
         cfg.stp_tau_d = 200.0
         cfg.enable_per_type_stp = False     # globals only; ee inherits stp_U/tau_f
         cfg.enable_parameter_heterogeneity = True
+        # Slow NMDA recurrent component (ruling: record-supported).
+        cfg.enable_nmda_recurrent = (
+            float(p.get("W_NMDA", 0.0)) > 0.0)
         bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                                   runtime_state=RuntimeState(), gpu_config=GPUConfig())
         bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
@@ -179,6 +182,10 @@ class RaceCircuit(ReplayCircuit):
             ee = SC.dense(self.eng[k], self.eng[k], p["W_EE"], conn_type="E_TO_E")
             ee.pop("stp_disabled", None)          # engram recurrence KEEPS STP
             plan["ee_%d" % k] = ee
+            if float(p.get("W_NMDA", 0.0)) > 0.0:
+                plan["eek_nmda_%d" % k] = SC.dense(
+                    self.eng[k], self.eng[k], float(p["W_NMDA"]),
+                    conn_type="E_TO_E", receptor="nmda_slow")
             plan["ei_%d" % k] = SC.dense(self.eng[k], self.inh[k], p["W_EI"],
                                          conn_type="E_TO_I")
             if K > 1:
@@ -647,6 +654,8 @@ def main():
     ap.add_argument("--controls-only", action="store_true")
     ap.add_argument("--w-ee", type=float, default=None,
                     help="override W_EE, engram recurrent excitation")
+    ap.add_argument("--w-nmda", type=float, default=0.0,
+                    help="slow NMDA recurrent weight (0 = off)")
     ap.add_argument("--w-ie", type=float, default=None,
                     help="override W_IE, exclusion (lateral) inhibition")
     args = ap.parse_args()
@@ -667,15 +676,18 @@ def main():
         base["W_EE"] = float(args.w_ee)
     if args.w_ie is not None:
         base["W_IE"] = float(args.w_ie)
+    if args.w_nmda:
+        base["W_NMDA"] = float(args.w_nmda)
     results = []
     for seed in seeds:
         circ = RaceCircuit(3, seed, dict(base), _F1_GRID_ROW)
         res = run_clauses(
             circ, seed, args.draws,
-            "row%d U=%s tau_f=%s NE=%s W_EE=%s W_IE=%s"
+            "row%d U=%s tau_f=%s NE=%s W_EE=%s W_IE=%s W_NMDA=%s"
             % (args.grid_row, _F1_GRID_ROW["U"],
                _F1_GRID_ROW["tau_f"], _F1_GRID_ROW["NE"],
-               base["W_EE"], base["W_IE"]),
+               base["W_EE"], base["W_IE"],
+               base.get("W_NMDA", 0.0)),
             controls_only=args.controls_only)
         results.append(res)
         passed = sorted(k for k, v in res["clauses"].items() if v.get("pass"))
