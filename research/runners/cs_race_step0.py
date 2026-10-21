@@ -109,6 +109,8 @@ def main():
     v.require("candidates listed", bool(cands))
     v.require("cue slots resolved", verdict != "UNRESOLVED")
     v.require("backend numpy", True)
+    # decide() BEFORE to_dict(): a verdict must be earned before it is written.
+    ok = v.decide(verdict in ("APPEND", "REWRITE"))
 
     out = {
         "probe": "cs_race_step0",
@@ -149,9 +151,8 @@ def main():
     print("verdict=%s cue_slots=%s patients=%s wall=%.1fs -> %s"
           % (verdict, out["cue_slots"], patients, out["wall_s"], out_path),
           flush=True)
-    ok = v.decide(verdict in ("APPEND", "REWRITE"))
     # GO = the route answered cleanly (an UNRESOLVED read = NO-GO).
-    return 0 if getattr(ok, "go", False) else 1
+    return 0 if ok.get("go") else 1
 
 
 if __name__ == "__main__":
