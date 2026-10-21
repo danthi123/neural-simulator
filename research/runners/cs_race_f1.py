@@ -400,8 +400,10 @@ class RaceCircuit(ReplayCircuit):
                 "cue_spikes": cue_spk}
 
 
-def run_clauses(circ, seed, draws, grid_tag):
-    """All clauses (a)-(i) for ONE dev seed x `draws` noise draws."""
+def run_clauses(circ, seed, draws, grid_tag, controls_only=False):
+    """All clauses (a)-(i) for ONE dev seed x `draws` noise draws.
+    controls_only=True stops after the two controls (step 1c lever
+    grid cells need the controls, not the full clause battery)."""
     out = {"seed": seed, "grid": grid_tag, "draws": draws,
            "KILL": KILL_CRITERIA, "clauses": {}}
     base_seed = seed * 1000003
@@ -459,6 +461,36 @@ def run_clauses(circ, seed, draws, grid_tag):
         "slot": 2,
         "winners": [content(r["winner"]) for r in pc_rows],
         "pass": bool(pc_commits >= 9)}
+
+    # DECISIVENESS CONTROL (RULING cs-race-f1b-1021c, written before
+    # any step-1c run): two engrams written TOGETHER (ABsim = one
+    # shared write, no recency gap), one shared cue, no mention -> the
+    # race must COMMIT to one of them on >= 9/10 draws per seed, each
+    # candidate winning 2-8 of 10 (a race, not a fixed winner).
+    d_rows = winners(tag="decisive", cue_words=list(CUE_OF[1]),
+                     encode=("ABsim",))
+    d_err = sum(1 for r in d_rows
+                if isinstance(r.get("winner"), str)
+                and str(r.get("winner")).startswith("ERROR"))
+    d_commits = sum(1 for r in d_rows
+                    if isinstance(r.get("winner"), int))
+    d_frog = sum(1 for r in d_rows if content(r["winner"]) == "frog")
+    d_vole = sum(1 for r in d_rows if content(r["winner"]) == "vole")
+    out["decisive_control"] = {
+        "encode": ["ABsim"], "cue": list(CUE_OF[1]),
+        "no_recency_no_mention": True,
+        "bar_commits": 9, "n": draws,
+        "commits": d_commits, "frog_wins": d_frog,
+        "vole_wins": d_vole, "errors": d_err,
+        "split_band": [2, draws - 2],
+        "vm_field": "v_mV (per_draw[tag=decisive])",
+        "pass": bool(d_err == 0 and d_commits >= 9
+                     and 2 <= d_frog <= draws - 2
+                     and 2 <= d_vole <= draws - 2)}
+    if controls_only:
+        out["subset"] = ("controls-only: posctl + decisive "
+                         "(cs-race-f1b-1021c lever grid)")
+        return out
 
     # (a) A old, B new, same cue -> B (frog) wins >= 8/10
     a_rows = winners(tag="a", cue_words=list(CUE_OF[1]),
@@ -612,6 +644,11 @@ def main():
     ap.add_argument("--draws", type=int, default=N_DRAWS)
     ap.add_argument("--grid-row", type=int, default=0)
     ap.add_argument("--out", default="")
+    ap.add_argument("--controls-only", action="store_true")
+    ap.add_argument("--w-ee", type=float, default=None,
+                    help="override W_EE, engram recurrent excitation")
+    ap.add_argument("--w-ie", type=float, default=None,
+                    help="override W_IE, exclusion (lateral) inhibition")
     args = ap.parse_args()
     global _F1_GRID_ROW
     _F1_GRID_ROW = dict(F1_GRID[args.grid_row])
@@ -625,28 +662,43 @@ def main():
     print("KILL CRITERIA (pre-registered):", flush=True)
     for line in KILL_CRITERIA:
         print("  " + line, flush=True)
+    base = dict(_BASE)
+    if args.w_ee is not None:
+        base["W_EE"] = float(args.w_ee)
+    if args.w_ie is not None:
+        base["W_IE"] = float(args.w_ie)
     results = []
     for seed in seeds:
-        circ = RaceCircuit(3, seed, dict(_BASE), _F1_GRID_ROW)
-        res = run_clauses(circ, seed, args.draws,
-                          "row%d U=%s tau_f=%s NE=%s"
-                          % (args.grid_row, _F1_GRID_ROW["U"],
-                             _F1_GRID_ROW["tau_f"], _F1_GRID_ROW["NE"]))
+        circ = RaceCircuit(3, seed, dict(base), _F1_GRID_ROW)
+        res = run_clauses(
+            circ, seed, args.draws,
+            "row%d U=%s tau_f=%s NE=%s W_EE=%s W_IE=%s"
+            % (args.grid_row, _F1_GRID_ROW["U"],
+               _F1_GRID_ROW["tau_f"], _F1_GRID_ROW["NE"],
+               base["W_EE"], base["W_IE"]),
+            controls_only=args.controls_only)
         results.append(res)
         passed = sorted(k for k, v in res["clauses"].items() if v.get("pass"))
         print("seed %d: %d/%d clauses pass (%s)"
               % (seed, len(passed), 9, ",".join(passed)), flush=True)
         pc = res.get("positive_control", {})
         print("    posctl commits %s/%s pass=%s"
-              % (pc.get("commits"), pc.get("n"), pc.get("pass")), flush=True)
+              % (pc.get("commits"), pc.get("n"), pc.get("pass")),
+              flush=True)
+        dc = res.get("decisive_control", {})
+        print("    decisive commits %s/%s (frog %s vole %s) pass=%s"
+              % (dc.get("commits"), dc.get("n"), dc.get("frog_wins"),
+                 dc.get("vole_wins"), dc.get("pass")), flush=True)
 
     all_seeds_all_clauses = all(
         all(v.get("pass") for v in r["clauses"].values()) for r in results)
     v = Verdict("cs-race step 1: F1 feasibility clause table")
     v.require("8 dev seeds ran", len(results) == 8,
               note="dev seeds only; gate seeds never run")
-    v.require("every clause present on every seed",
-              all(set(r["clauses"]) == set("abcdefghi") for r in results))
+    if not args.controls_only:
+        v.require("every clause present on every seed",
+                  all(set(r["clauses"]) == set("abcdefghi")
+                      for r in results))
     v.require("no clause errored (K2)",
               all(all(r["clauses"][c].get("errors", 0) == 0
                       for c in r["clauses"]) for r in results))
@@ -655,13 +707,24 @@ def main():
     v.require("positive control: one engram written alone commits >= 9/10 "
               "on every dev seed", pc_ok,
               note="step 1b: a control-failed row is UNDEFINED, not FAIL")
-    v.decide(all_seeds_all_clauses)
+    dec_ok = all(r.get("decisive_control", {}).get("pass")
+                 for r in results)
+    if args.controls_only:
+        v.require("decisiveness control (two writes together, one "
+                  "shared cue, no recency/mention): commits >= 9/10 "
+                  "and each winner 2-8 of 10 on every seed", dec_ok,
+                  note="RULING cs-race-f1b-1021c step 2")
+        v.decide(pc_ok and dec_ok)
+    else:
+        v.decide(all_seeds_all_clauses)
 
     out = {"probe": "cs_race_f1", "grid_row": args.grid_row,
            "grid": dict(_F1_GRID_ROW), "draws": args.draws,
            "seeds": seeds, "backend": "numpy", "device": "cpu",
            "KILL_CRITERIA": KILL_CRITERIA,
-           "row_all_pass_8_seeds": all_seeds_all_clauses,
+           "row_all_pass_8_seeds": bool(all_seeds_all_clauses
+                                    and not args.controls_only),
+        "controls_only": bool(args.controls_only),
            "results": results, "Verdict": v._decided,
            "preconditions": {
                "env": "probe-local flags only; BRAIN_CS_RACE does not exist "
@@ -694,7 +757,9 @@ def main():
     from research.runners import declare_output
     declare_output(out_path)
     print("row%d all_pass=%s wall=%.1fs -> %s"
-          % (args.grid_row, all_seeds_all_clauses, out["wall_s"], out_path),
+          % (args.grid_row,
+             bool(all_seeds_all_clauses and not args.controls_only),
+             out["wall_s"], out_path),
           flush=True)
     return 0
 
