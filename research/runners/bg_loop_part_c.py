@@ -152,11 +152,18 @@ def _mean_sd(xs):
 
 
 def run_preset(name, seed, n_reps, currents, hyper_pA,
-               stim_ms, settle_ms, rebound_read_ms, v0_offset_mV):
-    preset = DefaultIzhikevichParamsManager.get_params(
-        NeuronType[name], use_2007_formulation=True)
-    rng = np.random.default_rng(seed)
-    reps = [jittered_params(preset, rng) for _ in range(n_reps)]
+               stim_ms, settle_ms, rebound_read_ms, v0_offset_mV,
+               preset_override=None, reps_override=None):
+    if preset_override is not None:
+        preset = {k: float(v) for k, v in preset_override.items()}
+    else:
+        preset = DefaultIzhikevichParamsManager.get_params(
+            NeuronType[name], use_2007_formulation=True)
+    if reps_override is not None:
+        reps = [dict(r) for r in reps_override]
+    else:
+        rng = np.random.default_rng(seed)
+        reps = [jittered_params(preset, rng) for _ in range(n_reps)]
     # Per-rep jittered params as float32 arrays; vectorised over reps.
     C = np.array([r["C"] for r in reps], dtype=np.float32)
     kk = np.array([r["k"] for r in reps], dtype=np.float32)
@@ -253,11 +260,77 @@ def run_preset(name, seed, n_reps, currents, hyper_pA,
     }
 
 
+def run_positive_control(hybrid_json, seed, currents, hyper_pA,
+                         stim_ms, settle_ms, rebound_read_ms,
+                         v0_offset_mV):
+    """Ruling bg-tonic-loop-partC-1021: run the Part C runner on the hybrid
+    STN parameters the bridge ACTUALLY uses (cp_izh_* slice at seed 9) and
+    report rheobase + the 40 pA rate beside -1020f's figures. A mismatch is
+    reported, never tuned to."""
+    with open(hybrid_json) as fh:
+        data = json.load(fh)
+    cells = data["cells"]
+    keys = ("C", "k", "vr", "vt", "a", "b", "vpeak", "c_reset",
+            "d_increment")
+    reps = [{k: float(c[k]) for k in keys} for c in cells]
+    res = run_preset(
+        "HYBRID_STN_SEED9_POSCTRL", seed=seed, n_reps=len(reps),
+        currents=currents, hyper_pA=hyper_pA, stim_ms=stim_ms,
+        settle_ms=settle_ms, rebound_read_ms=rebound_read_ms,
+        v0_offset_mV=v0_offset_mV,
+        preset_override=data.get("base_preset_params"),
+        reps_override=reps,
+    )
+    stim_s = stim_ms / 1000.0
+    n = len(reps)
+    rheo_meas = [None] * n
+    rates_by_cell = [dict() for _ in range(n)]
+    for row in res["fi_curve"]:
+        I = row["current_pA"]
+        for i, cnt in enumerate(row["spikes_per_rep"]):
+            rates_by_cell[i][I] = cnt / stim_s
+            if cnt > 0 and (rheo_meas[i] is None or I < rheo_meas[i]):
+                rheo_meas[i] = I
+    rheo_cf = [((r["k"] * (r["vt"] - r["vr"]) + r["b"]) ** 2)
+               / (4.0 * r["k"]) for r in reps]
+    if not any(I == 40.0 for I in rates_by_cell[0]):
+        raise SystemExit(
+            "grid has no 40 pA point; pass one (e.g. --currents 0 5 ... 40 ...)")
+    r40 = [rates_by_cell[i][40.0] for i in range(n)]
+
+    def _rng(xs):
+        return "%.3g..%.3g" % (min(xs), max(xs))
+
+    measured = [x for x in rheo_meas if x is not None]
+    return {
+        "hybrid_source": hybrid_json,
+        "seed": seed,
+        "n_cells": n,
+        "fi_curve": res["fi_curve"],
+        "positive_control": {
+            "n_cells": n,
+            "rheobase_measured_pA": {
+                "range": _rng(measured), "per_cell": rheo_meas},
+            "rheobase_closed_form_pA": {
+                "range": _rng(rheo_cf), "per_cell": rheo_cf},
+            "rate_at_40pA_hz": {"range": _rng(r40), "per_cell": r40},
+            "reference_bg_tonic_stn_1020f": {
+                "rheobase_pA": [23.5, 33.7],
+                "rate_at_40pA_hz": [18.0, 49.0]},
+            "note": "mismatch is reported, never tuned (partC-1021)",
+        },
+    }
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=9)
     ap.add_argument("--n-reps", type=int, default=20)
     ap.add_argument("--presets", nargs="+", default=list(PRESETS))
+    ap.add_argument("--hybrid-json", default=None,
+                    help="positive control (ruling bg-tonic-loop-partC-1021): "
+                         "run ONLY the hybrid-parameter cells dumped from the "
+                         "bridge at seed 9 instead of the preset grid")
     ap.add_argument("--currents", nargs="+", type=float,
                     default=list(range(0, 1201, 100)))
     ap.add_argument("--settle-ms", type=float, default=1000.0)
@@ -275,6 +348,30 @@ def main():
     out_root = Path(args.out)
     out_root.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
+
+    if args.hybrid_json:
+        pos = run_positive_control(
+            args.hybrid_json, seed=args.seed, currents=args.currents,
+            hyper_pA=args.hyper_pA, stim_ms=args.stim_ms,
+            settle_ms=args.settle_ms,
+            rebound_read_ms=args.rebound_read_ms,
+            v0_offset_mV=args.v0_offset_mV,
+        )
+        path = out_root / "posctrl_hybrid.json"
+        path.write_text(json.dumps(pos, indent=2))
+        pc = pos["positive_control"]
+        print("positive control: %d hybrid cells, %s" % (
+            pc["n_cells"], path), flush=True)
+        print("  rheobase measured %s pA, closed-form %s pA "
+              "(-1020f: 23.5-33.7 pA)" % (
+                  pc["rheobase_measured_pA"]["range"],
+                  pc["rheobase_closed_form_pA"]["range"]), flush=True)
+        print("  rate at 40 pA %s Hz (-1020f: 18-49 Hz)" % (
+            pc["rate_at_40pA_hz"]["range"],), flush=True)
+        print("Part C positive control done: %.1fs wall" % (
+            time.time() - t0), flush=True)
+        return
+
     results = []
     for name in args.presets:
         res = run_preset(
