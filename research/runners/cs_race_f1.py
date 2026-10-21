@@ -98,8 +98,8 @@ CUE_PA = 60.0           # sensory current into a driven cue slot
 MENT_PA = 40.0          # context current into a driven mention slot
 MENT_MAX_PA = 90.0      # "maximal priming" for clause (c)
 _BASE = dict(NE=16, NI=6, NG=12, NGI=8, NS=20, NO=8,
-             W_EE=40.0, W_EI=40.0, W_IE=40.0, W_XG=30.0, W_GG=20.0,
-             W_GGI=60.0, W_GIG=60.0, W_GS=12.0, W_SS=60.0, W_SO=20.0,
+             W_EE=40.0, W_EI=40.0, W_IE=40.0, W_XG=45.0, W_GG=20.0,
+             W_GGI=60.0, W_GIG=60.0, W_GS=40.0, W_SS=60.0, W_SO=20.0,
              W_OG=80.0, W_OE=40.0, NOISE_SD=25.0, NOISE_TAU=50.0,
              BIAS_PA=42.0, REST_STEPS=CUE_MS, HOLD_STEPS=HOLD_MS,
              READ_STEPS=30, READ_FRAC=0.03)
@@ -249,7 +249,11 @@ class RaceCircuit(ReplayCircuit):
         xp = self._xp
         _reset_quiescent(b, xp, self._snap)
         b.set_transmission_gate(GATE_ENGRAM, 1.0)
-        b.set_transmission_gate(GATE_COMMIT_IN, 1.0)
+        # step 1b: the encode->latch path stays CLOSED while writing; a
+        # write-time latch (seen pre-cue: latch0=4-7, slot V=-15 mV) drives
+        # the occupancy pool -> W_OE=40 global engram inhibition and the cue
+        # can never ignite an engram.  Opened at cue onset below (g).
+        b.set_transmission_gate(GATE_COMMIT_IN, 0.0)
         b.set_transmission_gate(GATE_EXCL, 1.0 if excl_gate else 0.0)
         b.set_transmission_gate(GATE_MENT, 1.0 if ment_gate else 0.0)
         rng = np.random.default_rng(int(seed))
@@ -264,6 +268,7 @@ class RaceCircuit(ReplayCircuit):
         gate_all = [g for g in self.lay["gate"]]
         latch_before = [0] * K
         natural_winner = None
+        cue_spk = 0
         flip_step = steer_from_step
         stp_seen = []
 
@@ -313,12 +318,15 @@ class RaceCircuit(ReplayCircuit):
         for k in range(K):
             latch_before[k] = int(f_pre[self.lay["slot"][k]].sum())
         # cue window
+        b.set_transmission_gate(GATE_COMMIT_IN, 1.0)   # cue onset
         cue_idx = np.concatenate([self.cue[CUE_WORDS.index(w)]
                                   for w in cue_words if w in CUE_WORDS]) \
             if cue_words else np.zeros(0, dtype=np.int64)
         rest = int(p["REST_STEPS"])
         hold = int(p["HOLD_STEPS"])
         read = int(p["READ_STEPS"])
+        # latch counts accumulate over the read window (hold, no drive)
+        slot_counts = np.zeros(K, dtype=np.int64)
         for t in range(rest + hold):
             cur = zeros()
             if t < rest:
@@ -333,22 +341,40 @@ class RaceCircuit(ReplayCircuit):
                     cur[tgt] += float(steer_pa)
             step_with(cur)
             f = np.asarray(to_host(b.cp_firing_states)).astype(bool)
+            if cue_idx.size:
+                cue_spk += int(f[cue_idx].sum())
             for k in range(K):
                 eng_counts[k] += int(f[self.eng[k]].sum())
                 gk = int(f[gate_all[k]].sum())
                 gate_counts[k] += gk
                 if gk and first_gate[k] is None:
                     first_gate[k] = t
+            if rest <= t < rest + read:
+                for k in range(K):
+                    slot_counts[k] += int(
+                        f[self.lay["slot"][k]].sum())
             if natural_winner is None and sum(
                     1 for k in range(K) if first_gate[k] is not None) >= 1:
                 natural_winner = int(np.argmin([first_gate[k] if
                                                 first_gate[k] is not None
                                                 else 10 ** 9 for k in range(K)]))
         b.cp_external_input_current[:] = 0.0
-        slot_counts = np.zeros(K, dtype=np.int64)
-        f = np.asarray(to_host(b.cp_firing_states)).astype(bool)
-        for k in range(K):
-            slot_counts[k] = int(f[self.lay["slot"][k]].sum())
+        # step 1b: per-stage membrane V (mV) at the end of the cue window -
+        # a silent stage (cue->engram, engram->gate, gate->slot latch) shows
+        # as a population sitting at rest vs near threshold.
+        vp = np.asarray(to_host(b.cp_membrane_potential_v))
+        thr = np.asarray(to_host(b.cp_neuron_firing_thresholds))
+
+        def _vm(idx):
+            if idx is None or len(idx) == 0:
+                return None
+            return round(float(vp[idx].mean()), 3)
+
+        v_mV = {"cue": _vm(cue_idx),
+                "engram": [_vm(self.eng[k]) for k in range(K)],
+                "gate": [_vm(gate_all[k]) for k in range(K)],
+                "slot": [_vm(self.lay["slot"][k]) for k in range(K)],
+                "thr": round(float(thr.mean()), 3)}
         rd = SC.read_with_variants(slot_counts.tolist(), int(p["NS"]), read,
                                    float(p["READ_FRAC"]))
         # STP state over the ONLY STP-active pathways (engram recurrence)
@@ -370,7 +396,8 @@ class RaceCircuit(ReplayCircuit):
                 "first_gate_step": first_gate,
                 "latch_pre_cue": latch_before,
                 "natural_first_gate": natural_winner, "stp": stp,
-                "slot_counts": slot_counts.tolist()}
+                "slot_counts": slot_counts.tolist(), "v_mV": v_mV,
+                "cue_spikes": cue_spk}
 
 
 def run_clauses(circ, seed, draws, grid_tag):
@@ -379,14 +406,26 @@ def run_clauses(circ, seed, draws, grid_tag):
            "KILL": KILL_CRITERIA, "clauses": {}}
     base_seed = seed * 1000003
 
-    def winners(**kw):
+    def winners(tag=None, **kw):
         rows = []
         for d in range(draws):
             try:
                 r = circ.race(seed=base_seed + d, **kw)
-                rows.append(r)
             except Exception as e:                       # K2
-                rows.append({"winner": "ERROR:%s" % type(e).__name__})
+                r = {"winner": "ERROR:%s" % type(e).__name__}
+            rows.append(r)
+            if tag:
+                out.setdefault("per_draw", []).append({
+                    "clause": tag, "draw": d,
+                    "winner": r.get("winner"),
+                    "engram_counts": r.get("engram_counts"),
+                    "gate_counts": r.get("gate_counts"),
+                    "first_gate_step": r.get("first_gate_step"),
+                    "slot_counts": r.get("slot_counts"),
+                    "latch_pre_cue": r.get("latch_pre_cue"),
+                    "natural_first_gate": r.get("natural_first_gate"),
+                    "v_mV": r.get("v_mV"),
+                    "cue_spikes": r.get("cue_spikes")})
         return rows
 
     def content(w):
@@ -407,25 +446,43 @@ def run_clauses(circ, seed, draws, grid_tag):
         return {"pass": errors == 0 and good >= n, "wins": good,
                 "errors": errors, "n": draws}
 
+    # POSITIVE CONTROL (step 1b, RULING cs-race-f1-void-1021b): one engram
+    # written alone, its full cue, no competitor, must commit >= 9/10
+    # draws on every dev seed.  A row whose control fails is UNDEFINED,
+    # not FAIL (wired into main()'s Verdict as a require()).
+    pc_rows = winners(tag="posctl", cue_words=list(CUE_OF[2]),
+                      encode=("grass",))
+    pc_commits = sum(1 for r in pc_rows if r.get("winner") == 2)
+    out["positive_control"] = {
+        "cue": list(CUE_OF[2]), "encode": ["grass"], "no_competitor": True,
+        "bar": 9, "n": draws, "commits": pc_commits,
+        "slot": 2,
+        "winners": [content(r["winner"]) for r in pc_rows],
+        "pass": bool(pc_commits >= 9)}
+
     # (a) A old, B new, same cue -> B (frog) wins >= 8/10
-    a_rows = winners(cue_words=list(CUE_OF[1]), encode=("vole", "frog"))
+    a_rows = winners(tag="a", cue_words=list(CUE_OF[1]),
+                       encode=("vole", "frog"))
     out["clauses"]["a"] = dict(
         pass_bar(a_rows, lambda r: content(r["winner"]) == "frog"),
         winners=[content(r["winner"]) for r in a_rows])
     # (b) mention of A's patient after both writes -> A (vole) >= 8/10
-    b_rows = winners(cue_words=list(CUE_OF[1]), encode=("vole", "frog"),
+    b_rows = winners(tag="b", cue_words=list(CUE_OF[1]),
+                            encode=("vole", "frog"),
                      mention_words=["vole"])
     out["clauses"]["b"] = dict(
         pass_bar(b_rows, lambda r: content(r["winner"]) == "vole"),
         winners=[content(r["winner"]) for r in b_rows])
     # (c) one-role match with maximal priming -> 0 latched draws
-    c_rows = winners(cue_words=["chase"], encode=("vole", "frog"),
+    c_rows = winners(tag="c", cue_words=["chase"],
+                            encode=("vole", "frog"),
                      mention_words=["lynx", "chase", "vole"])
     out["clauses"]["c"] = dict(
         pass_bar(c_rows, lambda r: r["winner"] is None, bar=draws),
         winners=[content(r["winner"]) for r in c_rows])
     # (d) cue matching no engram -> 0 commits
-    d_rows = winners(cue_words=list(UNMATCHED_CUE), encode=("vole", "frog"))
+    d_rows = winners(tag="d", cue_words=list(UNMATCHED_CUE),
+                            encode=("vole", "frog"))
     out["clauses"]["d"] = dict(
         pass_bar(d_rows, lambda r: r["winner"] is None, bar=draws),
         winners=[content(r["winner"]) for r in d_rows])
@@ -510,7 +567,8 @@ def run_clauses(circ, seed, draws, grid_tag):
                            "stp_per_turn": stp_log,
                            "pass": bool(g_ok and post_ok)}
     # (h) near tie: simultaneous writes; position reads inside [2,8]
-    h_rows = winners(cue_words=list(CUE_OF[1]), encode=("ABsim",))
+    h_rows = winners(tag="h", cue_words=list(CUE_OF[1]),
+                            encode=("ABsim",))
     pos_low = sum(1 for r in h_rows
                   if isinstance(r["winner"], int) and r["winner"] == 0)
     content_wins = [content(r["winner"]) for r in h_rows]
@@ -526,10 +584,12 @@ def run_clauses(circ, seed, draws, grid_tag):
         "pass": bool(2 <= pos_low <= draws - 2
                      and 2 <= alpha_frog <= draws - 2)}
     # (i) deterministic lesions: mention edge closed; exclusion closed
-    l1 = winners(cue_words=list(CUE_OF[1]), encode=("vole", "frog"),
+    l1 = winners(tag="i1", cue_words=list(CUE_OF[1]),
+                        encode=("vole", "frog"),
                  mention_words=["vole"], ment_gate=False)
     l1_out = [content(r["winner"]) for r in l1]
-    l2 = winners(cue_words=list(CUE_OF[1]), encode=("vole", "frog"), excl_gate=False)
+    l2 = winners(tag="i2", cue_words=list(CUE_OF[1]),
+                        encode=("vole", "frog"), excl_gate=False)
     l2_out = [(r["winner"] if r["winner"] is None
                else ("commit" if not isinstance(r["winner"], str) else r["winner"]))
               for r in l2]
@@ -557,7 +617,7 @@ def main():
     _F1_GRID_ROW = dict(F1_GRID[args.grid_row])
     seeds = [int(s) for s in args.seeds.split(",") if s.strip()]
 
-    from tools.lab import assert_backend
+    from tools.lab import assert_backend, attributable_to
     from tools.verdict import Verdict
     assert_backend("numpy", note="cs-race step 1 F1 feasibility probe")
 
@@ -576,6 +636,20 @@ def main():
         passed = sorted(k for k, v in res["clauses"].items() if v.get("pass"))
         print("seed %d: %d/%d clauses pass (%s)"
               % (seed, len(passed), 9, ",".join(passed)), flush=True)
+        pc = res.get("positive_control", {})
+        print("    posctl commits %s/%s pass=%s"
+              % (pc.get("commits"), pc.get("n"), pc.get("pass")), flush=True)
+
+    # attribution (gate attribution-required): whose is the b-vs-i1
+    # difference?  treatment = b mention intact, control = i1 ment_gate
+    # lesioned; K4 expects identical wins, i.e. 0% attributable to the
+    # gate -- reported as numbers, not assumed.
+    b_w = float(sum((r.get("clauses") or {}).get("b", {}).get("wins", 0)
+                    for r in results))
+    i1_w = float(sum((r.get("clauses") or {}).get("i1", {}).get("wins", 0)
+                     for r in results))
+    out["attribution_mention_gate"] = attributable_to(
+        "mention gate (b intact vs i1 lesion)", b_w, i1_w)
 
     all_seeds_all_clauses = all(
         all(v.get("pass") for v in r["clauses"].values()) for r in results)
@@ -588,6 +662,10 @@ def main():
               all(all(r["clauses"][c].get("errors", 0) == 0
                       for c in r["clauses"]) for r in results))
     v.require("backend numpy", True)
+    pc_ok = all(r.get("positive_control", {}).get("pass") for r in results)
+    v.require("positive control: one engram written alone commits >= 9/10 "
+              "on every dev seed", pc_ok,
+              note="step 1b: a control-failed row is UNDEFINED, not FAIL")
     v.decide(all_seeds_all_clauses)
 
     out = {"probe": "cs_race_f1", "grid_row": args.grid_row,
@@ -602,7 +680,10 @@ def main():
                "organ": "RaceCircuit extends ReplayCircuit; shared organ "
                         "file unedited",
                "dev_seeds": "1-8", "draws": args.draws,
-               "kill_criteria_written_before_first_run": True},
+               "kill_criteria_written_before_first_run": True,
+               "positive_control": "step 1b (cs-race-f1-void-1021b): one "
+               "engram written alone, full cue, no competitor, >=9/10 "
+               "commits per dev seed; control-failed row = UNDEFINED"},
            "wall_s": round(time.time() - t0, 1)}
     if not args.out:
         args.out = ("research/findings/raw/_cs_race/f1/row%d/seed%s.json"
