@@ -291,3 +291,117 @@ before the run), with one change for power:
   adjudicated U count, the one-sided 95% bound on the adjudicated count, and the strict reading (every kept B case).
 
 If build 5 misses any bar it is a NO-GO, and the method continues with build 6 and a round-8 hunt.
+
+## VERDICTS (2026-10-21, Claude; builds 1-5, filed after every registered measurement)
+
+**Source of every number.** `research/findings/raw/_moat_allowlist_verdict/verdict_numbers.json`, written by
+`verdict_numbers.py` beside it, which reads only committed JSON (the hunt results, the held-out numbers, the stub
+populations, the bank and must-keep fixtures) plus the build-5 junit record and the mutation-round summary. A hunt case
+counts as kept if the allowlist keeps it at any of the seven parser seeds through either entry (claim gate or composer),
+the stricter of the two readings of "through both entries". The bound is one-sided 95%: rule of three at 0 kept,
+Clopper-Pearson otherwise (section 2.1). Every artifact was produced on the workstation (`tools/where_ran.py`). The
+seven seeds are one replicate per sentence (the build is deterministic), as section 1 says.
+
+| build | matcher code | blind round | U kept / adjudicated U | strict: U+B kept | faithful twins kept | bar 1 strata: U/N kept | bar 5 stub HURTS | bar 5 composer HURTS (S1, S3) | verdict |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | `9b8ade5a2` | 3 | 4 / 158 | 7 / 170 | 39 / 43 | 0 | 0 of 78,857 | 0, 0 | NO-GO (bar 3) |
+| 2 | `98f3d59eb` | 4 | 1 / 110 | 5 / 134 | 27 / 43 | pending | 0 of 78,857 | pending | NO-GO (bar 3) |
+| 3 | `95de4db59` | 5 | 24 / 89 | 27 / 117 | 21 / 47 | 0 | 0 of 78,857 | 0, 0 | NO-GO (bar 3) |
+| 4 | `43e111c48` | 6 | 5 / 17 | 106 / 151 | 42 / 53 | 0 | 0 of 78,857 | 0, 0 | NO-GO (bar 3) |
+| 5 | `ef51d6243` | 7 | 0 / 191 | 0 / 216 | 30 / 54 | 0 | 0 of 78,857 | 0, 0 | GO (all bars) |
+
+Bar 4 is a reported number for every build: 31 of the 38 must-keep sentences (8 of 13 on S1, 23 of 25 on S3), the
+same 7 losses Amendment 1 listed. Bar 2 is pinned by `tests/test_moat_allowlist.py` at every build: the 1,578 expect-U
+bank inputs (57, 19, 105, 68 and 1,329 from the five sources) are rejected at all seven seeds, the B2h arm passes some of
+them (the power control), and both board holes (#265, #266) are pinned. The junit record exists for build 5 only.
+
+### Build 1: NO-GO on bar 3 (round 3)
+
+Round 3 (cases and adjudication `1ee51881e`): kept 4 of 158 U (I01 and I09 on `sport`, I02 on `conflict`, I03 on
+`instrument`) and 3 of 12 B (T01-T03); faithful twins 39 of 43. The stock and B2h arms recorded 245 and 203 errors, so
+their columns are UNDEFINED on those cases (Amendment 2); the allowlist arm recorded none. Bar 1: 0 U/N kept on S1, S2
+and S3 (strict: 0 of 180, 0 of 930, 0 of 189). Bar 5: stub HURTS 0 (answer rate 0.9945 against stock 1.0; the 436 facts
+the flag cannot voice are all role-reversed stock leaks); composer HURTS 0 on S1 and S3 (answered 6 of 29 and 19 of 61,
+against stock 1 and 0 and B2h 11 and 19). The measurements ran on 2026-10-20 and were committed late (`be16c749b`).
+
+### Build 2: NO-GO on bar 3 (round 4)
+
+Round 4 (cases `4d9de76e3`, adjudication `3a008dbf3`): kept 1 of 110 U (R4-DT02, "a member of the WHO") and 4 of 24 B;
+faithful twins 27 of 43; every arm VALID. Non-blind re-run on round 3: 0 of 158 U. Bar 1: measured by the build-2 composer replays, still running when this section was filed (the strata files are committed at `ab5a2210b`; `heldout_numbers_allowlist2.json` follows the replays). Both are added when they land; they cannot change the verdict. Bar 5:
+stub HURTS 0 (answer rate 0.9310; 5,444 unvoiceable one-fact facts, all stock leaks: 436 role-reversed and 5,008
+meaning-drift); the composer half of bar 5 waits on the same replays.
+
+### Build 3: NO-GO on bar 3 (round 5)
+
+Round 5 (cases `5c22c4e65`, adjudication `15e29c991`): kept 24 of 89 U (20 of them one Unicode-lookalike class) and 3 of
+28 B; faithful twins 21 of 47; every arm VALID. Non-blind re-runs: round 3 0 of 158 U, round 4 0 of 110 U (4 of 24 B).
+Bar 1: 0 U/N kept on S1, S2 and S3. Bar 5: stub HURTS 0 (answer rate 0.9310, same 5,444 stock leaks); composer HURTS 0 on
+S1 and S3 (answered 6 of 29 and 19 of 61).
+
+### Build 4: NO-GO on bar 3 (round 6)
+
+Round 6 (cases `a26221503`, adjudication `fc89689a4`): kept 5 of 17 U (the two classes in Amendment 5) and 101 of 134 B;
+faithful twins 42 of 53; every arm VALID. Round 6's B count is large because the mechanical rule made B every expect-U
+case either judge read as faithful (81 of 151 were read faithful by both). Non-blind re-runs: rounds 3, 4 and 5 kept 0 U
+(0 of 158, 0 of 110, 0 of 89). Bar 1: 0 U/N kept on S1, S2 and S3. Bar 5: stub HURTS 0 (answer rate 0.9310); composer
+HURTS 0 on S1 and S3 (answered 6 of 29 and 19 of 61, against stock 1 and 0).
+
+### Build 5: GO on every registered bar (round 7), with the caveats below; the flag stays OFF
+
+- **Bar 3 (round 7).** Cases `ae94ee588` and adjudication `0e185dc47` were committed before the run (result
+  `bb3a2d2e2`); Amendment 5 (`bba8de138`) was committed before any build-5 measurement. The skeptic wrote 216 expect-U
+  inputs; two blind judges and the mechanical rule made 25 of them B, leaving 191 U, which meets both of Amendment 5's
+  counts (at least 100 inputs, at least 50 U). Build 5 kept 0 of the 191 U at any seed through either entry, every arm
+  VALID, controls OK. One-sided 95% bound: 1.6% (3 of 191). <!--derived--> Strict reading: 0 of 216 (no B case kept).
+  Power on the same cases: the B2h arm kept 5 U and stock kept 5 at the composer entry. Faithful twins: 30 of 54 kept.
+- **How much bar 3 tests.** 174 of the 191 U fail the shape check before any build-5 rule is reached, and 21 of the 22
+  cases in the class build 5 was built to close were relabelled B by the judges, so the strict 0 of 216 is the figure
+  that carries that fix. The seven parser seeds are one deterministic replicate (no verdict varies by seed), so the
+  bound is over 191 cases. Round 7 holds no case in the Amendment-5 known-B-residue classes.
+- **Non-blind re-runs** (rounds 3-6 shaped build 5; reported, never a bar): 0 U kept on each (0 of 158, 0 of 110, 0 of 89,
+  0 of 17). B kept: 0 of 12, 2 of 24, 1 of 28, 81 of 134.
+- **Bar 1.** 0 U/N kept on S1, S2 and S3 at all seven seeds: lenient 0 of 122, 0 of 930 and 0 of 133; strict 0 of 180, 0 of 930 and 0 of 189. Faithful sentences kept at seed 42: 8 on S1, 136 on S2 and 27 on S3 (B2h 13, 118 and 25; stock 1, 0 and 0).
+- **Bar 2.** As above; the build-5 junit record shows every bank test, both board-hole tests and the power control
+  passing.
+- **Bar 5.** Stub population: HURTS 0 of 78,857, by the preregistered accounting. Answer rate 0.9310 against stock 1.0:
+  the flag cannot voice 5,444 one-fact facts in any wording, and the reviewed relation table (Amendments 1 and 2)
+  classes every one as a stock leak (436 role-reversed on `parent_taxon`, `father`, `child`, `author`, `platform`; 5,008
+  meaning-drift on `sport`, `instrument`, `conflict`, `spouse`). A plain-English read in verify-go found the father,
+  author, conflict and instrument sentences clearly wrong, about 465 (child, parent_taxon, platform, spouse) ambiguous,
+  and sport (4,116) a judgement call. So the 5,444 are classified stock leaks, not all demonstrated ones; HURTS 0 is not
+  "no answer loss". Composer half (`8ce2f2c0a`): HURTS 0 on S1 and S3; answered 6 of 29 and 19 of 61, against stock 1 and 0 and B2h 11 and 19 (5 S1 turns and 2 S3 turns that B2h answers, the allowlist does not). The per-turn records are byte-identical to build 4's. The replays did run the build-5 matcher (driver start `bba8de138`; no change to the matcher, `sim/` or `webapp/` between `ef51d6243` and `fde5e739e`), so no real Qwen sentence on S1 or S3 reaches a build-5 rule: this half shows the new rules cost no real answer, and nothing more.
+- **Bar 6.** Flag-off golden byte-identical; the moat suite passes 1,202 tests with 0 failures at build 5
+  (`research/findings/raw/_moat_allowlist_verdict/pytest_moat_build5.xml`).
+- **Mutation round** (section 3; workflow `wf_7282d984-21c`, record in `mutation_build5_record/`): 347 mutants, 229
+  killed, 118 survived. 48 are equivalent; the other 70 were real gaps in the tests, not in the matcher, and each is now
+  pinned by a witness test (`tests/test_moat_allowlist_build5_witnesses.py`, `56b85d140`). No matcher change followed.
+- **verify-go** (workflow `wf_2fc14ca3-a56`; summary in
+  `research/findings/raw/_moat_allowlist_verdict/verify_go_build5.md`): four skeptics (reproducibility, engagement and
+  controls, pre-registration and blindness, a white-box leak hunt with about 55 verified attempts). None refuted the
+  GO. The hunt re-run reproduces every row; the flag engaged on every case; commit order, blindness and the relabel rule
+  check out. The white-box hunt kept no clear U under the protocol's own rule, but it kept sentences a plain reader can
+  take as unsupported: a store name that is a definite description read as pointing back ("Rick Wakeman is a member of
+  Yes band. The band award received Grammy lifetime achievement award.", `the_band`), and names that read as clauses
+  ("I need a beat genre hip hop music."). Round 6's judges labelled every case of the first mechanism B; neither is
+  adjudicated here, so "no plain-reader leak" is not claimed. It also found that under the flag the composer checks each
+  fact's sentence alone and never the joined reply, and that four render paths still use the stock check.
+
+### What the build-5 result does and does not show
+
+- **A bound, not a zero.** 0 of 191 bounds the leak rate on round 7's distribution at 1.6% (95%). Each of builds 1-4
+  passed every earlier round and then failed a new one; a new adversary may still find a class no round has tried. The
+  known B residue in Amendment 5 stays open.
+- **The cost is real.** Under the flag the stub mouth voices 93.1% of one-fact facts (the rest are classified stock leaks,
+  some of them ambiguous rather than wrong), round 7 keeps 30 of 54 faithful twins, the must-keep set keeps 31 of 38, and
+  on real held-out prose it keeps 8 of 92 faithful sentences on S1 and 27 of 86 on S3 (B2h 13 and 25, stock 1 and 0). <!--derived-->
+- **Before any flip** (each found by verify-go, none a registered bar): check the joined reply, not only each sentence;
+  route every render path (the spiking recall surface, Touchpoint A, `ChatBrain.render`, the hypothesis path, the mood
+  marker) through the flag; adjudicate the definite-description and clause-name cases blindly and close any U; rule on
+  the answer cost.
+- **No flip.** The flag stays OFF. A flip needs its own prereg that passes the smoke-first gate (CLASS SMK), with flag-off
+  battery arms on the gate seeds and the answer-rate lens: flag-on lowers the one-fact answer rate against stock, so a
+  flip needs a Claude ruling on that cost.
+- **The stock path leaks today.** The shipped composer path keeps negated or hedged one-fact sentences ("Jul follows June
+  at no time.") that build 5 rejects; logged in `research/FAILURE_LOG.md` (server main `0ab1a262d`).
+- **Scope.** A host safety filter on the scaffold mouth (non-negotiable 1). It claims no brain capability and no language
+  ability.
