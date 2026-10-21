@@ -29,7 +29,10 @@ import os
 import sys
 import time
 
-REPO = "/home/dant123/Projects/neural-simulator"
+# Root = <repo>/research/runners/<this file> -> derive, never hard-code:
+# the same file runs in worktrees and in pool revisions under /home/node.
+REPO = os.path.abspath(
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 if REPO not in sys.path:
     sys.path.insert(0, REPO)
 

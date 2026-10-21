@@ -40,7 +40,10 @@ import os
 import sys
 import time
 
-REPO = "/home/dant123/Projects/neural-simulator"
+# Root = <repo>/research/runners/<this file> -> derive, never hard-code:
+# the same file runs in worktrees and in pool revisions under /home/node.
+REPO = os.path.abspath(
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 if REPO not in sys.path:
     sys.path.insert(0, REPO)
 
@@ -199,6 +202,15 @@ class RaceCircuit(ReplayCircuit):
         plan["so"] = SC.dense(lay["all_slot"], self.occ, p["W_SO"], conn_type="E_TO_I")
         plan["og"] = SC.dense(self.occ, lay["all_gate"], p["W_OG"], conn_type="I_TO_E")
         plan["oe"] = SC.dense(self.occ, self.all_eng, p["W_OE"], conn_type="I_TO_E")
+        # The engram master gate covers every engram-local pathway (the base
+        # organ expects it known); mention edges keep their OWN cs_ment gate
+        # so clause (i) can close mention without touching the master.
+        for key, entry in plan.items():
+            if key.startswith(("ee_", "ei_", "ie_", "cue_")):
+                entry["transmission_gate"] = GATE_ENGRAM
+        for key, entry in plan.items():
+            if key.startswith("ment_"):
+                entry["transmission_gate"] = GATE_MENT
         # Everything except engram recurrence opts out of STP (facilitation on
         # each engram's own recurrence only; packet line 41-42).
         for key, entry in plan.items():
