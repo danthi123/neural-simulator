@@ -1910,12 +1910,12 @@ class ChatBrain:
             return spk
         surface, asserted = self.renderer.render_svo(a, v, p)
         if self._verify(surface, asserted, gate_svo):
-            return _moat_terminate(surface) if self._moat_allowlist_enabled() else surface
+            return _moat_terminate(surface) if ChatBrain._moat_allowlist_enabled() else surface
         # a generative renderer can DRIFT: try a tighter re-prompt once (if supported), else speak the raw fact
         if hasattr(self.renderer, "render_svo_regen"):
             surface2, asserted2 = self.renderer.render_svo_regen(a, v, p)
             if self._verify(surface2, asserted2, gate_svo):
-                return _moat_terminate(surface2) if self._moat_allowlist_enabled() else surface2
+                return _moat_terminate(surface2) if ChatBrain._moat_allowlist_enabled() else surface2
         # the brain's own store triple (not mouth text): kept under the flag too (build 6, a declared non-mouth path)
         return self._raw(gate_svo) + "   [unverified render -> spoke the brain's raw fact]"
 
@@ -1928,7 +1928,7 @@ class ChatBrain:
         the one gathered triple: kept only if the PROSE (terminated, `_moat_terminate`) states exactly that triple. `asserted` is ignored
         (the stub's canonical SVO is never trusted over its prose); an empty or malformed triple fails closed. Flag OFF: the stock re-parse
         below, byte-identical."""
-        if self._moat_allowlist_enabled():
+        if ChatBrain._moat_allowlist_enabled():
             accepted, _res = self._verify_claim_set(_moat_terminate(surface), [list(gate_svo)])
             return bool(accepted)
         if asserted is None:
@@ -2080,7 +2080,7 @@ class ChatBrain:
         """BUILD 6 (flag ON): the exact body `_frame_guess` will speak inside its frame ('Maybe <body> -- that's a guess ...'), so what
         is spoken equals what was checked; the frame strings are declared non-claims (an epistemic disclaimer, pinned verbatim in
         tests/test_moat_allowlist_build6.py). Flag OFF: `surface` unchanged."""
-        if not self._moat_allowlist_enabled() or not isinstance(surface, str):
+        if not ChatBrain._moat_allowlist_enabled() or not isinstance(surface, str):
             return surface
         g = surface.strip().rstrip(".")
         if g[:1].isupper():
@@ -2149,7 +2149,7 @@ class ChatBrain:
         dctx = {"subject": a, "verb_3sg": emerge_v3(v), "object": p}
         surface = " ".join(self._spiking_broca_producer().emit(HEDGED_TRANSITIVE, dctx))
         body = surface
-        if self._moat_allowlist_enabled():
+        if ChatBrain._moat_allowlist_enabled():
             # BUILD 6: the leading "perhaps " is the hedge slot of HEDGED_TRANSITIVE, a declared non-claim (a hedge only weakens the claim);
             # the body after it must state exactly the hypothesis. A "perhaps" anywhere else stays in the body and rejects.
             body = surface[len("perhaps "):] if surface.startswith("perhaps ") else surface
@@ -2197,7 +2197,7 @@ class ChatBrain:
             return None                                   # GPU-free / --raw: keep the brain's raw triple path
         if not recall_mouth_enabled() or not frame_supported(a, v, p):
             return None                                   # flag OFF / open prose -> byte-identical fallback
-        if self._moat_allowlist_enabled():                # BUILD 6: the allowlist checks the terminated sentence; the marker is added after
+        if ChatBrain._moat_allowlist_enabled():                # BUILD 6: the allowlist checks the terminated sentence; the marker is added after
             parts = self.spiking_recall_parts(a, v, p)
             return None if parts is None else (parts[0][:-1] + "!" if parts[1] else parts[0])
         surface = self._spiking_recall_mouth().render(a, v, p)
