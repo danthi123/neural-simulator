@@ -1,0 +1,44 @@
+{
+  "expect_q": {
+    "answer": "My affective forward model expects this to keep going negative (predicted next-turn valence -, pool-rate margin +0 Hz) \u2014 that's a functional read of my world-model's prediction, not a felt expectation.",
+    "abstained": false,
+    "recalled_svo": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "worldmodel": {
+      "on": true,
+      "lesioned": true,
+      "context_sign": 1,
+      "state": 0,
+      "pred_sign": -1,
+      "pred_pos_rate": 0.0,
+      "pred_neg_rate": 0.0,
+      "pred_margin": 0.0,
+      "kind": "query"
+    },
+    "inner_state_readout": true
+  }
+}
