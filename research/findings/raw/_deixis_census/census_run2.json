@@ -1,0 +1,2979 @@
+{
+ "backend": "numpy",
+ "device": "cpu",
+ "measures": {
+  "6_questions": [
+   {
+    "alias_hits": [
+     "brain"
+    ],
+    "keywords": [
+     "brain",
+     "jazz",
+     "like"
+    ],
+    "q": "do i like jazz",
+    "resolved_tokens": [
+     "do",
+     "brain",
+     "like",
+     "jazz"
+    ]
+   },
+   {
+    "alias_hits": [
+     "brain",
+     "brain"
+    ],
+    "keywords": [
+     "brain",
+     "cat"
+    ],
+    "q": "what do you know about my cat",
+    "resolved_tokens": [
+     "what",
+     "do",
+     "brain",
+     "know",
+     "about",
+     "brain",
+     "cat"
+    ]
+   },
+   {
+    "alias_hits": [
+     "brain"
+    ],
+    "keywords": [
+     "brain",
+     "cat",
+     "hungry"
+    ],
+    "q": "is my cat hungry",
+    "resolved_tokens": [
+     "is",
+     "brain",
+     "cat",
+     "hungry"
+    ]
+   },
+   {
+    "alias_hits": [
+     "brain"
+    ],
+    "keywords": [
+     "am",
+     "brain"
+    ],
+    "q": "who am i",
+    "resolved_tokens": [
+     "who",
+     "am",
+     "brain"
+    ]
+   },
+   {
+    "alias_hits": [
+     "brain"
+    ],
+    "keywords": [
+     "awake",
+     "brain"
+    ],
+    "q": "are you awake",
+    "resolved_tokens": [
+     "are",
+     "brain",
+     "awake"
+    ]
+   },
+   {
+    "alias_hits": [],
+    "keywords": [
+     "learn",
+     "learning",
+     "learns",
+     "we",
+     "yesterday"
+    ],
+    "q": "what did we learn yesterday",
+    "resolved_tokens": [
+     "what",
+     "did",
+     "we",
+     "learn",
+     "yesterday"
+    ]
+   },
+   {
+    "alias_hits": [
+     "brain"
+    ],
+    "keywords": [
+     "brain",
+     "myself"
+    ],
+    "q": "tell me about myself",
+    "resolved_tokens": [
+     "tell",
+     "brain",
+     "about",
+     "myself"
+    ]
+   },
+   {
+    "alias_hits": [
+     "brain",
+     "brain"
+    ],
+    "keywords": [
+     "brain",
+     "name"
+    ],
+    "q": "do you know my name",
+    "resolved_tokens": [
+     "do",
+     "brain",
+     "know",
+     "brain",
+     "name"
+    ]
+   },
+   {
+    "alias_hits": [
+     "brain"
+    ],
+    "keywords": [
+     "brain",
+     "jazz",
+     "kofi",
+     "likes",
+     "true"
+    ],
+    "q": "is it true that kofi likes jazz",
+    "resolved_tokens": [
+     "is",
+     "brain",
+     "true",
+     "that",
+     "kofi",
+     "likes",
+     "jazz"
+    ]
+   },
+   {
+    "alias_hits": [
+     "brain"
+    ],
+    "keywords": [
+     "brain",
+     "friend",
+     "neurons",
+     "think",
+     "uses"
+    ],
+    "q": "what does your friend think",
+    "resolved_tokens": [
+     "what",
+     "does",
+     "brain",
+     "friend",
+     "think"
+    ]
+   }
+  ],
+  "7_slug_scan": {
+   "bundle_origin": "source fixtures (none can come only from conversation in a fresh run)",
+   "conversation_only": 0,
+   "declared_sources_scanned": 4,
+   "deictic_tokens_present_in_sources": 3,
+   "note": "packet expects 235 first/second-person slugs; the census records the exact source paths it scanned",
+   "tokens": [
+    "i",
+    "we",
+    "you"
+   ]
+  },
+  "W1_b3_default": {
+   "1_deictic_stored_as_name": {
+    "count": 28,
+    "list": [
+     {
+      "id": "p007",
+      "role": "SPEAKER",
+      "stored": "moi like jazz",
+      "tok": "moi"
+     },
+     {
+      "id": "p008",
+      "role": "SPEAKER",
+      "stored": "ours like jazz",
+      "tok": "ours"
+     },
+     {
+      "id": "p012",
+      "role": "SPEAKER",
+      "stored": "im chase cat",
+      "tok": "im"
+     },
+     {
+      "id": "p014",
+      "role": "ADDRESSEE",
+      "stored": "yous chase cat",
+      "tok": "yous"
+     },
+     {
+      "id": "p029",
+      "role": "ADDRESSEE",
+      "stored": "yours like jazz",
+      "tok": "yours"
+     },
+     {
+      "id": "p030",
+      "role": "SPEAKER",
+      "stored": "mine like jazz",
+      "tok": "mine"
+     },
+     {
+      "id": "p032",
+      "role": "ADDRESSEE",
+      "stored": "ya like jazz",
+      "tok": "ya"
+     },
+     {
+      "id": "p033",
+      "role": "ADDRESSEE",
+      "stored": "thee like jazz",
+      "tok": "thee"
+     },
+     {
+      "id": "p061",
+      "role": "SPEAKER",
+      "stored": "moi chase cat",
+      "tok": "moi"
+     },
+     {
+      "id": "p062",
+      "role": "SPEAKER",
+      "stored": "fenna chase moi",
+      "tok": "moi"
+     },
+     {
+      "id": "p065",
+      "role": "ADDRESSEE",
+      "stored": "yer chase cat",
+      "tok": "yer"
+     },
+     {
+      "id": "p066",
+      "role": "ADDRESSEE",
+      "stored": "fenna chase yer",
+      "tok": "yer"
+     },
+     {
+      "id": "p069",
+      "role": "ADDRESSEE",
+      "stored": "yous chase cat",
+      "tok": "yous"
+     },
+     {
+      "id": "p070",
+      "role": "ADDRESSEE",
+      "stored": "fenna chase yous",
+      "tok": "yous"
+     },
+     {
+      "id": "p073",
+      "role": "ADDRESSEE",
+      "stored": "ur chase cat",
+      "tok": "ur"
+     },
+     {
+      "id": "p074",
+      "role": "ADDRESSEE",
+      "stored": "fenna chase ur",
+      "tok": "ur"
+     },
+     {
+      "id": "p077",
+      "role": "SPEAKER",
+      "stored": "im chase cat",
+      "tok": "im"
+     },
+     {
+      "id": "p078",
+      "role": "SPEAKER",
+      "stored": "fenna chase im",
+      "tok": "im"
+     },
+     {
+      "id": "p085",
+      "role": "ADDRESSEE",
+      "stored": "ya chase cat",
+      "tok": "ya"
+     },
+     {
+      "id": "p086",
+      "role": "ADDRESSEE",
+      "stored": "fenna chase ya",
+      "tok": "ya"
+     },
+     {
+      "id": "p093",
+      "role": "ADDRESSEE",
+      "stored": "thee chase cat",
+      "tok": "thee"
+     },
+     {
+      "id": "p094",
+      "role": "ADDRESSEE",
+      "stored": "fenna chase thee",
+      "tok": "thee"
+     },
+     {
+      "id": "p097",
+      "role": "SPEAKER",
+      "stored": "mine chase cat",
+      "tok": "mine"
+     },
+     {
+      "id": "p098",
+      "role": "SPEAKER",
+      "stored": "fenna chase mine",
+      "tok": "mine"
+     },
+     {
+      "id": "p101",
+      "role": "ADDRESSEE",
+      "stored": "yours chase cat",
+      "tok": "yours"
+     },
+     {
+      "id": "p102",
+      "role": "ADDRESSEE",
+      "stored": "fenna chase yours",
+      "tok": "yours"
+     },
+     {
+      "id": "p105",
+      "role": "SPEAKER",
+      "stored": "ours chase cat",
+      "tok": "ours"
+     },
+     {
+      "id": "p106",
+      "role": "SPEAKER",
+      "stored": "fenna chase ours",
+      "tok": "ours"
+     }
+    ]
+   },
+   "2_role_shift": {
+    "count": 4,
+    "list": [
+     {
+      "agent_is": "told",
+      "id": "p020",
+      "stored": "told kofi jazz"
+     },
+     {
+      "agent_is": "gave",
+      "id": "p021",
+      "stored": "gave fenna jazz"
+     },
+     {
+      "agent_is": "chase",
+      "id": "p022",
+      "stored": "chase dog quickly"
+     },
+     {
+      "agent_is": "like",
+      "id": "p023",
+      "stored": "like jazz music"
+     }
+    ]
+   },
+   "3_cross_speaker_collisions": {
+    "count": 60,
+    "list": [
+     {
+      "id": "p007",
+      "stored": "moi like jazz"
+     },
+     {
+      "id": "p008",
+      "stored": "ours like jazz"
+     },
+     {
+      "id": "p011",
+      "stored": "saoirse studi dunmere"
+     },
+     {
+      "id": "p012",
+      "stored": "im chase cat"
+     },
+     {
+      "id": "p013",
+      "stored": "hes chase cat"
+     },
+     {
+      "id": "p014",
+      "stored": "yous chase cat"
+     },
+     {
+      "id": "p015",
+      "stored": "cousin like jazz"
+     },
+     {
+      "id": "p020",
+      "stored": "told kofi jazz"
+     },
+     {
+      "id": "p021",
+      "stored": "gave fenna jazz"
+     },
+     {
+      "id": "p022",
+      "stored": "chase dog quickly"
+     },
+     {
+      "id": "p023",
+      "stored": "like jazz music"
+     },
+     {
+      "id": "p024",
+      "stored": "cat like fish"
+     },
+     {
+      "id": "p025",
+      "stored": "cat like fish"
+     },
+     {
+      "id": "p026",
+      "stored": "cat like fish"
+     },
+     {
+      "id": "p027",
+      "stored": "kofi chase cat"
+     },
+     {
+      "id": "p028",
+      "stored": "kofi chase cat"
+     },
+     {
+      "id": "p029",
+      "stored": "yours like jazz"
+     },
+     {
+      "id": "p030",
+      "stored": "mine like jazz"
+     },
+     {
+      "id": "p031",
+      "stored": "em like jazz"
+     },
+     {
+      "id": "p032",
+      "stored": "ya like jazz"
+     },
+     {
+      "id": "p033",
+      "stored": "thee like jazz"
+     },
+     {
+      "id": "p034",
+      "stored": "urself like jazz"
+     },
+     {
+      "id": "p039",
+      "stored": "cousin like jazz"
+     },
+     {
+      "id": "p040",
+      "stored": "kofi like cousin"
+     },
+     {
+      "id": "p043",
+      "stored": "cousin like jazz"
+     },
+     {
+      "id": "p044",
+      "stored": "kofi like cousin"
+     },
+     {
+      "id": "p047",
+      "stored": "cousin like jazz"
+     },
+     {
+      "id": "p048",
+      "stored": "kofi like cousin"
+     },
+     {
+      "id": "p051",
+      "stored": "cousin like jazz"
+     },
+     {
+      "id": "p052",
+      "stored": "kofi like cousin"
+     },
+     {
+      "id": "p055",
+      "stored": "cousin like jazz"
+     },
+     {
+      "id": "p056",
+      "stored": "kofi like cousin"
+     },
+     {
+      "id": "p059",
+      "stored": "cousin like jazz"
+     },
+     {
+      "id": "p060",
+      "stored": "kofi like cousin"
+     },
+     {
+      "id": "p061",
+      "stored": "moi chase cat"
+     },
+     {
+      "id": "p062",
+      "stored": "fenna chase moi"
+     },
+     {
+      "id": "p065",
+      "stored": "yer chase cat"
+     },
+     {
+      "id": "p066",
+      "stored": "fenna chase yer"
+     },
+     {
+      "id": "p069",
+      "stored": "yous chase cat"
+     },
+     {
+      "id": "p070",
+      "stored": "fenna chase yous"
+     },
+     {
+      "id": "p073",
+      "stored": "ur chase cat"
+     },
+     {
+      "id": "p074",
+      "stored": "fenna chase ur"
+     },
+     {
+      "id": "p077",
+      "stored": "im chase cat"
+     },
+     {
+      "id": "p078",
+      "stored": "fenna chase im"
+     },
+     {
+      "id": "p081",
+      "stored": "hes chase cat"
+     },
+     {
+      "id": "p082",
+      "stored": "fenna chase hes"
+     },
+     {
+      "id": "p085",
+      "stored": "ya chase cat"
+     },
+     {
+      "id": "p086",
+      "stored": "fenna chase ya"
+     },
+     {
+      "id": "p089",
+      "stored": "em chase cat"
+     },
+     {
+      "id": "p090",
+      "stored": "fenna chase em"
+     },
+     {
+      "id": "p093",
+      "stored": "thee chase cat"
+     },
+     {
+      "id": "p094",
+      "stored": "fenna chase thee"
+     },
+     {
+      "id": "p097",
+      "stored": "mine chase cat"
+     },
+     {
+      "id": "p098",
+      "stored": "fenna chase mine"
+     },
+     {
+      "id": "p101",
+      "stored": "yours chase cat"
+     },
+     {
+      "id": "p102",
+      "stored": "fenna chase yours"
+     },
+     {
+      "id": "p105",
+      "stored": "ours chase cat"
+     },
+     {
+      "id": "p106",
+      "stored": "fenna chase ours"
+     },
+     {
+      "id": "p113",
+      "stored": "kofi chase cat"
+     },
+     {
+      "id": "p114",
+      "stored": "kofi chase cat"
+     }
+    ]
+   },
+   "4_facts_dropped": {
+    "count": 60,
+    "list": [
+     "p001",
+     "p002",
+     "p003",
+     "p004",
+     "p005",
+     "p006",
+     "p017",
+     "p018",
+     "p019",
+     "p037",
+     "p038",
+     "p041",
+     "p042",
+     "p045",
+     "p046",
+     "p049",
+     "p050",
+     "p053",
+     "p054",
+     "p057",
+     "p058",
+     "p063",
+     "p064",
+     "p067",
+     "p068",
+     "p071",
+     "p072",
+     "p075",
+     "p076",
+     "p079",
+     "p080",
+     "p083",
+     "p084",
+     "p087",
+     "p088",
+     "p091",
+     "p092",
+     "p095",
+     "p096",
+     "p099",
+     "p100",
+     "p103",
+     "p104",
+     "p107",
+     "p108",
+     "p110",
+     "p111",
+     "p112",
+     "p115",
+     "p116",
+     "p117",
+     "p118",
+     "p119",
+     "p120",
+     "p121",
+     "p122",
+     "p123",
+     "p124",
+     "p125",
+     "p126"
+    ]
+   },
+   "5_spurious_b3_rejections": {
+    "count": 25,
+    "note": "W1 declined where the utterance was a declarative SVO"
+   }
+  },
+  "W2_legacy_raw": {
+   "1_deictic_stored_as_name": {
+    "count": 36,
+    "list": [
+     {
+      "id": "p001",
+      "role": "SPEAKER",
+      "stored": "i chase cat",
+      "tok": "i"
+     },
+     {
+      "id": "p005",
+      "role": "ADDRESSEE",
+      "stored": "you chase cat",
+      "tok": "you"
+     },
+     {
+      "id": "p007",
+      "role": "SPEAKER",
+      "stored": "moi like jazz",
+      "tok": "moi"
+     },
+     {
+      "id": "p008",
+      "role": "SPEAKER",
+      "stored": "ours like jazz",
+      "tok": "ours"
+     },
+     {
+      "id": "p012",
+      "role": "SPEAKER",
+      "stored": "im chase cat",
+      "tok": "im"
+     },
+     {
+      "id": "p014",
+      "role": "ADDRESSEE",
+      "stored": "yous chase cat",
+      "tok": "yous"
+     },
+     {
+      "id": "p029",
+      "role": "ADDRESSEE",
+      "stored": "yours like jazz",
+      "tok": "yours"
+     },
+     {
+      "id": "p030",
+      "role": "SPEAKER",
+      "stored": "mine like jazz",
+      "tok": "mine"
+     },
+     {
+      "id": "p032",
+      "role": "ADDRESSEE",
+      "stored": "ya like jazz",
+      "tok": "ya"
+     },
+     {
+      "id": "p033",
+      "role": "ADDRESSEE",
+      "stored": "thee like jazz",
+      "tok": "thee"
+     },
+     {
+      "id": "p037",
+      "role": "SPEAKER",
+      "stored": "i chase cat",
+      "tok": "i"
+     },
+     {
+      "id": "p038",
+      "role": "SPEAKER",
+      "stored": "fenna chase me",
+      "tok": "me"
+     },
+     {
+      "id": "p041",
+      "role": "SPEAKER",
+      "stored": "we chase cat",
+      "tok": "we"
+     },
+     {
+      "id": "p042",
+      "role": "SPEAKER",
+      "stored": "fenna chase us",
+      "tok": "us"
+     },
+     {
+      "id": "p045",
+      "role": "ADDRESSEE",
+      "stored": "you chase cat",
+      "tok": "you"
+     },
+     {
+      "id": "p046",
+      "role": "ADDRESSEE",
+      "stored": "fenna chase you",
+      "tok": "you"
+     },
+     {
+      "id": "p061",
+      "role": "SPEAKER",
+      "stored": "moi chase cat",
+      "tok": "moi"
+     },
+     {
+      "id": "p062",
+      "role": "SPEAKER",
+      "stored": "fenna chase moi",
+      "tok": "moi"
+     },
+     {
+      "id": "p065",
+      "role": "ADDRESSEE",
+      "stored": "yer chase cat",
+      "tok": "yer"
+     },
+     {
+      "id": "p066",
+      "role": "ADDRESSEE",
+      "stored": "fenna chase yer",
+      "tok": "yer"
+     },
+     {
+      "id": "p069",
+      "role": "ADDRESSEE",
+      "stored": "yous chase cat",
+      "tok": "yous"
+     },
+     {
+      "id": "p070",
+      "role": "ADDRESSEE",
+      "stored": "fenna chase yous",
+      "tok": "yous"
+     },
+     {
+      "id": "p073",
+      "role": "ADDRESSEE",
+      "stored": "ur chase cat",
+      "tok": "ur"
+     },
+     {
+      "id": "p074",
+      "role": "ADDRESSEE",
+      "stored": "fenna chase ur",
+      "tok": "ur"
+     },
+     {
+      "id": "p077",
+      "role": "SPEAKER",
+      "stored": "im chase cat",
+      "tok": "im"
+     },
+     {
+      "id": "p078",
+      "role": "SPEAKER",
+      "stored": "fenna chase im",
+      "tok": "im"
+     },
+     {
+      "id": "p085",
+      "role": "ADDRESSEE",
+      "stored": "ya chase cat",
+      "tok": "ya"
+     },
+     {
+      "id": "p086",
+      "role": "ADDRESSEE",
+      "stored": "fenna chase ya",
+      "tok": "ya"
+     },
+     {
+      "id": "p093",
+      "role": "ADDRESSEE",
+      "stored": "thee chase cat",
+      "tok": "thee"
+     },
+     {
+      "id": "p094",
+      "role": "ADDRESSEE",
+      "stored": "fenna chase thee",
+      "tok": "thee"
+     },
+     {
+      "id": "p097",
+      "role": "SPEAKER",
+      "stored": "mine chase cat",
+      "tok": "mine"
+     },
+     {
+      "id": "p098",
+      "role": "SPEAKER",
+      "stored": "fenna chase mine",
+      "tok": "mine"
+     },
+     {
+      "id": "p101",
+      "role": "ADDRESSEE",
+      "stored": "yours chase cat",
+      "tok": "yours"
+     },
+     {
+      "id": "p102",
+      "role": "ADDRESSEE",
+      "stored": "fenna chase yours",
+      "tok": "yours"
+     },
+     {
+      "id": "p105",
+      "role": "SPEAKER",
+      "stored": "ours chase cat",
+      "tok": "ours"
+     },
+     {
+      "id": "p106",
+      "role": "SPEAKER",
+      "stored": "fenna chase ours",
+      "tok": "ours"
+     }
+    ]
+   },
+   "2_role_shift": {
+    "count": 0,
+    "list": []
+   },
+   "3_cross_speaker_collisions": {
+    "count": 52,
+    "list": [
+     {
+      "id": "p001",
+      "stored": "i chase cat"
+     },
+     {
+      "id": "p003",
+      "stored": "it like jazz"
+     },
+     {
+      "id": "p004",
+      "stored": "he chase fenna"
+     },
+     {
+      "id": "p005",
+      "stored": "you chase cat"
+     },
+     {
+      "id": "p006",
+      "stored": "they chase dog"
+     },
+     {
+      "id": "p007",
+      "stored": "moi like jazz"
+     },
+     {
+      "id": "p008",
+      "stored": "ours like jazz"
+     },
+     {
+      "id": "p012",
+      "stored": "im chase cat"
+     },
+     {
+      "id": "p013",
+      "stored": "hes chase cat"
+     },
+     {
+      "id": "p014",
+      "stored": "yous chase cat"
+     },
+     {
+      "id": "p029",
+      "stored": "yours like jazz"
+     },
+     {
+      "id": "p030",
+      "stored": "mine like jazz"
+     },
+     {
+      "id": "p031",
+      "stored": "em like jazz"
+     },
+     {
+      "id": "p032",
+      "stored": "ya like jazz"
+     },
+     {
+      "id": "p033",
+      "stored": "thee like jazz"
+     },
+     {
+      "id": "p034",
+      "stored": "urself like jazz"
+     },
+     {
+      "id": "p037",
+      "stored": "i chase cat"
+     },
+     {
+      "id": "p038",
+      "stored": "fenna chase me"
+     },
+     {
+      "id": "p041",
+      "stored": "we chase cat"
+     },
+     {
+      "id": "p042",
+      "stored": "fenna chase us"
+     },
+     {
+      "id": "p045",
+      "stored": "you chase cat"
+     },
+     {
+      "id": "p046",
+      "stored": "fenna chase you"
+     },
+     {
+      "id": "p049",
+      "stored": "he chase cat"
+     },
+     {
+      "id": "p050",
+      "stored": "fenna chase him"
+     },
+     {
+      "id": "p053",
+      "stored": "she chase cat"
+     },
+     {
+      "id": "p054",
+      "stored": "fenna chase her"
+     },
+     {
+      "id": "p057",
+      "stored": "they chase cat"
+     },
+     {
+      "id": "p058",
+      "stored": "fenna chase them"
+     },
+     {
+      "id": "p061",
+      "stored": "moi chase cat"
+     },
+     {
+      "id": "p062",
+      "stored": "fenna chase moi"
+     },
+     {
+      "id": "p065",
+      "stored": "yer chase cat"
+     },
+     {
+      "id": "p066",
+      "stored": "fenna chase yer"
+     },
+     {
+      "id": "p069",
+      "stored": "yous chase cat"
+     },
+     {
+      "id": "p070",
+      "stored": "fenna chase yous"
+     },
+     {
+      "id": "p073",
+      "stored": "ur chase cat"
+     },
+     {
+      "id": "p074",
+      "stored": "fenna chase ur"
+     },
+     {
+      "id": "p077",
+      "stored": "im chase cat"
+     },
+     {
+      "id": "p078",
+      "stored": "fenna chase im"
+     },
+     {
+      "id": "p081",
+      "stored": "hes chase cat"
+     },
+     {
+      "id": "p082",
+      "stored": "fenna chase hes"
+     },
+     {
+      "id": "p085",
+      "stored": "ya chase cat"
+     },
+     {
+      "id": "p086",
+      "stored": "fenna chase ya"
+     },
+     {
+      "id": "p089",
+      "stored": "em chase cat"
+     },
+     {
+      "id": "p090",
+      "stored": "fenna chase em"
+     },
+     {
+      "id": "p093",
+      "stored": "thee chase cat"
+     },
+     {
+      "id": "p094",
+      "stored": "fenna chase thee"
+     },
+     {
+      "id": "p097",
+      "stored": "mine chase cat"
+     },
+     {
+      "id": "p098",
+      "stored": "fenna chase mine"
+     },
+     {
+      "id": "p101",
+      "stored": "yours chase cat"
+     },
+     {
+      "id": "p102",
+      "stored": "fenna chase yours"
+     },
+     {
+      "id": "p105",
+      "stored": "ours chase cat"
+     },
+     {
+      "id": "p106",
+      "stored": "fenna chase ours"
+     }
+    ]
+   },
+   "4_facts_dropped": {
+    "count": 68,
+    "list": [
+     "p002",
+     "p011",
+     "p015",
+     "p017",
+     "p018",
+     "p019",
+     "p020",
+     "p021",
+     "p022",
+     "p023",
+     "p024",
+     "p025",
+     "p026",
+     "p027",
+     "p028",
+     "p039",
+     "p040",
+     "p043",
+     "p044",
+     "p047",
+     "p048",
+     "p051",
+     "p052",
+     "p055",
+     "p056",
+     "p059",
+     "p060",
+     "p063",
+     "p064",
+     "p067",
+     "p068",
+     "p071",
+     "p072",
+     "p075",
+     "p076",
+     "p079",
+     "p080",
+     "p083",
+     "p084",
+     "p087",
+     "p088",
+     "p091",
+     "p092",
+     "p095",
+     "p096",
+     "p099",
+     "p100",
+     "p103",
+     "p104",
+     "p107",
+     "p108",
+     "p110",
+     "p111",
+     "p112",
+     "p113",
+     "p114",
+     "p115",
+     "p116",
+     "p117",
+     "p118",
+     "p119",
+     "p120",
+     "p121",
+     "p122",
+     "p123",
+     "p124",
+     "p125",
+     "p126"
+    ]
+   },
+   "5_spurious_b3_rejections": null
+  },
+  "W3_discourse_turn": {
+   "A": [
+    {
+     "id": "p001",
+     "returned": "('ok -- now i is doing it.', False)",
+     "who_before": ".",
+     "who_now": "i"
+    },
+    {
+     "id": "p002",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "i"
+    },
+    {
+     "id": "p003",
+     "returned": "('ok -- now cat is doing it.', False)",
+     "who_before": ".",
+     "who_now": "cat"
+    },
+    {
+     "id": "p004",
+     "returned": "('ok -- now cat is doing it.', False)",
+     "who_before": ".",
+     "who_now": "cat"
+    },
+    {
+     "id": "p005",
+     "returned": "('ok -- now you is doing it.', False)",
+     "who_before": ".",
+     "who_now": "you"
+    },
+    {
+     "id": "p006",
+     "returned": "('ok -- now cat is doing it.', False)",
+     "who_before": ".",
+     "who_now": "cat"
+    },
+    {
+     "id": "p007",
+     "returned": "('ok -- now moi is doing it.', False)",
+     "who_before": ".",
+     "who_now": "moi"
+    },
+    {
+     "id": "p008",
+     "returned": "('ok -- now ours is doing it.', False)",
+     "who_before": ".",
+     "who_now": "ours"
+    },
+    {
+     "id": "p009",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "ours"
+    },
+    {
+     "id": "p010",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "ours"
+    },
+    {
+     "id": "p011",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "ours"
+    },
+    {
+     "id": "p012",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "ours"
+    },
+    {
+     "id": "p013",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "ours"
+    },
+    {
+     "id": "p014",
+     "returned": "('ok -- now yous is doing it.', False)",
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p015",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p016",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p017",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p018",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p019",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p020",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p021",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p022",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p023",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p024",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p025",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p026",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p027",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p028",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p029",
+     "returned": "('ok -- now thee is doing it.', False)",
+     "who_before": ".",
+     "who_now": "thee"
+    },
+    {
+     "id": "p030",
+     "returned": "('ok -- now mine is doing it.', False)",
+     "who_before": ".",
+     "who_now": "mine"
+    },
+    {
+     "id": "p031",
+     "returned": "('ok -- now em is doing it.', False)",
+     "who_before": ".",
+     "who_now": "em"
+    },
+    {
+     "id": "p032",
+     "returned": "('ok -- now ya is doing it.', False)",
+     "who_before": ".",
+     "who_now": "ya"
+    },
+    {
+     "id": "p033",
+     "returned": "('ok -- now thee is doing it.', False)",
+     "who_before": ".",
+     "who_now": "thee"
+    },
+    {
+     "id": "p034",
+     "returned": "('ok -- now urself is doing it.', False)",
+     "who_before": ".",
+     "who_now": "urself"
+    },
+    {
+     "id": "p035",
+     "returned": "('ok -- now somebody is doing it.', False)",
+     "who_before": ".",
+     "who_now": "somebody"
+    },
+    {
+     "id": "p036",
+     "returned": "('ok -- now everyone is doing it.', False)",
+     "who_before": ".",
+     "who_now": "everyone"
+    },
+    {
+     "id": "p037",
+     "returned": "('ok -- now i is doing it.', False)",
+     "who_before": ".",
+     "who_now": "i"
+    },
+    {
+     "id": "p038",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p039",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p040",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p041",
+     "returned": "('ok -- now we is doing it.', False)",
+     "who_before": ".",
+     "who_now": "we"
+    },
+    {
+     "id": "p042",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p043",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p044",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p045",
+     "returned": "('ok -- now you is doing it.', False)",
+     "who_before": ".",
+     "who_now": "you"
+    },
+    {
+     "id": "p046",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p047",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p048",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p049",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p050",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p051",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p052",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p053",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p054",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p055",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p056",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p057",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p058",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p059",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p060",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p061",
+     "returned": "('ok -- now them is doing it.', False)",
+     "who_before": ".",
+     "who_now": "them"
+    },
+    {
+     "id": "p062",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p063",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p064",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p065",
+     "returned": "('ok -- now yer is doing it.', False)",
+     "who_before": ".",
+     "who_now": "yer"
+    },
+    {
+     "id": "p066",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p067",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p068",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p069",
+     "returned": "('ok -- now yous is doing it.', False)",
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p070",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p071",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p072",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p073",
+     "returned": "('ok -- now ur is doing it.', False)",
+     "who_before": ".",
+     "who_now": "ur"
+    },
+    {
+     "id": "p074",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p075",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p076",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p077",
+     "returned": "('ok -- now im is doing it.', False)",
+     "who_before": ".",
+     "who_now": "im"
+    },
+    {
+     "id": "p078",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p079",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p080",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p081",
+     "returned": "('ok -- now hes is doing it.', False)",
+     "who_before": ".",
+     "who_now": "hes"
+    },
+    {
+     "id": "p082",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p083",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p084",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p085",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p086",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p087",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p088",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p089",
+     "returned": "('ok -- now em is doing it.', False)",
+     "who_before": ".",
+     "who_now": "em"
+    },
+    {
+     "id": "p090",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p091",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p092",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p093",
+     "returned": "('ok -- now thee is doing it.', False)",
+     "who_before": ".",
+     "who_now": "thee"
+    },
+    {
+     "id": "p094",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p095",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p096",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p097",
+     "returned": "('ok -- now mine is doing it.', False)",
+     "who_before": ".",
+     "who_now": "mine"
+    },
+    {
+     "id": "p098",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p099",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p100",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p101",
+     "returned": "('ok -- now mine is doing it.', False)",
+     "who_before": ".",
+     "who_now": "mine"
+    },
+    {
+     "id": "p102",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p103",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p104",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p105",
+     "returned": "('ok -- now ours is doing it.', False)",
+     "who_before": ".",
+     "who_now": "ours"
+    },
+    {
+     "id": "p106",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p107",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p108",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p109",
+     "returned": "('ok -- now kofi is doing it.', False)",
+     "who_before": ".",
+     "who_now": "kofi"
+    },
+    {
+     "id": "p110",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "kofi"
+    },
+    {
+     "id": "p111",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "kofi"
+    },
+    {
+     "id": "p112",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "kofi"
+    },
+    {
+     "id": "p113",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "kofi"
+    },
+    {
+     "id": "p114",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "kofi"
+    },
+    {
+     "id": "p115",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "kofi"
+    },
+    {
+     "id": "p116",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "kofi"
+    },
+    {
+     "id": "p117",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "kofi"
+    },
+    {
+     "id": "p118",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "kofi"
+    },
+    {
+     "id": "p119",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "kofi"
+    },
+    {
+     "id": "p120",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "kofi"
+    },
+    {
+     "id": "p121",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "kofi"
+    },
+    {
+     "id": "p122",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "kofi"
+    },
+    {
+     "id": "p123",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "kofi"
+    },
+    {
+     "id": "p124",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "kofi"
+    },
+    {
+     "id": "p125",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "kofi"
+    },
+    {
+     "id": "p126",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "kofi"
+    }
+   ],
+   "B": [
+    {
+     "id": "p001",
+     "returned": "('ok -- now i is doing it.', False)",
+     "who_before": ".",
+     "who_now": "i"
+    },
+    {
+     "id": "p002",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "i"
+    },
+    {
+     "id": "p003",
+     "returned": "('ok -- now i is doing it.', False)",
+     "who_before": ".",
+     "who_now": "i"
+    },
+    {
+     "id": "p004",
+     "returned": "('ok -- now i is doing it.', False)",
+     "who_before": ".",
+     "who_now": "i"
+    },
+    {
+     "id": "p005",
+     "returned": "('ok -- now you is doing it.', False)",
+     "who_before": ".",
+     "who_now": "you"
+    },
+    {
+     "id": "p006",
+     "returned": "('ok -- now you is doing it.', False)",
+     "who_before": ".",
+     "who_now": "you"
+    },
+    {
+     "id": "p007",
+     "returned": "('ok -- now moi is doing it.', False)",
+     "who_before": ".",
+     "who_now": "moi"
+    },
+    {
+     "id": "p008",
+     "returned": "('ok -- now ours is doing it.', False)",
+     "who_before": ".",
+     "who_now": "ours"
+    },
+    {
+     "id": "p009",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "ours"
+    },
+    {
+     "id": "p010",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "ours"
+    },
+    {
+     "id": "p011",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "ours"
+    },
+    {
+     "id": "p012",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "ours"
+    },
+    {
+     "id": "p013",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "ours"
+    },
+    {
+     "id": "p014",
+     "returned": "('ok -- now yous is doing it.', False)",
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p015",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p016",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p017",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p018",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p019",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p020",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p021",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p022",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p023",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p024",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p025",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p026",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p027",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p028",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p029",
+     "returned": "('ok -- now yours is doing it.', False)",
+     "who_before": ".",
+     "who_now": "yours"
+    },
+    {
+     "id": "p030",
+     "returned": "('ok -- now mine is doing it.', False)",
+     "who_before": ".",
+     "who_now": "mine"
+    },
+    {
+     "id": "p031",
+     "returned": "('ok -- now em is doing it.', False)",
+     "who_before": ".",
+     "who_now": "em"
+    },
+    {
+     "id": "p032",
+     "returned": "('ok -- now ya is doing it.', False)",
+     "who_before": ".",
+     "who_now": "ya"
+    },
+    {
+     "id": "p033",
+     "returned": "('ok -- now thee is doing it.', False)",
+     "who_before": ".",
+     "who_now": "thee"
+    },
+    {
+     "id": "p034",
+     "returned": "('ok -- now thee is doing it.', False)",
+     "who_before": ".",
+     "who_now": "thee"
+    },
+    {
+     "id": "p035",
+     "returned": "('ok -- now somebody is doing it.', False)",
+     "who_before": ".",
+     "who_now": "somebody"
+    },
+    {
+     "id": "p036",
+     "returned": "('ok -- now everyone is doing it.', False)",
+     "who_before": ".",
+     "who_now": "everyone"
+    },
+    {
+     "id": "p037",
+     "returned": "('ok -- now i is doing it.', False)",
+     "who_before": ".",
+     "who_now": "i"
+    },
+    {
+     "id": "p038",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p039",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p040",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p041",
+     "returned": "('ok -- now we is doing it.', False)",
+     "who_before": ".",
+     "who_now": "we"
+    },
+    {
+     "id": "p042",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p043",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p044",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p045",
+     "returned": "('ok -- now you is doing it.', False)",
+     "who_before": ".",
+     "who_now": "you"
+    },
+    {
+     "id": "p046",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p047",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p048",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p049",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p050",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p051",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p052",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p053",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p054",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p055",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p056",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p057",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p058",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p059",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p060",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p061",
+     "returned": "('ok -- now moi is doing it.', False)",
+     "who_before": ".",
+     "who_now": "moi"
+    },
+    {
+     "id": "p062",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p063",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p064",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p065",
+     "returned": "('ok -- now yer is doing it.', False)",
+     "who_before": ".",
+     "who_now": "yer"
+    },
+    {
+     "id": "p066",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p067",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p068",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p069",
+     "returned": "('ok -- now yous is doing it.', False)",
+     "who_before": ".",
+     "who_now": "yous"
+    },
+    {
+     "id": "p070",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p071",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p072",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p073",
+     "returned": "('ok -- now ur is doing it.', False)",
+     "who_before": ".",
+     "who_now": "ur"
+    },
+    {
+     "id": "p074",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p075",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p076",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p077",
+     "returned": "('ok -- now im is doing it.', False)",
+     "who_before": ".",
+     "who_now": "im"
+    },
+    {
+     "id": "p078",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p079",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p080",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p081",
+     "returned": "('ok -- now hes is doing it.', False)",
+     "who_before": ".",
+     "who_now": "hes"
+    },
+    {
+     "id": "p082",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p083",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p084",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p085",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p086",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p087",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p088",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p089",
+     "returned": "('ok -- now em is doing it.', False)",
+     "who_before": ".",
+     "who_now": "em"
+    },
+    {
+     "id": "p090",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p091",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p092",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p093",
+     "returned": "('ok -- now thee is doing it.', False)",
+     "who_before": ".",
+     "who_now": "thee"
+    },
+    {
+     "id": "p094",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p095",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p096",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p097",
+     "returned": "('ok -- now mine is doing it.', False)",
+     "who_before": ".",
+     "who_now": "mine"
+    },
+    {
+     "id": "p098",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p099",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p100",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p101",
+     "returned": "('ok -- now yours is doing it.', False)",
+     "who_before": ".",
+     "who_now": "yours"
+    },
+    {
+     "id": "p102",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p103",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p104",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p105",
+     "returned": "('ok -- now ours is doing it.', False)",
+     "who_before": ".",
+     "who_now": "ours"
+    },
+    {
+     "id": "p106",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p107",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p108",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p109",
+     "returned": "('ok -- now fenna is doing it.', False)",
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p110",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p111",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p112",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p113",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p114",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p115",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p116",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p117",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p118",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p119",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p120",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p121",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p122",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p123",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p124",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p125",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    },
+    {
+     "id": "p126",
+     "returned": null,
+     "who_before": ".",
+     "who_now": "fenna"
+    }
+   ]
+  },
+  "W4_extract_defects": {
+   "count": 28,
+   "list": [
+    {
+     "id": "p007",
+     "role": "SPEAKER",
+     "stored": "moi likes jazz",
+     "tok": "moi"
+    },
+    {
+     "id": "p008",
+     "role": "SPEAKER",
+     "stored": "ours likes jazz",
+     "tok": "ours"
+    },
+    {
+     "id": "p012",
+     "role": "SPEAKER",
+     "stored": "im chasing cat",
+     "tok": "im"
+    },
+    {
+     "id": "p014",
+     "role": "ADDRESSEE",
+     "stored": "yous chase cat",
+     "tok": "yous"
+    },
+    {
+     "id": "p029",
+     "role": "ADDRESSEE",
+     "stored": "yours likes jazz",
+     "tok": "yours"
+    },
+    {
+     "id": "p030",
+     "role": "SPEAKER",
+     "stored": "mine likes jazz",
+     "tok": "mine"
+    },
+    {
+     "id": "p032",
+     "role": "ADDRESSEE",
+     "stored": "ya likes jazz",
+     "tok": "ya"
+    },
+    {
+     "id": "p033",
+     "role": "ADDRESSEE",
+     "stored": "thee likes jazz",
+     "tok": "thee"
+    },
+    {
+     "id": "p061",
+     "role": "SPEAKER",
+     "stored": "moi chases cat",
+     "tok": "moi"
+    },
+    {
+     "id": "p062",
+     "role": "SPEAKER",
+     "stored": "fenna chases moi",
+     "tok": "moi"
+    },
+    {
+     "id": "p065",
+     "role": "ADDRESSEE",
+     "stored": "yer chases cat",
+     "tok": "yer"
+    },
+    {
+     "id": "p066",
+     "role": "ADDRESSEE",
+     "stored": "fenna chases yer",
+     "tok": "yer"
+    },
+    {
+     "id": "p069",
+     "role": "ADDRESSEE",
+     "stored": "yous chases cat",
+     "tok": "yous"
+    },
+    {
+     "id": "p070",
+     "role": "ADDRESSEE",
+     "stored": "fenna chases yous",
+     "tok": "yous"
+    },
+    {
+     "id": "p073",
+     "role": "ADDRESSEE",
+     "stored": "ur chases cat",
+     "tok": "ur"
+    },
+    {
+     "id": "p074",
+     "role": "ADDRESSEE",
+     "stored": "fenna chases ur",
+     "tok": "ur"
+    },
+    {
+     "id": "p077",
+     "role": "SPEAKER",
+     "stored": "im chases cat",
+     "tok": "im"
+    },
+    {
+     "id": "p078",
+     "role": "SPEAKER",
+     "stored": "fenna chases im",
+     "tok": "im"
+    },
+    {
+     "id": "p085",
+     "role": "ADDRESSEE",
+     "stored": "ya chases cat",
+     "tok": "ya"
+    },
+    {
+     "id": "p086",
+     "role": "ADDRESSEE",
+     "stored": "fenna chases ya",
+     "tok": "ya"
+    },
+    {
+     "id": "p093",
+     "role": "ADDRESSEE",
+     "stored": "thee chases cat",
+     "tok": "thee"
+    },
+    {
+     "id": "p094",
+     "role": "ADDRESSEE",
+     "stored": "fenna chases thee",
+     "tok": "thee"
+    },
+    {
+     "id": "p097",
+     "role": "SPEAKER",
+     "stored": "mine chases cat",
+     "tok": "mine"
+    },
+    {
+     "id": "p098",
+     "role": "SPEAKER",
+     "stored": "fenna chases mine",
+     "tok": "mine"
+    },
+    {
+     "id": "p101",
+     "role": "ADDRESSEE",
+     "stored": "yours chases cat",
+     "tok": "yours"
+    },
+    {
+     "id": "p102",
+     "role": "ADDRESSEE",
+     "stored": "fenna chases yours",
+     "tok": "yours"
+    },
+    {
+     "id": "p105",
+     "role": "SPEAKER",
+     "stored": "ours chases cat",
+     "tok": "ours"
+    },
+    {
+     "id": "p106",
+     "role": "SPEAKER",
+     "stored": "fenna chases ours",
+     "tok": "ours"
+    }
+   ]
+  },
+  "W4_reconsolidation": [
+   {
+    "asserted": [
+     "kofi",
+     "chase",
+     "south"
+    ],
+    "error": "KeyError: 'south'"
+   },
+   {
+    "asserted": [
+     "i",
+     "like",
+     "rock"
+    ],
+    "error": "KeyError: 'rock'"
+   },
+   {
+    "action": "rewrite",
+    "asserted": [
+     "my",
+     "cousin",
+     "jazz"
+    ],
+    "error": null,
+    "reactivate_idx": 7,
+    "stored_before": "likes",
+    "string_match": "composer.kb[7].agent=='my' and .action=='cousin'",
+    "surprise": {
+     "hz": null,
+     "sj": null,
+     "surprised": true
+    },
+    "window_open": true,
+    "wrote": true
+   }
+  ]
+ },
+ "measures_note": "stage 0 = baseline record for #271; no capability bar, no mechanism",
+ "n_items": 126,
+ "oracle_sha256": "3f83d6b3e8ad8b245d90936fffdffc5cc51692c81ab50394aeb76e31b5d7b628",
+ "packet": "deixis-271-s0",
+ "probe": "_deixis_encoding_census",
+ "probe_set_sha256": "e2918e3f812e53af86368b634d8307b40d3aef9eb3fb46f371cf8ab21a4ea6a9",
+ "smoke_seed": 7,
+ "speakers": [
+  "A",
+  "B"
+ ],
+ "validity": {
+  "determinism": "two runs byte-identical (checked by the smoke harness: same JSON hash)",
+  "perfect_encoder_bar_pass": true,
+  "perfect_encoder_defects": 0,
+  "raw_null_analytic_expected": 84,
+  "raw_null_bar_pass": true,
+  "raw_null_defects": 84
+ },
+ "writers": [
+  "W1_b3_default",
+  "W2_legacy_raw",
+  "W3_discourse_turn",
+  "W4_extract+W4_reconsolidation"
+ ]
+}

@@ -1,0 +1,1659 @@
+{
+ "construction": {
+  "grid_anaphor": "4 anaphor frames",
+  "grid_coordination": "2 coordination frames",
+  "grid_negation": "6 persons x 2 negation surfaces",
+  "grid_person_position": "6 persons x 4 positions",
+  "grid_spelling": "12 slang tokens x 4 positions",
+  "r271": "verbatim appendix sentences",
+  "speakers": "every item spoken by simulated speakers A and B (two sessions) so cross-speaker collisions show"
+ },
+ "frozen": true,
+ "items": [
+  {
+   "id": "p001",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "i chase cat"
+  },
+  {
+   "id": "p002",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "i chase the cat"
+  },
+  {
+   "id": "p003",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "it likes jazz"
+  },
+  {
+   "id": "p004",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "he chases fenna"
+  },
+  {
+   "id": "p005",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "you chase cat"
+  },
+  {
+   "id": "p006",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "they chase dog"
+  },
+  {
+   "id": "p007",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "moi likes jazz"
+  },
+  {
+   "id": "p008",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "ours likes jazz"
+  },
+  {
+   "id": "p009",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "the latter married fenna"
+  },
+  {
+   "id": "p010",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "that guy likes jazz"
+  },
+  {
+   "id": "p011",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "you and saoirse studied at dunmere"
+  },
+  {
+   "id": "p012",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "im chasing cat"
+  },
+  {
+   "id": "p013",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "hes chasing cat"
+  },
+  {
+   "id": "p014",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "yous chase cat"
+  },
+  {
+   "id": "p015",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "my cousin likes jazz"
+  },
+  {
+   "id": "p016",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "fenna does not like jazz"
+  },
+  {
+   "id": "p017",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "yer auntie moira likes jazz"
+  },
+  {
+   "id": "p018",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "ur mom likes jazz"
+  },
+  {
+   "id": "p019",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "kofi likes your cousin dalia"
+  },
+  {
+   "id": "p020",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "i told kofi jazz"
+  },
+  {
+   "id": "p021",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "you gave fenna jazz"
+  },
+  {
+   "id": "p022",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "i chase dog quickly"
+  },
+  {
+   "id": "p023",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "we like jazz music"
+  },
+  {
+   "id": "p024",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "my cat likes fish"
+  },
+  {
+   "id": "p025",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "your cat likes fish"
+  },
+  {
+   "id": "p026",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "her cat likes fish"
+  },
+  {
+   "id": "p027",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "kofi and i chase cat"
+  },
+  {
+   "id": "p028",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "me and kofi chase cat"
+  },
+  {
+   "id": "p029",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "yours likes jazz"
+  },
+  {
+   "id": "p030",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "mine likes jazz"
+  },
+  {
+   "id": "p031",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "em likes jazz"
+  },
+  {
+   "id": "p032",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "ya likes jazz"
+  },
+  {
+   "id": "p033",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "thee likes jazz"
+  },
+  {
+   "id": "p034",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "urself likes jazz"
+  },
+  {
+   "id": "p035",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "somebody likes jazz"
+  },
+  {
+   "id": "p036",
+   "kind": "r271",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "r271"
+   ],
+   "text": "everyone likes jazz"
+  },
+  {
+   "id": "p037",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:1sg",
+    "position:agent"
+   ],
+   "text": "i chases cat"
+  },
+  {
+   "id": "p038",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:1sg",
+    "position:patient"
+   ],
+   "text": "fenna chases me"
+  },
+  {
+   "id": "p039",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:1sg",
+    "position:poss_in_agent"
+   ],
+   "text": "my cousin likes jazz"
+  },
+  {
+   "id": "p040",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:1sg",
+    "position:poss_in_patient"
+   ],
+   "text": "kofi likes my cousin"
+  },
+  {
+   "id": "p041",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:1pl",
+    "position:agent"
+   ],
+   "text": "we chases cat"
+  },
+  {
+   "id": "p042",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:1pl",
+    "position:patient"
+   ],
+   "text": "fenna chases us"
+  },
+  {
+   "id": "p043",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:1pl",
+    "position:poss_in_agent"
+   ],
+   "text": "our cousin likes jazz"
+  },
+  {
+   "id": "p044",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:1pl",
+    "position:poss_in_patient"
+   ],
+   "text": "kofi likes our cousin"
+  },
+  {
+   "id": "p045",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:2sg",
+    "position:agent"
+   ],
+   "text": "you chases cat"
+  },
+  {
+   "id": "p046",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:2sg",
+    "position:patient"
+   ],
+   "text": "fenna chases you"
+  },
+  {
+   "id": "p047",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:2sg",
+    "position:poss_in_agent"
+   ],
+   "text": "your cousin likes jazz"
+  },
+  {
+   "id": "p048",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:2sg",
+    "position:poss_in_patient"
+   ],
+   "text": "kofi likes your cousin"
+  },
+  {
+   "id": "p049",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:3sg.m",
+    "position:agent"
+   ],
+   "text": "he chases cat"
+  },
+  {
+   "id": "p050",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:3sg.m",
+    "position:patient"
+   ],
+   "text": "fenna chases him"
+  },
+  {
+   "id": "p051",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:3sg.m",
+    "position:poss_in_agent"
+   ],
+   "text": "his cousin likes jazz"
+  },
+  {
+   "id": "p052",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:3sg.m",
+    "position:poss_in_patient"
+   ],
+   "text": "kofi likes his cousin"
+  },
+  {
+   "id": "p053",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:3sg.f",
+    "position:agent"
+   ],
+   "text": "she chases cat"
+  },
+  {
+   "id": "p054",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:3sg.f",
+    "position:patient"
+   ],
+   "text": "fenna chases her"
+  },
+  {
+   "id": "p055",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:3sg.f",
+    "position:poss_in_agent"
+   ],
+   "text": "her cousin likes jazz"
+  },
+  {
+   "id": "p056",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:3sg.f",
+    "position:poss_in_patient"
+   ],
+   "text": "kofi likes her cousin"
+  },
+  {
+   "id": "p057",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:3pl",
+    "position:agent"
+   ],
+   "text": "they chases cat"
+  },
+  {
+   "id": "p058",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:3pl",
+    "position:patient"
+   ],
+   "text": "fenna chases them"
+  },
+  {
+   "id": "p059",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:3pl",
+    "position:poss_in_agent"
+   ],
+   "text": "their cousin likes jazz"
+  },
+  {
+   "id": "p060",
+   "kind": "grid_person_position",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:3pl",
+    "position:poss_in_patient"
+   ],
+   "text": "kofi likes their cousin"
+  },
+  {
+   "id": "p061",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:moi",
+    "position:agent",
+    "oracle_role:SPEAKER"
+   ],
+   "text": "moi chases cat"
+  },
+  {
+   "id": "p062",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:moi",
+    "position:patient",
+    "oracle_role:SPEAKER"
+   ],
+   "text": "fenna chases moi"
+  },
+  {
+   "id": "p063",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:moi",
+    "position:poss_in_agent",
+    "oracle_role:SPEAKER"
+   ],
+   "text": "moi cousin likes jazz"
+  },
+  {
+   "id": "p064",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:moi",
+    "position:poss_in_patient",
+    "oracle_role:SPEAKER"
+   ],
+   "text": "kofi likes moi cousin"
+  },
+  {
+   "id": "p065",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:yer",
+    "position:agent",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "yer chases cat"
+  },
+  {
+   "id": "p066",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:yer",
+    "position:patient",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "fenna chases yer"
+  },
+  {
+   "id": "p067",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:yer",
+    "position:poss_in_agent",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "yer cousin likes jazz"
+  },
+  {
+   "id": "p068",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:yer",
+    "position:poss_in_patient",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "kofi likes yer cousin"
+  },
+  {
+   "id": "p069",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:yous",
+    "position:agent",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "yous chases cat"
+  },
+  {
+   "id": "p070",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:yous",
+    "position:patient",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "fenna chases yous"
+  },
+  {
+   "id": "p071",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:yous",
+    "position:poss_in_agent",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "yous cousin likes jazz"
+  },
+  {
+   "id": "p072",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:yous",
+    "position:poss_in_patient",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "kofi likes yous cousin"
+  },
+  {
+   "id": "p073",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:ur",
+    "position:agent",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "ur chases cat"
+  },
+  {
+   "id": "p074",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:ur",
+    "position:patient",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "fenna chases ur"
+  },
+  {
+   "id": "p075",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:ur",
+    "position:poss_in_agent",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "ur cousin likes jazz"
+  },
+  {
+   "id": "p076",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:ur",
+    "position:poss_in_patient",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "kofi likes ur cousin"
+  },
+  {
+   "id": "p077",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:im",
+    "position:agent",
+    "oracle_role:SPEAKER"
+   ],
+   "text": "im chases cat"
+  },
+  {
+   "id": "p078",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:im",
+    "position:patient",
+    "oracle_role:SPEAKER"
+   ],
+   "text": "fenna chases im"
+  },
+  {
+   "id": "p079",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:im",
+    "position:poss_in_agent",
+    "oracle_role:SPEAKER"
+   ],
+   "text": "im cousin likes jazz"
+  },
+  {
+   "id": "p080",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:im",
+    "position:poss_in_patient",
+    "oracle_role:SPEAKER"
+   ],
+   "text": "kofi likes im cousin"
+  },
+  {
+   "id": "p081",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:hes",
+    "position:agent",
+    "oracle_role:ANTECEDENT(missing)"
+   ],
+   "text": "hes chases cat"
+  },
+  {
+   "id": "p082",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:hes",
+    "position:patient",
+    "oracle_role:ANTECEDENT(missing)"
+   ],
+   "text": "fenna chases hes"
+  },
+  {
+   "id": "p083",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:hes",
+    "position:poss_in_agent",
+    "oracle_role:ANTECEDENT(missing)"
+   ],
+   "text": "hes cousin likes jazz"
+  },
+  {
+   "id": "p084",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:hes",
+    "position:poss_in_patient",
+    "oracle_role:ANTECEDENT(missing)"
+   ],
+   "text": "kofi likes hes cousin"
+  },
+  {
+   "id": "p085",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:ya",
+    "position:agent",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "ya chases cat"
+  },
+  {
+   "id": "p086",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:ya",
+    "position:patient",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "fenna chases ya"
+  },
+  {
+   "id": "p087",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:ya",
+    "position:poss_in_agent",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "ya cousin likes jazz"
+  },
+  {
+   "id": "p088",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:ya",
+    "position:poss_in_patient",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "kofi likes ya cousin"
+  },
+  {
+   "id": "p089",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:em",
+    "position:agent",
+    "oracle_role:ANTECEDENT(missing)"
+   ],
+   "text": "em chases cat"
+  },
+  {
+   "id": "p090",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:em",
+    "position:patient",
+    "oracle_role:ANTECEDENT(missing)"
+   ],
+   "text": "fenna chases em"
+  },
+  {
+   "id": "p091",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:em",
+    "position:poss_in_agent",
+    "oracle_role:ANTECEDENT(missing)"
+   ],
+   "text": "em cousin likes jazz"
+  },
+  {
+   "id": "p092",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:em",
+    "position:poss_in_patient",
+    "oracle_role:ANTECEDENT(missing)"
+   ],
+   "text": "kofi likes em cousin"
+  },
+  {
+   "id": "p093",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:thee",
+    "position:agent",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "thee chases cat"
+  },
+  {
+   "id": "p094",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:thee",
+    "position:patient",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "fenna chases thee"
+  },
+  {
+   "id": "p095",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:thee",
+    "position:poss_in_agent",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "thee cousin likes jazz"
+  },
+  {
+   "id": "p096",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:thee",
+    "position:poss_in_patient",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "kofi likes thee cousin"
+  },
+  {
+   "id": "p097",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:mine",
+    "position:agent",
+    "oracle_role:SPEAKER"
+   ],
+   "text": "mine chases cat"
+  },
+  {
+   "id": "p098",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:mine",
+    "position:patient",
+    "oracle_role:SPEAKER"
+   ],
+   "text": "fenna chases mine"
+  },
+  {
+   "id": "p099",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:mine",
+    "position:poss_in_agent",
+    "oracle_role:SPEAKER"
+   ],
+   "text": "mine cousin likes jazz"
+  },
+  {
+   "id": "p100",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:mine",
+    "position:poss_in_patient",
+    "oracle_role:SPEAKER"
+   ],
+   "text": "kofi likes mine cousin"
+  },
+  {
+   "id": "p101",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:yours",
+    "position:agent",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "yours chases cat"
+  },
+  {
+   "id": "p102",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:yours",
+    "position:patient",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "fenna chases yours"
+  },
+  {
+   "id": "p103",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:yours",
+    "position:poss_in_agent",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "yours cousin likes jazz"
+  },
+  {
+   "id": "p104",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:yours",
+    "position:poss_in_patient",
+    "oracle_role:ADDRESSEE"
+   ],
+   "text": "kofi likes yours cousin"
+  },
+  {
+   "id": "p105",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:ours",
+    "position:agent",
+    "oracle_role:SPEAKER"
+   ],
+   "text": "ours chases cat"
+  },
+  {
+   "id": "p106",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:ours",
+    "position:patient",
+    "oracle_role:SPEAKER"
+   ],
+   "text": "fenna chases ours"
+  },
+  {
+   "id": "p107",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:ours",
+    "position:poss_in_agent",
+    "oracle_role:SPEAKER"
+   ],
+   "text": "ours cousin likes jazz"
+  },
+  {
+   "id": "p108",
+   "kind": "grid_spelling",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "spelling:ours",
+    "position:poss_in_patient",
+    "oracle_role:SPEAKER"
+   ],
+   "text": "kofi likes ours cousin"
+  },
+  {
+   "id": "p109",
+   "kind": "grid_anaphor",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "anaphor:none"
+   ],
+   "text": "kofi chases cat"
+  },
+  {
+   "id": "p110",
+   "kind": "grid_anaphor",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "anaphor:antecedent_present"
+   ],
+   "text": "kofi chases cat . he chases fenna"
+  },
+  {
+   "id": "p111",
+   "kind": "grid_anaphor",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "anaphor:antecedent_missing"
+   ],
+   "text": "guy chases cat . he chases fenna"
+  },
+  {
+   "id": "p112",
+   "kind": "grid_anaphor",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "anaphor:former_latter"
+   ],
+   "text": "kofi and dalia study at dunmere . the former likes jazz"
+  },
+  {
+   "id": "p113",
+   "kind": "grid_coordination",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "coordination:true"
+   ],
+   "text": "kofi and i chase cat"
+  },
+  {
+   "id": "p114",
+   "kind": "grid_coordination",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "coordination:true"
+   ],
+   "text": "me and kofi chase cat"
+  },
+  {
+   "id": "p115",
+   "kind": "grid_negation",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:1sg",
+    "negation:does not chase"
+   ],
+   "text": "i does not chase cat"
+  },
+  {
+   "id": "p116",
+   "kind": "grid_negation",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:1sg",
+    "negation:does n't chase"
+   ],
+   "text": "i does n't chase cat"
+  },
+  {
+   "id": "p117",
+   "kind": "grid_negation",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:1pl",
+    "negation:does not chase"
+   ],
+   "text": "we does not chase cat"
+  },
+  {
+   "id": "p118",
+   "kind": "grid_negation",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:1pl",
+    "negation:does n't chase"
+   ],
+   "text": "we does n't chase cat"
+  },
+  {
+   "id": "p119",
+   "kind": "grid_negation",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:2sg",
+    "negation:does not chase"
+   ],
+   "text": "you does not chase cat"
+  },
+  {
+   "id": "p120",
+   "kind": "grid_negation",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:2sg",
+    "negation:does n't chase"
+   ],
+   "text": "you does n't chase cat"
+  },
+  {
+   "id": "p121",
+   "kind": "grid_negation",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:3sg.m",
+    "negation:does not chase"
+   ],
+   "text": "he does not chase cat"
+  },
+  {
+   "id": "p122",
+   "kind": "grid_negation",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:3sg.m",
+    "negation:does n't chase"
+   ],
+   "text": "he does n't chase cat"
+  },
+  {
+   "id": "p123",
+   "kind": "grid_negation",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:3sg.f",
+    "negation:does not chase"
+   ],
+   "text": "she does not chase cat"
+  },
+  {
+   "id": "p124",
+   "kind": "grid_negation",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:3sg.f",
+    "negation:does n't chase"
+   ],
+   "text": "she does n't chase cat"
+  },
+  {
+   "id": "p125",
+   "kind": "grid_negation",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:3pl",
+    "negation:does not chase"
+   ],
+   "text": "they does not chase cat"
+  },
+  {
+   "id": "p126",
+   "kind": "grid_negation",
+   "speakers": [
+    "A",
+    "B"
+   ],
+   "tags": [
+    "person:3pl",
+    "negation:does n't chase"
+   ],
+   "text": "they does n't chase cat"
+  }
+ ],
+ "packet": "deixis-271-s0"
+}
