@@ -10,6 +10,11 @@ composer entry, and its summary counted both as kept 0). These tests pin that ru
   - the summary counts kept / not kept / UNDEFINED per label and sets VALID only when nothing is UNDEFINED;
   - main() exits nonzero when the allowlist arm has any UNDEFINED case.
 The composer entry is the REAL `RichAnswerComposer._verify_rendered` on a bare object whose `.chat` is the mock.
+The REPLY entry (round 8): the prefix mapping `map_reply` (the composer's declared normalisation only; every non-prefix text UNDEFINED,
+an in-order selection a `subsequence`), the reply-case validation, the stand-in mouth that answers by fact, the prefix-labelled
+adjudication reader, the reply summary counting, the reply controls; the real `render_paragraph` on a mocked chat (coercion, exception,
+wrong path); and end to end on the REAL composer (BridgeParser + ChatBrain + RichAnswerComposer over two synthetic store triples) the
+reply controls RP1 / RN1 / RN0 / RNJ at seeds 42 and 43 on both paths, flag ON, plus stock (flag OFF) emitting the full reply.
 
 Run: CUDA_VISIBLE_DEVICES="" SIM_BACKEND=numpy .venv/bin/python -m pytest tests/test_moat_hunt_runner.py -q
 """
@@ -303,3 +308,351 @@ def test_the_summary_counts_allowlist_reasons_by_tag_and_nothing_else_changes():
     for arm in s:
         assert {k: v for k, v in s[arm].items() if k != "reject_reason_tags"} == {k: v for k, v in b[arm].items() if k != "reject_reason_tags"}
     assert "reject_reason_tags" not in s["stock"] and "reject_reason_tags" not in s["b2h"]
+
+
+# =====================================================================================================================================
+# the reply entry (round 8): the composer's paragraph path, sequential and batched, with the build-6 joined check
+# =====================================================================================================================================
+def _term():
+    return H.composer_terminate()
+
+
+S2 = ["Aug follows Jul.", "Jul follows June."]
+
+
+# ---- the prefix mapping (pure) ------------------------------------------------------------------------------------------------------
+@pytest.mark.parametrize("text,j", [("Aug follows Jul. Jul follows June.", 2), ("Aug follows Jul.", 1), ("", 0)])
+def test_map_reply_reads_the_prefix_index(text, j):
+    for term in (None, _term()):                                    # terminated sentences: both joins coincide
+        m = H.map_reply(text, S2, terminate=term)
+        assert m == {"status": "prefix", "j": j, "subset": list(range(1, j + 1))}, (term, m)
+        assert H.outcome_key(m) == str(j)
+
+
+def test_map_reply_applies_only_the_composers_declared_normalisation():
+    raw = ["Aug follows Jul", "Jul follows June  "]                   # unterminated; a trailing U+0020 run
+    on, off = "Aug follows Jul. Jul follows June.", "Aug follows Jul Jul follows June  "
+    assert H.map_reply(on, raw, terminate=_term())["j"] == 2          # flag ON: "." added, trailing spaces stripped, one U+0020
+    assert H.map_reply(off, raw, terminate=None)["j"] == 2            # flag OFF: the sentences as rendered, one U+0020
+    assert H.map_reply("Aug follows Jul.", raw, terminate=_term())["j"] == 1
+    assert H.map_reply(on, raw, terminate=None)["status"] == "UNDEFINED"          # the other arm's join is not this arm's
+    assert H.map_reply(off, raw, terminate=_term())["status"] == "UNDEFINED"
+    # no other normalisation: a U+00A0 is not a space, case and whitespace runs are not folded
+    nb = ["Solomon is located in Oceania.", "Jul follows June."]
+    assert H.map_reply("Solomon is located in Oceania. Jul follows June.", nb, terminate=_term())["status"] == "UNDEFINED"
+    assert H.map_reply("Solomon is located in Oceania. Jul follows June.", nb, terminate=_term())["j"] == 2
+    assert H.map_reply("Aug follows Jul.  Jul follows June.", S2, terminate=_term())["status"] == "UNDEFINED"
+    assert H.map_reply("aug follows jul.", S2, terminate=_term())["status"] == "UNDEFINED"
+
+
+@pytest.mark.parametrize("text,why", [
+    ("Jul follows June. Aug follows Jul.", "no in-order"),           # reordered
+    ("Aug follows", "no in-order"),                                   # a partial sentence
+    ("Aug follows Jul. Jul follows June. And more.", "no in-order"),  # extra text
+    ("Aug follows Jul!", "no in-order"),                              # the mood marker is not this mouth's text
+    ("aug follow jul", "no in-order"),                                # another mouth (the raw triple)
+    (None, "not a string"), (["Aug follows Jul."], "not a string")])
+def test_map_reply_is_undefined_never_not_kept_for_text_that_matches_no_prefix(text, why):
+    m = H.map_reply(text, S2, terminate=_term())
+    assert m["status"] == "UNDEFINED" and m["j"] is None and why in m["why"], m
+    assert H.outcome_key(m) is None
+
+
+def test_map_reply_reads_a_non_prefix_selection_as_a_subsequence_never_as_a_prefix():
+    s3 = ["A is b.", "C is d.", "E is f."]
+    assert H.map_reply("C is d.", s3) == {"status": "subsequence", "j": None, "subset": [2]}
+    assert H.map_reply("A is b. E is f.", s3) == {"status": "subsequence", "j": None, "subset": [1, 3]}
+    assert H.outcome_key({"status": "subsequence", "subset": [2]}) == "sub:2" != H.outcome_key({"status": "prefix", "j": 2})
+    assert H.map_reply("A is b. C is d.", s3)["j"] == 2
+
+
+def test_map_reply_uses_the_composers_kept_facts_and_never_guesses():
+    rep = ["Aug follows Jul.", "Aug follows Jul."]                    # the same text for both facts
+    assert "ambiguous" in H.map_reply("Aug follows Jul.", rep)["why"]
+    assert H.map_reply("Aug follows Jul.", rep, kept_idx=[1]) == {"status": "prefix", "j": 1, "subset": [1]}
+    assert H.map_reply("Aug follows Jul.", rep, kept_idx=[2]) == {"status": "subsequence", "j": None, "subset": [2]}
+    assert "do not give" in H.map_reply("Aug follows Jul.", rep, kept_idx=[1, 2])["why"]
+    assert "do not give" in H.map_reply("Aug follows Jul.", S2, kept_idx=[2])["why"]
+    assert "kept facts" in H.map_reply("", S2, kept_idx=[1])["why"]                    # nothing spoken, yet a fact kept
+    assert "in-order" in H.map_reply("Jul follows June. Aug follows Jul.", S2, kept_idx=[2, 1])["why"]
+    assert H.map_reply("", S2, kept_idx=[]) == {"status": "prefix", "j": 0, "subset": []}
+
+
+def _reply_case(cid="R1", sentences=S2, gathered=None, expect="U", **kw):
+    g = gathered if gathered is not None else [list(f) for f in H.CONTROL_PAIR]
+    c = {"id": cid, "gathered": g, "sentences": list(sentences), "sentence": " ".join(sentences), "expect": expect, "class": "r",
+         "reply": True}
+    c.update(kw)
+    return c
+
+
+def test_validate_reply_case():
+    assert H.validate_reply_case(_reply_case()) is None
+    unterminated = _reply_case(sentences=["Aug follows Jul", "Jul follows June"])
+    assert H.validate_reply_case(unterminated) is None                                    # sentence = the flag-off join
+    unterminated["sentence"] = "Aug follows Jul. Jul follows June."
+    assert H.validate_reply_case(unterminated) is None                                    # or the flag-on join
+    bad = [(_reply_case(sentences=S2[:1], gathered=[list(H.CONTROL_PAIR[0])]), "2 <= k"),
+           (_reply_case(sentences=S2 + ["X is y."]), "3 sentences for 2"),
+           (_reply_case(gathered=[list(H.CONTROL_PAIR[0])] * 2), "gathered twice"),
+           (_reply_case(sentence="Aug follows Jul. Jul follows June!"), "not its 'sentences' joined"),
+           (_reply_case(sentences=["Aug follows Jul.", "  "]), "non-blank"),
+           (_reply_case(gathered=[["aug", "follows"], ["jul", "follows", "june"]]), "three-string")]
+    for c, why in bad:
+        assert why in (H.validate_reply_case(c) or ""), (c, H.validate_reply_case(c))
+    c = _reply_case()
+    del c["sentences"]
+    assert "sentences" in H.validate_reply_case(c)
+
+
+def test_the_stand_in_renders_by_fact_never_by_call_index():
+    g = [list(f) for f in H.CONTROL_PAIR]
+    ren = H.ReplyRenderer(g, S2, batch=True)
+    assert ren.render_svo(*g[1]) == ("Jul follows June.", None)                           # fact 2 asked first -> sentence 2
+    assert ren.render_svo_batch([tuple(g[1]), tuple(g[0])]) == ([("Jul follows June.", None), ("Aug follows Jul.", None)], 0.0)
+    assert ren.asked == [("render_svo", 2), ("render_svo_batch", 2), ("render_svo_batch", 1)]
+    with pytest.raises(KeyError):
+        ren.render_svo("x", "y", "z")
+    assert ren.errors and "not a gathered fact" in ren.errors[0]
+    assert not hasattr(H.ReplyRenderer(g, S2), "render_svo_batch")
+
+
+# ---- the adjudication reader -------------------------------------------------------------------------------------------------------
+def test_load_reply_labels_with_and_without_prefix_labels():
+    cases = [_reply_case("R1"), _reply_case("R2"), _reply_case("R3", expect="U"), {"id": "X1", "expect": "U"}]
+    label = {"R1": "U", "R2": "U", "R3": "B", "X1": "U"}                                  # R3 relabelled U->B
+    assert H.load_reply_labels({}, cases, label) == {i: {"prefix": None, "subset": None, "why": "no prefix_labels for this reply case"}
+                                                     for i in ("R1", "R2", "R3")}         # non-reply X1 is not listed
+    adj = {"prefix_labels": {"R1": ["F", "U"], "R2": ["U"], "R3": ["U", "U"]}, "subset_labels": {"R1": {"2": "F"}}}
+    got = H.load_reply_labels(adj, cases, label)
+    assert got["R1"] == {"prefix": ["F", "U"], "subset": {"2": "F"}, "why": None}
+    assert "not a list of 2" in got["R2"]["why"] and got["R2"]["prefix"] is None
+    assert "not the case's own label 'B'" in got["R3"]["why"]                            # the full reply's label must be the case's
+    assert "not one of" in H.check_prefix_labels(["X", "U"], 2, "U")
+    assert H.check_subset_labels({"1": "U"}, 2) and H.check_subset_labels({"2+1": "U"}, 3)   # a prefix / out of order: not a selection
+    assert H.check_subset_labels({"1+3": "U", "2": "B"}, 3) is None and H.check_subset_labels({"2": "Q"}, 2)
+
+
+# ---- the summary counting (pure) ---------------------------------------------------------------------------------------------------
+def _jr(j, path="sequential", seed=42):
+    return {"seed": seed, "path": path, "status": "prefix", "j": j, "subset": list(range(1, j + 1))}
+
+
+def _sr(sub, path="sequential", seed=42):
+    return {"seed": seed, "path": path, "status": "subsequence", "j": None, "subset": sub}
+
+
+UR = {"seed": 42, "path": "batched", "status": "UNDEFINED", "j": None, "subset": None, "why": "the text matches no in-order selection"}
+
+
+def _rrow(i, label, k, allow, pl, sl=None, other=None):
+    """A reply row: the gate/composer entries all F, the reply entry `allow` in the allowlist arm and `other` (default: all j = 0)
+    in stock and B2h."""
+    row = _row(i, label, {"stock": [F], "b2h": [F], "allowlist": [F]})
+    other = other if other is not None else [_jr(0), _jr(0, "batched")]
+    row.update(reply={"stock": other, "b2h": other, "allowlist": allow}, k=k, prefix_labels=pl, subset_labels=sl, labels_why=None)
+    return row
+
+
+def test_reply_summary_counts_kept_labels_by_prefix_label_at_any_seed_through_either_path():
+    rows = [
+        _rrow("R1", "U", 2, [_jr(1), _jr(2, "batched"), _jr(1, seed=43), _jr(1, "batched", 43)], ["F", "U"]),   # full reply via batched
+        _rrow("R2", "U", 2, [_jr(0), _jr(0, "batched")], ["U", "U"]),                                         # nothing emitted
+        _rrow("R3", "B", 3, [_jr(2), _jr(2, "batched")], ["F", "B", "B"]),                                    # cut to 2 of 3
+        _rrow("R4", "U", 2, [_sr([2]), _jr(0, "batched")], ["U", "U"], sl={"2": "F"}),                        # labelled selection
+        _row("X1", "U", {"stock": [F], "b2h": [F], "allowlist": [F]}),                                        # not a reply case
+    ]
+    s = H.summarise(rows)
+    rp = s["allowlist"]["reply"]
+    assert (rp["n"], rp["n_na"], rp["UNDEFINED"]) == (4, 1, 0)
+    assert rp["kept"] == {"U": {"n": 1, "ids": ["R1"]}, "B": {"n": 1, "ids": ["R3"]}, "F": {"n": 2, "ids": ["R1", "R4"]}}
+    assert rp["kept_by_path"]["batched"]["U"] == ["R1"] and rp["kept_by_path"]["sequential"]["U"] == []
+    assert rp["j_distribution"]["all"] == {"0": 3, "1": 3, "2": 3, "sub:2": 1}
+    assert rp["j_distribution"]["sequential"] == {"0": 1, "1": 2, "2": 1, "sub:2": 1}
+    assert rp["case_emitted"] == {"R1": ["1", "2"], "R2": ["0"], "R3": ["2"], "R4": ["0", "sub:2"]}
+    assert (rp["full_reply_ids"], rp["cut_ids"], rp["nothing_emitted_ids"], rp["subsequence_ids"]) == (["R1"], ["R1", "R3"], ["R2"], ["R4"])
+    assert s["allowlist"]["VALID"] is True and s["stock"]["reply"]["kept"]["U"]["n"] == 0
+    assert "reject_reason_tags" in rp and "reject_reason_tags" not in s["stock"]["reply"]
+
+
+@pytest.mark.parametrize("row,why", [
+    (_rrow("R1", "U", 2, [_jr(2), _jr(2, "batched")], None), "no prefix_labels"),                         # labels missing
+    (_rrow("R1", "U", 2, [_jr(2), _jr(2, "batched")], ["U", "F"]), "not the case's own label"),            # full label != case label
+    (_rrow("R1", "U", 2, [_jr(2), UR], ["F", "U"]), "no in-order"),                                       # one UNDEFINED record
+    (_rrow("R1", "U", 2, [_sr([2]), _jr(0, "batched")], ["U", "U"]), "no adjudicated label"),             # unlabelled selection
+    (_rrow("R1", "U", 2, [], ["U", "U"]), "no reply records")])
+def test_a_reply_case_without_usable_labels_or_with_an_undefined_record_is_undefined_and_the_arm_not_valid(row, why):
+    s = H.summarise([row])
+    rp = s["allowlist"]["reply"]
+    assert rp["UNDEFINED"] == 1 and rp["undefined_ids"] == ["R1"] and why in rp["undefined_why"]["R1"], rp["undefined_why"]
+    assert all(rp["kept"][lab]["n"] == 0 for lab in H.LABELS)                              # never counted
+    assert s["allowlist"]["VALID"] is False and s["allowlist"]["n_undefined_case_entries"] == 1
+    assert H.exit_code(s) == H.EXIT_ALLOWLIST_UNDEFINED
+
+
+def test_without_reply_cases_the_summary_and_exit_code_are_as_before():
+    rows = [_row("U1", "U", {"stock": [F], "b2h": [F], "allowlist": [F]})]
+    s = H.summarise(rows)
+    assert s["allowlist"]["reply"]["n"] == 0 and s["allowlist"]["reply"]["n_na"] == 1 and s["allowlist"]["VALID"] is True
+    assert H.exit_code(s) == 0 and H.exit_code(s, reply_controls_ok=False) == H.EXIT_CONTROL_FAILED
+
+
+# ---- the reply controls (pure) -------------------------------------------------------------------------------------------------------
+def test_reply_control_ok_rules():
+    full = [_jr(2), _jr(2, "batched")]
+    assert H.reply_control_ok(full, "full", 2) and not H.reply_control_ok([_jr(2), _jr(1, "batched")], "full", 2)
+    assert H.reply_control_ok([_jr(1), _jr(1, "batched")], "first", 2) and not H.reply_control_ok(full, "first", 2)
+    assert H.reply_control_ok([_sr([2]), _jr(0, "batched")], "not_first", 2)
+    assert not H.reply_control_ok([_jr(1), _jr(0, "batched")], "not_first", 2)             # a prefix holds sentence 1
+    assert not H.reply_control_ok([_jr(2), UR], "full", 2) and not H.reply_control_ok([], "full", 2)   # UNDEFINED / nothing: fail
+    assert [c["id"] for c in H.REPLY_CONTROL_CASES] == ["RP1", "RN1", "RN0", "RNJ"]
+    assert all(H.validate_reply_case(c) is None and c["gathered"] == H.CONTROL_PAIR for c in H.REPLY_CONTROL_CASES)
+
+
+def test_reply_control_report_fails_only_on_the_allowlist_arm():
+    cases = [c for c in H.REPLY_CONTROL_CASES if c["id"] in ("RP1", "RNJ")]
+    good = {"RP1": [_jr(2), _jr(2, "batched")], "RNJ": [_jr(1), _jr(1, "batched")]}
+    rows = [{"id": i, "k": 2, "reply": {"stock": [_jr(2), _jr(2, "batched")], "b2h": [_jr(2), _jr(2, "batched")], "allowlist": recs}}
+            for i, recs in good.items()]
+    rep = H.reply_control_report(rows, cases)
+    assert rep["STRICT_OK"] is True and rep["arm_ok"]["stock"] is False                   # stock RNJ keeps the repeat: reported only
+    assert rep["outcomes"]["stock"]["RNJ"] == ["2"] and rep["outcomes"]["allowlist"]["RNJ"] == ["1"]
+    rows[1]["reply"]["allowlist"] = [_jr(2), _jr(1, "batched")]
+    assert H.reply_control_report(rows, cases)["STRICT_OK"] is False
+
+
+# ---- the reply entry through the REAL composer on a mocked chat --------------------------------------------------------------------
+class FakeReplyChat(FakeChat):
+    """FakeChat plus what `render_paragraph` reads from a ChatBrain: raw_mode, renderer and the (absent) spiking recall surface."""
+    raw_mode = False
+    renderer = None
+
+    def spiking_recall_surface(self, a, v, p):
+        return None
+
+    def spiking_recall_parts(self, a, v, p):
+        return None
+
+    def _raw(self, svo):
+        return " ".join(str(x) for x in svo)                               # ChatBrain._raw: the brain's raw triple
+
+
+@pytest.mark.parametrize("path", H.REPLY_PATHS)
+def test_reply_one_runs_the_real_paragraph_path_and_restores_the_chat_and_the_environment(monkeypatch, path):
+    set_arm(monkeypatch, "allowlist")
+    monkeypatch.setenv("BRAIN_SPIKING_MOUTH_RECALL", "1")
+    monkeypatch.delenv("BRAIN_RICH_BATCH_RENDER", raising=False)
+    chat = FakeReplyChat(gate={"allowlist": (True, {})})
+    rc = composer_over(chat)
+    rec = H.reply_one(rc, chat, H.Trace(chat), _reply_case(), 42, path)
+    assert rec["status"] == "prefix" and rec["j"] == 2 and rec["text"] == "Aug follows Jul. Jul follows June.", rec
+    assert rec["asked"] == [1, 2] and rec["kept_idx"] == [1, 2] and rec["n_gate_calls"] == 4        # 2 candidates + 2 joined checks
+    assert chat.renderer is None and os.environ["BRAIN_SPIKING_MOUTH_RECALL"] == "1" and "BRAIN_RICH_BATCH_RENDER" not in os.environ
+
+
+def test_reply_one_sees_through_the_composers_coercion_of_a_none_allowlist_verdict(monkeypatch):
+    set_arm(monkeypatch, "allowlist")
+    chat = FakeReplyChat(gate={"allowlist": (None, None)})                 # the composer reads None as a reject (bool / `if not ok`)
+    rec = H.reply_one(composer_over(chat), chat, H.Trace(chat), _reply_case(), 42, "sequential")
+    assert rec["status"] == "UNDEFINED" and "coerces" in rec["why"] and rec["text"] == ""        # it emitted nothing: still UNDEFINED
+
+
+def test_reply_one_undefined_on_an_exception_the_wrong_path_or_another_mouths_text(monkeypatch):
+    set_arm(monkeypatch, "allowlist")
+    chat = FakeReplyChat(gate={"allowlist": AssertionError("boom")})
+    rec = H.reply_one(composer_over(chat), chat, H.Trace(chat), _reply_case(), 42, "sequential")
+    assert rec["status"] == "UNDEFINED" and rec["src"] == "error" and "AssertionError" in rec["why"]
+    raw = FakeReplyChat(gate={"allowlist": (True, {})})
+    raw.raw_mode = True                                                    # the composer speaks its raw triples, not the mouth
+    rec = H.reply_one(composer_over(raw), raw, H.Trace(raw), _reply_case(), 42, "batched")
+    assert rec["status"] == "UNDEFINED" and "batched path was not taken" in rec["why"]
+    rec = H.reply_one(composer_over(raw), raw, H.Trace(raw), _reply_case(), 42, "sequential")
+    assert rec["status"] == "UNDEFINED" and "no in-order" in rec["why"]
+
+
+def test_an_invalid_reply_case_is_undefined_in_every_arm_and_a_non_reply_case_is_na():
+    chats = {42: FakeReplyChat()}
+    rows = H.run_rows([_reply_case(sentence="nope"), {"id": "X1", "gathered": GATHERED, "sentence": SENT, "expect": "U"}],
+                      {"R1": "U", "X1": "U"}, (42,), chats, {42: composer_over(chats[42])}, {42: H.Trace(chats[42])}, alt_vocab=False)
+    assert rows[1]["reply"] == "n/a" and set(rows[0]["gate"]) == set(H.ARMS)              # the gate/composer entries still run
+    assert all(len(r) == 1 and r[0]["status"] == "UNDEFINED" and "not its 'sentences'" in r[0]["why"] for r in rows[0]["reply"].values())
+
+
+def _reply_cases_dir(tmp_path, prefix_labels=True):
+    cases = [{"id": "X1", "gathered": GATHERED, "sentence": SENT, "expect": "U", "class": "c"}, _reply_case("R1", expect="U")]
+    (tmp_path / "cases.json").write_text(json.dumps(cases))
+    adj = {"relabel_to_B": {}}
+    if prefix_labels:
+        adj["prefix_labels"] = {"R1": ["F", "U"]}
+    (tmp_path / "adjudication.json").write_text(json.dumps(adj))
+    return str(tmp_path)
+
+
+def _reply_objects(gate):
+    def make(seed, kb):
+        chat = FakeReplyChat(gate=gate)
+        return chat, composer_over(chat)
+    return make
+
+
+def test_main_counts_the_reply_entry_from_prefix_labels_and_exits_nonzero_without_them(tmp_path):
+    gate = {"stock": (True, {}), "b2h": (True, {}), "allowlist": (True, {})}
+    out = tmp_path / "o.json"
+    code = H.main([_reply_cases_dir(tmp_path), str(out), "--seeds", "42,43", "--equiv-n", "0"], control_cases=[],
+                  objects=_reply_objects(gate))
+    d = json.loads(out.read_text())
+    assert code == 0, d["summary"]["allowlist"]["reply"]
+    rp = d["summary"]["allowlist"]["reply"]
+    assert rp["kept"]["U"] == {"n": 1, "ids": ["R1"]} and rp["j_distribution"]["all"] == {"2": 4}       # 2 seeds x 2 paths
+    assert d["rows"][0]["reply"] == "n/a" and len(d["rows"][1]["reply"]["allowlist"]) == 4
+    assert d["reply_controls"]["cases"] == [] and d["summary"]["allowlist"]["entries"]["gate"]["U"]["n"] == 2
+    sub = tmp_path / "nolabels"
+    sub.mkdir()
+    code = H.main([_reply_cases_dir(sub, prefix_labels=False), str(sub / "o.json"), "--seeds", "42", "--equiv-n", "0"],
+                  control_cases=[], objects=_reply_objects(gate))
+    assert code == H.EXIT_ALLOWLIST_UNDEFINED
+
+
+# ---- end to end on the REAL composer (BridgeParser + ChatBrain + RichAnswerComposer, synthetic store triples) ----------------------
+E2E_SEEDS = (42, 43)
+
+
+@pytest.fixture(scope="module")
+def real_objects():
+    kb = H.kb_of([tuple(f) for f in H.CONTROL_PAIR])
+    chats, comps, traces = {}, {}, {}
+    for sd in E2E_SEEDS:
+        chats[sd], comps[sd] = H.build_objects(sd, kb)
+        traces[sd] = H.Trace(chats[sd])
+    return chats, comps, traces
+
+
+def test_reply_controls_on_the_real_composer_both_paths_two_seeds(real_objects):
+    chats, comps, traces = real_objects
+    before = {k: os.environ.get(k) for k in ("BRAIN_SPIKING_MOUTH_RECALL", "BRAIN_RICH_BATCH_RENDER", "BRAIN_TOUCHPOINT_A_FACT_CLAUSE")}
+    cc = H.REPLY_CONTROL_CASES
+    rows = H.run_rows(cc, {c["id"]: c["expect"] for c in cc}, E2E_SEEDS, chats, comps, traces, entries=())
+    rep = H.reply_control_report(rows, cc)
+    assert rep["STRICT_OK"] is True, rep["outcomes"]
+    allow = rep["outcomes"]["allowlist"]
+    assert allow == {"RP1": ["2"], "RN1": ["1"], "RN0": ["sub:2"], "RNJ": ["1"]}, allow
+    for r in rows:                                                          # every seed x path, both paths really taken
+        recs = r["reply"]["allowlist"]
+        assert [(x["seed"], x["path"]) for x in recs] == [(sd, p) for sd in E2E_SEEDS for p in H.REPLY_PATHS]
+    rnj = [x for x in rows[3]["reply"]["allowlist"]]
+    assert all("both state" in x["cut"][0] for x in rnj)                    # RNJ is cut by the JOINED check, not a lone check
+    # flag OFF: stock emits the full faithful reply on both paths, and keeps the repeat (it has no joined check)
+    assert rep["outcomes"]["stock"]["RP1"] == ["2"] and rep["ok"]["stock"]["RP1"] is True
+    assert rep["outcomes"]["stock"]["RNJ"] == ["2"] and rep["arm_ok"]["stock"] is False
+    assert all(x["text"] == "Aug follows Jul. Jul follows June." for x in rows[0]["reply"]["stock"])
+    assert all(ch.renderer is None for ch in chats.values())
+    assert {k: os.environ.get(k) for k in before} == before
+
+
+def test_the_reply_summary_tags_reject_reasons_with_sentence_numbers_read_as_n():
+    cut1 = "allowlist: sentences 1 and 2 both state (aug, follows, jul): a reply that states one fact twice"
+    cut2 = "allowlist: sentences 2 and 3 both state (jul, follows, june): a reply that states one fact twice"
+    recs = [dict(_jr(1), reasons=[cut1, "allowlist: not gathered: (x, y, z)"], cut=[cut1]), dict(_jr(2, "batched"), reasons=[cut2], cut=[cut2])]
+    rp = H.summarise([_rrow("R1", "U", 3, recs, ["U", "U", "U"])])["allowlist"]["reply"]
+    assert rp["reject_reason_tags"] == {"every_check": {"sentences N and N both state": 2, "not gathered": 1},
+                                        "joined_cut": {"sentences N and N both state": 2}}
