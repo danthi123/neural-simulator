@@ -65,6 +65,12 @@ every proposition it encodes is a gathered triple of this turn:
   non-finite "be", "am", "being", "been" and "do" are not in the set (real names: "Offenbach am Main", "Rio Grande do
   Sul"). (2) "Take That has part Robbie Williams and a Robbie Williams" asserts a second Robbie Williams: a parse that
   lists one proposition twice is rejected.
+  Review fixes before measurement: a multi-word relation keeps only its slug and the stub's own +s/+es token
+  ("has_parted" reads "has parted"); a reply that states one fact in two sentences is rejected; a CR between sentences
+  only before an LF; any casing of an underscore spelling other than the lower-case slug is prose and splits on
+  underscores ("Marshall_Is", "No_Saints"); "be" joins the clause words, and a lone lower-case "s" ending a name or "t"
+  after a negative stem ("Saint Alban s", "don t") rejects as a dropped apostrophe; the de-slugged form of a signed number
+  ("utc 06" for UTC-06) is not accepted.
 - **VERB(rel):** a verb form of the relation from the verb-form table that `_noun_before_verb` uses (`1b67eef9b`),
   including the guarded `-s`, `-es` and `-ies` readings, only when that relation is gathered this turn.
 - **Case fidelity of entity spans (build 3, controller ruling 2026-10-20: no invented acronyms).** The store's slug

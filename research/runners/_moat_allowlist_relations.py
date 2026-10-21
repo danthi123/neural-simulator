@@ -20,8 +20,10 @@ ROLE_REVERSING when the roles are the problem).
   MEANING_DRIFT   the reading is an English sentence that keeps the roles but asserts a DIFFERENT relation ("X sports Y" = X wears Y, not
                   the sport of X is Y), or the paraphrase is not certainly the triple (conservative).
 Tense and agreement are not a meaning change: the held-out F labels and the round-3 F labels treat "X followed Y" as the triple (X, follows, Y).
-Multi-word slugs: their inflected readings ("family_names", "award_receiveds") exist only as underscore TOKENS, never as English; prose with
-spaces normalises to the slug only when spelled exactly ("family name"), so for a multi-word relation the English reading is the bare phrase.
+Multi-word slugs: their inflected readings ("family_names", "award_receiveds") exist only as underscore TOKENS; prose with spaces
+normalises to the slug only when spelled exactly ("family name"), so for a multi-word relation the English reading is the bare phrase.
+Build 5 (review 2026-10-20): an underscore token is still read as words ("has_parted" reads "has parted"), so a multi-word relation keeps
+only the slug and the stub's own +s / +es token (`stub_third_person`); every other listed reading of it is dropped (`reading_dropped`).
 
 INVENTORY (where the rows come from; column `sources`):
   store           EVERY relation of the production LTM store the matcher's gathered sets and the one-fact stub population come from:
@@ -383,8 +385,21 @@ DROPPED_READINGS = {
 }
 
 
+def stub_third_person(rel):
+    """The ONE inflected token the template stub mouth renders for `rel` (research/runners/_grounded_lang_p3_derisk.py `_inflect` for a
+    relation with no irregular form: +es after s/sh/ch/x/z, else +s; pinned equal to `_inflect` over the table in
+    tests/test_moat_allowlist_build5.py)."""
+    return rel + ("es" if rel.endswith(("s", "sh", "ch", "x", "z")) else "s")
+
+
 def reading_dropped(rel, tok):
-    """True iff `tok` is a reading of `rel` that failed the per-reading meaning test."""
+    """True iff `tok` is a reading of `rel` that failed the per-reading meaning test, or (build 5, review of 2026-10-20) an
+    underscore inflection of a MULTI-WORD relation other than the stub's own token: "has_parted" reads as "has parted" (separated
+    from), not as has_part, and no mouth needs the -ed / -ing / -ies / second -es forms of a multi-word slug ("record_labeled",
+    "member_of_political_parties"). A multi-word relation keeps the slug itself and `stub_third_person(rel)`; its English reading
+    is the label written with spaces, which the exact check compares to the slug."""
+    if "_" in rel and tok != rel and tok != stub_third_person(rel):
+        return True
     return tok in DROPPED_READINGS.get(rel, ())
 
 

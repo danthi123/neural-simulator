@@ -77,6 +77,14 @@ in". After the exact check, `_structure_word_violation` rejects a SUBJ/OBJ span 
 auxiliary (is, are, was, were, has, have, had, does, did) or a NEG_MARKERS word; the slug written verbatim ("solomon_is") is one word and
 passes. Store cost: entities with such a word are rare (9 slugs with "is", 5 with "not", 8 with "no"), and each stays sayable as its
 slug. `_repeated_proposition` rejects a parse that lists one proposition twice: "X has part A and a A" asserts a second A.
+Review fixes (2026-10-20, before any build-5 measurement): (1) a multi-word relation keeps only its slug and the stub's own +s/+es token
+("has_parted" reads "has parted"; `reading_dropped` in the relation table); (2) `allowlist_verify` rejects a reply in which two sentences
+state the same proposition (the list rule across sentences); (3) a CR between sentences only before an LF (a bare CR overprints the line
+on a terminal); (4) the slug verbatim in lower case is one identifier, but any other casing of an underscore spelling ("Marshall_Is",
+"No_Saints") is prose and its underscores split words; (5) "be" joins the clause words, and a lone lower-case "s" ending a name or "t"
+after a negative stem ("Saint Alban s", "don t") is the residue of a dropped apostrophe and rejects; (6) when every table row of a slug
+writes a sign before a digit ("utc-06"), its de-slugged form ("utc 06", read as UTC+06) is not accepted. A one-word slug that is itself
+a clause word is rejected even verbatim (the 100k store has none).
 
 NOTHING IS DROPPED. A token outside the shape (pronoun, adverb, "just", "also", hedge, negation, subordinator, a comma that
 opens a clause, a digit not inside a gathered slug, "!", "?", ":", "-", a second ".") leaves the shape unmatched and the
@@ -137,6 +145,9 @@ _ASCII_ALNUM = re.compile(r"[a-z0-9]")
 # display-identical spaces (no-break, figure, thin, narrow no-break) count as one space. Every other whitespace or control character
 # (TAB, VT, FF, U+001C-U+001F, U+0085, U+1680, U+2028, U+2029, U+3000, ...) anywhere rejects the sentence (`_bad_space`).
 SPAN_SPACES = " \u00a0\u2007\u2009\u202f"
+# build 5: a sign before a digit (hyphen-minus, U+2212 minus, plus, plus-minus) that is not a range or joiner between two digits
+_WORD_BREAK = re.compile("[_%s]+" % SPAN_SPACES)
+_SIGNED_NUMBER = re.compile("(?<![0-9])[-\u2212+\u00b1][0-9]")
 _WS = re.compile("[%s]+" % SPAN_SPACES)
 
 
@@ -323,8 +334,13 @@ class _NamesTable:
 
     def surfaces(self, slug):
         """The slug's canonical surfaces: the slug itself as written (the stub mouth renders slugs verbatim; it is the store's own
-        identifier, [a-z0-9_] only, so no fold is involved), its de-slugged form, and its table rows."""
-        return frozenset((slug, deslug(slug))) | self.entities.get(slug, frozenset())
+        identifier, [a-z0-9_] only, so no fold is involved), its de-slugged form, and its table rows. Build 5 (review 2026-10-20): when
+        EVERY table row of the slug writes a sign before a digit (a minus or plus not preceded by a digit: "utc-06", "utc−06"), the
+        de-slugged form, which lost the sign ("utc 06" reads as UTC+06), is not accepted."""
+        rows = self.entities.get(slug, frozenset())
+        if rows and all(_SIGNED_NUMBER.search(r) for r in rows):
+            return frozenset((slug,)) | rows
+        return frozenset((slug, deslug(slug))) | rows
 
 
 @functools.lru_cache(maxsize=1)
@@ -370,22 +386,44 @@ def _exact_violation(parses, toks, origs, offs, src):
 # solomon_is (Solomon Is., the islands) + the telegraphic relation label (round-6 cases R6-CF01, R6-CF02, kept by build 4). Non-finite
 # forms ("be", "am", "being", "been", "do") are not in the set: a reader does not take them as a third-person verb, and they are
 # common inside real names ("Offenbach am Main", "Rio Grande do Sul", "Biel BE").
-STRUCTURE_WORDS = frozenset(("is", "are", "was", "were", "has", "have", "had", "does", "did")) | frozenset(NEG_MARKERS)
+STRUCTURE_WORDS = frozenset(("is", "are", "was", "were", "be", "has", "have", "had", "does", "did")) | frozenset(NEG_MARKERS)
+# "be" (review 2026-10-20): before a participial label ("Thun be located in ...") a name-final "be" supplies the missing verb; the store
+# has two such slugs (biel_be, thun_be), so the cost is small. "am", "being", "been" and "do" stay out.
+# The residue of a dropped apostrophe, compared on the text as written (lower case only, so a capital initial such as "Harry S Truman"
+# is not residue): a lone "s" that ENDS the name ("Saint Alban s located in ..." reads "Saint Alban's located" = "Saint Alban is
+# located") and a lone "t" right after a negative stem ("You don t arrest Voltaire" reads "don't"). A lone "s" or "t" elsewhere is the
+# residue of a folded accent or period ("universit t zu berlin", "u s of a") and reads as no word.
+CONTRACTION_RESIDUE = frozenset(("s", "t"))
+NEGATIVE_STEMS = frozenset(("don", "doesn", "didn", "isn", "aren", "wasn", "weren", "won", "can", "couldn", "wouldn", "shouldn",
+                            "hasn", "haven", "hadn", "ain", "mustn", "needn"))
 
 
 def _structure_word_violation(parses, origs):
     """Build 5 -> a reason string for the first SUBJ/OBJ span, over every parse, whose displayed text holds a word of
     STRUCTURE_WORDS once split on spaces (`surface_form`, so the four display-identical spaces split too), else None. The slug written
-    verbatim ("solomon_is", as the stub mouth renders it) is one word and is not split: underscores are not English word breaks."""
+    verbatim in lower case ("solomon_is", as the stub mouth renders it) is one identifier and is not split; any other casing of an
+    underscore spelling is split on underscores too. Also rejects the residue of a dropped apostrophe (CONTRACTION_RESIDUE)."""
     for _shape, _props, spans in parses:
         for kind, i, slug in spans:
             if kind != "ent":
                 continue
-            words = surface_form(origs[i]).split(" ")
-            hit = [w for w in words if w in STRUCTURE_WORDS]
+            orig = unicodedata.normalize("NFC", origs[i]).strip(SPAN_SPACES)
+            # the slug written verbatim in lower case (as the stub mouth renders it) is one identifier; any other casing of an
+            # underscore spelling is prose ("Marshall_Is", "No_Saints": review 2026-10-20), so its underscores split words like spaces
+            shown = [orig] if orig == slug else [w for w in _WORD_BREAK.split(orig) if w]
+            hit = [w for w in shown if w.lower() in STRUCTURE_WORDS]
             if hit:
-                return ("entity span %r of %s holds the clause word %r: written with spaces, English reads it as the verb or a negation "
-                        "and cuts the name there (write the name without it, or as the slug %s)" % (origs[i], slug, hit[0], slug))
+                return ("entity span %r of %s holds the clause word %r: English reads it as the verb or a negation and cuts the name "
+                        "there" % (origs[i], slug, hit[0]))
+            res = None
+            if len(shown) > 1 and shown[-1] == "s":
+                res = "s"
+            for k in range(1, len(shown)):
+                if shown[k] == "t" and shown[k - 1].lower() in NEGATIVE_STEMS:
+                    res = "t"
+            if res:
+                return ("entity span %r of %s holds a lone lower-case %r, the residue of a dropped apostrophe: English reads it as a "
+                        "contraction (\"'s\" = is, \"n't\" = not)" % (origs[i], slug, res))
     return None
 
 
@@ -709,8 +747,10 @@ def _bad_gap(surface):
     gaps = [surface[:len(surface) - len(surface.lstrip())], surface[len(surface.rstrip()):]]
     gaps.extend(m.group(0) for m in _SENTENCE_SPLIT.finditer(surface.strip()))
     for gap in gaps:
-        for ch in gap:
+        for k, ch in enumerate(gap):
             if ch not in _GAP_OK:
+                return ch
+            if ch == "\r" and gap[k + 1:k + 2] != "\n":      # build 5 (review): a bare CR overprints the line on a terminal
                 return ch
     return None
 
@@ -735,6 +775,17 @@ def allowlist_verify(surface, gathered):
     else:
         first_bad = next((i for i, t in enumerate(trace) if not t["keep"]), None)
         reason = None if first_bad is None else "%s [sentence %d of %d]" % (trace[first_bad]["reason"], first_bad + 1, len(trace))
+        if reason is None:                   # build 5 (review): the list rule across sentences ("... Robbie Williams. ... a Robbie Williams.")
+            seen = {}
+            for k, t in enumerate(trace):
+                for p in map(tuple, t["props"]):
+                    if p in seen:
+                        reason = ("allowlist: sentences %d and %d both state (%s, %s, %s): a reply that states one fact twice can "
+                                  "read as two distinct things" % ((seen[p] + 1, k + 1) + p))
+                        break
+                    seen[p] = k
+                if reason is not None:
+                    break
     return {"accepted": reason is None, "reject_reason": reason, "grounded": grounded, "hypotheses": [], "trace": trace,
             "allowlist": True}
 
