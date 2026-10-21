@@ -1,0 +1,2780 @@
+{
+ "_doc": "Claude adjudication of the round-7 hunt labels, written BEFORE any case is run through any checker. Two blind sonnet judges per case (a LITERAL copy-editor lens and an ORDINARY-reader lens) labelled every case U/F/B from an anonymised, shuffled, label-free copy (workflow wf_6d94717c-8de). 243 of 270 were unanimous with the skeptic. The rule, fixed before any run and applied mechanically: a U case becomes B if the skeptic flagged it arguable, or EITHER judge read it as supported (F), or BOTH judges read it as either-way (B); an F case becomes B if either judge read it as unsupported or both read it as either-way; every other case keeps the skeptic's label (so a U case with one judge U and one judge B stays U). B is counted in the strict reading only, as in rounds 3 to 6. The judge prompt is round 6's, with glosses added for the five relations round 7 uses that round 6 did not (described_by_source, educated_at, instrument, named_after, twinned_administrative_body).",
+ "relabel_to_B": {
+  "R7-A01": "U->B",
+  "R7-A02": "U->B",
+  "R7-A03": "U->B",
+  "R7-A04": "U->B",
+  "R7-A05": "U->B",
+  "R7-A06": "U->B",
+  "R7-A07": "U->B",
+  "R7-A08": "U->B",
+  "R7-A09": "U->B",
+  "R7-A10": "U->B",
+  "R7-A12": "U->B",
+  "R7-A13": "U->B",
+  "R7-A14": "U->B",
+  "R7-A15": "U->B",
+  "R7-A16": "U->B",
+  "R7-A17": "U->B",
+  "R7-A18": "U->B",
+  "R7-A19": "U->B",
+  "R7-A21": "U->B",
+  "R7-A22": "U->B",
+  "R7-A20": "U->B",
+  "R7-GP07": "U->B",
+  "R7-W02": "U->B",
+  "R7-W03": "U->B",
+  "R7-W06": "U->B"
+ },
+ "reasons": {
+  "R7-A01": "both blind judges: either way",
+  "R7-A02": "both blind judges: either way",
+  "R7-A03": "both blind judges: either way",
+  "R7-A04": "both blind judges: either way",
+  "R7-A05": "a blind judge read it as supported",
+  "R7-A06": "both blind judges: either way",
+  "R7-A07": "a blind judge read it as supported",
+  "R7-A08": "both blind judges: either way",
+  "R7-A09": "both blind judges: either way",
+  "R7-A10": "both blind judges: either way",
+  "R7-A12": "both blind judges: either way",
+  "R7-A13": "both blind judges: either way",
+  "R7-A14": "both blind judges: either way",
+  "R7-A15": "a blind judge read it as supported",
+  "R7-A16": "both blind judges: either way",
+  "R7-A17": "a blind judge read it as supported",
+  "R7-A18": "a blind judge read it as supported",
+  "R7-A19": "a blind judge read it as supported",
+  "R7-A21": "both blind judges: either way",
+  "R7-A22": "both blind judges: either way",
+  "R7-A20": "skeptic flagged it arguable",
+  "R7-GP07": "a blind judge read it as supported",
+  "R7-W02": "both blind judges: either way",
+  "R7-W03": "both blind judges: either way",
+  "R7-W06": "both blind judges: either way"
+ },
+ "final_counts": {
+  "B": 25,
+  "U": 191,
+  "F": 54
+ },
+ "bar3_count_note": "The skeptic wrote 216 expect-U inputs (AMENDMENT 5: at least 100). After this adjudication 191 cases are U (AMENDMENT 5: at least 50, else a supplementary batch before the run). Bar 3 is 0 of those 191 kept at all seven seeds through both entries, every arm VALID. The one-sided 95% upper bound at 0 kept is 3/191 = 1.6%. The strict reading, which counts every kept B case, is reported beside it.",
+ "label_crosstab": {
+  "expect F, literal F, ordinary F": 54,
+  "expect U, literal B, ordinary B": 17,
+  "expect U, literal B, ordinary F": 3,
+  "expect U, literal F, ordinary B": 1,
+  "expect U, literal F, ordinary F": 3,
+  "expect U, literal U, ordinary B": 2,
+  "expect U, literal U, ordinary F": 1,
+  "expect U, literal U, ordinary U": 189
+ },
+ "split_rule": "round 3's split rule applies to the split_context_retraction class: a case counts as a lenient leak if the checker keeps a span whose reading within the whole input is denied, hedged or reported",
+ "blindness_note": "the skeptic's README discloses reading the store builder's sanitize, pick_clean_alias and the _alias_map definition line and docstring (as round 6), the round-6 adjudication's judge labels (a label record, not a checker verdict), two result-file names printed in the round-6 README (not opened), and the session's CLAUDE.md and memory index; Claude judges these do not reveal the matcher's rules",
+ "judge_labels": {
+  "R7-A01": {
+   "literal": [
+    "B",
+    "The text displays 'Solomon' with the 'Is' dropped, so the subject is arguably not the Solomon Islands slug, though a reader may still infer it."
+   ],
+   "ordinary": [
+    "B",
+    "With the non-breaking space, \"Solomon Is\" reads as \"Solomon\" plus \"is\"; the entity name is unclear, though the content is otherwise right."
+   ]
+  },
+  "R7-A02": {
+   "literal": [
+    "B",
+    "The text displays 'Solomon' with the 'Is' dropped, so the subject is arguably not the Solomon Islands slug, though a reader may still infer it."
+   ],
+   "ordinary": [
+    "B",
+    "The figure space makes \"Solomon Is\" display as \"Solomon is\", so the entity name is dropped or unclear, though the content is otherwise right."
+   ]
+  },
+  "R7-A03": {
+   "literal": [
+    "B",
+    "The displayed subject is 'Solomon' with 'Is' dropped, so a reader may take it as a different entity, though it plausibly stands for Solomon Is."
+   ],
+   "ordinary": [
+    "B",
+    "The 'Is' is dropped, so it reads as 'Solomon' in Kosrae time, which is slightly off the entity name, though the content matches the triple."
+   ]
+  },
+  "R7-A04": {
+   "literal": [
+    "B",
+    "Displays 'Solomon is located' (narrow no-break space), dropping 'Is' from the name; a reader might still take it as Solomon Islands."
+   ],
+   "ordinary": [
+    "B",
+    "The narrow no-break space renders as 'Solomon is located...', dropping 'Is'; a reader could take it as another entity or as the Solomon Islands."
+   ]
+  },
+  "R7-A05": {
+   "literal": [
+    "B",
+    "Read literally it names 'Marshall' (the 'Is' is absorbed into the verb), so it is arguably a different entity from Marshall Is."
+   ],
+   "ordinary": [
+    "F",
+    "Restates Marshall Is uses Fiji standard time; the non-breaking space is invisible."
+   ]
+  },
+  "R7-A06": {
+   "literal": [
+    "B",
+    "The text displays 'Marshall' with the 'Is' dropped, so the subject is arguably not the Marshall Islands slug, though a reader may still infer it."
+   ],
+   "ordinary": [
+    "B",
+    "The figure space makes \"Marshall Is\" read as \"Marshall\" plus the verb \"is\", so the entity is dropped or unclear, though the time zone is right."
+   ]
+  },
+  "R7-A07": {
+   "literal": [
+    "F",
+    "The thin space is only whitespace, and the sentence states the time-zone triple plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states that the Marshall Islands use Fiji standard time."
+   ]
+  },
+  "R7-A08": {
+   "literal": [
+    "B",
+    "The subject displays as 'Marshall' with the 'Is' of 'Marshall Is' missing, so a reader could go either way on whether the entity is the same."
+   ],
+   "ordinary": [
+    "B",
+    "The subject displays as 'Marshall' instead of 'Marshall Is' (Marshall Islands), but the time zone claim is otherwise the same."
+   ]
+  },
+  "R7-A09": {
+   "literal": [
+    "B",
+    "The subject displays as 'Marshall', missing 'Is', so the entity is truncated and a reader could go either way."
+   ],
+   "ordinary": [
+    "B",
+    "The subject displays as 'Marshall' without 'Is', although the described-by claim is otherwise stated plainly."
+   ]
+  },
+  "R7-A10": {
+   "literal": [
+    "B",
+    "The displayed text drops 'Is' and reads 'Marshall is described by...', so a reader may take the subject as 'Marshall' rather than Marshall Is."
+   ],
+   "ordinary": [
+    "B",
+    "The narrow no-break space displays 'Marshall is described by...', so the entity can read as 'Marshall' rather than Marshall Is, but it is otherwise a plain statement of the triple."
+   ]
+  },
+  "R7-A11": {
+   "literal": [
+    "U",
+    "Displays 'Marshall', not 'Marshall Is', so the subject reads as a different entity."
+   ],
+   "ordinary": [
+    "B",
+    "Reads as 'Marshall' (no 'Is') being described, which may be a different entity, though a reader might supply Marshall Is."
+   ]
+  },
+  "R7-A12": {
+   "literal": [
+    "B",
+    "The displayed subject is 'Solomon' with 'Is' dropped, so a reader may take it as a different entity, though it plausibly stands for Solomon Is."
+   ],
+   "ordinary": [
+    "B",
+    "The 'Is' is dropped, so it reads as 'Solomon' being a sovereign state, and the entity could be taken for a different one, though the gist matches the triple."
+   ]
+  },
+  "R7-A13": {
+   "literal": [
+    "B",
+    "The subject displays as 'Marshall', missing 'Is', so the entity is truncated and a reader could go either way."
+   ],
+   "ordinary": [
+    "B",
+    "The subject displays as 'Marshall' without 'Is', although the instance claim is otherwise plain."
+   ]
+  },
+  "R7-A14": {
+   "literal": [
+    "B",
+    "Displays 'Solomon is a member of the United Nations' with the 'Is' of 'Solomon Is' folded into the verb; reader may or may not map 'Solomon' to Solomon Is."
+   ],
+   "ordinary": [
+    "B",
+    "Displays 'Solomon' with the 'Is' dropped, which could be read as a different entity."
+   ]
+  },
+  "R7-A15": {
+   "literal": [
+    "F",
+    "The figure space is only whitespace, and the article is dropped in telegraphic style; the member_of triple is stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states that the Marshall Islands are a UN member."
+   ]
+  },
+  "R7-A16": {
+   "literal": [
+    "B",
+    "Lowercase with a no-break space displays 'solomon is located', dropping 'Is' from the name; ambiguous between Solomon Is and a truncated name."
+   ],
+   "ordinary": [
+    "B",
+    "Non-breaking space and lowercase render as 'solomon is located...', dropping 'Is'; same entity ambiguity as J009."
+   ]
+  },
+  "R7-A17": {
+   "literal": [
+    "B",
+    "Non-breaking spaces make the subject read 'Solomon' with 'is' as the verb, so the entity Solomon Is is arguably misstated."
+   ],
+   "ordinary": [
+    "F",
+    "Restates the gathered triple; non-breaking spaces are invisible."
+   ]
+  },
+  "R7-A18": {
+   "literal": [
+    "F",
+    "The nbsp displays as an ordinary space; the two sentences state exactly the two gathered triples."
+   ],
+   "ordinary": [
+    "B",
+    "Both statements match the triples, but the subject displays as 'Marshall' with a no-break space and a missing 'Is', so the entity is ambiguous."
+   ]
+  },
+  "R7-A19": {
+   "literal": [
+    "F",
+    "The no-break space is only whitespace, and the sentence plainly states the time-zone triple for the Solomon Islands slug."
+   ],
+   "ordinary": [
+    "F",
+    "Stilted but clear: the entity uses Kosrae time."
+   ]
+  },
+  "R7-A21": {
+   "literal": [
+    "B",
+    "Displays 'Solomon is located...' with the 'Is' of 'Solomon Is' apparently lost behind thin spaces; a reader could take it as Solomon Is or as plain 'Solomon'."
+   ],
+   "ordinary": [
+    "B",
+    "Displays 'Solomon' without 'Is', so a reader may take it as a different entity than Solomon Is."
+   ]
+  },
+  "R7-A22": {
+   "literal": [
+    "B",
+    "The subject displays as 'Marshall', missing 'Is', followed by a double space, so the entity is truncated and a reader could go either way."
+   ],
+   "ordinary": [
+    "B",
+    "The subject displays as 'Marshall' without 'Is' and with an odd double space, although the time zone claim is the same."
+   ]
+  },
+  "R7-A20": {
+   "literal": [
+    "B",
+    "Displays the ungrammatical 'Thun be located in Canton de Berne'; meaning is probably clear, but the subject name 'Thun BE' appears altered."
+   ],
+   "ordinary": [
+    "F",
+    "Ungrammatical 'be' but meaning clearly is that Thun is located in Canton de Berne."
+   ]
+  },
+  "R7-B01": {
+   "literal": [
+    "U",
+    "'In name only' undermines the membership claim."
+   ],
+   "ordinary": [
+    "U",
+    "'In name only' undermines the membership."
+   ]
+  },
+  "R7-B02": {
+   "literal": [
+    "U",
+    "'Part of the time' restricts membership to partial time, which the triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "'Part of the time' qualifies membership as intermittent, which is not entailed."
+   ]
+  },
+  "R7-B03": {
+   "literal": [
+    "U",
+    "'only in part' qualifies and weakens the part relation."
+   ],
+   "ordinary": [
+    "U",
+    "'Only in part' qualifies and weakens the has_part claim."
+   ]
+  },
+  "R7-B04": {
+   "literal": [
+    "U",
+    "'at no point' negates the border."
+   ],
+   "ordinary": [
+    "U",
+    "'At no point' negates the border."
+   ]
+  },
+  "R7-B05": {
+   "literal": [
+    "U",
+    "'At no time' negates the follows triple."
+   ],
+   "ordinary": [
+    "U",
+    "'at no time' negates the relation."
+   ]
+  },
+  "R7-B06": {
+   "literal": [
+    "U",
+    "'Part time' limits the membership; the triple does not say so."
+   ],
+   "ordinary": [
+    "U",
+    "'Part time' adds a qualifier on membership that the triple does not support."
+   ]
+  },
+  "R7-B07": {
+   "literal": [
+    "U",
+    "'At times' hedges/temporalizes the part relation, which the triple states unconditionally."
+   ],
+   "ordinary": [
+    "U",
+    "'At times' hedges the part relation into a temporary one."
+   ]
+  },
+  "R7-B08": {
+   "literal": [
+    "U",
+    "'Part of the time' hedges the time-zone relation, which the triple states unconditionally."
+   ],
+   "ordinary": [
+    "U",
+    "'Part of the time' hedges the time-zone fact."
+   ]
+  },
+  "R7-B09": {
+   "literal": [
+    "U",
+    "'For a time only' restricts the membership beyond the triple."
+   ],
+   "ordinary": [
+    "U",
+    "'For a time only' limits the membership and implies it is not current."
+   ]
+  },
+  "R7-B10": {
+   "literal": [
+    "U",
+    "'only in part' qualifies the naming."
+   ],
+   "ordinary": [
+    "U",
+    "'Only in part' qualifies the naming."
+   ]
+  },
+  "R7-B11": {
+   "literal": [
+    "U",
+    "'in name only' undercuts the membership claim."
+   ],
+   "ordinary": [
+    "U",
+    "\"in name only\" casts doubt on the membership."
+   ]
+  },
+  "R7-B12": {
+   "literal": [
+    "U",
+    "'in some instances only' qualifies and restricts the instance-of claim."
+   ],
+   "ordinary": [
+    "U",
+    "\"in some instances only\" qualifies and limits the plain instance_of fact."
+   ]
+  },
+  "R7-B13": {
+   "literal": [
+    "U",
+    "'At times only' restricts the relation, which the triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "'At times only' limits the time zone claim."
+   ]
+  },
+  "R7-B14": {
+   "literal": [
+    "U",
+    "'At no time' negates the shares-border-with triple."
+   ],
+   "ordinary": [
+    "U",
+    "'at no time' negates the border relation."
+   ]
+  },
+  "R7-C01": {
+   "literal": [
+    "U",
+    "'may follow' hedges a stated fact."
+   ],
+   "ordinary": [
+    "U",
+    "'May follow' hedges a fact stated as certain."
+   ]
+  },
+  "R7-C02": {
+   "literal": [
+    "U",
+    "'might' hedges the border claim, which the triple states plainly."
+   ],
+   "ordinary": [
+    "U",
+    "\"might\" hedges a fact the triple states plainly."
+   ]
+  },
+  "R7-C03": {
+   "literal": [
+    "U",
+    "'Could be' hedges the membership into a possibility."
+   ],
+   "ordinary": [
+    "U",
+    "'Could be' turns a stated fact into a possibility."
+   ]
+  },
+  "R7-C04": {
+   "literal": [
+    "U",
+    "'Used to be' changes the tense and implies he no longer is a member."
+   ],
+   "ordinary": [
+    "U",
+    "'Used to be' says the membership is past, which changes the tense."
+   ]
+  },
+  "R7-C05": {
+   "literal": [
+    "U",
+    "'About to become' is a future or tense change, but the triple says the country already is a member."
+   ],
+   "ordinary": [
+    "U",
+    "'about to become' changes a current membership into a future event."
+   ]
+  },
+  "R7-C06": {
+   "literal": [
+    "U",
+    "'Is set to share' puts the border in the future, not as a present fact."
+   ],
+   "ordinary": [
+    "U",
+    "'Is set to share' makes the border a future event, not a current fact."
+   ]
+  },
+  "R7-C07": {
+   "literal": [
+    "U",
+    "'is expected to follow' turns the plain fact into an expectation."
+   ],
+   "ordinary": [
+    "U",
+    "\"is expected to follow\" turns a fact into a prediction."
+   ]
+  },
+  "R7-C08": {
+   "literal": [
+    "U",
+    "'Is thought to be' hedges the time-zone claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Is thought to be' hedges the claim."
+   ]
+  },
+  "R7-C09": {
+   "literal": [
+    "U",
+    "'Is rumoured to be' hedges the membership claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Rumoured' turns a stated fact into an unconfirmed claim."
+   ]
+  },
+  "R7-C10": {
+   "literal": [
+    "U",
+    "'Seems to' hedges the has_part assertion."
+   ],
+   "ordinary": [
+    "U",
+    "'Seems to' hedges a fact that is stated as plain."
+   ]
+  },
+  "R7-C11": {
+   "literal": [
+    "U",
+    "'Appears to be' is a hedge, while the triple asserts membership plainly."
+   ],
+   "ordinary": [
+    "U",
+    "'appears to be' adds a hedge."
+   ]
+  },
+  "R7-C12": {
+   "literal": [
+    "U",
+    "'Has stopped sharing border' asserts a change and the border ending, which contradicts the triple."
+   ],
+   "ordinary": [
+    "U",
+    "'Has stopped sharing' implies a past border that no longer exists, which changes the truth."
+   ]
+  },
+  "R7-C13": {
+   "literal": [
+    "U",
+    "'Has yet to' implies the relation does not currently hold."
+   ],
+   "ordinary": [
+    "U",
+    "'Yet to have' says the part is not currently there, which negates the triple."
+   ]
+  },
+  "R7-C14": {
+   "literal": [
+    "U",
+    "'Might not follow' hedges and negates the follows triple."
+   ],
+   "ordinary": [
+    "U",
+    "'Might not follow' hedges and negates the triple that Aug follows Jul."
+   ]
+  },
+  "R7-C15": {
+   "literal": [
+    "U",
+    "'would probably follow' hedges the plain 'follows' triple."
+   ],
+   "ordinary": [
+    "U",
+    "\"would probably\" hedges a stated fact."
+   ]
+  },
+  "R7-D01": {
+   "literal": [
+    "U",
+    "'Most famous' adds a superlative not in the triples."
+   ],
+   "ordinary": [
+    "U",
+    "'Most famous' adds a superlative that the triple does not support."
+   ]
+  },
+  "R7-D02": {
+   "literal": [
+    "U",
+    "'Longest border' adds a superlative that the triple does not support."
+   ],
+   "ordinary": [
+    "U",
+    "'longest border' adds a superlative."
+   ]
+  },
+  "R7-D03": {
+   "literal": [
+    "U",
+    "'the oldest member' adds a superlative claim."
+   ],
+   "ordinary": [
+    "U",
+    "\"oldest member\" adds a superlative."
+   ]
+  },
+  "R7-D04": {
+   "literal": [
+    "U",
+    "'Larger member... than Ukraine' adds a comparative size claim not in the triples."
+   ],
+   "ordinary": [
+    "U",
+    "Adds a size comparison to Ukraine."
+   ]
+  },
+  "R7-D05": {
+   "literal": [
+    "U",
+    "'Best known member' adds a superlative claim that the triple does not support."
+   ],
+   "ordinary": [
+    "U",
+    "'best known' adds an unsupported claim."
+   ]
+  },
+  "R7-D06": {
+   "literal": [
+    "U",
+    "'The largest member' adds a superlative/size claim not in the member_of triple."
+   ],
+   "ordinary": [
+    "U",
+    "'Largest' member is an added superlative."
+   ]
+  },
+  "R7-D07": {
+   "literal": [
+    "U",
+    "The comparative with 'any other country' adds a claim that the triple does not support."
+   ],
+   "ordinary": [
+    "U",
+    "Adds a comparative claim about border length."
+   ]
+  },
+  "R7-D08": {
+   "literal": [
+    "U",
+    "'Smallest instance' adds a superlative not entailed by instance_of."
+   ],
+   "ordinary": [
+    "U",
+    "'Smallest' adds a superlative not in the triple."
+   ]
+  },
+  "R7-D09": {
+   "literal": [
+    "U",
+    "'More closely than' adds a comparative claim not entailed by the two follows triples."
+   ],
+   "ordinary": [
+    "U",
+    "Adds a comparison of closeness that the triples do not support."
+   ]
+  },
+  "R7-D10": {
+   "literal": [
+    "U",
+    "'More prominently than any other member' adds a comparison that is not in the triple."
+   ],
+   "ordinary": [
+    "U",
+    "Adds a comparative claim of greater prominence than other members."
+   ]
+  },
+  "R7-E01": {
+   "literal": [
+    "U",
+    "Adds an ungathered claim that Robbie Williams is a member of The Who."
+   ],
+   "ordinary": [
+    "U",
+    "Adds an ungathered claim that Robbie Williams is a member of The Who."
+   ]
+  },
+  "R7-E02": {
+   "literal": [
+    "U",
+    "Adds that Ukraine is part of Pole Land, which is not in the triple and contradicts the border relation."
+   ],
+   "ordinary": [
+    "U",
+    "Adds an unsupported claim that Ukraine is part of Pole Land."
+   ]
+  },
+  "R7-E03": {
+   "literal": [
+    "U",
+    "Aug follows Jul in the triples, so saying Jul follows Aug reverses the order."
+   ],
+   "ordinary": [
+    "U",
+    "Says Jul follows Aug, which reverses the stored order (Aug follows Jul)."
+   ]
+  },
+  "R7-E04": {
+   "literal": [
+    "U",
+    "Adds the unsupported assertion that Take That has part Rick Wakeman."
+   ],
+   "ordinary": [
+    "U",
+    "Adds an extra claim that Take That has Rick Wakeman as a part, which is not gathered."
+   ]
+  },
+  "R7-E05": {
+   "literal": [
+    "U",
+    "Asserts Solomon Is is a member of the European Union, which is not gathered."
+   ],
+   "ordinary": [
+    "U",
+    "Adds EU membership for Solomon Is, which is not gathered."
+   ]
+  },
+  "R7-E06": {
+   "literal": [
+    "U",
+    "States the time zone as Kosrae time, whereas the triple says Fiji standard time."
+   ],
+   "ordinary": [
+    "U",
+    "States the time zone as Kosrae time, contradicting Fiji standard time."
+   ]
+  },
+  "R7-E07": {
+   "literal": [
+    "U",
+    "Says Pole Land contains M Kyiv, but Ukraine contains it."
+   ],
+   "ordinary": [
+    "U",
+    "Says Poland contains M Kyiv, but Ukraine contains it."
+   ]
+  },
+  "R7-E08": {
+   "literal": [
+    "U",
+    "Adds that he is the founder of Yes band, which is not in the triples."
+   ],
+   "ordinary": [
+    "U",
+    "Adds that Wakeman founded Yes, which is not in the triple."
+   ]
+  },
+  "R7-E09": {
+   "literal": [
+    "U",
+    "Adds 'the month after Jul', which is not entailed and is false (June precedes July)."
+   ],
+   "ordinary": [
+    "U",
+    "Adds that June comes after July, which is false and not in the triple."
+   ]
+  },
+  "R7-E10": {
+   "literal": [
+    "U",
+    "'Which is part of Ukraine' is an extra assertion that contradicts the border relation."
+   ],
+   "ordinary": [
+    "U",
+    "Adds that Poland is part of Ukraine, which is not stored and is false."
+   ]
+  },
+  "R7-E11": {
+   "literal": [
+    "U",
+    "'Take That, which has part Townshend' attaches Townshend to Take That, but the triple says he is a part of The Who."
+   ],
+   "ordinary": [
+    "U",
+    "'which has part Townshend' attaches the Townshend part-of relation to Take That instead of The Who."
+   ]
+  },
+  "R7-E12": {
+   "literal": [
+    "U",
+    "Adds that Robbie Williams is a part of The Who, which is not gathered."
+   ],
+   "ordinary": [
+    "U",
+    "Adds that The Who has Robbie Williams as a part, which is not gathered."
+   ]
+  },
+  "R7-GP01": {
+   "literal": [
+    "U",
+    "Ellipsis 'and June Jul' reads as 'June follows Jul', reversing the order."
+   ],
+   "ordinary": [
+    "U",
+    "The elided clause 'June Jul' reads as 'June follows Jul', which reverses the order; the triple says June is followed by Jul."
+   ]
+  },
+  "R7-GP02": {
+   "literal": [
+    "U",
+    "The elliptical 'Pole Land with M Kyiv' asserts Poland borders Kyiv, but the triple says Ukraine contains M Kyiv."
+   ],
+   "ordinary": [
+    "U",
+    "Says Pole Land borders M Kyiv, but M Kyiv is only contained in Ukraine."
+   ]
+  },
+  "R7-GP03": {
+   "literal": [
+    "U",
+    "Second clause puts Rick Wakeman in Take That, but the triple has him in Yes band."
+   ],
+   "ordinary": [
+    "U",
+    "Claims Rick Wakeman is a member of Take That, but the gathered triple puts him in Yes."
+   ]
+  },
+  "R7-GP04": {
+   "literal": [
+    "U",
+    "It asserts Yes band has part Robbie Williams, but the triple says Yes band's part is Rick Wakeman."
+   ],
+   "ordinary": [
+    "U",
+    "\"Yes band Robbie Williams\" asserts Robbie Williams is in Yes, but the triple says Rick Wakeman."
+   ]
+  },
+  "R7-GP05": {
+   "literal": [
+    "U",
+    "Townshend is a member of The Who, not Yes band."
+   ],
+   "ordinary": [
+    "U",
+    "Townshend is in The Who, not Yes band."
+   ]
+  },
+  "R7-GP06": {
+   "literal": [
+    "U",
+    "'June Aug' reads as June follows Aug, which is reversed or contradictory."
+   ],
+   "ordinary": [
+    "U",
+    "Elliptical 'June Aug' reads as June follows Aug, which is not gathered and is reversed."
+   ]
+  },
+  "R7-GP07": {
+   "literal": [
+    "U",
+    "'And Marshall Is too' asserts Marshall Is is in Kosrae time, but it is in Fiji standard time."
+   ],
+   "ordinary": [
+    "F",
+    "Both zone assignments are gathered; 'Marshall Is too' refers to its own Fiji standard time, but it reads as Kosrae time, which is wrong."
+   ]
+  },
+  "R7-GP08": {
+   "literal": [
+    "U",
+    "'So is M Kyiv' asserts that Kyiv is a UN member, but the triple only says Ukraine contains Kyiv."
+   ],
+   "ordinary": [
+    "U",
+    "Claims M Kyiv is also a UN member; the triples only say Ukraine contains it."
+   ]
+  },
+  "R7-GP09": {
+   "literal": [
+    "U",
+    "'And Solomon Is as well' asserts Solomon Is is described by the Armenian Soviet Encyclopedia, but the store only gives Solomon Is as a UN member."
+   ],
+   "ordinary": [
+    "U",
+    "'Solomon Is as well' says Solomon Is is described by the Armenian Soviet Encyclopedia, but the stored triple is UN membership."
+   ]
+  },
+  "R7-CF01": {
+   "literal": [
+    "U",
+    "Counterfactual 'would have been... but never joined' denies actual membership."
+   ],
+   "ordinary": [
+    "U",
+    "Says he never joined, which contradicts membership."
+   ]
+  },
+  "R7-CF02": {
+   "literal": [
+    "U",
+    "Counterfactual 'Had ... shared' implies they do not border."
+   ],
+   "ordinary": [
+    "U",
+    "Counterfactual 'Had ... would be neighbours' implies they do not actually border."
+   ]
+  },
+  "R7-CF03": {
+   "literal": [
+    "U",
+    "Counterfactual 'would be a member if he had not left' implies he left and is not a member."
+   ],
+   "ordinary": [
+    "U",
+    "Counterfactual implies he left and is not a member."
+   ]
+  },
+  "R7-CF04": {
+   "literal": [
+    "U",
+    "Counterfactual 'would be ... if it lay further east' implies it is not actually in that zone."
+   ],
+   "ordinary": [
+    "U",
+    "Counterfactual 'would be ... if it lay further east' implies it is not currently in that zone."
+   ]
+  },
+  "R7-CF05": {
+   "literal": [
+    "U",
+    "Counterfactual 'would follow ... if' implies it actually does not."
+   ],
+   "ordinary": [
+    "U",
+    "Counterfactual framing implies Jul does not actually follow June."
+   ]
+  },
+  "R7-CF06": {
+   "literal": [
+    "U",
+    "Counterfactual 'would have ... had he stayed' implies he is not actually a part."
+   ],
+   "ordinary": [
+    "U",
+    "A counterfactual ('would have ... had he stayed') implies he is not currently part of the band."
+   ]
+  },
+  "R7-CF07": {
+   "literal": [
+    "U",
+    "Counterfactual 'would share border ... if the border had not moved' implies they do not share a border now."
+   ],
+   "ordinary": [
+    "U",
+    "The counterfactual 'would share border ... if the border had not moved' implies they do not currently border."
+   ]
+  },
+  "R7-CF08": {
+   "literal": [
+    "U",
+    "'Could have been' is modal/counterfactual and does not assert the actual membership."
+   ],
+   "ordinary": [
+    "U",
+    "'Could have been' implies he was not a member."
+   ]
+  },
+  "R7-H01": {
+   "literal": [
+    "U",
+    "'According to rumour' hedges the assertion."
+   ],
+   "ordinary": [
+    "U",
+    "'According to rumour' casts doubt on a fact stated as plain."
+   ]
+  },
+  "R7-H02": {
+   "literal": [
+    "U",
+    "'Wrongly claim' frames the membership as a false claim, which denies the triple."
+   ],
+   "ordinary": [
+    "U",
+    "Says the claim is wrongly made, which denies the gathered fact."
+   ]
+  },
+  "R7-H03": {
+   "literal": [
+    "U",
+    "'Critics deny that...' negates or contests the membership the triple asserts."
+   ],
+   "ordinary": [
+    "U",
+    "\"Critics deny that\" frames the membership as denied or disputed."
+   ]
+  },
+  "R7-H04": {
+   "literal": [
+    "U",
+    "'It is disputed whether' casts doubt on the relation rather than asserting it."
+   ],
+   "ordinary": [
+    "U",
+    "Says the border is 'disputed', which is doubt and not plain assertion."
+   ]
+  },
+  "R7-H05": {
+   "literal": [
+    "U",
+    "'Nobody believes' frames the membership as disbelieved, implying doubt or denial."
+   ],
+   "ordinary": [
+    "U",
+    "'Nobody believes...' casts doubt on or denies the membership claim."
+   ]
+  },
+  "R7-H06": {
+   "literal": [
+    "U",
+    "'Wikipedia mistakenly says' frames the claim as an error and attributes it to a source."
+   ],
+   "ordinary": [
+    "U",
+    "'Wikipedia mistakenly says' frames the fact as an error."
+   ]
+  },
+  "R7-H07": {
+   "literal": [
+    "U",
+    "Quotes the claim and calls it a myth, which denies it."
+   ],
+   "ordinary": [
+    "U",
+    "Calling the statement 'a myth' denies it."
+   ]
+  },
+  "R7-H08": {
+   "literal": [
+    "U",
+    "The sentence calls the membership claim false, directly denying the gathered triple."
+   ],
+   "ordinary": [
+    "U",
+    "Denies the membership the triple asserts."
+   ]
+  },
+  "R7-I01": {
+   "literal": [
+    "U",
+    "'two Robbie Williams' adds a quantity."
+   ],
+   "ordinary": [
+    "U",
+    "\"two Robbie Williams\" adds a quantity."
+   ]
+  },
+  "R7-I02": {
+   "literal": [
+    "U",
+    "'Twice' adds a quantity that the triple does not support."
+   ],
+   "ordinary": [
+    "U",
+    "'twice' adds a quantity not in the triple."
+   ]
+  },
+  "R7-I03": {
+   "literal": [
+    "U",
+    "Adds a quantity (9 km of border) not in the triple."
+   ],
+   "ordinary": [
+    "U",
+    "Adds a quantity of 9 km of border."
+   ]
+  },
+  "R7-I04": {
+   "literal": [
+    "U",
+    "'By three months' adds a quantity, and July follows June by one month."
+   ],
+   "ordinary": [
+    "U",
+    "Adds a three-month gap, which is a quantity not in the triple and is also wrong."
+   ]
+  },
+  "R7-I05": {
+   "literal": [
+    "U",
+    "'One of nine members' adds a quantity that the membership triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "Adds a quantity, 'one of nine members', which the triple does not give."
+   ]
+  },
+  "R7-I06": {
+   "literal": [
+    "U",
+    "Adds 'four other keyboardists', a quantity and extra entities not in the triple."
+   ],
+   "ordinary": [
+    "U",
+    "Adds 'four other keyboardists', a quantity not in the triple."
+   ]
+  },
+  "R7-I07": {
+   "literal": [
+    "U",
+    "'Part 2' reads as a numbered part or a quantity, which the triple does not give."
+   ],
+   "ordinary": [
+    "U",
+    "'part 2' reads as a numbered part or a quantity, which the triple does not give."
+   ]
+  },
+  "R7-I08": {
+   "literal": [
+    "U",
+    "Adds 'for half of the year', a duration/partial-time claim not in the triple."
+   ],
+   "ordinary": [
+    "U",
+    "Adds 'for half of the year', a duration/seasonal qualifier not in the triple."
+   ]
+  },
+  "R7-I09": {
+   "literal": [
+    "U",
+    "'three times over' adds a quantity not in the triple."
+   ],
+   "ordinary": [
+    "U",
+    "\"three times over\" adds a quantity not in the triple."
+   ]
+  },
+  "R7-I10": {
+   "literal": [
+    "U",
+    "Adds the quantity '12 times a year', which the triple does not give."
+   ],
+   "ordinary": [
+    "U",
+    "Adds a quantity ('12 times a year') and changes the sense of the relation, which is not entailed."
+   ]
+  },
+  "R7-I11": {
+   "literal": [
+    "U",
+    "Adds a border length of 4000 km, a quantity not in the triple."
+   ],
+   "ordinary": [
+    "U",
+    "Adds a border length of 4000 km that is not entailed."
+   ]
+  },
+  "R7-I12": {
+   "literal": [
+    "U",
+    "Adds 'and of 5 other bands', a quantity not in the triples."
+   ],
+   "ordinary": [
+    "U",
+    "Adds a quantity, 5 other bands, that is not gathered."
+   ]
+  },
+  "R7-J01": {
+   "literal": [
+    "U",
+    "Claims membership of the board of Take That, a different role/entity than member of the band."
+   ],
+   "ordinary": [
+    "U",
+    "'Member of the board of Take That' says he sits on a governing board, a different relation from band membership."
+   ]
+  },
+  "R7-J02": {
+   "literal": [
+    "U",
+    "Says Ukraine borders 'the capital of' Pole Land, a different entity than Pole Land itself."
+   ],
+   "ordinary": [
+    "U",
+    "Says Ukraine borders the capital of Pole Land, a different entity than Pole Land."
+   ]
+  },
+  "R7-J03": {
+   "literal": [
+    "U",
+    "'Fan club of Yes band' is a different organisation from the band."
+   ],
+   "ordinary": [
+    "U",
+    "Fan club membership is a different relation from band membership."
+   ]
+  },
+  "R7-J04": {
+   "literal": [
+    "U",
+    "'tribute band of The Who' names a different entity (a tribute band) from The Who."
+   ],
+   "ordinary": [
+    "U",
+    "\"tribute band of The Who\" says he belongs to a tribute band, not to The Who."
+   ]
+  },
+  "R7-J05": {
+   "literal": [
+    "U",
+    "Membership of the Security Council is a different, narrower body than the United Nations, which is not entailed."
+   ],
+   "ordinary": [
+    "U",
+    "Security Council membership is a different, more specific claim than UN membership."
+   ]
+  },
+  "R7-J06": {
+   "literal": [
+    "U",
+    "Says Take That has part the brother of Robbie Williams, a different person."
+   ],
+   "ordinary": [
+    "U",
+    "Says the brother of Robbie Williams is part of Take That, which is a different person."
+   ]
+  },
+  "R7-J07": {
+   "literal": [
+    "U",
+    "'The son of Julius Ceasar' is an extra entity, since the triple says Jul is named after Julius Ceasar himself."
+   ],
+   "ordinary": [
+    "U",
+    "Says Jul is named after the 'son of' Julius Caesar, a different entity from the one in the triple."
+   ]
+  },
+  "R7-J08": {
+   "literal": [
+    "U",
+    "'The south of' Germany narrows the border to a region, which the plain border triple does not state."
+   ],
+   "ordinary": [
+    "U",
+    "Adds 'the south of' Germany, so the sentence claims a different or partial border than the triple."
+   ]
+  },
+  "R7-J09": {
+   "literal": [
+    "U",
+    "Says he is a member of the rival of Take That, a different entity."
+   ],
+   "ordinary": [
+    "U",
+    "'Member of the rival of Take That' names a different entity and denies membership of Take That."
+   ]
+  },
+  "R7-K01": {
+   "literal": [
+    "U",
+    "'Follow each other' asserts mutual succession; the triple only says Jul follows June."
+   ],
+   "ordinary": [
+    "U",
+    "Says they follow each other, which adds the reverse relation."
+   ]
+  },
+  "R7-K02": {
+   "literal": [
+    "U",
+    "Asserts mutual membership, but only Williams being a member of Take That is gathered."
+   ],
+   "ordinary": [
+    "U",
+    "Asserts reciprocal membership, but only Robbie being a member of Take That is gathered."
+   ]
+  },
+  "R7-K03": {
+   "literal": [
+    "U",
+    "Asserts has_part in both directions, but only Take That has_part Robbie Williams is gathered."
+   ],
+   "ordinary": [
+    "U",
+    "Claims the has-part relation in both directions, but only Take That has part Robbie Williams."
+   ]
+  },
+  "R7-K04": {
+   "literal": [
+    "U",
+    "'Follow each other' is mutual and asserts a reversed relation too; only second follows first."
+   ],
+   "ordinary": [
+    "U",
+    "'Follow each other' makes the relation mutual, but only second follows first."
+   ]
+  },
+  "R7-K05": {
+   "literal": [
+    "U",
+    "Asserts each follows the other; only Aug follows Jul is gathered."
+   ],
+   "ordinary": [
+    "U",
+    "Asserts mutual succession; only Aug following Jul is gathered."
+   ]
+  },
+  "R7-K06": {
+   "literal": [
+    "U",
+    "'Part of each other' asserts the reverse part_of relation as well, which is not entailed by a single has_part triple."
+   ],
+   "ordinary": [
+    "U",
+    "Claims mutual parthood, which reverses or adds to the one-way has_part."
+   ]
+  },
+  "R7-K07": {
+   "literal": [
+    "U",
+    "'Members of one another' asserts a reciprocal relation (the band is a member of Wakeman), which the triple does not give."
+   ],
+   "ordinary": [
+    "U",
+    "'Members of one another' reverses/adds a role: the band being a member of Wakeman is not entailed."
+   ]
+  },
+  "R7-K08": {
+   "literal": [
+    "U",
+    "'Follow one another' is symmetric and adds that May sickness follows June, but the triple has only June following May sickness."
+   ],
+   "ordinary": [
+    "U",
+    "'follow one another' makes the relation mutual, but the triple only says June follows May sickness."
+   ]
+  },
+  "R7-L01": {
+   "literal": [
+    "U",
+    "'Since 1975' adds a date that the triple does not give."
+   ],
+   "ordinary": [
+    "U",
+    "'since 1975' adds a date and a tense change."
+   ]
+  },
+  "R7-L02": {
+   "literal": [
+    "U",
+    "'Only since 2015' adds a temporal restriction and a tense claim not entailed."
+   ],
+   "ordinary": [
+    "U",
+    "Adds a time qualifier (only since 2015) not in the triple."
+   ]
+  },
+  "R7-L03": {
+   "literal": [
+    "U",
+    "'Left' asserts the membership ended, contradicting the present-tense triple."
+   ],
+   "ordinary": [
+    "U",
+    "'Left' says membership ended, which the triple does not say."
+   ]
+  },
+  "R7-L04": {
+   "literal": [
+    "U",
+    "'Quit' asserts that he left and is no longer a member, but the triple only says he is a member."
+   ],
+   "ordinary": [
+    "U",
+    "'quit' means he is no longer a member, which contradicts the membership triple."
+   ]
+  },
+  "R7-L05": {
+   "literal": [
+    "U",
+    "'Until 1900' adds a time bound and implies it no longer holds."
+   ],
+   "ordinary": [
+    "U",
+    "'Until 1900' is a tense change and an extra date, implying it no longer follows."
+   ]
+  },
+  "R7-L06": {
+   "literal": [
+    "U",
+    "Adds a date (2004) and a 'joined' event not in the membership triple."
+   ],
+   "ordinary": [
+    "U",
+    "Adds the year 2004, which is not in the triple."
+   ]
+  },
+  "R7-L07": {
+   "literal": [
+    "U",
+    "Past tense 'was ... until last year' implies it no longer is."
+   ],
+   "ordinary": [
+    "U",
+    "Past tense with 'until last year' implies it is no longer in that zone."
+   ]
+  },
+  "R7-L08": {
+   "literal": [
+    "U",
+    "'No longer a member' is a tense change that implies membership has ended."
+   ],
+   "ordinary": [
+    "U",
+    "'No longer a member' asserts a past membership that has ended, which contradicts the triple."
+   ]
+  },
+  "R7-L09": {
+   "literal": [
+    "U",
+    "Adds a time claim ('before 1950') and past tense not in the triple."
+   ],
+   "ordinary": [
+    "U",
+    "Adds a time qualifier 'before 1950' and past tense not in the triple."
+   ]
+  },
+  "R7-L10": {
+   "literal": [
+    "U",
+    "'Became a member... in 2020' adds a date and an event of joining, which the triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "Adds an unsupported date, 2020, and a 'became' tense claim."
+   ]
+  },
+  "R7-M01": {
+   "literal": [
+    "U",
+    "Fiji standard time is Marshall Is's zone, not Solomon Is's, so the zone is swapped."
+   ],
+   "ordinary": [
+    "U",
+    "Uses Fiji standard time, which belongs to Marshall Is, not Solomon Is."
+   ]
+  },
+  "R7-M02": {
+   "literal": [
+    "U",
+    "The gathered time zone for Marshall Is is Fiji standard time; Kosrae time belongs to Solomon Is."
+   ],
+   "ordinary": [
+    "U",
+    "Gives Marshall Is the Kosrae time zone, but the triple says Fiji standard time."
+   ]
+  },
+  "R7-M03": {
+   "literal": [
+    "U",
+    "The triples give Wakeman, not Williams, as a member of Yes band."
+   ],
+   "ordinary": [
+    "U",
+    "Gives Yes band as Robbie Williams's group, but the store has him in Take That and Rick Wakeman in Yes."
+   ]
+  },
+  "R7-M04": {
+   "literal": [
+    "U",
+    "Gathered says Wakeman is a member of Yes, not Take That."
+   ],
+   "ordinary": [
+    "U",
+    "Gathered says Wakeman is in Yes, not Take That; the sentence swaps the band."
+   ]
+  },
+  "R7-M05": {
+   "literal": [
+    "U",
+    "Gathered triples give Ukraine-Poland and Poland-Germany borders; Ukraine bordering Germany is not entailed."
+   ],
+   "ordinary": [
+    "U",
+    "Ukraine bordering Germany is a two-hop inference through Poland, not a gathered triple."
+   ]
+  },
+  "R7-M06": {
+   "literal": [
+    "U",
+    "The named_after triple is for jul, not june; the sentence attributes June's naming to Julius Caesar, which is a different entity and not entailed."
+   ],
+   "ordinary": [
+    "U",
+    "The store says Jul is named after Julius Caesar, not June."
+   ]
+  },
+  "R7-M07": {
+   "literal": [
+    "U",
+    "The triples give Robbie Williams as part of Take That and Townshend as part of The Who, so this attaches Williams to the wrong band."
+   ],
+   "ordinary": [
+    "U",
+    "The store says The Who has Townshend and Take That has Williams, so this swaps the band and the member."
+   ]
+  },
+  "R7-M08": {
+   "literal": [
+    "U",
+    "The triples give Townshend as part of The Who, not of Take That."
+   ],
+   "ordinary": [
+    "U",
+    "Attributes Townshend to Take That, but the store has him as part of The Who."
+   ]
+  },
+  "R7-M09": {
+   "literal": [
+    "U",
+    "The twinning triple is for Eugene OR, not Greater Eugene, so the subject is a different entity."
+   ],
+   "ordinary": [
+    "U",
+    "The twinning is Eugene's, but the sentence attributes it to Greater Eugene, a different entity."
+   ]
+  },
+  "R7-M10": {
+   "literal": [
+    "U",
+    "New Bern NC is only twinned with the city of Berne; the sentence says it is located in Canton de Berne, a different relation and entity."
+   ],
+   "ordinary": [
+    "U",
+    "New Bern is a twin town of Berne, not located in the canton; the sentence invents a location."
+   ]
+  },
+  "R7-M11": {
+   "literal": [
+    "U",
+    "The twinning triple is for Cleveland OH, not Cuyahoga County OH, so the subject is a different entity."
+   ],
+   "ordinary": [
+    "U",
+    "The twinning is Cleveland's, but the sentence attributes it to Cuyahoga County."
+   ]
+  },
+  "R7-M12": {
+   "literal": [
+    "U",
+    "The named_after triple belongs to Franklin County OH, not Dayton OH, so the subject is swapped."
+   ],
+   "ordinary": [
+    "U",
+    "The only naming triple is for Franklin County, not Dayton, so the claim attaches the naming to the wrong entity."
+   ]
+  },
+  "R7-M13": {
+   "literal": [
+    "U",
+    "Asserts Indianapolis IN borders Vigo County, which mixes two different triples; not entailed."
+   ],
+   "ordinary": [
+    "U",
+    "Claims Indianapolis borders Vigo County, which mixes two unrelated triples and is not entailed."
+   ]
+  },
+  "R7-M14": {
+   "literal": [
+    "U",
+    "Rabin is part of Yes, not Take That."
+   ],
+   "ordinary": [
+    "U",
+    "Rabin is in Yes, not Take That; the band is swapped."
+   ]
+  },
+  "R7-M15": {
+   "literal": [
+    "U",
+    "The triple says Ukraine follows the Ukrainian SSR; the sentence makes M Kyiv (a contained territory) the subject, which changes the entity."
+   ],
+   "ordinary": [
+    "U",
+    "The triple says Ukraine follows the Ukrainian SSR, but the sentence says M Kyiv does, which is a different subject."
+   ]
+  },
+  "R7-M16": {
+   "literal": [
+    "U",
+    "Gives Ukraine Rome time; that is Pole Land's zone, so the subjects are swapped."
+   ],
+   "ordinary": [
+    "U",
+    "Gathered gives Rome time to Poland and not to Ukraine; the sentence swaps the zone."
+   ]
+  },
+  "R7-M17": {
+   "literal": [
+    "U",
+    "Co Down and Co Derry each border Co Antrim, but nothing says they border each other."
+   ],
+   "ordinary": [
+    "U",
+    "Both border Co Antrim; bordering each other is not entailed."
+   ]
+  },
+  "R7-N01": {
+   "literal": [
+    "U",
+    "'Boy band' is listed as a part of Take That, but it is the group's class (instance_of)."
+   ],
+   "ordinary": [
+    "U",
+    "Presents 'boy band' as a part of Take That, when it is the band's type."
+   ]
+  },
+  "R7-N02": {
+   "literal": [
+    "U",
+    "Grammar makes Ukraine border M Kyiv, but Kyiv is a contained territory, not a bordering one."
+   ],
+   "ordinary": [
+    "U",
+    "Says Ukraine borders M Kyiv, but M Kyiv is an administrative territory it contains."
+   ]
+  },
+  "R7-N03": {
+   "literal": [
+    "U",
+    "'Jul follows June and Aug' asserts Jul comes after Aug, but the triples say Aug comes after Jul (jul followed_by aug)."
+   ],
+   "ordinary": [
+    "U",
+    "Says Jul follows Aug, but the store says Aug comes after Jul."
+   ]
+  },
+  "R7-N04": {
+   "literal": [
+    "U",
+    "'member of Take That and Stoke on Trent' makes Stoke on Trent a membership, but it is the birthplace."
+   ],
+   "ordinary": [
+    "U",
+    "Conjunction makes Stoke on Trent look like a body he is a member of, whereas it is his birthplace."
+   ]
+  },
+  "R7-N05": {
+   "literal": [
+    "U",
+    "The grammar makes Wakeman a member of 'Keyboard Hammer', but that is his instrument, not a membership."
+   ],
+   "ordinary": [
+    "U",
+    "Says Rick Wakeman is a member of 'Keyboard Hammer', but that triple is his instrument, so a reader would wrongly think it is a second band."
+   ]
+  },
+  "R7-N06": {
+   "literal": [
+    "U",
+    "Says Pole Land borders Mazowsze Voivodeship, but the triple says Pole Land contains it."
+   ],
+   "ordinary": [
+    "U",
+    "Says Pole Land borders Mazowsze Voivodeship, but the triple says Pole Land contains it."
+   ]
+  },
+  "R7-N07": {
+   "literal": [
+    "U",
+    "'June follows ... Jul' reverses the sequence, since June is followed by Jul."
+   ],
+   "ordinary": [
+    "U",
+    "\"follows ... and Jul\" says June comes after Jul, which reverses the followed_by triple."
+   ]
+  },
+  "R7-N08": {
+   "literal": [
+    "U",
+    "'member of The Who and England London' treats the birthplace as something he is a member of."
+   ],
+   "ordinary": [
+    "U",
+    "Conjunction makes England London appear to be something he is a member of, rather than his birthplace."
+   ]
+  },
+  "R7-P01": {
+   "literal": [
+    "U",
+    "'Nearly shares' hedges the border claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Nearly shares border' hedges the claim, so readers would think they do not quite border."
+   ]
+  },
+  "R7-P02": {
+   "literal": [
+    "U",
+    "'Almost a member' implies he is not actually a member, contradicting the triple."
+   ],
+   "ordinary": [
+    "U",
+    "'Almost a member' implies he is not actually a member."
+   ]
+  },
+  "R7-P03": {
+   "literal": [
+    "U",
+    "'Hardly' negates or weakens the has_part relation."
+   ],
+   "ordinary": [
+    "U",
+    "'Hardly' negates or weakens the has-part relation."
+   ]
+  },
+  "R7-P04": {
+   "literal": [
+    "U",
+    "'Scarcely' hedges/negates the membership the triple states plainly."
+   ],
+   "ordinary": [
+    "U",
+    "'Scarcely a member' hedges and suggests Solomon Is is barely or not really a UN member."
+   ]
+  },
+  "R7-P05": {
+   "literal": [
+    "U",
+    "'All but shares' means the border is almost, but not actually, shared."
+   ],
+   "ordinary": [
+    "U",
+    "'All but shares border' implies the border is not actually shared."
+   ]
+  },
+  "R7-P06": {
+   "literal": [
+    "U",
+    "'Almost follows' hedges the relation so it is not asserted fully."
+   ],
+   "ordinary": [
+    "U",
+    "'Almost follows' hedges the relation, so the reader would think Jul does not quite follow June."
+   ]
+  },
+  "R7-P07": {
+   "literal": [
+    "U",
+    "'Hardly a member' hedges/negates the membership asserted by the triple."
+   ],
+   "ordinary": [
+    "U",
+    "'Hardly a member' hedges/negates the membership."
+   ]
+  },
+  "R7-P08": {
+   "literal": [
+    "U",
+    "'Nearly located' hedges the relation, implying it is not actually located there."
+   ],
+   "ordinary": [
+    "U",
+    "'Nearly' hedges the time-zone fact."
+   ]
+  },
+  "R7-Q01": {
+   "literal": [
+    "U",
+    "'Only' adds an exclusivity claim (no other members) that the single member_of triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "'Only' adds an exclusivity claim (no other members) not in the triple."
+   ]
+  },
+  "R7-Q02": {
+   "literal": [
+    "U",
+    "'Only Robbie Williams' asserts exclusivity (no other parts), which is not entailed."
+   ],
+   "ordinary": [
+    "U",
+    "'Only' adds exclusivity."
+   ]
+  },
+  "R7-Q03": {
+   "literal": [
+    "U",
+    "'Only' adds an exclusivity claim the single triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "'Only' claims Poland is the sole neighbour, which the triple does not say."
+   ]
+  },
+  "R7-Q04": {
+   "literal": [
+    "U",
+    "'alone' adds exclusivity not in the triple."
+   ],
+   "ordinary": [
+    "U",
+    "\"alone\" implies he is the only member."
+   ]
+  },
+  "R7-Q05": {
+   "literal": [
+    "U",
+    "'The only member' adds an exclusivity/uniqueness claim not entailed by the membership triple."
+   ],
+   "ordinary": [
+    "U",
+    "'The only member' adds an exclusivity claim not in the triple."
+   ]
+  },
+  "R7-Q06": {
+   "literal": [
+    "U",
+    "'sole member' adds exclusivity not entailed."
+   ],
+   "ordinary": [
+    "U",
+    "'Sole member' asserts exclusivity not in the triple."
+   ]
+  },
+  "R7-Q07": {
+   "literal": [
+    "U",
+    "'exclusively' asserts Wakeman is the only part, which is not entailed."
+   ],
+   "ordinary": [
+    "U",
+    "\"exclusively\" implies he is the only part."
+   ]
+  },
+  "R7-R01": {
+   "literal": [
+    "U",
+    "'Each city of Japan' is a universal claim, and the gathered triples include a counterexample (Kushiro city is in Korea standard time); the class-level triple does not entail it for every city."
+   ],
+   "ordinary": [
+    "B",
+    "Matches the class-level triple, but 'each city' is a universal and the store gives Kushiro a different zone, so a reader could go either way."
+   ]
+  },
+  "R7-R02": {
+   "literal": [
+    "U",
+    "'Any city of Japan' is a universal claim, and Kushiro City is a city of Japan in Korea standard time."
+   ],
+   "ordinary": [
+    "U",
+    "A universal claim about every city of Japan that the gathered Kushiro triple contradicts."
+   ]
+  },
+  "R7-R03": {
+   "literal": [
+    "U",
+    "'Each Grosse Kreisstadt' is a universal claim, and the store itself places Freiberg, a Grosse Kreisstadt, in Saxony's Mittelsachsen."
+   ],
+   "ordinary": [
+    "U",
+    "'Each' makes it a universal claim, and Bayern is not entailed. Freiberg, a Grosse Kreisstadt, is in Mittelsachsen, which contradicts it."
+   ]
+  },
+  "R7-R04": {
+   "literal": [
+    "U",
+    "'All ... towns' is a universal claim; Freiberg is a Grosse Kreisstadt in Mittelsachsen, not Bayern."
+   ],
+   "ordinary": [
+    "U",
+    "Universal claim about all such towns being in Bayern; the Freiberg triple puts it in Saxony."
+   ]
+  },
+  "R7-S01": {
+   "literal": [
+    "U",
+    "'Excluded from' contradicts membership."
+   ],
+   "ordinary": [
+    "U",
+    "Says Robbie is excluded from Take That, the opposite of membership."
+   ]
+  },
+  "R7-S02": {
+   "literal": [
+    "U",
+    "'Fails to share' negates the border triple."
+   ],
+   "ordinary": [
+    "U",
+    "'Fails to share border' negates the stored border relation."
+   ]
+  },
+  "R7-S03": {
+   "literal": [
+    "U",
+    "'Lacks' negates the has_part triple."
+   ],
+   "ordinary": [
+    "U",
+    "'lacks' negates and reverses the has_part triple."
+   ]
+  },
+  "R7-S04": {
+   "literal": [
+    "U",
+    "'fails to follow' negates the triple."
+   ],
+   "ordinary": [
+    "U",
+    "Negates the follows relation."
+   ]
+  },
+  "R7-S05": {
+   "literal": [
+    "U",
+    "'Was expelled' adds a past event and implies membership ended."
+   ],
+   "ordinary": [
+    "U",
+    "Adds an expulsion event that is not in the triple."
+   ]
+  },
+  "R7-S06": {
+   "literal": [
+    "U",
+    "'Absent from' contradicts the member_of triple."
+   ],
+   "ordinary": [
+    "U",
+    "'Absent from' negates the United Nations membership."
+   ]
+  },
+  "R7-S07": {
+   "literal": [
+    "U",
+    "'Lies outside' is the opposite of the triple, which places it in that time zone."
+   ],
+   "ordinary": [
+    "U",
+    "'lies outside' negates the time-zone relation."
+   ]
+  },
+  "R7-S08": {
+   "literal": [
+    "U",
+    "'Refuses to share' adds volition and negation."
+   ],
+   "ordinary": [
+    "U",
+    "'Refuses to share border' implies the border is not shared and adds an act of refusal."
+   ]
+  },
+  "R7-S09": {
+   "literal": [
+    "U",
+    "'Is missing' says the member is absent, which contradicts has_part."
+   ],
+   "ordinary": [
+    "U",
+    "'Is missing' says Townshend is absent, which contradicts the has-part triple."
+   ]
+  },
+  "R7-S10": {
+   "literal": [
+    "U",
+    "'June precedes May sickness' reverses the triple, in which June follows May sickness."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses the order; the triple says June follows May sickness."
+   ]
+  },
+  "R7-S11": {
+   "literal": [
+    "U",
+    "Triple says aug follows jul, so 'Aug precedes Jul' reverses the order."
+   ],
+   "ordinary": [
+    "U",
+    "Reverses the order: Aug follows Jul, not precedes."
+   ]
+  },
+  "R7-S12": {
+   "literal": [
+    "U",
+    "Triple says jul follows june, so 'Jul comes before June' reverses the order."
+   ],
+   "ordinary": [
+    "U",
+    "Reversed order: Jul follows June, so Jul comes after June."
+   ]
+  },
+  "R7-W01": {
+   "literal": [
+    "U",
+    "Subject displayed as 'Bern' but the triple's subject is New Bern NC, a different place."
+   ],
+   "ordinary": [
+    "U",
+    "Says 'Bern' is twinned, but the triple is New Bern NC, a different entity."
+   ]
+  },
+  "R7-W02": {
+   "literal": [
+    "B",
+    "'Jeresy' omits 'New', so a reader could take it as a different name; otherwise the border triple is stated plainly."
+   ],
+   "ordinary": [
+    "B",
+    "Gives the entity as the misspelled 'Jeresy' without 'New', so a reader might or might not map it to the intended entity."
+   ]
+  },
+  "R7-W03": {
+   "literal": [
+    "B",
+    "Dropping 'Second' from the entity name could be read as a different or generic Commonwealth of Poland, though the intended entity is plausibly the same."
+   ],
+   "ordinary": [
+    "B",
+    "Drops 'Second' from the entity name, so it is probably still read as the right entity but could be taken as a different Commonwealth."
+   ]
+  },
+  "R7-W04": {
+   "literal": [
+    "U",
+    "The bare 'Asian Games' is the whole series rather than the Third Asian Games, so the sentence names a different entity."
+   ],
+   "ordinary": [
+    "U",
+    "Drops 'Third', so it claims the generic 'Asian Games' follows the Second, which is a different entity."
+   ]
+  },
+  "R7-W05": {
+   "literal": [
+    "U",
+    "'Guinea' is a different entity from New Guinea (Papua)."
+   ],
+   "ordinary": [
+    "U",
+    "The subject is 'Guinea', not 'New Guinea Papua', so a reader would take it as the country of Guinea bordering Australia."
+   ]
+  },
+  "R7-W06": {
+   "literal": [
+    "B",
+    "The displayed subject 'Papua' drops 'New Guinea' from the slug, so a reader could read it as a different or narrower entity."
+   ],
+   "ordinary": [
+    "B",
+    "The slug new_guinea_papua is shortened to \"Papua\", which a reader may take as a different entity."
+   ]
+  },
+  "R7-W07": {
+   "literal": [
+    "U",
+    "'Asian Games' (the general series) is a different entity from First Asian Games, which is the one followed by the Second."
+   ],
+   "ordinary": [
+    "U",
+    "Subject is 'Asian Games', not 'First Asian Games'; this is a different entity."
+   ]
+  },
+  "R7-W08": {
+   "literal": [
+    "U",
+    "The subject is 'Chromosome' with 'second' dropped, so the sentence asserts something about a different, generic entity."
+   ],
+   "ordinary": [
+    "U",
+    "The subject 'second chromosome' is reduced to 'Chromosome', so the sentence says a chromosome follows the first chromosome. That drops the 'second' and changes the claim."
+   ]
+  },
+  "R7-X01": {
+   "literal": [
+    "U",
+    "'Take That Tribute Band' is a different entity from Take That."
+   ],
+   "ordinary": [
+    "U",
+    "Take That Tribute Band is a different entity from Take That."
+   ]
+  },
+  "R7-X02": {
+   "literal": [
+    "U",
+    "The Security Council is a different body from the United Nations."
+   ],
+   "ordinary": [
+    "U",
+    "Narrows membership to the 'Security Council', a different body from the United Nations."
+   ]
+  },
+  "R7-X03": {
+   "literal": [
+    "U",
+    "The Human Rights Council is a different entity from the United Nations; the sentence adds a different body."
+   ],
+   "ordinary": [
+    "U",
+    "Human Rights Council membership is a different entity and claim than UN membership."
+   ]
+  },
+  "R7-X04": {
+   "literal": [
+    "U",
+    "'June Carter' introduces a different entity, a person, in place of the month June."
+   ],
+   "ordinary": [
+    "U",
+    "'June Carter' is a different entity (a person) from the month June."
+   ]
+  },
+  "R7-X05": {
+   "literal": [
+    "U",
+    "'Yes band Fan Club' is a different organization from Yes band."
+   ],
+   "ordinary": [
+    "U",
+    "Changes the group to 'Yes band Fan Club', a different entity from the band."
+   ]
+  },
+  "R7-X06": {
+   "literal": [
+    "U",
+    "'Lesser Pole Land' is a different entity from pole_land, so the border claim is about a different entity."
+   ],
+   "ordinary": [
+    "U",
+    "'Lesser Pole Land' is a different entity from Pole Land."
+   ]
+  },
+  "R7-X07": {
+   "literal": [
+    "U",
+    "Says participant of the qualifiers, not the Games themselves."
+   ],
+   "ordinary": [
+    "U",
+    "Changes the participation to 'XXX Olympic Games qualifiers', a different event from the Games."
+   ]
+  },
+  "R7-X08": {
+   "literal": [
+    "U",
+    "'Tribute act' changes the entity to a different group."
+   ],
+   "ordinary": [
+    "U",
+    "Calls the Jackson Five a tribute act, which changes the entity."
+   ]
+  },
+  "R7-Y01": {
+   "literal": [
+    "U",
+    "Says Jackson Six whereas the triple has the Jackson Five, a different entity."
+   ],
+   "ordinary": [
+    "U",
+    "Says Jackson Six, a different group from the gathered Jackson Five."
+   ]
+  },
+  "R7-Y02": {
+   "literal": [
+    "U",
+    "XXXI is a different Olympic Games from the XXX in the triple."
+   ],
+   "ordinary": [
+    "U",
+    "Says XXXI Olympic Games, not the stored XXX Olympic Games, so it names a different event."
+   ]
+  },
+  "R7-Y03": {
+   "literal": [
+    "U",
+    "Says Fourth Asian Games follows Second, whereas the triple has Third following Second."
+   ],
+   "ordinary": [
+    "U",
+    "Says Fourth Asian Games follows Second, but the triple has the Third following the Second."
+   ]
+  },
+  "R7-Y04": {
+   "literal": [
+    "U",
+    "The second chromosome follows the first, not the third; the sentence names a different entity."
+   ],
+   "ordinary": [
+    "U",
+    "Says second follows third, but the store says it follows first."
+   ]
+  },
+  "R7-Z01": {
+   "literal": [
+    "U",
+    "Adds a second, indefinite 'a Robbie Williams' as an extra part not in the triple."
+   ],
+   "ordinary": [
+    "U",
+    "The non-breaking space makes it read as 'Robbie Williams and a Robbie Williams', implying a second, extra person in the band."
+   ]
+  },
+  "R7-Z02": {
+   "literal": [
+    "U",
+    "'Wacko Jacko and a wacko_jacko' asserts a second part beyond the single gathered part."
+   ],
+   "ordinary": [
+    "U",
+    "Adds a second, duplicated 'wacko_jacko' part, implying an extra member."
+   ]
+  },
+  "R7-Z03": {
+   "literal": [
+    "U",
+    "'Another Rick Wakeman' asserts a second, distinct part not in the triples."
+   ],
+   "ordinary": [
+    "U",
+    "'Another Rick Wakeman' implies a second, extra entity."
+   ]
+  },
+  "R7-F01": {
+   "literal": [
+    "F",
+    "Plain statement of the located_in_time_zone triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement of the time-zone triple."
+   ]
+  },
+  "R7-F02": {
+   "literal": [
+    "F",
+    "Plainly states the located_in_time_zone triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states the located_in_time_zone triple."
+   ]
+  },
+  "R7-F03": {
+   "literal": [
+    "F",
+    "Exactly the described_by_source triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain restatement of described_by_source for Marshall Is."
+   ]
+  },
+  "R7-F04": {
+   "literal": [
+    "F",
+    "Displays as 'Solomon Is is located in time zone Kosrae time', matching the triple; the non-breaking space is invisible."
+   ],
+   "ordinary": [
+    "F",
+    "The non-breaking space is invisible, and the sentence plainly states the time-zone triple."
+   ]
+  },
+  "R7-F05": {
+   "literal": [
+    "F",
+    "Thin space is just spacing; displays 'Marshall Is is a member of the United Nations', matching the triple."
+   ],
+   "ordinary": [
+    "F",
+    "Thin space renders as a normal space; plainly states the membership triple."
+   ]
+  },
+  "R7-F06": {
+   "literal": [
+    "F",
+    "Plainly states the instance_of triple, awkward plural but unambiguous."
+   ],
+   "ordinary": [
+    "F",
+    "Stilted but plainly restates the instance_of triple with nothing added."
+   ]
+  },
+  "R7-F07": {
+   "literal": [
+    "F",
+    "The raw slug names are stilted but state the member_of triple exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Raw slugs are shown, but the membership meaning is unambiguous and matches the triple."
+   ]
+  },
+  "R7-F08": {
+   "literal": [
+    "F",
+    "The narrow no-break space just reads as a space, so the sentence displays the instance-of triple plainly."
+   ],
+   "ordinary": [
+    "F",
+    "The narrow no-break space displays as an ordinary space, so this is the instance_of triple."
+   ]
+  },
+  "R7-F09": {
+   "literal": [
+    "F",
+    "Matches the located-in-administrative-territory triple exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Exactly the administrative-territory triple."
+   ]
+  },
+  "R7-F10": {
+   "literal": [
+    "F",
+    "Exact triple, only the final period is missing."
+   ],
+   "ordinary": [
+    "F",
+    "Exactly the gathered member_of triple; the missing full stop is irrelevant."
+   ]
+  },
+  "R7-F11": {
+   "literal": [
+    "F",
+    "Stilted but unambiguous statement of the has_part triple."
+   ],
+   "ordinary": [
+    "F",
+    "Exactly the has_part triple."
+   ]
+  },
+  "R7-F12": {
+   "literal": [
+    "F",
+    "Jul follows June is exactly the triple."
+   ],
+   "ordinary": [
+    "F",
+    "Directly states jul follows june."
+   ]
+  },
+  "R7-F13": {
+   "literal": [
+    "F",
+    "Telegraphic but exactly states june follows may_sickness (missing period is harmless)."
+   ],
+   "ordinary": [
+    "F",
+    "Restates the follows triple directly, if oddly."
+   ]
+  },
+  "R7-F14": {
+   "literal": [
+    "F",
+    "Aug follows Jul is exactly the triple."
+   ],
+   "ordinary": [
+    "F",
+    "Directly states aug follows jul."
+   ]
+  },
+  "R7-F15": {
+   "literal": [
+    "F",
+    "Plainly states ukraine shares_border_with pole_land."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement of the shares_border_with triple."
+   ]
+  },
+  "R7-F16": {
+   "literal": [
+    "F",
+    "Plainly states pole_land shares_border_with federal_republic_of_germany."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement of the shares_border_with triple."
+   ]
+  },
+  "R7-F17": {
+   "literal": [
+    "F",
+    "Plainly states the single triple (Pole Land member of United Nations)."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states the single gathered triple that Pole Land is a member of the United Nations."
+   ]
+  },
+  "R7-F18": {
+   "literal": [
+    "F",
+    "Exactly the member_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement of the member_of triple."
+   ]
+  },
+  "R7-F19": {
+   "literal": [
+    "F",
+    "Telegraphic 'has part' wording that states the has_part triple unambiguously."
+   ],
+   "ordinary": [
+    "F",
+    "Telegraphic restatement of the has_part triple."
+   ]
+  },
+  "R7-F20": {
+   "literal": [
+    "F",
+    "Exact triple (missing period only)."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the member_of triple."
+   ]
+  },
+  "R7-F21": {
+   "literal": [
+    "F",
+    "Stilted but plainly states the has_part triple with nothing added."
+   ],
+   "ordinary": [
+    "F",
+    "Stilted but plainly states the triple that Yes band has part Rick Wakeman."
+   ]
+  },
+  "R7-F22": {
+   "literal": [
+    "F",
+    "Plain statement of the member_of triple; 'Yes band' matches yes_band."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement of the member_of triple."
+   ]
+  },
+  "R7-F23": {
+   "literal": [
+    "F",
+    "It states the named-after triple exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly restates the named-after triple."
+   ]
+  },
+  "R7-F24": {
+   "literal": [
+    "F",
+    "Plainly states the follows triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain restatement of the follows triple."
+   ]
+  },
+  "R7-F25": {
+   "literal": [
+    "F",
+    "It states the follows triple exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Exactly restates the triple."
+   ]
+  },
+  "R7-F26": {
+   "literal": [
+    "F",
+    "Plainly states the single triple (wacko_jacko member_of the_jackson_five)."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states the single member_of triple."
+   ]
+  },
+  "R7-F27": {
+   "literal": [
+    "F",
+    "The sentence restates participant_of with the same entity, XXX Olympic Games."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states the triple that Peter Sagan participated in the XXX Olympic Games."
+   ]
+  },
+  "R7-F28": {
+   "literal": [
+    "F",
+    "'New Bern NC is twinned with City of Berne' is exactly the twinned_administrative_body triple."
+   ],
+   "ordinary": [
+    "F",
+    "'Twinned with' is a plain, accurate rendering of the twinned_administrative_body triple."
+   ]
+  },
+  "R7-F29": {
+   "literal": [
+    "F",
+    "The sentence restates the border triple with the same entities."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states that New Jersey and NY State share a border, as in the triple."
+   ]
+  },
+  "R7-F30": {
+   "literal": [
+    "F",
+    "Directly states old_zealand named_after open_sea with nothing added."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement of the named_after triple."
+   ]
+  },
+  "R7-F31": {
+   "literal": [
+    "F",
+    "Plainly states the border triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain restatement of the shares_border_with triple."
+   ]
+  },
+  "R7-F32": {
+   "literal": [
+    "F",
+    "Plainly restates the part_of triple (Trevor Rabin part of Yes band)."
+   ],
+   "ordinary": [
+    "F",
+    "Directly states the part_of triple, with Trevor Rabin as part of Yes band."
+   ]
+  },
+  "R7-F33": {
+   "literal": [
+    "F",
+    "Twinned with matches the twinned_administrative_body triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the twinned_administrative_body triple."
+   ]
+  },
+  "R7-F34": {
+   "literal": [
+    "F",
+    "The twin-town triple is stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Twinning triple stated plainly."
+   ]
+  },
+  "R7-F35": {
+   "literal": [
+    "F",
+    "'twinned with' states the twin-town triple plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Twinning triple stated plainly."
+   ]
+  },
+  "R7-F36": {
+   "literal": [
+    "F",
+    "Directly states the shares_border_with triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain restatement of the shares-border-with triple."
+   ]
+  },
+  "R7-F37": {
+   "literal": [
+    "F",
+    "States the border triple plainly, stilted but unambiguous."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states Co Down borders Co Antrim, exactly the triple."
+   ]
+  },
+  "R7-F38": {
+   "literal": [
+    "F",
+    "Matches the 'follows' triple exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Directly states the follows triple."
+   ]
+  },
+  "R7-F39": {
+   "literal": [
+    "F",
+    "'Ukraine contains M Kyiv' is a telegraphic but unambiguous restatement of the contains-territory triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the contains-administrative-territory triple, and 'M Kyiv' is the stored slug."
+   ]
+  },
+  "R7-F40": {
+   "literal": [
+    "F",
+    "Matches the gathered time-zone triple exactly."
+   ],
+   "ordinary": [
+    "F",
+    "States exactly the gathered time-zone triple, nothing added."
+   ]
+  },
+  "R7-F41": {
+   "literal": [
+    "F",
+    "Restates city_of_japan located_in_time_zone japan_standard_time, stilted but faithful."
+   ],
+   "ordinary": [
+    "F",
+    "Restates the time zone triple for the entity City of Japan."
+   ]
+  },
+  "R7-F42": {
+   "literal": [
+    "F",
+    "Matches the located-in-administrative-territory triple exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Exactly the administrative-territory triple."
+   ]
+  },
+  "R7-F43": {
+   "literal": [
+    "F",
+    "Each of the three sentences matches a gathered triple (follows, followed_by, named_after)."
+   ],
+   "ordinary": [
+    "F",
+    "Three plain statements, each matching a gathered triple."
+   ]
+  },
+  "R7-F44": {
+   "literal": [
+    "F",
+    "Two sentences each state exactly one gathered border triple."
+   ],
+   "ordinary": [
+    "F",
+    "Two plain statements, each exactly a gathered triple."
+   ]
+  },
+  "R7-F45": {
+   "literal": [
+    "F",
+    "The no-break space displays as a normal space, so it plainly states the border triple."
+   ],
+   "ordinary": [
+    "F",
+    "The non-breaking space displays as a normal space, so this states the border triple plainly."
+   ]
+  },
+  "R7-F46": {
+   "literal": [
+    "F",
+    "A thin space between name parts displays as an ordinary space, and the member_of triple is stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Faithfully states the membership triple; the thin space just reads as a normal space."
+   ]
+  },
+  "R7-F47": {
+   "literal": [
+    "F",
+    "Both sentences state exactly the two gathered triples plainly, with nothing added."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences state exactly the two gathered triples."
+   ]
+  },
+  "R7-F48": {
+   "literal": [
+    "F",
+    "Sibling triple is stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Directly states the sibling triple."
+   ]
+  },
+  "R7-F49": {
+   "literal": [
+    "F",
+    "Plainly states robin_john_gibb member_of bee_gee."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement of the member_of triple."
+   ]
+  },
+  "R7-F50": {
+   "literal": [
+    "F",
+    "'Contains' matches the contains-administrative-territory triple directly."
+   ],
+   "ordinary": [
+    "F",
+    "Directly states the contains-territory triple."
+   ]
+  },
+  "R7-F51": {
+   "literal": [
+    "F",
+    "Exactly the followed_by triple, stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Exactly the followed_by triple."
+   ]
+  },
+  "R7-F53": {
+   "literal": [
+    "F",
+    "Exactly the follows triple, stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Stated plainly as the follows triple, if stilted."
+   ]
+  },
+  "R7-F54": {
+   "literal": [
+    "F",
+    "Present-tense 'is educated at' is stilted but matches the educated_at triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly restates educated_at; present tense is a minor stilted choice."
+   ]
+  },
+  "R7-F52": {
+   "literal": [
+    "F",
+    "Two lines each state exactly one gathered triple (time zone and described-by source), stilted but unambiguous."
+   ],
+   "ordinary": [
+    "F",
+    "Two sentences each restating one gathered triple plainly."
+   ]
+  }
+ },
+ "provenance": "written by Claude's adjudication script from the committed cases.json (ae94ee588) and the workflow's judge output; no checker was run",
+ "backend": "none (label adjudication, no simulation)",
+ "device": "none (label adjudication, no simulation)"
+}
