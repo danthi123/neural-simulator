@@ -308,3 +308,6 @@ verbatim. Board: #244 closed + milestone #264 added by Claude same cycle (RULING
 ## 2026-10-20 moat-strict-check-and-store-names (Claude)
 - Board #269 added: the strict no-making-things-up check (allowlist builds 1-3 NO-GO on fresh blind hunts; build 4 exact spellings, AMENDMENT 4 a631f7084; round 6 + measurements in flight).
 - Board #270 added: the fact store merges distinct entities under one slug and names some entities by another entity's alias (FAILURE_LOG row, S 9666e32ba).
+
+## 2026-10-21  claude-board-1021
+#260 word-role: step-0 deadlock read GO (near-tie, not the gate), step 1 next, prereg due 10-27. #269 strict check: build 5 round-7 result + verify-go caveats, build 6 under review; stays off.
