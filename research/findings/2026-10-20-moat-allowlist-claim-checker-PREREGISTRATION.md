@@ -232,3 +232,62 @@ protocol:
   count and the adjudicated U count, and the one-sided 95% bound on the adjudicated count.
 
 If build 4 misses any bar it is a NO-GO, and the method continues with build 5 and a round-7 hunt.
+
+## AMENDMENT 5 (2026-10-20, Claude; filed after build 4's round-6 result and build 5's build and review, before any build-5 measurement)
+
+**Build 4 fails bar 3 as registered.** Round 6 (`research/findings/raw/_moat_allowlist_hunt4/r6/`, cases at `a26221503`,
+blind two-judge adjudication at `fc89689a4`, both committed before the run) had 151 expect-U inputs; after adjudication 17
+are U (both judges read 81 of the 151 as faithful and 30 as arguable, so the mechanical rule made them B). Build 4 kept 5 of
+the 17 at all seven seeds through both entries, every arm VALID, controls OK (`f2b563462`). The one-sided 95% bound at 5
+of 17 is not reported as a pass bound: the bar is a zero count. Build 4 is a NO-GO. Its other measurements run to completion
+and are reported in its verdict section. <!--derived-->
+
+**The two classes.** R6-CF01 and R6-CF02: the relation table accepts telegraphic readings ("X located in time zone Y"), so a
+parse can hold no finite verb; "Solomon is located in time zone Kosrae time" spells `solomon_is` (Solomon Is., the islands)
+and the reader takes "is" from inside the name as the verb, which names a different subject. R6-S201, R6-S203, R6-S210: shape 2
+listed one object twice ("Robbie Williams and a Robbie Williams"), which asserts a second, distinct thing.
+
+**What build 5 changes** (branch `claude-build/moat-allowlist-1020e`, from `daa6998e4` with the round-6 hunt merged; commits
+through `ef51d6243`):
+- An entity span whose displayed text, split on spaces, holds a finite auxiliary (is, are, was, were, has, have, had, does, did)
+  or a negation word (B2h's NEG_MARKERS) is rejected. The slug written verbatim (`solomon_is`, as the stub mouth renders it) is
+  one word and passes, so the stub population is unchanged by construction. The non-finite "be", "am", "being", "been" and "do"
+  are not in the set: a reader does not take them as a third-person verb, and real names hold them ("Offenbach am Main").
+- A parse that lists one proposition twice is rejected.
+- Both checks run on every parse, after the build-4 exact check, so the reasons of sentences earlier builds rejected are
+  unchanged.
+- Review (workflow `wf_09aee02f-b8d`; leak hunt with 100 verified attempts, and a correctness check: flag-off identity, the
+  moat suite, a build-4 differential on 2,458 sentences, a 60,000-input fuzz, the stub population with 0 differences, m85
+  equivalent) found one U leak outside the two new rules: an underscore inflection of a multi-word relation read as English
+  ("has_parted" = has parted). The fix round (`4be0af697`): a multi-word relation keeps only its slug and the stub's own +s/+es
+  token; a reply that states one fact in two sentences is rejected; a CR between sentences only before an LF; any casing of an
+  underscore spelling other than the lower-case slug is prose and splits on underscores; "be" joins the clause words; the
+  residue of a dropped apostrophe rejects; the de-slugged form of a signed number is not accepted.
+- Re-review (`wf_45161cac-de3`; 107 verified attempts) found no U, confirmed every first-review leak closed, the stub
+  population unchanged and nothing build 4 rejected now kept, and refuted the first sign rule as too broad (hyphen joiners
+  such as "under-21"). The second fix round (`ef51d6243`) narrows the sign rule to a true sign (7 UTC/GMT slugs), keeps the
+  final-"s" residue rule to spaced names (an underscored accent fold such as "Andr_s" is kept), and adds the residue after a
+  pronoun ("He s dead Jim", "I ll cry later") and a capital "T" after a negative stem. <!--derived-->
+- Known B residue, not fixed (each costs real names or is the stub's own form): "and" inside a spaced name read as a list
+  ("Meurthe and Moselle"); a quantifier starting a name; a fact restated through an inverse or symmetric relation with "a"
+  ("Take That has part Robbie Williams. A Robbie Williams is a member of Take That."); the verbatim slug `utc_06`; a capital
+  final "S"; the lower-case verbatim slug `no_saints`. The strict reading reports any of these kept in round 7.
+
+**Lever count.** Build 5 is the fifth matcher change against the leak defect. The research gate ran
+(`tools/before_you_build.sh`; the corpus had no prior work on either class). Both causes are structural readings of English
+that the shape grammar did not model (a sentence needs a finite verb; a coordinated list denotes distinct things), not a
+further fold.
+
+The round-3 to round-6 cases shaped build 5. They are re-run and reported, never a bar.
+
+**Bars for build 5.** Sections 2.1-2.6 as amended by Amendments 1-4, with bar 3 on a NEW round-7 hunt under round 6's protocol
+(fresh blind skeptic who may read SPEC.md, this prereg with all five amendments, the held-out corpora, the store and the
+round-3 to round-6 case files; two blind judges per case; the same mechanical relabel rule; labels and adjudication committed
+before the run), with one change for power:
+- at least 100 expect-U inputs AND at least 50 adjudicated U. If the first batch leaves fewer than 50 U, the same skeptic
+  protocol writes a supplementary batch (new ids, new sentences), judged and adjudicated the same way and committed before the
+  run; the run happens once, on the union.
+- 0 U kept at all seven seeds through both entries, with every arm VALID. The verdict reports the expect-U input count, the
+  adjudicated U count, the one-sided 95% bound on the adjudicated count, and the strict reading (every kept B case).
+
+If build 5 misses any bar it is a NO-GO, and the method continues with build 6 and a round-8 hunt.
