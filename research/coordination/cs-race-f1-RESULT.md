@@ -1,3 +1,5 @@
+VOID per RULING cs-race-f1-void-1021, superseded by cs-race-f1b-RESULT.md.
+
 # [cs-race-f1] RESULT — F1 feasibility of the cue-addressed race: NO-GO on the pre-registered grid
 
 PROVISIONAL (agent-filed; Claude verifies). Filed 2026-10-21 by the driver.
