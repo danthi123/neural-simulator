@@ -82,8 +82,16 @@ RECORD_DIR = "research/findings/smoke"
 PREREG_RE = re.compile(r"^(research/findings|docs/plans)/[^/]*prereg[^/]*\.md$", re.I)
 
 _KEYS = ("flip", "smoke-record", "smoke-hurts-ruling", "smoke-exempt-ruling")
-_LINE_RE = re.compile(r"^[ \t>*+-]*(?:\*\*)?(?P<key>%s)(?:\*\*)?:(?:\*\*)?[ \t]*(?P<val>.*?)[ \t]*$" % "|".join(_KEYS),
-                      re.I)
+
+
+def key_line_re(keys):
+    """The declaration-line grammar (`key: value`, bullets, bold and quotes allowed), for any key set. Shared with
+    tools/gates/host_decision_declared.py (CLASS HD) so the two gates read a declaration line the same way."""
+    return re.compile(r"^[ \t>*+-]*(?:\*\*)?(?P<key>%s)(?:\*\*)?:(?:\*\*)?[ \t]*(?P<val>.*?)[ \t]*$"
+                      % "|".join(re.escape(k) for k in keys), re.I)
+
+
+_LINE_RE = key_line_re(_KEYS)
 _YES_RE = re.compile(r"^(?:yes|true|on|default-?on|1|brain_[a-z0-9_]+)\b", re.I)
 _NO_RE = re.compile(r"^(?:no|false|off|n/?a|none|0)\b[\s:;,.\-—]*(?P<reason>.*)$", re.I)
 _NAME_FLIP_RE = re.compile(r"(?:^|[-_.])flips?(?:[-_.]|$)", re.I)
