@@ -18,7 +18,7 @@ THE THREE ENTRIES (what each measures):
             with render_svo_batch and render_svo_regen_batch). The spiking recall surface (default ON in production) would speak a
             bounded SVO itself instead of the mouth, so the entry pins BRAIN_SPIKING_MOUTH_RECALL=0 and unsets
             BRAIN_TOUCHPOINT_A_FACT_CLAUSE: the reply under test is the MOUTH's text. A reply case carries "sentences", one
-            sentence per gathered triple in the same order (k = len(sentences) = len(gathered), 2 <= k <= 12, no repeated
+            sentence per gathered triple in the same order (k = len(sentences) = len(gathered), 2 <= k <= 4, no repeated
             triple), and its `sentence` is those sentences joined as the composer joins them (the gate and composer entries read
             `sentence` unchanged).
   ORDER: the composer renders and joins the facts in gathered order on both paths, and the stand-in answers BY FACT (the triple
@@ -28,21 +28,24 @@ THE THREE ENTRIES (what each measures):
   composer's own construction, declared in SPEC (build 6) and in `_join_verified` / `_terminate`: with the allowlist flag ON each
   sentence is `_terminate`d (trailing U+0020/LF/CR stripped, "." added when it has no terminal punctuation) and the sentences are
   joined with one U+0020; flag OFF they are joined with one U+0020 as rendered. No other normalisation (a U+00A0 is not a space).
-  The composer's own `kept` facts must give the same text. An in-order NON-prefix selection (the composer drops a middle or first
-  sentence alone before the joined check) is recorded as `subsequence` with its 1-based indices: it is defined as an emission, but
-  it counts only if the adjudication labels that selection (`subset_labels`), else the case is UNDEFINED for the reply entry.
+  The composer's own `kept` facts must give the same text. An in-order NON-prefix selection (correct composer behaviour: a fact
+  whose sentence fails alone is dropped before the joined check) is recorded as `subsequence` with its 1-based indices; like a
+  prefix it counts through its adjudicated label, and an emitted selection with no label is UNDEFINED.
   UNDEFINED (never "not kept"): text matching no in-order selection (reordered, a partial sentence, extra text, another mouth's
   text, the "!" mood marker), the composer's kept facts disagreeing with the text, an ambiguous match the kept facts cannot decide,
   a renderer error (even one the batched path swallowed), an exception, the wrong path taken, a non-bool claim verdict under the
-  allowlist (the composer coerces it) or the allowlist reaching the single-triple `_verify`, an invalid reply case, and a reply case
-  whose adjudicated `prefix_labels` are missing or invalid. Any UNDEFINED reply case makes the arm not VALID.
+  allowlist (the composer coerces it) or the allowlist reaching the single-triple `_verify`, an invalid reply case, a reply case
+  with no labels or invalid labels, and an emitted selection with no label. Any UNDEFINED reply case makes the arm not VALID.
   COUNTING: per arm, a case's outcome is the set of j (and labelled selections) it emitted over every seed and path; "kept U" =
   the cases that emitted, at ANY seed through EITHER path, a text whose adjudicated label is U (likewise B and F; a case can be in
   more than one), plus the full distribution of j over every (case, seed, path) record (keys '0'..'k'; 'sub:1+3' for a
   non-prefix selection, so sentence 2 alone, 'sub:2', never reads as j = 2).
-  LABELS: adjudication.json may carry "prefix_labels": {"<case id>": [label of prefix 1, ..., label of prefix k]} (the last is the
-  full reply's label and must equal the case's own label after relabel_to_B), and optionally "subset_labels": {"<case id>":
-  {"1+3": label}} for non-prefix selections (judge_prep.py --subsequences). adjudicate.py writes both.
+  LABELS (one key family, Claude ruling 2026-10-21): adjudication.json "subset_labels": {"<case id>": {"1": label, "1+2": label,
+  "2": label, "1+3": label, ...}}, a label for EVERY in-order non-empty selection of the reply's sentences (the judges label them
+  all: judge_prep.py's default; k <= 4, so at most 15 items per case). Every emitted selection, prefixes included, is looked up
+  there by its key (`subset_key`). The full selection's label must equal the case's own label after relabel_to_B (it is that label
+  when absent). For compatibility "prefix_labels": {"<case id>": [label of prefix 1, ..., label of prefix k]} (the last the full
+  reply's) is still read; where both families label one selection they must agree. adjudicate.py writes both.
   REPLY CONTROLS (over the store's own triples, never case text): RP1 two faithful sentences -> j = k at every seed on both paths;
   RN1 the second sentence role-reversed -> j = 1; RN0 the first role-reversed -> j = 0 or a selection without sentence 1; RNJ the
   same faithful sentence twice (each passes alone, the joined check must cut the repeat) -> j = 1. A failed reply control in the
@@ -100,7 +103,7 @@ VOCAB_ATTRS = ("stored_facts", "agents_set", "actions_set", "patients_set", "inf
 EXIT_OK, EXIT_ALLOWLIST_UNDEFINED, EXIT_COMPARISON_VOID, EXIT_EQUIV_FAILED, EXIT_CONTROL_FAILED = 0, 2, 3, 4, 5
 REPLY_PATHS = ("sequential", "batched")
 REPLY_ENV = {"BRAIN_SPIKING_MOUTH_RECALL": "0", "BRAIN_TOUCHPOINT_A_FACT_CLAUSE": None}   # None = unset (see the docstring)
-REPLY_MAX_K = 12
+REPLY_MAX_K = 4                     # Claude ruling 2026-10-21: every selection is judged, so at most 2**4 - 1 = 15 items per case
 NA = "n/a"
 
 TARGET_POLICY = ("a hunt sentence is free prose and the hunt does not know which gathered fact the mouth was rendering it for; where the "
@@ -413,6 +416,20 @@ def outcome_key(rec):
     return None
 
 
+NO_LABELS = "no subset_labels (or prefix_labels) for this reply case"
+
+
+def parse_selection(key, k):
+    """The 1-based indices of a selection key ("1+3"), or None unless it is the canonical key of an in-order non-empty selection of k."""
+    try:
+        idx = [int(x) for x in str(key).split("+")]
+    except ValueError:
+        return None
+    if idx != sorted(set(idx)) or not all(1 <= i <= k for i in idx) or subset_key(idx) != key:
+        return None
+    return idx
+
+
 def check_prefix_labels(pl, k, own_label):
     """None if `pl` is a valid prefix-label list for a k-sentence reply case whose own (adjudicated) label is `own_label`, else why."""
     if pl is None:
@@ -427,22 +444,46 @@ def check_prefix_labels(pl, k, own_label):
     return None
 
 
-def check_subset_labels(sl, k):
-    """None if `sl` (None, or {"1+3": label}) labels only in-order NON-prefix proper selections of k sentences with U/B/F, else why."""
+def check_subset_labels(sl, k, own_label=None):
+    """None if `sl` (None, or {"1+3": label}) labels only in-order non-empty selections of k sentences (prefixes and the full reply
+    included) with U/B/F, and the full selection, if labelled, with `own_label` (when given); else why."""
     if sl is None:
         return None
     if not isinstance(sl, dict):
         return "subset_labels %r is not a dict" % (sl,)
+    full = subset_key(range(1, k + 1))
     for key, lab in sl.items():
-        try:
-            idx = [int(x) for x in str(key).split("+")]
-        except ValueError:
-            return "subset_labels key %r is not of the form '1+3'" % (key,)
-        if idx != sorted(set(idx)) or not all(1 <= i <= k for i in idx) or idx == list(range(1, len(idx) + 1)):
-            return "subset_labels key %r is not an in-order non-prefix selection of %d sentences" % (key, k)
+        if parse_selection(key, k) is None:
+            return "subset_labels key %r is not the key of an in-order selection of %d sentences ('1', '1+3', ...)" % (key, k)
         if lab not in LABELS:
             return "subset label %r is not one of %s" % (lab, "/".join(LABELS))
+        if key == full and own_label is not None and lab != own_label:
+            return "the full reply's subset label %r is not the case's own label %r" % (lab, own_label)
     return None
+
+
+def reply_label_map(pl, sl, k, own_label):
+    """(labels, None) or (None, why): labels = {selection key: label} from `subset_labels` (every selection, prefixes and the full
+    reply included) and, for compatibility, `prefix_labels` (prefix j -> key "1+..+j"); where both label one selection they must
+    agree. The full selection is the case's own label. Neither family given: (None, NO_LABELS)."""
+    if pl is None and sl is None:
+        return None, NO_LABELS
+    out = {}
+    if pl is not None:
+        why = check_prefix_labels(pl, k, own_label)
+        if why:
+            return None, why
+        out = {subset_key(range(1, j + 1)): lab for j, lab in enumerate(pl, 1)}
+    if sl is not None:
+        why = check_subset_labels(sl, k, own_label)
+        if why:
+            return None, why
+        for key, lab in sl.items():
+            if key in out and out[key] != lab:
+                return None, "prefix_labels and subset_labels disagree on selection %s (%r vs %r)" % (key, out[key], lab)
+            out[key] = lab
+    out.setdefault(subset_key(range(1, k + 1)), own_label)
+    return out, None
 
 
 def load_reply_labels(adj, cases, label):
@@ -456,7 +497,7 @@ def load_reply_labels(adj, cases, label):
             continue
         k = len(c.get("sentences") or [])
         pl, sl = pls.get(c["id"]), sls.get(c["id"])
-        why = check_prefix_labels(pl, k, label[c["id"]]) or check_subset_labels(sl, k)
+        _m, why = reply_label_map(pl, sl, k, label[c["id"]])
         out[c["id"]] = {"prefix": None if why else pl, "subset": None if why else sl, "why": why}
     return out
 
@@ -591,7 +632,7 @@ def run_rows(cases, label, seeds, chats, composers, traces, arms=None, alt_vocab
         invalid = None
         if is_reply_case(c):
             invalid = validate_reply_case(c)
-            lab = reply_labels.get(c["id"]) or {"prefix": None, "subset": None, "why": "no prefix_labels for this reply case"}
+            lab = reply_labels.get(c["id"]) or {"prefix": None, "subset": None, "why": NO_LABELS}
             row.update(reply={}, sentences=c.get("sentences"), k=len(c.get("sentences") or []), reply_invalid=invalid,
                        prefix_labels=lab["prefix"], subset_labels=lab["subset"], labels_why=lab["why"])
         for arm, env in arms.items():
@@ -616,9 +657,9 @@ def run_rows(cases, label, seeds, chats, composers, traces, arms=None, alt_vocab
 
 
 def reply_case_outcome(row, arm):
-    """A reply case's outcome in one arm: ("UNDEFINED", why) if any (seed, path) record is UNDEFINED, the case is invalid, its prefix
-    labels are missing/invalid, or it emitted a non-prefix selection with no subset label; else ("defined", {"emitted": [keys],
-    "labels": {label: [keys]}, "labels_by_path": {path: [labels]}})."""
+    """A reply case's outcome in one arm: ("UNDEFINED", why) if any (seed, path) record is UNDEFINED, the case is invalid, its labels
+    are missing/invalid (`reply_label_map`), or it emitted a selection (prefix or not) with no label; else ("defined", {"emitted":
+    [keys], "labels": {label: [keys]}, "labels_by_path": {path: [labels]}})."""
     recs = row["reply"].get(arm) if isinstance(row.get("reply"), dict) else None
     if not recs:
         return "UNDEFINED", "no reply records for this arm"
@@ -626,21 +667,17 @@ def reply_case_outcome(row, arm):
     if bad:
         return "UNDEFINED", bad[0].get("why") or "UNDEFINED record"
     k = row.get("k") or 0
-    why = check_prefix_labels(row.get("prefix_labels"), k, row["label"]) or check_subset_labels(row.get("subset_labels"), k)
+    labmap, why = reply_label_map(row.get("prefix_labels"), row.get("subset_labels"), k, row["label"])
     if why:
         return "UNDEFINED", row.get("labels_why") or why
-    pl, sl = row["prefix_labels"], row.get("subset_labels") or {}
     labels, by_path = {}, {}
     for r in recs:
         key = outcome_key(r)
-        if r["status"] == "prefix":
-            if r["j"] == 0:
-                continue
-            lab = pl[r["j"] - 1]
-        else:
-            lab = sl.get(subset_key(r["subset"]))
-            if lab is None:
-                return "UNDEFINED", "emitted the non-prefix selection %s, which has no adjudicated label (subset_labels)" % key
+        if r["status"] == "prefix" and r["j"] == 0:
+            continue
+        lab = labmap.get(subset_key(r["subset"]))
+        if lab is None:
+            return "UNDEFINED", "emitted the selection %s (key %s), which has no adjudicated label" % (key, subset_key(r["subset"]))
         labels.setdefault(lab, set()).add(key)
         by_path.setdefault(r.get("path"), set()).add(lab)
     return "defined", {"emitted": sorted({outcome_key(r) for r in recs}, key=_key_order),
@@ -1063,7 +1100,8 @@ def main(argv=None, objects=None, equivalence=None, control_cases=None, reply_co
                            "n_reply_cases": sum(1 for c in cases if is_reply_case(c)),
                            "prefix_rule": "j = k full reply, 1 <= j < k the first j sentences, 0 nothing emitted; exact match against the "
                                           "composer's own join (flag ON: _terminate each, one U+0020; flag OFF: one U+0020)",
-                           "label_rule": "adjudication prefix_labels[id][j-1] (subset_labels for a non-prefix selection); missing -> UNDEFINED"},
+                           "label_rule": "adjudication subset_labels[id][selection key] for every emitted selection, prefixes included "
+                                         "(prefix_labels[id][j-1] still read; the two must agree); missing -> UNDEFINED"},
            "summary": summary, "controls": {**controls, "rows": ctl_rows},
            "reply_controls": {**reply_controls, "rows": rctl_rows}, "rows": rows}
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)

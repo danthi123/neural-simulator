@@ -403,6 +403,12 @@ def test_validate_reply_case():
     c = _reply_case()
     del c["sentences"]
     assert "sentences" in H.validate_reply_case(c)
+    # k <= 4 (Claude ruling 2026-10-21: every selection is judged, at most 15 items per case)
+    g5 = [["m%d" % i, "follows", "m%d" % (i + 1)] for i in range(5)]
+    s5 = ["M%d follows M%d." % (i, i + 1) for i in range(5)]
+    assert H.REPLY_MAX_K == 4
+    assert H.validate_reply_case(_reply_case(sentences=s5[:4], gathered=g5[:4])) is None
+    assert "2 <= k <= 4" in H.validate_reply_case(_reply_case(sentences=s5, gathered=g5))
 
 
 def test_the_stand_in_renders_by_fact_never_by_call_index():
@@ -421,7 +427,7 @@ def test_the_stand_in_renders_by_fact_never_by_call_index():
 def test_load_reply_labels_with_and_without_prefix_labels():
     cases = [_reply_case("R1"), _reply_case("R2"), _reply_case("R3", expect="U"), {"id": "X1", "expect": "U"}]
     label = {"R1": "U", "R2": "U", "R3": "B", "X1": "U"}                                  # R3 relabelled U->B
-    assert H.load_reply_labels({}, cases, label) == {i: {"prefix": None, "subset": None, "why": "no prefix_labels for this reply case"}
+    assert H.load_reply_labels({}, cases, label) == {i: {"prefix": None, "subset": None, "why": H.NO_LABELS}
                                                      for i in ("R1", "R2", "R3")}         # non-reply X1 is not listed
     adj = {"prefix_labels": {"R1": ["F", "U"], "R2": ["U"], "R3": ["U", "U"]}, "subset_labels": {"R1": {"2": "F"}}}
     got = H.load_reply_labels(adj, cases, label)
@@ -429,8 +435,24 @@ def test_load_reply_labels_with_and_without_prefix_labels():
     assert "not a list of 2" in got["R2"]["why"] and got["R2"]["prefix"] is None
     assert "not the case's own label 'B'" in got["R3"]["why"]                            # the full reply's label must be the case's
     assert "not one of" in H.check_prefix_labels(["X", "U"], 2, "U")
-    assert H.check_subset_labels({"1": "U"}, 2) and H.check_subset_labels({"2+1": "U"}, 3)   # a prefix / out of order: not a selection
-    assert H.check_subset_labels({"1+3": "U", "2": "B"}, 3) is None and H.check_subset_labels({"2": "Q"}, 2)
+    # subset_labels: every in-order selection, prefixes and the full reply included (one key family)
+    assert H.check_subset_labels({"1": "U", "2": "F", "1+2": "U"}, 2, "U") is None
+    assert H.check_subset_labels({"1+3": "U", "2": "B", "1+2+3": "B"}, 3, "B") is None
+    for bad, why in (({"2+1": "U"}, "not the key"), ({"01": "U"}, "not the key"), ({"3": "U"}, "not the key"),
+                     ({"2": "Q"}, "not one of"), ({"1+2": "F"}, "not the case's own label")):
+        assert why in (H.check_subset_labels(bad, 2, "U") or ""), bad
+
+
+def test_subset_labels_alone_label_every_selection_and_the_two_families_must_agree():
+    cases, label = [_reply_case("R1")], {"R1": "U"}
+    got = H.load_reply_labels({"subset_labels": {"R1": {"1": "F", "2": "U", "1+2": "U"}}}, cases, label)
+    assert got["R1"] == {"prefix": None, "subset": {"1": "F", "2": "U", "1+2": "U"}, "why": None}
+    m, why = H.reply_label_map(None, {"1": "F", "2": "U"}, 2, "U")
+    assert why is None and m == {"1": "F", "2": "U", "1+2": "U"}                         # the full reply is the case's own label
+    m, why = H.reply_label_map(["F", "U"], {"2": "B"}, 2, "U")
+    assert why is None and m == {"1": "F", "1+2": "U", "2": "B"}                         # prefix_labels still read (compatibility)
+    assert "disagree on selection 1" in H.reply_label_map(["F", "U"], {"1": "U"}, 2, "U")[1]
+    assert H.reply_label_map(None, None, 2, "U") == (None, H.NO_LABELS)
 
 
 # ---- the summary counting (pure) ---------------------------------------------------------------------------------------------------
@@ -476,7 +498,8 @@ def test_reply_summary_counts_kept_labels_by_prefix_label_at_any_seed_through_ei
 
 
 @pytest.mark.parametrize("row,why", [
-    (_rrow("R1", "U", 2, [_jr(2), _jr(2, "batched")], None), "no prefix_labels"),                         # labels missing
+    (_rrow("R1", "U", 2, [_jr(2), _jr(2, "batched")], None), "no subset_labels"),                         # labels missing
+    (_rrow("R1", "U", 3, [_jr(1), _jr(2, "batched")], None, sl={"1": "U"}), "no adjudicated label"),      # an emitted prefix unlabelled
     (_rrow("R1", "U", 2, [_jr(2), _jr(2, "batched")], ["U", "F"]), "not the case's own label"),            # full label != case label
     (_rrow("R1", "U", 2, [_jr(2), UR], ["F", "U"]), "no in-order"),                                       # one UNDEFINED record
     (_rrow("R1", "U", 2, [_sr([2]), _jr(0, "batched")], ["U", "U"]), "no adjudicated label"),             # unlabelled selection
@@ -656,3 +679,12 @@ def test_the_reply_summary_tags_reject_reasons_with_sentence_numbers_read_as_n()
     rp = H.summarise([_rrow("R1", "U", 3, recs, ["U", "U", "U"])])["allowlist"]["reply"]
     assert rp["reject_reason_tags"] == {"every_check": {"sentences N and N both state": 2, "not gathered": 1},
                                         "joined_cut": {"sentences N and N both state": 2}}
+
+
+def test_the_reply_summary_reads_every_selection_prefixes_included_from_subset_labels():
+    sl = {"1": "F", "2": "U", "1+2": "U"}
+    rows = [_rrow("R1", "U", 2, [_jr(1), _sr([2], "batched")], None, sl=sl),
+            _rrow("R2", "U", 2, [_jr(2), _jr(2, "batched")], None, sl=sl)]
+    rp = H.summarise(rows)["allowlist"]["reply"]
+    assert rp["UNDEFINED"] == 0 and rp["kept"]["F"]["ids"] == ["R1"] and rp["kept"]["U"]["ids"] == ["R1", "R2"]
+    assert rp["kept_by_path"]["sequential"]["F"] == ["R1"] and rp["kept_by_path"]["batched"]["U"] == ["R1", "R2"]
