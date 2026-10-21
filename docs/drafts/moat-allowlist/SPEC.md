@@ -169,7 +169,45 @@ every proposition it encodes is a gathered triple of this turn:
   "Me Myself"); "n" before "I" (an accent-fold residue in store names); sentence-case openers u, us, ya, ye, ur; who,
   whom and one (real names, an owner ruling would add them); a determiner before a one-word class slug ("The thou ...",
   like "The me"); lower-case names holding a lexical verb. Each fix is pinned at all seven parser seeds with a mutation
-  check per new branch.
+  check per new branch. (The second review found fourteen surviving mutants against that claim: the abbreviation test in
+  R7c(1) and R7c(2), the `if low:` guard and each non-"the" pointing lead. The second fix round pins each of them.)
+- **Build 7 second fix round (second review of b76421436, 2026-10-21).** Still additions to build 6 only, inside the
+  build-7 pass and `_points_back`. The abbreviation test is now an all-caps word (the build-3 caps rule) or a Roman
+  ordinal ("IVe"), not any word with two leading capitals, and R7c(0) rejects a pronoun-class word or contraction in
+  mixed case anywhere in a spaced name ("THis book", "HIs song", "YOure the one"). R7c(1) reads a digit after the
+  opener as uncapitalised ("her 2 sons", "this 1"). On a person side of a gathered fact (spouse, father, child and the
+  other kin relations; the person of author, composer, director, producer, screenwriter, performer and cast_member; the
+  subject of place_of_birth, place_of_death, country_of_citizenship, work_location and conflict) an opener rejects
+  whatever follows ("a spouse of My Husband", "the father of Our Son", "Yours Truly"). A span with no capital that opens
+  with u, us, ya, ye or ur rejects unless the next word is "of" or a single letter other than r or n, which is the
+  store's fold of a dotted abbreviation ("u s of a" stays; "ya boy", "u guys", "ye all", "u know" reject). New R7c(4): a
+  class word or contraction directly after a conjunction rejects unless it is all-caps or the span holds only class
+  words and conjunctions ("Trevor and Me", "Trevor or Me", "Trevor and IVe"). New R7c(5): after the first word, a
+  pointing word in lower case rejects ("Trevor and his song", "Songs of her own", "Sell this book"), and so does a
+  title-case one before a lower-case word that is not a function word ("Beatles For Sale My song"). The contractions add
+  weve, shes and thats. R7a's title block also covers the object side of has_part, composer, director, producer,
+  screenwriter, performer, cast_member, named_after and employer ("Strawberry Hill Boys has part Me."). The pointing
+  leads add ye, ur, thine and mine. Two over-rejects are fixed. A title-case name keeps its opener before a function
+  word when a capital follows later ("Me and Earl and the Dying Girl", "Her in the Dark", "It of the Night"). A
+  lower-case "ur" between two capitalised words stays ("Atta ur Rahman"). Correctness: `_points_back` now compares a
+  later span against the earlier span's build-6 words, so only a leading "the" is dropped. The first fix round dropped
+  every pointing lead from earlier spans too, so "... Her Majesty Ship. The Ship Her ..." was kept although build 6
+  rejected it.
+  Measured against b76421436 (`_moat_allowlist_build7/matcher_diff_fix2.json`): no change on the stub population, the
+  held-out corpora, hunt rounds 3-5, 7 and 8, the 64-slug scan or any natural cased spelling of a store name. In round 6
+  "take that has part robbie williams." (R6-LC01, adjudicated B) now rejects. Accepted costs: the sentence-case spelling
+  of 6 more store slugs (35 facts touch one) under R7c(5) ("Take that", "Stood on his head", "Play it once sam"), and
+  the all-lower-case spelling of 18 more (86 facts). Those 18 are the same 6 plus 10 `u_*` university names ("u iowa"),
+  "ya literature" and "ye yo". Two costs are off the store. A one-word track title in has_part ("Speak Now has part
+  Mine.") rejects. "Your Honor" after "Honor Civilian of Tirana" rejects under points-back: 1 store pair of 109
+  lead/name pairs shares a fact or a neighbour.
+  Declared residue: "u" as a pointing lead in title case ("U Abbey"). Adding it would reject 47 store pairs that share
+  a fact or a neighbour, such as "U Iowa" after "State of Iowa". The lower-case "u abbey" rejects under R7c(1c). Also
+  residue: a title-case class word inside a name before a capital ("Trevor Said Her Song"); a title-case span of class
+  words and conjunctions only ("Us and Them", "His and Hers"); imma, ima, lemme and gimme (an owner ruling would add
+  them); and a title-case contraction mid-sentence where a title can stand ("an author of Weve.", like "Mine."). Each
+  change is pinned in `tests/test_moat_allowlist_build7.py` at all seven parser seeds, with a mutation check for each
+  new branch and exemption and one points-back case per lead word.
 - **VERB(rel):** a verb form of the relation from the verb-form table that `_noun_before_verb` uses (`1b67eef9b`),
   including the guarded `-s`, `-es` and `-ies` readings, only when that relation is gathered this turn.
 - **Case fidelity of entity spans (build 3, controller ruling 2026-10-20: no invented acronyms).** The store's slug
