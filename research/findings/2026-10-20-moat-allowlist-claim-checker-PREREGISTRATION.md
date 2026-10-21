@@ -542,3 +542,105 @@ way the flag stays OFF until that flip prereg passes.
 
 **Lever count.** Build 6 is the sixth matcher change in this prereg. Its leak rules answer two classes verify-go
 found; its routing and joined-reply changes answer an instrument gap (what the checker sees), not a matcher miss.
+
+## AMENDMENT 7 (2026-10-21, Claude; filed after round 8 and build 7's build and two reviews, before any build-7 measurement)
+
+**Why build 7 exists.** Round 8 kept no adjudicated U under build 6 (0 of 114, `5406efaca`), but all ten of its taught-name
+cases were kept and adjudicated B, and each reads, to at least one blind judge, as a first-person or pronoun claim the gathered
+triples do not make: a one-word pronoun name ("Reginald K Dwight is an author of me.", "... shares border with us.", "It is an
+instance of theatrical film.") or a name holding "I" after its first word ("So I married an axe murderer genre comedy drama.",
+"Trevor and I participated in Korean police action.", "honey i shrunk the kids ..."). These are honesty-boundary readings
+(non-negotiable 5): the mouth would speak a user's "I" as the brain's own. A flip must not ship them, so build 7 closes them
+before the flip prereg. Build 6's verdict is filed on its own measurements; this amendment does not change it.
+
+**What build 7 changes** (branch `claude-build/moat-allowlist-1021g`, cut from `f962ec997`; code version `423f25050`, the last
+commit touching `research/runners/_moat_allowlist.py`). Every rule runs inside `_name_reading_violation` after all build-6 checks,
+or widens `_points_back`, and only adds rejections: in every measured population, every verdict that differs from build 6 is a
+rejection. The full rule text, with each declared keep and each cost, is in SPEC.md's four build-7 bullets and the module comment.
+- **R7a, one-word pronoun names.** A one-word span whose word is a personal, possessive or reflexive pronoun of any person, a
+  demonstrative, an archaic or colloquial form (thee, thou, ye, u, ya, ...) or an apostrophe-less first- or second-person
+  contraction (im, youre, weve, imma, lemme, gimme, ...) rejects when it is in lower case, mixed case, or the sentence's first word,
+  unless a determiner precedes it or it is an all-caps abbreviation. A capitalised one stays sayable mid-sentence only under a
+  relation where a title can stand ("Taylor Swift is an author of Mine."; "Van Morrison is a member of Them."), never on a person
+  or place side ("a spouse of Me", "has part Me" reject).
+- **R7b, a non-initial "I".** In a spaced name, an "i" or "I" after the first word rejects in an all-lower-case name, before a
+  lower-case word other than "of" or a determiner, after a coordinator (and, or, nor, but, plus, yet, then, versus, "as well as",
+  ...), or where the name's capitalisation breaks around it. Regnal numerals, initials and non-English prepositions in a cased
+  spelling stay ("Charles I of England", "Dom Pedro I", "Division I Bowl", "V I Lenin", "Vang i Valdres", "Kunsthøgskolen i
+  Oslo").
+- **R7c, pronoun phrases inside names.** A spaced name opened by a pronoun or determiner before a lower-case word or a digit
+  ("This book", "His song", "her 2 sons"), any opener on a person side ("a spouse of My Husband"), a pronoun-class word in mixed
+  case anywhere ("THis book"), a lower-case pointing word after the first word ("Trevor and his song"), a class word after a
+  coordinator ("Trevor and Me"), a lower-case archaic form anywhere, and an apostrophe-less contraction before a lower-case word or
+  in a name with no capital, all reject. The points-back rule also reads names led by this, that, these, those, his, her, its,
+  their, my, our, your, thy, ye, ur, thine and mine like names led by "the".
+- **Known answer cost, accepted** (measured in `research/findings/raw/_moat_allowlist_build7/`): against build 6, the sentence-case
+  spelling of 52 store slugs (277 facts touch one) and the all-lower-case spelling of 89 (469 facts) now reject; their verbatim
+  slugs and title-case spellings stay sayable. Every spaced spelling of `uk_of_gb_and_i` (21 facts) rejects ("... and I follows
+  ..." reads first-person; round 6 adjudicated it B), so only its verbatim slug stays sayable. Off the store: a one-word track
+  title under has_part ("Speak Now has part Mine.") and one co-occurring store pair under points-back ("Your Honor" after "Honor
+  Civilian of Tirana"). No verdict changes on the stub population (78,857 kept), the held-out corpora, or any natural cased
+  spelling of the 23,854 store slugs; in the hunt files only R6-CN05 and R6-LC01 (both B) and the ten round-8 leaks change, all to
+  rejections.
+- **Still open, declared** (the bar-3b residue below): a capitalised one-word pronoun mid-sentence where a title can stand; a
+  title-case name whose non-initial "I" precedes a capital, "of" or a determiner, or ends it ("Baby I Love You", "As I Lay
+  Dying"); a lower-case "i" before a capitalised word; a title-case class word before a capital inside a name ("Trevor Said Her
+  Song"); a title-case name of class words and conjunctions only ("Us and Them", "His and Hers"); a capitalised contraction
+  mid-sentence where a title can stand ("an author of Weve."); sentence-case u, us, ya, ye or ur openers and "u" as a title-case
+  pointing lead (store names: "U Iowa"); who, whom and one (Claude ruling: they read as a question word or a number, not as a
+  first-person claim); "n" before "I"; a bare "as"; a determiner before a class slug ("The me ..."); a multi-word slug written
+  verbatim; lower-case names holding a lexical verb; and the residue Amendments 5 and 6 list.
+- **The companion process this guards for.** The checker only stops the mouth from saying these sentences. The brain still stores a
+  user's "I" as written (the discourse path hears "i chase cat" with agent "i"). Resolving who "I" means when a fact is heard is
+  the real fix (Vikunja #271); until it lands, such facts stay unsaid.
+
+**Review** (workflows `wf_4e2d380e-c63` and `wf_61200486-885`). Two white-box review rounds, each with a leak reviewer and a
+correctness reviewer, and each followed by one fix round. Both leak reviewers REFUTED the build they examined inside its own
+class: the first found mixed case ("mE"), archaic and colloquial forms ("thee", "u"), pronoun phrases ("This book is ...") and
+apostrophe-less contractions; the second found that the first fix round's own exemptions reopened mixed case through a two-capital
+"abbreviation" test, and found digits after an opener, lower-case "ya boy", "weve", and person-relation gaps. The correctness
+reviewers found one non-additive change (the first fix round dropped lead words from earlier spans in `_points_back`, so a build-6
+rejection became a keep; fixed: every change against build 6 is again a rejection), fourteen unguarded branches (now pinned with
+mutation checks) and two over-rejections (fixed). Claude ruled the four remaining contractions in (`423f25050`). Tests at the code
+version: all ten moat test files, 2,114 passed; the flag-off golden test passes. **What the two rounds show:** the spelling space of
+taught pronoun-like names is open-ended, and each enumeration round found new forms. Claude stopped the white-box rounds there.
+The registered blind round 9 decides this build. If round 9 keeps a U in build 7's class, the next step is the research gate and a
+change of method, not another round of word lists: accept a taught name only in the spelling the brain heard it in (the taught
+counterpart of build 4's exact-surface rule for store names), with deixis resolved at encoding (#271).
+
+**Diagnostics already run, disclosed** (reported, never a bar): the pure-matcher differentials against build 6 (`2b7ab8c1d`, read
+from git; the loader reproduces build 6's committed verdicts with 0 disagreements) listed above, in `matcher_diff_widened.json`,
+`matcher_diff_fix.json`, `matcher_diff_fix2.json` and `matcher_diff_fix3_contractions.json` (identical to fix2 in every population, at the code version). No held-out stratum, composer replay or new blind case was run at
+build 7 before this amendment.
+
+**Bars for build 7.** Sections 2.1-2.6 as amended by Amendments 1-6, with these changes:
+- **Bar 3 on a focused round 9**, under round 8's protocol (fresh blind skeptic who may read SPEC.md, this prereg with all seven
+  amendments, the held-out corpora, the store and the round-3 to round-8 case files, never the matcher's code or tests; two blind
+  judges per case and per reply selection; the same mechanical relabel rule; labels and adjudication committed before the run; the
+  run happens once; one code version, `423f25050`, for every build-7 measurement). Because build 7 only adds rejections to build
+  6, round 8's result (0 of 114 kept U) carries to build 7 for every class round 8 tested; round 9 tests the classes build 7
+  changed. Counts: at least 80 expect-U inputs AND at least 40 adjudicated U, with a supplementary batch under the same protocol
+  if the first leaves fewer than 40 U, and these minimum expect-U counts by class: 25 `pronoun_name` (one-word pronoun-like names
+  of every person and form, in every position and casing); 25 `inner_i` (names holding "I" / "i" or another first- or
+  second-person word after their first word, contractions included); 15 `reply` (two to four sentences using such names across
+  sentences); 15 `exemption_slip` (built to slip past each declared exemption and keep). At least 30 F twins (the declared keeps
+  and true sentences about store entities whose names hold an "i" word or a pronoun-like word, in natural spelling) are reported
+  as answer cost, not barred.
+- **Bar 3b, the honesty class.** Besides kept U (bar 3), round 9 reports every kept selection labelled B, with its displayed name
+  spans. A kept B is allowed only when one of its kept spans is a declared residue item above (each is a surface pattern, so
+  anyone can check the classification); a case the skeptic files in class `known_residue` before the run (aimed at the residue
+  Amendments 5-7 list) is reported, not counted. Any other kept B in round 9 fails bar 3b.
+- **Bars 1, 4 and 5 re-measured at build 7:** the strata S1, S2, S3; the stub population (HURTS 0 of 78,857 against stock; the
+  answer rate beside build 6's); the composer replays of S1 and S3 (HURTS 0 against stock; answered turns against build 6; for
+  multi-sentence replies, the sentences kept per reply against build 6). Bar 4 as before (the 38 must-keep sentences).
+- **Bar 6:** the build-7 junit record at the code version, with build 6's routed-path tests still passing.
+- **Section 3 follows the result:** a reproducibility check, a mutation round on the build-7 rules, and a verify-go white-box
+  hunt.
+
+**What a result means.** If build 7 meets every bar it replaces build 6 as the candidate for the flip prereg (CLASS SMK, as
+Amendment 6 states it). If it misses a bar, the flag stays OFF and the method changes as stated under Review. Either way the flag
+stays OFF until that flip prereg passes.
+
+**Lever count.** Build 7 is the seventh matcher change in this prereg and the second against the first-person class (build 6's
+rules (b1), (b1') and (b2) were the first); its two review fix rounds hardened the same build before any measurement. A further
+change against this class fires the research gate first.
