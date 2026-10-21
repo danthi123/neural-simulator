@@ -147,8 +147,10 @@ BUILD 6 also adds shape 4 (above), `_name_reading_violation` (names that read as
 'the' span that points back across sentences).
 BUILD 7 (Claude rulings 2026-10-21; round-8 blind hunt) adds two narrow name rules to `_name_reading_violation`, run after every build-6 check
 so they only add rejections: R7a (`_pronoun_name_reading`: a one-word pronoun name, written in lower case or opening the sentence) and R7b
-(`_inner_first_person_reading`: a first-person "I" inside a spaced name). The rules, what stays sayable and what stays open are stated in the
-build-7 comment block above `PRONOUN_NAME_CLASS`; nothing outside this module changed, so the flag-off path is unchanged by construction.
+(`_inner_first_person_reading`: a first-person "I" inside a spaced name), and after the build-7 review R7c (`_pronoun_phrase_reading`: a spaced
+name that reads as a pronoun phrase or an apostrophe-less contraction) and pointing leads beyond "the" in `_points_back`. The rules, what stays
+sayable and what stays open are stated in the build-7 comment block above `PRONOUN_NAME_CLASS`; nothing outside this module changed, so the
+flag-off path is unchanged by construction.
 """
 from __future__ import annotations
 
@@ -517,6 +519,12 @@ SUBJECT_PRONOUNS = frozenset(("i", "we", "you"))
 #        already checked the entity's own store names for them). It runs BEFORE the slug-verbatim skip: a one-word slug written verbatim
 #        ("me", as the stub renders an object) is the pronoun. A capitalised one-word span that is not the sentence's first word stays
 #        sayable, because English reads it as a title: "Taylor Swift is an author of Mine.", "Spike Jonze ... Her."
+#        Review fixes (2026-10-21): the class also holds the archaic, colloquial and impersonal forms (thee, thou, thy, thine, thyself, ye,
+#        u, ya, yall, youse, yinz, ur, em, themself, ourself, oneself, meself), and the apostrophe-less contractions CONTRACTED_SUBJECTS
+#        (im, ive, youre, youve, youll, youd, theyre, theyve) are read the same way (R7A_WORDS); a spelling that is neither lower case,
+#        title case nor all-caps ("mE", "uS", "thEm", "mINE") rejects anywhere; and the title reading needs a relation where a title can
+#        stand: in a fact whose relation is in PERSON_PLACE_RELATIONS ("Taylor Swift is a spouse of Me.", "... the father of Him.") a
+#        title-case word rejects too. "Van Morrison is a member of Them." (a group) and "an author of Mine." (a work) stay sayable.
 #   R7b. In a spaced span (2+ words, not the slug verbatim) a word "i" / "I" at position k > 0 reads as the first-person pronoun, and the
 #        span rejects, when ANY of: (1) it is lower-case "i" and no word of the span starts with an upper-case letter (an all-lower-case
 #        display carries no casing signal: "honey i shrunk the kids", "sometimes i lie"); (2) it is "i" OR "I" (CLAUSE_I_FORMS, either
@@ -524,12 +532,30 @@ SUBJECT_PRONOUNS = frozenset(("i", "we", "you"))
 #        "Sometimes i lie", "Fatih i stanbul"; widened from "I" alone by the coordinator's ruling of 2026-10-21, which closed the mixed-case
 #        "Sometimes i lie"); (3) it is "i" or "I" and the word directly before it, case-folded, is a coordinating conjunction (and, or, nor,
 #        but, "&"): "Trevor and I", "Me and I". (3) is read case-folded on purpose: a capitalised "And" before an "I" is still the
-#        conjunction ("Trevor And I" is rejected here).
+#        conjunction ("Trevor And I" is rejected here). Review fixes: NAME_CONJUNCTIONS also holds plus, yet, then, than, versus, vs and
+#        "amp" (the HTML residue of "&"; "&" itself cannot sit in a slug span, so it only matters for a hand-built word list), and the three
+#        words "as well as" count as one; a lone "l" directly after a conjunction is read like "I" ("Trevor and l": the same glyph in
+#        sans-serif fonts). (2b) when a capital or a digit follows the "i" / "I", the name must be capitalised consistently: a lower-case
+#        "i" whose last word before it that is not a NAME_FUNCTION_WORDS word starts lower case ("honey i Shrunk the kids", "sometimes i
+#        Lie"; "Historic Areas of i Stanbul" stays: "Areas" decides), or any later word that is not a function word written in lower
+#        case ("So I Married an axe murderer", "So I 4got u"), reads as a clause.
 #        Stays sayable (each pinned in tests/test_moat_allowlist_build7.py): a Roman numeral ("Charles I of England", "Charles i of England",
 #        "Nicholas I the Conqueror": "of" / a determiner follows; "Dom Pedro I", "Dom Pedro i", "World War I": nothing follows; "Division I
 #        Bowl", "Fuad I University", "V I Lenin": a capital follows), a lower-case "i" before a capitalised word ("Vang i Valdres",
 #        "Kunsthogskolen i Oslo": the Norwegian / Swedish preposition, not English), a title-case clause ("Baby I Love You": title case reads
 #        as a title, a DELIBERATE keep), and the slug written verbatim.
+#        The word split is `_WORD_BREAK` (spaces and underscores), so a hyphen-joined store surface ("hilal-i-imtiaz", "division i-bowl")
+#        is one word to R7b; both are real names, so this costs nothing.
+#   R7c (review fix 2026-10-21, `_pronoun_phrase_reading`). In a spaced span (not the slug verbatim) the span rejects when (1) its first
+#        word, any case except an abbreviation (`_abbrev`: two leading capitals, "US", "YA", "IVe"), is in POINTING_OPENERS (the class
+#        without u / us / ya / ye / ur, each the sentence-case display of store names) and the next word starts lower case ("This book",
+#        "Its sequel", "His song", "Their son", "him and her", "these two", "her own", "My song", "thou art"; build-6 rule (a) for the
+#        other determiners), or the span is made only of class words and conjunctions with a class word in lower case ("Us and them");
+#        (2) a LOWER_PRONOUN_FORMS word is written in lower case anywhere ("tis thee"), or a second-person one opens the span in any case
+#        ("Thou Art", like build-6 rule (b1)); (3) a CONTRACTED_SUBJECTS word (not an abbreviation) has a lower-case next word, follows a
+#        conjunction, or sits in a span with no capital ("So Im married", "Youre the one", "Trevor and Im"; "Freiburg im Breisgau" stays).
+#        `_points_back` reads a span led by this / that / these / those / his / her / its / their / my / our / your / thy like one led by
+#        "the" (POINTING_LEADS: "... Carfax Abbey. This Abbey is ..." reads "This Abbey" as Carfax Abbey).
 # KNOWN ANSWER COSTS (accepted by the coordinator's rulings of 2026-10-21; measured, not assumed, in research/findings/raw/_moat_allowlist_build7/):
 #   - R7b(1): the all-lower-case de-slugged spelling of the 64 store slugs that hold a non-initial "i" word (355 store facts touch one) rejects
 #     ("charles i of england", "v i lenin", "universit paris i panth on sorbonne"): an all-lower-case display carries no casing signal. The slug
@@ -540,50 +566,142 @@ SUBJECT_PRONOUNS = frozenset(("i", "we", "you"))
 #     reads as a first-person coordination, so every spaced spelling of it rejects (round-6 case R6-CN05, label B, is this name). Only the slug
 #     written verbatim stays sayable: the slug has no names-table row, so its canonical surfaces are the slug and its de-slugged form, and the
 #     de-slugged form rejects too.
-# Cost on the stub, by construction: the stub renders every slug verbatim, so R7b (spaced spans only) cannot fire on a stub sentence, and R7a fires
-# on one only for a one-word pronoun-class slug in an object position (no determiner there); the store has no such slug.
-# Still open (documented, not closed): a title-case clause whose "I" is followed by a capital ("Baby I Love You"); a first-person "i" / "I" that ends
-# a mixed-case name or precedes "of" / a determiner ("Dom Pedro i", "Charles i of England" are real names and stay sayable on purpose); a
-# pronoun-class word inside a longer capitalised name ("Taylor Swift is an author of Me Myself"); and lower-case names holding a LEXICAL verb
+#   - Review fixes, R7c (measured in matcher_diff_fix.json, against the reviewed build 7 a05a6c91d): NO change on the stub population, the
+#     held-out corpora, hunt rounds 3-8 or any natural cased spelling of a store name (English title case, full title case, every names-table
+#     surface in title case: 0 of 23,854 slugs). The sentence-case spelling of 9 store slugs (28 facts touch one) newly rejects: R7c(3)
+#     "University of freiburg im breisgau", "Ried im innkreis district", "Akademia teatralna im aleksandra zelwero", "Ive arrondissement of
+#     paris"; R7c(1) "Her majesty s prison service", "His netherlands majesty s ship", "Your honor", "My n"; R7c(2) "Give it to em". The
+#     all-lower-case spelling of 7 of them newly rejects too (23 facts). Each stays sayable in title case and as the slug verbatim.
+# Cost on the stub, by construction: the stub renders every slug verbatim, so R7b and R7c (spaced spans only) cannot fire on a stub sentence, and R7a
+# fires on one only for a one-word class / contraction slug in an object position (no determiner there); the store has no such slug. A one-word slug
+# after the stub's subject determiner ("The thou instance_ofs ...") and a multi-word slug written verbatim ("... withs them_all.") stay sayable.
+# Still open (documented, not closed): a title-case clause whose "I" is followed by a capital ("Baby I Love You", "As I Lay Dying": a bare "as" is a
+# subordinator and is left out of the conjunctions); "Trevor n I" ("n" is left out: an accent-fold residue in store names, `ayd_n_i_li_province_turkey`
+# would reject in title case); a first-person "i" / "I" that ends a mixed-case name or precedes "of" / a determiner ("Dom Pedro i", "Charles i of
+# England" are real names and stay sayable on purpose); a pronoun-class word inside a longer capitalised name ("Taylor Swift is an author of Me
+# Myself", "Us and Them"); a sentence-case span opening with "Us" / "Ye" / "Ya" / "U" / "Ur" before a lower-case word (store-name displays, R7c(1)
+# leaves them out); "who", "whom", "one" (real names: "The Who"; an owner ruling would add them); and lower-case names holding a LEXICAL verb
 # ("steve threw up record label xl recordings.", no verb lexicon and no proper-name bit in the store).
 PRONOUN_NAME_CLASS = frozenset(("me", "my", "mine", "myself", "us", "our", "ours", "ourselves", "your", "yours", "yourself", "yourselves",
                                 "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself",
-                                "they", "them", "their", "theirs", "themselves", "this", "that", "these", "those"))
-NAME_CONJUNCTIONS = frozenset(("and", "or", "nor", "but", "&"))
+                                "they", "them", "their", "theirs", "themselves", "this", "that", "these", "those",
+                                # build-7 fix (review 2026-10-21): archaic, colloquial and impersonal forms a plain reader takes as a pronoun
+                                "thee", "thou", "thy", "thine", "thyself", "ye", "u", "ya", "yall", "youse", "yinz", "ur", "em",
+                                "themself", "ourself", "oneself", "meself"))
+# build-7 fix: first- and second-person contractions written without the apostrophe (pronoun + verb; "ill", "id", "well", "hes" are left out:
+# each is an ordinary English word too). R7a reads them as one-word names like the class; R7c(3) reads them inside a spaced name.
+CONTRACTED_SUBJECTS = frozenset(("im", "ive", "youre", "youve", "youll", "youd", "theyre", "theyve"))
+R7A_WORDS = PRONOUN_NAME_CLASS | CONTRACTED_SUBJECTS
+# R7b(3): a conjunction directly before the "I" ("&" cannot sit in a slug span, so it only matters for a hand-built word list; "amp" is the
+# HTML-entity residue of "&"). Left out, as declared residue: "n" (an accent-fold residue in store names: `ayd_n_i_li_province_turkey`, title
+# "Ayd N I Li Province Turkey") and a bare "as" (a subordinator: "As I Lay Dying" is a title-case clause like "Baby I Love You"); the
+# three words "as well as" are read as one conjunction.
+NAME_CONJUNCTIONS = frozenset(("and", "or", "nor", "but", "&", "plus", "yet", "then", "than", "versus", "vs", "amp"))
 CLAUSE_I_FORMS = frozenset(("i", "I"))              # R7b(2): the forms of the pronoun that a lower-case word after them turns into a clause
+# R7b(2b): the words a consistently capitalised name may keep in lower case after an "I" + capital ("Honey I Shrunk the Kids")
+NAME_FUNCTION_WORDS = frozenset(("of", "the", "a", "an", "and", "or", "nor", "but", "in", "on", "at", "to", "for", "by", "with", "from", "into",
+                                 "de", "du", "des", "la", "le", "les", "di", "da", "del", "della", "do", "dos", "das", "von", "van", "der",
+                                 "den", "y", "e", "et", "und", "im", "am", "zu", "och", "og", "af", "av", "til", "i"))
+# R7a title reading: a capitalised mid-sentence one-word pronoun name reads as a title ("an author of Mine.") only where a title can stand. In a
+# fact whose relation names a person or a place on both sides, no title reading stands ("Taylor Swift is a spouse of Me."), so it rejects.
+PERSON_PLACE_RELATIONS = frozenset(("spouse", "sibling", "father", "mother", "child", "relative", "unmarried_partner", "shares_border_with",
+                                    "twinned_administrative_body", "located_in_the_administrative_territoria",
+                                    "contains_administrative_territorial_enti", "place_of_birth", "place_of_death", "country",
+                                    "country_of_citizenship", "country_of_origin", "headquarters_location", "work_location"))
+# R7c(1): the words that open a pronoun phrase or a description pointing at something unnamed ("This book", "His song", "him and her");
+# R7c(2): archaic / colloquial / reflexive forms read in lower case anywhere in a spaced name ("u", "ye", "ya" are left out: lower-case
+# "u" / "ye" / "ya" are words of store names, "princeton u", "qaleh ye khvajeh", "repubilika ya ngola"), and the second-person ones also
+# as the name's first word in any case, like build-6 rule (b1);
+# left out of R7c(1), each the sentence-case display of store names (measured in matcher_diff_fix.json): "u" ("U of Ottawa"; "U s of a", the
+# de-slugged `u_s_of_a`, which the held-out S2 corpus holds as a TRUE answer in sentence case), "us" (23 store slugs `us_*` fold the
+# abbreviation US: "Us democratic party"), "ya" ("Ya literature", YA), "ye" ("Ye yo", the surname) and "ur" ("Ur of the Chaldees", the city)
+POINTING_OPENERS = PRONOUN_NAME_CLASS - frozenset(("u", "us", "ya", "ye", "ur"))
+LOWER_PRONOUN_FORMS = frozenset(("thee", "thou", "thy", "thine", "thyself", "yall", "youse", "yinz", "ur", "em", "themself", "ourself",
+                                 "oneself", "meself"))
+SECOND_PERSON_OPENERS = frozenset(("thee", "thou", "thy", "thine", "thyself", "yall", "youse", "yinz"))
+# _points_back: the words that lead a span pointing back like "the"
+POINTING_LEADS = frozenset(("the", "this", "that", "these", "those", "his", "her", "its", "their", "my", "our", "your", "thy"))
 
 
-def _pronoun_name_reading(word, initial, after_determiner):
+def _abbrev(word):
+    """A word whose first two characters are upper-case letters (US, YA, IM, the Roman ordinal "IVe") is an abbreviation or a numeral, not the
+    pronoun / contraction it folds to."""
+    return word[:2].isupper() and len(word) >= 2
+
+
+def _pronoun_name_reading(word, initial, after_determiner, person_place_rel=None):
     """Build 7, rule R7a -> a reason fragment when the ONE-word span `word` (as written) reads as a pronoun, else None. `initial`: the span
-    is the sentence's first word; `after_determiner`: a determiner stands directly before it."""
-    if word.lower() not in PRONOUN_NAME_CLASS or after_determiner or caps_tokens(word) == [word]:
+    is the sentence's first word; `after_determiner`: a determiner stands directly before it; `person_place_rel`: the relation of a gathered
+    fact on this span when it is in PERSON_PLACE_RELATIONS (no title reading), else None."""
+    if word.lower() not in R7A_WORDS or after_determiner or caps_tokens(word) == [word]:
         return None
     if word.islower():
         return "written in lower case"
     if initial:
         return "the first word of the sentence"
+    if word != word.capitalize():                     # build-7 fix: "mE", "uS", "thEm" are neither title case nor an abbreviation
+        return "written in mixed case, neither title case nor all-caps"
+    if person_place_rel:
+        return "a title-case word in the person / place relation %r, where no title reading stands" % person_place_rel
     return None
 
 
 def _inner_first_person_reading(words):
     """Build 7, rule R7b -> a reason fragment for the first word "i" / "I" at position k > 0 of the spaced span `words` that reads as the
-    first-person pronoun ((1), (2) or (3) in the build-7 comment block above), else None."""
+    first-person pronoun ((1), (2), (2b) or (3) in the build-7 comment block above; (3) also reads a lone "l" homoglyph), else None."""
     for k, w in enumerate(words):
-        if k == 0 or w not in ("i", "I"):
+        if k == 0:
+            continue
+        conj = words[k - 1].lower() in NAME_CONJUNCTIONS or [x.lower() for x in words[max(0, k - 3):k]] == ["as", "well", "as"]
+        if w == "l" and conj:
+            return "a lone 'l' (word %d) after the conjunction %r: it renders like 'I', a first-person subject" % (k + 1, words[k - 1])
+        if w not in ("i", "I"):
             continue
         if w == "i" and not any(x[:1].isupper() for x in words):
             return "a lower-case 'i' (word %d) in a name with no capital letter: English reads the first-person pronoun" % (k + 1)
         nxt = words[k + 1] if k + 1 < len(words) else ""
         if w in CLAUSE_I_FORMS and nxt[:1].islower() and nxt != "of" and nxt not in DETERMINERS:
             return "%r (word %d) before the lower-case word %r: English reads the first-person pronoun and a clause" % (w, k + 1, nxt)
-        if words[k - 1].lower() in NAME_CONJUNCTIONS:
+        if conj:
             return "a conjunction before 'I' (%r %r): English reads a first-person subject" % (words[k - 1], w)
+        if nxt and not nxt[:1].islower():             # (2b) a capital or a digit follows: a name only if it is capitalised consistently
+            before = [x for x in words[:k] if x.lower() not in NAME_FUNCTION_WORDS]     # "Historic Areas of i Stanbul": "Areas" decides
+            if w == "i" and before and before[-1][:1].islower():
+                return ("'i' (word %d) after the lower-case word %r: not a capitalised name, English reads the first-person pronoun"
+                        % (k + 1, before[-1]))
+            late = [x for x in words[k + 2:] if x.lower() not in NAME_FUNCTION_WORDS and x[:1].islower()]
+            if late:
+                return ("%r (word %d) in a name that goes on in lower case (%r): not a capitalised name, English reads the first-person "
+                        "pronoun and a clause" % (w, k + 1, late[0]))
+    return None
+
+
+def _pronoun_phrase_reading(words):
+    """Build-7 fix, rule R7c -> a reason fragment when the spaced span `words` reads as a pronoun phrase ((1), (2), (3) in the build-7
+    comment block above), else None."""
+    w0 = words[0]
+    if w0.lower() in POINTING_OPENERS and not _abbrev(w0) and words[1][:1].islower():
+        return ("opens with the pronoun / determiner %r and a lower-case word: a pronoun phrase or a description pointing at something "
+                "unnamed, not a name" % w0)
+    if all(w.lower() in PRONOUN_NAME_CLASS or w.lower() in NAME_CONJUNCTIONS for w in words):
+        low = [w for w in words if w.lower() in PRONOUN_NAME_CLASS and w.islower()]
+        if low:                                       # "Us and them": only pronouns and conjunctions, one in lower case
+            return "is made of pronouns and conjunctions only, with %r in lower case: a pronoun phrase, not a name" % low[0]
+    for k, w in enumerate(words):
+        lw = w.lower()
+        if lw in LOWER_PRONOUN_FORMS and not _abbrev(w) and (w.islower() or (k == 0 and lw in SECOND_PERSON_OPENERS)):
+            return "the pronoun %r (word %d) written as prose" % (w, k + 1)
+        if lw in CONTRACTED_SUBJECTS and not _abbrev(w):
+            nxt = words[k + 1] if k + 1 < len(words) else ""
+            conj = k > 0 and words[k - 1].lower() in NAME_CONJUNCTIONS
+            if nxt[:1].islower() or conj or not any(x[:1].isupper() for x in words):
+                return "the contraction %r (word %d) without its apostrophe: English reads a pronoun and a verb" % (w, k + 1)
     return None
 
 
 def _name_reading_violation(parses, toks, origs, offs, src):
     """Builds 6 and 7 -> a reason string for the first SUBJ/OBJ span, over every parse, whose words read as a description or a clause (build
-    6: rules (a), (b1), (b1'), (b2) above) or as a pronoun / a first-person clause (build 7: R7a, R7b above), else None. `toks` / `origs` /
+    6: rules (a), (b1), (b1'), (b2) above) or as a pronoun / a first-person clause (build 7: R7a, R7b, R7c above), else None. `toks` / `origs` /
     `offs` / `src` are `normalise_tracked`'s; token i - 1 is the determiner slot of the noun at i (`_np` puts Det directly before the
     noun). The build-7 pass runs after the whole build-6 pass, so it only adds rejections and a build-6 reject keeps its build-6 reason."""
     lead = len(src) - len(src.lstrip())
@@ -612,20 +730,24 @@ def _name_reading_violation(parses, toks, origs, offs, src):
                         return ("entity span %r of %s holds %r written as prose: read as a modal / pronoun / focus word"
                                 % (origs[i], slug, w))
     # build 7: after every build-6 check
-    for _shape, _props, spans in parses:
+    for _shape, props, spans in parses:
         for kind, i, slug in spans:
             if kind != "ent":
                 continue
             orig = unicodedata.normalize("NFC", origs[i]).strip(SPAN_SPACES)
             words = [w for w in _WORD_BREAK.split(orig) if w]
             if len(words) == 1:                                # R7a runs before the slug-verbatim skip: the verbatim one-word slug is the word
-                how = _pronoun_name_reading(words[0], offs[i][0] == lead, i > 0 and toks[i - 1] in DETERMINERS)
+                rel = next((v for a, v, p in props if slug in (a, p) and v in PERSON_PLACE_RELATIONS), None)
+                how = _pronoun_name_reading(words[0], offs[i][0] == lead, i > 0 and toks[i - 1] in DETERMINERS, rel)
                 if how:
                     return "entity span %r of %s reads as the pronoun %r (%s, no determiner before it)" % (origs[i], slug, words[0], how)
             elif len(words) >= 2 and orig != slug:
                 how = _inner_first_person_reading(words)
                 if how:
                     return "entity span %r of %s holds %s (the honesty boundary)" % (origs[i], slug, how)
+                how = _pronoun_phrase_reading(words)
+                if how:
+                    return "entity span %r of %s %s (the honesty boundary)" % (origs[i], slug, how)
     return None
 
 
@@ -634,14 +756,15 @@ def _ent_span_words(parses, toks, origs):
     words = the span's displayed text (NFC, lower case) split on EVERY run of non-alphanumeric characters (spaces, underscores, hyphens,
     any punctuation; build-6 fix after review: a names-table hyphen surface such as "boy-band" or "norway u-21" split on spaces and
     underscores only stayed one word, so a later "The Band" / "The U" was no longer a subset of it); led_by_the = the span's first word
-    is "the" (then dropped from words) or a "the" determiner stands directly before it."""
+    is in POINTING_LEADS ("the"; build-7 review fix: this / that / these / those / his / her / its / their / my / our / your / thy; then
+    dropped from words) or a "the" determiner stands directly before it."""
     out = []
     for _shape, _props, spans in parses:
         for kind, i, slug in spans:
             if kind != "ent":
                 continue
             words = [w for w in _NON_ALNUM_RUN.split(unicodedata.normalize("NFC", origs[i]).lower()) if w]
-            led = bool(words) and words[0] == "the" and len(words) > 1
+            led = bool(words) and words[0] in POINTING_LEADS and len(words) > 1     # build-7 fix: "This book", "Its sequel" point back too
             if led:
                 words = words[1:]
             led = led or (i > 0 and toks[i - 1] == "the")
@@ -1060,7 +1183,8 @@ def _points_back(trace):
                 continue
             for k0, slug0, words0 in earlier:
                 if slug0 != slug and set(words) <= set(words0):
-                    return ("allowlist: sentence %d: entity span %r of %s is led by 'the' and its words are among those of %s in sentence %d:"
+                    return ("allowlist: sentence %d: entity span %r of %s is led by 'the' or a pointing word and its words are among those of %s"
+                            " in sentence %d:"
                             " a definite description that points back to a different thing [sentence %d of %d]"
                             % (k + 1, " ".join(words), slug, slug0, k0 + 1, k + 1, len(trace)))
         earlier.extend((k, slug, words) for slug, words, _led in spans)
