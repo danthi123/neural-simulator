@@ -1,58 +1,58 @@
 {
-  "schema": "tool-health-v1",
-  "generator": "tools/tool_health.py",
-  "generated_at": "2026-10-11T21:36:32Z",
-  "any_rotted": false,
-  "results": [
-    {
-      "tool": "experiment-engine",
-      "lane": "experiment",
-      "status": "degraded",
-      "why": "current presets build fine; step-sweep needs a GPU \u2014 presets build; step needs GPU (no-cupy: ModuleNotFoundError(\"No module named 'cupy'\"))",
-      "checked": "build 4 presets (step needs cupy/GPU)",
-      "at": "2026-10-11T21:36:32Z"
-    },
-    {
-      "tool": "auto-tune",
-      "lane": "experiment",
-      "status": "degraded",
-      "why": "needs a GPU; this host has no usable CUDA device (not rotted): api.runtime.CUDARuntimeError: cudaErrorInsufficientDriver: CUDA driver version is insufficient for CUDA runtime version\n",
-      "checked": "neural-simulator.py --auto-tune --quick",
-      "at": "2026-10-10T19:55:06Z"
-    },
-    {
-      "tool": "gpu-queue",
-      "lane": "gpu",
-      "status": "ready",
-      "why": "status ok (0 dispatcher). == gpu_queue == shared queue: /home/dant123/Projects/neural-simulator/research/queue state: running current: (idle) queued: 0 | VRAM free: MiB (min_free 3000) dispatcher: DOWN (run: tools/gpu_queue.sh",
-      "checked": "gpu_queue.sh status + singleton",
-      "at": "2026-10-10T19:55:06Z"
-    },
-    {
-      "tool": "pool",
-      "lane": "pool",
-      "status": "ready",
-      "why": "2/4 nodes healthy",
-      "checked": "tools.pool_health --json + a trivial dispatch check",
-      "at": "2026-10-10T19:55:08Z"
-    },
-    {
-      "tool": "pool-checkout",
-      "lane": "pool",
-      "status": "ready",
-      "why": "2 nodes: code present + venv imports numpy/scipy",
-      "checked": "code present + venv import",
-      "at": "2026-10-10T19:55:09Z"
-    },
-    {
-      "tool": "cloud-aws",
-      "lane": "cloud",
-      "status": "unknown",
-      "why": "no AWS instance recorded \u2014 nothing to describe (no spend); provision via tools/aws_gpu.sh only when a run justifies it",
-      "checked": "aws_gpu.sh status",
-      "at": "2026-10-10T19:55:09Z"
-    }
-  ],
-  "backlog_items": [],
-  "_doc": "STEP B2 coordination surface: the backlog generator reads backlog_items (one repair item per ROTTED tool). Do NOT edit tools/backlog.py \u2014 add a scanner there that reads THIS file."
+ "schema": "tool-health-v1",
+ "generator": "tools/tool_health.py",
+ "generated_at": "2026-10-22T20:50:29Z",
+ "any_rotted": false,
+ "results": [
+  {
+   "tool": "experiment-engine",
+   "lane": "experiment",
+   "status": "degraded",
+   "why": "step-sweep needs a GPU; this host has no usable CUDA device (not rotted): api.runtime.CUDARuntimeError: cudaErrorInsufficientDriver: CUDA driver version is insufficient for CUDA runtime version\n",
+   "checked": "build 4 presets (step needs a CUDA device)",
+   "at": "2026-10-22T20:50:24Z"
+  },
+  {
+   "tool": "auto-tune",
+   "lane": "experiment",
+   "status": "degraded",
+   "why": "needs a GPU; this host has no usable CUDA device (not rotted): api.runtime.CUDARuntimeError: cudaErrorInsufficientDriver: CUDA driver version is insufficient for CUDA runtime version\n",
+   "checked": "neural-simulator.py --auto-tune --quick",
+   "at": "2026-10-22T20:50:25Z"
+  },
+  {
+   "tool": "gpu-queue",
+   "lane": "gpu",
+   "status": "ready",
+   "why": "status ok (0 dispatcher). == gpu_queue == shared queue: /home/dant123/Projects/neural-simulator/research/queue state: running current: (idle) queued: 0 | VRAM free: MiB (min_free 3000) dispatcher: DOWN (run: tools/gpu_queue.sh",
+   "checked": "gpu_queue.sh status + singleton",
+   "at": "2026-10-22T20:50:25Z"
+  },
+  {
+   "tool": "pool",
+   "lane": "pool",
+   "status": "ready",
+   "why": "4/4 nodes healthy",
+   "checked": "tools.pool_health --json + a trivial dispatch check",
+   "at": "2026-10-22T20:50:27Z"
+  },
+  {
+   "tool": "pool-checkout",
+   "lane": "pool",
+   "status": "ready",
+   "why": "4 nodes: code present + venv imports numpy/scipy",
+   "checked": "code present + venv import",
+   "at": "2026-10-22T20:50:29Z"
+  },
+  {
+   "tool": "cloud-aws",
+   "lane": "cloud",
+   "status": "unknown",
+   "why": "no AWS instance recorded \u2014 nothing to describe (no spend); provision via tools/aws_gpu.sh only when a run justifies it",
+   "checked": "aws_gpu.sh status",
+   "at": "2026-10-22T20:50:29Z"
+  }
+ ],
+ "backlog_items": [],
+ "_doc": "STEP B2 coordination surface: the backlog generator reads backlog_items (one repair item per ROTTED tool). Do NOT edit tools/backlog.py \u2014 add a scanner there that reads THIS file."
 }
