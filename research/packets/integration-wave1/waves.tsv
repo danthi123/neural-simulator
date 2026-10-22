@@ -1,3 +1,4 @@
 1791624249	wave1	1-43	first wave of iw1-flip-957c275 (canary PASS 2026-10-10T05:14)
 1792286272	wave2	retry-s42-discourse-register + 44-86	pre-flight CLEAN at 957c2752c (dev seed 7: 41/41 battery cells DEFINED, gate_preflight record 2026-10-17); ok=44 fail=0
 1792652306	wave3	87-129	iw1-flip-957c275 (queue 0<10 at add time; guards 43/43; landed-aware skips=0; ok=43)
+1792669245	wave4	130-172	iw1-flip-957c275 (queue 8<10 at add time; guards 43/43; landed-aware skips=0; ok=43)
