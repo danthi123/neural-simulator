@@ -1,0 +1,21 @@
+{
+ "argv": [
+  "python3",
+  "/opt/data/cache/scratch/a_f1g0b_score.py",
+  "--json"
+ ],
+ "artifact_kind": "aggregation-of-run-records (json read-only; no simulation executed)",
+ "backend": "numpy",
+ "device": "cpu",
+ "env": {
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_BACKEND": "numpy"
+ },
+ "git_dirty": true,
+ "git_sha": "284c214f4",
+ "notes": "step-0b scorer output: mechanical re-derivation of C0-C4 + STOP-C0/STOP-CAL/STOP-SMOKE per RULING cs-race-f1g-0-1022 (C0 = >=1 spike per pulsed cell per 150 ms pulse; selection C1-C4 unchanged); inputs cal60_wmm{10,15,20,30,40,60}_wim{20,40,80}.json (pool runs @ b8a1c11ad, seeds 41-48, --ment-pa 60).",
+ "run_id": "agg-f1g0b-20261022-070407",
+ "runner": "/opt/data/cache/scratch/a_f1g0b_score.py",
+ "sim_backend": "numpy",
+ "started": "2026-10-22T07:04:07"
+}
