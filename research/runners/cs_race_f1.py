@@ -912,6 +912,25 @@ def run_clauses(circ, seed, draws, grid_tag, controls_only=False,
 _F1_GRID_ROW = dict(F1_GRID[0])
 
 
+_HET_FIELDS = (("a", "cp_izh_a"), ("b", "cp_izh_b"),
+               ("C", "cp_izh_C"), ("d", "cp_izh_d_increment"),
+               ("v0", "cp_membrane_potential_v"),
+               ("u0", "cp_recovery_variable_u"))
+
+
+def _transplant_from_a0(a0, arm):
+    """f1d id2 ruling: copy A0's a, b, C, d, v0 and u0 into the arm's
+    shared indices before the first step -- harness initial conditions,
+    not a mechanism; the arm's extra cue cells keep their own draws."""
+    from sim.backend import to_host
+    n_shared = int(a0.occ[-1]) + 1
+    for _short, fname in _HET_FIELDS:
+        src = np.asarray(to_host(getattr(a0._bridge, fname)))
+        dst = getattr(arm._bridge, fname)
+        dst[:n_shared] = arm._xp.asarray(src[:n_shared])
+    return n_shared
+
+
 def identity_cue_n(base, grid, seeds, cue_n, w_cue, draws, out_arg):
     """f1d step 1d#2: for arms that change --cue-n, the engram, gate,
     GI, slot and occupancy heterogeneity arrays (a, b, d, C) and the
@@ -920,8 +939,10 @@ def identity_cue_n(base, grid, seeds, cue_n, w_cue, draws, out_arg):
     STOP with the diff (return 1); never proceeds silently."""
     from sim.backend import to_host
     rec = {"probe": "cs_race_f1_identity_cue_n",
+           "het_transplant_from_A0": True,
            "A0": {"cue_n": 8, "w_cue": float(W_CUE)},
            "A3": {"cue_n": int(cue_n), "w_cue": float(w_cue)},
+           "A3n": {"cue_n": 8, "cue_noise_sd": 0.15},
            "seeds": [], "seeds_pass": 0}
     all_ok = True
     for seed in seeds:
@@ -941,17 +962,45 @@ def identity_cue_n(base, grid, seeds, cue_n, w_cue, draws, out_arg):
 
         def _arr(c, name):
             return np.asarray(to_host(getattr(c._bridge, name)))
+        # pre-transfer state of the six arrays (kept in the record,
+        # RULING cs-race-f1d-id2): b/C/d differ by the draw offset
+        pre, pre_diff = {}, {}
+        for short, nm in _HET_FIELDS:
+            d0 = _arr(a0, nm)[:n_shared]
+            d3 = _arr(a3, nm)[:n_shared]
+            pre[short] = bool(np.array_equal(d0, d3))
+            pre_diff[short] = (0.0 if pre[short] else
+                               round(float(np.abs(d0 - d3).max()), 6))
+        # transplant A0's heterogeneity + init state into A3's shared
+        # indices BEFORE the first step (harness init, not a mechanism)
+        _transplant_from_a0(a0, a3)
         arr = {}
-        for nm in ("cp_izh_a", "cp_izh_b", "cp_izh_d_increment",
-                   "cp_izh_C"):
-            arr[nm] = bool(np.array_equal(_arr(a0, nm)[:n_shared],
-                                          _arr(a3, nm)[:n_shared]))
-        arr["v0"] = bool(np.array_equal(
-            _arr(a0, "cp_membrane_potential_v")[:n_shared],
-            _arr(a3, "cp_membrane_potential_v")[:n_shared]))
-        arr["u0"] = bool(np.array_equal(
-            _arr(a0, "cp_recovery_variable_u")[:n_shared],
-            _arr(a3, "cp_recovery_variable_u")[:n_shared]))
+        for short, nm in _HET_FIELDS:
+            arr[short] = bool(np.array_equal(
+                _arr(a0, nm)[:n_shared], _arr(a3, nm)[:n_shared]))
+        # A3n (ruling 2): n unchanged -> build arrays equal A0's; its
+        # cue OU noise must come from a private generator, so racing
+        # under two DIFFERENT global np.random states must be equal
+        an = RaceCircuit(3, seed, dict(b0, CUE_NOISE_SD=0.15), grid)
+        an2 = RaceCircuit(3, seed, dict(b0, CUE_NOISE_SD=0.15), grid)
+        a3n_arr = {}
+        for short, nm in _HET_FIELDS:
+            a3n_arr[short] = bool(np.array_equal(
+                _arr(a0, nm), _arr(an, nm)))
+        # first race on each fresh circuit (races are history-
+        # dependent), under two different GLOBAL np.random states: if
+        # equal, the cue OU uses its private seeded generator and no
+        # other draw touches the global stream
+        _ck = list(CUE_OF[1])
+        np.random.seed(1)
+        r1 = an.race(seed=seed * 1000003 + 900000,
+                     cue_words=_ck, encode=("ABsim",))
+        np.random.seed(99991)
+        r2 = an2.race(seed=seed * 1000003 + 900000,
+                      cue_words=_ck, encode=("ABsim",))
+        a3n_ou = (json.dumps(r1, sort_keys=True, default=str)
+                  == json.dumps(r2, sort_keys=True, default=str))
+        a3n_ok = bool(all(a3n_arr.values()) and a3n_ou)
         cue_pa = {}
         for tag, circ in (("A0", a0), ("A3", a3)):
             vals = []
@@ -965,17 +1014,24 @@ def identity_cue_n(base, grid, seeds, cue_n, w_cue, draws, out_arg):
                     vals.append(float(m))
             cue_pa[tag] = (round(sum(vals) / len(vals), 4)
                            if vals else None)
-        ok = all(arr.values())
+        ok = bool(all(arr.values()) and a3n_ok)
         all_ok = all_ok and ok
         rec["seeds"].append({"seed": seed, "n_shared": n_shared,
+                             "het_transplant_from_A0": True,
+                             "arrays_equal_pre_transplant": pre,
+                             "pre_transplant_max_abs_diff": pre_diff,
                              "arrays_equal": arr,
+                             "a3n": {"cue_n": 8, "cue_noise_sd": 0.15,
+                                     "build_arrays_equal_a0": a3n_arr,
+                                     "ou_private_global_seed_invariant":
+                                         bool(a3n_ou)},
                              "mean_cue_only_current_pa": cue_pa,
                              "pass": ok})
         rec["seeds_pass"] += int(ok)
-        print("identity 1d#2 seed %d: pass=%s shared=%d "
+        print("identity 1d#2 seed %d: pass=%s shared=%d a3n_ou=%s "
               "cue_only A0=%s A3=%s"
-              % (seed, ok, n_shared, cue_pa["A0"], cue_pa["A3"]),
-              flush=True)
+              % (seed, ok, n_shared, a3n_ou,
+                 cue_pa["A0"], cue_pa["A3"]), flush=True)
     rec["pass"] = bool(all_ok and len(rec["seeds"]) == len(seeds))
     path = out_arg or os.path.join(
         REPO, "research/findings/raw/_cs_race/f1d/identity_cue_n.json")
@@ -1084,8 +1140,16 @@ def main():
                               float(args.w_cue or 7.5), args.draws,
                               args.out)
     results = []
+    het_transplant = False
     for seed in seeds:
         circ = RaceCircuit(3, seed, dict(base), _F1_GRID_ROW)
+        if args.cue_n is not None and int(args.cue_n) != 8:
+            # f1d id2: cue-n arms transplant A0's heterogeneity +
+            # init state into shared indices before the first step
+            src = RaceCircuit(3, seed, dict(base, CUE_N=8),
+                              _F1_GRID_ROW)
+            _transplant_from_a0(src, circ)
+            het_transplant = True
         res = run_clauses(
             circ, seed, args.draws,
             "row%d U=%s tau_f=%s NE=%s W_EE=%s W_IE=%s W_NMDA=%s "
@@ -1146,6 +1210,7 @@ def main():
            "row_all_pass_8_seeds": bool(all_seeds_all_clauses
                                     and not args.controls_only),
         "controls_only": bool(args.controls_only),
+           "het_transplant_from_A0": bool(het_transplant),
            "instrument_flags": {"w_gis": base.get("W_GIS", 0.0),
                                 "w_sgi": base.get("W_SGI", 0.0),
                                 "cue_n": base.get("CUE_N", 8),
