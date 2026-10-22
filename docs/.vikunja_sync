@@ -319,3 +319,5 @@ verbatim. Board: #244 closed + milestone #264 added by Claude same cycle (RULING
 #269 updated (builds 6/7 verdicts, build 8 floor, frame premise NONE); #271 updated (deixis census lane, design round 1 refuted).
 ## 2026-10-21 deixis-271 census RESULT
 - Board #271: step-1 census landed, RESULT posted (provisional); next action = Claude reads the census + rules stage-1 design. No other task moved. (Ref: commit 1a3c1dc14; deixis-271-s0-RESULT.md.)
+## 2026-10-21 deixis-271 s0-accept
+- #271 census accepted; next action = Claude designs stage 1; branch @ 76765d87c. (Ref: RULING deixis-271-s0-accept.)
