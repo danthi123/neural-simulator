@@ -1,0 +1,8652 @@
+{
+ "stats": {
+  "a0_dev": {
+   "co": 63,
+   "commits": 17,
+   "cue_lock_base": 0.393,
+   "cue_lock_idx": 1.0,
+   "cue_lock_n": 80,
+   "frog": 10,
+   "frog_ci95": [
+    0.36,
+    0.784
+   ],
+   "frog_share": 0.588,
+   "gap_n": 73,
+   "latch_disagree": 0,
+   "med_gap_ms": 4,
+   "n_draws": 80,
+   "name": "a0_dev",
+   "ndec": 80,
+   "none": 0,
+   "one_sided": 7,
+   "per_seed": [
+    {
+     "co": 6,
+     "com": 4,
+     "frog": 2,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 1,
+     "uepsp": 3.4305,
+     "vole": 2
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 2,
+     "uepsp": 3.2811,
+     "vole": 0
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 3,
+     "uepsp": 2.9622,
+     "vole": 0
+    },
+    {
+     "co": 4,
+     "com": 6,
+     "frog": 4,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 4,
+     "uepsp": 2.8722,
+     "vole": 2
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 5,
+     "uepsp": 2.8661,
+     "vole": 0
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 6,
+     "uepsp": 3.1677,
+     "vole": 0
+    },
+    {
+     "co": 4,
+     "com": 6,
+     "frog": 4,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 7,
+     "uepsp": 2.8904,
+     "vole": 2
+    },
+    {
+     "co": 9,
+     "com": 1,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 8,
+     "uepsp": 3.0859,
+     "vole": 1
+    }
+   ],
+   "posctl_all": true,
+   "posctl_min": 10,
+   "ratio_cue_current": 1.935,
+   "sd_ge10": 2,
+   "seed_sd_min_ign": [
+    [
+     1,
+     4.94
+    ],
+    [
+     2,
+     1.77
+    ],
+    [
+     3,
+     1.87
+    ],
+    [
+     4,
+     21.45
+    ],
+    [
+     5,
+     5.07
+    ],
+    [
+     6,
+     1.17
+    ],
+    [
+     7,
+     35.87
+    ],
+    [
+     8,
+     9.8
+    ]
+   ],
+   "seeds": 8,
+   "seeds_pass": 0,
+   "surv": {
+    "first": 6,
+    "none": 63,
+    "single_burst": 11
+   },
+   "uepsp": 3.07,
+   "vole": 7
+  },
+  "a1_dev": {
+   "co": 1,
+   "commits": 78,
+   "cue_lock_base": 0.404,
+   "cue_lock_idx": 1.0,
+   "cue_lock_n": 80,
+   "frog": 46,
+   "frog_ci95": [
+    0.479,
+    0.692
+   ],
+   "frog_share": 0.59,
+   "gap_n": 73,
+   "latch_disagree": 0,
+   "med_gap_ms": 4,
+   "n_draws": 80,
+   "name": "a1_dev",
+   "ndec": 80,
+   "none": 1,
+   "one_sided": 7,
+   "per_seed": [
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 6,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 1,
+     "uepsp": 3.4305,
+     "vole": 4
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 6,
+     "none": 1,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 2,
+     "uepsp": 3.2811,
+     "vole": 3
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 10,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 3,
+     "uepsp": 2.9622,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 5,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 4,
+     "uepsp": 2.8722,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 5,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 5,
+     "uepsp": 2.8661,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 4,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 6,
+     "uepsp": 3.1677,
+     "vole": 6
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 6,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 7,
+     "uepsp": 2.8904,
+     "vole": 4
+    },
+    {
+     "co": 1,
+     "com": 9,
+     "frog": 4,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 8,
+     "uepsp": 3.0859,
+     "vole": 5
+    }
+   ],
+   "posctl_all": true,
+   "posctl_min": 10,
+   "ratio_cue_current": 1.935,
+   "sd_ge10": 2,
+   "seed_sd_min_ign": [
+    [
+     1,
+     4.94
+    ],
+    [
+     2,
+     1.77
+    ],
+    [
+     3,
+     1.87
+    ],
+    [
+     4,
+     21.45
+    ],
+    [
+     5,
+     5.07
+    ],
+    [
+     6,
+     1.17
+    ],
+    [
+     7,
+     35.87
+    ],
+    [
+     8,
+     9.8
+    ]
+   ],
+   "seeds": 8,
+   "seeds_pass": 7,
+   "surv": {
+    "first": 58,
+    "last": 2,
+    "none": 2,
+    "single_burst": 18
+   },
+   "uepsp": 3.07,
+   "vole": 32
+  },
+  "a1gs_dev": {
+   "co": 0,
+   "commits": 77,
+   "cue_lock_base": 0.43,
+   "cue_lock_idx": 0.991,
+   "cue_lock_n": 80,
+   "frog": 43,
+   "frog_ci95": [
+    0.447,
+    0.664
+   ],
+   "frog_share": 0.558,
+   "gap_n": 73,
+   "latch_disagree": 2,
+   "med_gap_ms": 4,
+   "n_draws": 80,
+   "name": "a1gs_dev",
+   "ndec": 80,
+   "none": 3,
+   "one_sided": 7,
+   "per_seed": [
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 6,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 1,
+     "uepsp": 3.4305,
+     "vole": 4
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 4,
+     "none": 1,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 2,
+     "uepsp": 3.2811,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 10,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 3,
+     "uepsp": 2.9622,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 5,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 4,
+     "uepsp": 2.8722,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 5,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 5,
+     "uepsp": 2.8661,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 4,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 6,
+     "uepsp": 3.1677,
+     "vole": 6
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 5,
+     "none": 1,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 7,
+     "uepsp": 2.8904,
+     "vole": 4
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 4,
+     "none": 1,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 8,
+     "uepsp": 3.0859,
+     "vole": 5
+    }
+   ],
+   "posctl_all": true,
+   "posctl_min": 10,
+   "ratio_cue_current": 1.935,
+   "sd_ge10": 2,
+   "seed_sd_min_ign": [
+    [
+     1,
+     4.94
+    ],
+    [
+     2,
+     1.77
+    ],
+    [
+     3,
+     1.87
+    ],
+    [
+     4,
+     21.45
+    ],
+    [
+     5,
+     5.07
+    ],
+    [
+     6,
+     1.17
+    ],
+    [
+     7,
+     35.87
+    ],
+    [
+     8,
+     9.8
+    ]
+   ],
+   "seeds": 8,
+   "seeds_pass": 7,
+   "surv": {
+    "first": 57,
+    "last": 3,
+    "neither": 1,
+    "none": 3,
+    "single_burst": 16
+   },
+   "uepsp": 3.07,
+   "vole": 34
+  },
+  "a1s_dev": {
+   "co": 63,
+   "commits": 17,
+   "cue_lock_base": 0.703,
+   "cue_lock_idx": 0.776,
+   "cue_lock_n": 80,
+   "frog": 10,
+   "frog_ci95": [
+    0.36,
+    0.784
+   ],
+   "frog_share": 0.588,
+   "gap_n": 73,
+   "latch_disagree": 0,
+   "med_gap_ms": 4,
+   "n_draws": 80,
+   "name": "a1s_dev",
+   "ndec": 80,
+   "none": 0,
+   "one_sided": 7,
+   "per_seed": [
+    {
+     "co": 6,
+     "com": 4,
+     "frog": 2,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 1,
+     "uepsp": 3.4305,
+     "vole": 2
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 2,
+     "uepsp": 3.2811,
+     "vole": 0
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 3,
+     "uepsp": 2.9622,
+     "vole": 0
+    },
+    {
+     "co": 4,
+     "com": 6,
+     "frog": 4,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 4,
+     "uepsp": 2.8722,
+     "vole": 2
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 5,
+     "uepsp": 2.8661,
+     "vole": 0
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 6,
+     "uepsp": 3.1677,
+     "vole": 0
+    },
+    {
+     "co": 4,
+     "com": 6,
+     "frog": 4,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 7,
+     "uepsp": 2.8904,
+     "vole": 2
+    },
+    {
+     "co": 9,
+     "com": 1,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 8,
+     "uepsp": 3.0859,
+     "vole": 1
+    }
+   ],
+   "posctl_all": true,
+   "posctl_min": 10,
+   "ratio_cue_current": 1.935,
+   "sd_ge10": 2,
+   "seed_sd_min_ign": [
+    [
+     1,
+     4.94
+    ],
+    [
+     2,
+     1.77
+    ],
+    [
+     3,
+     1.87
+    ],
+    [
+     4,
+     21.45
+    ],
+    [
+     5,
+     5.07
+    ],
+    [
+     6,
+     1.17
+    ],
+    [
+     7,
+     35.87
+    ],
+    [
+     8,
+     9.8
+    ]
+   ],
+   "seeds": 8,
+   "seeds_pass": 0,
+   "surv": {
+    "first": 6,
+    "none": 63,
+    "single_burst": 11
+   },
+   "uepsp": 3.07,
+   "vole": 7
+  },
+  "a3_dev": {
+   "co": 52,
+   "commits": 28,
+   "cue_lock_base": 0.407,
+   "cue_lock_idx": 1.0,
+   "cue_lock_n": 80,
+   "frog": 14,
+   "frog_ci95": [
+    0.326,
+    0.674
+   ],
+   "frog_share": 0.5,
+   "gap_n": 68,
+   "latch_disagree": 0,
+   "med_gap_ms": 8,
+   "n_draws": 80,
+   "name": "a3_dev",
+   "ndec": 80,
+   "none": 0,
+   "one_sided": 11,
+   "per_seed": [
+    {
+     "co": 4,
+     "com": 6,
+     "frog": 3,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 1,
+     "uepsp": 0.4925,
+     "vole": 3
+    },
+    {
+     "co": 5,
+     "com": 5,
+     "frog": 2,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 2,
+     "uepsp": 0.4692,
+     "vole": 3
+    },
+    {
+     "co": 8,
+     "com": 2,
+     "frog": 2,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 3,
+     "uepsp": 0.482,
+     "vole": 0
+    },
+    {
+     "co": 7,
+     "com": 3,
+     "frog": 1,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 4,
+     "uepsp": 0.4861,
+     "vole": 2
+    },
+    {
+     "co": 2,
+     "com": 8,
+     "frog": 4,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 5,
+     "uepsp": 0.4887,
+     "vole": 4
+    },
+    {
+     "co": 9,
+     "com": 1,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 6,
+     "uepsp": 0.4914,
+     "vole": 1
+    },
+    {
+     "co": 8,
+     "com": 2,
+     "frog": 2,
+     "none": 0,
+     "pass": false,
+     "posctl": 9,
+     "posctl_pass": true,
+     "seed": 7,
+     "uepsp": 0.4961,
+     "vole": 0
+    },
+    {
+     "co": 9,
+     "com": 1,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 8,
+     "uepsp": 0.5005,
+     "vole": 1
+    }
+   ],
+   "posctl_all": true,
+   "posctl_min": 9,
+   "ratio_cue_current": 2.013,
+   "sd_ge10": 2,
+   "seed_sd_min_ign": [
+    [
+     1,
+     4.23
+    ],
+    [
+     2,
+     8.13
+    ],
+    [
+     3,
+     4.08
+    ],
+    [
+     4,
+     10.1
+    ],
+    [
+     5,
+     14.05
+    ],
+    [
+     6,
+     2.4
+    ],
+    [
+     7,
+     3.06
+    ],
+    [
+     8,
+     7.6
+    ]
+   ],
+   "seeds": 8,
+   "seeds_pass": 0,
+   "surv": {
+    "first": 11,
+    "none": 52,
+    "single_burst": 17
+   },
+   "uepsp": 0.488,
+   "vole": 14
+  },
+  "a3n_dev": {
+   "co": 51,
+   "commits": 29,
+   "cue_lock_base": 0.385,
+   "cue_lock_idx": 1.0,
+   "cue_lock_n": 80,
+   "frog": 14,
+   "frog_ci95": [
+    0.314,
+    0.656
+   ],
+   "frog_share": 0.483,
+   "gap_n": 67,
+   "latch_disagree": 0,
+   "med_gap_ms": 4,
+   "n_draws": 80,
+   "name": "a3n_dev",
+   "ndec": 80,
+   "none": 0,
+   "one_sided": 13,
+   "per_seed": [
+    {
+     "co": 6,
+     "com": 4,
+     "frog": 1,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 1,
+     "uepsp": 3.4305,
+     "vole": 3
+    },
+    {
+     "co": 8,
+     "com": 2,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 9,
+     "posctl_pass": true,
+     "seed": 2,
+     "uepsp": 3.2811,
+     "vole": 2
+    },
+    {
+     "co": 8,
+     "com": 2,
+     "frog": 2,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 3,
+     "uepsp": 2.9622,
+     "vole": 0
+    },
+    {
+     "co": 6,
+     "com": 4,
+     "frog": 3,
+     "none": 0,
+     "pass": false,
+     "posctl": 9,
+     "posctl_pass": true,
+     "seed": 4,
+     "uepsp": 2.8722,
+     "vole": 1
+    },
+    {
+     "co": 7,
+     "com": 3,
+     "frog": 1,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 5,
+     "uepsp": 2.8661,
+     "vole": 2
+    },
+    {
+     "co": 7,
+     "com": 3,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 6,
+     "uepsp": 3.1677,
+     "vole": 3
+    },
+    {
+     "co": 3,
+     "com": 7,
+     "frog": 5,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 7,
+     "uepsp": 2.8904,
+     "vole": 2
+    },
+    {
+     "co": 6,
+     "com": 4,
+     "frog": 2,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 8,
+     "uepsp": 3.0859,
+     "vole": 2
+    }
+   ],
+   "posctl_all": true,
+   "posctl_min": 9,
+   "ratio_cue_current": 2.034,
+   "sd_ge10": 8,
+   "seed_sd_min_ign": [
+    [
+     1,
+     17.88
+    ],
+    [
+     2,
+     17.01
+    ],
+    [
+     3,
+     30.77
+    ],
+    [
+     4,
+     30.75
+    ],
+    [
+     5,
+     26.74
+    ],
+    [
+     6,
+     15.81
+    ],
+    [
+     7,
+     25.3
+    ],
+    [
+     8,
+     13.4
+    ]
+   ],
+   "seeds": 8,
+   "seeds_pass": 0,
+   "surv": {
+    "first": 8,
+    "last": 3,
+    "none": 51,
+    "single_burst": 18
+   },
+   "uepsp": 3.07,
+   "vole": 15
+  },
+  "a4_dev": {
+   "co": 4,
+   "commits": 75,
+   "cue_lock_base": 0.41,
+   "cue_lock_idx": 1.0,
+   "cue_lock_n": 80,
+   "frog": 45,
+   "frog_ci95": [
+    0.487,
+    0.703
+   ],
+   "frog_share": 0.6,
+   "gap_n": 68,
+   "latch_disagree": 0,
+   "med_gap_ms": 8,
+   "n_draws": 80,
+   "name": "a4_dev",
+   "ndec": 80,
+   "none": 1,
+   "one_sided": 11,
+   "per_seed": [
+    {
+     "co": 1,
+     "com": 9,
+     "frog": 5,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 1,
+     "uepsp": 0.4925,
+     "vole": 4
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 4,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 2,
+     "uepsp": 0.4692,
+     "vole": 6
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 10,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 3,
+     "uepsp": 0.482,
+     "vole": 0
+    },
+    {
+     "co": 2,
+     "com": 8,
+     "frog": 4,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 4,
+     "uepsp": 0.4861,
+     "vole": 4
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 5,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 5,
+     "uepsp": 0.4887,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 4,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 6,
+     "uepsp": 0.4914,
+     "vole": 6
+    },
+    {
+     "co": 1,
+     "com": 9,
+     "frog": 7,
+     "none": 0,
+     "pass": true,
+     "posctl": 9,
+     "posctl_pass": true,
+     "seed": 7,
+     "uepsp": 0.4961,
+     "vole": 2
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 6,
+     "none": 1,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 8,
+     "uepsp": 0.5005,
+     "vole": 3
+    }
+   ],
+   "posctl_all": true,
+   "posctl_min": 9,
+   "ratio_cue_current": 2.013,
+   "sd_ge10": 2,
+   "seed_sd_min_ign": [
+    [
+     1,
+     4.23
+    ],
+    [
+     2,
+     8.13
+    ],
+    [
+     3,
+     4.08
+    ],
+    [
+     4,
+     10.1
+    ],
+    [
+     5,
+     14.05
+    ],
+    [
+     6,
+     2.4
+    ],
+    [
+     7,
+     3.06
+    ],
+    [
+     8,
+     7.6
+    ]
+   ],
+   "seeds": 8,
+   "seeds_pass": 6,
+   "surv": {
+    "first": 50,
+    "last": 5,
+    "none": 5,
+    "single_burst": 20
+   },
+   "uepsp": 0.488,
+   "vole": 30
+  },
+  "a5_dev": {
+   "co": 0,
+   "commits": 3,
+   "cue_lock_base": 0.552,
+   "cue_lock_idx": 0.866,
+   "cue_lock_n": 78,
+   "frog": 2,
+   "frog_ci95": [
+    0.208,
+    0.939
+   ],
+   "frog_share": 0.667,
+   "gap_n": 76,
+   "latch_disagree": 1,
+   "med_gap_ms": 4,
+   "n_draws": 80,
+   "name": "a5_dev",
+   "ndec": 80,
+   "none": 77,
+   "one_sided": 4,
+   "per_seed": [
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 1,
+     "uepsp": 3.4305,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 2,
+     "uepsp": 3.2811,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 3,
+     "uepsp": 2.9622,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 4,
+     "uepsp": 2.8722,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 1,
+     "posctl_pass": false,
+     "seed": 5,
+     "uepsp": 2.8661,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 1,
+     "posctl_pass": false,
+     "seed": 6,
+     "uepsp": 3.1677,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 3,
+     "frog": 2,
+     "none": 7,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 7,
+     "uepsp": 2.8904,
+     "vole": 1
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 2,
+     "posctl_pass": false,
+     "seed": 8,
+     "uepsp": 3.0859,
+     "vole": 0
+    }
+   ],
+   "posctl_all": false,
+   "posctl_min": 0,
+   "ratio_cue_current": 1.93,
+   "sd_ge10": 2,
+   "seed_sd_min_ign": [
+    [
+     1,
+     4.94
+    ],
+    [
+     2,
+     1.77
+    ],
+    [
+     3,
+     1.87
+    ],
+    [
+     4,
+     21.28
+    ],
+    [
+     5,
+     5.07
+    ],
+    [
+     6,
+     1.17
+    ],
+    [
+     7,
+     33.22
+    ],
+    [
+     8,
+     9.8
+    ]
+   ],
+   "seeds": 8,
+   "seeds_pass": 0,
+   "surv": {
+    "none": 77,
+    "single_burst": 3
+   },
+   "uepsp": 3.07,
+   "vole": 1
+  },
+  "a5_wie20_dev": {
+   "co": 0,
+   "commits": 2,
+   "cue_lock_base": 0.56,
+   "cue_lock_idx": 0.857,
+   "cue_lock_n": 78,
+   "frog": 2,
+   "frog_ci95": [
+    0.342,
+    1.0
+   ],
+   "frog_share": 1.0,
+   "gap_n": 77,
+   "latch_disagree": 1,
+   "med_gap_ms": 4,
+   "n_draws": 80,
+   "name": "a5_wie20_dev",
+   "ndec": 80,
+   "none": 78,
+   "one_sided": 3,
+   "per_seed": [
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 1,
+     "uepsp": 3.4305,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 2,
+     "uepsp": 3.2811,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 3,
+     "uepsp": 2.9622,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 4,
+     "uepsp": 2.8722,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 1,
+     "posctl_pass": false,
+     "seed": 5,
+     "uepsp": 2.8661,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 1,
+     "posctl_pass": false,
+     "seed": 6,
+     "uepsp": 3.1677,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 2,
+     "frog": 2,
+     "none": 8,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 7,
+     "uepsp": 2.8904,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 2,
+     "posctl_pass": false,
+     "seed": 8,
+     "uepsp": 3.0859,
+     "vole": 0
+    }
+   ],
+   "posctl_all": false,
+   "posctl_min": 0,
+   "ratio_cue_current": 1.921,
+   "sd_ge10": 3,
+   "seed_sd_min_ign": [
+    [
+     1,
+     4.84
+    ],
+    [
+     2,
+     1.77
+    ],
+    [
+     3,
+     1.87
+    ],
+    [
+     4,
+     21.15
+    ],
+    [
+     5,
+     5.05
+    ],
+    [
+     6,
+     1.17
+    ],
+    [
+     7,
+     31.19
+    ],
+    [
+     8,
+     11.04
+    ]
+   ],
+   "seeds": 8,
+   "seeds_pass": 0,
+   "surv": {
+    "none": 78,
+    "single_burst": 2
+   },
+   "uepsp": 3.07,
+   "vole": 0
+  },
+  "a5_wie80_dev": {
+   "co": 0,
+   "commits": 3,
+   "cue_lock_base": 0.548,
+   "cue_lock_idx": 0.873,
+   "cue_lock_n": 77,
+   "frog": 2,
+   "frog_ci95": [
+    0.208,
+    0.939
+   ],
+   "frog_share": 0.667,
+   "gap_n": 78,
+   "latch_disagree": 1,
+   "med_gap_ms": 4,
+   "n_draws": 80,
+   "name": "a5_wie80_dev",
+   "ndec": 80,
+   "none": 77,
+   "one_sided": 2,
+   "per_seed": [
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 1,
+     "uepsp": 3.4305,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 2,
+     "uepsp": 3.2811,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 3,
+     "uepsp": 2.9622,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 4,
+     "uepsp": 2.8722,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 1,
+     "posctl_pass": false,
+     "seed": 5,
+     "uepsp": 2.8661,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 1,
+     "posctl_pass": false,
+     "seed": 6,
+     "uepsp": 3.1677,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 3,
+     "frog": 2,
+     "none": 7,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 7,
+     "uepsp": 2.8904,
+     "vole": 1
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 2,
+     "posctl_pass": false,
+     "seed": 8,
+     "uepsp": 3.0859,
+     "vole": 0
+    }
+   ],
+   "posctl_all": false,
+   "posctl_min": 0,
+   "ratio_cue_current": 1.93,
+   "sd_ge10": 2,
+   "seed_sd_min_ign": [
+    [
+     1,
+     4.94
+    ],
+    [
+     2,
+     1.77
+    ],
+    [
+     3,
+     1.89
+    ],
+    [
+     4,
+     22.02
+    ],
+    [
+     5,
+     5.07
+    ],
+    [
+     6,
+     1.17
+    ],
+    [
+     7,
+     31.19
+    ],
+    [
+     8,
+     9.8
+    ]
+   ],
+   "seeds": 8,
+   "seeds_pass": 0,
+   "surv": {
+    "none": 77,
+    "single_burst": 3
+   },
+   "uepsp": 3.07,
+   "vole": 1
+  },
+  "c_a0": {
+   "co": 134,
+   "commits": 26,
+   "cue_lock_base": 0.39,
+   "cue_lock_idx": 1.0,
+   "cue_lock_n": 160,
+   "frog": 15,
+   "frog_ci95": [
+    0.389,
+    0.745
+   ],
+   "frog_share": 0.577,
+   "gap_n": 149,
+   "latch_disagree": 0,
+   "med_gap_ms": 5,
+   "n_draws": 160,
+   "name": "c_a0",
+   "ndec": 160,
+   "none": 0,
+   "one_sided": 10,
+   "per_seed": [
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 25,
+     "uepsp": 2.8568,
+     "vole": 0
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 26,
+     "uepsp": 2.9683,
+     "vole": 0
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 27,
+     "uepsp": 2.9698,
+     "vole": 0
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 28,
+     "uepsp": 2.902,
+     "vole": 0
+    },
+    {
+     "co": 7,
+     "com": 3,
+     "frog": 1,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 29,
+     "uepsp": 2.8579,
+     "vole": 2
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 30,
+     "uepsp": 3.0138,
+     "vole": 0
+    },
+    {
+     "co": 8,
+     "com": 2,
+     "frog": 2,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 31,
+     "uepsp": 2.966,
+     "vole": 0
+    },
+    {
+     "co": 8,
+     "com": 2,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 32,
+     "uepsp": 3.027,
+     "vole": 2
+    },
+    {
+     "co": 9,
+     "com": 1,
+     "frog": 1,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 33,
+     "uepsp": 3.011,
+     "vole": 0
+    },
+    {
+     "co": 9,
+     "com": 1,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 34,
+     "uepsp": 3.0263,
+     "vole": 1
+    },
+    {
+     "co": 6,
+     "com": 4,
+     "frog": 3,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 35,
+     "uepsp": 2.8847,
+     "vole": 1
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 36,
+     "uepsp": 3.0096,
+     "vole": 0
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 37,
+     "uepsp": 3.0176,
+     "vole": 0
+    },
+    {
+     "co": 7,
+     "com": 3,
+     "frog": 2,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 38,
+     "uepsp": 3.0838,
+     "vole": 1
+    },
+    {
+     "co": 8,
+     "com": 2,
+     "frog": 1,
+     "none": 0,
+     "pass": false,
+     "posctl": 9,
+     "posctl_pass": true,
+     "seed": 39,
+     "uepsp": 2.8907,
+     "vole": 1
+    },
+    {
+     "co": 2,
+     "com": 8,
+     "frog": 5,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 40,
+     "uepsp": 2.9073,
+     "vole": 3
+    }
+   ],
+   "posctl_all": true,
+   "posctl_min": 9,
+   "ratio_cue_current": 1.891,
+   "sd_ge10": 1,
+   "seed_sd_min_ign": [
+    [
+     25,
+     1.7
+    ],
+    [
+     26,
+     1.51
+    ],
+    [
+     27,
+     4.48
+    ],
+    [
+     28,
+     1.77
+    ],
+    [
+     29,
+     5.05
+    ],
+    [
+     30,
+     1.51
+    ],
+    [
+     31,
+     6.3
+    ],
+    [
+     32,
+     3.3
+    ],
+    [
+     33,
+     1.41
+    ],
+    [
+     34,
+     5.23
+    ],
+    [
+     35,
+     5.06
+    ],
+    [
+     36,
+     3.97
+    ],
+    [
+     37,
+     2.28
+    ],
+    [
+     38,
+     4.22
+    ],
+    [
+     39,
+     7.94
+    ],
+    [
+     40,
+     13.61
+    ]
+   ],
+   "seeds": 16,
+   "seeds_pass": 0,
+   "surv": {
+    "first": 9,
+    "none": 134,
+    "single_burst": 17
+   },
+   "uepsp": 2.962,
+   "vole": 11
+  },
+  "c_a1": {
+   "co": 4,
+   "commits": 153,
+   "cue_lock_base": 0.415,
+   "cue_lock_idx": 0.997,
+   "cue_lock_n": 160,
+   "frog": 76,
+   "frog_ci95": [
+    0.419,
+    0.575
+   ],
+   "frog_share": 0.497,
+   "gap_n": 149,
+   "latch_disagree": 1,
+   "med_gap_ms": 5,
+   "n_draws": 160,
+   "name": "c_a1",
+   "ndec": 160,
+   "none": 3,
+   "one_sided": 10,
+   "per_seed": [
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 10,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 25,
+     "uepsp": 2.8568,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 8,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 26,
+     "uepsp": 2.9683,
+     "vole": 2
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 4,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 27,
+     "uepsp": 2.9698,
+     "vole": 6
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 3,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 28,
+     "uepsp": 2.902,
+     "vole": 7
+    },
+    {
+     "co": 1,
+     "com": 9,
+     "frog": 2,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 29,
+     "uepsp": 2.8579,
+     "vole": 7
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 1,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 30,
+     "uepsp": 3.0138,
+     "vole": 9
+    },
+    {
+     "co": 3,
+     "com": 7,
+     "frog": 6,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 31,
+     "uepsp": 2.966,
+     "vole": 1
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 2,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 32,
+     "uepsp": 3.027,
+     "vole": 8
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 4,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 33,
+     "uepsp": 3.011,
+     "vole": 6
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 3,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 34,
+     "uepsp": 3.0263,
+     "vole": 7
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 6,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 35,
+     "uepsp": 2.8847,
+     "vole": 4
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 3,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 36,
+     "uepsp": 3.0096,
+     "vole": 7
+    },
+    {
+     "co": 0,
+     "com": 8,
+     "frog": 8,
+     "none": 2,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 37,
+     "uepsp": 3.0176,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 6,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 38,
+     "uepsp": 3.0838,
+     "vole": 4
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 4,
+     "none": 0,
+     "pass": true,
+     "posctl": 9,
+     "posctl_pass": true,
+     "seed": 39,
+     "uepsp": 2.8907,
+     "vole": 6
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 6,
+     "none": 1,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 40,
+     "uepsp": 2.9073,
+     "vole": 3
+    }
+   ],
+   "posctl_all": true,
+   "posctl_min": 9,
+   "ratio_cue_current": 1.891,
+   "sd_ge10": 1,
+   "seed_sd_min_ign": [
+    [
+     25,
+     1.7
+    ],
+    [
+     26,
+     1.51
+    ],
+    [
+     27,
+     4.48
+    ],
+    [
+     28,
+     1.77
+    ],
+    [
+     29,
+     5.05
+    ],
+    [
+     30,
+     1.51
+    ],
+    [
+     31,
+     6.3
+    ],
+    [
+     32,
+     3.3
+    ],
+    [
+     33,
+     1.41
+    ],
+    [
+     34,
+     5.23
+    ],
+    [
+     35,
+     5.06
+    ],
+    [
+     36,
+     3.97
+    ],
+    [
+     37,
+     2.28
+    ],
+    [
+     38,
+     4.22
+    ],
+    [
+     39,
+     7.94
+    ],
+    [
+     40,
+     13.61
+    ]
+   ],
+   "seeds": 16,
+   "seeds_pass": 12,
+   "surv": {
+    "first": 117,
+    "last": 15,
+    "none": 7,
+    "single_burst": 21
+   },
+   "uepsp": 2.962,
+   "vole": 77
+  },
+  "c_a4": {
+   "co": 0,
+   "commits": 154,
+   "cue_lock_base": 0.416,
+   "cue_lock_idx": 0.998,
+   "cue_lock_n": 160,
+   "frog": 68,
+   "frog_ci95": [
+    0.365,
+    0.52
+   ],
+   "frog_share": 0.442,
+   "gap_n": 142,
+   "latch_disagree": 1,
+   "med_gap_ms": 8,
+   "n_draws": 160,
+   "name": "c_a4",
+   "ndec": 160,
+   "none": 6,
+   "one_sided": 17,
+   "per_seed": [
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 5,
+     "none": 1,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 25,
+     "uepsp": 0.4663,
+     "vole": 4
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 8,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 26,
+     "uepsp": 0.4629,
+     "vole": 2
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 5,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 27,
+     "uepsp": 0.465,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 3,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 28,
+     "uepsp": 0.4529,
+     "vole": 7
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 2,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 29,
+     "uepsp": 0.4907,
+     "vole": 8
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 3,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 30,
+     "uepsp": 0.4923,
+     "vole": 7
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 7,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 31,
+     "uepsp": 0.4852,
+     "vole": 3
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 2,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 32,
+     "uepsp": 0.4855,
+     "vole": 8
+    },
+    {
+     "co": 0,
+     "com": 7,
+     "frog": 4,
+     "none": 3,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 33,
+     "uepsp": 0.4719,
+     "vole": 3
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 3,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 34,
+     "uepsp": 0.5063,
+     "vole": 7
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 5,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 35,
+     "uepsp": 0.4707,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 3,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 36,
+     "uepsp": 0.47,
+     "vole": 7
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 4,
+     "none": 1,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 37,
+     "uepsp": 0.4683,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 5,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 38,
+     "uepsp": 0.4755,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 4,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 39,
+     "uepsp": 0.4974,
+     "vole": 6
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 5,
+     "none": 1,
+     "pass": true,
+     "posctl": 9,
+     "posctl_pass": true,
+     "seed": 40,
+     "uepsp": 0.5014,
+     "vole": 4
+    }
+   ],
+   "posctl_all": true,
+   "posctl_min": 9,
+   "ratio_cue_current": 1.988,
+   "sd_ge10": 3,
+   "seed_sd_min_ign": [
+    [
+     25,
+     5.6
+    ],
+    [
+     26,
+     9.43
+    ],
+    [
+     27,
+     5.89
+    ],
+    [
+     28,
+     5.55
+    ],
+    [
+     29,
+     8.7
+    ],
+    [
+     30,
+     3.16
+    ],
+    [
+     31,
+     2.83
+    ],
+    [
+     32,
+     10.84
+    ],
+    [
+     33,
+     2.11
+    ],
+    [
+     34,
+     6.84
+    ],
+    [
+     35,
+     5.57
+    ],
+    [
+     36,
+     9.69
+    ],
+    [
+     37,
+     10.99
+    ],
+    [
+     38,
+     5.49
+    ],
+    [
+     39,
+     7.57
+    ],
+    [
+     40,
+     12.5
+    ]
+   ],
+   "seeds": 16,
+   "seeds_pass": 15,
+   "surv": {
+    "first": 111,
+    "last": 16,
+    "none": 6,
+    "single_burst": 27
+   },
+   "uepsp": 0.479,
+   "vole": 86
+  },
+  "c_a5": {
+   "co": 0,
+   "commits": 6,
+   "cue_lock_base": 0.554,
+   "cue_lock_idx": 0.982,
+   "cue_lock_n": 151,
+   "frog": 3,
+   "frog_ci95": [
+    0.188,
+    0.812
+   ],
+   "frog_share": 0.5,
+   "gap_n": 158,
+   "latch_disagree": 1,
+   "med_gap_ms": 5,
+   "n_draws": 160,
+   "name": "c_a5",
+   "ndec": 160,
+   "none": 154,
+   "one_sided": 2,
+   "per_seed": [
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 9,
+     "posctl_pass": true,
+     "seed": 25,
+     "uepsp": 2.8568,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 8,
+     "posctl_pass": false,
+     "seed": 26,
+     "uepsp": 2.9683,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 1,
+     "posctl_pass": false,
+     "seed": 27,
+     "uepsp": 2.9698,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 1,
+     "posctl_pass": false,
+     "seed": 28,
+     "uepsp": 2.902,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 29,
+     "uepsp": 2.8579,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 6,
+     "posctl_pass": false,
+     "seed": 30,
+     "uepsp": 3.0138,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 31,
+     "uepsp": 2.966,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 32,
+     "uepsp": 3.027,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 33,
+     "uepsp": 3.011,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 2,
+     "frog": 0,
+     "none": 8,
+     "pass": false,
+     "posctl": 7,
+     "posctl_pass": false,
+     "seed": 34,
+     "uepsp": 3.0263,
+     "vole": 2
+    },
+    {
+     "co": 0,
+     "com": 3,
+     "frog": 3,
+     "none": 7,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 35,
+     "uepsp": 2.8847,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 36,
+     "uepsp": 3.0096,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 37,
+     "uepsp": 3.0176,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 38,
+     "uepsp": 3.0838,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 1,
+     "frog": 0,
+     "none": 9,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 39,
+     "uepsp": 2.8907,
+     "vole": 1
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 40,
+     "uepsp": 2.9073,
+     "vole": 0
+    }
+   ],
+   "posctl_all": false,
+   "posctl_min": 0,
+   "ratio_cue_current": 1.892,
+   "sd_ge10": 1,
+   "seed_sd_min_ign": [
+    [
+     25,
+     1.7
+    ],
+    [
+     26,
+     1.51
+    ],
+    [
+     27,
+     4.47
+    ],
+    [
+     28,
+     1.77
+    ],
+    [
+     29,
+     4.93
+    ],
+    [
+     30,
+     1.51
+    ],
+    [
+     31,
+     6.92
+    ],
+    [
+     32,
+     3.3
+    ],
+    [
+     33,
+     1.41
+    ],
+    [
+     34,
+     5.23
+    ],
+    [
+     35,
+     5.06
+    ],
+    [
+     36,
+     3.97
+    ],
+    [
+     37,
+     2.28
+    ],
+    [
+     38,
+     4.22
+    ],
+    [
+     39,
+     7.53
+    ],
+    [
+     40,
+     48.07
+    ]
+   ],
+   "seeds": 16,
+   "seeds_pass": 0,
+   "surv": {
+    "none": 154,
+    "single_burst": 6
+   },
+   "uepsp": 2.962,
+   "vole": 3
+  },
+  "c_st_a0_eng_frog_p4": {
+   "co": 132,
+   "commits": 28,
+   "cue_lock_base": 0.385,
+   "cue_lock_idx": 1.0,
+   "cue_lock_n": 160,
+   "frog": 24,
+   "frog_ci95": [
+    0.685,
+    0.943
+   ],
+   "frog_share": 0.857,
+   "gap_n": 149,
+   "latch_disagree": 0,
+   "med_gap_ms": 5,
+   "n_draws": 160,
+   "name": "c_st_a0_eng_frog_p4",
+   "ndec": 160,
+   "none": 0,
+   "one_sided": 10,
+   "per_seed": [
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 25,
+     "uepsp": 2.8568,
+     "vole": 0
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 26,
+     "uepsp": 2.9683,
+     "vole": 0
+    },
+    {
+     "co": 9,
+     "com": 1,
+     "frog": 1,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 27,
+     "uepsp": 2.9698,
+     "vole": 0
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 28,
+     "uepsp": 2.902,
+     "vole": 0
+    },
+    {
+     "co": 9,
+     "com": 1,
+     "frog": 1,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 29,
+     "uepsp": 2.8579,
+     "vole": 0
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 30,
+     "uepsp": 3.0138,
+     "vole": 0
+    },
+    {
+     "co": 6,
+     "com": 4,
+     "frog": 4,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 31,
+     "uepsp": 2.966,
+     "vole": 0
+    },
+    {
+     "co": 8,
+     "com": 2,
+     "frog": 1,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 32,
+     "uepsp": 3.027,
+     "vole": 1
+    },
+    {
+     "co": 9,
+     "com": 1,
+     "frog": 1,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 33,
+     "uepsp": 3.011,
+     "vole": 0
+    },
+    {
+     "co": 9,
+     "com": 1,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 34,
+     "uepsp": 3.0263,
+     "vole": 1
+    },
+    {
+     "co": 7,
+     "com": 3,
+     "frog": 3,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 35,
+     "uepsp": 2.8847,
+     "vole": 0
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 36,
+     "uepsp": 3.0096,
+     "vole": 0
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 37,
+     "uepsp": 3.0176,
+     "vole": 0
+    },
+    {
+     "co": 7,
+     "com": 3,
+     "frog": 3,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 38,
+     "uepsp": 3.0838,
+     "vole": 0
+    },
+    {
+     "co": 6,
+     "com": 4,
+     "frog": 3,
+     "none": 0,
+     "pass": false,
+     "posctl": 9,
+     "posctl_pass": true,
+     "seed": 39,
+     "uepsp": 2.8907,
+     "vole": 1
+    },
+    {
+     "co": 2,
+     "com": 8,
+     "frog": 7,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 40,
+     "uepsp": 2.9073,
+     "vole": 1
+    }
+   ],
+   "posctl_all": true,
+   "posctl_min": 9,
+   "ratio_cue_current": 1.873,
+   "sd_ge10": 1,
+   "seed_sd_min_ign": [
+    [
+     25,
+     1.66
+    ],
+    [
+     26,
+     1.75
+    ],
+    [
+     27,
+     4.09
+    ],
+    [
+     28,
+     1.7
+    ],
+    [
+     29,
+     3.37
+    ],
+    [
+     30,
+     1.58
+    ],
+    [
+     31,
+     3.2
+    ],
+    [
+     32,
+     3.33
+    ],
+    [
+     33,
+     1.2
+    ],
+    [
+     34,
+     5.03
+    ],
+    [
+     35,
+     3.6
+    ],
+    [
+     36,
+     3.74
+    ],
+    [
+     37,
+     1.94
+    ],
+    [
+     38,
+     4.09
+    ],
+    [
+     39,
+     4.18
+    ],
+    [
+     40,
+     13.62
+    ]
+   ],
+   "seeds": 16,
+   "seeds_pass": 0,
+   "surv": {
+    "first": 14,
+    "none": 132,
+    "single_burst": 14
+   },
+   "uepsp": 2.962,
+   "vole": 4
+  },
+  "c_st_a0_gt_frog_p4": {
+   "co": 135,
+   "commits": 25,
+   "cue_lock_base": 0.39,
+   "cue_lock_idx": 1.0,
+   "cue_lock_n": 160,
+   "frog": 15,
+   "frog_ci95": [
+    0.407,
+    0.766
+   ],
+   "frog_share": 0.6,
+   "gap_n": 149,
+   "latch_disagree": 0,
+   "med_gap_ms": 5,
+   "n_draws": 160,
+   "name": "c_st_a0_gt_frog_p4",
+   "ndec": 160,
+   "none": 0,
+   "one_sided": 10,
+   "per_seed": [
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 25,
+     "uepsp": 2.8568,
+     "vole": 0
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 26,
+     "uepsp": 2.9683,
+     "vole": 0
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 27,
+     "uepsp": 2.9698,
+     "vole": 0
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 28,
+     "uepsp": 2.902,
+     "vole": 0
+    },
+    {
+     "co": 7,
+     "com": 3,
+     "frog": 1,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 29,
+     "uepsp": 2.8579,
+     "vole": 2
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 30,
+     "uepsp": 3.0138,
+     "vole": 0
+    },
+    {
+     "co": 8,
+     "com": 2,
+     "frog": 2,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 31,
+     "uepsp": 2.966,
+     "vole": 0
+    },
+    {
+     "co": 8,
+     "com": 2,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 32,
+     "uepsp": 3.027,
+     "vole": 2
+    },
+    {
+     "co": 9,
+     "com": 1,
+     "frog": 1,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 33,
+     "uepsp": 3.011,
+     "vole": 0
+    },
+    {
+     "co": 9,
+     "com": 1,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 34,
+     "uepsp": 3.0263,
+     "vole": 1
+    },
+    {
+     "co": 7,
+     "com": 3,
+     "frog": 3,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 35,
+     "uepsp": 2.8847,
+     "vole": 0
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 36,
+     "uepsp": 3.0096,
+     "vole": 0
+    },
+    {
+     "co": 10,
+     "com": 0,
+     "frog": 0,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 37,
+     "uepsp": 3.0176,
+     "vole": 0
+    },
+    {
+     "co": 7,
+     "com": 3,
+     "frog": 2,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 38,
+     "uepsp": 3.0838,
+     "vole": 1
+    },
+    {
+     "co": 8,
+     "com": 2,
+     "frog": 1,
+     "none": 0,
+     "pass": false,
+     "posctl": 9,
+     "posctl_pass": true,
+     "seed": 39,
+     "uepsp": 2.8907,
+     "vole": 1
+    },
+    {
+     "co": 2,
+     "com": 8,
+     "frog": 5,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 40,
+     "uepsp": 2.9073,
+     "vole": 3
+    }
+   ],
+   "posctl_all": true,
+   "posctl_min": 9,
+   "ratio_cue_current": 1.891,
+   "sd_ge10": 1,
+   "seed_sd_min_ign": [
+    [
+     25,
+     1.7
+    ],
+    [
+     26,
+     1.51
+    ],
+    [
+     27,
+     4.48
+    ],
+    [
+     28,
+     1.77
+    ],
+    [
+     29,
+     5.05
+    ],
+    [
+     30,
+     1.51
+    ],
+    [
+     31,
+     6.3
+    ],
+    [
+     32,
+     3.3
+    ],
+    [
+     33,
+     1.41
+    ],
+    [
+     34,
+     5.23
+    ],
+    [
+     35,
+     5.06
+    ],
+    [
+     36,
+     3.97
+    ],
+    [
+     37,
+     2.28
+    ],
+    [
+     38,
+     4.22
+    ],
+    [
+     39,
+     7.94
+    ],
+    [
+     40,
+     13.61
+    ]
+   ],
+   "seeds": 16,
+   "seeds_pass": 0,
+   "surv": {
+    "first": 8,
+    "none": 135,
+    "single_burst": 17
+   },
+   "uepsp": 2.962,
+   "vole": 10
+  },
+  "c_st_a1_eng_frog_p4": {
+   "co": 3,
+   "commits": 155,
+   "cue_lock_base": 0.408,
+   "cue_lock_idx": 0.999,
+   "cue_lock_n": 160,
+   "frog": 107,
+   "frog_ci95": [
+    0.614,
+    0.758
+   ],
+   "frog_share": 0.69,
+   "gap_n": 150,
+   "latch_disagree": 0,
+   "med_gap_ms": 5,
+   "n_draws": 160,
+   "name": "c_st_a1_eng_frog_p4",
+   "ndec": 160,
+   "none": 2,
+   "one_sided": 9,
+   "per_seed": [
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 10,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 25,
+     "uepsp": 2.8568,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 8,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 26,
+     "uepsp": 2.9683,
+     "vole": 2
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 8,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 27,
+     "uepsp": 2.9698,
+     "vole": 2
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 7,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 28,
+     "uepsp": 2.902,
+     "vole": 3
+    },
+    {
+     "co": 1,
+     "com": 9,
+     "frog": 4,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 29,
+     "uepsp": 2.8579,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 2,
+     "none": 1,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 30,
+     "uepsp": 3.0138,
+     "vole": 7
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 10,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 31,
+     "uepsp": 2.966,
+     "vole": 0
+    },
+    {
+     "co": 1,
+     "com": 9,
+     "frog": 4,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 32,
+     "uepsp": 3.027,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 6,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 33,
+     "uepsp": 3.011,
+     "vole": 4
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 4,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 34,
+     "uepsp": 3.0263,
+     "vole": 6
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 9,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 35,
+     "uepsp": 2.8847,
+     "vole": 1
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 5,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 36,
+     "uepsp": 3.0096,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 9,
+     "none": 1,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 37,
+     "uepsp": 3.0176,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 7,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 38,
+     "uepsp": 3.0838,
+     "vole": 3
+    },
+    {
+     "co": 1,
+     "com": 9,
+     "frog": 7,
+     "none": 0,
+     "pass": true,
+     "posctl": 9,
+     "posctl_pass": true,
+     "seed": 39,
+     "uepsp": 2.8907,
+     "vole": 2
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 7,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 40,
+     "uepsp": 2.9073,
+     "vole": 3
+    }
+   ],
+   "posctl_all": true,
+   "posctl_min": 9,
+   "ratio_cue_current": 1.873,
+   "sd_ge10": 1,
+   "seed_sd_min_ign": [
+    [
+     25,
+     1.66
+    ],
+    [
+     26,
+     1.75
+    ],
+    [
+     27,
+     4.09
+    ],
+    [
+     28,
+     1.7
+    ],
+    [
+     29,
+     3.37
+    ],
+    [
+     30,
+     1.58
+    ],
+    [
+     31,
+     3.2
+    ],
+    [
+     32,
+     3.33
+    ],
+    [
+     33,
+     1.2
+    ],
+    [
+     34,
+     5.03
+    ],
+    [
+     35,
+     3.6
+    ],
+    [
+     36,
+     3.74
+    ],
+    [
+     37,
+     1.94
+    ],
+    [
+     38,
+     4.09
+    ],
+    [
+     39,
+     4.18
+    ],
+    [
+     40,
+     11.8
+    ]
+   ],
+   "seeds": 16,
+   "seeds_pass": 12,
+   "surv": {
+    "first": 106,
+    "last": 21,
+    "none": 5,
+    "single_burst": 28
+   },
+   "uepsp": 2.962,
+   "vole": 48
+  },
+  "c_st_a1_gt_frog_p4": {
+   "co": 3,
+   "commits": 154,
+   "cue_lock_base": 0.415,
+   "cue_lock_idx": 1.0,
+   "cue_lock_n": 160,
+   "frog": 78,
+   "frog_ci95": [
+    0.428,
+    0.584
+   ],
+   "frog_share": 0.506,
+   "gap_n": 149,
+   "latch_disagree": 0,
+   "med_gap_ms": 5,
+   "n_draws": 160,
+   "name": "c_st_a1_gt_frog_p4",
+   "ndec": 160,
+   "none": 3,
+   "one_sided": 10,
+   "per_seed": [
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 10,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 25,
+     "uepsp": 2.8568,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 8,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 26,
+     "uepsp": 2.9683,
+     "vole": 2
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 4,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 27,
+     "uepsp": 2.9698,
+     "vole": 6
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 2,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 28,
+     "uepsp": 2.902,
+     "vole": 8
+    },
+    {
+     "co": 1,
+     "com": 9,
+     "frog": 2,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 29,
+     "uepsp": 2.8579,
+     "vole": 7
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 1,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 30,
+     "uepsp": 3.0138,
+     "vole": 9
+    },
+    {
+     "co": 1,
+     "com": 9,
+     "frog": 8,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 31,
+     "uepsp": 2.966,
+     "vole": 1
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 2,
+     "none": 1,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 32,
+     "uepsp": 3.027,
+     "vole": 7
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 4,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 33,
+     "uepsp": 3.011,
+     "vole": 6
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 3,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 34,
+     "uepsp": 3.0263,
+     "vole": 7
+    },
+    {
+     "co": 1,
+     "com": 9,
+     "frog": 6,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 35,
+     "uepsp": 2.8847,
+     "vole": 3
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 3,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 36,
+     "uepsp": 3.0096,
+     "vole": 7
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 9,
+     "none": 1,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 37,
+     "uepsp": 3.0176,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 6,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 38,
+     "uepsp": 3.0838,
+     "vole": 4
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 4,
+     "none": 0,
+     "pass": true,
+     "posctl": 9,
+     "posctl_pass": true,
+     "seed": 39,
+     "uepsp": 2.8907,
+     "vole": 6
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 6,
+     "none": 1,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 40,
+     "uepsp": 2.9073,
+     "vole": 3
+    }
+   ],
+   "posctl_all": true,
+   "posctl_min": 9,
+   "ratio_cue_current": 1.891,
+   "sd_ge10": 1,
+   "seed_sd_min_ign": [
+    [
+     25,
+     1.7
+    ],
+    [
+     26,
+     1.51
+    ],
+    [
+     27,
+     4.48
+    ],
+    [
+     28,
+     1.77
+    ],
+    [
+     29,
+     5.05
+    ],
+    [
+     30,
+     1.51
+    ],
+    [
+     31,
+     6.3
+    ],
+    [
+     32,
+     3.3
+    ],
+    [
+     33,
+     1.41
+    ],
+    [
+     34,
+     5.23
+    ],
+    [
+     35,
+     5.06
+    ],
+    [
+     36,
+     3.97
+    ],
+    [
+     37,
+     2.28
+    ],
+    [
+     38,
+     4.22
+    ],
+    [
+     39,
+     7.94
+    ],
+    [
+     40,
+     13.61
+    ]
+   ],
+   "seeds": 16,
+   "seeds_pass": 12,
+   "surv": {
+    "first": 117,
+    "last": 15,
+    "none": 6,
+    "single_burst": 22
+   },
+   "uepsp": 2.962,
+   "vole": 76
+  },
+  "c_st_a4_eng_frog_p4": {
+   "co": 2,
+   "commits": 154,
+   "cue_lock_base": 0.413,
+   "cue_lock_idx": 0.996,
+   "cue_lock_n": 160,
+   "frog": 102,
+   "frog_ci95": [
+    0.585,
+    0.732
+   ],
+   "frog_share": 0.662,
+   "gap_n": 145,
+   "latch_disagree": 0,
+   "med_gap_ms": 7,
+   "n_draws": 160,
+   "name": "c_st_a4_eng_frog_p4",
+   "ndec": 160,
+   "none": 4,
+   "one_sided": 15,
+   "per_seed": [
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 10,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 25,
+     "uepsp": 0.4663,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 9,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 26,
+     "uepsp": 0.4629,
+     "vole": 1
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 6,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 27,
+     "uepsp": 0.465,
+     "vole": 4
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 4,
+     "none": 1,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 28,
+     "uepsp": 0.4529,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 5,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 29,
+     "uepsp": 0.4907,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 4,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 30,
+     "uepsp": 0.4923,
+     "vole": 6
+    },
+    {
+     "co": 2,
+     "com": 8,
+     "frog": 8,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 31,
+     "uepsp": 0.4852,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 5,
+     "none": 1,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 32,
+     "uepsp": 0.4855,
+     "vole": 4
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 7,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 33,
+     "uepsp": 0.4719,
+     "vole": 3
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 5,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 34,
+     "uepsp": 0.5063,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 8,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 35,
+     "uepsp": 0.4707,
+     "vole": 2
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 6,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 36,
+     "uepsp": 0.47,
+     "vole": 4
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 7,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 37,
+     "uepsp": 0.4683,
+     "vole": 3
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 6,
+     "none": 1,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 38,
+     "uepsp": 0.4755,
+     "vole": 3
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 6,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 39,
+     "uepsp": 0.4974,
+     "vole": 4
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 6,
+     "none": 1,
+     "pass": true,
+     "posctl": 9,
+     "posctl_pass": true,
+     "seed": 40,
+     "uepsp": 0.5014,
+     "vole": 3
+    }
+   ],
+   "posctl_all": true,
+   "posctl_min": 9,
+   "ratio_cue_current": 1.952,
+   "sd_ge10": 3,
+   "seed_sd_min_ign": [
+    [
+     25,
+     4.3
+    ],
+    [
+     26,
+     6.57
+    ],
+    [
+     27,
+     6.03
+    ],
+    [
+     28,
+     6.46
+    ],
+    [
+     29,
+     7.09
+    ],
+    [
+     30,
+     3.07
+    ],
+    [
+     31,
+     3.98
+    ],
+    [
+     32,
+     10.83
+    ],
+    [
+     33,
+     2.54
+    ],
+    [
+     34,
+     6.25
+    ],
+    [
+     35,
+     4.8
+    ],
+    [
+     36,
+     9.43
+    ],
+    [
+     37,
+     12.62
+    ],
+    [
+     38,
+     5.33
+    ],
+    [
+     39,
+     6.4
+    ],
+    [
+     40,
+     10.47
+    ]
+   ],
+   "seeds": 16,
+   "seeds_pass": 13,
+   "surv": {
+    "first": 116,
+    "last": 12,
+    "none": 6,
+    "single_burst": 26
+   },
+   "uepsp": 0.479,
+   "vole": 52
+  },
+  "c_st_a4_gt_frog_p4": {
+   "co": 3,
+   "commits": 151,
+   "cue_lock_base": 0.418,
+   "cue_lock_idx": 0.999,
+   "cue_lock_n": 160,
+   "frog": 72,
+   "frog_ci95": [
+    0.399,
+    0.556
+   ],
+   "frog_share": 0.477,
+   "gap_n": 142,
+   "latch_disagree": 1,
+   "med_gap_ms": 8,
+   "n_draws": 160,
+   "name": "c_st_a4_gt_frog_p4",
+   "ndec": 160,
+   "none": 6,
+   "one_sided": 16,
+   "per_seed": [
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 7,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 25,
+     "uepsp": 0.4663,
+     "vole": 3
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 8,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 26,
+     "uepsp": 0.4629,
+     "vole": 2
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 5,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 27,
+     "uepsp": 0.465,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 3,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 28,
+     "uepsp": 0.4529,
+     "vole": 7
+    },
+    {
+     "co": 2,
+     "com": 8,
+     "frog": 2,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 29,
+     "uepsp": 0.4907,
+     "vole": 6
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 3,
+     "none": 1,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 30,
+     "uepsp": 0.4923,
+     "vole": 6
+    },
+    {
+     "co": 1,
+     "com": 9,
+     "frog": 7,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 31,
+     "uepsp": 0.4852,
+     "vole": 2
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 2,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 32,
+     "uepsp": 0.4855,
+     "vole": 8
+    },
+    {
+     "co": 0,
+     "com": 7,
+     "frog": 4,
+     "none": 3,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 33,
+     "uepsp": 0.4719,
+     "vole": 3
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 3,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 34,
+     "uepsp": 0.5063,
+     "vole": 7
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 6,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 35,
+     "uepsp": 0.4707,
+     "vole": 4
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 3,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 36,
+     "uepsp": 0.47,
+     "vole": 7
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 5,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 37,
+     "uepsp": 0.4683,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 5,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 38,
+     "uepsp": 0.4755,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 4,
+     "none": 1,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 39,
+     "uepsp": 0.4974,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 5,
+     "none": 1,
+     "pass": true,
+     "posctl": 9,
+     "posctl_pass": true,
+     "seed": 40,
+     "uepsp": 0.5014,
+     "vole": 4
+    }
+   ],
+   "posctl_all": true,
+   "posctl_min": 9,
+   "ratio_cue_current": 1.99,
+   "sd_ge10": 3,
+   "seed_sd_min_ign": [
+    [
+     25,
+     5.6
+    ],
+    [
+     26,
+     9.43
+    ],
+    [
+     27,
+     5.89
+    ],
+    [
+     28,
+     5.55
+    ],
+    [
+     29,
+     8.7
+    ],
+    [
+     30,
+     3.16
+    ],
+    [
+     31,
+     2.83
+    ],
+    [
+     32,
+     10.84
+    ],
+    [
+     33,
+     2.11
+    ],
+    [
+     34,
+     6.84
+    ],
+    [
+     35,
+     5.57
+    ],
+    [
+     36,
+     9.69
+    ],
+    [
+     37,
+     10.99
+    ],
+    [
+     38,
+     5.49
+    ],
+    [
+     39,
+     7.57
+    ],
+    [
+     40,
+     12.5
+    ]
+   ],
+   "seeds": 16,
+   "seeds_pass": 14,
+   "surv": {
+    "first": 112,
+    "last": 13,
+    "none": 9,
+    "single_burst": 26
+   },
+   "uepsp": 0.479,
+   "vole": 79
+  },
+  "c_st_a5_eng_frog_p4": {
+   "co": 0,
+   "commits": 6,
+   "cue_lock_base": 0.548,
+   "cue_lock_idx": 0.976,
+   "cue_lock_n": 159,
+   "frog": 4,
+   "frog_ci95": [
+    0.3,
+    0.903
+   ],
+   "frog_share": 0.667,
+   "gap_n": 157,
+   "latch_disagree": 0,
+   "med_gap_ms": 5,
+   "n_draws": 160,
+   "name": "c_st_a5_eng_frog_p4",
+   "ndec": 160,
+   "none": 154,
+   "one_sided": 3,
+   "per_seed": [
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 9,
+     "posctl_pass": true,
+     "seed": 25,
+     "uepsp": 2.8568,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 8,
+     "posctl_pass": false,
+     "seed": 26,
+     "uepsp": 2.9683,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 1,
+     "posctl_pass": false,
+     "seed": 27,
+     "uepsp": 2.9698,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 1,
+     "posctl_pass": false,
+     "seed": 28,
+     "uepsp": 2.902,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 29,
+     "uepsp": 2.8579,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 6,
+     "posctl_pass": false,
+     "seed": 30,
+     "uepsp": 3.0138,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 31,
+     "uepsp": 2.966,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 32,
+     "uepsp": 3.027,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 33,
+     "uepsp": 3.011,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 1,
+     "frog": 0,
+     "none": 9,
+     "pass": false,
+     "posctl": 7,
+     "posctl_pass": false,
+     "seed": 34,
+     "uepsp": 3.0263,
+     "vole": 1
+    },
+    {
+     "co": 0,
+     "com": 3,
+     "frog": 3,
+     "none": 7,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 35,
+     "uepsp": 2.8847,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 36,
+     "uepsp": 3.0096,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 1,
+     "frog": 1,
+     "none": 9,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 37,
+     "uepsp": 3.0176,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 38,
+     "uepsp": 3.0838,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 1,
+     "frog": 0,
+     "none": 9,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 39,
+     "uepsp": 2.8907,
+     "vole": 1
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 40,
+     "uepsp": 2.9073,
+     "vole": 0
+    }
+   ],
+   "posctl_all": false,
+   "posctl_min": 0,
+   "ratio_cue_current": 1.875,
+   "sd_ge10": 1,
+   "seed_sd_min_ign": [
+    [
+     25,
+     1.66
+    ],
+    [
+     26,
+     1.75
+    ],
+    [
+     27,
+     4.1
+    ],
+    [
+     28,
+     1.7
+    ],
+    [
+     29,
+     3.37
+    ],
+    [
+     30,
+     1.58
+    ],
+    [
+     31,
+     3.2
+    ],
+    [
+     32,
+     3.33
+    ],
+    [
+     33,
+     1.2
+    ],
+    [
+     34,
+     5.03
+    ],
+    [
+     35,
+     3.6
+    ],
+    [
+     36,
+     3.74
+    ],
+    [
+     37,
+     1.94
+    ],
+    [
+     38,
+     3.85
+    ],
+    [
+     39,
+     3.97
+    ],
+    [
+     40,
+     49.87
+    ]
+   ],
+   "seeds": 16,
+   "seeds_pass": 0,
+   "surv": {
+    "first": 1,
+    "last": 1,
+    "none": 154,
+    "single_burst": 4
+   },
+   "uepsp": 2.962,
+   "vole": 2
+  },
+  "c_st_a5_gt_frog_p4": {
+   "co": 0,
+   "commits": 6,
+   "cue_lock_base": 0.554,
+   "cue_lock_idx": 0.983,
+   "cue_lock_n": 153,
+   "frog": 3,
+   "frog_ci95": [
+    0.188,
+    0.812
+   ],
+   "frog_share": 0.5,
+   "gap_n": 158,
+   "latch_disagree": 1,
+   "med_gap_ms": 5,
+   "n_draws": 160,
+   "name": "c_st_a5_gt_frog_p4",
+   "ndec": 160,
+   "none": 154,
+   "one_sided": 2,
+   "per_seed": [
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 9,
+     "posctl_pass": true,
+     "seed": 25,
+     "uepsp": 2.8568,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 8,
+     "posctl_pass": false,
+     "seed": 26,
+     "uepsp": 2.9683,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 1,
+     "posctl_pass": false,
+     "seed": 27,
+     "uepsp": 2.9698,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 1,
+     "posctl_pass": false,
+     "seed": 28,
+     "uepsp": 2.902,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 29,
+     "uepsp": 2.8579,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 6,
+     "posctl_pass": false,
+     "seed": 30,
+     "uepsp": 3.0138,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 31,
+     "uepsp": 2.966,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 32,
+     "uepsp": 3.027,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 33,
+     "uepsp": 3.011,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 2,
+     "frog": 0,
+     "none": 8,
+     "pass": false,
+     "posctl": 7,
+     "posctl_pass": false,
+     "seed": 34,
+     "uepsp": 3.0263,
+     "vole": 2
+    },
+    {
+     "co": 0,
+     "com": 3,
+     "frog": 3,
+     "none": 7,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 35,
+     "uepsp": 2.8847,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 36,
+     "uepsp": 3.0096,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 37,
+     "uepsp": 3.0176,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 38,
+     "uepsp": 3.0838,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 1,
+     "frog": 0,
+     "none": 9,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 39,
+     "uepsp": 2.8907,
+     "vole": 1
+    },
+    {
+     "co": 0,
+     "com": 0,
+     "frog": 0,
+     "none": 10,
+     "pass": false,
+     "posctl": 0,
+     "posctl_pass": false,
+     "seed": 40,
+     "uepsp": 2.9073,
+     "vole": 0
+    }
+   ],
+   "posctl_all": false,
+   "posctl_min": 0,
+   "ratio_cue_current": 1.892,
+   "sd_ge10": 1,
+   "seed_sd_min_ign": [
+    [
+     25,
+     1.7
+    ],
+    [
+     26,
+     1.51
+    ],
+    [
+     27,
+     4.47
+    ],
+    [
+     28,
+     1.77
+    ],
+    [
+     29,
+     4.93
+    ],
+    [
+     30,
+     1.51
+    ],
+    [
+     31,
+     6.92
+    ],
+    [
+     32,
+     3.3
+    ],
+    [
+     33,
+     1.41
+    ],
+    [
+     34,
+     5.23
+    ],
+    [
+     35,
+     5.06
+    ],
+    [
+     36,
+     3.97
+    ],
+    [
+     37,
+     2.28
+    ],
+    [
+     38,
+     4.22
+    ],
+    [
+     39,
+     7.53
+    ],
+    [
+     40,
+     48.07
+    ]
+   ],
+   "seeds": 16,
+   "seeds_pass": 0,
+   "surv": {
+    "none": 154,
+    "single_burst": 6
+   },
+   "uepsp": 2.962,
+   "vole": 3
+  },
+  "gis20_dev": {
+   "co": 21,
+   "commits": 59,
+   "cue_lock_base": 0.393,
+   "cue_lock_idx": 1.0,
+   "cue_lock_n": 80,
+   "frog": 36,
+   "frog_ci95": [
+    0.483,
+    0.724
+   ],
+   "frog_share": 0.61,
+   "gap_n": 73,
+   "latch_disagree": 0,
+   "med_gap_ms": 4,
+   "n_draws": 80,
+   "name": "gis20_dev",
+   "ndec": 80,
+   "none": 0,
+   "one_sided": 7,
+   "per_seed": [
+    {
+     "co": 2,
+     "com": 8,
+     "frog": 5,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 1,
+     "uepsp": 3.4305,
+     "vole": 3
+    },
+    {
+     "co": 8,
+     "com": 2,
+     "frog": 2,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 2,
+     "uepsp": 3.2811,
+     "vole": 0
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 10,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 3,
+     "uepsp": 2.9622,
+     "vole": 0
+    },
+    {
+     "co": 1,
+     "com": 9,
+     "frog": 5,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 4,
+     "uepsp": 2.8722,
+     "vole": 4
+    },
+    {
+     "co": 1,
+     "com": 9,
+     "frog": 4,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 5,
+     "uepsp": 2.8661,
+     "vole": 5
+    },
+    {
+     "co": 5,
+     "com": 5,
+     "frog": 1,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 6,
+     "uepsp": 3.1677,
+     "vole": 4
+    },
+    {
+     "co": 2,
+     "com": 8,
+     "frog": 5,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 7,
+     "uepsp": 2.8904,
+     "vole": 3
+    },
+    {
+     "co": 2,
+     "com": 8,
+     "frog": 4,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 8,
+     "uepsp": 3.0859,
+     "vole": 4
+    }
+   ],
+   "posctl_all": true,
+   "posctl_min": 10,
+   "ratio_cue_current": 1.935,
+   "sd_ge10": 2,
+   "seed_sd_min_ign": [
+    [
+     1,
+     4.94
+    ],
+    [
+     2,
+     1.77
+    ],
+    [
+     3,
+     1.87
+    ],
+    [
+     4,
+     21.45
+    ],
+    [
+     5,
+     5.07
+    ],
+    [
+     6,
+     1.17
+    ],
+    [
+     7,
+     35.87
+    ],
+    [
+     8,
+     9.8
+    ]
+   ],
+   "seeds": 8,
+   "seeds_pass": 2,
+   "surv": {
+    "first": 47,
+    "none": 21,
+    "single_burst": 12
+   },
+   "uepsp": 3.07,
+   "vole": 23
+  },
+  "gis25_dev": {
+   "co": 3,
+   "commits": 77,
+   "cue_lock_base": 0.393,
+   "cue_lock_idx": 1.0,
+   "cue_lock_n": 80,
+   "frog": 45,
+   "frog_ci95": [
+    0.473,
+    0.688
+   ],
+   "frog_share": 0.584,
+   "gap_n": 73,
+   "latch_disagree": 0,
+   "med_gap_ms": 4,
+   "n_draws": 80,
+   "name": "gis25_dev",
+   "ndec": 80,
+   "none": 0,
+   "one_sided": 7,
+   "per_seed": [
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 6,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 1,
+     "uepsp": 3.4305,
+     "vole": 4
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 6,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 2,
+     "uepsp": 3.2811,
+     "vole": 4
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 10,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 3,
+     "uepsp": 2.9622,
+     "vole": 0
+    },
+    {
+     "co": 1,
+     "com": 9,
+     "frog": 5,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 4,
+     "uepsp": 2.8722,
+     "vole": 4
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 4,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 5,
+     "uepsp": 2.8661,
+     "vole": 6
+    },
+    {
+     "co": 1,
+     "com": 9,
+     "frog": 4,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 6,
+     "uepsp": 3.1677,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 6,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 7,
+     "uepsp": 2.8904,
+     "vole": 4
+    },
+    {
+     "co": 1,
+     "com": 9,
+     "frog": 4,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 8,
+     "uepsp": 3.0859,
+     "vole": 5
+    }
+   ],
+   "posctl_all": true,
+   "posctl_min": 10,
+   "ratio_cue_current": 1.935,
+   "sd_ge10": 2,
+   "seed_sd_min_ign": [
+    [
+     1,
+     4.94
+    ],
+    [
+     2,
+     1.77
+    ],
+    [
+     3,
+     1.87
+    ],
+    [
+     4,
+     21.45
+    ],
+    [
+     5,
+     5.07
+    ],
+    [
+     6,
+     1.17
+    ],
+    [
+     7,
+     35.87
+    ],
+    [
+     8,
+     9.8
+    ]
+   ],
+   "seeds": 8,
+   "seeds_pass": 7,
+   "surv": {
+    "first": 59,
+    "last": 2,
+    "none": 3,
+    "single_burst": 16
+   },
+   "uepsp": 3.07,
+   "vole": 32
+  },
+  "gis35_dev": {
+   "co": 0,
+   "commits": 76,
+   "cue_lock_base": 0.435,
+   "cue_lock_idx": 0.988,
+   "cue_lock_n": 80,
+   "frog": 45,
+   "frog_ci95": [
+    0.48,
+    0.696
+   ],
+   "frog_share": 0.592,
+   "gap_n": 73,
+   "latch_disagree": 3,
+   "med_gap_ms": 4,
+   "n_draws": 80,
+   "name": "gis35_dev",
+   "ndec": 80,
+   "none": 4,
+   "one_sided": 7,
+   "per_seed": [
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 6,
+     "none": 1,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 1,
+     "uepsp": 3.4305,
+     "vole": 3
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 5,
+     "none": 1,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 2,
+     "uepsp": 3.2811,
+     "vole": 4
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 9,
+     "none": 0,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 3,
+     "uepsp": 2.9622,
+     "vole": 1
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 5,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 4,
+     "uepsp": 2.8722,
+     "vole": 5
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 7,
+     "none": 1,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 5,
+     "uepsp": 2.8661,
+     "vole": 2
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 4,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 6,
+     "uepsp": 3.1677,
+     "vole": 6
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 6,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 7,
+     "uepsp": 2.8904,
+     "vole": 4
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 3,
+     "none": 1,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 8,
+     "uepsp": 3.0859,
+     "vole": 6
+    }
+   ],
+   "posctl_all": true,
+   "posctl_min": 10,
+   "ratio_cue_current": 1.935,
+   "sd_ge10": 2,
+   "seed_sd_min_ign": [
+    [
+     1,
+     4.94
+    ],
+    [
+     2,
+     1.77
+    ],
+    [
+     3,
+     1.87
+    ],
+    [
+     4,
+     21.45
+    ],
+    [
+     5,
+     5.07
+    ],
+    [
+     6,
+     1.17
+    ],
+    [
+     7,
+     35.87
+    ],
+    [
+     8,
+     9.8
+    ]
+   ],
+   "seeds": 8,
+   "seeds_pass": 7,
+   "surv": {
+    "first": 52,
+    "last": 6,
+    "none": 4,
+    "single_burst": 18
+   },
+   "uepsp": 3.07,
+   "vole": 31
+  },
+  "gis40_dev": {
+   "co": 1,
+   "commits": 70,
+   "cue_lock_base": 0.47,
+   "cue_lock_idx": 0.982,
+   "cue_lock_n": 80,
+   "frog": 39,
+   "frog_ci95": [
+    0.441,
+    0.668
+   ],
+   "frog_share": 0.557,
+   "gap_n": 73,
+   "latch_disagree": 3,
+   "med_gap_ms": 4,
+   "n_draws": 80,
+   "name": "gis40_dev",
+   "ndec": 80,
+   "none": 9,
+   "one_sided": 7,
+   "per_seed": [
+    {
+     "co": 0,
+     "com": 8,
+     "frog": 5,
+     "none": 2,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 1,
+     "uepsp": 3.4305,
+     "vole": 3
+    },
+    {
+     "co": 1,
+     "com": 7,
+     "frog": 4,
+     "none": 2,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 2,
+     "uepsp": 3.2811,
+     "vole": 3
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 8,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 3,
+     "uepsp": 2.9622,
+     "vole": 2
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 6,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 4,
+     "uepsp": 2.8722,
+     "vole": 4
+    },
+    {
+     "co": 0,
+     "com": 8,
+     "frog": 6,
+     "none": 2,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 5,
+     "uepsp": 2.8661,
+     "vole": 2
+    },
+    {
+     "co": 0,
+     "com": 10,
+     "frog": 2,
+     "none": 0,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 6,
+     "uepsp": 3.1677,
+     "vole": 8
+    },
+    {
+     "co": 0,
+     "com": 8,
+     "frog": 5,
+     "none": 2,
+     "pass": false,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 7,
+     "uepsp": 2.8904,
+     "vole": 3
+    },
+    {
+     "co": 0,
+     "com": 9,
+     "frog": 3,
+     "none": 1,
+     "pass": true,
+     "posctl": 10,
+     "posctl_pass": true,
+     "seed": 8,
+     "uepsp": 3.0859,
+     "vole": 6
+    }
+   ],
+   "posctl_all": true,
+   "posctl_min": 10,
+   "ratio_cue_current": 1.935,
+   "sd_ge10": 2,
+   "seed_sd_min_ign": [
+    [
+     1,
+     4.94
+    ],
+    [
+     2,
+     1.77
+    ],
+    [
+     3,
+     1.87
+    ],
+    [
+     4,
+     21.45
+    ],
+    [
+     5,
+     5.07
+    ],
+    [
+     6,
+     1.17
+    ],
+    [
+     7,
+     35.87
+    ],
+    [
+     8,
+     9.8
+    ]
+   ],
+   "seeds": 8,
+   "seeds_pass": 4,
+   "surv": {
+    "first": 43,
+    "last": 9,
+    "none": 10,
+    "single_burst": 18
+   },
+   "uepsp": 3.07,
+   "vole": 31
+  }
+ },
+ "steers": {
+  "c_st_a0_eng_frog_p4": [
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 25,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 26,
+    "vole": 0
+   },
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 27,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 28,
+    "vole": 0
+   },
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 29,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 30,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 31,
+    "vole": 0
+   },
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 32,
+    "vole": 1
+   },
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 33,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 34,
+    "vole": 1
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 35,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 36,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 37,
+    "vole": 0
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 38,
+    "vole": 0
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 39,
+    "vole": 1
+   },
+   {
+    "frog": 7,
+    "n": 10,
+    "seed": 40,
+    "vole": 1
+   }
+  ],
+  "c_st_a0_gt_frog_p4": [
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 25,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 26,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 27,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 28,
+    "vole": 0
+   },
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 29,
+    "vole": 2
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 30,
+    "vole": 0
+   },
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 31,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 32,
+    "vole": 2
+   },
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 33,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 34,
+    "vole": 1
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 35,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 36,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 37,
+    "vole": 0
+   },
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 38,
+    "vole": 1
+   },
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 39,
+    "vole": 1
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 40,
+    "vole": 3
+   }
+  ],
+  "c_st_a1_eng_frog_p4": [
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 25,
+    "vole": 0
+   },
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 26,
+    "vole": 2
+   },
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 27,
+    "vole": 2
+   },
+   {
+    "frog": 7,
+    "n": 10,
+    "seed": 28,
+    "vole": 3
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 29,
+    "vole": 5
+   },
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 30,
+    "vole": 7
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 31,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 32,
+    "vole": 5
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 33,
+    "vole": 4
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 34,
+    "vole": 6
+   },
+   {
+    "frog": 9,
+    "n": 10,
+    "seed": 35,
+    "vole": 1
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 36,
+    "vole": 5
+   },
+   {
+    "frog": 9,
+    "n": 10,
+    "seed": 37,
+    "vole": 0
+   },
+   {
+    "frog": 7,
+    "n": 10,
+    "seed": 38,
+    "vole": 3
+   },
+   {
+    "frog": 7,
+    "n": 10,
+    "seed": 39,
+    "vole": 2
+   },
+   {
+    "frog": 7,
+    "n": 10,
+    "seed": 40,
+    "vole": 3
+   }
+  ],
+  "c_st_a1_gt_frog_p4": [
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 25,
+    "vole": 0
+   },
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 26,
+    "vole": 2
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 27,
+    "vole": 6
+   },
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 28,
+    "vole": 8
+   },
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 29,
+    "vole": 7
+   },
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 30,
+    "vole": 9
+   },
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 31,
+    "vole": 1
+   },
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 32,
+    "vole": 7
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 33,
+    "vole": 6
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 34,
+    "vole": 7
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 35,
+    "vole": 3
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 36,
+    "vole": 7
+   },
+   {
+    "frog": 9,
+    "n": 10,
+    "seed": 37,
+    "vole": 0
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 38,
+    "vole": 4
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 39,
+    "vole": 6
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 40,
+    "vole": 3
+   }
+  ],
+  "c_st_a4_eng_frog_p4": [
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 25,
+    "vole": 0
+   },
+   {
+    "frog": 9,
+    "n": 10,
+    "seed": 26,
+    "vole": 1
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 27,
+    "vole": 4
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 28,
+    "vole": 5
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 29,
+    "vole": 5
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 30,
+    "vole": 6
+   },
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 31,
+    "vole": 0
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 32,
+    "vole": 4
+   },
+   {
+    "frog": 7,
+    "n": 10,
+    "seed": 33,
+    "vole": 3
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 34,
+    "vole": 5
+   },
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 35,
+    "vole": 2
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 36,
+    "vole": 4
+   },
+   {
+    "frog": 7,
+    "n": 10,
+    "seed": 37,
+    "vole": 3
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 38,
+    "vole": 3
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 39,
+    "vole": 4
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 40,
+    "vole": 3
+   }
+  ],
+  "c_st_a4_gt_frog_p4": [
+   {
+    "frog": 7,
+    "n": 10,
+    "seed": 25,
+    "vole": 3
+   },
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 26,
+    "vole": 2
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 27,
+    "vole": 5
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 28,
+    "vole": 7
+   },
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 29,
+    "vole": 6
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 30,
+    "vole": 6
+   },
+   {
+    "frog": 7,
+    "n": 10,
+    "seed": 31,
+    "vole": 2
+   },
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 32,
+    "vole": 8
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 33,
+    "vole": 3
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 34,
+    "vole": 7
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 35,
+    "vole": 4
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 36,
+    "vole": 7
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 37,
+    "vole": 5
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 38,
+    "vole": 5
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 39,
+    "vole": 5
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 40,
+    "vole": 4
+   }
+  ],
+  "c_st_a5_eng_frog_p4": [
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 25,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 26,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 27,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 28,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 29,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 30,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 31,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 32,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 33,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 34,
+    "vole": 1
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 35,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 36,
+    "vole": 0
+   },
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 37,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 38,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 39,
+    "vole": 1
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 40,
+    "vole": 0
+   }
+  ],
+  "c_st_a5_gt_frog_p4": [
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 25,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 26,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 27,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 28,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 29,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 30,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 31,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 32,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 33,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 34,
+    "vole": 2
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 35,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 36,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 37,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 38,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 39,
+    "vole": 1
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 40,
+    "vole": 0
+   }
+  ],
+  "st_a0_eng_frog_p1": [
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 1,
+    "vole": 2
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 4,
+    "vole": 2
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 5,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 6,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 7,
+    "vole": 2
+   },
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 8,
+    "vole": 1
+   }
+  ],
+  "st_a0_eng_frog_p2": [
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 1,
+    "vole": 1
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 4,
+    "vole": 2
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 5,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 6,
+    "vole": 0
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 7,
+    "vole": 1
+   },
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 8,
+    "vole": 0
+   }
+  ],
+  "st_a0_eng_frog_p4": [
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 1,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 4,
+    "vole": 2
+   },
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 5,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 6,
+    "vole": 0
+   },
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 7,
+    "vole": 0
+   },
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 8,
+    "vole": 0
+   }
+  ],
+  "st_a0_eng_frog_p8": [
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 1,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 4,
+    "vole": 0
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 5,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 6,
+    "vole": 0
+   },
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 7,
+    "vole": 0
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 8,
+    "vole": 0
+   }
+  ],
+  "st_a0_eng_vole_p4": [
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 1,
+    "vole": 2
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 4,
+    "vole": 2
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 5,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 6,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 7,
+    "vole": 3
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 8,
+    "vole": 2
+   }
+  ],
+  "st_a0_gt_frog_p1": [
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 1,
+    "vole": 2
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 4,
+    "vole": 2
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 5,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 6,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 7,
+    "vole": 2
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 8,
+    "vole": 1
+   }
+  ],
+  "st_a0_gt_frog_p2": [
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 1,
+    "vole": 2
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 4,
+    "vole": 2
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 5,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 6,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 7,
+    "vole": 2
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 8,
+    "vole": 1
+   }
+  ],
+  "st_a0_gt_frog_p4": [
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 1,
+    "vole": 2
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 4,
+    "vole": 2
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 5,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 6,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 7,
+    "vole": 2
+   },
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 8,
+    "vole": 1
+   }
+  ],
+  "st_a0_gt_frog_p8": [
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 1,
+    "vole": 2
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 4,
+    "vole": 2
+   },
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 5,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 6,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 7,
+    "vole": 0
+   },
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 8,
+    "vole": 1
+   }
+  ],
+  "st_a0_gt_vole_p4": [
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 1,
+    "vole": 2
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 4,
+    "vole": 2
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 5,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 6,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 7,
+    "vole": 2
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 8,
+    "vole": 1
+   }
+  ],
+  "st_a1_eng_frog_p1": [
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 1,
+    "vole": 4
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 2,
+    "vole": 4
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 4,
+    "vole": 4
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 5,
+    "vole": 5
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 6,
+    "vole": 6
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 7,
+    "vole": 3
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 8,
+    "vole": 5
+   }
+  ],
+  "st_a1_eng_frog_p2": [
+   {
+    "frog": 7,
+    "n": 10,
+    "seed": 1,
+    "vole": 3
+   },
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 2,
+    "vole": 2
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 4,
+    "vole": 4
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 5,
+    "vole": 4
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 6,
+    "vole": 5
+   },
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 7,
+    "vole": 2
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 8,
+    "vole": 3
+   }
+  ],
+  "st_a1_eng_frog_p4": [
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 1,
+    "vole": 2
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 4,
+    "vole": 4
+   },
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 5,
+    "vole": 2
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 6,
+    "vole": 5
+   },
+   {
+    "frog": 9,
+    "n": 10,
+    "seed": 7,
+    "vole": 1
+   },
+   {
+    "frog": 7,
+    "n": 10,
+    "seed": 8,
+    "vole": 3
+   }
+  ],
+  "st_a1_eng_frog_p8": [
+   {
+    "frog": 9,
+    "n": 10,
+    "seed": 1,
+    "vole": 1
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 4,
+    "vole": 2
+   },
+   {
+    "frog": 9,
+    "n": 10,
+    "seed": 5,
+    "vole": 1
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 6,
+    "vole": 4
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 7,
+    "vole": 0
+   },
+   {
+    "frog": 9,
+    "n": 10,
+    "seed": 8,
+    "vole": 1
+   }
+  ],
+  "st_a1_eng_vole_p4": [
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 1,
+    "vole": 7
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 2,
+    "vole": 7
+   },
+   {
+    "frog": 7,
+    "n": 10,
+    "seed": 3,
+    "vole": 3
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 4,
+    "vole": 7
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 5,
+    "vole": 7
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 6,
+    "vole": 7
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 7,
+    "vole": 5
+   },
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 8,
+    "vole": 9
+   }
+  ],
+  "st_a1_gt_frog_p1": [
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 1,
+    "vole": 4
+   },
+   {
+    "frog": 7,
+    "n": 10,
+    "seed": 2,
+    "vole": 3
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 4,
+    "vole": 5
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 5,
+    "vole": 5
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 6,
+    "vole": 6
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 7,
+    "vole": 4
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 8,
+    "vole": 5
+   }
+  ],
+  "st_a1_gt_frog_p2": [
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 1,
+    "vole": 4
+   },
+   {
+    "frog": 7,
+    "n": 10,
+    "seed": 2,
+    "vole": 3
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 4,
+    "vole": 5
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 5,
+    "vole": 5
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 6,
+    "vole": 6
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 7,
+    "vole": 4
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 8,
+    "vole": 5
+   }
+  ],
+  "st_a1_gt_frog_p4": [
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 1,
+    "vole": 4
+   },
+   {
+    "frog": 7,
+    "n": 10,
+    "seed": 2,
+    "vole": 3
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 4,
+    "vole": 4
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 5,
+    "vole": 5
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 6,
+    "vole": 5
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 7,
+    "vole": 4
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 8,
+    "vole": 5
+   }
+  ],
+  "st_a1_gt_frog_p8": [
+   {
+    "frog": 7,
+    "n": 10,
+    "seed": 1,
+    "vole": 3
+   },
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 2,
+    "vole": 2
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 4,
+    "vole": 4
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 5,
+    "vole": 5
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 6,
+    "vole": 5
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 7,
+    "vole": 3
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 8,
+    "vole": 5
+   }
+  ],
+  "st_a1_gt_vole_p4": [
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 1,
+    "vole": 4
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 2,
+    "vole": 4
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 4,
+    "vole": 5
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 5,
+    "vole": 5
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 6,
+    "vole": 6
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 7,
+    "vole": 4
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 8,
+    "vole": 5
+   }
+  ],
+  "st_a4_eng_frog_p1": [
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 1,
+    "vole": 3
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 2,
+    "vole": 5
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 4,
+    "vole": 4
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 5,
+    "vole": 4
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 6,
+    "vole": 6
+   },
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 7,
+    "vole": 2
+   },
+   {
+    "frog": 7,
+    "n": 10,
+    "seed": 8,
+    "vole": 2
+   }
+  ],
+  "st_a4_eng_frog_p2": [
+   {
+    "frog": 7,
+    "n": 10,
+    "seed": 1,
+    "vole": 3
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 2,
+    "vole": 5
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 4,
+    "vole": 4
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 5,
+    "vole": 4
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 6,
+    "vole": 6
+   },
+   {
+    "frog": 9,
+    "n": 10,
+    "seed": 7,
+    "vole": 1
+   },
+   {
+    "frog": 9,
+    "n": 10,
+    "seed": 8,
+    "vole": 1
+   }
+  ],
+  "st_a4_eng_frog_p4": [
+   {
+    "frog": 7,
+    "n": 10,
+    "seed": 1,
+    "vole": 3
+   },
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 2,
+    "vole": 1
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 4,
+    "vole": 4
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 5,
+    "vole": 4
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 6,
+    "vole": 4
+   },
+   {
+    "frog": 9,
+    "n": 10,
+    "seed": 7,
+    "vole": 1
+   },
+   {
+    "frog": 9,
+    "n": 10,
+    "seed": 8,
+    "vole": 1
+   }
+  ],
+  "st_a4_eng_frog_p8": [
+   {
+    "frog": 9,
+    "n": 10,
+    "seed": 1,
+    "vole": 1
+   },
+   {
+    "frog": 9,
+    "n": 10,
+    "seed": 2,
+    "vole": 1
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 9,
+    "n": 10,
+    "seed": 4,
+    "vole": 1
+   },
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 5,
+    "vole": 1
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 6,
+    "vole": 4
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 7,
+    "vole": 0
+   },
+   {
+    "frog": 9,
+    "n": 10,
+    "seed": 8,
+    "vole": 1
+   }
+  ],
+  "st_a4_eng_vole_p4": [
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 1,
+    "vole": 7
+   },
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 2,
+    "vole": 8
+   },
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 3,
+    "vole": 2
+   },
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 4,
+    "vole": 8
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 5,
+    "vole": 6
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 6,
+    "vole": 6
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 7,
+    "vole": 4
+   },
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 8,
+    "vole": 9
+   }
+  ],
+  "st_a4_gt_frog_p1": [
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 1,
+    "vole": 4
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 2,
+    "vole": 6
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 4,
+    "vole": 4
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 5,
+    "vole": 5
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 6,
+    "vole": 6
+   },
+   {
+    "frog": 7,
+    "n": 10,
+    "seed": 7,
+    "vole": 2
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 8,
+    "vole": 3
+   }
+  ],
+  "st_a4_gt_frog_p2": [
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 1,
+    "vole": 4
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 2,
+    "vole": 5
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 4,
+    "vole": 4
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 5,
+    "vole": 5
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 6,
+    "vole": 6
+   },
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 7,
+    "vole": 2
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 8,
+    "vole": 3
+   }
+  ],
+  "st_a4_gt_frog_p4": [
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 1,
+    "vole": 4
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 2,
+    "vole": 5
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 4,
+    "vole": 4
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 5,
+    "vole": 4
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 6,
+    "vole": 6
+   },
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 7,
+    "vole": 2
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 8,
+    "vole": 3
+   }
+  ],
+  "st_a4_gt_frog_p8": [
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 1,
+    "vole": 3
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 2,
+    "vole": 5
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 4,
+    "vole": 4
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 5,
+    "vole": 4
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 6,
+    "vole": 6
+   },
+   {
+    "frog": 8,
+    "n": 10,
+    "seed": 7,
+    "vole": 2
+   },
+   {
+    "frog": 7,
+    "n": 10,
+    "seed": 8,
+    "vole": 2
+   }
+  ],
+  "st_a4_gt_vole_p4": [
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 1,
+    "vole": 5
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 2,
+    "vole": 6
+   },
+   {
+    "frog": 10,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 4,
+    "vole": 6
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 5,
+    "vole": 5
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 6,
+    "vole": 6
+   },
+   {
+    "frog": 6,
+    "n": 10,
+    "seed": 7,
+    "vole": 2
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 8,
+    "vole": 5
+   }
+  ],
+  "st_a5_eng_frog_p1": [
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 1,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 4,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 5,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 6,
+    "vole": 0
+   },
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 7,
+    "vole": 1
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 8,
+    "vole": 0
+   }
+  ],
+  "st_a5_eng_frog_p2": [
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 1,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 4,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 5,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 6,
+    "vole": 0
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 7,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 8,
+    "vole": 0
+   }
+  ],
+  "st_a5_eng_frog_p4": [
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 1,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 4,
+    "vole": 0
+   },
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 5,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 6,
+    "vole": 0
+   },
+   {
+    "frog": 4,
+    "n": 10,
+    "seed": 7,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 8,
+    "vole": 0
+   }
+  ],
+  "st_a5_eng_frog_p8": [
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 1,
+    "vole": 0
+   },
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 4,
+    "vole": 0
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 5,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 6,
+    "vole": 0
+   },
+   {
+    "frog": 5,
+    "n": 10,
+    "seed": 7,
+    "vole": 0
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 8,
+    "vole": 0
+   }
+  ],
+  "st_a5_eng_vole_p4": [
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 1,
+    "vole": 3
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 4,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 5,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 6,
+    "vole": 0
+   },
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 7,
+    "vole": 1
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 8,
+    "vole": 0
+   }
+  ],
+  "st_a5_gt_frog_p1": [
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 1,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 4,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 5,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 6,
+    "vole": 0
+   },
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 7,
+    "vole": 1
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 8,
+    "vole": 0
+   }
+  ],
+  "st_a5_gt_frog_p2": [
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 1,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 4,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 5,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 6,
+    "vole": 0
+   },
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 7,
+    "vole": 1
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 8,
+    "vole": 0
+   }
+  ],
+  "st_a5_gt_frog_p4": [
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 1,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 4,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 5,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 6,
+    "vole": 0
+   },
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 7,
+    "vole": 1
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 8,
+    "vole": 0
+   }
+  ],
+  "st_a5_gt_frog_p8": [
+   {
+    "frog": 1,
+    "n": 10,
+    "seed": 1,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 4,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 5,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 6,
+    "vole": 0
+   },
+   {
+    "frog": 3,
+    "n": 10,
+    "seed": 7,
+    "vole": 1
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 8,
+    "vole": 0
+   }
+  ],
+  "st_a5_gt_vole_p4": [
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 1,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 2,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 3,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 4,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 5,
+    "vole": 0
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 6,
+    "vole": 0
+   },
+   {
+    "frog": 2,
+    "n": 10,
+    "seed": 7,
+    "vole": 1
+   },
+   {
+    "frog": 0,
+    "n": 10,
+    "seed": 8,
+    "vole": 0
+   }
+  ]
+ }
+}
