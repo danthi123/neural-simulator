@@ -23,15 +23,21 @@ Stage 1 passed 10-16 with four caveats (the 10-16 section below, verbatim; never
   fix merged default OFF.
 - Word-role frame method: step 0 GO (RULINGS `wrc-frame-0-1021`, `-1021b`); the organ-level prereg is due 10-27, else
   word-role stays OFF at the 11-01 pin.
-- Content-selection race: the F1 grid is VOID (the race never committed; RULING `cs-race-f1-void-1021`); step 1b adds a
-  positive control and reruns the grid.
+- Content-selection race: step 1d measures before any third lever (RULING `cs-race-f1d-1021`). Its identity check caught
+  an engine defect: heterogeneity draws depend on total network size, so growing one population changes every neuron
+  (RULING `cs-race-f1d-id2`: the probe copies A0's parameters into shared cells; engine fix joins board #268). Step 2 runs.
 - The reply-level LBF at HEAD on the gate seeds: prereg `04ca8ccf8`, 294 lines.
 - The strict claim checker on the mouth (VERDICTS in `research/findings/2026-10-20-moat-allowlist-claim-checker-PREREGISTRATION.md`,
-  merge `359e8ff63`): build 5 GO; build 6 meets every bar (round 8: 0 of 114 U) but is no flip candidate (taught names
-  holding I/me/you read as the brain speaking); build 7 (word lists) NO-GO, round 9 kept 41 of 86. Method changed: build 8
-  = per-FACT declared-provenance floor (Claude branch claude-build/moat-allowlist-1021h, in build/review); a frame premise
-  round found no quotation frame fixes a stored name that IS a pointing word or pronoun, so #271 (deixis at encoding) is
-  the path to voicing taught facts: Hermes runs its stage-0 census (RULING deixis-271-s0). Flip via CLASS SMK prereg.
+  merge `359e8ff63`): build 5 GO; build 6 meets every bar but is no flip candidate; build 7 (word lists) NO-GO. It is now a
+  DECLARED HOST SCAFFOLD capped at build 8 (RULING `moat-cap-1021`): build 8, the per-fact declared-provenance floor, is in
+  review round 2 on claude-build/moat-allowlist-1021h (mirrored to S at b7e80dbb8; Amendment 8 not yet filed). No blind
+  round 10 until a flip candidate exists. Its retirement path is board #272 (the brain checks its own speech).
+- #271, heard I/you/pointing words bound at encoding: the stage-0 census is ACCEPTED as the baseline (RULING
+  `deixis-271-s0-accept`, merge `b664d4b37`; W1 28 deictic names, 60 collisions, 60 dropped facts). Claude's stage-1
+  design round 2 has written DESIGN.md + PACKET.md (workstation sim-rev/build8/r271/round2, verify pending); Hermes waits.
+- Process (owner's 10-21 templating question): CLASS HD is live (merge `86e5cd133`, RULING `hd-gate-1021`): every prereg,
+  packet and lane plan declares whether host code decides content. RAG now indexes the coordination rulings and drafts
+  (merge `129c53c4e`; `--corpus coord`).
 **Next command (Hermes, on S):** `bash tools/status.sh`, then runbook section 6 RULINGs newest first, then section 4 in order.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-16 (history; superseded by 2026-10-21 above) — PHASE: PROVE WHO OWNS THE COMPUTATION

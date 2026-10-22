@@ -321,3 +321,6 @@ verbatim. Board: #244 closed + milestone #264 added by Claude same cycle (RULING
 - Board #271: step-1 census landed, RESULT posted (provisional); next action = Claude reads the census + rules stage-1 design. No other task moved. (Ref: commit 1a3c1dc14; deixis-271-s0-RESULT.md.)
 ## 2026-10-21 deixis-271 s0-accept
 - #271 census accepted; next action = Claude designs stage 1; branch @ 76765d87c. (Ref: RULING deixis-271-s0-accept.)
+
+## 2026-10-21  claude docs-sync 23:30
+#271 census accepted + design round 2; #272 added (speech self-monitor); #268 size-dependent draws appended; moat capped at build 8 (CLASS HD).
