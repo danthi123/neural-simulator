@@ -164,14 +164,29 @@ def p_slices():
             for k in range(len(POOLS_REL))}
 
 
-def wiring_plan(w_hc, w_ec, w_pc, wta=False):
-    """The frozen Appendix C plan (weights in engine units)."""
-    tok_all = np.arange(N_TOK, dtype=np.int64)
-    e_all = np.arange(N_E, dtype=np.int64)
-    fs_all = np.arange(N_FS, dtype=np.int64)
-    h_all = np.arange(N_HC, dtype=np.int64)
-    c_all = np.arange(N_HC, dtype=np.int64)
-    p_all = np.arange(N_P, dtype=np.int64)
+def wiring_plan(w_hc, w_ec, w_pc, wta=False, idx=None):
+    """The frozen Appendix C plan (weights in engine units).
+
+    `idx` is region_indices_dict() and is REQUIRED: the engine's
+    inject_explicit_wiring builds a COO of shape (n, n) over GLOBAL
+    neuron indices, so region-local indices would alias every region's
+    edges onto the low global ids (learn blocks colliding with tok/e,
+    COO->CSR dedup collapsing 94,160 planned edges to 55,424, and the
+    plasticity-gate maps pointing past cp_connections.data).  The gate
+    maps are rebuilt from this plan in (pre, post) sort order, so the
+    plan must be the exact global edge set.
+    """
+    if idx is None:
+        raise ValueError(
+            "wiring_plan requires idx=region_indices_dict(): the engine "
+            "injects global neuron indices (COO shape (n, n)); local "
+            "indices collide inside sum_duplicates()")
+    tok_all = np.asarray(idx["tok"], np.int64)
+    e_all = np.asarray(idx["e"], np.int64)
+    fs_all = np.asarray(idx["fs"], np.int64)
+    h_all = np.asarray(idx["h"], np.int64)
+    c_all = np.asarray(idx["c"], np.int64)
+    p_all = np.asarray(idx["p"], np.int64)
     plan = {
         "ef": _dense(e_all, fs_all, W_EF_FROZEN),
         "fe": _dense(fs_all, e_all, W_FE_FROZEN, receptor="gaba_a"),
@@ -183,7 +198,7 @@ def wiring_plan(w_hc, w_ec, w_pc, wta=False):
         for ei in range(len(ENTITIES)):
             cb = hc[(k, ei)]
             eb = es[ENTITIES[ei]]
-            e_idx = np.arange(eb.start, eb.stop, dtype=np.int64)
+            e_idx = e_all[eb]
             plan["hc_%d_%d" % (k, ei)] = _dense(h_all[cb], c_all[cb], w_hc)
             plan["ec_%d_%d" % (k, ei)] = _dense(e_idx, c_all[cb], w_ec,
                                                 transmission_gate="dx_teach")
@@ -201,8 +216,7 @@ def wiring_plan(w_hc, w_ec, w_pc, wta=False):
                              plasticity_gate="dx_name",
                              transmission_gate="dx_name_tx")
     if wta:
-        n_pw = len(POOLS_REL) * N_WTA
-        pw_all = np.arange(n_pw, dtype=np.int64)
+        pw_all = np.asarray(idx["pw"], np.int64)
         for k in range(len(POOLS_REL)):
             pwk = slice(k * N_WTA, (k + 1) * N_WTA)
             plan["ri_%d" % k] = _dense(p_all[ps[k]], pw_all[pwk], W_RI)
@@ -303,8 +317,9 @@ def build(seed=61, mode="EXPOSURE", w_hc=6.0, w_ec=20.0, w_pc=20.0, wta=False):
     inh = idx["fs"]
     if wta:
         inh = np.concatenate([inh, idx["pw"]])
-    b.inject_explicit_wiring(wiring_plan(w_hc, w_ec, w_pc, wta=wta),
-                             output_inhibitory_indices=inh)
+    b.inject_explicit_wiring(
+        wiring_plan(w_hc, w_ec, w_pc, wta=wta, idx=idx),
+        output_inhibitory_indices=inh)
     b.cp_external_input_current[:] = 0.0
     gates = set_mode(b, mode)
     return b, idx, gates
@@ -330,6 +345,25 @@ def selftest(seed=61):
     expected_plastic = {"dx_ptr": N_TOK * N_P, "dx_name": N_TOK * N_E}
     for g in PLASTICITY_GATES:
         assert b.plasticity_gate_synapse_count(g) == expected_plastic[g]
+    # installed matrix must carry EVERY plan edge (global indices; local
+    # ones alias and collapse inside COO->CSR dedup), and every gate map
+    # must index inside cp_connections.data.
+    want_nnz = (sum(expected_trans.values())
+                + len(POOLS_REL) * len(ENTITIES) * N_H_UNIT * N_H_UNIT
+                + N_E * N_FS + N_FS * N_E)
+    got_nnz = int(b.cp_connections.nnz)
+    assert got_nnz == want_nnz, "nnz %d != plan total %d" % (
+        got_nnz, want_nnz)
+    for g in PLASTICITY_GATES:
+        mx = int(np.max(np.asarray(
+            b._plasticity_gate_to_synapses[g])))
+        assert mx < got_nnz, "gate %s index %d >= nnz %d" % (
+            g, mx, got_nnz)
+    for g in TRANSMISSION_GATES:
+        mx = int(np.max(np.asarray(
+            b._transmission_gate_to_synapses[g])))
+        assert mx < got_nnz, "gate %s index %d >= nnz %d" % (
+            g, mx, got_nnz)
     for g, v in MODES["EXPOSURE"].items():
         want = v
         got = (b._transmission_gate_values[g]
