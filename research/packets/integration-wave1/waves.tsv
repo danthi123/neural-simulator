@@ -4,3 +4,4 @@
 1792669245	wave4	130-172	iw1-flip-957c275 (queue 8<10 at add time; guards 43/43; landed-aware skips=0; ok=43)
 1792681921	wave5	173-215	iw1-flip-957c275 (queue 0<10 at add time; guards 43/43; landed-aware skips=0; ok=43 fail=0; claim-race present=38/43 at verify, dispatched, running=16 fail24h=0)
 1792689214	wave6	216-258	iw1-flip-957c275 (queue 2<10 at add time; guards 43/43; landed-aware skips=0; ok=43)
+1792697377	wave7	259-288	iw1-flip-957c275 (queue 8<10 at add time; guards 30/30; landed-aware skips=0; ok=30)
