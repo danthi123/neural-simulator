@@ -655,6 +655,70 @@ class RaceCircuit(ReplayCircuit):
                 "peak_dv_mv": (round(float((peak - v0).mean()), 4)
                                if spiking else None)}
 
+    def rheobase_probe(self):
+        """f1e step 1a, once per seed: the smallest step current (pA)
+        that fires each engram cell, read from the quiescent snapshot.
+        Declared method (fixed before any result): a 5 pA coarse scan
+        5..100, then an exact 1 pA back-off inside (pa-5, pa); a 200 ms
+        step per trial; >= 1 spike in the window counts as firing; a
+        fresh snapshot before every trial; None = never fired by the
+        100 pA cap. Per engram k the record carries every cell value
+        and the engram rheobase = min over its cells. Measurement
+        probe only, never a mechanism."""
+        from sim.backend import to_host
+        from research.runners._gnw_rung1_ignition_curve_derisk import \
+            _reset_quiescent
+        b = self._bridge
+
+        def fires(cell, pa):
+            _reset_quiescent(b, self._xp, self._snap)
+            cur = np.zeros(self._n, dtype=np.float32)
+            cur[cell] = float(pa)
+            hit = False
+            for _ in range(200):
+                b.cp_external_input_current[:] = self._xp.asarray(cur)
+                b._run_one_simulation_step()
+                if bool(np.asarray(
+                        to_host(b.cp_firing_states)).astype(bool)[cell]):
+                    hit = True
+                    break
+            b.cp_external_input_current[:] = 0.0
+            return hit
+
+        per_k = {}
+        for k in range(self.K):
+            cells = [int(c) for c in np.asarray(self.eng[k]).ravel()]
+            vals = []
+            for cell in cells:
+                found = None
+                for pa in range(5, 105, 5):
+                    if fires(cell, float(pa)):
+                        for exact in range(max(1, pa - 5), pa + 1):
+                            if fires(cell, float(exact)):
+                                found = exact
+                                break
+                        break
+                vals.append(found)
+            known = [v for v in vals if v is not None]
+            per_k[str(k)] = {
+                "cell_rheobases_pA": vals,
+                "engram_rheobase_pA": (min(known) if known else None),
+                "cells": len(vals),
+            }
+        return {
+            "per_engram": per_k,
+            "method": ("smallest step current firing the cell from the "
+                       "quiescent snapshot: 5 pA coarse 5..100 then "
+                       "exact 1 pA in (pa-5, pa); 200 ms step; >=1 "
+                       "spike counts; fresh snapshot per trial; engram "
+                       "value = min over its cells; None = no fire "
+                       "<=100 pA"),
+            "step_window_ms": 200,
+            "coarse_step_pA": 5,
+            "cap_pA": 100,
+            "snapshot": "quiescent (pre-race) _snap",
+        }
+
 
 def run_clauses(circ, seed, draws, grid_tag, controls_only=False,
                 steer_pa=0.0, steer_stage="engram", steer_target=0):
@@ -666,6 +730,8 @@ def run_clauses(circ, seed, draws, grid_tag, controls_only=False,
     base_seed = seed * 1000003
     # f1d step 1c: unitary cue EPSP, once per seed
     out["unitary_cue_epsp"] = circ.unitary_epsp()
+    # f1e step 1a: engram rheobase, once per seed (declared probe)
+    out["rheobase"] = circ.rheobase_probe()
 
     def winners(tag=None, **kw):
         rows = []
@@ -1210,8 +1276,10 @@ def main():
            "row_all_pass_8_seeds": bool(all_seeds_all_clauses
                                     and not args.controls_only),
         "controls_only": bool(args.controls_only),
-           "het_transplant_from_A0": bool(het_transplant),
-           "instrument_flags": {"w_gis": base.get("W_GIS", 0.0),
+        "het_transplant_from_A0": bool(het_transplant),
+        "record_label": {"latch_exclusion_w_gis":
+                         float(base.get("W_GIS", 0.0))},
+        "instrument_flags": {"w_gis": base.get("W_GIS", 0.0),
                                 "w_sgi": base.get("W_SGI", 0.0),
                                 "cue_n": base.get("CUE_N", 8),
                                 "cue_noise_sd":
