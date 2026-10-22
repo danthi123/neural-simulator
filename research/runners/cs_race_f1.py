@@ -102,7 +102,12 @@ _BASE = dict(NE=16, NI=6, NG=12, NGI=8, NS=20, NO=8,
              W_GGI=60.0, W_GIG=60.0, W_GS=40.0, W_SS=60.0, W_SO=20.0,
              W_OG=80.0, W_OE=40.0, NOISE_SD=25.0, NOISE_TAU=50.0,
              BIAS_PA=42.0, REST_STEPS=CUE_MS, HOLD_STEPS=HOLD_MS,
-             READ_STEPS=30, READ_FRAC=0.03)
+             READ_STEPS=30, READ_FRAC=0.03,
+             # f1d step 1b (RULING cs-race-f1d-1021): flags default to
+             # today's values; with no new flag every decision is
+             # unchanged (identity check 1d#1 asserts it).
+             W_GIS=0.0, W_SGI=0.0, CUE_N=8,
+             CUE_NOISE_SD=0.0, CUE_NOISE_TAU=5.0)
 GATE_CUE = "cs_cue"          # sensory drive gate for the cue layer
 GATE_MENT = "cs_ment"        # mention->E gate (lesion i closes it)
 
@@ -143,9 +148,11 @@ class RaceCircuit(ReplayCircuit):
         self.lay = lay
         self.occ = np.arange(o_o, o_o + NO, dtype=np.int64)   # occupancy pool
         o_cue = o_o + NO
-        o_ment = o_cue + len(CUE_WORDS) * W_SLOT
+        cue_n = int(p.get("CUE_N", W_SLOT))   # f1d --cue-n: cue slots
+        # only; mention slots stay W_SLOT (ruling step 1b)
+        o_ment = o_cue + len(CUE_WORDS) * cue_n
         n = o_ment + len(MENTION_WORDS) * W_SLOT
-        self.cue = [np.arange(o_cue + i * W_SLOT, o_cue + (i + 1) * W_SLOT,
+        self.cue = [np.arange(o_cue + i * cue_n, o_cue + (i + 1) * cue_n,
                               dtype=np.int64) for i in range(len(CUE_WORDS))]
         self.ment = [np.arange(o_ment + i * W_SLOT, o_ment + (i + 1) * W_SLOT,
                                dtype=np.int64) for i in range(len(MENTION_WORDS))]
@@ -335,6 +342,27 @@ class RaceCircuit(ReplayCircuit):
         rest = int(p["REST_STEPS"])
         hold = int(p["HOLD_STEPS"])
         read = int(p["READ_STEPS"])
+        T = rest + hold
+        # f1d step 1c instrument (additive, recorded only): per-ms
+        # rasters over cue + hold, per-ms engram mean Vm and total
+        # excitatory synaptic current (window means are read after
+        # t_ign is known), private cue-cell OU current, last-30 latch.
+        eng_ms = np.zeros((K, T), dtype=np.int32)
+        gate_ms = np.zeros((K, T), dtype=np.int32)
+        slot_ms = np.zeros((K, T), dtype=np.int32)
+        word_ms = np.zeros((len(CUE_WORDS), T), dtype=np.int32)
+        vm_ms = np.zeros((K, T))
+        iexc_ms = np.zeros((K, T))
+        slot_counts_last = np.zeros(K, dtype=np.int64)
+        cue_all = (np.concatenate(self.cue) if len(self.cue) else
+                   np.zeros(0, dtype=np.int64))
+        cue_sd = float(p.get("CUE_NOISE_SD", 0.0))
+        cue_tau = float(p.get("CUE_NOISE_TAU", 5.0))
+        a_c = 1.0 / cue_tau
+        s_c = cue_sd * math.sqrt(2.0 / cue_tau)
+        # no rng draw when cue_sd == 0 -> A0's noise stream is untouched
+        eta_cue = (rng.standard_normal(cue_all.size) * cue_sd
+                   if cue_sd > 0.0 else None)
         # latch counts accumulate over the read window (hold, no drive)
         slot_counts = np.zeros(K, dtype=np.int64)
         for t in range(rest + hold):
@@ -342,6 +370,10 @@ class RaceCircuit(ReplayCircuit):
             if t < rest:
                 eta += a_ou * (-eta) + s_ou * rng.standard_normal(nE)
                 cur[:nE] += eta.astype(np.float32)
+                if eta_cue is not None:      # f1d A3n: private OU on
+                    eta_cue += a_c * (-eta_cue) + s_c * rng.standard_normal(
+                        cue_all.size)        # cue cells only
+                    cur[cue_all] += eta_cue.astype(np.float32)
                 if cue_idx.size:
                     cur[cue_idx] += float(CUE_PA)
                 if steer_pa and (flip_step is None or t >= flip_step):
@@ -357,15 +389,39 @@ class RaceCircuit(ReplayCircuit):
             f = np.asarray(to_host(b.cp_firing_states)).astype(bool)
             if cue_idx.size:
                 cue_spk += int(f[cue_idx].sum())
+            vp_now = np.asarray(to_host(b.cp_membrane_potential_v))
+            ge_now = (np.asarray(to_host(b.cp_conductance_g_e))
+                      if b.cp_conductance_g_e is not None else None)
+            for wi in range(len(CUE_WORDS)):
+                c_wi = int(f[self.cue[wi]].sum())
+                if c_wi:
+                    word_ms[wi, t] = c_wi
             for k in range(K):
-                eng_counts[k] += int(f[self.eng[k]].sum())
+                e_i = int(f[self.eng[k]].sum())
+                eng_counts[k] += e_i
+                eng_ms[k, t] = e_i
                 gk = int(f[gate_all[k]].sum())
                 gate_counts[k] += gk
+                gate_ms[k, t] = gk
                 if gk and first_gate[k] is None:
                     first_gate[k] = t
+                s_i = int(f[self.lay["slot"][k]].sum())
+                slot_ms[k, t] = s_i
+                vm_ms[k, t] = float(vp_now[self.eng[k]].mean())
+                # total excitatory synaptic current per cell:
+                # I = g_e * (E_e - V), E_e = syn_reversal_potential_e
+                # = 0.0 mV (sim/config.py), mean over engram cells.
+                iexc_ms[k, t] = (float(
+                    (ge_now[self.eng[k]] *
+                     (0.0 - vp_now[self.eng[k]])).mean())
+                    if ge_now is not None else 0.0)
             if rest <= t < rest + read:
                 for k in range(K):
                     slot_counts[k] += int(
+                        f[self.lay["slot"][k]].sum())
+            if t >= T - 30:                 # last 30 ms of hold
+                for k in range(K):
+                    slot_counts_last[k] += int(
                         f[self.lay["slot"][k]].sum())
             if natural_winner is None and sum(
                     1 for k in range(K) if first_gate[k] is not None) >= 1:
@@ -391,6 +447,133 @@ class RaceCircuit(ReplayCircuit):
                 "thr": round(float(thr.mean()), 3)}
         rd = SC.read_with_variants(slot_counts.tolist(), int(p["NS"]), read,
                                    float(p["READ_FRAC"]))
+        rd_last = SC.read_with_variants(slot_counts_last.tolist(),
+                                        int(p["NS"]), 30,
+                                        float(p["READ_FRAC"]))
+        # f1d step 1c: derive ignition / latch / burst / pre-ignition
+        # fields from the per-ms instrument -- recorded for step 2/3,
+        # never used inside the decision itself.
+        def _trailing3(c_arr):
+            c_arr = np.asarray(c_arr, dtype=np.int64)
+            if c_arr.size < 5:
+                return None
+            w = np.convolve(c_arr, np.ones(5, dtype=np.int64),
+                            mode="valid")
+            idx = np.flatnonzero(w >= 3)
+            return int(idx[0] + 4) if idx.size else None
+        t_ign = [_trailing3(eng_ms[k]) for k in range(K)]
+        latch_onset = [_trailing3(slot_ms[k]) for k in range(K)]
+        gate_bursts = []
+        for k in range(K):
+            idx_b = np.flatnonzero(gate_ms[k])
+            if idx_b.size == 0:
+                gate_bursts.append(None)
+                continue
+            bb = (gate_ms[k] > 0).astype(np.int8)
+            dd = np.diff(np.concatenate(([0], bb, [0])))
+            runs = (np.flatnonzero(dd == -1) -
+                    np.flatnonzero(dd == 1))
+            gate_bursts.append(
+                {"first_ms": int(idx_b[0]),
+                 "last_ms": int(idx_b[-1]),
+                 "span_ms": int(idx_b[-1] - idx_b[0] + 1),
+                 "longest_run_ms": int(runs.max()) if runs.size else 0})
+        firing = [k for k in range(K) if gate_bursts[k] is not None]
+        first_burst_k = (min(firing, key=lambda kk:
+                             gate_bursts[kk]["first_ms"]) if firing
+                         else None)
+        last_burst_k = (max(firing, key=lambda kk:
+                            gate_bursts[kk]["first_ms"]) if firing
+                        else None)
+        winner = rd.get("winner")
+        if winner is None:
+            gate_survivor = "none"
+        elif first_burst_k is None:
+            gate_survivor = "no_burst"
+        elif first_burst_k == last_burst_k:
+            gate_survivor = "single_burst"
+        elif int(winner) == int(first_burst_k):
+            gate_survivor = "first"
+        elif int(winner) == int(last_burst_k):
+            gate_survivor = "last"
+        else:
+            gate_survivor = "neither"
+        igs = [v for v in t_ign if v is not None]
+        if igs:
+            w0 = max(int(min(igs)) - 50, 0)
+            w1 = max(int(min(igs)) - 5, w0)
+            ign_rel = True
+        else:
+            w0, w1, ign_rel = 100, 400, False
+        # cue-only current per engram, ruling formula: cue raster x
+        # W_CUE x conductance kernel, kernel = the engine's own
+        # _cached_decay_e = exp(-dt/syn_tau_g_e); dense edges, so every
+        # cell of a fact's cue word drives every target of that fact.
+        lam = getattr(b, "_cached_decay_e", None)
+        if lam is None or not float(lam):
+            raise RuntimeError("_cached_decay_e missing: cannot compute "
+                               "the cue-only current kernel exactly")
+        w_cue_now = float(p.get("W_CUE", W_CUE))
+        cue_k = []
+        for k in range(K):
+            words_k = [CUE_WORDS.index(w) for w in CUE_OF[k]
+                       if w in CUE_WORDS]
+            exc = (np.asarray(word_ms[words_k].sum(axis=0),
+                              dtype=np.float64) if words_k
+                   else np.zeros(T))
+            acc = 0.0
+            g_cue = np.zeros(T)
+            for tt in range(T):
+                acc = acc * float(lam) + w_cue_now * exc[tt]
+                g_cue[tt] = acc
+            cue_k.append(g_cue)
+        pre_ign = {"window_ms": [int(w0), int(w1)],
+                   "ignition_relative": bool(ign_rel),
+                   "vm_mean_mv_per_k": [
+                       round(float(vm_ms[k, w0:w1].mean()), 4)
+                       if w1 > w0 else None for k in range(K)],
+                   "vm_mean_mv": (round(float(vm_ms[:, w0:w1].mean()), 4)
+                                  if w1 > w0 else None),
+                   "total_exc_current_pa_per_k": [
+                       round(float(iexc_ms[k, w0:w1].mean()), 4)
+                       if w1 > w0 else None for k in range(K)],
+                   "total_exc_current_pa": (
+                       round(float(iexc_ms[:, w0:w1].mean()), 4)
+                       if w1 > w0 else None),
+                   "total_exc_current_note":
+                       "g_e * (E_e - V) per cell, E_e = "
+                       "syn_reversal_potential_e = 0.0 mV, mean over "
+                       "engram cells in the window",
+                   "cue_only_current_pa_per_k": [
+                       round(float(cue_k[k][w0:w1].mean()), 4)
+                       if w1 > w0 else None for k in range(K)],
+                   "cue_only_current_pa": (
+                       round(float(np.mean(
+                           [cue_k[k][w0:w1].mean() for k in range(K)])),
+                           4) if w1 > w0 else None),
+                   "cue_only_formula":
+                       "W_CUE * cue raster convolved with the engine "
+                       "conductance kernel exp(-dt/syn_tau_g_e)",
+                   "engram_spikes_in_window": [
+                       int(eng_ms[k, w0:w1].sum()) for k in range(K)]}
+        latch_first_last = {"first_read_winner": winner,
+                            "last_read_winner": rd_last.get("winner"),
+                            "last30_slot_counts":
+                                slot_counts_last.tolist(),
+                            "disagree": bool(
+                                str(winner) != str(rd_last.get("winner")))}
+
+        def _sparse(arr_row):
+            idx_s = np.flatnonzero(arr_row)
+            return [[int(i), int(arr_row[i])] for i in idx_s]
+        raster_sparse = {
+            "engram": [_sparse(eng_ms[k]) for k in range(K)],
+            "gate": [_sparse(gate_ms[k]) for k in range(K)],
+            "slot": [_sparse(slot_ms[k]) for k in range(K)],
+            "cue_word": [_sparse(word_ms[wi])
+                         for wi in range(len(CUE_WORDS))],
+            "encoding": "sparse [ms, count] lists per entity, zeros "
+                        "implied; per-ms counts over cue + hold"}
         # STP state over the ONLY STP-active pathways (engram recurrence)
         stp = {"u": None, "x": None}
         if getattr(b, "cp_stp_u", None) is not None:
@@ -411,7 +594,66 @@ class RaceCircuit(ReplayCircuit):
                 "latch_pre_cue": latch_before,
                 "natural_first_gate": natural_winner, "stp": stp,
                 "slot_counts": slot_counts.tolist(), "v_mV": v_mV,
-                "cue_spikes": cue_spk}
+                "cue_spikes": cue_spk,
+                "t_ign": t_ign, "latch_onset": latch_onset,
+                "gate_bursts": gate_bursts,
+                "first_burst_k": first_burst_k,
+                "last_burst_k": last_burst_k,
+                "gate_survivor": gate_survivor,
+                "pre_ign": pre_ign,
+                "latch_first_last": latch_first_last,
+                "raster": raster_sparse}
+
+    def unitary_epsp(self, cue_word="lynx"):
+        """f1d step 1c, once per seed: force ONE cue cell to spike from
+        the quiescent snapshot; peak dV over 30 ms averaged over its
+        engram targets (mV)."""
+        from sim.backend import to_host
+        from research.runners._gnw_rung1_ignition_curve_derisk import \
+            _reset_quiescent
+        b = self._bridge
+        _reset_quiescent(b, self._xp, self._snap)
+        b.set_transmission_gate(GATE_ENGRAM, 1.0)
+        b.set_transmission_gate(GATE_COMMIT_IN, 0.0)
+        b.set_transmission_gate(GATE_EXCL, 1.0)
+        b.set_transmission_gate(GATE_MENT, 1.0)
+        i = CUE_WORDS.index(cue_word)
+        cell = int(self.cue[i][0])
+        tgt = np.concatenate([self.eng[k] for k in range(self.K)
+                              if cue_word in CUE_OF[k]])
+        v0 = np.asarray(to_host(b.cp_membrane_potential_v))[tgt].copy()
+        driven = 0
+        spiking = False
+        pa_used = 0.0
+        for mult in (1.0, 2.0, 3.0, 4.0):
+            for _ in range(30):
+                cur = np.zeros(self._n, dtype=np.float32)
+                pa_used = float(CUE_PA) * mult
+                cur[cell] = pa_used
+                b.cp_external_input_current[:] = self._xp.asarray(cur)
+                b._run_one_simulation_step()
+                driven += 1
+                if bool(np.asarray(
+                        to_host(b.cp_firing_states)).astype(bool)[cell]):
+                    spiking = True
+                    break
+            if spiking:
+                break
+            for _ in range(20):   # relax to rest between drive rungs
+                b.cp_external_input_current[:] = 0.0
+                b._run_one_simulation_step()
+        peak = np.full(tgt.size, -1e9)
+        for _ in range(30):
+            b.cp_external_input_current[:] = 0.0
+            b._run_one_simulation_step()
+            v = np.asarray(to_host(b.cp_membrane_potential_v))[tgt]
+            peak = np.maximum(peak, v)
+        b.cp_external_input_current[:] = 0.0
+        return {"cue_word": cue_word, "cue_cell": cell,
+                "ms_driven": driven, "spiked": spiking,
+                "cue_pa_used": pa_used, "targets": int(tgt.size),
+                "peak_dv_mv": (round(float((peak - v0).mean()), 4)
+                               if spiking else None)}
 
 
 def run_clauses(circ, seed, draws, grid_tag, controls_only=False,
@@ -422,6 +664,8 @@ def run_clauses(circ, seed, draws, grid_tag, controls_only=False,
     out = {"seed": seed, "grid": grid_tag, "draws": draws,
            "KILL": KILL_CRITERIA, "clauses": {}}
     base_seed = seed * 1000003
+    # f1d step 1c: unitary cue EPSP, once per seed
+    out["unitary_cue_epsp"] = circ.unitary_epsp()
 
     def winners(tag=None, **kw):
         rows = []
@@ -432,17 +676,25 @@ def run_clauses(circ, seed, draws, grid_tag, controls_only=False,
                 r = {"winner": "ERROR:%s" % type(e).__name__}
             rows.append(r)
             if tag:
-                out.setdefault("per_draw", []).append({
-                    "clause": tag, "draw": d,
-                    "winner": r.get("winner"),
-                    "engram_counts": r.get("engram_counts"),
-                    "gate_counts": r.get("gate_counts"),
-                    "first_gate_step": r.get("first_gate_step"),
-                    "slot_counts": r.get("slot_counts"),
-                    "latch_pre_cue": r.get("latch_pre_cue"),
-                    "natural_first_gate": r.get("natural_first_gate"),
-                    "v_mV": r.get("v_mV"),
-                    "cue_spikes": r.get("cue_spikes")})
+                row = {"clause": tag, "draw": d,
+                       "winner": r.get("winner"),
+                       "engram_counts": r.get("engram_counts"),
+                       "gate_counts": r.get("gate_counts"),
+                       "first_gate_step": r.get("first_gate_step"),
+                       "slot_counts": r.get("slot_counts"),
+                       "latch_pre_cue": r.get("latch_pre_cue"),
+                       "natural_first_gate": r.get("natural_first_gate"),
+                       "v_mV": r.get("v_mV"),
+                       "cue_spikes": r.get("cue_spikes"),
+                       "t_ign": r.get("t_ign"),
+                       "latch_onset": r.get("latch_onset"),
+                       "gate_bursts": r.get("gate_bursts"),
+                       "gate_survivor": r.get("gate_survivor"),
+                       "pre_ign": r.get("pre_ign"),
+                       "latch_first_last": r.get("latch_first_last")}
+                if tag == "decisive":   # per-ms rasters: cue-lock and
+                    row["raster"] = r.get("raster")   # ignition stats
+                out.setdefault("per_draw", []).append(row)
         return rows
 
     def content(w):
@@ -660,6 +912,92 @@ def run_clauses(circ, seed, draws, grid_tag, controls_only=False,
 _F1_GRID_ROW = dict(F1_GRID[0])
 
 
+def identity_cue_n(base, grid, seeds, cue_n, w_cue, draws, out_arg):
+    """f1d step 1d#2: for arms that change --cue-n, the engram, gate,
+    GI, slot and occupancy heterogeneity arrays (a, b, d, C) and the
+    initial state equal A0's for the shared indices, and the per-seed
+    mean cue-only current of A0 and A3 is recorded.  Any mismatch ->
+    STOP with the diff (return 1); never proceeds silently."""
+    from sim.backend import to_host
+    rec = {"probe": "cs_race_f1_identity_cue_n",
+           "A0": {"cue_n": 8, "w_cue": float(W_CUE)},
+           "A3": {"cue_n": int(cue_n), "w_cue": float(w_cue)},
+           "seeds": [], "seeds_pass": 0}
+    all_ok = True
+    for seed in seeds:
+        # A0 = today's defaults.  The CLI may have already written
+        # --cue-n/--w-cue into `base` (main() wires them before this
+        # call), so A0 must be forced back to the defaults -- otherwise
+        # the compare is vacuous (caught: first run compared A3 to A3).
+        b0 = dict(base)
+        b0["CUE_N"] = 8
+        b0.pop("W_CUE", None)
+        a0 = RaceCircuit(3, seed, b0, grid)
+        a3 = RaceCircuit(3, seed,
+                         dict(b0, CUE_N=int(cue_n),
+                              W_CUE=float(w_cue)), grid)
+        n_shared = int(a0.occ[-1]) + 1   # everything before the cue
+        # layer is index-shared: E, I, layout (gate/slot/GI), occupancy
+
+        def _arr(c, name):
+            return np.asarray(to_host(getattr(c._bridge, name)))
+        arr = {}
+        for nm in ("cp_izh_a", "cp_izh_b", "cp_izh_d_increment",
+                   "cp_izh_C"):
+            arr[nm] = bool(np.array_equal(_arr(a0, nm)[:n_shared],
+                                          _arr(a3, nm)[:n_shared]))
+        arr["v0"] = bool(np.array_equal(
+            _arr(a0, "cp_membrane_potential_v")[:n_shared],
+            _arr(a3, "cp_membrane_potential_v")[:n_shared]))
+        arr["u0"] = bool(np.array_equal(
+            _arr(a0, "cp_recovery_variable_u")[:n_shared],
+            _arr(a3, "cp_recovery_variable_u")[:n_shared]))
+        cue_pa = {}
+        for tag, circ in (("A0", a0), ("A3", a3)):
+            vals = []
+            for d in range(draws):
+                r = circ.race(seed=seed * 1000003 + d,
+                              cue_words=list(CUE_OF[1]),
+                              encode=("ABsim",))
+                m = (r.get("pre_ign") or {}).get(
+                    "cue_only_current_pa")
+                if m is not None:
+                    vals.append(float(m))
+            cue_pa[tag] = (round(sum(vals) / len(vals), 4)
+                           if vals else None)
+        ok = all(arr.values())
+        all_ok = all_ok and ok
+        rec["seeds"].append({"seed": seed, "n_shared": n_shared,
+                             "arrays_equal": arr,
+                             "mean_cue_only_current_pa": cue_pa,
+                             "pass": ok})
+        rec["seeds_pass"] += int(ok)
+        print("identity 1d#2 seed %d: pass=%s shared=%d "
+              "cue_only A0=%s A3=%s"
+              % (seed, ok, n_shared, cue_pa["A0"], cue_pa["A3"]),
+              flush=True)
+    rec["pass"] = bool(all_ok and len(rec["seeds"]) == len(seeds))
+    path = out_arg or os.path.join(
+        REPO, "research/findings/raw/_cs_race/f1d/identity_cue_n.json")
+    path = path if os.path.isabs(path) else os.path.join(REPO, path)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as fh:
+        json.dump(rec, fh, indent=2, sort_keys=True, default=str)
+    from research.runners import declare_output
+    declare_output(path)
+    if not rec["pass"]:
+        print("IDENTITY 1d#2 FAIL -- STOP with the diff:", flush=True)
+        for s in rec["seeds"]:
+            if not s["pass"]:
+                print("  seed %d: %s" % (s["seed"], s["arrays_equal"]),
+                      flush=True)
+        print("diff -> %s" % path, flush=True)
+        return 1
+    print("identity 1d#2 PASS on %d/%d seeds -> %s"
+          % (rec["seeds_pass"], len(seeds), path), flush=True)
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", default="1,2,3,4,5,6,7,8")
@@ -679,6 +1017,23 @@ def main():
                     help="override W_GS, gate->slot drive")
     ap.add_argument("--w-cue", type=float, default=None,
                     help="override W_CUE, cue->engram synapse weight")
+    ap.add_argument("--w-gis", type=float, default=None,
+                    help="override W_GIS, bursting gate GI -> other "
+                         "slots (single-slot exclusion)")
+    ap.add_argument("--w-sgi", type=float, default=None,
+                    help="override W_SGI, latched slot -> own gate GI")
+    ap.add_argument("--cue-n", type=int, default=None,
+                    help="cue slots per cue word (mention slots stay "
+                         "%d; f1d --cue-n)" % W_SLOT)
+    ap.add_argument("--cue-noise-sd", type=float, default=None,
+                    help="private OU current sd (pA) on cue cells")
+    ap.add_argument("--cue-noise-tau", type=float, default=None,
+                    help="private OU tau (ms) on cue cells (default 5)")
+    ap.add_argument("--identity-cue-n", action="store_true",
+                    help="f1d step 1d#2: build A0 vs a --cue-n arm, "
+                         "compare heterogeneity arrays (a,b,d,C) + "
+                         "initial state on shared indices, record each "
+                         "arm's mean cue-only current, then exit")
     ap.add_argument("--steer-pa", type=float, default=0.0,
                     help="host steer current pA on the decisive control "
                          "(measurement probe; record = steer_host_probe)")
@@ -713,16 +1068,34 @@ def main():
         base["W_CUE"] = float(args.w_cue)
     if args.w_nmda:
         base["W_NMDA"] = float(args.w_nmda)
+    if args.w_gis is not None:
+        base["W_GIS"] = float(args.w_gis)
+    if args.w_sgi is not None:
+        base["W_SGI"] = float(args.w_sgi)
+    if args.cue_n is not None:
+        base["CUE_N"] = int(args.cue_n)
+    if args.cue_noise_sd is not None:
+        base["CUE_NOISE_SD"] = float(args.cue_noise_sd)
+    if args.cue_noise_tau is not None:
+        base["CUE_NOISE_TAU"] = float(args.cue_noise_tau)
+    if args.identity_cue_n:
+        return identity_cue_n(base, _F1_GRID_ROW, seeds,
+                              int(args.cue_n or 48),
+                              float(args.w_cue or 7.5), args.draws,
+                              args.out)
     results = []
     for seed in seeds:
         circ = RaceCircuit(3, seed, dict(base), _F1_GRID_ROW)
         res = run_clauses(
             circ, seed, args.draws,
-            "row%d U=%s tau_f=%s NE=%s W_EE=%s W_IE=%s W_NMDA=%s"
+            "row%d U=%s tau_f=%s NE=%s W_EE=%s W_IE=%s W_NMDA=%s "
+            "W_GIS=%s W_SGI=%s CUE_N=%s CUE_NOISE_SD=%s"
             % (args.grid_row, _F1_GRID_ROW["U"],
                _F1_GRID_ROW["tau_f"], _F1_GRID_ROW["NE"],
                base["W_EE"], base["W_IE"],
-               base.get("W_NMDA", 0.0)),
+               base.get("W_NMDA", 0.0), base.get("W_GIS", 0.0),
+               base.get("W_SGI", 0.0), base.get("CUE_N", 8),
+               base.get("CUE_NOISE_SD", 0.0)),
             controls_only=args.controls_only,
             steer_pa=args.steer_pa, steer_stage=args.steer_stage,
             steer_target=args.steer_target)
@@ -773,6 +1146,13 @@ def main():
            "row_all_pass_8_seeds": bool(all_seeds_all_clauses
                                     and not args.controls_only),
         "controls_only": bool(args.controls_only),
+           "instrument_flags": {"w_gis": base.get("W_GIS", 0.0),
+                                "w_sgi": base.get("W_SGI", 0.0),
+                                "cue_n": base.get("CUE_N", 8),
+                                "cue_noise_sd":
+                                    base.get("CUE_NOISE_SD", 0.0),
+                                "cue_noise_tau":
+                                    base.get("CUE_NOISE_TAU", 5.0)},
            "results": results, "Verdict": v._decided,
            "preconditions": {
                "env": "probe-local flags only; BRAIN_CS_RACE does not exist "
