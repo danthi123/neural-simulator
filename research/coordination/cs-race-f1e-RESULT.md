@@ -1,5 +1,7 @@
 # cs-race-f1d step 1e RESULT — carrier grid (rows 3-4, W_GIS 30 held fixed): OWNERSHIP NOT ESTABLISHED
 
+> **AMENDMENT (2026-10-22, RULING cs-race-f1g-0-1022):** clause (b) and every mention-ownership reading in this file are UNDEFINED (carrier unengaged: 0 mention spikes at MENT_PA 40 pA, sub-rheobase for the mention slots), NOT a null; clause (a) (recency) and the controls stand; clause (c) used MENT_MAX_PA 90 and fired.
+
 **Date:** 2026-10-22 · **Author:** driver (local-LLM session) · **Branch:** `research/cs-race`
 **Rule source (pre-registered, bars fixed by Claude):** `cs-race-f1d-verdict-1022`
 (`6e7891aa4`) — f1d RATIFIED, step 1e = carrier grid, gate exclusion (W_GIS 30) held

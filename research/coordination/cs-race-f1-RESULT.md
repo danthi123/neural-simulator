@@ -2,6 +2,8 @@ VOID per RULING cs-race-f1-void-1021, superseded by cs-race-f1b-RESULT.md.
 
 # [cs-race-f1] RESULT — F1 feasibility of the cue-addressed race: NO-GO on the pre-registered grid
 
+> **AMENDMENT (2026-10-22, RULING cs-race-f1g-0-1022):** clause (b) and every mention-ownership reading in this file are UNDEFINED (carrier unengaged: 0 mention spikes at MENT_PA 40 pA, sub-rheobase for the mention slots), NOT a null; clause (a) (recency) and the controls stand; clause (c) used MENT_MAX_PA 90 and fired.
+
 PROVISIONAL (agent-filed; Claude verifies). Filed 2026-10-21 by the driver.
 
 **Verdict: NO-GO under K1 (grid exhausted).** No row of the pre-registered
