@@ -1,0 +1,54 @@
+== noise model: moderate {'LAM_SPK': 8.0, 'GAIN_SD': 0.25, 'SPONT': 0.01, 'PRE_SD': 0.05, 'MISS': 0.02, 'CONV': 1.25, 'KCONV': 1.1}
+  generated-by covpre  (GO bars pass 15/15) vs replica-of covpre  : audit PASS      A1 15/15 A2 15/15 rho med 0.962 min 0.953
+  generated-by covpre  (GO bars pass 15/15) vs replica-of cov     : audit FAIL      A1  0/15 A2  0/15 rho med 0.906 min 0.881
+  generated-by covpre  (GO bars pass 15/15) vs replica-of hebb    : audit FAIL      A1  0/15 A2  0/15 rho med 0.466 min 0.407
+  generated-by covpre  (GO bars pass 15/15) vs replica-of hebbwta : audit FAIL      A1  0/15 A2  0/15 rho med 0.297 min 0.183
+  generated-by covpre  (GO bars pass 15/15) vs replica-of bcm     : audit FAIL      A1  0/15 A2  0/15 rho med 0.499 min 0.429
+  generated-by cov     (GO bars pass  0/15) vs replica-of covpre  : audit FAIL      A1  0/15 A2  0/15 rho med 0.900 min 0.878
+  generated-by cov     (GO bars pass  0/15) vs replica-of cov     : audit FAIL      A1 14/15 A2 11/15 rho med 0.964 min 0.942
+  generated-by cov     (GO bars pass  0/15) vs replica-of hebb    : audit FAIL      A1  0/15 A2  0/15 rho med 0.623 min 0.595
+  generated-by cov     (GO bars pass  0/15) vs replica-of hebbwta : audit FAIL      A1  0/15 A2  0/15 rho med 0.419 min 0.322
+  generated-by cov     (GO bars pass  0/15) vs replica-of bcm     : audit FAIL      A1  1/15 A2  0/15 rho med 0.670 min 0.617
+  generated-by hebb    (GO bars pass  0/15) vs replica-of covpre  : audit FAIL      A1  0/15 A2  0/15 rho med 0.417 min 0.351
+  generated-by hebb    (GO bars pass  0/15) vs replica-of cov     : audit FAIL      A1  0/15 A2  0/15 rho med 0.550 min 0.498
+  generated-by hebb    (GO bars pass  0/15) vs replica-of hebb    : audit FAIL      A1 15/15 A2  8/15 rho med 0.996 min 0.991
+  generated-by hebb    (GO bars pass  0/15) vs replica-of hebbwta : audit FAIL      A1 15/15 A2  0/15 rho med 0.717 min 0.686
+  generated-by hebb    (GO bars pass  0/15) vs replica-of bcm     : audit FAIL      A1  0/15 A2  0/15 rho med 0.951 min 0.938
+  generated-by hebbwta (GO bars pass  0/15) vs replica-of covpre  : audit FAIL      A1  0/15 A2  0/15 rho med 0.250 min 0.151
+  generated-by hebbwta (GO bars pass  0/15) vs replica-of cov     : audit FAIL      A1  0/15 A2  0/15 rho med 0.373 min 0.263
+  generated-by hebbwta (GO bars pass  0/15) vs replica-of hebb    : audit FAIL      A1 14/15 A2  0/15 rho med 0.732 min 0.697
+  generated-by hebbwta (GO bars pass  0/15) vs replica-of hebbwta : audit FAIL      A1 14/15 A2  4/15 rho med 0.947 min 0.832
+  generated-by hebbwta (GO bars pass  0/15) vs replica-of bcm     : audit FAIL      A1  0/15 A2  0/15 rho med 0.626 min 0.584
+  generated-by bcm     (GO bars pass  0/15) vs replica-of covpre  : audit FAIL      A1  0/15 A2  0/15 rho med 0.451 min 0.389
+  generated-by bcm     (GO bars pass  0/15) vs replica-of cov     : audit FAIL      A1  5/15 A2  0/15 rho med 0.605 min 0.550
+  generated-by bcm     (GO bars pass  0/15) vs replica-of hebb    : audit FAIL      A1  0/15 A2  0/15 rho med 0.925 min 0.897
+  generated-by bcm     (GO bars pass  0/15) vs replica-of hebbwta : audit FAIL      A1  0/15 A2  0/15 rho med 0.575 min 0.547
+  generated-by bcm     (GO bars pass  0/15) vs replica-of bcm     : audit FAIL      A1  0/15 A2 15/15 rho med 0.983 min 0.975
+== noise model: harsh {'LAM_SPK': 3.0, 'GAIN_SD': 0.4, 'SPONT': 0.03, 'PRE_SD': 0.1, 'MISS': 0.05, 'CONV': 1.5, 'KCONV': 1.25}
+  generated-by covpre  (GO bars pass 13/15) vs replica-of covpre  : audit PASS      A1 13/15 A2 14/15 rho med 0.927 min 0.903
+  generated-by covpre  (GO bars pass 13/15) vs replica-of cov     : audit FAIL      A1  1/15 A2  0/15 rho med 0.878 min 0.829
+  generated-by covpre  (GO bars pass 13/15) vs replica-of hebb    : audit FAIL      A1  0/15 A2  0/15 rho med 0.484 min 0.426
+  generated-by covpre  (GO bars pass 13/15) vs replica-of hebbwta : audit FAIL      A1  0/15 A2  0/15 rho med 0.327 min 0.221
+  generated-by covpre  (GO bars pass 13/15) vs replica-of bcm     : audit FAIL      A1  0/15 A2  0/15 rho med 0.510 min 0.440
+  generated-by cov     (GO bars pass  0/15) vs replica-of covpre  : audit FAIL      A1  0/15 A2  0/15 rho med 0.863 min 0.831
+  generated-by cov     (GO bars pass  0/15) vs replica-of cov     : audit FAIL      A1  9/15 A2  4/15 rho med 0.929 min 0.911
+  generated-by cov     (GO bars pass  0/15) vs replica-of hebb    : audit FAIL      A1  0/15 A2  0/15 rho med 0.671 min 0.629
+  generated-by cov     (GO bars pass  0/15) vs replica-of hebbwta : audit FAIL      A1  0/15 A2  0/15 rho med 0.450 min 0.392
+  generated-by cov     (GO bars pass  0/15) vs replica-of bcm     : audit FAIL      A1  0/15 A2  0/15 rho med 0.708 min 0.646
+  generated-by hebb    (GO bars pass  0/15) vs replica-of covpre  : audit FAIL      A1  0/15 A2  0/15 rho med 0.396 min 0.333
+  generated-by hebb    (GO bars pass  0/15) vs replica-of cov     : audit FAIL      A1  0/15 A2  0/15 rho med 0.535 min 0.483
+  generated-by hebb    (GO bars pass  0/15) vs replica-of hebb    : audit FAIL      A1 14/15 A2  2/15 rho med 0.990 min 0.985
+  generated-by hebb    (GO bars pass  0/15) vs replica-of hebbwta : audit FAIL      A1 14/15 A2  0/15 rho med 0.712 min 0.678
+  generated-by hebb    (GO bars pass  0/15) vs replica-of bcm     : audit FAIL      A1  0/15 A2  0/15 rho med 0.947 min 0.934
+  generated-by hebbwta (GO bars pass  0/15) vs replica-of covpre  : audit FAIL      A1  0/15 A2  0/15 rho med 0.229 min 0.151
+  generated-by hebbwta (GO bars pass  0/15) vs replica-of cov     : audit FAIL      A1  0/15 A2  0/15 rho med 0.360 min 0.276
+  generated-by hebbwta (GO bars pass  0/15) vs replica-of hebb    : audit FAIL      A1 13/15 A2  0/15 rho med 0.743 min 0.726
+  generated-by hebbwta (GO bars pass  0/15) vs replica-of hebbwta : audit FAIL      A1 13/15 A2  0/15 rho med 0.896 min 0.767
+  generated-by hebbwta (GO bars pass  0/15) vs replica-of bcm     : audit FAIL      A1  0/15 A2  0/15 rho med 0.668 min 0.611
+  generated-by bcm     (GO bars pass  0/15) vs replica-of covpre  : audit FAIL      A1  0/15 A2  0/15 rho med 0.424 min 0.372
+  generated-by bcm     (GO bars pass  0/15) vs replica-of cov     : audit FAIL      A1  1/15 A2  0/15 rho med 0.592 min 0.545
+  generated-by bcm     (GO bars pass  0/15) vs replica-of hebb    : audit FAIL      A1  0/15 A2  0/15 rho med 0.883 min 0.847
+  generated-by bcm     (GO bars pass  0/15) vs replica-of hebbwta : audit FAIL      A1  0/15 A2  0/15 rho med 0.559 min 0.531
+  generated-by bcm     (GO bars pass  0/15) vs replica-of bcm     : audit FAIL      A1  0/15 A2 11/15 rho med 0.950 min 0.929
+== independent streams (s vs s+1000), COV-PRE replica both sides: {'rho_median': 0.4484024030918762, 'rho_min': 0.33295614193329726, 'A1_same': 13, 'A2_same': 15, 'verdict': 'UNDEFINED'}
+== unengaged arm (all weights 0): {'GO_bars': {'S0': False, 'S1': True, 'S2a': True, 'S2b_nf': True, 'S3_nf': True, 'S4_nf': True, 'S5_nf': True}, 'note': 'sum|dw| = 0 -> UNDEFINED by the engagement record, never a FAIL'}

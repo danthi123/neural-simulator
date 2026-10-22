@@ -1,0 +1,27 @@
+== 2. per-seed pass rate, dev seeds 1-60, each arm at its own grid centre
+  covpre  lt=6 q(ALL null-free)=0.983 q(with nulls)=0.883 per-bar {'S0': np.float64(1.0), 'S1': np.float64(1.0), 'S2a': 1.0, 'S2b_nf': 1.0, 'S3_nf': 1.0, 'S4_nf': 1.0, 'S5_nf': np.float64(0.983)} P(>=14/15)=0.9747 P(>=13/15)=0.9982
+  cov     lt=6 q(ALL null-free)=0.000 q(with nulls)=0.000 per-bar {'S0': 0.0, 'S1': np.float64(1.0), 'S2a': 0.983, 'S2b_nf': 1.0, 'S3_nf': 0.983, 'S4_nf': 0.983, 'S5_nf': np.float64(1.0)} P(>=14/15)=0.0000 P(>=13/15)=0.0000
+  bcm     lt=1 q(ALL null-free)=0.000 q(with nulls)=0.000 per-bar {'S0': 0.0, 'S1': np.float64(0.733), 'S2a': 0.217, 'S2b_nf': 1.0, 'S3_nf': 1.0, 'S4_nf': 0.133, 'S5_nf': np.float64(1.0)} P(>=14/15)=0.0000 P(>=13/15)=0.0000
+  hebb    lt=3 q(ALL null-free)=0.000 q(with nulls)=0.000 per-bar {'S0': 0.0, 'S1': np.float64(0.0), 'S2a': 0.0, 'S2b_nf': 0.0, 'S3_nf': 0.0, 'S4_nf': 0.0, 'S5_nf': np.float64(1.0)} P(>=14/15)=0.0000 P(>=13/15)=0.0000
+  hebbwta lt=3 q(ALL null-free)=0.000 q(with nulls)=0.000 per-bar {'S0': 0.0, 'S1': np.float64(0.0), 'S2a': 0.0, 'S2b_nf': 0.0, 'S3_nf': 0.0, 'S4_nf': 0.0, 'S5_nf': np.float64(0.933)} P(>=14/15)=0.0000 P(>=13/15)=0.0000
+== 3. nulls on the GO candidate (covpre lt=6): each must FAIL the GO bars
+  label  {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b_nf': 15, 'S3_nf': 15, 'S4_nf': 0, 'S5_nf': 5} ALL 0/15
+  scene  {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b_nf': 0, 'S3_nf': 15, 'S4_nf': 0, 'S5_nf': 1} ALL 0/15
+  k0     {'S0': 0, 'S1': 15, 'S2a': 15, 'S2b_nf': 15, 'S3_nf': 15, 'S4_nf': 15, 'S5_nf': 15} ALL 0/15
+  voice  {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b_nf': 15, 'S3_nf': 15, 'S4_nf': 0, 'S5_nf': 1} ALL 0/15
+== 4. dose curves (covpre lt=6), medians over 15 seeds
+  overheard 0.00: SHA->E_SELF 0.573 (theta_silent 0.20) ALL 0/15
+  overheard 0.25: SHA->E_SELF 0.429 (theta_silent 0.20) ALL 0/15
+  overheard 0.50: SHA->E_SELF 0.264 (theta_silent 0.20) ALL 14/15
+  overheard 0.60: SHA->E_SELF 0.184 (theta_silent 0.20) ALL 15/15
+  overheard 0.75: SHA->E_SELF 0.078 (theta_silent 0.20) ALL 12/15
+  speaking voices 1: SHS->best E 0.437
+  speaking voices 2: SHS->best E 0.182
+  speaking voices 3: SHS->best E 0.125
+  speaking voices 5: SHS->best E 0.086
+  turn-taking p=0.0: PREV->ADR / SHA->ADR 0.108
+  turn-taking p=0.3: PREV->ADR / SHA->ADR 0.166
+  turn-taking p=0.6: PREV->ADR / SHA->ADR 0.301
+  turn-taking p=0.9: PREV->ADR / SHA->ADR 0.405
+== 5. convergence (covpre lt=6): weights at 2/3 vs full exposure
+  pointer targets within 20%: 0.976 of (token, pool, seed); non-decreasing (tol 0.05): 1.000

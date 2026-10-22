@@ -1,0 +1,21 @@
+{
+ "run_id": "agg-f1e-20261022-042403",
+ "runner": "/opt/data/cache/scratch/a_f1e_score.py",
+ "argv": [
+  "python3",
+  "/opt/data/cache/scratch/a_f1e_score.py",
+  "--json"
+ ],
+ "git_sha": "878b79add",
+ "git_dirty": true,
+ "started": "2026-10-22T04:24:03",
+ "artifact_kind": "aggregation-of-run-records (json read-only; no simulation executed)",
+ "backend": "numpy",
+ "device": "cpu",
+ "sim_backend": "numpy",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "notes": "step-1e scorer output: mechanical tally of per-seed clauses.a/b pass + positive_control.pass under RULING cs-race-f1d-verdict-1022 frozen bars; inputs row{3,4}_s{1..8,25..40}.json (pool runs @ 3f139fb2d)."
+}

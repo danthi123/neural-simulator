@@ -1,0 +1,45 @@
+cov     lam*tau= 1 {'S0': 0, 'S1': 15, 'S2a': 14, 'S2b': 15, 'S3': 15, 'S4': 15, 'S5': 15, 'S0_fire': 0, 'S0_silent': 15, 'S2b_classmax': 6} ALL  0/15 | min fire med 0.02 max silent med 0.04
+cov     lam*tau= 2 {'S0': 0, 'S1': 15, 'S2a': 14, 'S2b': 15, 'S3': 15, 'S4': 15, 'S5': 15, 'S0_fire': 0, 'S0_silent': 15, 'S2b_classmax': 6} ALL  0/15 | min fire med 0.03 max silent med 0.07
+cov     lam*tau= 3 {'S0': 0, 'S1': 15, 'S2a': 14, 'S2b': 15, 'S3': 15, 'S4': 15, 'S5': 15, 'S0_fire': 0, 'S0_silent': 15, 'S2b_classmax': 6} ALL  0/15 | min fire med 0.05 max silent med 0.11
+cov     lam*tau= 4 {'S0': 0, 'S1': 15, 'S2a': 14, 'S2b': 15, 'S3': 15, 'S4': 15, 'S5': 15, 'S0_fire': 0, 'S0_silent': 15, 'S2b_classmax': 6} ALL  0/15 | min fire med 0.07 max silent med 0.14
+cov     lam*tau= 6 {'S0': 0, 'S1': 15, 'S2a': 14, 'S2b': 15, 'S3': 15, 'S4': 15, 'S5': 15, 'S0_fire': 0, 'S0_silent': 3, 'S2b_classmax': 6} ALL  0/15 | min fire med 0.10 max silent med 0.21
+cov     lam*tau= 9 {'S0': 0, 'S1': 15, 'S2a': 14, 'S2b': 15, 'S3': 15, 'S4': 14, 'S5': 15, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 6} ALL  0/15 | min fire med 0.15 max silent med 0.32
+cov     lam*tau=12 {'S0': 0, 'S1': 15, 'S2a': 12, 'S2b': 15, 'S3': 14, 'S4': 10, 'S5': 15, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 6} ALL  0/15 | min fire med 0.20 max silent med 0.43
+cov     lam*tau=18 {'S0': 0, 'S1': 15, 'S2a': 1, 'S2b': 15, 'S3': 14, 'S4': 8, 'S5': 14, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 6} ALL  0/15 | min fire med 0.30 max silent med 0.64
+  => cov grid centre lam*tau=1 (ALL 0/15)
+covpre  lam*tau= 1 {'S0': 0, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S3': 15, 'S4': 15, 'S5': 15, 'S0_fire': 0, 'S0_silent': 15, 'S2b_classmax': 15} ALL  0/15 | min fire med 0.08 max silent med 0.13
+covpre  lam*tau= 2 {'S0': 0, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S3': 15, 'S4': 15, 'S5': 15, 'S0_fire': 0, 'S0_silent': 15, 'S2b_classmax': 15} ALL  0/15 | min fire med 0.16 max silent med 0.18
+covpre  lam*tau= 3 {'S0': 0, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S3': 15, 'S4': 15, 'S5': 15, 'S0_fire': 0, 'S0_silent': 9, 'S2b_classmax': 15} ALL  0/15 | min fire med 0.23 max silent med 0.19
+covpre  lam*tau= 4 {'S0': 0, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S3': 15, 'S4': 15, 'S5': 15, 'S0_fire': 0, 'S0_silent': 5, 'S2b_classmax': 15} ALL  0/15 | min fire med 0.29 max silent med 0.21
+covpre  lam*tau= 6 {'S0': 1, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S3': 15, 'S4': 14, 'S5': 14, 'S0_fire': 5, 'S0_silent': 2, 'S2b_classmax': 15} ALL  1/15 | min fire med 0.39 max silent med 0.24
+covpre  lam*tau= 9 {'S0': 0, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S3': 15, 'S4': 12, 'S5': 11, 'S0_fire': 15, 'S0_silent': 0, 'S2b_classmax': 15} ALL  0/15 | min fire med 0.50 max silent med 0.26
+covpre  lam*tau=12 {'S0': 0, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S3': 15, 'S4': 12, 'S5': 10, 'S0_fire': 15, 'S0_silent': 0, 'S2b_classmax': 15} ALL  0/15 | min fire med 0.56 max silent med 0.28
+covpre  lam*tau=18 {'S0': 0, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S3': 15, 'S4': 13, 'S5': 9, 'S0_fire': 15, 'S0_silent': 0, 'S2b_classmax': 15} ALL  0/15 | min fire med 0.57 max silent med 0.31
+  => covpre grid centre lam*tau=6 (ALL 1/15)
+hebb    lam*tau= 1 {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S3': 15, 'S4': 0, 'S5': 14, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.02 max silent med 0.32
+hebb    lam*tau= 2 {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S3': 15, 'S4': 0, 'S5': 14, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.05 max silent med 0.64
+hebb    lam*tau= 3 {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S3': 15, 'S4': 0, 'S5': 14, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.07 max silent med 0.95
+hebb    lam*tau= 4 {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S3': 15, 'S4': 0, 'S5': 14, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.09 max silent med 0.99
+hebb    lam*tau= 6 {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S3': 15, 'S4': 0, 'S5': 11, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.14 max silent med 1.00
+hebb    lam*tau= 9 {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S3': 15, 'S4': 0, 'S5': 1, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.21 max silent med 1.00
+hebb    lam*tau=12 {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S3': 15, 'S4': 0, 'S5': 0, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.27 max silent med 1.00
+hebb    lam*tau=18 {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S3': 15, 'S4': 0, 'S5': 0, 'S0_fire': 8, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.41 max silent med 1.00
+  => hebb grid centre lam*tau=1 (ALL 0/15)
+hebbwta lam*tau= 1 {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S3': 15, 'S4': 0, 'S5': 0, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.00 max silent med 0.32
+hebbwta lam*tau= 2 {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S3': 15, 'S4': 0, 'S5': 0, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.00 max silent med 0.63
+hebbwta lam*tau= 3 {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S3': 15, 'S4': 0, 'S5': 0, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.00 max silent med 0.95
+hebbwta lam*tau= 4 {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S3': 15, 'S4': 0, 'S5': 0, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.00 max silent med 0.99
+hebbwta lam*tau= 6 {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S3': 15, 'S4': 0, 'S5': 0, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.00 max silent med 1.00
+hebbwta lam*tau= 9 {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S3': 15, 'S4': 0, 'S5': 0, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.00 max silent med 1.00
+hebbwta lam*tau=12 {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S3': 15, 'S4': 0, 'S5': 0, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.00 max silent med 1.00
+hebbwta lam*tau=18 {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S3': 15, 'S4': 0, 'S5': 0, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.00 max silent med 1.00
+  => hebbwta grid centre lam*tau=1 (ALL 0/15)
+bcm     lam*tau= 1 {'S0': 0, 'S1': 12, 'S2a': 2, 'S2b': 15, 'S3': 15, 'S4': 0, 'S5': 15, 'S0_fire': 0, 'S0_silent': 15, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.02 max silent med 0.12
+bcm     lam*tau= 2 {'S0': 0, 'S1': 12, 'S2a': 2, 'S2b': 15, 'S3': 15, 'S4': 0, 'S5': 15, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.03 max silent med 0.24
+bcm     lam*tau= 3 {'S0': 0, 'S1': 12, 'S2a': 2, 'S2b': 15, 'S3': 15, 'S4': 0, 'S5': 15, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.05 max silent med 0.36
+bcm     lam*tau= 4 {'S0': 0, 'S1': 12, 'S2a': 2, 'S2b': 15, 'S3': 15, 'S4': 0, 'S5': 15, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.07 max silent med 0.48
+bcm     lam*tau= 6 {'S0': 0, 'S1': 12, 'S2a': 2, 'S2b': 15, 'S3': 15, 'S4': 0, 'S5': 15, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.10 max silent med 0.72
+bcm     lam*tau= 9 {'S0': 0, 'S1': 11, 'S2a': 1, 'S2b': 8, 'S3': 15, 'S4': 0, 'S5': 15, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.15 max silent med 0.99
+bcm     lam*tau=12 {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S3': 15, 'S4': 0, 'S5': 15, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.20 max silent med 1.00
+bcm     lam*tau=18 {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S3': 15, 'S4': 0, 'S5': 7, 'S0_fire': 0, 'S0_silent': 0, 'S2b_classmax': 0} ALL  0/15 | min fire med 0.30 max silent med 1.00
+  => bcm grid centre lam*tau=1 (ALL 0/15)
