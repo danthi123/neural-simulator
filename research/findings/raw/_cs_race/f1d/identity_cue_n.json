@@ -7,145 +7,390 @@
     "cue_n": 48,
     "w_cue": 7.5
   },
-  "pass": false,
+  "A3n": {
+    "cue_n": 8,
+    "cue_noise_sd": 0.15
+  },
+  "het_transplant_from_A0": true,
+  "pass": true,
   "probe": "cs_race_f1_identity_cue_n",
   "seeds": [
     {
+      "a3n": {
+        "build_arrays_equal_a0": {
+          "C": true,
+          "a": true,
+          "b": true,
+          "d": true,
+          "u0": true,
+          "v0": true
+        },
+        "cue_n": 8,
+        "cue_noise_sd": 0.15,
+        "ou_private_global_seed_invariant": true
+      },
       "arrays_equal": {
-        "cp_izh_C": false,
-        "cp_izh_a": true,
-        "cp_izh_b": false,
-        "cp_izh_d_increment": false,
+        "C": true,
+        "a": true,
+        "b": true,
+        "d": true,
         "u0": true,
         "v0": true
       },
+      "arrays_equal_pre_transplant": {
+        "C": false,
+        "a": true,
+        "b": false,
+        "d": false,
+        "u0": true,
+        "v0": true
+      },
+      "het_transplant_from_A0": true,
       "mean_cue_only_current_pa": {
         "A0": 15.6308,
-        "A3": 17.5894
+        "A3": 18.4486
       },
       "n_shared": 194,
-      "pass": false,
+      "pass": true,
+      "pre_transplant_max_abs_diff": {
+        "C": 51.020172,
+        "a": 0.0,
+        "b": 2.202179,
+        "d": 105.060471,
+        "u0": 0.0,
+        "v0": 0.0
+      },
       "seed": 1
     },
     {
+      "a3n": {
+        "build_arrays_equal_a0": {
+          "C": true,
+          "a": true,
+          "b": true,
+          "d": true,
+          "u0": true,
+          "v0": true
+        },
+        "cue_n": 8,
+        "cue_noise_sd": 0.15,
+        "ou_private_global_seed_invariant": true
+      },
       "arrays_equal": {
-        "cp_izh_C": false,
-        "cp_izh_a": true,
-        "cp_izh_b": false,
-        "cp_izh_d_increment": false,
+        "C": true,
+        "a": true,
+        "b": true,
+        "d": true,
         "u0": true,
         "v0": true
       },
+      "arrays_equal_pre_transplant": {
+        "C": false,
+        "a": true,
+        "b": false,
+        "d": false,
+        "u0": true,
+        "v0": true
+      },
+      "het_transplant_from_A0": true,
       "mean_cue_only_current_pa": {
         "A0": 23.8246,
-        "A3": 19.8137
+        "A3": 19.4427
       },
       "n_shared": 194,
-      "pass": false,
+      "pass": true,
+      "pre_transplant_max_abs_diff": {
+        "C": 61.670708,
+        "a": 0.0,
+        "b": 2.206605,
+        "d": 95.39682,
+        "u0": 0.0,
+        "v0": 0.0
+      },
       "seed": 2
     },
     {
+      "a3n": {
+        "build_arrays_equal_a0": {
+          "C": true,
+          "a": true,
+          "b": true,
+          "d": true,
+          "u0": true,
+          "v0": true
+        },
+        "cue_n": 8,
+        "cue_noise_sd": 0.15,
+        "ou_private_global_seed_invariant": true
+      },
       "arrays_equal": {
-        "cp_izh_C": false,
-        "cp_izh_a": true,
-        "cp_izh_b": false,
-        "cp_izh_d_increment": false,
+        "C": true,
+        "a": true,
+        "b": true,
+        "d": true,
         "u0": true,
         "v0": true
       },
+      "arrays_equal_pre_transplant": {
+        "C": false,
+        "a": true,
+        "b": false,
+        "d": false,
+        "u0": true,
+        "v0": true
+      },
+      "het_transplant_from_A0": true,
       "mean_cue_only_current_pa": {
         "A0": 23.75,
-        "A3": 22.3597
+        "A3": 22.0285
       },
       "n_shared": 194,
-      "pass": false,
+      "pass": true,
+      "pre_transplant_max_abs_diff": {
+        "C": 61.56871,
+        "a": 0.0,
+        "b": 2.115221,
+        "d": 91.208038,
+        "u0": 0.0,
+        "v0": 0.0
+      },
       "seed": 3
     },
     {
+      "a3n": {
+        "build_arrays_equal_a0": {
+          "C": true,
+          "a": true,
+          "b": true,
+          "d": true,
+          "u0": true,
+          "v0": true
+        },
+        "cue_n": 8,
+        "cue_noise_sd": 0.15,
+        "ou_private_global_seed_invariant": true
+      },
       "arrays_equal": {
-        "cp_izh_C": false,
-        "cp_izh_a": true,
-        "cp_izh_b": false,
-        "cp_izh_d_increment": false,
+        "C": true,
+        "a": true,
+        "b": true,
+        "d": true,
         "u0": true,
         "v0": true
       },
+      "arrays_equal_pre_transplant": {
+        "C": false,
+        "a": true,
+        "b": false,
+        "d": false,
+        "u0": true,
+        "v0": true
+      },
+      "het_transplant_from_A0": true,
       "mean_cue_only_current_pa": {
         "A0": 13.4315,
-        "A3": 20.0767
+        "A3": 20.0267
       },
       "n_shared": 194,
-      "pass": false,
+      "pass": true,
+      "pre_transplant_max_abs_diff": {
+        "C": 67.260429,
+        "a": 0.0,
+        "b": 2.024826,
+        "d": 102.206596,
+        "u0": 0.0,
+        "v0": 0.0
+      },
       "seed": 4
     },
     {
+      "a3n": {
+        "build_arrays_equal_a0": {
+          "C": true,
+          "a": true,
+          "b": true,
+          "d": true,
+          "u0": true,
+          "v0": true
+        },
+        "cue_n": 8,
+        "cue_noise_sd": 0.15,
+        "ou_private_global_seed_invariant": true
+      },
       "arrays_equal": {
-        "cp_izh_C": false,
-        "cp_izh_a": true,
-        "cp_izh_b": false,
-        "cp_izh_d_increment": false,
+        "C": true,
+        "a": true,
+        "b": true,
+        "d": true,
         "u0": true,
         "v0": true
       },
+      "arrays_equal_pre_transplant": {
+        "C": false,
+        "a": true,
+        "b": false,
+        "d": false,
+        "u0": true,
+        "v0": true
+      },
+      "het_transplant_from_A0": true,
       "mean_cue_only_current_pa": {
         "A0": 22.9237,
-        "A3": 14.0069
+        "A3": 13.8403
       },
       "n_shared": 194,
-      "pass": false,
+      "pass": true,
+      "pre_transplant_max_abs_diff": {
+        "C": 58.631012,
+        "a": 0.0,
+        "b": 2.421737,
+        "d": 108.537354,
+        "u0": 0.0,
+        "v0": 0.0
+      },
       "seed": 5
     },
     {
+      "a3n": {
+        "build_arrays_equal_a0": {
+          "C": true,
+          "a": true,
+          "b": true,
+          "d": true,
+          "u0": true,
+          "v0": true
+        },
+        "cue_n": 8,
+        "cue_noise_sd": 0.15,
+        "ou_private_global_seed_invariant": true
+      },
       "arrays_equal": {
-        "cp_izh_C": false,
-        "cp_izh_a": true,
-        "cp_izh_b": false,
-        "cp_izh_d_increment": false,
+        "C": true,
+        "a": true,
+        "b": true,
+        "d": true,
         "u0": true,
         "v0": true
       },
+      "arrays_equal_pre_transplant": {
+        "C": false,
+        "a": true,
+        "b": false,
+        "d": false,
+        "u0": true,
+        "v0": true
+      },
+      "het_transplant_from_A0": true,
       "mean_cue_only_current_pa": {
         "A0": 19.5613,
-        "A3": 24.7166
+        "A3": 24.4394
       },
       "n_shared": 194,
-      "pass": false,
+      "pass": true,
+      "pre_transplant_max_abs_diff": {
+        "C": 71.615387,
+        "a": 0.0,
+        "b": 2.144726,
+        "d": 87.602394,
+        "u0": 0.0,
+        "v0": 0.0
+      },
       "seed": 6
     },
     {
+      "a3n": {
+        "build_arrays_equal_a0": {
+          "C": true,
+          "a": true,
+          "b": true,
+          "d": true,
+          "u0": true,
+          "v0": true
+        },
+        "cue_n": 8,
+        "cue_noise_sd": 0.15,
+        "ou_private_global_seed_invariant": true
+      },
       "arrays_equal": {
-        "cp_izh_C": false,
-        "cp_izh_a": true,
-        "cp_izh_b": false,
-        "cp_izh_d_increment": false,
+        "C": true,
+        "a": true,
+        "b": true,
+        "d": true,
         "u0": true,
         "v0": true
       },
+      "arrays_equal_pre_transplant": {
+        "C": false,
+        "a": true,
+        "b": false,
+        "d": false,
+        "u0": true,
+        "v0": true
+      },
+      "het_transplant_from_A0": true,
       "mean_cue_only_current_pa": {
         "A0": 25.2123,
-        "A3": 22.8362
+        "A3": 22.2929
       },
       "n_shared": 194,
-      "pass": false,
+      "pass": true,
+      "pre_transplant_max_abs_diff": {
+        "C": 70.884079,
+        "a": 0.0,
+        "b": 1.936047,
+        "d": 80.923401,
+        "u0": 0.0,
+        "v0": 0.0
+      },
       "seed": 7
     },
     {
+      "a3n": {
+        "build_arrays_equal_a0": {
+          "C": true,
+          "a": true,
+          "b": true,
+          "d": true,
+          "u0": true,
+          "v0": true
+        },
+        "cue_n": 8,
+        "cue_noise_sd": 0.15,
+        "ou_private_global_seed_invariant": true
+      },
       "arrays_equal": {
-        "cp_izh_C": false,
-        "cp_izh_a": true,
-        "cp_izh_b": false,
-        "cp_izh_d_increment": false,
+        "C": true,
+        "a": true,
+        "b": true,
+        "d": true,
         "u0": true,
         "v0": true
       },
+      "arrays_equal_pre_transplant": {
+        "C": false,
+        "a": true,
+        "b": false,
+        "d": false,
+        "u0": true,
+        "v0": true
+      },
+      "het_transplant_from_A0": true,
       "mean_cue_only_current_pa": {
         "A0": 14.0125,
-        "A3": 18.9715
+        "A3": 19.1114
       },
       "n_shared": 194,
-      "pass": false,
+      "pass": true,
+      "pre_transplant_max_abs_diff": {
+        "C": 51.892677,
+        "a": 0.0,
+        "b": 1.867435,
+        "d": 86.079994,
+        "u0": 0.0,
+        "v0": 0.0
+      },
       "seed": 8
     }
   ],
-  "seeds_pass": 0
+  "seeds_pass": 8
 }
