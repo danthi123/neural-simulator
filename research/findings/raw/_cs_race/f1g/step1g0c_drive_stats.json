@@ -1,0 +1,71 @@
+{
+  "chosen_pa": 150,
+  "sweep": [
+    {
+      "cell_pass": false,
+      "min_150ms": 1,
+      "min_50ms": 0,
+      "n_seeds": 8,
+      "pa_pa": 80,
+      "pass_both": 0,
+      "stop_drive": true,
+      "zero150": 0,
+      "zero50": 72
+    },
+    {
+      "cell_pass": false,
+      "min_150ms": 1,
+      "min_50ms": 0,
+      "n_seeds": 8,
+      "pa_pa": 100,
+      "pass_both": 0,
+      "stop_drive": true,
+      "zero150": 0,
+      "zero50": 72
+    },
+    {
+      "cell_pass": false,
+      "min_150ms": 1,
+      "min_50ms": 0,
+      "n_seeds": 8,
+      "pa_pa": 120,
+      "pass_both": 2,
+      "stop_drive": true,
+      "zero150": 0,
+      "zero50": 12
+    },
+    {
+      "cell_pass": true,
+      "min_150ms": 2,
+      "min_50ms": 1,
+      "n_seeds": 8,
+      "pa_pa": 150,
+      "pass_both": 8,
+      "stop_drive": false,
+      "zero150": 0,
+      "zero50": 0
+    },
+    {
+      "cell_pass": true,
+      "min_150ms": 3,
+      "min_50ms": 1,
+      "n_seeds": 8,
+      "pa_pa": 200,
+      "pass_both": 8,
+      "stop_drive": false,
+      "zero150": 0,
+      "zero50": 0
+    },
+    {
+      "cell_pass": true,
+      "min_150ms": 4,
+      "min_50ms": 2,
+      "n_seeds": 8,
+      "pa_pa": 300,
+      "pass_both": 8,
+      "stop_drive": false,
+      "zero150": 0,
+      "zero50": 0
+    }
+  ]
+}
