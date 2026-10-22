@@ -942,7 +942,7 @@ def identity_cue_n(base, grid, seeds, cue_n, w_cue, draws, out_arg):
            "het_transplant_from_A0": True,
            "A0": {"cue_n": 8, "w_cue": float(W_CUE)},
            "A3": {"cue_n": int(cue_n), "w_cue": float(w_cue)},
-           "A3n": {"cue_n": 8, "cue_noise_sd": 0.15},
+           "A3n": {"cue_n": 8, "cue_noise_sd": 15.0, "cue_noise_tau": 5.0},
            "seeds": [], "seeds_pass": 0}
     all_ok = True
     for seed in seeds:
@@ -981,8 +981,8 @@ def identity_cue_n(base, grid, seeds, cue_n, w_cue, draws, out_arg):
         # A3n (ruling 2): n unchanged -> build arrays equal A0's; its
         # cue OU noise must come from a private generator, so racing
         # under two DIFFERENT global np.random states must be equal
-        an = RaceCircuit(3, seed, dict(b0, CUE_NOISE_SD=0.15), grid)
-        an2 = RaceCircuit(3, seed, dict(b0, CUE_NOISE_SD=0.15), grid)
+        an = RaceCircuit(3, seed, dict(b0, CUE_NOISE_SD=15.0), grid)
+        an2 = RaceCircuit(3, seed, dict(b0, CUE_NOISE_SD=15.0), grid)
         a3n_arr = {}
         for short, nm in _HET_FIELDS:
             a3n_arr[short] = bool(np.array_equal(
@@ -1021,7 +1021,7 @@ def identity_cue_n(base, grid, seeds, cue_n, w_cue, draws, out_arg):
                              "arrays_equal_pre_transplant": pre,
                              "pre_transplant_max_abs_diff": pre_diff,
                              "arrays_equal": arr,
-                             "a3n": {"cue_n": 8, "cue_noise_sd": 0.15,
+                             "a3n": {"cue_n": 8, "cue_noise_sd": 15.0,
                                      "build_arrays_equal_a0": a3n_arr,
                                      "ou_private_global_seed_invariant":
                                          bool(a3n_ou)},
