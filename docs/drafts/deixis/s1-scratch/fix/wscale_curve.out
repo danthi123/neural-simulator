@@ -1,0 +1,28 @@
+NT= 8 w=  2.0  TOK spikes med   61 | P spikes min   0 med   0 max   0 | frac P fired min 0.00 med 0.00 | mean g_e(P) 0.839 nS
+NT= 8 w=  4.0  TOK spikes med   61 | P spikes min   0 med   0 max   0 | frac P fired min 0.00 med 0.00 | mean g_e(P) 1.679 nS
+NT= 8 w=  5.0  TOK spikes med   61 | P spikes min   0 med   0 max   0 | frac P fired min 0.00 med 0.00 | mean g_e(P) 2.099 nS
+NT= 8 w=  6.0  TOK spikes med   61 | P spikes min   0 med   0 max   1 | frac P fired min 0.00 med 0.00 | mean g_e(P) 2.518 nS
+NT= 8 w=  7.0  TOK spikes med   61 | P spikes min   0 med   1 max   3 | frac P fired min 0.00 med 0.08 | mean g_e(P) 2.938 nS
+NT= 8 w=  8.0  TOK spikes med   61 | P spikes min   1 med   3 max   7 | frac P fired min 0.08 med 0.29 | mean g_e(P) 3.358 nS
+NT= 8 w=  9.0  TOK spikes med   61 | P spikes min   3 med   8 max  10 | frac P fired min 0.25 med 0.71 | mean g_e(P) 3.778 nS
+NT= 8 w= 10.0  TOK spikes med   61 | P spikes min   9 med  10 max  12 | frac P fired min 0.75 med 0.83 | mean g_e(P) 4.197 nS
+NT= 8 w= 12.0  TOK spikes med   61 | P spikes min  12 med  12 max  14 | frac P fired min 1.00 med 1.00 | mean g_e(P) 5.037 nS
+NT= 8 w= 14.0  TOK spikes med   61 | P spikes min  12 med  12 max  14 | frac P fired min 1.00 med 1.00 | mean g_e(P) 5.876 nS
+NT= 8 w= 16.0  TOK spikes med   61 | P spikes min  12 med  13 max  16 | frac P fired min 1.00 med 1.00 | mean g_e(P) 6.716 nS
+NT= 8 w= 20.0  TOK spikes med   61 | P spikes min  16 med  18 max  22 | frac P fired min 1.00 med 1.00 | mean g_e(P) 8.395 nS
+NT= 8 w= 25.0  TOK spikes med   61 | P spikes min  22 med  23 max  25 | frac P fired min 1.00 med 1.00 | mean g_e(P) 10.494 nS
+NT= 8 w= 30.0  TOK spikes med   61 | P spikes min  24 med  25 max  28 | frac P fired min 1.00 med 1.00 | mean g_e(P) 12.592 nS
+NT=12 w=  2.0  TOK spikes med   89 | P spikes min   0 med   0 max   0 | frac P fired min 0.00 med 0.00 | mean g_e(P) 1.241 nS
+NT=12 w=  4.0  TOK spikes med   89 | P spikes min   0 med   0 max   1 | frac P fired min 0.00 med 0.00 | mean g_e(P) 2.483 nS
+NT=12 w=  5.0  TOK spikes med   89 | P spikes min   0 med   1 max   4 | frac P fired min 0.00 med 0.12 | mean g_e(P) 3.103 nS
+NT=12 w=  6.0  TOK spikes med   89 | P spikes min   7 med   7 max  10 | frac P fired min 0.58 med 0.62 | mean g_e(P) 3.724 nS
+NT=12 w=  7.0  TOK spikes med   89 | P spikes min  11 med  12 max  12 | frac P fired min 0.92 med 1.00 | mean g_e(P) 4.345 nS
+NT=12 w=  8.0  TOK spikes med   89 | P spikes min  12 med  12 max  13 | frac P fired min 1.00 med 1.00 | mean g_e(P) 4.965 nS
+NT=12 w=  9.0  TOK spikes med   89 | P spikes min  12 med  12 max  14 | frac P fired min 1.00 med 1.00 | mean g_e(P) 5.586 nS
+NT=12 w= 10.0  TOK spikes med   89 | P spikes min  12 med  13 max  14 | frac P fired min 1.00 med 1.00 | mean g_e(P) 6.206 nS
+NT=12 w= 12.0  TOK spikes med   89 | P spikes min  13 med  15 max  18 | frac P fired min 1.00 med 1.00 | mean g_e(P) 7.448 nS
+NT=12 w= 14.0  TOK spikes med   89 | P spikes min  18 med  20 max  23 | frac P fired min 1.00 med 1.00 | mean g_e(P) 8.689 nS
+NT=12 w= 16.0  TOK spikes med   89 | P spikes min  21 med  23 max  26 | frac P fired min 1.00 med 1.00 | mean g_e(P) 9.930 nS
+NT=12 w= 20.0  TOK spikes med   89 | P spikes min  24 med  25 max  27 | frac P fired min 1.00 med 1.00 | mean g_e(P) 12.413 nS
+NT=12 w= 25.0  TOK spikes med   89 | P spikes min  26 med  30 max  32 | frac P fired min 1.00 med 1.00 | mean g_e(P) 15.516 nS
+NT=12 w= 30.0  TOK spikes med   89 | P spikes min  32 med  35 max  38 | frac P fired min 1.00 med 1.00 | mean g_e(P) 18.619 nS
