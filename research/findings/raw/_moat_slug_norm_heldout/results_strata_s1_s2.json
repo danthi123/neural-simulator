@@ -1,0 +1,4073 @@
+{
+ "_doc": "stock vs B2h (BRAIN_MOAT_SLUG_NORM=1) claim-gate verdicts per held-out stratum; labels committed before this ran",
+ "backend": "numpy",
+ "device": "cpu",
+ "host": "dant123-wk",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/measure_strata.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-b2d/research/findings/raw/_moat_slug_norm_heldout/measure_strata.py",
+  "research/findings/raw/_moat_slug_norm_heldout/results_strata_s1_s2.json",
+  "S1=research/findings/raw/_moat_slug_norm_heldout/corpus.json:research/findings/raw/_moat_slug_norm_heldout/labels.json",
+  "S2=research/findings/raw/_moat_slug_norm_heldout/s2_corpus.json:research/findings/raw/_moat_slug_norm_heldout/s2_labels.json"
+ ],
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102,
+  1
+ ],
+ "seed_note": "parser seeds of one deterministic brain build = a single replicate per sentence, not independent draws",
+ "strata": {
+  "S1": {
+   "corpus": "research/findings/raw/_moat_slug_norm_heldout/corpus.json:research/findings/raw/_moat_slug_norm_heldout/labels.json",
+   "turns_with_calls": 29,
+   "unique_sentences": 272,
+   "label_totals": {
+    "U": 118,
+    "B": 58,
+    "F": 92,
+    "N": 4
+   },
+   "turns_by_subset": {
+    "four_plus": 29
+   },
+   "per_seed": {
+    "42": {
+     "all": {
+      "stock": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "REJECTED": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "lexical: unknown content word": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "lexical: unknown content word": 4
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 50,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "REJECTED": 69,
+         "KEPT": 13,
+         "UNBUILDABLE": 10
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "guard: relation word after an article": 9,
+         "lexical: unknown content word": 86,
+         "structure: predicate with no resolvable subject (dangling)": 2,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 44,
+         "structure: bare noun phrase not attached to any predicate (da": 2,
+         "guard: relation word after an article": 4,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "lexical: unknown content word": 66,
+         "KEPT": 13,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 3
+        },
+        "N": {
+         "structure: predicate with no resolvable subject (dangling)": 1,
+         "lexical: unknown content word": 3
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": [
+        "h12|history_of_ferrara/instance_of/city_work|The history of Ferrara is an instance of its city work.",
+        "h28|waadt_canton_of/contains_administrative_territorial_enti/jura_nord_vaudois_district|The waadt_canton_of contains administrative territorial enti in jura nord vaudois district."
+       ]
+      }
+     },
+     "one_fact": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "S3_member_1to3": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "four_plus": {
+      "stock": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "REJECTED": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "lexical: unknown content word": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "lexical: unknown content word": 4
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 50,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "REJECTED": 69,
+         "KEPT": 13,
+         "UNBUILDABLE": 10
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "guard: relation word after an article": 9,
+         "lexical: unknown content word": 86,
+         "structure: predicate with no resolvable subject (dangling)": 2,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 44,
+         "structure: bare noun phrase not attached to any predicate (da": 2,
+         "guard: relation word after an article": 4,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "lexical: unknown content word": 66,
+         "KEPT": 13,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 3
+        },
+        "N": {
+         "structure: predicate with no resolvable subject (dangling)": 1,
+         "lexical: unknown content word": 3
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": [
+        "h12|history_of_ferrara/instance_of/city_work|The history of Ferrara is an instance of its city work.",
+        "h28|waadt_canton_of/contains_administrative_territorial_enti/jura_nord_vaudois_district|The waadt_canton_of contains administrative territorial enti in jura nord vaudois district."
+       ]
+      }
+     },
+     "unbuildable_turns": [
+      "h06",
+      "h14",
+      "h19",
+      "h29"
+     ],
+     "unbuildable_unique_sentences": 37,
+     "unbuildable_stock_equals_b2h": true
+    },
+    "43": {
+     "all": {
+      "stock": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "REJECTED": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "lexical: unknown content word": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "lexical: unknown content word": 4
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 50,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "REJECTED": 69,
+         "KEPT": 13,
+         "UNBUILDABLE": 10
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "guard: relation word after an article": 9,
+         "lexical: unknown content word": 86,
+         "structure: predicate with no resolvable subject (dangling)": 2,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 44,
+         "structure: bare noun phrase not attached to any predicate (da": 2,
+         "guard: relation word after an article": 4,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "lexical: unknown content word": 66,
+         "KEPT": 13,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 3
+        },
+        "N": {
+         "structure: predicate with no resolvable subject (dangling)": 1,
+         "lexical: unknown content word": 3
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": [
+        "h12|history_of_ferrara/instance_of/city_work|The history of Ferrara is an instance of its city work.",
+        "h28|waadt_canton_of/contains_administrative_territorial_enti/jura_nord_vaudois_district|The waadt_canton_of contains administrative territorial enti in jura nord vaudois district."
+       ]
+      }
+     },
+     "one_fact": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "S3_member_1to3": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "four_plus": {
+      "stock": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "REJECTED": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "lexical: unknown content word": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "lexical: unknown content word": 4
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 50,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "REJECTED": 69,
+         "KEPT": 13,
+         "UNBUILDABLE": 10
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "guard: relation word after an article": 9,
+         "lexical: unknown content word": 86,
+         "structure: predicate with no resolvable subject (dangling)": 2,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 44,
+         "structure: bare noun phrase not attached to any predicate (da": 2,
+         "guard: relation word after an article": 4,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "lexical: unknown content word": 66,
+         "KEPT": 13,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 3
+        },
+        "N": {
+         "structure: predicate with no resolvable subject (dangling)": 1,
+         "lexical: unknown content word": 3
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": [
+        "h12|history_of_ferrara/instance_of/city_work|The history of Ferrara is an instance of its city work.",
+        "h28|waadt_canton_of/contains_administrative_territorial_enti/jura_nord_vaudois_district|The waadt_canton_of contains administrative territorial enti in jura nord vaudois district."
+       ]
+      }
+     },
+     "unbuildable_turns": [
+      "h06",
+      "h14",
+      "h19",
+      "h29"
+     ],
+     "unbuildable_unique_sentences": 37,
+     "unbuildable_stock_equals_b2h": true
+    },
+    "44": {
+     "all": {
+      "stock": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "REJECTED": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "lexical: unknown content word": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "lexical: unknown content word": 4
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 50,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "REJECTED": 69,
+         "KEPT": 13,
+         "UNBUILDABLE": 10
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "guard: relation word after an article": 9,
+         "lexical: unknown content word": 86,
+         "structure: predicate with no resolvable subject (dangling)": 2,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 44,
+         "structure: bare noun phrase not attached to any predicate (da": 2,
+         "guard: relation word after an article": 4,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "lexical: unknown content word": 66,
+         "KEPT": 13,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 3
+        },
+        "N": {
+         "structure: predicate with no resolvable subject (dangling)": 1,
+         "lexical: unknown content word": 3
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": [
+        "h12|history_of_ferrara/instance_of/city_work|The history of Ferrara is an instance of its city work.",
+        "h28|waadt_canton_of/contains_administrative_territorial_enti/jura_nord_vaudois_district|The waadt_canton_of contains administrative territorial enti in jura nord vaudois district."
+       ]
+      }
+     },
+     "one_fact": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "S3_member_1to3": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "four_plus": {
+      "stock": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "REJECTED": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "lexical: unknown content word": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "lexical: unknown content word": 4
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 50,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "REJECTED": 69,
+         "KEPT": 13,
+         "UNBUILDABLE": 10
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "guard: relation word after an article": 9,
+         "lexical: unknown content word": 86,
+         "structure: predicate with no resolvable subject (dangling)": 2,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 44,
+         "structure: bare noun phrase not attached to any predicate (da": 2,
+         "guard: relation word after an article": 4,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "lexical: unknown content word": 66,
+         "KEPT": 13,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 3
+        },
+        "N": {
+         "structure: predicate with no resolvable subject (dangling)": 1,
+         "lexical: unknown content word": 3
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": [
+        "h12|history_of_ferrara/instance_of/city_work|The history of Ferrara is an instance of its city work.",
+        "h28|waadt_canton_of/contains_administrative_territorial_enti/jura_nord_vaudois_district|The waadt_canton_of contains administrative territorial enti in jura nord vaudois district."
+       ]
+      }
+     },
+     "unbuildable_turns": [
+      "h06",
+      "h14",
+      "h19",
+      "h29"
+     ],
+     "unbuildable_unique_sentences": 37,
+     "unbuildable_stock_equals_b2h": true
+    },
+    "100": {
+     "all": {
+      "stock": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "REJECTED": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "lexical: unknown content word": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "lexical: unknown content word": 4
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 50,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "REJECTED": 69,
+         "KEPT": 13,
+         "UNBUILDABLE": 10
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "guard: relation word after an article": 9,
+         "lexical: unknown content word": 86,
+         "structure: predicate with no resolvable subject (dangling)": 2,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 44,
+         "structure: bare noun phrase not attached to any predicate (da": 2,
+         "guard: relation word after an article": 4,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "lexical: unknown content word": 66,
+         "KEPT": 13,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 3
+        },
+        "N": {
+         "structure: predicate with no resolvable subject (dangling)": 1,
+         "lexical: unknown content word": 3
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": [
+        "h12|history_of_ferrara/instance_of/city_work|The history of Ferrara is an instance of its city work.",
+        "h28|waadt_canton_of/contains_administrative_territorial_enti/jura_nord_vaudois_district|The waadt_canton_of contains administrative territorial enti in jura nord vaudois district."
+       ]
+      }
+     },
+     "one_fact": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "S3_member_1to3": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "four_plus": {
+      "stock": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "REJECTED": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "lexical: unknown content word": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "lexical: unknown content word": 4
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 50,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "REJECTED": 69,
+         "KEPT": 13,
+         "UNBUILDABLE": 10
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "guard: relation word after an article": 9,
+         "lexical: unknown content word": 86,
+         "structure: predicate with no resolvable subject (dangling)": 2,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 44,
+         "structure: bare noun phrase not attached to any predicate (da": 2,
+         "guard: relation word after an article": 4,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "lexical: unknown content word": 66,
+         "KEPT": 13,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 3
+        },
+        "N": {
+         "structure: predicate with no resolvable subject (dangling)": 1,
+         "lexical: unknown content word": 3
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": [
+        "h12|history_of_ferrara/instance_of/city_work|The history of Ferrara is an instance of its city work.",
+        "h28|waadt_canton_of/contains_administrative_territorial_enti/jura_nord_vaudois_district|The waadt_canton_of contains administrative territorial enti in jura nord vaudois district."
+       ]
+      }
+     },
+     "unbuildable_turns": [
+      "h06",
+      "h14",
+      "h19",
+      "h29"
+     ],
+     "unbuildable_unique_sentences": 37,
+     "unbuildable_stock_equals_b2h": true
+    },
+    "101": {
+     "all": {
+      "stock": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "REJECTED": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "lexical: unknown content word": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "lexical: unknown content word": 4
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 50,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "REJECTED": 69,
+         "KEPT": 13,
+         "UNBUILDABLE": 10
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "guard: relation word after an article": 9,
+         "lexical: unknown content word": 86,
+         "structure: predicate with no resolvable subject (dangling)": 2,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 44,
+         "structure: bare noun phrase not attached to any predicate (da": 2,
+         "guard: relation word after an article": 4,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "lexical: unknown content word": 66,
+         "KEPT": 13,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 3
+        },
+        "N": {
+         "structure: predicate with no resolvable subject (dangling)": 1,
+         "lexical: unknown content word": 3
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": [
+        "h12|history_of_ferrara/instance_of/city_work|The history of Ferrara is an instance of its city work.",
+        "h28|waadt_canton_of/contains_administrative_territorial_enti/jura_nord_vaudois_district|The waadt_canton_of contains administrative territorial enti in jura nord vaudois district."
+       ]
+      }
+     },
+     "one_fact": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "S3_member_1to3": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "four_plus": {
+      "stock": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "REJECTED": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "lexical: unknown content word": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "lexical: unknown content word": 4
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 50,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "REJECTED": 69,
+         "KEPT": 13,
+         "UNBUILDABLE": 10
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "guard: relation word after an article": 9,
+         "lexical: unknown content word": 86,
+         "structure: predicate with no resolvable subject (dangling)": 2,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 44,
+         "structure: bare noun phrase not attached to any predicate (da": 2,
+         "guard: relation word after an article": 4,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "lexical: unknown content word": 66,
+         "KEPT": 13,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 3
+        },
+        "N": {
+         "structure: predicate with no resolvable subject (dangling)": 1,
+         "lexical: unknown content word": 3
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": [
+        "h12|history_of_ferrara/instance_of/city_work|The history of Ferrara is an instance of its city work.",
+        "h28|waadt_canton_of/contains_administrative_territorial_enti/jura_nord_vaudois_district|The waadt_canton_of contains administrative territorial enti in jura nord vaudois district."
+       ]
+      }
+     },
+     "unbuildable_turns": [
+      "h06",
+      "h14",
+      "h19",
+      "h29"
+     ],
+     "unbuildable_unique_sentences": 37,
+     "unbuildable_stock_equals_b2h": true
+    },
+    "102": {
+     "all": {
+      "stock": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "REJECTED": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "lexical: unknown content word": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "lexical: unknown content word": 4
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 50,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "REJECTED": 69,
+         "KEPT": 13,
+         "UNBUILDABLE": 10
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "guard: relation word after an article": 9,
+         "lexical: unknown content word": 86,
+         "structure: predicate with no resolvable subject (dangling)": 2,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 44,
+         "structure: bare noun phrase not attached to any predicate (da": 2,
+         "guard: relation word after an article": 4,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "lexical: unknown content word": 66,
+         "KEPT": 13,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 3
+        },
+        "N": {
+         "structure: predicate with no resolvable subject (dangling)": 1,
+         "lexical: unknown content word": 3
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": [
+        "h12|history_of_ferrara/instance_of/city_work|The history of Ferrara is an instance of its city work.",
+        "h28|waadt_canton_of/contains_administrative_territorial_enti/jura_nord_vaudois_district|The waadt_canton_of contains administrative territorial enti in jura nord vaudois district."
+       ]
+      }
+     },
+     "one_fact": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "S3_member_1to3": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "four_plus": {
+      "stock": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "REJECTED": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "lexical: unknown content word": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "lexical: unknown content word": 4
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 50,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "REJECTED": 69,
+         "KEPT": 13,
+         "UNBUILDABLE": 10
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "guard: relation word after an article": 9,
+         "lexical: unknown content word": 86,
+         "structure: predicate with no resolvable subject (dangling)": 2,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 44,
+         "structure: bare noun phrase not attached to any predicate (da": 2,
+         "guard: relation word after an article": 4,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "lexical: unknown content word": 66,
+         "KEPT": 13,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 3
+        },
+        "N": {
+         "structure: predicate with no resolvable subject (dangling)": 1,
+         "lexical: unknown content word": 3
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": [
+        "h12|history_of_ferrara/instance_of/city_work|The history of Ferrara is an instance of its city work.",
+        "h28|waadt_canton_of/contains_administrative_territorial_enti/jura_nord_vaudois_district|The waadt_canton_of contains administrative territorial enti in jura nord vaudois district."
+       ]
+      }
+     },
+     "unbuildable_turns": [
+      "h06",
+      "h14",
+      "h19",
+      "h29"
+     ],
+     "unbuildable_unique_sentences": 37,
+     "unbuildable_stock_equals_b2h": true
+    },
+    "1": {
+     "all": {
+      "stock": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "REJECTED": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "lexical: unknown content word": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "lexical: unknown content word": 4
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 50,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "REJECTED": 69,
+         "KEPT": 13,
+         "UNBUILDABLE": 10
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "guard: relation word after an article": 9,
+         "lexical: unknown content word": 86,
+         "structure: predicate with no resolvable subject (dangling)": 2,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 44,
+         "structure: bare noun phrase not attached to any predicate (da": 2,
+         "guard: relation word after an article": 4,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "lexical: unknown content word": 66,
+         "KEPT": 13,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 3
+        },
+        "N": {
+         "structure: predicate with no resolvable subject (dangling)": 1,
+         "lexical: unknown content word": 3
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": [
+        "h12|history_of_ferrara/instance_of/city_work|The history of Ferrara is an instance of its city work.",
+        "h28|waadt_canton_of/contains_administrative_territorial_enti/jura_nord_vaudois_district|The waadt_canton_of contains administrative territorial enti in jura nord vaudois district."
+       ]
+      }
+     },
+     "one_fact": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "S3_member_1to3": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "four_plus": {
+      "stock": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "REJECTED": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 52,
+         "UNBUILDABLE": 6
+        },
+        "F": {
+         "lexical: unknown content word": 81,
+         "UNBUILDABLE": 10,
+         "KEPT": 1
+        },
+        "N": {
+         "lexical: unknown content word": 4
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 272,
+       "by_label": {
+        "U": {
+         "REJECTED": 97,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "REJECTED": 50,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "REJECTED": 69,
+         "KEPT": 13,
+         "UNBUILDABLE": 10
+        },
+        "N": {
+         "REJECTED": 4
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "guard: relation word after an article": 9,
+         "lexical: unknown content word": 86,
+         "structure: predicate with no resolvable subject (dangling)": 2,
+         "UNBUILDABLE": 21
+        },
+        "B": {
+         "lexical: unknown content word": 44,
+         "structure: bare noun phrase not attached to any predicate (da": 2,
+         "guard: relation word after an article": 4,
+         "UNBUILDABLE": 6,
+         "KEPT": 2
+        },
+        "F": {
+         "lexical: unknown content word": 66,
+         "KEPT": 13,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 3
+        },
+        "N": {
+         "structure: predicate with no resolvable subject (dangling)": 1,
+         "lexical: unknown content word": 3
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": [
+        "h12|history_of_ferrara/instance_of/city_work|The history of Ferrara is an instance of its city work.",
+        "h28|waadt_canton_of/contains_administrative_territorial_enti/jura_nord_vaudois_district|The waadt_canton_of contains administrative territorial enti in jura nord vaudois district."
+       ]
+      }
+     },
+     "unbuildable_turns": [
+      "h06",
+      "h14",
+      "h19",
+      "h29"
+     ],
+     "unbuildable_unique_sentences": 37,
+     "unbuildable_stock_equals_b2h": true
+    }
+   },
+   "summary": {
+    "all": {
+     "stock": {
+      "buildable_unique_sentences": 235,
+      "labels_in_buildable": {
+       "U": 97,
+       "B": 52,
+       "F": 82,
+       "N": 4
+      },
+      "lenient_unsupported_n": 101,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.0297029702970297,
+      "strict_unsupported_n": 153,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": 0.0196078431372549,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 1
+     },
+     "b2h": {
+      "buildable_unique_sentences": 235,
+      "labels_in_buildable": {
+       "U": 97,
+       "B": 52,
+       "F": 82,
+       "N": 4
+      },
+      "lenient_unsupported_n": 101,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.0297029702970297,
+      "strict_unsupported_n": 153,
+      "strict_leaks_any_seed": 2,
+      "strict_upper95": 0.040575096712900105,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [
+       "h12|history_of_ferrara/instance_of/city_work|The history of Ferrara is an instance of its city work.",
+       "h28|waadt_canton_of/contains_administrative_territorial_enti/jura_nord_vaudois_district|The waadt_canton_of contains administrative territorial enti in jura nord vaudois district."
+      ],
+      "answered_F_kept_seed42": 13
+     }
+    },
+    "one_fact": {
+     "stock": {
+      "buildable_unique_sentences": 0,
+      "labels_in_buildable": {},
+      "lenient_unsupported_n": 0,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": null,
+      "strict_unsupported_n": 0,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": null,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 0
+     },
+     "b2h": {
+      "buildable_unique_sentences": 0,
+      "labels_in_buildable": {},
+      "lenient_unsupported_n": 0,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": null,
+      "strict_unsupported_n": 0,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": null,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 0
+     }
+    },
+    "S3_member_1to3": {
+     "stock": {
+      "buildable_unique_sentences": 0,
+      "labels_in_buildable": {},
+      "lenient_unsupported_n": 0,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": null,
+      "strict_unsupported_n": 0,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": null,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 0
+     },
+     "b2h": {
+      "buildable_unique_sentences": 0,
+      "labels_in_buildable": {},
+      "lenient_unsupported_n": 0,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": null,
+      "strict_unsupported_n": 0,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": null,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 0
+     }
+    },
+    "four_plus": {
+     "stock": {
+      "buildable_unique_sentences": 235,
+      "labels_in_buildable": {
+       "U": 97,
+       "B": 52,
+       "F": 82,
+       "N": 4
+      },
+      "lenient_unsupported_n": 101,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.0297029702970297,
+      "strict_unsupported_n": 153,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": 0.0196078431372549,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 1
+     },
+     "b2h": {
+      "buildable_unique_sentences": 235,
+      "labels_in_buildable": {
+       "U": 97,
+       "B": 52,
+       "F": 82,
+       "N": 4
+      },
+      "lenient_unsupported_n": 101,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.0297029702970297,
+      "strict_unsupported_n": 153,
+      "strict_leaks_any_seed": 2,
+      "strict_upper95": 0.040575096712900105,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [
+       "h12|history_of_ferrara/instance_of/city_work|The history of Ferrara is an instance of its city work.",
+       "h28|waadt_canton_of/contains_administrative_territorial_enti/jura_nord_vaudois_district|The waadt_canton_of contains administrative territorial enti in jura nord vaudois district."
+      ],
+      "answered_F_kept_seed42": 13
+     }
+    }
+   }
+  },
+  "S2": {
+   "corpus": "research/findings/raw/_moat_slug_norm_heldout/s2_corpus.json:research/findings/raw/_moat_slug_norm_heldout/s2_labels.json",
+   "turns_with_calls": 29,
+   "unique_sentences": 1068,
+   "label_totals": {
+    "F": 138,
+    "U": 930
+   },
+   "turns_by_subset": {
+    "four_plus": 29
+   },
+   "per_seed": {
+    "42": {
+     "all": {
+      "stock": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "REJECTED": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "lexical: unknown content word": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "lexical: unknown content word": 90,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "proposition: asserted triple not in the gathered set": 635,
+         "negation": 118,
+         "structure: predicate with no object (cannot match a stored [a": 45,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "proposition: asserted triple not in the gathered set": 100,
+         "structure: predicate with no object (cannot match a stored [a": 18,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "proposition: asserted triple not in the gathered set": 75,
+         "structure: predicate with no object (cannot match a stored [a": 15,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "proposition: asserted triple not in the gathered set": 106,
+         "structure: predicate with no object (cannot match a stored [a": 12,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "negation": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "one_fact": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "S3_member_1to3": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "four_plus": {
+      "stock": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "REJECTED": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "lexical: unknown content word": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "lexical: unknown content word": 90,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "proposition: asserted triple not in the gathered set": 635,
+         "negation": 118,
+         "structure: predicate with no object (cannot match a stored [a": 45,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "proposition: asserted triple not in the gathered set": 100,
+         "structure: predicate with no object (cannot match a stored [a": 18,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "proposition: asserted triple not in the gathered set": 75,
+         "structure: predicate with no object (cannot match a stored [a": 15,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "proposition: asserted triple not in the gathered set": 106,
+         "structure: predicate with no object (cannot match a stored [a": 12,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "negation": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "unbuildable_turns": [
+      "h06",
+      "h14",
+      "h19",
+      "h29"
+     ],
+     "unbuildable_unique_sentences": 152,
+     "unbuildable_stock_equals_b2h": true
+    },
+    "43": {
+     "all": {
+      "stock": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "REJECTED": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "lexical: unknown content word": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "lexical: unknown content word": 90,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "proposition: asserted triple not in the gathered set": 635,
+         "negation": 118,
+         "structure: predicate with no object (cannot match a stored [a": 45,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "proposition: asserted triple not in the gathered set": 100,
+         "structure: predicate with no object (cannot match a stored [a": 18,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "proposition: asserted triple not in the gathered set": 75,
+         "structure: predicate with no object (cannot match a stored [a": 15,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "proposition: asserted triple not in the gathered set": 106,
+         "structure: predicate with no object (cannot match a stored [a": 12,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "negation": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "one_fact": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "S3_member_1to3": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "four_plus": {
+      "stock": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "REJECTED": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "lexical: unknown content word": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "lexical: unknown content word": 90,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "proposition: asserted triple not in the gathered set": 635,
+         "negation": 118,
+         "structure: predicate with no object (cannot match a stored [a": 45,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "proposition: asserted triple not in the gathered set": 100,
+         "structure: predicate with no object (cannot match a stored [a": 18,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "proposition: asserted triple not in the gathered set": 75,
+         "structure: predicate with no object (cannot match a stored [a": 15,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "proposition: asserted triple not in the gathered set": 106,
+         "structure: predicate with no object (cannot match a stored [a": 12,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "negation": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "unbuildable_turns": [
+      "h06",
+      "h14",
+      "h19",
+      "h29"
+     ],
+     "unbuildable_unique_sentences": 152,
+     "unbuildable_stock_equals_b2h": true
+    },
+    "44": {
+     "all": {
+      "stock": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "REJECTED": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "lexical: unknown content word": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "lexical: unknown content word": 90,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "proposition: asserted triple not in the gathered set": 635,
+         "negation": 118,
+         "structure: predicate with no object (cannot match a stored [a": 45,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "proposition: asserted triple not in the gathered set": 100,
+         "structure: predicate with no object (cannot match a stored [a": 18,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "proposition: asserted triple not in the gathered set": 75,
+         "structure: predicate with no object (cannot match a stored [a": 15,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "proposition: asserted triple not in the gathered set": 106,
+         "structure: predicate with no object (cannot match a stored [a": 12,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "negation": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "one_fact": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "S3_member_1to3": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "four_plus": {
+      "stock": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "REJECTED": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "lexical: unknown content word": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "lexical: unknown content word": 90,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "proposition: asserted triple not in the gathered set": 635,
+         "negation": 118,
+         "structure: predicate with no object (cannot match a stored [a": 45,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "proposition: asserted triple not in the gathered set": 100,
+         "structure: predicate with no object (cannot match a stored [a": 18,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "proposition: asserted triple not in the gathered set": 75,
+         "structure: predicate with no object (cannot match a stored [a": 15,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "proposition: asserted triple not in the gathered set": 106,
+         "structure: predicate with no object (cannot match a stored [a": 12,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "negation": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "unbuildable_turns": [
+      "h06",
+      "h14",
+      "h19",
+      "h29"
+     ],
+     "unbuildable_unique_sentences": 152,
+     "unbuildable_stock_equals_b2h": true
+    },
+    "100": {
+     "all": {
+      "stock": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "REJECTED": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "lexical: unknown content word": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "lexical: unknown content word": 90,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "proposition: asserted triple not in the gathered set": 635,
+         "negation": 118,
+         "structure: predicate with no object (cannot match a stored [a": 45,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "proposition: asserted triple not in the gathered set": 100,
+         "structure: predicate with no object (cannot match a stored [a": 18,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "proposition: asserted triple not in the gathered set": 75,
+         "structure: predicate with no object (cannot match a stored [a": 15,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "proposition: asserted triple not in the gathered set": 106,
+         "structure: predicate with no object (cannot match a stored [a": 12,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "negation": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "one_fact": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "S3_member_1to3": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "four_plus": {
+      "stock": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "REJECTED": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "lexical: unknown content word": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "lexical: unknown content word": 90,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "proposition: asserted triple not in the gathered set": 635,
+         "negation": 118,
+         "structure: predicate with no object (cannot match a stored [a": 45,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "proposition: asserted triple not in the gathered set": 100,
+         "structure: predicate with no object (cannot match a stored [a": 18,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "proposition: asserted triple not in the gathered set": 75,
+         "structure: predicate with no object (cannot match a stored [a": 15,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "proposition: asserted triple not in the gathered set": 106,
+         "structure: predicate with no object (cannot match a stored [a": 12,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "negation": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "unbuildable_turns": [
+      "h06",
+      "h14",
+      "h19",
+      "h29"
+     ],
+     "unbuildable_unique_sentences": 152,
+     "unbuildable_stock_equals_b2h": true
+    },
+    "101": {
+     "all": {
+      "stock": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "REJECTED": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "lexical: unknown content word": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "lexical: unknown content word": 90,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "proposition: asserted triple not in the gathered set": 635,
+         "negation": 118,
+         "structure: predicate with no object (cannot match a stored [a": 45,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "proposition: asserted triple not in the gathered set": 100,
+         "structure: predicate with no object (cannot match a stored [a": 18,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "proposition: asserted triple not in the gathered set": 75,
+         "structure: predicate with no object (cannot match a stored [a": 15,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "proposition: asserted triple not in the gathered set": 106,
+         "structure: predicate with no object (cannot match a stored [a": 12,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "negation": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "one_fact": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "S3_member_1to3": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "four_plus": {
+      "stock": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "REJECTED": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "lexical: unknown content word": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "lexical: unknown content word": 90,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "proposition: asserted triple not in the gathered set": 635,
+         "negation": 118,
+         "structure: predicate with no object (cannot match a stored [a": 45,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "proposition: asserted triple not in the gathered set": 100,
+         "structure: predicate with no object (cannot match a stored [a": 18,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "proposition: asserted triple not in the gathered set": 75,
+         "structure: predicate with no object (cannot match a stored [a": 15,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "proposition: asserted triple not in the gathered set": 106,
+         "structure: predicate with no object (cannot match a stored [a": 12,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "negation": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "unbuildable_turns": [
+      "h06",
+      "h14",
+      "h19",
+      "h29"
+     ],
+     "unbuildable_unique_sentences": 152,
+     "unbuildable_stock_equals_b2h": true
+    },
+    "102": {
+     "all": {
+      "stock": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "REJECTED": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "lexical: unknown content word": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "lexical: unknown content word": 90,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "proposition: asserted triple not in the gathered set": 635,
+         "negation": 118,
+         "structure: predicate with no object (cannot match a stored [a": 45,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "proposition: asserted triple not in the gathered set": 100,
+         "structure: predicate with no object (cannot match a stored [a": 18,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "proposition: asserted triple not in the gathered set": 75,
+         "structure: predicate with no object (cannot match a stored [a": 15,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "proposition: asserted triple not in the gathered set": 106,
+         "structure: predicate with no object (cannot match a stored [a": 12,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "negation": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "one_fact": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "S3_member_1to3": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "four_plus": {
+      "stock": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "REJECTED": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "lexical: unknown content word": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "lexical: unknown content word": 90,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "proposition: asserted triple not in the gathered set": 635,
+         "negation": 118,
+         "structure: predicate with no object (cannot match a stored [a": 45,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "proposition: asserted triple not in the gathered set": 100,
+         "structure: predicate with no object (cannot match a stored [a": 18,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "proposition: asserted triple not in the gathered set": 75,
+         "structure: predicate with no object (cannot match a stored [a": 15,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "proposition: asserted triple not in the gathered set": 106,
+         "structure: predicate with no object (cannot match a stored [a": 12,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "negation": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "unbuildable_turns": [
+      "h06",
+      "h14",
+      "h19",
+      "h29"
+     ],
+     "unbuildable_unique_sentences": 152,
+     "unbuildable_stock_equals_b2h": true
+    },
+    "1": {
+     "all": {
+      "stock": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "REJECTED": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "lexical: unknown content word": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "lexical: unknown content word": 90,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "proposition: asserted triple not in the gathered set": 635,
+         "negation": 118,
+         "structure: predicate with no object (cannot match a stored [a": 45,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "proposition: asserted triple not in the gathered set": 100,
+         "structure: predicate with no object (cannot match a stored [a": 18,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "proposition: asserted triple not in the gathered set": 75,
+         "structure: predicate with no object (cannot match a stored [a": 15,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "proposition: asserted triple not in the gathered set": 106,
+         "structure: predicate with no object (cannot match a stored [a": 12,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "negation": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "one_fact": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "S3_member_1to3": {
+      "stock": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 0,
+       "by_label": {},
+       "stage_by_label": {},
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "four_plus": {
+      "stock": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "REJECTED": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "lexical: unknown content word": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "lexical: unknown content word": 90,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "lexical: unknown content word": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 1068,
+       "by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "REJECTED": 798,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_label": {
+        "F": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "U": {
+         "proposition: asserted triple not in the gathered set": 635,
+         "negation": 118,
+         "structure: predicate with no object (cannot match a stored [a": 45,
+         "UNBUILDABLE": 132
+        }
+       },
+       "stage_by_variant": {
+        "control_true": {
+         "KEPT": 118,
+         "UNBUILDABLE": 20
+        },
+        "role_swap": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 12
+        },
+        "wrong_relation": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "hedged_wrong": {
+         "proposition: asserted triple not in the gathered set": 118,
+         "UNBUILDABLE": 20
+        },
+        "wrong_object": {
+         "proposition: asserted triple not in the gathered set": 100,
+         "structure: predicate with no object (cannot match a stored [a": 18,
+         "UNBUILDABLE": 20
+        },
+        "wrong_subject": {
+         "proposition: asserted triple not in the gathered set": 75,
+         "structure: predicate with no object (cannot match a stored [a": 15,
+         "UNBUILDABLE": 20
+        },
+        "extra_clause": {
+         "proposition: asserted triple not in the gathered set": 106,
+         "structure: predicate with no object (cannot match a stored [a": 12,
+         "UNBUILDABLE": 20
+        },
+        "negated_true": {
+         "negation": 118,
+         "UNBUILDABLE": 20
+        }
+       },
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "unbuildable_turns": [
+      "h06",
+      "h14",
+      "h19",
+      "h29"
+     ],
+     "unbuildable_unique_sentences": 152,
+     "unbuildable_stock_equals_b2h": true
+    }
+   },
+   "summary": {
+    "all": {
+     "stock": {
+      "buildable_unique_sentences": 916,
+      "labels_in_buildable": {
+       "F": 118,
+       "U": 798
+      },
+      "lenient_unsupported_n": 798,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.0037593984962406013,
+      "strict_unsupported_n": 798,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": 0.0037593984962406013,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 0
+     },
+     "b2h": {
+      "buildable_unique_sentences": 916,
+      "labels_in_buildable": {
+       "F": 118,
+       "U": 798
+      },
+      "lenient_unsupported_n": 798,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.0037593984962406013,
+      "strict_unsupported_n": 798,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": 0.0037593984962406013,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 118
+     }
+    },
+    "one_fact": {
+     "stock": {
+      "buildable_unique_sentences": 0,
+      "labels_in_buildable": {},
+      "lenient_unsupported_n": 0,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": null,
+      "strict_unsupported_n": 0,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": null,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 0
+     },
+     "b2h": {
+      "buildable_unique_sentences": 0,
+      "labels_in_buildable": {},
+      "lenient_unsupported_n": 0,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": null,
+      "strict_unsupported_n": 0,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": null,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 0
+     }
+    },
+    "S3_member_1to3": {
+     "stock": {
+      "buildable_unique_sentences": 0,
+      "labels_in_buildable": {},
+      "lenient_unsupported_n": 0,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": null,
+      "strict_unsupported_n": 0,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": null,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 0
+     },
+     "b2h": {
+      "buildable_unique_sentences": 0,
+      "labels_in_buildable": {},
+      "lenient_unsupported_n": 0,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": null,
+      "strict_unsupported_n": 0,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": null,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 0
+     }
+    },
+    "four_plus": {
+     "stock": {
+      "buildable_unique_sentences": 916,
+      "labels_in_buildable": {
+       "F": 118,
+       "U": 798
+      },
+      "lenient_unsupported_n": 798,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.0037593984962406013,
+      "strict_unsupported_n": 798,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": 0.0037593984962406013,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 0
+     },
+     "b2h": {
+      "buildable_unique_sentences": 916,
+      "labels_in_buildable": {
+       "F": 118,
+       "U": 798
+      },
+      "lenient_unsupported_n": 798,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.0037593984962406013,
+      "strict_unsupported_n": 798,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": 0.0037593984962406013,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 118
+     }
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,25 @@
+{
+ "run_id": "1792551311-3410243",
+ "runner": "research/findings/raw/_moat_allowlist_hunt4/r7/build_cases.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-hunt7/research/findings/raw/_moat_allowlist_hunt4/r7/build_cases.py"
+ ],
+ "git_sha": "bba8de138",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-20T22:55:11",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 7147.5,
+ "corpus_check_query": "allowlist claim checker accepts a copula absorbed into an entity span (slug ending in 'is') before a participial relation, and a coordinated object list naming the same entity twice",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_moat_allowlist_hunt4/r7/cases.json"
+}

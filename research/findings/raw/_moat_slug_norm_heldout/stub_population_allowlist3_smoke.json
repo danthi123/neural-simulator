@@ -1,0 +1,599 @@
+{
+ "_doc": "exhaustive one-fact stub-mouth population, stock _verify vs the BRAIN_MOAT_SLUG_NORM claim gate and the BRAIN_MOAT_ALLOWLIST claim gate (module docstring)",
+ "arms": [
+  "allowlist"
+ ],
+ "limit": 700,
+ "n_population": 78857,
+ "elapsed_s": 16.8,
+ "backend": "numpy",
+ "device": "cpu",
+ "host": "dant123-wk",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-allow3/research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive.py",
+  "research/findings/raw/_moat_slug_norm_heldout/stub_population_allowlist3_smoke.json",
+  "1",
+  "research/findings/raw/_moat_slug_norm_heldout/composer_stub_sweep_3000_after.json",
+  "--arms",
+  "allowlist",
+  "--limit",
+  "700"
+ ],
+ "parser_seed": 1,
+ "n_facts": 700,
+ "cells(stock_ok,flag_on_ok)": null,
+ "stock_answer_rate": 1.0,
+ "flag_on_answer_rate": null,
+ "HURTS": null,
+ "HELPS": null,
+ "flag_on_fallback_to_single_triple": null,
+ "hurts_reasons": {},
+ "hurts_by_relation": {},
+ "composer_sample_agreement": null,
+ "cells(stock_ok,allowlist_ok)": {
+  "(True, True)": 641,
+  "(True, False)": 59
+ },
+ "allowlist_answer_rate": 0.9157142857142857,
+ "HURTS_allowlist": 0,
+ "HELPS_allowlist": 0,
+ "allowlist_unbuildable_rejected": 0,
+ "allowlist_hurts_reasons": {},
+ "allowlist_hurts_by_relation": {},
+ "allowlist_role_reversed_stock_leaks": 3,
+ "allowlist_role_reversed_by_relation": {
+  "child": 2,
+  "father": 1
+ },
+ "allowlist_role_reversed_stock_rejected_by_relation": {},
+ "allowlist_meaning_drift_stock_leaks": 56,
+ "allowlist_meaning_drift_by_relation": {
+  "sport": 50,
+  "instrument": 3,
+  "conflict": 2,
+  "spouse": 1
+ },
+ "allowlist_meaning_drift_stock_rejected_by_relation": {},
+ "relation_table": "research/runners/_moat_allowlist_relations.py",
+ "relation_table_sha256": "36e39fce89f4e4fd215c5f2ee184fd8ec1111693addfc5dd73722cb1baa2e1e0",
+ "allowlist_role_reversed_rows": [
+  {
+   "svo": [
+    "jaya_badhuri",
+    "child",
+    "abishek_bachchan"
+   ],
+   "surface": "The jaya_badhuri childs abishek_bachchan.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "albert_prince_of_wales",
+    "child",
+    "george_v"
+   ],
+   "surface": "The albert_prince_of_wales childs george_v.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "albert_prince_of_wales",
+    "father",
+    "albert_prince_consort"
+   ],
+   "surface": "The albert_prince_of_wales fathers albert_prince_consort.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  }
+ ],
+ "allowlist_meaning_drift_rows": [
+  {
+   "svo": [
+    "portugal_national_under_21_football_team",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The portugal_national_under_21_football_team sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "linzer_ask",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The linzer_ask sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "fc_dnepr_transmash_mogilev",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The fc_dnepr_transmash_mogilev sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "c_d_universidad_de_concepci_n",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The c_d_universidad_de_concepci_n sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "scotland_national_under_17_football_team",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The scotland_national_under_17_football_team sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "880_yard_run",
+    "sport",
+    "sport_of_athletics"
+   ],
+   "surface": "The 880_yard_run sports sport_of_athletics.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "james_whitmore",
+    "conflict",
+    "war_world_two"
+   ],
+   "surface": "The james_whitmore conflicts war_world_two.",
+   "reject": "allowlist: no shape: at token 2 'conflicts' expected a relation with a verb reading ('conflicts' reads conflict, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "chazal_vetta_mbk",
+    "sport",
+    "road_cycling_race"
+   ],
+   "surface": "The chazal_vetta_mbk sports road_cycling_race.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "e3_harelbeke",
+    "sport",
+    "road_cycling_race"
+   ],
+   "surface": "The e3_harelbeke sports road_cycling_race.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "british_touring_car_championships",
+    "sport",
+    "motorsport_engineering"
+   ],
+   "surface": "The british_touring_car_championships sports motorsport_engineering.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "jaya_badhuri",
+    "spouse",
+    "amitabh_harivansh_bachchan"
+   ],
+   "surface": "The jaya_badhuri spouses amitabh_harivansh_bachchan.",
+   "reject": "allowlist: no shape: at token 2 'spouses' expected a relation with a verb reading ('spouses' reads spouse, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "barnet_f_c",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The barnet_f_c sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "real_valladolid_cf",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The real_valladolid_cf sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "metallurg_lipetsk",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The metallurg_lipetsk sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "stade_de_reims_champagne",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The stade_de_reims_champagne sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "uniao_leiria",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The uniao_leiria sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "bfc_si_fok",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The bfc_si_fok sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "syli_nationale",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The syli_nationale sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "asmaral_moscow",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The asmaral_moscow sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "timber_joey",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The timber_joey sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "spanish_football_league",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The spanish_football_league sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "nacional_quito",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The nacional_quito sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "fc_botosani",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The fc_botosani sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "kartal_sc",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The kartal_sc sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "hallmark_security_league",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The hallmark_security_league sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "sannois_saint_gratien",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sannois_saint_gratien sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "oakland_athletocs",
+    "sport",
+    "base_ball"
+   ],
+   "surface": "The oakland_athletocs sports base_ball.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "todd_rundgren",
+    "instrument",
+    "history_of_the_guitar"
+   ],
+   "surface": "The todd_rundgren instruments history_of_the_guitar.",
+   "reject": "allowlist: no shape: at token 2 'instruments' expected a relation with a verb reading ('instruments' reads instrument, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "keith_jarrett",
+    "instrument",
+    "keyboard_hammer"
+   ],
+   "surface": "The keith_jarrett instruments keyboard_hammer.",
+   "reject": "allowlist: no shape: at token 2 'instruments' expected a relation with a verb reading ('instruments' reads instrument, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "nordic_ski_ing",
+    "sport",
+    "biathlon_ski_racing"
+   ],
+   "surface": "The nordic_ski_ing sports biathlon_ski_racing.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "colchester_united_f_c",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The colchester_united_f_c sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "ec_juventude",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The ec_juventude sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "s_c_freiburg",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The s_c_freiburg sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "gremio_prudente_futebol",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The gremio_prudente_futebol sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "preussen_muenster",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The preussen_muenster sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "usm_alger",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The usm_alger sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "fudbalski_klub_jagodina",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The fudbalski_klub_jagodina sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "cd_puerto_montt",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The cd_puerto_montt sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "cdu_cesar_vallejo_trujillo",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The cdu_cesar_vallejo_trujillo sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "digenis_akritas_ipsona",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The digenis_akritas_ipsona sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "danish_hockey_league",
+    "sport",
+    "women_s_ice_hockey"
+   ],
+   "surface": "The danish_hockey_league sports women_s_ice_hockey.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "albert_prince_of_wales",
+    "instrument",
+    "bagpipe_maintenance"
+   ],
+   "surface": "The albert_prince_of_wales instruments bagpipe_maintenance.",
+   "reject": "allowlist: no shape: at token 2 'instruments' expected a relation with a verb reading ('instruments' reads instrument, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "dundee_untied_f_c",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The dundee_untied_f_c sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "wimbledon_afc",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The wimbledon_afc sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "f_c_dallas",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The f_c_dallas sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "hjk_helsinki",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The hjk_helsinki sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "halil_nal",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The halil_nal sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "sandefjord_fotball",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sandefjord_fotball sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "esporte_clube_noroeste",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The esporte_clube_noroeste sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "campinense_club",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The campinense_club sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "la_chaux_de_fonds_fc",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The la_chaux_de_fonds_fc sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "r_ttabandalag_akraness",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The r_ttabandalag_akraness sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "hastings_town_f_c",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The hastings_town_f_c sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "1984_african_cup_of_nations",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The 1984_african_cup_of_nations sports association_football_club.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "pallacanestro_fortitudo_bologna",
+    "sport",
+    "basket_ball"
+   ],
+   "surface": "The pallacanestro_fortitudo_bologna sports basket_ball.",
+   "reject": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "georgiy_zhukow",
+    "conflict",
+    "war_world_two"
+   ],
+   "surface": "The georgiy_zhukow conflicts war_world_two.",
+   "reject": "allowlist: no shape: at token 2 'conflicts' expected a relation with a verb reading ('conflicts' reads conflict, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  }
+ ],
+ "hurts_rows": [],
+ "helps_rows": [],
+ "allowlist_hurts_rows": [],
+ "allowlist_helps_rows": []
+}

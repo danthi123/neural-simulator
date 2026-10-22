@@ -1,0 +1,139 @@
+{
+ "_doc": "Build-6 REVIEW DIAGNOSTIC (non-blind; disclosed in prereg Amendment 6): the pure matcher's verdict on every case of hunt rounds 3-7, at\nbuild 6 vs the committed build-5 allowlist-arm verdict (results_build5.json / r3_rerun_build5.json, production claim gate, seed 42; the\nmatcher is pure, so one seed suffices). Labels are the committed adjudicated labels of each round. Reports, per round and label, the cases\nwhose verdict changed, and the build-6 reject reason of each newly rejected case. Writes no case, reads no held-out stratum.",
+ "backend": "numpy",
+ "device": "cpu",
+ "host": "dant123-wk",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-allow6/research/findings/raw/_moat_allowlist_build6/matcher_diff_vs_build5.py",
+  "research/findings/raw/_moat_allowlist_build6/matcher_diff_vs_build5.json"
+ ],
+ "rounds": {
+  "r3": {
+   "n": 213,
+   "cells(label,build5_kept,build6_kept)": {
+    "('B', False, False)": 12,
+    "('F', False, False)": 5,
+    "('F', True, True)": 38,
+    "('U', False, False)": 158
+   },
+   "kept_build5_by_label": {
+    "F": 38
+   },
+   "kept_build6_by_label": {
+    "F": 38
+   },
+   "changed": []
+  },
+  "r4": {
+   "n": 177,
+   "cells(label,build5_kept,build6_kept)": {
+    "('B', False, False)": 22,
+    "('B', True, True)": 2,
+    "('F', False, False)": 18,
+    "('F', True, True)": 25,
+    "('U', False, False)": 110
+   },
+   "kept_build5_by_label": {
+    "B": 2,
+    "F": 25
+   },
+   "kept_build6_by_label": {
+    "B": 2,
+    "F": 25
+   },
+   "changed": []
+  },
+  "r5": {
+   "n": 164,
+   "cells(label,build5_kept,build6_kept)": {
+    "('B', False, False)": 27,
+    "('B', True, True)": 1,
+    "('F', False, False)": 26,
+    "('F', True, True)": 21,
+    "('U', False, False)": 89
+   },
+   "kept_build5_by_label": {
+    "B": 1,
+    "F": 21
+   },
+   "kept_build6_by_label": {
+    "B": 1,
+    "F": 21
+   },
+   "changed": []
+  },
+  "r6": {
+   "n": 204,
+   "cells(label,build5_kept,build6_kept)": {
+    "('B', False, False)": 53,
+    "('B', True, False)": 4,
+    "('B', True, True)": 77,
+    "('F', False, False)": 17,
+    "('F', True, True)": 36,
+    "('U', False, False)": 17
+   },
+   "kept_build5_by_label": {
+    "B": 81,
+    "F": 36
+   },
+   "kept_build6_by_label": {
+    "B": 77,
+    "F": 36
+   },
+   "changed": [
+    {
+     "id": "R6-AC13",
+     "label": "B",
+     "class": "anaphoric_composite_contradiction",
+     "sentence": "Belarusian Soviet Republic is an instance of United Nations member states. The United Nations member states is a member of the United Nations.",
+     "build5_kept": true,
+     "build6_kept": false,
+     "build6_reason": "allowlist: sentence 2: entity span 'united nations' of united_nations is led by 'the' and its words are among those of united_nations_member_states in sentence 1: a definite description that points back to a different thing [sentence 2 of 2]"
+    },
+    {
+     "id": "R6-DP06",
+     "label": "B",
+     "class": "det_indefinite_proper_name",
+     "sentence": "A May sickness follows the cruellest month.",
+     "build5_kept": true,
+     "build6_kept": false,
+     "build6_reason": "allowlist: entity span 'the cruellest month' of the_cruellest_month opens with 'the' and a lower-case word: a description, not a name [sentence 1 of 1]"
+    },
+    {
+     "id": "R6-MC02",
+     "label": "B",
+     "class": "mixed_case_acronym_evasion",
+     "sentence": "Roger Daltrey Filmography is a member of the wHO.",
+     "build5_kept": true,
+     "build6_kept": false,
+     "build6_reason": "allowlist: entity span 'the wHO' of the_who opens with 'the' and a lower-case word: a description, not a name [sentence 1 of 1]"
+    },
+    {
+     "id": "R6-LC03",
+     "label": "B",
+     "class": "lowercase_clause_name",
+     "sentence": "will hurt is an instance of human specie.",
+     "build5_kept": true,
+     "build6_kept": false,
+     "build6_reason": "allowlist: entity span 'will hurt' of will_hurt holds 'will' written as prose: read as a modal / pronoun / focus word [sentence 1 of 1]"
+    }
+   ]
+  },
+  "r7": {
+   "n": 270,
+   "cells(label,build5_kept,build6_kept)": {
+    "('B', False, False)": 25,
+    "('F', False, False)": 24,
+    "('F', True, True)": 30,
+    "('U', False, False)": 191
+   },
+   "kept_build5_by_label": {
+    "F": 30
+   },
+   "kept_build6_by_label": {
+    "F": 30
+   },
+   "changed": []
+  }
+ }
+}

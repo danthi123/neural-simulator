@@ -1,0 +1,1184 @@
+{
+ "_doc": "exhaustive one-fact stub-mouth population, stock _verify vs the BRAIN_MOAT_SLUG_NORM claim gate (module docstring)",
+ "backend": "numpy",
+ "device": "cpu",
+ "host": "dant123-wk",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-b2d/research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive.py",
+  "research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive.json",
+  "1"
+ ],
+ "parser_seed": 1,
+ "n_facts": 78857,
+ "cells(stock_ok,flag_on_ok)": {
+  "(True, True)": 78732,
+  "(True, False)": 125
+ },
+ "stock_answer_rate": 1.0,
+ "flag_on_answer_rate": 0.9984148522008192,
+ "HURTS": 125,
+ "HELPS": 0,
+ "flag_on_fallback_to_single_triple": 0,
+ "hurts_reasons": {
+  "predicate with no resolvable subject (dangling)": 125
+ },
+ "hurts_by_relation": {
+  "country": 62,
+  "sport": 19,
+  "instance_of": 8,
+  "subclass_of": 4,
+  "shares_border_with": 4,
+  "genre": 3,
+  "headquarters_location": 3,
+  "part_of": 2,
+  "located_in_the_administrative_territoria": 2,
+  "place_of_death": 2,
+  "conflict": 2,
+  "contains_administrative_territorial_enti": 2,
+  "language_of_work_or_name": 2,
+  "manner_of_death": 2,
+  "taxon_rank": 1,
+  "twinned_administrative_body": 1,
+  "composer": 1,
+  "original_language_of_film_or_tv_show": 1,
+  "country_of_citizenship": 1,
+  "parent_taxon": 1,
+  "participant_of": 1,
+  "languages_spoken_written_or_signed": 1
+ },
+ "composer_sample_agreement": {
+  "sample_n": 3000,
+  "composer_hurts": 6,
+  "population_hurts_within_sample": 6,
+  "composer_sample_agrees": true
+ },
+ "hurts_rows": [
+  {
+   "svo": [
+    "county_borough_of_wolverhampton",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_borough_of_wolverhampton countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "taxonomy_of_cossidae",
+    "taxon_rank",
+    "taxonomical_family"
+   ],
+   "surface": "The taxonomy_of_cossidae taxon_ranks taxonomical_family.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_borough_of_southport",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_borough_of_southport countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "suburban_train",
+    "subclass_of",
+    "public_transportation"
+   ],
+   "surface": "The suburban_train subclass_ofs public_transportation.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_inyo",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_inyo countrys u_s_of_a.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_warwick",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_warwick countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "sportovn_klub_idenice",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sportovn_klub_idenice sports association_football_club.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_new_york",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_new_york countrys u_s_of_a.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "sport_club_recife",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sport_club_recife sports association_football_club.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "parochial_church",
+    "part_of",
+    "church_of_scotland_parish"
+   ],
+   "surface": "The parochial_church part_ofs church_of_scotland_parish.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "lock_haven_pa_sa",
+    "located_in_the_administrative_territoria",
+    "transport_in_pennsylvania"
+   ],
+   "surface": "The lock_haven_pa_sa located_in_the_administrative_territorias transport_in_pennsylvania.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "twin_rivers_multimedia_festival",
+    "twinned_administrative_body",
+    "notre_dame_des_ardilliers"
+   ],
+   "surface": "The twin_rivers_multimedia_festival twinned_administrative_bodys notre_dame_des_ardilliers.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "platonic_socrates",
+    "place_of_death",
+    "classical_attica"
+   ],
+   "surface": "The platonic_socrates place_of_deaths classical_attica.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_wetzlar",
+    "country",
+    "federal_republic_of_germany"
+   ],
+   "surface": "The county_of_wetzlar countrys federal_republic_of_germany.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "shaanxi_province_china",
+    "shares_border_with",
+    "chong_ch_ing"
+   ],
+   "surface": "The shaanxi_province_china shares_border_withs chong_ch_ing.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "continental_soldiers",
+    "conflict",
+    "american_rev_war"
+   ],
+   "surface": "The continental_soldiers conflicts american_rev_war.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "genesis_band",
+    "genre",
+    "symphonic_rock"
+   ],
+   "surface": "The genesis_band genres symphonic_rock.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "commodore_meta",
+    "composer",
+    "summon_the_heros"
+   ],
+   "surface": "The commodore_meta composers summon_the_heros.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "conf_d_ration_suisse",
+    "contains_administrative_territorial_enti",
+    "canton_of_graubuenden"
+   ],
+   "surface": "The conf_d_ration_suisse contains_administrative_territorial_entis canton_of_graubuenden.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "sportsklubben_brann",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sportsklubben_brann sports association_football_club.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "councils_of_arras",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "The councils_of_arras countrys franzoesische_republik.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "insulin_dependent_diabetes_mellitus",
+    "instance_of",
+    "organic_cause"
+   ],
+   "surface": "The insulin_dependent_diabetes_mellitus instance_ofs organic_cause.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_borough_of_rotherham",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_borough_of_rotherham countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_bedford_pennsylvania",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_bedford_pennsylvania countrys u_s_of_a.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "paris_law_faculty",
+    "part_of",
+    "paris_university_of"
+   ],
+   "surface": "The paris_law_faculty part_ofs paris_university_of.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_mariposa",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_mariposa countrys u_s_of_a.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "country_usa_oshkosh",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The country_usa_oshkosh countrys u_s_of_a.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "hearts_of_midlothian_f_c",
+    "headquarters_location",
+    "din_eidyn"
+   ],
+   "surface": "The hearts_of_midlothian_f_c headquarters_locations din_eidyn.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "courtauld_institute_of_art",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The courtauld_institute_of_art countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_stafford",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_stafford countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "lang_surname",
+    "language_of_work_or_name",
+    "wie_gehts"
+   ],
+   "surface": "The lang_surname language_of_work_or_names wie_gehts.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_lake",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_lake countrys u_s_of_a.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "original_twilight_zone",
+    "original_language_of_film_or_tv_show",
+    "number_of_english_words"
+   ],
+   "surface": "The original_twilight_zone original_language_of_film_or_tv_shows number_of_english_words.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "sportivo_luque_o",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sportivo_luque_o sports association_football_club.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "mansour_bin_abdulaziz_al_saud",
+    "manner_of_death",
+    "unintentional_injury"
+   ],
+   "surface": "The mansour_bin_abdulaziz_al_saud manner_of_deaths unintentional_injury.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "institute_of_theatre_arts",
+    "instance_of",
+    "higher_general_education"
+   ],
+   "surface": "The institute_of_theatre_arts instance_ofs higher_general_education.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_nottingham",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_nottingham countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_borough_of_torfaen",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_borough_of_torfaen countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_moempelgard",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "The county_of_moempelgard countrys franzoesische_republik.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_gwynedd",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_gwynedd countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "count_of_schaumburg",
+    "country",
+    "federal_republic_of_germany"
+   ],
+   "surface": "The count_of_schaumburg countrys federal_republic_of_germany.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "confederate_military_organization",
+    "conflict",
+    "conservative_rebellion"
+   ],
+   "surface": "The confederate_military_organization conflicts conservative_rebellion.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_modoc_california",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_modoc_california countrys u_s_of_a.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "sub_machine_gun",
+    "subclass_of",
+    "target_pistol"
+   ],
+   "surface": "The sub_machine_gun subclass_ofs target_pistol.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "sporting_benevento",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sporting_benevento sports association_football_club.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_amador_california",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_amador_california countrys u_s_of_a.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "plato_s_dialogues",
+    "place_of_death",
+    "athens_greece"
+   ],
+   "surface": "The plato_s_dialogues place_of_deaths athens_greece.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "gene_autrey",
+    "genre",
+    "c_w_music"
+   ],
+   "surface": "The gene_autrey genres c_w_music.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "count_of_besan_on",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "The count_of_besan_on countrys franzoesische_republik.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "insect_viruses",
+    "instance_of",
+    "taxonomic_group"
+   ],
+   "surface": "The insect_viruses instance_ofs taxonomic_group.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "shansi_province",
+    "shares_border_with",
+    "henan_china"
+   ],
+   "surface": "The shansi_province shares_border_withs henan_china.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_fresno_california",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_fresno_california countrys u_s_of_a.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "sporting_cp_b",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sporting_cp_b sports association_football_club.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "sporting_club_toulon",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sporting_club_toulon sports association_football_club.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "sport_club_corinthians_paulista",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sport_club_corinthians_paulista sports association_football_club.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "gene_wolf",
+    "genre",
+    "sciene_fiction"
+   ],
+   "surface": "The gene_wolf genres sciene_fiction.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "sportfreunde_siegen_ii",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sportfreunde_siegen_ii sports association_football_club.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "headington_united_fc",
+    "headquarters_location",
+    "city_of_dreaming_spires"
+   ],
+   "surface": "The headington_united_fc headquarters_locations city_of_dreaming_spires.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_rutland",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_rutland countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_borough_of_nottingham",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_borough_of_nottingham countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "instrumental_rock",
+    "instance_of",
+    "genre_of_music"
+   ],
+   "surface": "The instrumental_rock instance_ofs genre_of_music.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_bucks",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_bucks countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "inside_out_records",
+    "instance_of",
+    "record_companies"
+   ],
+   "surface": "The inside_out_records instance_ofs record_companies.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_borough_of_smethwick",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_borough_of_smethwick countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_carmarthenshire",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_carmarthenshire countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_wilts",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_wilts countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_plumas_california",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_plumas_california countrys u_s_of_a.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_yorkshire",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_yorkshire countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "institut_de_droit_international",
+    "instance_of",
+    "learned_societies"
+   ],
+   "surface": "The institut_de_droit_international instance_ofs learned_societies.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_palatine_of_cheshire",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_palatine_of_cheshire countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_monmouthshire",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_monmouthshire countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_calaveras",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_calaveras countrys u_s_of_a.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_saarbruecken",
+    "country",
+    "federal_republic_of_germany"
+   ],
+   "surface": "The county_of_saarbruecken countrys federal_republic_of_germany.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "count_bassie",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ],
+   "surface": "The count_bassie country_of_citizenships u_s_of_a.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "counties_of_iran",
+    "country",
+    "persian_state_of_iran"
+   ],
+   "surface": "The counties_of_iran countrys persian_state_of_iran.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_tyrone",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_tyrone countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "coupe_de_france",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "The coupe_de_france countrys franzoesische_republik.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "counties_in_china",
+    "country",
+    "china_pr"
+   ],
+   "surface": "The counties_in_china countrys china_pr.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "lane_surname",
+    "language_of_work_or_name",
+    "number_of_english_words"
+   ],
+   "surface": "The lane_surname language_of_work_or_names number_of_english_words.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "cours_florent",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "The cours_florent countrys franzoesische_republik.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_equivalent",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_equivalent countrys u_s_of_a.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "manet_douard",
+    "manner_of_death",
+    "death_by_natural_cause"
+   ],
+   "surface": "The manet_douard manner_of_deaths death_by_natural_cause.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_level_district",
+    "country",
+    "china_pr"
+   ],
+   "surface": "The county_level_district countrys china_pr.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_routes_in_iowa",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_routes_in_iowa countrys u_s_of_a.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "subofficial_mayor",
+    "subclass_of",
+    "military_officers"
+   ],
+   "surface": "The subofficial_mayor subclass_ofs military_officers.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "sporting_de_gijon",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sporting_de_gijon sports association_football_club.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_borough_of_blackburn",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_borough_of_blackburn countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_maryland",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_maryland countrys u_s_of_a.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "constitution_of_queensland",
+    "contains_administrative_territorial_enti",
+    "city_of_brisbane"
+   ],
+   "surface": "The constitution_of_queensland contains_administrative_territorial_entis city_of_brisbane.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_mono",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_mono countrys u_s_of_a.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "shantung_province",
+    "shares_border_with",
+    "jiangsu_province"
+   ],
+   "surface": "The shantung_province shares_border_withs jiangsu_province.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "locarno_switzerland",
+    "located_in_the_administrative_territoria",
+    "canton_of_ticino"
+   ],
+   "surface": "The locarno_switzerland located_in_the_administrative_territorias canton_of_ticino.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "parargyractis",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The parargyractis parent_taxons crambid_snout_moths.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_denbighshire",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_denbighshire countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "sporting_c_da_covilha",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sporting_c_da_covilha sports association_football_club.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "sporting_gij_n_b",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sporting_gij_n_b sports association_football_club.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "paraguay_national_soccer_team",
+    "participant_of",
+    "2002_fifa_world_cup_hosting_controversy"
+   ],
+   "surface": "The paraguay_national_soccer_team participant_ofs 2002_fifa_world_cup_hosting_controversy.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "count_of_hohenzollern",
+    "country",
+    "federal_republic_of_germany"
+   ],
+   "surface": "The count_of_hohenzollern countrys federal_republic_of_germany.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_borough_of_walsall",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_borough_of_walsall countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "sporting_clube_portugal",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sporting_clube_portugal sports association_football_club.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "council_of_europe",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "The council_of_europe countrys franzoesische_republik.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "sportul_studen_esc",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sportul_studen_esc sports association_football_club.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_lincoln",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_lincoln countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "sporting_club_de_goa",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sporting_club_de_goa sports association_football_club.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "courbevoie",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "The courbevoie countrys franzoesische_republik.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "count_of_scheyern",
+    "country",
+    "holy_empire"
+   ],
+   "surface": "The count_of_scheyern countrys holy_empire.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_championship",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_championship countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_lancaster",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_lancaster countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "institute_of_political_science",
+    "instance_of",
+    "public_college"
+   ],
+   "surface": "The institute_of_political_science instance_ofs public_college.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_borough_of_darlington",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_borough_of_darlington countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "council_bluffs",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The council_bluffs countrys u_s_of_a.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "suburban_united_states",
+    "subclass_of",
+    "populated_places"
+   ],
+   "surface": "The suburban_united_states subclass_ofs populated_places.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "shawano_county",
+    "shares_border_with",
+    "wausau_wi_msa"
+   ],
+   "surface": "The shawano_county shares_border_withs wausau_wi_msa.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "lana_del_ray",
+    "languages_spoken_written_or_signed",
+    "number_of_english_words"
+   ],
+   "surface": "The lana_del_ray languages_spoken_written_or_signeds number_of_english_words.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "sport_lisboa",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sport_lisboa sports association_football_club.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "instrumental_music",
+    "instance_of",
+    "genre_of_music"
+   ],
+   "surface": "The instrumental_music instance_ofs genre_of_music.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_kent",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_kent countrys united_kingom.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "sportklub_rapid_wien",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sportklub_rapid_wien sports association_football_club.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_level_city",
+    "country",
+    "china_pr"
+   ],
+   "surface": "The county_level_city countrys china_pr.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "heaton_norris_rovers",
+    "headquarters_location",
+    "stockport_greater_manchester"
+   ],
+   "surface": "The heaton_norris_rovers headquarters_locations stockport_greater_manchester.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "sportfreunde_lotte",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sportfreunde_lotte sports association_football_club.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "count_of_laon",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "The count_of_laon countrys franzoesische_republik.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_delmenhorst",
+    "country",
+    "federal_republic_of_germany"
+   ],
+   "surface": "The county_of_delmenhorst countrys federal_republic_of_germany.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "county_of_lassen",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_lassen countrys u_s_of_a.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  },
+  {
+   "svo": [
+    "sport_boys_association",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sport_boys_association sports association_football_club.",
+   "reject": "predicate with no resolvable subject (dangling)"
+  }
+ ],
+ "helps_rows": []
+}

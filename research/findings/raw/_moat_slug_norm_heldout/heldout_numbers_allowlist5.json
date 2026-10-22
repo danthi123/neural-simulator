@@ -1,0 +1,1461 @@
+{
+ "_doc": "numbers behind the allowlist claim-checker prereg (stock / b2h / allowlist; module docstring)",
+ "backend": "numpy",
+ "device": "cpu",
+ "host": "dant123-wk",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/heldout_numbers.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-allow5/research/findings/raw/_moat_slug_norm_heldout/heldout_numbers.py",
+  "research/findings/raw/_moat_slug_norm_heldout/heldout_numbers_allowlist5.json",
+  "--allowlist",
+  "--suffix",
+  "_allowlist5"
+ ],
+ "seeds_note": "parser seeds 42,43,44,100,101,102,1 of one deterministic brain build: a single replicate per sentence, not independent draws",
+ "verifier_level": {
+  "S1": {
+   "all": {
+    "stock": {
+     "buildable_unique": 235,
+     "labels_in_buildable": {
+      "U": 97,
+      "B": 52,
+      "F": 82,
+      "N": 4
+     },
+     "lenient_unsupported_n": 101,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.0297029702970297,
+     "strict_unsupported_n": 153,
+     "strict_leaks": 0,
+     "strict_upper95": 0.0196078431372549,
+     "faithful_kept_seed42": 1,
+     "strict_leak_sentences": []
+    },
+    "b2h": {
+     "buildable_unique": 235,
+     "labels_in_buildable": {
+      "U": 97,
+      "B": 52,
+      "F": 82,
+      "N": 4
+     },
+     "lenient_unsupported_n": 101,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.0297029702970297,
+     "strict_unsupported_n": 153,
+     "strict_leaks": 2,
+     "strict_upper95": 0.040575096712900105,
+     "faithful_kept_seed42": 13,
+     "strict_leak_sentences": [
+      "h12|history_of_ferrara/instance_of/city_work|The history of Ferrara is an instance of its city work.",
+      "h28|waadt_canton_of/contains_administrative_territorial_enti/jura_nord_vaudois_district|The waadt_canton_of contains administrative territorial enti in jura nord vaudois district."
+     ]
+    },
+    "allowlist": {
+     "buildable_unique": 272,
+     "labels_in_buildable": {
+      "U": 118,
+      "B": 58,
+      "F": 92,
+      "N": 4
+     },
+     "lenient_unsupported_n": 122,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.02459016393442623,
+     "strict_unsupported_n": 180,
+     "strict_leaks": 0,
+     "strict_upper95": 0.016666666666666666,
+     "faithful_kept_seed42": 8,
+     "strict_leak_sentences": [],
+     "lenient_leak_sentences": [],
+     "like_for_like_b2h_buildable": {
+      "buildable_unique_sentences": 235,
+      "lenient_unsupported_n": 101,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.0297029702970297,
+      "strict_unsupported_n": 153,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": 0.0196078431372549
+     },
+     "kept_per_seed": {
+      "42": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "43": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "44": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "100": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "101": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "102": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "1": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      }
+     }
+    },
+    "unbuildable_turns": [
+     "h06",
+     "h14",
+     "h19",
+     "h29"
+    ],
+    "unbuildable_unique_sentences": 37,
+    "unbuildable_stock_equals_b2h": true,
+    "b2h_stage_by_label_seed42": {
+     "U": {
+      "guard: relation word after an article": 9,
+      "lexical: unknown content word": 86,
+      "structure: predicate with no resolvable subject (dangling)": 2,
+      "UNBUILDABLE": 21
+     },
+     "B": {
+      "lexical: unknown content word": 44,
+      "structure: bare noun phrase not attached to any predicate (da": 2,
+      "guard: relation word after an article": 4,
+      "UNBUILDABLE": 6,
+      "KEPT": 2
+     },
+     "F": {
+      "lexical: unknown content word": 66,
+      "KEPT": 13,
+      "UNBUILDABLE": 10,
+      "structure: bare noun phrase not attached to any predicate (da": 3
+     },
+     "N": {
+      "structure: predicate with no resolvable subject (dangling)": 1,
+      "lexical: unknown content word": 3
+     }
+    },
+    "b2h_by_label_seed42": {
+     "U": {
+      "REJECTED": 97,
+      "UNBUILDABLE": 21
+     },
+     "B": {
+      "REJECTED": 50,
+      "UNBUILDABLE": 6,
+      "KEPT": 2
+     },
+     "F": {
+      "REJECTED": 69,
+      "KEPT": 13,
+      "UNBUILDABLE": 10
+     },
+     "N": {
+      "REJECTED": 4
+     }
+    },
+    "b2h_kept_per_seed": {
+     "42": {
+      "lenient": 0,
+      "strict_extra_B": 2
+     },
+     "43": {
+      "lenient": 0,
+      "strict_extra_B": 2
+     },
+     "44": {
+      "lenient": 0,
+      "strict_extra_B": 2
+     },
+     "100": {
+      "lenient": 0,
+      "strict_extra_B": 2
+     },
+     "101": {
+      "lenient": 0,
+      "strict_extra_B": 2
+     },
+     "102": {
+      "lenient": 0,
+      "strict_extra_B": 2
+     },
+     "1": {
+      "lenient": 0,
+      "strict_extra_B": 2
+     }
+    }
+   },
+   "label_totals": {
+    "U": 118,
+    "B": 58,
+    "F": 92,
+    "N": 4
+   },
+   "turns_by_subset": {
+    "four_plus": 29
+   }
+  },
+  "S2": {
+   "all": {
+    "stock": {
+     "buildable_unique": 916,
+     "labels_in_buildable": {
+      "F": 118,
+      "U": 798
+     },
+     "lenient_unsupported_n": 798,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.0037593984962406013,
+     "strict_unsupported_n": 798,
+     "strict_leaks": 0,
+     "strict_upper95": 0.0037593984962406013,
+     "faithful_kept_seed42": 0,
+     "strict_leak_sentences": []
+    },
+    "b2h": {
+     "buildable_unique": 916,
+     "labels_in_buildable": {
+      "F": 118,
+      "U": 798
+     },
+     "lenient_unsupported_n": 798,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.0037593984962406013,
+     "strict_unsupported_n": 798,
+     "strict_leaks": 0,
+     "strict_upper95": 0.0037593984962406013,
+     "faithful_kept_seed42": 118,
+     "strict_leak_sentences": []
+    },
+    "allowlist": {
+     "buildable_unique": 1068,
+     "labels_in_buildable": {
+      "F": 138,
+      "U": 930
+     },
+     "lenient_unsupported_n": 930,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.0032258064516129032,
+     "strict_unsupported_n": 930,
+     "strict_leaks": 0,
+     "strict_upper95": 0.0032258064516129032,
+     "faithful_kept_seed42": 136,
+     "strict_leak_sentences": [],
+     "lenient_leak_sentences": [],
+     "like_for_like_b2h_buildable": {
+      "buildable_unique_sentences": 916,
+      "lenient_unsupported_n": 798,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.0037593984962406013,
+      "strict_unsupported_n": 798,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": 0.0037593984962406013
+     },
+     "kept_per_seed": {
+      "42": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "43": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "44": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "100": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "101": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "102": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "1": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      }
+     }
+    },
+    "unbuildable_turns": [
+     "h06",
+     "h14",
+     "h19",
+     "h29"
+    ],
+    "unbuildable_unique_sentences": 152,
+    "unbuildable_stock_equals_b2h": true,
+    "b2h_stage_by_label_seed42": {
+     "F": {
+      "KEPT": 118,
+      "UNBUILDABLE": 20
+     },
+     "U": {
+      "proposition: asserted triple not in the gathered set": 635,
+      "negation": 118,
+      "structure: predicate with no object (cannot match a stored [a": 45,
+      "UNBUILDABLE": 132
+     }
+    },
+    "b2h_by_label_seed42": {
+     "F": {
+      "KEPT": 118,
+      "UNBUILDABLE": 20
+     },
+     "U": {
+      "REJECTED": 798,
+      "UNBUILDABLE": 132
+     }
+    },
+    "b2h_kept_per_seed": {
+     "42": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "43": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "44": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "100": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "101": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "102": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "1": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     }
+    }
+   },
+   "label_totals": {
+    "F": 138,
+    "U": 930
+   },
+   "turns_by_subset": {
+    "four_plus": 29
+   },
+   "stage_by_variant_b2h_seed42": {
+    "control_true": {
+     "KEPT": 118,
+     "UNBUILDABLE": 20
+    },
+    "role_swap": {
+     "proposition: asserted triple not in the gathered set": 118,
+     "UNBUILDABLE": 12
+    },
+    "wrong_relation": {
+     "proposition: asserted triple not in the gathered set": 118,
+     "UNBUILDABLE": 20
+    },
+    "hedged_wrong": {
+     "proposition: asserted triple not in the gathered set": 118,
+     "UNBUILDABLE": 20
+    },
+    "wrong_object": {
+     "proposition: asserted triple not in the gathered set": 100,
+     "structure: predicate with no object (cannot match a stored [a": 18,
+     "UNBUILDABLE": 20
+    },
+    "wrong_subject": {
+     "proposition: asserted triple not in the gathered set": 75,
+     "structure: predicate with no object (cannot match a stored [a": 15,
+     "UNBUILDABLE": 20
+    },
+    "extra_clause": {
+     "proposition: asserted triple not in the gathered set": 106,
+     "structure: predicate with no object (cannot match a stored [a": 12,
+     "UNBUILDABLE": 20
+    },
+    "negated_true": {
+     "negation": 118,
+     "UNBUILDABLE": 20
+    }
+   },
+   "stage_by_variant_stock_seed42": {
+    "control_true": {
+     "lexical: unknown content word": 118,
+     "UNBUILDABLE": 20
+    },
+    "role_swap": {
+     "lexical: unknown content word": 118,
+     "UNBUILDABLE": 12
+    },
+    "wrong_relation": {
+     "lexical: unknown content word": 118,
+     "UNBUILDABLE": 20
+    },
+    "hedged_wrong": {
+     "lexical: unknown content word": 118,
+     "UNBUILDABLE": 20
+    },
+    "wrong_object": {
+     "lexical: unknown content word": 118,
+     "UNBUILDABLE": 20
+    },
+    "wrong_subject": {
+     "lexical: unknown content word": 90,
+     "UNBUILDABLE": 20
+    },
+    "extra_clause": {
+     "lexical: unknown content word": 118,
+     "UNBUILDABLE": 20
+    },
+    "negated_true": {
+     "lexical: unknown content word": 118,
+     "UNBUILDABLE": 20
+    }
+   },
+   "stage_by_variant_allowlist_seed42": {
+    "control_true": {
+     "KEPT": 136,
+     "allowlist: no shape": 1,
+     "allowlist: entity span 'utc 06' is not an exact sto": 1
+    },
+    "role_swap": {
+     "allowlist: not gathered": 129,
+     "allowlist: no shape": 1
+    },
+    "wrong_relation": {
+     "allowlist: not gathered": 138
+    },
+    "hedged_wrong": {
+     "allowlist: no shape": 138
+    },
+    "wrong_object": {
+     "allowlist: not gathered": 137,
+     "allowlist: no shape": 1
+    },
+    "wrong_subject": {
+     "allowlist: not gathered": 109,
+     "allowlist: no shape": 1
+    },
+    "extra_clause": {
+     "allowlist: no shape": 138
+    },
+    "negated_true": {
+     "allowlist: no shape": 138
+    }
+   }
+  },
+  "S3": {
+   "all": {
+    "stock": {
+     "buildable_unique": 212,
+     "labels_in_buildable": {
+      "B": 46,
+      "U": 100,
+      "F": 65,
+      "N": 1
+     },
+     "lenient_unsupported_n": 101,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.0297029702970297,
+     "strict_unsupported_n": 147,
+     "strict_leaks": 0,
+     "strict_upper95": 0.02040816326530612,
+     "faithful_kept_seed42": 0,
+     "strict_leak_sentences": []
+    },
+    "b2h": {
+     "buildable_unique": 212,
+     "labels_in_buildable": {
+      "B": 46,
+      "U": 100,
+      "F": 65,
+      "N": 1
+     },
+     "lenient_unsupported_n": 101,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.0297029702970297,
+     "strict_unsupported_n": 147,
+     "strict_leaks": 0,
+     "strict_upper95": 0.02040816326530612,
+     "faithful_kept_seed42": 25,
+     "strict_leak_sentences": []
+    },
+    "allowlist": {
+     "buildable_unique": 275,
+     "labels_in_buildable": {
+      "B": 56,
+      "U": 132,
+      "F": 86,
+      "N": 1
+     },
+     "lenient_unsupported_n": 133,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.022556390977443608,
+     "strict_unsupported_n": 189,
+     "strict_leaks": 0,
+     "strict_upper95": 0.015873015873015872,
+     "faithful_kept_seed42": 27,
+     "strict_leak_sentences": [],
+     "lenient_leak_sentences": [],
+     "like_for_like_b2h_buildable": {
+      "buildable_unique_sentences": 212,
+      "lenient_unsupported_n": 101,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.0297029702970297,
+      "strict_unsupported_n": 147,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": 0.02040816326530612
+     },
+     "kept_per_seed": {
+      "42": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "43": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "44": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "100": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "101": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "102": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "1": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      }
+     }
+    },
+    "unbuildable_turns": [
+     "s3a05",
+     "s3a11",
+     "s3a17",
+     "s3a18",
+     "s3a20",
+     "s3a21",
+     "s3a25"
+    ],
+    "unbuildable_unique_sentences": 63,
+    "unbuildable_stock_equals_b2h": true,
+    "b2h_stage_by_label_seed42": {
+     "B": {
+      "lexical: unknown content word": 41,
+      "guard: relation word after an article": 3,
+      "UNBUILDABLE": 10,
+      "structure: bare noun phrase not attached to any predicate (da": 1,
+      "structure: predicate with no object (cannot match a stored [a": 1
+     },
+     "U": {
+      "lexical: unknown content word": 83,
+      "guard: relation word after an article": 15,
+      "structure: predicate with no object (cannot match a stored [a": 1,
+      "UNBUILDABLE": 32,
+      "structure: bare noun phrase not attached to any predicate (da": 1
+     },
+     "F": {
+      "lexical: unknown content word": 37,
+      "KEPT": 25,
+      "UNBUILDABLE": 21,
+      "guard: relation word after an article": 1,
+      "structure: bare noun phrase not attached to any predicate (da": 2
+     },
+     "N": {
+      "structure: bare noun phrase not attached to any predicate (da": 1
+     }
+    },
+    "b2h_by_label_seed42": {
+     "B": {
+      "REJECTED": 46,
+      "UNBUILDABLE": 10
+     },
+     "U": {
+      "REJECTED": 100,
+      "UNBUILDABLE": 32
+     },
+     "F": {
+      "REJECTED": 40,
+      "KEPT": 25,
+      "UNBUILDABLE": 21
+     },
+     "N": {
+      "REJECTED": 1
+     }
+    },
+    "b2h_kept_per_seed": {
+     "42": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "43": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "44": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "100": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "101": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "102": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "1": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     }
+    }
+   },
+   "one_fact": {
+    "stock": {
+     "buildable_unique": 65,
+     "labels_in_buildable": {
+      "U": 26,
+      "F": 21,
+      "B": 17,
+      "N": 1
+     },
+     "lenient_unsupported_n": 27,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.1111111111111111,
+     "strict_unsupported_n": 44,
+     "strict_leaks": 0,
+     "strict_upper95": 0.06818181818181818,
+     "faithful_kept_seed42": 0,
+     "strict_leak_sentences": []
+    },
+    "b2h": {
+     "buildable_unique": 65,
+     "labels_in_buildable": {
+      "U": 26,
+      "F": 21,
+      "B": 17,
+      "N": 1
+     },
+     "lenient_unsupported_n": 27,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.1111111111111111,
+     "strict_unsupported_n": 44,
+     "strict_leaks": 0,
+     "strict_upper95": 0.06818181818181818,
+     "faithful_kept_seed42": 12,
+     "strict_leak_sentences": []
+    },
+    "allowlist": {
+     "buildable_unique": 65,
+     "labels_in_buildable": {
+      "U": 26,
+      "F": 21,
+      "B": 17,
+      "N": 1
+     },
+     "lenient_unsupported_n": 27,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.1111111111111111,
+     "strict_unsupported_n": 44,
+     "strict_leaks": 0,
+     "strict_upper95": 0.06818181818181818,
+     "faithful_kept_seed42": 11,
+     "strict_leak_sentences": [],
+     "lenient_leak_sentences": [],
+     "like_for_like_b2h_buildable": {
+      "buildable_unique_sentences": 65,
+      "lenient_unsupported_n": 27,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.1111111111111111,
+      "strict_unsupported_n": 44,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": 0.06818181818181818
+     },
+     "kept_per_seed": {
+      "42": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "43": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "44": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "100": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "101": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "102": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "1": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      }
+     }
+    },
+    "unbuildable_turns": [
+     "s3a05",
+     "s3a11",
+     "s3a17",
+     "s3a18",
+     "s3a20",
+     "s3a21",
+     "s3a25"
+    ],
+    "unbuildable_unique_sentences": 63,
+    "unbuildable_stock_equals_b2h": true,
+    "b2h_stage_by_label_seed42": {
+     "U": {
+      "lexical: unknown content word": 25,
+      "guard: relation word after an article": 1
+     },
+     "F": {
+      "structure: bare noun phrase not attached to any predicate (da": 1,
+      "KEPT": 12,
+      "lexical: unknown content word": 8
+     },
+     "B": {
+      "lexical: unknown content word": 16,
+      "structure: predicate with no object (cannot match a stored [a": 1
+     },
+     "N": {
+      "structure: bare noun phrase not attached to any predicate (da": 1
+     }
+    },
+    "b2h_by_label_seed42": {
+     "U": {
+      "REJECTED": 26
+     },
+     "F": {
+      "REJECTED": 9,
+      "KEPT": 12
+     },
+     "B": {
+      "REJECTED": 17
+     },
+     "N": {
+      "REJECTED": 1
+     }
+    },
+    "b2h_kept_per_seed": {
+     "42": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "43": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "44": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "100": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "101": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "102": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "1": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     }
+    }
+   },
+   "S3_member_1to3": {
+    "stock": {
+     "buildable_unique": 119,
+     "labels_in_buildable": {
+      "U": 51,
+      "B": 27,
+      "F": 40,
+      "N": 1
+     },
+     "lenient_unsupported_n": 52,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.057692307692307696,
+     "strict_unsupported_n": 79,
+     "strict_leaks": 0,
+     "strict_upper95": 0.0379746835443038,
+     "faithful_kept_seed42": 0,
+     "strict_leak_sentences": []
+    },
+    "b2h": {
+     "buildable_unique": 119,
+     "labels_in_buildable": {
+      "U": 51,
+      "B": 27,
+      "F": 40,
+      "N": 1
+     },
+     "lenient_unsupported_n": 52,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.057692307692307696,
+     "strict_unsupported_n": 79,
+     "strict_leaks": 0,
+     "strict_upper95": 0.0379746835443038,
+     "faithful_kept_seed42": 19,
+     "strict_leak_sentences": []
+    },
+    "allowlist": {
+     "buildable_unique": 119,
+     "labels_in_buildable": {
+      "U": 51,
+      "B": 27,
+      "F": 40,
+      "N": 1
+     },
+     "lenient_unsupported_n": 52,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.057692307692307696,
+     "strict_unsupported_n": 79,
+     "strict_leaks": 0,
+     "strict_upper95": 0.0379746835443038,
+     "faithful_kept_seed42": 17,
+     "strict_leak_sentences": [],
+     "lenient_leak_sentences": [],
+     "like_for_like_b2h_buildable": {
+      "buildable_unique_sentences": 119,
+      "lenient_unsupported_n": 52,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.057692307692307696,
+      "strict_unsupported_n": 79,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": 0.0379746835443038
+     },
+     "kept_per_seed": {
+      "42": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "43": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "44": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "100": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "101": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "102": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "1": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      }
+     }
+    },
+    "unbuildable_turns": [
+     "s3a05",
+     "s3a11",
+     "s3a17",
+     "s3a18",
+     "s3a20",
+     "s3a21",
+     "s3a25"
+    ],
+    "unbuildable_unique_sentences": 63,
+    "unbuildable_stock_equals_b2h": true,
+    "b2h_stage_by_label_seed42": {
+     "U": {
+      "lexical: unknown content word": 48,
+      "structure: predicate with no object (cannot match a stored [a": 1,
+      "guard: relation word after an article": 2
+     },
+     "B": {
+      "guard: relation word after an article": 1,
+      "lexical: unknown content word": 25,
+      "structure: predicate with no object (cannot match a stored [a": 1
+     },
+     "F": {
+      "KEPT": 19,
+      "lexical: unknown content word": 20,
+      "structure: bare noun phrase not attached to any predicate (da": 1
+     },
+     "N": {
+      "structure: bare noun phrase not attached to any predicate (da": 1
+     }
+    },
+    "b2h_by_label_seed42": {
+     "U": {
+      "REJECTED": 51
+     },
+     "B": {
+      "REJECTED": 27
+     },
+     "F": {
+      "KEPT": 19,
+      "REJECTED": 21
+     },
+     "N": {
+      "REJECTED": 1
+     }
+    },
+    "b2h_kept_per_seed": {
+     "42": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "43": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "44": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "100": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "101": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "102": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "1": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     }
+    }
+   },
+   "four_plus": {
+    "stock": {
+     "buildable_unique": 93,
+     "labels_in_buildable": {
+      "B": 19,
+      "U": 49,
+      "F": 25
+     },
+     "lenient_unsupported_n": 49,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.061224489795918366,
+     "strict_unsupported_n": 68,
+     "strict_leaks": 0,
+     "strict_upper95": 0.04411764705882353,
+     "faithful_kept_seed42": 0,
+     "strict_leak_sentences": []
+    },
+    "b2h": {
+     "buildable_unique": 93,
+     "labels_in_buildable": {
+      "B": 19,
+      "U": 49,
+      "F": 25
+     },
+     "lenient_unsupported_n": 49,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.061224489795918366,
+     "strict_unsupported_n": 68,
+     "strict_leaks": 0,
+     "strict_upper95": 0.04411764705882353,
+     "faithful_kept_seed42": 6,
+     "strict_leak_sentences": []
+    },
+    "allowlist": {
+     "buildable_unique": 156,
+     "labels_in_buildable": {
+      "B": 29,
+      "U": 81,
+      "F": 46
+     },
+     "lenient_unsupported_n": 81,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.037037037037037035,
+     "strict_unsupported_n": 110,
+     "strict_leaks": 0,
+     "strict_upper95": 0.02727272727272727,
+     "faithful_kept_seed42": 10,
+     "strict_leak_sentences": [],
+     "lenient_leak_sentences": [],
+     "like_for_like_b2h_buildable": {
+      "buildable_unique_sentences": 93,
+      "lenient_unsupported_n": 49,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.061224489795918366,
+      "strict_unsupported_n": 68,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": 0.04411764705882353
+     },
+     "kept_per_seed": {
+      "42": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "43": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "44": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "100": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "101": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "102": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      },
+      "1": {
+       "lenient": 0,
+       "strict_extra_B": 0
+      }
+     }
+    },
+    "unbuildable_turns": [
+     "s3a05",
+     "s3a11",
+     "s3a17",
+     "s3a18",
+     "s3a20",
+     "s3a21",
+     "s3a25"
+    ],
+    "unbuildable_unique_sentences": 63,
+    "unbuildable_stock_equals_b2h": true,
+    "b2h_stage_by_label_seed42": {
+     "B": {
+      "lexical: unknown content word": 16,
+      "guard: relation word after an article": 2,
+      "UNBUILDABLE": 10,
+      "structure: bare noun phrase not attached to any predicate (da": 1
+     },
+     "U": {
+      "lexical: unknown content word": 35,
+      "guard: relation word after an article": 13,
+      "UNBUILDABLE": 32,
+      "structure: bare noun phrase not attached to any predicate (da": 1
+     },
+     "F": {
+      "lexical: unknown content word": 17,
+      "UNBUILDABLE": 21,
+      "KEPT": 6,
+      "guard: relation word after an article": 1,
+      "structure: bare noun phrase not attached to any predicate (da": 1
+     }
+    },
+    "b2h_by_label_seed42": {
+     "B": {
+      "REJECTED": 19,
+      "UNBUILDABLE": 10
+     },
+     "U": {
+      "REJECTED": 49,
+      "UNBUILDABLE": 32
+     },
+     "F": {
+      "REJECTED": 19,
+      "UNBUILDABLE": 21,
+      "KEPT": 6
+     }
+    },
+    "b2h_kept_per_seed": {
+     "42": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "43": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "44": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "100": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "101": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "102": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     },
+     "1": {
+      "lenient": 0,
+      "strict_extra_B": 0
+     }
+    }
+   },
+   "label_totals": {
+    "B": 56,
+    "U": 132,
+    "F": 86,
+    "N": 1
+   },
+   "turns_by_subset": {
+    "four_plus": 18,
+    "two_three": 10,
+    "one_fact": 33
+   }
+  }
+ },
+ "composer_path": {
+  "S1": {
+   "n_turns": 29,
+   "status_counts": {
+    "both_abstain": 23,
+    "HELPS": 5,
+    "both_answer": 1
+   },
+   "status_by_gathered_size": {
+    "4+": {
+     "both_abstain": 23,
+     "HELPS": 5,
+     "both_answer": 1
+    }
+   },
+   "stock_answered": 1,
+   "flag_on_answered": 6,
+   "replay_validation": {
+    "turns_replayed_flag_off": 9,
+    "answer_and_abstain_equal_to_live": 9,
+    "mismatches": []
+   },
+   "replay_misses_flag_on": [],
+   "replay_misses_flag_off": [],
+   "HURTS_turns": [],
+   "fell_back_to_single_triple_candidates": 0,
+   "unbuildable_turns_answered_flag_on": [],
+   "arm": "allowlist",
+   "b2h_answered": 11,
+   "LOSES_vs_b2h_turns": [
+    "h01",
+    "h12",
+    "h21",
+    "h27",
+    "h28"
+   ]
+  },
+  "S3": {
+   "n_turns": 61,
+   "status_counts": {
+    "both_abstain": 42,
+    "HELPS": 19
+   },
+   "status_by_gathered_size": {
+    "4+": {
+     "both_abstain": 11,
+     "HELPS": 7
+    },
+    "2-3": {
+     "both_abstain": 7,
+     "HELPS": 3
+    },
+    "1": {
+     "both_abstain": 24,
+     "HELPS": 9
+    }
+   },
+   "stock_answered": 0,
+   "flag_on_answered": 19,
+   "replay_validation": {
+    "turns_replayed_flag_off": 6,
+    "answer_and_abstain_equal_to_live": 6,
+    "mismatches": []
+   },
+   "replay_misses_flag_on": [],
+   "replay_misses_flag_off": [],
+   "HURTS_turns": [],
+   "fell_back_to_single_triple_candidates": 0,
+   "unbuildable_turns_answered_flag_on": [],
+   "arm": "allowlist",
+   "b2h_answered": 19,
+   "LOSES_vs_b2h_turns": [
+    "s3a04",
+    "s3b07"
+   ]
+  }
+ },
+ "unbuildable": {
+  "S1": {
+   "turns": [
+    "h06",
+    "h14",
+    "h19",
+    "h29"
+   ],
+   "unique_sentences": 37,
+   "raw_rows": 40,
+   "labels": {
+    "U": 21,
+    "B": 6,
+    "F": 10,
+    "N": 0
+   },
+   "same_set_stock_and_b2h": true
+  },
+  "S2": {
+   "turns": [
+    "h06",
+    "h14",
+    "h19",
+    "h29"
+   ],
+   "unique_sentences": 152,
+   "raw_rows": 152,
+   "labels": {
+    "F": 20,
+    "U": 132
+   },
+   "same_set_stock_and_b2h": true
+  },
+  "S3": {
+   "turns": [
+    "s3a05",
+    "s3a11",
+    "s3a17",
+    "s3a18",
+    "s3a20",
+    "s3a21",
+    "s3a25"
+   ],
+   "unique_sentences": 63,
+   "raw_rows": 64,
+   "labels": {
+    "B": 10,
+    "U": 32,
+    "F": 21,
+    "N": 0
+   },
+   "same_set_stock_and_b2h": true
+  }
+ },
+ "arms": [
+  "stock",
+  "b2h",
+  "allowlist"
+ ],
+ "bar4_f_single_triple": {
+  "S1": {
+   "n": 13,
+   "kept_by_allowlist_seed42": 8,
+   "rejected": [
+    {
+     "turn": "h01",
+     "svo": [
+      "1962_asian_games",
+      "instance_of",
+      "asian_summer_games"
+     ],
+     "surface": "The 1962 Asian Games were an instance of the Asian Summer Games.",
+     "allowlist_kept_seed42": false,
+     "allowlist_kept_all_seeds": false,
+     "allowlist_reject_reason": "allowlist: no shape: at token 2 'were' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]"
+    },
+    {
+     "turn": "h11",
+     "svo": [
+      "ha_noi_vietnam",
+      "described_by_source",
+      "armenian_soviet_encyclopedia"
+     ],
+     "surface": "Ha noi vietnam was described by source Armenian Soviet Encyclopedia.",
+     "allowlist_kept_seed42": false,
+     "allowlist_kept_all_seeds": false,
+     "allowlist_reject_reason": "allowlist: no shape: at token 1 'was' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]"
+    },
+    {
+     "turn": "h12",
+     "svo": [
+      "history_of_ferrara",
+      "described_by_source",
+      "nordisk_familjebok"
+     ],
+     "surface": "The history of Ferrara was described by source Nordisk familjebok.",
+     "allowlist_kept_seed42": false,
+     "allowlist_kept_all_seeds": false,
+     "allowlist_reject_reason": "allowlist: no shape: at token 2 'was' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]"
+    },
+    {
+     "turn": "h21",
+     "svo": [
+      "prefecture_of_nagasaki",
+      "located_in_time_zone",
+      "korea_standard_time"
+     ],
+     "surface": "The prefecture of Nagasaki is located in time zone Korea Standard Time.",
+     "allowlist_kept_seed42": false,
+     "allowlist_kept_all_seeds": false,
+     "allowlist_reject_reason": "allowlist: no shape: at token 3 'located_in_time_zone' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]"
+    },
+    {
+     "turn": "h27",
+     "svo": [
+      "federal_republic_of_germany",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "The federal republic of germany is located in time zone rome time.",
+     "allowlist_kept_seed42": false,
+     "allowlist_kept_all_seeds": false,
+     "allowlist_reject_reason": "allowlist: no shape: at token 3 'located_in_time_zone' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]"
+    }
+   ],
+   "n_f_kept_by_b2h_multi_triple": 0
+  },
+  "S2": {
+   "n": 118,
+   "kept_by_allowlist_seed42": 117,
+   "rejected": [
+    {
+     "turn": "h03",
+     "svo": [
+      "aus_fb_a_league_br",
+      "sport",
+      "association_football_club"
+     ],
+     "surface": "Aus fb a league br sport association football club.",
+     "allowlist_kept_seed42": false,
+     "allowlist_kept_all_seeds": false,
+     "allowlist_reject_reason": "allowlist: no shape: at token 1 'sport' expected a relation with a verb reading ('sport' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+    }
+   ],
+   "n_f_kept_by_b2h_multi_triple": 0
+  },
+  "S3": {
+   "n": 25,
+   "kept_by_allowlist_seed42": 23,
+   "rejected": [
+    {
+     "turn": "s3a04",
+     "svo": [
+      "pole_land",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "Pole Land is located in time zone ROME_TIME.",
+     "allowlist_kept_seed42": false,
+     "allowlist_kept_all_seeds": false,
+     "allowlist_reject_reason": "allowlist: no shape: at token 2 'located_in_time_zone' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]"
+    },
+    {
+     "turn": "s3b07",
+     "svo": [
+      "defensive_secondary",
+      "sport",
+      "us_football"
+     ],
+     "surface": "Defensive secondary sport is us_football.",
+     "allowlist_kept_seed42": false,
+     "allowlist_kept_all_seeds": false,
+     "allowlist_reject_reason": "allowlist: no shape: at token 1 'sport' expected a relation with a verb reading ('sport' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+    }
+   ],
+   "n_f_kept_by_b2h_multi_triple": 0
+  }
+ },
+ "stub_one_fact": {
+  "population_exhaustive": {
+   "n_facts": 78857,
+   "cells(stock_ok,flag_on_ok)": null,
+   "stock_answer_rate": 1.0,
+   "flag_on_answer_rate": null,
+   "HURTS": null,
+   "HELPS": null,
+   "flag_on_fallback_to_single_triple": null,
+   "hurts_reasons": {},
+   "hurts_surfaces": [],
+   "hurts_by_relation": {},
+   "arms": [
+    "allowlist"
+   ],
+   "limit": null,
+   "n_population": 78857,
+   "cells(stock_ok,allowlist_ok)": {
+    "(True, True)": 73413,
+    "(True, False)": 5444
+   },
+   "allowlist_answer_rate": 0.930963643050078,
+   "HURTS_allowlist": 0,
+   "HELPS_allowlist": 0,
+   "allowlist_unbuildable_rejected": 0,
+   "allowlist_hurts_reasons": {},
+   "allowlist_hurts_by_relation": {},
+   "allowlist_role_reversed_stock_leaks": 436,
+   "allowlist_role_reversed_by_relation": {
+    "parent_taxon": 182,
+    "father": 125,
+    "child": 81,
+    "author": 27,
+    "platform": 21
+   },
+   "allowlist_role_reversed_stock_rejected_by_relation": {},
+   "allowlist_meaning_drift_stock_leaks": 5008,
+   "allowlist_meaning_drift_by_relation": {
+    "sport": 4116,
+    "instrument": 410,
+    "conflict": 280,
+    "spouse": 202
+   },
+   "allowlist_meaning_drift_stock_rejected_by_relation": {},
+   "relation_table_sha256": "0f820d2f3f376516fccf75ab596a06d4763b2f9aab0ddc91edf826cccd8a039a",
+   "allowlist_hurts_surfaces": []
+  }
+ }
+}

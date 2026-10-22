@@ -1,0 +1,30 @@
+{
+ "run_id": "1792584972-318557",
+ "runner": "research/findings/raw/_moat_allowlist_hunt4/run_hunt.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-allow6/research/findings/raw/_moat_allowlist_hunt4/run_hunt.py",
+  "research/findings/raw/_moat_allowlist_hunt4/r4",
+  "research/findings/raw/_moat_allowlist_hunt4/r4/results_build6.json"
+ ],
+ "git_sha": "2b7ab8c1d",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-21T08:16:12",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 40808.6,
+ "corpus_check_query": "allowlist claim checker accepts a copula absorbed into an entity span (slug ending in 'is') before a participial relation, and a coordinated object list naming the same entity twice",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_moat_allowlist_hunt4/r4/results_build6.json"
+}

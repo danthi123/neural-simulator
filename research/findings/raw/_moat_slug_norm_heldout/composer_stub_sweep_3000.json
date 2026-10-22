@@ -1,0 +1,109 @@
+{
+ "_doc": "composer-path one-fact sweep, stub mouth, production tiny-demo+LTM brain; rule in the module docstring",
+ "backend": "numpy",
+ "device": "cpu (x86_64)",
+ "host": "dant123-wk",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/composer_stub_sweep.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-b2d/research/findings/raw/_moat_slug_norm_heldout/composer_stub_sweep.py",
+  "research/findings/raw/_moat_slug_norm_heldout/composer_stub_sweep_3000.json",
+  "3000"
+ ],
+ "brain_source": "tiny-demo +LTM",
+ "brain_build_s": 193.0,
+ "vocab_sizes": [
+  3,
+  5,
+  5
+ ],
+ "parser_seed": 1,
+ "n_facts": 3000,
+ "sample_seed": 20261018,
+ "cells(stock_ok,flag_on_ok)": {
+  "(True, True)": 2994,
+  "(True, False)": 6
+ },
+ "stock_answer_rate": 1.0,
+ "flag_on_answer_rate": 0.998,
+ "HURTS": 6,
+ "HELPS": 0,
+ "flag_on_fallback_to_single_triple": 0,
+ "hurts_reasons": {
+  "predicate with no resolvable subject (dangling)": 6
+ },
+ "hurts_rows": [
+  {
+   "svo": [
+    "sporting_benevento",
+    "sport",
+    "association_football_club"
+   ],
+   "stock_surface": "The sporting_benevento sports association_football_club.",
+   "flag_on_claim": [
+    false,
+    "predicate with no resolvable subject (dangling)"
+   ]
+  },
+  {
+   "svo": [
+    "headington_united_fc",
+    "headquarters_location",
+    "city_of_dreaming_spires"
+   ],
+   "stock_surface": "The headington_united_fc headquarters_locations city_of_dreaming_spires.",
+   "flag_on_claim": [
+    false,
+    "predicate with no resolvable subject (dangling)"
+   ]
+  },
+  {
+   "svo": [
+    "country_usa_oshkosh",
+    "country",
+    "u_s_of_a"
+   ],
+   "stock_surface": "The country_usa_oshkosh countrys u_s_of_a.",
+   "flag_on_claim": [
+    false,
+    "predicate with no resolvable subject (dangling)"
+   ]
+  },
+  {
+   "svo": [
+    "shawano_county",
+    "shares_border_with",
+    "wausau_wi_msa"
+   ],
+   "stock_surface": "The shawano_county shares_border_withs wausau_wi_msa.",
+   "flag_on_claim": [
+    false,
+    "predicate with no resolvable subject (dangling)"
+   ]
+  },
+  {
+   "svo": [
+    "county_routes_in_iowa",
+    "country",
+    "u_s_of_a"
+   ],
+   "stock_surface": "The county_routes_in_iowa countrys u_s_of_a.",
+   "flag_on_claim": [
+    false,
+    "predicate with no resolvable subject (dangling)"
+   ]
+  },
+  {
+   "svo": [
+    "gene_wolf",
+    "genre",
+    "sciene_fiction"
+   ],
+   "stock_surface": "The gene_wolf genres sciene_fiction.",
+   "flag_on_claim": [
+    false,
+    "predicate with no resolvable subject (dangling)"
+   ]
+  }
+ ],
+ "helps_rows": []
+}

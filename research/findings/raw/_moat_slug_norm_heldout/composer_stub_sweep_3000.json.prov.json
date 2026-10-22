@@ -1,0 +1,34 @@
+{
+ "run_id": "1792324915-518450",
+ "runner": "research/findings/raw/_moat_slug_norm_heldout/composer_stub_sweep.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-b2d/research/findings/raw/_moat_slug_norm_heldout/composer_stub_sweep.py",
+  "research/findings/raw/_moat_slug_norm_heldout/composer_stub_sweep_3000.json",
+  "3000"
+ ],
+ "git_sha": "8ce076fd6",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-18T08:01:55",
+ "env": {
+  "OPENBLAS_NUM_THREADS": "4",
+  "OMP_NUM_THREADS": "4",
+  "MKL_NUM_THREADS": "4",
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "BRAIN_CHAT_SEED": "1"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 28035.1,
+ "corpus_check_query": "claim-entailment verifier rejects de-slugged entity names and paraphrase; rich LTM answers abstain",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_moat_slug_norm_heldout/composer_stub_sweep_3000.json"
+}

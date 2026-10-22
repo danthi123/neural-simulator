@@ -115,3 +115,15 @@ def stable_document_id(
         raise ValueError(f"RAG source escaped its declared root: {source}") from exc
     namespace = "catalog" if source_type in {"catalog", "kandel", "paper"} else "sim"
     return f"{namespace}:{relative.as_posix()}"
+
+
+# A refresh that adds many documents at once (a new source type, a large merge) is faster as one batched rebuild than
+# as per-document refresh_ref_docs. Measured on the workstation 2026-10-21: a full rebuild takes about 4-5 minutes,
+# while an incremental refresh costs about 10-15 s per new or changed document (40 documents took 899 s). A refresh
+# that runs past the updater's 30-minute stale-lock window also lets a second refresh start beside it.
+BULK_REBUILD_MIN_NEW = 25
+
+
+def bulk_change_needs_rebuild(current_ids, indexed_ids, threshold: int = BULK_REBUILD_MIN_NEW) -> bool:
+    """True when the corpus holds at least `threshold` document ids the persisted index lacks."""
+    return len(set(current_ids) - set(indexed_ids)) >= threshold

@@ -1,0 +1,4410 @@
+{
+ "_doc": "Numbers behind the VERDICT sections of the moat allowlist claim-checker prereg (builds 1-5).",
+ "script": "__main__",
+ "argv": {
+  "out": "research/findings/raw/_moat_allowlist_verdict/verdict_numbers.json",
+  "junit": "research/findings/raw/_moat_allowlist_verdict/pytest_moat_build5.xml",
+  "mutation": "/home/dant123/Projects/sim-rev/moat-allow5/mut/summary_b5.json"
+ },
+ "bound_rule": "one-sided 95% upper bound: rule of three at 0 kept, Clopper-Pearson otherwise (prereg 2.1)",
+ "kept_rule": "a hunt case counts as kept when the allowlist keeps it at ANY of the seven seeds through EITHER entry (claim gate or composer), the stricter of the two readings; round 3's runner records kept ids at any seed",
+ "builds": {
+  "1": {
+   "code": "9b8ade5a2",
+   "blind_round": "r3",
+   "hunt": {
+    "file": "research/findings/raw/_moat_allowlist_hunt3/results.json",
+    "sha256": "a1894946df5f5a50f2ee9bb33387c1aff82d33573c01d5fadb56fd8504b2c75d",
+    "measured_at": "1ee51881e",
+    "host": "dant123-wk",
+    "stock": {
+     "errors": 245,
+     "VALID": false,
+     "U": {
+      "n": 158,
+      "kept_gate": 0,
+      "kept_composer": 0,
+      "kept_either_entry": 0,
+      "kept_ids_either_entry": []
+     },
+     "B": {
+      "n": 12,
+      "kept_gate": 0,
+      "kept_composer": 0,
+      "kept_either_entry": 0,
+      "kept_ids_either_entry": []
+     },
+     "F": {
+      "n": 43,
+      "kept_gate": 0,
+      "kept_composer": 0,
+      "kept_either_entry": 0,
+      "kept_ids_either_entry": []
+     }
+    },
+    "b2h": {
+     "errors": 203,
+     "VALID": false,
+     "U": {
+      "n": 158,
+      "kept_gate": 20,
+      "kept_composer": 20,
+      "kept_either_entry": 20,
+      "kept_ids_either_entry": [
+       "B02",
+       "B05",
+       "D05",
+       "D09",
+       "F04",
+       "F14",
+       "F15",
+       "G01",
+       "G02",
+       "G03",
+       "G04",
+       "G05",
+       "G06",
+       "H08",
+       "H09",
+       "H11",
+       "I01",
+       "I02",
+       "I03",
+       "I09"
+      ]
+     },
+     "B": {
+      "n": 12,
+      "kept_gate": 5,
+      "kept_composer": 5,
+      "kept_either_entry": 5,
+      "kept_ids_either_entry": [
+       "D07",
+       "D08",
+       "T01",
+       "T02",
+       "T03"
+      ]
+     },
+     "F": {
+      "n": 43,
+      "kept_gate": 36,
+      "kept_composer": 36,
+      "kept_either_entry": 36,
+      "kept_ids_either_entry": [
+       "Z02",
+       "Z03",
+       "Z04",
+       "Z05",
+       "Z06",
+       "Z08",
+       "Z10",
+       "Z11",
+       "Z12",
+       "Z13",
+       "Z14",
+       "Z15",
+       "Z17",
+       "Z18",
+       "Z19",
+       "Z20",
+       "Z21",
+       "Z22",
+       "Z23",
+       "Z24",
+       "Z25",
+       "Z26",
+       "Z27",
+       "Z28",
+       "Z29",
+       "Z30",
+       "Z31",
+       "Z32",
+       "Z33",
+       "Z34",
+       "Z35",
+       "Z36",
+       "Z39",
+       "Z40",
+       "Z41",
+       "Z43"
+      ]
+     }
+    },
+    "allowlist": {
+     "errors": 0,
+     "VALID": true,
+     "U": {
+      "n": 158,
+      "kept_gate": 4,
+      "kept_composer": 4,
+      "kept_either_entry": 4,
+      "kept_ids_either_entry": [
+       "I01",
+       "I02",
+       "I03",
+       "I09"
+      ]
+     },
+     "B": {
+      "n": 12,
+      "kept_gate": 3,
+      "kept_composer": 3,
+      "kept_either_entry": 3,
+      "kept_ids_either_entry": [
+       "T01",
+       "T02",
+       "T03"
+      ]
+     },
+     "F": {
+      "n": 43,
+      "kept_gate": 39,
+      "kept_composer": 39,
+      "kept_either_entry": 39,
+      "kept_ids_either_entry": [
+       "Z01",
+       "Z02",
+       "Z03",
+       "Z04",
+       "Z05",
+       "Z06",
+       "Z08",
+       "Z10",
+       "Z11",
+       "Z12",
+       "Z13",
+       "Z14",
+       "Z15",
+       "Z17",
+       "Z18",
+       "Z19",
+       "Z20",
+       "Z21",
+       "Z22",
+       "Z23",
+       "Z24",
+       "Z25",
+       "Z26",
+       "Z27",
+       "Z28",
+       "Z29",
+       "Z30",
+       "Z31",
+       "Z32",
+       "Z33",
+       "Z34",
+       "Z35",
+       "Z36",
+       "Z37",
+       "Z38",
+       "Z39",
+       "Z40",
+       "Z41",
+       "Z43"
+      ]
+     }
+    },
+    "allowlist_U_kept": 4,
+    "allowlist_U_n": 158,
+    "allowlist_U_upper95": 0.056993868652557456,
+    "allowlist_strict_kept": 7,
+    "allowlist_strict_n": 170,
+    "allowlist_strict_upper95": 0.07594719300343196,
+    "allowlist_F_kept": 39,
+    "allowlist_F_n": 43
+   },
+   "hunt_cases": {
+    "cases": 213,
+    "skeptic_labels": {
+     "U": 170,
+     "F": 43
+    },
+    "adjudicated": null,
+    "relabelled_to_B": 12
+   },
+   "strata": {
+    "heldout_numbers": "research/findings/raw/_moat_slug_norm_heldout/heldout_numbers_allowlist.json",
+    "sha256": "ca5eca2629e31418d96bbd28540dcb7079b67db07c36551d656b4a90a4da0736",
+    "measured_at": "1ee51881e",
+    "S1": {
+     "buildable_unique": 272,
+     "lenient_unsupported_n": 122,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.02459016393442623,
+     "strict_unsupported_n": 180,
+     "strict_leaks": 0,
+     "strict_upper95": 0.016666666666666666,
+     "faithful_kept_seed42": 8,
+     "stock_faithful_kept_seed42": 1,
+     "b2h_faithful_kept_seed42": 13
+    },
+    "S2": {
+     "buildable_unique": 1068,
+     "lenient_unsupported_n": 930,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.0032258064516129032,
+     "strict_unsupported_n": 930,
+     "strict_leaks": 0,
+     "strict_upper95": 0.0032258064516129032,
+     "faithful_kept_seed42": 138,
+     "stock_faithful_kept_seed42": 0,
+     "b2h_faithful_kept_seed42": 118
+    },
+    "S3": {
+     "buildable_unique": 275,
+     "lenient_unsupported_n": 133,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.022556390977443608,
+     "strict_unsupported_n": 189,
+     "strict_leaks": 0,
+     "strict_upper95": 0.015873015873015872,
+     "faithful_kept_seed42": 27,
+     "stock_faithful_kept_seed42": 0,
+     "b2h_faithful_kept_seed42": 25
+    },
+    "composer": {
+     "S1": {
+      "n_turns": 29,
+      "stock_answered": 1,
+      "b2h_answered": 11,
+      "allowlist_answered": 6,
+      "HURTS": 0,
+      "LOSES_vs_b2h": 5,
+      "replay_misses": 0,
+      "status_counts": {
+       "both_abstain": 23,
+       "HELPS": 5,
+       "both_answer": 1
+      }
+     },
+     "S3": {
+      "n_turns": 61,
+      "stock_answered": 0,
+      "b2h_answered": 19,
+      "allowlist_answered": 19,
+      "HURTS": 0,
+      "LOSES_vs_b2h": 2,
+      "replay_misses": 0,
+      "status_counts": {
+       "both_abstain": 42,
+       "HELPS": 19
+      }
+     }
+    },
+    "bar4": {
+     "S1": {
+      "n": 13,
+      "kept": 8
+     },
+     "S2": {
+      "n": 118,
+      "kept": 118
+     },
+     "S3": {
+      "n": 25,
+      "kept": 23
+     }
+    }
+   },
+   "stub": {
+    "file": "research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive_allowlist.json",
+    "sha256": "9be913f7f89e9965e7b3bc0ef64a9fac1fe5cabb75d956d901f1f8d7f567b2cb",
+    "measured_at": "9b8ade5a2",
+    "n_population": 78857,
+    "stock_answer_rate": 1.0,
+    "allowlist_answer_rate": 0.9944710044764574,
+    "HURTS_allowlist": 0,
+    "HELPS_allowlist": 0,
+    "allowlist_role_reversed_stock_leaks": 436,
+    "allowlist_meaning_drift_stock_leaks": null,
+    "relation_table_sha256": "37bf3563ed36d449ce2a66b6a823c294d1bba4616590350ee52ba0c14a2d3ba2",
+    "unvoiceable_under_flag": 436,
+    "role_reversed_by_relation": {
+     "parent_taxon": 182,
+     "father": 125,
+     "child": 81,
+     "author": 27,
+     "platform": 21
+    },
+    "meaning_drift_by_relation": null
+   },
+   "nonblind_reruns": {},
+   "bar3_pass": false
+  },
+  "2": {
+   "code": "98f3d59eb",
+   "blind_round": "r4",
+   "hunt": {
+    "file": "research/findings/raw/_moat_allowlist_hunt4/r4/results_build2.json",
+    "sha256": "eab974c7d0edbe0ace9fa483779964ee34d6f8cc71550c2bda155d0e5992ed94",
+    "measured_at": "3a008dbf3",
+    "host": "dant123-wk",
+    "exit_code": 0,
+    "controls_all_ok": true,
+    "stock": {
+     "VALID": true,
+     "n_undefined_case_entries": 0,
+     "U": {
+      "n": 110,
+      "kept_gate": 0,
+      "kept_composer": 0,
+      "kept_either_entry": 0,
+      "kept_ids_either_entry": [],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "B": {
+      "n": 24,
+      "kept_gate": 0,
+      "kept_composer": 0,
+      "kept_either_entry": 0,
+      "kept_ids_either_entry": [],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "F": {
+      "n": 43,
+      "kept_gate": 0,
+      "kept_composer": 0,
+      "kept_either_entry": 0,
+      "kept_ids_either_entry": [],
+      "undefined": [
+       0,
+       0
+      ]
+     }
+    },
+    "b2h": {
+     "VALID": true,
+     "n_undefined_case_entries": 0,
+     "U": {
+      "n": 110,
+      "kept_gate": 14,
+      "kept_composer": 14,
+      "kept_either_entry": 14,
+      "kept_ids_either_entry": [
+       "R4-DT02",
+       "R4-EM02",
+       "R4-HG01",
+       "R4-HG02",
+       "R4-S3M02",
+       "R4-S3M03",
+       "R4-S3M05",
+       "R4-S3M07",
+       "R4-S3N01",
+       "R4-S3N02",
+       "R4-S3N03",
+       "R4-S3N06",
+       "R4-S3N07",
+       "R4-VD07"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "B": {
+      "n": 24,
+      "kept_gate": 11,
+      "kept_composer": 11,
+      "kept_either_entry": 11,
+      "kept_ids_either_entry": [
+       "R4-AR01",
+       "R4-AR02",
+       "R4-AR04",
+       "R4-DT03",
+       "R4-F43",
+       "R4-S3M01",
+       "R4-S3M04",
+       "R4-S3M06",
+       "R4-S3M08",
+       "R4-S3N08",
+       "R4-VD08"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "F": {
+      "n": 43,
+      "kept_gate": 30,
+      "kept_composer": 30,
+      "kept_either_entry": 30,
+      "kept_ids_either_entry": [
+       "R4-F01",
+       "R4-F02",
+       "R4-F03",
+       "R4-F04",
+       "R4-F05",
+       "R4-F06",
+       "R4-F07",
+       "R4-F08",
+       "R4-F10",
+       "R4-F12",
+       "R4-F13",
+       "R4-F14",
+       "R4-F15",
+       "R4-F16",
+       "R4-F17",
+       "R4-F18",
+       "R4-F19",
+       "R4-F20",
+       "R4-F21",
+       "R4-F22",
+       "R4-F23",
+       "R4-F24",
+       "R4-F26",
+       "R4-F27",
+       "R4-F28",
+       "R4-F29",
+       "R4-F31",
+       "R4-F37",
+       "R4-F38",
+       "R4-F44"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     }
+    },
+    "allowlist": {
+     "VALID": true,
+     "n_undefined_case_entries": 0,
+     "U": {
+      "n": 110,
+      "kept_gate": 1,
+      "kept_composer": 1,
+      "kept_either_entry": 1,
+      "kept_ids_either_entry": [
+       "R4-DT02"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "B": {
+      "n": 24,
+      "kept_gate": 4,
+      "kept_composer": 4,
+      "kept_either_entry": 4,
+      "kept_ids_either_entry": [
+       "R4-AR01",
+       "R4-AR04",
+       "R4-DT03",
+       "R4-F43"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "F": {
+      "n": 43,
+      "kept_gate": 27,
+      "kept_composer": 27,
+      "kept_either_entry": 27,
+      "kept_ids_either_entry": [
+       "R4-F01",
+       "R4-F02",
+       "R4-F03",
+       "R4-F04",
+       "R4-F05",
+       "R4-F06",
+       "R4-F09",
+       "R4-F10",
+       "R4-F12",
+       "R4-F13",
+       "R4-F14",
+       "R4-F15",
+       "R4-F16",
+       "R4-F17",
+       "R4-F18",
+       "R4-F19",
+       "R4-F20",
+       "R4-F21",
+       "R4-F22",
+       "R4-F23",
+       "R4-F24",
+       "R4-F26",
+       "R4-F27",
+       "R4-F28",
+       "R4-F29",
+       "R4-F31",
+       "R4-F44"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     }
+    },
+    "allowlist_U_kept": 1,
+    "allowlist_U_n": 110,
+    "allowlist_U_upper95": 0.042399046957119,
+    "allowlist_strict_kept": 5,
+    "allowlist_strict_n": 134,
+    "allowlist_strict_upper95": 0.07685033535193526,
+    "allowlist_F_kept": 27,
+    "allowlist_F_n": 43
+   },
+   "hunt_cases": {
+    "cases": 177,
+    "skeptic_labels": {
+     "U": 133,
+     "F": 44
+    },
+    "adjudicated": {
+     "U": 110,
+     "B": 24,
+     "F": 43
+    },
+    "relabelled_to_B": 24
+   },
+   "strata": {
+    "heldout_numbers": null,
+    "note": "heldout_numbers_allowlist2.json not in this tree yet"
+   },
+   "stub": {
+    "file": "research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive_allowlist2.json",
+    "sha256": "ea3501eba4f5280a31f04bdc07f8f3a47b55625ac90410332146a044eaae32b0",
+    "measured_at": "8d9869d88",
+    "n_population": 78857,
+    "stock_answer_rate": 1.0,
+    "allowlist_answer_rate": 0.930963643050078,
+    "HURTS_allowlist": 0,
+    "HELPS_allowlist": 0,
+    "allowlist_role_reversed_stock_leaks": 436,
+    "allowlist_meaning_drift_stock_leaks": 5008,
+    "relation_table_sha256": "36e39fce89f4e4fd215c5f2ee184fd8ec1111693addfc5dd73722cb1baa2e1e0",
+    "unvoiceable_under_flag": 5444,
+    "role_reversed_by_relation": {
+     "parent_taxon": 182,
+     "father": 125,
+     "child": 81,
+     "author": 27,
+     "platform": 21
+    },
+    "meaning_drift_by_relation": {
+     "sport": 4116,
+     "instrument": 410,
+     "conflict": 280,
+     "spouse": 202
+    }
+   },
+   "nonblind_reruns": {
+    "r3": {
+     "file": "research/findings/raw/_moat_allowlist_hunt3/results_allowlist2.json",
+     "sha256": "86edfbe26ab9fff77e11b045e11e3f95232ee25f148359efd44801e7eaf7c76a",
+     "measured_at": "8d9869d88",
+     "host": "dant123-wk",
+     "stock": {
+      "errors": 245,
+      "VALID": false,
+      "U": {
+       "n": 158,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": []
+      },
+      "B": {
+       "n": 12,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": []
+      },
+      "F": {
+       "n": 43,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": []
+      }
+     },
+     "b2h": {
+      "errors": 203,
+      "VALID": false,
+      "U": {
+       "n": 158,
+       "kept_gate": 20,
+       "kept_composer": 20,
+       "kept_either_entry": 20,
+       "kept_ids_either_entry": [
+        "B02",
+        "B05",
+        "D05",
+        "D09",
+        "F04",
+        "F14",
+        "F15",
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "H08",
+        "H09",
+        "H11",
+        "I01",
+        "I02",
+        "I03",
+        "I09"
+       ]
+      },
+      "B": {
+       "n": 12,
+       "kept_gate": 5,
+       "kept_composer": 5,
+       "kept_either_entry": 5,
+       "kept_ids_either_entry": [
+        "D07",
+        "D08",
+        "T01",
+        "T02",
+        "T03"
+       ]
+      },
+      "F": {
+       "n": 43,
+       "kept_gate": 36,
+       "kept_composer": 36,
+       "kept_either_entry": 36,
+       "kept_ids_either_entry": [
+        "Z02",
+        "Z03",
+        "Z04",
+        "Z05",
+        "Z06",
+        "Z08",
+        "Z10",
+        "Z11",
+        "Z12",
+        "Z13",
+        "Z14",
+        "Z15",
+        "Z17",
+        "Z18",
+        "Z19",
+        "Z20",
+        "Z21",
+        "Z22",
+        "Z23",
+        "Z24",
+        "Z25",
+        "Z26",
+        "Z27",
+        "Z28",
+        "Z29",
+        "Z30",
+        "Z31",
+        "Z32",
+        "Z33",
+        "Z34",
+        "Z35",
+        "Z36",
+        "Z39",
+        "Z40",
+        "Z41",
+        "Z43"
+       ]
+      }
+     },
+     "allowlist": {
+      "errors": 0,
+      "VALID": true,
+      "U": {
+       "n": 158,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": []
+      },
+      "B": {
+       "n": 12,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": []
+      },
+      "F": {
+       "n": 43,
+       "kept_gate": 39,
+       "kept_composer": 39,
+       "kept_either_entry": 39,
+       "kept_ids_either_entry": [
+        "Z01",
+        "Z02",
+        "Z03",
+        "Z04",
+        "Z05",
+        "Z06",
+        "Z08",
+        "Z10",
+        "Z11",
+        "Z12",
+        "Z13",
+        "Z14",
+        "Z15",
+        "Z17",
+        "Z18",
+        "Z19",
+        "Z20",
+        "Z21",
+        "Z22",
+        "Z23",
+        "Z24",
+        "Z25",
+        "Z26",
+        "Z27",
+        "Z28",
+        "Z29",
+        "Z30",
+        "Z31",
+        "Z32",
+        "Z33",
+        "Z34",
+        "Z35",
+        "Z36",
+        "Z37",
+        "Z38",
+        "Z39",
+        "Z40",
+        "Z41",
+        "Z43"
+       ]
+      }
+     },
+     "allowlist_U_kept": 0,
+     "allowlist_U_n": 158,
+     "allowlist_U_upper95": 0.0189873417721519,
+     "allowlist_strict_kept": 0,
+     "allowlist_strict_n": 170,
+     "allowlist_strict_upper95": 0.01764705882352941,
+     "allowlist_F_kept": 39,
+     "allowlist_F_n": 43
+    }
+   },
+   "bar3_pass": false
+  },
+  "3": {
+   "code": "95de4db59",
+   "blind_round": "r5",
+   "hunt": {
+    "file": "research/findings/raw/_moat_allowlist_hunt4/r5/results_build3.json",
+    "sha256": "150a6ceec54768869f85ed1b86ad2928ebe7a640a01908cb995c89892a1db320",
+    "measured_at": "15e29c991",
+    "host": "dant123-wk",
+    "exit_code": 0,
+    "controls_all_ok": true,
+    "stock": {
+     "VALID": true,
+     "n_undefined_case_entries": 0,
+     "U": {
+      "n": 89,
+      "kept_gate": 0,
+      "kept_composer": 0,
+      "kept_either_entry": 0,
+      "kept_ids_either_entry": [],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "B": {
+      "n": 28,
+      "kept_gate": 0,
+      "kept_composer": 0,
+      "kept_either_entry": 0,
+      "kept_ids_either_entry": [],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "F": {
+      "n": 47,
+      "kept_gate": 0,
+      "kept_composer": 0,
+      "kept_either_entry": 0,
+      "kept_ids_either_entry": [],
+      "undefined": [
+       0,
+       0
+      ]
+     }
+    },
+    "b2h": {
+     "VALID": true,
+     "n_undefined_case_entries": 0,
+     "U": {
+      "n": 89,
+      "kept_gate": 15,
+      "kept_composer": 15,
+      "kept_either_entry": 15,
+      "kept_ids_either_entry": [
+       "R5-DL01",
+       "R5-DL02",
+       "R5-DQ01",
+       "R5-IN01",
+       "R5-NX01",
+       "R5-NX03",
+       "R5-NX04",
+       "R5-NX05",
+       "R5-NX06",
+       "R5-NX07",
+       "R5-NX08",
+       "R5-NX09",
+       "R5-NX14",
+       "R5-NX16",
+       "R5-NX18"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "B": {
+      "n": 28,
+      "kept_gate": 3,
+      "kept_composer": 3,
+      "kept_either_entry": 3,
+      "kept_ids_either_entry": [
+       "R5-CW02",
+       "R5-CW04",
+       "R5-IN02"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "F": {
+      "n": 47,
+      "kept_gate": 26,
+      "kept_composer": 26,
+      "kept_either_entry": 26,
+      "kept_ids_either_entry": [
+       "R5-F01",
+       "R5-F02",
+       "R5-F03",
+       "R5-F04",
+       "R5-F13",
+       "R5-F14",
+       "R5-F15",
+       "R5-F16",
+       "R5-F17",
+       "R5-F18",
+       "R5-F19",
+       "R5-F24",
+       "R5-F25",
+       "R5-F26",
+       "R5-F27",
+       "R5-F28",
+       "R5-F29",
+       "R5-F30",
+       "R5-F31",
+       "R5-F32",
+       "R5-F33",
+       "R5-F38",
+       "R5-F40",
+       "R5-F45",
+       "R5-F46",
+       "R5-F47"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     }
+    },
+    "allowlist": {
+     "VALID": true,
+     "n_undefined_case_entries": 0,
+     "U": {
+      "n": 89,
+      "kept_gate": 24,
+      "kept_composer": 24,
+      "kept_either_entry": 24,
+      "kept_ids_either_entry": [
+       "R5-DL01",
+       "R5-DL02",
+       "R5-DQ01",
+       "R5-IN01",
+       "R5-NX01",
+       "R5-NX02",
+       "R5-NX03",
+       "R5-NX04",
+       "R5-NX05",
+       "R5-NX07",
+       "R5-NX08",
+       "R5-NX09",
+       "R5-NX10",
+       "R5-NX11",
+       "R5-NX12",
+       "R5-NX13",
+       "R5-NX14",
+       "R5-NX15",
+       "R5-NX16",
+       "R5-NX18",
+       "R5-NX19",
+       "R5-NX20",
+       "R5-NX21",
+       "R5-NX23"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "B": {
+      "n": 28,
+      "kept_gate": 3,
+      "kept_composer": 3,
+      "kept_either_entry": 3,
+      "kept_ids_either_entry": [
+       "R5-CW04",
+       "R5-IN02",
+       "R5-LH01"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "F": {
+      "n": 47,
+      "kept_gate": 21,
+      "kept_composer": 21,
+      "kept_either_entry": 21,
+      "kept_ids_either_entry": [
+       "R5-F13",
+       "R5-F14",
+       "R5-F15",
+       "R5-F16",
+       "R5-F17",
+       "R5-F18",
+       "R5-F19",
+       "R5-F24",
+       "R5-F25",
+       "R5-F26",
+       "R5-F27",
+       "R5-F28",
+       "R5-F29",
+       "R5-F30",
+       "R5-F31",
+       "R5-F32",
+       "R5-F38",
+       "R5-F40",
+       "R5-F45",
+       "R5-F46",
+       "R5-F47"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     }
+    },
+    "allowlist_U_kept": 24,
+    "allowlist_U_n": 89,
+    "allowlist_U_upper95": 0.35778915814016254,
+    "allowlist_strict_kept": 27,
+    "allowlist_strict_n": 117,
+    "allowlist_strict_upper95": 0.3039147812420343,
+    "allowlist_F_kept": 21,
+    "allowlist_F_n": 47
+   },
+   "hunt_cases": {
+    "cases": 164,
+    "skeptic_labels": {
+     "U": 117,
+     "F": 47
+    },
+    "adjudicated": {
+     "U": 89,
+     "B": 28,
+     "F": 47
+    },
+    "relabelled_to_B": 28
+   },
+   "strata": {
+    "heldout_numbers": "research/findings/raw/_moat_slug_norm_heldout/heldout_numbers_allowlist3.json",
+    "sha256": "2a9b714e0f0ae712fecd0195ebda04db964c1e278ca6a1a5a4733df32a8a5924",
+    "measured_at": "9cd066d60",
+    "S1": {
+     "buildable_unique": 272,
+     "lenient_unsupported_n": 122,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.02459016393442623,
+     "strict_unsupported_n": 180,
+     "strict_leaks": 0,
+     "strict_upper95": 0.016666666666666666,
+     "faithful_kept_seed42": 8,
+     "stock_faithful_kept_seed42": 1,
+     "b2h_faithful_kept_seed42": 13
+    },
+    "S2": {
+     "buildable_unique": 1068,
+     "lenient_unsupported_n": 930,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.0032258064516129032,
+     "strict_unsupported_n": 930,
+     "strict_leaks": 0,
+     "strict_upper95": 0.0032258064516129032,
+     "faithful_kept_seed42": 137,
+     "stock_faithful_kept_seed42": 0,
+     "b2h_faithful_kept_seed42": 118
+    },
+    "S3": {
+     "buildable_unique": 275,
+     "lenient_unsupported_n": 133,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.022556390977443608,
+     "strict_unsupported_n": 189,
+     "strict_leaks": 0,
+     "strict_upper95": 0.015873015873015872,
+     "faithful_kept_seed42": 27,
+     "stock_faithful_kept_seed42": 0,
+     "b2h_faithful_kept_seed42": 25
+    },
+    "composer": {
+     "S1": {
+      "n_turns": 29,
+      "stock_answered": 1,
+      "b2h_answered": 11,
+      "allowlist_answered": 6,
+      "HURTS": 0,
+      "LOSES_vs_b2h": 5,
+      "replay_misses": 0,
+      "status_counts": {
+       "both_abstain": 23,
+       "HELPS": 5,
+       "both_answer": 1
+      }
+     },
+     "S3": {
+      "n_turns": 61,
+      "stock_answered": 0,
+      "b2h_answered": 19,
+      "allowlist_answered": 19,
+      "HURTS": 0,
+      "LOSES_vs_b2h": 2,
+      "replay_misses": 0,
+      "status_counts": {
+       "both_abstain": 42,
+       "HELPS": 19
+      }
+     }
+    },
+    "bar4": {
+     "S1": {
+      "n": 13,
+      "kept": 8
+     },
+     "S2": {
+      "n": 118,
+      "kept": 117
+     },
+     "S3": {
+      "n": 25,
+      "kept": 23
+     }
+    }
+   },
+   "stub": {
+    "file": "research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive_allowlist3.json",
+    "sha256": "7093969594da78b50e69de5acf3284f48dc546594c6dbd8b84d069fcb14ed449",
+    "measured_at": "9cd066d60",
+    "n_population": 78857,
+    "stock_answer_rate": 1.0,
+    "allowlist_answer_rate": 0.930963643050078,
+    "HURTS_allowlist": 0,
+    "HELPS_allowlist": 0,
+    "allowlist_role_reversed_stock_leaks": 436,
+    "allowlist_meaning_drift_stock_leaks": 5008,
+    "relation_table_sha256": "36e39fce89f4e4fd215c5f2ee184fd8ec1111693addfc5dd73722cb1baa2e1e0",
+    "unvoiceable_under_flag": 5444,
+    "role_reversed_by_relation": {
+     "parent_taxon": 182,
+     "father": 125,
+     "child": 81,
+     "author": 27,
+     "platform": 21
+    },
+    "meaning_drift_by_relation": {
+     "sport": 4116,
+     "instrument": 410,
+     "conflict": 280,
+     "spouse": 202
+    }
+   },
+   "nonblind_reruns": {
+    "r3": {
+     "file": "research/findings/raw/_moat_allowlist_hunt4/r3_rerun_build3.json",
+     "sha256": "88e517515c3731a78942a1dad571b6d95141c00b1df1e704056201d2e8751c84",
+     "measured_at": "5922f47ed",
+     "host": "dant123-wk",
+     "exit_code": 0,
+     "controls_all_ok": true,
+     "stock": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 158,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 12,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 43,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "b2h": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 158,
+       "kept_gate": 20,
+       "kept_composer": 20,
+       "kept_either_entry": 20,
+       "kept_ids_either_entry": [
+        "B02",
+        "B05",
+        "D05",
+        "D09",
+        "F04",
+        "F14",
+        "F15",
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "H08",
+        "H09",
+        "H11",
+        "I01",
+        "I02",
+        "I03",
+        "I09"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 12,
+       "kept_gate": 5,
+       "kept_composer": 5,
+       "kept_either_entry": 5,
+       "kept_ids_either_entry": [
+        "D07",
+        "D08",
+        "T01",
+        "T02",
+        "T03"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 43,
+       "kept_gate": 36,
+       "kept_composer": 36,
+       "kept_either_entry": 36,
+       "kept_ids_either_entry": [
+        "Z02",
+        "Z03",
+        "Z04",
+        "Z05",
+        "Z06",
+        "Z08",
+        "Z10",
+        "Z11",
+        "Z12",
+        "Z13",
+        "Z14",
+        "Z15",
+        "Z17",
+        "Z18",
+        "Z19",
+        "Z20",
+        "Z21",
+        "Z22",
+        "Z23",
+        "Z24",
+        "Z25",
+        "Z26",
+        "Z27",
+        "Z28",
+        "Z29",
+        "Z30",
+        "Z31",
+        "Z32",
+        "Z33",
+        "Z34",
+        "Z35",
+        "Z36",
+        "Z39",
+        "Z40",
+        "Z41",
+        "Z43"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "allowlist": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 158,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 12,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 43,
+       "kept_gate": 38,
+       "kept_composer": 38,
+       "kept_either_entry": 38,
+       "kept_ids_either_entry": [
+        "Z01",
+        "Z02",
+        "Z03",
+        "Z04",
+        "Z05",
+        "Z06",
+        "Z08",
+        "Z10",
+        "Z11",
+        "Z12",
+        "Z13",
+        "Z14",
+        "Z15",
+        "Z17",
+        "Z18",
+        "Z19",
+        "Z20",
+        "Z21",
+        "Z22",
+        "Z23",
+        "Z24",
+        "Z25",
+        "Z26",
+        "Z27",
+        "Z28",
+        "Z29",
+        "Z30",
+        "Z31",
+        "Z32",
+        "Z33",
+        "Z34",
+        "Z35",
+        "Z36",
+        "Z38",
+        "Z39",
+        "Z40",
+        "Z41",
+        "Z43"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "allowlist_U_kept": 0,
+     "allowlist_U_n": 158,
+     "allowlist_U_upper95": 0.0189873417721519,
+     "allowlist_strict_kept": 0,
+     "allowlist_strict_n": 170,
+     "allowlist_strict_upper95": 0.01764705882352941,
+     "allowlist_F_kept": 38,
+     "allowlist_F_n": 43
+    },
+    "r4": {
+     "file": "research/findings/raw/_moat_allowlist_hunt4/r4/results_build3.json",
+     "sha256": "3ce7c866f80c49b68a6cf9e9dd975295058aea695b10c42fbfd029898ce2aca8",
+     "measured_at": "5922f47ed",
+     "host": "dant123-wk",
+     "exit_code": 0,
+     "controls_all_ok": true,
+     "stock": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 110,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 24,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 43,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "b2h": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 110,
+       "kept_gate": 14,
+       "kept_composer": 14,
+       "kept_either_entry": 14,
+       "kept_ids_either_entry": [
+        "R4-DT02",
+        "R4-EM02",
+        "R4-HG01",
+        "R4-HG02",
+        "R4-S3M02",
+        "R4-S3M03",
+        "R4-S3M05",
+        "R4-S3M07",
+        "R4-S3N01",
+        "R4-S3N02",
+        "R4-S3N03",
+        "R4-S3N06",
+        "R4-S3N07",
+        "R4-VD07"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 24,
+       "kept_gate": 11,
+       "kept_composer": 11,
+       "kept_either_entry": 11,
+       "kept_ids_either_entry": [
+        "R4-AR01",
+        "R4-AR02",
+        "R4-AR04",
+        "R4-DT03",
+        "R4-F43",
+        "R4-S3M01",
+        "R4-S3M04",
+        "R4-S3M06",
+        "R4-S3M08",
+        "R4-S3N08",
+        "R4-VD08"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 43,
+       "kept_gate": 30,
+       "kept_composer": 30,
+       "kept_either_entry": 30,
+       "kept_ids_either_entry": [
+        "R4-F01",
+        "R4-F02",
+        "R4-F03",
+        "R4-F04",
+        "R4-F05",
+        "R4-F06",
+        "R4-F07",
+        "R4-F08",
+        "R4-F10",
+        "R4-F12",
+        "R4-F13",
+        "R4-F14",
+        "R4-F15",
+        "R4-F16",
+        "R4-F17",
+        "R4-F18",
+        "R4-F19",
+        "R4-F20",
+        "R4-F21",
+        "R4-F22",
+        "R4-F23",
+        "R4-F24",
+        "R4-F26",
+        "R4-F27",
+        "R4-F28",
+        "R4-F29",
+        "R4-F31",
+        "R4-F37",
+        "R4-F38",
+        "R4-F44"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "allowlist": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 110,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 24,
+       "kept_gate": 4,
+       "kept_composer": 4,
+       "kept_either_entry": 4,
+       "kept_ids_either_entry": [
+        "R4-AR01",
+        "R4-AR04",
+        "R4-DT03",
+        "R4-F43"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 43,
+       "kept_gate": 27,
+       "kept_composer": 27,
+       "kept_either_entry": 27,
+       "kept_ids_either_entry": [
+        "R4-F01",
+        "R4-F02",
+        "R4-F03",
+        "R4-F04",
+        "R4-F05",
+        "R4-F06",
+        "R4-F09",
+        "R4-F10",
+        "R4-F12",
+        "R4-F13",
+        "R4-F14",
+        "R4-F15",
+        "R4-F16",
+        "R4-F17",
+        "R4-F18",
+        "R4-F19",
+        "R4-F20",
+        "R4-F21",
+        "R4-F22",
+        "R4-F23",
+        "R4-F24",
+        "R4-F26",
+        "R4-F27",
+        "R4-F28",
+        "R4-F29",
+        "R4-F31",
+        "R4-F44"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "allowlist_U_kept": 0,
+     "allowlist_U_n": 110,
+     "allowlist_U_upper95": 0.02727272727272727,
+     "allowlist_strict_kept": 4,
+     "allowlist_strict_n": 134,
+     "allowlist_strict_upper95": 0.06700449392126168,
+     "allowlist_F_kept": 27,
+     "allowlist_F_n": 43
+    }
+   },
+   "bar3_pass": false
+  },
+  "4": {
+   "code": "43e111c48",
+   "blind_round": "r6",
+   "hunt": {
+    "file": "research/findings/raw/_moat_allowlist_hunt4/r6/results_build4.json",
+    "sha256": "8cf76ca8898f9e3e8412b6f4af389d82610303660fad5bafc5f3a61c0add3b64",
+    "measured_at": "fc89689a4",
+    "host": "dant123-wk",
+    "exit_code": 0,
+    "controls_all_ok": true,
+    "stock": {
+     "VALID": true,
+     "n_undefined_case_entries": 0,
+     "U": {
+      "n": 17,
+      "kept_gate": 0,
+      "kept_composer": 1,
+      "kept_either_entry": 1,
+      "kept_ids_either_entry": [
+       "R6-CR02"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "B": {
+      "n": 134,
+      "kept_gate": 1,
+      "kept_composer": 2,
+      "kept_either_entry": 2,
+      "kept_ids_either_entry": [
+       "R6-DX06",
+       "R6-S205"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "F": {
+      "n": 53,
+      "kept_gate": 2,
+      "kept_composer": 2,
+      "kept_either_entry": 2,
+      "kept_ids_either_entry": [
+       "R6-F29",
+       "R6-F31"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     }
+    },
+    "b2h": {
+     "VALID": true,
+     "n_undefined_case_entries": 0,
+     "U": {
+      "n": 17,
+      "kept_gate": 6,
+      "kept_composer": 6,
+      "kept_either_entry": 6,
+      "kept_ids_either_entry": [
+       "R6-CF01",
+       "R6-CF02",
+       "R6-CR06",
+       "R6-S201",
+       "R6-S203",
+       "R6-S210"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "B": {
+      "n": 134,
+      "kept_gate": 117,
+      "kept_composer": 117,
+      "kept_either_entry": 117,
+      "kept_ids_either_entry": [
+       "R6-AC01",
+       "R6-AC02",
+       "R6-AC04",
+       "R6-AC05",
+       "R6-AC06",
+       "R6-AC07",
+       "R6-AC13",
+       "R6-AC14",
+       "R6-AC15",
+       "R6-AC16",
+       "R6-AC17",
+       "R6-AC18",
+       "R6-AC19",
+       "R6-AC21",
+       "R6-AN01",
+       "R6-AN02",
+       "R6-AN03",
+       "R6-AN04",
+       "R6-AN05",
+       "R6-AN06",
+       "R6-AN07",
+       "R6-AN08",
+       "R6-AN09",
+       "R6-AN10",
+       "R6-AN11",
+       "R6-AN12",
+       "R6-AN13",
+       "R6-AN14",
+       "R6-AN15",
+       "R6-AN16",
+       "R6-AN17",
+       "R6-AN18",
+       "R6-AN20",
+       "R6-AN21",
+       "R6-AN22",
+       "R6-AN23",
+       "R6-AN24",
+       "R6-AO01",
+       "R6-AO02",
+       "R6-AO03",
+       "R6-AO04",
+       "R6-AO05",
+       "R6-AS01",
+       "R6-AS02",
+       "R6-AS03",
+       "R6-AS04",
+       "R6-AS05",
+       "R6-AS06",
+       "R6-AS07",
+       "R6-CF03",
+       "R6-CF05",
+       "R6-CF06",
+       "R6-CN01",
+       "R6-CN02",
+       "R6-CN03",
+       "R6-CN05",
+       "R6-CN07",
+       "R6-CN08",
+       "R6-DC01",
+       "R6-DC02",
+       "R6-DC03",
+       "R6-DC04",
+       "R6-DC05",
+       "R6-DC06",
+       "R6-DC07",
+       "R6-DC08",
+       "R6-DC09",
+       "R6-DP01",
+       "R6-DP02",
+       "R6-DP03",
+       "R6-DP04",
+       "R6-DP05",
+       "R6-DP06",
+       "R6-DP07",
+       "R6-DP08",
+       "R6-DP09",
+       "R6-DP10",
+       "R6-DP13",
+       "R6-DP14",
+       "R6-DP15",
+       "R6-DP16",
+       "R6-DP17",
+       "R6-DP18",
+       "R6-DX01",
+       "R6-DX05",
+       "R6-GP01",
+       "R6-LC01",
+       "R6-LC02",
+       "R6-LC03",
+       "R6-LC04",
+       "R6-MC01",
+       "R6-MC02",
+       "R6-MC03",
+       "R6-MC04",
+       "R6-MC06",
+       "R6-OR01",
+       "R6-OR02",
+       "R6-OR03",
+       "R6-OR04",
+       "R6-OR05",
+       "R6-OR06",
+       "R6-QN01",
+       "R6-QN02",
+       "R6-QN03",
+       "R6-QN04",
+       "R6-QN05",
+       "R6-QN06",
+       "R6-QN07",
+       "R6-S202",
+       "R6-S204",
+       "R6-S205",
+       "R6-S206",
+       "R6-S207",
+       "R6-S209",
+       "R6-S211",
+       "R6-S212",
+       "R6-S213"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "F": {
+      "n": 53,
+      "kept_gate": 50,
+      "kept_composer": 50,
+      "kept_either_entry": 50,
+      "kept_ids_either_entry": [
+       "R6-F01",
+       "R6-F02",
+       "R6-F03",
+       "R6-F04",
+       "R6-F06",
+       "R6-F07",
+       "R6-F08",
+       "R6-F09",
+       "R6-F10",
+       "R6-F11",
+       "R6-F12",
+       "R6-F13",
+       "R6-F14",
+       "R6-F15",
+       "R6-F16",
+       "R6-F17",
+       "R6-F18",
+       "R6-F19",
+       "R6-F20",
+       "R6-F21",
+       "R6-F22",
+       "R6-F23",
+       "R6-F24",
+       "R6-F25",
+       "R6-F26",
+       "R6-F27",
+       "R6-F28",
+       "R6-F29",
+       "R6-F30",
+       "R6-F31",
+       "R6-F32",
+       "R6-F33",
+       "R6-F34",
+       "R6-F35",
+       "R6-F36",
+       "R6-F37",
+       "R6-F38",
+       "R6-F39",
+       "R6-F40",
+       "R6-F41",
+       "R6-F44",
+       "R6-F45",
+       "R6-F46",
+       "R6-F47",
+       "R6-F48",
+       "R6-F49",
+       "R6-F50",
+       "R6-F51",
+       "R6-F52",
+       "R6-F53"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     }
+    },
+    "allowlist": {
+     "VALID": true,
+     "n_undefined_case_entries": 0,
+     "U": {
+      "n": 17,
+      "kept_gate": 5,
+      "kept_composer": 5,
+      "kept_either_entry": 5,
+      "kept_ids_either_entry": [
+       "R6-CF01",
+       "R6-CF02",
+       "R6-S201",
+       "R6-S203",
+       "R6-S210"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "B": {
+      "n": 134,
+      "kept_gate": 101,
+      "kept_composer": 101,
+      "kept_either_entry": 101,
+      "kept_ids_either_entry": [
+       "R6-AC13",
+       "R6-AC14",
+       "R6-AC15",
+       "R6-AC16",
+       "R6-AN01",
+       "R6-AN02",
+       "R6-AN03",
+       "R6-AN04",
+       "R6-AN05",
+       "R6-AN06",
+       "R6-AN07",
+       "R6-AN08",
+       "R6-AN09",
+       "R6-AN10",
+       "R6-AN11",
+       "R6-AN12",
+       "R6-AN13",
+       "R6-AN14",
+       "R6-AN15",
+       "R6-AN16",
+       "R6-AN17",
+       "R6-AN18",
+       "R6-AN20",
+       "R6-AN21",
+       "R6-AN22",
+       "R6-AN23",
+       "R6-AN24",
+       "R6-AO01",
+       "R6-AO02",
+       "R6-AO03",
+       "R6-AO04",
+       "R6-AO05",
+       "R6-AS01",
+       "R6-AS02",
+       "R6-AS03",
+       "R6-AS04",
+       "R6-AS05",
+       "R6-AS06",
+       "R6-AS07",
+       "R6-CF03",
+       "R6-CF05",
+       "R6-CF06",
+       "R6-CN02",
+       "R6-CN05",
+       "R6-CN07",
+       "R6-CN08",
+       "R6-DC01",
+       "R6-DC02",
+       "R6-DC03",
+       "R6-DC04",
+       "R6-DC05",
+       "R6-DC06",
+       "R6-DC07",
+       "R6-DC08",
+       "R6-DC09",
+       "R6-DP01",
+       "R6-DP02",
+       "R6-DP03",
+       "R6-DP04",
+       "R6-DP05",
+       "R6-DP06",
+       "R6-DP07",
+       "R6-DP08",
+       "R6-DP09",
+       "R6-DP10",
+       "R6-DP13",
+       "R6-DP14",
+       "R6-DP15",
+       "R6-DP16",
+       "R6-DP17",
+       "R6-DP18",
+       "R6-GP01",
+       "R6-LC01",
+       "R6-LC02",
+       "R6-LC03",
+       "R6-LC04",
+       "R6-MC01",
+       "R6-MC02",
+       "R6-MC03",
+       "R6-MC06",
+       "R6-OR01",
+       "R6-OR03",
+       "R6-OR04",
+       "R6-OR05",
+       "R6-OR06",
+       "R6-QN01",
+       "R6-QN02",
+       "R6-QN03",
+       "R6-QN04",
+       "R6-QN05",
+       "R6-QN06",
+       "R6-QN07",
+       "R6-S202",
+       "R6-S204",
+       "R6-S205",
+       "R6-S206",
+       "R6-S207",
+       "R6-S209",
+       "R6-S211",
+       "R6-S212",
+       "R6-S213"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "F": {
+      "n": 53,
+      "kept_gate": 42,
+      "kept_composer": 42,
+      "kept_either_entry": 42,
+      "kept_ids_either_entry": [
+       "R6-F01",
+       "R6-F02",
+       "R6-F06",
+       "R6-F07",
+       "R6-F08",
+       "R6-F09",
+       "R6-F10",
+       "R6-F11",
+       "R6-F12",
+       "R6-F13",
+       "R6-F15",
+       "R6-F16",
+       "R6-F17",
+       "R6-F18",
+       "R6-F19",
+       "R6-F20",
+       "R6-F21",
+       "R6-F22",
+       "R6-F23",
+       "R6-F24",
+       "R6-F25",
+       "R6-F26",
+       "R6-F27",
+       "R6-F28",
+       "R6-F29",
+       "R6-F30",
+       "R6-F31",
+       "R6-F33",
+       "R6-F34",
+       "R6-F35",
+       "R6-F36",
+       "R6-F37",
+       "R6-F38",
+       "R6-F39",
+       "R6-F41",
+       "R6-F45",
+       "R6-F46",
+       "R6-F47",
+       "R6-F48",
+       "R6-F49",
+       "R6-F51",
+       "R6-F52"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     }
+    },
+    "allowlist_U_kept": 5,
+    "allowlist_U_n": 17,
+    "allowlist_U_upper95": 0.5219176931136311,
+    "allowlist_strict_kept": 106,
+    "allowlist_strict_n": 151,
+    "allowlist_strict_upper95": 0.763113596393151,
+    "allowlist_F_kept": 42,
+    "allowlist_F_n": 53
+   },
+   "hunt_cases": {
+    "cases": 204,
+    "skeptic_labels": {
+     "U": 151,
+     "F": 53
+    },
+    "adjudicated": {
+     "B": 134,
+     "U": 17,
+     "F": 53
+    },
+    "relabelled_to_B": 134
+   },
+   "strata": {
+    "heldout_numbers": "research/findings/raw/_moat_slug_norm_heldout/heldout_numbers_allowlist4.json",
+    "sha256": "d7e80420efd52e5daa532b8bc296ece9d23ca55fce909fc8c9fd8eddd96cc8d5",
+    "measured_at": "daa6998e4",
+    "S1": {
+     "buildable_unique": 272,
+     "lenient_unsupported_n": 122,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.02459016393442623,
+     "strict_unsupported_n": 180,
+     "strict_leaks": 0,
+     "strict_upper95": 0.016666666666666666,
+     "faithful_kept_seed42": 8,
+     "stock_faithful_kept_seed42": 1,
+     "b2h_faithful_kept_seed42": 13
+    },
+    "S2": {
+     "buildable_unique": 1068,
+     "lenient_unsupported_n": 930,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.0032258064516129032,
+     "strict_unsupported_n": 930,
+     "strict_leaks": 0,
+     "strict_upper95": 0.0032258064516129032,
+     "faithful_kept_seed42": 137,
+     "stock_faithful_kept_seed42": 0,
+     "b2h_faithful_kept_seed42": 118
+    },
+    "S3": {
+     "buildable_unique": 275,
+     "lenient_unsupported_n": 133,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.022556390977443608,
+     "strict_unsupported_n": 189,
+     "strict_leaks": 0,
+     "strict_upper95": 0.015873015873015872,
+     "faithful_kept_seed42": 27,
+     "stock_faithful_kept_seed42": 0,
+     "b2h_faithful_kept_seed42": 25
+    },
+    "composer": {
+     "S1": {
+      "n_turns": 29,
+      "stock_answered": 1,
+      "b2h_answered": 11,
+      "allowlist_answered": 6,
+      "HURTS": 0,
+      "LOSES_vs_b2h": 5,
+      "replay_misses": 0,
+      "status_counts": {
+       "both_abstain": 23,
+       "HELPS": 5,
+       "both_answer": 1
+      }
+     },
+     "S3": {
+      "n_turns": 61,
+      "stock_answered": 0,
+      "b2h_answered": 19,
+      "allowlist_answered": 19,
+      "HURTS": 0,
+      "LOSES_vs_b2h": 2,
+      "replay_misses": 0,
+      "status_counts": {
+       "both_abstain": 42,
+       "HELPS": 19
+      }
+     }
+    },
+    "bar4": {
+     "S1": {
+      "n": 13,
+      "kept": 8
+     },
+     "S2": {
+      "n": 118,
+      "kept": 117
+     },
+     "S3": {
+      "n": 25,
+      "kept": 23
+     }
+    }
+   },
+   "stub": {
+    "file": "research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive_allowlist4.json",
+    "sha256": "54f1367e212c2d062ddcd0144db8704d864acd025723719aa15c83aebbe12897",
+    "measured_at": "a631f7084",
+    "n_population": 78857,
+    "stock_answer_rate": 1.0,
+    "allowlist_answer_rate": 0.930963643050078,
+    "HURTS_allowlist": 0,
+    "HELPS_allowlist": 0,
+    "allowlist_role_reversed_stock_leaks": 436,
+    "allowlist_meaning_drift_stock_leaks": 5008,
+    "relation_table_sha256": "36e39fce89f4e4fd215c5f2ee184fd8ec1111693addfc5dd73722cb1baa2e1e0",
+    "unvoiceable_under_flag": 5444,
+    "role_reversed_by_relation": {
+     "parent_taxon": 182,
+     "father": 125,
+     "child": 81,
+     "author": 27,
+     "platform": 21
+    },
+    "meaning_drift_by_relation": {
+     "sport": 4116,
+     "instrument": 410,
+     "conflict": 280,
+     "spouse": 202
+    }
+   },
+   "nonblind_reruns": {
+    "r3": {
+     "file": "research/findings/raw/_moat_allowlist_hunt4/r3_rerun_build4.json",
+     "sha256": "0e8b59e5d917508dfa4f5d671bf9eb68cb89bbfec1d9c7ed5709575525f0fdc2",
+     "measured_at": "9a59065da",
+     "host": "dant123-wk",
+     "exit_code": 0,
+     "controls_all_ok": true,
+     "stock": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 158,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 12,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 43,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "b2h": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 158,
+       "kept_gate": 20,
+       "kept_composer": 20,
+       "kept_either_entry": 20,
+       "kept_ids_either_entry": [
+        "B02",
+        "B05",
+        "D05",
+        "D09",
+        "F04",
+        "F14",
+        "F15",
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "H08",
+        "H09",
+        "H11",
+        "I01",
+        "I02",
+        "I03",
+        "I09"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 12,
+       "kept_gate": 5,
+       "kept_composer": 5,
+       "kept_either_entry": 5,
+       "kept_ids_either_entry": [
+        "D07",
+        "D08",
+        "T01",
+        "T02",
+        "T03"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 43,
+       "kept_gate": 36,
+       "kept_composer": 36,
+       "kept_either_entry": 36,
+       "kept_ids_either_entry": [
+        "Z02",
+        "Z03",
+        "Z04",
+        "Z05",
+        "Z06",
+        "Z08",
+        "Z10",
+        "Z11",
+        "Z12",
+        "Z13",
+        "Z14",
+        "Z15",
+        "Z17",
+        "Z18",
+        "Z19",
+        "Z20",
+        "Z21",
+        "Z22",
+        "Z23",
+        "Z24",
+        "Z25",
+        "Z26",
+        "Z27",
+        "Z28",
+        "Z29",
+        "Z30",
+        "Z31",
+        "Z32",
+        "Z33",
+        "Z34",
+        "Z35",
+        "Z36",
+        "Z39",
+        "Z40",
+        "Z41",
+        "Z43"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "allowlist": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 158,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 12,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 43,
+       "kept_gate": 38,
+       "kept_composer": 38,
+       "kept_either_entry": 38,
+       "kept_ids_either_entry": [
+        "Z01",
+        "Z02",
+        "Z03",
+        "Z04",
+        "Z05",
+        "Z06",
+        "Z08",
+        "Z10",
+        "Z11",
+        "Z12",
+        "Z13",
+        "Z14",
+        "Z15",
+        "Z17",
+        "Z18",
+        "Z19",
+        "Z20",
+        "Z21",
+        "Z22",
+        "Z23",
+        "Z24",
+        "Z25",
+        "Z26",
+        "Z27",
+        "Z28",
+        "Z29",
+        "Z30",
+        "Z31",
+        "Z32",
+        "Z33",
+        "Z34",
+        "Z35",
+        "Z36",
+        "Z38",
+        "Z39",
+        "Z40",
+        "Z41",
+        "Z43"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "allowlist_U_kept": 0,
+     "allowlist_U_n": 158,
+     "allowlist_U_upper95": 0.0189873417721519,
+     "allowlist_strict_kept": 0,
+     "allowlist_strict_n": 170,
+     "allowlist_strict_upper95": 0.01764705882352941,
+     "allowlist_F_kept": 38,
+     "allowlist_F_n": 43
+    },
+    "r4": {
+     "file": "research/findings/raw/_moat_allowlist_hunt4/r4/results_build4.json",
+     "sha256": "0a573226e8fb265def44464c6e3f89a90fd0990d2050fd0e77f3b968bc36b381",
+     "measured_at": "6f0fbcfe3",
+     "host": "dant123-wk",
+     "exit_code": 0,
+     "controls_all_ok": true,
+     "stock": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 110,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 24,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 43,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "b2h": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 110,
+       "kept_gate": 14,
+       "kept_composer": 14,
+       "kept_either_entry": 14,
+       "kept_ids_either_entry": [
+        "R4-DT02",
+        "R4-EM02",
+        "R4-HG01",
+        "R4-HG02",
+        "R4-S3M02",
+        "R4-S3M03",
+        "R4-S3M05",
+        "R4-S3M07",
+        "R4-S3N01",
+        "R4-S3N02",
+        "R4-S3N03",
+        "R4-S3N06",
+        "R4-S3N07",
+        "R4-VD07"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 24,
+       "kept_gate": 11,
+       "kept_composer": 11,
+       "kept_either_entry": 11,
+       "kept_ids_either_entry": [
+        "R4-AR01",
+        "R4-AR02",
+        "R4-AR04",
+        "R4-DT03",
+        "R4-F43",
+        "R4-S3M01",
+        "R4-S3M04",
+        "R4-S3M06",
+        "R4-S3M08",
+        "R4-S3N08",
+        "R4-VD08"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 43,
+       "kept_gate": 30,
+       "kept_composer": 30,
+       "kept_either_entry": 30,
+       "kept_ids_either_entry": [
+        "R4-F01",
+        "R4-F02",
+        "R4-F03",
+        "R4-F04",
+        "R4-F05",
+        "R4-F06",
+        "R4-F07",
+        "R4-F08",
+        "R4-F10",
+        "R4-F12",
+        "R4-F13",
+        "R4-F14",
+        "R4-F15",
+        "R4-F16",
+        "R4-F17",
+        "R4-F18",
+        "R4-F19",
+        "R4-F20",
+        "R4-F21",
+        "R4-F22",
+        "R4-F23",
+        "R4-F24",
+        "R4-F26",
+        "R4-F27",
+        "R4-F28",
+        "R4-F29",
+        "R4-F31",
+        "R4-F37",
+        "R4-F38",
+        "R4-F44"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "allowlist": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 110,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 24,
+       "kept_gate": 4,
+       "kept_composer": 4,
+       "kept_either_entry": 4,
+       "kept_ids_either_entry": [
+        "R4-AR01",
+        "R4-AR04",
+        "R4-DT03",
+        "R4-F43"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 43,
+       "kept_gate": 27,
+       "kept_composer": 27,
+       "kept_either_entry": 27,
+       "kept_ids_either_entry": [
+        "R4-F01",
+        "R4-F02",
+        "R4-F03",
+        "R4-F04",
+        "R4-F05",
+        "R4-F06",
+        "R4-F09",
+        "R4-F10",
+        "R4-F12",
+        "R4-F13",
+        "R4-F14",
+        "R4-F15",
+        "R4-F16",
+        "R4-F17",
+        "R4-F18",
+        "R4-F19",
+        "R4-F20",
+        "R4-F21",
+        "R4-F22",
+        "R4-F23",
+        "R4-F24",
+        "R4-F26",
+        "R4-F27",
+        "R4-F28",
+        "R4-F29",
+        "R4-F31",
+        "R4-F44"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "allowlist_U_kept": 0,
+     "allowlist_U_n": 110,
+     "allowlist_U_upper95": 0.02727272727272727,
+     "allowlist_strict_kept": 4,
+     "allowlist_strict_n": 134,
+     "allowlist_strict_upper95": 0.06700449392126168,
+     "allowlist_F_kept": 27,
+     "allowlist_F_n": 43
+    },
+    "r5": {
+     "file": "research/findings/raw/_moat_allowlist_hunt4/r5/results_build4.json",
+     "sha256": "1eac5428ae1723745cc5766f2125d033ad148e4a5c586c44c13d5c6164a25202",
+     "measured_at": "43e111c48",
+     "host": "dant123-wk",
+     "exit_code": 0,
+     "controls_all_ok": true,
+     "stock": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 89,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 28,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 47,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "b2h": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 89,
+       "kept_gate": 15,
+       "kept_composer": 15,
+       "kept_either_entry": 15,
+       "kept_ids_either_entry": [
+        "R5-DL01",
+        "R5-DL02",
+        "R5-DQ01",
+        "R5-IN01",
+        "R5-NX01",
+        "R5-NX03",
+        "R5-NX04",
+        "R5-NX05",
+        "R5-NX06",
+        "R5-NX07",
+        "R5-NX08",
+        "R5-NX09",
+        "R5-NX14",
+        "R5-NX16",
+        "R5-NX18"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 28,
+       "kept_gate": 3,
+       "kept_composer": 3,
+       "kept_either_entry": 3,
+       "kept_ids_either_entry": [
+        "R5-CW02",
+        "R5-CW04",
+        "R5-IN02"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 47,
+       "kept_gate": 26,
+       "kept_composer": 26,
+       "kept_either_entry": 26,
+       "kept_ids_either_entry": [
+        "R5-F01",
+        "R5-F02",
+        "R5-F03",
+        "R5-F04",
+        "R5-F13",
+        "R5-F14",
+        "R5-F15",
+        "R5-F16",
+        "R5-F17",
+        "R5-F18",
+        "R5-F19",
+        "R5-F24",
+        "R5-F25",
+        "R5-F26",
+        "R5-F27",
+        "R5-F28",
+        "R5-F29",
+        "R5-F30",
+        "R5-F31",
+        "R5-F32",
+        "R5-F33",
+        "R5-F38",
+        "R5-F40",
+        "R5-F45",
+        "R5-F46",
+        "R5-F47"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "allowlist": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 89,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 28,
+       "kept_gate": 1,
+       "kept_composer": 1,
+       "kept_either_entry": 1,
+       "kept_ids_either_entry": [
+        "R5-CW04"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 47,
+       "kept_gate": 21,
+       "kept_composer": 21,
+       "kept_either_entry": 21,
+       "kept_ids_either_entry": [
+        "R5-F13",
+        "R5-F14",
+        "R5-F15",
+        "R5-F16",
+        "R5-F17",
+        "R5-F18",
+        "R5-F19",
+        "R5-F24",
+        "R5-F25",
+        "R5-F26",
+        "R5-F27",
+        "R5-F28",
+        "R5-F29",
+        "R5-F30",
+        "R5-F31",
+        "R5-F32",
+        "R5-F38",
+        "R5-F40",
+        "R5-F45",
+        "R5-F46",
+        "R5-F47"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "allowlist_U_kept": 0,
+     "allowlist_U_n": 89,
+     "allowlist_U_upper95": 0.033707865168539325,
+     "allowlist_strict_kept": 1,
+     "allowlist_strict_n": 117,
+     "allowlist_strict_upper95": 0.03990288212806109,
+     "allowlist_F_kept": 21,
+     "allowlist_F_n": 47
+    }
+   },
+   "bar3_pass": false
+  },
+  "5": {
+   "code": "ef51d6243",
+   "blind_round": "r7",
+   "hunt": {
+    "file": "research/findings/raw/_moat_allowlist_hunt4/r7/results_build5.json",
+    "sha256": "049e92fa3434b4f5ce18d1c3d2d2f37f17ee35fd781e205326d1651400c9056b",
+    "measured_at": "0e185dc47",
+    "host": "dant123-wk",
+    "exit_code": 0,
+    "controls_all_ok": true,
+    "stock": {
+     "VALID": true,
+     "n_undefined_case_entries": 0,
+     "U": {
+      "n": 191,
+      "kept_gate": 0,
+      "kept_composer": 5,
+      "kept_either_entry": 5,
+      "kept_ids_either_entry": [
+       "R7-B05",
+       "R7-H01",
+       "R7-I04",
+       "R7-P06",
+       "R7-X04"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "B": {
+      "n": 25,
+      "kept_gate": 0,
+      "kept_composer": 0,
+      "kept_either_entry": 0,
+      "kept_ids_either_entry": [],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "F": {
+      "n": 54,
+      "kept_gate": 2,
+      "kept_composer": 2,
+      "kept_either_entry": 2,
+      "kept_ids_either_entry": [
+       "R7-F12",
+       "R7-F14"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     }
+    },
+    "b2h": {
+     "VALID": true,
+     "n_undefined_case_entries": 0,
+     "U": {
+      "n": 191,
+      "kept_gate": 5,
+      "kept_composer": 5,
+      "kept_either_entry": 5,
+      "kept_ids_either_entry": [
+       "R7-A11",
+       "R7-C03",
+       "R7-CF08",
+       "R7-Z01",
+       "R7-Z02"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "B": {
+      "n": 25,
+      "kept_gate": 19,
+      "kept_composer": 19,
+      "kept_either_entry": 19,
+      "kept_ids_either_entry": [
+       "R7-A01",
+       "R7-A02",
+       "R7-A03",
+       "R7-A04",
+       "R7-A05",
+       "R7-A06",
+       "R7-A07",
+       "R7-A08",
+       "R7-A09",
+       "R7-A10",
+       "R7-A12",
+       "R7-A13",
+       "R7-A14",
+       "R7-A15",
+       "R7-A16",
+       "R7-A17",
+       "R7-A18",
+       "R7-A21",
+       "R7-A22"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "F": {
+      "n": 54,
+      "kept_gate": 45,
+      "kept_composer": 45,
+      "kept_either_entry": 45,
+      "kept_ids_either_entry": [
+       "R7-F01",
+       "R7-F02",
+       "R7-F03",
+       "R7-F04",
+       "R7-F05",
+       "R7-F06",
+       "R7-F07",
+       "R7-F08",
+       "R7-F10",
+       "R7-F11",
+       "R7-F12",
+       "R7-F13",
+       "R7-F14",
+       "R7-F15",
+       "R7-F16",
+       "R7-F17",
+       "R7-F18",
+       "R7-F19",
+       "R7-F20",
+       "R7-F21",
+       "R7-F22",
+       "R7-F23",
+       "R7-F24",
+       "R7-F25",
+       "R7-F26",
+       "R7-F27",
+       "R7-F29",
+       "R7-F30",
+       "R7-F31",
+       "R7-F32",
+       "R7-F36",
+       "R7-F37",
+       "R7-F38",
+       "R7-F40",
+       "R7-F41",
+       "R7-F43",
+       "R7-F44",
+       "R7-F45",
+       "R7-F46",
+       "R7-F47",
+       "R7-F49",
+       "R7-F51",
+       "R7-F52",
+       "R7-F53",
+       "R7-F54"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     }
+    },
+    "allowlist": {
+     "VALID": true,
+     "n_undefined_case_entries": 0,
+     "U": {
+      "n": 191,
+      "kept_gate": 0,
+      "kept_composer": 0,
+      "kept_either_entry": 0,
+      "kept_ids_either_entry": [],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "B": {
+      "n": 25,
+      "kept_gate": 0,
+      "kept_composer": 0,
+      "kept_either_entry": 0,
+      "kept_ids_either_entry": [],
+      "undefined": [
+       0,
+       0
+      ]
+     },
+     "F": {
+      "n": 54,
+      "kept_gate": 30,
+      "kept_composer": 30,
+      "kept_either_entry": 30,
+      "kept_ids_either_entry": [
+       "R7-F07",
+       "R7-F10",
+       "R7-F11",
+       "R7-F12",
+       "R7-F13",
+       "R7-F14",
+       "R7-F15",
+       "R7-F16",
+       "R7-F17",
+       "R7-F18",
+       "R7-F19",
+       "R7-F20",
+       "R7-F21",
+       "R7-F22",
+       "R7-F24",
+       "R7-F25",
+       "R7-F26",
+       "R7-F27",
+       "R7-F29",
+       "R7-F31",
+       "R7-F32",
+       "R7-F36",
+       "R7-F37",
+       "R7-F38",
+       "R7-F44",
+       "R7-F45",
+       "R7-F46",
+       "R7-F47",
+       "R7-F49",
+       "R7-F53"
+      ],
+      "undefined": [
+       0,
+       0
+      ]
+     }
+    },
+    "allowlist_U_kept": 0,
+    "allowlist_U_n": 191,
+    "allowlist_U_upper95": 0.015706806282722512,
+    "allowlist_strict_kept": 0,
+    "allowlist_strict_n": 216,
+    "allowlist_strict_upper95": 0.013888888888888888,
+    "allowlist_F_kept": 30,
+    "allowlist_F_n": 54
+   },
+   "hunt_cases": {
+    "cases": 270,
+    "skeptic_labels": {
+     "U": 216,
+     "F": 54
+    },
+    "adjudicated": {
+     "B": 25,
+     "U": 191,
+     "F": 54
+    },
+    "relabelled_to_B": 25
+   },
+   "strata": {
+    "heldout_numbers": "research/findings/raw/_moat_slug_norm_heldout/heldout_numbers_allowlist5.json",
+    "sha256": "87531ce5c8ede2740485c800a4149d808b6e8da9f360ae3d2544e54f02b29237",
+    "measured_at": "fde5e739e",
+    "S1": {
+     "buildable_unique": 272,
+     "lenient_unsupported_n": 122,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.02459016393442623,
+     "strict_unsupported_n": 180,
+     "strict_leaks": 0,
+     "strict_upper95": 0.016666666666666666,
+     "faithful_kept_seed42": 8,
+     "stock_faithful_kept_seed42": 1,
+     "b2h_faithful_kept_seed42": 13
+    },
+    "S2": {
+     "buildable_unique": 1068,
+     "lenient_unsupported_n": 930,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.0032258064516129032,
+     "strict_unsupported_n": 930,
+     "strict_leaks": 0,
+     "strict_upper95": 0.0032258064516129032,
+     "faithful_kept_seed42": 136,
+     "stock_faithful_kept_seed42": 0,
+     "b2h_faithful_kept_seed42": 118
+    },
+    "S3": {
+     "buildable_unique": 275,
+     "lenient_unsupported_n": 133,
+     "lenient_leaks": 0,
+     "lenient_upper95": 0.022556390977443608,
+     "strict_unsupported_n": 189,
+     "strict_leaks": 0,
+     "strict_upper95": 0.015873015873015872,
+     "faithful_kept_seed42": 27,
+     "stock_faithful_kept_seed42": 0,
+     "b2h_faithful_kept_seed42": 25
+    },
+    "composer": {
+     "S1": {
+      "n_turns": 29,
+      "stock_answered": 1,
+      "b2h_answered": 11,
+      "allowlist_answered": 6,
+      "HURTS": 0,
+      "LOSES_vs_b2h": 5,
+      "replay_misses": 0,
+      "status_counts": {
+       "both_abstain": 23,
+       "HELPS": 5,
+       "both_answer": 1
+      }
+     },
+     "S3": {
+      "n_turns": 61,
+      "stock_answered": 0,
+      "b2h_answered": 19,
+      "allowlist_answered": 19,
+      "HURTS": 0,
+      "LOSES_vs_b2h": 2,
+      "replay_misses": 0,
+      "status_counts": {
+       "both_abstain": 42,
+       "HELPS": 19
+      }
+     }
+    },
+    "bar4": {
+     "S1": {
+      "n": 13,
+      "kept": 8
+     },
+     "S2": {
+      "n": 118,
+      "kept": 117
+     },
+     "S3": {
+      "n": 25,
+      "kept": 23
+     }
+    }
+   },
+   "stub": {
+    "file": "research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive_allowlist5.json",
+    "sha256": "15ffa5ee59423ecb3cc87d11e061a3b645933363127d1a0f94881eb8181fef2d",
+    "measured_at": "5ccf24761",
+    "n_population": 78857,
+    "stock_answer_rate": 1.0,
+    "allowlist_answer_rate": 0.930963643050078,
+    "HURTS_allowlist": 0,
+    "HELPS_allowlist": 0,
+    "allowlist_role_reversed_stock_leaks": 436,
+    "allowlist_meaning_drift_stock_leaks": 5008,
+    "relation_table_sha256": "0f820d2f3f376516fccf75ab596a06d4763b2f9aab0ddc91edf826cccd8a039a",
+    "unvoiceable_under_flag": 5444,
+    "role_reversed_by_relation": {
+     "parent_taxon": 182,
+     "father": 125,
+     "child": 81,
+     "author": 27,
+     "platform": 21
+    },
+    "meaning_drift_by_relation": {
+     "sport": 4116,
+     "instrument": 410,
+     "conflict": 280,
+     "spouse": 202
+    }
+   },
+   "nonblind_reruns": {
+    "r3": {
+     "file": "research/findings/raw/_moat_allowlist_hunt4/r3_rerun_build5.json",
+     "sha256": "d2d4f79bec17ba9c31dff04c33b68b46379ad3a25b342f8359302084b1bc0235",
+     "measured_at": "c18568cbb",
+     "host": "dant123-wk",
+     "exit_code": 0,
+     "controls_all_ok": true,
+     "stock": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 158,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 12,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 43,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "b2h": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 158,
+       "kept_gate": 20,
+       "kept_composer": 20,
+       "kept_either_entry": 20,
+       "kept_ids_either_entry": [
+        "B02",
+        "B05",
+        "D05",
+        "D09",
+        "F04",
+        "F14",
+        "F15",
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05",
+        "G06",
+        "H08",
+        "H09",
+        "H11",
+        "I01",
+        "I02",
+        "I03",
+        "I09"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 12,
+       "kept_gate": 5,
+       "kept_composer": 5,
+       "kept_either_entry": 5,
+       "kept_ids_either_entry": [
+        "D07",
+        "D08",
+        "T01",
+        "T02",
+        "T03"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 43,
+       "kept_gate": 36,
+       "kept_composer": 36,
+       "kept_either_entry": 36,
+       "kept_ids_either_entry": [
+        "Z02",
+        "Z03",
+        "Z04",
+        "Z05",
+        "Z06",
+        "Z08",
+        "Z10",
+        "Z11",
+        "Z12",
+        "Z13",
+        "Z14",
+        "Z15",
+        "Z17",
+        "Z18",
+        "Z19",
+        "Z20",
+        "Z21",
+        "Z22",
+        "Z23",
+        "Z24",
+        "Z25",
+        "Z26",
+        "Z27",
+        "Z28",
+        "Z29",
+        "Z30",
+        "Z31",
+        "Z32",
+        "Z33",
+        "Z34",
+        "Z35",
+        "Z36",
+        "Z39",
+        "Z40",
+        "Z41",
+        "Z43"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "allowlist": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 158,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 12,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 43,
+       "kept_gate": 38,
+       "kept_composer": 38,
+       "kept_either_entry": 38,
+       "kept_ids_either_entry": [
+        "Z01",
+        "Z02",
+        "Z03",
+        "Z04",
+        "Z05",
+        "Z06",
+        "Z08",
+        "Z10",
+        "Z11",
+        "Z12",
+        "Z13",
+        "Z14",
+        "Z15",
+        "Z17",
+        "Z18",
+        "Z19",
+        "Z20",
+        "Z21",
+        "Z22",
+        "Z23",
+        "Z24",
+        "Z25",
+        "Z26",
+        "Z27",
+        "Z28",
+        "Z29",
+        "Z30",
+        "Z31",
+        "Z32",
+        "Z33",
+        "Z34",
+        "Z35",
+        "Z36",
+        "Z38",
+        "Z39",
+        "Z40",
+        "Z41",
+        "Z43"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "allowlist_U_kept": 0,
+     "allowlist_U_n": 158,
+     "allowlist_U_upper95": 0.0189873417721519,
+     "allowlist_strict_kept": 0,
+     "allowlist_strict_n": 170,
+     "allowlist_strict_upper95": 0.01764705882352941,
+     "allowlist_F_kept": 38,
+     "allowlist_F_n": 43
+    },
+    "r4": {
+     "file": "research/findings/raw/_moat_allowlist_hunt4/r4/results_build5.json",
+     "sha256": "e0fdbaab57b90632c832d614d54637d8a2079fe738d374a7f848c6f4aa825e66",
+     "measured_at": "f41af26e9",
+     "host": "dant123-wk",
+     "exit_code": 0,
+     "controls_all_ok": true,
+     "stock": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 110,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 24,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 43,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "b2h": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 110,
+       "kept_gate": 14,
+       "kept_composer": 14,
+       "kept_either_entry": 14,
+       "kept_ids_either_entry": [
+        "R4-DT02",
+        "R4-EM02",
+        "R4-HG01",
+        "R4-HG02",
+        "R4-S3M02",
+        "R4-S3M03",
+        "R4-S3M05",
+        "R4-S3M07",
+        "R4-S3N01",
+        "R4-S3N02",
+        "R4-S3N03",
+        "R4-S3N06",
+        "R4-S3N07",
+        "R4-VD07"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 24,
+       "kept_gate": 11,
+       "kept_composer": 11,
+       "kept_either_entry": 11,
+       "kept_ids_either_entry": [
+        "R4-AR01",
+        "R4-AR02",
+        "R4-AR04",
+        "R4-DT03",
+        "R4-F43",
+        "R4-S3M01",
+        "R4-S3M04",
+        "R4-S3M06",
+        "R4-S3M08",
+        "R4-S3N08",
+        "R4-VD08"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 43,
+       "kept_gate": 30,
+       "kept_composer": 30,
+       "kept_either_entry": 30,
+       "kept_ids_either_entry": [
+        "R4-F01",
+        "R4-F02",
+        "R4-F03",
+        "R4-F04",
+        "R4-F05",
+        "R4-F06",
+        "R4-F07",
+        "R4-F08",
+        "R4-F10",
+        "R4-F12",
+        "R4-F13",
+        "R4-F14",
+        "R4-F15",
+        "R4-F16",
+        "R4-F17",
+        "R4-F18",
+        "R4-F19",
+        "R4-F20",
+        "R4-F21",
+        "R4-F22",
+        "R4-F23",
+        "R4-F24",
+        "R4-F26",
+        "R4-F27",
+        "R4-F28",
+        "R4-F29",
+        "R4-F31",
+        "R4-F37",
+        "R4-F38",
+        "R4-F44"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "allowlist": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 110,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 24,
+       "kept_gate": 2,
+       "kept_composer": 2,
+       "kept_either_entry": 2,
+       "kept_ids_either_entry": [
+        "R4-AR01",
+        "R4-DT03"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 43,
+       "kept_gate": 25,
+       "kept_composer": 25,
+       "kept_either_entry": 25,
+       "kept_ids_either_entry": [
+        "R4-F01",
+        "R4-F02",
+        "R4-F03",
+        "R4-F04",
+        "R4-F05",
+        "R4-F06",
+        "R4-F09",
+        "R4-F10",
+        "R4-F12",
+        "R4-F13",
+        "R4-F14",
+        "R4-F15",
+        "R4-F16",
+        "R4-F17",
+        "R4-F18",
+        "R4-F19",
+        "R4-F21",
+        "R4-F22",
+        "R4-F23",
+        "R4-F24",
+        "R4-F26",
+        "R4-F27",
+        "R4-F28",
+        "R4-F29",
+        "R4-F44"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "allowlist_U_kept": 0,
+     "allowlist_U_n": 110,
+     "allowlist_U_upper95": 0.02727272727272727,
+     "allowlist_strict_kept": 2,
+     "allowlist_strict_n": 134,
+     "allowlist_strict_upper95": 0.046236069352293914,
+     "allowlist_F_kept": 25,
+     "allowlist_F_n": 43
+    },
+    "r5": {
+     "file": "research/findings/raw/_moat_allowlist_hunt4/r5/results_build5.json",
+     "sha256": "c7b78aabc37e2448ab13c035581121885b41ce318dc34a95f739272d97a871ce",
+     "measured_at": "0fc345476",
+     "host": "dant123-wk",
+     "exit_code": 0,
+     "controls_all_ok": true,
+     "stock": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 89,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 28,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 47,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "b2h": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 89,
+       "kept_gate": 15,
+       "kept_composer": 15,
+       "kept_either_entry": 15,
+       "kept_ids_either_entry": [
+        "R5-DL01",
+        "R5-DL02",
+        "R5-DQ01",
+        "R5-IN01",
+        "R5-NX01",
+        "R5-NX03",
+        "R5-NX04",
+        "R5-NX05",
+        "R5-NX06",
+        "R5-NX07",
+        "R5-NX08",
+        "R5-NX09",
+        "R5-NX14",
+        "R5-NX16",
+        "R5-NX18"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 28,
+       "kept_gate": 3,
+       "kept_composer": 3,
+       "kept_either_entry": 3,
+       "kept_ids_either_entry": [
+        "R5-CW02",
+        "R5-CW04",
+        "R5-IN02"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 47,
+       "kept_gate": 26,
+       "kept_composer": 26,
+       "kept_either_entry": 26,
+       "kept_ids_either_entry": [
+        "R5-F01",
+        "R5-F02",
+        "R5-F03",
+        "R5-F04",
+        "R5-F13",
+        "R5-F14",
+        "R5-F15",
+        "R5-F16",
+        "R5-F17",
+        "R5-F18",
+        "R5-F19",
+        "R5-F24",
+        "R5-F25",
+        "R5-F26",
+        "R5-F27",
+        "R5-F28",
+        "R5-F29",
+        "R5-F30",
+        "R5-F31",
+        "R5-F32",
+        "R5-F33",
+        "R5-F38",
+        "R5-F40",
+        "R5-F45",
+        "R5-F46",
+        "R5-F47"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "allowlist": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 89,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 28,
+       "kept_gate": 1,
+       "kept_composer": 1,
+       "kept_either_entry": 1,
+       "kept_ids_either_entry": [
+        "R5-CW04"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 47,
+       "kept_gate": 21,
+       "kept_composer": 21,
+       "kept_either_entry": 21,
+       "kept_ids_either_entry": [
+        "R5-F13",
+        "R5-F14",
+        "R5-F15",
+        "R5-F16",
+        "R5-F17",
+        "R5-F18",
+        "R5-F19",
+        "R5-F24",
+        "R5-F25",
+        "R5-F26",
+        "R5-F27",
+        "R5-F28",
+        "R5-F29",
+        "R5-F30",
+        "R5-F31",
+        "R5-F32",
+        "R5-F38",
+        "R5-F40",
+        "R5-F45",
+        "R5-F46",
+        "R5-F47"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "allowlist_U_kept": 0,
+     "allowlist_U_n": 89,
+     "allowlist_U_upper95": 0.033707865168539325,
+     "allowlist_strict_kept": 1,
+     "allowlist_strict_n": 117,
+     "allowlist_strict_upper95": 0.03990288212806109,
+     "allowlist_F_kept": 21,
+     "allowlist_F_n": 47
+    },
+    "r6": {
+     "file": "research/findings/raw/_moat_allowlist_hunt4/r6/results_build5.json",
+     "sha256": "56d2c74f6846ff7d2a4011b5ecb3d7f24e7ca8c06be247dc02bb1568d62ae3e4",
+     "measured_at": "bba8de138",
+     "host": "dant123-wk",
+     "exit_code": 0,
+     "controls_all_ok": true,
+     "stock": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 17,
+       "kept_gate": 0,
+       "kept_composer": 1,
+       "kept_either_entry": 1,
+       "kept_ids_either_entry": [
+        "R6-CR02"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 134,
+       "kept_gate": 1,
+       "kept_composer": 2,
+       "kept_either_entry": 2,
+       "kept_ids_either_entry": [
+        "R6-DX06",
+        "R6-S205"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 53,
+       "kept_gate": 2,
+       "kept_composer": 2,
+       "kept_either_entry": 2,
+       "kept_ids_either_entry": [
+        "R6-F29",
+        "R6-F31"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "b2h": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 17,
+       "kept_gate": 6,
+       "kept_composer": 6,
+       "kept_either_entry": 6,
+       "kept_ids_either_entry": [
+        "R6-CF01",
+        "R6-CF02",
+        "R6-CR06",
+        "R6-S201",
+        "R6-S203",
+        "R6-S210"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 134,
+       "kept_gate": 117,
+       "kept_composer": 117,
+       "kept_either_entry": 117,
+       "kept_ids_either_entry": [
+        "R6-AC01",
+        "R6-AC02",
+        "R6-AC04",
+        "R6-AC05",
+        "R6-AC06",
+        "R6-AC07",
+        "R6-AC13",
+        "R6-AC14",
+        "R6-AC15",
+        "R6-AC16",
+        "R6-AC17",
+        "R6-AC18",
+        "R6-AC19",
+        "R6-AC21",
+        "R6-AN01",
+        "R6-AN02",
+        "R6-AN03",
+        "R6-AN04",
+        "R6-AN05",
+        "R6-AN06",
+        "R6-AN07",
+        "R6-AN08",
+        "R6-AN09",
+        "R6-AN10",
+        "R6-AN11",
+        "R6-AN12",
+        "R6-AN13",
+        "R6-AN14",
+        "R6-AN15",
+        "R6-AN16",
+        "R6-AN17",
+        "R6-AN18",
+        "R6-AN20",
+        "R6-AN21",
+        "R6-AN22",
+        "R6-AN23",
+        "R6-AN24",
+        "R6-AO01",
+        "R6-AO02",
+        "R6-AO03",
+        "R6-AO04",
+        "R6-AO05",
+        "R6-AS01",
+        "R6-AS02",
+        "R6-AS03",
+        "R6-AS04",
+        "R6-AS05",
+        "R6-AS06",
+        "R6-AS07",
+        "R6-CF03",
+        "R6-CF05",
+        "R6-CF06",
+        "R6-CN01",
+        "R6-CN02",
+        "R6-CN03",
+        "R6-CN05",
+        "R6-CN07",
+        "R6-CN08",
+        "R6-DC01",
+        "R6-DC02",
+        "R6-DC03",
+        "R6-DC04",
+        "R6-DC05",
+        "R6-DC06",
+        "R6-DC07",
+        "R6-DC08",
+        "R6-DC09",
+        "R6-DP01",
+        "R6-DP02",
+        "R6-DP03",
+        "R6-DP04",
+        "R6-DP05",
+        "R6-DP06",
+        "R6-DP07",
+        "R6-DP08",
+        "R6-DP09",
+        "R6-DP10",
+        "R6-DP13",
+        "R6-DP14",
+        "R6-DP15",
+        "R6-DP16",
+        "R6-DP17",
+        "R6-DP18",
+        "R6-DX01",
+        "R6-DX05",
+        "R6-GP01",
+        "R6-LC01",
+        "R6-LC02",
+        "R6-LC03",
+        "R6-LC04",
+        "R6-MC01",
+        "R6-MC02",
+        "R6-MC03",
+        "R6-MC04",
+        "R6-MC06",
+        "R6-OR01",
+        "R6-OR02",
+        "R6-OR03",
+        "R6-OR04",
+        "R6-OR05",
+        "R6-OR06",
+        "R6-QN01",
+        "R6-QN02",
+        "R6-QN03",
+        "R6-QN04",
+        "R6-QN05",
+        "R6-QN06",
+        "R6-QN07",
+        "R6-S202",
+        "R6-S204",
+        "R6-S205",
+        "R6-S206",
+        "R6-S207",
+        "R6-S209",
+        "R6-S211",
+        "R6-S212",
+        "R6-S213"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 53,
+       "kept_gate": 50,
+       "kept_composer": 50,
+       "kept_either_entry": 50,
+       "kept_ids_either_entry": [
+        "R6-F01",
+        "R6-F02",
+        "R6-F03",
+        "R6-F04",
+        "R6-F06",
+        "R6-F07",
+        "R6-F08",
+        "R6-F09",
+        "R6-F10",
+        "R6-F11",
+        "R6-F12",
+        "R6-F13",
+        "R6-F14",
+        "R6-F15",
+        "R6-F16",
+        "R6-F17",
+        "R6-F18",
+        "R6-F19",
+        "R6-F20",
+        "R6-F21",
+        "R6-F22",
+        "R6-F23",
+        "R6-F24",
+        "R6-F25",
+        "R6-F26",
+        "R6-F27",
+        "R6-F28",
+        "R6-F29",
+        "R6-F30",
+        "R6-F31",
+        "R6-F32",
+        "R6-F33",
+        "R6-F34",
+        "R6-F35",
+        "R6-F36",
+        "R6-F37",
+        "R6-F38",
+        "R6-F39",
+        "R6-F40",
+        "R6-F41",
+        "R6-F44",
+        "R6-F45",
+        "R6-F46",
+        "R6-F47",
+        "R6-F48",
+        "R6-F49",
+        "R6-F50",
+        "R6-F51",
+        "R6-F52",
+        "R6-F53"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "allowlist": {
+      "VALID": true,
+      "n_undefined_case_entries": 0,
+      "U": {
+       "n": 17,
+       "kept_gate": 0,
+       "kept_composer": 0,
+       "kept_either_entry": 0,
+       "kept_ids_either_entry": [],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "B": {
+       "n": 134,
+       "kept_gate": 81,
+       "kept_composer": 81,
+       "kept_either_entry": 81,
+       "kept_ids_either_entry": [
+        "R6-AC13",
+        "R6-AC14",
+        "R6-AC15",
+        "R6-AC16",
+        "R6-AN01",
+        "R6-AN02",
+        "R6-AN03",
+        "R6-AN04",
+        "R6-AN05",
+        "R6-AN06",
+        "R6-AN07",
+        "R6-AN08",
+        "R6-AN09",
+        "R6-AN10",
+        "R6-AN11",
+        "R6-AN12",
+        "R6-AN13",
+        "R6-AN14",
+        "R6-AN15",
+        "R6-AN16",
+        "R6-AN17",
+        "R6-AN18",
+        "R6-AN20",
+        "R6-AN21",
+        "R6-AN22",
+        "R6-AN23",
+        "R6-AN24",
+        "R6-AO01",
+        "R6-AO02",
+        "R6-AO03",
+        "R6-AO04",
+        "R6-AO05",
+        "R6-AS01",
+        "R6-AS02",
+        "R6-AS03",
+        "R6-AS04",
+        "R6-AS05",
+        "R6-AS06",
+        "R6-AS07",
+        "R6-CN02",
+        "R6-CN05",
+        "R6-CN07",
+        "R6-CN08",
+        "R6-DC01",
+        "R6-DC02",
+        "R6-DC03",
+        "R6-DC04",
+        "R6-DC05",
+        "R6-DC06",
+        "R6-DC07",
+        "R6-DC08",
+        "R6-DC09",
+        "R6-DP01",
+        "R6-DP02",
+        "R6-DP03",
+        "R6-DP04",
+        "R6-DP05",
+        "R6-DP06",
+        "R6-DP07",
+        "R6-DP08",
+        "R6-DP09",
+        "R6-DP10",
+        "R6-DP15",
+        "R6-DP16",
+        "R6-DP17",
+        "R6-DP18",
+        "R6-GP01",
+        "R6-LC01",
+        "R6-LC03",
+        "R6-MC01",
+        "R6-MC02",
+        "R6-MC03",
+        "R6-MC06",
+        "R6-OR01",
+        "R6-OR03",
+        "R6-OR04",
+        "R6-OR05",
+        "R6-OR06",
+        "R6-QN03",
+        "R6-QN04",
+        "R6-QN05"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      },
+      "F": {
+       "n": 53,
+       "kept_gate": 36,
+       "kept_composer": 36,
+       "kept_either_entry": 36,
+       "kept_ids_either_entry": [
+        "R6-F01",
+        "R6-F02",
+        "R6-F06",
+        "R6-F07",
+        "R6-F08",
+        "R6-F09",
+        "R6-F10",
+        "R6-F11",
+        "R6-F12",
+        "R6-F13",
+        "R6-F15",
+        "R6-F16",
+        "R6-F17",
+        "R6-F20",
+        "R6-F21",
+        "R6-F22",
+        "R6-F23",
+        "R6-F24",
+        "R6-F25",
+        "R6-F26",
+        "R6-F29",
+        "R6-F30",
+        "R6-F33",
+        "R6-F34",
+        "R6-F35",
+        "R6-F36",
+        "R6-F37",
+        "R6-F38",
+        "R6-F39",
+        "R6-F41",
+        "R6-F45",
+        "R6-F47",
+        "R6-F48",
+        "R6-F49",
+        "R6-F51",
+        "R6-F52"
+       ],
+       "undefined": [
+        0,
+        0
+       ]
+      }
+     },
+     "allowlist_U_kept": 0,
+     "allowlist_U_n": 17,
+     "allowlist_U_upper95": 0.17647058823529413,
+     "allowlist_strict_kept": 81,
+     "allowlist_strict_n": 151,
+     "allowlist_strict_upper95": 0.6054884996421728,
+     "allowlist_F_kept": 36,
+     "allowlist_F_n": 53
+    }
+   },
+   "bar3_pass": true
+  }
+ },
+ "bank_and_must_keep": {
+  "file": "tests/fixtures/moat_allowlist_bank.json",
+  "sha256": "0a3cfa90bbf57dbaf426e7c3888ede273e27fd1a79f4ce6feb4e013b5f934bcb",
+  "expect_U_by_source": {
+   "leak_hunt.py": 57,
+   "leak_hunt2.py": 19,
+   "cases_a.py": 105,
+   "cases_b.py": 68,
+   "sweep_real.py": 1329
+  },
+  "expect_U_total": 1578,
+  "must_keep_single_triple": 38,
+  "must_keep_allowlist_losses": 7,
+  "must_keep_kept": 31
+ },
+ "build5_moat_suite": {
+  "file": "research/findings/raw/_moat_allowlist_verdict/pytest_moat_build5.xml",
+  "sha256": "cf60b16a426eff3621b9c3280bc013f0661e81cddd7acdef0089d02cc845ec31",
+  "totals": {
+   "tests": 1202,
+   "failures": 0,
+   "errors": 0,
+   "skipped": 0
+  },
+  "by_file": {
+   "test_moat_allowlist": {
+    "tests": 452,
+    "not_passed": 0
+   },
+   "test_moat_allowlist_witnesses": {
+    "tests": 78,
+    "not_passed": 0
+   },
+   "test_moat_allowlist_caps": {
+    "tests": 82,
+    "not_passed": 0
+   },
+   "test_moat_allowlist_exact": {
+    "tests": 118,
+    "not_passed": 0
+   },
+   "test_moat_allowlist_build5": {
+    "tests": 94,
+    "not_passed": 0
+   },
+   "test_moat_allowlist_build5_witnesses": {
+    "tests": 152,
+    "not_passed": 0
+   },
+   "test_moat_hunt_runner": {
+    "tests": 25,
+    "not_passed": 0
+   },
+   "test_moat_slug_norm": {
+    "tests": 201,
+    "not_passed": 0
+   }
+  },
+  "bar_tests": {
+   "tests.test_moat_allowlist::test_flag_off_production_claim_gate_matches_the_unmodified_verifier_golden[None]": true,
+   "tests.test_moat_allowlist::test_flag_off_production_claim_gate_matches_the_unmodified_verifier_golden[0]": true,
+   "tests.test_moat_allowlist::test_flag_off_production_claim_gate_matches_the_unmodified_verifier_golden[]": true,
+   "tests.test_moat_allowlist::test_flag_off_production_claim_gate_matches_the_unmodified_verifier_golden[off]": true,
+   "tests.test_moat_allowlist::test_flag_off_production_claim_gate_matches_the_unmodified_verifier_golden[false]": true,
+   "tests.test_moat_allowlist::test_flag_off_production_claim_gate_matches_the_unmodified_verifier_golden[no]": true,
+   "tests.test_moat_allowlist::test_flag_off_production_claim_gate_matches_the_unmodified_verifier_golden[garbage]": true,
+   "tests.test_moat_allowlist::test_flag_off_composer_routes_exactly_as_before[None]": true,
+   "tests.test_moat_allowlist::test_flag_off_composer_routes_exactly_as_before[0]": true,
+   "tests.test_moat_allowlist::test_flag_off_composer_routes_exactly_as_before[off]": true,
+   "tests.test_moat_allowlist::test_flag_off_composer_routes_exactly_as_before[garbage]": true,
+   "tests.test_moat_allowlist::test_flag_off_builds_the_stock_verifier_with_the_old_cache_key": true,
+   "tests.test_moat_allowlist::test_flag_on_ignores_the_claim_moat_escape_but_flag_off_keeps_it": true,
+   "tests.test_moat_allowlist::test_bank_is_the_full_port_and_nontrivial": true,
+   "tests.test_moat_allowlist::test_every_expect_u_bank_case_is_rejected_at_every_seed[leak_hunt.py]": true,
+   "tests.test_moat_allowlist::test_every_expect_u_bank_case_is_rejected_at_every_seed[leak_hunt2.py]": true,
+   "tests.test_moat_allowlist::test_every_expect_u_bank_case_is_rejected_at_every_seed[cases_a.py]": true,
+   "tests.test_moat_allowlist::test_every_expect_u_bank_case_is_rejected_at_every_seed[cases_b.py]": true,
+   "tests.test_moat_allowlist::test_every_expect_u_bank_case_is_rejected_at_every_seed[sweep_real.py]": true,
+   "tests.test_moat_allowlist::test_the_bank_can_see_a_leak_the_b2h_arm_accepts_some_of_it": true,
+   "tests.test_moat_allowlist::test_board_265_mutual_pair_is_unbuildable_for_the_stock_verifier_control": true,
+   "tests.test_moat_allowlist::test_board_265_mutual_pair_under_the_flag[Shawano County shares border with Menominee County.-True]": true,
+   "tests.test_moat_allowlist::test_board_265_mutual_pair_under_the_flag[Menominee County shares border with Shawano County.-True]": true,
+   "tests.test_moat_allowlist::test_board_265_mutual_pair_under_the_flag[Shawano County is an instance of county of Wisconsin.-True]": true,
+   "tests.test_moat_allowlist::test_board_265_mutual_pair_under_the_flag[Menominee County is an instance of county of Wisconsin.-False]": true,
+   "tests.test_moat_allowlist::test_board_265_mutual_pair_under_the_flag[Shawano County shares border with county of Wisconsin.-False]": true,
+   "tests.test_moat_allowlist::test_board_265_mutual_pair_under_the_flag[Shawano County shares border with Menominee County and county of Wisconsin.-False]": true,
+   "tests.test_moat_allowlist::test_board_265_mutual_pair_under_the_flag[Menominee County shares border with Shawano County, which is an instance of county of Wisconsin.-False]": true,
+   "tests.test_moat_allowlist::test_board_265_composer_decides_the_mutual_pair_without_the_single_triple_fallback": true,
+   "tests.test_moat_allowlist::test_board_266_the_stock_three_letter_match_loses_the_subject_control": true,
+   "tests.test_moat_allowlist::test_board_266_prefix_subject_under_the_flag[country]": true,
+   "tests.test_moat_allowlist::test_board_266_prefix_subject_under_the_flag[sport]": true,
+   "tests.test_moat_allowlist::test_board_266_prefix_subject_under_the_flag[genre]": true,
+   "tests.test_moat_allowlist::test_board_266_prefix_subject_under_the_flag[shares_border_with]": true,
+   "tests.test_moat_allowlist::test_board_266_prefix_subject_under_the_flag[subclass_of]": true,
+   "tests.test_moat_allowlist::test_board_266_prefix_subject_under_the_flag[instance_of]": true,
+   "tests.test_moat_allowlist::test_board_266_prefix_subject_under_the_flag[headquarters_location]": true,
+   "tests.test_moat_allowlist::test_must_keep_set_is_nontrivial_and_from_the_held_out_strata": true,
+   "tests.test_moat_slug_norm::test_golden_is_nontrivial": true,
+   "tests.test_moat_slug_norm::test_flag_off_builds_the_stock_verifier_with_the_old_cache_key": true,
+   "tests.test_moat_slug_norm::test_flag_off_rejects_what_it_always_rejected": true,
+   "tests.test_moat_slug_norm::test_flag_off_one_fact_turn_uses_the_single_triple_verify[None]": true,
+   "tests.test_moat_slug_norm::test_flag_off_one_fact_turn_uses_the_single_triple_verify[0]": true,
+   "tests.test_moat_slug_norm::test_flag_off_one_fact_turn_uses_the_single_triple_verify[]": true,
+   "tests.test_moat_slug_norm::test_flag_off_one_fact_turn_uses_the_single_triple_verify[off]": true,
+   "tests.test_moat_slug_norm::test_flag_off_one_fact_turn_uses_the_single_triple_verify[false]": true,
+   "tests.test_moat_slug_norm::test_flag_off_one_fact_turn_uses_the_single_triple_verify[no]": true,
+   "tests.test_moat_slug_norm::test_flag_off_one_fact_turn_uses_the_single_triple_verify[garbage]": true,
+   "tests.test_moat_slug_norm::test_hunt_cases_the_flag_off_verifier_still_leaks_stay_unchanged_when_off": true
+  }
+ },
+ "build5_mutation": {
+  "commit": "ef51d6243 (branch claude-build/moat-allowlist-1020e)",
+  "n_mutants": 347,
+  "killed_by_corpus": 109,
+  "killed_by_pytest_after_corpus": 120,
+  "killed_total": 229,
+  "survived_total": 118,
+  "pytest_command": "pytest tests/test_moat_allowlist_build5.py tests/test_moat_allowlist_exact.py tests/test_moat_allowlist_witnesses.py tests/test_moat_allowlist_caps.py tests/test_moat_allowlist.py -q -p no:cacheprovider -x (same five files as specified, ordered so the likeliest killers run first; any failure kills, so order does not change a verdict)",
+  "baseline": "824 passed on the unmutated worktree (wt-mut5 and wt-mut5-15), ~130 s",
+  "witness_corpus_items": 10614,
+  "n_survived_equivalent": 48,
+  "n_survived_not_equivalent": 70,
+  "n_survived_unsure": 0,
+  "record": "research/findings/raw/_moat_allowlist_verdict/mutation_build5_summary.json"
+ }
+}

@@ -1,0 +1,85 @@
+{
+ "_doc": "exhaustive one-fact stub-mouth population, stock _verify vs the BRAIN_MOAT_SLUG_NORM claim gate and the BRAIN_MOAT_ALLOWLIST claim gate (module docstring)",
+ "arms": [
+  "allowlist"
+ ],
+ "limit": 700,
+ "n_population": 78857,
+ "elapsed_s": 16.3,
+ "backend": "numpy",
+ "device": "cpu",
+ "host": "dant123-wk",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-allow/research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive.py",
+  "research/findings/raw/_moat_slug_norm_heldout/stub_population_allowlist_rr_smoke.json",
+  "1",
+  "research/findings/raw/_moat_slug_norm_heldout/composer_stub_sweep_3000_after.json",
+  "--arms",
+  "allowlist",
+  "--limit",
+  "700"
+ ],
+ "parser_seed": 1,
+ "n_facts": 700,
+ "cells(stock_ok,flag_on_ok)": null,
+ "stock_answer_rate": 1.0,
+ "flag_on_answer_rate": null,
+ "HURTS": null,
+ "HELPS": null,
+ "flag_on_fallback_to_single_triple": null,
+ "hurts_reasons": {},
+ "hurts_by_relation": {},
+ "composer_sample_agreement": null,
+ "cells(stock_ok,allowlist_ok)": {
+  "(True, True)": 697,
+  "(True, False)": 3
+ },
+ "allowlist_answer_rate": 0.9957142857142857,
+ "HURTS_allowlist": 0,
+ "HELPS_allowlist": 0,
+ "allowlist_unbuildable_rejected": 0,
+ "allowlist_hurts_reasons": {},
+ "allowlist_hurts_by_relation": {},
+ "allowlist_role_reversed_stock_leaks": 3,
+ "allowlist_role_reversed_by_relation": {
+  "child": 2,
+  "father": 1
+ },
+ "allowlist_role_reversed_stock_rejected_by_relation": {},
+ "relation_table": "research/runners/_moat_allowlist_relations.py",
+ "relation_table_sha256": "37bf3563ed36d449ce2a66b6a823c294d1bba4616590350ee52ba0c14a2d3ba2",
+ "allowlist_role_reversed_rows": [
+  {
+   "svo": [
+    "jaya_badhuri",
+    "child",
+    "abishek_bachchan"
+   ],
+   "surface": "The jaya_badhuri childs abishek_bachchan.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "albert_prince_of_wales",
+    "child",
+    "george_v"
+   ],
+   "surface": "The albert_prince_of_wales childs george_v.",
+   "reject": "allowlist: no shape: at token 2 'childs' expected a relation with a verb reading ('childs' reads child, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  },
+  {
+   "svo": [
+    "albert_prince_of_wales",
+    "father",
+    "albert_prince_consort"
+   ],
+   "surface": "The albert_prince_of_wales fathers albert_prince_consort.",
+   "reject": "allowlist: no shape: at token 2 'fathers' expected a relation with a verb reading ('fathers' reads father, classified ROLE-REVERSING in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]"
+  }
+ ],
+ "hurts_rows": [],
+ "helps_rows": [],
+ "allowlist_hurts_rows": [],
+ "allowlist_helps_rows": []
+}

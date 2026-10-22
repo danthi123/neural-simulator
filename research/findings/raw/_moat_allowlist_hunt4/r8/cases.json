@@ -1,0 +1,4534 @@
+[
+ {
+  "id": "R8-RJ01",
+  "gathered": [
+   [
+    "peter_fonda",
+    "father",
+    "henry_fonda"
+   ],
+   [
+    "jayne_seymour_fonda",
+    "father",
+    "henry_fonda"
+   ]
+  ],
+  "sentence": "Henry Fonda is the father of Peter Fonda. Jayne Seymour Fonda is the father of Henry Fonda.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 2 renders (jayne_seymour_fonda, father, henry_fonda) with the father phrase reversed: it says the daughter is Henry Fonda's father",
+  "reply": true,
+  "sentences": [
+   "Henry Fonda is the father of Peter Fonda.",
+   "Jayne Seymour Fonda is the father of Henry Fonda."
+  ]
+ },
+ {
+  "id": "R8-RJ02",
+  "gathered": [
+   [
+    "jeff_bridges",
+    "father",
+    "lloyd_bridges"
+   ],
+   [
+    "jeff_bridges",
+    "sibling",
+    "beau_bridges"
+   ]
+  ],
+  "sentence": "Lloyd Bridges is the father of Jeff Bridges. So is Beau Bridges.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "the elliptical second sentence reads 'Beau Bridges is the father of Jeff Bridges too'; Beau is his sibling",
+  "reply": true,
+  "sentences": [
+   "Lloyd Bridges is the father of Jeff Bridges.",
+   "So is Beau Bridges."
+  ]
+ },
+ {
+  "id": "R8-RJ03",
+  "gathered": [
+   [
+    "henry_fonda",
+    "child",
+    "jayne_seymour_fonda"
+   ],
+   [
+    "peter_fonda",
+    "father",
+    "henry_fonda"
+   ],
+   [
+    "peter_fonda",
+    "sibling",
+    "jayne_seymour_fonda"
+   ]
+  ],
+  "sentence": "Jayne Seymour Fonda is a child of Henry Fonda. Henry Fonda is the father of Peter Fonda. Peter Fonda is her only sibling.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 3 adds 'only' (no other siblings) and a pronoun; the gathered set says nothing about other siblings",
+  "reply": true,
+  "sentences": [
+   "Jayne Seymour Fonda is a child of Henry Fonda.",
+   "Henry Fonda is the father of Peter Fonda.",
+   "Peter Fonda is her only sibling."
+  ]
+ },
+ {
+  "id": "R8-RJ04",
+  "gathered": [
+   [
+    "ringo_star",
+    "instrument",
+    "drum_kit"
+   ],
+   [
+    "george_harrison",
+    "instrument",
+    "history_of_the_guitar"
+   ]
+  ],
+  "sentence": "Ringo Star plays drum kit. George Harrison does not.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 2 renders George Harrison's instrument triple as a negation of playing the drum kit, which nothing gathered states",
+  "reply": true,
+  "sentences": [
+   "Ringo Star plays drum kit.",
+   "George Harrison does not."
+  ]
+ },
+ {
+  "id": "R8-RJ05",
+  "gathered": [
+   [
+    "w_churchill",
+    "conflict",
+    "world_war_one"
+   ],
+   [
+    "charles_degaulle",
+    "conflict",
+    "war_world_two"
+   ]
+  ],
+  "sentence": "W Churchill participated in world war one. Charles Degaulle participated in war world two, but not in world war one.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 2 adds a denial (not in world war one) that no gathered triple supports",
+  "reply": true,
+  "sentences": [
+   "W Churchill participated in world war one.",
+   "Charles Degaulle participated in war world two, but not in world war one."
+  ]
+ },
+ {
+  "id": "R8-RJ06",
+  "gathered": [
+   [
+    "genesis_band",
+    "has_part",
+    "phil_colins"
+   ],
+   [
+    "phil_colins",
+    "member_of",
+    "genesis_band"
+   ]
+  ],
+  "sentence": "Genesis band has part Phil Colins. Phil Colins is no longer a member of Genesis band.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 2 says the membership ended; the gathered member_of triple states it plainly",
+  "reply": true,
+  "sentences": [
+   "Genesis band has part Phil Colins.",
+   "Phil Colins is no longer a member of Genesis band."
+  ]
+ },
+ {
+  "id": "R8-RJ07",
+  "gathered": [
+   [
+    "october",
+    "follows",
+    "mean_fomhair"
+   ],
+   [
+    "the_month_of_november",
+    "follows",
+    "october"
+   ],
+   [
+    "xber",
+    "follows",
+    "the_month_of_november"
+   ]
+  ],
+  "sentence": "October follows Mean Fomhair. The month of November follows October. Xber follows the month of November, and nothing follows Xber.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 3 adds 'nothing follows Xber', false against the store and not gathered",
+  "reply": true,
+  "sentences": [
+   "October follows Mean Fomhair.",
+   "The month of November follows October.",
+   "Xber follows the month of November, and nothing follows Xber."
+  ]
+ },
+ {
+  "id": "R8-RJ08",
+  "gathered": [
+   [
+    "october",
+    "followed_by",
+    "the_month_of_november"
+   ],
+   [
+    "the_month_of_november",
+    "followed_by",
+    "xber"
+   ]
+  ],
+  "sentence": "October is followed by the month of November. Xber is followed by the month of November.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 2 reverses followed_by: it puts Xber before November",
+  "reply": true,
+  "sentences": [
+   "October is followed by the month of November.",
+   "Xber is followed by the month of November."
+  ]
+ },
+ {
+  "id": "R8-RJ09",
+  "gathered": [
+   [
+    "mean_fomhair",
+    "follows",
+    "aug"
+   ],
+   [
+    "october",
+    "follows",
+    "mean_fomhair"
+   ]
+  ],
+  "sentence": "Mean Fomhair follows Aug. Perhaps October follows Mean Fomhair.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 2 is hedged with a leading 'Perhaps' inside a composer reply, where it is no declared non-claim",
+  "reply": true,
+  "sentences": [
+   "Mean Fomhair follows Aug.",
+   "Perhaps October follows Mean Fomhair."
+  ]
+ },
+ {
+  "id": "R8-RJ10",
+  "gathered": [
+   [
+    "united_kingom",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   [
+    "franzoesische_republik",
+    "member_of",
+    "united_nations_security_council"
+   ]
+  ],
+  "sentence": "United Kingom shares border with Franzoesische Republik. My guess is that Franzoesische Republik is a member of United Nations Security Council.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 2 is a first-person guess frame: it hedges a gathered fact and makes a first-person claim",
+  "reply": true,
+  "sentences": [
+   "United Kingom shares border with Franzoesische Republik.",
+   "My guess is that Franzoesische Republik is a member of United Nations Security Council."
+  ]
+ },
+ {
+  "id": "R8-RJ11",
+  "gathered": [
+   [
+    "henry_fonda",
+    "conflict",
+    "war_world_two"
+   ],
+   [
+    "he_s_dead_jim",
+    "occupation",
+    "doctor_behaviour"
+   ]
+  ],
+  "sentence": "Henry Fonda participated in war world two. He s dead Jim occupation doctor behaviour.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "the store name he_s_dead_jim, displayed after a sentence about Henry Fonda, reads 'He's dead, Jim': it asserts that Henry Fonda is dead, which is not gathered",
+  "reply": true,
+  "sentences": [
+   "Henry Fonda participated in war world two.",
+   "He s dead Jim occupation doctor behaviour."
+  ]
+ },
+ {
+  "id": "R8-RJ12",
+  "gathered": [
+   [
+    "w_churchill",
+    "conflict",
+    "world_war_one"
+   ],
+   [
+    "he_s_dead_jim",
+    "given_name",
+    "l_n_rd"
+   ]
+  ],
+  "sentence": "W Churchill participated in world war one. He s dead Jim given name L N Rd.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "as RJ11 with W Churchill as the antecedent of 'He s dead'; arguable because the telegraphic tail ('given name L N Rd') may make a reader take the whole run as a garbled name",
+  "reply": true,
+  "sentences": [
+   "W Churchill participated in world war one.",
+   "He s dead Jim given name L N Rd."
+  ],
+  "arguable": true
+ },
+ {
+  "id": "R8-RJ13",
+  "gathered": [
+   [
+    "canada_portal",
+    "member_of",
+    "united_nations"
+   ],
+   [
+    "not_wanted",
+    "instance_of",
+    "human_specie"
+   ]
+  ],
+  "sentence": "Canada portal is a member of the United Nations. Not wanted is an instance of human specie.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "the store name 'Not wanted' opening the next sentence reads as a comment on the membership just stated (not wanted); arguable because a reader may take it as a garbled name",
+  "reply": true,
+  "sentences": [
+   "Canada portal is a member of the United Nations.",
+   "Not wanted is an instance of human specie."
+  ],
+  "arguable": true
+ },
+ {
+  "id": "R8-RJ14",
+  "gathered": [
+   [
+    "trevor_horn",
+    "member_of",
+    "yes_band"
+   ],
+   [
+    "trevor_rabin",
+    "part_of",
+    "yes_band"
+   ],
+   [
+    "yes_band",
+    "genre",
+    "symphonic_rock"
+   ]
+  ],
+  "sentence": "Trevor Horn is a member of Yes band. Trevor Rabin left Yes band. Yes band genre symphonic rock.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 2 says Trevor Rabin left the band; the gathered triple states he is part of it",
+  "reply": true,
+  "sentences": [
+   "Trevor Horn is a member of Yes band.",
+   "Trevor Rabin left Yes band.",
+   "Yes band genre symphonic rock."
+  ]
+ },
+ {
+  "id": "R8-RJ15",
+  "gathered": [
+   [
+    "the_rolling_stones",
+    "has_part",
+    "michael_philip_jagger"
+   ],
+   [
+    "keith_richards",
+    "member_of",
+    "the_rolling_stones"
+   ]
+  ],
+  "sentence": "The Rolling Stones has part Michael Philip Jagger. Keith Richards is a member of the Rolling Stones as well, and the two founded it.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 2 adds that the two founded the band, not gathered",
+  "reply": true,
+  "sentences": [
+   "The Rolling Stones has part Michael Philip Jagger.",
+   "Keith Richards is a member of the Rolling Stones as well, and the two founded it."
+  ]
+ },
+ {
+  "id": "R8-RJ16",
+  "gathered": [
+   [
+    "john_huston",
+    "father",
+    "walter_thomas_huston"
+   ],
+   [
+    "huston_anjelica",
+    "father",
+    "john_huston"
+   ]
+  ],
+  "sentence": "Walter Thomas Huston is the father of John Huston. He is also the father of Huston Anjelica.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "'He' points back to Walter Thomas Huston, who is Huston Anjelica's grandfather in the gathered chain",
+  "reply": true,
+  "sentences": [
+   "Walter Thomas Huston is the father of John Huston.",
+   "He is also the father of Huston Anjelica."
+  ]
+ },
+ {
+  "id": "R8-RJ17",
+  "gathered": [
+   [
+    "george_v",
+    "father",
+    "albert_prince_of_wales"
+   ],
+   [
+    "albert_prince_of_wales",
+    "given_name",
+    "edw"
+   ]
+  ],
+  "sentence": "Albert Prince of Wales is the father of George V. The latter given name Edw.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "'The latter' points back to George V, so sentence 2 gives George V the given name Edw, which belongs to his father",
+  "reply": true,
+  "sentences": [
+   "Albert Prince of Wales is the father of George V.",
+   "The latter given name Edw."
+  ]
+ },
+ {
+  "id": "R8-RJ18",
+  "gathered": [
+   [
+    "jaya_badhuri",
+    "spouse",
+    "amitabh_harivansh_bachchan"
+   ],
+   [
+    "jaya_badhuri",
+    "child",
+    "abishek_bachchan"
+   ]
+  ],
+  "sentence": "Amitabh Harivansh Bachchan is a spouse of Jaya Badhuri. Abishek Bachchan is a spouse of Jaya Badhuri too.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 2 renders the child triple with the spouse phrase: it makes Jaya Badhuri's son her spouse",
+  "reply": true,
+  "sentences": [
+   "Amitabh Harivansh Bachchan is a spouse of Jaya Badhuri.",
+   "Abishek Bachchan is a spouse of Jaya Badhuri too."
+  ]
+ },
+ {
+  "id": "R8-RJ19",
+  "gathered": [
+   [
+    "mother_of_god",
+    "spouse",
+    "st_joseph_the_worker"
+   ],
+   [
+    "mother_of_god",
+    "child",
+    "the_christ"
+   ],
+   [
+    "st_joseph_the_worker",
+    "child",
+    "the_christ"
+   ]
+  ],
+  "sentence": "St Joseph the Worker is a spouse of Mother of God. The Christ is a child of Mother of God. The Christ is not a child of St Joseph the Worker.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 3 negates a gathered triple",
+  "reply": true,
+  "sentences": [
+   "St Joseph the Worker is a spouse of Mother of God.",
+   "The Christ is a child of Mother of God.",
+   "The Christ is not a child of St Joseph the Worker."
+  ]
+ },
+ {
+  "id": "R8-RJ20",
+  "gathered": [
+   [
+    "phalonia",
+    "parent_taxon",
+    "tortricinae"
+   ],
+   [
+    "tortricinae",
+    "parent_taxon",
+    "tortrix_moth"
+   ]
+  ],
+  "sentence": "Tortricinae is the parent taxon of Phalonia. Tortrix moth is the parent taxon of both.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "'both' makes tortrix moth the parent taxon of Phalonia too; it is Phalonia's grandparent taxon",
+  "reply": true,
+  "sentences": [
+   "Tortricinae is the parent taxon of Phalonia.",
+   "Tortrix moth is the parent taxon of both."
+  ]
+ },
+ {
+  "id": "R8-RJ21",
+  "gathered": [
+   [
+    "call_of_duty",
+    "platform",
+    "windows_applications"
+   ],
+   [
+    "mortal_kombat",
+    "platform",
+    "windows_applications"
+   ],
+   [
+    "street_fighter",
+    "platform",
+    "windows_applications"
+   ]
+  ],
+  "sentence": "Windows applications is a platform for Call of Duty. Windows applications is a platform for Mortal Kombat. Windows applications is a platform for Street Fighter, and for no other game.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 3 adds an exclusive claim ('no other game') contradicted by sentences 1 and 2",
+  "reply": true,
+  "sentences": [
+   "Windows applications is a platform for Call of Duty.",
+   "Windows applications is a platform for Mortal Kombat.",
+   "Windows applications is a platform for Street Fighter, and for no other game."
+  ]
+ },
+ {
+  "id": "R8-RJ22",
+  "gathered": [
+   [
+    "lord_of_the_rings",
+    "author",
+    "j_r_r_tolkien"
+   ],
+   [
+    "translations_from_the_elvish",
+    "author",
+    "j_r_r_tolkien"
+   ]
+  ],
+  "sentence": "J R R Tolkien is an author of Lord of the Rings. J R R Tolkien is the sole author of Translations from the Elvish.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "'sole author' adds exclusivity the author triple does not state",
+  "reply": true,
+  "sentences": [
+   "J R R Tolkien is an author of Lord of the Rings.",
+   "J R R Tolkien is the sole author of Translations from the Elvish."
+  ]
+ },
+ {
+  "id": "R8-RJ23",
+  "gathered": [
+   [
+    "bond_james_bond",
+    "author",
+    "ian_flemming"
+   ],
+   [
+    "ian_flemming",
+    "conflict",
+    "war_world_two"
+   ]
+  ],
+  "sentence": "Ian Flemming is an author of Bond James Bond. Bond James Bond participated in war world two.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 2 moves Ian Flemming's conflict onto the work Bond James Bond",
+  "reply": true,
+  "sentences": [
+   "Ian Flemming is an author of Bond James Bond.",
+   "Bond James Bond participated in war world two."
+  ]
+ },
+ {
+  "id": "R8-RJ24",
+  "gathered": [
+   [
+    "julio_iglesias",
+    "instrument",
+    "history_of_the_guitar"
+   ],
+   [
+    "enrique_iglesias",
+    "father",
+    "julio_iglesias"
+   ],
+   [
+    "enrique_iglesias",
+    "instrument",
+    "history_of_the_guitar"
+   ]
+  ],
+  "sentence": "Julio Iglesias plays history of the guitar. Julio Iglesias is the father of Enrique Iglesias. Enrique Iglesias plays history of the guitar because Julio Iglesias taught him.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 3 adds a causal claim (taught him) that nothing gathered states",
+  "reply": true,
+  "sentences": [
+   "Julio Iglesias plays history of the guitar.",
+   "Julio Iglesias is the father of Enrique Iglesias.",
+   "Enrique Iglesias plays history of the guitar because Julio Iglesias taught him."
+  ]
+ },
+ {
+  "id": "R8-RJ25",
+  "gathered": [
+   [
+    "tim_burton",
+    "spouse",
+    "helena_bonham_carter"
+   ],
+   [
+    "helena_bonham_carter",
+    "spouse",
+    "tim_burton"
+   ]
+  ],
+  "sentence": "Helena Bonham Carter is a spouse of Tim Burton. Tim Burton is a spouse of Helena Bonham Carter, but they divorced.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 2 adds a divorce, which contradicts the spouse triples as stated",
+  "reply": true,
+  "sentences": [
+   "Helena Bonham Carter is a spouse of Tim Burton.",
+   "Tim Burton is a spouse of Helena Bonham Carter, but they divorced."
+  ]
+ },
+ {
+  "id": "R8-RJ26",
+  "gathered": [
+   [
+    "take_that",
+    "instance_of",
+    "boy_band"
+   ],
+   [
+    "take_that",
+    "genre",
+    "pop_starlets"
+   ],
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Take That is an instance of boy band. Take That genre pop starlets. Take That has part Robbie Williams, its lead singer.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "the appositive 'its lead singer' adds a role that is not gathered",
+  "reply": true,
+  "sentences": [
+   "Take That is an instance of boy band.",
+   "Take That genre pop starlets.",
+   "Take That has part Robbie Williams, its lead singer."
+  ]
+ },
+ {
+  "id": "R8-RJ27",
+  "gathered": [
+   [
+    "federal_republic_of_germany",
+    "shares_border_with",
+    "franzoesische_republik"
+   ],
+   [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   [
+    "federal_republic_of_germany",
+    "member_of",
+    "ibrd"
+   ]
+  ],
+  "sentence": "Federal Republic of Germany shares border with Franzoesische Republik. Franzoesische Republik shares border with United Kingom. So Federal Republic of Germany shares border with United Kingom.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 3 (the rendering of Germany's IBRD membership) draws a false transitive border claim",
+  "reply": true,
+  "sentences": [
+   "Federal Republic of Germany shares border with Franzoesische Republik.",
+   "Franzoesische Republik shares border with United Kingom.",
+   "So Federal Republic of Germany shares border with United Kingom."
+  ]
+ },
+ {
+  "id": "R8-RJ28",
+  "gathered": [
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ],
+   [
+    "u_s_of_a",
+    "shares_border_with",
+    "canada_portal"
+   ]
+  ],
+  "sentence": "Canada portal shares border with U S of A. U S of A shares border with Canada portal and with nobody else.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 2 adds an exclusive border claim ('with nobody else')",
+  "reply": true,
+  "sentences": [
+   "Canada portal shares border with U S of A.",
+   "U S of A shares border with Canada portal and with nobody else."
+  ]
+ },
+ {
+  "id": "R8-RJ29",
+  "gathered": [
+   [
+    "june",
+    "followed_by",
+    "jul"
+   ],
+   [
+    "jul",
+    "followed_by",
+    "aug"
+   ]
+  ],
+  "sentence": "June is followed by Jul. Jul is followed by Aug, which is followed by June.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "the relative clause asserts Aug is followed by June, not gathered and false",
+  "reply": true,
+  "sentences": [
+   "June is followed by Jul.",
+   "Jul is followed by Aug, which is followed by June."
+  ]
+ },
+ {
+  "id": "R8-RJ30",
+  "gathered": [
+   [
+    "mean_fomhair",
+    "follows",
+    "aug"
+   ],
+   [
+    "october",
+    "follows",
+    "mean_fomhair"
+   ]
+  ],
+  "sentence": "Mean Fomhair follows Aug. October follows Mean Fomhair?",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "the question mark turns sentence 2 into a doubt about a gathered fact",
+  "reply": true,
+  "sentences": [
+   "Mean Fomhair follows Aug.",
+   "October follows Mean Fomhair?"
+  ]
+ },
+ {
+  "id": "R8-RJ31",
+  "gathered": [
+   [
+    "peter_fonda",
+    "sibling",
+    "jayne_seymour_fonda"
+   ],
+   [
+    "jayne_seymour_fonda",
+    "sibling",
+    "peter_fonda"
+   ]
+  ],
+  "sentence": "Peter Fonda is a sibling of Jayne Seymour Fonda. Jayne Seymour Fonda is a sibling of Peter Fonda, and they are twins.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 2 adds that they are twins, not gathered",
+  "reply": true,
+  "sentences": [
+   "Peter Fonda is a sibling of Jayne Seymour Fonda.",
+   "Jayne Seymour Fonda is a sibling of Peter Fonda, and they are twins."
+  ]
+ },
+ {
+  "id": "R8-RJ32",
+  "gathered": [
+   [
+    "henry_fonda",
+    "conflict",
+    "war_world_two"
+   ],
+   [
+    "george_bush_senior",
+    "conflict",
+    "war_world_two"
+   ]
+  ],
+  "sentence": "Henry Fonda participated in war world two. George Bush Senior participated in war world two alongside him.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "'alongside him' asserts they served together, which nothing gathered states",
+  "reply": true,
+  "sentences": [
+   "Henry Fonda participated in war world two.",
+   "George Bush Senior participated in war world two alongside him."
+  ]
+ },
+ {
+  "id": "R8-RJ33",
+  "gathered": [
+   [
+    "benito_mussolini",
+    "conflict",
+    "war_world_two"
+   ],
+   [
+    "charles_degaulle",
+    "conflict",
+    "war_world_two"
+   ]
+  ],
+  "sentence": "Benito Mussolini participated in war world two. Charles Degaulle participated in war world two on the same side.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "'on the same side' adds an alliance claim, false and not gathered",
+  "reply": true,
+  "sentences": [
+   "Benito Mussolini participated in war world two.",
+   "Charles Degaulle participated in war world two on the same side."
+  ]
+ },
+ {
+  "id": "R8-RJ34",
+  "gathered": [
+   [
+    "albert_prince_of_wales",
+    "father",
+    "albert_prince_consort"
+   ],
+   [
+    "george_v",
+    "father",
+    "albert_prince_of_wales"
+   ]
+  ],
+  "sentence": "Albert Prince Consort is the father of Albert Prince of Wales. Albert Prince Consort is the father of George V as well.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 2 renders George V's father triple as a chain hop: Albert Prince Consort is his grandfather",
+  "reply": true,
+  "sentences": [
+   "Albert Prince Consort is the father of Albert Prince of Wales.",
+   "Albert Prince Consort is the father of George V as well."
+  ]
+ },
+ {
+  "id": "R8-RJ35",
+  "gathered": [
+   [
+    "lloyd_bridges",
+    "child",
+    "jeff_bridges"
+   ],
+   [
+    "beau_bridges",
+    "father",
+    "lloyd_bridges"
+   ],
+   [
+    "jeff_bridges",
+    "sibling",
+    "beau_bridges"
+   ]
+  ],
+  "sentence": "Jeff Bridges is a child of Lloyd Bridges. Lloyd Bridges is the father of Beau Bridges. Beau Bridges is the father of Jeff Bridges.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 3 renders the sibling triple with the father phrase: it makes Beau Bridges his brother's father",
+  "reply": true,
+  "sentences": [
+   "Jeff Bridges is a child of Lloyd Bridges.",
+   "Lloyd Bridges is the father of Beau Bridges.",
+   "Beau Bridges is the father of Jeff Bridges."
+  ]
+ },
+ {
+  "id": "R8-RJ36",
+  "gathered": [
+   [
+    "ringo_star",
+    "instrument",
+    "drum_kit"
+   ],
+   [
+    "george_harrison",
+    "instrument",
+    "history_of_the_guitar"
+   ],
+   [
+    "james_paul_mccartney",
+    "instrument",
+    "history_of_the_guitar"
+   ]
+  ],
+  "sentence": "Ringo Star plays drum kit. George Harrison plays history of the guitar. James Paul McCartney plays drum kit too.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 3 gives James Paul McCartney Ringo Star's drum kit instead of his gathered guitar",
+  "reply": true,
+  "sentences": [
+   "Ringo Star plays drum kit.",
+   "George Harrison plays history of the guitar.",
+   "James Paul McCartney plays drum kit too."
+  ]
+ },
+ {
+  "id": "R8-RJ37",
+  "gathered": [
+   [
+    "rat",
+    "parent_taxon",
+    "old_world_mouse"
+   ],
+   [
+    "old_world_mouse",
+    "taxon_rank",
+    "subfamilia"
+   ]
+  ],
+  "sentence": "Old world mouse is the parent taxon of rat. Rat taxon rank subfamilia.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 2 moves old world mouse's rank (subfamilia) onto rat, whose gathered parent it is",
+  "reply": true,
+  "sentences": [
+   "Old world mouse is the parent taxon of rat.",
+   "Rat taxon rank subfamilia."
+  ]
+ },
+ {
+  "id": "R8-RJ38",
+  "gathered": [
+   [
+    "keith_richards",
+    "member_of",
+    "the_rolling_stones"
+   ],
+   [
+    "the_rolling_stones",
+    "record_label",
+    "columbia_phonograph"
+   ],
+   [
+    "the_band",
+    "record_label",
+    "capitol_records_inc"
+   ]
+  ],
+  "sentence": "Keith Richards is a member of the Rolling Stones. The Rolling Stones record label Columbia Phonograph, I believe. The band record label Capitol Records Inc.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 2 is hedged in the first person; if it is dropped, sentences 1 and 3 remain and 'The band' (no-break space) reads as the Rolling Stones, giving them The Band's label",
+  "reply": true,
+  "sentences": [
+   "Keith Richards is a member of the Rolling Stones.",
+   "The Rolling Stones record label Columbia Phonograph, I believe.",
+   "The band record label Capitol Records Inc."
+  ]
+ },
+ {
+  "id": "R8-RJ39",
+  "gathered": [
+   [
+    "michael_philip_jagger",
+    "member_of",
+    "the_rolling_stones"
+   ],
+   [
+    "keith_richards",
+    "member_of",
+    "the_rolling_stones"
+   ],
+   [
+    "the_band",
+    "award_received",
+    "grammy_lifetime_achievement_award"
+   ]
+  ],
+  "sentence": "Michael Philip Jagger is a member of the Rolling Stones. Keith Richards was a member of the Rolling Stones. The band award received Grammy lifetime achievement award.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 2 puts the membership in the past (no longer a member); the selection 1+3 reads 'the band' as the Rolling Stones and gives them an award that is gathered only for The Band",
+  "reply": true,
+  "sentences": [
+   "Michael Philip Jagger is a member of the Rolling Stones.",
+   "Keith Richards was a member of the Rolling Stones.",
+   "The band award received Grammy lifetime achievement award."
+  ]
+ },
+ {
+  "id": "R8-RJ40",
+  "gathered": [
+   [
+    "phil_colins",
+    "member_of",
+    "genesis_band"
+   ],
+   [
+    "genesis_band",
+    "record_label",
+    "atlantic_jazz"
+   ]
+  ],
+  "sentence": "Phil Colins is a member of Genesis band. Genesis band record label Atlantic Jazz, I think.",
+  "expect": "U",
+  "class": "reply_joined",
+  "why": "sentence 2 is a first-person hedge on a gathered fact",
+  "reply": true,
+  "sentences": [
+   "Phil Colins is a member of Genesis band.",
+   "Genesis band record label Atlantic Jazz, I think."
+  ]
+ },
+ {
+  "id": "R8-RF01",
+  "gathered": [
+   [
+    "john_huston",
+    "father",
+    "walter_thomas_huston"
+   ],
+   [
+    "huston_anjelica",
+    "father",
+    "john_huston"
+   ]
+  ],
+  "sentence": "Walter Thomas Huston is the father of John Huston. John Huston is the father of Huston Anjelica.",
+  "expect": "F",
+  "class": "reply_joined",
+  "why": "two father triples, each in the build-6 wording, in order",
+  "reply": true,
+  "sentences": [
+   "Walter Thomas Huston is the father of John Huston.",
+   "John Huston is the father of Huston Anjelica."
+  ]
+ },
+ {
+  "id": "R8-RF02",
+  "gathered": [
+   [
+    "george_v",
+    "father",
+    "albert_prince_of_wales"
+   ],
+   [
+    "albert_prince_of_wales",
+    "child",
+    "george_v"
+   ]
+  ],
+  "sentence": "Albert Prince of Wales is the father of George V. George V is a child of Albert Prince of Wales.",
+  "expect": "F",
+  "class": "reply_joined",
+  "why": "a father triple and the store's separate child triple, each said once in its own wording",
+  "reply": true,
+  "sentences": [
+   "Albert Prince of Wales is the father of George V.",
+   "George V is a child of Albert Prince of Wales."
+  ]
+ },
+ {
+  "id": "R8-RF03",
+  "gathered": [
+   [
+    "tim_burton",
+    "spouse",
+    "helena_bonham_carter"
+   ],
+   [
+    "helena_bonham_carter",
+    "spouse",
+    "tim_burton"
+   ]
+  ],
+  "sentence": "Helena Bonham Carter is a spouse of Tim Burton. Tim Burton is a spouse of Helena Bonham Carter.",
+  "expect": "F",
+  "class": "reply_joined",
+  "why": "both gathered spouse triples, each in the orientation-exact wording",
+  "reply": true,
+  "sentences": [
+   "Helena Bonham Carter is a spouse of Tim Burton.",
+   "Tim Burton is a spouse of Helena Bonham Carter."
+  ]
+ },
+ {
+  "id": "R8-RF04",
+  "gathered": [
+   [
+    "mean_fomhair",
+    "follows",
+    "aug"
+   ],
+   [
+    "october",
+    "follows",
+    "mean_fomhair"
+   ]
+  ],
+  "sentence": "Mean Fomhair follows Aug. October follows Mean Fomhair.",
+  "expect": "F",
+  "class": "reply_joined",
+  "why": "two follows triples, plainly",
+  "reply": true,
+  "sentences": [
+   "Mean Fomhair follows Aug.",
+   "October follows Mean Fomhair."
+  ]
+ },
+ {
+  "id": "R8-RF05",
+  "gathered": [
+   [
+    "ringo_star",
+    "instrument",
+    "drum_kit"
+   ],
+   [
+    "george_harrison",
+    "instrument",
+    "history_of_the_guitar"
+   ]
+  ],
+  "sentence": "Ringo Star plays drum kit. George Harrison plays history of the guitar.",
+  "expect": "F",
+  "class": "reply_joined",
+  "why": "two instrument triples in the build-6 'plays' wording",
+  "reply": true,
+  "sentences": [
+   "Ringo Star plays drum kit.",
+   "George Harrison plays history of the guitar."
+  ]
+ },
+ {
+  "id": "R8-RF06",
+  "gathered": [
+   [
+    "harry_potter_series",
+    "author",
+    "joanne_rowling"
+   ],
+   [
+    "lord_of_the_rings",
+    "author",
+    "j_r_r_tolkien"
+   ]
+  ],
+  "sentence": "Joanne Rowling is an author of Harry Potter series. J R R Tolkien is an author of Lord of the Rings.",
+  "expect": "F",
+  "class": "reply_joined",
+  "why": "two author triples in the build-6 wording",
+  "reply": true,
+  "sentences": [
+   "Joanne Rowling is an author of Harry Potter series.",
+   "J R R Tolkien is an author of Lord of the Rings."
+  ]
+ },
+ {
+  "id": "R8-RF07",
+  "gathered": [
+   [
+    "keith_richards",
+    "member_of",
+    "the_rolling_stones"
+   ],
+   [
+    "the_rolling_stones",
+    "has_part",
+    "michael_philip_jagger"
+   ],
+   [
+    "the_rolling_stones",
+    "genre",
+    "rock_musician"
+   ]
+  ],
+  "sentence": "Keith Richards is a member of the Rolling Stones. The Rolling Stones has part Michael Philip Jagger. The Rolling Stones genre rock musician.",
+  "expect": "F",
+  "class": "reply_joined",
+  "why": "three gathered triples about one band, same slug throughout",
+  "reply": true,
+  "sentences": [
+   "Keith Richards is a member of the Rolling Stones.",
+   "The Rolling Stones has part Michael Philip Jagger.",
+   "The Rolling Stones genre rock musician."
+  ]
+ },
+ {
+  "id": "R8-RF08",
+  "gathered": [
+   [
+    "rat",
+    "parent_taxon",
+    "old_world_mouse"
+   ],
+   [
+    "tortricinae",
+    "parent_taxon",
+    "tortrix_moth"
+   ]
+  ],
+  "sentence": "Old world mouse is the parent taxon of rat. Tortrix moth is the parent taxon of Tortricinae.",
+  "expect": "F",
+  "class": "reply_joined",
+  "why": "two parent_taxon triples in the build-6 wording",
+  "reply": true,
+  "sentences": [
+   "Old world mouse is the parent taxon of rat.",
+   "Tortrix moth is the parent taxon of Tortricinae."
+  ]
+ },
+ {
+  "id": "R8-RF09",
+  "gathered": [
+   [
+    "henry_fonda",
+    "conflict",
+    "war_world_two"
+   ],
+   [
+    "w_churchill",
+    "conflict",
+    "world_war_one"
+   ]
+  ],
+  "sentence": "Henry Fonda participated in war world two. W Churchill participated in world war one.",
+  "expect": "F",
+  "class": "reply_joined",
+  "why": "two conflict triples in the build-6 wording",
+  "reply": true,
+  "sentences": [
+   "Henry Fonda participated in war world two.",
+   "W Churchill participated in world war one."
+  ]
+ },
+ {
+  "id": "R8-RF10",
+  "gathered": [
+   [
+    "call_of_duty",
+    "platform",
+    "windows_applications"
+   ],
+   [
+    "legend_of_zelda",
+    "platform",
+    "wireless_multi_player"
+   ]
+  ],
+  "sentence": "Windows applications is a platform for Call of Duty. Wireless multi player is a platform for Legend of Zelda.",
+  "expect": "F",
+  "class": "reply_joined",
+  "why": "two platform triples in the build-6 wording",
+  "reply": true,
+  "sentences": [
+   "Windows applications is a platform for Call of Duty.",
+   "Wireless multi player is a platform for Legend of Zelda."
+  ]
+ },
+ {
+  "id": "R8-RF11",
+  "gathered": [
+   [
+    "the_band",
+    "country_of_origin",
+    "canada_portal"
+   ],
+   [
+    "keith_richards",
+    "member_of",
+    "the_rolling_stones"
+   ]
+  ],
+  "sentence": "The Band country of origin Canada portal. Keith Richards is a member of the Rolling Stones.",
+  "expect": "F",
+  "class": "reply_joined",
+  "why": "order twin of the points-back cases: The Band comes first, so nothing precedes it to point back to",
+  "reply": true,
+  "sentences": [
+   "The Band country of origin Canada portal.",
+   "Keith Richards is a member of the Rolling Stones."
+  ]
+ },
+ {
+  "id": "R8-PW01",
+  "gathered": [
+   [
+    "peter_fonda",
+    "father",
+    "henry_fonda"
+   ]
+  ],
+  "sentence": "Peter Fonda is the father of Henry Fonda.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "father phrase with roles reversed: the son is called the father"
+ },
+ {
+  "id": "R8-PW02",
+  "gathered": [
+   [
+    "jeff_bridges",
+    "father",
+    "lloyd_bridges"
+   ]
+  ],
+  "sentence": "Jeff Bridges is the father of Lloyd Bridges.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "father phrase reversed"
+ },
+ {
+  "id": "R8-PW03",
+  "gathered": [
+   [
+    "enrique_iglesias",
+    "father",
+    "julio_iglesias"
+   ]
+  ],
+  "sentence": "Julio Iglesias is a child of Enrique Iglesias.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "a father triple said with the child phrase in the wrong orientation: the father is called the son's child"
+ },
+ {
+  "id": "R8-PW04",
+  "gathered": [
+   [
+    "henry_fonda",
+    "child",
+    "jayne_seymour_fonda"
+   ]
+  ],
+  "sentence": "Henry Fonda is a child of Jayne Seymour Fonda.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "child phrase reversed"
+ },
+ {
+  "id": "R8-PW05",
+  "gathered": [
+   [
+    "julio_iglesias",
+    "child",
+    "enrique_iglesias"
+   ]
+  ],
+  "sentence": "Enrique Iglesias is the father of Julio Iglesias.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "a child triple said with the father phrase pointing the wrong way"
+ },
+ {
+  "id": "R8-PW06",
+  "gathered": [
+   [
+    "john_huston",
+    "father",
+    "walter_thomas_huston"
+   ],
+   [
+    "huston_anjelica",
+    "father",
+    "john_huston"
+   ]
+  ],
+  "sentence": "Walter Thomas Huston is the father of Huston Anjelica.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "chain hop through two gathered father triples: grandfather called father"
+ },
+ {
+  "id": "R8-PW07",
+  "gathered": [
+   [
+    "george_v",
+    "father",
+    "albert_prince_of_wales"
+   ],
+   [
+    "albert_prince_of_wales",
+    "father",
+    "albert_prince_consort"
+   ]
+  ],
+  "sentence": "Albert Prince Consort is the father of George V.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "chain hop: grandfather called father"
+ },
+ {
+  "id": "R8-PW08",
+  "gathered": [
+   [
+    "lord_of_the_rings",
+    "author",
+    "j_r_r_tolkien"
+   ]
+  ],
+  "sentence": "Lord of the Rings is an author of J R R Tolkien.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "author phrase reversed: the work is called the author of the person"
+ },
+ {
+  "id": "R8-PW09",
+  "gathered": [
+   [
+    "sherlock_holmes_canon",
+    "author",
+    "arthur_conan_doyle"
+   ]
+  ],
+  "sentence": "Sherlock Holmes canon is an author of Arthur Conan Doyle.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "author phrase reversed"
+ },
+ {
+  "id": "R8-PW10",
+  "gathered": [
+   [
+    "bond_james_bond",
+    "author",
+    "ian_flemming"
+   ],
+   [
+    "harry_potter_series",
+    "author",
+    "joanne_rowling"
+   ]
+  ],
+  "sentence": "Ian Flemming is an author of Harry Potter series.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "cross swap of two gathered author triples"
+ },
+ {
+  "id": "R8-PW11",
+  "gathered": [
+   [
+    "rat",
+    "parent_taxon",
+    "old_world_mouse"
+   ]
+  ],
+  "sentence": "Rat is the parent taxon of old world mouse.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "parent taxon phrase reversed"
+ },
+ {
+  "id": "R8-PW12",
+  "gathered": [
+   [
+    "tortricinae",
+    "parent_taxon",
+    "tortrix_moth"
+   ]
+  ],
+  "sentence": "Tortricinae is the parent taxon of tortrix moth.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "parent taxon phrase reversed"
+ },
+ {
+  "id": "R8-PW13",
+  "gathered": [
+   [
+    "phalonia",
+    "parent_taxon",
+    "tortricinae"
+   ],
+   [
+    "tortricinae",
+    "parent_taxon",
+    "tortrix_moth"
+   ]
+  ],
+  "sentence": "Tortrix moth is the parent taxon of Phalonia.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "chain hop: grandparent taxon called 'the' parent taxon"
+ },
+ {
+  "id": "R8-PW14",
+  "gathered": [
+   [
+    "call_of_duty",
+    "platform",
+    "windows_applications"
+   ]
+  ],
+  "sentence": "Call of Duty is a platform for Windows applications.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "platform phrase reversed: the game becomes the platform"
+ },
+ {
+  "id": "R8-PW15",
+  "gathered": [
+   [
+    "legend_of_zelda",
+    "platform",
+    "wireless_multi_player"
+   ]
+  ],
+  "sentence": "Legend of Zelda is a platform for wireless multi player.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "platform phrase reversed"
+ },
+ {
+  "id": "R8-PW16",
+  "gathered": [
+   [
+    "julio_iglesias",
+    "sport",
+    "association_football_club"
+   ]
+  ],
+  "sentence": "Julio Iglesias is a sport of association football club.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "sport phrase reversed: a person called a sport"
+ },
+ {
+  "id": "R8-PW17",
+  "gathered": [
+   [
+    "the_raptor",
+    "sport",
+    "basket_ball"
+   ]
+  ],
+  "sentence": "The Raptor is a sport of basket ball.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "sport phrase reversed: the team called a sport of basketball"
+ },
+ {
+  "id": "R8-PW18",
+  "gathered": [
+   [
+    "ringo_star",
+    "instrument",
+    "drum_kit"
+   ]
+  ],
+  "sentence": "Drum kit plays Ringo Star.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "plays phrase reversed: the instrument plays the drummer"
+ },
+ {
+  "id": "R8-PW19",
+  "gathered": [
+   [
+    "keith_richards",
+    "instrument",
+    "history_of_the_guitar"
+   ]
+  ],
+  "sentence": "History of the guitar plays Keith Richards.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "plays phrase reversed"
+ },
+ {
+  "id": "R8-PW20",
+  "gathered": [
+   [
+    "ringo_star",
+    "instrument",
+    "drum_kit"
+   ],
+   [
+    "george_harrison",
+    "instrument",
+    "history_of_the_guitar"
+   ]
+  ],
+  "sentence": "Ringo Star plays history of the guitar.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "cross swap of two gathered instrument triples"
+ },
+ {
+  "id": "R8-PW21",
+  "gathered": [
+   [
+    "henry_fonda",
+    "conflict",
+    "war_world_two"
+   ]
+  ],
+  "sentence": "War world two participated in Henry Fonda.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "participated-in phrase reversed: the war takes part in the person"
+ },
+ {
+  "id": "R8-PW22",
+  "gathered": [
+   [
+    "benito_mussolini",
+    "conflict",
+    "war_world_two"
+   ],
+   [
+    "kim_il_sung",
+    "conflict",
+    "korean_police_action"
+   ]
+  ],
+  "sentence": "Benito Mussolini participated in Korean police action.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "cross swap of two gathered conflict triples"
+ },
+ {
+  "id": "R8-PW23",
+  "gathered": [
+   [
+    "jaya_badhuri",
+    "spouse",
+    "amitabh_harivansh_bachchan"
+   ],
+   [
+    "jaya_badhuri",
+    "child",
+    "abishek_bachchan"
+   ]
+  ],
+  "sentence": "Abishek Bachchan is a spouse of Jaya Badhuri.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "spouse phrase applied to the gathered child: the son is called her spouse"
+ },
+ {
+  "id": "R8-PW24",
+  "gathered": [
+   [
+    "mother_of_god",
+    "spouse",
+    "st_joseph_the_worker"
+   ],
+   [
+    "mother_of_god",
+    "child",
+    "the_christ"
+   ]
+  ],
+  "sentence": "The Christ is a spouse of Mother of God.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "spouse phrase applied to the gathered child"
+ },
+ {
+  "id": "R8-PW25",
+  "gathered": [
+   [
+    "the_christ",
+    "father",
+    "st_joseph_the_worker"
+   ]
+  ],
+  "sentence": "The Christ is the father of St Joseph the Worker.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "father phrase reversed"
+ },
+ {
+  "id": "R8-PW26",
+  "gathered": [
+   [
+    "julio_iglesias",
+    "instrument",
+    "history_of_the_guitar"
+   ],
+   [
+    "julio_iglesias",
+    "sport",
+    "association_football_club"
+   ]
+  ],
+  "sentence": "History of the guitar is a sport of Julio Iglesias.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "the sport phrase applied to the instrument triple: the guitar is called his sport"
+ },
+ {
+  "id": "R8-PW27",
+  "gathered": [
+   [
+    "jaya_badhuri",
+    "spouse",
+    "amitabh_harivansh_bachchan"
+   ]
+  ],
+  "sentence": "Jaya Badhuri is the father of Amitabh Harivansh Bachchan.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "a spouse triple said with the father phrase"
+ },
+ {
+  "id": "R8-PW28",
+  "gathered": [
+   [
+    "abishek_bachchan",
+    "father",
+    "amitabh_harivansh_bachchan"
+   ]
+  ],
+  "sentence": "Amitabh Harivansh Bachchan is a spouse of Abishek Bachchan.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "a father triple said with the spouse phrase"
+ },
+ {
+  "id": "R8-PW29",
+  "gathered": [
+   [
+    "huston_anjelica",
+    "father",
+    "john_huston"
+   ]
+  ],
+  "sentence": "John Huston is a child of Huston Anjelica.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "a father triple said with the child phrase reversed: the father is called his daughter's child"
+ },
+ {
+  "id": "R8-PW30",
+  "gathered": [
+   [
+    "mario_luigi",
+    "platform",
+    "iphone_operating_system"
+   ]
+  ],
+  "sentence": "Mario Luigi is a platform for iphone operating system.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "platform phrase reversed: the game becomes the platform"
+ },
+ {
+  "id": "R8-PW31",
+  "gathered": [
+   [
+    "hardy_boys",
+    "author",
+    "franklin_w_dixon"
+   ]
+  ],
+  "sentence": "Hardy Boys is an author of Franklin W Dixon.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "author phrase reversed"
+ },
+ {
+  "id": "R8-PW32",
+  "gathered": [
+   [
+    "aphrodite_acidalia",
+    "father",
+    "mythology_jupiter"
+   ]
+  ],
+  "sentence": "Aphrodite Acidalia is the father of Mythology Jupiter.",
+  "expect": "U",
+  "class": "phrase_wording",
+  "why": "father phrase reversed"
+ },
+ {
+  "id": "R8-PM01",
+  "gathered": [
+   [
+    "peter_fonda",
+    "father",
+    "henry_fonda"
+   ]
+  ],
+  "sentence": "Henry Fonda is not the father of Peter Fonda.",
+  "expect": "U",
+  "class": "phrase_modifier",
+  "why": "negated father phrase"
+ },
+ {
+  "id": "R8-PM02",
+  "gathered": [
+   [
+    "henry_fonda",
+    "child",
+    "jayne_seymour_fonda"
+   ]
+  ],
+  "sentence": "Jayne Seymour Fonda is the only child of Henry Fonda.",
+  "expect": "U",
+  "class": "phrase_modifier",
+  "why": "'the only child' adds exclusivity (and is false against the store)"
+ },
+ {
+  "id": "R8-PM03",
+  "gathered": [
+   [
+    "ringo_star",
+    "instrument",
+    "drum_kit"
+   ]
+  ],
+  "sentence": "Ringo Star no longer plays drum kit.",
+  "expect": "U",
+  "class": "phrase_modifier",
+  "why": "'no longer' says he stopped"
+ },
+ {
+  "id": "R8-PM04",
+  "gathered": [
+   [
+    "ringo_star",
+    "instrument",
+    "drum_kit"
+   ]
+  ],
+  "sentence": "Ringo Star plays drum kit badly.",
+  "expect": "U",
+  "class": "phrase_modifier",
+  "why": "an evaluative adverb not in the triple"
+ },
+ {
+  "id": "R8-PM05",
+  "gathered": [
+   [
+    "henry_fonda",
+    "conflict",
+    "war_world_two"
+   ]
+  ],
+  "sentence": "Henry Fonda never participated in war world two.",
+  "expect": "U",
+  "class": "phrase_modifier",
+  "why": "negated conflict phrase"
+ },
+ {
+  "id": "R8-PM06",
+  "gathered": [
+   [
+    "henry_fonda",
+    "conflict",
+    "war_world_two"
+   ]
+  ],
+  "sentence": "Henry Fonda participated in war world two twice.",
+  "expect": "U",
+  "class": "phrase_modifier",
+  "why": "a frequency the triple does not state"
+ },
+ {
+  "id": "R8-PM07",
+  "gathered": [
+   [
+    "tim_burton",
+    "spouse",
+    "helena_bonham_carter"
+   ]
+  ],
+  "sentence": "Helena Bonham Carter is a former spouse of Tim Burton.",
+  "expect": "U",
+  "class": "phrase_modifier",
+  "why": "'former' says the marriage ended"
+ },
+ {
+  "id": "R8-PM08",
+  "gathered": [
+   [
+    "lord_of_the_rings",
+    "author",
+    "j_r_r_tolkien"
+   ]
+  ],
+  "sentence": "J R R Tolkien is an author of Lord of the Rings, possibly.",
+  "expect": "U",
+  "class": "phrase_modifier",
+  "why": "a trailing hedge"
+ },
+ {
+  "id": "R8-PM09",
+  "gathered": [
+   [
+    "rat",
+    "parent_taxon",
+    "old_world_mouse"
+   ]
+  ],
+  "sentence": "Old world mouse may be the parent taxon of rat.",
+  "expect": "U",
+  "class": "phrase_modifier",
+  "why": "a modal hedge inside the parent taxon phrase"
+ },
+ {
+  "id": "R8-PM10",
+  "gathered": [
+   [
+    "julio_iglesias",
+    "sport",
+    "association_football_club"
+   ]
+  ],
+  "sentence": "Association football club is a sport of Julio Iglesias and of his son.",
+  "expect": "U",
+  "class": "phrase_modifier",
+  "why": "an extra conjunct (his son) not gathered"
+ },
+ {
+  "id": "R8-PM11",
+  "gathered": [
+   [
+    "george_harrison",
+    "instrument",
+    "history_of_the_guitar"
+   ]
+  ],
+  "sentence": "George Harrison plays history of the guitar and drum kit.",
+  "expect": "U",
+  "class": "phrase_modifier",
+  "why": "an extra instrument not gathered"
+ },
+ {
+  "id": "R8-PM12",
+  "gathered": [
+   [
+    "jeff_bridges",
+    "father",
+    "lloyd_bridges"
+   ]
+  ],
+  "sentence": "Lloyd Bridges is said to be the father of Jeff Bridges.",
+  "expect": "U",
+  "class": "phrase_modifier",
+  "why": "reported speech: the fact is attributed rather than stated"
+ },
+ {
+  "id": "R8-PM13",
+  "gathered": [
+   [
+    "harry_potter_series",
+    "author",
+    "joanne_rowling"
+   ]
+  ],
+  "sentence": "Joanne Rowling is one of two authors of Harry Potter series.",
+  "expect": "U",
+  "class": "phrase_modifier",
+  "why": "a count of authors the triple does not state"
+ },
+ {
+  "id": "R8-PM14",
+  "gathered": [
+   [
+    "the_christ",
+    "father",
+    "st_joseph_the_worker"
+   ]
+  ],
+  "sentence": "St Joseph the Worker is the adoptive father of The Christ.",
+  "expect": "U",
+  "class": "phrase_modifier",
+  "why": "'adoptive' qualifies the gathered relation"
+ },
+ {
+  "id": "R8-PM15",
+  "gathered": [
+   [
+    "call_of_duty",
+    "platform",
+    "windows_applications"
+   ]
+  ],
+  "sentence": "Windows applications was once a platform for Call of Duty.",
+  "expect": "U",
+  "class": "phrase_modifier",
+  "why": "'was once' says it no longer is"
+ },
+ {
+  "id": "R8-PM16",
+  "gathered": [
+   [
+    "mother_of_god",
+    "child",
+    "the_christ"
+   ]
+  ],
+  "sentence": "The Christ is a child of Mother of God and of no one else.",
+  "expect": "U",
+  "class": "phrase_modifier",
+  "why": "an exclusive clause not gathered"
+ },
+ {
+  "id": "R8-PM17",
+  "gathered": [
+   [
+    "tortricinae",
+    "parent_taxon",
+    "tortrix_moth"
+   ]
+  ],
+  "sentence": "Tortrix moth is probably the parent taxon of Tortricinae.",
+  "expect": "U",
+  "class": "phrase_modifier",
+  "why": "a hedge adverb inside the phrase"
+ },
+ {
+  "id": "R8-FP01",
+  "gathered": [
+   [
+    "i_need_a_beat",
+    "instance_of",
+    "human_specie"
+   ]
+  ],
+  "sentence": "I need a beat is an instance of human specie.",
+  "expect": "U",
+  "class": "first_second_person",
+  "why": "the displayed text opens with a first-person clause ('I need a beat'); arguable because 'is an instance of' forces the name reading",
+  "arguable": true
+ },
+ {
+  "id": "R8-FP02",
+  "gathered": [
+   [
+    "i_need_a_beat",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ]
+  ],
+  "sentence": "i need a beat country of citizenship u s of a.",
+  "expect": "U",
+  "class": "first_second_person",
+  "why": "lower case, telegraphic: reads as the mouth saying 'i need a beat' and then a citizenship"
+ },
+ {
+  "id": "R8-FP03",
+  "gathered": [
+   [
+    "i_need_a_beat",
+    "occupation",
+    "television_actor"
+   ]
+  ],
+  "sentence": "I need a beat occupation television actor.",
+  "expect": "U",
+  "class": "first_second_person",
+  "why": "first-person clause name with a no-break space after 'I' (a rule that splits words on U+0020 sees 'I need' as one word); reads 'I need a beat'"
+ },
+ {
+  "id": "R8-FP04",
+  "gathered": [
+   [
+    "i_need_a_beat",
+    "place_of_birth",
+    "new_york_new_york"
+   ]
+  ],
+  "sentence": "I need a beat place of birth New York New York.",
+  "expect": "U",
+  "class": "first_second_person",
+  "why": "first-person clause name with a thin space inside"
+ },
+ {
+  "id": "R8-FP05",
+  "gathered": [
+   [
+    "i_heart_tuesdays",
+    "award_received",
+    "grammy_award_nomination"
+   ]
+  ],
+  "sentence": "I heart Tuesdays award received Grammy award nomination.",
+  "expect": "U",
+  "class": "first_second_person",
+  "why": "reads as the mouth saying 'I heart (love) Tuesdays', a first-person claim"
+ },
+ {
+  "id": "R8-FP06",
+  "gathered": [
+   [
+    "louis_the_alligator",
+    "composer",
+    "i_heart_tuesdays"
+   ]
+  ],
+  "sentence": "Louis the Alligator composer i heart tuesdays.",
+  "expect": "U",
+  "class": "first_second_person",
+  "why": "the first-person clause name in object position, lower case"
+ },
+ {
+  "id": "R8-FP07",
+  "gathered": [
+   [
+    "i_heart_tuesdays",
+    "genre",
+    "soul_music"
+   ]
+  ],
+  "sentence": "I heart Tuesdays genre soul music.",
+  "expect": "U",
+  "class": "first_second_person",
+  "why": "first-person clause name with a narrow no-break space after 'I'"
+ },
+ {
+  "id": "R8-FP08",
+  "gathered": [
+   [
+    "lifting_you",
+    "instrument",
+    "black_notes"
+   ]
+  ],
+  "sentence": "Lifting you plays black notes.",
+  "expect": "U",
+  "class": "first_second_person",
+  "why": "second-person clause name with the build-6 'plays' wording; reads as a claim about lifting the listener"
+ },
+ {
+  "id": "R8-FP09",
+  "gathered": [
+   [
+    "lifting_you",
+    "record_label",
+    "interscope_records"
+   ]
+  ],
+  "sentence": "lifting you record label interscope records.",
+  "expect": "U",
+  "class": "first_second_person",
+  "why": "lower-case second-person clause name"
+ },
+ {
+  "id": "R8-FP10",
+  "gathered": [
+   [
+    "feel_your_heart_beat",
+    "follows",
+    "eurovision_song_contest_2010"
+   ]
+  ],
+  "sentence": "Feel your heart beat follows Eurovision Song Contest 2010.",
+  "expect": "U",
+  "class": "first_second_person",
+  "why": "an imperative addressed to the listener ('feel your heart beat') as the subject"
+ },
+ {
+  "id": "R8-FP11",
+  "gathered": [
+   [
+    "baku_2012",
+    "follows",
+    "feel_your_heart_beat"
+   ]
+  ],
+  "sentence": "Baku 2012 follows feel your heart beat.",
+  "expect": "U",
+  "class": "first_second_person",
+  "why": "second-person clause name in object position, lower case"
+ },
+ {
+  "id": "R8-FP12",
+  "gathered": [
+   [
+    "your_honor",
+    "subclass_of",
+    "legal_scholar"
+   ]
+  ],
+  "sentence": "Your honor is a subclass of legal scholar.",
+  "expect": "U",
+  "class": "first_second_person",
+  "why": "'Your honor' reads as the listener's honor or a term of address; arguable because the store name is the title",
+  "arguable": true
+ },
+ {
+  "id": "R8-FP13",
+  "gathered": [
+   [
+    "ameerul_mu_mineen",
+    "occupation",
+    "your_honor"
+   ]
+  ],
+  "sentence": "Ameerul Mu Mineen occupation your honor.",
+  "expect": "U",
+  "class": "first_second_person",
+  "why": "ends by addressing the listener as 'your honor'"
+ },
+ {
+  "id": "R8-FP14",
+  "gathered": [
+   [
+    "electrocuting_yourself",
+    "subclass_of",
+    "punishment_by_death"
+   ]
+  ],
+  "sentence": "Electrocuting yourself is a subclass of punishment by death.",
+  "expect": "U",
+  "class": "first_second_person",
+  "why": "second-person reflexive: reads as a claim about the listener electrocuting themselves; arguable because 'you' may be read as generic",
+  "arguable": true
+ },
+ {
+  "id": "R8-FP15",
+  "gathered": [
+   [
+    "fire_walk_with_me",
+    "cast_member",
+    "ziggy_stardust"
+   ]
+  ],
+  "sentence": "fire walk with me cast member Ziggy Stardust.",
+  "expect": "U",
+  "class": "first_second_person",
+  "why": "reads as an imperative with first-person 'me' ('fire, walk with me')"
+ },
+ {
+  "id": "R8-FP16",
+  "gathered": [
+   [
+    "all_my_children",
+    "genre",
+    "soap_star"
+   ]
+  ],
+  "sentence": "All my children genre soap star.",
+  "expect": "U",
+  "class": "first_second_person",
+  "why": "reads as a first-person claim about the speaker's children; arguable because 'All My Children' is a known title",
+  "arguable": true
+ },
+ {
+  "id": "R8-FP17",
+  "gathered": [
+   [
+    "the_rescuers_down_under",
+    "follows",
+    "someone_s_waiting_for_you"
+   ]
+  ],
+  "sentence": "The Rescuers Down Under follows someone s waiting for you.",
+  "expect": "U",
+  "class": "first_second_person",
+  "why": "second-person clause name in object position ('someone's waiting for you')"
+ },
+ {
+  "id": "R8-FP18",
+  "gathered": [
+   [
+    "you_don_t_arrest_voltaire",
+    "conflict",
+    "war_world_two"
+   ]
+  ],
+  "sentence": "You don t arrest Voltaire participated in war world two.",
+  "expect": "U",
+  "class": "first_second_person",
+  "why": "second-person, negated clause name with the build-6 conflict wording"
+ },
+ {
+  "id": "R8-FP19",
+  "gathered": [
+   [
+    "i",
+    "language_of_work_or_name",
+    "french_language"
+   ]
+  ],
+  "sentence": "I language of work or name French language.",
+  "expect": "U",
+  "class": "first_second_person",
+  "why": "a one-word 'I' as subject reads as the mouth speaking of itself; arguable because the slug is a letter",
+  "arguable": true
+ },
+ {
+  "id": "R8-FP20",
+  "gathered": [
+   [
+    "i_heart_tuesdays",
+    "place_of_birth",
+    "sin_city"
+   ]
+  ],
+  "sentence": "i heart tuesdays place of birth sin city.",
+  "expect": "U",
+  "class": "first_second_person",
+  "why": "lower-case first-person clause name"
+ },
+ {
+  "id": "R8-FP21",
+  "gathered": [
+   [
+    "i_need_a_beat",
+    "genre",
+    "hip_hop_music"
+   ]
+  ],
+  "sentence": "I need a beat genre hip hop music.",
+  "expect": "U",
+  "class": "first_second_person",
+  "why": "first-person clause name with a figure space after 'I'"
+ },
+ {
+  "id": "R8-PB01",
+  "gathered": [
+   [
+    "keith_richards",
+    "member_of",
+    "the_rolling_stones"
+   ],
+   [
+    "the_band",
+    "country_of_origin",
+    "canada_portal"
+   ]
+  ],
+  "sentence": "Keith Richards is a member of the Rolling Stones. The band country of origin Canada portal.",
+  "expect": "U",
+  "class": "points_back_description",
+  "why": "hypernym anaphor written in lower case: 'The band' (no-break space) reads as the Rolling Stones, so the reply says the Rolling Stones come from Canada",
+  "reply": true,
+  "sentences": [
+   "Keith Richards is a member of the Rolling Stones.",
+   "The band country of origin Canada portal."
+  ]
+ },
+ {
+  "id": "R8-PB02",
+  "gathered": [
+   [
+    "michael_philip_jagger",
+    "member_of",
+    "the_rolling_stones"
+   ],
+   [
+    "the_band",
+    "record_label",
+    "capitol_records_inc"
+   ]
+  ],
+  "sentence": "Michael Philip Jagger is a member of the Rolling Stones. The band record label Capitol Records Inc.",
+  "expect": "U",
+  "class": "points_back_description",
+  "why": "lower-case hypernym anaphor (thin space): gives the Rolling Stones The Band's record label",
+  "reply": true,
+  "sentences": [
+   "Michael Philip Jagger is a member of the Rolling Stones.",
+   "The band record label Capitol Records Inc."
+  ]
+ },
+ {
+  "id": "R8-PB03",
+  "gathered": [
+   [
+    "lewis_allan_reed",
+    "member_of",
+    "the_velvet_underground"
+   ],
+   [
+    "the_band",
+    "award_received",
+    "grammy_lifetime_achievement_award"
+   ]
+  ],
+  "sentence": "Lewis Allan Reed is a member of the Velvet Underground. The band award received Grammy lifetime achievement award.",
+  "expect": "U",
+  "class": "points_back_description",
+  "why": "lower-case hypernym anaphor (narrow no-break space): gives the Velvet Underground The Band's award",
+  "reply": true,
+  "sentences": [
+   "Lewis Allan Reed is a member of the Velvet Underground.",
+   "The band award received Grammy lifetime achievement award."
+  ]
+ },
+ {
+  "id": "R8-PB04",
+  "gathered": [
+   [
+    "the_jackson_five",
+    "has_part",
+    "wacko_jacko"
+   ],
+   [
+    "the_band",
+    "country_of_origin",
+    "canada_portal"
+   ]
+  ],
+  "sentence": "The Jackson Five has part Wacko Jacko. The band country of origin Canada portal.",
+  "expect": "U",
+  "class": "points_back_description",
+  "why": "lower-case hypernym anaphor (figure space): says the Jackson Five come from Canada",
+  "reply": true,
+  "sentences": [
+   "The Jackson Five has part Wacko Jacko.",
+   "The band country of origin Canada portal."
+  ]
+ },
+ {
+  "id": "R8-PB05",
+  "gathered": [
+   [
+    "phil_colins",
+    "member_of",
+    "genesis_band"
+   ],
+   [
+    "the_band",
+    "country_of_origin",
+    "canada_portal"
+   ]
+  ],
+  "sentence": "Phil Colins is a member of Genesis band. The band country of origin Canada portal.",
+  "expect": "U",
+  "class": "points_back_description",
+  "why": "subset anaphor ('band' is a word of 'Genesis band') with a no-break space: says Genesis comes from Canada",
+  "reply": true,
+  "sentences": [
+   "Phil Colins is a member of Genesis band.",
+   "The band country of origin Canada portal."
+  ]
+ },
+ {
+  "id": "R8-PB06",
+  "gathered": [
+   [
+    "peter_gabriel",
+    "member_of",
+    "genesis_band"
+   ],
+   [
+    "the_band",
+    "record_label",
+    "capitol_records_inc"
+   ]
+  ],
+  "sentence": "Peter Gabriel is a member of Genesis band. The Band record label Capitol Records Inc.",
+  "expect": "U",
+  "class": "points_back_description",
+  "why": "subset anaphor in title case: 'The Band' right after 'Genesis band' reads as Genesis",
+  "reply": true,
+  "sentences": [
+   "Peter Gabriel is a member of Genesis band.",
+   "The Band record label Capitol Records Inc."
+  ]
+ },
+ {
+  "id": "R8-PB07",
+  "gathered": [
+   [
+    "trevor_horn",
+    "member_of",
+    "yes_band"
+   ],
+   [
+    "yes_band",
+    "has_part",
+    "rick_wakeman"
+   ],
+   [
+    "the_band",
+    "country_of_origin",
+    "canada_portal"
+   ]
+  ],
+  "sentence": "Trevor Horn is a member of Yes band. Yes band has part Rick Wakeman, too. The band country of origin Canada portal.",
+  "expect": "U",
+  "class": "points_back_description",
+  "why": "after two sentences about Yes band, 'The band' (thin space) reads as Yes band: says Yes comes from Canada; the middle sentence carries an extra 'too', so dropping it leaves sentences 1 and 3 as the selection",
+  "reply": true,
+  "sentences": [
+   "Trevor Horn is a member of Yes band.",
+   "Yes band has part Rick Wakeman, too.",
+   "The band country of origin Canada portal."
+  ]
+ },
+ {
+  "id": "R8-PB08",
+  "gathered": [
+   [
+    "walt_disney",
+    "conflict",
+    "world_war_one"
+   ],
+   [
+    "the_duck_man",
+    "award_received",
+    "inkpot_award"
+   ]
+  ],
+  "sentence": "Walt Disney participated in world war one. The duck man award received Inkpot award.",
+  "expect": "U",
+  "class": "points_back_description",
+  "why": "a lower-case description ('the duck man') that fits Walt Disney, the only person mentioned: gives him the Inkpot award",
+  "reply": true,
+  "sentences": [
+   "Walt Disney participated in world war one.",
+   "The duck man award received Inkpot award."
+  ]
+ },
+ {
+  "id": "R8-PB09",
+  "gathered": [
+   [
+    "walt_disney",
+    "occupation",
+    "writter"
+   ],
+   [
+    "the_duck_man",
+    "manner_of_death",
+    "death_by_natural_cause"
+   ]
+  ],
+  "sentence": "Walt Disney occupation writter. The duck man manner of death death by natural cause.",
+  "expect": "U",
+  "class": "points_back_description",
+  "why": "plain lower-case description pointing back to Walt Disney",
+  "reply": true,
+  "sentences": [
+   "Walt Disney occupation writter.",
+   "The duck man manner of death death by natural cause."
+  ]
+ },
+ {
+  "id": "R8-PB10",
+  "gathered": [
+   [
+    "penny_cruz",
+    "spouse",
+    "bardem_javier"
+   ],
+   [
+    "cruz",
+    "language_of_work_or_name",
+    "modern_spanish"
+   ]
+  ],
+  "sentence": "Bardem Javier is a spouse of Penny Cruz. Cruz language of work or name modern Spanish.",
+  "expect": "U",
+  "class": "points_back_description",
+  "why": "a bare surname (no 'the') points back to Penny Cruz; arguable because the slug cruz is the surname page",
+  "reply": true,
+  "sentences": [
+   "Bardem Javier is a spouse of Penny Cruz.",
+   "Cruz language of work or name modern Spanish."
+  ],
+  "arguable": true
+ },
+ {
+  "id": "R8-PB11",
+  "gathered": [
+   [
+    "scarlett_johansson",
+    "place_of_birth",
+    "new_york_new_york"
+   ],
+   [
+    "johansson",
+    "language_of_work_or_name",
+    "swedish_lang"
+   ]
+  ],
+  "sentence": "Scarlett Johansson place of birth New York New York. Johansson language of work or name Swedish lang.",
+  "expect": "U",
+  "class": "points_back_description",
+  "why": "a bare surname points back to Scarlett Johansson: gives her the language Swedish; arguable as PB10",
+  "reply": true,
+  "sentences": [
+   "Scarlett Johansson place of birth New York New York.",
+   "Johansson language of work or name Swedish lang."
+  ],
+  "arguable": true
+ },
+ {
+  "id": "R8-PB12",
+  "gathered": [
+   [
+    "keith_richards",
+    "member_of",
+    "the_rolling_stones"
+   ],
+   [
+    "the_band",
+    "country_of_origin",
+    "canada_portal"
+   ]
+  ],
+  "sentence": "Keith Richards is a member of the Rolling Stones. the_band country of origin canada_portal.",
+  "expect": "U",
+  "class": "points_back_description",
+  "why": "the verbatim slug the_band after the Rolling Stones; arguable because underscores read as an identifier",
+  "reply": true,
+  "sentences": [
+   "Keith Richards is a member of the Rolling Stones.",
+   "the_band country of origin canada_portal."
+  ],
+  "arguable": true
+ },
+ {
+  "id": "R8-PB13",
+  "gathered": [
+   [
+    "keith_richards",
+    "member_of",
+    "the_rolling_stones"
+   ],
+   [
+    "keith_richards",
+    "instrument",
+    "history_of_the_guitar"
+   ],
+   [
+    "the_band",
+    "record_label",
+    "capitol_records_inc"
+   ]
+  ],
+  "sentence": "Keith Richards is a member of the Rolling Stones. Keith Richards plays history of the guitar. The band record label Capitol Records Inc.",
+  "expect": "U",
+  "class": "points_back_description",
+  "why": "a lower-case hypernym anaphor two sentences after the antecedent",
+  "reply": true,
+  "sentences": [
+   "Keith Richards is a member of the Rolling Stones.",
+   "Keith Richards plays history of the guitar.",
+   "The band record label Capitol Records Inc."
+  ]
+ },
+ {
+  "id": "R8-PB14",
+  "gathered": [
+   [
+    "trevor_horn",
+    "member_of",
+    "yes_band"
+   ],
+   [
+    "the_band",
+    "award_received",
+    "grammy_lifetime_achievement_award"
+   ]
+  ],
+  "sentence": "Trevor Horn is a member of Yes band. The Band award received Grammy lifetime achievement award.",
+  "expect": "U",
+  "class": "points_back_description",
+  "why": "subset anaphor in title case: 'The Band' right after 'Yes band' reads as Yes",
+  "reply": true,
+  "sentences": [
+   "Trevor Horn is a member of Yes band.",
+   "The Band award received Grammy lifetime achievement award."
+  ]
+ },
+ {
+  "id": "R8-PB15",
+  "gathered": [
+   [
+    "phil_colins",
+    "member_of",
+    "genesis_band"
+   ],
+   [
+    "peter_gabriel",
+    "member_of",
+    "genesis_band"
+   ],
+   [
+    "the_band",
+    "genre",
+    "rock_musician"
+   ]
+  ],
+  "sentence": "Phil Colins is a member of Genesis band. Peter Gabriel is a member of Genesis band. The Band genre rock musician.",
+  "expect": "U",
+  "class": "points_back_description",
+  "why": "subset anaphor (narrow no-break space) after two Genesis sentences",
+  "reply": true,
+  "sentences": [
+   "Phil Colins is a member of Genesis band.",
+   "Peter Gabriel is a member of Genesis band.",
+   "The Band genre rock musician."
+  ]
+ },
+ {
+  "id": "R8-PB16",
+  "gathered": [
+   [
+    "take_that",
+    "instance_of",
+    "boy_band"
+   ],
+   [
+    "the_band",
+    "instance_of",
+    "pop_rock_band"
+   ]
+  ],
+  "sentence": "Take That is an instance of boy band. The band is an instance of pop rock band.",
+  "expect": "U",
+  "class": "points_back_description",
+  "why": "lower-case anaphor ('band' is also a word of 'boy band'): right after Take That is called a boy band, 'the band' reads as Take That and calls it a pop rock band, which nothing gathered says",
+  "reply": true,
+  "sentences": [
+   "Take That is an instance of boy band.",
+   "The band is an instance of pop rock band."
+  ]
+ },
+ {
+  "id": "R8-PB17",
+  "gathered": [
+   [
+    "lewis_allan_reed",
+    "member_of",
+    "the_velvet_underground"
+   ],
+   [
+    "john_cale",
+    "part_of",
+    "the_velvet_underground"
+   ],
+   [
+    "the_band",
+    "country_of_origin",
+    "canada_portal"
+   ]
+  ],
+  "sentence": "Lewis Allan Reed is a member of the Velvet Underground. John Cale is part of the Velvet Underground. The band country of origin Canada portal.",
+  "expect": "U",
+  "class": "points_back_description",
+  "why": "lower-case hypernym anaphor (figure space) after two Velvet Underground sentences",
+  "reply": true,
+  "sentences": [
+   "Lewis Allan Reed is a member of the Velvet Underground.",
+   "John Cale is part of the Velvet Underground.",
+   "The band country of origin Canada portal."
+  ]
+ },
+ {
+  "id": "R8-PB18",
+  "gathered": [
+   [
+    "roger_daltrey_filmography",
+    "member_of",
+    "the_who"
+   ],
+   [
+    "the_band",
+    "record_label",
+    "capitol_records_inc"
+   ]
+  ],
+  "sentence": "Roger Daltrey Filmography is a member of the Who. The band record label Capitol Records Inc.",
+  "expect": "U",
+  "class": "points_back_description",
+  "why": "lower-case hypernym anaphor: gives the Who The Band's label",
+  "reply": true,
+  "sentences": [
+   "Roger Daltrey Filmography is a member of the Who.",
+   "The band record label Capitol Records Inc."
+  ]
+ },
+ {
+  "id": "R8-PB19",
+  "gathered": [
+   [
+    "king_abdulaziz",
+    "child",
+    "salman_bin_abdul_aziz_al_saud"
+   ],
+   [
+    "monarch",
+    "part_of",
+    "dynastic_state"
+   ]
+  ],
+  "sentence": "Salman Bin Abdul Aziz Al Saud is a child of King Abdulaziz. The monarch is part of dynastic state.",
+  "expect": "U",
+  "class": "points_back_description",
+  "why": "a one-word hypernym ('the monarch') after a sentence about a king reads as King Abdulaziz; arguable because 'the monarch' is also the class name",
+  "reply": true,
+  "sentences": [
+   "Salman Bin Abdul Aziz Al Saud is a child of King Abdulaziz.",
+   "The monarch is part of dynastic state."
+  ],
+  "arguable": true
+ },
+ {
+  "id": "R8-KR01",
+  "gathered": [
+   [
+    "province_of_frosinone",
+    "located_in_the_administrative_territoria",
+    "latium_and_rome"
+   ]
+  ],
+  "sentence": "Province of Frosinone is located in Latium and Rome.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "'and' inside the name read as a list: places the province of Frosinone inside Rome as well as Latium"
+ },
+ {
+  "id": "R8-KR02",
+  "gathered": [
+   [
+    "moselle_d_partement",
+    "shares_border_with",
+    "meurthe_and_moselle"
+   ]
+  ],
+  "sentence": "Moselle d partement shares border with meurthe and moselle.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "lower-case 'and' name read as a list: Moselle would border Moselle; arguable because the self-border is absurd enough that a reader may fall back to the name",
+  "arguable": true
+ },
+ {
+  "id": "R8-KR03",
+  "gathered": [
+   [
+    "nonhuman_animal",
+    "subclass_of",
+    "flora_and_fauna"
+   ]
+  ],
+  "sentence": "Nonhuman animal is a subclass of flora and fauna.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "list reading makes animals a subclass of flora; arguable because 'flora and fauna' is an idiom",
+  "arguable": true
+ },
+ {
+  "id": "R8-KR04",
+  "gathered": [
+   [
+    "mus_most",
+    "headquarters_location",
+    "most_czech_republic"
+   ]
+  ],
+  "sentence": "Mus Most is headquartered in most Czech Republic.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "quantifier at the start of a lower-case name: 'in most Czech Republic' reads as 'in most of the Czech Republic'"
+ },
+ {
+  "id": "R8-KR05",
+  "gathered": [
+   [
+    "most_czech_republic",
+    "twinned_administrative_body",
+    "quarters_bucharest"
+   ]
+  ],
+  "sentence": "most czech republic is twinned with quarters bucharest.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "quantifier-initial name in lower case reads as 'most (of the) Czech Republic'"
+ },
+ {
+  "id": "R8-KR06",
+  "gathered": [
+   [
+    "the_rolling_stones",
+    "has_part",
+    "michael_philip_jagger"
+   ],
+   [
+    "michael_philip_jagger",
+    "member_of",
+    "the_rolling_stones"
+   ]
+  ],
+  "sentence": "The Rolling Stones has part Michael Philip Jagger. A Michael Philip Jagger is a member of the Rolling Stones.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "a fact restated through the inverse relation with 'a': asserts a second, different Michael Philip Jagger; arguable because round 6's judges read this form (R6-DP13) as either way",
+  "reply": true,
+  "sentences": [
+   "The Rolling Stones has part Michael Philip Jagger.",
+   "A Michael Philip Jagger is a member of the Rolling Stones."
+  ],
+  "arguable": true
+ },
+ {
+  "id": "R8-KR07",
+  "gathered": [
+   [
+    "city_of_chicago",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "City of Chicago is located in time zone utc_06.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "the verbatim slug utc_06 drops the sign of UTC-06 and reads as UTC+06; arguable because it is the slug as written",
+  "arguable": true
+ },
+ {
+  "id": "R8-KR08",
+  "gathered": [
+   [
+    "gary_numan_s",
+    "instrument",
+    "history_of_the_guitar"
+   ]
+  ],
+  "sentence": "Gary Numan S plays history of the guitar.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "capital final 'S' (a dropped apostrophe) reads as a second person's initial beside Gary Numan; arguable because a reader may take it as part of the name",
+  "arguable": true
+ },
+ {
+  "id": "R8-KR09",
+  "gathered": [
+   [
+    "no_saints",
+    "member_of",
+    "national_football_league"
+   ]
+  ],
+  "sentence": "no_saints is a member of national football league.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "lower-case verbatim slug no_saints reads 'no saints is a member', a negated claim; arguable because the underscore makes it read as an identifier",
+  "arguable": true
+ },
+ {
+  "id": "R8-KR10",
+  "gathered": [
+   [
+    "steve_threw_up",
+    "place_of_birth",
+    "los_angelas"
+   ]
+  ],
+  "sentence": "steve threw up place of birth los angelas.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "lower-case name holding a lexical verb: reads as Steve vomiting at his place of birth"
+ },
+ {
+  "id": "R8-KR11",
+  "gathered": [
+   [
+    "steve_threw_up",
+    "instrument",
+    "history_of_the_guitar"
+   ]
+  ],
+  "sentence": "steve threw up plays history of the guitar.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "lexical-verb name with the build-6 'plays' wording; reads 'Steve threw up' as a clause"
+ },
+ {
+  "id": "R8-KR12",
+  "gathered": [
+   [
+    "celtics_beat_la_chant",
+    "headquarters_location",
+    "economy_of_boston"
+   ]
+  ],
+  "sentence": "celtics beat la chant is headquartered in economy of boston.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "lexical-verb name: reads as 'the Celtics beat LA', a game result nothing gathered states"
+ },
+ {
+  "id": "R8-KR13",
+  "gathered": [
+   [
+    "keith_richards",
+    "member_of",
+    "the_rolling_stones"
+   ],
+   [
+    "the_band",
+    "record_label",
+    "capitol_records_inc"
+   ]
+  ],
+  "sentence": "Keith Richards is a member of the Rolling Stones. The Band record label Capitol Records Inc.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "hypernym definite description in title case (Amendment 6 residue): 'The Band' read as the Rolling Stones; arguable because title case reads as the proper name",
+  "reply": true,
+  "sentences": [
+   "Keith Richards is a member of the Rolling Stones.",
+   "The Band record label Capitol Records Inc."
+  ],
+  "arguable": true
+ },
+ {
+  "id": "R8-KR14",
+  "gathered": [
+   [
+    "keith_richards",
+    "member_of",
+    "the_rolling_stones"
+   ],
+   [
+    "the_rolling_stones",
+    "genre",
+    "rock_musician"
+   ],
+   [
+    "the_band",
+    "country_of_origin",
+    "canada_portal"
+   ]
+  ],
+  "sentence": "Keith Richards is a member of the Rolling Stones. The Rolling Stones genre rock musician. The Band country of origin Canada portal.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "hypernym residue after two sentences about the Rolling Stones",
+  "reply": true,
+  "sentences": [
+   "Keith Richards is a member of the Rolling Stones.",
+   "The Rolling Stones genre rock musician.",
+   "The Band country of origin Canada portal."
+  ]
+ },
+ {
+  "id": "R8-KR15",
+  "gathered": [
+   [
+    "kingdom_of_ire",
+    "followed_by",
+    "uk_of_gb_and_i"
+   ]
+  ],
+  "sentence": "Kingdom of Ire is followed by uk of gb and i.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "a first-person 'i' that is not the name's first word: 'followed by ... and I' reads as the speaker; arguable because 'UK of GB and I' is a recognisable short form of the state's name",
+  "arguable": true
+ },
+ {
+  "id": "R8-KR16",
+  "gathered": [
+   [
+    "victoria_of_england",
+    "occupation",
+    "monarch"
+   ],
+   [
+    "monarch",
+    "subclass_of",
+    "head_of_nation"
+   ]
+  ],
+  "sentence": "Victoria of England occupation monarch. The monarch is a subclass of head of nation.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "same-slug class-noun anaphor (exempt by design): 'The monarch' reads as Victoria; arguable because round 6's judges read this form (R6-AN01) as faithful",
+  "reply": true,
+  "sentences": [
+   "Victoria of England occupation monarch.",
+   "The monarch is a subclass of head of nation."
+  ],
+  "arguable": true
+ },
+ {
+  "id": "R8-KR17",
+  "gathered": [
+   [
+    "only_fools_and_horses",
+    "country_of_origin",
+    "united_kingom"
+   ]
+  ],
+  "sentence": "only fools and horses country of origin united kingom.",
+  "expect": "U",
+  "class": "known_residue",
+  "why": "focus word plus 'and' list at the start of a lower-case name: reads 'only fools and horses (come from) the UK'"
+ },
+ {
+  "id": "R8-HF01",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Perhaps Robbie Williams is a member of Take That.",
+  "expect": "U",
+  "class": "hypothesis_frame",
+  "why": "leading hedge 'Perhaps'"
+ },
+ {
+  "id": "R8-HF02",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ]
+  ],
+  "sentence": "perhaps Jul follows June.",
+  "expect": "U",
+  "class": "hypothesis_frame",
+  "why": "leading lower-case 'perhaps ', the exact spiking-hypothesis prefix, on a mouth sentence"
+ },
+ {
+  "id": "R8-HF03",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "perhaps ukraine shares border with pole land.",
+  "expect": "U",
+  "class": "hypothesis_frame",
+  "why": "lower-case 'perhaps ' prefix"
+ },
+ {
+  "id": "R8-HF04",
+  "gathered": [
+   [
+    "ringo_star",
+    "instrument",
+    "drum_kit"
+   ]
+  ],
+  "sentence": "Perhaps Ringo Star plays drum kit.",
+  "expect": "U",
+  "class": "hypothesis_frame",
+  "why": "hedge on a build-6 wording"
+ },
+ {
+  "id": "R8-HF05",
+  "gathered": [
+   [
+    "peter_fonda",
+    "father",
+    "henry_fonda"
+   ]
+  ],
+  "sentence": "perhaps Henry Fonda is the father of Peter Fonda.",
+  "expect": "U",
+  "class": "hypothesis_frame",
+  "why": "'perhaps ' prefix on the father wording"
+ },
+ {
+  "id": "R8-HF06",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Perhaps, Take That has part Robbie Williams.",
+  "expect": "U",
+  "class": "hypothesis_frame",
+  "why": "hedge with a comma"
+ },
+ {
+  "id": "R8-HF07",
+  "gathered": [
+   [
+    "aug",
+    "follows",
+    "jul"
+   ]
+  ],
+  "sentence": "My guess is that Aug follows Jul.",
+  "expect": "U",
+  "class": "hypothesis_frame",
+  "why": "first-person guess frame"
+ },
+ {
+  "id": "R8-HF08",
+  "gathered": [
+   [
+    "canada_portal",
+    "shares_border_with",
+    "u_s_of_a"
+   ]
+  ],
+  "sentence": "My best guess: Canada portal shares border with U S of A.",
+  "expect": "U",
+  "class": "hypothesis_frame",
+  "why": "first-person guess frame with a colon"
+ },
+ {
+  "id": "R8-HF09",
+  "gathered": [
+   [
+    "henry_fonda",
+    "conflict",
+    "war_world_two"
+   ]
+  ],
+  "sentence": "I would guess that Henry Fonda participated in war world two.",
+  "expect": "U",
+  "class": "hypothesis_frame",
+  "why": "first-person guess frame"
+ },
+ {
+  "id": "R8-HF10",
+  "gathered": [
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ]
+  ],
+  "sentence": "I think Rick Wakeman is a member of Yes band.",
+  "expect": "U",
+  "class": "hypothesis_frame",
+  "why": "first-person belief frame"
+ },
+ {
+  "id": "R8-HF11",
+  "gathered": [
+   [
+    "lord_of_the_rings",
+    "author",
+    "j_r_r_tolkien"
+   ]
+  ],
+  "sentence": "I believe J R R Tolkien is an author of Lord of the Rings.",
+  "expect": "U",
+  "class": "hypothesis_frame",
+  "why": "first-person belief frame"
+ },
+ {
+  "id": "R8-HF12",
+  "gathered": [
+   [
+    "pole_land",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Maybe Pole Land is a member of the United Nations.",
+  "expect": "U",
+  "class": "hypothesis_frame",
+  "why": "leading hedge 'Maybe'"
+ },
+ {
+  "id": "R8-HF13",
+  "gathered": [
+   [
+    "june",
+    "followed_by",
+    "jul"
+   ]
+  ],
+  "sentence": "Possibly June is followed by Jul.",
+  "expect": "U",
+  "class": "hypothesis_frame",
+  "why": "leading hedge 'Possibly'"
+ },
+ {
+  "id": "R8-HF14",
+  "gathered": [
+   [
+    "keith_richards",
+    "member_of",
+    "the_rolling_stones"
+   ]
+  ],
+  "sentence": "If I had to guess, Keith Richards is a member of the Rolling Stones.",
+  "expect": "U",
+  "class": "hypothesis_frame",
+  "why": "first-person guess frame"
+ },
+ {
+  "id": "R8-HF15",
+  "gathered": [
+   [
+    "tim_burton",
+    "spouse",
+    "helena_bonham_carter"
+   ]
+  ],
+  "sentence": "I do not know whether Helena Bonham Carter is a spouse of Tim Burton.",
+  "expect": "U",
+  "class": "hypothesis_frame",
+  "why": "first-person abstain wording wrapped around a gathered fact"
+ },
+ {
+  "id": "R8-HF16",
+  "gathered": [
+   [
+    "rat",
+    "parent_taxon",
+    "old_world_mouse"
+   ]
+  ],
+  "sentence": "perhaps  Old world mouse is the parent taxon of rat.",
+  "expect": "U",
+  "class": "hypothesis_frame",
+  "why": "'perhaps' followed by two spaces"
+ },
+ {
+  "id": "R8-HF17",
+  "gathered": [
+   [
+    "jul",
+    "followed_by",
+    "aug"
+   ]
+  ],
+  "sentence": "Jul is followed by Aug, perhaps.",
+  "expect": "U",
+  "class": "hypothesis_frame",
+  "why": "trailing hedge"
+ },
+ {
+  "id": "R8-HF18",
+  "gathered": [
+   [
+    "ukraine",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Perhaps Ukraine is a member of the United Nations, perhaps not.",
+  "expect": "U",
+  "class": "hypothesis_frame",
+  "why": "hedge and negated alternative"
+ },
+ {
+  "id": "R8-HF19",
+  "gathered": [
+   [
+    "julio_iglesias",
+    "child",
+    "enrique_iglesias"
+   ]
+  ],
+  "sentence": "PERHAPS Enrique Iglesias is a child of Julio Iglesias.",
+  "expect": "U",
+  "class": "hypothesis_frame",
+  "why": "upper-case hedge prefix"
+ },
+ {
+  "id": "R8-TP01",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Robbie Williams is a member of Take That?",
+  "expect": "U",
+  "class": "terminal_punctuation",
+  "why": "a question mark turns the fact into a doubt"
+ },
+ {
+  "id": "R8-TP02",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ]
+  ],
+  "sentence": "Does Jul follow June",
+  "expect": "U",
+  "class": "terminal_punctuation",
+  "why": "an unterminated question; a period added before the check does not make it an assertion"
+ },
+ {
+  "id": "R8-TP03",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Take That has part Robbie Williams, right",
+  "expect": "U",
+  "class": "terminal_punctuation",
+  "why": "an unterminated tag that seeks confirmation"
+ },
+ {
+  "id": "R8-TP04",
+  "gathered": [
+   [
+    "aug",
+    "follows",
+    "jul"
+   ]
+  ],
+  "sentence": "Aug follows Jul or",
+  "expect": "U",
+  "class": "terminal_punctuation",
+  "why": "an unterminated sentence ending in a dangling 'or' (an unfinished alternative)"
+ },
+ {
+  "id": "R8-TP05",
+  "gathered": [
+   [
+    "pole_land",
+    "shares_border_with",
+    "federal_republic_of_germany"
+   ]
+  ],
+  "sentence": "Pole Land shares border with Federal Republic of Germany?!",
+  "expect": "U",
+  "class": "terminal_punctuation",
+  "why": "an interrobang expresses doubt"
+ },
+ {
+  "id": "R8-TP06",
+  "gathered": [
+   [
+    "june",
+    "follows",
+    "may_sickness"
+   ]
+  ],
+  "sentence": "June follows May sickness ?",
+  "expect": "U",
+  "class": "terminal_punctuation",
+  "why": "a spaced question mark"
+ },
+ {
+  "id": "R8-TP07",
+  "gathered": [
+   [
+    "henry_fonda",
+    "conflict",
+    "war_world_two"
+   ]
+  ],
+  "sentence": "Henry Fonda participated in war world two, or so I am told",
+  "expect": "U",
+  "class": "terminal_punctuation",
+  "why": "unterminated hearsay tail in the first person"
+ },
+ {
+  "id": "R8-TP08",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ],
+   [
+    "aug",
+    "follows",
+    "jul"
+   ]
+  ],
+  "sentence": "Jul follows June Aug",
+  "expect": "U",
+  "class": "terminal_punctuation",
+  "why": "unterminated run-on: reads 'Jul follows June (and) Aug', and Jul does not follow Aug"
+ },
+ {
+  "id": "R8-TP09",
+  "gathered": [
+   [
+    "ringo_star",
+    "instrument",
+    "drum_kit"
+   ]
+  ],
+  "sentence": "Ringo Star plays drum kit (allegedly)",
+  "expect": "U",
+  "class": "terminal_punctuation",
+  "why": "unterminated, with a parenthesised hedge"
+ },
+ {
+  "id": "R8-TP10",
+  "gathered": [
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ]
+  ],
+  "sentence": "Rick Wakeman is a member of Yes band?.",
+  "expect": "U",
+  "class": "terminal_punctuation",
+  "why": "a question mark before the period"
+ },
+ {
+  "id": "R8-TP11",
+  "gathered": [
+   [
+    "canada_portal",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Canada portal is a member of the United Nations -- not.",
+  "expect": "U",
+  "class": "terminal_punctuation",
+  "why": "a trailing retraction"
+ },
+ {
+  "id": "R8-TP12",
+  "gathered": [
+   [
+    "lloyd_bridges",
+    "child",
+    "jeff_bridges"
+   ]
+  ],
+  "sentence": "Jeff Bridges is a child of Lloyd Bridges!?",
+  "expect": "U",
+  "class": "terminal_punctuation",
+  "why": "an interrobang on a build-6 wording"
+ },
+ {
+  "id": "R8-TP13",
+  "gathered": [
+   [
+    "the_rolling_stones",
+    "has_part",
+    "michael_philip_jagger"
+   ]
+  ],
+  "sentence": "The Rolling Stones has part Michael Philip Jagger, doesn t it",
+  "expect": "U",
+  "class": "terminal_punctuation",
+  "why": "an unterminated question tag"
+ },
+ {
+  "id": "R8-TP14",
+  "gathered": [
+   [
+    "tim_burton",
+    "spouse",
+    "helena_bonham_carter"
+   ]
+  ],
+  "sentence": "Is Helena Bonham Carter a spouse of Tim Burton",
+  "expect": "U",
+  "class": "terminal_punctuation",
+  "why": "an unterminated yes-no question in the spouse wording"
+ },
+ {
+  "id": "R8-TP15",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Ukraine shares border with Pole Land...",
+  "expect": "U",
+  "class": "terminal_punctuation",
+  "why": "a trailing ellipsis (three periods; stripping one final period leaves two); arguable because the claim is still made",
+  "arguable": true
+ },
+ {
+  "id": "R8-TP16",
+  "gathered": [
+   [
+    "henry_fonda",
+    "child",
+    "jayne_seymour_fonda"
+   ]
+  ],
+  "sentence": "Jayne Seymour Fonda is a child of Henry Fonda or not",
+  "expect": "U",
+  "class": "terminal_punctuation",
+  "why": "unterminated alternative that denies the fact"
+ },
+ {
+  "id": "R8-TA01",
+  "gathered": [
+   [
+    "me",
+    "author",
+    "reginald_k_dwight"
+   ]
+  ],
+  "sentence": "Reginald K Dwight is an author of me.",
+  "expect": "U",
+  "class": "taught",
+  "why": "taught one-word title 'me' (a memoir): the sentence says Reginald K Dwight wrote the speaker"
+ },
+ {
+  "id": "R8-TA02",
+  "gathered": [
+   [
+    "my_life",
+    "author",
+    "bill_clinten"
+   ]
+  ],
+  "sentence": "Bill Clinten is an author of my life.",
+  "expect": "U",
+  "class": "taught",
+  "why": "taught title 'my life': reads as a first-person claim about the speaker's life"
+ },
+ {
+  "id": "R8-TA03",
+  "gathered": [
+   [
+    "our_mutual_friend",
+    "author",
+    "charles_john_huffam_dickens"
+   ]
+  ],
+  "sentence": "Charles John Huffam Dickens is an author of our mutual friend.",
+  "expect": "U",
+  "class": "taught",
+  "why": "taught title read as 'our mutual friend', a first-person plural claim about a person"
+ },
+ {
+  "id": "R8-TA04",
+  "gathered": [
+   [
+    "mine",
+    "author",
+    "taylor_alison_swift"
+   ]
+  ],
+  "sentence": "Taylor Alison Swift is an author of mine.",
+  "expect": "U",
+  "class": "taught",
+  "why": "taught title 'mine': reads 'an author of mine' (one of the speaker's authors)"
+ },
+ {
+  "id": "R8-TA05",
+  "gathered": [
+   [
+    "dreams_from_my_father",
+    "author",
+    "barack_h_obama_jr"
+   ]
+  ],
+  "sentence": "Barack H Obama Jr is an author of dreams from my father.",
+  "expect": "U",
+  "class": "taught",
+  "why": "taught title read as a claim about the speaker's father"
+ },
+ {
+  "id": "R8-TA06",
+  "gathered": [
+   [
+    "get_out",
+    "followed_by",
+    "us"
+   ]
+  ],
+  "sentence": "Get Out is followed by us.",
+  "expect": "U",
+  "class": "taught",
+  "why": "taught one-word title 'us': reads as the speakers following the film"
+ },
+ {
+  "id": "R8-TA07",
+  "gathered": [
+   [
+    "canada_portal",
+    "shares_border_with",
+    "us"
+   ]
+  ],
+  "sentence": "Canada portal shares border with us.",
+  "expect": "U",
+  "class": "taught",
+  "why": "taught slug 'us' (a country abbreviation) reads as the first-person plural: Canada borders the speakers"
+ },
+ {
+  "id": "R8-TA08",
+  "gathered": [
+   [
+    "my_father_and_i",
+    "conflict",
+    "war_world_two"
+   ]
+  ],
+  "sentence": "My father and I participated in war world two.",
+  "expect": "U",
+  "class": "taught",
+  "why": "taught title with 'I' not first: with the past-tense conflict wording it reads as the speaker fighting in the war"
+ },
+ {
+  "id": "R8-TA09",
+  "gathered": [
+   [
+    "honey_i_shrunk_the_kids",
+    "instance_of",
+    "theatrical_film"
+   ]
+  ],
+  "sentence": "honey i shrunk the kids is an instance of theatrical film.",
+  "expect": "U",
+  "class": "taught",
+  "why": "taught title with 'i' not first, lower case: reads 'Honey, I shrunk the kids'"
+ },
+ {
+  "id": "R8-TA10",
+  "gathered": [
+   [
+    "so_i_married_an_axe_murderer",
+    "genre",
+    "comedy_drama"
+   ]
+  ],
+  "sentence": "So I married an axe murderer genre comedy drama.",
+  "expect": "U",
+  "class": "taught",
+  "why": "taught title with 'I' not first: reads as the speaker confessing a marriage"
+ },
+ {
+  "id": "R8-TA11",
+  "gathered": [
+   [
+    "sometimes_i_lie",
+    "author",
+    "alice_feeney"
+   ]
+  ],
+  "sentence": "Alice Feeney is an author of sometimes i lie.",
+  "expect": "U",
+  "class": "taught",
+  "why": "taught title read as a first-person confession"
+ },
+ {
+  "id": "R8-TA12",
+  "gathered": [
+   [
+    "our_town",
+    "author",
+    "thornton_wilder"
+   ]
+  ],
+  "sentence": "Thornton Wilder is an author of our town.",
+  "expect": "U",
+  "class": "taught",
+  "why": "taught title read as 'our town'"
+ },
+ {
+  "id": "R8-TA13",
+  "gathered": [
+   [
+    "your_song",
+    "author",
+    "bernie_taupin"
+   ]
+  ],
+  "sentence": "Bernie Taupin is an author of your song.",
+  "expect": "U",
+  "class": "taught",
+  "why": "taught title read as the listener's song"
+ },
+ {
+  "id": "R8-TA14",
+  "gathered": [
+   [
+    "harry_potter_series",
+    "author",
+    "joanne_rowling"
+   ],
+   [
+    "she",
+    "followed_by",
+    "ayesha"
+   ]
+  ],
+  "sentence": "Joanne Rowling is an author of Harry Potter series. She is followed by Ayesha.",
+  "expect": "U",
+  "class": "taught",
+  "why": "taught one-word title 'She' (a novel): after a sentence about Joanne Rowling it reads as the pronoun",
+  "reply": true,
+  "sentences": [
+   "Joanne Rowling is an author of Harry Potter series.",
+   "She is followed by Ayesha."
+  ]
+ },
+ {
+  "id": "R8-TA15",
+  "gathered": [
+   [
+    "carfax_abbey",
+    "author",
+    "stoker_bram"
+   ],
+   [
+    "it",
+    "instance_of",
+    "theatrical_film"
+   ]
+  ],
+  "sentence": "Stoker Bram is an author of Carfax Abbey. It is an instance of theatrical film.",
+  "expect": "U",
+  "class": "taught",
+  "why": "taught one-word title 'It' (a film) reads as the pronoun: says Carfax Abbey is a film",
+  "reply": true,
+  "sentences": [
+   "Stoker Bram is an author of Carfax Abbey.",
+   "It is an instance of theatrical film."
+  ]
+ },
+ {
+  "id": "R8-TA16",
+  "gathered": [
+   [
+    "scarlett_johansson",
+    "place_of_birth",
+    "new_york_new_york"
+   ],
+   [
+    "her",
+    "original_language_of_film_or_tv_show",
+    "number_of_english_words"
+   ]
+  ],
+  "sentence": "Scarlett Johansson place of birth New York New York. Her original language of film or TV show number of English words.",
+  "expect": "U",
+  "class": "taught",
+  "why": "taught one-word title 'Her' (a film) reads as the possessive: gives Scarlett Johansson an 'original language'",
+  "reply": true,
+  "sentences": [
+   "Scarlett Johansson place of birth New York New York.",
+   "Her original language of film or TV show number of English words."
+  ]
+ },
+ {
+  "id": "R8-TA17",
+  "gathered": [
+   [
+    "trevor_horn",
+    "member_of",
+    "yes_band"
+   ],
+   [
+    "trevor_and_i",
+    "conflict",
+    "korean_police_action"
+   ]
+  ],
+  "sentence": "Trevor Horn is a member of Yes band. Trevor and I participated in Korean police action.",
+  "expect": "U",
+  "class": "taught",
+  "why": "taught name with 'I' not first: after Trevor Horn it reads as the speaker and Trevor fighting in Korea",
+  "reply": true,
+  "sentences": [
+   "Trevor Horn is a member of Yes band.",
+   "Trevor and I participated in Korean police action."
+  ]
+ },
+ {
+  "id": "R8-TA18",
+  "gathered": [
+   [
+    "we_were_soldiers",
+    "conflict",
+    "vietnam_war"
+   ]
+  ],
+  "sentence": "We were soldiers participated in Vietnam war.",
+  "expect": "U",
+  "class": "taught",
+  "why": "taught title opening with 'We': reads as the speakers having been soldiers"
+ },
+ {
+  "id": "R8-TA19",
+  "gathered": [
+   [
+    "baby_i_love_you",
+    "performer",
+    "the_ronettes"
+   ]
+  ],
+  "sentence": "Baby I love you performer the Ronettes.",
+  "expect": "U",
+  "class": "taught",
+  "why": "taught title with 'I' not first (Amendment 6 residue): reads as a declaration to the listener; arguable because it is a known song title",
+  "arguable": true
+ },
+ {
+  "id": "R8-TA20",
+  "gathered": [
+   [
+    "and_i_love_her",
+    "follows",
+    "if_i_fell"
+   ]
+  ],
+  "sentence": "and i love her follows if i fell.",
+  "expect": "U",
+  "class": "taught",
+  "why": "taught lower-case titles with 'i' not first (the residue's own example): reads as first-person clauses"
+ },
+ {
+  "id": "R8-TA21",
+  "gathered": [
+   [
+    "harry_potter_series",
+    "author",
+    "joanne_rowling"
+   ],
+   [
+    "she",
+    "author",
+    "sir_henry_haggard"
+   ],
+   [
+    "she",
+    "followed_by",
+    "ayesha"
+   ]
+  ],
+  "sentence": "Joanne Rowling is an author of Harry Potter series. Sir Henry Haggard wrote She, I think. She is followed by Ayesha.",
+  "expect": "U",
+  "class": "taught",
+  "why": "sentence 2 is a first-person hedge; if it is dropped, the selection 1+3 reads 'She' as Joanne Rowling",
+  "reply": true,
+  "sentences": [
+   "Joanne Rowling is an author of Harry Potter series.",
+   "Sir Henry Haggard wrote She, I think.",
+   "She is followed by Ayesha."
+  ]
+ },
+ {
+  "id": "R8-TAF1",
+  "gathered": [
+   [
+    "the_jewel_of_seven_stars",
+    "author",
+    "stoker_bram"
+   ]
+  ],
+  "sentence": "Stoker Bram is an author of The Jewel of Seven Stars.",
+  "expect": "F",
+  "class": "taught",
+  "why": "taught title, faithful author wording"
+ },
+ {
+  "id": "R8-TAF2",
+  "gathered": [
+   [
+    "get_out",
+    "instance_of",
+    "theatrical_film"
+   ]
+  ],
+  "sentence": "Get Out is an instance of theatrical film.",
+  "expect": "F",
+  "class": "taught",
+  "why": "taught title, title case, faithful"
+ },
+ {
+  "id": "R8-TAF3",
+  "gathered": [
+   [
+    "my_fair_lady",
+    "instance_of",
+    "theatrical_film"
+   ]
+  ],
+  "sentence": "My Fair Lady is an instance of theatrical film.",
+  "expect": "F",
+  "class": "taught",
+  "why": "taught title opening with 'My' in title case; faithful (an answer-loss probe for the pronoun rule)"
+ },
+ {
+  "id": "R8-TAF4",
+  "gathered": [
+   [
+    "she",
+    "author",
+    "sir_henry_haggard"
+   ]
+  ],
+  "sentence": "Sir Henry Haggard is an author of She.",
+  "expect": "F",
+  "class": "taught",
+  "why": "taught one-word title in title case, faithful, nothing before it"
+ },
+ {
+  "id": "R8-F01",
+  "gathered": [
+   [
+    "peter_fonda",
+    "father",
+    "henry_fonda"
+   ]
+  ],
+  "sentence": "Henry Fonda is the father of Peter Fonda.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "father wording"
+ },
+ {
+  "id": "R8-F02",
+  "gathered": [
+   [
+    "beau_bridges",
+    "father",
+    "lloyd_bridges"
+   ]
+  ],
+  "sentence": "Lloyd Bridges is the father of Beau Bridges.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "father wording"
+ },
+ {
+  "id": "R8-F03",
+  "gathered": [
+   [
+    "henry_fonda",
+    "child",
+    "jayne_seymour_fonda"
+   ]
+  ],
+  "sentence": "Jayne Seymour Fonda is a child of Henry Fonda.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "child wording"
+ },
+ {
+  "id": "R8-F04",
+  "gathered": [
+   [
+    "julio_iglesias",
+    "child",
+    "enrique_iglesias"
+   ]
+  ],
+  "sentence": "Enrique Iglesias is a child of Julio Iglesias.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "child wording"
+ },
+ {
+  "id": "R8-F05",
+  "gathered": [
+   [
+    "harry_potter_series",
+    "author",
+    "joanne_rowling"
+   ]
+  ],
+  "sentence": "Joanne Rowling is an author of Harry Potter series.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "author wording"
+ },
+ {
+  "id": "R8-F06",
+  "gathered": [
+   [
+    "sherlock_holmes_canon",
+    "author",
+    "arthur_conan_doyle"
+   ]
+  ],
+  "sentence": "Arthur Conan Doyle is an author of Sherlock Holmes canon.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "author wording"
+ },
+ {
+  "id": "R8-F07",
+  "gathered": [
+   [
+    "rat",
+    "parent_taxon",
+    "old_world_mouse"
+   ]
+  ],
+  "sentence": "Old world mouse is the parent taxon of rat.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "parent taxon wording"
+ },
+ {
+  "id": "R8-F08",
+  "gathered": [
+   [
+    "phalonia",
+    "parent_taxon",
+    "tortricinae"
+   ]
+  ],
+  "sentence": "Tortricinae is the parent taxon of Phalonia.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "parent taxon wording"
+ },
+ {
+  "id": "R8-F09",
+  "gathered": [
+   [
+    "call_of_duty",
+    "platform",
+    "windows_applications"
+   ]
+  ],
+  "sentence": "Windows applications is a platform for Call of Duty.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "platform wording"
+ },
+ {
+  "id": "R8-F10",
+  "gathered": [
+   [
+    "julio_iglesias",
+    "sport",
+    "association_football_club"
+   ]
+  ],
+  "sentence": "Association football club is a sport of Julio Iglesias.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "sport wording (faithful to the store's slug)"
+ },
+ {
+  "id": "R8-F11",
+  "gathered": [
+   [
+    "the_raptor",
+    "sport",
+    "basket_ball"
+   ]
+  ],
+  "sentence": "Basket ball is a sport of The Raptor.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "sport wording"
+ },
+ {
+  "id": "R8-F12",
+  "gathered": [
+   [
+    "ringo_star",
+    "instrument",
+    "drum_kit"
+   ]
+  ],
+  "sentence": "Ringo Star plays drum kit.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "plays wording"
+ },
+ {
+  "id": "R8-F13",
+  "gathered": [
+   [
+    "keith_richards",
+    "instrument",
+    "history_of_the_guitar"
+   ]
+  ],
+  "sentence": "Keith Richards plays history of the guitar.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "plays wording"
+ },
+ {
+  "id": "R8-F14",
+  "gathered": [
+   [
+    "henry_fonda",
+    "conflict",
+    "war_world_two"
+   ]
+  ],
+  "sentence": "Henry Fonda participated in war world two.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "conflict wording"
+ },
+ {
+  "id": "R8-F15",
+  "gathered": [
+   [
+    "kim_il_sung",
+    "conflict",
+    "korean_police_action"
+   ]
+  ],
+  "sentence": "Kim Il Sung participated in Korean police action.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "conflict wording"
+ },
+ {
+  "id": "R8-F16",
+  "gathered": [
+   [
+    "tim_burton",
+    "spouse",
+    "helena_bonham_carter"
+   ]
+  ],
+  "sentence": "Helena Bonham Carter is a spouse of Tim Burton.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "spouse wording, orientation-exact"
+ },
+ {
+  "id": "R8-F17",
+  "gathered": [
+   [
+    "mother_of_god",
+    "child",
+    "the_christ"
+   ]
+  ],
+  "sentence": "The Christ is a child of Mother of God.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "child wording"
+ },
+ {
+  "id": "R8-F18",
+  "gathered": [
+   [
+    "shania_twain",
+    "spouse",
+    "robert_john_mutt_lange"
+   ]
+  ],
+  "sentence": "Shania Twain is a spouse of Robert John Mutt Lange.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "orientation-swapped spouse wording: true by the symmetry of marriage, though not the exact accepted form (an answer-loss probe)"
+ },
+ {
+  "id": "R8-F19",
+  "gathered": [
+   [
+    "shania_twain",
+    "spouse",
+    "robert_john_mutt_lange"
+   ]
+  ],
+  "sentence": "Robert John Mutt Lange is a spouse of Shania Twain.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "spouse wording, orientation-exact"
+ },
+ {
+  "id": "R8-F20",
+  "gathered": [
+   [
+    "robert_john_mutt_lange",
+    "instrument",
+    "the_electric_guitar"
+   ]
+  ],
+  "sentence": "Robert John Mutt Lange plays the electric guitar.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "the store name 'the electric guitar' opens with 'the' and a lower-case word (an answer-loss probe)"
+ },
+ {
+  "id": "R8-F21",
+  "gathered": [
+   [
+    "mortal_kombat",
+    "platform",
+    "windows_applications"
+   ]
+  ],
+  "sentence": "Windows applications is a platform for Mortal Kombat.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "platform wording"
+ },
+ {
+  "id": "R8-F22",
+  "gathered": [
+   [
+    "aphrodite_acidalia",
+    "father",
+    "mythology_jupiter"
+   ]
+  ],
+  "sentence": "Mythology Jupiter is the father of Aphrodite Acidalia.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "father wording"
+ },
+ {
+  "id": "R8-F23",
+  "gathered": [
+   [
+    "leonard_bernstein",
+    "genre",
+    "the_symphony"
+   ]
+  ],
+  "sentence": "Leonard Bernstein genre the symphony.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "store name 'the symphony' in lower case (an answer-loss probe)"
+ },
+ {
+  "id": "R8-F24",
+  "gathered": [
+   [
+    "walt_disney",
+    "conflict",
+    "world_war_one"
+   ]
+  ],
+  "sentence": "Walt Disney participated in world war one.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "conflict wording"
+ },
+ {
+  "id": "R8-F25",
+  "gathered": [
+   [
+    "the_duck_man",
+    "award_received",
+    "inkpot_award"
+   ]
+  ],
+  "sentence": "The Duck Man award received Inkpot award.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "a title-case 'the' name with nothing before it"
+ },
+ {
+  "id": "R8-F26",
+  "gathered": [
+   [
+    "james_vii_of_scots",
+    "father",
+    "charles_i_of_england"
+   ]
+  ],
+  "sentence": "Charles I of England is the father of James VII of Scots.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Roman numeral I in the father wording"
+ },
+ {
+  "id": "R8-F27",
+  "gathered": [
+   [
+    "pedro_ii",
+    "father",
+    "dom_pedro_i"
+   ]
+  ],
+  "sentence": "Dom Pedro I is the father of Pedro II.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Roman numeral I in the father wording"
+ },
+ {
+  "id": "R8-F28",
+  "gathered": [
+   [
+    "sadler_s_wells_horse",
+    "father",
+    "northern_dancer"
+   ]
+  ],
+  "sentence": "Northern Dancer is the father of Sadler s Wells horse.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "father wording on a store name with a dropped apostrophe mid-name ('Sadler s Wells'); faithful to the triple"
+ },
+ {
+  "id": "R8-F29",
+  "gathered": [
+   [
+    "king_abdulaziz",
+    "child",
+    "salman_bin_abdul_aziz_al_saud"
+   ]
+  ],
+  "sentence": "Salman Bin Abdul Aziz Al Saud is a child of King Abdulaziz.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "child wording"
+ },
+ {
+  "id": "R8-F30",
+  "gathered": [
+   [
+    "hardy_boys",
+    "author",
+    "franklin_w_dixon"
+   ]
+  ],
+  "sentence": "Franklin W Dixon is an author of Hardy Boys.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "author wording"
+ },
+ {
+  "id": "R8-F31",
+  "gathered": [
+   [
+    "roku_netflix",
+    "platform",
+    "http_clients"
+   ]
+  ],
+  "sentence": "Http clients is a platform for Roku Netflix.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "platform wording"
+ },
+ {
+  "id": "R8-F32",
+  "gathered": [
+   [
+    "the_band",
+    "genre",
+    "rock_musician"
+   ]
+  ],
+  "sentence": "The Band genre rock musician.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "title-case 'The Band' with nothing before it"
+ },
+ {
+  "id": "R8-F33",
+  "gathered": [
+   [
+    "tortricinae",
+    "parent_taxon",
+    "tortrix_moth"
+   ]
+  ],
+  "sentence": "Tortrix moth is the parent taxon of Tortricinae.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "parent taxon wording"
+ },
+ {
+  "id": "R8-F34",
+  "gathered": [
+   [
+    "w_churchill",
+    "conflict",
+    "world_war_one"
+   ]
+  ],
+  "sentence": "W Churchill participated in world war one.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "conflict wording"
+ },
+ {
+  "id": "R8-F35",
+  "gathered": [
+   [
+    "legend_of_zelda",
+    "platform",
+    "wireless_multi_player"
+   ]
+  ],
+  "sentence": "Wireless multi player is a platform for Legend of Zelda.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "platform wording"
+ },
+ {
+  "id": "R8-F37",
+  "gathered": [
+   [
+    "jayne_seymour_fonda",
+    "father",
+    "henry_fonda"
+   ]
+  ],
+  "sentence": "Henry Fonda is the father of Jayne Seymour Fonda!",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "an exclamation mark from the mouth (not the spiking tone marker) adds no claim"
+ },
+ {
+  "id": "R8-F36",
+  "gathered": [
+   [
+    "lloyd_bridges",
+    "child",
+    "jeff_bridges"
+   ]
+  ],
+  "sentence": "Jeff Bridges is a child of Lloyd Bridges.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "child wording"
+ }
+]

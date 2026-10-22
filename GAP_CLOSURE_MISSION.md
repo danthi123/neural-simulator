@@ -13,7 +13,34 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-16 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-21 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+
+**Date:** 2026-10-21. **North star:** unchanged. **Calendar:** Stage-2 exit attempt by 11-21 (pool window 11-03..11-10);
+Stage 1 passed 10-16 with four caveats (the 10-16 section below, verbatim; never cite it without them).
+**Live lanes (Hermes drives; Claude rules on NEEDS):**
+- The first live seam: the BG commit with the tonic pallidal drive (Part B cells, Part C positive control); `[bg-tonic-loop-0]`
+  is due 10-23. Under it, the 10-20 substrate fault (global heterogeneity made the cell types regular-spiking hybrids) has a
+  fix merged default OFF.
+- Word-role frame method: step 0 GO (RULINGS `wrc-frame-0-1021`, `-1021b`); the organ-level prereg is due 10-27, else
+  word-role stays OFF at the 11-01 pin.
+- Content-selection race: step 1d measures before any third lever (RULING `cs-race-f1d-1021`). Its identity check caught
+  an engine defect: heterogeneity draws depend on total network size, so growing one population changes every neuron
+  (RULING `cs-race-f1d-id2`: the probe copies A0's parameters into shared cells; engine fix joins board #268). Step 2 runs.
+- The reply-level LBF at HEAD on the gate seeds: prereg `04ca8ccf8`, 294 lines.
+- The strict claim checker on the mouth (VERDICTS in `research/findings/2026-10-20-moat-allowlist-claim-checker-PREREGISTRATION.md`,
+  merge `359e8ff63`): build 5 GO; build 6 meets every bar but is no flip candidate; build 7 (word lists) NO-GO. It is now a
+  DECLARED HOST SCAFFOLD capped at build 8 (RULING `moat-cap-1021`): build 8, the per-fact declared-provenance floor, is in
+  review round 2 on claude-build/moat-allowlist-1021h (mirrored to S at b7e80dbb8; Amendment 8 not yet filed). No blind
+  round 10 until a flip candidate exists. Its retirement path is board #272 (the brain checks its own speech).
+- #271, heard I/you/pointing words bound at encoding: the stage-0 census is ACCEPTED as the baseline (RULING
+  `deixis-271-s0-accept`, merge `b664d4b37`; W1 28 deictic names, 60 collisions, 60 dropped facts). Claude's stage-1
+  design round 2 has written DESIGN.md + PACKET.md (workstation sim-rev/build8/r271/round2, verify pending); Hermes waits.
+- Process (owner's 10-21 templating question): CLASS HD is live (merge `86e5cd133`, RULING `hd-gate-1021`): every prereg,
+  packet and lane plan declares whether host code decides content. RAG now indexes the coordination rulings and drafts
+  (merge `129c53c4e`; `--corpus coord`).
+**Next command (Hermes, on S):** `bash tools/status.sh`, then runbook section 6 RULINGs newest first, then section 4 in order.
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-16 (history; superseded by 2026-10-21 above) — PHASE: PROVE WHO OWNS THE COMPUTATION
 
 **Date:** 2026-10-16. **North star:** unchanged — a sim-brain that converses genuinely; Qwen stays the mouth; the
 #1 metric is the load-bearing fraction, with host-decision share (by intervention) beside it.

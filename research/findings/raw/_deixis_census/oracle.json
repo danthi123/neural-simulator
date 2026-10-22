@@ -1,0 +1,2197 @@
+{
+ "items": {
+  "p001": [
+   {
+    "role": "SPEAKER",
+    "tok": "i"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p002": [
+   {
+    "role": "SPEAKER",
+    "tok": "i"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "the"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p003": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "it"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p004": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "he"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   }
+  ],
+  "p005": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "you"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p006": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "they"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "dog"
+   }
+  ],
+  "p007": [
+   {
+    "role": "SPEAKER",
+    "tok": "moi"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p008": [
+   {
+    "role": "SPEAKER",
+    "tok": "ours"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p009": [
+   {
+    "role": "NONE",
+    "tok": "the"
+   },
+   {
+    "role": "NONE",
+    "tok": "latter"
+   },
+   {
+    "role": "NONE",
+    "tok": "married"
+   },
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   }
+  ],
+  "p010": [
+   {
+    "role": "NONE",
+    "tok": "that"
+   },
+   {
+    "role": "NONE",
+    "tok": "guy"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p011": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "you"
+   },
+   {
+    "role": "NONE",
+    "tok": "and"
+   },
+   {
+    "role": "NAME",
+    "tok": "saoirse"
+   },
+   {
+    "role": "NONE",
+    "tok": "studied"
+   },
+   {
+    "role": "NONE",
+    "tok": "at"
+   },
+   {
+    "role": "NAME",
+    "tok": "dunmere"
+   }
+  ],
+  "p012": [
+   {
+    "role": "SPEAKER",
+    "tok": "im"
+   },
+   {
+    "role": "NONE",
+    "tok": "chasing"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p013": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "hes"
+   },
+   {
+    "role": "NONE",
+    "tok": "chasing"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p014": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "yous"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p015": [
+   {
+    "role": "SPEAKER",
+    "tok": "my"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p016": [
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   },
+   {
+    "role": "NONE",
+    "tok": "does"
+   },
+   {
+    "role": "NONE",
+    "tok": "not"
+   },
+   {
+    "role": "NONE",
+    "tok": "like"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p017": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "yer"
+   },
+   {
+    "role": "NONE",
+    "tok": "auntie"
+   },
+   {
+    "role": "NAME",
+    "tok": "moira"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p018": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "ur"
+   },
+   {
+    "role": "NONE",
+    "tok": "mom"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p019": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "ADDRESSEE",
+    "tok": "your"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   },
+   {
+    "role": "NAME",
+    "tok": "dalia"
+   }
+  ],
+  "p020": [
+   {
+    "role": "SPEAKER",
+    "tok": "i"
+   },
+   {
+    "role": "NONE",
+    "tok": "told"
+   },
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p021": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "you"
+   },
+   {
+    "role": "NONE",
+    "tok": "gave"
+   },
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p022": [
+   {
+    "role": "SPEAKER",
+    "tok": "i"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "dog"
+   },
+   {
+    "role": "NONE",
+    "tok": "quickly"
+   }
+  ],
+  "p023": [
+   {
+    "role": "SPEAKER",
+    "tok": "we"
+   },
+   {
+    "role": "NONE",
+    "tok": "like"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   },
+   {
+    "role": "NONE",
+    "tok": "music"
+   }
+  ],
+  "p024": [
+   {
+    "role": "SPEAKER",
+    "tok": "my"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "fish"
+   }
+  ],
+  "p025": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "your"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "fish"
+   }
+  ],
+  "p026": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "her"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "fish"
+   }
+  ],
+  "p027": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "and"
+   },
+   {
+    "role": "SPEAKER",
+    "tok": "i"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p028": [
+   {
+    "role": "SPEAKER",
+    "tok": "me"
+   },
+   {
+    "role": "NONE",
+    "tok": "and"
+   },
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p029": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "yours"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p030": [
+   {
+    "role": "SPEAKER",
+    "tok": "mine"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p031": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "em"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p032": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "ya"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p033": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "thee"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p034": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "urself"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p035": [
+   {
+    "role": "NONE",
+    "tok": "somebody"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p036": [
+   {
+    "role": "NONE",
+    "tok": "everyone"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p037": [
+   {
+    "role": "SPEAKER",
+    "tok": "i"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p038": [
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "SPEAKER",
+    "tok": "me"
+   }
+  ],
+  "p039": [
+   {
+    "role": "SPEAKER",
+    "tok": "my"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p040": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "SPEAKER",
+    "tok": "my"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   }
+  ],
+  "p041": [
+   {
+    "role": "SPEAKER",
+    "tok": "we"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p042": [
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "SPEAKER",
+    "tok": "us"
+   }
+  ],
+  "p043": [
+   {
+    "role": "SPEAKER",
+    "tok": "our"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p044": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "SPEAKER",
+    "tok": "our"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   }
+  ],
+  "p045": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "you"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p046": [
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "ADDRESSEE",
+    "tok": "you"
+   }
+  ],
+  "p047": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "your"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p048": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "ADDRESSEE",
+    "tok": "your"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   }
+  ],
+  "p049": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "he"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p050": [
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "him"
+   }
+  ],
+  "p051": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "his"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p052": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "his"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   }
+  ],
+  "p053": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "she"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p054": [
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "her"
+   }
+  ],
+  "p055": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "her"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p056": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "her"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   }
+  ],
+  "p057": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "they"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p058": [
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "them"
+   }
+  ],
+  "p059": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "their"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p060": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "their"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   }
+  ],
+  "p061": [
+   {
+    "role": "SPEAKER",
+    "tok": "moi"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p062": [
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "SPEAKER",
+    "tok": "moi"
+   }
+  ],
+  "p063": [
+   {
+    "role": "SPEAKER",
+    "tok": "moi"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p064": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "SPEAKER",
+    "tok": "moi"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   }
+  ],
+  "p065": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "yer"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p066": [
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "ADDRESSEE",
+    "tok": "yer"
+   }
+  ],
+  "p067": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "yer"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p068": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "ADDRESSEE",
+    "tok": "yer"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   }
+  ],
+  "p069": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "yous"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p070": [
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "ADDRESSEE",
+    "tok": "yous"
+   }
+  ],
+  "p071": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "yous"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p072": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "ADDRESSEE",
+    "tok": "yous"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   }
+  ],
+  "p073": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "ur"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p074": [
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "ADDRESSEE",
+    "tok": "ur"
+   }
+  ],
+  "p075": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "ur"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p076": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "ADDRESSEE",
+    "tok": "ur"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   }
+  ],
+  "p077": [
+   {
+    "role": "SPEAKER",
+    "tok": "im"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p078": [
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "SPEAKER",
+    "tok": "im"
+   }
+  ],
+  "p079": [
+   {
+    "role": "SPEAKER",
+    "tok": "im"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p080": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "SPEAKER",
+    "tok": "im"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   }
+  ],
+  "p081": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "hes"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p082": [
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "hes"
+   }
+  ],
+  "p083": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "hes"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p084": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "hes"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   }
+  ],
+  "p085": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "ya"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p086": [
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "ADDRESSEE",
+    "tok": "ya"
+   }
+  ],
+  "p087": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "ya"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p088": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "ADDRESSEE",
+    "tok": "ya"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   }
+  ],
+  "p089": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "em"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p090": [
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "em"
+   }
+  ],
+  "p091": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "em"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p092": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "em"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   }
+  ],
+  "p093": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "thee"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p094": [
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "ADDRESSEE",
+    "tok": "thee"
+   }
+  ],
+  "p095": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "thee"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p096": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "ADDRESSEE",
+    "tok": "thee"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   }
+  ],
+  "p097": [
+   {
+    "role": "SPEAKER",
+    "tok": "mine"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p098": [
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "SPEAKER",
+    "tok": "mine"
+   }
+  ],
+  "p099": [
+   {
+    "role": "SPEAKER",
+    "tok": "mine"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p100": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "SPEAKER",
+    "tok": "mine"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   }
+  ],
+  "p101": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "yours"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p102": [
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "ADDRESSEE",
+    "tok": "yours"
+   }
+  ],
+  "p103": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "yours"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p104": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "ADDRESSEE",
+    "tok": "yours"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   }
+  ],
+  "p105": [
+   {
+    "role": "SPEAKER",
+    "tok": "ours"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p106": [
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "SPEAKER",
+    "tok": "ours"
+   }
+  ],
+  "p107": [
+   {
+    "role": "SPEAKER",
+    "tok": "ours"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p108": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "SPEAKER",
+    "tok": "ours"
+   },
+   {
+    "role": "NONE",
+    "tok": "cousin"
+   }
+  ],
+  "p109": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p110": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   },
+   {
+    "role": "NONE",
+    "tok": "."
+   },
+   {
+    "role": "ANTECEDENT(kofi)",
+    "tok": "he"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   }
+  ],
+  "p111": [
+   {
+    "role": "NONE",
+    "tok": "guy"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   },
+   {
+    "role": "NONE",
+    "tok": "."
+   },
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "he"
+   },
+   {
+    "role": "NONE",
+    "tok": "chases"
+   },
+   {
+    "role": "NAME",
+    "tok": "fenna"
+   }
+  ],
+  "p112": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "and"
+   },
+   {
+    "role": "NAME",
+    "tok": "dalia"
+   },
+   {
+    "role": "NONE",
+    "tok": "study"
+   },
+   {
+    "role": "NONE",
+    "tok": "at"
+   },
+   {
+    "role": "NAME",
+    "tok": "dunmere"
+   },
+   {
+    "role": "NONE",
+    "tok": "."
+   },
+   {
+    "role": "ANTECEDENT(pair)",
+    "tok": "the"
+   },
+   {
+    "role": "ANTECEDENT(pair)",
+    "tok": "former"
+   },
+   {
+    "role": "NONE",
+    "tok": "likes"
+   },
+   {
+    "role": "NONE",
+    "tok": "jazz"
+   }
+  ],
+  "p113": [
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "and"
+   },
+   {
+    "role": "SPEAKER",
+    "tok": "i"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p114": [
+   {
+    "role": "SPEAKER",
+    "tok": "me"
+   },
+   {
+    "role": "NONE",
+    "tok": "and"
+   },
+   {
+    "role": "NAME",
+    "tok": "kofi"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p115": [
+   {
+    "role": "SPEAKER",
+    "tok": "i"
+   },
+   {
+    "role": "NONE",
+    "tok": "does"
+   },
+   {
+    "role": "NONE",
+    "tok": "not"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p116": [
+   {
+    "role": "SPEAKER",
+    "tok": "i"
+   },
+   {
+    "role": "NONE",
+    "tok": "does"
+   },
+   {
+    "role": "NONE",
+    "tok": "n't"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p117": [
+   {
+    "role": "SPEAKER",
+    "tok": "we"
+   },
+   {
+    "role": "NONE",
+    "tok": "does"
+   },
+   {
+    "role": "NONE",
+    "tok": "not"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p118": [
+   {
+    "role": "SPEAKER",
+    "tok": "we"
+   },
+   {
+    "role": "NONE",
+    "tok": "does"
+   },
+   {
+    "role": "NONE",
+    "tok": "n't"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p119": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "you"
+   },
+   {
+    "role": "NONE",
+    "tok": "does"
+   },
+   {
+    "role": "NONE",
+    "tok": "not"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p120": [
+   {
+    "role": "ADDRESSEE",
+    "tok": "you"
+   },
+   {
+    "role": "NONE",
+    "tok": "does"
+   },
+   {
+    "role": "NONE",
+    "tok": "n't"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p121": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "he"
+   },
+   {
+    "role": "NONE",
+    "tok": "does"
+   },
+   {
+    "role": "NONE",
+    "tok": "not"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p122": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "he"
+   },
+   {
+    "role": "NONE",
+    "tok": "does"
+   },
+   {
+    "role": "NONE",
+    "tok": "n't"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p123": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "she"
+   },
+   {
+    "role": "NONE",
+    "tok": "does"
+   },
+   {
+    "role": "NONE",
+    "tok": "not"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p124": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "she"
+   },
+   {
+    "role": "NONE",
+    "tok": "does"
+   },
+   {
+    "role": "NONE",
+    "tok": "n't"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p125": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "they"
+   },
+   {
+    "role": "NONE",
+    "tok": "does"
+   },
+   {
+    "role": "NONE",
+    "tok": "not"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ],
+  "p126": [
+   {
+    "role": "ANTECEDENT(missing)",
+    "tok": "they"
+   },
+   {
+    "role": "NONE",
+    "tok": "does"
+   },
+   {
+    "role": "NONE",
+    "tok": "n't"
+   },
+   {
+    "role": "NONE",
+    "tok": "chase"
+   },
+   {
+    "role": "NONE",
+    "tok": "cat"
+   }
+  ]
+ },
+ "packet": "deixis-271-s0",
+ "roles": [
+  "SPEAKER",
+  "ADDRESSEE",
+  "ANTECEDENT(x)",
+  "NONE",
+  "NAME"
+ ],
+ "rules": "pronouns/deictics -> SPEAKER/ADDRESSEE/ANTECEDENT; proper names -> NAME; common nouns, indefinites, verbs -> NONE; 'former/latter' -> ANTECEDENT(pair); generated from the template metadata that built each sentence."
+}

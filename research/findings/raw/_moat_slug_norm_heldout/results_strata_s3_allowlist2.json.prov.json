@@ -1,0 +1,30 @@
+{
+ "run_id": "1792517202-1847948",
+ "runner": "research/findings/raw/_moat_slug_norm_heldout/measure_strata.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-allow2/research/findings/raw/_moat_slug_norm_heldout/measure_strata.py",
+  "research/findings/raw/_moat_slug_norm_heldout/results_strata_s3_allowlist2.json",
+  "S3=research/findings/raw/_moat_slug_norm_heldout/s3_corpus.json:research/findings/raw/_moat_slug_norm_heldout/s3_labels.json"
+ ],
+ "git_sha": "8d9869d88",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-20T13:26:42",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 12651.6,
+ "corpus_check_query": "word-role commit declines on dual-role nouns; learned wh-question construction supplies role evidence",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_moat_slug_norm_heldout/results_strata_s3_allowlist2.json"
+}
