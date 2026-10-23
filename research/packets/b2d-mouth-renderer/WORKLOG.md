@@ -276,3 +276,7 @@ would pause it; the ruling only directs re-queue. gpu_queue.log holds no per-lin
   numbers untouched; Operational notes appended) + the four registered artifacts committed on this branch.
   NEEDS-CLAUDE #2 (review + merge) filed as a RESULT on the runbook; push skipped per §3 / RULING a2-no-push
   (branch @ sha named in the RESULT instead); board card sync = Claude via that RESULT line.
+
+## 2026-10-23 09:05 EDT - T23 section 0 STOP
+
+Ran section 0 as one call (P/W/K/SH/PIN/CORPUS_SHA set): worktree clean (no uncommitted code), prereg-ok at HEAD, job file = 18 lines / 18 `revisions/$PIN ` refs, corpus sha256 == CORPUS_SHA (so step 4 may keep --corpus). THE MOUTH ROW FIRED: mouth_lb=18 > 0, which section 0 marks STOP ('nothing was ever queued; Claude checks where they came from'). Evidence for that check: 18/18 _shards/b2d0929-mouth/s*/<faculty>/lb.json, all mtime 2026-10-06 13:19, backend cupy, seeds 42/43/44/100/101/102, runner load_bearing_fraction; b2d_mouth_score.json + PIN.txt already in the shard dir (i.e. already scored once); `gpu_remote.sh log 120` / `events 200` contain no mouth|5818dc line, so not queued from S by this packet. Nothing queued, no yield. NEEDS [T23] filed. Guess (marked): a workstation-local queue run around 10-06 (research/coordination/b2d_queue_next_wave.sh exists), unverified.
