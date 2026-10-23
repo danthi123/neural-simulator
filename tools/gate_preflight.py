@@ -53,6 +53,16 @@ DEFINED = re.compile(r"(?<![A-Za-z_])DEFINED(?![A-Za-z_])")
 # tools/b2d_score.py prints no DEFINED word, only a count: `"n_defined": 82` (RULING lbf-preflight-ack-1020: its CLEAN
 # dev read was FLAGGED "no DEFINED cell" until this). A zero count is still no defined cell.
 DEFINED_COUNT = re.compile(r'"n_defined"\s*:\s*[1-9][0-9]*')
+# research/runners/sleep_transitive_inference_grade.py decides in its own words - GO/NO-GO per seed
+# (grade_seed: `sti = "GO" ... else "NO-GO"`, pm likewise) and the family collapse - and never prints the
+# token DEFINED. Registered per RULING pool-gate-preflight-1023 (2026-10-23, case (a): vocabulary, not logic;
+# Claude reviews at merge). A decided GO/NO-GO cell proves the scorer read the seed; the per-seed UNDEFINED
+# lines are still checked separately above.
+DEFINED_VERDICT = re.compile(r'"(?:pm_)?verdict":\s*"(?:GO|NO-GO)"')
+# Same reader, what its --family stdout actually prints: the per-seed GO/NO-GO never reaches the captured
+# output (verified on the 2026-10-23 bfde9a195 log: NO-GO count 0), but the necessity block decides in its
+# own words - `"label": "contributing"` / `"not necessary"` (8 in that log). Register those too.
+DEFINED_LABEL = re.compile(r'"label":\s*"(?:contributing|not necessary)"')
 
 
 def _rev9(r):
@@ -71,7 +81,8 @@ def classify(text):
         line = m.group(0)[:200]
         if not COVERAGE.search(line):
             bad.append(line)
-    if not (DEFINED.search(text) or DEFINED_COUNT.search(text)):
+    if not (DEFINED.search(text) or DEFINED_COUNT.search(text)
+            or DEFINED_VERDICT.search(text) or DEFINED_LABEL.search(text)):
         bad.append("no DEFINED cell anywhere in the read (did the scorer read the dev seed?)")
     return ("FLAGGED" if bad else "CLEAN"), bad
 
