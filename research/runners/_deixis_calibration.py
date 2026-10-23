@@ -11,13 +11,23 @@ command 107:
       hearing (the target's H lines on), plus the exposure condition
       reported ONLY as the increment over w=0 (it never enters a
       threshold); thresholds by the rule of Appendix C / DESIGN 2.6
-      (packet 505-516): theta_fire = smallest grid w where every target
-      neuron fires >= 1 spike in a 40-step token on EVERY calibration seed
-      in EVERY hearing condition of that target; theta_silent = the
-      largest grid w below theta_fire where the target emits <= 1 spike on
-      every seed in every hearing condition.  Port follows
-      calib_proto.py:133-142 (fire = all-seed/all-cond frac 1.0, silent =
-      all-seed/all-cond spikes <= 1, th_s = max silent w < th_f).
+      (packet 505-516) as CORRECTED by RULING deixis-271-s1-thr-1022
+      (2026-10-22, this replaces the 19:30 MiMo decision-A pinning to the
+      first pool/assembly): a threshold covers EVERY target neuron of
+      EVERY unit — theta_fire = the MAXIMUM over the per-unit thresholds:
+      smallest grid w where all 12 cells of EVERY P pool (P_0..P_4) fire
+      >= 1 spike in a 40-step token on EVERY calibration seed in EVERY
+      hearing condition of that target; for TOK->E the same over all 10
+      entity assemblies (E_0..E_9); theta_silent = the largest grid w
+      below theta_fire at which EVERY pool emits <= 1 spike.  Port
+      follows calib_proto.py:133-142 (fire = all-seed/all-cond frac 1.0,
+      silent = all-seed/all-cond spikes <= 1, th_s = max silent w <
+      th_f) applied per unit and then pooled per the ruling; every unit's
+      curves and its own theta pair live in sub_target_curves beside the
+      pooled thresholds, and a per-unit theta_fire span over 2 grid steps
+      is a RESULT heterogeneity line (not a STOP).  The exposure increment
+      is over the whole E population (proto's single assembly) and stays
+      outside `transfer`.
   (b) the saturated-route check on seed 61: TOK->P and TOK->E at W_MAX=20
       must fire P (all 60) and E (all 120) — every neuron — and with the
       target's H lines on must fire its C_k[e] cells; at theta_silent and
@@ -76,13 +86,16 @@ update applied with an lr factor of 0; every bridge's learned blocks
 the record carries plasticity_off {unchanged, changed_blocks, blocks}.
 
 Delegated design ruling (RULING models, one MiMo Pro, quoted verbatim in
-the WORKLOG): decision A — every curve's threshold unit is a 12-neuron
-target pinned to the FIRST pool (P_0 = SPK) and the FIRST entity
-assembly (E_0 = V1) in build order; the other four pools' and nine
-assemblies' curves are stored as reported sub_target_curves (a sibling
-key OUTSIDE `transfer`, no pass/fail booleans); thresholds.P comes from
-the base circuit alone, thresholds.E is the conjunct over production AND
-toy, and the WTA variant carries its own transfer entry, its own pair,
+the WORKLOG) — as CORRECTED by RULING deixis-271-s1-thr-1022 (Claude,
+2026-10-22): decision A's pinning to the FIRST pool (P_0 = SPK) and the
+FIRST entity assembly (E_0 = V1) is REPLACED — thresholds pool over
+every unit (theta_fire = max over per-unit thresholds, theta_silent =
+below pooled theta_fire with EVERY pool <= 1 spike), and EVERY unit's
+curves plus its own theta pair are stored as sub_target_curves (a
+sibling key OUTSIDE `transfer`, no pass/fail booleans); thresholds.P
+comes from the base circuit alone, thresholds.E is the conjunct over
+production AND toy, and the WTA variant carries its own transfer entry,
+its own pair,
 and an extra thresholds key `P_wta` (module 4's load_thresholds reads
 only P and E, so the extra key is inert there).  The exposure increment
 lives in the sibling key `exposure_increment`, outside `transfer`
@@ -465,44 +478,71 @@ def run_curves(seeds, presence_current, head, grid):
     transfer, sub, expo = {}, {}, {}
     for key, pop, kw, cname in conds:
         is_p = (pop == "p")
+        unit_names = _sub_names(is_p)
+        # pooled rows: EVERY neuron of EVERY pool/assembly (RULING
+        # deixis-271-s1-thr-1022), plus per-unit rows for the
+        # sub_target_curves + each unit's own theta pair
         curve = {w: {} for w in grid}
-        subs = {u: {} for u in _sub_names(is_p)}
+        ucur = {nm: {w: {} for w in grid} for nm in unit_names}
         for w in grid:
             for s in seeds:
                 res = trial(s, w, cname, presence_current, head,
                             pop, **kw)
-                # target unit (first pool / first assembly): unit 0 in
-                # build order, 12 cells (delegate ruling A)
-                v = res[pop][:HC.N_UNIT]
+                v = res[pop]
                 row = {"spk": int(v.sum()),
                        "frac": float((v > 0).mean()),
                        "c_spk": int(res["c"].sum())}
                 curve[w].setdefault(cname, []).append(row)
-                n_units = len(HC.POOLS_REL) if is_p else \
-                    len(HC.ENTITIES)
-                for u in range(n_units):
-                    a = u * HC.N_UNIT
-                    z = res[pop][a:a + HC.N_UNIT]
-                    nm = _sub_names(is_p)[u]
-                    d = subs[nm].setdefault(
-                        w, {"frac_min": 1.0, "spk_max": 0})
-                    d["frac_min"] = min(d["frac_min"],
-                                        float((z > 0).mean()))
-                    d["spk_max"] = max(d["spk_max"], int(z.sum()))
+                for u, nm in enumerate(unit_names):
+                    z = v[u * HC.N_UNIT:(u + 1) * HC.N_UNIT]
+                    urow = {"spk": int(z.sum()),
+                            "frac": float((z > 0).mean())}
+                    ucur[nm][w].setdefault(cname, []).append(urow)
                 del res
         if cname == "exposure":
             expo[key] = curve
             continue
-        th = threshold_pair(curve, [cname], grid)
+        # pooled theta_fire: threshold_pair on pooled rows is exactly
+        # min{w : every cell of every unit fired} = max over per-unit
+        # threshold_pair fires (a unit fires <=> its frac == 1.0)
+        fire, _ = threshold_pair(curve, [cname], grid)
+        # pooled theta_silent per the ruling: the largest w BELOW
+        # pooled theta_fire at which EVERY unit emits <= 1 spike on
+        # EVERY seed (threshold_pair's pooled-silent would instead
+        # demand the TOTAL <= 1 across all units — stricter than the
+        # ruling's per-pool reading)
+        silent = None
+        if fire is not None:
+            for w in grid:
+                if w >= fire:
+                    break
+                if all(max(r["spk"] for r in ucur[nm][w][cname]) <= 1
+                       for nm in unit_names):
+                    silent = w
+        th = [fire, silent]
+        unit_pairs = {}
+        ssub = {}
+        for nm in unit_names:
+            ut = threshold_pair(ucur[nm], [cname], grid)
+            unit_pairs[nm] = [ut[0], ut[1]]
+            wagg = {}
+            for w in grid:
+                rs = ucur[nm][w][cname]
+                wagg[str(w)] = {
+                    "frac_min": min(r["frac"] for r in rs),
+                    "spk_max": max(r["spk"] for r in rs)}
+            ssub[nm] = {"curves": wagg, "theta": unit_pairs[nm]}
         transfer[key] = {
             "grid": list(grid), "cond": cname,
-            "target": "P_0 (SPK)" if is_p else "E_0 (V1)",
+            "target": ("ALL P pools (P_0..P_4, 60 cells)" if is_p
+                       else "ALL entity assemblies (E_0..E_9, "
+                            "120 cells)"),
             "curves": {str(w): curve[w] for w in grid},
             "theta_fire": th[0], "theta_silent": th[1],
             "fired_all_by_20": th[0] is not None,
             "silent_below_theta": th[1] is not None,
         }
-        sub[key] = subs
+        sub[key] = ssub
     p_pair = [transfer["TOK>P@base"]["theta_fire"],
               transfer["TOK>P@base"]["theta_silent"]]
     pw_pair = [transfer["TOK>P@wta"]["theta_fire"],
@@ -1089,18 +1129,23 @@ def assemble(seeds, grid, streams_manifest, streams_sha, transfer, sub,
         "thresholds": {k: [v[0], v[1]] for k, v in th.items()},
         "thresholds_source": {
             "rule": "packet 74-77 / DESIGN 2.6 (243-313), ported from "
-                    "s1-scratch/fix2/calib_proto.py:133-142",
+                    "s1-scratch/fix2/calib_proto.py:133-142; pooled "
+                    "over every pool/assembly = max over per-unit "
+                    "thresholds per RULING deixis-271-s1-thr-1022",
             "grid": [int(w) for w in grid],
             "conditions": {"P": ["TOK>P@base"],
                            "P_wta": ["TOK>P@wta"],
                            "E": ["TOK>E@production", "TOK>E@toy"]},
-            "targets": {"P": "P_0 = first pool (SPK), 12 cells",
-                        "E": "E_0 = first entity assembly (V1), "
-                             "12 cells"},
+            "targets": {"P": "ALL five P pools (P_0..P_4, 60 cells); "
+                              "theta = max over per-pool thresholds",
+                        "E": "ALL ten entity assemblies (E_0..E_9, "
+                             "120 cells), conjunct production AND toy"},
             "delegate_ruling":
-                "MiMo Pro 2026-10-22, decision A: 12-neuron units "
-                "pinned to the first pool/assembly; sub_target_curves "
-                "reported outside transfer; WTA pair separate (P_wta)",
+                "MiMo Pro 2026-10-22 decision A (WTA pair separate as "
+                "P_wta; sub_target_curves + exposure increment outside "
+                "transfer) as corrected by RULING "
+                "deixis-271-s1-thr-1022: thresholds over every pool, "
+                "not the first (first-pool pinning replaced)",
             "proto": "docs/drafts/deixis/s1-scratch/fix2/calib_proto.py",
         },
         "transfer": transfer,
@@ -1251,6 +1296,29 @@ def selftest():
         assert "exposure_increment" not in rec["transfer"]
         assert "sub_target_curves" in rec
         assert "sub_target_curves" not in rec["transfer"]
+        # RULING deixis-271-s1-thr-1022: every unit present with its
+        # own theta pair; pooled theta = max over per-unit theta_fire
+        subr = rec["sub_target_curves"]
+        for key, names in (("TOK>P@base",
+                            ["P_%s" % k for k in HC.POOLS_REL]),
+                           ("TOK>P@wta",
+                            ["P_%s" % k for k in HC.POOLS_REL]),
+                           ("TOK>E@production",
+                            ["E_%s" % e for e in HC.ENTITIES]),
+                           ("TOK>E@toy",
+                            ["E_%s" % e for e in HC.ENTITIES])):
+            assert set(subr[key]) == set(names), (key, set(subr[key]))
+            for nm in names:
+                ent = subr[key][nm]
+                assert "curves" in ent and "theta" in ent, (key, nm)
+                assert isinstance(ent["theta"], list) \
+                    and len(ent["theta"]) == 2, (key, nm)
+            pf = rec["transfer"][key]["theta_fire"]
+            unit_fires = [subr[key][nm]["theta"][0] for nm in names]
+            if any(x is None for x in unit_fires):
+                assert pf is None, (key, pf, unit_fires)
+            else:
+                assert pf == max(unit_fires), (key, pf, unit_fires)
         p0 = rec["plasticity_off"]
         assert p0["unchanged"] is True, p0
         assert set(p0["blocks"]) == {"dx_ptr", "dx_name"}, p0
