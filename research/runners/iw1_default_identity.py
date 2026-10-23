@@ -174,16 +174,38 @@ def run_arm(arm: str, seed: int, out: str) -> dict:
     return rec
 
 
-def compare(a: dict, b: dict, expect: str) -> dict:
+def load_record(path: str) -> dict:
+    """Load an identity record; when the run's process recorded no git_sha (pool revisions are not git
+    checkouts -- every recorded arm of one pin shares its identity/<pin>/ directory), fill it from that
+    parent directory so the cross-pin guard in compare() can see the pin."""
+    rec = json.load(open(path))
+    if not rec.get("git_sha"):
+        rec["git_sha"] = os.path.basename(os.path.dirname(os.path.abspath(path)))
+    return rec
+
+
+def _cross_pin(a: dict, b: dict) -> bool:
+    """The two records were built at different git revisions (one side with no recorded pin counts as different;
+    synthetic fixtures recording no pin on either side are not cross-pin)."""
+    if not (a.get("git_sha") or b.get("git_sha")):
+        return False
+    return a.get("git_sha") != b.get("git_sha")
+
+
+def compare(a: dict, b: dict, expect: str, allow_cross_pin: bool = False) -> dict:
     """Per-turn sha_canon comparison. expect='same': every turn identical (and every status 200). expect='differs':
     at least one turn differs. Returns a verdict dict; `ok` is the check's outcome; UNDEFINED when a precondition
-    (same seed, same script length, every status 200) fails."""
+    (same seed, same script length, every status 200, pin-comparable) fails. CROSS-PIN records (different git_sha)
+    are UNDEFINED without allow_cross_pin=True and always carry confounded_cross_pin: the pin span moves shared code
+    (2026-10-23 RULING iw1-f3-1023: F3's turns-7-12 delta reproduced as off@F vs off@P with both arms off)."""
     pre = {"same_seed": a.get("seed") == b.get("seed"), "same_n_turns": a.get("n_turns") == b.get("n_turns"),
            "all_status_200": all(r.get("status") == 200 for r in a.get("turns", []) + b.get("turns", [])),
            "all_turns_present": all(len(x.get("turns", [])) == x.get("n_turns") for x in (a, b)),
            # degraded-brain guard (module docstring): both arms built with the corpus and the same shipped LTM
            "corpus_present_both": a.get("corpus_present") is True and b.get("corpus_present") is True,
-           "same_ltm_bundle": bool(a.get("ltm_bundle")) and a.get("ltm_bundle") == b.get("ltm_bundle")}
+           "same_ltm_bundle": bool(a.get("ltm_bundle")) and a.get("ltm_bundle") == b.get("ltm_bundle"),
+           # byte-comparability guard: a different pin means shared code (affect/worldmodel body writers) moved
+           "pin_comparable": allow_cross_pin or not _cross_pin(a, b)}
     diff = [i for i, (x, y) in enumerate(zip(a.get("turns", []), b.get("turns", [])))
             if x.get("sha_canon") != y.get("sha_canon")]
     reply_diff = [i for i, (x, y) in enumerate(zip(a.get("turns", []), b.get("turns", [])))
@@ -194,7 +216,8 @@ def compare(a: dict, b: dict, expect: str) -> dict:
          "sim_backend": backends[0] if len(backends) == 1 else backends,   # the compared arms' backend (no build here)
          "arms": [a.get("arm"), b.get("arm")], "git_shas": [a.get("git_sha"), b.get("git_sha")], "expect": expect,
          "ltm_bundles": [a.get("ltm_bundle"), b.get("ltm_bundle")], "sources": [a.get("sources"), b.get("sources")],
-         "preconditions": pre, "differing_turns": diff, "reply_differing_turns": reply_diff}
+         "preconditions": pre, "confounded_cross_pin": _cross_pin(a, b),
+         "differing_turns": diff, "reply_differing_turns": reply_diff}
     if not all(pre.values()):
         v["verdict"], v["ok"] = "UNDEFINED", None
     elif expect == "same":
@@ -213,9 +236,12 @@ def main(argv=None):
     ap.add_argument("--out", default=None)
     ap.add_argument("--compare", nargs=2, default=None)
     ap.add_argument("--expect", choices=("same", "differs"), default="same")
+    ap.add_argument("--allow-cross-pin", action="store_true",
+                    help="compare records built at different git revisions (verdict stays flagged confounded_cross_pin)")
     a = ap.parse_args(argv)
     if a.compare:
-        v = compare(json.load(open(a.compare[0])), json.load(open(a.compare[1])), a.expect)
+        v = compare(load_record(a.compare[0]), load_record(a.compare[1]), a.expect,
+                    allow_cross_pin=a.allow_cross_pin)
         v["inputs"] = [os.path.abspath(p) for p in a.compare]
         print(json.dumps(v, indent=1))
         if a.out:
