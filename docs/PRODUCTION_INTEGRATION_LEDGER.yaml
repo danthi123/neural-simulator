@@ -202,15 +202,6 @@ rows:
     de_risked: YES
     wired: YES                  # 2026-08-12 INTEGRATION #2+#2b: ChatBrain acquires an SVO assertion (_maybe_acquire->hear) + substrate-first recall on /api/brain-chat
     on_by_default: YES          # default turn behavior; no flag; lesion-verified in the production lesion probe
-    # >>> iw1-flip:d6-hebbian-write
-    subflag_flip_iw1_d6_hebbian_write: "BRAIN_D6_HEBBIAN_STORE + BRAIN_D6_ENGRAM_VOCAB + BRAIN_D6_ENGRAM_READTIME flipped default-ON together (one anchor, integration wave 1): an in-conversation fact is written by the local Hebbian rule and every routed kb reader sees only engrams that reactivate. Explicit =0 on a flag is the escape. Validation per the prereg; LBF row d6-hebbian-write joins the headline registry. (2026-10-08; prereg research/findings/2026-09-29-iw1-d6-hebbian-write-flip-PREREGISTRATION.md)"
-    default_anchor:
-      - file: research/runners/d6_hebbian_store.py
-        assign: _D6_LEARN_DEFAULT_ON
-        off_value: "False"
-        on_value: "True"
-        count: 1
-    # <<< iw1-flip:d6-hebbian-write
     scaffold_retired: NO        # the host QuestionRouter remains the FALLBACK (role-blind) — retired only when #1 (spiking selector) lands
     # retire_status (2026-09-02 scaffold-retirement taxonomy, Check D): BLOCKED: host QuestionRouter role-blind fallback recall + no lasting per-turn BTSP write by default; the neural selector + the neural language surface (neural-render) are the shared frontier.
     retire_status: "BLOCKED:neural-render"
@@ -514,15 +505,6 @@ rows:
     de_risked: "YES"            # the spiking valence forward model is a 6/6-GO E2 de-risk (predicted-valence acc 1.00, expected 0 Hz vs violated 37-46 Hz, lesion 3/3, dual-scored shuffle), 2026-08-12
     wired: "YES"                # 2026-08-12 Gate-B/E2: /api/brain-chat answers a 'what do you expect / how is this going' query with the two-pool spiking prediction (early return) and prepends an honest surprise notice on an affect-trajectory violation (reuse-by-import from research/runners/worldmodel_production_organ.py). Verified in-process numpy-CPU (composer=rf), 15/15 checks.
     on_by_default: "YES"        # default-ON; BRAIN_WORLDMODEL=0 is the byte-identical-oracle escape. Additive + moat-safe: E2 only READS (a queryable expectation) or NOTICES (an honest surprise notice); it never manufactures a fact, flips an abstain, or changes WHICH answer the recall produced.
-    # >>> iw1-flip:xedge-surprise-worldmodel
-    subflag_flip_iw1_xedge_surprise_worldmodel: "BRAIN_ONEBRAIN_XEDGE_SURPRISE_WORLDMODEL flipped default-ON (integration wave 1): on a turn that violates the affective forward model's prediction, its own D2 prediction-error unit gates one Hebbian co-fire step of the live state->pred transition toward the observed valence (cross-edge C1), so the model is no longer frozen after build. The organ is process-shared: learning accumulates across sessions of one server process. Explicit =0 is the escape. Validation per the prereg; LBF row xedge-surprise-worldmodel joins the headline registry. (2026-10-08; prereg research/findings/2026-09-29-iw1-xedge-surprise-worldmodel-flip-PREREGISTRATION.md)"
-    default_anchor:
-      - file: research/runners/onebrain_xedge_surprise_worldmodel_production.py
-        assign: _XEDGE_SWM_DEFAULT_ON
-        off_value: "False"
-        on_value: "True"
-        count: 1
-    # <<< iw1-flip:xedge-surprise-worldmodel
     scaffold_retired: "NO"      # declared residuals (the mission's named next rungs): (1) GENERIC pos/neg pools — NOT bound to the ACTUAL interlocutor affect (the P0.3 valence latch + W5 ToM channel) — the next rung, un-wired; (2) the persistence state-SELECTION is a host mapping over the model's learned predictions; (3) Markov-1 first-order transition (HTM-TM high-order is a rung); (4) teacher-driven (not self-organized); (5) burn-down #1 PARTIAL (2026-08-13): the forward model now shares ONE bridge with the D2 SURPRISE organ BY DEFAULT (BRAIN_ONEBRAIN_MERGE, ledger row onebrain-merge-organs; one cp_membrane_potential_v, N=1584); NOT yet merged onto the ONE recall composer bridge.
     # retire_status (2026-09-02 scaffold-retirement taxonomy, Check D): BLOCKED: host valence appraisal + salience gate + numpy label-prop + persistence state-selection -> a fully-spiking opponent-population appraisal not GO.
     retire_status: "BLOCKED:neural-render"
