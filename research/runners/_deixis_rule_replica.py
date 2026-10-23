@@ -383,11 +383,25 @@ def load_thresholds(path):
 
 def verify_committed_sha(path):
     """Refuse a thresholds file whose bytes differ from the committed one
-    (packet module-4 spec line 83). Uncommitted -> refusal."""
+    (packet module-4 spec line 83). Uncommitted -> refusal. Where the tree
+    carries NO git metadata at all (pool revisions are tree copies of a
+    checkout), there is no HEAD to compare against: record the file's sha256
+    with committed="unverifiable-no-git" and say so loudly - never silently
+    treat it as checked (the bar-sanity idiom, packet module 6). Every other
+    failure (missing path, outside repo, uncommitted or byte-different with
+    git present) still refuses."""
     import subprocess
     rel = os.path.relpath(os.path.abspath(path), REPO)
     if rel.startswith(".."):
         raise ValueError("%s is outside the repo" % path)
+    probe = subprocess.run(["git", "-C", REPO, "rev-parse", "--git-dir"],
+                           capture_output=True)
+    if probe.returncode != 0:
+        got_sha = sha256(path)
+        print("verify_committed_sha: NO git metadata at %s -> recording "
+              "sha256=%s.. committed=unverifiable-no-git (NOT checked)"
+              % (REPO, got_sha[:16]), flush=True)
+        return {"sha256": got_sha, "committed": "unverifiable-no-git"}
     got = subprocess.run(["git", "-C", REPO, "show", "HEAD:" + rel],
                          capture_output=True)
     if got.returncode != 0:
@@ -395,7 +409,7 @@ def verify_committed_sha(path):
     committed = hashlib.sha256(got.stdout).hexdigest()
     if committed != sha256(path):
         raise ValueError("%s differs from the committed bytes" % rel)
-    return committed
+    return {"sha256": committed, "committed": committed}
 
 
 def load_manifests(streams_dir):
@@ -463,12 +477,13 @@ def main(argv=None):
     seeds = _rng(args.seeds)
     rate_seeds = _rng(args.rate_seeds)
     th = load_thresholds(args.thresholds)
-    verify_committed_sha(args.thresholds)
+    th_verify = verify_committed_sha(args.thresholds)
     by_arm, by_key = load_manifests(args.streams)
 
     out = {"schema": "deixis-replica-v1", "thresholds": th,
            "thresholds_source": os.path.abspath(args.thresholds),
-           "thresholds_sha256": sha256(args.thresholds), "grid": grid,
+           "thresholds_sha256": sha256(args.thresholds),
+           "thresholds_verify": th_verify, "grid": grid,
            "seeds": seeds, "rate_seeds": rate_seeds, "manifests": by_arm,
            "arm_note": ("the replica's rate arm 'hebb' stands for CAUSAL and "
                         "RW-HEBB (the replica has no spike timing, stated); "
@@ -669,9 +684,28 @@ def selftest():
         assert ("base", 1) in bk and bk[("base", 1)]["sha256"] == sha256(
             sfile)
         res["manifest_ok"] = True
-        # packet line 83: thresholds must match the committed bytes
-        verify_committed_sha(os.path.join(
+        # packet line 83: thresholds must match the committed bytes. Pool
+        # revisions carry no git metadata, so neither half can compare a
+        # HEAD: both calls must record committed=unverifiable-no-git with the
+        # file's sha256 (never silently treated as checked - the bar-sanity
+        # idiom). With git present the positive verifies and the uncommitted
+        # file refuses.
+        import subprocess as _sp
+        have_git = _sp.run(["git", "-C", REPO, "rev-parse", "--git-dir"],
+                           capture_output=True).returncode == 0
+        v = verify_committed_sha(os.path.join(
             REPO, "research/coordination/LOCAL_LLM_RUNBOOK.md"))
+        if have_git:
+            assert v["committed"] != "unverifiable-no-git"
+            assert len(v["committed"]) == 64
+            res["commit_verify_ok"] = True
+        else:
+            assert v["committed"] == "unverifiable-no-git"
+            res["commit_verify_ok"] = ("unverifiable-no-git: sha256 recorded,"
+                                       " never treated as checked")
+        # refusal half: a path outside the repo (the tmp cal file) refuses on
+        # BOTH branches - before any git probe - and with git present an
+        # uncommitted in-repo file refuses too (packet test line 99/83).
         try:
             verify_committed_sha(os.path.join(td, "cal.json"))
             raise AssertionError("uncommitted refusal did not fire")
