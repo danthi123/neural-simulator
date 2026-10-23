@@ -108,6 +108,19 @@ def test_no_production_module_imports_deixis():
 
 
 def test_sim_diff_vs_main_empty():
+    # Pool revisions are plain tree copies (no .git), so the diff contract can
+    # only be asserted where git + the main ref exist (home checkout).
+    probe = subprocess.run(["git", "rev-parse", "--is-inside-work-tree"],
+                           cwd=REPO, stdout=subprocess.PIPE,
+                           stderr=subprocess.STDOUT, text=True)
+    if probe.returncode != 0:
+        pytest.skip("not a git checkout (pool revision): %s"
+                    % probe.stdout.strip())
+    probe = subprocess.run(["git", "rev-parse", "--verify", "main"],
+                           cwd=REPO, stdout=subprocess.PIPE,
+                           stderr=subprocess.STDOUT, text=True)
+    if probe.returncode != 0:
+        pytest.skip("no main ref in this checkout")
     r = subprocess.run(["git", "diff", "--stat", "main", "--", "sim/"],
                        cwd=REPO, stdout=subprocess.PIPE,
                        stderr=subprocess.STDOUT, text=True)

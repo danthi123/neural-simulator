@@ -81,7 +81,7 @@ OBJ = ["O1", "O2", "O3"]
 POOLS_REL = ["SPK", "ADR", "GIV", "LEFT", "NEWEST"]
 MARKERS = ["ART", "ASP", "IND", "AGR", "DEF"]
 FORMS = FIXED + GIVTOK + ["N_" + p for p in PERS] + ["T_" + o for o in OBJ] \
-    + ["P%d" % i for i in range(5)] + MARKERS + ["LFT"]  # 36 toy forms
+    + ["P%d" % i for i in range(1, 6)] + MARKERS + ["LFT"]  # 36 toy forms; P1..P5 per replica vocab
 ENTITIES = PERS + OBJ  # 10
 
 N_UNIT = 12          # neurons per form / per entity / per P pool
