@@ -111,14 +111,14 @@ in the main JSON because packet command 118 feeds calibration.json to
 module 6, which reads cal["step_times"] for the 0b queue plan.
 
 Stream interface: rows are x/y/S/A per packet 53-54 and the committed
-module 4 reader (header POST = POOLS+ENT, 15 entries), PLUS an `h` field
-— the list of [relation, entity] H-block drives the world rendered for
-that utterance.  The design requires per-(k,e) drives ("H_k[e] driven
-1500 pA while relation k holds for e", packet 495) but the port source's
-write_stream carries only the replica's 15-entry POST, and left/newest
-are hidden per-utterance coins inside world() — so the field's name is
-pending the NEEDS ask [deixis-271-s1-H].  If rows lack `h`, this runner
-refuses with that key named instead of inventing the truth.
+module 4 reader (header POST = POOLS+ENT, 15 entries), PLUS a field `H`
+— the flat list of [relation, entity] H-block drives that module 1
+RECORDS from the world's own state (RULING dejits-271-s1-0a-q-1022:
+the coins world() already draws for LEFT/NEWEST, the givenness set for
+GIV, the heard voices for SPK/ADR; no extra RNG draw).  The design
+requires per-(k,e) drives ("H_k[e] driven 1500 pA while relation k
+holds for e", packet 495).  If rows lack `H`, this runner refuses with
+that key named instead of inventing the truth.
 
 Region coordinates: idx[<pop>] is the population's GLOBAL neuron index
 array; form_slices()/entity_slices()/hc_slices() are region-LOCAL.  All
@@ -290,7 +290,7 @@ def plasticity_record():
 
 
 # ---------------------------------------------------------------------------
-# stream loading (packet 53-54, module-4 header contract, + row field `h`)
+# stream loading (packet 53-54, module-4 header contract, + row field `H`)
 # ---------------------------------------------------------------------------
 
 def load_manifest(manifest_path, seeds):
@@ -335,20 +335,21 @@ def load_stream(path):
     if not rows:
         raise ValueError("empty stream: %s" % path)
     for i, r in enumerate(rows):
-        if "h" not in r:
+        if "H" not in r:
             raise ValueError(
-                "row %d of %s has no 'h' field (the per-(k,e) H-block "
-                "drives the exposure replay and P0 need); see NEEDS %s"
+                "row %d of %s has no 'H' field (the per-(k,e) H-block "
+                "drives the exposure replay and P0 need, per RULING "
+                "dejits-271-s1-0a-q-1022); see NEEDS %s"
                 % (i, path, NEEDS_KEY))
     return head, rows
 
 
 def row_parts(row, head):
-    """-> (x ids, y(15), S, A, hset) for one utterance row."""
+    """-> (x ids, y(15), S, A, hset) for one utterance row (H read as row["H"])."""
     y = np.zeros(len(head["POST"]), np.float32)
     for i, v in row["y"]:
         y[i] = v
-    hset = frozenset((int(k), int(e)) for k, e in row["h"])
+    hset = frozenset((int(k), int(e)) for k, e in row["H"])
     return list(row["x"]), y, int(row["S"]), int(row["A"]), hset
 
 
@@ -1255,7 +1256,7 @@ def selftest():
                            [8, 0.2], [9, 0.2], [10, 0.0], [11, 0.0],
                            [12, 0.0], [13, 0.0], [14, 0.0]],
                      "S": 0, "A": 1,
-                     "h": [[0, 0], [0, 1], [1, 1]]})
+                     "H": [[0, 0], [0, 1], [1, 1]]})
     spath = os.path.join(tmp, "calib_seed61.json")
     with open(spath, "w") as f:
         f.write(json.dumps(head, sort_keys=True) + "\n")
@@ -1354,16 +1355,16 @@ def selftest():
             r = attributable_to("calib_c_match",
                                 float(t.sum()), float(c.sum()))
             ok.append("attributable_to=%s" % (r,))
-        # `h` refusal names the NEEDS key
+        # `H` refusal names the NEEDS key
         bad = os.path.join(tmp, "bad.json")
         with open(bad, "w") as f:
             f.write(json.dumps(head, sort_keys=True) + "\n")
             rr = dict(rows[0])
-            rr.pop("h")
+            rr.pop("H")
             f.write(json.dumps(rr, sort_keys=True) + "\n")
         try:
             load_stream(bad)
-            raise AssertionError("missing `h` was not refused")
+            raise AssertionError("missing `H` was not refused")
         except ValueError as e:
             assert NEEDS_KEY in str(e), e
             ok.append("refused_missing_h")
