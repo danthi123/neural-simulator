@@ -1,7 +1,7 @@
 {
  "schema": "board-sync-v1",
  "_doc": "Audit trail of board mutations written by tools/vikunja.sh. gates/board_sync_on_status_change.py requires this file to GROW in the same commit that changes docs/PRODUCTION_INTEGRATION_LEDGER.yaml (a faculty-status change must sync the board). Seeded 2026-08-21.",
- "updated_at": "2026-10-16T00:31:50Z",
+ "updated_at": "2026-10-22T05:27:57Z",
  "entries": [
   {
    "at": "2026-08-22T02:19:31Z",
@@ -2458,6 +2458,90 @@
    "head": "32db95f88"
   },
   {
+   "at": "2026-10-13T00:14:06Z",
+   "op": "set-desc",
+   "args": "task=224",
+   "head": "f734c0c69"
+  },
+  {
+   "at": "2026-10-13T00:14:06Z",
+   "op": "create-task",
+   "args": "proj=2 title=Run the one validation battery over every pending default switch",
+   "head": "f734c0c69"
+  },
+  {
+   "at": "2026-10-13T00:14:07Z",
+   "op": "create-task",
+   "args": "proj=2 title=Switch on the brain's between-turn replay by default, after the memory check",
+   "head": "f734c0c69"
+  },
+  {
+   "at": "2026-10-13T00:14:07Z",
+   "op": "create-task",
+   "args": "proj=2 title=Stop the chat server from holding one giant brain copy per chat session",
+   "head": "f734c0c69"
+  },
+  {
+   "at": "2026-10-13T00:14:07Z",
+   "op": "label-task",
+   "args": "task=247 label=8",
+   "head": "f734c0c69"
+  },
+  {
+   "at": "2026-10-13T00:14:07Z",
+   "op": "label-task",
+   "args": "task=248 label=3",
+   "head": "f734c0c69"
+  },
+  {
+   "at": "2026-10-13T00:14:07Z",
+   "op": "label-task",
+   "args": "task=248 label=10",
+   "head": "f734c0c69"
+  },
+  {
+   "at": "2026-10-13T00:14:07Z",
+   "op": "label-task",
+   "args": "task=249 label=6",
+   "head": "f734c0c69"
+  },
+  {
+   "at": "2026-10-15T05:26:01Z",
+   "op": "set-desc",
+   "args": "task=256",
+   "head": "515843c49"
+  },
+  {
+   "at": "2026-10-15T05:26:01Z",
+   "op": "set-desc",
+   "args": "task=237",
+   "head": "515843c49"
+  },
+  {
+   "at": "2026-10-15T05:26:02Z",
+   "op": "create-task",
+   "args": "proj=2 title=Understand who did what to whom from the brain's own word roles, proven across chats",
+   "head": "515843c49"
+  },
+  {
+   "at": "2026-10-15T05:26:02Z",
+   "op": "create-task",
+   "args": "proj=2 title=Hold a chosen decision with a steady brain signal instead of a program trigger",
+   "head": "515843c49"
+  },
+  {
+   "at": "2026-10-15T05:26:44Z",
+   "op": "label-task",
+   "args": "task=260 label=2",
+   "head": "515843c49"
+  },
+  {
+   "at": "2026-10-15T05:26:44Z",
+   "op": "label-task",
+   "args": "task=261 label=1",
+   "head": "515843c49"
+  },
+  {
    "at": "2026-10-16T00:31:50Z",
    "op": "create-task",
    "args": "proj=2 title=The brain names which emotion it is reading (joy, fear, anger or sadness) \u2014 ON by default",
@@ -2474,6 +2558,30 @@
    "op": "update-task",
    "args": "task=262 done=true",
    "head": "69511f9cd"
+  },
+  {
+   "at": "2026-10-20T18:27:35Z",
+   "op": "set-desc",
+   "args": "task=261",
+   "head": "8519f1174"
+  },
+  {
+   "at": "2026-10-22T01:27:05Z",
+   "op": "set-desc",
+   "args": "task=271",
+   "head": "1a3c1dc14"
+  },
+  {
+   "at": "2026-10-22T01:48:07Z",
+   "op": "set-desc",
+   "args": "task=271",
+   "head": "9f2c5ea1e"
+  },
+  {
+   "at": "2026-10-22T05:27:57Z",
+   "op": "set-desc",
+   "args": "task=238",
+   "head": "5fd354e5f"
   }
  ]
 }
