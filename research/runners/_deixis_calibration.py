@@ -1241,9 +1241,11 @@ def selftest():
     grid, 1 seed, 2 rows, 40-step arms.  Proves every record key module 6
     reads, the identity/timing rule, the `h` refusal, and one genuine
     tools.lab.attributable_to call (attribution gate)."""
+    import shutil
     import tempfile
-    tmp = tempfile.mkdtemp(prefix="deixis_calib_",
-                           dir="/opt/data/cache/scratch")
+    # TMPDIR-respecting (the old hardcoded dir was one machine's scratch and
+    # could not exist on a pool node); cleaned up in the finally below.
+    tmp = tempfile.mkdtemp(prefix="deixis_calib_")
     from research.runners._deixis_rule_replica import TOKM, POST
     head = {"schema": "deixis-toy-stream-v1", "seed": 61, "length": 3,
             "arm": "calib", "TOK": TOKM, "POST": POST,
@@ -1373,6 +1375,8 @@ def selftest():
         return 0
     finally:
         GRID, ARM_STEPS, ROWS = sav
+        if "tmp" in locals():
+            shutil.rmtree(tmp, ignore_errors=True)
 
 
 def main(argv=None):

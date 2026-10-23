@@ -381,6 +381,19 @@ def load_thresholds(path):
             "E": [float(th["E"][0]), float(th["E"][1])]}
 
 
+def _repo_git(repo):
+    """True only when git metadata belongs to `repo` ITSELF. An ancestor
+    directory's repo (e.g. sim/ on pool nodes, or a developer's dotfiles repo)
+    must not satisfy the check - otherwise `git show HEAD:<rel>` verifies
+    against the wrong HEAD (or worse, silently passes)."""
+    import subprocess
+    p = subprocess.run(["git", "-C", repo, "rev-parse", "--show-toplevel"],
+                       capture_output=True, text=True)
+    top = (p.stdout or "").strip()
+    return bool(p.returncode == 0 and top and
+                os.path.realpath(top) == os.path.realpath(repo))
+
+
 def verify_committed_sha(path):
     """Refuse a thresholds file whose bytes differ from the committed one
     (packet module-4 spec line 83). Uncommitted -> refusal. Where the tree
@@ -394,9 +407,8 @@ def verify_committed_sha(path):
     rel = os.path.relpath(os.path.abspath(path), REPO)
     if rel.startswith(".."):
         raise ValueError("%s is outside the repo" % path)
-    probe = subprocess.run(["git", "-C", REPO, "rev-parse", "--git-dir"],
-                           capture_output=True)
-    if probe.returncode != 0:
+    probe_ok = _repo_git(REPO)
+    if not probe_ok:
         got_sha = sha256(path)
         print("verify_committed_sha: NO git metadata at %s -> recording "
               "sha256=%s.. committed=unverifiable-no-git (NOT checked)"
@@ -684,25 +696,29 @@ def selftest():
         assert ("base", 1) in bk and bk[("base", 1)]["sha256"] == sha256(
             sfile)
         res["manifest_ok"] = True
-        # packet line 83: thresholds must match the committed bytes. Pool
-        # revisions carry no git metadata, so neither half can compare a
-        # HEAD: both calls must record committed=unverifiable-no-git with the
-        # file's sha256 (never silently treated as checked - the bar-sanity
-        # idiom). With git present the positive verifies and the uncommitted
-        # file refuses.
-        import subprocess as _sp
-        have_git = _sp.run(["git", "-C", REPO, "rev-parse", "--git-dir"],
-                           capture_output=True).returncode == 0
-        v = verify_committed_sha(os.path.join(
-            REPO, "research/coordination/LOCAL_LLM_RUNBOOK.md"))
+        # packet line 83: thresholds must match the committed bytes. Two
+        # structural facts of provisioned revisions: no git metadata at all,
+        # and research/coordination/ is not shipped. Both are RECORDED
+        # (never silently treated as checked - the bar-sanity idiom); with
+        # git present + files shipped, the positive verifies and an
+        # uncommitted/outside path refuses.
+        import subprocess as _sp  # noqa: F401  (kept: probe moved to _repo_git)
+        rb = os.path.join(REPO, "research/coordination/LOCAL_LLM_RUNBOOK.md")
+        have_git = _repo_git(REPO)
+        try:
+            v = verify_committed_sha(rb)
+        except FileNotFoundError:
+            v = {"sha256": None, "committed": "absent-from-revision"}
         if have_git:
-            assert v["committed"] != "unverifiable-no-git"
+            assert v["committed"] not in ("unverifiable-no-git",
+                                          "absent-from-revision"), v
             assert len(v["committed"]) == 64
             res["commit_verify_ok"] = True
         else:
-            assert v["committed"] == "unverifiable-no-git"
-            res["commit_verify_ok"] = ("unverifiable-no-git: sha256 recorded,"
-                                       " never treated as checked")
+            assert v["committed"] in ("unverifiable-no-git",
+                                      "absent-from-revision"), v
+            res["commit_verify_ok"] = ("recorded-not-checked: %s"
+                                       % v["committed"])
         # refusal half: a path outside the repo (the tmp cal file) refuses on
         # BOTH branches - before any git probe - and with git present an
         # uncommitted in-repo file refuses too (packet test line 99/83).
