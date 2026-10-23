@@ -226,3 +226,6 @@ opposite of the harm the check guards). The flips themselves are §2 (flipping a
   (make_jobs.sh requires HEAD == pin; no checkout sits at 77c8faab8), no F row appended to PINS.tsv, no lines
   queued. Filed NEEDS [T8] STOP + ASK: which pin runs steps B+F (77c8faab8 by a sanctioned route, current
   main with its code lead, or the branch flip commit cfce97fe1).
+
+2026-10-23 00:20 T8 section 7 scored at F=957c275 (waves 1-7 landed + consumed; env path adapted -- /home/dant123/Projects/sim does not exist on this host, P=/home/dant123/Projects/neural-simulator): B=FAIL (1 regression: s2 affect-marker-spiking-wta 4->0 load-bearing seeds), F2=IDENTICAL, F3=DIFFERS. F3 diff = turns 7-12 (all xedge-surprise-worldmodel) off-arm payloads differ from default@049d4bb although answers match; d6 escape OK. Decision table row 5 applies: every packet in FLIP reverted (bbf7b9d0e, anchors 148 passed), wave STOPPED -- no packet still on, so no new F row / no provision / no redo; never pushed (RULING push-credential).
+2026-10-23 00:20 T8 hand-back: NEEDS-CLAUDE [iw1-f3-fail] STOP filed with the verdict files (research/findings/raw/_iw1/verdicts/957c275/{B,F2,F3}.json, data 3a694274b); board #245 desc + ladder label blocked synced (board_sync receipt in bbf7b9d0e).
