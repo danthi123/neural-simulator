@@ -114,6 +114,12 @@ GATE_FIXED = "wrp_fixed"                    # frozen lateral-inhibition projecti
 GATE_COMMIT_IN = "role_commit"              # role ensemble -> commit gate (the commit lesion closes it)
 GATE_SLOT_LOOP = "slot_loop"                # slot-latch self-recurrence (the latch lesion closes it)
 GATE_COMMIT_EXCL = "commit_excl"            # commit-gate cross-inhibition (the exclusion lesion closes it)
+# Frame stage (packet word-role-frame, 2026-10-20; additive, built only when the organ is given `frame=` params):
+GATE_TRACE_LOOP = "trace_loop"              # trace self-recurrence (the MM4 trace-loop lesion closes it)
+GATE_WORD_TRACE = "word_trace"              # word assembly -> its own trace (the held filler register)
+GATE_TROLE_XMIT = "t_role"                  # T -> role ensembles (the MM3 frame lesion closes it)
+GATE_TROLE_PLASTIC = "wrp_trole_plastic"    # plasticity gain of T -> role (the only projector that learns teach-free)
+GATE_DISCHARGE = "discharge"                # commit-gate burst -> discharge pool -> all traces (MM7 lesion closes it)
 
 GATE_SEEDS = (42, 43, 44, 100, 101, 102)
 DEV_SEEDS = (1, 2, 3, 4, 5, 6, 7, 8)
@@ -200,6 +206,19 @@ def commit_organ_params(i: int) -> Tuple[dict, dict]:
     return dict(GRID[int(row["BASE_OP"])]), row
 
 
+FRAME_PARAMS = dict(NT=4, ND=8, W_WT=8.0, W_TL=8.0, W_TROLE=0.05,
+                    W_GD=200.0, W_DT=80.0, EXC_R="ampa")
+
+
+def frame_organ_params() -> dict:
+    """The frame stage of the word-role packet (docs/drafts/word-role-frame PAPER
+    section 2): per-form trace pops (NT), a discharge pool (ND), the fixed
+    word->trace and gate->discharge weights, the slow-NMDA trace self-loop
+    (W_TL), and the plastic T->role projector (W_TROLE init, the same Hebbian
+    rule/caps as word->role)."""
+    return dict(FRAME_PARAMS)
+
+
 def set_operating_point(i: int) -> dict:
     """Select GRID[i] as the module's PARAMS (mutated in place so importers holding PARAMS see it). Returns it."""
     i = int(i)
@@ -236,7 +255,8 @@ def _isolated(fn):
 
 
 def _dense(pre_idx, post_idx, weight: float, *, plastic: bool, conn_type: str, plasticity_gate: str,
-           transmission_gate: Optional[str] = None, receptor: Optional[str] = None) -> dict:
+           transmission_gate: Optional[str] = None, receptor: Optional[str] = None,
+           exc_receptor: Optional[str] = None) -> dict:
     pre = np.repeat(np.asarray(pre_idx, dtype=np.int64), len(post_idx))
     post = np.tile(np.asarray(post_idx, dtype=np.int64), len(pre_idx))
     d = {"pre_indices": pre.astype(np.int64), "post_indices": post.astype(np.int64),
@@ -246,6 +266,8 @@ def _dense(pre_idx, post_idx, weight: float, *, plastic: bool, conn_type: str, p
         d["transmission_gate"] = transmission_gate
     if receptor:
         d["receptor"] = receptor
+    if exc_receptor:
+        d["exc_receptor"] = exc_receptor
     return d
 
 
@@ -254,9 +276,10 @@ class WordRoleParserOrgan:
     ((agent, action, patient) strings); `train()` runs the Hebbian replay; `parse()` reads roles from the words."""
 
     def __init__(self, facts: Iterable[Tuple[str, str, str]], seed: int = 1, params: Optional[dict] = None,
-                 commit: Optional[dict] = None):
+                 commit: Optional[dict] = None, frame: Optional[dict] = None):
         self.p = dict(params if params is not None else PARAMS)
         self.c = dict(commit) if commit else None          # None -> no commit stage, the count-rule organ unchanged
+        self.f = dict(frame) if frame else None            # None -> no frame stage (byte-identical identity pin)
         self.seed = int(seed)
         seen, uniq = set(), []
         for f in facts:
@@ -293,6 +316,7 @@ class WordRoleParserOrgan:
         o_inh = o_role + 3 * R
         n = o_inh + 3 * NI
         c = self.c
+        frm = self.f
         if c is not None:                                  # commit stage appended after the count-rule organ
             lay = SC.layout(len(ROLES), n, int(c["NG"]), int(c["NGI"]), int(c["NS"]))   # (research/runners/
             n = int(lay["end"])                                                          # spiking_commit.py)
@@ -309,6 +333,17 @@ class WordRoleParserOrgan:
         all_word = np.arange(0, n_word, dtype=np.int64)
         all_role = np.arange(o_role, o_role + 3 * R, dtype=np.int64)
         all_pos = np.arange(o_pos, o_pos + 3 * NP, dtype=np.int64)
+        if frm is not None:                                 # frame layout: NT-trace pop per form + a discharge pool
+            NT, ND = int(frm["NT"]), int(frm["ND"])
+            o_trace = n                                    # appended after the commit stage (n already = lay["end"])
+            self.trace_idx = {w: np.arange(o_trace + j * NT, o_trace + (j + 1) * NT, dtype=np.int64)
+                              for j, w in enumerate(self.vocab)}
+            o_spare_trace = o_trace + V * NT
+            self.spare_trace_idx = [np.arange(o_spare_trace + j * NT, o_spare_trace + (j + 1) * NT, dtype=np.int64)
+                                    for j in range(S)]
+            self.all_trace = np.arange(o_trace, o_trace + (V + S) * NT, dtype=np.int64)
+            self.discharge_idx = np.arange(o_trace + (V + S) * NT, o_trace + (V + S) * NT + ND, dtype=np.int64)
+            n = int(self.discharge_idx[-1]) + 1
 
         cfg = CoreSimConfig()
         cfg.num_neurons = int(n)
@@ -322,6 +357,8 @@ class WordRoleParserOrgan:
                   "enable_structural_plasticity", "enable_watts_strogatz", "enable_ou_process"):
             setattr(cfg, f, False)
         cfg.enable_gabab = bool(p.get("RECEPTOR") == "gaba_b")
+        cfg.enable_nmda = bool(frm is not None
+                               and frm.get("EXC_R") == "nmda_slow")  # the nmda_slow route (AMPA fallback needs none)
         cfg.enable_hebbian_learning = True       # the co-firing rule BridgeParser._train uses (pre t-1 & post t)
         cfg.hebbian_learning_rate = float(p["LR"])
         cfg.hebbian_max_weight = float(p["W_MAX"])
@@ -348,6 +385,28 @@ class WordRoleParserOrgan:
                                        prefix="commit_", gate_in=GATE_COMMIT_IN, gate_excl=GATE_COMMIT_EXCL,
                                        latch_loop=GATE_SLOT_LOOP, plasticity_gate=GATE_FIXED))
             inh = np.concatenate([inh] + [self.gate_inh_idx[r] for r in ROLES])
+        if frm is not None:                                 # the frame stage: traces, T->role, discharge
+            for w in self.vocab:
+                plan["wt_" + w] = _dense(self.word_idx[w], self.trace_idx[w], frm["W_WT"], plastic=False,
+                                         conn_type="E_TO_E", plasticity_gate=GATE_FIXED,
+                                         transmission_gate=GATE_WORD_TRACE)
+            for j in range(len(self.spare_idx)):
+                plan[f"wt_sp{j}"] = _dense(self.spare_idx[j], self.spare_trace_idx[j], frm["W_WT"], plastic=False,
+                                           conn_type="E_TO_E", plasticity_gate=GATE_FIXED,
+                                           transmission_gate=GATE_WORD_TRACE)
+            for j, tr in enumerate(list(self.trace_idx.values()) + self.spare_trace_idx):
+                plan[f"tl_{j}"] = _dense(tr, tr, frm["W_TL"], plastic=False, conn_type="E_TO_E",
+                                         plasticity_gate=GATE_FIXED, transmission_gate=GATE_TRACE_LOOP,
+                                         exc_receptor=frm.get("EXC_R"))     # "ampa" = packet fallback, else nmda_slow
+            plan["trole"] = _dense(self.all_trace, all_role, frm["W_TROLE"], plastic=True, conn_type="E_TO_E",
+                                   plasticity_gate=GATE_TROLE_PLASTIC, transmission_gate=GATE_TROLE_XMIT,
+                                   exc_receptor=frm.get("EXC_R"))
+            plan["disch_in"] = _dense(np.concatenate([self.gate_idx[r] for r in ROLES]), self.discharge_idx,
+                                      frm["W_GD"], plastic=False, conn_type="E_TO_I", plasticity_gate=GATE_FIXED)
+            plan["disch_out"] = _dense(self.discharge_idx, self.all_trace, frm["W_DT"], plastic=False,
+                                       conn_type="I_TO_E", plasticity_gate=GATE_FIXED,
+                                       transmission_gate=GATE_DISCHARGE)
+            inh = np.concatenate([inh, self.discharge_idx])
         bridge.inject_explicit_wiring(plan, output_inhibitory_indices=inh)
         bridge.set_plasticity_gate(GATE_FIXED, 0.0)
         bridge.set_plasticity_gate(GATE_WORD_PLASTIC, 1.0)
@@ -356,6 +415,10 @@ class WordRoleParserOrgan:
         if c is not None:
             for gname in (GATE_COMMIT_IN, GATE_SLOT_LOOP, GATE_COMMIT_EXCL):
                 bridge.set_transmission_gate(gname, 1.0)
+        if frm is not None:
+            for gname in (GATE_TRACE_LOOP, GATE_WORD_TRACE, GATE_TROLE_XMIT, GATE_DISCHARGE):
+                bridge.set_transmission_gate(gname, 1.0)
+            bridge.set_plasticity_gate(GATE_TROLE_PLASTIC, float(frm.get("PLAST_GAIN", 1.0)))
         bridge.cp_external_input_current[:] = 0.0
         for _ in range(60):
             bridge._run_one_simulation_step()
@@ -414,12 +477,16 @@ class WordRoleParserOrgan:
         p, b = self.p, self._bridge
         b.set_plasticity_gate(GATE_WORD_PLASTIC, 1.0)
         b.set_plasticity_gate(GATE_POS_PLASTIC, float(p["POS_GAIN"]))
+        if self.f is not None:
+            b.set_plasticity_gate(GATE_TROLE_PLASTIC, float(self.f.get("PLAST_GAIN", 1.0)))
         for _ in range(int(p["EPOCHS"])):
             for fact in self.facts:
                 for k, role in enumerate(ROLES):
                     self._present(fact[k], k, int(p["TRAIN_STEPS"]), teach=role, count=False)
         b.set_plasticity_gate(GATE_WORD_PLASTIC, 0.0)     # frozen after training: a parse never rewrites weights
         b.set_plasticity_gate(GATE_POS_PLASTIC, 0.0)
+        if self.f is not None:
+            b.set_plasticity_gate(GATE_TROLE_PLASTIC, 0.0)  # same invariant for the frame projector
         self.weight_summary = self._weights()
 
     def _weights(self) -> dict:
@@ -479,10 +546,13 @@ class WordRoleParserOrgan:
     # ── the spiking commit read (only when built with `commit=`) ────────────────────────────────────────────────────
     def _reset_keep_slots(self):
         """The inter-word reset of the commit mode: every neuron returns to the quiescent snapshot EXCEPT the role-slot
-        latches, whose full dynamical state (v, u, firing, conductances) is carried over. Declared compression: the
-        inter-word interval is a reset for everything but working memory."""
+        latches AND (frame mode) the trace populations, whose full dynamical state (v, u, firing, conductances) is
+        carried over. Declared compression: the inter-word interval is a reset for everything but working memory."""
         b, xp = self._bridge, self._xp
-        keep = xp.asarray(self.all_slot)
+        if self.f is not None:
+            keep = xp.asarray(np.concatenate([np.asarray(self.all_slot, dtype=np.int64), self.all_trace]))
+        else:
+            keep = xp.asarray(self.all_slot)
         saved = {}
         for name in self._snap:
             arr = getattr(b, name, None)

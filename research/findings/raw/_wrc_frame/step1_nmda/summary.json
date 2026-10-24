@@ -1,0 +1,75 @@
+{
+  "backend": "numpy",
+  "chance": null,
+  "cofire_ok": true,
+  "device": "cpu",
+  "disabled_processes": [],
+  "gain_ok": false,
+  "go": false,
+  "label": "wrc-frame step 1 frame build (thresholds in this probe)",
+  "n_cofire_ok": 15,
+  "n_frame_built": 15,
+  "n_gain_ok": 0,
+  "n_seeds": 15,
+  "n_tie_broken": 0,
+  "preconditions": [
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "15 dev seeds run",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "backend numpy",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "frame stage built on every seed",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "thresholds: co-firing present on >= 13 seeds",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=False expect=True",
+      "kind": "require",
+      "name": "thresholds: gain present on >= 13 seeds",
+      "note": "",
+      "ok": false
+    }
+  ],
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "status": "UNDEFINED",
+  "thresholds": "(a) >= 1 co-firing event on >= 13/15 seeds; (b) mean own-role gain >= 1.5 on >= 13/15 seeds; either absent -> AMPA-with-discharge fallback reported, no bar picked here.",
+  "undefined_reasons": [
+    "unmet: thresholds: gain present on >= 13 seeds (measured=False expect=True)"
+  ],
+  "verdict": "FALLBACK (packet rule): frame measurements too small -- co-firing 15/15, gain 0/15; use an AMPA frame WITH discharge (never drop discharge), report the counts"
+}

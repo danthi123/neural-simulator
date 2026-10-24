@@ -1,0 +1,32 @@
+{
+ "run_id": "1792831040-17574",
+ "runner": "research/runners/wrc_frame_step1.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/wrc-frame/research/runners/wrc_frame_step1.py",
+  "--seeds",
+  "1-15",
+  "--out",
+  "research/findings/raw/_wrc_frame/step1"
+ ],
+ "git_sha": "c01c21eb7",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-24T04:37:20",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 158563.9,
+ "corpus_check_query": "heard word sensory drive near rheobase in a spiking probe",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_wrc_frame/step1/seed13.json"
+}
