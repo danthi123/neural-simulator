@@ -96,7 +96,7 @@
       "role": "agent",
       "word": "heron",
       "confidence": 1.0,
-      "margin": 0.6397371923821153,
+      "margin": 0.7600700756474931,
       "margin_spiking": null,
       "cue": true,
       "asserted": "heron"
@@ -105,7 +105,7 @@
       "role": "action",
       "word": "hunt",
       "confidence": 1.0,
-      "margin": 0.5465844850781912,
+      "margin": 0.6003095279068996,
       "margin_spiking": null,
       "cue": true,
       "asserted": "hunt"
@@ -114,15 +114,15 @@
       "role": "patient",
       "word": "frog",
       "confidence": 1.0,
-      "margin": 0.6578597143255381,
+      "margin": 0.7894861287074539,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "words",
       "confidence": 1.0,
-      "margin": 0.18705821991867208,
+      "margin": 0.42600581679775706,
       "margin_spiking": null,
       "cue": false
      },
@@ -141,7 +141,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 78884.39988028142
+     "mean_magnitude": 18934.785706118833
     },
     "composer": "onebrain"
    },
@@ -204,7 +204,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.5865131937333852
+    "mean_role_conf": 0.6954395812044025
    },
    "confidence_forthcoming": {
     "on": true,
@@ -384,7 +384,7 @@
       "role": "agent",
       "word": "frog",
       "confidence": 1.0,
-      "margin": 0.5507714066950996,
+      "margin": 0.7976678581469615,
       "margin_spiking": null,
       "cue": true,
       "asserted": "frog"
@@ -393,7 +393,7 @@
       "role": "action",
       "word": "eat",
       "confidence": 1.0,
-      "margin": 0.6324263033289436,
+      "margin": 0.7750997198716603,
       "margin_spiking": null,
       "cue": true,
       "asserted": "eat"
@@ -402,15 +402,15 @@
       "role": "patient",
       "word": "gnat",
       "confidence": 1.0,
-      "margin": 0.6509106207900474,
+      "margin": 0.7096676812616818,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "fish",
       "confidence": 1.0,
-      "margin": 0.0069829032189022994,
+      "margin": 0.2561652935438982,
       "margin_spiking": null,
       "cue": false
      },
@@ -429,7 +429,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 76552.86462428766
+     "mean_magnitude": 19297.388841893837
     },
     "composer": "onebrain"
    },
@@ -492,7 +492,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.5682182468065985
+    "mean_role_conf": 0.7077201105648403
    },
    "confidence_forthcoming": {
     "on": true,
@@ -675,7 +675,7 @@
       "role": "agent",
       "word": "crow",
       "confidence": 1.0,
-      "margin": 0.6047041933706686,
+      "margin": 0.6555310498329571,
       "margin_spiking": null,
       "cue": true,
       "asserted": "crow"
@@ -684,7 +684,7 @@
       "role": "action",
       "word": "chase",
       "confidence": 1.0,
-      "margin": 0.6618812463756701,
+      "margin": 0.8209038586135551,
       "margin_spiking": null,
       "cue": true,
       "asserted": "chase"
@@ -693,15 +693,15 @@
       "role": "patient",
       "word": "wren",
       "confidence": 1.0,
-      "margin": 0.5715984164376525,
+      "margin": 0.6857382161399673,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "use",
       "confidence": 1.0,
-      "margin": 0.15352894516808052,
+      "margin": 0.22234663589026232,
       "margin_spiking": null,
       "cue": false
      },
@@ -720,7 +720,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 88293.39663413075
+     "mean_magnitude": 23124.547542989145
     },
     "composer": "onebrain"
    },
@@ -783,7 +783,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.5983425602704143
+    "mean_role_conf": 0.6769039520953483
    },
    "confidence_forthcoming": {
     "on": true,
@@ -953,7 +953,7 @@
       "role": "agent",
       "word": "wren",
       "confidence": 1.0,
-      "margin": 0.5823538508376934,
+      "margin": 0.6373942194819872,
       "margin_spiking": null,
       "cue": true,
       "asserted": "wren"
@@ -962,7 +962,7 @@
       "role": "action",
       "word": "chase",
       "confidence": 1.0,
-      "margin": 0.44301532486347617,
+      "margin": 0.7218785166508592,
       "margin_spiking": null,
       "cue": true,
       "asserted": "chase"
@@ -971,15 +971,15 @@
       "role": "patient",
       "word": "moth",
       "confidence": 1.0,
-      "margin": 0.48977218212567325,
+      "margin": 0.7066106925081778,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "memory",
       "confidence": 1.0,
-      "margin": 0.01326881270741064,
+      "margin": 0.49201215046445596,
       "margin_spiking": null,
       "cue": false
      },
@@ -998,7 +998,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 71652.54924226266
+     "mean_magnitude": 19513.99164664852
     },
     "composer": "onebrain"
    },
@@ -1046,8 +1046,8 @@
    "metacog": {
     "on": true,
     "lesioned": false,
-    "evidence": 0.9982829760533171,
-    "balance": 0.09301706575986703,
+    "evidence": 1.0,
+    "balance": 0.09269111534688368,
     "threshold": 0.060034058880282674,
     "confident": true,
     "calib": {
@@ -1061,7 +1061,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.4996565952106634
+    "mean_role_conf": 0.7055536769249088
    },
    "confidence_forthcoming": {
     "on": true,
@@ -1271,7 +1271,7 @@
       "role": "agent",
       "word": "frog",
       "confidence": 1.0,
-      "margin": 0.5507714066950996,
+      "margin": 0.7976678581469615,
       "margin_spiking": null,
       "cue": true,
       "asserted": "frog"
@@ -1280,7 +1280,7 @@
       "role": "action",
       "word": "eat",
       "confidence": 1.0,
-      "margin": 0.6324263033289436,
+      "margin": 0.7750997198716603,
       "margin_spiking": null,
       "cue": true,
       "asserted": "eat"
@@ -1289,15 +1289,15 @@
       "role": "patient",
       "word": "gnat",
       "confidence": 1.0,
-      "margin": 0.6509106207900474,
+      "margin": 0.7096676812616818,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "fish",
       "confidence": 1.0,
-      "margin": 0.0069829032189022994,
+      "margin": 0.2561652935438982,
       "margin_spiking": null,
       "cue": false
      },
@@ -1316,7 +1316,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 76552.86462428766
+     "mean_magnitude": 20580.521233513125
     },
     "composer": "onebrain"
    },
@@ -1365,7 +1365,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.5682182468065985
+    "mean_role_conf": 0.7077201105648403
    },
    "confidence_forthcoming": {
     "on": true,
@@ -1520,7 +1520,7 @@
       "role": "agent",
       "word": "frog",
       "confidence": 1.0,
-      "margin": 0.5507714066950996,
+      "margin": 0.7976678581469615,
       "margin_spiking": null,
       "cue": true,
       "asserted": "frog"
@@ -1529,7 +1529,7 @@
       "role": "action",
       "word": "eat",
       "confidence": 1.0,
-      "margin": 0.6324263033289436,
+      "margin": 0.7750997198716603,
       "margin_spiking": null,
       "cue": true,
       "asserted": "eat"
@@ -1538,15 +1538,15 @@
       "role": "patient",
       "word": "gnat",
       "confidence": 1.0,
-      "margin": 0.6509106207900474,
+      "margin": 0.7096676812616818,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "fish",
       "confidence": 1.0,
-      "margin": 0.0069829032189022994,
+      "margin": 0.2561652935438982,
       "margin_spiking": null,
       "cue": false
      },
@@ -1565,7 +1565,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 76552.86462428766
+     "mean_magnitude": 20580.521233513125
     },
     "composer": "onebrain"
    },
@@ -1614,7 +1614,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.5682182468065985
+    "mean_role_conf": 0.7077201105648403
    },
    "confidence_forthcoming": {
     "on": true,
@@ -1784,7 +1784,7 @@
       "role": "agent",
       "word": "frog",
       "confidence": 1.0,
-      "margin": 0.5507714066950996,
+      "margin": 0.7976678581469615,
       "margin_spiking": null,
       "cue": true,
       "asserted": "frog"
@@ -1793,7 +1793,7 @@
       "role": "action",
       "word": "eat",
       "confidence": 1.0,
-      "margin": 0.6324263033289436,
+      "margin": 0.7750997198716603,
       "margin_spiking": null,
       "cue": true,
       "asserted": "eat"
@@ -1802,15 +1802,15 @@
       "role": "patient",
       "word": "gnat",
       "confidence": 1.0,
-      "margin": 0.6509106207900474,
+      "margin": 0.7096676812616818,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "fish",
       "confidence": 1.0,
-      "margin": 0.0069829032189022994,
+      "margin": 0.2561652935438982,
       "margin_spiking": null,
       "cue": false
      },
@@ -1829,7 +1829,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 76552.86462428766
+     "mean_magnitude": 20580.521233513125
     },
     "composer": "onebrain"
    },
@@ -1878,7 +1878,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.5682182468065985
+    "mean_role_conf": 0.7077201105648403
    },
    "confidence_forthcoming": {
     "on": true,
@@ -2059,7 +2059,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.00029069767441860465,
-     "mean_magnitude": 2.7180512703725346
+     "mean_magnitude": 2.012018047764839
     },
     "composer": "onebrain"
    },
@@ -2270,7 +2270,7 @@
       "role": "agent",
       "word": "wren",
       "confidence": 1.0,
-      "margin": 0.5823538508376934,
+      "margin": 0.6373942194819872,
       "margin_spiking": null,
       "cue": true,
       "asserted": "wren"
@@ -2279,7 +2279,7 @@
       "role": "action",
       "word": "chase",
       "confidence": 1.0,
-      "margin": 0.44301532486347617,
+      "margin": 0.7218785166508592,
       "margin_spiking": null,
       "cue": true,
       "asserted": "chase"
@@ -2288,15 +2288,15 @@
       "role": "patient",
       "word": "moth",
       "confidence": 1.0,
-      "margin": 0.48977218212567325,
+      "margin": 0.7066106925081778,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "memory",
       "confidence": 1.0,
-      "margin": 0.01326881270741064,
+      "margin": 0.49201215046445596,
       "margin_spiking": null,
       "cue": false
      },
@@ -2315,7 +2315,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 71652.54924226266
+     "mean_magnitude": 19513.99164664852
     },
     "composer": "onebrain"
    },
@@ -2388,8 +2388,8 @@
    "metacog": {
     "on": true,
     "lesioned": false,
-    "evidence": 0.9982829760533171,
-    "balance": 0.09301706575986703,
+    "evidence": 1.0,
+    "balance": 0.09269111534688368,
     "threshold": 0.060034058880282674,
     "confident": true,
     "calib": {
@@ -2403,7 +2403,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.4996565952106634
+    "mean_role_conf": 0.7055536769249088
    },
    "confidence_forthcoming": {
     "on": true,
@@ -2583,7 +2583,7 @@
       "role": "action",
       "word": "eat",
       "confidence": 1.0,
-      "margin": 0.73995980026762,
+      "margin": 0.8345739787529197,
       "margin_spiking": null,
       "cue": true,
       "asserted": "eat"
@@ -2592,15 +2592,15 @@
       "role": "patient",
       "word": "fish",
       "confidence": 1.0,
-      "margin": 0.5690845696533703,
+      "margin": 0.7662109311904481,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "eat",
       "confidence": 1.0,
-      "margin": 0.09690536611937062,
+      "margin": 0.04627953695600279,
       "margin_spiking": null,
       "cue": false
      },
@@ -2619,7 +2619,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 40903.680714801776
+     "mean_magnitude": 10955.542634482144
     },
     "composer": "onebrain"
    },
@@ -2668,7 +2668,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.6177232712454817
+    "mean_role_conf": 0.6659462134172836
    },
    "confidence_forthcoming": {
     "on": true,
@@ -2810,23 +2810,23 @@
  },
  "internal": {},
  "timings_s": {
-  "t_heron_hunt": 528.1,
-  "t_frog_eat": 42.9,
-  "t_crow_chase": 40.7,
-  "t_wren_chase": 44.0,
-  "p_prey_eat": 27.6,
-  "c_heron_hunt": 192.0,
-  "c_frog_eat": 31.8,
-  "c_prey_chase": 12.6,
-  "p_yesno": 255.4,
-  "c_dog_chase": 29.1
+  "t_heron_hunt": 383.6,
+  "t_frog_eat": 31.9,
+  "t_crow_chase": 29.7,
+  "t_wren_chase": 31.5,
+  "p_prey_eat": 21.1,
+  "c_heron_hunt": 136.2,
+  "c_frog_eat": 23.7,
+  "c_prey_chase": 9.7,
+  "p_yesno": 188.5,
+  "c_dog_chase": 19.8
  },
  "import_s": 0.3,
- "wall_s": 1204.5,
- "elapsed_seconds": 1204.5,
+ "wall_s": 876.0,
+ "elapsed_seconds": 876.0,
  "expected_source": "tiny-demo +LTM",
  "process": {
-  "peak_rss_mb": 6022.1,
+  "peak_rss_mb": 6020.5,
   "ltm_bundle": "wikidata_100k"
  },
  "sources": [

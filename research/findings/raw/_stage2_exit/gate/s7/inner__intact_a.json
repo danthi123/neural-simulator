@@ -106,7 +106,7 @@
       "role": "agent",
       "word": "lynx",
       "confidence": 1.0,
-      "margin": 0.6764349786364349,
+      "margin": 0.8471026933526412,
       "margin_spiking": null,
       "cue": true,
       "asserted": "lynx"
@@ -115,7 +115,7 @@
       "role": "action",
       "word": "chase",
       "confidence": 1.0,
-      "margin": 0.6535541156283261,
+      "margin": 0.7833540636428905,
       "margin_spiking": null,
       "cue": true,
       "asserted": "chase"
@@ -124,15 +124,15 @@
       "role": "patient",
       "word": "vole",
       "confidence": 1.0,
-      "margin": 0.6374731755120168,
+      "margin": 0.7332694156574181,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "words",
       "confidence": 1.0,
-      "margin": 0.05858907762255395,
+      "margin": 0.29239048993168676,
       "margin_spiking": null,
       "cue": false
      },
@@ -151,7 +151,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 76802.59203606902
+     "mean_magnitude": 17669.252276693405
     },
     "composer": "onebrain"
    },
@@ -214,7 +214,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.6052102694798662
+    "mean_role_conf": 0.7312233325169274
    },
    "confidence_forthcoming": {
     "on": true,
@@ -384,7 +384,7 @@
       "role": "agent",
       "word": "vole",
       "confidence": 1.0,
-      "margin": 0.6747598252554408,
+      "margin": 0.7090873607267049,
       "margin_spiking": null,
       "cue": true,
       "asserted": "vole"
@@ -393,7 +393,7 @@
       "role": "action",
       "word": "chase",
       "confidence": 1.0,
-      "margin": 0.6251714581272418,
+      "margin": 0.7776530900282994,
       "margin_spiking": null,
       "cue": true,
       "asserted": "chase"
@@ -402,15 +402,15 @@
       "role": "patient",
       "word": "beetle",
       "confidence": 1.0,
-      "margin": 0.6194364948947362,
+      "margin": 0.8952739371078627,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "words",
       "confidence": 1.0,
-      "margin": 1.0336126300522338e-05,
+      "margin": 0.1589359829267291,
       "margin_spiking": null,
       "cue": false
      },
@@ -429,7 +429,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 75588.1792870544
+     "mean_magnitude": 17893.50457653202
     },
     "composer": "onebrain"
    },
@@ -492,7 +492,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.5499400971414323
+    "mean_role_conf": 0.6742545484186075
    },
    "confidence_forthcoming": {
     "on": true,
@@ -684,7 +684,7 @@
       "role": "action",
       "word": "chase",
       "confidence": 1.0,
-      "margin": 0.725700480106517,
+      "margin": 0.8204745202671895,
       "margin_spiking": null,
       "cue": true,
       "asserted": "chase"
@@ -693,15 +693,15 @@
       "role": "patient",
       "word": "mite",
       "confidence": 1.0,
-      "margin": 0.5600802308977402,
+      "margin": 0.7851715194932353,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "fish",
       "confidence": 1.0,
-      "margin": 0.27257554523970684,
+      "margin": 0.3939578762296017,
       "margin_spiking": null,
       "cue": false
      },
@@ -720,7 +720,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 66831.43035909314
+     "mean_magnitude": 16579.968840845027
     },
     "composer": "onebrain"
    },
@@ -783,7 +783,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.6321190514700457
+    "mean_role_conf": 0.720368583419258
    },
    "confidence_forthcoming": {
     "on": true,
@@ -1240,7 +1240,7 @@
       "role": "action",
       "word": "chase",
       "confidence": 1.0,
-      "margin": 0.725700480106517,
+      "margin": 0.8204745202671895,
       "margin_spiking": null,
       "cue": true,
       "asserted": "chase"
@@ -1249,15 +1249,15 @@
       "role": "patient",
       "word": "mite",
       "confidence": 1.0,
-      "margin": 0.5600802308977402,
+      "margin": 0.7851715194932353,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "fish",
       "confidence": 1.0,
-      "margin": 0.27257554523970684,
+      "margin": 0.3939578762296017,
       "margin_spiking": null,
       "cue": false
      },
@@ -1276,7 +1276,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 66831.43035909314
+     "mean_magnitude": 16579.968840845027
     },
     "composer": "onebrain"
    },
@@ -1325,7 +1325,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.6321190514700457
+    "mean_role_conf": 0.720368583419258
    },
    "confidence_forthcoming": {
     "on": true,
@@ -1522,7 +1522,7 @@
       "role": "action",
       "word": "chase",
       "confidence": 1.0,
-      "margin": 0.725700480106517,
+      "margin": 0.8204745202671895,
       "margin_spiking": null,
       "cue": true,
       "asserted": "chase"
@@ -1531,15 +1531,15 @@
       "role": "patient",
       "word": "mite",
       "confidence": 1.0,
-      "margin": 0.5600802308977402,
+      "margin": 0.7851715194932353,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "fish",
       "confidence": 1.0,
-      "margin": 0.27257554523970684,
+      "margin": 0.3939578762296017,
       "margin_spiking": null,
       "cue": false
      },
@@ -1558,7 +1558,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 66831.43035909314
+     "mean_magnitude": 16579.968840845027
     },
     "composer": "onebrain"
    },
@@ -1607,7 +1607,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.6321190514700457
+    "mean_role_conf": 0.720368583419258
    },
    "confidence_forthcoming": {
     "on": true,
@@ -1788,7 +1788,7 @@
       "role": "action",
       "word": "chase",
       "confidence": 1.0,
-      "margin": 0.725700480106517,
+      "margin": 0.8204745202671895,
       "margin_spiking": null,
       "cue": true,
       "asserted": "chase"
@@ -1797,15 +1797,15 @@
       "role": "patient",
       "word": "mite",
       "confidence": 1.0,
-      "margin": 0.5600802308977402,
+      "margin": 0.7851715194932353,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "fish",
       "confidence": 1.0,
-      "margin": 0.27257554523970684,
+      "margin": 0.3939578762296017,
       "margin_spiking": null,
       "cue": false
      },
@@ -1824,7 +1824,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 66831.43035909314
+     "mean_magnitude": 16579.968840845027
     },
     "composer": "onebrain"
    },
@@ -1873,7 +1873,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.6321190514700457
+    "mean_role_conf": 0.720368583419258
    },
    "confidence_forthcoming": {
     "on": true,
@@ -2054,7 +2054,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.00014534883720930232,
-     "mean_magnitude": 0.9897323062234037
+     "mean_magnitude": 0.2454349979911814
     },
     "composer": "onebrain"
    },
@@ -2304,7 +2304,7 @@
       "role": "action",
       "word": "chase",
       "confidence": 1.0,
-      "margin": 0.725700480106517,
+      "margin": 0.8204745202671895,
       "margin_spiking": null,
       "cue": true,
       "asserted": "chase"
@@ -2313,15 +2313,15 @@
       "role": "patient",
       "word": "mite",
       "confidence": 1.0,
-      "margin": 0.5600802308977402,
+      "margin": 0.7851715194932353,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "fish",
       "confidence": 1.0,
-      "margin": 0.27257554523970684,
+      "margin": 0.3939578762296017,
       "margin_spiking": null,
       "cue": false
      },
@@ -2340,7 +2340,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 66831.43035909314
+     "mean_magnitude": 16579.968840845027
     },
     "composer": "onebrain"
    },
@@ -2389,7 +2389,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.6321190514700457
+    "mean_role_conf": 0.720368583419258
    },
    "confidence_forthcoming": {
     "on": true,
@@ -2570,7 +2570,7 @@
       "role": "action",
       "word": "eat",
       "confidence": 1.0,
-      "margin": 0.73995980026762,
+      "margin": 0.8345739787529197,
       "margin_spiking": null,
       "cue": true,
       "asserted": "eat"
@@ -2579,15 +2579,15 @@
       "role": "patient",
       "word": "fish",
       "confidence": 1.0,
-      "margin": 0.5690845696533703,
+      "margin": 0.7662109311904481,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "eat",
       "confidence": 1.0,
-      "margin": 0.09690536611937062,
+      "margin": 0.04627953695600279,
       "margin_spiking": null,
       "cue": false
      },
@@ -2606,7 +2606,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 40903.680714801776
+     "mean_magnitude": 10252.659526386155
     },
     "composer": "onebrain"
    },
@@ -2655,7 +2655,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.6177232712454817
+    "mean_role_conf": 0.6659462134172836
    },
    "confidence_forthcoming": {
     "on": true,
@@ -2797,23 +2797,23 @@
  },
  "internal": {},
  "timings_s": {
-  "t_lynx": 410.1,
-  "t_vole": 30.9,
-  "t_beetle": 33.4,
-  "p_private": 1.2,
-  "p_chase_all": 130.0,
-  "p_chase_all_vole": 26.7,
-  "c_lynx_chase": 23.9,
-  "c_mite_all": 8.8,
-  "c_beetle_all": 26.4,
-  "c_dog_chase": 23.6
+  "t_lynx": 383.3,
+  "t_vole": 28.3,
+  "t_beetle": 29.5,
+  "p_private": 1.1,
+  "p_chase_all": 121.8,
+  "p_chase_all_vole": 26.6,
+  "c_lynx_chase": 23.4,
+  "c_mite_all": 9.4,
+  "c_beetle_all": 26.1,
+  "c_dog_chase": 23.4
  },
  "import_s": 0.3,
- "wall_s": 715.3,
- "elapsed_seconds": 715.3,
+ "wall_s": 673.4,
+ "elapsed_seconds": 673.4,
  "expected_source": "tiny-demo +LTM",
  "process": {
-  "peak_rss_mb": 5940.4,
+  "peak_rss_mb": 5938.9,
   "ltm_bundle": "wikidata_100k"
  },
  "sources": [

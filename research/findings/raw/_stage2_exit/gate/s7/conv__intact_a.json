@@ -111,7 +111,7 @@
       "role": "agent",
       "word": "fox",
       "confidence": 1.0,
-      "margin": 0.6764349786364349,
+      "margin": 0.8471026933526412,
       "margin_spiking": null,
       "cue": true,
       "asserted": "fox"
@@ -120,7 +120,7 @@
       "role": "action",
       "word": "chase",
       "confidence": 1.0,
-      "margin": 0.6535541156283261,
+      "margin": 0.7833540636428905,
       "margin_spiking": null,
       "cue": true,
       "asserted": "chase"
@@ -129,15 +129,15 @@
       "role": "patient",
       "word": "hare",
       "confidence": 1.0,
-      "margin": 0.6374731755120168,
+      "margin": 0.7332694156574181,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "words",
       "confidence": 1.0,
-      "margin": 0.05858907762255395,
+      "margin": 0.29239048993168676,
       "margin_spiking": null,
       "cue": false
      },
@@ -156,7 +156,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 76802.59203606902
+     "mean_magnitude": 17669.252276693405
     },
     "composer": "onebrain"
    },
@@ -219,7 +219,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.6052102694798662
+    "mean_role_conf": 0.7312233325169274
    },
    "confidence_forthcoming": {
     "on": true,
@@ -389,7 +389,7 @@
       "role": "agent",
       "word": "fox",
       "confidence": 1.0,
-      "margin": 0.7221179802111776,
+      "margin": 0.7709636668500887,
       "margin_spiking": null,
       "cue": true,
       "asserted": "fox"
@@ -407,15 +407,15 @@
       "role": "patient",
       "word": "berry",
       "confidence": 1.0,
-      "margin": 0.6031313870698666,
+      "margin": 0.6413776053345628,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "words",
       "confidence": 1.0,
-      "margin": 0.17393085214288823,
+      "margin": 0.305612013073195,
       "margin_spiking": null,
       "cue": false
      },
@@ -434,7 +434,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 77459.40802976507
+     "mean_magnitude": 18723.118239317788
     },
     "composer": "onebrain"
    },
@@ -497,7 +497,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.6004607685883077
+    "mean_role_conf": 0.6442153817550904
    },
    "confidence_forthcoming": {
     "on": true,
@@ -680,7 +680,7 @@
       "role": "agent",
       "word": "deer",
       "confidence": 1.0,
-      "margin": 0.6707476556919044,
+      "margin": 0.7686100728840448,
       "margin_spiking": null,
       "cue": true,
       "asserted": "deer"
@@ -698,15 +698,15 @@
       "role": "patient",
       "word": "meadow",
       "confidence": 1.0,
-      "margin": 0.637498596762789,
+      "margin": 0.7420482176123638,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "words",
       "confidence": 1.0,
-      "margin": 0.11136420776501513,
+      "margin": 0.03400091017039091,
       "margin_spiking": null,
       "cue": false
      },
@@ -725,7 +725,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 88121.85534325507
+     "mean_magnitude": 22749.283734891247
     },
     "composer": "onebrain"
    },
@@ -788,7 +788,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.613641217391965
+    "mean_role_conf": 0.6386509654813832
    },
    "confidence_forthcoming": {
     "on": true,
@@ -967,7 +967,7 @@
       "role": "action",
       "word": "hunt",
       "confidence": 1.0,
-      "margin": 0.6662793394012679,
+      "margin": 0.7630328986559899,
       "margin_spiking": null,
       "cue": true,
       "asserted": "hunt"
@@ -976,15 +976,15 @@
       "role": "patient",
       "word": "owl",
       "confidence": 1.0,
-      "margin": 0.5792180522384176,
+      "margin": 0.8126065974645392,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "sleep",
       "confidence": 1.0,
-      "margin": 0.3575787208671156,
+      "margin": 0.19965716958575108,
       "margin_spiking": null,
       "cue": false
      },
@@ -1003,7 +1003,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 87606.61115070821
+     "mean_magnitude": 24983.65577023056
     },
     "composer": "onebrain"
    },
@@ -1066,7 +1066,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.6687414499694218
+    "mean_role_conf": 0.7031855606093174
    },
    "confidence_forthcoming": {
     "on": true,
@@ -1236,7 +1236,7 @@
       "role": "agent",
       "word": "fox",
       "confidence": 1.0,
-      "margin": 0.6764349786364349,
+      "margin": 0.7867890628080769,
       "margin_spiking": null,
       "cue": true,
       "asserted": "fox"
@@ -1245,7 +1245,7 @@
       "role": "action",
       "word": "chase",
       "confidence": 1.0,
-      "margin": 0.6535541156283261,
+      "margin": 0.7833540636428905,
       "margin_spiking": null,
       "cue": true,
       "asserted": "chase"
@@ -1254,15 +1254,15 @@
       "role": "patient",
       "word": "hare",
       "confidence": 1.0,
-      "margin": 0.6374731755120168,
+      "margin": 0.7332694156574181,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "mole",
       "confidence": 1.0,
-      "margin": 0.05858907762255395,
+      "margin": 0.2351008927613527,
       "margin_spiking": null,
       "cue": false
      },
@@ -1281,7 +1281,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 76802.59203606902
+     "mean_magnitude": 21222.18966671667
     },
     "composer": "onebrain"
    },
@@ -1330,7 +1330,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.6052102694798662
+    "mean_role_conf": 0.7077026869739477
    },
    "confidence_forthcoming": {
     "on": true,
@@ -1673,7 +1673,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 76804.3446605771
+     "mean_magnitude": 21223.942291224746
     },
     "composer": "onebrain"
    },
@@ -1923,7 +1923,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.0008720930232558139,
-     "mean_magnitude": 0.9639476296183153
+     "mean_magnitude": 0.27484048837510255
     },
     "composer": "onebrain"
    },
@@ -2171,7 +2171,7 @@
       "role": "action",
       "word": "hunt",
       "confidence": 1.0,
-      "margin": 0.6662793394012679,
+      "margin": 0.7630328986559899,
       "margin_spiking": null,
       "cue": true,
       "asserted": "hunt"
@@ -2180,15 +2180,15 @@
       "role": "patient",
       "word": "owl",
       "confidence": 1.0,
-      "margin": 0.5792180522384176,
+      "margin": 0.8126065974645392,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "sleep",
       "confidence": 1.0,
-      "margin": 0.3575787208671156,
+      "margin": 0.19965716958575108,
       "margin_spiking": null,
       "cue": false
      },
@@ -2207,7 +2207,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 87606.61115070821
+     "mean_magnitude": 24983.65577023056
     },
     "composer": "onebrain"
    },
@@ -2256,7 +2256,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.6687414499694218
+    "mean_role_conf": 0.7031855606093174
    },
    "confidence_forthcoming": {
     "on": true,
@@ -2435,7 +2435,7 @@
       "role": "action",
       "word": "eat",
       "confidence": 1.0,
-      "margin": 0.73995980026762,
+      "margin": 0.8345739787529197,
       "margin_spiking": null,
       "cue": true,
       "asserted": "eat"
@@ -2444,15 +2444,15 @@
       "role": "patient",
       "word": "fish",
       "confidence": 1.0,
-      "margin": 0.5690845696533703,
+      "margin": 0.7662109311904481,
       "margin_spiking": null,
       "cue": false
      },
      {
       "role": "attribute",
-      "word": null,
+      "word": "eat",
       "confidence": 1.0,
-      "margin": 0.09690536611937062,
+      "margin": 0.04627953695600279,
       "margin_spiking": null,
       "cue": false
      },
@@ -2471,7 +2471,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.11177325581395349,
-     "mean_magnitude": 40903.680714801776
+     "mean_magnitude": 11433.113989112215
     },
     "composer": "onebrain"
    },
@@ -2520,7 +2520,7 @@
      "role_conf_hi": 0.5,
      "confidence_read": "nmda_norm"
     },
-    "mean_role_conf": 0.6177232712454817
+    "mean_role_conf": 0.6659462134172836
    },
    "confidence_forthcoming": {
     "on": true,
@@ -2701,7 +2701,7 @@
     "rf": {
      "n_readout_neurons": 6880,
      "frac_fired": 0.0007267441860465116,
-     "mean_magnitude": 2.7202031347818045
+     "mean_magnitude": 2.022659544606705
     },
     "composer": "onebrain"
    },
@@ -2883,24 +2883,24 @@
  },
  "internal": {},
  "timings_s": {
-  "t_fox_chase": 525.4,
-  "t_fox_eat": 40.3,
-  "t_deer_sleep": 43.3,
-  "t_mole_passive": 40.8,
-  "p_fox_chase": 191.6,
-  "p_more": 7.7,
+  "t_fox_chase": 534.5,
+  "t_fox_eat": 40.6,
+  "t_deer_sleep": 42.6,
+  "t_mole_passive": 41.0,
+  "p_fox_chase": 190.8,
+  "p_more": 7.5,
   "p_deer_sleep": 13.7,
-  "p_owl_hunt": 11.3,
-  "c_mole_hunt": 30.9,
-  "c_dog_chase": 30.7,
-  "c_oov": 10.1
+  "p_owl_hunt": 11.4,
+  "c_mole_hunt": 30.2,
+  "c_dog_chase": 30.3,
+  "c_oov": 10.5
  },
  "import_s": 0.3,
- "wall_s": 946.1,
- "elapsed_seconds": 946.1,
+ "wall_s": 953.4,
+ "elapsed_seconds": 953.4,
  "expected_source": "tiny-demo +LTM",
  "process": {
-  "peak_rss_mb": 6034.8,
+  "peak_rss_mb": 6033.5,
   "ltm_bundle": "wikidata_100k"
  },
  "sources": [
