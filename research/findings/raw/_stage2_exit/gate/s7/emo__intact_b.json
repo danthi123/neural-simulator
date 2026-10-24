@@ -10,7 +10,33 @@
  "patch": null,
  "pythonhashseed_ok": true,
  "corpus_present": true,
- "builtin_facts": [],
+ "builtin_facts": [
+  [
+   "brain",
+   "use",
+   "spikes"
+  ],
+  [
+   "brain",
+   "learn",
+   "words"
+  ],
+  [
+   "brain",
+   "store",
+   "memory"
+  ],
+  [
+   "dog",
+   "chase",
+   "cat"
+  ],
+  [
+   "cat",
+   "eat",
+   "fish"
+  ]
+ ],
  "session": "s2_emo_intact_b_7",
  "turns": [
   {
@@ -2316,28 +2342,77 @@
    }
   }
  },
- "internal": {},
+ "internal": {
+  "s_joy_1": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "s_joy_2": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "s_fear_1": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "s_fear_2": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "s_anger_1": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "s_anger_2": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "s_sadness_1": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "s_sadness_2": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  }
+ },
  "timings_s": {
-  "feel_base": 128.4,
-  "s_joy_1": 133.3,
-  "s_joy_2": 31.5,
+  "feel_base": 131.1,
+  "s_joy_1": 137.3,
+  "s_joy_2": 32.0,
   "feel_joy": 1.9,
-  "s_fear_1": 29.6,
-  "s_fear_2": 25.2,
+  "s_fear_1": 29.3,
+  "s_fear_2": 25.6,
   "feel_fear": 1.8,
-  "s_anger_1": 32.3,
-  "s_anger_2": 32.1,
+  "s_anger_1": 33.0,
+  "s_anger_2": 32.2,
   "feel_anger": 1.9,
-  "s_sadness_1": 29.6,
-  "s_sadness_2": 29.1,
-  "feel_sadness": 2.0
+  "s_sadness_1": 29.5,
+  "s_sadness_2": 29.2,
+  "feel_sadness": 1.9
  },
  "import_s": 0.3,
- "wall_s": 478.9,
- "elapsed_seconds": 478.9,
+ "wall_s": 487.2,
+ "elapsed_seconds": 487.2,
  "expected_source": "tiny-demo +LTM",
  "process": {
-  "peak_rss_mb": 7702.4,
+  "peak_rss_mb": 7705.3,
   "ltm_bundle": "wikidata_100k"
  },
  "sources": [

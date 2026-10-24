@@ -10,11 +10,42 @@
  "patch": {
   "patch": "qp_lesion",
   "calls": 29,
-  "orig": "<function OneBrainComposer.query_patient at 0x7fb02d78a200>"
+  "orig": "<function OneBrainComposer.query_patient at 0x7f39491168c0>"
  },
  "pythonhashseed_ok": true,
  "corpus_present": true,
- "builtin_facts": [],
+ "builtin_facts": [
+  [
+   "brain",
+   "use",
+   "spikes"
+  ],
+  [
+   "brain",
+   "learn",
+   "words"
+  ],
+  [
+   "brain",
+   "store",
+   "memory"
+  ],
+  [
+   "dog",
+   "chase",
+   "cat"
+  ],
+  [
+   "cat",
+   "eat",
+   "fish"
+  ],
+  [
+   "heron",
+   "hunt",
+   "frog"
+  ]
+ ],
  "session": "s2_infer_qp_lesion_7",
  "turns": [
   {
@@ -2504,25 +2535,80 @@
    }
   }
  },
- "internal": {},
- "timings_s": {
-  "t_heron_hunt": 239.7,
-  "t_frog_eat": 23.8,
-  "t_crow_chase": 21.6,
-  "t_wren_chase": 24.5,
-  "p_prey_eat": 8.2,
-  "c_heron_hunt": 17.3,
-  "c_frog_eat": 12.2,
-  "c_prey_chase": 12.5,
-  "p_yesno": 17.7,
-  "c_dog_chase": 10.6
+ "internal": {
+  "t_heron_hunt": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_frog_eat": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_crow_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_wren_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_heron_hunt": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_frog_eat": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_prey_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "p_yesno": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_dog_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  }
  },
- "import_s": 0.3,
- "wall_s": 388.4,
- "elapsed_seconds": 388.4,
+ "timings_s": {
+  "t_heron_hunt": 152.0,
+  "t_frog_eat": 16.9,
+  "t_crow_chase": 14.9,
+  "t_wren_chase": 16.9,
+  "p_prey_eat": 6.1,
+  "c_heron_hunt": 13.3,
+  "c_frog_eat": 8.9,
+  "c_prey_chase": 9.2,
+  "p_yesno": 12.6,
+  "c_dog_chase": 7.8
+ },
+ "import_s": 0.2,
+ "wall_s": 258.8,
+ "elapsed_seconds": 258.8,
  "expected_source": "tiny-demo +LTM",
  "process": {
-  "peak_rss_mb": 6003.3,
+  "peak_rss_mb": 6013.8,
   "ltm_bundle": "wikidata_100k"
  },
  "sources": [

@@ -12,7 +12,38 @@
  "patch": null,
  "pythonhashseed_ok": true,
  "corpus_present": true,
- "builtin_facts": [],
+ "builtin_facts": [
+  [
+   "brain",
+   "use",
+   "spikes"
+  ],
+  [
+   "brain",
+   "learn",
+   "words"
+  ],
+  [
+   "brain",
+   "store",
+   "memory"
+  ],
+  [
+   "dog",
+   "chase",
+   "cat"
+  ],
+  [
+   "cat",
+   "eat",
+   "fish"
+  ],
+  [
+   "lynx",
+   "chase",
+   "vole"
+  ]
+ ],
  "session": "s2_inner_lesion_workspace_rep0_7",
  "turns": [
   {
@@ -2830,25 +2861,164 @@
    }
   }
  },
- "internal": {},
+ "internal": {
+  "t_lynx": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_vole": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_beetle": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "p_chase_all": {
+   "gnw_multistep": {
+    "acted": true,
+    "reason": "chase_abstained",
+    "agent": "lynx",
+    "action": "chase",
+    "first_patient": "vole",
+    "terminal": null,
+    "resolved_hops": 0,
+    "cycles": 1,
+    "halted_at_cap": false,
+    "abstained": true,
+    "lesion": true,
+    "n_concepts": 11,
+    "derived": false,
+    "derived_from": null,
+    "trace": [
+     {
+      "cycle": 1,
+      "x": "lynx",
+      "target": "vole",
+      "committed": null,
+      "winner": 0,
+      "n_ignited": 0,
+      "conf": 0.0,
+      "action": "COMMIT"
+     }
+    ]
+   }
+  },
+  "p_chase_all_vole": {
+   "gnw_multistep": {
+    "acted": true,
+    "reason": "chase_abstained",
+    "agent": "vole",
+    "action": "chase",
+    "first_patient": "beetle",
+    "terminal": null,
+    "resolved_hops": 0,
+    "cycles": 1,
+    "halted_at_cap": false,
+    "abstained": true,
+    "lesion": true,
+    "n_concepts": 11,
+    "derived": false,
+    "derived_from": null,
+    "trace": [
+     {
+      "cycle": 1,
+      "x": "vole",
+      "target": "beetle",
+      "committed": null,
+      "winner": 0,
+      "n_ignited": 0,
+      "conf": 0.0,
+      "action": "COMMIT"
+     }
+    ]
+   }
+  },
+  "c_lynx_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_mite_all": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "already_abstained",
+    "agent": null,
+    "action": null,
+    "first_patient": null,
+    "terminal": null,
+    "resolved_hops": null,
+    "cycles": null,
+    "halted_at_cap": null,
+    "abstained": false,
+    "lesion": true,
+    "n_concepts": null,
+    "derived": false,
+    "derived_from": null
+   }
+  },
+  "c_beetle_all": {
+   "gnw_multistep": {
+    "acted": true,
+    "reason": "chase_abstained",
+    "agent": "beetle",
+    "action": "chase",
+    "first_patient": "mite",
+    "terminal": null,
+    "resolved_hops": 0,
+    "cycles": 1,
+    "halted_at_cap": false,
+    "abstained": true,
+    "lesion": true,
+    "n_concepts": 11,
+    "derived": false,
+    "derived_from": null,
+    "trace": [
+     {
+      "cycle": 1,
+      "x": "beetle",
+      "target": "mite",
+      "committed": null,
+      "winner": 0,
+      "n_ignited": 0,
+      "conf": 0.0,
+      "action": "COMMIT"
+     }
+    ]
+   }
+  },
+  "c_dog_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  }
+ },
  "timings_s": {
-  "t_lynx": 383.3,
-  "t_vole": 26.7,
-  "t_beetle": 27.1,
-  "p_private": 1.1,
-  "p_chase_all": 106.7,
-  "p_chase_all_vole": 9.4,
-  "c_lynx_chase": 23.0,
-  "c_mite_all": 8.6,
-  "c_beetle_all": 9.9,
-  "c_dog_chase": 23.0
+  "t_lynx": 529.0,
+  "t_vole": 39.4,
+  "t_beetle": 41.0,
+  "p_private": 1.9,
+  "p_chase_all": 151.9,
+  "p_chase_all_vole": 13.5,
+  "c_lynx_chase": 31.7,
+  "c_mite_all": 12.3,
+  "c_beetle_all": 14.4,
+  "c_dog_chase": 31.0
  },
  "import_s": 0.3,
- "wall_s": 619.1,
- "elapsed_seconds": 619.1,
+ "wall_s": 866.3,
+ "elapsed_seconds": 866.3,
  "expected_source": "tiny-demo +LTM",
  "process": {
-  "peak_rss_mb": 5945.2,
+  "peak_rss_mb": 5930.9,
   "ltm_bundle": "wikidata_100k"
  },
  "sources": [

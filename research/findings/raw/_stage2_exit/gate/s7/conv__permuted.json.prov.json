@@ -1,8 +1,8 @@
 {
- "run_id": "1792846756-2",
+ "run_id": "1792865919-2",
  "runner": "research/runners/stage2_exit_gate.py",
  "argv": [
-  "/srv/simpool/derisk-pool/revisions/a4f5caba5cd87113b51bd597a7d3a3c5ec707ded/research/runners/stage2_exit_gate.py",
+  "/srv/simpool/derisk-pool/revisions/9bdb92ee8a10572a4789009c7a90b3a7b394252f/research/runners/stage2_exit_gate.py",
   "--shard",
   "--seed",
   "7",
@@ -16,18 +16,18 @@
   "--out",
   "research/findings/raw/_stage2_exit/gate/s7/conv__permuted.json"
  ],
- "git_sha": "a4f5caba5cd87113b51bd597a7d3a3c5ec707ded",
+ "git_sha": "9bdb92ee8a10572a4789009c7a90b3a7b394252f",
  "git_dirty": false,
  "source_kind": "git_archive",
- "source_manifest_sha256": "ed2b6c9c58762d05ca146283f473962eac7a48d5ae9b57b23e06342d6574d6f0",
+ "source_manifest_sha256": "93d80293b3665c1a8c716f11499f6010969c55d77f1b278c27a4776a97f69aa9",
  "source_manifest_verified_at_start": true,
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": true,
  "source_manifest_exit_error": null,
- "started": "2026-10-24T08:59:16",
+ "started": "2026-10-24T14:18:39",
  "env": {
   "NUMEXPR_NUM_THREADS": "1",
-  "POOL_JOB_ID": "1792846755935500672-10252",
+  "POOL_JOB_ID": "1792865919015774067-11262",
   "POOL_SANDBOX_MEMCAP_ENFORCED": "1",
   "OPENBLAS_NUM_THREADS": "1",
   "POOL_SANDBOX_OUTER_MEMORY_MAX": "10G",

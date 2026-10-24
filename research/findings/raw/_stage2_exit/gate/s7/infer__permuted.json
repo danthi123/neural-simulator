@@ -10,7 +10,33 @@
  "patch": null,
  "pythonhashseed_ok": true,
  "corpus_present": true,
- "builtin_facts": [],
+ "builtin_facts": [
+  [
+   "brain",
+   "use",
+   "spikes"
+  ],
+  [
+   "brain",
+   "learn",
+   "words"
+  ],
+  [
+   "brain",
+   "store",
+   "memory"
+  ],
+  [
+   "dog",
+   "chase",
+   "cat"
+  ],
+  [
+   "cat",
+   "eat",
+   "fish"
+  ]
+ ],
  "session": "s2_infer_permuted_7",
  "turns": [
   {
@@ -2480,25 +2506,80 @@
    }
   }
  },
- "internal": {},
+ "internal": {
+  "t_frog_eat": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_crow_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_wren_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "p_prey_eat": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_heron_hunt": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_frog_eat": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_prey_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "p_yesno": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_dog_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  }
+ },
  "timings_s": {
   "t_heron_hunt": 263.0,
-  "t_frog_eat": 312.7,
-  "t_crow_chase": 38.6,
-  "t_wren_chase": 42.2,
+  "t_frog_eat": 310.2,
+  "t_crow_chase": 39.1,
+  "t_wren_chase": 42.6,
   "p_prey_eat": 12.8,
   "c_heron_hunt": 10.3,
   "c_frog_eat": 10.7,
   "c_prey_chase": 11.9,
-  "p_yesno": 387.2,
-  "c_dog_chase": 27.9
+  "p_yesno": 391.7,
+  "c_dog_chase": 27.8
  },
  "import_s": 0.3,
- "wall_s": 1117.5,
- "elapsed_seconds": 1117.5,
+ "wall_s": 1120.3,
+ "elapsed_seconds": 1120.3,
  "expected_source": "tiny-demo +LTM",
  "process": {
-  "peak_rss_mb": 6071.5,
+  "peak_rss_mb": 6072.3,
   "ltm_bundle": "wikidata_100k"
  },
  "sources": [

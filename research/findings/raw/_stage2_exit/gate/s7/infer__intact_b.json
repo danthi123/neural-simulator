@@ -10,7 +10,38 @@
  "patch": null,
  "pythonhashseed_ok": true,
  "corpus_present": true,
- "builtin_facts": [],
+ "builtin_facts": [
+  [
+   "brain",
+   "use",
+   "spikes"
+  ],
+  [
+   "brain",
+   "learn",
+   "words"
+  ],
+  [
+   "brain",
+   "store",
+   "memory"
+  ],
+  [
+   "dog",
+   "chase",
+   "cat"
+  ],
+  [
+   "cat",
+   "eat",
+   "fish"
+  ],
+  [
+   "heron",
+   "hunt",
+   "frog"
+  ]
+ ],
  "session": "s2_infer_intact_b_7",
  "turns": [
   {
@@ -2808,25 +2839,80 @@
    }
   }
  },
- "internal": {},
+ "internal": {
+  "t_heron_hunt": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_frog_eat": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_crow_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_wren_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_heron_hunt": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_frog_eat": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_prey_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "p_yesno": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_dog_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  }
+ },
  "timings_s": {
-  "t_heron_hunt": 385.9,
-  "t_frog_eat": 30.7,
-  "t_crow_chase": 28.9,
-  "t_wren_chase": 30.7,
-  "p_prey_eat": 20.6,
-  "c_heron_hunt": 136.2,
-  "c_frog_eat": 23.8,
-  "c_prey_chase": 10.4,
-  "p_yesno": 205.0,
-  "c_dog_chase": 22.8
+  "t_heron_hunt": 383.6,
+  "t_frog_eat": 31.0,
+  "t_crow_chase": 29.5,
+  "t_wren_chase": 31.0,
+  "p_prey_eat": 20.9,
+  "c_heron_hunt": 135.8,
+  "c_frog_eat": 23.4,
+  "c_prey_chase": 9.4,
+  "p_yesno": 208.2,
+  "c_dog_chase": 21.4
  },
  "import_s": 0.3,
- "wall_s": 895.1,
- "elapsed_seconds": 895.1,
+ "wall_s": 894.6,
+ "elapsed_seconds": 894.6,
  "expected_source": "tiny-demo +LTM",
  "process": {
-  "peak_rss_mb": 6026.1,
+  "peak_rss_mb": 6031.1,
   "ltm_bundle": "wikidata_100k"
  },
  "sources": [

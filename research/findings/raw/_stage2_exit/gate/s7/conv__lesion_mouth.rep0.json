@@ -12,7 +12,38 @@
  "patch": null,
  "pythonhashseed_ok": true,
  "corpus_present": true,
- "builtin_facts": [],
+ "builtin_facts": [
+  [
+   "brain",
+   "use",
+   "spikes"
+  ],
+  [
+   "brain",
+   "learn",
+   "words"
+  ],
+  [
+   "brain",
+   "store",
+   "memory"
+  ],
+  [
+   "dog",
+   "chase",
+   "cat"
+  ],
+  [
+   "cat",
+   "eat",
+   "fish"
+  ],
+  [
+   "fox",
+   "chase",
+   "hare"
+  ]
+ ],
  "session": "s2_conv_lesion_mouth_rep0_7",
  "turns": [
   {
@@ -2883,26 +2914,87 @@
    }
   }
  },
- "internal": {},
+ "internal": {
+  "t_fox_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_fox_eat": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_deer_sleep": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_mole_passive": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "p_fox_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "p_deer_sleep": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "p_owl_hunt": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_mole_hunt": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_dog_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_oov": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  }
+ },
  "timings_s": {
-  "t_fox_chase": 539.2,
-  "t_fox_eat": 40.5,
-  "t_deer_sleep": 42.5,
-  "t_mole_passive": 41.3,
-  "p_fox_chase": 190.9,
-  "p_more": 7.6,
-  "p_deer_sleep": 13.6,
-  "p_owl_hunt": 11.3,
-  "c_mole_hunt": 29.8,
-  "c_dog_chase": 30.0,
-  "c_oov": 10.1
+  "t_fox_chase": 382.2,
+  "t_fox_eat": 29.0,
+  "t_deer_sleep": 30.3,
+  "t_mole_passive": 29.7,
+  "p_fox_chase": 135.8,
+  "p_more": 5.7,
+  "p_deer_sleep": 9.6,
+  "p_owl_hunt": 8.2,
+  "c_mole_hunt": 23.0,
+  "c_dog_chase": 24.3,
+  "c_oov": 7.9
  },
  "import_s": 0.3,
- "wall_s": 957.1,
- "elapsed_seconds": 957.1,
+ "wall_s": 686.1,
+ "elapsed_seconds": 686.1,
  "expected_source": "tiny-demo +LTM",
  "process": {
-  "peak_rss_mb": 6030.2,
+  "peak_rss_mb": 6045.2,
   "ltm_bundle": "wikidata_100k"
  },
  "sources": [

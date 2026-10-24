@@ -10,7 +10,38 @@
  "patch": null,
  "pythonhashseed_ok": true,
  "corpus_present": true,
- "builtin_facts": [],
+ "builtin_facts": [
+  [
+   "brain",
+   "use",
+   "spikes"
+  ],
+  [
+   "brain",
+   "learn",
+   "words"
+  ],
+  [
+   "brain",
+   "store",
+   "memory"
+  ],
+  [
+   "dog",
+   "chase",
+   "cat"
+  ],
+  [
+   "cat",
+   "eat",
+   "fish"
+  ],
+  [
+   "yak",
+   "eat",
+   "grass"
+  ]
+ ],
  "session": "s2_ask_intact_a_7",
  "turns": [
   {
@@ -4556,34 +4587,143 @@
    }
   }
  },
- "internal": {},
+ "internal": {
+  "t_yak": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_moose": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "g_eel": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "m_yak": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "g_crab": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "m_moose": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "g_newt": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "m_goat": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "lp_ibex_1": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_ibex": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "lp_ibex_2": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "u_toad_1": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_dog_1": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "u_toad_2": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_dog_2": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "u_toad_3": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_dog_3": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "u_toad_4": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  }
+ },
  "timings_s": {
-  "t_yak": 531.5,
-  "t_moose": 38.8,
-  "t_goat": 50.3,
-  "g_eel": 10.8,
-  "m_yak": 12.1,
-  "g_crab": 10.3,
-  "m_moose": 12.1,
-  "g_newt": 10.2,
-  "m_goat": 10.1,
-  "lp_ibex_1": 10.2,
-  "t_ibex": 40.7,
-  "lp_ibex_2": 163.5,
-  "u_toad_1": 10.1,
-  "c_dog_1": 30.8,
-  "u_toad_2": 10.0,
-  "c_dog_2": 30.0,
-  "u_toad_3": 9.9,
-  "c_dog_3": 30.0,
-  "u_toad_4": 9.9
+  "t_yak": 379.8,
+  "t_moose": 27.5,
+  "t_goat": 38.9,
+  "g_eel": 7.9,
+  "m_yak": 8.8,
+  "g_crab": 7.7,
+  "m_moose": 8.8,
+  "g_newt": 7.6,
+  "m_goat": 7.5,
+  "lp_ibex_1": 7.6,
+  "t_ibex": 29.5,
+  "lp_ibex_2": 119.8,
+  "u_toad_1": 7.5,
+  "c_dog_1": 23.1,
+  "u_toad_2": 7.4,
+  "c_dog_2": 23.0,
+  "u_toad_3": 7.4,
+  "c_dog_3": 22.8,
+  "u_toad_4": 7.6
  },
  "import_s": 0.3,
- "wall_s": 1031.7,
- "elapsed_seconds": 1031.7,
+ "wall_s": 750.5,
+ "elapsed_seconds": 750.5,
  "expected_source": "tiny-demo +LTM",
  "process": {
-  "peak_rss_mb": 6148.7,
+  "peak_rss_mb": 6167.5,
   "ltm_bundle": "wikidata_100k"
  },
  "sources": [

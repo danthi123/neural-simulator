@@ -10,7 +10,38 @@
  "patch": null,
  "pythonhashseed_ok": true,
  "corpus_present": true,
- "builtin_facts": [],
+ "builtin_facts": [
+  [
+   "brain",
+   "use",
+   "spikes"
+  ],
+  [
+   "brain",
+   "learn",
+   "words"
+  ],
+  [
+   "brain",
+   "store",
+   "memory"
+  ],
+  [
+   "dog",
+   "chase",
+   "cat"
+  ],
+  [
+   "cat",
+   "eat",
+   "fish"
+  ],
+  [
+   "lynx",
+   "chase",
+   "vole"
+  ]
+ ],
  "session": "s2_inner_intact_b_7",
  "turns": [
   {
@@ -2795,25 +2826,251 @@
    }
   }
  },
- "internal": {},
+ "internal": {
+  "t_lynx": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_vole": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_beetle": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "p_chase_all": {
+   "gnw_multistep": {
+    "acted": true,
+    "reason": "chain_terminal",
+    "agent": "lynx",
+    "action": "chase",
+    "first_patient": "vole",
+    "terminal": "mite",
+    "resolved_hops": 3,
+    "cycles": 4,
+    "halted_at_cap": false,
+    "abstained": false,
+    "lesion": false,
+    "n_concepts": 11,
+    "derived": true,
+    "derived_from": [
+     [
+      "lynx",
+      "chase",
+      "vole"
+     ],
+     [
+      "vole",
+      "chase",
+      "beetle"
+     ],
+     [
+      "beetle",
+      "chase",
+      "mite"
+     ]
+    ],
+    "trace": [
+     {
+      "cycle": 1,
+      "x": "lynx",
+      "target": "vole",
+      "committed": "vole",
+      "winner": 0,
+      "n_ignited": 1,
+      "conf": 0.9425,
+      "action": "ADVANCE"
+     },
+     {
+      "cycle": 2,
+      "x": "vole",
+      "target": "beetle",
+      "committed": "beetle",
+      "winner": 0,
+      "n_ignited": 1,
+      "conf": 0.9425,
+      "action": "ADVANCE"
+     },
+     {
+      "cycle": 3,
+      "x": "beetle",
+      "target": "mite",
+      "committed": "mite",
+      "winner": 0,
+      "n_ignited": 1,
+      "conf": 0.9425,
+      "action": "ADVANCE"
+     },
+     {
+      "cycle": 4,
+      "x": "mite",
+      "target": null,
+      "committed": null,
+      "winner": 0,
+      "n_ignited": 0,
+      "conf": 0.0,
+      "action": "COMMIT"
+     }
+    ]
+   }
+  },
+  "p_chase_all_vole": {
+   "gnw_multistep": {
+    "acted": true,
+    "reason": "chain_terminal",
+    "agent": "vole",
+    "action": "chase",
+    "first_patient": "beetle",
+    "terminal": "mite",
+    "resolved_hops": 2,
+    "cycles": 3,
+    "halted_at_cap": false,
+    "abstained": false,
+    "lesion": false,
+    "n_concepts": 11,
+    "derived": true,
+    "derived_from": [
+     [
+      "vole",
+      "chase",
+      "beetle"
+     ],
+     [
+      "beetle",
+      "chase",
+      "mite"
+     ]
+    ],
+    "trace": [
+     {
+      "cycle": 1,
+      "x": "vole",
+      "target": "beetle",
+      "committed": "beetle",
+      "winner": 0,
+      "n_ignited": 1,
+      "conf": 0.9425,
+      "action": "ADVANCE"
+     },
+     {
+      "cycle": 2,
+      "x": "beetle",
+      "target": "mite",
+      "committed": "mite",
+      "winner": 0,
+      "n_ignited": 1,
+      "conf": 0.9425,
+      "action": "ADVANCE"
+     },
+     {
+      "cycle": 3,
+      "x": "mite",
+      "target": null,
+      "committed": null,
+      "winner": 0,
+      "n_ignited": 0,
+      "conf": 0.0,
+      "action": "COMMIT"
+     }
+    ]
+   }
+  },
+  "c_lynx_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_mite_all": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "already_abstained",
+    "agent": null,
+    "action": null,
+    "first_patient": null,
+    "terminal": null,
+    "resolved_hops": null,
+    "cycles": null,
+    "halted_at_cap": null,
+    "abstained": false,
+    "lesion": false,
+    "n_concepts": null,
+    "derived": false,
+    "derived_from": null
+   }
+  },
+  "c_beetle_all": {
+   "gnw_multistep": {
+    "acted": true,
+    "reason": "chain_terminal",
+    "agent": "beetle",
+    "action": "chase",
+    "first_patient": "mite",
+    "terminal": "mite",
+    "resolved_hops": 1,
+    "cycles": 2,
+    "halted_at_cap": false,
+    "abstained": false,
+    "lesion": false,
+    "n_concepts": 11,
+    "derived": false,
+    "derived_from": null,
+    "trace": [
+     {
+      "cycle": 1,
+      "x": "beetle",
+      "target": "mite",
+      "committed": "mite",
+      "winner": 0,
+      "n_ignited": 1,
+      "conf": 0.9425,
+      "action": "ADVANCE"
+     },
+     {
+      "cycle": 2,
+      "x": "mite",
+      "target": null,
+      "committed": null,
+      "winner": 0,
+      "n_ignited": 0,
+      "conf": 0.0,
+      "action": "COMMIT"
+     }
+    ]
+   }
+  },
+  "c_dog_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  }
+ },
  "timings_s": {
-  "t_lynx": 368.4,
-  "t_vole": 27.1,
-  "t_beetle": 28.9,
-  "p_private": 1.1,
-  "p_chase_all": 123.3,
-  "p_chase_all_vole": 26.3,
-  "c_lynx_chase": 23.7,
-  "c_mite_all": 8.8,
-  "c_beetle_all": 25.6,
-  "c_dog_chase": 22.9
+  "t_lynx": 525.0,
+  "t_vole": 37.8,
+  "t_beetle": 39.8,
+  "p_private": 1.8,
+  "p_chase_all": 170.1,
+  "p_chase_all_vole": 35.1,
+  "c_lynx_chase": 31.2,
+  "c_mite_all": 12.3,
+  "c_beetle_all": 34.7,
+  "c_dog_chase": 31.2
  },
  "import_s": 0.3,
- "wall_s": 656.4,
- "elapsed_seconds": 656.4,
+ "wall_s": 919.3,
+ "elapsed_seconds": 919.3,
  "expected_source": "tiny-demo +LTM",
  "process": {
-  "peak_rss_mb": 5947.1,
+  "peak_rss_mb": 5937.6,
   "ltm_bundle": "wikidata_100k"
  },
  "sources": [

@@ -12,7 +12,38 @@
  "patch": null,
  "pythonhashseed_ok": true,
  "corpus_present": true,
- "builtin_facts": [],
+ "builtin_facts": [
+  [
+   "brain",
+   "use",
+   "spikes"
+  ],
+  [
+   "brain",
+   "learn",
+   "words"
+  ],
+  [
+   "brain",
+   "store",
+   "memory"
+  ],
+  [
+   "dog",
+   "chase",
+   "cat"
+  ],
+  [
+   "cat",
+   "eat",
+   "fish"
+  ],
+  [
+   "yak",
+   "eat",
+   "grass"
+  ]
+ ],
  "session": "s2_ask_lesion_graded_rep0_7",
  "turns": [
   {
@@ -4558,34 +4589,143 @@
    }
   }
  },
- "internal": {},
+ "internal": {
+  "t_yak": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_moose": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "g_eel": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "m_yak": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "g_crab": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "m_moose": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "g_newt": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "m_goat": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "lp_ibex_1": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_ibex": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "lp_ibex_2": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "u_toad_1": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_dog_1": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "u_toad_2": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_dog_2": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "u_toad_3": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_dog_3": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "u_toad_4": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  }
+ },
  "timings_s": {
-  "t_yak": 374.5,
-  "t_moose": 27.6,
-  "t_goat": 38.5,
+  "t_yak": 380.7,
+  "t_moose": 27.7,
+  "t_goat": 39.7,
   "g_eel": 7.6,
-  "m_yak": 8.6,
+  "m_yak": 8.7,
   "g_crab": 7.7,
-  "m_moose": 8.7,
-  "g_newt": 7.5,
-  "m_goat": 7.4,
+  "m_moose": 8.8,
+  "g_newt": 7.6,
+  "m_goat": 7.5,
   "lp_ibex_1": 7.6,
-  "t_ibex": 29.5,
-  "lp_ibex_2": 119.4,
-  "u_toad_1": 7.3,
-  "c_dog_1": 23.0,
-  "u_toad_2": 7.3,
-  "c_dog_2": 22.8,
-  "u_toad_3": 7.4,
-  "c_dog_3": 22.6,
+  "t_ibex": 29.8,
+  "lp_ibex_2": 119.6,
+  "u_toad_1": 7.4,
+  "c_dog_1": 23.1,
+  "u_toad_2": 7.4,
+  "c_dog_2": 23.0,
+  "u_toad_3": 7.3,
+  "c_dog_3": 22.9,
   "u_toad_4": 7.3
  },
  "import_s": 0.3,
- "wall_s": 742.7,
- "elapsed_seconds": 742.7,
+ "wall_s": 751.6,
+ "elapsed_seconds": 751.6,
  "expected_source": "tiny-demo +LTM",
  "process": {
-  "peak_rss_mb": 6157.6,
+  "peak_rss_mb": 6161.2,
   "ltm_bundle": "wikidata_100k"
  },
  "sources": [
