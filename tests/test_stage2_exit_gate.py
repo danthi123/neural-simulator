@@ -597,3 +597,37 @@ def test_a_c1_fail_prints_the_named_gaps_line_through_aggregate_and_report(tmp_p
     # an ideal brain names nothing
     _e2e_build(td, (1, 2), _e2e_ideal)
     assert "Named gaps" not in SG.report(SG.aggregate(td, seeds=(1, 2)))
+
+
+# ── recorder fix (RULING batch-1024 (10)): a taught fact must appear in builtin_facts ──
+def test_builtin_facts_reads_a_taught_fact_through_the_registry_view():
+    """The dev-7 pre-flight read builtin_facts: [] in all 33 shards while the brain recalled facts fine: the
+    recorder scanned module-level dicts for the chat, but the server's `_BRAIN_CHATS` is a `ContextFieldView`
+    (a MutableMapping, deliberately dict-shaped but NOT a dict) keyed (session, brain, renderer). The lookup
+    must find the chat through that view and surface what the acquisition path leaves in stored_facts — the
+    build-time facts plus one TAUGHT in the turn — which is exactly what SG.read_builtin_facts latches into the
+    shard's builtin_facts field (no brain build: the live arms stay the dev smoke / gate's job)."""
+    from types import SimpleNamespace
+    from webapp import one_brain as OB
+
+    session = "s2_taught_facts_7"
+    key = (session, SG.BRAIN_NAME, SG.RENDERER)
+
+    class _Chat:                      # the only attribute the recorder reads (the buffer tier acquisition writes)
+        stored_facts = [["yak", "eat", "grass"], ["dog", "chase", "cat"]]   # the second = TAUGHT this session
+
+    reg = OB.ContextRegistry()
+    view = reg.view("chat")
+    assert not isinstance(view, dict), "the registry view must stay non-dict — that mismatch is the regression"
+    view.setdefault(key, _Chat())     # the production write shape (server.py: `_BRAIN_CHATS.setdefault(key, chat)`)
+    srv = SimpleNamespace(_BRAIN_CHATS=view)
+
+    chat = SG._find_chat(srv, session)
+    assert chat is not None, "the registry view went unread (the dict-only module scan)"
+    got = SG.read_builtin_facts(srv, session)
+    assert got is not None
+    assert ["yak", "eat", "grass"] in got
+    assert ["dog", "chase", "cat"] in got          # the TAUGHT fact appears in builtin_facts
+    # a conversation that does not exist yet reads as None: the read-once latch must never freeze [] on a miss
+    absent = SimpleNamespace(_BRAIN_CHATS=OB.ContextRegistry().view("chat"))
+    assert SG.read_builtin_facts(absent, "s2_absent_7") is None

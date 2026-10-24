@@ -375,18 +375,50 @@ def _facts_of(chat):
     return out
 
 
+# The brain/renderer the worker itself asks for: one source of truth for the brain_chat call and the chat lookup,
+# so a rename cannot silently desynchronise them (RULING batch-1024 (10): recorder-only fix).
+BRAIN_NAME = "tiny-demo"
+RENDERER = "stub"
+
+
 def _find_chat(srv, session):
-    """The session's live ChatBrain in the handler's session cache (keyed (session, brain, renderer)), or None."""
-    chat = None
+    """The session's live ChatBrain, or None. The server keeps it in `_BRAIN_CHATS`, which is a
+    `ContextFieldView` (a `MutableMapping`, deliberately dict-shaped but NOT a `dict`) keyed
+    (session, brain, renderer): the old `isinstance(_obj, dict)` module scan never saw it, so every dev-7
+    shard recorded `builtin_facts: []` while the brain itself recalled facts fine. Try the canonical key the
+    worker used, then any conversation key for this session, then any Mapping left on the module (layouts where
+    the chat lives in another registry)."""
+    from collections.abc import Mapping
+    brains = getattr(srv, "_BRAIN_CHATS", None)
+    if isinstance(brains, Mapping):
+        try:
+            chat = brains.get((session, BRAIN_NAME, RENDERER))
+            if chat is not None and hasattr(chat, "stored_facts"):
+                return chat
+            for key, val in list(brains.items()):
+                if isinstance(key, tuple) and key and key[0] == session and hasattr(val, "stored_facts"):
+                    return val
+        except Exception:
+            pass
     try:
         for _name, _obj in list(vars(srv).items()):
-            if isinstance(_obj, dict):
+            if isinstance(_obj, Mapping) and _obj is not brains:
                 for key, val in list(_obj.items()):
                     if isinstance(key, tuple) and key and key[0] == session and hasattr(val, "stored_facts"):
-                        chat = val
+                        return val
     except Exception:
         return None
-    return chat
+    return None
+
+
+def read_builtin_facts(srv, session):
+    """The C1/C5 grounding set the shard records as `builtin_facts`: the chat's stored facts once the chat exists,
+    None while the lookup finds no chat yet — the read-once latch in run_arm must not freeze [] on a miss (it did,
+    in all 33 dev-7 shards, so C1/C5 read ungrounded)."""
+    chat = _find_chat(srv, session)
+    if chat is None:
+        return None
+    return _facts_of(chat)
 
 
 INTERNAL_TRACE_ATTRS = {"gnw_multistep": "_last_gnw_multistep"}
@@ -457,7 +489,7 @@ def run_worker(seed, group, arm, out_path, labels=None):
     for i, (label, msg, role) in enumerate(turns):
         t1 = time.time()
         try:
-            r = brain_chat(BrainChatRequest(session=session, message=msg, brain="tiny-demo", renderer="stub",
+            r = brain_chat(BrainChatRequest(session=session, message=msg, brain=BRAIN_NAME, renderer=RENDERER,
                                             reset=(i == 0)))      # `rich` OMITTED = the production default path
             responses[label] = json.loads(r.body)
         except Exception as e:
@@ -470,8 +502,13 @@ def run_worker(seed, group, arm, out_path, labels=None):
         if rec:
             internal[label] = rec
         if builtin_facts is None:
-            # the build-time fact list (read once, after the first turn built the brain; the grounding set for C1/C5)
-            builtin_facts = _facts_of(chat) if chat is not None else []
+            # the build-time fact list (read once, after the first turn built the brain; the grounding set for C1/C5).
+            # read_builtin_facts answers None while no chat is found: only latch a real read, never a lookup miss
+            got = read_builtin_facts(_srv, session)
+            if got is not None:
+                builtin_facts = got
+    if builtin_facts is None:
+        builtin_facts = []              # no chat was ever found (same observable shape as before the recorder fix)
     out = {"runner": "research/runners/stage2_exit_gate.py", "prereg": PREREG,
            "seed": int(seed), "group": group, "arm": arm, "kind": kind, "criterion": GROUPS[group]["criterion"],
            "env": dict(GROUPS[group]["env"], **env), "patch": patch_rec, "pythonhashseed_ok": hash_ok,
