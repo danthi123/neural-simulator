@@ -1,0 +1,48 @@
+{
+ "run_id": "1792786746-2",
+ "runner": "research/runners/_deixis_calibration.py",
+ "argv": [
+  "/home/node/derisk-pool/revisions/41722c23466bc3cd0b8f684baa85538c23be9c69/research/runners/_deixis_calibration.py",
+  "--seeds",
+  "61-70",
+  "--streams",
+  "research/findings/raw/_deixis_s1/0a/streams/manifest_calib.json",
+  "--out",
+  "research/findings/raw/_deixis_s1/0a/calibration.json"
+ ],
+ "git_sha": "41722c23466bc3cd0b8f684baa85538c23be9c69",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "2c0260c59a6a3fa90860574bf1059c03d7921ac436434c654761a99997cbc5a2",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-23T16:19:06",
+ "env": {
+  "NUMEXPR_NUM_THREADS": "1",
+  "POOL_JOB_ID": "1792786746151982722-29582",
+  "POOL_SANDBOX_MEMCAP_ENFORCED": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "POOL_SANDBOX_OUTER_MEMORY_MAX": "4G",
+  "POOL_JOB_MEM_GB": "4",
+  "OMP_NUM_THREADS": "1",
+  "POOL_SANDBOX": "1",
+  "MKL_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "node-dl4g243",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_deixis_s1/0a/calibration.json",
+ "amendment": {
+  "date": "2026-10-24",
+  "ruling": "RULING batch-1024 (7) [dejits-stopcal-1023]",
+  "change": "thresholds.E [null,null] -> [20,3]; thresholds_source += recompute_10_24; every other field byte-identical to the run artifact",
+  "run_artifact_sha256": "c6eb645ee887976eba2f38c0f9df04748f039e9b86214c59a20996488880c9b9",
+  "amended_artifact_sha256": "340801bad13afbbaf58f8ee3045cdcf2d7098c3ec6cb16c259ab4d0806635fc0"
+ }
+}
