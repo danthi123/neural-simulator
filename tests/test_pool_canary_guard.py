@@ -37,8 +37,18 @@ PREREG = "CLAUDE.md"                      # committed at HEAD in every checkout
 MOD = "tools.fake_canary_runner"
 
 
+def _preflight_clean(tmp_path, prereg, shas):
+    """A CLEAN scorer pre-flight row per (prereg, sha): the 2026-10-16 pre-flight guard (tests/test_gate_preflight.py)
+    runs after the canary guard; these tests keep testing their own guard."""
+    p = tmp_path / "preflight.tsv"
+    if not p.exists():
+        p.write_text("".join("2026-10-16 00:00\t%s\t%s\tCLEAN\tok\t\tfixture\n" % (prereg, s[:9]) for s in shas))
+    return str(p)
+
+
 def _env(tmp_path, **extra):
     env = dict(os.environ)
+    env["GATE_PREFLIGHT_PATH"] = _preflight_clean(tmp_path, PREREG, [HEAD_SHA, PARENT_SHA])
     env["POOL_QUEUE_PATH"] = str(tmp_path / "pool.queue")
     env["POOL_CANARIES_PATH"] = str(tmp_path / "pool_canaries.tsv")
     env["POOL_SSH_CONFIG"] = str(tmp_path / "no-such-pool-ssh-config")

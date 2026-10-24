@@ -86,6 +86,11 @@ Dual-role reads: 17/24 right, 0 wrong, 7 declined (seed 101: 1/4). The exclusion
 "at most one role" comes from the role layer, and the commit gate's cross-inhibition is not shown necessary.
 Count-mode baseline at 9ea7411.
 
+**Correction (2026-10-20, Claude):** "not shown necessary" holds for co-commits only. The same files show the commit
+gates' cross-inhibition causes most of the declines: with it lesioned, dual-role reads are 21/24 right and 0 wrong,
+against 17/24 intact; cat@0 is rescued on seeds 43, 44 and 101 and cat@2 on 42 (`diagnostics.dual_role` against
+`dual_role_excl_lesion` in the O files) <!--derived-->. See `docs/drafts/word-role-frame/PACKET.md` section 1.
+
 ## Not yet a live seam
 
 Both flags stay default OFF; production still parses with BridgeParser. Residual host steps at ON: the commit read

@@ -12,11 +12,13 @@ Broadened corpus (source_type shown per hit; build via tools/rag/build_llamainde
   kandel  : Kandel 6e full text              -> "how does the BIOLOGY do X?"
   paper   : the specialty texts/papers/books -> "what does the ORIGINAL SOURCE say?" (Marr 1969, Albus 1971,
             Buzsaki "Rhythms of the Brain", O'Keefe-Nadel "Cognitive Map", Schultz, Sutton-Barto, Tepper/Bolam BG)
+  coord   : research/coordination/*.md, the runbook split per ruling -> "what did a RULING / packet / RESULT decide?"
+  draft   : docs/drafts/**/*.md          -> "is there a DRAFT plan for X?" (drafts are not approved plans)
 
 Run with the isolated RAG venv (has llama-index; base sim env untouched -- installing llama-index into the sim
 venv would churn its pinned torch/cupy CUDA stack):
     .venv-rag/bin/python tools/rag/rag_search.py "<question>" [top_k] [--corpus TYPE]
-  --corpus one of {all(default), finding, plan, doc, catalog, kandel, paper} -- target one corpus (e.g. --corpus kandel for biology).
+  --corpus one of {all(default), finding, plan, doc, catalog, kandel, paper, coord, draft} -- target one corpus (e.g. --corpus kandel for biology).
 
 Index location resolves through Git's common checkout, so linked worktrees use the canonical sibling
 ``rag_index`` and ``sim-catalog``. ``SIM_RAG_ROOT`` remains an explicit override. See docs/RAG_COMPARISON.md."""
@@ -34,12 +36,12 @@ argv = sys.argv[1:]
 corpus = "all"
 if "--corpus" in argv:
     i = argv.index("--corpus"); corpus = argv[i + 1]; del argv[i:i + 2]
-valid_corpora = {"all", "finding", "plan", "doc", "catalog", "kandel", "paper"}
+valid_corpora = {"all", "finding", "plan", "doc", "catalog", "kandel", "paper", "coord", "draft"}
 if corpus not in valid_corpora:
     sys.stderr.write(f"unknown corpus {corpus!r}; choose one of {sorted(valid_corpora)}\n")
     raise SystemExit(2)
 if not argv or not argv[0].strip():
-    sys.stdout.write('usage: rag_search.py "<question>" [top_k] [--corpus finding|plan|doc|catalog|kandel|paper|all]\n')
+    sys.stdout.write('usage: rag_search.py "<question>" [top_k] [--corpus finding|plan|doc|catalog|kandel|paper|coord|draft|all]\n')
     raise SystemExit(2)
 query = argv[0]
 top_k = int(argv[1]) if len(argv) > 1 else 5

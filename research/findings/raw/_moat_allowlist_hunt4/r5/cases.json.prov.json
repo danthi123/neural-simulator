@@ -1,0 +1,25 @@
+{
+ "run_id": "1792527488-2352501",
+ "runner": "research/findings/raw/_moat_allowlist_hunt4/r5/build_cases.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-hunt5/research/findings/raw/_moat_allowlist_hunt4/r5/build_cases.py"
+ ],
+ "git_sha": "9cd066d60",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-20T16:18:08",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 5112.5,
+ "corpus_check_query": "STN GPe reciprocal loop rate stabilization tonic firing variance negative feedback",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_moat_allowlist_hunt4/r5/cases.json"
+}

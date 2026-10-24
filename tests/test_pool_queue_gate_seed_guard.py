@@ -30,8 +30,18 @@ EXISTING_PATH = "CLAUDE.md"           # committed at HEAD in every checkout of t
 MISSING_PATH = "docs/no-such-prereg-xyz-zzz.md"
 
 
+def _preflight_clean(tmp_path, prereg, shas):
+    """A CLEAN scorer pre-flight row per (prereg, sha): the 2026-10-16 pre-flight guard (tests/test_gate_preflight.py)
+    runs after the canary guard; these tests keep testing their own guard."""
+    p = tmp_path / "preflight.tsv"
+    if not p.exists():
+        p.write_text("".join("2026-10-16 00:00\t%s\t%s\tCLEAN\tok\t\tfixture\n" % (prereg, s[:9]) for s in shas))
+    return str(p)
+
+
 def _run(cmd, tmp_path):
     env = dict(os.environ)
+    env["GATE_PREFLIGHT_PATH"] = _preflight_clean(tmp_path, EXISTING_PATH, [HEAD_SHA])
     env["POOL_QUEUE_PATH"] = str(tmp_path / "pool.queue")
     env["POOL_SSH_CONFIG"] = str(tmp_path / "no-such-pool-ssh-config")
     env["POOL_EXTRA_NODES_FILE"] = str(tmp_path / "no-such-extra-nodes")
@@ -156,3 +166,55 @@ def test_seed_frac_flag_is_not_mistaken_for_a_seed_value(tmp_path):
     res = _run(["add", "true --seed-frac 0.5", "--checked", "dev, no gate seeds here"], tmp_path)
     assert res.returncode == 0, res.stderr
     assert "queued" in res.stdout
+
+# ------------------------------------------------- a measurement of an OLDER pin (RULING lbf-gate-pin-1020, 2026-10-20)
+# The LBF gate-seed prereg (flip: no) registers a measurement of S main f2885df70, a revision older than the prereg
+# itself (first added at bc9ac887d), so the prereg can never be in the pinned tree. It is accepted on the narrow
+# historical-pin rule; a pin it does not name, or a prereg without `flip: no`, is still refused.
+LBF_PREREG = "research/findings/2026-10-20-lbf-at-head-gate-seed-measurement-PREREGISTRATION.md"
+LBF_PIN = "f2885df70cfb99a8715c376bca12ac3c2134ef46"
+WRC_PREREG = "research/findings/2026-10-16-word-role-flip-PREREGISTRATION.md"   # no `flip: no` line
+
+
+def _run_pinned(cmd, tmp_path, prereg, sha):
+    (tmp_path / "pool_canaries.tsv").write_text(
+        "2026-09-30T00:00:00-04:00\t%s\t%s\tPASS\tpool41\tgate\ttest\tfixture record\n" % (CANARY_MOD, sha))
+    (tmp_path / "preflight.tsv").write_text("2026-10-20 00:00\t%s\t%s\tCLEAN\tok\t\tfixture\n" % (prereg, sha[:9]))
+    env = dict(os.environ)
+    env.update(GATE_PREFLIGHT_PATH=str(tmp_path / "preflight.tsv"), POOL_QUEUE_PATH=str(tmp_path / "pool.queue"),
+               POOL_SSH_CONFIG=str(tmp_path / "no-such-pool-ssh-config"),
+               POOL_EXTRA_NODES_FILE=str(tmp_path / "no-such-extra-nodes"),
+               POOL_CANARIES_PATH=str(tmp_path / "pool_canaries.tsv"))
+    return subprocess.run(["bash", str(POOL_QUEUE), *cmd], cwd=ROOT, env=env, capture_output=True, text=True, timeout=30)
+
+
+def _rev(spec):
+    return subprocess.run(["git", "rev-parse", spec], cwd=ROOT, capture_output=True, text=True, check=True).stdout.strip()
+
+
+def test_accepts_a_flip_no_measurement_of_the_older_pin_it_names(tmp_path):
+    res = _run_pinned(["add", f"{_pinned(LBF_PIN[:9])} && true -m {CANARY_MOD} --seed 42", "--checked",
+                       f"prereg {LBF_PREREG} gate seed 42"], tmp_path, LBF_PREREG, LBF_PIN)
+    assert res.returncode == 0, res.stderr
+    assert "older pin" in res.stderr and "bc9ac887d" in res.stderr
+    assert (tmp_path / "pool.queue").read_text().strip() != ""
+
+
+def test_refuses_an_older_pin_the_prereg_does_not_name(tmp_path):
+    parent = _rev(LBF_PIN + "^")
+    res = _run_pinned(["add", f"{_pinned(parent)} && true -m {CANARY_MOD} --seed 42", "--checked",
+                       f"prereg {LBF_PREREG}"], tmp_path, LBF_PREREG, parent)
+    assert res.returncode == 2
+    assert "does not exist at pinned revision" in res.stderr and "does not name the full pinned sha" in res.stderr
+    assert _queue_is_empty(tmp_path)
+
+
+def test_refuses_an_older_pin_for_a_prereg_without_flip_no(tmp_path):
+    born = subprocess.run(["git", "log", "--diff-filter=A", "--format=%H", "HEAD", "--", WRC_PREREG], cwd=ROOT,
+                          capture_output=True, text=True, check=True).stdout.split()[-1]
+    parent = _rev(born + "^")
+    res = _run_pinned(["add", f"{_pinned(parent)} && true -m {CANARY_MOD} --seed 42", "--checked",
+                       f"prereg {WRC_PREREG}"], tmp_path, WRC_PREREG, parent)
+    assert res.returncode == 2
+    assert "does not declare 'flip: no'" in res.stderr
+    assert _queue_is_empty(tmp_path)

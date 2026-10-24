@@ -1,0 +1,43 @@
+{
+ "run_id": "1792368125-2",
+ "runner": "research/runners/_curiosity_lp_trace_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/revisions/58c1598f10b2f5ea4508ccd20bab301d774a6bf9/research/runners/_curiosity_lp_trace_derisk.py",
+  "--battery",
+  "--seeds",
+  "1",
+  "--no-ou",
+  "--out",
+  "research/findings/raw/_curiosity_lp/m2_dev/battery_m2_dev_s1.json"
+ ],
+ "git_sha": "58c1598f10b2f5ea4508ccd20bab301d774a6bf9",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "77efe51c9c5209d6652f641d32c0e2c9254d832636afbc0566d9af95c1fa3f12",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-18T20:02:05",
+ "env": {
+  "NUMEXPR_NUM_THREADS": "1",
+  "POOL_JOB_ID": "1792368124685122598-13305",
+  "POOL_SANDBOX_MEMCAP_ENFORCED": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "POOL_SANDBOX_OUTER_MEMORY_MAX": "9G",
+  "POOL_JOB_MEM_GB": "9",
+  "OMP_NUM_THREADS": "1",
+  "POOL_SANDBOX": "1",
+  "MKL_NUM_THREADS": "1",
+  "PYTHONHASHSEED": "0",
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "node-mxl1462drl",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_curiosity_lp/m2_dev/battery_m2_dev_s1.json"
+}

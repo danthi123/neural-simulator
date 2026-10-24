@@ -1,0 +1,2311 @@
+[
+ {
+  "id": "R5-NX01",
+  "gathered": [
+   [
+    "charles_ii_of_scotland",
+    "member_of",
+    "british_royal_society"
+   ]
+  ],
+  "sentence": "Charles IIļ of Scotland is a member of British Royal Society.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "l-with-cedilla after II displays as 'Charles III of Scotland', a different monarch; it folds to charles_ii_of_scotland"
+ },
+ {
+  "id": "R5-NX02",
+  "gathered": [
+   [
+    "george_v",
+    "member_of",
+    "british_royal_society"
+   ],
+   [
+    "george_v",
+    "instance_of",
+    "human_specie"
+   ]
+  ],
+  "sentence": "George Vĺ is a member of British Royal Society.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "l-with-acute after V displays as 'George VI', a different king; folds to george_v"
+ },
+ {
+  "id": "R5-NX03",
+  "gathered": [
+   [
+    "james_vii_of_scots",
+    "member_of",
+    "british_royal_society"
+   ]
+  ],
+  "sentence": "James VIIǀ of Scots is a member of British Royal Society.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "U+01C0 (Latin letter dental click, a bare vertical stroke) after VII displays as 'James VIII', the Old Pretender; folds to james_vii_of_scots"
+ },
+ {
+  "id": "R5-NX04",
+  "gathered": [
+   [
+    "elizabeth_ii_of_guyana",
+    "member_of",
+    "british_royal_society"
+   ]
+  ],
+  "sentence": "Elizabeth IIɪ of Guyana is a member of British Royal Society.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "small-capital I (U+026A, lowercase so not an all-caps token) after II displays as 'Elizabeth III'; folds to elizabeth_ii_of_guyana"
+ },
+ {
+  "id": "R5-NX05",
+  "gathered": [
+   [
+    "pedro_ii",
+    "member_of",
+    "british_royal_society"
+   ]
+  ],
+  "sentence": "Pedro ᴠII is a member of British Royal Society.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "small-capital V (U+1D20) before II displays as 'Pedro VII'; folds to pedro_ii"
+ },
+ {
+  "id": "R5-NX06",
+  "gathered": [
+   [
+    "games_of_the_ii_olympiad",
+    "follows",
+    "first_summer_olympic_games"
+   ]
+  ],
+  "sentence": "Games of the IIÍ Olympiad follows First Summer Olympic Games.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "I-acute after II displays as 'III Olympiad' (St Louis 1904), which does not follow the first Games; folds to games_of_the_ii_olympiad"
+ },
+ {
+  "id": "R5-NX07",
+  "gathered": [
+   [
+    "games_of_the_x_olympiad",
+    "follows",
+    "erven_jos_rovers"
+   ]
+  ],
+  "sentence": "Games of the Xļ Olympiad follows Erven Jos Rovers.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "displays as 'XI Olympiad' (Berlin 1936), a different edition; folds to games_of_the_x_olympiad"
+ },
+ {
+  "id": "R5-NX08",
+  "gathered": [
+   [
+    "ii_olympic_winter_games",
+    "follows",
+    "inaugural_winter_games"
+   ]
+  ],
+  "sentence": "IIĺ Olympic Winter Games follows Inaugural Winter Games.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "displays as 'III Olympic Winter Games', which does not directly follow the first; folds to ii_olympic_winter_games"
+ },
+ {
+  "id": "R5-NX09",
+  "gathered": [
+   [
+    "vii_commonwealth_games",
+    "follows",
+    "vi_commonwealth_games"
+   ]
+  ],
+  "sentence": "VII Commonwealth Games follows VIľ Commonwealth Games.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "l-with-caron after VI displays as 'VII', so the sentence reads 'VII follows VII' (self-succession); folds to vi_commonwealth_games"
+ },
+ {
+  "id": "R5-NX10",
+  "gathered": [
+   [
+    "sega_mega_drive_ii",
+    "follows",
+    "sega_master_system_iii"
+   ]
+  ],
+  "sentence": "Sega Mega Drive IIǀ follows Sega Master System III.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "displays as 'Sega Mega Drive III', a different console; folds to sega_mega_drive_ii"
+ },
+ {
+  "id": "R5-NX11",
+  "gathered": [
+   [
+    "the_godfather_trilogy",
+    "has_part",
+    "the_godfather_part_ii"
+   ]
+  ],
+  "sentence": "The Godfather Trilogy has part The Godfather Part IIĺ.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "displays as 'The Godfather Part III', a different film from the gathered Part II; folds to the_godfather_part_ii"
+ },
+ {
+  "id": "R5-NX12",
+  "gathered": [
+   [
+    "the_hobbit_ii",
+    "follows",
+    "an_unexpected_journey"
+   ]
+  ],
+  "sentence": "The Hobbit IIɪ follows An Unexpected Journey.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "displays as 'The Hobbit III', which follows the second film, not the first; folds to the_hobbit_ii"
+ },
+ {
+  "id": "R5-NX13",
+  "gathered": [
+   [
+    "universite_de_paris_vii",
+    "member_of",
+    "consortium_couperin"
+   ]
+  ],
+  "sentence": "Universite de Paris VIIļ is a member of Consortium Couperin.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "displays as 'Paris VIII', a different university (a store member too, but not gathered); folds to universite_de_paris_vii"
+ },
+ {
+  "id": "R5-NX14",
+  "gathered": [
+   [
+    "universit_paris_i_panth_on_sorbonne",
+    "member_of",
+    "consortium_couperin"
+   ]
+  ],
+  "sentence": "Université Paris Iĺ Panthéon Sorbonne is a member of Consortium Couperin.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "displays as 'Paris II' (the Pantheon-Assas university), not the gathered Paris I; folds to universit_paris_i_panth_on_sorbonne"
+ },
+ {
+  "id": "R5-NX15",
+  "gathered": [
+   [
+    "indochina_war",
+    "part_of",
+    "cold_war_i"
+   ]
+  ],
+  "sentence": "Indochina War is part of Cold War Iı.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "dotless i after I displays as 'Cold War II', a different period; folds to cold_war_i"
+ },
+ {
+  "id": "R5-NX16",
+  "gathered": [
+   [
+    "division_i_bowl",
+    "part_of",
+    "en_cee_double_ay"
+   ]
+  ],
+  "sentence": "Division Iǀ Bowl is part of En Cee Double Ay.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "displays as 'Division II Bowl', a different tier; folds to division_i_bowl"
+ },
+ {
+  "id": "R5-NX17",
+  "gathered": [
+   [
+    "apple_ii",
+    "instance_of",
+    "personal_computer"
+   ]
+  ],
+  "sentence": "Apple IIÏ is an instance of personal computer.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "I-diaeresis after II displays as 'Apple III', a different computer; folds to apple_ii"
+ },
+ {
+  "id": "R5-NX18",
+  "gathered": [
+   [
+    "v_arrondissement",
+    "shares_border_with",
+    "ier_arrondissement"
+   ]
+  ],
+  "sentence": "Vļ arrondissement shares border with Ier arrondissement.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "displays as 'VI arrondissement', not the gathered Ve; folds to v_arrondissement"
+ },
+ {
+  "id": "R5-NX19",
+  "gathered": [
+   [
+    "oosterhoff_type_i",
+    "subclass_of",
+    "star_cluster"
+   ]
+  ],
+  "sentence": "Oosterhoff type Iľ is a subclass of star cluster.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "displays as 'Oosterhoff type II', the other Oosterhoff class; folds to oosterhoff_type_i"
+ },
+ {
+  "id": "R5-NX20",
+  "gathered": [
+   [
+    "vi_olympic_winter_games",
+    "follows",
+    "vth_olympic_winter_games"
+   ]
+  ],
+  "sentence": "VI Olympic Winter Games follows ǀVth Olympic Winter Games.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "a vertical-stroke letter before Vth displays as 'IVth', so VI is said to follow IV; folds to vth_olympic_winter_games"
+ },
+ {
+  "id": "R5-NX21",
+  "gathered": [
+   [
+    "mac_os_x",
+    "instance_of",
+    "operating_system"
+   ]
+  ],
+  "sentence": "Mac OS Xĺ is an instance of operating system.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "displays as 'Mac OS XI', a different release; folds to mac_os_x"
+ },
+ {
+  "id": "R5-NX22",
+  "gathered": [
+   [
+    "x_commonwealth_games",
+    "follows",
+    "ix_commonwealth_games"
+   ]
+  ],
+  "sentence": "ĹX Commonwealth Games follows IX Commonwealth Games.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "L-acute before X displays as 'LX Commonwealth Games' (60th); folds to x_commonwealth_games"
+ },
+ {
+  "id": "R5-NX23",
+  "gathered": [
+   [
+    "1st_parliament_of_george_i",
+    "follows",
+    "4th_parliament_of_great_britain"
+   ]
+  ],
+  "sentence": "1st Parliament of George Iļ follows 4th Parliament of Great Britain.",
+  "expect": "U",
+  "class": "numeral_extension_foldable_letter",
+  "why": "displays as 'George II', a different king's parliament; folds to 1st_parliament_of_george_i"
+ },
+ {
+  "id": "R5-PA01",
+  "gathered": [
+   [
+    "women_s_international_league",
+    "instance_of",
+    "non_governmental_organization"
+   ]
+  ],
+  "sentence": "Women's International League is an instance of (non-)governmental organization.",
+  "expect": "U",
+  "class": "paren_affix_hedge",
+  "why": "'(non-)governmental' hedges between governmental and non-governmental; folds to non_governmental_organization"
+ },
+ {
+  "id": "R5-PA02",
+  "gathered": [
+   [
+    "non_insulin_dependent_diabetes",
+    "subclass_of",
+    "risk_factors_for_diabetes"
+   ]
+  ],
+  "sentence": "(Non-)insulin dependent diabetes is a subclass of risk factors for diabetes.",
+  "expect": "U",
+  "class": "paren_affix_hedge",
+  "why": "hedges between insulin-dependent (type 1) and non-insulin-dependent (type 2) diabetes"
+ },
+ {
+  "id": "R5-PA03",
+  "gathered": [
+   [
+    "winchester_district",
+    "instance_of",
+    "non_metropolitan_districts"
+   ]
+  ],
+  "sentence": "Winchester District is an instance of (non-)metropolitan districts.",
+  "expect": "U",
+  "class": "paren_affix_hedge",
+  "why": "hedges between metropolitan and non-metropolitan districts"
+ },
+ {
+  "id": "R5-PA04",
+  "gathered": [
+   [
+    "charitable_organization",
+    "subclass_of",
+    "not_for_profit_organization"
+   ]
+  ],
+  "sentence": "Charitable organization is a subclass of (not-)for-profit organization.",
+  "expect": "U",
+  "class": "paren_affix_hedge",
+  "why": "hedges between for-profit and not-for-profit"
+ },
+ {
+  "id": "R5-PA05",
+  "gathered": [
+   [
+    "crime_writers",
+    "subclass_of",
+    "non_fiction"
+   ]
+  ],
+  "sentence": "Crime writers is a subclass of (non-)fiction.",
+  "expect": "U",
+  "class": "paren_affix_hedge",
+  "why": "hedges between fiction and non-fiction"
+ },
+ {
+  "id": "R5-PA06",
+  "gathered": [
+   [
+    "united_states_whig_party",
+    "follows",
+    "anti_jacksonian_party"
+   ]
+  ],
+  "sentence": "United States Whig Party follows (Anti-)Jacksonian Party.",
+  "expect": "U",
+  "class": "paren_affix_hedge",
+  "why": "hedges between the Jacksonian (Democratic) party and its opponent, the Anti-Jacksonians"
+ },
+ {
+  "id": "R5-PA07",
+  "gathered": [
+   [
+    "anti_treaty_sinn_fein",
+    "instance_of",
+    "party_member"
+   ]
+  ],
+  "sentence": "(Anti-)Treaty Sinn Fein is an instance of party member.",
+  "expect": "U",
+  "class": "paren_affix_hedge",
+  "why": "hedges between the pro-Treaty and anti-Treaty factions"
+ },
+ {
+  "id": "R5-PA08",
+  "gathered": [
+   [
+    "semi_automatic_rifles",
+    "subclass_of",
+    "revolving_rifle"
+   ]
+  ],
+  "sentence": "(Semi-)automatic rifles is a subclass of revolving rifle.",
+  "expect": "U",
+  "class": "paren_affix_hedge",
+  "why": "hedges between automatic and semi-automatic rifles"
+ },
+ {
+  "id": "R5-PA09",
+  "gathered": [
+   [
+    "semi_constitutional_monarchy",
+    "subclass_of",
+    "dynastic_state"
+   ]
+  ],
+  "sentence": "[Semi-]constitutional monarchy is a subclass of dynastic state.",
+  "expect": "U",
+  "class": "paren_affix_hedge",
+  "why": "square-bracketed prefix hedges between constitutional and semi-constitutional monarchy"
+ },
+ {
+  "id": "R5-PA10",
+  "gathered": [
+   [
+    "pre_dreadnought_battleship",
+    "subclass_of",
+    "battle_ship"
+   ]
+  ],
+  "sentence": "(Pre-)dreadnought battleship is a subclass of battle ship.",
+  "expect": "U",
+  "class": "paren_affix_hedge",
+  "why": "hedges between dreadnought and pre-dreadnought battleships"
+ },
+ {
+  "id": "R5-PA11",
+  "gathered": [
+   [
+    "a_touch_of_pink",
+    "instance_of",
+    "tv_mini_series"
+   ]
+  ],
+  "sentence": "A Touch of Pink is an instance of TV (mini-)series.",
+  "expect": "U",
+  "class": "paren_affix_hedge",
+  "why": "hedges between a TV series and a TV miniseries"
+ },
+ {
+  "id": "R5-PA12",
+  "gathered": [
+   [
+    "bi_weekly_newspaper",
+    "subclass_of",
+    "sister_newspaper"
+   ]
+  ],
+  "sentence": "(Bi-)weekly newspaper is a subclass of sister newspaper.",
+  "expect": "U",
+  "class": "paren_affix_hedge",
+  "why": "hedges between weekly and bi-weekly"
+ },
+ {
+  "id": "R5-PA13",
+  "gathered": [
+   [
+    "emo_rock",
+    "subclass_of",
+    "post_hardcore"
+   ]
+  ],
+  "sentence": "Emo rock is a subclass of (post-)hardcore.",
+  "expect": "U",
+  "class": "paren_affix_hedge",
+  "why": "hedges between hardcore and post-hardcore"
+ },
+ {
+  "id": "R5-PA14",
+  "gathered": [
+   [
+    "hepatitis_non_b",
+    "instance_of",
+    "organic_cause"
+   ]
+  ],
+  "sentence": "Hepatitis (non-)B is an instance of organic cause.",
+  "expect": "U",
+  "class": "paren_affix_hedge",
+  "why": "hedges between hepatitis B and non-B hepatitis"
+ },
+ {
+  "id": "R5-PA15",
+  "gathered": [
+   [
+    "sub_machine_gun",
+    "subclass_of",
+    "target_pistol"
+   ]
+  ],
+  "sentence": "(Sub-)machine gun is a subclass of target pistol.",
+  "expect": "U",
+  "class": "paren_affix_hedge",
+  "why": "hedges between a machine gun and a sub-machine gun"
+ },
+ {
+  "id": "R5-PA16",
+  "gathered": [
+   [
+    "sound_engineering",
+    "subclass_of",
+    "non_degreed_engineer"
+   ]
+  ],
+  "sentence": "Sound engineering is a subclass of (non-)degreed engineer.",
+  "expect": "U",
+  "class": "paren_affix_hedge",
+  "why": "hedges between degreed and non-degreed engineer"
+ },
+ {
+  "id": "R5-PM01",
+  "gathered": [
+   [
+    "south_mongolia",
+    "shares_border_with",
+    "liaoning_province"
+   ]
+  ],
+  "sentence": "(South) Mongolia shares border with Liaoning Province.",
+  "expect": "U",
+  "class": "paren_modifier_hedge",
+  "why": "reads 'Mongolia, or South Mongolia'; the state of Mongolia does not border Liaoning"
+ },
+ {
+  "id": "R5-PM02",
+  "gathered": [
+   [
+    "new_jeresy",
+    "shares_border_with",
+    "ny_state"
+   ]
+  ],
+  "sentence": "(New) Jeresy shares border with NY State.",
+  "expect": "U",
+  "class": "paren_modifier_hedge",
+  "why": "reads 'Jersey, or New Jersey'; the island of Jersey does not border New York"
+ },
+ {
+  "id": "R5-PM03",
+  "gathered": [
+   [
+    "new_zealnd",
+    "shares_border_with",
+    "commonwealth_australia"
+   ]
+  ],
+  "sentence": "(New) Zealnd shares border with Commonwealth Australia.",
+  "expect": "U",
+  "class": "paren_modifier_hedge",
+  "why": "reads 'Zealand (the Danish island), or New Zealand'"
+ },
+ {
+  "id": "R5-PM04",
+  "gathered": [
+   [
+    "south_holland",
+    "shares_border_with",
+    "noord_brabant"
+   ]
+  ],
+  "sentence": "(South) Holland shares border with Noord Brabant.",
+  "expect": "U",
+  "class": "paren_modifier_hedge",
+  "why": "hedges between Holland and the province of South Holland"
+ },
+ {
+  "id": "R5-PM05",
+  "gathered": [
+   [
+    "northern_ireland_fc",
+    "participant_of",
+    "world_cup_1982"
+   ]
+  ],
+  "sentence": "(Northern) Ireland FC is a participant of World Cup 1982.",
+  "expect": "U",
+  "class": "paren_modifier_hedge",
+  "why": "reads 'Ireland, or Northern Ireland'; the Republic of Ireland did not play in 1982"
+ },
+ {
+  "id": "R5-PM06",
+  "gathered": [
+   [
+    "great_poland_voivodship",
+    "shares_border_with",
+    "lower_silesian_voivodship"
+   ]
+  ],
+  "sentence": "Great Poland Voivodship shares border with (Lower) Silesian Voivodship.",
+  "expect": "U",
+  "class": "paren_modifier_hedge",
+  "why": "hedges between Lower Silesian and Silesian Voivodeship; Greater Poland does not border the latter"
+ },
+ {
+  "id": "R5-PM07",
+  "gathered": [
+   [
+    "new_south_wales_state",
+    "shares_border_with",
+    "constitution_of_queensland"
+   ]
+  ],
+  "sentence": "(New) South Wales State shares border with Constitution of Queensland.",
+  "expect": "U",
+  "class": "paren_modifier_hedge",
+  "why": "reads 'South Wales (UK), or New South Wales'"
+ },
+ {
+  "id": "R5-PM08",
+  "gathered": [
+   [
+    "west_balochistan",
+    "shares_border_with",
+    "south_khorasan_province"
+   ]
+  ],
+  "sentence": "(West) Balochistan shares border with South Khorasan Province.",
+  "expect": "U",
+  "class": "paren_modifier_hedge",
+  "why": "hedges between Balochistan (Pakistan) and West Balochistan (Iran); only the latter borders South Khorasan"
+ },
+ {
+  "id": "R5-PM09",
+  "gathered": [
+   [
+    "new_mexcio",
+    "shares_border_with",
+    "lone_star_state"
+   ]
+  ],
+  "sentence": "(New) Mexcio shares border with Lone Star State.",
+  "expect": "U",
+  "class": "paren_modifier_hedge",
+  "why": "hedges between Mexico and New Mexico, two different entities"
+ },
+ {
+  "id": "R5-PM10",
+  "gathered": [
+   [
+    "council_of_five_hundred",
+    "instance_of",
+    "lower_house"
+   ]
+  ],
+  "sentence": "Council of Five Hundred is an instance of (lower) house.",
+  "expect": "U",
+  "class": "paren_modifier_hedge",
+  "why": "hedges between a house and a lower house"
+ },
+ {
+  "id": "R5-PM11",
+  "gathered": [
+   [
+    "east_susex",
+    "shares_border_with",
+    "county_kent"
+   ]
+  ],
+  "sentence": "(East) Susex shares border with County Kent.",
+  "expect": "U",
+  "class": "paren_modifier_hedge",
+  "why": "hedges between Sussex and East Sussex"
+ },
+ {
+  "id": "R5-PM12",
+  "gathered": [
+   [
+    "north_lincolnshire",
+    "part_of",
+    "county_of_lincoln"
+   ]
+  ],
+  "sentence": "(North) Lincolnshire is part of County of Lincoln.",
+  "expect": "U",
+  "class": "paren_modifier_hedge",
+  "why": "hedges between Lincolnshire itself and North Lincolnshire"
+ },
+ {
+  "id": "R5-PM13",
+  "gathered": [
+   [
+    "uk_liberals",
+    "follows",
+    "old_whigs"
+   ]
+  ],
+  "sentence": "UK Liberals follows (Old) Whigs.",
+  "expect": "U",
+  "class": "paren_modifier_hedge",
+  "why": "hedges between the Whigs and the Old Whigs faction"
+ },
+ {
+  "id": "R5-CO01",
+  "gathered": [
+   [
+    "hesse_germany",
+    "shares_border_with",
+    "bayern_germany"
+   ]
+  ],
+  "sentence": "Hesse Germany shares border with Bayern & Germany.",
+  "expect": "U",
+  "class": "intra_slug_coordination",
+  "why": "reads as bordering Bayern and Germany; Hesse is inside Germany"
+ },
+ {
+  "id": "R5-CO02",
+  "gathered": [
+   [
+    "freistaat_sachsen",
+    "shares_border_with",
+    "bayern_germany"
+   ]
+  ],
+  "sentence": "Freistaat Sachsen shares border with Bayern+Germany.",
+  "expect": "U",
+  "class": "intra_slug_coordination",
+  "why": "glued '+' reads 'Bayern plus Germany'; Saxony does not border Germany"
+ },
+ {
+  "id": "R5-CO03",
+  "gathered": [
+   [
+    "alicante_spain",
+    "shares_border_with",
+    "elche_spain"
+   ]
+  ],
+  "sentence": "Alicante Spain shares border with Elche & Spain.",
+  "expect": "U",
+  "class": "intra_slug_coordination",
+  "why": "adds Spain as a bordering entity"
+ },
+ {
+  "id": "R5-CO04",
+  "gathered": [
+   [
+    "asker_norway",
+    "shares_border_with",
+    "b_rum_norway"
+   ]
+  ],
+  "sentence": "Asker Norway shares border with Bærum&Norway.",
+  "expect": "U",
+  "class": "intra_slug_coordination",
+  "why": "glued '&' reads 'Baerum and Norway'"
+ },
+ {
+  "id": "R5-CO05",
+  "gathered": [
+   [
+    "barking_london",
+    "shares_border_with",
+    "ilford_united_kingdom"
+   ]
+  ],
+  "sentence": "Barking London shares border with Ilford + United Kingdom.",
+  "expect": "U",
+  "class": "intra_slug_coordination",
+  "why": "adds the United Kingdom as a bordering entity"
+ },
+ {
+  "id": "R5-CO06",
+  "gathered": [
+   [
+    "anhui_china",
+    "shares_border_with",
+    "jiangsu_province"
+   ]
+  ],
+  "sentence": "Anhui & China shares border with Jiangsu Province.",
+  "expect": "U",
+  "class": "intra_slug_coordination",
+  "why": "subject reads as Anhui and China; China contains Jiangsu"
+ },
+ {
+  "id": "R5-CO07",
+  "gathered": [
+   [
+    "acre_brazil",
+    "shares_border_with",
+    "estado_do_amazonas"
+   ]
+  ],
+  "sentence": "Acre+Brazil shares border with Estado do Amazonas.",
+  "expect": "U",
+  "class": "intra_slug_coordination",
+  "why": "subject reads as Acre plus Brazil; Brazil contains Amazonas"
+ },
+ {
+  "id": "R5-CO08",
+  "gathered": [
+   [
+    "anderlecht_belgium",
+    "shares_border_with",
+    "city_of_brussels"
+   ]
+  ],
+  "sentence": "Anderlecht & Belgium shares border with City of Brussels.",
+  "expect": "U",
+  "class": "intra_slug_coordination",
+  "why": "subject reads as Anderlecht and Belgium"
+ },
+ {
+  "id": "R5-CO09",
+  "gathered": [
+   [
+    "ayacucho_peru",
+    "shares_border_with",
+    "qusqu_region"
+   ]
+  ],
+  "sentence": "Ayacucho & Peru shares border with Qusqu Region.",
+  "expect": "U",
+  "class": "intra_slug_coordination",
+  "why": "subject reads as Ayacucho and Peru"
+ },
+ {
+  "id": "R5-CO10",
+  "gathered": [
+   [
+    "new_dehli_india",
+    "instance_of",
+    "city_work"
+   ]
+  ],
+  "sentence": "New Dehli & India is an instance of city work.",
+  "expect": "U",
+  "class": "intra_slug_coordination",
+  "why": "reads as New Delhi and India each being a city"
+ },
+ {
+  "id": "R5-CO11",
+  "gathered": [
+   [
+    "east_london_south_africa",
+    "instance_of",
+    "city_work"
+   ]
+  ],
+  "sentence": "East London & South Africa is an instance of city work.",
+  "expect": "U",
+  "class": "intra_slug_coordination",
+  "why": "reads as East London and South Africa each being a city"
+ },
+ {
+  "id": "R5-CO12",
+  "gathered": [
+   [
+    "new_plymouth_new_zealand",
+    "instance_of",
+    "city_work"
+   ]
+  ],
+  "sentence": "New Plymouth + New Zealand is an instance of city work.",
+  "expect": "U",
+  "class": "intra_slug_coordination",
+  "why": "reads as New Plymouth plus New Zealand"
+ },
+ {
+  "id": "R5-CO13",
+  "gathered": [
+   [
+    "north_carolina_state_college",
+    "member_of",
+    "midwest_inter_library_center"
+   ]
+  ],
+  "sentence": "North Carolina State College is a member of Midwest & Inter Library Center.",
+  "expect": "U",
+  "class": "intra_slug_coordination",
+  "why": "object reads as two bodies, 'Midwest' and 'Inter Library Center'"
+ },
+ {
+  "id": "R5-CO14",
+  "gathered": [
+   [
+    "thuringen_state_germany",
+    "shares_border_with",
+    "bayern_germany"
+   ]
+  ],
+  "sentence": "Thuringen State Germany shares border with Bayern=Germany.",
+  "expect": "U",
+  "class": "intra_slug_coordination",
+  "why": "glued '=' asserts Bayern is Germany, an extra (false) identity claim"
+ },
+ {
+  "id": "R5-CO15",
+  "gathered": [
+   [
+    "almere_netherlands",
+    "shares_border_with",
+    "municipality_of_amsterdam"
+   ]
+  ],
+  "sentence": "Almere≠Netherlands shares border with Municipality of Amsterdam.",
+  "expect": "U",
+  "class": "intra_slug_coordination",
+  "why": "glued not-equal sign asserts Almere is not (in) the Netherlands"
+ },
+ {
+  "id": "R5-CO16",
+  "gathered": [
+   [
+    "elche_spain",
+    "shares_border_with",
+    "alicante_spain"
+   ]
+  ],
+  "sentence": "Elche Spain shares border with Alicante⊂Spain.",
+  "expect": "U",
+  "class": "intra_slug_coordination",
+  "why": "glued subset sign adds a second, ungathered claim (Alicante is a subset of Spain) inside the object"
+ },
+ {
+  "id": "R5-HM01",
+  "gathered": [
+   [
+    "tehran_iran",
+    "located_in_time_zone",
+    "utc_3_5"
+   ],
+   [
+    "tehran_iran",
+    "instance_of",
+    "city_work"
+   ]
+  ],
+  "sentence": "Tehran Iran is located in time zone UTC-3.5.",
+  "expect": "U",
+  "class": "hyphen_minus_sign_flip",
+  "why": "Tehran is UTC+3:30; 'UTC-3.5' is a mid-Atlantic offset seven hours away"
+ },
+ {
+  "id": "R5-HM02",
+  "gathered": [
+   [
+    "mashhad_iran",
+    "located_in_time_zone",
+    "utc_3_5"
+   ]
+  ],
+  "sentence": "Mashhad Iran is located in time zone UTC -3,5.",
+  "expect": "U",
+  "class": "hyphen_minus_sign_flip",
+  "why": "detached minus with a decimal comma: UTC minus 3.5 hours, the opposite of Iran's +3:30"
+ },
+ {
+  "id": "R5-HM03",
+  "gathered": [
+   [
+    "nangarhar_province",
+    "located_in_time_zone",
+    "utc_4_30"
+   ]
+  ],
+  "sentence": "Nangarhar Province is located in time zone UTC-4:30.",
+  "expect": "U",
+  "class": "hyphen_minus_sign_flip",
+  "why": "Afghanistan is UTC+4:30; UTC-4:30 is a Venezuelan-era offset"
+ },
+ {
+  "id": "R5-HM04",
+  "gathered": [
+   [
+    "badakhshan_province",
+    "located_in_time_zone",
+    "utc_4_30"
+   ]
+  ],
+  "sentence": "Badakhshan Province located in time zone UTC-4:30.",
+  "expect": "U",
+  "class": "hyphen_minus_sign_flip",
+  "why": "sign reversed, bare 'located in time zone' form"
+ },
+ {
+  "id": "R5-HM05",
+  "gathered": [
+   [
+    "yangon_myanmar",
+    "located_in_time_zone",
+    "utc_06_30"
+   ]
+  ],
+  "sentence": "Yangon Myanmar is located in time zone UTC-06:30.",
+  "expect": "U",
+  "class": "hyphen_minus_sign_flip",
+  "why": "Myanmar is UTC+06:30; minus reverses it"
+ },
+ {
+  "id": "R5-HM06",
+  "gathered": [
+   [
+    "kathmandu_nepal",
+    "located_in_time_zone",
+    "gmt_5_45"
+   ]
+  ],
+  "sentence": "Kathmandu Nepal is located in time zone GMT-5:45.",
+  "expect": "U",
+  "class": "hyphen_minus_sign_flip",
+  "why": "Nepal is GMT+5:45; minus reverses it"
+ },
+ {
+  "id": "R5-HM07",
+  "gathered": [
+   [
+    "shiraz_persia",
+    "located_in_time_zone",
+    "utc_3_5"
+   ]
+  ],
+  "sentence": "Shiraz Persia is located in time zone UTC+/-3.5.",
+  "expect": "U",
+  "class": "hyphen_minus_sign_flip",
+  "why": "'+/-' makes the offset either +3.5 or -3.5, a hedge on the sign"
+ },
+ {
+  "id": "R5-HM08",
+  "gathered": [
+   [
+    "zone_of_peace",
+    "located_in_time_zone",
+    "gmt_5_45"
+   ]
+  ],
+  "sentence": "Zone of Peace is located in time zone GMT -5:45.",
+  "expect": "U",
+  "class": "hyphen_minus_sign_flip",
+  "why": "detached minus token on Nepal's +5:45 zone"
+ },
+ {
+  "id": "R5-HM09",
+  "gathered": [
+   [
+    "kerman_iran",
+    "located_in_time_zone",
+    "utc_3_5"
+   ]
+  ],
+  "sentence": "Kerman Iran located in time zone UTC-3.5.",
+  "expect": "U",
+  "class": "hyphen_minus_sign_flip",
+  "why": "sign reversed, bare verb form"
+ },
+ {
+  "id": "R5-DQ01",
+  "gathered": [
+   [
+    "1_500_m",
+    "subclass_of",
+    "middle_distance_runner"
+   ]
+  ],
+  "sentence": "1-500 m is a subclass of middle distance runner.",
+  "expect": "U",
+  "class": "digit_punct_quantity",
+  "why": "'1-500 m' reads as a range from 1 to 500 metres, not the 1,500 m event"
+ },
+ {
+  "id": "R5-DQ02",
+  "gathered": [
+   [
+    "1_500_m",
+    "subclass_of",
+    "middle_distance_runner"
+   ]
+  ],
+  "sentence": "1/500 m is a subclass of middle distance runner.",
+  "expect": "U",
+  "class": "digit_punct_quantity",
+  "why": "'1/500 m' is a fraction (2 mm)"
+ },
+ {
+  "id": "R5-DQ03",
+  "gathered": [
+   [
+    "1_500_m",
+    "subclass_of",
+    "middle_distance_runner"
+   ]
+  ],
+  "sentence": "1.500 m is a subclass of middle distance runner.",
+  "expect": "U",
+  "class": "digit_punct_quantity",
+  "why": "in English '1.500 m' is one and a half metres; arguable because continental usage writes 1.500 for 1,500",
+  "arguable": true
+ },
+ {
+  "id": "R5-DQ04",
+  "gathered": [
+   [
+    "5_000_m",
+    "subclass_of",
+    "long_distance_running"
+   ]
+  ],
+  "sentence": "5.000 m is a subclass of long distance running.",
+  "expect": "U",
+  "class": "digit_punct_quantity",
+  "why": "in English '5.000 m' is five metres; arguable for the same continental-separator reason",
+  "arguable": true
+ },
+ {
+  "id": "R5-DQ05",
+  "gathered": [
+   [
+    "10_000_m",
+    "subclass_of",
+    "long_distance_running"
+   ]
+  ],
+  "sentence": "10,000+ m is a subclass of long distance running.",
+  "expect": "U",
+  "class": "digit_punct_quantity",
+  "why": "'10,000+ m' is an open range (10 km or more), a different class from the 10,000 m event"
+ },
+ {
+  "id": "R5-DQ06",
+  "gathered": [
+   [
+    "1_500_m",
+    "subclass_of",
+    "middle_distance_runner"
+   ]
+  ],
+  "sentence": "<1,500 m is a subclass of middle distance runner.",
+  "expect": "U",
+  "class": "digit_punct_quantity",
+  "why": "'<1,500 m' is 'under 1,500 m', a different set of events"
+ },
+ {
+  "id": "R5-DQ07",
+  "gathered": [
+   [
+    "5_000_m",
+    "subclass_of",
+    "long_distance_running"
+   ]
+  ],
+  "sentence": ">5,000 m is a subclass of long distance running.",
+  "expect": "U",
+  "class": "digit_punct_quantity",
+  "why": "'>5,000 m' is 'over 5,000 m'"
+ },
+ {
+  "id": "R5-DQ08",
+  "gathered": [
+   [
+    "10_000_m",
+    "subclass_of",
+    "long_distance_running"
+   ]
+  ],
+  "sentence": "~10,000 m is a subclass of long distance running.",
+  "expect": "U",
+  "class": "digit_punct_quantity",
+  "why": "'~10,000 m' is 'about 10,000 m', a hedged quantity"
+ },
+ {
+  "id": "R5-UX01",
+  "gathered": [
+   [
+    "10_000_m",
+    "subclass_of",
+    "long_distance_running"
+   ]
+  ],
+  "sentence": "10,000 m² is a subclass of long distance running.",
+  "expect": "U",
+  "class": "unit_exponent_fold",
+  "why": "superscript two makes it square metres, an area not a race distance; the sign folds away"
+ },
+ {
+  "id": "R5-UX02",
+  "gathered": [
+   [
+    "1_500_m",
+    "subclass_of",
+    "middle_distance_runner"
+   ]
+  ],
+  "sentence": "1,500 m³ is a subclass of middle distance runner.",
+  "expect": "U",
+  "class": "unit_exponent_fold",
+  "why": "superscript three makes it cubic metres"
+ },
+ {
+  "id": "R5-CU01",
+  "gathered": [
+   [
+    "1_500_m",
+    "subclass_of",
+    "middle_distance_runner"
+   ]
+  ],
+  "sentence": "$1,500 m is a subclass of middle distance runner.",
+  "expect": "U",
+  "class": "currency_sign_fold",
+  "why": "'$1,500 m' reads as 1,500 million dollars"
+ },
+ {
+  "id": "R5-CU02",
+  "gathered": [
+   [
+    "10_000_m",
+    "subclass_of",
+    "long_distance_running"
+   ]
+  ],
+  "sentence": "$10,000 m is a subclass of long distance running.",
+  "expect": "U",
+  "class": "currency_sign_fold",
+  "why": "'$10,000 m' reads as ten billion dollars"
+ },
+ {
+  "id": "R5-DL01",
+  "gathered": [
+   [
+    "1_500_m",
+    "subclass_of",
+    "middle_distance_runner"
+   ]
+  ],
+  "sentence": "1Ʒ500 m is a subclass of middle distance runner.",
+  "expect": "U",
+  "class": "digit_lookalike_letter",
+  "why": "ezh (U+01B7) in the thousands slot displays as '13500 m'"
+ },
+ {
+  "id": "R5-DL02",
+  "gathered": [
+   [
+    "5_000_m",
+    "subclass_of",
+    "long_distance_running"
+   ]
+  ],
+  "sentence": "5Ƽ000 m is a subclass of long distance running.",
+  "expect": "U",
+  "class": "digit_lookalike_letter",
+  "why": "tone-five letter (U+01BC) displays as '55000 m'"
+ },
+ {
+  "id": "R5-DL03",
+  "gathered": [
+   [
+    "10_000_m",
+    "subclass_of",
+    "long_distance_running"
+   ]
+  ],
+  "sentence": "ǀ10,000 m is a subclass of long distance running.",
+  "expect": "U",
+  "class": "digit_lookalike_letter",
+  "why": "a vertical-stroke letter before 10,000 displays as '110,000 m'"
+ },
+ {
+  "id": "R5-DL04",
+  "gathered": [
+   [
+    "lc_200_40",
+    "part_of",
+    "baikonur_cosmodrome"
+   ]
+  ],
+  "sentence": "LC 200/40ǀ is part of Baikonur Cosmodrome.",
+  "expect": "U",
+  "class": "digit_lookalike_letter",
+  "why": "displays as launch complex 200/401, a different pad"
+ },
+ {
+  "id": "R5-DL05",
+  "gathered": [
+   [
+    "matthew_17_11",
+    "part_of",
+    "new_testiment"
+   ]
+  ],
+  "sentence": "Matthew 17:11ǀ is part of New Testiment.",
+  "expect": "U",
+  "class": "digit_lookalike_letter",
+  "why": "displays as verse 17:111, which does not exist"
+ },
+ {
+  "id": "R5-GI01",
+  "gathered": [
+   [
+    "clive_s_lewis",
+    "instance_of",
+    "human_specie"
+   ]
+  ],
+  "sentence": "Clive's Lewis is an instance of human specie.",
+  "expect": "U",
+  "class": "genitive_initial_swap",
+  "why": "'Clive's Lewis' is some Lewis belonging to a Clive, not C. S. Lewis"
+ },
+ {
+  "id": "R5-GI02",
+  "gathered": [
+   [
+    "george_s_clinton",
+    "instance_of",
+    "human_specie"
+   ]
+  ],
+  "sentence": "George's Clinton is an instance of human specie.",
+  "expect": "U",
+  "class": "genitive_initial_swap",
+  "why": "possessive noun phrase, not George S. Clinton"
+ },
+ {
+  "id": "R5-GI03",
+  "gathered": [
+   [
+    "charles_s_dutton",
+    "instance_of",
+    "human_specie"
+   ]
+  ],
+  "sentence": "Charles's Dutton is an instance of human specie.",
+  "expect": "U",
+  "class": "genitive_initial_swap",
+  "why": "possessive noun phrase, not Charles S. Dutton"
+ },
+ {
+  "id": "R5-GI04",
+  "gathered": [
+   [
+    "samuel_s_hinds",
+    "instance_of",
+    "human_specie"
+   ]
+  ],
+  "sentence": "Samuel's Hinds is an instance of human specie.",
+  "expect": "U",
+  "class": "genitive_initial_swap",
+  "why": "possessive noun phrase, not Samuel S. Hinds"
+ },
+ {
+  "id": "R5-GI05",
+  "gathered": [
+   [
+    "rapid_city_s_dakota",
+    "instance_of",
+    "city_work"
+   ]
+  ],
+  "sentence": "Rapid City's Dakota is an instance of city work.",
+  "expect": "U",
+  "class": "genitive_initial_swap",
+  "why": "'Rapid City's Dakota' is something named Dakota in Rapid City, not Rapid City, S. Dakota"
+ },
+ {
+  "id": "R5-IN01",
+  "gathered": [
+   [
+    "a_berg",
+    "instance_of",
+    "surname_page"
+   ]
+  ],
+  "sentence": "Aĺ Berg is an instance of surname page.",
+  "expect": "U",
+  "class": "foldable_letter_initial_to_name",
+  "why": "l-acute after the initial A displays as 'Al Berg', a different name; folds to a_berg"
+ },
+ {
+  "id": "R5-IN02",
+  "gathered": [
+   [
+    "s_morgenstern",
+    "instance_of",
+    "human_specie"
+   ]
+  ],
+  "sentence": "Sý Morgenstern is an instance of human specie.",
+  "expect": "U",
+  "class": "foldable_letter_initial_to_name",
+  "why": "y-acute after the initial S displays as 'Sy Morgenstern', a different person; folds to s_morgenstern"
+ },
+ {
+  "id": "R5-LH01",
+  "gathered": [
+   [
+    "stra_aros",
+    "instance_of",
+    "urban_areas_of_sweden"
+   ]
+  ],
+  "sentence": "Ṽästra Aros is an instance of urban areas of Sweden.",
+  "expect": "U",
+  "class": "latin_diacritic_homoglyph",
+  "why": "V-with-tilde (Latin, decomposes to V) displays 'Vastra Aros', a different town from the gathered Ostra Aros; both letters fold away"
+ },
+ {
+  "id": "R5-LH02",
+  "gathered": [
+   [
+    "stra_aros",
+    "located_in_time_zone",
+    "rome_time"
+   ]
+  ],
+  "sentence": "Ʋästra Aros is located in time zone Rome time.",
+  "expect": "U",
+  "class": "latin_diacritic_homoglyph",
+  "why": "V-with-hook (Latin script, no decomposition) displays 'Vastra Aros'"
+ },
+ {
+  "id": "R5-CW01",
+  "gathered": [
+   [
+    "greater_eugene",
+    "shares_border_with",
+    "albany_lebanon_or_sa"
+   ]
+  ],
+  "sentence": "Greater Eugene shares border with Albany-Lebanon, or SA.",
+  "expect": "U",
+  "class": "connective_word_in_slug",
+  "why": "the slug's OR is the state Oregon; ', or SA' reads as a disjunction (Albany-Lebanon or SA)"
+ },
+ {
+  "id": "R5-CW02",
+  "gathered": [
+   [
+    "if_chins_could_kill",
+    "instance_of",
+    "human_specie"
+   ]
+  ],
+  "sentence": "If chins could kill, is an instance of human specie.",
+  "expect": "U",
+  "class": "connective_word_in_slug",
+  "why": "the trailing comma turns the name into a conditional clause; arguable because the result is garbled",
+  "arguable": true
+ },
+ {
+  "id": "R5-CW03",
+  "gathered": [
+   [
+    "demographic_group",
+    "subclass_of",
+    "sociology_versus_social_theory"
+   ]
+  ],
+  "sentence": "Demographic group is a subclass of sociology, versus social theory.",
+  "expect": "U",
+  "class": "connective_word_in_slug",
+  "why": "reads 'a subclass of sociology, as opposed to social theory': a different object"
+ },
+ {
+  "id": "R5-CW04",
+  "gathered": [
+   [
+    "nothing_but_wind",
+    "instance_of",
+    "human_specie"
+   ]
+  ],
+  "sentence": "nothing but wind is an instance of human specie.",
+  "expect": "U",
+  "class": "connective_word_in_slug",
+  "why": "in lower case the name reads as a quantifier: nothing except wind is human"
+ },
+ {
+  "id": "R5-AB01",
+  "gathered": [
+   [
+    "iso_3166_2_no_01",
+    "part_of",
+    "iso_region_codes"
+   ]
+  ],
+  "sentence": "ISO 3166-2 No. 01 is part of ISO region codes.",
+  "expect": "U",
+  "class": "abbreviation_reread",
+  "why": "the slug's NO is Norway; 'No. 01' reads as 'number 01', a different code"
+ },
+ {
+  "id": "R5-GL01",
+  "gathered": [
+   [
+    "alicante_spain",
+    "shares_border_with",
+    "elche_spain"
+   ]
+  ],
+  "sentence": "Alicante Spain shares border with ~Elche Spain.",
+  "expect": "U",
+  "class": "glued_logic_symbol",
+  "why": "a tilde glued inside the object span reads as 'about' or logical NOT"
+ },
+ {
+  "id": "R5-GL02",
+  "gathered": [
+   [
+    "hesse_germany",
+    "shares_border_with",
+    "bayern_germany"
+   ]
+  ],
+  "sentence": "Hesse Germany shares border with ¬Bayern Germany.",
+  "expect": "U",
+  "class": "glued_logic_symbol",
+  "why": "a negation sign glued inside the object span (round 3 put it outside, around a whole sentence)"
+ },
+ {
+  "id": "R5-SC01",
+  "gathered": [
+   [
+    "costa_rica",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "The next line is false. Costa Rica is a member of the United Nations.",
+  "expect": "U",
+  "class": "split_context_new",
+  "why": "a U+2028 LINE SEPARATOR; the line before declares the claim false"
+ },
+ {
+  "id": "R5-SC02",
+  "gathered": [
+   [
+    "el_salvador",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "El Salvador is a member of the United Nations. The previous sentence is a lie.",
+  "expect": "U",
+  "class": "split_context_new",
+  "why": "the following sentence retracts the claim by explicit back-reference"
+ },
+ {
+  "id": "R5-SC03",
+  "gathered": [
+   [
+    "zone_of_peace",
+    "shares_border_with",
+    "bharat_ganrajya"
+   ]
+  ],
+  "sentence": "Zone of Peace shares border with Bharat Ganrajya। Untrue।",
+  "expect": "U",
+  "class": "split_context_new",
+  "why": "Devanagari danda as the sentence boundary, then a denial"
+ },
+ {
+  "id": "R5-SC04",
+  "gathered": [
+   [
+    "costa_rica",
+    "shares_border_with",
+    "sport_in_panama"
+   ]
+  ],
+  "sentence": "MythCosta Rica shares border with Sport in Panama.",
+  "expect": "U",
+  "class": "split_context_new",
+  "why": "a NEL (U+0085) line break after the label 'Myth'"
+ },
+ {
+  "id": "R5-SC05",
+  "gathered": [
+   [
+    "el_salvador",
+    "shares_border_with",
+    "administrative_divisions_of_guatemala"
+   ]
+  ],
+  "sentence": "El Salvador shares border with Administrative Divisions of Guatemala。不对。",
+  "expect": "U",
+  "class": "split_context_new",
+  "why": "ideographic full stop, then a Chinese denial ('not right') whose slug form is empty"
+ },
+ {
+  "id": "R5-VR01",
+  "gathered": [
+   [
+    "bayer_leverkusen_ii",
+    "located_in_the_administrative_territoria",
+    "history_of_leverkusen"
+   ]
+  ],
+  "sentence": "Bayer Leverkusen II locates History of Leverkusen.",
+  "expect": "U",
+  "class": "verb_reading_new",
+  "why": "an -s reading of 'located': 'locates' means finds or places, so the team acts on the city"
+ },
+ {
+  "id": "R5-VR02",
+  "gathered": [
+   [
+    "eintracht_braunschweig_ii",
+    "located_in_the_administrative_territoria",
+    "brunswick_germany"
+   ]
+  ],
+  "sentence": "Eintracht Braunschweig II locates Brunswick Germany.",
+  "expect": "U",
+  "class": "verb_reading_new",
+  "why": "'locates' (finds) instead of 'is located in'"
+ },
+ {
+  "id": "R5-F01",
+  "gathered": [
+   [
+    "city_of_chicago",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "City of Chicago is located in time zone UTC-06.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Chicago is UTC-6; hyphen-minus is the correct sign"
+ },
+ {
+  "id": "R5-F02",
+  "gathered": [
+   [
+    "metro_tucson",
+    "located_in_time_zone",
+    "utc_07"
+   ]
+  ],
+  "sentence": "Metro Tucson is located in time zone UTC-07.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Tucson is UTC-7"
+ },
+ {
+  "id": "R5-F03",
+  "gathered": [
+   [
+    "costa_rica",
+    "located_in_time_zone",
+    "utc_06"
+   ]
+  ],
+  "sentence": "Costa Rica is located in time zone UTC-06.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Costa Rica is UTC-6"
+ },
+ {
+  "id": "R5-F04",
+  "gathered": [
+   [
+    "denver_colorado_united_states",
+    "located_in_time_zone",
+    "utc_07"
+   ]
+  ],
+  "sentence": "Denver Colorado United States is located in time zone UTC-07.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "Denver is UTC-7"
+ },
+ {
+  "id": "R5-F05",
+  "gathered": [
+   [
+    "tehran_iran",
+    "located_in_time_zone",
+    "utc_3_5"
+   ]
+  ],
+  "sentence": "Tehran Iran is located in time zone UTC+3.5.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "correct sign; twin of HM01"
+ },
+ {
+  "id": "R5-F06",
+  "gathered": [
+   [
+    "kathmandu_nepal",
+    "located_in_time_zone",
+    "gmt_5_45"
+   ]
+  ],
+  "sentence": "Kathmandu Nepal is located in time zone GMT+5:45.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "correct sign; twin of HM06"
+ },
+ {
+  "id": "R5-F07",
+  "gathered": [
+   [
+    "hesse_germany",
+    "shares_border_with",
+    "bayern_germany"
+   ]
+  ],
+  "sentence": "Hesse Germany shares border with Bayern, Germany.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "appositive comma (Bayern, in Germany); twin of CO01"
+ },
+ {
+  "id": "R5-F08",
+  "gathered": [
+   [
+    "alicante_spain",
+    "shares_border_with",
+    "elche_spain"
+   ]
+  ],
+  "sentence": "Alicante Spain shares border with Elche, Spain.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "appositive comma; twin of CO03"
+ },
+ {
+  "id": "R5-F09",
+  "gathered": [
+   [
+    "barking_london",
+    "shares_border_with",
+    "ilford_united_kingdom"
+   ]
+  ],
+  "sentence": "Barking London shares border with Ilford, United Kingdom.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "appositive comma; twin of CO05"
+ },
+ {
+  "id": "R5-F10",
+  "gathered": [
+   [
+    "asker_norway",
+    "shares_border_with",
+    "b_rum_norway"
+   ]
+  ],
+  "sentence": "Asker Norway shares border with Bærum, Norway.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "accented name plus appositive comma; twin of CO04"
+ },
+ {
+  "id": "R5-F11",
+  "gathered": [
+   [
+    "new_dehli_india",
+    "instance_of",
+    "city_work"
+   ]
+  ],
+  "sentence": "New Dehli, India is an instance of city work.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "appositive comma; twin of CO10"
+ },
+ {
+  "id": "R5-F12",
+  "gathered": [
+   [
+    "women_s_international_league",
+    "instance_of",
+    "non_governmental_organization"
+   ]
+  ],
+  "sentence": "Women’s International League is an instance of non-governmental organization.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "curly apostrophe; twin of PA01"
+ },
+ {
+  "id": "R5-F13",
+  "gathered": [
+   [
+    "hepatitis_non_b",
+    "instance_of",
+    "organic_cause"
+   ]
+  ],
+  "sentence": "Hepatitis non-B is an instance of organic cause.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "twin of PA14"
+ },
+ {
+  "id": "R5-F14",
+  "gathered": [
+   [
+    "pre_dreadnought_battleship",
+    "subclass_of",
+    "battle_ship"
+   ]
+  ],
+  "sentence": "Pre-dreadnought battleship is a subclass of battle ship.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "twin of PA10"
+ },
+ {
+  "id": "R5-F15",
+  "gathered": [
+   [
+    "semi_automatic_rifles",
+    "subclass_of",
+    "revolving_rifle"
+   ]
+  ],
+  "sentence": "Semi-automatic rifles is a subclass of revolving rifle.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "twin of PA08"
+ },
+ {
+  "id": "R5-F16",
+  "gathered": [
+   [
+    "united_states_whig_party",
+    "follows",
+    "anti_jacksonian_party"
+   ]
+  ],
+  "sentence": "United States Whig Party follows Anti-Jacksonian Party.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "twin of PA06"
+ },
+ {
+  "id": "R5-F17",
+  "gathered": [
+   [
+    "south_mongolia",
+    "shares_border_with",
+    "liaoning_province"
+   ]
+  ],
+  "sentence": "South Mongolia shares border with Liaoning Province.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "twin of PM01"
+ },
+ {
+  "id": "R5-F18",
+  "gathered": [
+   [
+    "new_zealnd",
+    "shares_border_with",
+    "commonwealth_australia"
+   ]
+  ],
+  "sentence": "New Zealnd shares border with Commonwealth Australia.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "twin of PM03 (store misspelling kept)"
+ },
+ {
+  "id": "R5-F19",
+  "gathered": [
+   [
+    "northern_ireland_fc",
+    "participant_of",
+    "world_cup_1982"
+   ]
+  ],
+  "sentence": "Northern Ireland FC is a participant of World Cup 1982.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "twin of PM05"
+ },
+ {
+  "id": "R5-F20",
+  "gathered": [
+   [
+    "clive_s_lewis",
+    "instance_of",
+    "human_specie"
+   ]
+  ],
+  "sentence": "Clive S. Lewis is an instance of human specie.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "initial with period; twin of GI01"
+ },
+ {
+  "id": "R5-F21",
+  "gathered": [
+   [
+    "george_s_clinton",
+    "instance_of",
+    "human_specie"
+   ]
+  ],
+  "sentence": "George S. Clinton is an instance of human specie.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "twin of GI02"
+ },
+ {
+  "id": "R5-F22",
+  "gathered": [
+   [
+    "rapid_city_s_dakota",
+    "instance_of",
+    "city_work"
+   ]
+  ],
+  "sentence": "Rapid City, S. Dakota is an instance of city work.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "twin of GI05"
+ },
+ {
+  "id": "R5-F23",
+  "gathered": [
+   [
+    "1_500_m",
+    "subclass_of",
+    "middle_distance_runner"
+   ]
+  ],
+  "sentence": "1,500 m is a subclass of middle distance runner.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "thousands comma; twin of the DQ/UX/CU/DL cases"
+ },
+ {
+  "id": "R5-F24",
+  "gathered": [
+   [
+    "10_000_m",
+    "subclass_of",
+    "long_distance_running"
+   ]
+  ],
+  "sentence": "10 000 m is a subclass of long distance running.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "SI thousands separator (narrow no-break space)"
+ },
+ {
+  "id": "R5-F25",
+  "gathered": [
+   [
+    "5_000_m",
+    "subclass_of",
+    "long_distance_running"
+   ]
+  ],
+  "sentence": "5 000 m is a subclass of long distance running.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "thin-space thousands separator"
+ },
+ {
+  "id": "R5-F26",
+  "gathered": [
+   [
+    "charles_ii_of_scotland",
+    "member_of",
+    "british_royal_society"
+   ]
+  ],
+  "sentence": "Charles II of Scotland is a member of British Royal Society.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "twin of NX01"
+ },
+ {
+  "id": "R5-F27",
+  "gathered": [
+   [
+    "george_v",
+    "member_of",
+    "british_royal_society"
+   ]
+  ],
+  "sentence": "George V is a member of British Royal Society.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "twin of NX02"
+ },
+ {
+  "id": "R5-F28",
+  "gathered": [
+   [
+    "games_of_the_x_olympiad",
+    "follows",
+    "erven_jos_rovers"
+   ]
+  ],
+  "sentence": "Games of the X Olympiad follows Erven Jos Rovers.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "twin of NX07"
+ },
+ {
+  "id": "R5-F29",
+  "gathered": [
+   [
+    "the_godfather_trilogy",
+    "has_part",
+    "the_godfather_part_ii"
+   ]
+  ],
+  "sentence": "The Godfather Trilogy has part The Godfather Part II.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "twin of NX11"
+ },
+ {
+  "id": "R5-F30",
+  "gathered": [
+   [
+    "apple_ii",
+    "instance_of",
+    "personal_computer"
+   ]
+  ],
+  "sentence": "Apple II is an instance of personal computer.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "twin of NX17"
+ },
+ {
+  "id": "R5-F31",
+  "gathered": [
+   [
+    "indochina_war",
+    "part_of",
+    "cold_war_i"
+   ]
+  ],
+  "sentence": "Indochina War is part of Cold War I.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "twin of NX15"
+ },
+ {
+  "id": "R5-F32",
+  "gathered": [
+   [
+    "sega_mega_drive_ii",
+    "follows",
+    "sega_master_system_iii"
+   ]
+  ],
+  "sentence": "Sega Mega Drive II follows Sega Master System III.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "twin of NX10"
+ },
+ {
+  "id": "R5-F33",
+  "gathered": [
+   [
+    "greater_eugene",
+    "shares_border_with",
+    "albany_lebanon_or_sa"
+   ]
+  ],
+  "sentence": "Greater Eugene shares border with Albany Lebanon OR SA.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "OR is the Oregon abbreviation, in capitals; twin of CW01"
+ },
+ {
+  "id": "R5-F34",
+  "gathered": [
+   [
+    "iso_3166_2_no_01",
+    "part_of",
+    "iso_region_codes"
+   ]
+  ],
+  "sentence": "ISO 3166-2:NO-01 is part of ISO region codes.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "the code as written; twin of AB01"
+ },
+ {
+  "id": "R5-F35",
+  "gathered": [
+   [
+    "stra_aros",
+    "located_in_time_zone",
+    "rome_time"
+   ]
+  ],
+  "sentence": "Östra Aros is located in time zone Rome time.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "correct accented spelling; twin of LH02"
+ },
+ {
+  "id": "R5-F36",
+  "gathered": [
+   [
+    "intel_corp",
+    "part_of",
+    "s_p"
+   ]
+  ],
+  "sentence": "Intel Corp is part of S&P.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "the ampersand is part of the real name S&P"
+ },
+ {
+  "id": "R5-F37",
+  "gathered": [
+   [
+    "oslo_t_banedrift",
+    "instance_of",
+    "a_s"
+   ]
+  ],
+  "sentence": "Oslo T-banedrift is an instance of A/S.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "the slash is part of the real form A/S"
+ },
+ {
+  "id": "R5-F38",
+  "gathered": [
+   [
+    "z_80",
+    "subclass_of",
+    "microprocessor_unit"
+   ]
+  ],
+  "sentence": "Z-80 is a subclass of microprocessor unit.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "hyphen in the real name"
+ },
+ {
+  "id": "R5-F39",
+  "gathered": [
+   [
+    "german_research_network",
+    "instance_of",
+    "e_v"
+   ]
+  ],
+  "sentence": "German Research Network is an instance of e.V.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "the real abbreviation e.V."
+ },
+ {
+  "id": "R5-F40",
+  "gathered": [
+   [
+    "freistaat_sachsen",
+    "shares_border_with",
+    "bayern_germany"
+   ]
+  ],
+  "sentence": "Freistaat Sachsen shares border with Bayern Germany.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "no-break space inside the subject; displays identically"
+ },
+ {
+  "id": "R5-F41",
+  "gathered": [
+   [
+    "parody_film",
+    "subclass_of",
+    "fantasy_comedy_film"
+   ]
+  ],
+  "sentence": "Parody ﬁlm is a subclass of fantasy comedy ﬁlm.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "fi ligature (U+FB01) displays as 'film'; a retention probe for compatibility characters"
+ },
+ {
+  "id": "R5-F42",
+  "gathered": [
+   [
+    "tyrant_flycatcher",
+    "instance_of",
+    "taxonomic_group"
+   ]
+  ],
+  "sentence": "Tyrant ﬂycatcher is an instance of taxonomic group.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "fl ligature (U+FB02) displays as 'flycatcher'"
+ },
+ {
+  "id": "R5-F43",
+  "gathered": [
+   [
+    "orange_county_florida",
+    "shares_border_with",
+    "volusia_county_florida"
+   ]
+  ],
+  "sentence": "Orange County Florida shares border with Volu‌sia County Florida.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "zero-width non-joiner inside a word; displays identically"
+ },
+ {
+  "id": "R5-F44",
+  "gathered": [
+   [
+    "a_berg",
+    "instance_of",
+    "surname_page"
+   ]
+  ],
+  "sentence": "A. Berg is an instance of surname page.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "initial with period; twin of IN01"
+ },
+ {
+  "id": "R5-F45",
+  "gathered": [
+   [
+    "demographic_group",
+    "subclass_of",
+    "sociology_versus_social_theory"
+   ]
+  ],
+  "sentence": "Demographic group is a subclass of sociology versus social theory.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "twin of CW03"
+ },
+ {
+  "id": "R5-F46",
+  "gathered": [
+   [
+    "crime_writers",
+    "subclass_of",
+    "non_fiction"
+   ]
+  ],
+  "sentence": "Crime writers is a subclass of non-fiction.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "twin of PA05"
+ },
+ {
+  "id": "R5-F47",
+  "gathered": [
+   [
+    "0_6_0dh",
+    "subclass_of",
+    "railway_locomotive"
+   ]
+  ],
+  "sentence": "0-6-0DH is a subclass of railway locomotive.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "hyphenated wheel arrangement as written"
+ }
+]

@@ -1,0 +1,33 @@
+{
+ "_doc": "composer-path one-fact sweep, stub mouth, production tiny-demo+LTM brain; rule in the module docstring",
+ "backend": "numpy",
+ "device": "cpu (x86_64)",
+ "host": "dant123-wk",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/composer_stub_sweep.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-b2d/research/findings/raw/_moat_slug_norm_heldout/composer_stub_sweep.py",
+  "research/findings/raw/_moat_slug_norm_heldout/composer_stub_sweep_3000_after.json",
+  "3000"
+ ],
+ "brain_source": "tiny-demo +LTM",
+ "brain_build_s": 188.6,
+ "vocab_sizes": [
+  3,
+  5,
+  5
+ ],
+ "parser_seed": 1,
+ "n_facts": 3000,
+ "sample_seed": 20261018,
+ "cells(stock_ok,flag_on_ok)": {
+  "(True, True)": 3000
+ },
+ "stock_answer_rate": 1.0,
+ "flag_on_answer_rate": 1.0,
+ "HURTS": 0,
+ "HELPS": 0,
+ "flag_on_fallback_to_single_triple": 0,
+ "hurts_reasons": {},
+ "hurts_rows": [],
+ "helps_rows": []
+}

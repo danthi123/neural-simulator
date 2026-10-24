@@ -1,0 +1,4063 @@
+[
+ {
+  "id": "R7-A01",
+  "gathered": [
+   [
+    "solomon_is",
+    "located_in_time_zone",
+    "kosrae_time"
+   ]
+  ],
+  "sentence": "Solomon is located in time zone Kosrae time.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "the subject slug ends in the word 'is' (solomon_is); its last space is the display-identical U+00A0, so the text reads exactly like the plain sentence 'Solomon is located in time zone Kosrae time': the reader takes 'Solomon' as the subject and 'is' as the copula, naming a different entity than the gathered islands; build 5's clause-word rule would catch this with an ordinary space, so the case asks whether its split on spaces also splits on U+00A0"
+ },
+ {
+  "id": "R7-A02",
+  "gathered": [
+   [
+    "solomon_is",
+    "located_in_time_zone",
+    "kosrae_time"
+   ]
+  ],
+  "sentence": "Solomon is located in time zone Kosrae time.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "the subject slug ends in the word 'is' (solomon_is); its last space is the display-identical U+2007, so the text reads exactly like the plain sentence 'Solomon is located in time zone Kosrae time': the reader takes 'Solomon' as the subject and 'is' as the copula, naming a different entity than the gathered islands; build 5's clause-word rule would catch this with an ordinary space, so the case asks whether its split on spaces also splits on U+2007"
+ },
+ {
+  "id": "R7-A03",
+  "gathered": [
+   [
+    "solomon_is",
+    "located_in_time_zone",
+    "kosrae_time"
+   ]
+  ],
+  "sentence": "Solomon is located in time zone Kosrae time.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "the subject slug ends in the word 'is' (solomon_is); its last space is the display-identical U+2009, so the text reads exactly like the plain sentence 'Solomon is located in time zone Kosrae time': the reader takes 'Solomon' as the subject and 'is' as the copula, naming a different entity than the gathered islands; build 5's clause-word rule would catch this with an ordinary space, so the case asks whether its split on spaces also splits on U+2009"
+ },
+ {
+  "id": "R7-A04",
+  "gathered": [
+   [
+    "solomon_is",
+    "located_in_time_zone",
+    "kosrae_time"
+   ]
+  ],
+  "sentence": "Solomon is located in time zone Kosrae time.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "the subject slug ends in the word 'is' (solomon_is); its last space is the display-identical U+202F, so the text reads exactly like the plain sentence 'Solomon is located in time zone Kosrae time': the reader takes 'Solomon' as the subject and 'is' as the copula, naming a different entity than the gathered islands; build 5's clause-word rule would catch this with an ordinary space, so the case asks whether its split on spaces also splits on U+202F"
+ },
+ {
+  "id": "R7-A05",
+  "gathered": [
+   [
+    "marshall_is",
+    "located_in_time_zone",
+    "fiji_standard_time"
+   ]
+  ],
+  "sentence": "Marshall is located in time zone Fiji standard time.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "the subject slug ends in the word 'is' (marshall_is); its last space is the display-identical U+00A0, so the text reads exactly like the plain sentence 'Marshall is located in time zone Fiji standard time': the reader takes 'Marshall' as the subject and 'is' as the copula, naming a different entity than the gathered islands; build 5's clause-word rule would catch this with an ordinary space, so the case asks whether its split on spaces also splits on U+00A0"
+ },
+ {
+  "id": "R7-A06",
+  "gathered": [
+   [
+    "marshall_is",
+    "located_in_time_zone",
+    "fiji_standard_time"
+   ]
+  ],
+  "sentence": "Marshall is located in time zone Fiji standard time.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "the subject slug ends in the word 'is' (marshall_is); its last space is the display-identical U+2007, so the text reads exactly like the plain sentence 'Marshall is located in time zone Fiji standard time': the reader takes 'Marshall' as the subject and 'is' as the copula, naming a different entity than the gathered islands; build 5's clause-word rule would catch this with an ordinary space, so the case asks whether its split on spaces also splits on U+2007"
+ },
+ {
+  "id": "R7-A07",
+  "gathered": [
+   [
+    "marshall_is",
+    "located_in_time_zone",
+    "fiji_standard_time"
+   ]
+  ],
+  "sentence": "Marshall is located in time zone Fiji standard time.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "the subject slug ends in the word 'is' (marshall_is); its last space is the display-identical U+2009, so the text reads exactly like the plain sentence 'Marshall is located in time zone Fiji standard time': the reader takes 'Marshall' as the subject and 'is' as the copula, naming a different entity than the gathered islands; build 5's clause-word rule would catch this with an ordinary space, so the case asks whether its split on spaces also splits on U+2009"
+ },
+ {
+  "id": "R7-A08",
+  "gathered": [
+   [
+    "marshall_is",
+    "located_in_time_zone",
+    "fiji_standard_time"
+   ]
+  ],
+  "sentence": "Marshall is located in time zone Fiji standard time.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "the subject slug ends in the word 'is' (marshall_is); its last space is the display-identical U+202F, so the text reads exactly like the plain sentence 'Marshall is located in time zone Fiji standard time': the reader takes 'Marshall' as the subject and 'is' as the copula, naming a different entity than the gathered islands; build 5's clause-word rule would catch this with an ordinary space, so the case asks whether its split on spaces also splits on U+202F"
+ },
+ {
+  "id": "R7-A09",
+  "gathered": [
+   [
+    "marshall_is",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ]
+  ],
+  "sentence": "Marshall is described by source Armenian Soviet Encyclopedia.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "the subject slug ends in the word 'is' (marshall_is); its last space is the display-identical U+00A0, so the text reads exactly like the plain sentence 'Marshall is described by source Armenian Soviet Encyclopedia': the reader takes 'Marshall' as the subject and 'is' as the copula, naming a different entity than the gathered islands; build 5's clause-word rule would catch this with an ordinary space, so the case asks whether its split on spaces also splits on U+00A0; the relation is the telegraphic 'described by source', so the parse needs no copula of its own"
+ },
+ {
+  "id": "R7-A10",
+  "gathered": [
+   [
+    "marshall_is",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ]
+  ],
+  "sentence": "Marshall is described by source Armenian Soviet Encyclopedia.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "the subject slug ends in the word 'is' (marshall_is); its last space is the display-identical U+202F, so the text reads exactly like the plain sentence 'Marshall is described by source Armenian Soviet Encyclopedia': the reader takes 'Marshall' as the subject and 'is' as the copula, naming a different entity than the gathered islands; build 5's clause-word rule would catch this with an ordinary space, so the case asks whether its split on spaces also splits on U+202F"
+ },
+ {
+  "id": "R7-A11",
+  "gathered": [
+   [
+    "marshall_is",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ]
+  ],
+  "sentence": "Marshall is described by source Armenian Soviet Encyclopedia.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "control with an ordinary space: 'Marshall is described by source ...' names Marshall, not Marshall Is. (the islands); a new relation for round 6's copula-fusion class, which build 5's clause-word rule should reject"
+ },
+ {
+  "id": "R7-A12",
+  "gathered": [
+   [
+    "solomon_is",
+    "instance_of",
+    "sovereign_states"
+   ]
+  ],
+  "sentence": "Solomon is an instance of sovereign states.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "the subject slug ends in the word 'is' (solomon_is); its last space is the display-identical U+00A0, so the text reads exactly like the plain sentence 'Solomon is an instance of sovereign states': the reader takes 'Solomon' as the subject and 'is' as the copula, naming a different entity than the gathered islands; build 5's clause-word rule would catch this with an ordinary space, so the case asks whether its split on spaces also splits on U+00A0; it parses only if the shape-3 noun reading has a copula-less form"
+ },
+ {
+  "id": "R7-A13",
+  "gathered": [
+   [
+    "marshall_is",
+    "instance_of",
+    "sovereign_states"
+   ]
+  ],
+  "sentence": "Marshall is an instance of sovereign states.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "the subject slug ends in the word 'is' (marshall_is); its last space is the display-identical U+2009, so the text reads exactly like the plain sentence 'Marshall is an instance of sovereign states': the reader takes 'Marshall' as the subject and 'is' as the copula, naming a different entity than the gathered islands; build 5's clause-word rule would catch this with an ordinary space, so the case asks whether its split on spaces also splits on U+2009"
+ },
+ {
+  "id": "R7-A14",
+  "gathered": [
+   [
+    "solomon_is",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Solomon is a member of the United Nations.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "the subject slug ends in the word 'is' (solomon_is); its last space is the display-identical U+00A0, so the text reads exactly like the plain sentence 'Solomon is a member of the United Nations': the reader takes 'Solomon' as the subject and 'is' as the copula, naming a different entity than the gathered islands; build 5's clause-word rule would catch this with an ordinary space, so the case asks whether its split on spaces also splits on U+00A0"
+ },
+ {
+  "id": "R7-A15",
+  "gathered": [
+   [
+    "marshall_is",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Marshall is member of the United Nations.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "the subject slug ends in the word 'is' (marshall_is); its last space is the display-identical U+2007, so the text reads exactly like the plain sentence 'Marshall is member of the United Nations': the reader takes 'Marshall' as the subject and 'is' as the copula, naming a different entity than the gathered islands; build 5's clause-word rule would catch this with an ordinary space, so the case asks whether its split on spaces also splits on U+2007; probes a telegraphic 'member of' reading"
+ },
+ {
+  "id": "R7-A16",
+  "gathered": [
+   [
+    "solomon_is",
+    "located_in_time_zone",
+    "kosrae_time"
+   ]
+  ],
+  "sentence": "solomon is located in time zone kosrae time.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "the subject slug ends in the word 'is' (solomon_is); its last space is the display-identical U+00A0, so the text reads exactly like the plain sentence 'solomon is located in time zone kosrae time': the reader takes 'solomon' as the subject and 'is' as the copula, naming a different entity than the gathered islands; build 5's clause-word rule would catch this with an ordinary space, so the case asks whether its split on spaces also splits on U+00A0; all lower case, so no capital marks 'is' as part of a name"
+ },
+ {
+  "id": "R7-A17",
+  "gathered": [
+   [
+    "solomon_is",
+    "located_in_time_zone",
+    "kosrae_time"
+   ]
+  ],
+  "sentence": "Solomon is located in time zone Kosrae time.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "the subject slug ends in the word 'is' (solomon_is); its last space is the display-identical U+00A0, so the text reads exactly like the plain sentence 'Solomon is located in time zone Kosrae time': the reader takes 'Solomon' as the subject and 'is' as the copula, naming a different entity than the gathered islands; build 5's clause-word rule would catch this with an ordinary space, so the case asks whether its split on spaces also splits on U+00A0; the object also uses U+00A0, as a renderer that joins every name would"
+ },
+ {
+  "id": "R7-A18",
+  "gathered": [
+   [
+    "marshall_is",
+    "located_in_time_zone",
+    "fiji_standard_time"
+   ],
+   [
+    "marshall_is",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ]
+  ],
+  "sentence": "Marshall is located in time zone Fiji standard time.\nMarshall is described by source Armenian Soviet Encyclopedia.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "two sentences, each 'Marshall' plus U+00A0 plus 'is' before a copula-less relation; both read as claims about Marshall, not Marshall Is. (the islands)"
+ },
+ {
+  "id": "R7-A19",
+  "gathered": [
+   [
+    "solomon_is",
+    "located_in_time_zone",
+    "kosrae_time"
+   ]
+  ],
+  "sentence": "Solomon is located in Kosrae time.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "the subject slug ends in the word 'is' (solomon_is); its last space is the display-identical U+00A0, so the text reads exactly like the plain sentence 'Solomon is located in Kosrae time': the reader takes 'Solomon' as the subject and 'is' as the copula, naming a different entity than the gathered islands; build 5's clause-word rule would catch this with an ordinary space, so the case asks whether its split on spaces also splits on U+00A0; probes a 'located in' reading of the time-zone relation"
+ },
+ {
+  "id": "R7-A21",
+  "gathered": [
+   [
+    "solomon_is",
+    "located_in_time_zone",
+    "kosrae_time"
+   ]
+  ],
+  "sentence": "Solomon  is located in time zone Kosrae time.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "the subject slug ends in the word 'is' (solomon_is); its last space is the display-identical a run of two U+2009, so the text reads exactly like the plain sentence 'Solomon is located in time zone Kosrae time': the reader takes 'Solomon' as the subject and 'is' as the copula, naming a different entity than the gathered islands; build 5's clause-word rule would catch this with an ordinary space, so the case asks whether its split on spaces also splits on a run of two U+2009; the build-4 exact check collapses runs of spaces inside a name"
+ },
+ {
+  "id": "R7-A22",
+  "gathered": [
+   [
+    "marshall_is",
+    "located_in_time_zone",
+    "fiji_standard_time"
+   ]
+  ],
+  "sentence": "Marshall  is located in time zone Fiji standard time.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "the subject slug ends in the word 'is' (marshall_is); its last space is the display-identical a mixed run U+00A0 U+2009, so the text reads exactly like the plain sentence 'Marshall is located in time zone Fiji standard time': the reader takes 'Marshall' as the subject and 'is' as the copula, naming a different entity than the gathered islands; build 5's clause-word rule would catch this with an ordinary space, so the case asks whether its split on spaces also splits on a mixed run U+00A0 U+2009"
+ },
+ {
+  "id": "R7-A20",
+  "gathered": [
+   [
+    "thun_be",
+    "located_in_the_administrative_territoria",
+    "canton_de_berne"
+   ]
+  ],
+  "sentence": "Thun be located in Canton de Berne.",
+  "expect": "U",
+  "class": "copula_fusion_display_space",
+  "why": "the subject slug thun_be ends in 'be' (canton BE); with U+00A0 the text reads 'Thun be located in Canton de Berne', a subjunctive or imperative about Thun rather than a statement about the town Thun BE",
+  "arguable": true
+ },
+ {
+  "id": "R7-B01",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Robbie Williams is a member of Take That in name only.",
+  "expect": "U",
+  "class": "relation_token_reuse_hedge",
+  "why": "'in name only' denies real membership; it reuses no new content word beyond 'name'"
+ },
+ {
+  "id": "R7-B02",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Robbie Williams is a member of Take That part of the time.",
+  "expect": "U",
+  "class": "relation_token_reuse_hedge",
+  "why": "'part of the time' (relation tokens 'part', 'of', 'time') makes the membership intermittent"
+ },
+ {
+  "id": "R7-B03",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Take That has part Robbie Williams only in part.",
+  "expect": "U",
+  "class": "relation_token_reuse_hedge",
+  "why": "'only in part' repeats the relation word 'part' as a hedge: Robbie Williams belongs only partly"
+ },
+ {
+  "id": "R7-B04",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Ukraine shares border with Pole Land at no point.",
+  "expect": "U",
+  "class": "relation_token_reuse_hedge",
+  "why": "'at no point' negates the shared border"
+ },
+ {
+  "id": "R7-B05",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ]
+  ],
+  "sentence": "Jul follows June at no time.",
+  "expect": "U",
+  "class": "relation_token_reuse_hedge",
+  "why": "'at no time' negates the order"
+ },
+ {
+  "id": "R7-B06",
+  "gathered": [
+   [
+    "peter_dennis_blandford_townshend",
+    "member_of",
+    "the_who"
+   ]
+  ],
+  "sentence": "Peter Dennis Blandford Townshend is a member of The Who part time.",
+  "expect": "U",
+  "class": "relation_token_reuse_hedge",
+  "why": "'part time' adds a part-time membership claim the triple does not state"
+ },
+ {
+  "id": "R7-B07",
+  "gathered": [
+   [
+    "the_who",
+    "has_part",
+    "peter_dennis_blandford_townshend"
+   ]
+  ],
+  "sentence": "The Who has part Peter Dennis Blandford Townshend at times.",
+  "expect": "U",
+  "class": "relation_token_reuse_hedge",
+  "why": "'at times' makes the part intermittent"
+ },
+ {
+  "id": "R7-B08",
+  "gathered": [
+   [
+    "solomon_is",
+    "located_in_time_zone",
+    "kosrae_time"
+   ]
+  ],
+  "sentence": "Solomon Is is located in time zone Kosrae time part of the time.",
+  "expect": "U",
+  "class": "relation_token_reuse_hedge",
+  "why": "'part of the time' (relation tokens 'time', 'part') says the islands are in Kosrae time only sometimes"
+ },
+ {
+  "id": "R7-B09",
+  "gathered": [
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ]
+  ],
+  "sentence": "Rick Wakeman is a member of Yes band for a time only.",
+  "expect": "U",
+  "class": "relation_token_reuse_hedge",
+  "why": "'for a time only' says the membership was temporary and has ended"
+ },
+ {
+  "id": "R7-B10",
+  "gathered": [
+   [
+    "jul",
+    "named_after",
+    "julius_ceasar"
+   ]
+  ],
+  "sentence": "Jul is named after Julius Ceasar only in part.",
+  "expect": "U",
+  "class": "relation_token_reuse_hedge",
+  "why": "'only in part' hedges the naming"
+ },
+ {
+  "id": "R7-B11",
+  "gathered": [
+   [
+    "pole_land",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Pole Land is a member of the United Nations in name only.",
+  "expect": "U",
+  "class": "relation_token_reuse_hedge",
+  "why": "'in name only' denies real membership"
+ },
+ {
+  "id": "R7-B12",
+  "gathered": [
+   [
+    "solomon_is",
+    "instance_of",
+    "sovereign_states"
+   ]
+  ],
+  "sentence": "Solomon Is is an instance of sovereign states in some instances only.",
+  "expect": "U",
+  "class": "relation_token_reuse_hedge",
+  "why": "'in some instances only' (relation token 'instance') hedges the classification"
+ },
+ {
+  "id": "R7-B13",
+  "gathered": [
+   [
+    "marshall_is",
+    "located_in_time_zone",
+    "fiji_standard_time"
+   ]
+  ],
+  "sentence": "Marshall Is is located in time zone Fiji standard time at times only.",
+  "expect": "U",
+  "class": "relation_token_reuse_hedge",
+  "why": "'at times only' makes the time zone intermittent"
+ },
+ {
+  "id": "R7-B14",
+  "gathered": [
+   [
+    "pole_land",
+    "shares_border_with",
+    "federal_republic_of_germany"
+   ]
+  ],
+  "sentence": "Pole Land shares border with Federal Republic of Germany at no time.",
+  "expect": "U",
+  "class": "relation_token_reuse_hedge",
+  "why": "'at no time' negates the border"
+ },
+ {
+  "id": "R7-C01",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ]
+  ],
+  "sentence": "Jul may follow June.",
+  "expect": "U",
+  "class": "modality_aspect",
+  "why": "epistemic 'may' hedges a fact the triple states outright"
+ },
+ {
+  "id": "R7-C02",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Ukraine might share border with Pole Land.",
+  "expect": "U",
+  "class": "modality_aspect",
+  "why": "'might' hedges the border"
+ },
+ {
+  "id": "R7-C03",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Robbie Williams could be a member of Take That.",
+  "expect": "U",
+  "class": "modality_aspect",
+  "why": "'could be' hedges the membership"
+ },
+ {
+  "id": "R7-C04",
+  "gathered": [
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ]
+  ],
+  "sentence": "Rick Wakeman used to be a member of Yes band.",
+  "expect": "U",
+  "class": "modality_aspect",
+  "why": "'used to be' asserts the membership has ended, which the present-tense triple does not say"
+ },
+ {
+  "id": "R7-C05",
+  "gathered": [
+   [
+    "pole_land",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Pole Land is about to become a member of the United Nations.",
+  "expect": "U",
+  "class": "modality_aspect",
+  "why": "'is about to become' asserts Pole Land is not yet a member, contradicting the triple"
+ },
+ {
+  "id": "R7-C06",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Ukraine is set to share border with Pole Land.",
+  "expect": "U",
+  "class": "modality_aspect",
+  "why": "'is set to' places the border in the future, so it does not hold now"
+ },
+ {
+  "id": "R7-C07",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ]
+  ],
+  "sentence": "Jul is expected to follow June.",
+  "expect": "U",
+  "class": "modality_aspect",
+  "why": "'is expected to' turns the fact into a prediction"
+ },
+ {
+  "id": "R7-C08",
+  "gathered": [
+   [
+    "solomon_is",
+    "located_in_time_zone",
+    "kosrae_time"
+   ]
+  ],
+  "sentence": "Solomon Is is thought to be located in time zone Kosrae time.",
+  "expect": "U",
+  "class": "modality_aspect",
+  "why": "'is thought to be' hedges the time zone"
+ },
+ {
+  "id": "R7-C09",
+  "gathered": [
+   [
+    "peter_dennis_blandford_townshend",
+    "member_of",
+    "the_who"
+   ]
+  ],
+  "sentence": "Peter Dennis Blandford Townshend is rumoured to be a member of The Who.",
+  "expect": "U",
+  "class": "modality_aspect",
+  "why": "'is rumoured to be' reports the membership as rumour"
+ },
+ {
+  "id": "R7-C10",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Take That seems to have part Robbie Williams.",
+  "expect": "U",
+  "class": "modality_aspect",
+  "why": "'seems to' hedges the part"
+ },
+ {
+  "id": "R7-C11",
+  "gathered": [
+   [
+    "marshall_is",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Marshall Is appears to be a member of the United Nations.",
+  "expect": "U",
+  "class": "modality_aspect",
+  "why": "'appears to be' hedges the membership"
+ },
+ {
+  "id": "R7-C12",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Ukraine has stopped sharing border with Pole Land.",
+  "expect": "U",
+  "class": "modality_aspect",
+  "why": "'has stopped' asserts the border no longer exists"
+ },
+ {
+  "id": "R7-C13",
+  "gathered": [
+   [
+    "yes_band",
+    "has_part",
+    "rick_wakeman"
+   ]
+  ],
+  "sentence": "Yes band has yet to have part Rick Wakeman.",
+  "expect": "U",
+  "class": "modality_aspect",
+  "why": "'has yet to' asserts Rick Wakeman is not yet part of the band"
+ },
+ {
+  "id": "R7-C14",
+  "gathered": [
+   [
+    "aug",
+    "follows",
+    "jul"
+   ]
+  ],
+  "sentence": "Aug might not follow Jul.",
+  "expect": "U",
+  "class": "modality_aspect",
+  "why": "modal plus negation doubts the order"
+ },
+ {
+  "id": "R7-C15",
+  "gathered": [
+   [
+    "second_chromosome",
+    "follows",
+    "first_chromosome"
+   ]
+  ],
+  "sentence": "Second chromosome would probably follow first chromosome.",
+  "expect": "U",
+  "class": "modality_aspect",
+  "why": "'would probably' hedges the order"
+ },
+ {
+  "id": "R7-D01",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Robbie Williams is the most famous member of Take That.",
+  "expect": "U",
+  "class": "comparative_superlative",
+  "why": "superlative ranking among members, not in the triple"
+ },
+ {
+  "id": "R7-D02",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Ukraine shares its longest border with Pole Land.",
+  "expect": "U",
+  "class": "comparative_superlative",
+  "why": "claims the Pole Land border is Ukraine's longest; the triple says nothing of length (and it is false)"
+ },
+ {
+  "id": "R7-D03",
+  "gathered": [
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ]
+  ],
+  "sentence": "Rick Wakeman is the oldest member of Yes band.",
+  "expect": "U",
+  "class": "comparative_superlative",
+  "why": "age ranking not in the triple"
+ },
+ {
+  "id": "R7-D04",
+  "gathered": [
+   [
+    "pole_land",
+    "member_of",
+    "united_nations"
+   ],
+   [
+    "ukraine",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Pole Land is a larger member of the United Nations than Ukraine.",
+  "expect": "U",
+  "class": "comparative_superlative",
+  "why": "a size comparison between two members that no gathered triple states"
+ },
+ {
+  "id": "R7-D05",
+  "gathered": [
+   [
+    "peter_dennis_blandford_townshend",
+    "member_of",
+    "the_who"
+   ]
+  ],
+  "sentence": "Peter Dennis Blandford Townshend is the best known member of The Who.",
+  "expect": "U",
+  "class": "comparative_superlative",
+  "why": "fame ranking not in the triple"
+ },
+ {
+  "id": "R7-D06",
+  "gathered": [
+   [
+    "solomon_is",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Solomon Is is the largest member of the United Nations.",
+  "expect": "U",
+  "class": "comparative_superlative",
+  "why": "size ranking, not in the triple and false"
+ },
+ {
+  "id": "R7-D07",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Ukraine shares a longer border with Pole Land than with any other country.",
+  "expect": "U",
+  "class": "comparative_superlative",
+  "why": "a comparison with Ukraine's other borders, none gathered"
+ },
+ {
+  "id": "R7-D08",
+  "gathered": [
+   [
+    "marshall_is",
+    "instance_of",
+    "sovereign_states"
+   ]
+  ],
+  "sentence": "Marshall Is is the smallest instance of sovereign states.",
+  "expect": "U",
+  "class": "comparative_superlative",
+  "why": "size ranking not in the triple"
+ },
+ {
+  "id": "R7-D09",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ],
+   [
+    "aug",
+    "follows",
+    "jul"
+   ]
+  ],
+  "sentence": "Jul follows June more closely than Aug follows Jul.",
+  "expect": "U",
+  "class": "comparative_superlative",
+  "why": "compares the closeness of two orderings; neither triple grades closeness"
+ },
+ {
+  "id": "R7-D10",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Take That has part Robbie Williams more prominently than any other member.",
+  "expect": "U",
+  "class": "comparative_superlative",
+  "why": "a prominence ranking and other members, none gathered"
+ },
+ {
+  "id": "R7-E01",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Robbie Williams, who is a member of The Who, is a member of Take That.",
+  "expect": "U",
+  "class": "apposition_relative_smuggle",
+  "why": "the relative clause smuggles membership of The Who"
+ },
+ {
+  "id": "R7-E02",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Ukraine, which is part of Pole Land, shares border with Pole Land.",
+  "expect": "U",
+  "class": "apposition_relative_smuggle",
+  "why": "the relative clause smuggles Ukraine being part of Pole Land"
+ },
+ {
+  "id": "R7-E03",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ],
+   [
+    "aug",
+    "follows",
+    "jul"
+   ]
+  ],
+  "sentence": "Jul, which follows Aug, follows June.",
+  "expect": "U",
+  "class": "apposition_relative_smuggle",
+  "why": "the relative clause reverses the gathered (aug, follows, jul)"
+ },
+ {
+  "id": "R7-E04",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Take That, a band that has part Rick Wakeman, has part Robbie Williams.",
+  "expect": "U",
+  "class": "apposition_relative_smuggle",
+  "why": "the appositive smuggles Rick Wakeman as a part of Take That"
+ },
+ {
+  "id": "R7-E05",
+  "gathered": [
+   [
+    "solomon_is",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Solomon Is, a member of the European Union, is a member of the United Nations.",
+  "expect": "U",
+  "class": "apposition_relative_smuggle",
+  "why": "the appositive smuggles EU membership"
+ },
+ {
+  "id": "R7-E06",
+  "gathered": [
+   [
+    "marshall_is",
+    "located_in_time_zone",
+    "fiji_standard_time"
+   ],
+   [
+    "marshall_is",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Marshall Is, which is located in time zone Kosrae time, is a member of the United Nations.",
+  "expect": "U",
+  "class": "apposition_relative_smuggle",
+  "why": "the relative clause gives the wrong time zone (gathered: Fiji standard time)"
+ },
+ {
+  "id": "R7-E07",
+  "gathered": [
+   [
+    "pole_land",
+    "shares_border_with",
+    "federal_republic_of_germany"
+   ],
+   [
+    "ukraine",
+    "contains_administrative_territorial_enti",
+    "m_kyiv"
+   ]
+  ],
+  "sentence": "Pole Land, which contains M Kyiv, shares border with Federal Republic of Germany.",
+  "expect": "U",
+  "class": "apposition_relative_smuggle",
+  "why": "the relative clause moves M Kyiv into Pole Land (gathered: Ukraine contains it)"
+ },
+ {
+  "id": "R7-E08",
+  "gathered": [
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ]
+  ],
+  "sentence": "Rick Wakeman, the founder of Yes band, is a member of Yes band.",
+  "expect": "U",
+  "class": "apposition_relative_smuggle",
+  "why": "the appositive smuggles 'founder'"
+ },
+ {
+  "id": "R7-E09",
+  "gathered": [
+   [
+    "june",
+    "follows",
+    "may_sickness"
+   ]
+  ],
+  "sentence": "June, the month after Jul, follows May sickness.",
+  "expect": "U",
+  "class": "apposition_relative_smuggle",
+  "why": "the appositive puts June after Jul, which is false"
+ },
+ {
+  "id": "R7-E10",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Ukraine shares border with Pole Land, which is part of Ukraine.",
+  "expect": "U",
+  "class": "apposition_relative_smuggle",
+  "why": "the relative clause makes Pole Land part of Ukraine"
+ },
+ {
+  "id": "R7-E11",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ],
+   [
+    "the_who",
+    "has_part",
+    "peter_dennis_blandford_townshend"
+   ]
+  ],
+  "sentence": "Robbie Williams is a member of Take That, which has part Peter Dennis Blandford Townshend.",
+  "expect": "U",
+  "class": "apposition_relative_smuggle",
+  "why": "the relative clause gives Take That the gathered part of The Who"
+ },
+ {
+  "id": "R7-E12",
+  "gathered": [
+   [
+    "peter_dennis_blandford_townshend",
+    "member_of",
+    "the_who"
+   ]
+  ],
+  "sentence": "Peter Dennis Blandford Townshend is a member of The Who, a band that has part Robbie Williams.",
+  "expect": "U",
+  "class": "apposition_relative_smuggle",
+  "why": "the appositive puts Robbie Williams in The Who"
+ },
+ {
+  "id": "R7-GP01",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ],
+   [
+    "june",
+    "followed_by",
+    "jul"
+   ]
+  ],
+  "sentence": "Jul follows June, and June Jul.",
+  "expect": "U",
+  "class": "ellipsis_gapping",
+  "why": "the gapped conjunct asserts 'June follows Jul', the reverse of the gathered order"
+ },
+ {
+  "id": "R7-GP02",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ],
+   [
+    "pole_land",
+    "shares_border_with",
+    "federal_republic_of_germany"
+   ],
+   [
+    "ukraine",
+    "contains_administrative_territorial_enti",
+    "m_kyiv"
+   ]
+  ],
+  "sentence": "Ukraine shares border with Pole Land, and Pole Land with M Kyiv.",
+  "expect": "U",
+  "class": "ellipsis_gapping",
+  "why": "the gapped conjunct asserts Pole Land borders M Kyiv"
+ },
+ {
+  "id": "R7-GP03",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ],
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ]
+  ],
+  "sentence": "Robbie Williams is a member of Take That, and Rick Wakeman of Take That too.",
+  "expect": "U",
+  "class": "ellipsis_gapping",
+  "why": "the gapped conjunct puts Rick Wakeman in Take That"
+ },
+ {
+  "id": "R7-GP04",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ],
+   [
+    "yes_band",
+    "has_part",
+    "rick_wakeman"
+   ]
+  ],
+  "sentence": "Take That has part Robbie Williams, and Yes band Robbie Williams as well.",
+  "expect": "U",
+  "class": "ellipsis_gapping",
+  "why": "the gapped conjunct puts Robbie Williams in Yes band"
+ },
+ {
+  "id": "R7-GP05",
+  "gathered": [
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ],
+   [
+    "peter_dennis_blandford_townshend",
+    "member_of",
+    "the_who"
+   ]
+  ],
+  "sentence": "Rick Wakeman is a member of Yes band, and Peter Dennis Blandford Townshend of Yes band too.",
+  "expect": "U",
+  "class": "ellipsis_gapping",
+  "why": "the gapped conjunct puts Townshend in Yes band"
+ },
+ {
+  "id": "R7-GP06",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ],
+   [
+    "aug",
+    "follows",
+    "jul"
+   ]
+  ],
+  "sentence": "Jul follows June, and June Aug.",
+  "expect": "U",
+  "class": "ellipsis_gapping",
+  "why": "the gapped conjunct asserts 'June follows Aug'"
+ },
+ {
+  "id": "R7-GP07",
+  "gathered": [
+   [
+    "solomon_is",
+    "located_in_time_zone",
+    "kosrae_time"
+   ],
+   [
+    "marshall_is",
+    "located_in_time_zone",
+    "fiji_standard_time"
+   ]
+  ],
+  "sentence": "Solomon Is is located in time zone Kosrae time, and Marshall Is too.",
+  "expect": "U",
+  "class": "ellipsis_gapping",
+  "why": "the elided conjunct puts Marshall Is in Kosrae time (gathered: Fiji standard time)"
+ },
+ {
+  "id": "R7-GP08",
+  "gathered": [
+   [
+    "ukraine",
+    "member_of",
+    "united_nations"
+   ],
+   [
+    "ukraine",
+    "contains_administrative_territorial_enti",
+    "m_kyiv"
+   ]
+  ],
+  "sentence": "Ukraine is a member of the United Nations, and so is M Kyiv.",
+  "expect": "U",
+  "class": "ellipsis_gapping",
+  "why": "the elided conjunct makes the city M Kyiv a UN member"
+ },
+ {
+  "id": "R7-GP09",
+  "gathered": [
+   [
+    "marshall_is",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   [
+    "solomon_is",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Marshall Is is described by source Armenian Soviet Encyclopedia, and Solomon Is as well.",
+  "expect": "U",
+  "class": "ellipsis_gapping",
+  "why": "the elided conjunct asserts a source for Solomon Is that is not gathered"
+ },
+ {
+  "id": "R7-CF01",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Robbie Williams would have been a member of Take That, but he never joined.",
+  "expect": "U",
+  "class": "counterfactual_conditional",
+  "why": "the counterfactual and 'never joined' deny the membership"
+ },
+ {
+  "id": "R7-CF02",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Had Ukraine shared border with Pole Land, the two would be neighbours.",
+  "expect": "U",
+  "class": "counterfactual_conditional",
+  "why": "a counterfactual antecedent implies there is no shared border"
+ },
+ {
+  "id": "R7-CF03",
+  "gathered": [
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ]
+  ],
+  "sentence": "Rick Wakeman would be a member of Yes band if he had not left.",
+  "expect": "U",
+  "class": "counterfactual_conditional",
+  "why": "implies he left, so he is not a member"
+ },
+ {
+  "id": "R7-CF04",
+  "gathered": [
+   [
+    "solomon_is",
+    "located_in_time_zone",
+    "kosrae_time"
+   ]
+  ],
+  "sentence": "Solomon Is would be located in time zone Kosrae time if it lay further east.",
+  "expect": "U",
+  "class": "counterfactual_conditional",
+  "why": "implies it is not in Kosrae time"
+ },
+ {
+  "id": "R7-CF05",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ]
+  ],
+  "sentence": "Jul would follow June if the calendar were different.",
+  "expect": "U",
+  "class": "counterfactual_conditional",
+  "why": "implies Jul does not follow June in the actual calendar"
+ },
+ {
+  "id": "R7-CF06",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Take That would have part Robbie Williams had he stayed.",
+  "expect": "U",
+  "class": "counterfactual_conditional",
+  "why": "implies he did not stay, so he is not a part"
+ },
+ {
+  "id": "R7-CF07",
+  "gathered": [
+   [
+    "pole_land",
+    "shares_border_with",
+    "federal_republic_of_germany"
+   ]
+  ],
+  "sentence": "Pole Land would share border with Federal Republic of Germany if the border had not moved.",
+  "expect": "U",
+  "class": "counterfactual_conditional",
+  "why": "implies there is no shared border now"
+ },
+ {
+  "id": "R7-CF08",
+  "gathered": [
+   [
+    "peter_dennis_blandford_townshend",
+    "member_of",
+    "the_who"
+   ]
+  ],
+  "sentence": "Peter Dennis Blandford Townshend could have been a member of The Who.",
+  "expect": "U",
+  "class": "counterfactual_conditional",
+  "why": "'could have been' implies he was not"
+ },
+ {
+  "id": "R7-H01",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ]
+  ],
+  "sentence": "According to rumour, Jul follows June.",
+  "expect": "U",
+  "class": "report_attribution",
+  "why": "reported as rumour, not asserted"
+ },
+ {
+  "id": "R7-H02",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Some fans wrongly claim Robbie Williams is a member of Take That.",
+  "expect": "U",
+  "class": "report_attribution",
+  "why": "'wrongly claim' denies the membership"
+ },
+ {
+  "id": "R7-H03",
+  "gathered": [
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ]
+  ],
+  "sentence": "Critics deny that Rick Wakeman is a member of Yes band.",
+  "expect": "U",
+  "class": "report_attribution",
+  "why": "reports a denial of the membership"
+ },
+ {
+  "id": "R7-H04",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "It is disputed whether Ukraine shares border with Pole Land.",
+  "expect": "U",
+  "class": "report_attribution",
+  "why": "presents the border as disputed"
+ },
+ {
+  "id": "R7-H05",
+  "gathered": [
+   [
+    "solomon_is",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Nobody believes Solomon Is is a member of the United Nations.",
+  "expect": "U",
+  "class": "report_attribution",
+  "why": "asserts universal disbelief in the membership"
+ },
+ {
+  "id": "R7-H06",
+  "gathered": [
+   [
+    "marshall_is",
+    "located_in_time_zone",
+    "fiji_standard_time"
+   ]
+  ],
+  "sentence": "Wikipedia mistakenly says Marshall Is is located in time zone Fiji standard time.",
+  "expect": "U",
+  "class": "report_attribution",
+  "why": "'mistakenly' denies the time zone"
+ },
+ {
+  "id": "R7-H07",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "\"Take That has part Robbie Williams\" is a myth.",
+  "expect": "U",
+  "class": "report_attribution",
+  "why": "calls the quoted fact a myth"
+ },
+ {
+  "id": "R7-H08",
+  "gathered": [
+   [
+    "peter_dennis_blandford_townshend",
+    "member_of",
+    "the_who"
+   ]
+  ],
+  "sentence": "Rumours that Peter Dennis Blandford Townshend is a member of The Who are false.",
+  "expect": "U",
+  "class": "report_attribution",
+  "why": "calls the membership false"
+ },
+ {
+  "id": "R7-I01",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Take That has part two Robbie Williams.",
+  "expect": "U",
+  "class": "quantity_numeral",
+  "why": "asserts two individuals named Robbie Williams"
+ },
+ {
+  "id": "R7-I02",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Ukraine shares border with Pole Land twice.",
+  "expect": "U",
+  "class": "quantity_numeral",
+  "why": "asserts two separate borders"
+ },
+ {
+  "id": "R7-I03",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Ukraine shares 9 km of border with Pole Land.",
+  "expect": "U",
+  "class": "quantity_numeral",
+  "why": "a border length the triple lacks, and false"
+ },
+ {
+  "id": "R7-I04",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ]
+  ],
+  "sentence": "Jul follows June by three months.",
+  "expect": "U",
+  "class": "quantity_numeral",
+  "why": "a three-month gap, false and not gathered"
+ },
+ {
+  "id": "R7-I05",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Robbie Williams is one of nine members of Take That.",
+  "expect": "U",
+  "class": "quantity_numeral",
+  "why": "a member count not gathered"
+ },
+ {
+  "id": "R7-I06",
+  "gathered": [
+   [
+    "yes_band",
+    "has_part",
+    "rick_wakeman"
+   ]
+  ],
+  "sentence": "Yes band has part Rick Wakeman and four other keyboardists.",
+  "expect": "U",
+  "class": "quantity_numeral",
+  "why": "four further parts not gathered"
+ },
+ {
+  "id": "R7-I07",
+  "gathered": [
+   [
+    "the_who",
+    "has_part",
+    "peter_dennis_blandford_townshend"
+   ]
+  ],
+  "sentence": "The Who has part 2 Peter Dennis Blandford Townshend.",
+  "expect": "U",
+  "class": "quantity_numeral",
+  "why": "a digit count of two"
+ },
+ {
+  "id": "R7-I08",
+  "gathered": [
+   [
+    "solomon_is",
+    "located_in_time_zone",
+    "kosrae_time"
+   ]
+  ],
+  "sentence": "Solomon Is is located in time zone Kosrae time for half of the year.",
+  "expect": "U",
+  "class": "quantity_numeral",
+  "why": "limits the time zone to half the year"
+ },
+ {
+  "id": "R7-I09",
+  "gathered": [
+   [
+    "marshall_is",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Marshall Is is a member of the United Nations three times over.",
+  "expect": "U",
+  "class": "quantity_numeral",
+  "why": "a threefold membership"
+ },
+ {
+  "id": "R7-I10",
+  "gathered": [
+   [
+    "june",
+    "follows",
+    "may_sickness"
+   ]
+  ],
+  "sentence": "June follows May sickness 12 times a year.",
+  "expect": "U",
+  "class": "quantity_numeral",
+  "why": "a frequency of 12 a year"
+ },
+ {
+  "id": "R7-I11",
+  "gathered": [
+   [
+    "pole_land",
+    "shares_border_with",
+    "federal_republic_of_germany"
+   ]
+  ],
+  "sentence": "Pole Land shares border with Federal Republic of Germany along 4000 km.",
+  "expect": "U",
+  "class": "quantity_numeral",
+  "why": "a border length not gathered and false"
+ },
+ {
+  "id": "R7-I12",
+  "gathered": [
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ]
+  ],
+  "sentence": "Rick Wakeman is a member of Yes band and of 5 other bands.",
+  "expect": "U",
+  "class": "quantity_numeral",
+  "why": "five further memberships not gathered"
+ },
+ {
+  "id": "R7-J01",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Robbie Williams is a member of the board of Take That.",
+  "expect": "U",
+  "class": "genitive_of_scope",
+  "why": "'the board of' makes him a board member, a different body"
+ },
+ {
+  "id": "R7-J02",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Ukraine shares border with the capital of Pole Land.",
+  "expect": "U",
+  "class": "genitive_of_scope",
+  "why": "the capital of Pole Land, a different entity that Ukraine does not border"
+ },
+ {
+  "id": "R7-J03",
+  "gathered": [
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ]
+  ],
+  "sentence": "Rick Wakeman is a member of the fan club of Yes band.",
+  "expect": "U",
+  "class": "genitive_of_scope",
+  "why": "a fan club, not the band"
+ },
+ {
+  "id": "R7-J04",
+  "gathered": [
+   [
+    "peter_dennis_blandford_townshend",
+    "member_of",
+    "the_who"
+   ]
+  ],
+  "sentence": "Peter Dennis Blandford Townshend is a member of the tribute band of The Who.",
+  "expect": "U",
+  "class": "genitive_of_scope",
+  "why": "a tribute band, not The Who"
+ },
+ {
+  "id": "R7-J05",
+  "gathered": [
+   [
+    "solomon_is",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Solomon Is is a member of the Security Council of the United Nations.",
+  "expect": "U",
+  "class": "genitive_of_scope",
+  "why": "the Security Council, not the UN"
+ },
+ {
+  "id": "R7-J06",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Take That has part the brother of Robbie Williams.",
+  "expect": "U",
+  "class": "genitive_of_scope",
+  "why": "the brother of Robbie Williams is another person"
+ },
+ {
+  "id": "R7-J07",
+  "gathered": [
+   [
+    "jul",
+    "named_after",
+    "julius_ceasar"
+   ]
+  ],
+  "sentence": "Jul is named after the son of Julius Ceasar.",
+  "expect": "U",
+  "class": "genitive_of_scope",
+  "why": "names the son, not Julius Ceasar"
+ },
+ {
+  "id": "R7-J08",
+  "gathered": [
+   [
+    "pole_land",
+    "shares_border_with",
+    "federal_republic_of_germany"
+   ]
+  ],
+  "sentence": "Pole Land shares border with the south of Federal Republic of Germany.",
+  "expect": "U",
+  "class": "genitive_of_scope",
+  "why": "locates the border in Germany's south, which is false and not gathered"
+ },
+ {
+  "id": "R7-J09",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Robbie Williams is a member of the rival of Take That.",
+  "expect": "U",
+  "class": "genitive_of_scope",
+  "why": "the rival of Take That is another band"
+ },
+ {
+  "id": "R7-K01",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ]
+  ],
+  "sentence": "Jul and June follow each other.",
+  "expect": "U",
+  "class": "symmetric_reciprocal",
+  "why": "reciprocal: also asserts June follows Jul"
+ },
+ {
+  "id": "R7-K02",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Robbie Williams and Take That are members of each other.",
+  "expect": "U",
+  "class": "symmetric_reciprocal",
+  "why": "reciprocal: also makes Take That a member of Robbie Williams"
+ },
+ {
+  "id": "R7-K03",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Take That and Robbie Williams have part one another.",
+  "expect": "U",
+  "class": "symmetric_reciprocal",
+  "why": "reciprocal: also makes Take That a part of Robbie Williams"
+ },
+ {
+  "id": "R7-K04",
+  "gathered": [
+   [
+    "second_chromosome",
+    "follows",
+    "first_chromosome"
+   ]
+  ],
+  "sentence": "Second chromosome and first chromosome follow each other.",
+  "expect": "U",
+  "class": "symmetric_reciprocal",
+  "why": "reciprocal: also asserts the first follows the second"
+ },
+ {
+  "id": "R7-K05",
+  "gathered": [
+   [
+    "aug",
+    "follows",
+    "jul"
+   ]
+  ],
+  "sentence": "Aug and Jul are followed by each other.",
+  "expect": "U",
+  "class": "symmetric_reciprocal",
+  "why": "reciprocal: also asserts Aug precedes Jul"
+ },
+ {
+  "id": "R7-K06",
+  "gathered": [
+   [
+    "the_who",
+    "has_part",
+    "peter_dennis_blandford_townshend"
+   ]
+  ],
+  "sentence": "The Who and Peter Dennis Blandford Townshend are part of each other.",
+  "expect": "U",
+  "class": "symmetric_reciprocal",
+  "why": "reciprocal: also makes the band part of Townshend"
+ },
+ {
+  "id": "R7-K07",
+  "gathered": [
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ]
+  ],
+  "sentence": "Yes band and Rick Wakeman are members of one another.",
+  "expect": "U",
+  "class": "symmetric_reciprocal",
+  "why": "reciprocal: also makes Yes band a member of Rick Wakeman"
+ },
+ {
+  "id": "R7-K08",
+  "gathered": [
+   [
+    "june",
+    "follows",
+    "may_sickness"
+   ]
+  ],
+  "sentence": "June and May sickness follow one another.",
+  "expect": "U",
+  "class": "symmetric_reciprocal",
+  "why": "reciprocal: also asserts May follows June"
+ },
+ {
+  "id": "R7-L01",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Robbie Williams has been a member of Take That since 1975.",
+  "expect": "U",
+  "class": "time_index_change",
+  "why": "a start date not gathered (and before the band existed)"
+ },
+ {
+  "id": "R7-L02",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Ukraine has shared border with Pole Land only since 2015.",
+  "expect": "U",
+  "class": "time_index_change",
+  "why": "a start date not gathered"
+ },
+ {
+  "id": "R7-L03",
+  "gathered": [
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ]
+  ],
+  "sentence": "Rick Wakeman left Yes band.",
+  "expect": "U",
+  "class": "time_index_change",
+  "why": "asserts he left, so the membership ended"
+ },
+ {
+  "id": "R7-L04",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Robbie Williams quit Take That.",
+  "expect": "U",
+  "class": "time_index_change",
+  "why": "asserts he quit"
+ },
+ {
+  "id": "R7-L05",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ]
+  ],
+  "sentence": "Jul followed June until 1900.",
+  "expect": "U",
+  "class": "time_index_change",
+  "why": "the order is said to have ended in 1900"
+ },
+ {
+  "id": "R7-L06",
+  "gathered": [
+   [
+    "pole_land",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Pole Land joined the United Nations in 2004.",
+  "expect": "U",
+  "class": "time_index_change",
+  "why": "a joining date not gathered, false"
+ },
+ {
+  "id": "R7-L07",
+  "gathered": [
+   [
+    "solomon_is",
+    "located_in_time_zone",
+    "kosrae_time"
+   ]
+  ],
+  "sentence": "Solomon Is was located in time zone Kosrae time until last year.",
+  "expect": "U",
+  "class": "time_index_change",
+  "why": "says the time zone no longer applies"
+ },
+ {
+  "id": "R7-L08",
+  "gathered": [
+   [
+    "marshall_is",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Marshall Is is no longer a member of the United Nations.",
+  "expect": "U",
+  "class": "time_index_change",
+  "why": "'no longer' denies the membership"
+ },
+ {
+  "id": "R7-L09",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Take That had part Robbie Williams before 1950.",
+  "expect": "U",
+  "class": "time_index_change",
+  "why": "a date not gathered"
+ },
+ {
+  "id": "R7-L10",
+  "gathered": [
+   [
+    "peter_dennis_blandford_townshend",
+    "member_of",
+    "the_who"
+   ]
+  ],
+  "sentence": "Peter Dennis Blandford Townshend became a member of The Who in 2020.",
+  "expect": "U",
+  "class": "time_index_change",
+  "why": "a joining date not gathered, false"
+ },
+ {
+  "id": "R7-M01",
+  "gathered": [
+   [
+    "solomon_is",
+    "located_in_time_zone",
+    "kosrae_time"
+   ],
+   [
+    "marshall_is",
+    "located_in_time_zone",
+    "fiji_standard_time"
+   ]
+  ],
+  "sentence": "Solomon Is is located in time zone Fiji standard time.",
+  "expect": "U",
+  "class": "cross_triple_swap",
+  "why": "gives Solomon Is the time zone gathered for Marshall Is"
+ },
+ {
+  "id": "R7-M02",
+  "gathered": [
+   [
+    "solomon_is",
+    "located_in_time_zone",
+    "kosrae_time"
+   ],
+   [
+    "marshall_is",
+    "located_in_time_zone",
+    "fiji_standard_time"
+   ]
+  ],
+  "sentence": "Marshall Is is located in time zone Kosrae time.",
+  "expect": "U",
+  "class": "cross_triple_swap",
+  "why": "gives Marshall Is the time zone gathered for Solomon Is"
+ },
+ {
+  "id": "R7-M03",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ],
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ]
+  ],
+  "sentence": "Robbie Williams is a member of Yes band.",
+  "expect": "U",
+  "class": "cross_triple_swap",
+  "why": "swaps the bands of two gathered facts"
+ },
+ {
+  "id": "R7-M04",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ],
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ]
+  ],
+  "sentence": "Rick Wakeman is a member of Take That.",
+  "expect": "U",
+  "class": "cross_triple_swap",
+  "why": "swaps the bands of two gathered facts"
+ },
+ {
+  "id": "R7-M05",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ],
+   [
+    "pole_land",
+    "shares_border_with",
+    "federal_republic_of_germany"
+   ]
+  ],
+  "sentence": "Ukraine shares border with Federal Republic of Germany.",
+  "expect": "U",
+  "class": "cross_triple_swap",
+  "why": "a neighbour of Pole Land given to Ukraine"
+ },
+ {
+  "id": "R7-M06",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ],
+   [
+    "jul",
+    "named_after",
+    "julius_ceasar"
+   ],
+   [
+    "june",
+    "follows",
+    "may_sickness"
+   ]
+  ],
+  "sentence": "June is named after Julius Ceasar.",
+  "expect": "U",
+  "class": "cross_triple_swap",
+  "why": "Jul's eponym given to June"
+ },
+ {
+  "id": "R7-M07",
+  "gathered": [
+   [
+    "the_who",
+    "has_part",
+    "peter_dennis_blandford_townshend"
+   ],
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "The Who has part Robbie Williams.",
+  "expect": "U",
+  "class": "cross_triple_swap",
+  "why": "Take That's member given to The Who"
+ },
+ {
+  "id": "R7-M08",
+  "gathered": [
+   [
+    "the_who",
+    "has_part",
+    "peter_dennis_blandford_townshend"
+   ],
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Take That has part Peter Dennis Blandford Townshend.",
+  "expect": "U",
+  "class": "cross_triple_swap",
+  "why": "The Who's member given to Take That"
+ },
+ {
+  "id": "R7-M09",
+  "gathered": [
+   [
+    "eugene_or",
+    "twinned_administrative_body",
+    "kathmandu_nepal"
+   ],
+   [
+    "eugene_or",
+    "located_in_the_administrative_territoria",
+    "greater_eugene"
+   ]
+  ],
+  "sentence": "Greater Eugene is twinned with Kathmandu Nepal.",
+  "expect": "U",
+  "class": "cross_triple_swap",
+  "why": "the twinning of eugene_or given to greater_eugene, a gathered slug that contains 'eugene'"
+ },
+ {
+  "id": "R7-M10",
+  "gathered": [
+   [
+    "thun_be",
+    "located_in_the_administrative_territoria",
+    "canton_de_berne"
+   ],
+   [
+    "new_bern_nc",
+    "twinned_administrative_body",
+    "city_of_berne"
+   ]
+  ],
+  "sentence": "New Bern NC is located in Canton de Berne.",
+  "expect": "U",
+  "class": "cross_triple_swap",
+  "why": "puts the North Carolina town in the Swiss canton gathered for Thun"
+ },
+ {
+  "id": "R7-M11",
+  "gathered": [
+   [
+    "cleveland_oh",
+    "twinned_administrative_body",
+    "ciudad_de_los_reyes"
+   ],
+   [
+    "cleveland_oh",
+    "located_in_the_administrative_territoria",
+    "cuyahoga_county_oh"
+   ]
+  ],
+  "sentence": "Cuyahoga County OH is twinned with Ciudad de los Reyes.",
+  "expect": "U",
+  "class": "cross_triple_swap",
+  "why": "the twinning of cleveland_oh given to its county"
+ },
+ {
+  "id": "R7-M12",
+  "gathered": [
+   [
+    "dayton_oh",
+    "twinned_administrative_body",
+    "capital_of_serbia"
+   ],
+   [
+    "franklin_county_oh",
+    "named_after",
+    "cilla_single"
+   ]
+  ],
+  "sentence": "Dayton OH is named after Cilla Single.",
+  "expect": "U",
+  "class": "cross_triple_swap",
+  "why": "Franklin County OH's eponym given to Dayton OH"
+ },
+ {
+  "id": "R7-M13",
+  "gathered": [
+   [
+    "indianapolis_in",
+    "shares_border_with",
+    "morgan_county_in"
+   ],
+   [
+    "parke_county_in",
+    "shares_border_with",
+    "vigo_county"
+   ]
+  ],
+  "sentence": "Indianapolis IN shares border with Vigo County.",
+  "expect": "U",
+  "class": "cross_triple_swap",
+  "why": "Parke County's neighbour given to Indianapolis"
+ },
+ {
+  "id": "R7-M14",
+  "gathered": [
+   [
+    "trevor_rabin",
+    "part_of",
+    "yes_band"
+   ],
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Trevor Rabin is part of Take That.",
+  "expect": "U",
+  "class": "cross_triple_swap",
+  "why": "Trevor Rabin moved from Yes band to Take That"
+ },
+ {
+  "id": "R7-M15",
+  "gathered": [
+   [
+    "ukraine",
+    "follows",
+    "ukrainian_s_s_r"
+   ],
+   [
+    "ukraine",
+    "contains_administrative_territorial_enti",
+    "m_kyiv"
+   ]
+  ],
+  "sentence": "M Kyiv follows Ukrainian S S R.",
+  "expect": "U",
+  "class": "cross_triple_swap",
+  "why": "Ukraine's predecessor given to its capital"
+ },
+ {
+  "id": "R7-M16",
+  "gathered": [
+   [
+    "pole_land",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "ukraine",
+    "located_in_time_zone",
+    "west_africa_summer_time"
+   ]
+  ],
+  "sentence": "Ukraine is located in time zone Rome time.",
+  "expect": "U",
+  "class": "cross_triple_swap",
+  "why": "Pole Land's time zone given to Ukraine"
+ },
+ {
+  "id": "R7-M17",
+  "gathered": [
+   [
+    "co_down",
+    "shares_border_with",
+    "co_antrim"
+   ],
+   [
+    "co_derry",
+    "shares_border_with",
+    "co_antrim"
+   ]
+  ],
+  "sentence": "Co Down shares border with Co Derry.",
+  "expect": "U",
+  "class": "cross_triple_swap",
+  "why": "two counties that each border Co Antrim, asserted to border each other"
+ },
+ {
+  "id": "R7-N01",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ],
+   [
+    "take_that",
+    "instance_of",
+    "boy_band"
+   ]
+  ],
+  "sentence": "Take That has part Robbie Williams and boy band.",
+  "expect": "U",
+  "class": "shape2_cross_relation_conjunct",
+  "why": "the second conjunct is Take That's class, asserted as a part"
+ },
+ {
+  "id": "R7-N02",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ],
+   [
+    "ukraine",
+    "contains_administrative_territorial_enti",
+    "m_kyiv"
+   ]
+  ],
+  "sentence": "Ukraine shares border with Pole Land and M Kyiv.",
+  "expect": "U",
+  "class": "shape2_cross_relation_conjunct",
+  "why": "M Kyiv lies inside Ukraine; it is not a neighbour"
+ },
+ {
+  "id": "R7-N03",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ],
+   [
+    "jul",
+    "followed_by",
+    "aug"
+   ]
+  ],
+  "sentence": "Jul follows June and Aug.",
+  "expect": "U",
+  "class": "shape2_cross_relation_conjunct",
+  "why": "Jul does not follow Aug; Aug follows Jul"
+ },
+ {
+  "id": "R7-N04",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ],
+   [
+    "robbie_williams",
+    "place_of_birth",
+    "stoke_on_trent"
+   ]
+  ],
+  "sentence": "Robbie Williams is a member of Take That and Stoke on Trent.",
+  "expect": "U",
+  "class": "shape2_cross_relation_conjunct",
+  "why": "his birthplace asserted as something he is a member of"
+ },
+ {
+  "id": "R7-N05",
+  "gathered": [
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ],
+   [
+    "rick_wakeman",
+    "instrument",
+    "keyboard_hammer"
+   ]
+  ],
+  "sentence": "Rick Wakeman is a member of Yes band and Keyboard Hammer.",
+  "expect": "U",
+  "class": "shape2_cross_relation_conjunct",
+  "why": "his instrument asserted as something he is a member of"
+ },
+ {
+  "id": "R7-N06",
+  "gathered": [
+   [
+    "pole_land",
+    "shares_border_with",
+    "federal_republic_of_germany"
+   ],
+   [
+    "pole_land",
+    "contains_administrative_territorial_enti",
+    "mazowsze_voivodeship"
+   ]
+  ],
+  "sentence": "Pole Land shares border with Federal Republic of Germany and Mazowsze Voivodeship.",
+  "expect": "U",
+  "class": "shape2_cross_relation_conjunct",
+  "why": "a province inside Pole Land asserted as a neighbour"
+ },
+ {
+  "id": "R7-N07",
+  "gathered": [
+   [
+    "june",
+    "follows",
+    "may_sickness"
+   ],
+   [
+    "june",
+    "followed_by",
+    "jul"
+   ]
+  ],
+  "sentence": "June follows May sickness and Jul.",
+  "expect": "U",
+  "class": "shape2_cross_relation_conjunct",
+  "why": "June does not follow Jul"
+ },
+ {
+  "id": "R7-N08",
+  "gathered": [
+   [
+    "peter_dennis_blandford_townshend",
+    "member_of",
+    "the_who"
+   ],
+   [
+    "peter_dennis_blandford_townshend",
+    "place_of_birth",
+    "england_london"
+   ]
+  ],
+  "sentence": "Peter Dennis Blandford Townshend is a member of The Who and England London.",
+  "expect": "U",
+  "class": "shape2_cross_relation_conjunct",
+  "why": "his birthplace asserted as a membership"
+ },
+ {
+  "id": "R7-P01",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Ukraine nearly shares border with Pole Land.",
+  "expect": "U",
+  "class": "near_negative_adverb",
+  "why": "'nearly' implies it does not"
+ },
+ {
+  "id": "R7-P02",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Robbie Williams is almost a member of Take That.",
+  "expect": "U",
+  "class": "near_negative_adverb",
+  "why": "'almost' implies he is not"
+ },
+ {
+  "id": "R7-P03",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Take That hardly has part Robbie Williams.",
+  "expect": "U",
+  "class": "near_negative_adverb",
+  "why": "'hardly' implies almost not"
+ },
+ {
+  "id": "R7-P04",
+  "gathered": [
+   [
+    "solomon_is",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Solomon Is is scarcely a member of the United Nations.",
+  "expect": "U",
+  "class": "near_negative_adverb",
+  "why": "'scarcely' implies almost not"
+ },
+ {
+  "id": "R7-P05",
+  "gathered": [
+   [
+    "pole_land",
+    "shares_border_with",
+    "federal_republic_of_germany"
+   ]
+  ],
+  "sentence": "Pole Land all but shares border with Federal Republic of Germany.",
+  "expect": "U",
+  "class": "near_negative_adverb",
+  "why": "'all but' implies it does not"
+ },
+ {
+  "id": "R7-P06",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ]
+  ],
+  "sentence": "Jul almost follows June.",
+  "expect": "U",
+  "class": "near_negative_adverb",
+  "why": "'almost' implies it does not"
+ },
+ {
+  "id": "R7-P07",
+  "gathered": [
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ]
+  ],
+  "sentence": "Rick Wakeman is hardly a member of Yes band.",
+  "expect": "U",
+  "class": "near_negative_adverb",
+  "why": "'hardly' implies almost not"
+ },
+ {
+  "id": "R7-P08",
+  "gathered": [
+   [
+    "marshall_is",
+    "located_in_time_zone",
+    "fiji_standard_time"
+   ]
+  ],
+  "sentence": "Marshall Is is nearly located in time zone Fiji standard time.",
+  "expect": "U",
+  "class": "near_negative_adverb",
+  "why": "'nearly' implies it is not"
+ },
+ {
+  "id": "R7-Q01",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Only Robbie Williams is a member of Take That.",
+  "expect": "U",
+  "class": "exclusive_focus",
+  "why": "exclusivity: no other member"
+ },
+ {
+  "id": "R7-Q02",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Take That has part only Robbie Williams.",
+  "expect": "U",
+  "class": "exclusive_focus",
+  "why": "exclusivity: no other part"
+ },
+ {
+  "id": "R7-Q03",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Ukraine shares border only with Pole Land.",
+  "expect": "U",
+  "class": "exclusive_focus",
+  "why": "exclusivity: no other neighbour"
+ },
+ {
+  "id": "R7-Q04",
+  "gathered": [
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ]
+  ],
+  "sentence": "Rick Wakeman alone is a member of Yes band.",
+  "expect": "U",
+  "class": "exclusive_focus",
+  "why": "exclusivity: no other member"
+ },
+ {
+  "id": "R7-Q05",
+  "gathered": [
+   [
+    "solomon_is",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Solomon Is is the only member of the United Nations.",
+  "expect": "U",
+  "class": "exclusive_focus",
+  "why": "exclusivity: no other UN member"
+ },
+ {
+  "id": "R7-Q06",
+  "gathered": [
+   [
+    "peter_dennis_blandford_townshend",
+    "member_of",
+    "the_who"
+   ]
+  ],
+  "sentence": "Peter Dennis Blandford Townshend is the sole member of The Who.",
+  "expect": "U",
+  "class": "exclusive_focus",
+  "why": "exclusivity: no other member"
+ },
+ {
+  "id": "R7-Q07",
+  "gathered": [
+   [
+    "yes_band",
+    "has_part",
+    "rick_wakeman"
+   ]
+  ],
+  "sentence": "Yes band has part Rick Wakeman exclusively.",
+  "expect": "U",
+  "class": "exclusive_focus",
+  "why": "exclusivity: no other part"
+ },
+ {
+  "id": "R7-R01",
+  "gathered": [
+   [
+    "city_of_japan",
+    "located_in_time_zone",
+    "japan_standard_time"
+   ],
+   [
+    "kushiro_city",
+    "instance_of",
+    "city_of_japan"
+   ],
+   [
+    "kushiro_city",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ]
+  ],
+  "sentence": "Each city of Japan is located in time zone Japan standard time.",
+  "expect": "U",
+  "class": "generic_quantified_class_subject",
+  "why": "a universal over instances; the gathered instance Kushiro City is in Korea standard time"
+ },
+ {
+  "id": "R7-R02",
+  "gathered": [
+   [
+    "city_of_japan",
+    "located_in_time_zone",
+    "japan_standard_time"
+   ],
+   [
+    "kushiro_city",
+    "instance_of",
+    "city_of_japan"
+   ],
+   [
+    "kushiro_city",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ]
+  ],
+  "sentence": "Any city of Japan is located in time zone Japan standard time.",
+  "expect": "U",
+  "class": "generic_quantified_class_subject",
+  "why": "free-choice 'any' over instances, contradicted by the gathered Kushiro City"
+ },
+ {
+  "id": "R7-R03",
+  "gathered": [
+   [
+    "grosse_kreisstadt",
+    "located_in_the_administrative_territoria",
+    "bayern_germany"
+   ],
+   [
+    "freiberg_saxony",
+    "instance_of",
+    "grosse_kreisstadt"
+   ],
+   [
+    "freiberg_saxony",
+    "located_in_the_administrative_territoria",
+    "landkreis_mittelsachsen"
+   ]
+  ],
+  "sentence": "Each Grosse Kreisstadt is located in Bayern Germany.",
+  "expect": "U",
+  "class": "generic_quantified_class_subject",
+  "why": "a universal over instances; the gathered instance Freiberg Saxony is in Landkreis Mittelsachsen"
+ },
+ {
+  "id": "R7-R04",
+  "gathered": [
+   [
+    "grosse_kreisstadt",
+    "located_in_the_administrative_territoria",
+    "bayern_germany"
+   ],
+   [
+    "freiberg_saxony",
+    "instance_of",
+    "grosse_kreisstadt"
+   ],
+   [
+    "freiberg_saxony",
+    "located_in_the_administrative_territoria",
+    "landkreis_mittelsachsen"
+   ]
+  ],
+  "sentence": "All Grosse Kreisstadt towns are located in Bayern Germany.",
+  "expect": "U",
+  "class": "generic_quantified_class_subject",
+  "why": "a universal over towns, contradicted by the gathered Freiberg Saxony"
+ },
+ {
+  "id": "R7-S01",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Robbie Williams is excluded from Take That.",
+  "expect": "U",
+  "class": "lexical_negation_antonym",
+  "why": "'excluded from' denies membership"
+ },
+ {
+  "id": "R7-S02",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Ukraine fails to share border with Pole Land.",
+  "expect": "U",
+  "class": "lexical_negation_antonym",
+  "why": "'fails to' denies the border"
+ },
+ {
+  "id": "R7-S03",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Take That lacks Robbie Williams.",
+  "expect": "U",
+  "class": "lexical_negation_antonym",
+  "why": "'lacks' denies the part"
+ },
+ {
+  "id": "R7-S04",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ]
+  ],
+  "sentence": "Jul fails to follow June.",
+  "expect": "U",
+  "class": "lexical_negation_antonym",
+  "why": "'fails to' denies the order"
+ },
+ {
+  "id": "R7-S05",
+  "gathered": [
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ]
+  ],
+  "sentence": "Rick Wakeman was expelled from Yes band.",
+  "expect": "U",
+  "class": "lexical_negation_antonym",
+  "why": "'expelled' ends the membership"
+ },
+ {
+  "id": "R7-S06",
+  "gathered": [
+   [
+    "solomon_is",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Solomon Is is absent from the United Nations.",
+  "expect": "U",
+  "class": "lexical_negation_antonym",
+  "why": "'absent from' denies membership"
+ },
+ {
+  "id": "R7-S07",
+  "gathered": [
+   [
+    "marshall_is",
+    "located_in_time_zone",
+    "fiji_standard_time"
+   ]
+  ],
+  "sentence": "Marshall Is lies outside time zone Fiji standard time.",
+  "expect": "U",
+  "class": "lexical_negation_antonym",
+  "why": "'lies outside' denies the time zone"
+ },
+ {
+  "id": "R7-S08",
+  "gathered": [
+   [
+    "pole_land",
+    "shares_border_with",
+    "federal_republic_of_germany"
+   ]
+  ],
+  "sentence": "Pole Land refuses to share border with Federal Republic of Germany.",
+  "expect": "U",
+  "class": "lexical_negation_antonym",
+  "why": "'refuses to' implies it does not"
+ },
+ {
+  "id": "R7-S09",
+  "gathered": [
+   [
+    "the_who",
+    "has_part",
+    "peter_dennis_blandford_townshend"
+   ]
+  ],
+  "sentence": "The Who is missing Peter Dennis Blandford Townshend.",
+  "expect": "U",
+  "class": "lexical_negation_antonym",
+  "why": "'is missing' denies the part"
+ },
+ {
+  "id": "R7-S10",
+  "gathered": [
+   [
+    "june",
+    "follows",
+    "may_sickness"
+   ]
+  ],
+  "sentence": "June precedes May sickness.",
+  "expect": "U",
+  "class": "lexical_negation_antonym",
+  "why": "the antonym 'precedes' reverses the order"
+ },
+ {
+  "id": "R7-S11",
+  "gathered": [
+   [
+    "aug",
+    "follows",
+    "jul"
+   ]
+  ],
+  "sentence": "Aug precedes Jul.",
+  "expect": "U",
+  "class": "lexical_negation_antonym",
+  "why": "'precedes' reverses the order"
+ },
+ {
+  "id": "R7-S12",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ]
+  ],
+  "sentence": "Jul comes before June.",
+  "expect": "U",
+  "class": "lexical_negation_antonym",
+  "why": "'comes before' reverses the order"
+ },
+ {
+  "id": "R7-W01",
+  "gathered": [
+   [
+    "new_bern_nc",
+    "twinned_administrative_body",
+    "city_of_berne"
+   ]
+  ],
+  "sentence": "Bern is twinned with City of Berne.",
+  "expect": "U",
+  "class": "name_truncation_other_entity",
+  "why": "'Bern' (the Swiss capital) is not New Bern NC"
+ },
+ {
+  "id": "R7-W02",
+  "gathered": [
+   [
+    "new_jeresy",
+    "shares_border_with",
+    "ny_state"
+   ]
+  ],
+  "sentence": "Jeresy shares border with NY State.",
+  "expect": "U",
+  "class": "name_truncation_other_entity",
+  "why": "'Jeresy' without 'New' names the island of Jersey, not the state"
+ },
+ {
+  "id": "R7-W03",
+  "gathered": [
+   [
+    "second_commonwealth_of_poland",
+    "follows",
+    "imperial_germany"
+   ]
+  ],
+  "sentence": "Commonwealth of Poland follows Imperial Germany.",
+  "expect": "U",
+  "class": "name_truncation_other_entity",
+  "why": "'Commonwealth of Poland' (the Polish-Lithuanian Commonwealth, 1569-1795) is not the Second Commonwealth of Poland, and it did not follow Imperial Germany"
+ },
+ {
+  "id": "R7-W04",
+  "gathered": [
+   [
+    "third_asian_games",
+    "follows",
+    "second_asian_games"
+   ]
+  ],
+  "sentence": "Asian Games follows Second Asian Games.",
+  "expect": "U",
+  "class": "name_truncation_other_entity",
+  "why": "the whole Asian Games series, not the third edition"
+ },
+ {
+  "id": "R7-W05",
+  "gathered": [
+   [
+    "new_guinea_papua",
+    "shares_border_with",
+    "commonwealth_australia"
+   ]
+  ],
+  "sentence": "Guinea shares border with Commonwealth Australia.",
+  "expect": "U",
+  "class": "name_truncation_other_entity",
+  "why": "'Guinea' is the West African country, not New Guinea Papua"
+ },
+ {
+  "id": "R7-W06",
+  "gathered": [
+   [
+    "new_guinea_papua",
+    "shares_border_with",
+    "commonwealth_australia"
+   ]
+  ],
+  "sentence": "Papua shares border with Commonwealth Australia.",
+  "expect": "U",
+  "class": "name_truncation_other_entity",
+  "why": "'Papua' (the Indonesian province) is not New Guinea Papua"
+ },
+ {
+  "id": "R7-W07",
+  "gathered": [
+   [
+    "first_asian_games",
+    "followed_by",
+    "second_asian_games"
+   ]
+  ],
+  "sentence": "Asian Games is followed by Second Asian Games.",
+  "expect": "U",
+  "class": "name_truncation_other_entity",
+  "why": "the series, not the first edition"
+ },
+ {
+  "id": "R7-W08",
+  "gathered": [
+   [
+    "second_chromosome",
+    "follows",
+    "first_chromosome"
+   ]
+  ],
+  "sentence": "Chromosome follows first chromosome.",
+  "expect": "U",
+  "class": "name_truncation_other_entity",
+  "why": "'chromosome' in general, not the second chromosome"
+ },
+ {
+  "id": "R7-X01",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Robbie Williams is a member of Take That Tribute Band.",
+  "expect": "U",
+  "class": "name_extension_other_entity",
+  "why": "a tribute band, not Take That"
+ },
+ {
+  "id": "R7-X02",
+  "gathered": [
+   [
+    "solomon_is",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Solomon Is is a member of the United Nations Security Council.",
+  "expect": "U",
+  "class": "name_extension_other_entity",
+  "why": "the Security Council, a different body"
+ },
+ {
+  "id": "R7-X03",
+  "gathered": [
+   [
+    "pole_land",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Pole Land is a member of the United Nations Human Rights Council.",
+  "expect": "U",
+  "class": "name_extension_other_entity",
+  "why": "the Human Rights Council, a different body"
+ },
+ {
+  "id": "R7-X04",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ]
+  ],
+  "sentence": "Jul follows June Carter.",
+  "expect": "U",
+  "class": "name_extension_other_entity",
+  "why": "June Carter is a person, not the month"
+ },
+ {
+  "id": "R7-X05",
+  "gathered": [
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ]
+  ],
+  "sentence": "Rick Wakeman is a member of Yes band Fan Club.",
+  "expect": "U",
+  "class": "name_extension_other_entity",
+  "why": "a fan club, not the band"
+ },
+ {
+  "id": "R7-X06",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Ukraine shares border with Lesser Pole Land.",
+  "expect": "U",
+  "class": "name_extension_other_entity",
+  "why": "Lesser Poland is a province that does not border Ukraine"
+ },
+ {
+  "id": "R7-X07",
+  "gathered": [
+   [
+    "peter_sagan",
+    "participant_of",
+    "xxx_olympic_games"
+   ]
+  ],
+  "sentence": "Peter Sagan is a participant of XXX Olympic Games qualifiers.",
+  "expect": "U",
+  "class": "name_extension_other_entity",
+  "why": "the qualifiers, a different event"
+ },
+ {
+  "id": "R7-X08",
+  "gathered": [
+   [
+    "wacko_jacko",
+    "member_of",
+    "the_jackson_five"
+   ]
+  ],
+  "sentence": "Wacko Jacko is a member of the Jackson Five tribute act.",
+  "expect": "U",
+  "class": "name_extension_other_entity",
+  "why": "a tribute act, not the band"
+ },
+ {
+  "id": "R7-Y01",
+  "gathered": [
+   [
+    "wacko_jacko",
+    "member_of",
+    "the_jackson_five"
+   ]
+  ],
+  "sentence": "Wacko Jacko is a member of the Jackson Six.",
+  "expect": "U",
+  "class": "numeral_inside_name_change",
+  "why": "a different number inside the name"
+ },
+ {
+  "id": "R7-Y02",
+  "gathered": [
+   [
+    "peter_sagan",
+    "participant_of",
+    "xxx_olympic_games"
+   ]
+  ],
+  "sentence": "Peter Sagan is a participant of XXXI Olympic Games.",
+  "expect": "U",
+  "class": "numeral_inside_name_change",
+  "why": "XXXI (2016) is not XXX (2012)"
+ },
+ {
+  "id": "R7-Y03",
+  "gathered": [
+   [
+    "third_asian_games",
+    "follows",
+    "second_asian_games"
+   ]
+  ],
+  "sentence": "Fourth Asian Games follows Second Asian Games.",
+  "expect": "U",
+  "class": "numeral_inside_name_change",
+  "why": "the fourth games, not the third, as subject"
+ },
+ {
+  "id": "R7-Y04",
+  "gathered": [
+   [
+    "second_chromosome",
+    "follows",
+    "first_chromosome"
+   ]
+  ],
+  "sentence": "Second chromosome follows third chromosome.",
+  "expect": "U",
+  "class": "numeral_inside_name_change",
+  "why": "the third chromosome, not the first"
+ },
+ {
+  "id": "R7-Z01",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Take That has part Robbie Williams and a Robbie Williams.",
+  "expect": "U",
+  "class": "shape2_duplicate_variant",
+  "why": "'and a Robbie Williams' adds a second individual; the second copy uses U+00A0 inside the name"
+ },
+ {
+  "id": "R7-Z02",
+  "gathered": [
+   [
+    "the_jackson_five",
+    "has_part",
+    "wacko_jacko"
+   ]
+  ],
+  "sentence": "The Jackson Five has part Wacko Jacko and a wacko_jacko.",
+  "expect": "U",
+  "class": "shape2_duplicate_variant",
+  "why": "'and a wacko_jacko' (verbatim slug) adds a second individual"
+ },
+ {
+  "id": "R7-Z03",
+  "gathered": [
+   [
+    "yes_band",
+    "has_part",
+    "rick_wakeman"
+   ]
+  ],
+  "sentence": "Yes band has part Rick Wakeman and another Rick Wakeman.",
+  "expect": "U",
+  "class": "shape2_duplicate_variant",
+  "why": "'another' asserts a second Rick Wakeman"
+ },
+ {
+  "id": "R7-F01",
+  "gathered": [
+   [
+    "solomon_is",
+    "located_in_time_zone",
+    "kosrae_time"
+   ]
+  ],
+  "sentence": "Solomon Is is located in time zone Kosrae time.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; copula after the full name"
+ },
+ {
+  "id": "R7-F02",
+  "gathered": [
+   [
+    "marshall_is",
+    "located_in_time_zone",
+    "fiji_standard_time"
+   ]
+  ],
+  "sentence": "Marshall Is is located in time zone Fiji standard time.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; copula after the full name"
+ },
+ {
+  "id": "R7-F03",
+  "gathered": [
+   [
+    "marshall_is",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ]
+  ],
+  "sentence": "Marshall Is is described by source Armenian Soviet Encyclopedia.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; copula after the full name"
+ },
+ {
+  "id": "R7-F04",
+  "gathered": [
+   [
+    "solomon_is",
+    "located_in_time_zone",
+    "kosrae_time"
+   ]
+  ],
+  "sentence": "Solomon Is is located in time zone Kosrae time.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; U+00A0 inside the name, then the copula: retention of a display space"
+ },
+ {
+  "id": "R7-F05",
+  "gathered": [
+   [
+    "marshall_is",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Marshall Is is a member of the United Nations.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; U+2009 inside the name, then the copula"
+ },
+ {
+  "id": "R7-F06",
+  "gathered": [
+   [
+    "solomon_is",
+    "instance_of",
+    "sovereign_states"
+   ]
+  ],
+  "sentence": "Solomon Is is an instance of sovereign states.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; shape 3"
+ },
+ {
+  "id": "R7-F07",
+  "gathered": [
+   [
+    "solomon_is",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "solomon_is is a member of united_nations.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; verbatim slugs, as the stub renders them"
+ },
+ {
+  "id": "R7-F08",
+  "gathered": [
+   [
+    "marshall_is",
+    "instance_of",
+    "sovereign_states"
+   ]
+  ],
+  "sentence": "Marshall Is is an instance of sovereign states.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; U+202F inside the name, then the copula"
+ },
+ {
+  "id": "R7-F09",
+  "gathered": [
+   [
+    "thun_be",
+    "located_in_the_administrative_territoria",
+    "canton_de_berne"
+   ]
+  ],
+  "sentence": "Thun BE is located in Canton de Berne.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; the canton letters in capitals"
+ },
+ {
+  "id": "R7-F10",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ]
+  ],
+  "sentence": "Robbie Williams is a member of Take That",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; no final period"
+ },
+ {
+  "id": "R7-F11",
+  "gathered": [
+   [
+    "take_that",
+    "has_part",
+    "robbie_williams"
+   ]
+  ],
+  "sentence": "Take That has part Robbie Williams.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; plain"
+ },
+ {
+  "id": "R7-F12",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ]
+  ],
+  "sentence": "Jul follows June.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; plain"
+ },
+ {
+  "id": "R7-F13",
+  "gathered": [
+   [
+    "june",
+    "follows",
+    "may_sickness"
+   ]
+  ],
+  "sentence": "June follows May sickness",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; no final period"
+ },
+ {
+  "id": "R7-F14",
+  "gathered": [
+   [
+    "aug",
+    "follows",
+    "jul"
+   ]
+  ],
+  "sentence": "Aug follows Jul.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; plain"
+ },
+ {
+  "id": "R7-F15",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Ukraine shares border with Pole Land.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; plain"
+ },
+ {
+  "id": "R7-F16",
+  "gathered": [
+   [
+    "pole_land",
+    "shares_border_with",
+    "federal_republic_of_germany"
+   ]
+  ],
+  "sentence": "Pole Land shares border with Federal Republic of Germany.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; plain"
+ },
+ {
+  "id": "R7-F17",
+  "gathered": [
+   [
+    "pole_land",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Pole Land is a member of the United Nations.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; shape 3 with 'the' before the object"
+ },
+ {
+  "id": "R7-F18",
+  "gathered": [
+   [
+    "ukraine",
+    "member_of",
+    "united_nations"
+   ]
+  ],
+  "sentence": "Ukraine is a member of the United Nations.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; shape 3"
+ },
+ {
+  "id": "R7-F19",
+  "gathered": [
+   [
+    "the_who",
+    "has_part",
+    "peter_dennis_blandford_townshend"
+   ]
+  ],
+  "sentence": "The Who has part Peter Dennis Blandford Townshend",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; no final period"
+ },
+ {
+  "id": "R7-F20",
+  "gathered": [
+   [
+    "peter_dennis_blandford_townshend",
+    "member_of",
+    "the_who"
+   ]
+  ],
+  "sentence": "Peter Dennis Blandford Townshend is a member of The Who",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; shape 3, no final period"
+ },
+ {
+  "id": "R7-F21",
+  "gathered": [
+   [
+    "yes_band",
+    "has_part",
+    "rick_wakeman"
+   ]
+  ],
+  "sentence": "Yes band has part Rick Wakeman.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; plain"
+ },
+ {
+  "id": "R7-F22",
+  "gathered": [
+   [
+    "rick_wakeman",
+    "member_of",
+    "yes_band"
+   ]
+  ],
+  "sentence": "Rick Wakeman is a member of Yes band.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; shape 3"
+ },
+ {
+  "id": "R7-F23",
+  "gathered": [
+   [
+    "jul",
+    "named_after",
+    "julius_ceasar"
+   ]
+  ],
+  "sentence": "Jul is named after Julius Ceasar.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; copula plus participle"
+ },
+ {
+  "id": "R7-F24",
+  "gathered": [
+   [
+    "second_chromosome",
+    "follows",
+    "first_chromosome"
+   ]
+  ],
+  "sentence": "Second chromosome follows the first chromosome.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; 'the' before the object"
+ },
+ {
+  "id": "R7-F25",
+  "gathered": [
+   [
+    "third_asian_games",
+    "follows",
+    "second_asian_games"
+   ]
+  ],
+  "sentence": "Third Asian Games follows Second Asian Games.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; ordinal names, plain"
+ },
+ {
+  "id": "R7-F26",
+  "gathered": [
+   [
+    "wacko_jacko",
+    "member_of",
+    "the_jackson_five"
+   ]
+  ],
+  "sentence": "Wacko Jacko is a member of the Jackson Five.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; number word inside the name"
+ },
+ {
+  "id": "R7-F27",
+  "gathered": [
+   [
+    "peter_sagan",
+    "participant_of",
+    "xxx_olympic_games"
+   ]
+  ],
+  "sentence": "Peter Sagan is a participant of XXX Olympic Games.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; Roman numeral in capitals"
+ },
+ {
+  "id": "R7-F28",
+  "gathered": [
+   [
+    "new_bern_nc",
+    "twinned_administrative_body",
+    "city_of_berne"
+   ]
+  ],
+  "sentence": "New Bern NC is twinned with City of Berne.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; twinning wording"
+ },
+ {
+  "id": "R7-F29",
+  "gathered": [
+   [
+    "new_jeresy",
+    "shares_border_with",
+    "ny_state"
+   ]
+  ],
+  "sentence": "New Jeresy shares border with NY State.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; store misspelling kept"
+ },
+ {
+  "id": "R7-F30",
+  "gathered": [
+   [
+    "old_zealand",
+    "named_after",
+    "open_sea"
+   ]
+  ],
+  "sentence": "Old Zealand is named after open sea.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; plain"
+ },
+ {
+  "id": "R7-F31",
+  "gathered": [
+   [
+    "new_guinea_papua",
+    "shares_border_with",
+    "commonwealth_australia"
+   ]
+  ],
+  "sentence": "New Guinea Papua shares border with Commonwealth Australia.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; plain"
+ },
+ {
+  "id": "R7-F32",
+  "gathered": [
+   [
+    "trevor_rabin",
+    "part_of",
+    "yes_band"
+   ]
+  ],
+  "sentence": "Trevor Rabin is part of Yes band.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; plain"
+ },
+ {
+  "id": "R7-F33",
+  "gathered": [
+   [
+    "eugene_or",
+    "twinned_administrative_body",
+    "kathmandu_nepal"
+   ]
+  ],
+  "sentence": "Eugene OR is twinned with Kathmandu Nepal.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; state letters in capitals"
+ },
+ {
+  "id": "R7-F34",
+  "gathered": [
+   [
+    "cleveland_oh",
+    "twinned_administrative_body",
+    "ciudad_de_los_reyes"
+   ]
+  ],
+  "sentence": "Cleveland OH is twinned with Ciudad de los Reyes.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; plain"
+ },
+ {
+  "id": "R7-F35",
+  "gathered": [
+   [
+    "dayton_oh",
+    "twinned_administrative_body",
+    "capital_of_serbia"
+   ]
+  ],
+  "sentence": "Dayton OH is twinned with Capital of Serbia.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; plain"
+ },
+ {
+  "id": "R7-F36",
+  "gathered": [
+   [
+    "indianapolis_in",
+    "shares_border_with",
+    "morgan_county_in"
+   ]
+  ],
+  "sentence": "Indianapolis IN shares border with Morgan County IN.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; plain"
+ },
+ {
+  "id": "R7-F37",
+  "gathered": [
+   [
+    "co_down",
+    "shares_border_with",
+    "co_antrim"
+   ]
+  ],
+  "sentence": "Co Down shares border with Co Antrim.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; plain"
+ },
+ {
+  "id": "R7-F38",
+  "gathered": [
+   [
+    "ukraine",
+    "follows",
+    "ukrainian_s_s_r"
+   ]
+  ],
+  "sentence": "Ukraine follows Ukrainian S S R.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; single letters inside the name"
+ },
+ {
+  "id": "R7-F39",
+  "gathered": [
+   [
+    "ukraine",
+    "contains_administrative_territorial_enti",
+    "m_kyiv"
+   ]
+  ],
+  "sentence": "Ukraine contains M Kyiv.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; plain"
+ },
+ {
+  "id": "R7-F40",
+  "gathered": [
+   [
+    "kushiro_city",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ]
+  ],
+  "sentence": "Kushiro City is located in time zone Korea standard time.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; the store's own (wrong in the world) value, restated"
+ },
+ {
+  "id": "R7-F41",
+  "gathered": [
+   [
+    "city_of_japan",
+    "located_in_time_zone",
+    "japan_standard_time"
+   ]
+  ],
+  "sentence": "The city of Japan is located in time zone Japan standard time.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; class entity with 'the', alone (no instance named, so no anaphor)"
+ },
+ {
+  "id": "R7-F42",
+  "gathered": [
+   [
+    "freiberg_saxony",
+    "located_in_the_administrative_territoria",
+    "landkreis_mittelsachsen"
+   ]
+  ],
+  "sentence": "Freiberg Saxony is located in Landkreis Mittelsachsen.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; plain"
+ },
+ {
+  "id": "R7-F43",
+  "gathered": [
+   [
+    "jul",
+    "follows",
+    "june"
+   ],
+   [
+    "jul",
+    "followed_by",
+    "aug"
+   ],
+   [
+    "jul",
+    "named_after",
+    "julius_ceasar"
+   ]
+  ],
+  "sentence": "Jul follows June. Jul is followed by Aug. Jul is named after Julius Ceasar.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; three distinct gathered facts in three sentences"
+ },
+ {
+  "id": "R7-F44",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ],
+   [
+    "pole_land",
+    "shares_border_with",
+    "federal_republic_of_germany"
+   ]
+  ],
+  "sentence": "Ukraine shares border with Pole Land. Pole Land shares border with Federal Republic of Germany.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; two distinct gathered facts"
+ },
+ {
+  "id": "R7-F45",
+  "gathered": [
+   [
+    "ukraine",
+    "shares_border_with",
+    "pole_land"
+   ]
+  ],
+  "sentence": "Ukraine shares border with Pole Land.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; U+00A0 inside the object name"
+ },
+ {
+  "id": "R7-F46",
+  "gathered": [
+   [
+    "peter_dennis_blandford_townshend",
+    "member_of",
+    "the_who"
+   ]
+  ],
+  "sentence": "Peter Dennis Blandford Townshend is a member of The Who.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; U+2009 inside the subject name"
+ },
+ {
+  "id": "R7-F47",
+  "gathered": [
+   [
+    "robbie_williams",
+    "member_of",
+    "take_that"
+   ],
+   [
+    "take_that",
+    "instance_of",
+    "boy_band"
+   ]
+  ],
+  "sentence": "Robbie Williams is a member of Take That. Take That is an instance of boy band.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; two distinct gathered facts"
+ },
+ {
+  "id": "R7-F48",
+  "gathered": [
+   [
+    "jeff_bridges",
+    "sibling",
+    "beau_bridges"
+   ]
+  ],
+  "sentence": "Jeff Bridges is a sibling of Beau Bridges.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; shape 3, symmetric relation"
+ },
+ {
+  "id": "R7-F49",
+  "gathered": [
+   [
+    "robin_john_gibb",
+    "member_of",
+    "bee_gee"
+   ]
+  ],
+  "sentence": "Robin John Gibb is a member of Bee Gee.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; store's singular band name"
+ },
+ {
+  "id": "R7-F50",
+  "gathered": [
+   [
+    "pole_land",
+    "contains_administrative_territorial_enti",
+    "mazowsze_voivodeship"
+   ]
+  ],
+  "sentence": "Pole Land contains Mazowsze Voivodeship.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; plain"
+ },
+ {
+  "id": "R7-F51",
+  "gathered": [
+   [
+    "first_asian_games",
+    "followed_by",
+    "second_asian_games"
+   ]
+  ],
+  "sentence": "First Asian Games is followed by Second Asian Games.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; copula plus participle"
+ },
+ {
+  "id": "R7-F53",
+  "gathered": [
+   [
+    "second_commonwealth_of_poland",
+    "follows",
+    "imperial_germany"
+   ]
+  ],
+  "sentence": "Second Commonwealth of Poland follows Imperial Germany.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; ordinal name, plain"
+ },
+ {
+  "id": "R7-F54",
+  "gathered": [
+   [
+    "rick_wakeman",
+    "educated_at",
+    "royal_college_of_music"
+   ]
+  ],
+  "sentence": "Rick Wakeman is educated at Royal College of Music.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; copula plus participle"
+ },
+ {
+  "id": "R7-F52",
+  "gathered": [
+   [
+    "marshall_is",
+    "located_in_time_zone",
+    "fiji_standard_time"
+   ],
+   [
+    "marshall_is",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ]
+  ],
+  "sentence": "Marshall Is is located in time zone Fiji standard time.\nMarshall Is is described by source Armenian Soviet Encyclopedia.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported twin: every assertion is a gathered triple; two distinct facts separated by a line feed"
+ }
+]

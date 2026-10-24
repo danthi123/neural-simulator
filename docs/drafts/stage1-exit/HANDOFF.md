@@ -1,3 +1,5 @@
+> **ATTEMPT 1 ONLY (2026-09-29..10-06).** Attempt 2 = runbook rulings s1-attempt2-*, run from main (Claude 2026-10-16).
+
 # HANDOFF — Stage-1 (INFANT) exit gate: execution packet for the local model
 
 Written 2026-09-29 by Claude. Execute top to bottom. Do not change code, bars, turns or arms. At most ONE fix round

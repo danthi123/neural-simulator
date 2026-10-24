@@ -12,6 +12,72 @@ stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CUR
 compute node (GPU queue, local model serving), and Claude Code inspects occasionally. See
 `docs/plans/2026-09-30-home-to-server-MIGRATION.md`. The capability entries below predate this move and are unaffected.
 
+## 2026-10-21 — the strict no-making-things-up check passes its tests (still off); a cell-type fault under the substrate; two new methods start
+
+- **The strict speech check passes every test written for it in advance, and stays off.** The check on the mouth now
+  keeps a sentence only when all of it spells out facts the brain gathered for that turn. Attempt 5 let none of 191
+  made-up sentences from a fresh blind adversary through (none of 216 counting borderline ones), kept no unsupported
+  sentence in three held-out sets of real recorded answers, and lost no answer the current check gives. It is merged
+  switched off. It has a cost: it can voice 93% of the brain's one-fact facts, and it keeps fewer true sentences in long
+  real answers. A review found that it reads one sentence at a time and that four routes to the mouth skip it; attempt 6
+  fixes those, is under review, and then faces its own blind round. Switching it on needs its own test.
+  (VERDICTS in `research/findings/2026-10-20-moat-allowlist-claim-checker-PREREGISTRATION.md`, merge `33c17026e`.)
+- **Later on 10-21: the strict check meets a honesty problem it cannot solve by reading words.** Attempt 6 let none of 114
+  made-up sentences through, but its blind round showed that when a user teaches the brain a name holding "I", "me" or
+  "you" (a band called "Trevor and I"), the mouth can say it as if the brain were talking about itself. Attempt 7 tried
+  word lists and failed its blind round (41 of 86 kept): such words can be spelled endlessly. A reading test then showed
+  that quoting the fact as someone's words fixes names like "So I Married ..." but not a stored name that is itself a
+  pointing word or pronoun ("the latter", "moi"), because what the person meant was lost when the fact was stored. So
+  attempt 8 decides per fact (with the switch on, only facts from the brain's declared build knowledge are spoken), and
+  the real fix moves to where a fact is heard: the brain should learn who "I" and "you" mean (task #271; its first step,
+  a census of today's encoding, has started). (VERDICTS for builds 6 and 7, merge `359e8ff63`.)
+- **A fault under the cell types (10-20).** A global randomization step overwrote each region's own neuron parameters
+  with jitter centred on one regular-spiking type, so the specialised cell types were hybrids. The fix is merged
+  switched off; the basal-ganglia seam test waits on measuring that organ on the real cell types.
+- **Word roles.** Switching on the brain's own word-role reading was held on 10-18: it made one answer worse ("what does
+  the cat eat" became "I don't know" on three of six setups). The next method lets the question's own shape supply the
+  missing evidence, learned rather than hand-written. Its first step (10-21) found that the refusal is a near-tie in what
+  the brain has learned, not a broken switch. The switch-on test plan is due 10-27.
+- **Choosing what to say.** A new method lets candidate memories race, addressed by the question's content. Its first
+  feasibility grid (10-21) is void: the race never picked any winner, even when pushed hard, so it tested nothing. It
+  is rerun with a check that a lone memory does get picked.
+- **The #1 metric at the current code** on the six test seeds is registered and running (294 jobs).
+
+## 2026-10-16 — the first Stage-1 exit gate is verified: all four primary tests met on all six seeds
+
+**Stage 1 passed on attempt 2 (2026-10-16).** The first integrated stage-exit gate — the four tests a brain must
+clear before Stage 2 — is run in full: 216 jobs (six seeds, 36 per seed) from the main branch at `c02180f2c`,
+split between the local pool (seed 42) and two AWS nodes (the other seeds). All four primary criteria are met on
+6 of 6 seeds each: category inheritance (C1), word learning (C2), remembered lived events (C3) and held-out
+feeling words (C4). Every counted lesion arm changed the reply on 6 of 6 and reproduced (caveat 1 says how); the shuffled-exposure control
+was tracked on 6 of 6. Claude's verify-go re-score is exact and two adversarial reviews survived
+(`research/findings/2026-10-16-stage1-exit-attempt2-RESULT.md`, merge `e114828f1`). The two diagnostics
+(`cat_told`, `val_novel`) read 0/6 and are registered in advance as not counted. Next: the word-role flip (F3
+rerun at P', prereg), then the Stage-2 gate with the same pool/AWS split.
+
+The PASS carries four caveats, copied verbatim from the finding (never an unqualified pass):
+
+1. **C2 and C3: the recall lesions change how the answer is framed, not what it is.** `lesion_recruit` (C2) and
+   `lesion_recall` (C3) turn a recalled answer into a guess with the SAME content ("perhaps the bear chases the
+   otter [a guess]"). The default-on category organ (C1) still supplies the answer. §7 is met, since a primary
+   reply field differs, but the §1/§6 wording that the lesion "removes" the answer is not. The C3
+   `lesion_episodic` arm does remove it (disclosure becomes "I don't recall", 6/6). Load-bearing claims for the
+   recruit and recall pathways must cite this.
+2. **C1-C3 replies are identical across the six seeds.** Seeds change internal traces and C4, but not these
+   discrete answers. For C2, seeds 43-102 give byte-identical text. Six seeds here show robustness, not six
+   independent varied samples.
+3. **C4 measures how faithfully the brain follows a precomputed valence map.** The map is an offline numpy PPMI +
+   label-propagation table seeded from Warriner norms. Intact r (about 0.82) sits below the raw-norm reference
+   (0.94). 8-13 of the 24 reads per seed are neutral, which is why sign agreement is only 0.46-0.67, though no
+   non-neutral read has the wrong sign. Valence inheritance during a session (`val_novel`) is absent, 0/6.
+4. **Minor.** The generative probe ("what might...") abstains on 6/6 because the host topic extractor reads
+   "might"; it is uncounted. Prereg §4.1 calls the worm/bug exposure equal, but the teach turns hold worm x3 and
+   bug x2; the permuted flip shows no frequency shortcut. A2.2's constrained scramble draw makes the C4 control
+   pass for a perfect follower about 99% of the time, so that clause is near-determined by construction.
+
+**Decisions-owned:** this stage bar does not measure host-decision share — k-select is still host code; the
+load-bearing work is the step-3 ownership moves.
+
 ## 2026-10-15 — shared memory switches on by default; the BG commit's six-seed test comes back NO-GO; word-role's flip packet is in progress
 
 **Shared memory is now ON by default** (merge `1ff97a8cd`). The 10-14 flip battery Amendment A asked one question

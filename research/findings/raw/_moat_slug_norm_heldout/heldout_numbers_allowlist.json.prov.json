@@ -1,0 +1,27 @@
+{
+ "run_id": "1792539636-2867731",
+ "runner": "research/findings/raw/_moat_slug_norm_heldout/heldout_numbers.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-allow/research/findings/raw/_moat_slug_norm_heldout/heldout_numbers.py",
+  "research/findings/raw/_moat_slug_norm_heldout/heldout_numbers_allowlist.json",
+  "--allowlist"
+ ],
+ "git_sha": "1ee51881e",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-20T19:40:36",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 11440.1,
+ "corpus_check_query": "claim checker span matcher accepts Unicode confusable letters and separator characters because it compares spans through a lossy slug fold (sanitize) instead of exact canonical surface forms",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_moat_slug_norm_heldout/heldout_numbers_allowlist.json"
+}

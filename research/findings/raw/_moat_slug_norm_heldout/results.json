@@ -1,0 +1,1840 @@
+{
+ "_doc": "B2h (BRAIN_MOAT_SLUG_NORM=1) vs stock on the held-out corpus; labels committed before this ran",
+ "backend": "numpy",
+ "device": "cpu",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/measure_heldout.py",
+ "argv": [
+  "research/findings/raw/_moat_slug_norm_heldout/measure_heldout.py",
+  "research/findings/raw/_moat_slug_norm_heldout/corpus.json",
+  "research/findings/raw/_moat_slug_norm_heldout/labels.json",
+  "research/findings/raw/_moat_slug_norm_heldout/results.json"
+ ],
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102,
+  1
+ ],
+ "corpus": "research/findings/raw/_moat_slug_norm_heldout/corpus.json",
+ "labels": "research/findings/raw/_moat_slug_norm_heldout/labels.json",
+ "per_seed": {
+  "42": {
+   "stock": {
+    "turns_with_unbuildable_claim_verifier": [
+     "h06",
+     "h14",
+     "h19",
+     "h29"
+    ],
+    "rows_in_those_turns": 40,
+    "note_unbuildable": "a gathered set with a role-permutation collision (e.g. a mutual shares_border_with pair) makes the claim verifier unbuildable; _verify_claim_set returns (None, None) and production falls back to the single-triple chat._verify, flag on or off -- those rows are not decided by this flag",
+    "raw_rows": 276,
+    "unique_sentences": 272,
+    "label_totals_raw": {
+     "U": 120,
+     "B": 58,
+     "F": 94,
+     "N": 4
+    },
+    "label_totals_unique": {
+     "U": 118,
+     "B": 58,
+     "F": 92,
+     "N": 4
+    },
+    "kept_raw": {
+     "F": 1,
+     "B": 0,
+     "U": 0,
+     "N": 0
+    },
+    "kept_unique": {
+     "F": 1,
+     "B": 0,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_kept": {
+     "F": 1,
+     "B": 0,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_total": 227,
+    "kept_raw_total": 1,
+    "kept_unique_total": 1,
+    "facts": 138,
+    "facts_kept": 1,
+    "facts_kept_by_label": {
+     "F": 1
+    },
+    "turns": 29,
+    "turns_answered": 1
+   },
+   "b2h": {
+    "turns_with_unbuildable_claim_verifier": [
+     "h06",
+     "h14",
+     "h19",
+     "h29"
+    ],
+    "rows_in_those_turns": 40,
+    "note_unbuildable": "a gathered set with a role-permutation collision (e.g. a mutual shares_border_with pair) makes the claim verifier unbuildable; _verify_claim_set returns (None, None) and production falls back to the single-triple chat._verify, flag on or off -- those rows are not decided by this flag",
+    "raw_rows": 276,
+    "unique_sentences": 272,
+    "label_totals_raw": {
+     "U": 120,
+     "B": 58,
+     "F": 94,
+     "N": 4
+    },
+    "label_totals_unique": {
+     "U": 118,
+     "B": 58,
+     "F": 92,
+     "N": 4
+    },
+    "kept_raw": {
+     "F": 13,
+     "B": 2,
+     "U": 0,
+     "N": 0
+    },
+    "kept_unique": {
+     "F": 13,
+     "B": 2,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_kept": {
+     "F": 13,
+     "B": 2,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_total": 227,
+    "kept_raw_total": 15,
+    "kept_unique_total": 15,
+    "facts": 138,
+    "facts_kept": 14,
+    "facts_kept_by_label": {
+     "F": 12,
+     "B": 2
+    },
+    "turns": 29,
+    "turns_answered": 11,
+    "kept_sentences": [
+     {
+      "turn": "h01",
+      "svo": [
+       "1962_asian_games",
+       "instance_of",
+       "asian_summer_games"
+      ],
+      "surface": "The 1962 Asian Games were an instance of the Asian Summer Games.",
+      "label": "F"
+     },
+     {
+      "turn": "h10",
+      "svo": [
+       "geography_of_adana",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The geography of Adana is an instance of a city work.",
+      "label": "F"
+     },
+     {
+      "turn": "h10",
+      "svo": [
+       "geography_of_adana",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "Geography of Adana is an instance of city work.",
+      "label": "F"
+     },
+     {
+      "turn": "h11",
+      "svo": [
+       "ha_noi_vietnam",
+       "described_by_source",
+       "armenian_soviet_encyclopedia"
+      ],
+      "surface": "Ha noi vietnam was described by source Armenian Soviet Encyclopedia.",
+      "label": "F"
+     },
+     {
+      "turn": "h11",
+      "svo": [
+       "hayastani_hanrapetut_yun",
+       "shares_border_with",
+       "persian_state_of_iran"
+      ],
+      "surface": "Hayastani Hanrapetut Yun shares border with Persian State of Iran.",
+      "label": "F"
+     },
+     {
+      "turn": "h12",
+      "svo": [
+       "history_of_ferrara",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The history of Ferrara is an instance of its city work.",
+      "label": "B"
+     },
+     {
+      "turn": "h12",
+      "svo": [
+       "history_of_ferrara",
+       "described_by_source",
+       "nordisk_familjebok"
+      ],
+      "surface": "The history of Ferrara was described by source Nordisk familjebok.",
+      "label": "F"
+     },
+     {
+      "turn": "h17",
+      "svo": [
+       "luk_cs_p_l",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Luk_cs_p_l is an instance of human_specie.",
+      "label": "F"
+     },
+     {
+      "turn": "h21",
+      "svo": [
+       "prefecture_of_nagasaki",
+       "located_in_time_zone",
+       "korea_standard_time"
+      ],
+      "surface": "The prefecture of Nagasaki is located in time zone Korea Standard Time.",
+      "label": "F"
+     },
+     {
+      "turn": "h22",
+      "svo": [
+       "rep_blica_del_paraguay",
+       "shares_border_with",
+       "republic_of_brazil"
+      ],
+      "surface": "Rep Blica del Paraguay shares border with the Republic of Brazil.",
+      "label": "F"
+     },
+     {
+      "turn": "h22",
+      "svo": [
+       "rep_blica_del_paraguay",
+       "member_of",
+       "united_nations"
+      ],
+      "surface": "Rep_blica_del_paraguay is a member of the United Nations.",
+      "label": "F"
+     },
+     {
+      "turn": "h23",
+      "svo": [
+       "s_te_france",
+       "instance_of",
+       "communes_in_france"
+      ],
+      "surface": "The S_Te_France instance_of communes_in_france.",
+      "label": "F"
+     },
+     {
+      "turn": "h26",
+      "svo": [
+       "the_weather_in_stavenger",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The weather in Stavenger is an instance of the city work.",
+      "label": "F"
+     },
+     {
+      "turn": "h27",
+      "svo": [
+       "federal_republic_of_germany",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "The federal republic of germany is located in time zone rome time.",
+      "label": "F"
+     },
+     {
+      "turn": "h28",
+      "svo": [
+       "waadt_canton_of",
+       "contains_administrative_territorial_enti",
+       "jura_nord_vaudois_district"
+      ],
+      "surface": "The waadt_canton_of contains administrative territorial enti in jura nord vaudois district.",
+      "label": "B"
+     }
+    ]
+   }
+  },
+  "43": {
+   "stock": {
+    "turns_with_unbuildable_claim_verifier": [
+     "h06",
+     "h14",
+     "h19",
+     "h29"
+    ],
+    "rows_in_those_turns": 40,
+    "note_unbuildable": "a gathered set with a role-permutation collision (e.g. a mutual shares_border_with pair) makes the claim verifier unbuildable; _verify_claim_set returns (None, None) and production falls back to the single-triple chat._verify, flag on or off -- those rows are not decided by this flag",
+    "raw_rows": 276,
+    "unique_sentences": 272,
+    "label_totals_raw": {
+     "U": 120,
+     "B": 58,
+     "F": 94,
+     "N": 4
+    },
+    "label_totals_unique": {
+     "U": 118,
+     "B": 58,
+     "F": 92,
+     "N": 4
+    },
+    "kept_raw": {
+     "F": 1,
+     "B": 0,
+     "U": 0,
+     "N": 0
+    },
+    "kept_unique": {
+     "F": 1,
+     "B": 0,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_kept": {
+     "F": 1,
+     "B": 0,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_total": 227,
+    "kept_raw_total": 1,
+    "kept_unique_total": 1,
+    "facts": 138,
+    "facts_kept": 1,
+    "facts_kept_by_label": {
+     "F": 1
+    },
+    "turns": 29,
+    "turns_answered": 1
+   },
+   "b2h": {
+    "turns_with_unbuildable_claim_verifier": [
+     "h06",
+     "h14",
+     "h19",
+     "h29"
+    ],
+    "rows_in_those_turns": 40,
+    "note_unbuildable": "a gathered set with a role-permutation collision (e.g. a mutual shares_border_with pair) makes the claim verifier unbuildable; _verify_claim_set returns (None, None) and production falls back to the single-triple chat._verify, flag on or off -- those rows are not decided by this flag",
+    "raw_rows": 276,
+    "unique_sentences": 272,
+    "label_totals_raw": {
+     "U": 120,
+     "B": 58,
+     "F": 94,
+     "N": 4
+    },
+    "label_totals_unique": {
+     "U": 118,
+     "B": 58,
+     "F": 92,
+     "N": 4
+    },
+    "kept_raw": {
+     "F": 13,
+     "B": 2,
+     "U": 0,
+     "N": 0
+    },
+    "kept_unique": {
+     "F": 13,
+     "B": 2,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_kept": {
+     "F": 13,
+     "B": 2,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_total": 227,
+    "kept_raw_total": 15,
+    "kept_unique_total": 15,
+    "facts": 138,
+    "facts_kept": 14,
+    "facts_kept_by_label": {
+     "F": 12,
+     "B": 2
+    },
+    "turns": 29,
+    "turns_answered": 11,
+    "kept_sentences": [
+     {
+      "turn": "h01",
+      "svo": [
+       "1962_asian_games",
+       "instance_of",
+       "asian_summer_games"
+      ],
+      "surface": "The 1962 Asian Games were an instance of the Asian Summer Games.",
+      "label": "F"
+     },
+     {
+      "turn": "h10",
+      "svo": [
+       "geography_of_adana",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The geography of Adana is an instance of a city work.",
+      "label": "F"
+     },
+     {
+      "turn": "h10",
+      "svo": [
+       "geography_of_adana",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "Geography of Adana is an instance of city work.",
+      "label": "F"
+     },
+     {
+      "turn": "h11",
+      "svo": [
+       "ha_noi_vietnam",
+       "described_by_source",
+       "armenian_soviet_encyclopedia"
+      ],
+      "surface": "Ha noi vietnam was described by source Armenian Soviet Encyclopedia.",
+      "label": "F"
+     },
+     {
+      "turn": "h11",
+      "svo": [
+       "hayastani_hanrapetut_yun",
+       "shares_border_with",
+       "persian_state_of_iran"
+      ],
+      "surface": "Hayastani Hanrapetut Yun shares border with Persian State of Iran.",
+      "label": "F"
+     },
+     {
+      "turn": "h12",
+      "svo": [
+       "history_of_ferrara",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The history of Ferrara is an instance of its city work.",
+      "label": "B"
+     },
+     {
+      "turn": "h12",
+      "svo": [
+       "history_of_ferrara",
+       "described_by_source",
+       "nordisk_familjebok"
+      ],
+      "surface": "The history of Ferrara was described by source Nordisk familjebok.",
+      "label": "F"
+     },
+     {
+      "turn": "h17",
+      "svo": [
+       "luk_cs_p_l",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Luk_cs_p_l is an instance of human_specie.",
+      "label": "F"
+     },
+     {
+      "turn": "h21",
+      "svo": [
+       "prefecture_of_nagasaki",
+       "located_in_time_zone",
+       "korea_standard_time"
+      ],
+      "surface": "The prefecture of Nagasaki is located in time zone Korea Standard Time.",
+      "label": "F"
+     },
+     {
+      "turn": "h22",
+      "svo": [
+       "rep_blica_del_paraguay",
+       "shares_border_with",
+       "republic_of_brazil"
+      ],
+      "surface": "Rep Blica del Paraguay shares border with the Republic of Brazil.",
+      "label": "F"
+     },
+     {
+      "turn": "h22",
+      "svo": [
+       "rep_blica_del_paraguay",
+       "member_of",
+       "united_nations"
+      ],
+      "surface": "Rep_blica_del_paraguay is a member of the United Nations.",
+      "label": "F"
+     },
+     {
+      "turn": "h23",
+      "svo": [
+       "s_te_france",
+       "instance_of",
+       "communes_in_france"
+      ],
+      "surface": "The S_Te_France instance_of communes_in_france.",
+      "label": "F"
+     },
+     {
+      "turn": "h26",
+      "svo": [
+       "the_weather_in_stavenger",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The weather in Stavenger is an instance of the city work.",
+      "label": "F"
+     },
+     {
+      "turn": "h27",
+      "svo": [
+       "federal_republic_of_germany",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "The federal republic of germany is located in time zone rome time.",
+      "label": "F"
+     },
+     {
+      "turn": "h28",
+      "svo": [
+       "waadt_canton_of",
+       "contains_administrative_territorial_enti",
+       "jura_nord_vaudois_district"
+      ],
+      "surface": "The waadt_canton_of contains administrative territorial enti in jura nord vaudois district.",
+      "label": "B"
+     }
+    ]
+   }
+  },
+  "44": {
+   "stock": {
+    "turns_with_unbuildable_claim_verifier": [
+     "h06",
+     "h14",
+     "h19",
+     "h29"
+    ],
+    "rows_in_those_turns": 40,
+    "note_unbuildable": "a gathered set with a role-permutation collision (e.g. a mutual shares_border_with pair) makes the claim verifier unbuildable; _verify_claim_set returns (None, None) and production falls back to the single-triple chat._verify, flag on or off -- those rows are not decided by this flag",
+    "raw_rows": 276,
+    "unique_sentences": 272,
+    "label_totals_raw": {
+     "U": 120,
+     "B": 58,
+     "F": 94,
+     "N": 4
+    },
+    "label_totals_unique": {
+     "U": 118,
+     "B": 58,
+     "F": 92,
+     "N": 4
+    },
+    "kept_raw": {
+     "F": 1,
+     "B": 0,
+     "U": 0,
+     "N": 0
+    },
+    "kept_unique": {
+     "F": 1,
+     "B": 0,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_kept": {
+     "F": 1,
+     "B": 0,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_total": 227,
+    "kept_raw_total": 1,
+    "kept_unique_total": 1,
+    "facts": 138,
+    "facts_kept": 1,
+    "facts_kept_by_label": {
+     "F": 1
+    },
+    "turns": 29,
+    "turns_answered": 1
+   },
+   "b2h": {
+    "turns_with_unbuildable_claim_verifier": [
+     "h06",
+     "h14",
+     "h19",
+     "h29"
+    ],
+    "rows_in_those_turns": 40,
+    "note_unbuildable": "a gathered set with a role-permutation collision (e.g. a mutual shares_border_with pair) makes the claim verifier unbuildable; _verify_claim_set returns (None, None) and production falls back to the single-triple chat._verify, flag on or off -- those rows are not decided by this flag",
+    "raw_rows": 276,
+    "unique_sentences": 272,
+    "label_totals_raw": {
+     "U": 120,
+     "B": 58,
+     "F": 94,
+     "N": 4
+    },
+    "label_totals_unique": {
+     "U": 118,
+     "B": 58,
+     "F": 92,
+     "N": 4
+    },
+    "kept_raw": {
+     "F": 13,
+     "B": 2,
+     "U": 0,
+     "N": 0
+    },
+    "kept_unique": {
+     "F": 13,
+     "B": 2,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_kept": {
+     "F": 13,
+     "B": 2,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_total": 227,
+    "kept_raw_total": 15,
+    "kept_unique_total": 15,
+    "facts": 138,
+    "facts_kept": 14,
+    "facts_kept_by_label": {
+     "F": 12,
+     "B": 2
+    },
+    "turns": 29,
+    "turns_answered": 11,
+    "kept_sentences": [
+     {
+      "turn": "h01",
+      "svo": [
+       "1962_asian_games",
+       "instance_of",
+       "asian_summer_games"
+      ],
+      "surface": "The 1962 Asian Games were an instance of the Asian Summer Games.",
+      "label": "F"
+     },
+     {
+      "turn": "h10",
+      "svo": [
+       "geography_of_adana",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The geography of Adana is an instance of a city work.",
+      "label": "F"
+     },
+     {
+      "turn": "h10",
+      "svo": [
+       "geography_of_adana",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "Geography of Adana is an instance of city work.",
+      "label": "F"
+     },
+     {
+      "turn": "h11",
+      "svo": [
+       "ha_noi_vietnam",
+       "described_by_source",
+       "armenian_soviet_encyclopedia"
+      ],
+      "surface": "Ha noi vietnam was described by source Armenian Soviet Encyclopedia.",
+      "label": "F"
+     },
+     {
+      "turn": "h11",
+      "svo": [
+       "hayastani_hanrapetut_yun",
+       "shares_border_with",
+       "persian_state_of_iran"
+      ],
+      "surface": "Hayastani Hanrapetut Yun shares border with Persian State of Iran.",
+      "label": "F"
+     },
+     {
+      "turn": "h12",
+      "svo": [
+       "history_of_ferrara",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The history of Ferrara is an instance of its city work.",
+      "label": "B"
+     },
+     {
+      "turn": "h12",
+      "svo": [
+       "history_of_ferrara",
+       "described_by_source",
+       "nordisk_familjebok"
+      ],
+      "surface": "The history of Ferrara was described by source Nordisk familjebok.",
+      "label": "F"
+     },
+     {
+      "turn": "h17",
+      "svo": [
+       "luk_cs_p_l",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Luk_cs_p_l is an instance of human_specie.",
+      "label": "F"
+     },
+     {
+      "turn": "h21",
+      "svo": [
+       "prefecture_of_nagasaki",
+       "located_in_time_zone",
+       "korea_standard_time"
+      ],
+      "surface": "The prefecture of Nagasaki is located in time zone Korea Standard Time.",
+      "label": "F"
+     },
+     {
+      "turn": "h22",
+      "svo": [
+       "rep_blica_del_paraguay",
+       "shares_border_with",
+       "republic_of_brazil"
+      ],
+      "surface": "Rep Blica del Paraguay shares border with the Republic of Brazil.",
+      "label": "F"
+     },
+     {
+      "turn": "h22",
+      "svo": [
+       "rep_blica_del_paraguay",
+       "member_of",
+       "united_nations"
+      ],
+      "surface": "Rep_blica_del_paraguay is a member of the United Nations.",
+      "label": "F"
+     },
+     {
+      "turn": "h23",
+      "svo": [
+       "s_te_france",
+       "instance_of",
+       "communes_in_france"
+      ],
+      "surface": "The S_Te_France instance_of communes_in_france.",
+      "label": "F"
+     },
+     {
+      "turn": "h26",
+      "svo": [
+       "the_weather_in_stavenger",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The weather in Stavenger is an instance of the city work.",
+      "label": "F"
+     },
+     {
+      "turn": "h27",
+      "svo": [
+       "federal_republic_of_germany",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "The federal republic of germany is located in time zone rome time.",
+      "label": "F"
+     },
+     {
+      "turn": "h28",
+      "svo": [
+       "waadt_canton_of",
+       "contains_administrative_territorial_enti",
+       "jura_nord_vaudois_district"
+      ],
+      "surface": "The waadt_canton_of contains administrative territorial enti in jura nord vaudois district.",
+      "label": "B"
+     }
+    ]
+   }
+  },
+  "100": {
+   "stock": {
+    "turns_with_unbuildable_claim_verifier": [
+     "h06",
+     "h14",
+     "h19",
+     "h29"
+    ],
+    "rows_in_those_turns": 40,
+    "note_unbuildable": "a gathered set with a role-permutation collision (e.g. a mutual shares_border_with pair) makes the claim verifier unbuildable; _verify_claim_set returns (None, None) and production falls back to the single-triple chat._verify, flag on or off -- those rows are not decided by this flag",
+    "raw_rows": 276,
+    "unique_sentences": 272,
+    "label_totals_raw": {
+     "U": 120,
+     "B": 58,
+     "F": 94,
+     "N": 4
+    },
+    "label_totals_unique": {
+     "U": 118,
+     "B": 58,
+     "F": 92,
+     "N": 4
+    },
+    "kept_raw": {
+     "F": 1,
+     "B": 0,
+     "U": 0,
+     "N": 0
+    },
+    "kept_unique": {
+     "F": 1,
+     "B": 0,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_kept": {
+     "F": 1,
+     "B": 0,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_total": 227,
+    "kept_raw_total": 1,
+    "kept_unique_total": 1,
+    "facts": 138,
+    "facts_kept": 1,
+    "facts_kept_by_label": {
+     "F": 1
+    },
+    "turns": 29,
+    "turns_answered": 1
+   },
+   "b2h": {
+    "turns_with_unbuildable_claim_verifier": [
+     "h06",
+     "h14",
+     "h19",
+     "h29"
+    ],
+    "rows_in_those_turns": 40,
+    "note_unbuildable": "a gathered set with a role-permutation collision (e.g. a mutual shares_border_with pair) makes the claim verifier unbuildable; _verify_claim_set returns (None, None) and production falls back to the single-triple chat._verify, flag on or off -- those rows are not decided by this flag",
+    "raw_rows": 276,
+    "unique_sentences": 272,
+    "label_totals_raw": {
+     "U": 120,
+     "B": 58,
+     "F": 94,
+     "N": 4
+    },
+    "label_totals_unique": {
+     "U": 118,
+     "B": 58,
+     "F": 92,
+     "N": 4
+    },
+    "kept_raw": {
+     "F": 13,
+     "B": 2,
+     "U": 0,
+     "N": 0
+    },
+    "kept_unique": {
+     "F": 13,
+     "B": 2,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_kept": {
+     "F": 13,
+     "B": 2,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_total": 227,
+    "kept_raw_total": 15,
+    "kept_unique_total": 15,
+    "facts": 138,
+    "facts_kept": 14,
+    "facts_kept_by_label": {
+     "F": 12,
+     "B": 2
+    },
+    "turns": 29,
+    "turns_answered": 11,
+    "kept_sentences": [
+     {
+      "turn": "h01",
+      "svo": [
+       "1962_asian_games",
+       "instance_of",
+       "asian_summer_games"
+      ],
+      "surface": "The 1962 Asian Games were an instance of the Asian Summer Games.",
+      "label": "F"
+     },
+     {
+      "turn": "h10",
+      "svo": [
+       "geography_of_adana",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The geography of Adana is an instance of a city work.",
+      "label": "F"
+     },
+     {
+      "turn": "h10",
+      "svo": [
+       "geography_of_adana",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "Geography of Adana is an instance of city work.",
+      "label": "F"
+     },
+     {
+      "turn": "h11",
+      "svo": [
+       "ha_noi_vietnam",
+       "described_by_source",
+       "armenian_soviet_encyclopedia"
+      ],
+      "surface": "Ha noi vietnam was described by source Armenian Soviet Encyclopedia.",
+      "label": "F"
+     },
+     {
+      "turn": "h11",
+      "svo": [
+       "hayastani_hanrapetut_yun",
+       "shares_border_with",
+       "persian_state_of_iran"
+      ],
+      "surface": "Hayastani Hanrapetut Yun shares border with Persian State of Iran.",
+      "label": "F"
+     },
+     {
+      "turn": "h12",
+      "svo": [
+       "history_of_ferrara",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The history of Ferrara is an instance of its city work.",
+      "label": "B"
+     },
+     {
+      "turn": "h12",
+      "svo": [
+       "history_of_ferrara",
+       "described_by_source",
+       "nordisk_familjebok"
+      ],
+      "surface": "The history of Ferrara was described by source Nordisk familjebok.",
+      "label": "F"
+     },
+     {
+      "turn": "h17",
+      "svo": [
+       "luk_cs_p_l",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Luk_cs_p_l is an instance of human_specie.",
+      "label": "F"
+     },
+     {
+      "turn": "h21",
+      "svo": [
+       "prefecture_of_nagasaki",
+       "located_in_time_zone",
+       "korea_standard_time"
+      ],
+      "surface": "The prefecture of Nagasaki is located in time zone Korea Standard Time.",
+      "label": "F"
+     },
+     {
+      "turn": "h22",
+      "svo": [
+       "rep_blica_del_paraguay",
+       "shares_border_with",
+       "republic_of_brazil"
+      ],
+      "surface": "Rep Blica del Paraguay shares border with the Republic of Brazil.",
+      "label": "F"
+     },
+     {
+      "turn": "h22",
+      "svo": [
+       "rep_blica_del_paraguay",
+       "member_of",
+       "united_nations"
+      ],
+      "surface": "Rep_blica_del_paraguay is a member of the United Nations.",
+      "label": "F"
+     },
+     {
+      "turn": "h23",
+      "svo": [
+       "s_te_france",
+       "instance_of",
+       "communes_in_france"
+      ],
+      "surface": "The S_Te_France instance_of communes_in_france.",
+      "label": "F"
+     },
+     {
+      "turn": "h26",
+      "svo": [
+       "the_weather_in_stavenger",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The weather in Stavenger is an instance of the city work.",
+      "label": "F"
+     },
+     {
+      "turn": "h27",
+      "svo": [
+       "federal_republic_of_germany",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "The federal republic of germany is located in time zone rome time.",
+      "label": "F"
+     },
+     {
+      "turn": "h28",
+      "svo": [
+       "waadt_canton_of",
+       "contains_administrative_territorial_enti",
+       "jura_nord_vaudois_district"
+      ],
+      "surface": "The waadt_canton_of contains administrative territorial enti in jura nord vaudois district.",
+      "label": "B"
+     }
+    ]
+   }
+  },
+  "101": {
+   "stock": {
+    "turns_with_unbuildable_claim_verifier": [
+     "h06",
+     "h14",
+     "h19",
+     "h29"
+    ],
+    "rows_in_those_turns": 40,
+    "note_unbuildable": "a gathered set with a role-permutation collision (e.g. a mutual shares_border_with pair) makes the claim verifier unbuildable; _verify_claim_set returns (None, None) and production falls back to the single-triple chat._verify, flag on or off -- those rows are not decided by this flag",
+    "raw_rows": 276,
+    "unique_sentences": 272,
+    "label_totals_raw": {
+     "U": 120,
+     "B": 58,
+     "F": 94,
+     "N": 4
+    },
+    "label_totals_unique": {
+     "U": 118,
+     "B": 58,
+     "F": 92,
+     "N": 4
+    },
+    "kept_raw": {
+     "F": 1,
+     "B": 0,
+     "U": 0,
+     "N": 0
+    },
+    "kept_unique": {
+     "F": 1,
+     "B": 0,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_kept": {
+     "F": 1,
+     "B": 0,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_total": 227,
+    "kept_raw_total": 1,
+    "kept_unique_total": 1,
+    "facts": 138,
+    "facts_kept": 1,
+    "facts_kept_by_label": {
+     "F": 1
+    },
+    "turns": 29,
+    "turns_answered": 1
+   },
+   "b2h": {
+    "turns_with_unbuildable_claim_verifier": [
+     "h06",
+     "h14",
+     "h19",
+     "h29"
+    ],
+    "rows_in_those_turns": 40,
+    "note_unbuildable": "a gathered set with a role-permutation collision (e.g. a mutual shares_border_with pair) makes the claim verifier unbuildable; _verify_claim_set returns (None, None) and production falls back to the single-triple chat._verify, flag on or off -- those rows are not decided by this flag",
+    "raw_rows": 276,
+    "unique_sentences": 272,
+    "label_totals_raw": {
+     "U": 120,
+     "B": 58,
+     "F": 94,
+     "N": 4
+    },
+    "label_totals_unique": {
+     "U": 118,
+     "B": 58,
+     "F": 92,
+     "N": 4
+    },
+    "kept_raw": {
+     "F": 13,
+     "B": 2,
+     "U": 0,
+     "N": 0
+    },
+    "kept_unique": {
+     "F": 13,
+     "B": 2,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_kept": {
+     "F": 13,
+     "B": 2,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_total": 227,
+    "kept_raw_total": 15,
+    "kept_unique_total": 15,
+    "facts": 138,
+    "facts_kept": 14,
+    "facts_kept_by_label": {
+     "F": 12,
+     "B": 2
+    },
+    "turns": 29,
+    "turns_answered": 11,
+    "kept_sentences": [
+     {
+      "turn": "h01",
+      "svo": [
+       "1962_asian_games",
+       "instance_of",
+       "asian_summer_games"
+      ],
+      "surface": "The 1962 Asian Games were an instance of the Asian Summer Games.",
+      "label": "F"
+     },
+     {
+      "turn": "h10",
+      "svo": [
+       "geography_of_adana",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The geography of Adana is an instance of a city work.",
+      "label": "F"
+     },
+     {
+      "turn": "h10",
+      "svo": [
+       "geography_of_adana",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "Geography of Adana is an instance of city work.",
+      "label": "F"
+     },
+     {
+      "turn": "h11",
+      "svo": [
+       "ha_noi_vietnam",
+       "described_by_source",
+       "armenian_soviet_encyclopedia"
+      ],
+      "surface": "Ha noi vietnam was described by source Armenian Soviet Encyclopedia.",
+      "label": "F"
+     },
+     {
+      "turn": "h11",
+      "svo": [
+       "hayastani_hanrapetut_yun",
+       "shares_border_with",
+       "persian_state_of_iran"
+      ],
+      "surface": "Hayastani Hanrapetut Yun shares border with Persian State of Iran.",
+      "label": "F"
+     },
+     {
+      "turn": "h12",
+      "svo": [
+       "history_of_ferrara",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The history of Ferrara is an instance of its city work.",
+      "label": "B"
+     },
+     {
+      "turn": "h12",
+      "svo": [
+       "history_of_ferrara",
+       "described_by_source",
+       "nordisk_familjebok"
+      ],
+      "surface": "The history of Ferrara was described by source Nordisk familjebok.",
+      "label": "F"
+     },
+     {
+      "turn": "h17",
+      "svo": [
+       "luk_cs_p_l",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Luk_cs_p_l is an instance of human_specie.",
+      "label": "F"
+     },
+     {
+      "turn": "h21",
+      "svo": [
+       "prefecture_of_nagasaki",
+       "located_in_time_zone",
+       "korea_standard_time"
+      ],
+      "surface": "The prefecture of Nagasaki is located in time zone Korea Standard Time.",
+      "label": "F"
+     },
+     {
+      "turn": "h22",
+      "svo": [
+       "rep_blica_del_paraguay",
+       "shares_border_with",
+       "republic_of_brazil"
+      ],
+      "surface": "Rep Blica del Paraguay shares border with the Republic of Brazil.",
+      "label": "F"
+     },
+     {
+      "turn": "h22",
+      "svo": [
+       "rep_blica_del_paraguay",
+       "member_of",
+       "united_nations"
+      ],
+      "surface": "Rep_blica_del_paraguay is a member of the United Nations.",
+      "label": "F"
+     },
+     {
+      "turn": "h23",
+      "svo": [
+       "s_te_france",
+       "instance_of",
+       "communes_in_france"
+      ],
+      "surface": "The S_Te_France instance_of communes_in_france.",
+      "label": "F"
+     },
+     {
+      "turn": "h26",
+      "svo": [
+       "the_weather_in_stavenger",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The weather in Stavenger is an instance of the city work.",
+      "label": "F"
+     },
+     {
+      "turn": "h27",
+      "svo": [
+       "federal_republic_of_germany",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "The federal republic of germany is located in time zone rome time.",
+      "label": "F"
+     },
+     {
+      "turn": "h28",
+      "svo": [
+       "waadt_canton_of",
+       "contains_administrative_territorial_enti",
+       "jura_nord_vaudois_district"
+      ],
+      "surface": "The waadt_canton_of contains administrative territorial enti in jura nord vaudois district.",
+      "label": "B"
+     }
+    ]
+   }
+  },
+  "102": {
+   "stock": {
+    "turns_with_unbuildable_claim_verifier": [
+     "h06",
+     "h14",
+     "h19",
+     "h29"
+    ],
+    "rows_in_those_turns": 40,
+    "note_unbuildable": "a gathered set with a role-permutation collision (e.g. a mutual shares_border_with pair) makes the claim verifier unbuildable; _verify_claim_set returns (None, None) and production falls back to the single-triple chat._verify, flag on or off -- those rows are not decided by this flag",
+    "raw_rows": 276,
+    "unique_sentences": 272,
+    "label_totals_raw": {
+     "U": 120,
+     "B": 58,
+     "F": 94,
+     "N": 4
+    },
+    "label_totals_unique": {
+     "U": 118,
+     "B": 58,
+     "F": 92,
+     "N": 4
+    },
+    "kept_raw": {
+     "F": 1,
+     "B": 0,
+     "U": 0,
+     "N": 0
+    },
+    "kept_unique": {
+     "F": 1,
+     "B": 0,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_kept": {
+     "F": 1,
+     "B": 0,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_total": 227,
+    "kept_raw_total": 1,
+    "kept_unique_total": 1,
+    "facts": 138,
+    "facts_kept": 1,
+    "facts_kept_by_label": {
+     "F": 1
+    },
+    "turns": 29,
+    "turns_answered": 1
+   },
+   "b2h": {
+    "turns_with_unbuildable_claim_verifier": [
+     "h06",
+     "h14",
+     "h19",
+     "h29"
+    ],
+    "rows_in_those_turns": 40,
+    "note_unbuildable": "a gathered set with a role-permutation collision (e.g. a mutual shares_border_with pair) makes the claim verifier unbuildable; _verify_claim_set returns (None, None) and production falls back to the single-triple chat._verify, flag on or off -- those rows are not decided by this flag",
+    "raw_rows": 276,
+    "unique_sentences": 272,
+    "label_totals_raw": {
+     "U": 120,
+     "B": 58,
+     "F": 94,
+     "N": 4
+    },
+    "label_totals_unique": {
+     "U": 118,
+     "B": 58,
+     "F": 92,
+     "N": 4
+    },
+    "kept_raw": {
+     "F": 13,
+     "B": 2,
+     "U": 0,
+     "N": 0
+    },
+    "kept_unique": {
+     "F": 13,
+     "B": 2,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_kept": {
+     "F": 13,
+     "B": 2,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_total": 227,
+    "kept_raw_total": 15,
+    "kept_unique_total": 15,
+    "facts": 138,
+    "facts_kept": 14,
+    "facts_kept_by_label": {
+     "F": 12,
+     "B": 2
+    },
+    "turns": 29,
+    "turns_answered": 11,
+    "kept_sentences": [
+     {
+      "turn": "h01",
+      "svo": [
+       "1962_asian_games",
+       "instance_of",
+       "asian_summer_games"
+      ],
+      "surface": "The 1962 Asian Games were an instance of the Asian Summer Games.",
+      "label": "F"
+     },
+     {
+      "turn": "h10",
+      "svo": [
+       "geography_of_adana",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The geography of Adana is an instance of a city work.",
+      "label": "F"
+     },
+     {
+      "turn": "h10",
+      "svo": [
+       "geography_of_adana",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "Geography of Adana is an instance of city work.",
+      "label": "F"
+     },
+     {
+      "turn": "h11",
+      "svo": [
+       "ha_noi_vietnam",
+       "described_by_source",
+       "armenian_soviet_encyclopedia"
+      ],
+      "surface": "Ha noi vietnam was described by source Armenian Soviet Encyclopedia.",
+      "label": "F"
+     },
+     {
+      "turn": "h11",
+      "svo": [
+       "hayastani_hanrapetut_yun",
+       "shares_border_with",
+       "persian_state_of_iran"
+      ],
+      "surface": "Hayastani Hanrapetut Yun shares border with Persian State of Iran.",
+      "label": "F"
+     },
+     {
+      "turn": "h12",
+      "svo": [
+       "history_of_ferrara",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The history of Ferrara is an instance of its city work.",
+      "label": "B"
+     },
+     {
+      "turn": "h12",
+      "svo": [
+       "history_of_ferrara",
+       "described_by_source",
+       "nordisk_familjebok"
+      ],
+      "surface": "The history of Ferrara was described by source Nordisk familjebok.",
+      "label": "F"
+     },
+     {
+      "turn": "h17",
+      "svo": [
+       "luk_cs_p_l",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Luk_cs_p_l is an instance of human_specie.",
+      "label": "F"
+     },
+     {
+      "turn": "h21",
+      "svo": [
+       "prefecture_of_nagasaki",
+       "located_in_time_zone",
+       "korea_standard_time"
+      ],
+      "surface": "The prefecture of Nagasaki is located in time zone Korea Standard Time.",
+      "label": "F"
+     },
+     {
+      "turn": "h22",
+      "svo": [
+       "rep_blica_del_paraguay",
+       "shares_border_with",
+       "republic_of_brazil"
+      ],
+      "surface": "Rep Blica del Paraguay shares border with the Republic of Brazil.",
+      "label": "F"
+     },
+     {
+      "turn": "h22",
+      "svo": [
+       "rep_blica_del_paraguay",
+       "member_of",
+       "united_nations"
+      ],
+      "surface": "Rep_blica_del_paraguay is a member of the United Nations.",
+      "label": "F"
+     },
+     {
+      "turn": "h23",
+      "svo": [
+       "s_te_france",
+       "instance_of",
+       "communes_in_france"
+      ],
+      "surface": "The S_Te_France instance_of communes_in_france.",
+      "label": "F"
+     },
+     {
+      "turn": "h26",
+      "svo": [
+       "the_weather_in_stavenger",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The weather in Stavenger is an instance of the city work.",
+      "label": "F"
+     },
+     {
+      "turn": "h27",
+      "svo": [
+       "federal_republic_of_germany",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "The federal republic of germany is located in time zone rome time.",
+      "label": "F"
+     },
+     {
+      "turn": "h28",
+      "svo": [
+       "waadt_canton_of",
+       "contains_administrative_territorial_enti",
+       "jura_nord_vaudois_district"
+      ],
+      "surface": "The waadt_canton_of contains administrative territorial enti in jura nord vaudois district.",
+      "label": "B"
+     }
+    ]
+   }
+  },
+  "1": {
+   "stock": {
+    "turns_with_unbuildable_claim_verifier": [
+     "h06",
+     "h14",
+     "h19",
+     "h29"
+    ],
+    "rows_in_those_turns": 40,
+    "note_unbuildable": "a gathered set with a role-permutation collision (e.g. a mutual shares_border_with pair) makes the claim verifier unbuildable; _verify_claim_set returns (None, None) and production falls back to the single-triple chat._verify, flag on or off -- those rows are not decided by this flag",
+    "raw_rows": 276,
+    "unique_sentences": 272,
+    "label_totals_raw": {
+     "U": 120,
+     "B": 58,
+     "F": 94,
+     "N": 4
+    },
+    "label_totals_unique": {
+     "U": 118,
+     "B": 58,
+     "F": 92,
+     "N": 4
+    },
+    "kept_raw": {
+     "F": 1,
+     "B": 0,
+     "U": 0,
+     "N": 0
+    },
+    "kept_unique": {
+     "F": 1,
+     "B": 0,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_kept": {
+     "F": 1,
+     "B": 0,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_total": 227,
+    "kept_raw_total": 1,
+    "kept_unique_total": 1,
+    "facts": 138,
+    "facts_kept": 1,
+    "facts_kept_by_label": {
+     "F": 1
+    },
+    "turns": 29,
+    "turns_answered": 1
+   },
+   "b2h": {
+    "turns_with_unbuildable_claim_verifier": [
+     "h06",
+     "h14",
+     "h19",
+     "h29"
+    ],
+    "rows_in_those_turns": 40,
+    "note_unbuildable": "a gathered set with a role-permutation collision (e.g. a mutual shares_border_with pair) makes the claim verifier unbuildable; _verify_claim_set returns (None, None) and production falls back to the single-triple chat._verify, flag on or off -- those rows are not decided by this flag",
+    "raw_rows": 276,
+    "unique_sentences": 272,
+    "label_totals_raw": {
+     "U": 120,
+     "B": 58,
+     "F": 94,
+     "N": 4
+    },
+    "label_totals_unique": {
+     "U": 118,
+     "B": 58,
+     "F": 92,
+     "N": 4
+    },
+    "kept_raw": {
+     "F": 13,
+     "B": 2,
+     "U": 0,
+     "N": 0
+    },
+    "kept_unique": {
+     "F": 13,
+     "B": 2,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_kept": {
+     "F": 13,
+     "B": 2,
+     "U": 0,
+     "N": 0
+    },
+    "distinct_svo_surface_total": 227,
+    "kept_raw_total": 15,
+    "kept_unique_total": 15,
+    "facts": 138,
+    "facts_kept": 14,
+    "facts_kept_by_label": {
+     "F": 12,
+     "B": 2
+    },
+    "turns": 29,
+    "turns_answered": 11,
+    "kept_sentences": [
+     {
+      "turn": "h01",
+      "svo": [
+       "1962_asian_games",
+       "instance_of",
+       "asian_summer_games"
+      ],
+      "surface": "The 1962 Asian Games were an instance of the Asian Summer Games.",
+      "label": "F"
+     },
+     {
+      "turn": "h10",
+      "svo": [
+       "geography_of_adana",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The geography of Adana is an instance of a city work.",
+      "label": "F"
+     },
+     {
+      "turn": "h10",
+      "svo": [
+       "geography_of_adana",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "Geography of Adana is an instance of city work.",
+      "label": "F"
+     },
+     {
+      "turn": "h11",
+      "svo": [
+       "ha_noi_vietnam",
+       "described_by_source",
+       "armenian_soviet_encyclopedia"
+      ],
+      "surface": "Ha noi vietnam was described by source Armenian Soviet Encyclopedia.",
+      "label": "F"
+     },
+     {
+      "turn": "h11",
+      "svo": [
+       "hayastani_hanrapetut_yun",
+       "shares_border_with",
+       "persian_state_of_iran"
+      ],
+      "surface": "Hayastani Hanrapetut Yun shares border with Persian State of Iran.",
+      "label": "F"
+     },
+     {
+      "turn": "h12",
+      "svo": [
+       "history_of_ferrara",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The history of Ferrara is an instance of its city work.",
+      "label": "B"
+     },
+     {
+      "turn": "h12",
+      "svo": [
+       "history_of_ferrara",
+       "described_by_source",
+       "nordisk_familjebok"
+      ],
+      "surface": "The history of Ferrara was described by source Nordisk familjebok.",
+      "label": "F"
+     },
+     {
+      "turn": "h17",
+      "svo": [
+       "luk_cs_p_l",
+       "instance_of",
+       "human_specie"
+      ],
+      "surface": "Luk_cs_p_l is an instance of human_specie.",
+      "label": "F"
+     },
+     {
+      "turn": "h21",
+      "svo": [
+       "prefecture_of_nagasaki",
+       "located_in_time_zone",
+       "korea_standard_time"
+      ],
+      "surface": "The prefecture of Nagasaki is located in time zone Korea Standard Time.",
+      "label": "F"
+     },
+     {
+      "turn": "h22",
+      "svo": [
+       "rep_blica_del_paraguay",
+       "shares_border_with",
+       "republic_of_brazil"
+      ],
+      "surface": "Rep Blica del Paraguay shares border with the Republic of Brazil.",
+      "label": "F"
+     },
+     {
+      "turn": "h22",
+      "svo": [
+       "rep_blica_del_paraguay",
+       "member_of",
+       "united_nations"
+      ],
+      "surface": "Rep_blica_del_paraguay is a member of the United Nations.",
+      "label": "F"
+     },
+     {
+      "turn": "h23",
+      "svo": [
+       "s_te_france",
+       "instance_of",
+       "communes_in_france"
+      ],
+      "surface": "The S_Te_France instance_of communes_in_france.",
+      "label": "F"
+     },
+     {
+      "turn": "h26",
+      "svo": [
+       "the_weather_in_stavenger",
+       "instance_of",
+       "city_work"
+      ],
+      "surface": "The weather in Stavenger is an instance of the city work.",
+      "label": "F"
+     },
+     {
+      "turn": "h27",
+      "svo": [
+       "federal_republic_of_germany",
+       "located_in_time_zone",
+       "rome_time"
+      ],
+      "surface": "The federal republic of germany is located in time zone rome time.",
+      "label": "F"
+     },
+     {
+      "turn": "h28",
+      "svo": [
+       "waadt_canton_of",
+       "contains_administrative_territorial_enti",
+       "jura_nord_vaudois_district"
+      ],
+      "surface": "The waadt_canton_of contains administrative territorial enti in jura nord vaudois district.",
+      "label": "B"
+     }
+    ]
+   }
+  }
+ },
+ "unsupported_kept": [],
+ "bar_zero_unsupported_kept": true
+}

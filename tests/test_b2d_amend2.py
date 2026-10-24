@@ -148,6 +148,112 @@ def test_probe_arms_and_turns():
     assert table["a2_c3_q"][2:] == ("a2_c3", False, None, True)
 
 
+# ── 3b. the arm's memory plan (infra only: nothing here changes a reply) ─────────────────────────────────────────
+# The 2026-10-14 arm at the P2 export (8a969e7) never finished: that revision loads one private copy of the imported
+# knowledge store per conversation (wikidata_100k: 78,857 one-per-fact bridges, ~5.4 GiB), the arm opens one
+# conversation per candidate, and the old memcap's MemoryHigh then throttled every allocation (research/FAILURE_LOG.md
+# 2026-10-17). The server now shares one store per process; the probe refuses to start without it.
+_SHARED_ENV = ("BRAIN_SHARED_LTM", "BRAIN_LTM_RNG_ISOLATE", "BRAIN_LTM_CODEBOOK_CACHE", "BRAIN_LTM_DECODE_ESCALATION",
+               "BRAIN_LTM_SUBSTRATE_STORE", "BRAIN_BATCHED_SUBSTRATE_SCAN", "BRAIN_SHARD_SPARSE_INDEX",
+               "BRAIN_METACOG_SPIKING_MARGIN", "BRAIN_ONE_BRAIN", PR.PRIVATE_LTM_OK_ENV)
+
+
+def _server_tree(tmp_path, body):
+    (tmp_path / "webapp").mkdir()
+    (tmp_path / "webapp" / "server.py").write_text(body)
+    return str(tmp_path)
+
+
+def test_preflight_passes_on_this_checkout_and_reads_the_server_source():
+    assert PR.preflight_problems(environ={}) == []
+    assert S._SHARED_LTM_DEFAULT_ON is True      # what the source read above stands for
+
+
+def test_preflight_refuses_a_revision_without_the_shared_store(tmp_path):
+    for i, body in enumerate(("X = 1\n", "_SHARED_LTM_DEFAULT_ON = False\n", "_SHARED_LTM_DEFAULT_ON = _flag()\n",
+                              "def f(:\n")):                  # absent, off, not a literal, unparseable
+        root = tmp_path / ("rev%d" % i)
+        root.mkdir()
+        why = PR.preflight_problems(root=_server_tree(root, body), environ={})
+        assert len(why) == 1 and "absent or off in this revision" in why[0], (body, why)
+    root = tmp_path / "ok"
+    root.mkdir()
+    assert PR.preflight_problems(root=_server_tree(root, "_SHARED_LTM_DEFAULT_ON = True\n"), environ={}) == []
+    assert PR.preflight_problems(root=str(tmp_path / "no_such_tree"), environ={})       # no server source at all
+
+
+def test_preflight_reads_the_sharing_escape_like_the_server_does(tmp_path):
+    off = tmp_path / "off"
+    off.mkdir()
+    root = _server_tree(off, "_SHARED_LTM_DEFAULT_ON = False\n")
+    for v in ("1", "true", "ON", " yes "):                   # the server's own truthy set turns it on, whatever the default
+        assert PR.preflight_problems(root=root, environ={"BRAIN_SHARED_LTM": v}) == []
+    for v in ("0", "false", "off", "no", "2"):
+        why = PR.preflight_problems(environ={"BRAIN_SHARED_LTM": v})                    # this checkout's default is on
+        assert len(why) == 1 and "turns the process-shared knowledge store off" in why[0]
+    assert PR.preflight_problems(environ={"BRAIN_SHARED_LTM": "  "}) == []              # blank = unset = the default
+
+
+def test_main_refuses_before_any_brain_work_and_the_escape_is_explicit(tmp_path, monkeypatch, capsys):
+    import research.runners.onebrain_regression_battery as B
+    for k in _SHARED_ENV:
+        monkeypatch.delenv(k, raising=False)
+    calls = []
+    monkeypatch.setattr(B, "_collect_worker", lambda *a, **k: calls.append(a) or 3)
+    argv = ["--arm", "route", "--seed", "1", "--pin", PIN, "--out", str(tmp_path / "o.json")]
+    monkeypatch.setenv("BRAIN_SHARED_LTM", "0")
+    assert PR.main(argv) == 4 and calls == []
+    assert "REFUSED" in capsys.readouterr().err
+    monkeypatch.setenv(PR.PRIVATE_LTM_OK_ENV, "1")            # dev escape: measuring the old behaviour on purpose
+    assert PR.main(argv) == 3 and len(calls) == 1             # reached the (stubbed) worker, and returned its rc
+    monkeypatch.delenv("BRAIN_SHARED_LTM")
+    monkeypatch.delenv(PR.PRIVATE_LTM_OK_ENV)
+    calls.clear()
+    assert PR.main(argv) == 3 and len(calls) == 1             # the checked-out default passes with no escape
+
+
+def test_one_arm_loads_the_knowledge_store_once_and_recall_builds_no_new_bridge(tmp_path, monkeypatch):
+    """The arm's real conversation count (one per candidate) against a real, tiny, persisted store: only the first
+    conversation builds bridges (one per fact), the others build none, and repeated recall through any view builds
+    none either (no per-turn bridge rebuild)."""
+    import sim.bridge as SB
+    from research.runners.sharded_phasor_store import ShardedPhasorStore
+    for k in _SHARED_ENV:
+        monkeypatch.delenv(k, raising=False)
+    monkeypatch.setattr(S, "_SHARED_LTM", {})
+    vocab = ["dog", "go", "north", "cat", "run", "south", "river", "look", "apple", "bird", "eat", "seed"]
+    facts = [("dog", "go", "north"), ("cat", "run", "south"), ("river", "look", "apple"), ("bird", "eat", "seed")]
+    st = ShardedPhasorStore(n_shards=2, seed=42, D=64, period=200, vocab=list(vocab), enable_substrate_store=True,
+                            enable_batched_substrate_scan=True, enable_codebook_cache=True,
+                            enable_decode_escalation=True)
+    for a, v, p in facts:
+        st.store(a, v, p, polarity="AFFIRM")
+    bundle = tmp_path / "bundle"
+    st.save(str(bundle))
+    built = []
+    orig = SB.SimulationBridge.__init__
+
+    def counted(self, *a, **k):
+        built.append(1)
+        return orig(self, *a, **k)
+    monkeypatch.setattr(SB.SimulationBridge, "__init__", counted)
+    n0, views, marks = len(built), [], []
+    for _ in PR.CANDIDATES:
+        views.append(S._ltm_store_for_conversation(str(bundle), seed=7))
+        marks.append(len(built))
+    assert marks[0] - n0 >= len(facts)                                    # the one load: a bridge per stored fact
+    assert marks[1:] == [marks[0]] * (len(PR.CANDIDATES) - 1)             # every later conversation: none
+    assert len({id(v.shared_store) for v in views}) == 1
+    for _ in range(2):                                                    # warm every lazily built, cached scan bridge
+        for a, v, _p in facts:
+            views[0].query_patient(a, v)
+    warm = len(built)
+    for i in range(24):
+        a, v, _p = facts[i % len(facts)]
+        views[i % len(views)].query_patient(a, v)
+    assert len(built) == warm
+
+
 def test_prompt_capture_is_transparent_and_split_by_counts():
     class F:
         def _generate(self, user_msg, seed=None):

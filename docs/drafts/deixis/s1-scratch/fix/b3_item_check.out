@@ -1,0 +1,40 @@
+'you are a brain that feels pain' -> ('brain', 'feels', 'pain', 'AFFIRM')
+'your brain feels pain' -> ('brain', 'feels', 'pain', 'AFFIRM')
+'you are a brain that loves jazz' -> ('brain', 'loves', 'jazz', 'AFFIRM')
+'the brain feels pain' -> ('brain', 'feels', 'pain', 'AFFIRM')
+'the brain feels joy' -> ('brain', 'feels', 'joy', 'AFFIRM')
+'brain likes jazz' -> ('brain', 'likes', 'jazz', 'AFFIRM')
+'jazz bores the brain' -> ('jazz', 'bores', 'brain', 'AFFIRM')
+'my brain likes jazz' -> ('brain', 'likes', 'jazz', 'AFFIRM')
+'you and the brain like jazz' -> ('brain', 'like', 'jazz', 'AFFIRM')
+'brain is conscious' -> None
+'you are a brain made of spikes' -> ('brain', 'made', 'spikes', 'AFFIRM')
+'a wolf attacks you' -> None
+'a wolf bites your arm' -> ('wolf', 'bites', 'arm', 'AFFIRM')
+'the storm scares your cat' -> ('storm', 'scares', 'cat', 'AFFIRM')
+'kofi: "i hate jazz"' -> ('kofi', 'hate', 'jazz', 'AFFIRM')
+'this is kofi, i like jazz' -> ('kofi', 'like', 'jazz', 'AFFIRM')
+'kofi said i hate jazz' -> None
+'i am the brain' -> None
+'the former likes jazz' -> ('former', 'likes', 'jazz', 'AFFIRM')
+'the latter married fenna' -> ('latter', 'married', 'fenna', 'AFFIRM')
+'that guy likes jazz' -> ('guy', 'likes', 'jazz', 'AFFIRM')
+'this one likes jazz' -> ('one', 'likes', 'jazz', 'AFFIRM')
+'a dog has a brain' -> ('dog', 'has', 'brain', 'AFFIRM')
+'kofi owns a mine' -> ('kofi', 'owns', 'mine', 'AFFIRM')
+'kofi and fenna were friends' -> ('kofi', 'fenna', 'friends', 'AFFIRM')
+'the dog chases a cat' -> ('dog', 'chases', 'cat', 'AFFIRM')
+'fenna does not like jazz' -> ('fenna', 'like', 'jazz', 'NEGATE')
+'kofi chases the cat' -> ('kofi', 'chases', 'cat', 'AFFIRM')
+'its tail likes fish' -> ('tail', 'likes', 'fish', 'AFFIRM')
+'kofi likes those' -> None
+'kofi and dalia study at dunmere' -> None
+'mine likes jazz' -> ('mine', 'likes', 'jazz', 'AFFIRM')
+'the brain likes jazz' -> ('brain', 'likes', 'jazz', 'AFFIRM')
+'kofi said that fenna likes jazz' -> None
+'the dog chases that cat' -> ('dog', 'chases', 'cat', 'AFFIRM')
+'he leaves the room' -> None
+'you put the marble in the basket' -> ('put', 'marble', 'basket', 'AFFIRM')
+'ya chases cat' -> ('ya', 'chases', 'cat', 'AFFIRM')
+'u like jazz' -> ('u', 'like', 'jazz', 'AFFIRM')
+'kofi visits us' -> None

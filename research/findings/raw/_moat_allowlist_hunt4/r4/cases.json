@@ -1,0 +1,2501 @@
+[
+ {
+  "id": "R4-CT01",
+  "gathered": [
+   [
+    "joseph_alois_ratzinger",
+    "member_of",
+    "academia_scientiarum_et_artium_europaea"
+   ]
+  ],
+  "sentence": "Joseph Alois Ratzinger is a member of Academia Scientiarum et Artium Europaea no longer.",
+  "expect": "U",
+  "class": "cap_tail_fold",
+  "why": "'no longer' denies current membership; the 39-char slug absorbs the tail under the 40-char cut"
+ },
+ {
+  "id": "R4-CT02",
+  "gathered": [
+   [
+    "joseph_alois_ratzinger",
+    "member_of",
+    "academia_scientiarum_et_artium_europaea"
+   ],
+   [
+    "academia_scientiarum_et_artium_europaea",
+    "headquarters_location",
+    "historic_centre_of_salzburg"
+   ]
+  ],
+  "sentence": "Joseph Alois Ratzinger is a member of Academia Scientiarum et Artium Europaea's expulsion list.",
+  "expect": "U",
+  "class": "cap_tail_fold",
+  "why": "asserts he is on the academy's expulsion list, not that he is a member of the academy"
+ },
+ {
+  "id": "R4-CT03",
+  "gathered": [
+   [
+    "2004_summer_paralympic_games",
+    "follows",
+    "sydney_paralyampic_organising_committee"
+   ]
+  ],
+  "sentence": "2004 Summer Paralympic Games follows Sydney Paralyampic Organising Committee's collapse.",
+  "expect": "U",
+  "class": "cap_tail_fold",
+  "why": "asserts an extra event (the committee's collapse) and makes it the thing followed"
+ },
+ {
+  "id": "R4-CT04",
+  "gathered": [
+   [
+    "independent_spd",
+    "follows",
+    "sozialdemokratische_partei_deutschlands"
+   ]
+  ],
+  "sentence": "Independent SPD follows Sozialdemokratische Partei Deutschlands der DDR.",
+  "expect": "U",
+  "class": "cap_tail_fold",
+  "why": "the SPD of the GDR is a different party from the gathered SPD"
+ },
+ {
+  "id": "R4-CT05",
+  "gathered": [
+   [
+    "rally_for_the_republic",
+    "follows",
+    "union_des_democrates_pour_la_republique"
+   ]
+  ],
+  "sentence": "Rally for the Republic follows Union des Democrates pour la Republique, but only in name.",
+  "expect": "U",
+  "class": "cap_tail_fold",
+  "why": "hedged ('only in name'); the comma and tail fold away inside a sanitized 39-char span"
+ },
+ {
+  "id": "R4-CT06",
+  "gathered": [
+   [
+    "leningrad_state_choreographic_institute",
+    "part_of",
+    "ballet_portal"
+   ]
+  ],
+  "sentence": "Leningrad State Choreographic Institute's rival school is part of Ballet Portal.",
+  "expect": "U",
+  "class": "cap_tail_fold",
+  "why": "subject is the institute's rival school, not the institute (SUBJ-side tail)"
+ },
+ {
+  "id": "R4-CT07",
+  "gathered": [
+   [
+    "university_of_north_carolina_chapel_hill",
+    "member_of",
+    "midwest_inter_library_center"
+   ],
+   [
+    "university_of_north_carolina_chapel_hill",
+    "part_of",
+    "u_north_carolina"
+   ]
+  ],
+  "sentence": "University of North Carolina Chapel Hill's rival is a member of Midwest Inter Library Center.",
+  "expect": "U",
+  "class": "cap_tail_fold",
+  "why": "subject is the university's rival (40-char slug, possessive tail cut off)"
+ },
+ {
+  "id": "R4-CT08",
+  "gathered": [
+   [
+    "university_of_north_carolina_chapel_hill",
+    "part_of",
+    "u_north_carolina"
+   ]
+  ],
+  "sentence": "University of North Carolina Chapel Hill Medical School is part of U North Carolina.",
+  "expect": "U",
+  "class": "cap_tail_fold",
+  "why": "subject is a different entity (its medical school); not gathered"
+ },
+ {
+  "id": "R4-CT09",
+  "gathered": [
+   [
+    "alberta_provincial_electoral_districts",
+    "subclass_of",
+    "canadian_provincial_electoral_districts"
+   ]
+  ],
+  "sentence": "Alberta provincial electoral districts is a subclass of Canadian provincial electoral districts abolished in 1905.",
+  "expect": "U",
+  "class": "cap_tail_fold",
+  "why": "extra claim: the superclass districts were abolished in 1905"
+ },
+ {
+  "id": "R4-CT10",
+  "gathered": [
+   [
+    "glamoc",
+    "instance_of",
+    "municipalities_of_bosnia_and_herzegovina"
+   ]
+  ],
+  "sentence": "Glamoc is an instance of municipalities of Bosnia and Herzegovina that no longer exist.",
+  "expect": "U",
+  "class": "cap_tail_fold",
+  "why": "extra claim that the municipality class no longer exists"
+ },
+ {
+  "id": "R4-CT11",
+  "gathered": [
+   [
+    "multilateral_investment_guarantee_agency",
+    "instance_of",
+    "global_organization"
+   ]
+  ],
+  "sentence": "Multilateral Investment Guarantee Agency's defunct predecessor is an instance of global organization.",
+  "expect": "U",
+  "class": "cap_tail_fold",
+  "why": "subject is a (claimed) defunct predecessor, not the agency"
+ },
+ {
+  "id": "R4-CT12",
+  "gathered": [
+   [
+    "senegal_national_football_team",
+    "participant_of",
+    "2002_fifa_world_cup_hosting_controversy"
+   ]
+  ],
+  "sentence": "Senegal National Football Team is a participant of 2002 FIFA World Cup hosting controversy only as a spectator.",
+  "expect": "U",
+  "class": "cap_tail_fold",
+  "why": "'only as a spectator' contradicts participation"
+ },
+ {
+  "id": "R4-CT13",
+  "gathered": [
+   [
+    "1989_fis_nordic_world_ski_championships",
+    "followed_by",
+    "1991_fis_nordic_world_ski_championships"
+   ]
+  ],
+  "sentence": "1989 FIS Nordic World Ski Championships junior edition is followed by 1991 FIS Nordic World Ski Championships.",
+  "expect": "U",
+  "class": "cap_tail_fold",
+  "why": "subject is a junior edition, a different event"
+ },
+ {
+  "id": "R4-CT14",
+  "gathered": [
+   [
+    "sydney_paralyampic_organising_committee",
+    "follows",
+    "atlanta_paralympics"
+   ]
+  ],
+  "sentence": "Sydney Paralyampic Organising Committee chairman follows Atlanta Paralympics.",
+  "expect": "U",
+  "class": "cap_tail_fold",
+  "why": "subject is the committee chairman (a person), and 'follows' then reads as tracking/pursuing"
+ },
+ {
+  "id": "R4-CT15",
+  "gathered": [
+   [
+    "kongelige_danske_videnskabernes_selskab",
+    "instance_of",
+    "academies_of_science"
+   ]
+  ],
+  "sentence": "Kongelige Danske Videnskabernes Selskab's ex-president is an instance of academies of science.",
+  "expect": "U",
+  "class": "cap_tail_fold",
+  "why": "subject is a former president (a person), not the academy"
+ },
+ {
+  "id": "R4-CT16",
+  "gathered": [
+   [
+    "western_australian_electoral_commission",
+    "subclass_of",
+    "election_district"
+   ]
+  ],
+  "sentence": "Western Australian Electoral Commission, which was abolished, is a subclass of election district.",
+  "expect": "U",
+  "class": "cap_tail_fold",
+  "why": "relative clause adds an unsupported claim (abolished); commas fold inside the span"
+ },
+ {
+  "id": "R4-CT17",
+  "gathered": [
+   [
+    "encyclopedia_britannica_eleventh_edition",
+    "instance_of",
+    "published_edition"
+   ]
+  ],
+  "sentence": "Encyclopedia Britannica Eleventh Edition supplement is an instance of published edition.",
+  "expect": "U",
+  "class": "cap_tail_fold",
+  "why": "subject is a supplement, a different work"
+ },
+ {
+  "id": "R4-CT18",
+  "gathered": [
+   [
+    "vimu_vend_su",
+    "award_received",
+    "order_of_merit_of_north_rhine_westphalia"
+   ]
+  ],
+  "sentence": "Vimu Vend Su received Order of Merit of North Rhine Westphalia nomination.",
+  "expect": "U",
+  "class": "cap_tail_fold",
+  "why": "received a nomination, not the award"
+ },
+ {
+  "id": "R4-CT19",
+  "gathered": [
+   [
+    "state_observatory_heidelberg_konigstuhl",
+    "instance_of",
+    "weather_observation_station"
+   ]
+  ],
+  "sentence": "State Observatory Heidelberg Konigstuhl annex is an instance of weather observation station.",
+  "expect": "U",
+  "class": "cap_tail_fold",
+  "why": "subject is an annex, a different entity"
+ },
+ {
+  "id": "R4-AC01",
+  "gathered": [
+   [
+    "d_major",
+    "follows",
+    "g_major"
+   ]
+  ],
+  "sentence": "D♭ major follows G major.",
+  "expect": "U",
+  "class": "accidental_sign_fold",
+  "why": "D-flat major is a different key from D major"
+ },
+ {
+  "id": "R4-AC02",
+  "gathered": [
+   [
+    "d_major",
+    "follows",
+    "g_major"
+   ],
+   [
+    "d_major",
+    "followed_by",
+    "d_sharp_major"
+   ]
+  ],
+  "sentence": "D# major follows G major.",
+  "expect": "U",
+  "class": "accidental_sign_fold",
+  "why": "D-sharp major (ASCII #) is a different key; d_sharp_major is gathered only as D major's successor"
+ },
+ {
+  "id": "R4-AC03",
+  "gathered": [
+   [
+    "d_major",
+    "follows",
+    "g_major"
+   ]
+  ],
+  "sentence": "D major follows G♯ major.",
+  "expect": "U",
+  "class": "accidental_sign_fold",
+  "why": "G-sharp major is not G major (OBJ side)"
+ },
+ {
+  "id": "R4-AC04",
+  "gathered": [
+   [
+    "g_minor",
+    "follows",
+    "c_minor"
+   ]
+  ],
+  "sentence": "G minor follows C# minor.",
+  "expect": "U",
+  "class": "accidental_sign_fold",
+  "why": "C-sharp minor is not C minor"
+ },
+ {
+  "id": "R4-AC05",
+  "gathered": [
+   [
+    "f_minor",
+    "follows",
+    "e_minor"
+   ]
+  ],
+  "sentence": "F# minor follows E minor.",
+  "expect": "U",
+  "class": "accidental_sign_fold",
+  "why": "F-sharp minor is not F minor (the natural LLM spelling of F-sharp)"
+ },
+ {
+  "id": "R4-AC06",
+  "gathered": [
+   [
+    "e_minor",
+    "followed_by",
+    "f_minor"
+   ]
+  ],
+  "sentence": "E minor is followed by F♯ minor.",
+  "expect": "U",
+  "class": "accidental_sign_fold",
+  "why": "F-sharp minor is not F minor"
+ },
+ {
+  "id": "R4-AC07",
+  "gathered": [
+   [
+    "c_minor",
+    "followed_by",
+    "e_minor"
+   ]
+  ],
+  "sentence": "C minor is followed by E♭ minor.",
+  "expect": "U",
+  "class": "accidental_sign_fold",
+  "why": "E-flat minor is not E minor"
+ },
+ {
+  "id": "R4-AC08",
+  "gathered": [
+   [
+    "g_major",
+    "followed_by",
+    "d_major"
+   ]
+  ],
+  "sentence": "G♭ major is followed by D major.",
+  "expect": "U",
+  "class": "accidental_sign_fold",
+  "why": "G-flat major is not G major (SUBJ side)"
+ },
+ {
+  "id": "R4-HG01",
+  "gathered": [
+   [
+    "x_commonwealth_games",
+    "follows",
+    "ix_commonwealth_games"
+   ]
+  ],
+  "sentence": "XІ Commonwealth Games follows IX Commonwealth Games.",
+  "expect": "U",
+  "class": "homoglyph_entity_swap",
+  "why": "reader sees 'XI' (Cyrillic I, U+0406): XI follows X, not IX; slug fold gives x_commonwealth_games"
+ },
+ {
+  "id": "R4-HG02",
+  "gathered": [
+   [
+    "ix_commonwealth_games",
+    "followed_by",
+    "x_commonwealth_games"
+   ]
+  ],
+  "sentence": "IX Commonwealth Games is followed by XⅠ Commonwealth Games.",
+  "expect": "U",
+  "class": "homoglyph_entity_swap",
+  "why": "reader sees 'XI' (Roman numeral one U+2160); IX is followed by X, not XI"
+ },
+ {
+  "id": "R4-HG03",
+  "gathered": [
+   [
+    "vi_olympic_winter_games",
+    "follows",
+    "vth_olympic_winter_games"
+   ]
+  ],
+  "sentence": "ХVI Olympic Winter Games follows Vth Olympic Winter Games.",
+  "expect": "U",
+  "class": "homoglyph_entity_swap",
+  "why": "reader sees 'XVI' (Cyrillic Kha U+0425); XVI does not follow the Vth games"
+ },
+ {
+  "id": "R4-HG04",
+  "gathered": [
+   [
+    "vii_pan_american_games",
+    "followed_by",
+    "viii_pan_american_games"
+   ]
+  ],
+  "sentence": "ⅩVII Pan American Games is followed by VIII Pan American Games.",
+  "expect": "U",
+  "class": "homoglyph_entity_swap",
+  "why": "reader sees 'XVII' (Roman numeral ten U+2169); XVII is not followed by VIII"
+ },
+ {
+  "id": "R4-HG05",
+  "gathered": [
+   [
+    "viii_commonwealth_games",
+    "followed_by",
+    "ix_commonwealth_games"
+   ]
+  ],
+  "sentence": "ХVIII Commonwealth Games is followed by IX Commonwealth Games.",
+  "expect": "U",
+  "class": "homoglyph_entity_swap",
+  "why": "reader sees 'XVIII'; XVIII is not followed by IX"
+ },
+ {
+  "id": "R4-HG06",
+  "gathered": [
+   [
+    "vi_olympic_winter_games",
+    "follows",
+    "vth_olympic_winter_games"
+   ]
+  ],
+  "sentence": "VI Olympic Winter Games follows ХVth Olympic Winter Games.",
+  "expect": "U",
+  "class": "homoglyph_entity_swap",
+  "why": "reader sees 'XVth' on the OBJ side; VI does not follow XV"
+ },
+ {
+  "id": "R4-HG07",
+  "gathered": [
+   [
+    "stra_aros",
+    "instance_of",
+    "urban_areas_of_sweden"
+   ]
+  ],
+  "sentence": "Ѵästra Aros is an instance of urban areas of Sweden.",
+  "expect": "U",
+  "class": "homoglyph_entity_swap",
+  "why": "reader sees 'Västra Aros' (Izhitsa U+0474 looks like V), a different town from Östra Aros (stra_aros); Västra Aros is not in the gathered set"
+ },
+ {
+  "id": "R4-HG08",
+  "gathered": [
+   [
+    "vi_olympic_winter_games",
+    "follows",
+    "vth_olympic_winter_games"
+   ]
+  ],
+  "sentence": "ＸVI Olympic Winter Games follows Vth Olympic Winter Games.",
+  "expect": "U",
+  "class": "homoglyph_entity_swap",
+  "why": "reader sees 'XVI' (full-width X U+FF38)"
+ },
+ {
+  "id": "R4-DG01",
+  "gathered": [
+   [
+    "eurovision_song_contest",
+    "subclass_of",
+    "scripted_television"
+   ]
+  ],
+  "sentence": "１９８１ Eurovision Song Contest is a subclass of scripted television.",
+  "expect": "U",
+  "class": "nonascii_digit_erasure",
+  "why": "the 1981 contest (one event) is not what is gathered; an event is not a subclass"
+ },
+ {
+  "id": "R4-DG02",
+  "gathered": [
+   [
+    "eurovision_song_contest",
+    "subclass_of",
+    "scripted_television"
+   ]
+  ],
+  "sentence": "Eurovision Song Contest ٢٠٠١ is a subclass of scripted television.",
+  "expect": "U",
+  "class": "nonascii_digit_erasure",
+  "why": "the 2001 contest in Arabic-Indic digits; a single edition, not the series"
+ },
+ {
+  "id": "R4-DG03",
+  "gathered": [
+   [
+    "giro_d_italia",
+    "subclass_of",
+    "stage_race"
+   ]
+  ],
+  "sentence": "Giro d'Italia ２０１４ is a subclass of stage race.",
+  "expect": "U",
+  "class": "nonascii_digit_erasure",
+  "why": "the 2014 edition (full-width digits) is an instance, not the gathered series"
+ },
+ {
+  "id": "R4-DG04",
+  "gathered": [
+   [
+    "giro_d_italia",
+    "subclass_of",
+    "stage_race"
+   ]
+  ],
+  "sentence": "Giro d'Italia २०१७ is a subclass of stage race.",
+  "expect": "U",
+  "class": "nonascii_digit_erasure",
+  "why": "the 2017 edition in Devanagari digits"
+ },
+ {
+  "id": "R4-S2F01",
+  "gathered": [
+   [
+    "d_major",
+    "follows",
+    "g_major"
+   ]
+  ],
+  "sentence": "D major follows G major and G♯ major.",
+  "expect": "U",
+  "class": "shape2_fold_duplicate",
+  "why": "second conjunct is G-sharp major; both conjuncts fold to g_major"
+ },
+ {
+  "id": "R4-S2F02",
+  "gathered": [
+   [
+    "independent_spd",
+    "follows",
+    "sozialdemokratische_partei_deutschlands"
+   ]
+  ],
+  "sentence": "Independent SPD follows Sozialdemokratische Partei Deutschlands and Sozialdemokratische Partei Deutschlands der DDR.",
+  "expect": "U",
+  "class": "shape2_fold_duplicate",
+  "why": "second conjunct is the GDR party; both fold to the 39-char SPD slug"
+ },
+ {
+  "id": "R4-S2F03",
+  "gathered": [
+   [
+    "vi_olympic_winter_games",
+    "follows",
+    "vth_olympic_winter_games"
+   ]
+  ],
+  "sentence": "VI Olympic Winter Games follows Vth Olympic Winter Games and ХVth Olympic Winter Games.",
+  "expect": "U",
+  "class": "shape2_fold_duplicate",
+  "why": "second conjunct reads 'XVth' (Cyrillic X); VI does not follow XV"
+ },
+ {
+  "id": "R4-S2F04",
+  "gathered": [
+   [
+    "f_minor",
+    "follows",
+    "e_minor"
+   ]
+  ],
+  "sentence": "F minor follows E minor, E♭ minor and E# minor.",
+  "expect": "U",
+  "class": "shape2_fold_duplicate",
+  "why": "three conjuncts, two of them different keys; all fold to e_minor"
+ },
+ {
+  "id": "R4-VD01",
+  "gathered": [
+   [
+    "portmanteau_film",
+    "subclass_of",
+    "theatrical_film"
+   ]
+  ],
+  "sentence": "Portmanteau film subclasses theatrical film.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "'to subclass' = to derive a subclass from: says theatrical film is derived from portmanteau film (reversed)"
+ },
+ {
+  "id": "R4-VD02",
+  "gathered": [
+   [
+    "motor_ships",
+    "subclass_of",
+    "wooden_ship"
+   ]
+  ],
+  "sentence": "Motor ships subclassed wooden ship.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "past-tense 'subclassed' = created a subclass of wooden ship; reversed and an event"
+ },
+ {
+  "id": "R4-VD03",
+  "gathered": [
+   [
+    "agglutinative_language",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ]
+  ],
+  "sentence": "Agglutinative language describes Armenian Soviet Encyclopedia.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "'describes' reverses roles: the encyclopedia describes the language, not the other way round"
+ },
+ {
+  "id": "R4-VD04",
+  "gathered": [
+   [
+    "frank_lincoln_wright",
+    "educated_at",
+    "university_of_wisconsin_madison"
+   ]
+  ],
+  "sentence": "Frank Lincoln Wright educates at University of Wisconsin Madison.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "'educates at' = teaches there; the triple says he was a student there"
+ },
+ {
+  "id": "R4-VD05",
+  "gathered": [
+   [
+    "palm_beach_county_fl",
+    "named_after",
+    "palm_beach_florida"
+   ]
+  ],
+  "sentence": "Palm Beach County FL names Palm Beach Florida.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "'names' = gives a name to / mentions; reverses the naming direction"
+ },
+ {
+  "id": "R4-VD06",
+  "gathered": [
+   [
+    "brendan_gleeson",
+    "award_received",
+    "regional_emmy"
+   ]
+  ],
+  "sentence": "Brendan Gleeson awards Regional Emmy.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "'awards' = he gives the award; the triple says he received it"
+ },
+ {
+  "id": "R4-VD07",
+  "gathered": [
+   [
+    "mutaib_bin_abdul_aziz",
+    "father",
+    "king_abdulaziz"
+   ]
+  ],
+  "sentence": "Mutaib bin Abdul Aziz fathers King Abdulaziz.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "'fathers' = begets: says Mutaib is the father of the king (reversed); round 3 used only 'fathered'"
+ },
+ {
+  "id": "R4-VD08",
+  "gathered": [
+   [
+    "bomber_men",
+    "platform",
+    "world_of_spectrum"
+   ]
+  ],
+  "sentence": "Bomber Men platforms World of Spectrum.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "'to platform' = give a platform to: the game would host the computer (reversed)"
+ },
+ {
+  "id": "R4-VD09",
+  "gathered": [
+   [
+    "keith_jarrett",
+    "record_label",
+    "atlantic_jazz"
+   ]
+  ],
+  "sentence": "Keith Jarrett labels Atlantic Jazz.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "'labels' = puts a label on / categorises Atlantic Jazz; not 'his record label is'"
+ },
+ {
+  "id": "R4-VD10",
+  "gathered": [
+   [
+    "cornrow_kenny",
+    "record_label",
+    "interscope_records"
+   ]
+  ],
+  "sentence": "Cornrow Kenny recorded Interscope Records.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "'recorded' = made a recording of the company; round 3 used only 'records'"
+ },
+ {
+  "id": "R4-VD11",
+  "gathered": [
+   [
+    "depressaria",
+    "taxon_rank",
+    "generic_epithet"
+   ]
+  ],
+  "sentence": "Depressaria ranks generic epithet.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "transitive 'ranks' = Depressaria assigns a rank to / orders the generic epithet"
+ },
+ {
+  "id": "R4-VD12",
+  "gathered": [
+   [
+    "aloe_plant",
+    "taxon_rank",
+    "generic_epithet"
+   ]
+  ],
+  "sentence": "Aloe plant ranked generic epithet.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "past transitive 'ranked': the plant rated something; not its taxon rank"
+ },
+ {
+  "id": "R4-VD13",
+  "gathered": [
+   [
+    "donald_pleasance",
+    "military_branch",
+    "royal_air_force"
+   ]
+  ],
+  "sentence": "Donald Pleasance branches Royal Air Force.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "'branches' (-es reading of 'branch') = splits/forks the RAF"
+ },
+ {
+  "id": "R4-VD14",
+  "gathered": [
+   [
+    "linzer_ask",
+    "headquarters_location",
+    "linz_an_der_donau"
+   ]
+  ],
+  "sentence": "Linzer ASK headquarters Linz an der Donau.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "transitive 'to headquarter' = to provide with headquarters: the club would house the city's HQ (reversed)"
+ },
+ {
+  "id": "R4-VD15",
+  "gathered": [
+   [
+    "software_conversions",
+    "headquarters_location",
+    "santa_monica_california_usa"
+   ]
+  ],
+  "sentence": "Software Conversions headquartered Santa Monica California USA.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "active past 'headquartered Y' = gave Y headquarters; the triple needs passive 'is headquartered in'"
+ },
+ {
+  "id": "R4-VD16",
+  "gathered": [
+   [
+    "suhasini_maniratnam",
+    "languages_spoken_written_or_signed",
+    "number_of_english_words"
+   ]
+  ],
+  "sentence": "Suhasini Maniratnam signed number of English words.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "'signed' = put a signature on (a number of English words); not 'speaks/writes/signs the language'"
+ },
+ {
+  "id": "R4-VD17",
+  "gathered": [
+   [
+    "landkreis_munchen",
+    "shares_border_with",
+    "munich_west_germany"
+   ]
+  ],
+  "sentence": "Landkreis Munchen shares Munich West Germany.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "'shares X' = co-owns X; dropping 'border with' changes the relation"
+ },
+ {
+  "id": "R4-VD18",
+  "gathered": [
+   [
+    "brendan_gleeson",
+    "place_of_birth",
+    "dublin_city_centre"
+   ]
+  ],
+  "sentence": "Brendan Gleeson placed Dublin City Centre.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "'placed' = put somewhere / ranked; round 3 used only 'places'"
+ },
+ {
+  "id": "R4-VD19",
+  "gathered": [
+   [
+    "albert_prince_of_wales",
+    "position_held",
+    "monarch"
+   ]
+  ],
+  "sentence": "Albert Prince of Wales positioned monarch.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "'positioned' = moved the monarch into place; round 3 used only 'positions'"
+ },
+ {
+  "id": "R4-VD20",
+  "gathered": [
+   [
+    "palm_beach_county_fl",
+    "located_in_the_administrative_territoria",
+    "florida_united_states"
+   ]
+  ],
+  "sentence": "Palm Beach County FL located Florida United States.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "active 'located Y' = found Y; the triple needs 'is located in'"
+ },
+ {
+  "id": "R4-VD21",
+  "gathered": [
+   [
+    "iron_man_one",
+    "original_language_of_film_or_tv_show",
+    "number_of_english_words"
+   ]
+  ],
+  "sentence": "Iron Man One shows number of English words.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "'shows' (last relation token as a verb) = displays a number of English words"
+ },
+ {
+  "id": "R4-VD22",
+  "gathered": [
+   [
+    "agglutinative_language",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ]
+  ],
+  "sentence": "Agglutinative language sources Armenian Soviet Encyclopedia.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "'sources' = procures/obtains the encyclopedia"
+ },
+ {
+  "id": "R4-VD23",
+  "gathered": [
+   [
+    "nagoya_university",
+    "instance_of",
+    "higher_general_education"
+   ]
+  ],
+  "sentence": "Nagoya University instanced higher general education.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "'instanced' = cited as an example; round 3 used only 'instances'"
+ },
+ {
+  "id": "R4-VD24",
+  "gathered": [
+   [
+    "leningrad_state_choreographic_institute",
+    "part_of",
+    "ballet_portal"
+   ]
+  ],
+  "sentence": "Leningrad State Choreographic Institute parted Ballet Portal.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "'parted' = separated/divided Ballet Portal; round 3 used only 'parts'"
+ },
+ {
+  "id": "R4-VD25",
+  "gathered": [
+   [
+    "graham_grene",
+    "employer",
+    "secret_intelligence_service"
+   ]
+  ],
+  "sentence": "Graham Grene employed Secret Intelligence Service.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "reversed: SIS employed Greene; round 3 used only 'employs'"
+ },
+ {
+  "id": "R4-VD26",
+  "gathered": [
+   [
+    "ben_hur_1925_film",
+    "producer",
+    "irving_g_thalberg"
+   ]
+  ],
+  "sentence": "Ben Hur 1925 Film produces Irving G Thalberg.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "reversed: Thalberg produced the film; round 3 used only 'produced'"
+ },
+ {
+  "id": "R4-VD27",
+  "gathered": [
+   [
+    "helen_cho",
+    "director",
+    "joss_whedon"
+   ]
+  ],
+  "sentence": "Helen Cho directs Joss Whedon.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "reversed: Whedon is the director; round 3 used only 'directed'"
+ },
+ {
+  "id": "R4-VD28",
+  "gathered": [
+   [
+    "bomber_men",
+    "publisher",
+    "sega_of_america"
+   ]
+  ],
+  "sentence": "Bomber Men published Sega of America.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "reversed: Sega published the game; round 3 used only 'publishes'"
+ },
+ {
+  "id": "R4-VD29",
+  "gathered": [
+   [
+    "captain_mccluskey",
+    "performer",
+    "giovanni_rota"
+   ]
+  ],
+  "sentence": "Captain McCluskey performed Giovanni Rota.",
+  "expect": "U",
+  "class": "verb_reading_drift_new",
+  "why": "reversed: Rota performs the role; round 3 used only 'performs'"
+ },
+ {
+  "id": "R4-S3M01",
+  "gathered": [
+   [
+    "frank_lincoln_wright",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ]
+  ],
+  "sentence": "Frank Lincoln Wright is a country of citizenship of U S of A.",
+  "expect": "U",
+  "class": "shape3_mid_of_no_the",
+  "why": "English: Wright is a country that is the citizenship-country of the USA (reversed and absurd)"
+ },
+ {
+  "id": "R4-S3M02",
+  "gathered": [
+   [
+    "brendan_gleeson",
+    "place_of_birth",
+    "dublin_city_centre"
+   ]
+  ],
+  "sentence": "Brendan Gleeson is place of birth of Dublin City Centre.",
+  "expect": "U",
+  "class": "shape3_mid_of_no_the",
+  "why": "reversed: says Gleeson is where Dublin City Centre was born"
+ },
+ {
+  "id": "R4-S3M03",
+  "gathered": [
+   [
+    "james_whitmore",
+    "place_of_death",
+    "malibu_ca"
+   ]
+  ],
+  "sentence": "James Whitmore is a place of death of Malibu CA.",
+  "expect": "U",
+  "class": "shape3_mid_of_no_the",
+  "why": "reversed: says Whitmore is the place where Malibu died"
+ },
+ {
+  "id": "R4-S3M04",
+  "gathered": [
+   [
+    "ralph_w_ince",
+    "manner_of_death",
+    "unintentional_injury"
+   ]
+  ],
+  "sentence": "Ralph W Ince is a manner of death of unintentional injury.",
+  "expect": "U",
+  "class": "shape3_mid_of_no_the",
+  "why": "reversed: Ince would be a manner of death"
+ },
+ {
+  "id": "R4-S3M05",
+  "gathered": [
+   [
+    "law_and_order_svu",
+    "country_of_origin",
+    "u_s_of_a"
+   ]
+  ],
+  "sentence": "Law and Order SVU is a country of origin of U S of A.",
+  "expect": "U",
+  "class": "shape3_mid_of_no_the",
+  "why": "reversed: the show would be the USA's origin country"
+ },
+ {
+  "id": "R4-S3M06",
+  "gathered": [
+   [
+    "mads_given_name",
+    "language_of_work_or_name",
+    "danish_language"
+   ]
+  ],
+  "sentence": "Mads given name is a language of work or name of Danish language.",
+  "expect": "U",
+  "class": "shape3_mid_of_no_the",
+  "why": "reversed: the name would be a language of Danish"
+ },
+ {
+  "id": "R4-S3M07",
+  "gathered": [
+   [
+    "iron_man_one",
+    "original_language_of_film_or_tv_show",
+    "number_of_english_words"
+   ]
+  ],
+  "sentence": "Iron Man One is an original language of film or TV show of number of English words.",
+  "expect": "U",
+  "class": "shape3_mid_of_no_the",
+  "why": "reversed: the film would be a language"
+ },
+ {
+  "id": "R4-S3M08",
+  "gathered": [
+   [
+    "massimo_girotti",
+    "position_played_on_team_speciality",
+    "goal_keeper"
+   ]
+  ],
+  "sentence": "Massimo Girotti is a position played on team speciality of goal keeper.",
+  "expect": "U",
+  "class": "shape3_mid_of_no_the",
+  "why": "reversed: Girotti would be a position of the goalkeeper"
+ },
+ {
+  "id": "R4-S3N01",
+  "gathered": [
+   [
+    "james_whitmore",
+    "given_name",
+    "gemmes"
+   ]
+  ],
+  "sentence": "James Whitmore is a given name of Gemmes.",
+  "expect": "U",
+  "class": "shape3_noun_relation_new",
+  "why": "reversed: Whitmore would be Gemmes's given name"
+ },
+ {
+  "id": "R4-S3N02",
+  "gathered": [
+   [
+    "charles_h_west",
+    "family_name",
+    "mr_west"
+   ]
+  ],
+  "sentence": "Charles H West is family name of Mr West.",
+  "expect": "U",
+  "class": "shape3_noun_relation_new",
+  "why": "reversed: West would be the family name of Mr West"
+ },
+ {
+  "id": "R4-S3N03",
+  "gathered": [
+   [
+    "james_whitmore",
+    "military_branch",
+    "u_s_marine"
+   ]
+  ],
+  "sentence": "James Whitmore is a military branch of U S Marine.",
+  "expect": "U",
+  "class": "shape3_noun_relation_new",
+  "why": "reversed: Whitmore would be a branch of the Marines"
+ },
+ {
+  "id": "R4-S3N04",
+  "gathered": [
+   [
+    "thor_movie",
+    "screenwriter",
+    "stanley_martin_lieber"
+   ]
+  ],
+  "sentence": "Thor Movie is a screenwriter of Stanley Martin Lieber.",
+  "expect": "U",
+  "class": "shape3_noun_relation_new",
+  "why": "reversed: the film would have written Lieber"
+ },
+ {
+  "id": "R4-S3N05",
+  "gathered": [
+   [
+    "the_saint_mystery_magazine",
+    "performer",
+    "george_henry_sanders"
+   ]
+  ],
+  "sentence": "The Saint Mystery Magazine is a performer of George Henry Sanders.",
+  "expect": "U",
+  "class": "shape3_noun_relation_new",
+  "why": "reversed: the magazine would perform Sanders"
+ },
+ {
+  "id": "R4-S3N06",
+  "gathered": [
+   [
+    "keith_jarrett",
+    "work_location",
+    "new_york_new_york"
+   ]
+  ],
+  "sentence": "Keith Jarrett is a work location of New York New York.",
+  "expect": "U",
+  "class": "shape3_noun_relation_new",
+  "why": "reversed: Jarrett would be a place where New York works"
+ },
+ {
+  "id": "R4-S3N07",
+  "gathered": [
+   [
+    "linzer_ask",
+    "headquarters_location",
+    "linz_an_der_donau"
+   ]
+  ],
+  "sentence": "Linzer ASK is headquarters location of Linz an der Donau.",
+  "expect": "U",
+  "class": "shape3_noun_relation_new",
+  "why": "reversed: the club would be Linz's HQ location"
+ },
+ {
+  "id": "R4-S3N08",
+  "gathered": [
+   [
+    "aloe_plant",
+    "taxon_rank",
+    "generic_epithet"
+   ]
+  ],
+  "sentence": "Aloe plant is a taxon rank of generic epithet.",
+  "expect": "U",
+  "class": "shape3_noun_relation_new",
+  "why": "reversed: the plant would be a rank"
+ },
+ {
+  "id": "R4-IV01",
+  "gathered": [
+   [
+    "giro_d_italia",
+    "has_part",
+    "giro_d_italia_2014"
+   ]
+  ],
+  "sentence": "Giro d'Italia is part of Giro d'Italia 2014.",
+  "expect": "U",
+  "class": "inverse_relation_reading",
+  "why": "inverse: the 2014 race is part of the Giro, not the reverse"
+ },
+ {
+  "id": "R4-IV02",
+  "gathered": [
+   [
+    "ameerul_mu_mineen",
+    "part_of",
+    "all_sahaba_are_upright"
+   ]
+  ],
+  "sentence": "Ameerul Mu Mineen has part All Sahaba Are Upright.",
+  "expect": "U",
+  "class": "inverse_relation_reading",
+  "why": "inverse of part_of"
+ },
+ {
+  "id": "R4-IV03",
+  "gathered": [
+   [
+    "landkreis_munchen",
+    "located_in_the_administrative_territoria",
+    "upper_bavaria"
+   ]
+  ],
+  "sentence": "Landkreis Munchen contains Upper Bavaria.",
+  "expect": "U",
+  "class": "inverse_relation_reading",
+  "why": "inverse: Upper Bavaria contains the district"
+ },
+ {
+  "id": "R4-IV04",
+  "gathered": [
+   [
+    "trindad_and_tobago",
+    "contains_administrative_territorial_enti",
+    "port_o_spain"
+   ]
+  ],
+  "sentence": "Trindad and Tobago is located in Port O Spain.",
+  "expect": "U",
+  "class": "inverse_relation_reading",
+  "why": "inverse: Port of Spain is located in Trinidad and Tobago"
+ },
+ {
+  "id": "R4-AF01",
+  "gathered": [
+   [
+    "american_library_association",
+    "instance_of",
+    "not_for_profit_organization"
+   ]
+  ],
+  "sentence": "American Library Association is an instance of for profit organization.",
+  "expect": "U",
+  "class": "slug_affix_tolerance",
+  "why": "opposite claim: for-profit instead of not-for-profit"
+ },
+ {
+  "id": "R4-AF02",
+  "gathered": [
+   [
+    "popularization_of_science",
+    "subclass_of",
+    "non_fiction"
+   ]
+  ],
+  "sentence": "Popularization of science is a subclass of fiction.",
+  "expect": "U",
+  "class": "slug_affix_tolerance",
+  "why": "opposite claim: fiction instead of non-fiction"
+ },
+ {
+  "id": "R4-AF03",
+  "gathered": [
+   [
+    "beiqing_insident",
+    "instance_of",
+    "anti_government_revolt"
+   ]
+  ],
+  "sentence": "Beiqing Insident is an instance of pro-government revolt.",
+  "expect": "U",
+  "class": "slug_affix_tolerance",
+  "why": "opposite claim: pro-government instead of anti-government (shares the slug's suffix government_revolt)"
+ },
+ {
+  "id": "R4-AF04",
+  "gathered": [
+   [
+    "structural_dynamics_research_corporation",
+    "instance_of",
+    "for_profit"
+   ]
+  ],
+  "sentence": "Structural Dynamics Research Corporation is an instance of not for profit.",
+  "expect": "U",
+  "class": "slug_affix_tolerance",
+  "why": "opposite claim: not-for-profit instead of for-profit"
+ },
+ {
+  "id": "R4-AF05",
+  "gathered": [
+   [
+    "bachelor_of_civil_engineering",
+    "subclass_of",
+    "non_degreed_engineer"
+   ]
+  ],
+  "sentence": "Bachelor of civil engineering is a subclass of degreed engineer.",
+  "expect": "U",
+  "class": "slug_affix_tolerance",
+  "why": "drops 'non': opposite class"
+ },
+ {
+  "id": "R4-DT01",
+  "gathered": [
+   [
+    "roger_daltrey_filmography",
+    "member_of",
+    "the_who"
+   ]
+  ],
+  "sentence": "Roger Daltrey Filmography is a member of WHO.",
+  "expect": "U",
+  "class": "determiner_changes_referent",
+  "why": "all-caps WHO reads as the World Health Organization; only a matcher that treats the slug's leading 'the' as an optional determiner would map it to the_who"
+ },
+ {
+  "id": "R4-DT02",
+  "gathered": [
+   [
+    "peter_dennis_blandford_townshend",
+    "member_of",
+    "the_who"
+   ]
+  ],
+  "sentence": "Peter Dennis Blandford Townshend is a member of the WHO.",
+  "expect": "U",
+  "class": "determiner_changes_referent",
+  "why": "'the WHO' reads as the World Health Organization, yet the token run spells the gathered slug the_who exactly after case folding; case is the only signal"
+ },
+ {
+  "id": "R4-DT03",
+  "gathered": [
+   [
+    "rembrandt_van_rhyn",
+    "instance_of",
+    "human_specie"
+   ]
+  ],
+  "sentence": "A Rembrandt van Rhyn is an instance of human specie.",
+  "expect": "U",
+  "class": "determiner_changes_referent",
+  "why": "the spec's own [Det] slot: 'a Rembrandt' is a painting by Rembrandt (or some person of that name), not the painter; a painting is not a human",
+  "arguable": true
+ },
+ {
+  "id": "R4-SP01",
+  "gathered": [
+   [
+    "landkreis_munchen",
+    "shares_border_with",
+    "munich_west_germany"
+   ]
+  ],
+  "sentence": "Myth: Landkreis Munchen shares border with Munich West Germany.",
+  "expect": "U",
+  "class": "split_context_retraction",
+  "why": "colon-introduced label marks the clause as a myth. Split rule applies (round-3 adjudication split_rule)."
+ },
+ {
+  "id": "R4-SP02",
+  "gathered": [
+   [
+    "cote_d_or",
+    "shares_border_with",
+    "saone_et_loire"
+   ]
+  ],
+  "sentence": "Cote d'Or shares border with Saone et Loire; or so the rumour goes.",
+  "expect": "U",
+  "class": "split_context_retraction",
+  "why": "semicolon tail reports it as rumour. Split rule applies (round-3 adjudication split_rule)."
+ },
+ {
+  "id": "R4-SP03",
+  "gathered": [
+   [
+    "landkreis_munchen",
+    "shares_border_with",
+    "munich_west_germany"
+   ]
+  ],
+  "sentence": "Landkreis Munchen shares border with Munich West Germany — not.",
+  "expect": "U",
+  "class": "split_context_retraction",
+  "why": "em-dash tail negates the clause. Split rule applies (round-3 adjudication split_rule)."
+ },
+ {
+  "id": "R4-SP04",
+  "gathered": [
+   [
+    "cote_d_or",
+    "shares_border_with",
+    "saone_et_loire"
+   ]
+  ],
+  "sentence": "False:\nCote d'Or shares border with Saone et Loire.",
+  "expect": "U",
+  "class": "split_context_retraction",
+  "why": "newline after a 'False:' label. Split rule applies (round-3 adjudication split_rule)."
+ },
+ {
+  "id": "R4-SP05",
+  "gathered": [
+   [
+    "nagoya_university",
+    "instance_of",
+    "higher_general_education"
+   ]
+  ],
+  "sentence": "Prob. Nagoya University is an instance of higher general education.",
+  "expect": "U",
+  "class": "split_context_retraction",
+  "why": "'Prob.' (probably) is an abbreviation hedge a period splitter detaches. Split rule applies (round-3 adjudication split_rule)."
+ },
+ {
+  "id": "R4-SP06",
+  "gathered": [
+   [
+    "landkreis_munchen",
+    "shares_border_with",
+    "munich_west_germany"
+   ]
+  ],
+  "sentence": "Landkreis Munchen shares border with Munich West Germany. Scratch that.",
+  "expect": "U",
+  "class": "split_context_retraction",
+  "why": "the next sentence retracts it. Split rule applies (round-3 adjudication split_rule)."
+ },
+ {
+  "id": "R4-SP07",
+  "gathered": [
+   [
+    "cote_d_or",
+    "shares_border_with",
+    "saone_et_loire"
+   ]
+  ],
+  "sentence": "Cote d'Or shares border with Saone et Loire. Or does it?",
+  "expect": "U",
+  "class": "split_context_retraction",
+  "why": "the follow-up question puts it in doubt. Split rule applies (round-3 adjudication split_rule)."
+ },
+ {
+  "id": "R4-SP08",
+  "gathered": [
+   [
+    "nagoya_university",
+    "instance_of",
+    "higher_general_education"
+   ]
+  ],
+  "sentence": "Imagine a world where this is true. Nagoya University is an instance of higher general education.",
+  "expect": "U",
+  "class": "split_context_retraction",
+  "why": "the preceding sentence frames the next one as hypothetical. Split rule applies (round-3 adjudication split_rule)."
+ },
+ {
+  "id": "R4-SP09",
+  "gathered": [
+   [
+    "landkreis_munchen",
+    "shares_border_with",
+    "munich_west_germany"
+   ]
+  ],
+  "sentence": "Landkreis Munchen shares border with Munich West Germany.[citation needed]",
+  "expect": "U",
+  "class": "split_context_retraction",
+  "why": "Wikipedia-style tag marks the claim as unverified. Split rule applies (round-3 adjudication split_rule)."
+ },
+ {
+  "id": "R4-SP10",
+  "gathered": [
+   [
+    "cote_d_or",
+    "shares_border_with",
+    "saone_et_loire"
+   ]
+  ],
+  "sentence": "Cote d'Or shares border with Saone et Loire. (This is false.)",
+  "expect": "U",
+  "class": "split_context_retraction",
+  "why": "parenthetical sentence denies it. Split rule applies (round-3 adjudication split_rule)."
+ },
+ {
+  "id": "R4-SP11",
+  "gathered": [
+   [
+    "nagoya_university",
+    "instance_of",
+    "higher_general_education"
+   ]
+  ],
+  "sentence": "Poss. Nagoya University is an instance of higher general education.",
+  "expect": "U",
+  "class": "split_context_retraction",
+  "why": "'Poss.' (possibly) abbreviation hedge. Split rule applies (round-3 adjudication split_rule)."
+ },
+ {
+  "id": "R4-SP12",
+  "gathered": [
+   [
+    "landkreis_munchen",
+    "shares_border_with",
+    "munich_west_germany"
+   ]
+  ],
+  "sentence": "Landkreis Munchen shares border with Munich West Germany. Not anymore.",
+  "expect": "U",
+  "class": "split_context_retraction",
+  "why": "the next fragment says it no longer holds. Split rule applies (round-3 adjudication split_rule)."
+ },
+ {
+  "id": "R4-GL01",
+  "gathered": [
+   [
+    "landkreis_munchen",
+    "shares_border_with",
+    "munich_west_germany"
+   ]
+  ],
+  "sentence": "Landkreis Munchen shares border with Munich West Germanyではない.",
+  "expect": "U",
+  "class": "glued_suffix_negation",
+  "why": "Japanese 'dewa nai' (is not) glued as a suffix to the OBJ slug; round 3 used only prefixes/inner affixes"
+ },
+ {
+  "id": "R4-GL02",
+  "gathered": [
+   [
+    "nagoya_university",
+    "instance_of",
+    "higher_general_education"
+   ]
+  ],
+  "sentence": "Nagoya University is an instance of higher general education아님.",
+  "expect": "U",
+  "class": "glued_suffix_negation",
+  "why": "Korean '-anim' (is not) glued as a suffix to the OBJ slug"
+ },
+ {
+  "id": "R4-ST01",
+  "gathered": [
+   [
+    "nagoya_university",
+    "instance_of",
+    "higher_general_education"
+   ]
+  ],
+  "sentence": "Nagoya University is ⁿᵒᵗ an instance of higher general education.",
+  "expect": "U",
+  "class": "styled_letters_new_blocks",
+  "why": "'not' in superscript modifier letters (U+207F U+1D52 U+1D57)"
+ },
+ {
+  "id": "R4-ST02",
+  "gathered": [
+   [
+    "nagoya_university",
+    "instance_of",
+    "higher_general_education"
+   ]
+  ],
+  "sentence": "Nagoya University is 𝕟𝕠𝕥 an instance of higher general education.",
+  "expect": "U",
+  "class": "styled_letters_new_blocks",
+  "why": "'not' in mathematical double-struck letters"
+ },
+ {
+  "id": "R4-ST03",
+  "gathered": [
+   [
+    "cote_d_or",
+    "shares_border_with",
+    "saone_et_loire"
+   ]
+  ],
+  "sentence": "Cote d'Or 𝔫𝔢𝔳𝔢𝔯 shares border with Saone et Loire.",
+  "expect": "U",
+  "class": "styled_letters_new_blocks",
+  "why": "'never' in mathematical fraktur letters"
+ },
+ {
+  "id": "R4-ST04",
+  "gathered": [
+   [
+    "landkreis_munchen",
+    "shares_border_with",
+    "munich_west_germany"
+   ]
+  ],
+  "sentence": "Landkreis Munchen 🅽🅾🆃 shares border with Munich West Germany.",
+  "expect": "U",
+  "class": "styled_letters_new_blocks",
+  "why": "'NOT' in negative squared Latin capitals"
+ },
+ {
+  "id": "R4-EM01",
+  "gathered": [
+   [
+    "landkreis_munchen",
+    "shares_border_with",
+    "munich_west_germany"
+   ]
+  ],
+  "sentence": "Landkreis Munchen shares⃠ border with Munich West Germany.",
+  "expect": "U",
+  "class": "enclosing_mark_prohibition",
+  "why": "U+20E0 COMBINING ENCLOSING CIRCLE BACKSLASH (category Me, not Mn) draws a prohibition sign over the verb; an Mn-only accent stripper keeps it, the slug rule erases it"
+ },
+ {
+  "id": "R4-EM02",
+  "gathered": [
+   [
+    "nagoya_university",
+    "instance_of",
+    "higher_general_education"
+   ]
+  ],
+  "sentence": "Nagoya University is⃠ an instance of higher general education.",
+  "expect": "U",
+  "class": "enclosing_mark_prohibition",
+  "why": "prohibition sign over the copula"
+ },
+ {
+  "id": "R4-EM03",
+  "gathered": [
+   [
+    "cote_d_or",
+    "shares_border_with",
+    "saone_et_loire"
+   ]
+  ],
+  "sentence": "Cote d'Or shares border with Saone et Loire⃠.",
+  "expect": "U",
+  "class": "enclosing_mark_prohibition",
+  "why": "prohibition sign over the object"
+ },
+ {
+  "id": "R4-EJ01",
+  "gathered": [
+   [
+    "cote_d_or",
+    "shares_border_with",
+    "saone_et_loire"
+   ]
+  ],
+  "sentence": "Cote d'Or shares border with Saone et Loire 🤥",
+  "expect": "U",
+  "class": "emoji_or_tag_stance",
+  "why": "lying-face emoji: the speaker marks the statement as a lie"
+ },
+ {
+  "id": "R4-EJ02",
+  "gathered": [
+   [
+    "nagoya_university",
+    "instance_of",
+    "higher_general_education"
+   ]
+  ],
+  "sentence": "Nagoya University is an instance of higher general education 🤔",
+  "expect": "U",
+  "class": "emoji_or_tag_stance",
+  "why": "thinking-face emoji: doubt, not assertion"
+ },
+ {
+  "id": "R4-EJ03",
+  "gathered": [
+   [
+    "landkreis_munchen",
+    "shares_border_with",
+    "munich_west_germany"
+   ]
+  ],
+  "sentence": "Landkreis Munchen shares border with Munich West Germany 🙄",
+  "expect": "U",
+  "class": "emoji_or_tag_stance",
+  "why": "eye-roll emoji: sarcastic, not asserted"
+ },
+ {
+  "id": "R4-EJ04",
+  "gathered": [
+   [
+    "cote_d_or",
+    "shares_border_with",
+    "saone_et_loire"
+   ]
+  ],
+  "sentence": "Cote d'Or shares border with Saone et Loire /s",
+  "expect": "U",
+  "class": "emoji_or_tag_stance",
+  "why": "'/s' is the standard internet sarcasm tag: the statement is not meant"
+ },
+ {
+  "id": "R4-MK01",
+  "gathered": [
+   [
+    "landkreis_munchen",
+    "shares_border_with",
+    "munich_west_germany"
+   ]
+  ],
+  "sentence": "~Landkreis Munchen shares border with Munich West Germany~",
+  "expect": "U",
+  "class": "markup_strike",
+  "why": "single-tilde GFM strikethrough renders the claim struck out; round 3 used only double tildes"
+ },
+ {
+  "id": "R4-MK02",
+  "gathered": [
+   [
+    "cote_d_or",
+    "shares_border_with",
+    "saone_et_loire"
+   ]
+  ],
+  "sentence": "<del>Cote d'Or shares border with Saone et Loire.</del>",
+  "expect": "U",
+  "class": "markup_strike",
+  "why": "HTML <del> renders the sentence as deleted"
+ },
+ {
+  "id": "R4-MK03",
+  "gathered": [
+   [
+    "nagoya_university",
+    "instance_of",
+    "higher_general_education"
+   ]
+  ],
+  "sentence": "<s>Nagoya University is an instance of higher general education.</s>",
+  "expect": "U",
+  "class": "markup_strike",
+  "why": "HTML <s> renders it struck through"
+ },
+ {
+  "id": "R4-AR01",
+  "gathered": [
+   [
+    "acting_major",
+    "follows",
+    "army_captain"
+   ]
+  ],
+  "sentence": "Acting major follows army captain.",
+  "expect": "U",
+  "class": "arguable_misc",
+  "why": "VERB-SAFE 'follows' drifts by argument type: read about people, an acting major follows (walks behind / obeys) an army captain; the triple means the rank comes next in order",
+  "arguable": true
+ },
+ {
+  "id": "R4-AR02",
+  "gathered": [
+   [
+    "albert_prince_of_wales",
+    "father",
+    "albert_prince_consort"
+   ]
+  ],
+  "sentence": "Albert Prince of Wales father Albert Prince Consort.",
+  "expect": "U",
+  "class": "arguable_misc",
+  "why": "telegraphic 'X father Y' (a bare noun-relation reading) is role-ambiguous: it reads equally as 'X, father of Y' (reversed); not plainly the triple",
+  "arguable": true
+ },
+ {
+  "id": "R4-AR03",
+  "gathered": [
+   [
+    "albert_prince_of_wales",
+    "position_held",
+    "monarch"
+   ]
+  ],
+  "sentence": "Albert Prince of Wales held monarch.",
+  "expect": "U",
+  "class": "arguable_misc",
+  "why": "'held monarch' reads literally as physically holding a monarch; a loose reader may supply 'the office of'",
+  "arguable": true
+ },
+ {
+  "id": "R4-AR04",
+  "gathered": [
+   [
+    "no_saints",
+    "member_of",
+    "national_football_league"
+   ]
+  ],
+  "sentence": "no saints is a member of national football league.",
+  "expect": "U",
+  "class": "arguable_misc",
+  "why": "lower-cased, the slug 'no saints' reads as a negative quantifier (no saint is a member), the opposite of the triple; the singular 'is' still allows a name reading",
+  "arguable": true
+ },
+ {
+  "id": "R4-AR05",
+  "gathered": [
+   [
+    "v_i_lenin",
+    "work_location",
+    "moscow_ussr"
+   ]
+  ],
+  "sentence": "V I Lenin works Moscow USSR.",
+  "expect": "U",
+  "class": "arguable_misc",
+  "why": "transitive 'works Moscow' = exploits / canvasses Moscow (present tense); idiomatically it can also mean 'operates in', which is close to the triple",
+  "arguable": true
+ },
+ {
+  "id": "R4-F01",
+  "gathered": [
+   [
+    "d_major",
+    "follows",
+    "g_major"
+   ]
+  ],
+  "sentence": "D major follows G major.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of AC01-AC03, S2F01"
+ },
+ {
+  "id": "R4-F02",
+  "gathered": [
+   [
+    "f_minor",
+    "follows",
+    "e_minor"
+   ]
+  ],
+  "sentence": "F minor follows E minor.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of AC05, S2F04"
+ },
+ {
+  "id": "R4-F03",
+  "gathered": [
+   [
+    "e_major",
+    "follows",
+    "b_sharp_major"
+   ]
+  ],
+  "sentence": "E major follows B sharp major.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: sharp spelled as a word, as the store does"
+ },
+ {
+  "id": "R4-F04",
+  "gathered": [
+   [
+    "g_minor",
+    "follows",
+    "c_minor"
+   ]
+  ],
+  "sentence": "G minor follows C minor.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of AC04"
+ },
+ {
+  "id": "R4-F05",
+  "gathered": [
+   [
+    "x_commonwealth_games",
+    "follows",
+    "ix_commonwealth_games"
+   ]
+  ],
+  "sentence": "X Commonwealth Games follows IX Commonwealth Games.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of HG01"
+ },
+ {
+  "id": "R4-F06",
+  "gathered": [
+   [
+    "vi_olympic_winter_games",
+    "follows",
+    "vth_olympic_winter_games"
+   ]
+  ],
+  "sentence": "VI Olympic Winter Games follows Vth Olympic Winter Games.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of HG03, HG06, HG08, S2F03"
+ },
+ {
+  "id": "R4-F07",
+  "gathered": [
+   [
+    "ix_commonwealth_games",
+    "followed_by",
+    "x_commonwealth_games"
+   ]
+  ],
+  "sentence": "IX Commonwealth Games is followed by X Commonwealth Games.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of HG02"
+ },
+ {
+  "id": "R4-F08",
+  "gathered": [
+   [
+    "vii_pan_american_games",
+    "followed_by",
+    "viii_pan_american_games"
+   ]
+  ],
+  "sentence": "VII Pan American Games is followed by VIII Pan American Games.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of HG04"
+ },
+ {
+  "id": "R4-F09",
+  "gathered": [
+   [
+    "stra_aros",
+    "instance_of",
+    "urban_areas_of_sweden"
+   ]
+  ],
+  "sentence": "Östra Aros is an instance of urban areas of Sweden.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of HG07; accented name folds to stra_aros"
+ },
+ {
+  "id": "R4-F10",
+  "gathered": [
+   [
+    "eurovision_song_contest",
+    "subclass_of",
+    "scripted_television"
+   ]
+  ],
+  "sentence": "Eurovision Song Contest is a subclass of scripted television.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of DG01, DG02"
+ },
+ {
+  "id": "R4-F11",
+  "gathered": [
+   [
+    "giro_d_italia",
+    "subclass_of",
+    "stage_race"
+   ]
+  ],
+  "sentence": "Giro d'Italia is a subclass of stage race.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of DG03, DG04"
+ },
+ {
+  "id": "R4-F12",
+  "gathered": [
+   [
+    "joseph_alois_ratzinger",
+    "member_of",
+    "academia_scientiarum_et_artium_europaea"
+   ]
+  ],
+  "sentence": "Joseph Alois Ratzinger is a member of Academia Scientiarum et Artium Europaea.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of CT01, CT02"
+ },
+ {
+  "id": "R4-F13",
+  "gathered": [
+   [
+    "2004_summer_paralympic_games",
+    "follows",
+    "sydney_paralyampic_organising_committee"
+   ]
+  ],
+  "sentence": "2004 Summer Paralympic Games follows Sydney Paralyampic Organising Committee.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of CT03"
+ },
+ {
+  "id": "R4-F14",
+  "gathered": [
+   [
+    "independent_spd",
+    "follows",
+    "sozialdemokratische_partei_deutschlands"
+   ]
+  ],
+  "sentence": "Independent SPD follows Sozialdemokratische Partei Deutschlands.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of CT04, S2F02"
+ },
+ {
+  "id": "R4-F15",
+  "gathered": [
+   [
+    "leningrad_state_choreographic_institute",
+    "part_of",
+    "ballet_portal"
+   ]
+  ],
+  "sentence": "Leningrad State Choreographic Institute is part of Ballet Portal.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of CT06, VD24"
+ },
+ {
+  "id": "R4-F16",
+  "gathered": [
+   [
+    "university_of_north_carolina_chapel_hill",
+    "member_of",
+    "midwest_inter_library_center"
+   ]
+  ],
+  "sentence": "University of North Carolina Chapel Hill is a member of Midwest Inter Library Center.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of CT07; exact 40-char slug"
+ },
+ {
+  "id": "R4-F17",
+  "gathered": [
+   [
+    "alberta_provincial_electoral_districts",
+    "subclass_of",
+    "canadian_provincial_electoral_districts"
+   ]
+  ],
+  "sentence": "Alberta provincial electoral districts is a subclass of Canadian provincial electoral districts.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of CT09"
+ },
+ {
+  "id": "R4-F18",
+  "gathered": [
+   [
+    "glamoc",
+    "instance_of",
+    "municipalities_of_bosnia_and_herzegovina"
+   ]
+  ],
+  "sentence": "Glamoc is an instance of municipalities of Bosnia and Herzegovina.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of CT10"
+ },
+ {
+  "id": "R4-F19",
+  "gathered": [
+   [
+    "peter_dennis_blandford_townshend",
+    "member_of",
+    "the_who"
+   ]
+  ],
+  "sentence": "Peter Dennis Blandford Townshend is a member of The Who.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of DT01, DT02"
+ },
+ {
+  "id": "R4-F20",
+  "gathered": [
+   [
+    "american_library_association",
+    "instance_of",
+    "not_for_profit_organization"
+   ]
+  ],
+  "sentence": "American Library Association is an instance of not for profit organization.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of AF01; 'not' belongs to the slug"
+ },
+ {
+  "id": "R4-F21",
+  "gathered": [
+   [
+    "popularization_of_science",
+    "subclass_of",
+    "non_fiction"
+   ]
+  ],
+  "sentence": "Popularization of science is a subclass of non-fiction.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of AF02; 'non' belongs to the slug"
+ },
+ {
+  "id": "R4-F22",
+  "gathered": [
+   [
+    "beiqing_insident",
+    "instance_of",
+    "anti_government_revolt"
+   ]
+  ],
+  "sentence": "Beiqing Insident is an instance of anti-government revolt.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of AF03"
+ },
+ {
+  "id": "R4-F23",
+  "gathered": [
+   [
+    "structural_dynamics_research_corporation",
+    "instance_of",
+    "for_profit"
+   ]
+  ],
+  "sentence": "Structural Dynamics Research Corporation is an instance of for profit.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of AF04"
+ },
+ {
+  "id": "R4-F24",
+  "gathered": [
+   [
+    "landkreis_munchen",
+    "shares_border_with",
+    "munich_west_germany"
+   ]
+  ],
+  "sentence": "Landkreis Munchen shares border with Munich West Germany.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of the LKM split/emoji/markup/styled cases and VD17"
+ },
+ {
+  "id": "R4-F25",
+  "gathered": [
+   [
+    "cote_d_or",
+    "shares_border_with",
+    "saone_et_loire"
+   ]
+  ],
+  "sentence": "Cote d'Or shares border with Saone et Loire.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of the COTE split/emoji/markup/styled cases"
+ },
+ {
+  "id": "R4-F26",
+  "gathered": [
+   [
+    "nagoya_university",
+    "instance_of",
+    "higher_general_education"
+   ]
+  ],
+  "sentence": "Nagoya University is an instance of higher general education.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of the NAGOYA cases"
+ },
+ {
+  "id": "R4-F27",
+  "gathered": [
+   [
+    "portmanteau_film",
+    "subclass_of",
+    "theatrical_film"
+   ]
+  ],
+  "sentence": "Portmanteau film is a subclass of theatrical film.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of VD01"
+ },
+ {
+  "id": "R4-F28",
+  "gathered": [
+   [
+    "rembrandt_van_rhyn",
+    "instance_of",
+    "human_specie"
+   ]
+  ],
+  "sentence": "Rembrandt van Rhyn is an instance of human specie.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of DT03"
+ },
+ {
+  "id": "R4-F29",
+  "gathered": [
+   [
+    "diego_vel_zquez",
+    "instance_of",
+    "human_specie"
+   ]
+  ],
+  "sentence": "Diego Velázquez is an instance of human specie.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: accented spelling folds to diego_vel_zquez"
+ },
+ {
+  "id": "R4-F30",
+  "gathered": [
+   [
+    "giro_d_italia",
+    "has_part",
+    "giro_d_italia_2014"
+   ]
+  ],
+  "sentence": "Giro d'Italia has part Giro d'Italia 2014.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of IV01"
+ },
+ {
+  "id": "R4-F31",
+  "gathered": [
+   [
+    "ameerul_mu_mineen",
+    "part_of",
+    "all_sahaba_are_upright"
+   ]
+  ],
+  "sentence": "Ameerul Mu Mineen is part of All Sahaba Are Upright.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of IV02"
+ },
+ {
+  "id": "R4-F32",
+  "gathered": [
+   [
+    "trindad_and_tobago",
+    "contains_administrative_territorial_enti",
+    "port_o_spain"
+   ]
+  ],
+  "sentence": "Trindad and Tobago contains Port O Spain.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of IV04"
+ },
+ {
+  "id": "R4-F33",
+  "gathered": [
+   [
+    "constance_bennett",
+    "sibling",
+    "joan_bennett_filmography"
+   ]
+  ],
+  "sentence": "Constance Bennett is a sibling of Joan Bennett Filmography.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: sibling is symmetric, so shape 3 on it states the triple exactly (retention probe for a non-_of noun)"
+ },
+ {
+  "id": "R4-F34",
+  "gathered": [
+   [
+    "rock_johnson",
+    "member_of_sports_team",
+    "calgary_stampeders"
+   ]
+  ],
+  "sentence": "Rock Johnson is a member of Calgary Stampeders.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: plain English for member_of_sports_team (retention)"
+ },
+ {
+  "id": "R4-F35",
+  "gathered": [
+   [
+    "james_whitmore",
+    "place_of_death",
+    "malibu_ca"
+   ]
+  ],
+  "sentence": "Malibu CA is the place of death of James Whitmore.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of S3M03 in the correct English order (retention)"
+ },
+ {
+  "id": "R4-F36",
+  "gathered": [
+   [
+    "james_whitmore",
+    "given_name",
+    "gemmes"
+   ]
+  ],
+  "sentence": "Gemmes is the given name of James Whitmore.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of S3N01 in the correct English order (retention)"
+ },
+ {
+  "id": "R4-F37",
+  "gathered": [
+   [
+    "frank_lincoln_wright",
+    "educated_at",
+    "university_of_wisconsin_madison"
+   ]
+  ],
+  "sentence": "Frank Lincoln Wright was educated at University of Wisconsin Madison.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of VD04"
+ },
+ {
+  "id": "R4-F38",
+  "gathered": [
+   [
+    "palm_beach_county_fl",
+    "named_after",
+    "palm_beach_florida"
+   ]
+  ],
+  "sentence": "Palm Beach County FL is named after Palm Beach Florida.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of VD05"
+ },
+ {
+  "id": "R4-F39",
+  "gathered": [
+   [
+    "brendan_gleeson",
+    "award_received",
+    "regional_emmy"
+   ]
+  ],
+  "sentence": "Brendan Gleeson received Regional Emmy.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of VD06"
+ },
+ {
+  "id": "R4-F40",
+  "gathered": [
+   [
+    "linzer_ask",
+    "headquarters_location",
+    "linz_an_der_donau"
+   ]
+  ],
+  "sentence": "Linzer ASK is headquartered in Linz an der Donau.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of VD14, S3N07"
+ },
+ {
+  "id": "R4-F41",
+  "gathered": [
+   [
+    "keith_jarrett",
+    "record_label",
+    "atlantic_jazz"
+   ]
+  ],
+  "sentence": "Keith Jarrett is signed to Atlantic Jazz.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of VD09"
+ },
+ {
+  "id": "R4-F42",
+  "gathered": [
+   [
+    "agglutinative_language",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ]
+  ],
+  "sentence": "Agglutinative language is described by Armenian Soviet Encyclopedia.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of VD03, VD22"
+ },
+ {
+  "id": "R4-F43",
+  "gathered": [
+   [
+    "no_saints",
+    "member_of",
+    "national_football_league"
+   ]
+  ],
+  "sentence": "No Saints is a member of National Football League.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: twin of AR04; capitalised slug containing 'no'"
+ },
+ {
+  "id": "R4-F44",
+  "gathered": [
+   [
+    "world_fantasy_award_short_fiction",
+    "is_a_list_of",
+    "short_fiction"
+   ]
+  ],
+  "sentence": "World Fantasy Award Short Fiction is a list of short fiction.",
+  "expect": "F",
+  "class": "F_twin",
+  "why": "supported: is_a_list_of in its own words"
+ }
+]

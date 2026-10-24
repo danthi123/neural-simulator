@@ -1,0 +1,35 @@
+{
+ "run_id": "1792640065-146829",
+ "runner": "research/runners/cs_race_f1.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/cs-race/research/runners/cs_race_f1.py",
+  "--seeds",
+  "1,2,3,4,5,6,7,8",
+  "--identity-cue-n",
+  "--cue-n",
+  "48",
+  "--w-cue",
+  "7.5"
+ ],
+ "git_sha": "47ba335f2",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-21T23:34:25",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 54920.2,
+ "corpus_check_query": "two-candidate spiking race fails to commit under symmetric drive",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_cs_race/f1d/identity_cue_n.json"
+}

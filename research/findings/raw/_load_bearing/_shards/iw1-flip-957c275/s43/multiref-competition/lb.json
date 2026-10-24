@@ -1,0 +1,59 @@
+{
+  "runner": "research.runners.load_bearing_fraction",
+  "metric": "load_bearing_fraction",
+  "repeats": 2,
+  "seed": 43,
+  "backend": "numpy",
+  "cuda_visible_devices": null,
+  "source_prov_abstain_at_tie_env": null,
+  "affect_marker_settle_env": null,
+  "per_faculty": [
+    {
+      "faculty": "multiref-competition",
+      "turn": "hold",
+      "kind": "neural-lesion",
+      "flag": "BRAIN_MULTIREF_COMPETITION_LESION",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "value",
+      "diffs": [
+        {
+          "field": "multiref.all_recovered",
+          "on": true,
+          "off": false
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": "research/runners/d6_multiref_wm_production_organ.py (board #196, default-ON since 2026-09-02). Reuses the EXISTING 'hold' turn ('the fox and the wolf walked in', already in PROBE_TURNS as the first turn of the wm-binding-advanced hold->held group -- turn_group('hold') is ['hold'] alone, so no dependency on 'held'). Under lesion every referent routes to register 0 regardless of the occupancy probe -> fox+wolf collide in one register (the already-validated superposed-collide regime) -> 'multiref.all_recovered' flips True (intact, distinct registers) -> False (lesioned, collision) on the SAME turn multiref_info already populates for the existing wm-binding-advanced row (whose own field, n_referents, is a COUNT and does not distinguish this lesion -- this row adds the complementary field the count cannot show)."
+    }
+  ],
+  "determinism": {
+    "deterministic": true,
+    "n_null_controls_checked": 1,
+    "dirty_null_controls": []
+  },
+  "counts": {
+    "n_faculties_total": 1,
+    "n_coverable_env_lesion": 1,
+    "n_exercised": 1,
+    "n_load_bearing": 1,
+    "n_not_load_bearing": 0,
+    "n_not_exercised": 0,
+    "n_noisy": 0,
+    "n_lesion_knob_missing": 0,
+    "n_in_process": 0,
+    "n_thin": 0,
+    "n_mechanism_only": 0,
+    "n_proposed": 0
+  },
+  "load_bearing_fraction": 1.0,
+  "load_bearing_faculties": [
+    "multiref-competition"
+  ],
+  "not_load_bearing_faculties": []
+}

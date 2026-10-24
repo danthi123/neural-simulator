@@ -1,0 +1,22 @@
+{
+ "run_id": "agg-20261022-005729",
+ "runner": "/opt/data/cache/scratch/a_s3agg.py",
+ "argv": [
+  "python3",
+  "/opt/data/cache/scratch/a_s3agg.py"
+ ],
+ "git_sha": "cf2263195",
+ "git_dirty": true,
+ "started": "2026-10-22T00:57:29",
+ "artifact_kind": "aggregation-of-run-records (json read-only; no simulation executed)",
+ "backend": "numpy",
+ "device": "cpu",
+ "sim_backend": "numpy",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "83db10ba1ddb",
+ "source_records": "research/findings/raw/_cs_race/f1d/m/*.json (all stamped sim_backend=numpy, device=cpu)",
+ "artifact": "research/findings/raw/_cs_race/f1d/step3_stats.json"
+}

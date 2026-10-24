@@ -1,6 +1,32 @@
 > # ⚠️ SUPERSEDED — this file is NOT the live board (abandoned 2026-07-17; last entry 2026-07-15).
 > **The live working board is [`GAP_CLOSURE_MISSION.md`](../../GAP_CLOSURE_MISSION.md) (CURRENT STATE) + the plan is [`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](../../docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md); skim [`ROADMAP.md`](../../ROADMAP.md).** Everything below is a historical autonomous-cycle log kept for provenance only — do NOT resume from it.
 
+## ⭐⭐⭐ Stage 1 PASSED (2026-10-16, attempt 2) — C1-C4 primary each 6/6, Claude-verified — posted
+post-supersession per RULING `s1-verified-1016`; live board = GAP_CLOSURE_MISSION.md CURRENT STATE.
+
+Attempt 2 ran from main at SHA2 `c02180f2c` (216 gate lines, prereg additions-only §12; pool = seed 42, AWS =
+seeds 43+). Aggregate verdict PASS, GO true, all seven preconditions ok, 0 missing shards; Claude's verify-go
+re-score is exact and two adversarial skeptics survive (merge `e114828f1`). Diagnostics `cat_told` and `val_novel`
+FAIL 0/6, prereg-frozen as not counted. Four caveats, verbatim from the finding:
+
+1. **C2 and C3: the recall lesions change how the answer is framed, not what it is.** `lesion_recruit` (C2) and
+   `lesion_recall` (C3) turn a recalled answer into a guess with the SAME content ("perhaps the bear chases the
+   otter [a guess]"). The default-on category organ (C1) still supplies the answer. §7 is met, since a primary
+   reply field differs, but the §1/§6 wording that the lesion "removes" the answer is not. The C3
+   `lesion_episodic` arm does remove it (disclosure becomes "I don't recall", 6/6). Load-bearing claims for the
+   recruit and recall pathways must cite this.
+2. **C1-C3 replies are identical across the six seeds.** Seeds change internal traces and C4, but not these
+   discrete answers. For C2, seeds 43-102 give byte-identical text. Six seeds here show robustness, not six
+   independent varied samples.
+3. **C4 measures how faithfully the brain follows a precomputed valence map.** The map is an offline numpy PPMI +
+   label-propagation table seeded from Warriner norms. Intact r (about 0.82) sits below the raw-norm reference
+   (0.94). 8-13 of the 24 reads per seed are neutral, which is why sign agreement is only 0.46-0.67, though no
+   non-neutral read has the wrong sign. Valence inheritance during a session (`val_novel`) is absent, 0/6.
+4. **Minor.** The generative probe ("what might...") abstains on 6/6 because the host topic extractor reads
+   "might"; it is uncounted. Prereg §4.1 calls the worm/bug exposure equal, but the teach turns hold worm x3 and
+   bug x2; the permuted flip shows no frequency shortcut. A2.2's constrained scramble draw makes the C4 control
+   pass for a perfect follower about 99% of the time, so that clause is near-determined by construction.
+
 ## ⭐⭐⭐ NEWEST — DISPATCH WIRE-IN arc MAPPED + DECOMPOSED to GO pieces; open-vocab discourse-router DEPLOYED into FluidChat; anti-stall FIXED+verified (2026-07-15)
 
 **Owner turn this session: compute UNLOCKED (full parallelization) + a CRITICAL anti-stall constraint ("continue working all day, don't accidentally stop waiting on a run"). Both honored.**

@@ -65,6 +65,9 @@ def _run_status(tmp_path: Path, *, llm_active: bool = False, aws_json: str | Non
     env["AWS_BUDGET_LOG"] = str(tmp_path / "aws_budget.log")
     env["AWS_SPEND_LEDGER"] = str(tmp_path / "aws_ledger.json")
     env["HANDOFF_BATTERIES_TSV"] = str(tmp_path / "batteries.tsv")
+    # the stall watcher (tools/stall_watch.py) reads its data root and the canary table: keep both inside tmp_path
+    env["STALL_WATCH_ROOT"] = str(tmp_path)
+    env["POOL_CANARIES_PATH"] = str(tmp_path / "pool_canaries.tsv")
     # ABSOLUTE glob (os.path.join(root, abs_glob) == abs_glob, ignoring --root): status.sh always resolves
     # --root to its OWN script location (the real repo checkout), not this test's cwd, so a repo-relative glob
     # here would count files in the real repo instead of this test's isolated tmp_path/raw/ tree.
@@ -194,3 +197,104 @@ def test_status_ignores_a_gpu_failure_older_than_24h(tmp_path):
     assert "a stale failing job from days ago" not in res.stdout
     section = res.stdout.split("-- Recent failures (24h) --")[1]
     assert "(none)" in section
+
+
+# ---------------------------------------------------------------------------- the Stalls section (tools/stall_watch.py)
+def _stall_ssh(tmp_path: Path, live_b64: str = "") -> Path:
+    """A stub ssh for status.sh: the node probe (`bash -s`) answers `0 0`, the stall watcher's liveness scan answers the
+    given JOB_B64 line plus the scan's sentinel."""
+    p = tmp_path / "stall_ssh"
+    _make_stub(p, f"""
+for a in "$@"; do last="$a"; done
+if [ "$last" = "bash -s" ]; then cat >/dev/null; echo "0 0"; exit 0; fi
+{('echo JOB_B64=' + live_b64) if live_b64 else ':'}
+echo POOL_LIVENESS_SCAN_OK
+""")
+    return p
+
+
+def _overdue_claim(tmp_path: Path, hours: float = 20.0) -> str:
+    import base64
+    import time
+
+    job = ("POOL_CHECKED_REASON=x cd ~/derisk-pool/revisions/a1b2c3d4e5f6a7b8c9d0 && python -m research.runners.fake "
+           "--seed 7 --out research/findings/raw/_never/out.json")
+    ts = time.strftime("%F %T", time.localtime(time.time() - hours * 3600))
+    (tmp_path / "pool.running").write_text(f"{ts}\tfakenode1\t{job}\n", encoding="utf-8")
+    return base64.b64encode(job.encode()).decode()
+
+
+def test_status_has_a_stalls_section_that_reports_unknown_when_the_pool_file_is_missing(tmp_path):
+    res = _run_status(tmp_path)
+    assert res.returncode == 0, res.stderr
+    section = res.stdout.split("-- Stalls --")[1].split("-- Recent failures (24h) --")[0]
+    assert "stall_watch: UNKNOWN pool" in section and "CLEAN" not in section
+
+
+def test_status_shows_a_clean_stalls_section(tmp_path):
+    (tmp_path / "pool.running").write_text("", encoding="utf-8")
+    res = _run_status(tmp_path)
+    assert res.returncode == 0, res.stderr
+    section = res.stdout.split("-- Stalls --")[1].split("-- Recent failures (24h) --")[0]
+    assert "stall_watch: CLEAN" in section
+
+
+def test_status_shows_a_stall_for_an_overdue_live_pool_claim(tmp_path):
+    b64 = _overdue_claim(tmp_path)
+    res = _run_status(tmp_path, ssh_bin=_stall_ssh(tmp_path, live_b64=b64))
+    assert res.returncode == 0, res.stderr
+    section = res.stdout.split("-- Stalls --")[1].split("-- Recent failures (24h) --")[0]
+    assert "STALL fakenode1-" in section and "node=fakenode1" in section and "runner=research.runners.fake" in section
+    assert "expected=6h00m (default 6h)" in section and "pin=a1b2c3d4e" in section and "CLEAN" not in section
+    assert len(res.stdout.rstrip("\n").split("\n")) <= 40
+
+
+def test_status_survives_a_watcher_that_fails_crashes_or_hangs(tmp_path):
+    bad = tmp_path / "bad_watcher"
+    _make_stub(bad, "echo 'Traceback: the watcher blew up'; exit 9")
+    res = _run_status(tmp_path, extra_env={"STALL_WATCH_CMD": str(bad)})
+    assert res.returncode == 0, res.stderr
+    assert "stall_watch: UNAVAILABLE (rc=9) Traceback: the watcher blew up" in res.stdout
+    assert "-- Recent failures (24h) --" in res.stdout                      # the rest of the snapshot is still there
+    slow = tmp_path / "slow_watcher"
+    _make_stub(slow, "sleep 30")
+    res = _run_status(tmp_path, extra_env={"STALL_WATCH_CMD": str(slow), "STALL_WATCH_TIMEOUT": "1"})
+    assert res.returncode == 0, res.stderr
+    assert "stall_watch: UNAVAILABLE (rc=124)" in res.stdout
+    res = _run_status(tmp_path, extra_env={"STALL_WATCH_CMD": str(tmp_path / "no_such_watcher")})
+    assert res.returncode == 0 and "stall_watch: UNAVAILABLE" in res.stdout
+
+
+def test_a_python_crash_of_the_watcher_is_unavailable_not_a_stall_report(tmp_path):
+    """Review 2026-10-18: a traceback exits 1, which used to be the STALL code, so it was printed under "Stalls" as a report.
+    A STALL is exit 3."""
+    crash = tmp_path / "crashing_watcher"
+    _make_stub(crash, "echo 'Traceback (most recent call last):'; echo 'ModuleNotFoundError: nonexistent'; exit 1")
+    res = _run_status(tmp_path, extra_env={"STALL_WATCH_CMD": str(crash)})
+    section = res.stdout.split("-- Stalls --")[1].split("-- Recent failures (24h) --")[0]
+    assert res.returncode == 0 and "stall_watch: UNAVAILABLE (rc=1) Traceback" in section
+    assert "ModuleNotFoundError" not in section
+    stalled = tmp_path / "stalled_watcher"
+    _make_stub(stalled, "echo 'STALL pool41-x node=pool41 runner=r elapsed=20h00m expected=6h00m (default 6h) pin=none "
+                        "pin_age_commits=n/a out=none'; exit 3")
+    res = _run_status(tmp_path, extra_env={"STALL_WATCH_CMD": str(stalled)})
+    section = res.stdout.split("-- Stalls --")[1].split("-- Recent failures (24h) --")[0]
+    assert res.returncode == 0 and "STALL pool41-x node=pool41" in section and "UNAVAILABLE" not in section
+
+
+def _idle_ssh(tmp_path: Path) -> Path:
+    p = tmp_path / "idle_ssh"
+    p.write_text("#!/usr/bin/env bash\ncat >/dev/null\necho '0 0'\n")
+    p.chmod(0o755)
+    return p
+
+
+def test_status_flags_idle_nodes_next_to_queued_work(tmp_path):
+    # RULING pool-stall-1020: pool41/pool42 sat idle ~30 h beside 32 queued lines (memcap above their free memory).
+    r = _run_status(tmp_path, ssh_bin=_idle_ssh(tmp_path))
+    assert "idle node(s)" not in r.stdout                       # empty queue: idle nodes are normal
+    (tmp_path / "pool.queue").write_text("1792451543\techo a\n1792451544\techo b\n")
+    r = _run_status(tmp_path, ssh_bin=_idle_ssh(tmp_path))
+    assert r.returncode == 0
+    line = [ln for ln in r.stdout.splitlines() if "idle node(s)" in ln]
+    assert len(line) == 1 and "fakenode1 fakenode2" in line[0] and "memcap" in line[0], r.stdout

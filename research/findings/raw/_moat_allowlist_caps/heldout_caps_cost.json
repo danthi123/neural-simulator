@@ -1,0 +1,597 @@
+{
+ "_doc": "Retention cost of the allowlist checker's build-3 case rule (\"no invented acronyms\") on the held-out strata, measured BEFORE any heavy",
+ "script": "research/findings/raw/_moat_allowlist_caps/heldout_caps_cost.py",
+ "caps_table": "research/findings/raw/_moat_allowlist_caps/caps_table.json",
+ "strata": {
+  "S1": {
+   "by_label": {
+    "B": {
+     "n": 58,
+     "caps_in_entity_span": 1,
+     "b2_kept": 0,
+     "b3_kept": 0,
+     "caps_and_b3_rejected": 1,
+     "lost_b2_kept_b3_rejected": 0,
+     "gained_b3_kept_b2_rejected": 0
+    },
+    "F": {
+     "n": 92,
+     "caps_in_entity_span": 3,
+     "b2_kept": 8,
+     "b3_kept": 8,
+     "caps_and_b3_rejected": 3,
+     "lost_b2_kept_b3_rejected": 0,
+     "gained_b3_kept_b2_rejected": 0
+    },
+    "N": {
+     "n": 4,
+     "caps_in_entity_span": 0,
+     "b2_kept": 0,
+     "b3_kept": 0,
+     "caps_and_b3_rejected": 0,
+     "lost_b2_kept_b3_rejected": 0,
+     "gained_b3_kept_b2_rejected": 0
+    },
+    "U": {
+     "n": 118,
+     "caps_in_entity_span": 1,
+     "b2_kept": 0,
+     "b3_kept": 0,
+     "caps_and_b3_rejected": 1,
+     "lost_b2_kept_b3_rejected": 0,
+     "gained_b3_kept_b2_rejected": 0
+    }
+   },
+   "rows": [
+    {
+     "turn": "h03",
+     "svo": [
+      "aus_fb_a_league_br",
+      "sport",
+      "association_football_club"
+     ],
+     "surface": "The Aus FB A League Br sports association football club is based in London.",
+     "label": "U",
+     "caps_in_entity_span": [
+      [
+       "FB",
+       "aus_fb_a_league_br",
+       "Aus FB A League Br"
+      ]
+     ],
+     "b2_kept": false,
+     "b3_kept": false,
+     "b3_reject_reason": "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]",
+     "b3_allowlist_keep_per_sentence": [
+      [
+       false,
+       "allowlist: no shape: at token 2 'sports' expected a relation with a verb reading ('sports' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading)"
+      ]
+     ]
+    },
+    {
+     "turn": "h06",
+     "svo": [
+      "city_of_green_bay",
+      "located_in_time_zone",
+      "utc_06"
+     ],
+     "surface": "The city of Green Bay is located in the time zone of UTC 06.",
+     "label": "F",
+     "caps_in_entity_span": [
+      [
+       "UTC",
+       "utc_06",
+       "UTC 06"
+      ]
+     ],
+     "b2_kept": false,
+     "b3_kept": false,
+     "b3_reject_reason": "allowlist: no shape: at token 3 'located' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+     "b3_allowlist_keep_per_sentence": [
+      [
+       false,
+       "allowlist: no shape: at token 3 'located' expected a gathered relation slug ending in _of (shape 3)"
+      ]
+     ]
+    },
+    {
+     "turn": "h06",
+     "svo": [
+      "city_of_green_bay",
+      "located_in_time_zone",
+      "utc_06"
+     ],
+     "surface": "The city of Green Bay is located in the time zone UTC 06.",
+     "label": "F",
+     "caps_in_entity_span": [
+      [
+       "UTC",
+       "utc_06",
+       "UTC 06"
+      ]
+     ],
+     "b2_kept": false,
+     "b3_kept": false,
+     "b3_reject_reason": "allowlist: no shape: at token 3 'located' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+     "b3_allowlist_keep_per_sentence": [
+      [
+       false,
+       "allowlist: no shape: at token 3 'located' expected a gathered relation slug ending in _of (shape 3)"
+      ]
+     ]
+    },
+    {
+     "turn": "h17",
+     "svo": [
+      "luk_cs_p_l",
+      "country_of_citizenship",
+      "u_s_of_a"
+     ],
+     "surface": "The United States of America is the country of citizenship for Luk CS P L.",
+     "label": "F",
+     "caps_in_entity_span": [
+      [
+       "CS",
+       "luk_cs_p_l",
+       "Luk CS P L"
+      ]
+     ],
+     "b2_kept": false,
+     "b3_kept": false,
+     "b3_reject_reason": "allowlist: no shape: at token 1 'united' expected a gathered slug after the determiner [sentence 1 of 1]",
+     "b3_allowlist_keep_per_sentence": [
+      [
+       false,
+       "allowlist: no shape: at token 1 'united' expected a gathered slug after the determiner"
+      ]
+     ]
+    },
+    {
+     "turn": "h19",
+     "svo": [
+      "nc_arts",
+      "located_in_the_administrative_territoria",
+      "the_tar_heel_state"
+     ],
+     "surface": "The NC-ARTS is located in the administrative territory of the Tarheel State.",
+     "label": "B",
+     "caps_in_entity_span": [
+      [
+       "NC",
+       "nc_arts",
+       "NC-ARTS"
+      ],
+      [
+       "ARTS",
+       "nc_arts",
+       "NC-ARTS"
+      ]
+     ],
+     "b2_kept": false,
+     "b3_kept": false,
+     "b3_reject_reason": "allowlist: no shape: at token 3 'located' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+     "b3_allowlist_keep_per_sentence": [
+      [
+       false,
+       "allowlist: no shape: at token 3 'located' expected a gathered relation slug ending in _of (shape 3)"
+      ]
+     ]
+    }
+   ]
+  },
+  "S2": {
+   "by_label": {
+    "F": {
+     "n": 138,
+     "caps_in_entity_span": 0,
+     "b2_kept": 137,
+     "b3_kept": 137,
+     "caps_and_b3_rejected": 0,
+     "lost_b2_kept_b3_rejected": 0,
+     "gained_b3_kept_b2_rejected": 0
+    },
+    "U": {
+     "n": 930,
+     "caps_in_entity_span": 0,
+     "b2_kept": 0,
+     "b3_kept": 0,
+     "caps_and_b3_rejected": 0,
+     "lost_b2_kept_b3_rejected": 0,
+     "gained_b3_kept_b2_rejected": 0
+    }
+   },
+   "rows": []
+  },
+  "S3": {
+   "by_label": {
+    "B": {
+     "n": 56,
+     "caps_in_entity_span": 1,
+     "b2_kept": 0,
+     "b3_kept": 0,
+     "caps_and_b3_rejected": 1,
+     "lost_b2_kept_b3_rejected": 0,
+     "gained_b3_kept_b2_rejected": 0
+    },
+    "F": {
+     "n": 86,
+     "caps_in_entity_span": 7,
+     "b2_kept": 27,
+     "b3_kept": 27,
+     "caps_and_b3_rejected": 4,
+     "lost_b2_kept_b3_rejected": 0,
+     "gained_b3_kept_b2_rejected": 0
+    },
+    "N": {
+     "n": 1,
+     "caps_in_entity_span": 0,
+     "b2_kept": 0,
+     "b3_kept": 0,
+     "caps_and_b3_rejected": 0,
+     "lost_b2_kept_b3_rejected": 0,
+     "gained_b3_kept_b2_rejected": 0
+    },
+    "U": {
+     "n": 132,
+     "caps_in_entity_span": 5,
+     "b2_kept": 0,
+     "b3_kept": 0,
+     "caps_and_b3_rejected": 5,
+     "lost_b2_kept_b3_rejected": 0,
+     "gained_b3_kept_b2_rejected": 0
+    }
+   },
+   "rows": [
+    {
+     "turn": "s3a02",
+     "svo": [
+      "angola_national_football_team",
+      "participant_of",
+      "2006_fifa_world_cup_final_positions"
+     ],
+     "surface": "Angola's national football team participated in the 2006 FIFA World Cup final positions.",
+     "label": "F",
+     "caps_in_entity_span": [
+      [
+       "FIFA",
+       "2006_fifa_world_cup_final_positions",
+       "2006 FIFA World Cup final positions"
+      ]
+     ],
+     "b2_kept": false,
+     "b3_kept": false,
+     "b3_reject_reason": "allowlist: apostrophe (possessive or contraction) in \"Angola's national football team participated in the 2006 FIFA World Cup final positions.\" [sentence 1 of 1]",
+     "b3_allowlist_keep_per_sentence": [
+      [
+       false,
+       "allowlist: apostrophe (possessive or contraction) in \"Angola's national football team participated in the 2006 FIFA World Cup final positions.\""
+      ]
+     ]
+    },
+    {
+     "turn": "s3a04",
+     "svo": [
+      "pole_land",
+      "located_in_time_zone",
+      "rome_time"
+     ],
+     "surface": "Pole Land is located in time zone ROME_TIME.",
+     "label": "F",
+     "caps_in_entity_span": [
+      [
+       "ROME",
+       "rome_time",
+       "ROME_TIME"
+      ],
+      [
+       "TIME",
+       "rome_time",
+       "ROME_TIME"
+      ]
+     ],
+     "b2_kept": false,
+     "b3_kept": false,
+     "b3_reject_reason": "allowlist: no shape: at token 2 'located_in_time_zone' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+     "b3_allowlist_keep_per_sentence": [
+      [
+       false,
+       "allowlist: no shape: at token 2 'located_in_time_zone' expected a gathered relation slug ending in _of (shape 3)"
+      ]
+     ]
+    },
+    {
+     "turn": "s3a10",
+     "svo": [
+      "fc_magna_wiener_neustadt",
+      "sport",
+      "association_football_club"
+     ],
+     "surface": "The FC Magna Wiener Neustadt Sport Association is a football club based in Neustadt, Germany.",
+     "label": "U",
+     "caps_in_entity_span": [
+      [
+       "FC",
+       "fc_magna_wiener_neustadt",
+       "FC Magna Wiener Neustadt"
+      ]
+     ],
+     "b2_kept": false,
+     "b3_kept": false,
+     "b3_reject_reason": "allowlist: no shape: at token 2 'sport' expected a relation with a verb reading ('sport' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading) [sentence 1 of 1]",
+     "b3_allowlist_keep_per_sentence": [
+      [
+       false,
+       "allowlist: no shape: at token 2 'sport' expected a relation with a verb reading ('sport' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading)"
+      ]
+     ]
+    },
+    {
+     "turn": "s3a10",
+     "svo": [
+      "fc_magna_wiener_neustadt",
+      "country",
+      "etymology_of_austria"
+     ],
+     "surface": "FC Magna Wiener Neustadt is the country where Austria's etymology of \"et\" was derived from.",
+     "label": "U",
+     "caps_in_entity_span": [
+      [
+       "FC",
+       "fc_magna_wiener_neustadt",
+       "FC Magna Wiener Neustadt"
+      ]
+     ],
+     "b2_kept": false,
+     "b3_kept": false,
+     "b3_reject_reason": "allowlist: apostrophe (possessive or contraction) in 'FC Magna Wiener Neustadt is the country where Austria\\'s etymology of \"et\" was derived from.' [sentence 1 of 1]",
+     "b3_allowlist_keep_per_sentence": [
+      [
+       false,
+       "allowlist: apostrophe (possessive or contraction) in 'FC Magna Wiener Neustadt is the country where Austria\\'s etymology of \"et\" was derived from.'"
+      ]
+     ]
+    },
+    {
+     "turn": "s3a13",
+     "svo": [
+      "hertha_berlin_ii",
+      "sport",
+      "association_football_club"
+     ],
+     "surface": "Hertha Berlin II competes in football (soccer).",
+     "label": "B",
+     "caps_in_entity_span": [
+      [
+       "II",
+       "hertha_berlin_ii",
+       "Hertha Berlin II"
+      ]
+     ],
+     "b2_kept": false,
+     "b3_kept": false,
+     "b3_reject_reason": "allowlist: no shape: at token 1 'competes' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+     "b3_allowlist_keep_per_sentence": [
+      [
+       false,
+       "allowlist: no shape: at token 1 'competes' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3)"
+      ]
+     ]
+    },
+    {
+     "turn": "s3a13",
+     "svo": [
+      "hertha_berlin_ii",
+      "sport",
+      "association_football_club"
+     ],
+     "surface": "Hertha Berlin II is a football club based in Hertha, Germany.",
+     "label": "U",
+     "caps_in_entity_span": [
+      [
+       "II",
+       "hertha_berlin_ii",
+       "Hertha Berlin II"
+      ]
+     ],
+     "b2_kept": false,
+     "b3_kept": false,
+     "b3_reject_reason": "allowlist: no shape: at token 3 'football' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+     "b3_allowlist_keep_per_sentence": [
+      [
+       false,
+       "allowlist: no shape: at token 3 'football' expected a gathered relation slug ending in _of (shape 3)"
+      ]
+     ]
+    },
+    {
+     "turn": "s3a13",
+     "svo": [
+      "hertha_berlin_ii",
+      "country",
+      "federal_republic_of_germany"
+     ],
+     "surface": "Hertha Berlin II is from the Federal Republic of Germany.",
+     "label": "F",
+     "caps_in_entity_span": [
+      [
+       "II",
+       "hertha_berlin_ii",
+       "Hertha Berlin II"
+      ]
+     ],
+     "b2_kept": false,
+     "b3_kept": false,
+     "b3_reject_reason": "allowlist: no shape: at token 2 'from' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+     "b3_allowlist_keep_per_sentence": [
+      [
+       false,
+       "allowlist: no shape: at token 2 'from' expected a gathered relation slug ending in _of (shape 3)"
+      ]
+     ]
+    },
+    {
+     "turn": "s3a13",
+     "svo": [
+      "hertha_berlin_ii",
+      "country",
+      "federal_republic_of_germany"
+     ],
+     "surface": "Hertha Berlin II is a country federal republic of Germany.",
+     "label": "U",
+     "caps_in_entity_span": [
+      [
+       "II",
+       "hertha_berlin_ii",
+       "Hertha Berlin II"
+      ]
+     ],
+     "b2_kept": false,
+     "b3_kept": false,
+     "b3_reject_reason": "allowlist: no shape: at token 3 'country' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+     "b3_allowlist_keep_per_sentence": [
+      [
+       false,
+       "allowlist: no shape: at token 3 'country' expected a gathered relation slug ending in _of (shape 3)"
+      ]
+     ]
+    },
+    {
+     "turn": "s3a13",
+     "svo": [
+      "hertha_berlin_ii",
+      "subclass_of",
+      "hertha_bsc"
+     ],
+     "surface": "Hertha Berlin II is a subclass of Hertha BSC.",
+     "label": "F",
+     "caps_in_entity_span": [
+      [
+       "II",
+       "hertha_berlin_ii",
+       "Hertha Berlin II"
+      ],
+      [
+       "BSC",
+       "hertha_bsc",
+       "Hertha BSC"
+      ]
+     ],
+     "b2_kept": true,
+     "b3_kept": true,
+     "b3_reject_reason": null,
+     "b3_allowlist_keep_per_sentence": [
+      [
+       true,
+       "ok"
+      ]
+     ]
+    },
+    {
+     "turn": "s3a20",
+     "svo": [
+      "o_t_bonner_middle_school",
+      "located_in_the_administrative_territoria",
+      "religion_in_virginia"
+     ],
+     "surface": "The O_T_BONNER Middle School is located in the administrative territory of Virginia and teaches students about Christianity.",
+     "label": "U",
+     "caps_in_entity_span": [
+      [
+       "BONNER",
+       "o_t_bonner_middle_school",
+       "O_T_BONNER Middle School"
+      ]
+     ],
+     "b2_kept": false,
+     "b3_kept": false,
+     "b3_reject_reason": "allowlist: no shape: at token 3 'located' expected a gathered relation slug ending in _of (shape 3) [sentence 1 of 1]",
+     "b3_allowlist_keep_per_sentence": [
+      [
+       false,
+       "allowlist: no shape: at token 3 'located' expected a gathered relation slug ending in _of (shape 3)"
+      ]
+     ]
+    },
+    {
+     "turn": "s3b10",
+     "svo": [
+      "field_goal_kicker",
+      "sport",
+      "us_football"
+     ],
+     "surface": "The field goal kicker competes in US football.",
+     "label": "F",
+     "caps_in_entity_span": [
+      [
+       "US",
+       "us_football",
+       "US football"
+      ]
+     ],
+     "b2_kept": false,
+     "b3_kept": false,
+     "b3_reject_reason": "allowlist: no shape: at token 2 'competes' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3) [sentence 1 of 1]",
+     "b3_allowlist_keep_per_sentence": [
+      [
+       false,
+       "allowlist: no shape: at token 2 'competes' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3)"
+      ]
+     ]
+    },
+    {
+     "turn": "s3b23",
+     "svo": [
+      "pittsburgh_lrt",
+      "instance_of",
+      "transportation_authority"
+     ],
+     "surface": "Pittsburgh LRT is an instance of transportation authority.",
+     "label": "F",
+     "caps_in_entity_span": [
+      [
+       "LRT",
+       "pittsburgh_lrt",
+       "Pittsburgh LRT"
+      ]
+     ],
+     "b2_kept": true,
+     "b3_kept": true,
+     "b3_reject_reason": null,
+     "b3_allowlist_keep_per_sentence": [
+      [
+       true,
+       "ok"
+      ]
+     ]
+    },
+    {
+     "turn": "s3b23",
+     "svo": [
+      "pittsburgh_lrt",
+      "instance_of",
+      "transportation_authority"
+     ],
+     "surface": "Pittsburgh LRT is an instance of a transportation authority.",
+     "label": "F",
+     "caps_in_entity_span": [
+      [
+       "LRT",
+       "pittsburgh_lrt",
+       "Pittsburgh LRT"
+      ]
+     ],
+     "b2_kept": true,
+     "b3_kept": true,
+     "b3_reject_reason": null,
+     "b3_allowlist_keep_per_sentence": [
+      [
+       true,
+       "ok"
+      ]
+     ]
+    }
+   ]
+  }
+ }
+}

@@ -914,6 +914,28 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 7. WALLS LEDGER (every known wall + its planned biological surpass)
 
+> **⭐ 2026-10-16 — Stage-1 exit attempt 2: PASSED (C1-C4 primary each 6/6), Claude-verified with four
+> caveats (finding `research/findings/2026-10-16-stage1-exit-attempt2-RESULT.md`, merge `e114828f1`).**
+> 1. **C2 and C3: the recall lesions change how the answer is framed, not what it is.** `lesion_recruit` (C2) and
+>    `lesion_recall` (C3) turn a recalled answer into a guess with the SAME content ("perhaps the bear chases the
+>    otter [a guess]"). The default-on category organ (C1) still supplies the answer. §7 is met, since a primary
+>    reply field differs, but the §1/§6 wording that the lesion "removes" the answer is not. The C3
+>    `lesion_episodic` arm does remove it (disclosure becomes "I don't recall", 6/6). Load-bearing claims for the
+>    recruit and recall pathways must cite this.
+> 2. **C1-C3 replies are identical across the six seeds.** Seeds change internal traces and C4, but not these
+>    discrete answers. For C2, seeds 43-102 give byte-identical text. Six seeds here show robustness, not six
+>    independent varied samples.
+> 3. **C4 measures how faithfully the brain follows a precomputed valence map.** The map is an offline numpy PPMI +
+>    label-propagation table seeded from Warriner norms. Intact r (about 0.82) sits below the raw-norm reference
+>    (0.94). 8-13 of the 24 reads per seed are neutral, which is why sign agreement is only 0.46-0.67, though no
+>    non-neutral read has the wrong sign. Valence inheritance during a session (`val_novel`) is absent, 0/6.
+> 4. **Minor.** The generative probe ("what might...") abstains on 6/6 because the host topic extractor reads
+>    "might"; it is uncounted. Prereg §4.1 calls the worm/bug exposure equal, but the teach turns hold worm x3 and
+>    bug x2; the permuted flip shows no frequency shortcut. A2.2's constrained scramble draw makes the C4 control
+>    pass for a perfect follower about 99% of the time, so that clause is near-determined by construction.
+> The diagnostics `cat_told` and `val_novel` FAIL 0/6, prereg-frozen as not counted. This stage bar
+> does not measure host-decision share; k-select remains host code.
+
 > **⭐ 2026-10-06 — Stage-1 exit attempt 1 fully read: not passed.** C1 category inheritance is the open wall
 > (its wiring-on gate, T7, needs 2 more cells). C4 is not a capability wall: the reply follows the learned valence map
 > on every seed, and the FAIL is the registered permuted-map clause (two seeds' derangements correlate with the norm).
@@ -1217,6 +1239,13 @@ narrowed each claim: the false-belief lesion overrides the host witnessing decis
 only the stop; self-ID adds no new answer. All three stay PARTIAL until T18-T21. Owed: bisect the
 affect-marker-spiking-wta S2 loss on main. LDC Step 4b proceeds to the omission build (lr-0 cells declared, RULING
 T1-lr0).
+
+**2026-10-16 (attempt 2):** **Stage-1 exit PASSED** — C1-C4 primary each 6/6
+(`research/findings/2026-10-16-stage1-exit-attempt2-RESULT.md`, Claude-verified `e114828f1`, board #264); the four
+caveats ride the PASS verbatim in §7 above. Per RULING `s1-next-1016`: next (2) the word-role flip — F3 rerun at
+P' `b1c11a088`, prereg, ASK [wrc-flip-prereg]; then (3) the Stage-2 gate run with the same AWS split as attempt 2
+(file [aws-run] when its lines are emitted; pool for the other seeds). Any load-bearing-fraction row citing the
+recruit or recall pathway must carry caveat 1 (those lesions reframe the answer, not remove it).
 
 **2026-10-04 (cloud session 6):** Stage-1 exit attempt 1 not passed (above). C4 re-runs after the provisioning fix;
 the C1 and C3 gaps (category inheritance, lived recall needing the memory system) go to the prereg's section-8 named

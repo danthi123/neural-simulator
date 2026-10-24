@@ -1,0 +1,8779 @@
+{
+  "KILL_CRITERIA": [
+    "K1 NO-GO iff no F1_GRID row passes (a)-(i) on 8/8 seeds x 10 draws; next carrier = recurrent persistent mention trace",
+    "K2 error/incomplete clause = FAIL for the row",
+    "K3 (e) fails if STEER* undefined (no pA reaches >= 8/10)",
+    "K4 (i) lesion outcome must be identical across 10 draws",
+    "K5 (h) chance band = wins in [2,8] of 10, both reads",
+    "K6 first-all-pass row in F1_GRID order (fixed before run)"
+  ],
+  "Verdict": {
+    "chance": null,
+    "disabled_processes": [],
+    "go": false,
+    "label": "cs-race step 1: F1 feasibility clause table",
+    "preconditions": [
+      {
+        "detail": "measured=True expect=True",
+        "kind": "require",
+        "name": "8 dev seeds ran",
+        "note": "dev seeds only; gate seeds never run",
+        "ok": true
+      },
+      {
+        "detail": "measured=True expect=True",
+        "kind": "require",
+        "name": "no clause errored (K2)",
+        "note": "",
+        "ok": true
+      },
+      {
+        "detail": "measured=True expect=True",
+        "kind": "require",
+        "name": "backend numpy",
+        "note": "",
+        "ok": true
+      },
+      {
+        "detail": "measured=True expect=True",
+        "kind": "require",
+        "name": "positive control: one engram written alone commits >= 9/10 on every dev seed",
+        "note": "step 1b: a control-failed row is UNDEFINED, not FAIL",
+        "ok": true
+      },
+      {
+        "detail": "measured=False expect=True",
+        "kind": "require",
+        "name": "decisiveness control (two writes together, one shared cue, no recency/mention): commits >= 9/10 and each winner 2-8 of 10 on every seed",
+        "note": "RULING cs-race-f1b-1021c step 2",
+        "ok": false
+      }
+    ],
+    "status": "UNDEFINED",
+    "undefined_reasons": [
+      "unmet: decisiveness control (two writes together, one shared cue, no recency/mention): commits >= 9/10 and each winner 2-8 of 10 on every seed (measured=False expect=True)"
+    ]
+  },
+  "attribution_mention_gate": null,
+  "backend": "numpy",
+  "controls_only": true,
+  "device": "cpu",
+  "draws": 10,
+  "grid": {
+    "NE": 24,
+    "U": 0.45,
+    "tau_f": 300.0
+  },
+  "grid_row": 4,
+  "preconditions": {
+    "dev_seeds": "1-8",
+    "draws": 10,
+    "env": "probe-local flags only; BRAIN_CS_RACE does not exist yet (step 2); default-off world",
+    "kill_criteria_written_before_first_run": true,
+    "organ": "RaceCircuit extends ReplayCircuit; shared organ file unedited",
+    "positive_control": "step 1b (cs-race-f1-void-1021b): one engram written alone, full cue, no competitor, >=9/10 commits per dev seed; control-failed row = UNDEFINED"
+  },
+  "probe": "cs_race_f1",
+  "results": [
+    {
+      "KILL": [
+        "K1 NO-GO iff no F1_GRID row passes (a)-(i) on 8/8 seeds x 10 draws; next carrier = recurrent persistent mention trace",
+        "K2 error/incomplete clause = FAIL for the row",
+        "K3 (e) fails if STEER* undefined (no pA reaches >= 8/10)",
+        "K4 (i) lesion outcome must be identical across 10 draws",
+        "K5 (h) chance band = wins in [2,8] of 10, both reads",
+        "K6 first-all-pass row in F1_GRID order (fixed before run)"
+      ],
+      "clauses": {},
+      "decisive_control": {
+        "bar_commits": 9,
+        "commits": 3,
+        "cue": [
+          "lynx",
+          "chase"
+        ],
+        "encode": [
+          "ABsim"
+        ],
+        "errors": 0,
+        "frog_wins": 3,
+        "n": 10,
+        "no_recency_no_mention": true,
+        "pass": false,
+        "split_band": [
+          2,
+          8
+        ],
+        "vm_field": "v_mV (per_draw[tag=decisive])",
+        "vole_wins": 0
+      },
+      "draws": 10,
+      "grid": "row4 U=0.45 tau_f=300.0 NE=24 W_EE=120.0 W_IE=80.0",
+      "per_draw": [
+        {
+          "clause": "posctl",
+          "cue_spikes": 23,
+          "draw": 0,
+          "engram_counts": [
+            1,
+            1,
+            62
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            213
+          ],
+          "gate_counts": [
+            0,
+            0,
+            47
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            78
+          ],
+          "v_mV": {
+            "cue": -59.913,
+            "engram": [
+              -68.252,
+              -68.24,
+              -68.241
+            ],
+            "gate": [
+              -70.392,
+              -70.443,
+              -70.443
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -8.461
+            ],
+            "thr": -42.39
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 23,
+          "draw": 1,
+          "engram_counts": [
+            0,
+            0,
+            63
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            212
+          ],
+          "gate_counts": [
+            0,
+            0,
+            46
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            82
+          ],
+          "v_mV": {
+            "cue": -59.913,
+            "engram": [
+              -68.432,
+              -68.423,
+              -68.422
+            ],
+            "gate": [
+              -70.593,
+              -70.64,
+              -70.64
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -12.257
+            ],
+            "thr": -42.39
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 23,
+          "draw": 2,
+          "engram_counts": [
+            0,
+            0,
+            62
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            215
+          ],
+          "gate_counts": [
+            0,
+            0,
+            47
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            78
+          ],
+          "v_mV": {
+            "cue": -59.913,
+            "engram": [
+              -68.022,
+              -67.999,
+              -68.012
+            ],
+            "gate": [
+              -69.96,
+              -69.998,
+              -70.028
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -15.583
+            ],
+            "thr": -42.39
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 23,
+          "draw": 3,
+          "engram_counts": [
+            0,
+            0,
+            63
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            217
+          ],
+          "gate_counts": [
+            0,
+            0,
+            47
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            81
+          ],
+          "v_mV": {
+            "cue": -59.913,
+            "engram": [
+              -68.251,
+              -68.232,
+              -68.239
+            ],
+            "gate": [
+              -70.257,
+              -70.291,
+              -70.318
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -0.724
+            ],
+            "thr": -42.39
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 23,
+          "draw": 4,
+          "engram_counts": [
+            0,
+            0,
+            62
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            200
+          ],
+          "gate_counts": [
+            0,
+            0,
+            47
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            79
+          ],
+          "v_mV": {
+            "cue": -59.913,
+            "engram": [
+              -67.933,
+              -67.911,
+              -67.922
+            ],
+            "gate": [
+              -69.91,
+              -69.948,
+              -69.977
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -10.314
+            ],
+            "thr": -42.39
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 23,
+          "draw": 5,
+          "engram_counts": [
+            0,
+            0,
+            63
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            206
+          ],
+          "gate_counts": [
+            0,
+            0,
+            47
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            83
+          ],
+          "v_mV": {
+            "cue": -59.913,
+            "engram": [
+              -68.411,
+              -68.392,
+              -68.399
+            ],
+            "gate": [
+              -70.371,
+              -70.405,
+              -70.432
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -20.309
+            ],
+            "thr": -42.39
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 23,
+          "draw": 6,
+          "engram_counts": [
+            0,
+            0,
+            60
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            219
+          ],
+          "gate_counts": [
+            0,
+            0,
+            47
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            79
+          ],
+          "v_mV": {
+            "cue": -59.913,
+            "engram": [
+              -68.305,
+              -68.29,
+              -68.294
+            ],
+            "gate": [
+              -70.377,
+              -70.43,
+              -70.432
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -21.337
+            ],
+            "thr": -42.39
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 23,
+          "draw": 7,
+          "engram_counts": [
+            0,
+            0,
+            61
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            209
+          ],
+          "gate_counts": [
+            0,
+            0,
+            47
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            76
+          ],
+          "v_mV": {
+            "cue": -59.913,
+            "engram": [
+              -68.788,
+              -68.78,
+              -68.777
+            ],
+            "gate": [
+              -70.913,
+              -70.954,
+              -70.957
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -10.942
+            ],
+            "thr": -42.39
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 23,
+          "draw": 8,
+          "engram_counts": [
+            0,
+            0,
+            63
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            214
+          ],
+          "gate_counts": [
+            0,
+            0,
+            47
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            79
+          ],
+          "v_mV": {
+            "cue": -59.913,
+            "engram": [
+              -67.971,
+              -67.947,
+              -67.96
+            ],
+            "gate": [
+              -69.92,
+              -69.957,
+              -69.988
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -24.714
+            ],
+            "thr": -42.39
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 23,
+          "draw": 9,
+          "engram_counts": [
+            0,
+            0,
+            62
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            212
+          ],
+          "gate_counts": [
+            0,
+            0,
+            48
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            83
+          ],
+          "v_mV": {
+            "cue": -59.913,
+            "engram": [
+              -68.237,
+              -68.226,
+              -68.226
+            ],
+            "gate": [
+              -70.394,
+              -70.446,
+              -70.445
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -3.298
+            ],
+            "thr": -42.39
+          },
+          "winner": 2
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 34,
+          "draw": 0,
+          "engram_counts": [
+            31,
+            23,
+            0
+          ],
+          "first_gate_step": [
+            181,
+            181,
+            null
+          ],
+          "gate_counts": [
+            25,
+            15,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            87,
+            95,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.935,
+            "engram": [
+              -69.589,
+              -69.573,
+              -69.583
+            ],
+            "gate": [
+              -71.421,
+              -71.437,
+              -71.47
+            ],
+            "slot": [
+              -21.397,
+              6.47,
+              -60.0
+            ],
+            "thr": -42.39
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 34,
+          "draw": 1,
+          "engram_counts": [
+            36,
+            22,
+            0
+          ],
+          "first_gate_step": [
+            186,
+            190,
+            null
+          ],
+          "gate_counts": [
+            26,
+            14,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            87,
+            85,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.935,
+            "engram": [
+              -69.632,
+              -69.622,
+              -69.628
+            ],
+            "gate": [
+              -71.595,
+              -71.649,
+              -71.632
+            ],
+            "slot": [
+              -13.547,
+              -16.103,
+              -60.0
+            ],
+            "thr": -42.39
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 34,
+          "draw": 2,
+          "engram_counts": [
+            9,
+            55,
+            0
+          ],
+          "first_gate_step": [
+            200,
+            184,
+            null
+          ],
+          "gate_counts": [
+            1,
+            48,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            0,
+            91,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.935,
+            "engram": [
+              -68.327,
+              -68.311,
+              -68.324
+            ],
+            "gate": [
+              -70.374,
+              -70.407,
+              -70.43
+            ],
+            "slot": [
+              -60.0,
+              -28.452,
+              -60.0
+            ],
+            "thr": -42.39
+          },
+          "winner": 1
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 34,
+          "draw": 3,
+          "engram_counts": [
+            20,
+            34,
+            0
+          ],
+          "first_gate_step": [
+            190,
+            187,
+            null
+          ],
+          "gate_counts": [
+            13,
+            26,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            86,
+            86,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.935,
+            "engram": [
+              -69.313,
+              -69.296,
+              -69.31
+            ],
+            "gate": [
+              -71.199,
+              -71.246,
+              -71.247
+            ],
+            "slot": [
+              -19.779,
+              -9.65,
+              -60.0
+            ],
+            "thr": -42.39
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 34,
+          "draw": 4,
+          "engram_counts": [
+            11,
+            48,
+            0
+          ],
+          "first_gate_step": [
+            200,
+            186,
+            null
+          ],
+          "gate_counts": [
+            2,
+            46,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            0,
+            82,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.935,
+            "engram": [
+              -68.072,
+              -68.059,
+              -68.071
+            ],
+            "gate": [
+              -70.218,
+              -70.274,
+              -70.27
+            ],
+            "slot": [
+              -60.0,
+              -33.029,
+              -60.0
+            ],
+            "thr": -42.39
+          },
+          "winner": 1
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 34,
+          "draw": 5,
+          "engram_counts": [
+            8,
+            55,
+            0
+          ],
+          "first_gate_step": [
+            null,
+            177,
+            null
+          ],
+          "gate_counts": [
+            0,
+            47,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            0,
+            84,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.935,
+            "engram": [
+              -68.3,
+              -68.282,
+              -68.297
+            ],
+            "gate": [
+              -70.31,
+              -70.345,
+              -70.369
+            ],
+            "slot": [
+              -60.0,
+              -8.539,
+              -60.0
+            ],
+            "thr": -42.39
+          },
+          "winner": 1
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 34,
+          "draw": 6,
+          "engram_counts": [
+            31,
+            26,
+            0
+          ],
+          "first_gate_step": [
+            195,
+            192,
+            null
+          ],
+          "gate_counts": [
+            25,
+            23,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            85,
+            93,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.935,
+            "engram": [
+              -69.785,
+              -69.783,
+              -69.782
+            ],
+            "gate": [
+              -71.876,
+              -71.932,
+              -71.902
+            ],
+            "slot": [
+              -16.818,
+              1.626,
+              -60.0
+            ],
+            "thr": -42.39
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 34,
+          "draw": 7,
+          "engram_counts": [
+            23,
+            31,
+            0
+          ],
+          "first_gate_step": [
+            192,
+            191,
+            null
+          ],
+          "gate_counts": [
+            20,
+            25,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            87,
+            86,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.935,
+            "engram": [
+              -69.667,
+              -69.649,
+              -69.663
+            ],
+            "gate": [
+              -71.431,
+              -71.476,
+              -71.48
+            ],
+            "slot": [
+              0.625,
+              -4.262,
+              -60.0
+            ],
+            "thr": -42.39
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 34,
+          "draw": 8,
+          "engram_counts": [
+            10,
+            42,
+            0
+          ],
+          "first_gate_step": [
+            194,
+            186,
+            null
+          ],
+          "gate_counts": [
+            10,
+            36,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            86,
+            93,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.935,
+            "engram": [
+              -69.436,
+              -69.416,
+              -69.432
+            ],
+            "gate": [
+              -71.223,
+              -71.263,
+              -71.276
+            ],
+            "slot": [
+              -19.841,
+              -22.74,
+              -60.0
+            ],
+            "thr": -42.39
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 34,
+          "draw": 9,
+          "engram_counts": [
+            35,
+            18,
+            0
+          ],
+          "first_gate_step": [
+            192,
+            197,
+            null
+          ],
+          "gate_counts": [
+            28,
+            14,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            87,
+            85,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.935,
+            "engram": [
+              -69.792,
+              -69.781,
+              -69.787
+            ],
+            "gate": [
+              -71.664,
+              -71.712,
+              -71.705
+            ],
+            "slot": [
+              -9.513,
+              5.309,
+              -60.0
+            ],
+            "thr": -42.39
+          },
+          "winner": null
+        }
+      ],
+      "positive_control": {
+        "bar": 9,
+        "commits": 10,
+        "cue": [
+          "yak",
+          "eat"
+        ],
+        "encode": [
+          "grass"
+        ],
+        "n": 10,
+        "no_competitor": true,
+        "pass": true,
+        "slot": 2,
+        "winners": [
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass"
+        ]
+      },
+      "seed": 1,
+      "subset": "controls-only: posctl + decisive (cs-race-f1b-1021c lever grid)"
+    },
+    {
+      "KILL": [
+        "K1 NO-GO iff no F1_GRID row passes (a)-(i) on 8/8 seeds x 10 draws; next carrier = recurrent persistent mention trace",
+        "K2 error/incomplete clause = FAIL for the row",
+        "K3 (e) fails if STEER* undefined (no pA reaches >= 8/10)",
+        "K4 (i) lesion outcome must be identical across 10 draws",
+        "K5 (h) chance band = wins in [2,8] of 10, both reads",
+        "K6 first-all-pass row in F1_GRID order (fixed before run)"
+      ],
+      "clauses": {},
+      "decisive_control": {
+        "bar_commits": 9,
+        "commits": 0,
+        "cue": [
+          "lynx",
+          "chase"
+        ],
+        "encode": [
+          "ABsim"
+        ],
+        "errors": 0,
+        "frog_wins": 0,
+        "n": 10,
+        "no_recency_no_mention": true,
+        "pass": false,
+        "split_band": [
+          2,
+          8
+        ],
+        "vm_field": "v_mV (per_draw[tag=decisive])",
+        "vole_wins": 0
+      },
+      "draws": 10,
+      "grid": "row4 U=0.45 tau_f=300.0 NE=24 W_EE=120.0 W_IE=80.0",
+      "per_draw": [
+        {
+          "clause": "posctl",
+          "cue_spikes": 31,
+          "draw": 0,
+          "engram_counts": [
+            0,
+            0,
+            66
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            201
+          ],
+          "gate_counts": [
+            0,
+            0,
+            44
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            84
+          ],
+          "v_mV": {
+            "cue": -60.158,
+            "engram": [
+              -68.142,
+              -68.151,
+              -68.136
+            ],
+            "gate": [
+              -70.259,
+              -70.266,
+              -70.299
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -5.488
+            ],
+            "thr": -42.947
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 31,
+          "draw": 1,
+          "engram_counts": [
+            1,
+            1,
+            66
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            202
+          ],
+          "gate_counts": [
+            0,
+            0,
+            46
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            88
+          ],
+          "v_mV": {
+            "cue": -60.158,
+            "engram": [
+              -68.261,
+              -68.269,
+              -68.251
+            ],
+            "gate": [
+              -70.422,
+              -70.434,
+              -70.459
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -13.658
+            ],
+            "thr": -42.947
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 31,
+          "draw": 2,
+          "engram_counts": [
+            0,
+            0,
+            62
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            202
+          ],
+          "gate_counts": [
+            0,
+            0,
+            43
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            81
+          ],
+          "v_mV": {
+            "cue": -60.158,
+            "engram": [
+              -68.626,
+              -68.632,
+              -68.598
+            ],
+            "gate": [
+              -70.94,
+              -70.969,
+              -70.971
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -4.665
+            ],
+            "thr": -42.947
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 31,
+          "draw": 3,
+          "engram_counts": [
+            0,
+            0,
+            62
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            204
+          ],
+          "gate_counts": [
+            0,
+            0,
+            45
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            85
+          ],
+          "v_mV": {
+            "cue": -60.158,
+            "engram": [
+              -68.227,
+              -68.236,
+              -68.219
+            ],
+            "gate": [
+              -70.366,
+              -70.374,
+              -70.406
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -7.222
+            ],
+            "thr": -42.947
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 31,
+          "draw": 4,
+          "engram_counts": [
+            0,
+            0,
+            64
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            196
+          ],
+          "gate_counts": [
+            0,
+            0,
+            45
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            85
+          ],
+          "v_mV": {
+            "cue": -60.158,
+            "engram": [
+              -68.18,
+              -68.189,
+              -68.177
+            ],
+            "gate": [
+              -70.261,
+              -70.263,
+              -70.301
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -26.211
+            ],
+            "thr": -42.947
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 31,
+          "draw": 5,
+          "engram_counts": [
+            0,
+            0,
+            55
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            201
+          ],
+          "gate_counts": [
+            0,
+            0,
+            42
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            80
+          ],
+          "v_mV": {
+            "cue": -60.158,
+            "engram": [
+              -68.143,
+              -68.153,
+              -68.136
+            ],
+            "gate": [
+              -70.273,
+              -70.28,
+              -70.313
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -20.959
+            ],
+            "thr": -42.947
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 31,
+          "draw": 6,
+          "engram_counts": [
+            0,
+            0,
+            61
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            199
+          ],
+          "gate_counts": [
+            0,
+            0,
+            43
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            83
+          ],
+          "v_mV": {
+            "cue": -60.158,
+            "engram": [
+              -68.591,
+              -68.598,
+              -68.573
+            ],
+            "gate": [
+              -70.758,
+              -70.769,
+              -70.795
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -18.945
+            ],
+            "thr": -42.947
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 31,
+          "draw": 7,
+          "engram_counts": [
+            0,
+            0,
+            63
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            205
+          ],
+          "gate_counts": [
+            0,
+            0,
+            45
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            86
+          ],
+          "v_mV": {
+            "cue": -60.158,
+            "engram": [
+              -68.241,
+              -68.25,
+              -68.223
+            ],
+            "gate": [
+              -70.532,
+              -70.558,
+              -70.566
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -16.375
+            ],
+            "thr": -42.947
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 31,
+          "draw": 8,
+          "engram_counts": [
+            0,
+            0,
+            63
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            200
+          ],
+          "gate_counts": [
+            0,
+            0,
+            46
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            83
+          ],
+          "v_mV": {
+            "cue": -60.158,
+            "engram": [
+              -68.388,
+              -68.396,
+              -68.376
+            ],
+            "gate": [
+              -70.525,
+              -70.533,
+              -70.563
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -9.879
+            ],
+            "thr": -42.947
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 31,
+          "draw": 9,
+          "engram_counts": [
+            0,
+            0,
+            63
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            202
+          ],
+          "gate_counts": [
+            0,
+            0,
+            45
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            80
+          ],
+          "v_mV": {
+            "cue": -60.158,
+            "engram": [
+              -68.113,
+              -68.121,
+              -68.104
+            ],
+            "gate": [
+              -70.242,
+              -70.246,
+              -70.282
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -10.424
+            ],
+            "thr": -42.947
+          },
+          "winner": 2
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 43,
+          "draw": 0,
+          "engram_counts": [
+            28,
+            21,
+            0
+          ],
+          "first_gate_step": [
+            160,
+            163,
+            null
+          ],
+          "gate_counts": [
+            22,
+            20,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            87,
+            101,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.966,
+            "engram": [
+              -69.805,
+              -69.813,
+              -69.82
+            ],
+            "gate": [
+              -71.619,
+              -71.619,
+              -71.648
+            ],
+            "slot": [
+              -17.099,
+              -11.12,
+              -60.0
+            ],
+            "thr": -42.947
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 43,
+          "draw": 1,
+          "engram_counts": [
+            33,
+            20,
+            0
+          ],
+          "first_gate_step": [
+            157,
+            160,
+            null
+          ],
+          "gate_counts": [
+            25,
+            17,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            93,
+            100,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.966,
+            "engram": [
+              -69.648,
+              -69.656,
+              -69.66
+            ],
+            "gate": [
+              -71.566,
+              -71.576,
+              -71.595
+            ],
+            "slot": [
+              -0.877,
+              -24.827,
+              -60.0
+            ],
+            "thr": -42.947
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 43,
+          "draw": 2,
+          "engram_counts": [
+            33,
+            21,
+            0
+          ],
+          "first_gate_step": [
+            161,
+            163,
+            null
+          ],
+          "gate_counts": [
+            24,
+            18,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            84,
+            97,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.966,
+            "engram": [
+              -69.856,
+              -69.864,
+              -69.869
+            ],
+            "gate": [
+              -71.677,
+              -71.678,
+              -71.707
+            ],
+            "slot": [
+              -17.551,
+              -11.522,
+              -60.0
+            ],
+            "thr": -42.947
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 43,
+          "draw": 3,
+          "engram_counts": [
+            25,
+            24,
+            0
+          ],
+          "first_gate_step": [
+            161,
+            161,
+            null
+          ],
+          "gate_counts": [
+            18,
+            23,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            87,
+            98,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.966,
+            "engram": [
+              -69.708,
+              -69.717,
+              -69.719
+            ],
+            "gate": [
+              -71.625,
+              -71.634,
+              -71.653
+            ],
+            "slot": [
+              -3.508,
+              -6.153,
+              -60.0
+            ],
+            "thr": -42.947
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 43,
+          "draw": 4,
+          "engram_counts": [
+            32,
+            18,
+            0
+          ],
+          "first_gate_step": [
+            163,
+            165,
+            null
+          ],
+          "gate_counts": [
+            23,
+            18,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            82,
+            98,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.966,
+            "engram": [
+              -69.91,
+              -69.917,
+              -69.908
+            ],
+            "gate": [
+              -71.9,
+              -71.918,
+              -71.926
+            ],
+            "slot": [
+              -5.674,
+              -26.718,
+              -60.0
+            ],
+            "thr": -42.947
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 43,
+          "draw": 5,
+          "engram_counts": [
+            32,
+            18,
+            0
+          ],
+          "first_gate_step": [
+            163,
+            165,
+            null
+          ],
+          "gate_counts": [
+            22,
+            18,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            83,
+            99,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.966,
+            "engram": [
+              -69.854,
+              -69.861,
+              -69.849
+            ],
+            "gate": [
+              -71.881,
+              -71.898,
+              -71.906
+            ],
+            "slot": [
+              -19.848,
+              -13.184,
+              -60.0
+            ],
+            "thr": -42.947
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 43,
+          "draw": 6,
+          "engram_counts": [
+            27,
+            24,
+            0
+          ],
+          "first_gate_step": [
+            164,
+            164,
+            null
+          ],
+          "gate_counts": [
+            21,
+            23,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            85,
+            99,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.966,
+            "engram": [
+              -69.828,
+              -69.835,
+              -69.834
+            ],
+            "gate": [
+              -71.744,
+              -71.752,
+              -71.77
+            ],
+            "slot": [
+              -16.436,
+              -6.32,
+              -60.0
+            ],
+            "thr": -42.947
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 43,
+          "draw": 7,
+          "engram_counts": [
+            26,
+            22,
+            0
+          ],
+          "first_gate_step": [
+            161,
+            161,
+            null
+          ],
+          "gate_counts": [
+            21,
+            23,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            83,
+            98,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.966,
+            "engram": [
+              -69.858,
+              -69.866,
+              -69.869
+            ],
+            "gate": [
+              -71.689,
+              -71.688,
+              -71.718
+            ],
+            "slot": [
+              -17.577,
+              -10.852,
+              -60.0
+            ],
+            "thr": -42.947
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 43,
+          "draw": 8,
+          "engram_counts": [
+            25,
+            26,
+            0
+          ],
+          "first_gate_step": [
+            162,
+            161,
+            null
+          ],
+          "gate_counts": [
+            16,
+            23,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            88,
+            99,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.966,
+            "engram": [
+              -69.835,
+              -69.842,
+              -69.846
+            ],
+            "gate": [
+              -71.664,
+              -71.665,
+              -71.695
+            ],
+            "slot": [
+              -18.517,
+              -20.084,
+              -60.0
+            ],
+            "thr": -42.947
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 43,
+          "draw": 9,
+          "engram_counts": [
+            19,
+            32,
+            0
+          ],
+          "first_gate_step": [
+            164,
+            160,
+            null
+          ],
+          "gate_counts": [
+            12,
+            27,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            90,
+            98,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.966,
+            "engram": [
+              -70.013,
+              -70.019,
+              -70.014
+            ],
+            "gate": [
+              -71.895,
+              -71.901,
+              -71.923
+            ],
+            "slot": [
+              -11.447,
+              -12.818,
+              -60.0
+            ],
+            "thr": -42.947
+          },
+          "winner": null
+        }
+      ],
+      "positive_control": {
+        "bar": 9,
+        "commits": 10,
+        "cue": [
+          "yak",
+          "eat"
+        ],
+        "encode": [
+          "grass"
+        ],
+        "n": 10,
+        "no_competitor": true,
+        "pass": true,
+        "slot": 2,
+        "winners": [
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass"
+        ]
+      },
+      "seed": 2,
+      "subset": "controls-only: posctl + decisive (cs-race-f1b-1021c lever grid)"
+    },
+    {
+      "KILL": [
+        "K1 NO-GO iff no F1_GRID row passes (a)-(i) on 8/8 seeds x 10 draws; next carrier = recurrent persistent mention trace",
+        "K2 error/incomplete clause = FAIL for the row",
+        "K3 (e) fails if STEER* undefined (no pA reaches >= 8/10)",
+        "K4 (i) lesion outcome must be identical across 10 draws",
+        "K5 (h) chance band = wins in [2,8] of 10, both reads",
+        "K6 first-all-pass row in F1_GRID order (fixed before run)"
+      ],
+      "clauses": {},
+      "decisive_control": {
+        "bar_commits": 9,
+        "commits": 0,
+        "cue": [
+          "lynx",
+          "chase"
+        ],
+        "encode": [
+          "ABsim"
+        ],
+        "errors": 0,
+        "frog_wins": 0,
+        "n": 10,
+        "no_recency_no_mention": true,
+        "pass": false,
+        "split_band": [
+          2,
+          8
+        ],
+        "vm_field": "v_mV (per_draw[tag=decisive])",
+        "vole_wins": 0
+      },
+      "draws": 10,
+      "grid": "row4 U=0.45 tau_f=300.0 NE=24 W_EE=120.0 W_IE=80.0",
+      "per_draw": [
+        {
+          "clause": "posctl",
+          "cue_spikes": 37,
+          "draw": 0,
+          "engram_counts": [
+            0,
+            0,
+            63
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            179
+          ],
+          "gate_counts": [
+            0,
+            0,
+            46
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            85
+          ],
+          "v_mV": {
+            "cue": -60.019,
+            "engram": [
+              -68.955,
+              -68.995,
+              -68.968
+            ],
+            "gate": [
+              -71.12,
+              -71.107,
+              -71.147
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -24.238
+            ],
+            "thr": -42.755
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 37,
+          "draw": 1,
+          "engram_counts": [
+            0,
+            0,
+            63
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            184
+          ],
+          "gate_counts": [
+            0,
+            0,
+            49
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            86
+          ],
+          "v_mV": {
+            "cue": -60.019,
+            "engram": [
+              -68.772,
+              -68.762,
+              -68.726
+            ],
+            "gate": [
+              -70.744,
+              -70.738,
+              -70.746
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -11.835
+            ],
+            "thr": -42.755
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 37,
+          "draw": 2,
+          "engram_counts": [
+            0,
+            0,
+            67
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            176
+          ],
+          "gate_counts": [
+            0,
+            0,
+            48
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            81
+          ],
+          "v_mV": {
+            "cue": -60.019,
+            "engram": [
+              -69.217,
+              -69.251,
+              -69.227
+            ],
+            "gate": [
+              -71.347,
+              -71.325,
+              -71.397
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -21.946
+            ],
+            "thr": -42.755
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 37,
+          "draw": 3,
+          "engram_counts": [
+            0,
+            0,
+            64
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            176
+          ],
+          "gate_counts": [
+            0,
+            0,
+            49
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            82
+          ],
+          "v_mV": {
+            "cue": -60.019,
+            "engram": [
+              -68.83,
+              -68.87,
+              -68.848
+            ],
+            "gate": [
+              -71.068,
+              -71.044,
+              -71.126
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -0.326
+            ],
+            "thr": -42.755
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 37,
+          "draw": 4,
+          "engram_counts": [
+            0,
+            0,
+            63
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            168
+          ],
+          "gate_counts": [
+            0,
+            0,
+            46
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            82
+          ],
+          "v_mV": {
+            "cue": -60.019,
+            "engram": [
+              -68.385,
+              -68.379,
+              -68.347
+            ],
+            "gate": [
+              -70.464,
+              -70.449,
+              -70.493
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -27.3
+            ],
+            "thr": -42.755
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 37,
+          "draw": 5,
+          "engram_counts": [
+            0,
+            0,
+            64
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            170
+          ],
+          "gate_counts": [
+            0,
+            0,
+            47
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            84
+          ],
+          "v_mV": {
+            "cue": -60.019,
+            "engram": [
+              -68.566,
+              -68.557,
+              -68.523
+            ],
+            "gate": [
+              -70.581,
+              -70.573,
+              -70.588
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -23.516
+            ],
+            "thr": -42.755
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 37,
+          "draw": 6,
+          "engram_counts": [
+            0,
+            0,
+            67
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            176
+          ],
+          "gate_counts": [
+            0,
+            0,
+            48
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            87
+          ],
+          "v_mV": {
+            "cue": -60.019,
+            "engram": [
+              -69.028,
+              -69.06,
+              -69.033
+            ],
+            "gate": [
+              -71.153,
+              -71.14,
+              -71.178
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -16.325
+            ],
+            "thr": -42.755
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 37,
+          "draw": 7,
+          "engram_counts": [
+            0,
+            0,
+            62
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            184
+          ],
+          "gate_counts": [
+            0,
+            0,
+            46
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            85
+          ],
+          "v_mV": {
+            "cue": -60.019,
+            "engram": [
+              -68.934,
+              -68.933,
+              -68.902
+            ],
+            "gate": [
+              -70.944,
+              -70.93,
+              -70.967
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -7.967
+            ],
+            "thr": -42.755
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 37,
+          "draw": 8,
+          "engram_counts": [
+            0,
+            0,
+            62
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            174
+          ],
+          "gate_counts": [
+            0,
+            0,
+            44
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            85
+          ],
+          "v_mV": {
+            "cue": -60.019,
+            "engram": [
+              -69.052,
+              -69.11,
+              -69.085
+            ],
+            "gate": [
+              -71.267,
+              -71.257,
+              -71.289
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -34.655
+            ],
+            "thr": -42.755
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 37,
+          "draw": 9,
+          "engram_counts": [
+            0,
+            0,
+            67
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            181
+          ],
+          "gate_counts": [
+            0,
+            0,
+            48
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            85
+          ],
+          "v_mV": {
+            "cue": -60.019,
+            "engram": [
+              -68.184,
+              -68.16,
+              -68.122
+            ],
+            "gate": [
+              -70.187,
+              -70.178,
+              -70.194
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -29.346
+            ],
+            "thr": -42.755
+          },
+          "winner": 2
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 32,
+          "draw": 0,
+          "engram_counts": [
+            17,
+            27,
+            0
+          ],
+          "first_gate_step": [
+            165,
+            163,
+            null
+          ],
+          "gate_counts": [
+            14,
+            23,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            76,
+            86,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.875,
+            "engram": [
+              -70.079,
+              -70.092,
+              -70.08
+            ],
+            "gate": [
+              -71.968,
+              -71.951,
+              -72.001
+            ],
+            "slot": [
+              -22.362,
+              -12.457,
+              -60.0
+            ],
+            "thr": -42.755
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 32,
+          "draw": 1,
+          "engram_counts": [
+            19,
+            30,
+            0
+          ],
+          "first_gate_step": [
+            162,
+            160,
+            null
+          ],
+          "gate_counts": [
+            13,
+            23,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            81,
+            88,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.875,
+            "engram": [
+              -69.952,
+              -69.972,
+              -69.961
+            ],
+            "gate": [
+              -71.892,
+              -71.876,
+              -71.934
+            ],
+            "slot": [
+              -21.876,
+              -20.227,
+              -60.0
+            ],
+            "thr": -42.755
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 32,
+          "draw": 2,
+          "engram_counts": [
+            19,
+            29,
+            0
+          ],
+          "first_gate_step": [
+            164,
+            163,
+            null
+          ],
+          "gate_counts": [
+            15,
+            23,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            76,
+            88,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.875,
+            "engram": [
+              -69.921,
+              -69.909,
+              -69.888
+            ],
+            "gate": [
+              -71.669,
+              -71.671,
+              -71.64
+            ],
+            "slot": [
+              -12.26,
+              -4.843,
+              -60.0
+            ],
+            "thr": -42.755
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 32,
+          "draw": 3,
+          "engram_counts": [
+            9,
+            36,
+            0
+          ],
+          "first_gate_step": [
+            169,
+            164,
+            null
+          ],
+          "gate_counts": [
+            10,
+            31,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            85,
+            91,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.875,
+            "engram": [
+              -70.151,
+              -70.152,
+              -70.13
+            ],
+            "gate": [
+              -71.878,
+              -71.873,
+              -71.891
+            ],
+            "slot": [
+              -20.85,
+              -17.615,
+              -60.0
+            ],
+            "thr": -42.755
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 32,
+          "draw": 4,
+          "engram_counts": [
+            22,
+            24,
+            0
+          ],
+          "first_gate_step": [
+            165,
+            165,
+            null
+          ],
+          "gate_counts": [
+            18,
+            22,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            83,
+            88,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.875,
+            "engram": [
+              -70.141,
+              -70.13,
+              -70.108
+            ],
+            "gate": [
+              -71.845,
+              -71.838,
+              -71.865
+            ],
+            "slot": [
+              -20.92,
+              -27.19,
+              -60.0
+            ],
+            "thr": -42.755
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 32,
+          "draw": 5,
+          "engram_counts": [
+            13,
+            36,
+            0
+          ],
+          "first_gate_step": [
+            169,
+            162,
+            null
+          ],
+          "gate_counts": [
+            10,
+            32,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            83,
+            94,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.875,
+            "engram": [
+              -70.112,
+              -70.107,
+              -70.085
+            ],
+            "gate": [
+              -71.828,
+              -71.83,
+              -71.808
+            ],
+            "slot": [
+              -20.655,
+              -5.115,
+              -60.0
+            ],
+            "thr": -42.755
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 32,
+          "draw": 6,
+          "engram_counts": [
+            15,
+            32,
+            0
+          ],
+          "first_gate_step": [
+            166,
+            163,
+            null
+          ],
+          "gate_counts": [
+            12,
+            26,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            81,
+            86,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.875,
+            "engram": [
+              -69.775,
+              -69.772,
+              -69.755
+            ],
+            "gate": [
+              -71.635,
+              -71.625,
+              -71.659
+            ],
+            "slot": [
+              -15.761,
+              -8.909,
+              -60.0
+            ],
+            "thr": -42.755
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 32,
+          "draw": 7,
+          "engram_counts": [
+            17,
+            33,
+            0
+          ],
+          "first_gate_step": [
+            165,
+            161,
+            null
+          ],
+          "gate_counts": [
+            12,
+            25,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            79,
+            87,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.875,
+            "engram": [
+              -69.763,
+              -69.751,
+              -69.729
+            ],
+            "gate": [
+              -71.549,
+              -71.544,
+              -71.555
+            ],
+            "slot": [
+              -7.281,
+              -19.366,
+              -60.0
+            ],
+            "thr": -42.755
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 32,
+          "draw": 8,
+          "engram_counts": [
+            14,
+            34,
+            0
+          ],
+          "first_gate_step": [
+            168,
+            162,
+            null
+          ],
+          "gate_counts": [
+            12,
+            29,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            77,
+            93,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.875,
+            "engram": [
+              -69.96,
+              -69.991,
+              -69.985
+            ],
+            "gate": [
+              -71.994,
+              -71.967,
+              -72.06
+            ],
+            "slot": [
+              -13.885,
+              -18.241,
+              -60.0
+            ],
+            "thr": -42.755
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 32,
+          "draw": 9,
+          "engram_counts": [
+            13,
+            39,
+            0
+          ],
+          "first_gate_step": [
+            170,
+            163,
+            null
+          ],
+          "gate_counts": [
+            10,
+            32,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            77,
+            86,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.875,
+            "engram": [
+              -69.909,
+              -69.894,
+              -69.872
+            ],
+            "gate": [
+              -71.652,
+              -71.649,
+              -71.643
+            ],
+            "slot": [
+              -13.001,
+              -10.695,
+              -60.0
+            ],
+            "thr": -42.755
+          },
+          "winner": null
+        }
+      ],
+      "positive_control": {
+        "bar": 9,
+        "commits": 10,
+        "cue": [
+          "yak",
+          "eat"
+        ],
+        "encode": [
+          "grass"
+        ],
+        "n": 10,
+        "no_competitor": true,
+        "pass": true,
+        "slot": 2,
+        "winners": [
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass"
+        ]
+      },
+      "seed": 3,
+      "subset": "controls-only: posctl + decisive (cs-race-f1b-1021c lever grid)"
+    },
+    {
+      "KILL": [
+        "K1 NO-GO iff no F1_GRID row passes (a)-(i) on 8/8 seeds x 10 draws; next carrier = recurrent persistent mention trace",
+        "K2 error/incomplete clause = FAIL for the row",
+        "K3 (e) fails if STEER* undefined (no pA reaches >= 8/10)",
+        "K4 (i) lesion outcome must be identical across 10 draws",
+        "K5 (h) chance band = wins in [2,8] of 10, both reads",
+        "K6 first-all-pass row in F1_GRID order (fixed before run)"
+      ],
+      "clauses": {},
+      "decisive_control": {
+        "bar_commits": 9,
+        "commits": 6,
+        "cue": [
+          "lynx",
+          "chase"
+        ],
+        "encode": [
+          "ABsim"
+        ],
+        "errors": 0,
+        "frog_wins": 2,
+        "n": 10,
+        "no_recency_no_mention": true,
+        "pass": false,
+        "split_band": [
+          2,
+          8
+        ],
+        "vm_field": "v_mV (per_draw[tag=decisive])",
+        "vole_wins": 4
+      },
+      "draws": 10,
+      "grid": "row4 U=0.45 tau_f=300.0 NE=24 W_EE=120.0 W_IE=80.0",
+      "per_draw": [
+        {
+          "clause": "posctl",
+          "cue_spikes": 29,
+          "draw": 0,
+          "engram_counts": [
+            0,
+            0,
+            67
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            189
+          ],
+          "gate_counts": [
+            0,
+            0,
+            43
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            82
+          ],
+          "v_mV": {
+            "cue": -60.035,
+            "engram": [
+              -69.054,
+              -69.054,
+              -69.079
+            ],
+            "gate": [
+              -71.118,
+              -71.114,
+              -71.09
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -13.027
+            ],
+            "thr": -42.175
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 29,
+          "draw": 1,
+          "engram_counts": [
+            0,
+            0,
+            67
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            189
+          ],
+          "gate_counts": [
+            0,
+            0,
+            46
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            82
+          ],
+          "v_mV": {
+            "cue": -60.035,
+            "engram": [
+              -68.606,
+              -68.611,
+              -68.612
+            ],
+            "gate": [
+              -70.679,
+              -70.67,
+              -70.647
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -3.761
+            ],
+            "thr": -42.175
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 29,
+          "draw": 2,
+          "engram_counts": [
+            1,
+            0,
+            66
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            197
+          ],
+          "gate_counts": [
+            0,
+            0,
+            43
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            84
+          ],
+          "v_mV": {
+            "cue": -60.035,
+            "engram": [
+              -67.99,
+              -67.999,
+              -67.983
+            ],
+            "gate": [
+              -69.997,
+              -70.021,
+              -69.97
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -24.518
+            ],
+            "thr": -42.175
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 29,
+          "draw": 3,
+          "engram_counts": [
+            0,
+            0,
+            66
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            185
+          ],
+          "gate_counts": [
+            0,
+            0,
+            44
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            78
+          ],
+          "v_mV": {
+            "cue": -60.035,
+            "engram": [
+              -67.596,
+              -67.606,
+              -67.584
+            ],
+            "gate": [
+              -69.603,
+              -69.632,
+              -69.575
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -34.502
+            ],
+            "thr": -42.175
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 29,
+          "draw": 4,
+          "engram_counts": [
+            0,
+            0,
+            67
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            181
+          ],
+          "gate_counts": [
+            0,
+            0,
+            43
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            83
+          ],
+          "v_mV": {
+            "cue": -60.035,
+            "engram": [
+              -68.327,
+              -68.324,
+              -68.35
+            ],
+            "gate": [
+              -70.734,
+              -70.642,
+              -70.677
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -31.825
+            ],
+            "thr": -42.175
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 29,
+          "draw": 5,
+          "engram_counts": [
+            0,
+            0,
+            65
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            180
+          ],
+          "gate_counts": [
+            0,
+            0,
+            43
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            79
+          ],
+          "v_mV": {
+            "cue": -60.035,
+            "engram": [
+              -69.007,
+              -69.007,
+              -69.028
+            ],
+            "gate": [
+              -71.066,
+              -71.062,
+              -71.037
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -19.866
+            ],
+            "thr": -42.175
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 29,
+          "draw": 6,
+          "engram_counts": [
+            0,
+            0,
+            66
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            190
+          ],
+          "gate_counts": [
+            0,
+            0,
+            45
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            80
+          ],
+          "v_mV": {
+            "cue": -60.035,
+            "engram": [
+              -68.968,
+              -68.972,
+              -68.98
+            ],
+            "gate": [
+              -70.948,
+              -70.96,
+              -70.925
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -23.628
+            ],
+            "thr": -42.175
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 29,
+          "draw": 7,
+          "engram_counts": [
+            0,
+            0,
+            65
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            182
+          ],
+          "gate_counts": [
+            0,
+            0,
+            44
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            80
+          ],
+          "v_mV": {
+            "cue": -60.035,
+            "engram": [
+              -68.55,
+              -68.552,
+              -68.567
+            ],
+            "gate": [
+              -70.703,
+              -70.682,
+              -70.667
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -2.562
+            ],
+            "thr": -42.175
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 29,
+          "draw": 8,
+          "engram_counts": [
+            0,
+            0,
+            70
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            185
+          ],
+          "gate_counts": [
+            0,
+            0,
+            43
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            79
+          ],
+          "v_mV": {
+            "cue": -60.035,
+            "engram": [
+              -67.921,
+              -67.931,
+              -67.913
+            ],
+            "gate": [
+              -69.93,
+              -69.954,
+              -69.903
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -24.891
+            ],
+            "thr": -42.175
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 29,
+          "draw": 9,
+          "engram_counts": [
+            0,
+            0,
+            66
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            182
+          ],
+          "gate_counts": [
+            0,
+            0,
+            44
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            80
+          ],
+          "v_mV": {
+            "cue": -60.035,
+            "engram": [
+              -68.011,
+              -68.016,
+              -68.013
+            ],
+            "gate": [
+              -70.109,
+              -70.111,
+              -70.076
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -10.898
+            ],
+            "thr": -42.175
+          },
+          "winner": 2
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 32,
+          "draw": 0,
+          "engram_counts": [
+            55,
+            5,
+            0
+          ],
+          "first_gate_step": [
+            209,
+            null,
+            null
+          ],
+          "gate_counts": [
+            40,
+            0,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            80,
+            0,
+            0
+          ],
+          "v_mV": {
+            "cue": -60.052,
+            "engram": [
+              -68.376,
+              -68.38,
+              -68.398
+            ],
+            "gate": [
+              -70.471,
+              -70.472,
+              -70.44
+            ],
+            "slot": [
+              -15.333,
+              -60.0,
+              -60.0
+            ],
+            "thr": -42.175
+          },
+          "winner": 0
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 32,
+          "draw": 1,
+          "engram_counts": [
+            16,
+            40,
+            0
+          ],
+          "first_gate_step": [
+            206,
+            201,
+            null
+          ],
+          "gate_counts": [
+            12,
+            28,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            86,
+            83,
+            0
+          ],
+          "v_mV": {
+            "cue": -60.052,
+            "engram": [
+              -69.735,
+              -69.741,
+              -69.746
+            ],
+            "gate": [
+              -71.542,
+              -71.553,
+              -71.521
+            ],
+            "slot": [
+              -28.945,
+              -14.495,
+              -60.0
+            ],
+            "thr": -42.175
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 32,
+          "draw": 2,
+          "engram_counts": [
+            55,
+            4,
+            0
+          ],
+          "first_gate_step": [
+            186,
+            null,
+            null
+          ],
+          "gate_counts": [
+            39,
+            0,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            75,
+            0,
+            0
+          ],
+          "v_mV": {
+            "cue": -60.052,
+            "engram": [
+              -67.843,
+              -67.852,
+              -67.851
+            ],
+            "gate": [
+              -69.877,
+              -69.9,
+              -69.849
+            ],
+            "slot": [
+              -22.863,
+              -60.0,
+              -60.0
+            ],
+            "thr": -42.175
+          },
+          "winner": 0
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 32,
+          "draw": 3,
+          "engram_counts": [
+            5,
+            58,
+            0
+          ],
+          "first_gate_step": [
+            null,
+            198,
+            null
+          ],
+          "gate_counts": [
+            0,
+            41,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            0,
+            89,
+            0
+          ],
+          "v_mV": {
+            "cue": -60.052,
+            "engram": [
+              -68.371,
+              -68.378,
+              -68.387
+            ],
+            "gate": [
+              -70.476,
+              -70.465,
+              -70.442
+            ],
+            "slot": [
+              -60.0,
+              -18.846,
+              -60.0
+            ],
+            "thr": -42.175
+          },
+          "winner": 1
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 32,
+          "draw": 4,
+          "engram_counts": [
+            56,
+            2,
+            0
+          ],
+          "first_gate_step": [
+            198,
+            null,
+            null
+          ],
+          "gate_counts": [
+            41,
+            0,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            87,
+            0,
+            0
+          ],
+          "v_mV": {
+            "cue": -60.052,
+            "engram": [
+              -68.682,
+              -68.684,
+              -68.707
+            ],
+            "gate": [
+              -70.736,
+              -70.742,
+              -70.709
+            ],
+            "slot": [
+              -7.014,
+              -60.0,
+              -60.0
+            ],
+            "thr": -42.175
+          },
+          "winner": 0
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 32,
+          "draw": 5,
+          "engram_counts": [
+            18,
+            33,
+            1
+          ],
+          "first_gate_step": [
+            206,
+            204,
+            null
+          ],
+          "gate_counts": [
+            12,
+            23,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            76,
+            87,
+            0
+          ],
+          "v_mV": {
+            "cue": -60.052,
+            "engram": [
+              -69.889,
+              -69.89,
+              -69.914
+            ],
+            "gate": [
+              -71.794,
+              -71.783,
+              -71.766
+            ],
+            "slot": [
+              -13.889,
+              -11.279,
+              -60.0
+            ],
+            "thr": -42.175
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 32,
+          "draw": 6,
+          "engram_counts": [
+            22,
+            17,
+            0
+          ],
+          "first_gate_step": [
+            219,
+            223,
+            null
+          ],
+          "gate_counts": [
+            23,
+            12,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            82,
+            81,
+            0
+          ],
+          "v_mV": {
+            "cue": -60.052,
+            "engram": [
+              -69.714,
+              -69.716,
+              -69.732
+            ],
+            "gate": [
+              -71.694,
+              -71.66,
+              -71.659
+            ],
+            "slot": [
+              -13.632,
+              -12.146,
+              -60.0
+            ],
+            "thr": -42.175
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 32,
+          "draw": 7,
+          "engram_counts": [
+            45,
+            10,
+            1
+          ],
+          "first_gate_step": [
+            206,
+            null,
+            null
+          ],
+          "gate_counts": [
+            39,
+            0,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            83,
+            0,
+            0
+          ],
+          "v_mV": {
+            "cue": -60.052,
+            "engram": [
+              -68.328,
+              -68.332,
+              -68.351
+            ],
+            "gate": [
+              -70.447,
+              -70.443,
+              -70.414
+            ],
+            "slot": [
+              -21.523,
+              -60.0,
+              -60.0
+            ],
+            "thr": -42.175
+          },
+          "winner": 0
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 32,
+          "draw": 8,
+          "engram_counts": [
+            3,
+            58,
+            0
+          ],
+          "first_gate_step": [
+            null,
+            190,
+            null
+          ],
+          "gate_counts": [
+            0,
+            42,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            0,
+            85,
+            0
+          ],
+          "v_mV": {
+            "cue": -60.052,
+            "engram": [
+              -68.702,
+              -68.705,
+              -68.73
+            ],
+            "gate": [
+              -70.85,
+              -70.825,
+              -70.814
+            ],
+            "slot": [
+              -60.0,
+              -22.065,
+              -60.0
+            ],
+            "thr": -42.175
+          },
+          "winner": 1
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 32,
+          "draw": 9,
+          "engram_counts": [
+            18,
+            32,
+            0
+          ],
+          "first_gate_step": [
+            199,
+            195,
+            null
+          ],
+          "gate_counts": [
+            13,
+            22,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            77,
+            86,
+            0
+          ],
+          "v_mV": {
+            "cue": -60.052,
+            "engram": [
+              -69.238,
+              -69.246,
+              -69.243
+            ],
+            "gate": [
+              -71.102,
+              -71.118,
+              -71.078
+            ],
+            "slot": [
+              -17.066,
+              -7.68,
+              -60.0
+            ],
+            "thr": -42.175
+          },
+          "winner": null
+        }
+      ],
+      "positive_control": {
+        "bar": 9,
+        "commits": 10,
+        "cue": [
+          "yak",
+          "eat"
+        ],
+        "encode": [
+          "grass"
+        ],
+        "n": 10,
+        "no_competitor": true,
+        "pass": true,
+        "slot": 2,
+        "winners": [
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass"
+        ]
+      },
+      "seed": 4,
+      "subset": "controls-only: posctl + decisive (cs-race-f1b-1021c lever grid)"
+    },
+    {
+      "KILL": [
+        "K1 NO-GO iff no F1_GRID row passes (a)-(i) on 8/8 seeds x 10 draws; next carrier = recurrent persistent mention trace",
+        "K2 error/incomplete clause = FAIL for the row",
+        "K3 (e) fails if STEER* undefined (no pA reaches >= 8/10)",
+        "K4 (i) lesion outcome must be identical across 10 draws",
+        "K5 (h) chance band = wins in [2,8] of 10, both reads",
+        "K6 first-all-pass row in F1_GRID order (fixed before run)"
+      ],
+      "clauses": {},
+      "decisive_control": {
+        "bar_commits": 9,
+        "commits": 1,
+        "cue": [
+          "lynx",
+          "chase"
+        ],
+        "encode": [
+          "ABsim"
+        ],
+        "errors": 0,
+        "frog_wins": 1,
+        "n": 10,
+        "no_recency_no_mention": true,
+        "pass": false,
+        "split_band": [
+          2,
+          8
+        ],
+        "vm_field": "v_mV (per_draw[tag=decisive])",
+        "vole_wins": 0
+      },
+      "draws": 10,
+      "grid": "row4 U=0.45 tau_f=300.0 NE=24 W_EE=120.0 W_IE=80.0",
+      "per_draw": [
+        {
+          "clause": "posctl",
+          "cue_spikes": 29,
+          "draw": 0,
+          "engram_counts": [
+            0,
+            0,
+            68
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            264
+          ],
+          "gate_counts": [
+            0,
+            0,
+            44
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            80
+          ],
+          "v_mV": {
+            "cue": -59.908,
+            "engram": [
+              -67.873,
+              -67.836,
+              -67.863
+            ],
+            "gate": [
+              -69.901,
+              -69.884,
+              -69.95
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -6.423
+            ],
+            "thr": -42.503
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 29,
+          "draw": 1,
+          "engram_counts": [
+            0,
+            0,
+            69
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            279
+          ],
+          "gate_counts": [
+            0,
+            0,
+            43
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            83
+          ],
+          "v_mV": {
+            "cue": -59.908,
+            "engram": [
+              -67.982,
+              -67.948,
+              -67.973
+            ],
+            "gate": [
+              -70.049,
+              -70.034,
+              -70.087
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -10.248
+            ],
+            "thr": -42.503
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 29,
+          "draw": 2,
+          "engram_counts": [
+            0,
+            0,
+            69
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            285
+          ],
+          "gate_counts": [
+            0,
+            0,
+            43
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            82
+          ],
+          "v_mV": {
+            "cue": -59.908,
+            "engram": [
+              -68.614,
+              -68.594,
+              -68.608
+            ],
+            "gate": [
+              -70.777,
+              -70.773,
+              -70.782
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -16.58
+            ],
+            "thr": -42.503
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 29,
+          "draw": 3,
+          "engram_counts": [
+            0,
+            0,
+            66
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            231
+          ],
+          "gate_counts": [
+            0,
+            0,
+            40
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            85
+          ],
+          "v_mV": {
+            "cue": -59.908,
+            "engram": [
+              -68.394,
+              -68.372,
+              -68.385
+            ],
+            "gate": [
+              -70.571,
+              -70.57,
+              -70.571
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -21.866
+            ],
+            "thr": -42.503
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 29,
+          "draw": 4,
+          "engram_counts": [
+            0,
+            0,
+            65
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            255
+          ],
+          "gate_counts": [
+            0,
+            0,
+            42
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            80
+          ],
+          "v_mV": {
+            "cue": -59.908,
+            "engram": [
+              -68.436,
+              -68.407,
+              -68.428
+            ],
+            "gate": [
+              -70.468,
+              -70.451,
+              -70.503
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -12.337
+            ],
+            "thr": -42.503
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 29,
+          "draw": 5,
+          "engram_counts": [
+            0,
+            0,
+            60
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            219
+          ],
+          "gate_counts": [
+            0,
+            0,
+            39
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            87
+          ],
+          "v_mV": {
+            "cue": -59.908,
+            "engram": [
+              -69.006,
+              -68.992,
+              -69.005
+            ],
+            "gate": [
+              -71.044,
+              -71.026,
+              -71.073
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -12.359
+            ],
+            "thr": -42.503
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 29,
+          "draw": 6,
+          "engram_counts": [
+            0,
+            0,
+            66
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            255
+          ],
+          "gate_counts": [
+            0,
+            0,
+            45
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            82
+          ],
+          "v_mV": {
+            "cue": -59.908,
+            "engram": [
+              -68.504,
+              -68.483,
+              -68.497
+            ],
+            "gate": [
+              -70.642,
+              -70.642,
+              -70.653
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -16.369
+            ],
+            "thr": -42.503
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 29,
+          "draw": 7,
+          "engram_counts": [
+            0,
+            0,
+            71
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            285
+          ],
+          "gate_counts": [
+            0,
+            0,
+            43
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            81
+          ],
+          "v_mV": {
+            "cue": -59.908,
+            "engram": [
+              -68.67,
+              -68.649,
+              -68.665
+            ],
+            "gate": [
+              -70.772,
+              -70.772,
+              -70.786
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -10.34
+            ],
+            "thr": -42.503
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 29,
+          "draw": 8,
+          "engram_counts": [
+            1,
+            0,
+            65
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            273
+          ],
+          "gate_counts": [
+            0,
+            0,
+            46
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            80
+          ],
+          "v_mV": {
+            "cue": -59.908,
+            "engram": [
+              -68.566,
+              -68.544,
+              -68.563
+            ],
+            "gate": [
+              -70.605,
+              -70.589,
+              -70.645
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -22.076
+            ],
+            "thr": -42.503
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 29,
+          "draw": 9,
+          "engram_counts": [
+            0,
+            1,
+            65
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            248
+          ],
+          "gate_counts": [
+            0,
+            0,
+            42
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            82
+          ],
+          "v_mV": {
+            "cue": -59.908,
+            "engram": [
+              -68.398,
+              -68.37,
+              -68.391
+            ],
+            "gate": [
+              -70.448,
+              -70.431,
+              -70.482
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -1.958
+            ],
+            "thr": -42.503
+          },
+          "winner": 2
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 34,
+          "draw": 0,
+          "engram_counts": [
+            14,
+            47,
+            0
+          ],
+          "first_gate_step": [
+            190,
+            179,
+            null
+          ],
+          "gate_counts": [
+            10,
+            39,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            80,
+            80,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.938,
+            "engram": [
+              -69.424,
+              -69.401,
+              -69.422
+            ],
+            "gate": [
+              -71.383,
+              -71.389,
+              -71.391
+            ],
+            "slot": [
+              -20.4,
+              0.244,
+              -60.0
+            ],
+            "thr": -42.503
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 34,
+          "draw": 1,
+          "engram_counts": [
+            33,
+            28,
+            0
+          ],
+          "first_gate_step": [
+            185,
+            186,
+            null
+          ],
+          "gate_counts": [
+            27,
+            17,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            88,
+            80,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.938,
+            "engram": [
+              -69.919,
+              -69.909,
+              -69.922
+            ],
+            "gate": [
+              -71.829,
+              -71.82,
+              -71.842
+            ],
+            "slot": [
+              -35.112,
+              -6.653,
+              -60.0
+            ],
+            "thr": -42.503
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 34,
+          "draw": 2,
+          "engram_counts": [
+            30,
+            28,
+            0
+          ],
+          "first_gate_step": [
+            188,
+            188,
+            null
+          ],
+          "gate_counts": [
+            24,
+            19,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            78,
+            80,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.938,
+            "engram": [
+              -69.115,
+              -69.077,
+              -69.109
+            ],
+            "gate": [
+              -70.955,
+              -70.943,
+              -70.995
+            ],
+            "slot": [
+              -14.363,
+              -3.991,
+              -60.0
+            ],
+            "thr": -42.503
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 34,
+          "draw": 3,
+          "engram_counts": [
+            32,
+            31,
+            0
+          ],
+          "first_gate_step": [
+            189,
+            188,
+            null
+          ],
+          "gate_counts": [
+            23,
+            19,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            77,
+            80,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.938,
+            "engram": [
+              -69.735,
+              -69.719,
+              -69.734
+            ],
+            "gate": [
+              -71.669,
+              -71.648,
+              -71.68
+            ],
+            "slot": [
+              -7.155,
+              -3.991,
+              -60.0
+            ],
+            "thr": -42.503
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 34,
+          "draw": 4,
+          "engram_counts": [
+            39,
+            25,
+            0
+          ],
+          "first_gate_step": [
+            180,
+            184,
+            null
+          ],
+          "gate_counts": [
+            32,
+            16,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            88,
+            83,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.938,
+            "engram": [
+              -69.421,
+              -69.392,
+              -69.416
+            ],
+            "gate": [
+              -71.343,
+              -71.346,
+              -71.353
+            ],
+            "slot": [
+              -36.653,
+              -8.075,
+              -60.0
+            ],
+            "thr": -42.503
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 34,
+          "draw": 5,
+          "engram_counts": [
+            11,
+            54,
+            0
+          ],
+          "first_gate_step": [
+            197,
+            181,
+            null
+          ],
+          "gate_counts": [
+            2,
+            46,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            0,
+            90,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.938,
+            "engram": [
+              -67.518,
+              -67.475,
+              -67.514
+            ],
+            "gate": [
+              -69.498,
+              -69.481,
+              -69.555
+            ],
+            "slot": [
+              -60.0,
+              -25.423,
+              -60.0
+            ],
+            "thr": -42.503
+          },
+          "winner": 1
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 34,
+          "draw": 6,
+          "engram_counts": [
+            33,
+            27,
+            0
+          ],
+          "first_gate_step": [
+            186,
+            186,
+            null
+          ],
+          "gate_counts": [
+            27,
+            19,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            82,
+            82,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.938,
+            "engram": [
+              -69.495,
+              -69.477,
+              -69.492
+            ],
+            "gate": [
+              -71.55,
+              -71.566,
+              -71.53
+            ],
+            "slot": [
+              -17.036,
+              -4.296,
+              -60.0
+            ],
+            "thr": -42.503
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 34,
+          "draw": 7,
+          "engram_counts": [
+            27,
+            33,
+            0
+          ],
+          "first_gate_step": [
+            189,
+            185,
+            null
+          ],
+          "gate_counts": [
+            21,
+            27,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            80,
+            86,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.938,
+            "engram": [
+              -69.478,
+              -69.462,
+              -69.476
+            ],
+            "gate": [
+              -71.545,
+              -71.561,
+              -71.525
+            ],
+            "slot": [
+              -8.942,
+              -11.822,
+              -60.0
+            ],
+            "thr": -42.503
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 34,
+          "draw": 8,
+          "engram_counts": [
+            34,
+            23,
+            0
+          ],
+          "first_gate_step": [
+            187,
+            188,
+            null
+          ],
+          "gate_counts": [
+            27,
+            16,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            85,
+            78,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.938,
+            "engram": [
+              -69.385,
+              -69.361,
+              -69.383
+            ],
+            "gate": [
+              -71.29,
+              -71.261,
+              -71.321
+            ],
+            "slot": [
+              -5.462,
+              -2.048,
+              -60.0
+            ],
+            "thr": -42.503
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 34,
+          "draw": 9,
+          "engram_counts": [
+            16,
+            47,
+            0
+          ],
+          "first_gate_step": [
+            194,
+            184,
+            null
+          ],
+          "gate_counts": [
+            12,
+            36,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            81,
+            74,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.938,
+            "engram": [
+              -69.481,
+              -69.453,
+              -69.479
+            ],
+            "gate": [
+              -71.325,
+              -71.304,
+              -71.359
+            ],
+            "slot": [
+              -12.962,
+              -7.84,
+              -60.0
+            ],
+            "thr": -42.503
+          },
+          "winner": null
+        }
+      ],
+      "positive_control": {
+        "bar": 9,
+        "commits": 10,
+        "cue": [
+          "yak",
+          "eat"
+        ],
+        "encode": [
+          "grass"
+        ],
+        "n": 10,
+        "no_competitor": true,
+        "pass": true,
+        "slot": 2,
+        "winners": [
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass"
+        ]
+      },
+      "seed": 5,
+      "subset": "controls-only: posctl + decisive (cs-race-f1b-1021c lever grid)"
+    },
+    {
+      "KILL": [
+        "K1 NO-GO iff no F1_GRID row passes (a)-(i) on 8/8 seeds x 10 draws; next carrier = recurrent persistent mention trace",
+        "K2 error/incomplete clause = FAIL for the row",
+        "K3 (e) fails if STEER* undefined (no pA reaches >= 8/10)",
+        "K4 (i) lesion outcome must be identical across 10 draws",
+        "K5 (h) chance band = wins in [2,8] of 10, both reads",
+        "K6 first-all-pass row in F1_GRID order (fixed before run)"
+      ],
+      "clauses": {},
+      "decisive_control": {
+        "bar_commits": 9,
+        "commits": 0,
+        "cue": [
+          "lynx",
+          "chase"
+        ],
+        "encode": [
+          "ABsim"
+        ],
+        "errors": 0,
+        "frog_wins": 0,
+        "n": 10,
+        "no_recency_no_mention": true,
+        "pass": false,
+        "split_band": [
+          2,
+          8
+        ],
+        "vm_field": "v_mV (per_draw[tag=decisive])",
+        "vole_wins": 0
+      },
+      "draws": 10,
+      "grid": "row4 U=0.45 tau_f=300.0 NE=24 W_EE=120.0 W_IE=80.0",
+      "per_draw": [
+        {
+          "clause": "posctl",
+          "cue_spikes": 31,
+          "draw": 0,
+          "engram_counts": [
+            0,
+            0,
+            63
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            211
+          ],
+          "gate_counts": [
+            0,
+            0,
+            44
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            91
+          ],
+          "v_mV": {
+            "cue": -59.864,
+            "engram": [
+              -68.51,
+              -68.506,
+              -68.532
+            ],
+            "gate": [
+              -70.747,
+              -70.711,
+              -70.739
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -8.381
+            ],
+            "thr": -42.318
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 31,
+          "draw": 1,
+          "engram_counts": [
+            0,
+            0,
+            62
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            214
+          ],
+          "gate_counts": [
+            0,
+            0,
+            44
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            87
+          ],
+          "v_mV": {
+            "cue": -59.864,
+            "engram": [
+              -68.399,
+              -68.396,
+              -68.427
+            ],
+            "gate": [
+              -70.665,
+              -70.629,
+              -70.659
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -14.672
+            ],
+            "thr": -42.318
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 31,
+          "draw": 2,
+          "engram_counts": [
+            0,
+            0,
+            64
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            197
+          ],
+          "gate_counts": [
+            0,
+            0,
+            44
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            87
+          ],
+          "v_mV": {
+            "cue": -59.864,
+            "engram": [
+              -68.237,
+              -68.233,
+              -68.262
+            ],
+            "gate": [
+              -70.473,
+              -70.433,
+              -70.463
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -1.479
+            ],
+            "thr": -42.318
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 31,
+          "draw": 3,
+          "engram_counts": [
+            2,
+            0,
+            64
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            200
+          ],
+          "gate_counts": [
+            0,
+            0,
+            44
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            93
+          ],
+          "v_mV": {
+            "cue": -59.864,
+            "engram": [
+              -67.788,
+              -67.786,
+              -67.824
+            ],
+            "gate": [
+              -70.09,
+              -70.05,
+              -70.084
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -19.534
+            ],
+            "thr": -42.318
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 31,
+          "draw": 4,
+          "engram_counts": [
+            0,
+            0,
+            68
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            191
+          ],
+          "gate_counts": [
+            0,
+            0,
+            44
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            92
+          ],
+          "v_mV": {
+            "cue": -59.864,
+            "engram": [
+              -68.917,
+              -68.915,
+              -68.936
+            ],
+            "gate": [
+              -70.977,
+              -70.946,
+              -70.97
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -22.503
+            ],
+            "thr": -42.318
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 31,
+          "draw": 5,
+          "engram_counts": [
+            0,
+            0,
+            63
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            207
+          ],
+          "gate_counts": [
+            0,
+            0,
+            45
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            86
+          ],
+          "v_mV": {
+            "cue": -59.864,
+            "engram": [
+              -68.611,
+              -68.607,
+              -68.633
+            ],
+            "gate": [
+              -70.797,
+              -70.763,
+              -70.79
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -7.626
+            ],
+            "thr": -42.318
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 31,
+          "draw": 6,
+          "engram_counts": [
+            0,
+            0,
+            63
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            208
+          ],
+          "gate_counts": [
+            0,
+            0,
+            44
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            88
+          ],
+          "v_mV": {
+            "cue": -59.864,
+            "engram": [
+              -68.035,
+              -68.039,
+              -68.07
+            ],
+            "gate": [
+              -70.112,
+              -70.077,
+              -70.106
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -11.204
+            ],
+            "thr": -42.318
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 31,
+          "draw": 7,
+          "engram_counts": [
+            0,
+            2,
+            62
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            200
+          ],
+          "gate_counts": [
+            0,
+            0,
+            44
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            88
+          ],
+          "v_mV": {
+            "cue": -59.864,
+            "engram": [
+              -67.998,
+              -68.002,
+              -68.035
+            ],
+            "gate": [
+              -70.063,
+              -70.028,
+              -70.057
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -28.288
+            ],
+            "thr": -42.318
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 31,
+          "draw": 8,
+          "engram_counts": [
+            0,
+            0,
+            65
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            202
+          ],
+          "gate_counts": [
+            0,
+            0,
+            44
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            86
+          ],
+          "v_mV": {
+            "cue": -59.864,
+            "engram": [
+              -67.995,
+              -68.001,
+              -68.032
+            ],
+            "gate": [
+              -70.021,
+              -69.988,
+              -70.017
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -6.1
+            ],
+            "thr": -42.318
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 31,
+          "draw": 9,
+          "engram_counts": [
+            0,
+            0,
+            67
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            203
+          ],
+          "gate_counts": [
+            0,
+            0,
+            46
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            91
+          ],
+          "v_mV": {
+            "cue": -59.864,
+            "engram": [
+              -68.02,
+              -68.026,
+              -68.06
+            ],
+            "gate": [
+              -70.032,
+              -69.999,
+              -70.028
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -23.81
+            ],
+            "thr": -42.318
+          },
+          "winner": 2
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 36,
+          "draw": 0,
+          "engram_counts": [
+            25,
+            20,
+            0
+          ],
+          "first_gate_step": [
+            175,
+            176,
+            null
+          ],
+          "gate_counts": [
+            24,
+            17,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            89,
+            86,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.943,
+            "engram": [
+              -69.731,
+              -69.726,
+              -69.759
+            ],
+            "gate": [
+              -71.863,
+              -71.832,
+              -71.857
+            ],
+            "slot": [
+              -2.846,
+              -21.119,
+              -60.0
+            ],
+            "thr": -42.318
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 36,
+          "draw": 1,
+          "engram_counts": [
+            41,
+            16,
+            0
+          ],
+          "first_gate_step": [
+            171,
+            175,
+            null
+          ],
+          "gate_counts": [
+            32,
+            12,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            90,
+            91,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.943,
+            "engram": [
+              -69.628,
+              -69.628,
+              -69.659
+            ],
+            "gate": [
+              -71.563,
+              -71.535,
+              -71.558
+            ],
+            "slot": [
+              -4.611,
+              -28.864,
+              -60.0
+            ],
+            "thr": -42.318
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 36,
+          "draw": 2,
+          "engram_counts": [
+            36,
+            15,
+            1
+          ],
+          "first_gate_step": [
+            174,
+            178,
+            null
+          ],
+          "gate_counts": [
+            31,
+            12,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            90,
+            88,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.943,
+            "engram": [
+              -69.545,
+              -69.545,
+              -69.577
+            ],
+            "gate": [
+              -71.491,
+              -71.464,
+              -71.487
+            ],
+            "slot": [
+              -8.407,
+              -9.424,
+              -60.0
+            ],
+            "thr": -42.318
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 36,
+          "draw": 3,
+          "engram_counts": [
+            33,
+            16,
+            0
+          ],
+          "first_gate_step": [
+            172,
+            176,
+            null
+          ],
+          "gate_counts": [
+            28,
+            12,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            93,
+            85,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.943,
+            "engram": [
+              -69.534,
+              -69.537,
+              -69.569
+            ],
+            "gate": [
+              -71.396,
+              -71.368,
+              -71.391
+            ],
+            "slot": [
+              -3.725,
+              -21.112,
+              -60.0
+            ],
+            "thr": -42.318
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 36,
+          "draw": 4,
+          "engram_counts": [
+            33,
+            16,
+            0
+          ],
+          "first_gate_step": [
+            173,
+            179,
+            null
+          ],
+          "gate_counts": [
+            28,
+            12,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            89,
+            83,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.943,
+            "engram": [
+              -69.864,
+              -69.864,
+              -69.89
+            ],
+            "gate": [
+              -71.685,
+              -71.656,
+              -71.678
+            ],
+            "slot": [
+              -14.142,
+              -19.782,
+              -60.0
+            ],
+            "thr": -42.318
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 36,
+          "draw": 5,
+          "engram_counts": [
+            14,
+            39,
+            0
+          ],
+          "first_gate_step": [
+            178,
+            171,
+            null
+          ],
+          "gate_counts": [
+            12,
+            29,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            91,
+            81,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.943,
+            "engram": [
+              -69.898,
+              -69.897,
+              -69.924
+            ],
+            "gate": [
+              -71.794,
+              -71.771,
+              -71.791
+            ],
+            "slot": [
+              -16.455,
+              -27.949,
+              -60.0
+            ],
+            "thr": -42.318
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 36,
+          "draw": 6,
+          "engram_counts": [
+            19,
+            27,
+            0
+          ],
+          "first_gate_step": [
+            174,
+            173,
+            null
+          ],
+          "gate_counts": [
+            17,
+            23,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            88,
+            91,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.943,
+            "engram": [
+              -69.906,
+              -69.903,
+              -69.929
+            ],
+            "gate": [
+              -71.831,
+              -71.799,
+              -71.821
+            ],
+            "slot": [
+              2.381,
+              -2.835,
+              -60.0
+            ],
+            "thr": -42.318
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 36,
+          "draw": 7,
+          "engram_counts": [
+            24,
+            27,
+            0
+          ],
+          "first_gate_step": [
+            174,
+            172,
+            null
+          ],
+          "gate_counts": [
+            22,
+            23,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            89,
+            91,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.943,
+            "engram": [
+              -69.692,
+              -69.691,
+              -69.721
+            ],
+            "gate": [
+              -71.623,
+              -71.597,
+              -71.619
+            ],
+            "slot": [
+              -22.599,
+              5.752,
+              -60.0
+            ],
+            "thr": -42.318
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 36,
+          "draw": 8,
+          "engram_counts": [
+            21,
+            31,
+            0
+          ],
+          "first_gate_step": [
+            176,
+            173,
+            null
+          ],
+          "gate_counts": [
+            16,
+            25,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            92,
+            97,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.943,
+            "engram": [
+              -69.871,
+              -69.869,
+              -69.895
+            ],
+            "gate": [
+              -71.798,
+              -71.769,
+              -71.79
+            ],
+            "slot": [
+              -7.763,
+              -3.475,
+              -60.0
+            ],
+            "thr": -42.318
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 36,
+          "draw": 9,
+          "engram_counts": [
+            22,
+            24,
+            0
+          ],
+          "first_gate_step": [
+            174,
+            175,
+            null
+          ],
+          "gate_counts": [
+            22,
+            22,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            94,
+            88,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.943,
+            "engram": [
+              -69.827,
+              -69.826,
+              -69.852
+            ],
+            "gate": [
+              -71.674,
+              -71.648,
+              -71.668
+            ],
+            "slot": [
+              -20.793,
+              -21.476,
+              -60.0
+            ],
+            "thr": -42.318
+          },
+          "winner": null
+        }
+      ],
+      "positive_control": {
+        "bar": 9,
+        "commits": 10,
+        "cue": [
+          "yak",
+          "eat"
+        ],
+        "encode": [
+          "grass"
+        ],
+        "n": 10,
+        "no_competitor": true,
+        "pass": true,
+        "slot": 2,
+        "winners": [
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass"
+        ]
+      },
+      "seed": 6,
+      "subset": "controls-only: posctl + decisive (cs-race-f1b-1021c lever grid)"
+    },
+    {
+      "KILL": [
+        "K1 NO-GO iff no F1_GRID row passes (a)-(i) on 8/8 seeds x 10 draws; next carrier = recurrent persistent mention trace",
+        "K2 error/incomplete clause = FAIL for the row",
+        "K3 (e) fails if STEER* undefined (no pA reaches >= 8/10)",
+        "K4 (i) lesion outcome must be identical across 10 draws",
+        "K5 (h) chance band = wins in [2,8] of 10, both reads",
+        "K6 first-all-pass row in F1_GRID order (fixed before run)"
+      ],
+      "clauses": {},
+      "decisive_control": {
+        "bar_commits": 9,
+        "commits": 7,
+        "cue": [
+          "lynx",
+          "chase"
+        ],
+        "encode": [
+          "ABsim"
+        ],
+        "errors": 0,
+        "frog_wins": 4,
+        "n": 10,
+        "no_recency_no_mention": true,
+        "pass": false,
+        "split_band": [
+          2,
+          8
+        ],
+        "vm_field": "v_mV (per_draw[tag=decisive])",
+        "vole_wins": 3
+      },
+      "draws": 10,
+      "grid": "row4 U=0.45 tau_f=300.0 NE=24 W_EE=120.0 W_IE=80.0",
+      "per_draw": [
+        {
+          "clause": "posctl",
+          "cue_spikes": 24,
+          "draw": 0,
+          "engram_counts": [
+            0,
+            0,
+            66
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            184
+          ],
+          "gate_counts": [
+            0,
+            0,
+            44
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            85
+          ],
+          "v_mV": {
+            "cue": -59.863,
+            "engram": [
+              -68.594,
+              -68.61,
+              -68.572
+            ],
+            "gate": [
+              -70.654,
+              -70.658,
+              -70.683
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -16.605
+            ],
+            "thr": -42.642
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 24,
+          "draw": 1,
+          "engram_counts": [
+            0,
+            0,
+            65
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            188
+          ],
+          "gate_counts": [
+            0,
+            0,
+            45
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            80
+          ],
+          "v_mV": {
+            "cue": -59.863,
+            "engram": [
+              -68.961,
+              -69.039,
+              -69.003
+            ],
+            "gate": [
+              -71.198,
+              -71.225,
+              -71.221
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -14.341
+            ],
+            "thr": -42.642
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 24,
+          "draw": 2,
+          "engram_counts": [
+            0,
+            0,
+            67
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            187
+          ],
+          "gate_counts": [
+            0,
+            0,
+            45
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            81
+          ],
+          "v_mV": {
+            "cue": -59.863,
+            "engram": [
+              -68.898,
+              -68.92,
+              -68.879
+            ],
+            "gate": [
+              -70.902,
+              -70.894,
+              -70.927
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              0.613
+            ],
+            "thr": -42.642
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 24,
+          "draw": 3,
+          "engram_counts": [
+            0,
+            0,
+            62
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            183
+          ],
+          "gate_counts": [
+            0,
+            0,
+            45
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            88
+          ],
+          "v_mV": {
+            "cue": -59.863,
+            "engram": [
+              -68.777,
+              -68.775,
+              -68.734
+            ],
+            "gate": [
+              -70.717,
+              -70.704,
+              -70.744
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -24.031
+            ],
+            "thr": -42.642
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 24,
+          "draw": 4,
+          "engram_counts": [
+            0,
+            0,
+            61
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            185
+          ],
+          "gate_counts": [
+            0,
+            0,
+            43
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            86
+          ],
+          "v_mV": {
+            "cue": -59.863,
+            "engram": [
+              -68.997,
+              -69.008,
+              -68.967
+            ],
+            "gate": [
+              -70.939,
+              -70.928,
+              -70.965
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -0.086
+            ],
+            "thr": -42.642
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 24,
+          "draw": 5,
+          "engram_counts": [
+            0,
+            0,
+            67
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            183
+          ],
+          "gate_counts": [
+            0,
+            0,
+            45
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            81
+          ],
+          "v_mV": {
+            "cue": -59.863,
+            "engram": [
+              -68.741,
+              -68.742,
+              -68.702
+            ],
+            "gate": [
+              -70.696,
+              -70.683,
+              -70.724
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -0.894
+            ],
+            "thr": -42.642
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 24,
+          "draw": 6,
+          "engram_counts": [
+            0,
+            0,
+            63
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            183
+          ],
+          "gate_counts": [
+            0,
+            0,
+            43
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            89
+          ],
+          "v_mV": {
+            "cue": -59.863,
+            "engram": [
+              -68.775,
+              -68.77,
+              -68.731
+            ],
+            "gate": [
+              -70.714,
+              -70.701,
+              -70.741
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -7.886
+            ],
+            "thr": -42.642
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 24,
+          "draw": 7,
+          "engram_counts": [
+            0,
+            0,
+            67
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            186
+          ],
+          "gate_counts": [
+            0,
+            0,
+            45
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            79
+          ],
+          "v_mV": {
+            "cue": -59.863,
+            "engram": [
+              -68.838,
+              -68.83,
+              -68.792
+            ],
+            "gate": [
+              -70.761,
+              -70.748,
+              -70.789
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -7.991
+            ],
+            "thr": -42.642
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 24,
+          "draw": 8,
+          "engram_counts": [
+            0,
+            1,
+            64
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            186
+          ],
+          "gate_counts": [
+            0,
+            0,
+            45
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            90
+          ],
+          "v_mV": {
+            "cue": -59.863,
+            "engram": [
+              -68.632,
+              -68.614,
+              -68.577
+            ],
+            "gate": [
+              -70.559,
+              -70.545,
+              -70.588
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -9.518
+            ],
+            "thr": -42.642
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 24,
+          "draw": 9,
+          "engram_counts": [
+            0,
+            1,
+            64
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            185
+          ],
+          "gate_counts": [
+            0,
+            0,
+            45
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            86
+          ],
+          "v_mV": {
+            "cue": -59.863,
+            "engram": [
+              -68.702,
+              -68.726,
+              -68.689
+            ],
+            "gate": [
+              -70.776,
+              -70.781,
+              -70.803
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              3.933
+            ],
+            "thr": -42.642
+          },
+          "winner": 2
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 29,
+          "draw": 0,
+          "engram_counts": [
+            60,
+            5,
+            0
+          ],
+          "first_gate_step": [
+            209,
+            null,
+            null
+          ],
+          "gate_counts": [
+            42,
+            0,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            86,
+            0,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.869,
+            "engram": [
+              -68.893,
+              -68.893,
+              -68.863
+            ],
+            "gate": [
+              -70.835,
+              -70.822,
+              -70.861
+            ],
+            "slot": [
+              -14.023,
+              -60.0,
+              -60.0
+            ],
+            "thr": -42.642
+          },
+          "winner": 0
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 29,
+          "draw": 1,
+          "engram_counts": [
+            1,
+            47,
+            0
+          ],
+          "first_gate_step": [
+            null,
+            186,
+            null
+          ],
+          "gate_counts": [
+            0,
+            34,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            0,
+            87,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.869,
+            "engram": [
+              -68.839,
+              -68.889,
+              -68.855
+            ],
+            "gate": [
+              -70.939,
+              -70.934,
+              -70.961
+            ],
+            "slot": [
+              -60.0,
+              -22.01,
+              -60.0
+            ],
+            "thr": -42.642
+          },
+          "winner": 1
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 29,
+          "draw": 2,
+          "engram_counts": [
+            5,
+            44,
+            0
+          ],
+          "first_gate_step": [
+            null,
+            191,
+            null
+          ],
+          "gate_counts": [
+            0,
+            33,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            0,
+            82,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.869,
+            "engram": [
+              -68.579,
+              -68.585,
+              -68.553
+            ],
+            "gate": [
+              -70.579,
+              -70.567,
+              -70.606
+            ],
+            "slot": [
+              -60.0,
+              -6.397,
+              -60.0
+            ],
+            "thr": -42.642
+          },
+          "winner": 1
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 29,
+          "draw": 3,
+          "engram_counts": [
+            10,
+            17,
+            1
+          ],
+          "first_gate_step": [
+            201,
+            193,
+            null
+          ],
+          "gate_counts": [
+            10,
+            22,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            83,
+            84,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.869,
+            "engram": [
+              -69.778,
+              -69.779,
+              -69.749
+            ],
+            "gate": [
+              -71.566,
+              -71.557,
+              -71.59
+            ],
+            "slot": [
+              -15.292,
+              -5.401,
+              -60.0
+            ],
+            "thr": -42.642
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 29,
+          "draw": 4,
+          "engram_counts": [
+            43,
+            5,
+            0
+          ],
+          "first_gate_step": [
+            193,
+            null,
+            null
+          ],
+          "gate_counts": [
+            35,
+            0,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            87,
+            0,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.869,
+            "engram": [
+              -67.962,
+              -67.933,
+              -67.905
+            ],
+            "gate": [
+              -69.932,
+              -69.914,
+              -69.965
+            ],
+            "slot": [
+              -19.739,
+              -60.0,
+              -60.0
+            ],
+            "thr": -42.642
+          },
+          "winner": 0
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 29,
+          "draw": 5,
+          "engram_counts": [
+            34,
+            33,
+            0
+          ],
+          "first_gate_step": [
+            236,
+            237,
+            null
+          ],
+          "gate_counts": [
+            23,
+            24,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            82,
+            82,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.869,
+            "engram": [
+              -69.842,
+              -69.872,
+              -69.838
+            ],
+            "gate": [
+              -71.686,
+              -71.67,
+              -71.704
+            ],
+            "slot": [
+              -16.201,
+              -11.76,
+              -60.0
+            ],
+            "thr": -42.642
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 29,
+          "draw": 6,
+          "engram_counts": [
+            38,
+            9,
+            1
+          ],
+          "first_gate_step": [
+            188,
+            201,
+            null
+          ],
+          "gate_counts": [
+            32,
+            4,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            86,
+            0,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.869,
+            "engram": [
+              -68.879,
+              -68.945,
+              -68.918
+            ],
+            "gate": [
+              -71.091,
+              -71.114,
+              -71.115
+            ],
+            "slot": [
+              -8.609,
+              -60.0,
+              -60.0
+            ],
+            "thr": -42.642
+          },
+          "winner": 0
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 29,
+          "draw": 7,
+          "engram_counts": [
+            46,
+            21,
+            0
+          ],
+          "first_gate_step": [
+            218,
+            235,
+            null
+          ],
+          "gate_counts": [
+            34,
+            12,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            86,
+            82,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.869,
+            "engram": [
+              -70.096,
+              -70.152,
+              -70.124
+            ],
+            "gate": [
+              -72.031,
+              -72.042,
+              -72.049
+            ],
+            "slot": [
+              -8.891,
+              -4.267,
+              -60.0
+            ],
+            "thr": -42.642
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 29,
+          "draw": 8,
+          "engram_counts": [
+            2,
+            50,
+            0
+          ],
+          "first_gate_step": [
+            null,
+            178,
+            null
+          ],
+          "gate_counts": [
+            0,
+            41,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            0,
+            85,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.869,
+            "engram": [
+              -68.0,
+              -67.998,
+              -67.974
+            ],
+            "gate": [
+              -70.087,
+              -70.09,
+              -70.121
+            ],
+            "slot": [
+              -60.0,
+              -10.009,
+              -60.0
+            ],
+            "thr": -42.642
+          },
+          "winner": 1
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 29,
+          "draw": 9,
+          "engram_counts": [
+            7,
+            37,
+            0
+          ],
+          "first_gate_step": [
+            null,
+            184,
+            null
+          ],
+          "gate_counts": [
+            0,
+            32,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            0,
+            83,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.869,
+            "engram": [
+              -68.387,
+              -68.43,
+              -68.399
+            ],
+            "gate": [
+              -70.55,
+              -70.552,
+              -70.576
+            ],
+            "slot": [
+              -60.0,
+              -20.281,
+              -60.0
+            ],
+            "thr": -42.642
+          },
+          "winner": 1
+        }
+      ],
+      "positive_control": {
+        "bar": 9,
+        "commits": 10,
+        "cue": [
+          "yak",
+          "eat"
+        ],
+        "encode": [
+          "grass"
+        ],
+        "n": 10,
+        "no_competitor": true,
+        "pass": true,
+        "slot": 2,
+        "winners": [
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass"
+        ]
+      },
+      "seed": 7,
+      "subset": "controls-only: posctl + decisive (cs-race-f1b-1021c lever grid)"
+    },
+    {
+      "KILL": [
+        "K1 NO-GO iff no F1_GRID row passes (a)-(i) on 8/8 seeds x 10 draws; next carrier = recurrent persistent mention trace",
+        "K2 error/incomplete clause = FAIL for the row",
+        "K3 (e) fails if STEER* undefined (no pA reaches >= 8/10)",
+        "K4 (i) lesion outcome must be identical across 10 draws",
+        "K5 (h) chance band = wins in [2,8] of 10, both reads",
+        "K6 first-all-pass row in F1_GRID order (fixed before run)"
+      ],
+      "clauses": {},
+      "decisive_control": {
+        "bar_commits": 9,
+        "commits": 0,
+        "cue": [
+          "lynx",
+          "chase"
+        ],
+        "encode": [
+          "ABsim"
+        ],
+        "errors": 0,
+        "frog_wins": 0,
+        "n": 10,
+        "no_recency_no_mention": true,
+        "pass": false,
+        "split_band": [
+          2,
+          8
+        ],
+        "vm_field": "v_mV (per_draw[tag=decisive])",
+        "vole_wins": 0
+      },
+      "draws": 10,
+      "grid": "row4 U=0.45 tau_f=300.0 NE=24 W_EE=120.0 W_IE=80.0",
+      "per_draw": [
+        {
+          "clause": "posctl",
+          "cue_spikes": 27,
+          "draw": 0,
+          "engram_counts": [
+            0,
+            0,
+            61
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            224
+          ],
+          "gate_counts": [
+            0,
+            0,
+            46
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            84
+          ],
+          "v_mV": {
+            "cue": -59.997,
+            "engram": [
+              -68.362,
+              -68.373,
+              -68.408
+            ],
+            "gate": [
+              -70.401,
+              -70.375,
+              -70.367
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -9.277
+            ],
+            "thr": -42.664
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 27,
+          "draw": 1,
+          "engram_counts": [
+            0,
+            0,
+            63
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            229
+          ],
+          "gate_counts": [
+            0,
+            0,
+            46
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            79
+          ],
+          "v_mV": {
+            "cue": -59.997,
+            "engram": [
+              -68.279,
+              -68.293,
+              -68.313
+            ],
+            "gate": [
+              -70.461,
+              -70.414,
+              -70.415
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -14.061
+            ],
+            "thr": -42.664
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 27,
+          "draw": 2,
+          "engram_counts": [
+            0,
+            0,
+            61
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            223
+          ],
+          "gate_counts": [
+            0,
+            0,
+            47
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            83
+          ],
+          "v_mV": {
+            "cue": -59.997,
+            "engram": [
+              -68.469,
+              -68.483,
+              -68.5
+            ],
+            "gate": [
+              -70.631,
+              -70.585,
+              -70.586
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -7.518
+            ],
+            "thr": -42.664
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 27,
+          "draw": 3,
+          "engram_counts": [
+            0,
+            0,
+            62
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            229
+          ],
+          "gate_counts": [
+            0,
+            0,
+            46
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            87
+          ],
+          "v_mV": {
+            "cue": -59.997,
+            "engram": [
+              -68.639,
+              -68.652,
+              -68.658
+            ],
+            "gate": [
+              -70.838,
+              -70.794,
+              -70.795
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -21.91
+            ],
+            "thr": -42.664
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 27,
+          "draw": 4,
+          "engram_counts": [
+            0,
+            0,
+            66
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            222
+          ],
+          "gate_counts": [
+            0,
+            0,
+            47
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            85
+          ],
+          "v_mV": {
+            "cue": -59.997,
+            "engram": [
+              -67.906,
+              -67.919,
+              -67.973
+            ],
+            "gate": [
+              -69.944,
+              -69.915,
+              -69.906
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -17.886
+            ],
+            "thr": -42.664
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 27,
+          "draw": 5,
+          "engram_counts": [
+            0,
+            0,
+            63
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            221
+          ],
+          "gate_counts": [
+            0,
+            0,
+            45
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            81
+          ],
+          "v_mV": {
+            "cue": -59.997,
+            "engram": [
+              -68.563,
+              -68.583,
+              -68.547
+            ],
+            "gate": [
+              -71.195,
+              -71.075,
+              -71.107
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -14.748
+            ],
+            "thr": -42.664
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 27,
+          "draw": 6,
+          "engram_counts": [
+            0,
+            0,
+            63
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            231
+          ],
+          "gate_counts": [
+            0,
+            0,
+            46
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            85
+          ],
+          "v_mV": {
+            "cue": -59.997,
+            "engram": [
+              -68.164,
+              -68.178,
+              -68.206
+            ],
+            "gate": [
+              -70.287,
+              -70.256,
+              -70.249
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -15.147
+            ],
+            "thr": -42.664
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 27,
+          "draw": 7,
+          "engram_counts": [
+            0,
+            0,
+            68
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            220
+          ],
+          "gate_counts": [
+            0,
+            0,
+            46
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            79
+          ],
+          "v_mV": {
+            "cue": -59.997,
+            "engram": [
+              -68.362,
+              -68.375,
+              -68.392
+            ],
+            "gate": [
+              -70.502,
+              -70.475,
+              -70.467
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -8.228
+            ],
+            "thr": -42.664
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 27,
+          "draw": 8,
+          "engram_counts": [
+            0,
+            0,
+            63
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            223
+          ],
+          "gate_counts": [
+            0,
+            0,
+            46
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            83
+          ],
+          "v_mV": {
+            "cue": -59.997,
+            "engram": [
+              -68.001,
+              -68.015,
+              -68.055
+            ],
+            "gate": [
+              -70.083,
+              -70.054,
+              -70.046
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -15.082
+            ],
+            "thr": -42.664
+          },
+          "winner": 2
+        },
+        {
+          "clause": "posctl",
+          "cue_spikes": 27,
+          "draw": 9,
+          "engram_counts": [
+            0,
+            0,
+            63
+          ],
+          "first_gate_step": [
+            null,
+            null,
+            226
+          ],
+          "gate_counts": [
+            0,
+            0,
+            46
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 2,
+          "slot_counts": [
+            0,
+            0,
+            84
+          ],
+          "v_mV": {
+            "cue": -59.997,
+            "engram": [
+              -68.543,
+              -68.556,
+              -68.577
+            ],
+            "gate": [
+              -70.612,
+              -70.588,
+              -70.581
+            ],
+            "slot": [
+              -60.0,
+              -60.0,
+              -0.975
+            ],
+            "thr": -42.664
+          },
+          "winner": 2
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 30,
+          "draw": 0,
+          "engram_counts": [
+            30,
+            25,
+            0
+          ],
+          "first_gate_step": [
+            205,
+            210,
+            null
+          ],
+          "gate_counts": [
+            26,
+            15,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            85,
+            77,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.927,
+            "engram": [
+              -69.487,
+              -69.498,
+              -69.534
+            ],
+            "gate": [
+              -71.372,
+              -71.352,
+              -71.342
+            ],
+            "slot": [
+              -9.696,
+              -22.311,
+              -60.0
+            ],
+            "thr": -42.664
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 30,
+          "draw": 1,
+          "engram_counts": [
+            9,
+            52,
+            0
+          ],
+          "first_gate_step": [
+            213,
+            204,
+            null
+          ],
+          "gate_counts": [
+            5,
+            44,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            85,
+            76,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.927,
+            "engram": [
+              -69.6,
+              -69.612,
+              -69.647
+            ],
+            "gate": [
+              -71.462,
+              -71.444,
+              -71.434
+            ],
+            "slot": [
+              0.438,
+              -12.413,
+              -60.0
+            ],
+            "thr": -42.664
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 30,
+          "draw": 2,
+          "engram_counts": [
+            23,
+            33,
+            0
+          ],
+          "first_gate_step": [
+            196,
+            197,
+            null
+          ],
+          "gate_counts": [
+            21,
+            24,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            91,
+            83,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.927,
+            "engram": [
+              -69.803,
+              -69.814,
+              -69.826
+            ],
+            "gate": [
+              -71.743,
+              -71.715,
+              -71.709
+            ],
+            "slot": [
+              -28.055,
+              -17.941,
+              -60.0
+            ],
+            "thr": -42.664
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 30,
+          "draw": 3,
+          "engram_counts": [
+            22,
+            31,
+            0
+          ],
+          "first_gate_step": [
+            200,
+            202,
+            null
+          ],
+          "gate_counts": [
+            21,
+            24,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            87,
+            79,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.927,
+            "engram": [
+              -69.763,
+              -69.774,
+              -69.806
+            ],
+            "gate": [
+              -71.589,
+              -71.576,
+              -71.563
+            ],
+            "slot": [
+              -13.956,
+              -21.764,
+              -60.0
+            ],
+            "thr": -42.664
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 30,
+          "draw": 4,
+          "engram_counts": [
+            20,
+            36,
+            0
+          ],
+          "first_gate_step": [
+            200,
+            200,
+            null
+          ],
+          "gate_counts": [
+            17,
+            24,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            88,
+            86,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.927,
+            "engram": [
+              -69.582,
+              -69.595,
+              -69.622
+            ],
+            "gate": [
+              -71.547,
+              -71.505,
+              -71.505
+            ],
+            "slot": [
+              -23.455,
+              -25.366,
+              -60.0
+            ],
+            "thr": -42.664
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 30,
+          "draw": 5,
+          "engram_counts": [
+            19,
+            37,
+            0
+          ],
+          "first_gate_step": [
+            205,
+            203,
+            null
+          ],
+          "gate_counts": [
+            16,
+            27,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            84,
+            77,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.927,
+            "engram": [
+              -70.0,
+              -70.009,
+              -70.037
+            ],
+            "gate": [
+              -71.824,
+              -71.775,
+              -71.783
+            ],
+            "slot": [
+              -12.127,
+              -15.112,
+              -60.0
+            ],
+            "thr": -42.664
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 30,
+          "draw": 6,
+          "engram_counts": [
+            41,
+            14,
+            0
+          ],
+          "first_gate_step": [
+            202,
+            213,
+            null
+          ],
+          "gate_counts": [
+            41,
+            8,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            90,
+            74,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.927,
+            "engram": [
+              -69.464,
+              -69.477,
+              -69.507
+            ],
+            "gate": [
+              -71.441,
+              -71.399,
+              -71.398
+            ],
+            "slot": [
+              -14.26,
+              -7.58,
+              -60.0
+            ],
+            "thr": -42.664
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 30,
+          "draw": 7,
+          "engram_counts": [
+            28,
+            27,
+            0
+          ],
+          "first_gate_step": [
+            202,
+            205,
+            null
+          ],
+          "gate_counts": [
+            22,
+            20,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 0,
+          "slot_counts": [
+            85,
+            81,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.927,
+            "engram": [
+              -69.917,
+              -69.928,
+              -69.94
+            ],
+            "gate": [
+              -71.839,
+              -71.803,
+              -71.803
+            ],
+            "slot": [
+              -9.544,
+              -22.265,
+              -60.0
+            ],
+            "thr": -42.664
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 30,
+          "draw": 8,
+          "engram_counts": [
+            26,
+            30,
+            0
+          ],
+          "first_gate_step": [
+            202,
+            201,
+            null
+          ],
+          "gate_counts": [
+            21,
+            24,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            84,
+            79,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.927,
+            "engram": [
+              -69.806,
+              -69.818,
+              -69.842
+            ],
+            "gate": [
+              -71.726,
+              -71.688,
+              -71.687
+            ],
+            "slot": [
+              -11.998,
+              -21.764,
+              -60.0
+            ],
+            "thr": -42.664
+          },
+          "winner": null
+        },
+        {
+          "clause": "decisive",
+          "cue_spikes": 30,
+          "draw": 9,
+          "engram_counts": [
+            14,
+            49,
+            0
+          ],
+          "first_gate_step": [
+            201,
+            196,
+            null
+          ],
+          "gate_counts": [
+            12,
+            34,
+            0
+          ],
+          "latch_pre_cue": [
+            0,
+            0,
+            0
+          ],
+          "natural_first_gate": 1,
+          "slot_counts": [
+            88,
+            82,
+            0
+          ],
+          "v_mV": {
+            "cue": -59.927,
+            "engram": [
+              -69.608,
+              -69.622,
+              -69.643
+            ],
+            "gate": [
+              -71.58,
+              -71.547,
+              -71.543
+            ],
+            "slot": [
+              -26.322,
+              -18.61,
+              -60.0
+            ],
+            "thr": -42.664
+          },
+          "winner": null
+        }
+      ],
+      "positive_control": {
+        "bar": 9,
+        "commits": 10,
+        "cue": [
+          "yak",
+          "eat"
+        ],
+        "encode": [
+          "grass"
+        ],
+        "n": 10,
+        "no_competitor": true,
+        "pass": true,
+        "slot": 2,
+        "winners": [
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass",
+          "grass"
+        ]
+      },
+      "seed": 8,
+      "subset": "controls-only: posctl + decisive (cs-race-f1b-1021c lever grid)"
+    }
+  ],
+  "row_all_pass_8_seeds": false,
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "wall_s": 37.5
+}

@@ -1,0 +1,7 @@
+== research/coordination/deixis-271-s1-PACKET.md kind packet state scaffold header line 9 first ## line 15 host-decision lines 1 cap 3
+   fields: {'decides': 1, 'allowed-by': 1, 'replaced-by': 1, 'cap': 1}
+   problems: NONE
+== docs/drafts/deixis/DESIGN-s1.md kind plan state scaffold header line 25 first ## line 31 host-decision lines 1 cap 3
+   fields: {'decides': 1, 'allowed-by': 1, 'replaced-by': 1, 'cap': 1}
+   problems: NONE
+identical decides/allowed-by/replaced-by/cap across the two files: True

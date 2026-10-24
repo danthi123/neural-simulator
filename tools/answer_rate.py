@@ -30,12 +30,18 @@ Two cell layouts:
      python tools/answer_rate.py paired --on-tag iw1-R-d6-049d4bb --off-arm lesion_d6_hebbian_write --faculty d6-hebbian-write
 Library: `report(per_seed)`, `prefixed_per_seed(dirs)`,
          `paired_per_seed(base, on_tag, off_tag, faculty, seeds, off_arm=None)`.
+A record written by the CLI (`--json`) is a SMOKE RECORD that tools/smoke_first.py can validate (RULING smoke-first-1018):
+beside the report it carries `mode`, `faculty`, `on_tag`, `off_tag` / `off_arm`, `seeds`, `evidence` (one {file, sha256}
+per probe file read), and the stamps the commit gates read from any result JSON (`backend`, `device`, `analysis_only`,
+`script`, `argv`: this tool reads existing arm files and runs no brain). `paired` refuses `--on-tag` == `--off-tag`
+(a flip compared with itself can never show a harm). Redirect it to `research/findings/smoke/<name>.json`, outside raw/.
 Exit 0 always (reported, not gated) unless --strict, which exits 4 on FLIP-HURTS-ANSWERS and 3 when nothing measured.
 """
 from __future__ import annotations
 
 import argparse
 import glob
+import hashlib
 import json
 import os
 import re
@@ -94,19 +100,25 @@ def _arm_files(d):
                   if not p.endswith(".prov.json") and os.path.basename(p) != "lb.json")
 
 
-def probes_in(d, arm_re):
-    """Probe bodies of the arm files in `d` whose basename matches `arm_re`."""
+def probes_in(d, arm_re, files=None):
+    """Probe bodies of the arm files in `d` whose basename matches `arm_re`. `files` (a list), when given, receives the
+    path of every arm file that yielded a body (the evidence a smoke record cites)."""
     out = []
     for p in _arm_files(d):
         if re.search(arm_re, os.path.basename(p)):
             b = probe_body(p)
             if b is not None:
                 out.append(b)
+                if files is not None:
+                    files.append(p)
     return out
 
 
-def report(per_seed, label=""):
-    """`per_seed` = {seed: {"on": [bodies], "off": [bodies]}} -> the reported check (JSON-able)."""
+def report(per_seed, label="", mode=None):
+    """`per_seed` = {seed: {"on": [bodies], "off": [bodies]}} -> the reported check (JSON-able). `mode` ("paired" |
+    "prefixed"; the CLI passes it, added 2026-10-18) is recorded as the report's `mode` key ONLY when given, so
+    tools/smoke_first.py can tell a paired smoke record from a prefixed one while every other caller (tools/iw2_score.py)
+    gets the report byte-for-byte as before; no existing key changes."""
     rows, hurts, unmeasured = {}, [], []
     for seed in sorted(per_seed, key=lambda s: (0, int(s), "") if str(s).isdigit() else (1, 0, str(s))):
         on, off = rate(per_seed[seed].get("on") or []), rate(per_seed[seed].get("off") or [])
@@ -123,33 +135,65 @@ def report(per_seed, label=""):
     measured = len(rows) - len(unmeasured)
     flags = [HURTS] if hurts else []
     status = HURTS if hurts else ("UNMEASURED" if (not measured or unmeasured) else "OK")
-    return {"check": "answer_rate", "label": label, "per_seed": rows, "n_seeds": len(rows), "n_measured": measured,
-            "unmeasured_seeds": unmeasured, "hurt_seeds": hurts, "flags": flags, "status": status,
-            "rule": "FLIP-HURTS-ANSWERS when flag-on answer rate < flag-off on any measured seed; reported only, "
-                    "changes no registered PASS/FAIL; the flip then needs a Claude ruling (NEEDS line)",
-            "abstention_detection": "abstained flag; fallback text patterns %s" % [p.pattern for p in ABSTAIN_RES]}
+    rep = {"check": "answer_rate", "label": label, "per_seed": rows, "n_seeds": len(rows), "n_measured": measured,
+           "unmeasured_seeds": unmeasured, "hurt_seeds": hurts, "flags": flags, "status": status,
+           "rule": "FLIP-HURTS-ANSWERS when flag-on answer rate < flag-off on any measured seed; reported only, "
+                   "changes no registered PASS/FAIL; the flip then needs a Claude ruling (NEEDS line)",
+           "abstention_detection": "abstained flag; fallback text patterns %s" % [p.pattern for p in ABSTAIN_RES]}
+    if mode is not None:
+        rep["mode"] = mode
+    return rep
 
 
-def prefixed_per_seed(dirs):
-    """One shard dir per seed (`.../s<seed>/<faculty>`) holding on_intact_* / off_intact_* arm files."""
+def prefixed_per_seed(dirs, evidence=None):
+    """One shard dir per seed (`.../s<seed>/<faculty>`) holding on_intact_* / off_intact_* arm files. `evidence` (a dict),
+    when given, is filled with {seed: {"on": [paths], "off": [paths]}}."""
     out = {}
     for d in dirs:
         m = re.search(r"/s(\d+)(?:/|$)", d + "/")
         seed = m.group(1) if m else d
-        out[seed] = {"on": probes_in(d, r"^on_intact"), "off": probes_in(d, r"^off_intact")}
+        files = {"on": [], "off": []}
+        out[seed] = {"on": probes_in(d, r"^on_intact", files["on"]), "off": probes_in(d, r"^off_intact", files["off"])}
+        if evidence is not None:
+            evidence[seed] = files
     return out
 
 
-def paired_per_seed(base, on_tag, off_tag, faculty, seeds=SEEDS, off_arm=None):
+def paired_per_seed(base, on_tag, off_tag, faculty, seeds=SEEDS, off_arm=None, evidence=None):
     """Per seed: on = `^intact` in the on-tag dir; off = `^intact` in the off-tag dir, or, with `off_arm`, the lesion
-    arm of that name in the ON-tag dir (off = lesion arm; the alloff cells abstain by design via REQUIRED_ENV)."""
+    arm of that name in the ON-tag dir (off = lesion arm; the alloff cells abstain by design via REQUIRED_ENV).
+    `evidence` (a dict), when given, is filled with {seed: {"on": [paths], "off": [paths]}}."""
     out = {}
     for s in seeds:
         on_d = os.path.join(base, on_tag, "s%d" % s, faculty)
-        out[str(s)] = {"on": probes_in(on_d, r"^intact"),
-                       "off": probes_in(on_d, "^" + re.escape(off_arm)) if off_arm
-                              else probes_in(os.path.join(base, off_tag, "s%d" % s, faculty), r"^intact")}
+        files = {"on": [], "off": []}
+        out[str(s)] = {"on": probes_in(on_d, r"^intact", files["on"]),
+                       "off": probes_in(on_d, "^" + re.escape(off_arm), files["off"]) if off_arm
+                              else probes_in(os.path.join(base, off_tag, "s%d" % s, faculty), r"^intact", files["off"])}
+        if evidence is not None:
+            evidence[str(s)] = files
     return out
+
+
+def _sha256(path):
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def stamp_record(rep, argv, evidence, extra=None):
+    """The fields only the CLI adds to a report (tools/iw2_score.py, a library caller, gets the bare report): the
+    evidence (one {file, sha256} per probe file), the stamps the commit gates read from any result JSON, and `extra`."""
+    ev = {}
+    for seed, sides in (evidence or {}).items():
+        ev[str(seed)] = {side: [{"file": os.path.relpath(p, ROOT) if os.path.abspath(p).startswith(ROOT + os.sep) else p,
+                                 "sha256": _sha256(p)} for p in paths] for side, paths in sides.items()}
+    rep.update(extra or {})
+    rep.update({"evidence": ev, "script": "tools/answer_rate.py", "argv": list(argv),
+                "backend": "numpy", "device": "cpu", "analysis_only": True})
+    return rep
 
 
 def render(rep):
@@ -181,21 +225,31 @@ def main(argv=None):
     for p in (p1, p2):
         p.add_argument("--json", action="store_true")
         p.add_argument("--strict", action="store_true")
-    a = ap.parse_args(argv)
+    raw_argv = list(sys.argv[1:] if argv is None else argv)
+    a = ap.parse_args(raw_argv)
+    evidence = {}
     if a.mode == "prefixed":
         dirs = sorted({d for g in a.dirs for d in (glob.glob(g) or [g]) if os.path.isdir(d)})
         if not dirs:
             print("answer_rate: no shard dir matched", file=sys.stderr)
             return 2
-        rep = report(prefixed_per_seed(dirs), label=a.dirs[0])
+        rep = stamp_record(report(prefixed_per_seed(dirs, evidence), label=a.dirs[0], mode="prefixed"), raw_argv,
+                           evidence)
     else:
         if bool(a.off_tag) == bool(a.off_arm):                       # both or neither: exactly one off side
             print("answer_rate: paired needs EXACTLY one of --off-tag / --off-arm", file=sys.stderr)
             return 2
+        if a.off_tag and a.off_tag == a.on_tag:
+            print("answer_rate: --on-tag and --off-tag are both %r: a flip compared with itself can never show a harm"
+                  % a.on_tag, file=sys.stderr)
+            return 2
         label = ("%s: %s vs off-arm %s (off = lesion arm)" % (a.faculty, a.on_tag, a.off_arm) if a.off_arm
                  else "%s: %s vs %s" % (a.faculty, a.on_tag, a.off_tag))
-        rep = report(paired_per_seed(a.base, a.on_tag, a.off_tag, a.faculty,
-                                     [int(x) for x in a.seeds.split(",")], off_arm=a.off_arm), label=label)
+        seeds = [int(x) for x in a.seeds.split(",")]
+        rep = report(paired_per_seed(a.base, a.on_tag, a.off_tag, a.faculty, seeds, off_arm=a.off_arm,
+                                     evidence=evidence), label=label, mode="paired")
+        stamp_record(rep, raw_argv, evidence, {"faculty": a.faculty, "on_tag": a.on_tag, "off_tag": a.off_tag or None,
+                                               "off_arm": a.off_arm or None, "seeds": seeds})
     print(json.dumps(rep, indent=1) if a.json else render(rep))
     if a.strict:
         return 4 if rep["flags"] else (3 if rep["status"] == "UNMEASURED" else 0)

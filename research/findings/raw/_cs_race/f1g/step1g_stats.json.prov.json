@@ -1,0 +1,21 @@
+{
+ "argv": [
+  "python3",
+  "/opt/data/cache/scratch/a_f1g_score.py",
+  "--json"
+ ],
+ "artifact_kind": "aggregation-of-run-records (json read-only; no simulation executed)",
+ "backend": "numpy",
+ "device": "cpu",
+ "env": {
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_BACKEND": "numpy"
+ },
+ "git_dirty": true,
+ "git_sha": "3200bbcad",
+ "notes": "step-1g scorer output: mechanical re-derivation of packet cs-race-f1g C1-C5 per seed (thresholds 2-20 Hz, quiet 1 Hz), selection rule and STOP rules; inputs cal_wmm{10,15,20,30,40,60}_wim{20,40,80}.json (pool runs @ 74783b4a6, seeds 41-48).",
+ "run_id": "agg-f1g-20261022-060817",
+ "runner": "/opt/data/cache/scratch/a_f1g_score.py",
+ "sim_backend": "numpy",
+ "started": "2026-10-22T06:08:17"
+}

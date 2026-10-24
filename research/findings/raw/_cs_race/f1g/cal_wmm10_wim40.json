@@ -1,0 +1,2504 @@
+{
+  "backend": "numpy",
+  "c5_median_pa": {
+    "clause_a": 0.0,
+    "clause_b": 0.0
+  },
+  "cell_pass_c1_c4": false,
+  "device": "cpu",
+  "flags": {
+    "NIM": 8,
+    "W_IM": 40.0,
+    "W_MI": 20.0,
+    "W_MM": 10.0,
+    "encode_words": true
+  },
+  "grid": {
+    "NE": 24,
+    "U": 0.3,
+    "tau_f": 150.0
+  },
+  "grid_row": 3,
+  "mode": "f1g_step0_calibration",
+  "per_seed": [
+    {
+      "c1": {
+        "all_engram_spikes": [
+          0,
+          0,
+          1
+        ],
+        "burst_ms": null,
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c1",
+        "latch_ms": null,
+        "max_word_hz": 0.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "primed_engram_spikes": 0,
+        "primed_k": 0,
+        "pulse_phase_spikes": 0,
+        "pulsed_rate_hz": 0.0,
+        "seed": 41,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 40.0,
+          "W_MI": 20.0,
+          "W_MM": 10.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 650,
+        "window_ms": [
+          150,
+          800
+        ],
+        "word1_rate_hz": 0.0,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c2b": {
+        "all_engram_spikes": [
+          3,
+          0,
+          3
+        ],
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c2b",
+        "max_word_hz": 0.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "pulse_phase_spikes": null,
+        "pulsed_rate_hz": null,
+        "seed": 41,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 40.0,
+          "W_MI": 20.0,
+          "W_MM": 10.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 2000,
+        "window_ms": [
+          0,
+          2000
+        ],
+        "word1_rate_hz": null,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c3": [
+        {
+          "all_engram_spikes": [
+            0,
+            0,
+            1
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 41,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            0,
+            1
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 41,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            0,
+            1
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 41,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        }
+      ],
+      "c5": {
+        "clause_a_delta_pa": 0.0,
+        "clause_a_per_k": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "clause_b_delta_pa": -1.3446,
+        "clause_b_per_k": [
+          0.0,
+          1.3446,
+          0.0
+        ],
+        "encode_words_seen_by_race": true,
+        "window_ms": [
+          100,
+          200
+        ]
+      },
+      "config_readback": {
+        "enable_nmda_recurrent": true,
+        "enable_parameter_heterogeneity": true,
+        "enable_short_term_plasticity": true,
+        "w_gis_read_back": 30.0
+      },
+      "pass": {
+        "c1": false,
+        "c2": true,
+        "c3": false,
+        "c4": true
+      },
+      "seed": 41
+    },
+    {
+      "c1": {
+        "all_engram_spikes": [
+          0,
+          0,
+          0
+        ],
+        "burst_ms": null,
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c1",
+        "latch_ms": null,
+        "max_word_hz": 0.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "primed_engram_spikes": 0,
+        "primed_k": 0,
+        "pulse_phase_spikes": 0,
+        "pulsed_rate_hz": 0.0,
+        "seed": 42,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 40.0,
+          "W_MI": 20.0,
+          "W_MM": 10.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 650,
+        "window_ms": [
+          150,
+          800
+        ],
+        "word1_rate_hz": 0.0,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c2b": {
+        "all_engram_spikes": [
+          0,
+          1,
+          1
+        ],
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c2b",
+        "max_word_hz": 0.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "pulse_phase_spikes": null,
+        "pulsed_rate_hz": null,
+        "seed": 42,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 40.0,
+          "W_MI": 20.0,
+          "W_MM": 10.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 2000,
+        "window_ms": [
+          0,
+          2000
+        ],
+        "word1_rate_hz": null,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c3": [
+        {
+          "all_engram_spikes": [
+            0,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 42,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 42,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 42,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        }
+      ],
+      "c5": {
+        "clause_a_delta_pa": 0.0,
+        "clause_a_per_k": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "clause_b_delta_pa": 0.0,
+        "clause_b_per_k": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "encode_words_seen_by_race": true,
+        "window_ms": [
+          100,
+          200
+        ]
+      },
+      "config_readback": {
+        "enable_nmda_recurrent": true,
+        "enable_parameter_heterogeneity": true,
+        "enable_short_term_plasticity": true,
+        "w_gis_read_back": 30.0
+      },
+      "pass": {
+        "c1": false,
+        "c2": true,
+        "c3": false,
+        "c4": true
+      },
+      "seed": 42
+    },
+    {
+      "c1": {
+        "all_engram_spikes": [
+          0,
+          0,
+          0
+        ],
+        "burst_ms": null,
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c1",
+        "latch_ms": null,
+        "max_word_hz": 0.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "primed_engram_spikes": 0,
+        "primed_k": 0,
+        "pulse_phase_spikes": 0,
+        "pulsed_rate_hz": 0.0,
+        "seed": 43,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 40.0,
+          "W_MI": 20.0,
+          "W_MM": 10.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 650,
+        "window_ms": [
+          150,
+          800
+        ],
+        "word1_rate_hz": 0.0,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c2b": {
+        "all_engram_spikes": [
+          1,
+          0,
+          2
+        ],
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c2b",
+        "max_word_hz": 0.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "pulse_phase_spikes": null,
+        "pulsed_rate_hz": null,
+        "seed": 43,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 40.0,
+          "W_MI": 20.0,
+          "W_MM": 10.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 2000,
+        "window_ms": [
+          0,
+          2000
+        ],
+        "word1_rate_hz": null,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c3": [
+        {
+          "all_engram_spikes": [
+            0,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 43,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 43,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 43,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        }
+      ],
+      "c5": {
+        "clause_a_delta_pa": 0.0,
+        "clause_a_per_k": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "clause_b_delta_pa": 0.0,
+        "clause_b_per_k": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "encode_words_seen_by_race": true,
+        "window_ms": [
+          100,
+          200
+        ]
+      },
+      "config_readback": {
+        "enable_nmda_recurrent": true,
+        "enable_parameter_heterogeneity": true,
+        "enable_short_term_plasticity": true,
+        "w_gis_read_back": 30.0
+      },
+      "pass": {
+        "c1": false,
+        "c2": true,
+        "c3": false,
+        "c4": true
+      },
+      "seed": 43
+    },
+    {
+      "c1": {
+        "all_engram_spikes": [
+          0,
+          0,
+          0
+        ],
+        "burst_ms": null,
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c1",
+        "latch_ms": null,
+        "max_word_hz": 0.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "primed_engram_spikes": 0,
+        "primed_k": 0,
+        "pulse_phase_spikes": 0,
+        "pulsed_rate_hz": 0.0,
+        "seed": 44,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 40.0,
+          "W_MI": 20.0,
+          "W_MM": 10.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 650,
+        "window_ms": [
+          150,
+          800
+        ],
+        "word1_rate_hz": 0.0,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c2b": {
+        "all_engram_spikes": [
+          2,
+          0,
+          1
+        ],
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c2b",
+        "max_word_hz": 0.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "pulse_phase_spikes": null,
+        "pulsed_rate_hz": null,
+        "seed": 44,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 40.0,
+          "W_MI": 20.0,
+          "W_MM": 10.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 2000,
+        "window_ms": [
+          0,
+          2000
+        ],
+        "word1_rate_hz": null,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c3": [
+        {
+          "all_engram_spikes": [
+            0,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 44,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 44,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 44,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        }
+      ],
+      "c5": {
+        "clause_a_delta_pa": 0.0,
+        "clause_a_per_k": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "clause_b_delta_pa": -1.3544,
+        "clause_b_per_k": [
+          0.0,
+          1.3544,
+          0.0
+        ],
+        "encode_words_seen_by_race": true,
+        "window_ms": [
+          100,
+          200
+        ]
+      },
+      "config_readback": {
+        "enable_nmda_recurrent": true,
+        "enable_parameter_heterogeneity": true,
+        "enable_short_term_plasticity": true,
+        "w_gis_read_back": 30.0
+      },
+      "pass": {
+        "c1": false,
+        "c2": true,
+        "c3": false,
+        "c4": true
+      },
+      "seed": 44
+    },
+    {
+      "c1": {
+        "all_engram_spikes": [
+          0,
+          0,
+          0
+        ],
+        "burst_ms": null,
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c1",
+        "latch_ms": null,
+        "max_word_hz": 0.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "primed_engram_spikes": 0,
+        "primed_k": 0,
+        "pulse_phase_spikes": 0,
+        "pulsed_rate_hz": 0.0,
+        "seed": 45,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 40.0,
+          "W_MI": 20.0,
+          "W_MM": 10.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 650,
+        "window_ms": [
+          150,
+          800
+        ],
+        "word1_rate_hz": 0.0,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c2b": {
+        "all_engram_spikes": [
+          0,
+          0,
+          0
+        ],
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c2b",
+        "max_word_hz": 0.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "pulse_phase_spikes": null,
+        "pulsed_rate_hz": null,
+        "seed": 45,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 40.0,
+          "W_MI": 20.0,
+          "W_MM": 10.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 2000,
+        "window_ms": [
+          0,
+          2000
+        ],
+        "word1_rate_hz": null,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c3": [
+        {
+          "all_engram_spikes": [
+            0,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 45,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 45,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 45,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        }
+      ],
+      "c5": {
+        "clause_a_delta_pa": 0.0,
+        "clause_a_per_k": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "clause_b_delta_pa": 0.0,
+        "clause_b_per_k": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "encode_words_seen_by_race": true,
+        "window_ms": [
+          100,
+          200
+        ]
+      },
+      "config_readback": {
+        "enable_nmda_recurrent": true,
+        "enable_parameter_heterogeneity": true,
+        "enable_short_term_plasticity": true,
+        "w_gis_read_back": 30.0
+      },
+      "pass": {
+        "c1": false,
+        "c2": true,
+        "c3": false,
+        "c4": true
+      },
+      "seed": 45
+    },
+    {
+      "c1": {
+        "all_engram_spikes": [
+          1,
+          0,
+          0
+        ],
+        "burst_ms": null,
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c1",
+        "latch_ms": null,
+        "max_word_hz": 0.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "primed_engram_spikes": 1,
+        "primed_k": 0,
+        "pulse_phase_spikes": 0,
+        "pulsed_rate_hz": 0.0,
+        "seed": 46,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 40.0,
+          "W_MI": 20.0,
+          "W_MM": 10.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 650,
+        "window_ms": [
+          150,
+          800
+        ],
+        "word1_rate_hz": 0.0,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c2b": {
+        "all_engram_spikes": [
+          1,
+          2,
+          0
+        ],
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c2b",
+        "max_word_hz": 0.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "pulse_phase_spikes": null,
+        "pulsed_rate_hz": null,
+        "seed": 46,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 40.0,
+          "W_MI": 20.0,
+          "W_MM": 10.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 2000,
+        "window_ms": [
+          0,
+          2000
+        ],
+        "word1_rate_hz": null,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c3": [
+        {
+          "all_engram_spikes": [
+            0,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 46,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 46,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 46,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        }
+      ],
+      "c5": {
+        "clause_a_delta_pa": 0.0,
+        "clause_a_per_k": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "clause_b_delta_pa": 0.0,
+        "clause_b_per_k": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "encode_words_seen_by_race": true,
+        "window_ms": [
+          100,
+          200
+        ]
+      },
+      "config_readback": {
+        "enable_nmda_recurrent": true,
+        "enable_parameter_heterogeneity": true,
+        "enable_short_term_plasticity": true,
+        "w_gis_read_back": 30.0
+      },
+      "pass": {
+        "c1": false,
+        "c2": true,
+        "c3": false,
+        "c4": true
+      },
+      "seed": 46
+    },
+    {
+      "c1": {
+        "all_engram_spikes": [
+          0,
+          0,
+          0
+        ],
+        "burst_ms": null,
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c1",
+        "latch_ms": null,
+        "max_word_hz": 0.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "primed_engram_spikes": 0,
+        "primed_k": 0,
+        "pulse_phase_spikes": 0,
+        "pulsed_rate_hz": 0.0,
+        "seed": 47,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 40.0,
+          "W_MI": 20.0,
+          "W_MM": 10.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 650,
+        "window_ms": [
+          150,
+          800
+        ],
+        "word1_rate_hz": 0.0,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c2b": {
+        "all_engram_spikes": [
+          2,
+          1,
+          0
+        ],
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c2b",
+        "max_word_hz": 0.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "pulse_phase_spikes": null,
+        "pulsed_rate_hz": null,
+        "seed": 47,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 40.0,
+          "W_MI": 20.0,
+          "W_MM": 10.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 2000,
+        "window_ms": [
+          0,
+          2000
+        ],
+        "word1_rate_hz": null,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c3": [
+        {
+          "all_engram_spikes": [
+            0,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 47,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 47,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 47,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        }
+      ],
+      "c5": {
+        "clause_a_delta_pa": 0.0,
+        "clause_a_per_k": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "clause_b_delta_pa": 0.0,
+        "clause_b_per_k": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "encode_words_seen_by_race": true,
+        "window_ms": [
+          100,
+          200
+        ]
+      },
+      "config_readback": {
+        "enable_nmda_recurrent": true,
+        "enable_parameter_heterogeneity": true,
+        "enable_short_term_plasticity": true,
+        "w_gis_read_back": 30.0
+      },
+      "pass": {
+        "c1": false,
+        "c2": true,
+        "c3": false,
+        "c4": true
+      },
+      "seed": 47
+    },
+    {
+      "c1": {
+        "all_engram_spikes": [
+          2,
+          0,
+          1
+        ],
+        "burst_ms": null,
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c1",
+        "latch_ms": null,
+        "max_word_hz": 0.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "primed_engram_spikes": 2,
+        "primed_k": 0,
+        "pulse_phase_spikes": 0,
+        "pulsed_rate_hz": 0.0,
+        "seed": 48,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 40.0,
+          "W_MI": 20.0,
+          "W_MM": 10.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 650,
+        "window_ms": [
+          150,
+          800
+        ],
+        "word1_rate_hz": 0.0,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c2b": {
+        "all_engram_spikes": [
+          2,
+          0,
+          2
+        ],
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c2b",
+        "max_word_hz": 0.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "pulse_phase_spikes": null,
+        "pulsed_rate_hz": null,
+        "seed": 48,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 40.0,
+          "W_MI": 20.0,
+          "W_MM": 10.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 2000,
+        "window_ms": [
+          0,
+          2000
+        ],
+        "word1_rate_hz": null,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c3": [
+        {
+          "all_engram_spikes": [
+            2,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 48,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            2,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 48,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            2,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 0.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_phase_spikes": 0,
+          "pulsed_rate_hz": 0.0,
+          "seed": 48,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 40.0,
+            "W_MI": 20.0,
+            "W_MM": 10.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 0.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        }
+      ],
+      "c5": {
+        "clause_a_delta_pa": 0.0,
+        "clause_a_per_k": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "clause_b_delta_pa": 0.0,
+        "clause_b_per_k": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "encode_words_seen_by_race": true,
+        "window_ms": [
+          100,
+          200
+        ]
+      },
+      "config_readback": {
+        "enable_nmda_recurrent": true,
+        "enable_parameter_heterogeneity": true,
+        "enable_short_term_plasticity": true,
+        "w_gis_read_back": 30.0
+      },
+      "pass": {
+        "c1": false,
+        "c2": true,
+        "c3": false,
+        "c4": true
+      },
+      "seed": 48
+    }
+  ],
+  "preconditions": {
+    "calibration_seeds": "41-48 only; no DEV/CONFIRM arm has run on them",
+    "frozen_selection": "smallest W_MM, then smallest W_IM among cells passing C1-C4 on 8/8 seeds",
+    "grid_row": 3,
+    "no_race": "cue withheld in every calibration run",
+    "thresholds_frozen_in_packet": {
+      "C1_hz": [
+        2.0,
+        20.0
+      ],
+      "STOP_SMOKE_pa": 2.0,
+      "flip_scale_pa": [
+        4.0,
+        6.0
+      ],
+      "quiet_hz": 1.0
+    },
+    "w_gis": 30.0
+  },
+  "probe": "cs_race_f1",
+  "record_label": {
+    "latch_exclusion_w_gis": 30.0
+  },
+  "seeds": [
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48
+  ],
+  "seeds_passing_c1_c4": 0,
+  "stop_preview": {
+    "STOP_CAL": true,
+    "STOP_SMOKE": true,
+    "note": "STOP-ID is judged by the separate identity run"
+  }
+}

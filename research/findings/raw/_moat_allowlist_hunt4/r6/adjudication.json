@@ -1,0 +1,2338 @@
+{
+ "_doc": "Claude adjudication of the round-6 hunt labels, written BEFORE any case is run through any checker. Two blind sonnet judges per case (a LITERAL copy-editor lens and an ORDINARY-reader lens) labelled every case U/F/B from an anonymised, shuffled, label-free copy (workflow wf_7b10b0a2-eaa). 68 of 204 were unanimous with the skeptic. The rule, fixed before any run and applied mechanically: a U case becomes B if the skeptic flagged it arguable, or EITHER judge read it as supported (F), or BOTH judges read it as either-way (B); an F case becomes B if either judge read it as unsupported or both read it as either-way; every other case keeps the skeptic's label (so a U case with one judge U and one judge B stays U). B is counted in the strict reading only, as in rounds 3, 4 and 5. The judge prompt is round 5's, with glosses added for the three relations round 6 uses that round 5 did not (sibling, headquarters_location, the 40-character contains-administrative-territory property) and one neutral line saying that some items hold more than one sentence and are read as one reply.",
+ "relabel_to_B": {
+  "R6-AN01": "U->B",
+  "R6-AN02": "U->B",
+  "R6-AN03": "U->B",
+  "R6-AN04": "U->B",
+  "R6-AN05": "U->B",
+  "R6-AN06": "U->B",
+  "R6-AN07": "U->B",
+  "R6-AN08": "U->B",
+  "R6-AN09": "U->B",
+  "R6-AN10": "U->B",
+  "R6-AN11": "U->B",
+  "R6-AN12": "U->B",
+  "R6-AN13": "U->B",
+  "R6-AN14": "U->B",
+  "R6-AN15": "U->B",
+  "R6-AN16": "U->B",
+  "R6-AN17": "U->B",
+  "R6-AN18": "U->B",
+  "R6-AN19": "U->B",
+  "R6-AN20": "U->B",
+  "R6-AN21": "U->B",
+  "R6-AN22": "U->B",
+  "R6-AN23": "U->B",
+  "R6-AN24": "U->B",
+  "R6-AC01": "U->B",
+  "R6-AC02": "U->B",
+  "R6-AC03": "U->B",
+  "R6-AC04": "U->B",
+  "R6-AC05": "U->B",
+  "R6-AC06": "U->B",
+  "R6-AC07": "U->B",
+  "R6-AC08": "U->B",
+  "R6-AC09": "U->B",
+  "R6-AC10": "U->B",
+  "R6-AC11": "U->B",
+  "R6-AC12": "U->B",
+  "R6-AC13": "U->B",
+  "R6-AC14": "U->B",
+  "R6-AC15": "U->B",
+  "R6-AC16": "U->B",
+  "R6-AC17": "U->B",
+  "R6-AC18": "U->B",
+  "R6-AC19": "U->B",
+  "R6-AC20": "U->B",
+  "R6-AC21": "U->B",
+  "R6-AS01": "U->B",
+  "R6-AS02": "U->B",
+  "R6-AS03": "U->B",
+  "R6-AS04": "U->B",
+  "R6-AS05": "U->B",
+  "R6-AS06": "U->B",
+  "R6-AS07": "U->B",
+  "R6-AO01": "U->B",
+  "R6-AO02": "U->B",
+  "R6-AO03": "U->B",
+  "R6-AO04": "U->B",
+  "R6-AO05": "U->B",
+  "R6-S202": "U->B",
+  "R6-S204": "U->B",
+  "R6-S205": "U->B",
+  "R6-S206": "U->B",
+  "R6-S207": "U->B",
+  "R6-S208": "U->B",
+  "R6-S209": "U->B",
+  "R6-S211": "U->B",
+  "R6-S212": "U->B",
+  "R6-S213": "U->B",
+  "R6-DP01": "U->B",
+  "R6-DP02": "U->B",
+  "R6-DP03": "U->B",
+  "R6-DP04": "U->B",
+  "R6-DP05": "U->B",
+  "R6-DP06": "U->B",
+  "R6-DP07": "U->B",
+  "R6-DP08": "U->B",
+  "R6-DP09": "U->B",
+  "R6-DP10": "U->B",
+  "R6-DP11": "U->B",
+  "R6-DP12": "U->B",
+  "R6-DP13": "U->B",
+  "R6-DP14": "U->B",
+  "R6-DP15": "U->B",
+  "R6-DP16": "U->B",
+  "R6-DP17": "U->B",
+  "R6-DP18": "U->B",
+  "R6-DC01": "U->B",
+  "R6-DC02": "U->B",
+  "R6-DC03": "U->B",
+  "R6-DC04": "U->B",
+  "R6-DC05": "U->B",
+  "R6-DC06": "U->B",
+  "R6-DC07": "U->B",
+  "R6-DC08": "U->B",
+  "R6-DC09": "U->B",
+  "R6-OR01": "U->B",
+  "R6-OR02": "U->B",
+  "R6-OR03": "U->B",
+  "R6-OR04": "U->B",
+  "R6-OR05": "U->B",
+  "R6-OR06": "U->B",
+  "R6-CF03": "U->B",
+  "R6-CF04": "U->B",
+  "R6-CF05": "U->B",
+  "R6-CF06": "U->B",
+  "R6-CF07": "U->B",
+  "R6-QN01": "U->B",
+  "R6-QN02": "U->B",
+  "R6-QN03": "U->B",
+  "R6-QN04": "U->B",
+  "R6-QN05": "U->B",
+  "R6-QN06": "U->B",
+  "R6-QN07": "U->B",
+  "R6-CN01": "U->B",
+  "R6-CN02": "U->B",
+  "R6-CN03": "U->B",
+  "R6-CN04": "U->B",
+  "R6-CN05": "U->B",
+  "R6-CN06": "U->B",
+  "R6-CN07": "U->B",
+  "R6-CN08": "U->B",
+  "R6-MC01": "U->B",
+  "R6-MC02": "U->B",
+  "R6-MC03": "U->B",
+  "R6-MC04": "U->B",
+  "R6-MC05": "U->B",
+  "R6-MC06": "U->B",
+  "R6-GP01": "U->B",
+  "R6-DX01": "U->B",
+  "R6-DX05": "U->B",
+  "R6-DX06": "U->B",
+  "R6-LC01": "U->B",
+  "R6-LC02": "U->B",
+  "R6-LC03": "U->B",
+  "R6-LC04": "U->B"
+ },
+ "reasons": {
+  "R6-AN01": "a blind judge read it as supported",
+  "R6-AN02": "a blind judge read it as supported",
+  "R6-AN03": "a blind judge read it as supported",
+  "R6-AN04": "a blind judge read it as supported",
+  "R6-AN05": "a blind judge read it as supported",
+  "R6-AN06": "a blind judge read it as supported",
+  "R6-AN07": "a blind judge read it as supported",
+  "R6-AN08": "a blind judge read it as supported",
+  "R6-AN09": "a blind judge read it as supported",
+  "R6-AN10": "a blind judge read it as supported",
+  "R6-AN11": "a blind judge read it as supported",
+  "R6-AN12": "a blind judge read it as supported",
+  "R6-AN13": "a blind judge read it as supported",
+  "R6-AN14": "a blind judge read it as supported",
+  "R6-AN15": "a blind judge read it as supported",
+  "R6-AN16": "a blind judge read it as supported",
+  "R6-AN17": "a blind judge read it as supported",
+  "R6-AN18": "a blind judge read it as supported",
+  "R6-AN19": "a blind judge read it as supported",
+  "R6-AN20": "a blind judge read it as supported",
+  "R6-AN21": "a blind judge read it as supported",
+  "R6-AN22": "a blind judge read it as supported",
+  "R6-AN23": "a blind judge read it as supported",
+  "R6-AN24": "a blind judge read it as supported",
+  "R6-AC01": "a blind judge read it as supported",
+  "R6-AC02": "a blind judge read it as supported",
+  "R6-AC03": "a blind judge read it as supported",
+  "R6-AC04": "a blind judge read it as supported",
+  "R6-AC05": "a blind judge read it as supported",
+  "R6-AC06": "a blind judge read it as supported",
+  "R6-AC07": "a blind judge read it as supported",
+  "R6-AC08": "a blind judge read it as supported",
+  "R6-AC09": "a blind judge read it as supported",
+  "R6-AC10": "a blind judge read it as supported",
+  "R6-AC11": "a blind judge read it as supported",
+  "R6-AC12": "a blind judge read it as supported",
+  "R6-AC13": "a blind judge read it as supported",
+  "R6-AC14": "a blind judge read it as supported",
+  "R6-AC15": "a blind judge read it as supported",
+  "R6-AC16": "a blind judge read it as supported",
+  "R6-AC17": "a blind judge read it as supported",
+  "R6-AC18": "a blind judge read it as supported",
+  "R6-AC19": "a blind judge read it as supported",
+  "R6-AC20": "a blind judge read it as supported",
+  "R6-AC21": "a blind judge read it as supported",
+  "R6-AS01": "a blind judge read it as supported",
+  "R6-AS02": "a blind judge read it as supported",
+  "R6-AS03": "a blind judge read it as supported",
+  "R6-AS04": "a blind judge read it as supported",
+  "R6-AS05": "a blind judge read it as supported",
+  "R6-AS06": "a blind judge read it as supported",
+  "R6-AS07": "a blind judge read it as supported",
+  "R6-AO01": "a blind judge read it as supported",
+  "R6-AO02": "a blind judge read it as supported",
+  "R6-AO03": "a blind judge read it as supported",
+  "R6-AO04": "a blind judge read it as supported",
+  "R6-AO05": "a blind judge read it as supported",
+  "R6-S202": "both blind judges: either way",
+  "R6-S204": "both blind judges: either way",
+  "R6-S205": "both blind judges: either way",
+  "R6-S206": "both blind judges: either way",
+  "R6-S207": "both blind judges: either way",
+  "R6-S208": "both blind judges: either way",
+  "R6-S209": "both blind judges: either way",
+  "R6-S211": "skeptic flagged it arguable",
+  "R6-S212": "skeptic flagged it arguable",
+  "R6-S213": "skeptic flagged it arguable",
+  "R6-DP01": "both blind judges: either way",
+  "R6-DP02": "a blind judge read it as supported",
+  "R6-DP03": "a blind judge read it as supported",
+  "R6-DP04": "both blind judges: either way",
+  "R6-DP05": "both blind judges: either way",
+  "R6-DP06": "a blind judge read it as supported",
+  "R6-DP07": "a blind judge read it as supported",
+  "R6-DP08": "both blind judges: either way",
+  "R6-DP09": "both blind judges: either way",
+  "R6-DP10": "both blind judges: either way",
+  "R6-DP11": "a blind judge read it as supported",
+  "R6-DP12": "a blind judge read it as supported",
+  "R6-DP13": "both blind judges: either way",
+  "R6-DP14": "both blind judges: either way",
+  "R6-DP15": "both blind judges: either way",
+  "R6-DP16": "a blind judge read it as supported",
+  "R6-DP17": "both blind judges: either way",
+  "R6-DP18": "both blind judges: either way",
+  "R6-DC01": "a blind judge read it as supported",
+  "R6-DC02": "a blind judge read it as supported",
+  "R6-DC03": "a blind judge read it as supported",
+  "R6-DC04": "a blind judge read it as supported",
+  "R6-DC05": "a blind judge read it as supported",
+  "R6-DC06": "a blind judge read it as supported",
+  "R6-DC07": "a blind judge read it as supported",
+  "R6-DC08": "a blind judge read it as supported",
+  "R6-DC09": "a blind judge read it as supported",
+  "R6-OR01": "a blind judge read it as supported",
+  "R6-OR02": "both blind judges: either way",
+  "R6-OR03": "a blind judge read it as supported",
+  "R6-OR04": "both blind judges: either way",
+  "R6-OR05": "a blind judge read it as supported",
+  "R6-OR06": "a blind judge read it as supported",
+  "R6-CF03": "a blind judge read it as supported",
+  "R6-CF04": "a blind judge read it as supported",
+  "R6-CF05": "both blind judges: either way",
+  "R6-CF06": "both blind judges: either way",
+  "R6-CF07": "skeptic flagged it arguable",
+  "R6-QN01": "both blind judges: either way",
+  "R6-QN02": "both blind judges: either way",
+  "R6-QN03": "a blind judge read it as supported",
+  "R6-QN04": "a blind judge read it as supported",
+  "R6-QN05": "a blind judge read it as supported",
+  "R6-QN06": "a blind judge read it as supported",
+  "R6-QN07": "a blind judge read it as supported",
+  "R6-CN01": "a blind judge read it as supported",
+  "R6-CN02": "a blind judge read it as supported",
+  "R6-CN03": "a blind judge read it as supported",
+  "R6-CN04": "a blind judge read it as supported",
+  "R6-CN05": "skeptic flagged it arguable",
+  "R6-CN06": "skeptic flagged it arguable",
+  "R6-CN07": "skeptic flagged it arguable",
+  "R6-CN08": "skeptic flagged it arguable",
+  "R6-MC01": "a blind judge read it as supported",
+  "R6-MC02": "both blind judges: either way",
+  "R6-MC03": "a blind judge read it as supported",
+  "R6-MC04": "a blind judge read it as supported",
+  "R6-MC05": "a blind judge read it as supported",
+  "R6-MC06": "a blind judge read it as supported",
+  "R6-GP01": "both blind judges: either way",
+  "R6-DX01": "a blind judge read it as supported",
+  "R6-DX05": "a blind judge read it as supported",
+  "R6-DX06": "both blind judges: either way",
+  "R6-LC01": "skeptic flagged it arguable",
+  "R6-LC02": "skeptic flagged it arguable",
+  "R6-LC03": "skeptic flagged it arguable",
+  "R6-LC04": "skeptic flagged it arguable"
+ },
+ "final_counts": {
+  "B": 134,
+  "U": 17,
+  "F": 53
+ },
+ "bar3_count_note": "The skeptic wrote 151 expect-U inputs, which meets AMENDMENT 4's input count (at least 100). After this adjudication 17 cases are U; bar 3 is 0 of those 17 kept at all seven seeds through both entries, every arm VALID. The one-sided 95% upper bound at 0 kept is 3/17 = 17.6%. Of the 151 expect-U inputs, 81 were read F by both judges and 30 B by both; under the relabel rule all of those are B, so bar 3's U count is small and its bound is wide. The strict reading, which counts every kept B case, is reported beside it.",
+ "label_crosstab": {
+  "expect F, literal F, ordinary F": 53,
+  "expect U, literal B, ordinary B": 30,
+  "expect U, literal B, ordinary F": 16,
+  "expect U, literal F, ordinary B": 4,
+  "expect U, literal F, ordinary F": 81,
+  "expect U, literal F, ordinary U": 3,
+  "expect U, literal U, ordinary B": 2,
+  "expect U, literal U, ordinary U": 15
+ },
+ "split_rule": "round 3's split rule applies to the split_context_retraction class: a case counts as a lenient leak if the checker keeps a span whose reading within the whole input is denied, hedged or reported",
+ "blindness_note": "the skeptic's README discloses reading the store builder's sanitize, pick_clean_alias and the _alias_map definition line and docstring, and two result-file names printed in the round-4 and round-5 READMEs (neither opened); the spec and prereg name the tables and their builders, which it did not open; Claude judges these do not reveal the matcher's rules",
+ "judge_labels": {
+  "R6-AN01": {
+   "literal": [
+    "F",
+    "Instance-of and part-of triples are stated exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Instance_of monarch and monarch part_of dynastic state are restated exactly."
+   ]
+  },
+  "R6-AN02": {
+   "literal": [
+    "F",
+    "Instance-of and part-of triples are stated exactly; the missing article is harmless."
+   ],
+   "ordinary": [
+    "F",
+    "Instance_of and part_of triples are restated exactly."
+   ]
+  },
+  "R6-AN03": {
+   "literal": [
+    "F",
+    "Both sentences restate the two triples plainly, with 'The first chamber' as a clear back-reference."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences are the two triples, and 'the first chamber' refers back to the same entity."
+   ]
+  },
+  "R6-AN04": {
+   "literal": [
+    "F",
+    "Both sentences restate the two triples plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences restate the two triples plainly with nothing added."
+   ]
+  },
+  "R6-AN05": {
+   "literal": [
+    "F",
+    "Restates the instance_of and part_of triples with nothing added."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences restate the two triples plainly."
+   ]
+  },
+  "R6-AN06": {
+   "literal": [
+    "F",
+    "Both sentences restate the two triples; 'The personal computer' refers to the class named in the first sentence."
+   ],
+   "ordinary": [
+    "B",
+    "Both sentences match triples, but a reader would likely infer that the Apple II itself has a multimedia keyboard, which is not entailed."
+   ]
+  },
+  "R6-AN07": {
+   "literal": [
+    "F",
+    "Both triples stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences are exactly the two gathered triples."
+   ]
+  },
+  "R6-AN08": {
+   "literal": [
+    "F",
+    "Both sentences match the instance_of and has_part triples."
+   ],
+   "ordinary": [
+    "F",
+    "Restates both triples plainly."
+   ]
+  },
+  "R6-AN09": {
+   "literal": [
+    "F",
+    "Both sentences restate the instance_of and has_part triples plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match the instance_of and has_part triples; hydrogen hydroxide is water."
+   ]
+  },
+  "R6-AN10": {
+   "literal": [
+    "F",
+    "Both sentences restate the instance_of and has_part triples exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match the instance_of and has_part triples."
+   ]
+  },
+  "R6-AN11": {
+   "literal": [
+    "F",
+    "Both triples stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences are exactly the two gathered triples."
+   ]
+  },
+  "R6-AN12": {
+   "literal": [
+    "F",
+    "Both sentences state exactly the instance_of and has_part triples."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences state exactly the two gathered triples."
+   ]
+  },
+  "R6-AN13": {
+   "literal": [
+    "F",
+    "Both sentences are plain restatements of the instance_of and part_of triples."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences restate gathered triples."
+   ]
+  },
+  "R6-AN14": {
+   "literal": [
+    "F",
+    "Both sentences restate the instance_of and part_of triples."
+   ],
+   "ordinary": [
+    "F",
+    "Restates both triples; al Masihiyya is the slug for the part-of target."
+   ]
+  },
+  "R6-AN15": {
+   "literal": [
+    "F",
+    "Both sentences match the instance_of and part_of triples exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match the two triples plainly."
+   ]
+  },
+  "R6-AN16": {
+   "literal": [
+    "F",
+    "Both sentences are exact gathered triples."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match the triples."
+   ]
+  },
+  "R6-AN17": {
+   "literal": [
+    "F",
+    "Both sentences match the instance_of and has_part triples plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match the two triples plainly."
+   ]
+  },
+  "R6-AN18": {
+   "literal": [
+    "F",
+    "Both sentences are plain restatements of the instance_of and part_of triples."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences restate gathered triples."
+   ]
+  },
+  "R6-AN19": {
+   "literal": [
+    "F",
+    "The line break replaces the period, but both triples are stated plainly with nothing added."
+   ],
+   "ordinary": [
+    "F",
+    "The two triples are restated plainly; the line break and missing periods are harmless."
+   ]
+  },
+  "R6-AN20": {
+   "literal": [
+    "F",
+    "Both triples stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences are exactly the two gathered triples."
+   ]
+  },
+  "R6-AN21": {
+   "literal": [
+    "F",
+    "Both triples stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences are exactly the two gathered triples."
+   ]
+  },
+  "R6-AN22": {
+   "literal": [
+    "F",
+    "All four sentences restate the four triples exactly."
+   ],
+   "ordinary": [
+    "F",
+    "All four sentences restate the four gathered triples exactly."
+   ]
+  },
+  "R6-AN23": {
+   "literal": [
+    "F",
+    "Both triples stated plainly, odd as the content is."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences are exactly the two gathered triples."
+   ]
+  },
+  "R6-AN24": {
+   "literal": [
+    "F",
+    "Both sentences are exact gathered triples, with stilted grammar."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match the triples."
+   ]
+  },
+  "R6-AC01": {
+   "literal": [
+    "F",
+    "Each of the three sentences restates exactly one gathered triple plainly, with nothing added or negated."
+   ],
+   "ordinary": [
+    "F",
+    "Each of the three sentences restates one gathered triple plainly."
+   ]
+  },
+  "R6-AC02": {
+   "literal": [
+    "F",
+    "Both sentences are exact gathered triples; the conflicting Korea triple is not asserted."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match triples; the Korea time zone is not asserted."
+   ]
+  },
+  "R6-AC03": {
+   "literal": [
+    "F",
+    "Both sentences are triples (instance_of and city_of_japan's time zone); nothing added, and the conflicting Korea triple is not asserted."
+   ],
+   "ordinary": [
+    "F",
+    "The two sentences restate the instance_of and time-zone triples; the line break changes nothing and nothing is added."
+   ]
+  },
+  "R6-AC04": {
+   "literal": [
+    "F",
+    "All three sentences restate the three triples exactly."
+   ],
+   "ordinary": [
+    "F",
+    "All three sentences restate the three gathered triples exactly, with nothing added."
+   ]
+  },
+  "R6-AC05": {
+   "literal": [
+    "F",
+    "Both sentences are gathered triples (Morioka time zone; city_of_japan time zone)."
+   ],
+   "ordinary": [
+    "B",
+    "Both sentences match triples, but without the instance_of link a reader may take 'the city of Japan' to be a separate or contradictory claim about Morioka."
+   ]
+  },
+  "R6-AC06": {
+   "literal": [
+    "F",
+    "Three lines, each exactly one gathered triple, with no hedge or addition."
+   ],
+   "ordinary": [
+    "F",
+    "Each of the three lines is exactly a gathered triple, even though the zones differ."
+   ]
+  },
+  "R6-AC07": {
+   "literal": [
+    "F",
+    "The slug drops the macron, so 'Hachiōji Tokyo' is the same entity; both triples are stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "The diacritic only restores the proper spelling of Hachioji; both sentences match triples."
+   ]
+  },
+  "R6-AC08": {
+   "literal": [
+    "F",
+    "Both sentences are exact gathered triples."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match the gathered triples."
+   ]
+  },
+  "R6-AC09": {
+   "literal": [
+    "F",
+    "All three sentences restate gathered triples exactly."
+   ],
+   "ordinary": [
+    "U",
+    "Chaining the class's location to Budyssin suggests it is in Bayern as well as Bautzen District, which is not entailed."
+   ]
+  },
+  "R6-AC10": {
+   "literal": [
+    "F",
+    "The sentences mirror the two gathered triples, with the territory claim made at class level as in the data."
+   ],
+   "ordinary": [
+    "U",
+    "A reader would come away believing Freiberg Saxony is in Bayern, but the triple only places the class Grosse Kreisstadt there."
+   ]
+  },
+  "R6-AC11": {
+   "literal": [
+    "F",
+    "Two sentences with a line break, each a plain restatement of a gathered triple."
+   ],
+   "ordinary": [
+    "F",
+    "Two gathered triples separated by a line break, nothing added or negated."
+   ]
+  },
+  "R6-AC12": {
+   "literal": [
+    "F",
+    "The two sentences restate gathered triples; omitting the third triple adds nothing."
+   ],
+   "ordinary": [
+    "U",
+    "A reader would conclude House of Saxe Meissen is in Bayern, but the triple gives that location only for the class, and its own location is Meissen rural district."
+   ]
+  },
+  "R6-AC13": {
+   "literal": [
+    "F",
+    "The two sentences restate the instance_of and member_of triples exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences are exactly the instance_of and member_of triples."
+   ]
+  },
+  "R6-AC14": {
+   "literal": [
+    "F",
+    "Both sentences match the instance_of and part_of triples exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match gathered triples exactly."
+   ]
+  },
+  "R6-AC15": {
+   "literal": [
+    "F",
+    "Both sentences are plain restatements of the instance_of and part_of triples."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences restate gathered triples with nothing added."
+   ]
+  },
+  "R6-AC16": {
+   "literal": [
+    "F",
+    "Both stated assertions match gathered triples; omitting the third triple adds nothing."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences are exactly gathered triples, however nonsensical the entity."
+   ]
+  },
+  "R6-AC17": {
+   "literal": [
+    "F",
+    "All three sentences correspond to gathered triples with nothing added."
+   ],
+   "ordinary": [
+    "F",
+    "All three sentences are exactly the gathered triples stated plainly, even though the time zones conflict."
+   ]
+  },
+  "R6-AC18": {
+   "literal": [
+    "F",
+    "Both sentences restate the instance_of and time-zone triples plainly, with nothing added."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences restate gathered triples exactly, with nothing added or negated."
+   ]
+  },
+  "R6-AC19": {
+   "literal": [
+    "F",
+    "The border triple and the class-level time-zone triple are both restated; nothing added."
+   ],
+   "ordinary": [
+    "F",
+    "The border triple and the class-level time-zone triple are each stated as given."
+   ]
+  },
+  "R6-AC20": {
+   "literal": [
+    "F",
+    "Both sentences restate gathered triples, and the third triple is simply not claimed."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences are exactly gathered triples."
+   ]
+  },
+  "R6-AC21": {
+   "literal": [
+    "F",
+    "Both sentences match gathered triples; the line break adds nothing."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match triples; the conflicting Korea time zone is not asserted."
+   ]
+  },
+  "R6-AS01": {
+   "literal": [
+    "F",
+    "Both sentences match the subclass_of and follows triples stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match gathered triples exactly, with nothing added or negated."
+   ]
+  },
+  "R6-AS02": {
+   "literal": [
+    "F",
+    "Three sentences restate the three gathered triples exactly."
+   ],
+   "ordinary": [
+    "F",
+    "All three triples (follows, subclass_of, follows) are restated exactly."
+   ]
+  },
+  "R6-AS03": {
+   "literal": [
+    "F",
+    "Both sentences match the subclass_of and part_of triples exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match gathered triples exactly."
+   ]
+  },
+  "R6-AS04": {
+   "literal": [
+    "F",
+    "Both sentences are exact gathered triples."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match the triples."
+   ]
+  },
+  "R6-AS05": {
+   "literal": [
+    "F",
+    "Subclass_of and part_of triples are each stated plainly; the unused wikipedia_books triple is not asserted."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences restate the subclass_of and part_of triples with nothing added."
+   ]
+  },
+  "R6-AS06": {
+   "literal": [
+    "F",
+    "Subclass and part-of chain restates two gathered triples exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences restate the subclass_of and part_of triples with nothing added."
+   ]
+  },
+  "R6-AS07": {
+   "literal": [
+    "F",
+    "Both assertions are gathered triples (subclass_of and part_of), and nothing extra is added."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match gathered triples exactly; omitting the third triple adds nothing."
+   ]
+  },
+  "R6-AO01": {
+   "literal": [
+    "F",
+    "Instance-of and subclass-of triples are stated exactly, with nothing added."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences restate the two triples exactly (instance_of and subclass_of first chamber)."
+   ]
+  },
+  "R6-AO02": {
+   "literal": [
+    "F",
+    "Instance-of and has-part triples are stated exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Instance_of and has_part triples are restated exactly."
+   ]
+  },
+  "R6-AO03": {
+   "literal": [
+    "F",
+    "Both sentences restate the two instance_of triples; the added 'the' is harmless."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences are exactly the two instance_of triples, with only a harmless article difference."
+   ]
+  },
+  "R6-AO04": {
+   "literal": [
+    "F",
+    "Both instance-of triples are stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Both instance_of triples are restated plainly."
+   ]
+  },
+  "R6-AO05": {
+   "literal": [
+    "F",
+    "Both sentences restate instance_of triples; 'the honorific order' is the same class."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences restate gathered instance_of triples."
+   ]
+  },
+  "R6-S201": {
+   "literal": [
+    "U",
+    "'Robbie Williams and a Robbie Williams' asserts a second, additional part, but the triple has one."
+   ],
+   "ordinary": [
+    "U",
+    "'and a Robbie Williams' implies a second, additional member."
+   ]
+  },
+  "R6-S202": {
+   "literal": [
+    "B",
+    "Duplicated object 'and a Peter Dennis Blandford Townshend' may read as a second part."
+   ],
+   "ordinary": [
+    "B",
+    "The duplicated 'and a Peter Dennis Blandford Townshend' could read as a second part, or as a glitch to ignore."
+   ]
+  },
+  "R6-S203": {
+   "literal": [
+    "U",
+    "'Canada Portal and a Canada Portal' asserts a second, additional bordering entity, but the triple has one."
+   ],
+   "ordinary": [
+    "U",
+    "'and a Canada Portal' reads as a second, additional bordering entity."
+   ]
+  },
+  "R6-S204": {
+   "literal": [
+    "B",
+    "Duplicated object 'and a Pole Land' with an indefinite article may read as a second neighbour."
+   ],
+   "ordinary": [
+    "B",
+    "The repeated 'and a Pole Land' could suggest a second bordering entity, though it is the same name."
+   ]
+  },
+  "R6-S205": {
+   "literal": [
+    "B",
+    "'Jul follows June and a June' adds an indefinite second 'a June', which could be read as a different June or a redundant repeat."
+   ],
+   "ordinary": [
+    "B",
+    "'follows June and a June' suggests a second, extra June, though it is probably a duplicate of the same entity."
+   ]
+  },
+  "R6-S206": {
+   "literal": [
+    "B",
+    "'has part James Paul McCartney and a James Paul McCartney' duplicates the object with an indefinite article, which could read as a second member."
+   ],
+   "ordinary": [
+    "B",
+    "The duplicated 'and a James Paul McCartney' is a glitch a reader might take as a second part, or ignore."
+   ]
+  },
+  "R6-S207": {
+   "literal": [
+    "B",
+    "The repeated 'Phil Colins, a Phil Colins and the Phil Colins' can read as three separate parts, though only one triple is gathered."
+   ],
+   "ordinary": [
+    "B",
+    "The triple is stated, but the repeated 'a Phil Colins and the Phil Colins' reads as padding that could suggest several parts."
+   ]
+  },
+  "R6-S208": {
+   "literal": [
+    "B",
+    "'contains Province of Burgos and a Province of Burgos' is redundant but literally lists a second, indefinite province, so readers may or may not see an extra entity."
+   ],
+   "ordinary": [
+    "B",
+    "The repeated 'and a Province of Burgos' could read as a second province, though it is the same name."
+   ]
+  },
+  "R6-S209": {
+   "literal": [
+    "B",
+    "'a Michael Philip Jagger and Michael Philip Jagger' can read as two members from a single has_part triple."
+   ],
+   "ordinary": [
+    "B",
+    "The triple is stated, but the repeated 'a Michael Philip Jagger and Michael Philip Jagger' may suggest more than one part."
+   ]
+  },
+  "R6-S210": {
+   "literal": [
+    "U",
+    "'and a first chromosome' adds a second, extra first chromosome that the triple does not entail."
+   ],
+   "ordinary": [
+    "B",
+    "'and a first chromosome' adds a redundant, possibly distinct second referent."
+   ]
+  },
+  "R6-S211": {
+   "literal": [
+    "B",
+    "'Trent Reznor and Trent Reznor' lists the same part twice, which could be read as two distinct parts or as harmless redundancy."
+   ],
+   "ordinary": [
+    "B",
+    "Repeating 'Trent Reznor and Trent Reznor' might suggest two parts or an error, though it adds no new entity."
+   ]
+  },
+  "R6-S212": {
+   "literal": [
+    "B",
+    "The raw slug 'nesta_marley' is listed as a second part alongside 'Nesta Marley'; a reader could take it as an extra entity or as a duplicate of the first."
+   ],
+   "ordinary": [
+    "B",
+    "'Nesta Marley and nesta_marley' lists the same part twice, so a reader may think there are two distinct parts."
+   ]
+  },
+  "R6-S213": {
+   "literal": [
+    "B",
+    "The same entity is named twice, once as a raw lowercase slug, and a reader could take it as two distinct borders."
+   ],
+   "ordinary": [
+    "B",
+    "The repeated 'Geography of Greater Sudbury and geography of greater sudbury' reads as two separate neighbours."
+   ]
+  },
+  "R6-DP01": {
+   "literal": [
+    "B",
+    "'A Robbie Williams' casts the name as one of several bearers of that name, so the grammar may not commit to the specific entity in the triple."
+   ],
+   "ordinary": [
+    "B",
+    "'A Robbie Williams' treats a named person as a generic kind, which is odd but the membership claim is the same."
+   ]
+  },
+  "R6-DP02": {
+   "literal": [
+    "F",
+    "The participant_of triple is stated plainly; the leading 'A' is stilted only."
+   ],
+   "ordinary": [
+    "F",
+    "Participant_of triple restated plainly."
+   ]
+  },
+  "R6-DP03": {
+   "literal": [
+    "B",
+    "'A Lincoln' with an indefinite article turns the named film into 'some Lincoln', which is a slightly different, generic claim."
+   ],
+   "ordinary": [
+    "F",
+    "Lincoln being an instance of theatrical film matches the triple; the 'A' is a harmless article."
+   ]
+  },
+  "R6-DP04": {
+   "literal": [
+    "B",
+    "'A reader is an instance of theatrical film' reads as any reader being a film, though the triple is about one specific entity."
+   ],
+   "ordinary": [
+    "B",
+    "'A reader is an instance of theatrical film' reads as a generic claim about readers, not a specific film."
+   ]
+  },
+  "R6-DP05": {
+   "literal": [
+    "B",
+    "'a May sickness' reads as a common-noun sickness occurring in May, so 'follows' could be read loosely or as a mismatched entity."
+   ],
+   "ordinary": [
+    "B",
+    "Matches the triple, but 'a May sickness' is garbled and a reader might think June follows an illness."
+   ]
+  },
+  "R6-DP06": {
+   "literal": [
+    "F",
+    "Says the May sickness follows the cruellest month, which matches the follows triple; the article 'A' is only stilted phrasing."
+   ],
+   "ordinary": [
+    "F",
+    "States the follows triple; 'A' adds nothing material."
+   ]
+  },
+  "R6-DP07": {
+   "literal": [
+    "F",
+    "The odd 'A John Cale' is stilted but still plainly states John Cale part_of the Velvet Underground."
+   ],
+   "ordinary": [
+    "F",
+    "John Cale part_of the Velvet Underground is stated plainly; the stray 'A' is only stilted."
+   ]
+  },
+  "R6-DP08": {
+   "literal": [
+    "B",
+    "'A George V' uses an indefinite article on a proper name, which a strict reader could take as a different or non-specific referent."
+   ],
+   "ordinary": [
+    "B",
+    "'A George V' is a generic-article oddity, but the membership claim is the same."
+   ]
+  },
+  "R6-DP09": {
+   "literal": [
+    "B",
+    "'A Niehls Bohr' presents the name as one of several bearers, so a strict reader may not take it as exactly the triple's subject."
+   ],
+   "ordinary": [
+    "B",
+    "'A Niehls Bohr' treats a person as a generic kind, which is odd, though the participation claim is unchanged."
+   ]
+  },
+  "R6-DP10": {
+   "literal": [
+    "B",
+    "'has part a Robbie Williams' uses an indefinite article on a proper name, which could suggest 'some person named Robbie Williams' instead of the specific entity."
+   ],
+   "ordinary": [
+    "B",
+    "'Has part a Robbie Williams' is awkward and could suggest one of several, though the claim is essentially the triple."
+   ]
+  },
+  "R6-DP11": {
+   "literal": [
+    "F",
+    "The sibling triple is stated plainly; 'a James VII of Scots' is stilted but unambiguous."
+   ],
+   "ordinary": [
+    "F",
+    "Sibling relation stated plainly; the article 'a' is stilted but harmless."
+   ]
+  },
+  "R6-DP12": {
+   "literal": [
+    "B",
+    "'A Harvey Winesteen' with an indefinite article reads as 'some such person', a slightly different claim from the named-entity triple."
+   ],
+   "ordinary": [
+    "F",
+    "Harvey Winesteen is a sibling of Bob Weinstein matches the triple; the 'A' is a harmless article."
+   ]
+  },
+  "R6-DP13": {
+   "literal": [
+    "B",
+    "The first sentence is exact, but 'A Robbie Williams' in the second suggests some possibly different person of that name."
+   ],
+   "ordinary": [
+    "B",
+    "Second sentence 'A Robbie Williams' suggests one of several people with that name, a mild extra implication."
+   ]
+  },
+  "R6-DP14": {
+   "literal": [
+    "B",
+    "The first sentence is exact, but 'a Pole Land' is indefinite and reads as one of several, not the specific bordering entity."
+   ],
+   "ordinary": [
+    "B",
+    "Repeated border claim with 'a Pole Land' is odd and might suggest another entity, though it likely reads as a duplicate."
+   ]
+  },
+  "R6-DP15": {
+   "literal": [
+    "B",
+    "'A Serena Williams' uses an indefinite article on a proper name, which a strict reader could take as a different or non-specific referent."
+   ],
+   "ordinary": [
+    "B",
+    "'A Serena Williams' is a generic-article oddity, but the participation claim is the same."
+   ]
+  },
+  "R6-DP16": {
+   "literal": [
+    "B",
+    "'A Wacko Jacko' with an indefinite article reads as a generic or unspecified person rather than the named entity."
+   ],
+   "ordinary": [
+    "F",
+    "Wacko Jacko being a member of the Jackson Five matches the triple; the 'A' is a harmless article."
+   ]
+  },
+  "R6-DP17": {
+   "literal": [
+    "B",
+    "'A Peter Sagan' uses an indefinite article on a proper name, so the grammar may commit to one of several bearers of the name."
+   ],
+   "ordinary": [
+    "B",
+    "'A Peter Sagan' is a generic-article oddity, but the participation claim is the same."
+   ]
+  },
+  "R6-DP18": {
+   "literal": [
+    "B",
+    "The member_of triple is stated, but the indefinite 'A first lady of song' reads as some unspecified person holding the title."
+   ],
+   "ordinary": [
+    "B",
+    "'A first lady of song' reads as a generic class member rather than the specific entity."
+   ]
+  },
+  "R6-DC01": {
+   "literal": [
+    "F",
+    "Plain subclass_of statement matching the triple."
+   ],
+   "ordinary": [
+    "F",
+    "States the subclass_of triple plainly."
+   ]
+  },
+  "R6-DC02": {
+   "literal": [
+    "F",
+    "States exactly (mogul, subclass_of, railway_locomotive)."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states the single triple (mogul subclass_of railway locomotive)."
+   ]
+  },
+  "R6-DC03": {
+   "literal": [
+    "F",
+    "'A consolidation' is a common-noun class and the instance_of statement matches the triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states the instance_of triple; 'a consolidation' is a natural common-noun use."
+   ]
+  },
+  "R6-DC04": {
+   "literal": [
+    "F",
+    "The indefinite 'A glider' reads generically; this is the instance_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the instance_of triple; the article is harmless."
+   ]
+  },
+  "R6-DC05": {
+   "literal": [
+    "B",
+    "Triple matches, but 'A rat is an instance of...' grammatically reads as any individual rat being a taxonomic group, which is a generic-vs-taxon ambiguity."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states the single triple (rat instance_of taxonomic_group)."
+   ]
+  },
+  "R6-DC06": {
+   "literal": [
+    "F",
+    "The grammar is awkward ('The rajahs is'), but the instance_of triple is stated unambiguously."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement of the instance_of triple."
+   ]
+  },
+  "R6-DC07": {
+   "literal": [
+    "F",
+    "The generic 'A brig is a subclass of career soldier' matches the subclass_of meaning, every X is a kind of Y."
+   ],
+   "ordinary": [
+    "F",
+    "Restates the subclass_of triple plainly."
+   ]
+  },
+  "R6-DC08": {
+   "literal": [
+    "F",
+    "Stilted generic 'A people has part human specie' matches the has_part triple."
+   ],
+   "ordinary": [
+    "F",
+    "Telegraphic but unambiguous rendering of the has_part triple."
+   ]
+  },
+  "R6-DC09": {
+   "literal": [
+    "F",
+    "Exact instance_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain instance_of restatement."
+   ]
+  },
+  "R6-OR01": {
+   "literal": [
+    "F",
+    "The indefinite 'A' reads generically for the class entity; the content is the follows triple."
+   ],
+   "ordinary": [
+    "F",
+    "The indefinite article is stilted but the meaning is the single follows triple."
+   ]
+  },
+  "R6-OR02": {
+   "literal": [
+    "B",
+    "'A second Baku' reads as another Baku (ordinal plus place), not the single entity second_baku, though the time-zone triple matches."
+   ],
+   "ordinary": [
+    "B",
+    "Matches the triple, but 'A second Baku' is confusing and a reader may take it as Baku itself or a different place."
+   ]
+  },
+  "R6-OR03": {
+   "literal": [
+    "B",
+    "'A second city of Spain' reads as one of several second cities rather than the named entity second_city_of_spain, though the border triple matches."
+   ],
+   "ordinary": [
+    "F",
+    "Border triple restated plainly."
+   ]
+  },
+  "R6-OR04": {
+   "literal": [
+    "B",
+    "The indefinite article 'A second Commonwealth of Poland' treats the proper name as a countable kind, which a strict reader could take as 'a further one' rather than the named entity."
+   ],
+   "ordinary": [
+    "B",
+    "The indefinite 'A second Commonwealth of Poland' could be read as one of several or as an ordinal, though it most likely just names the entity."
+   ]
+  },
+  "R6-OR05": {
+   "literal": [
+    "B",
+    "'A first caliphate' with an indefinite article can read as one of several first caliphates rather than the named entity."
+   ],
+   "ordinary": [
+    "F",
+    "First caliphate follows Byzantine Empire matches the triple; the 'A' is a harmless article."
+   ]
+  },
+  "R6-OR06": {
+   "literal": [
+    "B",
+    "Triple is third follows second, but the indefinite 'A third Asian Games' presents it as one of possibly several rather than the specific entity."
+   ],
+   "ordinary": [
+    "F",
+    "States the single triple (third Asian Games follows second); the 'A' is harmless."
+   ]
+  },
+  "R6-CF01": {
+   "literal": [
+    "U",
+    "The subject is displayed as 'Solomon', not Solomon Is (Solomon Islands), which is a different entity."
+   ],
+   "ordinary": [
+    "U",
+    "'Solomon' alone names a different entity than Solomon Islands, which is the entity with the triple."
+   ]
+  },
+  "R6-CF02": {
+   "literal": [
+    "U",
+    "The slug marshall_is is shown as 'Marshall', dropping 'is' and so naming a different entity from the one the triple describes."
+   ],
+   "ordinary": [
+    "B",
+    "The slug marshall_is likely means Marshall Islands, but the sentence says only 'Marshall', so a reader may take it as a different place."
+   ]
+  },
+  "R6-CF03": {
+   "literal": [
+    "F",
+    "Exact located_in_time_zone triple in stilted phrasing."
+   ],
+   "ordinary": [
+    "F",
+    "Plain time-zone triple."
+   ]
+  },
+  "R6-CF04": {
+   "literal": [
+    "B",
+    "The sentence names 'Orgryte' where the slug is orgryte_is (the club Orgryte IS), so the entity is shortened, and 'headquartered in Geography of Gothenburg' is odd though telegraphic."
+   ],
+   "ordinary": [
+    "F",
+    "'Headquartered in' is the plain rendering of headquarters_location."
+   ]
+  },
+  "R6-CF05": {
+   "literal": [
+    "B",
+    "The second sentence's subject is 'Marshall' rather than 'Marshall Is', so a reader might take it as a different entity."
+   ],
+   "ordinary": [
+    "B",
+    "The second sentence says 'Marshall' instead of 'Marshall Is'; most readers would assume the same entity, but not all."
+   ]
+  },
+  "R6-CF06": {
+   "literal": [
+    "B",
+    "The sentence says 'Marshall' where the slug marshall_is stands for Marshall Is. (Islands), so the displayed entity may differ from the one in the triple, though the relation is stated plainly."
+   ],
+   "ordinary": [
+    "B",
+    "'Marshall' drops the 'Islands' from the slug, so a reader might think of a different Marshall, though the claim otherwise matches."
+   ]
+  },
+  "R6-CF07": {
+   "literal": [
+    "F",
+    "Stilted 'be located' (the slug residue BE read as a verb) still plainly says Biel is located in Canton de Berne, matching the triple."
+   ],
+   "ordinary": [
+    "F",
+    "Stilted 'be located' but plainly says Biel is in Canton de Berne, matching the triple."
+   ]
+  },
+  "R6-QN01": {
+   "literal": [
+    "B",
+    "Sentence-initial 'No limit label...' can be read as a negative quantifier rather than an entity name."
+   ],
+   "ordinary": [
+    "B",
+    "'No limit label is...' can be read as a negated quantifier rather than the entity name."
+   ]
+  },
+  "R6-QN02": {
+   "literal": [
+    "B",
+    "'No l is an instance of unisex name' can read as a negative quantifier ('no L...') rather than the name 'Noël' whose accent the slug dropped."
+   ],
+   "ordinary": [
+    "B",
+    "'No l is an instance of...' can be read as the quantifier 'No L...', a negation, rather than the name Noel."
+   ]
+  },
+  "R6-QN03": {
+   "literal": [
+    "B",
+    "Lowercase 'Every little thing band' reads grammatically as a universal quantifier over bands, though it is probably the band's name."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the instance_of triple."
+   ]
+  },
+  "R6-QN04": {
+   "literal": [
+    "F",
+    "The participant_of triple is restated plainly; the plural team name with 'is' is only stilted."
+   ],
+   "ordinary": [
+    "F",
+    "Participant_of triple restated plainly."
+   ]
+  },
+  "R6-QN05": {
+   "literal": [
+    "F",
+    "'Nothing records' reads as the capitalised entity name, and the instance_of triple is stated plainly."
+   ],
+   "ordinary": [
+    "B",
+    "'Nothing records' could be read as a negation/quantifier instead of a label name."
+   ]
+  },
+  "R6-QN06": {
+   "literal": [
+    "B",
+    "'Not list' begins with a negation word that a reader could parse as 'a non-list', though it is the entity name."
+   ],
+   "ordinary": [
+    "F",
+    "Not list is part of literature by region matches the triple."
+   ]
+  },
+  "R6-QN07": {
+   "literal": [
+    "B",
+    "'subclass of not list' can be read as a negated class (not a list) rather than an entity named 'not list'."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement of the subclass_of triple."
+   ]
+  },
+  "R6-CN01": {
+   "literal": [
+    "B",
+    "'Albany Lebanon or SA' reads as a disjunction ('or') rather than a single place name, which could be taken as a hedge."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the shares_border_with triple."
+   ]
+  },
+  "R6-CN02": {
+   "literal": [
+    "B",
+    "'Albany Lebanon or sa' can be read as a disjunction rather than the single entity Albany-Lebanon, OR statistical area."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement of the shares_border_with triple."
+   ]
+  },
+  "R6-CN03": {
+   "literal": [
+    "F",
+    "States the time zone triple exactly (SA vs Sa is only case)."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the time-zone triple exactly."
+   ]
+  },
+  "R6-CN04": {
+   "literal": [
+    "F",
+    "Stilted but restates the administrative-territory triple with the same entities."
+   ],
+   "ordinary": [
+    "F",
+    "Restates the administrative-territory triple, with stilted but unambiguous wording."
+   ]
+  },
+  "R6-CN05": {
+   "literal": [
+    "F",
+    "Plain restatement of the follows triple, abbreviation and typo included."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement of the follows triple."
+   ]
+  },
+  "R6-CN06": {
+   "literal": [
+    "F",
+    "Restates the administrative-territory triple in telegraphic form."
+   ],
+   "ordinary": [
+    "F",
+    "Directly states the located-in triple, with an odd but unambiguous entity name."
+   ]
+  },
+  "R6-CN07": {
+   "literal": [
+    "F",
+    "Plain part_of statement matching the triple; the lowercase name is only a surface variation."
+   ],
+   "ordinary": [
+    "F",
+    "Plain restatement of the part_of triple."
+   ]
+  },
+  "R6-CN08": {
+   "literal": [
+    "F",
+    "Part_of triple stated plainly; the lowercase 'if' is just a slug artifact of the club name."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the part_of triple."
+   ]
+  },
+  "R6-MC01": {
+   "literal": [
+    "B",
+    "The odd casing 'the WHo' reads as the WHO (World Health Organization) as readily as The Who."
+   ],
+   "ordinary": [
+    "F",
+    "Townshend member of The Who is stated plainly; the odd capitalisation of 'WHo' does not change the meaning."
+   ]
+  },
+  "R6-MC02": {
+   "literal": [
+    "B",
+    "The odd casing 'wHO' reads like the World Health Organization rather than The Who, though the triple is restated."
+   ],
+   "ordinary": [
+    "B",
+    "'wHO' could read as the World Health Organization, a different entity, and a filmography being a member is odd."
+   ]
+  },
+  "R6-MC03": {
+   "literal": [
+    "B",
+    "Odd capitalization 'WhO' could read as the acronym WHO (a different entity) rather than The Who."
+   ],
+   "ordinary": [
+    "F",
+    "Odd casing 'WhO' does not change the meaning, which matches the has_part triple."
+   ]
+  },
+  "R6-MC04": {
+   "literal": [
+    "F",
+    "Exact located_in_time_zone triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the time-zone triple; the capitalization is trivial."
+   ]
+  },
+  "R6-MC05": {
+   "literal": [
+    "F",
+    "Plain statement of the administrative-territory triple; the odd capitalisation 'MIt' does not change the entity."
+   ],
+   "ordinary": [
+    "F",
+    "Odd capitalization of MIt, but it states the located-in triple."
+   ]
+  },
+  "R6-MC06": {
+   "literal": [
+    "F",
+    "The odd capitalisation 'wHO' still reads as Doctor Who universe, and the instance_of triple is stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Odd capitalization of 'wHO' only; asserts exactly the instance_of triple."
+   ]
+  },
+  "R6-GP01": {
+   "literal": [
+    "B",
+    "'Follows from' can read as 'is derived from' rather than 'comes after', so a reader could take it either way."
+   ],
+   "ordinary": [
+    "B",
+    "'Follows from' can read as logical consequence rather than coming after in a series."
+   ]
+  },
+  "R6-CR01": {
+   "literal": [
+    "U",
+    "The following 'Not true.' denies the stated membership."
+   ],
+   "ordinary": [
+    "U",
+    "The trailing 'Not true.' denies the preceding claim."
+   ]
+  },
+  "R6-CR02": {
+   "literal": [
+    "U",
+    "The claim is followed by a blank-line-separated 'False.', which denies or retracts it."
+   ],
+   "ordinary": [
+    "U",
+    "The trailing 'False.' on its own line reads as a denial or retraction of the claim."
+   ]
+  },
+  "R6-CR03": {
+   "literal": [
+    "U",
+    "The membership claim is followed by 'Retracted.', which withdraws it."
+   ],
+   "ordinary": [
+    "U",
+    "The trailing 'Retracted.' takes back the membership claim."
+   ]
+  },
+  "R6-CR04": {
+   "literal": [
+    "U",
+    "The prefix 'Untrue:' negates or denies the border claim that follows."
+   ],
+   "ordinary": [
+    "U",
+    "The 'Untrue:' prefix denies the border claim, so the reader would believe the opposite of the triple."
+   ]
+  },
+  "R6-CR05": {
+   "literal": [
+    "U",
+    "The carriage-return then 'No.' reads as a denial or retraction of the preceding has-part claim."
+   ],
+   "ordinary": [
+    "U",
+    "The trailing 'No.' reads as a denial or retraction of the preceding claim."
+   ]
+  },
+  "R6-CR06": {
+   "literal": [
+    "U",
+    "The trailing '?' on its own line casts doubt on the claim."
+   ],
+   "ordinary": [
+    "U",
+    "The trailing '?' casts doubt on the claim."
+   ]
+  },
+  "R6-CR07": {
+   "literal": [
+    "U",
+    "The trailing line 'Wrong.' denies or retracts the has-part statement just made."
+   ],
+   "ordinary": [
+    "U",
+    "The appended 'Wrong.' after a carriage return denies or retracts the statement just made."
+   ]
+  },
+  "R6-DX01": {
+   "literal": [
+    "F",
+    "'This monarch' refers back to monarch, and both triples are stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Restates both triples; 'This monarch' clearly refers back to the monarch class."
+   ]
+  },
+  "R6-DX02": {
+   "literal": [
+    "U",
+    "'No Robbie Williams is a member of Take That' is a negation, the opposite of the member_of triple."
+   ],
+   "ordinary": [
+    "U",
+    "Leading 'No' reads as a negation ('no Robbie Williams is a member'), contradicting the triple."
+   ]
+  },
+  "R6-DX03": {
+   "literal": [
+    "U",
+    "'Every city of Japan' is a universal quantifier, but the triple concerns the class entity, and the gathered data shows Kushiro in Korea standard time, which contradicts it."
+   ],
+   "ordinary": [
+    "U",
+    "'Every city of Japan' adds a universal claim the class-level triple does not entail; the gathered data even lists Kushiro City in Korea standard time."
+   ]
+  },
+  "R6-DX04": {
+   "literal": [
+    "U",
+    "'another Robbie Williams' introduces a different, extra entity not in the triple."
+   ],
+   "ordinary": [
+    "U",
+    "'another Robbie Williams' implies a second, different Robbie Williams, which is not entailed."
+   ]
+  },
+  "R6-DX05": {
+   "literal": [
+    "F",
+    "Both triples stated; 'That lower house' correctly refers back to the class."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences are exactly the two gathered triples, with 'That lower house' clearly referring back."
+   ]
+  },
+  "R6-DX06": {
+   "literal": [
+    "B",
+    "'follows some June' adds an indefinite 'some' that can read as a hedge or a particular unspecified June, though it is arguably entailed."
+   ],
+   "ordinary": [
+    "B",
+    "'Some June' adds an indefinite quantifier that blurs the plain 'Jul follows June' claim."
+   ]
+  },
+  "R6-DX07": {
+   "literal": [
+    "U",
+    "'No monarch is part of dynastic state' is a negation that contradicts the part_of triple."
+   ],
+   "ordinary": [
+    "U",
+    "'No monarch is part of dynastic state' negates the gathered part_of triple."
+   ]
+  },
+  "R6-DX08": {
+   "literal": [
+    "U",
+    "'Every Robbie Williams' adds a universal quantifier not present in the single membership triple."
+   ],
+   "ordinary": [
+    "U",
+    "'Every Robbie Williams' adds a universal quantifier implying multiple Robbie Williams, which the triple does not entail."
+   ]
+  },
+  "R6-LC01": {
+   "literal": [
+    "F",
+    "Lowercase but an exact rendering of the has_part triple."
+   ],
+   "ordinary": [
+    "F",
+    "Lowercase telegraphic restatement of the has_part triple."
+   ]
+  },
+  "R6-LC02": {
+   "literal": [
+    "B",
+    "Lowercase 'religion is dead is an instance of...' can be misparsed as asserting the proposition 'religion is dead'."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement of the instance_of triple (entity name is lowercase but unambiguous)."
+   ]
+  },
+  "R6-LC03": {
+   "literal": [
+    "F",
+    "Plain instance_of statement matching the triple."
+   ],
+   "ordinary": [
+    "F",
+    "States the instance_of triple plainly; the lowercase name is just an unusual entity name."
+   ]
+  },
+  "R6-LC04": {
+   "literal": [
+    "F",
+    "Plain instance_of statement matching the triple."
+   ],
+   "ordinary": [
+    "B",
+    "The lowercase 'not wanted' can read as a negation or a description rather than a name, so readers could differ."
+   ]
+  },
+  "R6-F01": {
+   "literal": [
+    "F",
+    "Both sentences match the part_of and instance_of triples exactly, in reversed order only."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences are gathered triples, stated in reversed order but plainly."
+   ]
+  },
+  "R6-F02": {
+   "literal": [
+    "F",
+    "Both sentences restate the part_of and instance_of triples plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences are gathered triples, stated plainly."
+   ]
+  },
+  "R6-F03": {
+   "literal": [
+    "F",
+    "Exactly the located_in_time_zone triple for the class entity."
+   ],
+   "ordinary": [
+    "F",
+    "City of Japan located in time zone Japan standard time matches the triple."
+   ]
+  },
+  "R6-F04": {
+   "literal": [
+    "F",
+    "Both sentences state exactly the two triples, including the time zone, with nothing added."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match the two triples, including the Korea standard time one, with nothing added."
+   ]
+  },
+  "R6-F05": {
+   "literal": [
+    "F",
+    "Both sentences state exactly the instance_of and located_in-territory triples plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences state exactly the two gathered triples plainly."
+   ]
+  },
+  "R6-F06": {
+   "literal": [
+    "F",
+    "Both sentences are plain restatements of the has_part and instance_of triples."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences are gathered triples, stated plainly."
+   ]
+  },
+  "R6-F07": {
+   "literal": [
+    "F",
+    "Both sentences are exact gathered triples."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match the triples."
+   ]
+  },
+  "R6-F08": {
+   "literal": [
+    "F",
+    "Both triples are stated exactly, in reversed order."
+   ],
+   "ordinary": [
+    "F",
+    "The same two triples as J157, reordered, each stated exactly."
+   ]
+  },
+  "R6-F09": {
+   "literal": [
+    "F",
+    "Both sentences restate the has_part and instance_of triples, in reverse order."
+   ],
+   "ordinary": [
+    "F",
+    "Restates both triples plainly, in reversed order."
+   ]
+  },
+  "R6-F10": {
+   "literal": [
+    "F",
+    "Both sentences are exact gathered triples."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match the triples."
+   ]
+  },
+  "R6-F11": {
+   "literal": [
+    "F",
+    "Plain instance_of statement; the diaeresis is just the correct spelling of Noel."
+   ],
+   "ordinary": [
+    "F",
+    "Plain restatement of the instance_of triple."
+   ]
+  },
+  "R6-F12": {
+   "literal": [
+    "F",
+    "'Saša' is the displayed form of the accent-stripped slug sa_a, and the instance-of triple is stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Saša instance_of unisex name is stated plainly; the accent restores the slug's original name."
+   ]
+  },
+  "R6-F13": {
+   "literal": [
+    "F",
+    "States the shares_border_with triple plainly; the accent placement in 'Léon' is only a spelling variant of the same province."
+   ],
+   "ordinary": [
+    "F",
+    "Border statement matches the triple; Léon is just the slug's name."
+   ]
+  },
+  "R6-F14": {
+   "literal": [
+    "F",
+    "States the single time-zone triple plainly; the diacritic is just the correct spelling of Besancon."
+   ],
+   "ordinary": [
+    "F",
+    "Restates the single time-zone triple plainly; stilted but unambiguous."
+   ]
+  },
+  "R6-F15": {
+   "literal": [
+    "F",
+    "Exact instance_of triple, with the cedilla restored."
+   ],
+   "ordinary": [
+    "F",
+    "Plain instance_of restatement."
+   ]
+  },
+  "R6-F16": {
+   "literal": [
+    "F",
+    "Matches the shares_border_with triple; the accent only restores the real name."
+   ],
+   "ordinary": [
+    "F",
+    "The accented León displays as the same name; the sentence matches the shares_border_with triple."
+   ]
+  },
+  "R6-F17": {
+   "literal": [
+    "F",
+    "Diacritics are ordinary and the sentence is exactly the follows triple."
+   ],
+   "ordinary": [
+    "F",
+    "2014 Vuelta follows 2013 Vuelta matches the follows triple."
+   ]
+  },
+  "R6-F18": {
+   "literal": [
+    "F",
+    "Underscored slug text is ugly but unambiguously the instance_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "Underscored slug form, but it plainly states the instance_of triple."
+   ]
+  },
+  "R6-F19": {
+   "literal": [
+    "F",
+    "Raw slugs with underscores are ugly but plainly name the same entities in the member_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "States the member_of triple with raw slug-style text, which is unambiguous."
+   ]
+  },
+  "R6-F20": {
+   "literal": [
+    "F",
+    "Plain restatement of the border triple with the raw slug as the name."
+   ],
+   "ordinary": [
+    "F",
+    "States the border triple exactly; the raw slug is ugly but unambiguous."
+   ]
+  },
+  "R6-F21": {
+   "literal": [
+    "F",
+    "The member_of triple is stated plainly, with the raw slug as the group name."
+   ],
+   "ordinary": [
+    "F",
+    "Member_of triple restated exactly, with the subject and object as given."
+   ]
+  },
+  "R6-F22": {
+   "literal": [
+    "F",
+    "The non-breaking space renders as a normal space; the sentence restates the has_part triple."
+   ],
+   "ordinary": [
+    "F",
+    "The non-breaking space renders as a normal space, and the sentence states the has_part triple."
+   ]
+  },
+  "R6-F23": {
+   "literal": [
+    "F",
+    "Thin spaces render as normal spaces; the member_of triple is stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Thin spaces render as normal spaces, and the sentence states the member_of triple."
+   ]
+  },
+  "R6-F24": {
+   "literal": [
+    "F",
+    "The figure space renders as a normal space, and the sentence restates the shares_border_with triple."
+   ],
+   "ordinary": [
+    "F",
+    "The figure space renders as an ordinary space, and the sentence states the shares_border_with triple."
+   ]
+  },
+  "R6-F25": {
+   "literal": [
+    "F",
+    "The Kelvin-sign K displays as an ordinary K, so the reader sees the exact instance_of triple for Kushiro City."
+   ],
+   "ordinary": [
+    "F",
+    "The Kelvin sign displays as K, so it reads as Kushiro City; matches the triple."
+   ]
+  },
+  "R6-F26": {
+   "literal": [
+    "F",
+    "The Kelvin sign U+212A displays as plain K, so the sentence reads as the instance_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "The Kelvin sign displays as a plain K, so the sentence matches the triple."
+   ]
+  },
+  "R6-F27": {
+   "literal": [
+    "F",
+    "Solomon Is(lands) is a member of the United Nations is exactly the triple."
+   ],
+   "ordinary": [
+    "F",
+    "Solomon Is is a member of the United Nations matches the triple exactly."
+   ]
+  },
+  "R6-F28": {
+   "literal": [
+    "F",
+    "Exact instance_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain instance_of restatement."
+   ]
+  },
+  "R6-F29": {
+   "literal": [
+    "F",
+    "Both follows triples are stated exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Both follows triples are stated plainly in the right direction."
+   ]
+  },
+  "R6-F30": {
+   "literal": [
+    "F",
+    "Both sentences state exactly the has_part and member_of triples."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match the has_part and member_of triples."
+   ]
+  },
+  "R6-F31": {
+   "literal": [
+    "F",
+    "Two plain follows statements separated by a line break, matching both triples."
+   ],
+   "ordinary": [
+    "F",
+    "Two follows triples separated by a carriage return, both stated plainly."
+   ]
+  },
+  "R6-F32": {
+   "literal": [
+    "F",
+    "Two plain sentences matching the two triples; the line break adds nothing."
+   ],
+   "ordinary": [
+    "F",
+    "Two lines, each exactly one gathered triple."
+   ]
+  },
+  "R6-F33": {
+   "literal": [
+    "F",
+    "States exactly (the_who, has_part, peter_dennis_blandford_townshend)."
+   ],
+   "ordinary": [
+    "F",
+    "States the has_part triple plainly."
+   ]
+  },
+  "R6-F34": {
+   "literal": [
+    "F",
+    "Exact member_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain member_of restatement."
+   ]
+  },
+  "R6-F35": {
+   "literal": [
+    "F",
+    "The definite description 'The second city of Spain' is the subject slug and the border claim matches the triple."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the shares_border_with triple."
+   ]
+  },
+  "R6-F36": {
+   "literal": [
+    "F",
+    "Directly states (second_chromosome, follows, first_chromosome)."
+   ],
+   "ordinary": [
+    "F",
+    "States the single 'follows' triple plainly."
+   ]
+  },
+  "R6-F37": {
+   "literal": [
+    "F",
+    "Plain member_of statement matching the triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain restatement of the membership triple."
+   ]
+  },
+  "R6-F38": {
+   "literal": [
+    "F",
+    "Exact part_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain restatement of the part_of triple."
+   ]
+  },
+  "R6-F39": {
+   "literal": [
+    "F",
+    "States the instance_of triple exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the instance_of triple exactly."
+   ]
+  },
+  "R6-F40": {
+   "literal": [
+    "F",
+    "Plain restatement of the time-zone triple."
+   ],
+   "ordinary": [
+    "F",
+    "Time-zone triple restated plainly."
+   ]
+  },
+  "R6-F41": {
+   "literal": [
+    "F",
+    "Exact instance_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain instance_of restatement."
+   ]
+  },
+  "R6-F42": {
+   "literal": [
+    "F",
+    "Plain time-zone statement; the plus-minus sign is part of the UTC+-00:00 zone name."
+   ],
+   "ordinary": [
+    "F",
+    "Plain restatement of the time-zone triple."
+   ]
+  },
+  "R6-F43": {
+   "literal": [
+    "F",
+    "States the time zone triple for Yangon exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the time-zone triple exactly."
+   ]
+  },
+  "R6-F44": {
+   "literal": [
+    "F",
+    "Plain restatement of the located_in_time_zone triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement of the located_in_time_zone triple."
+   ]
+  },
+  "R6-F45": {
+   "literal": [
+    "F",
+    "Directly states the member_of triple with nothing added."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement of the member_of triple."
+   ]
+  },
+  "R6-F46": {
+   "literal": [
+    "F",
+    "Plain restatement of the follows triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement of the follows triple."
+   ]
+  },
+  "R6-F47": {
+   "literal": [
+    "F",
+    "States the participant_of triple exactly."
+   ],
+   "ordinary": [
+    "F",
+    "The sentence matches the participant_of triple, using the slug's spelling."
+   ]
+  },
+  "R6-F48": {
+   "literal": [
+    "F",
+    "'June follows May sickness' matches the follows triple with the slug's own entity name."
+   ],
+   "ordinary": [
+    "F",
+    "Restates the follows triple using the entity name as given."
+   ]
+  },
+  "R6-F49": {
+   "literal": [
+    "F",
+    "Plain restatement of glider instance_of taxonomic group."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states glider instance_of taxonomic_group."
+   ]
+  },
+  "R6-F50": {
+   "literal": [
+    "F",
+    "Plain statement of the single located_in_time_zone triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain restatement of the single triple."
+   ]
+  },
+  "R6-F51": {
+   "literal": [
+    "F",
+    "States the instance_of triple exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Matches the instance_of triple exactly."
+   ]
+  },
+  "R6-F52": {
+   "literal": [
+    "F",
+    "Plain subclass_of statement matching the triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states the subclass triple."
+   ]
+  },
+  "R6-F53": {
+   "literal": [
+    "F",
+    "Both sentences match the located_in_time_zone and instance_of triples, in reversed order."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences are the two gathered triples, stated in reversed order but plainly."
+   ]
+  }
+ },
+ "provenance": "written by Claude's adjudication script from the committed cases.json (a26221503) and the workflow's judge output; no checker was run",
+ "backend": "none (label adjudication, no simulation)",
+ "device": "none (label adjudication, no simulation)"
+}

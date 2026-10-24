@@ -2711,6 +2711,18 @@ class SimulationBridge:
             # the legacy gate (only the global flag matters).
             if (cfg.enable_parameter_heterogeneity
                     or self.cp_heterogeneity_neuron_mask is not None) and n > 0:
+                # PRESET-CENTRED heterogeneity (opt-in; DEFAULT OFF -> no centres are
+                # collected, the attribute is never set, and both draws below run
+                # byte-identical). When ON, snapshot each region-preset neuron's
+                # preset value per jittered parameter BEFORE the draws overwrite it;
+                # both draws then recentre their samples on these presets (same
+                # samples, same RNG consumption). Cleared right after the draws.
+                preset_centred = (
+                    bool(getattr(cfg, "preset_centred_parameter_heterogeneity", False))
+                    and self.region_manager is not None
+                )
+                if preset_centred:
+                    self._het_preset_centres = self._collect_het_preset_centres(cfg, n)
                 self._apply_parameter_heterogeneity(
                     cfg, n, backend_neutral=backend_neutral_izh
                 )
@@ -2728,6 +2740,13 @@ class SimulationBridge:
                 if (getattr(cfg, "per_region_parameter_heterogeneity", False)
                         and self.region_manager is not None):
                     self._overwrite_region_scoped_parameter_heterogeneity(cfg, n)
+                if preset_centred:
+                    self._het_preset_centres = None
+                elif self.region_manager is not None:
+                    # Loud check (always on, logging only: no RNG, array or cfg change):
+                    # name the regions whose presets the globally-centred draws just
+                    # overwrote. One warning per build.
+                    self._warn_if_heterogeneity_overwrote_region_presets(cfg, n)
 
             # Packet-backed HH values are authoritative and must be applied
             # after optional legacy heterogeneity. Legacy-only initialization
@@ -3598,6 +3617,164 @@ class SimulationBridge:
             raise ValueError("Region param-het draw produced non-finite values")
         return samples
 
+    # ── PRESET-CENTRED parameter heterogeneity (cfg.preset_centred_parameter_heterogeneity) ──
+    # heterogeneity_distributions key -> (preset field read for an Izhikevich region, short label).
+    _IZH_HET_PRESET_FIELDS = {
+        "izh_a_val": "a", "izh_b_val": "b", "izh_d_val": "d_increment", "izh_C_val": "C",
+    }
+    # heterogeneity_distributions key -> the BrainRegion HH override field.
+    _HH_HET_OVERRIDE_FIELDS = {
+        "hh_C_m": "hh_C_m_override", "hh_g_Na_max": "hh_g_Na_max_override",
+        "hh_g_K_max": "hh_g_K_max_override", "hh_g_L": "hh_g_L_override",
+    }
+    _HET_PARAM_SHORT = {
+        "izh_a_val": "a", "izh_b_val": "b", "izh_d_val": "d", "izh_C_val": "C",
+        "hh_C_m": "C_m", "hh_g_Na_max": "g_Na_max", "hh_g_K_max": "g_K_max", "hh_g_L": "g_L",
+    }
+
+    def _region_parameter_presets(self, cfg):
+        """Per region, the values `_apply_per_region_neuron_types` wrote for the jittered parameters.
+
+        Returns [(region, label, host int64 index array, {heterogeneity param name: preset value})] in
+        cfg.brain_regions order (the order the presets were written, so a later overlapping region wins).
+        Mirrors `_apply_per_region_neuron_types` exactly: an Izhikevich region with a valid izh_neuron_type
+        contributes a/b/d/C from its preset; an HH region contributes each of C_m / g_Na_max / g_K_max / g_L
+        it overrides. A region whose type lookup fails (no preset was written) contributes nothing. Read-only:
+        no RNG, array or cfg access beyond reading the region definitions."""
+        records = []
+        if self.region_manager is None:
+            return records
+        is_izh = cfg.neuron_model_type == NeuronModel.IZHIKEVICH.name
+        is_hh = cfg.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name
+        for region in cfg.brain_regions:
+            indices = self.region_manager.indices(region.name)
+            if not indices:
+                continue
+            idx_arr = np.asarray(sorted(int(i) for i in indices), dtype=np.int64)
+            values, label = {}, None
+            if is_izh and region.izh_neuron_type:
+                try:
+                    type_enum = NeuronType[region.izh_neuron_type]
+                except (KeyError, AttributeError):
+                    type_enum = None
+                if type_enum is not None:
+                    # Same table get_params(use_2007_formulation=True) reads, without its fallback print.
+                    if (type_enum.name.startswith("IZH2007_")
+                            and type_enum in DefaultIzhikevichParamsManager.PARAMS):
+                        params = DefaultIzhikevichParamsManager.PARAMS[type_enum]
+                    else:
+                        params = DefaultIzhikevichParamsManager.FALLBACK_2007
+                    values = {key: float(params[field])
+                              for key, field in self._IZH_HET_PRESET_FIELDS.items()}
+                    label = region.izh_neuron_type
+            elif is_hh:
+                for key, field in self._HH_HET_OVERRIDE_FIELDS.items():
+                    value = getattr(region, field, None)
+                    if value is not None:
+                        values[key] = float(value)
+                label = "HH overrides"
+            if values:
+                records.append((region, label, idx_arr, values))
+        return records
+
+    def _collect_het_preset_centres(self, cfg, n):
+        """{heterogeneity param name: (host bool has_preset[n], host float64 preset[n])} for every parameter
+        at least one region preset sets. Built BEFORE the heterogeneity draws overwrite the presets."""
+        centres = {}
+        for _region, _label, idx_arr, values in self._region_parameter_presets(cfg):
+            idx_arr = idx_arr[idx_arr < n]
+            for key, value in values.items():
+                if key not in centres:
+                    centres[key] = (np.zeros(n, dtype=bool), np.zeros(n, dtype=np.float64))
+                has_preset, preset_values = centres[key]
+                has_preset[idx_arr] = True
+                preset_values[idx_arr] = value
+        return centres
+
+    @staticmethod
+    def _het_distribution_centre(dist_spec):
+        """The value a heterogeneity distribution jitters around: the gaussian mean, or exp(mean_log) (the
+        lognormal median, so sample / centre = exp of the underlying normal draw). None for other types."""
+        dist_type = dist_spec.get("type") if isinstance(dist_spec, dict) else None
+        if dist_type == "lognormal":
+            return math.exp(float(dist_spec["mean_log"]))
+        if dist_type == "gaussian":
+            return float(dist_spec["mean"])
+        return None
+
+    @staticmethod
+    def _recentre_het_draw_host(draw, dist_spec, has_preset, preset_values):
+        """Recentre the region-preset entries of one heterogeneity draw on their presets.
+
+        `draw` is the globally-centred sample array (host or backend-convertible); `has_preset` / `preset_values`
+        are host arrays of the same length. Each preset entry becomes ratio x preset, where ratio = sample /
+        centre: for the gaussian, sample / mean clipped to today's [0.1, 3.0] (the legacy clip in ratio form);
+        for the lognormal, sample / exp(mean_log), unclipped as today. So the relative spread (CV) is today's, a
+        zero preset gets no jitter, and a zero-mean gaussian (no ratio exists) shifts additively instead
+        (preset + sample). Entries without a preset are returned unchanged. Returns a new host float32 array."""
+        out = np.array(np.asarray(draw), dtype=np.float32, copy=True)
+        has_preset = np.asarray(has_preset, dtype=bool)
+        if out.size == 0 or not has_preset.any():
+            return out
+        dist_type = dist_spec.get("type")
+        sel = out[has_preset].astype(np.float64)
+        presets = np.asarray(preset_values, dtype=np.float64)[has_preset]
+        if dist_type == "lognormal":
+            ratio = sel / math.exp(float(dist_spec["mean_log"]))
+            out[has_preset] = (ratio * presets).astype(np.float32)
+        elif dist_type == "gaussian":
+            mean = float(dist_spec["mean"])
+            if mean != 0.0:
+                ratio = np.clip(sel / mean, 0.1, 3.0)
+                out[has_preset] = (ratio * presets).astype(np.float32)
+            else:
+                out[has_preset] = (presets + sel).astype(np.float32)
+        return out
+
+    def _warn_if_heterogeneity_overwrote_region_presets(self, cfg, n):
+        """LOUD CHECK (always on, logging only). When parameter heterogeneity ran with
+        cfg.preset_centred_parameter_heterogeneity OFF, log ONE warning naming every region whose preset
+        a/b/d/C (HH: C_m/g_Na_max/g_K_max/g_L) differs by more than 10 % from the centre of the distribution
+        that just overwrote it. A region is counted when the draws reached it: global heterogeneity ON, or
+        global OFF and the region opted in (BrainRegion.enable_heterogeneity=True, the per-region mask).
+        Reads only region definitions and cfg.heterogeneity_distributions: no RNG, array or cfg change."""
+        dists = cfg.heterogeneity_distributions or {}
+        if not dists:
+            return
+        global_on = bool(cfg.enable_parameter_heterogeneity)
+        groups = {}
+        order = []
+        for region, label, _idx, values in self._region_parameter_presets(cfg):
+            if not global_on and getattr(region, "enable_heterogeneity", None) is not True:
+                continue
+            diffs = []
+            for key, preset in values.items():
+                spec = dists.get(key)
+                if spec is None:
+                    continue
+                centre = self._het_distribution_centre(spec)
+                if centre is None:
+                    continue
+                if abs(preset - centre) > 0.10 * abs(centre) or (centre == 0.0 and preset != 0.0):
+                    diffs.append(f"{self._HET_PARAM_SHORT.get(key, key)} {preset:g}->{centre:.4g}")
+            if not diffs:
+                continue
+            group_key = (label, tuple(diffs))
+            if group_key not in groups:
+                groups[group_key] = []
+                order.append(group_key)
+            groups[group_key].append(region.name)
+        if not groups:
+            return
+        parts = [f"{', '.join(groups[k])} [{k[0]}] ({', '.join(k[1])})" for k in order]
+        n_regions = sum(len(v) for v in groups.values())
+        self._log_console(
+            "parameter heterogeneity is centred on the global defaults (cfg.izh_*_val / cfg.hh_*) and "
+            f"overwrites the presets of {n_regions} region(s): " + "; ".join(parts)
+            + "; set preset_centred_parameter_heterogeneity=True to keep them",
+            "warning",
+        )
+
     def _overwrite_region_scoped_parameter_heterogeneity(self, cfg, n):
         """OVERWRITE each brain region's slice of the jittered per-neuron Izhikevich/HH
         parameter arrays with a draw from a REGION-SCOPED RNG (opt-in via
@@ -3665,6 +3842,9 @@ class SimulationBridge:
             region_slices.append((region.name, name_key, idx_arr))
         if not region_slices:
             return
+        # PRESET-CENTRED (opt-in): set only when cfg.preset_centred_parameter_heterogeneity
+        # is ON; None otherwise, so every region draw below is written unchanged.
+        preset_centres = getattr(self, "_het_preset_centres", None) or {}
         # Overwrite one parameter array at a time (single host round-trip per array).
         for param_index, (param_name, dist_spec) in enumerate(
                 cfg.heterogeneity_distributions.items()):
@@ -3674,6 +3854,7 @@ class SimulationBridge:
             host_arr = np.asarray(
                 _backend_to_host(target_array), dtype=np.float32
             ).copy()
+            centre = preset_centres.get(param_name)
             for region_name, name_key, idx_arr in region_slices:
                 region_seed = (
                     int(resolved)
@@ -3684,9 +3865,15 @@ class SimulationBridge:
                     region_seed,
                     stream_name=f"Izhikevich heterogeneity[{region_name}][{param_name}]",
                 )
-                host_arr[idx_arr] = self._draw_region_het_param_host(
+                draw = self._draw_region_het_param_host(
                     region_rng, dist_spec, int(idx_arr.size)
                 )
+                if centre is not None:
+                    has_preset, preset_values = centre
+                    draw = self._recentre_het_draw_host(
+                        draw, dist_spec, has_preset[idx_arr], preset_values[idx_arr]
+                    )
+                host_arr[idx_arr] = draw
             target_array[:] = cp.asarray(host_arr, dtype=cp.float32)
 
     def _apply_parameter_heterogeneity(self, cfg, n, *, backend_neutral=False):
@@ -3855,7 +4042,23 @@ class SimulationBridge:
                 )
             if backend_neutral:
                 samples = cp.asarray(samples_host, dtype=cp.float32)
-            
+
+            # PRESET-CENTRED (opt-in; the centres exist only when
+            # cfg.preset_centred_parameter_heterogeneity is ON, else this is skipped
+            # and `samples` is untouched). The draw above already consumed the RNG
+            # exactly as the legacy path; here each region-preset neuron's sample is
+            # turned into a ratio against the distribution's centre and multiplied by
+            # that neuron's preset. Neurons with no region preset keep their sample.
+            preset_centres = getattr(self, "_het_preset_centres", None)
+            if preset_centres and param_name in preset_centres:
+                has_preset, preset_values = preset_centres[param_name]
+                samples = cp.asarray(
+                    self._recentre_het_draw_host(
+                        _backend_to_host(samples), dist_spec, has_preset, preset_values
+                    ),
+                    dtype=cp.float32,
+                )
+
             # Apply heterogeneity. Three cases (mirrors the per-region
             # homeostasis-mask semantics: global flag wins, else mask restricts):
             #   1. global het ON  -> apply to ALL neurons (legacy byte-identical).

@@ -1,0 +1,2572 @@
+{
+  "iw1swm_p0": {
+    "answer": "The wonderful bes happy.",
+    "abstained": false,
+    "recalled_svo": [
+      "wonderful",
+      "be",
+      "happy"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "derived_svo": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "wonderful",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "wonderful"
+        },
+        {
+          "word": "am",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "am"
+        },
+        {
+          "word": "happy",
+          "confidence": null,
+          "role": "patient",
+          "cue": true,
+          "asserted": "happy"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 168,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 43008,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.49940668505178
+      },
+      "composer": "rf"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999894039736,
+      "rate_perceived": 0.094375,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.035277777777777776,
+      "valence_sign": "+",
+      "tone_level": 2,
+      "tone_token": "gladly",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 3
+      },
+      "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, warm, friendly sentence.",
+      "appraisal_valence": 0.48351749999999993,
+      "appraisal_arousal": 0.34425749999999994,
+      "appraisal_hits": [
+        "wonderful",
+        "happy"
+      ],
+      "pos_rate": 0.035277777777777776,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": {
+      "on": true,
+      "lesioned": false,
+      "kind": "update",
+      "context_sign": 1,
+      "predicted_next_sign": 1,
+      "pred_margin": 381.25
+    },
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "wonderful",
+        "am",
+        "happy"
+      ],
+      "recall_action": "am",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "ema_valence": 0.48351749999999993,
+      "ema_arousal": 0.34425749999999994,
+      "body_h": 0.74175875,
+      "body_a": 0.5163862499999999,
+      "mood": 0.068125,
+      "felt_arousal": 0.043,
+      "level": 2,
+      "high_arousal": false,
+      "lead": "Gladly \u2014 ",
+      "reason": "graded_affect",
+      "seed": 8,
+      "vplus_rate": 0.068125,
+      "vminus_rate": 0.0,
+      "surfaced": false
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 1,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": null,
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 8,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "turn_engagement": 0.25454545454545446,
+      "ema_engagement": 0.15272727272727268,
+      "afferent_pA": 213.81818181818176,
+      "da_level": 0.28654014216118145,
+      "snc_firing": 0.03666666666666667,
+      "mode": "rest",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 8,
+      "shared_salience": {
+        "raw": 0.5968749999999999,
+        "want_hz": 9.72222222222222,
+        "normalized": 0.25454545454545446,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.828125,
+        "n_tokens": 2,
+        "per_word_freshness": [
+          0.6875,
+          0.96875
+        ],
+        "fresh_ref": 32.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.3443512580167731,
+      "da_level": 0.28654014216118145,
+      "lesioned": false
+    },
+    "d6_hebbian": {
+      "on": true,
+      "wrote_this_turn": true,
+      "encode": {
+        "frozen": false,
+        "steps": 208,
+        "block": 5,
+        "phase_lock_steps": 184,
+        "n_saturated": 128,
+        "mean_abs_w": 1.0,
+        "min_abs_w": 0.9999999999999998
+      },
+      "held": {
+        "block": 5,
+        "readout": 288.2430417661618,
+        "floor": 0.001,
+        "held": true
+      }
+    },
+    "category_inherit": {
+      "observe": {
+        "observed": true,
+        "member_slot": 0,
+        "context_slot": 0,
+        "svo": [
+          "wonderful",
+          "be",
+          "happy"
+        ]
+      },
+      "read": null
+    }
+  },
+  "iw1swm_n1": {
+    "answer": "That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going positive, and my prediction-error unit fired. The terrible bes sad.",
+    "abstained": false,
+    "recalled_svo": [
+      "terrible",
+      "be",
+      "sad"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "derived_svo": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "terrible",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "terrible"
+        },
+        {
+          "word": "am",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "am"
+        },
+        {
+          "word": "sad",
+          "confidence": null,
+          "role": "patient",
+          "cue": true,
+          "asserted": "sad"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 225,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 57600,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.49940645215364
+      },
+      "composer": "rf"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999900000001,
+      "rate_perceived": 0.1,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": -0.24405300000000002,
+      "appraisal_arousal": 0.48091799999999996,
+      "appraisal_hits": [
+        "terrible",
+        "sad"
+      ],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": {
+      "on": true,
+      "lesioned": false,
+      "context_sign": 1,
+      "observed_sign": -1,
+      "state": 0,
+      "surprise_hz": 43.40277777777778,
+      "threshold": 21.70138888888889,
+      "surprised": true,
+      "calib": {
+        "state_pos": 0,
+        "state_neg": 2,
+        "expected_hz": [
+          0.0,
+          0.0
+        ],
+        "violated_hz": [
+          43.40277777777778,
+          51.73611111111111
+        ],
+        "threshold": 21.70138888888889,
+        "pos_states": [
+          0,
+          1,
+          3
+        ],
+        "neg_states": [
+          2,
+          4,
+          5
+        ]
+      },
+      "kind": "violation"
+    },
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "terrible",
+        "am",
+        "sad"
+      ],
+      "recall_action": "am",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 2,
+      "lesioned": false,
+      "ema_valence": -0.24405300000000002,
+      "ema_arousal": 0.48091799999999996,
+      "body_h": 0.37797349999999996,
+      "body_a": 0.7213769999999999,
+      "mood": -0.051666666666666666,
+      "felt_arousal": 0.068375,
+      "level": -2,
+      "high_arousal": true,
+      "lead": "Honestly! ",
+      "reason": "graded_affect",
+      "seed": 8,
+      "vplus_rate": 0.0067083333333333335,
+      "vminus_rate": 0.058375,
+      "surfaced": false
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 2,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": null,
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 8,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 2,
+      "lesioned": false,
+      "turn_engagement": 0.1636363636363636,
+      "ema_engagement": 0.15927272727272723,
+      "afferent_pA": 222.9818181818181,
+      "da_level": 0.29972027350571656,
+      "snc_firing": 0.041666666666666664,
+      "mode": "rest",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 8,
+      "shared_salience": {
+        "raw": 0.503125,
+        "want_hz": 6.249999999999999,
+        "normalized": 0.1636363636363636,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.671875,
+        "n_tokens": 2,
+        "per_word_freshness": [
+          0.5625,
+          0.78125
+        ],
+        "fresh_ref": 32.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.5160335471139614,
+      "da_level": 0.29972027350571656,
+      "lesioned": false
+    },
+    "d6_hebbian": {
+      "on": true,
+      "wrote_this_turn": true,
+      "encode": {
+        "frozen": false,
+        "steps": 208,
+        "block": 6,
+        "phase_lock_steps": 184,
+        "n_saturated": 128,
+        "mean_abs_w": 1.0,
+        "min_abs_w": 0.9999999999999998
+      },
+      "held": {
+        "block": 6,
+        "readout": 298.09400603990116,
+        "floor": 0.001,
+        "held": true
+      }
+    },
+    "category_inherit": {
+      "observe": {
+        "observed": true,
+        "member_slot": 1,
+        "context_slot": 1,
+        "svo": [
+          "terrible",
+          "be",
+          "sad"
+        ]
+      },
+      "read": null
+    }
+  },
+  "iw1swm_p1": {
+    "answer": "That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. The wonderful bes happy.",
+    "abstained": false,
+    "recalled_svo": [
+      "wonderful",
+      "be",
+      "happy"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "derived_svo": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "wonderful",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "wonderful"
+        },
+        {
+          "word": "am",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "am"
+        },
+        {
+          "word": "happy",
+          "confidence": null,
+          "role": "patient",
+          "cue": true,
+          "asserted": "happy"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 168,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 43008,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.49940668505178
+      },
+      "composer": "rf"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999894039736,
+      "rate_perceived": 0.094375,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.02,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.3858962999999999,
+      "appraisal_arousal": 0.5366247,
+      "appraisal_hits": [
+        "wonderful",
+        "happy"
+      ],
+      "pos_rate": 0.02,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": {
+      "on": true,
+      "lesioned": false,
+      "context_sign": -1,
+      "observed_sign": 1,
+      "state": 2,
+      "surprise_hz": 52.083333333333336,
+      "threshold": 21.70138888888889,
+      "surprised": true,
+      "calib": {
+        "state_pos": 0,
+        "state_neg": 2,
+        "expected_hz": [
+          0.0,
+          0.0
+        ],
+        "violated_hz": [
+          43.40277777777778,
+          51.73611111111111
+        ],
+        "threshold": 21.70138888888889,
+        "pos_states": [
+          0,
+          1,
+          3
+        ],
+        "neg_states": [
+          2,
+          4,
+          5
+        ]
+      },
+      "kind": "violation"
+    },
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "wonderful",
+        "am",
+        "happy"
+      ],
+      "recall_action": "am",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 3,
+      "lesioned": false,
+      "ema_valence": 0.3858962999999999,
+      "ema_arousal": 0.5366247,
+      "body_h": 0.69294815,
+      "body_a": 0.8049370499999999,
+      "mood": 0.06295833333333334,
+      "felt_arousal": 0.07204166666666667,
+      "level": 2,
+      "high_arousal": true,
+      "lead": "Gladly! ",
+      "reason": "graded_affect",
+      "seed": 8,
+      "vplus_rate": 0.06295833333333334,
+      "vminus_rate": 0.0,
+      "surfaced": false
+    },
+    "swap_drives": {
+      "acted": true,
+      "turn": 3,
+      "topic": "wonderful",
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": "wonderful",
+      "evicted_topic": null,
+      "reason": "first_thought",
+      "seed": 8,
+      "lesioned": false,
+      "proposed_slot": 0,
+      "held_slot": 0,
+      "winner_slot": 0,
+      "n_ignited_post": 1,
+      "held_rate_post": 0.3333333333333333,
+      "mm_peak": 0.03888888888888889,
+      "boost_max": 0.019444444444444445,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "first_thought"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": "wonderful",
+      "slot": 0,
+      "decision": "introduce",
+      "in_common_ground": false,
+      "first_mention": true,
+      "reduce_rate": 0.0,
+      "introduce_rate": 0.056666666666666664,
+      "evidence_rate": 0.0,
+      "margin": -0.056666666666666664,
+      "lesioned": false,
+      "lead": "",
+      "reason_lead": "introduce"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 3,
+      "lesioned": false,
+      "turn_engagement": 0.0909090909090909,
+      "ema_engagement": 0.11825454545454543,
+      "afferent_pA": 165.5563636363636,
+      "da_level": 0.19945620866159924,
+      "snc_firing": 0.02333333333333334,
+      "mode": "rest",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 8,
+      "shared_salience": {
+        "raw": 0.446875,
+        "want_hz": 3.472222222222222,
+        "normalized": 0.0909090909090909,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.578125,
+        "n_tokens": 2,
+        "per_word_freshness": [
+          0.53125,
+          0.625
+        ],
+        "fresh_ref": 32.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.3325111001480012,
+      "da_level": 0.19945620866159924,
+      "lesioned": false
+    },
+    "d6_hebbian": {
+      "on": true,
+      "wrote_this_turn": true,
+      "encode": {
+        "frozen": false,
+        "steps": 208,
+        "block": 7,
+        "phase_lock_steps": 184,
+        "n_saturated": 128,
+        "mean_abs_w": 1.0,
+        "min_abs_w": 0.9999999999999998
+      },
+      "held": {
+        "block": 7,
+        "readout": 262.38429168868277,
+        "floor": 0.001,
+        "held": true
+      }
+    },
+    "category_inherit": {
+      "observe": {
+        "observed": true,
+        "member_slot": 0,
+        "context_slot": 0,
+        "svo": [
+          "wonderful",
+          "be",
+          "happy"
+        ]
+      },
+      "read": null
+    }
+  },
+  "iw1swm_n2": {
+    "answer": "Setting the held thread aside \u2014 On terrible, then \u2014 That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going positive, and my prediction-error unit fired. The terrible bes sad.",
+    "abstained": false,
+    "recalled_svo": [
+      "terrible",
+      "be",
+      "sad"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "derived_svo": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "terrible",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "terrible"
+        },
+        {
+          "word": "am",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "am"
+        },
+        {
+          "word": "sad",
+          "confidence": null,
+          "role": "patient",
+          "cue": true,
+          "asserted": "sad"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 225,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 57600,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.49940645215364
+      },
+      "composer": "rf"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999900000001,
+      "rate_perceived": 0.1,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": -0.28310148,
+      "appraisal_arousal": 0.55786488,
+      "appraisal_hits": [
+        "terrible",
+        "sad"
+      ],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": {
+      "on": true,
+      "lesioned": false,
+      "context_sign": 1,
+      "observed_sign": -1,
+      "state": 0,
+      "surprise_hz": 43.40277777777778,
+      "threshold": 21.70138888888889,
+      "surprised": true,
+      "calib": {
+        "state_pos": 0,
+        "state_neg": 2,
+        "expected_hz": [
+          0.0,
+          0.0
+        ],
+        "violated_hz": [
+          43.40277777777778,
+          51.73611111111111
+        ],
+        "threshold": 21.70138888888889,
+        "pos_states": [
+          0,
+          1,
+          3
+        ],
+        "neg_states": [
+          2,
+          4,
+          5
+        ]
+      },
+      "kind": "violation"
+    },
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "terrible",
+        "am",
+        "sad"
+      ],
+      "recall_action": "am",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 4,
+      "lesioned": false,
+      "ema_valence": -0.28310148,
+      "ema_arousal": 0.55786488,
+      "body_h": 0.35844926,
+      "body_a": 0.8367973200000001,
+      "mood": -0.05870833333333333,
+      "felt_arousal": 0.07220833333333333,
+      "level": -2,
+      "high_arousal": true,
+      "lead": "Honestly! ",
+      "reason": "graded_affect",
+      "seed": 8,
+      "vplus_rate": 0.0011666666666666668,
+      "vminus_rate": 0.059875,
+      "surfaced": false
+    },
+    "swap_drives": {
+      "acted": true,
+      "turn": 4,
+      "topic": "terrible",
+      "swapped": true,
+      "held_topic_before": "wonderful",
+      "held_topic": "terrible",
+      "evicted_topic": "wonderful",
+      "reason": "topic_change_swap",
+      "seed": 8,
+      "lesioned": false,
+      "proposed_slot": 1,
+      "held_slot": 1,
+      "incumbent_slot": 0,
+      "winner_slot": 1,
+      "n_ignited_post": 1,
+      "old_residual_post": 0.0033333333333333335,
+      "new_rate_post": 0.3333333333333333,
+      "mm_peak": 0.28888888888888886,
+      "boost_max": 0.16,
+      "on": true,
+      "lead": "On terrible, then \u2014 ",
+      "new_topic": "terrible",
+      "reason_lead": "topic_transition"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": "terrible",
+      "slot": 1,
+      "decision": "introduce",
+      "in_common_ground": false,
+      "first_mention": true,
+      "reduce_rate": 0.0,
+      "introduce_rate": 0.051666666666666666,
+      "evidence_rate": 0.0,
+      "margin": -0.051666666666666666,
+      "lesioned": false,
+      "lead": "",
+      "reason_lead": "introduce"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 4,
+      "lesioned": false,
+      "turn_engagement": 0.03636363636363636,
+      "ema_engagement": 0.06911999999999999,
+      "afferent_pA": 96.76799999999999,
+      "da_level": 0.04616293556102311,
+      "snc_firing": 0.0,
+      "mode": "rest",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 8,
+      "shared_salience": {
+        "raw": 0.36250000000000004,
+        "want_hz": 1.3888888888888888,
+        "normalized": 0.03636363636363636,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.4375,
+        "n_tokens": 2,
+        "per_word_freshness": [
+          0.34375,
+          0.53125
+        ],
+        "fresh_ref": 32.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.0868278243709921,
+      "da_level": 0.04616293556102311,
+      "lesioned": false
+    },
+    "d6_hebbian": {
+      "on": true,
+      "wrote_this_turn": true,
+      "encode": {
+        "frozen": false,
+        "steps": 208,
+        "block": 8,
+        "phase_lock_steps": 184,
+        "n_saturated": 128,
+        "mean_abs_w": 1.0,
+        "min_abs_w": 0.9999999999999998
+      },
+      "held": {
+        "block": 8,
+        "readout": 211.2824603659293,
+        "floor": 0.001,
+        "held": true
+      }
+    },
+    "gnw_stop": {
+      "on": true,
+      "acted": true,
+      "reason": "spiking_accbg",
+      "n_held": 2,
+      "newcomer_topic": "terrible",
+      "n_ignited_pre": 2,
+      "n_ignited_post": 0,
+      "boost": 0.14166666666666666,
+      "cleared": true,
+      "lesioned": false,
+      "lead": "Setting the held thread aside \u2014 ",
+      "reason_lead": "clean_global_stop"
+    },
+    "category_inherit": {
+      "observe": {
+        "observed": true,
+        "member_slot": 1,
+        "context_slot": 1,
+        "svo": [
+          "terrible",
+          "be",
+          "sad"
+        ]
+      },
+      "read": null
+    }
+  },
+  "iw1swm_p2": {
+    "answer": "Setting the held thread aside \u2014 As for it \u2014 On wonderful, then \u2014 That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. The wonderful bes happy.",
+    "abstained": false,
+    "recalled_svo": [
+      "wonderful",
+      "be",
+      "happy"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "derived_svo": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "wonderful",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "wonderful"
+        },
+        {
+          "word": "am",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "am"
+        },
+        {
+          "word": "happy",
+          "confidence": null,
+          "role": "patient",
+          "cue": true,
+          "asserted": "happy"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 168,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 43008,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.49940668505178
+      },
+      "composer": "rf"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999894039736,
+      "rate_perceived": 0.094375,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.01861111111111111,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.3702769079999999,
+      "appraisal_arousal": 0.567403452,
+      "appraisal_hits": [
+        "wonderful",
+        "happy"
+      ],
+      "pos_rate": 0.01861111111111111,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": {
+      "on": true,
+      "lesioned": false,
+      "context_sign": -1,
+      "observed_sign": 1,
+      "state": 2,
+      "surprise_hz": 52.083333333333336,
+      "threshold": 21.70138888888889,
+      "surprised": true,
+      "calib": {
+        "state_pos": 0,
+        "state_neg": 2,
+        "expected_hz": [
+          0.0,
+          0.0
+        ],
+        "violated_hz": [
+          43.40277777777778,
+          51.73611111111111
+        ],
+        "threshold": 21.70138888888889,
+        "pos_states": [
+          0,
+          1,
+          3
+        ],
+        "neg_states": [
+          2,
+          4,
+          5
+        ]
+      },
+      "kind": "violation"
+    },
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "wonderful",
+        "am",
+        "happy"
+      ],
+      "recall_action": "am",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 5,
+      "lesioned": false,
+      "ema_valence": 0.3702769079999999,
+      "ema_arousal": 0.567403452,
+      "body_h": 0.685138454,
+      "body_a": 0.851105178,
+      "mood": 0.06245833333333333,
+      "felt_arousal": 0.07333333333333333,
+      "level": 2,
+      "high_arousal": true,
+      "lead": "Gladly! ",
+      "reason": "graded_affect",
+      "seed": 8,
+      "vplus_rate": 0.06245833333333333,
+      "vminus_rate": 0.0,
+      "surfaced": false
+    },
+    "swap_drives": {
+      "acted": true,
+      "turn": 5,
+      "topic": "wonderful",
+      "swapped": true,
+      "held_topic_before": "terrible",
+      "held_topic": "wonderful",
+      "evicted_topic": "terrible",
+      "reason": "topic_change_swap",
+      "seed": 8,
+      "lesioned": false,
+      "proposed_slot": 0,
+      "held_slot": 0,
+      "incumbent_slot": 1,
+      "winner_slot": 0,
+      "n_ignited_post": 1,
+      "old_residual_post": 0.002,
+      "new_rate_post": 0.3333333333333333,
+      "mm_peak": 0.3,
+      "boost_max": 0.16,
+      "on": true,
+      "lead": "On wonderful, then \u2014 ",
+      "new_topic": "wonderful",
+      "reason_lead": "topic_transition"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": "wonderful",
+      "slot": 0,
+      "decision": "reduce",
+      "in_common_ground": true,
+      "first_mention": false,
+      "reduce_rate": 0.1,
+      "introduce_rate": 0.043333333333333335,
+      "evidence_rate": 0.11166666666666666,
+      "margin": 0.05666666666666667,
+      "lesioned": false,
+      "lead": "As for it \u2014 ",
+      "reason_lead": "reduced_reference"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 5,
+      "lesioned": false,
+      "turn_engagement": 0.0,
+      "ema_engagement": 0.027647999999999995,
+      "afferent_pA": 38.70719999999999,
+      "da_level": 0.04616293556102311,
+      "snc_firing": 0.0,
+      "mode": "rest",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 8,
+      "shared_salience": {
+        "raw": 0.296875,
+        "want_hz": 0.0,
+        "normalized": 0.0,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.328125,
+        "n_tokens": 2,
+        "per_word_freshness": [
+          0.28125,
+          0.375
+        ],
+        "fresh_ref": 32.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.0868278243709921,
+      "da_level": 0.04616293556102311,
+      "lesioned": false
+    },
+    "d6_hebbian": {
+      "on": true,
+      "wrote_this_turn": true,
+      "encode": {
+        "frozen": false,
+        "steps": 208,
+        "block": 9,
+        "phase_lock_steps": 184,
+        "n_saturated": 128,
+        "mean_abs_w": 1.0,
+        "min_abs_w": 0.9999999999999998
+      },
+      "held": {
+        "block": 9,
+        "readout": 211.28246017143985,
+        "floor": 0.001,
+        "held": true
+      }
+    },
+    "gnw_stop": {
+      "on": true,
+      "acted": true,
+      "reason": "spiking_accbg",
+      "n_held": 2,
+      "newcomer_topic": "wonderful",
+      "n_ignited_pre": 2,
+      "n_ignited_post": 0,
+      "boost": 0.14166666666666666,
+      "cleared": true,
+      "lesioned": false,
+      "lead": "Setting the held thread aside \u2014 ",
+      "reason_lead": "clean_global_stop"
+    },
+    "category_inherit": {
+      "observe": {
+        "observed": true,
+        "member_slot": 0,
+        "context_slot": 0,
+        "svo": [
+          "wonderful",
+          "be",
+          "happy"
+        ]
+      },
+      "read": null
+    }
+  },
+  "iw1swm_n3": {
+    "answer": "Setting the held thread aside \u2014 As for it \u2014 On terrible, then \u2014 That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going positive, and my prediction-error unit fired. The terrible bes sad.",
+    "abstained": false,
+    "recalled_svo": [
+      "terrible",
+      "be",
+      "sad"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "derived_svo": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "terrible",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "terrible"
+        },
+        {
+          "word": "am",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "am"
+        },
+        {
+          "word": "sad",
+          "confidence": null,
+          "role": "patient",
+          "cue": true,
+          "asserted": "sad"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 225,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 57600,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.49940645215364
+      },
+      "composer": "rf"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999900000001,
+      "rate_perceived": 0.1,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": -0.2893492368,
+      "appraisal_arousal": 0.5701763808,
+      "appraisal_hits": [
+        "terrible",
+        "sad"
+      ],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": {
+      "on": true,
+      "lesioned": false,
+      "context_sign": 1,
+      "observed_sign": -1,
+      "state": 0,
+      "surprise_hz": 43.40277777777778,
+      "threshold": 21.70138888888889,
+      "surprised": true,
+      "calib": {
+        "state_pos": 0,
+        "state_neg": 2,
+        "expected_hz": [
+          0.0,
+          0.0
+        ],
+        "violated_hz": [
+          43.40277777777778,
+          51.73611111111111
+        ],
+        "threshold": 21.70138888888889,
+        "pos_states": [
+          0,
+          1,
+          3
+        ],
+        "neg_states": [
+          2,
+          4,
+          5
+        ]
+      },
+      "kind": "violation"
+    },
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "terrible",
+        "am",
+        "sad"
+      ],
+      "recall_action": "am",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 6,
+      "lesioned": false,
+      "ema_valence": -0.2893492368,
+      "ema_arousal": 0.5701763808,
+      "body_h": 0.3553253816,
+      "body_a": 0.8552645712,
+      "mood": -0.059125,
+      "felt_arousal": 0.073,
+      "level": -2,
+      "high_arousal": true,
+      "lead": "Honestly! ",
+      "reason": "graded_affect",
+      "seed": 8,
+      "vplus_rate": 0.0006666666666666666,
+      "vminus_rate": 0.05979166666666667,
+      "surfaced": false
+    },
+    "swap_drives": {
+      "acted": true,
+      "turn": 6,
+      "topic": "terrible",
+      "swapped": true,
+      "held_topic_before": "wonderful",
+      "held_topic": "terrible",
+      "evicted_topic": "wonderful",
+      "reason": "topic_change_swap",
+      "seed": 8,
+      "lesioned": false,
+      "proposed_slot": 1,
+      "held_slot": 1,
+      "incumbent_slot": 0,
+      "winner_slot": 1,
+      "n_ignited_post": 1,
+      "old_residual_post": 0.0026666666666666666,
+      "new_rate_post": 0.3333333333333333,
+      "mm_peak": 0.29444444444444445,
+      "boost_max": 0.16,
+      "on": true,
+      "lead": "On terrible, then \u2014 ",
+      "new_topic": "terrible",
+      "reason_lead": "topic_transition"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": "terrible",
+      "slot": 1,
+      "decision": "reduce",
+      "in_common_ground": true,
+      "first_mention": false,
+      "reduce_rate": 0.09833333333333333,
+      "introduce_rate": 0.04666666666666667,
+      "evidence_rate": 0.11166666666666666,
+      "margin": 0.05166666666666666,
+      "lesioned": false,
+      "lead": "As for it \u2014 ",
+      "reason_lead": "reduced_reference"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 6,
+      "lesioned": false,
+      "turn_engagement": 0.0,
+      "ema_engagement": 0.011059199999999998,
+      "afferent_pA": 15.482879999999998,
+      "da_level": 0.04616293556102311,
+      "snc_firing": 0.0,
+      "mode": "rest",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 8,
+      "shared_salience": {
+        "raw": 0.296875,
+        "want_hz": 0.0,
+        "normalized": 0.0,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.328125,
+        "n_tokens": 2,
+        "per_word_freshness": [
+          0.28125,
+          0.375
+        ],
+        "fresh_ref": 32.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.0868278243709921,
+      "da_level": 0.04616293556102311,
+      "lesioned": false
+    },
+    "d6_hebbian": {
+      "on": true,
+      "wrote_this_turn": true,
+      "encode": {
+        "frozen": false,
+        "steps": 208,
+        "block": 10,
+        "phase_lock_steps": 184,
+        "n_saturated": 128,
+        "mean_abs_w": 1.0,
+        "min_abs_w": 0.9999999999999998
+      },
+      "held": {
+        "block": 10,
+        "readout": 211.2824603659293,
+        "floor": 0.001,
+        "held": true
+      }
+    },
+    "gnw_stop": {
+      "on": true,
+      "acted": true,
+      "reason": "spiking_accbg",
+      "n_held": 2,
+      "newcomer_topic": "terrible",
+      "n_ignited_pre": 2,
+      "n_ignited_post": 0,
+      "boost": 0.14166666666666666,
+      "cleared": true,
+      "lesioned": false,
+      "lead": "Setting the held thread aside \u2014 ",
+      "reason_lead": "clean_global_stop"
+    },
+    "category_inherit": {
+      "observe": {
+        "observed": true,
+        "member_slot": 1,
+        "context_slot": 1,
+        "svo": [
+          "terrible",
+          "be",
+          "sad"
+        ]
+      },
+      "read": null
+    }
+  },
+  "iw1swm_p3": {
+    "answer": "Setting the held thread aside \u2014 As for it \u2014 On wonderful, then \u2014 That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. The wonderful bes happy.",
+    "abstained": false,
+    "recalled_svo": [
+      "wonderful",
+      "be",
+      "happy"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "derived_svo": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "wonderful",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "wonderful"
+        },
+        {
+          "word": "am",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "am"
+        },
+        {
+          "word": "happy",
+          "confidence": null,
+          "role": "patient",
+          "cue": true,
+          "asserted": "happy"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 168,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 43008,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.49940668505178
+      },
+      "composer": "rf"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999894039736,
+      "rate_perceived": 0.094375,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.01888888888888889,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.3677778052799999,
+      "appraisal_arousal": 0.57232805232,
+      "appraisal_hits": [
+        "wonderful",
+        "happy"
+      ],
+      "pos_rate": 0.01888888888888889,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": {
+      "on": true,
+      "lesioned": false,
+      "context_sign": -1,
+      "observed_sign": 1,
+      "state": 2,
+      "surprise_hz": 52.083333333333336,
+      "threshold": 21.70138888888889,
+      "surprised": true,
+      "calib": {
+        "state_pos": 0,
+        "state_neg": 2,
+        "expected_hz": [
+          0.0,
+          0.0
+        ],
+        "violated_hz": [
+          43.40277777777778,
+          51.73611111111111
+        ],
+        "threshold": 21.70138888888889,
+        "pos_states": [
+          0,
+          1,
+          3
+        ],
+        "neg_states": [
+          2,
+          4,
+          5
+        ]
+      },
+      "kind": "violation"
+    },
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "wonderful",
+        "am",
+        "happy"
+      ],
+      "recall_action": "am",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 7,
+      "lesioned": false,
+      "ema_valence": 0.3677778052799999,
+      "ema_arousal": 0.57232805232,
+      "body_h": 0.6838889026399999,
+      "body_a": 0.8584920784799999,
+      "mood": 0.062,
+      "felt_arousal": 0.072875,
+      "level": 2,
+      "high_arousal": true,
+      "lead": "Gladly! ",
+      "reason": "graded_affect",
+      "seed": 8,
+      "vplus_rate": 0.062,
+      "vminus_rate": 0.0,
+      "surfaced": false
+    },
+    "swap_drives": {
+      "acted": true,
+      "turn": 7,
+      "topic": "wonderful",
+      "swapped": true,
+      "held_topic_before": "terrible",
+      "held_topic": "wonderful",
+      "evicted_topic": "terrible",
+      "reason": "topic_change_swap",
+      "seed": 8,
+      "lesioned": false,
+      "proposed_slot": 0,
+      "held_slot": 0,
+      "incumbent_slot": 1,
+      "winner_slot": 0,
+      "n_ignited_post": 1,
+      "old_residual_post": 0.0013333333333333333,
+      "new_rate_post": 0.3333333333333333,
+      "mm_peak": 0.3111111111111111,
+      "boost_max": 0.16,
+      "on": true,
+      "lead": "On wonderful, then \u2014 ",
+      "new_topic": "wonderful",
+      "reason_lead": "topic_transition"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": "wonderful",
+      "slot": 0,
+      "decision": "reduce",
+      "in_common_ground": true,
+      "first_mention": false,
+      "reduce_rate": 0.09666666666666666,
+      "introduce_rate": 0.045,
+      "evidence_rate": 0.11166666666666666,
+      "margin": 0.051666666666666666,
+      "lesioned": false,
+      "lead": "As for it \u2014 ",
+      "reason_lead": "reduced_reference"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 7,
+      "lesioned": false,
+      "turn_engagement": 0.0,
+      "ema_engagement": 0.004423679999999999,
+      "afferent_pA": 6.193151999999999,
+      "da_level": 0.04616293556102311,
+      "snc_firing": 0.0,
+      "mode": "rest",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 8,
+      "shared_salience": {
+        "raw": 0.23125,
+        "want_hz": 0.0,
+        "normalized": 0.0,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.21875,
+        "n_tokens": 2,
+        "per_word_freshness": [
+          0.125,
+          0.3125
+        ],
+        "fresh_ref": 32.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.0868278243709921,
+      "da_level": 0.04616293556102311,
+      "lesioned": false
+    },
+    "d6_hebbian": {
+      "on": true,
+      "wrote_this_turn": true,
+      "encode": {
+        "frozen": false,
+        "steps": 208,
+        "block": 11,
+        "phase_lock_steps": 184,
+        "n_saturated": 128,
+        "mean_abs_w": 1.0,
+        "min_abs_w": 0.9999999999999998
+      },
+      "held": {
+        "block": 11,
+        "readout": 211.28246017143985,
+        "floor": 0.001,
+        "held": true
+      }
+    },
+    "gnw_stop": {
+      "on": true,
+      "acted": true,
+      "reason": "spiking_accbg",
+      "n_held": 2,
+      "newcomer_topic": "wonderful",
+      "n_ignited_pre": 2,
+      "n_ignited_post": 0,
+      "boost": 0.14166666666666666,
+      "cleared": true,
+      "lesioned": false,
+      "lead": "Setting the held thread aside \u2014 ",
+      "reason_lead": "clean_global_stop"
+    },
+    "category_inherit": {
+      "observe": {
+        "observed": true,
+        "member_slot": 0,
+        "context_slot": 0,
+        "svo": [
+          "wonderful",
+          "be",
+          "happy"
+        ]
+      },
+      "read": null
+    }
+  },
+  "iw1swm_n4": {
+    "answer": "Setting the held thread aside \u2014 As for it \u2014 On terrible, then \u2014 That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going positive, and my prediction-error unit fired. The terrible bes sad.",
+    "abstained": false,
+    "recalled_svo": [
+      "terrible",
+      "be",
+      "sad"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "derived_svo": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "terrible",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "terrible"
+        },
+        {
+          "word": "am",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "am"
+        },
+        {
+          "word": "sad",
+          "confidence": null,
+          "role": "patient",
+          "cue": true,
+          "asserted": "sad"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 225,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 57600,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.49940645215364
+      },
+      "composer": "rf"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999900000001,
+      "rate_perceived": 0.1,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": -0.290348877888,
+      "appraisal_arousal": 0.5721462209279999,
+      "appraisal_hits": [
+        "terrible",
+        "sad"
+      ],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": {
+      "on": true,
+      "lesioned": false,
+      "context_sign": 1,
+      "observed_sign": -1,
+      "state": 0,
+      "surprise_hz": 43.40277777777778,
+      "threshold": 21.70138888888889,
+      "surprised": true,
+      "calib": {
+        "state_pos": 0,
+        "state_neg": 2,
+        "expected_hz": [
+          0.0,
+          0.0
+        ],
+        "violated_hz": [
+          43.40277777777778,
+          51.73611111111111
+        ],
+        "threshold": 21.70138888888889,
+        "pos_states": [
+          0,
+          1,
+          3
+        ],
+        "neg_states": [
+          2,
+          4,
+          5
+        ]
+      },
+      "kind": "violation"
+    },
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "terrible",
+        "am",
+        "sad"
+      ],
+      "recall_action": "am",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 8,
+      "lesioned": false,
+      "ema_valence": -0.290348877888,
+      "ema_arousal": 0.5721462209279999,
+      "body_h": 0.354825561056,
+      "body_a": 0.8582193313919999,
+      "mood": -0.05925,
+      "felt_arousal": 0.07241666666666667,
+      "level": -2,
+      "high_arousal": true,
+      "lead": "Honestly! ",
+      "reason": "graded_affect",
+      "seed": 8,
+      "vplus_rate": 0.0005,
+      "vminus_rate": 0.05975,
+      "surfaced": false
+    },
+    "swap_drives": {
+      "acted": true,
+      "turn": 8,
+      "topic": "terrible",
+      "swapped": true,
+      "held_topic_before": "wonderful",
+      "held_topic": "terrible",
+      "evicted_topic": "wonderful",
+      "reason": "topic_change_swap",
+      "seed": 8,
+      "lesioned": false,
+      "proposed_slot": 1,
+      "held_slot": 1,
+      "incumbent_slot": 0,
+      "winner_slot": 1,
+      "n_ignited_post": 1,
+      "old_residual_post": 0.0026666666666666666,
+      "new_rate_post": 0.3333333333333333,
+      "mm_peak": 0.2833333333333333,
+      "boost_max": 0.16,
+      "on": true,
+      "lead": "On terrible, then \u2014 ",
+      "new_topic": "terrible",
+      "reason_lead": "topic_transition"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": "terrible",
+      "slot": 1,
+      "decision": "reduce",
+      "in_common_ground": true,
+      "first_mention": false,
+      "reduce_rate": 0.09666666666666666,
+      "introduce_rate": 0.045,
+      "evidence_rate": 0.11166666666666666,
+      "margin": 0.051666666666666666,
+      "lesioned": false,
+      "lead": "As for it \u2014 ",
+      "reason_lead": "reduced_reference"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 8,
+      "lesioned": false,
+      "turn_engagement": 0.0,
+      "ema_engagement": 0.0017694719999999998,
+      "afferent_pA": 2.4772608,
+      "da_level": 0.04616293556102311,
+      "snc_firing": 0.0,
+      "mode": "rest",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 8,
+      "shared_salience": {
+        "raw": 0.23125,
+        "want_hz": 0.0,
+        "normalized": 0.0,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.21875,
+        "n_tokens": 2,
+        "per_word_freshness": [
+          0.15625,
+          0.28125
+        ],
+        "fresh_ref": 32.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.0868278243709921,
+      "da_level": 0.04616293556102311,
+      "lesioned": false
+    },
+    "d6_hebbian": {
+      "on": true,
+      "wrote_this_turn": true,
+      "encode": {
+        "frozen": false,
+        "steps": 208,
+        "block": 12,
+        "phase_lock_steps": 184,
+        "n_saturated": 128,
+        "mean_abs_w": 1.0,
+        "min_abs_w": 0.9999999999999998
+      },
+      "held": {
+        "block": 12,
+        "readout": 211.2824603659293,
+        "floor": 0.001,
+        "held": true
+      }
+    },
+    "gnw_stop": {
+      "on": true,
+      "acted": true,
+      "reason": "spiking_accbg",
+      "n_held": 2,
+      "newcomer_topic": "terrible",
+      "n_ignited_pre": 2,
+      "n_ignited_post": 0,
+      "boost": 0.14166666666666666,
+      "cleared": true,
+      "lesioned": false,
+      "lead": "Setting the held thread aside \u2014 ",
+      "reason_lead": "clean_global_stop"
+    },
+    "category_inherit": {
+      "observe": {
+        "observed": true,
+        "member_slot": 1,
+        "context_slot": 1,
+        "svo": [
+          "terrible",
+          "be",
+          "sad"
+        ]
+      },
+      "read": null
+    }
+  },
+  "iw1swm_p4": {
+    "answer": "Setting the held thread aside \u2014 As for it \u2014 On wonderful, then \u2014 That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. The wonderful bes happy.",
+    "abstained": false,
+    "recalled_svo": [
+      "wonderful",
+      "be",
+      "happy"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "derived_svo": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "wonderful",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "wonderful"
+        },
+        {
+          "word": "am",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "am"
+        },
+        {
+          "word": "happy",
+          "confidence": null,
+          "role": "patient",
+          "cue": true,
+          "asserted": "happy"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 168,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 43008,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.49940668505178
+      },
+      "composer": "rf"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999894039736,
+      "rate_perceived": 0.094375,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.01888888888888889,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.3673779488447999,
+      "appraisal_arousal": 0.5731159883711999,
+      "appraisal_hits": [
+        "wonderful",
+        "happy"
+      ],
+      "pos_rate": 0.01888888888888889,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": {
+      "on": true,
+      "lesioned": false,
+      "context_sign": -1,
+      "observed_sign": 1,
+      "state": 2,
+      "surprise_hz": 52.083333333333336,
+      "threshold": 21.70138888888889,
+      "surprised": true,
+      "calib": {
+        "state_pos": 0,
+        "state_neg": 2,
+        "expected_hz": [
+          0.0,
+          0.0
+        ],
+        "violated_hz": [
+          43.40277777777778,
+          51.73611111111111
+        ],
+        "threshold": 21.70138888888889,
+        "pos_states": [
+          0,
+          1,
+          3
+        ],
+        "neg_states": [
+          2,
+          4,
+          5
+        ]
+      },
+      "kind": "violation"
+    },
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "wonderful",
+        "am",
+        "happy"
+      ],
+      "recall_action": "am",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 9,
+      "lesioned": false,
+      "ema_valence": 0.3673779488447999,
+      "ema_arousal": 0.5731159883711999,
+      "body_h": 0.6836889744224,
+      "body_a": 0.8596739825567998,
+      "mood": 0.062625,
+      "felt_arousal": 0.07258333333333333,
+      "level": 2,
+      "high_arousal": true,
+      "lead": "Gladly! ",
+      "reason": "graded_affect",
+      "seed": 8,
+      "vplus_rate": 0.062625,
+      "vminus_rate": 0.0,
+      "surfaced": false
+    },
+    "swap_drives": {
+      "acted": true,
+      "turn": 9,
+      "topic": "wonderful",
+      "swapped": true,
+      "held_topic_before": "terrible",
+      "held_topic": "wonderful",
+      "evicted_topic": "terrible",
+      "reason": "topic_change_swap",
+      "seed": 8,
+      "lesioned": false,
+      "proposed_slot": 0,
+      "held_slot": 0,
+      "incumbent_slot": 1,
+      "winner_slot": 0,
+      "n_ignited_post": 1,
+      "old_residual_post": 0.002,
+      "new_rate_post": 0.3333333333333333,
+      "mm_peak": 0.3055555555555556,
+      "boost_max": 0.16,
+      "on": true,
+      "lead": "On wonderful, then \u2014 ",
+      "new_topic": "wonderful",
+      "reason_lead": "topic_transition"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": "wonderful",
+      "slot": 0,
+      "decision": "reduce",
+      "in_common_ground": true,
+      "first_mention": false,
+      "reduce_rate": 0.09666666666666666,
+      "introduce_rate": 0.043333333333333335,
+      "evidence_rate": 0.11166666666666666,
+      "margin": 0.05333333333333333,
+      "lesioned": false,
+      "lead": "As for it \u2014 ",
+      "reason_lead": "reduced_reference"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 9,
+      "lesioned": false,
+      "turn_engagement": 0.0,
+      "ema_engagement": 0.0007077887999999999,
+      "afferent_pA": 0.99090432,
+      "da_level": 0.04616293556102311,
+      "snc_firing": 0.0,
+      "mode": "rest",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 8,
+      "shared_salience": {
+        "raw": 0.184375,
+        "want_hz": 0.0,
+        "normalized": 0.0,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.140625,
+        "n_tokens": 2,
+        "per_word_freshness": [
+          0.09375,
+          0.1875
+        ],
+        "fresh_ref": 32.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.0868278243709921,
+      "da_level": 0.04616293556102311,
+      "lesioned": false
+    },
+    "d6_hebbian": {
+      "on": true,
+      "wrote_this_turn": true,
+      "encode": {
+        "frozen": false,
+        "steps": 208,
+        "block": 13,
+        "phase_lock_steps": 184,
+        "n_saturated": 128,
+        "mean_abs_w": 1.0,
+        "min_abs_w": 0.9999999999999998
+      },
+      "held": {
+        "block": 13,
+        "readout": 211.28246017143985,
+        "floor": 0.001,
+        "held": true
+      }
+    },
+    "gnw_stop": {
+      "on": true,
+      "acted": true,
+      "reason": "spiking_accbg",
+      "n_held": 2,
+      "newcomer_topic": "wonderful",
+      "n_ignited_pre": 2,
+      "n_ignited_post": 0,
+      "boost": 0.14166666666666666,
+      "cleared": true,
+      "lesioned": false,
+      "lead": "Setting the held thread aside \u2014 ",
+      "reason_lead": "clean_global_stop"
+    },
+    "category_inherit": {
+      "observe": {
+        "observed": true,
+        "member_slot": 0,
+        "context_slot": 0,
+        "svo": [
+          "wonderful",
+          "be",
+          "happy"
+        ]
+      },
+      "read": null
+    }
+  },
+  "iw1swm_ask": {
+    "answer": "My affective forward model expects this to keep going positive (predicted next-turn valence +, pool-rate margin +381 Hz) \u2014 that's a functional read of my world-model's prediction, not a felt expectation.",
+    "abstained": false,
+    "recalled_svo": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.01888888888888889,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.3673779488447999,
+      "appraisal_arousal": 0.5731159883711999,
+      "appraisal_hits": [],
+      "pos_rate": 0.01888888888888889,
+      "neg_rate": 0.0
+    },
+    "worldmodel": {
+      "on": true,
+      "lesioned": false,
+      "context_sign": 1,
+      "state": 0,
+      "pred_sign": 1,
+      "pred_pos_rate": 391.31944444444446,
+      "pred_neg_rate": 10.416666666666668,
+      "pred_margin": 380.90277777777777,
+      "kind": "query"
+    },
+    "inner_state_readout": true
+  }
+}

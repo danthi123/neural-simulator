@@ -1,0 +1,1520 @@
+{
+ "_doc": "cause of the stub-mouth HURTS (module docstring)",
+ "backend": "numpy",
+ "device": "cpu",
+ "host": "dant123-wk",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/stub_hurts_cause.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-b2d/research/findings/raw/_moat_slug_norm_heldout/stub_hurts_cause.py",
+  "research/findings/raw/_moat_slug_norm_heldout/stub_hurts_cause.json"
+ ],
+ "n_hurts": 125,
+ "stock_claim_gate_equals_b2h_on_all": true,
+ "stock_claim_gate_accepts": 0,
+ "b2h_claim_gate_accepts": 0,
+ "clause_verdicts": {
+  "reject:no_subject": 125
+ },
+ "rows": [
+  {
+   "svo": [
+    "county_borough_of_wolverhampton",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_borough_of_wolverhampton countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "taxonomy_of_cossidae",
+    "taxon_rank",
+    "taxonomical_family"
+   ],
+   "surface": "The taxonomy_of_cossidae taxon_ranks taxonomical_family.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "taxon_ranks"
+  },
+  {
+   "svo": [
+    "county_borough_of_southport",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_borough_of_southport countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "suburban_train",
+    "subclass_of",
+    "public_transportation"
+   ],
+   "surface": "The suburban_train subclass_ofs public_transportation.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "subclass_ofs"
+  },
+  {
+   "svo": [
+    "county_of_inyo",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_inyo countrys u_s_of_a.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_of_warwick",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_warwick countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "sportovn_klub_idenice",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sportovn_klub_idenice sports association_football_club.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "sports"
+  },
+  {
+   "svo": [
+    "county_of_new_york",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_new_york countrys u_s_of_a.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "sport_club_recife",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sport_club_recife sports association_football_club.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "sports"
+  },
+  {
+   "svo": [
+    "parochial_church",
+    "part_of",
+    "church_of_scotland_parish"
+   ],
+   "surface": "The parochial_church part_ofs church_of_scotland_parish.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "part_ofs"
+  },
+  {
+   "svo": [
+    "lock_haven_pa_sa",
+    "located_in_the_administrative_territoria",
+    "transport_in_pennsylvania"
+   ],
+   "surface": "The lock_haven_pa_sa located_in_the_administrative_territorias transport_in_pennsylvania.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "located_in_the_administrative_territorias"
+  },
+  {
+   "svo": [
+    "twin_rivers_multimedia_festival",
+    "twinned_administrative_body",
+    "notre_dame_des_ardilliers"
+   ],
+   "surface": "The twin_rivers_multimedia_festival twinned_administrative_bodys notre_dame_des_ardilliers.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "twinned_administrative_bodys"
+  },
+  {
+   "svo": [
+    "platonic_socrates",
+    "place_of_death",
+    "classical_attica"
+   ],
+   "surface": "The platonic_socrates place_of_deaths classical_attica.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "place_of_deaths"
+  },
+  {
+   "svo": [
+    "county_of_wetzlar",
+    "country",
+    "federal_republic_of_germany"
+   ],
+   "surface": "The county_of_wetzlar countrys federal_republic_of_germany.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "shaanxi_province_china",
+    "shares_border_with",
+    "chong_ch_ing"
+   ],
+   "surface": "The shaanxi_province_china shares_border_withs chong_ch_ing.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "shares_border_withs"
+  },
+  {
+   "svo": [
+    "continental_soldiers",
+    "conflict",
+    "american_rev_war"
+   ],
+   "surface": "The continental_soldiers conflicts american_rev_war.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "conflicts"
+  },
+  {
+   "svo": [
+    "genesis_band",
+    "genre",
+    "symphonic_rock"
+   ],
+   "surface": "The genesis_band genres symphonic_rock.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "genres"
+  },
+  {
+   "svo": [
+    "commodore_meta",
+    "composer",
+    "summon_the_heros"
+   ],
+   "surface": "The commodore_meta composers summon_the_heros.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "composers"
+  },
+  {
+   "svo": [
+    "conf_d_ration_suisse",
+    "contains_administrative_territorial_enti",
+    "canton_of_graubuenden"
+   ],
+   "surface": "The conf_d_ration_suisse contains_administrative_territorial_entis canton_of_graubuenden.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "contains_administrative_territorial_entis"
+  },
+  {
+   "svo": [
+    "sportsklubben_brann",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sportsklubben_brann sports association_football_club.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "sports"
+  },
+  {
+   "svo": [
+    "councils_of_arras",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "The councils_of_arras countrys franzoesische_republik.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "insulin_dependent_diabetes_mellitus",
+    "instance_of",
+    "organic_cause"
+   ],
+   "surface": "The insulin_dependent_diabetes_mellitus instance_ofs organic_cause.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "instance_ofs"
+  },
+  {
+   "svo": [
+    "county_borough_of_rotherham",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_borough_of_rotherham countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_of_bedford_pennsylvania",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_bedford_pennsylvania countrys u_s_of_a.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "paris_law_faculty",
+    "part_of",
+    "paris_university_of"
+   ],
+   "surface": "The paris_law_faculty part_ofs paris_university_of.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "part_ofs"
+  },
+  {
+   "svo": [
+    "county_of_mariposa",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_mariposa countrys u_s_of_a.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "country_usa_oshkosh",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The country_usa_oshkosh countrys u_s_of_a.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "hearts_of_midlothian_f_c",
+    "headquarters_location",
+    "din_eidyn"
+   ],
+   "surface": "The hearts_of_midlothian_f_c headquarters_locations din_eidyn.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "headquarters_locations"
+  },
+  {
+   "svo": [
+    "courtauld_institute_of_art",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The courtauld_institute_of_art countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_of_stafford",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_stafford countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "lang_surname",
+    "language_of_work_or_name",
+    "wie_gehts"
+   ],
+   "surface": "The lang_surname language_of_work_or_names wie_gehts.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "language_of_work_or_names"
+  },
+  {
+   "svo": [
+    "county_of_lake",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_lake countrys u_s_of_a.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "original_twilight_zone",
+    "original_language_of_film_or_tv_show",
+    "number_of_english_words"
+   ],
+   "surface": "The original_twilight_zone original_language_of_film_or_tv_shows number_of_english_words.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "original_language_of_film_or_tv_shows"
+  },
+  {
+   "svo": [
+    "sportivo_luque_o",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sportivo_luque_o sports association_football_club.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "sports"
+  },
+  {
+   "svo": [
+    "mansour_bin_abdulaziz_al_saud",
+    "manner_of_death",
+    "unintentional_injury"
+   ],
+   "surface": "The mansour_bin_abdulaziz_al_saud manner_of_deaths unintentional_injury.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "manner_of_deaths"
+  },
+  {
+   "svo": [
+    "institute_of_theatre_arts",
+    "instance_of",
+    "higher_general_education"
+   ],
+   "surface": "The institute_of_theatre_arts instance_ofs higher_general_education.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "instance_ofs"
+  },
+  {
+   "svo": [
+    "county_of_nottingham",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_nottingham countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_borough_of_torfaen",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_borough_of_torfaen countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_of_moempelgard",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "The county_of_moempelgard countrys franzoesische_republik.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_of_gwynedd",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_gwynedd countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "count_of_schaumburg",
+    "country",
+    "federal_republic_of_germany"
+   ],
+   "surface": "The count_of_schaumburg countrys federal_republic_of_germany.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "confederate_military_organization",
+    "conflict",
+    "conservative_rebellion"
+   ],
+   "surface": "The confederate_military_organization conflicts conservative_rebellion.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "conflicts"
+  },
+  {
+   "svo": [
+    "county_of_modoc_california",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_modoc_california countrys u_s_of_a.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "sub_machine_gun",
+    "subclass_of",
+    "target_pistol"
+   ],
+   "surface": "The sub_machine_gun subclass_ofs target_pistol.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "subclass_ofs"
+  },
+  {
+   "svo": [
+    "sporting_benevento",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sporting_benevento sports association_football_club.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "sports"
+  },
+  {
+   "svo": [
+    "county_of_amador_california",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_amador_california countrys u_s_of_a.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "plato_s_dialogues",
+    "place_of_death",
+    "athens_greece"
+   ],
+   "surface": "The plato_s_dialogues place_of_deaths athens_greece.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "place_of_deaths"
+  },
+  {
+   "svo": [
+    "gene_autrey",
+    "genre",
+    "c_w_music"
+   ],
+   "surface": "The gene_autrey genres c_w_music.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "genres"
+  },
+  {
+   "svo": [
+    "count_of_besan_on",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "The count_of_besan_on countrys franzoesische_republik.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "insect_viruses",
+    "instance_of",
+    "taxonomic_group"
+   ],
+   "surface": "The insect_viruses instance_ofs taxonomic_group.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "instance_ofs"
+  },
+  {
+   "svo": [
+    "shansi_province",
+    "shares_border_with",
+    "henan_china"
+   ],
+   "surface": "The shansi_province shares_border_withs henan_china.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "shares_border_withs"
+  },
+  {
+   "svo": [
+    "county_of_fresno_california",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_fresno_california countrys u_s_of_a.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "sporting_cp_b",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sporting_cp_b sports association_football_club.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "sports"
+  },
+  {
+   "svo": [
+    "sporting_club_toulon",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sporting_club_toulon sports association_football_club.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "sports"
+  },
+  {
+   "svo": [
+    "sport_club_corinthians_paulista",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sport_club_corinthians_paulista sports association_football_club.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "sports"
+  },
+  {
+   "svo": [
+    "gene_wolf",
+    "genre",
+    "sciene_fiction"
+   ],
+   "surface": "The gene_wolf genres sciene_fiction.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "genres"
+  },
+  {
+   "svo": [
+    "sportfreunde_siegen_ii",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sportfreunde_siegen_ii sports association_football_club.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "sports"
+  },
+  {
+   "svo": [
+    "headington_united_fc",
+    "headquarters_location",
+    "city_of_dreaming_spires"
+   ],
+   "surface": "The headington_united_fc headquarters_locations city_of_dreaming_spires.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "headquarters_locations"
+  },
+  {
+   "svo": [
+    "county_of_rutland",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_rutland countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_borough_of_nottingham",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_borough_of_nottingham countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "instrumental_rock",
+    "instance_of",
+    "genre_of_music"
+   ],
+   "surface": "The instrumental_rock instance_ofs genre_of_music.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "instance_ofs"
+  },
+  {
+   "svo": [
+    "county_of_bucks",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_bucks countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "inside_out_records",
+    "instance_of",
+    "record_companies"
+   ],
+   "surface": "The inside_out_records instance_ofs record_companies.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "instance_ofs"
+  },
+  {
+   "svo": [
+    "county_borough_of_smethwick",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_borough_of_smethwick countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_of_carmarthenshire",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_carmarthenshire countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_of_wilts",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_wilts countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_of_plumas_california",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_plumas_california countrys u_s_of_a.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_yorkshire",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_yorkshire countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "institut_de_droit_international",
+    "instance_of",
+    "learned_societies"
+   ],
+   "surface": "The institut_de_droit_international instance_ofs learned_societies.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "instance_ofs"
+  },
+  {
+   "svo": [
+    "county_palatine_of_cheshire",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_palatine_of_cheshire countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_of_monmouthshire",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_monmouthshire countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_of_calaveras",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_calaveras countrys u_s_of_a.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_of_saarbruecken",
+    "country",
+    "federal_republic_of_germany"
+   ],
+   "surface": "The county_of_saarbruecken countrys federal_republic_of_germany.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "count_bassie",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ],
+   "surface": "The count_bassie country_of_citizenships u_s_of_a.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "country_of_citizenships"
+  },
+  {
+   "svo": [
+    "counties_of_iran",
+    "country",
+    "persian_state_of_iran"
+   ],
+   "surface": "The counties_of_iran countrys persian_state_of_iran.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_of_tyrone",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_tyrone countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "coupe_de_france",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "The coupe_de_france countrys franzoesische_republik.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "counties_in_china",
+    "country",
+    "china_pr"
+   ],
+   "surface": "The counties_in_china countrys china_pr.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "lane_surname",
+    "language_of_work_or_name",
+    "number_of_english_words"
+   ],
+   "surface": "The lane_surname language_of_work_or_names number_of_english_words.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "language_of_work_or_names"
+  },
+  {
+   "svo": [
+    "cours_florent",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "The cours_florent countrys franzoesische_republik.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_equivalent",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_equivalent countrys u_s_of_a.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "manet_douard",
+    "manner_of_death",
+    "death_by_natural_cause"
+   ],
+   "surface": "The manet_douard manner_of_deaths death_by_natural_cause.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "manner_of_deaths"
+  },
+  {
+   "svo": [
+    "county_level_district",
+    "country",
+    "china_pr"
+   ],
+   "surface": "The county_level_district countrys china_pr.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_routes_in_iowa",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_routes_in_iowa countrys u_s_of_a.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "subofficial_mayor",
+    "subclass_of",
+    "military_officers"
+   ],
+   "surface": "The subofficial_mayor subclass_ofs military_officers.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "subclass_ofs"
+  },
+  {
+   "svo": [
+    "sporting_de_gijon",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sporting_de_gijon sports association_football_club.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "sports"
+  },
+  {
+   "svo": [
+    "county_borough_of_blackburn",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_borough_of_blackburn countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_of_maryland",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_maryland countrys u_s_of_a.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "constitution_of_queensland",
+    "contains_administrative_territorial_enti",
+    "city_of_brisbane"
+   ],
+   "surface": "The constitution_of_queensland contains_administrative_territorial_entis city_of_brisbane.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "contains_administrative_territorial_entis"
+  },
+  {
+   "svo": [
+    "county_of_mono",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_mono countrys u_s_of_a.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "shantung_province",
+    "shares_border_with",
+    "jiangsu_province"
+   ],
+   "surface": "The shantung_province shares_border_withs jiangsu_province.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "shares_border_withs"
+  },
+  {
+   "svo": [
+    "locarno_switzerland",
+    "located_in_the_administrative_territoria",
+    "canton_of_ticino"
+   ],
+   "surface": "The locarno_switzerland located_in_the_administrative_territorias canton_of_ticino.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "located_in_the_administrative_territorias"
+  },
+  {
+   "svo": [
+    "parargyractis",
+    "parent_taxon",
+    "crambid_snout_moths"
+   ],
+   "surface": "The parargyractis parent_taxons crambid_snout_moths.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "parent_taxons"
+  },
+  {
+   "svo": [
+    "county_of_denbighshire",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_denbighshire countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "sporting_c_da_covilha",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sporting_c_da_covilha sports association_football_club.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "sports"
+  },
+  {
+   "svo": [
+    "sporting_gij_n_b",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sporting_gij_n_b sports association_football_club.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "sports"
+  },
+  {
+   "svo": [
+    "paraguay_national_soccer_team",
+    "participant_of",
+    "2002_fifa_world_cup_hosting_controversy"
+   ],
+   "surface": "The paraguay_national_soccer_team participant_ofs 2002_fifa_world_cup_hosting_controversy.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "participant_ofs"
+  },
+  {
+   "svo": [
+    "count_of_hohenzollern",
+    "country",
+    "federal_republic_of_germany"
+   ],
+   "surface": "The count_of_hohenzollern countrys federal_republic_of_germany.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_borough_of_walsall",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_borough_of_walsall countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "sporting_clube_portugal",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sporting_clube_portugal sports association_football_club.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "sports"
+  },
+  {
+   "svo": [
+    "council_of_europe",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "The council_of_europe countrys franzoesische_republik.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "sportul_studen_esc",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sportul_studen_esc sports association_football_club.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "sports"
+  },
+  {
+   "svo": [
+    "county_of_lincoln",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_lincoln countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "sporting_club_de_goa",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sporting_club_de_goa sports association_football_club.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "sports"
+  },
+  {
+   "svo": [
+    "courbevoie",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "The courbevoie countrys franzoesische_republik.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "count_of_scheyern",
+    "country",
+    "holy_empire"
+   ],
+   "surface": "The count_of_scheyern countrys holy_empire.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_championship",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_championship countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_of_lancaster",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_of_lancaster countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "institute_of_political_science",
+    "instance_of",
+    "public_college"
+   ],
+   "surface": "The institute_of_political_science instance_ofs public_college.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "instance_ofs"
+  },
+  {
+   "svo": [
+    "county_borough_of_darlington",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_borough_of_darlington countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "council_bluffs",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The council_bluffs countrys u_s_of_a.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "suburban_united_states",
+    "subclass_of",
+    "populated_places"
+   ],
+   "surface": "The suburban_united_states subclass_ofs populated_places.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "subclass_ofs"
+  },
+  {
+   "svo": [
+    "shawano_county",
+    "shares_border_with",
+    "wausau_wi_msa"
+   ],
+   "surface": "The shawano_county shares_border_withs wausau_wi_msa.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "shares_border_withs"
+  },
+  {
+   "svo": [
+    "lana_del_ray",
+    "languages_spoken_written_or_signed",
+    "number_of_english_words"
+   ],
+   "surface": "The lana_del_ray languages_spoken_written_or_signeds number_of_english_words.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "languages_spoken_written_or_signeds"
+  },
+  {
+   "svo": [
+    "sport_lisboa",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sport_lisboa sports association_football_club.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "sports"
+  },
+  {
+   "svo": [
+    "instrumental_music",
+    "instance_of",
+    "genre_of_music"
+   ],
+   "surface": "The instrumental_music instance_ofs genre_of_music.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "instance_ofs"
+  },
+  {
+   "svo": [
+    "county_kent",
+    "country",
+    "united_kingom"
+   ],
+   "surface": "The county_kent countrys united_kingom.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "sportklub_rapid_wien",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sportklub_rapid_wien sports association_football_club.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "sports"
+  },
+  {
+   "svo": [
+    "county_level_city",
+    "country",
+    "china_pr"
+   ],
+   "surface": "The county_level_city countrys china_pr.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "heaton_norris_rovers",
+    "headquarters_location",
+    "stockport_greater_manchester"
+   ],
+   "surface": "The heaton_norris_rovers headquarters_locations stockport_greater_manchester.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "headquarters_locations"
+  },
+  {
+   "svo": [
+    "sportfreunde_lotte",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sportfreunde_lotte sports association_football_club.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "sports"
+  },
+  {
+   "svo": [
+    "count_of_laon",
+    "country",
+    "franzoesische_republik"
+   ],
+   "surface": "The count_of_laon countrys franzoesische_republik.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_of_delmenhorst",
+    "country",
+    "federal_republic_of_germany"
+   ],
+   "surface": "The county_of_delmenhorst countrys federal_republic_of_germany.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "county_of_lassen",
+    "country",
+    "u_s_of_a"
+   ],
+   "surface": "The county_of_lassen countrys u_s_of_a.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "countrys"
+  },
+  {
+   "svo": [
+    "sport_boys_association",
+    "sport",
+    "association_football_club"
+   ],
+   "surface": "The sport_boys_association sports association_football_club.",
+   "stock_claim_gate": false,
+   "b2h_claim_gate": false,
+   "clause_verdict": "reject:no_subject",
+   "relation_word_in_sentence": "sports"
+  }
+ ]
+}

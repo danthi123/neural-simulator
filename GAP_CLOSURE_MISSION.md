@@ -13,7 +13,77 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-21 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+
+**Date:** 2026-10-21. **North star:** unchanged. **Calendar:** Stage-2 exit attempt by 11-21 (pool window 11-03..11-10);
+Stage 1 passed 10-16 with four caveats (the 10-16 section below, verbatim; never cite it without them).
+**Live lanes (Hermes drives; Claude rules on NEEDS):**
+- The first live seam: the BG commit with the tonic pallidal drive (Part B cells, Part C positive control); `[bg-tonic-loop-0]`
+  is due 10-23. Under it, the 10-20 substrate fault (global heterogeneity made the cell types regular-spiking hybrids) has a
+  fix merged default OFF.
+- Word-role frame method: step 0 GO (RULINGS `wrc-frame-0-1021`, `-1021b`); the organ-level prereg is due 10-27, else
+  word-role stays OFF at the 11-01 pin.
+- Content-selection race: step 1d measures before any third lever (RULING `cs-race-f1d-1021`). Its identity check caught
+  an engine defect: heterogeneity draws depend on total network size, so growing one population changes every neuron
+  (RULING `cs-race-f1d-id2`: the probe copies A0's parameters into shared cells; engine fix joins board #268). Step 2 runs.
+- The reply-level LBF at HEAD on the gate seeds: prereg `04ca8ccf8`, 294 lines.
+- The strict claim checker on the mouth (VERDICTS in `research/findings/2026-10-20-moat-allowlist-claim-checker-PREREGISTRATION.md`,
+  merge `359e8ff63`): build 5 GO; build 6 meets every bar but is no flip candidate; build 7 (word lists) NO-GO. It is now a
+  DECLARED HOST SCAFFOLD capped at build 8 (RULING `moat-cap-1021`): build 8, the per-fact declared-provenance floor, is in
+  review round 2 on claude-build/moat-allowlist-1021h (mirrored to S at b7e80dbb8; Amendment 8 not yet filed). No blind
+  round 10 until a flip candidate exists. Its retirement path is board #272 (the brain checks its own speech).
+- #271, heard I/you/pointing words bound at encoding: the stage-0 census is ACCEPTED as the baseline (RULING
+  `deixis-271-s0-accept`, merge `b664d4b37`; W1 28 deictic names, 60 collisions, 60 dropped facts). Claude's stage-1
+  design round 2 has written DESIGN.md + PACKET.md (workstation sim-rev/build8/r271/round2, verify pending); Hermes waits.
+- Process (owner's 10-21 templating question): CLASS HD is live (merge `86e5cd133`, RULING `hd-gate-1021`): every prereg,
+  packet and lane plan declares whether host code decides content. RAG now indexes the coordination rulings and drafts
+  (merge `129c53c4e`; `--corpus coord`).
+**Next command (Hermes, on S):** `bash tools/status.sh`, then runbook section 6 RULINGs newest first, then section 4 in order.
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-16 (history; superseded by 2026-10-21 above) — PHASE: PROVE WHO OWNS THE COMPUTATION
+
+**Date:** 2026-10-16. **North star:** unchanged — a sim-brain that converses genuinely; Qwen stays the mouth; the
+#1 metric is the load-bearing fraction, with host-decision share (by intervention) beside it.
+**Frontier:** **Stage 1 PASSED 2026-10-16 (attempt 2): C1-C4 each 6/6, Claude-verified, with the four caveats listed below (never cite it without them).** The verdict, its
+numbers and its four caveats live verbatim in `research/findings/2026-10-16-stage1-exit-attempt2-RESULT.md`
+(verify-go + two adversarial reviews survived, merge `e114828f1`; RULING `s1-verified-1016`: board #244 closed,
+milestone #264 added). All four primary criteria are covered by that finding at 6/6 each; the diagnostics
+`cat_told` and `val_novel` read 0/6 and are prereg-frozen as not counted. Per RULING `s1-next-1016`,
+priorities-1015 item (1) is done: next is (2) the word-role flip (F3 rerun at P', prereg, ASK
+[wrc-flip-prereg]), then (3) Stage 2 (same AWS split as attempt 2: file [aws-run] when its lines are emitted,
+pool for the other seeds). Headline inserted by Claude 2026-10-16 (ASK [roadmap-sync] answered).
+**Next command (Hermes, on S):** `bash tools/status.sh`, then runbook section 6 RULINGs `s1-verified-1016` and
+`s1-next-1016`, then section 4 in order.
+
+**Stage-1 attempt 2 — four caveats ride the verdict, copied verbatim from the finding (never an unqualified
+claim):**
+
+1. **C2 and C3: the recall lesions change how the answer is framed, not what it is.** `lesion_recruit` (C2) and
+   `lesion_recall` (C3) turn a recalled answer into a guess with the SAME content ("perhaps the bear chases the
+   otter [a guess]"). The default-on category organ (C1) still supplies the answer. §7 is met, since a primary
+   reply field differs, but the §1/§6 wording that the lesion "removes" the answer is not. The C3
+   `lesion_episodic` arm does remove it (disclosure becomes "I don't recall", 6/6). Load-bearing claims for the
+   recruit and recall pathways must cite this.
+2. **C1-C3 replies are identical across the six seeds.** Seeds change internal traces and C4, but not these
+   discrete answers. For C2, seeds 43-102 give byte-identical text. Six seeds here show robustness, not six
+   independent varied samples.
+3. **C4 measures how faithfully the brain follows a precomputed valence map.** The map is an offline numpy PPMI +
+   label-propagation table seeded from Warriner norms. Intact r (about 0.82) sits below the raw-norm reference
+   (0.94). 8-13 of the 24 reads per seed are neutral, which is why sign agreement is only 0.46-0.67, though no
+   non-neutral read has the wrong sign. Valence inheritance during a session (`val_novel`) is absent, 0/6.
+4. **Minor.** The generative probe ("what might...") abstains on 6/6 because the host topic extractor reads
+   "might"; it is uncounted. Prereg §4.1 calls the worm/bug exposure equal, but the teach turns hold worm x3 and
+   bug x2; the permuted flip shows no frequency shortcut. A2.2's constrained scramble draw makes the C4 control
+   pass for a perfect follower about 99% of the time, so that clause is near-determined by construction.
+
+**Decisions-owned (from the finding):** this stage bar does not measure host-decision share — the k-select step
+is still host code and the load-bearing work is the step-3 ownership moves; caveat 1 above goes into any
+load-bearing-fraction row that cites the recruit or recall pathway (RULING `s1-next-1016`).
+
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-13 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+
+**⚠️ Superseded 2026-10-16 — the live RESUME point is the 2026-10-16 section above; everything
+below this heading is history.**
 
 **Date:** 2026-10-13. **North star:** unchanged. A sim-brain that converses genuinely; Qwen stays the mouth; the #1
 metric is the load-bearing fraction, with host-decision share (by intervention) beside it.

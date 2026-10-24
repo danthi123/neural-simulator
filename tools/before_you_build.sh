@@ -20,6 +20,26 @@ cd "$_SCRIPT_DIR/.."
 Q="${*:-}"
 [ -z "$Q" ] && { echo "usage: bash tools/before_you_build.sh \"<the defect in one line>\""; exit 2; }
 
+echo "════ 0. IS THE CORPUS CURRENT? (local main must contain published main) ════"
+# STALE-CORPUS GUARD (2026-10-21). After home moved to the server (09-30) nothing fast-forwarded the workstation's
+# main, and the RAG index is built from the worktree that owns `main`. The workstation main sat 1,184 commits (15 days)
+# behind published main, so every corpus check run there searched a 10-06 corpus and missed every finding, ruling and
+# verdict since, while the refresh logged "no change" with status 0. Read-only: ls-remote never moves a ref (the
+# server's origin/main ref is stale by design), and the check reads local `main`, not this worktree's branch, because
+# the index is built from main.
+_PUB=$(timeout 20 git ls-remote origin refs/heads/main 2>/dev/null | cut -f1)
+if [ -z "$_PUB" ]; then
+  echo "  (could not read published main from origin: freshness NOT checked)"
+elif ! git cat-file -e "${_PUB}^{commit}" 2>/dev/null || ! git merge-base --is-ancestor "$_PUB" refs/heads/main 2>/dev/null; then
+  echo "  ⛔ STALE CORPUS: published main ${_PUB:0:9} is not in local main ($(git rev-parse --short refs/heads/main 2>/dev/null))."
+  echo "     Every search below would read an old tree. On the workstation run: bash tools/w_follow.sh"
+  echo "     then refresh the index (systemctl --user start sim-rag-autoupdate.service). This check is NOT recorded."
+  exit 4
+else
+  echo "  current: local main contains published main ${_PUB:0:9}"
+fi
+
+echo
 echo "════ 1. HAS THIS ALREADY BEEN SCOPED / TRIED / REFUTED? (our own findings) ════"
 bash tools/rag/search.sh "$Q" 5 --corpus finding 2>/dev/null | grep -vi "^LLM is" || echo "  (rag unavailable)"
 
