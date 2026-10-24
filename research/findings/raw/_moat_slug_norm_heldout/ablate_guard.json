@@ -1,0 +1,28 @@
+{
+ "backend": "numpy",
+ "device": "cpu",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/ablate_guard.py",
+ "argv": [
+  "research/findings/raw/_moat_slug_norm_heldout/ablate_guard.py",
+  "research/findings/raw/_moat_slug_norm_heldout/corpus.json",
+  "research/findings/raw/_moat_slug_norm_heldout/labels.json",
+  "research/findings/raw/_moat_slug_norm_heldout/ablate_guard.json"
+ ],
+ "seed": 42,
+ "results": {
+  "b2h": {
+   "kept_by_label": {
+    "F": 13,
+    "B": 2
+   },
+   "unsupported_kept": []
+  },
+  "b2h_without_article_relation_guard": {
+   "kept_by_label": {
+    "F": 13,
+    "B": 3
+   },
+   "unsupported_kept": []
+  }
+ }
+}

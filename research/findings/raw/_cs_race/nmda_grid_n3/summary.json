@@ -1,0 +1,63 @@
+{
+  "grid": "NMDA arm: W_EE x W_NMDA at W_IE=40, row 3, controls-only, seeds 1-8, draws 10",
+  "ruling": "cs-race-f1b-1021c step 3 (record-supported slow NMDA recurrent component)",
+  "cells": [
+    {
+      "cell": "wee40_wie40_wnmda40",
+      "W_EE": 40.0,
+      "W_IE": 40.0,
+      "W_NMDA": 40.0,
+      "rc": 0,
+      "wall_s": 51.7,
+      "posctl_seeds_pass": "8/8",
+      "decisive_seeds_pass": "0/8",
+      "commits_80": 0,
+      "frog": 0,
+      "vole": 0,
+      "verdict_go": false
+    },
+    {
+      "cell": "wee40_wie40_wnmda80",
+      "W_EE": 40.0,
+      "W_IE": 40.0,
+      "W_NMDA": 80.0,
+      "rc": 0,
+      "wall_s": 51.8,
+      "posctl_seeds_pass": "8/8",
+      "decisive_seeds_pass": "0/8",
+      "commits_80": 0,
+      "frog": 0,
+      "vole": 0,
+      "verdict_go": false
+    },
+    {
+      "cell": "wee120_wie40_wnmda40",
+      "W_EE": 120.0,
+      "W_IE": 40.0,
+      "W_NMDA": 40.0,
+      "rc": 0,
+      "wall_s": 51.0,
+      "posctl_seeds_pass": "8/8",
+      "decisive_seeds_pass": "0/8",
+      "commits_80": 0,
+      "frog": 0,
+      "vole": 0,
+      "verdict_go": false
+    },
+    {
+      "cell": "wee120_wie40_wnmda80",
+      "W_EE": 120.0,
+      "W_IE": 40.0,
+      "W_NMDA": 80.0,
+      "rc": 0,
+      "wall_s": 51.1,
+      "posctl_seeds_pass": "8/8",
+      "decisive_seeds_pass": "0/8",
+      "commits_80": 0,
+      "frog": 0,
+      "vole": 0,
+      "verdict_go": false
+    }
+  ],
+  "total_wall_s": 205.6
+}

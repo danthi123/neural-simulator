@@ -1,0 +1,35 @@
+{
+ "run_id": "1792331857-936156",
+ "runner": "research/findings/raw/_moat_slug_norm_heldout/extract_corpus_s3.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-b2d/research/findings/raw/_moat_slug_norm_heldout/extract_corpus_s3.py",
+  "research/findings/raw/_moat_slug_norm_heldout/s3_corpus.json",
+  "/home/dant123/Projects/sim-rev/moat-build/s3/s3_b1.json",
+  "/home/dant123/Projects/sim-rev/moat-build/s3/s3_b2.json",
+  "/home/dant123/Projects/sim-rev/moat-build/s3/s3_b3.json",
+  "/home/dant123/Projects/sim-rev/moat-build/s3/s3_b4.json",
+  "/home/dant123/Projects/sim-rev/moat-build/s3/s3_b5.json",
+  "/home/dant123/Projects/sim-rev/moat-build/s3/s3_b6.json"
+ ],
+ "git_sha": "0e4c68677",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-18T09:57:37",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 34977.6,
+ "corpus_check_query": "claim-entailment verifier rejects de-slugged entity names and paraphrase; rich LTM answers abstain",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_moat_slug_norm_heldout/s3_corpus.json"
+}

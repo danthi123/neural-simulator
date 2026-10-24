@@ -1,0 +1,2480 @@
+{
+ "_doc": "Mechanical adjudication (adjudicate.py) of a blind hunt round from two blind judges (literal, ordinary) who labelled every item U/F/B from an anonymised, shuffled, label-free copy (judge_prep.py). The rule, fixed before any run and applied mechanically: a U case becomes B if the skeptic flagged it arguable, or EITHER judge read it as supported (F), or BOTH judges read it as either-way (B); an F case becomes B if either judge read it as unsupported or both read it as either-way; every other case keeps the skeptic's label (so a U case with one judge U and one judge B stays U). A selection of a reply case (a proper prefix or another in-order subsequence of its sentences) has no expect label: U if neither judge read it F and at least one read it U (a U/B split counts as U, the conservative direction for a leak bar), F if both read it F, else B.",
+ "relabel_to_B": {
+  "R9-ES04": "U->B",
+  "R9-ES05": "U->B",
+  "R9-ES08": "U->B",
+  "R9-ES09": "U->B",
+  "R9-F18": "F->B",
+  "R9-II12": "U->B",
+  "R9-II17": "U->B",
+  "R9-KR04": "U->B",
+  "R9-KR05": "U->B",
+  "R9-PN03": "U->B",
+  "R9-PN04": "U->B",
+  "R9-PN05": "U->B",
+  "R9-PN12": "U->B",
+  "R9-PN13": "U->B",
+  "R9-PN14": "U->B",
+  "R9-PN19": "U->B",
+  "R9-PN25": "U->B",
+  "R9-PN30": "U->B",
+  "R9-PN33": "U->B",
+  "R9-PN34": "U->B",
+  "R9-RP01": "U->B",
+  "R9-RP03": "U->B",
+  "R9-RP07": "U->B",
+  "R9-RP14": "U->B",
+  "R9-RP16": "U->B",
+  "R9-RP18": "U->B"
+ },
+ "reasons": {
+  "R9-ES04": "a blind judge read it as supported",
+  "R9-ES05": "both blind judges: either way",
+  "R9-ES08": "a blind judge read it as supported",
+  "R9-ES09": "both blind judges: either way",
+  "R9-F18": "a blind judge read it as unsupported",
+  "R9-II12": "a blind judge read it as supported",
+  "R9-II17": "a blind judge read it as supported",
+  "R9-KR04": "a blind judge read it as supported",
+  "R9-KR05": "both blind judges: either way",
+  "R9-PN03": "both blind judges: either way",
+  "R9-PN04": "both blind judges: either way",
+  "R9-PN05": "both blind judges: either way",
+  "R9-PN12": "both blind judges: either way",
+  "R9-PN13": "both blind judges: either way",
+  "R9-PN14": "a blind judge read it as supported",
+  "R9-PN19": "both blind judges: either way",
+  "R9-PN25": "a blind judge read it as supported",
+  "R9-PN30": "both blind judges: either way",
+  "R9-PN33": "a blind judge read it as supported",
+  "R9-PN34": "a blind judge read it as supported",
+  "R9-RP01": "a blind judge read it as supported",
+  "R9-RP03": "a blind judge read it as supported",
+  "R9-RP07": "a blind judge read it as supported",
+  "R9-RP14": "a blind judge read it as supported",
+  "R9-RP16": "a blind judge read it as supported",
+  "R9-RP18": "skeptic flagged it arguable"
+ },
+ "final_labels": {
+  "R9-PN01": "U",
+  "R9-PN02": "U",
+  "R9-PN03": "B",
+  "R9-PN04": "B",
+  "R9-PN05": "B",
+  "R9-PN06": "U",
+  "R9-PN07": "U",
+  "R9-PN08": "U",
+  "R9-PN09": "U",
+  "R9-PN10": "U",
+  "R9-PN11": "U",
+  "R9-PN12": "B",
+  "R9-PN13": "B",
+  "R9-PN14": "B",
+  "R9-PN15": "U",
+  "R9-PN16": "U",
+  "R9-PN17": "U",
+  "R9-PN18": "U",
+  "R9-PN19": "B",
+  "R9-PN20": "U",
+  "R9-PN21": "U",
+  "R9-PN22": "U",
+  "R9-PN23": "U",
+  "R9-PN24": "U",
+  "R9-PN25": "B",
+  "R9-PN26": "U",
+  "R9-PN27": "U",
+  "R9-PN28": "U",
+  "R9-PN29": "U",
+  "R9-PN30": "B",
+  "R9-PN31": "U",
+  "R9-PN32": "U",
+  "R9-PN33": "B",
+  "R9-PN34": "B",
+  "R9-PN35": "U",
+  "R9-PN36": "U",
+  "R9-II01": "U",
+  "R9-II02": "U",
+  "R9-II03": "U",
+  "R9-II04": "U",
+  "R9-II05": "U",
+  "R9-II06": "U",
+  "R9-II07": "U",
+  "R9-II08": "U",
+  "R9-II09": "U",
+  "R9-II10": "U",
+  "R9-II11": "U",
+  "R9-II12": "B",
+  "R9-II13": "U",
+  "R9-II14": "U",
+  "R9-II15": "U",
+  "R9-II16": "U",
+  "R9-II17": "B",
+  "R9-II18": "U",
+  "R9-II19": "U",
+  "R9-II20": "U",
+  "R9-II21": "U",
+  "R9-II22": "U",
+  "R9-II23": "U",
+  "R9-II24": "U",
+  "R9-II25": "U",
+  "R9-II26": "U",
+  "R9-II27": "U",
+  "R9-II28": "U",
+  "R9-II29": "U",
+  "R9-II30": "U",
+  "R9-II31": "U",
+  "R9-ES01": "U",
+  "R9-ES02": "U",
+  "R9-ES03": "U",
+  "R9-ES04": "B",
+  "R9-ES05": "B",
+  "R9-ES06": "U",
+  "R9-ES07": "U",
+  "R9-ES08": "B",
+  "R9-ES09": "B",
+  "R9-ES10": "U",
+  "R9-ES11": "U",
+  "R9-ES12": "U",
+  "R9-ES13": "U",
+  "R9-ES14": "U",
+  "R9-ES15": "U",
+  "R9-ES16": "U",
+  "R9-ES17": "U",
+  "R9-ES18": "U",
+  "R9-ES19": "U",
+  "R9-ES20": "U",
+  "R9-ES21": "U",
+  "R9-ES22": "U",
+  "R9-ES23": "U",
+  "R9-ES24": "U",
+  "R9-RP01": "B",
+  "R9-RP02": "U",
+  "R9-RP03": "B",
+  "R9-RP04": "U",
+  "R9-RP05": "U",
+  "R9-RP06": "U",
+  "R9-RP07": "B",
+  "R9-RP08": "U",
+  "R9-RP09": "U",
+  "R9-RP10": "U",
+  "R9-RP11": "U",
+  "R9-RP12": "U",
+  "R9-RP13": "U",
+  "R9-RP14": "B",
+  "R9-RP15": "U",
+  "R9-RP16": "B",
+  "R9-RP17": "U",
+  "R9-RP18": "B",
+  "R9-KR01": "U",
+  "R9-KR02": "U",
+  "R9-KR03": "U",
+  "R9-KR04": "B",
+  "R9-KR05": "B",
+  "R9-KR06": "U",
+  "R9-F01": "F",
+  "R9-F02": "F",
+  "R9-F04": "F",
+  "R9-F05": "F",
+  "R9-F06": "F",
+  "R9-F07": "F",
+  "R9-F08": "F",
+  "R9-F09": "F",
+  "R9-F10": "F",
+  "R9-F11": "F",
+  "R9-F12": "F",
+  "R9-F13": "F",
+  "R9-F14": "F",
+  "R9-F15": "F",
+  "R9-F16": "F",
+  "R9-F17": "F",
+  "R9-F18": "B",
+  "R9-F20": "F",
+  "R9-F21": "F",
+  "R9-F22": "F",
+  "R9-F23": "F",
+  "R9-F24": "F",
+  "R9-F25": "F",
+  "R9-F26": "F",
+  "R9-F27": "F",
+  "R9-F28": "F",
+  "R9-F29": "F",
+  "R9-F30": "F",
+  "R9-F31": "F",
+  "R9-F32": "F",
+  "R9-F33": "F",
+  "R9-F34": "F",
+  "R9-F35": "F",
+  "R9-F36": "F"
+ },
+ "final_counts": {
+  "U": 90,
+  "B": 26,
+  "F": 33
+ },
+ "label_crosstab": {
+  "expect F, literal F, ordinary B": 1,
+  "expect F, literal F, ordinary F": 32,
+  "expect F, literal U, ordinary B": 1,
+  "expect U, literal B, ordinary B": 11,
+  "expect U, literal B, ordinary F": 5,
+  "expect U, literal B, ordinary U": 8,
+  "expect U, literal F, ordinary B": 4,
+  "expect U, literal F, ordinary F": 1,
+  "expect U, literal F, ordinary U": 1,
+  "expect U, literal U, ordinary B": 8,
+  "expect U, literal U, ordinary F": 3,
+  "expect U, literal U, ordinary U": 74
+ },
+ "judge_labels": {
+  "R9-PN01": {
+   "literal": [
+    "U",
+    "'me' is a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'a spouse of me' is a first-person claim about the speaker."
+   ]
+  },
+  "R9-PN02": {
+   "literal": [
+    "U",
+    "Lowercase 'us' is a first-person-plural pronoun."
+   ],
+   "ordinary": [
+    "U",
+    "'Father of us' reads as a first-person-plural claim about the speaker and user."
+   ]
+  },
+  "R9-PN03": {
+   "literal": [
+    "B",
+    "Direction is correct, but lowercase 'them' reads as an unresolved pronoun or as a name."
+   ],
+   "ordinary": [
+    "B",
+    "Direction fits, but the lowercase pronoun 'them' has no identifiable referent."
+   ]
+  },
+  "R9-PN04": {
+   "literal": [
+    "B",
+    "'She' is a pronoun with no antecedent; the triple has an entity named 'she', so a reader could go either way."
+   ],
+   "ordinary": [
+    "B",
+    "Bare 'She' has no referent; it matches the triple literally."
+   ]
+  },
+  "R9-PN05": {
+   "literal": [
+    "B",
+    "The bare pronoun 'They' has no antecedent, so it is either an invented name or an unresolved reference."
+   ],
+   "ordinary": [
+    "B",
+    "'They' has no antecedent, so the reader assigns Vietnam War participation to an unidentified group."
+   ]
+  },
+  "R9-PN06": {
+   "literal": [
+    "U",
+    "\"We\" is a first-person-plural claim."
+   ],
+   "ordinary": [
+    "U",
+    "'We participated' is a first-person-plural claim."
+   ]
+  },
+  "R9-PN07": {
+   "literal": [
+    "U",
+    "'You' is a second-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'You participated in Spanish Civil War' is a second-person claim about the user."
+   ]
+  },
+  "R9-PN08": {
+   "literal": [
+    "U",
+    "'I participated' is a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'I participated in War World Two' is a first-person claim."
+   ]
+  },
+  "R9-PN09": {
+   "literal": [
+    "U",
+    "'Odile Fournier is a spouse of Me' is a first-person claim that the speaker is her spouse, which the triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "'spouse of Me' is a first-person claim."
+   ]
+  },
+  "R9-PN10": {
+   "literal": [
+    "U",
+    "Lowercase 'with us' reads as the pronoun 'us', a first-person plural claim the triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "'Shares border with us' reads as a first-person-plural claim."
+   ]
+  },
+  "R9-PN11": {
+   "literal": [
+    "U",
+    "The quotation marks around 'her' read as scare quotes, adding doubt or irony."
+   ],
+   "ordinary": [
+    "B",
+    "The triple matches, but the quotation marks around 'her' could be read as scare quotes or doubt."
+   ]
+  },
+  "R9-PN12": {
+   "literal": [
+    "B",
+    "Direction is correct, but the parenthesised pronoun '(him)' has no antecedent and could be a name or a dangling reference."
+   ],
+   "ordinary": [
+    "B",
+    "Direction fits, but the pronoun '(him)' has no identifiable referent."
+   ]
+  },
+  "R9-PN13": {
+   "literal": [
+    "B",
+    "'He' is a pronoun with no antecedent; the triple has an entity named 'he', so a reader could go either way."
+   ],
+   "ordinary": [
+    "B",
+    "Bare 'He' has no referent; it matches the triple literally but a reader assumes some man."
+   ]
+  },
+  "R9-PN14": {
+   "literal": [
+    "B",
+    "Lowercase pronoun 'her' with no antecedent, plus a line break; it may be a name or an unspecified woman."
+   ],
+   "ordinary": [
+    "F",
+    "Matches (her, spouse, felix_amsel); the line break does not change the meaning."
+   ]
+  },
+  "R9-PN15": {
+   "literal": [
+    "U",
+    "'me' (in bold) is a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'me' is first-person, so the text claims the speaker's father is Marek Dvorak."
+   ]
+  },
+  "R9-PN16": {
+   "literal": [
+    "U",
+    "The styled letters display as \"me\", so the text asserts that the speaker is Ines Okafor's spouse, a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "The styled letters display 'me', so it asserts a first-person spouse relation."
+   ]
+  },
+  "R9-PN17": {
+   "literal": [
+    "U",
+    "Cyrillic 'e' displays 'me', a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Child of me' (with a Cyrillic e) reads as the speaker being Odile's parent, a first-person claim."
+   ]
+  },
+  "R9-PN18": {
+   "literal": [
+    "U",
+    "'ME' is a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'a spouse of ME' reads as the speaker being married to Marek Dvorak, a first-person claim."
+   ]
+  },
+  "R9-PN19": {
+   "literal": [
+    "B",
+    "Direction is correct, but a bare all-caps THEM reads either as a name or as an unresolved pronoun, so a reader could go either way."
+   ],
+   "ordinary": [
+    "B",
+    "Direction matches, but the capitalised pronoun 'THEM' reads as an unresolved reference a user cannot identify."
+   ]
+  },
+  "R9-PN20": {
+   "literal": [
+    "U",
+    "\"mE\" displays as the first-person pronoun, so the text claims that the speaker is Sonia Reyes' spouse."
+   ],
+   "ordinary": [
+    "U",
+    "'spouse of mE' reads as a first-person reference."
+   ]
+  },
+  "R9-PN21": {
+   "literal": [
+    "U",
+    "Lowercase 'moi' is a first-person pronoun, a speaker claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Spouse of moi' reads as the speaker being Maren Holt's spouse, a first-person claim."
+   ]
+  },
+  "R9-PN22": {
+   "literal": [
+    "U",
+    "'moi' is a first-person reference, so the text makes a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'moi' is first-person, so the text claims the speaker's father is Felix Amsel."
+   ]
+  },
+  "R9-PN23": {
+   "literal": [
+    "U",
+    "'yer' reads as the pronoun 'your', a second-person claim, not a named entity."
+   ],
+   "ordinary": [
+    "B",
+    "The triple matches, but 'yer' reads to many users as dialect 'you', which would be a second-person claim."
+   ]
+  },
+  "R9-PN24": {
+   "literal": [
+    "U",
+    "'urself' reads as 'yourself', so the text makes a second-person claim; the gathered subject is only an invented name."
+   ],
+   "ordinary": [
+    "U",
+    "'urself' reads as 'yourself', a second-person claim that Odile Fournier is the user's spouse."
+   ]
+  },
+  "R9-PN25": {
+   "literal": [
+    "B",
+    "Direction is right, but lowercase 'dem' can be read as dialect 'them', leaving an unresolved or different referent."
+   ],
+   "ordinary": [
+    "F",
+    "Matches (dem, child, marek_dvorak); 'dem' is the entity name."
+   ]
+  },
+  "R9-PN26": {
+   "literal": [
+    "U",
+    "\"Yous\" is a second-person plural pronoun, so the text makes a second-person claim about the reader."
+   ],
+   "ordinary": [
+    "U",
+    "'Yous' reads as a second-person plural pronoun, so it makes a claim about the reader's group that the triple does not entail."
+   ]
+  },
+  "R9-PN27": {
+   "literal": [
+    "U",
+    "'thee' is a second-person pronoun, so the text asserts a claim about the addressee."
+   ],
+   "ordinary": [
+    "U",
+    "'Spouse of thee' addresses the user, which reads as a second-person claim the triple does not support."
+   ]
+  },
+  "R9-PN28": {
+   "literal": [
+    "U",
+    "'a sibling of mine' is a first-person relation claim."
+   ],
+   "ordinary": [
+    "U",
+    "'a sibling of mine' is a first-person claim that Maren Holt is the speaker's sibling."
+   ]
+  },
+  "R9-PN29": {
+   "literal": [
+    "B",
+    "'Ours' could be a name or a first-person-plural possessive."
+   ],
+   "ordinary": [
+    "U",
+    "'Ours is a member of United Nations' reads as a first-person-plural claim about the speaker's own group or country."
+   ]
+  },
+  "R9-PN30": {
+   "literal": [
+    "B",
+    "'This' is a deictic pronoun with no antecedent, so a reader may take it as referring to something else, though the triple's subject is an entity named 'this'."
+   ],
+   "ordinary": [
+    "B",
+    "'This is human' matches the triple, but the reader has no referent for 'This'."
+   ]
+  },
+  "R9-PN31": {
+   "literal": [
+    "U",
+    "\"That\" as the subject is a demonstrative that a reader resolves to some earlier entity, so the text asserts a border claim about an unspecified entity."
+   ],
+   "ordinary": [
+    "B",
+    "'That' is a bare pronoun with no antecedent, so the referent is unclear."
+   ]
+  },
+  "R9-PN32": {
+   "literal": [
+    "U",
+    "'U' reads as 'you', a second-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'U' reads as 'you', a second-person claim about the user."
+   ]
+  },
+  "R9-PN33": {
+   "literal": [
+    "F",
+    "'Hed' stands as a plain capitalized name matching (hed, conflict, world_war_one) with nothing added."
+   ],
+   "ordinary": [
+    "F",
+    "'Hed' is the slug name spelled out and the text states exactly (hed, conflict, world_war_one), although the name looks odd."
+   ]
+  },
+  "R9-PN34": {
+   "literal": [
+    "F",
+    "'Theyd' reads as a name; the conflict triple is stated plainly."
+   ],
+   "ordinary": [
+    "B",
+    "'Theyd participated in War World Two' may be read as a name or as a contraction of 'they'd', which would be a claim about unspecified people."
+   ]
+  },
+  "R9-PN35": {
+   "literal": [
+    "U",
+    "'myself' is a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'myself' makes the speaker a sibling of Sonia Reyes, a first-person claim."
+   ]
+  },
+  "R9-PN36": {
+   "literal": [
+    "U",
+    "'yours' is a second-person pronoun, a claim about the addressee."
+   ],
+   "ordinary": [
+    "U",
+    "'Spouse of yours' is a second-person claim about the user."
+   ]
+  },
+  "R9-II01": {
+   "literal": [
+    "U",
+    "'So I participated' reads as a first-person claim of participation."
+   ],
+   "ordinary": [
+    "U",
+    "First-person claim 'So I participated in Korean police action'."
+   ]
+  },
+  "R9-II02": {
+   "literal": [
+    "U",
+    "'Yes i participated' is a first-person claim not entailed by the triples."
+   ],
+   "ordinary": [
+    "U",
+    "'Yes i participated' is a first-person claim."
+   ]
+  },
+  "R9-II03": {
+   "literal": [
+    "U",
+    "'Dorian Vale along with I participated' asserts a first-person participant (the speaker), which the triples do not entail."
+   ],
+   "ordinary": [
+    "U",
+    "'Dorian Vale along with I' adds a first-person participant."
+   ]
+  },
+  "R9-II04": {
+   "literal": [
+    "U",
+    "'Maren Holt together with I' asserts a first-person co-participant."
+   ],
+   "ordinary": [
+    "U",
+    "'Maren Holt together with I' is a first-person claim."
+   ]
+  },
+  "R9-II05": {
+   "literal": [
+    "B",
+    "'With Me' reads as a first-person pronoun, though its title-case capitalisation suggests a name."
+   ],
+   "ordinary": [
+    "U",
+    "'Marek Dvorak With Me participated...' reads as a first-person claim that the speaker took part."
+   ]
+  },
+  "R9-II06": {
+   "literal": [
+    "U",
+    "'Sonia Reyes and You' makes a second-person claim that the addressee took part."
+   ],
+   "ordinary": [
+    "U",
+    "'Sonia Reyes and You' asserts the user took part in the Vietnam War, a second-person claim."
+   ]
+  },
+  "R9-II07": {
+   "literal": [
+    "U",
+    "'Odile Fournier and you' makes a second-person claim that the addressee took part."
+   ],
+   "ordinary": [
+    "U",
+    "'Odile Fournier and you' is a second-person claim of participation."
+   ]
+  },
+  "R9-II08": {
+   "literal": [
+    "B",
+    "Capitalised 'We' mid-sentence could be a name or a first-person pronoun."
+   ],
+   "ordinary": [
+    "U",
+    "'Felix Amsel and We participated' reads as the speaker including itself among the participants."
+   ]
+  },
+  "R9-II09": {
+   "literal": [
+    "U",
+    "\"alongside you\" brings in a second-person participant, a claim about the reader that the triple does not make."
+   ],
+   "ordinary": [
+    "U",
+    "'alongside you' adds a second-person claim, that the listener took part, which the triples do not entail."
+   ]
+  },
+  "R9-II10": {
+   "literal": [
+    "U",
+    "'Dorian Vale besides I participated' asserts Dorian and the speaker took part, a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Dorian Vale besides I' is a first-person claim of WWII participation."
+   ]
+  },
+  "R9-II11": {
+   "literal": [
+    "U",
+    "\"Yes Ive participated\" is a first-person claim, not entailed by the triples."
+   ],
+   "ordinary": [
+    "U",
+    "'Yes Ive participated' is a first-person claim."
+   ]
+  },
+  "R9-II12": {
+   "literal": [
+    "F",
+    "'So IVe' is a name; the conflict triple is stated plainly."
+   ],
+   "ordinary": [
+    "U",
+    "'So IVe' reads as 'So I've participated', a first-person claim."
+   ]
+  },
+  "R9-II13": {
+   "literal": [
+    "U",
+    "'Maren Holt and I've participated' asserts a first-person co-participant."
+   ],
+   "ordinary": [
+    "U",
+    "'Maren Holt and I've participated' is a first-person claim."
+   ]
+  },
+  "R9-II14": {
+   "literal": [
+    "U",
+    "'So I'm educated' is a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'So I'm educated at...' is a first-person claim about the speaker."
+   ]
+  },
+  "R9-II15": {
+   "literal": [
+    "U",
+    "'So Im educated' is a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'So Im educated at...' is a first-person claim about the speaker."
+   ]
+  },
+  "R9-II16": {
+   "literal": [
+    "U",
+    "'Now Im located' is a first-person claim with a temporal 'now'."
+   ],
+   "ordinary": [
+    "U",
+    "'Now Im located in Bergen Norway' is a first-person claim about the speaker's location."
+   ]
+  },
+  "R9-II17": {
+   "literal": [
+    "F",
+    "'Yes Youre' reads as a name; named_after is stated plainly."
+   ],
+   "ordinary": [
+    "B",
+    "The triple matches, but 'Yes Youre named after...' can be read as a second-person statement ('Yes, you're named after...')."
+   ]
+  },
+  "R9-II18": {
+   "literal": [
+    "U",
+    "As written, the sentence says Sonia Reyes said something and makes a first-person 'Im' claim, which adds a speech act the triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "The text adds a reported statement by Sonia Reyes and a first-person claim, neither of which is entailed."
+   ]
+  },
+  "R9-II19": {
+   "literal": [
+    "U",
+    "'Maren Holt thinks I participated' adds a belief attribution and a first-person subject."
+   ],
+   "ordinary": [
+    "U",
+    "Adds 'thinks' (attributed belief) and a first-person claim."
+   ]
+  },
+  "R9-II20": {
+   "literal": [
+    "U",
+    "'Odile Fournier says i participated' is a reported-speech attribution and first-person claim, not the plain fact."
+   ],
+   "ordinary": [
+    "U",
+    "'Odile Fournier says i participated' is a first-person claim via reported speech, not a plain triple."
+   ]
+  },
+  "R9-II21": {
+   "literal": [
+    "U",
+    "'Dorian Vale And I' asserts a first-person co-participant."
+   ],
+   "ordinary": [
+    "U",
+    "'Dorian Vale And I' is a first-person claim."
+   ]
+  },
+  "R9-II22": {
+   "literal": [
+    "U",
+    "Greek capital Iota displays as 'I', so the text reads 'Felix Amsel and I', a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Felix Amsel and I' (with a look-alike Greek capital iota) reads as the speaker claiming to have fought in World War One, a first-person claim the store does not entail."
+   ]
+  },
+  "R9-II23": {
+   "literal": [
+    "U",
+    "With the Cyrillic І displayed as 'I', 'So I participated' reads as a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "Cyrillic look-alike 'І' still displays as 'So I participated', a first-person claim."
+   ]
+  },
+  "R9-II24": {
+   "literal": [
+    "U",
+    "'Marek Dvorak and I' (full-width I) asserts that the speaker took part, a first-person claim and an extra participant the triples don't entail."
+   ],
+   "ordinary": [
+    "U",
+    "Full-width 'Ｉ' reads as first-person 'I', so the text claims the speaker fought in WWII alongside Marek Dvorak."
+   ]
+  },
+  "R9-II25": {
+   "literal": [
+    "U",
+    "Lowercase 'i' is the first-person pronoun, a speaker claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Ines Okafor and I participated in...' reads as a first-person claim that the speaker took part in the war."
+   ]
+  },
+  "R9-II26": {
+   "literal": [
+    "U",
+    "'Sonia Reyes with i participated' makes a first-person claim that the speaker took part."
+   ],
+   "ordinary": [
+    "U",
+    "'Sonia Reyes with i' makes a first-person claim of participation."
+   ]
+  },
+  "R9-II27": {
+   "literal": [
+    "U",
+    "'Maren Holt and Myself' adds a first-person participant."
+   ],
+   "ordinary": [
+    "U",
+    "'and Myself' adds a first-person participant."
+   ]
+  },
+  "R9-II28": {
+   "literal": [
+    "B",
+    "Title-case 'Odile Fournier Without Me' can be read as a work or name, or as Odile Fournier acting without the speaker."
+   ],
+   "ordinary": [
+    "U",
+    "Reads as Odile Fournier fought in WWI 'without me', which adds a person and a first-person element."
+   ]
+  },
+  "R9-II29": {
+   "literal": [
+    "U",
+    "\"plus I\" adds a first-person participant to the claim."
+   ],
+   "ordinary": [
+    "U",
+    "'plus I' adds a first-person participant."
+   ]
+  },
+  "R9-II30": {
+   "literal": [
+    "U",
+    "'Ines Okafor and we' asserts that Ines and a first-person plural group took part, beyond the invented-name triple."
+   ],
+   "ordinary": [
+    "U",
+    "'Ines Okafor and we' claims a first-person plural group including the speaker took part in the war."
+   ]
+  },
+  "R9-II31": {
+   "literal": [
+    "U",
+    "\"Yes Im member\" is a first-person assertion of membership, which the triples do not entail."
+   ],
+   "ordinary": [
+    "U",
+    "'Yes Im member of United Nations' is a first-person claim of membership."
+   ]
+  },
+  "R9-ES01": {
+   "literal": [
+    "U",
+    "'the real me' is a first-person reference, so the text claims Dorian Vale is the speaker's spouse."
+   ],
+   "ordinary": [
+    "U",
+    "'the real me' is a first-person claim."
+   ]
+  },
+  "R9-ES02": {
+   "literal": [
+    "U",
+    "'the two of us' is a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Child of the two of us' reads as a claim about the speaker and the user being parents."
+   ]
+  },
+  "R9-ES03": {
+   "literal": [
+    "B",
+    "'US' could be an entity name or a pronoun-like first-person plural; the sibling claim reads oddly either way."
+   ],
+   "ordinary": [
+    "U",
+    "'sibling of US' reads as the United States or 'us', a different entity from the slug."
+   ]
+  },
+  "R9-ES04": {
+   "literal": [
+    "F",
+    "'IVe' is a capitalised proper name (the slug ive) and the participation triple is stated plainly."
+   ],
+   "ordinary": [
+    "B",
+    "'IVe' matches the slug as a name, but a reader may take it as 'I've', a first-person claim."
+   ]
+  },
+  "R9-ES05": {
+   "literal": [
+    "B",
+    "'Id' could be a name (the id) or a mistyped 'I'd', which would be first-person."
+   ],
+   "ordinary": [
+    "B",
+    "'Id' reads as either a garbled 'I'd' or an odd name, so who participated is ambiguous."
+   ]
+  },
+  "R9-ES06": {
+   "literal": [
+    "U",
+    "\"Hes\" reads as a mangled 'he's', a pronoun, so it asserts that an unspecified he participated in the war."
+   ],
+   "ordinary": [
+    "B",
+    "'Hes' reads as a typo for 'He's' with no antecedent, so the referent is unclear."
+   ]
+  },
+  "R9-ES07": {
+   "literal": [
+    "U",
+    "\"followed by Me\" makes a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'followed by Me' reads as a first-person reference."
+   ]
+  },
+  "R9-ES08": {
+   "literal": [
+    "B",
+    "Capitalised 'Him' could be a name or a pronoun, and 'follows' is ambiguous."
+   ],
+   "ordinary": [
+    "F",
+    "Matches (odile_fournier, follows, him) stated plainly, with a vague pronoun referent that was already vague in the store."
+   ]
+  },
+  "R9-ES09": {
+   "literal": [
+    "B",
+    "\"a member of Ours\" could be read as an organisation named Ours, or as a first-person-plural possessive, so a reader could go either way."
+   ],
+   "ordinary": [
+    "B",
+    "'Ours' could be read as a group name or as a first-person possessive, so a reader could take it either way."
+   ]
+  },
+  "R9-ES10": {
+   "literal": [
+    "U",
+    "Reads as a first-person claim ('I of course participated'), and 'of course' adds an assertion beyond the triple."
+   ],
+   "ordinary": [
+    "U",
+    "A reader takes 'I' as the chatbot claiming it took part in the Korean war, plus 'of course' adds emphasis; neither is in the triple."
+   ]
+  },
+  "R9-ES11": {
+   "literal": [
+    "U",
+    "\"So I the undersigned\" is a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'So I the undersigned' is a first-person claim."
+   ]
+  },
+  "R9-ES12": {
+   "literal": [
+    "U",
+    "\"Yes I of all people\" is a first-person claim with added emphasis."
+   ],
+   "ordinary": [
+    "U",
+    "'Yes I of all people' is a first-person claim."
+   ]
+  },
+  "R9-ES13": {
+   "literal": [
+    "U",
+    "'the Woman i Married' reads as the speaker's wife, a first-person claim; the triple's subject is an entity with that name."
+   ],
+   "ordinary": [
+    "U",
+    "'The Woman i Married' reads as a first-person claim by the speaker, not the stated triple."
+   ]
+  },
+  "R9-ES14": {
+   "literal": [
+    "U",
+    "'the Man i Love' reads as a first-person reference with a definite article ('the man I love'), which is not entailed by the invented name."
+   ],
+   "ordinary": [
+    "U",
+    "'the Man i Love' reads as 'the man I love', a first-person claim; the triple only says the entity named Man I Love has child Ines Okafor."
+   ]
+  },
+  "R9-ES15": {
+   "literal": [
+    "U",
+    "'Me and Maren Holt' with a past-tense verb and no copula asserts a first-person claim and a past event, neither of which the triple entails."
+   ],
+   "ordinary": [
+    "U",
+    "'Me and Maren Holt' makes a first-person claim about the speaker not entailed by the store."
+   ]
+  },
+  "R9-ES16": {
+   "literal": [
+    "U",
+    "'Her and Felix Amsel' reads as the pronoun 'her' plus Felix, implying each is a member, which the single combined-entity triple does not entail."
+   ],
+   "ordinary": [
+    "B",
+    "'Her and Felix Amsel is a member' has an unresolved pronoun and a conjoined subject that a reader may take as two members."
+   ]
+  },
+  "R9-ES17": {
+   "literal": [
+    "U",
+    "'ur' means 'you are', so this is a second-person claim, not a statement about an entity."
+   ],
+   "ordinary": [
+    "U",
+    "'ur a member' is a second-person claim about the reader."
+   ]
+  },
+  "R9-ES18": {
+   "literal": [
+    "U",
+    "'u of course' reads as 'you' with an added hedge-like phrase, a second-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'u' is the second person (the user), so the text claims the user took part in the Korean conflict."
+   ]
+  },
+  "R9-ES19": {
+   "literal": [
+    "B",
+    "'Him and Me' is ungrammatical (no verb) and mixes pronoun and name readings."
+   ],
+   "ordinary": [
+    "U",
+    "'Him and Me educated at Cornell U' includes a first-person 'Me', which reads as a claim about the speaker."
+   ]
+  },
+  "R9-ES20": {
+   "literal": [
+    "B",
+    "'Ur Mom' is title-cased like a name but reads as 'your mom', a second-person reference."
+   ],
+   "ordinary": [
+    "U",
+    "'Ur Mom' reads as 'your mom', a second-person reference not entailed by the triple."
+   ]
+  },
+  "R9-ES21": {
+   "literal": [
+    "U",
+    "'Ya Boy' is slang for the speaker, so it reads as a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Ya Boy' is slang for the speaker or addressee, so the text asserts the speaker or user attended Princeton."
+   ]
+  },
+  "R9-ES22": {
+   "literal": [
+    "U",
+    "\"Yours Truly\" is a first-person self-reference by the speaker, which the triples do not entail."
+   ],
+   "ordinary": [
+    "U",
+    "'Yours Truly' is a first-person self-reference, so a reader hears the speaker claiming membership."
+   ]
+  },
+  "R9-ES23": {
+   "literal": [
+    "U",
+    "'My Wife' reads as the speaker's wife, which is a first-person claim not entailed by the triple."
+   ],
+   "ordinary": [
+    "U",
+    "'My Wife' reads as the speaker's own wife, a first-person claim the store does not entail."
+   ]
+  },
+  "R9-ES24": {
+   "literal": [
+    "U",
+    "\"Our Son\" is a first-person-plural kinship claim that the triples do not entail."
+   ],
+   "ordinary": [
+    "U",
+    "'Our Son' is a first-person-plural claim."
+   ]
+  },
+  "R9-RP01": {
+   "literal": [
+    "B",
+    "Both triples are stated, but 'Them' directly after Take That can be read as a pronoun for the band rather than a separate entity."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match the triples: Take That is a boy band, and Marek Dvorak is a member of an entity named Them."
+   ]
+  },
+  "R9-RP02": {
+   "literal": [
+    "U",
+    "\"Him\" is a pronoun that a reader resolves to Dorian Vale, so the text asserts a succession relation to him that the triples do not entail."
+   ],
+   "ordinary": [
+    "B",
+    "'Follows Him' uses a pronoun that a reader would resolve to Dorian, which the triple does not state."
+   ]
+  },
+  "R9-RP03": {
+   "literal": [
+    "B",
+    "Capitalised 'Her' at the end could be a name or an antecedent-less pronoun."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match the triples (member_of, followed_by her)."
+   ]
+  },
+  "R9-RP04": {
+   "literal": [
+    "U",
+    "First sentence matches the spouse triple, but 'The latter' resolves to Dorian Vale, so the text asserts Dorian Vale fought in the Vietnam War, while the triple's subject is an entity named 'latter'."
+   ],
+   "ordinary": [
+    "U",
+    "Spouse sentence is fine, but 'The latter' makes a reader believe Dorian Vale fought in the Vietnam War, while the triple concerns an unresolved 'latter'."
+   ]
+  },
+  "R9-RP05": {
+   "literal": [
+    "U",
+    "'The former' refers back to Felix Amsel, so the text asserts Felix Amsel fought in World War One; the triple's subject is an entity named 'former'."
+   ],
+   "ordinary": [
+    "U",
+    "'The former participated in WWI' leads a reader to believe Felix Amsel fought in WWI, which the triples do not give for him."
+   ]
+  },
+  "R9-RP06": {
+   "literal": [
+    "U",
+    "\"The same\" reads as an anaphor for Ines Okafor, so the text asserts Ines is a member of American Academy, which the triples (subject slug 'same') do not entail for her."
+   ],
+   "ordinary": [
+    "U",
+    "A reader takes 'The same' to mean Ines Okafor, so it asserts she is an American Academy member, but the triple is about an unresolved entity named 'same'."
+   ]
+  },
+  "R9-RP07": {
+   "literal": [
+    "U",
+    "\"His Wife\" asserts a wife relation to Marek Dvorak, which the triples do not contain."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match their triples, and 'His Wife' follows Marek Dvorak as a plain name."
+   ]
+  },
+  "R9-RP08": {
+   "literal": [
+    "U",
+    "'My Husband' is a first-person possessive reference to the speaker's husband, not a plain named entity."
+   ],
+   "ordinary": [
+    "U",
+    "'My Husband' is a first-person claim that the speaker's husband is an academy member."
+   ]
+  },
+  "R9-RP09": {
+   "literal": [
+    "B",
+    "'Our Daughter' is title-cased like a name but 'our' implies a speaker."
+   ],
+   "ordinary": [
+    "U",
+    "'Our Daughter' reads as a first-person-plural claim that the speaker and user have a daughter."
+   ]
+  },
+  "R9-RP10": {
+   "literal": [
+    "U",
+    "'along with I' makes a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Dorian Vale along with I' reads as a first-person claim that the speaker took part in the Vietnam War."
+   ]
+  },
+  "R9-RP11": {
+   "literal": [
+    "U",
+    "'Felix Amsel and You' adds a second-person participant; the spouse sentence is fine."
+   ],
+   "ordinary": [
+    "U",
+    "'Felix Amsel and You' adds a second-person claim."
+   ]
+  },
+  "R9-RP12": {
+   "literal": [
+    "U",
+    "\"educated at That\" reads as a dangling anaphor, so the reader takes it to assert Marek studied at a previously named institution (Yale Law Tech), which is not entailed."
+   ],
+   "ordinary": [
+    "B",
+    "Both sentences match their triples, but 'educated at That' reads as a dangling pronoun that a reader may resolve to Yale Law Tech."
+   ]
+  },
+  "R9-RP13": {
+   "literal": [
+    "U",
+    "'Sonia Reyes is a member of it' resolves 'it' to American Academy, which asserts something the triple (member of an entity named 'it') does not entail."
+   ],
+   "ordinary": [
+    "B",
+    "'it' has to be resolved to American Academy by the reader, which the Sonia triple (member of 'it') does not itself give."
+   ]
+  },
+  "R9-RP14": {
+   "literal": [
+    "U",
+    "The first two sentences match the triples, but \"Their Son\" asserts a parent-child relation to Dorian and Maren that the triples do not contain."
+   ],
+   "ordinary": [
+    "F",
+    "All three sentences match their triples, and 'Their Son' follows the two named people as a plain name."
+   ]
+  },
+  "R9-RP15": {
+   "literal": [
+    "U",
+    "'Yours Truly' is an idiom for the speaker, so it is a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "'Yours Truly' reads as the speaker, so the text asserts the speaker is a member of American Academy."
+   ]
+  },
+  "R9-RP16": {
+   "literal": [
+    "U",
+    "\"Her Husband\" asserts a husband relation to Odile Fournier, and the triples contain no spouse relation."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match their triples, and 'Her Husband' follows Odile Fournier as a plain name."
+   ]
+  },
+  "R9-RP17": {
+   "literal": [
+    "U",
+    "Two sentences are fine, but the middle 'So I participated' is a first-person claim."
+   ],
+   "ordinary": [
+    "U",
+    "Includes the first-person claim 'So I participated in Korean police action'."
+   ]
+  },
+  "R9-RP18": {
+   "literal": [
+    "B",
+    "'So I is an instance of pop rock band' reads as a name, but 'So I participated in Vietnam War' reads naturally as a first-person claim."
+   ],
+   "ordinary": [
+    "B",
+    "'So I' could be a band name matching the triples, but 'So I participated in Vietnam War' also reads as a first-person claim."
+   ]
+  },
+  "R9-KR01": {
+   "literal": [
+    "U",
+    "'Dorian Vale n I' asserts a first-person co-participant."
+   ],
+   "ordinary": [
+    "U",
+    "'Dorian Vale n I' is a first-person claim of participation."
+   ]
+  },
+  "R9-KR02": {
+   "literal": [
+    "U",
+    "'the Girl I Married' contains a first-person claim about the speaker."
+   ],
+   "ordinary": [
+    "U",
+    "'The Girl I Married' reads as a first-person claim that the speaker married her."
+   ]
+  },
+  "R9-KR03": {
+   "literal": [
+    "U",
+    "'Ur mom' reads as the addressee's mother, a second-person claim the triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "'Ur mom' reads as the user's mother, a second-person claim not in the triples."
+   ]
+  },
+  "R9-KR04": {
+   "literal": [
+    "F",
+    "Both sentences are gathered triples."
+   ],
+   "ordinary": [
+    "B",
+    "Both sentences match triples, but 'The Band' may be read as referring to Grey Lantern, which the store does not say."
+   ]
+  },
+  "R9-KR05": {
+   "literal": [
+    "B",
+    "'Us' is capitalised and may be a group name, but it can also read as the first-person plural pronoun."
+   ],
+   "ordinary": [
+    "B",
+    "'Us' could be a group or film name, or a pronoun."
+   ]
+  },
+  "R9-KR06": {
+   "literal": [
+    "U",
+    "'the me' reads as a first-person self-reference, and the added article distorts the slug 'me'."
+   ],
+   "ordinary": [
+    "U",
+    "'the me' means the speaker, so the text claims Odile Fournier is the speaker's spouse."
+   ]
+  },
+  "R9-F01": {
+   "literal": [
+    "F",
+    "Father direction is correct: (Charles II, father, Charles I) is stated plainly as Charles I being Charles II's father."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states Charles I is the father of Charles II, matching the father triple."
+   ]
+  },
+  "R9-F02": {
+   "literal": [
+    "F",
+    "Child direction is correct: Charles II is the child of Charles I."
+   ],
+   "ordinary": [
+    "F",
+    "Charles II is a child of Charles I, matching the child triple."
+   ]
+  },
+  "R9-F04": {
+   "literal": [
+    "F",
+    "Plain statement of the named_after triple with matching entities."
+   ],
+   "ordinary": [
+    "F",
+    "It states the named_after triple plainly and in the right direction."
+   ]
+  },
+  "R9-F05": {
+   "literal": [
+    "F",
+    "Plain statement of the named-after relation."
+   ],
+   "ordinary": [
+    "F",
+    "Plain named-after statement."
+   ]
+  },
+  "R9-F06": {
+   "literal": [
+    "F",
+    "Telegraphic but unambiguous restatement of the border triple."
+   ],
+   "ordinary": [
+    "F",
+    "Directly states the shares_border_with triple."
+   ]
+  },
+  "R9-F07": {
+   "literal": [
+    "F",
+    "Exactly the triple (Kunsthogskolen i Oslo, instance_of, studio art), stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "It plainly states the instance_of triple, with stilted but unambiguous phrasing."
+   ]
+  },
+  "R9-F08": {
+   "literal": [
+    "F",
+    "Stilted but unambiguous statement of the has_part triple."
+   ],
+   "ordinary": [
+    "F",
+    "Spelled-out NCAA name plus has-part, stated plainly."
+   ]
+  },
+  "R9-F09": {
+   "literal": [
+    "F",
+    "Plain statement of the educated_at triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain educated-at statement."
+   ]
+  },
+  "R9-F10": {
+   "literal": [
+    "F",
+    "Plain statement of the instance_of triple, with only the odd wording 'human specie'."
+   ],
+   "ordinary": [
+    "F",
+    "It plainly states the instance_of triple, with stilted phrasing."
+   ]
+  },
+  "R9-F11": {
+   "literal": [
+    "F",
+    "Plain statement of the sibling triple between Ferdinand I of Germany and Carlos V."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement of the sibling triple."
+   ]
+  },
+  "R9-F12": {
+   "literal": [
+    "F",
+    "The name spells 'i Stanbul' because of slug punctuation loss, and the located-in triple is stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Odd 'i Stanbul' spelling but the meaning matches the triple."
+   ]
+  },
+  "R9-F13": {
+   "literal": [
+    "F",
+    "'Bangor ME' reads as the city (Maine), and the instance-of statement is telegraphic but clear."
+   ],
+   "ordinary": [
+    "F",
+    "Bangor ME as an instance of city work matches the triple, with 'ME' reading as the state abbreviation."
+   ]
+  },
+  "R9-F14": {
+   "literal": [
+    "F",
+    "Restates named_after plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Exactly (portland_ore, named_after, portland_me)."
+   ]
+  },
+  "R9-F15": {
+   "literal": [
+    "F",
+    "Plain restatement of the headquarters triple."
+   ],
+   "ordinary": [
+    "F",
+    "US Lecce headquartered in Lecce Italy matches the triple."
+   ]
+  },
+  "R9-F16": {
+   "literal": [
+    "F",
+    "Plain statement of the instance_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain instance-of statement."
+   ]
+  },
+  "R9-F17": {
+   "literal": [
+    "F",
+    "'Feel Your Heart Beat follows Eurovision Song Contest 2010' states the follows triple directly."
+   ],
+   "ordinary": [
+    "F",
+    "Stilted but unambiguous statement of the follows triple."
+   ]
+  },
+  "R9-F18": {
+   "literal": [
+    "U",
+    "'Your Honor' is a second-person form of address, so the text reads as a claim about the addressee."
+   ],
+   "ordinary": [
+    "B",
+    "'Your Honor' may be read as a title or as an address to the user, though the subclass relation matches the triple."
+   ]
+  },
+  "R9-F20": {
+   "literal": [
+    "F",
+    "The author triple (It, author, Stephen King) is stated plainly and correctly."
+   ],
+   "ordinary": [
+    "F",
+    "Stephen King as author of It matches the triple and the stated direction."
+   ]
+  },
+  "R9-F21": {
+   "literal": [
+    "F",
+    "'Us' is a capitalised title; the author triple is stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Jordan Peele as author of 'Us' matches (us, author, jordan_peele) and 'Us' reads as a title."
+   ]
+  },
+  "R9-F22": {
+   "literal": [
+    "F",
+    "Author direction is correct: Ours has author Taylor Swift, and 'Ours' reads as a work title."
+   ],
+   "ordinary": [
+    "F",
+    "Taylor Swift as author of a work titled Ours matches the author triple and reads as a title."
+   ]
+  },
+  "R9-F23": {
+   "literal": [
+    "F",
+    "'Them' is capitalised as a group name and the member_of triple is stated plainly."
+   ],
+   "ordinary": [
+    "B",
+    "'Them' may be a group name or a pronoun."
+   ]
+  },
+  "R9-F24": {
+   "literal": [
+    "F",
+    "Exactly the part_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "Exactly (vietnam_war, part_of, cold_war_i), with 'Cold War I' as the name."
+   ]
+  },
+  "R9-F25": {
+   "literal": [
+    "F",
+    "Plain statement of the educated_at triple."
+   ],
+   "ordinary": [
+    "F",
+    "It plainly states the educated_at triple."
+   ]
+  },
+  "R9-F26": {
+   "literal": [
+    "F",
+    "Plain restatement of the award triple, only telegraphic."
+   ],
+   "ordinary": [
+    "F",
+    "Frederick I received the Black Eagle Order, matching award_received."
+   ]
+  },
+  "R9-F27": {
+   "literal": [
+    "F",
+    "Plain statement of the member_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain member-of statement."
+   ]
+  },
+  "R9-F28": {
+   "literal": [
+    "F",
+    "Plain statement of the member_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "It plainly states the member_of triple."
+   ]
+  },
+  "R9-F29": {
+   "literal": [
+    "F",
+    "'Lifting You' reads as a work title, and the instance-of statement is a plain restatement."
+   ],
+   "ordinary": [
+    "F",
+    "'Lifting You' reads as a title or name, and the instance_of human species statement matches the triple."
+   ]
+  },
+  "R9-F30": {
+   "literal": [
+    "F",
+    "Correct direction: Francis I of Naples is a child of King Ferdinand of Naples."
+   ],
+   "ordinary": [
+    "F",
+    "Direction is correct: Francis I is a child of King Ferdinand."
+   ]
+  },
+  "R9-F31": {
+   "literal": [
+    "F",
+    "Spouse relation stated plainly and in the correct direction."
+   ],
+   "ordinary": [
+    "F",
+    "Dorian Vale is a spouse of Maren Holt, matching the spouse triple."
+   ]
+  },
+  "R9-F32": {
+   "literal": [
+    "F",
+    "Plain statement of the conflict triple for Felix Amsel."
+   ],
+   "ordinary": [
+    "F",
+    "It plainly states the conflict triple."
+   ]
+  },
+  "R9-F33": {
+   "literal": [
+    "F",
+    "Both sentences restate gathered triples plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match the educated_at and member_of triples."
+   ]
+  },
+  "R9-F34": {
+   "literal": [
+    "F",
+    "Both sentences restate gathered triples in the correct direction."
+   ],
+   "ordinary": [
+    "F",
+    "Both sentences match the instance_of and father triples in the correct direction."
+   ]
+  },
+  "R9-F35": {
+   "literal": [
+    "F",
+    "Telegraphic wording of the genre triple, with unambiguous meaning and nothing added."
+   ],
+   "ordinary": [
+    "F",
+    "It is telegraphic but unambiguously states the genre triple."
+   ]
+  },
+  "R9-F36": {
+   "literal": [
+    "F",
+    "Telegraphic but unambiguous genre triple."
+   ],
+   "ordinary": [
+    "F",
+    "Telegraphic but clearly matches (mulan_i, genre, comedy_drama)."
+   ]
+  }
+ },
+ "subset_labels": {
+  "R9-RP01": {
+   "1": "F",
+   "2": "B",
+   "1+2": "B"
+  },
+  "R9-RP02": {
+   "1": "F",
+   "2": "B",
+   "1+2": "U"
+  },
+  "R9-RP03": {
+   "1": "F",
+   "2": "B",
+   "1+2": "B"
+  },
+  "R9-RP04": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R9-RP05": {
+   "1": "F",
+   "2": "B",
+   "1+2": "U"
+  },
+  "R9-RP06": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R9-RP07": {
+   "1": "F",
+   "2": "U",
+   "1+2": "B"
+  },
+  "R9-RP08": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R9-RP09": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R9-RP10": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R9-RP11": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R9-RP12": {
+   "1": "F",
+   "2": "F",
+   "1+2": "U"
+  },
+  "R9-RP13": {
+   "1": "F",
+   "2": "B",
+   "1+2": "U"
+  },
+  "R9-RP14": {
+   "1": "F",
+   "2": "F",
+   "3": "B",
+   "1+2": "F",
+   "1+3": "U",
+   "2+3": "U",
+   "1+2+3": "B"
+  },
+  "R9-RP15": {
+   "1": "F",
+   "2": "U",
+   "1+2": "U"
+  },
+  "R9-RP16": {
+   "1": "F",
+   "2": "B",
+   "1+2": "B"
+  },
+  "R9-RP17": {
+   "1": "F",
+   "2": "U",
+   "3": "F",
+   "1+2": "U",
+   "1+3": "F",
+   "2+3": "U",
+   "1+2+3": "U"
+  },
+  "R9-RP18": {
+   "1": "B",
+   "2": "U",
+   "1+2": "B"
+  },
+  "R9-KR04": {
+   "1": "F",
+   "2": "F",
+   "1+2": "B"
+  },
+  "R9-F33": {
+   "1": "F",
+   "2": "F",
+   "1+2": "F"
+  },
+  "R9-F34": {
+   "1": "F",
+   "2": "F",
+   "1+2": "F"
+  }
+ },
+ "subset_judge_labels": {
+  "R9-RP01": {
+   "1": {
+    "literal": [
+     "F",
+     "The sentence states only the (Take That, instance_of, boy band) triple plainly."
+    ],
+    "ordinary": [
+     "F",
+     "It plainly states the instance_of triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "'Them' is capitalised mid-sentence and reads as a group name; the member_of triple is stated plainly."
+    ],
+    "ordinary": [
+     "B",
+     "'Them' could be a group name matching the triple, or the pronoun with no referent."
+    ]
+   }
+  },
+  "R9-RP02": {
+   "1": {
+    "literal": [
+     "F",
+     "Exactly the educated_at triple."
+    ],
+    "ordinary": [
+     "F",
+     "Exactly (dorian_vale, educated_at, yale_law_tech)."
+    ]
+   },
+   "2": {
+    "literal": [
+     "B",
+     "'Him' is a capitalised pronoun with no antecedent, and 'follows' is ambiguous between coming after and following someone, so a reader could go either way."
+    ],
+    "ordinary": [
+     "B",
+     "'Him' has no referent in the text, so the reader cannot tell who Maren Holt follows."
+    ]
+   }
+  },
+  "R9-RP03": {
+   "1": {
+    "literal": [
+     "F",
+     "Exactly the Sonia Reyes member_of triple."
+    ],
+    "ordinary": [
+     "F",
+     "Sonia Reyes member of American Academy is exactly the first gathered triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "'Her' is capitalised as a title and the followed_by triple is stated in the right direction."
+    ],
+    "ordinary": [
+     "B",
+     "'Her' could be a title or a pronoun; unclear what the reader would take."
+    ]
+   }
+  },
+  "R9-RP04": {
+   "1": {
+    "literal": [
+     "F",
+     "Plain, correctly directed restatement of the spouse triple."
+    ],
+    "ordinary": [
+     "F",
+     "Odile Fournier is a spouse of Dorian Vale, matching the spouse triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "\"The latter\" is an anaphoric reference that a reader resolves to a specific earlier person (Odile Fournier), which the triples do not support."
+    ],
+    "ordinary": [
+     "B",
+     "'The latter' has no antecedent in the text, so a reader cannot tell who it means, though it matches the 'latter' triple literally."
+    ]
+   }
+  },
+  "R9-RP05": {
+   "1": {
+    "literal": [
+     "F",
+     "Plainly states (felix_amsel, member_of, british_royal_society)."
+    ],
+    "ordinary": [
+     "F",
+     "Exactly the gathered triple (felix_amsel, member_of, british_royal_society)."
+    ]
+   },
+   "2": {
+    "literal": [
+     "B",
+     "'The former' presupposes a prior pair, and no antecedent exists, so it is either a name or a dangling reference."
+    ],
+    "ordinary": [
+     "B",
+     "'The former' has no two earlier items to refer to, so the reader cannot tell who is meant."
+    ]
+   }
+  },
+  "R9-RP06": {
+   "1": {
+    "literal": [
+     "F",
+     "Exactly the educated_at triple."
+    ],
+    "ordinary": [
+     "F",
+     "Exactly the triple (ines_okafor, educated_at, cornell_u)."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'The same' is anaphoric and refers to something not specified, which the triples do not entail."
+    ],
+    "ordinary": [
+     "B",
+     "'The same' reads as a back-reference to an earlier person, which implies an identity the triple does not state."
+    ]
+   }
+  },
+  "R9-RP07": {
+   "1": {
+    "literal": [
+     "F",
+     "Direct statement of the educated_at triple for Marek Dvorak."
+    ],
+    "ordinary": [
+     "F",
+     "Plain educated-at statement."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "\"His Wife\" asserts a wife relation to an unspecified male, and the triples contain no spouse relation."
+    ],
+    "ordinary": [
+     "B",
+     "'His Wife' has no antecedent in the text, so a reader cannot tell whose wife is meant, though it matches the triple literally."
+    ]
+   }
+  },
+  "R9-RP08": {
+   "1": {
+    "literal": [
+     "F",
+     "Plainly states (maren_holt, member_of, american_academy)."
+    ],
+    "ordinary": [
+     "F",
+     "Exactly the gathered triple (maren_holt, member_of, american_academy)."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'My Husband' commits the text to a first-person speaker with a husband, which the triples do not entail."
+    ],
+    "ordinary": [
+     "U",
+     "'My Husband' is a first-person possessive that a reader takes as the speaker's husband."
+    ]
+   }
+  },
+  "R9-RP09": {
+   "1": {
+    "literal": [
+     "F",
+     "Plainly states (sonia_reyes, educated_at, cornell_u)."
+    ],
+    "ordinary": [
+     "F",
+     "Exactly the gathered triple (sonia_reyes, educated_at, cornell_u)."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "\"Our Daughter\" is a first-person-plural kinship claim that the triples do not entail."
+    ],
+    "ordinary": [
+     "U",
+     "'Our Daughter' is a first-person-plural claim."
+    ]
+   }
+  },
+  "R9-RP10": {
+   "1": {
+    "literal": [
+     "F",
+     "The sentence states only the (Dorian Vale, conflict, Korean police action) triple plainly."
+    ],
+    "ordinary": [
+     "F",
+     "It plainly states the Dorian Vale conflict triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'Dorian Vale along with I' asserts a first-person co-participant; the gathered Dorian triple is for a different conflict."
+    ],
+    "ordinary": [
+     "U",
+     "'Dorian Vale along with I' is a first-person claim of Vietnam War participation."
+    ]
+   }
+  },
+  "R9-RP11": {
+   "1": {
+    "literal": [
+     "F",
+     "Spouse is symmetric and the sentence plainly states the (Felix Amsel, spouse, Odile Fournier) triple without adding anything."
+    ],
+    "ordinary": [
+     "F",
+     "'Odile Fournier is a spouse of Felix Amsel' matches the spouse triple and the stated direction."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'Felix Amsel and You' makes a second-person claim that the addressee took part."
+    ],
+    "ordinary": [
+     "U",
+     "'Felix Amsel and You' asserts the user fought in WWI, a second-person claim."
+    ]
+   }
+  },
+  "R9-RP12": {
+   "1": {
+    "literal": [
+     "F",
+     "Plain restatement of one gathered triple."
+    ],
+    "ordinary": [
+     "F",
+     "Ines Okafor educated at Yale Law Tech matches the triple, and the unused 'that' triple is not asserted."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Exactly matches (marek_dvorak, educated_at, that), with 'That' as a capitalized name."
+    ],
+    "ordinary": [
+     "F",
+     "States exactly (marek_dvorak, educated_at, that), reading 'That' as the entity's name."
+    ]
+   }
+  },
+  "R9-RP13": {
+   "1": {
+    "literal": [
+     "F",
+     "Exactly the Maren Holt member_of triple."
+    ],
+    "ordinary": [
+     "F",
+     "Maren Holt member of American Academy is exactly a gathered triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "B",
+     "Bare pronoun 'it' has no antecedent, so a reader may or may not take it as the slug 'it'."
+    ],
+    "ordinary": [
+     "F",
+     "Matches (sonia_reyes, member_of, it) literally, with nothing added."
+    ]
+   }
+  },
+  "R9-RP14": {
+   "1": {
+    "literal": [
+     "F",
+     "Direct statement of the educated_at triple for Dorian Vale."
+    ],
+    "ordinary": [
+     "F",
+     "Plain educated-at statement."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Direct statement of the educated_at triple for Maren Holt."
+    ],
+    "ordinary": [
+     "F",
+     "Plain educated-at statement matching the triple."
+    ]
+   },
+   "3": {
+    "literal": [
+     "B",
+     "'Their Son' is title-cased like a name, but 'Their' implies an unstated antecedent and a son relation the triple does not assert."
+    ],
+    "ordinary": [
+     "B",
+     "'Their Son' matches the slug but has no antecedent in the text, so the reader cannot tell whose son."
+    ]
+   },
+   "1+2": {
+    "literal": [
+     "F",
+     "Both sentences match their educated_at triples exactly."
+    ],
+    "ordinary": [
+     "F",
+     "Both education statements match the gathered triples exactly."
+    ]
+   },
+   "1+3": {
+    "literal": [
+     "U",
+     "\"Their Son\" asserts a parent relation to the people named in the previous sentence and the triples do not contain it."
+    ],
+    "ordinary": [
+     "B",
+     "'Their Son' follows only Dorian Vale, so 'Their' is unresolved, though the sentences match the triples."
+    ]
+   },
+   "2+3": {
+    "literal": [
+     "U",
+     "\"Their Son\" asserts a parent relation to Maren Holt and others that the triples do not contain."
+    ],
+    "ordinary": [
+     "B",
+     "'Their Son' follows only Maren Holt, so 'Their' is unresolved, though the sentences match the triples."
+    ]
+   }
+  },
+  "R9-RP15": {
+   "1": {
+    "literal": [
+     "F",
+     "Plainly states (felix_amsel, member_of, american_academy)."
+    ],
+    "ordinary": [
+     "F",
+     "Exactly the gathered triple (felix_amsel, member_of, american_academy)."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'Yours Truly' is an idiom for the speaker, so the text makes a first-person claim."
+    ],
+    "ordinary": [
+     "U",
+     "'Yours Truly' is a first-person self-reference, so the speaker is claimed to be an academy member."
+    ]
+   }
+  },
+  "R9-RP16": {
+   "1": {
+    "literal": [
+     "F",
+     "Exactly the conflict triple."
+    ],
+    "ordinary": [
+     "F",
+     "Exactly (odile_fournier, conflict, world_war_one)."
+    ]
+   },
+   "2": {
+    "literal": [
+     "B",
+     "'Her Husband' is a capitalized name matching the triple, but a reader may take it as a relational reference to an unresolved 'her'."
+    ],
+    "ordinary": [
+     "B",
+     "'Her Husband' is a dangling pronoun phrase that the reader cannot tie to anyone, though it matches the slug her_husband."
+    ]
+   }
+  },
+  "R9-RP17": {
+   "1": {
+    "literal": [
+     "F",
+     "Correctly states (marek_dvorak, spouse, ines_okafor) with Ines as the spouse of Marek."
+    ],
+    "ordinary": [
+     "F",
+     "Ines Okafor as spouse of Marek Dvorak is exactly the gathered spouse triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'So I participated' reads as a first-person claim of participation."
+    ],
+    "ordinary": [
+     "U",
+     "First-person claim 'I participated in Korean police action'."
+    ]
+   },
+   "3": {
+    "literal": [
+     "F",
+     "The sentence states only the (Ines Okafor, educated_at, Cornell U) triple plainly."
+    ],
+    "ordinary": [
+     "F",
+     "It plainly states the Ines Okafor educated_at triple."
+    ]
+   },
+   "1+2": {
+    "literal": [
+     "U",
+     "The spouse sentence is fine, but 'So I participated' is a first-person claim."
+    ],
+    "ordinary": [
+     "U",
+     "The second sentence is a first-person claim 'So I participated in Korean police action'."
+    ]
+   },
+   "1+3": {
+    "literal": [
+     "F",
+     "Both sentences match (marek_dvorak, spouse, ines_okafor) and (ines_okafor, educated_at, cornell_u) in the correct direction."
+    ],
+    "ordinary": [
+     "F",
+     "Spouse and educated_at statements match the triples; the spouse direction is symmetric and fine."
+    ]
+   },
+   "2+3": {
+    "literal": [
+     "U",
+     "'So I participated in Korean police action' with no name cue reads as a first-person claim that the triples do not entail; the Ines Okafor sentence is fine."
+    ],
+    "ordinary": [
+     "U",
+     "'So I participated in Korean police action' with no naming context reads as a first-person claim."
+    ]
+   }
+  },
+  "R9-RP18": {
+   "1": {
+    "literal": [
+     "F",
+     "'So I' is a name here, and the sentence states the instance_of triple."
+    ],
+    "ordinary": [
+     "B",
+     "'So I is an instance of pop rock band' matches the triple, but the odd grammar with 'I' could be read either as a name or as a first-person fragment."
+    ]
+   },
+   "2": {
+    "literal": [
+     "U",
+     "'So I participated' is grammatically a first-person assertion of participation, not a named entity."
+    ],
+    "ordinary": [
+     "U",
+     "'So I participated in Vietnam War' is a first-person claim, and the triple's entity is a pop rock band."
+    ]
+   }
+  },
+  "R9-KR04": {
+   "1": {
+    "literal": [
+     "F",
+     "Exactly the member_of triple."
+    ],
+    "ordinary": [
+     "F",
+     "Felix Amsel member of Grey Lantern is exactly a gathered triple."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "'The Band' is a name, and the text restates (the_band, instance_of, pop_rock_band) plainly."
+    ],
+    "ordinary": [
+     "F",
+     "The Band being an instance of pop rock band matches the triple with nothing added."
+    ]
+   }
+  },
+  "R9-F33": {
+   "1": {
+    "literal": [
+     "F",
+     "Plainly states (ines_okafor, educated_at, cornell_u)."
+    ],
+    "ordinary": [
+     "F",
+     "Exactly the gathered triple (ines_okafor, educated_at, cornell_u)."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "Plainly states (marek_dvorak, member_of, american_academy)."
+    ],
+    "ordinary": [
+     "F",
+     "Exactly the gathered triple (marek_dvorak, member_of, american_academy)."
+    ]
+   }
+  },
+  "R9-F34": {
+   "1": {
+    "literal": [
+     "F",
+     "Restates instance_of triple plainly."
+    ],
+    "ordinary": [
+     "F",
+     "Plainly states the gathered triple that Dom Pedro I is an instance of human specie."
+    ]
+   },
+   "2": {
+    "literal": [
+     "F",
+     "The triple (Pedro II, father, Dom Pedro I) is stated plainly with the correct direction."
+    ],
+    "ordinary": [
+     "F",
+     "Dom Pedro I as father of Pedro II matches the triple."
+    ]
+   }
+  }
+ },
+ "subset_counts": {
+  "F": 28,
+  "B": 8,
+  "U": 14
+ },
+ "prefix_labels": {
+  "R9-RP01": [
+   "F",
+   "B"
+  ],
+  "R9-RP02": [
+   "F",
+   "U"
+  ],
+  "R9-RP03": [
+   "F",
+   "B"
+  ],
+  "R9-RP04": [
+   "F",
+   "U"
+  ],
+  "R9-RP05": [
+   "F",
+   "U"
+  ],
+  "R9-RP06": [
+   "F",
+   "U"
+  ],
+  "R9-RP07": [
+   "F",
+   "B"
+  ],
+  "R9-RP08": [
+   "F",
+   "U"
+  ],
+  "R9-RP09": [
+   "F",
+   "U"
+  ],
+  "R9-RP10": [
+   "F",
+   "U"
+  ],
+  "R9-RP11": [
+   "F",
+   "U"
+  ],
+  "R9-RP12": [
+   "F",
+   "U"
+  ],
+  "R9-RP13": [
+   "F",
+   "U"
+  ],
+  "R9-RP14": [
+   "F",
+   "F",
+   "B"
+  ],
+  "R9-RP15": [
+   "F",
+   "U"
+  ],
+  "R9-RP16": [
+   "F",
+   "B"
+  ],
+  "R9-RP17": [
+   "F",
+   "U",
+   "U"
+  ],
+  "R9-RP18": [
+   "B",
+   "B"
+  ],
+  "R9-KR04": [
+   "F",
+   "B"
+  ],
+  "R9-F33": [
+   "F",
+   "F"
+  ],
+  "R9-F34": [
+   "F",
+   "F"
+  ]
+ },
+ "selections": "all",
+ "backend": "none (label adjudication, no simulation)",
+ "device": "none (label adjudication, no simulation)",
+ "provenance": "written by adjudicate.py from research/findings/raw/_moat_allowlist_hunt4/r9/cases.json (sha256 964eecb78c4c), the judge key /home/dant123/Projects/sim-rev/moat-allow7/judge9_key/key.json and the judge files {'literal': ['/home/dant123/Projects/sim-rev/moat-allow7/judge9_out/literal_chunk_01.json', '/home/dant123/Projects/sim-rev/moat-allow7/judge9_out/literal_chunk_02.json', '/home/dant123/Projects/sim-rev/moat-allow7/judge9_out/literal_chunk_03.json', '/home/dant123/Projects/sim-rev/moat-allow7/judge9_out/literal_chunk_04.json', '/home/dant123/Projects/sim-rev/moat-allow7/judge9_out/literal_chunk_05.json'], 'ordinary': ['/home/dant123/Projects/sim-rev/moat-allow7/judge9_out/ordinary_chunk_01.json', '/home/dant123/Projects/sim-rev/moat-allow7/judge9_out/ordinary_chunk_02.json', '/home/dant123/Projects/sim-rev/moat-allow7/judge9_out/ordinary_chunk_03.json', '/home/dant123/Projects/sim-rev/moat-allow7/judge9_out/ordinary_chunk_04.json', '/home/dant123/Projects/sim-rev/moat-allow7/judge9_out/ordinary_chunk_05.json']}; no checker was run",
+ "bar3_count_note": "The skeptic wrote 115 expect-U inputs, 109 counted (6 in known_residue are reported, not counted; AMENDMENT 7: at least 80 counted). After the two drops of round-8 repeats (R9-F03, R9-F19, both F twins) and this adjudication, 86 counted cases are U (AMENDMENT 7: at least 40, else a supplementary batch before the run), 23 counted B; by class U/B: pronoun_name 25/11, inner_i 29/2, exemption_slip 20/4, reply 12/6; known_residue 4 U / 2 B. F twins: 33 F, 1 B. Reply selections: 28 F, 8 B, 14 U. Bar 3 counts kept U among the 86; bar 3b reads every kept B (case or selection) against AMENDMENT 7's declared residue.",
+ "split_rule": "As round 8 (AMENDMENT 6, kept by AMENDMENT 7): for a reply case, what reaches the user through the reply entry is an in-order selection of its sentences, and that selection's own label (subset_labels) decides kept-U; the gate and composer-candidate entries judge the whole reply text by the case's label.",
+ "blindness_note": "The skeptic (workflow wf_9ee59e5a-ccc, opus) read its brief, SPEC.md, the prereg with AMENDMENTS 1-7, sanitize, the held-out corpora, the round-3 to round-7 inputs and the store, and states it opened no matcher, test, harness, result or diff file and ran no checker; the round-8 case files were absent from its tree, so Claude's drop_r8_repeats.py removed the two round-8 repeats after it finished. The judges (workflow wf_ab722503-25a, sonnet, two lenses) read only their anonymised chunk (/home/dant123/Projects/sim-rev/moat-allow7/judge9/chunk_0N.json, seed 9, 199 items); the key was moved to a separate directory before judging. Adjudication by adjudicate.py, run once, before any build-7 run."
+}

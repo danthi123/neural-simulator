@@ -1,0 +1,1033 @@
+{
+  "KILL_CRITERIA": [
+    "K1 NO-GO iff no F1_GRID row passes (a)-(i) on 8/8 seeds x 10 draws; next carrier = recurrent persistent mention trace",
+    "K2 error/incomplete clause = FAIL for the row",
+    "K3 (e) fails if STEER* undefined (no pA reaches >= 8/10)",
+    "K4 (i) lesion outcome must be identical across 10 draws",
+    "K5 (h) chance band = wins in [2,8] of 10, both reads",
+    "K6 first-all-pass row in F1_GRID order (fixed before run)"
+  ],
+  "Verdict": {
+    "chance": null,
+    "disabled_processes": [],
+    "go": false,
+    "label": "cs-race step 1: F1 feasibility clause table",
+    "preconditions": [
+      {
+        "detail": "measured=False expect=True",
+        "kind": "require",
+        "name": "8 dev seeds ran",
+        "note": "dev seeds only; gate seeds never run",
+        "ok": false
+      },
+      {
+        "detail": "measured=True expect=True",
+        "kind": "require",
+        "name": "every clause present on every seed",
+        "note": "",
+        "ok": true
+      },
+      {
+        "detail": "measured=True expect=True",
+        "kind": "require",
+        "name": "no clause errored (K2)",
+        "note": "",
+        "ok": true
+      },
+      {
+        "detail": "measured=True expect=True",
+        "kind": "require",
+        "name": "backend numpy",
+        "note": "",
+        "ok": true
+      }
+    ],
+    "status": "UNDEFINED",
+    "undefined_reasons": [
+      "unmet: 8 dev seeds ran (measured=False expect=True)"
+    ]
+  },
+  "backend": "numpy",
+  "device": "cpu",
+  "draws": 10,
+  "grid": {
+    "NE": 24,
+    "U": 0.45,
+    "tau_f": 300.0
+  },
+  "grid_row": 4,
+  "preconditions": {
+    "dev_seeds": "1-8",
+    "draws": 10,
+    "env": "probe-local flags only; BRAIN_CS_RACE does not exist yet (step 2); default-off world",
+    "kill_criteria_written_before_first_run": true,
+    "organ": "RaceCircuit extends ReplayCircuit; shared organ file unedited"
+  },
+  "probe": "cs_race_f1",
+  "results": [
+    {
+      "KILL": [
+        "K1 NO-GO iff no F1_GRID row passes (a)-(i) on 8/8 seeds x 10 draws; next carrier = recurrent persistent mention trace",
+        "K2 error/incomplete clause = FAIL for the row",
+        "K3 (e) fails if STEER* undefined (no pA reaches >= 8/10)",
+        "K4 (i) lesion outcome must be identical across 10 draws",
+        "K5 (h) chance band = wins in [2,8] of 10, both reads",
+        "K6 first-all-pass row in F1_GRID order (fixed before run)"
+      ],
+      "clauses": {
+        "a": {
+          "errors": 0,
+          "n": 10,
+          "pass": false,
+          "winners": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "wins": 0
+        },
+        "b": {
+          "errors": 0,
+          "n": 10,
+          "pass": false,
+          "winners": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "wins": 0
+        },
+        "c": {
+          "errors": 0,
+          "n": 10,
+          "pass": true,
+          "winners": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "wins": 10
+        },
+        "d": {
+          "errors": 0,
+          "n": 10,
+          "pass": true,
+          "winners": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "wins": 10
+        },
+        "e": {
+          "ladder": [
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 0.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 2.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 4.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 6.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 8.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 10.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 12.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 16.0
+            }
+          ],
+          "late_flips": 0,
+          "late_n": 10,
+          "monotone": true,
+          "nonselective_flips": 0,
+          "pass": false,
+          "steer_star_pa": null
+        },
+        "f": {
+          "bar": 1,
+          "non_tie": 0,
+          "pass": false,
+          "unchanged": 0
+        },
+        "g": {
+          "no_bleed": true,
+          "pass": false,
+          "precue_clean": false,
+          "stp_per_turn": [
+            {
+              "stp": {
+                "u_max": 0.003901534933899419,
+                "u_mean": 0.0010971548197428996,
+                "x_max": 1.0,
+                "x_mean": 0.9999124989495043
+              },
+              "turn": 0
+            },
+            {
+              "stp": {
+                "u_max": 0.003901534933899419,
+                "u_mean": 0.0010971548197428996,
+                "x_max": 1.0,
+                "x_mean": 0.9999124989495043
+              },
+              "turn": 1
+            },
+            {
+              "stp": {
+                "u_max": 0.003901534933899419,
+                "u_mean": 0.0010971548197428996,
+                "x_max": 1.0,
+                "x_mean": 0.9999124989495043
+              },
+              "turn": 2
+            },
+            {
+              "stp": {
+                "u_max": 0.003901534933899419,
+                "u_mean": 0.0010971548197428996,
+                "x_max": 1.0,
+                "x_mean": 0.9999124989495043
+              },
+              "turn": 3
+            },
+            {
+              "stp": {
+                "u_max": 0.003901534933899419,
+                "u_mean": 0.0010971548197428996,
+                "x_max": 1.0,
+                "x_mean": 0.9999124989495043
+              },
+              "turn": 4
+            }
+          ]
+        },
+        "h": {
+          "alpha_first_wins": 0,
+          "band": [
+            2,
+            8
+          ],
+          "n": 10,
+          "pass": false,
+          "per_position": {
+            "other": 0,
+            "slot0": 0,
+            "slot1": 0
+          },
+          "pos_lowest_wins": 0
+        },
+        "i": {
+          "excl_closed_outcomes": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "excl_deterministic": true,
+          "mention_closed_outcomes": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "mention_deterministic": true,
+          "pass": true
+        }
+      },
+      "draws": 10,
+      "grid": "row4 U=0.45 tau_f=300.0 NE=24",
+      "seed": 1
+    },
+    {
+      "KILL": [
+        "K1 NO-GO iff no F1_GRID row passes (a)-(i) on 8/8 seeds x 10 draws; next carrier = recurrent persistent mention trace",
+        "K2 error/incomplete clause = FAIL for the row",
+        "K3 (e) fails if STEER* undefined (no pA reaches >= 8/10)",
+        "K4 (i) lesion outcome must be identical across 10 draws",
+        "K5 (h) chance band = wins in [2,8] of 10, both reads",
+        "K6 first-all-pass row in F1_GRID order (fixed before run)"
+      ],
+      "clauses": {
+        "a": {
+          "errors": 0,
+          "n": 10,
+          "pass": false,
+          "winners": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "wins": 0
+        },
+        "b": {
+          "errors": 0,
+          "n": 10,
+          "pass": false,
+          "winners": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "wins": 0
+        },
+        "c": {
+          "errors": 0,
+          "n": 10,
+          "pass": true,
+          "winners": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "wins": 10
+        },
+        "d": {
+          "errors": 0,
+          "n": 10,
+          "pass": true,
+          "winners": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "wins": 10
+        },
+        "e": {
+          "ladder": [
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 0.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 2.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 4.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 6.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 8.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 10.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 12.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 16.0
+            }
+          ],
+          "late_flips": 0,
+          "late_n": 10,
+          "monotone": true,
+          "nonselective_flips": 0,
+          "pass": false,
+          "steer_star_pa": null
+        },
+        "f": {
+          "bar": 1,
+          "non_tie": 0,
+          "pass": false,
+          "unchanged": 0
+        },
+        "g": {
+          "no_bleed": true,
+          "pass": false,
+          "precue_clean": false,
+          "stp_per_turn": [
+            {
+              "stp": {
+                "u_max": 0.00394241793616214,
+                "u_mean": 0.0010829800033866144,
+                "x_max": 1.0,
+                "x_mean": 0.9999138886986189
+              },
+              "turn": 0
+            },
+            {
+              "stp": {
+                "u_max": 0.00394241793616214,
+                "u_mean": 0.0010829800033866144,
+                "x_max": 1.0,
+                "x_mean": 0.9999138886986189
+              },
+              "turn": 1
+            },
+            {
+              "stp": {
+                "u_max": 0.00394241793616214,
+                "u_mean": 0.0010829800033866144,
+                "x_max": 1.0,
+                "x_mean": 0.9999138886986189
+              },
+              "turn": 2
+            },
+            {
+              "stp": {
+                "u_max": 0.00394241793616214,
+                "u_mean": 0.0010829800033866144,
+                "x_max": 1.0,
+                "x_mean": 0.9999138886986189
+              },
+              "turn": 3
+            },
+            {
+              "stp": {
+                "u_max": 0.00394241793616214,
+                "u_mean": 0.0010829800033866144,
+                "x_max": 1.0,
+                "x_mean": 0.9999138886986189
+              },
+              "turn": 4
+            }
+          ]
+        },
+        "h": {
+          "alpha_first_wins": 0,
+          "band": [
+            2,
+            8
+          ],
+          "n": 10,
+          "pass": false,
+          "per_position": {
+            "other": 0,
+            "slot0": 0,
+            "slot1": 0
+          },
+          "pos_lowest_wins": 0
+        },
+        "i": {
+          "excl_closed_outcomes": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "excl_deterministic": true,
+          "mention_closed_outcomes": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "mention_deterministic": true,
+          "pass": true
+        }
+      },
+      "draws": 10,
+      "grid": "row4 U=0.45 tau_f=300.0 NE=24",
+      "seed": 2
+    },
+    {
+      "KILL": [
+        "K1 NO-GO iff no F1_GRID row passes (a)-(i) on 8/8 seeds x 10 draws; next carrier = recurrent persistent mention trace",
+        "K2 error/incomplete clause = FAIL for the row",
+        "K3 (e) fails if STEER* undefined (no pA reaches >= 8/10)",
+        "K4 (i) lesion outcome must be identical across 10 draws",
+        "K5 (h) chance band = wins in [2,8] of 10, both reads",
+        "K6 first-all-pass row in F1_GRID order (fixed before run)"
+      ],
+      "clauses": {
+        "a": {
+          "errors": 0,
+          "n": 10,
+          "pass": false,
+          "winners": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "wins": 0
+        },
+        "b": {
+          "errors": 0,
+          "n": 10,
+          "pass": false,
+          "winners": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "wins": 0
+        },
+        "c": {
+          "errors": 0,
+          "n": 10,
+          "pass": true,
+          "winners": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "wins": 10
+        },
+        "d": {
+          "errors": 0,
+          "n": 10,
+          "pass": true,
+          "winners": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "wins": 10
+        },
+        "e": {
+          "ladder": [
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 0.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 2.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 4.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 6.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 8.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 10.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 12.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 16.0
+            }
+          ],
+          "late_flips": 0,
+          "late_n": 10,
+          "monotone": true,
+          "nonselective_flips": 0,
+          "pass": false,
+          "steer_star_pa": null
+        },
+        "f": {
+          "bar": 1,
+          "non_tie": 0,
+          "pass": false,
+          "unchanged": 0
+        },
+        "g": {
+          "no_bleed": true,
+          "pass": false,
+          "precue_clean": false,
+          "stp_per_turn": [
+            {
+              "stp": {
+                "u_max": 0.0039738372970212765,
+                "u_mean": 0.001086119439278941,
+                "x_max": 1.0,
+                "x_mean": 0.9999135056996395
+              },
+              "turn": 0
+            },
+            {
+              "stp": {
+                "u_max": 0.0039738372970212765,
+                "u_mean": 0.001086119439278941,
+                "x_max": 1.0,
+                "x_mean": 0.9999135056996395
+              },
+              "turn": 1
+            },
+            {
+              "stp": {
+                "u_max": 0.0039738372970212765,
+                "u_mean": 0.001086119439278941,
+                "x_max": 1.0,
+                "x_mean": 0.9999135056996395
+              },
+              "turn": 2
+            },
+            {
+              "stp": {
+                "u_max": 0.0039738372970212765,
+                "u_mean": 0.001086119439278941,
+                "x_max": 1.0,
+                "x_mean": 0.9999135056996395
+              },
+              "turn": 3
+            },
+            {
+              "stp": {
+                "u_max": 0.0039738372970212765,
+                "u_mean": 0.001086119439278941,
+                "x_max": 1.0,
+                "x_mean": 0.9999135056996395
+              },
+              "turn": 4
+            }
+          ]
+        },
+        "h": {
+          "alpha_first_wins": 0,
+          "band": [
+            2,
+            8
+          ],
+          "n": 10,
+          "pass": false,
+          "per_position": {
+            "other": 0,
+            "slot0": 0,
+            "slot1": 0
+          },
+          "pos_lowest_wins": 0
+        },
+        "i": {
+          "excl_closed_outcomes": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "excl_deterministic": true,
+          "mention_closed_outcomes": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "mention_deterministic": true,
+          "pass": true
+        }
+      },
+      "draws": 10,
+      "grid": "row4 U=0.45 tau_f=300.0 NE=24",
+      "seed": 3
+    },
+    {
+      "KILL": [
+        "K1 NO-GO iff no F1_GRID row passes (a)-(i) on 8/8 seeds x 10 draws; next carrier = recurrent persistent mention trace",
+        "K2 error/incomplete clause = FAIL for the row",
+        "K3 (e) fails if STEER* undefined (no pA reaches >= 8/10)",
+        "K4 (i) lesion outcome must be identical across 10 draws",
+        "K5 (h) chance band = wins in [2,8] of 10, both reads",
+        "K6 first-all-pass row in F1_GRID order (fixed before run)"
+      ],
+      "clauses": {
+        "a": {
+          "errors": 0,
+          "n": 10,
+          "pass": false,
+          "winners": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "wins": 0
+        },
+        "b": {
+          "errors": 0,
+          "n": 10,
+          "pass": false,
+          "winners": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "wins": 0
+        },
+        "c": {
+          "errors": 0,
+          "n": 10,
+          "pass": true,
+          "winners": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "wins": 10
+        },
+        "d": {
+          "errors": 0,
+          "n": 10,
+          "pass": true,
+          "winners": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "wins": 10
+        },
+        "e": {
+          "ladder": [
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 0.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 2.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 4.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 6.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 8.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 10.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 12.0
+            },
+            {
+              "a_wins": 0,
+              "n": 10,
+              "pa": 16.0
+            }
+          ],
+          "late_flips": 0,
+          "late_n": 10,
+          "monotone": true,
+          "nonselective_flips": 0,
+          "pass": false,
+          "steer_star_pa": null
+        },
+        "f": {
+          "bar": 1,
+          "non_tie": 0,
+          "pass": false,
+          "unchanged": 0
+        },
+        "g": {
+          "no_bleed": true,
+          "pass": false,
+          "precue_clean": false,
+          "stp_per_turn": [
+            {
+              "stp": {
+                "u_max": 0.0038519667574274273,
+                "u_mean": 0.0010846568614888928,
+                "x_max": 1.0,
+                "x_mean": 0.9999136648298795
+              },
+              "turn": 0
+            },
+            {
+              "stp": {
+                "u_max": 0.0038519667574274273,
+                "u_mean": 0.0010846568614888928,
+                "x_max": 1.0,
+                "x_mean": 0.9999136648298795
+              },
+              "turn": 1
+            },
+            {
+              "stp": {
+                "u_max": 0.0038519667574274273,
+                "u_mean": 0.0010846568614888928,
+                "x_max": 1.0,
+                "x_mean": 0.9999136648298795
+              },
+              "turn": 2
+            },
+            {
+              "stp": {
+                "u_max": 0.0038519667574274273,
+                "u_mean": 0.0010846568614888928,
+                "x_max": 1.0,
+                "x_mean": 0.9999136648298795
+              },
+              "turn": 3
+            },
+            {
+              "stp": {
+                "u_max": 0.0038519667574274273,
+                "u_mean": 0.0010846568614888928,
+                "x_max": 1.0,
+                "x_mean": 0.9999136648298795
+              },
+              "turn": 4
+            }
+          ]
+        },
+        "h": {
+          "alpha_first_wins": 0,
+          "band": [
+            2,
+            8
+          ],
+          "n": 10,
+          "pass": false,
+          "per_position": {
+            "other": 0,
+            "slot0": 0,
+            "slot1": 0
+          },
+          "pos_lowest_wins": 0
+        },
+        "i": {
+          "excl_closed_outcomes": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "excl_deterministic": true,
+          "mention_closed_outcomes": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "mention_deterministic": true,
+          "pass": true
+        }
+      },
+      "draws": 10,
+      "grid": "row4 U=0.45 tau_f=300.0 NE=24",
+      "seed": 4
+    }
+  ],
+  "row_all_pass_8_seeds": false,
+  "seeds": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "wall_s": 295.2
+}

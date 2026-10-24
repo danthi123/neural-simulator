@@ -1,0 +1,29 @@
+{
+ "run_id": "1792607899-1325248",
+ "runner": "research/findings/raw/_moat_slug_norm_heldout/heldout_numbers.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-allow6/research/findings/raw/_moat_slug_norm_heldout/heldout_numbers.py",
+  "research/findings/raw/_moat_slug_norm_heldout/heldout_numbers_allowlist6.json",
+  "--allowlist",
+  "--suffix",
+  "_allowlist6"
+ ],
+ "git_sha": "f7f15f5fc",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-21T14:38:19",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2091.4,
+ "corpus_check_query": "deixis at encoding: the brain stores a heard pronoun or pointing word (I, me, you, the latter, it) as an entity name instead of binding it to the speaker, addressee or discourse referent",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_moat_slug_norm_heldout/heldout_numbers_allowlist6.json"
+}

@@ -1727,6 +1727,34 @@ def _scan_for_orphans() -> int:
     return new_count
 
 
+# build 6: the default-OFF paths that replace or produce reply text OUTSIDE the allowlist (their own post-filters apply, not the strict
+# claim checker): BRAIN_OPEN_ENDED (the free-reply Qwen path, webapp/open_ended_chat.py) and BRAIN_OPEN_ENDED_GATED (webapp/
+# open_ended_gated_turn.py: `ltm_render` speaks a `render_fact_sentence` clause under open_ended_chat.post_filter and `offkb_render` free
+# Qwen text under the honesty and phenomenal-claim filters, both replacing the composer's answer via apply_rich after the allowlist ran)
+MOAT_ALLOWLIST_OUT_OF_SCOPE = ("BRAIN_OPEN_ENDED", "BRAIN_OPEN_ENDED_GATED")
+
+
+def moat_allowlist_scope_warning(env=None):
+    """Build 6: `BRAIN_MOAT_ALLOWLIST` owns the MOUTH path (docs/drafts/moat-allowlist/SPEC.md); the paths in MOAT_ALLOWLIST_OUT_OF_SCOPE
+    (each default OFF) are out of its scope. With the flag and any of them on, log one warning at startup naming them and return it
+    (None otherwise)."""
+    env = os.environ if env is None else env
+    on = lambda k: str(env.get(k, "0")).strip().lower() in ("1", "true", "on", "yes")
+    hit = [k for k in MOAT_ALLOWLIST_OUT_OF_SCOPE if on(k)]
+    if on("BRAIN_MOAT_ALLOWLIST") and hit:
+        msg = ("[webapp] WARNING: BRAIN_MOAT_ALLOWLIST is on but %s %s OUT of the allowlist's scope (reply text from %s is checked by its "
+               "own post-filter, not the strict claim checker); keep %s off for a strict-mouth run"
+               % (" and ".join(hit), "is" if len(hit) == 1 else "are", "that path" if len(hit) == 1 else "those paths", " and ".join(hit)))
+        print(msg, flush=True)
+        return msg
+    return None
+
+
+@app.on_event("startup")
+async def _moat_allowlist_scope_check() -> None:
+    moat_allowlist_scope_warning()
+
+
 @app.on_event("startup")
 async def recover_orphan_runs() -> None:
     """Initial orphan scan at server start. Periodic re-scan is in
@@ -5083,14 +5111,21 @@ def _one_brain_turn(req, cache_key, renderer, ctx) -> JSONResponse:
     mouth = _deferred_mouth(chat)
     if mouth is not None:
         mouth.take_calls()                                  # nothing from an earlier turn
+    from research.runners._moat_allowlist import allowlist_enabled as _allowlist_on
+    joined = mouth is not None and _allowlist_on()
+    if joined:
+        _OB.begin_joined_record(chat)                       # build 6: the composer records its joined mouth paragraphs
     before = _OB.learned_triples(chat)
-    resp = brain_reply(chat, req, source, cache_key)
+    try:
+        resp = brain_reply(chat, req, source, cache_key)
+    finally:
+        replies = _OB.take_joined_record(chat) if joined else None
     _ONE_BRAIN.note_taught(bk, before, _OB.learned_triples(chat), ctx.conversation_id)
     resp = _one_brain_source_frame(resp, bk, ctx.conversation_id)
     if mouth is not None:
         calls = mouth.take_calls()
         if calls:
-            resp._one_brain_mouth = (mouth, calls, chat)    # type: ignore[attr-defined]
+            resp._one_brain_mouth = (mouth, calls, chat) if replies is None else (mouth, calls, chat, replies)  # type: ignore
     return resp
 
 
@@ -5135,13 +5170,22 @@ def _one_brain_articulate(resp, pending):
     whose template surface reached the answer, VERIFY each prose surface under a short re-take of the turn lock (the
     brain's on-substrate re-parse), substitute the verified prose. Never raises: on any failure the template answer,
     which the brain already verified, is returned."""
-    mouth, calls, chat = pending
+    mouth, calls, chat = pending[:3]
+    replies = pending[3] if len(pending) > 3 else None
     try:
         body = json.loads(bytes(resp.body))
         from webapp.brain_turn_lock import brain_turn as _bt
+        kw = {}
+        from research.runners._moat_allowlist import allowlist_enabled as _allowlist_on
+        if _allowlist_on():
+            # build 6 (BRAIN_MOAT_ALLOWLIST): the per-prose check is the allowlist (the `_verify` chokepoint) and the substituted reply
+            # is checked JOINED: every composer sentence of the answer (recorded during the turn) with the substitution, against the
+            # union of every triple those sentences were checked against
+            kw["verify_reply"] = lambda texts, svos: bool(chat._verify_claim_set(" ".join(texts), svos)[0])
+            kw["replies"] = replies or []
         ans, rec = _OB.articulate(body.get("answer"), calls, mouth,
                                   verify=lambda prose, svo: bool(chat._verify(prose, None, svo)),
-                                  relock=lambda: _bt("mouth_verify"))
+                                  relock=lambda: _bt("mouth_verify"), **kw)
         body["answer"] = ans
         body["one_brain_mouth"] = rec
         return JSONResponse(body)

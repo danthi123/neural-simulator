@@ -1,0 +1,41 @@
+{
+ "run_id": "1792589071-55135",
+ "runner": "research/runners/cs_race_f1.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/cs-race/research/runners/cs_race_f1.py",
+  "--seeds",
+  "1,2,3,4,5,6,7,8",
+  "--draws",
+  "10",
+  "--grid-row",
+  "3",
+  "--controls-only",
+  "--w-ee",
+  "40.0",
+  "--w-ie",
+  "20.0",
+  "--out",
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/cs-race/research/findings/raw/_cs_race/lever_grid_r3/wee40_wie20.json"
+ ],
+ "git_sha": "e290dbdaa",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-21T09:24:31",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 3926.2,
+ "corpus_check_query": "two-candidate spiking race fails to commit under symmetric drive",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_cs_race/lever_grid_r3/wee40_wie20.json"
+}

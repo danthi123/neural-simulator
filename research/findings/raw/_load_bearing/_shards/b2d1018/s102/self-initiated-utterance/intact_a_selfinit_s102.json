@@ -1,0 +1,171 @@
+{
+  "selfinit": {
+    "answer": "Something's been on my mind \u2014 brain use spikes.",
+    "abstained": false,
+    "recalled_svo": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": null,
+    "affect": null,
+    "self_initiated": {
+      "on": true,
+      "lesioned": false,
+      "composer": "brain_store",
+      "path": "idle-replay",
+      "n_utt": 1,
+      "about_rate": 1.0,
+      "n_concepts_spoken": 1,
+      "concept": "brain",
+      "utterance": "brain use spikes",
+      "question": null,
+      "examples": [],
+      "idle_replay": {
+        "route": "idle_replay",
+        "op": 0,
+        "turn": 1,
+        "lesions": {
+          "no_encode": false,
+          "tag": false,
+          "commit": false
+        },
+        "candidates": [
+          {
+            "fact": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "kb_idx": 0,
+            "t_enc": 0,
+            "age": 1,
+            "s": 1.0,
+            "s_source": "engram_readout",
+            "x": 1.313417119032592
+          },
+          {
+            "fact": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "kb_idx": 1,
+            "t_enc": 0,
+            "age": 1,
+            "s": 0.9999999724706112,
+            "s_source": "engram_readout",
+            "x": 1.3134171048985326
+          },
+          {
+            "fact": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "kb_idx": 2,
+            "t_enc": 0,
+            "age": 1,
+            "s": 0.9999999377723849,
+            "s_source": "engram_readout",
+            "x": 1.3134170870838693
+          },
+          {
+            "fact": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "kb_idx": 3,
+            "t_enc": 0,
+            "age": 1,
+            "s": 0.9999999159836706,
+            "s_source": "engram_readout",
+            "x": 1.3134170758971702
+          },
+          {
+            "fact": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "kb_idx": 4,
+            "t_enc": 0,
+            "age": 1,
+            "s": 0.9999999640632214,
+            "s_source": "engram_readout",
+            "x": 1.3134171005820348
+          }
+        ],
+        "selection": {
+          "engram_counts": [
+            47,
+            1,
+            16,
+            1,
+            5
+          ],
+          "gate_counts": [
+            36,
+            0,
+            5,
+            0,
+            0
+          ],
+          "slot_counts": [
+            81,
+            0,
+            0,
+            0,
+            0
+          ],
+          "first_gate_step": [
+            97,
+            null,
+            106,
+            null,
+            null
+          ],
+          "read": {
+            "threshold": 18.0,
+            "on": [
+              0
+            ],
+            "winner": 0,
+            "co_commit": false,
+            "variants": {
+              "x0.5": 0,
+              "x2": 0
+            },
+            "read_invariant": true
+          },
+          "K": 5,
+          "x_applied": [
+            1.313417119032592,
+            1.3134171048985326,
+            1.3134170870838693,
+            1.3134170758971702,
+            1.3134171005820348
+          ]
+        },
+        "winner": 0,
+        "winner_fact": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "winner_is_most_excitable": true,
+        "decoded": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "decode_route": "read_one_block",
+        "decode_matches_winner": true
+      },
+      "kind": "self_initiated"
+    },
+    "inner_state_readout": true
+  }
+}

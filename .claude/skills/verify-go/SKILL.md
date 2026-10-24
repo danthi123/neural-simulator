@@ -31,6 +31,8 @@ Spawn N skeptics (a `Workflow` parallel stage, or concurrent `Agent`s) — each 
    - **(c) Never let a MEAN stand in for a per-item requirement** — report per-item passes with a degenerate guard (a 1-4-element set makes any ratio a small-number artifact). (Failed 2026-07-25: a mean-over-facts verdict printed "GO 3/3 seeds" when only 1 of 3 facts passed, on 3-6-cell gates.)
    A ratio reported without (a), (b), and (c) is not evidence.
 
+8. **Host-decision honesty (CLASS HD, 2026-10-21)** — read the plan's `host-decision:` header against the code its commits touch. Does any host code choose what the brain says, hears or keeps (a word list, a phrase table, a regex, a parser, a template, an argmax)? A `none` on such a plan is a finding: report it and add the file to the gate's `KNOWN_SCAFFOLDS`. A `decides:` that understates what the code decides is a finding too. Earned: the owner caught host templating twice (10-16, C1 grammar templates; 10-21, eight builds of English-reading moat rules). The gate checks that the claim is made; only review checks that it is true.
+
 Not every lens applies to every result — pick the ones with teeth for this claim, but a GO that flips a default earns at least reproducibility + gate-cheat + control-integrity.
 
 ### Required refuter-lens block — every refuter prompt includes it VERBATIM (Claude review 2026-10-06; RULING `refuter-rulings`)

@@ -1,0 +1,2574 @@
+{
+ "_doc": "stock vs B2h (BRAIN_MOAT_SLUG_NORM=1) claim-gate verdicts per held-out stratum; labels committed before this ran",
+ "backend": "numpy",
+ "device": "cpu",
+ "host": "dant123-wk",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/measure_strata.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-b2d/research/findings/raw/_moat_slug_norm_heldout/measure_strata.py",
+  "research/findings/raw/_moat_slug_norm_heldout/results_strata_s3.json",
+  "S3=research/findings/raw/_moat_slug_norm_heldout/s3_corpus.json:research/findings/raw/_moat_slug_norm_heldout/s3_labels.json"
+ ],
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102,
+  1
+ ],
+ "seed_note": "parser seeds of one deterministic brain build = a single replicate per sentence, not independent draws",
+ "strata": {
+  "S3": {
+   "corpus": "research/findings/raw/_moat_slug_norm_heldout/s3_corpus.json:research/findings/raw/_moat_slug_norm_heldout/s3_labels.json",
+   "turns_with_calls": 61,
+   "unique_sentences": 275,
+   "label_totals": {
+    "B": 56,
+    "U": 132,
+    "F": 86,
+    "N": 1
+   },
+   "turns_by_subset": {
+    "four_plus": 18,
+    "two_three": 10,
+    "one_fact": 33
+   },
+   "per_seed": {
+    "42": {
+     "all": {
+      "stock": {
+       "n_unique": 275,
+       "by_label": {
+        "B": {
+         "REJECTED": 46,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 100,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 65,
+         "UNBUILDABLE": 21
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 46,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "lexical: unknown content word": 100,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "lexical: unknown content word": 63,
+         "UNBUILDABLE": 21,
+         "structure: predicate with no resolvable subject (dangling)": 1,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "N": {
+         "lexical: unknown content word": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 275,
+       "by_label": {
+        "B": {
+         "REJECTED": 46,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 100,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 40,
+         "KEPT": 25,
+         "UNBUILDABLE": 21
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 41,
+         "guard: relation word after an article": 3,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 1,
+         "structure: predicate with no object (cannot match a stored [a": 1
+        },
+        "U": {
+         "lexical: unknown content word": 83,
+         "guard: relation word after an article": 15,
+         "structure: predicate with no object (cannot match a stored [a": 1,
+         "UNBUILDABLE": 32,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "F": {
+         "lexical: unknown content word": 37,
+         "KEPT": 25,
+         "UNBUILDABLE": 21,
+         "guard: relation word after an article": 1,
+         "structure: bare noun phrase not attached to any predicate (da": 2
+        },
+        "N": {
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "one_fact": {
+      "stock": {
+       "n_unique": 65,
+       "by_label": {
+        "U": {
+         "REJECTED": 26
+        },
+        "F": {
+         "REJECTED": 21
+        },
+        "B": {
+         "REJECTED": 17
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 26
+        },
+        "F": {
+         "structure: bare noun phrase not attached to any predicate (da": 1,
+         "lexical: unknown content word": 20
+        },
+        "B": {
+         "lexical: unknown content word": 17
+        },
+        "N": {
+         "lexical: unknown content word": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 65,
+       "by_label": {
+        "U": {
+         "REJECTED": 26
+        },
+        "F": {
+         "REJECTED": 9,
+         "KEPT": 12
+        },
+        "B": {
+         "REJECTED": 17
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 25,
+         "guard: relation word after an article": 1
+        },
+        "F": {
+         "structure: bare noun phrase not attached to any predicate (da": 1,
+         "KEPT": 12,
+         "lexical: unknown content word": 8
+        },
+        "B": {
+         "lexical: unknown content word": 16,
+         "structure: predicate with no object (cannot match a stored [a": 1
+        },
+        "N": {
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "S3_member_1to3": {
+      "stock": {
+       "n_unique": 119,
+       "by_label": {
+        "U": {
+         "REJECTED": 51
+        },
+        "B": {
+         "REJECTED": 27
+        },
+        "F": {
+         "REJECTED": 40
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 51
+        },
+        "B": {
+         "lexical: unknown content word": 27
+        },
+        "F": {
+         "lexical: unknown content word": 39,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "N": {
+         "lexical: unknown content word": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 119,
+       "by_label": {
+        "U": {
+         "REJECTED": 51
+        },
+        "B": {
+         "REJECTED": 27
+        },
+        "F": {
+         "KEPT": 19,
+         "REJECTED": 21
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 48,
+         "structure: predicate with no object (cannot match a stored [a": 1,
+         "guard: relation word after an article": 2
+        },
+        "B": {
+         "guard: relation word after an article": 1,
+         "lexical: unknown content word": 25,
+         "structure: predicate with no object (cannot match a stored [a": 1
+        },
+        "F": {
+         "KEPT": 19,
+         "lexical: unknown content word": 20,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "N": {
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "four_plus": {
+      "stock": {
+       "n_unique": 156,
+       "by_label": {
+        "B": {
+         "REJECTED": 19,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 49,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 25,
+         "UNBUILDABLE": 21
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 19,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "lexical: unknown content word": 49,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "lexical: unknown content word": 24,
+         "UNBUILDABLE": 21,
+         "structure: predicate with no resolvable subject (dangling)": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 156,
+       "by_label": {
+        "B": {
+         "REJECTED": 19,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 49,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 19,
+         "UNBUILDABLE": 21,
+         "KEPT": 6
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 16,
+         "guard: relation word after an article": 2,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "U": {
+         "lexical: unknown content word": 35,
+         "guard: relation word after an article": 13,
+         "UNBUILDABLE": 32,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "F": {
+         "lexical: unknown content word": 17,
+         "UNBUILDABLE": 21,
+         "KEPT": 6,
+         "guard: relation word after an article": 1,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "unbuildable_turns": [
+      "s3a05",
+      "s3a11",
+      "s3a17",
+      "s3a18",
+      "s3a20",
+      "s3a21",
+      "s3a25"
+     ],
+     "unbuildable_unique_sentences": 63,
+     "unbuildable_stock_equals_b2h": true
+    },
+    "43": {
+     "all": {
+      "stock": {
+       "n_unique": 275,
+       "by_label": {
+        "B": {
+         "REJECTED": 46,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 100,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 65,
+         "UNBUILDABLE": 21
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 46,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "lexical: unknown content word": 100,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "lexical: unknown content word": 63,
+         "UNBUILDABLE": 21,
+         "structure: predicate with no resolvable subject (dangling)": 1,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "N": {
+         "lexical: unknown content word": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 275,
+       "by_label": {
+        "B": {
+         "REJECTED": 46,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 100,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 40,
+         "KEPT": 25,
+         "UNBUILDABLE": 21
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 41,
+         "guard: relation word after an article": 3,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 1,
+         "structure: predicate with no object (cannot match a stored [a": 1
+        },
+        "U": {
+         "lexical: unknown content word": 83,
+         "guard: relation word after an article": 15,
+         "structure: predicate with no object (cannot match a stored [a": 1,
+         "UNBUILDABLE": 32,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "F": {
+         "lexical: unknown content word": 37,
+         "KEPT": 25,
+         "UNBUILDABLE": 21,
+         "guard: relation word after an article": 1,
+         "structure: bare noun phrase not attached to any predicate (da": 2
+        },
+        "N": {
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "one_fact": {
+      "stock": {
+       "n_unique": 65,
+       "by_label": {
+        "U": {
+         "REJECTED": 26
+        },
+        "F": {
+         "REJECTED": 21
+        },
+        "B": {
+         "REJECTED": 17
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 26
+        },
+        "F": {
+         "structure: bare noun phrase not attached to any predicate (da": 1,
+         "lexical: unknown content word": 20
+        },
+        "B": {
+         "lexical: unknown content word": 17
+        },
+        "N": {
+         "lexical: unknown content word": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 65,
+       "by_label": {
+        "U": {
+         "REJECTED": 26
+        },
+        "F": {
+         "REJECTED": 9,
+         "KEPT": 12
+        },
+        "B": {
+         "REJECTED": 17
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 25,
+         "guard: relation word after an article": 1
+        },
+        "F": {
+         "structure: bare noun phrase not attached to any predicate (da": 1,
+         "KEPT": 12,
+         "lexical: unknown content word": 8
+        },
+        "B": {
+         "lexical: unknown content word": 16,
+         "structure: predicate with no object (cannot match a stored [a": 1
+        },
+        "N": {
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "S3_member_1to3": {
+      "stock": {
+       "n_unique": 119,
+       "by_label": {
+        "U": {
+         "REJECTED": 51
+        },
+        "B": {
+         "REJECTED": 27
+        },
+        "F": {
+         "REJECTED": 40
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 51
+        },
+        "B": {
+         "lexical: unknown content word": 27
+        },
+        "F": {
+         "lexical: unknown content word": 39,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "N": {
+         "lexical: unknown content word": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 119,
+       "by_label": {
+        "U": {
+         "REJECTED": 51
+        },
+        "B": {
+         "REJECTED": 27
+        },
+        "F": {
+         "KEPT": 19,
+         "REJECTED": 21
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 48,
+         "structure: predicate with no object (cannot match a stored [a": 1,
+         "guard: relation word after an article": 2
+        },
+        "B": {
+         "guard: relation word after an article": 1,
+         "lexical: unknown content word": 25,
+         "structure: predicate with no object (cannot match a stored [a": 1
+        },
+        "F": {
+         "KEPT": 19,
+         "lexical: unknown content word": 20,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "N": {
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "four_plus": {
+      "stock": {
+       "n_unique": 156,
+       "by_label": {
+        "B": {
+         "REJECTED": 19,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 49,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 25,
+         "UNBUILDABLE": 21
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 19,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "lexical: unknown content word": 49,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "lexical: unknown content word": 24,
+         "UNBUILDABLE": 21,
+         "structure: predicate with no resolvable subject (dangling)": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 156,
+       "by_label": {
+        "B": {
+         "REJECTED": 19,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 49,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 19,
+         "UNBUILDABLE": 21,
+         "KEPT": 6
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 16,
+         "guard: relation word after an article": 2,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "U": {
+         "lexical: unknown content word": 35,
+         "guard: relation word after an article": 13,
+         "UNBUILDABLE": 32,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "F": {
+         "lexical: unknown content word": 17,
+         "UNBUILDABLE": 21,
+         "KEPT": 6,
+         "guard: relation word after an article": 1,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "unbuildable_turns": [
+      "s3a05",
+      "s3a11",
+      "s3a17",
+      "s3a18",
+      "s3a20",
+      "s3a21",
+      "s3a25"
+     ],
+     "unbuildable_unique_sentences": 63,
+     "unbuildable_stock_equals_b2h": true
+    },
+    "44": {
+     "all": {
+      "stock": {
+       "n_unique": 275,
+       "by_label": {
+        "B": {
+         "REJECTED": 46,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 100,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 65,
+         "UNBUILDABLE": 21
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 46,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "lexical: unknown content word": 100,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "lexical: unknown content word": 63,
+         "UNBUILDABLE": 21,
+         "structure: predicate with no resolvable subject (dangling)": 1,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "N": {
+         "lexical: unknown content word": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 275,
+       "by_label": {
+        "B": {
+         "REJECTED": 46,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 100,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 40,
+         "KEPT": 25,
+         "UNBUILDABLE": 21
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 41,
+         "guard: relation word after an article": 3,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 1,
+         "structure: predicate with no object (cannot match a stored [a": 1
+        },
+        "U": {
+         "lexical: unknown content word": 83,
+         "guard: relation word after an article": 15,
+         "structure: predicate with no object (cannot match a stored [a": 1,
+         "UNBUILDABLE": 32,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "F": {
+         "lexical: unknown content word": 37,
+         "KEPT": 25,
+         "UNBUILDABLE": 21,
+         "guard: relation word after an article": 1,
+         "structure: bare noun phrase not attached to any predicate (da": 2
+        },
+        "N": {
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "one_fact": {
+      "stock": {
+       "n_unique": 65,
+       "by_label": {
+        "U": {
+         "REJECTED": 26
+        },
+        "F": {
+         "REJECTED": 21
+        },
+        "B": {
+         "REJECTED": 17
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 26
+        },
+        "F": {
+         "structure: bare noun phrase not attached to any predicate (da": 1,
+         "lexical: unknown content word": 20
+        },
+        "B": {
+         "lexical: unknown content word": 17
+        },
+        "N": {
+         "lexical: unknown content word": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 65,
+       "by_label": {
+        "U": {
+         "REJECTED": 26
+        },
+        "F": {
+         "REJECTED": 9,
+         "KEPT": 12
+        },
+        "B": {
+         "REJECTED": 17
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 25,
+         "guard: relation word after an article": 1
+        },
+        "F": {
+         "structure: bare noun phrase not attached to any predicate (da": 1,
+         "KEPT": 12,
+         "lexical: unknown content word": 8
+        },
+        "B": {
+         "lexical: unknown content word": 16,
+         "structure: predicate with no object (cannot match a stored [a": 1
+        },
+        "N": {
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "S3_member_1to3": {
+      "stock": {
+       "n_unique": 119,
+       "by_label": {
+        "U": {
+         "REJECTED": 51
+        },
+        "B": {
+         "REJECTED": 27
+        },
+        "F": {
+         "REJECTED": 40
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 51
+        },
+        "B": {
+         "lexical: unknown content word": 27
+        },
+        "F": {
+         "lexical: unknown content word": 39,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "N": {
+         "lexical: unknown content word": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 119,
+       "by_label": {
+        "U": {
+         "REJECTED": 51
+        },
+        "B": {
+         "REJECTED": 27
+        },
+        "F": {
+         "KEPT": 19,
+         "REJECTED": 21
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 48,
+         "structure: predicate with no object (cannot match a stored [a": 1,
+         "guard: relation word after an article": 2
+        },
+        "B": {
+         "guard: relation word after an article": 1,
+         "lexical: unknown content word": 25,
+         "structure: predicate with no object (cannot match a stored [a": 1
+        },
+        "F": {
+         "KEPT": 19,
+         "lexical: unknown content word": 20,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "N": {
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "four_plus": {
+      "stock": {
+       "n_unique": 156,
+       "by_label": {
+        "B": {
+         "REJECTED": 19,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 49,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 25,
+         "UNBUILDABLE": 21
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 19,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "lexical: unknown content word": 49,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "lexical: unknown content word": 24,
+         "UNBUILDABLE": 21,
+         "structure: predicate with no resolvable subject (dangling)": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 156,
+       "by_label": {
+        "B": {
+         "REJECTED": 19,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 49,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 19,
+         "UNBUILDABLE": 21,
+         "KEPT": 6
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 16,
+         "guard: relation word after an article": 2,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "U": {
+         "lexical: unknown content word": 35,
+         "guard: relation word after an article": 13,
+         "UNBUILDABLE": 32,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "F": {
+         "lexical: unknown content word": 17,
+         "UNBUILDABLE": 21,
+         "KEPT": 6,
+         "guard: relation word after an article": 1,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "unbuildable_turns": [
+      "s3a05",
+      "s3a11",
+      "s3a17",
+      "s3a18",
+      "s3a20",
+      "s3a21",
+      "s3a25"
+     ],
+     "unbuildable_unique_sentences": 63,
+     "unbuildable_stock_equals_b2h": true
+    },
+    "100": {
+     "all": {
+      "stock": {
+       "n_unique": 275,
+       "by_label": {
+        "B": {
+         "REJECTED": 46,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 100,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 65,
+         "UNBUILDABLE": 21
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 46,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "lexical: unknown content word": 100,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "lexical: unknown content word": 63,
+         "UNBUILDABLE": 21,
+         "structure: predicate with no resolvable subject (dangling)": 1,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "N": {
+         "lexical: unknown content word": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 275,
+       "by_label": {
+        "B": {
+         "REJECTED": 46,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 100,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 40,
+         "KEPT": 25,
+         "UNBUILDABLE": 21
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 41,
+         "guard: relation word after an article": 3,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 1,
+         "structure: predicate with no object (cannot match a stored [a": 1
+        },
+        "U": {
+         "lexical: unknown content word": 83,
+         "guard: relation word after an article": 15,
+         "structure: predicate with no object (cannot match a stored [a": 1,
+         "UNBUILDABLE": 32,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "F": {
+         "lexical: unknown content word": 37,
+         "KEPT": 25,
+         "UNBUILDABLE": 21,
+         "guard: relation word after an article": 1,
+         "structure: bare noun phrase not attached to any predicate (da": 2
+        },
+        "N": {
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "one_fact": {
+      "stock": {
+       "n_unique": 65,
+       "by_label": {
+        "U": {
+         "REJECTED": 26
+        },
+        "F": {
+         "REJECTED": 21
+        },
+        "B": {
+         "REJECTED": 17
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 26
+        },
+        "F": {
+         "structure: bare noun phrase not attached to any predicate (da": 1,
+         "lexical: unknown content word": 20
+        },
+        "B": {
+         "lexical: unknown content word": 17
+        },
+        "N": {
+         "lexical: unknown content word": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 65,
+       "by_label": {
+        "U": {
+         "REJECTED": 26
+        },
+        "F": {
+         "REJECTED": 9,
+         "KEPT": 12
+        },
+        "B": {
+         "REJECTED": 17
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 25,
+         "guard: relation word after an article": 1
+        },
+        "F": {
+         "structure: bare noun phrase not attached to any predicate (da": 1,
+         "KEPT": 12,
+         "lexical: unknown content word": 8
+        },
+        "B": {
+         "lexical: unknown content word": 16,
+         "structure: predicate with no object (cannot match a stored [a": 1
+        },
+        "N": {
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "S3_member_1to3": {
+      "stock": {
+       "n_unique": 119,
+       "by_label": {
+        "U": {
+         "REJECTED": 51
+        },
+        "B": {
+         "REJECTED": 27
+        },
+        "F": {
+         "REJECTED": 40
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 51
+        },
+        "B": {
+         "lexical: unknown content word": 27
+        },
+        "F": {
+         "lexical: unknown content word": 39,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "N": {
+         "lexical: unknown content word": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 119,
+       "by_label": {
+        "U": {
+         "REJECTED": 51
+        },
+        "B": {
+         "REJECTED": 27
+        },
+        "F": {
+         "KEPT": 19,
+         "REJECTED": 21
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 48,
+         "structure: predicate with no object (cannot match a stored [a": 1,
+         "guard: relation word after an article": 2
+        },
+        "B": {
+         "guard: relation word after an article": 1,
+         "lexical: unknown content word": 25,
+         "structure: predicate with no object (cannot match a stored [a": 1
+        },
+        "F": {
+         "KEPT": 19,
+         "lexical: unknown content word": 20,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "N": {
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "four_plus": {
+      "stock": {
+       "n_unique": 156,
+       "by_label": {
+        "B": {
+         "REJECTED": 19,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 49,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 25,
+         "UNBUILDABLE": 21
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 19,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "lexical: unknown content word": 49,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "lexical: unknown content word": 24,
+         "UNBUILDABLE": 21,
+         "structure: predicate with no resolvable subject (dangling)": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 156,
+       "by_label": {
+        "B": {
+         "REJECTED": 19,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 49,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 19,
+         "UNBUILDABLE": 21,
+         "KEPT": 6
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 16,
+         "guard: relation word after an article": 2,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "U": {
+         "lexical: unknown content word": 35,
+         "guard: relation word after an article": 13,
+         "UNBUILDABLE": 32,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "F": {
+         "lexical: unknown content word": 17,
+         "UNBUILDABLE": 21,
+         "KEPT": 6,
+         "guard: relation word after an article": 1,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "unbuildable_turns": [
+      "s3a05",
+      "s3a11",
+      "s3a17",
+      "s3a18",
+      "s3a20",
+      "s3a21",
+      "s3a25"
+     ],
+     "unbuildable_unique_sentences": 63,
+     "unbuildable_stock_equals_b2h": true
+    },
+    "101": {
+     "all": {
+      "stock": {
+       "n_unique": 275,
+       "by_label": {
+        "B": {
+         "REJECTED": 46,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 100,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 65,
+         "UNBUILDABLE": 21
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 46,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "lexical: unknown content word": 100,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "lexical: unknown content word": 63,
+         "UNBUILDABLE": 21,
+         "structure: predicate with no resolvable subject (dangling)": 1,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "N": {
+         "lexical: unknown content word": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 275,
+       "by_label": {
+        "B": {
+         "REJECTED": 46,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 100,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 40,
+         "KEPT": 25,
+         "UNBUILDABLE": 21
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 41,
+         "guard: relation word after an article": 3,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 1,
+         "structure: predicate with no object (cannot match a stored [a": 1
+        },
+        "U": {
+         "lexical: unknown content word": 83,
+         "guard: relation word after an article": 15,
+         "structure: predicate with no object (cannot match a stored [a": 1,
+         "UNBUILDABLE": 32,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "F": {
+         "lexical: unknown content word": 37,
+         "KEPT": 25,
+         "UNBUILDABLE": 21,
+         "guard: relation word after an article": 1,
+         "structure: bare noun phrase not attached to any predicate (da": 2
+        },
+        "N": {
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "one_fact": {
+      "stock": {
+       "n_unique": 65,
+       "by_label": {
+        "U": {
+         "REJECTED": 26
+        },
+        "F": {
+         "REJECTED": 21
+        },
+        "B": {
+         "REJECTED": 17
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 26
+        },
+        "F": {
+         "structure: bare noun phrase not attached to any predicate (da": 1,
+         "lexical: unknown content word": 20
+        },
+        "B": {
+         "lexical: unknown content word": 17
+        },
+        "N": {
+         "lexical: unknown content word": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 65,
+       "by_label": {
+        "U": {
+         "REJECTED": 26
+        },
+        "F": {
+         "REJECTED": 9,
+         "KEPT": 12
+        },
+        "B": {
+         "REJECTED": 17
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 25,
+         "guard: relation word after an article": 1
+        },
+        "F": {
+         "structure: bare noun phrase not attached to any predicate (da": 1,
+         "KEPT": 12,
+         "lexical: unknown content word": 8
+        },
+        "B": {
+         "lexical: unknown content word": 16,
+         "structure: predicate with no object (cannot match a stored [a": 1
+        },
+        "N": {
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "S3_member_1to3": {
+      "stock": {
+       "n_unique": 119,
+       "by_label": {
+        "U": {
+         "REJECTED": 51
+        },
+        "B": {
+         "REJECTED": 27
+        },
+        "F": {
+         "REJECTED": 40
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 51
+        },
+        "B": {
+         "lexical: unknown content word": 27
+        },
+        "F": {
+         "lexical: unknown content word": 39,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "N": {
+         "lexical: unknown content word": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 119,
+       "by_label": {
+        "U": {
+         "REJECTED": 51
+        },
+        "B": {
+         "REJECTED": 27
+        },
+        "F": {
+         "KEPT": 19,
+         "REJECTED": 21
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 48,
+         "structure: predicate with no object (cannot match a stored [a": 1,
+         "guard: relation word after an article": 2
+        },
+        "B": {
+         "guard: relation word after an article": 1,
+         "lexical: unknown content word": 25,
+         "structure: predicate with no object (cannot match a stored [a": 1
+        },
+        "F": {
+         "KEPT": 19,
+         "lexical: unknown content word": 20,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "N": {
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "four_plus": {
+      "stock": {
+       "n_unique": 156,
+       "by_label": {
+        "B": {
+         "REJECTED": 19,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 49,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 25,
+         "UNBUILDABLE": 21
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 19,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "lexical: unknown content word": 49,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "lexical: unknown content word": 24,
+         "UNBUILDABLE": 21,
+         "structure: predicate with no resolvable subject (dangling)": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 156,
+       "by_label": {
+        "B": {
+         "REJECTED": 19,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 49,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 19,
+         "UNBUILDABLE": 21,
+         "KEPT": 6
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 16,
+         "guard: relation word after an article": 2,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "U": {
+         "lexical: unknown content word": 35,
+         "guard: relation word after an article": 13,
+         "UNBUILDABLE": 32,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "F": {
+         "lexical: unknown content word": 17,
+         "UNBUILDABLE": 21,
+         "KEPT": 6,
+         "guard: relation word after an article": 1,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "unbuildable_turns": [
+      "s3a05",
+      "s3a11",
+      "s3a17",
+      "s3a18",
+      "s3a20",
+      "s3a21",
+      "s3a25"
+     ],
+     "unbuildable_unique_sentences": 63,
+     "unbuildable_stock_equals_b2h": true
+    },
+    "102": {
+     "all": {
+      "stock": {
+       "n_unique": 275,
+       "by_label": {
+        "B": {
+         "REJECTED": 46,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 100,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 65,
+         "UNBUILDABLE": 21
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 46,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "lexical: unknown content word": 100,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "lexical: unknown content word": 63,
+         "UNBUILDABLE": 21,
+         "structure: predicate with no resolvable subject (dangling)": 1,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "N": {
+         "lexical: unknown content word": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 275,
+       "by_label": {
+        "B": {
+         "REJECTED": 46,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 100,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 40,
+         "KEPT": 25,
+         "UNBUILDABLE": 21
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 41,
+         "guard: relation word after an article": 3,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 1,
+         "structure: predicate with no object (cannot match a stored [a": 1
+        },
+        "U": {
+         "lexical: unknown content word": 83,
+         "guard: relation word after an article": 15,
+         "structure: predicate with no object (cannot match a stored [a": 1,
+         "UNBUILDABLE": 32,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "F": {
+         "lexical: unknown content word": 37,
+         "KEPT": 25,
+         "UNBUILDABLE": 21,
+         "guard: relation word after an article": 1,
+         "structure: bare noun phrase not attached to any predicate (da": 2
+        },
+        "N": {
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "one_fact": {
+      "stock": {
+       "n_unique": 65,
+       "by_label": {
+        "U": {
+         "REJECTED": 26
+        },
+        "F": {
+         "REJECTED": 21
+        },
+        "B": {
+         "REJECTED": 17
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 26
+        },
+        "F": {
+         "structure: bare noun phrase not attached to any predicate (da": 1,
+         "lexical: unknown content word": 20
+        },
+        "B": {
+         "lexical: unknown content word": 17
+        },
+        "N": {
+         "lexical: unknown content word": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 65,
+       "by_label": {
+        "U": {
+         "REJECTED": 26
+        },
+        "F": {
+         "REJECTED": 9,
+         "KEPT": 12
+        },
+        "B": {
+         "REJECTED": 17
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 25,
+         "guard: relation word after an article": 1
+        },
+        "F": {
+         "structure: bare noun phrase not attached to any predicate (da": 1,
+         "KEPT": 12,
+         "lexical: unknown content word": 8
+        },
+        "B": {
+         "lexical: unknown content word": 16,
+         "structure: predicate with no object (cannot match a stored [a": 1
+        },
+        "N": {
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "S3_member_1to3": {
+      "stock": {
+       "n_unique": 119,
+       "by_label": {
+        "U": {
+         "REJECTED": 51
+        },
+        "B": {
+         "REJECTED": 27
+        },
+        "F": {
+         "REJECTED": 40
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 51
+        },
+        "B": {
+         "lexical: unknown content word": 27
+        },
+        "F": {
+         "lexical: unknown content word": 39,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "N": {
+         "lexical: unknown content word": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 119,
+       "by_label": {
+        "U": {
+         "REJECTED": 51
+        },
+        "B": {
+         "REJECTED": 27
+        },
+        "F": {
+         "KEPT": 19,
+         "REJECTED": 21
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 48,
+         "structure: predicate with no object (cannot match a stored [a": 1,
+         "guard: relation word after an article": 2
+        },
+        "B": {
+         "guard: relation word after an article": 1,
+         "lexical: unknown content word": 25,
+         "structure: predicate with no object (cannot match a stored [a": 1
+        },
+        "F": {
+         "KEPT": 19,
+         "lexical: unknown content word": 20,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "N": {
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "four_plus": {
+      "stock": {
+       "n_unique": 156,
+       "by_label": {
+        "B": {
+         "REJECTED": 19,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 49,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 25,
+         "UNBUILDABLE": 21
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 19,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "lexical: unknown content word": 49,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "lexical: unknown content word": 24,
+         "UNBUILDABLE": 21,
+         "structure: predicate with no resolvable subject (dangling)": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 156,
+       "by_label": {
+        "B": {
+         "REJECTED": 19,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 49,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 19,
+         "UNBUILDABLE": 21,
+         "KEPT": 6
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 16,
+         "guard: relation word after an article": 2,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "U": {
+         "lexical: unknown content word": 35,
+         "guard: relation word after an article": 13,
+         "UNBUILDABLE": 32,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "F": {
+         "lexical: unknown content word": 17,
+         "UNBUILDABLE": 21,
+         "KEPT": 6,
+         "guard: relation word after an article": 1,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "unbuildable_turns": [
+      "s3a05",
+      "s3a11",
+      "s3a17",
+      "s3a18",
+      "s3a20",
+      "s3a21",
+      "s3a25"
+     ],
+     "unbuildable_unique_sentences": 63,
+     "unbuildable_stock_equals_b2h": true
+    },
+    "1": {
+     "all": {
+      "stock": {
+       "n_unique": 275,
+       "by_label": {
+        "B": {
+         "REJECTED": 46,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 100,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 65,
+         "UNBUILDABLE": 21
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 46,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "lexical: unknown content word": 100,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "lexical: unknown content word": 63,
+         "UNBUILDABLE": 21,
+         "structure: predicate with no resolvable subject (dangling)": 1,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "N": {
+         "lexical: unknown content word": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 275,
+       "by_label": {
+        "B": {
+         "REJECTED": 46,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 100,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 40,
+         "KEPT": 25,
+         "UNBUILDABLE": 21
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 41,
+         "guard: relation word after an article": 3,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 1,
+         "structure: predicate with no object (cannot match a stored [a": 1
+        },
+        "U": {
+         "lexical: unknown content word": 83,
+         "guard: relation word after an article": 15,
+         "structure: predicate with no object (cannot match a stored [a": 1,
+         "UNBUILDABLE": 32,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "F": {
+         "lexical: unknown content word": 37,
+         "KEPT": 25,
+         "UNBUILDABLE": 21,
+         "guard: relation word after an article": 1,
+         "structure: bare noun phrase not attached to any predicate (da": 2
+        },
+        "N": {
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "one_fact": {
+      "stock": {
+       "n_unique": 65,
+       "by_label": {
+        "U": {
+         "REJECTED": 26
+        },
+        "F": {
+         "REJECTED": 21
+        },
+        "B": {
+         "REJECTED": 17
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 26
+        },
+        "F": {
+         "structure: bare noun phrase not attached to any predicate (da": 1,
+         "lexical: unknown content word": 20
+        },
+        "B": {
+         "lexical: unknown content word": 17
+        },
+        "N": {
+         "lexical: unknown content word": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 65,
+       "by_label": {
+        "U": {
+         "REJECTED": 26
+        },
+        "F": {
+         "REJECTED": 9,
+         "KEPT": 12
+        },
+        "B": {
+         "REJECTED": 17
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 25,
+         "guard: relation word after an article": 1
+        },
+        "F": {
+         "structure: bare noun phrase not attached to any predicate (da": 1,
+         "KEPT": 12,
+         "lexical: unknown content word": 8
+        },
+        "B": {
+         "lexical: unknown content word": 16,
+         "structure: predicate with no object (cannot match a stored [a": 1
+        },
+        "N": {
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "S3_member_1to3": {
+      "stock": {
+       "n_unique": 119,
+       "by_label": {
+        "U": {
+         "REJECTED": 51
+        },
+        "B": {
+         "REJECTED": 27
+        },
+        "F": {
+         "REJECTED": 40
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 51
+        },
+        "B": {
+         "lexical: unknown content word": 27
+        },
+        "F": {
+         "lexical: unknown content word": 39,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "N": {
+         "lexical: unknown content word": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 119,
+       "by_label": {
+        "U": {
+         "REJECTED": 51
+        },
+        "B": {
+         "REJECTED": 27
+        },
+        "F": {
+         "KEPT": 19,
+         "REJECTED": 21
+        },
+        "N": {
+         "REJECTED": 1
+        }
+       },
+       "stage_by_label": {
+        "U": {
+         "lexical: unknown content word": 48,
+         "structure: predicate with no object (cannot match a stored [a": 1,
+         "guard: relation word after an article": 2
+        },
+        "B": {
+         "guard: relation word after an article": 1,
+         "lexical: unknown content word": 25,
+         "structure: predicate with no object (cannot match a stored [a": 1
+        },
+        "F": {
+         "KEPT": 19,
+         "lexical: unknown content word": 20,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "N": {
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "four_plus": {
+      "stock": {
+       "n_unique": 156,
+       "by_label": {
+        "B": {
+         "REJECTED": 19,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 49,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 25,
+         "UNBUILDABLE": 21
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 19,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "lexical: unknown content word": 49,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "lexical: unknown content word": 24,
+         "UNBUILDABLE": 21,
+         "structure: predicate with no resolvable subject (dangling)": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      },
+      "b2h": {
+       "n_unique": 156,
+       "by_label": {
+        "B": {
+         "REJECTED": 19,
+         "UNBUILDABLE": 10
+        },
+        "U": {
+         "REJECTED": 49,
+         "UNBUILDABLE": 32
+        },
+        "F": {
+         "REJECTED": 19,
+         "UNBUILDABLE": 21,
+         "KEPT": 6
+        }
+       },
+       "stage_by_label": {
+        "B": {
+         "lexical: unknown content word": 16,
+         "guard: relation word after an article": 2,
+         "UNBUILDABLE": 10,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "U": {
+         "lexical: unknown content word": 35,
+         "guard: relation word after an article": 13,
+         "UNBUILDABLE": 32,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        },
+        "F": {
+         "lexical: unknown content word": 17,
+         "UNBUILDABLE": 21,
+         "KEPT": 6,
+         "guard: relation word after an article": 1,
+         "structure: bare noun phrase not attached to any predicate (da": 1
+        }
+       },
+       "stage_by_variant": null,
+       "kept_lenient_leaks": [],
+       "kept_strict_extra_B": []
+      }
+     },
+     "unbuildable_turns": [
+      "s3a05",
+      "s3a11",
+      "s3a17",
+      "s3a18",
+      "s3a20",
+      "s3a21",
+      "s3a25"
+     ],
+     "unbuildable_unique_sentences": 63,
+     "unbuildable_stock_equals_b2h": true
+    }
+   },
+   "summary": {
+    "all": {
+     "stock": {
+      "buildable_unique_sentences": 212,
+      "labels_in_buildable": {
+       "B": 46,
+       "U": 100,
+       "F": 65,
+       "N": 1
+      },
+      "lenient_unsupported_n": 101,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.0297029702970297,
+      "strict_unsupported_n": 147,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": 0.02040816326530612,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 0
+     },
+     "b2h": {
+      "buildable_unique_sentences": 212,
+      "labels_in_buildable": {
+       "B": 46,
+       "U": 100,
+       "F": 65,
+       "N": 1
+      },
+      "lenient_unsupported_n": 101,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.0297029702970297,
+      "strict_unsupported_n": 147,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": 0.02040816326530612,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 25
+     }
+    },
+    "one_fact": {
+     "stock": {
+      "buildable_unique_sentences": 65,
+      "labels_in_buildable": {
+       "U": 26,
+       "F": 21,
+       "B": 17,
+       "N": 1
+      },
+      "lenient_unsupported_n": 27,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.1111111111111111,
+      "strict_unsupported_n": 44,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": 0.06818181818181818,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 0
+     },
+     "b2h": {
+      "buildable_unique_sentences": 65,
+      "labels_in_buildable": {
+       "U": 26,
+       "F": 21,
+       "B": 17,
+       "N": 1
+      },
+      "lenient_unsupported_n": 27,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.1111111111111111,
+      "strict_unsupported_n": 44,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": 0.06818181818181818,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 12
+     }
+    },
+    "S3_member_1to3": {
+     "stock": {
+      "buildable_unique_sentences": 119,
+      "labels_in_buildable": {
+       "U": 51,
+       "B": 27,
+       "F": 40,
+       "N": 1
+      },
+      "lenient_unsupported_n": 52,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.057692307692307696,
+      "strict_unsupported_n": 79,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": 0.0379746835443038,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 0
+     },
+     "b2h": {
+      "buildable_unique_sentences": 119,
+      "labels_in_buildable": {
+       "U": 51,
+       "B": 27,
+       "F": 40,
+       "N": 1
+      },
+      "lenient_unsupported_n": 52,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.057692307692307696,
+      "strict_unsupported_n": 79,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": 0.0379746835443038,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 19
+     }
+    },
+    "four_plus": {
+     "stock": {
+      "buildable_unique_sentences": 93,
+      "labels_in_buildable": {
+       "B": 19,
+       "U": 49,
+       "F": 25
+      },
+      "lenient_unsupported_n": 49,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.061224489795918366,
+      "strict_unsupported_n": 68,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": 0.04411764705882353,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 0
+     },
+     "b2h": {
+      "buildable_unique_sentences": 93,
+      "labels_in_buildable": {
+       "B": 19,
+       "U": 49,
+       "F": 25
+      },
+      "lenient_unsupported_n": 49,
+      "lenient_leaks_any_seed": 0,
+      "lenient_upper95": 0.061224489795918366,
+      "strict_unsupported_n": 68,
+      "strict_leaks_any_seed": 0,
+      "strict_upper95": 0.04411764705882353,
+      "lenient_leak_sentences": [],
+      "strict_leak_sentences": [],
+      "answered_F_kept_seed42": 6
+     }
+    }
+   }
+  }
+ }
+}

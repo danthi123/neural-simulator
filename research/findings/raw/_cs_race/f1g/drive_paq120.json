@@ -1,0 +1,3461 @@
+{
+  "backend": "numpy",
+  "cell_pass_drive": false,
+  "device": "cpu",
+  "drive": {
+    "criterion": "every cell of every mention slot fires >=1 spike within a 50 ms word AND >=1 spike in a 150 ms pulse, on 8/8 seeds (RULING cs-race-f1g-0b-1022 (1))",
+    "cue_pa_reported_only": 60.0,
+    "trace_off": {
+      "W_IM": 0.0,
+      "W_MM": 0.0
+    }
+  },
+  "flags": {
+    "NIM": 8,
+    "W_IM": 0.0,
+    "W_MI": 0.0,
+    "W_MM": 0.0,
+    "encode_words": false
+  },
+  "grid": {
+    "NE": 16,
+    "U": 0.15,
+    "tau_f": 50.0
+  },
+  "grid_row": 0,
+  "ment_pa": 120.0,
+  "mode": "f1g_step0c_drive",
+  "per_seed": [
+    {
+      "cue_events": [
+        {
+          "min_cell_spikes": 2,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            3,
+            5,
+            2,
+            2,
+            2,
+            3,
+            2
+          ],
+          "total_spikes": 22,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            2,
+            2,
+            1,
+            2,
+            1,
+            2
+          ],
+          "total_spikes": 12,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            2,
+            2,
+            3,
+            2,
+            1,
+            2
+          ],
+          "total_spikes": 16,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            2,
+            0,
+            0,
+            2,
+            2,
+            2,
+            2
+          ],
+          "total_spikes": 11,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            4,
+            2,
+            2,
+            1,
+            2,
+            2,
+            2
+          ],
+          "total_spikes": 16,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            0,
+            3,
+            3,
+            2,
+            6,
+            2,
+            2
+          ],
+          "total_spikes": 20,
+          "word": "graze"
+        }
+      ],
+      "min_150ms": 2,
+      "min_50ms": 1,
+      "n_150ms": 9,
+      "n_50ms": 9,
+      "pass_150ms": true,
+      "pass_50ms": true,
+      "pass_both": true,
+      "pulse_events": [
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "vole"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "frog"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            2,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 9,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "grass"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "graze"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            3,
+            3,
+            3,
+            3,
+            3,
+            2,
+            3
+          ],
+          "total_spikes": 22,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            4,
+            2,
+            3,
+            2,
+            3,
+            2,
+            3
+          ],
+          "total_spikes": 21,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            2,
+            2,
+            2,
+            5,
+            2,
+            3,
+            2
+          ],
+          "total_spikes": 21,
+          "word": "vole"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            4,
+            2,
+            2
+          ],
+          "total_spikes": 23,
+          "word": "frog"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            2,
+            4,
+            3,
+            3,
+            2,
+            2
+          ],
+          "total_spikes": 20,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            3,
+            5,
+            2,
+            7,
+            3,
+            3,
+            3
+          ],
+          "total_spikes": 29,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            2,
+            2,
+            3,
+            2,
+            3,
+            3,
+            2
+          ],
+          "total_spikes": 20,
+          "word": "grass"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            5,
+            2,
+            3,
+            3,
+            2,
+            2,
+            2
+          ],
+          "total_spikes": 22,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            5,
+            2,
+            4,
+            3,
+            2,
+            4,
+            2,
+            3
+          ],
+          "total_spikes": 25,
+          "word": "graze"
+        }
+      ],
+      "seed": 41,
+      "zero_spike_150ms": 0,
+      "zero_spike_50ms": 0
+    },
+    {
+      "cue_events": [
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            3,
+            1,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "total_spikes": 16,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            4,
+            2,
+            1,
+            3,
+            2,
+            2,
+            4
+          ],
+          "total_spikes": 20,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            4,
+            3,
+            2,
+            2,
+            2,
+            1,
+            3
+          ],
+          "total_spikes": 20,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            5,
+            2,
+            3,
+            1,
+            1,
+            2
+          ],
+          "total_spikes": 18,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            2,
+            1,
+            1,
+            3,
+            2,
+            2,
+            2
+          ],
+          "total_spikes": 14,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            2,
+            1,
+            2,
+            1,
+            2,
+            1,
+            2
+          ],
+          "total_spikes": 14,
+          "word": "graze"
+        }
+      ],
+      "min_150ms": 1,
+      "min_50ms": 0,
+      "n_150ms": 9,
+      "n_50ms": 9,
+      "pass_150ms": true,
+      "pass_50ms": false,
+      "pass_both": false,
+      "pulse_events": [
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "vole"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "frog"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 7,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 7,
+          "word": "grass"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "graze"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            3,
+            3,
+            3,
+            2,
+            2,
+            3,
+            3
+          ],
+          "total_spikes": 22,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            3,
+            3,
+            4,
+            3,
+            2,
+            3,
+            2
+          ],
+          "total_spikes": 22,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            3,
+            2,
+            2,
+            1,
+            2,
+            2,
+            2
+          ],
+          "total_spikes": 16,
+          "word": "vole"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            2,
+            2,
+            2,
+            3,
+            2,
+            3,
+            3
+          ],
+          "total_spikes": 20,
+          "word": "frog"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            3,
+            2,
+            4,
+            2,
+            2,
+            2
+          ],
+          "total_spikes": 19,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            4,
+            2,
+            4,
+            2,
+            2,
+            3,
+            2,
+            2
+          ],
+          "total_spikes": 21,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            2,
+            2,
+            3,
+            3,
+            2,
+            2,
+            3
+          ],
+          "total_spikes": 20,
+          "word": "grass"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            3,
+            2,
+            2,
+            3,
+            2,
+            3,
+            5
+          ],
+          "total_spikes": 23,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            3,
+            3,
+            2,
+            2,
+            3,
+            4,
+            3
+          ],
+          "total_spikes": 23,
+          "word": "graze"
+        }
+      ],
+      "seed": 42,
+      "zero_spike_150ms": 0,
+      "zero_spike_50ms": 2
+    },
+    {
+      "cue_events": [
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            3,
+            2,
+            2,
+            2,
+            2,
+            3,
+            2
+          ],
+          "total_spikes": 17,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            2,
+            1,
+            0,
+            2,
+            3,
+            3
+          ],
+          "total_spikes": 15,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            2,
+            6,
+            2,
+            2,
+            1,
+            1,
+            2
+          ],
+          "total_spikes": 19,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            2,
+            1,
+            2,
+            1,
+            2,
+            2,
+            4
+          ],
+          "total_spikes": 17,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            2,
+            2,
+            1,
+            0,
+            3,
+            2,
+            1
+          ],
+          "total_spikes": 12,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            3,
+            2,
+            3,
+            4,
+            2,
+            2,
+            2
+          ],
+          "total_spikes": 20,
+          "word": "graze"
+        }
+      ],
+      "min_150ms": 2,
+      "min_50ms": 0,
+      "n_150ms": 9,
+      "n_50ms": 9,
+      "pass_150ms": true,
+      "pass_50ms": false,
+      "pass_both": false,
+      "pulse_events": [
+        {
+          "min_cell_spikes": 0,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            1
+          ],
+          "total_spikes": 7,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "vole"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "frog"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "grass"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "graze"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            4,
+            4,
+            3,
+            2,
+            2,
+            3
+          ],
+          "total_spikes": 22,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            2,
+            3,
+            4,
+            3,
+            2,
+            2,
+            3
+          ],
+          "total_spikes": 22,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            4,
+            2,
+            2,
+            3,
+            4,
+            3
+          ],
+          "total_spikes": 22,
+          "word": "vole"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            3
+          ],
+          "total_spikes": 18,
+          "word": "frog"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            3,
+            3,
+            3,
+            3,
+            3,
+            2,
+            2
+          ],
+          "total_spikes": 21,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            4,
+            3,
+            2,
+            2,
+            2,
+            3,
+            4
+          ],
+          "total_spikes": 22,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            2,
+            2,
+            2,
+            3,
+            4,
+            2,
+            3
+          ],
+          "total_spikes": 21,
+          "word": "grass"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            3,
+            4,
+            2,
+            3,
+            2,
+            3,
+            3
+          ],
+          "total_spikes": 23,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            4,
+            3,
+            2,
+            3,
+            2,
+            2,
+            2,
+            3
+          ],
+          "total_spikes": 21,
+          "word": "graze"
+        }
+      ],
+      "seed": 43,
+      "zero_spike_150ms": 0,
+      "zero_spike_50ms": 1
+    },
+    {
+      "cue_events": [
+        {
+          "min_cell_spikes": 0,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            0,
+            3,
+            1,
+            1,
+            2,
+            1,
+            2,
+            2
+          ],
+          "total_spikes": 12,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            1,
+            0,
+            2,
+            1,
+            0,
+            2
+          ],
+          "total_spikes": 10,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            0,
+            2,
+            1,
+            3,
+            2,
+            1,
+            0
+          ],
+          "total_spikes": 11,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            3,
+            2,
+            3,
+            2,
+            1,
+            3,
+            3
+          ],
+          "total_spikes": 19,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            2,
+            3,
+            0,
+            2,
+            2,
+            2
+          ],
+          "total_spikes": 15,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            1,
+            2,
+            3,
+            2,
+            1,
+            2
+          ],
+          "total_spikes": 15,
+          "word": "graze"
+        }
+      ],
+      "min_150ms": 1,
+      "min_50ms": 1,
+      "n_150ms": 9,
+      "n_50ms": 9,
+      "pass_150ms": true,
+      "pass_50ms": true,
+      "pass_both": true,
+      "pulse_events": [
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "vole"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "frog"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "grass"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "graze"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            3,
+            3,
+            2,
+            2,
+            3,
+            2,
+            2
+          ],
+          "total_spikes": 19,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            3,
+            4,
+            3,
+            3,
+            2,
+            3,
+            2
+          ],
+          "total_spikes": 22,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            2,
+            3,
+            3,
+            2,
+            4,
+            3,
+            2
+          ],
+          "total_spikes": 22,
+          "word": "vole"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            4,
+            2,
+            2,
+            2,
+            4,
+            2
+          ],
+          "total_spikes": 20,
+          "word": "frog"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            4,
+            2,
+            1,
+            4,
+            2,
+            3,
+            2,
+            2
+          ],
+          "total_spikes": 20,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            4,
+            2,
+            3,
+            4,
+            2,
+            2,
+            2
+          ],
+          "total_spikes": 21,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            3,
+            2,
+            3,
+            3,
+            2,
+            3,
+            3
+          ],
+          "total_spikes": 22,
+          "word": "grass"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            4,
+            2,
+            4,
+            3,
+            4,
+            2,
+            5
+          ],
+          "total_spikes": 27,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            2,
+            4,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "total_spikes": 19,
+          "word": "graze"
+        }
+      ],
+      "seed": 44,
+      "zero_spike_150ms": 0,
+      "zero_spike_50ms": 0
+    },
+    {
+      "cue_events": [
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            1,
+            4,
+            1,
+            1,
+            2,
+            2,
+            2
+          ],
+          "total_spikes": 15,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            2,
+            1,
+            2,
+            2,
+            2,
+            2,
+            1
+          ],
+          "total_spikes": 15,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            3,
+            2,
+            2,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 14,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            2,
+            2,
+            2,
+            1,
+            2,
+            1,
+            2
+          ],
+          "total_spikes": 13,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            2,
+            2,
+            4,
+            1,
+            2,
+            4
+          ],
+          "total_spikes": 19,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            1,
+            2,
+            2,
+            3,
+            5,
+            3,
+            2
+          ],
+          "total_spikes": 20,
+          "word": "graze"
+        }
+      ],
+      "min_150ms": 2,
+      "min_50ms": 0,
+      "n_150ms": 9,
+      "n_50ms": 9,
+      "pass_150ms": true,
+      "pass_50ms": false,
+      "pass_both": false,
+      "pulse_events": [
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "vole"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 7,
+          "word": "frog"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "grass"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "graze"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            2,
+            3,
+            3,
+            3,
+            2,
+            3,
+            2
+          ],
+          "total_spikes": 21,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            4,
+            6
+          ],
+          "total_spikes": 22,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            3,
+            3
+          ],
+          "total_spikes": 18,
+          "word": "vole"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            2,
+            3,
+            2,
+            3,
+            3,
+            2
+          ],
+          "total_spikes": 19,
+          "word": "frog"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            2,
+            2,
+            3,
+            3,
+            3,
+            3,
+            3
+          ],
+          "total_spikes": 22,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            4,
+            3,
+            3,
+            2,
+            4,
+            4,
+            4
+          ],
+          "total_spikes": 27,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            3,
+            3,
+            4,
+            3,
+            3,
+            2,
+            3
+          ],
+          "total_spikes": 24,
+          "word": "grass"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            3,
+            3,
+            2,
+            4,
+            3,
+            4
+          ],
+          "total_spikes": 23,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            2,
+            2,
+            3,
+            3,
+            2,
+            2,
+            3
+          ],
+          "total_spikes": 20,
+          "word": "graze"
+        }
+      ],
+      "seed": 45,
+      "zero_spike_150ms": 0,
+      "zero_spike_50ms": 1
+    },
+    {
+      "cue_events": [
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            2,
+            2,
+            1,
+            4,
+            1,
+            3,
+            2
+          ],
+          "total_spikes": 16,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            0,
+            1,
+            3,
+            4,
+            0,
+            3,
+            2,
+            1
+          ],
+          "total_spikes": 14,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            2,
+            1,
+            2,
+            2,
+            2,
+            2,
+            1
+          ],
+          "total_spikes": 13,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            1,
+            2,
+            3,
+            3,
+            2,
+            2
+          ],
+          "total_spikes": 17,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            2,
+            2,
+            2,
+            2,
+            1,
+            2,
+            2
+          ],
+          "total_spikes": 14,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            1,
+            2,
+            2,
+            2,
+            3,
+            8,
+            2
+          ],
+          "total_spikes": 22,
+          "word": "graze"
+        }
+      ],
+      "min_150ms": 1,
+      "min_50ms": 0,
+      "n_150ms": 9,
+      "n_50ms": 9,
+      "pass_150ms": true,
+      "pass_50ms": false,
+      "pass_both": false,
+      "pulse_events": [
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 7,
+          "word": "vole"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "frog"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 9,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 7,
+          "word": "grass"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            1
+          ],
+          "total_spikes": 7,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "graze"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            5,
+            2,
+            3,
+            2,
+            2,
+            2,
+            4
+          ],
+          "total_spikes": 22,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            2,
+            5,
+            4,
+            2,
+            4,
+            2
+          ],
+          "total_spikes": 23,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            2,
+            2,
+            2,
+            3,
+            2,
+            2,
+            3
+          ],
+          "total_spikes": 17,
+          "word": "vole"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            2,
+            3,
+            3,
+            2,
+            3,
+            2,
+            1
+          ],
+          "total_spikes": 19,
+          "word": "frog"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            4,
+            3,
+            3,
+            2,
+            2,
+            3,
+            2
+          ],
+          "total_spikes": 22,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            7,
+            4,
+            3,
+            2,
+            3,
+            3,
+            2,
+            3
+          ],
+          "total_spikes": 27,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            4,
+            2,
+            2,
+            3,
+            2,
+            3,
+            3,
+            2
+          ],
+          "total_spikes": 21,
+          "word": "grass"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            4,
+            2,
+            3,
+            2,
+            3,
+            3,
+            3,
+            2
+          ],
+          "total_spikes": 22,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            4,
+            2,
+            3,
+            3,
+            3,
+            2,
+            2,
+            2
+          ],
+          "total_spikes": 21,
+          "word": "graze"
+        }
+      ],
+      "seed": 46,
+      "zero_spike_150ms": 0,
+      "zero_spike_50ms": 3
+    },
+    {
+      "cue_events": [
+        {
+          "min_cell_spikes": 0,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            2,
+            2,
+            0,
+            2,
+            1,
+            2,
+            3
+          ],
+          "total_spikes": 13,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            2,
+            3,
+            2,
+            2,
+            1,
+            2
+          ],
+          "total_spikes": 16,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            2,
+            3,
+            2,
+            2,
+            2,
+            3
+          ],
+          "total_spikes": 18,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            2,
+            2,
+            2,
+            3,
+            0,
+            2,
+            2
+          ],
+          "total_spikes": 16,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            1,
+            3,
+            2,
+            1,
+            3,
+            2,
+            2
+          ],
+          "total_spikes": 16,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            1,
+            3,
+            3,
+            2,
+            1,
+            2,
+            4
+          ],
+          "total_spikes": 18,
+          "word": "graze"
+        }
+      ],
+      "min_150ms": 2,
+      "min_50ms": 0,
+      "n_150ms": 9,
+      "n_50ms": 9,
+      "pass_150ms": true,
+      "pass_50ms": false,
+      "pass_both": false,
+      "pulse_events": [
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            1
+          ],
+          "total_spikes": 7,
+          "word": "vole"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 7,
+          "word": "frog"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "grass"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "graze"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            3,
+            2,
+            4,
+            5,
+            4,
+            3
+          ],
+          "total_spikes": 25,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            3,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "total_spikes": 18,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            2,
+            2,
+            3,
+            2,
+            3,
+            2,
+            2
+          ],
+          "total_spikes": 19,
+          "word": "vole"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            3,
+            2,
+            2,
+            3,
+            4,
+            2,
+            2
+          ],
+          "total_spikes": 20,
+          "word": "frog"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            3,
+            3,
+            3,
+            3,
+            3,
+            2
+          ],
+          "total_spikes": 21,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            3,
+            2,
+            4,
+            2,
+            3,
+            3,
+            3
+          ],
+          "total_spikes": 22,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            4,
+            2,
+            3,
+            4,
+            2,
+            2,
+            2
+          ],
+          "total_spikes": 21,
+          "word": "grass"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            3,
+            2,
+            3,
+            3,
+            4,
+            3,
+            3
+          ],
+          "total_spikes": 24,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            4,
+            3,
+            2,
+            3,
+            5,
+            2,
+            2,
+            3
+          ],
+          "total_spikes": 24,
+          "word": "graze"
+        }
+      ],
+      "seed": 47,
+      "zero_spike_150ms": 0,
+      "zero_spike_50ms": 2
+    },
+    {
+      "cue_events": [
+        {
+          "min_cell_spikes": 0,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            2,
+            3,
+            0,
+            2,
+            2,
+            3,
+            0
+          ],
+          "total_spikes": 13,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            3,
+            2,
+            5,
+            2,
+            0,
+            1,
+            2
+          ],
+          "total_spikes": 17,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            4,
+            1,
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "total_spikes": 17,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            0,
+            2,
+            2,
+            3,
+            1,
+            2,
+            1,
+            2
+          ],
+          "total_spikes": 13,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            0,
+            2,
+            2,
+            2,
+            2,
+            1,
+            2,
+            1
+          ],
+          "total_spikes": 12,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 500,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            1,
+            1,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "total_spikes": 14,
+          "word": "graze"
+        }
+      ],
+      "min_150ms": 1,
+      "min_50ms": 0,
+      "n_150ms": 9,
+      "n_50ms": 9,
+      "pass_150ms": true,
+      "pass_50ms": false,
+      "pass_both": false,
+      "pulse_events": [
+        {
+          "min_cell_spikes": 0,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 7,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "vole"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0
+          ],
+          "total_spikes": 7,
+          "word": "frog"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "grass"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 8,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 0,
+          "ms": 50,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "total_spikes": 7,
+          "word": "graze"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            3,
+            2,
+            2,
+            5,
+            2,
+            3,
+            2
+          ],
+          "total_spikes": 21,
+          "word": "lynx"
+        },
+        {
+          "min_cell_spikes": 1,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            1,
+            2,
+            3,
+            3,
+            2,
+            4,
+            2,
+            2
+          ],
+          "total_spikes": 19,
+          "word": "chase"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            4,
+            4,
+            2,
+            4,
+            3,
+            3,
+            3,
+            2
+          ],
+          "total_spikes": 25,
+          "word": "vole"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            4,
+            3,
+            2,
+            3,
+            3,
+            2,
+            3,
+            2
+          ],
+          "total_spikes": 22,
+          "word": "frog"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            3,
+            3,
+            2,
+            2,
+            2,
+            2,
+            3
+          ],
+          "total_spikes": 19,
+          "word": "yak"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            3,
+            2,
+            3,
+            2,
+            2,
+            2,
+            2
+          ],
+          "total_spikes": 18,
+          "word": "eat"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            4,
+            3,
+            3,
+            2,
+            2,
+            4,
+            2,
+            3
+          ],
+          "total_spikes": 23,
+          "word": "grass"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            3,
+            4,
+            3,
+            2,
+            3,
+            2,
+            3,
+            2
+          ],
+          "total_spikes": 22,
+          "word": "moose"
+        },
+        {
+          "min_cell_spikes": 2,
+          "ms": 150,
+          "n_cells": 8,
+          "per_cell_spikes": [
+            2,
+            2,
+            2,
+            3,
+            2,
+            2,
+            2,
+            3
+          ],
+          "total_spikes": 18,
+          "word": "graze"
+        }
+      ],
+      "seed": 48,
+      "zero_spike_150ms": 0,
+      "zero_spike_50ms": 3
+    }
+  ],
+  "preconditions": {
+    "calibration_seeds": "41-48 only; no DEV/CONFIRM arm has run on them",
+    "frozen_selection": "smallest W_MM, then smallest W_IM among cells passing C1-C4 on 8/8 seeds",
+    "grid_row": 3,
+    "no_race": "cue withheld in every calibration run",
+    "thresholds_frozen_in_packet": {
+      "C0_min_spikes_per_cell": "1 (RULING cs-race-f1g-0-1022 C)",
+      "C1_hz": [
+        2.0,
+        20.0
+      ],
+      "STOP_SMOKE_pa": 2.0,
+      "flip_scale_pa": [
+        4.0,
+        6.0
+      ],
+      "quiet_hz": 1.0
+    },
+    "w_gis": 0.0
+  },
+  "probe": "cs_race_f1",
+  "record_label": {
+    "latch_exclusion_w_gis": 0.0
+  },
+  "seeds": [
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48
+  ],
+  "seeds_passing_both": 2,
+  "stop_preview": {
+    "STOP_DRIVE": true,
+    "note": "cue report read-only; cue stays 60 (RULING cs-race-f1g-0b-1022 (1))"
+  }
+}
