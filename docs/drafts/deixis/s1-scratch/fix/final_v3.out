@@ -1,0 +1,73 @@
+== 1. every arm, same grid, T=4800, dev seeds 1-15 (counts = seeds passing)
+cov     lt= 1 {'S0_fire': 0, 'S0_silent': 15, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S2b_classmax': 6, 'S3': 15, 'S4': 14, 'S5': 15} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.02, max silent(W) med 0.02, max leak(H) med 0.03
+cov     lt= 2 {'S0_fire': 0, 'S0_silent': 15, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S2b_classmax': 6, 'S3': 15, 'S4': 14, 'S5': 15} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.03, max silent(W) med 0.04, max leak(H) med 0.06
+cov     lt= 3 {'S0_fire': 0, 'S0_silent': 15, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S2b_classmax': 6, 'S3': 15, 'S4': 14, 'S5': 15} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.05, max silent(W) med 0.06, max leak(H) med 0.10
+cov     lt= 4 {'S0_fire': 0, 'S0_silent': 15, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S2b_classmax': 6, 'S3': 15, 'S4': 14, 'S5': 15} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.06, max silent(W) med 0.08, max leak(H) med 0.13
+cov     lt= 6 {'S0_fire': 0, 'S0_silent': 15, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S2b_classmax': 6, 'S3': 15, 'S4': 14, 'S5': 15} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.09, max silent(W) med 0.12, max leak(H) med 0.19
+cov     lt= 9 {'S0_fire': 0, 'S0_silent': 11, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S2b_classmax': 6, 'S3': 15, 'S4': 12, 'S5': 15} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.14, max silent(W) med 0.18, max leak(H) med 0.29
+cov     lt=12 {'S0_fire': 0, 'S0_silent': 1, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S2b_classmax': 6, 'S3': 15, 'S4': 10, 'S5': 15} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.19, max silent(W) med 0.24, max leak(H) med 0.38
+cov     lt=18 {'S0_fire': 0, 'S0_silent': 0, 'S1': 15, 'S2a': 2, 'S2b': 15, 'S2b_classmax': 6, 'S3': 15, 'S4': 9, 'S5': 15} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.28, max silent(W) med 0.37, max leak(H) med 0.57
+  => cov grid centre lt=1 (ALL null-free 0, with nulls 0)
+covpre  lt= 1 {'S0_fire': 0, 'S0_silent': 15, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S2b_classmax': 15, 'S3': 15, 'S4': 15, 'S5': 15} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.16, max silent(W) med 0.06, max leak(H) med 0.16
+covpre  lt= 2 {'S0_fire': 0, 'S0_silent': 15, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S2b_classmax': 15, 'S3': 15, 'S4': 15, 'S5': 15} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.29, max silent(W) med 0.09, max leak(H) med 0.19
+covpre  lt= 3 {'S0_fire': 5, 'S0_silent': 15, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S2b_classmax': 15, 'S3': 15, 'S4': 15, 'S5': 15} ALL(null bars)  5 ALL(null-free)  5 | min fire med 0.39, max silent(W) med 0.10, max leak(H) med 0.20
+covpre  lt= 4 {'S0_fire': 15, 'S0_silent': 15, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S2b_classmax': 15, 'S3': 15, 'S4': 15, 'S5': 15} ALL(null bars) 15 ALL(null-free) 15 | min fire med 0.46, max silent(W) med 0.11, max leak(H) med 0.22
+covpre  lt= 6 {'S0_fire': 15, 'S0_silent': 15, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S2b_classmax': 15, 'S3': 15, 'S4': 13, 'S5': 15} ALL(null bars) 13 ALL(null-free) 15 | min fire med 0.57, max silent(W) med 0.13, max leak(H) med 0.24
+covpre  lt= 9 {'S0_fire': 15, 'S0_silent': 15, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S2b_classmax': 15, 'S3': 14, 'S4': 13, 'S5': 14} ALL(null bars) 12 ALL(null-free) 14 | min fire med 0.57, max silent(W) med 0.15, max leak(H) med 0.25
+covpre  lt=12 {'S0_fire': 15, 'S0_silent': 14, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S2b_classmax': 15, 'S3': 14, 'S4': 14, 'S5': 13} ALL(null bars) 11 ALL(null-free) 12 | min fire med 0.57, max silent(W) med 0.16, max leak(H) med 0.26
+covpre  lt=18 {'S0_fire': 15, 'S0_silent': 11, 'S1': 15, 'S2a': 15, 'S2b': 15, 'S2b_classmax': 15, 'S3': 15, 'S4': 14, 'S5': 12} ALL(null bars)  9 ALL(null-free)  9 | min fire med 0.57, max silent(W) med 0.19, max leak(H) med 0.28
+  => covpre grid centre lt=4 (ALL null-free 15, with nulls 15)
+hebb    lt= 1 {'S0_fire': 0, 'S0_silent': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S2b_classmax': 0, 'S3': 15, 'S4': 0, 'S5': 15} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.02, max silent(W) med 0.31, max leak(H) med 0.11
+hebb    lt= 2 {'S0_fire': 0, 'S0_silent': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S2b_classmax': 0, 'S3': 15, 'S4': 0, 'S5': 15} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.04, max silent(W) med 0.62, max leak(H) med 0.21
+hebb    lt= 3 {'S0_fire': 0, 'S0_silent': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S2b_classmax': 0, 'S3': 15, 'S4': 0, 'S5': 15} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.06, max silent(W) med 0.93, max leak(H) med 0.32
+hebb    lt= 4 {'S0_fire': 0, 'S0_silent': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S2b_classmax': 0, 'S3': 15, 'S4': 0, 'S5': 15} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.08, max silent(W) med 1.00, max leak(H) med 0.42
+hebb    lt= 6 {'S0_fire': 0, 'S0_silent': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S2b_classmax': 0, 'S3': 15, 'S4': 0, 'S5': 15} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.13, max silent(W) med 1.00, max leak(H) med 0.63
+hebb    lt= 9 {'S0_fire': 0, 'S0_silent': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S2b_classmax': 0, 'S3': 15, 'S4': 0, 'S5': 13} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.19, max silent(W) med 1.00, max leak(H) med 0.92
+hebb    lt=12 {'S0_fire': 0, 'S0_silent': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S2b_classmax': 0, 'S3': 15, 'S4': 0, 'S5': 8} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.25, max silent(W) med 1.00, max leak(H) med 0.99
+hebb    lt=18 {'S0_fire': 7, 'S0_silent': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S2b_classmax': 0, 'S3': 15, 'S4': 0, 'S5': 2} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.38, max silent(W) med 1.00, max leak(H) med 0.99
+  => hebb grid centre lt=1 (ALL null-free 0, with nulls 0)
+hebbwta lt= 1 {'S0_fire': 0, 'S0_silent': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S2b_classmax': 0, 'S3': 15, 'S4': 0, 'S5': 12} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.00, max silent(W) med 0.31, max leak(H) med 0.11
+hebbwta lt= 2 {'S0_fire': 0, 'S0_silent': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S2b_classmax': 0, 'S3': 15, 'S4': 0, 'S5': 12} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.00, max silent(W) med 0.62, max leak(H) med 0.21
+hebbwta lt= 3 {'S0_fire': 0, 'S0_silent': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S2b_classmax': 0, 'S3': 15, 'S4': 0, 'S5': 12} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.00, max silent(W) med 0.91, max leak(H) med 0.32
+hebbwta lt= 4 {'S0_fire': 0, 'S0_silent': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S2b_classmax': 0, 'S3': 15, 'S4': 0, 'S5': 12} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.00, max silent(W) med 0.99, max leak(H) med 0.42
+hebbwta lt= 6 {'S0_fire': 0, 'S0_silent': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S2b_classmax': 0, 'S3': 15, 'S4': 0, 'S5': 12} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.00, max silent(W) med 1.00, max leak(H) med 0.63
+hebbwta lt= 9 {'S0_fire': 0, 'S0_silent': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S2b_classmax': 0, 'S3': 15, 'S4': 0, 'S5': 12} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.00, max silent(W) med 1.00, max leak(H) med 0.92
+hebbwta lt=12 {'S0_fire': 0, 'S0_silent': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S2b_classmax': 0, 'S3': 15, 'S4': 0, 'S5': 12} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.00, max silent(W) med 1.00, max leak(H) med 0.99
+hebbwta lt=18 {'S0_fire': 0, 'S0_silent': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S2b_classmax': 0, 'S3': 15, 'S4': 0, 'S5': 12} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.00, max silent(W) med 1.00, max leak(H) med 0.99
+  => hebbwta grid centre lt=1 (ALL null-free 0, with nulls 0)
+bcm     lt= 1 {'S0_fire': 0, 'S0_silent': 15, 'S1': 11, 'S2a': 5, 'S2b': 15, 'S2b_classmax': 0, 'S3': 15, 'S4': 2, 'S5': 15} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.02, max silent(W) med 0.12, max leak(H) med 0.06
+bcm     lt= 2 {'S0_fire': 0, 'S0_silent': 0, 'S1': 11, 'S2a': 5, 'S2b': 15, 'S2b_classmax': 0, 'S3': 15, 'S4': 2, 'S5': 15} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.03, max silent(W) med 0.24, max leak(H) med 0.12
+bcm     lt= 3 {'S0_fire': 0, 'S0_silent': 0, 'S1': 11, 'S2a': 5, 'S2b': 15, 'S2b_classmax': 0, 'S3': 15, 'S4': 2, 'S5': 15} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.05, max silent(W) med 0.36, max leak(H) med 0.18
+bcm     lt= 4 {'S0_fire': 0, 'S0_silent': 0, 'S1': 11, 'S2a': 5, 'S2b': 15, 'S2b_classmax': 0, 'S3': 15, 'S4': 2, 'S5': 15} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.06, max silent(W) med 0.48, max leak(H) med 0.24
+bcm     lt= 6 {'S0_fire': 0, 'S0_silent': 0, 'S1': 11, 'S2a': 5, 'S2b': 15, 'S2b_classmax': 0, 'S3': 15, 'S4': 2, 'S5': 15} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.09, max silent(W) med 0.72, max leak(H) med 0.36
+bcm     lt= 9 {'S0_fire': 0, 'S0_silent': 0, 'S1': 11, 'S2a': 1, 'S2b': 5, 'S2b_classmax': 0, 'S3': 15, 'S4': 0, 'S5': 15} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.14, max silent(W) med 0.99, max leak(H) med 0.54
+bcm     lt=12 {'S0_fire': 0, 'S0_silent': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S2b_classmax': 0, 'S3': 15, 'S4': 0, 'S5': 14} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.19, max silent(W) med 1.00, max leak(H) med 0.72
+bcm     lt=18 {'S0_fire': 0, 'S0_silent': 0, 'S1': 0, 'S2a': 0, 'S2b': 0, 'S2b_classmax': 0, 'S3': 15, 'S4': 0, 'S5': 8} ALL(null bars)  0 ALL(null-free)  0 | min fire med 0.28, max silent(W) med 1.00, max leak(H) med 0.96
+  => bcm grid centre lt=1 (ALL null-free 0, with nulls 0)
+== 2. per-seed pass rate, dev seeds 1-60, each arm at its own grid centre
+  covpre  lt=4 q(ALL null-free)=1.000 q(with nulls)=0.983 per-bar {'S0': np.float64(1.0), 'S1': np.float64(1.0), 'S2a': 1.0, 'S2b_nf': 1.0, 'S3_nf': 1.0, 'S4_nf': 1.0, 'S5_nf': np.float64(1.0)} P(>=14/15)=1.0000 P(>=13/15)=1.0000
+  cov     lt=1 q(ALL null-free)=0.000 q(with nulls)=0.000 per-bar {'S0': 0.0, 'S1': np.float64(1.0), 'S2a': 0.983, 'S2b_nf': 1.0, 'S3_nf': 1.0, 'S4_nf': 1.0, 'S5_nf': np.float64(1.0)} P(>=14/15)=0.0000 P(>=13/15)=0.0000
+  bcm     lt=1 q(ALL null-free)=0.000 q(with nulls)=0.000 per-bar {'S0': 0.0, 'S1': np.float64(0.733), 'S2a': 0.217, 'S2b_nf': 1.0, 'S3_nf': 1.0, 'S4_nf': 0.133, 'S5_nf': np.float64(1.0)} P(>=14/15)=0.0000 P(>=13/15)=0.0000
+  hebb    lt=1 q(ALL null-free)=0.000 q(with nulls)=0.000 per-bar {'S0': 0.0, 'S1': np.float64(0.0), 'S2a': 0.0, 'S2b_nf': 0.0, 'S3_nf': 0.0, 'S4_nf': 0.0, 'S5_nf': np.float64(1.0)} P(>=14/15)=0.0000 P(>=13/15)=0.0000
+  hebbwta lt=1 q(ALL null-free)=0.000 q(with nulls)=0.000 per-bar {'S0': 0.0, 'S1': np.float64(0.0), 'S2a': 0.0, 'S2b_nf': 0.0, 'S3_nf': 0.0, 'S4_nf': 0.0, 'S5_nf': np.float64(0.933)} P(>=14/15)=0.0000 P(>=13/15)=0.0000
+== 3. nulls on the GO candidate (covpre lt=4): each must FAIL the GO bars
+  label  {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b_nf': 15, 'S3_nf': 15, 'S4_nf': 0, 'S5_nf': 6} ALL 0/15
+  scene  {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b_nf': 0, 'S3_nf': 15, 'S4_nf': 0, 'S5_nf': 1} ALL 0/15
+  k0     {'S0': 0, 'S1': 15, 'S2a': 15, 'S2b_nf': 15, 'S3_nf': 15, 'S4_nf': 15, 'S5_nf': 15} ALL 0/15
+  voice  {'S0': 0, 'S1': 0, 'S2a': 0, 'S2b_nf': 15, 'S3_nf': 15, 'S4_nf': 0, 'S5_nf': 1} ALL 0/15
+== 4. dose curves (covpre lt=4), medians over 15 seeds
+  overheard 0.00: SHA->E_SELF 0.571 (theta_silent 0.20) ALL 0/15
+  overheard 0.25: SHA->E_SELF 0.427 (theta_silent 0.20) ALL 0/15
+  overheard 0.50: SHA->E_SELF 0.262 (theta_silent 0.20) ALL 15/15
+  overheard 0.60: SHA->E_SELF 0.182 (theta_silent 0.20) ALL 15/15
+  overheard 0.75: SHA->E_SELF 0.081 (theta_silent 0.20) ALL 14/15
+  speaking voices 1: SHS->best E 0.436
+  speaking voices 2: SHS->best E 0.178
+  speaking voices 3: SHS->best E 0.114
+  speaking voices 5: SHS->best E 0.079
+  turn-taking p=0.0: PREV->ADR / SHA->ADR 0.086
+  turn-taking p=0.3: PREV->ADR / SHA->ADR 0.147
+  turn-taking p=0.6: PREV->ADR / SHA->ADR 0.282
+  turn-taking p=0.9: PREV->ADR / SHA->ADR 0.367
+== 5. convergence (covpre lt=4): weights at 2/3 vs full exposure
+  pointer targets within 20%: 0.903 of (token, pool, seed); non-decreasing (tol 0.05): 1.000

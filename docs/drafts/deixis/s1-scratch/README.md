@@ -1,0 +1,1 @@
+Scratch result JSONs (forecasts, no provenance sidecar) are kept off the repo; each number they hold is printed in the matching .out file. Step 0a regenerates every one as a provenance-stamped module run.

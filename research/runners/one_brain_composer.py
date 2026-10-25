@@ -612,6 +612,9 @@ class OneBrainComposer:
             self._recruited_slots = {}
         self._recruited_slots[w] = s
         self._dg_index = None; self._dg_built_V = -1         # codebook mutated -> rebuild the DG index on next read
+        cache = getattr(self, "_csr_cache", None)
+        if cache is not None:
+            cache.clear()                                    # the slot was silent (unwired) until now -> wire it on the next read
         return True
 
     def recruited_slots(self) -> dict:
@@ -982,6 +985,18 @@ class OneBrainComposer:
         zr = comp._to_phasor(comp.roles[role])
         return comp._local_conj(zr) if self.local_reciprocal_unbind else np.conj(zr)
 
+    def _silent_reserve(self, j):
+        """True iff cleanup slot `j` is an UNRECRUITED reserve slot (`vocab_headroom`): `self.words[j]` is still its
+        `__free<k>__` placeholder. A reserve slot is an uncommitted assembly whose synapses are SILENT until it is
+        recruited, so every cleanup-wiring loop skips it: with no input its cleanup cell stays at rest and scores exactly
+        0, and a real word with any positive score wins. (Before this, the placeholder's random code was wired like a
+        word's and at the shipped headroom 128 an empty slot out-scored the true word: `__free10__` 5270 vs `look`
+        4080, seed 42, clause read.) `_recruit_word` / `restore_recruit` rename the slot to the real word, which ends
+        the silence and drops the cached cleanup operator so the next read wires it. Always False at
+        `vocab_headroom=0` (no placeholder exists), so that layout is unchanged. The single definition of the rule."""
+        w = self.words[j]
+        return isinstance(w, str) and w.startswith("__free")
+
     def _cleanup_conj(self, concept_word):
         """The CLEANUP / matched-filter codebook synapse weight phasor for `concept_word` = conj(concept phasor) --
         so the recovered phasor correlates against each concept's CONJUGATE (the matched filter = the transpose/
@@ -1108,6 +1123,8 @@ class OneBrainComposer:
         clean = []
         for ri, role in enumerate(self.main_roles):                     # main roles -> the main vocab codebook
             for j in range(V):
+                if self._silent_reserve(j):                              # uncommitted reserve slot: no cleanup synapses
+                    continue
                 cc = self._cleanup_conj(self.words[j])                   # local reciprocal rule when ON; conj when OFF
                 clean += [(self.c_base + ri * V + j, self.q_base + ri * D + k, complex(cc[k])) for k in range(D)]
         pol_ri = self.bind_roles.index("polarity")                      # polarity role -> the 2-word polarity codebook
@@ -1147,6 +1164,8 @@ class OneBrainComposer:
             for ri in range(nm):                                          # main roles -> the main vocab codebook
                 qreg = self.bat_q_base + (i * nr + ri) * D
                 for j in range(V):
+                    if self._silent_reserve(j):                            # uncommitted reserve slot: no cleanup synapses
+                        continue
                     cc = self._cleanup_conj(self.words[j])                 # local reciprocal rule when ON; conj when OFF
                     clean += [(cblk + ri * V + j, qreg + k, complex(cc[k])) for k in range(D)]
             qreg_p = self.bat_q_base + (i * nr + pol_ri) * D              # polarity role -> the polarity codebook
@@ -1242,6 +1261,8 @@ class OneBrainComposer:
             for ri in range(nm):
                 qreg = self.bat_q_base + (i * nr + ri) * D
                 for j in range(V):
+                    if self._silent_reserve(j):                            # uncommitted reserve slot: no cleanup synapses
+                        continue
                     cc = self._cleanup_conj(self.words[j])                 # local reciprocal rule when ON; conj when OFF
                     clean += [(cblk + ri * V + j, qreg + k, complex(cc[k])) for k in range(D)]
             qreg_p = self.bat_q_base + (i * nr + pol_ri) * D
@@ -1518,6 +1539,8 @@ class OneBrainComposer:
         clean = []
         for ri, role in enumerate(self.main_roles):
             for j in range(V):
+                if self._silent_reserve(j):                                # uncommitted reserve slot: no cleanup synapses
+                    continue
                 cc = self._cleanup_conj(self.words[j])
                 clean += [(self.c_base + ri * V + j, self.q_base + ri * D + k, complex(cc[k])) for k in range(D)]
         pol_ri = self.bind_roles.index("polarity")
@@ -1608,6 +1631,8 @@ class OneBrainComposer:
         clean = []
         for ri in range(len(self.main_roles)):
             for j in range(V):
+                if self._silent_reserve(j):                                # uncommitted reserve slot: no cleanup synapses
+                    continue
                 cc = np.conj(comp._to_phasor(comp.concepts[self.words[j]]))
                 clean += [(self.c_base + ri * V + j, self.q_base + ri * D + k, complex(cc[k])) for k in range(D)]
         self._seq_cleanup_conns_cache = clean
@@ -1735,12 +1760,17 @@ class OneBrainComposer:
         clean = []
         for ri in range(3):
             for j in range(V):
+                if self._silent_reserve(j):                                # uncommitted reserve slot: no cleanup synapses
+                    continue
                 cc = self._cleanup_conj(self.words[j])                     # local reciprocal rule when ON; conj when OFF
                 clean += [(self.c_base + ri * V + j, self.q_base + ri * D + k, complex(cc[k])) for k in range(D)]
         b.rf_set_complex_weights(clean); b.rf_resonate_steps(1)
         mem = np.asarray(to_host(b.cp_membrane_potential_v)).astype(float)
         words = [self._select(np.maximum(mem[self.c_base + ri * V:self.c_base + (ri + 1) * V], 0.0), self.words)
                  for ri in range(3)]
+        if any(w is None for w in words):
+            return None                                      # a role decoded to nothing (`_select` maps a placeholder winner
+                                                             # to None): ABSTAIN, never join a None into a sentence
         order = order_fn(3) if order_fn is not None else [0, 1, 2]
         return " ".join(words[o] for o in order)
 
@@ -1914,6 +1944,8 @@ class OneBrainComposer:
                 wp = got.get("patient")
                 pt = self._decode_clause(i, order_fn=order_fn) if _is_clause(stored) else self._attributed_patient(i, wp, got)
                 words = [got.get("agent"), got.get("action"), pt]
+                if any(w is None for w in words):
+                    return None                              # an undecoded role (e.g. an abstained clause): abstain
                 order = order_fn(3) if order_fn is not None else [0, 1, 2]
                 return " ".join(words[o] for o in order)
         return None
@@ -2040,6 +2072,8 @@ class OneBrainComposer:
         self._dev_rekick_into([slice(self.q_base + 2 * D, self.q_base + 3 * D)])
         clean = []
         for j in range(V):
+            if self._silent_reserve(j):                                    # uncommitted reserve slot: no cleanup synapses
+                continue
             cc = self._cleanup_conj(self.words[j])
             clean += [(self.c_base + j, self.q_base + 2 * D + k, complex(cc[k])) for k in range(D)]
         b.rf_set_complex_weights(clean); b.rf_resonate_steps(1)

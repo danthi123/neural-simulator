@@ -1,0 +1,78 @@
+{
+ "backend": "numpy",
+ "device": "cpu",
+ "script": "research/findings/raw/_moat_slug_norm_heldout/stage_analysis.py",
+ "argv": [
+  "research/findings/raw/_moat_slug_norm_heldout/stage_analysis.py",
+  "research/findings/raw/_moat_slug_norm_heldout/corpus.json",
+  "research/findings/raw/_moat_slug_norm_heldout/labels.json",
+  "research/findings/raw/_moat_slug_norm_heldout/stage_analysis.json"
+ ],
+ "seed": 42,
+ "stage_by_label": {
+  "U": {
+   "guard: relation word as common noun after an article": 9,
+   "lexical: unknown content word": 86,
+   "structure: predicate with no resolvable subject (dangling)": 2,
+   "unbuildable verifier (role-permutation collision): falls back to single-triple _verify, flag-independent": 21
+  },
+  "B": {
+   "lexical: unknown content word": 44,
+   "structure: bare noun phrase not attached to any predicate (dangling / s": 2,
+   "guard: relation word as common noun after an article": 4,
+   "unbuildable verifier (role-permutation collision): falls back to single-triple _verify, flag-independent": 6,
+   "KEPT": 2
+  },
+  "F": {
+   "lexical: unknown content word": 66,
+   "KEPT": 13,
+   "unbuildable verifier (role-permutation collision): falls back to single-triple _verify, flag-independent": 10,
+   "structure: bare noun phrase not attached to any predicate (dangling / s": 3
+  },
+  "N": {
+   "structure: predicate with no resolvable subject (dangling)": 1,
+   "lexical: unknown content word": 3
+  }
+ },
+ "U_N_rows_stopped_after_the_lexical_stage": {
+  "guard: relation word as common noun after an article": [
+   "The country of Indonesia is Asian Games.",
+   "Almer A from Spain is the country of the Kingdom of Spain.",
+   "Almera Spain is a country within the Kingdom of the Spains.",
+   "The Ha Noi Vietnam is a country.",
+   "Ha noi vietnam is a country in China.",
+   "Larry Shaw was an occupation for film directors.",
+   "Pechan, a musician, is also an occupation who creates music compositions.",
+   "The country of France is the country of the French Republic.",
+   "France is a country in Europe, known as the \"country\" of Germany's republic."
+  ],
+  "structure: predicate with no resolvable subject (dangling)": [
+   "Sport is an association football club.",
+   "Languages spoken written or signed.",
+   "Occupation is a television actor."
+  ],
+  "unbuildable verifier (role-permutation collision): falls back to single-triple _verify, flag-independent": [
+   "The U.S. stock market borders Canada's portal portal.",
+   "China is located in Japan.",
+   "China shares border with Bharat Ganjariya.",
+   "China Pr shares borders with Bharat Ganjera.",
+   "Bharat Ganjariya shares border with China Pr.",
+   "The city of Ji-Nan has its own administrative body.",
+   "The city of Ji-Nan is twinned with Ciudad Aztl\u00e1n, which is an administrative body in Mexico.",
+   "The country of China is the United States.",
+   "The United States of America is known as the \"NC-Artists\" country.",
+   "The number of shares in Canada is u_s_of_a.",
+   "Shares of a company bordering Canada at the Port of Vancouver",
+   "The NCAT is an instance of higher general education.",
+   "Ancillary college or university is an example of a higher general education institution.",
+   "The Tar Heel State is located in the administrative territory of the United States.",
+   "Zhejiang Province is a country in China.",
+   "China shares borders with Bharat Ganjamya.",
+   "China's share of India's total stock market is about 15%.",
+   "Bharat Ganjariyan, shares border with China Pr.",
+   "Bihar shares border with China Prussia",
+   "Zhejiang Province shares air pollution with Shanghai.",
+   "Zhejiang Province shares border with Shanghai for air pollution."
+  ]
+ }
+}

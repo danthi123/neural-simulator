@@ -1,0 +1,25 @@
+{
+ "run_id": "1792674395-191918",
+ "runner": "../../../../opt/data/cache/scratch/a_f1g0c_provstamp.py",
+ "argv": [
+  "/opt/data/cache/scratch/a_f1g0c_provstamp.py"
+ ],
+ "git_sha": "5cddd02b8",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-22T09:06:35",
+ "env": {},
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": 1918.4,
+ "corpus_check_query": "heard word sensory drive near rheobase in a spiking probe",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_cs_race/f1g/step1g0c_drive_stats.json"
+}

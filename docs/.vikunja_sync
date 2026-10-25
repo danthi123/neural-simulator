@@ -304,3 +304,25 @@ verbatim. Board: #244 closed + milestone #264 added by Claude same cycle (RULING
 - Board #268 added: specialised cell types were running as generic cortical cells (preset_centred_parameter_heterogeneity merged default OFF, S 42747441e; RULINGS preset-het-1020/-1020b).
 - Board #261 rung appended and due moved to 11-01: the BG circuit is measured on its real cell types before re-tuning, and the seam gate does not run on the generic cells (packet v3 6d4f50dcd; RULINGS bg-tonic-loop-1020, bg-seam-calendar-1020 at 273e5772c).
 - Hermes's Check I for preset-het (15:45) found no stale summary doc.
+
+## 2026-10-20 moat-strict-check-and-store-names (Claude)
+- Board #269 added: the strict no-making-things-up check (allowlist builds 1-3 NO-GO on fresh blind hunts; build 4 exact spellings, AMENDMENT 4 a631f7084; round 6 + measurements in flight).
+- Board #270 added: the fact store merges distinct entities under one slug and names some entities by another entity's alias (FAILURE_LOG row, S 9666e32ba).
+
+## 2026-10-21  claude-board-1021
+#260 word-role: step-0 deadlock read GO (near-tie, not the gate), step 1 next, prereg due 10-27. #269 strict check: build 5 round-7 result + verify-go caveats, build 6 under review; stays off.
+
+## 2026-10-21  claude-moat-b5-landed
+#269 build 5 GO merged 33c17026e (switched off; build 6 under review); #265/#266/#267 closed under the strict check only, open until it is switched on.
+
+## 2026-10-21  claude-moat-b67-verdicts
+#269 updated (builds 6/7 verdicts, build 8 floor, frame premise NONE); #271 updated (deixis census lane, design round 1 refuted).
+## 2026-10-21 deixis-271 census RESULT
+- Board #271: step-1 census landed, RESULT posted (provisional); next action = Claude reads the census + rules stage-1 design. No other task moved. (Ref: commit 1a3c1dc14; deixis-271-s0-RESULT.md.)
+## 2026-10-21 deixis-271 s0-accept
+- #271 census accepted; next action = Claude designs stage 1; branch @ 76765d87c. (Ref: RULING deixis-271-s0-accept.)
+
+## 2026-10-21  claude docs-sync 23:30
+#271 census accepted + design round 2; #272 added (speech self-monitor); #268 size-dependent draws appended; moat capped at build 8 (CLASS HD).
+## 2026-10-22  cs-race-f1d step4
+Board #238 updated: feasibility check complete, RESULT PROVISIONAL research/cs-race @ a6f70651d, next action Claude's ruling on f1d (merge next).

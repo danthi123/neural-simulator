@@ -1,0 +1,25 @@
+{
+ "run_id": "1792583561-45778",
+ "runner": "../../../../opt/data/cache/scratch/a_f1b_decl.py",
+ "argv": [
+  "/opt/data/cache/scratch/a_f1b_decl.py"
+ ],
+ "git_sha": "0a8b6b48b",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-21T07:52:41",
+ "env": {},
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": 70179.8,
+ "corpus_check_query": "STN GPe autonomous pacemaking rate robustness SK afterhyperpolarization persistent sodium spiking model",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_cs_race/f1b/row1/seed5-6-7-8.json"
+}

@@ -1,0 +1,33 @@
+== arms, 2400 utterances, tau=400, 15 seeds; counts = seeds passing; nulls = 5 label shuffles per seed
+ cov  lam*tau=4 {'S1': 15, 'S2a': 15, 'S2b': 6, 'S3': 15, 'S4': 15, 'S5': 15} ALL  6/15 med tS 0.55 tA 0.50 nullmax(nonref) 0.090 leakA 0.27
+ cov  lam*tau=6 {'S1': 15, 'S2a': 15, 'S2b': 6, 'S3': 15, 'S4': 15, 'S5': 15} ALL  6/15 med tS 0.82 tA 0.76 nullmax(nonref) 0.136 leakA 0.27
+ cov  lam*tau=9 {'S1': 15, 'S2a': 15, 'S2b': 6, 'S3': 15, 'S4': 15, 'S5': 15} ALL  6/15 med tS 0.99 tA 0.97 nullmax(nonref) 0.203 leakA 0.32
+ hebb lam*tau=4 {'S1': 0, 'S2a': 15, 'S2b': 0, 'S3': 1, 'S4': 0, 'S5': 14} ALL  0/15 med tS 0.80 tA 0.73 nullmax(nonref) 0.977 leakA 0.62
+ hebb lam*tau=6 {'S1': 0, 'S2a': 10, 'S2b': 0, 'S3': 12, 'S4': 0, 'S5': 11} ALL  0/15 med tS 0.99 tA 0.97 nullmax(nonref) 0.998 leakA 0.69
+ hebb lam*tau=9 {'S1': 0, 'S2a': 0, 'S2b': 0, 'S3': 12, 'S4': 0, 'S5': 0} ALL  0/15 med tS 0.99 tA 0.99 nullmax(nonref) 1.000 leakA 0.96
+ bcm  lam*tau=4 {'S1': 15, 'S2a': 15, 'S2b': 0, 'S3': 15, 'S4': 0, 'S5': 15} ALL  0/15 med tS 0.55 tA 0.51 nullmax(nonref) 0.538 leakA 0.50
+ bcm  lam*tau=6 {'S1': 15, 'S2a': 15, 'S2b': 0, 'S3': 15, 'S4': 0, 'S5': 15} ALL  0/15 med tS 0.83 tA 0.76 nullmax(nonref) 0.807 leakA 0.50
+ bcm  lam*tau=9 {'S1': 14, 'S2a': 9, 'S2b': 0, 'S3': 15, 'S4': 0, 'S5': 15} ALL  0/15 med tS 0.99 tA 0.97 nullmax(nonref) 0.998 leakA 0.58
+== cov 6: per-name detail (bearer w, max pool w, max other-E w, ok) on the first failing seed, if any
+   {'N_V1': (0.321, 0.072, 0.031, np.True_), 'N_V2': (0.282, 0.04, 0.04, np.True_), 'N_V3': (0.126, 0.028, 0.016, np.False_), 'N_V4': (0.206, 0.033, 0.038, np.True_), 'N_V5': (0.508, 0.082, 0.049, np.True_), 'N_B1': (0.941, 0.103, 0.042, np.True_), 'N_SELF': (0.599, 0.06, 0.041, np.True_), 'CN': (0.153, 0.03, 0.019, np.False_)}
+== S6 asymptote: cov 6, margins at 1600 (4 tau) vs 2400 (6 tau)
+   SHS->SPK agrees within 20% on 15/15 seeds
+== nulls (cov 6): label-shuffled stream scored against fresh nulls; K=0 is all zeros
+   passes S1+S2a on 0/15
+== dose (cov 6): overheard fraction -> SHA->SELF leak / pool
+   overheard 0.00: leakA med 0.80 ALL 0/15
+   overheard 0.25: leakA med 0.58 ALL 5/15
+   overheard 0.50: leakA med 0.36 ALL 6/15
+   overheard 0.60: leakA med 0.27 ALL 6/15
+   overheard 0.75: leakA med 0.11 ALL 3/15
+== dose (cov 6): speaking voices -> SHS entity leak
+   n_voices=1: leak med 0.90
+   n_voices=2: leak med 0.29
+   n_voices=3: leak med 0.19
+   n_voices=5: leak med 0.13
+== forced-fit arm (cov 6): PREV marks the previous speaker; addressee = previous speaker with p
+   p=0.0: PREV->ADR / SHA->ADR med 0.04  S5 15/15
+   p=0.3: PREV->ADR / SHA->ADR med 0.06  S5 15/15
+   p=0.6: PREV->ADR / SHA->ADR med 0.09  S5 15/15
+   p=0.9: PREV->ADR / SHA->ADR med 0.11  S5 15/15
+== IDIO (SPK, E_V2) med (0.016, 0.018); PLUR (SPK, ADR) med (0.13, 0.13)

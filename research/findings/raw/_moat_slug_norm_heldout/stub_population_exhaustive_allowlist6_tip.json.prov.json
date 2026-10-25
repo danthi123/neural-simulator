@@ -1,0 +1,33 @@
+{
+ "run_id": "1792588809-485552",
+ "runner": "research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-allow6/research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive.py",
+  "research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive_allowlist6_tip.json",
+  "1",
+  "research/findings/raw/_moat_slug_norm_heldout/composer_stub_sweep_3000_after.json",
+  "--arms",
+  "allowlist"
+ ],
+ "git_sha": "f962ec997",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-21T09:20:09",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 101.1,
+ "corpus_check_query": "claim checker keeps a one-word pronoun used as an entity name (me, mine, us, it, her) so the mouth makes a first-person or pointing-back claim",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_moat_slug_norm_heldout/stub_population_exhaustive_allowlist6_tip.json"
+}

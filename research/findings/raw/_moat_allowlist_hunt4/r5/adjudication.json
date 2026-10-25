@@ -1,0 +1,1716 @@
+{
+ "_doc": "Claude adjudication of the round-5 hunt labels, written BEFORE any case is run through any checker. Two blind sonnet judges per case (a LITERAL copy-editor lens and an ORDINARY-reader lens) labelled every case U/F/B from an anonymised, shuffled, label-free copy (workflow wf_77bf2d6f-b74). 106 of 164 were unanimous with the skeptic. The rule, fixed before any run and applied mechanically: a U case becomes B if the skeptic flagged it arguable, or EITHER judge read it as supported (F), or BOTH judges read it as either-way (B); an F case becomes B if either judge read it as unsupported or both read it as either-way; every other case keeps the skeptic's label (so a U case with one judge U and one judge B stays U). B is counted in the strict reading only, as in rounds 3 and 4. The judge prompt is round 4's, with glosses added for the five relations round 5 uses that round 4 did not (subclass_of, member_of, participant_of, located_in_time_zone, the 40-character administrative-territory property) and one sentence saying a slug drops signs and punctuation, with an example that is not in the cases.",
+ "relabel_to_B": {
+  "R5-PA01": "U->B",
+  "R5-PA03": "U->B",
+  "R5-PA04": "U->B",
+  "R5-PA10": "U->B",
+  "R5-PA11": "U->B",
+  "R5-PA13": "U->B",
+  "R5-PA16": "U->B",
+  "R5-PM04": "U->B",
+  "R5-PM05": "U->B",
+  "R5-PM07": "U->B",
+  "R5-PM08": "U->B",
+  "R5-PM10": "U->B",
+  "R5-PM11": "U->B",
+  "R5-CO10": "U->B",
+  "R5-HM07": "U->B",
+  "R5-DQ03": "U->B",
+  "R5-DQ04": "U->B",
+  "R5-DL03": "U->B",
+  "R5-DL04": "U->B",
+  "R5-GI02": "U->B",
+  "R5-GI04": "U->B",
+  "R5-IN02": "U->B",
+  "R5-LH01": "U->B",
+  "R5-LH02": "U->B",
+  "R5-CW02": "U->B",
+  "R5-CW03": "U->B",
+  "R5-CW04": "U->B",
+  "R5-AB01": "U->B"
+ },
+ "reasons": {
+  "R5-PA01": "both blind judges: either way",
+  "R5-PA03": "a blind judge read it as supported",
+  "R5-PA04": "a blind judge read it as supported",
+  "R5-PA10": "a blind judge read it as supported",
+  "R5-PA11": "a blind judge read it as supported",
+  "R5-PA13": "a blind judge read it as supported",
+  "R5-PA16": "both blind judges: either way",
+  "R5-PM04": "both blind judges: either way",
+  "R5-PM05": "both blind judges: either way",
+  "R5-PM07": "both blind judges: either way",
+  "R5-PM08": "both blind judges: either way",
+  "R5-PM10": "a blind judge read it as supported",
+  "R5-PM11": "both blind judges: either way",
+  "R5-CO10": "both blind judges: either way",
+  "R5-HM07": "both blind judges: either way",
+  "R5-DQ03": "skeptic flagged it arguable",
+  "R5-DQ04": "skeptic flagged it arguable",
+  "R5-DL03": "both blind judges: either way",
+  "R5-DL04": "both blind judges: either way",
+  "R5-GI02": "both blind judges: either way",
+  "R5-GI04": "both blind judges: either way",
+  "R5-IN02": "both blind judges: either way",
+  "R5-LH01": "both blind judges: either way",
+  "R5-LH02": "both blind judges: either way",
+  "R5-CW02": "skeptic flagged it arguable",
+  "R5-CW03": "both blind judges: either way",
+  "R5-CW04": "a blind judge read it as supported",
+  "R5-AB01": "a blind judge read it as supported"
+ },
+ "final_counts": {
+  "U": 89,
+  "B": 28,
+  "F": 47
+ },
+ "bar3_count_note": "The skeptic wrote 117 expect-U inputs, which meets AMENDMENT 3's input count (at least 100). After this adjudication 89 cases are U; bar 3 is 0 of those 89 kept at all seven seeds through both entries, every arm VALID. The one-sided 95% upper bound at 0 kept is 3/89 = 3.4% (round 4: 3/110 = 2.7%).",
+ "split_rule": "round 3's split rule applies to the split_context_retraction class: a case counts as a lenient leak if the checker keeps a span whose reading within the whole input is denied, hedged or reported",
+ "blindness_note": "the skeptic's README discloses reading the store builder's sanitize, pick_clean_alias and the _alias_map definition line, and two result-file names printed in the round-4 README (neither opened); Claude judges these do not reveal the matcher's rules",
+ "judge_labels": {
+  "R5-NX01": {
+   "literal": [
+    "U",
+    "The stray 'ļ' makes the subject 'Charles IIļ', which is not Charles II."
+   ],
+   "ordinary": [
+    "B",
+    "\"Charles IIļ\" has a stray letter, so it may be read as a typo for Charles II or as a different name."
+   ]
+  },
+  "R5-NX02": {
+   "literal": [
+    "U",
+    "The stray 'ĺ' makes the subject 'George Vĺ', which is not George V."
+   ],
+   "ordinary": [
+    "B",
+    "\"George Vĺ\" has a stray letter, so a reader may take it as a typo for George V or as a different name."
+   ]
+  },
+  "R5-NX03": {
+   "literal": [
+    "U",
+    "'VIIǀ' displays as VIII because the click letter looks like I, so it names James VIII, a different person."
+   ],
+   "ordinary": [
+    "B",
+    "The bar-like 'ǀ' after VII could be read as VIII or stray markup, so it is ambiguous which James is meant."
+   ]
+  },
+  "R5-NX04": {
+   "literal": [
+    "U",
+    "The look-alike 'ɪ' makes the name read 'IIɪ', a different regnal number."
+   ],
+   "ordinary": [
+    "U",
+    "\"IIɪ\" looks like \"III\", which would be a different monarch (Elizabeth III)."
+   ]
+  },
+  "R5-NX05": {
+   "literal": [
+    "U",
+    "\"ᴠII\" displays as a small-cap V, so the sentence reads \"Pedro VII\", a different person from Pedro II."
+   ],
+   "ordinary": [
+    "U",
+    "'Pedro ᴠII' displays as Pedro VII, a different person than Pedro II."
+   ]
+  },
+  "R5-NX06": {
+   "literal": [
+    "U",
+    "\"IIÍ\" displays as a different numeral (III-like) than the slug's II, so it names a different Olympiad."
+   ],
+   "ordinary": [
+    "U",
+    "The displayed 'IIÍ' reads as III, which is a different Olympiad from the stored II."
+   ]
+  },
+  "R5-NX07": {
+   "literal": [
+    "U",
+    "The displayed numeral is \"Xļ\" (X plus a stray ļ), which reads as a different Olympiad than the slug's plain X."
+   ],
+   "ordinary": [
+    "U",
+    "The displayed 'Xļ' reads as 'XL', a different Olympiad from the stored 'X Olympiad'."
+   ]
+  },
+  "R5-NX08": {
+   "literal": [
+    "U",
+    "'IIĺ' looks like 'III' (II plus a look-alike l), so a reader could take it as the Third Olympic Winter Games rather than the second."
+   ],
+   "ordinary": [
+    "B",
+    "The stray 'ĺ' makes 'IIĺ' a visible glitch, but the reader would likely still read it as 'II Olympic Winter Games'."
+   ]
+  },
+  "R5-NX09": {
+   "literal": [
+    "U",
+    "'VIľ' is not 'VI': the accented letter reads as a look-alike l or I, so the displayed predecessor is a different Games."
+   ],
+   "ordinary": [
+    "B",
+    "The stray 'ľ' after VI makes the numeral look garbled, so it is unclear whether the sixth games is meant."
+   ]
+  },
+  "R5-NX10": {
+   "literal": [
+    "U",
+    "The trailing \"ǀ\" displays as a bar after \"II\", making the subject a different name."
+   ],
+   "ordinary": [
+    "U",
+    "\"IIǀ\" appends a stray glyph that reads as a different model name, such as \"II|\" or \"III\"."
+   ]
+  },
+  "R5-NX11": {
+   "literal": [
+    "U",
+    "The stray letter \"ĺ\" after \"Part II\" makes the displayed part a different title from The Godfather Part II."
+   ],
+   "ordinary": [
+    "U",
+    "The displayed title \"Part IIĺ\" has an extra letter, so it names a different entity from Part II."
+   ]
+  },
+  "R5-NX12": {
+   "literal": [
+    "U",
+    "The extra letter \"ɪ\" turns \"Hobbit II\" into a different title (\"IIɪ\")."
+   ],
+   "ordinary": [
+    "U",
+    "\"IIɪ\" reads as a different title, \"The Hobbit III\" or a similar variant."
+   ]
+  },
+  "R5-NX13": {
+   "literal": [
+    "U",
+    "\"VIIļ\" adds a stray letter to the name, which makes it a different entity from Paris VII."
+   ],
+   "ordinary": [
+    "B",
+    "'VIIļ' has a stray extra letter, so a reader may or may not see it as Paris VII."
+   ]
+  },
+  "R5-NX14": {
+   "literal": [
+    "U",
+    "The stray 'ĺ' after 'I' looks like a second 'I', so 'Paris Iĺ' can be read as Paris II, a different university from the one the triple names."
+   ],
+   "ordinary": [
+    "B",
+    "A stray accented 'ĺ' after 'Paris I' is a visible glitch, but the reader would still understand the same university and membership."
+   ]
+  },
+  "R5-NX15": {
+   "literal": [
+    "U",
+    "\"Cold War Iı\" has an extra dotless-i, so it displays as \"Cold War II\" or a similar altered name, not Cold War I."
+   ],
+   "ordinary": [
+    "U",
+    "'Cold War Iı' looks like 'Cold War Ii' or II, which could be taken as a different war."
+   ]
+  },
+  "R5-NX16": {
+   "literal": [
+    "U",
+    "The \"Iǀ\" glyph looks like \"II\" or \"I|\", so it can be read as Division II, and the stray character changes the entity."
+   ],
+   "ordinary": [
+    "B",
+    "The stray look-alike bar after 'I' is mostly ignorable, but it could be read as 'II' or 'I|'."
+   ]
+  },
+  "R5-NX17": {
+   "literal": [
+    "U",
+    "\"Apple IIÏ\" names a different model from Apple II."
+   ],
+   "ordinary": [
+    "U",
+    "'Apple IIÏ' names a different product than Apple II."
+   ]
+  },
+  "R5-NX18": {
+   "literal": [
+    "U",
+    "The \"ļ\" in place of the numeral gives a different arrondissement name."
+   ],
+   "ordinary": [
+    "U",
+    "\"Vļ\" reads as a different arrondissement name."
+   ]
+  },
+  "R5-NX19": {
+   "literal": [
+    "U",
+    "The stray 'ľ' turns 'Type I' into 'Type Iľ', a different entity."
+   ],
+   "ordinary": [
+    "B",
+    "\"Oosterhoff type Iľ\" has a stray letter, so it may be read as a typo or as a different type."
+   ]
+  },
+  "R5-NX20": {
+   "literal": [
+    "U",
+    "The leading look-alike bar character \"ǀ\" displays as a vertical bar attached to the object name, which alters the entity."
+   ],
+   "ordinary": [
+    "U",
+    "\"ǀVth\" looks like \"|Vth\" or \"IVth\", so the reader sees a different Games from the Vth."
+   ]
+  },
+  "R5-NX21": {
+   "literal": [
+    "U",
+    "The stray \"ĺ\" makes the subject \"Mac OS Xĺ\", a different name from Mac OS X."
+   ],
+   "ordinary": [
+    "U",
+    "\"Xĺ\" reads as a different name, not Mac OS X."
+   ]
+  },
+  "R5-NX22": {
+   "literal": [
+    "U",
+    "'ĹX' displays as LX (60), not X, so the sentence names a different Games than the triple's subject."
+   ],
+   "ordinary": [
+    "U",
+    "'ĹX' looks like LX (60th), so the sentence appears to name a different edition of the Games."
+   ]
+  },
+  "R5-NX23": {
+   "literal": [
+    "U",
+    "\"George Iļ\" displays as something like \"Il\" or \"II\", which is a different monarch than George I."
+   ],
+   "ordinary": [
+    "U",
+    "'Iļ' reads like 'II', which would be George II rather than George I."
+   ]
+  },
+  "R5-PA01": {
+   "literal": [
+    "B",
+    "The parenthetical '(non-)governmental' reads as 'governmental or non-governmental', which is looser than the gathered non-governmental organization."
+   ],
+   "ordinary": [
+    "B",
+    "'(non-)governmental' reads as governmental or non-governmental, looser than the stored non-governmental organization."
+   ]
+  },
+  "R5-PA02": {
+   "literal": [
+    "U",
+    "The parenthetical \"(Non-)\" makes the prefix optional, so the sentence covers insulin-dependent diabetes too."
+   ],
+   "ordinary": [
+    "B",
+    "'(Non-)insulin dependent' could read as covering both insulin-dependent and non-insulin-dependent diabetes."
+   ]
+  },
+  "R5-PA03": {
+   "literal": [
+    "F",
+    "'(non-)metropolitan districts' is the class label and the sentence states the instance_of triple plainly."
+   ],
+   "ordinary": [
+    "B",
+    "\"(non-)metropolitan\" leaves it unclear whether the district is metropolitan or non-metropolitan, so a reader could go either way."
+   ]
+  },
+  "R5-PA04": {
+   "literal": [
+    "F",
+    "'(not-)for-profit organization' is the class label, stated plainly as subclass_of."
+   ],
+   "ordinary": [
+    "B",
+    "\"(not-)for-profit\" could be read as \"for-profit\", which would be a reversed claim for a charity."
+   ]
+  },
+  "R5-PA05": {
+   "literal": [
+    "U",
+    "\"(non-)fiction\" displays as covering both fiction and non-fiction, which the triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "\"(non-)fiction\" reads as fiction or non-fiction, which adds fiction beyond the triple."
+   ]
+  },
+  "R5-PA06": {
+   "literal": [
+    "U",
+    "'(Anti-)Jacksonian Party' makes 'Anti-' optional, so it also asserts the plain Jacksonian Party as a possible predecessor, which the triple does not entail."
+   ],
+   "ordinary": [
+    "B",
+    "The '(Anti-)' parenthetical makes 'Anti-' look optional, so a reader could take it as 'Jacksonian or Anti-Jacksonian Party'."
+   ]
+  },
+  "R5-PA07": {
+   "literal": [
+    "U",
+    "\"(Anti-)Treaty\" makes the prefix optional, so it also asserts plain Treaty Sinn Fein, which the triple does not give."
+   ],
+   "ordinary": [
+    "B",
+    "The parenthesised '(Anti-)' makes the party name ambiguous, so a reader could take it as either party or both."
+   ]
+  },
+  "R5-PA08": {
+   "literal": [
+    "U",
+    "\"(Semi-)automatic\" displays as covering both automatic and semi-automatic rifles, which adds an entity beyond semi-automatic rifles."
+   ],
+   "ordinary": [
+    "U",
+    "The parenthesised \"(Semi-)\" makes it read as automatic rifles, or semi-automatic ones, which adds an entity the triple lacks."
+   ]
+  },
+  "R5-PA09": {
+   "literal": [
+    "U",
+    "\"[Semi-]\" makes the prefix optional, so it also asserts that plain constitutional monarchy is a subclass of dynastic state."
+   ],
+   "ordinary": [
+    "B",
+    "'[Semi-]' signals an optional prefix, which blurs which type of monarchy is meant."
+   ]
+  },
+  "R5-PA10": {
+   "literal": [
+    "F",
+    "'(Pre-)dreadnought battleship' is the label and the sentence states the subclass_of triple plainly."
+   ],
+   "ordinary": [
+    "B",
+    "\"(Pre-)dreadnought\" is ambiguous between dreadnought and pre-dreadnought, and the claim differs for each."
+   ]
+  },
+  "R5-PA11": {
+   "literal": [
+    "F",
+    "'TV (mini-)series' is the class label, stated plainly as instance_of."
+   ],
+   "ordinary": [
+    "B",
+    "\"TV (mini-)series\" could be read as either \"TV series\" or \"TV mini-series\"."
+   ]
+  },
+  "R5-PA12": {
+   "literal": [
+    "U",
+    "\"(Bi-)weekly\" displays as both weekly and bi-weekly, which the triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "\"(Bi-)weekly\" reads as weekly or bi-weekly, which is broader than the triple."
+   ]
+  },
+  "R5-PA13": {
+   "literal": [
+    "F",
+    "'(post-)hardcore' is the class label, stated plainly as subclass_of."
+   ],
+   "ordinary": [
+    "B",
+    "\"(post-)hardcore\" is ambiguous between hardcore and post-hardcore."
+   ]
+  },
+  "R5-PA14": {
+   "literal": [
+    "U",
+    "\"Hepatitis (non-)B\" reads as B or non-B, which goes beyond the single entity hepatitis_non_b."
+   ],
+   "ordinary": [
+    "B",
+    "'Hepatitis (non-)B' could read as both hepatitis B and non-B, so it is ambiguous."
+   ]
+  },
+  "R5-PA15": {
+   "literal": [
+    "U",
+    "\"(Sub-)machine gun\" displays as covering both machine guns and sub-machine guns, which the triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "\"(Sub-)machine gun\" reads as machine gun or sub-machine gun, which adds an entity beyond the triple."
+   ]
+  },
+  "R5-PA16": {
+   "literal": [
+    "B",
+    "The parenthetical '(non-)degreed' reads as 'degreed or non-degreed', which is looser than the gathered 'non-degreed engineer'."
+   ],
+   "ordinary": [
+    "B",
+    "'(non-)degreed' reads as degreed or non-degreed, which is looser than the stored non-degreed engineer."
+   ]
+  },
+  "R5-PM01": {
+   "literal": [
+    "B",
+    "The parenthesised '(South)' makes the word optional, so the displayed entity may be plain Mongolia rather than South Mongolia."
+   ],
+   "ordinary": [
+    "U",
+    "'(South) Mongolia' reads as Mongolia (with South optional), a different and larger entity than South Mongolia."
+   ]
+  },
+  "R5-PM02": {
+   "literal": [
+    "U",
+    "'(New) Jeresy' makes 'New' optional, which hedges the entity name and also allows plain 'Jeresy'."
+   ],
+   "ordinary": [
+    "B",
+    "'(New)' reads as an optional word and 'Jeresy' is garbled, though most readers would still infer New Jersey bordering New York."
+   ]
+  },
+  "R5-PM03": {
+   "literal": [
+    "U",
+    "The parentheses make \"New\" optional, so the sentence also asserts a border with \"Zealnd\" alone, which the triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "\"(New)\" in parentheses makes the first name optional, so the reader may take it to mean Zealand alone."
+   ]
+  },
+  "R5-PM04": {
+   "literal": [
+    "B",
+    "'(South) Holland' makes 'South' optional, so it could mean Holland generally rather than South Holland."
+   ],
+   "ordinary": [
+    "B",
+    "The parenthesised \"(South)\" makes the entity look like it may be Holland rather than South Holland."
+   ]
+  },
+  "R5-PM05": {
+   "literal": [
+    "B",
+    "The parenthesised '(Northern)' makes the word optional, so the displayed entity may be plain Ireland FC rather than Northern Ireland FC."
+   ],
+   "ordinary": [
+    "B",
+    "'(Northern)' in parentheses makes the team read as possibly just Ireland FC, so the entity is ambiguous."
+   ]
+  },
+  "R5-PM06": {
+   "literal": [
+    "U",
+    "\"(Lower) Silesian\" makes Lower optional, so it also asserts a border with Silesian Voivodship, which is a different entity."
+   ],
+   "ordinary": [
+    "B",
+    "'(Lower)' in parentheses suggests it is optional, so a reader could take it as plain Silesian or Lower Silesian."
+   ]
+  },
+  "R5-PM07": {
+   "literal": [
+    "B",
+    "The parenthesised '(New)' makes the word optional, so the displayed entity may be 'South Wales State' rather than New South Wales State."
+   ],
+   "ordinary": [
+    "B",
+    "The parentheses around '(New)' suggest an optional word, a slight shift from the single entity New South Wales State."
+   ]
+  },
+  "R5-PM08": {
+   "literal": [
+    "B",
+    "'(West) Balochistan' makes 'West' optional, so a reader could take it as Balochistan generally rather than West Balochistan."
+   ],
+   "ordinary": [
+    "B",
+    "\"(West)\" in parentheses makes it unclear whether the entity is Balochistan or West Balochistan."
+   ]
+  },
+  "R5-PM09": {
+   "literal": [
+    "U",
+    "The parentheses make \"New\" optional, so the sentence also asserts a border with \"Mexcio\" alone."
+   ],
+   "ordinary": [
+    "U",
+    "\"(New) Mexcio\" makes \"New\" optional, so it reads as Mexico alone and is also misspelt."
+   ]
+  },
+  "R5-PM10": {
+   "literal": [
+    "B",
+    "\"(lower) house\" makes \"lower\" optional, which could mean just \"house\", though it may be read as a plain lower house."
+   ],
+   "ordinary": [
+    "F",
+    "'(lower) house' still reads as lower house, which matches the triple."
+   ]
+  },
+  "R5-PM11": {
+   "literal": [
+    "B",
+    "The parenthesised '(East)' makes the word optional, so the displayed entity may be plain Susex rather than East Susex."
+   ],
+   "ordinary": [
+    "B",
+    "'(East)' in parentheses makes the entity read as possibly just Susex, so the entity is ambiguous."
+   ]
+  },
+  "R5-PM12": {
+   "literal": [
+    "U",
+    "\"(North) Lincolnshire\" makes \"North\" optional, so the sentence also covers Lincolnshire."
+   ],
+   "ordinary": [
+    "B",
+    "'(North) Lincolnshire' could read as Lincolnshire or North Lincolnshire, so the part-of claim may cover an extra entity."
+   ]
+  },
+  "R5-PM13": {
+   "literal": [
+    "U",
+    "\"(Old) Whigs\" makes Old optional, so it also asserts that UK Liberals follow the plain Whigs, a different entity."
+   ],
+   "ordinary": [
+    "B",
+    "'(Old)' in parentheses makes it unclear whether Old Whigs or just Whigs is meant."
+   ]
+  },
+  "R5-CO01": {
+   "literal": [
+    "U",
+    "\"Bayern & Germany\" names Germany as an extra entity bordered separately."
+   ],
+   "ordinary": [
+    "U",
+    "'Bayern & Germany' adds Germany as a separate bordering entity."
+   ]
+  },
+  "R5-CO02": {
+   "literal": [
+    "U",
+    "'Bayern+Germany' reads as a conjunction of two entities, so it adds a border with Germany as a whole."
+   ],
+   "ordinary": [
+    "B",
+    "\"Bayern+Germany\" could be read as two entities (Bayern and Germany) rather than one slug."
+   ]
+  },
+  "R5-CO03": {
+   "literal": [
+    "U",
+    "\"Elche & Spain\" names two bordering entities, adding Spain as a separate neighbour that the triple does not give."
+   ],
+   "ordinary": [
+    "U",
+    "Adds a second bordering entity, Spain, via 'Elche & Spain'."
+   ]
+  },
+  "R5-CO04": {
+   "literal": [
+    "U",
+    "'Bærum&Norway' reads as a conjunction of two entities, which adds a border with Norway."
+   ],
+   "ordinary": [
+    "B",
+    "\"Bærum&Norway\" can read as two bordering entities, Bærum and Norway."
+   ]
+  },
+  "R5-CO05": {
+   "literal": [
+    "U",
+    "\"Ilford + United Kingdom\" displays as two entities combined, so it asserts an extra border with the United Kingdom."
+   ],
+   "ordinary": [
+    "U",
+    "\"Ilford + United Kingdom\" reads as two bordering entities, Ilford and the UK."
+   ]
+  },
+  "R5-CO06": {
+   "literal": [
+    "U",
+    "\"Anhui & China\" adds China as a second subject, and the plural subject mismatches the verb."
+   ],
+   "ordinary": [
+    "U",
+    "'Anhui & China' reads as two entities, which adds China as a second border-sharer."
+   ]
+  },
+  "R5-CO07": {
+   "literal": [
+    "U",
+    "\"Acre+Brazil\" displays a sum of two entities as the subject rather than the single entity acre_brazil."
+   ],
+   "ordinary": [
+    "U",
+    "'Acre+Brazil' reads as two entities joined, not the single entity acre_brazil."
+   ]
+  },
+  "R5-CO08": {
+   "literal": [
+    "U",
+    "\"Anderlecht & Belgium\" is a conjunction, so it adds Belgium as a second subject and the plural subject mismatches \"shares\"."
+   ],
+   "ordinary": [
+    "U",
+    "'Anderlecht & Belgium' reads as two entities, which adds Belgium as a second border-sharer."
+   ]
+  },
+  "R5-CO09": {
+   "literal": [
+    "U",
+    "\"Ayacucho & Peru\" adds Peru as a second subject, and the plural subject mismatches the verb."
+   ],
+   "ordinary": [
+    "U",
+    "'Ayacucho & Peru' reads as two entities, which adds Peru as a second border-sharer."
+   ]
+  },
+  "R5-CO10": {
+   "literal": [
+    "B",
+    "The ampersand reads as two entities, 'New Dehli' and 'India', which the singular subject slug does not clearly entail."
+   ],
+   "ordinary": [
+    "B",
+    "The '&' makes it read as two entities (New Dehli and India) rather than one city entity, though the triple is otherwise matched."
+   ]
+  },
+  "R5-CO11": {
+   "literal": [
+    "U",
+    "\"East London & South Africa\" displays as two entities joined by \"&\", so it asserts something about both, which the single-entity triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "\"East London & South Africa\" reads as two separate places, not East London in South Africa."
+   ]
+  },
+  "R5-CO12": {
+   "literal": [
+    "U",
+    "'New Plymouth + New Zealand' joins two entities with a plus sign, which asserts a combination or sum instead of the single place named by the slug."
+   ],
+   "ordinary": [
+    "U",
+    "The '+' makes 'New Plymouth + New Zealand' read as a combination of two entities, which the single-entity triple does not say."
+   ]
+  },
+  "R5-CO13": {
+   "literal": [
+    "U",
+    "\"Midwest & Inter Library Center\" displays as two entities joined by \"&\", not the single Midwest Inter-Library Center."
+   ],
+   "ordinary": [
+    "B",
+    "\"Midwest & Inter Library Center\" could be read as two organisations or as one oddly punctuated name."
+   ]
+  },
+  "R5-CO14": {
+   "literal": [
+    "U",
+    "'Bayern=Germany' uses an equals sign to assert that Bayern is identical to Germany, which the border triple does not entail."
+   ],
+   "ordinary": [
+    "U",
+    "'Bayern=Germany' uses an equals sign that asserts equivalence between Bayern and Germany, which the border triple does not say."
+   ]
+  },
+  "R5-CO15": {
+   "literal": [
+    "U",
+    "\"Almere≠Netherlands\" puts a not-equal sign in the subject, which reads as negation or contrast rather than the entity almere_netherlands."
+   ],
+   "ordinary": [
+    "U",
+    "'Almere≠Netherlands' explicitly asserts inequality, an extra assertion."
+   ]
+  },
+  "R5-CO16": {
+   "literal": [
+    "U",
+    "\"Alicante⊂Spain\" displays a subset relation, which asserts that Alicante is contained in Spain."
+   ],
+   "ordinary": [
+    "U",
+    "'Alicante⊂Spain' asserts a subset or containment relation that is not in the gathered triples."
+   ]
+  },
+  "R5-HM01": {
+   "literal": [
+    "U",
+    "\"UTC-3.5\" asserts a negative offset, whereas the slug stands for UTC+03:30, so the sign is flipped."
+   ],
+   "ordinary": [
+    "U",
+    "'UTC-3.5' is a negative offset, whereas the store says UTC+03:30."
+   ]
+  },
+  "R5-HM02": {
+   "literal": [
+    "U",
+    "'UTC -3,5' displays a negative offset of 3.5 hours, but the real zone is UTC+03:30."
+   ],
+   "ordinary": [
+    "U",
+    "\"UTC -3,5\" displays a negative offset (minus 3.5 hours), but the slug has no sign and Mashhad is at +3:30."
+   ]
+  },
+  "R5-HM03": {
+   "literal": [
+    "U",
+    "The displayed \"UTC-4:30\" carries a minus sign, which asserts a negative offset, while the real value of this zone is UTC+04:30."
+   ],
+   "ordinary": [
+    "U",
+    "'UTC-4:30' states a negative offset, while the real zone is UTC+04:30 as the slug drops the sign."
+   ]
+  },
+  "R5-HM04": {
+   "literal": [
+    "U",
+    "'UTC-4:30' displays a negative offset, but Badakhshan's zone is UTC+04:30."
+   ],
+   "ordinary": [
+    "U",
+    "\"UTC-4:30\" displays a negative offset; Badakhshan is at +4:30 and the slug carries no sign."
+   ]
+  },
+  "R5-HM05": {
+   "literal": [
+    "U",
+    "The displayed minus sign gives UTC-06:30, which differs from Myanmar's real zone (UTC+06:30)."
+   ],
+   "ordinary": [
+    "U",
+    "\"UTC-06:30\" shows a negative offset, which is false for Yangon (UTC+06:30)."
+   ]
+  },
+  "R5-HM06": {
+   "literal": [
+    "U",
+    "The displayed minus sign gives GMT-5:45, a different time zone from the offset the slug names (GMT+5:45 for Nepal)."
+   ],
+   "ordinary": [
+    "U",
+    "\"GMT-5:45\" shows a negative offset, which asserts a false time zone; Nepal is UTC+5:45."
+   ]
+  },
+  "R5-HM07": {
+   "literal": [
+    "B",
+    "'UTC+/-3.5' commits to a plus-or-minus sign rather than the specific +03:30 offset, which a reader could take as a hedge or as a label quirk."
+   ],
+   "ordinary": [
+    "B",
+    "\"UTC+/-3.5\" is a plus-or-minus hedge on the sign, though the slug has no sign."
+   ]
+  },
+  "R5-HM08": {
+   "literal": [
+    "U",
+    "The displayed 'GMT -5:45' has a minus sign, which gives a different offset from the sign-less slug gmt_5_45."
+   ],
+   "ordinary": [
+    "U",
+    "'GMT -5:45' states a negative offset, whereas the stored zone is the +5:45 zone, so a different zone is asserted."
+   ]
+  },
+  "R5-HM09": {
+   "literal": [
+    "U",
+    "The displayed UTC-3.5 is a negative offset, a different zone from the gathered UTC+3.5, because the slug drops the sign."
+   ],
+   "ordinary": [
+    "U",
+    "The minus sign says UTC-3.5, which is a different time zone from the stored positive offset."
+   ]
+  },
+  "R5-DQ01": {
+   "literal": [
+    "U",
+    "'1-500 m' reads naturally as a range from 1 to 500 m, not the 1,500 m event."
+   ],
+   "ordinary": [
+    "B",
+    "'1-500 m' can be read as a range of 1 to 500 m rather than 1,500 m."
+   ]
+  },
+  "R5-DQ02": {
+   "literal": [
+    "U",
+    "\"1/500 m\" displays as a fraction (one five-hundredth of a metre), not the event 1,500 m named by the slug."
+   ],
+   "ordinary": [
+    "U",
+    "\"1/500 m\" reads as a fraction, a different distance from the 1,500 m the slug names."
+   ]
+  },
+  "R5-DQ03": {
+   "literal": [
+    "B",
+    "\"1.500 m\" is 1.5 m in English and 1500 m in European notation, so the reading could go either way."
+   ],
+   "ordinary": [
+    "U",
+    "'1.500 m' reads in English as 1.5 metres, a different quantity than 1,500 m."
+   ]
+  },
+  "R5-DQ04": {
+   "literal": [
+    "B",
+    "In English notation '5.000 m' literally reads as five metres rather than the 5,000 m event, though it may be a European-style label."
+   ],
+   "ordinary": [
+    "B",
+    "\"5.000 m\" means 5000 m in some locales but an ordinary English reader may read it as five metres."
+   ]
+  },
+  "R5-DQ05": {
+   "literal": [
+    "U",
+    "\"10,000+ m\" displays as more than 10,000 m, which is a different event from 10,000 m."
+   ],
+   "ordinary": [
+    "U",
+    "\"10,000+ m\" means more than 10,000 m, which is a different event from the 10,000 m."
+   ]
+  },
+  "R5-DQ06": {
+   "literal": [
+    "U",
+    "\"<1,500 m\" displays a less-than quantity bound, which is a different thing from 1,500 m."
+   ],
+   "ordinary": [
+    "U",
+    "The '<' changes the entity into 'less than 1,500 m', which is a quantity claim the triple does not make."
+   ]
+  },
+  "R5-DQ07": {
+   "literal": [
+    "U",
+    "\">5,000 m\" displays a greater-than bound, which is a different quantity from 5,000 m."
+   ],
+   "ordinary": [
+    "U",
+    "The '>' turns the entity into 'greater than 5,000 m', which is a quantity claim."
+   ]
+  },
+  "R5-DQ08": {
+   "literal": [
+    "B",
+    "The tilde reads as \"approximately 10,000 m\", which could be a hedge, but it could also be sign noise from the slug."
+   ],
+   "ordinary": [
+    "U",
+    "The leading '~' adds an 'approximately' hedge that the stored value does not have."
+   ]
+  },
+  "R5-UX01": {
+   "literal": [
+    "U",
+    "\"m²\" makes 10,000 square metres, which is an area, not the 10,000 m race."
+   ],
+   "ordinary": [
+    "U",
+    "'m²' turns a race distance into an area, a changed quantity."
+   ]
+  },
+  "R5-UX02": {
+   "literal": [
+    "U",
+    "'m³' means cubic metres, which is a different thing from the 1,500 m event in the triple."
+   ],
+   "ordinary": [
+    "U",
+    "\"m³\" displays cubic metres, which is a different quantity and entity from 1,500 m."
+   ]
+  },
+  "R5-CU01": {
+   "literal": [
+    "U",
+    "\"$1,500 m\" adds a currency sign, so it reads as a sum of money rather than a 1500 m race."
+   ],
+   "ordinary": [
+    "U",
+    "'$1,500 m' introduces a dollar amount, a different quantity or meaning."
+   ]
+  },
+  "R5-CU02": {
+   "literal": [
+    "U",
+    "The '$' prefix makes the subject a dollar amount, '$10,000 m', not the 10,000 m event."
+   ],
+   "ordinary": [
+    "U",
+    "The '$' prefix makes it read as a monetary amount of $10,000, not a 10,000 m race."
+   ]
+  },
+  "R5-DL01": {
+   "literal": [
+    "U",
+    "The look-alike letter Ʒ reads as a digit 3 in the displayed number, so the distance shown is not 1,500 m."
+   ],
+   "ordinary": [
+    "U",
+    "The look-alike letter Ʒ (resembles a 3) makes the figure read as something like 13500 m, a different event."
+   ]
+  },
+  "R5-DL02": {
+   "literal": [
+    "U",
+    "The tone-five letter Ƽ looks like a digit 5, so the displayed distance reads as 55,000 m, not 5,000 m."
+   ],
+   "ordinary": [
+    "U",
+    "The look-alike character Ƽ (resembles a 5) turns the figure into something like 55000 m, a different event."
+   ]
+  },
+  "R5-DL03": {
+   "literal": [
+    "B",
+    "The leading dental click 'ǀ' looks like a vertical bar, an 'l' or a '1', so it could be harmless noise or could change the figure to 110,000 m."
+   ],
+   "ordinary": [
+    "B",
+    "A leading click-letter that looks like a vertical bar precedes '10,000 m', which is harmless to most readers but is an extra visible mark."
+   ]
+  },
+  "R5-DL04": {
+   "literal": [
+    "B",
+    "A trailing \"ǀ\" glyph looks like a stray vertical bar, which could be harmless punctuation or could change the name."
+   ],
+   "ordinary": [
+    "B",
+    "The trailing look-alike bar is likely ignored, but it is still a stray character in the entity name."
+   ]
+  },
+  "R5-DL05": {
+   "literal": [
+    "U",
+    "The trailing \"ǀ\" displays as a bar after the verse number, altering the entity."
+   ],
+   "ordinary": [
+    "B",
+    "The trailing bar-like glyph is a stray mark that most readers would ignore, though some might read it as extra."
+   ]
+  },
+  "R5-GI01": {
+   "literal": [
+    "U",
+    "\"Clive's Lewis\" is a possessive form that names a different entity than Clive S. Lewis."
+   ],
+   "ordinary": [
+    "B",
+    "'Clive's Lewis' is a garbled possessive of the stored name, so a reader may still take it as C. S. Lewis or may not."
+   ]
+  },
+  "R5-GI02": {
+   "literal": [
+    "B",
+    "As in J151, 'George's Clinton' turns the slug's middle initial into a possessive, so a reader could take it as a different or garbled name, though it most likely points to the same person."
+   ],
+   "ordinary": [
+    "B",
+    "Triple content matches, but 'George's Clinton' adds a possessive that an ordinary reader may find odd or take as a different name."
+   ]
+  },
+  "R5-GI03": {
+   "literal": [
+    "U",
+    "\"Charles's Dutton\" reads as a possessive and a different name from Charles S. Dutton."
+   ],
+   "ordinary": [
+    "B",
+    "'Charles's Dutton' reads as a possessive or a different name than Charles S. Dutton."
+   ]
+  },
+  "R5-GI04": {
+   "literal": [
+    "B",
+    "The slug stands for Samuel S. Hinds, but 'Samuel's Hinds' reads as a possessive, so a careful reader could take it as a different or garbled name; the 'human specie' phrasing is stilted but clear."
+   ],
+   "ordinary": [
+    "B",
+    "Content matches the triple, but 'Samuel's Hinds' renders the name with a possessive that could read as a different name."
+   ]
+  },
+  "R5-GI05": {
+   "literal": [
+    "U",
+    "The possessive \"Rapid City's Dakota\" asserts a different entity from \"Rapid City, S. Dakota\" implied by the slug."
+   ],
+   "ordinary": [
+    "U",
+    "\"Rapid City's Dakota\" is a different entity from Rapid City, South Dakota."
+   ]
+  },
+  "R5-IN01": {
+   "literal": [
+    "U",
+    "The stray 'ĺ' turns 'A Berg' into 'Aĺ Berg', a different name."
+   ],
+   "ordinary": [
+    "B",
+    "\"Aĺ Berg\" has an odd accented letter, so it is unclear whether it names the same surname page."
+   ]
+  },
+  "R5-IN02": {
+   "literal": [
+    "B",
+    "\"Sý\" carries an accented letter the slug does not have, so the name is altered, but the reader may see it as a spelling variant."
+   ],
+   "ordinary": [
+    "B",
+    "'Sý' reads as a different given name than the store's 'S. Morgenstern'; unclear whether it is the same person."
+   ]
+  },
+  "R5-LH01": {
+   "literal": [
+    "B",
+    "\"Ṽ\" is a V-with-tilde look-alike, so the name is spelled differently from Västra Aros, though a reader may take it as a typo."
+   ],
+   "ordinary": [
+    "B",
+    "Ṽ is a look-alike V so the name reads as Västra Aros, but the odd glyph could make a reader doubt the identity."
+   ]
+  },
+  "R5-LH02": {
+   "literal": [
+    "B",
+    "\"Ʋ\" is a look-alike V-with-hook letter, so the name is altered, though a reader may take it as a typo of Västra Aros."
+   ],
+   "ordinary": [
+    "B",
+    "Ʋ is a look-alike for V, so a reader would take it as Västra but the glyph makes it uncertain."
+   ]
+  },
+  "R5-CW01": {
+   "literal": [
+    "U",
+    "Lowercase \"or SA\" reads as a disjunction (\"Albany-Lebanon, or SA\"), which adds an alternative entity."
+   ],
+   "ordinary": [
+    "B",
+    "'Albany-Lebanon, or SA' ('OR' state abbreviation) could be read as an 'or' alternative."
+   ]
+  },
+  "R5-CW02": {
+   "literal": [
+    "U",
+    "'If chins could kill,' followed by a subjectless clause reads as a conditional, which hedges the instance_of claim."
+   ],
+   "ordinary": [
+    "F",
+    "The sentence matches the triple; the trailing comma in the title is only punctuation."
+   ]
+  },
+  "R5-CW03": {
+   "literal": [
+    "B",
+    "The comma in \"sociology, versus social theory\" can be read as splitting two items or as a single label with a pause."
+   ],
+   "ordinary": [
+    "B",
+    "The inserted comma in 'sociology, versus social theory' could read as two things or an odd phrase rather than one entity."
+   ]
+  },
+  "R5-CW04": {
+   "literal": [
+    "F",
+    "The sentence states instance_of for the slug exactly, with stilted but unambiguous phrasing."
+   ],
+   "ordinary": [
+    "F",
+    "Stilted but plain instance_of statement matching the triple."
+   ]
+  },
+  "R5-AB01": {
+   "literal": [
+    "F",
+    "\"ISO 3166-2 No. 01\" matches the slug and the part_of relation is stated plainly."
+   ],
+   "ordinary": [
+    "B",
+    "'No. 01' reads as a number rather than the code ISO 3166-2:NO-01, so the entity identity is ambiguous."
+   ]
+  },
+  "R5-GL01": {
+   "literal": [
+    "U",
+    "The tilde before Elche reads as approximation or negation, so it is not a plain statement of the border."
+   ],
+   "ordinary": [
+    "U",
+    "The \"~\" before Elche reads as \"approximately\" or \"not\", which hedges the claim."
+   ]
+  },
+  "R5-GL02": {
+   "literal": [
+    "U",
+    "The \"¬\" before Bayern reads as logical negation, so the sentence displays a denial of the border."
+   ],
+   "ordinary": [
+    "U",
+    "The \"¬\" sign reads as logical negation, so the sentence looks like it says Hesse does not border Bayern."
+   ]
+  },
+  "R5-SC01": {
+   "literal": [
+    "U",
+    "\"The next line is false\", with a hidden line separator, denies the following claim."
+   ],
+   "ordinary": [
+    "U",
+    "'The next line is false' (with a line separator) casts doubt on the claim that follows it."
+   ]
+  },
+  "R5-SC02": {
+   "literal": [
+    "U",
+    "The added sentence \"The previous sentence is a lie\" retracts the claim."
+   ],
+   "ordinary": [
+    "U",
+    "'The previous sentence is a lie' denies the claim just made."
+   ]
+  },
+  "R5-SC03": {
+   "literal": [
+    "U",
+    "The appended 'Untrue।' directly denies the border claim."
+   ],
+   "ordinary": [
+    "U",
+    "The sentence appends \"Untrue।\", which denies the border claim."
+   ]
+  },
+  "R5-SC04": {
+   "literal": [
+    "U",
+    "A hidden NEL control character leaves 'Myth' attached to 'Costa Rica', which adds a different word or entity."
+   ],
+   "ordinary": [
+    "U",
+    "A hidden NEL control character shows an extra word \"Myth\" fused to Costa Rica, which is not in the triple."
+   ]
+  },
+  "R5-SC05": {
+   "literal": [
+    "U",
+    "The trailing Chinese '不对。' ('that's wrong') retracts or denies the border claim just stated."
+   ],
+   "ordinary": [
+    "U",
+    "The appended Chinese '不对' means 'that's wrong', which retracts or denies the border claim."
+   ]
+  },
+  "R5-VR01": {
+   "literal": [
+    "U",
+    "The active verb \"locates\" says Bayer Leverkusen II finds or places History of Leverkusen, which reverses the located-in relation."
+   ],
+   "ordinary": [
+    "U",
+    "'Bayer Leverkusen II locates History of Leverkusen' reverses the stored 'located in' relation."
+   ]
+  },
+  "R5-VR02": {
+   "literal": [
+    "U",
+    "\"locates\" is an active verb that reverses the located-in-territory relation."
+   ],
+   "ordinary": [
+    "U",
+    "'locates' reverses the stored 'located in' relation."
+   ]
+  },
+  "R5-F01": {
+   "literal": [
+    "F",
+    "UTC-06 is the correct displayed offset for the slug utc_06, and the triple is stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement of the triple (City of Chicago, UTC-06)."
+   ]
+  },
+  "R5-F02": {
+   "literal": [
+    "F",
+    "It states the located_in_time_zone triple plainly with the UTC-07 value."
+   ],
+   "ordinary": [
+    "F",
+    "UTC-07 matches the stored zone and Tucson's real offset."
+   ]
+  },
+  "R5-F03": {
+   "literal": [
+    "F",
+    "'Costa Rica is located in time zone UTC-06' states the located_in_time_zone triple exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states Costa Rica uses UTC-06."
+   ]
+  },
+  "R5-F04": {
+   "literal": [
+    "F",
+    "'UTC-07' plainly names the zone in the located_in_time_zone triple, with nothing added."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states Denver uses time zone UTC-07 with nothing added."
+   ]
+  },
+  "R5-F05": {
+   "literal": [
+    "F",
+    "The sentence states the time-zone triple plainly, with UTC+3.5 matching utc_3_5."
+   ],
+   "ordinary": [
+    "F",
+    "Tehran's zone UTC+3.5 matches the triple stated plainly."
+   ]
+  },
+  "R5-F06": {
+   "literal": [
+    "F",
+    "GMT+5:45 is the displayed form of the gmt_5_45 value, and the sentence states the triple plainly."
+   ],
+   "ordinary": [
+    "F",
+    "GMT+5:45 matches the stored zone and Nepal's actual offset."
+   ]
+  },
+  "R5-F07": {
+   "literal": [
+    "F",
+    "'Bayern, Germany' reads as a place qualified by its country and matches the shares_border_with triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states the Hesse-Bayern border, with \"Germany\" as a harmless disambiguator."
+   ]
+  },
+  "R5-F08": {
+   "literal": [
+    "F",
+    "The sentence states shares_border_with plainly and matches the slugs."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement of the triple with the comma only punctuation."
+   ]
+  },
+  "R5-F09": {
+   "literal": [
+    "F",
+    "The comma in \"Ilford, United Kingdom\" is a conventional place-name disambiguation, so one neighbour is named."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states Barking London borders Ilford, United Kingdom, as in the triple."
+   ]
+  },
+  "R5-F10": {
+   "literal": [
+    "F",
+    "Plain statement of the shares_border_with triple; the slug b_rum is just Bærum without the accent."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement matching the triple; Bærum is the entity named by b_rum."
+   ]
+  },
+  "R5-F11": {
+   "literal": [
+    "F",
+    "It states the instance_of triple plainly; the odd class and the spelling are the slug's own."
+   ],
+   "ordinary": [
+    "F",
+    "It states the instance_of triple plainly, even though the wording is odd."
+   ]
+  },
+  "R5-F12": {
+   "literal": [
+    "F",
+    "The curly apostrophe is only typographic, and the sentence states instance_of plainly."
+   ],
+   "ordinary": [
+    "F",
+    "A curly apostrophe is harmless; plain statement of the triple."
+   ]
+  },
+  "R5-F13": {
+   "literal": [
+    "F",
+    "The sentence states exactly the instance_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain restatement of the instance_of triple."
+   ]
+  },
+  "R5-F14": {
+   "literal": [
+    "F",
+    "The hyphen in \"Pre-dreadnought\" is just the slug's dropped punctuation, and the subclass_of claim is stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Plain subclass_of statement matching the triple, with the hyphen only reflecting the slug."
+   ]
+  },
+  "R5-F15": {
+   "literal": [
+    "F",
+    "The sentence states the subclass_of triple plainly; the odd grammar and content are as gathered."
+   ],
+   "ordinary": [
+    "F",
+    "Stilted grammar but a plain subclass_of statement matching the triple."
+   ]
+  },
+  "R5-F16": {
+   "literal": [
+    "F",
+    "It states the follows triple exactly and plainly."
+   ],
+   "ordinary": [
+    "F",
+    "It states the 'follows' triple plainly."
+   ]
+  },
+  "R5-F17": {
+   "literal": [
+    "F",
+    "The sentence states shares_border_with plainly and matches the slugs."
+   ],
+   "ordinary": [
+    "F",
+    "Plain, exact statement of the triple."
+   ]
+  },
+  "R5-F18": {
+   "literal": [
+    "F",
+    "The sentence repeats the slugs as written, including the typo, and states the border plainly."
+   ],
+   "ordinary": [
+    "F",
+    "Typo in the name only; it matches the stored slug and states the triple plainly."
+   ]
+  },
+  "R5-F19": {
+   "literal": [
+    "F",
+    "Northern Ireland FC is stated plainly as a participant of World Cup 1982, matching the participant_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plainly states Northern Ireland FC participated in World Cup 1982, as in the triple."
+   ]
+  },
+  "R5-F20": {
+   "literal": [
+    "F",
+    "The sentence states instance_of plainly, with 'S.' standing for the slug's s."
+   ],
+   "ordinary": [
+    "F",
+    "Plain instance_of statement matching the triple."
+   ]
+  },
+  "R5-F21": {
+   "literal": [
+    "F",
+    "\"George S. Clinton\" is the plain label and the triple is stated directly."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement of the triple; 'George S. Clinton' is the entity."
+   ]
+  },
+  "R5-F22": {
+   "literal": [
+    "F",
+    "The sentence states instance_of plainly, and the comma and abbreviation are just the slug's punctuation."
+   ],
+   "ordinary": [
+    "F",
+    "Plain instance_of statement; 'S. Dakota' is just the name."
+   ]
+  },
+  "R5-F23": {
+   "literal": [
+    "F",
+    "The sentence states the subclass_of triple exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Plain subclass_of statement matching the triple."
+   ]
+  },
+  "R5-F24": {
+   "literal": [
+    "F",
+    "A narrow no-break space is just a thousands separator, so this is plainly 10 000 m."
+   ],
+   "ordinary": [
+    "F",
+    "A narrow no-break space in '10 000 m' is just a thousands separator; the sentence states the triple plainly."
+   ]
+  },
+  "R5-F25": {
+   "literal": [
+    "F",
+    "The thin space is just a thousands separator, so the sentence states the subclass_of triple plainly."
+   ],
+   "ordinary": [
+    "F",
+    "A thin space as thousands separator is just 5,000 m; plain statement of the triple."
+   ]
+  },
+  "R5-F26": {
+   "literal": [
+    "F",
+    "Plain member_of statement matching the triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain member_of statement matching the triple."
+   ]
+  },
+  "R5-F27": {
+   "literal": [
+    "F",
+    "Plain member_of statement matching the triple."
+   ],
+   "ordinary": [
+    "F",
+    "Plain member_of statement matching the triple."
+   ]
+  },
+  "R5-F28": {
+   "literal": [
+    "F",
+    "The sentence states the 'follows' triple plainly, if telegraphically."
+   ],
+   "ordinary": [
+    "F",
+    "Plain \"follows\" statement matching the triple, odd but unambiguous."
+   ]
+  },
+  "R5-F29": {
+   "literal": [
+    "F",
+    "Plainly states the has_part triple with matching entities."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement of the single has_part triple."
+   ]
+  },
+  "R5-F30": {
+   "literal": [
+    "F",
+    "The sentence states the instance_of triple exactly."
+   ],
+   "ordinary": [
+    "F",
+    "Plain instance_of statement matching the triple."
+   ]
+  },
+  "R5-F31": {
+   "literal": [
+    "F",
+    "Plain part_of statement matching the triple (Cold War I is the slug's object)."
+   ],
+   "ordinary": [
+    "F",
+    "Plain part_of statement matching the triple."
+   ]
+  },
+  "R5-F32": {
+   "literal": [
+    "F",
+    "The sentence states the follows triple plainly with the same entities."
+   ],
+   "ordinary": [
+    "F",
+    "Plain follows statement matching the triple."
+   ]
+  },
+  "R5-F33": {
+   "literal": [
+    "F",
+    "The odd label 'Albany Lebanon OR SA' is the slug's entity name, stated plainly as a border."
+   ],
+   "ordinary": [
+    "B",
+    "\"Albany Lebanon OR SA\" can read as a disjunction (\"or\") or as a place-name abbreviation."
+   ]
+  },
+  "R5-F34": {
+   "literal": [
+    "F",
+    "\"ISO 3166-2:NO-01\" is the standard code format for the same entity, and the part_of relation is stated plainly."
+   ],
+   "ordinary": [
+    "F",
+    "'ISO 3166-2:NO-01' is the natural rendering of the entity, stated plainly."
+   ]
+  },
+  "R5-F35": {
+   "literal": [
+    "F",
+    "The sentence states the time-zone triple plainly with the diacritic form of the name."
+   ],
+   "ordinary": [
+    "F",
+    "Plain time-zone statement; Östra Aros restores the diacritic dropped from the slug."
+   ]
+  },
+  "R5-F36": {
+   "literal": [
+    "F",
+    "\"S&P\" is the slug's s_p with punctuation restored, and the part_of claim is plain."
+   ],
+   "ordinary": [
+    "F",
+    "\"S&P\" is a plain rendering of the s_p slug, and the sentence states exactly the part_of triple."
+   ]
+  },
+  "R5-F37": {
+   "literal": [
+    "F",
+    "A/S is the slug a_s, and the sentence states instance_of plainly."
+   ],
+   "ordinary": [
+    "F",
+    "A/S is just the company-type entity named by the slug; plain instance_of statement."
+   ]
+  },
+  "R5-F38": {
+   "literal": [
+    "F",
+    "\"Z-80\" is the plain label, and the triple is stated directly."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement of the triple."
+   ]
+  },
+  "R5-F39": {
+   "literal": [
+    "F",
+    "The sentence states the instance_of triple plainly; 'e.V.' is the legal-form label."
+   ],
+   "ordinary": [
+    "F",
+    "Plain statement that the network is an instance of e.V., matching the triple."
+   ]
+  },
+  "R5-F40": {
+   "literal": [
+    "F",
+    "The non-breaking space displays as an ordinary space, so this is a plain shares_border_with statement."
+   ],
+   "ordinary": [
+    "F",
+    "The non-breaking space displays as an ordinary space, so this is the plain triple."
+   ]
+  },
+  "R5-F41": {
+   "literal": [
+    "F",
+    "The 'fi' ligature characters display as plain 'film', so the sentence plainly states the subclass_of triple."
+   ],
+   "ordinary": [
+    "F",
+    "The fi ligature displays as 'film', so this plainly states the subclass triple."
+   ]
+  },
+  "R5-F42": {
+   "literal": [
+    "F",
+    "The ﬂ ligature displays as \"fl\", so this is plainly \"Tyrant flycatcher\"."
+   ],
+   "ordinary": [
+    "F",
+    "The fl ligature displays as 'flycatcher', so the sentence matches the triple."
+   ]
+  },
+  "R5-F43": {
+   "literal": [
+    "F",
+    "The zero-width non-joiner is invisible, so the sentence displays 'Volusia County Florida' and states the shares_border_with triple plainly."
+   ],
+   "ordinary": [
+    "F",
+    "The zero-width non-joiner is invisible, so it displays as 'Volusia County Florida' and states the border triple plainly."
+   ]
+  },
+  "R5-F44": {
+   "literal": [
+    "F",
+    "It states the instance_of triple plainly."
+   ],
+   "ordinary": [
+    "F",
+    "It states the instance_of triple plainly."
+   ]
+  },
+  "R5-F45": {
+   "literal": [
+    "F",
+    "It plainly states the subclass_of triple, and the odd class name is only the slug's wording."
+   ],
+   "ordinary": [
+    "F",
+    "It states the subclass triple plainly, if awkwardly."
+   ]
+  },
+  "R5-F46": {
+   "literal": [
+    "F",
+    "It plainly states the subclass_of triple, and the only oddity is the singular/plural verb."
+   ],
+   "ordinary": [
+    "F",
+    "It states the subclass triple plainly with no additions."
+   ]
+  },
+  "R5-F47": {
+   "literal": [
+    "F",
+    "It states the subclass_of triple plainly."
+   ],
+   "ordinary": [
+    "F",
+    "It states the subclass triple plainly."
+   ]
+  }
+ },
+ "provenance": "written by Claude's adjudication script from the committed cases.json (5c22c4e65) and the workflow's judge output; no checker was run",
+ "backend": "none (label adjudication, no simulation)",
+ "device": "none (label adjudication, no simulation)"
+}

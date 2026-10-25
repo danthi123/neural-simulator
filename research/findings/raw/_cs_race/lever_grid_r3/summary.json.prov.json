@@ -1,0 +1,25 @@
+{
+ "run_id": "1792594060-59683",
+ "runner": "../../../../opt/data/cache/scratch/a_1c_sum.py",
+ "argv": [
+  "/opt/data/cache/scratch/a_1c_sum.py"
+ ],
+ "git_sha": "fa0825063",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-21T10:47:40",
+ "env": {},
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 8915.9,
+ "corpus_check_query": "two-candidate spiking race fails to commit under symmetric drive",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_cs_race/lever_grid_r3/summary.json"
+}

@@ -12,6 +12,37 @@ stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CUR
 compute node (GPU queue, local model serving), and Claude Code inspects occasionally. See
 `docs/plans/2026-09-30-home-to-server-MIGRATION.md`. The capability entries below predate this move and are unaffected.
 
+## 2026-10-21 — the strict no-making-things-up check passes its tests (still off); a cell-type fault under the substrate; two new methods start
+
+- **The strict speech check passes every test written for it in advance, and stays off.** The check on the mouth now
+  keeps a sentence only when all of it spells out facts the brain gathered for that turn. Attempt 5 let none of 191
+  made-up sentences from a fresh blind adversary through (none of 216 counting borderline ones), kept no unsupported
+  sentence in three held-out sets of real recorded answers, and lost no answer the current check gives. It is merged
+  switched off. It has a cost: it can voice 93% of the brain's one-fact facts, and it keeps fewer true sentences in long
+  real answers. A review found that it reads one sentence at a time and that four routes to the mouth skip it; attempt 6
+  fixes those, is under review, and then faces its own blind round. Switching it on needs its own test.
+  (VERDICTS in `research/findings/2026-10-20-moat-allowlist-claim-checker-PREREGISTRATION.md`, merge `33c17026e`.)
+- **Later on 10-21: the strict check meets a honesty problem it cannot solve by reading words.** Attempt 6 let none of 114
+  made-up sentences through, but its blind round showed that when a user teaches the brain a name holding "I", "me" or
+  "you" (a band called "Trevor and I"), the mouth can say it as if the brain were talking about itself. Attempt 7 tried
+  word lists and failed its blind round (41 of 86 kept): such words can be spelled endlessly. A reading test then showed
+  that quoting the fact as someone's words fixes names like "So I Married ..." but not a stored name that is itself a
+  pointing word or pronoun ("the latter", "moi"), because what the person meant was lost when the fact was stored. So
+  attempt 8 decides per fact (with the switch on, only facts from the brain's declared build knowledge are spoken), and
+  the real fix moves to where a fact is heard: the brain should learn who "I" and "you" mean (task #271; its first step,
+  a census of today's encoding, has started). (VERDICTS for builds 6 and 7, merge `359e8ff63`.)
+- **A fault under the cell types (10-20).** A global randomization step overwrote each region's own neuron parameters
+  with jitter centred on one regular-spiking type, so the specialised cell types were hybrids. The fix is merged
+  switched off; the basal-ganglia seam test waits on measuring that organ on the real cell types.
+- **Word roles.** Switching on the brain's own word-role reading was held on 10-18: it made one answer worse ("what does
+  the cat eat" became "I don't know" on three of six setups). The next method lets the question's own shape supply the
+  missing evidence, learned rather than hand-written. Its first step (10-21) found that the refusal is a near-tie in what
+  the brain has learned, not a broken switch. The switch-on test plan is due 10-27.
+- **Choosing what to say.** A new method lets candidate memories race, addressed by the question's content. Its first
+  feasibility grid (10-21) is void: the race never picked any winner, even when pushed hard, so it tested nothing. It
+  is rerun with a check that a lone memory does get picked.
+- **The #1 metric at the current code** on the six test seeds is registered and running (294 jobs).
+
 ## 2026-10-16 — the first Stage-1 exit gate is verified: all four primary tests met on all six seeds
 
 **Stage 1 passed on attempt 2 (2026-10-16).** The first integrated stage-exit gate — the four tests a brain must

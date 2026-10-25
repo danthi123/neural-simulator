@@ -1,0 +1,1559 @@
+{
+ "_doc": "F-labelled S1/S3 sentences the B2h arm kept at parser seed 42 (BRAIN_MOAT_SLUG_NORM=1 via ChatBrain._verify_claim_set); single_triple = B2h grounded exactly one distinct gathered triple (prereg bar 4). allowlist_losses = single-triple sentences the allowlist matcher rejects, with the shape it failed (bar-4 misses, reported, never loosened for). Rule: tests/fixtures/build_moat_allowlist_fixtures.py docstring.",
+ "generated_by": "tests/fixtures/build_moat_allowlist_fixtures.py",
+ "backend": "numpy",
+ "device": "cpu (BridgeParser on numpy, CUDA hidden)",
+ "heldout_sha256": {
+  "corpus.json": "7a53c7cb14a60a28beb82e57060cea19770ae65031a3d3017449ce983ed556c1",
+  "s3_corpus.json": "d796f0e7048870fb57c5cf69a512bfec83574c4ac021fa53855f81e96af78f92",
+  "labels.json": "48e5334b9cde7cc94ca313b6db47737fdbb6b621fbf12fccc29f17c470ab4772",
+  "s3_labels.json": "4246a6a24745c1b31880761970cf2b0d091ee33a883a73f36fe632b36e778167"
+ },
+ "parser_seed": 42,
+ "totals": {
+  "S1": {
+   "F_unique": 92,
+   "F_kept_by_b2h_seed42": 13
+  },
+  "S3": {
+   "F_unique": 86,
+   "F_kept_by_b2h_seed42": 25
+  }
+ },
+ "n_single_triple": 38,
+ "n_multi_triple": 0,
+ "gathered_sets": {
+  "S1:h01": [
+   [
+    "1962_asian_games",
+    "country",
+    "etymology_of_indonesia"
+   ],
+   [
+    "1962_asian_games",
+    "follows",
+    "third_asian_games"
+   ],
+   [
+    "1962_asian_games",
+    "instance_of",
+    "asian_summer_games"
+   ],
+   [
+    "commonwealth_australia",
+    "shares_border_with",
+    "new_zealnd"
+   ],
+   [
+    "etymology_of_indonesia",
+    "shares_border_with",
+    "commonwealth_australia"
+   ]
+  ],
+  "S1:h10": [
+   [
+    "geography_of_adana",
+    "country",
+    "the_republic_of_turkey"
+   ],
+   [
+    "geography_of_adana",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "geography_of_adana",
+    "located_in_time_zone",
+    "kaliningrad_time"
+   ],
+   [
+    "geography_of_adana",
+    "twinned_administrative_body",
+    "saint_petersburg_city"
+   ]
+  ],
+  "S1:h11": [
+   [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   [
+    "ha_noi_vietnam",
+    "country",
+    "chxhcn_vietnam"
+   ],
+   [
+    "ha_noi_vietnam",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   [
+    "ha_noi_vietnam",
+    "twinned_administrative_body",
+    "montr_al_canada"
+   ],
+   [
+    "hayastani_hanrapetut_yun",
+    "shares_border_with",
+    "persian_state_of_iran"
+   ]
+  ],
+  "S1:h12": [
+   [
+    "history_of_ferrara",
+    "country",
+    "italian_republic"
+   ],
+   [
+    "history_of_ferrara",
+    "described_by_source",
+    "nordisk_familjebok"
+   ],
+   [
+    "history_of_ferrara",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "history_of_ferrara",
+    "located_in_time_zone",
+    "rome_time"
+   ]
+  ],
+  "S1:h17": [
+   [
+    "common_names",
+    "subclass_of",
+    "meaning_of_names"
+   ],
+   [
+    "human_specie",
+    "instance_of",
+    "common_names"
+   ],
+   [
+    "luk_cs_p_l",
+    "country_of_citizenship",
+    "u_s_of_a"
+   ],
+   [
+    "luk_cs_p_l",
+    "instance_of",
+    "human_specie"
+   ],
+   [
+    "luk_cs_p_l",
+    "occupation",
+    "television_actor"
+   ]
+  ],
+  "S1:h21": [
+   [
+    "china_pr",
+    "shares_border_with",
+    "bharat_ganrajya"
+   ],
+   [
+    "modern_era_japan",
+    "shares_border_with",
+    "china_pr"
+   ],
+   [
+    "prefecture_of_nagasaki",
+    "country",
+    "modern_era_japan"
+   ],
+   [
+    "prefecture_of_nagasaki",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ],
+   [
+    "prefecture_of_nagasaki",
+    "twinned_administrative_body",
+    "districts_of_busan"
+   ]
+  ],
+  "S1:h22": [
+   [
+    "franzoesische_republik",
+    "shares_border_with",
+    "united_kingom"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "described_by_source",
+    "brockhaus_and_efron_encyclopaedia"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ],
+   [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   [
+    "republic_of_brazil",
+    "shares_border_with",
+    "franzoesische_republik"
+   ]
+  ],
+  "S1:h23": [
+   [
+    "s_te_france",
+    "country",
+    "franzoesische_republik"
+   ],
+   [
+    "s_te_france",
+    "instance_of",
+    "communes_in_france"
+   ],
+   [
+    "s_te_france",
+    "located_in_the_administrative_territoria",
+    "department_of_herault"
+   ],
+   [
+    "s_te_france",
+    "located_in_time_zone",
+    "rome_time"
+   ]
+  ],
+  "S1:h26": [
+   [
+    "the_weather_in_stavenger",
+    "country",
+    "royal_kingdom_of_norway"
+   ],
+   [
+    "the_weather_in_stavenger",
+    "instance_of",
+    "city_work"
+   ],
+   [
+    "the_weather_in_stavenger",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "the_weather_in_stavenger",
+    "twinned_administrative_body",
+    "city_of_houston_texas"
+   ]
+  ],
+  "S1:h27": [
+   [
+    "federal_republic_of_germany",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "universitat_des_saarlandes",
+    "country",
+    "federal_republic_of_germany"
+   ],
+   [
+    "universitat_des_saarlandes",
+    "instance_of",
+    "higher_general_education"
+   ],
+   [
+    "universitat_des_saarlandes",
+    "located_in_the_administrative_territoria",
+    "county_of_saarbruecken"
+   ],
+   [
+    "universitat_des_saarlandes",
+    "member_of",
+    "german_research_network"
+   ]
+  ],
+  "S3:s3a04": [
+   [
+    "bobolice_commune",
+    "country",
+    "pole_land"
+   ],
+   [
+    "bobolice_commune",
+    "shares_border_with",
+    "szczecinek_commune"
+   ],
+   [
+    "pole_land",
+    "located_in_time_zone",
+    "rome_time"
+   ]
+  ],
+  "S3:s3a08": [
+   [
+    "cycle_race",
+    "subclass_of",
+    "playing_sport"
+   ],
+   [
+    "directeurs_sportifs",
+    "instance_of",
+    "expert_occupation"
+   ],
+   [
+    "directeurs_sportifs",
+    "sport",
+    "road_cycling_race"
+   ],
+   [
+    "road_cycling_race",
+    "subclass_of",
+    "cycle_race"
+   ]
+  ],
+  "S3:s3a09": [
+   [
+    "emarcy_records",
+    "genre",
+    "jazz_lists"
+   ],
+   [
+    "emarcy_records",
+    "instance_of",
+    "record_companies"
+   ],
+   [
+    "genre_of_music",
+    "instance_of",
+    "sociological_concept"
+   ],
+   [
+    "jazz_lists",
+    "instance_of",
+    "genre_of_music"
+   ]
+  ],
+  "S3:s3a12": [
+   [
+    "england_london",
+    "twinned_administrative_body",
+    "new_york_new_york"
+   ],
+   [
+    "gorky_film_studio",
+    "headquarters_location",
+    "moscow_ussr"
+   ],
+   [
+    "gorky_film_studio",
+    "instance_of",
+    "film_studios"
+   ],
+   [
+    "moscow_ussr",
+    "twinned_administrative_body",
+    "england_london"
+   ]
+  ],
+  "S3:s3a13": [
+   [
+    "armenian_soviet_encyclopedia",
+    "country",
+    "hayastani_hanrapetut_yun"
+   ],
+   [
+    "association_football_club",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   [
+    "hertha_berlin_ii",
+    "country",
+    "federal_republic_of_germany"
+   ],
+   [
+    "hertha_berlin_ii",
+    "sport",
+    "association_football_club"
+   ],
+   [
+    "hertha_berlin_ii",
+    "subclass_of",
+    "hertha_bsc"
+   ]
+  ],
+  "S3:s3a14": [
+   [
+    "climate_of_sweden",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   [
+    "indoor_bandy",
+    "country_of_origin",
+    "climate_of_sweden"
+   ],
+   [
+    "indoor_bandy",
+    "subclass_of",
+    "ball_games"
+   ]
+  ],
+  "S3:s3a19": [
+   [
+    "coat_of_arms",
+    "subclass_of",
+    "cultural_ikon"
+   ],
+   [
+    "national_coat_of_arms",
+    "subclass_of",
+    "coat_of_arms"
+   ]
+  ],
+  "S3:s3a22": [
+   [
+    "commonwealth_australia",
+    "participant_of",
+    "war_world_two"
+   ],
+   [
+    "premiers_of_victoria",
+    "country",
+    "commonwealth_australia"
+   ],
+   [
+    "premiers_of_victoria",
+    "subclass_of",
+    "chief_administrator"
+   ],
+   [
+    "war_world_two",
+    "follows",
+    "world_war_one"
+   ]
+  ],
+  "S3:s3a23": [
+   [
+    "proprietary_firmware",
+    "subclass_of",
+    "software_technology"
+   ],
+   [
+    "renderware",
+    "instance_of",
+    "proprietary_firmware"
+   ],
+   [
+    "software_technology",
+    "subclass_of",
+    "commercial_product"
+   ]
+  ],
+  "S3:s3a29": [
+   [
+    "veterinary_physician",
+    "instance_of",
+    "expert_occupation"
+   ]
+  ],
+  "S3:s3b07": [
+   [
+    "defensive_secondary",
+    "sport",
+    "us_football"
+   ]
+  ],
+  "S3:s3b09": [
+   [
+    "equestrian_statue",
+    "subclass_of",
+    "stone_statue"
+   ]
+  ],
+  "S3:s3b14": [
+   [
+    "independent_spirit_award_for_best_first",
+    "instance_of",
+    "movie_award"
+   ]
+  ],
+  "S3:s3b20": [
+   [
+    "naval_artillery_support",
+    "subclass_of",
+    "commercial_product"
+   ]
+  ],
+  "S3:s3b23": [
+   [
+    "pittsburgh_lrt",
+    "instance_of",
+    "transportation_authority"
+   ]
+  ],
+  "S3:s3b25": [
+   [
+    "rustic_architecture",
+    "instance_of",
+    "architectural_styles"
+   ]
+  ],
+  "S3:s3b27": [
+   [
+    "supervising_direction",
+    "instance_of",
+    "expert_occupation"
+   ]
+  ],
+  "S3:s3b29": [
+   [
+    "unit_of_volume",
+    "subclass_of",
+    "units_of_measurements"
+   ]
+  ],
+  "S3:s3b30": [
+   [
+    "web_gallery_of_art",
+    "instance_of",
+    "internet_websites"
+   ]
+  ]
+ },
+ "single_triple": [
+  {
+   "stratum": "S1",
+   "turn": "h01",
+   "svo": [
+    "1962_asian_games",
+    "instance_of",
+    "asian_summer_games"
+   ],
+   "surface": "The 1962 Asian Games were an instance of the Asian Summer Games.",
+   "gathered": "S1:h01",
+   "b2h_grounded": [
+    [
+     "1962_asian_games",
+     "instance_of",
+     "asian_summer_games"
+    ]
+   ]
+  },
+  {
+   "stratum": "S1",
+   "turn": "h10",
+   "svo": [
+    "geography_of_adana",
+    "instance_of",
+    "city_work"
+   ],
+   "surface": "The geography of Adana is an instance of a city work.",
+   "gathered": "S1:h10",
+   "b2h_grounded": [
+    [
+     "geography_of_adana",
+     "instance_of",
+     "city_work"
+    ]
+   ]
+  },
+  {
+   "stratum": "S1",
+   "turn": "h10",
+   "svo": [
+    "geography_of_adana",
+    "instance_of",
+    "city_work"
+   ],
+   "surface": "Geography of Adana is an instance of city work.",
+   "gathered": "S1:h10",
+   "b2h_grounded": [
+    [
+     "geography_of_adana",
+     "instance_of",
+     "city_work"
+    ]
+   ]
+  },
+  {
+   "stratum": "S1",
+   "turn": "h11",
+   "svo": [
+    "ha_noi_vietnam",
+    "described_by_source",
+    "armenian_soviet_encyclopedia"
+   ],
+   "surface": "Ha noi vietnam was described by source Armenian Soviet Encyclopedia.",
+   "gathered": "S1:h11",
+   "b2h_grounded": [
+    [
+     "ha_noi_vietnam",
+     "described_by_source",
+     "armenian_soviet_encyclopedia"
+    ]
+   ]
+  },
+  {
+   "stratum": "S1",
+   "turn": "h11",
+   "svo": [
+    "hayastani_hanrapetut_yun",
+    "shares_border_with",
+    "persian_state_of_iran"
+   ],
+   "surface": "Hayastani Hanrapetut Yun shares border with Persian State of Iran.",
+   "gathered": "S1:h11",
+   "b2h_grounded": [
+    [
+     "hayastani_hanrapetut_yun",
+     "shares_border_with",
+     "persian_state_of_iran"
+    ]
+   ]
+  },
+  {
+   "stratum": "S1",
+   "turn": "h12",
+   "svo": [
+    "history_of_ferrara",
+    "described_by_source",
+    "nordisk_familjebok"
+   ],
+   "surface": "The history of Ferrara was described by source Nordisk familjebok.",
+   "gathered": "S1:h12",
+   "b2h_grounded": [
+    [
+     "history_of_ferrara",
+     "described_by_source",
+     "nordisk_familjebok"
+    ]
+   ]
+  },
+  {
+   "stratum": "S1",
+   "turn": "h17",
+   "svo": [
+    "luk_cs_p_l",
+    "instance_of",
+    "human_specie"
+   ],
+   "surface": "Luk_cs_p_l is an instance of human_specie.",
+   "gathered": "S1:h17",
+   "b2h_grounded": [
+    [
+     "luk_cs_p_l",
+     "instance_of",
+     "human_specie"
+    ]
+   ]
+  },
+  {
+   "stratum": "S1",
+   "turn": "h21",
+   "svo": [
+    "prefecture_of_nagasaki",
+    "located_in_time_zone",
+    "korea_standard_time"
+   ],
+   "surface": "The prefecture of Nagasaki is located in time zone Korea Standard Time.",
+   "gathered": "S1:h21",
+   "b2h_grounded": [
+    [
+     "prefecture_of_nagasaki",
+     "located_in_time_zone",
+     "korea_standard_time"
+    ]
+   ]
+  },
+  {
+   "stratum": "S1",
+   "turn": "h22",
+   "svo": [
+    "rep_blica_del_paraguay",
+    "shares_border_with",
+    "republic_of_brazil"
+   ],
+   "surface": "Rep Blica del Paraguay shares border with the Republic of Brazil.",
+   "gathered": "S1:h22",
+   "b2h_grounded": [
+    [
+     "rep_blica_del_paraguay",
+     "shares_border_with",
+     "republic_of_brazil"
+    ]
+   ]
+  },
+  {
+   "stratum": "S1",
+   "turn": "h22",
+   "svo": [
+    "rep_blica_del_paraguay",
+    "member_of",
+    "united_nations"
+   ],
+   "surface": "Rep_blica_del_paraguay is a member of the United Nations.",
+   "gathered": "S1:h22",
+   "b2h_grounded": [
+    [
+     "rep_blica_del_paraguay",
+     "member_of",
+     "united_nations"
+    ]
+   ]
+  },
+  {
+   "stratum": "S1",
+   "turn": "h23",
+   "svo": [
+    "s_te_france",
+    "instance_of",
+    "communes_in_france"
+   ],
+   "surface": "The S_Te_France instance_of communes_in_france.",
+   "gathered": "S1:h23",
+   "b2h_grounded": [
+    [
+     "s_te_france",
+     "instance_of",
+     "communes_in_france"
+    ]
+   ]
+  },
+  {
+   "stratum": "S1",
+   "turn": "h26",
+   "svo": [
+    "the_weather_in_stavenger",
+    "instance_of",
+    "city_work"
+   ],
+   "surface": "The weather in Stavenger is an instance of the city work.",
+   "gathered": "S1:h26",
+   "b2h_grounded": [
+    [
+     "the_weather_in_stavenger",
+     "instance_of",
+     "city_work"
+    ]
+   ]
+  },
+  {
+   "stratum": "S1",
+   "turn": "h27",
+   "svo": [
+    "federal_republic_of_germany",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   "surface": "The federal republic of germany is located in time zone rome time.",
+   "gathered": "S1:h27",
+   "b2h_grounded": [
+    [
+     "federal_republic_of_germany",
+     "located_in_time_zone",
+     "rome_time"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3a04",
+   "svo": [
+    "pole_land",
+    "located_in_time_zone",
+    "rome_time"
+   ],
+   "surface": "Pole Land is located in time zone ROME_TIME.",
+   "gathered": "S3:s3a04",
+   "b2h_grounded": [
+    [
+     "pole_land",
+     "located_in_time_zone",
+     "rome_time"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3a08",
+   "svo": [
+    "cycle_race",
+    "subclass_of",
+    "playing_sport"
+   ],
+   "surface": "A cycle_race is a subclass of playing_sport.",
+   "gathered": "S3:s3a08",
+   "b2h_grounded": [
+    [
+     "cycle_race",
+     "subclass_of",
+     "playing_sport"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3a09",
+   "svo": [
+    "genre_of_music",
+    "instance_of",
+    "sociological_concept"
+   ],
+   "surface": "Genre of music is an instance of sociological concept.",
+   "gathered": "S3:s3a09",
+   "b2h_grounded": [
+    [
+     "genre_of_music",
+     "instance_of",
+     "sociological_concept"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3a12",
+   "svo": [
+    "gorky_film_studio",
+    "instance_of",
+    "film_studios"
+   ],
+   "surface": "Gorky Film Studio is an instance of film studios.",
+   "gathered": "S3:s3a12",
+   "b2h_grounded": [
+    [
+     "gorky_film_studio",
+     "instance_of",
+     "film_studios"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3a13",
+   "svo": [
+    "hertha_berlin_ii",
+    "subclass_of",
+    "hertha_bsc"
+   ],
+   "surface": "Hertha Berlin II is a subclass of Hertha BSC.",
+   "gathered": "S3:s3a13",
+   "b2h_grounded": [
+    [
+     "hertha_berlin_ii",
+     "subclass_of",
+     "hertha_bsc"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3a14",
+   "svo": [
+    "indoor_bandy",
+    "subclass_of",
+    "ball_games"
+   ],
+   "surface": "Indoor bandy is a subclass of ball games.",
+   "gathered": "S3:s3a14",
+   "b2h_grounded": [
+    [
+     "indoor_bandy",
+     "subclass_of",
+     "ball_games"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3a14",
+   "svo": [
+    "indoor_bandy",
+    "subclass_of",
+    "ball_games"
+   ],
+   "surface": "Indoor_bandy is a subclass of ball_games.",
+   "gathered": "S3:s3a14",
+   "b2h_grounded": [
+    [
+     "indoor_bandy",
+     "subclass_of",
+     "ball_games"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3a19",
+   "svo": [
+    "coat_of_arms",
+    "subclass_of",
+    "cultural_ikon"
+   ],
+   "surface": "Coat_of_arms is a subclass of cultural_ikon.",
+   "gathered": "S3:s3a19",
+   "b2h_grounded": [
+    [
+     "coat_of_arms",
+     "subclass_of",
+     "cultural_ikon"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3a22",
+   "svo": [
+    "war_world_two",
+    "follows",
+    "world_war_one"
+   ],
+   "surface": "War World Two Follows World War One",
+   "gathered": "S3:s3a22",
+   "b2h_grounded": [
+    [
+     "war_world_two",
+     "follows",
+     "world_war_one"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3a22",
+   "svo": [
+    "premiers_of_victoria",
+    "subclass_of",
+    "chief_administrator"
+   ],
+   "surface": "Premiers of Victoria is a subclass of chief administrator.",
+   "gathered": "S3:s3a22",
+   "b2h_grounded": [
+    [
+     "premiers_of_victoria",
+     "subclass_of",
+     "chief_administrator"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3a23",
+   "svo": [
+    "renderware",
+    "instance_of",
+    "proprietary_firmware"
+   ],
+   "surface": "The renderware is an instance of the proprietary firmware.",
+   "gathered": "S3:s3a23",
+   "b2h_grounded": [
+    [
+     "renderware",
+     "instance_of",
+     "proprietary_firmware"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3a23",
+   "svo": [
+    "renderware",
+    "instance_of",
+    "proprietary_firmware"
+   ],
+   "surface": "Renderware is an instance of proprietary firmware.",
+   "gathered": "S3:s3a23",
+   "b2h_grounded": [
+    [
+     "renderware",
+     "instance_of",
+     "proprietary_firmware"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3a23",
+   "svo": [
+    "software_technology",
+    "subclass_of",
+    "commercial_product"
+   ],
+   "surface": "Software technology is a subclass of commercial product.",
+   "gathered": "S3:s3a23",
+   "b2h_grounded": [
+    [
+     "software_technology",
+     "subclass_of",
+     "commercial_product"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3a29",
+   "svo": [
+    "veterinary_physician",
+    "instance_of",
+    "expert_occupation"
+   ],
+   "surface": "A veterinary physician is an instance of an expert occupation.",
+   "gathered": "S3:s3a29",
+   "b2h_grounded": [
+    [
+     "veterinary_physician",
+     "instance_of",
+     "expert_occupation"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3b07",
+   "svo": [
+    "defensive_secondary",
+    "sport",
+    "us_football"
+   ],
+   "surface": "Defensive secondary sport is us_football.",
+   "gathered": "S3:s3b07",
+   "b2h_grounded": [
+    [
+     "defensive_secondary",
+     "sport",
+     "us_football"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3b09",
+   "svo": [
+    "equestrian_statue",
+    "subclass_of",
+    "stone_statue"
+   ],
+   "surface": "Equestrian_statue is a subclass of stone_statue.",
+   "gathered": "S3:s3b09",
+   "b2h_grounded": [
+    [
+     "equestrian_statue",
+     "subclass_of",
+     "stone_statue"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3b14",
+   "svo": [
+    "independent_spirit_award_for_best_first",
+    "instance_of",
+    "movie_award"
+   ],
+   "surface": "The independent spirit award for best first is an instance of a movie award.",
+   "gathered": "S3:s3b14",
+   "b2h_grounded": [
+    [
+     "independent_spirit_award_for_best_first",
+     "instance_of",
+     "movie_award"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3b20",
+   "svo": [
+    "naval_artillery_support",
+    "subclass_of",
+    "commercial_product"
+   ],
+   "surface": "Naval artillery support is a subclass of commercial product.",
+   "gathered": "S3:s3b20",
+   "b2h_grounded": [
+    [
+     "naval_artillery_support",
+     "subclass_of",
+     "commercial_product"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3b23",
+   "svo": [
+    "pittsburgh_lrt",
+    "instance_of",
+    "transportation_authority"
+   ],
+   "surface": "Pittsburgh LRT is an instance of transportation authority.",
+   "gathered": "S3:s3b23",
+   "b2h_grounded": [
+    [
+     "pittsburgh_lrt",
+     "instance_of",
+     "transportation_authority"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3b23",
+   "svo": [
+    "pittsburgh_lrt",
+    "instance_of",
+    "transportation_authority"
+   ],
+   "surface": "Pittsburgh LRT is an instance of a transportation authority.",
+   "gathered": "S3:s3b23",
+   "b2h_grounded": [
+    [
+     "pittsburgh_lrt",
+     "instance_of",
+     "transportation_authority"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3b25",
+   "svo": [
+    "rustic_architecture",
+    "instance_of",
+    "architectural_styles"
+   ],
+   "surface": "Rustic architecture is an instance of architectural styles.",
+   "gathered": "S3:s3b25",
+   "b2h_grounded": [
+    [
+     "rustic_architecture",
+     "instance_of",
+     "architectural_styles"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3b27",
+   "svo": [
+    "supervising_direction",
+    "instance_of",
+    "expert_occupation"
+   ],
+   "surface": "Supervising_direction is an instance of an expert_occupation.",
+   "gathered": "S3:s3b27",
+   "b2h_grounded": [
+    [
+     "supervising_direction",
+     "instance_of",
+     "expert_occupation"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3b29",
+   "svo": [
+    "unit_of_volume",
+    "subclass_of",
+    "units_of_measurements"
+   ],
+   "surface": "A unit of volume is a subclass of units of measurements.",
+   "gathered": "S3:s3b29",
+   "b2h_grounded": [
+    [
+     "unit_of_volume",
+     "subclass_of",
+     "units_of_measurements"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3b30",
+   "svo": [
+    "web_gallery_of_art",
+    "instance_of",
+    "internet_websites"
+   ],
+   "surface": "The web gallery of art is an instance of internet websites.",
+   "gathered": "S3:s3b30",
+   "b2h_grounded": [
+    [
+     "web_gallery_of_art",
+     "instance_of",
+     "internet_websites"
+    ]
+   ]
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3b30",
+   "svo": [
+    "web_gallery_of_art",
+    "instance_of",
+    "internet_websites"
+   ],
+   "surface": "A web gallery of art is an instance of internet websites.",
+   "gathered": "S3:s3b30",
+   "b2h_grounded": [
+    [
+     "web_gallery_of_art",
+     "instance_of",
+     "internet_websites"
+    ]
+   ]
+  }
+ ],
+ "multi_triple": [],
+ "allowlist_losses": [
+  {
+   "stratum": "S1",
+   "turn": "h01",
+   "surface": "The 1962 Asian Games were an instance of the Asian Summer Games.",
+   "reason": "allowlist: no shape: at token 2 'were' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3)"
+  },
+  {
+   "stratum": "S1",
+   "turn": "h11",
+   "surface": "Ha noi vietnam was described by source Armenian Soviet Encyclopedia.",
+   "reason": "allowlist: no shape: at token 1 'was' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3)"
+  },
+  {
+   "stratum": "S1",
+   "turn": "h12",
+   "surface": "The history of Ferrara was described by source Nordisk familjebok.",
+   "reason": "allowlist: no shape: at token 2 'was' expected a verb form of a gathered relation (shapes 1/2) or 'is' (shape 3)"
+  },
+  {
+   "stratum": "S1",
+   "turn": "h21",
+   "surface": "The prefecture of Nagasaki is located in time zone Korea Standard Time.",
+   "reason": "allowlist: no shape: at token 3 'located_in_time_zone' expected a gathered relation slug ending in _of (shape 3)"
+  },
+  {
+   "stratum": "S1",
+   "turn": "h27",
+   "surface": "The federal republic of germany is located in time zone rome time.",
+   "reason": "allowlist: no shape: at token 3 'located_in_time_zone' expected a gathered relation slug ending in _of (shape 3)"
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3a04",
+   "surface": "Pole Land is located in time zone ROME_TIME.",
+   "reason": "allowlist: no shape: at token 2 'located_in_time_zone' expected a gathered relation slug ending in _of (shape 3)"
+  },
+  {
+   "stratum": "S3",
+   "turn": "s3b07",
+   "surface": "Defensive secondary sport is us_football.",
+   "reason": "allowlist: no shape: at token 1 'sport' expected a relation with a verb reading ('sport' reads sport, classified MEANING-DRIFT in _moat_allowlist_relations: no verb reading)"
+  }
+ ],
+ "stub_one_per_relation_doc": "the first AFFIRM fact of each relation of the production LTM store (/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k/facts.json), for the per-relation stub-mouth pins",
+ "stub_one_per_relation": [
+  [
+   "book_of_gen",
+   "author",
+   "moshe_rabbenu"
+  ],
+  [
+   "brendan_gleeson",
+   "award_received",
+   "regional_emmy"
+  ],
+  [
+   "law_and_order_svu",
+   "cast_member",
+   "tracy_lauren_marrow"
+  ],
+  [
+   "jaya_badhuri",
+   "child",
+   "abishek_bachchan"
+  ],
+  [
+   "iron_man_one",
+   "composer",
+   "ramin_djawadi"
+  ],
+  [
+   "james_whitmore",
+   "conflict",
+   "war_world_two"
+  ],
+  [
+   "trindad_and_tobago",
+   "contains_administrative_territorial_enti",
+   "port_o_spain"
+  ],
+  [
+   "software_conversions",
+   "country",
+   "u_s_of_a"
+  ],
+  [
+   "frank_lincoln_wright",
+   "country_of_citizenship",
+   "u_s_of_a"
+  ],
+  [
+   "law_and_order_svu",
+   "country_of_origin",
+   "u_s_of_a"
+  ],
+  [
+   "agglutinative_language",
+   "described_by_source",
+   "armenian_soviet_encyclopedia"
+  ],
+  [
+   "ben_hur_1925_film",
+   "director",
+   "william_christy_cabanne"
+  ],
+  [
+   "james_whitmore",
+   "educated_at",
+   "yale_law_tech"
+  ],
+  [
+   "graham_grene",
+   "employer",
+   "secret_intelligence_service"
+  ],
+  [
+   "frank_lincoln_wright",
+   "family_name",
+   "woodwright"
+  ],
+  [
+   "albert_prince_of_wales",
+   "father",
+   "albert_prince_consort"
+  ],
+  [
+   "ukrainian_s_s_r",
+   "followed_by",
+   "ukraine"
+  ],
+  [
+   "federal_republic_of_germany",
+   "follows",
+   "germany_under_hitler"
+  ],
+  [
+   "keith_jarrett",
+   "genre",
+   "jazz_lists"
+  ],
+  [
+   "james_whitmore",
+   "given_name",
+   "gemmes"
+  ],
+  [
+   "chazal_vetta_mbk",
+   "has_part",
+   "2016_ag2r_la_mondiale_season"
+  ],
+  [
+   "brisbane_citytrain_network",
+   "headquarters_location",
+   "brisbane_australia"
+  ],
+  [
+   "frank_lincoln_wright",
+   "instance_of",
+   "human_specie"
+  ],
+  [
+   "todd_rundgren",
+   "instrument",
+   "history_of_the_guitar"
+  ],
+  [
+   "world_fantasy_award_short_fiction",
+   "is_a_list_of",
+   "short_fiction"
+  ],
+  [
+   "modern_humans",
+   "iucn_conservation_status",
+   "least_concern_species"
+  ],
+  [
+   "jos_mar_a",
+   "language_of_work_or_name",
+   "modern_spanish"
+  ],
+  [
+   "frank_lincoln_wright",
+   "languages_spoken_written_or_signed",
+   "number_of_english_words"
+  ],
+  [
+   "stoke_stoke_upon_trent",
+   "located_in_the_administrative_territoria",
+   "england_uk"
+  ],
+  [
+   "notable_people_of_turin",
+   "located_in_time_zone",
+   "rome_time"
+  ],
+  [
+   "james_whitmore",
+   "manner_of_death",
+   "death_by_natural_cause"
+  ],
+  [
+   "trindad_and_tobago",
+   "member_of",
+   "united_nations"
+  ],
+  [
+   "georgiy_zhukow",
+   "member_of_political_party",
+   "soviet_union_communist_party"
+  ],
+  [
+   "rock_johnson",
+   "member_of_sports_team",
+   "calgary_stampeders"
+  ],
+  [
+   "james_whitmore",
+   "military_branch",
+   "u_s_marine"
+  ],
+  [
+   "trindad_and_tobago",
+   "named_after",
+   "trinidad_island"
+  ],
+  [
+   "jaya_badhuri",
+   "occupation",
+   "political_figure"
+  ],
+  [
+   "jingbao_railway",
+   "operator",
+   "china_railway"
+  ],
+  [
+   "law_and_order_svu",
+   "original_language_of_film_or_tv_show",
+   "number_of_english_words"
+  ],
+  [
+   "sheetweaver_spider",
+   "parent_taxon",
+   "egg_sac"
+  ],
+  [
+   "oosterhoff_type_i",
+   "part_of",
+   "colonization_of_other_galaxies"
+  ],
+  [
+   "digenis_akritas_ipsona",
+   "participant_of",
+   "1992_93_cypriot_cup"
+  ],
+  [
+   "cdr_james_bond",
+   "performer",
+   "sean_connary"
+  ],
+  [
+   "brendan_gleeson",
+   "place_of_birth",
+   "dublin_city_centre"
+  ],
+  [
+   "frank_lincoln_wright",
+   "place_of_death",
+   "estrella_phoenix_arizona"
+  ],
+  [
+   "bomber_men",
+   "platform",
+   "world_of_spectrum"
+  ],
+  [
+   "jaya_badhuri",
+   "position_held",
+   "mp_of_rajya_sabha"
+  ],
+  [
+   "massimo_girotti",
+   "position_played_on_team_speciality",
+   "goal_keeper"
+  ],
+  [
+   "carry_on_regardless",
+   "producer",
+   "peter_rogers"
+  ],
+  [
+   "the_avengers_united",
+   "publisher",
+   "marvel_comic"
+  ],
+  [
+   "keith_jarrett",
+   "record_label",
+   "atlantic_jazz"
+  ],
+  [
+   "iron_man_one",
+   "screenwriter",
+   "stanley_martin_lieber"
+  ],
+  [
+   "trindad_and_tobago",
+   "shares_border_with",
+   "name_of_venezuela"
+  ],
+  [
+   "eshaan_roshan",
+   "sibling",
+   "rakesh_roshan_films"
+  ],
+  [
+   "portugal_national_under_21_football_team",
+   "sport",
+   "association_football_club"
+  ],
+  [
+   "jaya_badhuri",
+   "spouse",
+   "amitabh_harivansh_bachchan"
+  ],
+  [
+   "portmanteau_film",
+   "subclass_of",
+   "theatrical_film"
+  ],
+  [
+   "depressaria",
+   "taxon_rank",
+   "generic_epithet"
+  ],
+  [
+   "notable_people_of_turin",
+   "twinned_administrative_body",
+   "saint_petersburg_city"
+  ],
+  [
+   "keith_jarrett",
+   "work_location",
+   "new_york_new_york"
+  ]
+ ]
+}

@@ -15,7 +15,7 @@ except ImportError:  # direct script execution
     from rag_paths import resolve_paths
 
 
-EXCLUDE_BASENAMES = {"AUTONOMOUS_STATE.md", "AUTONOMOUS_STATE_ARCHIVE.md"}
+EXCLUDE_BASENAMES = {"AUTONOMOUS_STATE.md", "AUTONOMOUS_STATE_ARCHIVE.md", "live_state.md"}
 
 
 def _patterns(repo: Path, catalog: Path) -> list[tuple[str, list[str]]]:
@@ -35,6 +35,8 @@ def _patterns(repo: Path, catalog: Path) -> list[tuple[str, list[str]]]:
         ),
         ("catalog", [str(catalog / "*.md")]),
         ("paper", [str(catalog / "textbooks/*/*.txt")]),
+        ("coord", [str(repo / "research/coordination/*.md")]),
+        ("draft", [str(repo / "docs/drafts/**/*.md")]),
     ]
 
 
