@@ -63,6 +63,13 @@ DEFINED_VERDICT = re.compile(r'"(?:pm_)?verdict":\s*"(?:GO|NO-GO)"')
 # output (verified on the 2026-10-23 bfde9a195 log: NO-GO count 0), but the necessity block decides in its
 # own words - `"label": "contributing"` / `"not necessary"` (8 in that log). Register those too.
 DEFINED_LABEL = re.compile(r'"label":\s*"(?:contributing|not necessary)"')
+# research/runners/stage2_exit_gate.py's --aggregate decides in its own words - the top line
+# `**Stage-2 exit verdict: PASS/FAIL**` and the per-criterion `C1 PASS`/`C1 FAIL` tokens - and
+# never prints the token DEFINED (its json carries DEFINED only inside UNDEFINED notes).
+# Registered per RULING pool-gate-preflight-1023 (case (a): vocabulary, not logic; Claude
+# reviews at merge). A decided PASS/FAIL criterion proves the scorer read cells; the read's
+# UNDEFINED lines are still checked above.
+STAGE2_VERDICT = re.compile(r"\*\*Stage-2 exit verdict: (?:PASS|FAIL)\*\*|\bC[1-5] (?:PASS|FAIL)\b")
 
 
 def _rev9(r):
@@ -82,7 +89,8 @@ def classify(text):
         if not COVERAGE.search(line):
             bad.append(line)
     if not (DEFINED.search(text) or DEFINED_COUNT.search(text)
-            or DEFINED_VERDICT.search(text) or DEFINED_LABEL.search(text)):
+            or DEFINED_VERDICT.search(text) or DEFINED_LABEL.search(text)
+            or STAGE2_VERDICT.search(text)):
         bad.append("no DEFINED cell anywhere in the read (did the scorer read the dev seed?)")
     return ("FLAGGED" if bad else "CLEAN"), bad
 
