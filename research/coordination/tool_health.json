@@ -1,7 +1,7 @@
 {
  "schema": "tool-health-v1",
  "generator": "tools/tool_health.py",
- "generated_at": "2026-10-19T10:56:24Z",
+ "generated_at": "2026-10-24T13:00:06Z",
  "any_rotted": false,
  "results": [
   {
@@ -10,7 +10,7 @@
    "status": "degraded",
    "why": "step-sweep needs a GPU; this host has no usable CUDA device (not rotted): api.runtime.CUDARuntimeError: cudaErrorInsufficientDriver: CUDA driver version is insufficient for CUDA runtime version\n",
    "checked": "build 4 presets (step needs a CUDA device)",
-   "at": "2026-10-19T10:56:19Z"
+   "at": "2026-10-24T13:00:01Z"
   },
   {
    "tool": "auto-tune",
@@ -18,7 +18,7 @@
    "status": "degraded",
    "why": "needs a GPU; this host has no usable CUDA device (not rotted): api.runtime.CUDARuntimeError: cudaErrorInsufficientDriver: CUDA driver version is insufficient for CUDA runtime version\n",
    "checked": "neural-simulator.py --auto-tune --quick",
-   "at": "2026-10-19T10:56:20Z"
+   "at": "2026-10-24T13:00:02Z"
   },
   {
    "tool": "gpu-queue",
@@ -26,7 +26,7 @@
    "status": "ready",
    "why": "status ok (0 dispatcher). == gpu_queue == shared queue: /home/dant123/Projects/neural-simulator/research/queue state: running current: (idle) queued: 0 | VRAM free: MiB (min_free 3000) dispatcher: DOWN (run: tools/gpu_queue.sh",
    "checked": "gpu_queue.sh status + singleton",
-   "at": "2026-10-19T10:56:20Z"
+   "at": "2026-10-24T13:00:02Z"
   },
   {
    "tool": "pool",
@@ -34,7 +34,7 @@
    "status": "ready",
    "why": "4/4 nodes healthy",
    "checked": "tools.pool_health --json + a trivial dispatch check",
-   "at": "2026-10-19T10:56:22Z"
+   "at": "2026-10-24T13:00:04Z"
   },
   {
    "tool": "pool-checkout",
@@ -42,7 +42,7 @@
    "status": "ready",
    "why": "4 nodes: code present + venv imports numpy/scipy",
    "checked": "code present + venv import",
-   "at": "2026-10-19T10:56:24Z"
+   "at": "2026-10-24T13:00:06Z"
   },
   {
    "tool": "cloud-aws",
@@ -50,7 +50,7 @@
    "status": "unknown",
    "why": "no AWS instance recorded \u2014 nothing to describe (no spend); provision via tools/aws_gpu.sh only when a run justifies it",
    "checked": "aws_gpu.sh status",
-   "at": "2026-10-19T10:56:24Z"
+   "at": "2026-10-24T13:00:06Z"
   }
  ],
  "backlog_items": [],
