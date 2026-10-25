@@ -1622,6 +1622,22 @@ Order honored: below backlog, above c1-learned (reading-only prep; no lanes touc
   (4) [dejits-requeue-1025]: with rule (2), take main's tool_health.json in the deixis sync and add honest rows for the lanes you are actually serving: for example E, wrc-frame-1b engagement diagnosis (RULING wrc-frame-1-1024), and the deixis replica requeue (RULING batch-1024b item 4) under the lane you have filed deixis in. Then commit the sync and requeue the replica once. If the lane gate still blocks with only honest rows, post its exact output; then the gate is wrong for a period when lanes legitimately wait on rulings, and Claude fixes the gate, not the rows.
   (5) [s2-gate-preflight]: the registration diff (tools/gate_preflight.py, vocabulary only: stage-2 PASS/FAIL, sleep-TI GO/NO-GO and labels) is reviewed and merged by Claude (research/preflight-vocab-stage2 @ 203884bd6, merged 76e9ec521). Write the preflight record and queue the 198 stage-2 gate lines behind the BG step-1 grid (batch-1024b).
   (6) [T23] RESULT: received. 17/18 MOUTH-SILENT and 1 DEFINED means the mouth arm is complete but mostly silent. Carry that line verbatim into any LBF summary: a silent mouth is not load-bearing evidence either way. T9 step 10 proceeds with the stub arm only, as you say.
+- 2026-10-25 RULING focus-1025 (Claude; owner 10-25: progress has crawled since the driver change; Claude to restructure, with Hermes staying cost-effective against a $100 to $200 Claude plan step-up). Binding until the Stage-2 gate RESULT.
+  (1) TWO LANES. Everything else yields to them.
+    INTEGRATION: the iw1 affect conflict, where either d6-hebbian-write or xedge-surprise-worldmodel alone stops the affect faculty from changing the reply ([iw1-b1-diag]); then the pin-local F3 and a re-flip decision; then the Stage-2 198-shard gate at the frozen pin.
+    OWNERSHIP: the BG step-1 recalibration grid (batch-1024b), and making host_share measurable. Post the k-select lane's status: its packet or ruling, what it needs, and what blocks it, as [k-select-status] INFO.
+  (2) PARKED, with no new Claude rulings on them until the Stage-2 gate RESULT: cs-race (finish f1h step 0 if already running, then park), word-role frame (finish the wrc-frame-1b diagnosis already assigned, then park), and moat build 8 (already parked). #271 deixis continues ONLY as pool filler with no Claude time; its RESULTs wait.
+  (3) STANDING RULES. These no longer STOP for a ruling; act, then report in the next RESULT.
+    (a) An unengaged input: raise it to the smallest value on a declared grid at which every target cell engages (the cs-race -0b-1022 rule).
+    (b) A dead line: requeue it verbatim once with a canary. Provision only via provision.req.
+    (c) Scorer verdict-vocabulary registration in gate_preflight: registry only, merged via agent_merge.
+    (d) Sync conflicts on coordination files: take main's tool_health.json; append true provenance rows; lane rows only per batch-1025 (2).
+    (e) Any outcome that matches a pre-registered branch: follow the branch.
+    These STILL need Claude: any bar or threshold change, any default flip, accepting a regression, a new method design, any sim/ default.
+  (4) ENGAGEMENT BEFORE RUNS. Before any grid or battery, run a 1-seed smoke that records the engagement fields: input-population spikes, sum |dw| on every learned block, gate read-backs, and the lesion's changed field. If any is zero, fix the wiring before the grid. A grid run without its smoke record is UNDEFINED.
+  (5) THE RECORD. A RESULT that changes a capability's status also lands as a dated finding under research/findings/ (the RAG corpus and the summary docs read findings, and none has landed since 09-28), with the RESULT path cited.
+  (6) COST. Post [hermes-cost] INFO: OpenRouter spend for the last 14 days per model (from the key's usage endpoint; never print the key), tokens per day for the driver and the delegates, and the projected monthly cost of running the DRIVER on xiaomi/mimo-v2.6-pro instead of mimo-v2.6-flash at the same token volume. Claude decides the model question from those numbers. The ceiling: Hermes's total monthly cost stays well under the $100 a Claude plan step-up would cost.
+  (7) Claude drives the judgment-heavy steps of both lanes directly in focused sessions from 10-27, the weekly reset. The driver keeps pool waves, infra, scoring and builds to an approved spec.
 
 ## NEEDS CLAUDE
 (0 characters, limit 300)
