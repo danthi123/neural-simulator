@@ -83,6 +83,22 @@ Every knob the seam/recalibration can touch, with the SOURCE of its range. Where
 
 **Scoring.** Per set, the registered scorer over all 8 seeds: `host_share_bg_seam --score --seeds 71 72 73 74 75 76 77 78 --commit`, verdict read from score.json (AMENDMENT.md item 6). Run and score commands are copied verbatim from PREREGISTRATION.md 'Run and score' and AMENDMENT.md 'Run and score' with only the seed block and the two env currents substituted; no bar, arm or schedule changes with them.
 
+### 3.9. Addition A (RULING batch-1024b): region table at in-organ tonic, report only
+
+Built from the EXISTING Part C f-I data (bg-tonic-loop-0-RESULT.md section 4; canary run bg_loop_part_c_71efc4a5c_pool41 20261021T022651, rc=0) with no new runs. In-organ tonic = what `_set_equal_tonic_current` injects (`research/runners/_vocal_action_selector_gate.py:408-431`): gpi/thal always; gpe/stn under `BRAIN_BG_TONIC_DRIVE` at the registered 100/50 pA; the MSN D1/D2 and cortical FS interneuron presets receive no injected tonic term (0 pA).
+
+| preset | in-organ tonic | preset-centred isolated rate | registered band | published context band | check |
+| --- | --- | --- | --- | --- | --- |
+| IZH2007_GPI_OUTPUT | 1000 pA | 279.0 Hz | - | 40-80 | 2.5x beyond the 80 ceiling (> 2x): **FIRST next candidate if STOP 1 fires** |
+| IZH2007_THALAMIC_RELAY | 900 pA | 70.4 Hz | - | no source found | n/a |
+| IZH2007_STN_BURST | 50 pA (registered pick) | in-organ SILENT at 40-50 pA (bg-tonic-loop-partA-INFO.md); isolated grid 0.0 @ 0 pA, 10.6 @ 100 pA (50 pA is off the 13-point grid) | 10-30 | 5-15 | below both, at most 1x beyond the 5 floor: reported, not named |
+| IZH2007_GPE_PACEMAKER | 100 pA (registered pick) | 86.1 Hz | 20-60 (1.4x above) | 30-80 (1.1x above) | within 2x |
+| IZH2007_STRIATAL_MSN_D1 | 0 pA (no injected tonic) | 0.0 Hz | - | no source found | n/a |
+| IZH2007_STRIATAL_MSN_D2 | 0 pA (no injected tonic) | 0.0 Hz | - | no source found | n/a |
+| IZH2007_FS_CORTICAL_INTERNEURON | 0 pA (no injected tonic) | 0.0 Hz | - | no source found | n/a |
+
+Report only; no gate, bar or selection rule reads this table. Named as the first next candidate if STOP 1 fires: **GPI at 279.0 Hz, 3.5x the published 40-80 ceiling** (the only region more than 2x outside its published band).
+
 ## 4. Frozen selection rule (stated before any run; deterministic)
 
 The winning set is chosen from the sets that completed all 8 seam cells with every precondition holding (a set with a precondition failure is UNDEFINED and cannot be selected — the prereg verdict logic). Keys, applied lexicographically:
