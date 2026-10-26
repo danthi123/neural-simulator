@@ -18,7 +18,9 @@ verdict: PROVISIONAL, organ level plus one seed through the handler. With the fl
 `research/runners/emotion_category_organ.py`. When on, `_build` sets `cfg.enable_bounded_conductance_integration = True`
 at `CoreSimConfig` construction, the repo's existing opt-in guard (`sim/config.py`; kernel
 `fused_bounded_conductance_decay_and_current`, `sim/kernels.py`). Nothing else changes: no `sim/` edit, no host table,
-no English rule, no capacitance truncation. Flag unset, the organ is byte-identical to main.
+no English rule, no capacitance truncation. Flag unset, every pre-existing field, the trained weights and the dynamical state are identical to main; each read gains
+five engagement keys (bounded_flag, bounded_env, bounded_readback, oor_count, oor_count_session). A whole-record
+byte-compare of an emo/feel turn across the merge therefore differs by exactly those keys (expected drift).
 Every read now carries engagement fields in the `emotion_category` block: `bounded_flag` (what the organ resolved),
 `bounded_env` (the raw env string it saw), `bounded_readback` (the bridge's own `core_config` value),
 `oor_count` (distinct organ neurons below -110 mV during the read) and `oor_count_session` (the same, over the
