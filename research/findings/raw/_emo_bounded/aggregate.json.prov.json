@@ -1,0 +1,34 @@
+{
+ "run_id": "1793041651-2100759",
+ "runner": "research/runners/emotion_category_bounded_aggregate.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-emobc/research/runners/emotion_category_bounded_aggregate.py",
+  "--src",
+  "/home/dant123/Projects/sim-rev/emobc_scratch",
+  "--pinned",
+  "/home/dant123/Projects/sim-rev/diag_1026/c4/probe14_base_w*.json",
+  "--out",
+  "research/findings/raw/_emo_bounded/aggregate.json"
+ ],
+ "git_sha": "a8e867ab3",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-26T15:07:31",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 3975.8,
+ "corpus_check_query": "curiosity per-topic stop in production handler",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_emo_bounded/aggregate.json"
+}

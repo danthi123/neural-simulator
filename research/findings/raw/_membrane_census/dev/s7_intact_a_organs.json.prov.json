@@ -1,0 +1,36 @@
+{
+ "run_id": "1793052299-2645044",
+ "runner": "research/runners/membrane_census.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-census/research/runners/membrane_census.py",
+  "--aggregate",
+  "/home/dant123/Projects/sim-rev/census_scratch/s7/conv__intact_a.json",
+  "/home/dant123/Projects/sim-rev/census_scratch/s7/infer__intact_a.json",
+  "/home/dant123/Projects/sim-rev/census_scratch/s7/ask__intact_a.json",
+  "/home/dant123/Projects/sim-rev/census_scratch/s7/emo__intact_a.json",
+  "/home/dant123/Projects/sim-rev/census_scratch/s7/inner__intact_a.json",
+  "--out",
+  "research/findings/raw/_membrane_census/dev/s7_intact_a_organs.json"
+ ],
+ "git_sha": "be4a4854d",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-26T18:04:59",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 14623.9,
+ "corpus_check_query": "curiosity per-topic stop in production handler",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_membrane_census/dev/s7_intact_a_organs.json"
+}
