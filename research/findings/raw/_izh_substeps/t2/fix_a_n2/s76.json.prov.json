@@ -1,0 +1,35 @@
+{
+ "run_id": "1793043134-2185541",
+ "runner": "research/runners/izh_substep_organ_probe.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-izhsub/research/runners/izh_substep_organ_probe.py",
+  "--seed",
+  "76",
+  "--arm",
+  "fix_a_n2",
+  "--out",
+  "research/findings/raw/_izh_substeps/t2/fix_a_n2/s76.json"
+ ],
+ "git_sha": "ee5fbdef6",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-26T15:32:14",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "OMP_NUM_THREADS": "1"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 5458.8,
+ "corpus_check_query": "curiosity per-topic stop in production handler",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_izh_substeps/t2/fix_a_n2/s76.json"
+}
