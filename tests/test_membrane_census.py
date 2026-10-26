@@ -417,3 +417,84 @@ def test_aggregate_merges_the_groups_of_one_seed_into_per_organ_records(tmp_path
     (tmp_path / "emo8.json").write_text(json.dumps(d))
     with pytest.raises(ValueError, match="mixes seeds"):
         MC.aggregate([paths[0], str(tmp_path / "emo8.json")])
+
+
+def _stepper_a(bridge, n):
+    for _ in range(n):
+        bridge._run_one_simulation_step()
+
+
+def _stepper_b(bridge, n):
+    for _ in range(n):
+        bridge._run_one_simulation_step()
+
+
+def test_offenders_are_counted_per_stepper_that_was_running_at_their_first_reading(monkeypatch):
+    """A bridge stepped by two callers is labelled by the majority one; the per-stepper count says whose steps the
+    excursions actually first appeared in (the metacog pool bridge case, where 72 role-competition cells sat in a bridge
+    labelled by the metacog organ)."""
+    real = SimulationBridge.__dict__["_run_one_simulation_step"]
+    plan = []
+
+    def stub(self, *a, **k):
+        real(self, *a, **k)
+        for i, x in plan:
+            self.cp_membrane_potential_v[i] = np.float32(x)
+
+    monkeypatch.setattr(SimulationBridge, "_run_one_simulation_step", stub)
+    b = _tiny_bridge(seed=5)
+    with MC.Census() as census:
+        _stepper_a(b, 6)                                  # the majority stepper: no excursion in its steps
+        plan.extend([(2, -500.0), (3, -400.0)])
+        _stepper_b(b, 3)                                  # the minority stepper: two cells first leave the range here
+        plan.append((4, -450.0))
+        _stepper_a(b, 1)                                  # the majority stepper again: one more cell
+    rep = census.report()
+    (br,) = rep["bridges"]
+    assert br["n_oor_neurons"] == 3 and br["step_callers"][0]["site"].split(":")[-2] == "_stepper_a"
+    by = {e["site"].split(":")[-2]: e["offenders"] for e in br["offenders_by_stepper"]}
+    assert by == {"_stepper_b": 2, "_stepper_a": 1}
+    assert sum(e["offenders"] for e in br["offenders_by_stepper"]) == br["n_oor_neurons"]
+    assert all(e["stepper"].endswith(":" + e["site"].split(":")[-2]) for e in br["offenders_by_stepper"])
+    (row,) = rep["organs"]                                # the organ row carries the split by stepper label
+    assert sorted(row["offenders_by_stepper"].values()) == [1, 2] and row["n_oor_neurons"] == 3
+
+
+def _agg_input(tmp_path, workload):
+    import json
+    quiet = {"census_version": 1, "total_bridge_steps": 1, "n_bridges": 0, "observer_errors": 0, "observe_s": 0.0,
+             "bridges": [], "organs": []}
+    d = {"seed": 7, "group": "conv", "arm": "intact_a", "git_sha": "abc", "wall_s": 1.0, "wrapper_restored": {"step": True},
+         "workload": dict({"rc": 0, "n_turns": 3, "responses_sha256": "x" * 64, "process": {"peak_rss_mb": 1.0}}, **workload),
+         "census": quiet}
+    p = tmp_path / "conv.json"
+    p.write_text(json.dumps(d))
+    return [str(p)]
+
+
+def test_aggregate_carries_the_run_validity_fields_and_flags_an_invalid_run(tmp_path):
+    ok = {"sources": ["tiny-demo +LTM"], "corpus_present": True, "pythonhashseed_ok": True, "turn_errors": {},
+          "host": "dant123-wk"}
+    agg = MC.aggregate(_agg_input(tmp_path, ok))
+    g = agg["groups"]["conv"]
+    assert agg["flagged"] is False and agg["flags"] == []
+    assert (g["sources"], g["rc"], g["host"], g["corpus_present"], g["pythonhashseed_ok"]) == (
+        ["tiny-demo +LTM"], 0, "dant123-wk", True, True)
+    for bad, text in (({"corpus_present": False}, "corpus_present"), ({"pythonhashseed_ok": False}, "pythonhashseed_ok"),
+                      ({"turn_errors": {"p_prey_eat": "boom"}}, "p_prey_eat")):
+        agg = MC.aggregate(_agg_input(tmp_path, dict(ok, **bad)))
+        assert agg["flagged"] is True and len(agg["flags"]) == 1 and text in agg["flags"][0], agg["flags"]
+    # a record that does not say is not a clean census either
+    agg = MC.aggregate(_agg_input(tmp_path, {"turn_errors": {}}))
+    assert agg["flagged"] is True and len(agg["flags"]) == 2
+
+
+def test_pool_job_lines_carry_the_dispatch_tokens_in_the_checked_reason_and_match_the_committed_file():
+    pairs = MC.pool_job_lines()
+    assert len(pairs) == 60 and [c for c, _ in pairs] == MC.pool_lines()
+    for cmd, why in pairs:
+        assert "mem_gb=9 max_age_h=240" in why and "\t" not in why and "<sha>" in cmd
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "research", "coordination",
+                        "membrane-census-pool-lines.txt")
+    with open(path) as f:
+        assert f.read().splitlines() == ["%s\t%s" % p for p in pairs]

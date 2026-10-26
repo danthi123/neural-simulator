@@ -43,6 +43,7 @@ import collections
 import hashlib
 import json
 import os
+import platform
 import subprocess
 import sys
 import threading
@@ -64,6 +65,7 @@ CENSUS_VERSION = 1
 DEFAULT_OUT_DIR = "research/findings/raw/_membrane_census/dev"
 POOL_MEM_GB = 9                   # the Stage-2 lane's memory declaration (stage2_exit_gate.MEM_GB / MEMCAP_GB)
 POOL_MEMCAP_GB = 10
+POOL_MAX_AGE_H = 240              # the dispatcher's own cap (POOL_JOB_MAX_AGE_CAP_H); a deep queue would otherwise age out at 12 h
 POOL_SEEDS = tuple(range(1, 13))
 CAVEAT = ("One seed is a census of one heterogeneity draw, and the seed-to-cell map is specific to the numpy CPU "
           "random stream; no out-of-range membrane on this seed does not mean the organ cannot produce one. Only "
@@ -219,6 +221,7 @@ class _BridgeRec:
         self.prev_v = None                            # post-step v of the previous observation (the step's starting v)
         self.prev_u = None                            # ... and u
         self.first_classes = collections.Counter()    # class of every offender's first reading (rows are capped, this is not)
+        self.first_by_stepper = collections.Counter()  # offenders per STEPPER call site that was running at their first reading
         self.n_spikes_total = 0                       # all spikes this bridge emitted while observed
         self.n_spikes_oor_cells = 0                   # spikes emitted by cells AFTER their first out-of-range step
         self.nspk_after = None
@@ -458,9 +461,9 @@ class Census:
             hi_min = float(getattr(cfg, "adex_V_peak", np.inf)) + self.margin
         if gmin >= self.v_low and gmax <= hi_min:             # the fast path: nothing out of range (NaN falls through)
             return
-        self._record_out_of_range(rec, bridge, vh, vp, high_kind, hi_min, pre, pre_v, pre_u)
+        self._record_out_of_range(rec, bridge, vh, vp, high_kind, hi_min, pre, pre_v, pre_u, site)
 
-    def _record_out_of_range(self, rec, bridge, vh, vp, high_kind, hi_min, pre=None, pre_v=None, pre_u=None):
+    def _record_out_of_range(self, rec, bridge, vh, vp, high_kind, hi_min, pre=None, pre_v=None, pre_u=None, site=None):
         m = rec.map
         R = len(m.names)
         low = vh < self.v_low
@@ -495,6 +498,7 @@ class Census:
         rec.nhigh[hi_idx] += 1
         rec.nnonf[nf_idx] += 1
         if new.size:
+            rec.first_by_stepper[site] += int(new.size)
             self._count_first_classes(rec, bridge, new, low, high, nonf, vh, pre)
         if new.size and len(rec.ctx) < MAX_CONTEXT_PER_BRIDGE:
             gi, ge = _host(getattr(bridge, "cp_conductance_g_i", None)), _host(getattr(bridge, "cp_conductance_g_e", None))
@@ -674,9 +678,13 @@ class Census:
         vmaxs = [(rec.vmax_r[r], m.names[r]) for r in range(len(m.names)) if np.isfinite(rec.vmax_r[r])]
         vmin = min(vmins) if vmins else (None, None)
         vmax = max(vmaxs) if vmaxs else (None, None)
-        top_caller = [("%s:%s:%d" % (mod, getattr(code, "co_qualname", code.co_name), ln) if code is not None else "?", c)
-                      for (code, ln, mod), c in
+        top_caller = [(_site_str(k), c) for k, c in
                       collections.Counter({k: v for k, v in rec.callers.items() if k is not None}).most_common(3)]
+        # offenders per stepper: the call site that was stepping the bridge at each cell's FIRST out-of-range reading. A
+        # bridge stepped by more than one caller is labelled by its majority stepper, so this says whose steps the
+        # excursions actually happened in (the metacog pool bridge's role-competition cells, found by review)
+        by_stepper = [{"site": _site_str(k), "stepper": (_stepper_label([{"site": _site_str(k)}]) if k else "?"),
+                       "offenders": c} for k, c in rec.first_by_stepper.most_common()]
         bounded = sorted(rec.bounded_seen)
         return {
             "bridge_id": rec.bridge_id, "organ": None, "built_by": None, "owner_chain": rec.owner_chain,
@@ -693,6 +701,7 @@ class Census:
             "n_spikes_total": rec.n_spikes_total, "n_spikes_from_oor_cells": rec.n_spikes_oor_cells,
             "alive_at_end": bridge is not None,
             "first_reading_classes": dict(rec.first_classes),
+            "offenders_by_stepper": by_stepper,
             "has_rf_state": (getattr(bridge, "cp_rf_prev_im", None) is not None) if bridge is not None else None,
             "regions": regions, "oor_neurons": rows, "oor_neurons_truncated": truncated,
         }
@@ -708,6 +717,14 @@ class Census:
                 "observer_errors": self.observer_errors, "first_observer_error": self.first_error,
                 "observe_s": round(self.observe_s, 2),
                 "bridges": bridges, "organs": organ_rows(bridges)}
+
+
+def _site_str(site):
+    """'module:qualname:line' of a step call site tuple (code, line, module); '?' when it could not be read."""
+    if not site or site[0] is None:
+        return "?"
+    code, ln, mod = site
+    return "%s:%s:%d" % (mod, getattr(code, "co_qualname", code.co_name), ln)
 
 
 def _stepper_label(callers):
@@ -759,6 +776,11 @@ def organ_rows(bridges):
                 if gt is not None and (gt_max is None or gt > gt_max):
                     gt_max, gt_max_region = gt, name
         bounded = {str(b["bounded_conductance_integration"]) for b in bs}
+        by_stepper = collections.Counter()
+        for b in bs:
+            for e in b.get("offenders_by_stepper") or []:
+                by_stepper[e["stepper"]] += e["offenders"]
+        by_stepper = dict(by_stepper)
         rows.append({"organ": organ, "n_bridges": len(bs), "neuron_models": sorted({b["neuron_model"] for b in bs}),
                      "n_neurons": sum(b["n_neurons"] for b in bs), "n_steps": sum(b["n_steps"] for b in bs),
                      "v_min": vmin[0], "v_min_region": vmin[1], "v_max": (max(vmaxs) if vmaxs else None),
@@ -770,6 +792,7 @@ def organ_rows(bridges):
                                                        collections.Counter())),
                      "n_spikes_total": sum(b.get("n_spikes_total", 0) for b in bs),
                      "n_spikes_from_oor_cells": sum(b.get("n_spikes_from_oor_cells", 0) for b in bs),
+                     "offenders_by_stepper": by_stepper,
                      "oor_regions": oor_regions,
                      "c_min": c_min, "c_min_region": c_min_region,
                      "max_gi_dt_over_C": gi_max, "max_gi_dt_over_C_region": gi_max_region,
@@ -804,7 +827,7 @@ def run_worker(seed, group, arm, out_path, labels=None):
         rc = SG.run_worker(seed, group, arm, wl_path, labels=labels)
     restored = {"step": census._cls.__dict__["_run_one_simulation_step"] is census._orig_step,
                 "init": census._cls.__dict__["__init__"] is census._orig_init}
-    wl = {"runner": "research/runners/stage2_exit_gate.py", "rc": rc}
+    wl = {"runner": "research/runners/stage2_exit_gate.py", "rc": rc, "host": platform.node()}
     try:
         with open(wl_path) as f:
             d = json.load(f)
@@ -876,19 +899,29 @@ def run_shard(seed, group, arm, out_path, backend="numpy", labels=None, allow_ga
 
 
 # ══════════════════════════════════════════════ pool lines / summary ═══════════════════════════════════════════════
-def pool_lines(sha="<sha>", seeds=POOL_SEEDS, out_dir=DEFAULT_OUT_DIR, arm="intact_a"):
-    """One plain command line per (dev seed, Stage-2 group), in the shape of the Stage-2 pool lines (no TSV columns)."""
+def pool_job_lines(sha="<sha>", seeds=POOL_SEEDS, out_dir=DEFAULT_OUT_DIR, arm="intact_a"):
+    """One (command, checked-reason) pair per (dev seed, Stage-2 group), in the shape of stage2_exit_gate.pool_job_lines.
+    The reason carries `mem_gb=N max_age_h=N`, which the pool dispatcher reads from the --checked text."""
     from research.runners import stage2_exit_gate as SG
-    lines = []
+    out = []
     for seed in seeds:
         for group in SG.PRIMARY_GROUPS:
             d = "%s/s%d" % (out_dir, seed)
-            lines.append("cd ~/derisk-pool/revisions/%s && bash tools/mem_ok.sh %d 1 && mkdir -p %s && bash tools/memcap.sh %d "
-                         "-- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 "
-                         "NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -u -m "
-                         "research.runners.membrane_census --shard --seed %d --group %s --arm %s --out %s/%s__%s.json" % (
-                             sha, POOL_MEM_GB, d, POOL_MEMCAP_GB, seed, group, arm, d, group, arm))
-    return lines
+            cmd = ("cd ~/derisk-pool/revisions/%s && bash tools/mem_ok.sh %d 1 && mkdir -p %s && bash tools/memcap.sh %d "
+                   "-- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 "
+                   "NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -u -m "
+                   "research.runners.membrane_census --shard --seed %d --group %s --arm %s --out %s/%s__%s.json" % (
+                       sha, POOL_MEM_GB, d, POOL_MEMCAP_GB, seed, group, arm, d, group, arm))
+            why = ("membrane-validity census replication, dev seed %d %s %s; record: "
+                   "research/findings/2026-10-26-membrane-census-dev7.md holds dev seed 7 only, and no other seed's "
+                   "per-organ census exists; mem_gb=%d max_age_h=%d" % (seed, group, arm, POOL_MEM_GB, POOL_MAX_AGE_H))
+            out.append((cmd, why))
+    return out
+
+
+def pool_lines(sha="<sha>", seeds=POOL_SEEDS, out_dir=DEFAULT_OUT_DIR, arm="intact_a"):
+    """The plain command of each pool job line (no TSV columns); `pool_job_lines` adds the checked-reason."""
+    return [cmd for cmd, _ in pool_job_lines(sha, seeds, out_dir, arm)]
 
 
 def aggregate(paths):
@@ -898,6 +931,7 @@ def aggregate(paths):
     are kept."""
     groups, meta = collections.OrderedDict(), {}
     organs = collections.OrderedDict()
+    flags = []                                                  # why the aggregate is NOT a clean census (empty = clean)
     for p in paths:
         with open(p) as f:
             d = json.load(f)
@@ -911,7 +945,17 @@ def aggregate(paths):
                      "wall_s": d.get("wall_s"), "peak_rss_mb": (w.get("process") or {}).get("peak_rss_mb"),
                      "n_bridges": d["census"]["n_bridges"], "total_bridge_steps": d["census"]["total_bridge_steps"],
                      "observer_errors": d["census"]["observer_errors"], "observe_s": d["census"]["observe_s"],
-                     "wrapper_restored": d.get("wrapper_restored"), "source": os.path.basename(p)}
+                     "wrapper_restored": d.get("wrapper_restored"), "source": os.path.basename(p),
+                     "sources": w.get("sources"), "rc": w.get("rc"), "host": w.get("host"),
+                     "corpus_present": w.get("corpus_present"), "pythonhashseed_ok": w.get("pythonhashseed_ok")}
+        # an instrument-validity flag, never a silent pass: the corpus-learned organs differ without data/, a
+        # PYTHONHASHSEED other than the gate's changes the draw, and an errored turn means the workload did not run clean
+        if w.get("corpus_present") is not True:
+            flags.append("%s: corpus_present is %r (must be true)" % (g, w.get("corpus_present")))
+        if w.get("pythonhashseed_ok") is not True:
+            flags.append("%s: pythonhashseed_ok is %r (must be true)" % (g, w.get("pythonhashseed_ok")))
+        if w.get("turn_errors"):
+            flags.append("%s: turn error(s) in %s" % (g, ", ".join(sorted(w["turn_errors"]))))
         bridges = relabel(d["census"]["bridges"])
         for row in organ_rows(bridges):
             org = organs.setdefault(row["organ"], {"organ": row["organ"], "per_group": collections.OrderedDict(),
@@ -922,6 +966,7 @@ def aggregate(paths):
                                                        "n_spikes_total", "n_spikes_from_oor_cells", "c_min", "c_min_region",
                                                        "max_gtot_dt_over_C", "max_gtot_dt_over_C_region",
                                                        "first_reading_classes", "oor_regions", "built_by",
+                                                       "offenders_by_stepper",
                                                        "bounded_conductance_integration", "neuron_models")}
         for b in bridges:
             org = organs[b["organ"]]
@@ -945,6 +990,7 @@ def aggregate(paths):
             "v_min": min(v["v_min"] for v in org["per_group"].values() if v["v_min"] is not None),
             "v_max": max(v["v_max"] for v in org["per_group"].values() if v["v_max"] is not None),
             "first_reading_classes": best["first_reading_classes"],
+            "offenders_by_stepper": best["offenders_by_stepper"],
             "oor_regions": {rg: {"n": v["n"]} for rg, v in best["oor_regions"].items()},
             "offender_c_by_region": c_ranges,
             "min_drawn_c": min((v["c_min"], v["c_min_region"]) for v in org["per_group"].values() if v["c_min"] is not None)
@@ -960,6 +1006,7 @@ def aggregate(paths):
     out_orgs.sort(key=lambda o: -o["n_oor_neurons"])
     return {"runner": "research/runners/membrane_census.py", "census_version": CENSUS_VERSION,
             "seed": meta.get("seed"), "inputs": [os.path.basename(p) for p in paths], "groups": groups,
+            "flagged": bool(flags), "flags": flags,
             "n_organs": len(out_orgs), "n_offender_organs": sum(1 for o in out_orgs if o["n_oor_neurons"]),
             "n_bridge_instances": sum(g["n_bridges"] for g in groups.values()),
             "organs": out_orgs, "caveat": CAVEAT}
@@ -984,7 +1031,7 @@ def main():
     ap.add_argument("--shard", action="store_true", help="run one (seed, group, arm) census in a fresh subprocess")
     ap.add_argument("--summarize", nargs="+", metavar="JSON", help="print the per-organ summary lines of result JSONs")
     ap.add_argument("--aggregate", nargs="+", metavar="JSON", help="merge one seed's per-group result JSONs into --out")
-    ap.add_argument("--emit-pool-lines", action="store_true", help="print the dev-seed 1-12 x 5-group pool command lines")
+    ap.add_argument("--emit-pool-lines", action="store_true", help="print the dev-seed 1-12 x 5-group pool job lines (TSV: command, checked-reason)")
     ap.add_argument("--sha", default="<sha>", help="revision token for --emit-pool-lines (default: the literal <sha>)")
     ap.add_argument("--seed", type=int, default=None)
     ap.add_argument("--group", default=None, choices=sorted(SG.GROUPS))
@@ -998,7 +1045,8 @@ def main():
         summarize(a.summarize)
         return
     if a.emit_pool_lines:
-        print("\n".join(pool_lines(a.sha)))
+        for cmd, why in pool_job_lines(a.sha):
+            print("%s\t%s" % (cmd, why))
         return
     if a.aggregate:
         if not a.out:
@@ -1009,6 +1057,8 @@ def main():
             json.dump(agg, f, indent=1, default=str)
         print("[membrane census] aggregate seed=%s: %d organs, %d with out-of-range membranes, %d bridge instances -> %s" % (
             agg["seed"], agg["n_organs"], agg["n_offender_organs"], agg["n_bridge_instances"], a.out))
+        for fl in agg["flags"]:
+            print("[membrane census] FLAGGED: %s" % fl)
         return
     if a.worker or a.shard:
         if a.seed is None or not a.group or not a.arm or not a.out:
