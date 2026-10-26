@@ -58,7 +58,7 @@ import numpy as np  # noqa: E402
 
 V_LOW_MV = -110.0                 # below this a membrane is out of physiological range (task definition)
 VPEAK_MARGIN_MV = 5.0             # above vpeak + this a membrane the step failed to reset is out of range
-MAX_DETAIL_PER_BRIDGE = 500       # per-neuron rows kept in the JSON per bridge (the counts are always exact)
+MAX_DETAIL_PER_BRIDGE = 1000      # per-neuron rows kept in the JSON per bridge (the counts are always exact)
 MAX_CONTEXT_PER_BRIDGE = 5000     # first-step context (g_i, g_e) captured for at most this many neurons per bridge
 CENSUS_VERSION = 1
 DEFAULT_OUT_DIR = "research/findings/raw/_membrane_census/dev"
@@ -218,6 +218,7 @@ class _BridgeRec:
         self.prev_timers = None                       # post-step refractory timers of the previous observation
         self.prev_v = None                            # post-step v of the previous observation (the step's starting v)
         self.prev_u = None                            # ... and u
+        self.first_classes = collections.Counter()    # class of every offender's first reading (rows are capped, this is not)
         self.n_spikes_total = 0                       # all spikes this bridge emitted while observed
         self.n_spikes_oor_cells = 0                   # spikes emitted by cells AFTER their first out-of-range step
         self.nspk_after = None
@@ -493,6 +494,8 @@ class Census:
         rec.nlow[lo_idx] += 1
         rec.nhigh[hi_idx] += 1
         rec.nnonf[nf_idx] += 1
+        if new.size:
+            self._count_first_classes(rec, bridge, new, low, high, nonf, vh, pre)
         if new.size and len(rec.ctx) < MAX_CONTEXT_PER_BRIDGE:
             gi, ge = _host(getattr(bridge, "cp_conductance_g_i", None)), _host(getattr(bridge, "cp_conductance_g_e", None))
             C = _host(getattr(bridge, "cp_izh_C", None)) if rec.model == "IZHIKEVICH" else None
@@ -506,6 +509,8 @@ class Census:
             types = getattr(getattr(bridge, "runtime_state", None), "neuron_types_list_for_viz", None)
             if types is not None and len(types) != rec.n:
                 types = None
+            rfm = getattr(bridge, "_rf_neuron_mask", None)               # resonate-and-fire co-residence mask
+            rfm = None if rfm is None else _host(rfm).astype(bool)
             extra = {key: _host(getattr(bridge, attr, None)) for key, attr in (
                 ("u", "cp_recovery_variable_u"), ("ext_pA", "cp_external_input_current"),
                 ("g_nmda", "cp_conductance_g_nmda"), ("g_gabab", "cp_conductance_g_gabab"),
@@ -516,6 +521,9 @@ class Census:
                      "type": (str(types[i]) if types is not None else None),
                      "v_before": (_f(pre_v[i], 2) if pre_v is not None and pre_v.shape[0] > i else None),
                      "v_first": _f(vh[i], 2),
+                     # True: the cell sits in a slice the bridge also drives as resonate-and-fire phasors (v/u are then
+                     # phasor re/im, not a membrane); None: the bridge has no RF mask
+                     "rf_masked": (bool(rfm[i]) if rfm is not None and rfm.shape[0] > i else None),
                      "u_before": _f(pre_u[i], 2) if pre_u is not None and pre_u.shape[0] > i else None,
                      # the total input current the step integrated, by inverting the Euler update of the Izhikevich-2007
                      # model (valid when the cell did not spike/reset in the step, as for every row recorded here)
@@ -538,6 +546,37 @@ class Census:
                                 if d["g_i"] is not None or d["g_e"] is not None else None)):
                     d[key] = _f(g * rec.dt / float(C[i]), 3) if g is not None and ok else None
                 rec.ctx[i] = d
+
+    @staticmethod
+    def _count_first_classes(rec, bridge, new, low, high, nonf, vh, pre):
+        """Class of each NEW offender's first out-of-range reading, counted for all of them (the JSON rows are capped):
+        low_conductance (g_i+g_e)*dt/C >= 2 (the explicit-step overshoot), low_other, high_refractory (the crossing
+        was withheld by the refractory timer), high_other, high_refractory_unknown (first observed step), nonfinite.
+        A '|rf' suffix marks cells in a resonate-and-fire masked slice (v/u there are phasor components)."""
+        n = rec.n
+        gi = _host(getattr(bridge, "cp_conductance_g_i", None))
+        ge = _host(getattr(bridge, "cp_conductance_g_e", None))
+        C = _host(getattr(bridge, "cp_izh_C", None)) if rec.model == "IZHIKEVICH" else None
+        gt = None
+        if C is not None and C.shape[0] == n and (gi is not None or ge is not None):
+            tot = (gi if gi is not None else 0.0) + (ge if ge is not None else 0.0)
+            with np.errstate(divide="ignore", invalid="ignore"):
+                gt = np.asarray(tot * (rec.dt / C))
+        rfm = getattr(bridge, "_rf_neuron_mask", None)
+        rfm = None if rfm is None else _host(rfm).astype(bool)
+        for i in new:
+            i = int(i)
+            if nonf[i]:
+                cls = "nonfinite"
+            elif low[i]:
+                cls = "low_conductance" if (gt is not None and gt.shape[0] > i and gt[i] >= 2.0) else "low_other"
+            elif pre is None or pre.shape[0] <= i:
+                cls = "high_refractory_unknown"
+            else:
+                cls = "high_refractory" if pre[i] > 0 else "high_other"
+            if rfm is not None and rfm.shape[0] > i and rfm[i]:
+                cls += "|rf"
+            rec.first_classes[cls] += 1
 
     @staticmethod
     def _implied_current(P, i, pre_v, pre_u, vh, dt):
@@ -584,7 +623,7 @@ class Census:
                         "n_steps_low": int(rec.nlow[i]), "n_steps_high": int(rec.nhigh[i]),
                         "n_steps_nonfinite": int(rec.nnonf[i]),
                         "n_spikes_after_first": int(rec.nspk_after[i])})
-            for key in ("v_before", "v_first", "u_before", "u_first", "I_implied_pA", "ext_pA", "g_i", "g_e", "g_nmda", "g_gabab", "g_nmda_rec",
+            for key in ("rf_masked", "v_before", "v_first", "u_before", "u_first", "I_implied_pA", "ext_pA", "g_i", "g_e", "g_nmda", "g_gabab", "g_nmda_rec",
                         "refractory", "refractory_post", "gi_dt_over_C", "ge_dt_over_C", "gtot_dt_over_C"):
                 row[key] = c.get(key)
             rows.append(row)
@@ -602,6 +641,13 @@ class Census:
                 rec.c_last = None
         c_first = rec.c_first or {}
         c_last = rec.c_last or c_first
+        rf_mask = None
+        if bridge is not None:
+            rfm = getattr(bridge, "_rf_neuron_mask", None)
+            if rfm is not None:
+                rf_mask = _host(rfm).astype(bool)
+                if rf_mask.shape[0] != rec.n:
+                    rf_mask = None
         rows, n_oor, truncated = self._neuron_rows(rec)
         regions = {}
         for r, name in enumerate(m.names):
@@ -622,7 +668,8 @@ class Census:
                 "steps_low": int(rec.steps_low_r[r]), "steps_high": int(rec.steps_high_r[r]),
                 "neuron_steps_low": int(rec.nsteps_low_r[r]), "neuron_steps_high": int(rec.nsteps_high_r[r]),
                 "max_gi_dt_over_C": _f(rec.g_r[0][r], 3), "max_ge_dt_over_C": _f(rec.g_r[1][r], 3),
-                "max_gtot_dt_over_C": _f(rec.g_r[2][r], 3)}
+                "max_gtot_dt_over_C": _f(rec.g_r[2][r], 3),
+                "rf_masked_neurons": (int(np.count_nonzero(rf_mask[m.region_of == r])) if rf_mask is not None else None)}
         vmins = [(rec.vmin_r[r], m.names[r]) for r in range(len(m.names)) if np.isfinite(rec.vmin_r[r])]
         vmaxs = [(rec.vmax_r[r], m.names[r]) for r in range(len(m.names)) if np.isfinite(rec.vmax_r[r])]
         vmin = min(vmins) if vmins else (None, None)
@@ -645,6 +692,8 @@ class Census:
             "n_steps_with_oor": rec.steps_with_oor,
             "n_spikes_total": rec.n_spikes_total, "n_spikes_from_oor_cells": rec.n_spikes_oor_cells,
             "alive_at_end": bridge is not None,
+            "first_reading_classes": dict(rec.first_classes),
+            "has_rf_state": (getattr(bridge, "cp_rf_prev_im", None) is not None) if bridge is not None else None,
             "regions": regions, "oor_neurons": rows, "oor_neurons_truncated": truncated,
         }
 
@@ -717,6 +766,8 @@ def organ_rows(bridges):
                      "n_low_neurons": sum(b["n_low_neurons"] for b in bs),
                      "n_high_neurons": sum(b["n_high_neurons"] for b in bs),
                      "n_nonfinite_neurons": sum(b["n_nonfinite_neurons"] for b in bs),
+                     "first_reading_classes": dict(sum((collections.Counter(b.get("first_reading_classes") or {}) for b in bs),
+                                                       collections.Counter())),
                      "n_spikes_total": sum(b.get("n_spikes_total", 0) for b in bs),
                      "n_spikes_from_oor_cells": sum(b.get("n_spikes_from_oor_cells", 0) for b in bs),
                      "oor_regions": oor_regions,

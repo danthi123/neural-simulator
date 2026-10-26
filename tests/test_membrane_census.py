@@ -345,3 +345,44 @@ def test_implied_input_current_inverts_the_euler_update_on_the_real_overshoot():
     v0, u0, I = row["v_before"], row["u_before"], row["I_implied_pA"]
     v1 = v0 + (row["k"] * (v0 - row["vr"]) * (v0 - row["vt"]) - u0 + I) / row["C"]          # dt = 1 ms
     assert v1 == pytest.approx(row["v_first"], rel=2e-2, abs=2.0)
+
+
+def test_neurons_in_a_resonate_and_fire_masked_slice_are_flagged_as_phasors_not_membranes(monkeypatch):
+    b = _tiny_bridge(seed=5)
+    mask = np.zeros(7, dtype=bool)
+    mask[:2] = True                                     # cortex neurons 0,1 are also driven as RF phasors
+    b._rf_neuron_mask = np.asarray(mask)
+    _inject_after_real_step(monkeypatch, lows=[(1, -400.0), (3, -400.0)])
+    with MC.Census() as census:
+        _run(b, 3)
+    (br,) = census.report()["bridges"]
+    rows = {r["idx"]: r for r in br["oor_neurons"]}
+    assert rows[1]["rf_masked"] is True and rows[3]["rf_masked"] is False
+    assert br["regions"]["cortex"]["rf_masked_neurons"] == 2 and br["regions"]["inh"]["rf_masked_neurons"] == 0
+
+
+def test_first_reading_classes_count_every_offender_by_mechanism(monkeypatch):
+    # conductance overshoot: the defect reproducer's commit neuron leaves the range on a step with (g_i+g_e)*dt/C >= 2
+    with MC.Census() as census:
+        _run(_overshoot_bridge(42, bounded=False), 60)
+    (br,) = census.report()["bridges"]
+    assert br["first_reading_classes"] == {"low_conductance": 1}, br["first_reading_classes"]
+    (row,) = census.report()["organs"]
+    assert row["first_reading_classes"] == {"low_conductance": 1}
+    # refractory-withheld: a cell driven far past vpeak inside its refractory window
+    b = _tiny_bridge(seed=11)
+    b.cp_external_input_current[0] = np.float32(20000.0)
+    with MC.Census() as census2:
+        _run(b, 30)
+    cls = census2.report()["bridges"][0]["first_reading_classes"]
+    assert cls.get("high_refractory", 0) >= 1 and not any(k.startswith("low") for k in cls), cls
+    # RF-masked cells are suffixed
+    monkeypatch.undo()
+    b3 = _tiny_bridge(seed=5)
+    mask = np.zeros(7, dtype=bool)
+    mask[:2] = True
+    b3._rf_neuron_mask = np.asarray(mask)
+    _inject_after_real_step(monkeypatch, lows=[(1, -400.0), (3, -400.0)])
+    with MC.Census() as census3:
+        _run(b3, 3)
+    assert census3.report()["bridges"][0]["first_reading_classes"] == {"low_other|rf": 1, "low_other": 1}
