@@ -173,7 +173,65 @@ Reported, not barred: asks_before_stop per seed; null_count agreement; the flag-
 
 ## 8. Smoke result (dev seed 7)
 
-Filled in after the runs; see the next commit.
+Runs: one fresh process per arm, numpy CPU, `SIM_NO_PROVENANCE=1`, branch code at 86d8b461c; records on the
+workstation under `sim-rev/c3int_scratch/<config>/s7/ask__<arm>.json` (diagnostic, not committed), scored by
+`sim-rev/c3int_scratch/analyze.py` with the runner's own `score_ask`. The runner's `--aggregate` does not accept a
+partial dev directory (it reports the seed UNDEFINED, "intact arm missing", until every arm of every group is present),
+so the clauses below are `score_ask` on each shard. m_goat is UNDEFINED in every arm: the default-ON D4 comprehension
+gate refused `the goat eats the hay` (margin 0.0167 against 0.2, the known C2 defect), so goat stays a novel topic and
+the scorer drops it from the moat rate.
+
+Asked by label (g_eel m_yak g_crab m_moose g_newt m_goat lp_ibex_1 lp_ibex_2 | u_toad_1..4) and the C3 clauses:
+
+| arm | asked | toads | gap | moat | discr. | learnable | unlearnable stops | abstained/recalled_svo vs flag-off |
+|---|---|---|---|---|---|---|---|---|
+| S1 L, gain pinned, intact_a | 1 0 1 0 1 1u 1 0 | 1 0 0 0 | 1.0 | 0.0 | T | T | T | 0 of 19 turns differ (S3) |
+| S2 L, gain pinned, reversed | 1 0 1 0 1 1u 1 0 | 1 0 0 0 | 1.0 | 0.0 | T | T | T | 0 of 19 (S3r) |
+| S3 flag-off, gain pinned, intact_a | 1 0 1 0 1 1u 1 0 | 1 1 1 1 | 1.0 | 0.0 | T | T | F | reference |
+| S3r flag-off, gain pinned, reversed | 1 0 1 0 1 1u 1 0 | 1 1 1 1 | 1.0 | 0.0 | T | T | F | reference |
+| S4 L+P, intact_a | 1 0 1 0 1 1u 1 0 | 1 0 0 0 | 1.0 | 0.0 | T | T | T | 0 of 19 (S3) |
+| S5 L+P, reversed | 1 0 1 0 1 1u 1 0 | 1 1 0 0 | 1.0 | 0.0 | T | T | T | 0 of 19 (S3r) |
+| S6 L+P, lesion_P, intact_a | 1 0 0 0 0 0u 0 0 | 0 0 0 0 | 0.33 | 0.0 | F | F | F | 0 of 19 (S3) |
+
+(1u / 0u: m_goat, undefined.) `all_gaps_abstain` and `builtin_dog_cat` are true in every arm.
+
+Engagement reads:
+- **L.** The topic-stop want on a fresh slice is 35.3-35.7 Hz against its threshold 17.63 Hz (the shared pool reads
+  38.2-38.9 Hz against 19.10 Hz on the same probes). Toad, intact_a order: x_pre 1.000, 0.673, 0.475, 0.354; want
+  35.3, 12.9, 0, 0 Hz. Reversed: x_pre 1.000, 0.663, 0.464, 0.346; want 35.7, 16.1, 0, 0 Hz. A familiar moat drives
+  0 afferent spikes and its slice stays at x = 1. Read back on every L probe: stp_tau_d 12000 ms, ou_enabled false.
+  On S1/S2 every `curiosity_da` trace is lesioned with gain 1.0 (`da_lesion_held`: held).
+- **P (S4).** Session DA 0.554 / 0.262 / 0.055 / 0.046 with salience 1.0 gives SNc 71.4 / 56.0 / 44.0 / 46.4 Hz,
+  da_eff 0.97 / 0.76 / 0.60 / 0.63, gain 1.70 / 1.39 / 1.15 / 1.19. Moats (salience 0) read da_eff 0.42 at DA 0.407 and
+  0 at DA 0.061 (gain 0.88, 0.25). reward_us fires 337 spikes on every novel probe and 0 on the moats. u_toad_2:
+  12.9 Hz x 1.19 = 15.5 Hz, not asked. No `curiosity_da` trace is attached (the host `crave_decision` is skipped).
+- **S5.** The toad block runs first, at session DA 0.554 then 0.246: gains 1.70 and 1.36. u_toad_2: 16.1 Hz x 1.36 =
+  21.9 Hz, asked; u_toad_3 and u_toad_4 read 0 Hz. asks_before_stop 2 (S1, S2, S4: 1).
+- **S6.** reward_us fires 0 spikes on every probe (the lesion held). g_crab (DA 0.262): gain 0.44, 15.8 Hz, not asked.
+  From g_newt on: da_eff 0, gain 0.25 (the clip), 8.8-8.9 Hz, nothing asked.
+- **null_count (informational, from S1 and S4).** k = 1 agrees with the intact asked vector on 11 of 11 abstain probes;
+  k = 2 on 10 of 11. On this seed L's decision equals a one-ask count rule, as its label says.
+
+Predictions (section 6) against the results:
+- S1 held except one listed element: m_goat was predicted unasked as a taught moat, but its teach was refused, so it is
+  a novel topic and was asked; the scorer marks it undefined. The prediction should have conditioned on acquisition.
+- S2, S3, S4, S5 (u_toad_2 asked, as predicted likelier) and S6 (g_eel asked; lp_ibex_1 and u_toad_1 not; gap 1/3)
+  held. The answer-rate prediction held: 0 differing turns in 5 comparisons (95 turns). The read-backs held.
+- The reversed flag-off control named in section 6 (the diagnosis run) was replaced by S3r: that run recorded
+  `corpus_present` false and its comprehension organ raised FileNotFoundError on 4 turns
+  (`sim-rev/wt-s2pin/data/corpus/tinystories.txt`), which is why it acquired t_goat. It is not a valid control. Its toad
+  claim (asked 4 of 4 with the gain pinned) is unaffected: S3r reproduces it with the corpus present.
+
+Flag-off byte identity:
+- **Whole record, branch vs main.** S3 (branch, flags unset, gain pinned, intact_a) against the same arm run from a
+  detached main worktree at 3065c5614 (`sim-rev/wt-c3int-main`): every record field except wall-clock and peak RSS is
+  equal, and the 19 responses serialize to the same 81,508 bytes.
+- **One handler turn, opt-in test.** `C3TS_HANDLER_TEST=1 pytest tests/test_curiosity_topic_stop.py -k handler_turn`:
+  1 passed (142 s). With every flag unset an abstain turn carries no `curiosity_topic_stop` key, no Context attribute
+  is created, and `decide` / `note_turn` (patched to raise) are never reached.
+
+What the smoke does not show: anything beyond dev seed 7 (one seed; the battery in section 7 is the read), the gain
+left at its production default with L alone, or any gate seed.
 
 ## 9. Residuals carried forward
 
