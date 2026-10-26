@@ -20,7 +20,10 @@ is read, never written:
   * per bridge: `cfg.enable_bounded_conductance_integration` read back from its own core config (every step; the set of
     values seen), the neuron model, dt, neuron count, who built it (the call chain at construction) and who steps it.
 The v array is read AFTER the step, so a spike's reset to c has already happened: a value below -110 mV or above
-vpeak + 5 mV at that point is a membrane the step left out of range. Coverage limit: only `_run_one_simulation_step`
+vpeak + 5 mV at that point is a membrane the step left out of range. A LOW membrane is the explicit-Euler instability
+(and its spurious spikes); a HIGH one is mostly a cell inside its refractory window, whose crossing the step withholds
+(`fired = v_new >= threshold & not_in_refractory`, so no reset), and each row records `refractory` at first detection.
+The high bound is max(vpeak, the homeostatic adapted threshold where the bridge uses one) + 5 mV. Coverage limit: only `_run_one_simulation_step`
 is observed (the megakernel dispatch lives inside it); `rf_resonate_steps` (resonate-and-fire phasors, whose v is a
 phasor component, not a membrane) is not.
 
@@ -110,6 +113,24 @@ def _caller_chain(depth_skip=2, limit=8):
             out.append("%s:%d" % (_frame_label(f), f.f_lineno))
         f = f.f_back
     return out
+
+
+def _spike_ceiling(bridge, vp):
+    """Per-neuron voltage the step compares v_new against to decide a spike: cp_izh_vpeak, or max(vpeak, the homeostatic
+    adapted threshold) where the bridge uses one (the step's own selection, bridge.py section 3). The high bound is this
+    plus the margin, so a legitimately raised threshold is not read as an out-of-range membrane."""
+    th = getattr(bridge, "cp_neuron_firing_thresholds", None)
+    if th is None or vp is None:
+        return vp
+    th = _host(th)
+    if th.shape != vp.shape:
+        return vp
+    if getattr(bridge.core_config, "enable_homeostasis", False):
+        return np.maximum(vp, th)
+    mask = getattr(bridge, "cp_homeostasis_neuron_mask", None)
+    if mask is not None:
+        return np.where(_host(mask).astype(bool), np.maximum(vp, th), vp)
+    return vp
 
 
 def _range_policy(model):
@@ -399,7 +420,7 @@ class Census:
         vp = None
         hi_min = np.inf
         if high_kind == "vpeak":
-            vp = _host(getattr(bridge, "cp_izh_vpeak", None))
+            vp = _spike_ceiling(bridge, _host(getattr(bridge, "cp_izh_vpeak", None)))
             if vp is not None:
                 hi_min = float(vp.min()) + self.margin
         elif high_kind == "adex":
@@ -445,10 +466,12 @@ class Census:
         if new.size and len(rec.ctx) < MAX_CONTEXT_PER_BRIDGE:
             gi, ge = _host(getattr(bridge, "cp_conductance_g_i", None)), _host(getattr(bridge, "cp_conductance_g_e", None))
             C = _host(getattr(bridge, "cp_izh_C", None)) if rec.model == "IZHIKEVICH" else None
+            rt = _host(getattr(bridge, "cp_refractory_timers", None))
             for idx in new[:MAX_CONTEXT_PER_BRIDGE - len(rec.ctx)]:
                 i = int(idx)
                 d = {"g_i": _f(gi[i]) if gi is not None and gi.shape[0] > i else None,
-                     "g_e": _f(ge[i]) if ge is not None and ge.shape[0] > i else None}
+                     "g_e": _f(ge[i]) if ge is not None and ge.shape[0] > i else None,
+                     "refractory": (bool(rt[i] > 0) if rt is not None and rt.shape[0] > i else None)}
                 d["gi_dt_over_C"] = (_f(d["g_i"] * rec.dt / float(C[i])) if d["g_i"] is not None and C is not None
                                      and float(C[i]) > 0 else None)
                 rec.ctx[i] = d
@@ -499,7 +522,7 @@ class Census:
                         "extreme_high_mV": _f(rec.vmax_n[i], 2) if rec.nhigh[i] > 0 else None,
                         "n_steps_low": int(rec.nlow[i]), "n_steps_high": int(rec.nhigh[i]),
                         "n_steps_nonfinite": int(rec.nnonf[i])})
-            row.update(rec.ctx.get(i, {"g_i": None, "g_e": None, "gi_dt_over_C": None}))
+            row.update(rec.ctx.get(i, {"g_i": None, "g_e": None, "refractory": None, "gi_dt_over_C": None}))
             rows.append(row)
         return rows, int(idx.size), truncated
 
@@ -564,7 +587,7 @@ class Census:
         bridges = [b for b in (self.bridge_report(r) for r in self.recs) if b is not None]
         return {"census_version": CENSUS_VERSION,
                 "thresholds": {"v_low_mV": self.v_low, "vpeak_margin_mV": self.margin,
-                               "high_check": "Izhikevich: per-neuron cp_izh_vpeak + margin; AdEx: adex_V_peak + margin; "
+                               "high_check": "Izhikevich: per-neuron max(cp_izh_vpeak, homeostatic threshold) + margin; AdEx: adex_V_peak + margin; "
                                              "HH and resonate-and-fire: none"},
                 "total_bridge_steps": self.total_steps, "n_bridges": len(bridges),
                 "observer_errors": self.observer_errors, "first_observer_error": self.first_error,

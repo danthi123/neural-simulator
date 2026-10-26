@@ -116,6 +116,7 @@ def test_injected_out_of_range_v_is_recorded_with_its_parameters(monkeypatch):
     assert lo["extreme_low_mV"] == -500.0 and lo["extreme_high_mV"] is None
     assert hi["extreme_high_mV"] == 80.0 and hi["extreme_low_mV"] is None
     assert lo["first_step"] == 1 and lo["n_steps_low"] == 4 and hi["n_steps_high"] == 4
+    assert isinstance(lo["refractory"], bool) and lo["g_i"] is not None      # first-step context was captured
     # the recorded parameters ARE the bridge's drawn parameters
     for key, attr in (("C", "cp_izh_C"), ("a", "cp_izh_a"), ("b", "cp_izh_b"), ("d", "cp_izh_d_increment"),
                       ("vpeak", "cp_izh_vpeak"), ("k", "cp_izh_k")):
