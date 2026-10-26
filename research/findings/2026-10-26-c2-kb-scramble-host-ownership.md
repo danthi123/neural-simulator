@@ -29,7 +29,7 @@ the spiking `query_patient` is only a fallback the production composer never rea
 (the `qp_lesion` arm leaves answer, derived flag and derived_from unchanged on 7/7 seeds) plus code reading. That shows the spiking
 read is not needed. It does not show that the list decides. This test intervenes on the list.
 
-## Prediction (written before any run)
+## Prediction (registered in the committed oracle and test code before the runs; this prose was written after)
 
 - Under `kb_scramble`, `derived_svo` and `derived_from` of `p_prey_eat` follow the scrambled list, because the host list owns the
   conclusion: `[frog, eat, wren]` from `[[heron, hunt, frog], [frog, eat, wren]]`, against `[frog, eat, gnat]` for the unscrambled brain.
@@ -37,6 +37,13 @@ read is not needed. It does not show that the list decides. This test intervenes
   `[frog, eat, gnat]`.
 - Direct recalls through the gate (`c_heron_hunt`, `c_frog_eat`) read the bound store and stay unchanged; supporting text built from
   `.kb` by other readers may mention the scrambled facts.
+
+Registration: predictions 1 and 2 are the oracle's `predicted_from_list` and `predicted_from_bound`, and prediction 3 is the
+bound-store assertion in `tests/test_stage2_kb_scramble.py` (`c_frog_eat` stays out of `changed_vs_intact`). Both were committed at
+8491e0df1 (2026-10-26 14:10) before the runs. The wording above was written after the runs.
+
+Outcome: predictions 1 and 2 held. Prediction 3 was FALSIFIED for `c_frog_eat` and `p_yesno`: both became flagged guesses under the
+scrambled list. It held for `c_heron_hunt` and `c_dog_chase`, which are unchanged. See Result.
 
 ## Method
 
@@ -81,7 +88,7 @@ Probe turn `p_prey_eat` ("what does the heron's prey eat"), fields `derived`, `d
 | kb_scramble | true | frog eat wren | heron hunt frog ; frog eat wren | the scrambled list |
 | kb_scramble_spiking_control | true | frog eat gnat | heron hunt frog ; frog eat gnat | the bound vectors |
 
-The prediction held on both arms. `abstained` is false on all three.
+Predictions 1 and 2 held on both arms. `abstained` is false on all three. Prediction 3 did not hold for two direct recalls (below).
 
 The route's own reads on `p_prey_eat`:
 
@@ -110,13 +117,13 @@ authorship-monitor marker and the "a guess from what I've learned" suffix):
 | p_yesno | recalled crow-chase-wren | guess "perhaps the crow chases the wren" | guess, same text |
 | c_dog_chase | recalled dog-chase-cat | same | same |
 
-Two things beyond the prediction:
+Two things beyond predictions 1 and 2:
 
 1. The answer TEXT of `p_prey_eat` in both scrambled arms carries sentences read from the deranged `.kb` by other readers ("the frog
    eats the wren the wren chases the gnat the crow chases the moth"), as the task brief anticipated. In the control the structured
    conclusion fields still follow the bound vectors while the text contains the list's sentences.
-2. Direct recall of a scrambled pair changed framing in both arms. `c_frog_eat` and `p_yesno` lost `recalled_svo` and became flagged
-   guesses, although the spiking recall still returned `gnat` for `(frog, eat)` (both arms, `spiking_reads_by_turn.c_frog_eat` in the summary). The content `gnat` came
+2. Prediction 3 was falsified: direct recall of a scrambled pair changed framing in both arms. `c_frog_eat` and `p_yesno` lost
+   `recalled_svo` and became flagged guesses, although the spiking recall still returned `gnat` for `(frog, eat)` (both arms, `spiking_reads_by_turn.c_frog_eat` in the summary). The content `gnat` came
    from the learned category-inheritance fallback (`flagged_guesses.c_frog_eat.category_inherit_patient`), not from the strict recall. Mechanism
    not isolated here. A candidate consistent with the data: the host router picks a fact from `chat.stored_facts` (rebuilt from
    `.kb` by `ChatBrain._refresh_facts`, `brain_chat_tui.py:985-1012`), then verifies it against the spiking recall
@@ -130,14 +137,16 @@ On the C2 probe turn the identity of the conclusion is decided by the host list.
 vectors untouched moves `derived_svo` and `derived_from` to exactly the conclusion the independent oracle computes from the list,
 with the spiking store unchanged and still holding the unscrambled facts. The control shows the reverse also holds: when the route's
 reads are forced onto spiking `query_patient`, the same bound vectors yield the unscrambled conclusion. So in the production-default
-path the bound vectors do not decide the answer, and where list and vectors disagree the list wins. Together with lesion invariance
-this gives necessity (removing the spiking read changes nothing) and sufficiency (changing the list changes the conclusion).
+path the bound vectors do not decide the answer. The list is decisive when it is present, and it wins when list and vectors
+disagree. The spiking read is not needed (the `qp_lesion` arm leaves the answer
+unchanged on 7/7 seeds), and the forced spiking fallback also gives the correct conclusion.
 
 Consequences, stated with their limits:
 
-- C2 as scored today passes with the conclusion owned by host code, as the preregistration's audit declared. By this intervention the
-  host-decision share of the C2 conclusion is 1 of 1 probe turns, on each of dev seeds 7 and 1. The spiking substrate's contribution to this reply
-  is the content of the bound vectors that the list was filled from at teach time, and the strict-recall content of direct recalls.
+- The intact-arm C2 conclusion is host-owned. The C2 criterion itself FAILED 0/6 at the 10-26 gate, because the permuted teach was
+  refused by the D4 comprehension gate before it was stored (`research/findings/2026-10-26-stage2-fail-diagnoses.md`). By this intervention the host-decision share of the C2 conclusion is 1 of 1 probe
+  turns, on each of dev seeds 7 and 1. The spiking substrate's contribution to this reply is the content of the bound vectors that
+  the list was filled from at teach time, and the strict-recall content of direct recalls.
 - The list's authority also reaches direct recall: a list that disagrees with the vectors turns a strict recall into a flagged
   guess (second observation above). So the same host list is plausibly a verification gate over the spiking recall. This candidate
   is not isolated.
