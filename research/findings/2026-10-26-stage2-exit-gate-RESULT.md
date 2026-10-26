@@ -77,3 +77,20 @@ C4 (emo): FAIL, capability absent on 1 of 6 seeds; sub-clauses: emo: sign_correc
 C5 (inner): PASS. Correct on 6 of 6 seeds; every lesion arm changed the reply on 6 of 6 and reproduced; the permuted exposure was tracked on 6 of 6.
 
 The per-seed curiosity ask-rates (C3 amendment A4) are copied verbatim in the report block above.
+
+## Claude amendment (2026-10-26, after the diagnoses)
+
+The verdict and every number above stand. Three stated reasons are corrected; the evidence is in
+research/findings/2026-10-26-stage2-fail-diagnoses.md (each diagnosis survived an independent skeptic).
+- C2: the reason "not exposure-driven" is inaccurate. Permuted premise 1 ('the heron hunts the gnat') was never
+  acquired. The default-ON D4 comprehension gate refused it as fully out-of-vocabulary on every seed (margin 0.0
+  against 0.2; 8 facts stored instead of 9). So the permuted arm measured an acquisition refusal, not whether the
+  conclusion follows the exposure. The literal rule still yields FAIL. The `transitive_chat` informational arm is
+  void: its flag was already default-ON, and the route is not on the production rich path. The infer content path
+  is deterministic, so 6/6 is one measurement repeated, not six replications.
+- C3: the global DA gain is the measured cause of every failing clause except the missing per-topic stop. It is not
+  "not the measured cause". With the gain pinned (da_lesion), gap is 1.0 and learnable is True on 6/6; lp_unlearnable
+  still fails because no per-topic stop exists in the handler.
+- C4: the s101 joy miss is a numerical artifact of the 1 ms explicit-Euler step. One low-capacitance appraisal
+  neuron (53.6 pF) overshoots under strong inhibitory conductance and emits spurious spikes that recruit the sadness
+  quench. The C4 lesion and permuted shortfalls are the same event, not independent failures.
