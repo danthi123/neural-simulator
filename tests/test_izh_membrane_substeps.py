@@ -58,7 +58,7 @@ def _region(name, preset):
                        enable_homeostasis=False, enable_nmda=False)
 
 
-def _cell_bridge(cell, *, n_sub=None, rule=None, C=None):
+def _cell_bridge(cell, *, n_sub=None, rule=None, C=None, fast_spike_reset=None):
     """One MSN (the cell's preset, then its drawn a/b/C/d) + one never-driven pad FS cell (a bridge with zero
     synapses does not initialise). Bounded conductance ON as in the organ; plasticity, OU, heterogeneity off.
     n_sub None leaves izh_membrane_substeps at its default."""
@@ -79,6 +79,8 @@ def _cell_bridge(cell, *, n_sub=None, rule=None, C=None):
         cfg.izh_membrane_substeps = n_sub
     if rule is not None:
         cfg.izh_substep_refractory_rule = rule
+    if fast_spike_reset is not None:
+        cfg.fast_spike_reset = bool(fast_spike_reset)
     cfg.brain_regions = [_region("msn", cell["preset"]), _region("pad", "IZH2007_FS_CORTICAL_INTERNEURON")]
     cfg.region_pathways = [RegionPathway(from_region="pad", to_region="msn", density=1.0, weight_mean=1.0,
                                          weight_jitter=0.0, plastic=False, receptor="gaba_a")]
@@ -155,6 +157,44 @@ def test_substeps_4_bounded(key, rule):
     assert float(v.min()) >= -150.0
     assert float(v.max()) <= cell["params"]["vpeak"]
     assert int(fired.sum()) <= 50
+
+
+@pytest.mark.parametrize("rule", ["model_reset", "no_engine_timer"])
+def test_substeps_legacy_reset_path_matches_fast_path(rule):
+    """The sub-step path feeds both reset paths (fast_spike_reset True / False) the same v/u; with the effective
+    refractory steps routed through both, the two give the same trace (s75 replay, n = 4)."""
+    v_fast, f_fast, b_fast, _ = _replay("s75", n_sub=4, rule=rule, fast_spike_reset=True)
+    v_leg, f_leg, b_leg, _ = _replay("s75", n_sub=4, rule=rule, fast_spike_reset=False)
+    np.testing.assert_array_equal(v_fast, v_leg)
+    np.testing.assert_array_equal(f_fast, f_leg)
+    assert b_fast.refractory_model_resets == b_leg.refractory_model_resets
+    np.testing.assert_array_equal(_host(b_fast.cp_refractory_timers), _host(b_leg.cp_refractory_timers))
+
+
+@pytest.mark.parametrize("n_sub,rule", [(1, "model_reset"), (4, "model_reset"), (4, "no_engine_timer")])
+def test_refractory_rules_on_a_strongly_driven_fs_cell(n_sub, rule):
+    """The pad FS cell driven at 1200 pA (the organ's selector_reset level) reaches vpeak within 1 ms of a spike.
+    Off: one spike per 2 steps (engine timer). Rule (a): the same transmitted rate, the extra in-refractory
+    crossings become counted model resets. Rule (b): no engine timer, so it fires on consecutive steps."""
+    b, _ = _cell_bridge(_META["cells"]["s72"], n_sub=None if n_sub == 1 else n_sub, rule=rule)
+    pad = int(b.region_manager.indices("pad")[0])
+    b.cp_external_input_current[pad] = np.float32(1200.0)
+    fired = []
+    for _ in range(60):
+        b._run_one_simulation_step()
+        fired.append(bool(_host(b.cp_firing_states)[pad]))
+    fired = np.asarray(fired[10:])
+    consecutive = int((fired[1:] & fired[:-1]).sum())
+    if n_sub == 1 or rule == "model_reset":
+        assert consecutive == 0
+        assert 20 <= int(fired.sum()) <= 26
+    if n_sub == 1:
+        assert b.substep_calls == 0 and b.refractory_model_resets == 0
+    elif rule == "model_reset":
+        assert b.substep_calls == 60 and b.refractory_model_resets >= 20
+    else:
+        assert b.substep_calls == 60 and b.refractory_model_resets == 0
+        assert consecutive >= 40
 
 
 # --- T0: the sub-step function itself ---------------------------------------------------------------------------
