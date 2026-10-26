@@ -277,3 +277,28 @@ def test_relabel_names_the_stepper_and_keeps_the_builder():
     assert bs[1]["organ"] == "pkg.fn:driver"
     assert bs[2]["organ"] == "?" and bs[2]["built_by"] is None
     assert MC.relabel(bs) is bs and bs[0]["organ"] == "pkg.organ:Organ"           # idempotent
+
+
+def test_parameters_are_captured_at_detection_so_a_transient_bridge_still_reports_them(monkeypatch):
+    import gc
+    b = _tiny_bridge(seed=5)
+    _inject_after_real_step(monkeypatch, lows=[(1, -300.0)])
+    with MC.Census() as census:
+        _run(b, 3)
+        want_C = float(np.asarray(to_host(b.cp_izh_C))[1])
+        del b
+        gc.collect()
+    (br,) = census.report()["bridges"]
+    assert br["alive_at_end"] is False
+    (row,) = br["oor_neurons"]
+    assert row["idx"] == 1 and row["C"] == pytest.approx(want_C, abs=1e-3) and row["a"] is not None and row["type"]
+
+
+def test_spikes_from_cells_after_they_left_the_range_are_counted():
+    with MC.Census() as census:
+        _run(_overshoot_bridge(42, bounded=False), 60)
+    (br,) = census.report()["bridges"]
+    assert br["n_spikes_total"] > 0
+    assert 0 < br["n_spikes_from_oor_cells"] <= br["n_spikes_total"], (br["n_spikes_from_oor_cells"], br["n_spikes_total"])
+    (row,) = br["oor_neurons"]
+    assert row["n_spikes_after_first"] == br["n_spikes_from_oor_cells"] > 0

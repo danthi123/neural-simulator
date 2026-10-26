@@ -216,6 +216,9 @@ class _BridgeRec:
         self.ctx = {}
         self.steps_with_oor = 0
         self.prev_timers = None                       # post-step refractory timers of the previous observation
+        self.n_spikes_total = 0                       # all spikes this bridge emitted while observed
+        self.n_spikes_oor_cells = 0                   # spikes emitted by cells AFTER their first out-of-range step
+        self.nspk_after = None
 
     def _alloc_region_stats(self, old=None, old_names=None):
         R = len(self.map.names) if self.map is not None else 0
@@ -258,6 +261,7 @@ class _BridgeRec:
             self.nlow = np.zeros(n, dtype=np.int32)
             self.nhigh = np.zeros(n, dtype=np.int32)
             self.nnonf = np.zeros(n, dtype=np.int32)
+            self.nspk_after = np.zeros(n, dtype=np.int32)
 
 
 def _c_summary(bridge, rm):
@@ -396,6 +400,16 @@ class Census:
         pre = rec.prev_timers                         # == the timers this step decided spikes with (None on the first)
         rt_now = getattr(bridge, "cp_refractory_timers", None)
         rec.prev_timers = None if rt_now is None else np.array(_host(rt_now), copy=True)
+        fired = getattr(bridge, "cp_firing_states", None)
+        if fired is not None:
+            fh = _host(fired)
+            if fh.shape[0] == n:
+                fh = fh.astype(bool, copy=False)
+                rec.n_spikes_total += int(np.count_nonzero(fh))
+                if rec.first_step is not None:                    # spikes by cells that already left the range
+                    sp = fh & (rec.first_step >= 0)
+                    rec.nspk_after += sp
+                    rec.n_spikes_oor_cells += int(np.count_nonzero(sp))
         cfg = bridge.core_config
         rec.bounded_seen.add(bool(getattr(cfg, "enable_bounded_conductance_integration", False)))
         m = rec.map
@@ -477,9 +491,20 @@ class Census:
             gi, ge = _host(getattr(bridge, "cp_conductance_g_i", None)), _host(getattr(bridge, "cp_conductance_g_e", None))
             C = _host(getattr(bridge, "cp_izh_C", None)) if rec.model == "IZHIKEVICH" else None
             rt = rec.prev_timers                         # post-step timers (this observation)
+            P = {}
+            if rec.model == "IZHIKEVICH":
+                for key, attr in (("C", "cp_izh_C"), ("k", "cp_izh_k"), ("vr", "cp_izh_vr"), ("vt", "cp_izh_vt"),
+                                  ("vpeak", "cp_izh_vpeak"), ("a", "cp_izh_a"), ("b", "cp_izh_b"),
+                                  ("c_reset", "cp_izh_c_reset"), ("d", "cp_izh_d_increment")):
+                    P[key] = _host(getattr(bridge, attr, None))
+            types = getattr(getattr(bridge, "runtime_state", None), "neuron_types_list_for_viz", None)
+            if types is not None and len(types) != rec.n:
+                types = None
             for idx in new[:MAX_CONTEXT_PER_BRIDGE - len(rec.ctx)]:
                 i = int(idx)
-                d = {"g_i": _f(gi[i]) if gi is not None and gi.shape[0] > i else None,
+                d = {"params": {key: (_f(arr[i]) if arr is not None and arr.shape[0] > i else None) for key, arr in P.items()},
+                     "type": (str(types[i]) if types is not None else None),
+                     "g_i": _f(gi[i]) if gi is not None and gi.shape[0] > i else None,
                      "g_e": _f(ge[i]) if ge is not None and ge.shape[0] > i else None,
                      # refractory = in its window when the step decided spikes (a withheld crossing is not reset);
                      # refractory_post = timer still running after the step
@@ -499,47 +524,35 @@ class Census:
         idx = np.flatnonzero(rec.first_step >= 0)
         if idx.size == 0:
             return [], 0, False
-        bridge = rec.ref()
-        izh = rec.model == "IZHIKEVICH" and bridge is not None
-        P = {}
-        if izh:
-            for key, attr in (("C", "cp_izh_C"), ("k", "cp_izh_k"), ("vr", "cp_izh_vr"), ("vt", "cp_izh_vt"),
-                              ("vpeak", "cp_izh_vpeak"), ("a", "cp_izh_a"), ("b", "cp_izh_b"),
-                              ("c_reset", "cp_izh_c_reset"), ("d", "cp_izh_d_increment")):
-                P[key] = _host(getattr(bridge, attr, None))
-        types = None
-        if bridge is not None:
-            types = getattr(getattr(bridge, "runtime_state", None), "neuron_types_list_for_viz", None)
-            if types is not None and len(types) != rec.n:
-                types = None
         sev = np.zeros(idx.size)
         for j, i in enumerate(idx):
-            s = 0.0
-            if rec.nnonf[i] > 0:
-                s = np.inf
+            c = rec.ctx.get(int(i)) or {}
+            vpeak = (c.get("params") or {}).get("vpeak")
+            s = np.inf if rec.nnonf[i] > 0 else 0.0
             if rec.nlow[i] > 0 and np.isfinite(rec.vmin_n[i]):
                 s = max(s, self.v_low - float(rec.vmin_n[i]))
             if rec.nhigh[i] > 0 and np.isfinite(rec.vmax_n[i]):
-                s = max(s, float(rec.vmax_n[i]) - (float(P["vpeak"][i]) + self.margin if izh and P.get("vpeak") is not None
-                                                  else 0.0))
+                s = max(s, float(rec.vmax_n[i]) - ((vpeak if vpeak is not None else 0.0) + self.margin))
             sev[j] = s
         order = np.argsort(-sev, kind="stable")
         truncated = idx.size > MAX_DETAIL_PER_BRIDGE
         rows = []
         for j in order[:MAX_DETAIL_PER_BRIDGE]:
             i = int(idx[j])
+            c = rec.ctx.get(i) or {}
             row = {"idx": i, "region": rec.map.names[int(rec.map.region_of[i])], "inhibitory": bool(rec.map.inhibitory[i]),
-                   "type": (str(types[i]) if types is not None else None)}
+                   "type": c.get("type")}
+            params = c.get("params") or {}
             for key in ("C", "k", "vr", "vt", "vpeak", "a", "b", "c_reset", "d"):
-                arr = P.get(key)
-                row[key] = _f(arr[i]) if arr is not None and arr.shape[0] > i else None
+                row[key] = params.get(key)
             row.update({"first_step": int(rec.first_step[i]), "first_census_step": int(rec.first_gstep[i]),
                         "extreme_low_mV": _f(rec.vmin_n[i], 2) if rec.nlow[i] > 0 else None,
                         "extreme_high_mV": _f(rec.vmax_n[i], 2) if rec.nhigh[i] > 0 else None,
                         "n_steps_low": int(rec.nlow[i]), "n_steps_high": int(rec.nhigh[i]),
-                        "n_steps_nonfinite": int(rec.nnonf[i])})
-            row.update(rec.ctx.get(i, {"g_i": None, "g_e": None, "refractory": None, "refractory_post": None,
-                                       "gi_dt_over_C": None, "ge_dt_over_C": None, "gtot_dt_over_C": None}))
+                        "n_steps_nonfinite": int(rec.nnonf[i]),
+                        "n_spikes_after_first": int(rec.nspk_after[i])})
+            for key in ("g_i", "g_e", "refractory", "refractory_post", "gi_dt_over_C", "ge_dt_over_C", "gtot_dt_over_C"):
+                row[key] = c.get(key)
             rows.append(row)
         return rows, int(idx.size), truncated
 
@@ -596,6 +609,8 @@ class Census:
             "n_high_neurons": int(np.count_nonzero(rec.nhigh > 0)) if rec.nhigh is not None else 0,
             "n_nonfinite_neurons": int(np.count_nonzero(rec.nnonf > 0)) if rec.nnonf is not None else 0,
             "n_steps_with_oor": rec.steps_with_oor,
+            "n_spikes_total": rec.n_spikes_total, "n_spikes_from_oor_cells": rec.n_spikes_oor_cells,
+            "alive_at_end": bridge is not None,
             "regions": regions, "oor_neurons": rows, "oor_neurons_truncated": truncated,
         }
 
@@ -668,6 +683,8 @@ def organ_rows(bridges):
                      "n_low_neurons": sum(b["n_low_neurons"] for b in bs),
                      "n_high_neurons": sum(b["n_high_neurons"] for b in bs),
                      "n_nonfinite_neurons": sum(b["n_nonfinite_neurons"] for b in bs),
+                     "n_spikes_total": sum(b.get("n_spikes_total", 0) for b in bs),
+                     "n_spikes_from_oor_cells": sum(b.get("n_spikes_from_oor_cells", 0) for b in bs),
                      "oor_regions": oor_regions,
                      "c_min": c_min, "c_min_region": c_min_region,
                      "max_gi_dt_over_C": gi_max, "max_gi_dt_over_C_region": gi_max_region,
@@ -681,10 +698,11 @@ def summary_line(row, tag=""):
     oor = "; ".join("%s x%d C=%s" % (r, d["n"], ",".join("%.2f" % c for c in d["C"][:6] if c is not None))
                     for r, d in row["oor_regions"].items()) or "-"
     return ("%s%s | bridges=%d n=%d steps=%d | v_min=%s (%s) v_max=%s | oor_neurons=%d (low %d high %d nonfinite %d) [%s] | "
-            "min_C=%s (%s) max_(g_i+g_e)*dt/C=%s (%s) | bounded=%s" % (
+            "spikes %d, of which %d from cells after leaving the range | min_C=%s (%s) max_(g_i+g_e)*dt/C=%s (%s) | bounded=%s" % (
                 tag, row["organ"], row["n_bridges"], row["n_neurons"], row["n_steps"], row["v_min"], row["v_min_region"],
                 row["v_max"], row["n_oor_neurons"], row["n_low_neurons"], row["n_high_neurons"],
-                row["n_nonfinite_neurons"], oor, row["c_min"], row["c_min_region"], row["max_gtot_dt_over_C"],
+                row["n_nonfinite_neurons"], oor, row.get("n_spikes_total", 0), row.get("n_spikes_from_oor_cells", 0),
+                row["c_min"], row["c_min_region"], row["max_gtot_dt_over_C"],
                 row["max_gtot_dt_over_C_region"], row["bounded_conductance_integration"]))
 
 
