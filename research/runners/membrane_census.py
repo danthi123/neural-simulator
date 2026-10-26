@@ -891,6 +891,80 @@ def pool_lines(sha="<sha>", seeds=POOL_SEEDS, out_dir=DEFAULT_OUT_DIR, arm="inta
     return lines
 
 
+def aggregate(paths):
+    """Merge the per-group census JSONs of ONE seed into a compact per-organ record (no per-neuron rows besides the C
+    range of the offenders per region). An organ appears in several groups (each group is a fresh brain), so the headline
+    values are those of the group in which the organ had the most offenders (ties: the most steps); the per-group counts
+    are kept."""
+    groups, meta = collections.OrderedDict(), {}
+    organs = collections.OrderedDict()
+    for p in paths:
+        with open(p) as f:
+            d = json.load(f)
+        g = d["group"]
+        meta.setdefault("seed", d["seed"])
+        if meta["seed"] != d["seed"]:
+            raise ValueError("aggregate mixes seeds %s and %s" % (meta["seed"], d["seed"]))
+        w = d.get("workload", {})
+        groups[g] = {"arm": d["arm"], "git_sha": d.get("git_sha"), "n_turns": w.get("n_turns"),
+                     "responses_sha256": w.get("responses_sha256"), "turn_errors": w.get("turn_errors"),
+                     "wall_s": d.get("wall_s"), "peak_rss_mb": (w.get("process") or {}).get("peak_rss_mb"),
+                     "n_bridges": d["census"]["n_bridges"], "total_bridge_steps": d["census"]["total_bridge_steps"],
+                     "observer_errors": d["census"]["observer_errors"], "observe_s": d["census"]["observe_s"],
+                     "wrapper_restored": d.get("wrapper_restored"), "source": os.path.basename(p)}
+        bridges = relabel(d["census"]["bridges"])
+        for row in organ_rows(bridges):
+            org = organs.setdefault(row["organ"], {"organ": row["organ"], "per_group": collections.OrderedDict(),
+                                                   "_rows": collections.defaultdict(lambda: collections.defaultdict(list)),
+                                                   "_rf": 0})
+            org["per_group"][g] = {k: row[k] for k in ("n_bridges", "n_neurons", "n_steps", "v_min", "v_max", "n_oor_neurons",
+                                                       "n_low_neurons", "n_high_neurons", "n_nonfinite_neurons",
+                                                       "n_spikes_total", "n_spikes_from_oor_cells", "c_min", "c_min_region",
+                                                       "max_gtot_dt_over_C", "max_gtot_dt_over_C_region",
+                                                       "first_reading_classes", "oor_regions", "built_by",
+                                                       "bounded_conductance_integration", "neuron_models")}
+        for b in bridges:
+            org = organs[b["organ"]]
+            for r in b["oor_neurons"]:
+                if r.get("C") is not None:
+                    org["_rows"][r["region"]]["C"].append(r["C"])
+                org["_rf"] += 1 if r.get("rf_masked") else 0
+    out_orgs = []
+    for name, org in organs.items():
+        best_g = max(org["per_group"], key=lambda g: (org["per_group"][g]["n_oor_neurons"], org["per_group"][g]["n_steps"]))
+        best = org["per_group"][best_g]
+        c_ranges = {rg: {"n_rows": len(v["C"]), "c_min": min(v["C"]), "c_max": max(v["C"])}
+                    for rg, v in org["_rows"].items() if v["C"]}
+        out_orgs.append({
+            "organ": name, "groups": list(org["per_group"]), "best_group": best_g,
+            "n_neurons": max(v["n_neurons"] for v in org["per_group"].values()),
+            "steps_per_group": {g: v["n_steps"] for g, v in org["per_group"].items()},
+            "oor_neurons_per_group": {g: v["n_oor_neurons"] for g, v in org["per_group"].items()},
+            "n_oor_neurons": best["n_oor_neurons"], "n_low_neurons": best["n_low_neurons"],
+            "n_high_neurons": best["n_high_neurons"], "n_nonfinite_neurons": best["n_nonfinite_neurons"],
+            "v_min": min(v["v_min"] for v in org["per_group"].values() if v["v_min"] is not None),
+            "v_max": max(v["v_max"] for v in org["per_group"].values() if v["v_max"] is not None),
+            "first_reading_classes": best["first_reading_classes"],
+            "oor_regions": {rg: {"n": v["n"]} for rg, v in best["oor_regions"].items()},
+            "offender_c_by_region": c_ranges,
+            "min_drawn_c": min((v["c_min"], v["c_min_region"]) for v in org["per_group"].values() if v["c_min"] is not None)
+            if any(v["c_min"] is not None for v in org["per_group"].values()) else None,
+            "max_gtot_dt_over_C": max((v["max_gtot_dt_over_C"] for v in org["per_group"].values()
+                                       if v["max_gtot_dt_over_C"] is not None), default=None),
+            "n_spikes_total": best["n_spikes_total"], "n_spikes_from_oor_cells": best["n_spikes_from_oor_cells"],
+            "bounded_conductance_integration": sorted({str(v["bounded_conductance_integration"])
+                                                       for v in org["per_group"].values()}),
+            "neuron_models": sorted({m for v in org["per_group"].values() for m in v["neuron_models"]}),
+            "built_by": sorted({x for v in org["per_group"].values() for x in v["built_by"]}),
+            "offender_rows_rf_masked": org["_rf"]})
+    out_orgs.sort(key=lambda o: -o["n_oor_neurons"])
+    return {"runner": "research/runners/membrane_census.py", "census_version": CENSUS_VERSION,
+            "seed": meta.get("seed"), "inputs": [os.path.basename(p) for p in paths], "groups": groups,
+            "n_organs": len(out_orgs), "n_offender_organs": sum(1 for o in out_orgs if o["n_oor_neurons"]),
+            "n_bridge_instances": sum(g["n_bridges"] for g in groups.values()),
+            "organs": out_orgs, "caveat": CAVEAT}
+
+
 def summarize(paths):
     for p in paths:
         with open(p) as f:
@@ -909,6 +983,7 @@ def main():
     ap.add_argument("--worker", action="store_true", help="internal: run one arm under the census in THIS process")
     ap.add_argument("--shard", action="store_true", help="run one (seed, group, arm) census in a fresh subprocess")
     ap.add_argument("--summarize", nargs="+", metavar="JSON", help="print the per-organ summary lines of result JSONs")
+    ap.add_argument("--aggregate", nargs="+", metavar="JSON", help="merge one seed's per-group result JSONs into --out")
     ap.add_argument("--emit-pool-lines", action="store_true", help="print the dev-seed 1-12 x 5-group pool command lines")
     ap.add_argument("--sha", default="<sha>", help="revision token for --emit-pool-lines (default: the literal <sha>)")
     ap.add_argument("--seed", type=int, default=None)
@@ -925,6 +1000,16 @@ def main():
     if a.emit_pool_lines:
         print("\n".join(pool_lines(a.sha)))
         return
+    if a.aggregate:
+        if not a.out:
+            ap.error("--aggregate needs --out")
+        agg = aggregate(a.aggregate)
+        os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
+        with open(a.out, "w") as f:
+            json.dump(agg, f, indent=1, default=str)
+        print("[membrane census] aggregate seed=%s: %d organs, %d with out-of-range membranes, %d bridge instances -> %s" % (
+            agg["seed"], agg["n_organs"], agg["n_offender_organs"], agg["n_bridge_instances"], a.out))
+        return
     if a.worker or a.shard:
         if a.seed is None or not a.group or not a.arm or not a.out:
             ap.error("--seed, --group, --arm and --out are required")
@@ -935,7 +1020,7 @@ def main():
             sys.exit(run_worker(a.seed, a.group, a.arm, a.out, labels=a.labels))
         sys.exit(run_shard(a.seed, a.group, a.arm, a.out, backend=a.backend, labels=a.labels,
                            allow_gate_seed=a.allow_gate_seed))
-    ap.error("choose one of --worker/--shard/--summarize/--emit-pool-lines")
+    ap.error("choose one of --worker/--shard/--summarize/--aggregate/--emit-pool-lines")
 
 
 if __name__ == "__main__":

@@ -386,3 +386,34 @@ def test_first_reading_classes_count_every_offender_by_mechanism(monkeypatch):
     with MC.Census() as census3:
         _run(b3, 3)
     assert census3.report()["bridges"][0]["first_reading_classes"] == {"low_other|rf": 1, "low_other": 1}
+
+
+def test_aggregate_merges_the_groups_of_one_seed_into_per_organ_records(tmp_path, monkeypatch):
+    import json
+    b = _tiny_bridge(seed=5)
+    _inject_after_real_step(monkeypatch, lows=[(2, -500.0)])
+    with MC.Census() as census:
+        _run(b, 4)
+    rep = census.report()
+    quiet = {"census_version": 1, "total_bridge_steps": 1, "n_bridges": 0, "observer_errors": 0, "observe_s": 0.0,
+             "bridges": [], "organs": []}
+    paths = []
+    for g, r in (("conv", rep), ("emo", quiet)):
+        d = {"seed": 7, "group": g, "arm": "intact_a", "git_sha": "abc", "wall_s": 1.0, "wrapper_restored": {"step": True},
+             "workload": {"n_turns": 3, "responses_sha256": "x" * 64, "process": {"peak_rss_mb": 1.0}}, "census": r}
+        p = tmp_path / ("%s.json" % g)
+        p.write_text(json.dumps(d))
+        paths.append(str(p))
+    agg = MC.aggregate(paths)
+    assert agg["seed"] == 7 and agg["n_organs"] == 1 and agg["n_offender_organs"] == 1
+    (org,) = agg["organs"]
+    assert org["n_oor_neurons"] == 1 and org["n_low_neurons"] == 1 and org["groups"] == ["conv"]
+    assert org["v_min"] == -500.0 and org["first_reading_classes"] == {"low_other": 1}
+    assert set(org["offender_c_by_region"]) == {"cortex"} and org["offender_c_by_region"]["cortex"]["n_rows"] == 1
+    assert agg["groups"]["emo"]["n_bridges"] == 0 and agg["groups"]["conv"]["responses_sha256"] == "x" * 64
+    # mixing seeds is refused
+    d = json.loads((tmp_path / "emo.json").read_text())
+    d["seed"] = 8
+    (tmp_path / "emo8.json").write_text(json.dumps(d))
+    with pytest.raises(ValueError, match="mixes seeds"):
+        MC.aggregate([paths[0], str(tmp_path / "emo8.json")])
