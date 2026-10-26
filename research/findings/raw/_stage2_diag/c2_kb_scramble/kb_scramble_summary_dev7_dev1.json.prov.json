@@ -1,0 +1,29 @@
+{
+ "run_id": "1793044357-2252155",
+ "runner": "research/runners/stage2_exit_gate.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-kbscr/research/runners/stage2_exit_gate.py",
+  "--kb-summary",
+  "7=/home/dant123/Projects/sim-rev/kbscr_scratch/s7,1=/home/dant123/Projects/sim-rev/kbscr_scratch/s1",
+  "--out",
+  "research/findings/raw/_stage2_diag/c2_kb_scramble/kb_scramble_summary_dev7_dev1.json"
+ ],
+ "git_sha": "5eeef1ae2",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-26T15:52:37",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 6681.6,
+ "corpus_check_query": "curiosity per-topic stop in production handler",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_stage2_diag/c2_kb_scramble/kb_scramble_summary_dev7_dev1.json"
+}

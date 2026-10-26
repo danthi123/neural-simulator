@@ -20,10 +20,16 @@ regex -- a DOCUMENTED SCAFFOLD (see "HONESTY" below), analogous to the codebase'
 extensible ROLE-NOUN hint table (a role noun like "prey" hints at a small set of candidate relations) PLUS
 always the question's own verb as a generic fallback (many role nouns, "prey" included, are themselves
 definitionally "the object of X's own instance of the asked verb" -- a wolf's prey IS what it eats). (3)
-EXECUTE strictly on the brain's OWN composer via TWO genuinely-spiking `query_patient` reads (the SAME op
-`query_chain` iterates) -- each hop is its own gate: a missing first hop tries the next candidate; a missing
-second hop for a candidate rules that candidate out. NO bridging fact is ever invented; only a hop pair BOTH
-independently confirmed by the composer is returned. If NO candidate resolves both hops, the caller (the
+EXECUTE each hop through `_hop`, which READS THE COMPOSER'S `.kb` (a host Python list of fact dicts;
+`_distinct_patients`) and takes the hop's patient from that scan; the spiking `query_patient` (the SAME op
+`query_chain` iterates) is only the FALLBACK `_hop` uses when NOTHING is scannable (no `.kb` reachable), a
+condition the production `OneBrainComposer` (which always carries `.kb`) never meets. (An earlier revision of this
+docstring said both hops were spiking reads; the hardening pass below made them list scans.) Each hop is its own
+gate: a missing first hop tries the next candidate; a missing second hop for a candidate rules that candidate out.
+NO bridging fact is ever invented; only a hop pair BOTH found in the fact store is returned. Who decides the
+conclusion is measured by intervention, not asserted: the stage-2 gate's informational `kb_scramble` arms derange
+the list's patients (bound vectors untouched) and read which one the conclusion follows
+(`research/runners/stage2_exit_gate.py`, finding 2026-10-26-c2-kb-scramble-host-ownership). If NO candidate resolves both hops, the caller (the
 `RichAnswerComposer` / the single-fact endpoint) sees `None` and abstains exactly as it already does for any
 unmatched question -- the no-confab moat is a strict superset of the direct-recall case (every returned
 answer is ITSELF a literal stored fact, reached via two verified hops instead of one).
@@ -32,10 +38,11 @@ HONESTY (do not relabel as biology). The SHAPE DETECTION (the regex) and the ROL
 CODE -- a scaffold, exactly like `_definitional_copula_route`'s own regex for "what is X?". The task's own
 framing is followed here: any host-side "is this compositional?" routing is a documented scaffold on the
 ladder to a learned replacement (a spiking relation-extraction circuit is the named next rung), never
-biology. What genuinely runs on the substrate is every DATA READ: both `query_patient` hops are the SAME
-spiking recall (`OneBrainComposer._seq_block` on the production onebrain composer) the single-fact path
-already uses and already counts as brain-based -- this module adds no new recall primitive, only a new
-DISPATCH path to the existing one, run TWICE with the moat re-checked at each hop.
+biology. The two hop DATA READS are NOT spiking at the production composer: `_hop` scans `.kb` (host code)
+and returns that scan's patient; only the no-`.kb` fallback would call the spiking `query_patient`
+(`OneBrainComposer._seq_block`, the recall the single-fact path uses and counts as brain-based). So this module
+is a host-code 2-hop read over the fact list (the multi-valued-hop moat is a deterministic distinct-count), a
+declared scaffold; replacing the hop reads with spiking reads is the named next rung (2026-10-26 diagnosis).
 
 LESION / LOAD-BEARING. `BRAIN_CHAIN_ROUTE=0` (or false/off/no) disables the whole route -- a compositional
 question then falls through to the pre-existing comprehension path (which mis-parses it, as documented above)
@@ -254,9 +261,10 @@ def _hop(composer, agent, action):
 
 def resolve_compositional_chain(composer, question: str):
     """DETECT + EXECUTE a 2-hop possessive-relative-clause question against `composer` (the brain's OWN fact
-    store -- `chat.inner.composer`, which may itself be a `TieredFactStore` buffer+LTM; `query_patient`
-    transparently checks both tiers). Returns a `ChainedSVO` `[hop1_agent, hop2_relation, hop2_patient]` --
-    itself a genuinely stored fact, reached via two independently brain-verified hops, each also checked for
+    store -- `chat.inner.composer`, which may itself be a `TieredFactStore` buffer+LTM; the hop scan reads the
+    buffer `.kb` and the one routed LTM shard's `.kb`; the `query_patient` fallback checks both tiers). Returns
+    a `ChainedSVO` `[hop1_agent, hop2_relation, hop2_patient]` -- itself a stored fact, reached via two hops
+    both found in the fact list (see `_hop`: a list scan, not a spiking read, unless nothing is scannable), each also checked for
     AMBIGUITY (a hop with >=2 distinct stored patients abstains the whole chain, see `_hop`) -- on success, or
     `None` when the question is not this shape, OR every candidate hop pair failed/was ambiguous (an HONEST
     ABSTAIN: never invents a bridging fact, never silently picks an arbitrary patient on a multi-valued hop).
