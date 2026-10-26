@@ -368,6 +368,9 @@ def build_selector_bridge(
         updates["preset_centred_parameter_heterogeneity"] = True
     if bg_bounded_cond_enabled():
         updates["enable_bounded_conductance_integration"] = True
+    # research/izh-substeps (DEFAULT-OFF): BRAIN_BG_IZH_SUBSTEPS=<n> / BRAIN_BG_IZH_SUBSTEP_RULE=<rule> ride the
+    # same path; both unset -> no update is added and the build is byte-identical.
+    updates.update(bg_izh_substep_updates())
     for name, value in updates.items():
         if not hasattr(cfg, name):
             raise AttributeError(f"CoreSimConfig has no field {name!r}")
@@ -458,6 +461,24 @@ def bg_bounded_cond_enabled() -> bool:
     built with enable_bounded_conductance_integration=True (bounds synaptic integration one term at a
     time; it does not touch the Izhikevich quadratic term)."""
     return (os.environ.get(BG_BOUNDED_COND_FLAG) or "").strip().lower() in ("1", "true", "yes", "on")
+
+
+BG_IZH_SUBSTEPS_FLAG = "BRAIN_BG_IZH_SUBSTEPS"
+BG_IZH_SUBSTEP_RULE_FLAG = "BRAIN_BG_IZH_SUBSTEP_RULE"
+
+
+def bg_izh_substep_updates() -> dict:
+    """DEFAULT-OFF (research/izh-substeps). `BRAIN_BG_IZH_SUBSTEPS` = an int n -> izh_membrane_substeps=n;
+    `BRAIN_BG_IZH_SUBSTEP_RULE` in {model_reset, no_engine_timer} -> izh_substep_refractory_rule. Unset or
+    empty -> {} (no core_config update). A malformed value raises at build (the bridge validates)."""
+    out = {}
+    n = (os.environ.get(BG_IZH_SUBSTEPS_FLAG) or "").strip()
+    if n:
+        out["izh_membrane_substeps"] = int(n)
+    rule = (os.environ.get(BG_IZH_SUBSTEP_RULE_FLAG) or "").strip()
+    if rule:
+        out["izh_substep_refractory_rule"] = rule
+    return out
 
 
 def tonic_drive_pA(config):

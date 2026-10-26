@@ -90,6 +90,8 @@ from sim.kernels import (
     fused_btsp_milstein_update,fused_izhikevich_legacy_dynamics_update,
                          fused_izhikevich2007_dynamics_update,
                          izhikevich2007_dynamics_update,
+                         izhikevich2007_substep_update,
+                         IZH_SUBSTEP_REFRACTORY_RULES,
                          fused_hodgkin_huxley_dynamics_update,
                          fused_hh_state_and_spike_update_into,
                          prepare_fused_hh_state_and_spike_update_into,
@@ -673,6 +675,11 @@ class SimulationBridge:
         self.cp_izh_C = None; self.cp_izh_k = None; self.cp_izh_vr = None; self.cp_izh_vt = None
         self.cp_izh_vpeak = None; self.cp_izh_a = None; self.cp_izh_b = None
         self.cp_izh_c_reset = None; self.cp_izh_d_increment = None
+        # cfg.izh_membrane_substeps engagement counters (plain Python values, so a flag-off bridge carries no new
+        # array): substep_calls = steps that ran the Izhikevich sub-step path; the rule-(a) model-reset count is
+        # accumulated on the device in _refractory_model_resets_acc and read through refractory_model_resets.
+        self.substep_calls = 0
+        self._refractory_model_resets_acc = None
 
         self.cp_izh_legacy_a = None; self.cp_izh_legacy_b = None
         self.cp_izh_legacy_c_reset = None; self.cp_izh_legacy_d_increment = None
@@ -2003,6 +2010,10 @@ class SimulationBridge:
                 raise ValueError(
                     "backend_neutral_izh_arithmetic supports only IZHIKEVICH"
                 )
+            # cfg.izh_membrane_substeps / izh_substep_refractory_rule: fail at build, not at the first step.
+            self._izh_substep_settings(cfg)
+            self.substep_calls = 0
+            self._refractory_model_resets_acc = None
             initialization_rng = (
                 _backend_neutral_random_state(
                     actual_seed, stream_name="Izhikevich initialization"
@@ -8306,6 +8317,11 @@ class SimulationBridge:
         # through here (rather than erroring) routes to the Python path below, which DOES honor the flag.
         if getattr(cfg, "enable_bounded_conductance_integration", False):
             return False
+        # Mutually exclusive with the Izhikevich membrane sub-step integrator (cfg.izh_membrane_substeps > 1): the
+        # megakernel fuses ONE explicit-Euler dt step and its own threshold/refractory logic, so a sub-stepped step
+        # falls through to the Python path below, which implements it.
+        if getattr(cfg, "izh_membrane_substeps", 1) != 1:
+            return False
         if getattr(cfg, "backend_neutral_izh_arithmetic", False):
             return False
         if not getattr(cfg, "fast_spike_reset", False):
@@ -8908,6 +8924,35 @@ class SimulationBridge:
             f"NeuronModel.IZHIKEVICH and NeuronModel.ADEX, not neuron_model_type={model!r}. "
             "Disable the flag or switch neuron_model_type."
         )
+
+    @staticmethod
+    def _izh_substep_settings(cfg):
+        """(n_substeps, refractory_rule) for cfg.izh_membrane_substeps / cfg.izh_substep_refractory_rule,
+        validated. n == 1 (the default) means the unchanged single-step path. Raises on a value that is not an
+        int >= 1, on an unknown rule, and on n > 1 with a non-Izhikevich neuron model (loud, never a silent
+        no-op). Cheap attribute reads only; called once per step and at initialization."""
+        n = getattr(cfg, "izh_membrane_substeps", 1)
+        if n == 1 and type(n) is int:
+            return 1, getattr(cfg, "izh_substep_refractory_rule", "model_reset")
+        if type(n) is not int or n < 1:
+            raise ValueError(f"izh_membrane_substeps must be an int >= 1, got {n!r}")
+        rule = getattr(cfg, "izh_substep_refractory_rule", "model_reset")
+        if rule not in IZH_SUBSTEP_REFRACTORY_RULES:
+            raise ValueError(
+                f"izh_substep_refractory_rule must be one of {IZH_SUBSTEP_REFRACTORY_RULES}, got {rule!r}")
+        if cfg.neuron_model_type != NeuronModel.IZHIKEVICH.name:
+            raise ValueError(
+                "izh_membrane_substeps > 1 supports only IZHIKEVICH, "
+                f"not neuron_model_type={cfg.neuron_model_type!r}")
+        return n, rule
+
+    @property
+    def refractory_model_resets(self):
+        """Rule-(a) count: refractory Izhikevich neurons that reached threshold inside a sub-step and got the
+        model reset with no spike emitted (cfg.izh_membrane_substeps > 1, izh_substep_refractory_rule
+        "model_reset"). 0 when that path never ran."""
+        acc = self._refractory_model_resets_acc
+        return 0 if acc is None else int(_backend_to_host(acc))
 
     def _run_one_simulation_step(self):
         """Executes a single step of the simulation logic."""
@@ -9850,15 +9895,6 @@ class SimulationBridge:
             fired_this_step = cp.zeros(n_neurons, dtype=bool)
 
             if cfg.neuron_model_type == NeuronModel.IZHIKEVICH.name:
-                v_new, u_new = izhikevich2007_dynamics_update(
-                    self.cp_membrane_potential_v, self.cp_recovery_variable_u,
-                    self.cp_izh_C, self.cp_izh_k, self.cp_izh_vr, self.cp_izh_vt,
-                    self.cp_izh_a, self.cp_izh_b,
-                    total_input_current_pA, dt,
-                    backend_neutral_arithmetic=getattr(
-                        cfg, "backend_neutral_izh_arithmetic", False
-                    ),
-                )
                 not_in_refractory = (self.cp_refractory_timers <= 0)
                 # Spike-threshold selection (2026-06-08: 3-branch for per-region
                 # homeostasis). Branches 1 and 3 are byte-identical to the legacy
@@ -9877,6 +9913,46 @@ class SimulationBridge:
                         self.cp_neuron_firing_thresholds, self.cp_izh_vpeak)
                 else:
                     current_spike_thresholds = self.cp_izh_vpeak
+                # Membrane integrator (cfg.izh_membrane_substeps, DEFAULT 1 => the unchanged single explicit-Euler
+                # step below; the threshold selection above was moved ahead of it, a pure reorder of reads the
+                # update does not write). n > 1: the same update in n sub-steps of dt/n with spike detection
+                # against current_spike_thresholds at sub-step resolution (sim/kernels.py
+                # izhikevich2007_substep_update has the stability rationale). Refractory rule
+                # (cfg.izh_substep_refractory_rule): "model_reset" (a) silently model-resets a refractory neuron
+                # that reaches threshold inside a sub-step; "no_engine_timer" (b) never sets the engine
+                # refractory timer for Izhikevich cells (effective refractory_period_steps 1), so the model
+                # reset is the only refractoriness.
+                _izh_nsub, _izh_rule = self._izh_substep_settings(cfg)
+                _izh_refractory_steps = cfg.refractory_period_steps
+                if _izh_nsub > 1:
+                    v_new, u_new, _izh_n_resets = izhikevich2007_substep_update(
+                        self.cp_membrane_potential_v, self.cp_recovery_variable_u,
+                        self.cp_izh_C, self.cp_izh_k, self.cp_izh_vr, self.cp_izh_vt,
+                        self.cp_izh_a, self.cp_izh_b,
+                        total_input_current_pA, dt, _izh_nsub, current_spike_thresholds,
+                        self.cp_izh_c_reset, self.cp_izh_d_increment,
+                        (~not_in_refractory) if _izh_rule == "model_reset" else None,
+                        backend_neutral_arithmetic=getattr(
+                            cfg, "backend_neutral_izh_arithmetic", False
+                        ),
+                    )
+                    self.substep_calls += 1
+                    if _izh_rule == "model_reset":
+                        self._refractory_model_resets_acc = (
+                            _izh_n_resets if self._refractory_model_resets_acc is None
+                            else self._refractory_model_resets_acc + _izh_n_resets)
+                    else:
+                        _izh_refractory_steps = 1
+                else:
+                    v_new, u_new = izhikevich2007_dynamics_update(
+                        self.cp_membrane_potential_v, self.cp_recovery_variable_u,
+                        self.cp_izh_C, self.cp_izh_k, self.cp_izh_vr, self.cp_izh_vt,
+                        self.cp_izh_a, self.cp_izh_b,
+                        total_input_current_pA, dt,
+                        backend_neutral_arithmetic=getattr(
+                            cfg, "backend_neutral_izh_arithmetic", False
+                        ),
+                    )
                 fired_this_step = (v_new >= current_spike_thresholds) & not_in_refractory
 
                 if getattr(cfg, "fast_spike_reset", False):
@@ -9892,7 +9968,7 @@ class SimulationBridge:
                     # off-by-one: legacy sets to N then decrements to N-1
                     # via the unconditional decrement). Non-fired with
                     # timer > 0 decrement; otherwise stay 0.
-                    new_refractory_for_fired = cp.int32(max(0, cfg.refractory_period_steps - 1))
+                    new_refractory_for_fired = cp.int32(max(0, _izh_refractory_steps - 1))
                     new_refractory_for_unfired = cp.maximum(
                         self.cp_refractory_timers - cp.int32(1),
                         cp.int32(0),
@@ -9913,7 +9989,7 @@ class SimulationBridge:
                     if fired_indices.size > 0:
                         v_new[fired_indices] = self.cp_izh_c_reset[fired_indices]
                         u_new[fired_indices] += self.cp_izh_d_increment[fired_indices]
-                        self.cp_refractory_timers[fired_indices] = cfg.refractory_period_steps
+                        self.cp_refractory_timers[fired_indices] = _izh_refractory_steps
 
                     self.cp_membrane_potential_v[:] = v_new
                     self.cp_recovery_variable_u[:] = u_new
