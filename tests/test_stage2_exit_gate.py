@@ -141,8 +141,9 @@ def test_gate_seed_is_refused_without_the_flag():
 def test_pool_job_lines_are_pinned_memcapped_prereg_tagged_and_carry_max_age():
     sha = "f" * 40
     lines = SG.pool_job_lines(sha)
-    # 186 at the prereg; amendment A4 adds the counted `ask/reversed` arm and the informational `ask/da_lesion` arm
-    assert len(lines) == len(SG.GATE_SEEDS) * sum(len(SG.arms_for(g)) for g in SG.GROUPS) == 198
+    # 186 at the prereg; amendment A4 adds the counted `ask/reversed` arm and the informational `ask/da_lesion` arm (198);
+    # the C2 host-ownership test (2026-10-26) adds the informational `infer/kb_scramble` and `kb_scramble_spiking_control`
+    assert len(lines) == len(SG.GATE_SEEDS) * sum(len(SG.arms_for(g)) for g in SG.GROUPS) == 210
     for cmd, why in lines:
         assert ("revisions/%s" % sha) in cmd and ("memcap.sh %d" % SG.MEMCAP_GB) in cmd and "--prereg %s" % SG.PREREG in cmd
         assert ("mem_gb=%d" % SG.MEM_GB) in why and SG.PREREG in why and "max_age_h=240" in why

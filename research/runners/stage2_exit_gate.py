@@ -249,7 +249,24 @@ GROUPS = {
                                                       "workspace chase (2026-09-24 prereg); reported, never counted"},
                           "qp_lesion": {"env": {}, "patch": "qp_lesion",
                                         "note": "the composer's spiking query_patient read returns None: does the "
-                                                "derived answer need it at all? (ownership; reported, never counted)"}},
+                                                "derived answer need it at all? (ownership; reported, never counted)"},
+                          # the causal host-ownership test (2026-10-26): INTERVENE on the list the route reads
+                          "kb_scramble": {"env": {}, "patch": None, "scramble": "kb",
+                                          "note": "after the teach turns, derange the patient strings of the told facts "
+                                                  "in OneBrainComposer.kb (the list the chain route scans), leaving the "
+                                                  "bound spiking vectors untouched: do derived_svo/derived_from follow "
+                                                  "the list? (ownership; reported, never counted)"},
+                          "kb_scramble_spiking_control": {"env": {}, "patch": None, "scramble": "kb_spiking",
+                                                          "note": "the same derangement with the route's own fallback "
+                                                                  "condition forced (its .kb scan reports nothing "
+                                                                  "scannable), so the hops are spiking query_patient "
+                                                                  "reads: do derived_svo/derived_from follow the bound "
+                                                                  "vectors? (ownership control; reported, never counted)"}},
+        # the kb_scramble arms' fixed configuration: the hop-1 premise the chain bridges through is kept (so the scrambled
+        # list still resolves to a different 2-hop conclusion); the question the prediction is read on, and the
+        # oracle's hop relations (the role-noun hint 'prey' -> hunt, eat; then the question's own verb)
+        "scramble_cfg": {"keep": [["heron", "hunt"]],
+                         "probe": {"label": "p_prey_eat", "x": "heron", "hop1": ["hunt", "eat"], "hop2": "eat"}},
     },
     "ask": {
         "criterion": "C3", "primary": True, "env": {},
@@ -344,6 +361,14 @@ def arm_spec(group, arm):
     raise ValueError("unknown arm %s for group %s" % (arm, group))
 
 
+def arm_scramble(group, arm):
+    """The kb-scramble mode of an arm (`kb` | `kb_spiking`), or None for every other arm. Separate from `arm_spec` (whose
+    3-tuple shape every existing caller unpacks): only the two C2 host-ownership arms declare a `scramble`."""
+    g = GROUPS[group]
+    d = (g.get("informational") or {}).get(arm.split(".rep")[0])
+    return (d or {}).get("scramble")
+
+
 # ══════════════════════════════════════════════ WORKER (inside the arm subprocess) ═════════════════════════════════
 def install_patch(name, seed):
     """The in-process manipulations (no sim/ or webapp/ edit). Returns a record dict the worker stores."""
@@ -361,6 +386,158 @@ def install_patch(name, seed):
         rec["orig"] = repr(orig)
         return rec
     raise ValueError(name)
+
+
+# ══════════════════════════ C2 HOST-OWNERSHIP INTERVENTION: the kb_scramble arms (2026-10-26) ═══════════════════════════
+# The possessive-chain route reads both hops from a Python list (`OneBrainComposer.kb`, `_distinct_patients`); the spiking
+# `query_patient` is only its fallback. The qp_lesion arm shows the answer does not need the spiking read; it does not show
+# the LIST decides it. These arms intervene on the list: after the teach turns and before the first probe, the patient
+# strings of the told facts are deranged in `.kb`, with the bound spiking vectors (the store the substrate reads) untouched.
+# If the host owns the conclusion, derived_svo/derived_from follow the list; if the bound vectors do, they do not.
+def derange_patients(agents, patients):
+    """A derangement of `patients` over the facts whose agents are `agents` (parallel lists): the smallest cyclic shift
+    s in 1..n-1 such that NO fact keeps its patient and NO fact becomes self-referential (patient == its own agent).
+    Needs n >= 2 DISTINCT patients (then every shift is a derangement and the multiset of patients is preserved, so
+    every (agent, action) pair keeps exactly one patient and no multi-valued-hop abstain is created). Raises ValueError
+    when none exists."""
+    n = len(patients)
+    if n < 2:
+        raise ValueError("need >= 2 facts to derange, got %d" % n)
+    if len(set(patients)) != n:
+        raise ValueError("patients are not distinct: %s" % (list(patients),))
+    for sh in range(1, n):
+        new = [patients[(i + sh) % n] for i in range(n)]
+        if all(new[i] != patients[i] and new[i] != agents[i] for i in range(n)):
+            return new
+    raise ValueError("no derangement avoiding self-reference for %s" % (list(zip(agents, patients)),))
+
+
+def _distinct_in(triples, agent, action):
+    out = []
+    for a, v, p in triples:
+        if a == agent and v == action and p not in out:
+            out.append(p)
+    return out
+
+
+def list_chain(triples, x, hop1, hop2):
+    """The prediction ORACLE: the 2-hop possessive read over a plain triple list, written independently of the route's
+    code. `hop1` = the candidate first relations in order, `hop2` = the second relation. A hop with >= 2 distinct
+    patients abstains the whole chain (None), mirroring the route's multi-valued-hop rule. Returns
+    {svo, derived_from} or None. (It scans the buffer list only; the told words are absent from the LTM.)"""
+    for v1 in hop1:
+        p1 = _distinct_in(triples, x, v1)
+        if len(p1) >= 2:
+            return None
+        if not p1:
+            continue
+        p2 = _distinct_in(triples, p1[0], hop2)
+        if len(p2) >= 2:
+            return None
+        if p2:
+            return {"svo": [p1[0], hop2, p2[0]], "derived_from": [[x, v1, p1[0]], [p1[0], hop2, p2[0]]]}
+    return None
+
+
+def _kb_buffer(composer):
+    """The OneBrainComposer whose `.kb` the chain route scans first (the TieredFactStore's buffer, else the composer)."""
+    buf = getattr(composer, "buffer", composer)
+    return buf if hasattr(buf, "kb") else None
+
+
+def _kb_triples(buf):
+    return [[f.get("agent"), f.get("action"), f.get("patient")] for f, _h in buf.kb]
+
+
+def apply_kb_scramble(composer, told, keep, probe):
+    """Derange the patient strings of the told facts in `composer`'s buffer `.kb` and read the list back. `told` = the
+    canonical [agent, action, patient] triples the teacher asserted; `keep` = (agent, action) pairs left untouched (the
+    hop-1 bridge); `probe` = {x, hop1, hop2} for the oracle. Only `.kb` is written (a fresh (fact, handle) tuple per
+    changed entry, as `update_on_mismatch` does): the bound vectors, the sequencer drives and the chat's `stored_facts`
+    snapshot are not. Returns the ENGAGEMENT record: engaged only if the read-back list equals the plan, every scoped
+    fact changed, the patients stayed distinct, and the conclusion-relevant (hop-2) fact differs from the bound one."""
+    rec = {"engaged": False, "reason": None}
+    buf = _kb_buffer(composer)
+    if buf is None:
+        rec["reason"] = "composer has no .kb"
+        return rec
+    before = _kb_triples(buf)
+    keep_set = {tuple(k) for k in (keep or [])}
+    want = [(t[0], t[1]) for t in told if (t[0], t[1]) not in keep_set]
+    idx = [i for i, (a, v, p) in enumerate(before) if (a, v) in set(want) and isinstance(p, str)]
+    rec.update(n_facts=len(before), n_told=len(told), n_scoped=len(idx), scope=[before[i] for i in idx],
+               kb_before=before, keep=[list(k) for k in keep_set])
+    if len({(before[i][0], before[i][1]) for i in idx}) != len(idx):
+        rec["reason"] = "a scoped (agent, action) appears twice in the kb"
+        return rec
+    try:
+        new = derange_patients([before[i][0] for i in idx], [before[i][2] for i in idx])
+    except ValueError as e:
+        rec["reason"] = "derangement impossible: %s" % e
+        return rec
+    for i, p in zip(idx, new):
+        fact, handle = buf.kb[i]
+        buf.kb[i] = (dict(fact, patient=p), handle)
+    after = _kb_triples(buf)                                   # READ BACK from .kb, not the plan
+    plan = {i: p for i, p in zip(idx, new)}
+    readback_ok = all(after[j][2] == plan[j] if j in plan else after[j] == before[j] for j in range(len(before))) \
+        and len(after) == len(before)
+    n_changed = sum(1 for b, a in zip(before, after) if b != a)
+    scoped_old = [before[i][2] for i in idx]
+    scoped_new = [after[i][2] for i in idx]
+    pred_bound = list_chain(before, probe["x"], probe["hop1"], probe["hop2"])
+    pred_list = list_chain(after, probe["x"], probe["hop1"], probe["hop2"])
+    relevant_changed = bool(pred_bound and pred_list and pred_bound["derived_from"][-1] != pred_list["derived_from"][-1])
+    rec.update(
+        kb_after=after, n_changed=n_changed, readback_matches_plan=readback_ok,
+        is_derangement=all(o != n for o, n in zip(scoped_old, scoped_new)),
+        patients_distinct_after=len(set(scoped_new)) == len(scoped_new),
+        multiset_preserved=sorted(scoped_old) == sorted(scoped_new),
+        predicted_from_bound=pred_bound, predicted_from_list=pred_list, conclusion_fact_changed=relevant_changed)
+    rec["engaged"] = bool(readback_ok and n_changed == len(idx) >= 2 and rec["is_derangement"]
+                          and rec["patients_distinct_after"] and relevant_changed)
+    if not rec["engaged"]:
+        rec["reason"] = "not engaged: readback=%s n_changed=%d/%d relevant_changed=%s" % (
+            readback_ok, n_changed, len(idx), relevant_changed)
+    return rec
+
+
+class KbProbe:
+    """Behaviour-preserving instrumentation for the kb_scramble arms only (installed in the arm's own worker process, no
+    production edit). It records every `_distinct_patients` call the chain route makes (the list read, with its result)
+    and every `OneBrainComposer.query_patient` call (the spiking read, with its result), tagged by the turn label.
+    mode `kb_spiking` additionally makes `_distinct_patients` report nothing scannable (return None) -- the route's OWN
+    documented fallback condition -- so each hop becomes a plain `composer.query_patient`."""
+    CAP = 120
+
+    def __init__(self, mode):
+        self.mode, self.label = mode, None
+        self.distinct, self.qp = [], []
+
+    def install(self):
+        from research.runners import compositional_chain_route as CCR
+        from research.runners import one_brain_composer as OBC
+        probe = self
+        orig_distinct = CCR._distinct_patients
+
+        def _distinct_patients(composer, agent, action):
+            forced = probe.mode == "kb_spiking"
+            res = None if forced else orig_distinct(composer, agent, action)
+            if len(probe.distinct) < KbProbe.CAP:
+                probe.distinct.append({"label": probe.label, "agent": agent, "action": action, "result": res,
+                                       "forced_unscannable": forced})
+            return res
+        CCR._distinct_patients = _distinct_patients
+        orig_qp = OBC.OneBrainComposer.query_patient
+
+        def _query_patient(self_, *a, **k):
+            res = orig_qp(self_, *a, **k)
+            if len(probe.qp) < KbProbe.CAP:
+                probe.qp.append({"label": probe.label, "agent": a[0] if len(a) > 0 else k.get("agent"),
+                                 "action": a[1] if len(a) > 1 else k.get("action"), "result": res})
+            return res
+        OBC.OneBrainComposer.query_patient = _query_patient
+        return {"mode": self.mode, "orig_distinct": repr(orig_distinct), "orig_qp": repr(orig_qp)}
 
 
 def _facts_of(chat):
@@ -461,6 +638,24 @@ def process_record(srv):
     return rec
 
 
+def _scramble_now(srv, session, turns, cfg):
+    """Apply the kb scramble to the live session's composer (called once, before the first non-teach turn) and return
+    its engagement record plus the composer's types and the chat's own `stored_facts` snapshot (untouched by design)."""
+    chat = _find_chat(srv, session)
+    told = _taught([{"role": r, "message": m} for _l, m, r in turns])
+    try:
+        comp = chat.inner.composer
+        rec = apply_kb_scramble(comp, told, cfg["keep"], cfg["probe"])
+        buf = getattr(comp, "buffer", comp)
+        rec["composer_types"] = {"composer": type(comp).__name__, "buffer": type(buf).__name__,
+                                 "ltm": type(getattr(comp, "ltm", None)).__name__}
+        rec["chat_stored_facts_after"] = _facts_of(chat)
+        rec["told"] = told
+    except Exception as e:                               # an instrument failure is recorded, never silent, never fatal
+        rec = {"engaged": False, "reason": "scramble raised %s: %s" % (type(e).__name__, e)}
+    return rec
+
+
 def run_worker(seed, group, arm, out_path, labels=None):
     os.environ.setdefault("SIM_BACKEND", "numpy")
     os.environ.setdefault("BRAIN_CHAT_RENDERER", "stub")
@@ -486,7 +681,18 @@ def run_worker(seed, group, arm, out_path, labels=None):
     builtin_facts = None
     from webapp import server as _srv
     prev_ids = {}
+    # the C2 host-ownership arms (kb_scramble*) only: instrument the route's reads, and derange the list once the teach
+    # block is done. `scr_mode` is None for every other arm, so none of this runs for them.
+    scr_mode = arm_scramble(group, arm)
+    probe, scr_rec = None, None
+    if scr_mode:
+        probe = KbProbe(scr_mode)
+        probe_patch = probe.install()
     for i, (label, msg, role) in enumerate(turns):
+        if scr_mode and scr_rec is None and role != "teach":
+            scr_rec = _scramble_now(_srv, session, turns, GROUPS[group]["scramble_cfg"])
+        if probe is not None:
+            probe.label = label
         t1 = time.time()
         try:
             r = brain_chat(BrainChatRequest(session=session, message=msg, brain=BRAIN_NAME, renderer=RENDERER,
@@ -518,6 +724,10 @@ def run_worker(seed, group, arm, out_path, labels=None):
            "wall_s": round(time.time() - t0, 1), "elapsed_seconds": round(time.time() - t0, 1),
            "expected_source": EXPECTED_SOURCE, "process": process_record(_srv),
            "sources": sorted({str(r.get("source")) for r in responses.values() if isinstance(r, dict)})}
+    if scr_mode:
+        out["kb_scramble"] = {"mode": scr_mode, "cfg": GROUPS[group]["scramble_cfg"], "engagement": scr_rec,
+                              "instrumentation": probe_patch, "distinct_calls": probe.distinct, "qp_calls": probe.qp,
+                              "n_distinct_calls": len(probe.distinct), "n_qp_calls": len(probe.qp)}
     os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
     with open(out_path, "w") as f:
         json.dump(out, f, indent=1, default=str)
@@ -1109,6 +1319,55 @@ def da_lesion_held(shard):
 INFO_LESION_HELD = {("ask", "da_lesion"): da_lesion_held}
 
 
+_SCR_FIELDS = ("answer", "abstained", "recalled_svo", "derived", "derived_svo", "derived_from")
+
+
+def _scr_fields(resp):
+    r = resp if isinstance(resp, dict) else {}
+    return {k: r.get(k) for k in _SCR_FIELDS}
+
+
+def kb_scramble_read(shard, intact=None):
+    """The reads of a kb_scramble* arm (informational, never counted): was the intervention ENGAGED (the list read back
+    deranged, the conclusion-relevant fact changed), and on the probe turn do derived_svo/derived_from follow the
+    SCRAMBLED LIST or the BOUND VECTORS (the two predictions the engagement record carries, from the independent
+    oracle)? Not engaged => the follow-read is withheld (docs/TERMS.md "lesion": a manipulation that did not hold is
+    reported as not held, never as 'no effect'). `intact` (the same seed's intact_a shard) adds, per turn, whether the
+    reply fields differ from the unscrambled brain's."""
+    ks = (shard or {}).get("kb_scramble") or {}
+    eng = ks.get("engagement") or {}
+    resp = (shard or {}).get("responses") or {}
+    cfg = ks.get("cfg") or {}
+    label = (cfg.get("probe") or {}).get("label") or "p_prey_eat"
+    out = {"mode": ks.get("mode"), "engaged": bool(eng.get("engaged")), "engagement_reason": eng.get("reason"),
+           "n_facts": eng.get("n_facts"), "n_scoped": eng.get("n_scoped"), "n_changed": eng.get("n_changed"),
+           "kb_before": eng.get("kb_before"), "kb_after": eng.get("kb_after"),
+           "predicted_from_list": eng.get("predicted_from_list"), "predicted_from_bound": eng.get("predicted_from_bound"),
+           "probe": _scr_fields(resp.get(label)),
+           "other_turns": {l: _scr_fields(r) for l, r in resp.items() if l != label and isinstance(r, dict)
+                           and any(t.get("label") == l and t.get("role") != "teach" for t in (shard.get("turns") or []))},
+           "route_list_reads": [(d.get("agent"), d.get("action"), d.get("result"), d.get("forced_unscannable"))
+                                for d in (ks.get("distinct_calls") or []) if d.get("label") == label],
+           "spiking_reads": [(d.get("agent"), d.get("action"), d.get("result"))
+                             for d in (ks.get("qp_calls") or []) if d.get("label") == label]}
+    p = resp.get(label) or {}
+    pl, pb = eng.get("predicted_from_list"), eng.get("predicted_from_bound")
+    if not out["engaged"]:
+        out["follows"] = "not engaged"
+    elif not (p.get("derived") and p.get("derived_svo") and p.get("derived_from")):
+        out["follows"] = "no derived answer (abstained)" if p.get("abstained") else "no derived answer (recalled)"
+    else:
+        on_list = bool(pl) and p["derived_svo"] == pl["svo"] and p["derived_from"] == pl["derived_from"]
+        on_bound = bool(pb) and p["derived_svo"] == pb["svo"] and p["derived_from"] == pb["derived_from"]
+        out["follows"] = ("both" if on_list and on_bound else "scrambled list" if on_list
+                          else "bound vectors" if on_bound else "neither")
+    if intact:
+        ir = intact.get("responses") or {}
+        out["changed_vs_intact"] = sorted(l for l, r in resp.items() if isinstance(r, dict) and l in ir
+                                          and _scr_fields(r) != _scr_fields(ir[l]))
+    return out
+
+
 def shard_path(out_dir, seed, group, arm):
     return os.path.join(out_dir, "s%d" % int(seed), "%s__%s.json" % (group, arm.replace(":", "_")))
 
@@ -1276,6 +1535,8 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
                                              # amendment A4 (c): the DA-lesion arm's C3 reads
                                              "ask_rate_gap", "ask_rate_moat", "discriminates",
                                              "lp_learnable", "lp_unlearnable", "moats_undefined", "asked_by_label")}
+                            if g["informational"][inf].get("scramble"):
+                                info["kb_scramble"] = kb_scramble_read(I, intact=ia)
                             held_fn = INFO_LESION_HELD.get((group, inf))
                             if held_fn is not None:
                                 # docs/TERMS.md "lesion": the manipulation must be verified to hold where it is read;
@@ -1442,6 +1703,21 @@ def report(agg):
     if kag:
         lines.append("- C3 known architecture gaps (not the measured cause; read beside the da_lesion lines above): %s"
                      % "; ".join(kag))
+    ks_lines = []
+    for s, row in agg["groups"]["infer"]["seeds"].items():
+        for inf, si in (row.get("informational") or {}).items():
+            k = si.get("kb_scramble")
+            if not k:
+                continue
+            pr = k.get("probe") or {}
+            ks_lines.append("- seed %s %s (informational, never counted): engaged %s (%s of %s facts changed); conclusion follows: %s; "
+                            "derived_svo %s, derived_from %s; list-predicted %s, bound-predicted %s" % (
+                                s, inf, k.get("engaged"), k.get("n_changed"), k.get("n_facts"), k.get("follows"),
+                                pr.get("derived_svo"), pr.get("derived_from"),
+                                (k.get("predicted_from_list") or {}).get("svo"), (k.get("predicted_from_bound") or {}).get("svo")))
+    if ks_lines:
+        lines += ["", "C2 host-ownership intervention (the kb_scramble arms: the list the chain route reads is deranged, the bound "
+                      "vectors are not; informational, never a pass condition):"] + ks_lines
     emo = agg["groups"]["emo"]["seeds"]
     lines += ["", "Per-seed discrete-emotion read (category named per situation; the 2-D sign/arousal read beside):"]
     for s, row in emo.items():
