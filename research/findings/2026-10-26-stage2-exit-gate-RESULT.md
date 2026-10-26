@@ -1,0 +1,79 @@
+---
+type: finding
+status: live
+date: 2026-10-26
+lane: integration-first (stage exits on the calendar)
+mechanism: Stage-2 (CHILD) exit gate on the integrated production brain, six seeds, scored by the registered scorer
+seeds: [42, 43, 44, 100, 101, 102]
+runner: research/runners/stage2_exit_gate.py
+artifacts:
+  - research/findings/raw/_stage2_exit/gate/aggregate.json
+---
+
+# Stage-2 (CHILD) exit gate: result (2026-10-26)
+
+Prereg: research/findings/2026-09-30-stage2-exit-gate-PREREGISTRATION.md (gate revision 43763e637bbda75fddd045c30ebef8ac0c6b4603). Scored only by `python -m research.runners.stage2_exit_gate --aggregate ... --seeds 42,43,44,100,101,102`. Every number below is read from research/findings/raw/_stage2_exit/gate/aggregate.json.
+
+**Stage-2 exit verdict: FAIL** (primary criteria: C1 FAIL, C2 FAIL, C3 FAIL, C4 FAIL, C5 PASS)
+
+| group | criterion | verdict | correct | lesion effect | reproduced | permuted tracks | why |
+|---|---|---|---|---|---|---|---|
+| conv | C1 | FAIL | 0/6 | lesion_mouth 6/6 | lesion_mouth 6/6 | 0/6 | capability absent on 6 of 6 seeds |
+| infer | C2 | FAIL | 6/6 | lesion_chain_route 6/6 | lesion_chain_route 6/6 | 0/6 | permuted exposure tracked on 0 of 6 seeds (not exposure-driven) |
+| ask | C3 | FAIL | 0/6 | lesion_curiosity 6/6, lesion_graded 6/6 | lesion_curiosity 6/6, lesion_graded 6/6 | 0/6 | capability absent on 6 of 6 seeds (correct per order: registered 0 of 6, reversed 0 of 6) |
+| emo | C4 | FAIL | 5/6 | lesion_affect 5/6 | lesion_affect 6/6 | 5/6 | capability absent on 1 of 6 seeds |
+| inner | C5 | PASS | 6/6 | lesion_workspace 6/6, lesion_selfinit 6/6 | lesion_workspace 6/6, lesion_selfinit 6/6 | 6/6 | - |
+
+Sub-clauses (seeds true / seeds defined; reported, never a pass condition alone):
+- conv: sub_transitive 0/6, sub_prepositional 0/6, sub_passive 0/6
+- infer: conclusion 6/6, derived_flag 6/6, yesno_derived_moth 0/6
+- ask: discriminates 5/6, lp_learnable 0/6, lp_unlearnable 0/6, reversed_all 0/6, reversed_discriminates 0/6, reversed_lp_learnable 0/6, reversed_lp_unlearnable 6/6, all_taught_moats_acquired 0/6
+- emo: sign_correct_all 0/6
+- inner: private_voices_stored_fact 6/6, inner_terminal_lynx 6/6, chain_hops_internal_ge2 6/6, private_selected_by_state 6/6
+
+Named gaps (amendment A4 reporting rule, NEEDS-CLAUDE #17; printed for a C1 FAIL, whichever sub-clause failed):
+- C1 (conv): wh-locative question parse; locative frame storage (the teach echo drops the preposition); discourse elaboration for 'tell me more'
+
+Per-seed curiosity ask-rates (novel-topic gaps vs taught-topic moats; the bar is gap >= 2/3 and gap >= 2x moat; amendment A4: every clause in BOTH orders, a taught moat not acquired is undefined):
+- seed 42: gap 0.6666666666666666, moat 0.0, learnable False, unlearnable-stops False, moats undefined ['m_goat']; defined
+  - reversed order: gap 0.0, moat 0.0, learnable False, unlearnable-stops True, moats undefined ['m_goat']
+  - da_lesion (informational, never counted, lesion held on 11 DA traces): gap 1.0, moat 0.0, learnable True, unlearnable-stops False
+- seed 43: gap 0.6666666666666666, moat 0.0, learnable False, unlearnable-stops False, moats undefined ['m_goat']; defined
+  - reversed order: gap 0.0, moat 0.0, learnable False, unlearnable-stops True, moats undefined ['m_goat']
+  - da_lesion (informational, never counted, lesion held on 11 DA traces): gap 1.0, moat 0.0, learnable True, unlearnable-stops False
+- seed 44: gap 0.6666666666666666, moat 0.0, learnable False, unlearnable-stops False, moats undefined ['m_goat']; defined
+  - reversed order: gap 0.0, moat 0.0, learnable False, unlearnable-stops True, moats undefined ['m_goat']
+  - da_lesion (informational, never counted, lesion held on 11 DA traces): gap 1.0, moat 0.0, learnable True, unlearnable-stops False
+- seed 100: gap 0.6666666666666666, moat 0.0, learnable False, unlearnable-stops False, moats undefined ['m_goat']; defined
+  - reversed order: gap 0.0, moat 0.0, learnable False, unlearnable-stops True, moats undefined ['m_goat']
+  - da_lesion (informational, never counted, lesion held on 11 DA traces): gap 1.0, moat 0.0, learnable True, unlearnable-stops False
+- seed 101: gap 0.6666666666666666, moat 0.0, learnable False, unlearnable-stops False, moats undefined ['m_goat']; defined
+  - reversed order: gap 0.0, moat 0.0, learnable False, unlearnable-stops True, moats undefined ['m_goat']
+  - da_lesion (informational, never counted, lesion held on 11 DA traces): gap 1.0, moat 0.0, learnable True, unlearnable-stops False
+- seed 102: gap 0.3333333333333333, moat 0.0, learnable False, unlearnable-stops False, moats undefined ['m_goat']; defined
+  - reversed order: gap 0.0, moat 0.0, learnable False, unlearnable-stops True, moats undefined ['m_goat']
+  - da_lesion (informational, never counted, lesion held on 11 DA traces): gap 1.0, moat 0.0, learnable True, unlearnable-stops False
+- C3 known architecture gaps (not the measured cause; read beside the da_lesion lines above): global DA engagement threshold; no per-topic learning-progress signal
+
+Per-seed discrete-emotion read (category named per situation; the 2-D sign/arousal read beside):
+- seed 42: named {'joy': 'joy', 'fear': 'fear', 'anger': 'anger', 'sadness': 'sadness'}; signs {'joy': 'positive', 'fear': 'neutral', 'anger': 'negative', 'sadness': 'negative'}; arousal {'joy': 'moderate', 'fear': 'high', 'anger': 'high', 'sadness': 'high'}; distinct 2-D reads 3
+- seed 43: named {'joy': 'joy', 'fear': 'fear', 'anger': 'anger', 'sadness': 'sadness'}; signs {'joy': 'positive', 'fear': 'neutral', 'anger': 'negative', 'sadness': 'negative'}; arousal {'joy': 'moderate', 'fear': 'high', 'anger': 'high', 'sadness': 'high'}; distinct 2-D reads 3
+- seed 44: named {'joy': 'joy', 'fear': 'fear', 'anger': 'anger', 'sadness': 'sadness'}; signs {'joy': 'positive', 'fear': 'neutral', 'anger': 'negative', 'sadness': 'negative'}; arousal {'joy': 'moderate', 'fear': 'high', 'anger': 'high', 'sadness': 'high'}; distinct 2-D reads 3
+- seed 100: named {'joy': 'joy', 'fear': 'fear', 'anger': 'anger', 'sadness': 'sadness'}; signs {'joy': 'positive', 'fear': 'neutral', 'anger': 'negative', 'sadness': 'negative'}; arousal {'joy': 'moderate', 'fear': 'high', 'anger': 'high', 'sadness': 'high'}; distinct 2-D reads 3
+- seed 101: named {'joy': None, 'fear': 'fear', 'anger': 'anger', 'sadness': 'sadness'}; signs {'joy': 'positive', 'fear': 'neutral', 'anger': 'negative', 'sadness': 'negative'}; arousal {'joy': 'moderate', 'fear': 'high', 'anger': 'high', 'sadness': 'high'}; distinct 2-D reads 3
+- seed 102: named {'joy': 'joy', 'fear': 'fear', 'anger': 'anger', 'sadness': 'sadness'}; signs {'joy': 'positive', 'fear': 'neutral', 'anger': 'negative', 'sadness': 'negative'}; arousal {'joy': 'moderate', 'fear': 'high', 'anger': 'high', 'sadness': 'high'}; distinct 2-D reads 3
+
+
+## Per-criterion reading (fixed sentences from HANDOFF section 8)
+
+C1 (conv): FAIL, capability absent on 6 of 6 seeds; sub-clauses: conv: sub_transitive 0/6, sub_prepositional 0/6, sub_passive 0/6. The integrated brain does not show this Stage-2 ability at production defaults; the gap named in prereg section 8 applies. Named gaps (amendment A4): C1 (conv): wh-locative question parse; locative frame storage (the teach echo drops the preposition); discourse elaboration for 'tell me more'
+
+C2 (infer): FAIL, not exposure-driven: the permuted exposure was tracked on only 0 of 6 seeds. `infer` informational: qp_lesion conclusion intact on 6/6 (the route did not need the spiking read), transitive_chat derived-moth on 0/6.
+
+C3 (ask): FAIL, capability absent on 6 of 6 seeds; sub-clauses: ask: discriminates 5/6, lp_learnable 0/6, lp_unlearnable 0/6, reversed_all 0/6, reversed_discriminates 0/6, reversed_lp_learnable 0/6, reversed_lp_unlearnable 6/6, all_taught_moats_acquired 0/6. The integrated brain does not show this Stage-2 ability at production defaults; the gap named in prereg section 8 applies. C3 known architecture gaps (not the measured cause; read beside the da_lesion lines in the report block above): global DA engagement threshold; no per-topic learning-progress signal
+
+C4 (emo): FAIL, capability absent on 1 of 6 seeds; sub-clauses: emo: sign_correct_all 0/6. The integrated brain does not show this Stage-2 ability at production defaults; the gap named in prereg section 8 applies. The per-seed discrete-emotion lines are copied verbatim in the report block above.
+
+C5 (inner): PASS. Correct on 6 of 6 seeds; every lesion arm changed the reply on 6 of 6 and reproduced; the permuted exposure was tracked on 6 of 6.
+
+The per-seed curiosity ask-rates (C3 amendment A4) are copied verbatim in the report block above.
