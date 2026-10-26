@@ -1,0 +1,8251 @@
+{
+ "runner": "research/runners/emotion_category_dev.py",
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8
+ ],
+ "rows": {
+  "0": {
+   "verdict": {
+    "pass": true,
+    "n_pass": 8,
+    "n_seeds": 8,
+    "per_seed": {
+     "1": {
+      "pass": true,
+      "cases": {
+       "intact": true,
+       "permuted": true,
+       "affect_lesion": true,
+       "word_lesion": true,
+       "latch_lesion": true,
+       "commit_lesion": true,
+       "shuffle": true,
+       "teach_swap": true,
+       "ladder_only": true,
+       "baseline": true
+      }
+     },
+     "2": {
+      "pass": true,
+      "cases": {
+       "intact": true,
+       "permuted": true,
+       "affect_lesion": true,
+       "word_lesion": true,
+       "latch_lesion": true,
+       "commit_lesion": true,
+       "shuffle": true,
+       "teach_swap": true,
+       "ladder_only": true,
+       "baseline": true
+      }
+     },
+     "3": {
+      "pass": true,
+      "cases": {
+       "intact": true,
+       "permuted": true,
+       "affect_lesion": true,
+       "word_lesion": true,
+       "latch_lesion": true,
+       "commit_lesion": true,
+       "shuffle": true,
+       "teach_swap": true,
+       "ladder_only": true,
+       "baseline": true
+      }
+     },
+     "4": {
+      "pass": true,
+      "cases": {
+       "intact": true,
+       "permuted": true,
+       "affect_lesion": true,
+       "word_lesion": true,
+       "latch_lesion": true,
+       "commit_lesion": true,
+       "shuffle": true,
+       "teach_swap": true,
+       "ladder_only": true,
+       "baseline": true
+      }
+     },
+     "5": {
+      "pass": true,
+      "cases": {
+       "intact": true,
+       "permuted": true,
+       "affect_lesion": true,
+       "word_lesion": true,
+       "latch_lesion": true,
+       "commit_lesion": true,
+       "shuffle": true,
+       "teach_swap": true,
+       "ladder_only": true,
+       "baseline": true
+      }
+     },
+     "6": {
+      "pass": true,
+      "cases": {
+       "intact": true,
+       "permuted": true,
+       "affect_lesion": true,
+       "word_lesion": true,
+       "latch_lesion": true,
+       "commit_lesion": true,
+       "shuffle": true,
+       "teach_swap": true,
+       "ladder_only": true,
+       "baseline": true
+      }
+     },
+     "7": {
+      "pass": true,
+      "cases": {
+       "intact": true,
+       "permuted": true,
+       "affect_lesion": true,
+       "word_lesion": true,
+       "latch_lesion": true,
+       "commit_lesion": true,
+       "shuffle": true,
+       "teach_swap": true,
+       "ladder_only": true,
+       "baseline": true
+      }
+     },
+     "8": {
+      "pass": true,
+      "cases": {
+       "intact": true,
+       "permuted": true,
+       "affect_lesion": true,
+       "word_lesion": true,
+       "latch_lesion": true,
+       "commit_lesion": true,
+       "shuffle": true,
+       "teach_swap": true,
+       "ladder_only": true,
+       "baseline": true
+      }
+     }
+    }
+   },
+   "records": [
+    {
+     "seed": 1,
+     "op": 0,
+     "cases": {
+      "intact": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 93,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 75,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 84,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 57,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 56,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 84,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 69,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 59,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 89
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 76
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 60
+        }
+       }
+      },
+      "permuted": {
+       "joy": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 90
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 75
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 60
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 90,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 73,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 60,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 86,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 57,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 55,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 90,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 77,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 65,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "affect_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "word_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "latch_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "commit_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 75,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 57,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 69,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 76
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "shuffle": {
+       "joy": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 85,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 75,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 63,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 94,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 57,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 53,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 92
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 69,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 60
+        }
+       },
+       "sadness": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 93,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 76
+        },
+        "gate_counts": {
+         "joy": 62,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "teach_swap": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 94,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 75,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 62,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 92,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 56,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 51,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 87,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 73,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 62,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 94
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 75
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 59
+        }
+       }
+      },
+      "ladder_only": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 89,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 75,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 64,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 85,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 73,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 62,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 90,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 71,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 60,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 94
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 75
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 59
+        }
+       }
+      },
+      "baseline": {
+       "fresh": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "neutral_after_joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 93,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 75,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      }
+     },
+     "weights": {
+      "word_taught": 9.506,
+      "word_untaught": 0.05
+     },
+     "attribution": {
+      "affect_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 350,
+       "slot_spikes_arm": 0
+      },
+      "word_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 350,
+       "slot_spikes_arm": 0
+      },
+      "latch_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 350,
+       "slot_spikes_arm": 0
+      },
+      "commit_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 350,
+       "slot_spikes_arm": 0
+      },
+      "shuffle": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        "fear",
+        "anger",
+        "sadness",
+        "joy"
+       ],
+       "slot_spikes_intact": 350,
+       "slot_spikes_arm": 364
+      },
+      "teach_swap": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        "joy",
+        "anger",
+        "fear",
+        "sadness"
+       ],
+       "slot_spikes_intact": 350,
+       "slot_spikes_arm": 367
+      }
+     }
+    },
+    {
+     "seed": 2,
+     "op": 0,
+     "cases": {
+      "intact": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 87,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 71,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 57,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 94,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 69,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 59,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 85,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 70,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 60,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 84
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 69
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 60
+        }
+       }
+      },
+      "permuted": {
+       "joy": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 85
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 70
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 60
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 85,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 55,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 52,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 88,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 71,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 59,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 86,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 72,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 57,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "affect_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "word_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "latch_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "commit_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 71,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 69,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 70,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 69
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "shuffle": {
+       "joy": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 88,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 71,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 59,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 87,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 69,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 62,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 83
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 70,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 59
+        }
+       },
+       "sadness": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 87,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 69
+        },
+        "gate_counts": {
+         "joy": 58,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "teach_swap": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 86,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 70,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 57,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 88,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 70,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 60,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 89,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 73,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 59,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 79
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 71
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 59
+        }
+       }
+      },
+      "ladder_only": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 92,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 71,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 56,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 89,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 73,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 59,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 84,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 72,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 60,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 82
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 70
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 59
+        }
+       }
+      },
+      "baseline": {
+       "fresh": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "neutral_after_joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 87,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 71,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 57,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      }
+     },
+     "weights": {
+      "word_taught": 10.986,
+      "word_untaught": 0.05
+     },
+     "attribution": {
+      "affect_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 350,
+       "slot_spikes_arm": 0
+      },
+      "word_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 350,
+       "slot_spikes_arm": 0
+      },
+      "latch_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 350,
+       "slot_spikes_arm": 0
+      },
+      "commit_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 350,
+       "slot_spikes_arm": 0
+      },
+      "shuffle": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        "fear",
+        "anger",
+        "sadness",
+        "joy"
+       ],
+       "slot_spikes_intact": 350,
+       "slot_spikes_arm": 345
+      },
+      "teach_swap": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        "joy",
+        "anger",
+        "fear",
+        "sadness"
+       ],
+       "slot_spikes_intact": 350,
+       "slot_spikes_arm": 342
+      }
+     }
+    },
+    {
+     "seed": 3,
+     "op": 0,
+     "cases": {
+      "intact": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 90,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 70,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 61,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 103,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 71,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 56,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 79,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 69,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 62,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 98
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 69
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 63
+        }
+       }
+      },
+      "permuted": {
+       "joy": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 103
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 69
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 63
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 80,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 69,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 62,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 108,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 71,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 56,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 83,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 70,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 61,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "affect_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "word_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "latch_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "commit_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 70,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 71,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 69,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 69
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "shuffle": {
+       "joy": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 104,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 70,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 55,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 83,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 71,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 62,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 98
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 69,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 63
+        }
+       },
+       "sadness": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 90,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 69
+        },
+        "gate_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "teach_swap": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 87,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 70,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 61,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 84,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 69,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 62,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 104,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 69,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 56,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 100
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 69
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 64
+        }
+       }
+      },
+      "ladder_only": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 83,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 70,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 109,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 71,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 56,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 82,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 68,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 62,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 101
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 70
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 62
+        }
+       }
+      },
+      "baseline": {
+       "fresh": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "neutral_after_joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 90,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 70,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 61,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      }
+     },
+     "weights": {
+      "word_taught": 10.58,
+      "word_untaught": 0.05
+     },
+     "attribution": {
+      "affect_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 370,
+       "slot_spikes_arm": 0
+      },
+      "word_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 370,
+       "slot_spikes_arm": 0
+      },
+      "latch_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 370,
+       "slot_spikes_arm": 0
+      },
+      "commit_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 370,
+       "slot_spikes_arm": 0
+      },
+      "shuffle": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        "fear",
+        "anger",
+        "sadness",
+        "joy"
+       ],
+       "slot_spikes_intact": 370,
+       "slot_spikes_arm": 375
+      },
+      "teach_swap": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        "joy",
+        "anger",
+        "fear",
+        "sadness"
+       ],
+       "slot_spikes_intact": 370,
+       "slot_spikes_arm": 375
+      }
+     }
+    },
+    {
+     "seed": 4,
+     "op": 0,
+     "cases": {
+      "intact": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 89,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 69,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 55,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 78,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 63,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 61,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 82,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 77,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 61,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 85
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 70
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 60
+        }
+       }
+      },
+      "permuted": {
+       "joy": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 82
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 70
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 60
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 81,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 75,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 61,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 77,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 67,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 61,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 88,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 68,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 54,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "affect_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "word_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "latch_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "commit_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 69,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 63,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 77,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 70
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "shuffle": {
+       "joy": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 78,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 69,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 64,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 84,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 63,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 54,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 83
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 77,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 67
+        }
+       },
+       "sadness": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 87,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 70
+        },
+        "gate_counts": {
+         "joy": 54,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "teach_swap": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 89,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 69,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 55,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 85,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 76,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 60,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 81,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 63,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 57,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 82
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 70
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 60
+        }
+       }
+      },
+      "ladder_only": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 86,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 69,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 55,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 80,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 65,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 61,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 79,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 75,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 59,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 85
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 71
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 61
+        }
+       }
+      },
+      "baseline": {
+       "fresh": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "neutral_after_joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 89,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 69,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 55,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      }
+     },
+     "weights": {
+      "word_taught": 10.698,
+      "word_untaught": 0.05
+     },
+     "attribution": {
+      "affect_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 334,
+       "slot_spikes_arm": 0
+      },
+      "word_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 334,
+       "slot_spikes_arm": 0
+      },
+      "latch_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 334,
+       "slot_spikes_arm": 0
+      },
+      "commit_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 334,
+       "slot_spikes_arm": 0
+      },
+      "shuffle": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        "fear",
+        "anger",
+        "sadness",
+        "joy"
+       ],
+       "slot_spikes_intact": 334,
+       "slot_spikes_arm": 332
+      },
+      "teach_swap": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        "joy",
+        "anger",
+        "fear",
+        "sadness"
+       ],
+       "slot_spikes_intact": 334,
+       "slot_spikes_arm": 337
+      }
+     }
+    },
+    {
+     "seed": 5,
+     "op": 0,
+     "cases": {
+      "intact": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 85,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 71,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 64,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 98,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 65,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 59,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 93,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 70,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 65,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 77
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 68
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 53
+        }
+       }
+      },
+      "permuted": {
+       "joy": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 77
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 70
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 54
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 94,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 70,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 65,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 94,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 64,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 59,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 84,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 69,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 64,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "affect_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "word_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "latch_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "commit_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 71,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 65,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 70,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 68
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "shuffle": {
+       "joy": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 96,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 71,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 62,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 93,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 65,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 66,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 78
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 70,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 53
+        }
+       },
+       "sadness": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 86,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 68
+        },
+        "gate_counts": {
+         "joy": 63,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "teach_swap": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 85,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 70,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 64,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 93,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 54,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 56,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 100,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 65,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 59,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 77
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 68
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 53
+        }
+       }
+      },
+      "ladder_only": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 86,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 68,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 64,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 99,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 64,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 59,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 88,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 70,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 63,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 82
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 68
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 53
+        }
+       }
+      },
+      "baseline": {
+       "fresh": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "neutral_after_joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 85,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 71,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 64,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      }
+     },
+     "weights": {
+      "word_taught": 10.659,
+      "word_untaught": 0.05
+     },
+     "attribution": {
+      "affect_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 353,
+       "slot_spikes_arm": 0
+      },
+      "word_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 353,
+       "slot_spikes_arm": 0
+      },
+      "latch_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 353,
+       "slot_spikes_arm": 0
+      },
+      "commit_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 353,
+       "slot_spikes_arm": 0
+      },
+      "shuffle": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        "fear",
+        "anger",
+        "sadness",
+        "joy"
+       ],
+       "slot_spikes_intact": 353,
+       "slot_spikes_arm": 353
+      },
+      "teach_swap": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        "joy",
+        "anger",
+        "fear",
+        "sadness"
+       ],
+       "slot_spikes_intact": 353,
+       "slot_spikes_arm": 355
+      }
+     }
+    },
+    {
+     "seed": 6,
+     "op": 0,
+     "cases": {
+      "intact": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 84,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 51,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 74,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 66,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 58,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 91,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 70,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 62,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 80
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 73
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 60
+        }
+       }
+      },
+      "permuted": {
+       "joy": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 84
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 70
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 58
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 94,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 57,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 51,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 74,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 68,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 59,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 85,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 51,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "affect_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "word_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "latch_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "commit_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 66,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 70,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 73
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "shuffle": {
+       "joy": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 82,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 54,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 93,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 66,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 59,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 81
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 70,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 59
+        }
+       },
+       "sadness": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 86,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 73
+        },
+        "gate_counts": {
+         "joy": 58,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "teach_swap": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 85,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 51,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 93,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 56,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 51,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 77,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 65,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 58,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 81
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 73
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 61
+        }
+       }
+      },
+      "ladder_only": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 85,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 61,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 53,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 80,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 67,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 58,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 94,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 70,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 62,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 80
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 73
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 59
+        }
+       }
+      },
+      "baseline": {
+       "fresh": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "neutral_after_joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 84,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 51,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      }
+     },
+     "weights": {
+      "word_taught": 9.595,
+      "word_untaught": 0.05
+     },
+     "attribution": {
+      "affect_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 329,
+       "slot_spikes_arm": 0
+      },
+      "word_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 329,
+       "slot_spikes_arm": 0
+      },
+      "latch_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 329,
+       "slot_spikes_arm": 0
+      },
+      "commit_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 329,
+       "slot_spikes_arm": 0
+      },
+      "shuffle": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        "fear",
+        "anger",
+        "sadness",
+        "joy"
+       ],
+       "slot_spikes_intact": 329,
+       "slot_spikes_arm": 342
+      },
+      "teach_swap": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        "joy",
+        "anger",
+        "fear",
+        "sadness"
+       ],
+       "slot_spikes_intact": 329,
+       "slot_spikes_arm": 336
+      }
+     }
+    },
+    {
+     "seed": 7,
+     "op": 0,
+     "cases": {
+      "intact": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 94,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 69,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 78,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 59,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 56,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 89,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 67,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 57,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 85
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 67
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 57
+        }
+       }
+      },
+      "permuted": {
+       "joy": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 89
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 67
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 57
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 86,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 51,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 50,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 86,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 56,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 53,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 93,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 71,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "affect_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "word_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "latch_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "commit_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 69,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 59,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 67,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 67
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "shuffle": {
+       "joy": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 82,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 69,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 59,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 89,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 59,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 53,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 91
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 67,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 58
+        }
+       },
+       "sadness": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 93,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 67
+        },
+        "gate_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "teach_swap": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 94,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 69,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 90,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 66,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 57,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 87,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 58,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 56,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 88
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 68
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 57
+        }
+       }
+      },
+      "ladder_only": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 92,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 69,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 86,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 57,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 53,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 89,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 66,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 57,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 91
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 68
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 57
+        }
+       }
+      },
+      "baseline": {
+       "fresh": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "neutral_after_joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 94,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 69,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      }
+     },
+     "weights": {
+      "word_taught": 10.238,
+      "word_untaught": 0.05
+     },
+     "attribution": {
+      "affect_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 346,
+       "slot_spikes_arm": 0
+      },
+      "word_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 346,
+       "slot_spikes_arm": 0
+      },
+      "latch_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 346,
+       "slot_spikes_arm": 0
+      },
+      "commit_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 346,
+       "slot_spikes_arm": 0
+      },
+      "shuffle": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        "fear",
+        "anger",
+        "sadness",
+        "joy"
+       ],
+       "slot_spikes_intact": 346,
+       "slot_spikes_arm": 355
+      },
+      "teach_swap": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        "joy",
+        "anger",
+        "fear",
+        "sadness"
+       ],
+       "slot_spikes_intact": 346,
+       "slot_spikes_arm": 359
+      }
+     }
+    },
+    {
+     "seed": 8,
+     "op": 0,
+     "cases": {
+      "intact": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 80,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 56,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 80,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 69,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 55,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 91,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 70,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 58,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 85
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 69
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 64
+        }
+       }
+      },
+      "permuted": {
+       "joy": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 82
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 70
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 64
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 80,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 70,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 59,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 85,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 69,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 57,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 81,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 56,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "affect_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "word_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "latch_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "commit_lesion": {
+       "joy": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 69,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 70,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 69
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "shuffle": {
+       "joy": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 85,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 53,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 79,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 69,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 57,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 78
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 70,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 64
+        }
+       },
+       "sadness": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 87,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 69
+        },
+        "gate_counts": {
+         "joy": 62,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      },
+      "teach_swap": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 82,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 61,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 56,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 78,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 70,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 58,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 82,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 69,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 53,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 80
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 69
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 63
+        }
+       }
+      },
+      "ladder_only": {
+       "joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 79,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 56,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "fear": {
+        "category": "fear",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 81,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 69,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 54,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "anger": {
+        "category": "anger",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 86,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 68,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 56,
+         "sadness": 0
+        }
+       },
+       "sadness": {
+        "category": "sadness",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 84
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 69
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 62
+        }
+       }
+      },
+      "baseline": {
+       "fresh": {
+        "category": null,
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 0,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       },
+       "neutral_after_joy": {
+        "category": "joy",
+        "read_invariant": true,
+        "co_commit": false,
+        "slot_counts": {
+         "joy": 80,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "readout_counts": {
+         "joy": 60,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        },
+        "gate_counts": {
+         "joy": 56,
+         "fear": 0,
+         "anger": 0,
+         "sadness": 0
+        }
+       }
+      }
+     },
+     "weights": {
+      "word_taught": 10.993,
+      "word_untaught": 0.05
+     },
+     "attribution": {
+      "affect_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 336,
+       "slot_spikes_arm": 0
+      },
+      "word_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 336,
+       "slot_spikes_arm": 0
+      },
+      "latch_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 336,
+       "slot_spikes_arm": 0
+      },
+      "commit_lesion": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        null,
+        null,
+        null,
+        null
+       ],
+       "slot_spikes_intact": 336,
+       "slot_spikes_arm": 0
+      },
+      "shuffle": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        "fear",
+        "anger",
+        "sadness",
+        "joy"
+       ],
+       "slot_spikes_intact": 336,
+       "slot_spikes_arm": 329
+      },
+      "teach_swap": {
+       "moved": true,
+       "intact": [
+        "joy",
+        "fear",
+        "anger",
+        "sadness"
+       ],
+       "arm": [
+        "joy",
+        "anger",
+        "fear",
+        "sadness"
+       ],
+       "slot_spikes_intact": 336,
+       "slot_spikes_arm": 322
+      }
+     }
+    }
+   ],
+   "params": {
+    "NW": 8,
+    "R": 12,
+    "NI": 8,
+    "NL": 3,
+    "NR": 20,
+    "NQ": 8,
+    "NO": 12,
+    "DRIVE_PA": 1500.0,
+    "LR": 0.2,
+    "W_MAX": 20.0,
+    "W_INIT": 0.05,
+    "EPOCHS": 8,
+    "TRAIN_STEPS": 40,
+    "W_US": 20.0,
+    "W_RI": 200.0,
+    "W_IR": 80.0,
+    "W_AL": 20.0,
+    "STAG": 0.25,
+    "W_LL": 60.0,
+    "W_AQ": 60.0,
+    "W_QL": 120.0,
+    "W_LO": 10.0,
+    "EXPOSE_STEPS": 60,
+    "SETTLE_STEPS": 100,
+    "READ_WINDOW": 60,
+    "NG": 12,
+    "NGI": 8,
+    "NS": 20,
+    "W_RG": 50.0,
+    "W_GG": 20.0,
+    "W_GGI": 60.0,
+    "W_GIG": 60.0,
+    "W_GS": 12.0,
+    "W_SS": 60.0,
+    "HOLD_STEPS": 100,
+    "READ_STEPS": 30,
+    "READ_FRAC": 0.03
+   }
+  }
+ },
+ "selected": 0,
+ "wall_s": 213.4
+}
