@@ -74,18 +74,19 @@ step of every bridge a seed builds, training included.
   targets cascade), flag on 0.
 - (h) Quench necessity, flag on, seeds 301-310, quench gate `emo_quench` (the `ql_*` quench-to-rung synapses) clamped to 0
   after development; read-back of the lesion: 5760 synapses, gain min = max = 0.0 (open arm 1.0). Quench open: all four
-  situations named correctly on 10/10 seeds. Quench closed: the protocol fails on 10/10 seeds. Of the 30 later
-  reads (fear, anger, sadness) 24 co-latch and name None, 5 name a stale earlier channel alone (joy; seeds 305, 306, 308,
-  309), and 1 names its own channel alone (seed 309, sadness). The strict wording "co-latch or name None" therefore holds on 24 of 30 reads, not all
-  30; what holds on every seed is that sequential situations are no longer read correctly without the quench. Flag off, same seeds: 26 / 3 / 1, protocol fails 10/10.
-  The quench is still load-bearing under the fix.
+  situations named correctly on 10/10 seeds. Quench closed: the four-situation protocol fails on 10/10 seeds. Of the 30
+  later reads (fear, anger, sadness) 24 co-latch and name None, 5 name a stale earlier channel alone (joy; seeds 305, 306,
+  308, 309), and 1 names its own channel alone (seed 309, sadness). So the strict wording "co-latch or name None" holds on
+  24 of 30 reads, not on all 30; what holds on every seed is that the sequence is no longer read correctly without the
+  quench. Flag off, same seeds: 26 / 3 / 1 and the protocol fails 10/10. The quench is still load-bearing under the fix.
 - Determinism: re-running flag-on seeds 305 and 1 reproduced the first run's records exactly.
 
 ## Handler level, seed 101, group emo (the owed step)
 
 The Stage-2 runner `research/runners/stage2_exit_gate.py` is not on main (it lives on `research/stage2-exit-gate`, pin
 9bdb92ee8). The emotion organ file is identical at the pin and at main, so these four shards ran from a scratch
-worktree at the pin with this branch's organ diff applied, not from the branch worktree. `--shard --seed 101 --group emo
+worktree at the pin with this branch's organ diff applied (the file is identical to the branch's), not from the
+branch worktree. `--shard --seed 101 --group emo
 --arm {intact_a, permuted} --allow-gate-seed` against the committed prereg, flag set or unset, run serially under
 `mem_ok.sh 10` and `memcap.sh 11`; peak RSS 8.0-8.1 GB, 516-547 s each, source `tiny-demo +LTM`, no errored turn, no
 organ error. Seed 101 is a gate seed; these are diagnostic shards, not the gate.
@@ -117,8 +118,12 @@ organ error. Seed 101 is a gate seed; these are diagnostic shards, not the gate.
 - Seeds 101, 202, 242, 308 and 348 are design seeds for this repair (the failures it was built to remove). Held-out
   301-360 is not untouched either: the diagnosis compared three candidate fixes (this guard, a capacitance floor,
   capacitance-matched synaptic scaling) on those 60 seeds before this branch existed, so the 60/60 here is a re-run of the
-  chosen fix from this branch's code, not a fresh draw. The fresh draw below (401-420) is the out-of-design check.
+  chosen fix from this branch's code, not a fresh draw. The fresh draw (d), seeds 401-420, is the out-of-design check.
 - Organ level plus one seed (101) through the handler. No six-seed handler run, no flip, default OFF.
+- Dev seeds 1-8 do not discriminate: flag off passes 8/8 although 5 of the 8 builds have an out-of-range excursion. The
+  excursion is common and harmless on most draws; only the draws where it recruits the opposing quench pool fail.
+- The flag-off organ-level arms set the env to "0" explicitly; the flag-off handler shards leave it unset. Both resolve to
+  the unbounded step (read-back False).
 - The bounded kernel changes every neuron's conductance step in the organ, so development (training) runs bounded too
   and the learned weights differ slightly from the unbounded build.
 - The 2-D sign sub-read (fear reads "neutral") is a separate host dead-zone issue and is untouched.
