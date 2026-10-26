@@ -1,0 +1,411 @@
+{
+  "W_GD": 200.0,
+  "answers": {
+    "a": {
+      "active_set": {
+        "max_trole_active_edges": 0,
+        "max_word_active_edges": 0,
+        "mean_trole_active": null,
+        "mean_word_active": null,
+        "per_step_logged": 0,
+        "steps_with_trole_active": 0,
+        "steps_with_word_active": 0
+      },
+      "enforcement_active": false,
+      "mask_excluded": false,
+      "mask_trole_all_plastic": true,
+      "n_moved_trole_final": 17,
+      "n_moved_word_final": 1295,
+      "n_presentations": 144,
+      "rule": "sim/bridge.py:10333-10336 causal, :10341 gain",
+      "sum_abs_dw_trole": 244.66096329689026,
+      "sum_abs_dw_word": 18638.794151306152,
+      "update_steps_trole": 0,
+      "update_steps_word": 0,
+      "verdict": "REACHED"
+    },
+    "b": {
+      "closes": [
+        {
+          "name": "wrp_trole_plastic",
+          "phase": "TRAIN",
+          "pres": 144,
+          "range_gain_min": 0.0,
+          "value": 0.0
+        }
+      ],
+      "enforcement": {
+        "cfg": false,
+        "env": "",
+        "mask_built": true
+      },
+      "expected_block": 2736,
+      "expected_gain": 1.0,
+      "gain_nn": 15824,
+      "indices_fit_gain": true,
+      "n_gate_calls": 2,
+      "open_before_training": true,
+      "registered": 2736,
+      "train_gain_min": 1.0,
+      "verdict": "OPEN"
+    },
+    "c": {
+      "I_rh_pA": 100.0,
+      "W_GD": 200.0,
+      "disch_spikes_probe": 9,
+      "disch_spikes_train": 0,
+      "drive_arith": "max_gate_spikes_at_t1 * 200.0 per edge (organ:404); geo={'n_edges': 288, 'n_cells': 8, 'w_min': 200.0, 'w_max': 200.0}",
+      "drive_probe": {
+        "max_pA": 1000.0,
+        "n_steps": 3840,
+        "spikes": 1792
+      },
+      "drive_train": {
+        "max_pA": 0.0,
+        "n_steps": 0,
+        "spikes": 0
+      },
+      "max_arriving_drive_pA": 1000.0,
+      "rh_sweep": [
+        {
+          "I_pA": 0.0,
+          "spikes": 0
+        },
+        {
+          "I_pA": 50.0,
+          "spikes": 0
+        },
+        {
+          "I_pA": 100.0,
+          "spikes": 15
+        },
+        {
+          "I_pA": 150.0,
+          "spikes": 29
+        },
+        {
+          "I_pA": 200.0,
+          "spikes": 40
+        },
+        {
+          "I_pA": 250.0,
+          "spikes": 52
+        },
+        {
+          "I_pA": 300.0,
+          "spikes": 62
+        },
+        {
+          "I_pA": 350.0,
+          "spikes": 71
+        },
+        {
+          "I_pA": 400.0,
+          "spikes": 80
+        },
+        {
+          "I_pA": 450.0,
+          "spikes": 89
+        },
+        {
+          "I_pA": 500.0,
+          "spikes": 98
+        },
+        {
+          "I_pA": 550.0,
+          "spikes": 104
+        },
+        {
+          "I_pA": 600.0,
+          "spikes": 111
+        },
+        {
+          "I_pA": 650.0,
+          "spikes": 119
+        },
+        {
+          "I_pA": 700.0,
+          "spikes": 126
+        },
+        {
+          "I_pA": 750.0,
+          "spikes": 133
+        },
+        {
+          "I_pA": 800.0,
+          "spikes": 138
+        }
+      ],
+      "verdict": "FIRING"
+    },
+    "fileline": {
+      "coo_site": "sim/bridge.py:10236-10238 (cached full COO)",
+      "disch_plan": "word_role_parser_organ.py:404-408 (W_GD, W_DT)",
+      "gate_close_site": "word_role_parser_organ.py:489",
+      "gate_open_site": "word_role_parser_organ.py:421 (_ensure), :481 (_train)",
+      "gate_write_site": "sim/bridge.py:5467-5491 (bound check :5490)",
+      "mask_enforce": "sim/bridge.py:1259-1271; sim/config.py:472 default False",
+      "rule_site": "sim/bridge.py:10333-10336 causal; :10341 gain; :10343 mask",
+      "trole_plan": "word_role_parser_organ.py:401-403 (plastic=True, plasticity_gate=wrp_trole_plastic)"
+    },
+    "rules": {
+      "a": "REACHED iff sum|dw| on T->role over training > 0; else NOT-REACHED-GAIN (gain 0.0 at training steps, bridge.py:10341) | NOT-REACHED-ACTIVESET (gain>0 but causal set empty, bridge.py:10333-10336) | MASK-EXCLUDED (mask False on range AND enforcement active at run, bridge.py:1259-1271).",
+      "b": "OPEN iff registered trole synapses>0 and gain over the range>0 at every read-back, call log shows open before training and only the close at word_role_parser_organ.py:489 after it; else CLOSED with the closer / missing registration named.",
+      "c": "SUB-RHOBASE iff max arriving drive (gate spikes t-1 x W_GD, organ:404) < measured I_rh; NOT-SUB if drive>=I_rh with 0 spikes (report other input) or spikes>0 (instrument error, say so)."
+    }
+  },
+  "drive_geo": {
+    "n_cells": 8,
+    "n_edges": 288,
+    "w_max": 200.0,
+    "w_min": 200.0
+  },
+  "drive_max": 1000.0,
+  "drive_probe": {
+    "max_pA": 1000.0,
+    "n_steps": 3840,
+    "spikes": 1792
+  },
+  "drive_train": {
+    "max_pA": 0.0,
+    "n_steps": 0,
+    "spikes": 0
+  },
+  "enforce": {
+    "cfg": false,
+    "env": "",
+    "mask_built": true
+  },
+  "frame_built": true,
+  "gate": [
+    {
+      "name": "wrp_word_plastic",
+      "phase": "TRAIN",
+      "pres": 0,
+      "range_gain_min": 1.0,
+      "value": 1.0
+    },
+    {
+      "name": "wrp_pos_plastic",
+      "phase": "TRAIN",
+      "pres": 0,
+      "range_gain_min": 0.03999999910593033,
+      "value": 0.04
+    },
+    {
+      "name": "wrp_trole_plastic",
+      "phase": "TRAIN",
+      "pres": 0,
+      "range_gain_min": 1.0,
+      "value": 1.0
+    },
+    {
+      "name": "wrp_word_plastic",
+      "phase": "TRAIN",
+      "pres": 144,
+      "range_gain_min": 0.0,
+      "value": 0.0
+    },
+    {
+      "name": "wrp_pos_plastic",
+      "phase": "TRAIN",
+      "pres": 144,
+      "range_gain_min": 0.0,
+      "value": 0.0
+    },
+    {
+      "name": "wrp_trole_plastic",
+      "phase": "TRAIN",
+      "pres": 144,
+      "range_gain_min": 0.0,
+      "value": 0.0
+    }
+  ],
+  "mask_trole_false": false,
+  "notes": [],
+  "nt": 4,
+  "per_step_head": [],
+  "plast_gain_expected": 1.0,
+  "probe": {
+    "cofire": {
+      "brain": 0,
+      "chase": 0,
+      "deer": 0,
+      "dog": 1,
+      "eat": 0,
+      "fish": 0,
+      "hunt": 0,
+      "memory": 0,
+      "spikes": 2,
+      "use": 1,
+      "wolf": 0,
+      "words": 2
+    },
+    "cofire_any": true,
+    "disch_spikes": 9,
+    "disch_spikes_lesion": 9,
+    "frame_attribution": 0.0,
+    "gain_mean": 1.0113636363636365,
+    "gain_own": {
+      "brain": 1.0,
+      "chase": 1.0,
+      "deer": 1.0,
+      "dog": 1.0,
+      "eat": 1.0,
+      "fish": 1.0,
+      "hunt": 1.0,
+      "memory": 1.0,
+      "spikes": 1.0,
+      "use": 1.0,
+      "wolf": 1.0,
+      "words": 1.1363636363636365
+    }
+  },
+  "registration": {
+    "trole_expected_block": 2736,
+    "wrp_trole_plastic": {
+      "gain_nn": 15824,
+      "indices_fit_gain": true,
+      "registered": 2736
+    },
+    "wrp_word_plastic": {
+      "gain_nn": 15824,
+      "indices_fit_gain": true,
+      "registered": 5472
+    }
+  },
+  "rh": 100.0,
+  "rh_sweep": [
+    {
+      "I_pA": 0.0,
+      "spikes": 0
+    },
+    {
+      "I_pA": 50.0,
+      "spikes": 0
+    },
+    {
+      "I_pA": 100.0,
+      "spikes": 15
+    },
+    {
+      "I_pA": 150.0,
+      "spikes": 29
+    },
+    {
+      "I_pA": 200.0,
+      "spikes": 40
+    },
+    {
+      "I_pA": 250.0,
+      "spikes": 52
+    },
+    {
+      "I_pA": 300.0,
+      "spikes": 62
+    },
+    {
+      "I_pA": 350.0,
+      "spikes": 71
+    },
+    {
+      "I_pA": 400.0,
+      "spikes": 80
+    },
+    {
+      "I_pA": 450.0,
+      "spikes": 89
+    },
+    {
+      "I_pA": 500.0,
+      "spikes": 98
+    },
+    {
+      "I_pA": 550.0,
+      "spikes": 104
+    },
+    {
+      "I_pA": 600.0,
+      "spikes": 111
+    },
+    {
+      "I_pA": 650.0,
+      "spikes": 119
+    },
+    {
+      "I_pA": 700.0,
+      "spikes": 126
+    },
+    {
+      "I_pA": 750.0,
+      "spikes": 133
+    },
+    {
+      "I_pA": 800.0,
+      "spikes": 138
+    }
+  ],
+  "seed": 6,
+  "tier": "light",
+  "train": {
+    "active_set": {
+      "max_trole_active_edges": 0,
+      "max_word_active_edges": 0,
+      "mean_trole_active": null,
+      "mean_word_active": null,
+      "per_step_logged": 0,
+      "steps_with_trole_active": 0,
+      "steps_with_word_active": 0
+    },
+    "disch_spikes_train": 0,
+    "min_gain_trole": 1.0,
+    "min_gain_word": 1.0,
+    "n_moved_trole_final": 17,
+    "n_moved_word_final": 1295,
+    "n_presentations": 144,
+    "sum_abs_dw_trole": 244.66096329689026,
+    "sum_abs_dw_word": 18638.794151306152,
+    "sum_drive_max_train": 0.0,
+    "update_steps_trole": 0,
+    "update_steps_word": 0
+  },
+  "train_present_head": [
+    {
+      "epoch": 0,
+      "gain_trole_min": 1.0,
+      "gain_word_min": 1.0,
+      "n_moved_trole": 0,
+      "n_moved_word": 66,
+      "pres": 0,
+      "sum_abs_dw_trole": 0.0,
+      "sum_abs_dw_word": 290.349609375,
+      "teach": "agent",
+      "word": "brain"
+    },
+    {
+      "epoch": 0,
+      "gain_trole_min": 1.0,
+      "gain_word_min": 1.0,
+      "n_moved_trole": 0,
+      "n_moved_word": 129,
+      "pres": 1,
+      "sum_abs_dw_trole": 0.0,
+      "sum_abs_dw_word": 238.1084747314453,
+      "teach": "action",
+      "word": "learn"
+    },
+    {
+      "epoch": 0,
+      "gain_trole_min": 1.0,
+      "gain_word_min": 1.0,
+      "n_moved_trole": 1,
+      "n_moved_word": 208,
+      "pres": 2,
+      "sum_abs_dw_trole": 1.994938611984253,
+      "sum_abs_dw_word": 304.5270080566406,
+      "teach": "patient",
+      "word": "words"
+    }
+  ],
+  "wall_s": 2.6
+}

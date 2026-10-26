@@ -1,0 +1,333 @@
+{
+  "a_cofire_present": true,
+  "ab_singles": {
+    "brain": {
+      "cofire": 1,
+      "first_discharge_step": -1,
+      "gain_own": 1.0,
+      "own_role": "agent",
+      "role_counts_lesion": {
+        "action": 0,
+        "agent": 19,
+        "patient": 0
+      },
+      "role_counts_open": {
+        "action": 0,
+        "agent": 19,
+        "patient": 0
+      },
+      "trace_drive": 4,
+      "trace_hold": 0
+    },
+    "chase": {
+      "cofire": 0,
+      "first_discharge_step": -1,
+      "gain_own": 1.0,
+      "own_role": "action",
+      "role_counts_lesion": {
+        "action": 15,
+        "agent": 0,
+        "patient": 0
+      },
+      "role_counts_open": {
+        "action": 15,
+        "agent": 0,
+        "patient": 0
+      },
+      "trace_drive": 4,
+      "trace_hold": 0
+    },
+    "deer": {
+      "cofire": 0,
+      "first_discharge_step": -1,
+      "gain_own": 1.0,
+      "own_role": "patient",
+      "role_counts_lesion": {
+        "action": 0,
+        "agent": 0,
+        "patient": 19
+      },
+      "role_counts_open": {
+        "action": 0,
+        "agent": 0,
+        "patient": 19
+      },
+      "trace_drive": 3,
+      "trace_hold": 0
+    },
+    "dog": {
+      "cofire": 0,
+      "first_discharge_step": -1,
+      "gain_own": 1.0,
+      "own_role": "agent",
+      "role_counts_lesion": {
+        "action": 0,
+        "agent": 16,
+        "patient": 0
+      },
+      "role_counts_open": {
+        "action": 0,
+        "agent": 16,
+        "patient": 0
+      },
+      "trace_drive": 4,
+      "trace_hold": 0
+    },
+    "eat": {
+      "cofire": 1,
+      "first_discharge_step": 48,
+      "gain_own": 1.0,
+      "own_role": "action",
+      "role_counts_lesion": {
+        "action": 16,
+        "agent": 0,
+        "patient": 0
+      },
+      "role_counts_open": {
+        "action": 16,
+        "agent": 0,
+        "patient": 0
+      },
+      "trace_drive": 4,
+      "trace_hold": 0
+    },
+    "fish": {
+      "cofire": 0,
+      "first_discharge_step": 47,
+      "gain_own": 1.0,
+      "own_role": "patient",
+      "role_counts_lesion": {
+        "action": 0,
+        "agent": 0,
+        "patient": 18
+      },
+      "role_counts_open": {
+        "action": 0,
+        "agent": 0,
+        "patient": 18
+      },
+      "trace_drive": 3,
+      "trace_hold": 0
+    },
+    "hunt": {
+      "cofire": 0,
+      "first_discharge_step": -1,
+      "gain_own": 1.0,
+      "own_role": "action",
+      "role_counts_lesion": {
+        "action": 9,
+        "agent": 0,
+        "patient": 0
+      },
+      "role_counts_open": {
+        "action": 9,
+        "agent": 0,
+        "patient": 0
+      },
+      "trace_drive": 4,
+      "trace_hold": 0
+    },
+    "memory": {
+      "cofire": 0,
+      "first_discharge_step": -1,
+      "gain_own": 1.0,
+      "own_role": "patient",
+      "role_counts_lesion": {
+        "action": 0,
+        "agent": 0,
+        "patient": 20
+      },
+      "role_counts_open": {
+        "action": 0,
+        "agent": 0,
+        "patient": 20
+      },
+      "trace_drive": 4,
+      "trace_hold": 0
+    },
+    "spikes": {
+      "cofire": 2,
+      "first_discharge_step": -1,
+      "gain_own": 1.0,
+      "own_role": "patient",
+      "role_counts_lesion": {
+        "action": 0,
+        "agent": 0,
+        "patient": 19
+      },
+      "role_counts_open": {
+        "action": 0,
+        "agent": 0,
+        "patient": 19
+      },
+      "trace_drive": 4,
+      "trace_hold": 0
+    },
+    "use": {
+      "cofire": 0,
+      "first_discharge_step": -1,
+      "gain_own": 1.0,
+      "own_role": "action",
+      "role_counts_lesion": {
+        "action": 16,
+        "agent": 0,
+        "patient": 0
+      },
+      "role_counts_open": {
+        "action": 16,
+        "agent": 0,
+        "patient": 0
+      },
+      "trace_drive": 4,
+      "trace_hold": 0
+    },
+    "wolf": {
+      "cofire": 0,
+      "first_discharge_step": -1,
+      "gain_own": 1.0,
+      "own_role": "agent",
+      "role_counts_lesion": {
+        "action": 0,
+        "agent": 13,
+        "patient": 0
+      },
+      "role_counts_open": {
+        "action": 0,
+        "agent": 13,
+        "patient": 0
+      },
+      "trace_drive": 4,
+      "trace_hold": 0
+    },
+    "words": {
+      "cofire": 0,
+      "first_discharge_step": 48,
+      "gain_own": 1.0,
+      "own_role": "patient",
+      "role_counts_lesion": {
+        "action": 0,
+        "agent": 0,
+        "patient": 17
+      },
+      "role_counts_open": {
+        "action": 0,
+        "agent": 0,
+        "patient": 17
+      },
+      "trace_drive": 4,
+      "trace_hold": 0
+    }
+  },
+  "b_gain_mean": 1.0,
+  "b_gain_present": false,
+  "backend": "numpy",
+  "c_attributable": null,
+  "c_correct": {
+    "frame_intact/excl_intact": false,
+    "frame_intact/excl_lesion": false,
+    "frame_lesion/excl_intact": false,
+    "frame_lesion/excl_lesion": false
+  },
+  "c_tie_2x2": {
+    "frame_intact/excl_intact": {
+      "new": [
+        [],
+        [
+          "action"
+        ]
+      ],
+      "per_item": [
+        {
+          "new": [],
+          "role": null
+        },
+        {
+          "new": [
+            "action"
+          ],
+          "role": "action"
+        }
+      ],
+      "role": [
+        null,
+        "action"
+      ]
+    },
+    "frame_intact/excl_lesion": {
+      "new": [
+        [],
+        [
+          "action"
+        ]
+      ],
+      "per_item": [
+        {
+          "new": [],
+          "role": null
+        },
+        {
+          "new": [
+            "action"
+          ],
+          "role": "action"
+        }
+      ],
+      "role": [
+        null,
+        "action"
+      ]
+    },
+    "frame_lesion/excl_intact": {
+      "new": [
+        [],
+        [
+          "action"
+        ]
+      ],
+      "per_item": [
+        {
+          "new": [],
+          "role": null
+        },
+        {
+          "new": [
+            "action"
+          ],
+          "role": "action"
+        }
+      ],
+      "role": [
+        null,
+        "action"
+      ]
+    },
+    "frame_lesion/excl_lesion": {
+      "new": [
+        [],
+        [
+          "action"
+        ]
+      ],
+      "per_item": [
+        {
+          "new": [],
+          "role": null
+        },
+        {
+          "new": [
+            "action"
+          ],
+          "role": "action"
+        }
+      ],
+      "role": [
+        null,
+        "action"
+      ]
+    }
+  },
+  "c_tie_broken_frame_intact": false,
+  "device": "cpu",
+  "frame_built": true,
+  "seed": 12
+}
