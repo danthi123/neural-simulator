@@ -117,6 +117,7 @@ def test_injected_out_of_range_v_is_recorded_with_its_parameters(monkeypatch):
     assert hi["extreme_high_mV"] == 80.0 and hi["extreme_low_mV"] is None
     assert lo["first_step"] == 1 and lo["n_steps_low"] == 4 and hi["n_steps_high"] == 4
     assert "refractory" in lo and isinstance(lo["refractory_post"], bool) and lo["g_i"] is not None   # first-step context
+    assert lo["v_first"] == -500.0 and lo["ext_pA"] is not None and lo["u_first"] is not None
     # the recorded parameters ARE the bridge's drawn parameters
     for key, attr in (("C", "cp_izh_C"), ("a", "cp_izh_a"), ("b", "cp_izh_b"), ("d", "cp_izh_d_increment"),
                       ("vpeak", "cp_izh_vpeak"), ("k", "cp_izh_k")):
@@ -302,3 +303,45 @@ def test_spikes_from_cells_after_they_left_the_range_are_counted():
     assert 0 < br["n_spikes_from_oor_cells"] <= br["n_spikes_total"], (br["n_spikes_from_oor_cells"], br["n_spikes_total"])
     (row,) = br["oor_neurons"]
     assert row["n_spikes_after_first"] == br["n_spikes_from_oor_cells"] > 0
+
+
+def test_a_first_excursion_on_the_first_observed_step_has_no_membrane_before_it(monkeypatch):
+    b = _tiny_bridge(seed=5)
+    _inject_after_real_step(monkeypatch, lows=[(2, -500.0)])
+    with MC.Census() as census:
+        _run(b, 3)
+    (br,) = census.report()["bridges"]
+    (row,) = br["oor_neurons"]
+    assert row["first_step"] == 1 and row["v_before"] is None            # nothing observed before the first step
+
+
+def test_a_later_first_excursion_records_the_in_range_membrane_that_preceded_it(monkeypatch):
+    b = _tiny_bridge(seed=5)
+    real = SimulationBridge.__dict__["_run_one_simulation_step"]
+    calls = {"n": 0}
+
+    def late(self, *a, **k):
+        real(self, *a, **k)
+        calls["n"] += 1
+        if calls["n"] == 3:
+            self.cp_membrane_potential_v[0] = np.float32(-400.0)
+    monkeypatch.setattr(SimulationBridge, "_run_one_simulation_step", late)
+    with MC.Census() as census:
+        _run(b, 4)
+    (br,) = census.report()["bridges"]
+    (row,) = br["oor_neurons"]
+    assert row["first_step"] == 3 and row["v_before"] is not None and -110.0 < row["v_before"] < 40.0
+    assert row["v_first"] == -400.0
+
+
+def test_implied_input_current_inverts_the_euler_update_on_the_real_overshoot():
+    """For the defect reproducer the recorded row carries v before/after and the input current the step integrated;
+    re-applying the Izhikevich-2007 Euler update with that current reproduces v_first."""
+    with MC.Census() as census:
+        _run(_overshoot_bridge(42, bounded=False), 60)
+    (br,) = census.report()["bridges"]
+    (row,) = br["oor_neurons"]
+    assert row["v_before"] is not None and row["u_before"] is not None and row["I_implied_pA"] is not None
+    v0, u0, I = row["v_before"], row["u_before"], row["I_implied_pA"]
+    v1 = v0 + (row["k"] * (v0 - row["vr"]) * (v0 - row["vt"]) - u0 + I) / row["C"]          # dt = 1 ms
+    assert v1 == pytest.approx(row["v_first"], rel=2e-2, abs=2.0)

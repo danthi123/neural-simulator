@@ -216,6 +216,8 @@ class _BridgeRec:
         self.ctx = {}
         self.steps_with_oor = 0
         self.prev_timers = None                       # post-step refractory timers of the previous observation
+        self.prev_v = None                            # post-step v of the previous observation (the step's starting v)
+        self.prev_u = None                            # ... and u
         self.n_spikes_total = 0                       # all spikes this bridge emitted while observed
         self.n_spikes_oor_cells = 0                   # spikes emitted by cells AFTER their first out-of-range step
         self.nspk_after = None
@@ -398,6 +400,10 @@ class Census:
         self.total_steps += 1
         rec.callers[site] += 1
         pre = rec.prev_timers                         # == the timers this step decided spikes with (None on the first)
+        pre_v, pre_u = rec.prev_v, rec.prev_u
+        rec.prev_v = np.array(vh, copy=True)
+        u_now = getattr(bridge, "cp_recovery_variable_u", None)
+        rec.prev_u = None if u_now is None else np.array(_host(u_now), copy=True)
         rt_now = getattr(bridge, "cp_refractory_timers", None)
         rec.prev_timers = None if rt_now is None else np.array(_host(rt_now), copy=True)
         fired = getattr(bridge, "cp_firing_states", None)
@@ -451,9 +457,9 @@ class Census:
             hi_min = float(getattr(cfg, "adex_V_peak", np.inf)) + self.margin
         if gmin >= self.v_low and gmax <= hi_min:             # the fast path: nothing out of range (NaN falls through)
             return
-        self._record_out_of_range(rec, bridge, vh, vp, high_kind, hi_min, pre)
+        self._record_out_of_range(rec, bridge, vh, vp, high_kind, hi_min, pre, pre_v, pre_u)
 
-    def _record_out_of_range(self, rec, bridge, vh, vp, high_kind, hi_min, pre=None):
+    def _record_out_of_range(self, rec, bridge, vh, vp, high_kind, hi_min, pre=None, pre_v=None, pre_u=None):
         m = rec.map
         R = len(m.names)
         low = vh < self.v_low
@@ -500,10 +506,26 @@ class Census:
             types = getattr(getattr(bridge, "runtime_state", None), "neuron_types_list_for_viz", None)
             if types is not None and len(types) != rec.n:
                 types = None
+            extra = {key: _host(getattr(bridge, attr, None)) for key, attr in (
+                ("u", "cp_recovery_variable_u"), ("ext_pA", "cp_external_input_current"),
+                ("g_nmda", "cp_conductance_g_nmda"), ("g_gabab", "cp_conductance_g_gabab"),
+                ("g_nmda_rec", "cp_conductance_g_nmda_recurrent"))}
             for idx in new[:MAX_CONTEXT_PER_BRIDGE - len(rec.ctx)]:
                 i = int(idx)
                 d = {"params": {key: (_f(arr[i]) if arr is not None and arr.shape[0] > i else None) for key, arr in P.items()},
                      "type": (str(types[i]) if types is not None else None),
+                     "v_before": (_f(pre_v[i], 2) if pre_v is not None and pre_v.shape[0] > i else None),
+                     "v_first": _f(vh[i], 2),
+                     "u_before": _f(pre_u[i], 2) if pre_u is not None and pre_u.shape[0] > i else None,
+                     # the total input current the step integrated, by inverting the Euler update of the Izhikevich-2007
+                     # model (valid when the cell did not spike/reset in the step, as for every row recorded here)
+                     "I_implied_pA": self._implied_current(P, i, pre_v, pre_u, vh, rec.dt),
+                     "u_first": _f(extra["u"][i], 2) if extra["u"] is not None and extra["u"].shape[0] > i else None,
+                     "ext_pA": _f(extra["ext_pA"][i], 2) if extra["ext_pA"] is not None and extra["ext_pA"].shape[0] > i else None,
+                     "g_nmda": _f(extra["g_nmda"][i]) if extra["g_nmda"] is not None and extra["g_nmda"].shape[0] > i else None,
+                     "g_gabab": _f(extra["g_gabab"][i]) if extra["g_gabab"] is not None and extra["g_gabab"].shape[0] > i else None,
+                     "g_nmda_rec": (_f(extra["g_nmda_rec"][i]) if extra["g_nmda_rec"] is not None
+                                    and extra["g_nmda_rec"].shape[0] > i else None),
                      "g_i": _f(gi[i]) if gi is not None and gi.shape[0] > i else None,
                      "g_e": _f(ge[i]) if ge is not None and ge.shape[0] > i else None,
                      # refractory = in its window when the step decided spikes (a withheld crossing is not reset);
@@ -516,6 +538,17 @@ class Census:
                                 if d["g_i"] is not None or d["g_e"] is not None else None)):
                     d[key] = _f(g * rec.dt / float(C[i]), 3) if g is not None and ok else None
                 rec.ctx[i] = d
+
+    @staticmethod
+    def _implied_current(P, i, pre_v, pre_u, vh, dt):
+        try:
+            if not P or pre_v is None or pre_u is None:
+                return None
+            C, k, vr, vt = (float(P[key][i]) for key in ("C", "k", "vr", "vt"))
+            vb, ub = float(pre_v[i]), float(pre_u[i])
+            return _f(C * (float(vh[i]) - vb) / dt - k * (vb - vr) * (vb - vt) + ub, 1)
+        except Exception:
+            return None
 
     # ── reporting ────────────────────────────────────────────────────────────────────────────────────────────────
     def _neuron_rows(self, rec):
@@ -551,7 +584,8 @@ class Census:
                         "n_steps_low": int(rec.nlow[i]), "n_steps_high": int(rec.nhigh[i]),
                         "n_steps_nonfinite": int(rec.nnonf[i]),
                         "n_spikes_after_first": int(rec.nspk_after[i])})
-            for key in ("g_i", "g_e", "refractory", "refractory_post", "gi_dt_over_C", "ge_dt_over_C", "gtot_dt_over_C"):
+            for key in ("v_before", "v_first", "u_before", "u_first", "I_implied_pA", "ext_pA", "g_i", "g_e", "g_nmda", "g_gabab", "g_nmda_rec",
+                        "refractory", "refractory_post", "gi_dt_over_C", "ge_dt_over_C", "gtot_dt_over_C"):
                 row[key] = c.get(key)
             rows.append(row)
         return rows, int(idx.size), truncated
