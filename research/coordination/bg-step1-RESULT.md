@@ -53,3 +53,11 @@ Every quantity above is a functional read-out of the registered scorer over reco
 ## Next per the spec
 
 After a STOP, STEP1-SPEC section 6's work is not the driver's: reporting is done here; naming the breaching region needs the approved observe run; choosing the region and the parameter change before any bar uses v is Claude/owner work (bars, preregs and spec edits are section-2 reserved). Inputs for that decision: this table, spec 3.9's region table, and [bg-breach-diag].
+
+## AMENDMENT 2026-10-26 12:05 - s71 landed, full grid re-scored, verdict unchanged
+
+The requeued stn50_gpe100 s71 cell landed complete (7/7 arms + 7 prov sidecars, 11:06-11:47), so the STOP 3 loop is closed and the grid is 64/64 cells. s71's own membrane is clean (worst -97.9 mV), so clean-5 {71,73,74,76,78} now rests on data, not elimination. All sixteen scores were re-run with the registered scorer at 12:00 (flat symlink view rebuilt, 896 links, artifacts untouched).
+
+all-8 = UNDEFINED on all eight sets with gates computing true and membrane_ok 0.625 (60/96; seeds 72/75/77 x 12; worst -1916.3 / -1639.7 / -460.6, tonic-pa independent); clean-5 = UNDEFINED structural (n_content 5 < min 6) with membrane 1.0 and gates true. Section 2's reason (c) is stale - stn50_gpe100's clean-5 now carries 60/60 seam events - but (a) and (b) alone keep clean-5 non-selectable.
+
+STOP 3's disposition (re-score on landing) is fulfilled; the original canary record/artifact disagreement stands as logged in FAILURE_LOG. Next: the approved observe run (RULING batch-1026 (3)) to name the breaching region.
