@@ -1,0 +1,5213 @@
+{
+ "stage": "STAGE-2 (CHILD) exit",
+ "verdict": "FAIL",
+ "GO": false,
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "no primary shard missing",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "null clean (intact_a == intact_b) on every primary (group, seed)",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "a failed null makes that seed UNDEFINED; the criterion then cannot reach 6 defined seeds"
+  },
+  {
+   "kind": "require",
+   "name": "every response from the expected brain",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "expected `source` = tiny-demo +LTM in every counted arm"
+  },
+  {
+   "kind": "require",
+   "name": "PYTHONHASHSEED=0 in every primary arm",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "no errored turn and no organ error in any counted arm",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "an errored reply or a caught organ exception is an instrument failure, never an effect or a FAIL"
+  },
+  {
+   "kind": "require",
+   "name": "the grounding set (builtin_facts) recorded in every conv/inner counted arm",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "the corpus-learned production organs had their corpus (data/corpus/tinystories.txt) in every primary arm",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "a worktree or pool checkout without the corpus builds a DEGRADED brain; pool_provision.sh syncs it"
+  },
+  {
+   "kind": "require",
+   "name": "every in-process lesion applied (patch called at least once)",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "the ask group's taught-moat ask-rate defined wherever it decides a correctness session (amendment A4 (a))",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "a taught moat whose teach turn was not acquired is UNDEFINED, never novel; with none acquired and every other C3 clause holding, the moat rate decides and does not exist (an acquisition gap, not a curiosity result); if another clause fails, the seed is scored incorrect instead"
+  },
+  {
+   "kind": "require",
+   "name": "every counted arm ran its own registered turn table (amendment A4 review)",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "the scorers read by label: a reversed shard in the registered order would pass vacuously"
+  },
+  {
+   "kind": "require",
+   "name": "six seeds defined for every primary criterion",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  }
+ ],
+ "undefined_reasons": [],
+ "criteria": {
+  "C1": "FAIL",
+  "C2": "FAIL",
+  "C3": "FAIL",
+  "C4": "FAIL",
+  "C5": "PASS"
+ },
+ "groups": {
+  "conv": {
+   "criterion": "C1",
+   "primary": true,
+   "verdict": "FAIL",
+   "why": [
+    "capability absent on 6 of 6 seeds"
+   ],
+   "n_defined": 6,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_mouth": 6
+   },
+   "n_reproduced": {
+    "lesion_mouth": 6
+   },
+   "n_permuted_tracks": 0,
+   "sub_clauses_n_true": {
+    "sub_transitive": 0,
+    "sub_prepositional": 0,
+    "sub_passive": 0
+   },
+   "seeds": {
+    "42": {
+     "seed": 42,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "fox_chase": true,
+      "more": false,
+      "owl_hunt": false,
+      "mole_moat": false,
+      "deer_sleep": false,
+      "builtin_dog_cat": true,
+      "oov_abstains": true,
+      "all": false,
+      "sub_transitive": false,
+      "sub_prepositional": false,
+      "sub_passive": false,
+      "frames_fox": [
+       [
+        "fox",
+        "chases",
+        null,
+        "hare"
+       ]
+      ],
+      "frames_more": [],
+      "frames_deer": [],
+      "passive_stored_as": "owl",
+      "n_facts_known": 9
+     },
+     "correct": false,
+     "lesions": {
+      "lesion_mouth": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_fox_chase": true,
+        "c_dog_chase": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "fox_chase": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "fox_chase_follows": true,
+      "owl_hunt_follows": false,
+      "mole_hunts_owl": false,
+      "deer_sleep": false,
+      "builtin_dog_cat": true,
+      "oov_abstains": true,
+      "all": false,
+      "sub_transitive": true,
+      "sub_prepositional": false,
+      "sub_passive": false,
+      "frames_fox": [],
+      "frames_more": [],
+      "frames_deer": [],
+      "passive_stored_as": null,
+      "n_facts_known": 9
+     },
+     "tracks": false,
+     "informational": {}
+    },
+    "43": {
+     "seed": 43,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "fox_chase": true,
+      "more": false,
+      "owl_hunt": false,
+      "mole_moat": false,
+      "deer_sleep": false,
+      "builtin_dog_cat": true,
+      "oov_abstains": true,
+      "all": false,
+      "sub_transitive": false,
+      "sub_prepositional": false,
+      "sub_passive": false,
+      "frames_fox": [
+       [
+        "fox",
+        "chases",
+        null,
+        "hare"
+       ]
+      ],
+      "frames_more": [],
+      "frames_deer": [],
+      "passive_stored_as": "owl",
+      "n_facts_known": 9
+     },
+     "correct": false,
+     "lesions": {
+      "lesion_mouth": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_fox_chase": true,
+        "c_dog_chase": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "fox_chase": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "fox_chase_follows": true,
+      "owl_hunt_follows": false,
+      "mole_hunts_owl": false,
+      "deer_sleep": false,
+      "builtin_dog_cat": true,
+      "oov_abstains": true,
+      "all": false,
+      "sub_transitive": true,
+      "sub_prepositional": false,
+      "sub_passive": false,
+      "frames_fox": [],
+      "frames_more": [],
+      "frames_deer": [],
+      "passive_stored_as": null,
+      "n_facts_known": 9
+     },
+     "tracks": false,
+     "informational": {}
+    },
+    "44": {
+     "seed": 44,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "fox_chase": true,
+      "more": false,
+      "owl_hunt": false,
+      "mole_moat": false,
+      "deer_sleep": false,
+      "builtin_dog_cat": true,
+      "oov_abstains": true,
+      "all": false,
+      "sub_transitive": false,
+      "sub_prepositional": false,
+      "sub_passive": false,
+      "frames_fox": [
+       [
+        "fox",
+        "chases",
+        null,
+        "hare"
+       ]
+      ],
+      "frames_more": [],
+      "frames_deer": [],
+      "passive_stored_as": "owl",
+      "n_facts_known": 9
+     },
+     "correct": false,
+     "lesions": {
+      "lesion_mouth": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_fox_chase": true,
+        "c_dog_chase": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "fox_chase": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "fox_chase_follows": true,
+      "owl_hunt_follows": false,
+      "mole_hunts_owl": false,
+      "deer_sleep": false,
+      "builtin_dog_cat": true,
+      "oov_abstains": true,
+      "all": false,
+      "sub_transitive": true,
+      "sub_prepositional": false,
+      "sub_passive": false,
+      "frames_fox": [],
+      "frames_more": [],
+      "frames_deer": [],
+      "passive_stored_as": null,
+      "n_facts_known": 9
+     },
+     "tracks": false,
+     "informational": {}
+    },
+    "100": {
+     "seed": 100,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "fox_chase": true,
+      "more": false,
+      "owl_hunt": false,
+      "mole_moat": false,
+      "deer_sleep": false,
+      "builtin_dog_cat": true,
+      "oov_abstains": true,
+      "all": false,
+      "sub_transitive": false,
+      "sub_prepositional": false,
+      "sub_passive": false,
+      "frames_fox": [
+       [
+        "fox",
+        "chases",
+        null,
+        "hare"
+       ]
+      ],
+      "frames_more": [],
+      "frames_deer": [],
+      "passive_stored_as": "owl",
+      "n_facts_known": 9
+     },
+     "correct": false,
+     "lesions": {
+      "lesion_mouth": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_fox_chase": true,
+        "c_dog_chase": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "fox_chase": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "fox_chase_follows": true,
+      "owl_hunt_follows": false,
+      "mole_hunts_owl": false,
+      "deer_sleep": false,
+      "builtin_dog_cat": true,
+      "oov_abstains": true,
+      "all": false,
+      "sub_transitive": true,
+      "sub_prepositional": false,
+      "sub_passive": false,
+      "frames_fox": [],
+      "frames_more": [],
+      "frames_deer": [],
+      "passive_stored_as": null,
+      "n_facts_known": 9
+     },
+     "tracks": false,
+     "informational": {}
+    },
+    "101": {
+     "seed": 101,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "fox_chase": true,
+      "more": false,
+      "owl_hunt": false,
+      "mole_moat": false,
+      "deer_sleep": false,
+      "builtin_dog_cat": true,
+      "oov_abstains": true,
+      "all": false,
+      "sub_transitive": false,
+      "sub_prepositional": false,
+      "sub_passive": false,
+      "frames_fox": [
+       [
+        "fox",
+        "chases",
+        null,
+        "hare"
+       ]
+      ],
+      "frames_more": [],
+      "frames_deer": [],
+      "passive_stored_as": "owl",
+      "n_facts_known": 9
+     },
+     "correct": false,
+     "lesions": {
+      "lesion_mouth": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_fox_chase": true,
+        "c_dog_chase": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "fox_chase": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "fox_chase_follows": true,
+      "owl_hunt_follows": false,
+      "mole_hunts_owl": false,
+      "deer_sleep": false,
+      "builtin_dog_cat": true,
+      "oov_abstains": true,
+      "all": false,
+      "sub_transitive": true,
+      "sub_prepositional": false,
+      "sub_passive": false,
+      "frames_fox": [],
+      "frames_more": [],
+      "frames_deer": [],
+      "passive_stored_as": null,
+      "n_facts_known": 9
+     },
+     "tracks": false,
+     "informational": {}
+    },
+    "102": {
+     "seed": 102,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "fox_chase": true,
+      "more": false,
+      "owl_hunt": false,
+      "mole_moat": false,
+      "deer_sleep": false,
+      "builtin_dog_cat": true,
+      "oov_abstains": true,
+      "all": false,
+      "sub_transitive": false,
+      "sub_prepositional": false,
+      "sub_passive": false,
+      "frames_fox": [
+       [
+        "fox",
+        "chases",
+        null,
+        "hare"
+       ]
+      ],
+      "frames_more": [],
+      "frames_deer": [],
+      "passive_stored_as": "owl",
+      "n_facts_known": 9
+     },
+     "correct": false,
+     "lesions": {
+      "lesion_mouth": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_fox_chase": true,
+        "c_dog_chase": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "fox_chase": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "fox_chase_follows": true,
+      "owl_hunt_follows": false,
+      "mole_hunts_owl": false,
+      "deer_sleep": false,
+      "builtin_dog_cat": true,
+      "oov_abstains": true,
+      "all": false,
+      "sub_transitive": true,
+      "sub_prepositional": false,
+      "sub_passive": false,
+      "frames_fox": [],
+      "frames_more": [],
+      "frames_deer": [],
+      "passive_stored_as": null,
+      "n_facts_known": 9
+     },
+     "tracks": false,
+     "informational": {}
+    }
+   },
+   "n_correct_by_order": {},
+   "named_gaps": [
+    "wh-locative question parse",
+    "locative frame storage (the teach echo drops the preposition)",
+    "discourse elaboration for 'tell me more'"
+   ],
+   "known_architecture_gaps": []
+  },
+  "infer": {
+   "criterion": "C2",
+   "primary": true,
+   "verdict": "FAIL",
+   "why": [
+    "permuted exposure tracked on 0 of 6 seeds (not exposure-driven)"
+   ],
+   "n_defined": 6,
+   "n_correct": 6,
+   "n_lesion_effect": {
+    "lesion_chain_route": 6
+   },
+   "n_reproduced": {
+    "lesion_chain_route": 6
+   },
+   "n_permuted_tracks": 0,
+   "sub_clauses_n_true": {
+    "conclusion": 6,
+    "derived_flag": 6,
+    "yesno_derived_moth": 0
+   },
+   "seeds": {
+    "42": {
+     "seed": 42,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "conclusion": true,
+      "derived_flag": true,
+      "derived_lead": true,
+      "premise1": true,
+      "moat_prey_chase": true,
+      "builtin_dog_cat": true,
+      "premise2": true,
+      "all": true,
+      "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 What I hold is: crow chase wren. the crow chases the wren",
+      "yesno_derived_moth": false,
+      "yesno_misparsed_as_first_hop": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_chain_route": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_prey_eat": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "conclusion": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "conclusion": false,
+      "derived_flag": false,
+      "derived_lead": false,
+      "premise1": false,
+      "moat_prey_chase": true,
+      "builtin_dog_cat": true,
+      "premise2_abstains": true,
+      "all": false,
+      "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 What I hold is: crow chase wren. the crow chases the wren",
+      "yesno_derived_moth": false,
+      "yesno_misparsed_as_first_hop": true
+     },
+     "tracks": false,
+     "informational": {
+      "transitive_chat": {
+       "conclusion": true,
+       "derived_flag": true,
+       "all": true,
+       "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 What I hold is: crow chase wren. the crow chases the wren",
+       "yesno_derived_moth": false,
+       "yesno_misparsed_as_first_hop": true
+      },
+      "qp_lesion": {
+       "conclusion": true,
+       "derived_flag": true,
+       "all": false,
+       "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps th",
+       "yesno_derived_moth": false,
+       "yesno_misparsed_as_first_hop": false,
+       "patch_calls": 29
+      }
+     }
+    },
+    "43": {
+     "seed": 43,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "conclusion": true,
+      "derived_flag": true,
+      "derived_lead": true,
+      "premise1": true,
+      "moat_prey_chase": true,
+      "builtin_dog_cat": true,
+      "premise2": true,
+      "all": true,
+      "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 What I hold is: crow chase wren. the crow chases the wren",
+      "yesno_derived_moth": false,
+      "yesno_misparsed_as_first_hop": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_chain_route": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_prey_eat": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "conclusion": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "conclusion": false,
+      "derived_flag": false,
+      "derived_lead": false,
+      "premise1": false,
+      "moat_prey_chase": true,
+      "builtin_dog_cat": true,
+      "premise2_abstains": true,
+      "all": false,
+      "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 What I hold is: crow chase wren. the crow chases the wren",
+      "yesno_derived_moth": false,
+      "yesno_misparsed_as_first_hop": true
+     },
+     "tracks": false,
+     "informational": {
+      "transitive_chat": {
+       "conclusion": true,
+       "derived_flag": true,
+       "all": true,
+       "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 What I hold is: crow chase wren. the crow chases the wren",
+       "yesno_derived_moth": false,
+       "yesno_misparsed_as_first_hop": true
+      },
+      "qp_lesion": {
+       "conclusion": true,
+       "derived_flag": true,
+       "all": false,
+       "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps th",
+       "yesno_derived_moth": false,
+       "yesno_misparsed_as_first_hop": false,
+       "patch_calls": 29
+      }
+     }
+    },
+    "44": {
+     "seed": 44,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "conclusion": true,
+      "derived_flag": true,
+      "derived_lead": true,
+      "premise1": true,
+      "moat_prey_chase": true,
+      "builtin_dog_cat": true,
+      "premise2": true,
+      "all": true,
+      "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 What I hold is: crow chase wren. the crow chases the wren",
+      "yesno_derived_moth": false,
+      "yesno_misparsed_as_first_hop": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_chain_route": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_prey_eat": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "conclusion": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "conclusion": false,
+      "derived_flag": false,
+      "derived_lead": false,
+      "premise1": false,
+      "moat_prey_chase": true,
+      "builtin_dog_cat": true,
+      "premise2_abstains": true,
+      "all": false,
+      "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 What I hold is: crow chase wren. the crow chases the wren",
+      "yesno_derived_moth": false,
+      "yesno_misparsed_as_first_hop": true
+     },
+     "tracks": false,
+     "informational": {
+      "transitive_chat": {
+       "conclusion": true,
+       "derived_flag": true,
+       "all": true,
+       "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 What I hold is: crow chase wren. the crow chases the wren",
+       "yesno_derived_moth": false,
+       "yesno_misparsed_as_first_hop": true
+      },
+      "qp_lesion": {
+       "conclusion": true,
+       "derived_flag": true,
+       "all": false,
+       "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps th",
+       "yesno_derived_moth": false,
+       "yesno_misparsed_as_first_hop": false,
+       "patch_calls": 29
+      }
+     }
+    },
+    "100": {
+     "seed": 100,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "conclusion": true,
+      "derived_flag": true,
+      "derived_lead": true,
+      "premise1": true,
+      "moat_prey_chase": true,
+      "builtin_dog_cat": true,
+      "premise2": true,
+      "all": true,
+      "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 What I hold is: crow chase wren. the crow chases the wren",
+      "yesno_derived_moth": false,
+      "yesno_misparsed_as_first_hop": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_chain_route": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_prey_eat": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "conclusion": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "conclusion": false,
+      "derived_flag": false,
+      "derived_lead": false,
+      "premise1": false,
+      "moat_prey_chase": true,
+      "builtin_dog_cat": true,
+      "premise2_abstains": true,
+      "all": false,
+      "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 What I hold is: crow chase wren. the crow chases the wren",
+      "yesno_derived_moth": false,
+      "yesno_misparsed_as_first_hop": true
+     },
+     "tracks": false,
+     "informational": {
+      "transitive_chat": {
+       "conclusion": true,
+       "derived_flag": true,
+       "all": true,
+       "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 What I hold is: crow chase wren. the crow chases the wren",
+       "yesno_derived_moth": false,
+       "yesno_misparsed_as_first_hop": true
+      },
+      "qp_lesion": {
+       "conclusion": true,
+       "derived_flag": true,
+       "all": false,
+       "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps th",
+       "yesno_derived_moth": false,
+       "yesno_misparsed_as_first_hop": false,
+       "patch_calls": 29
+      }
+     }
+    },
+    "101": {
+     "seed": 101,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "conclusion": true,
+      "derived_flag": true,
+      "derived_lead": true,
+      "premise1": true,
+      "moat_prey_chase": true,
+      "builtin_dog_cat": true,
+      "premise2": true,
+      "all": true,
+      "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 What I hold is: crow chase wren. the crow chases the wren",
+      "yesno_derived_moth": false,
+      "yesno_misparsed_as_first_hop": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_chain_route": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_prey_eat": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "conclusion": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "conclusion": false,
+      "derived_flag": false,
+      "derived_lead": false,
+      "premise1": false,
+      "moat_prey_chase": true,
+      "builtin_dog_cat": true,
+      "premise2_abstains": true,
+      "all": false,
+      "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 What I hold is: crow chase wren. the crow chases the wren",
+      "yesno_derived_moth": false,
+      "yesno_misparsed_as_first_hop": true
+     },
+     "tracks": false,
+     "informational": {
+      "transitive_chat": {
+       "conclusion": true,
+       "derived_flag": true,
+       "all": true,
+       "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 What I hold is: crow chase wren. the crow chases the wren",
+       "yesno_derived_moth": false,
+       "yesno_misparsed_as_first_hop": true
+      },
+      "qp_lesion": {
+       "conclusion": true,
+       "derived_flag": true,
+       "all": false,
+       "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps th",
+       "yesno_derived_moth": false,
+       "yesno_misparsed_as_first_hop": false,
+       "patch_calls": 29
+      }
+     }
+    },
+    "102": {
+     "seed": 102,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "conclusion": true,
+      "derived_flag": true,
+      "derived_lead": true,
+      "premise1": true,
+      "moat_prey_chase": true,
+      "builtin_dog_cat": true,
+      "premise2": true,
+      "all": true,
+      "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 What I hold is: crow chase wren. the crow chases the wren",
+      "yesno_derived_moth": false,
+      "yesno_misparsed_as_first_hop": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_chain_route": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_prey_eat": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "conclusion": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "conclusion": false,
+      "derived_flag": false,
+      "derived_lead": false,
+      "premise1": false,
+      "moat_prey_chase": true,
+      "builtin_dog_cat": true,
+      "premise2_abstains": true,
+      "all": false,
+      "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 What I hold is: crow chase wren. the crow chases the wren",
+      "yesno_derived_moth": false,
+      "yesno_misparsed_as_first_hop": true
+     },
+     "tracks": false,
+     "informational": {
+      "transitive_chat": {
+       "conclusion": true,
+       "derived_flag": true,
+       "all": true,
+       "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 What I hold is: crow chase wren. the crow chases the wren",
+       "yesno_derived_moth": false,
+       "yesno_misparsed_as_first_hop": true
+      },
+      "qp_lesion": {
+       "conclusion": true,
+       "derived_flag": true,
+       "all": false,
+       "yesno_reply": "Setting the held thread aside \u2014 On crow, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps th",
+       "yesno_derived_moth": false,
+       "yesno_misparsed_as_first_hop": false,
+       "patch_calls": 29
+      }
+     }
+    }
+   },
+   "n_correct_by_order": {},
+   "named_gaps": [],
+   "known_architecture_gaps": []
+  },
+  "ask": {
+   "criterion": "C3",
+   "primary": true,
+   "verdict": "FAIL",
+   "why": [
+    "capability absent on 6 of 6 seeds (correct per order: registered 0 of 6, reversed 0 of 6)"
+   ],
+   "n_defined": 6,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_curiosity": 6,
+    "lesion_graded": 6
+   },
+   "n_reproduced": {
+    "lesion_curiosity": 6,
+    "lesion_graded": 6
+   },
+   "n_permuted_tracks": 0,
+   "sub_clauses_n_true": {
+    "discriminates": 5,
+    "lp_learnable": 0,
+    "lp_unlearnable": 0,
+    "reversed_all": 0,
+    "reversed_discriminates": 0,
+    "reversed_lp_learnable": 0,
+    "reversed_lp_unlearnable": 6,
+    "all_taught_moats_acquired": 0
+   },
+   "seeds": {
+    "42": {
+     "seed": 42,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "ask_rate_gap": 0.6666666666666666,
+      "ask_rate_moat": 0.0,
+      "discriminates": true,
+      "lp_learnable": false,
+      "lp_unlearnable": false,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "all": false,
+      "n_moats_defined": 2,
+      "moats_undefined": [
+       "m_goat"
+      ],
+      "moat_rate_defined": true,
+      "moat_undefined_decides": false,
+      "moat_items": {
+       "m_yak": {
+        "topic": "yak",
+        "teach_acquired": true,
+        "asked": false,
+        "counted": true
+       },
+       "m_moose": {
+        "topic": "moose",
+        "teach_acquired": true,
+        "asked": false,
+        "counted": true
+       },
+       "m_goat": {
+        "topic": "goat",
+        "teach_acquired": false,
+        "asked": false,
+        "counted": false
+       }
+      },
+      "asked_by_label": {
+       "g_eel": true,
+       "g_crab": true,
+       "g_newt": false,
+       "m_yak": false,
+       "m_moose": false,
+       "m_goat": false,
+       "lp_ibex_1": false,
+       "lp_ibex_2": false,
+       "u_toad_1": false,
+       "u_toad_2": false,
+       "u_toad_3": false,
+       "u_toad_4": false
+      },
+      "curiosity_internal": {
+       "g_eel": {
+        "curious": true,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9782789405385334,
+        "topic": "eel"
+       },
+       "g_crab": {
+        "curious": true,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9688947935387985,
+        "topic": "crab"
+       },
+       "g_newt": {
+        "curious": false,
+        "want_hz": 38.19444444444444,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9631081226636948,
+        "topic": "newt"
+       },
+       "m_yak": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 2.220446049250313e-16,
+        "topic": "yak"
+       },
+       "m_moose": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 0.0,
+        "topic": "moose"
+       },
+       "m_goat": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9759988325698966,
+        "topic": "goat"
+       },
+       "u_toad_1": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9713900052610371,
+        "topic": "toad"
+       },
+       "u_toad_4": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9713900052610371,
+        "topic": "toad"
+       }
+      }
+     },
+     "correct": false,
+     "correct_by_order": {
+      "registered": false,
+      "reversed": false
+     },
+     "orders": {
+      "reversed": {
+       "ask_rate_gap": 0.0,
+       "ask_rate_moat": 0.0,
+       "discriminates": false,
+       "lp_learnable": false,
+       "lp_unlearnable": true,
+       "all_gaps_abstain": true,
+       "builtin_dog_cat": true,
+       "all": false,
+       "n_moats_defined": 2,
+       "moats_undefined": [
+        "m_goat"
+       ],
+       "moat_rate_defined": true,
+       "moat_undefined_decides": false,
+       "moat_items": {
+        "m_yak": {
+         "topic": "yak",
+         "teach_acquired": true,
+         "asked": false,
+         "counted": true
+        },
+        "m_moose": {
+         "topic": "moose",
+         "teach_acquired": true,
+         "asked": false,
+         "counted": true
+        },
+        "m_goat": {
+         "topic": "goat",
+         "teach_acquired": false,
+         "asked": false,
+         "counted": false
+        }
+       },
+       "asked_by_label": {
+        "g_eel": false,
+        "g_crab": false,
+        "g_newt": false,
+        "m_yak": false,
+        "m_moose": false,
+        "m_goat": false,
+        "lp_ibex_1": false,
+        "lp_ibex_2": false,
+        "u_toad_1": true,
+        "u_toad_2": true,
+        "u_toad_3": false,
+        "u_toad_4": false
+       },
+       "curiosity_internal": {
+        "g_eel": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9760601232005107,
+         "topic": "eel"
+        },
+        "g_crab": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9681777469000133,
+         "topic": "crab"
+        },
+        "g_newt": {
+         "curious": false,
+         "want_hz": 38.19444444444444,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9597592111635622,
+         "topic": "newt"
+        },
+        "m_yak": {
+         "curious": false,
+         "want_hz": 0.0,
+         "threshold": 19.09722222222222,
+         "novelty": 1.1102230246251565e-16,
+         "topic": "yak"
+        },
+        "m_moose": {
+         "curious": false,
+         "want_hz": 0.0,
+         "threshold": 19.09722222222222,
+         "novelty": 0.0,
+         "topic": "moose"
+        },
+        "m_goat": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9755394165809498,
+         "topic": "goat"
+        },
+        "u_toad_1": {
+         "curious": true,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.977236050454149,
+         "topic": "toad"
+        },
+        "u_toad_4": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.977236050454149,
+         "topic": "toad"
+        }
+       }
+      }
+     },
+     "moat_rate_decides": false,
+     "lesions": {
+      "lesion_curiosity": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "g_eel": true,
+        "g_crab": true,
+        "g_newt": false,
+        "lp_ibex_1": false,
+        "u_toad_1": false
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "ask_rate_gap": 0.0,
+        "ask_rate_moat": 0.0,
+        "discriminates": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      },
+      "lesion_graded": {
+       "present": true,
+       "repeat_present": true,
+       "scored_labels_dropped_A4": [
+        "m_goat"
+       ],
+       "differs": {
+        "m_yak": true,
+        "m_moose": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "ask_rate_gap": 0.6666666666666666,
+        "ask_rate_moat": 1.0,
+        "discriminates": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "ask_rate_gap": 0.6666666666666666,
+      "ask_rate_moat": 0.5,
+      "discriminates": false,
+      "lp_learnable": false,
+      "lp_unlearnable": false,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "all": false,
+      "n_moats_defined": 2,
+      "moats_undefined": [
+       "g_newt"
+      ],
+      "moat_rate_defined": true,
+      "moat_undefined_decides": false,
+      "moat_items": {
+       "g_eel": {
+        "topic": "eel",
+        "teach_acquired": true,
+        "asked": false,
+        "counted": true
+       },
+       "g_crab": {
+        "topic": "crab",
+        "teach_acquired": true,
+        "asked": true,
+        "counted": true
+       },
+       "g_newt": {
+        "topic": "newt",
+        "teach_acquired": false,
+        "asked": false,
+        "counted": false
+       }
+      },
+      "asked_by_label": {
+       "m_yak": true,
+       "m_moose": true,
+       "m_goat": false,
+       "g_eel": false,
+       "g_crab": true,
+       "g_newt": false,
+       "lp_ibex_1": false,
+       "lp_ibex_2": false,
+       "u_toad_1": false,
+       "u_toad_2": false,
+       "u_toad_3": false,
+       "u_toad_4": false
+      },
+      "curiosity_internal": {
+       "m_yak": {
+        "curious": true,
+        "want_hz": 38.19444444444444,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9560823047822471,
+        "topic": "yak"
+       },
+       "m_moose": {
+        "curious": true,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9847779907584311,
+        "topic": "moose"
+       },
+       "m_goat": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9861276095481406,
+        "topic": "goat"
+       },
+       "g_eel": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 1.1102230246251565e-16,
+        "topic": "eel"
+       },
+       "g_crab": {
+        "curious": true,
+        "want_hz": 38.19444444444444,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9643877687741784,
+        "topic": "crab"
+       },
+       "g_newt": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 2.220446049250313e-16,
+        "topic": "newt"
+       },
+       "u_toad_1": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9727644463464793,
+        "topic": "toad"
+       },
+       "u_toad_4": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9727644463464793,
+        "topic": "toad"
+       }
+      }
+     },
+     "tracks": false,
+     "informational": {
+      "da_lesion": {
+       "lesion_held": true,
+       "n_da_traces": 11,
+       "not_held_on": [],
+       "status": "held",
+       "ask_rate_gap": 1.0,
+       "ask_rate_moat": 0.0,
+       "discriminates": true,
+       "lp_learnable": true,
+       "lp_unlearnable": false,
+       "all": false,
+       "moats_undefined": [
+        "m_goat"
+       ],
+       "asked_by_label": {
+        "g_eel": true,
+        "g_crab": true,
+        "g_newt": true,
+        "m_yak": false,
+        "m_moose": false,
+        "m_goat": true,
+        "lp_ibex_1": true,
+        "lp_ibex_2": false,
+        "u_toad_1": true,
+        "u_toad_2": true,
+        "u_toad_3": true,
+        "u_toad_4": true
+       }
+      }
+     }
+    },
+    "43": {
+     "seed": 43,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "ask_rate_gap": 0.6666666666666666,
+      "ask_rate_moat": 0.0,
+      "discriminates": true,
+      "lp_learnable": false,
+      "lp_unlearnable": false,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "all": false,
+      "n_moats_defined": 2,
+      "moats_undefined": [
+       "m_goat"
+      ],
+      "moat_rate_defined": true,
+      "moat_undefined_decides": false,
+      "moat_items": {
+       "m_yak": {
+        "topic": "yak",
+        "teach_acquired": true,
+        "asked": false,
+        "counted": true
+       },
+       "m_moose": {
+        "topic": "moose",
+        "teach_acquired": true,
+        "asked": false,
+        "counted": true
+       },
+       "m_goat": {
+        "topic": "goat",
+        "teach_acquired": false,
+        "asked": false,
+        "counted": false
+       }
+      },
+      "asked_by_label": {
+       "g_eel": true,
+       "g_crab": true,
+       "g_newt": false,
+       "m_yak": false,
+       "m_moose": false,
+       "m_goat": false,
+       "lp_ibex_1": false,
+       "lp_ibex_2": false,
+       "u_toad_1": false,
+       "u_toad_2": false,
+       "u_toad_3": false,
+       "u_toad_4": false
+      },
+      "curiosity_internal": {
+       "g_eel": {
+        "curious": true,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9782789405385334,
+        "topic": "eel"
+       },
+       "g_crab": {
+        "curious": true,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9688947935387985,
+        "topic": "crab"
+       },
+       "g_newt": {
+        "curious": false,
+        "want_hz": 38.19444444444444,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9631081226636948,
+        "topic": "newt"
+       },
+       "m_yak": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 2.220446049250313e-16,
+        "topic": "yak"
+       },
+       "m_moose": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 0.0,
+        "topic": "moose"
+       },
+       "m_goat": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9759988325698966,
+        "topic": "goat"
+       },
+       "u_toad_1": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9713900052610371,
+        "topic": "toad"
+       },
+       "u_toad_4": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9713900052610371,
+        "topic": "toad"
+       }
+      }
+     },
+     "correct": false,
+     "correct_by_order": {
+      "registered": false,
+      "reversed": false
+     },
+     "orders": {
+      "reversed": {
+       "ask_rate_gap": 0.0,
+       "ask_rate_moat": 0.0,
+       "discriminates": false,
+       "lp_learnable": false,
+       "lp_unlearnable": true,
+       "all_gaps_abstain": true,
+       "builtin_dog_cat": true,
+       "all": false,
+       "n_moats_defined": 2,
+       "moats_undefined": [
+        "m_goat"
+       ],
+       "moat_rate_defined": true,
+       "moat_undefined_decides": false,
+       "moat_items": {
+        "m_yak": {
+         "topic": "yak",
+         "teach_acquired": true,
+         "asked": false,
+         "counted": true
+        },
+        "m_moose": {
+         "topic": "moose",
+         "teach_acquired": true,
+         "asked": false,
+         "counted": true
+        },
+        "m_goat": {
+         "topic": "goat",
+         "teach_acquired": false,
+         "asked": false,
+         "counted": false
+        }
+       },
+       "asked_by_label": {
+        "g_eel": false,
+        "g_crab": false,
+        "g_newt": false,
+        "m_yak": false,
+        "m_moose": false,
+        "m_goat": false,
+        "lp_ibex_1": false,
+        "lp_ibex_2": false,
+        "u_toad_1": true,
+        "u_toad_2": false,
+        "u_toad_3": false,
+        "u_toad_4": false
+       },
+       "curiosity_internal": {
+        "g_eel": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9760601232005107,
+         "topic": "eel"
+        },
+        "g_crab": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9681777469000133,
+         "topic": "crab"
+        },
+        "g_newt": {
+         "curious": false,
+         "want_hz": 38.19444444444444,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9597592111635622,
+         "topic": "newt"
+        },
+        "m_yak": {
+         "curious": false,
+         "want_hz": 0.0,
+         "threshold": 19.09722222222222,
+         "novelty": 1.1102230246251565e-16,
+         "topic": "yak"
+        },
+        "m_moose": {
+         "curious": false,
+         "want_hz": 0.0,
+         "threshold": 19.09722222222222,
+         "novelty": 0.0,
+         "topic": "moose"
+        },
+        "m_goat": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9755394165809498,
+         "topic": "goat"
+        },
+        "u_toad_1": {
+         "curious": true,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.977236050454149,
+         "topic": "toad"
+        },
+        "u_toad_4": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.977236050454149,
+         "topic": "toad"
+        }
+       }
+      }
+     },
+     "moat_rate_decides": false,
+     "lesions": {
+      "lesion_curiosity": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "g_eel": true,
+        "g_crab": true,
+        "g_newt": false,
+        "lp_ibex_1": false,
+        "u_toad_1": false
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "ask_rate_gap": 0.0,
+        "ask_rate_moat": 0.0,
+        "discriminates": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      },
+      "lesion_graded": {
+       "present": true,
+       "repeat_present": true,
+       "scored_labels_dropped_A4": [
+        "m_goat"
+       ],
+       "differs": {
+        "m_yak": true,
+        "m_moose": false
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "ask_rate_gap": 0.6666666666666666,
+        "ask_rate_moat": 0.5,
+        "discriminates": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "ask_rate_gap": 0.3333333333333333,
+      "ask_rate_moat": 0.0,
+      "discriminates": false,
+      "lp_learnable": false,
+      "lp_unlearnable": false,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "all": false,
+      "n_moats_defined": 2,
+      "moats_undefined": [
+       "g_newt"
+      ],
+      "moat_rate_defined": true,
+      "moat_undefined_decides": false,
+      "moat_items": {
+       "g_eel": {
+        "topic": "eel",
+        "teach_acquired": true,
+        "asked": false,
+        "counted": true
+       },
+       "g_crab": {
+        "topic": "crab",
+        "teach_acquired": true,
+        "asked": false,
+        "counted": true
+       },
+       "g_newt": {
+        "topic": "newt",
+        "teach_acquired": false,
+        "asked": false,
+        "counted": false
+       }
+      },
+      "asked_by_label": {
+       "m_yak": true,
+       "m_moose": false,
+       "m_goat": false,
+       "g_eel": false,
+       "g_crab": false,
+       "g_newt": false,
+       "lp_ibex_1": false,
+       "lp_ibex_2": false,
+       "u_toad_1": false,
+       "u_toad_2": false,
+       "u_toad_3": false,
+       "u_toad_4": false
+      },
+      "curiosity_internal": {
+       "m_yak": {
+        "curious": true,
+        "want_hz": 38.19444444444444,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9560823047822471,
+        "topic": "yak"
+       },
+       "m_moose": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9847779907584311,
+        "topic": "moose"
+       },
+       "m_goat": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9861276095481406,
+        "topic": "goat"
+       },
+       "g_eel": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 1.1102230246251565e-16,
+        "topic": "eel"
+       },
+       "g_crab": {
+        "curious": false,
+        "want_hz": 38.19444444444444,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9643877687741784,
+        "topic": "crab"
+       },
+       "g_newt": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 2.220446049250313e-16,
+        "topic": "newt"
+       },
+       "u_toad_1": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9727644463464793,
+        "topic": "toad"
+       },
+       "u_toad_4": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9727644463464793,
+        "topic": "toad"
+       }
+      }
+     },
+     "tracks": false,
+     "informational": {
+      "da_lesion": {
+       "lesion_held": true,
+       "n_da_traces": 11,
+       "not_held_on": [],
+       "status": "held",
+       "ask_rate_gap": 1.0,
+       "ask_rate_moat": 0.0,
+       "discriminates": true,
+       "lp_learnable": true,
+       "lp_unlearnable": false,
+       "all": false,
+       "moats_undefined": [
+        "m_goat"
+       ],
+       "asked_by_label": {
+        "g_eel": true,
+        "g_crab": true,
+        "g_newt": true,
+        "m_yak": false,
+        "m_moose": false,
+        "m_goat": true,
+        "lp_ibex_1": true,
+        "lp_ibex_2": false,
+        "u_toad_1": true,
+        "u_toad_2": true,
+        "u_toad_3": true,
+        "u_toad_4": true
+       }
+      }
+     }
+    },
+    "44": {
+     "seed": 44,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "ask_rate_gap": 0.6666666666666666,
+      "ask_rate_moat": 0.0,
+      "discriminates": true,
+      "lp_learnable": false,
+      "lp_unlearnable": false,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "all": false,
+      "n_moats_defined": 2,
+      "moats_undefined": [
+       "m_goat"
+      ],
+      "moat_rate_defined": true,
+      "moat_undefined_decides": false,
+      "moat_items": {
+       "m_yak": {
+        "topic": "yak",
+        "teach_acquired": true,
+        "asked": false,
+        "counted": true
+       },
+       "m_moose": {
+        "topic": "moose",
+        "teach_acquired": true,
+        "asked": false,
+        "counted": true
+       },
+       "m_goat": {
+        "topic": "goat",
+        "teach_acquired": false,
+        "asked": false,
+        "counted": false
+       }
+      },
+      "asked_by_label": {
+       "g_eel": true,
+       "g_crab": true,
+       "g_newt": false,
+       "m_yak": false,
+       "m_moose": false,
+       "m_goat": false,
+       "lp_ibex_1": false,
+       "lp_ibex_2": false,
+       "u_toad_1": false,
+       "u_toad_2": false,
+       "u_toad_3": false,
+       "u_toad_4": false
+      },
+      "curiosity_internal": {
+       "g_eel": {
+        "curious": true,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9782789405385334,
+        "topic": "eel"
+       },
+       "g_crab": {
+        "curious": true,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9688947935387985,
+        "topic": "crab"
+       },
+       "g_newt": {
+        "curious": false,
+        "want_hz": 38.19444444444444,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9631081226636948,
+        "topic": "newt"
+       },
+       "m_yak": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 2.220446049250313e-16,
+        "topic": "yak"
+       },
+       "m_moose": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 0.0,
+        "topic": "moose"
+       },
+       "m_goat": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9759988325698966,
+        "topic": "goat"
+       },
+       "u_toad_1": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9713900052610371,
+        "topic": "toad"
+       },
+       "u_toad_4": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9713900052610371,
+        "topic": "toad"
+       }
+      }
+     },
+     "correct": false,
+     "correct_by_order": {
+      "registered": false,
+      "reversed": false
+     },
+     "orders": {
+      "reversed": {
+       "ask_rate_gap": 0.0,
+       "ask_rate_moat": 0.0,
+       "discriminates": false,
+       "lp_learnable": false,
+       "lp_unlearnable": true,
+       "all_gaps_abstain": true,
+       "builtin_dog_cat": true,
+       "all": false,
+       "n_moats_defined": 2,
+       "moats_undefined": [
+        "m_goat"
+       ],
+       "moat_rate_defined": true,
+       "moat_undefined_decides": false,
+       "moat_items": {
+        "m_yak": {
+         "topic": "yak",
+         "teach_acquired": true,
+         "asked": false,
+         "counted": true
+        },
+        "m_moose": {
+         "topic": "moose",
+         "teach_acquired": true,
+         "asked": false,
+         "counted": true
+        },
+        "m_goat": {
+         "topic": "goat",
+         "teach_acquired": false,
+         "asked": false,
+         "counted": false
+        }
+       },
+       "asked_by_label": {
+        "g_eel": false,
+        "g_crab": false,
+        "g_newt": false,
+        "m_yak": false,
+        "m_moose": false,
+        "m_goat": false,
+        "lp_ibex_1": false,
+        "lp_ibex_2": false,
+        "u_toad_1": true,
+        "u_toad_2": false,
+        "u_toad_3": false,
+        "u_toad_4": false
+       },
+       "curiosity_internal": {
+        "g_eel": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9760601232005107,
+         "topic": "eel"
+        },
+        "g_crab": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9681777469000133,
+         "topic": "crab"
+        },
+        "g_newt": {
+         "curious": false,
+         "want_hz": 38.19444444444444,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9597592111635622,
+         "topic": "newt"
+        },
+        "m_yak": {
+         "curious": false,
+         "want_hz": 0.0,
+         "threshold": 19.09722222222222,
+         "novelty": 1.1102230246251565e-16,
+         "topic": "yak"
+        },
+        "m_moose": {
+         "curious": false,
+         "want_hz": 0.0,
+         "threshold": 19.09722222222222,
+         "novelty": 0.0,
+         "topic": "moose"
+        },
+        "m_goat": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9755394165809498,
+         "topic": "goat"
+        },
+        "u_toad_1": {
+         "curious": true,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.977236050454149,
+         "topic": "toad"
+        },
+        "u_toad_4": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.977236050454149,
+         "topic": "toad"
+        }
+       }
+      }
+     },
+     "moat_rate_decides": false,
+     "lesions": {
+      "lesion_curiosity": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "g_eel": true,
+        "g_crab": true,
+        "g_newt": false,
+        "lp_ibex_1": false,
+        "u_toad_1": false
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "ask_rate_gap": 0.0,
+        "ask_rate_moat": 0.0,
+        "discriminates": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      },
+      "lesion_graded": {
+       "present": true,
+       "repeat_present": true,
+       "scored_labels_dropped_A4": [
+        "m_goat"
+       ],
+       "differs": {
+        "m_yak": true,
+        "m_moose": false
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "ask_rate_gap": 0.6666666666666666,
+        "ask_rate_moat": 0.5,
+        "discriminates": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "ask_rate_gap": 0.3333333333333333,
+      "ask_rate_moat": 0.5,
+      "discriminates": false,
+      "lp_learnable": false,
+      "lp_unlearnable": false,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "all": false,
+      "n_moats_defined": 2,
+      "moats_undefined": [
+       "g_newt"
+      ],
+      "moat_rate_defined": true,
+      "moat_undefined_decides": false,
+      "moat_items": {
+       "g_eel": {
+        "topic": "eel",
+        "teach_acquired": true,
+        "asked": false,
+        "counted": true
+       },
+       "g_crab": {
+        "topic": "crab",
+        "teach_acquired": true,
+        "asked": true,
+        "counted": true
+       },
+       "g_newt": {
+        "topic": "newt",
+        "teach_acquired": false,
+        "asked": false,
+        "counted": false
+       }
+      },
+      "asked_by_label": {
+       "m_yak": true,
+       "m_moose": false,
+       "m_goat": false,
+       "g_eel": false,
+       "g_crab": true,
+       "g_newt": false,
+       "lp_ibex_1": false,
+       "lp_ibex_2": false,
+       "u_toad_1": false,
+       "u_toad_2": false,
+       "u_toad_3": false,
+       "u_toad_4": false
+      },
+      "curiosity_internal": {
+       "m_yak": {
+        "curious": true,
+        "want_hz": 38.19444444444444,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9560823047822471,
+        "topic": "yak"
+       },
+       "m_moose": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9847779907584311,
+        "topic": "moose"
+       },
+       "m_goat": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9861276095481406,
+        "topic": "goat"
+       },
+       "g_eel": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 1.1102230246251565e-16,
+        "topic": "eel"
+       },
+       "g_crab": {
+        "curious": true,
+        "want_hz": 38.19444444444444,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9643877687741784,
+        "topic": "crab"
+       },
+       "g_newt": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 2.220446049250313e-16,
+        "topic": "newt"
+       },
+       "u_toad_1": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9727644463464793,
+        "topic": "toad"
+       },
+       "u_toad_4": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9727644463464793,
+        "topic": "toad"
+       }
+      }
+     },
+     "tracks": false,
+     "informational": {
+      "da_lesion": {
+       "lesion_held": true,
+       "n_da_traces": 11,
+       "not_held_on": [],
+       "status": "held",
+       "ask_rate_gap": 1.0,
+       "ask_rate_moat": 0.0,
+       "discriminates": true,
+       "lp_learnable": true,
+       "lp_unlearnable": false,
+       "all": false,
+       "moats_undefined": [
+        "m_goat"
+       ],
+       "asked_by_label": {
+        "g_eel": true,
+        "g_crab": true,
+        "g_newt": true,
+        "m_yak": false,
+        "m_moose": false,
+        "m_goat": true,
+        "lp_ibex_1": true,
+        "lp_ibex_2": false,
+        "u_toad_1": true,
+        "u_toad_2": true,
+        "u_toad_3": true,
+        "u_toad_4": true
+       }
+      }
+     }
+    },
+    "100": {
+     "seed": 100,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "ask_rate_gap": 0.6666666666666666,
+      "ask_rate_moat": 0.0,
+      "discriminates": true,
+      "lp_learnable": false,
+      "lp_unlearnable": false,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "all": false,
+      "n_moats_defined": 2,
+      "moats_undefined": [
+       "m_goat"
+      ],
+      "moat_rate_defined": true,
+      "moat_undefined_decides": false,
+      "moat_items": {
+       "m_yak": {
+        "topic": "yak",
+        "teach_acquired": true,
+        "asked": false,
+        "counted": true
+       },
+       "m_moose": {
+        "topic": "moose",
+        "teach_acquired": true,
+        "asked": false,
+        "counted": true
+       },
+       "m_goat": {
+        "topic": "goat",
+        "teach_acquired": false,
+        "asked": false,
+        "counted": false
+       }
+      },
+      "asked_by_label": {
+       "g_eel": true,
+       "g_crab": true,
+       "g_newt": false,
+       "m_yak": false,
+       "m_moose": false,
+       "m_goat": false,
+       "lp_ibex_1": false,
+       "lp_ibex_2": false,
+       "u_toad_1": false,
+       "u_toad_2": false,
+       "u_toad_3": false,
+       "u_toad_4": false
+      },
+      "curiosity_internal": {
+       "g_eel": {
+        "curious": true,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9782789405385334,
+        "topic": "eel"
+       },
+       "g_crab": {
+        "curious": true,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9688947935387985,
+        "topic": "crab"
+       },
+       "g_newt": {
+        "curious": false,
+        "want_hz": 38.19444444444444,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9631081226636948,
+        "topic": "newt"
+       },
+       "m_yak": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 2.220446049250313e-16,
+        "topic": "yak"
+       },
+       "m_moose": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 0.0,
+        "topic": "moose"
+       },
+       "m_goat": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9759988325698966,
+        "topic": "goat"
+       },
+       "u_toad_1": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9713900052610371,
+        "topic": "toad"
+       },
+       "u_toad_4": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9713900052610371,
+        "topic": "toad"
+       }
+      }
+     },
+     "correct": false,
+     "correct_by_order": {
+      "registered": false,
+      "reversed": false
+     },
+     "orders": {
+      "reversed": {
+       "ask_rate_gap": 0.0,
+       "ask_rate_moat": 0.0,
+       "discriminates": false,
+       "lp_learnable": false,
+       "lp_unlearnable": true,
+       "all_gaps_abstain": true,
+       "builtin_dog_cat": true,
+       "all": false,
+       "n_moats_defined": 2,
+       "moats_undefined": [
+        "m_goat"
+       ],
+       "moat_rate_defined": true,
+       "moat_undefined_decides": false,
+       "moat_items": {
+        "m_yak": {
+         "topic": "yak",
+         "teach_acquired": true,
+         "asked": false,
+         "counted": true
+        },
+        "m_moose": {
+         "topic": "moose",
+         "teach_acquired": true,
+         "asked": false,
+         "counted": true
+        },
+        "m_goat": {
+         "topic": "goat",
+         "teach_acquired": false,
+         "asked": false,
+         "counted": false
+        }
+       },
+       "asked_by_label": {
+        "g_eel": false,
+        "g_crab": false,
+        "g_newt": false,
+        "m_yak": false,
+        "m_moose": false,
+        "m_goat": false,
+        "lp_ibex_1": false,
+        "lp_ibex_2": false,
+        "u_toad_1": true,
+        "u_toad_2": true,
+        "u_toad_3": false,
+        "u_toad_4": false
+       },
+       "curiosity_internal": {
+        "g_eel": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9760601232005107,
+         "topic": "eel"
+        },
+        "g_crab": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9681777469000133,
+         "topic": "crab"
+        },
+        "g_newt": {
+         "curious": false,
+         "want_hz": 38.19444444444444,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9597592111635622,
+         "topic": "newt"
+        },
+        "m_yak": {
+         "curious": false,
+         "want_hz": 0.0,
+         "threshold": 19.09722222222222,
+         "novelty": 1.1102230246251565e-16,
+         "topic": "yak"
+        },
+        "m_moose": {
+         "curious": false,
+         "want_hz": 0.0,
+         "threshold": 19.09722222222222,
+         "novelty": 0.0,
+         "topic": "moose"
+        },
+        "m_goat": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9755394165809498,
+         "topic": "goat"
+        },
+        "u_toad_1": {
+         "curious": true,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.977236050454149,
+         "topic": "toad"
+        },
+        "u_toad_4": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.977236050454149,
+         "topic": "toad"
+        }
+       }
+      }
+     },
+     "moat_rate_decides": false,
+     "lesions": {
+      "lesion_curiosity": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "g_eel": true,
+        "g_crab": true,
+        "g_newt": false,
+        "lp_ibex_1": false,
+        "u_toad_1": false
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "ask_rate_gap": 0.0,
+        "ask_rate_moat": 0.0,
+        "discriminates": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      },
+      "lesion_graded": {
+       "present": true,
+       "repeat_present": true,
+       "scored_labels_dropped_A4": [
+        "m_goat"
+       ],
+       "differs": {
+        "m_yak": true,
+        "m_moose": false
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "ask_rate_gap": 0.6666666666666666,
+        "ask_rate_moat": 0.5,
+        "discriminates": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "ask_rate_gap": 0.3333333333333333,
+      "ask_rate_moat": 0.5,
+      "discriminates": false,
+      "lp_learnable": false,
+      "lp_unlearnable": false,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "all": false,
+      "n_moats_defined": 2,
+      "moats_undefined": [
+       "g_newt"
+      ],
+      "moat_rate_defined": true,
+      "moat_undefined_decides": false,
+      "moat_items": {
+       "g_eel": {
+        "topic": "eel",
+        "teach_acquired": true,
+        "asked": false,
+        "counted": true
+       },
+       "g_crab": {
+        "topic": "crab",
+        "teach_acquired": true,
+        "asked": true,
+        "counted": true
+       },
+       "g_newt": {
+        "topic": "newt",
+        "teach_acquired": false,
+        "asked": false,
+        "counted": false
+       }
+      },
+      "asked_by_label": {
+       "m_yak": true,
+       "m_moose": false,
+       "m_goat": false,
+       "g_eel": false,
+       "g_crab": true,
+       "g_newt": false,
+       "lp_ibex_1": false,
+       "lp_ibex_2": false,
+       "u_toad_1": false,
+       "u_toad_2": false,
+       "u_toad_3": false,
+       "u_toad_4": false
+      },
+      "curiosity_internal": {
+       "m_yak": {
+        "curious": true,
+        "want_hz": 38.19444444444444,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9560823047822471,
+        "topic": "yak"
+       },
+       "m_moose": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9847779907584311,
+        "topic": "moose"
+       },
+       "m_goat": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9861276095481406,
+        "topic": "goat"
+       },
+       "g_eel": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 1.1102230246251565e-16,
+        "topic": "eel"
+       },
+       "g_crab": {
+        "curious": true,
+        "want_hz": 38.19444444444444,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9643877687741784,
+        "topic": "crab"
+       },
+       "g_newt": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 2.220446049250313e-16,
+        "topic": "newt"
+       },
+       "u_toad_1": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9727644463464793,
+        "topic": "toad"
+       },
+       "u_toad_4": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9727644463464793,
+        "topic": "toad"
+       }
+      }
+     },
+     "tracks": false,
+     "informational": {
+      "da_lesion": {
+       "lesion_held": true,
+       "n_da_traces": 11,
+       "not_held_on": [],
+       "status": "held",
+       "ask_rate_gap": 1.0,
+       "ask_rate_moat": 0.0,
+       "discriminates": true,
+       "lp_learnable": true,
+       "lp_unlearnable": false,
+       "all": false,
+       "moats_undefined": [
+        "m_goat"
+       ],
+       "asked_by_label": {
+        "g_eel": true,
+        "g_crab": true,
+        "g_newt": true,
+        "m_yak": false,
+        "m_moose": false,
+        "m_goat": true,
+        "lp_ibex_1": true,
+        "lp_ibex_2": false,
+        "u_toad_1": true,
+        "u_toad_2": true,
+        "u_toad_3": true,
+        "u_toad_4": true
+       }
+      }
+     }
+    },
+    "101": {
+     "seed": 101,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "ask_rate_gap": 0.6666666666666666,
+      "ask_rate_moat": 0.0,
+      "discriminates": true,
+      "lp_learnable": false,
+      "lp_unlearnable": false,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "all": false,
+      "n_moats_defined": 2,
+      "moats_undefined": [
+       "m_goat"
+      ],
+      "moat_rate_defined": true,
+      "moat_undefined_decides": false,
+      "moat_items": {
+       "m_yak": {
+        "topic": "yak",
+        "teach_acquired": true,
+        "asked": false,
+        "counted": true
+       },
+       "m_moose": {
+        "topic": "moose",
+        "teach_acquired": true,
+        "asked": false,
+        "counted": true
+       },
+       "m_goat": {
+        "topic": "goat",
+        "teach_acquired": false,
+        "asked": false,
+        "counted": false
+       }
+      },
+      "asked_by_label": {
+       "g_eel": true,
+       "g_crab": true,
+       "g_newt": false,
+       "m_yak": false,
+       "m_moose": false,
+       "m_goat": false,
+       "lp_ibex_1": false,
+       "lp_ibex_2": false,
+       "u_toad_1": false,
+       "u_toad_2": false,
+       "u_toad_3": false,
+       "u_toad_4": false
+      },
+      "curiosity_internal": {
+       "g_eel": {
+        "curious": true,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9782789405385334,
+        "topic": "eel"
+       },
+       "g_crab": {
+        "curious": true,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9688947935387985,
+        "topic": "crab"
+       },
+       "g_newt": {
+        "curious": false,
+        "want_hz": 38.19444444444444,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9631081226636948,
+        "topic": "newt"
+       },
+       "m_yak": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 2.220446049250313e-16,
+        "topic": "yak"
+       },
+       "m_moose": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 0.0,
+        "topic": "moose"
+       },
+       "m_goat": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9759988325698966,
+        "topic": "goat"
+       },
+       "u_toad_1": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9713900052610371,
+        "topic": "toad"
+       },
+       "u_toad_4": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9713900052610371,
+        "topic": "toad"
+       }
+      }
+     },
+     "correct": false,
+     "correct_by_order": {
+      "registered": false,
+      "reversed": false
+     },
+     "orders": {
+      "reversed": {
+       "ask_rate_gap": 0.0,
+       "ask_rate_moat": 0.0,
+       "discriminates": false,
+       "lp_learnable": false,
+       "lp_unlearnable": true,
+       "all_gaps_abstain": true,
+       "builtin_dog_cat": true,
+       "all": false,
+       "n_moats_defined": 2,
+       "moats_undefined": [
+        "m_goat"
+       ],
+       "moat_rate_defined": true,
+       "moat_undefined_decides": false,
+       "moat_items": {
+        "m_yak": {
+         "topic": "yak",
+         "teach_acquired": true,
+         "asked": false,
+         "counted": true
+        },
+        "m_moose": {
+         "topic": "moose",
+         "teach_acquired": true,
+         "asked": false,
+         "counted": true
+        },
+        "m_goat": {
+         "topic": "goat",
+         "teach_acquired": false,
+         "asked": false,
+         "counted": false
+        }
+       },
+       "asked_by_label": {
+        "g_eel": false,
+        "g_crab": false,
+        "g_newt": false,
+        "m_yak": false,
+        "m_moose": false,
+        "m_goat": false,
+        "lp_ibex_1": false,
+        "lp_ibex_2": false,
+        "u_toad_1": true,
+        "u_toad_2": false,
+        "u_toad_3": false,
+        "u_toad_4": false
+       },
+       "curiosity_internal": {
+        "g_eel": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9760601232005107,
+         "topic": "eel"
+        },
+        "g_crab": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9681777469000133,
+         "topic": "crab"
+        },
+        "g_newt": {
+         "curious": false,
+         "want_hz": 38.19444444444444,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9597592111635622,
+         "topic": "newt"
+        },
+        "m_yak": {
+         "curious": false,
+         "want_hz": 0.0,
+         "threshold": 19.09722222222222,
+         "novelty": 1.1102230246251565e-16,
+         "topic": "yak"
+        },
+        "m_moose": {
+         "curious": false,
+         "want_hz": 0.0,
+         "threshold": 19.09722222222222,
+         "novelty": 0.0,
+         "topic": "moose"
+        },
+        "m_goat": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9755394165809498,
+         "topic": "goat"
+        },
+        "u_toad_1": {
+         "curious": true,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.977236050454149,
+         "topic": "toad"
+        },
+        "u_toad_4": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.977236050454149,
+         "topic": "toad"
+        }
+       }
+      }
+     },
+     "moat_rate_decides": false,
+     "lesions": {
+      "lesion_curiosity": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "g_eel": true,
+        "g_crab": true,
+        "g_newt": false,
+        "lp_ibex_1": false,
+        "u_toad_1": false
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "ask_rate_gap": 0.0,
+        "ask_rate_moat": 0.0,
+        "discriminates": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      },
+      "lesion_graded": {
+       "present": true,
+       "repeat_present": true,
+       "scored_labels_dropped_A4": [
+        "m_goat"
+       ],
+       "differs": {
+        "m_yak": true,
+        "m_moose": false
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "ask_rate_gap": 0.6666666666666666,
+        "ask_rate_moat": 0.5,
+        "discriminates": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "ask_rate_gap": 0.3333333333333333,
+      "ask_rate_moat": 0.5,
+      "discriminates": false,
+      "lp_learnable": false,
+      "lp_unlearnable": false,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "all": false,
+      "n_moats_defined": 2,
+      "moats_undefined": [
+       "g_newt"
+      ],
+      "moat_rate_defined": true,
+      "moat_undefined_decides": false,
+      "moat_items": {
+       "g_eel": {
+        "topic": "eel",
+        "teach_acquired": true,
+        "asked": false,
+        "counted": true
+       },
+       "g_crab": {
+        "topic": "crab",
+        "teach_acquired": true,
+        "asked": true,
+        "counted": true
+       },
+       "g_newt": {
+        "topic": "newt",
+        "teach_acquired": false,
+        "asked": false,
+        "counted": false
+       }
+      },
+      "asked_by_label": {
+       "m_yak": true,
+       "m_moose": false,
+       "m_goat": false,
+       "g_eel": false,
+       "g_crab": true,
+       "g_newt": false,
+       "lp_ibex_1": false,
+       "lp_ibex_2": false,
+       "u_toad_1": false,
+       "u_toad_2": false,
+       "u_toad_3": false,
+       "u_toad_4": false
+      },
+      "curiosity_internal": {
+       "m_yak": {
+        "curious": true,
+        "want_hz": 38.19444444444444,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9560823047822471,
+        "topic": "yak"
+       },
+       "m_moose": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9847779907584311,
+        "topic": "moose"
+       },
+       "m_goat": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9861276095481406,
+        "topic": "goat"
+       },
+       "g_eel": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 1.1102230246251565e-16,
+        "topic": "eel"
+       },
+       "g_crab": {
+        "curious": true,
+        "want_hz": 38.19444444444444,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9643877687741784,
+        "topic": "crab"
+       },
+       "g_newt": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 2.220446049250313e-16,
+        "topic": "newt"
+       },
+       "u_toad_1": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9727644463464793,
+        "topic": "toad"
+       },
+       "u_toad_4": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9727644463464793,
+        "topic": "toad"
+       }
+      }
+     },
+     "tracks": false,
+     "informational": {
+      "da_lesion": {
+       "lesion_held": true,
+       "n_da_traces": 11,
+       "not_held_on": [],
+       "status": "held",
+       "ask_rate_gap": 1.0,
+       "ask_rate_moat": 0.0,
+       "discriminates": true,
+       "lp_learnable": true,
+       "lp_unlearnable": false,
+       "all": false,
+       "moats_undefined": [
+        "m_goat"
+       ],
+       "asked_by_label": {
+        "g_eel": true,
+        "g_crab": true,
+        "g_newt": true,
+        "m_yak": false,
+        "m_moose": false,
+        "m_goat": true,
+        "lp_ibex_1": true,
+        "lp_ibex_2": false,
+        "u_toad_1": true,
+        "u_toad_2": true,
+        "u_toad_3": true,
+        "u_toad_4": true
+       }
+      }
+     }
+    },
+    "102": {
+     "seed": 102,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "ask_rate_gap": 0.3333333333333333,
+      "ask_rate_moat": 0.0,
+      "discriminates": false,
+      "lp_learnable": false,
+      "lp_unlearnable": false,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "all": false,
+      "n_moats_defined": 2,
+      "moats_undefined": [
+       "m_goat"
+      ],
+      "moat_rate_defined": true,
+      "moat_undefined_decides": false,
+      "moat_items": {
+       "m_yak": {
+        "topic": "yak",
+        "teach_acquired": true,
+        "asked": false,
+        "counted": true
+       },
+       "m_moose": {
+        "topic": "moose",
+        "teach_acquired": true,
+        "asked": false,
+        "counted": true
+       },
+       "m_goat": {
+        "topic": "goat",
+        "teach_acquired": false,
+        "asked": false,
+        "counted": false
+       }
+      },
+      "asked_by_label": {
+       "g_eel": true,
+       "g_crab": false,
+       "g_newt": false,
+       "m_yak": false,
+       "m_moose": false,
+       "m_goat": false,
+       "lp_ibex_1": false,
+       "lp_ibex_2": false,
+       "u_toad_1": false,
+       "u_toad_2": false,
+       "u_toad_3": false,
+       "u_toad_4": false
+      },
+      "curiosity_internal": {
+       "g_eel": {
+        "curious": true,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9782789405385334,
+        "topic": "eel"
+       },
+       "g_crab": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9688947935387985,
+        "topic": "crab"
+       },
+       "g_newt": {
+        "curious": false,
+        "want_hz": 38.19444444444444,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9631081226636948,
+        "topic": "newt"
+       },
+       "m_yak": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 2.220446049250313e-16,
+        "topic": "yak"
+       },
+       "m_moose": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 0.0,
+        "topic": "moose"
+       },
+       "m_goat": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9759988325698966,
+        "topic": "goat"
+       },
+       "u_toad_1": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9713900052610371,
+        "topic": "toad"
+       },
+       "u_toad_4": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9713900052610371,
+        "topic": "toad"
+       }
+      }
+     },
+     "correct": false,
+     "correct_by_order": {
+      "registered": false,
+      "reversed": false
+     },
+     "orders": {
+      "reversed": {
+       "ask_rate_gap": 0.0,
+       "ask_rate_moat": 0.0,
+       "discriminates": false,
+       "lp_learnable": false,
+       "lp_unlearnable": true,
+       "all_gaps_abstain": true,
+       "builtin_dog_cat": true,
+       "all": false,
+       "n_moats_defined": 2,
+       "moats_undefined": [
+        "m_goat"
+       ],
+       "moat_rate_defined": true,
+       "moat_undefined_decides": false,
+       "moat_items": {
+        "m_yak": {
+         "topic": "yak",
+         "teach_acquired": true,
+         "asked": false,
+         "counted": true
+        },
+        "m_moose": {
+         "topic": "moose",
+         "teach_acquired": true,
+         "asked": false,
+         "counted": true
+        },
+        "m_goat": {
+         "topic": "goat",
+         "teach_acquired": false,
+         "asked": false,
+         "counted": false
+        }
+       },
+       "asked_by_label": {
+        "g_eel": false,
+        "g_crab": false,
+        "g_newt": false,
+        "m_yak": false,
+        "m_moose": false,
+        "m_goat": false,
+        "lp_ibex_1": false,
+        "lp_ibex_2": false,
+        "u_toad_1": true,
+        "u_toad_2": false,
+        "u_toad_3": false,
+        "u_toad_4": false
+       },
+       "curiosity_internal": {
+        "g_eel": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9760601232005107,
+         "topic": "eel"
+        },
+        "g_crab": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9681777469000133,
+         "topic": "crab"
+        },
+        "g_newt": {
+         "curious": false,
+         "want_hz": 38.19444444444444,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9597592111635622,
+         "topic": "newt"
+        },
+        "m_yak": {
+         "curious": false,
+         "want_hz": 0.0,
+         "threshold": 19.09722222222222,
+         "novelty": 1.1102230246251565e-16,
+         "topic": "yak"
+        },
+        "m_moose": {
+         "curious": false,
+         "want_hz": 0.0,
+         "threshold": 19.09722222222222,
+         "novelty": 0.0,
+         "topic": "moose"
+        },
+        "m_goat": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.9755394165809498,
+         "topic": "goat"
+        },
+        "u_toad_1": {
+         "curious": true,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.977236050454149,
+         "topic": "toad"
+        },
+        "u_toad_4": {
+         "curious": false,
+         "want_hz": 38.88888888888888,
+         "threshold": 19.09722222222222,
+         "novelty": 0.977236050454149,
+         "topic": "toad"
+        }
+       }
+      }
+     },
+     "moat_rate_decides": false,
+     "lesions": {
+      "lesion_curiosity": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "g_eel": true,
+        "g_crab": false,
+        "g_newt": false,
+        "lp_ibex_1": false,
+        "u_toad_1": false
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "ask_rate_gap": 0.0,
+        "ask_rate_moat": 0.0,
+        "discriminates": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      },
+      "lesion_graded": {
+       "present": true,
+       "repeat_present": true,
+       "scored_labels_dropped_A4": [
+        "m_goat"
+       ],
+       "differs": {
+        "m_yak": true,
+        "m_moose": false
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "ask_rate_gap": 0.3333333333333333,
+        "ask_rate_moat": 0.5,
+        "discriminates": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "ask_rate_gap": 0.3333333333333333,
+      "ask_rate_moat": 0.0,
+      "discriminates": false,
+      "lp_learnable": false,
+      "lp_unlearnable": false,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "all": false,
+      "n_moats_defined": 2,
+      "moats_undefined": [
+       "g_newt"
+      ],
+      "moat_rate_defined": true,
+      "moat_undefined_decides": false,
+      "moat_items": {
+       "g_eel": {
+        "topic": "eel",
+        "teach_acquired": true,
+        "asked": false,
+        "counted": true
+       },
+       "g_crab": {
+        "topic": "crab",
+        "teach_acquired": true,
+        "asked": false,
+        "counted": true
+       },
+       "g_newt": {
+        "topic": "newt",
+        "teach_acquired": false,
+        "asked": false,
+        "counted": false
+       }
+      },
+      "asked_by_label": {
+       "m_yak": true,
+       "m_moose": false,
+       "m_goat": false,
+       "g_eel": false,
+       "g_crab": false,
+       "g_newt": false,
+       "lp_ibex_1": false,
+       "lp_ibex_2": false,
+       "u_toad_1": false,
+       "u_toad_2": false,
+       "u_toad_3": false,
+       "u_toad_4": false
+      },
+      "curiosity_internal": {
+       "m_yak": {
+        "curious": true,
+        "want_hz": 38.19444444444444,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9560823047822471,
+        "topic": "yak"
+       },
+       "m_moose": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9847779907584311,
+        "topic": "moose"
+       },
+       "m_goat": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9861276095481406,
+        "topic": "goat"
+       },
+       "g_eel": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 1.1102230246251565e-16,
+        "topic": "eel"
+       },
+       "g_crab": {
+        "curious": false,
+        "want_hz": 38.19444444444444,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9643877687741784,
+        "topic": "crab"
+       },
+       "g_newt": {
+        "curious": false,
+        "want_hz": 0.0,
+        "threshold": 19.09722222222222,
+        "novelty": 2.220446049250313e-16,
+        "topic": "newt"
+       },
+       "u_toad_1": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9727644463464793,
+        "topic": "toad"
+       },
+       "u_toad_4": {
+        "curious": false,
+        "want_hz": 38.88888888888888,
+        "threshold": 19.09722222222222,
+        "novelty": 0.9727644463464793,
+        "topic": "toad"
+       }
+      }
+     },
+     "tracks": false,
+     "informational": {
+      "da_lesion": {
+       "lesion_held": true,
+       "n_da_traces": 11,
+       "not_held_on": [],
+       "status": "held",
+       "ask_rate_gap": 1.0,
+       "ask_rate_moat": 0.0,
+       "discriminates": true,
+       "lp_learnable": true,
+       "lp_unlearnable": false,
+       "all": false,
+       "moats_undefined": [
+        "m_goat"
+       ],
+       "asked_by_label": {
+        "g_eel": true,
+        "g_crab": true,
+        "g_newt": true,
+        "m_yak": false,
+        "m_moose": false,
+        "m_goat": true,
+        "lp_ibex_1": true,
+        "lp_ibex_2": false,
+        "u_toad_1": true,
+        "u_toad_2": true,
+        "u_toad_3": true,
+        "u_toad_4": true
+       }
+      }
+     }
+    }
+   },
+   "n_correct_by_order": {
+    "registered": 0,
+    "reversed": 0
+   },
+   "named_gaps": [],
+   "known_architecture_gaps": [
+    "global DA engagement threshold",
+    "no per-topic learning-progress signal"
+   ]
+  },
+  "emo": {
+   "criterion": "C4",
+   "primary": true,
+   "verdict": "FAIL",
+   "why": [
+    "capability absent on 1 of 6 seeds"
+   ],
+   "n_defined": 6,
+   "n_correct": 5,
+   "n_lesion_effect": {
+    "lesion_affect": 5
+   },
+   "n_reproduced": {
+    "lesion_affect": 6
+   },
+   "n_permuted_tracks": 5,
+   "sub_clauses_n_true": {
+    "sign_correct_all": 0
+   },
+   "seeds": {
+    "42": {
+     "seed": 42,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "named": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "want": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "positive",
+       "fear": "neutral",
+       "anger": "negative",
+       "sadness": "negative"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.039,
+       "fear": -0.021,
+       "anger": -0.05,
+       "sadness": -0.037
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": true,
+       "fear": false,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "feel_joy": true,
+        "feel_fear": true,
+        "feel_anger": true,
+        "feel_sadness": true
+       },
+       "effect": true,
+       "reply_effect": true,
+       "category_changed": {
+        "joy": true,
+        "fear": true,
+        "anger": true,
+        "sadness": true
+       },
+       "attributable": 1.0,
+       "lesion_score": {
+        "correct_each": {
+         "joy": false,
+         "fear": false,
+         "anger": false,
+         "sadness": false
+        },
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "named": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "want": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "neutral",
+       "fear": "negative",
+       "anger": "negative",
+       "sadness": "positive"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.0,
+       "fear": -0.037,
+       "anger": -0.037,
+       "sadness": 0.05
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": false,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "43": {
+     "seed": 43,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "named": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "want": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "positive",
+       "fear": "neutral",
+       "anger": "negative",
+       "sadness": "negative"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.038,
+       "fear": -0.022,
+       "anger": -0.049,
+       "sadness": -0.036
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": true,
+       "fear": false,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "feel_joy": true,
+        "feel_fear": true,
+        "feel_anger": true,
+        "feel_sadness": true
+       },
+       "effect": true,
+       "reply_effect": true,
+       "category_changed": {
+        "joy": true,
+        "fear": true,
+        "anger": true,
+        "sadness": true
+       },
+       "attributable": 1.0,
+       "lesion_score": {
+        "correct_each": {
+         "joy": false,
+         "fear": false,
+         "anger": false,
+         "sadness": false
+        },
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "named": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "want": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "neutral",
+       "fear": "negative",
+       "anger": "negative",
+       "sadness": "positive"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.0,
+       "fear": -0.039,
+       "anger": -0.037,
+       "sadness": 0.051
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": false,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "44": {
+     "seed": 44,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "named": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "want": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "positive",
+       "fear": "neutral",
+       "anger": "negative",
+       "sadness": "negative"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.04,
+       "fear": -0.027,
+       "anger": -0.057,
+       "sadness": -0.058
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": true,
+       "fear": false,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "feel_joy": true,
+        "feel_fear": true,
+        "feel_anger": true,
+        "feel_sadness": true
+       },
+       "effect": true,
+       "reply_effect": true,
+       "category_changed": {
+        "joy": true,
+        "fear": true,
+        "anger": true,
+        "sadness": true
+       },
+       "attributable": 1.0,
+       "lesion_score": {
+        "correct_each": {
+         "joy": false,
+         "fear": false,
+         "anger": false,
+         "sadness": false
+        },
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "named": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "want": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "neutral",
+       "fear": "negative",
+       "anger": "negative",
+       "sadness": "positive"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.0,
+       "fear": -0.058,
+       "anger": -0.058,
+       "sadness": 0.052
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": false,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "100": {
+     "seed": 100,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "named": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "want": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "positive",
+       "fear": "neutral",
+       "anger": "negative",
+       "sadness": "negative"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.041,
+       "fear": -0.018,
+       "anger": -0.048,
+       "sadness": -0.049
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": true,
+       "fear": false,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "feel_joy": true,
+        "feel_fear": true,
+        "feel_anger": true,
+        "feel_sadness": true
+       },
+       "effect": true,
+       "reply_effect": true,
+       "category_changed": {
+        "joy": true,
+        "fear": true,
+        "anger": true,
+        "sadness": true
+       },
+       "attributable": 1.0,
+       "lesion_score": {
+        "correct_each": {
+         "joy": false,
+         "fear": false,
+         "anger": false,
+         "sadness": false
+        },
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "named": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "want": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "neutral",
+       "fear": "negative",
+       "anger": "negative",
+       "sadness": "positive"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.0,
+       "fear": -0.035,
+       "anger": -0.049,
+       "sadness": 0.04
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": false,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "tracks": true,
+     "informational": {}
+    },
+    "101": {
+     "seed": 101,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "named": {
+       "joy": null,
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "want": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "correct_each": {
+       "joy": false,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 3,
+      "signs": {
+       "joy": "positive",
+       "fear": "neutral",
+       "anger": "negative",
+       "sadness": "negative"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.036,
+       "fear": -0.024,
+       "anger": -0.041,
+       "sadness": -0.04
+      },
+      "all": false,
+      "sign_correct": {
+       "joy": true,
+       "fear": false,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "correct": false,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "feel_joy": true,
+        "feel_fear": true,
+        "feel_anger": true,
+        "feel_sadness": true
+       },
+       "effect": false,
+       "reply_effect": true,
+       "category_changed": {
+        "joy": false,
+        "fear": true,
+        "anger": true,
+        "sadness": true
+       },
+       "attributable": 1.0,
+       "lesion_score": {
+        "correct_each": {
+         "joy": false,
+         "fear": false,
+         "anger": false,
+         "sadness": false
+        },
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "named": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": null
+      },
+      "want": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": false
+      },
+      "n_distinct_named": 3,
+      "signs": {
+       "joy": "neutral",
+       "fear": "negative",
+       "anger": "negative",
+       "sadness": "positive"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.0,
+       "fear": -0.041,
+       "anger": -0.041,
+       "sadness": 0.049
+      },
+      "all": false,
+      "sign_correct": {
+       "joy": false,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "tracks": null,
+     "informational": {}
+    },
+    "102": {
+     "seed": 102,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "named": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "want": {
+       "joy": "joy",
+       "fear": "fear",
+       "anger": "anger",
+       "sadness": "sadness"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "positive",
+       "fear": "neutral",
+       "anger": "negative",
+       "sadness": "negative"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.038,
+       "fear": -0.001,
+       "anger": -0.049,
+       "sadness": -0.037
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": true,
+       "fear": false,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_affect": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "feel_joy": true,
+        "feel_fear": true,
+        "feel_anger": true,
+        "feel_sadness": true
+       },
+       "effect": true,
+       "reply_effect": true,
+       "category_changed": {
+        "joy": true,
+        "fear": true,
+        "anger": true,
+        "sadness": true
+       },
+       "attributable": 1.0,
+       "lesion_score": {
+        "correct_each": {
+         "joy": false,
+         "fear": false,
+         "anger": false,
+         "sadness": false
+        },
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "named": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "want": {
+       "joy": "sadness",
+       "fear": "anger",
+       "anger": "fear",
+       "sadness": "joy"
+      },
+      "correct_each": {
+       "joy": true,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "n_distinct_named": 4,
+      "signs": {
+       "joy": "neutral",
+       "fear": "negative",
+       "anger": "negative",
+       "sadness": "positive"
+      },
+      "arousal": {
+       "joy": "moderate",
+       "fear": "high",
+       "anger": "high",
+       "sadness": "high"
+      },
+      "differentials": {
+       "joy": 0.0,
+       "fear": -0.036,
+       "anger": -0.051,
+       "sadness": 0.051
+      },
+      "all": true,
+      "sign_correct": {
+       "joy": false,
+       "fear": true,
+       "anger": true,
+       "sadness": true
+      },
+      "sign_correct_all": false,
+      "n_distinct_2d": 3,
+      "n_parsed": 4
+     },
+     "tracks": true,
+     "informational": {}
+    }
+   },
+   "n_correct_by_order": {},
+   "named_gaps": [],
+   "known_architecture_gaps": []
+  },
+  "inner": {
+   "criterion": "C5",
+   "primary": true,
+   "verdict": "PASS",
+   "why": [],
+   "n_defined": 6,
+   "n_correct": 6,
+   "n_lesion_effect": {
+    "lesion_workspace": 6,
+    "lesion_selfinit": 6
+   },
+   "n_reproduced": {
+    "lesion_workspace": 6,
+    "lesion_selfinit": 6
+   },
+   "n_permuted_tracks": 6,
+   "sub_clauses_n_true": {
+    "private_voices_stored_fact": 6,
+    "inner_terminal_lynx": 6,
+    "chain_hops_internal_ge2": 6,
+    "private_selected_by_state": 6
+   },
+   "seeds": {
+    "42": {
+     "seed": 42,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "private_voices_stored_fact": true,
+      "private_utterance": [
+       "beetle",
+       "chase",
+       "mite"
+      ],
+      "private_internal_n_utt": 1,
+      "inner_terminal_lynx": true,
+      "inner_terminal_vole": true,
+      "single_hop": true,
+      "moat_tail": true,
+      "other_tail_terminal": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "chain_internal_vole": {
+       "cycles": 3,
+       "resolved_hops": 2,
+       "terminal": "mite",
+       "reason": "chain_terminal"
+      },
+      "chain_internal": {
+       "cycles": 4,
+       "resolved_hops": 3,
+       "terminal": "mite",
+       "reason": "chain_terminal"
+      },
+      "chain_hops_internal_ge2": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_workspace": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_chase_all": true,
+        "p_chase_all_vole": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "private_voices_stored_fact": true,
+        "inner_terminal_lynx": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      },
+      "lesion_selfinit": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_private": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "private_voices_stored_fact": false,
+        "inner_terminal_lynx": true,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "private_voices_stored_fact": true,
+      "private_utterance": [
+       "vole",
+       "chase",
+       "beetle"
+      ],
+      "private_internal_n_utt": 1,
+      "inner_terminal_lynx": true,
+      "inner_terminal_vole": true,
+      "single_hop": true,
+      "moat_tail": true,
+      "other_tail_terminal": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "chain_internal_vole": {
+       "cycles": 2,
+       "resolved_hops": 1,
+       "terminal": "beetle",
+       "reason": "chain_terminal"
+      },
+      "chain_internal": {
+       "cycles": 4,
+       "resolved_hops": 3,
+       "terminal": "beetle",
+       "reason": "chain_terminal"
+      },
+      "chain_hops_internal_ge2": true
+     },
+     "private_selected_by_state": true,
+     "tracks": true,
+     "informational": {}
+    },
+    "43": {
+     "seed": 43,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "private_voices_stored_fact": true,
+      "private_utterance": [
+       "beetle",
+       "chase",
+       "mite"
+      ],
+      "private_internal_n_utt": 1,
+      "inner_terminal_lynx": true,
+      "inner_terminal_vole": true,
+      "single_hop": true,
+      "moat_tail": true,
+      "other_tail_terminal": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "chain_internal_vole": {
+       "cycles": 3,
+       "resolved_hops": 2,
+       "terminal": "mite",
+       "reason": "chain_terminal"
+      },
+      "chain_internal": {
+       "cycles": 4,
+       "resolved_hops": 3,
+       "terminal": "mite",
+       "reason": "chain_terminal"
+      },
+      "chain_hops_internal_ge2": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_workspace": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_chase_all": true,
+        "p_chase_all_vole": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "private_voices_stored_fact": true,
+        "inner_terminal_lynx": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      },
+      "lesion_selfinit": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_private": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "private_voices_stored_fact": false,
+        "inner_terminal_lynx": true,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "private_voices_stored_fact": true,
+      "private_utterance": [
+       "vole",
+       "chase",
+       "beetle"
+      ],
+      "private_internal_n_utt": 1,
+      "inner_terminal_lynx": true,
+      "inner_terminal_vole": true,
+      "single_hop": true,
+      "moat_tail": true,
+      "other_tail_terminal": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "chain_internal_vole": {
+       "cycles": 2,
+       "resolved_hops": 1,
+       "terminal": "beetle",
+       "reason": "chain_terminal"
+      },
+      "chain_internal": {
+       "cycles": 4,
+       "resolved_hops": 3,
+       "terminal": "beetle",
+       "reason": "chain_terminal"
+      },
+      "chain_hops_internal_ge2": true
+     },
+     "private_selected_by_state": true,
+     "tracks": true,
+     "informational": {}
+    },
+    "44": {
+     "seed": 44,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "private_voices_stored_fact": true,
+      "private_utterance": [
+       "beetle",
+       "chase",
+       "mite"
+      ],
+      "private_internal_n_utt": 1,
+      "inner_terminal_lynx": true,
+      "inner_terminal_vole": true,
+      "single_hop": true,
+      "moat_tail": true,
+      "other_tail_terminal": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "chain_internal_vole": {
+       "cycles": 3,
+       "resolved_hops": 2,
+       "terminal": "mite",
+       "reason": "chain_terminal"
+      },
+      "chain_internal": {
+       "cycles": 4,
+       "resolved_hops": 3,
+       "terminal": "mite",
+       "reason": "chain_terminal"
+      },
+      "chain_hops_internal_ge2": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_workspace": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_chase_all": true,
+        "p_chase_all_vole": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "private_voices_stored_fact": true,
+        "inner_terminal_lynx": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      },
+      "lesion_selfinit": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_private": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "private_voices_stored_fact": false,
+        "inner_terminal_lynx": true,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "private_voices_stored_fact": true,
+      "private_utterance": [
+       "vole",
+       "chase",
+       "beetle"
+      ],
+      "private_internal_n_utt": 1,
+      "inner_terminal_lynx": true,
+      "inner_terminal_vole": true,
+      "single_hop": true,
+      "moat_tail": true,
+      "other_tail_terminal": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "chain_internal_vole": {
+       "cycles": 2,
+       "resolved_hops": 1,
+       "terminal": "beetle",
+       "reason": "chain_terminal"
+      },
+      "chain_internal": {
+       "cycles": 4,
+       "resolved_hops": 3,
+       "terminal": "beetle",
+       "reason": "chain_terminal"
+      },
+      "chain_hops_internal_ge2": true
+     },
+     "private_selected_by_state": true,
+     "tracks": true,
+     "informational": {}
+    },
+    "100": {
+     "seed": 100,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "private_voices_stored_fact": true,
+      "private_utterance": [
+       "beetle",
+       "chase",
+       "mite"
+      ],
+      "private_internal_n_utt": 1,
+      "inner_terminal_lynx": true,
+      "inner_terminal_vole": true,
+      "single_hop": true,
+      "moat_tail": true,
+      "other_tail_terminal": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "chain_internal_vole": {
+       "cycles": 3,
+       "resolved_hops": 2,
+       "terminal": "mite",
+       "reason": "chain_terminal"
+      },
+      "chain_internal": {
+       "cycles": 4,
+       "resolved_hops": 3,
+       "terminal": "mite",
+       "reason": "chain_terminal"
+      },
+      "chain_hops_internal_ge2": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_workspace": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_chase_all": true,
+        "p_chase_all_vole": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "private_voices_stored_fact": true,
+        "inner_terminal_lynx": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      },
+      "lesion_selfinit": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_private": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "private_voices_stored_fact": false,
+        "inner_terminal_lynx": true,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "private_voices_stored_fact": true,
+      "private_utterance": [
+       "vole",
+       "chase",
+       "beetle"
+      ],
+      "private_internal_n_utt": 1,
+      "inner_terminal_lynx": true,
+      "inner_terminal_vole": true,
+      "single_hop": true,
+      "moat_tail": true,
+      "other_tail_terminal": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "chain_internal_vole": {
+       "cycles": 2,
+       "resolved_hops": 1,
+       "terminal": "beetle",
+       "reason": "chain_terminal"
+      },
+      "chain_internal": {
+       "cycles": 4,
+       "resolved_hops": 3,
+       "terminal": "beetle",
+       "reason": "chain_terminal"
+      },
+      "chain_hops_internal_ge2": true
+     },
+     "private_selected_by_state": true,
+     "tracks": true,
+     "informational": {}
+    },
+    "101": {
+     "seed": 101,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "private_voices_stored_fact": true,
+      "private_utterance": [
+       "beetle",
+       "chase",
+       "mite"
+      ],
+      "private_internal_n_utt": 1,
+      "inner_terminal_lynx": true,
+      "inner_terminal_vole": true,
+      "single_hop": true,
+      "moat_tail": true,
+      "other_tail_terminal": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "chain_internal_vole": {
+       "cycles": 3,
+       "resolved_hops": 2,
+       "terminal": "mite",
+       "reason": "chain_terminal"
+      },
+      "chain_internal": {
+       "cycles": 4,
+       "resolved_hops": 3,
+       "terminal": "mite",
+       "reason": "chain_terminal"
+      },
+      "chain_hops_internal_ge2": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_workspace": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_chase_all": true,
+        "p_chase_all_vole": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "private_voices_stored_fact": true,
+        "inner_terminal_lynx": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      },
+      "lesion_selfinit": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_private": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "private_voices_stored_fact": false,
+        "inner_terminal_lynx": true,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "private_voices_stored_fact": true,
+      "private_utterance": [
+       "vole",
+       "chase",
+       "beetle"
+      ],
+      "private_internal_n_utt": 1,
+      "inner_terminal_lynx": true,
+      "inner_terminal_vole": true,
+      "single_hop": true,
+      "moat_tail": true,
+      "other_tail_terminal": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "chain_internal_vole": {
+       "cycles": 2,
+       "resolved_hops": 1,
+       "terminal": "beetle",
+       "reason": "chain_terminal"
+      },
+      "chain_internal": {
+       "cycles": 4,
+       "resolved_hops": 3,
+       "terminal": "beetle",
+       "reason": "chain_terminal"
+      },
+      "chain_hops_internal_ge2": true
+     },
+     "private_selected_by_state": true,
+     "tracks": true,
+     "informational": {}
+    },
+    "102": {
+     "seed": 102,
+     "undefined_reasons": [],
+     "null_clean": true,
+     "null_diffs": [],
+     "sources": [
+      "tiny-demo +LTM"
+     ],
+     "ltm_bundles": [
+      "wikidata_100k"
+     ],
+     "intact": {
+      "private_voices_stored_fact": true,
+      "private_utterance": [
+       "beetle",
+       "chase",
+       "mite"
+      ],
+      "private_internal_n_utt": 1,
+      "inner_terminal_lynx": true,
+      "inner_terminal_vole": true,
+      "single_hop": true,
+      "moat_tail": true,
+      "other_tail_terminal": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "chain_internal_vole": {
+       "cycles": 3,
+       "resolved_hops": 2,
+       "terminal": "mite",
+       "reason": "chain_terminal"
+      },
+      "chain_internal": {
+       "cycles": 4,
+       "resolved_hops": 3,
+       "terminal": "mite",
+       "reason": "chain_terminal"
+      },
+      "chain_hops_internal_ge2": true
+     },
+     "correct": true,
+     "lesions": {
+      "lesion_workspace": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_chase_all": true,
+        "p_chase_all_vole": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "private_voices_stored_fact": true,
+        "inner_terminal_lynx": false,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      },
+      "lesion_selfinit": {
+       "present": true,
+       "repeat_present": true,
+       "differs": {
+        "p_private": true
+       },
+       "effect": true,
+       "attributable": 1.0,
+       "lesion_score": {
+        "private_voices_stored_fact": false,
+        "inner_terminal_lynx": true,
+        "all": false
+       },
+       "reproduced": true,
+       "applied": true
+      }
+     },
+     "permuted": {
+      "private_voices_stored_fact": true,
+      "private_utterance": [
+       "vole",
+       "chase",
+       "beetle"
+      ],
+      "private_internal_n_utt": 1,
+      "inner_terminal_lynx": true,
+      "inner_terminal_vole": true,
+      "single_hop": true,
+      "moat_tail": true,
+      "other_tail_terminal": true,
+      "builtin_dog_cat": true,
+      "all": true,
+      "chain_internal_vole": {
+       "cycles": 2,
+       "resolved_hops": 1,
+       "terminal": "beetle",
+       "reason": "chain_terminal"
+      },
+      "chain_internal": {
+       "cycles": 4,
+       "resolved_hops": 3,
+       "terminal": "beetle",
+       "reason": "chain_terminal"
+      },
+      "chain_hops_internal_ge2": true
+     },
+     "private_selected_by_state": true,
+     "tracks": true,
+     "informational": {}
+    }
+   },
+   "n_correct_by_order": {},
+   "named_gaps": [],
+   "known_architecture_gaps": []
+  }
+ },
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "missing_shards": [],
+ "bars": {
+  "ask_ratio": 2.0,
+  "ask_gap_floor": 0.6666666666666666,
+  "seeds_required": 6,
+  "emotion_categories": 4
+ },
+ "runner": "research/runners/stage2_exit_gate.py",
+ "prereg": "research/findings/2026-09-30-stage2-exit-gate-PREREGISTRATION.md",
+ "expected_source": "tiny-demo +LTM"
+}
