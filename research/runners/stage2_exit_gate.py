@@ -1660,6 +1660,45 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
             "runner": "research/runners/stage2_exit_gate.py", "prereg": PREREG, "expected_source": EXPECTED_SOURCE}
 
 
+KB_SUMMARY_ARMS = ("intact_a", "kb_scramble", "kb_scramble_spiking_control")
+
+
+def kb_scramble_summary(seed_dirs):
+    """The saved aggregate of a DIAGNOSTIC kb_scramble run (dev seeds, shards kept outside the repo): for each seed, the
+    three arms' probe-turn fields (`answer`, `abstained`, `derived`, `derived_svo`, `derived_from`, `recalled_svo`) for
+    every probe/control turn, the engagement record, `kb_scramble_read` per kb arm (what the conclusion follows, the
+    route's own list reads, the spiking reads, which turns changed against intact_a) and the shard identity (sha256, wall
+    seconds, peak RSS, corpus present, sources). `seed_dirs` = {seed: directory holding infer__<arm>.json}. A missing
+    arm shard is recorded as absent, never filled."""
+    import hashlib
+    out = {"runner": "research/runners/stage2_exit_gate.py --kb-summary", "group": "infer", "kind": "diagnostic (dev seeds)",
+           "arms": list(KB_SUMMARY_ARMS), "seeds": {}}
+    for seed, d in sorted(seed_dirs.items()):
+        shards, ident = {}, {}
+        for arm in KB_SUMMARY_ARMS:
+            path = os.path.join(d, "infer__%s.json" % arm)
+            if not os.path.exists(path):
+                ident[arm] = None
+                continue
+            raw = open(path, "rb").read()
+            shards[arm] = json.loads(raw)
+            sh = shards[arm]
+            ident[arm] = {"sha256": hashlib.sha256(raw).hexdigest(), "seed": sh.get("seed"), "wall_s": sh.get("wall_s"),
+                          "peak_rss_mb": (sh.get("process") or {}).get("peak_rss_mb"),
+                          "corpus_present": sh.get("corpus_present"), "sources": sh.get("sources")}
+        row = {"shards": ident, "turns": {}, "reads": {}}
+        probe_labels = [t["label"] for t in (shards.get("intact_a") or shards.get("kb_scramble") or {}).get("turns", [])]
+        for arm, sh in shards.items():
+            row["turns"][arm] = {l: _scr_fields((sh.get("responses") or {}).get(l)) for l in probe_labels}
+        for arm in ("kb_scramble", "kb_scramble_spiking_control"):
+            if arm in shards:
+                rd = kb_scramble_read(shards[arm], intact=shards.get("intact_a"))
+                rd.pop("probe", None)
+                row["reads"][arm] = rd
+        out["seeds"][str(seed)] = row
+    return out
+
+
 def report(agg):
     lines = ["**Stage-2 exit verdict: %s** (primary criteria: %s)" % (
         agg["verdict"], ", ".join("%s %s" % (k, v) for k, v in agg["criteria"].items())), "",
@@ -2024,7 +2063,21 @@ def main():
     ap.add_argument("--allow-gate-seed", action="store_true",
                     help="required to run a GATE seed (42/43/44/100/101/102); dev seeds need nothing")
     ap.add_argument("--no-informational", action="store_true", help="emit/aggregate without the informational arms")
+    ap.add_argument("--kb-summary", default=None, metavar="SEED=DIR[,SEED=DIR...]",
+                    help="save the aggregate of a DIAGNOSTIC kb_scramble run (dev seeds) to --out")
     a = ap.parse_args()
+    if a.kb_summary:
+        if not a.out:
+            ap.error("--kb-summary needs --out")
+        dirs = {int(kv.split("=", 1)[0]): kv.split("=", 1)[1] for kv in a.kb_summary.split(",")}
+        if any(sd in GATE_SEEDS for sd in dirs):
+            ap.error("--kb-summary is for dev seeds only")
+        res = kb_scramble_summary(dirs)
+        os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
+        with open(a.out, "w") as f:
+            json.dump(res, f, indent=1, default=str)
+        print("-> %s" % a.out)
+        return
     if a.selftest:
         ok, _ = selftest()
         sys.exit(0 if ok else 1)

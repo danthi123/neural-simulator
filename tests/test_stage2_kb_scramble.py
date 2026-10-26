@@ -344,3 +344,23 @@ def test_aggregate_reports_the_kb_arms_as_informational_and_never_in_the_verdict
     rep = SG.report(agg)
     assert "C2 host-ownership intervention" in rep and "conclusion follows: scrambled list" in rep
     assert "conclusion follows: bound vectors" in rep
+
+
+def test_kb_summary_saves_the_probe_fields_the_engagement_and_the_follow_read(fake_worker, tmp_path):
+    d = tmp_path / "shards"
+    d.mkdir()
+    for arm in SG.KB_SUMMARY_ARMS:
+        shard, _ = fake_worker(arm)
+        json.dump(shard, open(str(d / ("infer__%s.json" % arm)), "w"))
+    res = SG.kb_scramble_summary({7: str(d)})
+    row = res["seeds"]["7"]
+    assert set(row["turns"]) == set(SG.KB_SUMMARY_ARMS) and row["shards"]["intact_a"]["sha256"]
+    assert row["turns"]["intact_a"]["p_prey_eat"]["derived_svo"] == ["frog", "eat", "gnat"]
+    assert row["turns"]["kb_scramble"]["p_prey_eat"]["derived_svo"] == ["frog", "eat", "wren"]
+    assert row["reads"]["kb_scramble"]["follows"] == "scrambled list"
+    assert row["reads"]["kb_scramble_spiking_control"]["follows"] == "bound vectors"
+    assert row["reads"]["kb_scramble"]["n_changed"] == 3 and "p_prey_eat" in row["reads"]["kb_scramble"]["changed_vs_intact"]
+    # a missing arm shard is recorded as absent, never filled in
+    os.remove(str(d / "infer__kb_scramble.json"))
+    row = SG.kb_scramble_summary({7: str(d)})["seeds"]["7"]
+    assert row["shards"]["kb_scramble"] is None and "kb_scramble" not in row["turns"]
