@@ -360,6 +360,11 @@ def test_kb_summary_saves_the_probe_fields_the_engagement_and_the_follow_read(fa
     assert row["reads"]["kb_scramble"]["follows"] == "scrambled list"
     assert row["reads"]["kb_scramble_spiking_control"]["follows"] == "bound vectors"
     assert row["reads"]["kb_scramble"]["n_changed"] == 3 and "p_prey_eat" in row["reads"]["kb_scramble"]["changed_vs_intact"]
+    # the fake composer is not the OneBrainComposer class the wrapper patches, so no spiking read is recorded here; the
+    # structure is what is pinned (teach turns are never listed, intact_a has no instrumentation)
+    assert isinstance(row["spiking_reads_by_turn"]["kb_scramble"], dict) and "intact_a" not in row["spiking_reads_by_turn"]
+    assert not any(l.startswith("t_") for l in row["spiking_reads_by_turn"]["kb_scramble"])
+    assert row["flagged_guesses"]["intact_a"] == {}
     # a missing arm shard is recorded as absent, never filled in
     os.remove(str(d / "infer__kb_scramble.json"))
     row = SG.kb_scramble_summary({7: str(d)})["seeds"]["7"]

@@ -1686,10 +1686,26 @@ def kb_scramble_summary(seed_dirs):
             ident[arm] = {"sha256": hashlib.sha256(raw).hexdigest(), "seed": sh.get("seed"), "wall_s": sh.get("wall_s"),
                           "peak_rss_mb": (sh.get("process") or {}).get("peak_rss_mb"),
                           "corpus_present": sh.get("corpus_present"), "sources": sh.get("sources")}
-        row = {"shards": ident, "turns": {}, "reads": {}}
+        row = {"shards": ident, "turns": {}, "reads": {}, "spiking_reads_by_turn": {}, "flagged_guesses": {}}
         probe_labels = [t["label"] for t in (shards.get("intact_a") or shards.get("kb_scramble") or {}).get("turns", [])]
         for arm, sh in shards.items():
             row["turns"][arm] = {l: _scr_fields((sh.get("responses") or {}).get(l)) for l in probe_labels}
+            ks = sh.get("kb_scramble") or {}
+            nonteach = {t.get("label") for t in (sh.get("turns") or []) if t.get("role") != "teach"}
+            if ks:                        # every OneBrainComposer.query_patient call per non-teach turn (alias lookups included)
+                by = {}
+                for c in ks.get("qp_calls") or []:
+                    if c.get("label") in nonteach:
+                        by.setdefault(c["label"], []).append([c.get("agent"), c.get("action"), c.get("result")])
+                row["spiking_reads_by_turn"][arm] = by
+            guesses = {}
+            for l in probe_labels:        # a reply the front end flagged as a guess, and where its content came from
+                r = (sh.get("responses") or {}).get(l) or {}
+                if r.get("hypothesis"):
+                    guesses[l] = {"hypothesis_svo": r.get("hypothesis_svo"),
+                                  "category_inherit_patient": ((r.get("category_inherit") or {}).get("read") or {}).get("patient"),
+                                  "category_inherit_reason": ((r.get("category_inherit") or {}).get("read") or {}).get("reason")}
+            row["flagged_guesses"][arm] = guesses
         for arm in ("kb_scramble", "kb_scramble_spiking_control"):
             if arm in shards:
                 rd = kb_scramble_read(shards[arm], intact=shards.get("intact_a"))

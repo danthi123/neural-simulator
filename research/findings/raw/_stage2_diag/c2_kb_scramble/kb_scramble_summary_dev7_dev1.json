@@ -1,0 +1,2372 @@
+{
+ "runner": "research/runners/stage2_exit_gate.py --kb-summary",
+ "group": "infer",
+ "kind": "diagnostic (dev seeds)",
+ "arms": [
+  "intact_a",
+  "kb_scramble",
+  "kb_scramble_spiking_control"
+ ],
+ "seeds": {
+  "1": {
+   "shards": {
+    "intact_a": {
+     "sha256": "85dbc3c0c1710d72863d81860ac3b654c1792ead3ed221620418c92d732edb5b",
+     "seed": 1,
+     "wall_s": 930.9,
+     "peak_rss_mb": 6450.1,
+     "corpus_present": true,
+     "sources": [
+      "tiny-demo +LTM"
+     ]
+    },
+    "kb_scramble": {
+     "sha256": "1fc6b092559c18a8744e6a2620ae848bf6ffa123daf55a6c5d8d8e111edcfc84",
+     "seed": 1,
+     "wall_s": 1015.2,
+     "peak_rss_mb": 6410.3,
+     "corpus_present": true,
+     "sources": [
+      "tiny-demo +LTM"
+     ]
+    },
+    "kb_scramble_spiking_control": {
+     "sha256": "6367f1bd612366080928194a66b5112ce23938045cad5833f9fca005a032a1db",
+     "seed": 1,
+     "wall_s": 1051.7,
+     "peak_rss_mb": 6446.0,
+     "corpus_present": true,
+     "sources": [
+      "tiny-demo +LTM"
+     ]
+    }
+   },
+   "turns": {
+    "intact_a": {
+     "t_heron_hunt": {
+      "answer": "the heron hunts the frog",
+      "abstained": false,
+      "recalled_svo": [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "t_frog_eat": {
+      "answer": "the frog eats the gnat the dog chases the cat the cat eats the fish",
+      "abstained": false,
+      "recalled_svo": [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "t_crow_chase": {
+      "answer": "the crow chases the wren",
+      "abstained": false,
+      "recalled_svo": [
+       "crow",
+       "chase",
+       "wren"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "t_wren_chase": {
+      "answer": "Setting the held thread aside \u2014 On wren, then \u2014 the wren chases the moth",
+      "abstained": false,
+      "recalled_svo": [
+       "wren",
+       "chase",
+       "moth"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "p_prey_eat": {
+      "answer": "I derived this from: heron hunt frog; frog eat gnat. the frog eats the gnat",
+      "abstained": false,
+      "recalled_svo": null,
+      "derived": true,
+      "derived_svo": [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      "derived_from": [
+       [
+        "heron",
+        "hunt",
+        "frog"
+       ],
+       [
+        "frog",
+        "eat",
+        "gnat"
+       ]
+      ]
+     },
+     "c_heron_hunt": {
+      "answer": "Setting the held thread aside \u2014 On heron, then \u2014 the heron hunts the frog",
+      "abstained": false,
+      "recalled_svo": [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "c_frog_eat": {
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On frog, then \u2014 the frog eats the gnat",
+      "abstained": false,
+      "recalled_svo": [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "c_prey_chase": {
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about heron's yet: what can you tell me about heron's?",
+      "abstained": true,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "p_yesno": {
+      "answer": "Setting the held thread aside \u2014 On crow, then \u2014 What I hold is: crow chase wren. the crow chases the wren",
+      "abstained": false,
+      "recalled_svo": [
+       "crow",
+       "chase",
+       "wren"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "c_dog_chase": {
+      "answer": "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the cat",
+      "abstained": false,
+      "recalled_svo": [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     }
+    },
+    "kb_scramble": {
+     "t_heron_hunt": {
+      "answer": "the heron hunts the frog",
+      "abstained": false,
+      "recalled_svo": [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "t_frog_eat": {
+      "answer": "the frog eats the gnat the dog chases the cat the cat eats the fish",
+      "abstained": false,
+      "recalled_svo": [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "t_crow_chase": {
+      "answer": "the crow chases the wren",
+      "abstained": false,
+      "recalled_svo": [
+       "crow",
+       "chase",
+       "wren"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "t_wren_chase": {
+      "answer": "Setting the held thread aside \u2014 On wren, then \u2014 the wren chases the moth",
+      "abstained": false,
+      "recalled_svo": [
+       "wren",
+       "chase",
+       "moth"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "p_prey_eat": {
+      "answer": "I derived this from: heron hunt frog; frog eat wren. the frog eats the wren the wren chases the gnat the crow chases the moth",
+      "abstained": false,
+      "recalled_svo": null,
+      "derived": true,
+      "derived_svo": [
+       "frog",
+       "eat",
+       "wren"
+      ],
+      "derived_from": [
+       [
+        "heron",
+        "hunt",
+        "frog"
+       ],
+       [
+        "frog",
+        "eat",
+        "wren"
+       ]
+      ]
+     },
+     "c_heron_hunt": {
+      "answer": "Setting the held thread aside \u2014 On heron, then \u2014 the heron hunts the frog",
+      "abstained": false,
+      "recalled_svo": [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "c_frog_eat": {
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On frog, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the frog eats the gnat  [a guess from what I've learned -- not something I was taught]",
+      "abstained": false,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "c_prey_chase": {
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about heron's yet: what can you tell me about heron's?",
+      "abstained": true,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "p_yesno": {
+      "answer": "Setting the held thread aside \u2014 On crow, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) What I hold is: crow chase wren. perhaps the crow chases the wren  [a guess from what I've learned -- not something I was taught]",
+      "abstained": false,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "c_dog_chase": {
+      "answer": "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the cat",
+      "abstained": false,
+      "recalled_svo": [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     }
+    },
+    "kb_scramble_spiking_control": {
+     "t_heron_hunt": {
+      "answer": "the heron hunts the frog",
+      "abstained": false,
+      "recalled_svo": [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "t_frog_eat": {
+      "answer": "the frog eats the gnat the dog chases the cat the cat eats the fish",
+      "abstained": false,
+      "recalled_svo": [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "t_crow_chase": {
+      "answer": "the crow chases the wren",
+      "abstained": false,
+      "recalled_svo": [
+       "crow",
+       "chase",
+       "wren"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "t_wren_chase": {
+      "answer": "Setting the held thread aside \u2014 On wren, then \u2014 the wren chases the moth",
+      "abstained": false,
+      "recalled_svo": [
+       "wren",
+       "chase",
+       "moth"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "p_prey_eat": {
+      "answer": "I derived this from: heron hunt frog; frog eat gnat. the frog eats the gnat the frog eats the wren the wren chases the gnat the crow chases the moth",
+      "abstained": false,
+      "recalled_svo": null,
+      "derived": true,
+      "derived_svo": [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      "derived_from": [
+       [
+        "heron",
+        "hunt",
+        "frog"
+       ],
+       [
+        "frog",
+        "eat",
+        "gnat"
+       ]
+      ]
+     },
+     "c_heron_hunt": {
+      "answer": "Setting the held thread aside \u2014 On heron, then \u2014 the heron hunts the frog",
+      "abstained": false,
+      "recalled_svo": [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "c_frog_eat": {
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On frog, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the frog eats the gnat  [a guess from what I've learned -- not something I was taught]",
+      "abstained": false,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "c_prey_chase": {
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about heron's yet: what can you tell me about heron's?",
+      "abstained": true,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "p_yesno": {
+      "answer": "Setting the held thread aside \u2014 On crow, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) What I hold is: crow chase wren. perhaps the crow chases the wren  [a guess from what I've learned -- not something I was taught]",
+      "abstained": false,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "c_dog_chase": {
+      "answer": "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the cat",
+      "abstained": false,
+      "recalled_svo": [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     }
+    }
+   },
+   "reads": {
+    "kb_scramble": {
+     "mode": "kb",
+     "engaged": true,
+     "engagement_reason": null,
+     "n_facts": 9,
+     "n_scoped": 3,
+     "n_changed": 3,
+     "kb_before": [
+      [
+       "brain",
+       "use",
+       "spikes"
+      ],
+      [
+       "brain",
+       "learn",
+       "words"
+      ],
+      [
+       "brain",
+       "store",
+       "memory"
+      ],
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ],
+      [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      [
+       "crow",
+       "chase",
+       "wren"
+      ],
+      [
+       "wren",
+       "chase",
+       "moth"
+      ]
+     ],
+     "kb_after": [
+      [
+       "brain",
+       "use",
+       "spikes"
+      ],
+      [
+       "brain",
+       "learn",
+       "words"
+      ],
+      [
+       "brain",
+       "store",
+       "memory"
+      ],
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ],
+      [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      [
+       "frog",
+       "eat",
+       "wren"
+      ],
+      [
+       "crow",
+       "chase",
+       "moth"
+      ],
+      [
+       "wren",
+       "chase",
+       "gnat"
+      ]
+     ],
+     "predicted_from_list": {
+      "svo": [
+       "frog",
+       "eat",
+       "wren"
+      ],
+      "derived_from": [
+       [
+        "heron",
+        "hunt",
+        "frog"
+       ],
+       [
+        "frog",
+        "eat",
+        "wren"
+       ]
+      ]
+     },
+     "predicted_from_bound": {
+      "svo": [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      "derived_from": [
+       [
+        "heron",
+        "hunt",
+        "frog"
+       ],
+       [
+        "frog",
+        "eat",
+        "gnat"
+       ]
+      ]
+     },
+     "other_turns": {
+      "c_heron_hunt": {
+       "answer": "Setting the held thread aside \u2014 On heron, then \u2014 the heron hunts the frog",
+       "abstained": false,
+       "recalled_svo": [
+        "heron",
+        "hunt",
+        "frog"
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null
+      },
+      "c_frog_eat": {
+       "answer": "Setting the held thread aside \u2014 As for it \u2014 On frog, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the frog eats the gnat  [a guess from what I've learned -- not something I was taught]",
+       "abstained": false,
+       "recalled_svo": null,
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null
+      },
+      "c_prey_chase": {
+       "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about heron's yet: what can you tell me about heron's?",
+       "abstained": true,
+       "recalled_svo": null,
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null
+      },
+      "p_yesno": {
+       "answer": "Setting the held thread aside \u2014 On crow, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) What I hold is: crow chase wren. perhaps the crow chases the wren  [a guess from what I've learned -- not something I was taught]",
+       "abstained": false,
+       "recalled_svo": null,
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null
+      },
+      "c_dog_chase": {
+       "answer": "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the cat",
+       "abstained": false,
+       "recalled_svo": [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null
+      }
+     },
+     "route_list_reads": [
+      [
+       "heron",
+       "hunt",
+       [
+        "frog"
+       ],
+       false
+      ],
+      [
+       "frog",
+       "eat",
+       [
+        "wren"
+       ],
+       false
+      ]
+     ],
+     "spiking_reads": [
+      [
+       "wren",
+       "chase",
+       "moth"
+      ],
+      [
+       "moth",
+       "chase",
+       null
+      ]
+     ],
+     "follows": "scrambled list",
+     "changed_vs_intact": [
+      "c_frog_eat",
+      "p_prey_eat",
+      "p_yesno"
+     ]
+    },
+    "kb_scramble_spiking_control": {
+     "mode": "kb_spiking",
+     "engaged": true,
+     "engagement_reason": null,
+     "n_facts": 9,
+     "n_scoped": 3,
+     "n_changed": 3,
+     "kb_before": [
+      [
+       "brain",
+       "use",
+       "spikes"
+      ],
+      [
+       "brain",
+       "learn",
+       "words"
+      ],
+      [
+       "brain",
+       "store",
+       "memory"
+      ],
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ],
+      [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      [
+       "crow",
+       "chase",
+       "wren"
+      ],
+      [
+       "wren",
+       "chase",
+       "moth"
+      ]
+     ],
+     "kb_after": [
+      [
+       "brain",
+       "use",
+       "spikes"
+      ],
+      [
+       "brain",
+       "learn",
+       "words"
+      ],
+      [
+       "brain",
+       "store",
+       "memory"
+      ],
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ],
+      [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      [
+       "frog",
+       "eat",
+       "wren"
+      ],
+      [
+       "crow",
+       "chase",
+       "moth"
+      ],
+      [
+       "wren",
+       "chase",
+       "gnat"
+      ]
+     ],
+     "predicted_from_list": {
+      "svo": [
+       "frog",
+       "eat",
+       "wren"
+      ],
+      "derived_from": [
+       [
+        "heron",
+        "hunt",
+        "frog"
+       ],
+       [
+        "frog",
+        "eat",
+        "wren"
+       ]
+      ]
+     },
+     "predicted_from_bound": {
+      "svo": [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      "derived_from": [
+       [
+        "heron",
+        "hunt",
+        "frog"
+       ],
+       [
+        "frog",
+        "eat",
+        "gnat"
+       ]
+      ]
+     },
+     "other_turns": {
+      "c_heron_hunt": {
+       "answer": "Setting the held thread aside \u2014 On heron, then \u2014 the heron hunts the frog",
+       "abstained": false,
+       "recalled_svo": [
+        "heron",
+        "hunt",
+        "frog"
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null
+      },
+      "c_frog_eat": {
+       "answer": "Setting the held thread aside \u2014 As for it \u2014 On frog, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the frog eats the gnat  [a guess from what I've learned -- not something I was taught]",
+       "abstained": false,
+       "recalled_svo": null,
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null
+      },
+      "c_prey_chase": {
+       "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about heron's yet: what can you tell me about heron's?",
+       "abstained": true,
+       "recalled_svo": null,
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null
+      },
+      "p_yesno": {
+       "answer": "Setting the held thread aside \u2014 On crow, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) What I hold is: crow chase wren. perhaps the crow chases the wren  [a guess from what I've learned -- not something I was taught]",
+       "abstained": false,
+       "recalled_svo": null,
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null
+      },
+      "c_dog_chase": {
+       "answer": "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the cat",
+       "abstained": false,
+       "recalled_svo": [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null
+      }
+     },
+     "route_list_reads": [
+      [
+       "heron",
+       "hunt",
+       null,
+       true
+      ],
+      [
+       "frog",
+       "eat",
+       null,
+       true
+      ]
+     ],
+     "spiking_reads": [
+      [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      [
+       "gnat",
+       "eat",
+       null
+      ]
+     ],
+     "follows": "bound vectors",
+     "changed_vs_intact": [
+      "c_frog_eat",
+      "p_prey_eat",
+      "p_yesno"
+     ]
+    }
+   },
+   "spiking_reads_by_turn": {
+    "kb_scramble": {
+     "p_prey_eat": [
+      [
+       "wren",
+       "chase",
+       "moth"
+      ],
+      [
+       "moth",
+       "chase",
+       null
+      ]
+     ],
+     "c_heron_hunt": [
+      [
+       "heron_hunt",
+       "alias_of",
+       null
+      ],
+      [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      [
+       "gnat",
+       "eat",
+       null
+      ]
+     ],
+     "c_frog_eat": [
+      [
+       "frog_eat",
+       "alias_of",
+       null
+      ],
+      [
+       "frog",
+       "eat",
+       "gnat"
+      ]
+     ],
+     "c_prey_chase": [
+      [
+       "heron's_prey_chase",
+       "alias_of",
+       null
+      ],
+      [
+       "heron's_prey",
+       "alias_of",
+       null
+      ],
+      [
+       "prey_chase",
+       "alias_of",
+       null
+      ],
+      [
+       "heron's",
+       "prey",
+       null
+      ]
+     ],
+     "p_yesno": [
+      [
+       "crow",
+       "chase",
+       "wren"
+      ],
+      [
+       "crow_chase_moth",
+       "alias_of",
+       null
+      ],
+      [
+       "crow_chase",
+       "alias_of",
+       null
+      ],
+      [
+       "chase_moth",
+       "alias_of",
+       null
+      ],
+      [
+       "crow",
+       "chase",
+       "wren"
+      ]
+     ],
+     "c_dog_chase": [
+      [
+       "dog_chase",
+       "alias_of",
+       null
+      ],
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ],
+      [
+       "fish",
+       "eat",
+       null
+      ]
+     ]
+    },
+    "kb_scramble_spiking_control": {
+     "p_prey_eat": [
+      [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      [
+       "gnat",
+       "eat",
+       null
+      ]
+     ],
+     "c_heron_hunt": [
+      [
+       "heron_hunt",
+       "alias_of",
+       null
+      ],
+      [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      [
+       "gnat",
+       "eat",
+       null
+      ]
+     ],
+     "c_frog_eat": [
+      [
+       "frog_eat",
+       "alias_of",
+       null
+      ],
+      [
+       "frog",
+       "eat",
+       "gnat"
+      ]
+     ],
+     "c_prey_chase": [
+      [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      [
+       "frog",
+       "chase",
+       null
+      ],
+      [
+       "heron",
+       "eat",
+       null
+      ],
+      [
+       "heron",
+       "chase",
+       null
+      ],
+      [
+       "heron's_prey_chase",
+       "alias_of",
+       null
+      ],
+      [
+       "heron's_prey",
+       "alias_of",
+       null
+      ],
+      [
+       "prey_chase",
+       "alias_of",
+       null
+      ],
+      [
+       "heron's",
+       "prey",
+       null
+      ]
+     ],
+     "p_yesno": [
+      [
+       "crow",
+       "chase",
+       "wren"
+      ],
+      [
+       "crow_chase_moth",
+       "alias_of",
+       null
+      ],
+      [
+       "crow_chase",
+       "alias_of",
+       null
+      ],
+      [
+       "chase_moth",
+       "alias_of",
+       null
+      ],
+      [
+       "crow",
+       "chase",
+       "wren"
+      ]
+     ],
+     "c_dog_chase": [
+      [
+       "dog_chase",
+       "alias_of",
+       null
+      ],
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ],
+      [
+       "fish",
+       "eat",
+       null
+      ]
+     ]
+    }
+   },
+   "flagged_guesses": {
+    "intact_a": {},
+    "kb_scramble": {
+     "c_frog_eat": {
+      "hypothesis_svo": [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      "category_inherit_patient": "gnat",
+      "category_inherit_reason": "reached"
+     },
+     "p_yesno": {
+      "hypothesis_svo": [
+       "crow",
+       "chase",
+       "wren"
+      ],
+      "category_inherit_patient": "wren",
+      "category_inherit_reason": "reached"
+     }
+    },
+    "kb_scramble_spiking_control": {
+     "c_frog_eat": {
+      "hypothesis_svo": [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      "category_inherit_patient": "gnat",
+      "category_inherit_reason": "reached"
+     },
+     "p_yesno": {
+      "hypothesis_svo": [
+       "crow",
+       "chase",
+       "wren"
+      ],
+      "category_inherit_patient": "wren",
+      "category_inherit_reason": "reached"
+     }
+    }
+   }
+  },
+  "7": {
+   "shards": {
+    "intact_a": {
+     "sha256": "f2c7dfcc2001e4f7930b30a2dd93fc8e628c814ce034e2a44a10eb72cfd01a97",
+     "seed": 7,
+     "wall_s": 948.9,
+     "peak_rss_mb": 6453.3,
+     "corpus_present": true,
+     "sources": [
+      "tiny-demo +LTM"
+     ]
+    },
+    "kb_scramble": {
+     "sha256": "bf7c73e865f0668ceb4fb68733a2c6d486bddaab014bd2e73b185ba9c6612891",
+     "seed": 7,
+     "wall_s": 1022.0,
+     "peak_rss_mb": 6406.8,
+     "corpus_present": true,
+     "sources": [
+      "tiny-demo +LTM"
+     ]
+    },
+    "kb_scramble_spiking_control": {
+     "sha256": "04a8fa4aff7cba39fc493dc1eba9090fafad2fb5e80dbc1768e89d2ec3e527a8",
+     "seed": 7,
+     "wall_s": 943.2,
+     "peak_rss_mb": 6449.4,
+     "corpus_present": true,
+     "sources": [
+      "tiny-demo +LTM"
+     ]
+    }
+   },
+   "turns": {
+    "intact_a": {
+     "t_heron_hunt": {
+      "answer": "the heron hunts the frog",
+      "abstained": false,
+      "recalled_svo": [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "t_frog_eat": {
+      "answer": "the frog eats the gnat the dog chases the cat the cat eats the fish",
+      "abstained": false,
+      "recalled_svo": [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "t_crow_chase": {
+      "answer": "the crow chases the wren \u2014 worth going further here.",
+      "abstained": false,
+      "recalled_svo": [
+       "crow",
+       "chase",
+       "wren"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "t_wren_chase": {
+      "answer": "Setting the held thread aside \u2014 On wren, then \u2014 the wren chases the moth",
+      "abstained": false,
+      "recalled_svo": [
+       "wren",
+       "chase",
+       "moth"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "p_prey_eat": {
+      "answer": "I derived this from: heron hunt frog; frog eat gnat. the frog eats the gnat \u2014 worth going further here.",
+      "abstained": false,
+      "recalled_svo": null,
+      "derived": true,
+      "derived_svo": [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      "derived_from": [
+       [
+        "heron",
+        "hunt",
+        "frog"
+       ],
+       [
+        "frog",
+        "eat",
+        "gnat"
+       ]
+      ]
+     },
+     "c_heron_hunt": {
+      "answer": "Setting the held thread aside \u2014 On heron, then \u2014 the heron hunts the frog",
+      "abstained": false,
+      "recalled_svo": [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "c_frog_eat": {
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On frog, then \u2014 the frog eats the gnat",
+      "abstained": false,
+      "recalled_svo": [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "c_prey_chase": {
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about heron's yet: what can you tell me about heron's?",
+      "abstained": true,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "p_yesno": {
+      "answer": "Setting the held thread aside \u2014 On crow, then \u2014 What I hold is: crow chase wren. the crow chases the wren",
+      "abstained": false,
+      "recalled_svo": [
+       "crow",
+       "chase",
+       "wren"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "c_dog_chase": {
+      "answer": "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the cat",
+      "abstained": false,
+      "recalled_svo": [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     }
+    },
+    "kb_scramble": {
+     "t_heron_hunt": {
+      "answer": "the heron hunts the frog",
+      "abstained": false,
+      "recalled_svo": [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "t_frog_eat": {
+      "answer": "the frog eats the gnat the dog chases the cat the cat eats the fish",
+      "abstained": false,
+      "recalled_svo": [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "t_crow_chase": {
+      "answer": "the crow chases the wren \u2014 worth going further here.",
+      "abstained": false,
+      "recalled_svo": [
+       "crow",
+       "chase",
+       "wren"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "t_wren_chase": {
+      "answer": "Setting the held thread aside \u2014 On wren, then \u2014 the wren chases the moth",
+      "abstained": false,
+      "recalled_svo": [
+       "wren",
+       "chase",
+       "moth"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "p_prey_eat": {
+      "answer": "I derived this from: heron hunt frog; frog eat wren. the frog eats the wren the wren chases the gnat the crow chases the moth \u2014 worth going further here.",
+      "abstained": false,
+      "recalled_svo": null,
+      "derived": true,
+      "derived_svo": [
+       "frog",
+       "eat",
+       "wren"
+      ],
+      "derived_from": [
+       [
+        "heron",
+        "hunt",
+        "frog"
+       ],
+       [
+        "frog",
+        "eat",
+        "wren"
+       ]
+      ]
+     },
+     "c_heron_hunt": {
+      "answer": "Setting the held thread aside \u2014 On heron, then \u2014 the heron hunts the frog",
+      "abstained": false,
+      "recalled_svo": [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "c_frog_eat": {
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On frog, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the frog eats the gnat  [a guess from what I've learned -- not something I was taught]",
+      "abstained": false,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "c_prey_chase": {
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about heron's yet: what can you tell me about heron's?",
+      "abstained": true,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "p_yesno": {
+      "answer": "Setting the held thread aside \u2014 On crow, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) What I hold is: crow chase wren. perhaps the crow chases the wren  [a guess from what I've learned -- not something I was taught]",
+      "abstained": false,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "c_dog_chase": {
+      "answer": "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the cat",
+      "abstained": false,
+      "recalled_svo": [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     }
+    },
+    "kb_scramble_spiking_control": {
+     "t_heron_hunt": {
+      "answer": "the heron hunts the frog",
+      "abstained": false,
+      "recalled_svo": [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "t_frog_eat": {
+      "answer": "the frog eats the gnat the dog chases the cat the cat eats the fish",
+      "abstained": false,
+      "recalled_svo": [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "t_crow_chase": {
+      "answer": "the crow chases the wren \u2014 worth going further here.",
+      "abstained": false,
+      "recalled_svo": [
+       "crow",
+       "chase",
+       "wren"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "t_wren_chase": {
+      "answer": "Setting the held thread aside \u2014 On wren, then \u2014 the wren chases the moth",
+      "abstained": false,
+      "recalled_svo": [
+       "wren",
+       "chase",
+       "moth"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "p_prey_eat": {
+      "answer": "I derived this from: heron hunt frog; frog eat gnat. the frog eats the gnat the frog eats the wren the wren chases the gnat the crow chases the moth \u2014 worth going further here.",
+      "abstained": false,
+      "recalled_svo": null,
+      "derived": true,
+      "derived_svo": [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      "derived_from": [
+       [
+        "heron",
+        "hunt",
+        "frog"
+       ],
+       [
+        "frog",
+        "eat",
+        "gnat"
+       ]
+      ]
+     },
+     "c_heron_hunt": {
+      "answer": "Setting the held thread aside \u2014 On heron, then \u2014 the heron hunts the frog",
+      "abstained": false,
+      "recalled_svo": [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "c_frog_eat": {
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On frog, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the frog eats the gnat  [a guess from what I've learned -- not something I was taught]",
+      "abstained": false,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "c_prey_chase": {
+      "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about heron's yet: what can you tell me about heron's?",
+      "abstained": true,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "p_yesno": {
+      "answer": "Setting the held thread aside \u2014 On crow, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) What I hold is: crow chase wren. perhaps the crow chases the wren  [a guess from what I've learned -- not something I was taught]",
+      "abstained": false,
+      "recalled_svo": null,
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     },
+     "c_dog_chase": {
+      "answer": "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the cat",
+      "abstained": false,
+      "recalled_svo": [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      "derived": false,
+      "derived_svo": null,
+      "derived_from": null
+     }
+    }
+   },
+   "reads": {
+    "kb_scramble": {
+     "mode": "kb",
+     "engaged": true,
+     "engagement_reason": null,
+     "n_facts": 9,
+     "n_scoped": 3,
+     "n_changed": 3,
+     "kb_before": [
+      [
+       "brain",
+       "use",
+       "spikes"
+      ],
+      [
+       "brain",
+       "learn",
+       "words"
+      ],
+      [
+       "brain",
+       "store",
+       "memory"
+      ],
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ],
+      [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      [
+       "crow",
+       "chase",
+       "wren"
+      ],
+      [
+       "wren",
+       "chase",
+       "moth"
+      ]
+     ],
+     "kb_after": [
+      [
+       "brain",
+       "use",
+       "spikes"
+      ],
+      [
+       "brain",
+       "learn",
+       "words"
+      ],
+      [
+       "brain",
+       "store",
+       "memory"
+      ],
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ],
+      [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      [
+       "frog",
+       "eat",
+       "wren"
+      ],
+      [
+       "crow",
+       "chase",
+       "moth"
+      ],
+      [
+       "wren",
+       "chase",
+       "gnat"
+      ]
+     ],
+     "predicted_from_list": {
+      "svo": [
+       "frog",
+       "eat",
+       "wren"
+      ],
+      "derived_from": [
+       [
+        "heron",
+        "hunt",
+        "frog"
+       ],
+       [
+        "frog",
+        "eat",
+        "wren"
+       ]
+      ]
+     },
+     "predicted_from_bound": {
+      "svo": [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      "derived_from": [
+       [
+        "heron",
+        "hunt",
+        "frog"
+       ],
+       [
+        "frog",
+        "eat",
+        "gnat"
+       ]
+      ]
+     },
+     "other_turns": {
+      "c_heron_hunt": {
+       "answer": "Setting the held thread aside \u2014 On heron, then \u2014 the heron hunts the frog",
+       "abstained": false,
+       "recalled_svo": [
+        "heron",
+        "hunt",
+        "frog"
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null
+      },
+      "c_frog_eat": {
+       "answer": "Setting the held thread aside \u2014 As for it \u2014 On frog, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the frog eats the gnat  [a guess from what I've learned -- not something I was taught]",
+       "abstained": false,
+       "recalled_svo": null,
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null
+      },
+      "c_prey_chase": {
+       "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about heron's yet: what can you tell me about heron's?",
+       "abstained": true,
+       "recalled_svo": null,
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null
+      },
+      "p_yesno": {
+       "answer": "Setting the held thread aside \u2014 On crow, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) What I hold is: crow chase wren. perhaps the crow chases the wren  [a guess from what I've learned -- not something I was taught]",
+       "abstained": false,
+       "recalled_svo": null,
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null
+      },
+      "c_dog_chase": {
+       "answer": "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the cat",
+       "abstained": false,
+       "recalled_svo": [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null
+      }
+     },
+     "route_list_reads": [
+      [
+       "heron",
+       "hunt",
+       [
+        "frog"
+       ],
+       false
+      ],
+      [
+       "frog",
+       "eat",
+       [
+        "wren"
+       ],
+       false
+      ]
+     ],
+     "spiking_reads": [
+      [
+       "wren",
+       "chase",
+       "moth"
+      ],
+      [
+       "moth",
+       "chase",
+       null
+      ]
+     ],
+     "follows": "scrambled list",
+     "changed_vs_intact": [
+      "c_frog_eat",
+      "p_prey_eat",
+      "p_yesno"
+     ]
+    },
+    "kb_scramble_spiking_control": {
+     "mode": "kb_spiking",
+     "engaged": true,
+     "engagement_reason": null,
+     "n_facts": 9,
+     "n_scoped": 3,
+     "n_changed": 3,
+     "kb_before": [
+      [
+       "brain",
+       "use",
+       "spikes"
+      ],
+      [
+       "brain",
+       "learn",
+       "words"
+      ],
+      [
+       "brain",
+       "store",
+       "memory"
+      ],
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ],
+      [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      [
+       "crow",
+       "chase",
+       "wren"
+      ],
+      [
+       "wren",
+       "chase",
+       "moth"
+      ]
+     ],
+     "kb_after": [
+      [
+       "brain",
+       "use",
+       "spikes"
+      ],
+      [
+       "brain",
+       "learn",
+       "words"
+      ],
+      [
+       "brain",
+       "store",
+       "memory"
+      ],
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ],
+      [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      [
+       "frog",
+       "eat",
+       "wren"
+      ],
+      [
+       "crow",
+       "chase",
+       "moth"
+      ],
+      [
+       "wren",
+       "chase",
+       "gnat"
+      ]
+     ],
+     "predicted_from_list": {
+      "svo": [
+       "frog",
+       "eat",
+       "wren"
+      ],
+      "derived_from": [
+       [
+        "heron",
+        "hunt",
+        "frog"
+       ],
+       [
+        "frog",
+        "eat",
+        "wren"
+       ]
+      ]
+     },
+     "predicted_from_bound": {
+      "svo": [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      "derived_from": [
+       [
+        "heron",
+        "hunt",
+        "frog"
+       ],
+       [
+        "frog",
+        "eat",
+        "gnat"
+       ]
+      ]
+     },
+     "other_turns": {
+      "c_heron_hunt": {
+       "answer": "Setting the held thread aside \u2014 On heron, then \u2014 the heron hunts the frog",
+       "abstained": false,
+       "recalled_svo": [
+        "heron",
+        "hunt",
+        "frog"
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null
+      },
+      "c_frog_eat": {
+       "answer": "Setting the held thread aside \u2014 As for it \u2014 On frog, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the frog eats the gnat  [a guess from what I've learned -- not something I was taught]",
+       "abstained": false,
+       "recalled_svo": null,
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null
+      },
+      "c_prey_chase": {
+       "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about heron's yet: what can you tell me about heron's?",
+       "abstained": true,
+       "recalled_svo": null,
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null
+      },
+      "p_yesno": {
+       "answer": "Setting the held thread aside \u2014 On crow, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) What I hold is: crow chase wren. perhaps the crow chases the wren  [a guess from what I've learned -- not something I was taught]",
+       "abstained": false,
+       "recalled_svo": null,
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null
+      },
+      "c_dog_chase": {
+       "answer": "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the cat",
+       "abstained": false,
+       "recalled_svo": [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       "derived": false,
+       "derived_svo": null,
+       "derived_from": null
+      }
+     },
+     "route_list_reads": [
+      [
+       "heron",
+       "hunt",
+       null,
+       true
+      ],
+      [
+       "frog",
+       "eat",
+       null,
+       true
+      ]
+     ],
+     "spiking_reads": [
+      [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      [
+       "gnat",
+       "eat",
+       null
+      ]
+     ],
+     "follows": "bound vectors",
+     "changed_vs_intact": [
+      "c_frog_eat",
+      "p_prey_eat",
+      "p_yesno"
+     ]
+    }
+   },
+   "spiking_reads_by_turn": {
+    "kb_scramble": {
+     "p_prey_eat": [
+      [
+       "wren",
+       "chase",
+       "moth"
+      ],
+      [
+       "moth",
+       "chase",
+       null
+      ]
+     ],
+     "c_heron_hunt": [
+      [
+       "heron_hunt",
+       "alias_of",
+       null
+      ],
+      [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      [
+       "gnat",
+       "eat",
+       null
+      ]
+     ],
+     "c_frog_eat": [
+      [
+       "frog_eat",
+       "alias_of",
+       null
+      ],
+      [
+       "frog",
+       "eat",
+       "gnat"
+      ]
+     ],
+     "c_prey_chase": [
+      [
+       "heron's_prey_chase",
+       "alias_of",
+       null
+      ],
+      [
+       "heron's_prey",
+       "alias_of",
+       null
+      ],
+      [
+       "prey_chase",
+       "alias_of",
+       null
+      ],
+      [
+       "heron's",
+       "prey",
+       null
+      ]
+     ],
+     "p_yesno": [
+      [
+       "crow",
+       "chase",
+       "wren"
+      ],
+      [
+       "crow_chase_moth",
+       "alias_of",
+       null
+      ],
+      [
+       "crow_chase",
+       "alias_of",
+       null
+      ],
+      [
+       "chase_moth",
+       "alias_of",
+       null
+      ],
+      [
+       "crow",
+       "chase",
+       "wren"
+      ]
+     ],
+     "c_dog_chase": [
+      [
+       "dog_chase",
+       "alias_of",
+       null
+      ],
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ],
+      [
+       "fish",
+       "eat",
+       null
+      ]
+     ]
+    },
+    "kb_scramble_spiking_control": {
+     "p_prey_eat": [
+      [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      [
+       "gnat",
+       "eat",
+       null
+      ]
+     ],
+     "c_heron_hunt": [
+      [
+       "heron_hunt",
+       "alias_of",
+       null
+      ],
+      [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      [
+       "gnat",
+       "eat",
+       null
+      ]
+     ],
+     "c_frog_eat": [
+      [
+       "frog_eat",
+       "alias_of",
+       null
+      ],
+      [
+       "frog",
+       "eat",
+       "gnat"
+      ]
+     ],
+     "c_prey_chase": [
+      [
+       "heron",
+       "hunt",
+       "frog"
+      ],
+      [
+       "frog",
+       "chase",
+       null
+      ],
+      [
+       "heron",
+       "eat",
+       null
+      ],
+      [
+       "heron",
+       "chase",
+       null
+      ],
+      [
+       "heron's_prey_chase",
+       "alias_of",
+       null
+      ],
+      [
+       "heron's_prey",
+       "alias_of",
+       null
+      ],
+      [
+       "prey_chase",
+       "alias_of",
+       null
+      ],
+      [
+       "heron's",
+       "prey",
+       null
+      ]
+     ],
+     "p_yesno": [
+      [
+       "crow",
+       "chase",
+       "wren"
+      ],
+      [
+       "crow_chase_moth",
+       "alias_of",
+       null
+      ],
+      [
+       "crow_chase",
+       "alias_of",
+       null
+      ],
+      [
+       "chase_moth",
+       "alias_of",
+       null
+      ],
+      [
+       "crow",
+       "chase",
+       "wren"
+      ]
+     ],
+     "c_dog_chase": [
+      [
+       "dog_chase",
+       "alias_of",
+       null
+      ],
+      [
+       "dog",
+       "chase",
+       "cat"
+      ],
+      [
+       "cat",
+       "eat",
+       "fish"
+      ],
+      [
+       "fish",
+       "eat",
+       null
+      ]
+     ]
+    }
+   },
+   "flagged_guesses": {
+    "intact_a": {},
+    "kb_scramble": {
+     "c_frog_eat": {
+      "hypothesis_svo": [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      "category_inherit_patient": "gnat",
+      "category_inherit_reason": "reached"
+     },
+     "p_yesno": {
+      "hypothesis_svo": [
+       "crow",
+       "chase",
+       "wren"
+      ],
+      "category_inherit_patient": "wren",
+      "category_inherit_reason": "reached"
+     }
+    },
+    "kb_scramble_spiking_control": {
+     "c_frog_eat": {
+      "hypothesis_svo": [
+       "frog",
+       "eat",
+       "gnat"
+      ],
+      "category_inherit_patient": "gnat",
+      "category_inherit_reason": "reached"
+     },
+     "p_yesno": {
+      "hypothesis_svo": [
+       "crow",
+       "chase",
+       "wren"
+      ],
+      "category_inherit_patient": "wren",
+      "category_inherit_reason": "reached"
+     }
+    }
+   }
+  }
+ }
+}
