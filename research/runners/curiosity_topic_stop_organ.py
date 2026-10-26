@@ -42,23 +42,33 @@ named in 2026-08-02-laneB-curiosity-reserve-rescue-REFUTED). Every substrate con
   method 2's informational lesion_reset arm), and it needs a teach-turn hook; its rung is a sim/ DA -> STP-recovery
   target.
 
-P, THE TOPIC-LOCKED PHASIC DA (replaces the host crave-gain formula when on; requires L, whose organ hosts it). The
-organ's existing `reward_us -> snc` populations (method 2's DA read) drive a dopamine modulator on the engine's
-neuromodulator bus (`from_region_firing_signed` on the SNc firing, so a sub-tonic SNc dips the concentration below
-baseline), whose `excitability_drive` target acts on group:ask. On an abstain with topic T the SNc gets
+P, THE TOPIC-LOCKED PHASIC DA (replaces the session-global DA input to the crave gain when on; requires L, whose
+organ hosts it). The organ's existing `reward_us -> snc` populations (method 2's DA read) are read on every abstain
+with topic T, the SNc driven by
   * a TONIC afferent current = K_TONIC_PA * da_level, the session's existing host EMA DA level (the same value the
     host gain reads today; da_level 0.5 gives SNC_TONIC_PA = 220 pA, the SNc's neutral drive), and
   * a PHASIC afferent onto reward_us = G_PHASIC_PA * salience(T), salience(T) = T's normalized want on the shared
     ASK-pool read the production organ already makes (`salience_of`'s formula applied to `judge()`'s own read).
-The SNc runs W_DA_WARMUP steps, then T's slice is presented with the SNc drive held, and the ASK want is read and
-compared with the same calibrated threshold. No host gain formula remains. Declared host arithmetic that remains:
-the two linear input encodings (da_level -> tonic pA, salience -> phasic pA) and the threshold compare the organ
-already uses. Concentration convention: conc - baseline = (SNc rate - neutral rate) / neutral rate at equilibrium
-(silence -> -1, the floor; twice neutral -> +1, the ceiling). The two free constants S_DA_PA (pA per unit
-concentration) and G_PHASIC_PA are set by the design rule in `design()` on DESIGN_SEED 9, written into the packet
-and frozen in DESIGN_FROZEN below before any handler run. The bound: S_DA_PA is below the level at which the DA
-drive alone fires the ASK pool, so DA scales how readily a topic's own input drives the pool and can never ask by
-itself (a depressed slice stays stopped; a familiar topic stays silent).
+The SNc runs W_DA_WARMUP steps, its rate is read over the next DRIVE_STEPS + READ_STEPS steps (the P protocol
+window), and the read becomes the DA that enters the crave gain: da_eff = DA_TONIC * snc_rate / snc_neutral_rate
+(the neutral rate measured in the same window at da_level 0.5, no phasic; silence -> 0, neutral -> 0.5). The gain is
+the EXISTING host formula, unchanged (`webapp/da_curiosity_drives_chat.da_crave_gain`: clip(0.2, 3.0,
+1 + 1.5 (da_eff - 0.5))), applied to L's own want; `want * gain >= threshold` decides.
+  DECLARED HOST ARITHMETIC THAT REMAINS (P method B): the multiplicative gain formula and its clip, the rate -> da_eff
+  normalization, and the two linear input encodings (da_level -> tonic pA, salience -> phasic pA). What changes from
+  today is the DA that enters it: a topic-locked spiking SNc read in which T's own salience is a phasic afferent, not
+  the session-global EMA alone. The tonic afferent still carries that EMA (a host scaffold upstream, in
+  webapp/da_mode_drives_chat.py).
+  P method A, the bus form, was tried first and its registered design rule failed (artifact
+  research/findings/raw/_c3_topic_stop/design_s9.json): a dopamine modulator (`from_region_firing_signed` on the
+  SNc, `excitability_drive` on group:ask, concentration +-1 around baseline) needs S_DA between 60 and 80 pA to bring
+  a fresh novel want below threshold at the floor (60 -> 21.4 Hz, 80 -> 14.7 Hz against 17.9 Hz), and at 80 pA the
+  drive alone at the ceiling already fires the ASK pool (15.6 Hz with no topic input), violating the bound that DA
+  must never ask by itself. An additive excitability drive is not a gain. Its rung: a per-pathway (topic -> ASK)
+  neuromodulator synaptic-gain target, which needs a sim/ edit (today `synaptic_gain` supports scope=all only). The
+  bus code stays here only to reproduce that artifact (`design()`); the handler never installs it.
+  G_PHASIC_PA is fixed by the design rule's phasic half (unchanged since registration): the smallest grid value for
+  which a fully salient topic at the floor tonic brings the SNc back to its neutral rate.
 
 FUNCTIONAL CORRELATE, NOT phenomenal. A habituated ask drive is reported as a read-out ("I have asked about toads
 three times; my drive to ask about toads has habituated"), never as felt boredom or felt interest.
@@ -109,20 +119,29 @@ DA_MAX = 2.0                           # = baseline + 1: an SNc at twice its neu
 DA_TAU_MS = 20.0                       # concentration decay (fast phasic transmitter clearance scale)
 DA_WINDOW_MS = 5.0                     # the rule's SNc-rate EMA
 W_DA_WARMUP = 60                       # SNc + DA settle before the topic burst (3 x DA_TAU_MS)
-S_DA_GRID = (10.0, 20.0, 30.0, 40.0, 50.0, 60.0)          # pA per unit concentration
+# AMENDMENT D1 (2026-10-26, before any handler run; packet section "P design"): the first design run was VOID (the
+# rule-sensitivity conversion missed the engine's dt/1000 factor, so the concentration never left baseline) and the
+# neutral SNc rate was read in a different window from the P read. Both fixed to the registered intent; the grid is
+# extended upward (80-200) because the first valid read showed 40 pA leaves a fresh novel slice above threshold at the
+# floor. The rule itself (smallest value meeting (a) the floor reproduces the failure and (b) DA alone never fires the
+# ASK pool) is unchanged, and (b) still binds.
+S_DA_GRID = (10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 80.0, 100.0, 120.0, 150.0, 200.0)   # pA per unit concentration
 G_PHASIC_GRID = (100.0, 200.0, 300.0, 400.0, 600.0, 800.0, 1200.0, 2400.0)   # pA onto reward_us per unit salience
 DESIGN_SEED = 9                        # method 2's design seed (never a battery or gate seed)
 DA_FLOOR_PROBE = 0.046163              # the floor the gate recorded on s42 (diagnosis finding), used by the design rule
-# FROZEN by the design rule (None until `--design` has run and its artifact is committed).
-DESIGN_FROZEN = {"S_DA_PA": None, "G_PHASIC_PA": None, "artifact": None}
+# FROZEN by the design rule (research/findings/raw/_c3_topic_stop/design_s9.json, run after amendment D1):
+# S_DA_PA None = no grid value met both halves, so P method A (the bus form) is not used; G_PHASIC_PA 600 pA (the
+# SNc at the floor tonic with salience 1 reads 47.6 Hz against its 40.5 Hz neutral rate in the P window).
+DESIGN_FROZEN = {"S_DA_PA": None, "G_PHASIC_PA": 600.0, "artifact": "research/findings/raw/_c3_topic_stop/design_s9.json"}
 
 
 class TopicStopOrgan(CuriosityLPOrgan):
     """Method 2's organ (noise off, frozen constants) with the production read protocol: a lazily-run turn clock,
-    a capacity rule on the slice table, the lesion read-backs, and (P) a bus dopamine read on the ASK pool."""
+    a capacity rule on the slice table, the lesion read-backs, and (P) a topic-locked SNc read feeding the crave gain.
+    `bus_da` installs P method A (the rejected bus form) for `design()` only."""
 
     def __init__(self, seed, *, lesion_stop=False, drive_lesion=False, phasic=False, phasic_lesion=False,
-                 s_da_pa=None, g_phasic_pa=None):
+                 s_da_pa=None, g_phasic_pa=None, bus_da=False):
         super().__init__(seed, w_topic_ask=W_TOPIC_ASK,
                          tau_hab_ms=(TAU_LESION_MS if lesion_stop else TAU_HAB_MS),
                          reset_on=True, drive_lesion=bool(drive_lesion), shared_slice=False, no_ou=True)
@@ -136,7 +155,9 @@ class TopicStopOrgan(CuriosityLPOrgan):
         self._slot_last = {}           # slot -> presentation counter value at its last use (the capacity rule only)
         self._tick = 0
         self.recycled = []
+        self.bus_da = bool(bus_da)
         self._da_installed = False
+        self.snc_neutral_p_hz = None
 
     # ── build ──────────────────────────────────────────────────────────────────────────────────────────────────
     def ensure_built(self):
@@ -144,7 +165,10 @@ class TopicStopOrgan(CuriosityLPOrgan):
             return
         super().ensure_built()                     # bridge + calibration (no DA modulator yet) + snc_neutral_hz
         if self.phasic:
-            self._install_da()
+            # the SNc's neutral rate in the P read's own window (da_level 0.5, no phasic), before the modulator exists
+            self.snc_neutral_p_hz = self.snc_protocol_rate(DA_TONIC, 0.0)
+            if self.bus_da:
+                self._install_da()
 
     def _install_da(self):
         """The dopamine modulator on the engine's bus, installed AFTER calibration so the threshold is the same as
@@ -155,8 +179,10 @@ class TopicStopOrgan(CuriosityLPOrgan):
                                          NeuromodulatorManager)
         b = self.bridge
         cfg = b.core_config
-        thr_frac = float(self.snc_neutral_hz) * 1e-3 * cfg.dt_ms
-        k = (1.0 - math.exp(-cfg.dt_ms / DA_TAU_MS)) / max(thr_frac, 1e-9)
+        thr_frac = float(self.snc_neutral_p_hz) * 1e-3 * cfg.dt_ms
+        # the engine's signed rule returns sensitivity * (ema - threshold) * dt/1000 per step (sim/neuromodulators.py),
+        # and decay removes (1 - exp(-dt/tau)) of the excess per step: equilibrium excess = (rate - neutral) / neutral
+        k = (1.0 - math.exp(-cfg.dt_ms / DA_TAU_MS)) / (max(thr_frac, 1e-9) * cfg.dt_ms / 1000.0)
         nm = NeuromodulatorConfig(
             name=DA_NAME, baseline=DA_BASELINE, decay_tau_ms=DA_TAU_MS,
             concentration_min=DA_MIN, concentration_max=DA_MAX,
@@ -304,46 +330,52 @@ class TopicStopOrgan(CuriosityLPOrgan):
                 "da_conc_onset": conc_onset, "da_conc_read_mean": float(np.mean(conc)),
                 "da_drive_pa_read_mean": float(self.s_da_pa * (np.mean(conc) - DA_BASELINE))}
 
+    def phasic_gain(self, da_level, salience):
+        """P method B: the topic-locked SNc read -> da_eff -> the existing host crave gain. Returns the trace dict."""
+        from webapp.da_curiosity_drives_chat import da_crave_gain
+        i_t, i_p, lvl, sal = self._snc_currents(DA_TONIC if da_level is None else da_level,
+                                                 0.0 if salience is None else salience)
+        rate = self.snc_protocol_rate(lvl, sal)
+        da_eff = DA_TONIC * rate / self.snc_neutral_p_hz if self.snc_neutral_p_hz else DA_TONIC
+        gain = float(da_crave_gain(da_eff))
+        return {"on": True, "method": "B (spiking SNc read -> host gain formula, declared)",
+                "lesioned": bool(self.phasic_lesion), "salience": float(sal),
+                "salience_in": (None if salience is None else float(salience)),
+                "i_phasic_pa": float(i_p), "g_phasic_pa": float(self.g_phasic_pa),
+                "snc_hz": float(rate), "snc_neutral_hz": float(self.snc_neutral_p_hz), "da_eff": float(da_eff),
+                "reward_us_spikes": int(getattr(self, "last_reward_us_spikes", -1)),
+                "da_crave_gain": gain}, {"da_level": float(lvl), "i_tonic_pa": float(i_t), "k_tonic_pa": K_TONIC_PA}
+
     def read(self, topic, novelty, *, turns_seen, da_level=None, salience=None):
         """The production read on an abstain with topic `topic`: catch up the turn clock, present the topic's slice
-        (L; with the bus dopamine when P is on) and decide `want >= threshold`. Returns the engagement trace."""
+        (method 2's own read, unchanged) and decide `want >= threshold`; with P on, `want * gain >= threshold` with the
+        gain fed by the topic-locked SNc read. Returns the engagement trace."""
         self.ensure_built()
         idles = self.catch_up(turns_seen)
         slot = self.slot_for(topic)
         pre = self.slice_state(slot)
         rec = {"topic": topic, "novelty": float(novelty), "idles_run": int(idles)}
+        self._wash_neurons()
+        ask_spk, slot_spk = self._drive_slot(slot, novelty)
+        want = self._want_hz(ask_spk)
+        self._wash_neurons()
+        want_dec = want
         if self.phasic:
-            i_t, i_p, lvl, sal = self._snc_currents(0.5 if da_level is None else da_level,
-                                                     0.0 if salience is None else salience)
-            self._wash_neurons()
-            r = self._present_da(slot, novelty, i_t, i_p)
-            self._wash_neurons()
-            want = self._want_hz(r["ask_spk"])
-            rec["phasic_da"] = {"on": True, "lesioned": bool(self.phasic_lesion), "salience": float(sal),
-                                "salience_in": (None if salience is None else float(salience)),
-                                "i_phasic_pa": float(i_p), "g_phasic_pa": float(self.g_phasic_pa),
-                                "snc_hz_warmup": r["snc_hz_warmup"], "snc_hz_read": r["snc_hz_read"],
-                                "snc_neutral_hz": float(self.snc_neutral_hz),
-                                "reward_us_spikes": r["reward_us_spikes"],
-                                "da_conc_onset": r["da_conc_onset"], "da_conc_read_mean": r["da_conc_read_mean"],
-                                "da_drive_pa_read_mean": r["da_drive_pa_read_mean"], "s_da_pa": float(self.s_da_pa),
-                                "ask_warmup_spikes": r["ask_warmup_spikes"]}
-            rec["tonic_da"] = {"da_level": float(lvl), "i_tonic_pa": float(i_t), "k_tonic_pa": K_TONIC_PA}
-            slot_spk = r["slot_spk"]
-        else:
-            self._wash_neurons()
-            ask_spk, slot_spk = self._drive_slot(slot, novelty)
-            want = self._want_hz(ask_spk)
-            self._wash_neurons()
+            ph, tn = self.phasic_gain(da_level, salience)
+            want_dec = want * ph["da_crave_gain"]
+            ph["want_eff_hz"] = float(want_dec)
+            rec["phasic_da"] = ph
+            rec["tonic_da"] = tn
         self._tick += 1
         self._slot_last[slot] = self._tick
         self.n_presented[topic] = self.n_presented.get(topic, 0) + 1
         post = self.slice_state(slot)
-        rec.update({"slot": int(slot), "want_hz": float(want), "threshold": float(self.threshold),
-                    "curious": bool(want >= self.threshold), "afferent_spikes": int(slot_spk),
+        rec.update({"slot": int(slot), "want_hz": float(want), "want_decision_hz": float(want_dec),
+                    "threshold": float(self.threshold),
+                    "curious": bool(want_dec >= self.threshold), "afferent_spikes": int(slot_spk),
                     "slice_pre": pre, "slice_post": post,
                     "stop": {"presentations": int(self.n_presented[topic]), "x_pre": pre["x_mean"],
-                             "x_post": post["x_mean"], "stopped": bool(want < self.threshold)},
+                             "x_post": post["x_mean"], "stopped": bool(want_dec < self.threshold)},
                     "held": self.held(), "lesion_stop": bool(self.lesion_stop),
                     "drive_lesion": bool(self.drive_lesion), "recycled": list(self.recycled[-3:])})
         return rec
@@ -354,7 +386,7 @@ class TopicStopOrgan(CuriosityLPOrgan):
         _restore_state(self.bridge, self.snap0)
         if self._da_installed:
             self._reset_da()
-        if self.phasic and da_level is not None:
+        if self._da_installed and da_level is not None:
             i_t, i_p, _l, _s = self._snc_currents(da_level, 0.0 if salience is None else salience)
             r = self._present_da(0, novelty, i_t, i_p)
             want = self._want_hz(r["ask_spk"])
@@ -368,25 +400,32 @@ class TopicStopOrgan(CuriosityLPOrgan):
             self._reset_da()
         return float(want), extra
 
-    def snc_rate_at(self, da_level, salience):
-        """The SNc rate (Hz) over W_MEASURE after W_WARMUP at the P encodings (method 2's `_snc_rate` window)."""
+    def snc_protocol_rate(self, da_level, salience):
+        """The SNc rate (Hz) in the P read's own window: the drives on for W_DA_WARMUP steps, then the rate over the
+        next DRIVE_STEPS + READ_STEPS steps (no topic input). Used for the neutral rate and the phasic design rule."""
         from sim.backend import from_host
-        self.ensure_built()
         i_t, i_p, _l, _s = self._snc_currents(da_level, salience)
-        self._wash_neurons()
+        _restore_state(self.bridge, self._snap_neuron)
+        if self._da_installed:
+            self._reset_da()
         b = self.bridge
         cur = np.zeros(self._num, np.float32)
         cur[_h(self._idx_snc)] = float(i_t)
         cur[_h(self._idx_us)] = float(i_p)
         b.cp_external_input_current[:] = from_host(cur)
-        spk = 0
-        for i in range(W_WARMUP + W_MEASURE):
+        spk = us = 0
+        n_read = DRIVE_STEPS + READ_STEPS
+        for i in range(W_DA_WARMUP + n_read):
             _advance(b)
-            if i >= W_WARMUP:
+            us += int(b.cp_firing_states[self._idx_us].sum())
+            if i >= W_DA_WARMUP:
                 spk += int(b.cp_firing_states[self._idx_snc].sum())
         b.cp_external_input_current[:] = 0.0
-        self._wash_neurons()
-        return spk / max(self._n_snc, 1) / (W_MEASURE * 1e-3)
+        self.last_reward_us_spikes = int(us)      # read-back: 0 under lesion_P (no phasic afferent fired)
+        _restore_state(self.bridge, self._snap_neuron)
+        if self._da_installed:
+            self._reset_da()
+        return spk / max(self._n_snc, 1) / (n_read * 1e-3)
 
 
 # ── the P design rule (DESIGN_SEED only; registered in the packet before it ran) ───────────────────────────────────
@@ -399,7 +438,7 @@ def design(seed=DESIGN_SEED):
     least its neutral rate (a fully novel topic restores the DA a disengaged session lost). Nothing about asking order,
     stopping or any battery turn is read here."""
     t0 = time.time()
-    org = TopicStopOrgan(seed, phasic=True, s_da_pa=S_DA_GRID[0], g_phasic_pa=G_PHASIC_GRID[-1])
+    org = TopicStopOrgan(seed, phasic=True, s_da_pa=S_DA_GRID[0], g_phasic_pa=G_PHASIC_GRID[-1], bus_da=True)
     org.ensure_built()
     thr = float(org.threshold)
     rows = []
@@ -418,12 +457,13 @@ def design(seed=DESIGN_SEED):
     g_rows = []
     for g in G_PHASIC_GRID:
         org.g_phasic_pa = g
-        g_rows.append({"g_phasic_pa": g, "snc_hz_floor_sal1": org.snc_rate_at(DA_FLOOR_PROBE, 1.0)})
-    neutral_hz = float(org.snc_neutral_hz)
+        g_rows.append({"g_phasic_pa": g, "snc_hz_floor_sal1": org.snc_protocol_rate(DA_FLOOR_PROBE, 1.0)})
+    neutral_hz = float(org.snc_neutral_p_hz)
     chosen_g = next((r["g_phasic_pa"] for r in g_rows if r["snc_hz_floor_sal1"] >= neutral_hz), None)
     org.g_phasic_pa = G_PHASIC_GRID[-1]
-    snc_tonic_curve = {str(l): org.snc_rate_at(l, 0.0) for l in (0.0, DA_FLOOR_PROBE, 0.25, 0.5, 1.0, 2.0)}
+    snc_tonic_curve = {str(l): org.snc_protocol_rate(l, 0.0) for l in (0.0, DA_FLOOR_PROBE, 0.25, 0.5, 1.0, 2.0)}
     return {"seed": int(seed), "threshold_hz": thr, "calib": org.calib, "snc_neutral_hz": neutral_hz,
+            "snc_neutral_hz_method2_window": float(org.snc_neutral_hz),
             "s_da_rows": rows, "g_phasic_rows": g_rows, "snc_tonic_only_hz": snc_tonic_curve,
             "chosen": {"S_DA_PA": chosen_s, "G_PHASIC_PA": chosen_g},
             "rule": design.__doc__.strip(), "constants": {

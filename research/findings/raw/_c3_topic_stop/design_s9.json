@@ -1,0 +1,198 @@
+{
+ "seed": 9,
+ "threshold_hz": 17.857142857142858,
+ "calib": {
+  "want_novel_hz": 35.714285714285715,
+  "want_familiar_hz": 0.0,
+  "threshold_hz": 17.857142857142858,
+  "novel_signal": 0.95,
+  "familiar_signal": 0.0,
+  "read_reps": 4
+ },
+ "snc_neutral_hz": 40.476190476190474,
+ "snc_neutral_hz_method2_window": 65.27777777777777,
+ "s_da_rows": [
+  {
+   "s_da_pa": 10.0,
+   "want_novel_neutral_hz": 35.714285714285715,
+   "want_novel_floor_hz": 35.267857142857146,
+   "want_da_alone_ceiling_hz": 0.0,
+   "da_conc_floor": 0.03286937996103657,
+   "da_conc_ceiling": 2.0,
+   "ask_warmup_spikes_ceiling": 0,
+   "floor_below_threshold": false,
+   "alone_silent": true
+  },
+  {
+   "s_da_pa": 20.0,
+   "want_novel_neutral_hz": 35.714285714285715,
+   "want_novel_floor_hz": 34.375,
+   "want_da_alone_ceiling_hz": 0.0,
+   "da_conc_floor": 0.03286937996103657,
+   "da_conc_ceiling": 2.0,
+   "ask_warmup_spikes_ceiling": 0,
+   "floor_below_threshold": false,
+   "alone_silent": true
+  },
+  {
+   "s_da_pa": 30.0,
+   "want_novel_neutral_hz": 35.714285714285715,
+   "want_novel_floor_hz": 30.80357142857143,
+   "want_da_alone_ceiling_hz": 0.0,
+   "da_conc_floor": 0.03286937996103657,
+   "da_conc_ceiling": 2.0,
+   "ask_warmup_spikes_ceiling": 0,
+   "floor_below_threshold": false,
+   "alone_silent": true
+  },
+  {
+   "s_da_pa": 40.0,
+   "want_novel_neutral_hz": 35.714285714285715,
+   "want_novel_floor_hz": 27.232142857142854,
+   "want_da_alone_ceiling_hz": 0.0,
+   "da_conc_floor": 0.03286937996103657,
+   "da_conc_ceiling": 2.0,
+   "ask_warmup_spikes_ceiling": 0,
+   "floor_below_threshold": false,
+   "alone_silent": true
+  },
+  {
+   "s_da_pa": 50.0,
+   "want_novel_neutral_hz": 35.714285714285715,
+   "want_novel_floor_hz": 23.214285714285715,
+   "want_da_alone_ceiling_hz": 0.0,
+   "da_conc_floor": 0.03286937996103657,
+   "da_conc_ceiling": 2.0,
+   "ask_warmup_spikes_ceiling": 0,
+   "floor_below_threshold": false,
+   "alone_silent": true
+  },
+  {
+   "s_da_pa": 60.0,
+   "want_novel_neutral_hz": 35.714285714285715,
+   "want_novel_floor_hz": 21.428571428571427,
+   "want_da_alone_ceiling_hz": 0.0,
+   "da_conc_floor": 0.03286937996103657,
+   "da_conc_ceiling": 2.0,
+   "ask_warmup_spikes_ceiling": 0,
+   "floor_below_threshold": false,
+   "alone_silent": true
+  },
+  {
+   "s_da_pa": 80.0,
+   "want_novel_neutral_hz": 35.714285714285715,
+   "want_novel_floor_hz": 14.732142857142856,
+   "want_da_alone_ceiling_hz": 15.625,
+   "da_conc_floor": 0.03286937996103657,
+   "da_conc_ceiling": 2.0,
+   "ask_warmup_spikes_ceiling": 0,
+   "floor_below_threshold": true,
+   "alone_silent": false
+  },
+  {
+   "s_da_pa": 100.0,
+   "want_novel_neutral_hz": 35.714285714285715,
+   "want_novel_floor_hz": 8.035714285714286,
+   "want_da_alone_ceiling_hz": 26.339285714285715,
+   "da_conc_floor": 0.03286937996103657,
+   "da_conc_ceiling": 2.0,
+   "ask_warmup_spikes_ceiling": 23,
+   "floor_below_threshold": true,
+   "alone_silent": false
+  },
+  {
+   "s_da_pa": 120.0,
+   "want_novel_neutral_hz": 35.714285714285715,
+   "want_novel_floor_hz": 4.464285714285714,
+   "want_da_alone_ceiling_hz": 6.696428571428571,
+   "da_conc_floor": 0.03286937996103657,
+   "da_conc_ceiling": 2.0,
+   "ask_warmup_spikes_ceiling": 76,
+   "floor_below_threshold": true,
+   "alone_silent": false
+  },
+  {
+   "s_da_pa": 150.0,
+   "want_novel_neutral_hz": 35.714285714285715,
+   "want_novel_floor_hz": 1.3392857142857142,
+   "want_da_alone_ceiling_hz": 25.892857142857142,
+   "da_conc_floor": 0.03286937996103657,
+   "da_conc_ceiling": 2.0,
+   "ask_warmup_spikes_ceiling": 83,
+   "floor_below_threshold": true,
+   "alone_silent": false
+  },
+  {
+   "s_da_pa": 200.0,
+   "want_novel_neutral_hz": 35.714285714285715,
+   "want_novel_floor_hz": 0.0,
+   "want_da_alone_ceiling_hz": 35.267857142857146,
+   "da_conc_floor": 0.03286937996103657,
+   "da_conc_ceiling": 2.0,
+   "ask_warmup_spikes_ceiling": 123,
+   "floor_below_threshold": true,
+   "alone_silent": false
+  }
+ ],
+ "g_phasic_rows": [
+  {
+   "g_phasic_pa": 100.0,
+   "snc_hz_floor_sal1": 23.809523809523807
+  },
+  {
+   "g_phasic_pa": 200.0,
+   "snc_hz_floor_sal1": 16.666666666666668
+  },
+  {
+   "g_phasic_pa": 300.0,
+   "snc_hz_floor_sal1": 32.142857142857146
+  },
+  {
+   "g_phasic_pa": 400.0,
+   "snc_hz_floor_sal1": 34.523809523809526
+  },
+  {
+   "g_phasic_pa": 600.0,
+   "snc_hz_floor_sal1": 47.61904761904761
+  },
+  {
+   "g_phasic_pa": 800.0,
+   "snc_hz_floor_sal1": 53.57142857142857
+  },
+  {
+   "g_phasic_pa": 1200.0,
+   "snc_hz_floor_sal1": 63.095238095238095
+  },
+  {
+   "g_phasic_pa": 2400.0,
+   "snc_hz_floor_sal1": 80.95238095238095
+  }
+ ],
+ "snc_tonic_only_hz": {
+  "0.0": 0.0,
+  "0.046163": 0.0,
+  "0.25": 7.142857142857143,
+  "0.5": 40.476190476190474,
+  "1.0": 72.61904761904762,
+  "2.0": 117.85714285714285
+ },
+ "chosen": {
+  "S_DA_PA": null,
+  "G_PHASIC_PA": 600.0
+ },
+ "rule": "S_DA_PA := the smallest S_DA_GRID value for which (a) at the floor tonic (da_level DA_FLOOR_PROBE, phasic 0) a\n    fresh novel slice's want (NOVEL_SIGNAL) falls below the threshold (the coupling is strong enough that losing the\n    tonic reproduces today's failure), and (b) the DA drive alone never fires the ASK pool: at the ceiling (da_level\n    DA_LEVEL_MAX, salience 1, G_PHASIC_GRID max) with FAMILIAR_SIGNAL (no topic input) the want is 0 Hz.\n    G_PHASIC_PA := the smallest G_PHASIC_GRID value for which, at the floor tonic with salience 1, the SNc rate is at\n    least its neutral rate (a fully novel topic restores the DA a disengaged session lost). Nothing about asking order,\n    stopping or any battery turn is read here.",
+ "constants": {
+  "K_TONIC_PA": 440.0,
+  "DA_TAU_MS": 20.0,
+  "DA_WINDOW_MS": 5.0,
+  "W_DA_WARMUP": 60,
+  "DA_MIN": 0.0,
+  "DA_MAX": 2.0,
+  "DA_FLOOR_PROBE": 0.046163,
+  "W_TOPIC_ASK": 80.0,
+  "TAU_HAB_MS": 12000.0,
+  "no_ou": true
+ },
+ "wall_s": 1.7,
+ "runner": "research/runners/curiosity_topic_stop_organ.py"
+}

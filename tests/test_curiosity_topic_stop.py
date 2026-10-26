@@ -183,3 +183,32 @@ def test_flag_off_handler_turn_has_no_topic_stop_footprint(monkeypatch):
     ctx = srv._CONTEXTS.get(key)
     assert ctx is None or not hasattr(ctx, TS.CTX_ATTR)
     client.post("/api/brain-chat/reset", json={"session": sess, "brain": "tiny-demo", "renderer": "stub"})
+
+
+def test_phasic_da_feeds_the_gain_and_lesion_p_pins_the_phasic_afferent(flags):
+    """P method B: at the floor tonic a fully salient topic's SNc read restores da_eff >= 0.5 (gain >= 1); lesion_P
+    pins the phasic afferent to 0 (no reward_us spike fires, read back), da_eff falls to 0 and the gain to its clip."""
+    flags.setenv("BRAIN_CURIOSITY_PHASIC_DA", "1")
+    floor = {"_last_da_drives": {"da_level": ORG.DA_FLOOR_PROBE}}
+    ctx = types.SimpleNamespace()
+    TS.note_turn(ctx)
+    r = TS.decide(ctx, types.SimpleNamespace(**floor), "eel", NOVEL, _judge(38.9), SEED, False)
+    ph = r["phasic_da"]
+    assert r["phasic_da_applied"] and ph["salience"] == pytest.approx(1.0) and ph["reward_us_spikes"] > 0
+    assert ph["da_eff"] >= 0.5 and ph["da_crave_gain"] >= 1.0 and r["curious"] is True
+    assert r["tonic_da"]["i_tonic_pa"] == pytest.approx(ORG.K_TONIC_PA * ORG.DA_FLOOR_PROBE)
+    flags.setenv("BRAIN_CURIOSITY_PHASIC_DA_LESION", "1")
+    ctx2 = types.SimpleNamespace()
+    TS.note_turn(ctx2)
+    r2 = TS.decide(ctx2, types.SimpleNamespace(**floor), "eel", NOVEL, _judge(38.9), SEED, False)
+    ph2 = r2["phasic_da"]
+    assert ph2["lesioned"] and ph2["i_phasic_pa"] == 0.0 and ph2["reward_us_spikes"] == 0
+    assert ph2["da_eff"] == pytest.approx(0.0) and ph2["da_crave_gain"] == pytest.approx(0.25)
+    assert r2["curious"] is False and r2["want_hz"] == pytest.approx(r["want_hz"])
+
+
+def test_phasic_da_frozen_constants_match_the_design_artifact():
+    import json
+    d = json.load(open(os.path.join(ORG._REPO, ORG.DESIGN_FROZEN["artifact"])))
+    assert d["chosen"]["S_DA_PA"] is None and ORG.DESIGN_FROZEN["S_DA_PA"] is None
+    assert d["chosen"]["G_PHASIC_PA"] == ORG.DESIGN_FROZEN["G_PHASIC_PA"] == 600.0

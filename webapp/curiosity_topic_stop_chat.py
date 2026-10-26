@@ -6,11 +6,13 @@ Flags (each default OFF; unset or anything but 1/true/on/yes is off):
                                      depressing slices onto an ASK pool) instead of the shared-pool ASK read.
   BRAIN_CURIOSITY_TOPIC_STOP_LESION  lesion_L: the organ's slice synapses recover between turns (tau_d 200 ms, method
                                      2's lesion_habituation): the per-topic memory is removed, the drive is kept.
-  BRAIN_CURIOSITY_PHASIC_DA          P: the host crave-gain formula (webapp/da_curiosity_drives_chat.py) is NOT
-                                     applied; instead the organ's SNc gets a tonic afferent from the session DA level
-                                     and a phasic afferent from the topic's own salience, and the resulting bus
-                                     dopamine acts on the ASK pool's excitability. Requires L (the organ hosts it); with
-                                     L off this flag does nothing (the handler never reaches this module).
+  BRAIN_CURIOSITY_PHASIC_DA          P: the DA that enters the crave gain is no longer the session-global EMA but a
+                                     topic-locked spiking SNc read in the organ: a tonic afferent from the session DA
+                                     level plus a phasic afferent from the topic's own salience (P method B; the gain
+                                     formula itself stays, declared host arithmetic; the bus-excitability form, method
+                                     A, failed its registered design rule). The handler's own `crave_decision` is then
+                                     skipped. Requires L (the organ hosts it); with L off this flag does nothing (the
+                                     handler never reaches this module).
   BRAIN_CURIOSITY_PHASIC_DA_LESION   lesion_P: the phasic afferent pinned to 0 (the tonic afferent intact).
 
 With every flag off nothing here runs: `topic_stop_enabled()` is False, the handler skips this module entirely, no
