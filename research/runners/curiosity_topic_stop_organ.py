@@ -69,6 +69,11 @@ the EXISTING host formula, unchanged (`webapp/da_curiosity_drives_chat.da_crave_
   bus code stays here only to reproduce that artifact (`design()`); the handler never installs it.
   G_PHASIC_PA is fixed by the design rule's phasic half (unchanged since registration): the smallest grid value for
   which a fully salient topic at the floor tonic brings the SNc back to its neutral rate.
+  BATTERY ARM p_const_salience (informational, default OFF; env `BRAIN_CURIOSITY_PHASIC_DA_CONST_SALIENCE`): the tonic
+  SNc transfer is kept and the phasic afferent carries a CONSTANT in place of T's salience, the running mean of the
+  saliences this conversation has presented so far (the current probe included, so the first probe of a conversation
+  reads its own). It separates topic-locking by salience from the phasic drive as such (lesion_P pins that drive to 0).
+  The trace reports the constant used as `salience`, the topic's own as `salience_in` and `const_salience` true.
 
 FUNCTIONAL CORRELATE, NOT phenomenal. A habituated ask drive is reported as a read-out ("I have asked about toads
 three times; my drive to ask about toads has habituated"), never as felt boredom or felt interest.
@@ -109,6 +114,7 @@ from research.runners._curiosity_seek_learn_onbridge_derisk import (  # noqa: E4
 from research.runners.curiosity_production_organ import NOVEL_SIGNAL, FAMILIAR_SIGNAL  # noqa: E402
 
 # ── P constants (registered before data; the design rule fixes S_DA_PA and G_PHASIC_PA, see design()) ─────────────
+CONST_SALIENCE_ENV = "BRAIN_CURIOSITY_PHASIC_DA_CONST_SALIENCE"     # battery arm p_const_salience (default OFF)
 DA_TONIC = 0.5                         # the host EMA's neutral level (webapp/da_curiosity_drives_chat._DA_TONIC_BASELINE)
 K_TONIC_PA = SNC_TONIC_PA / DA_TONIC   # 440 pA per DA unit, intercept 0: da 0.5 -> 220 pA (the SNc's neutral drive)
 DA_LEVEL_MAX = 2.0                     # clip of the host EMA before encoding (it has read ~1.24 at most)
@@ -135,13 +141,18 @@ DA_FLOOR_PROBE = 0.046163              # the floor the gate recorded on s42 (dia
 DESIGN_FROZEN = {"S_DA_PA": None, "G_PHASIC_PA": 600.0, "artifact": "research/findings/raw/_c3_topic_stop/design_s9.json"}
 
 
+def const_salience_enabled():
+    """The p_const_salience battery arm: unset or anything but 1/true/on/yes is off."""
+    return os.environ.get(CONST_SALIENCE_ENV, "0").strip().lower() in ("1", "true", "on", "yes")
+
+
 class TopicStopOrgan(CuriosityLPOrgan):
     """Method 2's organ (noise off, frozen constants) with the production read protocol: a lazily-run turn clock,
     a capacity rule on the slice table, the lesion read-backs, and (P) a topic-locked SNc read feeding the crave gain.
     `bus_da` installs P method A (the rejected bus form) for `design()` only."""
 
     def __init__(self, seed, *, lesion_stop=False, drive_lesion=False, phasic=False, phasic_lesion=False,
-                 s_da_pa=None, g_phasic_pa=None, bus_da=False):
+                 s_da_pa=None, g_phasic_pa=None, bus_da=False, const_salience=None):
         super().__init__(seed, w_topic_ask=W_TOPIC_ASK,
                          tau_hab_ms=(TAU_LESION_MS if lesion_stop else TAU_HAB_MS),
                          reset_on=True, drive_lesion=bool(drive_lesion), shared_slice=False, no_ou=True)
@@ -150,6 +161,9 @@ class TopicStopOrgan(CuriosityLPOrgan):
         self.phasic_lesion = bool(phasic_lesion)
         self.s_da_pa = float(s_da_pa if s_da_pa is not None else (DESIGN_FROZEN["S_DA_PA"] or 0.0))
         self.g_phasic_pa = float(g_phasic_pa if g_phasic_pa is not None else (DESIGN_FROZEN["G_PHASIC_PA"] or 0.0))
+        self.const_salience = const_salience_enabled() if const_salience is None else bool(const_salience)
+        self._sal_sum = 0.0            # running sum / count of the saliences presented (used only by const_salience)
+        self._sal_n = 0
         self.turns_idled = 0
         self.n_presented = {}          # topic -> presentations so far (reported, never read by the decision)
         self._slot_last = {}           # slot -> presentation counter value at its last use (the capacity rule only)
@@ -330,6 +344,13 @@ class TopicStopOrgan(CuriosityLPOrgan):
                 "da_conc_onset": conc_onset, "da_conc_read_mean": float(np.mean(conc)),
                 "da_drive_pa_read_mean": float(self.s_da_pa * (np.mean(conc) - DA_BASELINE))}
 
+    def _session_mean_salience(self, salience):
+        """p_const_salience: fold this probe's salience (clipped to [0, 1] as the encoding does) into the conversation's
+        running mean and return the mean, the constant that replaces the topic's own salience."""
+        self._sal_sum += float(min(1.0, max(0.0, float(salience))))
+        self._sal_n += 1
+        return self._sal_sum / self._sal_n
+
     def phasic_gain(self, da_level, salience):
         """P method B: the topic-locked SNc read -> da_eff -> the existing host crave gain. Returns the trace dict."""
         from webapp.da_curiosity_drives_chat import da_crave_gain
@@ -361,7 +382,14 @@ class TopicStopOrgan(CuriosityLPOrgan):
         self._wash_neurons()
         want_dec = want
         if self.phasic:
-            ph, tn = self.phasic_gain(da_level, salience)
+            sal_used = salience
+            if self.const_salience and salience is not None:
+                sal_used = self._session_mean_salience(salience)
+            ph, tn = self.phasic_gain(da_level, sal_used)
+            if self.const_salience:                  # keys only when the arm is on: the flag-off trace is unchanged
+                ph["salience_in"] = None if salience is None else float(salience)
+                ph["const_salience"] = True
+                ph["salience_n_seen"] = int(self._sal_n)
             want_dec = want * ph["da_crave_gain"]
             ph["want_eff_hz"] = float(want_dec)
             rec["phasic_da"] = ph

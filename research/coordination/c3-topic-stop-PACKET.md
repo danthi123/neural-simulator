@@ -8,7 +8,9 @@ cap: 2 builds
 
 Board: Stage-2 C3 for the 11-21 retake (RULING stage2-fixes-1026, C3 item). Branch `research/c3-topic-stop` (worktree
 `sim-rev/wt-c3int`, cut from main 3065c5614). Default OFF everywhere; no default is flipped. No `sim/` edit. Gate seeds
-42/43/44/100/101/102 were not run; the smoke used dev seed 7, the design rule seed 9.
+42/43/44/100/101/102 were not run; the smoke used dev seed 7, the design rule seed 9. Seed 9 is the DESIGN seed
+(method 2's W_TOPIC_ASK, and this packet's G_PHASIC_PA and neutral SNc rate, were set there), so it is not a counted
+dev seed anywhere below (section 7).
 
 ## 1. The defect (research/findings/2026-10-26-stage2-fail-diagnoses.md)
 
@@ -85,7 +87,8 @@ DA 0.5 -> 220 pA, the SNc's neutral drive in method 2); the phasic term G_PHASIC
   threshold and (b) DA alone at the ceiling never fires the ASK pool. Amendment D1 (before any handler run): run 1 was
   void (the rule sensitivity missed the engine's dt/1000 factor, so the concentration never left baseline) and the
   neutral SNc rate is now read in the P window; the grid was extended to 200 pA. Result
-  (`research/findings/raw/_c3_topic_stop/design_s9.json`): no value meets both halves. 60 pA leaves the floor want at
+  (`research/findings/raw/_c3_topic_stop/design_s9.json`, produced at d25e25002 with an uncommitted tree: its sidecar
+  records git_dirty true, and the working-tree edits were committed afterwards in 86d8b461c): no value meets both halves. 60 pA leaves the floor want at
   21.4 Hz (threshold 17.9); 80 pA brings it to 14.7 Hz, but the drive alone then fires the ASK pool at 15.6 Hz with no
   topic input; 100 pA and above fire it past threshold. An additive excitability drive is not a gain. Verdict on the
   METHOD; its rung is the `replaced-by` above (a per-pathway synaptic-gain target needs a sim/ edit).
@@ -100,6 +103,11 @@ DA 0.5 -> 220 pA, the SNc's neutral drive in method 2); the phasic term G_PHASIC
   linear encodings remain host arithmetic (the header above). The tonic afferent still carries the host EMA
   (`webapp/da_mode_drives_chat.py`).
 - **Lesion P.** The phasic afferent pinned to 0, the tonic intact; read back as `phasic_da.reward_us_spikes` = 0.
+- **`BRAIN_CURIOSITY_DA_LESION` is not applicable when P is on.** The P branch skips `crave_decision`
+  (`webapp/server.py`, the `pass  # P:` branch), which is the only reader of that pin, so no `curiosity_da` trace is
+  attached and the gate's informational `da_lesion` arm is UNDEFINED under P (its `lesion_held` cannot be true). Under L
+  alone it applies and is used (S1-S3 and the `L only, gain pinned` battery arm). The test of P that does not rely on
+  it is lesion_P, plus the `p_const_salience` arm (section 7), which separates topic-locking from the phasic drive.
 - **Organ-level sanity read (dev seed 7, synthetic DA sequence, after the method-B build, before these predictions and
   before any P handler run):** at the floor tonic a novel topic reads da_eff 0.63, gain 1.19; under lesion_P da_eff 0,
   gain 0.25 (the clip), want_eff 8.9 Hz < 17.6; toad's 2nd presentation reads 15.2 Hz x 1.19 = 18.1 Hz (asked), the 3rd
@@ -111,10 +119,15 @@ DA 0.5 -> 220 pA, the SNc's neutral drive in method 2); the phasic term G_PHASIC
 `threshold_shared`; `tonic_da` {da_level, i_tonic_pa}; `phasic_da` {salience, i_phasic_pa, snc_hz, snc_neutral_hz,
 da_eff, da_crave_gain, reward_us_spikes, lesioned}; `slice_pre` / `slice_post` {weight_sum, x_mean, efficacy_sum};
 `stop` {presentations, x_pre, x_post, stopped}; `held` {stp_tau_d_ms, ou_enabled, topic_ask_weight_sum}; `idles_run`;
-`turns_seen`. With L on and P off, `curiosity.curiosity_da` (the host gain trace) is kept, so the gate's
+`turns_seen`. With the `p_const_salience` switch on, `phasic_da.salience` is the constant used, `salience_in` the topic's
+own and `const_salience` true (keys present only then). With L on and P off, `curiosity.curiosity_da` (the host gain trace) is kept, so the gate's
 `da_lesion_held` reads the pinned gain.
 
-## 6. Registered predictions for the dev-seed-7 smoke (written before any handler data of this build)
+## 6. Registered predictions for the dev-seed-7 smoke
+
+Ordering disclosure: S1 (the first smoke arm) was launched at 14:21:47, the predictions were committed at 14:24:21
+(f27f1efb4), and the first smoke record was written at 14:35. S1 was therefore already running when the predictions were
+committed, and no handler record existed at the commit.
 
 Each arm is one `stage2_exit_gate --shard --seed 7 --group ask` run at 86d8b461c, flags in the environment.
 Scores: `score_ask` (`discriminates`, `lp_learnable`, `lp_unlearnable`, the gap and moat rates).
@@ -133,7 +146,10 @@ Scores: `score_ask` (`discriminates`, `lp_learnable`, `lp_unlearnable`, the gap 
 - **Read-backs.** stp_tau_d 12000 ms and ou_enabled false on every L probe; reward_us_spikes > 0 on every novel P probe
   and = 0 on every S6 probe.
 
-## 7. Dev-seed battery for the pool (dev seeds 1-12; `stage2_exit_gate --shard ... --group ask`)
+## 7. Dev-seed battery for the pool (`stage2_exit_gate --shard ... --group ask`)
+
+Counted dev seeds: 1-8 and 10-12 (11 seeds). Dev seed 9 is the design seed (header): it may be run, and is reported
+separately, but it is never counted in any bar below, so the bars are written over 11 seeds ("11/11").
 
 Candidate configuration C = `BRAIN_CURIOSITY_TOPIC_STOP=1 BRAIN_CURIOSITY_PHASIC_DA=1`. Arms per seed (one fresh
 process each):
@@ -148,9 +164,17 @@ process each):
 | lesion_P | intact_a, reversed | C + `BRAIN_CURIOSITY_PHASIC_DA_LESION=1` | yes |
 | lesion_curiosity | lesion_curiosity | C | yes |
 | flag-off | intact_a, reversed | none (production defaults) | baseline |
+| flag-off permuted | permuted | none (production defaults) | baseline (D7's comparator for C permuted) |
 | L only, gain pinned | intact_a, reversed | `BRAIN_CURIOSITY_TOPIC_STOP=1 BRAIN_CURIOSITY_DA_LESION=1` | informational |
+| p_const_salience | intact_a, reversed | C + `BRAIN_CURIOSITY_PHASIC_DA_CONST_SALIENCE=1` | informational |
 | null_count | computed, no run | none | informational |
 | afferent-only noise | needs a build (section 3) | none | informational, later |
+
+`p_const_salience` keeps the tonic SNc transfer and replaces the topic's salience by a constant, the running mean of the
+saliences this conversation has presented (a default-OFF switch in `curiosity_topic_stop_organ.py`, unit-tested; built
+after the smoke, so S1-S6 did not use it). It tests topic-locking apart from lesion_P: lesion_P removes the phasic drive,
+this arm keeps the drive and removes only its dependence on the topic. It is reported against C and lesion_P, with no bar
+and no registered prediction. `BRAIN_CURIOSITY_DA_LESION` cannot serve here (section 4: not applicable under P).
 
 `null_count` (computed from C intact_a's trace): ask iff the shared-pool read is curious and the topic has been
 presented fewer than k times before (k = 1, 2). It reports how much of C's asked vector a host count alone reproduces.
@@ -158,16 +182,18 @@ L is count-based by design, so high agreement is expected and is reported, not h
 baseline in both orders is already in the pool at the Stage-2 pin (research/findings/raw/_stage2_diag/c3_gainpinned/).
 
 Bars (dev read; every bar must hold for the method to go to a gate-seed preregistration):
-- **D1** C intact_a and C reversed: every C3 clause of `score_ask` holds, 12/12 seeds each.
-- **D2** C intact_b: the per-label asked vector equals C intact_a, 12/12.
-- **D3** C permuted: `score_ask(permuted=True)` discriminates (the asks follow the exposure), 12/12.
-- **D4** lesion_L: u_toad_4 asked, and different from C on u_toad_4, on 12/12 in both orders; attributable fraction
+- **D1** C intact_a and C reversed: every C3 clause of `score_ask` holds, 11/11 counted seeds each.
+- **D2** C intact_b: the per-label asked vector equals C intact_a, 11/11.
+- **D3** C permuted: `score_ask(permuted=True)` discriminates (the asks follow the exposure), 11/11.
+- **D4** lesion_L: u_toad_4 asked, and different from C on u_toad_4, on 11/11 in both orders; attributable fraction
   of the extra toad asks against the intact_b null >= 0.5 (`tools.lab.attributable_to`).
-- **D5** lesion_P intact_a: lp_learnable false and lp_unlearnable false on >= 10/12 (the phasic afferent is what keeps
+- **D5** lesion_P intact_a: lp_learnable false and lp_unlearnable false on >= 9/11 (the phasic afferent is what keeps
   novel topics asked at the DA floor).
-- **D6** lesion_curiosity: 0 asks on every turn, 12/12.
-- **D7** answer rate: `abstained` and `recalled_svo` identical to flag-off of the same order on every turn of every
-  counted arm, 12/12.
+- **D6** lesion_curiosity: 0 asks on every turn, 11/11.
+- **D7** answer rate: `abstained` and `recalled_svo` identical to the same-order flag-off arm on every turn, 11/11, for
+  every counted arm that has such a comparator: C intact_a, C intact_b, lesion_L and lesion_P intact_a against flag-off
+  intact_a; C reversed, lesion_L and lesion_P reversed against flag-off reversed; C permuted against flag-off permuted.
+  lesion_curiosity has no same-order flag-off arm and is outside D7 (D6 covers its asks).
 - **D8** read-backs: every lesion holds on every probe of its arm (stp_tau_d 200 ms; reward_us_spikes 0; weight sum 0).
 Reported, not barred: asks_before_stop per seed; null_count agreement; the flag-off failure in both orders.
 
@@ -198,7 +224,7 @@ Asked by label (g_eel m_yak g_crab m_moose g_newt m_goat lp_ibex_1 lp_ibex_2 | u
 Engagement reads:
 - **L.** The topic-stop want on a fresh slice is 35.3-35.7 Hz against its threshold 17.63 Hz (the shared pool reads
   38.2-38.9 Hz against 19.10 Hz on the same probes). Toad, intact_a order: x_pre 1.000, 0.673, 0.475, 0.354; want
-  35.3, 12.9, 0, 0 Hz. Reversed: x_pre 1.000, 0.663, 0.464, 0.346; want 35.7, 16.1, 0, 0 Hz. A familiar moat drives
+  35.3, 12.9, 0, 0 Hz. Reversed (S2): x_pre 1.000, 0.663, 0.464, 0.346; want 35.7, 15.6, 0, 0 Hz (16.07 Hz is S5's u_toad_2, below). A familiar moat drives
   0 afferent spikes and its slice stays at x = 1. Read back on every L probe: stp_tau_d 12000 ms, ou_enabled false.
   On S1/S2 every `curiosity_da` trace is lesioned with gain 1.0 (`da_lesion_held`: held).
 - **P (S4).** Session DA 0.554 / 0.262 / 0.055 / 0.046 with salience 1.0 gives SNc 71.4 / 56.0 / 44.0 / 46.4 Hz,
@@ -241,3 +267,7 @@ left at its production default with L alone, or any gate seed.
 - P method B keeps the host gain formula (header). P method A's rung is a per-pathway synaptic-gain target (sim/).
 - The tonic afferent still carries the session-global host EMA (`da_mode_drives_chat.py`).
 - L is count-based; the learning-progress-sensitive rung is the spiking omission veto (section 2).
+- One-brain residual: the per-topic habituation state (the topic slices' synaptic depression) lives on the
+  per-conversation `Context` today. In `docs/plans/2026-10-13-one-brain-shared-memory-DESIGN.md`'s terms this is
+  "B target, C today": one brain would hold one habituation substrate across interlocutors. A topic asked about in one
+  conversation is still fresh in another.

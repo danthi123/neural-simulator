@@ -23,7 +23,7 @@ import research.runners.curiosity_topic_stop_organ as ORG  # noqa: E402
 SEED = 7
 NOVEL = 0.97
 _FLAGS = ("BRAIN_CURIOSITY_TOPIC_STOP", "BRAIN_CURIOSITY_TOPIC_STOP_LESION", "BRAIN_CURIOSITY_PHASIC_DA",
-          "BRAIN_CURIOSITY_PHASIC_DA_LESION")
+          "BRAIN_CURIOSITY_PHASIC_DA_LESION", "BRAIN_CURIOSITY_PHASIC_DA_CONST_SALIENCE")
 
 
 def _judge(want=38.9):
@@ -212,3 +212,40 @@ def test_phasic_da_frozen_constants_match_the_design_artifact():
     d = json.load(open(os.path.join(ORG._REPO, ORG.DESIGN_FROZEN["artifact"])))
     assert d["chosen"]["S_DA_PA"] is None and ORG.DESIGN_FROZEN["S_DA_PA"] is None
     assert d["chosen"]["G_PHASIC_PA"] == ORG.DESIGN_FROZEN["G_PHASIC_PA"] == 600.0
+
+
+def test_const_salience_switch_is_default_off_and_replaces_the_topic_salience_by_the_session_mean(flags):
+    """p_const_salience battery arm: off by default (the flag-off P trace has no new key); on, the phasic afferent carries
+    the conversation's running-mean salience instead of the topic's own, the tonic transfer is untouched."""
+    for v in ("0", "", "off", "no", "false"):
+        flags.setenv("BRAIN_CURIOSITY_PHASIC_DA_CONST_SALIENCE", v)
+        assert not ORG.const_salience_enabled()
+    flags.delenv("BRAIN_CURIOSITY_PHASIC_DA_CONST_SALIENCE", raising=False)
+    assert not ORG.const_salience_enabled()
+    flags.setenv("BRAIN_CURIOSITY_PHASIC_DA", "1")
+    chat = types.SimpleNamespace(_last_da_drives={"da_level": ORG.DA_FLOOR_PROBE})
+
+    def two_probes():
+        ctx = types.SimpleNamespace()
+        TS.note_turn(ctx)
+        a = TS.decide(ctx, chat, "eel", NOVEL, _judge(38.9), SEED, False)       # salience 1.0 (a gap)
+        TS.note_turn(ctx)
+        b = TS.decide(ctx, chat, "yak", 0.05, _judge(0.0), SEED, False)         # salience 0.0 (a familiar moat)
+        return a, b
+
+    a0, b0 = two_probes()                                                       # switch off
+    assert "const_salience" not in b0["phasic_da"] and b0["phasic_da"]["salience"] == pytest.approx(0.0)
+    flags.setenv("BRAIN_CURIOSITY_PHASIC_DA_CONST_SALIENCE", "1")
+    assert ORG.const_salience_enabled()
+    a1, b1 = two_probes()                                                       # switch on
+    pa, pb = a1["phasic_da"], b1["phasic_da"]
+    assert pa["const_salience"] and pa["salience"] == pytest.approx(1.0) and pa["salience_n_seen"] == 1
+    assert pb["const_salience"] and pb["salience_in"] == pytest.approx(0.0) and pb["salience_n_seen"] == 2
+    assert pb["salience"] == pytest.approx(0.5)                                  # mean of 1.0 and 0.0, not the topic's 0.0
+    assert pb["i_phasic_pa"] == pytest.approx(0.5 * ORG.DESIGN_FROZEN["G_PHASIC_PA"]) and pb["reward_us_spikes"] > 0
+    assert b1["tonic_da"]["i_tonic_pa"] == pytest.approx(b0["tonic_da"]["i_tonic_pa"])      # tonic transfer kept
+    assert a1["want_hz"] == pytest.approx(a0["want_hz"]) and a1["phasic_da"]["da_eff"] == pytest.approx(a0["phasic_da"]["da_eff"])
+    # lesion_P still pins the phasic afferent to 0 with the arm on
+    flags.setenv("BRAIN_CURIOSITY_PHASIC_DA_LESION", "1")
+    _a2, b2 = two_probes()
+    assert b2["phasic_da"]["lesioned"] and b2["phasic_da"]["i_phasic_pa"] == 0.0 and b2["phasic_da"]["reward_us_spikes"] == 0
