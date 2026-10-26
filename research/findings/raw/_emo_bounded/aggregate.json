@@ -1,0 +1,1586 @@
+{
+ "analysis_only": true,
+ "attribution": {
+  "dev_1_8": {
+   "attributable_to_flag": null,
+   "fails_off": 0,
+   "fails_on": 0,
+   "lever_moved": false,
+   "oor_neurons_off": 19,
+   "oor_neurons_on": 0
+  },
+  "fresh_401_420": {
+   "attributable_to_flag": 1.0,
+   "fails_off": 1,
+   "fails_on": 0,
+   "lever_moved": true,
+   "oor_neurons_off": 29,
+   "oor_neurons_on": 0
+  },
+  "held_out_301_360": {
+   "attributable_to_flag": 1.0,
+   "fails_off": 2,
+   "fails_on": 0,
+   "lever_moved": true,
+   "oor_neurons_off": 68,
+   "oor_neurons_on": 0
+  },
+  "inject_C_39.6": {
+   "attributable_to_flag": 1.0,
+   "fails_off": 16,
+   "fails_on": 0
+  },
+  "inject_C_53.6": {
+   "attributable_to_flag": 1.0,
+   "fails_off": 3,
+   "fails_on": 0
+  },
+  "quench_off": {
+   "attributable_to_quench": 1.0,
+   "protocol_fails_closed": 10,
+   "protocol_fails_open": 0
+  },
+  "quench_on": {
+   "attributable_to_quench": 1.0,
+   "protocol_fails_closed": 10,
+   "protocol_fails_open": 0
+  }
+ },
+ "battery": {
+  "determinism_flag_on_rerun": {
+   "1": true,
+   "305": true
+  },
+  "flag_off": {
+   "dev_1_8": {
+    "census_all_steps_incl_training": {
+     "max_v_mV": 68.05,
+     "min_v_mV": -146.63,
+     "n_neurons_total": 19,
+     "n_seeds_with_excursion": 5,
+     "seeds_with_excursion": [
+      1,
+      2,
+      6,
+      7,
+      8
+     ]
+    },
+    "engagement": {
+     "bounded_env_values": [
+      "0"
+     ],
+     "bounded_flag_values": [
+      "False"
+     ],
+     "bounded_readback_values": [
+      "False"
+     ],
+     "n_reads": 304,
+     "n_seeds_oor_count_session_gt0": 5,
+     "oor_count_max": 0,
+     "oor_count_session_max": 2
+    },
+    "failing_seeds": {},
+    "intact_named_latch": {
+     "max": 103,
+     "median": 85,
+     "min": 74,
+     "n": 32,
+     "n_below_36": 0
+    },
+    "n_co_commit_reads": 0,
+    "n_pass_all_10_cases": 8,
+    "n_reads": 304,
+    "n_seeds": 8,
+    "per_case_pass": {
+     "affect_lesion": 8,
+     "baseline": 8,
+     "commit_lesion": 8,
+     "intact": 8,
+     "ladder_only": 8,
+     "latch_lesion": 8,
+     "permuted": 8,
+     "shuffle": 8,
+     "teach_swap": 8,
+     "word_lesion": 8
+    }
+   },
+   "held_out_301_360": {
+    "census_all_steps_incl_training": {
+     "max_v_mV": 35.0,
+     "min_v_mV": -174.28,
+     "n_neurons_total": 68,
+     "n_seeds_with_excursion": 19,
+     "seeds_with_excursion": [
+      303,
+      308,
+      309,
+      311,
+      312,
+      316,
+      319,
+      324,
+      325,
+      332,
+      333,
+      337,
+      346,
+      348,
+      349,
+      350,
+      351,
+      352,
+      355
+     ]
+    },
+    "engagement": {
+     "bounded_env_values": [
+      "0"
+     ],
+     "bounded_flag_values": [
+      "False"
+     ],
+     "bounded_readback_values": [
+      "False"
+     ],
+     "n_reads": 2280,
+     "n_seeds_oor_count_session_gt0": 19,
+     "oor_count_max": 0,
+     "oor_count_session_max": 6
+    },
+    "failing_seeds": {
+     "308": [
+      "permuted",
+      "teach_swap",
+      "ladder_only"
+     ],
+     "348": [
+      "intact",
+      "shuffle"
+     ]
+    },
+    "intact_named_latch": {
+     "max": 104,
+     "median": 86,
+     "min": 69,
+     "n": 239,
+     "n_below_36": 0
+    },
+    "n_co_commit_reads": 0,
+    "n_pass_all_10_cases": 58,
+    "n_reads": 2280,
+    "n_seeds": 60,
+    "per_case_pass": {
+     "affect_lesion": 60,
+     "baseline": 60,
+     "commit_lesion": 60,
+     "intact": 59,
+     "ladder_only": 59,
+     "latch_lesion": 60,
+     "permuted": 59,
+     "shuffle": 59,
+     "teach_swap": 59,
+     "word_lesion": 60
+    }
+   }
+  },
+  "flag_off_vs_pinned_records": {
+   "n_held_out_compared": 60,
+   "n_identical": 60,
+   "pinned_n_pass_all_10_cases": 58
+  },
+  "flag_on": {
+   "dev_1_8": {
+    "census_all_steps_incl_training": {
+     "max_v_mV": 35.0,
+     "min_v_mV": -85.36,
+     "n_neurons_total": 0,
+     "n_seeds_with_excursion": 0,
+     "seeds_with_excursion": []
+    },
+    "engagement": {
+     "bounded_env_values": [
+      "1"
+     ],
+     "bounded_flag_values": [
+      "True"
+     ],
+     "bounded_readback_values": [
+      "True"
+     ],
+     "n_reads": 304,
+     "n_seeds_oor_count_session_gt0": 0,
+     "oor_count_max": 0,
+     "oor_count_session_max": 0
+    },
+    "failing_seeds": {},
+    "intact_named_latch": {
+     "max": 84,
+     "median": 74,
+     "min": 69,
+     "n": 32,
+     "n_below_36": 0
+    },
+    "n_co_commit_reads": 0,
+    "n_pass_all_10_cases": 8,
+    "n_reads": 304,
+    "n_seeds": 8,
+    "per_case_pass": {
+     "affect_lesion": 8,
+     "baseline": 8,
+     "commit_lesion": 8,
+     "intact": 8,
+     "ladder_only": 8,
+     "latch_lesion": 8,
+     "permuted": 8,
+     "shuffle": 8,
+     "teach_swap": 8,
+     "word_lesion": 8
+    }
+   },
+   "held_out_301_360": {
+    "census_all_steps_incl_training": {
+     "max_v_mV": 35.0,
+     "min_v_mV": -89.94,
+     "n_neurons_total": 0,
+     "n_seeds_with_excursion": 0,
+     "seeds_with_excursion": []
+    },
+    "engagement": {
+     "bounded_env_values": [
+      "1"
+     ],
+     "bounded_flag_values": [
+      "True"
+     ],
+     "bounded_readback_values": [
+      "True"
+     ],
+     "n_reads": 2280,
+     "n_seeds_oor_count_session_gt0": 0,
+     "oor_count_max": 0,
+     "oor_count_session_max": 0
+    },
+    "failing_seeds": {},
+    "intact_named_latch": {
+     "max": 87,
+     "median": 73,
+     "min": 61,
+     "n": 240,
+     "n_below_36": 0
+    },
+    "n_co_commit_reads": 0,
+    "n_pass_all_10_cases": 60,
+    "n_reads": 2280,
+    "n_seeds": 60,
+    "per_case_pass": {
+     "affect_lesion": 60,
+     "baseline": 60,
+     "commit_lesion": 60,
+     "intact": 60,
+     "ladder_only": 60,
+     "latch_lesion": 60,
+     "permuted": 60,
+     "shuffle": 60,
+     "teach_swap": 60,
+     "word_lesion": 60
+    }
+   }
+  },
+  "fresh_401_420": {
+   "flag_off": {
+    "census_all_steps_incl_training": {
+     "max_v_mV": 35.0,
+     "min_v_mV": -180.8,
+     "n_neurons_total": 29,
+     "n_seeds_with_excursion": 9,
+     "seeds_with_excursion": [
+      401,
+      406,
+      407,
+      409,
+      410,
+      411,
+      413,
+      417,
+      420
+     ]
+    },
+    "engagement": {
+     "bounded_env_values": [
+      "0"
+     ],
+     "bounded_flag_values": [
+      "False"
+     ],
+     "bounded_readback_values": [
+      "False"
+     ],
+     "n_reads": 760,
+     "n_seeds_oor_count_session_gt0": 9,
+     "oor_count_max": 0,
+     "oor_count_session_max": 2
+    },
+    "failing_seeds": {
+     "406": [
+      "intact",
+      "permuted",
+      "shuffle",
+      "teach_swap",
+      "baseline"
+     ]
+    },
+    "intact_named_latch": {
+     "max": 99,
+     "median": 86,
+     "min": 73,
+     "n": 78,
+     "n_below_36": 0
+    },
+    "n_co_commit_reads": 0,
+    "n_pass_all_10_cases": 19,
+    "n_reads": 760,
+    "n_seeds": 20,
+    "per_case_pass": {
+     "affect_lesion": 20,
+     "baseline": 19,
+     "commit_lesion": 20,
+     "intact": 19,
+     "ladder_only": 20,
+     "latch_lesion": 20,
+     "permuted": 19,
+     "shuffle": 19,
+     "teach_swap": 19,
+     "word_lesion": 20
+    }
+   },
+   "flag_on": {
+    "census_all_steps_incl_training": {
+     "max_v_mV": 35.0,
+     "min_v_mV": -90.68,
+     "n_neurons_total": 0,
+     "n_seeds_with_excursion": 0,
+     "seeds_with_excursion": []
+    },
+    "engagement": {
+     "bounded_env_values": [
+      "1"
+     ],
+     "bounded_flag_values": [
+      "True"
+     ],
+     "bounded_readback_values": [
+      "True"
+     ],
+     "n_reads": 760,
+     "n_seeds_oor_count_session_gt0": 0,
+     "oor_count_max": 0,
+     "oor_count_session_max": 0
+    },
+    "failing_seeds": {},
+    "intact_named_latch": {
+     "max": 83,
+     "median": 73,
+     "min": 61,
+     "n": 80,
+     "n_below_36": 0
+    },
+    "n_co_commit_reads": 0,
+    "n_pass_all_10_cases": 20,
+    "n_reads": 760,
+    "n_seeds": 20,
+    "per_case_pass": {
+     "affect_lesion": 20,
+     "baseline": 20,
+     "commit_lesion": 20,
+     "intact": 20,
+     "ladder_only": 20,
+     "latch_lesion": 20,
+     "permuted": 20,
+     "shuffle": 20,
+     "teach_swap": 20,
+     "word_lesion": 20
+    }
+   }
+  },
+  "intact_latch_shift_on_minus_off": {
+   "max": -3,
+   "mean": -13.61,
+   "median": -13.0,
+   "min": -24,
+   "n": 232
+  }
+ },
+ "census_overhead": {
+  "median_overhead_us": 2.1000000000000014,
+  "reps": [
+   {
+    "census_overhead_pct": 2.46,
+    "step_plain_us": 59.6,
+    "step_plus_census_us": 61.1
+   },
+   {
+    "census_overhead_pct": 3.49,
+    "step_plain_us": 58.6,
+    "step_plus_census_us": 60.7
+   },
+   {
+    "census_overhead_pct": 3.82,
+    "step_plain_us": 58.4,
+    "step_plus_census_us": 60.6
+   },
+   {
+    "census_overhead_pct": 3.27,
+    "step_plain_us": 58.8,
+    "step_plus_census_us": 60.7
+   },
+   {
+    "census_overhead_pct": 5.16,
+    "step_plain_us": 59.1,
+    "step_plus_census_us": 62.1
+   }
+  ],
+  "what": "census cost per step, organ seed 1 (920 neurons), numpy CPU, 300 steps x 5 reps, workstation under load"
+ },
+ "drivers": [
+  {
+   "file": "docs/drafts/emo-bounded-cond/README.md",
+   "sha256": "dfaa682551618e6650c4cc595197a4e0d23c52296c1c89a44e268aa06d3826f7"
+  },
+  {
+   "file": "docs/drafts/emo-bounded-cond/battery.py",
+   "sha256": "abc161bbc61c62fdea63d842af487f1001742f18a4b30582e246068a045e4860"
+  },
+  {
+   "file": "docs/drafts/emo-bounded-cond/golden_main.py",
+   "sha256": "08454c14aef5aec0a7167f1a0d83df9cb57a991142b4ef8c9498dc914e03e1f6"
+  },
+  {
+   "file": "docs/drafts/emo-bounded-cond/handler_queue.sh",
+   "sha256": "fae64754279cbcdd456901d7bfea32ed441e52a45e6cfd8cc4e767a28e1e7b81"
+  },
+  {
+   "file": "docs/drafts/emo-bounded-cond/launch_battery.sh",
+   "sha256": "b40fbc6e3aa0fe44f256c423410dc200698cb322278f1b489eaf8ef6749d80e7"
+  },
+  {
+   "file": "docs/drafts/emo-bounded-cond/overhead.py",
+   "sha256": "5d18de85a84b6be93696bb7bf39cd9382b0efd17ce108c94a1464ca2048bee74"
+  },
+  {
+   "file": "docs/drafts/emo-bounded-cond/stress.py",
+   "sha256": "42100e326978c37760428b19005d47b425bccfa592eac386a9a8899d37ca7974"
+  }
+ ],
+ "handler_seed101_emo": {
+  "off_intact_a": {
+   "answer_rate": 0.38461538461538464,
+   "answered": 5,
+   "errored_turns": [],
+   "feel": {
+    "feel_anger": {
+     "bounded_env": null,
+     "bounded_flag": false,
+     "bounded_readback": false,
+     "co_commit": false,
+     "latched": [
+      "anger"
+     ],
+     "named": "anger",
+     "oor_count": 0,
+     "oor_count_session": 1,
+     "organ_error": null,
+     "slot_max": 80
+    },
+    "feel_base": {
+     "bounded_env": null,
+     "bounded_flag": false,
+     "bounded_readback": false,
+     "co_commit": false,
+     "latched": [],
+     "named": null,
+     "oor_count": 0,
+     "oor_count_session": 0,
+     "organ_error": null,
+     "slot_max": 0
+    },
+    "feel_fear": {
+     "bounded_env": null,
+     "bounded_flag": false,
+     "bounded_readback": false,
+     "co_commit": false,
+     "latched": [
+      "fear"
+     ],
+     "named": "fear",
+     "oor_count": 0,
+     "oor_count_session": 1,
+     "organ_error": null,
+     "slot_max": 84
+    },
+    "feel_joy": {
+     "bounded_env": null,
+     "bounded_flag": false,
+     "bounded_readback": false,
+     "co_commit": false,
+     "latched": [],
+     "named": null,
+     "oor_count": 0,
+     "oor_count_session": 1,
+     "organ_error": null,
+     "slot_max": 0
+    },
+    "feel_sadness": {
+     "bounded_env": null,
+     "bounded_flag": false,
+     "bounded_readback": false,
+     "co_commit": false,
+     "latched": [
+      "sadness"
+     ],
+     "named": "sadness",
+     "oor_count": 0,
+     "oor_count_session": 1,
+     "organ_error": null,
+     "slot_max": 93
+    }
+   },
+   "n_turns": 13,
+   "peak_rss_mb": 8111.5,
+   "sources": [
+    "tiny-demo +LTM"
+   ],
+   "wall_s": 518.3
+  },
+  "off_permuted": {
+   "answer_rate": 0.38461538461538464,
+   "answered": 5,
+   "errored_turns": [],
+   "feel": {
+    "feel_anger": {
+     "bounded_env": null,
+     "bounded_flag": false,
+     "bounded_readback": false,
+     "co_commit": false,
+     "latched": [
+      "fear"
+     ],
+     "named": "fear",
+     "oor_count": 0,
+     "oor_count_session": 1,
+     "organ_error": null,
+     "slot_max": 86
+    },
+    "feel_base": {
+     "bounded_env": null,
+     "bounded_flag": false,
+     "bounded_readback": false,
+     "co_commit": false,
+     "latched": [],
+     "named": null,
+     "oor_count": 0,
+     "oor_count_session": 0,
+     "organ_error": null,
+     "slot_max": 0
+    },
+    "feel_fear": {
+     "bounded_env": null,
+     "bounded_flag": false,
+     "bounded_readback": false,
+     "co_commit": false,
+     "latched": [
+      "anger"
+     ],
+     "named": "anger",
+     "oor_count": 0,
+     "oor_count_session": 1,
+     "organ_error": null,
+     "slot_max": 76
+    },
+    "feel_joy": {
+     "bounded_env": null,
+     "bounded_flag": false,
+     "bounded_readback": false,
+     "co_commit": false,
+     "latched": [
+      "sadness"
+     ],
+     "named": "sadness",
+     "oor_count": 0,
+     "oor_count_session": 0,
+     "organ_error": null,
+     "slot_max": 90
+    },
+    "feel_sadness": {
+     "bounded_env": null,
+     "bounded_flag": false,
+     "bounded_readback": false,
+     "co_commit": false,
+     "latched": [],
+     "named": null,
+     "oor_count": 0,
+     "oor_count_session": 1,
+     "organ_error": null,
+     "slot_max": 0
+    }
+   },
+   "n_turns": 13,
+   "peak_rss_mb": 8024.3,
+   "sources": [
+    "tiny-demo +LTM"
+   ],
+   "wall_s": 516.2
+  },
+  "on_intact_a": {
+   "answer_rate": 0.38461538461538464,
+   "answered": 5,
+   "errored_turns": [],
+   "feel": {
+    "feel_anger": {
+     "bounded_env": "1",
+     "bounded_flag": true,
+     "bounded_readback": true,
+     "co_commit": false,
+     "latched": [
+      "anger"
+     ],
+     "named": "anger",
+     "oor_count": 0,
+     "oor_count_session": 0,
+     "organ_error": null,
+     "slot_max": 67
+    },
+    "feel_base": {
+     "bounded_env": "1",
+     "bounded_flag": true,
+     "bounded_readback": true,
+     "co_commit": false,
+     "latched": [],
+     "named": null,
+     "oor_count": 0,
+     "oor_count_session": 0,
+     "organ_error": null,
+     "slot_max": 0
+    },
+    "feel_fear": {
+     "bounded_env": "1",
+     "bounded_flag": true,
+     "bounded_readback": true,
+     "co_commit": false,
+     "latched": [
+      "fear"
+     ],
+     "named": "fear",
+     "oor_count": 0,
+     "oor_count_session": 0,
+     "organ_error": null,
+     "slot_max": 73
+    },
+    "feel_joy": {
+     "bounded_env": "1",
+     "bounded_flag": true,
+     "bounded_readback": true,
+     "co_commit": false,
+     "latched": [
+      "joy"
+     ],
+     "named": "joy",
+     "oor_count": 0,
+     "oor_count_session": 0,
+     "organ_error": null,
+     "slot_max": 77
+    },
+    "feel_sadness": {
+     "bounded_env": "1",
+     "bounded_flag": true,
+     "bounded_readback": true,
+     "co_commit": false,
+     "latched": [
+      "sadness"
+     ],
+     "named": "sadness",
+     "oor_count": 0,
+     "oor_count_session": 0,
+     "organ_error": null,
+     "slot_max": 75
+    }
+   },
+   "n_turns": 13,
+   "peak_rss_mb": 8110.2,
+   "sources": [
+    "tiny-demo +LTM"
+   ],
+   "wall_s": 546.9
+  },
+  "on_permuted": {
+   "answer_rate": 0.38461538461538464,
+   "answered": 5,
+   "errored_turns": [],
+   "feel": {
+    "feel_anger": {
+     "bounded_env": "1",
+     "bounded_flag": true,
+     "bounded_readback": true,
+     "co_commit": false,
+     "latched": [
+      "fear"
+     ],
+     "named": "fear",
+     "oor_count": 0,
+     "oor_count_session": 0,
+     "organ_error": null,
+     "slot_max": 73
+    },
+    "feel_base": {
+     "bounded_env": "1",
+     "bounded_flag": true,
+     "bounded_readback": true,
+     "co_commit": false,
+     "latched": [],
+     "named": null,
+     "oor_count": 0,
+     "oor_count_session": 0,
+     "organ_error": null,
+     "slot_max": 0
+    },
+    "feel_fear": {
+     "bounded_env": "1",
+     "bounded_flag": true,
+     "bounded_readback": true,
+     "co_commit": false,
+     "latched": [
+      "anger"
+     ],
+     "named": "anger",
+     "oor_count": 0,
+     "oor_count_session": 0,
+     "organ_error": null,
+     "slot_max": 68
+    },
+    "feel_joy": {
+     "bounded_env": "1",
+     "bounded_flag": true,
+     "bounded_readback": true,
+     "co_commit": false,
+     "latched": [
+      "sadness"
+     ],
+     "named": "sadness",
+     "oor_count": 0,
+     "oor_count_session": 0,
+     "organ_error": null,
+     "slot_max": 74
+    },
+    "feel_sadness": {
+     "bounded_env": "1",
+     "bounded_flag": true,
+     "bounded_readback": true,
+     "co_commit": false,
+     "latched": [
+      "joy"
+     ],
+     "named": "joy",
+     "oor_count": 0,
+     "oor_count_session": 0,
+     "organ_error": null,
+     "slot_max": 77
+    }
+   },
+   "n_turns": 13,
+   "peak_rss_mb": 8024.1,
+   "sources": [
+    "tiny-demo +LTM"
+   ],
+   "wall_s": 545.3
+  },
+  "paired_intact_a": {
+   "answer_rate_off": 0.38461538461538464,
+   "answer_rate_on": 0.38461538461538464,
+   "feel_text_before_category_clause_identical": 5,
+   "n_feel_turns": 5,
+   "n_nonfeel_turns": 8,
+   "nonfeel_reply_text_identical": 8,
+   "nonfeel_whole_response_identical": 8
+  },
+  "paired_permuted": {
+   "answer_rate_off": 0.38461538461538464,
+   "answer_rate_on": 0.38461538461538464,
+   "feel_text_before_category_clause_identical": 5,
+   "n_feel_turns": 5,
+   "n_nonfeel_turns": 8,
+   "nonfeel_reply_text_identical": 8,
+   "nonfeel_whole_response_identical": 8
+  }
+ },
+ "inputs": [
+  {
+   "file": "/home/dant123/Projects/sim-rev/diag_1026/c4/probe14_base_w0.json",
+   "sha256": "4636daaf35546a3853c2085072d8cd4f3dde7c9edfedbfcdd7d4fa8cd442a758"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/diag_1026/c4/probe14_base_w1.json",
+   "sha256": "4f2d6c487886a122d04668e866f0533969e3152857e74b89e9425a3d9eb569e7"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/diag_1026/c4/probe14_base_w2.json",
+   "sha256": "04fc4aef2bd43b531fb32a10648bfae05a0d3a1027e5e3c25d0cce51431e0831"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/diag_1026/c4/probe14_base_w3.json",
+   "sha256": "878e8ff1e6f0bd948b35dd8fc044cca8e1867c7c5a6370386aa0f8b9e884d65f"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/diag_1026/c4/probe14_base_w4.json",
+   "sha256": "e279fba723e4c058aa61a4860aed0a35db1ed33a9d141ab1004759a443aae064"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/diag_1026/c4/probe14_base_w5.json",
+   "sha256": "44b6d076c07e541d5ebc0e3237b340c17c1074612fa81d907dc199f000cf8b1d"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/foff_a.json",
+   "sha256": "df9bc04101333c71c87b42b55a54b0bf0abf04bdfe795179fbbefa97cfe6c648"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/foff_b.json",
+   "sha256": "4ef022e97dbc40060473e4174d67d62673521c65dad772e9e50a6fc15ea4a9a4"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/fon_a.json",
+   "sha256": "d758e4292fb9372dfb8156f0863cadfbdf7a342191daabf243f0980a362af170"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/fon_b.json",
+   "sha256": "caec381b5c53cea162027c43c6a6f3df104d19245da55bfcdda12f200276bcce"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/off_dev.json",
+   "sha256": "e4e1448fcb49797fad6ed5a09c0e32e0e5e3591c46144bf837a068f68609e96e"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/off_w0.json",
+   "sha256": "4e88bd0fc0bc516ba9d35aa478ed90aa39246297c7d548d5db97409019185dc8"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/off_w1.json",
+   "sha256": "870ac25136395ba7bc21a03b3adf8ae3af77822d0f618f08730135dc0f98ef6d"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/off_w2.json",
+   "sha256": "dd582f2350cc086d403b1421f69b676a7063059006695fecfab225d73c74f197"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/off_w3.json",
+   "sha256": "c17aa78d36a5d57bd5afc847e0c65ef2e2d6ec7db89d039f48c7fc3e50ba4656"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/off_w4.json",
+   "sha256": "e7ee5e34de60b26424d9cdaf898d855cbcaf01633026bbd53922f84da17b17b6"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/off_w5.json",
+   "sha256": "8b8888bc3f83ef69fa7a8c4305da4eb2c5ab8f04dff69dbdc4a0f36524709344"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/on_dev.json",
+   "sha256": "67b3d407b332644debf2c5ee6fe56ea7d8af4ca193569a9e0c8c0fd6fa21b780"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/on_w0.json",
+   "sha256": "fea7dc1d3dd2a3bd4418dcb31096b58be49295ec54b716accb8026a99eb6becc"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/on_w1.json",
+   "sha256": "2dab418ed55a86c91ec15cc5aeda17b338b91aa894be5866a966c4660f1bf2d3"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/on_w2.json",
+   "sha256": "9cd4d4be5ba5b919e3f96680dda3cfa520d8136b5c9139b7fa3f83592135a120"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/on_w3.json",
+   "sha256": "434546dee80719a09e56c65c741388e930d4fe1267c18aa1afc34adb81011869"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/on_w4.json",
+   "sha256": "b5dfb4573fdcb86e4ce9aea45e40fc52ccf63ca915f5d72f4546c6042e2fd537"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/on_w5.json",
+   "sha256": "32eff96f4e91e3cf79a1bb9e7e279dd3f0310ea2db6fcc9b0235843318275764"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/spot_on.json",
+   "sha256": "eea1dbc119bf18116ade85b8b7e39cdd8f674b3642071460daa7095009cdab4f"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/stress_off_inj_a.json",
+   "sha256": "85c4242e13bac47a94fe582e8ccd46a82797b595bc95cf0fd4869cf8dfea31da"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/stress_off_inj_b.json",
+   "sha256": "7b4c107acfc23bcedc964b17cf267184d36d2f4ad077c33f8584d3bb3bb59d07"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/stress_off_pinned.json",
+   "sha256": "0d75e175912014cabe77d52e8764a6208d821b2be08bf60adc98b73f771c6464"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/stress_off_quench.json",
+   "sha256": "9b44ac23d69ef4d9e9393a55222a09435622048edee13ba39cdbc3ebcebde0ab"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/stress_on_inj_a.json",
+   "sha256": "cc48082c0c4cf6b391fe7dbccf508e092c37ff02bf5a29997b863e528122050e"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/stress_on_inj_b.json",
+   "sha256": "9b996d92479cf542f26df97d267c28331b96149b75c1877c8897a733f614cc9c"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/stress_on_pinned.json",
+   "sha256": "c6ac49e7806041eef5dead2b4afa064d84189dd3f11aa09d4986c0ffbdb468c0"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/battery/stress_on_quench.json",
+   "sha256": "c8ec27dbd1cf6b20d3aaf1cf68280d13ec4c8f5a8e0febeaf2741e9a1f18f6d0"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/handler/off/s101/intact_a.json",
+   "sha256": "a0a65b3de35b7fe86c1aa79ebb9f0da8b66350fa3623927b5f2313da0b1474ab"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/handler/off/s101/permuted.json",
+   "sha256": "df1fc3a7543fe8b7aea0977d2653b3f2d735b3f60ae5b2748842002ba9540873"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/handler/on/s101/intact_a.json",
+   "sha256": "7a1b009a576ed05e7d8cc9a0699c82d57c0148a3ea164354f33b66f6f8840ee6"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/handler/on/s101/permuted.json",
+   "sha256": "44d12b040a14c897f99fdf2f1dc13e96f42c5b9616c0b9ea2137410186cc44ef"
+  },
+  {
+   "file": "/home/dant123/Projects/sim-rev/emobc_scratch/overhead.json",
+   "sha256": "6c8656c8042c58594b7095387102fe5f95bedae45cfd237cbaa7d8e395c84b30"
+  }
+ ],
+ "note": "aggregates driver outputs; runs no brain. Raw per-seed records stay in the scratch dir (sha256 below).",
+ "runner": "research/runners/emotion_category_bounded_aggregate.py",
+ "stress": {
+  "inject_flag_off": {
+   "bounded_readback_values": [
+    "False"
+   ],
+   "by_C_pF": {
+    "39.6": {
+     "n": 16,
+     "ok": 0,
+     "oor_session_max": 288
+    },
+    "53.6": {
+     "n": 16,
+     "ok": 13,
+     "oor_session_max": 4
+    }
+   },
+   "seeds": [
+    303,
+    304,
+    305,
+    306
+   ]
+  },
+  "inject_flag_on": {
+   "bounded_readback_values": [
+    "True"
+   ],
+   "by_C_pF": {
+    "39.6": {
+     "n": 16,
+     "ok": 16,
+     "oor_session_max": 0
+    },
+    "53.6": {
+     "n": 16,
+     "ok": 16,
+     "oor_session_max": 0
+    }
+   },
+   "seeds": [
+    303,
+    304,
+    305,
+    306
+   ]
+  },
+  "pinned_replay_flag_off": {
+   "101": {
+    "eng": {
+     "bounded_flag": false,
+     "oor_session_max": 1,
+     "readback": [
+      false
+     ]
+    },
+    "intact": {
+     "anger": [
+      "anger",
+      80
+     ],
+     "fear": [
+      "fear",
+      84
+     ],
+     "joy": [
+      null,
+      0
+     ],
+     "sadness": [
+      "sadness",
+      93
+     ]
+    },
+    "ok": false,
+    "permuted": {
+     "anger": [
+      "fear",
+      86
+     ],
+     "fear": [
+      "anger",
+      76
+     ],
+     "joy": [
+      "sadness",
+      90
+     ],
+     "sadness": [
+      null,
+      0
+     ]
+    }
+   },
+   "202": {
+    "eng": {
+     "bounded_flag": false,
+     "oor_session_max": 5,
+     "readback": [
+      false
+     ]
+    },
+    "intact": {
+     "anger": [
+      null,
+      0
+     ],
+     "fear": [
+      null,
+      0
+     ],
+     "joy": [
+      "joy",
+      79
+     ],
+     "sadness": [
+      null,
+      0
+     ]
+    },
+    "ok": false,
+    "permuted": {
+     "anger": [
+      "fear",
+      91
+     ],
+     "fear": [
+      "anger",
+      79
+     ],
+     "joy": [
+      null,
+      0
+     ],
+     "sadness": [
+      "joy",
+      77
+     ]
+    }
+   },
+   "242": {
+    "eng": {
+     "bounded_flag": false,
+     "oor_session_max": 1,
+     "readback": [
+      false
+     ]
+    },
+    "intact": {
+     "anger": [
+      "anger",
+      84
+     ],
+     "fear": [
+      "fear",
+      79
+     ],
+     "joy": [
+      "joy",
+      95
+     ],
+     "sadness": [
+      "sadness",
+      90
+     ]
+    },
+    "ok": false,
+    "permuted": {
+     "anger": [
+      "fear",
+      77
+     ],
+     "fear": [
+      "anger",
+      85
+     ],
+     "joy": [
+      "sadness",
+      92
+     ],
+     "sadness": [
+      null,
+      0
+     ]
+    }
+   },
+   "308": {
+    "eng": {
+     "bounded_flag": false,
+     "oor_session_max": 2,
+     "readback": [
+      false
+     ]
+    },
+    "intact": {
+     "anger": [
+      "anger",
+      85
+     ],
+     "fear": [
+      "fear",
+      87
+     ],
+     "joy": [
+      "joy",
+      85
+     ],
+     "sadness": [
+      "sadness",
+      102
+     ]
+    },
+    "ok": false,
+    "permuted": {
+     "anger": [
+      "fear",
+      85
+     ],
+     "fear": [
+      "anger",
+      80
+     ],
+     "joy": [
+      null,
+      0
+     ],
+     "sadness": [
+      "joy",
+      83
+     ]
+    }
+   },
+   "348": {
+    "eng": {
+     "bounded_flag": false,
+     "oor_session_max": 2,
+     "readback": [
+      false
+     ]
+    },
+    "intact": {
+     "anger": [
+      null,
+      0
+     ],
+     "fear": [
+      "fear",
+      90
+     ],
+     "joy": [
+      "joy",
+      79
+     ],
+     "sadness": [
+      "sadness",
+      82
+     ]
+    },
+    "ok": false,
+    "permuted": {
+     "anger": [
+      "fear",
+      91
+     ],
+     "fear": [
+      "anger",
+      93
+     ],
+     "joy": [
+      "sadness",
+      80
+     ],
+     "sadness": [
+      "joy",
+      85
+     ]
+    }
+   }
+  },
+  "pinned_replay_flag_on": {
+   "101": {
+    "eng": {
+     "bounded_flag": true,
+     "oor_session_max": 0,
+     "readback": [
+      true
+     ]
+    },
+    "intact": {
+     "anger": [
+      "anger",
+      67
+     ],
+     "fear": [
+      "fear",
+      73
+     ],
+     "joy": [
+      "joy",
+      77
+     ],
+     "sadness": [
+      "sadness",
+      75
+     ]
+    },
+    "ok": true,
+    "permuted": {
+     "anger": [
+      "fear",
+      73
+     ],
+     "fear": [
+      "anger",
+      68
+     ],
+     "joy": [
+      "sadness",
+      74
+     ],
+     "sadness": [
+      "joy",
+      77
+     ]
+    }
+   },
+   "202": {
+    "eng": {
+     "bounded_flag": true,
+     "oor_session_max": 0,
+     "readback": [
+      true
+     ]
+    },
+    "intact": {
+     "anger": [
+      "anger",
+      67
+     ],
+     "fear": [
+      "fear",
+      75
+     ],
+     "joy": [
+      "joy",
+      68
+     ],
+     "sadness": [
+      "sadness",
+      87
+     ]
+    },
+    "ok": true,
+    "permuted": {
+     "anger": [
+      "fear",
+      76
+     ],
+     "fear": [
+      "anger",
+      74
+     ],
+     "joy": [
+      "sadness",
+      85
+     ],
+     "sadness": [
+      "joy",
+      66
+     ]
+    }
+   },
+   "242": {
+    "eng": {
+     "bounded_flag": true,
+     "oor_session_max": 0,
+     "readback": [
+      true
+     ]
+    },
+    "intact": {
+     "anger": [
+      "anger",
+      73
+     ],
+     "fear": [
+      "fear",
+      72
+     ],
+     "joy": [
+      "joy",
+      77
+     ],
+     "sadness": [
+      "sadness",
+      76
+     ]
+    },
+    "ok": true,
+    "permuted": {
+     "anger": [
+      "fear",
+      73
+     ],
+     "fear": [
+      "anger",
+      77
+     ],
+     "joy": [
+      "sadness",
+      72
+     ],
+     "sadness": [
+      "joy",
+      78
+     ]
+    }
+   },
+   "308": {
+    "eng": {
+     "bounded_flag": true,
+     "oor_session_max": 0,
+     "readback": [
+      true
+     ]
+    },
+    "intact": {
+     "anger": [
+      "anger",
+      71
+     ],
+     "fear": [
+      "fear",
+      73
+     ],
+     "joy": [
+      "joy",
+      71
+     ],
+     "sadness": [
+      "sadness",
+      83
+     ]
+    },
+    "ok": true,
+    "permuted": {
+     "anger": [
+      "fear",
+      73
+     ],
+     "fear": [
+      "anger",
+      69
+     ],
+     "joy": [
+      "sadness",
+      81
+     ],
+     "sadness": [
+      "joy",
+      75
+     ]
+    }
+   },
+   "348": {
+    "eng": {
+     "bounded_flag": true,
+     "oor_session_max": 0,
+     "readback": [
+      true
+     ]
+    },
+    "intact": {
+     "anger": [
+      "anger",
+      85
+     ],
+     "fear": [
+      "fear",
+      79
+     ],
+     "joy": [
+      "joy",
+      70
+     ],
+     "sadness": [
+      "sadness",
+      74
+     ]
+    },
+    "ok": true,
+    "permuted": {
+     "anger": [
+      "fear",
+      76
+     ],
+     "fear": [
+      "anger",
+      82
+     ],
+     "joy": [
+      "sadness",
+      74
+     ],
+     "sadness": [
+      "joy",
+      73
+     ]
+    }
+   }
+  },
+  "quench_flag_off": {
+   "bounded_readback_values": [
+    "False"
+   ],
+   "closed_all_four_named": 0,
+   "closed_later_reads": {
+    "co_latch_none": 26,
+    "correct_alone": 1,
+    "none_no_latch": 0,
+    "stale_name_alone": 3
+   },
+   "closed_later_reads_n": 30,
+   "correct_alone_reads": [
+    [
+     "309",
+     "fear"
+    ]
+   ],
+   "lesion_engaged_closed_gain_min_max_nsyn_open_gain_min": [
+    [
+     0.0,
+     0.0,
+     5760,
+     1.0
+    ]
+   ],
+   "n_seeds": 10,
+   "open_all_four_named": 10,
+   "stale_reads": [
+    [
+     "305",
+     "fear",
+     "joy"
+    ],
+    [
+     "306",
+     "fear",
+     "joy"
+    ],
+    [
+     "308",
+     "fear",
+     "joy"
+    ]
+   ]
+  },
+  "quench_flag_on": {
+   "bounded_readback_values": [
+    "True"
+   ],
+   "closed_all_four_named": 0,
+   "closed_later_reads": {
+    "co_latch_none": 24,
+    "correct_alone": 1,
+    "none_no_latch": 0,
+    "stale_name_alone": 5
+   },
+   "closed_later_reads_n": 30,
+   "correct_alone_reads": [
+    [
+     "309",
+     "sadness"
+    ]
+   ],
+   "lesion_engaged_closed_gain_min_max_nsyn_open_gain_min": [
+    [
+     0.0,
+     0.0,
+     5760,
+     1.0
+    ]
+   ],
+   "n_seeds": 10,
+   "open_all_four_named": 10,
+   "stale_reads": [
+    [
+     "305",
+     "fear",
+     "joy"
+    ],
+    [
+     "306",
+     "fear",
+     "joy"
+    ],
+    [
+     "308",
+     "fear",
+     "joy"
+    ],
+    [
+     "309",
+     "fear",
+     "joy"
+    ],
+    [
+     "309",
+     "anger",
+     "joy"
+    ]
+   ]
+  }
+ }
+}
