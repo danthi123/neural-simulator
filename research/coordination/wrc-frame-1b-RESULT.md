@@ -46,6 +46,10 @@ step1b_rerun). All local under mem_ok 4, SIM_BACKEND=numpy CPU, 2.8 s/seed.
   parse probe (seed 7). Per-word intact runs (step-1's arm): 1/12 words fire
   (brain@41); batched probe 5/12 — the difference is batching (state carries
   across words in one run_frame call); both fire, so neither arm is silent.
+- Frame-lesion attribution (tools.lab.attributable_to, treatment vs control
+  discharge-firing words): the frame owns 0% on most seeds (range -33%..20%;
+  seed 7 = 0%, treatment 5 = control 5) — the firing is also present in the
+  lesion arm, i.e. substrate-level, driven by the suprheobase gate input.
 
 FIX-SITE CLASSIFICATION (per ruling (2)(c): the fix must be WIRING, never a
 retuned gain): NOT the mask, NOT the gate, NOT gain, NOT registration, NOT
