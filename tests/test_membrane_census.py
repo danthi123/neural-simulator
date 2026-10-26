@@ -116,7 +116,7 @@ def test_injected_out_of_range_v_is_recorded_with_its_parameters(monkeypatch):
     assert lo["extreme_low_mV"] == -500.0 and lo["extreme_high_mV"] is None
     assert hi["extreme_high_mV"] == 80.0 and hi["extreme_low_mV"] is None
     assert lo["first_step"] == 1 and lo["n_steps_low"] == 4 and hi["n_steps_high"] == 4
-    assert isinstance(lo["refractory"], bool) and lo["g_i"] is not None      # first-step context was captured
+    assert "refractory" in lo and isinstance(lo["refractory_post"], bool) and lo["g_i"] is not None   # first-step context
     # the recorded parameters ARE the bridge's drawn parameters
     for key, attr in (("C", "cp_izh_C"), ("a", "cp_izh_a"), ("b", "cp_izh_b"), ("d", "cp_izh_d_increment"),
                       ("vpeak", "cp_izh_vpeak"), ("k", "cp_izh_k")):
@@ -192,6 +192,7 @@ def test_the_real_euler_overshoot_is_detected_and_bounded_conductance_clears_it(
     assert off["n_low_neurons"] >= 1 and off["v_min"] < MC.V_LOW_MV, off["v_min"]
     assert off["regions"]["commit"]["n_low_neurons"] == 1
     assert off["regions"]["commit"]["max_gi_dt_over_C"] > 2.0          # the explicit-step hazard index tripped
+    assert off["regions"]["commit"]["max_gtot_dt_over_C"] >= off["regions"]["commit"]["max_gi_dt_over_C"]
     (row,) = off["oor_neurons"]
     assert row["region"] == "commit" and row["inhibitory"] is False and row["g_i"] is not None and row["g_i"] > 0
     assert on["n_oor_neurons"] == 0 and on["v_min"] >= MC.V_LOW_MV, on["v_min"]
@@ -250,3 +251,29 @@ def test_gate_seed_is_refused_without_the_flag():
                         "conv", "--arm", "intact_a", "--out", os.path.join(os.environ.get("TMPDIR", "/tmp"), "x.json")],
                        cwd=root, capture_output=True, text=True, env=dict(os.environ, SIM_NO_PROVENANCE="1"), timeout=120)
     assert p.returncode == 2 and "GATE seed 42 refused" in p.stderr
+
+
+def test_a_high_membrane_inside_the_refractory_window_is_marked_refractory():
+    """A cell driven hard keeps integrating through its refractory window (the crossing is withheld, nothing resets it):
+    the census records the high membrane and that the cell was refractory when the step decided."""
+    b = _tiny_bridge(seed=11)
+    b.cp_external_input_current[0] = np.float32(20000.0)
+    with MC.Census() as census:
+        _run(b, 30)
+    (br,) = census.report()["bridges"]
+    rows = {r["idx"]: r for r in br["oor_neurons"]}
+    assert 0 in rows and rows[0]["n_steps_high"] >= 1 and rows[0]["extreme_high_mV"] > 35.0 + 5.0
+    assert rows[0]["refractory"] is True, rows[0]
+    assert br["regions"]["cortex"]["n_high_neurons"] >= 1
+
+
+def test_relabel_names_the_stepper_and_keeps_the_builder():
+    bs = [{"owner_chain": ["pkg.builder:Build.make:12", "pkg.top:run:3"],
+           "step_callers": [{"site": "pkg.organ:Organ.step_once:88", "steps": 90}, {"site": "pkg.other:f:1", "steps": 10}]},
+          {"owner_chain": ["pkg.builder:Build.make:12"], "step_callers": [{"site": "pkg.fn:driver:5", "steps": 3}]},
+          {"owner_chain": [], "step_callers": []}]
+    MC.relabel(bs)
+    assert bs[0]["organ"] == "pkg.organ:Organ" and bs[0]["built_by"] == "pkg.builder:Build.make"
+    assert bs[1]["organ"] == "pkg.fn:driver"
+    assert bs[2]["organ"] == "?" and bs[2]["built_by"] is None
+    assert MC.relabel(bs) is bs and bs[0]["organ"] == "pkg.organ:Organ"           # idempotent

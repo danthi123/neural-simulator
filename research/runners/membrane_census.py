@@ -215,12 +215,13 @@ class _BridgeRec:
         self.nlow = self.nhigh = self.nnonf = None
         self.ctx = {}
         self.steps_with_oor = 0
+        self.prev_timers = None                       # post-step refractory timers of the previous observation
 
     def _alloc_region_stats(self, old=None, old_names=None):
         R = len(self.map.names) if self.map is not None else 0
         self.vmin_r = np.full(R, np.inf)
         self.vmax_r = np.full(R, -np.inf)
-        self.gi_r = np.full(R, -np.inf)
+        self.g_r = np.full((3, R), -np.inf)          # per-region max of g_i, g_e, (g_i+g_e) times dt/C
         self.steps_low_r = np.zeros(R, dtype=np.int64)
         self.steps_high_r = np.zeros(R, dtype=np.int64)
         self.nsteps_low_r = np.zeros(R, dtype=np.int64)
@@ -231,16 +232,17 @@ class _BridgeRec:
                 i = where.get(nm)
                 if i is None:
                     continue
-                for new, prev in ((self.vmin_r, old[0]), (self.vmax_r, old[1]), (self.gi_r, old[2]),
+                for new, prev in ((self.vmin_r, old[0]), (self.vmax_r, old[1]),
                                   (self.steps_low_r, old[3]), (self.steps_high_r, old[4]),
                                   (self.nsteps_low_r, old[5]), (self.nsteps_high_r, old[6])):
                     new[i] = prev[j]
+                self.g_r[:, i] = old[2][:, j]
 
     def set_map(self, m):
         old = None
         old_names = None
         if self.map is not None:
-            old = (self.vmin_r, self.vmax_r, self.gi_r, self.steps_low_r, self.steps_high_r, self.nsteps_low_r,
+            old = (self.vmin_r, self.vmax_r, self.g_r, self.steps_low_r, self.steps_high_r, self.nsteps_low_r,
                    self.nsteps_high_r)
             old_names = list(self.map.names)
         self.map = m
@@ -391,6 +393,9 @@ class Census:
         rec.n_steps += 1
         self.total_steps += 1
         rec.callers[site] += 1
+        pre = rec.prev_timers                         # == the timers this step decided spikes with (None on the first)
+        rt_now = getattr(bridge, "cp_refractory_timers", None)
+        rec.prev_timers = None if rt_now is None else np.array(_host(rt_now), copy=True)
         cfg = bridge.core_config
         rec.bounded_seen.add(bool(getattr(cfg, "enable_bounded_conductance_integration", False)))
         m = rec.map
@@ -403,15 +408,20 @@ class Census:
         np.fmin.at(rec.vmin_r, m.seg_region, seg_min)
         np.fmax.at(rec.vmax_r, m.seg_region, seg_max)
         check_low, high_kind = _range_policy(rec.model)
-        # the explicit-step hazard index g_i*dt/C (Izhikevich): per region maximum over steps
+        # the explicit-step hazard index g*dt/C (Izhikevich; the finding puts the Euler overshoot at about 2 and above),
+        # per region maximum over steps, for g_i, g_e and their sum (the end-of-step conductances the next step integrates)
         if self.track_conductance and rec.model == "IZHIKEVICH":
             gi = getattr(bridge, "cp_conductance_g_i", None)
+            ge = getattr(bridge, "cp_conductance_g_e", None)
             C = getattr(bridge, "cp_izh_C", None)
-            if gi is not None and C is not None:
+            if C is not None and (gi is not None or ge is not None):
                 try:
                     with np.errstate(divide="ignore", invalid="ignore"):
-                        ratio = _host(gi) * (rec.dt / _host(C))
-                    np.fmax.at(rec.gi_r, m.seg_region, np.maximum.reduceat(ratio, m.seg_starts))
+                        k = rec.dt / _host(C)
+                        gih = _host(gi) if gi is not None else np.zeros(n, dtype=np.float32)
+                        geh = _host(ge) if ge is not None else np.zeros(n, dtype=np.float32)
+                        for row, arr in enumerate((gih * k, geh * k, (gih + geh) * k)):
+                            np.fmax.at(rec.g_r[row], m.seg_region, np.maximum.reduceat(arr, m.seg_starts))
                 except Exception:
                     self.observer_errors += 1
         if not check_low:
@@ -427,9 +437,9 @@ class Census:
             hi_min = float(getattr(cfg, "adex_V_peak", np.inf)) + self.margin
         if gmin >= self.v_low and gmax <= hi_min:             # the fast path: nothing out of range (NaN falls through)
             return
-        self._record_out_of_range(rec, bridge, vh, vp, high_kind, hi_min)
+        self._record_out_of_range(rec, bridge, vh, vp, high_kind, hi_min, pre)
 
-    def _record_out_of_range(self, rec, bridge, vh, vp, high_kind, hi_min):
+    def _record_out_of_range(self, rec, bridge, vh, vp, high_kind, hi_min, pre=None):
         m = rec.map
         R = len(m.names)
         low = vh < self.v_low
@@ -466,14 +476,20 @@ class Census:
         if new.size and len(rec.ctx) < MAX_CONTEXT_PER_BRIDGE:
             gi, ge = _host(getattr(bridge, "cp_conductance_g_i", None)), _host(getattr(bridge, "cp_conductance_g_e", None))
             C = _host(getattr(bridge, "cp_izh_C", None)) if rec.model == "IZHIKEVICH" else None
-            rt = _host(getattr(bridge, "cp_refractory_timers", None))
+            rt = rec.prev_timers                         # post-step timers (this observation)
             for idx in new[:MAX_CONTEXT_PER_BRIDGE - len(rec.ctx)]:
                 i = int(idx)
                 d = {"g_i": _f(gi[i]) if gi is not None and gi.shape[0] > i else None,
                      "g_e": _f(ge[i]) if ge is not None and ge.shape[0] > i else None,
-                     "refractory": (bool(rt[i] > 0) if rt is not None and rt.shape[0] > i else None)}
-                d["gi_dt_over_C"] = (_f(d["g_i"] * rec.dt / float(C[i])) if d["g_i"] is not None and C is not None
-                                     and float(C[i]) > 0 else None)
+                     # refractory = in its window when the step decided spikes (a withheld crossing is not reset);
+                     # refractory_post = timer still running after the step
+                     "refractory": (bool(pre[i] > 0) if pre is not None and pre.shape[0] > i else None),
+                     "refractory_post": (bool(rt[i] > 0) if rt is not None and rt.shape[0] > i else None)}
+                ok = C is not None and float(C[i]) > 0
+                for key, g in (("gi_dt_over_C", d["g_i"]), ("ge_dt_over_C", d["g_e"]),
+                               ("gtot_dt_over_C", (d["g_i"] or 0.0) + (d["g_e"] or 0.0)
+                                if d["g_i"] is not None or d["g_e"] is not None else None)):
+                    d[key] = _f(g * rec.dt / float(C[i]), 3) if g is not None and ok else None
                 rec.ctx[i] = d
 
     # ── reporting ────────────────────────────────────────────────────────────────────────────────────────────────
@@ -522,7 +538,8 @@ class Census:
                         "extreme_high_mV": _f(rec.vmax_n[i], 2) if rec.nhigh[i] > 0 else None,
                         "n_steps_low": int(rec.nlow[i]), "n_steps_high": int(rec.nhigh[i]),
                         "n_steps_nonfinite": int(rec.nnonf[i])})
-            row.update(rec.ctx.get(i, {"g_i": None, "g_e": None, "refractory": None, "gi_dt_over_C": None}))
+            row.update(rec.ctx.get(i, {"g_i": None, "g_e": None, "refractory": None, "refractory_post": None,
+                                       "gi_dt_over_C": None, "ge_dt_over_C": None, "gtot_dt_over_C": None}))
             rows.append(row)
         return rows, int(idx.size), truncated
 
@@ -557,19 +574,18 @@ class Census:
                 "n_low_neurons": n_low, "n_high_neurons": n_high,
                 "steps_low": int(rec.steps_low_r[r]), "steps_high": int(rec.steps_high_r[r]),
                 "neuron_steps_low": int(rec.nsteps_low_r[r]), "neuron_steps_high": int(rec.nsteps_high_r[r]),
-                "max_gi_dt_over_C": _f(rec.gi_r[r], 3)}
+                "max_gi_dt_over_C": _f(rec.g_r[0][r], 3), "max_ge_dt_over_C": _f(rec.g_r[1][r], 3),
+                "max_gtot_dt_over_C": _f(rec.g_r[2][r], 3)}
         vmins = [(rec.vmin_r[r], m.names[r]) for r in range(len(m.names)) if np.isfinite(rec.vmin_r[r])]
         vmaxs = [(rec.vmax_r[r], m.names[r]) for r in range(len(m.names)) if np.isfinite(rec.vmax_r[r])]
         vmin = min(vmins) if vmins else (None, None)
         vmax = max(vmaxs) if vmaxs else (None, None)
-        owner = rec.owner_chain[0].rsplit(":", 1)[0] if rec.owner_chain else None
         top_caller = [("%s:%s:%d" % (mod, getattr(code, "co_qualname", code.co_name), ln) if code is not None else "?", c)
                       for (code, ln, mod), c in
                       collections.Counter({k: v for k, v in rec.callers.items() if k is not None}).most_common(3)]
-        label = owner or (top_caller[0][0].rsplit(":", 1)[0] if top_caller else "?")
         bounded = sorted(rec.bounded_seen)
         return {
-            "bridge_id": rec.bridge_id, "organ": label, "owner_chain": rec.owner_chain,
+            "bridge_id": rec.bridge_id, "organ": None, "built_by": None, "owner_chain": rec.owner_chain,
             "step_callers": [{"site": s, "steps": c} for s, c in top_caller],
             "neuron_model": rec.model, "n_neurons": rec.n, "dt_ms": rec.dt, "n_steps": rec.n_steps,
             "bounded_conductance_integration": (bounded[0] if len(bounded) == 1 else "mixed"),
@@ -585,6 +601,7 @@ class Census:
 
     def report(self):
         bridges = [b for b in (self.bridge_report(r) for r in self.recs) if b is not None]
+        relabel(bridges)
         return {"census_version": CENSUS_VERSION,
                 "thresholds": {"v_low_mV": self.v_low, "vpeak_margin_mV": self.margin,
                                "high_check": "Izhikevich: per-neuron max(cp_izh_vpeak, homeostatic threshold) + margin; AdEx: adex_V_peak + margin; "
@@ -593,6 +610,27 @@ class Census:
                 "observer_errors": self.observer_errors, "first_observer_error": self.first_error,
                 "observe_s": round(self.observe_s, 2),
                 "bridges": bridges, "organs": organ_rows(bridges)}
+
+
+def _stepper_label(callers):
+    """module:Class (or module:function) of the code that stepped the bridge most. One builder can make several bridges
+    that different organs step (the merged pool), so the stepper names the organ; the builder is kept as built_by."""
+    if not callers:
+        return None
+    base = callers[0]["site"].rsplit(":", 1)[0]
+    mod, _, q = base.partition(":")
+    if "." in q:
+        q = q.rsplit(".", 1)[0]
+    return "%s:%s" % (mod, q)
+
+
+def relabel(bridges):
+    """(Re)derive each bridge's `organ` (stepper) and `built_by` from the call-site data stored with it. Idempotent."""
+    for b in bridges:
+        chain = b.get("owner_chain") or []
+        b["built_by"] = chain[0].rsplit(":", 1)[0] if chain else None
+        b["organ"] = _stepper_label(b.get("step_callers")) or b["built_by"] or "?"
+    return bridges
 
 
 def organ_rows(bridges):
@@ -608,6 +646,7 @@ def organ_rows(bridges):
         oor_regions = collections.OrderedDict()
         c_min, c_min_region = None, None
         gi_max, gi_max_region = None, None
+        gt_max, gt_max_region = None, None
         for b in bs:
             for row in b["oor_neurons"]:
                 d = oor_regions.setdefault(row["region"], {"n": 0, "C": []})
@@ -618,6 +657,9 @@ def organ_rows(bridges):
                     c_min, c_min_region = rg["c_min"], name
                 if rg["max_gi_dt_over_C"] is not None and (gi_max is None or rg["max_gi_dt_over_C"] > gi_max):
                     gi_max, gi_max_region = rg["max_gi_dt_over_C"], name
+                gt = rg.get("max_gtot_dt_over_C")
+                if gt is not None and (gt_max is None or gt > gt_max):
+                    gt_max, gt_max_region = gt, name
         bounded = {str(b["bounded_conductance_integration"]) for b in bs}
         rows.append({"organ": organ, "n_bridges": len(bs), "neuron_models": sorted({b["neuron_model"] for b in bs}),
                      "n_neurons": sum(b["n_neurons"] for b in bs), "n_steps": sum(b["n_steps"] for b in bs),
@@ -629,6 +671,8 @@ def organ_rows(bridges):
                      "oor_regions": oor_regions,
                      "c_min": c_min, "c_min_region": c_min_region,
                      "max_gi_dt_over_C": gi_max, "max_gi_dt_over_C_region": gi_max_region,
+                     "max_gtot_dt_over_C": gt_max, "max_gtot_dt_over_C_region": gt_max_region,
+                     "built_by": sorted({b["built_by"] for b in bs if b.get("built_by")}),
                      "bounded_conductance_integration": (sorted(bounded)[0] if len(bounded) == 1 else "mixed")})
     return rows
 
@@ -637,11 +681,11 @@ def summary_line(row, tag=""):
     oor = "; ".join("%s x%d C=%s" % (r, d["n"], ",".join("%.2f" % c for c in d["C"][:6] if c is not None))
                     for r, d in row["oor_regions"].items()) or "-"
     return ("%s%s | bridges=%d n=%d steps=%d | v_min=%s (%s) v_max=%s | oor_neurons=%d (low %d high %d nonfinite %d) [%s] | "
-            "min_C=%s (%s) max_gi*dt/C=%s | bounded=%s" % (
+            "min_C=%s (%s) max_(g_i+g_e)*dt/C=%s (%s) | bounded=%s" % (
                 tag, row["organ"], row["n_bridges"], row["n_neurons"], row["n_steps"], row["v_min"], row["v_min_region"],
                 row["v_max"], row["n_oor_neurons"], row["n_low_neurons"], row["n_high_neurons"],
-                row["n_nonfinite_neurons"], oor, row["c_min"], row["c_min_region"], row["max_gi_dt_over_C"],
-                row["bounded_conductance_integration"]))
+                row["n_nonfinite_neurons"], oor, row["c_min"], row["c_min_region"], row["max_gtot_dt_over_C"],
+                row["max_gtot_dt_over_C_region"], row["bounded_conductance_integration"]))
 
 
 # ══════════════════════════════════════════════ worker / shard ═════════════════════════════════════════════════════
@@ -751,7 +795,8 @@ def summarize(paths):
         print("== seed %s %s/%s (%s) workload=%s observer_errors=%s wrapper_restored=%s" % (
             d.get("seed"), d.get("group"), d.get("arm"), os.path.basename(p), d.get("workload", {}).get("n_turns"),
             d["census"]["observer_errors"], d.get("wrapper_restored")))
-        for row in d["census"]["organs"]:
+        bridges = relabel(d["census"]["bridges"])
+        for row in organ_rows(bridges):
             print(summary_line(row, tag="  "))
 
 
