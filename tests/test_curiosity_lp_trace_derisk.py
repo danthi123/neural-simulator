@@ -69,3 +69,19 @@ def test_aggregate_fails_when_any_seed_misses_a_bar():
     per[5] = dict(good, B2_stop_by_4th=False)
     agg = M.aggregate(per)
     assert agg["verdict"] == "NO-GO" and agg["bars"]["B2_stop_by_4th"]["n_true"] == 7
+
+
+def test_no_ou_flag_is_additive_and_default_off():
+    """RULING c3-methods-1018: one additive flag, default off. Flag-off executes no new cfg write, so
+    flag-off output stays byte-identical to the frozen method-1 battery (the artifact gains the `no_ou`
+    key only when the flag is ON)."""
+    import inspect
+    import subprocess
+    import sys
+
+    for fn in (M.build_lp_bridge, M.run_arm, M.run_battery, M.CuriosityLPOrgan.__init__):
+        p = inspect.signature(fn).parameters["no_ou"]
+        assert p.default is False, fn.__name__
+    out = subprocess.run([sys.executable, "-m", "research.runners._curiosity_lp_trace_derisk", "--help"],
+                         capture_output=True, text=True, timeout=300)
+    assert out.returncode == 0 and "--no-ou" in out.stdout
