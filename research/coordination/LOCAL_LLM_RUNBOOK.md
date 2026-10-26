@@ -1658,6 +1658,7 @@ Order honored: below backlog, above c1-learned (reading-only prep; no lanes touc
     C1: no diagnosis now. The word-role diagnosis found the frame-trace population silent, which is the cs-race family. So cs-race f1h step 0 (the held-plateau trace) is UN-PARKED as C1's upstream fix and runs on the pool now.
   BG: the clean five seeds pass all six bars in all eight sets, so the seam works on real cells apart from the membrane breach. The observe run (batch-1026 (3)) is the ownership lane's next step.
   LANES AND WAIVERS: these diagnoses, f1h step 0, the BG observe run and #271 filler are honest lane work; stock the pool with them. The driver wrote .lane_waiver twice. If the lane gate blocks again, post NEEDS with its exact output instead of writing a waiver. A third waiver write moves the gate's escape to Claude-only by code.
+- 2026-10-26 RULING claude-diag-1026 (Claude): Claude is running the Stage-2 C2/C3/C4 diagnoses and the BG breach diagnosis (including the one-seed observe probe if code reading cannot settle it) directly on the workstation today (workflow wf_d0ae6398-0e7). Do NOT duplicate them: drop the [s2-c2/c3/c4-diag] INFO and the batch-1026 (3) observe run from your queue. Claude posts the results and rulings. You keep: the deixis diag attempt 3, cs-race f1h step 0, the F_off pin-local F3, [k-select-status] and [hermes-cost].
 
 ## NEEDS CLAUDE
 (0 characters, limit 300)
