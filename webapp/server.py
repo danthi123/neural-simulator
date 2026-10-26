@@ -5393,6 +5393,15 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     # WORD-ROLE ENGAGEMENT (RULING word-role-engagement): clear last turn's record before anything can parse.
     _word_role_trace_reset(chat)
     _mouth_trace_reset(chat)   # MOUTH TRACE (B2d Amendment 2): this turn's render calls only
+    # C3 TOPIC STOP turn clock (default OFF, BRAIN_CURIOSITY_TOPIC_STOP; webapp/curiosity_topic_stop_chat.py): count
+    # this conversation turn on its own Context so the topic-stop organ can run the owed inter-turn substrate time at
+    # its next read. Off -> only the env read; no Context is created or touched.
+    try:
+        from webapp import curiosity_topic_stop_chat as _C3TS_TURN
+        if _C3TS_TURN.topic_stop_enabled():
+            _C3TS_TURN.note_turn(_CONTEXTS.ensure(cache_key))
+    except Exception:
+        pass
     try:
         from webapp import gnw_bus_shadow as _gnw_bus_mod
         _gnw_bus_mod.install_bus_gate(chat)
@@ -7177,6 +7186,29 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                 info["graded_novelty"] = {"on": True, "value": float(novelty_val),
                                            "lesioned": bool(_CU.graded_novelty_lesioned())}
             curious = bool(j["curious"])
+            # ── C3 TOPIC STOP (L) + TOPIC-LOCKED PHASIC DA (P), default OFF (webapp/curiosity_topic_stop_chat.py) ──
+            # L on: the follow-up decision is read off THIS conversation's topic-stop organ (method 2's per-topic
+            # depressing slices onto an ASK pool; the slice synapses keep their depression across turns, so a topic
+            # presented repeatedly stops being asked about while a fresh topic is not touched). The shared-pool read
+            # above still runs and is reported. P on (with L): the bus dopamine inside that organ replaces the host
+            # crave-gain formula below. Off -> this block is skipped: no key, byte-identical. An organ failure is
+            # recorded and the production decision stands.
+            _ts_trace = None
+            try:
+                from webapp import curiosity_topic_stop_chat as _C3TS
+                if _C3TS.topic_stop_enabled():
+                    try:
+                        _ts_trace = _C3TS.decide(_CONTEXTS.ensure(cache_key), chat, topic, novelty_val, j,
+                                                 _brain_chat_seed(), _CU.curiosity_lesioned())
+                    except Exception as _tse:
+                        _ts_trace = {"on": True, "applied": False, "error": f"{type(_tse).__name__}: {_tse}"}
+                    info["curiosity_topic_stop"] = _ts_trace
+                    if _ts_trace.get("applied"):
+                        curious = bool(_ts_trace["curious"])
+                        info["curious"] = curious
+            except Exception:
+                _ts_trace = None
+            _ts_applied = bool(_ts_trace and _ts_trace.get("applied"))
             # ── DA/ENGAGEMENT-GATED crave-threshold (WAVE-0 Gap-4 coupling (b)), default-OFF ──────────────────────
             # When the brain is ENGAGED (self-produced tonic DA above baseline, read off chat._last_da_drives set by
             # the DA-mode block earlier this turn), LOWER the effective crave-threshold so the ASK pool crosses it
@@ -7188,8 +7220,13 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             # vanishes. See webapp/da_curiosity_drives_chat.py.
             try:
                 from webapp import da_curiosity_drives_chat as _DAC
-                if _DAC.da_curiosity_enabled():
-                    curious, _da_trace = _DAC.crave_decision(chat, j["want_hz"], j["threshold"])
+                if _ts_applied and _ts_trace.get("phasic_da_applied"):
+                    pass   # P: the organ's bus dopamine already acted on its ASK pool; no host gain is applied
+                elif _DAC.da_curiosity_enabled():
+                    if _ts_applied:   # L without P: the host gain scales the topic-stop organ's own want
+                        curious, _da_trace = _DAC.crave_decision(chat, _ts_trace["want_hz"], _ts_trace["threshold"])
+                    else:
+                        curious, _da_trace = _DAC.crave_decision(chat, j["want_hz"], j["threshold"])
                     info["curious"] = curious
                     info["curiosity_da"] = _da_trace
             except Exception as _dce:   # additive trace only; never let it change the organ's own decision on error
