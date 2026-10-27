@@ -16,6 +16,22 @@ Values.
 The accessors are read at call time, so the switch is a process-level environment setting like
 SIM_STABLE_INTEGRATION. Organs not listed here (the global-stop workspace, the ACC-BG stop trigger, ...) keep their
 production constants.
+
+REMAPPING RULE, and its limit. The production organ builders take their constants as default arguments, so under the
+switch a value-conditional accessor (`bus_attractor_weight`, `bus_d_sub`, `swap_value`) cannot tell a default from an
+explicit argument: ANY value equal to the production value is remapped to the re-calibrated one, including an explicit
+argument a caller passed on purpose (an explicit `weight=30.0` on the bus, `w_rec=34.0`, `establish_pa=8000.0` or
+`thal_tonic_pa=700.0` on the swap organ, a bus drive of 1000.0 or 1400.0 pA). Only an explicit value that DIFFERS from
+the production value is kept (a lesion's weight 0, a research weight such as 12). A research script that wants the
+production number itself under the switch has to pass a number that differs from it, or leave the switch off. The
+threshold accessors (`bus_solo_plateau`, `bus_thr`, `swap_ignite_thresh`) are called with a module constant, not a
+caller argument, and return the re-calibrated threshold unconditionally while the switch is on.
+tests/test_stable_recal_switch.py (test_explicit_production_value_is_remapped_under_the_switch) pins this.
+
+Provenance of the swap values: research/findings/raw/_stable_recal/swap_calibration_record.json, written by
+research/runners/stable_recal_calibration_record.py from the cited artifacts (it also checks that the record's
+production and re-calibrated values equal the `SWAP` table below). `w_pat_pred` (32) is formula-only: no cited
+artifact varies it.
 """
 from __future__ import annotations
 
@@ -54,8 +70,8 @@ BUS_PRODUCTION_D_SUB = {3: 1000.0, 2: 1400.0}
 
 
 def bus_attractor_weight(weight: float) -> float:
-    """The workspace assembly's recurrent weight: the production 30 becomes 5 under the switch; any other value (a
-    lesion's 0, an explicit research weight) is kept."""
+    """The workspace assembly's recurrent weight: the production 30 becomes 5 under the switch (an explicit 30.0 is
+    remapped too: see the module docstring); any other value (a lesion's 0, an explicit research weight) is kept."""
     w = float(weight)
     if w == BUS_PRODUCTION_WEIGHT and stable_recal_requested():
         return BUS_WEIGHT
@@ -71,7 +87,8 @@ def bus_thr(default: float) -> float:
 
 
 def bus_d_sub(n_organs: int, default: float) -> float:
-    """The per-organ subthreshold drive for an `n_organs` quorum (3 = unanimity bus, 2 = coincidence bus)."""
+    """The per-organ subthreshold drive for an `n_organs` quorum (3 = unanimity bus, 2 = coincidence bus). An explicit
+    drive equal to the production value (1000.0 for 3, 1400.0 for 2) is remapped like the default."""
     if stable_recal_requested() and float(default) == BUS_PRODUCTION_D_SUB.get(int(n_organs)):
         return BUS_D_SUB[int(n_organs)]
     return default
@@ -87,7 +104,7 @@ SWAP = {
     "solo_plateau": (1.0 / 3.0, 0.084),   # the measured ignited plateau; threshold IGNITE_FRAC x plateau = 0.042
     "establish_pa": (8000.0, 1280.0),     # production ratio establish/knee 8000/2500 = 3.2, x the stable knee 400
     "w_ws_occ": (8.0, 32.0),         # occupancy read input conserved: 8 x (1/3) / 0.084
-    "w_pat_pred": (8.0, 32.0),       # the same conservation for the held-content prediction read
+    "w_pat_pred": (8.0, 32.0),       # FORMULA-ONLY (not measured): the same conservation as w_ws_occ, no run varies it
     "w_occ_gate": (20.0, 80.0),      # the vacancy veto knee (occupied gate 0.215 -> 0.044)
     "w_pred_mm": (20.0, 80.0),       # the organ's match bar: match mismatch rate < 0.02
     "w_gate_ws": (100.0, 4.0),       # middle of the band 2-8 where the gate primitive holds on both seeds
@@ -96,8 +113,10 @@ SWAP = {
 
 
 def swap_value(name: str, value):
-    """The swap constant `name`: the re-calibrated value under the switch when `value` is the production value;
-    otherwise `value` unchanged (a lesion or an explicit research setting is kept)."""
+    """The swap constant `name`: the re-calibrated value under the switch when `value` equals the production value
+    (a default and an explicit argument with the production value are indistinguishable, so both are remapped: see the
+    module docstring); otherwise `value` unchanged (a lesion or an explicit research setting that differs from the
+    production value is kept)."""
     prod, recal = SWAP[name]
     if stable_recal_requested() and float(value) == float(prod):
         return type(value)(recal) if isinstance(value, int) and not isinstance(value, bool) else float(recal)

@@ -31,7 +31,10 @@ artifacts:
   - research/findings/raw/_stable_recal/swap_collapse/collapse_s8.json
   - research/findings/raw/_stable_recal/swap_organ_gate/production_off_s7.json
   - research/findings/raw/_stable_recal/swap_organ_gate/production_on_s7.json
+  - research/findings/raw/_stable_recal/swap_organ_gate/recal_on_s7.json
   - research/findings/raw/_stable_recal/swap_organ_gate_tw36/recal_on_s7.json
+  - research/findings/raw/_stable_recal/swap_organ_gate_wgate1/wgate1_on_s7.json
+  - research/findings/raw/_stable_recal/swap_organ_gate_wgate1/wgate1_on_s8.json
   - research/findings/raw/_stable_recal/stop_lead_attribution_s7.json
   - research/findings/raw/_stable_recal/dev78/dev_check.json
   - research/findings/raw/_stable_recal/dev78/compare_s7.json
@@ -50,7 +53,9 @@ valid membranes its production constants give depolarization block and no select
 own rules on valid membranes (recurrent weight 6.5, normalization 4, thalamic support 25 pA, plateau 0.084 with the
 criterion at half of it, establishment 1280 pA, read and veto weights rescaled to the new plateau, admission weight
 4, timing window 36; every value and its reason in `swap_calibration_record.json`), it passes its own GO gate on 12
-of 15 dev seeds, every non-timing check on 15 of 15. By intervention on inner, dev seed 7, the "Setting the held
+of 15 dev seeds, every non-timing check on 15 of 15. The order matters for that count: the gate ran first with the
+production timing window of 9 steps (GO on 4 of 15, every failure the timing check) and the window was re-derived to
+36 by the organ's own 3-ignition-period rule after that result (see "Order of events and which seeds were fitted"). By intervention on inner, dev seed 7, the "Setting the held
 thread aside" stop lead is decided by the global-stop workspace alone, in both directions (the ACC-BG trigger and
 the swap workspace do not move it), and it appears only while that workspace has 250 to 270 cells out of range.
 `SIM_STABLE_RECAL=1` (default OFF, refused without `SIM_STABLE_INTEGRATION=1`, byte-identical when unset) applies
@@ -59,7 +64,9 @@ STABLE+RECAL against OFF: the answer rate is identical in every cell (no FLIP-HU
 is identical (C4 and C5 pass, as under OFF), the same recalls are verified, the topic-swap lead is back, and
 out-of-range neurons fall from 4647-5381 to 111-820 per group with none left in the three GNW workspaces. The stop
 lead is gone (its workspace is not re-calibrated here). The gate seeds were not run; the C5 caveat is now on the
-10-26 Stage-2 result.
+10-26 Stage-2 result. Dev seeds 7 and 8 are the seeds the swap workspace was calibrated on (the bus: seed 7), so
+that whole-brain comparison is in-sample: it shows the switch leaves intact what it was fitted on, not that the
+replies stay identical on a seed it was not fitted on.
 
 ## What was built (default OFF)
 
@@ -79,8 +86,8 @@ lead is gone (its workspace is not re-calibrated here). The gate seeds were not 
   the switch unset, "" and "0" on both integrators (byte-identical); the switch raises without
   `SIM_STABLE_INTEGRATION=1` and on bad values; every accessor returns the production value when off and the
   measured value when on; under the switch the swap swaps and the bus keeps its quorum rules (three votes ignite and
-  two do not; two coincident votes ignite and one does not). 35 passed together with
-  `tests/test_stable_integration_switch.py`; the existing bus tests (`test_bg_neural_seam.py`,
+  two do not; two coincident votes ignite and one does not). 37 passed together with
+  `tests/test_stable_integration_switch.py` (numpy backend); the existing bus tests (`test_bg_neural_seam.py`,
   `test_reasoning_transitive_chat_wirein.py`, `test_wm_referent_focus_bind.py`) 29 passed.
 - Whole-brain identity: inner on dev seed 7 with both switches empty, run at this branch's head, gives replies
   byte-identical to the 10-26 OFF census and the same out-of-range count per organ
@@ -92,7 +99,15 @@ lead is gone (its workspace is not re-calibrated here). The gate seeds were not 
   `research/runners/stable_integration_exempt_probe.py` gains the `stop` and `accbg` organs (b2dace642);
   `research/runners/stable_recal_stop_attribution.py` (1ea629077, 30c722eb9);
   `research/runners/stable_recal_dev_check.py` (the dev check below); the census records `stable_recal_env`
-  (3d0653c20).
+  (3d0653c20); `research/runners/stable_recal_calibration_record.py` writes `swap_calibration_record.json` (with its
+  provenance sidecar) by reading the cited artifacts and checking the record's values against `stable_recal.SWAP`.
+- Remapping limit (documented in `research/runners/stable_recal.py`, pinned by
+  `test_explicit_production_value_is_remapped_under_the_switch`): the value-conditional accessors cannot tell a default
+  from an explicit argument, so under the switch an explicit argument equal to the production value (a bus weight of
+  30.0, a swap `w_rec` of 34.0, a bus drive of 1000 or 1400 pA) is remapped like the default; only a value that
+  differs from the production value is kept.
+- Backend: the byte-identity references and the re-calibrated fingerprints were captured on the numpy backend, and
+  `test_unset_is_byte_identical` and `test_recal_fingerprints_pinned` skip (they do not pass) on any other backend.
 
 ## The thought-swap workspace alone, on both integrators
 
@@ -124,11 +139,12 @@ source file: `research/findings/raw/_stable_recal/swap_calibration_record.json`.
 | ignited plateau (criterion = half of it) | 1/3 | 0.084 (0.042) | the measured plateau; the criterion is scoped to the swap organ (the global-stop workspace shares Rung-2's) |
 | thalamic support | 700 pA | 25 pA | largest support with no spontaneous ignition over 1000 undriven steps on both seeds (50 pA: seed 7 ignites by itself; 75 pA: seed 8) |
 | establishment drive | 8000 pA | 1280 pA | production ratio to the knee (8000 / 2500 = 3.2) times the stable knee (300 pA does not ignite, 400 pA does) |
-| workspace -> occupancy, pattern -> prediction | 8 | 32 | the read's input conserved: 8 x (1/3) / 0.084 |
+| workspace -> occupancy | 8 | 32 | the read's input conserved: 8 x (1/3) / 0.084 (a formula; the sweep 8, 16, 32, 64 keeps the gate and mismatch primitives holding on both seeds, `research/findings/raw/_stable_recal/swap_primitives/w_ws_occ_s7.json` and `w_ws_occ_s8.json`) |
+| pattern -> prediction (`w_pat_pred`) | 8 | 32 | **formula-only, not measured**: the same conservation applied to the held-content prediction read; no cited artifact varies it, so the organ gate and the sweeps show that they pass with 32, not that 32 is better than another value |
 | occupancy -> gate (vacancy veto) | 20 | 80 | occupied-gate rate 0.2152 / 0.1993 at 20 (no veto), 0.0933 / 0.077 at 40, 0.0441 / 0.0367 at 80 against 0.1948 / 0.1911 empty |
 | prediction -> mismatch (match veto) | 20 | 80 | the organ's own match bar (< 0.02): 0.0821 / 0.0843 at 20, 0.0377 / 0.0384 at 40, 0.0094 / 0.0133 at 80 |
-| gate -> workspace (admission) | 100 | 4 | the gate primitive holds for 1-8 on both seeds and fails at 16 (seed 7), 32 (seed 8) and at 100; 4 is the middle of 2-8 (1 is too weak for the swap on seed 7) |
-| timing window (instrument only) | 9 | 36 | the organ's rule is 3 ignition periods: 3 spikes of an ignited neuron (every 3 steps old, every 11.9 steps at 0.084) |
+| gate -> workspace (admission) | 100 | 4 | the gate primitive holds for 1-8 on both seeds and fails at 16 (seed 7), 32 (seed 8) and at 100; in the full organ, with everything else at the re-calibration, weight 1 fails the swap on seed 7 (the newcomer never ignites, rate 0.037; 5 of 11 checks fail) and passes it on seed 8 (timing fails), and weight 4 swaps on both (`swap_organ_gate_wgate1/`, `swap_organ_gate_tw36/`); 2 and 8 were not run through the organ, so 4 is the middle of the primitive's 2-8 band, not a measured optimum |
+| timing window (instrument only) | 9 | 36 | the organ's rule is 3 ignition periods: 3 spikes of an ignited neuron (every 3 steps old, every 11.9 steps at 0.084); **re-derived after the 9-step window had passed GO on 4 of 15 dev seeds** (all 11 failures the timing check), see "Order of events and which seeds were fitted" |
 | salient / non-salient drive, boost gain, cap | 5000 / 600 pA, 1, 0.16 | unchanged | the mismatch detector reads 0.1539 / 0.1546 salient and 0.0379 / 0.035 non-salient on stable, so the salient boost reaches the cap and the non-salient one stays near 0.06; the eviction collapse knee on stable is 0.06-0.10 |
 
 On the old integrator the re-calibrated point still runs away under strong drive (1 to 7 cells out of range at 3000
@@ -147,9 +163,30 @@ match holds, trigger lesion load-bearing, reversible, no host reset, determinist
   integrator 9 of 11 checks fail because nothing reaches the production criterion (`swap_organ_gate/production_*`).
 - Re-calibration on the stable integrator, timing window 36: GO on 12 of 15 dev seeds; every check other than timing
   passes on 15 of 15; seeds 1, 6 and 12 fail timing only (the incumbent and the newcomer both read above the
-  criterion for 3, 15 and 2 steps while the newcomer ignites). With the old window of 9 steps the same runs pass
-  timing on 4 of 15 (`swap_organ_gate/`, `swap_organ_gate_tw36/`). The swap's new-pattern rate is 0.0847 on seed 7
+  criterion for 3, 15 and 2 steps while the newcomer ignites). With the old window of 9 steps, which ran first, the
+  same runs pass timing on 4 of 15 (`swap_organ_gate/`, `swap_organ_gate_tw36/`); the window was re-derived after
+  that result (next section). The swap's new-pattern rate is 0.0847 on seed 7
   with the old pattern at 0.0, and the swap is 100% attributable to the trigger (lesion holds).
+
+## Order of events and which seeds were fitted
+
+**Order of the timing result.** The organ GO gate at the re-calibration was run first with the production timing
+window of 9 steps: GO on 4 of 15 dev seeds, and every one of the 11 failures is the timing check (the incumbent and
+the newcomer both read above the criterion for 3 to 15 steps, and 9 steps is 3 spikes of the old integrator's period-3
+oscillation, not of a neuron firing every 11.9 steps). Only after that result was the window re-derived, by the organ's
+own rule (3 ignition periods: 3 / 0.084 = 35.7, so 36), and the gate re-run: GO on 12 of 15. No other constant differs
+between the two sets of runs (the generator checks that from their recorded calibrations), and the provenance
+sidecars give the run order (window 9: started 12:40:56 to 12:41:12; window 36: 12:44:46 to 12:44:57, 2026-10-27). So
+12 of 15 is the count after a correction made once the 4 of 15 was seen, not a pass of a window fixed in advance. The
+window is a read-only timing instrument and production replies do not use it, so no reply depends on this choice.
+
+**Which seeds were fitted.** Every swap constant was chosen on the isolated organ on dev seeds 7 and 8; the bus
+constants on dev seed 7 (`research/findings/raw/_stable_integration/bus_ignition_curve_s7.json`, `research/findings/raw/_stable_integration/bus_quorum_w5_s7.json`). The whole-brain
+OFF-versus-RECAL comparison below was run on those same two seeds, so its identical answer rates, scorer verdicts and
+recalled turns are in-sample. The isolated organ's gate on dev seeds 1-6 and 9-15 (13 of the 15) is out-of-sample for
+the constants, except for the timing window, which was fixed after those seeds' 9-step results. No whole-brain
+comparison has been run on a seed the constants were not fitted on; the written pool battery (dev seeds 1-12, below)
+would give seeds 1-6 and 9-12 for that.
 
 ## Who decides the stop lead: attribution by intervention (inner, dev seed 7)
 
@@ -183,7 +220,8 @@ intact_a`) of the five Stage-2 groups on dev seeds 7 and 8, numpy CPU, each in a
 `tools/memcap.sh 10` after `tools/mem_ok.sh 9`. OFF = both switches unset or empty (seed 7 and seed 8 inner: the
 10-26 census records; seed 8 conv, infer, ask and emo: run at this branch, `census/off/s8/`); STABLE+RECAL =
 `SIM_STABLE_INTEGRATION=1 SIM_STABLE_RECAL=1` (`research/findings/raw/_stable_recal/dev78/stable_recal/s{7,8}/`).
-Comparison by `stable_integration_compare` (`research/findings/raw/_stable_recal/dev78/compare_s7.json`,
+These two seeds are the calibration seeds of the swap workspace (the bus: seed 7), so every "identical to OFF" below
+is in-sample. Comparison by `stable_integration_compare` (`research/findings/raw/_stable_recal/dev78/compare_s7.json`,
 `research/findings/raw/_stable_recal/dev78/compare_s8.json`) and `research/runners/stable_recal_dev_check.py`
 (`research/findings/raw/_stable_recal/dev78/dev_check.json`); the answer rate is
 `tools/answer_rate.py` `classify` / `rate` over every turn reply of the shard, with `report` per group-seed.
@@ -233,6 +271,14 @@ Comparison by `stable_integration_compare` (`research/findings/raw/_stable_recal
   it under OFF.
 - The swap organ's timing check fails on 3 of 15 dev seeds at the re-calibration; two of its constants (weight 6.5,
   normalization 4 over 5) are judgments recorded as such.
+- The whole-brain OFF-versus-RECAL result (identical answer rate, scorer verdicts and recalled turns) is in-sample:
+  dev seeds 7 and 8 are the calibration seeds (swap 7 and 8, bus 7). It has not been repeated on a seed the constants
+  were not fitted on.
+- The 12 of 15 organ GO is the count after the timing window was re-derived from 9 to 36 once the 9-step window had
+  given 4 of 15 (every failure the timing check); the 36 follows the organ's own rule but was applied after the
+  result was seen.
+- `w_pat_pred` = 32 is formula-only: no artifact varies it. `w_gate_ws` = 4 was run through the full organ only
+  against weight 1 (which fails the swap on seed 7); 2 and 8 were not run through the organ.
 - One brain workload per group and seed; the 10-26 finding measured the run-to-run floor of this workload as zero
   (replicate pairs identical), not repeated here.
 
@@ -240,7 +286,8 @@ Comparison by `stable_integration_compare` (`research/findings/raw/_stable_recal
 
 `research/coordination/stable-recal-pool-lines.txt`: dev seeds 1-12 x the five groups x {off, stable, stable_recal},
 180 lines in the membrane-census format (generator `research/runners/stable_recal_pool_lines.py`); outputs under
-`research/findings/raw/_stable_recal/dev/<arm>/s<N>/`.
+`research/findings/raw/_stable_recal/dev/<arm>/s<N>/`. Seeds 7 and 8 in it repeat the calibration seeds; seeds 1-6
+and 9-12 are the ones a result there would count as out-of-sample.
 
 ## Derived
 

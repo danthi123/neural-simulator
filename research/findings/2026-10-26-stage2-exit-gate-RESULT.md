@@ -110,7 +110,8 @@ The verdict and every number above stand; this limits how the C5 PASS may be cit
   `all` is true under the production integrator and false on valid membranes
   (research/findings/raw/_stable_integration/compare_s7.json, compare_s8.json).
 - With the bus and the thought-swap workspace re-calibrated by their own rules on valid membranes
-  (SIM_STABLE_RECAL=1, default OFF), C5 passes again on dev seeds 7 and 8
+  (SIM_STABLE_RECAL=1, default OFF), C5 passes again on dev seeds 7 and 8, which are the seeds that re-calibration was
+  fitted on (swap 7 and 8, bus 7), so this is an in-sample result
   (research/findings/2026-10-27-stable-recal-dev78.md, research/findings/raw/_stable_recal/dev78/dev_check.json).
 - The gate seeds (42, 43, 44, 100, 101, 102) were not measured on valid membranes, with or without the
   re-calibration.

@@ -111,6 +111,22 @@ def test_accessors_recal_values_when_on(monkeypatch):
     assert SR.swap_ignite_thresh(0.5, 1 / 6) == pytest.approx(0.042)
 
 
+def test_explicit_production_value_is_remapped_under_the_switch(monkeypatch):
+    """The documented limit (stable_recal.py, "REMAPPING RULE"): a value-conditional accessor cannot tell a default
+    from an explicit argument, so an explicit argument EQUAL to the production value is remapped under the switch
+    and left alone with the switch off; an explicit value that differs from it is kept either way."""
+    _env(monkeypatch, "1", None)
+    assert SR.bus_attractor_weight(30.0) == 30.0 and SR.swap_value("w_rec", 34.0) == 34.0
+    assert SR.bus_d_sub(3, 1000.0) == 1000.0
+    _env(monkeypatch, "1", "1")
+    assert SR.bus_attractor_weight(30.0) == SR.BUS_WEIGHT          # explicit 30.0 is indistinguishable from the default
+    assert SR.swap_value("w_rec", 34.0) == 6.5 and SR.swap_value("establish_pa", 8000.0) == 1280.0
+    assert SR.swap_value("thal_tonic_pa", 700.0) == 25.0
+    assert SR.bus_d_sub(3, 1000.0) == 500.0 and SR.bus_d_sub(2, 1400.0) == 750.0
+    assert SR.bus_attractor_weight(12.0) == 12.0 and SR.swap_value("w_rec", 20.0) == 20.0   # a different value is kept
+    assert SR.bus_d_sub(3, 999.0) == 999.0
+
+
 def test_production_call_sites_read_the_switch(monkeypatch):
     import webapp.gnw_three_organ_bus as TOB
     import webapp.gnw_two_organ_bus as TWO
@@ -133,12 +149,15 @@ def test_production_call_sites_read_the_switch(monkeypatch):
 @pytest.mark.parametrize("integrator", ["old", "stable"])
 @pytest.mark.parametrize("value", [None, "", "0"])
 def test_unset_is_byte_identical(monkeypatch, integrator, value):
+    """The reference hashes were captured on the numpy backend. On any other backend this test SKIPS (it never
+    passes without having compared a hash)."""
+    if not _numpy_backend():
+        pytest.skip("byte-identity references were captured on the numpy backend; this backend cannot compare them")
     _env(monkeypatch, "1" if integrator == "stable" else None, value)
     hs, _ = F.swap_fingerprint()
     hb, _ = F.bus_fingerprint()
-    if _numpy_backend():
-        assert hs == _REF_UNSET[integrator]["swap"]
-        assert hb == _REF_UNSET[integrator]["bus"]
+    assert hs == _REF_UNSET[integrator]["swap"]
+    assert hb == _REF_UNSET[integrator]["bus"]
 
 
 # --- on: the re-calibrated organs work by their own rules on the stable integrator -------------------------------
@@ -149,8 +168,16 @@ def test_recal_swap_and_bus_work_on_stable(monkeypatch):
     assert r["swapped"] and r["n_ignited_pre"] == 1 and r["n_ignited_post"] == 1 and r["winner_post"] == 1
     hb, rec = F.bus_fingerprint()
     assert all(v[0] == "fox" for v in rec.values())
-    if _numpy_backend():
-        assert hs == _REF_RECAL["swap"] and hb == _REF_RECAL["bus"]
+
+
+def test_recal_fingerprints_pinned(monkeypatch):
+    """The re-calibrated organs' hashes (numpy backend only; SKIPS elsewhere rather than passing unchecked)."""
+    if not _numpy_backend():
+        pytest.skip("the re-calibrated fingerprints were captured on the numpy backend; this backend cannot compare them")
+    _env(monkeypatch, "1", "1")
+    hs, _ = F.swap_fingerprint()
+    hb, _ = F.bus_fingerprint()
+    assert hs == _REF_RECAL["swap"] and hb == _REF_RECAL["bus"]
 
 
 def test_recal_bus_quorum_rules(monkeypatch):
