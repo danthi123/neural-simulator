@@ -3,15 +3,2137 @@
  "off_dir": "research/findings/raw/_stable_integration/census/off/s7",
  "on_dir": "research/findings/raw/_stable_integration/census/off_except_bus/s7",
  "groups_compared": [
+  "conv",
   "inner"
  ],
  "groups_missing": [
   "ask",
-  "conv",
   "emo",
   "infer"
  ],
  "groups": {
+  "conv": {
+   "group": "conv",
+   "off_path": "research/findings/raw/_stable_integration/census/off/s7/conv__intact_a.json",
+   "on_path": "research/findings/raw/_stable_integration/census/off_except_bus/s7/conv__intact_a.json",
+   "env_off": null,
+   "env_on": null,
+   "git_sha_off": "365cfbe0c8593b98d770ca9101cb715f35d63308",
+   "git_sha_on": "5a053026fe1c036c4499a7b747c3b9d912d8fb5c",
+   "valid": {
+    "rc_off": 0,
+    "rc_on": 0,
+    "turn_errors_off": {},
+    "turn_errors_on": {},
+    "pythonhashseed_ok": [
+     true,
+     true
+    ],
+    "corpus_present": [
+     true,
+     true
+    ],
+    "observer_errors": [
+     0,
+     0
+    ]
+   },
+   "speed": {
+    "workload_wall_s_off": 831.3,
+    "workload_wall_s_on": 709.0,
+    "workload_ratio_on_over_off": 0.853,
+    "census_wall_s_off": 831.6,
+    "census_wall_s_on": 709.1,
+    "observe_s_off": 18.15,
+    "observe_s_on": 15.92,
+    "peak_rss_mb_off": 6568.1,
+    "peak_rss_mb_on": 6545.4,
+    "total_bridge_steps_off": 218061,
+    "total_bridge_steps_on": 210713
+   },
+   "membrane": {
+    "n_offender_organs_off": 10,
+    "n_offender_organs_on": 8,
+    "n_oor_neurons_off": 5082,
+    "n_oor_neurons_on": 3958,
+    "organs": [
+     {
+      "organ": "research.runners.brain_conversational_agent:BridgeParser",
+      "off": {
+       "n_bridges": 2,
+       "n_steps": 32400,
+       "n_oor_neurons": 710,
+       "n_low_neurons": 360,
+       "n_high_neurons": 350,
+       "n_nonfinite_neurons": 0,
+       "v_min": -20917.69,
+       "v_min_region": "onebrain_composer",
+       "v_max": 11385.11,
+       "n_spikes_total": 1074644,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.462
+      },
+      "on": {
+       "n_bridges": 2,
+       "n_steps": 32100,
+       "n_oor_neurons": 741,
+       "n_low_neurons": 567,
+       "n_high_neurons": 560,
+       "n_nonfinite_neurons": 0,
+       "v_min": -22223.55,
+       "v_min_region": "onebrain_composer",
+       "v_max": 18039.59,
+       "n_spikes_total": 1230839,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.462
+      }
+     },
+     {
+      "organ": "research.runners.attributed_parser:AttributedBridgeParser",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 36960,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -93.96,
+       "v_min_region": "<all>",
+       "v_max": 35.0,
+       "n_spikes_total": 353043,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.572
+      },
+      "on": {
+       "n_bridges": 1,
+       "n_steps": 36960,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -93.96,
+       "v_min_region": "<all>",
+       "v_max": 35.0,
+       "n_spikes_total": 353043,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.572
+      }
+     },
+     {
+      "organ": "research.runners.learned_assoc_graph:LearnedAssocGraph",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 2250,
+       "n_oor_neurons": 307,
+       "n_low_neurons": 222,
+       "n_high_neurons": 112,
+       "n_nonfinite_neurons": 0,
+       "v_min": -1836.12,
+       "v_min_region": "pool",
+       "v_max": 158.6,
+       "n_spikes_total": 341960,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 23.357
+      },
+      "on": {
+       "n_bridges": 1,
+       "n_steps": 2250,
+       "n_oor_neurons": 307,
+       "n_low_neurons": 222,
+       "n_high_neurons": 112,
+       "n_nonfinite_neurons": 0,
+       "v_min": -1836.12,
+       "v_min_region": "pool",
+       "v_max": 158.6,
+       "n_spikes_total": 341960,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 23.357
+      }
+     },
+     {
+      "organ": "research.runners._self_schema_region_derisk:build_self_schema_bridge",
+      "off": {
+       "n_bridges": 2,
+       "n_steps": 80,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -60.0,
+       "v_min_region": "self_schema",
+       "v_max": -60.0,
+       "n_spikes_total": 0,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.0
+      },
+      "on": {
+       "n_bridges": 2,
+       "n_steps": 80,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -60.0,
+       "v_min_region": "self_schema",
+       "v_max": -60.0,
+       "n_spikes_total": 0,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.0
+      }
+     },
+     {
+      "organ": "research.runners._curiosity_seek_learn_onbridge_derisk:_advance",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 3176,
+       "n_oor_neurons": 1,
+       "n_low_neurons": 0,
+       "n_high_neurons": 1,
+       "n_nonfinite_neurons": 0,
+       "v_min": -83.44,
+       "v_min_region": "striosome_value",
+       "v_max": 105.05,
+       "n_spikes_total": 99160,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.481
+      },
+      "on": {
+       "n_bridges": 1,
+       "n_steps": 3288,
+       "n_oor_neurons": 1,
+       "n_low_neurons": 0,
+       "n_high_neurons": 1,
+       "n_nonfinite_neurons": 0,
+       "v_min": -83.44,
+       "v_min_region": "striosome_value",
+       "v_max": 105.05,
+       "n_spikes_total": 102564,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.481
+      }
+     },
+     {
+      "organ": "research.runners._stageA_full_integration_derisk:build_one_brain",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 40,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -68.44,
+       "v_min_region": "aff_vplus_L8",
+       "v_max": -55.0,
+       "n_spikes_total": 0,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.0
+      },
+      "on": {
+       "n_bridges": 1,
+       "n_steps": 40,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -68.44,
+       "v_min_region": "aff_vplus_L8",
+       "v_max": -55.0,
+       "n_spikes_total": 0,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.0
+      }
+     },
+     {
+      "organ": "research.runners._appraisal_interoceptive_ladder_derisk:AppraisalInteroceptiveLadder",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 9460,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -69.32,
+       "v_min_region": "aff_arousal_L8",
+       "v_max": -51.22,
+       "n_spikes_total": 0,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.0
+      },
+      "on": {
+       "n_bridges": 1,
+       "n_steps": 9460,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -69.32,
+       "v_min_region": "aff_arousal_L8",
+       "v_max": -51.22,
+       "n_spikes_total": 0,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.0
+      }
+     },
+     {
+      "organ": "research.runners.emotion_category_organ:EmotionCategoryOrgan",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 13500,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -75.93,
+       "v_min_region": "<all>",
+       "v_max": 35.0,
+       "n_spikes_total": 62487,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 2.309
+      },
+      "on": {
+       "n_bridges": 1,
+       "n_steps": 13500,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -75.93,
+       "v_min_region": "<all>",
+       "v_max": 35.0,
+       "n_spikes_total": 62487,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 2.309
+      }
+     },
+     {
+      "organ": "research.runners._graded_affect_attractor_derisk:read_body",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 2860,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -61.27,
+       "v_min_region": "affect_arousal_L5",
+       "v_max": 34.99,
+       "n_spikes_total": 27577,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.383
+      },
+      "on": {
+       "n_bridges": 1,
+       "n_steps": 2860,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -61.27,
+       "v_min_region": "affect_arousal_L5",
+       "v_max": 34.99,
+       "n_spikes_total": 27577,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.383
+      }
+     },
+     {
+      "organ": "research.runners.spiking_novelty_habituation_organ:SpikingNoveltyHabituationOrgan",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 756,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -80.0,
+       "v_min_region": "in0",
+       "v_max": 34.98,
+       "n_spikes_total": 1328,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.398
+      },
+      "on": {
+       "n_bridges": 1,
+       "n_steps": 756,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -80.0,
+       "v_min_region": "in0",
+       "v_max": 34.98,
+       "n_spikes_total": 1328,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.398
+      }
+     },
+     {
+      "organ": "research.runners._neuromod_spiking_da_mode_derisk:measure_self_driven",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 3520,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -84.7,
+       "v_min_region": "str_D2_E",
+       "v_max": 40.0,
+       "n_spikes_total": 104010,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 2.073
+      },
+      "on": {
+       "n_bridges": 1,
+       "n_steps": 3520,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -84.7,
+       "v_min_region": "str_D2_E",
+       "v_max": 40.0,
+       "n_spikes_total": 104010,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 2.073
+      }
+     },
+     {
+      "organ": "research.runners._da_write_gain_spiking_derisk:_read_rate_hz",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 16800,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -72.06,
+       "v_min_region": "write_gain",
+       "v_max": -30.33,
+       "n_spikes_total": 62128,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.0
+      },
+      "on": {
+       "n_bridges": 1,
+       "n_steps": 16800,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -72.06,
+       "v_min_region": "write_gain",
+       "v_max": -30.33,
+       "n_spikes_total": 62128,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.0
+      }
+     },
+     {
+      "organ": "research.runners._phaseB_multicue_competition_spiking_derisk:SpikingRoleCompetition",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 3384,
+       "n_oor_neurons": 72,
+       "n_low_neurons": 48,
+       "n_high_neurons": 72,
+       "n_nonfinite_neurons": 0,
+       "v_min": -4436.16,
+       "v_min_region": "sel_patient",
+       "v_max": 204.48,
+       "n_spikes_total": 174996,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 5.542
+      },
+      "on": {
+       "n_bridges": 1,
+       "n_steps": 3384,
+       "n_oor_neurons": 72,
+       "n_low_neurons": 48,
+       "n_high_neurons": 72,
+       "n_nonfinite_neurons": 0,
+       "v_min": -4436.16,
+       "v_min_region": "sel_patient",
+       "v_max": 204.48,
+       "n_spikes_total": 174996,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 5.542
+      }
+     },
+     {
+      "organ": "research.runners.metacog_production_organ:nmda_norm_margin",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 24880,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -80.0,
+       "v_min_region": "striosome_value",
+       "v_max": 35.0,
+       "n_spikes_total": 276141,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 1.36
+      },
+      "on": {
+       "n_bridges": 1,
+       "n_steps": 22180,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -81.7,
+       "v_min_region": "ss_workspace",
+       "v_max": 35.0,
+       "n_spikes_total": 244821,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 1.6
+      }
+     },
+     {
+      "organ": "research.runners.category_inherit_organ:CategoryInheritOrgan",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 1000,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -60.0,
+       "v_min_region": "context",
+       "v_max": 35.0,
+       "n_spikes_total": 11089,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 1.224
+      },
+      "on": {
+       "n_bridges": 1,
+       "n_steps": 1180,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -60.0,
+       "v_min_region": "context",
+       "v_max": 35.0,
+       "n_spikes_total": 12464,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 1.224
+      }
+     },
+     {
+      "organ": "research.runners.one_brain_composer:OneBrainComposer",
+      "off": {
+       "n_bridges": 2,
+       "n_steps": 18600,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -60.0,
+       "v_min_region": "<all>",
+       "v_max": -38.52,
+       "n_spikes_total": 0,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.0
+      },
+      "on": {
+       "n_bridges": 2,
+       "n_steps": 14400,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -60.0,
+       "v_min_region": "<all>",
+       "v_max": -38.52,
+       "n_spikes_total": 0,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.0
+      }
+     },
+     {
+      "organ": "research.runners.content_selection_spiking:SpikingLoopContextBuffer",
+      "off": {
+       "n_bridges": 5,
+       "n_steps": 650,
+       "n_oor_neurons": 2863,
+       "n_low_neurons": 2863,
+       "n_high_neurons": 1613,
+       "n_nonfinite_neurons": 0,
+       "v_min": -32250.02,
+       "v_min_region": "dlpfc_wm",
+       "v_max": 664.89,
+       "n_spikes_total": 120182,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 32.878
+      },
+      "on": {
+       "n_bridges": 4,
+       "n_steps": 360,
+       "n_oor_neurons": 1848,
+       "n_low_neurons": 1848,
+       "n_high_neurons": 1142,
+       "n_nonfinite_neurons": 0,
+       "v_min": -32250.02,
+       "v_min_region": "dlpfc_wm",
+       "v_max": 664.89,
+       "n_spikes_total": 51698,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 30.805
+      }
+     },
+     {
+      "organ": "research.runners._emerge59_spiking_broca_frame_slots_derisk:slot_pool_rates",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 360,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -80.0,
+       "v_min_region": "_anchor",
+       "v_max": -22.33,
+       "n_spikes_total": 18565,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.0
+      },
+      "on": {
+       "n_bridges": 2,
+       "n_steps": 320,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -80.0,
+       "v_min_region": "_anchor",
+       "v_max": -22.33,
+       "n_spikes_total": 16726,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.0
+      }
+     },
+     {
+      "organ": "research.runners._gnw_active_overwrite_derisk:_ws_step",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 3610,
+       "n_oor_neurons": 342,
+       "n_low_neurons": 342,
+       "n_high_neurons": 301,
+       "n_nonfinite_neurons": 0,
+       "v_min": -16041.73,
+       "v_min_region": "workspace",
+       "v_max": 328.53,
+       "n_spikes_total": 235538,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 10.415
+      },
+      "on": {
+       "n_bridges": 1,
+       "n_steps": 3610,
+       "n_oor_neurons": 342,
+       "n_low_neurons": 342,
+       "n_high_neurons": 301,
+       "n_nonfinite_neurons": 0,
+       "v_min": -16041.73,
+       "v_min_region": "workspace",
+       "v_max": 328.53,
+       "n_spikes_total": 235538,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 10.415
+      }
+     },
+     {
+      "organ": "research.runners.common_ground_ledger_production_organ:CommonGroundLedgerOrgan",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 940,
+       "n_oor_neurons": 400,
+       "n_low_neurons": 400,
+       "n_high_neurons": 400,
+       "n_nonfinite_neurons": 0,
+       "v_min": -21274.76,
+       "v_min_region": "led3",
+       "v_max": 419.99,
+       "n_spikes_total": 58729,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 9.337
+      },
+      "on": {
+       "n_bridges": 1,
+       "n_steps": 940,
+       "n_oor_neurons": 400,
+       "n_low_neurons": 400,
+       "n_high_neurons": 400,
+       "n_nonfinite_neurons": 0,
+       "v_min": -21274.76,
+       "v_min_region": "led3",
+       "v_max": 419.99,
+       "n_spikes_total": 58729,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 9.337
+      }
+     },
+     {
+      "organ": "research.runners._gnw_acc_bg_stop_trigger_derisk:run_trigger_trial",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 570,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -60.86,
+       "v_min_region": "delib_aff",
+       "v_max": 34.99,
+       "n_spikes_total": 11137,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 1.235
+      },
+      "on": {
+       "n_bridges": 1,
+       "n_steps": 570,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -60.86,
+       "v_min_region": "delib_aff",
+       "v_max": 34.99,
+       "n_spikes_total": 11137,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 1.235
+      }
+     },
+     {
+      "organ": "research.runners._comprehension_learned_verbselects_cue_derisk:LearnedVerbSelectsLexicon",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 75,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -59.83,
+       "v_min_region": "F_anim",
+       "v_max": 34.61,
+       "n_spikes_total": 243,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.0
+      },
+      "on": {
+       "n_bridges": 1,
+       "n_steps": 75,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -59.83,
+       "v_min_region": "F_anim",
+       "v_max": 34.61,
+       "n_spikes_total": 243,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.0
+      }
+     },
+     {
+      "organ": "research.runners._comprehension_learned_animacy_spiking:LearnedAnimacyLexicon",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 75,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -59.83,
+       "v_min_region": "F_anim",
+       "v_max": 34.65,
+       "n_spikes_total": 253,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.0
+      },
+      "on": {
+       "n_bridges": 1,
+       "n_steps": 75,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -59.83,
+       "v_min_region": "F_anim",
+       "v_max": 34.65,
+       "n_spikes_total": 253,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 0.0
+      }
+     },
+     {
+      "organ": "research.runners._affect_marker_wta_derisk:_step",
+      "off": {
+       "n_bridges": 6,
+       "n_steps": 960,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -69.55,
+       "v_min_region": "qroute_m3",
+       "v_max": 34.77,
+       "n_spikes_total": 3228,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 1.204
+      },
+      "on": {
+       "n_bridges": 6,
+       "n_steps": 960,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -69.55,
+       "v_min_region": "qroute_m3",
+       "v_max": 34.77,
+       "n_spikes_total": 3228,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 1.204
+      }
+     },
+     {
+      "organ": "research.runners._spiking_expectation_rpe_derisk:_step",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 39400,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -74.99,
+       "v_min_region": "surprise",
+       "v_max": -13.8,
+       "n_spikes_total": 459384,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 1.911
+      },
+      "on": {
+       "n_bridges": 1,
+       "n_steps": 39400,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -74.99,
+       "v_min_region": "surprise",
+       "v_max": -13.8,
+       "n_spikes_total": 459384,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 1.911
+      }
+     },
+     {
+      "organ": "research.runners._p1_2_workspace_deliberation_loop_derisk:_ignite_and_read",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 445,
+       "n_oor_neurons": 80,
+       "n_low_neurons": 80,
+       "n_high_neurons": 80,
+       "n_nonfinite_neurons": 0,
+       "v_min": -1356.03,
+       "v_min_region": "workspace",
+       "v_max": 95.7,
+       "n_spikes_total": 13191,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 3.437
+      },
+      "on": {
+       "n_bridges": 1,
+       "n_steps": 445,
+       "n_oor_neurons": 0,
+       "n_low_neurons": 0,
+       "n_high_neurons": 0,
+       "n_nonfinite_neurons": 0,
+       "v_min": -70.7,
+       "v_min_region": "workspace",
+       "v_max": 35.0,
+       "n_spikes_total": 6261,
+       "substep_calls": 445,
+       "refractory_model_resets": 624,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         4,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "True"
+       ],
+       "organ_bounded_configured": [
+        "False"
+       ],
+       "bounded_conductance_integration": "True",
+       "max_gtot_dt_over_C": 3.852
+      }
+     },
+     {
+      "organ": "research.runners._gnw_distributed_overwrite_workspace_derisk:_ws_step",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 1200,
+       "n_oor_neurons": 247,
+       "n_low_neurons": 247,
+       "n_high_neurons": 185,
+       "n_nonfinite_neurons": 0,
+       "v_min": -11479.09,
+       "v_min_region": "workspace",
+       "v_max": 345.85,
+       "n_spikes_total": 51595,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 10.487
+      },
+      "on": {
+       "n_bridges": 1,
+       "n_steps": 1200,
+       "n_oor_neurons": 247,
+       "n_low_neurons": 247,
+       "n_high_neurons": 185,
+       "n_nonfinite_neurons": 0,
+       "v_min": -11479.09,
+       "v_min_region": "workspace",
+       "v_max": 345.85,
+       "n_spikes_total": 51595,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 10.487
+      }
+     },
+     {
+      "organ": "research.runners.biased_competition_buffer:BiasedCompetitionContextBuffer",
+      "off": {
+       "n_bridges": 1,
+       "n_steps": 110,
+       "n_oor_neurons": 60,
+       "n_low_neurons": 60,
+       "n_high_neurons": 12,
+       "n_nonfinite_neurons": 0,
+       "v_min": -521.19,
+       "v_min_region": "cortex_ctx",
+       "v_max": 63.92,
+       "n_spikes_total": 3686,
+       "substep_calls": 0,
+       "refractory_model_resets": 0,
+       "stable_integration_reasserts": 0,
+       "izh_substeps_seen": [
+        [
+         1,
+         "model_reset"
+        ]
+       ],
+       "stable_integration_applied_seen": [
+        "False"
+       ],
+       "organ_bounded_configured": [
+        "None"
+       ],
+       "bounded_conductance_integration": "False",
+       "max_gtot_dt_over_C": 6.271
+      },
+      "on": null
+     }
+    ]
+   },
+   "replies": {
+    "n_turns": 11,
+    "n_changed": 5,
+    "changed": [
+     {
+      "label": "p_fox_chase",
+      "fields_changed": [
+       "answer",
+       "recalled_svo"
+      ],
+      "off": {
+       "answer": "As for it \u2014 the fox chases the hare",
+       "abstained": false,
+       "recalled_svo": [
+        "fox",
+        "chase",
+        "hare"
+       ],
+       "derived": false,
+       "source": "tiny-demo +LTM"
+      },
+      "on": {
+       "answer": "As for it \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the fox chases the hare  [a guess from what I've learned -- not something I was taught]",
+       "abstained": false,
+       "recalled_svo": null,
+       "derived": false,
+       "source": "tiny-demo +LTM"
+      }
+     },
+     {
+      "label": "p_more",
+      "fields_changed": [],
+      "off": {
+       "answer": "I don't have anything more to add on that. My curiosity is piqued \u2014 I haven't learned that yet: can you tell me more so I can learn?",
+       "abstained": true,
+       "recalled_svo": null,
+       "derived": false,
+       "source": "tiny-demo +LTM"
+      },
+      "on": {
+       "answer": "I don't have anything more to add on that. My curiosity is piqued \u2014 I haven't learned that yet: can you tell me more so I can learn?",
+       "abstained": true,
+       "recalled_svo": null,
+       "derived": false,
+       "source": "tiny-demo +LTM"
+      }
+     },
+     {
+      "label": "c_mole_hunt",
+      "fields_changed": [
+       "answer",
+       "recalled_svo"
+      ],
+      "off": {
+       "answer": "Setting the held thread aside \u2014 On mole, then \u2014 the mole hunts the owl",
+       "abstained": false,
+       "recalled_svo": [
+        "mole",
+        "hunt",
+        "owl"
+       ],
+       "derived": false,
+       "source": "tiny-demo +LTM"
+      },
+      "on": {
+       "answer": "Setting the held thread aside \u2014 On mole, then \u2014 (My authorship monitor reads this as self-generated \u2014 a guess of my own, not something I was taught.) perhaps the mole hunts the owl  [a guess from what I've learned -- not something I was taught]",
+       "abstained": false,
+       "recalled_svo": null,
+       "derived": false,
+       "source": "tiny-demo +LTM"
+      }
+     },
+     {
+      "label": "c_dog_chase",
+      "fields_changed": [
+       "answer",
+       "abstained",
+       "recalled_svo"
+      ],
+      "off": {
+       "answer": "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the cat",
+       "abstained": false,
+       "recalled_svo": [
+        "dog",
+        "chase",
+        "cat"
+       ],
+       "derived": false,
+       "source": "tiny-demo +LTM"
+      },
+      "on": {
+       "answer": "Setting the held thread aside \u2014 On dog, then \u2014 I don't know about that.",
+       "abstained": true,
+       "recalled_svo": null,
+       "derived": false,
+       "source": "tiny-demo +LTM"
+      }
+     },
+     {
+      "label": "c_oov",
+      "fields_changed": [],
+      "off": {
+       "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about zorblat yet: what can you tell me about zorblat?",
+       "abstained": true,
+       "recalled_svo": null,
+       "derived": false,
+       "source": "tiny-demo +LTM"
+      },
+      "on": {
+       "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about zorblat yet: what can you tell me about zorblat?",
+       "abstained": true,
+       "recalled_svo": null,
+       "derived": false,
+       "source": "tiny-demo +LTM"
+      }
+     }
+    ],
+    "responses_sha256_off": "fa8c9bdffe68ad1f7120f70b0a5d138d3b42c1ed56c77fe6bf9bee11ec36cc1b",
+    "responses_sha256_on": "ccf92ef05326053e3f185013f9ac889de69abe95e01b9540a03de3e158eb93d9",
+    "signatures": {
+     "t_fox_chase": {
+      "off": {
+       "swap_reason": "no_topic_hold",
+       "swapped": false,
+       "n_ignited_post": null,
+       "new_rate_post": null,
+       "stop": null,
+       "verified": true,
+       "authorship": null
+      },
+      "on": {
+       "swap_reason": "no_topic_hold",
+       "swapped": false,
+       "n_ignited_post": null,
+       "new_rate_post": null,
+       "stop": null,
+       "verified": true,
+       "authorship": null
+      }
+     },
+     "t_fox_eat": {
+      "off": {
+       "swap_reason": "first_thought",
+       "swapped": false,
+       "n_ignited_post": 1,
+       "new_rate_post": null,
+       "stop": null,
+       "verified": true,
+       "authorship": null
+      },
+      "on": {
+       "swap_reason": "first_thought",
+       "swapped": false,
+       "n_ignited_post": 1,
+       "new_rate_post": null,
+       "stop": null,
+       "verified": true,
+       "authorship": null
+      }
+     },
+     "t_deer_sleep": {
+      "off": {
+       "swap_reason": "no_topic_hold",
+       "swapped": false,
+       "n_ignited_post": null,
+       "new_rate_post": null,
+       "stop": null,
+       "verified": true,
+       "authorship": null
+      },
+      "on": {
+       "swap_reason": "no_topic_hold",
+       "swapped": false,
+       "n_ignited_post": null,
+       "new_rate_post": null,
+       "stop": null,
+       "verified": true,
+       "authorship": null
+      }
+     },
+     "t_mole_passive": {
+      "off": {
+       "swap_reason": "no_topic_hold",
+       "swapped": false,
+       "n_ignited_post": null,
+       "new_rate_post": null,
+       "stop": null,
+       "verified": true,
+       "authorship": null
+      },
+      "on": {
+       "swap_reason": "no_topic_hold",
+       "swapped": false,
+       "n_ignited_post": null,
+       "new_rate_post": null,
+       "stop": null,
+       "verified": true,
+       "authorship": null
+      }
+     },
+     "p_fox_chase": {
+      "off": {
+       "swap_reason": "same_topic_hold",
+       "swapped": false,
+       "n_ignited_post": 1,
+       "new_rate_post": 0.333,
+       "stop": null,
+       "verified": true,
+       "authorship": null
+      },
+      "on": {
+       "swap_reason": "same_topic_hold",
+       "swapped": false,
+       "n_ignited_post": 1,
+       "new_rate_post": 0.333,
+       "stop": null,
+       "verified": false,
+       "authorship": "self"
+      }
+     },
+     "p_more": {
+      "off": {
+       "swap_reason": "no_topic_hold",
+       "swapped": false,
+       "n_ignited_post": null,
+       "new_rate_post": null,
+       "stop": null,
+       "verified": false,
+       "authorship": null
+      },
+      "on": {
+       "swap_reason": "no_topic_hold",
+       "swapped": false,
+       "n_ignited_post": null,
+       "new_rate_post": null,
+       "stop": null,
+       "verified": false,
+       "authorship": null
+      }
+     },
+     "p_deer_sleep": {
+      "off": {
+       "swap_reason": "topic_change_swap",
+       "swapped": true,
+       "n_ignited_post": 1,
+       "new_rate_post": 0.333,
+       "stop": "clean_global_stop",
+       "verified": false,
+       "authorship": null
+      },
+      "on": {
+       "swap_reason": "topic_change_swap",
+       "swapped": true,
+       "n_ignited_post": 1,
+       "new_rate_post": 0.333,
+       "stop": "clean_global_stop",
+       "verified": false,
+       "authorship": null
+      }
+     },
+     "p_owl_hunt": {
+      "off": {
+       "swap_reason": "topic_change_swap",
+       "swapped": true,
+       "n_ignited_post": 1,
+       "new_rate_post": 0.333,
+       "stop": "clean_global_stop",
+       "verified": false,
+       "authorship": null
+      },
+      "on": {
+       "swap_reason": "topic_change_swap",
+       "swapped": true,
+       "n_ignited_post": 1,
+       "new_rate_post": 0.333,
+       "stop": "clean_global_stop",
+       "verified": false,
+       "authorship": null
+      }
+     },
+     "c_mole_hunt": {
+      "off": {
+       "swap_reason": "topic_change_swap",
+       "swapped": true,
+       "n_ignited_post": 1,
+       "new_rate_post": 0.333,
+       "stop": "clean_global_stop",
+       "verified": true,
+       "authorship": null
+      },
+      "on": {
+       "swap_reason": "topic_change_swap",
+       "swapped": true,
+       "n_ignited_post": 1,
+       "new_rate_post": 0.333,
+       "stop": "clean_global_stop",
+       "verified": false,
+       "authorship": "self"
+      }
+     },
+     "c_dog_chase": {
+      "off": {
+       "swap_reason": "topic_change_swap",
+       "swapped": true,
+       "n_ignited_post": 1,
+       "new_rate_post": 0.333,
+       "stop": "clean_global_stop",
+       "verified": true,
+       "authorship": null
+      },
+      "on": {
+       "swap_reason": "topic_change_swap",
+       "swapped": true,
+       "n_ignited_post": 1,
+       "new_rate_post": 0.333,
+       "stop": "clean_global_stop",
+       "verified": false,
+       "authorship": null
+      }
+     },
+     "c_oov": {
+      "off": {
+       "swap_reason": "no_topic_hold",
+       "swapped": false,
+       "n_ignited_post": null,
+       "new_rate_post": null,
+       "stop": null,
+       "verified": false,
+       "authorship": null
+      },
+      "on": {
+       "swap_reason": "no_topic_hold",
+       "swapped": false,
+       "n_ignited_post": null,
+       "new_rate_post": null,
+       "stop": null,
+       "verified": false,
+       "authorship": null
+      }
+     }
+    }
+   },
+   "gate_score": {
+    "off": {
+     "fox_chase": true,
+     "more": false,
+     "owl_hunt": false,
+     "mole_moat": false,
+     "deer_sleep": false,
+     "builtin_dog_cat": true,
+     "oov_abstains": true,
+     "all": false,
+     "sub_transitive": false,
+     "sub_prepositional": false,
+     "sub_passive": false,
+     "frames_fox": [
+      [
+       "fox",
+       "chases",
+       null,
+       "hare"
+      ]
+     ],
+     "frames_more": [],
+     "frames_deer": [],
+     "passive_stored_as": "owl",
+     "n_facts_known": 9
+    },
+    "on": {
+     "fox_chase": false,
+     "more": false,
+     "owl_hunt": false,
+     "mole_moat": false,
+     "deer_sleep": false,
+     "builtin_dog_cat": false,
+     "oov_abstains": true,
+     "all": false,
+     "sub_transitive": false,
+     "sub_prepositional": false,
+     "sub_passive": false,
+     "frames_fox": [
+      [
+       "fox",
+       "chases",
+       null,
+       "hare"
+      ]
+     ],
+     "frames_more": [],
+     "frames_deer": [],
+     "passive_stored_as": null,
+     "n_facts_known": 9
+    }
+   }
+  },
   "inner": {
    "group": "inner",
    "off_path": "research/findings/raw/_stable_integration/census/off/s7/inner__intact_a.json",
