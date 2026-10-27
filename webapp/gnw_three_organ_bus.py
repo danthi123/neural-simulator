@@ -104,12 +104,18 @@ from webapp.gnw_two_organ_bus import (
 # organ B's spiking corroboration read (cp_firing_states[surprise]) and the N-organ consensus hop + unanimity drive.
 from research.runners._gnw_two_distinct_organs_derisk import organ_b_confirms
 from research.runners._gnw_norgan_bus_derisk import norgan_hop, D_SUB_UNANIMITY
+from research.runners import stable_recal as _stable_recal
 from research.runners._gnw_coincidence_integrator_derisk import _pick_decoy
 # organ C — the production spiking comprehension monitor (the 6/6-GO D4 faculty; process-shared, built once).
 from research.runners.comprehension_production_organ import get_organ as _get_comprehension_organ
 
 _N_ORGANS = 3
 _D_SUB_3 = float(D_SUB_UNANIMITY[3])   # the calibrated Q=3 UNANIMITY drive: 2*d_sub < knee <= 3*d_sub
+
+
+def _d_sub_3() -> float:
+    """_D_SUB_3, or the stable-integrator re-calibration (500 pA) under SIM_STABLE_RECAL=1 (default OFF)."""
+    return _stable_recal.bus_d_sub(3, _D_SUB_3)
 
 _DEFAULT_SEED = int(os.environ.get("BRAIN_CHAT_SEED", "42"))  # research/seed-threading-lbf, 2026-09-20: reads the
 # same env var as webapp/server.py._brain_chat_seed so this organ reseeds coherently with the rest of the tiny-
@@ -238,7 +244,7 @@ def three_organ_combine(chat, agent: str, action: str, *, seed: int = _DEFAULT_S
     brain_vocab = set(all_concepts)
     info = {"organ_a_recall": None, "organ_b_confirmed": None, "organ_b_surprise_hz": None,
             "organ_c_votes": None, "committed": None, "ignited": False, "n_ignited": 0,
-            "d_sub": _D_SUB_3, "n_organs": _N_ORGANS,
+            "d_sub": _d_sub_3(), "n_organs": _N_ORGANS,
             "ws_lesion": bool(ws_lesion), "organb_lesion": bool(organb_lesion), "organc_lesion": bool(organc_lesion),
             "organb_ltm_exempt": bool(organb_ltm_exempt),
             "expected": e_b.get((agent, action))}
@@ -292,7 +298,7 @@ def three_organ_combine(chat, agent: str, action: str, *, seed: int = _DEFAULT_S
                         rng=np.random.default_rng(int(seed) * 991 + 7))
     candidates = [cand, (cand if confirmed_b else None), (cand if votes_c else None)]
     committed, _rates, _winner, n_ign = norgan_hop(
-        bridge, xp, slots_dev, snap, candidates, decoy, _D_SUB_3,
+        bridge, xp, slots_dev, snap, candidates, decoy, _d_sub_3(),
         rng=np.random.default_rng(int(seed) * 13 + 3))
     info["committed"] = committed
     info["ignited"] = committed is not None

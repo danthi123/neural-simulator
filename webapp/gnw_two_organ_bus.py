@@ -87,6 +87,12 @@ from research.runners._gnw_two_distinct_organs_derisk import (
 )
 from research.runners._p1_2_workspace_deliberation_loop_derisk import build_workspace_bridge
 from research.runners._gnw_coincidence_integrator_derisk import _pick_decoy, D_SUB_DEFAULT
+from research.runners import stable_recal as _stable_recal
+
+
+def _d_sub_2() -> float:
+    """float(D_SUB_DEFAULT), or the stable-integrator re-calibration (750 pA) under SIM_STABLE_RECAL=1 (default OFF)."""
+    return float(_stable_recal.bus_d_sub(2, D_SUB_DEFAULT))
 
 
 def _multiref_resolved(chat) -> bool:
@@ -320,7 +326,7 @@ def two_organ_combine(chat, agent: str, action: str, *, seed: int = _DEFAULT_SEE
     decoy = _pick_decoy(list(all_concepts), exclude={cand, exp, agent, action},
                         rng=np.random.default_rng(int(seed) * 991 + 7))
     committed, _rates, _winner, n_ign, _b_slot = coincidence_hop(
-        bridge, xp, slots_dev, snap, cand, (cand if confirmed else None), decoy, float(D_SUB_DEFAULT))
+        bridge, xp, slots_dev, snap, cand, (cand if confirmed else None), decoy, _d_sub_2())
     info["committed"] = committed
     info["ignited"] = committed is not None
     info["n_ignited"] = int(n_ign)

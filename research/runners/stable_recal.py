@@ -1,0 +1,112 @@
+"""SIM_STABLE_RECAL -- DEFAULT-OFF switch: the two GNW workspaces whose ignition was the old integrator's numerical
+runaway, re-calibrated by their OWN rules on the stable integrator (research/stable-recal, 2026-10-27).
+
+Why. On the old integrator the GNW ignition-bus workspace and the thought-swap workspace ignite at the drive where
+their cells leave the valid membrane range, and the ignited rate 1/3 is that runaway (findings
+2026-10-26-stable-integration-dev7.md and 2026-10-27-stable-recal-dev78.md). Under SIM_STABLE_INTEGRATION=1 the
+membranes stay valid and both workspaces stop igniting at their production constants. This switch applies the
+re-calibrations measured on the isolated organs, chosen by each organ's documented rules and never from a reply.
+
+Values.
+  * Unset, "" or "0": nothing changes. Every accessor below returns the production value it was handed, and the
+    production code paths are byte-identical (tests/test_stable_recal_switch.py).
+  * "1": requires SIM_STABLE_INTEGRATION=1 (raises RuntimeError without it, because the re-calibration is for the
+    stable membranes only). Any other value raises ValueError.
+
+The accessors are read at call time, so the switch is a process-level environment setting like
+SIM_STABLE_INTEGRATION. Organs not listed here (the global-stop workspace, the ACC-BG stop trigger, ...) keep their
+production constants.
+"""
+from __future__ import annotations
+
+import os
+
+STABLE_RECAL_ENV = "SIM_STABLE_RECAL"
+
+
+def stable_recal_requested() -> bool:
+    """True when SIM_STABLE_RECAL is "1" (and SIM_STABLE_INTEGRATION is "1"); False when unset, "" or "0"."""
+    raw = os.environ.get(STABLE_RECAL_ENV)
+    if raw is None:
+        return False
+    s = raw.strip()
+    if s in ("", "0"):
+        return False
+    if s != "1":
+        raise ValueError(f"{STABLE_RECAL_ENV} must be unset, '0' or '1', got {raw!r}")
+    from sim.bridge import stable_integration_requested, STABLE_INTEGRATION_ENV
+    if not stable_integration_requested():
+        raise RuntimeError(f"{STABLE_RECAL_ENV}=1 re-calibrates the GNW workspaces for the stable integrator and is "
+                           f"meaningless without {STABLE_INTEGRATION_ENV}=1; set both or neither")
+    return True
+
+
+# ── GNW ignition bus (research/runners/_p1_2_workspace_deliberation_loop_derisk.build_workspace_bridge and every hop
+#    that reads it). Source: research/findings/raw/_stable_integration/bus_ignition_curve_s7.json and
+#    bus_quorum_w5_s7.json (finding 2026-10-26-stable-integration-dev7.md, "A calibration both integrators agree on").
+BUS_PRODUCTION_WEIGHT = 30.0   # DEFAULT_ATTRACTOR_WEIGHT (rung-1 self-attractor recipe)
+BUS_WEIGHT = 5.0               # both integrators agree at 5 (no runaway on either): knee 1000-1500 pA
+BUS_PLATEAU = 0.089            # the measured ignited plateau at weight 5 (membranes near -25 mV)
+BUS_THR = 0.5 * BUS_PLATEAU    # IGNITE_FRAC x plateau, the bus's own ignition criterion
+BUS_D_SUB = {3: 500.0,         # unanimity quorum rule 2*d_sub < knee <= 3*d_sub with the knee in (1000, 1500]
+             2: 750.0}         # coincidence rule d_sub < knee <= 2*d_sub
+BUS_PRODUCTION_D_SUB = {3: 1000.0, 2: 1400.0}
+
+
+def bus_attractor_weight(weight: float) -> float:
+    """The workspace assembly's recurrent weight: the production 30 becomes 5 under the switch; any other value (a
+    lesion's 0, an explicit research weight) is kept."""
+    w = float(weight)
+    if w == BUS_PRODUCTION_WEIGHT and stable_recal_requested():
+        return BUS_WEIGHT
+    return w
+
+
+def bus_solo_plateau(default: float) -> float:
+    return BUS_PLATEAU if stable_recal_requested() else default
+
+
+def bus_thr(default: float) -> float:
+    return BUS_THR if stable_recal_requested() else default
+
+
+def bus_d_sub(n_organs: int, default: float) -> float:
+    """The per-organ subthreshold drive for an `n_organs` quorum (3 = unanimity bus, 2 = coincidence bus)."""
+    if stable_recal_requested() and float(default) == BUS_PRODUCTION_D_SUB.get(int(n_organs)):
+        return BUS_D_SUB[int(n_organs)]
+    return default
+
+
+# ── thought-swap workspace (research/runners/_gnw_neural_swap_intention_derisk: `build` + `run_intention_swap`, used
+#    by webapp/gnw_thought_swap.py, the ACC-BG stop trigger and the congruence reader). Source and the rule behind
+#    each value: research/findings/raw/_stable_recal/swap_calibration_record.json.
+SWAP = {
+    "w_rec": (34.0, 6.5),            # lowest weight with a steady (non-oscillating) sustained up-state, plateau 0.084
+    "norm_ws_w": (16.0, 4.0),        # largest normalization without the ~60-step relaxation oscillation
+    "thal_tonic_pa": (700.0, 25.0),  # largest thalamic support with no spontaneous ignition in 1000 steps
+    "solo_plateau": (1.0 / 3.0, 0.084),   # the measured ignited plateau; threshold IGNITE_FRAC x plateau = 0.042
+    "establish_pa": (8000.0, 1280.0),     # production ratio establish/knee 8000/2500 = 3.2, x the stable knee 400
+    "w_ws_occ": (8.0, 32.0),         # occupancy read input conserved: 8 x (1/3) / 0.084
+    "w_pat_pred": (8.0, 32.0),       # the same conservation for the held-content prediction read
+    "w_occ_gate": (20.0, 80.0),      # the vacancy veto knee (occupied gate 0.215 -> 0.044)
+    "w_pred_mm": (20.0, 80.0),       # the organ's match bar: match mismatch rate < 0.02
+    "w_gate_ws": (100.0, 4.0),       # middle of the band 2-8 where the gate primitive holds on both seeds
+    "timing_window": (9, 36),        # the organ's 3-ignition-period rule: 3 spikes of an ignited neuron
+}
+
+
+def swap_value(name: str, value):
+    """The swap constant `name`: the re-calibrated value under the switch when `value` is the production value;
+    otherwise `value` unchanged (a lesion or an explicit research setting is kept)."""
+    prod, recal = SWAP[name]
+    if stable_recal_requested() and float(value) == float(prod):
+        return type(value)(recal) if isinstance(value, int) and not isinstance(value, bool) else float(recal)
+    return value
+
+
+def swap_ignite_thresh(ignite_frac: float, default: float) -> float:
+    """The swap organ's ignition criterion, scoped to the swap organ (Rung-2's SOLO_PLATEAU, which the global-stop
+    workspace shares, is not touched)."""
+    if stable_recal_requested():
+        return float(ignite_frac) * SWAP["solo_plateau"][1]
+    return default
