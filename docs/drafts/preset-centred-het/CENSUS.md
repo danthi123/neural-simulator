@@ -130,6 +130,10 @@ assigns it, so the bridge runs with heterogeneity ON unless its config comes fro
    production base-brain bridges (`_d3_spiking_attractor_derisk.build_fswta_score_bridge`,
    `_D_sparse_heteroassoc.build`). The flag keeps these neurons on the global centre, on purpose: the requirement is
    that neurons with no REGION preset stay identical with the flag on and off.
+   Follow-up 2026-10-27 (research/stable-mechc2): `cfg.trait_centred_parameter_heterogeneity` and `SIM_TRAIT_CENTRED_HET=1`
+   (both default OFF) centre these neurons on their own trait preset, on a neuron set disjoint from the region flag's. On dev
+   seed 7 it removes the association graph's cells below -110 mV (110 down to 4) and changes the replies and the organs' own
+   gates for the worse: `research/findings/2026-10-27-trait-centred-het-dev7.md`.
 2. **Default type vs global centre.** `cfg.izh_*_val` / `cfg.hh_*` are not synced with `default_neuron_type_izh` /
    `default_neuron_type_hh`. A non-RS default Izhikevich type, or any HH default type other than the L5 values (for
    example `HH_EXCITATORY_DEFAULT_LEGACY`: g_Na 120, g_K 36, g_L 0.3), is recentred on the global values whenever

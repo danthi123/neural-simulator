@@ -37,6 +37,14 @@ compute node (GPU queue, local model serving), and Claude Code inspects occasion
   exactly where they were, and changed no answer. Giving the graph's cells their own trait type instead (a probe, not built)
   cuts the bad cells from about 100 to under 10 per seed on four dev seeds; the plain-RS cells that remain are a separate
   residual (`research/findings/2026-10-27-stable-preset-centred-dev7.md`).
+- **Giving every trait-typed cell its own type was built and tested (off, and not a flip candidate):** a second switch
+  (`SIM_TRAIT_CENTRED_HET=1`) does what the probe predicted for the associative-memory graph (110 bad cells down to 4 on the
+  five test conversations, nothing new going wrong) but it also changes two other organs that received the same random cell-type
+  mixture. The two sentence-slot bridges lose the article's place and the verb ending ("the fox the chases hare"; 32 of 63
+  turns have different words, none changes between answering and abstaining), the novelty bank changes the dopamine drive, and
+  the graph's and the slot bridge's own checks on dev seeds 1 to 8 drop from 5 of 8 to 0 of 8 and from 7 of 8 to 4 of 8.
+  These organs were built on the old mixed-up cells, so removing them is a change, not a repair
+  (`research/findings/2026-10-27-trait-centred-het-dev7.md`).
 
 ## 2026-10-21 — the strict no-making-things-up check passes its tests (still off); a cell-type fault under the substrate; two new methods start
 
