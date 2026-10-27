@@ -560,3 +560,25 @@ def test_the_committed_10_26_gate_reads_as_the_prereg_describes_it():
     for s in SEEDS:
         ia, ib = a(s, "intact_a")[0]["responses"], b(s, "intact_b")[0]["responses"]
         assert all(S.first_diff(S.drop_keys(ia[l]), S.drop_keys(ib[l])) is None for l in ia), s
+
+
+def test_a_dev_seed_read_is_possible_and_reads_clean_for_the_gate_preflight(tmp_path, capsys):
+    """tools/gate_preflight.py needs the registered scorer to read a dev-seed run of this packet CLEAN before any gate line is
+    queued. Dev seed 7 has no 10-26 reference (B5) and no row shards unless run, so the preflight read is --only B1,B2,B3,B4,B6."""
+    from tools.gate_preflight import classify
+    on = {7: {a: make_shard(7, a, on=True) for a in ARMS}}
+    off = {7: {a: make_shard(7, a, on=False) for a in ARMS}}
+    args = ["--on-dir", write_tree(tmp_path / "on", on), "--off-dir", write_tree(tmp_path / "off", off), "--seeds", "7",
+            "--only", "B1,B2,B3,B4,B6"]
+    assert S.main(args) == 0
+    out = capsys.readouterr().out
+    assert "B1  PASS" in out and "B4  PASS" in out and "B6  PASS" in out and "DEC PARTIAL" in out
+    assert classify(out)[0] == "CLEAN"
+    # a pre-merge shard (no engagement keys) is an instrument defect, not a coverage gap: the preflight must FLAG it
+    for sh in on[7].values():
+        for l, r in sh["responses"].items():
+            if l.startswith("feel_"):
+                r["emotion_category"] = {k: v for k, v in r["emotion_category"].items() if k not in S.ENGAGEMENT_KEYS}
+    args[1] = write_tree(tmp_path / "on_old", on)
+    assert S.main(args) == 0
+    assert classify(capsys.readouterr().out)[0] == "FLAGGED"

@@ -1,0 +1,202 @@
+{
+ "backend": "numpy",
+ "description": "emo_flip_score.score_b6 reads PASS over the six gate seeds x five arms, ON vs OFF; perfect = identical in every field of every non-feel turn after the five engagement keys are dropped at any depth, feel text before the clause identical (the clause itself and the keys may differ); nulls = one non-feel field / deep float / list item / key added or removed / a sixth key, a changed feel prefix, number or clause position, an unmatched or errored pair, every non-feel turn changed, and a random brain.",
+ "failures": [],
+ "kinds": {
+  "null_errored_turn_off": "null",
+  "null_every_nonfeel_turn_changed": "null",
+  "null_feel_clause_dropped_on": "null",
+  "null_feel_prefix_words": "null",
+  "null_feel_printed_number": "null",
+  "null_feel_sentence_after_clause": "null",
+  "null_feel_text_all_turns": "null",
+  "null_nonfeel_abstained_flipped": "null",
+  "null_nonfeel_answer_changed": "null",
+  "null_nonfeel_deep_float_drift": "null",
+  "null_nonfeel_deep_list_item": "null",
+  "null_nonfeel_extra_key": "null",
+  "null_nonfeel_key_missing": "null",
+  "null_nonfeel_nested_bool": "null",
+  "null_nonfeel_recalled_svo_changed": "null",
+  "null_nonfeel_sixth_engagement_key": "null",
+  "null_pair_missing_off": "null",
+  "null_pair_missing_on": "null",
+  "null_turn_missing_on": "null",
+  "perfect": "perfect",
+  "perfect_clause_changes_often": "perfect",
+  "perfect_keys_at_depth": "perfect",
+  "perfect_no_clause_change": "perfect",
+  "random_on_tree": "null"
+ },
+ "n": 1000,
+ "n_pass": {
+  "null_errored_turn_off": 0,
+  "null_every_nonfeel_turn_changed": 0,
+  "null_feel_clause_dropped_on": 0,
+  "null_feel_prefix_words": 0,
+  "null_feel_printed_number": 0,
+  "null_feel_sentence_after_clause": 0,
+  "null_feel_text_all_turns": 0,
+  "null_nonfeel_abstained_flipped": 0,
+  "null_nonfeel_answer_changed": 0,
+  "null_nonfeel_deep_float_drift": 0,
+  "null_nonfeel_deep_list_item": 0,
+  "null_nonfeel_extra_key": 0,
+  "null_nonfeel_key_missing": 0,
+  "null_nonfeel_nested_bool": 0,
+  "null_nonfeel_recalled_svo_changed": 0,
+  "null_nonfeel_sixth_engagement_key": 0,
+  "null_pair_missing_off": 0,
+  "null_pair_missing_on": 0,
+  "null_turn_missing_on": 0,
+  "perfect": 1000,
+  "perfect_clause_changes_often": 1000,
+  "perfect_keys_at_depth": 1000,
+  "perfect_no_clause_change": 1000,
+  "random_on_tree": 0
+ },
+ "name": "emo-bounded-flip B6 (ON vs OFF whole record apart from the five keys)",
+ "pass_rate": {
+  "null_errored_turn_off": 0.0,
+  "null_every_nonfeel_turn_changed": 0.0,
+  "null_feel_clause_dropped_on": 0.0,
+  "null_feel_prefix_words": 0.0,
+  "null_feel_printed_number": 0.0,
+  "null_feel_sentence_after_clause": 0.0,
+  "null_feel_text_all_turns": 0.0,
+  "null_nonfeel_abstained_flipped": 0.0,
+  "null_nonfeel_answer_changed": 0.0,
+  "null_nonfeel_deep_float_drift": 0.0,
+  "null_nonfeel_deep_list_item": 0.0,
+  "null_nonfeel_extra_key": 0.0,
+  "null_nonfeel_key_missing": 0.0,
+  "null_nonfeel_nested_bool": 0.0,
+  "null_nonfeel_recalled_svo_changed": 0.0,
+  "null_nonfeel_sixth_engagement_key": 0.0,
+  "null_pair_missing_off": 0.0,
+  "null_pair_missing_on": 0.0,
+  "null_turn_missing_on": 0.0,
+  "perfect": 1.0,
+  "perfect_clause_changes_often": 1.0,
+  "perfect_keys_at_depth": 1.0,
+  "perfect_no_clause_change": 1.0,
+  "random_on_tree": 0.0
+ },
+ "pass_rate_ci95": {
+  "null_errored_turn_off": [
+   0.0,
+   0.0038
+  ],
+  "null_every_nonfeel_turn_changed": [
+   0.0,
+   0.0038
+  ],
+  "null_feel_clause_dropped_on": [
+   0.0,
+   0.0038
+  ],
+  "null_feel_prefix_words": [
+   0.0,
+   0.0038
+  ],
+  "null_feel_printed_number": [
+   0.0,
+   0.0038
+  ],
+  "null_feel_sentence_after_clause": [
+   0.0,
+   0.0038
+  ],
+  "null_feel_text_all_turns": [
+   0.0,
+   0.0038
+  ],
+  "null_nonfeel_abstained_flipped": [
+   0.0,
+   0.0038
+  ],
+  "null_nonfeel_answer_changed": [
+   0.0,
+   0.0038
+  ],
+  "null_nonfeel_deep_float_drift": [
+   0.0,
+   0.0038
+  ],
+  "null_nonfeel_deep_list_item": [
+   0.0,
+   0.0038
+  ],
+  "null_nonfeel_extra_key": [
+   0.0,
+   0.0038
+  ],
+  "null_nonfeel_key_missing": [
+   0.0,
+   0.0038
+  ],
+  "null_nonfeel_nested_bool": [
+   0.0,
+   0.0038
+  ],
+  "null_nonfeel_recalled_svo_changed": [
+   0.0,
+   0.0038
+  ],
+  "null_nonfeel_sixth_engagement_key": [
+   0.0,
+   0.0038
+  ],
+  "null_pair_missing_off": [
+   0.0,
+   0.0038
+  ],
+  "null_pair_missing_on": [
+   0.0,
+   0.0038
+  ],
+  "null_turn_missing_on": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_clause_changes_often": [
+   0.9962,
+   1.0
+  ],
+  "perfect_keys_at_depth": [
+   0.9962,
+   1.0
+  ],
+  "perfect_no_clause_change": [
+   0.9962,
+   1.0
+  ],
+  "random_on_tree": [
+   0.0,
+   0.0038
+  ]
+ },
+ "repo_head": "7bf5bd7dd355b79c269b5b204c20465e02b10443",
+ "scorer_files": {
+  "docs/drafts/emo-bounded-flip/bar_sanity_emo_flip_common.py": "ba8e5d4bf436a7be27e93d7cf29b93e6f3f0856b5c5f803563ecbbde384e361d",
+  "docs/drafts/stage2-exit/bar_sanity_s2_common.py": "7ba31e0d675eb751a20c64ed2cd44eb50b7bad47295bcf100d208436b0c68a63",
+  "research/runners/emo_flip_score.py": "5d5f96d76eaab47aeb7fa8cffe3595cd4efb9faca59b18168a41e7d6257239cf",
+  "research/runners/stage2_exit_gate.py": "67bfd30b66d266748d9e06b0ef393d23ab03f5be3b22b2e84831ec094616a177"
+ },
+ "scorer_sha256": "eecaef9c4154a3b2e77423cdb14668605942597e1e48c8d66927c86f03c0173d",
+ "seed": 0,
+ "spec": "docs/drafts/emo-bounded-flip/bar_sanity_spec_b6.py",
+ "spec_sha256": "f35276f9af9f5161eab21a3558a6eb446a08d888557649ac7cbb5cf9c08537c4",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 454.0
+}
