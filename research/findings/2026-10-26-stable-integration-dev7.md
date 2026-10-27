@@ -341,13 +341,19 @@ Turns not listed kept every user-visible field (their internal read-outs moved).
   OFF: "Setting the held thread aside -- On dog, then -- the dog chases the cat"  
   ON: "I don't know about that."
 
-## Run-to-run noise floor
+## Run-to-run noise floor and default-OFF identity
 
-A second OFF and a second ON census of inner, fresh processes from the same code
-(`research/findings/raw/_stable_integration/replicate_off_s7.json`, `replicate_on_s7.json`): the whole-response hash is
-identical to the first run in both arms (OFF c705acd4779e, ON 12c9855d7dbe), 0 of 10 turns differ and the
-out-of-range counts are identical (4984 OFF, 787 ON). The brain is deterministic run to run on this setup, so the ON
-vs OFF reply changes are caused by the switch, not noise.
+- Replicates: a second OFF and a second ON census, fresh processes from the same code
+  (`research/findings/raw/_stable_integration/replicate_off_s7.json`, `replicate_on_s7.json`). Inner and conv: the
+  whole-response hash is identical to the first run in both arms (inner OFF c705acd4779e, ON 12c9855d7dbe), 0 of 10
+  and 0 of 11 turns differ, and the out-of-range counts are identical (inner 4984 OFF, 787 ON; conv 5082, 803). The
+  brain is deterministic run to run on this setup, so the ON vs OFF reply changes are caused by the switch, not noise.
+- Default OFF against main: OFF's per-bridge dynamics (steps, spikes, out-of-range count and lowest v of every
+  bridge) are identical to the pool's dev-seed-7 census records (main @ 79c6f5128) in all five groups, and its
+  whole-response hash equals those records for infer and ask. For conv, emo and inner the pool's response hashes
+  differ while their dynamics match; a fresh emo OFF census from a clean main @ cadf0f40f worktree (workstation
+  scratch, no provenance: wt-main-cadf under sim-rev) gave be03f3cd73fd, the same hash as this branch's OFF, so that
+  difference lies in the pool run's environment, not in this branch's code.
 
 ## Caveats
 
@@ -361,9 +367,9 @@ vs OFF reply changes are caused by the switch, not noise.
   organs need re-measurement on the stable integrator before any default flip.
 - The switch is global: no per-organ exemption was run, so which organ's integrator change causes each reply change
   is inferred from the response read-outs, not shown by intervention.
-- Responses are compared ON vs OFF from one run each; OFF's whole-response hash equals the pool's dev-seed-7 census
-  record for infer and ask (pool nodes) but not for conv, emo and inner (the pool ran those on the workstation).
-  The run-to-run replicate below is what bounds the noise.
+- The replicate pairs bound run-to-run noise at zero on this setup (inner, conv; see above); they do not bound
+  sensitivity to the environment (the pool's own runs of three groups produced different response hashes with
+  identical dynamics).
 - Whole-conversation wall times are confounded (different organ paths; infer and ask unpaired under memory
   pressure); the fixed-network step cost is the speed number.
 - Mechanism (c) is a model-level limit of the Izhikevich 2007 equations with b < 0 (unbounded u), not touched by
