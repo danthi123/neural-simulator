@@ -114,7 +114,12 @@ _BASE = dict(NE=16, NI=6, NG=12, NGI=8, NS=20, NO=8,
              # f1h (packet cs-race-f1h): intrinsic word trace = a held
              # BDSP apical plateau in the mention-slot cells. All
              # defaults keep the f1g build byte-for-byte.
-             TRACE_INTRINSIC=0, SOMA_G=0.0, APICAL_PA=0.0)
+             TRACE_INTRINSIC=0, SOMA_G=0.0, APICAL_PA=0.0,
+             # f1i (packet cs-race-f1i): SOM-like dendrite-targeting
+             # pool (slot -> SOM facilitating, SOM -> mention APICAL
+             # GABA_A). All defaults keep the f1h build byte-for-byte.
+             SOM_W_MS=0.0, SOM_W_SA=0.0, SOM_LESION=0, SOM_NOFAC=0,
+             NSOM=8)
 # f1h (packet cs-race-f1h, STEP 0): the gap4 6/6-seed GO configuration of
 # the bistable BDSP apical, FROZEN here, never tuned. Source of every value:
 # research/runners/_gap4_btsp_onbridge_behavioral_timescale_derisk.py
@@ -136,6 +141,14 @@ GAP4_GO = dict(
     apical_E_rest=-65.0,                    # [default] config.py:560
     bdsp_v_apical_scale=0.05)               # [default] config.py:630
 GAP4_GO_PULSE_PA = 120.0    # gap4 runner :75 pulse_pA (the packet's pulse value)
+# f1i (packet cs-race-f1i, R1 Q3): the slot -> SOM facilitating synapse.
+# Markram, Wang & Tsodyks 1998 PNAS 95:5323 (PMID 9560274, full text
+# PMC20259): pyramid -> interneuron facilitating, 7 convergent pairs
+# L2/3-4, U 0.049 +/- 0.037, D 399 +/- 295 ms, F 1797 +/- 1247 ms. The
+# paper does not classify the interneurons (no 'bitufted'); recorded in
+# the packet's Method section. Used whole, on per-type STP index 1.
+SOM_STP = dict(U=0.049, tau_f=1797.0, tau_d=399.0)
+GATE_SOM = "cs_som"          # f1i: SOM -> mention-apical output gate
 GATE_CUE = "cs_cue"          # sensory drive gate for the cue layer
 GATE_MENT = "cs_ment"        # mention->E gate (lesion i closes it)
 
@@ -193,6 +206,20 @@ class RaceCircuit(ReplayCircuit):
             n = n + nim
             self.pool = np.arange(o_pool, o_pool + nim,
                                   dtype=np.int64)
+        # f1i: the SOM-like pool, appended after the f1g pool ONLY when
+        # --som is given (no-flag build keeps the f1h neuron count).
+        self._som_on = float(p.get("SOM_W_MS", 0.0)) > 0.0
+        self.som = None
+        if self._som_on:
+            if not bool(int(p.get("TRACE_INTRINSIC", 0))):
+                raise ValueError("SOM (f1i) needs TRACE_INTRINSIC: the "
+                                 "apical compartment it inhibits")
+            if float(p.get("SOM_W_SA", 0.0)) <= 0.0:
+                raise ValueError("SOM (f1i) needs SOM_W_SA > 0")
+            nsom = int(p.get("NSOM", 8))
+            o_som = n
+            n = n + nsom
+            self.som = np.arange(o_som, o_som + nsom, dtype=np.int64)
         self.cue = [np.arange(o_cue + i * cue_n, o_cue + (i + 1) * cue_n,
                               dtype=np.int64) for i in range(len(CUE_WORDS))]
         self.ment = [np.arange(o_ment + i * W_SLOT, o_ment + (i + 1) * W_SLOT,
@@ -234,6 +261,19 @@ class RaceCircuit(ReplayCircuit):
             cfg.bdsp_apical_soma_g = float(p.get("SOMA_G", 0.0))
             for _k, _v in GAP4_GO.items():
                 setattr(cfg, _k, _v)
+        if self._som_on:
+            # f1i: apical GABA_A routing (sim/ E build) + per-conn-type
+            # STP. Index 0 (E->E) copies the row's globals so engram
+            # recurrence keeps its STP; index 1 (E->I) is the MWT98
+            # facilitating triple; every other E->I / I->E / I->I
+            # pathway is stp_disabled, so indices 2-3 are inert.
+            cfg.enable_apical_gaba_routing = True
+            cfg.enable_per_type_stp = True
+            cfg.stp_U_per_type = [float(cfg.stp_U), SOM_STP["U"], 0.25, 0.25]
+            cfg.stp_tau_f_per_type = [float(cfg.stp_tau_f),
+                                      SOM_STP["tau_f"], 50.0, 50.0]
+            cfg.stp_tau_d_per_type = [float(cfg.stp_tau_d),
+                                      SOM_STP["tau_d"], 100.0, 100.0]
         bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                                   runtime_state=RuntimeState(), gpu_config=GPUConfig())
         bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
@@ -284,6 +324,20 @@ class RaceCircuit(ReplayCircuit):
                                    conn_type="E_TO_I")
             plan["im"] = SC.dense(self.pool, all_ment, w_im,
                                    conn_type="I_TO_E")
+        som_nofac = bool(int(p.get("SOM_NOFAC", 0)))
+        if self._som_on:
+            all_ment = np.concatenate(self.ment)
+            w_ms = float(p["SOM_W_MS"])
+            # NOFAC: a static synapse at the facilitating synapse's
+            # resting efficacy (W_MS * U): only use-dependence removed.
+            plan["msom"] = SC.dense(
+                all_ment, self.som,
+                w_ms * (SOM_STP["U"] if som_nofac else 1.0),
+                conn_type="E_TO_I")
+            plan["sap"] = SC.dense(
+                self.som, all_ment, float(p["SOM_W_SA"]),
+                conn_type="I_TO_E", receptor="gaba_a_apical",
+                transmission_gate=GATE_SOM)
         plan.update(SC.commit_plan(self.eng, lay, dict(p, W_XG=p["W_XG"]),
                                    prefix="ir_", gate_in=GATE_COMMIT_IN,
                                    gate_excl=GATE_EXCL, latch_loop=GATE_LATCH))
@@ -303,6 +357,8 @@ class RaceCircuit(ReplayCircuit):
         # each engram's own recurrence only; packet line 41-42).
         for key, entry in plan.items():
             if not key.startswith("ee_"):
+                if key == "msom" and not som_nofac:
+                    continue        # f1i: the facilitating SOM input
                 entry["stp_disabled"] = True
         # mention edges get their own transmission gate (clause i lesion).
         for key, entry in plan.items():
@@ -312,6 +368,11 @@ class RaceCircuit(ReplayCircuit):
                      else [self.occ])
         if self.pool is not None:
             inh_parts.append(self.pool)
+        if self.som is not None:
+            inh_parts.append(self.som)
+            # step errors re-raise (the engine's routing checks fail
+            # loudly instead of logging and stopping the sim)
+            bridge.strict_step_errors = True
         inh = np.concatenate(inh_parts)
         bridge.inject_explicit_wiring(plan, output_inhibitory_indices=inh)
         bridge.set_plasticity_gate(SC.GATE_FIXED, 0.0)
@@ -331,6 +392,10 @@ class RaceCircuit(ReplayCircuit):
         for _ in range(60):
             bridge._run_one_simulation_step()
         self._bridge, self._xp, self._n = bridge, xp, int(n)
+        if self._som_on:
+            self._som_readback(plan, som_nofac)
+            self._som_resets = []
+            self._reset_som()           # before the snapshot (S1, S3)
         self._snap = _snapshot_state(bridge, xp)
         if self._ap_on:
             # cp_v_apical is not in _STATE_ARRAYS (_gnw_rung1_ignition_
@@ -361,6 +426,133 @@ class RaceCircuit(ReplayCircuit):
         self._bridge.cp_v_apical[:] = self._vap_rest
         self._bridge.cp_bdsp_apical_drive = self._xp.zeros(
             self._n, dtype=self._xp.float32)
+        if getattr(self, "_som_on", False):
+            self._reset_som()
+
+    # ── f1i: SOM-like pool bookkeeping (packet cs-race-f1i) ────────────
+    def _som_readback(self, plan, nofac):
+        """S2: read back the REALIZED per-synapse STP type and U / tau_f /
+        tau_d per pathway (the engine builds the type from neuron traits
+        and silently falls back to E->E without them), the stp_disabled
+        and apical-routing masks, and where g_ap lives. Any mismatch is
+        STOP-ID (raises)."""
+        from sim.backend import to_host
+        b = self._bridge
+        nnz = int(b.cp_connections.nnz)
+        coo = b.cp_connections.tocoo()
+        rows = np.asarray(to_host(coo.row)).astype(np.int64)
+        cols = np.asarray(to_host(coo.col)).astype(np.int64)
+        all_ment = np.concatenate(self.ment)
+        pos_msom = np.flatnonzero(np.isin(rows, all_ment)
+                                  & np.isin(cols, self.som))
+        pos_sap = np.flatnonzero(np.isin(rows, self.som)
+                                 & np.isin(cols, all_ment))
+        ee_mask = np.zeros(nnz, dtype=bool)
+        for e_k in self.eng:
+            ee_mask |= np.isin(rows, e_k) & np.isin(cols, e_k)
+        pos_ee = np.flatnonzero(ee_mask)
+        n_ment, n_som = int(all_ment.size), int(self.som.size)
+        problems = []
+        if pos_msom.size != n_ment * n_som or pos_sap.size != n_ment * n_som:
+            problems.append("msom/sap synapse count %d/%d != %d"
+                            % (pos_msom.size, pos_sap.size, n_ment * n_som))
+        ctype = np.asarray(to_host(b.cp_synapse_conn_type))[:nnz]
+        tf_full, td_full, u_syn = b._cached_stp_per_type
+        tf_full = np.asarray(to_host(tf_full))[:nnz]
+        td_full = np.asarray(to_host(td_full))[:nnz]
+        u_syn = np.asarray(to_host(u_syn))[:nnz]
+        cfg = b.core_config
+        want = {"ee": (0, float(cfg.stp_U), float(cfg.stp_tau_f),
+                       float(cfg.stp_tau_d)),
+                "msom": (1, SOM_STP["U"], SOM_STP["tau_f"],
+                         SOM_STP["tau_d"])}
+        real = {}
+        for name, pos in (("ee", pos_ee), ("msom", pos_msom)):
+            types = sorted(set(int(t) for t in ctype[pos].tolist()))
+            us = sorted(set(round(float(v), 6) for v in u_syn[pos]))
+            tfs = sorted(set(round(float(v), 4) for v in tf_full[pos]))
+            tds = sorted(set(round(float(v), 4) for v in td_full[pos]))
+            real[name] = {"conn_type": types, "U": us, "tau_f": tfs,
+                          "tau_d": tds}
+            w = want[name]
+            if (types != [w[0]] or len(us) != 1 or len(tfs) != 1
+                    or len(tds) != 1 or abs(us[0] - w[1]) > 1e-6
+                    or abs(tfs[0] - w[2]) > 1e-3
+                    or abs(tds[0] - w[3]) > 1e-3):
+                problems.append("%s realized %r != wanted %r"
+                                % (name, real[name], w))
+        sd = (np.asarray(to_host(b.cp_stp_disabled_mask))[:nnz].astype(bool)
+              if b.cp_stp_disabled_mask is not None
+              else np.zeros(nnz, dtype=bool))
+        if bool(sd[pos_msom].any()) != bool(nofac) or (
+                nofac and not bool(sd[pos_msom].all())):
+            problems.append("msom stp_disabled != NOFAC (%s)" % nofac)
+        if bool(sd[pos_ee].any()):
+            problems.append("engram recurrence lost its STP")
+        ag = (np.asarray(to_host(b.cp_apical_gaba_synapse_mask))[:nnz]
+              .astype(bool) if b.cp_apical_gaba_synapse_mask is not None
+              else np.zeros(nnz, dtype=bool))
+        if not np.array_equal(np.flatnonzero(ag), pos_sap):
+            problems.append("apical routing mask != the sap pathway")
+        g_ap = b.cp_conductance_g_apical_gaba
+        if g_ap is None or int(g_ap.shape[0]) != self._n:
+            problems.append("cp_conductance_g_apical_gaba not allocated")
+        ap_targets = sorted(set(int(c) for c in cols[ag].tolist()))
+        targets_ok = ap_targets == sorted(int(c) for c in all_ment.tolist())
+        if not targets_ok:
+            problems.append("apical GABA targets != the mention cells")
+        self._msom_pos = pos_msom
+        self._ee_pos = pos_ee
+        self.som_readback = {
+            "realized_stp": real, "nofac": bool(nofac),
+            "msom_stp_disabled": bool(sd[pos_msom].any()),
+            "n_msom": int(pos_msom.size), "n_sap": int(pos_sap.size),
+            "apical_targets_are_mention_cells": bool(targets_ok),
+            "g_ap_len": (int(g_ap.shape[0]) if g_ap is not None else None),
+            "som_cells": [int(self.som[0]), int(self.som[-1])],
+            "problems": problems}
+        if problems:
+            raise RuntimeError("STOP-ID (f1i build read-back): "
+                               + "; ".join(problems))
+
+    def _reset_som(self):
+        """S1/S3: trial-boundary reset of the state the quiescent
+        snapshot does not carry: the msom synapses' STP to rest (u = 0,
+        x = 1; cp_stp_u starts at the GLOBAL stp_U otherwise) and the
+        apical GABA conductance to 0. Then the cs_som gate is set (closed
+        for the whole run under --som-lesion, re-closed after every reset,
+        S7). Values are read back and logged per trial."""
+        from sim.backend import to_host
+        b, xp = self._bridge, self._xp
+        pos = xp.asarray(self._msom_pos)
+        b.cp_stp_u[pos] = 0.0
+        b.cp_stp_x[pos] = 1.0
+        b.cp_conductance_g_apical_gaba[:] = 0.0
+        lesion = bool(int(self.p.get("SOM_LESION", 0)))
+        b.set_transmission_gate(GATE_SOM, 0.0 if lesion else 1.0)
+        u = np.asarray(to_host(b.cp_stp_u))[self._msom_pos]
+        x = np.asarray(to_host(b.cp_stp_x))[self._msom_pos]
+        rb = {"msom_u_max": float(u.max()), "msom_x_min": float(x.min()),
+              "g_ap_max": float(np.asarray(to_host(
+                  b.cp_conductance_g_apical_gaba)).max()),
+              "gate_cs_som": float(b._transmission_gate_values[GATE_SOM])}
+        self._som_resets.append(rb)
+        return rb
+
+    def _som_stp_split(self):
+        """S4: STP state per STP-active pathway (engram ee vs msom), so
+        the engram record stays the engram's."""
+        from sim.backend import to_host
+        b = self._bridge
+        u_all = np.asarray(to_host(b.cp_stp_u))
+        x_all = np.asarray(to_host(b.cp_stp_x))
+        out = {}
+        for name, pos in (("ee", self._ee_pos), ("msom", self._msom_pos)):
+            u, x = u_all[pos], x_all[pos]
+            out[name] = ({"u_mean": float(u.mean()), "u_max": float(u.max()),
+                          "x_mean": float(x.mean()), "x_max": float(x.max())}
+                         if u.size else None)
+        return out
 
     # ── the race itself ────────────────────────────────────────────────
     def race(self, *, seed, cue_words, mention_words=(), encode=("B",),
@@ -748,7 +940,12 @@ class RaceCircuit(ReplayCircuit):
                         "implied; per-ms counts over cue + hold"}
         # STP state over the ONLY STP-active pathways (engram recurrence)
         stp = {"u": None, "x": None}
-        if getattr(b, "cp_stp_u", None) is not None:
+        if getattr(self, "_som_on", False):
+            # f1i S4: msom is STP-active too; split by pathway so the
+            # engram record stays the engram's.
+            stp = self._som_stp_split()
+            stp_seen.append(stp)
+        elif getattr(b, "cp_stp_u", None) is not None:
             mask = np.ones(int(b.cp_stp_u.shape[0]), dtype=bool)
             if getattr(b, "cp_stp_disabled_mask", None) is not None:
                 mask = ~np.asarray(to_host(b.cp_stp_disabled_mask)).astype(bool)
@@ -872,6 +1069,15 @@ class RaceCircuit(ReplayCircuit):
         if self._ap_on:
             vap_min = np.full((n_w, T), np.nan, dtype=np.float32)
             vap_max = np.full((n_w, T), np.nan, dtype=np.float32)
+        # f1i: raw per-ms SOM spike counts and per-slot g_ap max, so the
+        # scorer re-derives C7/C8 (allocated only with --som).
+        som_on = bool(getattr(self, "_som_on", False))
+        som_ms = gap_max = None
+        som_reset_rb = None
+        if som_on:
+            som_ms = np.zeros(T, dtype=np.int32)
+            gap_max = np.full((n_w, T), np.nan, dtype=np.float32)
+            som_reset_rb = dict(self._som_resets[-1])
 
         def zeros():
             return np.zeros(self._n, dtype=np.float32)
@@ -902,6 +1108,11 @@ class RaceCircuit(ReplayCircuit):
                     sv = va[self.ment[wi]]
                     vap_min[wi, t_ix] = float(sv.min())
                     vap_max[wi, t_ix] = float(sv.max())
+            if som_ms is not None:
+                som_ms[t_ix] = int(f[self.som].sum())
+                ga = np.asarray(to_host(b.cp_conductance_g_apical_gaba))
+                for wi in range(n_w):
+                    gap_max[wi, t_ix] = float(ga[self.ment[wi]].max())
 
         t = 0
         pulse_events = []
@@ -1026,6 +1237,31 @@ class RaceCircuit(ReplayCircuit):
                 "end": {
                     MENTION_WORDS[wi]: round(float(vap_min[wi, T - 1]), 4)
                     for wi in range(n_w)}}
+        if som_on:
+            # f1i: raw series for the scorer (C7 (0)/(a)/(b)/(c), C8) and
+            # the lesion read-back AT MEASUREMENT TIME (S7, TERMS.md).
+            _pw = [w for w in (word, word2) if w]
+            rec["som"] = {
+                "w_ms": float(p.get("SOM_W_MS", 0.0)),
+                "w_sa": float(p.get("SOM_W_SA", 0.0)),
+                "lesion": bool(int(p.get("SOM_LESION", 0))),
+                "nofac": bool(int(p.get("SOM_NOFAC", 0))),
+                "n_som": int(self.som.size),
+                "stp_triple": dict(SOM_STP),
+                "reset_readback": som_reset_rb,
+                "gate_cs_som_at_measurement": float(
+                    b._transmission_gate_values[GATE_SOM]),
+                "som_spikes_per_ms": [int(v) for v in som_ms.tolist()],
+                "g_ap_max_run": round(float(np.nanmax(gap_max)), 6),
+                "per_word_ms": {
+                    w: {"v_apical_min": [round(float(v), 4) for v in
+                                         vap_min[MENTION_WORDS.index(w)]],
+                        "v_apical_max": [round(float(v), 4) for v in
+                                         vap_max[MENTION_WORDS.index(w)]],
+                        "g_ap_max": [round(float(v), 6) for v in
+                                     gap_max[MENTION_WORDS.index(w)]]}
+                    for w in _pw},
+                "build_readback": dict(self.som_readback)}
         if item == "d0" and cue_cell_counts:
             rec["cue_events"] = [
                 {"word": str(CUE_WORDS[wi]),
@@ -1618,6 +1854,17 @@ def run_calibration(base, grid, seeds, args):
             "apical_pa": float(base.get("APICAL_PA", 0.0)),
             "gap4_go_frozen": dict(GAP4_GO),
             "gap4_go_pulse_pa": GAP4_GO_PULSE_PA})
+    if float(base.get("SOM_W_MS", 0.0)) > 0.0:
+        # f1i: only when ON, so a flags-off record is unchanged.
+        rec["flags"].update({
+            "som_w_ms": float(base["SOM_W_MS"]),
+            "som_w_sa": float(base["SOM_W_SA"]),
+            "som_lesion": bool(int(base.get("SOM_LESION", 0))),
+            "som_nofac": bool(int(base.get("SOM_NOFAC", 0))),
+            "nsom": int(base.get("NSOM", 8)),
+            "som_stp_triple": dict(SOM_STP),
+            "som_stp_source": "Markram, Wang & Tsodyks 1998 PNAS 95:5323 "
+                              "(PMID 9560274), full text PMC20259"})
     if getattr(args, "drive_probe", False):
         # f1g step 0c DRIVE probe (RULING cs-race-f1g-0b-1022): the
         # engagement criterion is fixed here, before any trace or
@@ -1951,6 +2198,24 @@ def main():
                          "word's own duration (gap4 GO value %g); needs "
                          "--trace intrinsic; 0/absent = no pulse (the "
                          "LESION arm)" % GAP4_GO_PULSE_PA)
+    ap.add_argument("--som", type=float, default=None, metavar="W_MS",
+                    help="f1i: SOM-like pool (NSOM 8): every mention cell "
+                         "-> every SOM cell at W_MS, facilitating (MWT98 "
+                         "U %g, D %g ms, F %g ms); needs --trace "
+                         "intrinsic and --som-ap; default off = the f1h "
+                         "circuit" % (SOM_STP["U"], SOM_STP["tau_d"],
+                                      SOM_STP["tau_f"]))
+    ap.add_argument("--som-ap", type=float, default=None, metavar="W_SA",
+                    help="f1i: SOM -> mention-cell APICAL GABA_A weight "
+                         "(receptor gaba_a_apical, gate %s); needs --som"
+                         % GATE_SOM)
+    ap.add_argument("--som-lesion", action="store_true",
+                    help="f1i LESION arm: gate %s closed for the whole "
+                         "run (SOM cells still driven and firing)"
+                         % GATE_SOM)
+    ap.add_argument("--som-nofac", action="store_true",
+                    help="f1i NOFAC arm: slot -> SOM stp_disabled at "
+                         "W_MS * U (resting efficacy; no use-dependence)")
     ap.add_argument("--drive-probe", action="store_true",
                     help="f1g step 0c: DRIVE engagement probe "
                          "(item d0, trace off; RULING "
@@ -2014,6 +2279,18 @@ def main():
         base["APICAL_PA"] = float(args.apical_pulse or 0.0)
     elif args.soma_g is not None or args.apical_pulse is not None:
         ap.error("--soma-g / --apical-pulse need --trace intrinsic")
+    if args.som is not None:
+        if args.trace != "intrinsic":
+            ap.error("--som needs --trace intrinsic (the apical compartment "
+                     "the SOM pool inhibits)")
+        if not args.som > 0.0 or not (args.som_ap or 0.0) > 0.0:
+            ap.error("--som W_MS > 0 needs --som-ap W_SA > 0")
+        base["SOM_W_MS"] = float(args.som)
+        base["SOM_W_SA"] = float(args.som_ap)
+        base["SOM_LESION"] = int(bool(args.som_lesion))
+        base["SOM_NOFAC"] = int(bool(args.som_nofac))
+    elif (args.som_ap is not None or args.som_lesion or args.som_nofac):
+        ap.error("--som-ap / --som-lesion / --som-nofac need --som")
     if args.identity_cue_n:
         return identity_cue_n(base, _F1_GRID_ROW, seeds,
                               int(args.cue_n or 48),
@@ -2128,6 +2405,13 @@ def main():
             "trace": "intrinsic", "soma_g": float(base["SOMA_G"]),
             "apical_pa": float(base["APICAL_PA"]),
             "gap4_go_frozen": dict(GAP4_GO)})
+    if float(base.get("SOM_W_MS", 0.0)) > 0.0:
+        out["instrument_flags"].update({
+            "som_w_ms": float(base["SOM_W_MS"]),
+            "som_w_sa": float(base["SOM_W_SA"]),
+            "som_lesion": bool(int(base.get("SOM_LESION", 0))),
+            "som_nofac": bool(int(base.get("SOM_NOFAC", 0))),
+            "som_stp_triple": dict(SOM_STP)})
     out["attribution_mention_gate"] = attributable_to(
         "mention gate (b intact vs i1 lesion)", b_w, i1_w)
     if not args.out:

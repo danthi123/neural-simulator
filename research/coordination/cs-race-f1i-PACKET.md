@@ -167,6 +167,17 @@ identities or rates.
   is STOP-ID.
 - **STP record split (S4).** The runner's STP record (`cs_race_f1.py:749-760`) averages every STP-active synapse as
   "engram recurrence". With msom STP-active it is split by pathway (ee, msom), so the engram record stays the engram's.
+- **Runner build record (Claude, 2026-10-27; `tests/test_cs_race_f1i_flags.py`).** Flags `--som W_MS`, `--som-ap W_SA`,
+  `--som-lesion`, `--som-nofac` (params `SOM_W_MS`, `SOM_W_SA`, `SOM_LESION`, `SOM_NOFAC`, `NSOM` 8; all default off).
+  - Flags off: the cal(c3), cal(c1) and race() record hashes at seed 41 equal the f1h runner + engine at 8e13b44cc.
+  - With `--som`: the build reads back the realized STP per pathway and stops (STOP-ID, raises) on any mismatch;
+    `bridge.strict_step_errors = True`; `_reset_som` runs before the snapshot and at every trial start (msom u = 0,
+    x = 1, `g_ap` = 0, `cs_som` re-set: closed under `--som-lesion`), each read back into the trial record.
+  - `cal()` keeps `rec["som"]`: per-ms SOM spike counts, per-ms `v_apical` min/max and `g_ap` max for the pulsed
+    words, the gate read-back at measurement time and the build read-back. `race()` splits the STP record (ee, msom).
+  - One mechanics smoke ran before posting (seed 41, W_MS 215, W_SA 0.25, soma-g 40, W_IM 40, item c3): it set no
+    value. In it both the older and the newer word's plateau ended (no C7(b) survival); informational only, not a
+    step-0 result.
 - **Frozen values and where they come from** (nothing here was chosen from a run; no SOM run of any kind exists):
   - **R1 Q3 record (E build, 2026-10-27).** Markram, Wang & Tsodyks 1998, PNAS 95:5323-8, PMID 9560274,
     doi:10.1073/pnas.95.9.5323, read in full text (PMC20259). Pyramid -> interneuron facilitating connections, 7 pairs of
