@@ -1,0 +1,358 @@
+{
+ "runner": "research/runners/stable_recal_stop_attribution.py",
+ "backend": "numpy",
+ "seed": 7,
+ "group": "inner",
+ "arm": "intact_a",
+ "stop_lead": "Setting the held thread aside",
+ "rows": {
+  "off": {
+   "what": "whole brain old integrator",
+   "source": "research/findings/raw/_stable_integration/census/off/s7/inner__intact_a.json",
+   "stop_lead_turns": [
+    "t_beetle",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "n_stop_lead": 7,
+   "swap_lead_only_turns": [],
+   "organs": {
+    "stop_workspace": {
+     "organ": [
+      "research.runners._gnw_distributed_overwrite_workspace_derisk:_ws_step"
+     ],
+     "n_oor_neurons": 250,
+     "izh_substeps_seen": [
+      [
+       [
+        1,
+        "model_reset"
+       ]
+      ]
+     ]
+    },
+    "accbg_trigger": {
+     "organ": [
+      "research.runners._gnw_acc_bg_stop_trigger_derisk:run_trigger_trial"
+     ],
+     "n_oor_neurons": 0,
+     "izh_substeps_seen": [
+      [
+       [
+        1,
+        "model_reset"
+       ]
+      ]
+     ]
+    },
+    "swap_workspace": {
+     "organ": [
+      "research.runners._gnw_active_overwrite_derisk:_ws_step"
+     ],
+     "n_oor_neurons": 344,
+     "izh_substeps_seen": [
+      [
+       [
+        1,
+        "model_reset"
+       ]
+      ]
+     ]
+    }
+   }
+  },
+  "on": {
+   "what": "whole brain stable integrator",
+   "source": "research/findings/raw/_stable_integration/census/on/s7/inner__intact_a.json",
+   "stop_lead_turns": [],
+   "n_stop_lead": 0,
+   "swap_lead_only_turns": [],
+   "organs": {
+    "stop_workspace": {
+     "organ": [
+      "research.runners._gnw_distributed_overwrite_workspace_derisk:_ws_step"
+     ],
+     "n_oor_neurons": 0,
+     "izh_substeps_seen": [
+      [
+       [
+        4,
+        "model_reset"
+       ]
+      ]
+     ]
+    },
+    "accbg_trigger": {
+     "organ": [
+      "research.runners._gnw_acc_bg_stop_trigger_derisk:run_trigger_trial"
+     ],
+     "n_oor_neurons": 0,
+     "izh_substeps_seen": [
+      [
+       [
+        4,
+        "model_reset"
+       ]
+      ]
+     ]
+    },
+    "swap_workspace": {
+     "organ": [
+      "research.runners._gnw_active_overwrite_derisk:_ws_step"
+     ],
+     "n_oor_neurons": 2,
+     "izh_substeps_seen": [
+      [
+       [
+        4,
+        "model_reset"
+       ]
+      ]
+     ]
+    }
+   }
+  },
+  "on_except_stop": {
+   "what": "stable brain, global-stop workspace on the old integrator",
+   "source": "research/findings/raw/_stable_integration/census/on_except_stop/s7/inner__intact_a.json",
+   "stop_lead_turns": [
+    "t_vole",
+    "t_beetle",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "n_stop_lead": 8,
+   "swap_lead_only_turns": [],
+   "organs": {
+    "stop_workspace": {
+     "organ": [
+      "research.runners._gnw_distributed_overwrite_workspace_derisk:_ws_step"
+     ],
+     "n_oor_neurons": 270,
+     "izh_substeps_seen": [
+      [
+       [
+        1,
+        "model_reset"
+       ]
+      ]
+     ]
+    },
+    "accbg_trigger": {
+     "organ": [
+      "research.runners._gnw_acc_bg_stop_trigger_derisk:run_trigger_trial"
+     ],
+     "n_oor_neurons": 0,
+     "izh_substeps_seen": [
+      [
+       [
+        4,
+        "model_reset"
+       ]
+      ]
+     ]
+    },
+    "swap_workspace": {
+     "organ": [
+      "research.runners._gnw_active_overwrite_derisk:_ws_step"
+     ],
+     "n_oor_neurons": 2,
+     "izh_substeps_seen": [
+      [
+       [
+        4,
+        "model_reset"
+       ]
+      ]
+     ]
+    }
+   }
+  },
+  "off_except_stop": {
+   "what": "old brain, global-stop workspace on the stable integrator",
+   "source": "research/findings/raw/_stable_integration/census/off_except_stop/s7/inner__intact_a.json",
+   "stop_lead_turns": [],
+   "n_stop_lead": 0,
+   "swap_lead_only_turns": [
+    "t_beetle",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "organs": {
+    "stop_workspace": {
+     "organ": [
+      "research.runners._gnw_distributed_overwrite_workspace_derisk:_ws_step"
+     ],
+     "n_oor_neurons": 0,
+     "izh_substeps_seen": [
+      [
+       [
+        4,
+        "model_reset"
+       ]
+      ]
+     ]
+    },
+    "accbg_trigger": {
+     "organ": [
+      "research.runners._gnw_acc_bg_stop_trigger_derisk:run_trigger_trial"
+     ],
+     "n_oor_neurons": 0,
+     "izh_substeps_seen": [
+      [
+       [
+        1,
+        "model_reset"
+       ]
+      ]
+     ]
+    },
+    "swap_workspace": {
+     "organ": [
+      "research.runners._gnw_active_overwrite_derisk:_ws_step"
+     ],
+     "n_oor_neurons": 344,
+     "izh_substeps_seen": [
+      [
+       [
+        1,
+        "model_reset"
+       ]
+      ]
+     ]
+    }
+   }
+  },
+  "on_except_swap": {
+   "what": "stable brain, thought-swap workspace on the old integrator",
+   "source": "research/findings/raw/_stable_integration/census/on_except_swap/s7/inner__intact_a.json",
+   "stop_lead_turns": [],
+   "n_stop_lead": 0,
+   "swap_lead_only_turns": [
+    "t_beetle",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "organs": {
+    "stop_workspace": {
+     "organ": [
+      "research.runners._gnw_distributed_overwrite_workspace_derisk:_ws_step"
+     ],
+     "n_oor_neurons": 0,
+     "izh_substeps_seen": [
+      [
+       [
+        4,
+        "model_reset"
+       ]
+      ]
+     ]
+    },
+    "accbg_trigger": {
+     "organ": [
+      "research.runners._gnw_acc_bg_stop_trigger_derisk:run_trigger_trial"
+     ],
+     "n_oor_neurons": 0,
+     "izh_substeps_seen": [
+      [
+       [
+        4,
+        "model_reset"
+       ]
+      ]
+     ]
+    },
+    "swap_workspace": {
+     "organ": [
+      "research.runners._gnw_active_overwrite_derisk:_ws_step"
+     ],
+     "n_oor_neurons": 344,
+     "izh_substeps_seen": [
+      [
+       [
+        1,
+        "model_reset"
+       ]
+      ]
+     ]
+    }
+   }
+  },
+  "off_except_swap": {
+   "what": "old brain, thought-swap workspace on the stable integrator",
+   "source": "research/findings/raw/_stable_integration/census/off_except_swap/s7/inner__intact_a.json",
+   "stop_lead_turns": [
+    "t_vole",
+    "t_beetle",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "n_stop_lead": 8,
+   "swap_lead_only_turns": [],
+   "organs": {
+    "stop_workspace": {
+     "organ": [
+      "research.runners._gnw_distributed_overwrite_workspace_derisk:_ws_step"
+     ],
+     "n_oor_neurons": 270,
+     "izh_substeps_seen": [
+      [
+       [
+        1,
+        "model_reset"
+       ]
+      ]
+     ]
+    },
+    "accbg_trigger": {
+     "organ": [
+      "research.runners._gnw_acc_bg_stop_trigger_derisk:run_trigger_trial"
+     ],
+     "n_oor_neurons": 0,
+     "izh_substeps_seen": [
+      [
+       [
+        1,
+        "model_reset"
+       ]
+      ]
+     ]
+    },
+    "swap_workspace": {
+     "organ": [
+      "research.runners._gnw_active_overwrite_derisk:_ws_step"
+     ],
+     "n_oor_neurons": 2,
+     "izh_substeps_seen": [
+      [
+       [
+        4,
+        "model_reset"
+       ]
+      ]
+     ]
+    }
+   }
+  }
+ }
+}
