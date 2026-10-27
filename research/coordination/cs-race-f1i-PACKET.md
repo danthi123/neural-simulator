@@ -118,6 +118,8 @@ identities or rates.
   - a closed transmission gate gives `g_ap == 0`;
   - one step never crosses `E_i` for `g_ap` in {0.1, 10, 1e4};
   - each FAIL-LOUDLY case of E2 raises.
+- **E7 bookkeeping.** Register `cp_conductance_g_apical_gaba` beside `cp_conductance_g_gabab` in the flag-gated array
+  map (`bridge.py:400`) and the state save/restore lists that carry `cp_conductance_g_gabab`.
 
 ## Method (runner flags on `research/runners/cs_race_f1.py`; every default reproduces the f1h runner exactly)
 - **Base cell.** The f1h circuit at the cell `[cs-race-f1h-0] RESULT` selects by f1h's own rule with C3 waived: smallest
@@ -135,15 +137,34 @@ identities or rates.
 - **SOM -> apical.** `plan["sap"] = SC.dense(som, all_ment, W_SA, conn_type="I_TO_E", receptor="gaba_a_apical")`, with
   its own transmission gate `cs_som` and stp_disabled. `enable_apical_gaba_routing = True` when `--som` is given.
 - **Flags:** `--som W_MS`, `--som-ap W_SA`, `--som-lesion` (gate `cs_som` closed for the whole run), `--som-nofac`
-  (msom stp_disabled at weight `W_MS * 0.05`: a static synapse with the facilitating synapse's resting efficacy).
+  (msom stp_disabled at weight `W_MS * 0.05`: a static synapse with the facilitating synapse's resting efficacy, so the
+  one thing NOFAC removes is the use-dependence).
+- **Lesion persistence.** `_build` and every `race()` / `cal()` gate reset re-open the named gates; with `--som-lesion`
+  the runner closes `cs_som` AFTER each reset and records the read-back at measurement time.
+- **Trial reset of the new state (self-skeptic S1, S3).** The quiescent snapshot does not carry STP state or the new
+  conductance (`_STATE_ARRAYS`, `_gnw_rung1_ignition_curve_derisk.py:219-227`), and `cp_stp_u` starts at the GLOBAL
+  `stp_U` (`bridge.py:1289`; 0.30 at row 3), not at rest. The engine's facilitation is the u -> 0 at rest form
+  (`kernels.py:1455-1467`; jump `u + U(1 - u)` at a spike, `bridge.py:9049-9060`). So `_reset_apical` also writes, on
+  the msom synapses only, u = 0 and x = 1, and zeros `cp_conductance_g_apical_gaba`, before the snapshot and at every
+  trial start. The values are read back per trial. Facilitation must not carry from one item into the next.
+- **Per-type STP read-back (S2).** The engine builds the per-synapse conn type from neuron TRAITS
+  (`bridge.py:1353-1383`) and silently falls back to all E->E when `inhibitory_trait_indices` is empty. The build
+  records the realized type per pathway (msom = 1, ee = 0) and the realized U / tau_f / tau_d per pathway. Any mismatch
+  is STOP-ID.
+- **STP record split (S4).** The runner's STP record (`cs_race_f1.py:749-760`) averages every STP-active synapse as
+  "engram recurrence". With msom STP-active it is split by pathway (ee, msom), so the engram record stays the engram's.
 - **Frozen values and where they come from** (nothing here was chosen from a run; no SOM run of any kind exists):
   - U = 0.05, tau_f = 750 ms: the record's facilitating range (f1f-RESEARCH.md:146-152). 0.05 is the upper end and the
     conservative one for item C8: a smaller U makes the held trace's spikes weaker still.
   - tau_d = 200 ms for E_TO_I: the engine default (config.py:1298), untouched.
   - E_i = -75 mV and tau = 10 ms: engine GABA_A defaults. NSOM = 8 and W_MI = 20: f1g's frozen values.
-- **Disclosure: facilitation alone is not the high-pass at these values.** Tsodyks-Markram arithmetic with the frozen
-  U, tau_f and tau_d gives a per-spike efficacy of about 0.14 at 100 Hz (peak, spikes 5-6) and about 0.2 at a steady
-  10 Hz: tau_d = 200 ms depletes the high-rate train. Rate x efficacy is about 14/s against 2/s, a factor of 7. A static
+- **Disclosure: no run informs any f1i value.** The only seed-41 information on this lane is f1h's informational soma-g
+  scan (soma-g 0.004-400 at W_IM 40; f1h Amendment A1). It reaches f1i only through f1h's own selection rule for the
+  base cell. Seed 41 stays a dev seed.
+- **Disclosure: facilitation alone is not the high-pass at these values.** Hand arithmetic in the engine's form, with
+  the frozen U, tau_f and tau_d, gives a per-spike efficacy of about 0.14 at 100 Hz (peak, spikes 5-6) and about 0.2 at
+  a steady 10 Hz (approximate; the build's read-back measures the realized values): tau_d = 200 ms depletes the high-rate
+  train. Rate x efficacy is about 14/s against 2/s, a factor of 7. A static
   synapse gives 10. Any selectivity must therefore come from rate and the SOM cell's temporal summation. Whether
   facilitation is NECESSARY is measured by the step-1 NOFAC arm, never assumed.
 
@@ -163,18 +184,25 @@ identities or rates.
 - **Items, on 8/8 seeds:**
   - C0-C6 as in f1h. C3 (overwrite, both orders, the three pairs) is now REQUIRED.
   - C7 (new, the eraser), per C3 pair, with X at 0-150 ms, gap, Y_on = 300 ms, Y at 300-450, window [600, 950):
+    - (0) precondition (S5): the older slot's min `v_apical` > `v_hold` over [150, 300), i.e. X latched before Y
+      arrived. Otherwise the pair is UNDEFINED: a plateau that never latched cannot be "ended".
     - (a) termination latency: the first ms after Y_on from which the older slot's max `v_apical` stays below `v_hold`
       through the window. Bar: <= 300 ms (the window opens at Y_on + 300). The latency is reported per pair.
     - (b) the newer plateau survives its own inhibition: the newer slot's min `v_apical` > `v_hold` over [Y_on + 150,
       Y_on + 650), from its pulse end (when SOM tails off) through the window.
     - (c) engagement: SOM pool spikes in [Y_on, Y_on + 300) >= 1 per SOM cell, and the older slot's `g_ap` peak is > 0
       and occurs before its termination ms.
-    - (d) in-cell lesion: the same pair with `--som-lesion` leaves the older plateau above `v_hold` in the window (3/3).
-  - C8 (new, selectivity): in the C1 protocol (one word, then 650 ms), the SOM pool rate over the 650 ms after the pulse
-    is < 1 Hz. The held trace must not recruit its own eraser.
+    - (d) in-cell lesion: the same pair with `--som-lesion` leaves the older plateau above `v_hold` in the window (3/3),
+      AND the rate form of C3 (newer 2-20 Hz, older < 1 Hz) fails on that pair (S6). A rate-C3 pass under the lesion
+      means the somatic pool (W_IM) silenced the older soma while its plateau held: that pair's C3 belongs to the
+      somatic pool, not the SOM path.
+  - C8 (new, selectivity): in the C1 protocol (one word, then 650 ms), the SOM pool rate over [pulse end + 50, pulse end
+    + 650) is < 1 Hz. The held trace must not recruit its own eraser. The first 50 ms (5 GABA_A decay constants of
+    10 ms) are the heard word's own tail, excluded so the item reads the held trace and not the volley.
   - Raw per-ms SOM counts, per-slot `g_ap` and `v_apical` min/max and the gate read-back are kept, so the scorer re-derives
     every item.
-- **Selection:** the smallest `W_SA`, then the smallest `W_MS`, among cells passing C0-C4 and C6-C8 on 8/8.
+- **Selection:** the smallest `W_SA`, then the smallest `W_MS`, among cells passing C0-C4 and C6-C8 on 8/8. An
+  UNDEFINED pair or item is not a pass: 8/8 means eight defined passes.
 - **STOP rules:** STOP-ENGINE (P0'), STOP-ID, STOP-CAL (no cell passes), STOP-SMOKE (median C5 below 2 pA in either
   clause), and STOP-ATTRIB. A cell whose C3 passes while C7(c) or C7(d) fails is UNATTRIBUTED, never a pass; if every
   C3-passing cell is unattributed, that is STOP-ATTRIB.
@@ -202,3 +230,18 @@ identities or rates.
   otherwise it is reported as not necessary for this capability and kept (faithfulness-first).
 - **Engagement:** per draw, the mention spike counts, the plateau-latched flag, the SOM spikes in the newer word's window
   and the older slot's `g_ap` peak. A draw with no latched plateau or no SOM engagement is UNDEFINED.
+
+## Self-skeptic record (Claude, 2026-10-27, before posting)
+- Host arithmetic? No step chooses content on the host. The SOM wiring and its apical target are declared structure
+  (`decides:`). The trial-start writes (u = 0, x = 1, `g_ap` = 0) are trial-boundary resets of the same class as
+  `_reset_quiescent`, not per-step decisions. Who survives is decided by spikes and the world's input timing.
+- One-variable lesion? LESION closes one transmission gate on the only output of the SOM cells; they keep firing.
+  It is re-closed after every gate reset and read back (S7). NOFAC changes the use-dependence only, at matched resting
+  efficacy.
+- Can C3 pass without the SOM path? Four guards: C7(0) the older plateau latched first (S5); C7(c) SOM spikes and a
+  `g_ap` rise precede the termination; C7(d) the lesion leaves the plateau up AND fails rate-C3 (S6); STOP-ATTRIB.
+- Values from a smoke? None (see the disclosure). The grid comes from W_MI, the gap4 self-regen, NIM and the
+  Tsodyks-Markram range; the C7 bar comes from the C3 schedule.
+- Silent engine fallbacks found while reading, now guarded: STP state and `g_ap` outside the snapshot (S1); the
+  trait-built conn type that falls back to E->E (S2); `cp_stp_u` starting at the global U (S3); the pooled STP record
+  (S4); the volley tail inside the C8 window (S8).
