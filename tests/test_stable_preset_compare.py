@@ -69,3 +69,50 @@ def test_compare_pair_runs_and_counts(tmp_path):
     assert res["answer_rate"]["transitions"] == {"answered->abstained": 1}
     assert res["replies"]["n_changed"] == 1
     json.dumps(res, default=str)
+
+
+def test_leaf_diff_reports_every_changed_leaf_with_its_largest_relative_change():
+    def rec(g, mag, label="p_a"):
+        return {"workload": {"shard": {"responses": {label: {"answer": "x", "da_encoding": {"g": g},
+                                                           "activity": {"rf": {"mean_magnitude": mag}},
+                                                           "list": [1.0, 2.0]}}, "timings_s": {label: 3.0}}}}
+    d = SPC.leaf_diff(rec(1.0, 100.0), rec(1.1, 100.0))
+    assert d["keys_equal"] and d["n_changed"] == 1 and d["changed_types"] == {"float": 1}
+    r = d["readouts"]["responses/da_encoding/g"]
+    assert r["n_changed"] == 1 and abs(r["max_rel"] - 0.1) < 1e-12 and r["values"] == [1.0, 1.1]
+    assert d["n_non_numeric_changed"] == 0
+    # a changed answer string is reported as non-numeric, never folded into a number
+    a, b = rec(1.0, 100.0), rec(1.0, 100.0)
+    b["workload"]["shard"]["responses"]["p_a"]["answer"] = "y"
+    d2 = SPC.leaf_diff(a, b)
+    assert d2["n_non_numeric_changed"] == 1 and d2["readouts"]["responses/answer"]["non_numeric"] == 1
+    # timings are excluded, and a different key set is flagged
+    c = rec(1.0, 100.0)
+    c["workload"]["shard"]["timings_s"]["p_a"] = 99.0
+    assert SPC.leaf_diff(rec(1.0, 100.0), c)["n_changed"] == 0
+    e = rec(1.0, 100.0)
+    del e["workload"]["shard"]["responses"]["p_a"]["list"]
+    assert SPC.leaf_diff(rec(1.0, 100.0), e)["keys_equal"] is False
+    tot = SPC.merge_leaf_diffs({"conv": d, "emo": d2})
+    assert tot["n_changed"] == 2 and tot["readouts"]["responses/da_encoding/g"]["group"] == "conv"
+
+
+def test_trait_read_back_and_type_split_flow_into_the_comparison():
+    row = {**ROW_C, "type": "Izh2007_THALAMIC_RETICULAR"}
+    base = _rec("inner", [row, row], -2.0, 10, False, "yes")
+    alt = _rec("inner", [], 2.0, 0, False, "yes")
+    base["census"]["bridges"][0]["trait_centred_het"] = {"requested": False, "applied": False, "organ_value": None,
+                                                         "readback": {"trait_centred": False}}
+    alt["census"]["bridges"][0]["trait_centred_het"] = {"requested": True, "applied": True, "organ_value": False,
+                                                        "readback": {"trait_centred": True, "n_trait_neurons": 10,
+                                                                     "n_trait_off_centre": 8}}
+    alt["trait_centred_het_env"] = "1"
+    res = SPC.compare_pair("inner", ("b.json", base), ("a.json", alt))
+    m = res["mechanism"]
+    assert m["n_trait_off_centre_alt"] == 8 and m["u_held_by_type_base"] == {"Izh2007_THALAMIC_RETICULAR": 2}
+    assert m["u_held_by_type_alt"] == {}
+    pa = res["mechanism"]["organs"][0]["params_alt"]
+    assert pa["trait_switch_applied_seen"] == ["True"] and pa["trait_draw_centred_seen"] == ["True"]
+    assert res["env"]["alt"] == ["1", None, "1"] and res["env"]["base"] == ["1", None, None]
+    assert "leaf_diff" in res
+    json.dumps(res, default=str)

@@ -227,6 +227,10 @@ class _BridgeRec:
         self.ph_applied = None
         self.ph_organ_value = None
         self.ph_readback = None
+        self.th_requested = None                      # SIM_TRAIT_CENTRED_HET read-back (research/stable-mechc)
+        self.th_applied = None
+        self.th_organ_value = None
+        self.th_readback = None
         self.first_step = self.first_gstep = self.vmin_n = self.vmax_n = None
         self.nlow = self.nhigh = self.nnonf = None
         self.ctx = {}
@@ -495,6 +499,10 @@ class Census:
         rec.ph_applied = getattr(bridge, "preset_centred_het_applied", None)
         rec.ph_organ_value = getattr(bridge, "preset_centred_het_organ_value", None)
         rec.ph_readback = getattr(bridge, "preset_centred_het_readback", None)
+        rec.th_requested = getattr(bridge, "trait_centred_het_requested", None)
+        rec.th_applied = getattr(bridge, "trait_centred_het_applied", None)
+        rec.th_organ_value = getattr(bridge, "trait_centred_het_organ_value", None)
+        rec.th_readback = getattr(bridge, "trait_centred_het_readback", None)
         rec.substep_calls = int(getattr(bridge, "substep_calls", 0) or 0)
         rec.model_resets = int(getattr(bridge, "refractory_model_resets", 0) or 0)
         rec.si_reasserts = int(getattr(bridge, "stable_integration_reasserts", 0) or 0)
@@ -778,6 +786,8 @@ class Census:
             "stable_integration_organ_values": rec.si_organ_values,
             "preset_centred_het": {"requested": rec.ph_requested, "applied": rec.ph_applied,
                                    "organ_value": rec.ph_organ_value, "readback": rec.ph_readback},
+            "trait_centred_het": {"requested": rec.th_requested, "applied": rec.th_applied,
+                                  "organ_value": rec.th_organ_value, "readback": rec.th_readback},
             "param_summary": rec.p_first or {},
             "v_min": _f(vmin[0], 2), "v_min_region": vmin[1], "v_max": _f(vmax[0], 2), "v_max_region": vmax[1],
             "n_oor_neurons": n_oor,
@@ -902,7 +912,15 @@ def organ_rows(bridges):
                      "n_with_region_preset": sum((((b.get("preset_centred_het") or {}).get("readback") or {}).get(
                          "n_with_region_preset") or 0) for b in bs),
                      "n_preset_off_centre": sum((((b.get("preset_centred_het") or {}).get("readback") or {}).get(
-                         "n_preset_off_centre") or 0) for b in bs)})
+                         "n_preset_off_centre") or 0) for b in bs),
+                     "trait_centred_het_applied_seen": sorted({str((b.get("trait_centred_het") or {}).get("applied"))
+                                                               for b in bs}),
+                     "trait_centred_het_draw_centred_seen": sorted({str(((b.get("trait_centred_het") or {}).get(
+                         "readback") or {}).get("trait_centred")) for b in bs}),
+                     "n_trait_neurons": sum((((b.get("trait_centred_het") or {}).get("readback") or {}).get(
+                         "n_trait_neurons") or 0) for b in bs),
+                     "n_trait_off_centre": sum((((b.get("trait_centred_het") or {}).get("readback") or {}).get(
+                         "n_trait_off_centre") or 0) for b in bs)})
     return rows
 
 
@@ -971,7 +989,8 @@ def run_worker(seed, group, arm, out_path, labels=None):
         sha = None
     out = {"runner": "research/runners/membrane_census.py", "seed": int(seed), "group": group, "arm": arm,
            "git_sha": sha, "stable_integration_env": os.environ.get("SIM_STABLE_INTEGRATION"),
-           "preset_centred_het_env": os.environ.get("SIM_PRESET_CENTRED_HET"), "workload": wl, "wrapper_restored": restored, "wall_s": round(time.time() - t0, 1),
+           "preset_centred_het_env": os.environ.get("SIM_PRESET_CENTRED_HET"),
+           "trait_centred_het_env": os.environ.get("SIM_TRAIT_CENTRED_HET"), "workload": wl, "wrapper_restored": restored, "wall_s": round(time.time() - t0, 1),
            "caveat": CAVEAT, "census": rep}
     os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
     with open(out_path, "w") as f:

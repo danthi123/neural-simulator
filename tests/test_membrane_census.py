@@ -547,6 +547,28 @@ def test_preset_centred_het_read_back_and_param_summary_are_recorded(monkeypatch
     assert row_on["preset_centred_het_applied_seen"] == ["True"] and row_on["n_preset_off_centre"] == rb["n_preset_off_centre"]
 
 
+def test_trait_centred_het_read_back_is_recorded(monkeypatch):
+    """research/stable-mechc2: the census records SIM_TRAIT_CENTRED_HET's read-back per bridge and per organ (requested /
+    applied / the organ's own value / what the draw saw: trait-typed neurons and how many sit off their distribution's
+    centre). Off: applied False, draw not trait-centred. On, on the LearnedAssocGraph bridge: applied True, organ value
+    False, draw trait-centred, 0 < off-centre < trait neurons (the RS trait is on the centre)."""
+    from tests._capture_trait_centred_het_golden import build_lag
+    monkeypatch.delenv("SIM_TRAIT_CENTRED_HET", raising=False)
+    with MC.Census() as c_off:
+        _run(build_lag(7, 60, 24), 3)
+    monkeypatch.setenv("SIM_TRAIT_CENTRED_HET", "1")
+    with MC.Census() as c_on:
+        _run(build_lag(7, 60, 24), 3)
+    off, on = c_off.report()["bridges"][0], c_on.report()["bridges"][0]
+    assert off["trait_centred_het"]["applied"] is False and off["trait_centred_het"]["readback"]["trait_centred"] is False
+    assert on["trait_centred_het"]["applied"] is True and on["trait_centred_het"]["organ_value"] is False
+    rb = on["trait_centred_het"]["readback"]
+    assert rb["trait_centred"] is True and 0 < rb["n_trait_off_centre"] < rb["n_trait_neurons"] == 84
+    (row_on,) = MC.organ_rows(MC.relabel([on]))
+    assert row_on["trait_centred_het_applied_seen"] == ["True"] and row_on["n_trait_off_centre"] == rb["n_trait_off_centre"]
+    assert row_on["trait_centred_het_draw_centred_seen"] == ["True"] and row_on["n_trait_neurons"] == 84
+
+
 def test_turn_reply_keeps_the_reply_fields_and_a_per_turn_hash():
     r = {"answer": "the fox chases the hen", "abstained": False, "recalled_svo": ["fox", "chase", "hen"],
          "derived": False, "source": "tiny-demo +LTM", "other": 1}

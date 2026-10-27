@@ -1,7 +1,9 @@
-"""STABLE vs STABLE+PRESET-CENTRED -- compare two membrane-census record sets of the same seed (research/stable-mechc).
+"""STABLE vs STABLE+PRESET-CENTRED (or +TRAIT-CENTRED, or both) -- compare two membrane-census record sets of the same seed
+(research/stable-mechc, research/stable-mechc2).
 
-Reads the per-group census JSONs written by research.runners.membrane_census with SIM_STABLE_INTEGRATION=1 and
-SIM_PRESET_CENTRED_HET unset (base, "STABLE") and with both set to "1" (alt, "STABLE+PRESET"), and reports per group:
+Reads the per-group census JSONs written by research.runners.membrane_census with SIM_STABLE_INTEGRATION=1 and the
+heterogeneity switches unset (base, "STABLE") and with SIM_PRESET_CENTRED_HET and / or SIM_TRAIT_CENTRED_HET set to "1"
+(alt), and reports per group:
 
   (1) membrane validity per organ: out-of-range neurons base / alt, the class of every offender's first reading
       (the census's own `first_reading_classes`), and a mechanism split of the per-neuron rows: phasor (rf_masked),
@@ -15,12 +17,16 @@ SIM_PRESET_CENTRED_HET unset (base, "STABLE") and with both set to "1" (alt, "ST
   (3) reply impact: every turn whose per-turn response sha256 differs, the answer-rate lens
       (tools/answer_rate.py classify/rate over the recorded turn replies) and the gate's own scorer on both shards.
 
+(4) a leaf diff of the two shard records: every number, string and flag of the stage-2 worker output that differs, grouped
+      by read-out with the largest relative change of each (research/stable-mechc2: "small numbers" is not a measurement).
+
 Observe-only: reads JSON, runs nothing.
 
   .venv/bin/python -m research.runners.stable_preset_compare \
       --base research/findings/raw/_stable_mechc/census/stable/s7 \
       --alt research/findings/raw/_stable_mechc/census/stable_preset/s7 \
       --out research/findings/raw/_stable_mechc/compare_s7.json
+  .venv/bin/python -m research.runners.stable_preset_compare --leaf-diff-only --base ... --alt ... --out leaf_diff.json
 """
 from __future__ import annotations
 
@@ -87,15 +93,19 @@ def _organ_classes(rec):
     out = {}
     for b in rec["census"]["bridges"]:
         o = out.setdefault(_bridge_organ(b), {"classes": collections.Counter(), "first_reading": collections.Counter(),
-                                              "rows_truncated": False, "n_oor": 0})
+                                              "rows_truncated": False, "n_oor": 0, "u_held_by_type": collections.Counter()})
         o["n_oor"] += int(b.get("n_oor_neurons") or 0)
         o["rows_truncated"] = o["rows_truncated"] or bool(b.get("oor_neurons_truncated"))
         for r in b.get("oor_neurons") or []:
-            o["classes"][classify_row(r, v_low)] += 1
+            cls = classify_row(r, v_low)
+            o["classes"][cls] += 1
+            if cls == "u_held_b_neg_c":
+                o["u_held_by_type"][str(r.get("type"))] += 1
         for k, c in (b.get("first_reading_classes") or {}).items():
             o["first_reading"][k] += int(c)
     return {k: {"classes": {c: v["classes"].get(c, 0) for c in CLASSES}, "first_reading": dict(v["first_reading"]),
-                "rows_truncated": v["rows_truncated"], "n_oor": v["n_oor"]} for k, v in out.items()}
+                "rows_truncated": v["rows_truncated"], "n_oor": v["n_oor"],
+                "u_held_by_type": dict(v["u_held_by_type"])} for k, v in out.items()}
 
 
 def _organ_params(rec):
@@ -105,6 +115,8 @@ def _organ_params(rec):
     for b in rec["census"]["bridges"]:
         o = acc.setdefault(_bridge_organ(b), {"n": 0, "n_b_negative": 0, "n_bridges": 0, "n_with_region_preset": 0,
                                               "n_preset_off_centre": 0, "draw_centred": set(), "applied": set(),
+                                              "n_trait_neurons": 0, "n_trait_off_centre": 0, "trait_centred": set(),
+                                              "trait_applied": set(),
                                               "sums": collections.Counter(), "regions": {}})
         o["n_bridges"] += 1
         ph = b.get("preset_centred_het") or {}
@@ -113,6 +125,12 @@ def _organ_params(rec):
         o["draw_centred"].add(str(rb.get("preset_centred")))
         o["n_with_region_preset"] += int(rb.get("n_with_region_preset") or 0)
         o["n_preset_off_centre"] += int(rb.get("n_preset_off_centre") or 0)
+        th = b.get("trait_centred_het") or {}
+        o["trait_applied"].add(str(th.get("applied")))
+        tb = th.get("readback") or {}
+        o["trait_centred"].add(str(tb.get("trait_centred")))
+        o["n_trait_neurons"] += int(tb.get("n_trait_neurons") or 0)
+        o["n_trait_off_centre"] += int(tb.get("n_trait_off_centre") or 0)
         for region, ps in (b.get("param_summary") or {}).items():
             n = int(ps["n"])
             o["n"] += n
@@ -134,10 +152,99 @@ def _organ_params(rec):
                      **{k + "_mean": (round(o["sums"][k] / n, 4) if n else None) for k in ("a", "b", "d_increment", "C")},
                      "n_with_region_preset": o["n_with_region_preset"], "n_preset_off_centre": o["n_preset_off_centre"],
                      "draw_centred_seen": sorted(o["draw_centred"]), "switch_applied_seen": sorted(o["applied"]),
+                     "n_trait_neurons": o["n_trait_neurons"], "n_trait_off_centre": o["n_trait_off_centre"],
+                     "trait_draw_centred_seen": sorted(o["trait_centred"]),
+                     "trait_switch_applied_seen": sorted(o["trait_applied"]),
                      "regions": {r: {"n": v["n"], "b_mean": (round(v["b_sum"] / v["n"], 4) if v["n"] else None),
                                      "n_b_negative": v["n_b_negative"], "presets": dict(v["presets"])}
                                  for r, v in o["regions"].items()}}
     return out
+
+
+def _sum_counters(counters):
+    tot = collections.Counter()
+    for c in counters:
+        tot.update(c)
+    return dict(tot)
+
+
+LEAF_SKIP_TOP = ("timings_s", "wall_s", "elapsed_seconds", "import_s", "process")
+
+
+def _leaves(o, path=()):
+    if isinstance(o, dict):
+        for k, v in o.items():
+            yield from _leaves(v, path + (str(k),))
+    elif isinstance(o, list):
+        for i, v in enumerate(o):
+            yield from _leaves(v, path + (str(i),))
+    else:
+        yield path, o
+
+
+def _readout(path):
+    """Group key of a leaf path: the turn label (second element under responses / internal) and list indexes removed."""
+    head = path[:1] + (path[2:] if path[:1] in (("responses",), ("internal",)) else path[1:])
+    return "/".join(x for x in head if not x.isdigit())
+
+
+def leaf_diff(base, alt):
+    """Every leaf of the two stage-2 worker outputs (workload.shard) that differs, grouped by read-out. Timings and process
+    statistics are excluded (they differ run to run). Reports whether the two leaf key sets are equal, the number compared
+    and changed, the types of the changed values and, per read-out, the number changed and the largest relative and
+    absolute change with where it was and its two values."""
+    sa = ((base.get("workload") or {}).get("shard")) or {}
+    sb = ((alt.get("workload") or {}).get("shard")) or {}
+    A = {p: v for p, v in _leaves(sa) if p[:1] and p[0] not in LEAF_SKIP_TOP}
+    B = {p: v for p, v in _leaves(sb) if p[:1] and p[0] not in LEAF_SKIP_TOP}
+    out = {"keys_equal": set(A) == set(B), "n_leaves_compared": len(A), "n_changed": 0,
+           "changed_types": collections.Counter(), "readouts": {}}
+    for p, x in A.items():
+        if p not in B or B[p] == x:
+            continue
+        y = B[p]
+        out["n_changed"] += 1
+        out["changed_types"][type(x).__name__] += 1
+        r = out["readouts"].setdefault(_readout(p), {"n_changed": 0, "max_rel": None, "max_abs": None, "where": None,
+                                                     "values": None, "non_numeric": 0})
+        r["n_changed"] += 1
+        if isinstance(x, (int, float)) and isinstance(y, (int, float)) and not isinstance(x, bool) \
+                and not isinstance(y, bool):
+            ab = abs(float(y) - float(x))
+            rel = ab / abs(float(x)) if x else (float("inf") if ab else 0.0)
+            if r["max_rel"] is None or rel > r["max_rel"]:
+                r["max_rel"], r["where"], r["values"] = rel, "/".join(p), [x, y]
+            if r["max_abs"] is None or ab > r["max_abs"]:
+                r["max_abs"] = ab
+        else:
+            r["non_numeric"] += 1
+            r["where"] = r["where"] or "/".join(p)
+            r["values"] = r["values"] or [str(x)[:80], str(y)[:80]]
+    out["changed_types"] = dict(out["changed_types"])
+    out["n_non_numeric_changed"] = sum(r["non_numeric"] for r in out["readouts"].values())
+    return out
+
+
+def merge_leaf_diffs(per_group):
+    """Across groups: totals and, per read-out, the number changed and the largest relative change (group named)."""
+    tot = {"n_leaves_compared": 0, "n_changed": 0, "n_non_numeric_changed": 0, "keys_equal_all": True,
+           "changed_types": collections.Counter(), "readouts": {}}
+    for g, d in per_group.items():
+        tot["n_leaves_compared"] += d["n_leaves_compared"]
+        tot["n_changed"] += d["n_changed"]
+        tot["n_non_numeric_changed"] += d["n_non_numeric_changed"]
+        tot["keys_equal_all"] = tot["keys_equal_all"] and d["keys_equal"]
+        tot["changed_types"].update(d["changed_types"])
+        for k, r in d["readouts"].items():
+            t = tot["readouts"].setdefault(k, {"n_changed": 0, "max_rel": None, "max_abs": None, "group": None,
+                                               "where": None, "values": None})
+            t["n_changed"] += r["n_changed"]
+            if r["max_abs"] is not None and (t["max_abs"] is None or r["max_abs"] > t["max_abs"]):
+                t["max_abs"] = r["max_abs"]
+            if r["max_rel"] is not None and (t["max_rel"] is None or r["max_rel"] > t["max_rel"]):
+                t["max_rel"], t["group"], t["where"], t["values"] = r["max_rel"], g, r["where"], r["values"]
+    tot["changed_types"] = dict(tot["changed_types"])
+    return tot
 
 
 def _answer_rate(rec):
@@ -200,27 +307,48 @@ def compare_pair(group, base, alt):
                         "n_b_negative_base": sum(p["n_b_negative"] for p in pb.values()),
                         "n_b_negative_alt": sum(p["n_b_negative"] for p in pa.values()),
                         "n_preset_off_centre_alt": sum(p["n_preset_off_centre"] for p in pa.values()),
+                        "n_trait_off_centre_alt": sum(p["n_trait_off_centre"] for p in pa.values()),
+                        "u_held_by_type_base": _sum_counters(c["u_held_by_type"] for c in cb.values()),
+                        "u_held_by_type_alt": _sum_counters(c["u_held_by_type"] for c in ca.values()),
                         "regions_moved": regions_moved}
     res["answer_rate"] = {"base": rate_b, "alt": rate_a, "transitions": dict(transitions),
                           "turn_kinds_base": kb, "turn_kinds_alt": ka}
     res["validity"] = {"base": validity(r_base), "alt": validity(r_alt)}
-    res["env"] = {"base": [r_base.get("stable_integration_env"), r_base.get("preset_centred_het_env")],
-                  "alt": [r_alt.get("stable_integration_env"), r_alt.get("preset_centred_het_env")]}
+    res["env"] = {"base": [r_base.get("stable_integration_env"), r_base.get("preset_centred_het_env"),
+                           r_base.get("trait_centred_het_env")],
+                  "alt": [r_alt.get("stable_integration_env"), r_alt.get("preset_centred_het_env"),
+                          r_alt.get("trait_centred_het_env")],
+                  "order": ["SIM_STABLE_INTEGRATION", "SIM_PRESET_CENTRED_HET", "SIM_TRAIT_CENTRED_HET"]}
+    res["leaf_diff"] = leaf_diff(r_base, r_alt)
     return res
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--base", required=True, help="census dir: SIM_STABLE_INTEGRATION=1 only")
-    ap.add_argument("--alt", required=True, help="census dir: SIM_STABLE_INTEGRATION=1 and SIM_PRESET_CENTRED_HET=1")
+    ap.add_argument("--alt", required=True, help="census dir: SIM_STABLE_INTEGRATION=1 and a heterogeneity switch set")
     ap.add_argument("--out", required=True)
     ap.add_argument("--allow-invalid", action="store_true", help="write the comparison although a record is invalid")
+    ap.add_argument("--leaf-diff-only", action="store_true",
+                    help="write only the leaf diff of the two record sets (for a pair compared earlier)")
     a = ap.parse_args()
     base, alt = _load(a.base), _load(a.alt)
     groups = [g for g in GROUPS if g in base and g in alt]
+    if a.leaf_diff_only:
+        per = {g: leaf_diff(base[g][1], alt[g][1]) for g in groups}
+        res = {"runner": "research/runners/stable_preset_compare.py --leaf-diff-only", "base_dir": a.base,
+               "alt_dir": a.alt, "groups_compared": groups, "per_group": per, "total": merge_leaf_diffs(per)}
+        os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
+        with open(a.out, "w") as f:
+            json.dump(res, f, indent=1, default=str)
+        t = res["total"]
+        print("leaf diff: %d of %d leaves changed (types %s), %d non-numeric; wrote %s" % (
+            t["n_changed"], t["n_leaves_compared"], t["changed_types"], t["n_non_numeric_changed"], a.out))
+        return 0
     res = {"runner": "research/runners/stable_preset_compare.py", "base_dir": a.base, "alt_dir": a.alt,
            "groups_compared": groups, "groups_missing": sorted((set(base) | set(alt)) - set(groups)),
            "groups": {g: compare_pair(g, base[g], alt[g]) for g in groups}}
+    res["leaf_diff_total"] = merge_leaf_diffs({g: res["groups"][g]["leaf_diff"] for g in groups})
     invalid = {g: res["groups"][g]["validity"] for g in groups
                if res["groups"][g]["validity"]["base"] or res["groups"][g]["validity"]["alt"]}
     res["invalid_groups"] = invalid
@@ -234,11 +362,11 @@ def main():
     for g in groups:
         r = res["groups"][g]
         m = r["mechanism"]
-        print("%-6s oor base %d alt %d | u-held b<0 base %d alt %d | b<0 cells base %d alt %d | preset-off-centre %d | "
-              "turns changed %d/%d | answer rate base %s alt %s | scorer all base %s alt %s" % (
+        print("%-6s oor base %d alt %d | u-held b<0 base %d alt %d | b<0 cells base %d alt %d | preset-off-centre %d "
+              "trait-off-centre %d | turns changed %d/%d | answer rate base %s alt %s | scorer all base %s alt %s" % (
                   g, r["membrane"]["n_oor_neurons_off"], r["membrane"]["n_oor_neurons_on"],
                   m["u_held_b_neg_c_base"], m["u_held_b_neg_c_alt"], m["n_b_negative_base"], m["n_b_negative_alt"],
-                  m["n_preset_off_centre_alt"], r["replies"]["n_changed"], r["replies"]["n_turns"],
+                  m["n_preset_off_centre_alt"], m["n_trait_off_centre_alt"], r["replies"]["n_changed"], r["replies"]["n_turns"],
                   r["answer_rate"]["base"]["answer_rate"], r["answer_rate"]["alt"]["answer_rate"],
                   (r["gate_score"]["off"] or {}).get("all"), (r["gate_score"]["on"] or {}).get("all")))
     print("wrote", a.out)
