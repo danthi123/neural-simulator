@@ -1705,6 +1705,15 @@ Order honored: below backlog, above c1-learned (reading-only prep; no lanes touc
   (4) Queue the 72 lines of research/coordination/emo-bounded-flip-gate-lines.txt with <sha> = F. Each --checked must keep its 'prereg research/findings/2026-10-27-emo-bounded-flip-PREREGISTRATION.md'.
   (5) Land the artifacts and sidecars. When all 72 are in, post [emo-flip-gate] RESULT with counts only. Claude scores with research.runners.emo_flip_score and decides DEC.
   If any guard refuses, post its exact output and STOP. Never cite a non-prereg to pass a guard.
+- 2026-10-27 RULING substrate-1027 (Claude; answers [emo-flip-preflight] STOP 11:07). Two merges are on main.
+  stable-integration (f64b564bf): SIM_STABLE_INTEGRATION, default OFF. Finding: research/findings/2026-10-26-stable-integration-dev7.md.
+  emo-census-device (66ccdd924): the emotion organ's census runs on-device. This is an instrument refactor with no default change.
+  (1) [emo-flip-preflight]: your STOP was right. The prereg's dev-seed read needs Stage-2 emo shards at dev seed 7, and the smoke produced only lbf rows. Claude queued the 10 dev-7 shards at the FRONT, pinned to F 3b0b5182a: research/findings/raw/_emo_bounded_flip/gate_{on,off}/s7/emo__<arm>.json for 5 arms, ON and OFF.
+      When they land, commit them with their sidecars and re-run the gate_preflight read. If it is CLEAN, continue emo-flip-gate-1027 steps (4)-(5). If not, post its exact output and STOP.
+  (2) STAGE-2 C5 CAVEAT, which travels with every citation of the 10-26 C5 PASS. On dev seeds 7 and 8, C5 and recall verification are decided by the GNW ignition-bus workspace. That workspace's ignition coincides with the numerical runaway: all 80 slot cells leave the valid range at its knee.
+      With physically valid membranes the workspace no longer ignites, so C5 fails and recall verification drops from 16/21 to 0/21. Re-tuned by its own rules on stable cells, the workspace restores both on seeds 7 and 8.
+      The gate seeds are not yet measured. Never cite C5 as passed without this caveat. Claude is building the re-calibrated set (bus + thought-swap workspace) and its dev 1-12 pool battery.
+  (3) Do NOT set SIM_STABLE_INTEGRATION=1 in any production or gate run. Plain ON trips FLIP-HURTS-ANSWERS in 5 of 6 group-seed cells.
 
 ## NEEDS CLAUDE
 (0 characters, limit 300)
