@@ -166,6 +166,60 @@ def run(seed, weights=WEIGHTS, fs_weights=None, arms=("off", "on")):
     return out
 
 
+CURVE_DRIVES = (500.0, 1000.0, 1500.0, 2000.0, 2500.0, 3000.0, 4000.0)
+
+
+def run_curve(seed, weights, arms=("off", "on"), drives=CURVE_DRIVES):
+    """The ignition CURVE the bus calibration rests on: the late-window rate of slot 0 driven alone at each drive
+    (pA), per integrator and recurrent weight, and the bus's own consensus read: N=3 agreeing organs at d_sub each
+    on slot 0 against a single-vote decoy at d_sub on slot 1 (D_SUB_UNANIMITY[3] in production), so the knee the bus
+    needs ((N-1)*d_sub < knee <= N*d_sub) is measured on each integrator rather than assumed."""
+    from research.runners import _p1_2_workspace_deliberation_loop_derisk as P
+    from research.runners._gnw_norgan_bus_derisk import D_SUB_UNANIMITY
+    from tools.lab import lever
+    d_sub = float(D_SUB_UNANIMITY[3])
+    out = {"runner": "research/runners/stable_integration_bus_ignition_probe.py --curve", "seed": int(seed),
+           "ignite_threshold": round(P.IGNITE_FRAC * P.SOLO_PLATEAU, 4), "drives": list(drives),
+           "d_sub_unanimity_3": d_sub, "weights": list(weights), "arms": {}}
+    saved = os.environ.get(ENV)
+    try:
+        for arm in arms:
+            if arm == "on":
+                os.environ[ENV] = "1"
+            else:
+                os.environ.pop(ENV, None)
+            rows = []
+            for w in weights:
+                bridge, xp, slots_dev, snap = P.build_workspace_bridge(int(seed), attractor_weight=w)
+                if bool(bridge.stable_integration_requested) != (arm == "on"):
+                    raise RuntimeError("bridge read the wrong switch value")
+                n = len(slots_dev)
+                curve = []
+                for d in drives:
+                    r = _read(P, bridge, xp, slots_dev, snap, [d] + [0.0] * (n - 1))
+                    curve.append({"drive": d, "late_rate": r["late_rates"][0], "n_oor_cells": r["n_oor_cells"],
+                                  "slot0_late_mean_v": r["slot0_late_mean_v"]})
+                cons = _read(P, bridge, xp, slots_dev, snap, [3 * d_sub, d_sub] + [0.0] * (n - 2))
+                single = _read(P, bridge, xp, slots_dev, snap, [d_sub] + [0.0] * (n - 1))
+                pair = _read(P, bridge, xp, slots_dev, snap, [2 * d_sub] + [0.0] * (n - 1))
+                rows.append({"attractor_weight": w, "curve": curve, "consensus_vs_decoy": cons,
+                             "single_vote": single, "two_votes": pair})
+                print("[bus curve] %s w=%5.1f %s | 3v-vs-decoy %s | 1v %.3f 2v %.3f"
+                      % (arm, w, " ".join("%g:%.3f" % (c["drive"], c["late_rate"]) for c in curve),
+                         cons["late_rates"][:2], single["late_rates"][0], pair["late_rates"][0]), flush=True)
+            out["arms"][arm] = rows
+        if "off" in out["arms"] and "on" in out["arms"]:
+            lever("integrator arm (curve at the first weight)",
+                  [c["late_rate"] for c in out["arms"]["off"][0]["curve"]],
+                  [c["late_rate"] for c in out["arms"]["on"][0]["curve"]])
+    finally:
+        if saved is None:
+            os.environ.pop(ENV, None)
+        else:
+            os.environ[ENV] = saved
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--seed", type=int, required=True)
@@ -173,12 +227,17 @@ def main():
     ap.add_argument("--weights", default=",".join(str(w) for w in WEIGHTS))
     ap.add_argument("--fs-weights", default="", help="comma list; default = the production FS_TO_WS_WEIGHT only")
     ap.add_argument("--arms", default="off,on")
+    ap.add_argument("--curve", action="store_true", help="measure the ignition curve + the bus consensus read")
     a = ap.parse_args()
     if a.seed in GATE_SEEDS:
         sys.exit("GATE seed %d refused: dev-seed diagnostic only" % a.seed)
-    d = run(a.seed, weights=[float(x) for x in a.weights.split(",")],
-            fs_weights=[float(x) for x in a.fs_weights.split(",") if x.strip()] or None,
-            arms=tuple(x.strip() for x in a.arms.split(",") if x.strip()))
+    if a.curve:
+        d = run_curve(a.seed, [float(x) for x in a.weights.split(",")],
+                      arms=tuple(x.strip() for x in a.arms.split(",") if x.strip()))
+    else:
+        d = run(a.seed, weights=[float(x) for x in a.weights.split(",")],
+                fs_weights=[float(x) for x in a.fs_weights.split(",") if x.strip()] or None,
+                arms=tuple(x.strip() for x in a.arms.split(",") if x.strip()))
     os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
     with open(a.out, "w") as f:
         json.dump(d, f, indent=1)
