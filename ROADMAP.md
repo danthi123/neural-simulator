@@ -7,6 +7,20 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-10-27 — the batch since 10-21: stage 2 does not pass, the membrane census names the blocker, the BG live seam's latch read fails
+
+- **Stage 2's exit gate: FAIL** (C1-C4 fail, C5 pass, 198/198 cells), plus four diagnoses of why
+  (`research/findings/2026-10-26-stage2-exit-gate-RESULT.md`, `...stage2-fail-diagnoses.md`).
+- **The host still owns the answer:** an intervention test shows the conclusion follows the Python
+  list, not the bound vectors (dev seed 7) — `...c2-kb-scramble-host-ownership.md`.
+- **The membrane-validity census replicates:** membranes invalid across organs and seeds (dev 7 plus
+  the six-seed pool census) — the substrate fix now gates the rest (`...membrane-census-dev7.md`,
+  `research/coordination/membrane-census-pool-RESULT.md`).
+- **Emotion organ (bounded conductance):** PROVISIONAL de-risk at organ level, stays OFF pending an
+  owner flip (`...emotion-organ-bounded-conductance-derisk.md`).
+- **BG live seam retirement: NO-GO** — the latch read is not threshold-invariant (G4); next: latch
+  rates, then a downstream all-or-none relay (`research/findings/2026-09-30-bg-live-seam-retirement-RESULT.md`).
+
 ## 2026-09-25 (afternoon) — owner rulings, a backlog of results scored, and handoff to the local model
 
 **Owner rulings:** the memory pair waits for a fix that makes the brain remember what matters (important facts and key

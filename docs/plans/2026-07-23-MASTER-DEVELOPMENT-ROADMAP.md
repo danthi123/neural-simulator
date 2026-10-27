@@ -1188,6 +1188,17 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-10-27 (sync: the 10-21..10-26 findings + today's retirement gate):**
+- **Stage-2 (CHILD) exit gate FAIL** (C1-C4, C5 pass, 198/198) with four failure diagnoses written;
+  next: fix per diagnosis, then re-attempt the stage exit (calendar date stands).
+- **C2 host ownership (intervention, dev seed 7):** conclusion follows the Python list, not the bound
+  vectors; next: the binding rewrite, not a re-score.
+- **Membrane census:** membrane validity fails across production organs/seeds (dev-7 finding + six-seed
+  pool census RESULT in `research/coordination/membrane-census-pool-RESULT.md`); substrate fix gates the rest.
+- **Emotion organ bounded conductance:** PROVISIONAL de-risk at organ level; default stays OFF (owner flip).
+- **BG live seam retirement gate: NO-GO** (G4 latch read not threshold-invariant); next: latch rates,
+  then a downstream all-or-none relay; do not start a fix without a Claude ruling.
+
 **2026-09-24 (night, provenance-fix scoring):** **CA3 superposed-fact-attractor capacity law: GO 6/6 RE-CONFIRMED,
 this time with valid provenance for every registered cell** (`research/findings/2026-09-24-ca3-superposed-fact-attractor-capacity-GO-6seed-reruns-provenance-fixed.md`).
 The seeds-101/102 provenance gap logged in the entry below (18 files, no execution trace) is closed: the 18 rerun
