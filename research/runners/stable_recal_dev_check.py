@@ -88,6 +88,22 @@ def _leads(rec):
             "n_stop_cleared": int(sum(bool(v["cleared"]) for v in organ.values())), "stop_organ": organ}
 
 
+def _organ_errors(rec):
+    """Every per-turn organ field that carries an "error" (an organ that failed inside the turn, e.g. a missing corpus
+    file): a run with any is not a valid comparison arm, whatever its replies say."""
+    out = {}
+
+    def walk(x, path):
+        if isinstance(x, dict):
+            if isinstance(x.get("error"), str):
+                out.setdefault(x["error"][:160], []).append(path)
+            for k, v in x.items():
+                walk(v, path + "." + str(k))
+    for lab, b in (rec["workload"]["shard"].get("responses") or {}).items():
+        walk(b, lab)
+    return {"n": int(sum(len(v) for v in out.values())), "by_error": {k: sorted(v) for k, v in out.items()}}
+
+
 def _all(score):
     return None if not isinstance(score, dict) else score.get("all")
 
@@ -123,6 +139,7 @@ def run(seeds, off_t, on_t, cmp_t):
                 "gate_all": {"off": _all(gs.get("off")), "on": _all(gs.get("on"))},
                 "recall": {"off": _recall(r_off), "on": _recall(r_on)},
                 "leads": {"off": _leads(r_off), "on": _leads(r_on)},
+                "organ_errors": {"off": _organ_errors(r_off), "on": _organ_errors(r_on)},
                 "replies_changed": (c.get("replies") or {}).get("n_changed"),
                 "replies_visible_changed": {x["label"]: x["fields_changed"] for x in (c.get("replies") or {}).get(
                     "changed") or [] if x.get("fields_changed")},
@@ -134,6 +151,7 @@ def run(seeds, off_t, on_t, cmp_t):
     measured = [r for r in rows.values() if "leads" in r]
     totals = {arm: {k: int(sum(r["leads"][arm][k] for r in measured))
                     for k in ("n_stop_lead", "n_swap_lead", "n_stop_ran", "n_stop_cleared")} for arm in ("off", "on")}
+    n_err = {arm: int(sum(r["organ_errors"][arm]["n"] for r in measured)) for arm in ("off", "on")}
     return {"runner": "research/runners/stable_recal_dev_check.py", "backend": "numpy", "device": "cpu",
             "analysis_only": True, "seeds": list(seeds), "arms": {"off": off_t, "on": on_t},
             "answer_rate_report_all_turns": AR.report(per_all, label="STABLE+RECAL vs OFF, all turn replies"),
@@ -141,6 +159,7 @@ def run(seeds, off_t, on_t, cmp_t):
             "criteria": {c: {"group": g, "per_seed": {str(s): rows.get("%s-s%d" % (g, s), {}).get("gate_all")
                                                     for s in seeds}} for c, g in crit.items()},
             "lead_totals": totals,
+            "organ_errors_total": n_err, "valid": bool(n_err["off"] == 0 and n_err["on"] == 0),
             "rows": rows}
 
 
@@ -174,6 +193,7 @@ def main():
     print("[dev check] answer rate (all turns): %s; hurt %s" % (res["answer_rate_report_all_turns"]["status"],
                                                                res["answer_rate_report_all_turns"]["hurt_seeds"]))
     print("[dev check] lead totals: %s" % res["lead_totals"])
+    print("[dev check] organ errors: %s -> %s" % (res["organ_errors_total"], "VALID" if res["valid"] else "INVALID"))
     print("[dev check] -> %s" % a.out)
     return 0
 
