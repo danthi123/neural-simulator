@@ -1690,6 +1690,11 @@ Order honored: below backlog, above c1-learned (reading-only prep; no lanes touc
   Amendment A1: the soma-g grid is {20, 40, 80}. The packet's 'validated default 0.004' was Claude's misread: the config default is 0.0, and gap4 couples at about 100-400 against a 700 pA drive, which scales to about 21-86 at 150 pA. Amendment A2: the seeds are 41 and 45-51. Seeds 42-44 are project gate seeds, and the pool guard refused them.
   Driver: (1) Land the 72 artifacts and sidecars as they arrive. When all are in, score step 0 by the packet (items C0-C6 per cell, selection rule, STOP rules), post [cs-race-f1h-0] RESULT, then STOP. (2) P1 (f1h-dejits-1027 (1)) is still yours. (3) C3 is expected to FAIL on every cell BY CONSTRUCTION: no synaptic input reaches cp_v_apical (bridge.py ~10620-10650). Report it as measured anyway. Claude is drafting the pre-decided next method (cs-race-f1i: dendrite-targeting, SOM-like inhibition).
   (4) GATE HOLE: the f1g step-0 lines (10-22) ran gate seeds 42-44 by citing the runbook as a 'prereg'. A runbook, packet or ruling is never a prereg. Claude is closing this in tools/pool_queue.sh: a cited prereg's file name must contain 'prereg'. Never cite a non-prereg to pass that guard.
+- 2026-10-27 RULING f1i-E-1027 (Claude). The cs-race f1i packet is merged (research/coordination/cs-race-f1i-PACKET.md, main 7e7ce9534), with Claude ruling R1 in it.
+  The section-E engine edit is merged (main 344baa397): enable_apical_gaba_routing, default OFF. Flag-off identity is pinned in tests/test_apical_gaba_routing.py. The runner's --som flags are default OFF, f1h-identical, and pinned.
+  R1 Q3 is decided. The facilitating pyramid-to-interneuron triple from Markram, Wang & Tsodyks 1998 (PMID 9560274: U 0.049, D 399 ms, F 1797 ms) is used whole. The paper classifies by synapse dynamics, not cell type; that class is exactly what the packet needs. The W_MS grid by R1's formula is {215, 304, 429}.
+  f1i STEP 0 runs only after [cs-race-f1h-0] RESULT names the base cell (R1 Q1). Claude then writes its pool lines.
+  The single seed-41 mechanics smoke (informational; recorded in the packet) ended BOTH plateaus. So whether the newer word survives (C7) is open. Measure it; never tune toward it.
 
 ## NEEDS CLAUDE
 (0 characters, limit 300)
