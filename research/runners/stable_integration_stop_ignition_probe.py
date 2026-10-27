@@ -315,10 +315,13 @@ def _stop_trial(S, std, thal_pa, contents, boost, pulse, strong_pa):
             "x_min_mean": round(xmin, 4), "cleared": bool(n_pre >= 2 and n_post == 0), **watch.summary()}
 
 
-def run_stopwin(seed, calib, arms=("off", "on"), boosts=STOP_BOOSTS, contents_list=((0, 1, 2), (0, 1))):
+def run_stopwin(seed, calib, arms=("off", "on"), boosts=STOP_BOOSTS, contents_list=((0, 1, 2), (0, 1)), repeats=1):
     """The divisive-norm load-bearing window of the stop effector at calibration `calib`: per integrator, per held
     set (all three = the organ's gate; two = what production usually holds), the fixed boost at which the intact
-    workspace clears and at which the normalization-lesioned one clears."""
+    workspace clears and at which the normalization-lesioned one clears. With repeats > 1 every boost is run that many
+    times in a row on the same bridge (each trial restores the settled snapshot; the OU noise stream runs on, so the
+    trials differ only by noise), giving a clearing fraction per boost and the spread of the conflict margin the
+    organ's sensor reads (pre_margin) at this drive."""
     DM = _dm()
     thal_pa = thal_of(calib)
     pulse = int(calib.get("pulse_duration", DM.PULSE_DURATION))
@@ -335,15 +338,30 @@ def run_stopwin(seed, calib, arms=("off", "on"), boosts=STOP_BOOSTS, contents_li
                 std = DM.WorkspaceDepression(S["bridge"], S["xp"], S["ws_used"])
                 for contents in contents_list:
                     key = "%s_n%d" % (label, len(contents))
-                    rows = [_stop_trial(S, std, thal_pa, contents, bst, pulse, strong) for bst in boosts]
+                    rows = [_stop_trial(S, std, thal_pa, contents, bst, pulse, strong)
+                            for bst in boosts for _rep in range(int(repeats))]
                     clears = [r["boost"] for r in rows if r["cleared"]]
-                    res[key] = {"rows": rows, "readback": S["readback"],
+                    per_boost = {}
+                    for bst in boosts:
+                        rr = [r for r in rows if r["boost"] == float(bst)]
+                        per_boost["%g" % bst] = {
+                            "n_trials": len(rr), "n_cleared": int(sum(r["cleared"] for r in rr)),
+                            "n_pre_ge2": int(sum(r["n_pre"] >= 2 for r in rr)),
+                            "n_post_hist": {str(k): int(sum(r["n_post"] == k for r in rr)) for k in range(4)},
+                            "max_oor": int(max(r["n_oor_cells"] for r in rr))}
+                    margins = [r["pre_margin"] for r in rows]
+                    res[key] = {"rows": rows, "readback": S["readback"], "per_boost": per_boost,
                                 "min_clearing_boost": (min(clears) if clears else None),
-                                "clears_at": clears}
-                    print("[stop window] %s s%d %s %s | %s" % (
+                                "clears_at": sorted(set(clears)),
+                                "pre_margin": {"mean": round(float(np.mean(margins)), 4),
+                                               "p90": round(float(np.percentile(margins, 90)), 4),
+                                               "max": round(float(np.max(margins)), 4)}}
+                    print("[stop window] %s s%d %s %s | %s | margin %s" % (
                         arm, seed, json.dumps(calib), key,
-                        " ".join("%g:n%d->%d(m%.3f,oor%d)" % (r["boost"], r["n_pre"], r["n_post"], r["pre_margin"],
-                                                              r["n_oor_cells"]) for r in rows)), flush=True)
+                        " ".join("%s:%d/%d%s" % (k, v["n_cleared"], v["n_trials"],
+                                                 "" if v["n_pre_ge2"] == v["n_trials"] else "(pre<2:%d)" % (
+                                                     v["n_trials"] - v["n_pre_ge2"]))
+                                 for k, v in per_boost.items()), res[key]["pre_margin"]), flush=True)
             out["arms"][arm] = res
     return out
 
@@ -384,6 +402,8 @@ def main():
     ap.add_argument("--steps", type=int, default=1000)
     ap.add_argument("--stopwin", action="store_true")
     ap.add_argument("--boosts", default=",".join("%g" % x for x in STOP_BOOSTS))
+    ap.add_argument("--repeats", type=int, default=1, help="--stopwin trials per boost")
+    ap.add_argument("--held", default="012,01", help="--stopwin held sets, e.g. '012,01'")
     ap.add_argument("--organ", action="store_true")
     a = ap.parse_args()
     if a.seed in GATE_SEEDS:
@@ -395,7 +415,9 @@ def main():
     if a.organ:
         d = {"arms": {arm: run_organ(a.seed, arm, calib) for arm in arms}}
     elif a.stopwin:
-        d = run_stopwin(a.seed, calib, arms=arms, boosts=[float(x) for x in a.boosts.split(",") if x.strip()])
+        d = run_stopwin(a.seed, calib, arms=arms, boosts=[float(x) for x in a.boosts.split(",") if x.strip()],
+                        repeats=a.repeats,
+                        contents_list=tuple(tuple(int(c) for c in g) for g in a.held.split(",") if g.strip()))
     elif a.sustain:
         thals = [float(x) for x in a.thals.split(",") if x.strip()] or [thal_of(calib)]
         d = run_sustain(a.seed, calib, weights, thals, drives, arms=arms, steps=a.steps, co=a.co)
