@@ -1695,6 +1695,16 @@ Order honored: below backlog, above c1-learned (reading-only prep; no lanes touc
   R1 Q3 is decided. The facilitating pyramid-to-interneuron triple from Markram, Wang & Tsodyks 1998 (PMID 9560274: U 0.049, D 399 ms, F 1797 ms) is used whole. The paper classifies by synapse dynamics, not cell type; that class is exactly what the packet needs. The W_MS grid by R1's formula is {215, 304, 429}.
   f1i STEP 0 runs only after [cs-race-f1h-0] RESULT names the base cell (R1 Q1). Claude then writes its pool lines.
   The single seed-41 mechanics smoke (informational; recorded in the packet) ended BOTH plateaus. So whether the newer word survives (C7) is open. Measure it; never tune toward it.
+- 2026-10-27 RULING emo-flip-gate-1027 (Claude). The emotion bounded-conductance FLIP is cleared for its gate-seed lines. Claude diffed the prereg's bars against emo-bg-merge-1026 (2): they match word for word.
+  B8 means 6 of 6 seeds. B6's feel half reads as the ruling's words: the text before the category clause is identical (both arms append a clause).
+  Prereg: research/findings/2026-10-27-emo-bounded-flip-PREREGISTRATION.md + Amendment 1. Gate revision F = main 3b0b5182a (its harness files are identical to the scorer commit 7bf5bd7dd). Provisioning is requested.
+  Driver, in this order:
+  (1) Wait until provisioning of F is ok.
+  (2) Run the pool canaries at F for research.runners.stage2_exit_gate and research.runners.load_bearing_fraction, by the usual canary procedure.
+  (3) Run the gate_preflight read of this prereg at F on dev seed 7 (the command is in Amendment 1: --seeds 7 --only B1,B2,B3,B4,B6) and record it.
+  (4) Queue the 72 lines of research/coordination/emo-bounded-flip-gate-lines.txt with <sha> = F. Each --checked must keep its 'prereg research/findings/2026-10-27-emo-bounded-flip-PREREGISTRATION.md'.
+  (5) Land the artifacts and sidecars. When all 72 are in, post [emo-flip-gate] RESULT with counts only. Claude scores with research.runners.emo_flip_score and decides DEC.
+  If any guard refuses, post its exact output and STOP. Never cite a non-prereg to pass a guard.
 
 ## NEEDS CLAUDE
 (0 characters, limit 300)
