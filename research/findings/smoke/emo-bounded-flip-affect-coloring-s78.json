@@ -1,0 +1,123 @@
+{
+ "check": "answer_rate",
+ "label": "affect-coloring: emo-bounded-on-ec8fe54 vs emo-bounded-off-ec8fe54",
+ "per_seed": {
+  "7": {
+   "on": {
+    "n": 2,
+    "answered": 2,
+    "abstained": 0,
+    "empty": 0,
+    "text_only": 0,
+    "answer_rate": 1.0
+   },
+   "off": {
+    "n": 2,
+    "answered": 2,
+    "abstained": 0,
+    "empty": 0,
+    "text_only": 0,
+    "answer_rate": 1.0
+   },
+   "status": "ok"
+  },
+  "8": {
+   "on": {
+    "n": 2,
+    "answered": 2,
+    "abstained": 0,
+    "empty": 0,
+    "text_only": 0,
+    "answer_rate": 1.0
+   },
+   "off": {
+    "n": 2,
+    "answered": 2,
+    "abstained": 0,
+    "empty": 0,
+    "text_only": 0,
+    "answer_rate": 1.0
+   },
+   "status": "ok"
+  }
+ },
+ "n_seeds": 2,
+ "n_measured": 2,
+ "unmeasured_seeds": [],
+ "hurt_seeds": [],
+ "flags": [],
+ "status": "OK",
+ "rule": "FLIP-HURTS-ANSWERS when flag-on answer rate < flag-off on any measured seed; reported only, changes no registered PASS/FAIL; the flip then needs a Claude ruling (NEEDS line)",
+ "abstention_detection": "abstained flag; fallback text patterns [\"\\\\bi\\\\s+(?:do\\\\s+not|don['\u2019]?t)\\\\s+know\\\\s+about\\\\s+that\\\\b\", \"\\\\bi\\\\s+haven[\u2019']?t\\\\s+learned\\\\s+about\\\\b.*\\\\byet\\\\b\"]",
+ "mode": "paired",
+ "faculty": "affect-coloring",
+ "on_tag": "emo-bounded-on-ec8fe54",
+ "off_tag": "emo-bounded-off-ec8fe54",
+ "off_arm": null,
+ "seeds": [
+  7,
+  8
+ ],
+ "evidence": {
+  "7": {
+   "on": [
+    {
+     "file": "research/findings/raw/_load_bearing/_shards/emo-bounded-on-ec8fe54/s7/affect-coloring/intact_a_well_s7.json",
+     "sha256": "e9f7d68da15f65daeb9696d546a7436ddc8af85929abb73e10c703eef5363427"
+    },
+    {
+     "file": "research/findings/raw/_load_bearing/_shards/emo-bounded-on-ec8fe54/s7/affect-coloring/intact_b_well_s7.json",
+     "sha256": "e9f7d68da15f65daeb9696d546a7436ddc8af85929abb73e10c703eef5363427"
+    }
+   ],
+   "off": [
+    {
+     "file": "research/findings/raw/_load_bearing/_shards/emo-bounded-off-ec8fe54/s7/affect-coloring/intact_a_well_s7.json",
+     "sha256": "e9f7d68da15f65daeb9696d546a7436ddc8af85929abb73e10c703eef5363427"
+    },
+    {
+     "file": "research/findings/raw/_load_bearing/_shards/emo-bounded-off-ec8fe54/s7/affect-coloring/intact_b_well_s7.json",
+     "sha256": "e9f7d68da15f65daeb9696d546a7436ddc8af85929abb73e10c703eef5363427"
+    }
+   ]
+  },
+  "8": {
+   "on": [
+    {
+     "file": "research/findings/raw/_load_bearing/_shards/emo-bounded-on-ec8fe54/s8/affect-coloring/intact_a_well_s8.json",
+     "sha256": "6a6444783fffb639bec80cc56063bb54e11b7ea71dc51a6125cde77be51a8548"
+    },
+    {
+     "file": "research/findings/raw/_load_bearing/_shards/emo-bounded-on-ec8fe54/s8/affect-coloring/intact_b_well_s8.json",
+     "sha256": "6a6444783fffb639bec80cc56063bb54e11b7ea71dc51a6125cde77be51a8548"
+    }
+   ],
+   "off": [
+    {
+     "file": "research/findings/raw/_load_bearing/_shards/emo-bounded-off-ec8fe54/s8/affect-coloring/intact_a_well_s8.json",
+     "sha256": "6a6444783fffb639bec80cc56063bb54e11b7ea71dc51a6125cde77be51a8548"
+    },
+    {
+     "file": "research/findings/raw/_load_bearing/_shards/emo-bounded-off-ec8fe54/s8/affect-coloring/intact_b_well_s8.json",
+     "sha256": "6a6444783fffb639bec80cc56063bb54e11b7ea71dc51a6125cde77be51a8548"
+    }
+   ]
+  }
+ },
+ "script": "tools/answer_rate.py",
+ "argv": [
+  "paired",
+  "--on-tag",
+  "emo-bounded-on-ec8fe54",
+  "--off-tag",
+  "emo-bounded-off-ec8fe54",
+  "--faculty",
+  "affect-coloring",
+  "--seeds",
+  "7,8",
+  "--json"
+ ],
+ "backend": "numpy",
+ "device": "cpu",
+ "analysis_only": true
+}

@@ -1,0 +1,41 @@
+{
+ "run_id": "1793102649-1077050",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-emoflip/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{\"BRAIN_AFFECT_LESION\": \"1\"}",
+  "--turns",
+  "well",
+  "--out",
+  "/home/dant123/Projects/sim-rev/wt-emoflip/research/findings/raw/_load_bearing/_shards/emo-bounded-on-ec8fe54/s7/affect-coloring/lesion_affect_coloring_s7.json"
+ ],
+ "git_sha": "ec8fe543f",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-27T08:04:09",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "BRAIN_EMOTION_CATEGORY_BOUNDED": "1",
+  "SIM_RUN_ID": "1793102207-1051679",
+  "NUMEXPR_NUM_THREADS": "1",
+  "BRAIN_CHAT_SEED": "7"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 344.8,
+ "corpus_check_query": "route GABA_A synapses onto the apical dendrite compartment",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_load_bearing/_shards/emo-bounded-on-ec8fe54/s7/affect-coloring/lesion_affect_coloring_s7.json"
+}

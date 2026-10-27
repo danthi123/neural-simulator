@@ -1,0 +1,123 @@
+{
+ "check": "answer_rate",
+ "label": "emotion-category: emo-bounded-on-ec8fe54 vs emo-bounded-off-ec8fe54",
+ "per_seed": {
+  "7": {
+   "on": {
+    "n": 2,
+    "answered": 2,
+    "abstained": 0,
+    "empty": 0,
+    "text_only": 0,
+    "answer_rate": 1.0
+   },
+   "off": {
+    "n": 2,
+    "answered": 2,
+    "abstained": 0,
+    "empty": 0,
+    "text_only": 0,
+    "answer_rate": 1.0
+   },
+   "status": "ok"
+  },
+  "8": {
+   "on": {
+    "n": 2,
+    "answered": 2,
+    "abstained": 0,
+    "empty": 0,
+    "text_only": 0,
+    "answer_rate": 1.0
+   },
+   "off": {
+    "n": 2,
+    "answered": 2,
+    "abstained": 0,
+    "empty": 0,
+    "text_only": 0,
+    "answer_rate": 1.0
+   },
+   "status": "ok"
+  }
+ },
+ "n_seeds": 2,
+ "n_measured": 2,
+ "unmeasured_seeds": [],
+ "hurt_seeds": [],
+ "flags": [],
+ "status": "OK",
+ "rule": "FLIP-HURTS-ANSWERS when flag-on answer rate < flag-off on any measured seed; reported only, changes no registered PASS/FAIL; the flip then needs a Claude ruling (NEEDS line)",
+ "abstention_detection": "abstained flag; fallback text patterns [\"\\\\bi\\\\s+(?:do\\\\s+not|don['\u2019]?t)\\\\s+know\\\\s+about\\\\s+that\\\\b\", \"\\\\bi\\\\s+haven[\u2019']?t\\\\s+learned\\\\s+about\\\\b.*\\\\byet\\\\b\"]",
+ "mode": "paired",
+ "faculty": "emotion-category",
+ "on_tag": "emo-bounded-on-ec8fe54",
+ "off_tag": "emo-bounded-off-ec8fe54",
+ "off_arm": null,
+ "seeds": [
+  7,
+  8
+ ],
+ "evidence": {
+  "7": {
+   "on": [
+    {
+     "file": "research/findings/raw/_load_bearing/_shards/emo-bounded-on-ec8fe54/s7/emotion-category/intact_a_emocat_s1_emocat_s2_emocat_feel_s7.json",
+     "sha256": "009fa2799905700b11b768f5dd40bc7c8608351f74b742ffeedded8d315849c9"
+    },
+    {
+     "file": "research/findings/raw/_load_bearing/_shards/emo-bounded-on-ec8fe54/s7/emotion-category/intact_b_emocat_s1_emocat_s2_emocat_feel_s7.json",
+     "sha256": "009fa2799905700b11b768f5dd40bc7c8608351f74b742ffeedded8d315849c9"
+    }
+   ],
+   "off": [
+    {
+     "file": "research/findings/raw/_load_bearing/_shards/emo-bounded-off-ec8fe54/s7/emotion-category/intact_a_emocat_s1_emocat_s2_emocat_feel_s7.json",
+     "sha256": "69c6a507a64fdd77b7748e9c5fa7f34c1349262fb80c1cd63e10fb6a323529e7"
+    },
+    {
+     "file": "research/findings/raw/_load_bearing/_shards/emo-bounded-off-ec8fe54/s7/emotion-category/intact_b_emocat_s1_emocat_s2_emocat_feel_s7.json",
+     "sha256": "69c6a507a64fdd77b7748e9c5fa7f34c1349262fb80c1cd63e10fb6a323529e7"
+    }
+   ]
+  },
+  "8": {
+   "on": [
+    {
+     "file": "research/findings/raw/_load_bearing/_shards/emo-bounded-on-ec8fe54/s8/emotion-category/intact_a_emocat_s1_emocat_s2_emocat_feel_s8.json",
+     "sha256": "7a0b3349a3f7e2745ea1f6e49606827ce4f150fea4b71d486393c217cd36b1aa"
+    },
+    {
+     "file": "research/findings/raw/_load_bearing/_shards/emo-bounded-on-ec8fe54/s8/emotion-category/intact_b_emocat_s1_emocat_s2_emocat_feel_s8.json",
+     "sha256": "7a0b3349a3f7e2745ea1f6e49606827ce4f150fea4b71d486393c217cd36b1aa"
+    }
+   ],
+   "off": [
+    {
+     "file": "research/findings/raw/_load_bearing/_shards/emo-bounded-off-ec8fe54/s8/emotion-category/intact_a_emocat_s1_emocat_s2_emocat_feel_s8.json",
+     "sha256": "f0790d3038ef34cd552056df9a788ce798af979548aa257b7bb0c5362c57779a"
+    },
+    {
+     "file": "research/findings/raw/_load_bearing/_shards/emo-bounded-off-ec8fe54/s8/emotion-category/intact_b_emocat_s1_emocat_s2_emocat_feel_s8.json",
+     "sha256": "f0790d3038ef34cd552056df9a788ce798af979548aa257b7bb0c5362c57779a"
+    }
+   ]
+  }
+ },
+ "script": "tools/answer_rate.py",
+ "argv": [
+  "paired",
+  "--on-tag",
+  "emo-bounded-on-ec8fe54",
+  "--off-tag",
+  "emo-bounded-off-ec8fe54",
+  "--faculty",
+  "emotion-category",
+  "--seeds",
+  "7,8",
+  "--json"
+ ],
+ "backend": "numpy",
+ "device": "cpu",
+ "analysis_only": true
+}
