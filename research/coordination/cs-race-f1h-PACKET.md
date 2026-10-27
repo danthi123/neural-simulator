@@ -33,7 +33,12 @@ So the next carrier is this held plateau in the mention slot's cells.
 - `W_MENT` stays 12. The controls (positive and decisive) present no words to the mention layer.
 - **Flags:** `--trace intrinsic`, `--soma-g`, `--w-im`, `--apical-pulse` (default off).
 
-## Step 0 (Hermes, now): seeds 41-48 only, no race, W_GIS 30, row 3
+## Step 0 (Hermes, now): seeds 41 and 45-51 only (Amendment A2), no race, W_GIS 30, row 3
+- **Amendment A2 (Claude 2026-10-27): seeds.** Seeds 42, 43 and 44 are project gate seeds, so the original 41-48 contradicted
+  this packet's own rule that gate seeds are not run; the pool's gate-seed guard refused those 27 lines. They are replaced by
+  the unused seeds 49, 50 and 51, keeping eight seeds and the 8/8 rule. Disclosure: the f1g step 0 (10-22) ran calibration on
+  41-48, gate seeds included, by citing the runbook as a prereg (a guard hole, now closed). A later cs-race gate claim on
+  42-44 must state that the probe's drive (150 pA) was chosen on a seed set that included them.
 - **P0, engine support (read-only, first).** Show with file:line that `cs_race_f1`'s bridge can host the BDSP apical on the
   mention slot cells only: which flags allocate it, whether it can be restricted to those indices, and which array carries
   an apical drive. If the BDSP apical cannot run on this probe's cells, that is STOP-ENGINE; post what blocks it.
