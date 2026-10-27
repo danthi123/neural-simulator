@@ -407,6 +407,34 @@ _SLOW_CONDUCTANCE_FEATURE_FLAGS = {
     'cp_conductance_g_graded_plateau_rise': 'enable_graded_dendritic_plateau',
 }
 
+# WHOLE-BRAIN STABLE-INTEGRATION SWITCH (2026-10-27, research/stable-integration), DEFAULT OFF. The membrane census
+# (research/findings/2026-10-26-membrane-census-dev7.md) found out-of-range membranes in 12-13 production organs per dev
+# seed: the 1 ms explicit-Euler Izhikevich step overshoots when (g_i+g_e)*dt/C >= ~2 (fixed by
+# cfg.enable_bounded_conductance_integration) and runs the quadratic term away after a refractory-withheld crossing
+# (fixed by cfg.izh_membrane_substeps with refractory rule "model_reset"). SIM_STABLE_INTEGRATION=1 forces BOTH on in
+# every SimulationBridge, whatever the organ configured: applied at construction, at _initialize_simulation_data and
+# re-asserted at the top of every _run_one_simulation_step (so an organ that sets the fields after building the bridge,
+# or a config reload, cannot undo it). Model-scoped like the options themselves: IZHIKEVICH gets all three; ADEX gets
+# only the bounded conductance integration (sub-steps are Izhikevich-only); any other model is left as configured.
+# Unset, "" or "0" => nothing is touched (byte-identical; tests/test_stable_integration_switch.py); any other value
+# raises at bridge construction (loud, never a silent no-op). The step megakernel declines both options already.
+STABLE_INTEGRATION_ENV = "SIM_STABLE_INTEGRATION"
+STABLE_INTEGRATION_SUBSTEPS = 4
+STABLE_INTEGRATION_REFRACTORY_RULE = "model_reset"
+
+
+def stable_integration_requested():
+    """True when SIM_STABLE_INTEGRATION is "1"; False when unset, "" or "0"; raises on any other value."""
+    raw = os.environ.get(STABLE_INTEGRATION_ENV)
+    if raw is None:
+        return False
+    s = raw.strip()
+    if s in ("", "0"):
+        return False
+    if s == "1":
+        return True
+    raise ValueError(f"{STABLE_INTEGRATION_ENV} must be unset, '0' or '1', got {raw!r}")
+
 
 class SimulationBridge:
     @property
@@ -438,6 +466,18 @@ class SimulationBridge:
         self.ui_queue = ui_queue  # Reference to the queue for sending data/status to UI
         self._simulation_source_root = simulation_source_root
         self.snr_packet_bindings = MappingProxyType({})
+        # SIM_STABLE_INTEGRATION read-back (see STABLE_INTEGRATION_ENV): requested is read ONCE here; applied is True
+        # only while the full Izhikevich set (bounded + sub-steps + model_reset) is in effect; effective holds the
+        # three values the step actually reads; organ_values what the organ had configured before the override;
+        # reasserts counts steps at which the per-step re-assert found the organ had changed a field back.
+        self.stable_integration_requested = stable_integration_requested()
+        self.stable_integration_applied = False
+        self.stable_integration_scope = None
+        self.stable_integration_effective = None
+        self.stable_integration_organ_values = None
+        self.stable_integration_reasserts = 0
+        self._stable_integration_cfg_id = None
+        self._apply_stable_integration()
 
         # --- CuPy Arrays for Simulation State ---
         self.cp_membrane_potential_v = None 
@@ -1871,6 +1911,7 @@ class SimulationBridge:
         """Initializes or re-initializes all CuPy arrays and simulation state variables."""
         self._log_console(f"Initializing simulation data for model: {self.core_config.neuron_model_type} (3D)... (playback_init: {called_from_playback_init})")
         self.snr_packet_bindings = MappingProxyType({})
+        self._apply_stable_integration()      # SIM_STABLE_INTEGRATION (no-op unless requested)
 
         if not called_from_playback_init:
             # These global_gui_state checks are for context; actual state changes are UI-driven.
@@ -8925,6 +8966,54 @@ class SimulationBridge:
             "Disable the flag or switch neuron_model_type."
         )
 
+    def _apply_stable_integration(self, *, per_step=False):
+        """Force the SIM_STABLE_INTEGRATION set onto self.core_config (no-op unless requested at construction).
+        IZHIKEVICH: enable_bounded_conductance_integration=True, izh_membrane_substeps=4,
+        izh_substep_refractory_rule="model_reset". ADEX: bounded only. Other models: the organ's values (restored if
+        an earlier call on this config had set them under a different model). Records the read-back attributes.
+        per_step=True (the re-assert at the top of each step) counts a step at which a field had to be changed back."""
+        if not getattr(self, "stable_integration_requested", False):
+            return
+        cfg = self.core_config
+        if cfg is None:
+            return
+        if self._stable_integration_cfg_id != id(cfg):
+            self._stable_integration_cfg_id = id(cfg)
+            self.stable_integration_organ_values = {
+                "enable_bounded_conductance_integration": bool(
+                    getattr(cfg, "enable_bounded_conductance_integration", False)),
+                "izh_membrane_substeps": getattr(cfg, "izh_membrane_substeps", 1),
+                "izh_substep_refractory_rule": getattr(cfg, "izh_substep_refractory_rule", "model_reset"),
+                "neuron_model_type": getattr(cfg, "neuron_model_type", None)}
+        model = getattr(cfg, "neuron_model_type", None)
+        organ = self.stable_integration_organ_values
+        if model == NeuronModel.IZHIKEVICH.name:
+            want = (True, STABLE_INTEGRATION_SUBSTEPS, STABLE_INTEGRATION_REFRACTORY_RULE)
+            scope = "izhikevich_full"
+        elif model == NeuronModel.ADEX.name:
+            want = (True, organ["izh_membrane_substeps"], organ["izh_substep_refractory_rule"])
+            scope = "adex_bounded_only"
+        else:
+            want = (organ["enable_bounded_conductance_integration"], organ["izh_membrane_substeps"],
+                    organ["izh_substep_refractory_rule"])
+            scope = "not_applicable:%s" % model
+        have = (getattr(cfg, "enable_bounded_conductance_integration", False),
+                getattr(cfg, "izh_membrane_substeps", 1),
+                getattr(cfg, "izh_substep_refractory_rule", "model_reset"))
+        if have != want:
+            if per_step:
+                self.stable_integration_reasserts += 1
+            cfg.enable_bounded_conductance_integration = want[0]
+            cfg.izh_membrane_substeps = want[1]
+            cfg.izh_substep_refractory_rule = want[2]
+        if self.stable_integration_scope != scope or have != want or self.stable_integration_effective is None:
+            self.stable_integration_scope = scope
+            self.stable_integration_applied = (scope == "izhikevich_full")
+            self.stable_integration_effective = {
+                "enable_bounded_conductance_integration": bool(cfg.enable_bounded_conductance_integration),
+                "izh_membrane_substeps": cfg.izh_membrane_substeps,
+                "izh_substep_refractory_rule": cfg.izh_substep_refractory_rule}
+
     @staticmethod
     def _izh_substep_settings(cfg):
         """(n_substeps, refractory_rule) for cfg.izh_membrane_substeps / cfg.izh_substep_refractory_rule,
@@ -8957,6 +9046,10 @@ class SimulationBridge:
     def _run_one_simulation_step(self):
         """Executes a single step of the simulation logic."""
         if not self.is_initialized or self.core_config.num_neurons == 0: return
+        # SIM_STABLE_INTEGRATION re-assert (one attribute read when not requested): an organ that set the fields
+        # after building the bridge, or a config reload, cannot undo the whole-brain override.
+        if getattr(self, "stable_integration_requested", False):
+            self._apply_stable_integration(per_step=True)
         # Backend-normalize the connection matrix before any sparse op / megakernel dispatch below (no-op on
         # numpy and once-per-foreign-assignment on cupy — see _ensure_connections_on_backend).
         self._ensure_connections_on_backend()
