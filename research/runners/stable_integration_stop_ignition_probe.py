@@ -25,6 +25,8 @@ integrators, so its re-calibration is read off measured curves, never off replie
                 the intact workspace clears and the lesioned one does not (production: ~0.13 inside [0.09, 0.15]).
   --margins     the conflict sensor's two levels (confident single-content margin, co-ignited conflict margin),
                 repeated, at a calibration: the organ's MARGIN_REF is "halfway between" them.
+  --organ-held  SUPPLEMENTARY, not the GO gate: the gate's conflict checks with a named held set (production holds
+                two contents unless three co-ignited upstream).
   --organ       the organ's own GO gate (`evaluate_seed`: global stop, selectivity, divisive-norm and STD load-bearing,
                 scramble, conflict-off, continuous stop without restore, byte-identical substrate, determinism) at a
                 named calibration on a named integrator.
@@ -438,6 +440,50 @@ def run_organ(seed, arm, calib):
             "arm": arm, "calibration": calib, "result": r, "stop_trial_membranes": trial}
 
 
+def run_organ_held(seed, arm, calib, contents=(0, 1)):
+    """SUPPLEMENTARY (not the organ's GO gate): the gate's conflict checks on the held set production usually clears
+    (webapp/gnw_global_stop.py holds max(2, n_ignited) contents, i.e. two unless the deliberation co-ignited three),
+    read exactly as `evaluate_seed` reads them but with `contents` held instead of all three: the global stop with the
+    organ's own boost, the freeze (boost 0), the scramble (the confident margin fed to the sensor), conflict-off
+    (gain 0) and the normalization lesion."""
+    DM = _dm()
+    thal_pa = thal_of(calib)
+    ev = {"boost_scale": float(calib.get("boost_scale", DM.BOOST_SCALE)),
+          "pulse_duration": int(calib.get("pulse_duration", DM.PULSE_DURATION))}
+    out = {"runner": "research/runners/stable_integration_stop_ignition_probe.py --organ-held", "seed": int(seed),
+           "arm": arm, "calibration": calib, "contents": list(contents)}
+    with stop_calibration(calib):
+        mref = float(DM.MARGIN_REF)
+        S = _build(seed, arm, calib)
+        b, xp = S["bridge"], S["xp"]
+        std = DM.WorkspaceDepression(b, xp, S["ws_used"])
+        args = (b, xp, S["patterns"], S["privates"], S["thal"], S["snap"], std, thal_pa)
+        conf = DM.run_confident(*args)
+        stop = DM.run_conflict_stop(*args, boost_gain=1.0, margin_ref=mref, contents=tuple(contents), **ev)
+        freeze = DM.run_conflict_stop(*args, boost_gain=0.0, margin_ref=mref, contents=tuple(contents), **ev)
+        scramble = DM.run_conflict_stop(*args, boost_gain=1.0, margin_ref=mref, contents=tuple(contents),
+                                        margin_override=conf["margin"], **ev)
+        SL = _build(seed, arm, calib, norm_lesion=True)
+        stdl = DM.WorkspaceDepression(SL["bridge"], SL["xp"], SL["ws_used"])
+        lesion = DM.run_conflict_stop(SL["bridge"], SL["xp"], SL["patterns"], SL["privates"], SL["thal"], SL["snap"],
+                                      stdl, thal_pa, boost_gain=1.0, margin_ref=mref, contents=tuple(contents), **ev)
+    keep = ("n_ignited_pre", "n_ignited_post", "margin", "boost", "pre_rates", "post_rates")
+    out.update({
+        "confident": {k: conf[k] for k in ("n_ignited", "margin", "winner", "rates")},
+        "stop": {k: stop[k] for k in keep}, "freeze": {k: freeze[k] for k in keep},
+        "scramble": {k: scramble[k] for k in keep}, "norm_lesion": {k: lesion[k] for k in keep},
+        "checks": {"global_stop": bool(stop["n_ignited_pre"] >= 2 and stop["n_ignited_post"] == 0),
+                   "freeze_holds": bool(freeze["n_ignited_pre"] >= 2 and freeze["n_ignited_post"] >= 2),
+                   "scramble_breaks_stop": bool(scramble["boost"] <= 1e-9 and scramble["n_ignited_post"] >= 2),
+                   "norm_load_bearing": bool(lesion["n_ignited_pre"] >= 2 and lesion["n_ignited_post"] >= 2)}})
+    print("[stop organ-held] %s s%d held %s | stop n%d->%d (m%.3f b%.3f) freeze n%d->%d scramble n%d->%d lesion "
+          "n%d->%d | %s" % (arm, seed, list(contents), stop["n_ignited_pre"], stop["n_ignited_post"], stop["margin"],
+                           stop["boost"], freeze["n_ignited_pre"], freeze["n_ignited_post"],
+                           scramble["n_ignited_pre"], scramble["n_ignited_post"], lesion["n_ignited_pre"],
+                           lesion["n_ignited_post"], out["checks"]), flush=True)
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--seed", type=int, required=True)
@@ -458,6 +504,7 @@ def main():
     ap.add_argument("--held", default="012,01", help="--stopwin held sets, e.g. '012,01'")
     ap.add_argument("--margins", action="store_true", help="confident vs conflict sensor margins (--repeats)")
     ap.add_argument("--organ", action="store_true")
+    ap.add_argument("--organ-held", default="", help="SUPPLEMENTARY conflict checks with this held set, e.g. '01'")
     a = ap.parse_args()
     if a.seed in GATE_SEEDS:
         sys.exit("GATE seed %d refused: dev-seed diagnostic only" % a.seed)
@@ -465,7 +512,10 @@ def main():
     calib = json.loads(a.calib) if a.calib else {}
     weights = [float(x) for x in a.weights.split(",") if x.strip()]
     drives = [float(x) for x in a.drives.split(",") if x.strip()]
-    if a.margins:
+    if a.organ_held:
+        d = {"arms": {arm: run_organ_held(a.seed, arm, calib, tuple(int(c) for c in a.organ_held))
+                      for arm in arms}}
+    elif a.margins:
         d = run_margins(a.seed, calib, arms=arms, repeats=a.repeats,
                         contents_list=tuple(tuple(int(c) for c in g) for g in a.held.split(",") if g.strip()))
     elif a.organ:

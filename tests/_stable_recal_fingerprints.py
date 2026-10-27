@@ -1,9 +1,9 @@
-"""Fingerprints of the two workspaces SIM_STABLE_RECAL re-calibrates (the GNW ignition bus and the thought-swap
-workspace), for tests/test_stable_recal_switch.py. Each builds the organ the way production does, runs one short
+"""Fingerprints of the workspaces SIM_STABLE_RECAL re-calibrates (the GNW ignition bus, the thought-swap workspace and
+the global-stop distributed-overwrite workspace), for tests/test_stable_recal_switch.py. Each builds the organ the way production does, runs one short
 decision and hashes the full decision record plus the final membrane potentials. The reference values in the test
-were captured with these functions on the code before the switch existed (base e38904197 + the probes), so a
-match with SIM_STABLE_RECAL unset proves the unset path is byte-identical, on the old integrator and on the stable
-one alike.
+were captured with these functions on the code before the switch existed (bus and swap: base e38904197 + the probes;
+global stop: 797ae26de, before the stop organ read the switch), so a match with SIM_STABLE_RECAL unset proves the
+unset path is byte-identical, on the old integrator and on the stable one alike.
 """
 from __future__ import annotations
 
@@ -60,3 +60,16 @@ def bus_fingerprint(seed=3):
     c, rates, w, n, conf, assign = RE._deliberate_hop_conf(b, xp, slots, snap, "fox", ["owl"])
     rec["reentrant_hop"] = [c, rates, w, n, conf, sorted(assign.items())]
     return _digest(rec, [b]), rec
+
+
+def stop_fingerprint(seed=3):
+    """The production global-stop path: `webapp.gnw_global_stop._StopWorkspace` (its private RNG timeline, the
+    production `build_overwrite_bridge` defaults and `run_conflict_stop` with the production BOOST_SCALE, MARGIN_REF
+    and PULSE_DURATION) for a two-content and a three-content held coalition, the upstream-conflict-scaled boost and
+    the lesion."""
+    from webapp import gnw_global_stop as GS
+    ws = GS._StopWorkspace(int(seed))
+    rec = {"n2": ws.run(2, lesion=False), "n3": ws.run(3, lesion=False),
+           "n2_scaled": ws.run(2, lesion=False, conflict_scale=0.5), "n2_lesion": ws.run(2, lesion=True),
+           "handles": ws._built[7]}
+    return _digest(rec, [ws._built[0]]), rec
