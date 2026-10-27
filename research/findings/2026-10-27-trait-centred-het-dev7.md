@@ -32,6 +32,7 @@ artifacts:
   - research/findings/raw/_stable_mechc/lag_gate/g3_stable.json
   - research/findings/raw/_stable_mechc/lag_gate/g3_stable_trait.json
   - research/findings/raw/_stable_mechc/census/stable/s7/inner__intact_a.json
+  - research/findings/raw/_stable_mechc/census/stable_unset_check/s7/inner__intact_a.json
 ---
 
 seed-waiver: a labelled dev-seed diagnostic (dev seed 7 for the five-group census, dev seeds 1 to 8 for the association graph's and the Broca slot bridge's own gates); no gate seed was run, no default was flipped and no capability claim is made.
@@ -78,7 +79,10 @@ their dynamics, not a repair. The 4 RS-preset offenders that remain are a separa
   is never touched by the region flag), so with the region flag alone every trait-typed neuron is identical to flag off, which
   is pinned by a test, and with both on the result is the region flag's on region neurons and the variant's on trait neurons. It
   is default OFF with the unset path byte-identical, shown by hash against a golden captured on the unedited bridge before the
-  edit. It does not hide the blast radius: the census read-back lists, per organ, how many trait-typed cells it moved, and the
+  edit, and at brain level: the inner group re-run at 72bc75e7c with both new switches unset reproduces the earlier stable census
+  (`census/stable/s7`, taken before the edit) turn for turn: the 10 per-turn response hashes, the all-response hash and the
+  out-of-range and spike totals of all 26 organ rows are equal
+  (`research/findings/raw/_stable_mechc/census/stable_unset_check/s7/inner__intact_a.json`). It does not hide the blast radius: the census read-back lists, per organ, how many trait-typed cells it moved, and the
   gates of the organs it moved were run (Results 2 and 3), which is the evidence the ruling asks for before any flip.
 - Tests. `tests/test_trait_centred_heterogeneity.py` (47 passed): the four unset spellings reproduce the pre-edit golden
   (`tests/_trait_centred_het_golden.json`, 7 cases: the LearnedAssocGraph bridge at two sizes, a plain pool, a typed region
