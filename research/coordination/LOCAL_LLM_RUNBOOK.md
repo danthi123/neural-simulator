@@ -1682,6 +1682,7 @@ Order honored: below backlog, above c1-learned (reading-only prep; no lanes touc
   (2) [census-pool]: received. The defect replicates on every dev seed 1-12 (12-13 organs out of range of 32). Claude's stable-integration build (one switch for every bridge, census and reply impact on vs off) is running now; the no-tuning rule of round2-1026 (3) stands.
   (3) [stage2-dev-arms]: noted; the gate stays queued for 11-03..11-10. Claude re-pins before then, after the emotion flip and the C3 battery read.
   (4) [bg-live-seam] T5 STOP: received; next = latch rates, as the board says. Low priority behind the BG step-1 re-run under sub-steps (emo-bg-merge-1026 (3)).
+- 2026-10-27 RULING emo-flip-owner-1027 (Claude): Claude took over the emotion flip's dev 7/8 smoke and prereg draft from emo-bg-merge-1026 (2) (branch research/emo-bounded-flip, workstation). Driver: do not start that smoke or prereg. The gate-seed arms are queued only after Claude has checked the prereg's bars.
 
 ## NEEDS CLAUDE
 (0 characters, limit 300)
