@@ -436,6 +436,34 @@ def stable_integration_requested():
     raise ValueError(f"{STABLE_INTEGRATION_ENV} must be unset, '0' or '1', got {raw!r}")
 
 
+# WHOLE-BRAIN PRESET-CENTRED HETEROGENEITY SWITCH (2026-10-27, research/stable-mechc), DEFAULT OFF. Parameter
+# heterogeneity draws a/b/d/C (HH: C_m/g_Na/g_K/g_L) around the GLOBAL cfg.izh_*_val (RS defaults) and overwrites every
+# region preset, so a typed non-RS region runs as an RS-centred hybrid (docs/drafts/preset-centred-het/CENSUS.md). The
+# fix is the per-config flag cfg.preset_centred_parameter_heterogeneity (default False); each organ builds its own
+# config, so no organ turns it on. SIM_PRESET_CENTRED_HET=1 forces that flag True on every SimulationBridge's core
+# config, whatever the organ configured, at construction and at every _initialize_simulation_data (the only place the
+# draws run, so that is the only place it needs to hold). It centres ONLY neurons that belong to a region with a
+# preset (BrainRegion.izh_neuron_type / HH overrides); trait-typed neurons (cfg.num_traits > 1, no region preset) and
+# untyped regions keep the global-centred draw by design (the flag's own rule), so the switch does not reach them.
+# Unset, "" or "0" => nothing is touched (byte-identical; tests/test_preset_centred_het_switch.py); any other value
+# raises at bridge construction (loud, never a silent no-op). Read-back on the bridge: preset_centred_het_requested,
+# _applied, _organ_value (what the organ had configured) and _readback (what the last heterogeneity draw saw).
+PRESET_CENTRED_HET_ENV = "SIM_PRESET_CENTRED_HET"
+
+
+def preset_centred_het_requested():
+    """True when SIM_PRESET_CENTRED_HET is "1"; False when unset, "" or "0"; raises on any other value."""
+    raw = os.environ.get(PRESET_CENTRED_HET_ENV)
+    if raw is None:
+        return False
+    s = raw.strip()
+    if s in ("", "0"):
+        return False
+    if s == "1":
+        return True
+    raise ValueError(f"{PRESET_CENTRED_HET_ENV} must be unset, '0' or '1', got {raw!r}")
+
+
 class SimulationBridge:
     @property
     def xp(self):
@@ -478,6 +506,15 @@ class SimulationBridge:
         self.stable_integration_reasserts = 0
         self._stable_integration_cfg_id = None
         self._apply_stable_integration()
+        # SIM_PRESET_CENTRED_HET read-back (see PRESET_CENTRED_HET_ENV): requested is read ONCE here; applied is True once
+        # the switch has forced cfg.preset_centred_parameter_heterogeneity True; organ_value is what the organ had
+        # configured before; readback is filled by each heterogeneity draw (None until one runs).
+        self.preset_centred_het_requested = preset_centred_het_requested()
+        self.preset_centred_het_applied = False
+        self.preset_centred_het_organ_value = None
+        self.preset_centred_het_readback = None
+        self._preset_centred_het_cfg_id = None
+        self._apply_preset_centred_het()
 
         # --- CuPy Arrays for Simulation State ---
         self.cp_membrane_potential_v = None 
@@ -1912,6 +1949,7 @@ class SimulationBridge:
         self._log_console(f"Initializing simulation data for model: {self.core_config.neuron_model_type} (3D)... (playback_init: {called_from_playback_init})")
         self.snr_packet_bindings = MappingProxyType({})
         self._apply_stable_integration()      # SIM_STABLE_INTEGRATION (no-op unless requested)
+        self._apply_preset_centred_het()      # SIM_PRESET_CENTRED_HET (no-op unless requested)
 
         if not called_from_playback_init:
             # These global_gui_state checks are for context; actual state changes are UI-driven.
@@ -2775,6 +2813,7 @@ class SimulationBridge:
                 )
                 if preset_centred:
                     self._het_preset_centres = self._collect_het_preset_centres(cfg, n)
+                het_centres_for_readback = self._het_preset_centres if preset_centred else None
                 self._apply_parameter_heterogeneity(
                     cfg, n, backend_neutral=backend_neutral_izh
                 )
@@ -2792,6 +2831,7 @@ class SimulationBridge:
                 if (getattr(cfg, "per_region_parameter_heterogeneity", False)
                         and self.region_manager is not None):
                     self._overwrite_region_scoped_parameter_heterogeneity(cfg, n)
+                self._record_het_readback(cfg, n, preset_centred, het_centres_for_readback)
                 if preset_centred:
                     self._het_preset_centres = None
                 elif self.region_manager is not None:
@@ -3728,6 +3768,32 @@ class SimulationBridge:
             if values:
                 records.append((region, label, idx_arr, values))
         return records
+
+    def _record_het_readback(self, cfg, n, preset_centred, centres):
+        """Read-back of one heterogeneity draw (host ints only; no RNG, array or cfg change), kept on
+        self.preset_centred_het_readback: whether the draw ran preset-centred, how many neurons belong to a region
+        preset (any jittered parameter) and how many of those presets sit more than 10 % from the centre of the
+        distribution that jitters them (the neurons the flag actually moves; an RS preset equals the global centre)."""
+        rb = {"heterogeneity_ran": True, "preset_centred": bool(preset_centred), "n_neurons": int(n),
+              "n_with_region_preset": 0, "n_preset_off_centre": 0, "by_param": {}}
+        if centres:
+            dists = cfg.heterogeneity_distributions or {}
+            any_preset = np.zeros(n, dtype=bool)
+            any_off = np.zeros(n, dtype=bool)
+            for key, (has_preset, preset_values) in centres.items():
+                centre = self._het_distribution_centre(dists[key]) if key in dists else None
+                if centre is None:
+                    off = np.asarray(has_preset, dtype=bool)
+                else:
+                    pv = np.asarray(preset_values, dtype=np.float64)
+                    off = np.asarray(has_preset, dtype=bool) & (
+                        (np.abs(pv - centre) > 0.10 * abs(centre)) | ((centre == 0.0) & (pv != 0.0)))
+                any_preset |= np.asarray(has_preset, dtype=bool)
+                any_off |= off
+                rb["by_param"][key] = {"with_preset": int(np.asarray(has_preset).sum()), "off_centre": int(off.sum())}
+            rb["n_with_region_preset"] = int(any_preset.sum())
+            rb["n_preset_off_centre"] = int(any_off.sum())
+        self.preset_centred_het_readback = rb
 
     def _collect_het_preset_centres(self, cfg, n):
         """{heterogeneity param name: (host bool has_preset[n], host float64 preset[n])} for every parameter
@@ -9013,6 +9079,21 @@ class SimulationBridge:
                 "enable_bounded_conductance_integration": bool(cfg.enable_bounded_conductance_integration),
                 "izh_membrane_substeps": cfg.izh_membrane_substeps,
                 "izh_substep_refractory_rule": cfg.izh_substep_refractory_rule}
+
+    def _apply_preset_centred_het(self):
+        """Force cfg.preset_centred_parameter_heterogeneity True on self.core_config (no-op unless requested at
+        construction). Records the organ's own value once per config object and the applied flag."""
+        if not getattr(self, "preset_centred_het_requested", False):
+            return
+        cfg = self.core_config
+        if cfg is None:
+            return
+        if self._preset_centred_het_cfg_id != id(cfg):
+            self._preset_centred_het_cfg_id = id(cfg)
+            self.preset_centred_het_organ_value = bool(
+                getattr(cfg, "preset_centred_parameter_heterogeneity", False))
+        cfg.preset_centred_parameter_heterogeneity = True
+        self.preset_centred_het_applied = True
 
     @staticmethod
     def _izh_substep_settings(cfg):

@@ -523,6 +523,30 @@ def test_stable_integration_read_back_is_recorded_per_bridge_and_organ(monkeypat
     assert row["stable_integration_applied_seen"] == ["True"]
 
 
+def test_preset_centred_het_read_back_and_param_summary_are_recorded(monkeypatch):
+    """research/stable-mechc: the census records SIM_PRESET_CENTRED_HET's read-back per bridge (requested / applied /
+    the organ's own value / what the heterogeneity draw saw) and a per-region drawn-parameter summary (a, b, d, C, k,
+    vpeak means, negative-b count, the preset each cell was built from). Off: applied False, draw not centred, STN b near the RS centre -2.
+    On: applied True, organ value False, draw centred, STN b near its preset -1."""
+    from tests._capture_preset_centred_het_golden import build_selector
+    stn = "selector_stn"
+    monkeypatch.delenv("SIM_PRESET_CENTRED_HET", raising=False)
+    with MC.Census() as c_off:
+        _run(build_selector(9), 3)
+    monkeypatch.setenv("SIM_PRESET_CENTRED_HET", "1")
+    with MC.Census() as c_on:
+        _run(build_selector(9), 3)
+    off, on = c_off.report()["bridges"][0], c_on.report()["bridges"][0]
+    assert off["preset_centred_het"]["applied"] is False and off["preset_centred_het"]["readback"]["preset_centred"] is False
+    assert on["preset_centred_het"]["applied"] is True and on["preset_centred_het"]["organ_value"] is False
+    rb = on["preset_centred_het"]["readback"]
+    assert rb["preset_centred"] is True and 0 < rb["n_preset_off_centre"] <= rb["n_with_region_preset"]
+    assert off["param_summary"][stn]["b_mean"] < -1.5 and on["param_summary"][stn]["b_mean"] > -1.5
+    assert on["param_summary"][stn]["preset_counts"] == {"STN_BURST": on["param_summary"][stn]["n"]}
+    (row_on,) = MC.organ_rows(MC.relabel([on]))
+    assert row_on["preset_centred_het_applied_seen"] == ["True"] and row_on["n_preset_off_centre"] == rb["n_preset_off_centre"]
+
+
 def test_turn_reply_keeps_the_reply_fields_and_a_per_turn_hash():
     r = {"answer": "the fox chases the hen", "abstained": False, "recalled_svo": ["fox", "chase", "hen"],
          "derived": False, "source": "tiny-demo +LTM", "other": 1}
