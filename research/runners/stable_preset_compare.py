@@ -146,6 +146,31 @@ def _answer_rate(rec):
     return kinds, AR.rate(list(reps.values()))
 
 
+def validity(rec):
+    """Reasons a census record cannot be compared like-for-like (empty list = valid): the stage-2 workload must have
+    exited 0, found its corpus (a worktree without data/ runs the whole workload with the comprehension organ erroring
+    in its first turns and still exits 0), had no turn errors, no comprehension error in any response, no observer
+    error, and the pinned PYTHONHASHSEED."""
+    w = rec.get("workload") or {}
+    why = []
+    if w.get("rc") != 0:
+        why.append("workload rc=%r" % (w.get("rc"),))
+    if w.get("corpus_present") is not True:
+        why.append("corpus_present=%r" % (w.get("corpus_present"),))
+    if w.get("turn_errors"):
+        why.append("turn_errors=%s" % sorted(w["turn_errors"]))
+    if w.get("pythonhashseed_ok") is not True:
+        why.append("pythonhashseed_ok=%r" % (w.get("pythonhashseed_ok"),))
+    if (rec.get("census") or {}).get("observer_errors"):
+        why.append("observer_errors=%r" % rec["census"]["observer_errors"])
+    resp = (w.get("shard") or {}).get("responses") or {}
+    bad = sorted(k for k, v in resp.items() if isinstance(v, dict) and isinstance(v.get("comprehension"), dict)
+                 and v["comprehension"].get("error"))
+    if bad:
+        why.append("comprehension error in turns %s" % bad)
+    return why
+
+
 def compare_pair(group, base, alt):
     res = compare_group(group, base, alt)               # keys named off/on there: off = base (STABLE), on = alt
     (_, r_base), (_, r_alt) = base, alt
@@ -178,6 +203,7 @@ def compare_pair(group, base, alt):
                         "regions_moved": regions_moved}
     res["answer_rate"] = {"base": rate_b, "alt": rate_a, "transitions": dict(transitions),
                           "turn_kinds_base": kb, "turn_kinds_alt": ka}
+    res["validity"] = {"base": validity(r_base), "alt": validity(r_alt)}
     res["env"] = {"base": [r_base.get("stable_integration_env"), r_base.get("preset_centred_het_env")],
                   "alt": [r_alt.get("stable_integration_env"), r_alt.get("preset_centred_het_env")]}
     return res
@@ -188,12 +214,20 @@ def main():
     ap.add_argument("--base", required=True, help="census dir: SIM_STABLE_INTEGRATION=1 only")
     ap.add_argument("--alt", required=True, help="census dir: SIM_STABLE_INTEGRATION=1 and SIM_PRESET_CENTRED_HET=1")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--allow-invalid", action="store_true", help="write the comparison although a record is invalid")
     a = ap.parse_args()
     base, alt = _load(a.base), _load(a.alt)
     groups = [g for g in GROUPS if g in base and g in alt]
     res = {"runner": "research/runners/stable_preset_compare.py", "base_dir": a.base, "alt_dir": a.alt,
            "groups_compared": groups, "groups_missing": sorted((set(base) | set(alt)) - set(groups)),
            "groups": {g: compare_pair(g, base[g], alt[g]) for g in groups}}
+    invalid = {g: res["groups"][g]["validity"] for g in groups
+               if res["groups"][g]["validity"]["base"] or res["groups"][g]["validity"]["alt"]}
+    res["invalid_groups"] = invalid
+    if invalid and not a.allow_invalid:
+        print("REFUSED: invalid census record(s), nothing written (use --allow-invalid to override):",
+              json.dumps(invalid, default=str))
+        return 3
     os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
     with open(a.out, "w") as f:
         json.dump(res, f, indent=1, default=str)

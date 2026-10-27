@@ -47,6 +47,17 @@ def _rec(group, oor_rows, b_mean, n_b_neg, preset_centred, answer):
                 "t1": {"sha256": "a" if not preset_centred else "b", "answer": answer, "abstained": answer is None}}}}
 
 
+def test_validity_refuses_a_run_without_its_corpus():
+    ok = {"workload": {"rc": 0, "corpus_present": True, "turn_errors": {}, "pythonhashseed_ok": True,
+                       "shard": {"responses": {"t": {"comprehension": None}}}}, "census": {"observer_errors": 0}}
+    assert SPC.validity(ok) == []
+    bad = json.loads(json.dumps(ok))
+    bad["workload"]["corpus_present"] = False
+    bad["workload"]["shard"]["responses"]["t"]["comprehension"] = {"on": True, "error": "FileNotFoundError: x"}
+    why = SPC.validity(bad)
+    assert any("corpus_present" in w for w in why) and any("comprehension error" in w for w in why)
+
+
 def test_compare_pair_runs_and_counts(tmp_path):
     base = _rec("emo", [ROW_C, ROW_C], -2.0, 10, False, "yes")
     alt = _rec("emo", [], 5.0, 0, True, None)
