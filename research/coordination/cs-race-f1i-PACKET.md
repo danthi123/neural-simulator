@@ -120,6 +120,19 @@ identities or rates.
   - each FAIL-LOUDLY case of E2 raises.
 - **E7 bookkeeping.** Register `cp_conductance_g_apical_gaba` beside `cp_conductance_g_gabab` in the flag-gated array
   map (`bridge.py:400`) and the state save/restore lists that carry `cp_conductance_g_gabab`.
+- **E build record (Claude, 2026-10-27; branch `research/apical-gaba-routing`).** Built as specified, with these
+  departures, each stricter than the spec:
+  - E5 is applied as a separate add, `v += (E_i - v0)(1 - exp(-g dt/tau))`, after the unchanged update line. It is the
+    spec's `_dvb` term with `(dt/tau)(tau/dt)` cancelled analytically, so float32 rounding of that product cannot carry
+    v past E_i (the test asserts v == E_i exactly at g = 1e4).
+  - E2 raises on five more misuse cases: a non-inhibitory source cell (checked after `output_inhibitory_indices`), a
+    negative tagged weight, a tagged pathway that is also `graded` or `coincidence_detector`, a (pre, post) carried by
+    both a tagged and an untagged edge, and duplicate edges that would misalign the mask.
+  - Two step-time checks raise: routing present with `cp_bdsp_apical_drive` None (the conductance would be dropped),
+    and the flag or `enable_bdsp` turned off after wiring. The engine's step handler logs these CRITICAL and stops the
+    sim; it re-raises only when `bridge.strict_step_errors = True`, so the f1i runner sets that with `--som`.
+  - E7 also saves the routing mask in the checkpoint's `synapse_routing_state` (receptor identity is routing state).
+  - A re-wire without the tag clears the mask and the conductance.
 
 ## Method (runner flags on `research/runners/cs_race_f1.py`; every default reproduces the f1h runner exactly)
 - **Base cell.** The f1h circuit at the cell `[cs-race-f1h-0] RESULT` selects by f1h's own rule with C3 waived: smallest

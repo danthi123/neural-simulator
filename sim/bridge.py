@@ -403,6 +403,7 @@ _SLOW_CONDUCTANCE_FEATURE_FLAGS = {
     'cp_conductance_g_coincidence_rise': 'enable_coincidence_detection',
     'cp_conductance_g_graded_plateau': 'enable_graded_dendritic_plateau',
     'cp_conductance_g_graded_plateau_rise': 'enable_graded_dendritic_plateau',
+    'cp_conductance_g_apical_gaba': 'enable_apical_gaba_routing',
 }
 
 
@@ -452,6 +453,11 @@ class SimulationBridge:
         self.cp_conductance_g_gabab = None          # slow GABA_B/GIRK conductance (None unless enable_gabab)
         self.cp_gabab_reversal_per_neuron = None     # per-neuron E_gabab (~-90 mV on GABA_B targets)
         self.cp_gabab_synapse_mask = None            # bool per-synapse: True for GABA_B-routed synapses
+        # APICAL GABA_A routing (cs-race f1i section E, 2026-10-27; cfg.enable_apical_gaba_routing). Both None unless
+        # the flag is on AND a plan pathway is tagged receptor="gaba_a_apical" (built in inject_explicit_wiring), so
+        # every step block that reads them is unreached by default (byte-identical).
+        self.cp_conductance_g_apical_gaba = None     # per-neuron apical GABA_A conductance (apical-leak units)
+        self.cp_apical_gaba_synapse_mask = None      # bool per-synapse: True for gaba_a_apical-routed synapses
         # TD value-DERIVATIVE channel (B-2, 2026-06-10). A SINGLE leaky-EMA copy of the GABA_B
         # value conductance above (decays slower, td_slow_tau_ms): the band-passed difference
         # (g_gabab - g_gabab_slow) is the value derivative = the TD bootstrap, computed at the SNc
@@ -4555,6 +4561,7 @@ class SimulationBridge:
         any_coincidence = False  # any synapse routed through the dendritic-coincidence plateau
         any_graded = False  # any synapse routed through the graded (analog) transmission path
         any_stp_disabled = False  # any synapse tagged stp_disabled (skips STP depression)
+        apical_gaba_groups = []  # names of pathways tagged receptor=="gaba_a_apical" (cs-race f1i E2)
         for name, group in wiring_plan.items():
             if not isinstance(group, dict) or "pre_indices" not in group:
                 continue
@@ -4574,6 +4581,16 @@ class SimulationBridge:
                 any_trans_gated = True
             if receptor == "gaba_b":
                 any_gabab = True
+            if receptor == "gaba_a_apical":
+                apical_gaba_groups.append(str(name))
+                if coincidence_flag or graded_flag:
+                    raise ValueError(
+                        f"inject_explicit_wiring: pathway {name!r} is receptor='gaba_a_apical' AND "
+                        "coincidence_detector/graded; those paths read the same synapse data and would double-route it")
+                if len(group["initial_weights"]) and float(np.min(np.asarray(group["initial_weights"], dtype=np.float64))) < 0.0:
+                    raise ValueError(
+                        f"inject_explicit_wiring: pathway {name!r} (receptor='gaba_a_apical') has a negative weight; "
+                        "the apical GABA_A conductance must be >= 0")
             if exc_receptor == "nmda_slow":
                 any_nmda_slow = True
             if coincidence_flag:
@@ -4598,6 +4615,25 @@ class SimulationBridge:
         if len(all_pre) == 0:
             self._log_console("inject_explicit_wiring: no synapses in plan.", "warning")
             return
+
+        # APICAL GABA_A routing (cs-race f1i E2): FAIL LOUDLY on misuse. Before this edit any receptor value other than
+        # "gaba_b" silently acted as somatic GABA_A, so a gaba_a_apical tag without the routing would run as somatic
+        # inhibition and look like a result. Checked before any state is touched.
+        any_apical_gaba = bool(apical_gaba_groups)
+        if any_apical_gaba:
+            _cfg_ag = self.core_config
+            if not getattr(_cfg_ag, "enable_apical_gaba_routing", False):
+                raise ValueError(
+                    f"inject_explicit_wiring: pathways {apical_gaba_groups} are tagged receptor='gaba_a_apical' but "
+                    "cfg.enable_apical_gaba_routing is False (they would silently act as somatic GABA_A)")
+            if not getattr(_cfg_ag, "enable_bdsp", False):
+                raise ValueError(
+                    "inject_explicit_wiring: receptor='gaba_a_apical' needs cfg.enable_bdsp (the BDSP apical update "
+                    "is the only place the apical conductance is applied)")
+            if getattr(_cfg_ag, "enable_two_compartment_dap", False):
+                raise ValueError(
+                    "inject_explicit_wiring: receptor='gaba_a_apical' is not defined with "
+                    "cfg.enable_two_compartment_dap (a second writer of cp_v_apical)")
 
         pre_np = np.asarray(all_pre, dtype=np.int32)
         post_np = np.asarray(all_post, dtype=np.int32)
@@ -4637,13 +4673,24 @@ class SimulationBridge:
         )
         if (any_fixed or any_gated or any_trans_gated or any_gabab or any_nmda_slow
                 or any_coincidence or any_graded or any_stp_disabled
-                or inhibitory_stdp_enabled):
+                or inhibitory_stdp_enabled or any_apical_gaba):
             keyed = sorted(
                 zip(all_pre, all_post, all_plastic, all_gates, all_trans_gates,
                     all_receptors, all_exc_receptors, all_coincidence, all_graded,
                     all_stp_disabled),
                 key=lambda t: (t[0], t[1]),
             )
+            # APICAL GABA_A routing (cs-race f1i E2): a (pre,post) coordinate carried by BOTH a gaba_a_apical edge and
+            # an untagged edge is merged into ONE synapse by sum_duplicates(), whose single receptor cannot be both.
+            # Raise rather than route the summed weight by list order. Only reached when a pathway carries the tag.
+            if any_apical_gaba:
+                import itertools as _it_ag
+                for _coord_ag, _run_ag in _it_ag.groupby(keyed, key=lambda t: (t[0], t[1])):
+                    _rc_ag = [t[5] == "gaba_a_apical" for t in _run_ag]
+                    if any(_rc_ag) and not all(_rc_ag):
+                        raise ValueError(
+                            f"inject_explicit_wiring: synapse {tuple(int(c) for c in _coord_ag)} is both receptor='gaba_a_apical' and "
+                            "untagged in the plan; one merged synapse cannot be routed to two compartments")
             # DEDUP SYNAPSE MASKS (2026-08-27; cfg.dedup_synapse_masks, DEFAULT-OFF -> the block
             # below is skipped and keyed is bit-for-bit the legacy list). cp_connections is built
             # via coo->tocsr()+sum_duplicates(), which MERGES duplicate (pre,post) edges, so nnz =
@@ -4878,6 +4925,28 @@ class SimulationBridge:
             self.cp_stp_disabled_mask = cp.zeros(self._synapse_capacity, dtype=cp.bool_)
             self.cp_stp_disabled_mask[:nnz] = cp.asarray(sd_mask_host)
 
+        # APICAL GABA_A per-synapse routing mask (cs-race f1i E2, 2026-10-27). True for synapses of any pathway tagged
+        # receptor=="gaba_a_apical"; the step removes them from the somatic g_e/g_i matvec (E3) and feeds them into
+        # cp_conductance_g_apical_gaba (E4), applied to cp_v_apical in the BDSP apical update (E5). Aligned with
+        # cp_connections.data via the same (pre,post)-sorted `keyed` list (receptor is keyed[5]). Built only when a
+        # pathway carries the tag (the misuse checks above guarantee the flag is on); capacity-sized with FALSE padding
+        # (grown synapses default to untagged). A re-wire without the tag clears any previous routing. Untagged plans
+        # never enter this block (both arrays stay None => byte-identical).
+        if any_apical_gaba:
+            if len(keyed) != nnz:
+                raise ValueError(
+                    f"inject_explicit_wiring: receptor='gaba_a_apical' with {len(keyed)} plan edges for {nnz} merged "
+                    "synapses (duplicate edges): the routing mask cannot align; set cfg.dedup_synapse_masks or "
+                    "remove the duplicates")
+            ag_mask_host = np.fromiter(
+                (rc == "gaba_a_apical" for rc in (t[5] for t in keyed)), dtype=np.bool_, count=nnz)
+            self.cp_apical_gaba_synapse_mask = cp.zeros(self._synapse_capacity, dtype=cp.bool_)
+            self.cp_apical_gaba_synapse_mask[:nnz] = cp.asarray(ag_mask_host)
+            self.cp_conductance_g_apical_gaba = cp.zeros(n, dtype=cp.float32)
+        elif self.cp_apical_gaba_synapse_mask is not None or self.cp_conductance_g_apical_gaba is not None:
+            self.cp_apical_gaba_synapse_mask = None
+            self.cp_conductance_g_apical_gaba = None
+
         # Cluster B.1 (2026-04-28): tag D2-targeting synapses with sign=-1.
         # D1-targeting + everything else stays at +1 (default). The reward-
         # modulated weight update will multiply by this sign so D2 synapses
@@ -4975,6 +5044,25 @@ class SimulationBridge:
         self._invalidate_coo_cache()
         self._cached_inhibitory_mask = None
         self._cached_stp_per_type = None
+
+        # APICAL GABA_A routing (cs-race f1i E2): every routed synapse must come from an INHIBITORY neuron (the polarity
+        # is final only now, after output_inhibitory_indices). An excitatory source would inject a GABA conductance
+        # from a glutamatergic cell. Only reached when a pathway carries the tag.
+        if any_apical_gaba:
+            _cfg_pol = self.core_config
+            if not getattr(_cfg_pol, "enable_inhibitory_neurons", False) or self.cp_traits is None:
+                raise ValueError(
+                    "inject_explicit_wiring: receptor='gaba_a_apical' needs inhibitory neurons "
+                    "(cfg.enable_inhibitory_neurons and cp_traits, e.g. via output_inhibitory_indices)")
+            _inh_idx_pol = getattr(_cfg_pol, "inhibitory_trait_indices", None)
+            if _inh_idx_pol:
+                _is_inh_pol = cp.isin(self.cp_traits, cp.asarray(_inh_idx_pol, dtype=cp.int32))
+            else:
+                _is_inh_pol = (self.cp_traits == _cfg_pol.inhibitory_trait_index)
+            _ag_pre = cp.asarray(np.fromiter((t[0] for t, m in zip(keyed, ag_mask_host) if m), dtype=np.int64))
+            if _ag_pre.size and not bool(cp.all(_is_inh_pol[_ag_pre])):
+                raise ValueError(
+                    "inject_explicit_wiring: a receptor='gaba_a_apical' synapse has a non-inhibitory source neuron")
 
         # Re-initialize synapse-indexed arrays to match the new nnz.
         if self.gpu_config is not None:
@@ -8328,6 +8416,8 @@ class SimulationBridge:
             return False
         if self.cp_nmda_recurrent_synapse_mask is not None or self.cp_graded_synapse_mask is not None:
             return False
+        if self.cp_apical_gaba_synapse_mask is not None:
+            return False
         if self.cp_dendritic_source_activity is not None:
             return False
         # No extra per-step current contributions beyond I_syn + external + OU.
@@ -9176,6 +9266,30 @@ class SimulationBridge:
                     shape=self.cp_connections.shape,
                 )
 
+            # APICAL GABA_A SPLIT (cs-race f1i E3, 2026-10-27; dendrite-targeting SOM/Martinotti-like inhibition). For
+            # receptor=="gaba_a_apical" pathways, capture the routed synapses' (STP/transmission-gated) data for the
+            # apical conductance increment below, then ZERO those entries in the matrix the g_e/g_i matvec uses (the
+            # nmda_slow / graded split idiom above): a routed synapse gives NO somatic g_i (the axodendritic IPSP's
+            # attenuation at the soma is taken as total). GUARDED NO-OP: cp_apical_gaba_synapse_mask is None unless the
+            # flag is on and a pathway carries the tag, so this block is unreached and the matvec is byte-identical.
+            _apical_gaba_src_data = None
+            if self.cp_apical_gaba_synapse_mask is not None and self.cp_connections.nnz > 0:
+                if (not getattr(cfg, "enable_apical_gaba_routing", False) or not getattr(cfg, "enable_bdsp", False)
+                        or getattr(cfg, "enable_two_compartment_dap", False)):
+                    raise RuntimeError(
+                        "apical GABA_A routing mask is present but cfg.enable_apical_gaba_routing / enable_bdsp is off "
+                        "or enable_two_compartment_dap is on (config changed after wiring?)")
+                _ag_nnz = self.cp_connections.nnz
+                _ag_mask_f = self._ensure_gate_capacity(
+                    "cp_apical_gaba_synapse_mask", _ag_nnz, fill=False, dtype=cp.bool_
+                )[:_ag_nnz].astype(cp.float32)
+                _apical_gaba_src_data = effective_connections_matrix.data * _ag_mask_f
+                _soma_data = effective_connections_matrix.data * (1.0 - _ag_mask_f)
+                effective_connections_matrix = csp.csr_matrix(
+                    (_soma_data, self.cp_connections.indices, self.cp_connections.indptr),
+                    shape=self.cp_connections.shape,
+                )
+
             if _profiling: _backend_synchronize(); _prof['t_stp'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             # --- 2. Synaptic Conductance Update & Current Calculation ---
             decay_e = self._cached_decay_e
@@ -9323,6 +9437,28 @@ class SimulationBridge:
                         self.cp_conductance_g_e += _deterministic_csr_matvec(_WgT1.tocsr(), _a_cont) * cfg.propagation_strength
                     else:
                         self.cp_conductance_g_e += (_WgT1 @ _a_cont) * cfg.propagation_strength
+
+            # APICAL GABA_A CONDUCTANCE (cs-race f1i E4). Decay at the GABA_A time constant (the cached decay_i: no
+            # new tau), then increment from last step's spikes through the routed synapses only. Applied to v_apical in
+            # the BDSP apical update (E5), never to the soma. deterministic_transpose_matvec is honoured exactly as in
+            # the GABA_B block. GUARDED NO-OP: _apical_gaba_src_data is None unless routing is active.
+            if _apical_gaba_src_data is not None:
+                if self.cp_conductance_g_apical_gaba is None:
+                    self.cp_conductance_g_apical_gaba = cp.zeros(self.cp_membrane_potential_v.shape[0], dtype=cp.float32)
+                self.cp_conductance_g_apical_gaba = (self.cp_conductance_g_apical_gaba * decay_i).astype(cp.float32)
+                if _prev_any:
+                    _ag_mat = csp.csr_matrix(
+                        (_apical_gaba_src_data, self.cp_connections.indices, self.cp_connections.indptr),
+                        shape=self.cp_connections.shape)
+                    _ag_matT = _ag_mat.T
+                    if getattr(cfg, "deterministic_transpose_matvec", False):
+                        _ag_drive = _deterministic_csr_matvec(
+                            _ag_matT.tocsr(), self.cp_prev_firing_states.astype(cp.float32))
+                    else:
+                        _ag_drive = _ag_matT @ self.cp_prev_firing_states.astype(cp.float32)
+                    self.cp_conductance_g_apical_gaba += (
+                        _ag_drive * cp.float32(getattr(cfg, "apical_gaba_propagation_strength", 1.0))
+                    ).astype(cp.float32)
 
             total_input_current_pA = synaptic_current_I_syn_pA + self.cp_external_input_current
 
@@ -10651,6 +10787,11 @@ class SimulationBridge:
                         and self.cp_bdsp_apical_drive is not None:
                     _bdsp_raw_apical = self.cp_bdsp_apical_drive
                     self.cp_bdsp_apical_drive = _bdsp_raw_apical - self.cp_bdsp_int_drive
+                if self.cp_bdsp_apical_drive is None and self.cp_apical_gaba_synapse_mask is not None:
+                    raise RuntimeError(
+                        "apical GABA_A routing is active but cp_bdsp_apical_drive is None: the apical compartment is "
+                        "not integrated this step, so the routed conductance would be silently dropped (set a zero "
+                        "drive to integrate it)")
                 if self.cp_bdsp_apical_drive is not None:
                     # leaky integration of the top-down drive toward (E_rest + drive); tau = apical_tau_ms
                     _atau = cp.float32(max(getattr(cfg, "apical_tau_ms", 15.0), 1e-6))
@@ -10681,7 +10822,25 @@ class SimulationBridge:
                             _kkb = cp.float32(getattr(cfg, "apical_kir_k", 8.0))
                             _gkirb = cp.float32(_kir_gb) / (1.0 + cp.exp((self.cp_v_apical - _kvhb) / _kkb))
                             _dvb = _dvb + _gkirb * (_ekb - self.cp_v_apical)
+                    # APICAL GABA_A term (cs-race f1i E5, 2026-10-27): the routed dendrite-targeting conductance g_ap
+                    # (apical-leak units) against the APICAL driving force (E_i - v_apical), as a BOUNDED per-term
+                    # exponential-Euler step: it moves v_apical by (E_i - v0)(1 - exp(-g_ap*dt/tau)), which reaches
+                    # E_i at most and never passes it, at any g_ap (the 2026-09-29 overshoot family; kernels.py
+                    # fused_bounded_conductance_decay_and_current with C/dt -> tau/dt). This is the packet's
+                    # `_dvb += (tau/dt)(E_i - v0)(1 - exp(-g*dt/tau))` with the (dt/tau)(tau/dt) factor cancelled
+                    # analytically, so float32 rounding of that product cannot carry v past E_i. First order == the
+                    # explicit g_ap*(E_i - v0); g_ap == 0 gives exactly 0.0. Exponent clipped to [-80, 0] as in that
+                    # kernel. Computed from v0 (before the update), like every other term. Per-term bound only: an
+                    # aggregate overshoot with the KIR term (E_K -90 mV) is not excluded, as the engine documents.
+                    # GUARDED NO-OP: the mask is None unless routing is active (then the update line is unchanged).
+                    _ap_gaba_step = None
+                    if self.cp_apical_gaba_synapse_mask is not None and self.cp_conductance_g_apical_gaba is not None:
+                        _ei_ap = cp.float32(cfg.syn_reversal_potential_i)
+                        _ex_ap = cp.clip(-(self.cp_conductance_g_apical_gaba * _adt) / _atau, -80.0, 0.0)
+                        _ap_gaba_step = ((_ei_ap - self.cp_v_apical) * (1.0 - cp.exp(_ex_ap))).astype(cp.float32)
                     self.cp_v_apical = self.cp_v_apical + (_adt / _atau) * _dvb
+                    if _ap_gaba_step is not None:
+                        self.cp_v_apical = (self.cp_v_apical + _ap_gaba_step).astype(cp.float32)
                 if _bdsp_raw_apical is not None:
                     self.cp_bdsp_apical_drive = _bdsp_raw_apical   # restore the runner-supplied raw drive (no accumulation)
                 _beta = cp.float32(getattr(cfg, "bdsp_beta", 1.0))
@@ -11835,6 +11994,7 @@ class SimulationBridge:
                     or self.cp_plasticity_rate_gain is not None
                     or self.cp_transmission_gain is not None
                     or self.cp_gabab_synapse_mask is not None
+                    or self.cp_apical_gaba_synapse_mask is not None
                     or bool(getattr(self, "_plasticity_gate_to_synapses", {}))
                     or bool(getattr(self, "_transmission_gate_to_synapses", {}))
                 )
@@ -11849,6 +12009,7 @@ class SimulationBridge:
                         ("cp_plasticity_rate_gain", None),
                         ("cp_transmission_gain", None),
                         ("cp_gabab_synapse_mask", np.bool_),
+                        ("cp_apical_gaba_synapse_mask", np.bool_),
                     ):
                         routing_array = getattr(self, routing_attr, None)
                         if routing_array is not None:
@@ -12523,6 +12684,11 @@ class SimulationBridge:
                 )
                 self.cp_gabab_synapse_mask = _load_routing_array(
                     "cp_gabab_synapse_mask", cp.bool_
+                )
+                # Apical GABA_A routing (cs-race f1i E7): receptor identity is routing state; absent => None
+                # (byte-identical for every checkpoint saved without the routing).
+                self.cp_apical_gaba_synapse_mask = _load_routing_array(
+                    "cp_apical_gaba_synapse_mask", cp.bool_
                 )
                 (
                     self._plasticity_gate_to_synapses,
