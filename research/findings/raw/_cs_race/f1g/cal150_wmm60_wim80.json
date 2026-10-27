@@ -1,0 +1,4075 @@
+{
+  "backend": "numpy",
+  "c5_median_pa": {
+    "clause_a": 0.0209,
+    "clause_b": -0.0117
+  },
+  "cell_pass_c1_c4": false,
+  "device": "cpu",
+  "flags": {
+    "NIM": 8,
+    "W_IM": 80.0,
+    "W_MI": 20.0,
+    "W_MM": 60.0,
+    "encode_words": true
+  },
+  "grid": {
+    "NE": 24,
+    "U": 0.3,
+    "tau_f": 150.0
+  },
+  "grid_row": 3,
+  "ment_pa": 150.0,
+  "mode": "f1g_step0_calibration",
+  "per_seed": [
+    {
+      "c0": {
+        "ment_pa": 150.0,
+        "n_pulses": 7,
+        "pass": false,
+        "pulses": [
+          {
+            "min_cell_spikes": 5,
+            "n_cells": 8,
+            "total_spikes": 52,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 5,
+            "n_cells": 8,
+            "total_spikes": 52,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "frog"
+          },
+          {
+            "min_cell_spikes": 5,
+            "n_cells": 8,
+            "total_spikes": 50,
+            "word": "frog"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 6,
+            "n_cells": 8,
+            "total_spikes": 54,
+            "word": "lynx"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "grass"
+          }
+        ]
+      },
+      "c1": {
+        "all_engram_spikes": [
+          60,
+          0,
+          0
+        ],
+        "burst_ms": 154,
+        "commit_slot_spikes": [
+          1213,
+          0,
+          0
+        ],
+        "item": "c1",
+        "latch_ms": 360,
+        "max_word_hz": 51.1538,
+        "ment_pa": 150.0,
+        "ments_spikes": [
+          0,
+          0,
+          266,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "primed_engram_spikes": 60,
+        "primed_k": 0,
+        "pulse_events": [
+          {
+            "min_cell_spikes": 5,
+            "ms": 150,
+            "n_cells": 8,
+            "per_cell_spikes": [
+              10,
+              6,
+              5,
+              5,
+              6,
+              6,
+              6,
+              8
+            ],
+            "t0": 0,
+            "t1": 149,
+            "total_spikes": 52,
+            "word": "vole"
+          }
+        ],
+        "pulse_phase_spikes": 52,
+        "pulsed_rate_hz": 51.1538,
+        "seed": 41,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 80.0,
+          "W_MI": 20.0,
+          "W_MM": 60.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 650,
+        "window_ms": [
+          150,
+          800
+        ],
+        "word1_rate_hz": 51.1538,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 51.1538,
+          "yak": 0.0
+        }
+      },
+      "c2b": {
+        "all_engram_spikes": [
+          3,
+          0,
+          3
+        ],
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c2b",
+        "max_word_hz": 0.0,
+        "ment_pa": 150.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "pulse_events": [],
+        "pulse_phase_spikes": null,
+        "pulsed_rate_hz": null,
+        "seed": 41,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 80.0,
+          "W_MI": 20.0,
+          "W_MM": 60.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 2000,
+        "window_ms": [
+          0,
+          2000
+        ],
+        "word1_rate_hz": null,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c3": [
+        {
+          "all_engram_spikes": [
+            15,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            819,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 50.7143,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            0,
+            0,
+            142,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 5,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                10,
+                6,
+                5,
+                5,
+                6,
+                6,
+                6,
+                8
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 52,
+              "word": "vole"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "frog"
+            }
+          ],
+          "pulse_phase_spikes": 52,
+          "pulsed_rate_hz": 50.7143,
+          "seed": 41,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 50.7143,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 50.7143,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            22,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            876,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 50.0,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            140,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 5,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                6,
+                6,
+                6,
+                5,
+                6,
+                8,
+                8,
+                5
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 50,
+              "word": "frog"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "vole"
+            }
+          ],
+          "pulse_phase_spikes": 50,
+          "pulsed_rate_hz": 50.0,
+          "seed": 41,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 50.0,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 50.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            16,
+            15,
+            0
+          ],
+          "commit_slot_spikes": [
+            14,
+            837,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 49.6429,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            139,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 6,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                6,
+                6,
+                7,
+                6,
+                8,
+                6,
+                8,
+                7
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 54,
+              "word": "lynx"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "grass"
+            }
+          ],
+          "pulse_phase_spikes": 54,
+          "pulsed_rate_hz": 49.6429,
+          "seed": 41,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 49.6429,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 49.6429,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        }
+      ],
+      "c5": {
+        "clause_a_delta_pa": 0.005,
+        "clause_a_per_k": [
+          85.32,
+          85.325,
+          0.0
+        ],
+        "clause_b_delta_pa": 0.2234,
+        "clause_b_per_k": [
+          87.115,
+          86.8916,
+          0.0
+        ],
+        "encode_words_seen_by_race": true,
+        "window_ms": [
+          100,
+          200
+        ]
+      },
+      "config_readback": {
+        "enable_nmda_recurrent": true,
+        "enable_parameter_heterogeneity": true,
+        "enable_short_term_plasticity": true,
+        "w_gis_read_back": 30.0
+      },
+      "pass": {
+        "c1": false,
+        "c2": true,
+        "c3": false,
+        "c4": false
+      },
+      "seed": 41
+    },
+    {
+      "c0": {
+        "ment_pa": 150.0,
+        "n_pulses": 7,
+        "pass": false,
+        "pulses": [
+          {
+            "min_cell_spikes": 8,
+            "n_cells": 8,
+            "total_spikes": 67,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 8,
+            "n_cells": 8,
+            "total_spikes": 67,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "frog"
+          },
+          {
+            "min_cell_spikes": 5,
+            "n_cells": 8,
+            "total_spikes": 58,
+            "word": "frog"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 6,
+            "n_cells": 8,
+            "total_spikes": 57,
+            "word": "lynx"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "grass"
+          }
+        ]
+      },
+      "c1": {
+        "all_engram_spikes": [
+          57,
+          0,
+          0
+        ],
+        "burst_ms": 154,
+        "commit_slot_spikes": [
+          1389,
+          0,
+          0
+        ],
+        "item": "c1",
+        "latch_ms": 360,
+        "max_word_hz": 53.8462,
+        "ment_pa": 150.0,
+        "ments_spikes": [
+          0,
+          0,
+          280,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "primed_engram_spikes": 57,
+        "primed_k": 0,
+        "pulse_events": [
+          {
+            "min_cell_spikes": 8,
+            "ms": 150,
+            "n_cells": 8,
+            "per_cell_spikes": [
+              8,
+              8,
+              9,
+              8,
+              8,
+              9,
+              9,
+              8
+            ],
+            "t0": 0,
+            "t1": 149,
+            "total_spikes": 67,
+            "word": "vole"
+          }
+        ],
+        "pulse_phase_spikes": 67,
+        "pulsed_rate_hz": 53.8462,
+        "seed": 42,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 80.0,
+          "W_MI": 20.0,
+          "W_MM": 60.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 650,
+        "window_ms": [
+          150,
+          800
+        ],
+        "word1_rate_hz": 53.8462,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 53.8462,
+          "yak": 0.0
+        }
+      },
+      "c2b": {
+        "all_engram_spikes": [
+          0,
+          1,
+          1
+        ],
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c2b",
+        "max_word_hz": 0.0,
+        "ment_pa": 150.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "pulse_events": [],
+        "pulse_phase_spikes": null,
+        "pulsed_rate_hz": null,
+        "seed": 42,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 80.0,
+          "W_MI": 20.0,
+          "W_MM": 60.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 2000,
+        "window_ms": [
+          0,
+          2000
+        ],
+        "word1_rate_hz": null,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c3": [
+        {
+          "all_engram_spikes": [
+            12,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            817,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 55.3571,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            0,
+            0,
+            155,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 8,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                8,
+                8,
+                9,
+                8,
+                8,
+                9,
+                9,
+                8
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 67,
+              "word": "vole"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "frog"
+            }
+          ],
+          "pulse_phase_spikes": 67,
+          "pulsed_rate_hz": 55.3571,
+          "seed": 42,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 55.3571,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 55.3571,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            15,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            858,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 52.5,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            147,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 5,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                9,
+                7,
+                6,
+                8,
+                7,
+                5,
+                8,
+                8
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 58,
+              "word": "frog"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "vole"
+            }
+          ],
+          "pulse_phase_spikes": 58,
+          "pulsed_rate_hz": 52.5,
+          "seed": 42,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 52.5,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 52.5,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            9,
+            16,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            847,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 52.5,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            147,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 6,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                8,
+                7,
+                7,
+                7,
+                8,
+                6,
+                8,
+                6
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 57,
+              "word": "lynx"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "grass"
+            }
+          ],
+          "pulse_phase_spikes": 57,
+          "pulsed_rate_hz": 52.5,
+          "seed": 42,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 52.5,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 52.5,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        }
+      ],
+      "c5": {
+        "clause_a_delta_pa": -0.002,
+        "clause_a_per_k": [
+          92.6476,
+          92.6456,
+          0.0
+        ],
+        "clause_b_delta_pa": -0.0251,
+        "clause_b_per_k": [
+          88.932,
+          88.9571,
+          0.0
+        ],
+        "encode_words_seen_by_race": true,
+        "window_ms": [
+          100,
+          200
+        ]
+      },
+      "config_readback": {
+        "enable_nmda_recurrent": true,
+        "enable_parameter_heterogeneity": true,
+        "enable_short_term_plasticity": true,
+        "w_gis_read_back": 30.0
+      },
+      "pass": {
+        "c1": false,
+        "c2": true,
+        "c3": false,
+        "c4": false
+      },
+      "seed": 42
+    },
+    {
+      "c0": {
+        "ment_pa": 150.0,
+        "n_pulses": 7,
+        "pass": false,
+        "pulses": [
+          {
+            "min_cell_spikes": 6,
+            "n_cells": 8,
+            "total_spikes": 58,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 6,
+            "n_cells": 8,
+            "total_spikes": 58,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "frog"
+          },
+          {
+            "min_cell_spikes": 6,
+            "n_cells": 8,
+            "total_spikes": 55,
+            "word": "frog"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 6,
+            "n_cells": 8,
+            "total_spikes": 58,
+            "word": "lynx"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "grass"
+          }
+        ]
+      },
+      "c1": {
+        "all_engram_spikes": [
+          45,
+          0,
+          0
+        ],
+        "burst_ms": 154,
+        "commit_slot_spikes": [
+          1347,
+          0,
+          0
+        ],
+        "item": "c1",
+        "latch_ms": 356,
+        "max_word_hz": 52.3077,
+        "ment_pa": 150.0,
+        "ments_spikes": [
+          0,
+          0,
+          272,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "primed_engram_spikes": 45,
+        "primed_k": 0,
+        "pulse_events": [
+          {
+            "min_cell_spikes": 6,
+            "ms": 150,
+            "n_cells": 8,
+            "per_cell_spikes": [
+              7,
+              8,
+              8,
+              7,
+              6,
+              6,
+              8,
+              8
+            ],
+            "t0": 0,
+            "t1": 149,
+            "total_spikes": 58,
+            "word": "vole"
+          }
+        ],
+        "pulse_phase_spikes": 58,
+        "pulsed_rate_hz": 52.3077,
+        "seed": 43,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 80.0,
+          "W_MI": 20.0,
+          "W_MM": 60.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 650,
+        "window_ms": [
+          150,
+          800
+        ],
+        "word1_rate_hz": 52.3077,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 52.3077,
+          "yak": 0.0
+        }
+      },
+      "c2b": {
+        "all_engram_spikes": [
+          1,
+          0,
+          2
+        ],
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c2b",
+        "max_word_hz": 0.0,
+        "ment_pa": 150.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "pulse_events": [],
+        "pulse_phase_spikes": null,
+        "pulsed_rate_hz": null,
+        "seed": 43,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 80.0,
+          "W_MI": 20.0,
+          "W_MM": 60.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 2000,
+        "window_ms": [
+          0,
+          2000
+        ],
+        "word1_rate_hz": null,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c3": [
+        {
+          "all_engram_spikes": [
+            13,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            916,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 52.8571,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            0,
+            0,
+            148,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 6,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                7,
+                8,
+                8,
+                7,
+                6,
+                6,
+                8,
+                8
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 58,
+              "word": "vole"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "frog"
+            }
+          ],
+          "pulse_phase_spikes": 58,
+          "pulsed_rate_hz": 52.8571,
+          "seed": 43,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 52.8571,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 52.8571,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            19,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            957,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 52.8571,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            148,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 6,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                7,
+                6,
+                7,
+                8,
+                6,
+                8,
+                7,
+                6
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 55,
+              "word": "frog"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "vole"
+            }
+          ],
+          "pulse_phase_spikes": 55,
+          "pulsed_rate_hz": 52.8571,
+          "seed": 43,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 52.8571,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 52.8571,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            1,
+            28,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            836,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 53.2143,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            149,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 6,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                7,
+                6,
+                8,
+                9,
+                7,
+                6,
+                8,
+                7
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 58,
+              "word": "lynx"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "grass"
+            }
+          ],
+          "pulse_phase_spikes": 58,
+          "pulsed_rate_hz": 53.2143,
+          "seed": 43,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 53.2143,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 53.2143,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        }
+      ],
+      "c5": {
+        "clause_a_delta_pa": 0.1388,
+        "clause_a_per_k": [
+          79.8911,
+          80.0299,
+          0.0
+        ],
+        "clause_b_delta_pa": 0.0017,
+        "clause_b_per_k": [
+          85.5074,
+          85.5057,
+          0.0
+        ],
+        "encode_words_seen_by_race": true,
+        "window_ms": [
+          100,
+          200
+        ]
+      },
+      "config_readback": {
+        "enable_nmda_recurrent": true,
+        "enable_parameter_heterogeneity": true,
+        "enable_short_term_plasticity": true,
+        "w_gis_read_back": 30.0
+      },
+      "pass": {
+        "c1": false,
+        "c2": true,
+        "c3": false,
+        "c4": false
+      },
+      "seed": 43
+    },
+    {
+      "c0": {
+        "ment_pa": 150.0,
+        "n_pulses": 7,
+        "pass": false,
+        "pulses": [
+          {
+            "min_cell_spikes": 6,
+            "n_cells": 8,
+            "total_spikes": 56,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 6,
+            "n_cells": 8,
+            "total_spikes": 56,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "frog"
+          },
+          {
+            "min_cell_spikes": 5,
+            "n_cells": 8,
+            "total_spikes": 59,
+            "word": "frog"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 6,
+            "n_cells": 8,
+            "total_spikes": 58,
+            "word": "lynx"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "grass"
+          }
+        ]
+      },
+      "c1": {
+        "all_engram_spikes": [
+          54,
+          0,
+          0
+        ],
+        "burst_ms": 192,
+        "commit_slot_spikes": [
+          1221,
+          0,
+          0
+        ],
+        "item": "c1",
+        "latch_ms": 344,
+        "max_word_hz": 57.6923,
+        "ment_pa": 150.0,
+        "ments_spikes": [
+          0,
+          0,
+          300,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "primed_engram_spikes": 54,
+        "primed_k": 0,
+        "pulse_events": [
+          {
+            "min_cell_spikes": 6,
+            "ms": 150,
+            "n_cells": 8,
+            "per_cell_spikes": [
+              9,
+              6,
+              6,
+              7,
+              9,
+              7,
+              6,
+              6
+            ],
+            "t0": 0,
+            "t1": 149,
+            "total_spikes": 56,
+            "word": "vole"
+          }
+        ],
+        "pulse_phase_spikes": 56,
+        "pulsed_rate_hz": 57.6923,
+        "seed": 44,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 80.0,
+          "W_MI": 20.0,
+          "W_MM": 60.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 650,
+        "window_ms": [
+          150,
+          800
+        ],
+        "word1_rate_hz": 57.6923,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 57.6923,
+          "yak": 0.0
+        }
+      },
+      "c2b": {
+        "all_engram_spikes": [
+          2,
+          0,
+          1
+        ],
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c2b",
+        "max_word_hz": 0.0,
+        "ment_pa": 150.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "pulse_events": [],
+        "pulse_phase_spikes": null,
+        "pulsed_rate_hz": null,
+        "seed": 44,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 80.0,
+          "W_MI": 20.0,
+          "W_MM": 60.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 2000,
+        "window_ms": [
+          0,
+          2000
+        ],
+        "word1_rate_hz": null,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c3": [
+        {
+          "all_engram_spikes": [
+            20,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            787,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 56.0714,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            0,
+            0,
+            157,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 6,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                9,
+                6,
+                6,
+                7,
+                9,
+                7,
+                6,
+                6
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 56,
+              "word": "vole"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "frog"
+            }
+          ],
+          "pulse_phase_spikes": 56,
+          "pulsed_rate_hz": 56.0714,
+          "seed": 44,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 56.0714,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 56.0714,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            16,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            925,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 56.4286,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            158,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 5,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                5,
+                8,
+                8,
+                10,
+                9,
+                6,
+                6,
+                7
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 59,
+              "word": "frog"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "vole"
+            }
+          ],
+          "pulse_phase_spikes": 59,
+          "pulsed_rate_hz": 56.4286,
+          "seed": 44,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 56.4286,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 56.4286,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            11,
+            12,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            677,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 53.9286,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            151,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 6,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                8,
+                7,
+                6,
+                6,
+                8,
+                10,
+                6,
+                7
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 58,
+              "word": "lynx"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "grass"
+            }
+          ],
+          "pulse_phase_spikes": 58,
+          "pulsed_rate_hz": 53.9286,
+          "seed": 44,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 53.9286,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 53.9286,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        }
+      ],
+      "c5": {
+        "clause_a_delta_pa": 0.0367,
+        "clause_a_per_k": [
+          100.4539,
+          100.4906,
+          0.0
+        ],
+        "clause_b_delta_pa": 0.0548,
+        "clause_b_per_k": [
+          92.0261,
+          91.9713,
+          0.0
+        ],
+        "encode_words_seen_by_race": true,
+        "window_ms": [
+          100,
+          200
+        ]
+      },
+      "config_readback": {
+        "enable_nmda_recurrent": true,
+        "enable_parameter_heterogeneity": true,
+        "enable_short_term_plasticity": true,
+        "w_gis_read_back": 30.0
+      },
+      "pass": {
+        "c1": false,
+        "c2": true,
+        "c3": false,
+        "c4": false
+      },
+      "seed": 44
+    },
+    {
+      "c0": {
+        "ment_pa": 150.0,
+        "n_pulses": 7,
+        "pass": false,
+        "pulses": [
+          {
+            "min_cell_spikes": 7,
+            "n_cells": 8,
+            "total_spikes": 61,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 7,
+            "n_cells": 8,
+            "total_spikes": 61,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "frog"
+          },
+          {
+            "min_cell_spikes": 6,
+            "n_cells": 8,
+            "total_spikes": 60,
+            "word": "frog"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 6,
+            "n_cells": 8,
+            "total_spikes": 58,
+            "word": "lynx"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "grass"
+          }
+        ]
+      },
+      "c1": {
+        "all_engram_spikes": [
+          38,
+          0,
+          0
+        ],
+        "burst_ms": 197,
+        "commit_slot_spikes": [
+          1333,
+          0,
+          0
+        ],
+        "item": "c1",
+        "latch_ms": 341,
+        "max_word_hz": 55.0,
+        "ment_pa": 150.0,
+        "ments_spikes": [
+          0,
+          0,
+          286,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "primed_engram_spikes": 38,
+        "primed_k": 0,
+        "pulse_events": [
+          {
+            "min_cell_spikes": 7,
+            "ms": 150,
+            "n_cells": 8,
+            "per_cell_spikes": [
+              8,
+              8,
+              7,
+              8,
+              7,
+              8,
+              7,
+              8
+            ],
+            "t0": 0,
+            "t1": 149,
+            "total_spikes": 61,
+            "word": "vole"
+          }
+        ],
+        "pulse_phase_spikes": 61,
+        "pulsed_rate_hz": 55.0,
+        "seed": 45,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 80.0,
+          "W_MI": 20.0,
+          "W_MM": 60.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 650,
+        "window_ms": [
+          150,
+          800
+        ],
+        "word1_rate_hz": 55.0,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 55.0,
+          "yak": 0.0
+        }
+      },
+      "c2b": {
+        "all_engram_spikes": [
+          0,
+          0,
+          0
+        ],
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c2b",
+        "max_word_hz": 0.0,
+        "ment_pa": 150.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "pulse_events": [],
+        "pulse_phase_spikes": null,
+        "pulsed_rate_hz": null,
+        "seed": 45,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 80.0,
+          "W_MI": 20.0,
+          "W_MM": 60.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 2000,
+        "window_ms": [
+          0,
+          2000
+        ],
+        "word1_rate_hz": null,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c3": [
+        {
+          "all_engram_spikes": [
+            19,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            948,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 53.2143,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            0,
+            0,
+            149,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 7,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                8,
+                8,
+                7,
+                8,
+                7,
+                8,
+                7,
+                8
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 61,
+              "word": "vole"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "frog"
+            }
+          ],
+          "pulse_phase_spikes": 61,
+          "pulsed_rate_hz": 53.2143,
+          "seed": 45,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 53.2143,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 53.2143,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            18,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            906,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 52.8571,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            148,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 6,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                6,
+                8,
+                8,
+                6,
+                7,
+                10,
+                7,
+                8
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 60,
+              "word": "frog"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "vole"
+            }
+          ],
+          "pulse_phase_spikes": 60,
+          "pulsed_rate_hz": 52.8571,
+          "seed": 45,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 52.8571,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 52.8571,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            15,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            855,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 54.2857,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            152,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 6,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                9,
+                6,
+                6,
+                8,
+                7,
+                7,
+                9,
+                6
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 58,
+              "word": "lynx"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "grass"
+            }
+          ],
+          "pulse_phase_spikes": 58,
+          "pulsed_rate_hz": 54.2857,
+          "seed": 45,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 54.2857,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 54.2857,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        }
+      ],
+      "c5": {
+        "clause_a_delta_pa": -0.1256,
+        "clause_a_per_k": [
+          72.9509,
+          72.8253,
+          0.0
+        ],
+        "clause_b_delta_pa": -0.0703,
+        "clause_b_per_k": [
+          75.8114,
+          75.8817,
+          0.0
+        ],
+        "encode_words_seen_by_race": true,
+        "window_ms": [
+          100,
+          200
+        ]
+      },
+      "config_readback": {
+        "enable_nmda_recurrent": true,
+        "enable_parameter_heterogeneity": true,
+        "enable_short_term_plasticity": true,
+        "w_gis_read_back": 30.0
+      },
+      "pass": {
+        "c1": false,
+        "c2": true,
+        "c3": false,
+        "c4": false
+      },
+      "seed": 45
+    },
+    {
+      "c0": {
+        "ment_pa": 150.0,
+        "n_pulses": 7,
+        "pass": false,
+        "pulses": [
+          {
+            "min_cell_spikes": 7,
+            "n_cells": 8,
+            "total_spikes": 72,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 7,
+            "n_cells": 8,
+            "total_spikes": 72,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 1,
+            "word": "frog"
+          },
+          {
+            "min_cell_spikes": 6,
+            "n_cells": 8,
+            "total_spikes": 59,
+            "word": "frog"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 1,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 6,
+            "n_cells": 8,
+            "total_spikes": 67,
+            "word": "lynx"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "grass"
+          }
+        ]
+      },
+      "c1": {
+        "all_engram_spikes": [
+          50,
+          0,
+          0
+        ],
+        "burst_ms": 280,
+        "commit_slot_spikes": [
+          1285,
+          0,
+          0
+        ],
+        "item": "c1",
+        "latch_ms": 374,
+        "max_word_hz": 56.5385,
+        "ment_pa": 150.0,
+        "ments_spikes": [
+          0,
+          0,
+          294,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "primed_engram_spikes": 50,
+        "primed_k": 0,
+        "pulse_events": [
+          {
+            "min_cell_spikes": 7,
+            "ms": 150,
+            "n_cells": 8,
+            "per_cell_spikes": [
+              8,
+              7,
+              9,
+              9,
+              8,
+              11,
+              11,
+              9
+            ],
+            "t0": 0,
+            "t1": 149,
+            "total_spikes": 72,
+            "word": "vole"
+          }
+        ],
+        "pulse_phase_spikes": 72,
+        "pulsed_rate_hz": 56.5385,
+        "seed": 46,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 80.0,
+          "W_MI": 20.0,
+          "W_MM": 60.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 650,
+        "window_ms": [
+          150,
+          800
+        ],
+        "word1_rate_hz": 56.5385,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 56.5385,
+          "yak": 0.0
+        }
+      },
+      "c2b": {
+        "all_engram_spikes": [
+          1,
+          2,
+          0
+        ],
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c2b",
+        "max_word_hz": 0.0,
+        "ment_pa": 150.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "pulse_events": [],
+        "pulse_phase_spikes": null,
+        "pulsed_rate_hz": null,
+        "seed": 46,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 80.0,
+          "W_MI": 20.0,
+          "W_MM": 60.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 2000,
+        "window_ms": [
+          0,
+          2000
+        ],
+        "word1_rate_hz": null,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c3": [
+        {
+          "all_engram_spikes": [
+            14,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            878,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 57.5,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            0,
+            0,
+            161,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 7,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                8,
+                7,
+                9,
+                9,
+                8,
+                11,
+                11,
+                9
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 72,
+              "word": "vole"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 1,
+              "word": "frog"
+            }
+          ],
+          "pulse_phase_spikes": 72,
+          "pulsed_rate_hz": 57.5,
+          "seed": 46,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 57.5,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 57.5,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            14,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            939,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 56.0714,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            157,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 6,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                8,
+                7,
+                6,
+                7,
+                8,
+                7,
+                10,
+                6
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 59,
+              "word": "frog"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 1,
+              "word": "vole"
+            }
+          ],
+          "pulse_phase_spikes": 59,
+          "pulsed_rate_hz": 56.0714,
+          "seed": 46,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 56.0714,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 56.0714,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            34,
+            29,
+            0
+          ],
+          "commit_slot_spikes": [
+            453,
+            9,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 56.7857,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            159,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 6,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                11,
+                9,
+                10,
+                9,
+                8,
+                7,
+                7,
+                6
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 67,
+              "word": "lynx"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "grass"
+            }
+          ],
+          "pulse_phase_spikes": 67,
+          "pulsed_rate_hz": 56.7857,
+          "seed": 46,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 56.7857,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 56.7857,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        }
+      ],
+      "c5": {
+        "clause_a_delta_pa": 0.3871,
+        "clause_a_per_k": [
+          113.9459,
+          114.333,
+          0.0
+        ],
+        "clause_b_delta_pa": 0.4355,
+        "clause_b_per_k": [
+          96.8025,
+          96.367,
+          0.0
+        ],
+        "encode_words_seen_by_race": true,
+        "window_ms": [
+          100,
+          200
+        ]
+      },
+      "config_readback": {
+        "enable_nmda_recurrent": true,
+        "enable_parameter_heterogeneity": true,
+        "enable_short_term_plasticity": true,
+        "w_gis_read_back": 30.0
+      },
+      "pass": {
+        "c1": false,
+        "c2": true,
+        "c3": false,
+        "c4": false
+      },
+      "seed": 46
+    },
+    {
+      "c0": {
+        "ment_pa": 150.0,
+        "n_pulses": 7,
+        "pass": false,
+        "pulses": [
+          {
+            "min_cell_spikes": 7,
+            "n_cells": 8,
+            "total_spikes": 64,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 7,
+            "n_cells": 8,
+            "total_spikes": 64,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "frog"
+          },
+          {
+            "min_cell_spikes": 5,
+            "n_cells": 8,
+            "total_spikes": 58,
+            "word": "frog"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 6,
+            "n_cells": 8,
+            "total_spikes": 57,
+            "word": "lynx"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "grass"
+          }
+        ]
+      },
+      "c1": {
+        "all_engram_spikes": [
+          44,
+          0,
+          0
+        ],
+        "burst_ms": 191,
+        "commit_slot_spikes": [
+          1524,
+          0,
+          0
+        ],
+        "item": "c1",
+        "latch_ms": 326,
+        "max_word_hz": 55.3846,
+        "ment_pa": 150.0,
+        "ments_spikes": [
+          0,
+          0,
+          288,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "primed_engram_spikes": 44,
+        "primed_k": 0,
+        "pulse_events": [
+          {
+            "min_cell_spikes": 7,
+            "ms": 150,
+            "n_cells": 8,
+            "per_cell_spikes": [
+              8,
+              8,
+              8,
+              7,
+              9,
+              8,
+              9,
+              7
+            ],
+            "t0": 0,
+            "t1": 149,
+            "total_spikes": 64,
+            "word": "vole"
+          }
+        ],
+        "pulse_phase_spikes": 64,
+        "pulsed_rate_hz": 55.3846,
+        "seed": 47,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 80.0,
+          "W_MI": 20.0,
+          "W_MM": 60.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 650,
+        "window_ms": [
+          150,
+          800
+        ],
+        "word1_rate_hz": 55.3846,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 55.3846,
+          "yak": 0.0
+        }
+      },
+      "c2b": {
+        "all_engram_spikes": [
+          2,
+          1,
+          0
+        ],
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c2b",
+        "max_word_hz": 0.0,
+        "ment_pa": 150.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "pulse_events": [],
+        "pulse_phase_spikes": null,
+        "pulsed_rate_hz": null,
+        "seed": 47,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 80.0,
+          "W_MI": 20.0,
+          "W_MM": 60.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 2000,
+        "window_ms": [
+          0,
+          2000
+        ],
+        "word1_rate_hz": null,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c3": [
+        {
+          "all_engram_spikes": [
+            15,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            919,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 54.2857,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            0,
+            0,
+            152,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 7,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                8,
+                8,
+                8,
+                7,
+                9,
+                8,
+                9,
+                7
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 64,
+              "word": "vole"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "frog"
+            }
+          ],
+          "pulse_phase_spikes": 64,
+          "pulsed_rate_hz": 54.2857,
+          "seed": 47,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 54.2857,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 54.2857,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            18,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            948,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 50.3571,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            141,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 5,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                8,
+                8,
+                6,
+                7,
+                8,
+                8,
+                5,
+                8
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 58,
+              "word": "frog"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "vole"
+            }
+          ],
+          "pulse_phase_spikes": 58,
+          "pulsed_rate_hz": 50.3571,
+          "seed": 47,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 50.3571,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 50.3571,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            12,
+            7,
+            0
+          ],
+          "commit_slot_spikes": [
+            796,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 53.9286,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            151,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 6,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                6,
+                8,
+                7,
+                8,
+                6,
+                6,
+                6,
+                10
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 57,
+              "word": "lynx"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "grass"
+            }
+          ],
+          "pulse_phase_spikes": 57,
+          "pulsed_rate_hz": 53.9286,
+          "seed": 47,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 53.9286,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 53.9286,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        }
+      ],
+      "c5": {
+        "clause_a_delta_pa": -0.1177,
+        "clause_a_per_k": [
+          102.2079,
+          102.0902,
+          0.0
+        ],
+        "clause_b_delta_pa": -0.0505,
+        "clause_b_per_k": [
+          106.3764,
+          106.4269,
+          0.0
+        ],
+        "encode_words_seen_by_race": true,
+        "window_ms": [
+          100,
+          200
+        ]
+      },
+      "config_readback": {
+        "enable_nmda_recurrent": true,
+        "enable_parameter_heterogeneity": true,
+        "enable_short_term_plasticity": true,
+        "w_gis_read_back": 30.0
+      },
+      "pass": {
+        "c1": false,
+        "c2": true,
+        "c3": false,
+        "c4": false
+      },
+      "seed": 47
+    },
+    {
+      "c0": {
+        "ment_pa": 150.0,
+        "n_pulses": 7,
+        "pass": false,
+        "pulses": [
+          {
+            "min_cell_spikes": 6,
+            "n_cells": 8,
+            "total_spikes": 52,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 6,
+            "n_cells": 8,
+            "total_spikes": 52,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "frog"
+          },
+          {
+            "min_cell_spikes": 6,
+            "n_cells": 8,
+            "total_spikes": 65,
+            "word": "frog"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "vole"
+          },
+          {
+            "min_cell_spikes": 7,
+            "n_cells": 8,
+            "total_spikes": 64,
+            "word": "lynx"
+          },
+          {
+            "min_cell_spikes": 0,
+            "n_cells": 8,
+            "total_spikes": 0,
+            "word": "grass"
+          }
+        ]
+      },
+      "c1": {
+        "all_engram_spikes": [
+          76,
+          0,
+          0
+        ],
+        "burst_ms": 154,
+        "commit_slot_spikes": [
+          1182,
+          0,
+          0
+        ],
+        "item": "c1",
+        "latch_ms": 355,
+        "max_word_hz": 50.5769,
+        "ment_pa": 150.0,
+        "ments_spikes": [
+          0,
+          0,
+          263,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "primed_engram_spikes": 76,
+        "primed_k": 0,
+        "pulse_events": [
+          {
+            "min_cell_spikes": 6,
+            "ms": 150,
+            "n_cells": 8,
+            "per_cell_spikes": [
+              6,
+              8,
+              8,
+              6,
+              6,
+              6,
+              6,
+              6
+            ],
+            "t0": 0,
+            "t1": 149,
+            "total_spikes": 52,
+            "word": "vole"
+          }
+        ],
+        "pulse_phase_spikes": 52,
+        "pulsed_rate_hz": 50.5769,
+        "seed": 48,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 80.0,
+          "W_MI": 20.0,
+          "W_MM": 60.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 650,
+        "window_ms": [
+          150,
+          800
+        ],
+        "word1_rate_hz": 50.5769,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 50.5769,
+          "yak": 0.0
+        }
+      },
+      "c2b": {
+        "all_engram_spikes": [
+          2,
+          0,
+          2
+        ],
+        "commit_slot_spikes": [
+          0,
+          0,
+          0
+        ],
+        "item": "c2b",
+        "max_word_hz": 0.0,
+        "ment_pa": 150.0,
+        "ments_spikes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "pulse_events": [],
+        "pulse_phase_spikes": null,
+        "pulsed_rate_hz": null,
+        "seed": 48,
+        "trace_flags": {
+          "NIM": 8,
+          "W_IM": 80.0,
+          "W_MI": 20.0,
+          "W_MM": 60.0
+        },
+        "unpulsed_max_hz": 0.0,
+        "window_len_ms": 2000,
+        "window_ms": [
+          0,
+          2000
+        ],
+        "word1_rate_hz": null,
+        "word2_rate_hz": null,
+        "word_rates_hz": {
+          "chase": 0.0,
+          "eat": 0.0,
+          "frog": 0.0,
+          "grass": 0.0,
+          "graze": 0.0,
+          "lynx": 0.0,
+          "moose": 0.0,
+          "vole": 0.0,
+          "yak": 0.0
+        }
+      },
+      "c3": [
+        {
+          "all_engram_spikes": [
+            16,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            826,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 45.7143,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            0,
+            0,
+            128,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 6,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                6,
+                8,
+                8,
+                6,
+                6,
+                6,
+                6,
+                6
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 52,
+              "word": "vole"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "frog"
+            }
+          ],
+          "pulse_phase_spikes": 52,
+          "pulsed_rate_hz": 45.7143,
+          "seed": 48,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 45.7143,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 45.7143,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            0,
+            20,
+            0
+          ],
+          "commit_slot_spikes": [
+            0,
+            759,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 51.4286,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            0,
+            0,
+            0,
+            144,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 6,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                9,
+                9,
+                9,
+                6,
+                9,
+                7,
+                7,
+                9
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 65,
+              "word": "frog"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "vole"
+            }
+          ],
+          "pulse_phase_spikes": 65,
+          "pulsed_rate_hz": 51.4286,
+          "seed": 48,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 51.4286,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 51.4286,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 0.0,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        },
+        {
+          "all_engram_spikes": [
+            20,
+            0,
+            0
+          ],
+          "commit_slot_spikes": [
+            794,
+            0,
+            0
+          ],
+          "item": "c3",
+          "max_word_hz": 52.1429,
+          "ment_pa": 150.0,
+          "ments_spikes": [
+            146,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "pulse_events": [
+            {
+              "min_cell_spikes": 7,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                8,
+                9,
+                7,
+                7,
+                9,
+                7,
+                9,
+                8
+              ],
+              "t0": 0,
+              "t1": 149,
+              "total_spikes": 64,
+              "word": "lynx"
+            },
+            {
+              "min_cell_spikes": 0,
+              "ms": 150,
+              "n_cells": 8,
+              "per_cell_spikes": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "t0": 300,
+              "t1": 449,
+              "total_spikes": 0,
+              "word": "grass"
+            }
+          ],
+          "pulse_phase_spikes": 64,
+          "pulsed_rate_hz": 52.1429,
+          "seed": 48,
+          "trace_flags": {
+            "NIM": 8,
+            "W_IM": 80.0,
+            "W_MI": 20.0,
+            "W_MM": 60.0
+          },
+          "unpulsed_max_hz": 0.0,
+          "window_len_ms": 350,
+          "window_ms": [
+            600,
+            950
+          ],
+          "word1_rate_hz": 52.1429,
+          "word2_rate_hz": 0.0,
+          "word_rates_hz": {
+            "chase": 0.0,
+            "eat": 0.0,
+            "frog": 0.0,
+            "grass": 0.0,
+            "graze": 0.0,
+            "lynx": 52.1429,
+            "moose": 0.0,
+            "vole": 0.0,
+            "yak": 0.0
+          }
+        }
+      ],
+      "c5": {
+        "clause_a_delta_pa": 0.0845,
+        "clause_a_per_k": [
+          107.3215,
+          107.406,
+          0.0
+        ],
+        "clause_b_delta_pa": -3.0311,
+        "clause_b_per_k": [
+          93.4604,
+          96.4915,
+          0.0
+        ],
+        "encode_words_seen_by_race": true,
+        "window_ms": [
+          100,
+          200
+        ]
+      },
+      "config_readback": {
+        "enable_nmda_recurrent": true,
+        "enable_parameter_heterogeneity": true,
+        "enable_short_term_plasticity": true,
+        "w_gis_read_back": 30.0
+      },
+      "pass": {
+        "c1": false,
+        "c2": true,
+        "c3": false,
+        "c4": false
+      },
+      "seed": 48
+    }
+  ],
+  "preconditions": {
+    "calibration_seeds": "41-48 only; no DEV/CONFIRM arm has run on them",
+    "frozen_selection": "smallest W_MM, then smallest W_IM among cells passing C1-C4 on 8/8 seeds",
+    "grid_row": 3,
+    "no_race": "cue withheld in every calibration run",
+    "thresholds_frozen_in_packet": {
+      "C0_min_spikes_per_cell": "1 (RULING cs-race-f1g-0-1022 C)",
+      "C1_hz": [
+        2.0,
+        20.0
+      ],
+      "STOP_SMOKE_pa": 2.0,
+      "flip_scale_pa": [
+        4.0,
+        6.0
+      ],
+      "quiet_hz": 1.0
+    },
+    "w_gis": 30.0
+  },
+  "probe": "cs_race_f1",
+  "record_label": {
+    "latch_exclusion_w_gis": 30.0
+  },
+  "seeds": [
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48
+  ],
+  "seeds_passing_c1_c4": 0,
+  "stop_preview": {
+    "STOP_C0": true,
+    "STOP_CAL": true,
+    "STOP_SMOKE": true,
+    "note": "STOP-ID is judged by the separate identity run"
+  }
+}

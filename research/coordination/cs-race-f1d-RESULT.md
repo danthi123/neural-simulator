@@ -1,5 +1,7 @@
 # cs-race-f1d RESULT — steps 2-3, measurement M (PROVISIONAL)
 
+> **AMENDMENT (2026-10-22, RULING cs-race-f1g-0-1022):** clause (b) and every mention-ownership reading in this file are UNDEFINED (carrier unengaged: 0 mention spikes at MENT_PA 40 pA, sub-rheobase for the mention slots), NOT a null; clause (a) (recency) and the controls stand; clause (c) used MENT_MAX_PA 90 and fired.
+
 **Status:** agent-filed, PROVISIONAL. Per the f1d step-3 handoff, adoption and
 any ruling on these readings are Claude's; the driver stops after this commit.
 **Provenance:** branch `research/cs-race` @ `b754567f4` (RESULT lands on top);
