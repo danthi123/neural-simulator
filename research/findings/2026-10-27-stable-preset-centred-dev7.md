@@ -40,7 +40,7 @@ preset are the same value. I built the missing whole-brain switch (`SIM_PRESET_C
 switch ran in 10 production organs and moved about 4900 to 12800 neurons per group (summed over bridges), the u-held
 b < 0 cells stayed exactly 112 (110 in emo) in every group, out-of-range neurons moved by at most 4 in either direction
 (phasor slice only), and no turn changed its answer, abstention, recalled fact or derived flag in any group; every
-response hash moved in most turns (all of them in conv, infer and inner), through small numeric read-outs (the DA write-gain `g` among them). The cause of the 110 is a
+response hash moved in most turns (all of them in conv, infer and inner), and every leaf that differs between the two arms is a number: the DA write-gain `g` moved by up to 12.1 %, the resonate-and-fire `mean_magnitude` and the Hebbian held read-out by up to 8.6 %, the idle-replay candidate scores by up to 5.3 % (its winner is unchanged), and the role-competition margins only at the sixth decimal. The cause of the 110 is a
 trait-typed population, and a diagnostic that centres those cells on their own trait preset with the engine's own rule
 (a probe, not an engine change) takes the cells below -110 mV on the stable integrator from 92 to 115 down to 3 to 9 of
 1800 on four dev seeds: every FS and thalamic-reticular offender goes, the RS-preset ones (72 down to 23 over the four seeds) stay. So the next method is a
@@ -67,8 +67,10 @@ not built.
 - Comparison runner, `research/runners/stable_preset_compare.py`: classifies every out-of-range row (phasor, conductance
   hazard, high side, u-held b < 0 = mechanism c by the dev7 finding's own definition, other low), reads the parameters the
   bridges drew, the per-turn replies and `tools/answer_rate.py` classify/rate. It refuses a record whose workload had no
-  corpus, a comprehension or turn error, or a nonzero rc (a first attempt in a worktree without the `data` link ran 782 s
-  with the comprehension organ erroring and was thrown away; `research/FAILURE_LOG.md`).
+  corpus, a comprehension or turn error, or a nonzero rc (a first attempt in a worktree without the `data` link ran with
+  the comprehension organ erroring and was thrown away; `research/FAILURE_LOG.md`). That attempt's wall time, quoted as
+  782 s here earlier and as 781 s in the FAILURE_LOG line, comes from a discarded, uncommitted run whose outputs were
+  deleted, so neither figure can be checked against a file in the repository.
 
 ## Step 1: the flag, where it applies, and whether it executes
 
@@ -112,10 +114,15 @@ as a lens on these two arms only. Answer-rate transitions per turn: every turn t
 
 Per offender organ, identical in every group that steps it: `LearnedAssocGraph` 110 u-held b < 0 cells stable and 110
 with the switch; the thought-swap workspace 2 and 2; the `BridgeParser` resonate-and-fire phasor slice 691, 718, 682, 675
-stable and 688, 719, 678, 672 with the switch in conv, infer, ask and inner (not membranes; the drift of a few cells is
-dynamics, because that bridge's parameters did not change: no region preset, no heterogeneity draw on its phasor
-bridges). Nothing the switch did created an out-of-range cell: every organ it changed was clean under stable and
-stays clean.
+stable and 688, 719, 678, 672 with the switch in conv, infer, ask and inner (a drift of 3, 1, 4 and 3 cells; not
+membranes). Its cause is the switch: it is the only difference between the two arms, and the stable arm reproduces the
+earlier census hash for hash. The coupling path that carries it is not identified. It is not a parameter or stream
+change in that bridge: the 47440-cell resonate-and-fire bridge runs no heterogeneity draw, the other `BridgeParser`
+bridge draws with no region preset and its drawn-parameter summary is the same in both arms (a, b, d, C means to four
+decimals, `n_with_region_preset` 0), and the host RNG state after a build is identical with the switch on and off
+(pinned in `tests/test_preset_centred_heterogeneity.py`). The upstream organs the switch does change (the table below)
+feed values into the replies, which makes an input change the likely route, and I did not trace it. Nothing the switch
+did created an out-of-range cell: every organ it changed was clean under stable and stays clean.
 
 What the switch did change, in the cells of the organs it reached (b is the drawn mean per region, one group shown):
 
@@ -125,10 +132,25 @@ What the switch did change, in the cells of the organs it reached (b is the draw
 | `_da_write_gain_spiking_derisk`, write_gain (80) | HIPPO_PYRAMIDAL | -2 -> 5 | 80 -> 0 |
 | `_curiosity_seek_learn_onbridge_derisk` and `metacog_production_organ`, striosome_value (60) | MSN_D1 | -2 -> -20 | 60 -> 60 |
 
-The read-outs of the replies that move are small numbers: role-competition margins at the seventh decimal, the DA
-encoding gain (inner t_lynx 2.0466 -> 2.0921), the resonate-and-fire mean magnitude, the Hebbian held read-out and the
-idle-replay candidate scores; the swap, stop, verification and authorship read-outs are identical in all 63 turns.
-Wall time is unchanged (ratio +preset over stable 0.993 to 1.014 per group).
+The two arms' shard records have the same set of 12251 leaves (summed over the five groups; timings and process
+statistics excluded); 235 of them differ (233 floats, 2 ints) and nothing else does: no answer text, abstention flag, recalled fact or derived flag changed, and the swap, stop, verification and
+authorship read-outs are identical in all 63 turns. The 235 are, with the largest relative change of each
+(`research/findings/raw/_stable_mechc/census/{stable,stable_preset}/s7/<group>__intact_a.json`, `workload.shard.responses`):
+
+| read-out | leaves changed | largest relative change | where |
+|---|---|---|---|
+| DA encoding gain `da_encoding.g` | 56 | 12.1 % (1.0831 -> 1.2144) | ask, turn m_moose |
+| resonate-and-fire `activity.rf.mean_magnitude` | 28 | 8.6 % (22964.7 -> 21000.5) | conv, turn t_deer_sleep |
+| Hebbian held read-out `d6_hebbian.held.readout` | 14 | 8.6 % (434.54 -> 397.37) | conv, turn t_deer_sleep |
+| idle-replay candidate score `s` / position `x` / applied `x` | 3 / 3 / 3 | 5.3 % / 2.0 % / 2.0 % | inner, turn p_private |
+| idle-replay engram count / first gate step | 1 / 1 | 1.0 % (101 -> 100) / 1.3 % (76 -> 75) | inner, turn p_private |
+| role-competition `activity.roles.margin` | 111 | 4.8e-5 relative, 1.65e-6 absolute | conv, turn t_deer_sleep |
+| `metacog.mean_role_conf` | 15 | 3.9e-7 absolute | conv, infer, ask, inner |
+
+The idle-replay winner (candidate 7) is the same in both arms. A 12 % change of the DA gain or an 8.6 % change of the
+resonate-and-fire magnitude is not a "small" number: it is a real change in the quantity, one that none of the
+answer, abstention, recall or derivation fields of these 63 turns happened to depend on. Wall time is unchanged (ratio
++preset over stable 0.993 to 1.014 per group).
 
 ## Result 2: the 110 cells are trait-typed, so no region-preset fix reaches them (build-only probe)
 
@@ -176,6 +198,14 @@ flip needs the association-graph gates, not this census.
 - The unchanged replies are for this seed and these five scripted conversations: the switch moved about 10000 neurons per
   group and no user-visible reply field, which says these organs' region-preset cells do not decide these replies, not
   that they cannot.
+- The answer rates are measured only on a `SIM_STABLE_INTEGRATION=1` brain, on dev seed 7: both arms ran the stable
+  integrator, so nothing here says what the switch does to the answer rate of the production-default (non-stable) brain.
+  They come from `tools/answer_rate.py` `classify` / `rate` applied directly to each turn's reply in the census records;
+  the tool's own report (`FLIP-HURTS-ANSWERS`) reads arm files laid out as load-bearing shard cells (`prefixed` or
+  `paired`), the census records are not in that layout, so that verdict was not produced and no load-bearing-layout
+  answer-rate check is possible on these records.
+- Numeric read-outs moved by up to 12 % (table in Result 1), so "no reply field changed" is a statement about these 63
+  turns' answer, abstention, recall and derivation fields, not about the quantities behind them.
 
 ## Sources
 
