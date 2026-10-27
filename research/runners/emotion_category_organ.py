@@ -68,7 +68,11 @@ reports `bounded_flag` (the flag the organ resolved), `bounded_env` (the raw env
 bridge's own core_config value) and `oor_count` / `oor_count_session` (distinct organ neurons whose v went below
 -110 mV during the read / during the session's observes and the read; 0 expected under the fix). The monitor is a
 read-only running minimum of v kept on the array module's device (`DeviceCensus`: one elementwise fmin per step, one
-host transfer per observe / read) and changes no state; on CuPy the former per-step host copy cost 8-12% per step.
+host transfer per observe / read) and changes no state. Measured on the workstation 3090 (organ dev seed 1, paired
+interleaved blocks, other GPU tenants present): the former per-step host copy cost +9.7% over a bare simulation step
+(+3.0% of a whole read); the device census +2.4% over a bare step (about 7 us/step: one extra enqueued op on a shared GPU;
+an in-place ElementwiseKernel and a memcpyAsync ring buffer measured no better in situ) and no measurable change to a
+whole read (-2.0%, inside the noise: IQR -5.4..+3.9%).
 
 NAMED RESIDUALS (host code that remains; declared):
   * the development curriculum (which trigger and which emotion word the teacher puts in one episode) is the teacher
