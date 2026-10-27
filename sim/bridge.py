@@ -444,7 +444,8 @@ def stable_integration_requested():
 # config, whatever the organ configured, at construction and at every _initialize_simulation_data (the only place the
 # draws run, so that is the only place it needs to hold). It centres ONLY neurons that belong to a region with a
 # preset (BrainRegion.izh_neuron_type / HH overrides); trait-typed neurons (cfg.num_traits > 1, no region preset) and
-# untyped regions keep the global-centred draw by design (the flag's own rule), so the switch does not reach them.
+# untyped regions keep the global-centred draw by design (the flag's own rule), so the switch does not reach them
+# (SIM_TRAIT_CENTRED_HET below is the separate, default-OFF variant that reaches the trait-typed ones).
 # Unset, "" or "0" => nothing is touched (byte-identical; tests/test_preset_centred_het_switch.py); any other value
 # raises at bridge construction (loud, never a silent no-op). Read-back on the bridge: preset_centred_het_requested,
 # _applied, _organ_value (what the organ had configured) and _readback (what the last heterogeneity draw saw).
@@ -462,6 +463,32 @@ def preset_centred_het_requested():
     if s == "1":
         return True
     raise ValueError(f"{PRESET_CENTRED_HET_ENV} must be unset, '0' or '1', got {raw!r}")
+
+
+# WHOLE-BRAIN TRAIT-CENTRED HETEROGENEITY SWITCH (2026-10-27, research/stable-mechc), DEFAULT OFF. The companion of
+# SIM_PRESET_CENTRED_HET for the neurons that switch leaves alone: with cfg.num_traits > 1 the Izhikevich init types every
+# neuron by trait (one of the defined IZH2007 presets), and a neuron in no region with an izh_neuron_type keeps that
+# trait preset but has its a/b/d/C overwritten by the global RS-centred draw (docs/drafts/preset-centred-het/CENSUS.md,
+# C2.1). SIM_TRAIT_CENTRED_HET=1 forces cfg.trait_centred_parameter_heterogeneity True on every SimulationBridge's core
+# config (construction and every _initialize_simulation_data), so each such neuron's jitter is centred on ITS OWN trait's
+# preset, with the same samples, order and RNG consumption. It reaches only trait-typed neurons no region preset covers
+# (the region flag's neurons are disjoint from these), and only Izhikevich populations with cfg.num_traits > 1.
+# Unset, "" or "0" => nothing is touched (byte-identical; tests/test_trait_centred_heterogeneity.py); any other value
+# raises at bridge construction. Read-back: trait_centred_het_requested, _applied, _organ_value and _readback.
+TRAIT_CENTRED_HET_ENV = "SIM_TRAIT_CENTRED_HET"
+
+
+def trait_centred_het_requested():
+    """True when SIM_TRAIT_CENTRED_HET is "1"; False when unset, "" or "0"; raises on any other value."""
+    raw = os.environ.get(TRAIT_CENTRED_HET_ENV)
+    if raw is None:
+        return False
+    s = raw.strip()
+    if s in ("", "0"):
+        return False
+    if s == "1":
+        return True
+    raise ValueError(f"{TRAIT_CENTRED_HET_ENV} must be unset, '0' or '1', got {raw!r}")
 
 
 class SimulationBridge:
@@ -515,6 +542,14 @@ class SimulationBridge:
         self.preset_centred_het_readback = None
         self._preset_centred_het_cfg_id = None
         self._apply_preset_centred_het()
+        # SIM_TRAIT_CENTRED_HET read-back (see TRAIT_CENTRED_HET_ENV), same shape as the preset switch's.
+        self.trait_centred_het_requested = trait_centred_het_requested()
+        self.trait_centred_het_applied = False
+        self.trait_centred_het_organ_value = None
+        self.trait_centred_het_readback = None
+        self._trait_centred_het_cfg_id = None
+        self._izh_trait_typed = False           # set by the Izhikevich init: True when neurons are typed by trait
+        self._apply_trait_centred_het()
 
         # --- CuPy Arrays for Simulation State ---
         self.cp_membrane_potential_v = None 
@@ -1950,6 +1985,7 @@ class SimulationBridge:
         self.snr_packet_bindings = MappingProxyType({})
         self._apply_stable_integration()      # SIM_STABLE_INTEGRATION (no-op unless requested)
         self._apply_preset_centred_het()      # SIM_PRESET_CENTRED_HET (no-op unless requested)
+        self._apply_trait_centred_het()       # SIM_TRAIT_CENTRED_HET (no-op unless requested)
 
         if not called_from_playback_init:
             # These global_gui_state checks are for context; actual state changes are UI-driven.
@@ -2631,6 +2667,7 @@ class SimulationBridge:
                 # math and reassigned existing populations.
                 use_trait_based = (num_defined_izh_variants > 1
                                     and cfg.num_traits > 1)
+                self._izh_trait_typed = bool(use_trait_based)    # read by the trait-centred heterogeneity draw
                 if use_trait_based:
                     # Vectorized type selection based on traits
                     type_indices = np_traits_host % num_defined_izh_variants
@@ -2814,6 +2851,18 @@ class SimulationBridge:
                 if preset_centred:
                     self._het_preset_centres = self._collect_het_preset_centres(cfg, n)
                 het_centres_for_readback = self._het_preset_centres if preset_centred else None
+                # TRAIT-CENTRED (opt-in; DEFAULT OFF -> `trait_centred` is False and nothing below runs). Adds the
+                # centres of the trait-typed neurons no region preset covers (their own trait's preset, read from the
+                # arrays the init just filled) to the same dict the draws consume; the region centres stay as they were.
+                trait_centred = self._trait_centred_het_active(cfg)
+                if trait_centred:
+                    trait_centres, trait_readback = self._collect_het_trait_centres(
+                        cfg, n, het_centres_for_readback)
+                    self._het_preset_centres = self._merge_het_centres(
+                        self._het_preset_centres if preset_centred else None, trait_centres)
+                    self.trait_centred_het_readback = trait_readback
+                else:
+                    self.trait_centred_het_readback = {"heterogeneity_ran": True, "trait_centred": False}
                 self._apply_parameter_heterogeneity(
                     cfg, n, backend_neutral=backend_neutral_izh
                 )
@@ -2832,9 +2881,9 @@ class SimulationBridge:
                         and self.region_manager is not None):
                     self._overwrite_region_scoped_parameter_heterogeneity(cfg, n)
                 self._record_het_readback(cfg, n, preset_centred, het_centres_for_readback)
-                if preset_centred:
+                if preset_centred or trait_centred:
                     self._het_preset_centres = None
-                elif self.region_manager is not None:
+                if not preset_centred and self.region_manager is not None:
                     # Loud check (always on, logging only: no RNG, array or cfg change):
                     # name the regions whose presets the globally-centred draws just
                     # overwrote. One warning per build.
@@ -3808,6 +3857,70 @@ class SimulationBridge:
                 has_preset[idx_arr] = True
                 preset_values[idx_arr] = value
         return centres
+
+    # A trait preset within this relative distance of its distribution's centre counts as AT the centre (float32 storage of
+    # the preset and exp(log(x)) of the lognormal centre both differ from the exact value by far less than this).
+    _TRAIT_AT_CENTRE_REL = 1e-6
+
+    def _trait_centred_het_active(self, cfg):
+        """True when this heterogeneity draw is trait-centred: the config flag is on, the model is Izhikevich and the
+        init typed the neurons by trait (cfg.num_traits > 1 with more than one defined IZH2007 preset)."""
+        return (bool(getattr(cfg, "trait_centred_parameter_heterogeneity", False))
+                and cfg.neuron_model_type == NeuronModel.IZHIKEVICH.name
+                and bool(getattr(self, "_izh_trait_typed", False)))
+
+    def _collect_het_trait_centres(self, cfg, n, region_centres):
+        """({heterogeneity param name: (host bool has_preset[n], host float64 preset[n])}, read-back dict) for the
+        trait-typed neurons no region preset covers. Called BEFORE the draws overwrite the arrays: at that point
+        cp_izh_a / b / d_increment / C of a neuron outside every typed region still hold the preset of its own trait
+        (`_apply_per_region_neuron_types` writes only region slices). `region_centres` is the dict
+        `_collect_het_preset_centres` returns (None when the region flag is off; the coverage is then computed here, only
+        to exclude region-typed neurons, which stay on the global centre unless the region flag is on). A neuron
+        counts for a parameter only when its trait preset sits off the centre of the distribution that jitters it,
+        so a trait on the centre (the RS trait) keeps today's sample bit for bit. Read-only: no RNG, array or cfg change."""
+        dists = cfg.heterogeneity_distributions or self._get_default_heterogeneity_distributions(cfg)
+        if region_centres is None:
+            region_centres = self._collect_het_preset_centres(cfg, n) if self.region_manager is not None else {}
+        covered_any = np.zeros(n, dtype=bool)
+        for has_preset, _values in region_centres.values():
+            covered_any |= np.asarray(has_preset, dtype=bool)
+        centres = {}
+        any_off = np.zeros(n, dtype=bool)
+        by_param = {}
+        for key, field in self._IZH_HET_PRESET_FIELDS.items():
+            spec = dists.get(key)
+            centre = self._het_distribution_centre(spec) if spec is not None else None
+            arr = getattr(self, "cp_izh_" + field, None)
+            if centre is None or arr is None or int(arr.shape[0]) != n:
+                continue
+            values = np.asarray(_backend_to_host(arr), dtype=np.float64)
+            covered = np.asarray(region_centres[key][0], dtype=bool) if key in region_centres else np.zeros(n, dtype=bool)
+            off = ~covered & ((np.abs(values - centre) > self._TRAIT_AT_CENTRE_REL * abs(centre))
+                              | ((centre == 0.0) & (values != 0.0)))
+            if off.any():
+                centres[key] = (off, np.where(off, values, 0.0))
+            any_off |= off
+            by_param[key] = {"trait_neurons": int((~covered).sum()), "off_centre": int(off.sum())}
+        readback = {"heterogeneity_ran": True, "trait_centred": True, "trait_typed": True, "n_neurons": int(n),
+                    "n_trait_neurons": int((~covered_any).sum()), "n_trait_off_centre": int(any_off.sum()),
+                    "by_param": by_param}
+        return centres, readback
+
+    @staticmethod
+    def _merge_het_centres(region_centres, trait_centres):
+        """Union of the region-preset centres and the trait centres into the one dict the draws consume. The two sets of
+        neurons are disjoint by construction (the trait mask excludes every region-covered neuron), and a region
+        centre wins if they were not. Returns None when both are empty."""
+        merged = {}
+        for key in set(region_centres or {}) | set(trait_centres or {}):
+            r = (region_centres or {}).get(key)
+            t = (trait_centres or {}).get(key)
+            if r is not None and t is not None:
+                has = np.asarray(r[0], dtype=bool) | np.asarray(t[0], dtype=bool)
+                merged[key] = (has, np.where(np.asarray(r[0], dtype=bool), r[1], t[1]))
+            else:
+                merged[key] = r if r is not None else t
+        return merged or None
 
     @staticmethod
     def _het_distribution_centre(dist_spec):
@@ -9094,6 +9207,21 @@ class SimulationBridge:
                 getattr(cfg, "preset_centred_parameter_heterogeneity", False))
         cfg.preset_centred_parameter_heterogeneity = True
         self.preset_centred_het_applied = True
+
+    def _apply_trait_centred_het(self):
+        """Force cfg.trait_centred_parameter_heterogeneity True on self.core_config (no-op unless requested at
+        construction). Records the organ's own value once per config object and the applied flag."""
+        if not getattr(self, "trait_centred_het_requested", False):
+            return
+        cfg = self.core_config
+        if cfg is None:
+            return
+        if self._trait_centred_het_cfg_id != id(cfg):
+            self._trait_centred_het_cfg_id = id(cfg)
+            self.trait_centred_het_organ_value = bool(
+                getattr(cfg, "trait_centred_parameter_heterogeneity", False))
+        cfg.trait_centred_parameter_heterogeneity = True
+        self.trait_centred_het_applied = True
 
     @staticmethod
     def _izh_substep_settings(cfg):
