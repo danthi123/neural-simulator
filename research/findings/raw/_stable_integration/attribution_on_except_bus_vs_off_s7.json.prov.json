@@ -1,0 +1,31 @@
+{
+ "run_id": "1793108483-1424333",
+ "runner": "research/runners/stable_integration_compare.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-stable/research/runners/stable_integration_compare.py",
+  "--off",
+  "research/findings/raw/_stable_integration/census/off/s7",
+  "--on",
+  "research/findings/raw/_stable_integration/census/on_except_bus/s7",
+  "--out",
+  "research/findings/raw/_stable_integration/attribution_on_except_bus_vs_off_s7.json"
+ ],
+ "git_sha": "a00ac65df",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-27T09:41:23",
+ "env": {},
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 6178.1,
+ "corpus_check_query": "route GABA_A synapses onto the apical dendrite compartment",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_stable_integration/attribution_on_except_bus_vs_off_s7.json"
+}
