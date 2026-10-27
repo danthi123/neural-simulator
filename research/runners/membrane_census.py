@@ -209,6 +209,15 @@ class _BridgeRec:
         self.n_steps = 0
         self.callers = collections.Counter()
         self.bounded_seen = set()
+        # SIM_STABLE_INTEGRATION / cfg.izh_membrane_substeps read-back (research/stable-integration): the (substeps,
+        # rule) pairs the core config held at each observed step, the bridge's own applied flag, its sub-step and
+        # rule-(a) model-reset counters (last value seen), its per-step re-assert count and the organ's own values
+        self.substeps_seen = set()
+        self.stable_seen = set()
+        self.substep_calls = 0
+        self.model_resets = 0
+        self.si_reasserts = 0
+        self.si_organ_values = None
         self.map = None
         self._alloc_region_stats()
         self.c_first = None
@@ -422,6 +431,14 @@ class Census:
                     rec.n_spikes_oor_cells += int(np.count_nonzero(sp))
         cfg = bridge.core_config
         rec.bounded_seen.add(bool(getattr(cfg, "enable_bounded_conductance_integration", False)))
+        rec.substeps_seen.add((getattr(cfg, "izh_membrane_substeps", 1),
+                               str(getattr(cfg, "izh_substep_refractory_rule", "model_reset"))))
+        rec.stable_seen.add(getattr(bridge, "stable_integration_applied", None))
+        rec.substep_calls = int(getattr(bridge, "substep_calls", 0) or 0)
+        rec.model_resets = int(getattr(bridge, "refractory_model_resets", 0) or 0)
+        rec.si_reasserts = int(getattr(bridge, "stable_integration_reasserts", 0) or 0)
+        if rec.si_organ_values is None:
+            rec.si_organ_values = getattr(bridge, "stable_integration_organ_values", None)
         m = rec.map
         if m is None or m.key != (id(getattr(bridge, "region_manager", None)), n, len(m.names)):
             m = _RegionMap(bridge, n)
@@ -692,6 +709,11 @@ class Census:
             "neuron_model": rec.model, "n_neurons": rec.n, "dt_ms": rec.dt, "n_steps": rec.n_steps,
             "bounded_conductance_integration": (bounded[0] if len(bounded) == 1 else "mixed"),
             "bounded_values_seen": bounded,
+            "izh_substeps_seen": sorted([list(x) for x in rec.substeps_seen], key=str),
+            "stable_integration_applied_seen": sorted(str(x) for x in rec.stable_seen),
+            "substep_calls": rec.substep_calls, "refractory_model_resets": rec.model_resets,
+            "stable_integration_reasserts": rec.si_reasserts,
+            "stable_integration_organ_values": rec.si_organ_values,
             "v_min": _f(vmin[0], 2), "v_min_region": vmin[1], "v_max": _f(vmax[0], 2), "v_max_region": vmax[1],
             "n_oor_neurons": n_oor,
             "n_low_neurons": int(np.count_nonzero(rec.nlow > 0)) if rec.nlow is not None else 0,
@@ -798,7 +820,16 @@ def organ_rows(bridges):
                      "max_gi_dt_over_C": gi_max, "max_gi_dt_over_C_region": gi_max_region,
                      "max_gtot_dt_over_C": gt_max, "max_gtot_dt_over_C_region": gt_max_region,
                      "built_by": sorted({b["built_by"] for b in bs if b.get("built_by")}),
-                     "bounded_conductance_integration": (sorted(bounded)[0] if len(bounded) == 1 else "mixed")})
+                     "bounded_conductance_integration": (sorted(bounded)[0] if len(bounded) == 1 else "mixed"),
+                     "izh_substeps_seen": sorted({tuple(x) for b in bs for x in (b.get("izh_substeps_seen") or [])},
+                                                 key=str),
+                     "stable_integration_applied_seen": sorted({x for b in bs
+                                                                for x in (b.get("stable_integration_applied_seen") or [])}),
+                     "substep_calls": sum(b.get("substep_calls", 0) or 0 for b in bs),
+                     "refractory_model_resets": sum(b.get("refractory_model_resets", 0) or 0 for b in bs),
+                     "stable_integration_reasserts": sum(b.get("stable_integration_reasserts", 0) or 0 for b in bs),
+                     "organ_bounded_configured": sorted({str((b.get("stable_integration_organ_values") or {}).get(
+                         "enable_bounded_conductance_integration")) for b in bs})})
     return rows
 
 
@@ -815,6 +846,16 @@ def summary_line(row, tag=""):
 
 
 # ══════════════════════════════════════════════ worker / shard ═════════════════════════════════════════════════════
+def turn_reply(resp):
+    """One turn's reply-level record: sha256 of the whole response, and the fields the user sees (answer, abstained,
+    recalled_svo, derived, source). An errored turn keeps its error."""
+    h = hashlib.sha256(json.dumps(resp, sort_keys=True, default=str).encode()).hexdigest()
+    if not isinstance(resp, dict) or "_error" in resp:
+        return {"sha256": h, "error": (resp.get("_error") if isinstance(resp, dict) else str(resp))}
+    return {"sha256": h, "answer": resp.get("answer"), "abstained": resp.get("abstained"),
+            "recalled_svo": resp.get("recalled_svo"), "derived": resp.get("derived"), "source": resp.get("source")}
+
+
 def run_worker(seed, group, arm, out_path, labels=None):
     """Run one Stage-2 gate arm IN THIS PROCESS under the census (the gate's own run_worker is the workload) and write
     the census JSON. The env (PYTHONHASHSEED etc.) is the parent shard's job, exactly as the gate's run_shard does it."""
@@ -836,7 +877,12 @@ def run_worker(seed, group, arm, out_path, labels=None):
                    "sources": d.get("sources"), "corpus_present": d.get("corpus_present"),
                    "pythonhashseed_ok": d.get("pythonhashseed_ok"), "process": d.get("process"),
                    "turn_errors": {k: v["_error"] for k, v in resp.items() if isinstance(v, dict) and "_error" in v},
-                   "responses_sha256": hashlib.sha256(json.dumps(resp, sort_keys=True, default=str).encode()).hexdigest()})
+                   "responses_sha256": hashlib.sha256(json.dumps(resp, sort_keys=True, default=str).encode()).hexdigest(),
+                   # per-turn reply record (research/stable-integration step 4: which turns' replies an integrator
+                   # change moved): the reply-level primary fields + a per-turn sha256 of the whole response
+                   "turn_replies": {k: turn_reply(v) for k, v in resp.items()},
+                   # the full stage-2 worker output, so the gate's own scorers can re-read this arm
+                   "shard": d})
     except Exception as e:
         wl["error"] = "%s: %s" % (type(e).__name__, e)
     finally:
@@ -851,7 +897,7 @@ def run_worker(seed, group, arm, out_path, labels=None):
     except Exception:
         sha = None
     out = {"runner": "research/runners/membrane_census.py", "seed": int(seed), "group": group, "arm": arm,
-           "git_sha": sha, "workload": wl, "wrapper_restored": restored, "wall_s": round(time.time() - t0, 1),
+           "git_sha": sha, "stable_integration_env": os.environ.get("SIM_STABLE_INTEGRATION"), "workload": wl, "wrapper_restored": restored, "wall_s": round(time.time() - t0, 1),
            "caveat": CAVEAT, "census": rep}
     os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
     with open(out_path, "w") as f:

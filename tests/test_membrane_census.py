@@ -498,3 +498,35 @@ def test_pool_job_lines_carry_the_dispatch_tokens_in_the_checked_reason_and_matc
                         "membrane-census-pool-lines.txt")
     with open(path) as f:
         assert f.read().splitlines() == ["%s\t%s" % p for p in pairs]
+
+
+def test_stable_integration_read_back_is_recorded_per_bridge_and_organ(monkeypatch):
+    """research/stable-integration: the census records the switch's read-back. Off: substeps (1, model_reset), no
+    sub-step calls, applied False. On (SIM_STABLE_INTEGRATION=1) on the overshoot reproducer with the organ asking for
+    bounded False: substeps (4, model_reset) every step, applied True, organ's own bounded value kept, in range."""
+    monkeypatch.delenv("SIM_STABLE_INTEGRATION", raising=False)
+    with MC.Census() as c_off:
+        _run(_overshoot_bridge(42, bounded=False), 30)
+    monkeypatch.setenv("SIM_STABLE_INTEGRATION", "1")
+    with MC.Census() as c_on:
+        _run(_overshoot_bridge(42, bounded=False), 30)
+    off = c_off.report()["bridges"][0]
+    on = c_on.report()["bridges"][0]
+    assert off["izh_substeps_seen"] == [[1, "model_reset"]] and off["substep_calls"] == 0
+    assert off["stable_integration_applied_seen"] == ["False"] and off["stable_integration_organ_values"] is None
+    assert on["izh_substeps_seen"] == [[4, "model_reset"]] and on["substep_calls"] == 30
+    assert on["stable_integration_applied_seen"] == ["True"] and on["bounded_conductance_integration"] is True
+    assert on["stable_integration_organ_values"]["enable_bounded_conductance_integration"] is False
+    assert on["n_oor_neurons"] == 0
+    (row,) = MC.organ_rows(MC.relabel([on]))
+    assert row["substep_calls"] == 30 and row["organ_bounded_configured"] == ["False"]
+    assert row["stable_integration_applied_seen"] == ["True"]
+
+
+def test_turn_reply_keeps_the_reply_fields_and_a_per_turn_hash():
+    r = {"answer": "the fox chases the hen", "abstained": False, "recalled_svo": ["fox", "chase", "hen"],
+         "derived": False, "source": "tiny-demo +LTM", "other": 1}
+    t = MC.turn_reply(r)
+    assert t["answer"] == r["answer"] and t["recalled_svo"] == ["fox", "chase", "hen"] and t["abstained"] is False
+    assert t["sha256"] == hashlib.sha256(__import__("json").dumps(r, sort_keys=True).encode()).hexdigest()
+    assert MC.turn_reply({"_error": "ValueError: x"})["error"] == "ValueError: x"
