@@ -30,6 +30,13 @@ compute node (GPU queue, local model serving), and Claude Code inspects occasion
   old scores on seed 7). The switch stays off until the other
   workspace (the one that changes topics) is re-tuned the same way and the pair is tested on six seeds
   (`research/findings/2026-10-26-stable-integration-dev7.md`).
+- **The cell-type fix cannot reach the 112 cells that are still wrong (dev seed 7, still off):** 110 of them belong to the
+  associative-memory graph, whose cells are given their type by a trait draw rather than by region, and the existing
+  "keep each region's own cell type" fix only covers regions. A new off-by-default switch (`SIM_PRESET_CENTRED_HET=1`) turns
+  that fix on everywhere; run on the five test conversations it changed about ten thousand cells in ten organs, left all 112
+  exactly where they were, and changed no answer. Giving the graph's cells their own trait type instead (a probe, not built)
+  cuts the bad cells from about 100 to under 10 per seed on four dev seeds; the plain-RS cells that remain are a separate
+  residual (`research/findings/2026-10-27-stable-preset-centred-dev7.md`).
 
 ## 2026-10-21 — the strict no-making-things-up check passes its tests (still off); a cell-type fault under the substrate; two new methods start
 
