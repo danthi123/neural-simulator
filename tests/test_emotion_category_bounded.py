@@ -170,13 +170,13 @@ class _StubBridge:
 def test_oor_census_sees_excursion_and_ignores_quiet_step():
     E = _E()
     org = E.EmotionCategoryOrgan(seed=1)
-    seen = set()
+    cen = org._census()      # the on-device census (tests/test_emotion_census_device.py pins it against the old host census)
     org._bridge = _StubBridge([-65.0, -80.0, 30.0, -109.9])
-    org._step(seen)
-    assert seen == set()
+    org._step(cen)
+    assert cen.members() == set()
     org._bridge = _StubBridge([-65.0, -137.0, 30.0, -110.5])
-    org._step(seen)
-    assert seen == {1, 3}
+    org._step(cen)
+    assert cen.members() == {1, 3}
 
 
 def test_read_turn_carries_engagement_fields(monkeypatch):

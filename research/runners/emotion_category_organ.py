@@ -67,7 +67,8 @@ reversal) at CoreSimConfig construction. Nothing else changes: no capacitance tr
 reports `bounded_flag` (the flag the organ resolved), `bounded_env` (the raw env string seen), `bounded_readback` (the
 bridge's own core_config value) and `oor_count` / `oor_count_session` (distinct organ neurons whose v went below
 -110 mV during the read / during the session's observes and the read; 0 expected under the fix). The monitor is a
-read-only min over v after each step and changes no state.
+read-only running minimum of v kept on the array module's device (`DeviceCensus`: one elementwise fmin per step, one
+host transfer per observe / read) and changes no state; on CuPy the former per-step host copy cost 8-12% per step.
 
 NAMED RESIDUALS (host code that remains; declared):
   * the development curriculum (which trigger and which emotion word the teacher puts in one episode) is the teacher
@@ -182,6 +183,37 @@ GATE_FIXED = "emo_fixed"
 
 BOUNDED_ENV = "BRAIN_EMOTION_CATEGORY_BOUNDED"   # default OFF: the organ builds with the engine's unbounded Euler step
 OOR_MV = -110.0                                    # an organ neuron below this left the physiological range (E_i = -75)
+
+
+class DeviceCensus:
+    """The out-of-range census, kept on the array module's device (cp under CuPy, np under numpy). Each step folds the
+    membrane array into a running per-neuron minimum with ONE elementwise `fmin` (no host copy, no host sync); `members()`
+    does the only device-to-host transfer, once per read, and returns the set of neurons whose minimum over the census
+    window is below OOR_MV. "Below OOR_MV at some step" and "minimum over the steps below OOR_MV" are the same set, so
+    the returned counts equal the former per-step host census (`np.flatnonzero(v < OOR_MV)` on a host copy after every
+    step) exactly. `fmin` ignores a NaN, so a NaN membrane value (a broken simulation, not a physiological one) is never
+    counted and does not hide the other neurons; the former census skipped the whole step instead. Read-only: it touches
+    no simulation state, and an error in it is swallowed (an instrument failure must not crash a turn)."""
+
+    def __init__(self, xp=None):
+        self.xp = xp if xp is not None else get_backend()[0]
+        self.vmin = None
+
+    def update(self, v) -> None:
+        try:
+            if self.vmin is None:
+                self.vmin = self.xp.full_like(v, self.xp.inf)
+            self.xp.fmin(self.vmin, v, out=self.vmin)
+        except Exception:   # noqa: BLE001 -- diagnostic only
+            pass
+
+    def members(self) -> set:
+        try:
+            if self.vmin is None:
+                return set()
+            return set(int(i) for i in np.flatnonzero(to_host(self.vmin < OOR_MV)))
+        except Exception:   # noqa: BLE001 -- diagnostic only
+            return set()
 
 
 def _truthy(name: str) -> bool:
@@ -435,18 +467,17 @@ class EmotionCategoryOrgan:
             _restore_state(b, st)
         b.cp_external_input_current[:] = 0.0
 
-    def _step(self, oor: set) -> None:
-        """One simulation step, then a read-only census: every organ neuron now below OOR_MV joins `oor`. The census
-        reads v after the step and changes no state, so it cannot move a spike; an error in it is swallowed (an
-        instrument failure must not crash a turn)."""
+    def _census(self) -> DeviceCensus:
+        """A fresh on-device census for one observe / read (see DeviceCensus)."""
+        return DeviceCensus(self._xp)
+
+    def _step(self, census: DeviceCensus) -> None:
+        """One simulation step, then a read-only on-device census: the membrane array folds into the census's running
+        minimum (no host transfer; `census.members()` reads it back once per read). It reads v after the step and changes
+        no state, so it cannot move a spike."""
         b = self._bridge
         b._run_one_simulation_step()
-        try:
-            v = to_host(b.cp_membrane_potential_v)
-            if float(v.min()) < OOR_MV:
-                oor.update(int(i) for i in np.flatnonzero(v < OOR_MV))
-        except Exception:   # noqa: BLE001 -- diagnostic only
-            pass
+        census.update(b.cp_membrane_potential_v)
 
     def _counts(self, idx_map, xp):
         f = self._bridge.cp_firing_states
@@ -479,17 +510,18 @@ class EmotionCategoryOrgan:
                 cur[xp.asarray(self.app_idx[c])] = xp.float32(pa)
             b.cp_external_input_current[:] = cur
             app = {c: 0 for c in CATS}
-            oor = set(self._oor_sessions.get(key, ()))
+            cen = self._census()
             for _ in range(int(p["EXPOSE_STEPS"])):
-                self._step(oor)
+                self._step(cen)
                 for c, v in self._counts(self.app_idx, xp).items():
                     app[c] += v
             b.cp_external_input_current[:] = 0.0
             for _ in range(int(p["SETTLE_STEPS"])):
-                self._step(oor)
+                self._step(cen)
             rungs = {c: [int(to_host(b.cp_firing_states[xp.asarray(r)].astype(xp.float64).sum())) for r in
                          self.rung_idx[c]] for c in CATS}
             self._save(key)
+            oor = set(self._oor_sessions.get(key, ())) | cen.members()     # the census's one host transfer
             self._oor_sessions[key] = oor
             self._oor_sessions.move_to_end(key)
             while len(self._oor_sessions) > 64:
@@ -523,11 +555,11 @@ class EmotionCategoryOrgan:
         out_c = {c: 0 for c in CATS}
         gate_c = {c: 0 for c in CATS}
         slot_c = {c: 0 for c in CATS}
-        oor = set()
+        cen = self._census()
         try:
             b.set_transmission_gate(GATE_COMMIT, 0.0 if commit_lesion else 1.0)    # the read window opens
             for _ in range(int(p["READ_WINDOW"])):
-                self._step(oor)
+                self._step(cen)
                 for c, v in self._counts(self.out_idx, xp).items():
                     out_c[c] += v
                 for c, v in self._counts(self.gate_idx, xp).items():
@@ -535,7 +567,7 @@ class EmotionCategoryOrgan:
             b.set_transmission_gate(GATE_COMMIT, 0.0)                               # ... and closes
             hold, rd = int(p["HOLD_STEPS"]), int(p["READ_STEPS"])
             for t in range(hold):
-                self._step(oor)
+                self._step(cen)
                 if t >= hold - rd:
                     for c, v in self._counts(self.slot_idx, xp).items():
                         slot_c[c] += v
@@ -544,6 +576,7 @@ class EmotionCategoryOrgan:
             b.set_transmission_gate(GATE_OUT, 1.0)
             b.set_transmission_gate(GATE_LOOP, 1.0)
             b.cp_external_input_current[:] = 0.0
+        oor = cen.members()                                                         # the census's one host transfer
         return {"readout_counts": out_c, "gate_counts": gate_c, "slot_counts": slot_c,
                 "lesioned": bool(lesion), "commit_lesioned": bool(commit_lesion), "latch_lesioned": bool(latch_lesion),
                 # ENGAGEMENT: what this read actually ran with (see BOUNDED CONDUCTANCE in the module docstring)
