@@ -12,6 +12,19 @@ stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CUR
 compute node (GPU queue, local model serving), and Claude Code inspects occasionally. See
 `docs/plans/2026-09-30-home-to-server-MIGRATION.md`. The capability entries below predate this move and are unaffected.
 
+## 2026-10-27 — one switch makes every brain region's cells numerically stable (still off); it changes replies, because one workspace ran on the artifact
+
+- **Built, off by default:** `SIM_STABLE_INTEGRATION=1` puts every brain region on the two existing integrator
+  fixes at once (bounded synaptic currents and 4 finer membrane steps per millisecond). Unset, nothing changes.
+- **Membranes:** on dev seed 7 the switch removes the impossible voltages the census found (thousands of cells per
+  conversation down to a phasor slice that is not a membrane, plus 112 cells whose own slow variable runs away, a
+  cell-type fault already known). It costs about 5 percent per step on large regions.
+- **Replies change, the same way every run:** the thought-swap workspace's "ignition" turned out to run on cells that
+  the old integrator let run away; with stable cells it no longer ignites, recall of taught facts turns into hedged
+  guesses, and the inner-thought test this seed passed is lost. Emotion naming is unaffected. The switch stays off
+  until that workspace is re-tuned on stable cells
+  (`research/findings/2026-10-26-stable-integration-dev7.md`).
+
 ## 2026-10-21 — the strict no-making-things-up check passes its tests (still off); a cell-type fault under the substrate; two new methods start
 
 - **The strict speech check passes every test written for it in advance, and stays off.** The check on the mouth now
