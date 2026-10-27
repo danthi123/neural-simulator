@@ -1,0 +1,36 @@
+{
+ "run_id": "1793110381-1533908",
+ "runner": "research/runners/stable_integration_bus_ignition_probe.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-stable/research/runners/stable_integration_bus_ignition_probe.py",
+  "--seed",
+  "7",
+  "--arms",
+  "off",
+  "--quorum",
+  "30,0.16666666666666666,3:1000,2:1400",
+  "--out",
+  "research/findings/raw/_stable_integration/bus_quorum_production_s7.json"
+ ],
+ "git_sha": "eaee70fab",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-27T10:13:01",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 8076.9,
+ "corpus_check_query": "route GABA_A synapses onto the apical dendrite compartment",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_stable_integration/bus_quorum_production_s7.json"
+}

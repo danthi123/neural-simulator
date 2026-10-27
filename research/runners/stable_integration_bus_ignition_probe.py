@@ -220,6 +220,54 @@ def run_curve(seed, weights, arms=("off", "on"), drives=CURVE_DRIVES):
     return out
 
 
+def run_quorum(seed, weight, thr, d_subs, arms=("on", "off")):
+    """The bus's quorum read at a candidate calibration: for each (N organs, d_sub), the target slot driven by k = 1..N
+    agreeing votes alone, and by N votes against a single-vote decoy (the production hop's competitor). A quorum
+    calibration is right iff only k = N reaches `thr`, and the decoy stays below it."""
+    from research.runners import _p1_2_workspace_deliberation_loop_derisk as P
+    from tools.lab import lever
+    out = {"runner": "research/runners/stable_integration_bus_ignition_probe.py --quorum", "seed": int(seed),
+           "attractor_weight": float(weight), "threshold": float(thr), "d_subs": {str(k): v for k, v in d_subs.items()},
+           "arms": {}}
+    saved = os.environ.get(ENV)
+    try:
+        for arm in arms:
+            if arm == "on":
+                os.environ[ENV] = "1"
+            else:
+                os.environ.pop(ENV, None)
+            bridge, xp, slots_dev, snap = P.build_workspace_bridge(int(seed), attractor_weight=float(weight))
+            if bool(bridge.stable_integration_requested) != (arm == "on"):
+                raise RuntimeError("bridge read the wrong switch value")
+            n = len(slots_dev)
+            rows = []
+            for n_org, d in sorted(d_subs.items()):
+                votes = []
+                for k in range(1, n_org + 1):
+                    r = _read(P, bridge, xp, slots_dev, snap, [k * d] + [0.0] * (n - 1))
+                    votes.append({"k": k, "drive": k * d, "rate": r["late_rates"][0], "ignited": r["late_rates"][0] >= thr,
+                                  "n_oor_cells": r["n_oor_cells"]})
+                vd = _read(P, bridge, xp, slots_dev, snap, [n_org * d, d] + [0.0] * (n - 2))
+                ok = all((v["ignited"] == (v["k"] == n_org)) for v in votes) and vd["late_rates"][0] >= thr \
+                    and vd["late_rates"][1] < thr
+                rows.append({"n_organs": n_org, "d_sub": d, "votes_alone": votes,
+                             "quorum_vs_decoy": {"rates": vd["late_rates"][:2], "n_oor_cells": vd["n_oor_cells"]},
+                             "calibration_holds": bool(ok)})
+                print("[bus quorum] %s w=%g thr=%.4f N=%d d_sub=%g alone %s | N vs decoy %s | holds=%s"
+                      % (arm, weight, thr, n_org, d, " ".join("%d:%.4f" % (v["k"], v["rate"]) for v in votes),
+                         vd["late_rates"][:2], ok), flush=True)
+            out["arms"][arm] = rows
+        if "off" in out["arms"] and "on" in out["arms"]:
+            lever("integrator arm (quorum rates)", [v["rate"] for v in out["arms"]["off"][0]["votes_alone"]],
+                  [v["rate"] for v in out["arms"]["on"][0]["votes_alone"]], required=False)
+    finally:
+        if saved is None:
+            os.environ.pop(ENV, None)
+        else:
+            os.environ[ENV] = saved
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--seed", type=int, required=True)
@@ -228,10 +276,16 @@ def main():
     ap.add_argument("--fs-weights", default="", help="comma list; default = the production FS_TO_WS_WEIGHT only")
     ap.add_argument("--arms", default="off,on")
     ap.add_argument("--curve", action="store_true", help="measure the ignition curve + the bus consensus read")
+    ap.add_argument("--quorum", default="", help="'weight,thr,N:d_sub,N:d_sub' -> the quorum read at that calibration")
     a = ap.parse_args()
     if a.seed in GATE_SEEDS:
         sys.exit("GATE seed %d refused: dev-seed diagnostic only" % a.seed)
-    if a.curve:
+    if a.quorum:
+        parts = a.quorum.split(",")
+        d = run_quorum(a.seed, float(parts[0]), float(parts[1]),
+                       {int(x.split(":")[0]): float(x.split(":")[1]) for x in parts[2:]},
+                       arms=tuple(x.strip() for x in a.arms.split(",") if x.strip()))
+    elif a.curve:
         d = run_curve(a.seed, [float(x) for x in a.weights.split(",")],
                       arms=tuple(x.strip() for x in a.arms.split(",") if x.strip()))
     else:
