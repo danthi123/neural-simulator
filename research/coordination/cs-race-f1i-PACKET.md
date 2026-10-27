@@ -245,3 +245,19 @@ identities or rates.
 - Silent engine fallbacks found while reading, now guarded: STP state and `g_ap` outside the snapshot (S1); the
   trait-built conn type that falls back to E->E (S2); `cp_stp_u` starting at the global U (S3); the pooled STP record
   (S4); the volley tail inside the C8 window (S8).
+
+## Claude ruling R1 (2026-10-27, on the five open questions; binding for the E build and step 0)
+- **Seeds.** Step 0 runs seeds 41 and 45-51, not 41-48: seeds 42-44 are project gate seeds (f1h Amendment A2, pool guard).
+- **Q1, base cell.** Accepted: step 0 starts from the f1h step-0 cell chosen by f1h's selection rule with C3 waived. If f1h
+  ends STOP-CAL with no cell passing C0-C2, C4 and C6, f1i step 0 waits for a ruling.
+- **Q2, the `sim/` edit.** Claude builds section E now, default OFF, with flags-off byte identity tests, merged before step 0.
+- **Q3, tau_d.** The SOM input's depression time constant comes from the facilitating-synapse record, never the engine
+  default (200 ms is a depressing-synapse default). The E build verifies the pyramid-to-bitufted (SOM-like) facilitating
+  triple of Markram, Wang & Tsodyks 1998 (PNAS 95:5323) against the paper. If confirmed, that triple (U, D, F) is used whole;
+  otherwise it keeps U 0.05 and F 750 ms with D from the source that gave them, stated with its citation. Whether
+  facilitation is needed at all stays the step-1 NOFAC arm's question.
+- **Q4, the W_MS grid.** The {100, 200, 400} scale derivation (f1g W_MI 20 over the facilitating efficacy range) is accepted
+  as frozen. A grid recomputed from the verified Q3 triple replaces it only by the same formula, stated before any run.
+- **Q5, engram STP carried across trials.** It is kept as is, for identity with f1h's chosen cell. Step 0 adds one
+  informational seed-41 arm that resets all STP state at each trial start. If that arm changes any item's verdict, the
+  carry-over is an instrument defect, fixed before step 1.
