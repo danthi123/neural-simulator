@@ -119,7 +119,11 @@ _BASE = dict(NE=16, NI=6, NG=12, NGI=8, NS=20, NO=8,
              # pool (slot -> SOM facilitating, SOM -> mention APICAL
              # GABA_A). All defaults keep the f1h build byte-for-byte.
              SOM_W_MS=0.0, SOM_W_SA=0.0, SOM_LESION=0, SOM_NOFAC=0,
-             NSOM=8)
+             NSOM=8,
+             # f1i R1 Q5 (informational arm): put ALL STP state at rest
+             # (u 0, x 1) at every trial start (default 0 = the STP
+             # state carries across trials, as in f1h).
+             STP_RESET=0)
 # f1h (packet cs-race-f1h, STEP 0): the gap4 6/6-seed GO configuration of
 # the bistable BDSP apical, FROZEN here, never tuned. Source of every value:
 # research/runners/_gap4_btsp_onbridge_behavioral_timescale_derisk.py
@@ -397,6 +401,11 @@ class RaceCircuit(ReplayCircuit):
             self._som_resets = []
             self._reset_som()           # before the snapshot (S1, S3)
         self._snap = _snapshot_state(bridge, xp)
+        self._stp_reset = bool(int(p.get("STP_RESET", 0)))
+        if self._stp_reset and (getattr(bridge, "cp_stp_u", None) is None
+                                or getattr(bridge, "cp_stp_x", None) is None):
+            raise RuntimeError("STP_RESET needs STP state (cp_stp_u / "
+                               "cp_stp_x are absent)")
         if self._ap_on:
             # cp_v_apical is not in _STATE_ARRAYS (_gnw_rung1_ignition_
             # curve_derisk.py:219): without this a latched plateau would
@@ -539,6 +548,37 @@ class RaceCircuit(ReplayCircuit):
         self._som_resets.append(rb)
         return rb
 
+    def _reset_stp(self):
+        """f1i R1 Q5 (informational arm, --stp-reset): put ALL STP state
+        at REST (u = 0, x = 1, every synapse) at the trial start. The
+        quiescent reset leaves cp_stp_u / cp_stp_x where the last trial
+        ended (they are not in _STATE_ARRAYS), and a fresh build starts
+        u at the global stp_U (S3), so neither is rest; this is the same
+        rest _reset_som writes on the slot -> SOM synapses, applied to
+        every pathway. No-op unless STP_RESET (flags off is f1h exactly)."""
+        if not getattr(self, "_stp_reset", False):
+            return
+        b = self._bridge
+        b.cp_stp_u[:] = 0.0
+        b.cp_stp_x[:] = 1.0
+
+    def _stp_trial_start(self):
+        """STP state of the engram recurrence (ee) and the slot -> SOM
+        synapses (msom) as the trial STARTS (after the resets), so the
+        carry-over (or its absence under --stp-reset) is in the record.
+        f1i runs only (needs the pathway positions)."""
+        from sim.backend import to_host
+        b = self._bridge
+        u_all = np.asarray(to_host(b.cp_stp_u))
+        x_all = np.asarray(to_host(b.cp_stp_x))
+        out = {"stp_reset": bool(getattr(self, "_stp_reset", False))}
+        for name, pos in (("ee", self._ee_pos), ("msom", self._msom_pos)):
+            u, x = u_all[pos], x_all[pos]
+            out[name] = ({"u_mean": float(u.mean()), "u_max": float(u.max()),
+                          "x_mean": float(x.mean()), "x_min": float(x.min())}
+                         if u.size else None)
+        return out
+
     def _som_stp_split(self):
         """S4: STP state per STP-active pathway (engram ee vs msom), so
         the engram record stays the engram's."""
@@ -568,7 +608,10 @@ class RaceCircuit(ReplayCircuit):
         b, p, K = self._bridge, self.p, self.K
         xp = self._xp
         _reset_quiescent(b, xp, self._snap)
+        self._reset_stp()
         self._reset_apical()
+        stp_start = (self._stp_trial_start()
+                     if getattr(self, "_som_on", False) else None)
         encode_words = (bool(int(p.get("ENCODE_WORDS", 0)))
                         if encode_words is None
                         else bool(encode_words))
@@ -993,6 +1036,8 @@ class RaceCircuit(ReplayCircuit):
             rec["cal_window"] = entry
         if encode_words:
             rec["encode_words"] = True
+        if stp_start is not None:
+            rec["stp_trial_start"] = stp_start      # f1i R1 Q5 read-out
         return rec
 
     def cal(self, *, seed, item, word=None, word2=None,
@@ -1009,6 +1054,7 @@ class RaceCircuit(ReplayCircuit):
         b, p, K = self._bridge, self.p, self.K
         xp = self._xp
         _reset_quiescent(b, xp, self._snap)
+        self._reset_stp()
         self._reset_apical()
         b.set_transmission_gate(GATE_ENGRAM, 1.0)
         b.set_transmission_gate(GATE_COMMIT_IN, 0.0)
@@ -1076,8 +1122,10 @@ class RaceCircuit(ReplayCircuit):
         som_reset_rb = None
         if som_on:
             som_ms = np.zeros(T, dtype=np.int32)
+            som_ev = []     # [ms, SOM cell 0..NSOM-1] per spike: C7(c) per cell
             gap_max = np.full((n_w, T), np.nan, dtype=np.float32)
             som_reset_rb = dict(self._som_resets[-1])
+            som_stp_start = self._stp_trial_start()
 
         def zeros():
             return np.zeros(self._n, dtype=np.float32)
@@ -1109,7 +1157,9 @@ class RaceCircuit(ReplayCircuit):
                     vap_min[wi, t_ix] = float(sv.min())
                     vap_max[wi, t_ix] = float(sv.max())
             if som_ms is not None:
-                som_ms[t_ix] = int(f[self.som].sum())
+                _fs = f[self.som]
+                som_ms[t_ix] = int(_fs.sum())
+                som_ev.extend([t_ix, int(j)] for j in np.flatnonzero(_fs))
                 ga = np.asarray(to_host(b.cp_conductance_g_apical_gaba))
                 for wi in range(n_w):
                     gap_max[wi, t_ix] = float(ga[self.ment[wi]].max())
@@ -1249,9 +1299,11 @@ class RaceCircuit(ReplayCircuit):
                 "n_som": int(self.som.size),
                 "stp_triple": dict(SOM_STP),
                 "reset_readback": som_reset_rb,
+                "stp_trial_start": som_stp_start,
                 "gate_cs_som_at_measurement": float(
                     b._transmission_gate_values[GATE_SOM]),
                 "som_spikes_per_ms": [int(v) for v in som_ms.tolist()],
+                "som_cell_events": som_ev,
                 "g_ap_max_run": round(float(np.nanmax(gap_max)), 6),
                 "per_word_ms": {
                     w: {"v_apical_min": [round(float(v), 4) for v in
@@ -1865,6 +1917,9 @@ def run_calibration(base, grid, seeds, args):
             "som_stp_triple": dict(SOM_STP),
             "som_stp_source": "Markram, Wang & Tsodyks 1998 PNAS 95:5323 "
                               "(PMID 9560274), full text PMC20259"})
+        if int(base.get("STP_RESET", 0)):
+            # R1 Q5 informational arm (only when ON; flags-off unchanged)
+            rec["flags"]["stp_reset"] = True
     if getattr(args, "drive_probe", False):
         # f1g step 0c DRIVE probe (RULING cs-race-f1g-0b-1022): the
         # engagement criterion is fixed here, before any trace or
@@ -2005,6 +2060,11 @@ def run_calibration(base, grid, seeds, args):
                       "window_ms": ca.get("ms"),
                       "encode_words_seen_by_race":
                           bool(ra.get("encode_words"))}
+        if ra.get("stp_trial_start") is not None:
+            # f1i R1 Q5 read-out of the two C5 races (only with --som)
+            srec["c5"]["stp_trial_start"] = {
+                "clause_a": ra["stp_trial_start"],
+                "clause_b": rb["stp_trial_start"]}
         c1_ok = bool(c_lo <= float(r1["pulsed_rate_hz"]) <= c_hi)
         c2a_ok = bool(float(r1["unpulsed_max_hz"]) < quiet)
         c2b_ok = bool(float(r2["max_word_hz"]) < quiet)
@@ -2216,6 +2276,11 @@ def main():
     ap.add_argument("--som-nofac", action="store_true",
                     help="f1i NOFAC arm: slot -> SOM stp_disabled at "
                          "W_MS * U (resting efficacy; no use-dependence)")
+    ap.add_argument("--stp-reset", action="store_true",
+                    help="f1i R1 Q5 informational arm: put ALL STP state "
+                         "(u 0, x 1, every synapse) at rest at each trial "
+                         "start; needs --som. Default off = the f1h "
+                         "carry-over")
     ap.add_argument("--drive-probe", action="store_true",
                     help="f1g step 0c: DRIVE engagement probe "
                          "(item d0, trace off; RULING "
@@ -2289,8 +2354,11 @@ def main():
         base["SOM_W_SA"] = float(args.som_ap)
         base["SOM_LESION"] = int(bool(args.som_lesion))
         base["SOM_NOFAC"] = int(bool(args.som_nofac))
-    elif (args.som_ap is not None or args.som_lesion or args.som_nofac):
-        ap.error("--som-ap / --som-lesion / --som-nofac need --som")
+        base["STP_RESET"] = int(bool(args.stp_reset))
+    elif (args.som_ap is not None or args.som_lesion or args.som_nofac
+          or args.stp_reset):
+        ap.error("--som-ap / --som-lesion / --som-nofac / --stp-reset "
+                 "need --som")
     if args.identity_cue_n:
         return identity_cue_n(base, _F1_GRID_ROW, seeds,
                               int(args.cue_n or 48),
@@ -2412,6 +2480,8 @@ def main():
             "som_lesion": bool(int(base.get("SOM_LESION", 0))),
             "som_nofac": bool(int(base.get("SOM_NOFAC", 0))),
             "som_stp_triple": dict(SOM_STP)})
+        if int(base.get("STP_RESET", 0)):
+            out["instrument_flags"]["stp_reset"] = True
     out["attribution_mention_gate"] = attributable_to(
         "mention gate (b intact vs i1 lesion)", b_w, i1_w)
     if not args.out:
