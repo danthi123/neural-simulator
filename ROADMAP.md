@@ -12,6 +12,25 @@ stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CUR
 compute node (GPU queue, local model serving), and Claude Code inspects occasionally. See
 `docs/plans/2026-09-30-home-to-server-MIGRATION.md`. The capability entries below predate this move and are unaffected.
 
+## 2026-10-27 — one switch makes every brain region's cells numerically stable (still off); it changes replies, because one workspace ran on the artifact
+
+- **Built, off by default:** `SIM_STABLE_INTEGRATION=1` puts every brain region on the two existing integrator
+  fixes at once (bounded synaptic currents and 4 finer membrane steps per millisecond). Unset, nothing changes.
+- **Membranes:** on dev seed 7 the switch removes the impossible voltages the census found (thousands of cells per
+  conversation down to a phasor slice that is not a membrane, plus 112 cells whose own slow variable runs away, a
+  cell-type fault already known). It costs about 5 percent per step on large regions.
+- **Replies change, the same way every run:** the workspace that checks a recalled fact turned out to "ignite" on
+  cells the old integrator let run away; with stable cells it no longer ignites, so recall of taught facts turns
+  into hedged guesses and the inner-thought test this seed passed is lost. Switching that one workspace back (or
+  forward) alone reproduces the change both ways. Emotion naming is unaffected. A second dev seed (8) shows the same.
+- **Why, and the fix that works on this seed:** measured alone, that workspace's "ignition" point is exactly the
+  input at which its cells go numerically wild, so its settings were tuned on the fault. Re-tuned by its own rules on
+  stable cells (weaker loops, a lower firing threshold, smaller votes), the fully stable brain verifies the same
+  recalls as before and passes the inner-thought test again (dev seeds 7 and 8; three other tests return to their
+  old scores on seed 7). The switch stays off until the other
+  workspace (the one that changes topics) is re-tuned the same way and the pair is tested on six seeds
+  (`research/findings/2026-10-26-stable-integration-dev7.md`).
+
 ## 2026-10-27 — the fix for the feeling-name circuit gets its first checks (still off)
 
 - **What the fix is.** The part of the brain that names which feeling it holds (joy, fear, anger or sadness) has a

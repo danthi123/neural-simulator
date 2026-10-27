@@ -199,6 +199,66 @@ def izhikevich2007_dynamics_update(
         total_synaptic_current, dt,
     )
 
+
+# cfg.izh_substep_refractory_rule values (sim/config.py). "model_reset" = rule (a): a neuron the engine's
+# refractory timer holds that reaches its spike threshold inside a sub-step gets the model's own reset
+# (v <- c, u <- u + d) with no spike emitted. "no_engine_timer" = rule (b): the engine timer is retired for
+# Izhikevich cells (the bridge never sets it), so the model reset is the only refractoriness.
+IZH_SUBSTEP_REFRACTORY_RULES = ("model_reset", "no_engine_timer")
+
+
+def izhikevich2007_substep_update(
+    v, u, C_param, k_param, vr_param, vt_param, a_param, b_param,
+    total_synaptic_current, dt, n_substeps, spike_thresholds,
+    c_reset, d_increment, refractory_mask=None, *,
+    backend_neutral_arithmetic=False,
+):
+    """Izhikevich-2007 membrane advanced by `n_substeps` explicit-Euler sub-steps of dt/n_substeps
+    (cfg.izh_membrane_substeps > 1), using the SAME update function as the single-step path
+    (izhikevich2007_dynamics_update) and the step's assembled input current held constant over the step.
+
+    Why: the single dt-step Euler map of dv/dt = (k(v-vr)(v-vt) - u + I)/C has the local multiplier
+    1 + dt*k(2v-vr-vt)/C, which leaves the unit circle (period-2 growth) when C is small against
+    dt*k|2v-vr-vt| -- e.g. at rest for a striatal MSN preset (vr -80, vt -25, k 1) once C < 27.5 pF at
+    dt = 1 ms. Sub-stepping shrinks h = dt/n in that multiplier; it is the same ODE, not a clamp.
+    The bounded conductance currents (cfg.enable_bounded_conductance_integration) are constant effective
+    currents by construction, so holding them over the sub-steps moves v by the same synaptic amount over
+    the whole step and keeps their bound.
+
+    Spike detection runs at sub-step resolution against `spike_thresholds` -- the threshold array the
+    bridge itself compares against (homeostasis-adaptive or vpeak), never a separate vpeak. A neuron that
+    is not refractory and reaches threshold stops advancing for the rest of the step; the bridge's own
+    threshold test then fires it and applies the model reset. `refractory_mask` (rule (a), "model_reset"):
+    a masked neuron that reaches threshold inside a sub-step is reset by the model rule (v <- c_reset,
+    u <- u + d_increment), emits no spike, and keeps integrating. refractory_mask=None (rule (b)): every
+    crosser stops advancing, as above.
+
+    Returns (v_new, u_new, n_model_resets); n_model_resets is a backend int64 count of rule-(a) resets
+    (kept on the device so the default GPU path adds no host sync)."""
+    n = int(n_substeps)
+    if n < 1:
+        raise ValueError("n_substeps must be >= 1")
+    h = dt / n
+    done = cp.zeros(v.shape, dtype=cp.bool_)
+    n_model_resets = cp.zeros((), dtype=cp.int64)
+    for _ in range(n):
+        v_sub, u_sub = izhikevich2007_dynamics_update(
+            v, u, C_param, k_param, vr_param, vt_param, a_param, b_param,
+            total_synaptic_current, h,
+            backend_neutral_arithmetic=backend_neutral_arithmetic,
+        )
+        v = cp.where(done, v, v_sub)
+        u = cp.where(done, u, u_sub)
+        crossed = (v >= spike_thresholds) & ~done
+        if refractory_mask is not None:
+            silent = crossed & refractory_mask
+            v = cp.where(silent, c_reset, v)
+            u = cp.where(silent, u + d_increment, u)
+            n_model_resets = n_model_resets + cp.count_nonzero(silent)
+            crossed = crossed & ~refractory_mask
+        done = done | crossed
+    return v, u, n_model_resets
+
 def _hodgkin_huxley_dynamics_expression(V, m, h, n, I_syn, dt, C_m, g_Na_max, g_K_max, g_L, E_Na, E_K, E_L, phi_m, phi_h, phi_n):
     """Fused kernel for Hodgkin-Huxley model dynamics with per-gate Q10.
 

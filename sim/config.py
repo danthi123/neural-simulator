@@ -374,6 +374,23 @@ class CoreSimConfig:
     # Izhikevich-2007 Euler update on both NumPy and CuPy. Default-off preserves
     # the established fused arithmetic path exactly.
     backend_neutral_izh_arithmetic: bool = False
+    # CORRECTNESS option, ADDITIVE + DEFAULT-OFF (2026-10-26, research/izh-substeps): Izhikevich-2007 membrane
+    # sub-stepping. The single explicit-Euler dt step of dv/dt = (k(v-vr)(v-vt) - u + I)/C has the local
+    # multiplier 1 + dt*k(2v-vr-vt)/C; with dt = 1 ms it leaves the unit circle when a cell's C is small (striatal
+    # MSN preset vr -80 / vt -25 / k 1: unstable at rest below C = 27.5 pF, under strong GABA_A below ~45 pF).
+    # Measured: seed-drawn MSNs at C 18-24 pF in the BG organ lock into a spike/dip 2-step cycle and run v to
+    # -1900 mV (research/findings/2026-10-26-izh-membrane-substeps-derisk.md). n > 1 advances v and u with n
+    # Euler sub-steps of dt/n of the SAME update (sim/kernels.py izhikevich2007_substep_update), the step's
+    # assembled input current held constant (the bounded conductance currents are constant effective currents,
+    # so their bound is kept), spike detection at sub-step resolution against the bridge's own threshold
+    # array. IZHIKEVICH only (raises otherwise); the step megakernel declines (Python path). 1 => the
+    # unchanged single step, byte-identical (tests/test_izh_membrane_substeps.py).
+    izh_membrane_substeps: int = 1
+    # Refractory rule for izh_membrane_substeps > 1 (ignored at 1): "model_reset" (a) -- a neuron held by the
+    # engine refractory timer that reaches threshold inside a sub-step gets the model reset (v <- c,
+    # u <- u + d) with no spike emitted; "no_engine_timer" (b) -- the engine refractory timer is never set for
+    # Izhikevich cells (effective refractory_period_steps 1), the model reset is the only refractoriness.
+    izh_substep_refractory_rule: str = "model_reset"
 
     # B4: Enhanced Channel Noise (White et al. 2000, Destexhe & Rudolph-Lilith 2012)
     # Conductance noise (multiplicative, applied to HH channels)
@@ -1344,6 +1361,13 @@ class CoreSimConfig:
             errors.append(
                 "inhibitory conductance clamp pathway/target_region pairs must be unique"
             )
+
+        # Izhikevich membrane sub-stepping (model scoping is checked at bridge build: SimulationBridge._izh_substep_settings)
+        if type(self.izh_membrane_substeps) is not int or self.izh_membrane_substeps < 1:
+            errors.append(f"izh_membrane_substeps must be an int >= 1, got {self.izh_membrane_substeps!r}")
+        if self.izh_substep_refractory_rule not in ("model_reset", "no_engine_timer"):
+            errors.append("izh_substep_refractory_rule must be 'model_reset' or 'no_engine_timer', "
+                          f"got {self.izh_substep_refractory_rule!r}")
 
         # Time parameters
         if self.dt_ms <= 0:

@@ -1,0 +1,109 @@
+{
+ "runner": "research/runners/stable_integration_step_cost.py",
+ "seed": 7,
+ "steps": 300,
+ "warmup": 30,
+ "reps": 5,
+ "backend": "numpy",
+ "scales": {
+  "25": {
+   "n_neurons": 325,
+   "ms_per_step_off": [
+    0.155,
+    0.2268,
+    0.1605,
+    0.1581,
+    0.1539
+   ],
+   "ms_per_step_on": [
+    0.3361,
+    0.2783,
+    0.2847,
+    0.2701,
+    0.2677
+   ],
+   "median_ms_off": 0.1581,
+   "median_ms_on": 0.2783,
+   "ratio_on_over_off": 1.76,
+   "on_readback": [
+    true,
+    4,
+    "model_reset"
+   ],
+   "on_applied": true,
+   "on_substep_calls": 330,
+   "off_readback": [
+    false,
+    1,
+    "model_reset"
+   ],
+   "off_substep_calls": 0
+  },
+  "250": {
+   "n_neurons": 3250,
+   "ms_per_step_off": [
+    2.5003,
+    2.2772,
+    2.5156,
+    2.4887,
+    2.2754
+   ],
+   "ms_per_step_on": [
+    2.6783,
+    2.5322,
+    2.9871,
+    2.5091,
+    2.6665
+   ],
+   "median_ms_off": 2.4887,
+   "median_ms_on": 2.6665,
+   "ratio_on_over_off": 1.071,
+   "on_readback": [
+    true,
+    4,
+    "model_reset"
+   ],
+   "on_applied": true,
+   "on_substep_calls": 330,
+   "off_readback": [
+    false,
+    1,
+    "model_reset"
+   ],
+   "off_substep_calls": 0
+  },
+  "500": {
+   "n_neurons": 6500,
+   "ms_per_step_off": [
+    9.367,
+    9.5593,
+    11.5868,
+    10.0856,
+    11.1089
+   ],
+   "ms_per_step_on": [
+    9.914,
+    11.6546,
+    10.2791,
+    10.5357,
+    12.1395
+   ],
+   "median_ms_off": 10.0856,
+   "median_ms_on": 10.5357,
+   "ratio_on_over_off": 1.045,
+   "on_readback": [
+    true,
+    4,
+    "model_reset"
+   ],
+   "on_applied": true,
+   "on_substep_calls": 330,
+   "off_readback": [
+    false,
+    1,
+    "model_reset"
+   ],
+   "off_substep_calls": 0
+  }
+ }
+}

@@ -1,0 +1,37 @@
+{
+ "run_id": "1793107047-1342710",
+ "runner": "research/runners/stable_integration_exempt_probe.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-stable/research/runners/stable_integration_exempt_probe.py",
+  "--shard",
+  "--mode",
+  "off_except_swap",
+  "--seed",
+  "7",
+  "--group",
+  "inner",
+  "--out",
+  "research/findings/raw/_stable_integration/census/off_except_swap/s7/inner__intact_a.json"
+ ],
+ "git_sha": "c333d4e9a",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-27T09:17:27",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 4742.7,
+ "corpus_check_query": "route GABA_A synapses onto the apical dendrite compartment",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_stable_integration/census/off_except_swap/s7/inner__intact_a.json"
+}

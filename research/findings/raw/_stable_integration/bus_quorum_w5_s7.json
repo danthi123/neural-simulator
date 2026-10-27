@@ -1,0 +1,142 @@
+{
+ "runner": "research/runners/stable_integration_bus_ignition_probe.py --quorum",
+ "seed": 7,
+ "attractor_weight": 5.0,
+ "threshold": 0.0445,
+ "d_subs": {
+  "3": 500.0,
+  "2": 750.0
+ },
+ "arms": {
+  "off": [
+   {
+    "n_organs": 2,
+    "d_sub": 750.0,
+    "votes_alone": [
+     {
+      "k": 1,
+      "drive": 750.0,
+      "rate": 0.0303,
+      "ignited": false,
+      "n_oor_cells": 0
+     },
+     {
+      "k": 2,
+      "drive": 1500.0,
+      "rate": 0.0822,
+      "ignited": true,
+      "n_oor_cells": 0
+     }
+    ],
+    "quorum_vs_decoy": {
+     "rates": [
+      0.0629,
+      0.0
+     ],
+     "n_oor_cells": 0
+    },
+    "calibration_holds": true
+   },
+   {
+    "n_organs": 3,
+    "d_sub": 500.0,
+    "votes_alone": [
+     {
+      "k": 1,
+      "drive": 500.0,
+      "rate": 0.0,
+      "ignited": false,
+      "n_oor_cells": 0
+     },
+     {
+      "k": 2,
+      "drive": 1000.0,
+      "rate": 0.0303,
+      "ignited": false,
+      "n_oor_cells": 0
+     },
+     {
+      "k": 3,
+      "drive": 1500.0,
+      "rate": 0.0822,
+      "ignited": true,
+      "n_oor_cells": 0
+     }
+    ],
+    "quorum_vs_decoy": {
+     "rates": [
+      0.0689,
+      0.0
+     ],
+     "n_oor_cells": 0
+    },
+    "calibration_holds": true
+   }
+  ],
+  "on": [
+   {
+    "n_organs": 2,
+    "d_sub": 750.0,
+    "votes_alone": [
+     {
+      "k": 1,
+      "drive": 750.0,
+      "rate": 0.0307,
+      "ignited": false,
+      "n_oor_cells": 0
+     },
+     {
+      "k": 2,
+      "drive": 1500.0,
+      "rate": 0.0894,
+      "ignited": true,
+      "n_oor_cells": 0
+     }
+    ],
+    "quorum_vs_decoy": {
+     "rates": [
+      0.0557,
+      0.0
+     ],
+     "n_oor_cells": 0
+    },
+    "calibration_holds": true
+   },
+   {
+    "n_organs": 3,
+    "d_sub": 500.0,
+    "votes_alone": [
+     {
+      "k": 1,
+      "drive": 500.0,
+      "rate": 0.0011,
+      "ignited": false,
+      "n_oor_cells": 0
+     },
+     {
+      "k": 2,
+      "drive": 1000.0,
+      "rate": 0.0303,
+      "ignited": false,
+      "n_oor_cells": 0
+     },
+     {
+      "k": 3,
+      "drive": 1500.0,
+      "rate": 0.0894,
+      "ignited": true,
+      "n_oor_cells": 0
+     }
+    ],
+    "quorum_vs_decoy": {
+     "rates": [
+      0.0841,
+      0.0
+     ],
+     "n_oor_cells": 0
+    },
+    "calibration_holds": true
+   }
+  ]
+ }
+}
