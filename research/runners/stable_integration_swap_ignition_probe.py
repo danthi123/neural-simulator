@@ -265,6 +265,24 @@ def run_collapse(seed, calib, arms=("off", "on"), boosts=(0.0, 0.01, 0.02, 0.03,
 SUSTAIN_WINDOWS = ((30, 45), (100, 200), (300, 400), (600, 700), (900, 1000))
 
 
+READ15 = 15          # the organ's late read window (the last third of READ_FREE_STEPS = 45)
+
+
+def _read15(r, start=100):
+    """Read reliability of the sustained state: pattern 0's private rate in consecutive READ15-step windows from step
+    `start` on (the organ reads a 15-step late window, so an up-state that oscillates on a longer period is read below
+    threshold in some windows). plateau = the mean; frac_below_half = the fraction of windows under half of it (the
+    ignition criterion is half the plateau); others_max = the largest mean rate of an undriven pattern."""
+    if r.shape[0] < start + READ15:
+        return None
+    wins = np.array([r[a:a + READ15, 0].mean() for a in range(start, r.shape[0] - READ15 + 1, READ15)])
+    plat = float(wins.mean())
+    return {"plateau": round(plat, 4), "min": round(float(wins.min()), 4),
+            "p10": round(float(np.percentile(wins, 10)), 4),
+            "frac_below_half": round(float(np.mean(wins < plat / 2.0)), 4) if plat > 0 else None,
+            "others_max": round(float(r[start:, 1:].mean(0).max()), 4), "n_windows": int(len(wins))}
+
+
 def run_sustain(seed, weights, thals, drives, norm_ws=None, arms=("off", "on"), steps=1000):
     """Does the driven pattern SELF-SUSTAIN on its own loop, and does the undriven workspace stay quiescent? Pattern 0
     driven for DRIVE_STEPS at each drive (0 = the no-drive / spontaneous-ignition control), then `steps` free steps
@@ -313,12 +331,12 @@ def run_sustain(seed, weights, thals, drives, norm_ws=None, arms=("off", "on"), 
                                 "slot0_frac_above_m20mV": round(float(hi0[a:e].mean()), 4)}
                                for a, e in SUSTAIN_WINDOWS if e <= steps]
                         row = {"arm": arm, "w_rec": float(w), "thal_tonic_pa": float(thal), "drive": float(d),
-                               "readback": S["readback"], "windows": win, **watch.summary()}
+                               "readback": S["readback"], "windows": win, "read15": _read15(r), **watch.summary()}
                         out["rows"].append(row)
-                        print("[swap sustain] %s nws=%g thal=%g w=%g d=%g %s oor%d" % (
+                        print("[swap sustain] %s nws=%g thal=%g w=%g d=%g %s oor%d | read15 %s" % (
                             arm, nws, thal, w, d, " ".join("[%d-%d]%.3f/%.3f/%.3f v%.0f" % (
                                 x["window"][0], x["window"][1], x["rates"][0], x["rates"][1], x["rates"][2],
-                                x["slot0_mean_v"]) for x in win), row["n_oor_cells"]), flush=True)
+                                x["slot0_mean_v"]) for x in win), row["n_oor_cells"], row["read15"]), flush=True)
     return out
 
 

@@ -30,19 +30,27 @@
   "w_rec": {
    "production": 34.0,
    "recal": 6.5,
-   "rule": "lowest recurrent weight whose up-state is steady (no relaxation oscillation) at the chosen normalization; knee between 4.0 (bursty, 0.047) and 4.5 (steady); 6.5 gives the sustained plateau 0.084 on seeds 7 and 8",
+   "rule": "at nws 4 the sustain knee lies between 4.0 (0.28-0.38 of read windows below half the plateau) and 4.5 (none; plateau 0.067-0.068); the production weight is deliberately supra-critical (the incumbent resists inhibition), so 6.5 (about 1.4x the knee; plateau 0.084, worst window 0.069-0.076) was chosen: a judgment, not a formula; the organ gate passes at it",
    "source": [
-    "research/findings/raw/_stable_recal/swap_sustain_s7.json",
-    "research/findings/raw/_stable_recal/swap_sustain_s8.json"
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws4_s7.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws4_s8.json"
    ]
   },
   "norm_ws_w": {
    "production": 16.0,
    "recal": 4.0,
-   "rule": "largest norm_pool->workspace weight with a steady up-state: 16, 8 and 6 give a ~60-step relaxation oscillation (about half the organ's read windows fall below half the plateau); <= 4 steady",
+   "rule": "largest norm_pool->workspace weight whose sustained state reads reliably in the organ's 15-step read window (read15: fraction of windows below half the plateau, steps 100-1000, thal 0, drive 2500, stable): at nws 16 and 8 every weight 4-6.5 has 0.53-0.93 of windows below half; at 6 still 0.23-0.42; at 5 none below half for w >= 5 but the worst window is only ~0.55 of the plateau (0.041-0.045 vs 0.074); at 4 none below half for w >= 4.5 and the worst window is 0.82-0.90 of the plateau. 4 was chosen over 5 for that margin (a judgment, recorded as such)",
    "source": [
-    "research/findings/raw/_stable_recal/swap_sustain_s7.json",
-    "research/findings/raw/_stable_recal/swap_sustain_s8.json"
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws4_s7.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws4_s8.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws5_s7.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws5_s8.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws6_s7.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws6_s8.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws8_s7.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws8_s8.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws16_s7.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws16_s8.json"
    ]
   },
   "thal_tonic_pa": {
@@ -61,8 +69,8 @@
    "recal": 0.084,
    "rule": "the measured ignited plateau at (6.5, 4, 25) on the stable integrator; the ignition criterion stays IGNITE_FRAC (0.5) x plateau = 0.042, scoped to the swap organ (the global-stop workspace shares Rung-2's SOLO_PLATEAU and is not re-calibrated here)",
    "source": [
-    "research/findings/raw/_stable_recal/swap_sustain_s7.json",
-    "research/findings/raw/_stable_recal/swap_sustain_s8.json"
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws4_s7.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws4_s8.json"
    ]
   },
   "establish_pa": {
