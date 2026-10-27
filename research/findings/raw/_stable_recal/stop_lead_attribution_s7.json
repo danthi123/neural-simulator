@@ -353,6 +353,116 @@
      ]
     }
    }
+  },
+  "on_except_accbg": {
+   "what": "stable brain, ACC-BG stop trigger on the old integrator",
+   "source": "research/findings/raw/_stable_integration/census/on_except_accbg/s7/inner__intact_a.json",
+   "stop_lead_turns": [],
+   "n_stop_lead": 0,
+   "swap_lead_only_turns": [],
+   "organs": {
+    "stop_workspace": {
+     "organ": [
+      "research.runners._gnw_distributed_overwrite_workspace_derisk:_ws_step"
+     ],
+     "n_oor_neurons": 0,
+     "izh_substeps_seen": [
+      [
+       [
+        4,
+        "model_reset"
+       ]
+      ]
+     ]
+    },
+    "accbg_trigger": {
+     "organ": [
+      "research.runners._gnw_acc_bg_stop_trigger_derisk:run_trigger_trial"
+     ],
+     "n_oor_neurons": 0,
+     "izh_substeps_seen": [
+      [
+       [
+        1,
+        "model_reset"
+       ]
+      ]
+     ]
+    },
+    "swap_workspace": {
+     "organ": [
+      "research.runners._gnw_active_overwrite_derisk:_ws_step"
+     ],
+     "n_oor_neurons": 3,
+     "izh_substeps_seen": [
+      [
+       [
+        4,
+        "model_reset"
+       ]
+      ]
+     ]
+    }
+   }
+  },
+  "off_except_accbg": {
+   "what": "old brain, ACC-BG stop trigger on the stable integrator",
+   "source": "research/findings/raw/_stable_integration/census/off_except_accbg/s7/inner__intact_a.json",
+   "stop_lead_turns": [
+    "t_beetle",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "n_stop_lead": 7,
+   "swap_lead_only_turns": [],
+   "organs": {
+    "stop_workspace": {
+     "organ": [
+      "research.runners._gnw_distributed_overwrite_workspace_derisk:_ws_step"
+     ],
+     "n_oor_neurons": 250,
+     "izh_substeps_seen": [
+      [
+       [
+        1,
+        "model_reset"
+       ]
+      ]
+     ]
+    },
+    "accbg_trigger": {
+     "organ": [
+      "research.runners._gnw_acc_bg_stop_trigger_derisk:run_trigger_trial"
+     ],
+     "n_oor_neurons": 0,
+     "izh_substeps_seen": [
+      [
+       [
+        4,
+        "model_reset"
+       ]
+      ]
+     ]
+    },
+    "swap_workspace": {
+     "organ": [
+      "research.runners._gnw_active_overwrite_derisk:_ws_step"
+     ],
+     "n_oor_neurons": 344,
+     "izh_substeps_seen": [
+      [
+       [
+        1,
+        "model_reset"
+       ]
+      ]
+     ]
+    }
+   }
   }
  }
 }

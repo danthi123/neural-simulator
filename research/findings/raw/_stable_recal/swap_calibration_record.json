@@ -56,7 +56,7 @@
   "thal_tonic_pa": {
    "production": 700.0,
    "recal": 25.0,
-   "rule": "largest thalamic support with no spontaneous ignition over 1000 steps on both seeds (50 pA: seed 8 ignites by itself at ~600 steps); thal pool rate is integrator-independent (700 pA: 0.097 old, 0.101 stable)",
+   "rule": "largest thalamic support with no spontaneous ignition over 1000 undriven steps on both seeds (w 6.5, nws 4): 25 pA leaves every pattern at 0.0 on seeds 7 and 8; at 50 pA seed 7 ignites pattern 0 by itself between steps 600 and 1000 (0.029 then 0.084), at 75 pA seed 8 ignites pattern 1 by itself; at 200 and 700 pA all three patterns fire together (0.05-0.06).",
    "source": [
     "research/findings/raw/_stable_recal/swap_thal_support_w6p5_nws4_s7.json",
     "research/findings/raw/_stable_recal/swap_thal_support_w6p5_nws4_s8.json",
