@@ -130,15 +130,16 @@ identities or rates.
 - **Slot -> SOM (facilitating).** `plan["msom"] = SC.dense(all_ment, som, W_MS, conn_type="E_TO_I")`, excluded from the
   runner's stp_disabled loop by its key.
   - Facilitation through per-conn-type STP (`bridge.py:9013-9034`): `enable_per_type_stp = True` with
-    `stp_U_per_type = [U_row, 0.05, 0.25, 0.25]`, `stp_tau_f_per_type = [tau_f_row, 750, 50, 50]` and
-    `stp_tau_d_per_type = [200, 200, 100, 100]`.
+    `stp_U_per_type = [U_row, 0.049, 0.25, 0.25]`, `stp_tau_f_per_type = [tau_f_row, 1797, 50, 50]` and
+    `stp_tau_d_per_type = [tau_d_row, 399, 100, 100]` (index 1 = the R1 Q3 triple below; it was 0.05 / 750 / 200
+    before the E build's Q3 check).
   - Index 0 copies the row's global values, so engram recurrence keeps its STP. Every other E_TO_I, I_TO_E and I_TO_I
     pathway in this probe is stp_disabled (factor 1.0), so indices 2-3 are inert; the read-back records it.
 - **SOM -> apical.** `plan["sap"] = SC.dense(som, all_ment, W_SA, conn_type="I_TO_E", receptor="gaba_a_apical")`, with
   its own transmission gate `cs_som` and stp_disabled. `enable_apical_gaba_routing = True` when `--som` is given.
 - **Flags:** `--som W_MS`, `--som-ap W_SA`, `--som-lesion` (gate `cs_som` closed for the whole run), `--som-nofac`
-  (msom stp_disabled at weight `W_MS * 0.05`: a static synapse with the facilitating synapse's resting efficacy, so the
-  one thing NOFAC removes is the use-dependence).
+  (msom stp_disabled at weight `W_MS * U`, U = 0.049: a static synapse with the facilitating synapse's resting
+  efficacy, so the one thing NOFAC removes is the use-dependence).
 - **Lesion persistence.** `_build` and every `race()` / `cal()` gate reset re-open the named gates; with `--som-lesion`
   the runner closes `cs_som` AFTER each reset and records the read-back at measurement time.
 - **Trial reset of the new state (self-skeptic S1, S3).** The quiescent snapshot does not carry STP state or the new
@@ -154,19 +155,35 @@ identities or rates.
 - **STP record split (S4).** The runner's STP record (`cs_race_f1.py:749-760`) averages every STP-active synapse as
   "engram recurrence". With msom STP-active it is split by pathway (ee, msom), so the engram record stays the engram's.
 - **Frozen values and where they come from** (nothing here was chosen from a run; no SOM run of any kind exists):
-  - U = 0.05, tau_f = 750 ms: the record's facilitating range (f1f-RESEARCH.md:146-152). 0.05 is the upper end and the
-    conservative one for item C8: a smaller U makes the held trace's spikes weaker still.
-  - tau_d = 200 ms for E_TO_I: the engine default (config.py:1298), untouched.
+  - **R1 Q3 record (E build, 2026-10-27).** Markram, Wang & Tsodyks 1998, PNAS 95:5323-8, PMID 9560274,
+    doi:10.1073/pnas.95.9.5323, read in full text (PMC20259). Pyramid -> interneuron facilitating connections, 7 pairs of
+    convergent inputs onto single interneurons in layers 2-3 and 4: **U = 0.049 +/- 0.037, tau_rec (D) = 399 +/- 295 ms,
+    tau_facil (F) = 1797 +/- 1247 ms** (Results; Fig. 3 single cells: U 0.03-0.12, D 30-600 ms, F 1700-3900 ms; Fig. 4
+    one synapse: U 0.03, D 130 ms, F 530 ms).
+  - **What did NOT verify:** the paper never says "bitufted". Its interneurons are unclassified ("an unambiguous
+    classification of interneurons is not possible"); the L5 divergent target is called "bipolar". So the triple is a
+    facilitating pyramid -> interneuron triple, and its SOM-like reading rests on the facilitation itself, not on a cell
+    class in this paper. R1's fallback (U 0.05, F 750 ms, D from their source) could not be checked either: the source
+    chain (f1f-RESEARCH.md:58-60, 146-152: Tsodyks & Markram 1998 Neural Comput; Scholarpedia) was not reachable here.
+  - **Applied:** the verified MWT98 triple whole, U = 0.049, D = 399 ms, F = 1797 ms, on index 1 (E_TO_I). R1's intent
+    (D from the facilitating record, not the 200 ms depressing default) is met. The class-label gap is flagged for the
+    next ruling; overruling it restores 0.05 / 750 and needs a verified D.
+  - The paper's model text: u jumps by U(1 - u) at a spike and "decays ... to its resting value U". The engine resets
+    toward u = 0 (`kernels.py` `fused_stp_decay_recovery`) and transmits w*u*x AFTER the spike's depletion
+    (`bridge.py` STP block: x <- x(1 - u_new), then efficacy u_new*x_new). Both give a first-spike efficacy near U; the
+    engine's is U(1 - U). Values below are computed in the ENGINE's form.
   - E_i = -75 mV and tau = 10 ms: engine GABA_A defaults. NSOM = 8 and W_MI = 20: f1g's frozen values.
 - **Disclosure: no run informs any f1i value.** The only seed-41 information on this lane is f1h's informational soma-g
   scan (soma-g 0.004-400 at W_IM 40; f1h Amendment A1). It reaches f1i only through f1h's own selection rule for the
   base cell. Seed 41 stays a dev seed.
-- **Disclosure: facilitation alone is not the high-pass at these values.** Hand arithmetic in the engine's form, with
-  the frozen U, tau_f and tau_d, gives a per-spike efficacy of about 0.14 at 100 Hz (peak, spikes 5-6) and about 0.2 at
-  a steady 10 Hz (approximate; the build's read-back measures the realized values): tau_d = 200 ms depletes the high-rate
-  train. Rate x efficacy is about 14/s against 2/s, a factor of 7. A static
-  synapse gives 10. Any selectivity must therefore come from rate and the SOM cell's temporal summation. Whether
-  facilitation is NECESSARY is measured by the step-1 NOFAC arm, never assumed.
+- **Disclosure: facilitation alone is not the high-pass at these values.** Exact per-step arithmetic in the engine's
+  form (dt = 1 ms; E build, replacing the earlier hand estimate of 0.14 / 0.2, which was high):
+  - MWT98 triple (applied): first spike 0.047; 100 Hz peak 0.111 (spike 4), then depleted to 0.005; 10 Hz steady
+    0.093; 2 Hz steady 0.135. The held trace's rates get a HIGHER per-spike efficacy than the volley's steady state.
+  - Old triple (0.05 / 750 / 200), for reference: first 0.048; 100 Hz peak 0.113 (spike 4); 10 Hz steady 0.143.
+  - Rate x efficacy at the 100 Hz peak is about 11/s against 0.9/s at 10 Hz and 0.3/s at 2 Hz. Any selectivity must
+    therefore come from rate and the SOM cell's temporal summation over the volley's first spikes. Whether facilitation
+    is NECESSARY is measured by the step-1 NOFAC arm, never assumed. NOFAC's static weight is `W_MS * 0.049`.
 
 ## Step 0 (Hermes, after the E build is merged): seeds 41-48 only, no race, W_GIS 30, row 3
 - **P0' engine support (read-only, first).** Show with file:line that the merged E build is present, its tests pass,
@@ -175,12 +192,14 @@ identities or rates.
 - **Identity (STOP-ID).** (i) No f1i flag: the calibrate JSON minus `wall_s` hashes equal to the f1h runner at the base
   cell on seeds 41-42. (ii) `--som-lesion`: `g_ap == 0` at every recorded ms and the `cs_som` gate reads back 0.0 at
   measurement time (the TERMS.md lesion condition).
-- **Grid (frozen):** `W_SA` in {0.125, 0.25, 0.5} x `W_MS` in {100, 200, 400}: 9 cells x 8 seeds = 72 pool lines.
+- **Grid (frozen):** `W_SA` in {0.125, 0.25, 0.5} x `W_MS` in {215, 304, 429}: 9 cells x 8 seeds = 72 pool lines.
   - `W_SA`: one synchronous volley of all 8 SOM cells delivers `8 * W_SA` = {1, 2, 4} apical-leak units, i.e. {0.5, 1, 2}
     x the gap4 GO self-regen conductance (`coincidence_plateau_self_regen` = 2.0), the conductance a terminating IPSP
     must oppose.
-  - `W_MS`: f1g's slot -> pool weight W_MI = 20 divided by the facilitating synapse's efficacy band, 0.2 (facilitated)
-    to 0.05 (first spike), giving 100-400 on a factor-2 grid.
+  - `W_MS`: f1g's slot -> pool weight W_MI = 20 divided by the facilitating synapse's efficacy band (R1 Q4, same
+    formula). Recomputed by the E build from the verified Q3 triple in the engine's form, before any run: 0.093
+    (facilitated, steady 10 Hz) to 0.047 (first spike) gives 215-429. The band is now a factor of 2, so the three cells
+    are its ends and their geometric midpoint (304), keeping the 9-cell size. Was {100, 200, 400} from 0.2-0.05.
 - **Items, on 8/8 seeds:**
   - C0-C6 as in f1h. C3 (overwrite, both orders, the three pairs) is now REQUIRED.
   - C7 (new, the eraser), per C3 pair, with X at 0-150 ms, gap, Y_on = 300 ms, Y at 300-450, window [600, 950):
