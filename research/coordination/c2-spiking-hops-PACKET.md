@@ -110,9 +110,19 @@ Each cited file:line was re-read for this revision before it was written down.
 | m1 | Infer arms are seed-invariant (one effective measurement) | 2.9 (checked, and how it is reported) |
 | m2 | The gate-off shards' hosts | section 1 |
 
-## 0e. Self-skeptic pass on this revision
+## 0e. Self-skeptic pass on this revision (Claude as refuter, 2026-10-27, on 2901b314c)
 
-Recorded in the follow-up commit on this branch, after the gates pass on this one.
+Same three questions as 0c, plus: does every new rule have a reference that can actually move?
+
+| # | finding | fix |
+|---|---|---|
+| T1 | B12 (b) barred `audit_disagree` on every M1 arm, but A3's `.kb` is deranged by design (its audit is no oracle) and A11's lesion blinds the unit by design (an ADVANCE on a two-patient cue there is B6's evidence): B12 would fail by construction | 2.9 B12 (b): A3 and A11 excluded with reasons; their hops still listed |
+| T2 | The audit counted the buffer and the ROUTED shard only; the fix asked for every shard | 2.3, 2.7: `audit_ltm_all` (record-only scan of `ltm.shards`); `audit_disagree` uses the larger LTM count |
+| T3 | The learning-engagement floor was "10% of word->role's update steps", but word->role is frozen while O->role and RT->role learn (3.2), so the floor was 0 and the precondition vacuous | 3.5: floor = n_stmt update steps (one co-firing per statement per projection), sum dw > 0, and the 90% co-firing fraction; word->role's frame-packet count is context only |
+| T4 | "conflict_unit in both builders" left the full-V builder's patient layer size and rebuild condition unstated | 2.3: V'_P in both builders, in both rebuild branches |
+| T5 | The `w_c` grid (5-600, linear) could miss the window for range reasons alone, and STOP on the grid instead of the physics; the ratio checks named no `w_c` | 2.10 step 1: 64 log-spaced points 1-3000, one 10x extension at an edge, geometric midpoint; ratios at the chosen `w_c` |
+| T6 | The `infer_xtier` LTM write was "before the first turn" without saying the brain exists by then | 2.8: after the chat brain is built, before its first turn |
+| T7 | Section 4 said a spiking cross-tier read waits for "co-residence of the buffer and the LTM shard" and attributed that to the `replaced-by` line, which names no such thing | section 4: the cross-tier slots and the LTM-hop enumeration are retired by the cs-race store competition once it spans the LTM tier, which `replaced-by` does name; `replaced-by` itself is unchanged, so the scaffold keeps its group identity |
 
 ## 1. The defect, as measured
 
@@ -226,8 +236,9 @@ whose grammar fixes two relations.
 (:133) that is `build_sequencerK_reduced_bridge` (`_seq_vocab_shrink_derisk.py:98`): role A has word lines only for
 the distinct stored agents and role X only for the distinct stored actions, listed by `reduced_cue_vocab` (:183) from
 `self.kb[:K]` (:1654), a host read of the fact list (declared). With the option off it is `build_sequencerK_bridge`
-over all V words. The new `conflict_unit` option is added to BOTH builders with the same semantics; the reduced one is
-the path every arm runs. Per block b, decoded agent and action word lines each pass a gate `g{b}{role}_w` that the cue
+over all V words. The new `conflict_unit` option is added to BOTH builders with the same semantics, its patient layer
+over the reduced patient vocabulary V'_P in both, and V'_P joins the rebuild condition in both branches of
+`_ensure_sequencer` (:1651-1670); the reduced builder is the path every arm runs. Per block b, decoded agent and action word lines each pass a gate `g{b}{role}_w` that the cue
 word line opens, so `mw{b}{role}_w` fires only when the decoded word equals the cue; role OR-pools `mA{b}`, `mX{b}`
 feed a block AND pool `m{b}` through gate `gblk{b}`, so `m{b}` fires only when agent AND action match. The `m{b}` pools
 count matching BLOCKS. Since the store appends a block per re-tell (2.1), a block count would read a duplicate re-tell
@@ -326,10 +337,12 @@ buffer abstains (`tiered_fact_store.py:194-195` through `_tiered`; tier provenan
   differs from the PROPOSE word gets its own workspace slot at `IGNITE_PA` (2.2). One buffer patient and one different
   LTM patient then put the gate in its CONFLICT regime, and it ABSTAINs. The enumeration and the string compare are
   host decisions, declared; M1's spiking claim covers the within-buffer read only (2.6).
-- **Registered either way.** Every hop records `ltm_candidates`, `xtier_slots`, the audit's distinct-patient counts
-  split by tier (`audit_buffer`, `audit_ltm`, from the 2.4 audit call), and two flags: `audit_disagree` (the audit
-  counts 2 or more distinct patients over buffer and LTM while `gate_decision` is ADVANCE) and, within it,
-  `xtier_disagree` (the second patient is only in the LTM). Both flags are reported on every M1 arm, and B12 bars them.
+- **Registered either way.** Every hop records `ltm_candidates`, `xtier_slots`, and the audit's distinct-patient
+  counts split by tier: `audit_buffer` and `audit_ltm` from the 2.4 audit call (the buffer and the routed shard), and
+  `audit_ltm_all`, a record-only scan of every shard in `ltm.shards` (`sharded_phasor_store.py:105-124`) in case a
+  fact sits outside its routed shard. Two flags follow: `audit_disagree` (the buffer plus the larger LTM count holds
+  2 or more distinct patients while `gate_decision` is ADVANCE) and, within it, `xtier_disagree` (the second patient
+  is only in the LTM). Both flags are reported on every M1 arm, and B12 bars them.
 
 **Risk named before data.** The integrated loop over-abstains at the tiny-demo's small vocabulary
 (`webapp/server.py:3903-3909`); at V=320 it missed 6-14 of 35 recalls (finding
@@ -389,7 +402,7 @@ m_counts (per block), blocks_matched (m{b} over the composer's match_thresh, 0.0
 pP_w line with any spike), patient_lines_active, spurious_P, stp_reset (cp_stp_x and cp_stp_u read back on the
 conflict synapses at the read's first step), acc_conf_spikes, slot1_drive, ltm_candidates, xtier_slots,
 xtier_dropped, drives, ws_seed, n_ignited, conf, winner, winner_kind, gate_decision, gate_cycles, committed,
-audit_buffer, audit_ltm, audit_disagree, xtier_disagree, route_kb_reads, composer_kb_reads}`. `route_kb_reads` counts
+audit_buffer, audit_ltm, audit_ltm_all, audit_disagree, xtier_disagree, route_kb_reads, composer_kb_reads}`. `route_kb_reads` counts
 `.kb` accesses whose caller frame is `compositional_chain_route` while a hop scope is open; `composer_kb_reads` counts
 those from `one_brain_composer`, listed by line: `_read_blocks` :1389, `_fact_shard_active` :1398,
 `_ensure_sequencer` :1654, `_attributed_patient` :1782, the clause test in `query_patient` :1822, and `_seq_block`
@@ -406,8 +419,8 @@ tiny-demo +LTM, corpus present, `PYTHONHASHSEED=0`, `rich` omitted):
 - `infer_dup` (duplicate facts): the four intact teaches, then verbatim re-tells of the hop-1 fact ('the heron hunts
   the frog', label t_heron_hunt_re) and of the hop-2 fact ('the frog eats the gnat', t_frog_eat_re), then the
   `infer` probes.
-- `infer_xtier` (cross-tier ambiguity): before the first turn the arm worker writes (heron, hunt, fish) into the LTM
-  with `ltm.store` (the call `build_ltm_from_facts` uses, `tiered_fact_store.py:108`; a fixture step, not a turn, so
+- `infer_xtier` (cross-tier ambiguity): after the chat brain is built and before its first turn, the arm worker
+  writes (heron, hunt, fish) into the LTM with `ltm.store` (the call `build_ltm_from_facts` uses, `tiered_fact_store.py:108`; a fixture step, not a turn, so
   the buffer never holds it); then the four intact teaches and the `infer` probes. Hop 1 of p_prey_eat then has frog
   in the buffer and fish in the LTM.
 
@@ -518,8 +531,11 @@ Bars (each on every dev seed 1-6; design seed 7 is excluded from the count):
 - **B12 cross tier:** (a) P9 holds. Engagement precondition: B1's engagement holds on that seed, and the arm's own
   read-back after the teaches shows the buffer's decoded rows under (heron, hunt) carrying frog only,
   `ltm.query_patient(heron, hunt)` returning fish, and the audit counting one patient per tier; otherwise UNDEFINED.
-  (b) On every M1 arm (A1-A6, A8, A10-A12, A14, A16) and every dev seed, no hop has `audit_disagree` true. Every hop
-  that does is listed with its tier counts, `xtier_disagree` and its seed; one such hop fails B12 on that seed.
+  (b) On every M1 arm except A3 and A11 (A1, A2, A4-A6, A8, A10, A12, A14, A16) and every dev seed, no hop has
+  `audit_disagree` true. Every hop that does is listed with its tier counts, `xtier_disagree` and its seed; one such
+  hop fails B12 on that seed. A3 is excluded because its `.kb` is deranged by design, so its audit is no oracle; A11
+  and its .rep0 are excluded because the lesion blinds the unit by design (an ADVANCE on a two-patient cue there is
+  B6's evidence, not a failure). Their `audit_disagree` hops are still listed.
 
 Every lesion reports engaged / not engaged first (docs/TERMS.md, lesion); a lesion that did not hold is reported as
 not held, never as no effect.
@@ -581,14 +597,16 @@ seed-7 counts in a comment. The fixture is the step-1 circuit fixture, never a b
 with the tiny-demo onebrain buffer's kwargs on seed 7, written by direct `composer.store` calls. Cue (heron, hunt)
 over (heron, hunt, frog) and (heron, hunt, fish) is the two-line case; cue (frog, eat) over (frog, eat, gnat) stored
 twice is the one-line-two-blocks case; cue (frog, eat) over (frog, eat, gnat) stored once (a separate composer) is the
-one-line-one-block case. Sweep `w_c` over the grid 5, 10, ..., 600 (the sequencer's own weights are 300-320,
-`_seq_vocab_shrink_derisk.py:99`). The window is the set of grid points where `acc_conf` is silent (0 spikes) in both
-one-line cases AND fires at least 20 spikes (one per cell) over the settle window in the two-line case. If the window
-holds fewer than 3 contiguous grid points, STOP: no weight window; post the counts. Otherwise `w_c` is the grid point
-nearest the window's midpoint, (lowest + highest) / 2, and `n_conf_ref` is the two-line count at that `w_c`. Reported
-beside it: the summed input current into `acc_conf` for one line from two blocks against one line from one block
-(must be within 1.1x) and for two lines against one line from one block (must be at least 1.5x); if either fails,
-STOP: the deduplication is not on the substrate. The sweep runs twice, on a fresh bridge and right after a prior
+one-line-one-block case. Sweep `w_c` over 64 log-spaced grid points from 1 to 3000 (the sequencer's own weights are
+300-320, `_seq_vocab_shrink_derisk.py:99`, and depression scales the effective weight down). The window is the set of
+grid points where `acc_conf` is silent (0 spikes) in both one-line cases AND fires at least 20 spikes (one per cell)
+over the settle window in the two-line case. If the window touches an end of the grid, the grid is extended once by
+a factor of 10 on that side and the rule re-applied. If the window then holds fewer than 3 contiguous grid points,
+STOP: no weight window; post the counts. Otherwise `w_c` is the grid point nearest the window's geometric midpoint,
+sqrt(lowest * highest), and `n_conf_ref` is the two-line count at that `w_c`. Reported beside it, at the chosen `w_c`:
+the summed input current into `acc_conf` for one line from two blocks against one line from one block (must be within
+1.1x) and for two lines against one line from one block (must be at least 1.5x); if either fails, STOP: the
+deduplication is not on the substrate. The sweep runs twice, on a fresh bridge and right after a prior
 two-line read, and the window must be the same grid points (the STP reset test).
 
 Unit tests: flag-off golden; the caller-frame `.kb` test (2.4); the lesion flags reach their targets;
@@ -725,10 +743,13 @@ passes to the store path untouched at the reply level. The nonce-determiner item
 diagnosis found the frame packet's T->role projection updated on 1 of 5760 training steps against word->role's 3595,
 because its pre-side trace population was almost silent (RULING batch-1026 (5), runbook on main); every bar read on
 that organ tested a frozen projection. So, per organ and seed, the training record must show: O->role and RT->role
-each updated on at least 10% as many steps as word->role on the same seed, with sum |dw| > 0 on each; and at the
-training steps where a role's commit gate fires, the pre-side trace that should predict it (O for agent, RT_agent for
-action, RT_action for patient) has spiked within the rule's co-firing window on at least 90% of them. The counts,
-sums and fractions are reported for every organ arm. A seed failing this is UNDEFINED for every organ bar of that
+each updated on at least n_stmt training steps, where n_stmt is the number of exposure statements heard in training
+(each statement offers each projection at least one co-firing), with sum |dw| > 0 on each; and at the training steps
+where a role's commit gate fires, the pre-side trace that should predict it (O for agent, RT_agent for action,
+RT_action for patient) has spiked within the rule's co-firing window on at least 90% of them. word->role is not the
+reference here: it is frozen while O->role and RT->role learn (3.2), so its count in this phase is 0 by design; its
+count from the frame packet's own training is reported as context only. The counts, sums and fractions are reported
+for every organ arm. A seed failing this is UNDEFINED for every organ bar of that
 organ, never PASS and never FAIL.
 
 Arms: intact; role-sequence lesion (RT->role and O->role gates closed at read, persistence verified); carrier lesion
@@ -834,8 +855,9 @@ M3's carrier; M3 step 1 waits for its results, and M1 proceeds independently. M3
 - **The void `transitive_chat` arm** (its flag is already ON and the route sits only on the single-fact path) and
   **the direct-recall framing change under kb_scramble** (a list-backed verify over `chat.stored_facts`) are named,
   not addressed.
-- **Cross-tier conflict on the substrate.** M1 keeps today's cross-tier abstain through host-listed slots (2.3); a
-  spiking cross-tier read waits for one-bridge co-residence of the buffer and the LTM shard (the `replaced-by` line).
+- **Cross-tier conflict on the substrate.** M1 keeps today's cross-tier abstain through host-listed slots (2.3). Those
+  slots and the LTM-hop enumeration are retired by the cs-race spiking store competition once it spans the LTM tier
+  (the `replaced-by` line names that competition for block selection); no build here does that.
 
 ## 5. Seeds, resources, where it runs
 
