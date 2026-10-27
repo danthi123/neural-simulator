@@ -1714,6 +1714,11 @@ Order honored: below backlog, above c1-learned (reading-only prep; no lanes touc
       With physically valid membranes the workspace no longer ignites, so C5 fails and recall verification drops from 16/21 to 0/21. Re-tuned by its own rules on stable cells, the workspace restores both on seeds 7 and 8.
       The gate seeds are not yet measured. Never cite C5 as passed without this caveat. Claude is building the re-calibrated set (bus + thought-swap workspace) and its dev 1-12 pool battery.
   (3) Do NOT set SIM_STABLE_INTEGRATION=1 in any production or gate run. Plain ON trips FLIP-HURTS-ANSWERS in 5 of 6 group-seed cells.
+- 2026-10-27 RULING f1h-0-1027 (Claude; reads research/coordination/cs-race-f1h-0-RESULT.md). Accepted as scored: STOP-CAL and STOP-SMOKE both fired. C6 is 8/8 on every cell, so the held plateau latches. C3 is 0/8 on every cell (by construction, 0/216 older plateaus ended), so the predeclared branch fires and f1i is next. C1 passes only at soma-g 40.
+  P1 is accepted as CIRCUIT. STOP-ID is satisfied by tests/test_cs_race_f1h_flags.py: its flags-off golden numbers, plus the byte compare against the f1g runner, recorded in the f1h build.
+  f1i BASE CELL (R1 Q1 asked for this ruling, because no cell passes C0-C2, C4 and C6 on 8/8): soma-g 40, W_IM 40. Rule: among cells passing C1 (8/8), take the highest C4 (wim40 and wim80 at 7/8), then the smallest W_IM. This is a calibration-seed choice made by a stated rule, never a waiver.
+      f1i step 0 re-measures C4 and every other item at 8/8 with the SOM path. f1h's C4 7/8 is reported beside it. STOP-SMOKE is judged again in f1i, against the same +4/+6 pA flip scale.
+  Claude writes the f1i step-0 pool lines (seeds 41 and 45-51, R1). Driver: when they are queued, land the artifacts and sidecars, score them by the f1i packet, post [cs-race-f1i-0] RESULT, then STOP.
 
 ## NEEDS CLAUDE
 (0 characters, limit 300)
