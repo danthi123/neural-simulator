@@ -59,6 +59,18 @@ def _score(group, rec):
     return json.loads(json.dumps(sc, default=str))
 
 
+def _signature(resp):
+    """The per-turn internal read-outs the reply changes trace to: the GNW thought-swap workspace (`swap_drives`), its
+    stop circuit (`gnw_stop`), the recall verification and the authorship label. Rates rounded to 3 decimals."""
+    if not isinstance(resp, dict) or "_error" in resp:
+        return None
+    sd, gs, au = resp.get("swap_drives") or {}, resp.get("gnw_stop") or {}, resp.get("authorship") or {}
+    r = sd.get("new_rate_post")
+    return {"swap_reason": sd.get("reason"), "swapped": sd.get("swapped"), "n_ignited_post": sd.get("n_ignited_post"),
+            "new_rate_post": (round(float(r), 3) if r is not None else None),
+            "stop": gs.get("reason_lead"), "verified": resp.get("verified"), "authorship": au.get("label")}
+
+
 def compare_group(group, off, on):
     (p_off, r_off), (p_on, r_on) = off, on
     w_off, w_on = r_off.get("workload") or {}, r_on.get("workload") or {}
@@ -69,6 +81,9 @@ def compare_group(group, off, on):
         organs.append({"organ": name, "off": a, "on": b})
     tr_off, tr_on = w_off.get("turn_replies") or {}, w_on.get("turn_replies") or {}
     labels = [t["label"] for t in ((w_off.get("shard") or {}).get("turns") or [])] or sorted(set(tr_off) | set(tr_on))
+    sh_off = ((w_off.get("shard") or {}).get("responses")) or {}
+    sh_on = ((w_on.get("shard") or {}).get("responses")) or {}
+    signatures = {lab: {"off": _signature(sh_off.get(lab)), "on": _signature(sh_on.get(lab))} for lab in labels}
     changed = []
     for lab in labels:
         a, b = tr_off.get(lab) or {}, tr_on.get(lab) or {}
@@ -102,7 +117,8 @@ def compare_group(group, off, on):
                          "organs": organs},
             "replies": {"n_turns": len(labels), "n_changed": len(changed), "changed": changed,
                         "responses_sha256_off": w_off.get("responses_sha256"),
-                        "responses_sha256_on": w_on.get("responses_sha256")},
+                        "responses_sha256_on": w_on.get("responses_sha256"),
+                        "signatures": signatures},
             "gate_score": {"off": _score(group, r_off), "on": _score(group, r_on)}}
 
 
