@@ -33,7 +33,7 @@ def _git(*args):
 
 HEAD_SHA = _git("rev-parse", "HEAD")
 PARENT_SHA = _git("rev-parse", "HEAD~1")
-PREREG = "CLAUDE.md"                      # committed at HEAD in every checkout
+PREREG = "research/findings/2026-09-29-host-share-baselines-PREREGISTRATION.md"   # a real committed prereg (the gate-seed guard requires "prereg" in the name)
 MOD = "tools.fake_canary_runner"
 
 
