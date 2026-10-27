@@ -9,6 +9,7 @@ seeds: [7, 1, 2, 3]
 runner: research/runners/membrane_census.py
 artifacts:
   - research/findings/raw/_stable_mechc/compare_s7.json
+  - research/findings/raw/_stable_mechc/leaf_diff_stable_vs_preset_s7.json
   - research/findings/raw/_stable_mechc/lag_probe_s7.json
   - research/findings/raw/_stable_mechc/lag_trait_probe.json
   - research/findings/raw/_stable_mechc/census/stable/s7/conv__intact_a.json
@@ -135,7 +136,9 @@ What the switch did change, in the cells of the organs it reached (b is the draw
 The two arms' shard records have the same set of 12251 leaves (summed over the five groups; timings and process
 statistics excluded); 235 of them differ (233 floats, 2 ints) and nothing else does: no answer text, abstention flag, recalled fact or derived flag changed, and the swap, stop, verification and
 authorship read-outs are identical in all 63 turns. The 235 are, with the largest relative change of each
-(`research/findings/raw/_stable_mechc/census/{stable,stable_preset}/s7/<group>__intact_a.json`, `workload.shard.responses`):
+(`research/findings/raw/_stable_mechc/leaf_diff_stable_vs_preset_s7.json`, written by
+`python -m research.runners.stable_preset_compare --leaf-diff-only` from the `workload.shard.responses` of the census
+records; first found by an ad hoc script and now reproduced by the committed runner):
 
 | read-out | leaves changed | largest relative change | where |
 |---|---|---|---|

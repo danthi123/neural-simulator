@@ -1,0 +1,377 @@
+{
+ "runner": "research/runners/stable_mechc_lag_gate.py",
+ "env": {
+  "SIM_TRAIT_CENTRED_HET": "1",
+  "SIM_PRESET_CENTRED_HET": null,
+  "SIM_STABLE_INTEGRATION": "1"
+ },
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8
+ ],
+ "rows": [
+  {
+   "gate": "G1 learned_assoc_graph.main",
+   "seed": 1,
+   "edges_recovered": 12,
+   "edges_oracle": 24,
+   "top_match": 6,
+   "top_total": 6,
+   "pass": false,
+   "steps": 1800,
+   "spikes": 80588,
+   "wall_s": 30.8,
+   "printed": [
+    "  [recurrent: mean=0.076 max=26.405 nnz=1349617]",
+    "=== LearnedAssocGraph (seed=1) ===",
+    "learned-graph edges recovered: 12/24 oracle co-occurrence edges",
+    "learned top-associate in oracle: 6/6 concepts",
+    "  dog: learned associates ['go', 'north']  | oracle ['big', 'cat', 'go', 'north']",
+    "  cat: learned associates ['south', 'run']  | oracle ['big', 'dog', 'run', 'south']",
+    "  apple: learned associates []  | oracle ['big', 'river']"
+   ]
+  },
+  {
+   "gate": "G2 _D_sparse_heteroassoc.run",
+   "seed": 1,
+   "n_pairs": 2,
+   "post_encode_top1": 1,
+   "post_swr_top1": 1,
+   "ranks_encode": [
+    0,
+    2
+   ],
+   "ranks_swr": [
+    0,
+    2
+   ],
+   "margins_swr": [
+    0.0,
+    0.0
+   ],
+   "steps": 2620,
+   "spikes": 112175,
+   "wall_s": 73.5,
+   "pass": false
+  },
+  {
+   "gate": "G1 learned_assoc_graph.main",
+   "seed": 2,
+   "edges_recovered": 16,
+   "edges_oracle": 24,
+   "top_match": 9,
+   "top_total": 9,
+   "pass": false,
+   "steps": 1800,
+   "spikes": 92733,
+   "wall_s": 29.8,
+   "printed": [
+    "  [recurrent: mean=0.079 max=17.404 nnz=1349963]",
+    "=== LearnedAssocGraph (seed=2) ===",
+    "learned-graph edges recovered: 16/24 oracle co-occurrence edges",
+    "learned top-associate in oracle: 9/9 concepts",
+    "  dog: learned associates ['go', 'north']  | oracle ['big', 'cat', 'go', 'north']",
+    "  cat: learned associates ['run', 'south']  | oracle ['big', 'dog', 'run', 'south']",
+    "  apple: learned associates ['big', 'river']  | oracle ['big', 'river']"
+   ]
+  },
+  {
+   "gate": "G2 _D_sparse_heteroassoc.run",
+   "seed": 2,
+   "n_pairs": 2,
+   "post_encode_top1": 0,
+   "post_swr_top1": 1,
+   "ranks_encode": [
+    1,
+    2
+   ],
+   "ranks_swr": [
+    0,
+    2
+   ],
+   "margins_swr": [
+    0.0,
+    0.0
+   ],
+   "steps": 2620,
+   "spikes": 100123,
+   "wall_s": 73.3,
+   "pass": false
+  },
+  {
+   "gate": "G1 learned_assoc_graph.main",
+   "seed": 3,
+   "edges_recovered": 8,
+   "edges_oracle": 24,
+   "top_match": 5,
+   "top_total": 5,
+   "pass": false,
+   "steps": 1800,
+   "spikes": 81603,
+   "wall_s": 29.7,
+   "printed": [
+    "  [recurrent: mean=0.066 max=15.524 nnz=1348630]",
+    "=== LearnedAssocGraph (seed=3) ===",
+    "learned-graph edges recovered: 8/24 oracle co-occurrence edges",
+    "learned top-associate in oracle: 5/5 concepts",
+    "  dog: learned associates ['north', 'go']  | oracle ['big', 'cat', 'go', 'north']",
+    "  cat: learned associates ['run']  | oracle ['big', 'dog', 'run', 'south']",
+    "  apple: learned associates []  | oracle ['big', 'river']"
+   ]
+  },
+  {
+   "gate": "G2 _D_sparse_heteroassoc.run",
+   "seed": 3,
+   "n_pairs": 2,
+   "post_encode_top1": 1,
+   "post_swr_top1": 1,
+   "ranks_encode": [
+    0,
+    2
+   ],
+   "ranks_swr": [
+    0,
+    2
+   ],
+   "margins_swr": [
+    0.0,
+    0.0
+   ],
+   "steps": 2620,
+   "spikes": 111469,
+   "wall_s": 80.9,
+   "pass": false
+  },
+  {
+   "gate": "G1 learned_assoc_graph.main",
+   "seed": 4,
+   "edges_recovered": 6,
+   "edges_oracle": 24,
+   "top_match": 3,
+   "top_total": 3,
+   "pass": false,
+   "steps": 1800,
+   "spikes": 95716,
+   "wall_s": 38.7,
+   "printed": [
+    "  [recurrent: mean=0.058 max=26.620 nnz=1350401]",
+    "=== LearnedAssocGraph (seed=4) ===",
+    "learned-graph edges recovered: 6/24 oracle co-occurrence edges",
+    "learned top-associate in oracle: 3/3 concepts",
+    "  dog: learned associates ['go', 'north']  | oracle ['big', 'cat', 'go', 'north']",
+    "  cat: learned associates []  | oracle ['big', 'dog', 'run', 'south']",
+    "  apple: learned associates []  | oracle ['big', 'river']"
+   ]
+  },
+  {
+   "gate": "G2 _D_sparse_heteroassoc.run",
+   "seed": 4,
+   "n_pairs": 2,
+   "post_encode_top1": 1,
+   "post_swr_top1": 1,
+   "ranks_encode": [
+    0,
+    2
+   ],
+   "ranks_swr": [
+    0,
+    2
+   ],
+   "margins_swr": [
+    0.0,
+    0.0
+   ],
+   "steps": 2620,
+   "spikes": 103659,
+   "wall_s": 93.4,
+   "pass": false
+  },
+  {
+   "gate": "G1 learned_assoc_graph.main",
+   "seed": 5,
+   "edges_recovered": 14,
+   "edges_oracle": 24,
+   "top_match": 8,
+   "top_total": 8,
+   "pass": false,
+   "steps": 1800,
+   "spikes": 87887,
+   "wall_s": 30.1,
+   "printed": [
+    "  [recurrent: mean=0.098 max=27.042 nnz=1350373]",
+    "=== LearnedAssocGraph (seed=5) ===",
+    "learned-graph edges recovered: 14/24 oracle co-occurrence edges",
+    "learned top-associate in oracle: 8/8 concepts",
+    "  dog: learned associates ['north', 'go']  | oracle ['big', 'cat', 'go', 'north']",
+    "  cat: learned associates ['south', 'run']  | oracle ['big', 'dog', 'run', 'south']",
+    "  apple: learned associates []  | oracle ['big', 'river']"
+   ]
+  },
+  {
+   "gate": "G2 _D_sparse_heteroassoc.run",
+   "seed": 5,
+   "n_pairs": 2,
+   "post_encode_top1": 1,
+   "post_swr_top1": 1,
+   "ranks_encode": [
+    0,
+    2
+   ],
+   "ranks_swr": [
+    0,
+    2
+   ],
+   "margins_swr": [
+    0.0,
+    0.0
+   ],
+   "steps": 2620,
+   "spikes": 97869,
+   "wall_s": 76.2,
+   "pass": false
+  },
+  {
+   "gate": "G1 learned_assoc_graph.main",
+   "seed": 6,
+   "edges_recovered": 14,
+   "edges_oracle": 24,
+   "top_match": 8,
+   "top_total": 8,
+   "pass": false,
+   "steps": 1800,
+   "spikes": 84285,
+   "wall_s": 30.5,
+   "printed": [
+    "  [recurrent: mean=0.092 max=19.881 nnz=1348699]",
+    "=== LearnedAssocGraph (seed=6) ===",
+    "learned-graph edges recovered: 14/24 oracle co-occurrence edges",
+    "learned top-associate in oracle: 8/8 concepts",
+    "  dog: learned associates ['go', 'north']  | oracle ['big', 'cat', 'go', 'north']",
+    "  cat: learned associates ['run', 'south']  | oracle ['big', 'dog', 'run', 'south']",
+    "  apple: learned associates []  | oracle ['big', 'river']"
+   ]
+  },
+  {
+   "gate": "G2 _D_sparse_heteroassoc.run",
+   "seed": 6,
+   "n_pairs": 2,
+   "post_encode_top1": 1,
+   "post_swr_top1": 1,
+   "ranks_encode": [
+    0,
+    2
+   ],
+   "ranks_swr": [
+    0,
+    2
+   ],
+   "margins_swr": [
+    0.0,
+    0.0
+   ],
+   "steps": 2620,
+   "spikes": 104661,
+   "wall_s": 69.2,
+   "pass": false
+  },
+  {
+   "gate": "G1 learned_assoc_graph.main",
+   "seed": 7,
+   "edges_recovered": 6,
+   "edges_oracle": 24,
+   "top_match": 3,
+   "top_total": 3,
+   "pass": false,
+   "steps": 1800,
+   "spikes": 84318,
+   "wall_s": 31.9,
+   "printed": [
+    "  [recurrent: mean=0.059 max=21.337 nnz=1350083]",
+    "=== LearnedAssocGraph (seed=7) ===",
+    "learned-graph edges recovered: 6/24 oracle co-occurrence edges",
+    "learned top-associate in oracle: 3/3 concepts",
+    "  dog: learned associates ['go', 'north']  | oracle ['big', 'cat', 'go', 'north']",
+    "  cat: learned associates []  | oracle ['big', 'dog', 'run', 'south']",
+    "  apple: learned associates []  | oracle ['big', 'river']"
+   ]
+  },
+  {
+   "gate": "G2 _D_sparse_heteroassoc.run",
+   "seed": 7,
+   "n_pairs": 2,
+   "post_encode_top1": 1,
+   "post_swr_top1": 1,
+   "ranks_encode": [
+    0,
+    2
+   ],
+   "ranks_swr": [
+    0,
+    2
+   ],
+   "margins_swr": [
+    0.0,
+    0.0
+   ],
+   "steps": 2620,
+   "spikes": 104381,
+   "wall_s": 69.5,
+   "pass": false
+  },
+  {
+   "gate": "G1 learned_assoc_graph.main",
+   "seed": 8,
+   "edges_recovered": 9,
+   "edges_oracle": 24,
+   "top_match": 5,
+   "top_total": 5,
+   "pass": false,
+   "steps": 1800,
+   "spikes": 86544,
+   "wall_s": 28.1,
+   "printed": [
+    "  [recurrent: mean=0.073 max=27.302 nnz=1349250]",
+    "=== LearnedAssocGraph (seed=8) ===",
+    "learned-graph edges recovered: 9/24 oracle co-occurrence edges",
+    "learned top-associate in oracle: 5/5 concepts",
+    "  dog: learned associates ['north', 'go']  | oracle ['big', 'cat', 'go', 'north']",
+    "  cat: learned associates ['run', 'south']  | oracle ['big', 'dog', 'run', 'south']",
+    "  apple: learned associates []  | oracle ['big', 'river']"
+   ]
+  },
+  {
+   "gate": "G2 _D_sparse_heteroassoc.run",
+   "seed": 8,
+   "n_pairs": 2,
+   "post_encode_top1": 1,
+   "post_swr_top1": 1,
+   "ranks_encode": [
+    0,
+    2
+   ],
+   "ranks_swr": [
+    0,
+    2
+   ],
+   "margins_swr": [
+    0.0,
+    0.0
+   ],
+   "steps": 2620,
+   "spikes": 112380,
+   "wall_s": 69.0,
+   "pass": false
+  }
+ ],
+ "n_g1_pass": 0,
+ "n_g1": 8,
+ "n_g2_pass": 0,
+ "n_g2": 8,
+ "spikes_total": 1540391
+}
