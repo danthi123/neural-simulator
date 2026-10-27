@@ -22,7 +22,7 @@
   "margin_ref": 0.16666666666666666,
   "boost_scale": 0.85
  },
- "checked_against_stable_recal_STOP": false,
+ "checked_against_stable_recal_STOP": true,
  "seed_roles": {
   "calibration_seeds": [
    7,

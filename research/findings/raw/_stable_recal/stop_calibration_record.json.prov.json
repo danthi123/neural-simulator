@@ -1,12 +1,12 @@
 {
- "run_id": "1793132602-2812620",
+ "run_id": "1793132997-2840177",
  "runner": "research/runners/stable_recal_stop_calibration_record.py",
  "argv": [
   "/home/dant123/Projects/sim-rev/wt-recal2/research/runners/stable_recal_stop_calibration_record.py",
   "--out",
   "research/findings/raw/_stable_recal/stop_calibration_record.json"
  ],
- "git_sha": "794275c49",
+ "git_sha": "3bc2ae085",
  "git_dirty": false,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -14,13 +14,13 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-10-27T16:23:22",
+ "started": "2026-10-27T16:29:57",
  "env": {},
  "host": "dant123-wk",
  "sim_backend": "numpy",
  "sim_backend_requested": "(unset -> runner default)",
  "sim_backend_cupy_importable": true,
- "corpus_check_age_s": 1454.6,
+ "corpus_check_age_s": 1849.4,
  "corpus_check_query": "re-calibrate the global-stop distributed-overwrite workspace on stable membranes",
  "corpus_check_fresh": true,
  "artifact": "research/findings/raw/_stable_recal/stop_calibration_record.json"
