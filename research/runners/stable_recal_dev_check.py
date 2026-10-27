@@ -1,5 +1,6 @@
 """STABLE+RECAL vs OFF dev check (research/stable-recal): replies, answer rate, the Stage-2 scorers (C4 = emo, C5 =
-inner), recall verification and membrane validity, per group and dev seed. Observe-only: reads the census JSONs that
+inner), recall verification, the two GNW leads (the global stop's "Setting the held thread aside" and the thought
+swap's "On X, then") with the global-stop organ's per-turn read, and membrane validity, per group and dev seed. Observe-only: reads the census JSONs that
 research.runners.membrane_census wrote and the per-seed comparisons research.runners.stable_integration_compare wrote
 from them; runs no brain.
 
@@ -61,6 +62,32 @@ def _ws_oor(rec):
     return out
 
 
+STOP_LEAD = "Setting the held thread aside"
+SWAP_LEAD = ", then \u2014"      # the swap lead is "On <topic>, then — "
+
+
+def _leads(rec):
+    """Turns carrying each lead, and the global-stop organ's per-turn read (`gnw_stop`: held contents, n_ignited
+    before / after the stop, boost, cleared) on every turn the stop ran."""
+    resp = rec["workload"]["shard"].get("responses") or {}
+    stop, swap, organ = [], [], {}
+    for lab, b in resp.items():
+        if not isinstance(b, dict):
+            continue
+        a = str(b.get("answer") or "")
+        if STOP_LEAD in a:
+            stop.append(lab)
+        if "On " in a and SWAP_LEAD in a:
+            swap.append(lab)
+        g = b.get("gnw_stop")
+        if isinstance(g, dict):
+            organ[lab] = {k: g.get(k) for k in ("reason", "n_held", "n_ignited_pre", "n_ignited_post", "boost",
+                                                "cleared", "conflict_scale")}
+    return {"n_stop_lead": len(stop), "n_swap_lead": len(swap), "stop_lead_turns": sorted(stop),
+            "swap_lead_turns": sorted(swap), "n_stop_ran": len(organ),
+            "n_stop_cleared": int(sum(bool(v["cleared"]) for v in organ.values())), "stop_organ": organ}
+
+
 def _all(score):
     return None if not isinstance(score, dict) else score.get("all")
 
@@ -95,6 +122,7 @@ def run(seeds, off_t, on_t, cmp_t):
                 "answer_rate_non_teach": {"off": AR.rate(per_probe[key]["off"]), "on": AR.rate(per_probe[key]["on"])},
                 "gate_all": {"off": _all(gs.get("off")), "on": _all(gs.get("on"))},
                 "recall": {"off": _recall(r_off), "on": _recall(r_on)},
+                "leads": {"off": _leads(r_off), "on": _leads(r_on)},
                 "replies_changed": (c.get("replies") or {}).get("n_changed"),
                 "replies_visible_changed": {x["label"]: x["fields_changed"] for x in (c.get("replies") or {}).get(
                     "changed") or [] if x.get("fields_changed")},
@@ -103,12 +131,16 @@ def run(seeds, off_t, on_t, cmp_t):
                 "workspace_oor": {"off": _ws_oor(r_off), "on": _ws_oor(r_on)},
                 "compare": os.path.relpath(cmp_path, _REPO)}
     crit = {"C4": "emo", "C5": "inner", "C1": "conv", "C2": "infer", "C3": "ask"}
+    measured = [r for r in rows.values() if "leads" in r]
+    totals = {arm: {k: int(sum(r["leads"][arm][k] for r in measured))
+                    for k in ("n_stop_lead", "n_swap_lead", "n_stop_ran", "n_stop_cleared")} for arm in ("off", "on")}
     return {"runner": "research/runners/stable_recal_dev_check.py", "backend": "numpy", "device": "cpu",
             "analysis_only": True, "seeds": list(seeds), "arms": {"off": off_t, "on": on_t},
             "answer_rate_report_all_turns": AR.report(per_all, label="STABLE+RECAL vs OFF, all turn replies"),
             "answer_rate_report_non_teach": AR.report(per_probe, label="STABLE+RECAL vs OFF, non-teach turn replies"),
             "criteria": {c: {"group": g, "per_seed": {str(s): rows.get("%s-s%d" % (g, s), {}).get("gate_all")
                                                     for s in seeds}} for c, g in crit.items()},
+            "lead_totals": totals,
             "rows": rows}
 
 
@@ -130,14 +162,18 @@ def main():
             print("[dev check] %-9s %s" % (key, r.get("status")))
             continue
         ar = r["answer_rate_all_turns"]
+        ld = r["leads"]
         print("[dev check] %-9s answer %d/%d -> %d/%d | gate all %s -> %s | recalled_svo %d -> %d | visible changed "
-              "%d/%s | oor %s -> %s" % (key, ar["off"]["answered"], ar["off"]["n"], ar["on"]["answered"], ar["on"]["n"],
-                                        r["gate_all"]["off"], r["gate_all"]["on"], r["recall"]["off"]["n_recalled_svo"],
-                                        r["recall"]["on"]["n_recalled_svo"], len(r["replies_visible_changed"]),
-                                        r["n_turns"], r["membrane"].get("n_oor_neurons_off"),
-                                        r["membrane"].get("n_oor_neurons_on")))
+              "%d/%s | stop lead %d -> %d (ran %d, cleared %d -> %d) | swap lead %d -> %d | oor %s -> %s" % (
+                  key, ar["off"]["answered"], ar["off"]["n"], ar["on"]["answered"], ar["on"]["n"],
+                  r["gate_all"]["off"], r["gate_all"]["on"], r["recall"]["off"]["n_recalled_svo"],
+                  r["recall"]["on"]["n_recalled_svo"], len(r["replies_visible_changed"]), r["n_turns"],
+                  ld["off"]["n_stop_lead"], ld["on"]["n_stop_lead"], ld["on"]["n_stop_ran"],
+                  ld["off"]["n_stop_cleared"], ld["on"]["n_stop_cleared"], ld["off"]["n_swap_lead"],
+                  ld["on"]["n_swap_lead"], r["membrane"].get("n_oor_neurons_off"), r["membrane"].get("n_oor_neurons_on")))
     print("[dev check] answer rate (all turns): %s; hurt %s" % (res["answer_rate_report_all_turns"]["status"],
                                                                res["answer_rate_report_all_turns"]["hurt_seeds"]))
+    print("[dev check] lead totals: %s" % res["lead_totals"])
     print("[dev check] -> %s" % a.out)
     return 0
 
