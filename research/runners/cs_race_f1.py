@@ -107,7 +107,10 @@ _BASE = dict(NE=16, NI=6, NG=12, NGI=8, NS=20, NO=8,
              # today's values; with no new flag every decision is
              # unchanged (identity check 1d#1 asserts it).
              W_GIS=0.0, W_SGI=0.0, CUE_N=8,
-             CUE_NOISE_SD=0.0, CUE_NOISE_TAU=5.0)
+             CUE_NOISE_SD=0.0, CUE_NOISE_TAU=5.0,
+             # f1g (packet cs-race-f1g): persistent word trace in the
+             # mention layer. All defaults keep the pre-f1g build.
+             W_MM=0.0, W_MI=0.0, W_IM=0.0, NIM=8, ENCODE_WORDS=0)
 GATE_CUE = "cs_cue"          # sensory drive gate for the cue layer
 GATE_MENT = "cs_ment"        # mention->E gate (lesion i closes it)
 
@@ -152,6 +155,19 @@ class RaceCircuit(ReplayCircuit):
         # only; mention slots stay W_SLOT (ruling step 1b)
         o_ment = o_cue + len(CUE_WORDS) * cue_n
         n = o_ment + len(MENTION_WORDS) * W_SLOT
+        # f1g: one shared inhibitory pool for the mention slots (WM
+        # overwrite); allocated ONLY when a pool weight is on, so the
+        # no-flag build keeps today's neuron count byte-for-byte.
+        w_mm = float(p.get("W_MM", 0.0))
+        w_mi = float(p.get("W_MI", 0.0))
+        w_im = float(p.get("W_IM", 0.0))
+        nim = int(p.get("NIM", 8))
+        self.pool = None
+        if (w_mi > 0.0 or w_im > 0.0) and nim > 0:
+            o_pool = n
+            n = n + nim
+            self.pool = np.arange(o_pool, o_pool + nim,
+                                  dtype=np.int64)
         self.cue = [np.arange(o_cue + i * cue_n, o_cue + (i + 1) * cue_n,
                               dtype=np.int64) for i in range(len(CUE_WORDS))]
         self.ment = [np.arange(o_ment + i * W_SLOT, o_ment + (i + 1) * W_SLOT,
@@ -179,7 +195,7 @@ class RaceCircuit(ReplayCircuit):
         cfg.enable_parameter_heterogeneity = True
         # Slow NMDA recurrent component (ruling: record-supported).
         cfg.enable_nmda_recurrent = (
-            float(p.get("W_NMDA", 0.0)) > 0.0)
+            float(p.get("W_NMDA", 0.0)) > 0.0 or w_mm > 0.0)
         bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                                   runtime_state=RuntimeState(), gpu_config=GPUConfig())
         bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
@@ -212,6 +228,24 @@ class RaceCircuit(ReplayCircuit):
                 i = MENTION_WORDS.index(w)
                 plan["ment_%d_%d" % (i, k)] = SC.dense(
                     self.ment[i], self.eng[k], W_MENT, conn_type="E_TO_E")
+        # f1g: persistent word trace -- slow-NMDA self-excitation per
+        # mention slot (the trace) and one shared inhibitory pool so the
+        # newest heard word overwrites the older (packet cs-race-f1g).
+        if w_mm > 0.0:
+            for i in range(len(MENTION_WORDS)):
+                # NOTE (_d3_persistent_slot_derisk.py:70): `receptor=`
+                # is the INHIBITORY receptor (gaba_a/gaba_b); the
+                # excitatory slow-NMDA routing key is `exc_receptor`.
+                mm_e = SC.dense(self.ment[i], self.ment[i], w_mm,
+                                conn_type="E_TO_E")
+                mm_e["exc_receptor"] = "nmda_slow"
+                plan["mm_%d" % i] = mm_e
+        if self.pool is not None:
+            all_ment = np.concatenate(self.ment)
+            plan["mi"] = SC.dense(all_ment, self.pool, w_mi,
+                                   conn_type="E_TO_I")
+            plan["im"] = SC.dense(self.pool, all_ment, w_im,
+                                   conn_type="I_TO_E")
         plan.update(SC.commit_plan(self.eng, lay, dict(p, W_XG=p["W_XG"]),
                                    prefix="ir_", gate_in=GATE_COMMIT_IN,
                                    gate_excl=GATE_EXCL, latch_loop=GATE_LATCH))
@@ -236,8 +270,11 @@ class RaceCircuit(ReplayCircuit):
         for key, entry in plan.items():
             if key.startswith("ment_"):
                 entry["transmission_gate"] = GATE_MENT
-        inh = np.concatenate(self.inh + [lay["all_gate_inh"], self.occ]) if K \
-            else np.concatenate([self.occ])
+        inh_parts = (self.inh + [lay["all_gate_inh"], self.occ] if K
+                     else [self.occ])
+        if self.pool is not None:
+            inh_parts.append(self.pool)
+        inh = np.concatenate(inh_parts)
         bridge.inject_explicit_wiring(plan, output_inhibitory_indices=inh)
         bridge.set_plasticity_gate(SC.GATE_FIXED, 0.0)
         self._gates = tuple(g for g in (GATE_ENGRAM, GATE_COMMIT_IN,
@@ -257,7 +294,8 @@ class RaceCircuit(ReplayCircuit):
              steer_pa=0.0, steer_target=None, steer_from_step=None,
              steer_stage="engram",
              nonselective=False, ment_gate=True, excl_gate=True,
-             precue_ms=PRECUE_WINDOW_MS):
+             precue_ms=PRECUE_WINDOW_MS, encode_words=None,
+             cal_window=None, cal_held_k=None, cal_rival_k=None):
         """One turn: optional encode pulses + context mention, then the cue
         window with OU noise, hold, latch read. Returns the full record."""
         from sim.backend import get_backend, to_host
@@ -265,6 +303,9 @@ class RaceCircuit(ReplayCircuit):
         b, p, K = self._bridge, self.p, self.K
         xp = self._xp
         _reset_quiescent(b, xp, self._snap)
+        encode_words = (bool(int(p.get("ENCODE_WORDS", 0)))
+                        if encode_words is None
+                        else bool(encode_words))
         b.set_transmission_gate(GATE_ENGRAM, 1.0)
         # step 1b: the encode->latch path stays CLOSED while writing; a
         # write-time latch (seen pre-cue: latch0=4-7, slot V=-15 mV) drives
@@ -307,27 +348,82 @@ class RaceCircuit(ReplayCircuit):
         # Token = fact patient name: the FIRST token is the OLD write, the
         # second the NEW one (facilitation decays across GAP_A_MS / keeps
         # across GAP_B_MS). "ABsim" writes the two compete facts together.
+        enc_ment_spk = 0
         enc = [t for t in encode if t != "ABsim"]
         if "ABsim" in encode:
             both = np.concatenate([self.eng[self.slot_of("vole")],
                                    self.eng[self.slot_of("frog")]])
-            pulse(both, float(p["BIAS_PA"]) * 3.0, ENCODE_MS)
+            if encode_words:
+                # both compete facts are heard together: the vole
+                # fact's three words then the frog fact's, 50 ms each
+                # from the write pulse's onset (the packet is silent
+                # on ABsim; this interpretation is flagged in the f1g
+                # WORKLOG).
+                k_a, k_b = self.slot_of("vole"), self.slot_of("frog")
+                heard = list(self.facts[k_a]) + list(self.facts[k_b])
+                for t_ms in range(50 * len(heard)):
+                    cur = zeros()
+                    if t_ms < ENCODE_MS:
+                        cur[both] = float(p["BIAS_PA"]) * 3.0
+                    m_w = self.ment[MENTION_WORDS.index(
+                        heard[t_ms // 50])]
+                    cur[m_w] = float(MENT_PA)
+                    step_with(cur)
+                    f_w = np.asarray(
+                        to_host(b.cp_firing_states)).astype(bool)
+                    enc_ment_spk += int(f_w[m_w].sum())
+            else:
+                pulse(both, float(p["BIAS_PA"]) * 3.0, ENCODE_MS)
             for _ in range(GAP_B_MS):
                 step_with(zeros())
         else:
             for i, name in enumerate(enc):
-                pulse(self.eng[self.slot_of(name)],
-                      float(p["BIAS_PA"]) * 3.0, ENCODE_MS)
+                e_tgt = self.eng[self.slot_of(name)]
+                if encode_words:
+                    # packet cs-race-f1g: the encode turn is HEARD --
+                    # its fact's three words reach their mention slots
+                    # in heard order (agent, action, patient), 50 ms
+                    # each at MENT_PA, starting at the encode pulse's
+                    # onset (world-side; no per-candidate number
+                    # passes the host boundary).
+                    words_k = list(self.facts[self.slot_of(name)])
+                    for wi, w in enumerate(words_k):
+                        m_idx = self.ment[MENTION_WORDS.index(w)]
+                        for t_ms in range(wi * 50, wi * 50 + 50):
+                            cur = zeros()
+                            if t_ms < ENCODE_MS:
+                                cur[e_tgt] = float(p["BIAS_PA"]) * 3.0
+                            cur[m_idx] = float(MENT_PA)
+                            step_with(cur)
+                            f_w = np.asarray(
+                                to_host(b.cp_firing_states)).astype(bool)
+                            enc_ment_spk += int(f_w[m_idx].sum())
+                else:
+                    pulse(e_tgt, float(p["BIAS_PA"]) * 3.0, ENCODE_MS)
                 gap = GAP_A_MS if i == 0 else GAP_B_MS
                 for _ in range(gap):
                     step_with(zeros())
-        # context mention turn
+        # context mention turn: same stepping as pulse(), plus the
+        # per-cell spike read-out -> per-draw carrier engagement
+        # (RULING cs-race-f1g-0-1022 B: 0 spikes on a draw = the
+        # mention clause is UNDEFINED for that draw)
+        ment_spk = None
+        mention_pa_used = None
         if mention_words:
             idx = np.concatenate([self.ment[MENTION_WORDS.index(w)]
                                   for w in mention_words if w in MENTION_WORDS])
             if idx.size:
                 pa = MENT_MAX_PA if len(mention_words) >= 3 else MENT_PA
-                pulse(idx, pa, MENTION_MS)
+                mention_pa_used = float(pa)
+                ment_cell = np.zeros(idx.size, dtype=np.int64)
+                for _ in range(MENTION_MS):
+                    cur = zeros()
+                    cur[idx] = float(pa)
+                    step_with(cur)
+                    f_m = np.asarray(
+                        to_host(b.cp_firing_states)).astype(bool)
+                    ment_cell += f_m[idx].astype(np.int64)
+                ment_spk = int(ment_cell.sum())
                 for _ in range(GAP_B_MS):
                     step_with(zeros())
         # pre-cue window: latch must be OFF (clause g)
@@ -586,7 +682,7 @@ class RaceCircuit(ReplayCircuit):
                 stp = {"u_mean": float(u.mean()), "u_max": float(u.max()),
                        "x_mean": float(x.mean()), "x_max": float(x.max())}
                 stp_seen.append(stp)
-        return {"winner": rd.get("winner"), "variants": rd.get("variants"),
+        rec = {"winner": rd.get("winner"), "variants": rd.get("variants"),
                 "read_invariant": rd.get("read_invariant"),
                 "engram_counts": eng_counts.tolist(),
                 "gate_counts": gate_counts.tolist(),
@@ -595,6 +691,10 @@ class RaceCircuit(ReplayCircuit):
                 "natural_first_gate": natural_winner, "stp": stp,
                 "slot_counts": slot_counts.tolist(), "v_mV": v_mV,
                 "cue_spikes": cue_spk,
+                "mention_pulse_spikes": ment_spk,
+                "mention_pulse_pa": mention_pa_used,
+                "encode_mention_spikes": (
+                    int(enc_ment_spk) if encode_words else None),
                 "t_ign": t_ign, "latch_onset": latch_onset,
                 "gate_bursts": gate_bursts,
                 "first_burst_k": first_burst_k,
@@ -603,6 +703,240 @@ class RaceCircuit(ReplayCircuit):
                 "pre_ign": pre_ign,
                 "latch_first_last": latch_first_last,
                 "raster": raster_sparse}
+        if cal_window is not None:
+            w_a, w_b = int(cal_window[0]), int(cal_window[1])
+            per_k = [round(float(iexc_ms[k, w_a:w_b].mean()), 4)
+                     for k in range(K)]
+            entry = {"ms": [w_a, w_b],
+                     "total_exc_current_pa_per_k": per_k}
+            if cal_held_k is not None:
+                entry["held_k"] = int(cal_held_k)
+            if cal_rival_k is not None:
+                entry["rival_k"] = int(cal_rival_k)
+            if cal_held_k is not None and cal_rival_k is not None:
+                entry["delta_pa"] = round(
+                    per_k[int(cal_held_k)] - per_k[int(cal_rival_k)],
+                    4)
+            rec["cal_window"] = entry
+        if encode_words:
+            rec["encode_words"] = True
+        return rec
+
+    def cal(self, *, seed, item, word=None, word2=None,
+            rest_ms=CUE_MS):
+        """f1g step 0 (packet cs-race-f1g): trace calibration with NO
+        race -- mention-layer pulses, then free dynamics in the window
+        the race would be decided in (no cue, no encode, no steer).
+        Rates are read from spike counts (Hz per cell, never a host
+        flag). Returns the raw record; run_calibration applies the
+        C1-C4 thresholds."""
+        from sim.backend import to_host
+        from research.runners._gnw_rung1_ignition_curve_derisk import \
+            _reset_quiescent
+        b, p, K = self._bridge, self.p, self.K
+        xp = self._xp
+        _reset_quiescent(b, xp, self._snap)
+        b.set_transmission_gate(GATE_ENGRAM, 1.0)
+        b.set_transmission_gate(GATE_COMMIT_IN, 0.0)
+        b.set_transmission_gate(GATE_EXCL, 1.0)
+        b.set_transmission_gate(GATE_MENT, 1.0)
+        rng = np.random.default_rng(int(seed) + 7717)
+        nE = K * int(p["NE"])
+        tau = float(p["NOISE_TAU"])
+        a_ou = 1.0 / tau
+        s_ou = float(p["NOISE_SD"]) * math.sqrt(2.0 / tau)
+        eta = rng.standard_normal(nE) * float(p["NOISE_SD"])
+        if item == "c2b":
+            sched = [("gap", GAP_B_MS)]
+            rest = 2000 - GAP_B_MS       # gap + rest = 2000 ms measured
+        elif item == "c3":
+            sched = [("pulse", word, MENTION_MS), ("gap", GAP_B_MS),
+                     ("pulse", word2, MENTION_MS), ("gap", GAP_B_MS)]
+            rest = int(rest_ms)
+        elif item == "d0":
+            # f1g step 0c DRIVE probe (RULING cs-race-f1g-0b-1022):
+            # every mention word once as a 50 ms encode-format word
+            # and once as a 150 ms pulse; trace off (W_MM 0, W_IM 0);
+            # then the 500 ms cue report at CUE_PA (cue phase below).
+            sched = []
+            for _w in MENTION_WORDS:
+                sched += [("pulse", _w, 50), ("gap", 100)]
+            for _w in MENTION_WORDS:
+                sched += [("pulse", _w, MENTION_MS), ("gap", 100)]
+            rest = 2 * CUE_MS
+        elif item in ("c1", "c4"):
+            sched = [("pulse", word, MENTION_MS), ("gap", GAP_B_MS)]
+            rest = int(rest_ms)
+        else:
+            raise ValueError("unknown calibration item %r" % (item,))
+        pre = 0
+        for ent in sched:
+            pre += int(ent[-1])
+        T = pre + rest + HOLD_MS
+        # measure windows (absolute ms), from the frozen schedule:
+        # c1/c4 = [pulse_end, pulse_end + 650)  (GAP_B + CUE_MS)
+        # c3    = [Y_on + 300, Y_on + 650)      (exactly the cue window
+        #                                         after the trailing gap)
+        # c2b   = [0, 2000)
+        if item in ("c1", "c4"):
+            m0, m1 = MENTION_MS, MENTION_MS + GAP_B_MS + rest
+        elif item == "c3":
+            y_on = MENTION_MS + GAP_B_MS
+            m0, m1 = y_on + 300, y_on + 650
+        else:
+            m0, m1 = 0, pre + rest
+        n_w = len(MENTION_WORDS)
+        ment_ms = np.zeros((n_w, T), dtype=np.int32)
+        eng_ms = np.zeros((K, T), dtype=np.int32)
+        slot_ms = np.zeros((K, T), dtype=np.int32)
+
+        def zeros():
+            return np.zeros(self._n, dtype=np.float32)
+
+        def step_with(cur):
+            b.cp_external_input_current[:] = xp.asarray(
+                cur.astype(np.float32))
+            b._run_one_simulation_step()
+
+        def _rec(t_ix):
+            f = np.asarray(to_host(b.cp_firing_states)).astype(bool)
+            for wi in range(n_w):
+                c_w = int(f[self.ment[wi]].sum())
+                if c_w:
+                    ment_ms[wi, t_ix] = c_w
+            for k in range(K):
+                e_k = int(f[self.eng[k]].sum())
+                if e_k:
+                    eng_ms[k, t_ix] = e_k
+                s_k = int(f[self.lay["slot"][k]].sum())
+                if s_k:
+                    slot_ms[k, t_ix] = s_k
+
+        t = 0
+        pulse_events = []
+        for ent in sched:
+            if ent[0] == "gap":
+                for _ in range(int(ent[1])):
+                    step_with(zeros())
+                    _rec(t)
+                    t += 1
+            else:
+                m_idx = self.ment[MENTION_WORDS.index(ent[1])]
+                ev_cells = np.zeros(m_idx.size, dtype=np.int64)
+                ev_t0 = t
+                for _ in range(int(ent[2])):
+                    cur = zeros()
+                    cur[m_idx] = float(MENT_PA)
+                    step_with(cur)
+                    f_p = np.asarray(
+                        to_host(b.cp_firing_states)).astype(bool)
+                    ev_cells += f_p[m_idx].astype(np.int64)
+                    _rec(t)
+                    t += 1
+                # C0 (RULING cs-race-f1g-0-1022 C): per-cell spike
+                # count over this pulse's own window
+                pulse_events.append(
+                    {"word": str(ent[1]), "ms": int(ent[2]),
+                     "t0": int(ev_t0), "t1": int(t - 1),
+                     "n_cells": int(m_idx.size),
+                     "total_spikes": int(ev_cells.sum()),
+                     "min_cell_spikes": int(ev_cells.min()),
+                     "per_cell_spikes":
+                         [int(x) for x in ev_cells.tolist()]})
+        # cue-onset phase with NO cue: OU noise on E cells as in
+        # race().  item d0 (f1g step 0c) additionally reports the 500
+        # ms cue engagement: every cue slot driven at CUE_PA, per-cell
+        # spike counts over the cue window, reported only (the cue
+        # stays 60 pA — RULING cs-race-f1g-0b-1022 (1)).
+        b.set_transmission_gate(GATE_COMMIT_IN, 1.0)
+        cue_cell_counts = []
+        cue_all = np.zeros(0, dtype=np.int64)
+        if item == "d0":
+            cue_cell_counts = [
+                np.zeros(len(self.cue[wi]), dtype=np.int64)
+                for wi in range(len(CUE_WORDS))]
+            cue_all = (np.concatenate(self.cue) if len(self.cue)
+                       else cue_all)
+        while t < T:
+            cur = zeros()
+            if t < pre + rest:
+                eta += a_ou * (-eta) + s_ou * rng.standard_normal(nE)
+                cur[:nE] += eta.astype(np.float32)
+            drive_cue = bool(item == "d0" and cue_all.size and
+                             pre <= t < pre + CUE_MS)
+            if drive_cue:
+                cur[cue_all] += float(CUE_PA)
+            step_with(cur)
+            if drive_cue:
+                f_c = np.asarray(
+                    to_host(b.cp_firing_states)).astype(bool)
+                for wi in range(len(CUE_WORDS)):
+                    cue_cell_counts[wi] += f_c[
+                        self.cue[wi]].astype(np.int64)
+            _rec(t)
+            t += 1
+        b.cp_external_input_current[:] = 0.0
+
+        def _hz(counts, n_cells, ms_len):
+            return round(float(counts) / (float(n_cells)
+                                          * float(ms_len) / 1000.0), 4)
+
+        def _first_burst(arr):
+            if arr.size < 5:
+                return None
+            w5 = np.convolve(np.asarray(arr, dtype=np.int64),
+                             np.ones(5, dtype=np.int64), mode="valid")
+            idx = np.flatnonzero(w5 >= 3)
+            return int(idx[0] + 4 + m0) if idx.size else None
+
+        seg = ment_ms[:, m0:m1]
+        ms_len = m1 - m0
+        rates = {}
+        for wi, wname in enumerate(MENTION_WORDS):
+            rates[wname] = _hz(int(seg[wi].sum()), W_SLOT, ms_len)
+        rec = {"item": item, "seed": int(seed),
+               "pulse_events": pulse_events,
+               "ment_pa": float(MENT_PA),
+               "window_ms": [int(m0), int(m1)], "window_len_ms": int(ms_len),
+               "word_rates_hz": rates,
+               "pulsed_rate_hz": (rates.get(word) if word else None),
+               "unpulsed_max_hz": (
+                   max(v for wname, v in rates.items() if wname != word)
+                   if word else max(rates.values())),
+               "word1_rate_hz": (rates.get(word) if word else None),
+               "word2_rate_hz": (rates.get(word2) if word2 else None),
+               "max_word_hz": max(rates.values()),
+               "all_engram_spikes": [
+                   int(eng_ms[k, m0:m1].sum()) for k in range(K)],
+               "commit_slot_spikes": [
+                   int(slot_ms[k, m0:m1].sum()) for k in range(K)],
+               "ments_spikes": [int(seg[wi].sum()) for wi in range(n_w)],
+               "pulse_phase_spikes": (
+                   int(ment_ms[MENTION_WORDS.index(word),
+                               0:MENTION_MS].sum())
+                   if word else None),
+               "trace_flags": {"W_MM": float(p.get("W_MM", 0.0)),
+                               "W_MI": float(p.get("W_MI", 0.0)),
+                               "W_IM": float(p.get("W_IM", 0.0)),
+                               "NIM": int(p.get("NIM", 8))}}
+        if item == "d0" and cue_cell_counts:
+            rec["cue_events"] = [
+                {"word": str(CUE_WORDS[wi]),
+                 "ms": int(CUE_MS),
+                 "n_cells": int(arr.size),
+                 "total_spikes": int(arr.sum()),
+                 "min_cell_spikes": int(arr.min()),
+                 "per_cell_spikes": [int(x) for x in arr.tolist()]}
+                for wi, arr in enumerate(cue_cell_counts)]
+            rec["drive_word_ms"] = 50
+            rec["cue_pa"] = float(CUE_PA)
+        if item in ("c1", "c4") and word:
+            pk = int(self.slot_of(word))
+            rec["primed_k"] = pk
+            rec["primed_engram_spikes"] = int(eng_ms[pk, m0:m1].sum())
+            rec["burst_ms"] = _first_burst(eng_ms[pk, m0:m1])
+            rec["latch_ms"] = _first_burst(slot_ms[pk, m0:m1])
+        return rec
 
     def unitary_epsp(self, cue_word="lynx"):
         """f1d step 1c, once per seed: force ONE cue cell to spike from
@@ -655,6 +989,70 @@ class RaceCircuit(ReplayCircuit):
                 "peak_dv_mv": (round(float((peak - v0).mean()), 4)
                                if spiking else None)}
 
+    def rheobase_probe(self):
+        """f1e step 1a, once per seed: the smallest step current (pA)
+        that fires each engram cell, read from the quiescent snapshot.
+        Declared method (fixed before any result): a 5 pA coarse scan
+        5..100, then an exact 1 pA back-off inside (pa-5, pa); a 200 ms
+        step per trial; >= 1 spike in the window counts as firing; a
+        fresh snapshot before every trial; None = never fired by the
+        100 pA cap. Per engram k the record carries every cell value
+        and the engram rheobase = min over its cells. Measurement
+        probe only, never a mechanism."""
+        from sim.backend import to_host
+        from research.runners._gnw_rung1_ignition_curve_derisk import \
+            _reset_quiescent
+        b = self._bridge
+
+        def fires(cell, pa):
+            _reset_quiescent(b, self._xp, self._snap)
+            cur = np.zeros(self._n, dtype=np.float32)
+            cur[cell] = float(pa)
+            hit = False
+            for _ in range(200):
+                b.cp_external_input_current[:] = self._xp.asarray(cur)
+                b._run_one_simulation_step()
+                if bool(np.asarray(
+                        to_host(b.cp_firing_states)).astype(bool)[cell]):
+                    hit = True
+                    break
+            b.cp_external_input_current[:] = 0.0
+            return hit
+
+        per_k = {}
+        for k in range(self.K):
+            cells = [int(c) for c in np.asarray(self.eng[k]).ravel()]
+            vals = []
+            for cell in cells:
+                found = None
+                for pa in range(5, 105, 5):
+                    if fires(cell, float(pa)):
+                        for exact in range(max(1, pa - 5), pa + 1):
+                            if fires(cell, float(exact)):
+                                found = exact
+                                break
+                        break
+                vals.append(found)
+            known = [v for v in vals if v is not None]
+            per_k[str(k)] = {
+                "cell_rheobases_pA": vals,
+                "engram_rheobase_pA": (min(known) if known else None),
+                "cells": len(vals),
+            }
+        return {
+            "per_engram": per_k,
+            "method": ("smallest step current firing the cell from the "
+                       "quiescent snapshot: 5 pA coarse 5..100 then "
+                       "exact 1 pA in (pa-5, pa); 200 ms step; >=1 "
+                       "spike counts; fresh snapshot per trial; engram "
+                       "value = min over its cells; None = no fire "
+                       "<=100 pA"),
+            "step_window_ms": 200,
+            "coarse_step_pA": 5,
+            "cap_pA": 100,
+            "snapshot": "quiescent (pre-race) _snap",
+        }
+
 
 def run_clauses(circ, seed, draws, grid_tag, controls_only=False,
                 steer_pa=0.0, steer_stage="engram", steer_target=0):
@@ -666,6 +1064,8 @@ def run_clauses(circ, seed, draws, grid_tag, controls_only=False,
     base_seed = seed * 1000003
     # f1d step 1c: unitary cue EPSP, once per seed
     out["unitary_cue_epsp"] = circ.unitary_epsp()
+    # f1e step 1a: engram rheobase, once per seed (declared probe)
+    out["rheobase"] = circ.rheobase_probe()
 
     def winners(tag=None, **kw):
         rows = []
@@ -686,6 +1086,9 @@ def run_clauses(circ, seed, draws, grid_tag, controls_only=False,
                        "natural_first_gate": r.get("natural_first_gate"),
                        "v_mV": r.get("v_mV"),
                        "cue_spikes": r.get("cue_spikes"),
+                       "mention_pulse_spikes":
+                           r.get("mention_pulse_spikes"),
+                       "mention_pulse_pa": r.get("mention_pulse_pa"),
                        "t_ign": r.get("t_ign"),
                        "latch_onset": r.get("latch_onset"),
                        "gate_bursts": r.get("gate_bursts"),
@@ -776,9 +1179,18 @@ def run_clauses(circ, seed, draws, grid_tag, controls_only=False,
     b_rows = winners(tag="b", cue_words=list(CUE_OF[1]),
                             encode=("vole", "frog"),
                      mention_words=["vole"])
+    # RULING cs-race-f1g-0-1022 B: a draw with 0 mention-slot spikes
+    # is UNDEFINED (carrier unengaged), never a null or a pass
+    b_def = [r for r in b_rows
+             if r.get("mention_pulse_spikes") is None
+             or int(r["mention_pulse_spikes"]) > 0]
     out["clauses"]["b"] = dict(
-        pass_bar(b_rows, lambda r: content(r["winner"]) == "vole"),
-        winners=[content(r["winner"]) for r in b_rows])
+        pass_bar(b_def, lambda r: content(r["winner"]) == "vole"),
+        winners=[content(r["winner"]) for r in b_def],
+        n_draws=len(b_rows),
+        n_undefined_no_mention_spikes=int(len(b_rows) - len(b_def)),
+        note="0 mention spikes on a draw = UNDEFINED "
+             "(RULING cs-race-f1g-0-1022 B)")
     # (c) one-role match with maximal priming -> 0 latched draws
     c_rows = winners(tag="c", cue_words=["chase"],
                             encode=("vole", "frog"),
@@ -1054,6 +1466,245 @@ def identity_cue_n(base, grid, seeds, cue_n, w_cue, draws, out_arg):
     return 0
 
 
+def run_calibration(base, grid, seeds, args):
+    """f1g step 0 (packet cs-race-f1g): calibrate the persistent word
+    trace with NO race. Frozen: grid row 3, W_GIS 30, seeds 41-48,
+    items C1-C5, selection = smallest W_MM then smallest W_IM among
+    cells passing C1-C4 on 8/8 seeds. One invocation = one cell."""
+    import statistics
+    t0 = time.time()
+    rec = {"probe": "cs_race_f1", "mode": "f1g_step0_calibration",
+           "grid_row": args.grid_row, "grid": dict(grid),
+           "seeds": [int(s) for s in seeds], "backend": "numpy",
+           "device": "cpu",
+           "flags": {"W_MM": float(base.get("W_MM", 0.0)),
+                     "W_MI": float(base.get("W_MI", 0.0)),
+                     "W_IM": float(base.get("W_IM", 0.0)),
+                     "NIM": int(base.get("NIM", 8)),
+                     "encode_words": bool(base.get("ENCODE_WORDS", 0))},
+           "record_label": {"latch_exclusion_w_gis":
+                            float(base.get("W_GIS", 0.0))},
+           "per_seed": [],
+           "preconditions": {
+               "calibration_seeds":
+                   "41-48 only; no DEV/CONFIRM arm has run on them",
+               "grid_row": 3,
+               "w_gis": float(base.get("W_GIS", 0.0)),
+               "no_race": "cue withheld in every calibration run",
+               "frozen_selection":
+                   "smallest W_MM, then smallest W_IM among cells "
+                   "passing C1-C4 on 8/8 seeds",
+               "thresholds_frozen_in_packet": {
+                   "C1_hz": [2.0, 20.0], "quiet_hz": 1.0,
+                   "STOP_SMOKE_pa": 2.0, "flip_scale_pa": [4.0, 6.0],
+                   "C0_min_spikes_per_cell":
+                       "1 (RULING cs-race-f1g-0-1022 C)"}},
+             "ment_pa": float(MENT_PA)}
+    if getattr(args, "drive_probe", False):
+        # f1g step 0c DRIVE probe (RULING cs-race-f1g-0b-1022): the
+        # engagement criterion is fixed here, before any trace or
+        # race reading: every cell of every mention slot fires >=1
+        # spike within a 50 ms word AND >=1 spike in a 150 ms pulse,
+        # on 8/8 seeds. The cue report is read-only (cue stays 60).
+        rec["mode"] = "f1g_step0c_drive"
+        rec["drive"] = {
+            "criterion": ("every cell of every mention slot fires "
+                          ">=1 spike within a 50 ms word AND >=1 "
+                          "spike in a 150 ms pulse, on 8/8 seeds "
+                          "(RULING cs-race-f1g-0b-1022 (1))"),
+            "cue_pa_reported_only": float(CUE_PA),
+            "trace_off": {"W_MM": 0.0, "W_IM": 0.0}}
+        n_both = 0
+        for seed in seeds:
+            circ = RaceCircuit(3, seed, dict(base), grid)
+            rd = circ.cal(seed=seed, item="d0")
+            evs = list(rd.get("pulse_events") or [])
+            w50 = [e for e in evs if int(e["ms"]) == 50]
+            w150 = [e for e in evs if int(e["ms"]) == 150]
+            p50 = bool(w50) and all(
+                int(e["min_cell_spikes"]) >= 1 for e in w50)
+            p150 = bool(w150) and all(
+                int(e["min_cell_spikes"]) >= 1 for e in w150)
+            both = bool(p50 and p150)
+            n_both += int(both)
+            rec["per_seed"].append({
+                "seed": int(seed),
+                "pass_50ms": p50, "pass_150ms": p150,
+                "pass_both": both,
+                "n_50ms": len(w50), "n_150ms": len(w150),
+                "min_50ms": (min(int(e["min_cell_spikes"])
+                                 for e in w50) if w50 else None),
+                "min_150ms": (min(int(e["min_cell_spikes"])
+                                  for e in w150) if w150 else None),
+                "zero_spike_50ms": sum(
+                    1 for e in w50
+                    if int(e["min_cell_spikes"]) < 1),
+                "zero_spike_150ms": sum(
+                    1 for e in w150
+                    if int(e["min_cell_spikes"]) < 1),
+                "pulse_events": [{k: e[k] for k in
+                                  ("word", "ms", "n_cells",
+                                   "total_spikes",
+                                   "min_cell_spikes",
+                                   "per_cell_spikes")}
+                                 for e in evs],
+                "cue_events": rd.get("cue_events")})
+            print("f1g-0c drive seed %d pa=%g: 50ms_pass=%s "
+                  "(zero=%d/%d) 150ms_pass=%s (zero=%d/%d) both=%s"
+                  % (seed, MENT_PA, p50,
+                     sum(1 for e in w50
+                         if int(e["min_cell_spikes"]) < 1),
+                     len(w50), p150,
+                     sum(1 for e in w150
+                         if int(e["min_cell_spikes"]) < 1),
+                     len(w150), both), flush=True)
+        rec["seeds_passing_both"] = int(n_both)
+        rec["cell_pass_drive"] = bool(
+            n_both == len(rec["per_seed"]) == len(seeds))
+        rec["stop_preview"] = {
+            "STOP_DRIVE": bool(not rec["cell_pass_drive"]),
+            "note": ("cue report read-only; cue stays 60 "
+                     "(RULING cs-race-f1g-0b-1022 (1))")}
+        if not args.out:
+            args.out = ("research/findings/raw/_cs_race/f1g/"
+                        "drive_paq%g_wmm%g_wim%g_seeds%s.json"
+                        % (MENT_PA, base.get("W_MM", 0.0),
+                           base.get("W_IM", 0.0),
+                           "-".join(str(s) for s in seeds)))
+        out_path = (args.out if os.path.isabs(args.out)
+                    else os.path.join(REPO, args.out))
+        os.makedirs(os.path.dirname(out_path), exist_ok=True)
+        with open(out_path, "w") as fh:
+            json.dump(rec, fh, indent=2, sort_keys=True, default=str)
+        from research.runners import declare_output
+        declare_output(out_path)
+        print("f1g-0c drive pa=%g trace_off: passing_both=%d/%d "
+              "STOP_DRIVE=%s wall=%.1fs -> %s"
+              % (MENT_PA, n_both, len(rec["per_seed"]),
+                 rec["stop_preview"]["STOP_DRIVE"],
+                 time.time() - t0, out_path), flush=True)
+        return 0
+    c_lo, c_hi, quiet = 2.0, 20.0, 1.0
+    pairs = (("vole", "frog"), ("frog", "vole"), ("lynx", "grass"))
+    for seed in seeds:
+        circ = RaceCircuit(3, seed, dict(base), grid)
+        bcfg = getattr(circ._bridge, "core_config", None)
+        srec = {"seed": int(seed),
+                "config_readback": {
+                    "enable_nmda_recurrent":
+                        bool(getattr(bcfg, "enable_nmda_recurrent",
+                                     False)),
+                    "enable_short_term_plasticity":
+                        bool(getattr(bcfg, "enable_short_term_plasticity",
+                                     False)),
+                    "enable_parameter_heterogeneity":
+                        bool(getattr(bcfg,
+                                     "enable_parameter_heterogeneity",
+                                     False)),
+                    "w_gis_read_back":
+                        float(base.get("W_GIS", 0.0))}}
+        r1 = circ.cal(seed=seed, item="c1", word="vole")
+        srec["c1"] = r1
+        r2 = circ.cal(seed=seed, item="c2b")
+        srec["c2b"] = r2
+        c3s = [circ.cal(seed=seed, item="c3", word=x, word2=y)
+               for x, y in pairs]
+        srec["c3"] = c3s
+        # C5: the clause-(a)/(b) protocols, encode words on, cue
+        # withheld; delta = held engram - rival engram total excitatory
+        # synaptic current in [100, 200] ms of the cue window, beside
+        # the +4/+6 pA flip scale.
+        ra = circ.race(seed=int(seed) * 1000003 + 51, cue_words=[],
+                       encode=("vole", "frog"), encode_words=True,
+                       cal_window=(100, 200),
+                       cal_held_k=circ.slot_of("frog"),
+                       cal_rival_k=circ.slot_of("vole"))
+        rb = circ.race(seed=int(seed) * 1000003 + 52, cue_words=[],
+                       encode=("vole", "frog"), mention_words=["vole"],
+                       encode_words=True, cal_window=(100, 200),
+                       cal_held_k=circ.slot_of("vole"),
+                       cal_rival_k=circ.slot_of("frog"))
+        ca = ra.get("cal_window") or {}
+        cb = rb.get("cal_window") or {}
+        srec["c5"] = {"clause_a_delta_pa": ca.get("delta_pa"),
+                      "clause_b_delta_pa": cb.get("delta_pa"),
+                      "clause_a_per_k": ca.get("total_exc_current_pa_per_k"),
+                      "clause_b_per_k": cb.get("total_exc_current_pa_per_k"),
+                      "window_ms": ca.get("ms"),
+                      "encode_words_seen_by_race":
+                          bool(ra.get("encode_words"))}
+        c1_ok = bool(c_lo <= float(r1["pulsed_rate_hz"]) <= c_hi)
+        c2a_ok = bool(float(r1["unpulsed_max_hz"]) < quiet)
+        c2b_ok = bool(float(r2["max_word_hz"]) < quiet)
+        c3_ok = all(bool(c_lo <= float(c["word2_rate_hz"]) <= c_hi and
+                         float(c["word1_rate_hz"]) < quiet)
+                    for c in c3s)
+        c4_ok = bool(r1.get("burst_ms") is None and
+                     r1.get("latch_ms") is None)
+        # C0 (RULING cs-race-f1g-0-1022 C): every pulsed slot fires
+        # >= 1 spike per cell during its 150 ms pulse, on 8/8 seeds.
+        # Kept OUT of pass{} so the frozen C1-C4 selection is intact.
+        evs = list(r1.get("pulse_events") or []) + [
+            e for cr in c3s for e in (cr.get("pulse_events") or [])]
+        c0_ok = bool(evs) and all(
+            int(e["min_cell_spikes"]) >= 1 for e in evs)
+        srec["c0"] = {"pass": c0_ok, "n_pulses": len(evs),
+                      "ment_pa": float(MENT_PA),
+                      "pulses": [{"word": e["word"],
+                                  "n_cells": e["n_cells"],
+                                  "total_spikes": e["total_spikes"],
+                                  "min_cell_spikes":
+                                      e["min_cell_spikes"]}
+                                 for e in evs]}
+        srec["pass"] = {"c1": c1_ok,
+                        "c2": bool(c2a_ok and c2b_ok),
+                        "c3": c3_ok, "c4": c4_ok}
+        rec["per_seed"].append(srec)
+        print("f1g-cal seed %d: c1=%sHz ok=%s c2=%s c3=%s c4=%s "
+              "c5(a)=%s c5(b)=%s"
+              % (seed, r1["pulsed_rate_hz"], c1_ok, srec["pass"]["c2"],
+                 c3_ok, c4_ok, srec["c5"]["clause_a_delta_pa"],
+                 srec["c5"]["clause_b_delta_pa"]), flush=True)
+    n_ok = sum(1 for s in rec["per_seed"] if all(s["pass"].values()))
+    rec["seeds_passing_c1_c4"] = int(n_ok)
+    rec["cell_pass_c1_c4"] = bool(n_ok == len(rec["per_seed"]) ==
+                                  len(seeds))
+    da = [float(s["c5"]["clause_a_delta_pa"]) for s in rec["per_seed"]
+          if s["c5"]["clause_a_delta_pa"] is not None]
+    db = [float(s["c5"]["clause_b_delta_pa"]) for s in rec["per_seed"]
+          if s["c5"]["clause_b_delta_pa"] is not None]
+    med_a = round(statistics.median(da), 4) if da else None
+    med_b = round(statistics.median(db), 4) if db else None
+    rec["c5_median_pa"] = {"clause_a": med_a, "clause_b": med_b}
+    c0_seeds = all(bool(s["c0"]["pass"]) for s in rec["per_seed"])
+    rec["stop_preview"] = {
+        "STOP_CAL": bool(not rec["cell_pass_c1_c4"]),
+        "STOP_SMOKE": bool(med_a is None or med_b is None or
+                           med_a < 2.0 or med_b < 2.0),
+        "STOP_C0": bool(not c0_seeds),
+        "note": "STOP-ID is judged by the separate identity run"}
+    if not args.out:
+        args.out = ("research/findings/raw/_cs_race/f1g/"
+                    "cal_wmm%g_wim%g_nim%d_seeds%s.json"
+                    % (base.get("W_MM", 0.0), base.get("W_IM", 0.0),
+                       int(base.get("NIM", 8)),
+                       "-".join(str(s) for s in seeds)))
+    out_path = (args.out if os.path.isabs(args.out)
+                else os.path.join(REPO, args.out))
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    with open(out_path, "w") as fh:
+        json.dump(rec, fh, indent=2, sort_keys=True, default=str)
+    from research.runners import declare_output
+    declare_output(out_path)
+    print("f1g-cal cell W_MM=%s W_IM=%s: pass_c1_c4=%s/%d seeds "
+          "c5_medians=(%s, %s) pa STOP=%s wall=%.1fs -> %s"
+          % (base.get("W_MM", 0.0), base.get("W_IM", 0.0),
+             n_ok, len(rec["per_seed"]), med_a, med_b,
+             rec["stop_preview"], time.time() - t0, out_path),
+          flush=True)
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", default="1,2,3,4,5,6,7,8")
@@ -1098,9 +1749,34 @@ def main():
                     help="which stage receives the host steer")
     ap.add_argument("--steer-target", type=int, default=0,
                     help="engram/gate index k receiving the host steer")
+    ap.add_argument("--w-mm", type=float, default=None,
+                    help="f1g: mention-slot slow-NMDA self-excitation "
+                         "(0 = off; the persistent word trace)")
+    ap.add_argument("--w-mi", type=float, default=None,
+                    help="f1g: mention slot -> shared inhibitory pool")
+    ap.add_argument("--w-im", type=float, default=None,
+                    help="f1g: shared inhibitory pool -> mention slots")
+    ap.add_argument("--nim", type=int, default=None,
+                    help="f1g: inhibitory pool cells (default 8)")
+    ap.add_argument("--encode-words", action="store_true",
+                    help="f1g: encode turns present their fact's words "
+                         "to the mention layer in heard order")
+    ap.add_argument("--calibrate", action="store_true",
+                    help="f1g step 0: trace calibration with no race "
+                         "(items C1-C5; seeds 41-48)")
+    ap.add_argument("--ment-pa", type=float, default=None,
+                    help="context/encode mention current pA; f1g arms "
+                         "pass 60 = CUE_PA (RULING cs-race-f1g-0-1022 "
+                         "B); default 40 keeps identity exact")
+    ap.add_argument("--drive-probe", action="store_true",
+                    help="f1g step 0c: DRIVE engagement probe "
+                         "(item d0, trace off; RULING "
+                         "cs-race-f1g-0b-1022)")
     args = ap.parse_args()
-    global _F1_GRID_ROW
+    global _F1_GRID_ROW, MENT_PA
     _F1_GRID_ROW = dict(F1_GRID[args.grid_row])
+    if args.ment_pa is not None:
+        MENT_PA = float(args.ment_pa)
     seeds = [int(s) for s in args.seeds.split(",") if s.strip()]
 
     from tools.lab import assert_backend, attributable_to
@@ -1134,11 +1810,23 @@ def main():
         base["CUE_NOISE_SD"] = float(args.cue_noise_sd)
     if args.cue_noise_tau is not None:
         base["CUE_NOISE_TAU"] = float(args.cue_noise_tau)
+    if args.w_mm is not None:
+        base["W_MM"] = float(args.w_mm)
+    if args.w_mi is not None:
+        base["W_MI"] = float(args.w_mi)
+    if args.w_im is not None:
+        base["W_IM"] = float(args.w_im)
+    if args.nim is not None:
+        base["NIM"] = int(args.nim)
+    if args.encode_words:
+        base["ENCODE_WORDS"] = 1
     if args.identity_cue_n:
         return identity_cue_n(base, _F1_GRID_ROW, seeds,
                               int(args.cue_n or 48),
                               float(args.w_cue or 7.5), args.draws,
                               args.out)
+    if args.calibrate or args.drive_probe:
+        return run_calibration(base, _F1_GRID_ROW, seeds, args)
     results = []
     het_transplant = False
     for seed in seeds:
@@ -1205,13 +1893,16 @@ def main():
 
     out = {"probe": "cs_race_f1", "grid_row": args.grid_row,
            "grid": dict(_F1_GRID_ROW), "draws": args.draws,
+           "ment_pa": float(MENT_PA),
            "seeds": seeds, "backend": "numpy", "device": "cpu",
            "KILL_CRITERIA": KILL_CRITERIA,
            "row_all_pass_8_seeds": bool(all_seeds_all_clauses
                                     and not args.controls_only),
         "controls_only": bool(args.controls_only),
-           "het_transplant_from_A0": bool(het_transplant),
-           "instrument_flags": {"w_gis": base.get("W_GIS", 0.0),
+        "het_transplant_from_A0": bool(het_transplant),
+        "record_label": {"latch_exclusion_w_gis":
+                         float(base.get("W_GIS", 0.0))},
+        "instrument_flags": {"w_gis": base.get("W_GIS", 0.0),
                                 "w_sgi": base.get("W_SGI", 0.0),
                                 "cue_n": base.get("CUE_N", 8),
                                 "cue_noise_sd":
