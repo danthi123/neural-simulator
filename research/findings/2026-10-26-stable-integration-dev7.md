@@ -14,6 +14,10 @@ artifacts:
   - research/findings/raw/_stable_integration/census/on/s7/inner__intact_a.json
   - research/findings/raw/_stable_integration/replicate_off_s7.json
   - research/findings/raw/_stable_integration/replicate_on_s7.json
+  - research/findings/raw/_stable_integration/attribution_on_except_bus_vs_off_s7.json
+  - research/findings/raw/_stable_integration/attribution_off_except_bus_vs_off_s7.json
+  - research/findings/raw/_stable_integration/attribution_on_except_swap_vs_off_s7.json
+  - research/findings/raw/_stable_integration/attribution_off_except_swap_vs_off_s7.json
 ---
 
 seed-waiver: a labelled dev-seed diagnostic of ONE heterogeneity draw (dev seed 7); no gate seed was run, no default was flipped and no capability claim is made.
@@ -24,19 +28,20 @@ seed-waiver: a labelled dev-seed diagnostic of ONE heterogeneity draw (dev seed 
 
 `SIM_STABLE_INTEGRATION=1` is now one switch that puts every `SimulationBridge` of the brain on the two existing
 fixes (bounded conductance integration and 4 Izhikevich membrane sub-steps with the `model_reset` refractory rule),
-whatever each organ configured; unset, the engine is unchanged (hash-checked in the tests). On dev seed 7 it removes
-the integrator excursions the census found: out-of-range neurons fall from 4878-5381 to 787-830 per group in the
-four groups that step the GNW organs (emo 382 to 110), no membrane rises above its spike ceiling any more, and what
-is left is a resonate-and-fire phasor slice (not membranes) plus 112 cells whose own recovery variable u (b < 0, an
-RS-centred heterogeneity draw) holds v below -110 mV. The speed cost is 1.045x to 1.071x per step on 3250-6500
-neuron bridges and 1.76x on a 325-neuron one. But it changes replies, deterministically (a replicate pair is
-identical run to run). The GNW thought-swap workspace stops igniting: under OFF it reaches its designed period-3
-cycle (exactly 1/3 per step) on cells that the census finds running away; under ON the same drive gives 0.005 to
-0.062 per step and it never ignites. Of the probe turns that engage it, OFF verified 16 of 21 and ON none: taught
-facts come back as self-generated guesses, the built-in dog-cat fact abstains in every group, and the inner C5 pass
-of this seed is lost (both chain answers become one-hop guesses). Emo (C4) still names all four categories. So part
-of the OFF behaviour these replies rest on is the integrator artifact. The switch stays default OFF; flipping it
-needs the workspace (and any other organ tuned on the old integrator) re-measured under it first.
+whatever each organ configured; unset, the engine is unchanged (hash-checked in the tests; a clean-main run of one
+group reproduces this branch's OFF replies). On dev seed 7 it removes the integrator excursions the census found:
+out-of-range neurons fall from 4878-5381 to 787-830 per group in the four groups that step the GNW organs (emo 382 to
+110), no membrane rises above its spike ceiling any more, and what is left is a resonate-and-fire phasor slice (not
+membranes) plus 112 cells whose own recovery variable u (b < 0, RS-centred heterogeneity draws) holds v below
+-110 mV. The cost is 1.045x to 1.071x per step on 3250-6500 neuron bridges and 1.76x on a 325-neuron one. But it
+changes replies, deterministically (replicate pairs are identical run to run): taught facts come back as
+self-generated guesses, the built-in dog-cat fact abstains in every group that asks it, and the inner C5 result of
+this seed is lost; emo (C4) still names all four categories. Intervention on single organs locates the cause: the
+GNW ignition-bus workspace that wraps the recall gate decides recall verification and C5 in both directions (old
+integrator inside an ON brain restores them; the stable set alone inside an OFF brain removes them), and under OFF
+that workspace's cells all run out of range. So on this seed the verified recall and the C5 pass rest on the
+integrator artifact. The switch stays default OFF; flipping it needs the bus workspace (and the thought-swap
+workspace, whose topic swap is likewise its own integrator's) re-measured on the stable integrator first.
 
 ## What was built (default OFF)
 
@@ -167,17 +172,17 @@ change recur:
 Answer-rate lens: no turn went from abstained to answered; 6 turns went from answered to abstained, all of them the
 built-in dog-cat probe (conv, infer and inner one each, ask all three); 8 recalls of taught facts became unverified
 guesses that still answer (recalled_svo set -> null); and the 2 derived chain answers of inner became one-hop
-guesses. Of the probe turns that engaged the thought-swap workspace, OFF verified 16 of 21 and ON 0
-of 21 (conv 3/5 -> 0/5, infer 4/4 -> 0/4, ask 4/6 -> 0/6, inner 5/6 -> 0/6; teach turns stay verified either way).
+guesses. Of the probe turns that engaged the GNW workspaces, OFF verified 16 of 21 and ON 0
+of 21 (conv 3/5 -> 0/5, infer 4/4 -> 0/4, ask 4/6 -> 0/6, inner 5/6 -> 0/6; teach turns stay verified either way);
+the next section attributes this to the ignition-bus workspace by intervention.
 
 **C5 (inner).** OFF passes the inner scorer on this seed (private voices a stored fact, both chase-form probes reach
 the never-told terminal mite with 3 and 2 internal hops, single hop, tail moat, dog-cat). ON fails it: `p_private`
 is unchanged ("Something's been on my mind -- beetle chase mite.") and the tail moat still abstains, but both chain
 probes become one-hop guesses ("perhaps the lynx chases the vole", "perhaps the vole chases the beetle"; derived
 true -> false, the internal chain trace reads `already_abstained`), the single hop becomes a guess and dog-cat
-abstains. The organs this group steps include three GNW organs with large OFF excursions
-(the thought-swap workspace, the distributed-overwrite workspace, and the reentrant metacog-gated deliberation organ,
-which the ON brain never reaches).
+abstains. The intervention below puts this on the GNW ignition-bus workspace: on the old integrator inside an ON
+brain, C5 holds again; alone on the stable set inside an OFF brain, it fails.
 
 **C4 (emo).** The emo replies do not touch the thought-swap workspace (no topic turn engages it). Both arms name the
 four categories correctly (joy, fear, anger, sadness; scorer `all` true in both). The valence differentials grow in
@@ -185,31 +190,51 @@ magnitude under ON (joy +0.038 -> +0.062, fear -0.023 -> -0.047, anger -0.052 ->
 which turns the fear read-out's sign from neutral to negative (sign correct 3/4 -> 4/4) and collapses the distinct
 2-D reads from 3 to 2. The emotion-category organ's own two OFF offenders (down to -123.39 mV) are gone under ON.
 
-## Why the replies change: the thought-swap workspace stops igniting
+## Why the replies change: attribution by intervention (inner, dev seed 7)
 
-The changed turns share one internal signature, read from the responses' own `swap_drives` and `gnw_stop` records
-(the GNW thought-swap workspace, `webapp/gnw_thought_swap.py`, which steps its bridge through
-`_gnw_active_overwrite_derisk._ws_step`). Under OFF, every topic turn ignites the new topic's coalition at a
-post-swap rate of exactly 1/3 per step (n_ignited_post 1), the swap succeeds (`topic_change_swap`) and the stop
-circuit clears the held thread (`clean_global_stop`, the "Setting the held thread aside" lead). Under ON the same
-turns read 0.005 to 0.062 per step, below the organ's ignition threshold (half of 1/3), n_ignited_post 0, the swap is
-refused (`mismatch_held_no_swap` or `same_topic_hold`) and the stop is `stop_incomplete`. On the probe turns that
-followed, the reply lost its verification (`verified` true -> false): taught facts come back through the hypothesis
-path labelled self-generated by the authorship monitor, and the built-in dog-cat fact abstains.
+Every changed probe turn carries the same internal signature in the responses' own records: under OFF the GNW
+thought-swap workspace (`webapp/gnw_thought_swap.py`, stepped through `_gnw_active_overwrite_derisk._ws_step`)
+ignites the new topic at exactly 1/3 per step (`topic_change_swap`, the "On X, then --" lead), the stop clears the
+held thread ("Setting the held thread aside --") and the recall is verified; under ON the new-topic rate is 0.005 to
+0.062 per step (below its ignition threshold, half of 1/3), the swap is refused, the stop is `stop_incomplete` and the
+recall is not verified. Co-occurrence is not cause, so each candidate organ was put on the opposite integrator to the
+rest of the brain (`research/runners/stable_integration_exempt_probe.py`: the organ's bridges are constructed with the
+switch read the other way, from their first step; the census read-back confirms exactly those bridges ran the other
+integrator). Counts over the 6 inner probe turns that engage the workspace; scorer = the inner (C5) scorer:
 
-The workspace's own design defines ignition as the period-3 limit cycle (`SOLO_PLATEAU = 1/3` in
-`_gnw_rung2_competitive_access_derisk.py`), i.e. a cell firing on every step its 2-step refractory timer allows.
-Under OFF that cycle runs on cells the census finds out of range: in inner, 159464 of the organ's 317732 spikes came
-from cells after their first excursion (conv: 120611 of 235538), its membranes reached -16042 mV, and 301 of its
-cells rose more than 5 mV above their spike ceiling. Under ON the organ's cells stay in range (2 offenders, both
-u-held cells, see above) and the same drive does not reach the cycle. So the OFF ignition that verified recall and
-the inner C5 chain depend on, at the drive constants tuned on the old integrator, is at least partly the integrator
-artifact. The same holds downstream: the common-ground ledger (91 percent of its OFF spikes from out-of-range cells
-in inner), the distributed-overwrite workspace (70 percent) and the reentrant metacog-gated deliberation organ
-(85 percent; under ON it is not reached at all) run on such cells under OFF.
+| arm | bridges on the other integrator | swap ignites | stop lead | recall verified | C5 scorer `all` |
+|---|---|---|---|---|---|
+| OFF | - | 6 of 6 | 6 of 6 | 5 of 6 | true |
+| ON | - | 0 | 0 | 0 | false |
+| ON except the thought-swap workspace | 1 (960 neurons) | 6 | 0 | 0 | false |
+| OFF except the thought-swap workspace | 1 | 0 | 6 | 5 | true |
+| ON except the GNW ignition-bus workspace | 2 (390 neurons each) | 0 | 0 | 5 | true |
+| OFF except the GNW ignition-bus workspace | 1 (390 neurons) | 6 | 6 | 0 | false |
 
-What this does not show: which single organ's integrator change flips the reply (the switch is global; no per-organ
-exemption was run), and whether re-measured drive constants restore ignition under ON. Both are the next step.
+(5 of 6 because `c_mite_all` is the tail moat, which abstains in every arm.) Sources:
+`research/findings/raw/_stable_integration/attribution_{on,off}_except_{swap,bus}_vs_off_s7.json` and the census
+records under `census/{on,off}_except_{swap,bus}/s7/`.
+
+- **Recall verification and the inner C5 result are the bus workspace's.** The bus is the workspace that
+  `_p1_2_workspace_deliberation_loop_derisk.build_workspace_bridge` builds for the GNW ignition buses that wrap the
+  recall gate (`webapp/gnw_bus_shadow.py`, `gnw_two_organ_bus.py`; the reentrant metacog-gated deliberation organ
+  builds the same workspace). Its integrator alone decides the outcome in both directions: kept on the old
+  integrator inside an ON brain, recall is verified on the same 5 probes as OFF and C5 holds; put alone on the stable
+  set inside an OFF brain, recall is lost on all of them and C5 fails. Under OFF its 390-cell bridge had 80
+  out-of-range cells, every one first read above its spike ceiling inside the refractory window, and 17760 of its
+  21985 spikes came from cells after their first excursion; on the stable set it had 0. So on this seed the bus's
+  verification runs on the integrator artifact (mechanism b).
+- **The topic swap is the thought-swap workspace's.** Its own integrator decides whether it ignites, in both
+  directions, and it does not decide recall. Its design defines ignition as the period-3 cycle (`SOLO_PLATEAU = 1/3`
+  in `_gnw_rung2_competitive_access_derisk.py`), a cell firing on every step its 2-step refractory timer allows;
+  under OFF that cycle runs on cells the census finds out of range (inner: 159464 of the organ's 317732 spikes from
+  cells after their first excursion; membranes to -16042 mV).
+- **The stop lead is neither's.** It follows the rest of the brain in all four exempt arms, so another organ's
+  integrator change removes it; not attributed here.
+
+What this does not show: whether re-measured drive constants restore the bus's verification and the swap's ignition
+on the stable integrator, and whether the same attribution holds on other seeds and in conv, infer and ask (the same
+signature appears there; only inner was intervened on).
 
 ## Reply changes per group, with both texts
 
@@ -344,9 +369,10 @@ Turns not listed kept every user-visible field (their internal read-outs moved).
 ## Run-to-run noise floor and default-OFF identity
 
 - Replicates: a second OFF and a second ON census, fresh processes from the same code
-  (`research/findings/raw/_stable_integration/replicate_off_s7.json`, `replicate_on_s7.json`). Inner and conv: the
-  whole-response hash is identical to the first run in both arms (inner OFF c705acd4779e, ON 12c9855d7dbe), 0 of 10
-  and 0 of 11 turns differ, and the out-of-range counts are identical (inner 4984 OFF, 787 ON; conv 5082, 803). The
+  (`research/findings/raw/_stable_integration/replicate_off_s7.json`, `replicate_on_s7.json`). Inner, conv and infer:
+  the whole-response hash is identical to the first run in both arms (inner OFF c705acd4779e, ON 12c9855d7dbe), 0 of
+  10, 11 and 10 turns differ, and the out-of-range counts are identical (inner 4984 OFF, 787 ON; conv 5082, 803;
+  infer 4878, 830); emo and ask were not replicated. The
   brain is deterministic run to run on this setup, so the ON vs OFF reply changes are caused by the switch, not noise.
 - Default OFF against main: OFF's per-bridge dynamics (steps, spikes, out-of-range count and lowest v of every
   bridge) are identical to the pool's dev-seed-7 census records (main @ 79c6f5128) in all five groups, and its
@@ -362,11 +388,11 @@ Turns not listed kept every user-visible field (their internal read-outs moved).
 - The sub-step option was cherry-picked from the BG branch (`research/izh-substeps`, based on
   `research/bg-tonic-loop`), engine part only; its BG organ switch is not on main.
 - The drive constants, thresholds and calibrations of every organ were tuned on the old integrator. The reply
-  changes above are partly that: the thought-swap workspace's ignition (defined as the period-3 cycle) is not reached
-  at its current drive under ON. They are not evidence that ON is worse or better for the brain; they say these
-  organs need re-measurement on the stable integrator before any default flip.
-- The switch is global: no per-organ exemption was run, so which organ's integrator change causes each reply change
-  is inferred from the response read-outs, not shown by intervention.
+  changes above are that: the bus and swap workspaces' ignitions are not reached at their current drives on the
+  stable integrator. They are not evidence that ON is worse or better for the brain; they say these organs need
+  re-measurement on the stable integrator before any default flip.
+- The attribution covers inner only, two organs (the bus and the swap workspaces); conv, infer and ask show the same
+  signature but were not intervened on, and the stop lead is not attributed.
 - The replicate pairs bound run-to-run noise at zero on this setup (inner, conv; see above); they do not bound
   sensitivity to the environment (the pool's own runs of three groups produced different response hashes with
   identical dynamics).
@@ -379,9 +405,10 @@ Turns not listed kept every user-visible field (their internal read-outs moved).
 
 ## Next
 
-1. Per-organ attribution by intervention: ON everywhere except the thought-swap workspace (and the reverse), to show
-   which organ's integrator change moves the conv / infer / ask / inner replies.
-2. Re-measure the thought-swap workspace's ignition drive (and the other GNW organs) under ON, then re-run this
-   comparison; only then a six-seed flip prereg.
-3. Mechanism (c): measure these organs with `cfg.preset_centred_parameter_heterogeneity` (on main, default OFF),
+1. Re-measure the GNW ignition-bus workspace (`_p1_2_workspace_deliberation_loop_derisk`) on the stable integrator:
+   what drive or recurrence gives a physiological ignition that still separates a stored from an unstored fact; then
+   the thought-swap workspace the same way; then re-run this comparison (all five groups) before any flip prereg.
+2. Repeat the bus / swap attribution on a second dev seed and in conv, infer and ask (same probe, same arms).
+3. Attribute the stop lead (the ACC-BG stop trigger and its inputs) with the same probe.
+4. Mechanism (c): measure these organs with `cfg.preset_centred_parameter_heterogeneity` (on main, default OFF),
    under which the thalamic-reticular cells keep b > 0; whatever is left then needs its own biology.

@@ -19,10 +19,11 @@ compute node (GPU queue, local model serving), and Claude Code inspects occasion
 - **Membranes:** on dev seed 7 the switch removes the impossible voltages the census found (thousands of cells per
   conversation down to a phasor slice that is not a membrane, plus 112 cells whose own slow variable runs away, a
   cell-type fault already known). It costs about 5 percent per step on large regions.
-- **Replies change, the same way every run:** the thought-swap workspace's "ignition" turned out to run on cells that
-  the old integrator let run away; with stable cells it no longer ignites, recall of taught facts turns into hedged
-  guesses, and the inner-thought test this seed passed is lost. Emotion naming is unaffected. The switch stays off
-  until that workspace is re-tuned on stable cells
+- **Replies change, the same way every run:** the workspace that checks a recalled fact turned out to "ignite" on
+  cells the old integrator let run away; with stable cells it no longer ignites, so recall of taught facts turns
+  into hedged guesses and the inner-thought test this seed passed is lost. Switching that one workspace back (or
+  forward) alone reproduces the change both ways. Emotion naming is unaffected. The switch stays off until that
+  workspace is re-tuned on stable cells
   (`research/findings/2026-10-26-stable-integration-dev7.md`).
 
 ## 2026-10-21 — the strict no-making-things-up check passes its tests (still off); a cell-type fault under the substrate; two new methods start
