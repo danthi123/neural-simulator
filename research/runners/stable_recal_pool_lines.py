@@ -5,7 +5,11 @@ research/coordination/stable-recal-pool-lines.txt in the format of membrane-cens
 Arms (environment of the census subprocess; everything else is the Stage-2 gate's frozen env):
   off           -- SIM_STABLE_INTEGRATION and SIM_STABLE_RECAL empty (= off: production);
   stable        -- SIM_STABLE_INTEGRATION=1 only (valid membranes, production workspace constants);
-  stable_recal  -- SIM_STABLE_INTEGRATION=1 SIM_STABLE_RECAL=1 (valid membranes, bus + thought-swap re-calibrated).
+  stable_recal  -- SIM_STABLE_INTEGRATION=1 SIM_STABLE_RECAL=1 (valid membranes, the bus, thought-swap and global-stop
+                   workspaces re-calibrated).
+Seed roles, written into every line's reason: dev seeds 7 and 8 are CALIBRATION REPLICATES (every re-calibrated
+constant was read off them -- swap and global stop on 7 and 8, the bus on 7 -- so a result there is in-sample); dev
+seeds 1-6 and 9-12 are HELD-OUT (no constant was fitted on them; a result there is out-of-sample).
 Same runner, memory and caps as the census lines (membrane_census.POOL_MEM_GB / POOL_MEMCAP_GB / POOL_MAX_AGE_H).
 Dev seeds only; the gate seeds are refused by the census itself.
 
@@ -27,6 +31,14 @@ ARMS = {"off": "SIM_STABLE_INTEGRATION= SIM_STABLE_RECAL= ", "stable": "SIM_STAB
         "stable_recal": "SIM_STABLE_INTEGRATION=1 SIM_STABLE_RECAL=1 "}   # each arm pinned explicitly ("" = off)
 OUT_DIR = "research/findings/raw/_stable_recal/dev"
 FINDING = "research/findings/2026-10-27-stable-recal-dev78.md"
+CALIBRATION_SEEDS = (7, 8)
+
+
+def seed_role(seed):
+    if int(seed) in CALIBRATION_SEEDS:
+        return ("calibration replicate, IN-SAMPLE (the swap and global-stop constants were fitted on dev seeds 7 and 8, "
+                "the bus on 7)")
+    return "held-out, OUT-OF-SAMPLE (no re-calibrated constant was fitted on this seed)"
 
 
 def pool_job_lines(sha="<sha>", seeds=SEEDS, out_dir=OUT_DIR):
@@ -45,9 +57,10 @@ def pool_job_lines(sha="<sha>", seeds=SEEDS, out_dir=OUT_DIR):
                        "research.runners.membrane_census --shard --seed %d --group %s --arm intact_a "
                        "--out %s/%s__intact_a.json" % (sha, MC.POOL_MEM_GB, d, MC.POOL_MEMCAP_GB, env, seed, group, d,
                                                        group))
-                why = ("stable-recal dev battery, dev seed %d %s arm %s (intact_a); record: %s holds dev seeds 7 and 8 "
-                       "only, and no other seed has the off / stable / stable+recal replies and census; "
-                       "mem_gb=%d max_age_h=%d" % (seed, group, arm, FINDING, MC.POOL_MEM_GB, MC.POOL_MAX_AGE_H))
+                why = ("stable-recal dev battery, dev seed %d %s arm %s (intact_a); seed role: %s; record: %s holds dev "
+                       "seeds 7 and 8 only, and no other seed has the off / stable / stable+recal replies and census; "
+                       "mem_gb=%d max_age_h=%d" % (seed, group, arm, seed_role(seed), FINDING, MC.POOL_MEM_GB,
+                                                   MC.POOL_MAX_AGE_H))
                 out.append((cmd, why))
     return out
 
