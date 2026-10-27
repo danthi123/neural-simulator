@@ -1,0 +1,38 @@
+{
+ "run_id": "1793100193-907316",
+ "runner": "research/runners/membrane_census.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-stable/research/runners/membrane_census.py",
+  "--shard",
+  "--seed",
+  "7",
+  "--group",
+  "conv",
+  "--arm",
+  "intact_a",
+  "--out",
+  "research/findings/raw/_stable_integration/census/on/s7/conv__intact_a.json"
+ ],
+ "git_sha": "ee3fab211",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-27T07:23:13",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_STABLE_INTEGRATION": "1"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 62517.2,
+ "corpus_check_query": "curiosity per-topic stop in production handler",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_stable_integration/census/on/s7/conv__intact_a.json"
+}
