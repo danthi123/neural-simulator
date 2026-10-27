@@ -5,7 +5,7 @@ date: 2026-10-27
 lane: substrate (integrator validity); follow-up of research/findings/2026-10-26-membrane-census-dev7.md and research/findings/2026-10-26-izh-membrane-substeps-derisk.md
 mechanism: SIM_STABLE_INTEGRATION=1 (sim/bridge.py STABLE_INTEGRATION_ENV) forces cfg.enable_bounded_conductance_integration=True, cfg.izh_membrane_substeps=4, cfg.izh_substep_refractory_rule=model_reset onto every SimulationBridge; default unset = unchanged
 flip: no - default OFF; one dev seed; the reply changes below are the reason not to flip yet
-seeds: [7]
+seeds: [7, 8]
 runner: research/runners/membrane_census.py
 artifacts:
   - research/findings/raw/_stable_integration/compare_s7.json
@@ -18,9 +18,13 @@ artifacts:
   - research/findings/raw/_stable_integration/attribution_off_except_bus_vs_off_s7.json
   - research/findings/raw/_stable_integration/attribution_on_except_swap_vs_off_s7.json
   - research/findings/raw/_stable_integration/attribution_off_except_swap_vs_off_s7.json
+  - research/findings/raw/_stable_integration/bus_ignition_s7.json
+  - research/findings/raw/_stable_integration/bus_ignition_curve_s7.json
+  - research/findings/raw/_stable_integration/bus_ignition_sweep_on_s7.json
+  - research/findings/raw/_stable_integration/compare_s8.json
 ---
 
-seed-waiver: a labelled dev-seed diagnostic of ONE heterogeneity draw (dev seed 7); no gate seed was run, no default was flipped and no capability claim is made.
+seed-waiver: a labelled dev-seed diagnostic (dev seed 7 in full, dev seed 8 for inner only); no gate seed was run, no default was flipped and no capability claim is made.
 
 # One stable-integration switch for the whole brain, measured on dev seed 7 (2026-10-27)
 
@@ -40,7 +44,9 @@ this seed is lost; emo (C4) still names all four categories. Intervention on sin
 GNW ignition-bus workspace that wraps the recall gate decides recall verification and C5 in both directions (old
 integrator inside an ON brain restores them; the stable set alone inside an OFF brain removes them), and under OFF
 that workspace's cells all run out of range. So on this seed the verified recall and the C5 pass rest on the
-integrator artifact. The switch stays default OFF; flipping it needs the bus workspace (and the thought-swap
+integrator artifact. Dev seed 8 (inner) repeats all of it, and measured alone the bus's ignition knee is exactly the
+drive at which its cells leave the valid range, so its weight, threshold and drives need re-calibration, not a
+nudge. The switch stays default OFF; flipping it needs the bus workspace (and the thought-swap
 workspace, whose topic swap is likewise its own integrator's) re-measured on the stable integrator first.
 
 ## What was built (default OFF)
@@ -240,6 +246,45 @@ What this does not show: whether re-measured drive constants restore the bus's v
 on the stable integrator, and whether the same attribution holds on other seeds and in infer and ask (the same
 signature appears there; inner and conv were intervened on).
 
+## The bus workspace in isolation: its ignition knee is the runaway onset (dev seed 7)
+
+`research/runners/stable_integration_bus_ignition_probe.py` builds the bus workspace alone (4 slots of 80
+self-recurrent NMDA cells, one shared FS pool, heterogeneity off) and reads it exactly as the bus does
+(`_ignite_and_read`: drive 35 steps, free-run 100, late-window rate per slot; ignited iff the rate reaches 1/6), on
+both integrators, with the loop-lesion and no-drive controls (both read 0 in every condition, so every sustained rate
+below is the assembly loops' own; `tools.lab.attributable_to` 100% against either control).
+
+- **Old integrator, production weight 30.** Driven alone at 500, 1000, 1500 and 2000 pA the slot keeps every cell in
+  range and its late rate is 0.0348, 0.0443, 0.0227 and 0.0284; at 2500, 3000 and 4000 pA all 80 cells leave the
+  valid range, the rate is exactly 0.3333 and the late-window mean membrane is -374.31 mV
+  (`bus_ignition_curve_s7.json`, `bus_ignition_s7.json`). The bus's unanimity quorum (each organ adds 1000 pA; three
+  votes ignite, two do not) sits on that step, so on the old integrator the consensus read is the runaway threshold:
+  "ignited" means the slot's membranes have left the model's valid range.
+- **Stable integrator, weight 30.** No cell leaves the range, but the driven slot sits in depolarization block near
+  the excitatory reversal (late-window mean +14.69 mV, 0.8777 of its cells above -20 mV), its late rate is 0.0826
+  (below 1/6) and the four slots are not separated when competing; raising the weight to 120 deepens the block.
+- **A calibration both integrators agree on.** At weight 5 the two integrators give the same curve (no runaway on
+  either): a knee between 1000 and 1500 pA and a plateau of about 0.089 with membranes near -25 mV; with competitors
+  (target plus three at 0.3 of its drive) only the target sustains. No weight from 5 to 120 and no FS inhibition from
+  16 to 64 reaches the old 1/6 threshold on the stable integrator (`bus_ignition_sweep_on_s7.json`): that threshold
+  is half the artifact's rate, not a property of the circuit.
+
+So re-measuring the bus is not a drive tweak: its weight, its threshold and its per-organ drives were all calibrated
+on the runaway. The bus's own rules (threshold = half the solo plateau; per-organ drive so that N-1 votes stay below
+the knee and N votes reach it), applied to the weight-5 curve, give weight 5, threshold 0.0445 and d_sub 500 (three
+organs) / 750 (two organs); `research/runners/stable_integration_retuned_bus_probe.py` runs that re-calibration
+inside the ON brain (results below when they land).
+
+## Second dev seed (8), inner
+
+The inner OFF/ON pair on dev seed 8 (`research/findings/raw/_stable_integration/compare_s8.json`; census under
+`census/{off,on}/s8/`) repeats seed 7 in every respect measured: offender organs 12 to 3 and out-of-range neurons
+4647 to 747; the inner scorer is true OFF and false ON; the workspace-engaging probe recalls verified are 5 of 6 OFF
+and 0 of 6 ON (the tail moat abstains in both); both derived chains (lynx and vole to the never-told mite) become
+one-hop guesses, the single hop becomes a guess, dog-cat abstains and the held-thread lead disappears; the private
+utterance is unchanged. What is left ON is the same three kinds: the BridgeParser phasor slice (640), the
+LearnedAssocGraph b < 0 cells (106) and one cell of the thought-swap workspace.
+
 ## Reply changes per group, with both texts
 
 Turns not listed kept every user-visible field (their internal read-outs moved). Source: `research/findings/raw/_stable_integration/compare_s7.json` (`groups.<g>.replies.changed`).
@@ -387,8 +432,8 @@ Turns not listed kept every user-visible field (their internal read-outs moved).
 
 ## Caveats
 
-- One dev seed (7), one heterogeneity draw, numpy CPU only; the seed-to-cell map is specific to the numpy random
-  stream. No gate seed was run and nothing here is a generalization claim.
+- Two dev seeds: 7 for all five groups, 8 for inner only; numpy CPU only; the seed-to-cell map is specific to the
+  numpy random stream. No gate seed was run and nothing here is a generalization claim.
 - The sub-step option was cherry-picked from the BG branch (`research/izh-substeps`, based on
   `research/bg-tonic-loop`), engine part only; its BG organ switch is not on main.
 - The drive constants, thresholds and calibrations of every organ were tuned on the old integrator. The reply
@@ -409,10 +454,11 @@ Turns not listed kept every user-visible field (their internal read-outs moved).
 
 ## Next
 
-1. Re-measure the GNW ignition-bus workspace (`_p1_2_workspace_deliberation_loop_derisk`) on the stable integrator:
-   what drive or recurrence gives a physiological ignition that still separates a stored from an unstored fact; then
-   the thought-swap workspace the same way; then re-run this comparison (all five groups) before any flip prereg.
-2. Repeat the bus / swap attribution on a second dev seed and in conv, infer and ask (same probe, same arms).
+1. The bus workspace's re-calibration (weight 5, threshold 0.0445, d_sub 500 / 750; section above): read whether
+   it restores verified recall and C5 inside the ON brain, and whether it still separates a stored from an unstored
+   fact; then the thought-swap workspace the same way (its period-3 ignition is the same artifact); then re-run this
+   comparison (all five groups, both dev seeds) before any flip prereg.
+2. Repeat the bus / swap attribution on dev seed 8 and in infer and ask (same probe, same arms).
 3. Attribute the stop lead (the ACC-BG stop trigger and its inputs) with the same probe.
 4. Mechanism (c): measure these organs with `cfg.preset_centred_parameter_heterogeneity` (on main, default OFF),
    under which the thalamic-reticular cells keep b > 0; whatever is left then needs its own biology.
