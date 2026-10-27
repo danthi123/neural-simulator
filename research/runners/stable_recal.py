@@ -1,10 +1,11 @@
-"""SIM_STABLE_RECAL -- DEFAULT-OFF switch: the two GNW workspaces whose ignition was the old integrator's numerical
-runaway, re-calibrated by their OWN rules on the stable integrator (research/stable-recal, 2026-10-27).
+"""SIM_STABLE_RECAL -- DEFAULT-OFF switch: the three GNW workspaces whose ignition was the old integrator's numerical
+runaway (the ignition bus, the thought-swap workspace and the global-stop distributed-overwrite workspace),
+re-calibrated by their OWN rules on the stable integrator (research/stable-recal, 2026-10-27).
 
-Why. On the old integrator the GNW ignition-bus workspace and the thought-swap workspace ignite at the drive where
-their cells leave the valid membrane range, and the ignited rate 1/3 is that runaway (findings
-2026-10-26-stable-integration-dev7.md and 2026-10-27-stable-recal-dev78.md). Under SIM_STABLE_INTEGRATION=1 the
-membranes stay valid and both workspaces stop igniting at their production constants. This switch applies the
+Why. On the old integrator the GNW ignition-bus workspace, the thought-swap workspace and the global-stop workspace
+ignite at the drive where their cells leave the valid membrane range, and the ignited rate 1/3 is that runaway
+(findings 2026-10-26-stable-integration-dev7.md and 2026-10-27-stable-recal-dev78.md). Under SIM_STABLE_INTEGRATION=1
+the membranes stay valid and the three workspaces stop igniting at their production constants. This switch applies the
 re-calibrations measured on the isolated organs, chosen by each organ's documented rules and never from a reply.
 
 Values.
@@ -14,24 +15,29 @@ Values.
     stable membranes only). Any other value raises ValueError.
 
 The accessors are read at call time, so the switch is a process-level environment setting like
-SIM_STABLE_INTEGRATION. Organs not listed here (the global-stop workspace, the ACC-BG stop trigger, ...) keep their
-production constants.
+SIM_STABLE_INTEGRATION. Organs not listed here (the ACC-BG stop trigger, ...) keep their production constants.
 
 REMAPPING RULE, and its limit. The production organ builders take their constants as default arguments, so under the
 switch a value-conditional accessor (`bus_attractor_weight`, `bus_d_sub`, `swap_value`) cannot tell a default from an
 explicit argument: ANY value equal to the production value is remapped to the re-calibrated one, including an explicit
 argument a caller passed on purpose (an explicit `weight=30.0` on the bus, `w_rec=34.0`, `establish_pa=8000.0` or
-`thal_tonic_pa=700.0` on the swap organ, a bus drive of 1000.0 or 1400.0 pA). Only an explicit value that DIFFERS from
-the production value is kept (a lesion's weight 0, a research weight such as 12). A research script that wants the
-production number itself under the switch has to pass a number that differs from it, or leave the switch off. The
-threshold accessors (`bus_solo_plateau`, `bus_thr`, `swap_ignite_thresh`) are called with a module constant, not a
+`thal_tonic_pa=700.0` on the swap organ, a bus drive of 1000.0 or 1400.0 pA, the global stop's `w_rec=34.0`,
+`norm_ws_w=16.0`, `thal_tonic_pA=700.0`, `margin_ref=MARGIN_REF` or `boost_scale=BOOST_SCALE`, which
+webapp/gnw_global_stop.py passes explicitly). Only an explicit value that DIFFERS from the production value is kept (a
+lesion's weight 0, a research weight such as 12). A research script that wants the production number itself under
+the switch has to pass a number that differs from it, or leave the switch off. The threshold accessors
+(`bus_solo_plateau`, `bus_thr`, `swap_ignite_thresh`, `stop_ignite_thresh`) are called with a module constant, not a
 caller argument, and return the re-calibrated threshold unconditionally while the switch is on.
 tests/test_stable_recal_switch.py (test_explicit_production_value_is_remapped_under_the_switch) pins this.
 
 Provenance of the swap values: research/findings/raw/_stable_recal/swap_calibration_record.json, written by
 research/runners/stable_recal_calibration_record.py from the cited artifacts (it also checks that the record's
 production and re-calibrated values equal the `SWAP` table below). `w_pat_pred` (32) is formula-only: no cited
-artifact varies it.
+artifact varies it. Provenance of the global-stop values:
+research/findings/raw/_stable_recal/stop_calibration_record.json, written by
+research/runners/stable_recal_stop_calibration_record.py (it checks the record against the `STOP` table).
+The global-stop organ's own GO gate passes on 5 of 15 dev seeds at these values (the conflict-gated stop itself on 11
+of 15; see the record), so this re-calibration is a measured operating point on valid membranes, not a GO.
 """
 from __future__ import annotations
 
@@ -128,4 +134,37 @@ def swap_ignite_thresh(ignite_frac: float, default: float) -> float:
     workspace shares, is not touched)."""
     if stable_recal_requested():
         return float(ignite_frac) * SWAP["solo_plateau"][1]
+    return default
+
+
+# ── global-stop distributed-overwrite workspace (research/runners/_gnw_distributed_overwrite_workspace_derisk:
+#    `build_overwrite_bridge`, `run_confident`, `run_conflict_stop`, `evaluate_seed`, `_margin`; used by
+#    webapp/gnw_global_stop.py). Source and the rule behind each value:
+#    research/findings/raw/_stable_recal/stop_calibration_record.json.
+STOP = {
+    "w_rec": (34.0, 6.5),            # ~1.44x the sustain knee (4.0-4.5) at nws 4, below neighbour recruitment (10)
+    "norm_ws_w": (16.0, 4.0),        # largest normalization whose sustained state reads reliably in the 15-step window
+    "thal_tonic_pa": (700.0, 50.0),  # largest thalamic support with no spontaneous ignition in 1000 steps
+    "solo_plateau": (1.0 / 3.0, 0.084),   # the measured ignited plateau; criterion IGNITE_FRAC x plateau = 0.042
+    "strong_pa": (5000.0, 800.0),    # STRONG_PA = 2 x the knee; stable knee by the organ's 45-step read = 400 pA
+    "margin_ref": ((1.0 / 3.0) * 0.5, 0.057),  # halfway between the measured confident and conflict margins
+    "boost_scale": (0.85, 31.0),     # full-conflict boost 0.8, the middle of the robust clearing band 0.6-1.0
+}
+
+
+def stop_value(name: str, value):
+    """The global-stop constant `name`: the re-calibrated value under the switch when `value` equals the production
+    value (default and explicit production arguments are both remapped: see the module docstring); otherwise `value`
+    unchanged (a lesion's 0 or an explicit research setting that differs from the production value is kept)."""
+    prod, recal = STOP[name]
+    if stable_recal_requested() and float(value) == float(prod):
+        return float(recal)
+    return value
+
+
+def stop_ignite_thresh(ignite_frac: float, default: float) -> float:
+    """The global-stop organ's ignition criterion, scoped to that organ (Rung-2's SOLO_PLATEAU, shared with other
+    organs, is not touched)."""
+    if stable_recal_requested():
+        return float(ignite_frac) * STOP["solo_plateau"][1]
     return default

@@ -91,6 +91,7 @@ from research.runners._gnw_rung2_competitive_access_derisk import (
 from research.runners._gnw_rung2b_sfa_workspace_eviction_derisk import _threshold_hash
 from research.runners._gnw_rung2c_salience_disinhibition_derisk import _dense_pop
 from research.runners._p1_2_workspace_deliberation_loop_derisk import _full_snapshot, _full_restore
+from research.runners import stable_recal as _stable_recal
 
 
 # ── geometry: K overlapping distributed patterns over a shared workspace pool ──────────────────────────────────
@@ -135,6 +136,28 @@ CONF_HOLD_STEPS = 90                # a confident commit must HOLD this long (se
 
 # restore-call accounting: the CONTINUOUS stop headline MUST make ZERO restore calls (anti-cheat c).
 _RESTORE_CALLS = {"n": 0}
+
+
+# ── SIM_STABLE_RECAL (default OFF; research/runners/stable_recal.py) ─────────────────────────────────────────────
+# On the old integrator this workspace ignites where its cells run out of the valid membrane range (rate exactly 1/3,
+# all 270 workspace cells out of range in the conflict state); on the stable one it does not ignite at the constants
+# above. Under SIM_STABLE_RECAL=1 (only with SIM_STABLE_INTEGRATION=1) every constant read below goes through `_st`,
+# which returns the re-calibrated value measured on the isolated organ
+# (research/findings/raw/_stable_recal/stop_calibration_record.json), and the ignition criterion is scoped to this
+# organ (`_st_ignited`), leaving Rung-2's SOLO_PLATEAU untouched. Unset, `_st` returns its argument and `_st_ignited`
+# is Rung-2's `_ignited`: byte-identical.
+def _st(name, value):
+    return _stable_recal.stop_value(name, value)
+
+
+def _st_ignited(rate):
+    if not _stable_recal.stable_recal_requested():
+        return _ignited(rate)
+    return bool(rate >= _stable_recal.stop_ignite_thresh(IGNITE_FRAC, IGNITE_FRAC * SOLO_PLATEAU))
+
+
+def _strong():
+    return _st("strong_pa", STRONG_PA)
 
 
 def _counted_full_restore(bridge, snap):
@@ -232,6 +255,8 @@ def build_overwrite_bridge(seed=42, w_rec=W_REC, overlap=DEFAULT_OVERLAP, ws_nor
     thal (exc; tonic shared support). ALL inter-region wiring explicit.
       norm_lesion=True -> norm_pool->workspace weight 0 (divisive-norm LOAD-BEARING anti-cheat).
     Returns (bridge, xp, patterns_dev, privates_dev, thal_dev, ws_used, snap, handles)."""
+    w_rec, norm_ws_w = _st("w_rec", w_rec), _st("norm_ws_w", norm_ws_w)
+    thal_tonic_pA = _st("thal_tonic_pa", thal_tonic_pA)
     xp, _ = get_backend()
 
     workspace = BrainRegion(name="workspace", n_neurons=WORKSPACE_N, exc_fraction=1.0,
@@ -352,12 +377,12 @@ def _margin(rates):
     order = sorted(range(len(rates)), key=lambda i: rates[i], reverse=True)
     top = rates[order[0]]
     second = rates[order[1]] if len(order) > 1 else 0.0
-    n_ign = int(sum(1 for r in rates if _ignited(r)))
+    n_ign = int(sum(1 for r in rates if _st_ignited(r)))
     return int(order[0]), float(top - second), n_ign
 
 
 def _verdict_label(rates):
-    n_ign = int(sum(1 for r in rates if _ignited(r)))
+    n_ign = int(sum(1 for r in rates if _st_ignited(r)))
     if n_ign == 0:
         return "ABSTAIN", 0
     return (f"COMMIT_p{int(np.argmax(rates))}" if n_ign == 1 else f"AMBIGUOUS_p{int(np.argmax(rates))}"), n_ign
@@ -378,14 +403,14 @@ def run_confident(bridge, xp, patterns_dev, privates_dev, thal_dev, snap, std, t
     """Confident single-content commit: drive target strong; HOLD long (baseline U=0 -> no self-eviction); read."""
     if isolate:
         _counted_full_restore(bridge, snap); std.reset()
-    _drive(bridge, xp, thal_dev, thal_tonic_pA, std, [(patterns_dev[target], STRONG_PA)])
+    _drive(bridge, xp, thal_dev, thal_tonic_pA, std, [(patterns_dev[target], _strong())])
     for _ in range(hold_steps):
         _ws_step(bridge, xp, thal_dev, thal_tonic_pA, std)
     rates = _read_private_rates(bridge, xp, thal_dev, thal_tonic_pA, privates_dev, std)
     win, m, n = _margin(rates)
     v, _ = _verdict_label(rates)
     return {"rates": [float(r) for r in rates], "winner": int(win), "n_ignited": int(n), "margin": float(m),
-            "delivered": v, "confident_ok": bool(n == 1 and win == target and m >= MARGIN_REF)}
+            "delivered": v, "confident_ok": bool(n == 1 and win == target and m >= _st("margin_ref", MARGIN_REF))}
 
 
 def run_conflict_stop(bridge, xp, patterns_dev, privates_dev, thal_dev, snap, std, thal_tonic_pA, *,
@@ -395,11 +420,12 @@ def run_conflict_stop(bridge, xp, patterns_dev, privates_dev, thal_dev, snap, st
     then apply the conflict-gated depression BURST (boost = f(margin deficit)) on the shared recurrence for
     pulse_duration steps, then read the settled (empty?) workspace. isolate=False -> a CONTINUOUS run (0 restores).
     margin_override feeds a DIFFERENT margin to the sensor (the scramble anti-cheat)."""
+    margin_ref, boost_scale = _st("margin_ref", margin_ref), _st("boost_scale", boost_scale)
     if isolate:
         _counted_full_restore(bridge, snap); std.reset()
     if contents is None:
         contents = tuple(range(len(patterns_dev)))
-    _drive(bridge, xp, thal_dev, thal_tonic_pA, std, [(patterns_dev[c], STRONG_PA) for c in contents])
+    _drive(bridge, xp, thal_dev, thal_tonic_pA, std, [(patterns_dev[c], _strong()) for c in contents])
     pre = _read_private_rates(bridge, xp, thal_dev, thal_tonic_pA, privates_dev, std)
     win_pre, margin, n_pre = _margin(pre)
     sensed = float(margin if margin_override is None else margin_override)
@@ -432,7 +458,7 @@ def run_gain_withdrawal(bridge, xp, patterns_dev, privates_dev, thal_dev, snap, 
     ignited attractor is self-sufficient -> it does NOT clear (a NO-GO; reproduces the STN self-sufficiency)."""
     if isolate:
         _counted_full_restore(bridge, snap); std.reset()
-    _drive(bridge, xp, thal_dev, thal_tonic_pA, std, [(patterns_dev[target], STRONG_PA)])
+    _drive(bridge, xp, thal_dev, thal_tonic_pA, std, [(patterns_dev[target], _strong())])
     pre = _read_private_rates(bridge, xp, thal_dev, thal_tonic_pA, privates_dev, std)
     _wp, _m, n_pre = _margin(pre)
     for _ in range(withdraw_steps):                                   # tonic OFF: withdraw the shared gain
@@ -451,10 +477,10 @@ def run_overwrite(bridge, xp, patterns_dev, privates_dev, thal_dev, snap, std, t
     self-sufficient incumbent HOLDS (co-ignition) -> a BOUNDARY (characterized)."""
     if isolate:
         _counted_full_restore(bridge, snap); std.reset()
-    _drive(bridge, xp, thal_dev, thal_tonic_pA, std, [(patterns_dev[incumbent], STRONG_PA)])
+    _drive(bridge, xp, thal_dev, thal_tonic_pA, std, [(patterns_dev[incumbent], _strong())])
     pre = _read_private_rates(bridge, xp, thal_dev, thal_tonic_pA, privates_dev, std)
     win_pre, _m, n_pre = _margin(pre)
-    _drive(bridge, xp, thal_dev, thal_tonic_pA, std, [(patterns_dev[challenger], STRONG_PA)])
+    _drive(bridge, xp, thal_dev, thal_tonic_pA, std, [(patterns_dev[challenger], _strong())])
     post = _read_private_rates(bridge, xp, thal_dev, thal_tonic_pA, privates_dev, std)
     win_post, _m2, n_post = _margin(post)
     return {"pre_rates": [float(r) for r in pre], "post_rates": [float(r) for r in post],
@@ -468,6 +494,10 @@ def run_overwrite(bridge, xp, patterns_dev, privates_dev, thal_dev, snap, std, t
 def evaluate_seed(seed, *, w_rec=W_REC, overlap=DEFAULT_OVERLAP, ws_norm_w=WS_NORM_W, norm_ws_w=NORM_WS_W,
                   thal_tonic_pA=THAL_TONIC_PA, thal_ws_w=THAL_WS_W, boost_gain=BOOST_GAIN, boost_scale=BOOST_SCALE,
                   margin_ref=MARGIN_REF, pulse_duration=PULSE_DURATION, heterogeneity=True, verbose=True):
+    w_rec, norm_ws_w = _st("w_rec", w_rec), _st("norm_ws_w", norm_ws_w)
+    thal_tonic_pA = _st("thal_tonic_pa", thal_tonic_pA)
+    margin_ref, boost_scale = _st("margin_ref", margin_ref), _st("boost_scale", boost_scale)
+
     def _build(**kw):
         params = dict(seed=seed, w_rec=w_rec, overlap=overlap, ws_norm_w=ws_norm_w, norm_ws_w=norm_ws_w,
                       thal_tonic_pA=thal_tonic_pA, thal_ws_w=thal_ws_w, heterogeneity=heterogeneity)
@@ -501,9 +531,10 @@ def evaluate_seed(seed, *, w_rec=W_REC, overlap=DEFAULT_OVERLAP, ws_norm_w=WS_NO
     # anti-cheat (c) SIGNAL-DRIVEN: sweep the 3rd content weak->strong; boost 0 at zero conflict, rises w/ conflict.
     #    (content0 STRONG, content1 swept 0->STRONG: the 0 end = a confident single commit -> margin high -> boost 0.)
     sweep_boost, sweep_margin, sweep_d = [], [], []
-    for d in list(np.linspace(0.0, STRONG_PA, 6)):
+    strong = _strong()
+    for d in list(np.linspace(0.0, strong, 6)):
         _counted_full_restore(b, snap); std.reset()
-        drive_map = [(pats[0], STRONG_PA)] if d <= 0.0 else [(pats[0], STRONG_PA), (pats[1], float(d))]
+        drive_map = [(pats[0], strong)] if d <= 0.0 else [(pats[0], strong), (pats[1], float(d))]
         _drive(b, xp, thal_dev, thal_tonic_pA, std, drive_map)
         rr = _read_private_rates(b, xp, thal_dev, thal_tonic_pA, privs, std)
         _w, mg, _n = _margin(rr)
