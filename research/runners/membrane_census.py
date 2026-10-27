@@ -897,7 +897,9 @@ def run_worker(seed, group, arm, out_path, labels=None):
     except Exception:
         sha = None
     out = {"runner": "research/runners/membrane_census.py", "seed": int(seed), "group": group, "arm": arm,
-           "git_sha": sha, "stable_integration_env": os.environ.get("SIM_STABLE_INTEGRATION"), "workload": wl, "wrapper_restored": restored, "wall_s": round(time.time() - t0, 1),
+           "git_sha": sha, "stable_integration_env": os.environ.get("SIM_STABLE_INTEGRATION"),
+           "stable_recal_env": os.environ.get("SIM_STABLE_RECAL"), "workload": wl, "wrapper_restored": restored,
+           "wall_s": round(time.time() - t0, 1),
            "caveat": CAVEAT, "census": rep}
     os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
     with open(out_path, "w") as f:
