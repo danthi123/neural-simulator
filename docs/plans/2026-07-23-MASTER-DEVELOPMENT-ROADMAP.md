@@ -1227,6 +1227,16 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-10-27 (workstation, Stage-2 C4 retake path):** the emotion-category bounded-conductance fix
+(`BRAIN_EMOTION_CATEGORY_BOUNDED`, merged default OFF, `research/findings/2026-10-26-emotion-organ-bounded-conductance-derisk.md`)
+has its flip pipeline started under RULING `emo-bg-merge-1026` item (2). The organ is now a row of the load-bearing registry
+(`research/runners/lbf_rows/emotion_category.py`, `ec8fe543f`: feel turn, organ commit-gate lesion, reply-level load-bearing at
+dev seeds 7 and 8, flag on and off). The dev 7/8 smoke is recorded (`research/findings/smoke/emo-bounded-flip-s78.json` and the
+`affect-coloring` record: 2/2 answered on both sides of both seeds, no FLIP-HURTS-ANSWERS). The flip prereg
+`research/findings/2026-10-27-emo-bounded-flip-PREREGISTRATION.md` carries the ruling's bars verbatim for Claude's diff. No gate
+seed has run. Owed before any gate line: a scorer and bar-sanity record for the engagement-key and whole-record clauses (B4, B6),
+gate revision F, the emitted TSV. The 10-26 Stage-2 gate result (C4 correct 5/6, seed 101) is unchanged until that gate runs.
+
 **2026-10-06 (Claude review of Stage 1):** C3 PASS 6/6 at P2 (narrowed: interface lesion, host-owned selection);
 C4 FAIL as registered on a control-design clause (amended control owed before attempt 2); the affect audit voids only
 attempt 1's C4 cells, and pool/AWS LBF affect rows before 10-05 carry a norm-values caveat. Next: the 2 missing T7

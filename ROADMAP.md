@@ -12,6 +12,19 @@ stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CUR
 compute node (GPU queue, local model serving), and Claude Code inspects occasionally. See
 `docs/plans/2026-09-30-home-to-server-MIGRATION.md`. The capability entries below predate this move and are unaffected.
 
+## 2026-10-27 — the fix for the feeling-name circuit gets its first checks (still off)
+
+- **What the fix is.** The part of the brain that names which feeling it holds (joy, fear, anger or sadness) has a
+  numerical fault: on about one build in twenty-five a single small neuron overshoots on one time step, and that silenced
+  the joy channel on one of the six Stage-2 exam seeds. The repair makes that one step stable. It is merged switched off,
+  and in its own tests it named all four feelings on 20 of 20 fresh builds (19 of 20 without it) and on 60 of 60 held-out
+  builds that were also used while diagnosing the fault (58 of 60 without it).
+- **Where it stands today.** Switching it on by default is being prepared the standard way. This circuit is now one of the
+  measured abilities in the "does the answer change when the part is cut" count (cutting its last stage changes the reply,
+  by exactly the sentence that names the feeling). A two-seed practice run with the repair on and off answered every probe
+  both ways, so the repair does not make the brain stop answering. The pre-registered exam for the switch-on is written but
+  no exam seed has been run. (`research/findings/2026-10-27-emo-bounded-flip-PREREGISTRATION.md`.)
+
 ## 2026-10-21 — the strict no-making-things-up check passes its tests (still off); a cell-type fault under the substrate; two new methods start
 
 - **The strict speech check passes every test written for it in advance, and stays off.** The check on the mouth now

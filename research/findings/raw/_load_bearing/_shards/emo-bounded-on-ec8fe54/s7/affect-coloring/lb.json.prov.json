@@ -1,0 +1,39 @@
+{
+ "run_id": "1793102207-1051679",
+ "runner": "research/runners/load_bearing_fraction.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-emoflip/research/runners/load_bearing_fraction.py",
+  "--only",
+  "affect-coloring",
+  "--seed",
+  "7",
+  "--repeats",
+  "2",
+  "--out",
+  "research/findings/raw/_load_bearing/_shards/emo-bounded-on-ec8fe54/s7/affect-coloring/lb.json"
+ ],
+ "git_sha": "ec8fe543f",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-27T07:56:47",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "BRAIN_EMOTION_CATEGORY_BOUNDED": "1"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1662.7,
+ "corpus_check_query": "end a held dendritic plateau with dendrite-targeting inhibition",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_load_bearing/_shards/emo-bounded-on-ec8fe54/s7/affect-coloring/lb.json"
+}

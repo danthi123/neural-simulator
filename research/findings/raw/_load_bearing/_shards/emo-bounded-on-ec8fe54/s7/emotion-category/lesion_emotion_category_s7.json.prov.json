@@ -1,0 +1,41 @@
+{
+ "run_id": "1793100046-882301",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-emoflip/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{\"BRAIN_EMOTION_CATEGORY_COMMIT_LESION\": \"1\"}",
+  "--turns",
+  "emocat_s1,emocat_s2,emocat_feel",
+  "--out",
+  "/home/dant123/Projects/sim-rev/wt-emoflip/research/findings/raw/_load_bearing/_shards/emo-bounded-on-ec8fe54/s7/emotion-category/lesion_emotion_category_s7.json"
+ ],
+ "git_sha": "ec8fe543f",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-27T07:20:46",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "BRAIN_EMOTION_CATEGORY_BOUNDED": "1",
+  "SIM_RUN_ID": "1793099325-825633",
+  "NUMEXPR_NUM_THREADS": "1",
+  "BRAIN_CHAT_SEED": "7"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 62370.7,
+ "corpus_check_query": "curiosity per-topic stop in production handler",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_load_bearing/_shards/emo-bounded-on-ec8fe54/s7/emotion-category/lesion_emotion_category_s7.json"
+}
