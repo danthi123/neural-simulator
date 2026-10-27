@@ -22,8 +22,12 @@ compute node (GPU queue, local model serving), and Claude Code inspects occasion
 - **Replies change, the same way every run:** the workspace that checks a recalled fact turned out to "ignite" on
   cells the old integrator let run away; with stable cells it no longer ignites, so recall of taught facts turns
   into hedged guesses and the inner-thought test this seed passed is lost. Switching that one workspace back (or
-  forward) alone reproduces the change both ways. Emotion naming is unaffected. The switch stays off until that
-  workspace is re-tuned on stable cells
+  forward) alone reproduces the change both ways. Emotion naming is unaffected. A second dev seed (8) shows the same.
+- **Why, and the fix that works on this seed:** measured alone, that workspace's "ignition" point is exactly the
+  input at which its cells go numerically wild, so its settings were tuned on the fault. Re-tuned by its own rules on
+  stable cells (weaker loops, a lower firing threshold, smaller votes), the fully stable brain verifies the same
+  recalls as before and passes the inner-thought test again (dev seed 7). The switch stays off until the other
+  workspace (the one that changes topics) is re-tuned the same way and the pair is tested on six seeds
   (`research/findings/2026-10-26-stable-integration-dev7.md`).
 
 ## 2026-10-21 — the strict no-making-things-up check passes its tests (still off); a cell-type fault under the substrate; two new methods start
