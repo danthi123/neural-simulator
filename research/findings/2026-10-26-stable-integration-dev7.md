@@ -25,6 +25,7 @@ artifacts:
   - research/findings/raw/_stable_integration/bus_quorum_w5_s7.json
   - research/findings/raw/_stable_integration/bus_quorum_production_s7.json
   - research/findings/raw/_stable_integration/retuned_bus_vs_off_s7.json
+  - research/findings/raw/_stable_integration/retuned_bus_vs_off_s8.json
 ---
 
 seed-waiver: a labelled dev-seed diagnostic (dev seed 7 in full, dev seed 8 for inner only); no gate seed was run, no default was flipped and no capability claim is made.
@@ -50,8 +51,8 @@ that workspace's cells all run out of range. So on this seed the verified recall
 integrator artifact. Dev seed 8 (inner) repeats all of it, and measured alone the bus's ignition knee is exactly the
 drive at which its cells leave the valid range, so its weight, threshold and drives need re-calibration, not a
 nudge. Re-calibrated by the bus's own rules on the measured stable curve (weight 5, threshold 0.0445, per-organ
-drive 500 / 750 pA), the bus inside the fully stable brain verifies the same recalls as OFF and inner passes C5
-again (inner and conv, dev seed 7). The switch stays default OFF; flipping it needs the bus workspace (and the thought-swap
+drive 500 / 750 pA), the bus inside the fully stable brain verifies the same recalls as OFF, inner passes C5
+again on dev seeds 7 and 8, and infer, conv and ask return to their OFF scores (dev seed 7). The switch stays default OFF; flipping it needs the bus workspace (and the thought-swap
 workspace, whose topic swap is likewise its own integrator's) re-measured on the stable integrator first.
 
 ## What was built (default OFF)
@@ -283,19 +284,27 @@ the stable integrator, so only three votes reach 0.0445, and a single-vote decoy
 organs at 750 pA behave the same. The production calibration also passes this check on the old integrator
 (`bus_quorum_production_s7.json`), but every read it calls ignited is the 0.3333 runaway.
 
-## The re-calibrated bus inside the ON brain (inner and conv, dev seed 7)
+## The re-calibrated bus inside the ON brain (dev seed 7: inner, conv, infer, ask; dev seed 8: inner)
 
 `research/runners/stable_integration_retuned_bus_probe.py` runs the whole brain on the stable set
 (`SIM_STABLE_INTEGRATION=1`) with the bus re-calibrated as above (constants set on the modules in the worker before
 the brain is built; no sim/ or webapp/ edit; the census JSON records every constant before and after). The
 constants come from the isolated organ, not from replies. The census read-back shows every bridge on (4,
 `model_reset`) and the bus workspaces with 0 out-of-range cells
-(`research/findings/raw/_stable_integration/retuned_bus_vs_off_s7.json`; census under `census/on_retuned_bus/s7/`).
+(`research/findings/raw/_stable_integration/retuned_bus_vs_off_s7.json`, `retuned_bus_vs_off_s8.json`; census under
+`census/on_retuned_bus/s{7,8}/`).
 
-| group | probe recalls verified (OFF / ON / re-calibrated) | scorer `all` (OFF / ON / re-calibrated) |
+| seed, group | probe recalls verified (OFF / ON / re-calibrated) | scorer `all` (OFF / ON / re-calibrated) |
 |---|---|---|
-| inner | 5 / 0 / 5 of 6 | true / false / true |
-| conv | 3 / 0 / 3 (the same probes) | false / false / false, sub-results identical to OFF |
+| 7, inner (C5) | 5 / 0 / 5 of 6 | true / false / true |
+| 8, inner (C5) | 5 / 0 / 5 of 6 | true / false / true |
+| 7, infer | 5 / 1 / 5 of 6 | true / false / true, sub-results identical to OFF |
+| 7, conv | 3 / 0 / 3 (the same probes) | false / false / false, sub-results identical to OFF |
+| 7, ask | 4 / 0 / 4 (the same probes) | false / false / false, sub-results identical to OFF |
+
+In every run the re-calibrated arm verifies exactly the probes OFF verifies and none OFF refuses (ask's gap probes
+all abstain, inner's tail moat abstains, infer's prey-chase moat abstains). Seed 8 is out of sample for the brain;
+the organ calibration was read on seed 7's isolated workspace. Emo was not run (it does not engage the bus).
 
 - **Inner (C5) passes again on the stable integrator.** Both chain probes derive the never-told terminal again ("I
   derived this from: lynx chase vole; vole chase beetle; beetle chase mite. the lynx chases the mite"), the single
@@ -481,7 +490,8 @@ Turns not listed kept every user-visible field (their internal read-outs moved).
   pressure); the fixed-network step cost is the speed number.
 - The bus re-calibration was read off the isolated organ of dev seed 7 (heterogeneity off in that organ, so its
   curve does not depend on the draw) and tested in the brain on the same seed; its quorum margins are thinner than
-  the old ones (two votes 0.0303 against a threshold of 0.0445). It was not tried on seed 8 or the other groups.
+  the old ones (two votes 0.0303 against a threshold of 0.0445). In the brain it was run on seed 7 (inner, conv,
+  infer, ask) and seed 8 (inner only).
 - Mechanism (c) is a model-level limit of the Izhikevich 2007 equations with b < 0 (unbounded u), not touched by
   either fix.
 - The resonate-and-fire slice of BridgeParser is also integrated by the (now sub-stepped) Izhikevich update; its
@@ -489,8 +499,8 @@ Turns not listed kept every user-visible field (their internal read-outs moved).
 
 ## Next
 
-1. The bus re-calibration restores verified recall and C5 on dev seed 7 (inner, conv). Next: the same arm on dev
-   seed 8 and in infer, ask and emo; then the thought-swap workspace measured and re-calibrated the same way (its
+1. The bus re-calibration restores verified recall and the OFF scores (dev seed 7: inner, conv, infer, ask; dev
+   seed 8: inner). Next: dev seed 8's other groups; then the thought-swap workspace measured and re-calibrated the same way (its
    period-3 ignition is the same artifact; it owns the topic-swap lead); then the stop lead; then a six-seed flip
    prereg of the switch together with the re-calibrated organs (a flip of the switch alone would lose recall).
 2. Repeat the bus / swap attribution on dev seed 8 and in infer and ask (same probe, same arms).

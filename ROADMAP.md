@@ -26,7 +26,8 @@ compute node (GPU queue, local model serving), and Claude Code inspects occasion
 - **Why, and the fix that works on this seed:** measured alone, that workspace's "ignition" point is exactly the
   input at which its cells go numerically wild, so its settings were tuned on the fault. Re-tuned by its own rules on
   stable cells (weaker loops, a lower firing threshold, smaller votes), the fully stable brain verifies the same
-  recalls as before and passes the inner-thought test again (dev seed 7). The switch stays off until the other
+  recalls as before and passes the inner-thought test again (dev seeds 7 and 8; three other tests return to their
+  old scores on seed 7). The switch stays off until the other
   workspace (the one that changes topics) is re-tuned the same way and the pair is tested on six seeds
   (`research/findings/2026-10-26-stable-integration-dev7.md`).
 
