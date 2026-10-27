@@ -1,0 +1,188 @@
+{
+ "backend": "numpy",
+ "description": "emo_flip_score.score_b4 reads PASS over the six gate seeds x five arms, flag ON; perfect = bounded_flag True, bounded_env '1', bounded_readback True, oor_count_session 0 on every feel_* read; nulls = the guard not engaged (all / one shard / one read), readback False, env not '1', an out-of-range excursion (one read / a shard), pre-merge shards lacking the keys, a missing shard / feel turn / repeat arm, an errored feel turn, no emotion block, a non-count oor_count_session, and a random brain.",
+ "failures": [],
+ "kinds": {
+  "null_env_unset_one_read": "null",
+  "null_env_zero_one_read": "null",
+  "null_feel_turn_errored": "null",
+  "null_feel_turn_missing": "null",
+  "null_flag_false_one_read": "null",
+  "null_flag_false_one_shard": "null",
+  "null_flag_not_engaged_everywhere": "null",
+  "null_keys_absent_everywhere": "null",
+  "null_keys_absent_one_shard": "null",
+  "null_no_emotion_block_on_a_read": "null",
+  "null_one_key_absent_one_read": "null",
+  "null_oor_session_last_turn_only": "null",
+  "null_oor_session_not_a_count": "null",
+  "null_oor_session_one_read": "null",
+  "null_oor_session_one_shard": "null",
+  "null_readback_false_one_read": "null",
+  "null_repeat_arm_missing_everywhere": "null",
+  "null_shard_missing": "null",
+  "perfect": "perfect",
+  "perfect_extra_fields": "perfect",
+  "perfect_nested": "perfect",
+  "random_engagement": "null"
+ },
+ "n": 1000,
+ "n_pass": {
+  "null_env_unset_one_read": 0,
+  "null_env_zero_one_read": 0,
+  "null_feel_turn_errored": 0,
+  "null_feel_turn_missing": 0,
+  "null_flag_false_one_read": 0,
+  "null_flag_false_one_shard": 0,
+  "null_flag_not_engaged_everywhere": 0,
+  "null_keys_absent_everywhere": 0,
+  "null_keys_absent_one_shard": 0,
+  "null_no_emotion_block_on_a_read": 0,
+  "null_one_key_absent_one_read": 0,
+  "null_oor_session_last_turn_only": 0,
+  "null_oor_session_not_a_count": 0,
+  "null_oor_session_one_read": 0,
+  "null_oor_session_one_shard": 0,
+  "null_readback_false_one_read": 0,
+  "null_repeat_arm_missing_everywhere": 0,
+  "null_shard_missing": 0,
+  "perfect": 1000,
+  "perfect_extra_fields": 1000,
+  "perfect_nested": 1000,
+  "random_engagement": 0
+ },
+ "name": "emo-bounded-flip B4 (engagement keys on every ON feel read)",
+ "pass_rate": {
+  "null_env_unset_one_read": 0.0,
+  "null_env_zero_one_read": 0.0,
+  "null_feel_turn_errored": 0.0,
+  "null_feel_turn_missing": 0.0,
+  "null_flag_false_one_read": 0.0,
+  "null_flag_false_one_shard": 0.0,
+  "null_flag_not_engaged_everywhere": 0.0,
+  "null_keys_absent_everywhere": 0.0,
+  "null_keys_absent_one_shard": 0.0,
+  "null_no_emotion_block_on_a_read": 0.0,
+  "null_one_key_absent_one_read": 0.0,
+  "null_oor_session_last_turn_only": 0.0,
+  "null_oor_session_not_a_count": 0.0,
+  "null_oor_session_one_read": 0.0,
+  "null_oor_session_one_shard": 0.0,
+  "null_readback_false_one_read": 0.0,
+  "null_repeat_arm_missing_everywhere": 0.0,
+  "null_shard_missing": 0.0,
+  "perfect": 1.0,
+  "perfect_extra_fields": 1.0,
+  "perfect_nested": 1.0,
+  "random_engagement": 0.0
+ },
+ "pass_rate_ci95": {
+  "null_env_unset_one_read": [
+   0.0,
+   0.0038
+  ],
+  "null_env_zero_one_read": [
+   0.0,
+   0.0038
+  ],
+  "null_feel_turn_errored": [
+   0.0,
+   0.0038
+  ],
+  "null_feel_turn_missing": [
+   0.0,
+   0.0038
+  ],
+  "null_flag_false_one_read": [
+   0.0,
+   0.0038
+  ],
+  "null_flag_false_one_shard": [
+   0.0,
+   0.0038
+  ],
+  "null_flag_not_engaged_everywhere": [
+   0.0,
+   0.0038
+  ],
+  "null_keys_absent_everywhere": [
+   0.0,
+   0.0038
+  ],
+  "null_keys_absent_one_shard": [
+   0.0,
+   0.0038
+  ],
+  "null_no_emotion_block_on_a_read": [
+   0.0,
+   0.0038
+  ],
+  "null_one_key_absent_one_read": [
+   0.0,
+   0.0038
+  ],
+  "null_oor_session_last_turn_only": [
+   0.0,
+   0.0038
+  ],
+  "null_oor_session_not_a_count": [
+   0.0,
+   0.0038
+  ],
+  "null_oor_session_one_read": [
+   0.0,
+   0.0038
+  ],
+  "null_oor_session_one_shard": [
+   0.0,
+   0.0038
+  ],
+  "null_readback_false_one_read": [
+   0.0,
+   0.0038
+  ],
+  "null_repeat_arm_missing_everywhere": [
+   0.0,
+   0.0038
+  ],
+  "null_shard_missing": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_extra_fields": [
+   0.9962,
+   1.0
+  ],
+  "perfect_nested": [
+   0.9962,
+   1.0
+  ],
+  "random_engagement": [
+   0.0,
+   0.0038
+  ]
+ },
+ "repo_head": "7bf5bd7dd355b79c269b5b204c20465e02b10443",
+ "scorer_files": {
+  "docs/drafts/emo-bounded-flip/bar_sanity_emo_flip_common.py": "ba8e5d4bf436a7be27e93d7cf29b93e6f3f0856b5c5f803563ecbbde384e361d",
+  "docs/drafts/stage2-exit/bar_sanity_s2_common.py": "7ba31e0d675eb751a20c64ed2cd44eb50b7bad47295bcf100d208436b0c68a63",
+  "research/runners/emo_flip_score.py": "5d5f96d76eaab47aeb7fa8cffe3595cd4efb9faca59b18168a41e7d6257239cf",
+  "research/runners/stage2_exit_gate.py": "67bfd30b66d266748d9e06b0ef393d23ab03f5be3b22b2e84831ec094616a177"
+ },
+ "scorer_sha256": "eecaef9c4154a3b2e77423cdb14668605942597e1e48c8d66927c86f03c0173d",
+ "seed": 0,
+ "spec": "docs/drafts/emo-bounded-flip/bar_sanity_spec_b4.py",
+ "spec_sha256": "8aadee5fa808b502a9812f9ebc6d2fae1cd7bea8e3a460b8eddf40018d53b166",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 157.9
+}
