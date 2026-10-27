@@ -1,0 +1,2062 @@
+{
+ "runner": "research/runners/membrane_census.py",
+ "census_version": 1,
+ "seed": 1,
+ "inputs": [
+  "ask__intact_a.json",
+  "conv__intact_a.json",
+  "emo__intact_a.json",
+  "infer__intact_a.json",
+  "inner__intact_a.json"
+ ],
+ "groups": {
+  "ask": {
+   "arm": "intact_a",
+   "git_sha": null,
+   "n_turns": 19,
+   "responses_sha256": "21b7a98580906bc9cf57060a41e5d9760cb0e107ce2b9e0625603dfa6acf75b1",
+   "turn_errors": {},
+   "wall_s": 1063.5,
+   "peak_rss_mb": 6234.8,
+   "n_bridges": 47,
+   "total_bridge_steps": 229591,
+   "observer_errors": 0,
+   "observe_s": 28.37,
+   "wrapper_restored": {
+    "step": true,
+    "init": true
+   },
+   "source": "ask__intact_a.json",
+   "sources": [
+    "tiny-demo +LTM"
+   ],
+   "rc": 0,
+   "host": "node-dl5d243",
+   "corpus_present": true,
+   "pythonhashseed_ok": true
+  },
+  "conv": {
+   "arm": "intact_a",
+   "git_sha": null,
+   "n_turns": 11,
+   "responses_sha256": "9e8625a5067def9cefbea3b499ef2b701095fa749c5d50686de3d230a1c6455f",
+   "turn_errors": {},
+   "wall_s": 976.6,
+   "peak_rss_mb": 6127.1,
+   "n_bridges": 40,
+   "total_bridge_steps": 204741,
+   "observer_errors": 0,
+   "observe_s": 24.8,
+   "wrapper_restored": {
+    "step": true,
+    "init": true
+   },
+   "source": "conv__intact_a.json",
+   "sources": [
+    "tiny-demo +LTM"
+   ],
+   "rc": 0,
+   "host": "node-mxl1462drl",
+   "corpus_present": true,
+   "pythonhashseed_ok": true
+  },
+  "emo": {
+   "arm": "intact_a",
+   "git_sha": null,
+   "n_turns": 13,
+   "responses_sha256": "48884072fbc9aa3158c811bc091e23950cb8645e81563c1b4555467cee9c71f2",
+   "turn_errors": {},
+   "wall_s": 510.3,
+   "peak_rss_mb": 7784.7,
+   "n_bridges": 26,
+   "total_bridge_steps": 129842,
+   "observer_errors": 0,
+   "observe_s": 7.81,
+   "wrapper_restored": {
+    "step": true,
+    "init": true
+   },
+   "source": "emo__intact_a.json",
+   "sources": [
+    "tiny-demo +LTM"
+   ],
+   "rc": 0,
+   "host": "dant123-wk",
+   "corpus_present": true,
+   "pythonhashseed_ok": true
+  },
+  "infer": {
+   "arm": "intact_a",
+   "git_sha": null,
+   "n_turns": 10,
+   "responses_sha256": "82e5f1c77c93e45843324640e1de12317d22946bd1f012646b4f242267c4a2ca",
+   "turn_errors": {},
+   "wall_s": 1232.3,
+   "peak_rss_mb": 6114.6,
+   "n_bridges": 37,
+   "total_bridge_steps": 225224,
+   "observer_errors": 0,
+   "observe_s": 28.49,
+   "wrapper_restored": {
+    "step": true,
+    "init": true
+   },
+   "source": "infer__intact_a.json",
+   "sources": [
+    "tiny-demo +LTM"
+   ],
+   "rc": 0,
+   "host": "node-dl4g243",
+   "corpus_present": true,
+   "pythonhashseed_ok": true
+  },
+  "inner": {
+   "arm": "intact_a",
+   "git_sha": null,
+   "n_turns": 10,
+   "responses_sha256": "8062d499fdb34e9ac6fb3ae2829dd4b81efd69cafeab36d3778c2c350f24b5da",
+   "turn_errors": {},
+   "wall_s": 692.0,
+   "peak_rss_mb": 6033.6,
+   "n_bridges": 39,
+   "total_bridge_steps": 227226,
+   "observer_errors": 0,
+   "observe_s": 15.22,
+   "wrapper_restored": {
+    "step": true,
+    "init": true
+   },
+   "source": "inner__intact_a.json",
+   "sources": [
+    "tiny-demo +LTM"
+   ],
+   "rc": 0,
+   "host": "dant123-wk",
+   "corpus_present": true,
+   "pythonhashseed_ok": true
+  }
+ },
+ "flagged": false,
+ "flags": [],
+ "n_organs": 32,
+ "n_offender_organs": 13,
+ "n_bridge_instances": 189,
+ "organs": [
+  {
+   "organ": "research.runners.content_selection_spiking:_step",
+   "groups": [
+    "ask",
+    "conv",
+    "infer",
+    "inner"
+   ],
+   "best_group": "infer",
+   "n_neurons": 9360,
+   "steps_per_group": {
+    "ask": 750,
+    "conv": 650,
+    "infer": 650,
+    "inner": 590
+   },
+   "oor_neurons_per_group": {
+    "ask": 3200,
+    "conv": 2805,
+    "infer": 3423,
+    "inner": 2428
+   },
+   "n_oor_neurons": 3423,
+   "n_low_neurons": 3423,
+   "n_high_neurons": 1920,
+   "n_nonfinite_neurons": 0,
+   "v_min": -72847.73,
+   "v_max": 890.36,
+   "first_reading_classes": {
+    "high_refractory": 1177,
+    "low_conductance": 2246
+   },
+   "offenders_by_stepper": {
+    "research.runners.content_selection_spiking:_step": 3423
+   },
+   "oor_regions": {
+    "dlpfc_wm": {
+     "n": 1867
+    },
+    "cortex_ctx": {
+     "n": 1472
+    }
+   },
+   "offender_c_by_region": {
+    "dlpfc_wm": {
+     "n_rows": 6499,
+     "c_min": 50.5771,
+     "c_max": 154.1992
+    },
+    "cortex_ctx": {
+     "n_rows": 5273,
+     "c_min": 50.5771,
+     "c_max": 143.4039
+    }
+   },
+   "min_drawn_c": [
+    45.1534,
+    "dlpfc_wm"
+   ],
+   "max_gtot_dt_over_C": 53.43,
+   "n_spikes_total": 182035,
+   "n_spikes_from_oor_cells": 134110,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners.content_selection_spiking:build_loop_wm_bridge"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners.brain_conversational_agent:role_of",
+   "groups": [
+    "ask",
+    "conv",
+    "emo",
+    "infer",
+    "inner"
+   ],
+   "best_group": "conv",
+   "n_neurons": 47440,
+   "steps_per_group": {
+    "ask": 9600,
+    "conv": 7200,
+    "emo": 3900,
+    "infer": 7500,
+    "inner": 7200
+   },
+   "oor_neurons_per_group": {
+    "ask": 676,
+    "conv": 736,
+    "emo": 0,
+    "infer": 730,
+    "inner": 718
+   },
+   "n_oor_neurons": 736,
+   "n_low_neurons": 487,
+   "n_high_neurons": 460,
+   "n_nonfinite_neurons": 0,
+   "v_min": -26123.09,
+   "v_max": 14351.37,
+   "first_reading_classes": {
+    "low_other|rf": 371,
+    "high_refractory|rf": 365
+   },
+   "offenders_by_stepper": {
+    "research.runners.brain_conversational_agent:_step_reset": 736
+   },
+   "oor_regions": {
+    "onebrain_composer": {
+     "n": 736
+    }
+   },
+   "offender_c_by_region": {
+    "onebrain_composer": {
+     "n_rows": 2860,
+     "c_min": 100.0,
+     "c_max": 100.0
+    }
+   },
+   "min_drawn_c": [
+    20.0,
+    "patient_expected"
+   ],
+   "max_gtot_dt_over_C": 0.477,
+   "n_spikes_total": 639343,
+   "n_spikes_from_oor_cells": 179789,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners.onebrain_merge_production:ensure_built"
+   ],
+   "offender_rows_rf_masked": 2860
+  },
+  {
+   "organ": "research.runners.common_ground_ledger_production_organ:_ground",
+   "groups": [
+    "ask",
+    "conv",
+    "infer",
+    "inner"
+   ],
+   "best_group": "inner",
+   "n_neurons": 750,
+   "steps_per_group": {
+    "ask": 940,
+    "conv": 940,
+    "infer": 940,
+    "inner": 1240
+   },
+   "oor_neurons_per_group": {
+    "ask": 320,
+    "conv": 400,
+    "infer": 400,
+    "inner": 400
+   },
+   "n_oor_neurons": 400,
+   "n_low_neurons": 400,
+   "n_high_neurons": 400,
+   "n_nonfinite_neurons": 0,
+   "v_min": -23763.78,
+   "v_max": 494.15,
+   "first_reading_classes": {
+    "high_refractory": 400
+   },
+   "offenders_by_stepper": {
+    "research.runners.common_ground_ledger_production_organ:_ground": 400
+   },
+   "oor_regions": {
+    "led0": {
+     "n": 80
+    },
+    "led1": {
+     "n": 80
+    },
+    "led2": {
+     "n": 80
+    },
+    "led3": {
+     "n": 80
+    },
+    "led4": {
+     "n": 80
+    }
+   },
+   "offender_c_by_region": {
+    "led0": {
+     "n_rows": 320,
+     "c_min": 54.0379,
+     "c_max": 131.2618
+    },
+    "led3": {
+     "n_rows": 320,
+     "c_min": 64.647,
+     "c_max": 124.8726
+    },
+    "led1": {
+     "n_rows": 320,
+     "c_min": 67.5261,
+     "c_max": 156.1037
+    },
+    "led2": {
+     "n_rows": 320,
+     "c_min": 67.3266,
+     "c_max": 132.2227
+    },
+    "led4": {
+     "n_rows": 240,
+     "c_min": 63.2062,
+     "c_max": 134.6039
+    }
+   },
+   "min_drawn_c": [
+    54.0379,
+    "led0"
+   ],
+   "max_gtot_dt_over_C": 8.651,
+   "n_spikes_total": 98299,
+   "n_spikes_from_oor_cells": 89109,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners._learned_common_ground_ledger_derisk:build_cg_bridge"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners._gnw_active_overwrite_derisk:_ws_step",
+   "groups": [
+    "ask",
+    "conv",
+    "infer",
+    "inner"
+   ],
+   "best_group": "inner",
+   "n_neurons": 960,
+   "steps_per_group": {
+    "ask": 3610,
+    "conv": 3610,
+    "infer": 3610,
+    "inner": 4800
+   },
+   "oor_neurons_per_group": {
+    "ask": 352,
+    "conv": 347,
+    "infer": 352,
+    "inner": 352
+   },
+   "n_oor_neurons": 352,
+   "n_low_neurons": 352,
+   "n_high_neurons": 300,
+   "n_nonfinite_neurons": 0,
+   "v_min": -15515.03,
+   "v_max": 367.58,
+   "first_reading_classes": {
+    "high_refractory": 224,
+    "low_conductance": 114,
+    "low_other": 14
+   },
+   "offenders_by_stepper": {
+    "research.runners._gnw_active_overwrite_derisk:_ws_step": 352
+   },
+   "oor_regions": {
+    "workspace": {
+     "n": 300
+    },
+    "gate": {
+     "n": 28
+    },
+    "mm": {
+     "n": 24
+    }
+   },
+   "offender_c_by_region": {
+    "workspace": {
+     "n_rows": 1200,
+     "c_min": 56.9192,
+     "c_max": 148.5751
+    },
+    "gate": {
+     "n_rows": 109,
+     "c_min": 59.3441,
+     "c_max": 81.3718
+    },
+    "mm": {
+     "n_rows": 94,
+     "c_min": 61.4261,
+     "c_max": 82.8927
+    }
+   },
+   "min_drawn_c": [
+    56.9192,
+    "workspace"
+   ],
+   "max_gtot_dt_over_C": 10.849,
+   "n_spikes_total": 317411,
+   "n_spikes_from_oor_cells": 160008,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners._gnw_neural_swap_intention_derisk:build"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners._gnw_reentrant_metacog_gated_deliberation_derisk:_ignite_and_read_nmda",
+   "groups": [
+    "inner"
+   ],
+   "best_group": "inner",
+   "n_neurons": 390,
+   "steps_per_group": {
+    "inner": 3685
+   },
+   "oor_neurons_per_group": {
+    "inner": 320
+   },
+   "n_oor_neurons": 320,
+   "n_low_neurons": 320,
+   "n_high_neurons": 320,
+   "n_nonfinite_neurons": 0,
+   "v_min": -1335.91,
+   "v_max": 94.32,
+   "first_reading_classes": {
+    "high_refractory": 320
+   },
+   "offenders_by_stepper": {
+    "research.runners._gnw_reentrant_metacog_gated_deliberation_derisk:_ignite_and_read_nmda": 320
+   },
+   "oor_regions": {
+    "workspace": {
+     "n": 320
+    }
+   },
+   "offender_c_by_region": {
+    "workspace": {
+     "n_rows": 320,
+     "c_min": 100.0,
+     "c_max": 100.0
+    }
+   },
+   "min_drawn_c": [
+    100.0,
+    "workspace"
+   ],
+   "max_gtot_dt_over_C": 3.611,
+   "n_spikes_total": 78169,
+   "n_spikes_from_oor_cells": 66458,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners._p1_2_workspace_deliberation_loop_derisk:build_workspace_bridge"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners.learned_assoc_graph:store_fact",
+   "groups": [
+    "ask",
+    "conv",
+    "emo",
+    "infer",
+    "inner"
+   ],
+   "best_group": "ask",
+   "n_neurons": 1800,
+   "steps_per_group": {
+    "ask": 2250,
+    "conv": 2250,
+    "emo": 2250,
+    "infer": 2250,
+    "inner": 2250
+   },
+   "oor_neurons_per_group": {
+    "ask": 298,
+    "conv": 298,
+    "emo": 298,
+    "infer": 298,
+    "inner": 298
+   },
+   "n_oor_neurons": 298,
+   "n_low_neurons": 200,
+   "n_high_neurons": 115,
+   "n_nonfinite_neurons": 0,
+   "v_min": -1421.97,
+   "v_max": 114.38,
+   "first_reading_classes": {
+    "low_other": 26,
+    "low_conductance": 171,
+    "high_refractory": 101
+   },
+   "offenders_by_stepper": {
+    "research.runners.learned_assoc_graph:store_fact": 298
+   },
+   "oor_regions": {
+    "pool": {
+     "n": 179
+    },
+    "fs": {
+     "n": 119
+    }
+   },
+   "offender_c_by_region": {
+    "pool": {
+     "n_rows": 895,
+     "c_min": 51.0908,
+     "c_max": 144.6368
+    },
+    "fs": {
+     "n_rows": 595,
+     "c_min": 60.3895,
+     "c_max": 146.7772
+    }
+   },
+   "min_drawn_c": [
+    51.0908,
+    "pool"
+   ],
+   "max_gtot_dt_over_C": 25.747,
+   "n_spikes_total": 327464,
+   "n_spikes_from_oor_cells": 108624,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners._D_sparse_heteroassoc:build"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners._gnw_distributed_overwrite_workspace_derisk:_ws_step",
+   "groups": [
+    "ask",
+    "conv",
+    "infer",
+    "inner"
+   ],
+   "best_group": "inner",
+   "n_neurons": 440,
+   "steps_per_group": {
+    "ask": 910,
+    "conv": 1200,
+    "infer": 1490,
+    "inner": 2070
+   },
+   "oor_neurons_per_group": {
+    "ask": 222,
+    "conv": 223,
+    "infer": 223,
+    "inner": 226
+   },
+   "n_oor_neurons": 226,
+   "n_low_neurons": 226,
+   "n_high_neurons": 185,
+   "n_nonfinite_neurons": 0,
+   "v_min": -14785.33,
+   "v_max": 371.19,
+   "first_reading_classes": {
+    "high_refractory": 185,
+    "low_conductance": 41
+   },
+   "offenders_by_stepper": {
+    "research.runners._gnw_distributed_overwrite_workspace_derisk:_ws_step": 226
+   },
+   "oor_regions": {
+    "workspace": {
+     "n": 226
+    }
+   },
+   "offender_c_by_region": {
+    "workspace": {
+     "n_rows": 894,
+     "c_min": 52.6996,
+     "c_max": 142.4095
+    }
+   },
+   "min_drawn_c": [
+    52.6996,
+    "workspace"
+   ],
+   "max_gtot_dt_over_C": 12.135,
+   "n_spikes_total": 87240,
+   "n_spikes_from_oor_cells": 61120,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners._gnw_distributed_overwrite_workspace_derisk:build_overwrite_bridge"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners._p1_2_workspace_deliberation_loop_derisk:_ignite_and_read",
+   "groups": [
+    "ask",
+    "conv",
+    "infer",
+    "inner"
+   ],
+   "best_group": "inner",
+   "n_neurons": 390,
+   "steps_per_group": {
+    "ask": 580,
+    "conv": 445,
+    "infer": 580,
+    "inner": 715
+   },
+   "oor_neurons_per_group": {
+    "ask": 80,
+    "conv": 80,
+    "infer": 80,
+    "inner": 80
+   },
+   "n_oor_neurons": 80,
+   "n_low_neurons": 80,
+   "n_high_neurons": 80,
+   "n_nonfinite_neurons": 0,
+   "v_min": -1346.73,
+   "v_max": 94.75,
+   "first_reading_classes": {
+    "high_refractory": 80
+   },
+   "offenders_by_stepper": {
+    "research.runners._p1_2_workspace_deliberation_loop_derisk:_ignite_and_read": 80
+   },
+   "oor_regions": {
+    "workspace": {
+     "n": 80
+    }
+   },
+   "offender_c_by_region": {
+    "workspace": {
+     "n_rows": 320,
+     "c_min": 100.0,
+     "c_max": 100.0
+    }
+   },
+   "min_drawn_c": [
+    100.0,
+    "workspace"
+   ],
+   "max_gtot_dt_over_C": 3.381,
+   "n_spikes_total": 21925,
+   "n_spikes_from_oor_cells": 17760,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners._p1_2_workspace_deliberation_loop_derisk:build_workspace_bridge"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners.biased_competition_buffer:update",
+   "groups": [
+    "ask",
+    "conv",
+    "infer",
+    "inner"
+   ],
+   "best_group": "ask",
+   "n_neurons": 1530,
+   "steps_per_group": {
+    "ask": 330,
+    "conv": 110,
+    "infer": 110,
+    "inner": 110
+   },
+   "oor_neurons_per_group": {
+    "ask": 80,
+    "conv": 67,
+    "infer": 67,
+    "inner": 67
+   },
+   "n_oor_neurons": 80,
+   "n_low_neurons": 80,
+   "n_high_neurons": 52,
+   "n_nonfinite_neurons": 0,
+   "v_min": -1597.78,
+   "v_max": 107.18,
+   "first_reading_classes": {
+    "low_conductance": 71,
+    "high_refractory": 4,
+    "low_other": 5
+   },
+   "offenders_by_stepper": {
+    "research.runners.biased_competition_buffer:update": 80
+   },
+   "oor_regions": {
+    "cortex_ctx": {
+     "n": 40
+    },
+    "dlpfc_wm": {
+     "n": 40
+    }
+   },
+   "offender_c_by_region": {
+    "cortex_ctx": {
+     "n_rows": 151,
+     "c_min": 68.5651,
+     "c_max": 133.935
+    },
+    "dlpfc_wm": {
+     "n_rows": 130,
+     "c_min": 64.354,
+     "c_max": 139.2101
+    }
+   },
+   "min_drawn_c": [
+    51.0908,
+    "sel_dog"
+   ],
+   "max_gtot_dt_over_C": 4.25,
+   "n_spikes_total": 13583,
+   "n_spikes_from_oor_cells": 7005,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners.biased_competition_buffer:__init__"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners._phaseB_multicue_competition_spiking_derisk:_noun_role_rates",
+   "groups": [
+    "ask",
+    "conv",
+    "emo",
+    "infer",
+    "inner"
+   ],
+   "best_group": "ask",
+   "n_neurons": 1752,
+   "steps_per_group": {
+    "ask": 3384,
+    "conv": 3384,
+    "emo": 3384,
+    "infer": 3384,
+    "inner": 3384
+   },
+   "oor_neurons_per_group": {
+    "ask": 72,
+    "conv": 72,
+    "emo": 72,
+    "infer": 72,
+    "inner": 72
+   },
+   "n_oor_neurons": 72,
+   "n_low_neurons": 48,
+   "n_high_neurons": 72,
+   "n_nonfinite_neurons": 0,
+   "v_min": -4436.63,
+   "v_max": 234.02,
+   "first_reading_classes": {
+    "high_refractory": 68,
+    "low_conductance": 4
+   },
+   "offenders_by_stepper": {
+    "research.runners._phaseB_multicue_competition_spiking_derisk:_noun_role_rates": 72
+   },
+   "oor_regions": {
+    "sel_patient": {
+     "n": 24
+    },
+    "sel_agent": {
+     "n": 24
+    },
+    "sel_FS_patient": {
+     "n": 12
+    },
+    "sel_FS_agent": {
+     "n": 12
+    }
+   },
+   "offender_c_by_region": {
+    "sel_patient": {
+     "n_rows": 120,
+     "c_min": 100.0,
+     "c_max": 100.0
+    },
+    "sel_agent": {
+     "n_rows": 120,
+     "c_min": 100.0,
+     "c_max": 100.0
+    },
+    "sel_FS_patient": {
+     "n_rows": 60,
+     "c_min": 20.0,
+     "c_max": 20.0
+    },
+    "sel_FS_agent": {
+     "n_rows": 60,
+     "c_min": 20.0,
+     "c_max": 20.0
+    }
+   },
+   "min_drawn_c": [
+    20.0,
+    "sel_FS_agent"
+   ],
+   "max_gtot_dt_over_C": 5.548,
+   "n_spikes_total": 175092,
+   "n_spikes_from_oor_cells": 31698,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners.onebrain_merge_framework:ensure_built"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners.metacog_production_organ:nmda_norm_margin",
+   "groups": [
+    "ask",
+    "conv",
+    "infer",
+    "inner"
+   ],
+   "best_group": "ask",
+   "n_neurons": 7002,
+   "steps_per_group": {
+    "ask": 28416,
+    "conv": 24880,
+    "infer": 40920,
+    "inner": 25960
+   },
+   "oor_neurons_per_group": {
+    "ask": 72,
+    "conv": 0,
+    "infer": 0,
+    "inner": 0
+   },
+   "n_oor_neurons": 72,
+   "n_low_neurons": 48,
+   "n_high_neurons": 72,
+   "n_nonfinite_neurons": 0,
+   "v_min": -8100.79,
+   "v_max": 262.82,
+   "first_reading_classes": {
+    "high_refractory": 72
+   },
+   "offenders_by_stepper": {
+    "research.runners._phaseB_multicue_competition_spiking_derisk:_noun_role_rates": 72
+   },
+   "oor_regions": {
+    "sel_agent": {
+     "n": 24
+    },
+    "sel_patient": {
+     "n": 24
+    },
+    "sel_FS_patient": {
+     "n": 12
+    },
+    "sel_FS_agent": {
+     "n": 12
+    }
+   },
+   "offender_c_by_region": {
+    "sel_agent": {
+     "n_rows": 24,
+     "c_min": 100.0,
+     "c_max": 100.0
+    },
+    "sel_patient": {
+     "n_rows": 24,
+     "c_min": 100.0,
+     "c_max": 100.0
+    },
+    "sel_FS_patient": {
+     "n_rows": 12,
+     "c_min": 20.0,
+     "c_max": 20.0
+    },
+    "sel_FS_agent": {
+     "n_rows": 12,
+     "c_min": 20.0,
+     "c_max": 20.0
+    }
+   },
+   "min_drawn_c": [
+    20.0,
+    "patient_expected"
+   ],
+   "max_gtot_dt_over_C": 5.559,
+   "n_spikes_total": 482776,
+   "n_spikes_from_oor_cells": 37083,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners.onebrain_merge_framework:ensure_built"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners._curiosity_seek_learn_onbridge_derisk:_advance",
+   "groups": [
+    "ask",
+    "conv",
+    "emo",
+    "infer",
+    "inner"
+   ],
+   "best_group": "ask",
+   "n_neurons": 7002,
+   "steps_per_group": {
+    "ask": 5752,
+    "conv": 3176,
+    "emo": 3512,
+    "infer": 2616,
+    "inner": 2392
+   },
+   "oor_neurons_per_group": {
+    "ask": 1,
+    "conv": 1,
+    "emo": 1,
+    "infer": 1,
+    "inner": 1
+   },
+   "n_oor_neurons": 1,
+   "n_low_neurons": 0,
+   "n_high_neurons": 1,
+   "n_nonfinite_neurons": 0,
+   "v_min": -83.44,
+   "v_max": 105.05,
+   "first_reading_classes": {
+    "high_refractory": 1
+   },
+   "offenders_by_stepper": {
+    "research.runners._curiosity_seek_learn_onbridge_derisk:_advance": 1
+   },
+   "oor_regions": {
+    "sel_FS_agent": {
+     "n": 1
+    }
+   },
+   "offender_c_by_region": {
+    "sel_FS_agent": {
+     "n_rows": 5,
+     "c_min": 20.0,
+     "c_max": 20.0
+    }
+   },
+   "min_drawn_c": [
+    20.0,
+    "patient_expected"
+   ],
+   "max_gtot_dt_over_C": 0.481,
+   "n_spikes_total": 180548,
+   "n_spikes_from_oor_cells": 658,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners.onebrain_merge_framework:ensure_built"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners.emotion_category_organ:_train",
+   "groups": [
+    "ask",
+    "conv",
+    "emo",
+    "infer",
+    "inner"
+   ],
+   "best_group": "emo",
+   "n_neurons": 920,
+   "steps_per_group": {
+    "ask": 13500,
+    "conv": 13500,
+    "emo": 15580,
+    "infer": 13500,
+    "inner": 13500
+   },
+   "oor_neurons_per_group": {
+    "ask": 0,
+    "conv": 0,
+    "emo": 1,
+    "infer": 0,
+    "inner": 0
+   },
+   "n_oor_neurons": 1,
+   "n_low_neurons": 1,
+   "n_high_neurons": 0,
+   "n_nonfinite_neurons": 0,
+   "v_min": -124.68,
+   "v_max": 35.0,
+   "first_reading_classes": {
+    "low_other": 1
+   },
+   "offenders_by_stepper": {
+    "research.runners.emotion_category_organ:_step": 1
+   },
+   "oor_regions": {
+    "<all>": {
+     "n": 1
+    }
+   },
+   "offender_c_by_region": {
+    "<all>": {
+     "n_rows": 1,
+     "c_min": 58.9129,
+     "c_max": 58.9129
+    }
+   },
+   "min_drawn_c": [
+    56.9192,
+    "<all>"
+   ],
+   "max_gtot_dt_over_C": 2.299,
+   "n_spikes_total": 82728,
+   "n_spikes_from_oor_cells": 0,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners.emotion_category_organ:_build"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners.brain_conversational_agent:_train",
+   "groups": [
+    "ask",
+    "conv",
+    "emo",
+    "infer",
+    "inner"
+   ],
+   "best_group": "ask",
+   "n_neurons": 6880,
+   "steps_per_group": {
+    "ask": 25200,
+    "conv": 25200,
+    "emo": 25200,
+    "infer": 25200,
+    "inner": 25200
+   },
+   "oor_neurons_per_group": {
+    "ask": 0,
+    "conv": 0,
+    "emo": 0,
+    "infer": 0,
+    "inner": 0
+   },
+   "n_oor_neurons": 0,
+   "n_low_neurons": 0,
+   "n_high_neurons": 0,
+   "n_nonfinite_neurons": 0,
+   "v_min": -96.27,
+   "v_max": 35.0,
+   "first_reading_classes": {},
+   "offenders_by_stepper": {},
+   "oor_regions": {},
+   "offender_c_by_region": {},
+   "min_drawn_c": [
+    36.5025,
+    "<all>"
+   ],
+   "max_gtot_dt_over_C": 0.484,
+   "n_spikes_total": 239284,
+   "n_spikes_from_oor_cells": 0,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners.one_brain_composer:build_coresident_bridge"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners.attributed_parser:_train",
+   "groups": [
+    "ask",
+    "conv",
+    "emo",
+    "infer",
+    "inner"
+   ],
+   "best_group": "ask",
+   "n_neurons": 224,
+   "steps_per_group": {
+    "ask": 36960,
+    "conv": 36960,
+    "emo": 36960,
+    "infer": 36960,
+    "inner": 36960
+   },
+   "oor_neurons_per_group": {
+    "ask": 0,
+    "conv": 0,
+    "emo": 0,
+    "infer": 0,
+    "inner": 0
+   },
+   "n_oor_neurons": 0,
+   "n_low_neurons": 0,
+   "n_high_neurons": 0,
+   "n_nonfinite_neurons": 0,
+   "v_min": -96.17,
+   "v_max": 35.0,
+   "first_reading_classes": {},
+   "offenders_by_stepper": {},
+   "oor_regions": {},
+   "offender_c_by_region": {},
+   "min_drawn_c": [
+    54.1935,
+    "<all>"
+   ],
+   "max_gtot_dt_over_C": 0.585,
+   "n_spikes_total": 353101,
+   "n_spikes_from_oor_cells": 0,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners.attributed_parser:__init__"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners._self_schema_region_derisk:build_self_schema_bridge",
+   "groups": [
+    "ask",
+    "conv",
+    "emo",
+    "infer",
+    "inner"
+   ],
+   "best_group": "ask",
+   "n_neurons": 1380,
+   "steps_per_group": {
+    "ask": 80,
+    "conv": 80,
+    "emo": 80,
+    "infer": 80,
+    "inner": 80
+   },
+   "oor_neurons_per_group": {
+    "ask": 0,
+    "conv": 0,
+    "emo": 0,
+    "infer": 0,
+    "inner": 0
+   },
+   "n_oor_neurons": 0,
+   "n_low_neurons": 0,
+   "n_high_neurons": 0,
+   "n_nonfinite_neurons": 0,
+   "v_min": -60.0,
+   "v_max": -60.0,
+   "first_reading_classes": {},
+   "offenders_by_stepper": {},
+   "oor_regions": {},
+   "offender_c_by_region": {},
+   "min_drawn_c": [
+    54.0379,
+    "workspace"
+   ],
+   "max_gtot_dt_over_C": 0.0,
+   "n_spikes_total": 0,
+   "n_spikes_from_oor_cells": 0,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners._self_schema_region_derisk:build_self_schema_bridge"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners._stageA_full_integration_derisk:build_one_brain",
+   "groups": [
+    "ask",
+    "conv",
+    "emo",
+    "infer",
+    "inner"
+   ],
+   "best_group": "ask",
+   "n_neurons": 25531,
+   "steps_per_group": {
+    "ask": 40,
+    "conv": 40,
+    "emo": 40,
+    "infer": 40,
+    "inner": 40
+   },
+   "oor_neurons_per_group": {
+    "ask": 0,
+    "conv": 0,
+    "emo": 0,
+    "infer": 0,
+    "inner": 0
+   },
+   "n_oor_neurons": 0,
+   "n_low_neurons": 0,
+   "n_high_neurons": 0,
+   "n_nonfinite_neurons": 0,
+   "v_min": -68.44,
+   "v_max": -55.0,
+   "first_reading_classes": {},
+   "offenders_by_stepper": {},
+   "oor_regions": {},
+   "offender_c_by_region": {},
+   "min_drawn_c": [
+    44.9039,
+    "rf"
+   ],
+   "max_gtot_dt_over_C": 0.0,
+   "n_spikes_total": 0,
+   "n_spikes_from_oor_cells": 0,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners._stageA_full_integration_derisk:build_one_brain"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners._appraisal_interoceptive_ladder_derisk:read_differential",
+   "groups": [
+    "ask",
+    "conv",
+    "emo",
+    "infer",
+    "inner"
+   ],
+   "best_group": "ask",
+   "n_neurons": 690,
+   "steps_per_group": {
+    "ask": 16340,
+    "conv": 9460,
+    "emo": 11180,
+    "infer": 8600,
+    "inner": 7740
+   },
+   "oor_neurons_per_group": {
+    "ask": 0,
+    "conv": 0,
+    "emo": 0,
+    "infer": 0,
+    "inner": 0
+   },
+   "n_oor_neurons": 0,
+   "n_low_neurons": 0,
+   "n_high_neurons": 0,
+   "n_nonfinite_neurons": 0,
+   "v_min": -70.42,
+   "v_max": 35.0,
+   "first_reading_classes": {},
+   "offenders_by_stepper": {},
+   "oor_regions": {},
+   "offender_c_by_region": {},
+   "min_drawn_c": [
+    54.0379,
+    "aff_vminus_L2"
+   ],
+   "max_gtot_dt_over_C": 0.36,
+   "n_spikes_total": 0,
+   "n_spikes_from_oor_cells": 0,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners._appraisal_interoceptive_ladder_derisk:__init__"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners._graded_affect_attractor_derisk:read_body",
+   "groups": [
+    "ask",
+    "conv",
+    "emo",
+    "infer",
+    "inner"
+   ],
+   "best_group": "ask",
+   "n_neurons": 1044,
+   "steps_per_group": {
+    "ask": 4940,
+    "conv": 2860,
+    "emo": 2080,
+    "infer": 2600,
+    "inner": 2340
+   },
+   "oor_neurons_per_group": {
+    "ask": 0,
+    "conv": 0,
+    "emo": 0,
+    "infer": 0,
+    "inner": 0
+   },
+   "n_oor_neurons": 0,
+   "n_low_neurons": 0,
+   "n_high_neurons": 0,
+   "n_nonfinite_neurons": 0,
+   "v_min": -61.33,
+   "v_max": 35.0,
+   "first_reading_classes": {},
+   "offenders_by_stepper": {},
+   "oor_regions": {},
+   "offender_c_by_region": {},
+   "min_drawn_c": [
+    20.0,
+    "inh_plus"
+   ],
+   "max_gtot_dt_over_C": 0.435,
+   "n_spikes_total": 49077,
+   "n_spikes_from_oor_cells": 0,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners._graded_affect_attractor_derisk:__init__"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners.spiking_novelty_habituation_organ:_present_channel",
+   "groups": [
+    "ask",
+    "conv",
+    "emo",
+    "infer",
+    "inner"
+   ],
+   "best_group": "ask",
+   "n_neurons": 3520,
+   "steps_per_group": {
+    "ask": 1204,
+    "conv": 756,
+    "emo": 1036,
+    "infer": 784,
+    "inner": 840
+   },
+   "oor_neurons_per_group": {
+    "ask": 0,
+    "conv": 0,
+    "emo": 0,
+    "infer": 0,
+    "inner": 0
+   },
+   "n_oor_neurons": 0,
+   "n_low_neurons": 0,
+   "n_high_neurons": 0,
+   "n_nonfinite_neurons": 0,
+   "v_min": -80.54,
+   "v_max": 36.84,
+   "first_reading_classes": {},
+   "offenders_by_stepper": {},
+   "oor_regions": {},
+   "offender_c_by_region": {},
+   "min_drawn_c": [
+    50.3374,
+    "rd20"
+   ],
+   "max_gtot_dt_over_C": 0.449,
+   "n_spikes_total": 1806,
+   "n_spikes_from_oor_cells": 0,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners.spiking_novelty_habituation_organ:_build_bank"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners._neuromod_spiking_da_mode_derisk:measure_self_driven",
+   "groups": [
+    "ask",
+    "conv",
+    "emo",
+    "infer",
+    "inner"
+   ],
+   "best_group": "ask",
+   "n_neurons": 758,
+   "steps_per_group": {
+    "ask": 6080,
+    "conv": 3520,
+    "emo": 2560,
+    "infer": 3200,
+    "inner": 2880
+   },
+   "oor_neurons_per_group": {
+    "ask": 0,
+    "conv": 0,
+    "emo": 0,
+    "infer": 0,
+    "inner": 0
+   },
+   "n_oor_neurons": 0,
+   "n_low_neurons": 0,
+   "n_high_neurons": 0,
+   "n_nonfinite_neurons": 0,
+   "v_min": -89.17,
+   "v_max": 40.0,
+   "first_reading_classes": {},
+   "offenders_by_stepper": {},
+   "oor_regions": {},
+   "offender_c_by_region": {},
+   "min_drawn_c": [
+    20.0,
+    "str_PV_FSI_N"
+   ],
+   "max_gtot_dt_over_C": 2.026,
+   "n_spikes_total": 183294,
+   "n_spikes_from_oor_cells": 0,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners._perturb_and_measure_derisk:build"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners._da_write_gain_spiking_derisk:_read_rate_hz",
+   "groups": [
+    "ask",
+    "conv",
+    "emo",
+    "infer",
+    "inner"
+   ],
+   "best_group": "ask",
+   "n_neurons": 80,
+   "steps_per_group": {
+    "ask": 22400,
+    "conv": 16800,
+    "emo": 11200,
+    "infer": 16000,
+    "inner": 14400
+   },
+   "oor_neurons_per_group": {
+    "ask": 0,
+    "conv": 0,
+    "emo": 0,
+    "infer": 0,
+    "inner": 0
+   },
+   "n_oor_neurons": 0,
+   "n_low_neurons": 0,
+   "n_high_neurons": 0,
+   "n_nonfinite_neurons": 0,
+   "v_min": -72.7,
+   "v_max": -30.33,
+   "first_reading_classes": {},
+   "offenders_by_stepper": {},
+   "oor_regions": {},
+   "offender_c_by_region": {},
+   "min_drawn_c": [
+    51.381,
+    "write_gain"
+   ],
+   "max_gtot_dt_over_C": 0.0,
+   "n_spikes_total": 69453,
+   "n_spikes_from_oor_cells": 0,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners._da_write_gain_spiking_derisk:_build_write_gain_bridge"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners._comprehension_learned_animacy_spiking:_read_margin",
+   "groups": [
+    "ask",
+    "conv"
+   ],
+   "best_group": "ask",
+   "n_neurons": 80,
+   "steps_per_group": {
+    "ask": 375,
+    "conv": 75
+   },
+   "oor_neurons_per_group": {
+    "ask": 0,
+    "conv": 0
+   },
+   "n_oor_neurons": 0,
+   "n_low_neurons": 0,
+   "n_high_neurons": 0,
+   "n_nonfinite_neurons": 0,
+   "v_min": -59.83,
+   "v_max": 34.65,
+   "first_reading_classes": {},
+   "offenders_by_stepper": {},
+   "oor_regions": {},
+   "offender_c_by_region": {},
+   "min_drawn_c": [
+    51.381,
+    "F_anim"
+   ],
+   "max_gtot_dt_over_C": 0.0,
+   "n_spikes_total": 1285,
+   "n_spikes_from_oor_cells": 0,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners._gap3_spiking_feature_compat_derisk:_build"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners.category_inherit_organ:observe",
+   "groups": [
+    "ask",
+    "conv",
+    "infer",
+    "inner"
+   ],
+   "best_group": "conv",
+   "n_neurons": 960,
+   "steps_per_group": {
+    "ask": 820,
+    "conv": 1000,
+    "infer": 1000,
+    "inner": 760
+   },
+   "oor_neurons_per_group": {
+    "ask": 0,
+    "conv": 0,
+    "infer": 0,
+    "inner": 0
+   },
+   "n_oor_neurons": 0,
+   "n_low_neurons": 0,
+   "n_high_neurons": 0,
+   "n_nonfinite_neurons": 0,
+   "v_min": -60.0,
+   "v_max": 34.99,
+   "first_reading_classes": {},
+   "offenders_by_stepper": {},
+   "oor_regions": {},
+   "offender_c_by_region": {},
+   "min_drawn_c": [
+    56.9192,
+    "member"
+   ],
+   "max_gtot_dt_over_C": 0.7,
+   "n_spikes_total": 11027,
+   "n_spikes_from_oor_cells": 0,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners.category_inherit_organ:_build"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners.one_brain_composer:_spiking_select",
+   "groups": [
+    "ask",
+    "conv",
+    "infer",
+    "inner"
+   ],
+   "best_group": "inner",
+   "n_neurons": 146,
+   "steps_per_group": {
+    "ask": 13800,
+    "conv": 16800,
+    "infer": 23400,
+    "inner": 37200
+   },
+   "oor_neurons_per_group": {
+    "ask": 0,
+    "conv": 0,
+    "infer": 0,
+    "inner": 0
+   },
+   "n_oor_neurons": 0,
+   "n_low_neurons": 0,
+   "n_high_neurons": 0,
+   "n_nonfinite_neurons": 0,
+   "v_min": -60.0,
+   "v_max": -44.5,
+   "first_reading_classes": {},
+   "offenders_by_stepper": {},
+   "oor_regions": {},
+   "offender_c_by_region": {},
+   "min_drawn_c": [
+    66.4437,
+    "<all>"
+   ],
+   "max_gtot_dt_over_C": 0.0,
+   "n_spikes_total": 0,
+   "n_spikes_from_oor_cells": 0,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners.rf_phasor_composer:_izh_bank"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners._emerge59_spiking_broca_frame_slots_derisk:slot_pool_rates",
+   "groups": [
+    "ask",
+    "conv",
+    "infer",
+    "inner"
+   ],
+   "best_group": "infer",
+   "n_neurons": 184,
+   "steps_per_group": {
+    "ask": 360,
+    "conv": 360,
+    "infer": 440,
+    "inner": 400
+   },
+   "oor_neurons_per_group": {
+    "ask": 0,
+    "conv": 0,
+    "infer": 0,
+    "inner": 0
+   },
+   "n_oor_neurons": 0,
+   "n_low_neurons": 0,
+   "n_high_neurons": 0,
+   "n_nonfinite_neurons": 0,
+   "v_min": -80.0,
+   "v_max": -27.76,
+   "first_reading_classes": {},
+   "offenders_by_stepper": {},
+   "oor_regions": {},
+   "offender_c_by_region": {},
+   "min_drawn_c": [
+    58.1351,
+    "slots"
+   ],
+   "max_gtot_dt_over_C": 0.0,
+   "n_spikes_total": 21450,
+   "n_spikes_from_oor_cells": 0,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners._emerge59_spiking_broca_frame_slots_derisk:build_slot_bridge"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners._affect_marker_wta_derisk:_step",
+   "groups": [
+    "ask",
+    "conv",
+    "emo",
+    "infer",
+    "inner"
+   ],
+   "best_group": "emo",
+   "n_neurons": 2160,
+   "steps_per_group": {
+    "ask": 2400,
+    "conv": 960,
+    "emo": 3360,
+    "infer": 800,
+    "inner": 960
+   },
+   "oor_neurons_per_group": {
+    "ask": 0,
+    "conv": 0,
+    "emo": 0,
+    "infer": 0,
+    "inner": 0
+   },
+   "n_oor_neurons": 0,
+   "n_low_neurons": 0,
+   "n_high_neurons": 0,
+   "n_nonfinite_neurons": 0,
+   "v_min": -84.79,
+   "v_max": 35.0,
+   "first_reading_classes": {},
+   "offenders_by_stepper": {},
+   "oor_regions": {},
+   "offender_c_by_region": {},
+   "min_drawn_c": [
+    58.1351,
+    "aff_val_m0"
+   ],
+   "max_gtot_dt_over_C": 1.829,
+   "n_spikes_total": 13062,
+   "n_spikes_from_oor_cells": 0,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners._affect_marker_wta_derisk:_build_bridge"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners._gnw_acc_bg_stop_trigger_derisk:run_trigger_trial",
+   "groups": [
+    "ask",
+    "conv",
+    "infer",
+    "inner"
+   ],
+   "best_group": "inner",
+   "n_neurons": 480,
+   "steps_per_group": {
+    "ask": 570,
+    "conv": 570,
+    "infer": 570,
+    "inner": 750
+   },
+   "oor_neurons_per_group": {
+    "ask": 0,
+    "conv": 0,
+    "infer": 0,
+    "inner": 0
+   },
+   "n_oor_neurons": 0,
+   "n_low_neurons": 0,
+   "n_high_neurons": 0,
+   "n_nonfinite_neurons": 0,
+   "v_min": -60.95,
+   "v_max": 35.0,
+   "first_reading_classes": {},
+   "offenders_by_stepper": {},
+   "oor_regions": {},
+   "offender_c_by_region": {},
+   "min_drawn_c": [
+    52.6996,
+    "delib_aff"
+   ],
+   "max_gtot_dt_over_C": 1.248,
+   "n_spikes_total": 19403,
+   "n_spikes_from_oor_cells": 0,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners._gnw_acc_bg_stop_trigger_derisk:build_stop_trigger_bridge"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners._spiking_expectation_rpe_derisk:_step",
+   "groups": [
+    "ask",
+    "conv",
+    "infer",
+    "inner"
+   ],
+   "best_group": "inner",
+   "n_neurons": 2184,
+   "steps_per_group": {
+    "ask": 28000,
+    "conv": 27880,
+    "infer": 28000,
+    "inner": 28120
+   },
+   "oor_neurons_per_group": {
+    "ask": 0,
+    "conv": 0,
+    "infer": 0,
+    "inner": 0
+   },
+   "n_oor_neurons": 0,
+   "n_low_neurons": 0,
+   "n_high_neurons": 0,
+   "n_nonfinite_neurons": 0,
+   "v_min": -74.99,
+   "v_max": -13.64,
+   "first_reading_classes": {},
+   "offenders_by_stepper": {},
+   "oor_regions": {},
+   "offender_c_by_region": {},
+   "min_drawn_c": [
+    20.0,
+    "patient_expected"
+   ],
+   "max_gtot_dt_over_C": 1.911,
+   "n_spikes_total": 360382,
+   "n_spikes_from_oor_cells": 0,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners._spiking_expectation_rpe_derisk:build_expectation_circuit"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners._comprehension_learned_verbselects_cue_derisk:_read_margin",
+   "groups": [
+    "conv"
+   ],
+   "best_group": "conv",
+   "n_neurons": 80,
+   "steps_per_group": {
+    "conv": 75
+   },
+   "oor_neurons_per_group": {
+    "conv": 0
+   },
+   "n_oor_neurons": 0,
+   "n_low_neurons": 0,
+   "n_high_neurons": 0,
+   "n_nonfinite_neurons": 0,
+   "v_min": -59.83,
+   "v_max": 34.61,
+   "first_reading_classes": {},
+   "offenders_by_stepper": {},
+   "oor_regions": {},
+   "offender_c_by_region": {},
+   "min_drawn_c": [
+    51.381,
+    "F_anim"
+   ],
+   "max_gtot_dt_over_C": 0.0,
+   "n_spikes_total": 243,
+   "n_spikes_from_oor_cells": 0,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners._gap3_spiking_feature_compat_derisk:_build"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners._affective_world_model_derisk:_step",
+   "groups": [
+    "emo"
+   ],
+   "best_group": "emo",
+   "n_neurons": 7002,
+   "steps_per_group": {
+    "emo": 7520
+   },
+   "oor_neurons_per_group": {
+    "emo": 0
+   },
+   "n_oor_neurons": 0,
+   "n_low_neurons": 0,
+   "n_high_neurons": 0,
+   "n_nonfinite_neurons": 0,
+   "v_min": -80.0,
+   "v_max": 15.08,
+   "first_reading_classes": {},
+   "offenders_by_stepper": {},
+   "oor_regions": {},
+   "offender_c_by_region": {},
+   "min_drawn_c": [
+    20.0,
+    "patient_expected"
+   ],
+   "max_gtot_dt_over_C": 0.595,
+   "n_spikes_total": 285464,
+   "n_spikes_from_oor_cells": 0,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners.onebrain_merge_framework:ensure_built"
+   ],
+   "offender_rows_rf_masked": 0
+  },
+  {
+   "organ": "research.runners.idle_replay_organ:_run",
+   "groups": [
+    "inner"
+   ],
+   "best_group": "inner",
+   "n_neurons": 504,
+   "steps_per_group": {
+    "inner": 660
+   },
+   "oor_neurons_per_group": {
+    "inner": 0
+   },
+   "n_oor_neurons": 0,
+   "n_low_neurons": 0,
+   "n_high_neurons": 0,
+   "n_nonfinite_neurons": 0,
+   "v_min": -73.12,
+   "v_max": 34.99,
+   "first_reading_classes": {},
+   "offenders_by_stepper": {},
+   "oor_regions": {},
+   "offender_c_by_region": {},
+   "min_drawn_c": [
+    58.1283,
+    "<all>"
+   ],
+   "max_gtot_dt_over_C": 2.06,
+   "n_spikes_total": 1932,
+   "n_spikes_from_oor_cells": 0,
+   "bounded_conductance_integration": [
+    "False"
+   ],
+   "neuron_models": [
+    "IZHIKEVICH"
+   ],
+   "built_by": [
+    "research.runners.idle_replay_organ:_build"
+   ],
+   "offender_rows_rf_masked": 0
+  }
+ ],
+ "caveat": "One seed is a census of one heterogeneity draw, and the seed-to-cell map is specific to the numpy CPU random stream; no out-of-range membrane on this seed does not mean the organ cannot produce one. Only SimulationBridge._run_one_simulation_step is observed (rf_resonate_steps is not)."
+}

@@ -326,3 +326,6 @@ verbatim. Board: #244 closed + milestone #264 added by Claude same cycle (RULING
 #271 census accepted + design round 2; #272 added (speech self-monitor); #268 size-dependent draws appended; moat capped at build 8 (CLASS HD).
 ## 2026-10-22  cs-race-f1d step4
 Board #238 updated: feasibility check complete, RESULT PROVISIONAL research/cs-race @ a6f70651d, next action Claude's ruling on f1d (merge next).
+
+## 2026-10-26  stage2-fixes + substrate (Claude)
+#273 updated with the checked Stage-2 causes; #261 BG time-step finding; #274 NEW substrate integrity (membrane census: 12 circuits with non-physical voltages). Findings: stage2-fail-diagnoses, emotion-organ-bounded-conductance-derisk, izh-membrane-substeps-derisk, membrane-census-dev7, c2-kb-scramble-host-ownership.

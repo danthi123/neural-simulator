@@ -1,0 +1,33 @@
+{
+ "run_id": "1793071773-123135",
+ "runner": "research/runners/membrane_census.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/research/runners/membrane_census.py",
+  "--aggregate",
+  "research/findings/raw/_membrane_census/dev/s3/ask__intact_a.json",
+  "research/findings/raw/_membrane_census/dev/s3/conv__intact_a.json",
+  "research/findings/raw/_membrane_census/dev/s3/emo__intact_a.json",
+  "research/findings/raw/_membrane_census/dev/s3/infer__intact_a.json",
+  "research/findings/raw/_membrane_census/dev/s3/inner__intact_a.json",
+  "--out",
+  "research/findings/raw/_membrane_census/dev/s3/aggregate.json"
+ ],
+ "git_sha": "5594f6090",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-26T23:29:33",
+ "env": {},
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 180881.8,
+ "corpus_check_query": "bg step-1 region table (batch-1024b Addition A) from existing Part C f-I",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_membrane_census/dev/s3/aggregate.json"
+}
