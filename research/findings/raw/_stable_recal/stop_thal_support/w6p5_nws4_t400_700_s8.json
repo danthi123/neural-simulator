@@ -1,0 +1,489 @@
+{
+ "runner": "research/runners/stable_integration_stop_ignition_probe.py --sustain",
+ "seed": 8,
+ "calibration": {
+  "norm_ws_w": 4
+ },
+ "weights": [
+  6.5
+ ],
+ "thal_tonic_pa": [
+  400.0,
+  700.0
+ ],
+ "drives": [
+  0.0,
+  1000.0
+ ],
+ "co_drive": false,
+ "steps": 1000,
+ "windows": [
+  [
+   30,
+   45
+  ],
+  [
+   100,
+   200
+  ],
+  [
+   300,
+   400
+  ],
+  [
+   600,
+   700
+  ],
+  [
+   900,
+   1000
+  ]
+ ],
+ "drive_steps": 35,
+ "rows": [
+  {
+   "arm": "on",
+   "w_rec": 6.5,
+   "thal_tonic_pa": 400.0,
+   "drive": 0.0,
+   "readback": {
+    "requested": true,
+    "bounded": true,
+    "substeps": 4,
+    "rule": "model_reset"
+   },
+   "windows": [
+    {
+     "window": [
+      30,
+      45
+     ],
+     "rates": [
+      0.0871,
+      0.0848,
+      0.0816
+     ],
+     "slot0_mean_v": -14.27,
+     "slot0_frac_above_m20mV": 0.5365
+    },
+    {
+     "window": [
+      100,
+      200
+     ],
+     "rates": [
+      0.0516,
+      0.049,
+      0.0508
+     ],
+     "slot0_mean_v": -2.54,
+     "slot0_frac_above_m20mV": 0.8224
+    },
+    {
+     "window": [
+      300,
+      400
+     ],
+     "rates": [
+      0.0529,
+      0.0517,
+      0.0514
+     ],
+     "slot0_mean_v": -2.11,
+     "slot0_frac_above_m20mV": 0.8327
+    },
+    {
+     "window": [
+      600,
+      700
+     ],
+     "rates": [
+      0.0614,
+      0.0594,
+      0.0599
+     ],
+     "slot0_mean_v": -1.99,
+     "slot0_frac_above_m20mV": 0.816
+    },
+    {
+     "window": [
+      900,
+      1000
+     ],
+     "rates": [
+      0.0673,
+      0.0653,
+      0.0671
+     ],
+     "slot0_mean_v": -2.56,
+     "slot0_frac_above_m20mV": 0.8002
+    }
+   ],
+   "read15": [
+    {
+     "plateau": 0.059,
+     "min": 0.0016,
+     "p10": 0.007,
+     "frac_below_half": 0.2167,
+     "n_windows": 60
+    },
+    {
+     "plateau": 0.057,
+     "min": 0.0019,
+     "p10": 0.012,
+     "frac_below_half": 0.2333,
+     "n_windows": 60
+    },
+    {
+     "plateau": 0.0579,
+     "min": 0.0,
+     "p10": 0.0089,
+     "frac_below_half": 0.2167,
+     "n_windows": 60
+    }
+   ],
+   "first_45_late15": [
+    0.0871,
+    0.0848,
+    0.0816
+   ],
+   "n_oor_cells": 0,
+   "n_cells": 270,
+   "v_min": -59.73,
+   "v_max": 35.0
+  },
+  {
+   "arm": "on",
+   "w_rec": 6.5,
+   "thal_tonic_pa": 400.0,
+   "drive": 1000.0,
+   "readback": {
+    "requested": true,
+    "bounded": true,
+    "substeps": 4,
+    "rule": "model_reset"
+   },
+   "windows": [
+    {
+     "window": [
+      30,
+      45
+     ],
+     "rates": [
+      0.0086,
+      0.039,
+      0.0188
+     ],
+     "slot0_mean_v": -0.2,
+     "slot0_frac_above_m20mV": 0.9388
+    },
+    {
+     "window": [
+      100,
+      200
+     ],
+     "rates": [
+      0.0598,
+      0.0587,
+      0.0602
+     ],
+     "slot0_mean_v": -2.18,
+     "slot0_frac_above_m20mV": 0.8091
+    },
+    {
+     "window": [
+      300,
+      400
+     ],
+     "rates": [
+      0.0604,
+      0.0586,
+      0.0593
+     ],
+     "slot0_mean_v": -1.99,
+     "slot0_frac_above_m20mV": 0.8201
+    },
+    {
+     "window": [
+      600,
+      700
+     ],
+     "rates": [
+      0.0671,
+      0.0633,
+      0.0654
+     ],
+     "slot0_mean_v": -3.04,
+     "slot0_frac_above_m20mV": 0.7915
+    },
+    {
+     "window": [
+      900,
+      1000
+     ],
+     "rates": [
+      0.0566,
+      0.0544,
+      0.0552
+     ],
+     "slot0_mean_v": -1.93,
+     "slot0_frac_above_m20mV": 0.8216
+    }
+   ],
+   "read15": [
+    {
+     "plateau": 0.0591,
+     "min": 0.0016,
+     "p10": 0.0054,
+     "frac_below_half": 0.2667,
+     "n_windows": 60
+    },
+    {
+     "plateau": 0.0568,
+     "min": 0.0019,
+     "p10": 0.0075,
+     "frac_below_half": 0.3,
+     "n_windows": 60
+    },
+    {
+     "plateau": 0.058,
+     "min": 0.0,
+     "p10": 0.0024,
+     "frac_below_half": 0.2667,
+     "n_windows": 60
+    }
+   ],
+   "first_45_late15": [
+    0.0086,
+    0.039,
+    0.0188
+   ],
+   "n_oor_cells": 0,
+   "n_cells": 270,
+   "v_min": -63.31,
+   "v_max": 35.0
+  },
+  {
+   "arm": "on",
+   "w_rec": 6.5,
+   "thal_tonic_pa": 700.0,
+   "drive": 0.0,
+   "readback": {
+    "requested": true,
+    "bounded": true,
+    "substeps": 4,
+    "rule": "model_reset"
+   },
+   "windows": [
+    {
+     "window": [
+      30,
+      45
+     ],
+     "rates": [
+      0.0675,
+      0.0676,
+      0.0667
+     ],
+     "slot0_mean_v": -4.65,
+     "slot0_frac_above_m20mV": 0.7749
+    },
+    {
+     "window": [
+      100,
+      200
+     ],
+     "rates": [
+      0.0607,
+      0.0573,
+      0.0575
+     ],
+     "slot0_mean_v": -0.93,
+     "slot0_frac_above_m20mV": 0.8232
+    },
+    {
+     "window": [
+      300,
+      400
+     ],
+     "rates": [
+      0.0638,
+      0.0626,
+      0.0619
+     ],
+     "slot0_mean_v": 0.32,
+     "slot0_frac_above_m20mV": 0.8356
+    },
+    {
+     "window": [
+      600,
+      700
+     ],
+     "rates": [
+      0.0654,
+      0.0643,
+      0.0635
+     ],
+     "slot0_mean_v": 0.03,
+     "slot0_frac_above_m20mV": 0.8313
+    },
+    {
+     "window": [
+      900,
+      1000
+     ],
+     "rates": [
+      0.0689,
+      0.0674,
+      0.0669
+     ],
+     "slot0_mean_v": 0.2,
+     "slot0_frac_above_m20mV": 0.8245
+    }
+   ],
+   "read15": [
+    {
+     "plateau": 0.059,
+     "min": 0.0016,
+     "p10": 0.0318,
+     "frac_below_half": 0.1,
+     "n_windows": 60
+    },
+    {
+     "plateau": 0.0576,
+     "min": 0.0019,
+     "p10": 0.0294,
+     "frac_below_half": 0.1,
+     "n_windows": 60
+    },
+    {
+     "plateau": 0.057,
+     "min": 0.0008,
+     "p10": 0.0274,
+     "frac_below_half": 0.1167,
+     "n_windows": 60
+    }
+   ],
+   "first_45_late15": [
+    0.0675,
+    0.0676,
+    0.0667
+   ],
+   "n_oor_cells": 0,
+   "n_cells": 270,
+   "v_min": -53.8,
+   "v_max": 35.0
+  },
+  {
+   "arm": "on",
+   "w_rec": 6.5,
+   "thal_tonic_pa": 700.0,
+   "drive": 1000.0,
+   "readback": {
+    "requested": true,
+    "bounded": true,
+    "substeps": 4,
+    "rule": "model_reset"
+   },
+   "windows": [
+    {
+     "window": [
+      30,
+      45
+     ],
+     "rates": [
+      0.0376,
+      0.059,
+      0.062
+     ],
+     "slot0_mean_v": 3.28,
+     "slot0_frac_above_m20mV": 0.9318
+    },
+    {
+     "window": [
+      100,
+      200
+     ],
+     "rates": [
+      0.0688,
+      0.0664,
+      0.0682
+     ],
+     "slot0_mean_v": -1.1,
+     "slot0_frac_above_m20mV": 0.8106
+    },
+    {
+     "window": [
+      300,
+      400
+     ],
+     "rates": [
+      0.0612,
+      0.061,
+      0.06
+     ],
+     "slot0_mean_v": 0.83,
+     "slot0_frac_above_m20mV": 0.8428
+    },
+    {
+     "window": [
+      600,
+      700
+     ],
+     "rates": [
+      0.0628,
+      0.0623,
+      0.0612
+     ],
+     "slot0_mean_v": 0.23,
+     "slot0_frac_above_m20mV": 0.8336
+    },
+    {
+     "window": [
+      900,
+      1000
+     ],
+     "rates": [
+      0.0668,
+      0.0647,
+      0.0658
+     ],
+     "slot0_mean_v": 0.29,
+     "slot0_frac_above_m20mV": 0.8333
+    }
+   ],
+   "read15": [
+    {
+     "plateau": 0.0595,
+     "min": 0.0063,
+     "p10": 0.0319,
+     "frac_below_half": 0.1,
+     "n_windows": 60
+    },
+    {
+     "plateau": 0.0578,
+     "min": 0.0086,
+     "p10": 0.03,
+     "frac_below_half": 0.1,
+     "n_windows": 60
+    },
+    {
+     "plateau": 0.0577,
+     "min": 0.0078,
+     "p10": 0.0296,
+     "frac_below_half": 0.1,
+     "n_windows": 60
+    }
+   ],
+   "first_45_late15": [
+    0.0376,
+    0.059,
+    0.062
+   ],
+   "n_oor_cells": 0,
+   "n_cells": 270,
+   "v_min": -54.66,
+   "v_max": 35.0
+  }
+ ]
+}
