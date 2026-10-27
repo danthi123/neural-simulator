@@ -232,9 +232,13 @@ records under `census/{on,off}_except_{swap,bus}/s7/`.
 - **The stop lead is neither's.** It follows the rest of the brain in all four exempt arms, so another organ's
   integrator change removes it; not attributed here.
 
+Conv, the bus arms only (same probe): ON except the bus workspace verifies the same 3 of 5 workspace-engaging probe
+recalls as OFF (fox_chase and builtin_dog_cat true again), OFF except the bus alone on the stable set verifies 0 of 5
+(both false); conv's scorer is false in every arm, as it is under OFF on this seed.
+
 What this does not show: whether re-measured drive constants restore the bus's verification and the swap's ignition
-on the stable integrator, and whether the same attribution holds on other seeds and in conv, infer and ask (the same
-signature appears there; only inner was intervened on).
+on the stable integrator, and whether the same attribution holds on other seeds and in infer and ask (the same
+signature appears there; inner and conv were intervened on).
 
 ## Reply changes per group, with both texts
 
@@ -391,8 +395,8 @@ Turns not listed kept every user-visible field (their internal read-outs moved).
   changes above are that: the bus and swap workspaces' ignitions are not reached at their current drives on the
   stable integrator. They are not evidence that ON is worse or better for the brain; they say these organs need
   re-measurement on the stable integrator before any default flip.
-- The attribution covers inner only, two organs (the bus and the swap workspaces); conv, infer and ask show the same
-  signature but were not intervened on, and the stop lead is not attributed.
+- The attribution covers inner (bus and swap) and conv (bus only); infer and ask show the same signature but were
+  not intervened on, and the stop lead is not attributed.
 - The replicate pairs bound run-to-run noise at zero on this setup (inner, conv; see above); they do not bound
   sensitivity to the environment (the pool's own runs of three groups produced different response hashes with
   identical dynamics).
