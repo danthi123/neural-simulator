@@ -110,7 +110,32 @@ _BASE = dict(NE=16, NI=6, NG=12, NGI=8, NS=20, NO=8,
              CUE_NOISE_SD=0.0, CUE_NOISE_TAU=5.0,
              # f1g (packet cs-race-f1g): persistent word trace in the
              # mention layer. All defaults keep the pre-f1g build.
-             W_MM=0.0, W_MI=0.0, W_IM=0.0, NIM=8, ENCODE_WORDS=0)
+             W_MM=0.0, W_MI=0.0, W_IM=0.0, NIM=8, ENCODE_WORDS=0,
+             # f1h (packet cs-race-f1h): intrinsic word trace = a held
+             # BDSP apical plateau in the mention-slot cells. All
+             # defaults keep the f1g build byte-for-byte.
+             TRACE_INTRINSIC=0, SOMA_G=0.0, APICAL_PA=0.0)
+# f1h (packet cs-race-f1h, STEP 0): the gap4 6/6-seed GO configuration of
+# the bistable BDSP apical, FROZEN here, never tuned. Source of every value:
+# research/runners/_gap4_btsp_onbridge_behavioral_timescale_derisk.py
+# (finding 2026-07-18-gap4-BTSP-onbridge-behavioral-timescale-GO-6seed-...;
+# lines 57-62 set the cfg, line 75 the pulse). Entries marked [default] are
+# the CoreSimConfig defaults the gap4 run left untouched (sim/config.py
+# 539, 566-568, 551, 560, 630); they are pinned explicitly so a later
+# default change cannot silently move this arm.
+GAP4_GO = dict(
+    coincidence_plateau_self_regen=2.0,     # gap4 runner :60
+    coincidence_plateau_v_hold=-35.0,       # gap4 runner :61
+    apical_kir_g=1.0,                       # gap4 runner :62
+    bdsp_learning_rate=0.0,                 # gap4 runner :58 (BDSP moves no weight)
+    coincidence_plateau_v_hold_k=0.2,       # [default] config.py:539
+    apical_kir_E_K=-90.0,                   # [default] config.py:566
+    apical_kir_vhalf=-50.0,                 # [default] config.py:567
+    apical_kir_k=8.0,                       # [default] config.py:568
+    apical_tau_ms=15.0,                     # [default] config.py:550
+    apical_E_rest=-65.0,                    # [default] config.py:560
+    bdsp_v_apical_scale=0.05)               # [default] config.py:630
+GAP4_GO_PULSE_PA = 120.0    # gap4 runner :75 pulse_pA (the packet's pulse value)
 GATE_CUE = "cs_cue"          # sensory drive gate for the cue layer
 GATE_MENT = "cs_ment"        # mention->E gate (lesion i closes it)
 
@@ -196,6 +221,19 @@ class RaceCircuit(ReplayCircuit):
         # Slow NMDA recurrent component (ruling: record-supported).
         cfg.enable_nmda_recurrent = (
             float(p.get("W_NMDA", 0.0)) > 0.0 or w_mm > 0.0)
+        # f1h: the intrinsic trace (packet cs-race-f1h). Off by default.
+        self._ap_on = bool(int(p.get("TRACE_INTRINSIC", 0)))
+        self._apical_pa = float(p.get("APICAL_PA", 0.0))
+        if self._ap_on:
+            if w_mm != 0.0:
+                raise ValueError("TRACE_INTRINSIC needs W_MM = 0 "
+                                 "(no recurrence at all)")
+            cfg.enable_bdsp = True
+            cfg.bdsp_apical_bistable = True
+            cfg.bdsp_apical_couples_soma = True
+            cfg.bdsp_apical_soma_g = float(p.get("SOMA_G", 0.0))
+            for _k, _v in GAP4_GO.items():
+                setattr(cfg, _k, _v)
         bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                                   runtime_state=RuntimeState(), gpu_config=GPUConfig())
         bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
@@ -284,10 +322,45 @@ class RaceCircuit(ReplayCircuit):
         for g in self._gates:
             bridge.set_transmission_gate(g, 1.0)
         bridge.cp_external_input_current[:] = 0.0
+        if self._ap_on:
+            # an allocated zero drive makes the apical integrate (KIR
+            # down-state) in the lesion arm exactly as in the trace arm;
+            # pulses are written per step by _set_apical.
+            self._ment_all = np.concatenate(self.ment)
+            bridge.cp_bdsp_apical_drive = xp.zeros(int(n), dtype=xp.float32)
         for _ in range(60):
             bridge._run_one_simulation_step()
         self._bridge, self._xp, self._n = bridge, xp, int(n)
         self._snap = _snapshot_state(bridge, xp)
+        if self._ap_on:
+            # cp_v_apical is not in _STATE_ARRAYS (_gnw_rung1_ignition_
+            # curve_derisk.py:219): without this a latched plateau would
+            # leak into the next trial. Snapshot the settled down-state.
+            self._vap_rest = bridge.cp_v_apical.copy()
+
+    def _set_apical(self, cur):
+        """f1h: write this step's apical drive. A heard word's sensory
+        volley reaches the apical arbor of its word-form slot as well as
+        the somatic arbor: every mention cell that receives somatic hearing
+        current this step gets the apical amplitude (--apical-pulse), all
+        other neurons 0. The pulse window is therefore the word window
+        (50 ms encode word, 150 ms mention). Amplitude 0 = lesion arm."""
+        ap = np.zeros(self._n, dtype=np.float32)
+        if self._apical_pa > 0.0:
+            m = self._ment_all
+            heard = np.asarray(cur[m]) > 0.0
+            if heard.any():
+                ap[m[heard]] = self._apical_pa
+        self._bridge.cp_bdsp_apical_drive = self._xp.asarray(ap)
+
+    def _reset_apical(self):
+        """f1h: restore the apical down-state and zero the drive (the
+        quiescent snapshot does not carry cp_v_apical). No-op when off."""
+        if not self._ap_on:
+            return
+        self._bridge.cp_v_apical[:] = self._vap_rest
+        self._bridge.cp_bdsp_apical_drive = self._xp.zeros(
+            self._n, dtype=self._xp.float32)
 
     # ── the race itself ────────────────────────────────────────────────
     def race(self, *, seed, cue_words, mention_words=(), encode=("B",),
@@ -303,6 +376,7 @@ class RaceCircuit(ReplayCircuit):
         b, p, K = self._bridge, self.p, self.K
         xp = self._xp
         _reset_quiescent(b, xp, self._snap)
+        self._reset_apical()
         encode_words = (bool(int(p.get("ENCODE_WORDS", 0)))
                         if encode_words is None
                         else bool(encode_words))
@@ -331,6 +405,8 @@ class RaceCircuit(ReplayCircuit):
         stp_seen = []
 
         def step_with(cur):
+            if self._ap_on:
+                self._set_apical(cur)
             b.cp_external_input_current[:] = xp.asarray(cur.astype(np.float32))
             b._run_one_simulation_step()
 
@@ -736,6 +812,7 @@ class RaceCircuit(ReplayCircuit):
         b, p, K = self._bridge, self.p, self.K
         xp = self._xp
         _reset_quiescent(b, xp, self._snap)
+        self._reset_apical()
         b.set_transmission_gate(GATE_ENGRAM, 1.0)
         b.set_transmission_gate(GATE_COMMIT_IN, 0.0)
         b.set_transmission_gate(GATE_EXCL, 1.0)
@@ -789,11 +866,19 @@ class RaceCircuit(ReplayCircuit):
         ment_ms = np.zeros((n_w, T), dtype=np.int32)
         eng_ms = np.zeros((K, T), dtype=np.int32)
         slot_ms = np.zeros((K, T), dtype=np.int32)
+        # f1h item C6: per-ms min / max (over the slot's cells) of the
+        # apical voltage; allocated only with the intrinsic trace.
+        vap_min = vap_max = None
+        if self._ap_on:
+            vap_min = np.full((n_w, T), np.nan, dtype=np.float32)
+            vap_max = np.full((n_w, T), np.nan, dtype=np.float32)
 
         def zeros():
             return np.zeros(self._n, dtype=np.float32)
 
         def step_with(cur):
+            if self._ap_on:
+                self._set_apical(cur)
             b.cp_external_input_current[:] = xp.asarray(
                 cur.astype(np.float32))
             b._run_one_simulation_step()
@@ -811,6 +896,12 @@ class RaceCircuit(ReplayCircuit):
                 s_k = int(f[self.lay["slot"][k]].sum())
                 if s_k:
                     slot_ms[k, t_ix] = s_k
+            if vap_min is not None:
+                va = np.asarray(to_host(b.cp_v_apical))
+                for wi in range(n_w):
+                    sv = va[self.ment[wi]]
+                    vap_min[wi, t_ix] = float(sv.min())
+                    vap_max[wi, t_ix] = float(sv.max())
 
         t = 0
         pulse_events = []
@@ -919,6 +1010,22 @@ class RaceCircuit(ReplayCircuit):
                                "W_MI": float(p.get("W_MI", 0.0)),
                                "W_IM": float(p.get("W_IM", 0.0)),
                                "NIM": int(p.get("NIM", 8))}}
+        if self._ap_on:
+            rec["v_apical"] = {
+                "v_hold": float(GAP4_GO["coincidence_plateau_v_hold"]),
+                "window_ms": [int(m0), int(m1)],
+                "pulsed_words": [w for w in (word, word2) if w],
+                "window": {
+                    MENTION_WORDS[wi]: {
+                        "min": round(float(vap_min[wi, m0:m1].min()), 4),
+                        "max": round(float(vap_max[wi, m0:m1].max()), 4)}
+                    for wi in range(n_w)},
+                "run_max": {
+                    MENTION_WORDS[wi]: round(float(vap_max[wi].max()), 4)
+                    for wi in range(n_w)},
+                "end": {
+                    MENTION_WORDS[wi]: round(float(vap_min[wi, T - 1]), 4)
+                    for wi in range(n_w)}}
         if item == "d0" and cue_cell_counts:
             rec["cue_events"] = [
                 {"word": str(CUE_WORDS[wi]),
@@ -947,6 +1054,7 @@ class RaceCircuit(ReplayCircuit):
             _reset_quiescent
         b = self._bridge
         _reset_quiescent(b, self._xp, self._snap)
+        self._reset_apical()
         b.set_transmission_gate(GATE_ENGRAM, 1.0)
         b.set_transmission_gate(GATE_COMMIT_IN, 0.0)
         b.set_transmission_gate(GATE_EXCL, 1.0)
@@ -1006,6 +1114,7 @@ class RaceCircuit(ReplayCircuit):
 
         def fires(cell, pa):
             _reset_quiescent(b, self._xp, self._snap)
+            self._reset_apical()
             cur = np.zeros(self._n, dtype=np.float32)
             cur[cell] = float(pa)
             hit = False
@@ -1500,6 +1609,15 @@ def run_calibration(base, grid, seeds, args):
                    "C0_min_spikes_per_cell":
                        "1 (RULING cs-race-f1g-0-1022 C)"}},
              "ment_pa": float(MENT_PA)}
+    if base.get("TRACE_INTRINSIC"):
+        # f1h: record the intrinsic-trace flags and the frozen gap4 GO
+        # values (only when ON, so a flags-off record is unchanged).
+        rec["flags"].update({
+            "trace": "intrinsic",
+            "soma_g": float(base.get("SOMA_G", 0.0)),
+            "apical_pa": float(base.get("APICAL_PA", 0.0)),
+            "gap4_go_frozen": dict(GAP4_GO),
+            "gap4_go_pulse_pa": GAP4_GO_PULSE_PA})
     if getattr(args, "drive_probe", False):
         # f1g step 0c DRIVE probe (RULING cs-race-f1g-0b-1022): the
         # engagement criterion is fixed here, before any trace or
@@ -1603,6 +1721,13 @@ def run_calibration(base, grid, seeds, args):
                                      False)),
                     "w_gis_read_back":
                         float(base.get("W_GIS", 0.0))}}
+        if base.get("TRACE_INTRINSIC"):
+            for _f in ("enable_bdsp", "bdsp_apical_bistable",
+                       "bdsp_apical_couples_soma", "bdsp_apical_soma_g",
+                       "coincidence_plateau_self_regen",
+                       "coincidence_plateau_v_hold", "apical_kir_g",
+                       "bdsp_learning_rate"):
+                srec["config_readback"][_f] = getattr(bcfg, _f, None)
         r1 = circ.cal(seed=seed, item="c1", word="vole")
         srec["c1"] = r1
         r2 = circ.cal(seed=seed, item="c2b")
@@ -1656,6 +1781,45 @@ def run_calibration(base, grid, seeds, args):
                                   "min_cell_spikes":
                                       e["min_cell_spikes"]}
                                  for e in evs]}
+        if base.get("TRACE_INTRINSIC"):
+            # C6 (packet cs-race-f1h, engagement): the pulsed slot's
+            # v_apical stays above v_hold across the 650 ms window and
+            # every unpulsed slot's stays below it. A seed whose pulse
+            # never took the apical above v_hold is UNDEFINED, never a
+            # FAIL. Raw numbers kept so the scorer can re-derive. Kept
+            # OUT of pass{} (C0 precedent) so the frozen C1-C4
+            # selection logic is untouched.
+            vh = float(GAP4_GO["coincidence_plateau_v_hold"])
+            va1 = r1["v_apical"]
+            pw = va1["window"]["vole"]
+            un_max = max(va1["window"][w]["max"] for w in MENTION_WORDS
+                         if w != "vole")
+            reached = bool(va1["run_max"]["vole"] > vh)
+            above = bool(pw["min"] > vh)
+            below = bool(un_max < vh)
+            srec["c6"] = {
+                "v_hold": vh, "pulsed_word": "vole",
+                "pulsed_window_min": pw["min"],
+                "pulsed_window_max": pw["max"],
+                "pulsed_run_max": va1["run_max"]["vole"],
+                "unpulsed_window_max": un_max,
+                "reached_v_hold_during_run": reached,
+                "pulsed_above_hold_all_window": above,
+                "unpulsed_below_hold": below,
+                "status": ("UNDEFINED" if not reached else
+                           ("PASS" if (above and below) else "FAIL"))}
+            vap2 = r2["v_apical"]["window"]
+            srec["c6"]["c2b_all_slots_below_hold"] = bool(
+                all(v["max"] < vh for v in vap2.values()))
+            srec["c3_apical"] = [
+                {"older": x, "newer": y,
+                 "older_window_max": c["v_apical"]["window"][x]["max"],
+                 "newer_window_min": c["v_apical"]["window"][y]["min"],
+                 "older_plateau_ended": bool(
+                     c["v_apical"]["window"][x]["max"] < vh),
+                 "newer_plateau_held": bool(
+                     c["v_apical"]["window"][y]["min"] > vh)}
+                for (x, y), c in zip(pairs, c3s)]
         srec["pass"] = {"c1": c1_ok,
                         "c2": bool(c2a_ok and c2b_ok),
                         "c3": c3_ok, "c4": c4_ok}
@@ -1677,6 +1841,11 @@ def run_calibration(base, grid, seeds, args):
     med_b = round(statistics.median(db), 4) if db else None
     rec["c5_median_pa"] = {"clause_a": med_a, "clause_b": med_b}
     c0_seeds = all(bool(s["c0"]["pass"]) for s in rec["per_seed"])
+    if base.get("TRACE_INTRINSIC"):
+        _st = [s["c6"]["status"] for s in rec["per_seed"]]
+        rec["c6_summary"] = {
+            "PASS": _st.count("PASS"), "FAIL": _st.count("FAIL"),
+            "UNDEFINED": _st.count("UNDEFINED"), "n": len(_st)}
     rec["stop_preview"] = {
         "STOP_CAL": bool(not rec["cell_pass_c1_c4"]),
         "STOP_SMOKE": bool(med_a is None or med_b is None or
@@ -1768,6 +1937,20 @@ def main():
                     help="context/encode mention current pA; f1g arms "
                          "pass 60 = CUE_PA (RULING cs-race-f1g-0-1022 "
                          "B); default 40 keeps identity exact")
+    ap.add_argument("--trace", choices=("intrinsic",), default=None,
+                    help="f1h: the word trace is a held BDSP apical "
+                         "plateau in the mention-slot cells (bistable + "
+                         "soma-coupled, gap4 GO values frozen; W_MM = 0); "
+                         "default off = the f1g circuit")
+    ap.add_argument("--soma-g", type=float, default=None,
+                    help="f1h: bdsp_apical_soma_g (apical->soma coupling); "
+                         "needs --trace intrinsic (grid 0.002/0.004/0.008)")
+    ap.add_argument("--apical-pulse", type=float, default=None,
+                    help="f1h: apical drive pA written to every mention "
+                         "cell that gets somatic hearing current, for the "
+                         "word's own duration (gap4 GO value %g); needs "
+                         "--trace intrinsic; 0/absent = no pulse (the "
+                         "LESION arm)" % GAP4_GO_PULSE_PA)
     ap.add_argument("--drive-probe", action="store_true",
                     help="f1g step 0c: DRIVE engagement probe "
                          "(item d0, trace off; RULING "
@@ -1820,6 +2003,17 @@ def main():
         base["NIM"] = int(args.nim)
     if args.encode_words:
         base["ENCODE_WORDS"] = 1
+    if args.trace == "intrinsic":
+        if args.soma_g is None:
+            ap.error("--trace intrinsic requires --soma-g")
+        if args.w_mm:
+            ap.error("--trace intrinsic is W_MM = 0 (no recurrence); "
+                     "do not pass --w-mm")
+        base["TRACE_INTRINSIC"] = 1
+        base["SOMA_G"] = float(args.soma_g)
+        base["APICAL_PA"] = float(args.apical_pulse or 0.0)
+    elif args.soma_g is not None or args.apical_pulse is not None:
+        ap.error("--soma-g / --apical-pulse need --trace intrinsic")
     if args.identity_cue_n:
         return identity_cue_n(base, _F1_GRID_ROW, seeds,
                               int(args.cue_n or 48),
@@ -1929,6 +2123,11 @@ def main():
                     for r in results))
     i1_w = float(sum((r.get("clauses") or {}).get("i1", {}).get("wins", 0)
                      for r in results))
+    if base.get("TRACE_INTRINSIC"):
+        out["instrument_flags"].update({
+            "trace": "intrinsic", "soma_g": float(base["SOMA_G"]),
+            "apical_pa": float(base["APICAL_PA"]),
+            "gap4_go_frozen": dict(GAP4_GO)})
     out["attribution_mention_gate"] = attributable_to(
         "mention gate (b intact vs i1 lesion)", b_w, i1_w)
     if not args.out:
