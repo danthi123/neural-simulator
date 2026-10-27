@@ -1,7 +1,7 @@
 # PACKET c2-spiking-hops (Claude, 2026-10-27; revised the same day after its skeptic): Stage-2 C2, two separate methods: hop reads on the spiking store (M1) and acquisition of all-novel transitives through a learned order cue (M3)
 
 host-decision: scaffold
-decides: M1: the possessive-question dispatch (_POSSESSIVE_CHAIN_RE), the hop-1 relation candidates (_ROLE_NOUN_HINTS plus the same-verb fallback), the two-hop relation order taken from that parse, the block selection inside query_patient at the production default (a host first-match over spiking-decoded rows), the slot-to-word map of the workspace, the relay of the conflict unit's spike count into a workspace slot drive, and the mapping of acc_conflict_gate's four outputs onto hop outcomes (section 2.2); M3: the competent() branch selection of ComprehensionProductionOrgan, which is a host English table (the hand ANIMACY and VERB_SELECTS coverage with their corpus-learned extensions, plus the _brain_vocab membership test, decide whether an assertion is fully covered, fully out-of-vocabulary or passed through, and so decide which assertions M3 ever judges), which utterances the comprehension read judges (extract_transitive's 3-content-token test and its function-word list), the role assignment of the stored triple (the positional parse after the host strip), and the utterance-onset event
+decides: M1: the possessive-question dispatch (_POSSESSIVE_CHAIN_RE), the hop-1 relation candidates (_ROLE_NOUN_HINTS plus the same-verb fallback), the two-hop relation order taken from that parse, the block selection inside query_patient at the production default (a host first-match over spiking-decoded rows), the host relay of each block's cleanup scores into the sequencer and the score-to-drive threshold that picks which decoded agent, action and patient word lines it receives (scores_to_drive, drive_frac 0.9), the slot-to-word map of the workspace, the relay of the conflict unit's spike count into a workspace slot drive, the mapping of acc_conflict_gate's four outputs onto hop outcomes (section 2.2), and, for an LTM-sourced hop (the TieredFactStore's tier routing picks the source), the conflict enumeration all_candidate_patients (host closed-form unbind with a host string dedup); M3: the competent() branch selection of ComprehensionProductionOrgan, which is a host English table (the hand ANIMACY and VERB_SELECTS coverage with their corpus-learned extensions, plus the _brain_vocab membership test, decide whether an assertion is fully covered, fully out-of-vocabulary or passed through, and so decide which assertions M3 ever judges), which utterances the comprehension read judges (extract_transitive's 3-content-token test and its function-word list), the role assignment of the stored triple (the positional parse after the host strip), the store-or-refuse agreement check between M3's commit roles and that positional parse, the M3 margin arithmetic (minimum over roles of winner-minus-runner-up, median-normalised) and its calibrated threshold, and the utterance-onset event
 allowed-by: CLAUDE.md non-negotiable 1 (a declared teaching scaffold for its neural replacement)
 replaced-by: the learned relation-noun binding (M2, its own packet), the cs-race spiking store competition for block selection, the word-role frame commit for scope and stored roles, and one-bridge co-residence of the K-way sequencer and the GNW workspace
 cap: 2 builds
@@ -17,9 +17,9 @@ when it posts this revision. If the ruling refuses, M3 step 3 does not run under
 Status: DESIGN ONLY, for Claude's review. No production code, no default flipped, no `sim/` edit. Gate seeds
 42/43/44/100/101/102 are not run by anything here. Branch `research/c2-spiking-hops` (cut from main cadf0f40f; first
 draft a7799b30c). The packet's skeptic REFUTED the first draft as written; every required fix is applied (section 0b)
-and Claude's ruling of 2026-10-27 is in section 7. Ruling this answers: stage2-fixes-1026, C2 item ("then two separate
-methods"). M2 (a learned relation-noun binding in place of `_ROLE_NOUN_HINTS`) is NOT in this packet; nothing below
-claims it, and no bar here needs it.
+and a self-skeptic pass on the revision is in 0c. Claude's ruling of 2026-10-27 is in section 7. Ruling this
+answers: stage2-fixes-1026, C2 item ("then two separate methods"). M2 (a learned relation-noun binding in place of
+`_ROLE_NOUN_HINTS`) is NOT in this packet; nothing below claims it, and no bar here needs it.
 
 Inputs read: `research/findings/2026-10-26-stage2-fail-diagnoses.md` (C2 section);
 `research/findings/2026-10-26-c2-kb-scramble-host-ownership.md`; the C2 diagnosis and its skeptic's verdict
@@ -64,6 +64,19 @@ Inputs read: `research/findings/2026-10-26-stage2-fail-diagnoses.md` (C2 section
 | 6 | An M3 reply-level lesion arm; 'ko blick gorps ko dax' is outside `extract_transitive` | 3.6 (m3_rs_lesion + .rep0, R6); 3.5 (out of D4's reach, organ-only) |
 | 7 | Disclose the kb_scramble evidence's provenance; a pinned pool re-run before P2/B2 rest on it | section 1 (disclosure); 2.8 (A3a/A3b pinned re-run); 2.9 (P2, B2 UNDEFINED until then) |
 | 8 | B6/A11 engagement precondition | 2.9, B6 |
+
+## 0c. Self-skeptic pass on the revision (Claude as refuter, 2026-10-27)
+
+Three questions: is any host decision undeclared, does each lesion move one variable, can any arm pass without
+engagement. What it found, and the fix:
+
+| # | finding | fix |
+|---|---|---|
+| S1 | The M3 read required "no closed-class token commits a role", which needs a host closed-class word list inside the brain's decision, against "M3 reads no word list" | 3.2: the brain's read counts role commits only; the closed-class check moved to the scorer |
+| S2 | Undeclared host decisions: the cleanup-score relay and `scores_to_drive` threshold into the sequencer (now on M1's path, patient lines included), the LTM-hop enumeration with its string dedup, M3's store-or-refuse agreement check, the M3 margin arithmetic and threshold | header `decides:`, 2.6, 3.2, 3.3 |
+| S3 | Arms passable without engagement: B1 and A3 (the old `_hop` could answer), B3 and B4 (a crash or an empty PROPOSE also removes the conclusion), B5 (an abstain from a miss), B9 (equal rates from a flag that never engaged), R1 (acquisition by another path); A12 had no prediction | 2.9 (preconditions on B1-B5 and B9, general `ws_seed` rule, P8), 3.6 (R1) |
+| S4 | The M3 role-sequence lesion closes two projections; the carrier lesion is not specific to the order cue; the transplant had no engagement check | 3.5 (split lesions reported, carrier scope stated, transplant weight check) |
+| S5 | The route's reads were not stated: a refuter could not tell whether `blocks_matched` or the sequencer's own first-match feed a decision | 2.3: the route reads only `acc_conf`'s count and the workspace read; the rest is record-only |
 
 ## 1. The defect, as measured
 
@@ -194,10 +207,14 @@ New, additive builder option `conflict_unit=True` (default False; the sequencer 
 - `acc_conf` inhibits nothing in this build; its spike count over the sequencer settle window is the conflict read.
   No host string compare deduplicates: a patient's identity is the word line its decoded patient drives on the
   substrate. A decode error that lights a different line for a duplicate reads as a conflict and abstains (the safe
-  direction); it is recorded per hop.
+  direction); it is recorded per hop. A clause or attributed patient (none in these fixtures) has no single patient
+  word line; such a hop is recorded with its `patient_kind` and reported, never barred.
 
 The sequencer is built for the hop reads even when `integrated_loop` is off (the selection stays the composer's own;
-only the match pools, the patient lines and `acc_conf` are read).
+only the match pools, the patient lines and `acc_conf` are read). The route reads exactly two things from the
+substrate: `acc_conf`'s spike count (through the relay) and the workspace's `(conf, n_ignited, winner)`. The
+sequencer's own first-match decision, `blocks_matched` and `patient_lines_active` are record fields that no branch of
+the route reads (checked in code review and by B7's record).
 
 **Relay to the workspace (declared host residual).** The sequencer and the workspace are separate bridges, so the
 count crosses by host relay: `slot1_drive = IGNITE_PA * min(1, n_conf / n_conf_ref)`, linear, no threshold;
@@ -246,9 +263,11 @@ audit's return value with garbage leaves the route's result identical.
 ### 2.6 What stays host under M1 (declared in the header)
 
 The regex dispatch, `_ROLE_NOUN_HINTS` and the same-verb fallback, the two-hop order, the default selection inside
-`query_patient` (a host first-match over decoded rows), the slot-to-word map, the cross-bridge relay, the mapping of
-the gate's outputs onto hop outcomes (2.2), the derived framing (`frame_derived_answer`) and the verify re-parse
-(`brain_chat_tui.py:1922-1942`). Under the conflict read the first-match answers only when the matching rows drive a
+`query_patient` (a host first-match over decoded rows), the relay of each block's cleanup scores into the sequencer
+and the `scores_to_drive` threshold (drive_frac 0.9) that picks which decoded word lines it receives, the slot-to-word
+map, the cross-bridge relay of the conflict count, the mapping of the gate's outputs onto hop outcomes (2.2), the
+LTM-hop enumeration `all_candidate_patients` with its host string dedup (2.3), the derived framing
+(`frame_derived_answer`) and the verify re-parse (`brain_chat_tui.py:1922-1942`). Under the conflict read the first-match answers only when the matching rows drive a
 single patient line, so it has no patient choice left to make; the step-2 record checks per hop that the PROPOSE word
 is the word of the single active patient line. M1 claims one thing: the identity of each hop's patient and the
 abstain on ambiguity are decided by spiking reads of the bound store.
@@ -315,17 +334,31 @@ Predictions, written before any M1 code exists:
 - P6 (A11): p_prey_eat is derived through the FIRST-taught patient (frog), reproduced on .rep0.
 - P7 (A13, A14): p_prey_eat derived_svo `[frog, eat, gnat]` on both routes; in A14 both hops show blocks_matched = 2,
   patient_lines_active = 1, acc_conf_spikes = 0 and gate_decision ADVANCE.
+- P8 (A12, reported only, never a bar): with t_heron_hunt acquired on that seed (`teach_acquired`; else the seed is
+  UNDEFINED for P8), p_prey_eat is derived `[gnat, eat, frog]` from `[[heron, hunt, gnat], [gnat, eat, frog]]`
+  through two recorded spiking hops, as the gate-off diagnostic arm derived it through the list.
+
+General engagement rule for every M1 arm: the arm's hop records must show `ws_seed` equal to the arm seed and, where
+the bar reads a hop, a hop scope that opened and closed without an exception. A seed that fails this is UNDEFINED for
+that bar, never PASS and never FAIL.
 
 Bars (each on every dev seed 1-6; design seed 7 is excluded from the count):
-- **B1 conclusion:** P1 holds.
+- **B1 conclusion:** P1 holds. Engagement precondition: A1's p_prey_eat carries both hop records (B7); with no hop
+  record the old `_hop` may have answered, so the seed is UNDEFINED for B1.
 - **B2 ownership:** P2's two fields hold; the bar reads derived_svo and derived_from only. It is scored only against
   A3a and A3b run at the step-2 revision; until they exist B2 is UNDEFINED. A seed where A3a does not follow the list
-  (the 10-26 result does not reproduce) is UNDEFINED for B2, and the non-reproduction is reported first.
-- **B3 PROPOSE necessary:** P3 holds and reproduces.
-- **B4 workspace necessary:** P4 holds and reproduces.
+  (the 10-26 result does not reproduce) is UNDEFINED for B2, and the non-reproduction is reported first. A3's
+  p_prey_eat must carry both hop records (the flag engaged under the scramble), else UNDEFINED.
+- **B3 PROPOSE necessary:** P3 holds and reproduces. Engagement precondition: hop 1 of p_prey_eat was entered and
+  recorded `proposed` None with `drives[0]` = 0 (the lesion held inside the hop); a missing hop record or a route
+  exception makes the seed UNDEFINED (no derived answer for another reason is not the lesion's effect).
+- **B4 workspace necessary:** P4 holds and reproduces. Engagement precondition: hop 1 of p_prey_eat recorded
+  `proposed` = frog, `drives[0]` = IGNITE_PA, the lesioned workspace bridge, and `n_ignited` = 0; otherwise UNDEFINED
+  (an absent conclusion with PROPOSE empty or the route crashed says nothing about the workspace).
 - **B5 multi-valued abstain:** P5 holds on both routes; engagement precondition: two decoded rows with two different
   decoded patients under the ambiguous cue (the default appended a re-told patient in the 10-12 dev-7 retell smoke; a
-  REWRITE makes the seed UNDEFINED, never PASS).
+  REWRITE makes the seed UNDEFINED, never PASS). In A8 and A10 the abstain must come from the abstaining hop's
+  `gate_decision` ABSTAIN, not from a miss or an exception; otherwise UNDEFINED.
 - **B6 conflict unit necessary:** P6 holds and reproduces. Engagement precondition, on the same seed and the same hop
   (hop 1 of p_prey_eat): A8 shows blocks_matched = 2, patient_lines_active = 2 and acc_conf_spikes > 0 (the unit
   sees the conflict when intact), and A11 and its .rep0 show blocks_matched = 2, patient_lines_active = 2,
@@ -337,7 +370,9 @@ Bars (each on every dev seed 1-6; design seed 7 is excluded from the count):
   fields equal A0.
 - **B9 answer rate:** per label, flag-on (A1, A8, A10, A14) against flag-off (A0, A7, A9, A13) on p_prey_eat,
   c_heron_hunt, c_frog_eat, c_prey_chase, p_yesno, c_dog_chase: no label answered off and abstained on. Read by
-  `tools/answer_rate.py --labels`, which the M1 build adds (section 7); FLIP-HURTS-ANSWERS is reported.
+  `tools/answer_rate.py --labels`, which the M1 build adds (section 7); FLIP-HURTS-ANSWERS is reported. A seed whose
+  flag-on arms carry no hop record on p_prey_eat is UNMEASURED (equal answer rates from a flag that never engaged are
+  not evidence of no harm).
 - **B10 flag-off identity:** with the flag unset, A0's primary fields equal an `intact_a` arm run at the base
   revision (before any M1 code) on the same seed, and the unit golden holds.
 - **B11 duplicate is not a conflict:** P7 holds. Engagement precondition: on that seed the re-tells appended, i.e.
@@ -369,6 +404,8 @@ of a re-told cue light the same line and the two blocks of an ambiguous cue ligh
 the arm seed. If a true match is missed on any seed, STOP: post the counts; the circuit is banked and the named next
 carrier is the cs-race engram race read for co-latching (two latches ON = conflict). If a patient line is missing,
 wrong or not unique, STOP: the patient identity the unit would count is not on the substrate at this fidelity. If the
+probe's agent or action slice differs from `block_cleanup_scores` on any block (the probe skips no reserve slots, the
+production read does), STOP and post the difference: the probe is not reading what the build would read. If the
 re-tells did not append on any seed, B11 is predicted UNDEFINED and the step-1 circuit test carries the duplicate
 case. Post `[c2-hops-0] RESULT`, STOP for Claude.
 
@@ -427,10 +464,13 @@ plastic T->role projection and discharge on commit), add a `role_seq=` build opt
   brain already hears (the teacher channel), with word->role and pos->role frozen while they learn (the frame
   packet's rule). With SVO exposure, O->agent, RT_agent->action and RT_action->patient potentiate. No code names an
   order: the order is whatever the exposure contained.
-- **The read.** A heard assertion is comprehended when agent, action and patient each commit exactly once, every
-  content token commits exactly one role, and no closed-class token commits a role (the frame packet's MM1 clause).
-  The M3 margin is the minimum over the three roles of the commit gate's winner-minus-runner-up spike count,
-  normalised by the in-sample median.
+- **The read.** A heard assertion is comprehended when agent, action and patient each commit exactly once over the
+  utterance and no token commits two roles. The read uses no word list: which tokens are closed-class is never told
+  to the brain. The M3 margin is the minimum over the three roles of the commit gate's winner-minus-runner-up spike
+  count, normalised by the in-sample median; this arithmetic and its threshold are host, declared in the header.
+  The instrument, not the brain, records which token committed which role; a role committed on a closed-class item
+  fails that item in the battery (the frame packet's MM1 clause, applied by the scorer, which knows each item's
+  structure).
 - **Carrier (ruled, section 7).** The traces must outlive the per-word reset. M3's carrier is the cs-race persistent
   word trace now in flight, feeding the word-role parser: the f1h held apical plateau
   (`research/coordination/cs-race-f1h-PACKET.md`; its step-0 RESULT on main: the plateau held, C0 8/8 on every grid
@@ -446,7 +486,8 @@ fully-covered branch, the out-of-competence pass-through and the known-fact hono
 for every input that is not fully OOV). The M3 threshold is calibrated at build from the exposure statements re-heard
 (in-sample well-formed only; no garbled item enters calibration), as D4's own build calibration does. The stored
 triple keeps the production store path; the M3 commit roles are recorded beside it, and a teach is stored only when
-the two agree (a disagreement refuses; counted and reported).
+the two agree (a disagreement refuses; counted and reported). That agreement check is a host decision about what the
+brain keeps, declared in the header.
 
 ### 3.4 Tables: what M3 adds and what stays
 
@@ -476,7 +517,12 @@ passes to the store path untouched at the reply level. The nonce-determiner item
 
 Arms: intact; role-sequence lesion (RT->role and O->role gates closed at read, persistence verified); carrier lesion
 (traces not held across the reset); frame lesion (T->role closed); transplant (only the O->role and RT->role blocks of
-the verb-initial organ copied into the SVO organ, same seed).
+the verb-initial organ copied into the SVO organ, same seed). The role-sequence lesion closes two projections that
+together carry the learned order; the two halves (O->role only, RT->role only) are reported beside it, never barred,
+so the record shows which half carries the effect. The carrier lesion removes every held trace (T, O and RT), so it
+is not specific to the order cue; the role-sequence lesion is the specific one. Transplant engagement: the copied
+blocks of the recipient equal the donor's weights after the copy, and every other block equals the recipient's own;
+otherwise OM5 is UNDEFINED.
 
 Bar-sanity generators, scored by the real scorer, n >= 1000: perfect; null-position-cue (the multicue organ's
 position vote: accepts G); null-accept-all-OOV (gate off); null-refuse-all-OOV (today's D4); null-English-template (a
@@ -486,7 +532,9 @@ perfect >= 0.95 and every null <= 0.05 on the composite; the record names the ba
 ### 3.6 Reply-level arms (stage-2 runner, informational; dev seeds 1-6)
 
 - **m3_permuted:** the frozen permuted `infer` table with M3 on. t_heron_hunt acquired (`teach_acquired`), and
-  p_prey_eat derived with terminal frog.
+  p_prey_eat derived with terminal frog. Engagement precondition: t_heron_hunt's `comprehension` record is non-null
+  with `in_scope` true and carries the M3 margin (the M3 branch decided the teach); otherwise the seed is UNDEFINED
+  for R1, since an acquisition through any other path is not M3's.
 - **m3_intact:** intact `infer` with M3 on: primary fields equal the flag-off arm.
 - **m3_rs_lesion (+ .rep0):** the frozen permuted `infer` table with M3 on and the role-sequence lesion
   (`BRAIN_COMPREHENSION_LEARNED_ORDER_LESION=1`: RT->role and O->role closed at read). Prediction: t_heron_hunt
@@ -525,7 +573,8 @@ Organ (each per seed on dev seeds 1-15; at least 14 of 15 seeds must meet every 
 - **OM7 identity:** with `role_seq=None` the frame-packet pins hold; the D4 decision is unchanged on every
   non-fully-OOV item of the committed D4 battery.
 
-Reply (dev seeds 1-6, every seed): R1 m3_permuted acquires t_heron_hunt and p_prey_eat ends on frog; R2 every G teach
+Reply (dev seeds 1-6, every seed): R1 m3_permuted acquires t_heron_hunt and p_prey_eat ends on frog (with the 3.6
+precondition); R2 every G teach
 in m3_garbled is refused and no later probe recalls it (with the 3.6 precondition and teeth); R3 m3_intact equals
 flag-off on primary fields; R4 no FLIP-HURTS-ANSWERS; R5 flag unset is byte-identical; R6 m3_rs_lesion refuses
 t_heron_hunt and derives nothing on p_prey_eat, on every seed and its .rep0 (with the 3.6 precondition).
