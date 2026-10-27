@@ -789,6 +789,19 @@ class CoreSimConfig:
     # and, with bdsp_apical_couples_soma ON, the held plateau lifts the soma -> measured bursts B rise -> directed credit.
     # Default False => neither term is computed => byte-identical to the prior plain leaky integration.
     bdsp_apical_bistable: bool = False
+    # APICAL GABA_A ROUTING (cs-race f1i section E, 2026-10-27; additive, DEFAULT OFF). Dendrite-targeting (SOM /
+    # Martinotti-like) inhibition: synapses of a plan pathway tagged receptor="gaba_a_apical" are REMOVED from the
+    # somatic g_i matvec and instead increment a per-neuron APICAL conductance cp_conductance_g_apical_gaba (decays at
+    # the GABA_A syn_tau_g_i; no new time constant), which the BDSP apical update applies against the apical voltage as
+    # a BOUNDED exponential-Euler term toward syn_reversal_potential_i (-75 mV): one step moves v_apical by
+    # (E_i - v)(1 - exp(-g*dt/apical_tau_ms)), reaching E_i at most and never passing it at any g (the 2026-09-29
+    # overshoot family; never the explicit g*(E_i - v)). Requires enable_bdsp and a runner-supplied
+    # cp_bdsp_apical_drive; raises (never a silent somatic fallback) on a tagged pathway with this flag off, with
+    # enable_bdsp off, with enable_two_compartment_dap on, from a non-inhibitory source, with a negative weight, on a
+    # graded / coincidence synapse, or on a (pre,post) shared with an untagged edge. Default False and no tagged
+    # pathway => no array is allocated and no new code path is entered (byte-identical; tests/test_apical_gaba_routing.py).
+    enable_apical_gaba_routing: bool = False
+    apical_gaba_propagation_strength: float = 1.0  # per-spike apical conductance increment scale, in apical-leak units
     # Poirazi-Mel 2003 WEIGHTED-subunit refinement (2026-06-09). The count form above switches the plateau
     # on the bare COUNT of coincident routed inputs (c_i = mask^T @ prev_fired), so it is WEIGHT-BLIND: a
     # sparse-distinct ensemble that fires >= K cells everywhere triggers the same plateau regardless of the
