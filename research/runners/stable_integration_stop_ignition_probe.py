@@ -23,6 +23,8 @@ integrators, so its re-calibration is read off measured curves, never off replie
                 per-spike depression boost on the shared recurrence for PULSE_DURATION steps, read again, intact and
                 with the normalization lesion. The organ's rule puts the full-conflict boost inside the window where
                 the intact workspace clears and the lesioned one does not (production: ~0.13 inside [0.09, 0.15]).
+  --margins     the conflict sensor's two levels (confident single-content margin, co-ignited conflict margin),
+                repeated, at a calibration: the organ's MARGIN_REF is "halfway between" them.
   --organ       the organ's own GO gate (`evaluate_seed`: global stop, selectivity, divisive-norm and STD load-bearing,
                 scramble, conflict-off, continuous stop without restore, byte-identical substrate, determinism) at a
                 named calibration on a named integrator.
@@ -366,6 +368,56 @@ def run_stopwin(seed, calib, arms=("off", "on"), boosts=STOP_BOOSTS, contents_li
     return out
 
 
+def run_margins(seed, calib, arms=("on",), repeats=16, contents_list=((0, 1, 2), (0, 1))):
+    """The conflict sensor's two levels at calibration `calib`, read exactly as the organ reads them: the CONFIDENT
+    single-content margin (`run_confident`: pattern 0 at STRONG_PA x DRIVE_STEPS, CONF_HOLD_STEPS hold, the 45-step
+    read) and the CONFLICT margin (`run_conflict_stop`'s pre read: the held contents at STRONG_PA x DRIVE_STEPS, the
+    45-step read), `repeats` trials each (the noise stream runs on between trials). The organ's MARGIN_REF is stated
+    as "halfway between single-content and co-ignition": these are the two levels it sits between."""
+    DM = _dm()
+    thal_pa = thal_of(calib)
+    out = {"runner": "research/runners/stable_integration_stop_ignition_probe.py --margins", "seed": int(seed),
+           "calibration": calib, "repeats": int(repeats), "arms": {}}
+
+    def _summ(xs):
+        return {"mean": round(float(np.mean(xs)), 4), "sd": round(float(np.std(xs)), 4),
+                "min": round(float(np.min(xs)), 4), "max": round(float(np.max(xs)), 4),
+                "p10": round(float(np.percentile(xs, 10)), 4), "p90": round(float(np.percentile(xs, 90)), 4)}
+
+    with stop_calibration(calib):
+        out["strong_pa_used"] = float(DM.STRONG_PA)
+        out["margin_ref_used"] = float(DM.MARGIN_REF)
+        for arm in arms:
+            S = _build(seed, arm, calib)
+            b, xp = S["bridge"], S["xp"]
+            std = DM.WorkspaceDepression(b, xp, S["ws_used"])
+            conf = [DM.run_confident(b, xp, S["patterns"], S["privates"], S["thal"], S["snap"], std, thal_pa)
+                    for _ in range(int(repeats))]
+            res = {"confident": {"margin": _summ([c["margin"] for c in conf]),
+                                 "n_ignited_hist": {str(k): int(sum(c["n_ignited"] == k for c in conf))
+                                                    for k in range(4)},
+                                 "winner_is_target": int(sum(c["winner"] == 0 for c in conf)),
+                                 "rates": [c["rates"] for c in conf]}}
+            for contents in contents_list:
+                rows = []
+                for _ in range(int(repeats)):
+                    DM._full_restore(b, S["snap"])
+                    std.reset()
+                    DM._drive(b, xp, S["thal"], thal_pa, std, [(S["patterns"][c], DM.STRONG_PA) for c in contents])
+                    pre = DM._read_private_rates(b, xp, S["thal"], thal_pa, S["privates"], std)
+                    _w, m, n = DM._margin(pre)
+                    rows.append({"rates": [round(r, 4) for r in pre], "margin": round(float(m), 4), "n": int(n)})
+                res["conflict_n%d" % len(contents)] = {
+                    "margin": _summ([r["margin"] for r in rows]),
+                    "n_ignited_hist": {str(k): int(sum(r["n"] == k for r in rows)) for k in range(4)}, "rows": rows}
+            out["arms"][arm] = res
+            print("[stop margins] %s s%d %s | confident %s n%s | %s" % (
+                arm, seed, json.dumps(calib), res["confident"]["margin"], res["confident"]["n_ignited_hist"],
+                " | ".join("%s %s n%s" % (k, v["margin"], v["n_ignited_hist"]) for k, v in res.items()
+                           if k.startswith("conflict"))), flush=True)
+    return out
+
+
 def run_organ(seed, arm, calib):
     """The organ's own GO gate (`evaluate_seed`) at calibration `calib` on integrator `arm`, plus the membrane read of
     its global-stop trial (the workspace's out-of-range cells during the conflict + stop, with the organ's own
@@ -404,6 +456,7 @@ def main():
     ap.add_argument("--boosts", default=",".join("%g" % x for x in STOP_BOOSTS))
     ap.add_argument("--repeats", type=int, default=1, help="--stopwin trials per boost")
     ap.add_argument("--held", default="012,01", help="--stopwin held sets, e.g. '012,01'")
+    ap.add_argument("--margins", action="store_true", help="confident vs conflict sensor margins (--repeats)")
     ap.add_argument("--organ", action="store_true")
     a = ap.parse_args()
     if a.seed in GATE_SEEDS:
@@ -412,7 +465,10 @@ def main():
     calib = json.loads(a.calib) if a.calib else {}
     weights = [float(x) for x in a.weights.split(",") if x.strip()]
     drives = [float(x) for x in a.drives.split(",") if x.strip()]
-    if a.organ:
+    if a.margins:
+        d = run_margins(a.seed, calib, arms=arms, repeats=a.repeats,
+                        contents_list=tuple(tuple(int(c) for c in g) for g in a.held.split(",") if g.strip()))
+    elif a.organ:
         d = {"arms": {arm: run_organ(a.seed, arm, calib) for arm in arms}}
     elif a.stopwin:
         d = run_stopwin(a.seed, calib, arms=arms, boosts=[float(x) for x in a.boosts.split(",") if x.strip()],
