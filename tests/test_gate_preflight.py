@@ -12,7 +12,7 @@ import gate_preflight as G  # noqa: E402
 POOL_QUEUE = ROOT / "tools" / "pool_queue.sh"
 HEAD_SHA = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True,
                           check=True).stdout.strip()
-PREREG = "CLAUDE.md"
+PREREG = "research/findings/2026-09-29-host-share-baselines-PREREGISTRATION.md"   # a real committed prereg (the gate-seed guard requires "prereg" in the name)
 MOD = "tools.fake_canary_runner"
 
 

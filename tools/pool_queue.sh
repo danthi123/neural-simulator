@@ -245,6 +245,20 @@ case "${1:-list}" in
              echo "   Add to --checked: '... prereg <path/to/PREREGISTRATION.md> ...'. Dev seeds (7, 1-15) are unaffected." >&2
              exit 2
            fi
+           # NAME CHECK (2026-10-27): "committed" is not "a preregistration". On 2026-10-22 the driver queued cs-race f1g
+           # gate-seed lines (seeds 41-48 incl. 42/43/44) citing research/coordination/LOCAL_LLM_RUNBOOK.md, which exists
+           # at the pin and so passed the cat-file test below. A runbook, packet or ruling is not a prereg: the cited
+           # basename must contain "prereg" (case-insensitive), the *prereg*.md convention tools/smoke_first.py and the
+           # CLASS BAR gate already read (*-PREREGISTRATION.md, *-PREREG.md, *-prereg.md, *-PREREGISTERED.md).
+           GS_PREREG_BASE=$(printf '%s' "${PREREG_PATH##*/}" | tr '[:upper:]' '[:lower:]')
+           case "$GS_PREREG_BASE" in
+             *prereg*) ;;
+             *)
+               echo "⛔ REFUSED: GATE seed(s) [$HIT_GATE_SEEDS]: '$PREREG_PATH' is not a preregistration (its file name must contain 'prereg', the *prereg*.md convention)." >&2
+               echo "   A runbook, packet or ruling is not a prereg; cite the committed *-PREREGISTRATION.md / *-PREREG.md for this measurement." >&2
+               exit 2
+               ;;
+           esac
            if [ -z "$GS_PINNED_REV" ]; then
              echo "⛔ REFUSED: GATE seed(s) [$HIT_GATE_SEEDS] need the job pinned to a revision (cd ~/derisk-pool/revisions/<sha>)" >&2
              echo "   so prereg '$PREREG_PATH' can be verified to exist there." >&2

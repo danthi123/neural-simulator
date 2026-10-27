@@ -26,7 +26,7 @@ POOL_QUEUE = ROOT / "tools" / "pool_queue.sh"
 HEAD_SHA = subprocess.run(
     ["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True, check=True
 ).stdout.strip()
-EXISTING_PATH = "CLAUDE.md"           # committed at HEAD in every checkout of this repo
+EXISTING_PATH = "research/findings/2026-09-29-host-share-baselines-PREREGISTRATION.md"   # a real committed prereg at HEAD (name must contain "prereg")
 MISSING_PATH = "docs/no-such-prereg-xyz-zzz.md"
 
 
@@ -121,6 +121,78 @@ def test_refuses_comma_separated_gate_seeds_without_prereg(tmp_path):
     assert res.returncode == 2
     assert "REFUSED" in res.stderr
     assert _queue_is_empty(tmp_path)
+
+
+# ------------------------------------------- the cited path must be NAMED a prereg (2026-10-27 loophole closed)
+# On 2026-10-22 cs-race f1g gate-seed lines (seeds 41-48 incl. 42/43/44) were queued with
+# `prereg research/coordination/LOCAL_LLM_RUNBOOK.md`: it is committed at the pin, so the cat-file test passed. A
+# runbook / packet / ruling is not a preregistration; the basename must contain "prereg" (case-insensitive).
+RUNBOOK_PATH = "research/coordination/LOCAL_LLM_RUNBOOK.md"
+
+
+def test_refuses_gate_seed_citing_a_committed_runbook_as_its_prereg(tmp_path):
+    assert subprocess.run(["git", "cat-file", "-e", f"HEAD:{RUNBOOK_PATH}"], cwd=ROOT).returncode == 0
+    _canary_pass(tmp_path)
+    res = _run(
+        ["add", f"{_pinned(HEAD_SHA)} && true -m {CANARY_MOD} --seeds 41 42 43 44",
+         "--checked", f"prereg {RUNBOOK_PATH} cs-race f1g gate seeds"],
+        tmp_path,
+    )
+    assert res.returncode == 2
+    assert "REFUSED" in res.stderr
+    assert "42" in res.stderr and "43" in res.stderr and "44" in res.stderr
+    assert "not a preregistration" in res.stderr
+    assert "prereg" in res.stderr and RUNBOOK_PATH in res.stderr
+    assert _queue_is_empty(tmp_path)
+
+
+def test_refuses_other_committed_non_prereg_paths_on_a_gate_seed(tmp_path):
+    # CLAUDE.md and a ruling-style file exist at HEAD but are not preregistrations either
+    _canary_pass(tmp_path)
+    for bad in ("CLAUDE.md", "docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md"):
+        res = _run(["add", f"{_pinned(HEAD_SHA)} && true -m {CANARY_MOD} --seed 102", "--checked", f"prereg {bad}"],
+                   tmp_path)
+        assert res.returncode == 2, bad
+        assert "not a preregistration" in res.stderr, bad
+        assert _queue_is_empty(tmp_path), bad
+
+
+def test_name_check_is_on_the_basename_not_the_directory(tmp_path):
+    # a directory called prereg/ does not make a runbook a prereg
+    _canary_pass(tmp_path)
+    res = _run(["add", f"{_pinned(HEAD_SHA)} && true -m {CANARY_MOD} --seed 43", "--checked",
+                "prereg research/prereg/LOCAL_LLM_RUNBOOK.md"], tmp_path)
+    assert res.returncode == 2
+    assert "not a preregistration" in res.stderr
+    assert _queue_is_empty(tmp_path)
+
+
+def test_dev_seed_may_still_cite_a_non_prereg_path(tmp_path):
+    res = _run(["add", f"{_pinned(HEAD_SHA)} && true --seed 7", "--checked", f"prereg {RUNBOOK_PATH} dev smoke"],
+               tmp_path)
+    assert res.returncode == 0, res.stderr
+    assert "queued" in res.stdout
+
+
+def test_accepts_a_lowercase_prereg_named_path(tmp_path):
+    # the name convention is case-insensitive: *-prereg.md (lowercase) passes the name check and the pinned-rev check
+    lower = "research/findings/2026-10-12-validation-battery-prereg.md"
+    assert subprocess.run(["git", "cat-file", "-e", f"HEAD:{lower}"], cwd=ROOT).returncode == 0
+    _canary_pass(tmp_path)
+    env_pf = tmp_path / "preflight.tsv"
+    env_pf.write_text("2026-10-16 00:00\t%s\t%s\tCLEAN\tok\t\tfixture\n" % (lower, HEAD_SHA[:9]))
+    env = dict(os.environ)
+    env.update(GATE_PREFLIGHT_PATH=str(env_pf), POOL_QUEUE_PATH=str(tmp_path / "pool.queue"),
+               POOL_SSH_CONFIG=str(tmp_path / "no-such-pool-ssh-config"),
+               POOL_EXTRA_NODES_FILE=str(tmp_path / "no-such-extra-nodes"),
+               POOL_CANARIES_PATH=str(tmp_path / "pool_canaries.tsv"))
+    res = subprocess.run(
+        ["bash", str(POOL_QUEUE), "add", f"{_pinned(HEAD_SHA)} && true -m {CANARY_MOD} --seed 101",
+         "--checked", f"prereg {lower} lowercase convention"],
+        cwd=ROOT, env=env, capture_output=True, text=True, timeout=30)
+    assert res.returncode == 0, res.stderr
+    assert "queued" in res.stdout
+    assert (tmp_path / "pool.queue").read_text().strip() != ""
 
 
 # ------------------------------------------------------------------------ gate seeds accepted with a prereg
