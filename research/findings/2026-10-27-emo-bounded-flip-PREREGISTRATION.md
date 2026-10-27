@@ -157,3 +157,79 @@ sidecars). Read beside the records, not as bars:
 - A scorer for B4 (the engagement keys on every ON feel read) and the whole-record compare of B6 (apart from the five keys),
   with tests and a bar-sanity record each, filed as an amendment before gate lines are emitted.
 - Gate revision F, and the emitted TSV.
+
+## Amendment 1 (2026-10-27): the readers section 6 owed, their bar-sanity records, B8 confirmed, gate revision F
+
+bar-sanity: docs/drafts/emo-bounded-flip/bar_sanity_record_b4.json
+bar-sanity: docs/drafts/emo-bounded-flip/bar_sanity_record_b6.json
+
+This amendment changes no bar. Sections 1 to 5 stand word for word; B1 to B8 and DEC are the ruling's words. It discharges
+section 6 (the readers, their tests and bar-sanity records, gate revision F, the emitted TSV) and fixes two readings of a
+scorer, before any gate-seed run. No gate seed has been run for this flip.
+
+**Scorer commands** (repo root, as modules so provenance sidecars are written; tests: `tests/test_emo_flip_score.py`, 24).
+- All eight bars and DEC in one read: `python -m research.runners.emo_flip_score --on-dir research/findings/raw/_emo_bounded_flip/gate_on
+  --off-dir research/findings/raw/_emo_bounded_flip/gate_off --out research/findings/raw/_emo_bounded_flip/verdict.json --pin <F, full sha>`.
+  It prints PASS, FAIL or UNDEFINED per bar with the shard and turn behind each, then `DEC`. Defaults are this protocol's: row tags
+  `emo-bounded-flip-gate-on` / `-off` under `research/findings/raw/_load_bearing/_shards`, the 10-26 reference
+  `research/findings/raw/_stage2_exit/gate/aggregate.json`. `--pin` makes each row cell's sidecars a `git_archive` measurement of F
+  (lb_shard's B2b rule; a cell that fails it is UNDEFINED); without it that check is not made.
+- The pieces, as the prereg named them, read the same cells: B1 to B3 `python -m research.runners.stage2_exit_gate --aggregate
+  <ON dir> --seeds 42,43,44,100,101,102` (emo group; the combined scorer calls the same function); B5 the same on the OFF
+  directory against the reference; B7 `python tools/answer_rate.py paired --on-tag emo-bounded-flip-gate-on --off-tag
+  emo-bounded-flip-gate-off --faculty emotion-category` and `python -m research.runners.emotion_category_dev --flip-check <ON>
+  <OFF> --seeds 42,43,44,100,101,102` (its `FLIP-HURTS-ANSWERS` only, reading 1 below); B4, B6, B8 `--only B4`, `--only B6`, `--only B8`.
+- Dev-seed read for `tools/gate_preflight.py`: the same command with `--seeds 7 --only B1,B2,B3,B4,B6` over dev-seed shards (B5 has no
+  10-26 reference at a dev seed).
+- Status rule for every bar (how a cell that cannot show the bar is read; no threshold moves): FAIL if any defined cell breaks the
+  bar; else UNDEFINED if any shard, turn, key or pair is missing, errored or unreadable (never a pass); else PASS. DEC is PASS only
+  when all eight read PASS, and then reads "flip the default ON before the 11-21 re-pin"; anything else reads "STOP with the data"
+  and names the FAIL and the UNDEFINED bars. A B5 mismatch is UNDEFINED (the OFF half does not reproduce the 10-26 gate) and holds
+  the ON half unread, as section 2 says.
+
+**Two readings fixed here.**
+1. B6, the feel half. Section 2 reads `FEEL-NOT-APPEND-ONLY` of `--flip-check` as the feel-text check. That flag asks whether the ON
+   text is the OFF text plus exactly one clause, which holds when the OFF arm has no clause (the organ flag `BRAIN_EMOTION_CATEGORY=0`).
+   Here both arms append a clause ("... is joy." or "No single emotion channel latched ..."), so it fires on every feel turn of
+   a perfect brain, and B6 would be unreachable. The ruling's own words are read instead: the feel text before the category clause
+   is identical ON vs OFF (the clause may differ), by `score_b6`; pinned by `test_the_prereg_flip_check_feel_flag_fires_on_a_perfect_pair_which_is_why_b6_does_not_read_it`.
+   The non-feel half is the whole record: every field at every depth of every non-feel turn, after the five engagement keys are
+   dropped at any depth from both sides; a sixth `bounded_*` key is a difference; the first differing path is printed. That
+   subsumes `FLIP-CHANGES-NONFEEL` (answer, abstained, recalled_svo only). On the six 10-26 gate shards `intact_a` and `intact_b`
+   differ at 0 paths whole-record, so a deterministic build can pass it.
+2. B4 checks the four fields section 2's scoring text lists (`bounded_flag` True, `bounded_env` "1", `bounded_readback` True,
+   `oor_count_session` the integer 0) on every `feel_*` response of every ON shard. B8 adds a validity condition and no bar: a flag-ON
+   row cell whose intact arms do not show `bounded_flag` and `bounded_readback` True is UNDEFINED, not a measurement of the flag ON.
+
+**Bar-sanity records** (`tools/bar_sanity.py`, n = 1000 per generator, seed 0, decide = the scorer itself on synthetic shards with
+the production reply surfaces; specs `docs/drafts/emo-bounded-flip/bar_sanity_spec_b4.py` and `_b6.py`):
+
+| bar | record | verdict | perfect brains | null brains |
+|---|---|---|---|---|
+| B4 | `bar_sanity_record_b4.json` | OK | 3, each passes 1.000 | 19, each passes 0.000 |
+| B6 | `bar_sanity_record_b6.json` | OK | 4, each passes 1.000 | 20, each passes 0.000 |
+
+A first trial of the B6 spec read UNREACHABLE for the perfect brain; that was the spec's own synthetic builder desynchronising its
+random stream between the ON and OFF builds when the organ latched, fixed in the builder before the records above. B1 to B3 stay
+covered by `bar_sanity_record_c4_emo.json`. B5, B7 and B8 read existing instruments (an aggregate comparison, `flip_check` plus
+`answer_rate`, and the lb_shard row records); they have no record here and are not claimed to.
+
+**B8 confirmed.** Claude confirmed on 2026-10-27 that section 2's reading of "stays load-bearing" as "6 of 6" seeds stands.
+
+**Gate revision F.** F is `7bf5bd7dd355b79c269b5b204c20465e02b10443`, the commit that contains the scorers (it supersedes section 3's
+"the tip of main after Claude merges this file"). It does not contain current main, and the pool provisioner refuses a revision that does
+not; so when this branch is merged, the F put in the lines is the tip of main that contains it, which must carry
+`research/runners/emo_flip_score.py` byte-identical (sha256 `5d5f96d76eaab47aeb7fa8cffe3595cd4efb9faca59b18168a41e7d6257239cf`),
+and the harness files the lines run (`research/runners/stage2_exit_gate.py` sha256 `67bfd30b66d266748d9e06b0ef393d23ab03f5be3b22b2e84831ec094616a177`,
+the emotion-category organ, `tools/lb_shard.py`, `tools/answer_rate.py`, `research/runners/load_bearing_fraction.py`, the
+emotion-category lbf row) unchanged from F. Checked 2026-10-27: at the server's main `d3bb83adb`, each of those files is identical to F's.
+
+**Gate lines.** `research/coordination/emo-bounded-flip-gate-lines.txt`, 72 pool lines (TSV: command, then the `--checked` reason that
+names `prereg research/findings/2026-10-27-emo-bounded-flip-PREREGISTRATION.md`), emitted by `python -m research.runners.emo_flip_lines
+[<F>]` with `<sha>` left as a placeholder: 60 Stage-2 emo lines (6 gate seeds x 5 arms, ON and OFF; the runner's own lines with `--prereg`
+and `--out` edited and, ON only, `BRAIN_EMOTION_CATEGORY_BOUNDED=1` added to the env block) and 12 row lines (`tools/lb_shard.py jobs`
+as section 3 gives it, wrapped in `mem_ok.sh 9 1` and `memcap.sh 12`). The Stage-2 lines declare `mem_gb=9` under a 10 GB memcap, as the
+10-26 gate lines did; the row lines declare `mem_gb=9` as well (the same tiny-demo brain) under a 12 GB cap, as earlier lb_shard row lines,
+because the battery's parent process shares the arm subprocess's cgroup and the dev smoke recorded no peak for this row. Nothing is
+queued by this amendment. Before `pool_queue.sh` accepts a gate-seed line it still needs a passing pool canary of
+`research.runners.stage2_exit_gate` and of `research.runners.load_bearing_fraction` at F, and a `gate_preflight` read of this prereg at F.
