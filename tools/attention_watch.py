@@ -13,6 +13,8 @@ Events already reported are suppressed for REPEAT_H hours (state file outside th
   python3 tools/attention_watch.py --once          # print current events (does not update the state file)
   python3 tools/attention_watch.py --loop          # poll every --interval s; print new events and exit
   python3 tools/attention_watch.py --ack KEY       # silence one event key for REPEAT_H hours
+  tools/status.sh runs `--once` (on the server: the server checks, run locally), so the driver sees every event each wake;
+  .claude/hooks/watcher_guard.py tells Claude to re-arm `--loop` whenever it is not running (reboot, new session, compaction).
 
 Checks: W GPU idle with an empty queue; a GPU job exiting non-zero; a degraded brain build in the GPU log
 (missing untracked inputs); an oom-kill; S NEEDS CLAUDE lines; the S driver silent; the S pool idle or not claiming;
@@ -122,9 +124,9 @@ sed -n '/^## NEEDS CLAUDE/,$p' $rb | tail -n 800
 """ % {"repo": S_REPO, "days": RULE_LOOKBACK_D}
 
 
-def s_checks(now):
+def s_checks(now, local=False):
     ev = []
-    rc, out = sh(S_EXEC + [S_PROBE], timeout=90)
+    rc, out = sh(["bash", "-c", S_PROBE] if local else S_EXEC + [S_PROBE], timeout=90)
     if rc != 0 or "@@NOW" not in out:
         return [("s-unreachable", f"S probe failed rc={rc}: {out[-200:]}")]
     sec, cur = {}, None
@@ -170,8 +172,14 @@ def s_checks(now):
     return ev
 
 
-def run_once(st, now, record):
-    events = w_checks(st, now) + s_checks(now)
+def run_once(st, now, record, host="auto"):
+    if host == "auto":
+        host = "s" if os.path.realpath(REPO) == os.path.realpath(S_REPO) else "both"
+    events = []
+    if host in ("both", "w"):
+        events += w_checks(st, now)
+    if host in ("both", "s"):
+        events += s_checks(now, local=(host == "s"))
     fresh = []
     for key, msg in events:
         last = st["seen"].get(key)
@@ -188,6 +196,8 @@ def main():
     ap.add_argument("--loop", action="store_true")
     ap.add_argument("--interval", type=int, default=300)
     ap.add_argument("--ack", default=None)
+    ap.add_argument("--host", choices=("auto", "both", "w", "s"), default="auto",
+                    help="auto: on the server checkout run the server checks locally; elsewhere both hosts (server via ssh)")
     a = ap.parse_args()
     st = load_state()
     if a.ack:
@@ -196,11 +206,11 @@ def main():
         print("acked", a.ack)
         return 0
     if a.once:
-        for key, msg in run_once(st, time.time(), record=False):
+        for key, msg in run_once(st, time.time(), record=False, host=a.host):
             print(f"[{key}] {msg}")
         return 0
     while True:
-        fresh = run_once(st, time.time(), record=True)
+        fresh = run_once(st, time.time(), record=True, host=a.host)
         save_state(st)
         if fresh:
             for key, msg in fresh:
