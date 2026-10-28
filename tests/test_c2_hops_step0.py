@@ -720,3 +720,80 @@ def test_the_committed_pool_lines_file_matches_the_emitter():
         pytest.fail("research/coordination/c2-step0-pool-lines.txt is missing")
     got = [l.rstrip("\n") for l in open(p) if l.strip()]
     assert got == ["%s\t%s" % x for x in S0.pool_lines("<sha>")]
+
+
+# ── M3 step 0 (d) (packet 3.8, 3.6): the nine infer_garbled forms ─────────────────────────────────────────────────────
+def test_m3_forms_are_the_garbled_teaches_content_words():
+    words = [w for t in S0.M3_GARBLED_TEACHES for w in t.split() if w != "the"]
+    assert tuple(words) == S0.M3_GARBLED_FORMS and len(set(words)) == 9
+    assert S0.M3_GARBLED_TEACHES == ("the zib the vop tavs", "pels the kig the dov", "the bim ruvs fep the")
+    taught = {w for _l, m, _r in SG.C2_TABLES["infer"] for w in m.split()}
+    assert not taught & set(words)
+
+
+@pytest.fixture
+def m3_env(monkeypatch, tmp_path):
+    from research.runners import comprehension_production_organ as CPO
+    from research.runners import _comprehension_learned_animacy_spiking as LA
+    from research.runners import _comprehension_learned_verbselects_cue_derisk as LV
+    corpus = tmp_path / "data" / "corpus"
+    corpus.mkdir(parents=True)
+    (corpus / "tinystories.txt").write_text("Once the dog saw a bim. The bim ran.\nzibber is not zib-less\n")
+    monkeypatch.setattr(S0, "_REPO", str(tmp_path))
+    monkeypatch.setattr(LA, "_LEXICON", types.SimpleNamespace(scores={"dov": 0.4}))
+    monkeypatch.setattr(LV, "_LEXICON", types.SimpleNamespace(scores={}))
+    monkeypatch.setattr(CPO, "_animacy_of", lambda n: "animate" if n == "dov" else None)
+    monkeypatch.setattr(CPO, "_verb_selects_of", lambda v: None)
+    srv = types.ModuleType("webapp.server")
+    srv._brain_vocab = lambda chat: {"heron", "hunt", "frog", "kig"}
+    pkg = types.ModuleType("webapp")
+    pkg.__path__ = []
+    pkg.server = srv
+    monkeypatch.setitem(sys.modules, "webapp", pkg)
+    monkeypatch.setitem(sys.modules, "webapp.server", srv)
+    return tmp_path
+
+
+def test_read_m3_d_names_every_source_a_form_is_found_in(m3_env):
+    d = S0.read_m3_d(object())
+    assert d["corpus_read"] and d["brain_vocab_size"] == 4
+    assert d["per_form"]["bim"]["corpus_count"] == 2 and d["per_form"]["bim"]["found_in"] == ["corpus"]
+    assert d["per_form"]["zib"]["corpus_count"] == 1          # "zib-less" tokenizes to zib, as the lexicons tokenize
+    assert d["per_form"]["kig"]["found_in"] == ["brain_vocab"]
+    assert d["per_form"]["dov"]["found_in"] == ["animacy_of", "learned_animacy_vocab"]
+    assert d["per_form"]["fep"]["found_in"] == [] and d["redraw"] == ["zib", "kig", "dov", "bim"]
+    os.remove(str(m3_env / "data" / "corpus" / "tinystories.txt"))
+    d = S0.read_m3_d(object())
+    assert d["corpus_read"] is False and d["per_form"]["bim"]["corpus_count"] is None
+
+
+def _m3_shard(seed, redraw=(), corpus_read=True):
+    sh = _good_shard(seed, "infer")
+    per = {w: {"found_in": (["corpus"] if w in redraw else []), "corpus_count": 1 if w in redraw else 0}
+           for w in S0.M3_GARBLED_FORMS}
+    sh["c2_hops"]["reads"]["m3_d"] = {"corpus_read": corpus_read, "per_form": per, "brain_vocab_size": 9,
+                                      "redraw": list(redraw)}
+    return sh
+
+
+def test_score_m3_d_clean_redraw_undefined(tmp_path):
+    assert S0.score_m3_d(_m3_shard(3), 3)["verdict"] == "CLEAN"
+    r = S0.score_m3_d(_m3_shard(3, redraw=("bim",)), 3)
+    assert r["verdict"] == "REDRAW" and r["redraw"] == {"bim": ["corpus"]}
+    assert S0.score_m3_d(_m3_shard(3, corpus_read=False), 3)["verdict"] == "UNDEFINED"
+    sh = _m3_shard(3)
+    sh["corpus_present"] = False
+    assert S0.score_m3_d(sh, 3)["verdict"] == "UNDEFINED"
+    assert S0.score_m3_d(_good_shard(3, "infer"), 3)["verdict"] == "UNDEFINED"         # no m3_d read
+    root = str(tmp_path)
+    for seed in S0.SEEDS:
+        p = S0.shard_path(root, seed, "c2s0_infer")
+        os.makedirs(os.path.dirname(p), exist_ok=True)
+        json.dump(_m3_shard(seed, redraw=("kig",) if seed == 4 else ()), open(p, "w"))
+    assert S0.score_m3_step0(root)["verdict"] == "REDRAW"
+    assert S0.score_m3_step0(root, seeds=(1, 2, 3, 5, 6))["verdict"] == "UNDEFINED"      # every dev seed 1-6 needed
+    json.dump(_m3_shard(4), open(S0.shard_path(root, 4, "c2s0_infer"), "w"))
+    assert S0.score_m3_step0(root)["verdict"] == "CLEAN"
+    # the C2 verdict does not read m3_d: a REDRAW leaves the planted C2 GO a GO
+    _plant(root, edit=lambda seed, table, sh: (sh["c2_hops"]["reads"].update(m3_d={"redraw": ["bim"]}) or sh))
+    assert S0.score(root)["verdict"] == "GO"

@@ -27,6 +27,13 @@ THE READS (made once per full step-0 worker, after the teach block, before any `
   overwrite fixtures (A17's plan on `infer_amb1`, A19's on `infer_dup`) with their engagement record (i)-(iv).
   (h) seed 7 only: the `infer` table in three fresh workers (`c2s0_infer_bare`, `c2s0_infer_rec`, `c2s0_infer`).
 
+M3 STEP 0 (packet 3.8), the part that fits this runner: (d), the nine `infer_garbled` nonce forms checked against the
+hand tables, the learned lexicons, the corpus vocabulary and `_brain_vocab(chat)` on the `infer` table's full worker
+right after its four intact teaches (`read_m3_d`, scored report-only by `score_m3_step0`). Not built here: (a) needs the
+M3 nonce item generator (W, G1-G5, out-of-scope; fixed seed) as a step-0 table; (b) builds `WordRoleParserOrgan` with
+no server import on seeds 7, 1-6 and 8-16; (c) is a document read of the cs-race f1h/f1i results; (e) needs
+`frame_conforming` and the frame packet's exposure frames.
+
   .venv/bin/python -m research.runners.c2_hops_step0 --score research/findings/raw/_c2_step0 [--seeds 7] [--out X]
   .venv/bin/python -m research.runners.c2_hops_step0 --emit-pool-lines '<sha>' [--mem-gb 9]
 """
@@ -67,6 +74,15 @@ RETOLD_CUES = {"infer_dup": (("heron", "hunt"), ("frog", "eat"))}
 OVERWRITE_TABLES = {"infer_amb1": "amb1_worm_to_frog", "infer_dup": "dup_first_frog_to_worm"}
 XTIER_TABLE, XTIER_FIXTURE = "infer_xtier", "xtier_heron_hunt_fish"
 ABSENCE_CUE = ("frog", "chase")
+# M3 step 0 (d) (packet 3.8, 3.6): the three garbled teaches of `infer_garbled`, as the packet writes them, and their
+# nine nonce forms. The forms are checked on the `infer` table's full worker right after its four intact teaches (the
+# packet's "right after the four intact teaches"); a form found anywhere is redrawn before the table is pinned. Report
+# only: never a C2 GO or STOP input.
+M3_GARBLED_TEACHES = ("the zib the vop tavs", "pels the kig the dov", "the bim ruvs fep the")
+M3_GARBLED_FORMS = ("zib", "vop", "tavs", "pels", "kig", "dov", "bim", "ruvs", "fep")
+M3_D_TABLE = "infer"
+M3_D_SOURCES = ("hand_animacy", "hand_verb_selects", "animacy_of", "verb_selects_of", "learned_animacy_vocab",
+                "learned_verbselects_vocab", "corpus", "brain_vocab")
 # pool-line resources: measured on the seed-7 local smoke (see `pool_lines`); the Stage-2 lane's memcap
 MEM_GB = 9
 MEMCAP_GB = 10
@@ -177,10 +193,78 @@ def run_reads(chat, seed, table, pprobe):
             out["b"] = read_b(buf, rows)
             out["c"] = read_c(buf, rows)
             out["f"] = read_f(buf, ltm, rows, table)
+            if table == M3_D_TABLE:
+                try:                                            # M3's read never voids C2's reads
+                    out["m3_d"] = read_m3_d(chat)
+                except Exception as e:
+                    out["m3_d"] = _err(e)
     except Exception as e:
         out.update(_err(e))
     out["wall_s"] = round(time.time() - t0, 1)
     out["rss_after"] = _rss_mb()
+    return out
+
+
+def _corpus_counts(words, path=None):
+    """Whole-word counts of `words` in the corpus file, tokenized as the learned lexicons tokenize it
+    (`_comprehension_learned_animacy_cue_derisk.load_tokens`, over the WHOLE file, not the lexicons' 8M-char prefix).
+    None when the corpus file is absent (the read is then UNDEFINED, packet 3.6)."""
+    path = path or os.path.join(_REPO, "data", "corpus", "tinystories.txt")
+    if not os.path.exists(path):
+        return None
+    from research.runners._comprehension_learned_animacy_cue_derisk import _WORD_RE as word_re
+    want = set(words)
+    cnt = {w: 0 for w in words}
+    with open(path, encoding="utf-8", errors="ignore") as f:
+        for line in f:
+            for t in word_re.findall(line.lower()):
+                if t in want:
+                    cnt[t] += 1
+    return cnt
+
+
+def read_m3_d(chat, forms=M3_GARBLED_FORMS):
+    """M3 step 0 (d) (packet 3.8, 3.6): each `infer_garbled` nonce form against ANIMACY, VERB_SELECTS, the learned
+    lexicons (the production `_animacy_of` / `_verb_selects_of` at its defaults, and the learned lexicons' scored
+    vocabularies), the corpus vocabulary and `_brain_vocab(chat)` read right after the four intact teaches. A form found
+    in any of them is listed in `redraw`."""
+    from research.runners import comprehension_production_organ as CPO
+    from research.runners import _comprehension_learned_animacy_spiking as LA
+    from research.runners import _comprehension_learned_verbselects_cue_derisk as LV
+    import webapp.server as srv
+    out = {"forms": list(forms), "learned_animacy_enabled": bool(CPO.learned_animacy_cue_enabled()),
+           "learned_verbselects_enabled": bool(CPO.learned_verb_selects_enabled()),
+           "animacy_lexicon_prebuilt": LA._LEXICON is not None, "verbselects_lexicon_prebuilt": LV._LEXICON is not None}
+    bv = srv._brain_vocab(chat)
+    out["brain_vocab_size"] = len(bv)
+    try:
+        corpus = _corpus_counts(forms)
+    except Exception as e:
+        corpus = None
+        out["corpus_error"] = "%s: %s" % (type(e).__name__, e)
+    out["corpus_read"] = corpus is not None
+    per = {}
+    for w in forms:
+        r = {"hand_animacy": w in CPO.ANIMACY, "hand_verb_selects": w in CPO.VERB_SELECTS}
+        try:
+            r["animacy_of"] = CPO._animacy_of(w)
+            r["verb_selects_of"] = SG._jsonable(CPO._verb_selects_of(w))
+        except Exception as e:
+            r["lexicon_error"] = "%s: %s" % (type(e).__name__, e)
+        la, lv = LA._LEXICON, LV._LEXICON
+        r["learned_animacy_vocab"] = (w in la.scores) if la is not None else None
+        r["learned_verbselects_vocab"] = (w in lv.scores) if lv is not None else None
+        r["corpus_count"] = None if corpus is None else int(corpus.get(w, 0))
+        r["in_brain_vocab"] = w in bv
+        hits = {"hand_animacy": r["hand_animacy"], "hand_verb_selects": r["hand_verb_selects"],
+                "animacy_of": r.get("animacy_of") is not None, "verb_selects_of": r.get("verb_selects_of") is not None,
+                "learned_animacy_vocab": bool(r["learned_animacy_vocab"]),
+                "learned_verbselects_vocab": bool(r["learned_verbselects_vocab"]),
+                "corpus": bool(r["corpus_count"]), "brain_vocab": r["in_brain_vocab"]}
+        r["found_in"] = [k for k in M3_D_SOURCES if hits[k]]
+        per[w] = r
+    out["per_form"] = per
+    out["redraw"] = [w for w in forms if per[w]["found_in"]]
     return out
 
 
@@ -834,6 +918,44 @@ def score(root, seeds=SEEDS):
             "next": "post [c2-hops-0] RESULT, STOP for Claude"}
 
 
+def score_m3_d(shard, seed):
+    """M3 step 0 (d) on one `infer` full shard (packet 3.8, 3.6): CLEAN (no nonce form found anywhere), REDRAW (the
+    forms the fixed-seed generator must redraw before `infer_garbled` is pinned) or UNDEFINED (the shard is not valid,
+    the corpus was not read, or a lexicon read raised). Report only: never a C2 GO or STOP input."""
+    why = shard_validity(shard, seed, TABLE_ARMS[M3_D_TABLE])
+    if why:
+        return {"verdict": "UNDEFINED", "why": why}
+    d = ((shard.get("c2_hops") or {}).get("reads") or {}).get("m3_d")
+    if not d:
+        return {"verdict": "UNDEFINED", "why": ["no m3_d read on the shard"]}
+    bad = []
+    if not d.get("corpus_read"):
+        bad.append("the corpus was not read: %s" % d.get("corpus_error", "file absent"))
+    for w in M3_GARBLED_FORMS:
+        r = (d.get("per_form") or {}).get(w)
+        if r is None:
+            bad.append("form %s not read" % w)
+        elif r.get("lexicon_error"):
+            bad.append("form %s: %s" % (w, r["lexicon_error"]))
+    if bad:
+        return {"verdict": "UNDEFINED", "why": bad}
+    redraw = {w: d["per_form"][w]["found_in"] for w in M3_GARBLED_FORMS if d["per_form"][w]["found_in"]}
+    return {"verdict": "REDRAW" if redraw else "CLEAN", "redraw": redraw, "brain_vocab_size": d.get("brain_vocab_size")}
+
+
+def score_m3_step0(root, seeds=SEEDS):
+    """The part of M3 step 0 this runner carries, (d) only, over `seeds` (dev seeds 1-6 per 3.6, seed 7 reported
+    beside them). (a), (b), (c) and (e) are not built here (packet 3.8; see the module docstring)."""
+    per = {int(s): score_m3_d(_load(shard_path(root, int(s), TABLE_ARMS[M3_D_TABLE])), int(s)) for s in seeds}
+    vs = {r["verdict"] for r in per.values()}
+    verdict = "REDRAW" if "REDRAW" in vs else ("UNDEFINED" if "UNDEFINED" in vs or not per else "CLEAN")
+    if verdict == "CLEAN" and not set(range(1, 7)) <= set(per):
+        verdict = "UNDEFINED"            # 3.6 checks every dev seed 1-6
+    return {"step": "M3 step 0 (d) (3.8)", "verdict": verdict, "per_seed": per,
+            "not_built_here": ["(a) W/G/out-of-scope D4 decisions", "(b) word-role parser commit read",
+                               "(c) carrier status read", "(e) frame_conforming exclusion"]}
+
+
 # the GO clauses every table carries (a None there is an instrument fault, never a pass)
 _ALWAYS_CLAUSES = ("match_pools", "patient_pools", "vp_equals_decoded", "probe_equals_production", "teach_branches",
                    "or_matches_return", "premise_map", "ws_seed", "no_host_routed")
@@ -871,7 +993,8 @@ def pool_lines(sha="<sha>", seeds=SEEDS, mem_gb=MEM_GB, memcap_gb=MEMCAP_GB, max
                    "map exists (research/findings/2026-10-26-c2-kb-scramble-host-ownership.md read the infer table's "
                    "conclusion only); mem_gb=%d max_age_h=%d"
                    % (PACKET, seed, table, arm, "inert-read check (h), %s worker" % mode if mode != "full"
-                      else "reads (a)-(g)", mem_gb, max_age_h))
+                      else ("reads (a)-(g) and M3 step-0 (d)" if table == M3_D_TABLE else "reads (a)-(g)"),
+                      mem_gb, max_age_h))
             out.append((cmd, why))
     return out
 
@@ -894,6 +1017,7 @@ def main():
         return
     if a.score:
         res = score(a.score, seeds=seeds)
+        res["m3_step0_d"] = score_m3_step0(a.score, seeds=seeds)
         if a.out:
             os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
             with open(a.out, "w") as f:
@@ -906,6 +1030,8 @@ def main():
             print("UNDEFINED seed %s %s: %s" % (u["seed"], u["table"], u["why"]))
         for p in res["posts"]:
             print("POST seed %s %s: %s" % (p["seed"], p["table"], json.dumps(p, default=str)[:400]))
+        m3 = res["m3_step0_d"]
+        print("M3 step 0 (d), report only: %s %s" % (m3["verdict"], json.dumps(m3["per_seed"], default=str)[:600]))
         return
     ap.error("choose --score or --emit-pool-lines")
 
