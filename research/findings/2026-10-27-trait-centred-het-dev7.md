@@ -4,13 +4,15 @@ status: qualified
 date: 2026-10-27
 lane: substrate (integrator validity, mechanism c); follow-up of research/findings/2026-10-27-stable-preset-centred-dev7.md (the region-preset switch did not reach the 110 association-graph cells because they are typed by trait)
 mechanism: SIM_TRAIT_CENTRED_HET=1 (sim/bridge.py TRAIT_CENTRED_HET_ENV) forces cfg.trait_centred_parameter_heterogeneity=True onto every SimulationBridge; default unset = unchanged
-flip: no - default OFF; it removes the mechanism-c cells it was built for and breaks the Broca slot bridge's own de-risk, the association graph's own gates and the word order of the replies
+flip: no - default OFF; it removes the mechanism-c cells it was built for, changes the word order of the replies, fails the association graph's own parity gate on all 8 dev seeds (5 of 8 pass without it) and lowers the Broca slot bridge's own de-risk from 7 of 8 to 4 of 8 seeds (3 pass-to-fail, 0 fail-to-pass: not separable at n = 8)
 seeds: [7, 1, 2, 3, 4, 5, 6, 8]
 runner: research/runners/membrane_census.py
 artifacts:
   - research/findings/raw/_stable_mechc/compare_s7_trait.json
   - research/findings/raw/_stable_mechc/compare_s7_preset_trait.json
   - research/findings/raw/_stable_mechc/compare_s7_preset_vs_preset_trait.json
+  - research/findings/raw/_stable_mechc/compare_s7_trait_only_broca.json
+  - research/findings/raw/_stable_mechc/compare_s7_trait_only_novelty.json
   - research/findings/raw/_stable_mechc/census/stable_trait/s7/conv__intact_a.json
   - research/findings/raw/_stable_mechc/census/stable_trait/s7/infer__intact_a.json
   - research/findings/raw/_stable_mechc/census/stable_trait/s7/ask__intact_a.json
@@ -37,24 +39,32 @@ artifacts:
 
 seed-waiver: a labelled dev-seed diagnostic (dev seed 7 for the five-group census, dev seeds 1 to 8 for the association graph's and the Broca slot bridge's own gates); no gate seed was run, no default was flipped and no capability claim is made.
 
-# Centring trait-typed cells on their own preset removes the cells below -110 mV and breaks the replies' word order and the association graph's gates (dev seed 7 and dev seeds 1 to 8, 2026-10-27)
+# Centring trait-typed cells on their own preset removes the cells below -110 mV and breaks the replies' word order and the association graph's parity gate (dev seed 7 and dev seeds 1 to 8, 2026-10-27)
 
 ## Answer in one paragraph
 
 The variant built here (`SIM_TRAIT_CENTRED_HET=1`, config flag `trait_centred_parameter_heterogeneity`, default OFF, the unset
-path equal by hash to the engine before the edit) centres the heterogeneity draw of Izhikevich cells typed by trait on their own
-trait's preset, which is the method the preset finding named for the 110 association-graph cells that stay below -110 mV on the
-stable integrator. On the five Stage-2 groups (dev seed 7, stable integrator) it does that: the 110 `LearnedAssocGraph` offenders
-fall to 4 (every FS and thalamic-reticular cell stops leaving the range), the brain's u-held cells go from 112 to 6, and nothing new
-leaves the range. It is not a flip candidate, and it answers why the region flag left these cells alone. It moves three organs'
-cells at once, and each has its own cost: the two Broca frame-slot bridges alone make the replies lose the article's place and the
-inflection ("the fox the chases hare", "perhaps lynx chase vole", 32 of 63 turns have a different answer text, 0 have a different
-abstention, recall or derivation, so the answer rate cannot see it); the novelty-habituation bank alone changes the DA drive (its
-level by up to 5.8 times, its mode in 19 turns); and the association graph's own gates, run on dev seeds 1 to 8, go from 5 of 8
-to 0 of 8 (parity with the oracle) and from 7 of 8 to 4 of 8 (the Broca bridge's de-risk) against the stable integrator without it.
-The three organs' effects add exactly (the 205 changed leaves of the inner group are the disjoint union of the Broca-only 11 and
-the novelty-only 194). These organs were built and validated on the RS-centred hybrid, so removing the hybrid is a change of
-their dynamics, not a repair. The 4 RS-preset offenders that remain are a separate residual.
+path equal by hash to the engine before the edit) centres the heterogeneity draw of Izhikevich cells typed by trait on their
+own trait's preset, which is the method the preset finding named for the 110 association-graph cells that stay below -110 mV
+on the stable integrator. On the five Stage-2 groups (dev seed 7, stable integrator) it does that: the 110 `LearnedAssocGraph`
+offenders fall to 4 (every FS and thalamic-reticular cell stops leaving the range), the brain's u-held cells go from 112 to 6,
+and no cell of the organs it moved newly leaves the range (one cell-count exception sits outside them: the `BridgeParser`
+phasor slice gains 4 in infer, 718 -> 722, path untraced; Result 1). It is not a flip candidate, and it answers why the region
+flag left these cells alone. It moves three organs' cells at once, and each has its own cost. What each organ does alone was
+measured on the inner group only, with the variant on for that organ's bridges alone: the two Broca frame-slot bridges alone
+change 7 of the 10 answer texts and turn the `fluent_hypothesis` flag true -> false in 4 turns, and change nothing else (11 of
+2274 leaves; the replies lose the article's place and the inflection: "the lynx the chases vole", "perhaps lynx chase vole"),
+with no turn changing abstention, recall or derivation, so the answer rate cannot see it; the novelty-habituation bank alone
+changes no answer text and moves the DA drive (194 of 2274 leaves: `da_level` by up to 5.0 times, the DA `mode` in 4 turns).
+With the variant on everywhere, over all five groups, 32 of 63 turns have a different answer text (25 change word order or
+inflection), `da_level` moves by up to 5.8 times and the DA `mode` in 19 turns. The association graph's parity gate (G1), run
+on dev seeds 1 to 8 against the stable integrator without the variant, goes from 5 of 8 seeds to 0 of 8 (5 pass-to-fail flips,
+0 fail-to-pass; the oracle edges recovered, summed over seeds, fall 192 -> 85 of 192, and are lower on every seed), and the
+Broca bridge's de-risk (G3) from 7 of 8 to 4 of 8 (3 pass-to-fail, 0 fail-to-pass; the D cue-recall gate G2 goes 1 of 8 -> 0
+of 8, a single flip on a failing baseline): at n = 8 the pass counts cannot separate the arms on G2 or G3. The three organs'
+effects add exactly (the 205 changed leaves of the inner group are the disjoint union of the Broca-only 11 and the
+novelty-only 194). These organs were built and validated on the RS-centred hybrid, so removing the hybrid is a change of their
+dynamics, not a repair. The 4 RS-preset offenders that remain are a separate residual.
 
 ## What was built (default OFF)
 
@@ -93,6 +103,17 @@ their dynamics, not a repair. The 4 RS-preset offenders that remain are a separa
   or dropping the region-coverage exclusion) fails 7 and 3 of them. `tests/test_membrane_census.py` 26 passed with the trait
   read-back, `tests/test_stable_preset_compare.py` 6, `tests/test_stable_mechc_lag_gate.py` 4,
   `tests/test_stable_mechc_trait_attrib.py` 3.
+- Related tests, base against branch (re-run for this note on numpy CPU, one process; base = 3c902abb1, the commit before the
+  `sim/` edit; branch = the tip of `research/stable-mechc`). The failing set is identical on both. The 17 CPU-runnable files
+  of the 18 that the names select (list in Sources) give 283 passed, 7 skipped, 0 failed on the branch and 226 passed, 7
+  skipped, 0 failed on the base; the 57 extra passes are the new test files (47 + 4 + 3) and the tests added to
+  `test_membrane_census.py` (26 against 25) and `test_stable_preset_compare.py` (6 against 4). The 18th file,
+  `tests/test_determinism.py`, needs a CUDA device when it is collected and was not run. A wider sweep of the 38 test files
+  that mention heterogeneity, the census or the stable integrator fails the same 28 tests and the same one collection error on
+  base and branch (450 against 393 passed); it is order-dependent (its 18 `test_membrane_census.py` failures pass in the
+  17-file run) and its failures were not analysed. A review run over 18 related test files reported 289 passed and 5
+  pre-existing failures, the failing set identical on base and branch; that figure is quoted from the review, its file list
+  was not recorded, and it was not reproduced here.
 - Census and comparison (observe-only). `research/runners/membrane_census.py` records the trait read-back per bridge and per
   organ; `research/runners/stable_preset_compare.py` adds the per-type split of the u-held cells, the trait fields and a leaf diff
   of the two shard records (every number, string and flag of the stage-2 worker output that differs, with the largest relative
@@ -136,12 +157,23 @@ membrane figures of the last two rows are from the inner group):
   membranes, with no heterogeneity draw in that bridge). The brain census reproduces the build-only probe of the preset finding
   (92 to 115 down to 3 to 9 of 1800 on four dev seeds) with 110 down to 4. The lowest remaining membrane is still -122.4 mV: those
   cells are RS cells, which the rule cannot move (RS is the global centre), the separate residual named there.
-- Nothing new left the range: the novelty bank and the Broca slot bridges, whose cells the variant moved, were clean under stable
-  and stay clean.
-- The variant moved the replies. 57 of the 63 turns have a different response hash and 32 of the 63 a different answer text; none
-  has a different abstention, recalled fact or derived flag, and the answered count is the same in every group, which is exactly
-  what `tools/answer_rate.py` `classify` / `rate` measures, so it reports no change while the text is worse. The teach-turn
-  echoes lose the article's place and the guesses lose articles and inflection:
+- No cell of the organs the variant moved newly left the range: the novelty bank and the Broca slot bridges, whose cells it
+  moved, were clean under stable and stay clean (0 -> 0 in every group that steps them). There is one exception to "nothing
+  new left the range", outside those organs: the `BridgeParser` phasor slice gains 4 in infer (718 -> 722). It falls or stays
+  in the other groups (691 -> 684 conv, 682 -> 682 ask, 675 -> 672 inner, 0 -> 0 emo), and its spike total moves with the
+  switch in every group that steps it: 1180350 -> 1032261 in conv (-12.5 %), 1050867 -> 835704 in infer (-20.5 %), 1356102 ->
+  1289778 in ask (-4.9 %), 1265461 -> 982747 in inner (-22.3 %), unchanged in emo. The path from the switch to this slice is
+  untraced: the bridge holds no trait-typed cell (0 of its 54320 neurons) and no heterogeneity draw, so the change reaches it
+  from what the switch changed elsewhere. In the inner group the one-organ arms split it without explaining it (Broca slot
+  bridges alone: spikes 1265461 -> 985024, -22.2 %, out-of-range count 675 -> 675; novelty bank alone: spikes 1265461 ->
+  1262041, -0.3 %, out-of-range count 675 -> 672); infer, where the +4 occurs, has no one-organ arm. In the preset + trait arm
+  (Result 4) the same slice gains 1 cell in conv (691 -> 692).
+- The variant moved the replies. 57 of the 63 turns have a different response hash and 32 of the 63 a different answer text;
+  none has a different abstention, recalled fact or derived flag, and the answered count is the same in every group, which is
+  exactly what `tools/answer_rate.py` `classify` / `rate` measures, so it reports no change while 25 of the 32 texts are
+  worse. Of the 32 changed texts, 25 change word order or inflection (conv 6, infer 8, ask 4, inner 7), 5 change only the
+  appended curiosity lead phrase (conv 3, emo 2) and 2 add a curiosity question that stable did not ask (ask, `g_newt` and
+  `u_toad_1`). The teach-turn echoes lose the article's place and the guesses lose articles and inflection:
 
 | group, turn | stable | +trait |
 |---|---|---|
@@ -176,12 +208,22 @@ two slot bridges, 368 cells of which 300 off their centre; novelty: the bank, 35
 
 - The full variant's 205 changed leaves are exactly the union of the two single-organ sets: no leaf is in both, the values are
   equal wherever a leaf is in one, and none is left over. So the lost article, the lost inflection and the `fluent_hypothesis`
-  flag come from the Broca frame-slot bridges alone, the DA drive numbers and mode from the novelty bank alone (and, in the
-  other groups, the appended curiosity lead phrase follows the DA mode), and the association graph contributes no reply leaf:
-  it changes its own membranes and spikes. The 3 cells by which the resonate-and-fire phasor slice drifts in this group
-  (787 to 784) already appear in the novelty-only arm.
+  flag come from the Broca frame-slot bridges alone, the DA drive numbers and mode from the novelty bank alone, and the
+  association graph contributes no reply leaf: it changes its own membranes and spikes. This attribution is the inner group
+  only. The 3 cells by which the resonate-and-fire phasor slice drifts in this group (787 to 784) already appear in the
+  novelty-only arm.
+- The other four groups have no one-organ arm, so what holds there is consistent with this split and not shown by it. The 10
+  turns where the DA drive's `lead` phrase changes are all turns where its `mode` changes (conv 5, emo 2, infer 2, ask 1), and
+  the 2 questions that `ask` newly asks (`g_newt`, `u_toad_1`; Result 1) go with a higher `da_level` (0.08 -> 0.15 and 0.05 ->
+  0.24) and a lower effective curiosity threshold (61.0 -> 46.3 and 69.6 -> 36.4), read from the `curiosity_da` block of
+  `research/findings/raw/_stable_mechc/census/stable/s7/ask__intact_a.json` and
+  `research/findings/raw/_stable_mechc/census/stable_trait/s7/ask__intact_a.json`. That is the DA drive, which the inner
+  attribution puts on the novelty bank; for `ask` this is not tested.
 - The Broca bridges are the only organ whose edit shows in the words. The G3 de-risk below is the same bridge's own bar run
-  without the brain around it, and it fails with the variant for the same bridge.
+  without the brain around it: with the variant it passes on 4 of 8 dev seeds against 7 of 8 without (3 pass-to-fail, 0
+  fail-to-pass; n = 8 cannot separate the arms on the pass count; under the stable integrator the mean held-out order falls from
+  0.904 to 0.834 <!--derived-->
+  across the 8 seeds).
 
 ## Result 3: the organs' own gates under the variant (dev seeds 1 to 8)
 
@@ -206,8 +248,16 @@ and `SIM_STABLE_INTEGRATION=1`, each with the variant unset and set):
 | stable integrator, variant off | 5 of 8 (192) | 1 of 8 | 7 of 8 (0.904 / 0.892) | 1542002 | <!--derived-->
 | stable integrator, variant on | 0 of 8 (85) | 0 of 8 | 4 of 8 (0.834 / 0.774) | 1540391 | <!--derived-->
 
-- The comparison that matters for the census is stable off against stable on: G1 5 of 8 -> 0 of 8, G2 1 of 8 -> 0 of 8, G3 7 of 8 ->
-  4 of 8. The variant breaks the association graph's parity and the Broca bridge's de-risk on dev seeds that passed without it.
+- The comparison that matters for the census is stable off against stable on, paired by seed, with the flips behind each pass
+  count: G1 5 of 8 -> 0 of 8 (5 pass-to-fail, seeds 1, 3, 5, 7, 8; 0 fail-to-pass); G3 7 of 8 -> 4 of 8 (3 pass-to-fail, seeds
+  1, 5, 7; 0 fail-to-pass); G2 1 of 8 -> 0 of 8 (1 pass-to-fail, seed 3; 0 fail-to-pass). G2 is not counted as a gate the
+  variant broke: its stable baseline already fails on 7 of 8 seeds and one flip is no evidence either way. At n = 8 the pass
+  counts cannot separate the arms on G2 (1 flip) or on G3 (3 flips against 0, exact two-sided sign test p = 0.25). G1 (5
+  against 0, p = 0.06) is the gate whose pass count alone comes closest, and its continuous read-out is unambiguous: the
+  oracle edges recovered are lower with the variant on all 8 seeds (24 per seed without it, 6 to 16 with it). The G3 read-outs
+  point the same way (held-out order lower on all 8 seeds, exact-slot rendering lower on 5 and equal on 3), which shows a
+  direction and is not a gate result. On the default integrator the same pairing gives G1 0 of 8 -> 0 of 8, G2 1 of 8 -> 0 of
+  8 (1 flip) and G3 7 of 8 -> 4 of 8 (4 pass-to-fail, seeds 1, 2, 3, 8; 1 fail-to-pass, seed 5).
 - With the variant the learned graph is sparser, not wrong where it exists: under stable + variant every concept that has a learned
   associate has a true top associate (the top-associate count equals the number of concepts with an associate on all 8 seeds,
   for example 6 of 6, 9 of 9, 5 of 5), but only 85 of the 192 oracle edges clear the 0.3 weight threshold.
@@ -239,6 +289,9 @@ same conditions as Result 1).
   the trait variant changes 32 of 63 answer texts and 1110 leaves, 83 of them strings or flags. The text changes are therefore the
   trait variant's, not the region switch's. The leaf total of the pair (1128 against stable) is not the sum of the two switches'
   separate effects, since the cells they change feed the same downstream organs.
+- The only out-of-range count that rises in this arm is the same `BridgeParser` phasor slice, by 1 in conv (691 -> 692); it
+  falls in infer (718 -> 717), ask (682 -> 681) and inner (675 -> 671). Its spike total is down 12.7 %, 20.6 %, 5.0 % and 22.5
+  % in conv, infer, ask and inner. The +4 of the stable + trait arm in infer does not recur here (Result 1: path untraced).
 
 ## What this does not show
 
@@ -247,10 +300,12 @@ same conditions as Result 1).
   step (the BG selector, the d3 FS-WTA score bridge, the rf-phasor composer's bridges, the lazily built organs) were not
   exercised, so the variant's reach in other trait-typed bridges is known only where the census read-back listed it: the
   association graph, the novelty bank and the Broca slot bridges, plus bridges that have no trait-typed cell outside a region.
-- The gates are dev seeds 1 to 8, numpy CPU, in process. Their baselines are weak (parity passes on 0 of 8 seeds at the default
-  integrator, cue-recall on 1 of 8), so "5 of 8 to 0 of 8" is a statement about the stable integrator, where parity passes on 5
-  seeds. The pass rules are my transcription of each organ's validated figures (24 of 24 and 9 of 9; 2 of 2; the de-risk's own
-  bars); G3 is an attribution check I added, not a gate registered for this variant. The association graph's agent-level test
+- The gates are dev seeds 1 to 8, numpy CPU, in process. Their baselines are weak (parity passes on 0 of 8 seeds at the
+  default integrator, cue-recall on 1 of 8), so "5 of 8 to 0 of 8" is a statement about the stable integrator, where parity
+  passes on 5 seeds. With 8 seeds the pass counts of G2 (one flip) and G3 (three flips against none) cannot separate the arms;
+  only G1's edges recovered, which fall on every seed, and the direction of G3's continuous read-outs say more. The pass rules
+  are my transcription of each organ's validated figures (24 of 24 and 9 of 9; 2 of 2; the de-risk's own bars); G3 is an
+  attribution check I added, not a gate registered for this variant. The association graph's agent-level test
   (`test_learned_assoc_graph_agent`) is GPU-only and was not run.
 - It does not show that trait-centred cells are the wrong model. The traits are assigned at random per neuron
   (`cfg.num_traits` of them, by `randint`), so a pool mixes striatal projection, thalamic relay, thalamic reticular, FS and RS
@@ -263,8 +318,19 @@ same conditions as Result 1).
   parameters are not changed by the variant (the RS trait is on the centre; shown bit for bit), yet the offenders fell from 22 to
   24 down to 4, because their inputs changed with their neighbours' parameters. The lowest remaining membrane is still -122.4 mV.
   They are the separate residual of the preset finding and need their own answer.
-- The answer rate is blind to this change: it classifies abstentions, and no turn changed between answering and abstaining.
-  A word-order or inflection regression needs a text check; none of the registered scorers (`gate scorer all`) moved either.
+- The answer rate is blind to this change: it classifies abstentions, and no turn changed between answering and abstaining. A
+  word-order or inflection regression needs a text check. The registered gate scorer's `all` verdict did not move in any group
+  (conv, infer, ask and inner false -> false; emo true -> true), but its sub-bars did in two groups, so it is not true that
+  none of its read-outs moved. In ask, `ask_rate_gap` goes from 0.667 to 1.0 <!--derived--> (2 of 3 gap topics asked to 3 of
+  3) and `lp_unlearnable` from false to true, with two more questions asked: `g_newt` and `u_toad_1` (asked and curious, false
+  -> true; the two added texts of Result 1). In conv, `frames_fox`, the frames the scorer parses out of the reply to
+  `p_fox_chase`, goes from one frame (fox, chases, hare) to none, while `fox_chase` stays false. The two ask changes move
+  clauses of that group's pass rule toward passing (`ask_rate_gap` feeds `discriminates`, `lp_unlearnable` is one of the
+  clauses `all` needs; `all` stays false because `lp_learnable` and `builtin_dog_cat` are false in both arms); the conv one
+  removes a parseable frame from a reply that did not pass `fox_chase` before either. In infer, emo and inner no sub-bar moved
+  (infer's yes/no reply text changed, its flags did not). The same sub-bar changes appear in the preset + trait arm and in the
+  preset-only against preset + trait pair, none in the preset-only arm (`compare_s7.json`) or in the two one-organ arms (inner
+  only). Source: `gate_score` of each group in `compare_s7_trait.json`.
 - HEAD moved during the census (research files added; `sim/` unchanged since the variant's commit). The test mutations that show
   the new tests can fail (two engine edits, 7 and 3 failures) were run by hand and are not committed.
 
@@ -273,6 +339,44 @@ re-run G3 and the novelty organ's own gates, since these pools were designed as 
 the default `num_traits`; (2) attack the association graph's remaining offenders at their cause, a pool that fires 125094 spikes in
 2250 steps with strong recurrent weights, rather than at the cell type; (3) if the trait variant is kept as a research switch,
 adopt it per organ behind that organ's gates (the ruling of the region flag), starting with an organ whose own gates it passes.
+
+## Host, inputs and provenance
+
+- Host and backend. The 27 provenance sidecars of the artifacts this finding cites (the 25 in the front matter plus
+  `compare_s7_trait_only_broca.json` and `compare_s7_trait_only_novelty.json`) all record host `dant123-wk` (the workstation,
+  20 CPUs), `sim_backend` numpy, `CUDA_VISIBLE_DEVICES=''` (no GPU was used) and the interpreter
+  `/home/dant123/Projects/sim/.venv/bin/python`. 26 of them ran from the worktree `sim-rev/wt-mechc2`, the reference arm
+  `research/findings/raw/_stable_mechc/census/stable/s7/inner__intact_a.json` from `sim-rev/wt-stable-mechc`; they started
+  between 2026-10-27 12:33 and 18:24 (the census, one-organ and gate runs under `tools/memcap.sh`).
+- Inputs. The 23 census runs (the reference and variant arms, the two one-organ arms and the unset-path check) read two inputs
+  that are not in the repository. First, `data/`: in each worktree a symlink to the main checkout's `data/`
+  (`/home/dant123/Projects/sim/data`), which the corpus-learned organs read; every comparison record carries `corpus_present`
+  true for both arms of every group (a first attempt without the symlink was discarded, FAILURE_LOG 2026-10-27). Second, the
+  persisted long-term-memory bundle `wikidata_100k`, loaded once per process from
+  `/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k` (78857 facts; a plain directory read by absolute path, not
+  a symlink); the run logs of all 23 census runs name that path and fact count, and the size and modification time they record
+  for its three files equal the files today. sha256 of those files, computed 2026-10-28: `manifest.json`
+  783dd0f4f5ba65aee4b1e59186a67ec4452e90c73d379d6c70461ce65efd0583, `facts.json`
+  92466eeeaccdb62bad396b1a6a580400abec6967eab89fbb78e8783a8d06b90c, `composites.npz`
+  48faad473478300321a91d91496deb327be92e080a04f5410d335487ae3c9365. The run logs are not committed (they sit in
+  `sim-rev/mechc2_scratch` and `sim-rev/stable_mechc_scratch`). The gates (G1 to G3) are in-process harnesses; their logs show
+  no LTM load.
+- Git state of the records. 24 of the 27 sidecars have `git_dirty` true, so the tree held uncommitted files when they were
+  started; what those files were is not recorded. `git_sha` of the 27: 65d60f996 (13), 19fda7fc4 (10), 3b9037b6f (2),
+  e49829cd2 (1), 72bc75e7c (1). `sim/` is the variant's at four of those five commits (19fda7fc4, 3b9037b6f,
+  65d60f996 and 72bc75e7c; no commit after bd13ab71c touches `sim/`, `git diff bd13ab71c HEAD -- sim` is empty) and the pre-edit
+  engine at e49829cd2; whether a dirty tree also held an uncommitted `sim/` edit is something the flag cannot show. The reference arms of conv, infer, ask
+  and emo (`census/stable/s7`, not in the front-matter list) are the preset finding's records, taken before the edit at
+  e13c7d968 or 0606d7fc4, also dirty-tree.
+- Clean-tree anchors. Three of the 27 records come from a clean tree:
+  `research/findings/raw/_stable_mechc/census/stable/s7/inner__intact_a.json` (e49829cd2, the engine before the edit),
+  `research/findings/raw/_stable_mechc/census/stable_trait/s7/inner__intact_a.json` (19fda7fc4, the variant) and
+  `research/findings/raw/_stable_mechc/census/stable_unset_check/s7/inner__intact_a.json` (72bc75e7c, both new switches
+  unset). The dirty-tree runs agree with them where they overlap: the two one-organ arms (dirty, 65d60f996) change exactly the
+  leaves of the clean variant record, the disjoint union of 11 and 194 leaves equal to its 205 with equal values; and the
+  clean unset-path record reproduces the clean reference record turn for turn (10 of 10 per-turn records identical, 26 of 26
+  organ rows equal in organ, out-of-range count, spikes and steps). The other four groups, the gates and the compare files
+  have no clean twin.
 
 ## Sources
 
@@ -287,6 +391,14 @@ adopt it per organ behind that organ's gates (the ruling of the region flag), st
   the per-organ classes, the parameters as drawn, the reply differences, the answer-rate lens and the leaf diff.
 - Gates (`python -m research.runners.stable_mechc_lag_gate`): `research/findings/raw/_stable_mechc/lag_gate/{off,trait,stable,
   stable_trait}.json` (G1 and G2) and `g3_{off,trait,stable,stable_trait}.json` (G3), dev seeds 1 to 8.
+- Related-test files run for the base-against-branch comparison (17 on numpy CPU; `tests/test_determinism.py` is the 18th and
+  was not run): `test_backend_neutral_izh_arithmetic`, `test_backend_neutral_izh_initialization`,
+  `test_izh_membrane_substeps`, `test_membrane_bound_check`, `test_membrane_census`, `test_preset_centred_heterogeneity`,
+  `test_preset_centred_het_switch`, `test_stable_integration_switch`, `test_stable_json_evidence`,
+  `test_stable_mechc_lag_gate`, `test_stable_mechc_trait_attrib`, `test_stable_preset_compare`,
+  `test_trait_centred_heterogeneity`, `test_v13_backend_neutral_izh_arithmetic_replay`,
+  `test_v13_backend_neutral_izh_arithmetic_replay_v2`, `test_v13_backend_neutral_izh_initialization_diagnostic`,
+  `test_v13_izh_arithmetic_localizer`.
 - Engine and tests: `sim/bridge.py` (`TRAIT_CENTRED_HET_ENV`, `_collect_het_trait_centres`), `sim/config.py`,
   `tests/test_trait_centred_heterogeneity.py` and its pre-edit golden `tests/_trait_centred_het_golden.json`
   (`tests/_capture_trait_centred_het_golden.py`, captured at f58274479 before the edit).
@@ -304,3 +416,20 @@ adopt it per organ behind that organ's gates (the ruling of the region flag), st
   reason + 10 fluent_hypothesis + 4 curiosity flags; inner 205 = 11 (Broca only) + 194 (novelty only); turns 63 = 11 + 10 + 19 +
   13 + 10; answer texts changed 32 = 9 + 8 + 6 + 2 + 7; response hashes changed 57 = 11 + 10 + 18 + 8 + 10.
 - Largest relative changes quoted as factors: `da_level` 4.77 more than before = 5.8 times, 4.04 more = 5.0 times; `g` 0.52 = 52 percent.
+- Answer texts changed 32 = 25 word order or inflection (conv 6 + infer 8 + ask 4 + inner 7) + 5 curiosity lead phrase only
+  (conv 3 + emo 2) + 2 added curiosity questions (ask); DA `lead` phrase changes 10 = 5 + 2 + 2 + 1 (conv, emo, infer, ask),
+  each with a `mode` change. Broca-only inner: 7 answer texts + 4 flags = 11 leaves; novelty-only inner: 188 floats + 2 ints +
+  4 strings = 194.
+- `BridgeParser` spike totals, stable -> stable + trait: 1032261 / 1180350 = 0.875 (-12.5 %), 835704 / 1050867 = 0.795 (-20.5
+  %), 1289778 / 1356102 = 0.951 (-4.9 %), 982747 / 1265461 = 0.777 (-22.3 %); inner one-organ arms 985024 / 1265461 (-22.2 %)
+  and 1262041 / 1265461 (-0.3 %); preset + trait arm -12.7 %, -20.6 %, -5.0 %, -22.5 %.
+- Gate flips, stable against stable + variant, paired by seed: G1 pass on seeds 1, 3, 5, 7, 8 without the variant and on none
+  with it (5 and 0); G2 pass on seed 3 only without it, none with it (1 and 0); G3 pass on 7 seeds without it (all but 2) and
+  on seeds 3, 4, 6, 8 with it, so seeds 1, 5, 7 flip (3 and 0). Exact two-sided sign tests on the discordant seeds: 3 against
+  0 gives 2 x (1/2)^3 = 0.25, 5 against 0 gives 2 x (1/2)^5 = 0.06, 1 against 0 gives 1. Oracle edges per seed without the
+  variant 24 on all 8 seeds, with it 12, 16, 8, 6, 14, 14, 6, 9 (sum 85). Default integrator, off against variant: G3 pass on
+  seeds 1, 2, 3, 4, 6, 7, 8 against 4, 5, 6, 7 (flips 1, 2, 3, 8 to fail and 5 to pass); G2 pass on seed 4 only against none.
+- Tests: 283 + 7 = 290 collected on the branch against 226 + 7 = 233 on the base, 57 more passes = 47 + 4 + 3 + (26 - 25) + (6
+  - 4).
+- Provenance: 27 sidecars = 24 `git_dirty` true + 3 false; `git_sha` 13 + 10 + 2 + 1 + 1 = 27; 26 from `wt-mechc2` + 1 from
+  `wt-stable-mechc`.

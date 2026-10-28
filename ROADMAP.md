@@ -39,12 +39,18 @@ compute node (GPU queue, local model serving), and Claude Code inspects occasion
   residual (`research/findings/2026-10-27-stable-preset-centred-dev7.md`).
 - **Giving every trait-typed cell its own type was built and tested (off, and not a flip candidate):** a second switch
   (`SIM_TRAIT_CENTRED_HET=1`) does what the probe predicted for the associative-memory graph (110 bad cells down to 4 on the
-  five test conversations, nothing new going wrong) but it also changes two other organs that received the same random cell-type
-  mixture. The two sentence-slot bridges lose the article's place and the verb ending ("the fox the chases hare"; 32 of 63
-  turns have different words, none changes between answering and abstaining), the novelty bank changes the dopamine drive, and
-  the graph's and the slot bridge's own checks on dev seeds 1 to 8 drop from 5 of 8 to 0 of 8 and from 7 of 8 to 4 of 8.
-  These organs were built on the old mixed-up cells, so removing them is a change, not a repair
-  (`research/findings/2026-10-27-trait-centred-het-dev7.md`).
+  five test conversations, and no cell of the organs it changed newly going wrong; one unrelated sentence-parsing slice gains
+  4 in one conversation, cause not traced) but it also changes two other organs that received the same random cell-type
+  mixture, and the changes were measured one organ at a time on one conversation group. With only the two sentence-slot
+  bridges changed, 7 of 10 answers lose the article's place and the verb ending ("the lynx the chases vole") and nothing else
+  moves; with only the novelty bank changed, no words change but the dopamine drive does (up to 5 times, its mode in 4 turns).
+  With all three changed, 32 of 63 answers have different words (25 of them worse word order) and none changes between
+  answering and abstaining. The graph's own parity check drops from 5 of 8 seeds to 0 of 8 (fewer correct links on every
+  seed), and the slot bridge's own check from 7 of 8 to 4 of 8 (3 seeds flip and none flips the other way; 8 seeds cannot
+  separate those counts, and the same holds for the cue-recall check, 1 of 8 to 0 of 8). The registered conversation scorer
+  keeps every verdict, but two of its sub-scores move: more questions asked in one group (toward passing), a parseable
+  sentence frame lost from a reply in another. These organs were built on the old mixed-up cells, so removing them is a
+  change, not a repair (`research/findings/2026-10-27-trait-centred-het-dev7.md`).
 
 ## 2026-10-21 — the strict no-making-things-up check passes its tests (still off); a cell-type fault under the substrate; two new methods start
 
