@@ -1,10 +1,12 @@
 """pre-commit GATE 2 (claims) is merge-aware: a merge is checked for what it adds, never for what main already carried.
 
-2026-10-28: GATE 2 ran tools/claim_check.py on every findings doc ADDED relative to the FIRST parent, so a main-into-branch
-merge (tools/agent_sync_branch.sh, every Hermes sync) re-checked all of main's new findings, and one stale citation on
-main (research/findings/2026-10-27-emo-bounded-flip-PREREGISTRATION.md, a placeholder `--out` path added by an
-amendment) blocked every branch sync. tools/merge_carried.py now drops, while MERGE_HEAD is present, a path whose staged
-content is byte-identical to a merge parent that main already contains.
+2026-10-28: GATE 2 ran tools/claim_check.py on every findings doc ADDED relative to the FIRST parent, so a
+main-into-branch merge (tools/agent_sync_branch.sh, every Hermes sync) re-checked all of main's new findings, and one
+stale citation on main (research/findings/2026-10-27-emo-bounded-flip-PREREGISTRATION.md, a placeholder `--out` path
+added by an amendment) blocked every branch sync. tools/merge_carried.py now drops, while MERGE_HEAD is present, a
+finding whose staged blob is byte-identical to a merge parent that main already contains AND none of whose cited
+artifacts differs between the index and that parent (the second condition from the skeptic review: without it a merge
+that deleted or rewrote main's cited artifact landed the finding unchecked).
 
 The scratch repos run the REAL hook code: the GATE 2 block is cut verbatim out of tools/githooks/pre-commit (only its
 scratch output file is renamed) and installed as the scratch repo's pre-commit, next to the real pre-merge-commit, and
@@ -164,6 +166,108 @@ def test_merge_that_edits_mains_doc_is_checked_as_new_content(synced):
     _write(lane, MAIN_DOC, STALE + "\nedited during the merge\n")
     _git(lane, "add", "-A")
     assert _blocked(_git(lane, "commit", "-m", "sync main, edited", check=False))
+
+
+def test_conflict_resolution_that_rewrites_mains_doc_is_checked(tmp_path):
+    """The second defence of content identity. A modify/delete conflict: the lane retired a finding main then amended,
+    and the resolution keeps it with NEW text. The path is ADDED relative to the lane and present in main's tree, so
+    only the blob compare tells it from main's own content. (A finding added on BOTH sides never reaches the helper:
+    it exists in the first parent, so `--diff-filter=A` does not list it.)"""
+    root = _make_repo(tmp_path)
+    doc = "research/findings/2026-01-07-amended.md"
+    _write(root, doc, GOOD)
+    _git(root, "add", "-A")
+    _git(root, "commit", "-q", "-m", "main: finding")
+    lane = str(tmp_path / "lane")
+    _git(root, "worktree", "add", "-q", "-b", "research/lane", lane)
+    _git(lane, "rm", "-q", doc)
+    _git(lane, "commit", "-q", "-m", "lane: retire the finding")
+    _write(root, doc, GOOD + "\namended on main\n")
+    _git(root, "add", "-A")
+    _git(root, "commit", "-q", "-m", "main: amend the finding")
+    assert _git(lane, "merge", "--no-ff", "--no-commit", "main", check=False).returncode != 0   # the conflict
+    _write(lane, doc, STALE + "\nresolved by hand\n")
+    _git(lane, "add", doc)
+    r = _git(lane, "commit", "-m", "sync main, conflict resolved", check=False)
+    assert _blocked(r) and doc in r.stdout + r.stderr
+
+
+# ------------------------------------------------------------------------------------------------------------------
+# a carried finding's SUPPORT: what it cites must be main's too (skeptic review 2026-10-28)
+# ------------------------------------------------------------------------------------------------------------------
+GLOB = "research/findings/raw/x/*.json"
+CITES = pytest.mark.parametrize("cite", [ART, GLOB], ids=["exact", "glob"])
+
+
+def _clean_main_doc(tmp_path, cite):
+    """A lane forked at base (it adds its own finding), then main gains a CLEAN finding citing the base artifact ART
+    (directly, or through a glob): GATE 2 passes it on main, so only a change to its support can make it fail."""
+    root = _make_repo(tmp_path)
+    lane = str(tmp_path / "lane")
+    _git(root, "worktree", "add", "-q", "-b", "research/lane", lane)
+    _write(lane, LANE_DOC, GOOD)
+    _git(lane, "add", "-A")
+    _git(lane, "commit", "-q", "-m", "lane: finding")
+    _write(root, MAIN_DOC, "---\nstatus: live\n---\n# clean\n\nvalue 0.123456 read from `%s`\n" % cite)
+    _git(root, "add", "-A")
+    _git(root, "commit", "-q", "-m", "main: clean finding")
+    return root, lane
+
+
+@CITES
+def test_sync_carries_a_clean_doc_when_only_uncited_artifacts_changed(tmp_path, cite):
+    """The control for the must-block cases below: the lane re-ran something ELSE; main's doc is still carried."""
+    root, lane = _clean_main_doc(tmp_path, cite)
+    _write(lane, "research/findings/raw/z/other.json", '{"v": 9.87654}')
+    _git(lane, "add", "-A")
+    _git(lane, "commit", "-q", "-m", "lane: an unrelated run")
+    _git(lane, "merge", "--no-ff", "--no-commit", "main")
+    r = _git(lane, "commit", "-m", "sync main", check=False)
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert "not re-checked: %s" % MAIN_DOC in r.stdout + r.stderr
+
+
+@CITES
+def test_sync_blocks_when_the_branch_deleted_a_cited_artifact(tmp_path, cite):
+    root, lane = _clean_main_doc(tmp_path, cite)
+    _git(lane, "rm", "-q", ART)
+    _git(lane, "commit", "-q", "-m", "lane: git rm the artifact")
+    _git(lane, "merge", "--no-ff", "--no-commit", "main")
+    r = _git(lane, "commit", "-m", "sync main", check=False)
+    out = r.stdout + r.stderr
+    assert _blocked(r) and MAIN_DOC in out and "MISSING  %s" % cite in out, out
+
+
+@CITES
+def test_sync_blocks_when_the_merge_deletes_a_cited_artifact(tmp_path, cite):
+    root, lane = _clean_main_doc(tmp_path, cite)
+    _git(lane, "merge", "--no-ff", "--no-commit", "main")
+    _git(lane, "rm", "-q", ART)
+    r = _git(lane, "commit", "-m", "sync main, artifact removed", check=False)
+    out = r.stdout + r.stderr
+    assert _blocked(r) and MAIN_DOC in out and "MISSING  %s" % cite in out, out
+
+
+@CITES
+def test_sync_blocks_when_the_merge_changes_a_cited_artifacts_numbers(tmp_path, cite):
+    """The common shape here: a branch re-runs a runner over the same research/findings/raw path."""
+    root, lane = _clean_main_doc(tmp_path, cite)
+    _git(lane, "merge", "--no-ff", "--no-commit", "main")
+    _write(lane, ART, '{"v": 0.5}')
+    _git(lane, "add", ART)
+    r = _git(lane, "commit", "-m", "sync main, artifact rewritten", check=False)
+    out = r.stdout + r.stderr
+    assert _blocked(r) and MAIN_DOC in out and "not in any cited artifact" in out, out
+
+
+def test_helper_names_the_cited_artifact_that_keeps_a_doc(tmp_path):
+    root, lane = _clean_main_doc(tmp_path, ART)
+    _git(lane, "merge", "--no-ff", "--no-commit", "main")
+    _write(lane, ART, '{"v": 0.5}')
+    _git(lane, "add", ART)
+    keep, carried, note = mc.split([MAIN_DOC], root=lane)
+    assert keep == [MAIN_DOC] and carried == [] and ART in note, note
+    _git(lane, "merge", "--abort", check=False)
 
 
 def test_normal_commit_is_unchanged(synced):
