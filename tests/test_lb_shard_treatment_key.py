@@ -57,8 +57,8 @@ def build_cell(base, tag, seed, on=True, lb=True, drop=(), drop_sidecar=(), env_
     _w(os.path.join(cell, "lb.json"), rep)
     _w(os.path.join(cell, "lb.json.prov.json"), _prov(treat))
     for fn in _arm_names(seed):
-        ec = {"category": "joy", "bounded_flag": on, "bounded_env": "1" if on else None, "bounded_readback": on,
-              "oor_count": 0, "oor_count_session": 0}
+        ec = {"category": "joy", "commit_lesioned": fn.startswith("lesion_"), "bounded_flag": on,
+              "bounded_env": "1" if on else None, "bounded_readback": on, "oor_count": 0, "oor_count_session": 0}
         if fn not in drop:
             _w(os.path.join(cell, fn), {"emocat_feel": {"answer": "joy.", "emotion_category": ec}})
         if fn not in drop or fn not in drop_sidecar:
@@ -199,6 +199,92 @@ def test_score_b8_under_pin_reads_the_treatment_tag(tmp_path):
     assert "must not carry it" in r["off_cells"]["s42"]["why"]
     # no pin: the pin rule (and with it the treatment rule and completeness) is not applied, as before
     assert S.score_b8(_tree(tmp_path / "nopin", on_kw={44: dict(env_override={"lb.json": {KEY: None}})}))["status"] == S.PASS
+
+
+# ── (6) the arm's argv --env (applied in-process by the battery worker) is read under a treatment ──────────────────
+LESION_KNOB = "BRAIN_EMOTION_CATEGORY_COMMIT_LESION"
+BATTERY = "/r/research/runners/onebrain_regression_battery.py"
+
+
+def _set_argv_env(cell, fn, env_json):
+    """Give `fn`'s sidecar the battery worker's argv, `--env <env_json>` (a str: written verbatim)."""
+    p = os.path.join(cell, fn + ".prov.json")
+    pj = json.load(open(p))
+    pj["argv"] = [BATTERY, "--worker", "--env", env_json, "--turns", "emocat_s1,emocat_s2,emocat_feel",
+                  "--out", os.path.join(cell, fn)]
+    _w(p, pj)
+
+
+def _real_argv(cell, seed, lesion_env=None):
+    """The gate cells' shape: intact arms --env {}, the lesion arm and its .rep0 --env {lesion knob: 1}."""
+    for fn in _arm_names(seed):
+        _set_argv_env(cell, fn, json.dumps(lesion_env if fn.startswith("lesion_") and lesion_env is not None
+                                           else ({LESION_KNOB: "1"} if fn.startswith("lesion_") else {})))
+    return cell
+
+
+def test_argv_env_of_the_real_cell_shape_passes_on_and_off(tmp_path):
+    assert _fails(_real_argv(build_cell(tmp_path, "on", 43, on=True), 43), S.TREATMENT_ON) == {}
+    assert _fails(_real_argv(build_cell(tmp_path, "off", 43, on=False), 43), S.TREATMENT_OFF) == {}
+    assert lb_shard._argv_env({"argv": ["x", "--env={\"A\": \"1\"}"]}) == {"A": "1"}
+    assert lb_shard._argv_env({"argv": ["x", "--only", "y"]}) == {}
+    assert lb_shard._argv_env({"argv": ["x", "--env", "[1]"]}) is None
+
+
+def test_a_treatment_key_overridden_in_argv_env_fails(tmp_path):
+    """verify-go 2026-10-28: the sidecar's env carries KEY=1 but the lesion arms' argv --env set it to 0, so they ran
+    OFF; the old rule read only pj['env'] and passed the cell."""
+    cell = _real_argv(build_cell(tmp_path, "on", 43, on=True), 43, lesion_env={LESION_KNOB: "1", KEY: "0"})
+    fails = _fails(cell, S.TREATMENT_ON)
+    want = ["treatment key %s='0' set by argv --env (want '1')" % KEY]
+    assert fails == {"lesion_emotion_category_s43.json.prov.json": want,
+                     "lesion_emotion_category_s43.json.rep0.prov.json": want}
+    # the same value as the treatment is not an override
+    cell = _real_argv(build_cell(tmp_path, "on1", 43, on=True), 43, lesion_env={LESION_KNOB: "1", KEY: "1"})
+    assert _fails(cell, S.TREATMENT_ON) == {}
+    # OFF: the key must not be set there at any value
+    cell = build_cell(tmp_path, "off", 43, on=False)
+    _real_argv(cell, 43)
+    _set_argv_env(cell, "intact_a_%s_s43.json" % GROUP, json.dumps({KEY: "1"}))
+    assert _fails(cell, S.TREATMENT_OFF) == {"intact_a_%s_s43.json.prov.json" % GROUP: [
+        "treatment key %s='1' set by argv --env (this tag must not carry it)" % KEY]}
+
+
+def test_a_stray_key_in_argv_env_fails_and_the_lesion_knob_only_on_a_lesion_arm(tmp_path):
+    cell = build_cell(tmp_path, "on", 43, on=True)
+    _real_argv(cell, 43)
+    _set_argv_env(cell, "intact_b_%s_s43.json" % GROUP, json.dumps({LESION_KNOB: "1"}))   # the lesion in the null arm
+    _set_argv_env(cell, "lesion_emotion_category_s43.json", json.dumps({LESION_KNOB: "1", "BRAIN_AFFECT_LESION": "1"}))
+    assert _fails(cell, S.TREATMENT_ON) == {
+        "intact_b_%s_s43.json.prov.json" % GROUP: ["stray BRAIN_* key(s) in argv --env: %s" % LESION_KNOB],
+        "lesion_emotion_category_s43.json.prov.json": ["stray BRAIN_* key(s) in argv --env: BRAIN_AFFECT_LESION"]}
+    # a non-BRAIN key there is not read (the same scope as the env rule)
+    cell = _real_argv(build_cell(tmp_path, "nb", 43, on=True), 43)
+    _set_argv_env(cell, "intact_a_%s_s43.json" % GROUP, json.dumps({"LB_SOMETHING": "1"}))
+    assert _fails(cell, S.TREATMENT_ON) == {}
+
+
+def test_an_unparseable_argv_env_fails_and_the_default_rule_is_unchanged(tmp_path):
+    cell = _real_argv(build_cell(tmp_path, "on", 43, on=True), 43)
+    _set_argv_env(cell, "intact_a_%s_s43.json" % GROUP, "{not json")
+    assert _fails(cell, S.TREATMENT_ON) == {"intact_a_%s_s43.json.prov.json" % GROUP: [
+        "argv --env unparseable (want a JSON object)"]}
+    # without a treatment the argv is not read (every other caller keeps the old rule)
+    cell = _real_argv(build_cell(tmp_path, "off", 43, on=False), 43)
+    _set_argv_env(cell, "intact_a_%s_s43.json" % GROUP, json.dumps({KEY: "1", "BRAIN_X": "1"}))
+    assert _fails(cell, None) == {}
+
+
+def test_score_b8_under_pin_reads_argv_env(tmp_path):
+    """The panel's mutation through the scorer: the ON s42 lesion arms' argv --env set KEY to 0 -> UNDEFINED."""
+    base = _tree(tmp_path / "t")
+    for s in S.GATE_SEEDS:
+        for tag in (S.LB_ON_TAG, S.LB_OFF_TAG):
+            _real_argv(os.path.join(base, tag, "s%d" % s, "emotion-category"), s)
+    assert S.score_b8(base, pin=PIN)["status"] == S.PASS
+    _real_argv(os.path.join(base, S.LB_ON_TAG, "s42", "emotion-category"), 42, lesion_env={LESION_KNOB: "1", KEY: "0"})
+    r = S.score_b8(base, pin=PIN)
+    assert r["status"] == S.UNDEFINED and "set by argv --env" in r["on_cells"]["s42"]["why"]
 
 
 # ── lb_shard aggregate: --treatment is opt-in; the default aggregate is unchanged ────────────────────────────────

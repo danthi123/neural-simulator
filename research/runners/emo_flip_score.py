@@ -29,11 +29,16 @@ READING OF EACH BAR (the clause text is in the prereg, not here):
             `tools/answer_rate.py` paired over the emotion-category lb_shard row, six gate seeds. Either flag is FAIL.
   B8        the `emotion-category` lb_shard row at each seed, flag ON: reply-level load-bearing (docs/TERMS.md: the lesion
             changes `answer`, the null is clean, the lesion reproduces) in every DEFINED cell, 6 of 6 seeds (Claude confirmed
-            this reading 2026-10-27). A cell whose intact arms do not show the flag engaged (bounded_flag and
-            bounded_readback True) is UNDEFINED. The flag-OFF row is reported beside it.
+            this reading 2026-10-27). A cell any of whose arms (intact_a, intact_b, the lesion arm and its .rep<i>) does
+            not show the flag in its tag's state (ON: bounded_flag and bounded_readback True; OFF: bounded_flag False), or
+            whose lesion arm does not show commit_lesioned True (or an intact arm shows it True), is UNDEFINED (verify-go
+            2026-10-28: the lesion arms were not read before). The flag-OFF row is reported beside it.
             Under --pin (prereg Amendment 2, POST-DATA, 2026-10-28; measurement rule only, the bar is unchanged): an ON
             cell's sidecars must ALL carry TREATMENT_KEY with the value "1" (absent or another value: UNDEFINED) and no
-            other stray BRAIN_* key; an OFF cell's must carry no TREATMENT_KEY at all (present: UNDEFINED); and a cell is
+            other stray BRAIN_* key; an OFF cell's must carry no TREATMENT_KEY at all (present: UNDEFINED); the same
+            rule reads each arm's argv `--env` JSON, which the battery worker applies in-process after the sidecar's env
+            was recorded (tools/lb_shard.py _argv_env_fails: a treatment key overridden there, or a BRAIN_* key there
+            other than the cell's own lesion knob on a lesion arm, is UNDEFINED); and a cell is
             read only when COMPLETE (every arm file its record requires, each with its sidecar; tools/lb_shard.py
             cell_missing_arms), else UNDEFINED naming each missing file.
   DEC       PASS on all eight -> flip the default ON before the 11-21 re-pin; anything else -> STOP with the data.
@@ -42,7 +47,6 @@ from __future__ import annotations
 
 import argparse
 import contextlib
-import glob
 import json
 import os
 import sys
@@ -467,27 +471,39 @@ def _lb_cell(base, tag, seed, want_flag, pin=None, treatment=None):
             parts = (["incomplete cell: %s" % "; ".join(miss)] if miss else []) + (
                 ["provenance does not match the pin: %s" % _short(rest, 160)] if rest else [])
             return "UNDEFINED", " | ".join(parts)
-    # engagement: the intact arms must show the flag in the state it is meant to be in for this tag
-    arms = sorted(a for a in glob.glob(os.path.join(cell_dir, "intact*.json")) if not a.endswith(".prov.json"))
-    if not arms:
+    # engagement: EVERY arm (the intact arms AND the lesion arm with its .rep<i> repeats) must show the flag in the
+    # state it is meant to be in for this tag, and each arm's lesion state must be its role's: commit_lesioned True on a
+    # lesion arm, not True on an intact arm. (verify-go 2026-10-28: this read only intact*.json, so a lesion arm that
+    # ran with the flag OFF, or without the lesion, was never seen and the cell could still read LB.)
+    names = sorted(os.listdir(cell_dir))
+    intact = [n for n in names if n.startswith("intact") and n.endswith(".json") and not n.endswith(".prov.json")]
+    lesion = [n for n in names if n.startswith("lesion_") and not n.endswith(".prov.json")]   # .json and .json.rep<i>
+    if not intact:
         return "UNDEFINED", "no intact arm file beside lb.json"
-    for a in arms:
+    if not lesion:
+        return "UNDEFINED", "no lesion arm file beside lb.json"
+    for n in intact + lesion:
+        is_lesion = n.startswith("lesion_")
         try:
-            with open(a) as f:
+            with open(os.path.join(cell_dir, n)) as f:
                 doc = json.load(f)
         except Exception as e:  # noqa: BLE001
-            return "UNDEFINED", "%s unreadable (%s)" % (os.path.basename(a), type(e).__name__)
+            return "UNDEFINED", "%s unreadable (%s)" % (n, type(e).__name__)
         feel = next((v for k, v in sorted(doc.items()) if isinstance(v, dict) and "emotion_category" in v), None) \
             if isinstance(doc, dict) else None
         ec = (feel or {}).get("emotion_category")
         if not isinstance(ec, dict) or "bounded_flag" not in ec or "bounded_readback" not in ec:
-            return "UNDEFINED", "%s carries no engagement keys on its feel read" % os.path.basename(a)
+            return "UNDEFINED", "%s carries no engagement keys on its feel read" % n
         if want_flag and not (ec["bounded_flag"] is True and ec["bounded_readback"] is True):
             return "UNDEFINED", "flag not engaged in %s (bounded_flag=%s, bounded_readback=%s)" % (
-                os.path.basename(a), _short(ec["bounded_flag"]), _short(ec["bounded_readback"]))
+                n, _short(ec["bounded_flag"]), _short(ec["bounded_readback"]))
         if not want_flag and ec["bounded_flag"] is not False:
-            return "UNDEFINED", "OFF cell %s shows bounded_flag=%s (the flag leaked in)" % (
-                os.path.basename(a), _short(ec["bounded_flag"]))
+            return "UNDEFINED", "OFF cell %s shows bounded_flag=%s (the flag leaked in)" % (n, _short(ec["bounded_flag"]))
+        if is_lesion and ec.get("commit_lesioned") is not True:
+            return "UNDEFINED", "lesion arm %s shows commit_lesioned=%s (the lesion did not engage)" % (
+                n, _short(ec.get("commit_lesioned", "absent")))
+        if not is_lesion and ec.get("commit_lesioned") is True:
+            return "UNDEFINED", "intact arm %s shows commit_lesioned=True (the lesion leaked into the intact arm)" % n
     lb, verdict = row.get("load_bearing"), row.get("verdict")
     clean, repro = row.get("null_control_clean"), row.get("lesion_reproduced")
     if lb is True and verdict == "regressed" and clean is True and repro is True:

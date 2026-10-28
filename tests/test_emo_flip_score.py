@@ -373,16 +373,26 @@ def test_b5_the_off_arms_must_reproduce_the_10_26_result_else_the_off_half_is_un
 
 # ══════════════════════════════════════════════ B7 ═══════════════════════════════════════════════════════════════════
 def write_lb(base, tag, seed, answers=("The channel is joy.", "The channel is joy."), flag=True, verdict="regressed",
-             lb=True, clean=True, repro=True, with_lb=True, arms=("intact_a", "intact_b")):
+             lb=True, clean=True, repro=True, with_lb=True, arms=("intact_a", "intact_b"), lesion_arms=("", ".rep0"),
+             lesion_flag=None, commit_lesioned=True, intact_commit_lesioned=False):
+    """One row cell: the intact arms, the lesion arm and its repeats (`lesion_arms`: suffixes after
+    lesion_emotion_category_s<seed>.json), and lb.json. `lesion_flag` (default `flag`) and `commit_lesioned` set the
+    lesion arms' engagement; `intact_commit_lesioned` the intact arms'."""
     cell = os.path.join(str(base), tag, "s%d" % seed, "emotion-category")
     os.makedirs(cell, exist_ok=True)
+
+    def doc(ans, cat, fl, cl):
+        return {"emocat_s1": {"answer": AB, "abstained": True},
+                "emocat_feel": {"answer": ans, "abstained": False, "emotion_category": {
+                    "category": cat, "commit_lesioned": cl, "bounded_flag": fl, "bounded_env": "1" if fl else None,
+                    "bounded_readback": fl, "oor_count": 0, "oor_count_session": 0}}}
     for arm, ans in zip(arms, answers):
-        doc = {"emocat_s1": {"answer": AB, "abstained": True},
-               "emocat_feel": {"answer": ans, "abstained": False, "emotion_category": {
-                   "category": "joy", "bounded_flag": flag, "bounded_env": "1" if flag else None,
-                   "bounded_readback": flag, "oor_count": 0, "oor_count_session": 0}}}
         with open(os.path.join(cell, "%s_emocat_s1_emocat_s2_emocat_feel_s%d.json" % (arm, seed)), "w") as f:
-            json.dump(doc, f)
+            json.dump(doc(ans, "joy", flag, intact_commit_lesioned), f)
+    lf = flag if lesion_flag is None else lesion_flag
+    for sfx in lesion_arms:
+        with open(os.path.join(cell, "lesion_emotion_category_s%d.json%s" % (seed, sfx)), "w") as f:
+            json.dump(doc("No single emotion channel latched.", None, lf, commit_lesioned), f)
     if with_lb:
         rep = {"seed": seed, "per_faculty": [{"faculty": "emotion-category", "turn": "emocat_feel", "kind": "neural-lesion",
                                               "load_bearing": lb, "verdict": verdict, "null_control_clean": clean,
@@ -454,6 +464,42 @@ def test_b8_load_bearing_on_six_of_six_defined_cells_else_not_a_pass(tmp_path):
     # the OFF row is reported beside it, and does not change the bar
     r = S.score_b8(lb_tree(tmp_path / "offnot", bad={("off", 42): dict(lb=False, verdict="pass")}))
     assert r["status"] == S.PASS and r["n_load_bearing_off"] == 5 and r["off_cells"]["s42"]["status"] == "NOT-LB"
+
+
+def test_b8_reads_the_lesion_arms_engagement_too(tmp_path):
+    """verify-go 2026-10-28: B8's engagement check read only intact*.json, so a cell whose lesion and .rep0 arms ran
+    with the flag OFF and without the lesion (commit_lesioned False, bounded_flag False) still read LB. Each arm must
+    now show its tag's flag state and its role's lesion state, else the cell is UNDEFINED (never LB)."""
+    assert S.score_b8(lb_tree(tmp_path / "ok"))["status"] == S.PASS
+    # the panel's mutation: the lesion arms of an ON cell ran OFF and unlesioned
+    r = S.score_b8(lb_tree(tmp_path / "mut", bad={("on", 42): dict(lesion_flag=False, commit_lesioned=False)}))
+    assert r["status"] == S.UNDEFINED and r["on_cells"]["s42"]["status"] == "UNDEFINED"
+    assert "flag not engaged in lesion_emotion_category_s42.json" in r["on_cells"]["s42"]["why"]
+    # only the .rep0 repeat ran with the flag OFF: still UNDEFINED, and named
+    assert S.score_b8(lb_tree(tmp_path / "rep"))["status"] == S.PASS
+    cell = os.path.join(str(tmp_path / "rep"), S.LB_ON_TAG, "s43", "emotion-category")
+    p = os.path.join(cell, "lesion_emotion_category_s43.json.rep0")
+    d = json.load(open(p))
+    d["emocat_feel"]["emotion_category"]["bounded_flag"] = False
+    json.dump(d, open(p, "w"))
+    r = S.score_b8(str(tmp_path / "rep"))
+    assert r["status"] == S.UNDEFINED and "lesion_emotion_category_s43.json.rep0" in r["on_cells"]["s43"]["why"]
+    # the lesion did not engage on the lesion arm (flag state right): UNDEFINED
+    r = S.score_b8(lb_tree(tmp_path / "nocommit", bad={("on", 44): dict(commit_lesioned=False)}))
+    assert r["status"] == S.UNDEFINED and "commit_lesioned=False" in r["on_cells"]["s44"]["why"]
+    # the lesion key absent from the lesion arm's read: UNDEFINED, not assumed
+    r = S.score_b8(lb_tree(tmp_path / "absent", bad={("on", 100): dict(commit_lesioned=None)}))
+    assert r["status"] == S.UNDEFINED and "commit_lesioned" in r["on_cells"]["s100"]["why"]
+    # the lesion leaked into an intact arm: UNDEFINED
+    r = S.score_b8(lb_tree(tmp_path / "leak", bad={("on", 101): dict(intact_commit_lesioned=True)}))
+    assert r["status"] == S.UNDEFINED and "leaked into the intact arm" in r["on_cells"]["s101"]["why"]
+    # an OFF cell whose lesion arm ran with the flag ON: UNDEFINED beside the bar ("the flag leaked in")
+    r = S.score_b8(lb_tree(tmp_path / "offles", bad={("off", 102): dict(lesion_flag=True)}))
+    assert r["status"] == S.PASS and r["off_cells"]["s102"]["status"] == "UNDEFINED"
+    assert "leaked in" in r["off_cells"]["s102"]["why"]
+    # no lesion arm at all beside lb.json: UNDEFINED
+    r = S.score_b8(lb_tree(tmp_path / "noles", bad={("on", 42): dict(lesion_arms=())}))
+    assert r["status"] == S.UNDEFINED and "no lesion arm file" in r["on_cells"]["s42"]["why"]
 
 
 # ══════════════════════════════════════════════ the decision ═════════════════════════════════════════════════════════

@@ -12,7 +12,12 @@ for job in "on intact_a" "on permuted" "off intact_a" "off permuted"; do
   mkdir -p $S/$side/s101
   until bash /home/dant123/Projects/sim/tools/mem_ok.sh 10 >/dev/null 2>&1; do sleep 20; done
   echo "$(date +%T) start $side $arm"
-  if [ "$side" = on ]; then FLAG="BRAIN_EMOTION_CATEGORY_BOUNDED=1"; else FLAG="EMOBC_UNUSED=1"; fi
+  # OFF sets the flag to 0 explicitly (fixed 2026-10-28, verify-go on research/emo-bounded-default-on): the runs this
+  # script made on 10-26/27 from wt-emobc-pin used FLAG="EMOBC_UNUSED=1" (variable unset), which read OFF at that
+  # pre-flip revision; at a revision carrying the default-ON flip an unset variable builds the bounded organ, so the
+  # OFF arm would silently run ON (the flip_offarm_staleness class). =0 is OFF at every revision; it differs from
+  # unset only in the reported raw bounded_env string ('0' vs None).
+  if [ "$side" = on ]; then FLAG="BRAIN_EMOTION_CATEGORY_BOUNDED=1"; else FLAG="BRAIN_EMOTION_CATEGORY_BOUNDED=0"; fi
   bash /home/dant123/Projects/sim/tools/memcap.sh 11 -- env $FLAG SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= \
     $PY -u -m research.runners.stage2_exit_gate --shard --seed 101 --group emo --arm $arm --allow-gate-seed --prereg $PREREG --out $out > $S/${side}_${arm}.log 2>&1
   echo "$(date +%T) end $side $arm rc=$?"
