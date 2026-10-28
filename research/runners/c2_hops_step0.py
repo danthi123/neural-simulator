@@ -1,0 +1,912 @@
+"""C2 M1 STEP 0: the engagement smoke of the spiking-hops packet, read-only (research/coordination/c2-spiking-hops-PACKET.md,
+round 9, section 2.10 step 0; tables 2.8; premise map 2.9).
+
+WHAT. The step-0 reads (a)-(h) of packet 2.10 as the informational step-0 mode of the Stage-2 arm worker
+(research/runners/stage2_exit_gate.py `run_worker`, entries `infer/c2s0_*`), one shard per (table, seed), and a scorer
+that applies the packet's GO rule and STOP lines VERBATIM to the shards. No production edit, no default changed, no M1
+code (none exists yet): every read runs on the production default path after the teach block, inside
+`stage2_exit_gate.substrate_read_guard` (global RNG preserved, composer bridge v/u/firing and lazy sequencer state put
+back), and the inert-read check (h) tests that on seed 7.
+
+THE READS (made once per full step-0 worker, after the teach block, before any `.kb` fixture and the first probe):
+  (a) `composer.query_patient_source` for (heron, hunt), (heron, eat), (frog, eat), (frog, chase): result, tier, the
+      selected block, `propose_path`, `fs_candidates` with the cue roles, the decoded rows under the cue from one full
+      `_read_blocks` scan, and `host_routed` (decoded rows under the cue, buffer PROPOSE None).
+  (b) the sequencer the production path builds (`_ensure_sequencer` at the composer defaults, the REDUCED fabric), every
+      block's `m{b}` rate for the same cues through `run_sequencerK_reduced_with_drive` with the composer's own drives,
+      the sequencer decision against the host first-match, and the build's memory and time.
+  (c) for EVERY stored block, the production `block_cleanup_scores` then the PATIENT row of the cleanup membrane read
+      right after it (clipped at 0), relayed through `onbridge_divnorm_drive` on the composer's score bridge at its
+      `input_gain`: the patient pools that fire per block, V'_P (their union in block order) beside the decoded stored
+      patients; and the full probe `block_cleanup_scores_full` as a cross-check under the P10 treatment (clip at 0,
+      every reserve slot -- `_silent_reserve(j)` True -- zeroed, compared on the non-reserve slots).
+  (f) every premise-map cue of the table (2.9) on the bound store (decoded rows) and the LTM (`ltm.query_patient`,
+      `all_candidate_patients` on the routed shard), plus the record-only `.kb` audit counts per tier.
+  The worker itself records (d) `chat._last_gnw_delib` per probe turn, (e) the D4 recorder and the teach replies'
+  `comprehension` / `surprise` / `reconsolidation`, the `infer_xtier` fixture record and `ws_seed`, and (g) the `.kb`
+  overwrite fixtures (A17's plan on `infer_amb1`, A19's on `infer_dup`) with their engagement record (i)-(iv).
+  (h) seed 7 only: the `infer` table in three fresh workers (`c2s0_infer_bare`, `c2s0_infer_rec`, `c2s0_infer`).
+
+  .venv/bin/python -m research.runners.c2_hops_step0 --score research/findings/raw/_c2_step0 [--seeds 7] [--out X]
+  .venv/bin/python -m research.runners.c2_hops_step0 --emit-pool-lines '<sha>' [--mem-gb 9]
+"""
+from __future__ import annotations
+
+import argparse
+import contextlib
+import json
+import os
+import resource
+import sys
+import time
+import traceback
+
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_REPO = os.path.normpath(os.path.join(_HERE, "..", ".."))
+if _REPO not in sys.path:
+    sys.path.insert(0, _REPO)
+
+from research.runners import stage2_exit_gate as SG  # noqa: E402
+
+PACKET = "research/coordination/c2-spiking-hops-PACKET.md"
+OUT_ROOT = "research/findings/raw/_c2_step0"
+GROUP = "infer"
+SEEDS = (7, 1, 2, 3, 4, 5, 6)                    # design seed 7 first, then the dev seeds 1-6 (packet 2.10 step 0)
+INERT_SEED = 7
+TABLE_ARMS = {"infer": "c2s0_infer", "infer_amb1": "c2s0_amb1", "infer_amb2": "c2s0_amb2", "infer_dup": "c2s0_dup",
+              "infer_xtier": "c2s0_xtier"}
+INERT_ARMS = {"full": "c2s0_infer", "recorder": "c2s0_infer_rec", "bare": "c2s0_infer_bare"}
+NEW_TABLES = ("infer_amb1", "infer_amb2", "infer_dup", "infer_xtier")
+CUES_A = (("heron", "hunt"), ("heron", "eat"), ("frog", "eat"), ("frog", "chase"))
+EXPECTED_LTM_BUNDLE = "wikidata_100k"
+# packet 2.8 "Which competent() branch each new teach takes" (keyed by the teach sentence, which is what the table rows name)
+EXPECTED_BRANCH = {"the heron hunts the frog": "pass_through", "the frog eats the gnat": "pass_through",
+                   "the heron hunts the worm": "pass_through", "the frog eats the apple": "covered"}
+AMBIGUOUS_CUES = {"infer_amb1": (("heron", "hunt"),), "infer_amb2": (("frog", "eat"),)}
+RETOLD_CUES = {"infer_dup": (("heron", "hunt"), ("frog", "eat"))}
+OVERWRITE_TABLES = {"infer_amb1": "amb1_worm_to_frog", "infer_dup": "dup_first_frog_to_worm"}
+XTIER_TABLE, XTIER_FIXTURE = "infer_xtier", "xtier_heron_hunt_fish"
+ABSENCE_CUE = ("frog", "chase")
+# pool-line resources: measured on the seed-7 local smoke (see `pool_lines`); the Stage-2 lane's memcap
+MEM_GB = 9
+MEMCAP_GB = 10
+MAX_AGE_H = 240
+
+
+# ══════════════════════════════════════ THE PREMISE MAP (packet 2.9), as data ══════════════════════════════════════
+def _row(probe, cues, sources, absence=(), reported_only=False):
+    """One map row: `cues` = {(agent, action): (buffer patients, LTM patients)}, exact sets; `sources` = teach labels,
+    `builtin:<a>,<v>,<p>` or `fixture:<name>`; `absence` = cues whose premise is that nothing is stored (read from the
+    teach log and builtin_facts ONLY, round 5)."""
+    return {"probe": probe, "cues": {k: (frozenset(b), frozenset(l)) for k, (b, l) in cues.items()},
+            "sources": list(sources), "absence": [tuple(a) for a in absence], "reported_only": bool(reported_only)}
+
+
+def _infer_rows(ltm_hh=(), extra_hh=(), extra_fe=(), hh_fixture=()):
+    hh, fe = ("heron", "hunt"), ("frog", "eat")
+    return [
+        _row("p_prey_eat", {hh: ({"frog"}, ltm_hh), fe: ({"gnat"}, ())},
+             ["t_heron_hunt", "t_frog_eat"] + list(extra_hh) + list(extra_fe) + list(hh_fixture)),
+        _row("c_heron_hunt", {hh: ({"frog"}, ltm_hh)}, ["t_heron_hunt"] + list(extra_hh) + list(hh_fixture)),
+        _row("c_frog_eat", {fe: ({"gnat"}, ())}, ["t_frog_eat"] + list(extra_fe)),
+        _row("c_prey_chase", {hh: ({"frog"}, ltm_hh)}, ["t_heron_hunt"] + list(extra_hh) + list(hh_fixture),
+             absence=[ABSENCE_CUE]),
+        _row("p_yesno", {("crow", "chase"): ({"wren"}, ()), ("wren", "chase"): ({"moth"}, ())},
+             ["t_crow_chase", "t_wren_chase"], reported_only=True),
+        _row("c_dog_chase", {("dog", "chase"): ({"cat"}, ())}, ["builtin:dog,chase,cat"]),
+    ]
+
+
+def _amb_rows(hh_set, fe_set, sources):
+    return [_row("p_prey_eat", {("heron", "hunt"): (hh_set, ()), ("frog", "eat"): (fe_set, ())}, sources),
+            _row("c_heron_hunt", {("heron", "hunt"): (hh_set, ()), ("frog", "eat"): (fe_set, ())}, sources),
+            _row("c_dog_chase", {("dog", "chase"): ({"cat"}, ())}, ["builtin:dog,chase,cat"])]
+
+
+PREMISE_MAP = {
+    "infer": _infer_rows(),
+    "infer_amb1": _amb_rows({"frog", "worm"}, {"gnat"}, ["t_heron_hunt", "t_heron_hunt_worm", "t_frog_eat"]),
+    "infer_amb2": _amb_rows({"frog"}, {"gnat", "apple"}, ["t_heron_hunt", "t_frog_eat", "t_frog_eat_apple"]),
+    "infer_dup": _infer_rows(extra_hh=["t_heron_hunt_re"], extra_fe=["t_frog_eat_re"]),
+    "infer_xtier": _infer_rows(ltm_hh={"fish"}, hh_fixture=["fixture:%s" % XTIER_FIXTURE]),
+}
+
+
+def premise_cues(table):
+    """Every cue (f) reads on `table`: the map's cues, the absence cue where a row names it, and the four (a) cues."""
+    out = []
+    for r in PREMISE_MAP[table]:
+        for c in list(r["cues"]) + list(r["absence"]):
+            if c not in out:
+                out.append(c)
+    for c in CUES_A:
+        if c not in out:
+            out.append(c)
+    return out
+
+
+# ═════════════════════════════════════════ THE READS (inside the arm worker) ════════════════════════════════════════
+def _rss_mb():
+    out = {}
+    try:
+        with open("/proc/self/status") as f:
+            for line in f:
+                if line.startswith(("VmRSS:", "VmHWM:")):
+                    out[line.split(":")[0]] = round(int(line.split()[1]) / 1024.0, 1)
+    except OSError:
+        pass
+    out["ru_maxrss_mb"] = round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024.0, 1)
+    return out
+
+
+def _err(e):
+    return {"error": "%s: %s" % (type(e).__name__, e), "traceback": traceback.format_exc()[-1500:]}
+
+
+def _key(cue):
+    return "%s,%s" % tuple(cue)
+
+
+def _read_layout(buf):
+    if getattr(buf, "enable_sparse_index", False) and getattr(buf, "confidence_gate", 0.0) == 0.0:
+        return "indexed_per_block"
+    return "batched" if getattr(buf, "enable_batched", False) else "per_block_loop"
+
+
+def run_reads(chat, seed, table, pprobe):
+    """Reads (a)-(c) and (f) on the live session, after the teach block (one call per full step-0 worker). Every read
+    records its own exception instead of raising, so one failing read never loses the others or the turn table."""
+    out = {"table": table, "seed": int(seed), "packet": PACKET}
+    t0 = time.time()
+    try:
+        comp = chat.inner.composer
+        buf = getattr(comp, "buffer", comp)
+        ltm = getattr(comp, "ltm", None)
+        out["composer_types"] = {"composer": type(comp).__name__, "buffer": type(buf).__name__,
+                                 "ltm": type(ltm).__name__}
+        out["K"] = len(buf.kb)
+        out["kb_rows"] = SG._kb_triples(buf)                       # record-only: the list, beside the bound store
+        out["read_layout"] = _read_layout(buf)
+        out["fact_shard_active"] = bool(buf._fact_shard_active())
+        out["integrated_loop"] = SG._jsonable(getattr(buf, "integrated_loop", None))
+        with SG.substrate_read_guard(buf) as guard:
+            out["guard"] = guard
+            rows = SG.decoded_rows(buf)
+            out["decoded_rows"] = rows
+            out["a"] = read_a(comp, buf, rows, pprobe)
+            out["b"] = read_b(buf, rows)
+            out["c"] = read_c(buf, rows)
+            out["f"] = read_f(buf, ltm, rows, table)
+    except Exception as e:
+        out.update(_err(e))
+    out["wall_s"] = round(time.time() - t0, 1)
+    out["rss_after"] = _rss_mb()
+    return out
+
+
+def read_a(comp, buf, rows, pprobe):
+    out = {}
+    for a, x in CUES_A:
+        r = {"cue": [a, x]}
+        try:
+            with (pprobe.scope() if pprobe is not None else contextlib.nullcontext([])) as ev:
+                if hasattr(comp, "query_patient_source"):
+                    res, tier = comp.query_patient_source(a, x)
+                else:
+                    res = comp.query_patient(a, x)
+                    tier = "buffer" if res is not None else None
+            r["result"], r["tier"] = SG._jsonable(res), tier
+            r["buffer_propose"] = SG._jsonable(res) if tier == "buffer" else None
+            r.update(SG.propose_path_of(ev))
+            r["events"] = SG._jsonable(ev)
+            dec = SG.rows_under(rows, a, x)
+            r["decoded_rows_under_cue"] = dec
+            # packet 2.10 step 0 (a), round 5: decoded rows under the cue while the buffer's PROPOSE is None
+            r["host_routed"] = bool(dec) and r["buffer_propose"] is None
+        except Exception as e:
+            r.update(_err(e))
+        out[_key((a, x))] = r
+    return out
+
+
+def read_b(buf, rows):
+    from research.runners.one_brain_composer import _seq_imports
+    fns = _seq_imports()
+    K = len(buf.kb)
+    thr = float(buf.sequencer_match_thresh)
+    out = {"K": K, "match_thresh": thr, "reduced": bool(buf.enable_seq_vocab_shrink),
+           "input_gain": float(buf.sequencer_input_gain)}
+    try:
+        out["rss_before"] = _rss_mb()
+        t = time.time()
+        buf._ensure_sequencer(K)
+        out["build_s"] = round(time.time() - t, 2)
+        out["rss_after_build"] = _rss_mb()
+        sb, meta = buf._seq
+        out["fabric"] = {"n_neurons": int(sb.core_config.num_neurons),
+                         "meta": {k: SG._jsonable(v) for k, v in meta.items() if isinstance(v, (int, float, str))}}
+        if out["reduced"]:
+            out["fabric"]["agentsA"] = list(buf._seq_mapA)
+            out["fabric"]["actionsX"] = list(buf._seq_mapX)
+        out["drives_lit"] = [[int((dA > 0).sum()), int((dX > 0).sum())] for dA, dX in buf._seq_drives]
+        out["drives_lit_words"] = [[[buf.words[j] for j in range(len(dA)) if dA[j] > 0],
+                                    [buf.words[j] for j in range(len(dX)) if dX[j] > 0]] for dA, dX in buf._seq_drives]
+    except Exception as e:
+        out.update(_err(e))
+        return out
+    cues = {}
+    for a, x in CUES_A:
+        c = {"cue": [a, x]}
+        true_m = [r["block"] for r in SG.rows_under(rows, a, x)]
+        c["true_matches"] = true_m
+        c["host_first_match"] = true_m[0] if true_m else None
+        try:
+            if out["reduced"]:
+                in_vocab = a in buf._seq_mapA and x in buf._seq_mapX
+            else:
+                in_vocab = a in buf._word_index and x in buf._word_index
+            c["cue_in_reduced_vocab"] = bool(in_vocab)
+            fired = []
+            if in_vocab:
+                spur = {}
+                t = time.time()
+                if out["reduced"]:
+                    dec, rates = fns["run_sequencerK_reduced_with_drive"](
+                        sb, meta, buf.words, buf._seq_mapA, buf._seq_mapX, a, x, buf._seq_drives, match_thresh=thr,
+                        spurious_counter=spur)
+                else:
+                    dec, rates = fns["run_sequencerK_with_drive"](sb, meta, buf._word_index[a], buf._word_index[x],
+                                                                  buf._seq_drives, match_thresh=thr)
+                c["run_s"] = round(time.time() - t, 2)
+                m = {b: float(rates["m%d" % b]) for b in range(K)}
+                fired = [b for b in range(K) if m[b] > thr]
+                c.update(decision=dec, winner=SG._jsonable(rates.get("winner")), m_rates=[m[b] for b in range(K)],
+                         spurious_dropped=spur, sequencer_block=fns["decision_to_block"](dec, K))
+            else:
+                c.update(decision=None, winner=None, m_rates=None, sequencer_block=None)
+            c["fired"] = fired
+            c["missed_true_matches"] = [b for b in true_m if b not in fired]
+            c["fired_non_matching"] = [b for b in fired if b not in true_m]
+            c["decision_equals_host_first_match"] = c.get("sequencer_block") == c["host_first_match"]
+        except Exception as e:
+            c.update(_err(e))
+        cues[_key((a, x))] = c
+    out["cues"] = cues
+    return out
+
+
+def read_c(buf, rows):
+    import numpy as np
+    from sim.backend import to_host
+    from research.runners.one_brain_composer import _seq_imports
+    from research.runners._phaseC_S5_divnorm_derisk import onbridge_divnorm_drive
+    from research.runners._phaseC_task1_cleanup_probe import block_cleanup_scores_full
+    fns = _seq_imports()
+    out = {}
+    try:
+        K, V = len(buf.kb), int(buf.V)
+        iA, iX, iP = (buf.main_roles.index(r) for r in ("agent", "action", "patient"))
+        reserve = np.array([bool(buf._silent_reserve(j)) for j in range(V)])
+        nonres = ~reserve
+        out.update(K=K, V=V, patient_row_index=iP, n_reserve_slots=int(reserve.sum()),
+                   input_gain=float(buf.sequencer_input_gain), score_bridge_built=buf._seq_score is not None)
+        blocks = []
+        for b in range(K):
+            blk = {"block": b, "decoded_patient": rows[b].get("patient") if b < len(rows) else None}
+            try:
+                ag, ax = fns["block_cleanup_scores"](buf, b)          # the production read (agent + action slices)
+                mem = np.asarray(to_host(buf.b.cp_membrane_potential_v)).astype(float)
+                pslice = np.maximum(mem[buf.c_base + iP * V: buf.c_base + (iP + 1) * V], 0.0)   # read right after it
+                _drive, acc = onbridge_divnorm_drive(buf._seq_score, V, pslice, buf.sequencer_input_gain)
+                fired = [buf.words[j] for j in range(V) if acc[j] > 0]
+                order = [int(j) for j in np.argsort(-pslice)[:3]]
+                blk.update(fired_pools=fired, n_fired=len(fired), exactly_one=len(fired) == 1,
+                           fires_decoded_patient=fired == [blk["decoded_patient"]],
+                           pool_spikes={buf.words[j]: float(acc[j]) for j in range(V) if acc[j] > 0},
+                           patient_slice_top=[[buf.words[j], float(pslice[j])] for j in order])
+                probe = block_cleanup_scores_full(buf, b)           # the cross-check (wires every slot, reserves too)
+                cmp = {}
+                for role, prod, ri in (("agent", ag, iA), ("action", ax, iX), ("patient", pslice, iP)):
+                    pr = np.maximum(np.asarray(probe[ri], dtype=float), 0.0)
+                    pr[reserve] = 0.0                                  # the P10 treatment
+                    prod = np.asarray(prod, dtype=float)
+                    d = np.abs(prod[nonres] - pr[nonres])
+                    cmp[role] = {"equal": bool(np.array_equal(prod[nonres], pr[nonres])),
+                                 "max_abs_diff": float(d.max()) if d.size else 0.0,
+                                 "n_slots_differ": int((d > 0).sum())}
+                blk["probe_vs_production"] = cmp
+            except Exception as e:
+                blk.update(_err(e))
+            blocks.append(blk)
+        out["blocks"] = blocks
+        vp = []
+        for blk in blocks:
+            for w in blk.get("fired_pools") or []:
+                if w not in vp:
+                    vp.append(w)
+        dec_p = []
+        for r in rows:
+            if r.get("patient") not in dec_p:
+                dec_p.append(r.get("patient"))
+        out.update(vp=vp, decoded_patients=dec_p, vp_equals_decoded_patients=set(vp) == set(dec_p),
+                   pools_no_block_decodes=[w for w in vp if w not in dec_p],
+                   decoded_patients_without_pool=[p for p in dec_p if p not in vp])
+    except Exception as e:
+        out.update(_err(e))
+    return out
+
+
+def _distinct(kb, agent, action):
+    out = []
+    for fact, _h in kb:
+        if fact.get("agent") == agent and fact.get("action") == action:
+            p = fact.get("patient")
+            if isinstance(p, str) and p not in out:
+                out.append(p)
+    return out
+
+
+def read_f(buf, ltm, rows, table):
+    out = {"cues": {}, "ltm_type": type(ltm).__name__}
+    for a, x in premise_cues(table):
+        d = {"cue": [a, x]}
+        try:
+            dec = SG.rows_under(rows, a, x)
+            d["decoded_rows"] = dec
+            d["decoded_patients"] = [r["patient"] for r in dec]
+            d["kb_patients"] = _distinct(buf.kb, a, x)                  # record-only (the list beside the store)
+            d["ltm"] = SG.ltm_readback(ltm, a, x) if ltm is not None else None
+            audit = {"buffer": len(d["kb_patients"])}
+            if ltm is not None:
+                audit["ltm_routed"] = len(_distinct(ltm.shard_for(a).kb, a, x))
+                allp = []
+                for sh in getattr(ltm, "shards", None) or []:
+                    for p in _distinct(sh.kb, a, x):
+                        if p not in allp:
+                            allp.append(p)
+                audit["ltm_all"] = len(allp)
+                audit["ltm_all_patients"] = allp
+            d["audit"] = audit
+        except Exception as e:
+            d.update(_err(e))
+        out["cues"][_key((a, x))] = d
+    return out
+
+
+# ═══════════════════════════════════════════ THE SCORER (GO rule + STOP lines) ══════════════════════════════════════
+def shard_path(root, seed, arm):
+    return SG.shard_path(root, seed, GROUP, arm)
+
+
+def _load(path):
+    if not os.path.exists(path):
+        return None
+    try:
+        with open(path) as f:
+            return json.load(f)
+    except Exception as e:
+        return {"_load_error": repr(e)}
+
+
+def shard_validity(shard, seed, arm):
+    """Why a step-0 shard cannot be read (empty = readable). Packet 2.10 step 0: a shard that records corpus_present
+    false is UNDEFINED for every check in it and is re-run on a corpus lane, never a GO or STOP input; a shard with NO
+    `corpus_present` key is UNDEFINED too (2.9 rule (i): never `arm_validity`'s default); section 5: `sources` must be
+    {tiny-demo +LTM} and `process.ltm_bundle` wikidata_100k, else the lane is not used."""
+    if shard is None:
+        return ["shard missing"]
+    if "_load_error" in shard or "responses" not in shard:
+        return ["shard unreadable"]
+    why = []
+    if int(shard.get("seed", -1)) in SG.GATE_SEEDS:
+        why.append("a gate seed: voids the step")
+    if int(shard.get("seed", -1)) != int(seed) or shard.get("arm") != arm:
+        why.append("shard is seed %s arm %s, expected seed %s arm %s" % (shard.get("seed"), shard.get("arm"), seed, arm))
+    if "corpus_present" not in shard:
+        why.append("no corpus_present key")
+    elif shard.get("corpus_present") is not True:
+        why.append("corpus_present false: re-run on a corpus lane")
+    if set(shard.get("sources") or []) != {SG.EXPECTED_SOURCE}:
+        why.append("sources %s, expected {%s}" % (shard.get("sources"), SG.EXPECTED_SOURCE))
+    if (shard.get("process") or {}).get("ltm_bundle") != EXPECTED_LTM_BUNDLE:
+        why.append("ltm_bundle %r, expected %s" % ((shard.get("process") or {}).get("ltm_bundle"), EXPECTED_LTM_BUNDLE))
+    if not shard.get("pythonhashseed_ok"):
+        why.append("PYTHONHASHSEED not 0")
+    want = [(l, m) for l, m, _r in SG.turns_for(GROUP, seed, arm)]
+    got = [(t.get("label"), t.get("message")) for t in shard.get("turns") or []]
+    if got != want:
+        why.append("turn table differs from the entry's table")
+    errored = sorted(l for l, r in (shard.get("responses") or {}).items() if not isinstance(r, dict) or "_error" in r)
+    if errored:
+        why.append("errored turn(s) %s" % ",".join(errored))
+    c2 = shard.get("c2_hops")
+    if not isinstance(c2, dict):
+        why.append("no c2_hops record")
+    return why
+
+
+def _fact_in(fact, triples):
+    return any(list(t) == list(fact) for t in triples or [])
+
+
+def _canon(message):
+    return SG._canonical_teach(message)
+
+
+def _stop(lines, key, detail):
+    lines.append({"line": key, "detail": detail})
+
+
+STOP_TEXT = {
+    "S1_missed_true_match": "a missed true match: post the counts; the circuit is banked and the named next carrier is "
+                            "the cs-race engram race read for co-latching (two latches ON = conflict)",
+    "S2_patient_pool": "a patient pool missing, wrong or not unique: the patient identity the unit would count is not "
+                       "on the substrate at this fidelity, and so neither is V'_P",
+    "S3_probe_differs": "the probe's clipped agent or action slice differs from block_cleanup_scores on a non-reserve "
+                        "slot, or its P10-treated patient slice from the membrane read of (c): post the difference "
+                        "(the V'_P read stays the membrane read)",
+    "S4_host_routed": "a probe cue recorded host_routed: post the candidate ids and the decoded rows; Claude rules on "
+                      "whether A21 carries the affected bars",
+    "S5_or_mismatch": "an or_matches_return false: post the call; that teach's branch is UNDEFINED",
+    "S6_teach_branch": "a new-table teach refused or taking another branch than 2.8's: post the recorder's inputs, terms "
+                       "and return; Claude rules on the word",
+    "S7_known_binding": "t_frog_eat_apple with known_binding false: the hop-2 table then rides on the margin; post it",
+    "S8_rewrite_or_rows": "a rewrite on an ambiguity or re-tell teach, or a cue holding one row where two are expected: "
+                          "D2 took the fact; Claude rules on the named fallback (a composer.store fixture)",
+    "S9_premise": "a premise-map row failing on the bound store or the LTM (a missing premise or an extra patient "
+                  "under a hop cue; a (frog, chase) fact in the teach log or builtin_facts): the probes that row "
+                  "feeds are predicted UNDEFINED; Claude rules on the table words",
+    "S10_overwrite": "an overwrite fixture not engaging: its half of B13 is predicted UNDEFINED",
+    "S11_xtier": "the infer_xtier fixture not landing",
+    "S12_not_inert": "reads that are not inert: post the differing turns; (d) is then re-read in a worker that makes "
+                     "none of the other reads",
+}
+
+
+def score_table_shard(shard, seed, table):
+    """GO clauses and STOP lines of ONE full step-0 shard (seed, table). Clauses are True / False, or None when the
+    clause does not apply to this table."""
+    c2 = shard.get("c2_hops") or {}
+    reads = c2.get("reads") or {}
+    resp = shard.get("responses") or {}
+    turns = shard.get("turns") or []
+    go, stops, posts, faults = {}, [], [], []
+    if c2.get("mode") != "full":
+        faults.append("c2_hops mode %r, expected full" % c2.get("mode"))
+    if reads.get("error"):
+        faults.append("reads raised: %s" % reads["error"])
+    rows = reads.get("decoded_rows") or []
+    dec_triples = [[r.get("agent"), r.get("action"), r.get("patient")] for r in rows]
+
+    # (b) every true match drives its m{b} over match_thresh and no non-matching block does
+    b = reads.get("b") or {}
+    if b.get("error") or not b.get("cues"):
+        faults.append("read (b) missing or raised: %s" % b.get("error"))
+        go["match_pools"] = None
+    else:
+        ok = True
+        for k, c in b["cues"].items():
+            if c.get("error"):
+                faults.append("read (b) %s raised: %s" % (k, c["error"]))
+                ok = None if ok is not False else ok
+                continue
+            if c.get("missed_true_matches"):
+                ok = False
+                _stop(stops, "S1_missed_true_match", {"cue": k, "true_matches": c["true_matches"],
+                                                      "fired": c["fired"], "m_rates": c.get("m_rates"),
+                                                      "cue_in_reduced_vocab": c.get("cue_in_reduced_vocab")})
+            if c.get("fired_non_matching"):
+                ok = False
+                posts.append({"what": "a non-matching block fired its m{b} (GO clause fails; no STOP line names it)",
+                              "cue": k, "fired_non_matching": c["fired_non_matching"], "m_rates": c.get("m_rates")})
+        go["match_pools"] = ok
+
+    # (c) one patient pool per block, its decoded patient's; V'_P == decoded patients; re-told same / ambiguous different
+    cc = reads.get("c") or {}
+    if cc.get("error") or not cc.get("blocks"):
+        faults.append("read (c) missing or raised: %s" % cc.get("error"))
+        go["patient_pools"] = go["vp_equals_decoded"] = go["probe_equals_production"] = None
+    else:
+        bad, probe_bad = [], []
+        for blk in cc["blocks"]:
+            if blk.get("error"):
+                faults.append("read (c) block %s raised: %s" % (blk.get("block"), blk["error"]))
+                continue
+            if not blk.get("fires_decoded_patient"):
+                bad.append({"block": blk["block"], "decoded_patient": blk.get("decoded_patient"),
+                            "fired_pools": blk.get("fired_pools"), "patient_slice_top": blk.get("patient_slice_top")})
+            for role, cmp in (blk.get("probe_vs_production") or {}).items():
+                if not cmp.get("equal"):
+                    probe_bad.append({"block": blk["block"], "role": role, "max_abs_diff": cmp.get("max_abs_diff"),
+                                      "n_slots_differ": cmp.get("n_slots_differ")})
+        stray = cc.get("pools_no_block_decodes") or []
+        go["patient_pools"] = not bad and not stray
+        if bad or stray:
+            _stop(stops, "S2_patient_pool", {"blocks": bad, "pools_no_block_decodes": stray})
+        go["vp_equals_decoded"] = bool(cc.get("vp_equals_decoded_patients"))
+        go["probe_equals_production"] = not probe_bad
+        if probe_bad:
+            _stop(stops, "S3_probe_differs", probe_bad)
+        by_block = {blk["block"]: blk.get("fired_pools") for blk in cc["blocks"] if "block" in blk}
+        pool_rel = True
+        for cue in RETOLD_CUES.get(table, ()):
+            ids = [r["block"] for r in SG.rows_under(rows, *cue)]
+            pools = [tuple(by_block.get(i) or ()) for i in ids]
+            if not (len(pools) >= 2 and len(set(pools)) == 1 and pools[0]):
+                pool_rel = False
+                posts.append({"what": "a re-told cue's blocks do not fire the same pool", "cue": _key(cue),
+                              "blocks": ids, "pools": pools})
+        for cue in AMBIGUOUS_CUES.get(table, ()):
+            ids = [r["block"] for r in SG.rows_under(rows, *cue)]
+            pools = [tuple(by_block.get(i) or ()) for i in ids]
+            if not (len(pools) >= 2 and len(set(pools)) == len(pools) and all(pools)):
+                pool_rel = False
+                posts.append({"what": "an ambiguous cue's blocks do not fire different pools", "cue": _key(cue),
+                              "blocks": ids, "pools": pools})
+        go["retold_same_ambiguous_different"] = pool_rel if (table in RETOLD_CUES or table in AMBIGUOUS_CUES) else None
+
+    # (e) every teach of 2.8's table took its expected branch (D4 recorder), and its fact is in the decoded rows
+    branches = c2.get("d4_branches") or {}
+    br_ok = True
+    for t in turns:
+        if t.get("role") != "teach" or t.get("message") not in EXPECTED_BRANCH:
+            continue
+        lab, want = t["label"], EXPECTED_BRANCH[t["message"]]
+        got = (branches.get(lab) or {}).get("branch")
+        r = resp.get(lab) or {}
+        refused = bool(r.get("not_understood")) or bool((r.get("comprehension") or {}).get("abstained"))
+        fact = _canon(t["message"])
+        in_rows = _fact_in(fact, dec_triples)
+        if got != want or refused or not in_rows:
+            br_ok = False
+            detail = {"label": lab, "message": t["message"], "expected": want, "branch": got, "refused": refused,
+                      "fact_in_decoded_rows": in_rows, "call": (branches.get(lab) or {}).get("call")}
+            if table in NEW_TABLES and (got != want or refused):
+                _stop(stops, "S6_teach_branch", detail)
+            else:
+                posts.append(dict(detail, what="a teach of 2.8's table off its expected branch or not decoded"))
+    go["teach_branches"] = br_ok
+
+    # (e) the recorder's or_matches_return on every call
+    calls = (c2.get("d4_recorder") or {}).get("calls")
+    if calls is None:
+        faults.append("no D4 recorder record")
+        go["or_matches_return"] = None
+    else:
+        badc = [c for c in calls if not c.get("or_matches_return")]
+        go["or_matches_return"] = not badc
+        if badc:
+            _stop(stops, "S5_or_mismatch", badc)
+        if not calls:
+            posts.append({"what": "the D4 recorder saw no competent() call on this shard"})
+
+    # (e) t_frog_eat_apple known_binding (amb2)
+    if table == "infer_amb2":
+        comp = (resp.get("t_frog_eat_apple") or {}).get("comprehension") or {}
+        kb_ok = comp.get("known_binding") is True
+        go["apple_known_binding"] = kb_ok
+        if not kb_ok:
+            _stop(stops, "S7_known_binding", {"comprehension": comp})
+    else:
+        go["apple_known_binding"] = None
+
+    # (e) no rewrite on an ambiguity / re-tell teach; ambiguous cues hold 2 rows, 2 patients; re-told 2 rows, 1 patient
+    if table in ("infer_amb1", "infer_amb2", "infer_dup"):
+        rw = [t["label"] for t in turns if t.get("role") == "teach"
+              and ((resp.get(t["label"]) or {}).get("reconsolidation") or {}).get("action") == "rewrite"]
+        rows_ok = True
+        for cue in AMBIGUOUS_CUES.get(table, ()):
+            under = SG.rows_under(rows, *cue)
+            if not (len(under) == 2 and len({r["patient"] for r in under}) == 2):
+                rows_ok = False
+                _stop(stops, "S8_rewrite_or_rows", {"cue": _key(cue), "rows": under, "expected": "2 rows, 2 patients"})
+        for cue in RETOLD_CUES.get(table, ()):
+            under = SG.rows_under(rows, *cue)
+            if not (len(under) == 2 and len({r["patient"] for r in under}) == 1):
+                rows_ok = False
+                _stop(stops, "S8_rewrite_or_rows", {"cue": _key(cue), "rows": under, "expected": "2 rows, 1 patient"})
+                if len(under) < 2:
+                    posts.append({"what": "a re-tell did not append: B11 is predicted UNDEFINED and the step-1 "
+                                          "circuit test carries the duplicate case", "cue": _key(cue)})
+        if rw:
+            _stop(stops, "S8_rewrite_or_rows", {"rewrite_on": rw,
+                                                "reconsolidation": {l: resp[l].get("reconsolidation") for l in rw}})
+        go["no_rewrite_rows_as_expected"] = not rw and rows_ok
+    else:
+        go["no_rewrite_rows_as_expected"] = None
+
+    # (f) every row of 2.9's premise map holds exactly on the bound store and the LTM (and on its teach-log sources)
+    f = (reads.get("f") or {}).get("cues") or {}
+    after = c2.get("stored_facts_after_teach") or []
+    builtin = shard.get("builtin_facts") or []
+    acquired = SG.acquired_teaches(shard)
+    msg_of = {t["label"]: t["message"] for t in turns}
+    fixture = c2.get("ltm_fixture") or {}
+    prem_ok, prem_fault = True, False
+    for row in PREMISE_MAP[table]:
+        fails = []
+        for src in row["sources"]:
+            if src.startswith("builtin:"):
+                fact = src.split(":", 1)[1].split(",")
+                if not _fact_in(fact, builtin):
+                    fails.append("built-in %s not in builtin_facts" % fact)
+            elif src.startswith("fixture:"):
+                rb = fixture.get("readback_before_first_probe") or {}
+                if not (fixture.get("ltm_type") == "ShardedPhasorStore" and rb.get("query_patient") == "fish"
+                        and "fish" in (rb.get("all_candidate_patients") or [])):
+                    fails.append("fixture read-back before the first probe did not return fish")
+            else:
+                fact = _canon(msg_of.get(src))
+                if not acquired.get(src):
+                    fails.append("%s not acquired (teach_acquired)" % src)
+                if not _fact_in(fact, after):
+                    fails.append("%s's fact %s not in stored_facts_after_teach" % (src, fact))
+        for cue, (want_buf, want_ltm) in row["cues"].items():
+            d = f.get(_key(cue))
+            if d is None or d.get("error"):
+                prem_fault = True
+                faults.append("read (f) %s missing or raised: %s" % (_key(cue), (d or {}).get("error")))
+                continue
+            got_buf = d.get("decoded_patients") or []
+            if set(got_buf) != set(want_buf):
+                fails.append("bound store %s holds %s, expected exactly %s" % (_key(cue), sorted(map(str, got_buf)),
+                                                                                sorted(want_buf)))
+            lt = d.get("ltm") or {}
+            if "all_candidate_patients_error" in lt:
+                prem_fault = True
+                faults.append("LTM read %s raised: %s" % (_key(cue), lt["all_candidate_patients_error"]))
+                continue
+            got_ltm = lt.get("all_candidate_patients") or []
+            if set(got_ltm) != set(want_ltm):
+                fails.append("LTM %s holds %s, expected exactly %s" % (_key(cue), sorted(map(str, got_ltm)),
+                                                                       sorted(want_ltm)))
+        for cue in row["absence"]:
+            held = [t for t in list(after) + list(builtin) if list(t[:2]) == list(cue)]
+            if held:
+                fails.append("absence premise %s: %s in the teach log or builtin_facts" % (_key(cue), held))
+            d = f.get(_key(cue)) or {}
+            extra = {"decoded": d.get("decoded_patients") or [],
+                     "ltm": (d.get("ltm") or {}).get("all_candidate_patients") or []}
+            if extra["decoded"] or extra["ltm"]:
+                posts.append({"what": "a decoded or LTM %s row that nothing taught (not a premise failure; B8 then "
+                                      "predicts a moat FAIL wherever it reaches an answer)" % _key(cue),
+                              "rows": extra, "probe": row["probe"]})
+        if fails:
+            prem_ok = False
+            _stop(stops, "S9_premise", {"probe": row["probe"], "reported_only": row["reported_only"],
+                                        "fails": fails})
+    go["premise_map"] = None if prem_fault and prem_ok else prem_ok
+
+    # (g) the overwrite fixture engages under (i)-(iv)
+    if table in OVERWRITE_TABLES:
+        eng = (shard.get("kb_scramble") or {}).get("engagement") or {}
+        ok = bool(eng.get("engaged")) and eng.get("plan") == OVERWRITE_TABLES[table]
+        go["overwrite_engaged"] = ok
+        if not ok:
+            _stop(stops, "S10_overwrite", {"plan": eng.get("plan"), "reason": eng.get("reason"),
+                                           "conditions": eng.get("conditions"), "condition_iv": eng.get("condition_iv")})
+    else:
+        go["overwrite_engaged"] = None
+
+    # (e)/(5) the infer_xtier fixture landed: ShardedPhasorStore, no store_exception, frog in the buffer only, fish in
+    # the LTM only, on both read-backs
+    if table == XTIER_TABLE:
+        fx = fixture
+        typ, exc = fx.get("ltm_type"), fx.get("store_exception")
+        rbs = [fx.get("readback_after_write") or {}, fx.get("readback_before_first_probe") or {}]
+        hh = f.get(_key(("heron", "hunt"))) or {}
+        buf_p = set(hh.get("decoded_patients") or [])
+        ltm_ok = all(rb.get("query_patient") == "fish" and set(rb.get("all_candidate_patients") or []) == {"fish"}
+                     for rb in rbs)
+        landed = typ == "ShardedPhasorStore" and not exc and bool(fx.get("written")) and ltm_ok and buf_p == {"frog"}
+        go["xtier_fixture_landed"] = landed
+        if not landed:
+            if typ != "ShardedPhasorStore" or "SharedLTMWriteError" in str(exc or ""):
+                remedy = ("the offiso env did not reach the server: post ltm_type and the two env values as read, fix "
+                          "the entry's env (BRAIN_SHARED_LTM=0, BRAIN_LTM_RNG_ISOLATE=1, BRAIN_ONE_BRAIN unset) and "
+                          "re-run that step-0 read; never a write through ltm.shared_store or on the shared default; "
+                          "A15 and A16 stay UNDEFINED until a re-run records ShardedPhasorStore")
+            else:
+                remedy = "the type is right and the write or a read-back still fails: post it; Claude rules on the words"
+            _stop(stops, "S11_xtier", {"ltm_type": typ, "env_as_read": fx.get("env_as_read"),
+                                       "store_exception": exc, "written": fx.get("written"), "readbacks": rbs,
+                                       "buffer_patients_heron_hunt": sorted(buf_p), "remedy": remedy})
+    else:
+        go["xtier_fixture_landed"] = None
+
+    # ws_seed equals the arm seed
+    go["ws_seed"] = c2.get("ws_seed") == int(seed)
+    if not go["ws_seed"]:
+        posts.append({"what": "ws_seed is not the arm seed (GO clause fails; no STOP line names it)",
+                      "ws_seed": c2.get("ws_seed"), "seed": seed})
+
+    # (a) no probe cue is host_routed
+    a = reads.get("a") or {}
+    if not a:
+        faults.append("read (a) missing")
+        go["no_host_routed"] = None
+    else:
+        hr = [dict(cue=k, fs_candidates=v.get("fs_candidates"), propose_path=v.get("propose_path"),
+                   decoded_rows=v.get("decoded_rows_under_cue")) for k, v in a.items() if v.get("host_routed")]
+        for k, v in a.items():
+            if v.get("error"):
+                faults.append("read (a) %s raised: %s" % (k, v["error"]))
+        go["no_host_routed"] = not hr
+        if hr:
+            _stop(stops, "S4_host_routed", hr)
+    return {"go": go, "stop_lines": stops, "posts": posts, "instrument_faults": faults}
+
+
+PRIMARY_KEYS = ("answer", "abstained", "recalled_svo", "derived")
+TEACH_KEYS = ("comprehension", "surprise", "reconsolidation")
+
+
+def inert_check(bare, rec, full):
+    """(h): the three workers give identical primary fields (`stage2_exit_gate._primary`) on every probe turn, and the
+    recorder-only worker's teach turns match the bare worker's comprehension / surprise / reconsolidation fields."""
+    out = {"probe_diffs": [], "teach_diffs": [], "reported_full_teach_diffs": []}
+    turns = bare.get("turns") or []
+    rb, rr, rf = (s.get("responses") or {} for s in (bare, rec, full))
+    for t in turns:
+        lab = t["label"]
+        if t.get("role") == "teach":
+            for k in TEACH_KEYS:
+                if (rb.get(lab) or {}).get(k) != (rr.get(lab) or {}).get(k):
+                    out["teach_diffs"].append({"label": lab, "field": k})
+                if (rb.get(lab) or {}).get(k) != (rf.get(lab) or {}).get(k):
+                    out["reported_full_teach_diffs"].append({"label": lab, "field": k})
+            continue
+        pb, pr, pf = (SG._primary(x.get(lab)) for x in (rb, rr, rf))
+        if pb is None or pr is None or pf is None or not (pb == pr == pf):
+            out["probe_diffs"].append({"label": lab, "bare": pb, "recorder": pr, "full": pf})
+    out["inert"] = not out["probe_diffs"] and not out["teach_diffs"]
+    return out
+
+
+def score(root, seeds=SEEDS):
+    """The step-0 verdict over `seeds` (packet 2.10: GO on 7/7 seeds, 7 and 1-6). Precedence: a STOP line on a readable
+    shard -> STOP; else a missing, unreadable or UNDEFINED shard (corpus absent, wrong bundle, an instrument fault) ->
+    UNDEFINED (re-run; never a GO or STOP input); else every GO clause on every shard and (h) -> GO; else NOT_GO (a GO
+    clause failed that no STOP line names: posted for Claude). Every outcome posts `[c2-hops-0] RESULT` and STOPs."""
+    seeds = [int(s) for s in seeds]
+    per = {}
+    undefined, stops, posts = [], [], []
+    go_all = True
+    for seed in seeds:
+        per[seed] = {}
+        for table, arm in TABLE_ARMS.items():
+            path = shard_path(root, seed, arm)
+            sh = _load(path)
+            why = shard_validity(sh, seed, arm)
+            if why:
+                per[seed][table] = {"path": path, "undefined": why}
+                undefined.append({"seed": seed, "table": table, "why": why})
+                go_all = False
+                continue
+            r = score_table_shard(sh, seed, table)
+            r["path"] = path
+            per[seed][table] = r
+            if r["instrument_faults"]:
+                undefined.append({"seed": seed, "table": table, "why": r["instrument_faults"]})
+                go_all = False
+            for s in r["stop_lines"]:
+                stops.append(dict(s, seed=seed, table=table))
+            for p in r["posts"]:
+                posts.append(dict(p, seed=seed, table=table))
+            if any(v is not True for v in r["go"].values() if v is not None) or any(v is None for k, v in r["go"].items()
+                                                                                     if k in _ALWAYS_CLAUSES):
+                go_all = False
+    inert = None
+    if INERT_SEED in seeds:
+        shs = {k: _load(shard_path(root, INERT_SEED, a)) for k, a in INERT_ARMS.items()}
+        why = {k: shard_validity(shs[k], INERT_SEED, INERT_ARMS[k]) for k in shs}
+        if any(why.values()):
+            inert = {"undefined": why}
+            undefined.append({"seed": INERT_SEED, "table": "inert (h)", "why": why})
+            go_all = False
+        else:
+            inert = inert_check(shs["bare"], shs["recorder"], shs["full"])
+            if not inert["inert"]:
+                stops.append({"line": "S12_not_inert", "detail": inert, "seed": INERT_SEED, "table": "infer"})
+                go_all = False
+    else:
+        go_all = False
+    complete = sorted(seeds) == sorted(SEEDS)
+    if stops:
+        verdict = "STOP"
+    elif undefined:
+        verdict = "UNDEFINED"
+    elif go_all and complete:
+        verdict = "GO"
+    elif go_all:
+        verdict = "UNDEFINED"            # every scored seed passes, but the GO rule needs all of 7 and 1-6
+    else:
+        verdict = "NOT_GO"
+    return {"packet": PACKET, "step": "M1 step 0 (2.10)", "root": root, "seeds": seeds, "complete_seed_set": complete,
+            "verdict": verdict, "go_on_scored_seeds": bool(go_all and not stops),
+            "stop_lines_fired": sorted({s["line"] for s in stops}), "stop_text": {k: STOP_TEXT[k] for k in
+                                                                                 sorted({s["line"] for s in stops})},
+            "stops": stops, "undefined": undefined, "posts": posts, "inert_h": inert, "per_seed": per,
+            "result_line": "[c2-hops-0] RESULT %s (seeds %s%s)" % (verdict, ",".join(map(str, seeds)),
+                                                                   "" if complete else "; incomplete seed set"),
+            "next": "post [c2-hops-0] RESULT, STOP for Claude"}
+
+
+# the GO clauses every table carries (a None there is an instrument fault, never a pass)
+_ALWAYS_CLAUSES = ("match_pools", "patient_pools", "vp_equals_decoded", "probe_equals_production", "teach_branches",
+                   "or_matches_return", "premise_map", "ws_seed", "no_host_routed")
+
+
+# ═════════════════════════════════════════════════ POOL LINES ═══════════════════════════════════════════════════════
+def pool_arms(seed):
+    """The entries one seed runs: the five tables, plus the two inert-check workers on seed 7."""
+    arms = list(TABLE_ARMS.values())
+    if int(seed) == INERT_SEED:
+        arms += [INERT_ARMS["recorder"], INERT_ARMS["bare"]]
+    return arms
+
+
+def pool_lines(sha="<sha>", seeds=SEEDS, mem_gb=MEM_GB, memcap_gb=MEMCAP_GB, max_age_h=MAX_AGE_H, out_root=OUT_ROOT):
+    """One (command, reason) per (table, seed), seed 7 first then 1-6, the Stage-2 pool-line prefix byte for byte
+    (stage2_exit_gate.pool_job_lines) with this step's module args and outputs; dev seeds only (no --allow-gate-seed)."""
+    out = []
+    max_age_h = min(int(max_age_h), 240)
+    for seed in seeds:
+        if int(seed) in SG.GATE_SEEDS:
+            raise ValueError("step 0 never runs a gate seed: %d" % seed)
+        for arm in pool_arms(seed):
+            p = shard_path(out_root, seed, arm)
+            table = (SG.arm_c2(GROUP, arm) or {}).get("table")
+            mode = (SG.arm_c2(GROUP, arm) or {}).get("step0")
+            cmd = ("cd ~/derisk-pool/revisions/%s && bash tools/mem_ok.sh %d 1 && mkdir -p %s && "
+                   "bash tools/memcap.sh %d -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 "
+                   "MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -u -m "
+                   "research.runners.stage2_exit_gate --shard --seed %d --group %s --arm %s --out %s"
+                   % (sha, mem_gb, os.path.dirname(p), memcap_gb, seed, GROUP, arm, p))
+            why = ("C2 M1 step 0 (%s 2.10, round 9, on main via 26dcdea48): dev seed %d table %s arm %s (%s); "
+                   "read-only, no production edit, never counted; scored by research/runners/c2_hops_step0.py --score; "
+                   "record: no step-0 read of the four new C2 tables or of the match pools, patient pools and premise "
+                   "map exists (research/findings/2026-10-26-c2-kb-scramble-host-ownership.md read the infer table's "
+                   "conclusion only); mem_gb=%d max_age_h=%d"
+                   % (PACKET, seed, table, arm, "inert-read check (h), %s worker" % mode if mode != "full"
+                      else "reads (a)-(g)", mem_gb, max_age_h))
+            out.append((cmd, why))
+    return out
+
+
+# ═══════════════════════════════════════════════════ CLI ════════════════════════════════════════════════════════════
+def main():
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("--score", default=None, metavar="ROOT", help="score the step-0 shards under ROOT")
+    ap.add_argument("--seeds", default=None, help="comma-separated seeds (default 7,1,2,3,4,5,6)")
+    ap.add_argument("--out", default=None, help="write the score JSON here")
+    ap.add_argument("--emit-pool-lines", default=None, metavar="SHA", help="print the step-0 pool lines (TSV)")
+    ap.add_argument("--mem-gb", type=int, default=MEM_GB)
+    a = ap.parse_args()
+    seeds = tuple(int(s) for s in a.seeds.split(",")) if a.seeds else SEEDS
+    if any(s in SG.GATE_SEEDS for s in seeds):
+        ap.error("step 0 is dev seeds only")
+    if a.emit_pool_lines:
+        for cmd, why in pool_lines(a.emit_pool_lines, seeds=seeds, mem_gb=a.mem_gb):
+            print("%s\t%s" % (cmd, why))
+        return
+    if a.score:
+        res = score(a.score, seeds=seeds)
+        if a.out:
+            os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
+            with open(a.out, "w") as f:
+                json.dump(res, f, indent=1, default=str)
+        print(json.dumps({k: res[k] for k in ("result_line", "verdict", "complete_seed_set", "go_on_scored_seeds",
+                                              "stop_lines_fired")}, indent=1))
+        for s in res["stops"]:
+            print("STOP %s seed %s %s: %s" % (s["line"], s["seed"], s["table"], json.dumps(s["detail"], default=str)[:600]))
+        for u in res["undefined"]:
+            print("UNDEFINED seed %s %s: %s" % (u["seed"], u["table"], u["why"]))
+        for p in res["posts"]:
+            print("POST seed %s %s: %s" % (p["seed"], p["table"], json.dumps(p, default=str)[:400]))
+        return
+    ap.error("choose --score or --emit-pool-lines")
+
+
+if __name__ == "__main__":
+    main()
