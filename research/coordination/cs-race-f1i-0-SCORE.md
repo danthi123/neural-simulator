@@ -12,6 +12,9 @@ Output: `research/findings/raw/_cs_race/f1i/score/f1i0_score.json` and its `.pro
 The scorer re-derives C7 and C8 from the raw the runner keeps (per-ms `v_apical` min / max and `g_ap` for the pulsed words, per-ms
 SOM counts, per-spike SOM cell events, the lesion arm) and re-scores C0-C6 from the same artifacts. Its readings of each item are in
 its docstring. It adds no bar and loosens none.
+Revision 2 (skeptic fixes, same day): STOP-SMOKE is reported as fired on the global reading; the C7(c) mechanism text is corrected
+and its 12 timing fails are listed pair by pair; the next method is no longer labelled branch B1; a C4 attribution note and seed 50's
+`g_ap` peak are added. No scorer output, bar or verdict other than STOP-SMOKE changed.
 
 ## Verdict
 
@@ -26,12 +29,17 @@ its docstring. It adds no bar and loosens none.
   Identity (ii): 72 of 72 lesion records read the `cs_som` gate 0.0 at measurement and `g_ap` 0 at every recorded ms, on every trial,
   while the SOM cells still fire. Per-type STP read-back (S2) matches on all 153 `--som` records: slot -> SOM U 0.049, F 1797 ms, D 399 ms
   on type 1, engram recurrence on type 0. No reset read-back problem.
-- **STOP-SMOKE: not judged** (no selected cell). At the C3 cell the C5 medians are 13.76 pA (clause a) and 15.52 pA (clause b), above
-  2 pA and above the +4/+6 pA flip scale. The median over all 72 TRACE records is 0.0 / 0.0, which comes from the cells that fail C1/C6.
-- **Branches B1-B4: none fires by its text.** B1 needs C7(a) passing and C7(b) failing on every cell. B2 needs C8 failing on every cell.
-  B3 needs C7(c) passing and C7(a) failing on every cell. B4 needs a cell with C3 and C7 passing.
-- **Decision-tree branch:** the packet says STOP-CAL and STOP-ATTRIB post and STOP. No pre-decided branch fires, so the next ruling has to
-  choose the next method. Step 1 does not run: it needs a chosen cell.
+- **STOP-SMOKE: FIRED (global reading).** RULING f1h-0-1027 accepted STOP-SMOKE on the global median, and that is the reading applied
+  here. The median C5 over all 72 TRACE records is 0.0 pA (clause a) and 0.0 pA (clause b), below 2 pA (scorer JSON
+  `decision.STOP_SMOKE_global` = true). The 0.0 comes from the cells that fail C1/C6. Beside it, the cell-level read at the only
+  C3-passing cell, `sa0p125_ms215`: 13.76 pA (clause a) and 15.52 pA (clause b), above 2 pA and above the +4/+6 pA flip scale. The
+  scorer's selected-cell field `decision.STOP_SMOKE_selected` is null because no cell is selected, and its `stops` list adds
+  STOP_SMOKE only for a selected cell, so the list and verdict string name STOP_CAL and STOP_ATTRIB alone.
+- **Branches B1-B4: none fires by its text.** B1 needs C7(a) passing and C7(b) failing on every cell (the newer word dies with the
+  older); at the corner C7(b) is a defined pass on 23 of 23 pairs, so B1 is not met. B2 needs C8 failing on every cell. B3 needs C7(c)
+  passing and C7(a) failing on every cell. B4 needs C3 and C7 passing with STOP-SMOKE; no cell passes C7, so B4 is not met.
+- **Decision-tree branch:** the packet says STOP-CAL, STOP-ATTRIB and STOP-SMOKE post and STOP. No pre-decided branch fires, so the next
+  ruling has to choose the next method. Step 1 does not run: it needs a chosen cell.
 
 ## Per-cell items (P/F/U over seeds 41, 45-51; 8/8 = 8/0/0)
 
@@ -49,6 +57,12 @@ its docstring. It adds no bar and loosens none.
 
 Totals over the 72 TRACE records: C1 24, C3 18, C6 21 PASS / 51 FAIL. These match the driver's `[f1i-0]` counts, which were scored
 independently. C4 is 8/8 on every cell. f1h's base cell read C4 7/8 (RULING f1h-0-1027 asked for the two side by side).
+
+C4 note: TRACE 8/8 against f1h 7/8 is not cleanly attributable to the SOM path. The LESION arm (path gated shut, `g_ap` 0 at every
+recorded ms) is C4 7/8 at every cell, failing seed 45 (burst at 162 ms), while f1h's base cell failed seed 46 (burst at 171 ms); TRACE
+passes both seeds. The seed-41 vole rate also moves between arms: LESION 7.31 Hz, TRACE at the corner 7.50 Hz, f1h 8.65 Hz. The
+SOM-off identity run is byte-equal to f1h at seeds 41 and 45, so the difference enters with the f1i build itself (the SOM pool and
+its wiring present), not only with the gate. Read C4 8/8 as measured, never as the SOM path curing f1h's seed-46 burst.
 
 ## C7 sub-items and the lesion arm
 
@@ -108,16 +122,43 @@ one spike in [300, 600) on all 24 pairs.
 ## What fails, read from the raw (diagnostics, never bars)
 
 1. **C7(c), the timing clause.** All 12 defined (c) fails at the corner, and all 60 over the grid, have one cause: the older slot's
-   `g_ap` PEAK over [300, 950) falls at or after its termination ms. The facilitating slot -> SOM input makes the volley's later SOM
-   spikes the stronger ones. `g_ap` therefore keeps rising after the plateau has already crossed `v_hold`, by 0-57 ms at the corner
-   (seed 46: termination 374, peak 428) and by up to 120 ms over the grid. The first rise precedes the termination on 23 of 23 pairs. The packet's self-skeptic
-   record states the intent as "SOM spikes and a `g_ap` rise precede the termination". The bar text says peak, and the text is scored.
+   `g_ap` PEAK over [300, 950) falls at or after its termination ms (by 0-57 ms at the corner, up to 120 ms over the grid). The cause is
+   not facilitation of `g_ap`. Every routed SOM spike adds a constant `W_SA` to `g_ap` (0.125 at the corner, 0.25 when two SOM cells
+   fire in the same ms): the `sap` pathway is `stp_disabled` and only `msom`, the mention -> SOM edge, keeps STP
+   (`research/runners/cs_race_f1.py`). Facilitation changes how many SOM spikes there are, never the size of a `g_ap` step. The peak is
+   the last spike of whichever SOM volley is still summing when the maximum is reached. The first rise precedes the termination on 23
+   of 23 defined pairs. The 12 corner fails split by peak minus termination ms (SOM spike ms read from `som_cell_events`):
+
+   | group | seed | pair | termination ms | `g_ap` peak ms (value) | peak - term ms | SOM spikes in the 20 ms before the peak |
+   |---|---|---|---|---|---|---|
+   | (i) | 45 | vole>frog | 359 | 360 (0.573) | 1 | 8, ms 347-359 |
+   | (i) | 45 | lynx>grass | 367 | 367 (0.612) | 0 | 8, ms 355-366 |
+   | (i) | 48 | lynx>grass | 374 | 376 (0.456) | 2 | 7, ms 356-375 |
+   | (i) | 49 | vole>frog | 437 | 441 (0.544) | 4 | 7, ms 426-440 |
+   | (i) | 51 | lynx>grass | 373 | 379 (0.398) | 6 | 6, ms 360-378 |
+   | (ii) | 51 | vole>frog | 395 | 421 (0.413) | 26 | 5, ms 407-420 |
+   | (ii) | 49 | frog>vole | 403 | 432 (0.566) | 29 | 7, ms 420-431 |
+   | (ii) | 46 | lynx>grass | 388 | 433 (0.612) | 45 | 7, ms 423-432 |
+   | (ii) | 46 | frog>vole | 376 | 427 (0.628) | 51 | 7, ms 418-426 |
+   | (ii) | 51 | frog>vole | 382 | 433 (0.376) | 51 | 5, ms 414-432 |
+   | (ii) | 46 | vole>frog | 374 | 428 (0.515) | 54 | 5, ms 422-427 |
+   | (ii) | 49 | lynx>grass | 372 | 429 (0.597) | 57 | 7, ms 411-428 |
+
+   (i) 5 pairs have the peak 0-6 ms after the termination. In four of them (s45 vole>frog, s45 lynx>grass, s48 lynx>grass, s51
+   lynx>grass) the termination and the peak both fall inside the first SOM volley, which is still summing as the plateau crosses
+   `v_hold` (`g_ap` at term - 1 is 0.31-0.55). The fifth, s49 vole>frog, is the exception: the SOM spikes at ms 378, 379, 390, 405 and
+   418 did not bring the plateau down, and both the termination (437) and the peak (441) sit inside the later cluster at ms 426-440. It
+   belongs to (i) by timing and to (ii) by mechanism. (ii) 7 pairs have the peak 26-57 ms after the termination, every peak at ms
+   421-433, fed by a second SOM volley (5-7 spikes in the 20 ms before the peak, the earliest at ms 407). In these the plateau fell
+   after the first volley (4-5 SOM spikes before the termination, `g_ap` at term - 1 only 0.04-0.25), and the second volley arrived
+   after it. The packet's self-skeptic record states the intent as "SOM spikes and a `g_ap` rise precede the termination". The bar
+   text says peak, and the text is scored.
 2. **Self-termination.** The word's own volley recruits the SOM pool, and the resulting `g_ap` (0.32-2.64 at its max in [150, 250) on the 51 failing records) outlasts the
    word's sensory apical drive, which ends at 150 ms. C6 fails on 51 of 72 TRACE records. In 45 of them the c1 word's own plateau fell
    within 50 ms of its pulse end (153-199 ms). The other 6 fell at 308-620 ms, each on a seed with 4-8 SOM spikes after 200 ms: the held
    trace recruiting its own eraser, C8's concern. The defect grows with W_SA and W_MS and drives the C1 failures (a dead plateau leaves the
-   soma near 0 Hz). The corner's one UNDEFINED pair is the same event: at seed 50, frog as X recruited SOM spikes at 136-169 ms, `g_ap`
-   reached 0.34 at 160 ms, and the plateau crossed `v_hold` at 178 ms, before Y arrived. Under the lesion the same frog plateau held.
+   soma near 0 Hz). The corner's one UNDEFINED pair is the same event: at seed 50, frog as X recruited SOM spikes at 136-169 ms, the
+   `g_ap` peak over [100, 300) was 0.419 at 158 ms (0.343 at 160 ms), and the plateau crossed `v_hold` at 178 ms, before Y arrived. Under the lesion the same frog plateau held.
 3. **What holds.** Wherever the older plateau latched (82 defined pairs over the grid), the SOM path ended it, within 8-137 ms of Y_on
    (bar 300 ms; 0 defined C7(a) fails). The newer plateau
    survived at the corner (23 of 23 defined). The lesion owns the overwrite. This is the first spiking route on this lane that ends an
@@ -145,16 +186,20 @@ for step 0. The driver's "stpreset c6 P1" equals TRACE seed 41, where C6 passes 
 ## Draft ruling (for Claude; nothing below is a ruling until Claude signs it)
 
 RULING f1i-0-1028 (draft; reads research/coordination/cs-race-f1i-0-SCORE.md, scorer `research/runners/cs_race_f1i_score.py` @ b5ee567a8).
-Accepted as scored: STOP-CAL and STOP-ATTRIB fire. STOP-ENGINE and STOP-ID do not. STOP-SMOKE is not judged because no cell was
-selected; the C3 cell reads 13.76 / 15.52 pA. No pre-decided branch B1-B4 fires by its text. The driver's provisional `sa0p125_ms215`
-is not selected (C7 2/5/1). P0' is HOSTABLE. Identity (i) and (ii) pass.
+Accepted as scored: STOP-CAL, STOP-ATTRIB and STOP-SMOKE fire. STOP-SMOKE is read globally, as RULING f1h-0-1027 accepted it: the
+median C5 over the 72 TRACE records is 0.0 / 0.0 pA; the cell-level read at the C3 cell is 13.76 / 15.52 pA, beside it. STOP-ENGINE and
+STOP-ID do not fire. No pre-decided branch B1-B4 fires by its text. The driver's provisional `sa0p125_ms215` is not selected
+(C7 2/5/1). P0' is HOSTABLE. Identity (i) and (ii) pass. C4 is 8/8 in TRACE against f1h 7/8, but the LESION arm is 7/8 on seed 45
+(burst at 162 ms) where f1h failed seed 46 (171 ms), so that change is not attributed to the SOM path.
 
   Step 1 does not run. It needs a chosen cell. Running TRACE / LESION / NO-ENC / NOFAC at an unselected cell would waive C7.
 
   Banked as a METHOD verdict, never a capability verdict: the shared facilitating SOM pool -> apical GABA_A ends the older word's held
   plateau through real synapses, and the lesion owns that (corner 23 vs 0 of 23 defined pairs; the first spiking route on this lane,
-  f1h 0/216). It misses the step-0 bars for two reasons. (1) C7(c) compares the `g_ap` PEAK with the termination ms, and facilitation
-  keeps `g_ap` rising after the plateau falls (12/23; the first rise precedes the fall 23/23). (2) The pulsed word's own SOM IPSP outlasts
+  f1h 0/216). It misses the step-0 bars for two reasons. (1) C7(c) compares the `g_ap` PEAK with the termination ms. Every routed SOM spike
+  adds a constant `W_SA` (the `sap` path is `stp_disabled`), so the peak is the last spike of a volley that is still summing. 12 of 23
+  corner pairs fail: 5 with the peak 0-6 ms after the termination (4 inside the first volley, s49 vole>frog inside the later cluster)
+  and 7 with the peak 26-57 ms after it, from a second clustered volley; the first rise precedes the termination 23/23. (2) The pulsed word's own SOM IPSP outlasts
   its 150 ms sensory apical drive and ends its own plateau: C6 51/72 FAIL, 45 of them within 50 ms of the pulse end, and the corner's
   UNDEFINED pair (seed 50). Reason (2) alone keeps every cell off 8/8. No reading of (1) changes STOP-CAL.
 
@@ -163,11 +208,14 @@ is not selected (C7 2/5/1). P0' is HOSTABLE. Identity (i) and (ii) pass.
 
   Q3 class-label gap (E build): the MWT98 triple stays. The method uses its facilitation, and no alternative D is verified.
 
-  Next method (Claude chooses; recommendation): the measured defect is the one B1 names, "the newer word dies under its own inhibition".
-  Banked alternative 2 is that branch's method: lateral per-slot SOM sparing its own slot, i.e. slot i -> SOM_i -> the apicals of
-  slots j != i. It is the Martinotti-mediated disynaptic inhibition between pyramidal cells of Silberberg & Markram 2007 (PMID 17329212,
-  in the packet; abstract-level, read before binding). It removes reason (2) by structure. Its cost is selectivity by wiring, which must
-  be in `decides:`.
+  Next method (Claude chooses; recommendation). This is not branch B1. B1's text is "C7(a) passes but C7(b) fails on every cell (the
+  newer word dies with the older)", and corner C7(b) is 23/23 defined passes, so B1 is not met. The measured defect is the pulsed word's
+  self-termination after its drive ends: C6 FAIL 51/72 (45 of them dropping at 153-199 ms), plus the seed-50 C7(0) pair, while the
+  lesion arm is C6 8/8 at every cell. The packet labels its banked alternative 2 "Pre-decided branch B1"; choosing it here is a method
+  choice made by this ruling, not a branch the data fired. Alternative 2 is lateral per-slot SOM sparing its own slot, i.e. slot i ->
+  SOM_i -> the apicals of slots j != i. It is the Martinotti-mediated disynaptic inhibition between pyramidal cells of Silberberg &
+  Markram 2007 (PMID 17329212, in the packet; abstract-level, read before binding). It removes reason (2) by structure. Its cost is
+  selectivity by wiring, which must be in `decides:`.
   Alternative: before any new wiring, ask the companion-process question (CLAUDE.md, at a wall): what keeps a real newer word's plateau
   up while its own SOM IPSP decays? Candidates are a sensory or top-down apical input that does not stop at a hard 150 ms edge, and the
   plateau's own regenerative conductance against a shunt. Run `bash tools/before_you_build.sh "the pulsed word's own SOM IPSP ends its
