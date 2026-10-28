@@ -1,0 +1,223 @@
+{
+ "backend": "numpy",
+ "description": "C3 topic-stop gate: DEC PASS over six gate seeds (G1-G10, need 6/6 each, the D4 attribution, the UNDEFINED rules); perfect = the real dev shards relabelled (and with the goat teach acquired); nulls = each capability removed on every seed or on one seed, each validity rule broken; random asks.",
+ "failures": [],
+ "kinds": {
+  "info_informational_cell_missing": "info",
+  "null_answer_lost": "null",
+  "null_engagement_missing": "null",
+  "null_flag_off_not_off": "null",
+  "null_learnable_not_asked": "null",
+  "null_lesionL_inert": "null",
+  "null_lesionL_not_held": "null",
+  "null_lesionL_one_order": "null",
+  "null_lesionP_inert": "null",
+  "null_lesionP_not_held": "null",
+  "null_lesion_curiosity_asks": "null",
+  "null_missing_cell": "null",
+  "null_moats_asked": "null",
+  "null_no_stop": "null",
+  "null_nondeterministic": "null",
+  "null_one_seed_answer_lost": "null",
+  "null_one_seed_lesionP_inert": "null",
+  "null_one_seed_no_stop": "null",
+  "null_permuted_inert": "null",
+  "null_recalled_differs": "null",
+  "null_sidecar_env_wrong": "null",
+  "null_sidecar_no_prereg": "null",
+  "null_sidecar_off_pin": "null",
+  "null_stop_order_carried": "null",
+  "perfect": "perfect",
+  "perfect_goat_acquired": "perfect",
+  "random": "null"
+ },
+ "n": 1000,
+ "n_pass": {
+  "info_informational_cell_missing": 1000,
+  "null_answer_lost": 0,
+  "null_engagement_missing": 0,
+  "null_flag_off_not_off": 0,
+  "null_learnable_not_asked": 0,
+  "null_lesionL_inert": 0,
+  "null_lesionL_not_held": 0,
+  "null_lesionL_one_order": 0,
+  "null_lesionP_inert": 0,
+  "null_lesionP_not_held": 0,
+  "null_lesion_curiosity_asks": 0,
+  "null_missing_cell": 0,
+  "null_moats_asked": 0,
+  "null_no_stop": 0,
+  "null_nondeterministic": 0,
+  "null_one_seed_answer_lost": 0,
+  "null_one_seed_lesionP_inert": 0,
+  "null_one_seed_no_stop": 0,
+  "null_permuted_inert": 0,
+  "null_recalled_differs": 0,
+  "null_sidecar_env_wrong": 0,
+  "null_sidecar_no_prereg": 0,
+  "null_sidecar_off_pin": 0,
+  "null_stop_order_carried": 0,
+  "perfect": 1000,
+  "perfect_goat_acquired": 1000,
+  "random": 0
+ },
+ "name": "c3-topic-stop gate DEC",
+ "pass_rate": {
+  "info_informational_cell_missing": 1.0,
+  "null_answer_lost": 0.0,
+  "null_engagement_missing": 0.0,
+  "null_flag_off_not_off": 0.0,
+  "null_learnable_not_asked": 0.0,
+  "null_lesionL_inert": 0.0,
+  "null_lesionL_not_held": 0.0,
+  "null_lesionL_one_order": 0.0,
+  "null_lesionP_inert": 0.0,
+  "null_lesionP_not_held": 0.0,
+  "null_lesion_curiosity_asks": 0.0,
+  "null_missing_cell": 0.0,
+  "null_moats_asked": 0.0,
+  "null_no_stop": 0.0,
+  "null_nondeterministic": 0.0,
+  "null_one_seed_answer_lost": 0.0,
+  "null_one_seed_lesionP_inert": 0.0,
+  "null_one_seed_no_stop": 0.0,
+  "null_permuted_inert": 0.0,
+  "null_recalled_differs": 0.0,
+  "null_sidecar_env_wrong": 0.0,
+  "null_sidecar_no_prereg": 0.0,
+  "null_sidecar_off_pin": 0.0,
+  "null_stop_order_carried": 0.0,
+  "perfect": 1.0,
+  "perfect_goat_acquired": 1.0,
+  "random": 0.0
+ },
+ "pass_rate_ci95": {
+  "info_informational_cell_missing": [
+   0.9962,
+   1.0
+  ],
+  "null_answer_lost": [
+   0.0,
+   0.0038
+  ],
+  "null_engagement_missing": [
+   0.0,
+   0.0038
+  ],
+  "null_flag_off_not_off": [
+   0.0,
+   0.0038
+  ],
+  "null_learnable_not_asked": [
+   0.0,
+   0.0038
+  ],
+  "null_lesionL_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_lesionL_not_held": [
+   0.0,
+   0.0038
+  ],
+  "null_lesionL_one_order": [
+   0.0,
+   0.0038
+  ],
+  "null_lesionP_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_lesionP_not_held": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_curiosity_asks": [
+   0.0,
+   0.0038
+  ],
+  "null_missing_cell": [
+   0.0,
+   0.0038
+  ],
+  "null_moats_asked": [
+   0.0,
+   0.0038
+  ],
+  "null_no_stop": [
+   0.0,
+   0.0038
+  ],
+  "null_nondeterministic": [
+   0.0,
+   0.0038
+  ],
+  "null_one_seed_answer_lost": [
+   0.0,
+   0.0038
+  ],
+  "null_one_seed_lesionP_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_one_seed_no_stop": [
+   0.0,
+   0.0038
+  ],
+  "null_permuted_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_recalled_differs": [
+   0.0,
+   0.0038
+  ],
+  "null_sidecar_env_wrong": [
+   0.0,
+   0.0038
+  ],
+  "null_sidecar_no_prereg": [
+   0.0,
+   0.0038
+  ],
+  "null_sidecar_off_pin": [
+   0.0,
+   0.0038
+  ],
+  "null_stop_order_carried": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_goat_acquired": [
+   0.9962,
+   1.0
+  ],
+  "random": [
+   0.0,
+   0.0038
+  ]
+ },
+ "repo_head": "6c6e08ad903dffad002ba0a9ce1859da607634b1",
+ "scorer_files": {
+  "docs/drafts/c3-topic-stop-gate/bar_sanity_spec_c3ts_gate.py": "dfa076e2fb0caf3fd24b2ac429356c5e852d99399aa4aa616ba5cb44ebf6ede1",
+  "research/runners/c3_topic_stop_score.py": "4812f633de5126696c10caf123686bf5e4589f02f06f509e3e3612a989e59ecb",
+  "research/runners/stage2_exit_gate.py": "67bfd30b66d266748d9e06b0ef393d23ab03f5be3b22b2e84831ec094616a177",
+  "tools/answer_rate.py": "4032a62fdc2d00d61ff307cb599993f552c709ec5f84830e97fd9842544c9253"
+ },
+ "scorer_sha256": "de4ea39e2a97d9e5977141a15a7d922bc1f607945808d68c79dab9c8915a712e",
+ "seed": 0,
+ "spec": "docs/drafts/c3-topic-stop-gate/bar_sanity_spec_c3ts_gate.py",
+ "spec_sha256": "dfa076e2fb0caf3fd24b2ac429356c5e852d99399aa4aa616ba5cb44ebf6ede1",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 1001.1
+}
