@@ -10,6 +10,9 @@ guard is for the runs that PRODUCE them).
     python -m research.runners.c3_topic_stop_score --mode gate --pin <F, full sha> \\
         [--root research/findings/raw/_c3_topic_stop/gate] [--seeds 42,43,44,100,101,102] [--out <json>]
     python -m research.runners.c3_topic_stop_score --emit-lines [<sha>]                        # the gate pool lines (TSV)
+    python -m research.runners.c3_topic_stop_score --emit-canary-lines [<sha>]                 # the identity canary's lines
+    python -m research.runners.c3_topic_stop_score --identity-canary <canary_dir> --pin <F, full sha> \\
+        [--dev-dir research/findings/raw/_c3_topic_stop/dev] [--seeds 7,8] [--out <json>] [--no-closure]
     python -m research.runners.c3_topic_stop_score --closure [--rev <sha>]                     # the arms' import closure
     python -m research.runners.c3_topic_stop_score --closure-check <P> <F>                     # IDENTICAL or the diffs
     python -m research.runners.c3_topic_stop_score --read-check <P> <R>                        # the scorer's READ_FILES
@@ -53,6 +56,16 @@ BAR READINGS (the bar text is the packet's / the prereg's; this is how each is r
 Tallies: gate mode needs every given seed (6 of 6 at the gate); dev mode needs 11 of the 11 counted seeds (9 for D5),
 seed 9 (the design seed) reported and never counted. A bar is PASS when its PASS seeds reach the need, FAIL when its
 FAIL seeds make the need unreachable, else UNDEFINED. DEC: every bar PASS -> PASS; any FAIL -> FAIL; else UNDEFINED.
+
+IDENTITY CANARY (prereg section 5, Edit 1): before any gate line is queued at the gate revision F, the sixteen arms run
+at F on dev seeds 7 and 8 (never gate seeds) through the gate lines' own command (`--emit-canary-lines`), and each
+canary shard must reproduce the committed dev shard of the same seed and arm (measured at 79c6f5128) on EVERY field
+except the host / timing / provenance fields of CANARY_EXCLUDED and the `.prov.json` sidecar (which is provenance and
+is judged by the cell-validity rules instead: the canary cell in gate mode against F, the dev cell in dev mode against
+79c6f5128). Compared exactly: the type and the value of every leaf, so 1 is not 1.0 and True is not 1. A canary arm is
+IDENTICAL, DIFFERS (the first differing field path is printed, then the first decision-bearing one) or UNDEFINED (a
+cell that is missing or breaks a validity rule, or a dev reference that is not the committed file). The canary reads
+PASS only when every arm of every seed is IDENTICAL; anything else is STOP (the gate is not queued at F).
 """
 from __future__ import annotations
 
@@ -79,13 +92,24 @@ PREREG = "research/findings/2026-10-28-c3-topic-stop-gate-PREREGISTRATION.md"
 PACKET = "research/coordination/c3-topic-stop-PACKET.md"
 DEV_DIR = "research/findings/raw/_c3_topic_stop/dev"
 GATE_DIR = "research/findings/raw/_c3_topic_stop/gate"
-PREFLIGHT_DIR = "research/findings/raw/_c3_topic_stop/preflight"
+CANARY_DIR = "research/findings/raw/_c3_topic_stop/canary"
 DEV_PIN = "79c6f5128916003d240f1d1cbb3f1abd715f163d"
 GATE_SEEDS = tuple(G.GATE_SEEDS)
 DEV_SEEDS = tuple(range(1, 13))
 DESIGN_SEED = 9
 DEV_COUNTED = tuple(s for s in DEV_SEEDS if s != DESIGN_SEED)
+CANARY_SEEDS = (7, 8)
 MEM_GB, MEMCAP_GB, MAX_AGE_H = 9, 10, 240
+# The ONLY shard fields the identity canary does not compare (host / timing / provenance), as dotted paths from the
+# shard root: the per-turn wall seconds, the import and wall times, and the process's peak RSS. On all 12 dev seeds
+# these are the only fields in which C_intact_b differs from C_intact_a besides the arm's own name (`arm`, `session`),
+# with the two arms on different pool hosts on 9 seeds. The `.prov.json` sidecar (git_sha, argv, env with the POOL_*
+# job variables, host, run_id, started, the source manifest) is provenance as a whole and is never compared.
+CANARY_EXCLUDED = ("timings_s", "import_s", "wall_s", "elapsed_seconds", "process.peak_rss_mb")
+# The decision-bearing fields, as paths below `responses.<label>.`: reported first when an arm DIFFERS. Every other
+# non-excluded field is compared too; this list only orders the report.
+CANARY_DECISION = ("answer", "abstained", "recalled_svo", "curiosity.curious", "curiosity.want_hz", "curiosity.threshold",
+                   "curiosity.curiosity_topic_stop", "curiosity.curiosity_da")
 
 C_ENV = (("BRAIN_CURIOSITY_TOPIC_STOP", "1"), ("BRAIN_CURIOSITY_PHASIC_DA", "1"))
 _L_LES = (("BRAIN_CURIOSITY_TOPIC_STOP_LESION", "1"),)
@@ -662,6 +686,172 @@ def emit_lines(sha="<sha>", seeds=GATE_SEEDS, out_dir=GATE_DIR, prereg=PREREG):
     return lines
 
 
+def emit_canary_lines(sha="<sha>", seeds=CANARY_SEEDS, out_dir=CANARY_DIR, prereg=PREREG):
+    """[(command, reason)]: the identity canary's lines (prereg section 5). The command is the gate line's byte for byte
+    except the seed and the --out directory (it keeps `--allow-gate-seed --prereg <prereg>`, which the runner accepts on
+    a dev seed); the reason is the canary's own. Dev seeds only: the pool's gate-seed guard does not apply to them."""
+    seeds = tuple(int(s) for s in seeds)
+    if any(s in GATE_SEEDS for s in seeds):
+        raise ValueError("the identity canary runs on dev seeds only, never a gate seed: %s" % (seeds,))
+    keys = [(s, tag) for s in seeds for tag in TAGS]
+    lines = []
+    for (cmd, _why), (s, tag) in zip(emit_lines(sha, seeds=seeds, out_dir=out_dir, prereg=prereg), keys):
+        why = ("prereg %s (F %s); C3 topic-stop gate IDENTITY CANARY (prereg section 5): dev seed %d arm %s (%s) at F, "
+               "compared field by field with the committed dev shard %s/s%d/ask__%s.json (measured at 79c6f5128) "
+               "before any gate line is queued; a dev seed, never a gate seed, and no verdict; mem_gb=%d max_age_h=%d"
+               % (prereg, sha, s, tag, TAGS[tag][2], DEV_DIR, s, tag, MEM_GB, MAX_AGE_H))
+        lines.append((cmd, why))
+    return lines
+
+
+# ══════════════════════════════════════════════ identity canary ════════════════════════════════════════════════════
+_ABSENT = object()
+
+
+def _leaf_equal(x, y):
+    """Exact: the same type and the same value (1 is not 1.0, True is not 1); NaN equals NaN."""
+    if type(x) is not type(y):
+        return False
+    if isinstance(x, float) and x != x and y != y:
+        return True
+    return x == y
+
+
+def walk_diffs(ref, got, path="", count=None):
+    """Yield (path, ref value, got value) for every leaf where `got` differs from `ref`, in `ref`'s key order (keys only in
+    `got` after), skipping CANARY_EXCLUDED paths. A key on one side only yields with _ABSENT on the other. `count`
+    (a one-element list) is incremented once per leaf compared."""
+    if isinstance(ref, dict) and isinstance(got, dict):
+        for k in list(ref) + [k for k in got if k not in ref]:
+            p = "%s.%s" % (path, k) if path else str(k)
+            if p in CANARY_EXCLUDED:
+                continue
+            if k not in got or k not in ref:
+                if count is not None:
+                    count[0] += 1
+                yield p, ref.get(k, _ABSENT), got.get(k, _ABSENT)
+            else:
+                yield from walk_diffs(ref[k], got[k], p, count)
+    elif isinstance(ref, list) and isinstance(got, list):
+        for i in range(max(len(ref), len(got))):
+            p = "%s[%d]" % (path, i)
+            if i >= len(ref) or i >= len(got):
+                if count is not None:
+                    count[0] += 1
+                yield p, (ref[i] if i < len(ref) else _ABSENT), (got[i] if i < len(got) else _ABSENT)
+            else:
+                yield from walk_diffs(ref[i], got[i], p, count)
+    else:
+        if count is not None:
+            count[0] += 1
+        if isinstance(ref, (dict, list)) or isinstance(got, (dict, list)) or not _leaf_equal(ref, got):
+            yield path, ref, got
+
+
+def decision_bearing(path):
+    """True when `path` is `responses.<label>.<f>` with <f> (or its parent) in CANARY_DECISION."""
+    parts = path.split(".", 2)
+    if len(parts) < 3 or parts[0] != "responses":
+        return False
+    rest = parts[2]
+    return any(rest == f or rest.startswith(f + ".") or rest.startswith(f + "[") for f in CANARY_DECISION)
+
+
+def _show(v):
+    return "<absent>" if v is _ABSENT else json.dumps(v, default=str)[:120]
+
+
+def compare_shards(ref, got):
+    """{"identical", "n_compared", "n_diffs", "first", "first_decision"}: `got` (canary) against `ref` (dev)."""
+    n, n_diffs, first, first_dec = [0], 0, None, None
+    for p, a, b in walk_diffs(ref, got, "", n):
+        n_diffs += 1
+        rec = {"path": p, "dev": _show(a), "canary": _show(b)}
+        if first is None:
+            first = rec
+        if first_dec is None and decision_bearing(p):
+            first_dec = rec
+    return {"identical": n_diffs == 0, "n_compared": n[0], "n_diffs": n_diffs, "first": first,
+            "first_decision": first_dec}
+
+
+def _dev_ref_problems(dev_root, seeds):
+    """({(seed, tag): [why]}, note): a dev reference must be the COMMITTED file (git reports it tracked and unmodified),
+    when the dev root lies inside this repo; outside it the check is skipped and the note says so."""
+    root = os.path.realpath(dev_root)
+    repo = os.path.realpath(_REPO)
+    if not root.startswith(repo + os.sep):
+        return {}, "committed check skipped (the dev root is outside this repo)"
+    rel = os.path.relpath(root, repo)
+    try:
+        out = _git("status", "--porcelain", "--untracked-files=all", "--", rel)
+    except (subprocess.CalledProcessError, OSError) as e:
+        return {(int(s), tag): ["dev reference: git status failed (%s)" % e] for s in seeds for tag in TAGS}, "git failed"
+    dirty = [ln[3:].strip() for ln in out.splitlines() if ln.strip()]
+    probs = {}
+    for s in seeds:
+        for tag in TAGS:
+            f = os.path.join(rel, "s%d" % int(s), "ask__%s.json" % tag)
+            hit = [d for d in dirty if d in (f, f + ".prov.json")]
+            if hit:
+                probs[(int(s), tag)] = ["dev reference is not the committed file (git status: %s)" % ", ".join(hit)]
+    return probs, "committed check: git status of %s" % rel
+
+
+def identity_canary(canary_root, dev_root, seeds, pin, dev_pin=DEV_PIN):
+    """The identity canary's read: each (seed, tag) canary cell against the dev cell, after both pass their validity
+    rules (canary: gate mode at `pin`; dev: dev mode at `dev_pin`, and committed). PASS iff every arm is IDENTICAL."""
+    seeds = tuple(int(s) for s in seeds)
+    if any(s in GATE_SEEDS for s in seeds):
+        raise ValueError("the identity canary reads dev seeds only, never a gate seed: %s" % (seeds,))
+    ref_probs, note = _dev_ref_problems(dev_root, seeds)
+    arms = {}
+    for s in seeds:
+        for tag in TAGS:
+            c, d = load_cell(canary_root, s, tag), load_cell(dev_root, s, tag)
+            why = ["canary: %s" % w for w in cell_problems(c, s, tag, pin, "gate")]
+            why += ["dev reference: %s" % w for w in cell_problems(d, s, tag, dev_pin, "dev")]
+            why += ref_probs.get((s, tag), [])
+            if why:
+                arms["%d/%s" % (s, tag)] = {"status": "UNDEFINED", "why": why}
+                continue
+            cmp_ = compare_shards(d["shard"], c["shard"])
+            asked_dev, asked_can = _vecstr(d["shard"]), _vecstr(c["shard"])
+            arms["%d/%s" % (s, tag)] = dict(cmp_, status="IDENTICAL" if cmp_["identical"] else "DIFFERS",
+                                            asked_dev=asked_dev, asked_canary=asked_can)
+    n_id = sum(1 for a in arms.values() if a["status"] == "IDENTICAL")
+    n_diff = sum(1 for a in arms.values() if a["status"] == "DIFFERS")
+    n_undef = sum(1 for a in arms.values() if a["status"] == "UNDEFINED")
+    verdict = "PASS" if n_id == len(arms) and arms else "STOP"
+    reads = ("every arm reproduces its dev shard: the gate lines may be queued at F" if verdict == "PASS" else
+             "the gate is not queued at F; Claude rules (prereg section 5)")
+    return {"mode": "identity-canary", "pin": pin, "dev_pin": dev_pin, "seeds": list(seeds),
+            "canary_root": canary_root, "dev_root": dev_root, "excluded": list(CANARY_EXCLUDED) + ["<shard>.prov.json"],
+            "reference_note": note, "arms": arms, "n_arms": len(arms), "n_identical": n_id, "n_differs": n_diff,
+            "n_undefined": n_undef, "verdict": verdict, "reads": reads}
+
+
+def render_canary(res, closure=None):
+    out = ["C3 topic-stop IDENTITY CANARY at F %s against the dev shards at %s, seeds %s" % (res["pin"], res["dev_pin"],
+                                                                                            res["seeds"]),
+           "not compared (host / timing / provenance): %s; %s" % (" ".join(res["excluded"]), res["reference_note"])]
+    for k, a in res["arms"].items():
+        if a["status"] == "IDENTICAL":
+            out.append("  canary %s IDENTICAL (%d fields compared, asked %s)" % (k, a["n_compared"], a["asked_canary"]))
+        elif a["status"] == "DIFFERS":
+            f, fd = a["first"], a["first_decision"]
+            out.append("  canary %s DIFFERS at %s: dev %s / canary %s (%d of %d fields differ; first decision-bearing: %s)"
+                       % (k, f["path"], f["dev"], f["canary"], a["n_diffs"], a["n_compared"],
+                          "none" if fd is None else "%s: dev %s / canary %s" % (fd["path"], fd["dev"], fd["canary"])))
+        else:
+            out.append("  canary %s UNDEFINED (%s)" % (k, "; ".join(a["why"])[:300]))
+    if closure is not None:
+        out.append("closure (informational, not a bar) %s" % closure)
+    out.append("CANARY %s: %d/%d IDENTICAL (DIFFERS %d, UNDEFINED %d); %s" % (
+        res["verdict"], res["n_identical"], res["n_arms"], res["n_differs"], res["n_undefined"], res["reads"]))
+    return "\n".join(out)
+
+
 # ══════════════════════════════════════════════ import closure ═════════════════════════════════════════════════════
 def _git(*args):
     return subprocess.run(["git", "-C", _REPO] + list(args), capture_output=True, text=True, check=True).stdout
@@ -765,9 +955,14 @@ def main(argv=None):
     ap.add_argument("--pin", default=None, help="the full sha every sidecar must name (gate: required; dev: 79c6f5128...)")
     ap.add_argument("--out", default=None)
     ap.add_argument("--emit-lines", nargs="?", const="<sha>", default=None, metavar="SHA")
-    ap.add_argument("--line-seeds", default=None, help="--emit-lines: seeds (default the six gate seeds; the pre-flight "
-                                                       "read uses dev seed 7)")
-    ap.add_argument("--line-dir", default=GATE_DIR, help="--emit-lines: output root (pre-flight: %s)" % PREFLIGHT_DIR)
+    ap.add_argument("--line-seeds", default=None, help="--emit-lines: seeds (default the six gate seeds)")
+    ap.add_argument("--line-dir", default=GATE_DIR, help="--emit-lines: output root")
+    ap.add_argument("--emit-canary-lines", nargs="?", const="<sha>", default=None, metavar="SHA",
+                    help="the identity canary's lines (dev seeds 7 and 8, output %s)" % CANARY_DIR)
+    ap.add_argument("--identity-canary", default=None, metavar="CANARY_DIR",
+                    help="compare the canary shards in CANARY_DIR with the dev shards (needs --pin F)")
+    ap.add_argument("--dev-dir", default=None, help="--identity-canary: the dev shards (default %s)" % DEV_DIR)
+    ap.add_argument("--no-closure", action="store_true", help="--identity-canary: skip the informational closure check")
     ap.add_argument("--closure", action="store_true")
     ap.add_argument("--rev", default=None)
     ap.add_argument("--closure-check", nargs=2, default=None, metavar=("P", "F"))
@@ -779,6 +974,32 @@ def main(argv=None):
         for cmd, why in emit_lines(a.emit_lines, seeds=ls, out_dir=a.line_dir):
             print("%s\t%s" % (cmd, why))
         return 0
+    if a.emit_canary_lines is not None:
+        for cmd, why in emit_canary_lines(a.emit_canary_lines):
+            print("%s\t%s" % (cmd, why))
+        return 0
+    if a.identity_canary is not None:
+        if not (a.pin and len(a.pin) == 40):
+            ap.error("--identity-canary needs --pin <F, the full 40-hex sha the canary lines ran at>")
+        seeds = tuple(int(x) for x in a.seeds.split(",")) if a.seeds else CANARY_SEEDS
+        res = identity_canary(a.identity_canary, a.dev_dir or os.path.join(_REPO, DEV_DIR), seeds, a.pin)
+        closure = None
+        if not a.no_closure:
+            try:
+                files, diffs = closure_check(DEV_PIN, a.pin)
+                closure = "--closure-check %s %s: closure %d files; %s" % (
+                    DEV_PIN[:9], a.pin[:9], len(files),
+                    "IDENTICAL" if not diffs else "DIFFERS on %d: %s" % (len(diffs), " ".join(diffs)))
+            except (subprocess.CalledProcessError, OSError) as e:
+                closure = "not computed (%s)" % e
+            res["closure_informational"] = closure
+        print(render_canary(res, closure))
+        if a.out:
+            os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
+            with open(a.out, "w") as f:
+                json.dump(res, f, indent=1, default=str)
+            print("-> %s" % a.out)
+        return 0 if res["verdict"] == "PASS" else 1
     if a.closure:
         for f in import_closure(a.rev):
             print(f)
@@ -794,7 +1015,8 @@ def main(argv=None):
                                                                                                  " ".join(diffs))))
         return 0 if not diffs else 1
     if a.mode is None:
-        ap.error("choose --mode dev|gate, --emit-lines, --closure or --closure-check")
+        ap.error("choose --mode dev|gate, --emit-lines, --emit-canary-lines, --identity-canary, --closure, --closure-check "
+                 "or --read-check")
     if a.mode == "gate" and not (a.pin and len(a.pin) == 40):
         ap.error("--mode gate needs --pin <F, the full 40-hex sha the lines ran at>")
     root = a.root or os.path.join(_REPO, DEV_DIR if a.mode == "dev" else GATE_DIR)

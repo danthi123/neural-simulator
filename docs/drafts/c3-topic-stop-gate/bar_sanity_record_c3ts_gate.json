@@ -201,14 +201,14 @@
    0.0038
   ]
  },
- "repo_head": "92c13fd0b3c2b84c5e7bb2856564009a6d3bb948",
+ "repo_head": "0d7da5972402c9cf8ca5024c0ae33fa2a8c108ea",
  "scorer_files": {
   "docs/drafts/c3-topic-stop-gate/bar_sanity_spec_c3ts_gate.py": "dfa076e2fb0caf3fd24b2ac429356c5e852d99399aa4aa616ba5cb44ebf6ede1",
-  "research/runners/c3_topic_stop_score.py": "2a900af271a31b92ddab841f2d206b57c81f18d6faf50349e252d768abe576e4",
+  "research/runners/c3_topic_stop_score.py": "17a61db910170a249e9c17b287e227ab56ed1fa0bed928b26a32dbbc92620b9d",
   "research/runners/stage2_exit_gate.py": "67bfd30b66d266748d9e06b0ef393d23ab03f5be3b22b2e84831ec094616a177",
   "tools/answer_rate.py": "4032a62fdc2d00d61ff307cb599993f552c709ec5f84830e97fd9842544c9253"
  },
- "scorer_sha256": "9a2f8d40eb6259c5e87c75471ae6e8aa2118c952b551c7c8741c2bc197339e54",
+ "scorer_sha256": "ae2b40cfebd2afa0ffe0a6c41de91a64a5247e5691c68cbb7d138795d77f5f51",
  "seed": 0,
  "spec": "docs/drafts/c3-topic-stop-gate/bar_sanity_spec_c3ts_gate.py",
  "spec_sha256": "dfa076e2fb0caf3fd24b2ac429356c5e852d99399aa4aa616ba5cb44ebf6ede1",
@@ -219,5 +219,5 @@
  },
  "tool": "tools/bar_sanity.py",
  "verdict": "OK",
- "wall_s": 952.9
+ "wall_s": 1019.2
 }
