@@ -94,3 +94,28 @@ research/findings/2026-10-26-stage2-fail-diagnoses.md (each diagnosis survived a
 - C4: the s101 joy miss is a numerical artifact of the 1 ms explicit-Euler step. One low-capacitance appraisal
   neuron (53.6 pF) overshoots under strong inhibitory conductance and emits spurious spikes that recruit the sadness
   quench. The C4 lesion and permuted shortfalls are the same event, not independent failures.
+
+## Claude amendment (2026-10-27): C5 caveat
+
+The verdict and every number above stand; this limits how the C5 PASS may be cited.
+- On dev seeds 7 and 8, C5 (inner) and recall verification are decided by the GNW ignition-bus workspace, and that
+  workspace's ignition coincides with the numerical runaway of the old integrator. Measured alone, its ignition knee
+  is the drive at which all 80 cells of the driven slot leave the valid membrane range, and its ignited rate 1/3 is
+  that runaway (research/findings/raw/_stable_integration/bus_ignition_curve_s7.json). By intervention on dev seed 7,
+  the bus alone on valid membranes inside an otherwise production brain loses recall verification and fails C5, and
+  the bus alone on the old integrator inside an otherwise stable brain keeps both
+  (research/findings/raw/_stable_integration/attribution_off_except_bus_vs_off_s7.json,
+  attribution_on_except_bus_vs_off_s7.json).
+- With valid membranes (SIM_STABLE_INTEGRATION=1, every bridge), C5 fails on dev seeds 7 and 8: the inner scorer
+  `all` is true under the production integrator and false on valid membranes
+  (research/findings/raw/_stable_integration/compare_s7.json, compare_s8.json).
+- With the bus and the thought-swap workspace re-calibrated by their own rules on valid membranes
+  (SIM_STABLE_RECAL=1, default OFF), C5 passes again on dev seeds 7 and 8, which are the seeds that re-calibration was
+  fitted on (swap 7 and 8, bus 7), so this is an in-sample result
+  (research/findings/2026-10-27-stable-recal-dev78.md, research/findings/raw/_stable_recal/dev78/dev_check.json).
+- The gate seeds (42, 43, 44, 100, 101, 102) were not measured on valid membranes, with or without the
+  re-calibration.
+- So the 10-26 C5 PASS is cited only with this caveat: it was scored on an integrator under which the deciding
+  workspace's ignition is a numerical runaway, and whether it holds on valid membranes at the gate seeds is unknown.
+  Evidence: research/findings/2026-10-26-stable-integration-dev7.md and its raw under
+  research/findings/raw/_stable_integration/.

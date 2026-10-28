@@ -1,0 +1,102 @@
+{
+ "arms": {
+  "on": {
+   "runner": "research/runners/stable_integration_stop_ignition_probe.py --organ-held",
+   "seed": 10,
+   "arm": "on",
+   "calibration": {
+    "w_rec": 6.5,
+    "norm_ws_w": 4,
+    "thal_tonic_pa": 50,
+    "solo_plateau": 0.084,
+    "strong_pa": 800,
+    "margin_ref": 0.057,
+    "boost_scale": 31
+   },
+   "contents": [
+    0,
+    1
+   ],
+   "confident": {
+    "n_ignited": 1,
+    "margin": 0.08235294117647059,
+    "winner": 0,
+    "rates": [
+     0.08235294117647059,
+     0.0,
+     0.0
+    ]
+   },
+   "stop": {
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "margin": 0.008907563025210091,
+    "boost": 1.4908655462184872,
+    "pre_rates": [
+     0.09176470588235294,
+     0.08285714285714285,
+     0.0
+    ],
+    "post_rates": [
+     0.0,
+     0.0004329004329004329,
+     0.0
+    ]
+   },
+   "freeze": {
+    "n_ignited_pre": 2,
+    "n_ignited_post": 2,
+    "margin": 0.013501400560224086,
+    "boost": 0.0,
+    "pre_rates": [
+     0.10588235294117647,
+     0.09238095238095238,
+     0.0
+    ],
+    "post_rates": [
+     0.059893048128342244,
+     0.05238095238095238,
+     0.0
+    ]
+   },
+   "scramble": {
+    "n_ignited_pre": 2,
+    "n_ignited_post": 2,
+    "margin": 0.013445378151260512,
+    "boost": 0.0,
+    "pre_rates": [
+     0.11058823529411765,
+     0.09714285714285714,
+     0.0
+    ],
+    "post_rates": [
+     0.06060606060606061,
+     0.05064935064935065,
+     0.0
+    ]
+   },
+   "norm_lesion": {
+    "n_ignited_pre": 3,
+    "n_ignited_post": 3,
+    "margin": 0.00313725490196079,
+    "boost": 1.6697450980392157,
+    "pre_rates": [
+     0.18274509803921568,
+     0.1742857142857143,
+     0.1796078431372549
+    ],
+    "post_rates": [
+     0.07950089126559715,
+     0.07878787878787878,
+     0.061319073083778965
+    ]
+   },
+   "checks": {
+    "global_stop": true,
+    "freeze_holds": true,
+    "scramble_breaks_stop": true,
+    "norm_load_bearing": true
+   }
+  }
+ }
+}

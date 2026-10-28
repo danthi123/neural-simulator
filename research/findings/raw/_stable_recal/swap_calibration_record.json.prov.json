@@ -1,0 +1,30 @@
+{
+ "run_id": "1793130104-2650774",
+ "runner": "research/runners/stable_recal_calibration_record.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-recal2/research/runners/stable_recal_calibration_record.py",
+  "--out",
+  "research/findings/raw/_stable_recal/swap_calibration_record.json"
+ ],
+ "git_sha": "100c23201",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-27T15:41:44",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 27799.2,
+ "corpus_check_query": "route GABA_A synapses onto the apical dendrite compartment",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_stable_recal/swap_calibration_record.json"
+}

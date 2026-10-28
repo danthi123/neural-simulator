@@ -1,0 +1,930 @@
+{
+ "runner": "research/runners/stable_integration_swap_ignition_probe.py --curve",
+ "seed": 8,
+ "ignite_threshold_production": 0.1667,
+ "solo_plateau_production": 0.3333,
+ "drive_steps": 35,
+ "read_free_steps": 45,
+ "hold_steps": 150,
+ "drives": [
+  100.0,
+  200.0,
+  300.0,
+  400.0,
+  500.0,
+  600.0,
+  750.0,
+  1000.0,
+  1250.0,
+  1500.0,
+  2000.0,
+  2500.0,
+  3000.0,
+  4000.0,
+  5000.0,
+  8000.0
+ ],
+ "weights": [
+  12.0
+ ],
+ "production_w_rec": 34.0,
+ "production_norm_ws_w": 16.0,
+ "production_establish_pa": 8000.0,
+ "production_salient_pa": 5000.0,
+ "thal_tonic_pa": 25.0,
+ "norm_ws_w": 16.0,
+ "v_low_mV": -110.0,
+ "vpeak_margin_mV": 5.0,
+ "arms": {
+  "off": [
+   {
+    "w_rec": 12.0,
+    "readback": {
+     "requested": false,
+     "bounded": false,
+     "substeps": 1,
+     "rule": "model_reset"
+    },
+    "curve": [
+     {
+      "drive": 100.0,
+      "drives": [
+       100.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0412,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -66.97,
+      "slot0_late_frac_above_m20mV": 0.0,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -74.12,
+      "v_max": 34.96
+     },
+     {
+      "drive": 200.0,
+      "drives": [
+       200.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0022,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -60.47,
+      "slot0_late_frac_above_m20mV": 0.0,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -89.71,
+      "v_max": 35.0
+     },
+     {
+      "drive": 300.0,
+      "drives": [
+       300.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0018,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -57.33,
+      "slot0_late_frac_above_m20mV": 0.0,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -100.31,
+      "v_max": 34.94
+     },
+     {
+      "drive": 400.0,
+      "drives": [
+       400.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0178,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -54.81,
+      "slot0_late_frac_above_m20mV": 0.0013,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -90.07,
+      "v_max": 34.93
+     },
+     {
+      "drive": 500.0,
+      "drives": [
+       500.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.002,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0252,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -50.57,
+      "slot0_late_frac_above_m20mV": 0.0173,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -100.41,
+      "v_max": 34.99
+     },
+     {
+      "drive": 600.0,
+      "drives": [
+       600.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.0067,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0394,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -45.27,
+      "slot0_late_frac_above_m20mV": 0.0613,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -74.17,
+      "v_max": 34.98
+     },
+     {
+      "drive": 750.0,
+      "drives": [
+       750.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.0173,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0376,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -39.54,
+      "slot0_late_frac_above_m20mV": 0.13,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -87.81,
+      "v_max": 34.99
+     },
+     {
+      "drive": 1000.0,
+      "drives": [
+       1000.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.0747,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0384,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -24.53,
+      "slot0_late_frac_above_m20mV": 0.3593,
+      "n_oor_cells": 1,
+      "n_cells": 300,
+      "v_min": -117.47,
+      "v_max": 34.99
+     },
+     {
+      "drive": 1250.0,
+      "drives": [
+       1250.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.0753,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0374,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -23.98,
+      "slot0_late_frac_above_m20mV": 0.364,
+      "n_oor_cells": 1,
+      "n_cells": 300,
+      "v_min": -121.75,
+      "v_max": 34.98
+     },
+     {
+      "drive": 1500.0,
+      "drives": [
+       1500.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.078,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0362,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -22.69,
+      "slot0_late_frac_above_m20mV": 0.3893,
+      "n_oor_cells": 2,
+      "n_cells": 300,
+      "v_min": -114.59,
+      "v_max": 42.42
+     },
+     {
+      "drive": 2000.0,
+      "drives": [
+       2000.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.0893,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0376,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -16.32,
+      "slot0_late_frac_above_m20mV": 0.4987,
+      "n_oor_cells": 5,
+      "n_cells": 300,
+      "v_min": -119.5,
+      "v_max": 56.6
+     },
+     {
+      "drive": 2500.0,
+      "drives": [
+       2500.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.1127,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0318,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -11.0,
+      "slot0_late_frac_above_m20mV": 0.5787,
+      "n_oor_cells": 8,
+      "n_cells": 300,
+      "v_min": -147.16,
+      "v_max": 77.64
+     },
+     {
+      "drive": 3000.0,
+      "drives": [
+       3000.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.1027,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.017,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -1.12,
+      "slot0_late_frac_above_m20mV": 0.71,
+      "n_oor_cells": 22,
+      "n_cells": 300,
+      "v_min": -123.21,
+      "v_max": 85.41
+     },
+     {
+      "drive": 4000.0,
+      "drives": [
+       4000.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.0727,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0184,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": 7.34,
+      "slot0_late_frac_above_m20mV": 0.8033,
+      "n_oor_cells": 61,
+      "n_cells": 300,
+      "v_min": -185.75,
+      "v_max": 111.08
+     },
+     {
+      "drive": 5000.0,
+      "drives": [
+       5000.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.0673,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0216,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": 4.14,
+      "slot0_late_frac_above_m20mV": 0.8227,
+      "n_oor_cells": 85,
+      "n_cells": 300,
+      "v_min": -134.95,
+      "v_max": 119.77
+     },
+     {
+      "drive": 8000.0,
+      "drives": [
+       8000.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.0733,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0304,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -3.3,
+      "slot0_late_frac_above_m20mV": 0.68,
+      "n_oor_cells": 102,
+      "n_cells": 300,
+      "v_min": -153.49,
+      "v_max": 185.22
+     }
+    ],
+    "none": {
+     "drives": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "read_rates": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "hold_rates": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "slot0_late_mean_v": -59.57,
+     "slot0_late_frac_above_m20mV": 0.0,
+     "n_oor_cells": 0,
+     "n_cells": 300,
+     "v_min": -64.19,
+     "v_max": -52.6
+    },
+    "lesion_at_max_drive": {
+     "drives": [
+      8000.0,
+      0.0,
+      0.0
+     ],
+     "read_rates": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "hold_rates": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "slot0_late_mean_v": -69.84,
+     "slot0_late_frac_above_m20mV": 0.0,
+     "n_oor_cells": 25,
+     "n_cells": 300,
+     "v_min": -139.1,
+     "v_max": 82.62
+    },
+    "attributable_to_loops_vs_lesion": 1.0,
+    "attributable_to_drive_vs_none": 1.0
+   }
+  ],
+  "on": [
+   {
+    "w_rec": 12.0,
+    "readback": {
+     "requested": true,
+     "bounded": true,
+     "substeps": 4,
+     "rule": "model_reset"
+    },
+    "curve": [
+     {
+      "drive": 100.0,
+      "drives": [
+       100.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0536,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -66.86,
+      "slot0_late_frac_above_m20mV": 0.0,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -71.55,
+      "v_max": 34.97
+     },
+     {
+      "drive": 200.0,
+      "drives": [
+       200.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0438,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -59.02,
+      "slot0_late_frac_above_m20mV": 0.0,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -71.82,
+      "v_max": 34.97
+     },
+     {
+      "drive": 300.0,
+      "drives": [
+       300.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0538,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -53.22,
+      "slot0_late_frac_above_m20mV": 0.006,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -71.8,
+      "v_max": 34.97
+     },
+     {
+      "drive": 400.0,
+      "drives": [
+       400.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.0047,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0528,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -49.07,
+      "slot0_late_frac_above_m20mV": 0.0233,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -71.74,
+      "v_max": 35.0
+     },
+     {
+      "drive": 500.0,
+      "drives": [
+       500.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.024,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0526,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -40.65,
+      "slot0_late_frac_above_m20mV": 0.1193,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -71.89,
+      "v_max": 34.99
+     },
+     {
+      "drive": 600.0,
+      "drives": [
+       600.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.0347,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0518,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -36.67,
+      "slot0_late_frac_above_m20mV": 0.1667,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -71.8,
+      "v_max": 34.99
+     },
+     {
+      "drive": 750.0,
+      "drives": [
+       750.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.0387,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0528,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -36.11,
+      "slot0_late_frac_above_m20mV": 0.18,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -71.97,
+      "v_max": 34.96
+     },
+     {
+      "drive": 1000.0,
+      "drives": [
+       1000.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.0733,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0522,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -29.51,
+      "slot0_late_frac_above_m20mV": 0.278,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -72.18,
+      "v_max": 34.98
+     },
+     {
+      "drive": 1250.0,
+      "drives": [
+       1250.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.1113,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0532,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -22.61,
+      "slot0_late_frac_above_m20mV": 0.3927,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -71.91,
+      "v_max": 34.98
+     },
+     {
+      "drive": 1500.0,
+      "drives": [
+       1500.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.136,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0478,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -18.5,
+      "slot0_late_frac_above_m20mV": 0.466,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -71.95,
+      "v_max": 34.99
+     },
+     {
+      "drive": 2000.0,
+      "drives": [
+       2000.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.1593,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0394,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -11.07,
+      "slot0_late_frac_above_m20mV": 0.5913,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -72.06,
+      "v_max": 34.99
+     },
+     {
+      "drive": 2500.0,
+      "drives": [
+       2500.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.1293,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0408,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -10.87,
+      "slot0_late_frac_above_m20mV": 0.5867,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -72.15,
+      "v_max": 34.99
+     },
+     {
+      "drive": 3000.0,
+      "drives": [
+       3000.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.0987,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.043,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -13.33,
+      "slot0_late_frac_above_m20mV": 0.5193,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -72.29,
+      "v_max": 34.98
+     },
+     {
+      "drive": 4000.0,
+      "drives": [
+       4000.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.1147,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0398,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -6.88,
+      "slot0_late_frac_above_m20mV": 0.648,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -73.9,
+      "v_max": 34.99
+     },
+     {
+      "drive": 5000.0,
+      "drives": [
+       5000.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.1433,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.045,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -6.21,
+      "slot0_late_frac_above_m20mV": 0.6327,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -80.6,
+      "v_max": 34.99
+     },
+     {
+      "drive": 8000.0,
+      "drives": [
+       8000.0,
+       0.0,
+       0.0
+      ],
+      "read_rates": [
+       0.0293,
+       0.0,
+       0.0
+      ],
+      "hold_rates": [
+       0.0488,
+       0.0,
+       0.0
+      ],
+      "slot0_late_mean_v": -27.79,
+      "slot0_late_frac_above_m20mV": 0.4873,
+      "n_oor_cells": 0,
+      "n_cells": 300,
+      "v_min": -88.83,
+      "v_max": 35.0
+     }
+    ],
+    "none": {
+     "drives": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "read_rates": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "hold_rates": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "slot0_late_mean_v": -59.57,
+     "slot0_late_frac_above_m20mV": 0.0,
+     "n_oor_cells": 0,
+     "n_cells": 300,
+     "v_min": -64.14,
+     "v_max": -52.69
+    },
+    "lesion_at_max_drive": {
+     "drives": [
+      8000.0,
+      0.0,
+      0.0
+     ],
+     "read_rates": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "hold_rates": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "slot0_late_mean_v": -75.6,
+     "slot0_late_frac_above_m20mV": 0.0,
+     "n_oor_cells": 0,
+     "n_cells": 300,
+     "v_min": -96.37,
+     "v_max": 34.99
+    },
+    "attributable_to_loops_vs_lesion": 1.0,
+    "attributable_to_drive_vs_none": 1.0
+   }
+  ]
+ }
+}

@@ -989,8 +989,10 @@ def run_worker(seed, group, arm, out_path, labels=None):
         sha = None
     out = {"runner": "research/runners/membrane_census.py", "seed": int(seed), "group": group, "arm": arm,
            "git_sha": sha, "stable_integration_env": os.environ.get("SIM_STABLE_INTEGRATION"),
+           "stable_recal_env": os.environ.get("SIM_STABLE_RECAL"),
            "preset_centred_het_env": os.environ.get("SIM_PRESET_CENTRED_HET"),
-           "trait_centred_het_env": os.environ.get("SIM_TRAIT_CENTRED_HET"), "workload": wl, "wrapper_restored": restored, "wall_s": round(time.time() - t0, 1),
+           "trait_centred_het_env": os.environ.get("SIM_TRAIT_CENTRED_HET"), "workload": wl, "wrapper_restored": restored,
+           "wall_s": round(time.time() - t0, 1),
            "caveat": CAVEAT, "census": rep}
     os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
     with open(out_path, "w") as f:
