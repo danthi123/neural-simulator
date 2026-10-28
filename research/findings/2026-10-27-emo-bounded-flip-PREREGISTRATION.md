@@ -287,7 +287,11 @@ lines ran is F's and is not touched. Because the scorer moved, the B4 and B6 bar
 with the same specs, n 1000 and seed 0: every pass rate and verdict is identical to Amendment 1's table (the B4 and B6 code paths
 did not change); only the scorer sha256, repo head and wall time differ.
 
-**The landed row cells are not complete.** At main `6c6e08ad9` every committed cell of both row tags lacks an arm file: no
-`lesion_emotion_category<sfx>.json.rep0` in any cell (its sidecar is present), and also no `lb.json` at ON s43, no lesion arm at ON
-s44 and ON s102, no `intact_a_*` at OFF s42, s43 and s44. Under rule 3 a read from that tree reads every one of them UNDEFINED; the
-complete cells must be landed before B8 is read under this amendment.
+**The landed row cells were not complete.** At main `6c6e08ad9`, and still at `631e8fa29`, every committed cell of both row tags
+lacked an arm file: no `lesion_emotion_category<sfx>.json.rep0` in any cell, its sidecar present in 11 of the 12 cells. ON s43 held
+only `intact_a_*`, `intact_b_*` and `lesion_emotion_category_s43.json`, each with its sidecar: no `lb.json`, no `lb.json.prov.json`,
+no `.rep0` and no `.rep0.prov.json`. Also no lesion arm at ON s44 and ON s102, no `intact_a_*` at OFF s42, s43 and s44. Under rule 3
+a read from that tree reads every one of them UNDEFINED; the complete cells must be landed before B8 is read under this amendment.
+They landed on main at `490b72fe2` (25 added files, no file changed; RULING landing-1028): the 120 files of the two row tags there
+are byte-identical to the scoring copy, and `cell_missing_arms` at this amendment's commit finds all 12 cells complete. A read from
+a tree without them (this amendment's branch before it merges, or a main older than `490b72fe2`) still reads every cell UNDEFINED.
