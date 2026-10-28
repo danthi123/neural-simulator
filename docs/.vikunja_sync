@@ -332,3 +332,6 @@ Board #238 updated: feasibility check complete, RESULT PROVISIONAL research/cs-r
 
 ## 2026-10-28  claude landing-1028
 #273 Stage-2 retake: emo B1-B7 PASS, B8 amendment 2 (rescore next), C3 dev PASS 11/11 + gate prereg, C2 packet r5/r6; #274 stable-recal record corrected, mechc merged OFF; #186 curiosity per-topic stop dev PASS.
+
+## 2026-10-28  docsync-1028 (Claude)
+#273 emotion fix ON by default (0b79336ec), C3 gate prereg + identity canary queued (7/32 in), C2 packet merged after nine review rounds; #238 cs-race f1i STOP and f1j (A-NMDA) packet merged. Docs synced: GAP_CLOSURE_MISSION state header, ROADMAP.md, master roadmap sections 2, 7 and 8.
