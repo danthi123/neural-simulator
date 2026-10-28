@@ -304,3 +304,27 @@ identities or rates.
 - **Q5, engram STP carried across trials.** It is kept as is, for identity with f1h's chosen cell. Step 0 adds one
   informational seed-41 arm that resets all STP state at each trial start. If that arm changes any item's verdict, the
   carry-over is an instrument defect, fixed before step 1.
+
+## Step-0 pool lines (build record, 2026-10-27; branch `research/cs-race-f1i-lines`)
+File: `research/coordination/cs-race-f1i-0-pool-lines.txt`, 155 lines of `cmd<TAB>reason`, written in the format of the f1h step-0 lines, one seed per line,
+CPU numpy, `mem_ok` + `memcap` (cap 2, `mem_gb=1`), module run so provenance is automatic, outputs under `research/findings/raw/_cs_race/f1i/step0/`.
+`<sha>` must be a revision that contains this branch's runner commit (the `--stp-reset` flag and the two new record fields below). Not queued here.
+- **Base cell** (RULING f1h-0-1027): the f1h circuit at `--soma-g 40`, `--w-im 40`, with the f1h flags exactly as the f1h step-0 lines ran them
+  (`--calibrate --grid-row 3 --w-gis 30 --w-mi 20 --nim 8 --encode-words --ment-pa 150 --trace intrinsic --apical-pulse 120`). Seeds 41 and 45-51 (R1).
+- **TRACE arm, 72 lines** (`cal_sa<W_SA>_ms<W_MS>_s<seed>.json`): `--som W_MS --som-ap W_SA`, W_SA {0.125, 0.25, 0.5} x W_MS {215, 304, 429} x 8 seeds. The packet's frozen grid.
+- **LESION arm, 72 lines** (`lesion_...`): the same 72 with `--som-lesion`. C7(d) is judged per C3 pair on the same cell and seed, so a lesion line exists for every
+  grid cell; the packet's identity (ii) (`g_ap` 0 at every recorded ms, `cs_som` gate 0.0 at measurement time) reads from these records.
+- **R1 Q5 informational arm, 9 lines** (`stpreset_...`): seed 41 at every grid cell with `--stp-reset`; compare each item with the TRACE line of the same cell and seed 41.
+- **Identity (i), 2 lines** (`identity_f1h_sg40_wim40_s<seed>.json`): no f1i flag. The packet says seeds 41-42; 42 is a project gate seed (R1, f1h A2), so seeds 41 and 45 are run.
+  Each record must hash equal, minus `wall_s`, to the landed `research/findings/raw/_cs_race/f1h/step0/cal_sg40_wim40_s<seed>.json`.
+- **Runner additions for these lines** (`research/runners/cs_race_f1.py`, tests in `tests/test_cs_race_f1i_flags.py`; flags off is still the f1h runner, pinned by the gold hashes):
+  - `--stp-reset` (needs `--som`): at every `cal()` / `race()` start, ALL STP state (u and x of every synapse) goes to rest, u 0 and x 1, the same rest `_reset_som` already
+    writes on the slot -> SOM synapses. The record carries the STP state as each trial STARTS (`rec["som"]["stp_trial_start"]`, `c5.stp_trial_start` for the two C5 races), in
+    the TRACE arm too, so the carry-over magnitude is read from the baseline. The reset arm's first trial starts at rest while the baseline's starts from the build state
+    (u about 0.20, S3), so the first trial differs by exactly the reset.
+  - `rec["som"]["som_cell_events"]`: `[ms, SOM cell]` per SOM spike, so C7(c) can be read per SOM cell as well as pooled (the pooled per-ms series is unchanged).
+- **Measured for sizing, not for any value:** peak RSS 333 MB and about 5 s wall for one seed-41 line, so `mem_gb=1` as in f1h.
+- **Disclosure: seed-41 mechanics smokes of these lines.** Two seed-41 runs at cells (W_SA 0.25, W_MS 304) and (W_SA 0.125, W_MS 215), plus the lesion, STP-reset and identity lines of the second.
+  No value, grid cell, bar or arm was chosen from them. At (0.125, 215) the TRACE record read C0-C4 and C6 pass, C7(0)/(a)/(b)/(c) pass (older plateau ended about 60 ms after Y_on on all
+  three pairs, newer held), C8 0.0 Hz, STOP-SMOKE true on C5(a) 0.0 pA, the lesion record held the older plateau on 3/3 pairs with rate-C3 failing and `g_ap` 0, and the STP-reset record
+  matched the TRACE verdicts. At (0.25, 304) C1 failed (0.58 Hz). One seed and one cell: nothing here is a step-0 result. The identity record at seed 41 hashed equal to the landed f1h artifact.

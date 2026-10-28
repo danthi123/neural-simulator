@@ -242,6 +242,22 @@ class CoreSimConfig:
     # region-scoped redraw (per_region_parameter_heterogeneity). DEFAULT OFF is byte-identical to the
     # pre-flag code (tests/test_preset_centred_heterogeneity.py, pre-edit golden).
     preset_centred_parameter_heterogeneity: bool = False
+    # TRAIT-CENTRED PARAMETER HETEROGENEITY (2026-10-27, research/stable-mechc; DEFAULT OFF). The companion of the
+    # flag above for the neurons it leaves alone on purpose: with cfg.num_traits > 1 the Izhikevich init gives every
+    # neuron one of the defined IZH2007 presets by its trait (sim/bridge.py `use_trait_based`), and a neuron in no
+    # region with an izh_neuron_type keeps that trait preset, but the global draw then overwrites its a/b/d/C with
+    # RS-centred values (a thalamic-reticular or FS cell keeps its own k/vr/vt/vpeak/c_reset and gets an RS pyramid's
+    # a/b/d/C: the hybrid of docs/drafts/preset-centred-het/CENSUS.md, section C2.1). When ON, each such neuron's
+    # jitter is centred on the preset of ITS OWN trait, by the same rule as the region flag (same samples, same order,
+    # same RNG consumption; the sample becomes a ratio against its distribution's centre and multiplies the trait's
+    # preset value). It reaches ONLY trait-typed neurons that no region preset covers: a neuron in a region with an
+    # izh_neuron_type is the region flag's business and is untouched here, so the two flags act on disjoint neuron
+    # sets and the region flag's own rule (neurons with no REGION preset stay identical with it on and off) holds
+    # exactly. A trait whose preset already sits on the distribution's centre (the RS trait) is left byte-identical.
+    # Izhikevich only; a no-op when cfg.num_traits == 1 (every neuron is then the default type, a separate case).
+    # Applies to the global draw, the per-region mask path and the region-scoped redraw, like the region flag.
+    # DEFAULT OFF is byte-identical to the pre-flag code (tests/test_trait_centred_heterogeneity.py, pre-edit golden).
+    trait_centred_parameter_heterogeneity: bool = False
     # PER-REGION HOMEOSTASIS ISOLATION (2026-08-13; the one-substrate 2-organ
     # merge's SECOND byte-identity cause). Homeostatic threshold adaptation is a
     # CONTINUOUS companion process: `fused_homeostasis_update` pulls every

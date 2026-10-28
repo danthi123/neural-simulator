@@ -83,15 +83,34 @@ PIN_FILENAME = "PIN.txt"
 # default-battery-B2a-FAIL.md: 23/28 coverable faculties' seed-102 cell ran off a dirty local worktree with a
 # SHORT git_sha and source_kind null, and the aggregate read clean because it never looked).
 PROV_ARM_ALLOWED_BRAIN_KEYS = {"BRAIN_CHAT_SEED"}  # arm runners set this after import; lb.json's own env allows NONE
+# TREATMENT KEYS (Amendment 2 to research/findings/2026-10-27-emo-bounded-flip-PREREGISTRATION.md, 2026-10-28): a
+# flip gate's flag-ON row runs with the flag in its env (`jobs --extra-env KEY=VAL`), and the stray-key rule above
+# then rejected every such cell, so that prereg's B8 could not be measured under a pin by construction. A caller
+# that scores a TREATMENT tag passes `treatment={KEY: VAL}`: each key is then REQUIRED in every sidecar of the cell
+# (lb.json's and each arm's) with exactly that value, and is not a stray key. `{KEY: None}` FORBIDS the key (a
+# control tag). Keys not named keep the default rule; no caller passes `treatment` unless it scores a treatment.
+
+
+def parse_treatment(pairs):
+    """['KEY=VAL', 'KEY2='] -> {'KEY': 'VAL', 'KEY2': None} (an empty VAL forbids the key); None/[] -> {}."""
+    out = {}
+    for kv in pairs or ():
+        k, sep, v = str(kv).partition("=")
+        if not k or not sep:
+            raise SystemExit("lb_shard: --treatment wants KEY=VAL (or KEY= to forbid), got %r" % kv)
+        out[k] = v if v != "" else None
+    return out
 
 
 def _pin_file(base, tag):
     return "%s/%s/%s" % (base, tag, PIN_FILENAME)
 
 
-def _prov_sidecar_fails(prov_path, pin, allow_brain_keys):
+def _prov_sidecar_fails(prov_path, pin, allow_brain_keys, treatment=None):
     """Fields of ONE `.prov.json` sidecar that fail the pin rule. Empty list == this sidecar is a clean
-    measurement of `pin`. Never raises: an unreadable/missing sidecar is reported as a failure, not skipped."""
+    measurement of `pin`. Never raises: an unreadable/missing sidecar is reported as a failure, not skipped.
+    `treatment` ({key: required value, or None = must be absent}) is the per-call allowlist described at
+    PROV_ARM_ALLOWED_BRAIN_KEYS; None (every caller's default) leaves the rule exactly as it was."""
     if not os.path.exists(prov_path):
         return ["missing"]
     try:
@@ -111,10 +130,84 @@ def _prov_sidecar_fails(prov_path, pin, allow_brain_keys):
     env = pj.get("env") or {}
     if env.get("SIM_BACKEND") != "numpy":
         fails.append("env.SIM_BACKEND=%r (want numpy)" % env.get("SIM_BACKEND"))
-    stray = sorted(k for k in env if k.startswith("BRAIN_") and k not in allow_brain_keys)
+    treatment = dict(treatment or {})
+    stray = sorted(k for k in env if k.startswith("BRAIN_") and k not in allow_brain_keys and k not in treatment)
     if stray:
         fails.append("stray BRAIN_* env key(s): %s" % ",".join(stray))
+    for k, want in sorted(treatment.items()):
+        if want is None:
+            if k in env:
+                fails.append("treatment key %s=%r present (this tag must not carry it)" % (k, env[k]))
+        elif k not in env:
+            fails.append("treatment key %s absent (want %s=%r)" % (k, k, want))
+        elif env[k] != want:
+            fails.append("treatment key %s=%r (want %r)" % (k, env[k], want))
     return fails
+
+
+_SPECIAL_PATH_MARKERS = ("measurement_ruler", "counted_faculty_key", "source_faculty_lesion_key")
+_NO_ARM_VERDICTS = ("unmapped-in-battery", "unmapped-lesion", "lesion-knob-missing", "arm-build-failed")
+
+
+def _standard_arm_patterns(p, seed, repeats):
+    """fnmatch patterns for the arm files `load_bearing_fraction.measure_faculty`'s standard env-lesion path wrote
+    for the lb.json `per_faculty` entry `p` (intact_a / intact_b of its turn group, the lesion arm, and one
+    `.rep<i>` per extra repeat when the lesion reproduced), or () when `p` is not from that path: an early-return
+    ruler (`measurement_ruler`, `counted_faculty_key` or `source_faculty_lesion_key` in its record; they name their
+    own files), a verdict reached before any arm was built, or `lesion_reproduced` unset (the comparison never ran).
+    Mirrors load_bearing_fraction.py: `_seed_suffix` ("" at seed 42, "_s<seed>" otherwise) and
+    `lesion_<key with - as _><sfx>.json[.rep<i>]`. A seed the record does not state matches any suffix."""
+    if not isinstance(p, dict) or any(k in p for k in _SPECIAL_PATH_MARKERS):
+        return ()
+    v = p.get("verdict")
+    if not p.get("faculty") or v is None or v in _NO_ARM_VERDICTS or str(v).startswith("not-covered"):
+        return ()
+    if p.get("lesion_reproduced") is None:
+        return ()
+    try:
+        sfx = "" if int(seed) == 42 else "_s%d" % int(seed)
+    except (TypeError, ValueError):
+        sfx = "*"
+    les = "lesion_%s%s.json" % (str(p["faculty"]).replace("-", "_"), sfx)
+    pats = ["intact_a_*%s.json" % sfx, "intact_b_*%s.json" % sfx, les]
+    if p.get("lesion_reproduced") is True and isinstance(repeats, int) and not isinstance(repeats, bool):
+        pats += ["%s.rep%d" % (les, i) for i in range(max(0, repeats - 1))]
+    return tuple(pats)
+
+
+def cell_missing_arms(cell_dir):
+    """COMPLETENESS (Amendment 2 to the emo-bounded-flip prereg, applied to every pinned read): the arm files the
+    cell's own record says it must hold and that are absent, each named. Empty list == complete. Three sources:
+    lb.json itself; every `<name>.prov.json` whose `<name>` is absent (a sidecar without its artifact); and the
+    standard-path arm set of each lb.json `per_faculty` entry (`_standard_arm_patterns`). A file that IS present
+    still needs its own sidecar: `cell_prov_fails` checks that. Never raises."""
+    try:
+        names = set(os.listdir(cell_dir))
+    except OSError:
+        return ["<cell directory unreadable>"]
+    missing = []
+    if "lb.json" not in names:
+        missing.append("lb.json")
+    orphans = set()
+    for fn in sorted(names):
+        if fn.endswith(".prov.json") and fn[:-len(".prov.json")] not in names and fn != "lb.json.prov.json":
+            orphans.add(fn[:-len(".prov.json")])
+            missing.append("%s (its sidecar is present)" % fn[:-len(".prov.json")])
+    arm_names = sorted(n for n in names if not n.endswith(".prov.json"))
+    rep = {}
+    if "lb.json" in names:
+        try:
+            rep = json.load(open(os.path.join(cell_dir, "lb.json")))
+        except Exception as e:  # noqa: BLE001
+            missing.append("lb.json unreadable (%s)" % type(e).__name__)
+            rep = {}
+    if not isinstance(rep, dict):
+        rep = {}
+    for p in rep.get("per_faculty") or []:
+        for pat in _standard_arm_patterns(p, rep.get("seed"), rep.get("repeats")):
+            if not fnmatch.filter(arm_names, pat) and pat not in orphans:
+                missing.append(pat)
+    return missing
 
 
 # covered-by-parent (research/oed-provenance-coverage, closing research/FAILURE_LOG.md's oed-provenance-coverage
@@ -254,7 +347,7 @@ def _covered_by_parent_reason(cell_dir, fn, lb_prov_path, lb_fails, lb_per_facul
             % (file_mtime, start_epoch, exit_epoch))
 
 
-def cell_prov_fails(cell_dir, pin, lb_per_faculty=()):
+def cell_prov_fails(cell_dir, pin, lb_per_faculty=(), treatment=None):
     """B2b Amendment 1.2's validity rule for the shard directory `cell_dir` (one faculty x one seed), against
     `pin`. `lb_per_faculty` is this cell's own lb.json `per_faculty` list (the caller already parsed lb.json to
     iterate it -- passed through rather than re-read here), used only for `_covered_by_parent_reason`'s content
@@ -264,11 +357,19 @@ def cell_prov_fails(cell_dir, pin, lb_per_faculty=()):
     import). `covered` is {filename: reason} for any file admitted with NO sidecar of its own via
     `_covered_by_parent_reason` -- reported, never silent, and never a reason to treat the cell as MORE trustworthy
     than its sidecars actually show (a covered file rides entirely on lb.json.prov.json's own clean verdict AND
-    its own content matching that same lb.json's `per_faculty` entry)."""
+    its own content matching that same lb.json's `per_faculty` entry).
+
+    Amendment 2 (2026-10-28, emo-bounded-flip prereg): `treatment` ({key: value} required in every sidecar, {key:
+    None} forbidden; see PROV_ARM_ALLOWED_BRAIN_KEYS) is passed to every sidecar check, and an INCOMPLETE cell (an
+    arm file its own record requires is absent: `cell_missing_arms`) fails under the key "completeness", one
+    "missing arm file <name>" string per absent file. Completeness applies to every caller, as it only tightens."""
     out = {}
     covered = {}
+    missing = cell_missing_arms(cell_dir)
+    if missing:
+        out["completeness"] = ["missing arm file %s" % m for m in missing]
     lb_prov_path = os.path.join(cell_dir, "lb.json.prov.json")
-    lb_fails = _prov_sidecar_fails(lb_prov_path, pin, allow_brain_keys=set())
+    lb_fails = _prov_sidecar_fails(lb_prov_path, pin, allow_brain_keys=set(), treatment=treatment)
     if lb_fails:
         out["lb.json.prov.json"] = lb_fails
     try:
@@ -286,7 +387,7 @@ def cell_prov_fails(cell_dir, pin, lb_per_faculty=()):
                 continue
             out[fn + ".prov.json"] = ["missing"]
             continue
-        f = _prov_sidecar_fails(own_sidecar, pin, allow_brain_keys=PROV_ARM_ALLOWED_BRAIN_KEYS)
+        f = _prov_sidecar_fails(own_sidecar, pin, allow_brain_keys=PROV_ARM_ALLOWED_BRAIN_KEYS, treatment=treatment)
         if f:
             out[fn + ".prov.json"] = f
     return out, covered
@@ -345,6 +446,7 @@ def cmd_aggregate(a):
     base = getattr(a, "base", None) or OUT_BASE
     pin_arg = getattr(a, "pin", None)
     pin, pin_source = (pin_arg.strip() if pin_arg else None), ("--pin" if pin_arg else None)
+    treatment = parse_treatment(getattr(a, "treatment", None))
     pin_file = _pin_file(base, a.tag)
     if not pin and os.path.exists(pin_file):
         try:
@@ -375,7 +477,7 @@ def cmd_aggregate(a):
                 kind = HOST_INPUT_KIND
             if pin and (kind in COVERABLE_KINDS or kind == HOST_INPUT_KIND):
                 n_checked += 1
-                fails, covered = cell_prov_fails(cell_dir, pin, rep.get("per_faculty", []))
+                fails, covered = cell_prov_fails(cell_dir, pin, rep.get("per_faculty", []), treatment=treatment)
                 if fails:
                     invalid_cells["s%d/%s" % (seed, fac)] = fails
                     continue  # NOT a measurement of `pin` -- excluded, reported below, never scored 0
@@ -494,6 +596,8 @@ def cmd_aggregate(a):
             # verdict, and that distinction must survive into the artifact.
             "n_covered_by_parent": n_covered, "covered_by_parent_cells": covered_cells,
         }
+        if treatment:
+            out["provenance"]["treatment"] = treatment  # only when given: every other aggregate is unchanged
     else:
         out["provenance"] = {
             "status": "unverified", "pin": None, "pin_source": None,
@@ -546,6 +650,10 @@ def main():
                         "env.SIM_BACKEND=numpy, no stray BRAIN_* key) is excluded and reported, never counted, "
                         "never scored 0. Defaults to the pin recorded by `jobs --pin` for this tag, if any; with "
                         "neither, prints a loud warning and marks the aggregate provenance 'unverified'.")
+    g.add_argument("--treatment", nargs="*", default=None, metavar="KEY=VAL",
+                   help="with a pin: the tag's treatment env (as `jobs --extra-env` set it). Each KEY is then required "
+                        "in every sidecar with exactly VAL and is not a stray key; `KEY=` (empty VAL) forbids KEY "
+                        "(a control tag). Omitted: the default rule.")
     g.add_argument("--base", default=OUT_BASE,
                    help="root directory holding <tag>/s<seed>/<faculty>/lb.json (default: %s). Override to "
                         "aggregate a shard tree checked out elsewhere (e.g. the primary checkout) without cd-ing "

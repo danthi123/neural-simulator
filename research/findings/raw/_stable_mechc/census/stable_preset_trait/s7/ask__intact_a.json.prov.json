@@ -1,0 +1,40 @@
+{
+ "run_id": "1793137551-3091051",
+ "runner": "research/runners/membrane_census.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-mechc2/research/runners/membrane_census.py",
+  "--shard",
+  "--seed",
+  "7",
+  "--group",
+  "ask",
+  "--arm",
+  "intact_a",
+  "--out",
+  "research/findings/raw/_stable_mechc/census/stable_preset_trait/s7/ask__intact_a.json"
+ ],
+ "git_sha": "65d60f996",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-27T17:45:51",
+ "env": {
+  "SIM_PRESET_CENTRED_HET": "1",
+  "SIM_BACKEND": "numpy",
+  "SIM_TRAIT_CENTRED_HET": "1",
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_STABLE_INTEGRATION": "1"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 6403.4,
+ "corpus_check_query": "re-calibrate the global-stop distributed-overwrite workspace on stable membranes",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_stable_mechc/census/stable_preset_trait/s7/ask__intact_a.json"
+}

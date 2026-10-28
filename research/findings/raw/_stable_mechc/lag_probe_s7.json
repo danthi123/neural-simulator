@@ -1,0 +1,75 @@
+{
+ "runner": "research/runners/stable_mechc_lag_probe.py",
+ "seed": 7,
+ "n_pool": 1500,
+ "n_fs": 300,
+ "backend": "numpy",
+ "arrays_differing_between_off_and_on": {
+  "a": 0,
+  "b": 0,
+  "d_increment": 0,
+  "C": 0,
+  "k": 0,
+  "vr": 0,
+  "vt": 0,
+  "vpeak": 0,
+  "c_reset": 0
+ },
+ "switch_applied_on_build": true,
+ "heterogeneity_readback_on_build": {
+  "heterogeneity_ran": true,
+  "preset_centred": true,
+  "n_neurons": 1800,
+  "n_with_region_preset": 0,
+  "n_preset_off_centre": 0,
+  "by_param": {}
+ },
+ "regions": {
+  "pool": {
+   "n": 1500,
+   "preset_counts": {
+    "THALAMIC_RETICULAR": 290,
+    "FS_CORTICAL_INTERNEURON": 305,
+    "THALAMIC_RELAY": 278,
+    "RS_CORTICAL_PYRAMIDAL": 330,
+    "STRIATAL_MSN/STRIATAL_MSN_D1/STRIATAL_MSN_D2": 297
+   },
+   "b_mean_off": -2.0055596341689426,
+   "b_mean_on": -2.0055596341689426,
+   "n_b_negative_off": 1500,
+   "n_b_negative_on": 1500,
+   "n_b_negative_with_preset_b_nonneg": 568
+  },
+  "fs": {
+   "n": 300,
+   "preset_counts": {
+    "RS_CORTICAL_PYRAMIDAL": 63,
+    "FS_CORTICAL_INTERNEURON": 67,
+    "STRIATAL_MSN/STRIATAL_MSN_D1/STRIATAL_MSN_D2": 65,
+    "THALAMIC_RELAY": 55,
+    "THALAMIC_RETICULAR": 50
+   },
+   "b_mean_off": -1.992401848634084,
+   "b_mean_on": -1.992401848634084,
+   "n_b_negative_off": 300,
+   "n_b_negative_on": 300,
+   "n_b_negative_with_preset_b_nonneg": 105
+  }
+ },
+ "census_offender_cells": {
+  "census": "research/findings/raw/_stable_integration/census/on/s7/inner__intact_a.json",
+  "n": 110,
+  "n_b_matches_this_build": 110,
+  "n_unchanged_by_switch": 110,
+  "n_preset_b_nonneg": 58,
+  "presets": {
+   "THALAMIC_RETICULAR": 58,
+   "FS_CORTICAL_INTERNEURON": 30,
+   "RS_CORTICAL_PYRAMIDAL": 22
+  },
+  "regions": {
+   "fs": 63,
+   "pool": 47
+  }
+ }
+}
