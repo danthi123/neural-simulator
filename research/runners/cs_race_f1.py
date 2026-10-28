@@ -123,7 +123,13 @@ _BASE = dict(NE=16, NI=6, NG=12, NGI=8, NS=20, NO=8,
              # f1i R1 Q5 (informational arm): put ALL STP state at rest
              # (u 0, x 1) at every trial start (default 0 = the STP
              # state carries across trials, as in f1h).
-             STP_RESET=0)
+             STP_RESET=0,
+             # f1j (packet cs-race-f1j): an input-driven, decaying,
+             # Mg-blocked NMDA conductance on the BDSP apical (engine
+             # cfg.enable_apical_nmda). NMDA_TAU 0 / TAU_GI 0 = the
+             # engine's own default (no write). All defaults keep the
+             # f1i build byte-for-byte.
+             NMDA_ON=0, NMDA_G0=0.0, NMDA_TAU=0.0, TAU_GI=0.0)
 # f1h (packet cs-race-f1h, STEP 0): the gap4 6/6-seed GO configuration of
 # the bistable BDSP apical, FROZEN here, never tuned. Source of every value:
 # research/runners/_gap4_btsp_onbridge_behavioral_timescale_derisk.py
@@ -153,6 +159,12 @@ GAP4_GO_PULSE_PA = 120.0    # gap4 runner :75 pulse_pA (the packet's pulse value
 # the packet's Method section. Used whole, on per-type STP index 1.
 SOM_STP = dict(U=0.049, tau_f=1797.0, tau_d=399.0)
 GATE_SOM = "cs_som"          # f1i: SOM -> mention-apical output gate
+
+
+def _f32(v):
+    """f1j: a float32 engine value as its shortest round-trip decimal (a
+    float32 parse of the JSON number gives back the exact value)."""
+    return float(str(np.float32(v)))
 GATE_CUE = "cs_cue"          # sensory drive gate for the cue layer
 GATE_MENT = "cs_ment"        # mention->E gate (lesion i closes it)
 
@@ -278,6 +290,31 @@ class RaceCircuit(ReplayCircuit):
                                       SOM_STP["tau_f"], 50.0, 50.0]
             cfg.stp_tau_d_per_type = [float(cfg.stp_tau_d),
                                       SOM_STP["tau_d"], 100.0, 100.0]
+        # f1j (packet cs-race-f1j, section E + Method): the apical NMDA
+        # conductance is ENGINE state (sim/ E build); the runner only sets
+        # its config. Full input = the --apical-pulse value, so the
+        # gating's input factor is 1 while a word is heard and 0
+        # otherwise. The runner writes no NMDA quantity except the
+        # trial-boundary reset (_reset_nmda, S9 / S12).
+        self._nmda_on = bool(int(p.get("NMDA_ON", 0)))
+        if self._nmda_on:
+            if not self._som_on:
+                raise ValueError("NMDA (f1j) needs the f1i SOM build "
+                                 "(SOM_W_MS > 0)")
+            if not self._apical_pa > 0.0:
+                raise ValueError("NMDA (f1j) needs APICAL_PA > 0 (the "
+                                 "drive that counts as full input)")
+            if float(p.get("NMDA_G0", 0.0)) < 0.0:
+                raise ValueError("NMDA_G0 must be >= 0 (0 = APV)")
+            cfg.enable_apical_nmda = True
+            cfg.apical_nmda_g0 = float(p.get("NMDA_G0", 0.0))
+            if float(p.get("NMDA_TAU", 0.0)) > 0.0:
+                cfg.apical_nmda_tau_ms = float(p["NMDA_TAU"])
+            cfg.apical_nmda_drive_ref = float(self._apical_pa)
+        # f1j IPSC arm (--tau-gi): every GABA_A decay (somatic g_i and the
+        # f1i apical g_ap; the engine caches decay_i at initialization).
+        if float(p.get("TAU_GI", 0.0)) > 0.0:
+            cfg.syn_tau_g_i = float(p["TAU_GI"])
         bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                                   runtime_state=RuntimeState(), gpu_config=GPUConfig())
         bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
@@ -400,6 +437,10 @@ class RaceCircuit(ReplayCircuit):
             self._som_readback(plan, som_nofac)
             self._som_resets = []
             self._reset_som()           # before the snapshot (S1, S3)
+        if self._nmda_on:
+            self._nmda_readback()
+            self._nmda_resets = []
+            self._reset_nmda()          # before the snapshot (S9)
         self._snap = _snapshot_state(bridge, xp)
         self._stp_reset = bool(int(p.get("STP_RESET", 0)))
         if self._stp_reset and (getattr(bridge, "cp_stp_u", None) is None
@@ -426,6 +467,8 @@ class RaceCircuit(ReplayCircuit):
             if heard.any():
                 ap[m[heard]] = self._apical_pa
         self._bridge.cp_bdsp_apical_drive = self._xp.asarray(ap)
+        if getattr(self, "_nmda_on", False):
+            self._ap_driven |= ap > 0.0       # f1j S10: driven this trial
 
     def _reset_apical(self):
         """f1h: restore the apical down-state and zero the drive (the
@@ -437,6 +480,8 @@ class RaceCircuit(ReplayCircuit):
             self._n, dtype=self._xp.float32)
         if getattr(self, "_som_on", False):
             self._reset_som()
+        if getattr(self, "_nmda_on", False):
+            self._reset_nmda()
 
     # ── f1i: SOM-like pool bookkeeping (packet cs-race-f1i) ────────────
     def _som_readback(self, plan, nofac):
@@ -548,6 +593,83 @@ class RaceCircuit(ReplayCircuit):
         self._som_resets.append(rb)
         return rb
 
+    # ── f1j: apical NMDA bookkeeping (packet cs-race-f1j) ──────────────
+    def _nmda_config(self):
+        """S13 / S14 (a): the NMDA config and the GABA_A decay as the
+        ENGINE realized them (read from the bridge, never echoed from the
+        flags), plus where the gating state lives."""
+        from sim.bridge import apical_nmda_s_full
+        b = self._bridge
+        cfg = b.core_config
+        s = getattr(b, "cp_apical_nmda_s", None)
+        return {
+            "enable_apical_nmda": bool(getattr(cfg, "enable_apical_nmda",
+                                               False)),
+            "apical_nmda_g0": float(cfg.apical_nmda_g0),
+            "apical_nmda_tau_ms": float(cfg.apical_nmda_tau_ms),
+            "apical_nmda_rise_per_ms": float(cfg.apical_nmda_rise_per_ms),
+            "apical_nmda_drive_ref": float(cfg.apical_nmda_drive_ref),
+            "nmda_mg_concentration": float(cfg.nmda_mg_concentration),
+            "syn_reversal_potential_e": float(cfg.syn_reversal_potential_e),
+            "s_full": float(apical_nmda_s_full(cfg)),
+            "syn_tau_g_i": float(cfg.syn_tau_g_i),
+            "decay_i": float(b._cached_decay_i),
+            "s_len": (int(s.shape[0]) if s is not None else None),
+            "s_dtype": (str(s.dtype) if s is not None else None)}
+
+    def _nmda_readback(self):
+        """P0' / S14 (a) at build: the flag took, the gating state is
+        allocated on every cell (the mention cells included) and the
+        realized values are the requested ones. Any mismatch is STOP-ID
+        (raises)."""
+        rb = self._nmda_config()
+        p = self.p
+        problems = []
+        if rb["enable_apical_nmda"] is not True:
+            problems.append("enable_apical_nmda did not take")
+        if rb["s_len"] != self._n or rb["s_dtype"] != "float32":
+            problems.append("cp_apical_nmda_s not allocated on all %d "
+                            "cells (%r %r)" % (self._n, rb["s_len"],
+                                               rb["s_dtype"]))
+        if rb["apical_nmda_g0"] != float(p.get("NMDA_G0", 0.0)):
+            problems.append("g0 %r != %r" % (rb["apical_nmda_g0"],
+                                             p.get("NMDA_G0")))
+        if (float(p.get("NMDA_TAU", 0.0)) > 0.0
+                and rb["apical_nmda_tau_ms"] != float(p["NMDA_TAU"])):
+            problems.append("tau %r != %r" % (rb["apical_nmda_tau_ms"],
+                                              p["NMDA_TAU"]))
+        if rb["apical_nmda_drive_ref"] != float(self._apical_pa):
+            problems.append("drive_ref %r != the apical pulse %r"
+                            % (rb["apical_nmda_drive_ref"], self._apical_pa))
+        rb["problems"] = problems
+        self.nmda_readback = rb
+        if problems:
+            raise RuntimeError("STOP-ID (f1j build read-back): "
+                               + "; ".join(problems))
+
+    def _reset_nmda(self):
+        """S9: the trial-boundary reset of the NMDA gating (outside the
+        quiescent snapshot): zeroed before the snapshot and at every
+        trial start, read back. The ONLY place the runner writes an NMDA
+        quantity (S12; tests/test_cs_race_f1j_flags.py pins it)."""
+        from sim.backend import to_host
+        b = self._bridge
+        b.cp_apical_nmda_s[:] = 0.0
+        self._ap_driven = np.zeros(self._n, dtype=bool)
+        rb = {"s_max": float(np.asarray(to_host(b.cp_apical_nmda_s)).max())}
+        self._nmda_resets.append(rb)
+        return rb
+
+    def _nmda_now(self):
+        """(s, g_N) per cell after the last step, read from the engine
+        (g_N by the engine's own apical_nmda_conductance)."""
+        from sim.backend import to_host
+        from sim.bridge import apical_nmda_conductance
+        b = self._bridge
+        s = b.cp_apical_nmda_s
+        g = apical_nmda_conductance(s, b.core_config, self._xp)
+        return np.asarray(to_host(s)), np.asarray(to_host(g))
+
     def _reset_stp(self):
         """f1i R1 Q5 (informational arm, --stp-reset): put ALL STP state
         at REST (u = 0, x = 1, every synapse) at the trial start. The
@@ -612,6 +734,13 @@ class RaceCircuit(ReplayCircuit):
         self._reset_apical()
         stp_start = (self._stp_trial_start()
                      if getattr(self, "_som_on", False) else None)
+        # f1j: the race's NMDA read-outs (only with --nmda-g0): the
+        # trial-start reset read-back and per-cell run maxima of g_N / s.
+        race_nmda = None
+        if getattr(self, "_nmda_on", False):
+            race_nmda = {"reset": dict(self._nmda_resets[-1]),
+                         "g": np.zeros(self._n, dtype=np.float32),
+                         "s": np.zeros(self._n, dtype=np.float32)}
         encode_words = (bool(int(p.get("ENCODE_WORDS", 0)))
                         if encode_words is None
                         else bool(encode_words))
@@ -644,6 +773,10 @@ class RaceCircuit(ReplayCircuit):
                 self._set_apical(cur)
             b.cp_external_input_current[:] = xp.asarray(cur.astype(np.float32))
             b._run_one_simulation_step()
+            if race_nmda is not None:
+                s_now, g_now = self._nmda_now()
+                np.maximum(race_nmda["g"], g_now, out=race_nmda["g"])
+                np.maximum(race_nmda["s"], s_now, out=race_nmda["s"])
 
         def zeros():
             return np.zeros(self._n, dtype=np.float32)
@@ -1038,6 +1171,20 @@ class RaceCircuit(ReplayCircuit):
             rec["encode_words"] = True
         if stp_start is not None:
             rec["stp_trial_start"] = stp_start      # f1i R1 Q5 read-out
+        if race_nmda is not None:
+            drv = np.asarray(self._ap_driven, dtype=bool)
+            rec["nmda"] = {
+                "config": self._nmda_config(),
+                "reset_readback": race_nmda["reset"],
+                "driven_words": [w for wi, w in enumerate(MENTION_WORDS)
+                                 if bool(drv[self.ment[wi]].any())],
+                "per_word_run_max": {
+                    w: {"g_n": _f32(race_nmda["g"][self.ment[wi]].max()),
+                        "s": _f32(race_nmda["s"][self.ment[wi]].max())}
+                    for wi, w in enumerate(MENTION_WORDS)},
+                "g_n_undriven_all_cells_max_run": (
+                    _f32(race_nmda["g"][~drv].max()) if (~drv).any()
+                    else None)}
         return rec
 
     def cal(self, *, seed, item, word=None, word2=None,
@@ -1126,6 +1273,20 @@ class RaceCircuit(ReplayCircuit):
             gap_max = np.full((n_w, T), np.nan, dtype=np.float32)
             som_reset_rb = dict(self._som_resets[-1])
             som_stp_start = self._stp_trial_start()
+        # f1j: per-ms NMDA read-outs (allocated only with --nmda-g0): per
+        # word max g_N and max gating s, per mention cell g_N (for the
+        # undriven-cell check, S10, read once the trial's drive is known)
+        # and the per-cell run max over every neuron.
+        nmda_on = bool(getattr(self, "_nmda_on", False))
+        nm_g = nm_s = nm_ment = nm_cell_max = None
+        nmda_reset_rb = None
+        ment_all_c = np.concatenate(self.ment)
+        if nmda_on:
+            nm_g = np.zeros((n_w, T), dtype=np.float32)
+            nm_s = np.zeros((n_w, T), dtype=np.float32)
+            nm_ment = np.zeros((ment_all_c.size, T), dtype=np.float32)
+            nm_cell_max = np.zeros(self._n, dtype=np.float32)
+            nmda_reset_rb = dict(self._nmda_resets[-1])
 
         def zeros():
             return np.zeros(self._n, dtype=np.float32)
@@ -1163,6 +1324,13 @@ class RaceCircuit(ReplayCircuit):
                 ga = np.asarray(to_host(b.cp_conductance_g_apical_gaba))
                 for wi in range(n_w):
                     gap_max[wi, t_ix] = float(ga[self.ment[wi]].max())
+            if nm_g is not None:
+                s_now, g_now = self._nmda_now()
+                for wi in range(n_w):
+                    nm_g[wi, t_ix] = g_now[self.ment[wi]].max()
+                    nm_s[wi, t_ix] = s_now[self.ment[wi]].max()
+                nm_ment[:, t_ix] = g_now[ment_all_c]
+                np.maximum(nm_cell_max, g_now, out=nm_cell_max)
 
         t = 0
         pulse_events = []
@@ -1314,6 +1482,46 @@ class RaceCircuit(ReplayCircuit):
                                      gap_max[MENTION_WORDS.index(w)]]}
                     for w in _pw},
                 "build_readback": dict(self.som_readback)}
+        if nmda_on:
+            # f1j raw series for the scorer (S9-S11, S14, the eraser
+            # boundary). Values are the engine's float32 numbers written
+            # as their shortest round-trip decimal (_f32).
+            drv = np.asarray(self._ap_driven, dtype=bool)
+            und = ~drv[ment_all_c]
+            und_max = (nm_ment[und].max(axis=0) if und.any()
+                       else np.zeros(T, dtype=np.float32))
+            _pw = [w for w in (word, word2) if w]
+            rec["nmda"] = {
+                "config": self._nmda_config(),
+                "build_readback": dict(self.nmda_readback),
+                "reset_readback": nmda_reset_rb,
+                "driven_words": [MENTION_WORDS[wi] for wi in range(n_w)
+                                 if bool(drv[self.ment[wi]].any())],
+                "n_driven_cells": int(drv.sum()),
+                "per_word_ms": {
+                    w: {"g_n_max": [_f32(v) for v in
+                                    nm_g[MENTION_WORDS.index(w)]],
+                        "s_max": [_f32(v) for v in
+                                  nm_s[MENTION_WORDS.index(w)]]}
+                    for w in _pw},
+                "n_undriven_mention_cells": int(und.sum()),
+                "g_n_undriven_mention_max_run": _f32(und_max.max()),
+                "g_n_undriven_mention_nonzero_ms": [
+                    [int(i), _f32(und_max[i])]
+                    for i in np.flatnonzero(und_max != 0.0)],
+                "g_n_undriven_all_cells_max_run": (
+                    _f32(nm_cell_max[~drv].max()) if (~drv).any()
+                    else None),
+                "encoding": "per_word_ms: per-ms max over the word's "
+                            "cells after each step; undriven: sparse "
+                            "[ms, max g_N] over the mention cells that "
+                            "received no apical drive in this trial, "
+                            "zeros implied, %d ms" % T}
+            if item == "c3":
+                y_off = MENTION_MS + GAP_B_MS + MENTION_MS
+                rec["nmda"]["newer_offset_ms"] = int(y_off)
+                rec["nmda"]["older_g_n_at_newer_offset"] = _f32(
+                    nm_g[MENTION_WORDS.index(word), y_off])
         if item == "d0" and cue_cell_counts:
             rec["cue_events"] = [
                 {"word": str(CUE_WORDS[wi]),
@@ -1863,6 +2071,19 @@ def identity_cue_n(base, grid, seeds, cue_n, w_cue, draws, out_arg):
     return 0
 
 
+def _f1j_flags(base):
+    """f1j: the echo of the f1j flags as given ({} when none is on, so a
+    flags-off record is unchanged)."""
+    out = {}
+    if int(base.get("NMDA_ON", 0)):
+        out["nmda_g0"] = float(base.get("NMDA_G0", 0.0))
+        if float(base.get("NMDA_TAU", 0.0)) > 0.0:
+            out["nmda_tau"] = float(base["NMDA_TAU"])
+    if float(base.get("TAU_GI", 0.0)) > 0.0:
+        out["tau_gi"] = float(base["TAU_GI"])
+    return out
+
+
 def run_calibration(base, grid, seeds, args):
     """f1g step 0 (packet cs-race-f1g): calibrate the persistent word
     trace with NO race. Frozen: grid row 3, W_GIS 30, seeds 41-48,
@@ -1920,6 +2141,10 @@ def run_calibration(base, grid, seeds, args):
         if int(base.get("STP_RESET", 0)):
             # R1 Q5 informational arm (only when ON; flags-off unchanged)
             rec["flags"]["stp_reset"] = True
+    f1j_flags = _f1j_flags(base)
+    if f1j_flags:
+        # f1j: only when ON, so a flags-off record is unchanged.
+        rec["flags"]["f1j"] = f1j_flags
     if getattr(args, "drive_probe", False):
         # f1g step 0c DRIVE probe (RULING cs-race-f1g-0b-1022): the
         # engagement criterion is fixed here, before any trace or
@@ -2030,6 +2255,13 @@ def run_calibration(base, grid, seeds, args):
                        "coincidence_plateau_v_hold", "apical_kir_g",
                        "bdsp_learning_rate"):
                 srec["config_readback"][_f] = getattr(bcfg, _f, None)
+        if f1j_flags:
+            # f1j S13 / S14 (a): the realized NMDA config and GABA_A decay
+            # (only when an f1j flag is on).
+            srec["config_readback"]["f1j"] = (
+                circ._nmda_config() if getattr(circ, "_nmda_on", False)
+                else {"syn_tau_g_i": float(bcfg.syn_tau_g_i),
+                      "decay_i": float(circ._bridge._cached_decay_i)})
         r1 = circ.cal(seed=seed, item="c1", word="vole")
         srec["c1"] = r1
         r2 = circ.cal(seed=seed, item="c2b")
@@ -2065,6 +2297,10 @@ def run_calibration(base, grid, seeds, args):
             srec["c5"]["stp_trial_start"] = {
                 "clause_a": ra["stp_trial_start"],
                 "clause_b": rb["stp_trial_start"]}
+        if ra.get("nmda") is not None:
+            # f1j S9 read-out of the two C5 races (only with --nmda-g0)
+            srec["c5"]["f1j_nmda"] = {"clause_a": ra["nmda"],
+                                      "clause_b": rb["nmda"]}
         c1_ok = bool(c_lo <= float(r1["pulsed_rate_hz"]) <= c_hi)
         c2a_ok = bool(float(r1["unpulsed_max_hz"]) < quiet)
         c2b_ok = bool(float(r2["max_word_hz"]) < quiet)
@@ -2281,6 +2517,19 @@ def main():
                          "(u 0, x 1, every synapse) at rest at each trial "
                          "start; needs --som. Default off = the f1h "
                          "carry-over")
+    ap.add_argument("--nmda-g0", type=float, default=None, metavar="G",
+                    help="f1j: apical NMDA conductance (engine "
+                         "enable_apical_nmda): g_N at the end of a heard "
+                         "word, apical-leak units; full input = the "
+                         "--apical-pulse value; 0 = the APV arm (receptor "
+                         "blocked, gating runs); needs --som")
+    ap.add_argument("--nmda-tau", type=float, default=None, metavar="T",
+                    help="f1j: apical_nmda_tau_ms, the gating decay (ms; "
+                         "engine default 50); needs --nmda-g0")
+    ap.add_argument("--tau-gi", type=float, default=None, metavar="T",
+                    help="f1j IPSC arm: syn_tau_g_i (ms), EVERY GABA_A "
+                         "decay (the f1g pool's somatic IPSC and the "
+                         "apical one); absent = the engine's 10 ms")
     ap.add_argument("--drive-probe", action="store_true",
                     help="f1g step 0c: DRIVE engagement probe "
                          "(item d0, trace off; RULING "
@@ -2359,6 +2608,27 @@ def main():
           or args.stp_reset):
         ap.error("--som-ap / --som-lesion / --som-nofac / --stp-reset "
                  "need --som")
+    if args.nmda_g0 is not None:
+        if args.som is None:
+            ap.error("--nmda-g0 needs --som (the f1i SOM build whose "
+                     "apical plateau it acts on)")
+        if not (args.apical_pulse or 0.0) > 0.0:
+            ap.error("--nmda-g0 needs --apical-pulse > 0 (the drive that "
+                     "counts as full input)")
+        if not args.nmda_g0 >= 0.0:
+            ap.error("--nmda-g0 must be >= 0 (0 = APV)")
+        base["NMDA_ON"] = 1
+        base["NMDA_G0"] = float(args.nmda_g0)
+        if args.nmda_tau is not None:
+            if not args.nmda_tau > 0.0:
+                ap.error("--nmda-tau must be > 0")
+            base["NMDA_TAU"] = float(args.nmda_tau)
+    elif args.nmda_tau is not None:
+        ap.error("--nmda-tau needs --nmda-g0")
+    if args.tau_gi is not None:
+        if not args.tau_gi > 0.0:
+            ap.error("--tau-gi must be > 0")
+        base["TAU_GI"] = float(args.tau_gi)
     if args.identity_cue_n:
         return identity_cue_n(base, _F1_GRID_ROW, seeds,
                               int(args.cue_n or 48),
@@ -2482,6 +2752,8 @@ def main():
             "som_stp_triple": dict(SOM_STP)})
         if int(base.get("STP_RESET", 0)):
             out["instrument_flags"]["stp_reset"] = True
+    if _f1j_flags(base):
+        out["instrument_flags"]["f1j"] = _f1j_flags(base)
     out["attribution_mention_gate"] = attributable_to(
         "mention gate (b intact vs i1 lesion)", b_w, i1_w)
     if not args.out:
