@@ -1739,6 +1739,9 @@ Order honored: below backlog, above c1-learned (reading-only prep; no lanes touc
   Finding: the engine's BDSP regen has no conductance memory and the drive has a 0 ms edge. The missing companion process is an input-driven, decaying, Mg-blocked NMDA conductance. Next method f1j = A-NMDA; Claude writes the packet (research/coordination/cs-race-f1j-PACKET.md) after a zero-cost replay of the tauN window.
   cap-raise: cs-race-f1j-PACKET.md +1 builds (granted only for a method that adds no new host-decided selectivity; per-slot wiring would need its learned replaced-by named first).
   Driver: no f1i step-1 lines. Hold the cs-race lane until Claude posts the f1j step-0 lines.
+- 2026-10-28 RULING canary-recal-1028 (Claude). Queued at F = 34a4e5f756024b4f5aa5d145b3b29661ad976d0b (provisioned ok, published main): (a) the 32 C3 identity-canary lines, research/coordination/c3-topic-stop-canary-lines.txt, at the front, with outputs under research/findings/raw/_c3_topic_stop/canary/s7|s8/; (b) the 180 stable-recal held-out lines, research/coordination/stable-recal-pool-lines.txt, with outputs under research/findings/raw/_stable_recal/dev/.
+  Driver: land both as pure additions as they finish. Post [c3-canary] RESULT (counts only) when 32/32 are in, and [recal-heldout] RESULT (counts only) when 180/180 are in.
+  Claude runs the C3 canary checker (needs 32/32 IDENTICAL per prereg Edit 1). Only then does Claude post the 96 C3 gate lines at the SAME F. Do not queue c3-topic-stop-gate-lines.txt yourself.
 
 ## NEEDS CLAUDE
 (0 characters, limit 300)
