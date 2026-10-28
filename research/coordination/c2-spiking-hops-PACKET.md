@@ -1,4 +1,4 @@
-# PACKET c2-spiking-hops (Claude, 2026-10-27; revised twice that day after two skeptics, again on 2026-10-28 after a third, round 4, the same day after the round-4 synthesis of three more skeptics, round 5, and after the round-5 synthesis, round 6): Stage-2 C2, two separate methods: hop reads on the spiking store (M1) and acquisition of all-novel transitives through a learned order cue (M3)
+# PACKET c2-spiking-hops (Claude, 2026-10-27; revised twice that day after two skeptics, again on 2026-10-28 after a third, round 4, the same day after the round-4 synthesis of three more skeptics, round 5, after the round-5 synthesis, round 6, and after the round-6 fix-checker, round 7): Stage-2 C2, two separate methods: hop reads on the spiking store (M1) and acquisition of all-novel transitives through a learned order cue (M3)
 
 host-decision: scaffold
 decides: M1: the possessive-question dispatch (_POSSESSIVE_CHAIN_RE), the hop-1 relation candidates (_ROLE_NOUN_HINTS plus the same-verb fallback), the two-hop relation order taken from that parse, the PROPOSE block selection inside query_patient at the production default, which is the fact-shard fast path (default ON: per-role DG sparse indices that _ensure_fact_shard builds from the .kb agent, action and patient strings, one_brain_composer.py:1400-1432 with the entry read at :1420, intersected by _fact_shard_candidates :1434-1466, an empty candidate set being an abstain before any block is decoded, then a host first-match over the spiking decodes of the candidate blocks, :1468-1481), and on escalation or with the fact shard off a host first-match over every spiking-decoded row (_seq_block :1685-1690), the label-only .kb reads on the PROPOSE path (the patient-type clause test at :1822 in _finish_query_patient and the attribute-key test at :1782), the sequencer's reduced agent and action vocabularies built from the host fact list (_ensure_sequencer's self.kb[:K] read, :1654, reading the agent and action fields only from step 1 on, which decides which stored agent and action words get word lines) and the host abstain of the read when a cue word has no line (:1709), the block count K that the per-block reads iterate over (len(self.kb)), read for the conflict read at one new site keyed as kind `len` (section 2.4), the drive rebuild after every store write while the conflict unit is built (section 2.3), the set union, in block order, of the patient word pools that the relay below lights across all K blocks, which forms the patient vocabulary V'_P without reading any .kb entry, and the fabric rebuild when that set changes (section 2.3), the relay of each block's cleanup scores into the sequencer (block_cleanup_scores read to host and clipped at 0, injected as input_gain x score into the divnorm score bridge by make_block_drives and onbridge_divnorm_drive, where the on-bridge divisive normalisation and the Izhikevich rheobase decide which word pools fire, then turned by the host into a fixed 1500 pA decoded-line drive and remapped to the reduced vocabularies with a lit word outside them dropped), the per-query STP reset of the conflict synapses, the slot-to-word map of the workspace, the relay of the conflict unit's spike count into a workspace slot drive, the drive vector the host builds for every hop whichever tier serves it, the host read-outs of the workspace (_conf_from_nmda's NMDA margin formula, its ignition count over the fixed threshold THR and its argmax winner, _gnw_reentrant_metacog_gated_deliberation_derisk.py:204-219 with THR at :105) and the gate's calibrated theta_hi and retry budget R_max (acc_conflict_gate :326-337, R_MAX_DEFAULT at :124, theta_hi from _get_theta), the mapping of acc_conflict_gate's four outputs onto hop outcomes (section 2.2), and, for the LTM tier (the TieredFactStore's tier routing picks the source), the candidate enumeration all_candidate_patients on the routed shard (host closed-form unbind with a host string dedup), whose patients other than the PROPOSE word each get their own workspace slot, on a buffer-served hop (the cross-tier slots) and on an LTM-served hop alike; M3: the competent() branch selection of ComprehensionProductionOrgan, which is a host English table (the hand ANIMACY and VERB_SELECTS coverage with their corpus-learned extensions, plus the _brain_vocab membership test, decide whether an assertion is fully covered, fully out-of-vocabulary or passed through, and so decide which assertions M3 ever judges), which utterances the comprehension read judges (extract_transitive's 3-content-token test and its function-word list), the role assignment of the stored triple (the positional parse after the host strip), the store-or-refuse agreement check between M3's commit roles and that positional parse, the M3 margin arithmetic (minimum over roles of winner-minus-runner-up, median-normalised) and its calibrated threshold (0.5 times the 10th percentile of the in-sample well-formed normalised margins), and the utterance-onset event
@@ -6,9 +6,26 @@ allowed-by: CLAUDE.md non-negotiable 1 (a declared teaching scaffold for its neu
 replaced-by: the learned relation-noun binding (M2, its own packet), the cs-race spiking store competition for block selection, the word-role frame commit for scope and stored roles, and one-bridge co-residence of the K-way sequencer and the GNW workspace
 cap: 2 builds
 
-**Round-6 changes (2026-10-28, after the round-5 synthesis ruled 3059090939 SURVIVES-WITH-FIXES; all fourteen items
-applied, six blocking and eight not; the item-by-item table, with the code at origin/main f0fd444f7 that each citation
-was checked against, is 0h).** Item number, then the sections changed:
+**Round-7 changes (2026-10-28, after the round-6 fix-checker returned two minor fixes on 1c84c367c; design only, no
+run and no code; both applied). Each was read at origin/main 53d64c2ef, where every file cited below is blob-identical to
+the f0fd444f7 of 0h.**
+1. The named test amendment of round 6 (item 12) left out A17-A20. They build as a new mode, `kb_overwrite`, of
+   `apply_kb_scramble` (2.8), and the worker enters a scramble mode only through `arm_scramble` reading the informational
+   entry's `scramble` key (`stage2_exit_gate.py:364-369`; the worker reads it at :686-693). So A17-A20 carry a scramble,
+   and `tests/test_stage2_kb_scramble.py:65-68` (no other arm carries a scramble) breaks for them as it does for A3. The
+   allowlist now names the arms carrying a scramble as the two kb arms (their modes `kb` and `kb_spiking` unchanged), A3
+   (mode `kb`) and A17-A20 (mode `kb_overwrite`), each with its mode asserted. Sections: 2.8 (the fixtures paragraph and
+   the test amendment), 2.10 step 0 (7), 0h item 12.
+2. Citation. 2.3 and 0h item 2 cited `_phaseB_onebrain_sequencerK_derisk.py:127-147` for the `RegionPathway` list. At
+   origin/main the pathway constructors run from :127 to :155 (the last, `inh{b}` -> `abstain`, spans :154-155) and
+   `cfg.region_pathways = P` is set at :156. Corrected to :127-155 (assignment at :156). The same convention was applied to
+   the neighbouring `_seq_vocab_shrink_derisk.py` cite, whose last constructor spans :164-165 and whose assignment is at
+   :166: :146-164 became :146-165. Sections: 2.3, 0h item 2.
+
+**Round-6 changes (history; 2026-10-28, after the round-5 synthesis ruled 3059090939 SURVIVES-WITH-FIXES; all fourteen
+items applied, six blocking and eight not; the item-by-item table, with the code at origin/main f0fd444f7 that each
+citation was checked against, is 0h; where round 7 changes a point, round 7 holds).** Item number, then the sections
+changed:
 1. (blocking) Patient-field counting had no insertion rule and no entry-level control: entries arrive as plain dicts
    (the composer's appends, the `kb_overwrite` fixture, `update_on_mismatch`). The proxy now wraps the fact dict on
    `append`, `insert`, `extend`, `+=` and `__setitem__` (slices included), supports `clear` and `pop`, and a class
@@ -342,7 +359,7 @@ committed s42 `infer__qp_lesion` shard of the 10-26 gate, read as a file for ite
 | # | item | where | checked against (origin/main f0fd444f7) |
 |---|---|---|---|
 | 1 | (blocking) Patient-field counter: no insertion rule, no entry-level control | 2.4 (counting by site with block id, insertion rule, class property setter, entry-level control), 2.7 (`kb_unwrapped`, positive control), 2.9 (B7 (c), B13 (b), table), 2.10 step 1 (one test per insertion path) | plain-dict appends `one_brain_composer.py:709` (`hear`), :724 (`hear_multiframe`), :732 (`store`), :753 (`store_fact`); the fixture pattern `stage2_exit_gate.py:479-480`; `update_on_mismatch` :2159-2163. Also found and covered: the reconsolidation fallback `reconsolidation_production_organ.py:140`, `tiered_fact_store.py:263` (`clear`), `d6_hebbian_store.py:266` and :397 (`pop`), and `TieredFactStore.__setattr__` (:132-151) forwarding a `.kb` reassignment to the buffer, which round 5's "only :499 assigns" claim missed; hence a property setter, not an `__init__` wrapper |
-| 2 | (blocking) B6 unreachable: RegionPathway floors weights at 0.01 | 2.3 (lesion bullet), 2.5, 2.9 (B6), 2.10 step 1 | `sim/regions.py:1009` (pathways) and :945 (within-region) `weights.append(max(0.01, float(w)))`; both builders wire every pathway as `RegionPathway` (`_seq_vocab_shrink_derisk.py:146-164`, `_phaseB_onebrain_sequencerK_derisk.py:127-147`); the workspace lesion's explicit wiring keeps 0.0 (`_p1_2_workspace_deliberation_loop_derisk.py:204-214`, `_gnw_rung1_ignition_curve_derisk.py:91-106` fills `np.full(..., attractor_weight)` unclamped) |
+| 2 | (blocking) B6 unreachable: RegionPathway floors weights at 0.01 | 2.3 (lesion bullet), 2.5, 2.9 (B6), 2.10 step 1 | `sim/regions.py:1009` (pathways) and :945 (within-region) `weights.append(max(0.01, float(w)))`; both builders wire every pathway as `RegionPathway` (`_seq_vocab_shrink_derisk.py:146-165`, `_phaseB_onebrain_sequencerK_derisk.py:127-155`; round 7 re-read both ranges at origin/main 53d64c2ef: the lists are assigned to `cfg.region_pathways` at :166 and :156); the workspace lesion's explicit wiring keeps 0.0 (`_p1_2_workspace_deliberation_loop_derisk.py:204-214`, `_gnw_rung1_ignition_curve_derisk.py:91-106` fills `np.full(..., attractor_weight)` unclamped) |
 | 3 | (blocking) B7 (c) unpassable: new K site unlisted; step 1 moves listed lines | 2.3 (where K is read), 2.4 (keyed sites, re-pin, unit test), 2.7, 2.9 (B7), 2.10 step 1 | `_ensure_sequencer(self, K)` :1641; its only production caller `_seq_block` reads `K = len(self.kb)` at :1700 and calls it at :1705, after the integrated-loop-off host path :1685-1691 has returned (`git grep` at origin/main: no other production caller) |
 | 4 | (blocking) B3 precondition unmeasurable | 2.7 (per-turn trace, `patch_calls_in_hop`), 2.9 (B3, table), 2.10 step 1 | `install_patch` :373-388, one counter `rec["calls"]` (:379, incremented at :383); written once in the shard at :720 inside the output dict :718-726; the s42 gate shard `infer__qp_lesion.json` reads `{'patch': 'qp_lesion', 'calls': 29}` over 10 turns |
 | 5 | (blocking) B8 (1b) passes with dead pools | 2.7 (`blocks_matched` as a list), 2.9 (B7 containment scope, B8 (1b), table) | A21: `no_batched_region` forced only with the fact shard on (:371-372), so off it stays False and `enable_batched` True (:480-482); A21's PROPOSE is `_seq_block`'s host first-match over `_read_blocks()` (:1685-1691), which reads no match pool |
@@ -352,7 +369,7 @@ committed s42 `infer__qp_lesion` shard of the 10-26 gate, read as a file for ite
 | 9 | In-place rewrite leaves drives and V'_P stale | 2.3 (drive-dirty bullet), 2.7 (`vp_formed_*`), 2.8, 2.9 (B13 (a)), 2.10 step 1 | `_write_block` :857, `_seq_dirty` only under `integrated_loop` (:874-875); `update_on_mismatch` :2144, in place at :2158-2163; rebuild condition :1671. Same pattern found and covered at :956-957 (homeostatic scaling), `webapp/da_tag_capture.py:189-190` and :509-510, `webapp/one_brain.py:674-675`, `d6_hebbian_store.py:271-272` and :402-403 |
 | 10 | B13 (a) tests `.kb` only | 2.6 (narrowed claim; review check), 2.7 (teach log first), 2.8 (A17/A18 chat-list refresh, index reset, read-backs), 2.9 (B13 (a)), 2.10 steps 0-1 | `brain_chat_tui.py:1010-1014` (`stored_facts` and the three sets from `.kb`, inside `_refresh_facts` :987-1016, called only at :985, :1418, :1431, :2336); the fixture leaves them (`stage2_exit_gate.py:455-457`); `resolve_compositional_chain(composer, question)` (`compositional_chain_route.py:262`); the index holds codes and block ids (`one_brain_composer.py:1416-1432`), rebuilt only on a K change (:1410-1412). Both remedies applied: narrowed claim AND the A17/A18 overwrite; D6's engram flags, which would make `_refresh_facts` read the engrams instead, are default OFF (`d6_hebbian_store.py:216`, :280) |
 | 11 | B7 (e) mislabels A6 misses | 2.6, 2.7 (`host_routed` scope, `seq_miss`), 2.9 (B7 (e)) | `_seq_block`'s spiking path under the integrated loop (:1699-1718) versus the host path (:1685-1691); on A21 the host path scans the very rows recorded, so a miss with decoded rows cannot occur there (listed as an instrument fault if it does) |
-| 12 | Existing test breaks unnamed | 2.8 (test amendment), 2.10 steps 0 (7) and 1 | `tests/test_stage2_kb_scramble.py:53-55` (extras: only the two kb arms, only in `infer`) and :65-68 (no other arm carries a scramble); `arms_for` at origin/main lists exactly those two extras (run on an archive of origin/main) |
+| 12 | Existing test breaks unnamed | 2.8 (test amendment), 2.10 steps 0 (7) and 1 | `tests/test_stage2_kb_scramble.py:53-55` (extras: only the two kb arms, only in `infer`) and :65-68 (no other arm carries a scramble); `arms_for` at origin/main lists exactly those two extras (run on an archive of origin/main). Round 7: A17-A20 also carry a scramble (mode `kb_overwrite`), so the :65-68 allowlist names them too (`arm_scramble` `stage2_exit_gate.py:364-369`, worker :686-693) |
 | 13 | D4 organ seed pinned per process only | 2.10 step 1 (seed test), 3.8 step 3 | `_ORGAN` :833, `get_organ(seed: int = 42)` :836, built once :848-869; `ComprehensionProductionOrgan.seed` set at :363; `gnw_deliberation._DEFAULT_SEED` :69 and `gnw_three_organ_bus._DEFAULT_SEED` :114 read `BRAIN_CHAT_SEED` at import with fallback 42 |
 | 14 | Minor: reserve slot, STP citations, circuit twin words, B12 (b) key | 2.10 step 0 (c); inputs, 2.3; 2.10 step 1; 2.3, 2.9 (B12 (b)) | `_silent_reserve` :988-998 (`__free` prefix), skipped at :1634; `sim/bridge.py:1413-1414`, `sim/config.py:949-950`, :1343-1344 at origin/main. Round 6 also resolves one scope ambiguity of round 5's B7 by taking the wider reading: the single-active-line check covers every buffer-resolved hop of every M1 arm except A11, not A1 alone |
 
@@ -585,7 +602,8 @@ New, additive builder option `conflict_unit=True` (default False; the sequencer 
   lines deliver about twice as much. `w_c` is chosen once, on design seed 7, by the rule in 2.10 step 1; one active
   line, from one block or from two, leaves `acc_conf` below rheobase.
 - **The conflict lesion holds a weight of exactly zero (round 6).** Both sequencer builders wire every pathway as a
-  `RegionPathway` (`_seq_vocab_shrink_derisk.py:146-164`; `_phaseB_onebrain_sequencerK_derisk.py:127-147`), and
+  `RegionPathway` (`_seq_vocab_shrink_derisk.py:146-165`; `_phaseB_onebrain_sequencerK_derisk.py:127-155`, the list assigned to
+  `cfg.region_pathways` at :156), and
   `RegionPathway` wiring clamps every sampled weight to `max(0.01, w)` (`sim/regions.py:1009`; the within-region
   recurrent wiring does the same at :945). A `pP_w -> acc_conf` pathway built at `w_c` = 0 would therefore hold 0.01 on
   every synapse, and A11's read-back `cp_w_max` = 0 (B6) could never be met. So the lesion is not a build weight. Both
@@ -1064,7 +1082,12 @@ named fallback, for that STOP or for a later lemma fix in D2: write the second f
 `composer.store` fixture after the teach block, as `infer_xtier` writes its LTM fact. Claude rules on it at the STOP.
 
 **The `.kb` overwrite fixtures (A17-A20, round 4).** These reuse `apply_kb_scramble`'s write and read-back pattern
-(`stage2_exit_gate.py:452`) in a new mode, `kb_overwrite`, with a fixed one-entry plan. After the teach block and
+(`stage2_exit_gate.py:452`) in a new mode, `kb_overwrite`, with a fixed one-entry plan. **How the mode is entered (round
+7).** Their informational entries declare `scramble: "kb_overwrite"`, because the worker enters a scramble mode only
+through `arm_scramble` reading that key (`stage2_exit_gate.py:364-369`; `scr_mode` at :686, the `_scramble_now` call at
+:692-693). So A17-A20 count as arms carrying a scramble for the test amendment below. The same key also installs `KbProbe`
+on them (:688-689), which forces nothing outside mode `kb_spiking` (:524), and routes their shards through
+`kb_scramble_read` (:1538). After the teach block and
 before the first probe, the worker overwrites the patient string of ONE `.kb` entry with a fresh `(fact, handle)`
 tuple, as `update_on_mismatch` does. On M1 arms that write goes through the counting proxy's `__setitem__`, which wraps
 the new fact dict (2.4, round 6). The bound vectors, the drives and the sequencer are not written, and on A19 and A20
@@ -1128,10 +1151,12 @@ commit that adds the arms. `test_every_pre_existing_arm_has_its_frozen_turn_tabl
 only arms outside GOLDEN are the two kb arms and that no other group has any (`tests/test_stage2_kb_scramble.py:53-55`).
 `test_kb_arms_are_informational_never_counted_and_run_the_intact_turn_table` asserts that no arm other than the two kb
 arms carries a scramble (:65-68). A0-A21, A8b, the `.rep0` arms of A4, A5 and A11, and A3 (scramble `kb`) break the
-first, and A3 breaks the second. The amendment replaces each expected value with an explicit allowlist: `infer`'s
+first, and A3 and A17-A20 (scramble `kb_overwrite`, round 7) break the second. The amendment replaces each expected value with an explicit allowlist: `infer`'s
 extras equal the two kb arms plus this packet's named arms (and, in M3 step 3, the M3 arms of 3.6); every other group's
 extras stay empty, and if a table of this packet is ever implemented as its own group, that group's arms are named
-in the allowlist too; the arms carrying a scramble are the two kb arms plus A3, with mode `kb`. The GOLDEN dict and
+in the allowlist too; the arms carrying a scramble are the two kb arms (modes `kb` and `kb_spiking`, as now), A3 (mode `kb`) and A17-A20 (mode
+`kb_overwrite`, round 7), written as an explicit arm-to-mode map that the test asserts equal to `arm_scramble` over every
+group and arm. The GOLDEN dict and
 the per-arm fingerprint assertion (:48-52) are not changed, so every pre-existing arm stays pinned. Step 0 lands the
 amendment for the arms it adds, and step 1 extends the allowlist (2.10).
 
@@ -1512,7 +1537,8 @@ and A18's chat-list refresh, the `_fact_shard_built_K` reset, their read-backs a
 `propose_path` and `fs_candidates` (2.7).
 (7) Round 6: the amendment of `tests/test_stage2_kb_scramble.py` named in 2.8. Its assertions at :53-55 (the extras
 of `infer` are exactly the two kb arms, and no other group has any) and :65-68 (no other arm carries a scramble) become
-explicit allowlists, extended by each step that adds arms. The GOLDEN dict and the fingerprint loop (:48-52) are
+explicit allowlists, extended by each step that adds arms. The :65-68 allowlist is the arm-to-mode map of 2.8: the two kb
+arms, A3 (`kb`) and A17-A20 (`kb_overwrite`, round 7). The GOLDEN dict and the fingerprint loop (:48-52) are
 unchanged. Step 0 adds the informational entries it runs and lands the amendment for them in the same commit.
 The `.rep0` change and the live `.kb` proxy are step-1 items.
 
