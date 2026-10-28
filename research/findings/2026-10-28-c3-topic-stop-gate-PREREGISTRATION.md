@@ -43,7 +43,12 @@ Each gate bar G1 to G8 is the packet's D1 to D8 (section 7), word for word in su
   same, 6/6 gate seeds each.
 - **G2 = D2.** Packet: "C intact_b: the per-label asked vector equals C intact_a, 11/11." Gate: the same, 6/6.
 - **G3 = D3.** Packet: "C permuted: `score_ask(permuted=True)` discriminates (the asks follow the exposure), 11/11." Gate:
-  the same, 6/6.
+  the same, 6/6. The call is the packet's literal one, with no `moat_acq`, so the moat set comes from the permuted shard's
+  own teach acquisition, as at dev. The Stage-2 aggregate reads a control arm's moats off intact_a's acquisition instead
+  (ruling 2026-10-13, `research/runners/stage2_exit_gate.py` line 1511), and its permuted-tracking clause is that call's
+  `all`. The two conventions count different moats on this battery (section 9 (d)). The scorer reports the aggregate one
+  per gate seed beside G3 (`aggconv`: discriminates, the tracking clause, both rates and the margin gap - 2 x moat); it is
+  reported, not barred.
 - **G4 = D4.** Packet: "lesion_L: u_toad_4 asked, and different from C on u_toad_4, on 11/11 in both orders; attributable
   fraction of the extra toad asks against the intact_b null >= 0.5 (`tools.lab.attributable_to`)." Gate: u_toad_4 asked under
   lesion_L and not under C, 6/6 in both orders; the attributable fraction (section 3) >= 0.5.
@@ -113,7 +118,8 @@ The three flag-OFF arms are the flip-prereg rule's flag-OFF battery arms on the 
 arm with them at the same revision and seed. `lesion_curiosity`'s `BRAIN_CURIOSITY_LESION=1` is the runner's own arm env.
 
 **Lines.** `research/coordination/c3-topic-stop-gate-lines.txt`, 96 lines (TSV: command, then the `--checked` reason), emitted
-by `python -m research.runners.c3_topic_stop_score --emit-lines` with `<sha>` left as the placeholder for F (section 5). Each
+by `python -m research.runners.c3_topic_stop_score --emit-lines` with `<sha>` left as the placeholder for the line revision F
+(section 5: F is P). Each
 command is the dev battery's line byte for byte (the 192 lines queued 2026-10-27 under RULING c3-battery-lines-1027:
 `mem_ok.sh 9 1`, `memcap.sh 10`, the one-thread numpy env block, the flags in the dev order, `.venv/bin/python -u -m
 research.runners.stage2_exit_gate --shard --seed N --group ask --arm A`) except three things: the seed, the `--out` directory
@@ -127,8 +133,9 @@ queue shape check passes on all 96, and all 96 parse through `stage2_exit_gate.m
 **Scorer.** `python -m research.runners.c3_topic_stop_score --mode gate --pin <F, full sha> --out
 <gate root>/verdict.json` (default root `research/findings/raw/_c3_topic_stop/gate`, default seeds
 the six gate seeds). It prints each cell DEFINED or UNDEFINED with the reason, each bar with its per-seed reads, the
-attribution, the informational reads and the DEC line. Its module docstring gives the reading of each bar; it adds no bar and
-loosens none. Tests: `tests/test_c3_topic_stop_score.py` (35).
+attribution, G3's aggregate-convention read, the informational reads and the DEC line. Its module docstring gives the
+reading of each bar; it adds no bar and loosens none. It is run from the checkout R of section 5. Tests:
+`tests/test_c3_topic_stop_score.py` (38).
 
 **The scorer reproduces the dev verdict.** `python -m research.runners.c3_topic_stop_score --mode dev` over the 192 dev
 shards (pin `79c6f5128`, seed 9 read and not counted, D5 at its packet need of 9) reads 192 of 192 cells DEFINED, D1 to D8 PASS
@@ -136,6 +143,8 @@ shards (pin `79c6f5128`, seed 9 read and not counted, D5 at its packet need of 9
 Its per-seed reads equal the dev scorer's (`score_c3ts_dev.py`, the read the skeptic re-scored) on every seed: each bar, the
 lesion_L extra toad asks in both orders, the null toad differences, the asked vectors, null_count and the answered counts
 (0 mismatches). G9 and G10, which the packet did not have, also read 11/11 on the dev shards (reported there, not a dev bar).
+G3's aggregate-convention read gives discriminates and tracking True on 11/11 with margin 0.0 on every seed, the dev
+scorer's `aggconv` read (True on 12 of 12 dev seeds, the design seed included).
 
 **Bar sanity.** `docs/drafts/c3-topic-stop-gate/bar_sanity_spec_c3ts_gate.py`, decide = DEC of the real scorer over synthetic
 six-gate-seed sets. The perfect brains are the real dev shards relabelled (a random counted dev seed per gate seed), and the
@@ -161,22 +170,44 @@ this file does not assert the ask replies are unchanged across them. So the gate
 verdict is evidence at `79c6f5128` only; at the gate every comparison (flag-ON against flag-OFF, lesion against intact) is
 within one revision and one seed.
 
-**Gate revision F.** The pool's gate-seed guard needs the cited prereg to exist at the line's pinned revision, and the
-provisioner refuses a revision that does not contain origin/main, so P itself cannot be the line revision once main has
-moved. F is the tip of main, after this branch merges, that (1) contains this file, the scorer and the lines file, (2)
-carries `research/runners/c3_topic_stop_score.py` byte-identical to this branch's (its sha256 is recorded below)
-and (3) passes `python -m research.runners.c3_topic_stop_score --closure-check 6c6e08ad903dffad002ba0a9ce1859da607634b1 <F>`
-with IDENTICAL. If (3) prints DIFFERS, no line is queued: an amendment names the new P and why, before any gate-seed run.
-Every line pins F (`~/derisk-pool/revisions/<F>`), and the scorer is run with `--pin <F>`.
+**Gate revision F is P.** Every gate line runs at P itself (`cd
+~/derisk-pool/revisions/6c6e08ad903dffad002ba0a9ce1859da607634b1`), and the scorer is run with `--pin
+6c6e08ad903dffad002ba0a9ce1859da607634b1`; F, the line revision that section 4, section 6 and the lines file name, is P. The
+arms' code is then P's by construction, so the line revision needs no closure check. A main tip could not serve: origin/main
+`490b72fe2` and the server's main `f0fd444f7` contain `500d8986d` (stable-mechc: `SIM_PRESET_CENTRED_HET` and
+`SIM_TRAIT_CENTRED_HET`, both default OFF), and `--closure-check 6c6e08ad9 490b72fe2` prints DIFFERS on `sim/bridge.py` and
+`sim/config.py`, so every main tip that contains this file differs from P in the arms' closure.
 
-Scorer sha256 at this commit: `4812f633de5126696c10caf123686bf5e4589f02f06f509e3e3612a989e59ecb`.
+P predates this file, and the pool's gate-seed guard looks for the cited prereg in the line's pinned tree. It accepts such a
+line through its historical-pin path (`historical_pin_prereg_ok` in `tools/pool_queue.sh`, RULING lbf-gate-pin-1020): the
+prereg is committed at HEAD, declares `flip: no`, names the full pinned sha, and the pin is an ancestor of the commit that
+first added the prereg. This file declares `flip: no` (header), names P's full sha (this section) and is first added by a
+commit whose parent is P. The provisioner refuses a revision that does not contain origin/main unless the run is declared a
+deliberate reproduction of an old state, so P is provisioned with `POOL_PROVISION_ALLOW_STALE=1 bash tools/pool_provision.sh
+--revision 6c6e08ad903dffad002ba0a9ce1859da607634b1 --isolated <node>`. The runner only requires `--allow-gate-seed --prereg
+<path>` to be given and never reads that file, so P's tree need not contain it.
+
+**Scorer revision R.** P's tree has no scorer, so the scorer runs from a checkout R that (1) carries
+`research/runners/c3_topic_stop_score.py` byte-identical to this branch's (sha256 below) and (2) passes `python -m
+research.runners.c3_topic_stop_score --read-check 6c6e08ad903dffad002ba0a9ce1859da607634b1 <R>` with IDENTICAL. That check
+compares the scorer's own read files (`READ_FILES`: `research/runners/stage2_exit_gate.py`, `tools/lab.py`,
+`tools/verdict.py`, `tools/answer_rate.py` and the two `research` package `__init__` files) with P's blobs, so `score_ask`,
+`arm_validity`, `attributable_to`, `classify` and `rate` are P's. The set is every repo module the scorer loads, pinned by
+`tests/test_c3_topic_stop_score.py`, which runs the dev read in a fresh process and lists them. At this commit (2) reads
+IDENTICAL at origin/main `490b72fe2`, at the server's main `f0fd444f7` and at this branch's tip. If the main tip fails (1)
+or (2) when the scorer is run, the scorer runs from a worktree at the commit this branch is merged at, which passes both by
+construction (P plus this branch's files; its `--closure-check` against P reads IDENTICAL), with `--root` naming the synced
+shard directory and, for the pre-flight record below, `GATE_PREFLIGHT_PATH` naming the shared `research/queue/preflight.tsv`
+that the pool's check reads.
+
+Scorer sha256 at this commit: `2a900af271a31b92ddab841f2d206b57c81f18d6faf50349e252d768abe576e4`.
 
 **Before any gate line is queued** (the pool's own guards): a passing pool canary of `research.runners.stage2_exit_gate` at
-F; and a CLEAN pre-flight read at F. The pre-flight runs the same sixteen arms on dev seed 7 at F (`--emit-lines <F>
---line-seeds 7 --line-dir research/findings/raw/_c3_topic_stop/preflight`, the same commands with seed 7) and records
-`python3 tools/gate_preflight.py record --prereg research/findings/2026-10-28-c3-topic-stop-gate-PREREGISTRATION.md
---revision <F> -- .venv/bin/python -m research.runners.c3_topic_stop_score --mode gate --root
-research/findings/raw/_c3_topic_stop/preflight --seeds 7 --pin <F>`. A dev-seed read is no verdict; it shows the instrument
+P; and a CLEAN pre-flight read at P. The pre-flight runs the same sixteen arms on dev seed 7 at P (`--emit-lines <P>
+--line-seeds 7 --line-dir research/findings/raw/_c3_topic_stop/preflight`, the same commands with seed 7) and records, from
+R, `python3 tools/gate_preflight.py record --prereg research/findings/2026-10-28-c3-topic-stop-gate-PREREGISTRATION.md
+--revision <P> -- .venv/bin/python -m research.runners.c3_topic_stop_score --mode gate --root
+research/findings/raw/_c3_topic_stop/preflight --seeds 7 --pin <P>`. A dev-seed read is no verdict; it shows the instrument
 can read the brain.
 
 ## 6 UNDEFINED rules
@@ -209,7 +240,8 @@ pconst in both orders (the same, and the count of probes read with a constant sa
 C intact_a over the abstained probes; per applied probe of C and lesion_P, whether asked equals `want_decision_hz >=
 threshold` (the host decision, section 9 (f)); the toad ask strings (asks before the stop); the flag-OFF arms' C3 clauses in
 both orders (the failure L+P addresses); lesion_P reversed; the tonic session DA at lesion_P's first and last applied probe;
-and the answered counts of every G10 pair.
+the answered counts of every G10 pair; and G3 under the Stage-2 aggregate's moat convention (`aggconv`: discriminates, the
+permuted tracking clause, both rates and the margin gap - 2 x moat, section 9 (d)), with its count over the six seeds.
 
 ## 8 The next method for the host threshold
 
@@ -238,9 +270,17 @@ dev read and re-measured at the gate seeds where a read exists (section 7):
 - **(c) A host count rule reproduces the decision.** null_count with k = 1 (ask iff the shared pool is curious and the topic
   was presented fewer than once before) equals C's ask decision on 117 of 121 abstained dev probes. L is count-based by
   design; the spiking omission-veto rung (section 8) is unbuilt.
-- **(d) The goat moat is UNDEFINED.** `m_goat` is undefined on every dev seed: the goat teach is refused by the default-ON D4
-  comprehension gate (the known C2 defect), so the moat rate rests on yak and moose. In the permuted arm `g_crab` is undefined
-  for the same reason (the crab teach is refused).
+- **(d) The goat moat is UNDEFINED, and G3 does not read the Stage-2 aggregate's moat convention.** `m_goat` is undefined
+  on every dev seed: the goat teach is refused by the default-ON D4 comprehension gate (the known C2 defect), so the moat
+  rate rests on yak and moose. In the permuted arm `g_crab` is undefined for the same reason (the crab teach is refused).
+  G3 reads the permuted shard's own acquisition (the packet's literal `score_ask(permuted=True)`): `g_crab` is excluded and
+  the moat rate is 0.0 (`g_eel` and `g_newt` not asked) against a gap rate of 1.0. The Stage-2 aggregate gives a control
+  arm intact_a's acquisition (ruling 2026-10-13; there the refused teach is `t_goat`, so `g_newt` drops out and `g_crab`
+  counts): `g_crab` is an asked moat, and the moat rate is 0.5 against a gap rate of 1.0, a pass with zero margin (1.0 = 2 x
+  0.5) on 12 of 12 dev seeds. So if one permuted gap goes unasked at a gate seed, G3 passes (gap 2/3 meets the 2/3 floor
+  against moat 0.0) while the Stage-2 permuted-tracking clause fails (2/3 < 2 x 0.5). A G3 PASS therefore does not carry
+  that clause to the 11-21 re-pin. The scorer reports the aggregate-convention discriminates and tracking per gate seed
+  (`aggconv`, section 7), and the verdict states every gate seed where either reads False, next to DEC.
 - **(e) The D2 and D4 nulls are zero by construction** (section 3): C intact_b is an exact replay of intact_a, so G2 is a
   cross-host determinism check.
 - **(f) Host-decision share.** Every ask or no-ask is still host arithmetic, `want_hz * clip(0.2, 3.0, 1 + 1.5 (DA - 0.5)) >=

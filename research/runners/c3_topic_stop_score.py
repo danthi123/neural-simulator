@@ -12,6 +12,7 @@ guard is for the runs that PRODUCE them).
     python -m research.runners.c3_topic_stop_score --emit-lines [<sha>]                        # the gate pool lines (TSV)
     python -m research.runners.c3_topic_stop_score --closure [--rev <sha>]                     # the arms' import closure
     python -m research.runners.c3_topic_stop_score --closure-check <P> <F>                     # IDENTICAL or the diffs
+    python -m research.runners.c3_topic_stop_score --read-check <P> <R>                        # the scorer's READ_FILES
 
 Layout: <root>/s<seed>/ask__<tag>.json plus its `.prov.json` sidecar, one fresh process per (seed, tag); tags and env
 are TAGS below (packet section 7, sixteen arms per seed).
@@ -31,7 +32,10 @@ BAR READINGS (the bar text is the packet's / the prereg's; this is how each is r
   1  (D1/G1) C intact_a and C reversed: `score_ask(shard)["all"]`; a seed is FAIL if either arm is False, UNDEFINED
      if either reads `moat_undefined_decides` (and none False), else PASS.
   2  (D2/G2) C intact_b's asked vector over the twelve probe labels equals C intact_a's.
-  3  (D3/G3) `score_ask(C_permuted, permuted=True)["discriminates"]` is True (the shard's own teach acquisition).
+  3  (D3/G3) `score_ask(C_permuted, permuted=True)["discriminates"]` is True (the shard's own teach acquisition: the
+     packet's literal call). Reported beside it, never barred (`aggconv`): the same call with intact_a's acquisition,
+     the Stage-2 aggregate's control-arm convention (ruling 2026-10-13), whose `all` is that aggregate's permuted
+     tracking clause, and the margin gap - 2 x moat (prereg section 9 (d)).
   4  (D4/G4) both orders: lesion_L asks u_toad_4 and C does not; and the pooled attribution
      `tools.lab.attributable_to(treatment, control)` >= 0.5, treatment = toad probes (u_toad_1..4) asked under
      lesionL_intact_a and not under C_intact_a, summed over the counted seeds; control = toad probes where C_intact_a
@@ -121,6 +125,11 @@ PACKET_BARS = ("1", "2", "3", "4", "5", "6", "7", "8")
 # the processes the arms run: the runner (it imports webapp.server inside the worker), the handler and the two organs
 CLOSURE_ROOTS = ("research/runners/stage2_exit_gate.py", "webapp/server.py", "webapp/curiosity_topic_stop_chat.py",
                  "research/runners/curiosity_topic_stop_organ.py")
+# Every repo file this scorer itself loads besides its own file (stage2_exit_gate's brain imports sit inside its run
+# functions, which the scorer never calls); pinned by tests/test_c3_topic_stop_score.py, which runs the dev read in a
+# fresh process and lists the repo modules it loaded. `--read-check P R` compares these blobs (prereg section 5).
+READ_FILES = ("research/__init__.py", "research/runners/__init__.py", "research/runners/stage2_exit_gate.py",
+              "tools/answer_rate.py", "tools/lab.py", "tools/verdict.py")
 _SYM = {True: "1", False: "0", None: "-"}
 
 
@@ -339,6 +348,19 @@ def score_seed(cells, probs, s):
                                                                             "g_crab", "g_newt"))}
         if sp["discriminates"] is None:
             row["3"]["why"] = "moat rate undefined decides (no taught moat acquired)"
+        # reported, never barred: the Stage-2 aggregate's convention (a control arm reads its moat set off intact_a's
+        # teach acquisition, ruling 2026-10-13, stage2_exit_gate.aggregate); its `all` is that aggregate's permuted
+        # tracking clause. The two conventions count different moats on this battery (prereg section 9 (d)).
+        if ia is None:
+            row["3"]["aggconv"] = {"discriminates": None, "tracks": None,
+                                   "why": _undef(["C_intact_a"], pr) or "C_intact_a not readable"}
+        else:
+            sa = G.score_ask(pm, permuted=True, moat_acq=G.acquired_teaches(ia))
+            gap, moat = sa["ask_rate_gap"], sa["ask_rate_moat"]
+            row["3"]["aggconv"] = {"discriminates": sa["discriminates"], "tracks": sa["all"], "ask_rate_gap": gap,
+                                   "ask_rate_moat": moat, "moats_undefined": sa["moats_undefined"],
+                                   "margin": (None if gap is None or moat is None
+                                              else round(gap - G.ASK_RATIO_BAR * moat, 6))}
     # 4
     d4 = {}
     for order in ("intact_a", "reversed"):
@@ -523,6 +545,16 @@ def attribution(rows, seeds):
     return out
 
 
+def aggconv_summary(rows, seeds):
+    """G3 under the Stage-2 aggregate's moat convention, over the counted seeds: reported, never a bar."""
+    ac = {s: rows[s]["3"].get("aggconv") or {} for s in seeds}
+    return {"discriminates": sum(1 for s in seeds if ac[s].get("discriminates") is True),
+            "tracks": sum(1 for s in seeds if ac[s].get("tracks") is True), "of": len(seeds),
+            "not_discriminating_seeds": [s for s in seeds if ac[s].get("discriminates") is not True],
+            "not_tracking_seeds": [s for s in seeds if ac[s].get("tracks") is not True],
+            "margin_by_seed": {str(s): ac[s].get("margin") for s in seeds}}
+
+
 def score(cells, seeds, mode, pin, counted=None, needs=None):
     """The whole read: cell validity, per-seed rows, bar tallies, the D4/G4 attribution, DEC."""
     seeds = tuple(int(s) for s in seeds)
@@ -536,6 +568,7 @@ def score(cells, seeds, mode, pin, counted=None, needs=None):
     bars["4"]["toad_verdict"] = bars["4"]["verdict"]
     bars["4"]["attribution"] = att
     bars["4"]["verdict"] = "FAIL" if "FAIL" in v4 else ("UNDEFINED" if "UNDEFINED" in v4 else "PASS")
+    bars["3"]["aggconv_reported"] = aggconv_summary(rows, counted)
     decided = PACKET_BARS if mode == "dev" else BARS
     vs = [bars[b]["verdict"] for b in decided]
     dec = "PASS" if all(v == "PASS" for v in vs) else ("FAIL" if "FAIL" in vs else "UNDEFINED")
@@ -567,6 +600,12 @@ def render(res):
         out.append("%s %s %d/%d need %d%s%s%s" % (name[b], t["verdict"], t["pass"], t["of"], t["need"], tag,
                                                  " fail %s" % t["fail_seeds"] if t["fail_seeds"] else "",
                                                  " undefined %s" % t["undefined_seeds"] if t["undefined_seeds"] else ""))
+        if b == "3":
+            g = t["aggconv_reported"]
+            out.append("   aggconv (Stage-2 aggregate moat convention, intact_a's acquisition; reported, not a bar): "
+                       "discriminates %d/%d, permuted tracking %d/%d, margin gap-%gxmoat by seed %s"
+                       % (g["discriminates"], g["of"], g["tracks"], g["of"], G.ASK_RATIO_BAR,
+                          json.dumps(g["margin_by_seed"], sort_keys=True)))
         if b == "4":
             a = t["attribution"]
             out.append("   attribution %s fraction %s (treatment %s, control %s; reversed treatment %s, reported)"
@@ -586,6 +625,10 @@ def render(res):
                 whys = [w for w in whys if w]
                 out.append("    %s UNDEFINED (%s)" % (name[b].split()[0], "; ".join(whys)[:300] or "no reason recorded"))
         i = r["info"]
+        ac = r["3"].get("aggconv") or {}
+        out.append("    %s3 own moat %s gap %s | aggconv moat %s gap %s discriminates %s tracks %s" % (
+            pre, r["3"].get("ask_rate_moat"), r["3"].get("ask_rate_gap"), ac.get("ask_rate_moat"), ac.get("ask_rate_gap"),
+            ac.get("discriminates"), ac.get("tracks")))
         out.append("    vectors C_a %s C_r %s | Lpinned %s/%s | pconst %s/%s | off %s/%s | null_count %s" % (
             (i.get("C_intact_a") or {}).get("asked"), (i.get("C_reversed") or {}).get("asked"),
             (i.get("Lpinned_intact_a") or {}).get("all"), (i.get("Lpinned_reversed") or {}).get("all"),
@@ -696,19 +739,22 @@ def import_closure(rev=None, roots=CLOSURE_ROOTS):
     return sorted(seen)
 
 
+def _blob(rev, path):
+    try:
+        return _git("rev-parse", "%s:%s" % (rev, path)).strip()
+    except subprocess.CalledProcessError:
+        return None
+
+
 def closure_check(p_rev, f_rev):
     """Files of the union closure (at P and at F) whose blob differs between P and F (absent counts as a difference)."""
     files = sorted(set(import_closure(p_rev)) | set(import_closure(f_rev)))
-    diffs = []
-    for path in files:
-        def blob(rev):
-            try:
-                return _git("rev-parse", "%s:%s" % (rev, path)).strip()
-            except subprocess.CalledProcessError:
-                return None
-        if blob(p_rev) != blob(f_rev):
-            diffs.append(path)
-    return files, diffs
+    return files, [path for path in files if _blob(p_rev, path) != _blob(f_rev, path)]
+
+
+def read_check(p_rev, r_rev):
+    """READ_FILES whose blob differs between P and R (absent counts as a difference): the scorer's own read code."""
+    return list(READ_FILES), [path for path in READ_FILES if _blob(p_rev, path) != _blob(r_rev, path)]
 
 
 def main(argv=None):
@@ -725,6 +771,8 @@ def main(argv=None):
     ap.add_argument("--closure", action="store_true")
     ap.add_argument("--rev", default=None)
     ap.add_argument("--closure-check", nargs=2, default=None, metavar=("P", "F"))
+    ap.add_argument("--read-check", nargs=2, default=None, metavar=("P", "R"),
+                    help="the scorer's own read files (READ_FILES) at R against P")
     a = ap.parse_args(argv)
     if a.emit_lines is not None:
         ls = tuple(int(x) for x in a.line_seeds.split(",")) if a.line_seeds else GATE_SEEDS
@@ -739,6 +787,11 @@ def main(argv=None):
         files, diffs = closure_check(*a.closure_check)
         print("closure %d files; %s" % (len(files), "IDENTICAL" if not diffs else "DIFFERS on %d: %s" % (len(diffs),
                                                                                                     " ".join(diffs))))
+        return 0 if not diffs else 1
+    if a.read_check:
+        files, diffs = read_check(*a.read_check)
+        print("read files %d; %s" % (len(files), "IDENTICAL" if not diffs else "DIFFERS on %d: %s" % (len(diffs),
+                                                                                                 " ".join(diffs))))
         return 0 if not diffs else 1
     if a.mode is None:
         ap.error("choose --mode dev|gate, --emit-lines, --closure or --closure-check")

@@ -180,3 +180,49 @@ def test_closure_holds_the_arms_code():
               "webapp/da_curiosity_drives_chat.py", "webapp/da_mode_drives_chat.py", "webapp/one_brain.py",
               "sim/bridge.py", "sim/neuromodulators.py"):
         assert f in c, f
+
+
+# ── G3's moat convention (prereg section 9 (d)) and the scorer's read files (section 5) ─────────────────────────────
+@needs_dev
+def test_dev_g3_reads_both_moat_conventions(dev):
+    """G3 (the shard's own acquisition): g_crab excluded, moat 0.0 against gap 1.0. The Stage-2 aggregate's convention
+    (intact_a's acquisition): g_newt excluded, g_crab an asked moat, moat 0.5 against gap 1.0, margin 0.0. Every dev seed."""
+    for s in S.DEV_SEEDS:
+        r3 = dev["rows"][str(s)]["3"]
+        assert (r3["ok"], r3["ask_rate_gap"], r3["ask_rate_moat"], r3["moats_undefined"]) == (True, 1.0, 0.0, ["g_crab"])
+        ac = r3["aggconv"]
+        assert (ac["discriminates"], ac["tracks"], ac["ask_rate_gap"], ac["ask_rate_moat"], ac["margin"],
+                ac["moats_undefined"]) == (True, True, 1.0, 0.5, 0.0, ["g_newt"]), s
+    g = dev["bars"]["3"]["aggconv_reported"]
+    assert (g["discriminates"], g["tracks"], g["of"], g["not_tracking_seeds"]) == (11, 11, 11, [])
+
+
+@needs_dev
+def test_one_permuted_gap_unasked_passes_g3_and_fails_the_aggregate_convention(spec):
+    """The caveat (d) case: G3 and DEC still PASS, while the reported aggregate-convention read names the seed."""
+    cells = spec.perfect(np.random.default_rng(0))
+    spec._ask(cells, 43, "C_permuted", "m_yak", False)
+    res = _gate(cells, spec)
+    assert res["bars"]["3"]["verdict"] == "PASS" and res["DEC"]["verdict"] == "PASS"
+    ac = res["rows"]["43"]["3"]["aggconv"]
+    assert (ac["discriminates"], ac["tracks"]) == (False, False) and ac["margin"] < 0
+    g = res["bars"]["3"]["aggconv_reported"]
+    assert g["not_discriminating_seeds"] == [43] and g["not_tracking_seeds"] == [43] and g["discriminates"] == 5
+    assert "aggconv (Stage-2 aggregate moat convention" in S.render(res)
+
+
+@needs_dev
+def test_read_files_are_every_repo_module_the_scorer_loads():
+    """READ_FILES (what `--read-check` compares) = the repo files a full dev read loads, besides the scorer itself."""
+    import subprocess
+    code = ("import os, sys; sys.path.insert(0, %r); os.environ['SIM_NO_PROVENANCE'] = '1'\n"
+            "from research.runners import c3_topic_stop_score as S\n"
+            "S.render(S.score(S.load_cells(os.path.join(%r, S.DEV_DIR), S.DEV_SEEDS), S.DEV_SEEDS, 'dev', S.DEV_PIN,"
+            " counted=S.DEV_COUNTED, needs={'5': 9}))\n"
+            "r = os.path.realpath(%r)\n"
+            "fs = {os.path.relpath(os.path.realpath(m.__file__), r) for m in list(sys.modules.values())"
+            " if getattr(m, '__file__', None) and os.path.realpath(m.__file__).startswith(r + os.sep)}\n"
+            "print('\\n'.join(sorted(fs)))\n") % (REPO, REPO, REPO)
+    out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True,
+                         env=dict(os.environ, SIM_BACKEND="numpy")).stdout.split()
+    assert set(out) - {"research/runners/c3_topic_stop_score.py"} == set(S.READ_FILES)
