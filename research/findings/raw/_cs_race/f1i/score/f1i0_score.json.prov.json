@@ -1,0 +1,29 @@
+{
+ "run_id": "1793207150-2887889",
+ "runner": "research/runners/cs_race_f1i_score.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-f1i-score/research/runners/cs_race_f1i_score.py",
+  "--out",
+  "research/findings/raw/_cs_race/f1i/score/f1i0_score.json"
+ ],
+ "git_sha": "b5ee567a8",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-28T13:05:50",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 76002.6,
+ "corpus_check_query": "re-calibrate the global-stop distributed-overwrite workspace on stable membranes",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_cs_race/f1i/score/f1i0_score.json"
+}
