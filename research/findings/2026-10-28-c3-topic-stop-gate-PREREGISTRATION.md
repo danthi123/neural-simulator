@@ -22,6 +22,27 @@ run with `BRAIN_CURIOSITY_TOPIC_STOP` or `BRAIN_CURIOSITY_PHASIC_DA` set. The he
 declaration, copied unchanged (`research/coordination/c3-topic-stop-PACKET.md`), so this file joins the packet's scaffold
 group; it is the group's first prereg (1 build of the cap of 2).
 
+**Edit 1 (pre-data), 2026-10-28.** Written by Claude before any gate data exists: no gate-seed shard of this method has
+been produced and no gate line has been queued (the lines were never provisioned, see below). It is an edit of a pre-data
+registration, not an amendment, and it changes no bar, arm, threshold, attribution input, UNDEFINED rule or DEC rule
+(sections 1 to 3 and 6 to 9 are unchanged). It changes the line revision F and how F is shown valid (section 5, replaced).
+The original section 5 pinned the gate lines at P = `6c6e08ad9`; the server's provisioner refused P ("stale: does not
+contain published main 04680400c832 or a main published in the 60 min before this request, and main changed more than docs
+since"), and `tools/pool_provision.sh` is banned on the server, so the `POOL_PROVISION_ALLOW_STALE` path that section named
+is not available and P cannot be the line revision. Re-pinning to a main tip under the old closure rule fails too:
+`--closure-check 6c6e08ad9 04680400c` prints DIFFERS on `sim/bridge.py` and `sim/config.py` (the default-OFF stable-mechc
+flags `SIM_PRESET_CENTRED_HET` and `SIM_TRAIT_CENTRED_HET`; at origin/main `6567104f8` it prints DIFFERS on those two and
+on `research/runners/emotion_category_organ.py`), and published main now carries the emotion organ's bounded conductance
+default ON (`0b79336ec`, the merge of emo-bounded-default-on), which every later published main will contain. So F is
+now the published main tip read once, at step 1's provision request, and held unchanged through the identity canary,
+the pre-flight, the pool canary and the 96 gate lines even if main moves (a new F only by a ruling); F counts as the
+gate revision only after an IDENTITY CANARY at F, on dev seeds 7 and 8, reproduces the committed dev shards on every
+decision-bearing field, and on every other field but the listed host, timing and provenance ones (section 5). With it:
+section 4's line-revision sentence and test count; the scorer gains `--identity-canary` and `--emit-canary-lines` (its
+dev and gate reads are unchanged), so its sha256 (section 5) and the bar-sanity record were regenerated;
+`research/coordination/c3-topic-stop-canary-lines.txt` (32 lines) is new. The gate lines file is unchanged: it already
+carried the `<sha>` placeholder, now substituted with F instead of P.
+
 ## 1 The decision this gate makes
 
 Candidate C = L+P = `BRAIN_CURIOSITY_TOPIC_STOP=1 BRAIN_CURIOSITY_PHASIC_DA=1`, merged default OFF at `79c6f5128`
@@ -119,23 +140,27 @@ arm with them at the same revision and seed. `lesion_curiosity`'s `BRAIN_CURIOSI
 
 **Lines.** `research/coordination/c3-topic-stop-gate-lines.txt`, 96 lines (TSV: command, then the `--checked` reason), emitted
 by `python -m research.runners.c3_topic_stop_score --emit-lines` with `<sha>` left as the placeholder for the line revision F
-(section 5: F is P). Each
-command is the dev battery's line byte for byte (the 192 lines queued 2026-10-27 under RULING c3-battery-lines-1027:
-`mem_ok.sh 9 1`, `memcap.sh 10`, the one-thread numpy env block, the flags in the dev order, `.venv/bin/python -u -m
+(section 5: F is the published main tip read at step 1's provision request and held unchanged through the identity
+canary and the gate lines, valid only after the identity canary). Each command is the dev battery's line byte for byte
+(the 192 lines queued 2026-10-27 under RULING c3-battery-lines-1027: `mem_ok.sh 9 1`, `memcap.sh 10`, the one-thread
+numpy env block, the flags in the dev order, `.venv/bin/python -u -m
 research.runners.stage2_exit_gate --shard --seed N --group ask --arm A`) except three things: the seed, the `--out` directory
 (`research/findings/raw/_c3_topic_stop/gate/s<N>/ask__<tag>.json`) and the pair `--allow-gate-seed --prereg
 research/findings/2026-10-28-c3-topic-stop-gate-PREREGISTRATION.md`, without which the runner refuses a gate seed. Checked:
 `emit_lines` regenerates all 192 dev commands byte for byte once that pair is removed. Each reason names this prereg (`prereg
 <path> (F <sha>)`) and ends `mem_gb=9 max_age_h=240`, like the dev lines. `bash -n` passes on three substituted lines, the
 queue shape check passes on all 96, and all 96 parse through `stage2_exit_gate.main` (run_shard stubbed;
-`tests/test_c3_topic_stop_score.py::test_every_line_parses_in_the_runner`).
+`tests/test_c3_topic_stop_score.py::test_every_line_parses_in_the_runner`). The identity canary's 32 lines
+(`research/coordination/c3-topic-stop-canary-lines.txt`, section 5) pass the same three checks (`bash -n` and the shape
+check on all 32, F substituted; `test_every_canary_line_parses_in_the_runner`).
 
 **Scorer.** `python -m research.runners.c3_topic_stop_score --mode gate --pin <F, full sha> --out
 <gate root>/verdict.json` (default root `research/findings/raw/_c3_topic_stop/gate`, default seeds
 the six gate seeds). It prints each cell DEFINED or UNDEFINED with the reason, each bar with its per-seed reads, the
 attribution, G3's aggregate-convention read, the informational reads and the DEC line. Its module docstring gives the
 reading of each bar; it adds no bar and loosens none. It is run from the checkout R of section 5. Tests:
-`tests/test_c3_topic_stop_score.py` (38).
+`tests/test_c3_topic_stop_score.py` (73: 38 for the dev and gate reads and the lines, 35 for the identity canary and its
+lines).
 
 **The scorer reproduces the dev verdict.** `python -m research.runners.c3_topic_stop_score --mode dev` over the 192 dev
 shards (pin `79c6f5128`, seed 9 read and not counted, D5 at its packet need of 9) reads 192 of 192 cells DEFINED, D1 to D8 PASS
@@ -158,57 +183,124 @@ reported, not thresholded.
 
 ## 5 Revision
 
-**The dev pin is not the gate pin.** The arms import a static closure of 425 repo files (any import statement, module-level
-or inside a function, from the runner, `webapp/server.py`, `webapp/curiosity_topic_stop_chat.py` and the organ;
-`python -m research.runners.c3_topic_stop_score --closure`). `--closure-check 79c6f5128 6c6e08ad9` prints DIFFERS on 6:
-`research/runners/stage2_exit_gate.py` (the C2 `kb_scramble` arms and `--kb-summary`; infer group only),
-`research/runners/compositional_chain_route.py` (the C2 change), `research/runners/emotion_category_organ.py` (the census
-moved on-device), `sim/bridge.py`, `sim/config.py` and `sim/kernels.py` (Izhikevich membrane sub-steps, default 1; the
-`SIM_STABLE_INTEGRATION` switch, default OFF; apical GABA_A routing, default OFF). Their commits declare them default OFF;
-this file does not assert the ask replies are unchanged across them. So the gate is pinned to
-**P = `6c6e08ad903dffad002ba0a9ce1859da607634b1`** (origin/main when this file was written), not to `79c6f5128`. The dev
-verdict is evidence at `79c6f5128` only; at the gate every comparison (flag-ON against flag-OFF, lesion against intact) is
-within one revision and one seed.
+(Replaced by Edit 1, 2026-10-28, before any gate data; the replaced text pinned F to P = `6c6e08ad9`, which the server's
+provisioner refuses as stale.)
 
-**Gate revision F is P.** Every gate line runs at P itself (`cd
-~/derisk-pool/revisions/6c6e08ad903dffad002ba0a9ce1859da607634b1`), and the scorer is run with `--pin
-6c6e08ad903dffad002ba0a9ce1859da607634b1`; F, the line revision that section 4, section 6 and the lines file name, is P. The
-arms' code is then P's by construction, so the line revision needs no closure check. A main tip could not serve: origin/main
-`490b72fe2` and the server's main `f0fd444f7` contain `500d8986d` (stable-mechc: `SIM_PRESET_CENTRED_HET` and
-`SIM_TRAIT_CENTRED_HET`, both default OFF), and `--closure-check 6c6e08ad9 490b72fe2` prints DIFFERS on `sim/bridge.py` and
-`sim/config.py`, so every main tip that contains this file differs from P in the arms' closure.
+**The dev pin is not the gate pin.** The arms import a static closure of 425 repo files (any import statement,
+module-level or inside a function, from the runner, `webapp/server.py`, `webapp/curiosity_topic_stop_chat.py` and the
+organ; `python -m research.runners.c3_topic_stop_score --closure`). `--closure-check 79c6f5128 6567104f8` (origin/main
+at Edit 1) prints DIFFERS on 6: `research/runners/stage2_exit_gate.py` (the C2 `kb_scramble` arms and `--kb-summary`;
+infer group only), `research/runners/compositional_chain_route.py` (the C2 change),
+`research/runners/emotion_category_organ.py` (the census moved on-device; the bounded conductance
+`BRAIN_EMOTION_CATEGORY_BOUNDED`, default ON since `0b79336ec`), `sim/bridge.py`, `sim/config.py` and `sim/kernels.py`
+(Izhikevich membrane sub-steps, default 1; the `SIM_STABLE_INTEGRATION` switch, default OFF; apical GABA_A routing,
+default OFF; the stable-mechc flags `SIM_PRESET_CENTRED_HET` and `SIM_TRAIT_CENTRED_HET`, default OFF). Their commits
+declare them default OFF, except the emotion organ's bounded conductance, which is default ON; this file does not assert
+the ask replies are unchanged across them on the strength of that declaration. The dev verdict is evidence at
+`79c6f5128` only; at the gate every comparison (flag-ON against flag-OFF, lesion against intact) is within one revision
+and one seed.
 
-P predates this file, and the pool's gate-seed guard looks for the cited prereg in the line's pinned tree. It accepts such a
-line through its historical-pin path (`historical_pin_prereg_ok` in `tools/pool_queue.sh`, RULING lbf-gate-pin-1020): the
-prereg is committed at HEAD, declares `flip: no`, names the full pinned sha, and the pin is an ancestor of the commit that
-first added the prereg. This file declares `flip: no` (header), names P's full sha (this section) and is first added by a
-commit whose parent is P. The provisioner refuses a revision that does not contain origin/main unless the run is declared a
-deliberate reproduction of an old state, so P is provisioned with `POOL_PROVISION_ALLOW_STALE=1 bash tools/pool_provision.sh
---revision 6c6e08ad903dffad002ba0a9ce1859da607634b1 --isolated <node>`. The runner only requires `--allow-gate-seed --prereg
-<path>` to be given and never reads that file, so P's tree need not contain it.
+**Gate revision F.** F is fixed once: it is the published main tip read when Claude makes step 1's provision request
+(below), the full 40-hex sha of `main` as pushed to the remotes, which is what the server's provisioner calls published
+main (the server's own main becomes published when it is pushed). F is then held unchanged through the identity canary,
+the pre-flight record, the pool canary and the 96 gate lines (steps 1 to 4 and the queueing below), even if main moves
+in the hours between: a later main tip is not F, and only a ruling names a new F (and repeats this section from the
+provision request). The pool's pool-canary and pre-flight guards are keyed on the revision a gate line names, so a gate
+line at a later tip is refused unless steps 3 and 4 were recorded at that tip too. At Edit 1 the published main is
+`6567104f8`, which contains `0b79336ec` (Merge emo-bounded-default-on @ `87c37d3f1`: `BRAIN_EMOTION_CATEGORY_BOUNDED`,
+the emotion organ's bounded conductance, default ON), so F carries that flip. Whether it, or any other change since
+`79c6f5128`, changes what the ask arms compute is what the identity canary shows; this file does not predict it. Claude
+provisions F through the server's request path, `touch research/queue/provision.req/<F, full sha>`, and reads
+`/opt/host-status/sim-provision/<F, full sha>.json`. Its `state` must read `ok` (`already`, which the server writes for
+a revision it provisioned ok before, is the same state); with any other state no line runs at F. Every canary line
+(below) and every gate line runs at F (`cd ~/derisk-pool/revisions/<F>`), and the scorer is run with `--pin <F>`; F is
+the line revision that section 4, section 6 and both lines files name, through their `<sha>` placeholder. F contains
+this file (Edit 1 included), so the pool's gate-seed guard finds the cited prereg in F's own tree; the historical-pin
+path is not used. F's code is not P's and need not be `79c6f5128`'s, and a closure difference cannot settle whether that
+matters, so F is established by what it computes: the identity canary.
 
-**Scorer revision R.** P's tree has no scorer, so the scorer runs from a checkout R that (1) carries
-`research/runners/c3_topic_stop_score.py` byte-identical to this branch's (sha256 below) and (2) passes `python -m
-research.runners.c3_topic_stop_score --read-check 6c6e08ad903dffad002ba0a9ce1859da607634b1 <R>` with IDENTICAL. That check
-compares the scorer's own read files (`READ_FILES`: `research/runners/stage2_exit_gate.py`, `tools/lab.py`,
-`tools/verdict.py`, `tools/answer_rate.py` and the two `research` package `__init__` files) with P's blobs, so `score_ask`,
-`arm_validity`, `attributable_to`, `classify` and `rate` are P's. The set is every repo module the scorer loads, pinned by
-`tests/test_c3_topic_stop_score.py`, which runs the dev read in a fresh process and lists them. At this commit (2) reads
-IDENTICAL at origin/main `490b72fe2`, at the server's main `f0fd444f7` and at this branch's tip. If the main tip fails (1)
-or (2) when the scorer is run, the scorer runs from a worktree at the commit this branch is merged at, which passes both by
-construction (P plus this branch's files; its `--closure-check` against P reads IDENTICAL), with `--root` naming the synced
-shard directory and, for the pre-flight record below, `GATE_PREFLIGHT_PATH` naming the shared `research/queue/preflight.tsv`
-that the pool's check reads.
+**Identity canary at F, before any gate line is queued.** The sixteen arms of section 4 run at F on dev seeds 7 and 8,
+never a gate seed: the 32 lines of `research/coordination/c3-topic-stop-canary-lines.txt` (`python -m
+research.runners.c3_topic_stop_score --emit-canary-lines`, with `<sha>` substituted with F). Each command is the gate line
+of the same arm byte for byte except the seed and the `--out` directory
+(`research/findings/raw/_c3_topic_stop/canary/s<N>/ask__<tag>.json`), so the canary runs the gate lines' own format,
+`--allow-gate-seed --prereg <this file>` included (the runner accepts it on a dev seed;
+`tests/test_c3_topic_stop_score.py::test_canary_lines_are_the_gate_lines_except_seed_and_out`). Each reason names this
+prereg and ends `mem_gb=9 max_age_h=240`, like the dev lines; seeds 7 and 8 are dev seeds, so the pool's gate-seed guard
+does not apply. When the 32 shards are in, the checker runs from R:
 
-Scorer sha256 at this commit: `2a900af271a31b92ddab841f2d206b57c81f18d6faf50349e252d768abe576e4`.
+    python -m research.runners.c3_topic_stop_score --identity-canary research/findings/raw/_c3_topic_stop/canary \
+        --dev-dir research/findings/raw/_c3_topic_stop/dev --seeds 7,8 --pin <F, full sha> \
+        --out research/findings/raw/_c3_topic_stop/canary/identity_canary.json
 
-**Before any gate line is queued** (the pool's own guards): a passing pool canary of `research.runners.stage2_exit_gate` at
-P; and a CLEAN pre-flight read at P. The pre-flight runs the same sixteen arms on dev seed 7 at P (`--emit-lines <P>
---line-seeds 7 --line-dir research/findings/raw/_c3_topic_stop/preflight`, the same commands with seed 7) and records, from
-R, `python3 tools/gate_preflight.py record --prereg research/findings/2026-10-28-c3-topic-stop-gate-PREREGISTRATION.md
---revision <P> -- .venv/bin/python -m research.runners.c3_topic_stop_score --mode gate --root
-research/findings/raw/_c3_topic_stop/preflight --seeds 7 --pin <P>`. A dev-seed read is no verdict; it shows the instrument
-can read the brain.
+Each canary shard must reproduce the committed dev shard of the same seed and arm
+(`research/findings/raw/_c3_topic_stop/dev/s<N>/ask__<tag>.json`, measured at `79c6f5128`) on every decision-bearing
+field: on every turn, the reply text (`answer`, from which `asked` is read), `abstained`, `recalled_svo`, `curiosity`'s
+`curious`, `want_hz` and `threshold`, and the `curiosity.curiosity_topic_stop` and `curiosity.curiosity_da` traces with
+their decision fields (`want_hz`, `want_decision_hz`, `threshold`, the gain `da_crave_gain`, `held.stp_tau_d_ms`,
+`phasic_da.reward_us_spikes`, and the lesion read-backs `lesioned` and `held.topic_ask_weight_sum`). The checker compares
+more than these: every field of the shard, exactly (the type and the value of every leaf, so 12000 is not 12000.0), except
+ONLY the following host, timing and provenance fields (`CANARY_EXCLUDED` in the scorer):
+
+- `timings_s` (per-turn wall seconds), `import_s`, `wall_s` and `elapsed_seconds` (timing);
+- `process.peak_rss_mb` (the host's peak resident memory);
+- the whole `.prov.json` sidecar (provenance: `git_sha`, `git_dirty`, `argv`, `env` with the pool's `POOL_*` job
+  variables, `host`, `run_id`, `started`, the source manifest). It is judged by the cell-validity rules of section 6
+  instead: the canary cell as a gate-mode measurement of F (a verified `git_archive` run at F with `--allow-gate-seed
+  --prereg <this file>` in its argv and the arm's `BRAIN_CURIOSITY*` env), the dev cell as a dev-mode measurement of
+  `79c6f5128`, and the dev file the committed one (git reports it tracked and unmodified).
+
+On all 12 dev seeds these are the only fields, besides the arm's own `arm` and `session`, in which C_intact_b differs
+from C_intact_a, with the two arms on different pool hosts on 9 seeds. The checker prints each arm IDENTICAL, DIFFERS
+(the first differing field path in the dev shard's order, with both values, then the first decision-bearing one) or
+UNDEFINED (a missing cell, a cell that breaks a validity rule, a dev reference that is not the committed file), and
+`CANARY PASS` when every arm of the seeds it is given reads IDENTICAL. The checker does not itself require both seeds
+(`--seeds 7` alone can print `CANARY PASS: 16/16`); step 2 requires the read with `--seeds 7,8`, all 32 arms,
+`CANARY PASS: 32/32 IDENTICAL`, and a read over fewer seeds is not step 2's read. **Any DIFFERS or UNDEFINED -> STOP: the gate
+is not queued at F; Claude rules.** Nothing is re-run, re-pinned or excluded by rule; a ruling that names a new F
+repeats this section from the provision request. The canary is no verdict on L+P: it shows that F computes, on every
+arm, what the dev battery measured at `79c6f5128`, so the dev evidence describes the brain the gate measures. Tests: the
+dev shards against themselves read IDENTICAL (all 192 compared with a re-load of themselves, and a canary directory
+holding the committed seed-7 and seed-8 files reads CANARY PASS; `test_canary_dev_against_itself_reads_identical`), a
+planted one-field difference reads DIFFERS at its path
+(`test_canary_one_planted_field_difference_differs_with_its_path`), each kind of decision-field difference reads
+DIFFERS, a change in only the listed host and timing fields reads IDENTICAL, an unreadable cell reads UNDEFINED, and the
+exclusion list is exactly what differs between C_intact_a and C_intact_b on the 12 dev seeds
+(`test_canary_exclusions_are_what_differs_between_the_two_intact_runs`).
+
+**Closure, informational.** The checker prints `--closure-check 79c6f5128 <F>` beside the canary verdict (`--no-closure`
+skips it), and the gate's result reports it. It decides nothing; the canary does.
+
+**Scorer revision R.** The scorer runs from a checkout R that (1) carries `research/runners/c3_topic_stop_score.py`
+byte-identical to this branch's (sha256 below) and (2) passes `python -m research.runners.c3_topic_stop_score --read-check
+<F> <R>` with IDENTICAL. That check compares the scorer's own read files (`READ_FILES`:
+`research/runners/stage2_exit_gate.py`, `tools/lab.py`, `tools/verdict.py`, `tools/answer_rate.py` and the two `research`
+package `__init__` files) with F's blobs, so `score_ask`, `arm_validity`, `attributable_to`, `classify` and `rate` are F's.
+The set is every repo module the scorer loads, pinned by `tests/test_c3_topic_stop_score.py`, which runs a dev read and an
+identity-canary read in a fresh process and lists them. F contains this branch's scorer, so a worktree at F normally passes
+both; any checkout that passes both serves. The same R runs the canary checker, the
+pre-flight record and the gate read, with `--root` (or `--identity-canary`, `--dev-dir`) naming the synced shard
+directories and, for the pre-flight record, `GATE_PREFLIGHT_PATH` naming the shared `research/queue/preflight.tsv` that the
+pool's check reads. At Edit 1, `--read-check 6567104f8 <this branch's tip>` reads IDENTICAL (and so did `04680400c`
+and `53d64c2ef`).
+
+Scorer sha256 at Edit 1: `17a61db910170a249e9c17b287e227ab56ed1fa0bed928b26a32dbbc92620b9d`.
+
+**Before any gate line is queued**, in this order:
+
+1. F contains this file with Edit 1 and the scorer at the sha256 above (this branch merged into main before F is read),
+   and F is provisioned: `/opt/host-status/sim-provision/<F>.json` reads `ok` (or `already`).
+2. The 32 identity-canary lines run at F, and the checker above reads `CANARY PASS` (32 of 32 IDENTICAL); its JSON
+   (`--out`, the closure line included) is reported with the gate's result. Any other read: STOP, Claude rules.
+3. A CLEAN pre-flight read at F over the canary shards, recorded from R: `python3 tools/gate_preflight.py record --prereg
+   research/findings/2026-10-28-c3-topic-stop-gate-PREREGISTRATION.md --revision <F> -- .venv/bin/python -m
+   research.runners.c3_topic_stop_score --mode gate --root research/findings/raw/_c3_topic_stop/canary --seeds 7,8 --pin
+   <F>`. A dev-seed read is no verdict; it shows the instrument can read the brain.
+4. A passing pool canary of `research.runners.stage2_exit_gate` at F (`bash tools/pool_canary.sh run <node> '<one gate
+   line, F substituted>'`, whose outputs go to `_pool_canary/` and whose outcome is never read).
+
+Then the 96 lines of `research/coordination/c3-topic-stop-gate-lines.txt` are queued with `<sha>` substituted with F, and
+the gate is read with `--pin <F>`.
 
 ## 6 UNDEFINED rules
 
