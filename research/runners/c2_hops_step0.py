@@ -440,7 +440,10 @@ def read_f(buf, ltm, rows, table):
             d["decoded_patients"] = [r["patient"] for r in dec]
             d["kb_patients"] = _distinct(buf.kb, a, x)                  # record-only (the list beside the store)
             d["ltm"] = SG.ltm_readback(ltm, a, x) if ltm is not None else None
-            audit = {"buffer": len(d["kb_patients"])}
+        except Exception as e:
+            d.update(_err(e))
+        audit = {"buffer": len(d.get("kb_patients") or [])}
+        try:                                    # record-only: an audit failure never voids the premise read
             if ltm is not None:
                 audit["ltm_routed"] = len(_distinct(ltm.shard_for(a).kb, a, x))
                 allp = []
@@ -450,9 +453,9 @@ def read_f(buf, ltm, rows, table):
                             allp.append(p)
                 audit["ltm_all"] = len(allp)
                 audit["ltm_all_patients"] = allp
-            d["audit"] = audit
         except Exception as e:
-            d.update(_err(e))
+            audit["error"] = "%s: %s" % (type(e).__name__, e)
+        d["audit"] = audit
         out["cues"][_key((a, x))] = d
     return out
 
