@@ -1,0 +1,40 @@
+{
+ "run_id": "1793195766-2231076",
+ "runner": "research/runners/emo_flip_score.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/emo-default-on-final/research/runners/emo_flip_score.py",
+  "--on-dir",
+  "research/findings/raw/_emo_bounded_flip/gate_on",
+  "--off-dir",
+  "research/findings/raw/_emo_bounded_flip/gate_off",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--reference",
+  "research/findings/raw/_stage2_exit/gate/aggregate.json",
+  "--pin",
+  "3b0b5182aa1819d1804ef21d704154132d75e5bc",
+  "--out",
+  "research/findings/raw/_emo_bounded_flip/gate_score_amend2_3b0b5182aa1819d1804ef21d704154132d75e5bc.json"
+ ],
+ "git_sha": "2123e2c68",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-28T09:56:06",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 64618.3,
+ "corpus_check_query": "re-calibrate the global-stop distributed-overwrite workspace on stable membranes",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_emo_bounded_flip/gate_score_amend2_3b0b5182aa1819d1804ef21d704154132d75e5bc.json"
+}

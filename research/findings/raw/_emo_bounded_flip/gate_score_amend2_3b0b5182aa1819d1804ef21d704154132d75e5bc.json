@@ -1,0 +1,292 @@
+{
+ "runner": "research/runners/emo_flip_score.py",
+ "prereg": "research/findings/2026-10-27-emo-bounded-flip-PREREGISTRATION.md",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "on_dir": "research/findings/raw/_emo_bounded_flip/gate_on",
+ "off_dir": "research/findings/raw/_emo_bounded_flip/gate_off",
+ "lb_tags": [
+  "emo-bounded-flip-gate-on",
+  "emo-bounded-flip-gate-off"
+ ],
+ "pin": "3b0b5182aa1819d1804ef21d704154132d75e5bc",
+ "bars": {
+  "B1": {
+   "bar": "B1",
+   "status": "PASS",
+   "detail": "n_correct 6 of 6 defined seeds (need 6 of 6)",
+   "failures": [],
+   "undefined": [],
+   "n_correct": 6,
+   "n_defined": 6
+  },
+  "B2": {
+   "bar": "B2",
+   "status": "PASS",
+   "detail": "lesion_affect n_lesion_effect 6, n_reproduced 6 of 6 defined seeds (need 6, 6 of 6)",
+   "failures": [],
+   "undefined": [],
+   "n_lesion_effect": 6,
+   "n_reproduced": 6,
+   "n_defined": 6,
+   "attributable_fraction": {
+    "s42": 1.0,
+    "s43": 1.0,
+    "s44": 1.0,
+    "s100": 1.0,
+    "s101": 1.0,
+    "s102": 1.0
+   }
+  },
+  "B3": {
+   "bar": "B3",
+   "status": "PASS",
+   "detail": "n_permuted_tracks 6 of 6 tracking-defined seeds (need 6 of 6)",
+   "failures": [],
+   "undefined": [],
+   "n_permuted_tracks": 6,
+   "n_tracking_defined": 6
+  },
+  "B4": {
+   "bar": "B4",
+   "status": "PASS",
+   "detail": "30 ON shard(s), 150 feel read(s) checked; 0 violation(s), 0 undefined",
+   "failures": [],
+   "undefined": [],
+   "n_shards": 30,
+   "n_feel_reads": 150
+  },
+  "B5": {
+   "bar": "B5",
+   "status": "PASS",
+   "detail": "OFF intact named categories compared with the 10-26 gate on 6 of 6 seed(s); 0 mismatch(es)",
+   "failures": [],
+   "undefined": [],
+   "mismatch": false,
+   "compared": 6
+  },
+  "B6": {
+   "bar": "B6",
+   "status": "PASS",
+   "detail": "30 ON/OFF pair(s): 240 non-feel turn(s) compared whole-record (five engagement keys dropped at any depth), 150 feel turn(s) compared before the clause; 0 difference(s), 0 undefined",
+   "failures": [],
+   "undefined": [],
+   "n_pairs": 30,
+   "n_nonfeel_turns": 240,
+   "n_feel_turns": 150
+  },
+  "B7": {
+   "bar": "B7",
+   "status": "PASS",
+   "detail": "flip_check 30 pair(s), flags ['FEEL-NOT-APPEND-ONLY'] (FEEL-NOT-APPEND-ONLY / FLIP-CHANGES-NONFEEL are not read here: see B6); answer_rate paired status OK over 6 seed(s)",
+   "failures": [],
+   "undefined": [],
+   "flip_check_flags": [
+    "FEEL-NOT-APPEND-ONLY"
+   ],
+   "answer_rate": {
+    "check": "answer_rate",
+    "label": "emotion-category: emo-bounded-flip-gate-on vs emo-bounded-flip-gate-off",
+    "per_seed": {
+     "42": {
+      "on": {
+       "n": 2,
+       "answered": 2,
+       "abstained": 0,
+       "empty": 0,
+       "text_only": 0,
+       "answer_rate": 1.0
+      },
+      "off": {
+       "n": 2,
+       "answered": 2,
+       "abstained": 0,
+       "empty": 0,
+       "text_only": 0,
+       "answer_rate": 1.0
+      },
+      "status": "ok"
+     },
+     "43": {
+      "on": {
+       "n": 2,
+       "answered": 2,
+       "abstained": 0,
+       "empty": 0,
+       "text_only": 0,
+       "answer_rate": 1.0
+      },
+      "off": {
+       "n": 2,
+       "answered": 2,
+       "abstained": 0,
+       "empty": 0,
+       "text_only": 0,
+       "answer_rate": 1.0
+      },
+      "status": "ok"
+     },
+     "44": {
+      "on": {
+       "n": 2,
+       "answered": 2,
+       "abstained": 0,
+       "empty": 0,
+       "text_only": 0,
+       "answer_rate": 1.0
+      },
+      "off": {
+       "n": 2,
+       "answered": 2,
+       "abstained": 0,
+       "empty": 0,
+       "text_only": 0,
+       "answer_rate": 1.0
+      },
+      "status": "ok"
+     },
+     "100": {
+      "on": {
+       "n": 2,
+       "answered": 2,
+       "abstained": 0,
+       "empty": 0,
+       "text_only": 0,
+       "answer_rate": 1.0
+      },
+      "off": {
+       "n": 2,
+       "answered": 2,
+       "abstained": 0,
+       "empty": 0,
+       "text_only": 0,
+       "answer_rate": 1.0
+      },
+      "status": "ok"
+     },
+     "101": {
+      "on": {
+       "n": 2,
+       "answered": 2,
+       "abstained": 0,
+       "empty": 0,
+       "text_only": 0,
+       "answer_rate": 1.0
+      },
+      "off": {
+       "n": 2,
+       "answered": 2,
+       "abstained": 0,
+       "empty": 0,
+       "text_only": 0,
+       "answer_rate": 1.0
+      },
+      "status": "ok"
+     },
+     "102": {
+      "on": {
+       "n": 2,
+       "answered": 2,
+       "abstained": 0,
+       "empty": 0,
+       "text_only": 0,
+       "answer_rate": 1.0
+      },
+      "off": {
+       "n": 2,
+       "answered": 2,
+       "abstained": 0,
+       "empty": 0,
+       "text_only": 0,
+       "answer_rate": 1.0
+      },
+      "status": "ok"
+     }
+    },
+    "n_seeds": 6,
+    "n_measured": 6,
+    "unmeasured_seeds": [],
+    "hurt_seeds": [],
+    "flags": [],
+    "status": "OK",
+    "rule": "FLIP-HURTS-ANSWERS when flag-on answer rate < flag-off on any measured seed; reported only, changes no registered PASS/FAIL; the flip then needs a Claude ruling (NEEDS line)",
+    "abstention_detection": "abstained flag; fallback text patterns [\"\\\\bi\\\\s+(?:do\\\\s+not|don['\u2019]?t)\\\\s+know\\\\s+about\\\\s+that\\\\b\", \"\\\\bi\\\\s+haven[\u2019']?t\\\\s+learned\\\\s+about\\\\b.*\\\\byet\\\\b\"]",
+    "mode": "paired"
+   }
+  },
+  "B8": {
+   "bar": "B8",
+   "status": "PASS",
+   "detail": "emotion-category row, flag ON: load-bearing in 6 of 6 seeds (need 6 of 6); flag OFF beside it: 5 of 6",
+   "failures": [],
+   "undefined": [],
+   "on_cells": {
+    "s42": {
+     "status": "LB",
+     "why": "regressed; null clean; lesion reproduced"
+    },
+    "s43": {
+     "status": "LB",
+     "why": "regressed; null clean; lesion reproduced"
+    },
+    "s44": {
+     "status": "LB",
+     "why": "regressed; null clean; lesion reproduced"
+    },
+    "s100": {
+     "status": "LB",
+     "why": "regressed; null clean; lesion reproduced"
+    },
+    "s101": {
+     "status": "LB",
+     "why": "regressed; null clean; lesion reproduced"
+    },
+    "s102": {
+     "status": "LB",
+     "why": "regressed; null clean; lesion reproduced"
+    }
+   },
+   "off_cells": {
+    "s42": {
+     "status": "LB",
+     "why": "regressed; null clean; lesion reproduced"
+    },
+    "s43": {
+     "status": "LB",
+     "why": "regressed; null clean; lesion reproduced"
+    },
+    "s44": {
+     "status": "LB",
+     "why": "regressed; null clean; lesion reproduced"
+    },
+    "s100": {
+     "status": "LB",
+     "why": "regressed; null clean; lesion reproduced"
+    },
+    "s101": {
+     "status": "NOT-LB",
+     "why": "the lesion did not change the reply (verdict pass)"
+    },
+    "s102": {
+     "status": "LB",
+     "why": "regressed; null clean; lesion reproduced"
+    }
+   },
+   "n_load_bearing_on": 6,
+   "n_load_bearing_off": 5
+  }
+ },
+ "dec": {
+  "status": "PASS",
+  "action": "flip the default ON before the 11-21 re-pin",
+  "fail": [],
+  "undefined": [],
+  "held": false
+ }
+}
