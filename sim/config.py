@@ -835,6 +835,27 @@ class CoreSimConfig:
     # pathway => no array is allocated and no new code path is entered (byte-identical; tests/test_apical_gaba_routing.py).
     enable_apical_gaba_routing: bool = False
     apical_gaba_propagation_strength: float = 1.0  # per-spike apical conductance increment scale, in apical-leak units
+    # APICAL NMDA CONDUCTANCE (cs-race f1j section E, 2026-10-28; additive, DEFAULT OFF). In a real tuft the synapses
+    # that carried a heard word leave an NMDA conductance that decays over tens of ms after the input stops; the BDSP
+    # regen latch alone has no conductance memory. With this flag a per-cell gating state cp_apical_nmda_s rises from
+    # the cell's OWN apical drive (cp_bdsp_apical_drive: u = max(drive, 0) / apical_nmda_drive_ref, bounded rise
+    # s += (1 - s)(1 - exp(-apical_nmda_rise_per_ms * u * dt))) and decays by exp(-dt / apical_nmda_tau_ms); the
+    # conductance g_N = apical_nmda_g0 * s / s_full (s_full = the discrete steady state at u = 1, so g_N at the end of a
+    # sustained full input is g0) is Mg-blocked by the engine's existing Jahr & Stevens expression at
+    # nmda_mg_concentration (constants 3.57 mM and 0.062/mV, as in kernels.fused_nmda_update_and_current; no new Mg
+    # field) and applied in the BDSP apical update toward syn_reversal_potential_e (0 mV) as a BOUNDED exponential-Euler
+    # step computed from v0 (it reaches E_e at most, never passes it). A cell with no drive keeps s == 0.0 exactly.
+    # g0 == 0.0 with the flag on is the APV arm (the gating still runs; the receptor is blocked, not the input).
+    # Requires enable_bdsp and a runner-supplied cp_bdsp_apical_drive; raises with enable_two_compartment_dap or
+    # enable_bdsp_microcircuit on, or on g0 < 0, tau/rise/drive_ref <= 0, nmda_mg_concentration < 0. Default False =>
+    # no array is allocated and no new code path is entered (byte-identical; tests/test_apical_nmda.py). Biology:
+    # research/biology/apical-nmda-conductance.md (tauN 40-80 ms adult cortex; 100 ms or more is juvenile / room
+    # temperature / GluN2B-rich and is labelled as such).
+    enable_apical_nmda: bool = False
+    apical_nmda_g0: float = 0.0                 # apical-leak units; the conductance at the end of a sustained full input
+    apical_nmda_tau_ms: float = 50.0            # gating decay (adult L5 NMDA-EPSC decay 40-80 ms)
+    apical_nmda_rise_per_ms: float = 0.6931471805599453   # ln 2: per-step rise fraction exactly 0.5 at dt 1, full input
+    apical_nmda_drive_ref: float = 0.0          # apical drive (leak-normalized mV) that counts as full input; > 0 when on
     # Poirazi-Mel 2003 WEIGHTED-subunit refinement (2026-06-09). The count form above switches the plateau
     # on the bare COUNT of coincident routed inputs (c_i = mask^T @ prev_fired), so it is WEIGHT-BLIND: a
     # sparse-distinct ensemble that fires >= K cells everywhere triggers the same plateau regardless of the
