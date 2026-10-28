@@ -83,7 +83,9 @@ M3_GARBLED_FORMS = ("zib", "vop", "tavs", "pels", "kig", "dov", "bim", "ruvs", "
 M3_D_TABLE = "infer"
 M3_D_SOURCES = ("hand_animacy", "hand_verb_selects", "animacy_of", "verb_selects_of", "learned_animacy_vocab",
                 "learned_verbselects_vocab", "corpus", "brain_vocab")
-# pool-line resources: measured on the seed-7 local smoke (see `pool_lines`); the Stage-2 lane's memcap
+# pool-line resources, measured on the seed-7 local smoke under memcap 10 (2026-10-28, numpy, one thread): worker peak
+# RSS 6.49-6.92 GB over the seven entries (c2s0_dup the largest, 6925 MB; wall 725-1222 s), so mem_gb 9 (peak x 1.3)
+# under the Stage-2 lane's memcap 10
 MEM_GB = 9
 MEMCAP_GB = 10
 MAX_AGE_H = 240
