@@ -36,8 +36,15 @@ production and re-calibrated values equal the `SWAP` table below). `w_pat_pred` 
 artifact varies it. Provenance of the global-stop values:
 research/findings/raw/_stable_recal/stop_calibration_record.json, written by
 research/runners/stable_recal_stop_calibration_record.py (it checks the record against the `STOP` table).
-The global-stop organ's own GO gate passes on 5 of 15 dev seeds at these values (the conflict-gated stop itself on 11
-of 15; see the record), so this re-calibration is a measured operating point on valid membranes, not a GO.
+The global-stop organ's own gate reads 5 GO / 1 NO-GO / 9 UNDEFINED on 15 dev seeds at these values: the stop clears the
+conflict on 11 of 15, but on 5 of those 11 the conflict already resolves with the boost at 0 (the freeze precondition
+fails), so the stop is shown to remove a standing conflict on 6 of 15. This re-calibration is a measured operating
+point on valid membranes, not a GO (finding 2026-10-27-stable-recal-dev78.md, per-seed table).
+`margin_ref` and `boost_scale` are constants of a host-computed (Python) conflict sensor (`_margin`) and boost
+(`_boost_from_margin`), and the STD release state x is updated by the host every step (`WorkspaceDepression`), so they
+calibrate a scaffold, not a neural quantity: scaffold-retirement backlog. In the brain every boost is >= 1 (1.01 to
+1.77 on the 38 dev stops), so U >= 1 empties x on every spike, the stop is saturated (binary) and `boost_scale`'s 0.8
+target does not shape the dev result.
 """
 from __future__ import annotations
 
@@ -143,12 +150,18 @@ def swap_ignite_thresh(ignite_frac: float, default: float) -> float:
 #    research/findings/raw/_stable_recal/stop_calibration_record.json.
 STOP = {
     "w_rec": (34.0, 6.5),            # ~1.44x the sustain knee (4.0-4.5) at nws 4, below neighbour recruitment (10)
-    "norm_ws_w": (16.0, 4.0),        # largest normalization whose sustained state reads reliably in the 15-step window
+    # The literal rule (largest normalization whose sustained state reads reliably in the 15-step window) selects 5
+    # (weight 5: no window below half, worst window ~0.6 of its plateau); 4 was chosen over 5 for the margin (weights
+    # 4.5-8 have none, worst window 0.80-0.89 at 6.5). A judgment, recorded as such in the finding.
+    "norm_ws_w": (16.0, 4.0),
     "thal_tonic_pa": (700.0, 50.0),  # largest thalamic support with no spontaneous ignition in 1000 steps
     "solo_plateau": (1.0 / 3.0, 0.084),   # the measured ignited plateau; criterion IGNITE_FRAC x plateau = 0.042
     "strong_pa": (5000.0, 800.0),    # STRONG_PA = 2 x the knee; stable knee by the organ's 45-step read = 400 pA
+    # margin_ref and boost_scale are constants of the HOST-computed (Python) conflict sensor and boost: a scaffold.
     "margin_ref": ((1.0 / 3.0) * 0.5, 0.057),  # halfway between the measured confident and conflict margins
-    "boost_scale": (0.85, 31.0),     # full-conflict boost 0.8, the middle of the robust clearing band 0.6-1.0
+    # Target 0.8 (the middle of the robust clearing band 0.6-1.0) at the three-content conflict margin only; the
+    # in-brain two-content stops read boosts of 1.01-1.77 (>= 1, saturated), where it does not shape the result.
+    "boost_scale": (0.85, 31.0),
 }
 
 

@@ -56,9 +56,11 @@ artifacts:
   - research/findings/raw/_stable_recal/stop_margins/recal_on_s8.json
   - research/findings/raw/_stable_recal/stop_margins/production_off_s7.json
   - research/findings/raw/_stable_recal/stop_organ_gate/recal_on_s1.json
+  - research/findings/raw/_stable_recal/stop_organ_gate/recal_on_s13.json
   - research/findings/raw/_stable_recal/stop_organ_gate/production_off_s7.json
   - research/findings/raw/_stable_recal/stop_organ_gate/production_on_s7.json
   - research/findings/raw/_stable_recal/stop_organ_gate_literal/literal_on_s1.json
+  - research/findings/raw/_stable_recal/stop_organ_gate_literal/literal_on_s10.json
   - research/findings/raw/_stable_recal/stop_organ_held/recal_on_held01_s1.json
   - research/findings/raw/_stable_recal/stop_organ_held/recal_on_held01_s7.json
   - research/findings/raw/_stable_recal/stop_organ_held/recal_on_held01_s8.json
@@ -96,14 +98,21 @@ lead is gone (its workspace is not re-calibrated here). The gate seeds were not 
 10-26 Stage-2 result. Dev seeds 7 and 8 are the seeds the swap workspace was calibrated on (the bus: seed 7), so
 that whole-brain comparison is in-sample: it shows the switch leaves intact what it was fitted on, not that the
 replies stay identical on a seed it was not fitted on. ADDENDUM (same day, below): the global-stop workspace is now
-re-calibrated by its own rules too and the switch covers it; its own GO gate holds on 5 of 15 dev seeds (the stop
-itself on 11 of 15; with two held contents, what production holds, the stop, the normalization lesion, freeze and
-scramble on 15 of 15), and on dev seeds 7 and 8 (in-sample)
+re-calibrated by its own rules too and the switch covers it. Its own organ gate over 15 dev seeds reads 5 GO, 1 NO-GO
+(seed 13, the continuous stop) and 9 UNDEFINED, each of the 9 with an unmet validity precondition (listed per seed
+below). The stop clears the conflict (n_ignited 0) on 11 of 15, but on 5 of those 11 (seeds 4, 8, 11, 14, 15) the
+three-content conflict also resolves with the boost frozen at 0, so the stop is shown to remove a standing conflict
+on 6 of 15 (1, 3, 5, 7, 10, 13); with two held contents, what production holds, the stop, the normalization lesion,
+freeze and scramble pass on 15 of 15. On dev seeds 7 and 8 (in-sample)
 the stop lead is back on all 38 turns that carry it under OFF, with the answer rate, every scorer, every recall and
 the swap lead unchanged and no cell of the stop workspace out of range; against the bus and swap re-calibration
-alone those 38 leads are the only change in any reply. On the old integrator that lead rested on 250 to 270 runaway
-cells; on valid membranes the three-content conflict the organ gate clears no longer stands by itself, so this
-calibration is a measured operating point of the stop, not a GO of the organ.
+alone those 38 leads are the only change in any reply. The boost behind those 38 stops is 1.01 to 1.77, at or above
+1 on every turn, so the stop is saturated (binary) there: the boost's spread is functionally null and
+`boost_scale`'s 0.8 target does not shape the dev result. `margin_ref` and `boost_scale` are constants of a
+host-computed (Python) conflict sensor and boost, and the depression state they drive is updated by the host every
+step, so this re-calibration tunes a scaffold (retirement backlog line below). On the old integrator that lead rested
+on 250 to 270 runaway cells; on valid membranes the three-content conflict the organ gate clears no longer stands by
+itself on 8 of 15 seeds, so this calibration is a measured operating point of the stop, not a GO of the organ.
 
 ## What was built (default OFF)
 
@@ -340,14 +349,24 @@ against `stable_recal.STOP`).
 
 | constant | production | stable re-calibration | why |
 |---|---|---|---|
-| normalization (norm -> workspace) | 16 | 4 | the swap organ's rule: the largest normalization whose sustained pattern reads reliably in the organ's 15-step window; at 16, 8 and 6 every weight 4-10 has windows below half its plateau, at 5 only weight 5 has none (worst window ~0.6 of the plateau), at 4 weights 4.5-8 have none (at 6.5 the worst window is 0.80-0.88 of it); at 2 the read is reliable but the overlapped neighbour is recruited from weight 6.5 (4 over 5 is a margin judgment) |
+| normalization (norm -> workspace) | 16 | 4 | the swap organ's rule: the largest normalization whose sustained pattern reads reliably in the organ's 15-step window; at 16, 8 and 6 every weight 4-10 has windows below half its plateau, at 5 only weight 5 has none (worst window ~0.6 of the plateau), at 4 weights 4.5-8 have none (at 6.5 the worst window is 0.80-0.89 of it); at 2 the read is reliable but the overlapped neighbour is recruited from weight 6.5. **The literal rule selects 5; 4 was chosen over 5 for that margin, a judgment (listed under "What this does not show")** |
 | recurrent weight | 34 | 6.5 | at normalization 4 the sustain knee lies between 4.0 (0.37 / 0.38 of windows below half) and 4.5 (none) and the neighbour is recruited at 10, not at 8; 6.5 is ~1.44x the knee inside that band (the swap organ's judgment), plateau 0.0846 / 0.0830 |
 | ignited plateau (criterion = half of it) | 1/3 | 0.084 (0.042) | the measured plateau; the criterion is scoped to the stop organ (`_st_ignited`), Rung-2's `SOLO_PLATEAU` is untouched |
 | thalamic support | 700 pA | 50 pA | the swap organ's rule: the largest support with no spontaneous ignition over 1000 undriven steps on both seeds (0, 25, 50 pA silent; 75 pA ignites patterns by themselves on both) |
 | establishment drive (`STRONG_PA`) | 5000 pA | 800 pA | the module's rule `STRONG_PA = 2 x IGNITE_PA` (the knee); the stable knee by the organ's 45-step read is 400 pA (300 pA reads 0.037 on seed 7 and 350 pA 0.028 on seed 8, below 0.042; 400 pA ignites on both) |
-| conflict reference (`MARGIN_REF`) | 1/6 | 0.057 | the module's stated rule, "halfway between single-content and co-ignition": the measured confident margin (0.0825 / 0.0833) and three-content conflict margin (0.0267 / 0.0351, max 0.0468) give a midpoint of 0.057. The formula `SOLO_PLATEAU x 0.5` (0.042) is that rule at a conflict margin of 0, true only in the lockstep runaway; it was run through the gate beside the midpoint as a comparison arm, both fixed before the gate ran |
-| boost scale | 0.85 | 31 | the module's rule: the full-conflict boost lies in the window where the intact workspace clears and the normalization-lesioned one does not. On valid membranes (fixed boosts, 8 trials each, both seeds, three and two held contents) the intact workspace clears on every trial at 0.6, 0.8 and 1.0, with a non-monotone dip at 0.25-0.5; the lesion never clears up to 1.0 (U >= 1 empties x every spike), so normalization owns the clearing there (`attributable_to` 1.0). Target 0.8, the middle of that band (a judgment): 0.8 / (0.057 - 0.0309) = 30.7, rounded to 31 |
+| conflict reference (`MARGIN_REF`) | 1/6 | 0.057 | the module's stated rule, "halfway between single-content and co-ignition": the measured confident margin (0.0825 / 0.0833) and three-content conflict margin (0.0267 / 0.0351, max 0.0468) give a midpoint of 0.057. The formula `SOLO_PLATEAU x 0.5` (0.042) is that rule at a conflict margin of 0, true only in the lockstep runaway; it was run through the gate beside the midpoint as a comparison arm, both fixed before the gate ran. A constant of the host-computed (Python) conflict sensor `_margin` and its boost, not a neural quantity |
+| boost scale | 0.85 | 31 | the module's rule: the full-conflict boost lies in the window where the intact workspace clears and the normalization-lesioned one does not. On valid membranes (fixed boosts, 8 trials each, both seeds, three and two held contents) the intact workspace clears on every trial at 0.6, 0.8 and 1.0, with a non-monotone dip at 0.25-0.5; the lesion never clears up to 1.0 (U >= 1 empties x every spike), so normalization owns the clearing there (`attributable_to` 1.0). Target 0.8, the middle of that band (a judgment): 0.8 / (0.057 - 0.0309) = 30.7, rounded to 31. A constant of the host-computed (Python) boost `_boost_from_margin`. In the brain it does not shape the dev result: the boosts of the 38 dev stops are 1.01-1.77, all >= 1, a saturated stop (dev check below) |
 | pulse 110 steps, boost gain 1, tau_D 250 ms, overlap 15, ws -> norm 5, thal -> ws 5, OU 30 pA, read windows | | unchanged | not constants of the runaway; nothing measured here asked for them to move |
+
+`margin_ref` and `boost_scale` are constants of a host-computed (Python) conflict sensor and boost: `_margin` takes the
+top-minus-second spike rate on the host and `_boost_from_margin` turns it into `boost_gain x max(0, margin_ref -
+margin) x boost_scale`. The Tsodyks-Markram release state x that the boost drives is also host-computed, once per
+step: `WorkspaceDepression.update` depletes x on the host and `.apply` overwrites the recurrent synapse weights with
+base x x before the step (baseline release `STD_BASELINE_U` is 0, so the release probability U is the boost). So the
+two constants calibrate a scaffold, not a neural quantity (CLAUDE.md non-negotiable 1). Scaffold-retirement backlog
+line: replace the host conflict sensor, the host boost and the host x update of the global-stop organ with an in-brain
+conflict signal and a depression carried by the substrate's own synapses on the shared recurrence; when that lands
+`margin_ref` and `boost_scale` do not exist and this re-calibration retires with them.
 
 On the old integrator the re-calibrated point still runs away under strong drive (seeds 7 / 8: 19 / 10 cells out of range
 for one pattern at 5000 pA, 88 / 87 at 8000 pA; 254 / 260 for all three at 8000 pA), so like the other two re-calibrations it
@@ -361,30 +380,69 @@ continuous stop without restore, byte-identical substrate, determinism) under th
 after the gate ran; it was re-run twice on unchanged code only to re-stamp provenance from clean commits (the first
 run's sidecars read dirty because a test helper was being edited meanwhile), and the results are byte-identical.
 
-| | GO | global stop | selectivity | normalization load-bearing | freeze / scramble / conflict-off hold | conflict-gated boost | continuous stop | out of range in the stop trial |
+| | GO / NO-GO / UNDEFINED | global stop | selectivity | normalization load-bearing | freeze / scramble / conflict-off hold | conflict-gated boost | continuous stop | out of range in the stop trial |
 |---|---|---|---|---|---|---|---|---|
-| production, old integrator (7, 8) | 2/2 | 2/2 | 2/2 | 2/2 | 2/2 | 2/2 | 2/2 | 270 |
-| production, stable (7, 8) | 0/2 (UNDEFINED) | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0 |
-| re-calibration, stable, margin_ref 0.057 (1-15) | 5/15 | 11/15 | 15/15 | 15/15 | 7/15 | 14/15 | 11/15 | 0 |
-| comparison, margin_ref 0.042 (formula) (1-15) | 4/15 | 6/15 | 15/15 | 15/15 | 7/15 | 8/15 | 6/15 | 0 |
+| production, old integrator (7, 8) | 2 / 0 / 0 | 2/2 | 2/2 | 2/2 | 2/2 | 2/2 | 2/2 | 270 |
+| production, stable (7, 8) | 0 / 0 / 2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0 |
+| re-calibration, stable, margin_ref 0.057 (1-15) | 5 / 1 / 9 | 11/15 | 15/15 | 15/15 | 7/15 | 14/15 | 11/15 | 0 |
+| comparison, margin_ref 0.042 (formula) (1-15) | 4 / 1 / 10 | 6/15 | 15/15 | 15/15 | 7/15 | 8/15 | 6/15 | 0 |
 | supplementary: two held contents (1-15) | | 15/15 | | 15/15 | 15/15 (freeze, scramble) | | | |
 
-GO seeds at the re-calibration: 1, 3, 5, 7 and 10. The dominant failure is not the stop: the anti-cheats that need the
-three-content conflict to stand WITHOUT the stop (freeze, scramble, conflict-off) pass on 7 of 15, because on valid
-membranes the divisively normalized workspace resolves a three-way co-ignition to one pattern by itself within about
-250 steps (seed 8 at a fixed zero boost: 5 of 8 trials end with one pattern). On the old integrator every co-ignited
-pattern was a self-sufficient lockstep runaway, so the conflict stood until the stop removed it. The other failures
-are the sensor: on valid membranes the conflict margin is noisy (0.018 to 0.047 on the calibration seeds), so a
-conflict that reads near or above the reference gets a boost in the 0.25-0.5 dip or none (seeds 2, 9, 12; seed 6
-starts with one pattern). With the two contents production holds (`max(2, n_ignited)` in
-`webapp/gnw_global_stop.py`; every stop in the dev workload holds two), the stop, the normalization lesion, freeze
-and scramble pass on 15 of 15 (`stop_organ_held/`, supplementary, not the gate; conflict-off, the conflict-gated boost
-and the continuous stop were not run with two). Seeds 7 and 8 are the calibration seeds; 1-6 and 9-15 are
-out-of-sample for every constant.
+The gate has 14 validity preconditions (`--organ`, `evaluate_seed`). A seed is UNDEFINED when any is unmet (the gate
+cannot score it: neither a pass nor a failure of the organ), NO-GO when all 14 are met and the seed still fails, GO
+otherwise. "GO 5/15" therefore hides 9 seeds the gate could not score. Each seed's verdict and unmet preconditions
+(from `stop_organ_gate/recal_on_s<N>.json` and `stop_organ_gate_literal/literal_on_s<N>.json`):
 
-So this calibration is a measured operating point of the stop on valid membranes, not a GO of the organ: the stop
-itself works on 11 of 15 seeds and on every seed with two held contents, but the three-content conflict the gate
-clears is not self-sustaining any more. Named next method (not run): the conflict sensor and the co-ignited state
+| seed | re-calibration (margin_ref 0.057) | formula (margin_ref 0.042) |
+|---|---|---|
+| 1 | GO | GO |
+| 2 | UNDEFINED: stop, hold | UNDEFINED: margin, gated, stop, hold |
+| 3 | GO | GO |
+| 4 | UNDEFINED: hold | UNDEFINED: margin, gated, stop, hold |
+| 5 | GO | GO |
+| 6 | UNDEFINED: one pattern, stop, hold | UNDEFINED: one pattern, stop, hold |
+| 7 | GO | GO |
+| 8 | UNDEFINED: hold | UNDEFINED: margin, gated, stop, hold |
+| 9 | UNDEFINED: margin, gated, stop | UNDEFINED: margin, gated, stop |
+| 10 | GO | NO-GO (continuous stop) |
+| 11 | UNDEFINED: hold | UNDEFINED: stop, hold |
+| 12 | UNDEFINED: stop, hold | UNDEFINED: margin, gated, stop, hold |
+| 13 | NO-GO (continuous stop) | UNDEFINED: margin, gated, stop |
+| 14 | UNDEFINED: hold | UNDEFINED: hold |
+| 15 | UNDEFINED: hold | UNDEFINED: margin, gated, stop, hold |
+
+Unmet precondition labels: **one pattern** = a multi-content conflict state exists to clear (co-ignition n >= 2);
+**margin** = the conflict margin is readable (below `margin_ref`); **gated** = the depression boost is conflict-gated
+(0 at a confident commit, fires on conflict); **stop** = GLOBAL STOP (conflict n >= 2 -> n_ignited 0); **hold** = the
+three boost-0 preconditions, which fail together on the same 8 seeds (2, 4, 6, 8, 11, 12, 14, 15) at both references:
+STD load-bearing (freeze at boost 0 holds the conflict), neural-sensor scramble breaks the stop, and conflict-off holds.
+
+GO seeds: 1, 3, 5, 7 and 10 at the re-calibration; 1, 3, 5, 7 for the formula. The one NO-GO at the re-calibration
+(seed 13) has all 14 preconditions met and its stop trial clears three patterns to none (boost 0.152), but the
+continuous run (the stop on a freshly built workspace, no restore call) reads a conflict margin of 0.05681, just under
+`margin_ref`, so the boost is 0.00599 and 2 of 3 patterns stay ignited. The formula arm's NO-GO (seed 10) is the same
+check: its stop trial clears (boost 0.757) and its continuous run, with a boost of 0.3255, leaves 2 of 2.
+
+The dominant failure is not the stop: the three boost-0 preconditions, which need the three-content conflict to stand
+WITHOUT the stop (freeze, scramble, conflict-off), hold on 7 of 15 and are unmet on the other 8 (UNDEFINED, not a failed
+stop), because on valid membranes the divisively normalized workspace resolves a three-way co-ignition to one pattern
+by itself within about 250 steps (seed 8 at a fixed zero boost: 5 of 8 trials end with one pattern). On the old
+integrator every co-ignited pattern was a self-sufficient lockstep runaway, so the conflict stood until the stop
+removed it. The other failures are the sensor: on valid membranes the conflict margin is noisy (0.018 to 0.047 on the
+calibration seeds), so a conflict that reads near or above the reference gets a boost in the 0.25-0.5 dip or none
+(seeds 2, 9, 12; seed 6 starts with one pattern; seed 13 reads just under the reference in its continuous run). With
+the two contents production holds (`max(2, n_ignited)` in `webapp/gnw_global_stop.py`; every stop in the dev workload
+holds two), the stop, the normalization lesion, freeze and scramble pass on 15 of 15 (`stop_organ_held/`,
+supplementary, not the gate; conflict-off, the conflict-gated boost and the continuous stop were not run with two).
+Seeds 7 and 8 are the calibration seeds; 1-6 and 9-15 are out-of-sample for every constant.
+
+So this calibration is a measured operating point of the stop on valid membranes, not a GO of the organ. "The stop
+works" needs a qualifier. The stop clears the conflict (n_ignited 0 after the pulse) on 11 of 15 seeds, and on every
+seed with two held contents, but on 5 of those 11 (seeds 4, 8, 11, 14, 15) the freeze arm at boost 0 also ends with
+a single pattern: the normalization pool alone has already resolved the three-way conflict, the boost-0 precondition
+fails and the gate is UNDEFINED there. The stop is shown to remove a conflict that only the boost removes on 6 of 15
+(seeds 1, 3, 5, 7, 10, 13; five GO, seed 13 NO-GO), and the three-content conflict the gate clears is not
+self-sustaining any more. Named next method (not run): the conflict sensor and the co-ignited state
 are the residual. A three-way co-ignition that resolves by itself raises the question the 2026-07-31 wall finding
 asks: what kept the real conflict standing that the runaway replaced (here, the incumbent's own persistence, e.g. the
 slow NMDA / plateau support the swap organ's incumbent has), and the sensor reads a 15-step window of a ~0.08 rate on
@@ -448,7 +506,14 @@ carries an organ error (`research/FAILURE_LOG.md`, 2026-10-27).
   of the supplementary two-content checks, where the normalization-lesioned workspace did not clear at 1.67 and 1.74
   (`research/findings/raw/_stable_recal/stop_organ_held/recal_on_held01_s7.json`, `_s8.json`). The turn's words do
   not reach the stop organ: on these turns it is given the number of held contents, and the same boost sequence
-  repeats in every group of a seed, so the boost's spread is the workspace's own noise.
+  repeats in every group of a seed, so the boost's spread is the sensor's own noise.
+  - **The stop is saturated (binary) on all 38 turns.** Every in-brain boost (1.01 to 1.77, none below 1) is at or
+    above 1, and the release probability is `STD_BASELINE_U` (0) plus the boost, so U >= 1 and the host's depletion
+    step `x - U x` empties x to 0 (clipped) on every spike of the workspace, whatever the boost. The depression the
+    stop applies is therefore the same for 1.01 as for 1.77: the boost's spread is functionally null, the clearing
+    does not depend on it, and `boost_scale`'s 0.8 target (chosen at the three-content conflict margin, where the
+    boost is below 1) does not shape this dev result. What these 38 clearings test is "U >= 1 for the pulse", not the
+    calibration of the boost.
 - **Nothing else that the dev check reads moves:** the answer rate is identical in every cell (all turns and
   non-teach turns, status OK, no FLIP-HURTS-ANSWERS); every scorer `all` is the same as OFF (C2, C4 and C5 true, C1 and
   C3 false, in both arms); the same turns carry `recalled_svo` and the same number carry `verified`; the swap lead is
@@ -471,15 +536,31 @@ carries an organ error (`research/FAILURE_LOG.md`, 2026-10-27).
 - The gate seeds were not run. Nothing here says whether C1-C5 hold on valid membranes at seeds 42, 43, 44, 100,
   101 and 102.
 - (Before the addendum) the global-stop workspace was not re-calibrated and the stop lead was absent under
-  STABLE+RECAL. The addendum re-calibrates it, but its own GO gate holds on 5 of 15 dev seeds: the three-content
-  conflict no longer stands without the stop on valid membranes (the checks that need it hold on 7 of 15), and the
-  noisy conflict sensor misses the stop on 4 of 15. The lead's return on dev seeds 7 and 8 is in-sample (they are its calibration seeds), and
-  every stop in that workload holds two contents, the case the organ gate does not test (the supplementary
-  two-content checks pass on 15 of 15).
-- Two global-stop constants are judgments recorded as such: weight 6.5 (~1.44x the knee) and the boost target 0.8
-  (the middle of the robust clearing band); margin_ref follows the module's stated rule (the midpoint of the two
-  measured margin levels), not its formula (plateau / 2), a choice made before the gate ran and run beside the
-  formula (GO 5 of 15 against 4 of 15).
+  STABLE+RECAL. The addendum re-calibrates it, but its own organ gate reads 5 GO, 1 NO-GO (seed 13) and 9 UNDEFINED
+  over 15 dev seeds: the three-content conflict no longer stands without the stop on valid membranes (the
+  preconditions that need it are met on 7 of 15, so the other 8 seeds are UNDEFINED, not failed), and the stop leaves a
+  pattern ignited on 4 of 15 (seeds 2, 9, 12, a noisy conflict sensor; seed 6 starts with one pattern). "The stop
+  itself works on 11 of 15" holds as n_ignited 0 after the pulse, but on 5 of those 11 (seeds 4, 8, 11, 14, 15) the
+  boost-0 freeze precondition fails (the conflict is already resolved to one pattern without the boost), so the stop
+  is shown to remove a standing conflict on 6 of 15 (1, 3, 5, 7, 10, 13). The lead's return on dev seeds 7 and 8 is
+  in-sample (they are its calibration seeds), and every stop in that workload holds two contents, the case the
+  organ gate does not test (the supplementary two-content checks pass on 15 of 15).
+- The dev check's 38 stops are saturated: every in-brain boost (1.01 to 1.77) is at or above 1, so U >= 1 empties x on
+  every spike and the stop is binary. They test that a full depletion clears two held contents, not the calibration
+  of `boost_scale` or `margin_ref`; the graded part of the boost (0 to 1) is exercised only in the isolated organ
+  gate and the fixed-boost sweeps.
+- Three global-stop constants are judgments recorded as such: weight 6.5 (~1.44x the knee), the boost target 0.8
+  (the middle of the robust clearing band) and the normalization 4 over 5: read literally, the rule (the largest
+  normalization whose sustained pattern reads reliably in the 15-step window) selects 5, where weight 5 has no window
+  below half (worst window ~0.6 of the plateau); 4 was chosen for the margin (weights 4.5-8 have none and the worst
+  window at weight 6.5 is 0.80-0.89 of the plateau). margin_ref follows the module's stated rule (the midpoint of the
+  two measured margin levels), not its formula (plateau / 2), a choice made before the gate ran and run beside the
+  formula (5 GO against 4 GO of 15, each with 1 NO-GO; 9 against 10 UNDEFINED).
+- `margin_ref` and `boost_scale` calibrate a host-computed (Python) conflict sensor and boost, and the depression
+  state x is updated by the host every step (`WorkspaceDepression`), so the re-calibration tunes a scaffold.
+  Scaffold-retirement backlog: replace the host sensor, boost and x update of the global-stop organ with an in-brain
+  conflict signal and a depression carried by the substrate's own synapses (see "Re-calibrated by its own rules"); the
+  two constants then disappear.
 - The swap organ's timing check fails on 3 of 15 dev seeds at the re-calibration; two of its constants (weight 6.5,
   normalization 4 over 5) are judgments recorded as such.
 - The whole-brain OFF-versus-RECAL result (identical answer rate, scorer verdicts and recalled turns) is in-sample:
@@ -509,3 +590,9 @@ cited records; 3.2 x 400 = 1280; 8 x (1/3) / 0.084 = 31.7; 3 / 0.084 = 35.7. Glo
 (0.0829 + 0.0309) / 2 = 0.0569; 0.8 / (0.057 - 0.0309) = 30.7; 0.8 / (0.042 - 0.0309) = 72; 6.5 / 4.5 = 1.44; the
 pooled means 0.0829 and 0.0309 are the means of the two seeds' figures; the turn and lead counts are counted from the
 cited census records.
+
+Organ-gate verdict counts (5 GO / 1 NO-GO / 9 UNDEFINED; 4 / 1 / 10), the per-seed unmet preconditions, the 11 and 6
+seeds of the stop split and the 38 boosts (1.01 to 1.77) are counted from the 15 `stop_organ_gate/recal_on_s<N>.json`,
+the 15 `stop_organ_gate_literal/literal_on_s<N>.json` and the `leads` rows of `research/findings/raw/_stable_recal/dev78_stop/dev_check.json`; the
+worst-window / plateau ratios of the normalization row are 0.0753 / 0.0846 = 0.89 and 0.0659 / 0.0825 = 0.80 at
+normalization 4, weight 6.5, and 0.0353 / 0.0606 = 0.58 and 0.0345 / 0.0582 = 0.59 at normalization 5, weight 5.
