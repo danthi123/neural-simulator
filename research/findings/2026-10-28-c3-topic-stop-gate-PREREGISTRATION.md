@@ -31,13 +31,14 @@ contain published main 04680400c832 or a main published in the 60 min before thi
 since"), and `tools/pool_provision.sh` is banned on the server, so the `POOL_PROVISION_ALLOW_STALE` path that section named
 is not available and P cannot be the line revision. Re-pinning to a main tip under the old closure rule fails too:
 `--closure-check 6c6e08ad9 04680400c` prints DIFFERS on `sim/bridge.py` and `sim/config.py` (the default-OFF stable-mechc
-flags `SIM_PRESET_CENTRED_HET` and `SIM_TRAIT_CENTRED_HET`; the same at origin/main `53d64c2ef`), and the server's main
-already carries the emotion organ's bounded conductance default ON (`0b79336ec`, the merge of emo-bounded-default-on),
-which every later published main will contain. So F is now the published main tip at queue time, and F counts as the
-gate revision only after an IDENTITY CANARY at F, on dev seeds 7 and 8, reproduces the committed dev shards on every
-decision-bearing field, and on every other field but the listed host, timing and provenance ones (section 5). With it:
-section 4's line-revision sentence and test count; the scorer gains `--identity-canary` and `--emit-canary-lines` (its dev
-and gate reads are unchanged), so its sha256 (section 5) and the bar-sanity record were regenerated;
+flags `SIM_PRESET_CENTRED_HET` and `SIM_TRAIT_CENTRED_HET`; at origin/main `6567104f8` it prints DIFFERS on those two and
+on `research/runners/emotion_category_organ.py`), and published main now carries the emotion organ's bounded conductance
+default ON (`0b79336ec`, the merge of emo-bounded-default-on), which every later published main will contain. So F is
+now the published main tip at queue time, and F counts as the gate revision only after an IDENTITY CANARY at F, on dev
+seeds 7 and 8, reproduces the committed dev shards on every decision-bearing field, and on every other field but the
+listed host, timing and provenance ones (section 5). With it: section 4's line-revision sentence and test count; the
+scorer gains `--identity-canary` and `--emit-canary-lines` (its dev and gate reads are unchanged), so its sha256
+(section 5) and the bar-sanity record were regenerated;
 `research/coordination/c3-topic-stop-canary-lines.txt` (32 lines) is new. The gate lines file is unchanged: it already
 carried the `<sha>` placeholder, now substituted with F instead of P.
 
@@ -182,23 +183,25 @@ reported, not thresholded.
 (Replaced by Edit 1, 2026-10-28, before any gate data; the replaced text pinned F to P = `6c6e08ad9`, which the server's
 provisioner refuses as stale.)
 
-**The dev pin is not the gate pin.** The arms import a static closure of 425 repo files (any import statement, module-level
-or inside a function, from the runner, `webapp/server.py`, `webapp/curiosity_topic_stop_chat.py` and the organ;
-`python -m research.runners.c3_topic_stop_score --closure`). `--closure-check 79c6f5128 53d64c2ef` (origin/main at Edit 1)
-prints DIFFERS on 6: `research/runners/stage2_exit_gate.py` (the C2 `kb_scramble` arms and `--kb-summary`; infer group
-only), `research/runners/compositional_chain_route.py` (the C2 change), `research/runners/emotion_category_organ.py` (the
-census moved on-device), `sim/bridge.py`, `sim/config.py` and `sim/kernels.py` (Izhikevich membrane sub-steps, default 1;
-the `SIM_STABLE_INTEGRATION` switch, default OFF; apical GABA_A routing, default OFF; the stable-mechc flags
-`SIM_PRESET_CENTRED_HET` and `SIM_TRAIT_CENTRED_HET`, default OFF). Their commits declare them default OFF; this file
-does not assert the ask replies are unchanged across them on the strength of that declaration. The dev verdict is evidence
-at `79c6f5128` only; at the gate every comparison (flag-ON against flag-OFF, lesion against intact) is within one revision
+**The dev pin is not the gate pin.** The arms import a static closure of 425 repo files (any import statement,
+module-level or inside a function, from the runner, `webapp/server.py`, `webapp/curiosity_topic_stop_chat.py` and the
+organ; `python -m research.runners.c3_topic_stop_score --closure`). `--closure-check 79c6f5128 6567104f8` (origin/main
+at Edit 1) prints DIFFERS on 6: `research/runners/stage2_exit_gate.py` (the C2 `kb_scramble` arms and `--kb-summary`;
+infer group only), `research/runners/compositional_chain_route.py` (the C2 change),
+`research/runners/emotion_category_organ.py` (the census moved on-device; the bounded conductance
+`BRAIN_EMOTION_CATEGORY_BOUNDED`, default ON since `0b79336ec`), `sim/bridge.py`, `sim/config.py` and `sim/kernels.py`
+(Izhikevich membrane sub-steps, default 1; the `SIM_STABLE_INTEGRATION` switch, default OFF; apical GABA_A routing,
+default OFF; the stable-mechc flags `SIM_PRESET_CENTRED_HET` and `SIM_TRAIT_CENTRED_HET`, default OFF). Their commits
+declare them default OFF, except the emotion organ's bounded conductance, which is default ON; this file does not assert
+the ask replies are unchanged across them on the strength of that declaration. The dev verdict is evidence at
+`79c6f5128` only; at the gate every comparison (flag-ON against flag-OFF, lesion against intact) is within one revision
 and one seed.
 
 **Gate revision F.** F is the published main tip at the time the gate is queued: the full 40-hex sha of `main` as pushed
 to the remotes, which is what the server's provisioner calls published main (the server's own main becomes published when
-it is pushed). At Edit 1 the published main is `53d64c2ef`, and the server's main is ahead at `0b79336ec` (Merge
-emo-bounded-default-on @ `87c37d3f1`: `BRAIN_EMOTION_CATEGORY_BOUNDED`, the emotion organ's bounded conductance, default
-ON), so F will carry that flip. Whether it, or any other change since `79c6f5128`, changes what the ask arms compute is what
+it is pushed). At Edit 1 the published main is `6567104f8`, which contains `0b79336ec` (Merge emo-bounded-default-on @
+`87c37d3f1`: `BRAIN_EMOTION_CATEGORY_BOUNDED`, the emotion organ's bounded conductance, default ON), so F carries that
+flip. Whether it, or any other change since `79c6f5128`, changes what the ask arms compute is what
 the identity canary shows; this file does not predict it. Claude provisions F through the server's request path, `touch
 research/queue/provision.req/<F, full sha>`, and reads `/opt/host-status/sim-provision/<F, full sha>.json`. Its `state` must
 read `ok` (`already`, which the server writes for a revision it provisioned ok before, is the same state); with any other
@@ -267,7 +270,8 @@ identity-canary read in a fresh process and lists them. F contains this branch's
 both; any checkout that passes both serves. The same R runs the canary checker, the
 pre-flight record and the gate read, with `--root` (or `--identity-canary`, `--dev-dir`) naming the synced shard
 directories and, for the pre-flight record, `GATE_PREFLIGHT_PATH` naming the shared `research/queue/preflight.tsv` that the
-pool's check reads. At Edit 1, `--read-check 53d64c2ef <this branch's tip>` reads IDENTICAL (and so did `04680400c`).
+pool's check reads. At Edit 1, `--read-check 6567104f8 <this branch's tip>` reads IDENTICAL (and so did `04680400c`
+and `53d64c2ef`).
 
 Scorer sha256 at Edit 1: `17a61db910170a249e9c17b287e227ab56ed1fa0bed928b26a32dbbc92620b9d`.
 
