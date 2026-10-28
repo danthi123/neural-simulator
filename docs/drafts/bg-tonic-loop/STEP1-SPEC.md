@@ -1,5 +1,7 @@
 # STEP1-SPEC — BG seam recalibration (step 1) — DRAFT for Claude review
 
+host-decision: none — the spec only pins runner env (tonic currents, preset cells, sub-step rule) for the registered scorer; no host code computes weights, spikes, rates or readouts — all of that stays in the spiking substrate
+
 **Status: PROVISIONAL.** Design draft only (RULING batch-1024 item 8, answering NEEDS [bg-tonic-loop-0]). **Run nothing until Claude rules.** **The spec must be reviewed by 2026-10-27 or the 11-03 window is lost** (the BG commit seam's stage-2 gate window 11-03..11-10 holds only then: PACKET.md sec 5; bg-tonic-loop-0-RESULT.md sec 5). No default, prereg or registered bar is changed by this document.
 
 ## 1. Target and non-target
@@ -59,6 +61,8 @@ Every knob the seam/recalibration can touch, with the SOURCE of its range. Where
 |---|---|---|
 | `BRAIN_BG_BOUNDED_COND` | 1 on every step 1 run | the step-0 rule FIRED (sub-reversal steps A0p = 8319 vs 0 in every bounded arm — bg-tonic-loop-0-RESULT.md sec 1); ruling -1020a rule 2 |
 | `BRAIN_BG_PRESET_CELLS` | 1 (preset-centred cells are the population) | ruling batch-1024 item 8; the hybrid cells were the defect (PACKET.md sec 1) |
+| `BRAIN_BG_IZH_SUBSTEPS` | 4 on every step-1 run | ruling emo-bg-merge-1026 (3)(c); finding research/findings/2026-10-26-izh-membrane-substeps-derisk.md (0 breach cells on 8/8 dev seeds at n=4) |
+| `BRAIN_BG_IZH_SUBSTEP_RULE` | model_reset on every step-1 run | ruling emo-bg-merge-1026 (3)(c); the sub-step option's registered rule |
 | E_inh, inhibitory synaptic reversal | -75 mV | PACKET.md sec 1 |
 | sub-reversal bound | steps with v below E_inh - 5 mV, counted per region | PACKET.md sec 3 Part A; bg-tonic-loop-0-RESULT.md sec 1 |
 | tonic rate targets (tie-break bands only) | GPe 20-60 Hz, STN 10-30 Hz | bg-tonic-dev-1019.md I_tonic rule (registered; not to be moved) |
@@ -78,6 +82,8 @@ Every knob the seam/recalibration can touch, with the SOURCE of its range. Where
 - `gpe_pA` in {50, 100}: 100 pA is today's anchor (the registered pick, bg-tonic-dev-1019.md); 50 pA is the next lower declared-grid level (preset-centred GPe reads 86.1 Hz at 100 pA, above the 20-60 Hz band).
 
 **The grid = the 8 sets** of the 4 x 2 product, enumerated lexicographically — stn_pA ascending outer, gpe_pA ascending inner: (50,50), (50,100), (100,50), (100,100), (200,50), (200,100), (400,50), (400,100). Each set is applied per run through `BRAIN_BG_TONIC_STN_PA` / `BRAIN_BG_TONIC_GPE_PA` with `BRAIN_BG_TONIC_DRIVE=1` (env overrides in _vocal_action_selector_gate.py, branch research/bg-tonic-loop; recorded in every artifact's .prov.json as in bg-tonic-dev-1019.md).
+
+**Sub-step re-run (RULING emo-bg-merge-1026 (3)(c)).** The grid re-runs with `BRAIN_BG_IZH_SUBSTEPS=4` and `BRAIN_BG_IZH_SUBSTEP_RULE=model_reset` on every run. The option shifts rates (GPi +18.6%) and changes 3 of 20 clean-seed events, so NOTHING carries over from the n=1 grid: it is a new measurement, scored by the registered scorer with the membrane precondition read first. Gate seeds are never run in step 1.
 
 **Cells and cost.** Per set: one isolated-cell pre-screen in the bg_loop_part_c.py shape (7 presets x 13 currents 0-1200 pA x 20 preset-centred jittered cells; numpy, minutes per set — the Part C budget, PACKET.md sec 5 and bg-tonic-loop-0-RESULT.md sec 5), reported beside the set's rates; and one seam cell per seed — one `host_share_bg_seam --run-all --seed <s>` invocation = 7 artifacts at about 4400 s wall (recorded canaries: bg-tonic-dev-1019.md preconditions 4470 s; 2026-10-14-bg-live-seam-commit-RESULT.md evidence 4409 s). Total 8 sets x 8 seeds = 64 seam cells + 8 pre-screen cells. The 64-cell cap is twice step 0's Part B volume (224 artifacts = 32 cells — bg-tonic-loop-0-RESULT.md sec 5) and is the budget STOP in section 5.
 
