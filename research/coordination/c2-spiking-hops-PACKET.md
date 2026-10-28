@@ -1,4 +1,4 @@
-# PACKET c2-spiking-hops (Claude, 2026-10-27; revised twice that day after two skeptics, again on 2026-10-28 after a third, round 4, the same day after the round-4 synthesis of three more skeptics, round 5, after the round-5 synthesis, round 6, after the round-6 fix-checker, round 7, and after a fresh skeptic, round 8): Stage-2 C2, two separate methods: hop reads on the spiking store (M1) and acquisition of all-novel transitives through a learned order cue (M3)
+# PACKET c2-spiking-hops (Claude, 2026-10-27; revised twice that day after two skeptics, again on 2026-10-28 after a third, round 4, the same day after the round-4 synthesis of three more skeptics, round 5, after the round-5 synthesis, round 6, after the round-6 fix-checker, round 7, after a fresh skeptic, round 8, and after a verifier, round 9): Stage-2 C2, two separate methods: hop reads on the spiking store (M1) and acquisition of all-novel transitives through a learned order cue (M3)
 
 host-decision: scaffold
 decides: M1: the possessive-question dispatch (_POSSESSIVE_CHAIN_RE), the hop-1 relation candidates (_ROLE_NOUN_HINTS plus the same-verb fallback), the two-hop relation order taken from that parse, the PROPOSE block selection inside query_patient at the production default, which is the fact-shard fast path (default ON: per-role DG sparse indices that _ensure_fact_shard builds from the .kb agent, action and patient strings, one_brain_composer.py:1400-1432 with the entry read at :1420, intersected by _fact_shard_candidates :1434-1466, an empty candidate set being an abstain before any block is decoded, then a host first-match over the spiking decodes of the candidate blocks, :1468-1481), and on escalation or with the fact shard off a host first-match over every spiking-decoded row (_seq_block :1685-1690), the label-only .kb reads on the PROPOSE path (the patient-type clause test at :1822 in _finish_query_patient and the attribute-key test at :1782), the sequencer's reduced agent and action vocabularies built from the host fact list (_ensure_sequencer's self.kb[:K] read, :1654, reading the agent and action fields only from step 1 on, which decides which stored agent and action words get word lines) and the host abstain of the read when a cue word has no line (:1709), the block count K that the per-block reads iterate over (len(self.kb)), read for the conflict read at one new site keyed as kind `len` (section 2.4), the drive rebuild after every store write while the conflict unit is built (section 2.3), the set union, in block order, of the patient word pools that the relay below lights across all K blocks, which forms the patient vocabulary V'_P without reading any .kb entry, and the fabric rebuild when that set changes (section 2.3), the relay of each block's cleanup scores into the sequencer (block_cleanup_scores read to host and clipped at 0, injected as input_gain x score into the divnorm score bridge by make_block_drives and onbridge_divnorm_drive, where the on-bridge divisive normalisation and the Izhikevich rheobase decide which word pools fire, then turned by the host into a fixed 1500 pA decoded-line drive and remapped to the reduced vocabularies with a lit word outside them dropped), the per-query STP reset of the conflict synapses, the slot-to-word map of the workspace, the relay of the conflict unit's spike count into a workspace slot drive, the drive vector the host builds for every hop whichever tier serves it, the host read-outs of the workspace (_conf_from_nmda's NMDA margin formula, its ignition count over the fixed threshold THR and its argmax winner, _gnw_reentrant_metacog_gated_deliberation_derisk.py:204-219 with THR at :105) and the gate's calibrated theta_hi and retry budget R_max (acc_conflict_gate :326-337, R_MAX_DEFAULT at :124, theta_hi from _get_theta), the mapping of acc_conflict_gate's four outputs onto hop outcomes (section 2.2), and, for the LTM tier (the TieredFactStore's tier routing picks the source), the candidate enumeration all_candidate_patients on the routed shard (host closed-form unbind with a host string dedup), whose patients other than the PROPOSE word each get their own workspace slot, on a buffer-served hop (the cross-tier slots) and on an LTM-served hop alike; M3: the competent() branch selection of ComprehensionProductionOrgan, which is a host English table (the hand ANIMACY and VERB_SELECTS coverage with their corpus-learned extensions, plus the _brain_vocab membership test, decide whether an assertion is fully covered, fully out-of-vocabulary or passed through, and so decide which assertions M3 ever judges), which utterances the comprehension read judges (extract_transitive's 3-content-token test and its function-word list), the role assignment of the stored triple (the positional parse after the host strip), the store-or-refuse agreement check between M3's commit roles and that positional parse, the M3 margin arithmetic (minimum over roles of winner-minus-runner-up, median-normalised) and its calibrated threshold (0.5 times the 10th percentile of the in-sample well-formed normalised margins), and the utterance-onset event
@@ -6,8 +6,57 @@ allowed-by: CLAUDE.md non-negotiable 1 (a declared teaching scaffold for its neu
 replaced-by: the learned relation-noun binding (M2, its own packet), the cs-race spiking store competition for block selection, the word-role frame commit for scope and stored roles, and one-bridge co-residence of the K-way sequencer and the GNW workspace
 cap: 2 builds
 
-**Round-8 changes (2026-10-28, after a fresh skeptic returned four fixes on fc476672a, two of them blocking; design
-only, no run and no code; all four applied as given, with one citation corrected in item 4). Every citation below was
+**Round-9 changes (2026-10-28, after a verifier returned five fixes on 33a6ac58c, none blocking: two minor text
+fixes, one bar that could never hold (R4, the class of round 8's item 3), one provisioning gap and one forward tool
+gap; design only, no run and no code; all five applied). Every citation below was read at origin/main c394b764a
+(`git show`). Every file round 8 cites is blob-identical there to 34a4e5f75 (an empty `git diff` over them), so round
+8's line numbers hold; `tools/pool_provision.sh`, `tools/gpu_remote.sh` and `tools/pool_queue.sh` are cited at
+c394b764a. No bar is loosened and no gate seed is read.** Item number, then the sections changed:
+1. (minor; stale text that contradicted round 8's item 2) 2.7's "Teach log and store read-back" paragraph still said
+   that the bound store is read only in the hop records and the overwrite fixtures, and that the substrate read-back
+   of every premise (decoded buffer rows, `ltm.query_patient`) runs in step 0 only. Round 8's per-turn
+   `store_snapshot` (2.7, 2.9) is a decoded-row substrate read on every non-teach turn of every M1 arm. The paragraph
+   now names the snapshot as the M1 arms' per-probe-turn bound-store read, keeps the hop records' and the fixtures'
+   own reads, says what a flag-off arm reads instead, and names step 0 (f) as a separate step-0-only read of the whole
+   premise map with step 0 (h)'s inert check beside it. Sections: 2.7.
+2. (minor; scope) 2.9's "A probe turn with no `store_snapshot` ... is UNDEFINED for every bar that reads that probe"
+   did not say "on an M1 arm". The flag-off arms record no snapshot by design (2.7, 2.9), so a scorer reading the
+   sentence literally would make every flag-off B9 cell, and B8 (controls) on A0, UNDEFINED. The sentence now names M1
+   arms, and a flag-off arm's probes are scored on facts-present sources (1)-(3) only. The term is pinned once, in
+   2.8: an **M1 arm** runs with `BRAIN_CHAIN_SPIKING_HOPS` on, a **flag-off arm** runs without it, and "every arm of
+   2.8" names both. The packet had also used "M1 arm" for rules that bind flag-off shards too (2.9's general rule,
+   whose (i) B9's flag-off side needs; round 5's item 9; section 5's bundle line). Those scopes are now written out:
+   rules (i) and (iv) bind every arm of 2.8 that a bar reads, and (ii), (iii) and (v) bind M1 arms, the only arms
+   that make hop records. Round 5's item 9 is history and is not rewritten; its "every M1 arm" meant every arm of
+   2.8. Sections: 2.8 (the term), 2.9 (general rule, facts present), section 5.
+3. (a bar that could never hold; round 8 item 3's class, on the M3 side) 3.6's answer-rate bullet and R4 read "m3
+   against flag-off on every infer and ask probe label" and named no arm pairs and no per-pair label lists.
+   `infer_garbled` carries none of the six `_INFER_PROBES` labels (3.6), and the ask labels exist only on R-goat's
+   arm, so under rule (vii) R4 was UNDEFINED on every seed. Fix: R4's (pair, label) cells are written into the scorer
+   as data, as B9's are. The pairs are m3_intact against `infer` `intact_a` and m3_permuted against `infer` `permuted`,
+   each on the six `_INFER_PROBES` labels, and R-goat's arm, now named `m3_ask`, against `ask` `intact_a` on the
+   fifteen non-teach `ask` labels (`stage2_exit_gate.py:163-170` and :173-197 at origin/main). m3_garbled with
+   off_garbled, m3_rs_lesion and gateoff_garbled are not R4 pairs (reasons in 3.6). The same `turns_for` equality
+   unit test as B9's, asserted on both arms of each pair, lands in M3 step 3 with the arms, and `m3_ask` joins the
+   test allowlist as `ask`'s one extra. R3's "flag-off arm" is pinned to the same `infer` `intact_a`. R4's
+   no-engagement UNMEASURED clause stays per seed (reason in 3.7). Sections: 2.8 (test amendment), 3.6, 3.7 (R3, R4),
+   3.8 step 3.
+4. (provisioning) The step-1 `--labels` unit test read its shard from `research/findings/raw`, which pool-provisioned
+   revisions exclude (`tools/pool_provision.sh:91-92`, `':(exclude)research/findings/raw'`) and which
+   `tools/gpu_remote.sh`'s sparse worktrees exclude too (:47). Fix: the shard is vendored under `tests/fixtures/`
+   (path in 2.10 step 1); the test checks the copy's git blob id against the committed shard's, and a missing or
+   different copy FAILS the test, never skips it. The step-1 unit tests are named to run in the build's own full
+   worktree under `tools/memcap.sh 6 --`, and the vendored copy keeps the test valid on a provisioned or sparse
+   checkout as well. Sections: 2.10 step 1.
+5. (forward; non-blocking) `--labels` was pinned to dev seeds 1-6, and the prefixed and paired modes report every
+   stage-2 shard UNMEASURED (round 8, item 4), so step 3's later flip prereg (answer rate on the gate seeds, 2.10
+   step 3) had no working tool for stage-2 shards. Fix: `--labels` takes an explicit `--seeds`, default 1-6 and never
+   `SEEDS`; a gate seed in the list is refused (exit 2) unless `--prereg` names a file that exists at the read
+   revision and whose name contains "prereg", the pool guard's name check (`tools/pool_queue.sh:248-261`). Sections:
+   2.9 (B9), 2.10 steps 1 and 3, section 7 (packet note).
+
+**Round-8 changes (history; 2026-10-28, after a fresh skeptic returned four fixes on fc476672a, two of them blocking; design
+only, no run and no code; all four applied as given, with one citation corrected in item 4; where round 9 changes a point, round 9 holds). Every citation below was
 read at origin/main 34a4e5f75 (`git show`), where every file it cites (`webapp/server.py`,
 `research/runners/shared_ltm.py`, the route, the composer, the stage-2 runner, the tiered and sharded stores,
 `tools/answer_rate.py` and `tests/test_stage2_kb_scramble.py`) is blob-identical to the branch base cadf0f40f, so the
@@ -221,7 +270,8 @@ in 0e. A third skeptic REFUTED bad12d536; its fixes are applied in the round-4 r
 more skeptics REFUTED that revision, bdd949cc5, all three on the same V'_P test; the twelve ranked fixes of their
 synthesis are applied in the round-5 revision (0g). The round-5 synthesis ruled that revision, 3059090939,
 SURVIVES-WITH-FIXES; its fourteen items are applied in the round-6 revision (0h). The round-6 fix-checker's two
-minor fixes are round 7, and a fresh skeptic's four fixes on fc476672a are round 8 (both lists at the top). Section 7 copies Claude's 2026-10-27 ruling text; the keyed runbook RULING, which Claude posts, is the
+minor fixes are round 7, a fresh skeptic's four fixes on fc476672a are round 8, and a verifier's five fixes on
+33a6ac58c are round 9 (all three lists at the top). Section 7 copies Claude's 2026-10-27 ruling text; the keyed runbook RULING, which Claude posts, is the
 authoritative record. Ruling this answers: stage2-fixes-1026, C2 item ("Then two separate methods", finding
 2026-10-26-stage2-fail-diagnoses.md:137-141). M2 (a learned relation-noun binding in place of `_ROLE_NOUN_HINTS`) is
 NOT in this packet; nothing below claims it, and no bar here needs it.
@@ -1058,11 +1108,18 @@ copied beside it.
 fixture (round 6: the teach-log read comes first, because A17 and A18 now also rewrite `chat.stored_facts`, 2.8), the
 worker records `stored_facts_after_teach`, a list read of `chat.stored_facts` (`_facts_of`, no substrate run, so no
 reply can change). On an overwrite arm a second read, `stored_facts_after_overwrite`, follows the fixture and is
-reported; the premise map never reads it. The bound store itself is read where it is already read: in
-the hop records (decoded rows under each hop cue, LTM candidates) and in the overwrite fixtures' own read-back (2.8).
-The extra substrate read-back of every premise (decoded buffer rows, `ltm.query_patient`) runs in step 0 only (2.10),
-where an inert-read check comes with it. The fixtures' own read-backs (`infer_xtier`'s LTM write, the `.kb`
-overwrites, 2.8) belong to their arms.
+reported; the premise map never reads it. **Where the bound store is read (round 9: rewritten, because round 8's
+snapshot made the earlier text false).** On an M1 arm (the term as pinned in 2.8) the bound store is read on every
+probe turn: the per-turn `store_snapshot` above is the M1 arms' per-probe-turn bound-store read. It is a decoded-row
+substrate read (one `_read_blocks` call decoding all K blocks) plus the record-only `audit_ltm_all` scan under each
+map cue, taken after the reply on every non-teach turn, and the facts-present rule reads each map cue's bound-store
+side from it (2.9). Its inertness is shown by the step-1 whole-table behaviour-preservation test, which runs with it
+installed (2.10). Two other reads keep their own scope. The hop records hold the decoded rows and the LTM candidates
+under each hop cue, which B5, B8 and B12 (a) read on the hops they name. The fixtures' read-backs (`infer_xtier`'s LTM
+write, the `.kb` overwrites, 2.8) belong to their arms. A flag-off arm makes no snapshot and no hop record, so its
+premises come from the teach log, `builtin_facts` and the `infer_xtier` fixture's read-back only (2.9, sources
+(1)-(3)). Step 0 (f) is a separate read, made in step 0 only: the whole premise map on the decoded buffer rows and on
+the LTM through `ltm.query_patient` and `all_candidate_patients`, with step 0 (h)'s inert-read check beside it (2.10).
 
 ### 2.8 Arms (stage-2 runner, `infer` group, all informational, never counted in the Stage-2 verdict)
 
@@ -1222,6 +1279,14 @@ later store write would re-form V'_P at the next read.
 | A19 dup_kbset_m1 / A20 dup_kbset_off | infer_dup + overwrite of the FIRST (heron, hunt) entry, frog -> worm | M1 on / off | the hop-1 value a first-match list reader sees, and a patient added to the list: M1 still advances through frog, today's route abstains (B13 b, route-level list reads only) |
 | A21 m1_fs0 (round 5) | infer | M1 on + `BRAIN_FACT_SHARD_RETRIEVAL=0` | PROPOSE on the full decoded scan (`propose_path` `seq_block`, the batched layout): the moat read through the decoded store and the match pools (B8 (1b)) |
 
+**One term, pinned here (round 9).** An **M1 arm** is an arm that runs with `BRAIN_CHAIN_SPIKING_HOPS` on: the "M1
+on" rows of the table above, that is A1-A6, A8, A8b, A10, A11, A12, A14, A16, A17, A19 and A21, with the `.rep0` arms
+of A4, A5 and A11. A **flag-off arm** runs without it: A0, A3a, A3b, A7, A9, A13, A15, A18 and A20. "Every arm of
+2.8" names both sets. Only an M1 arm enters `_hop_spiking`, so only an M1 arm makes hop records, spiking hop reads and
+the per-turn `store_snapshot` (2.7). Every use of "M1 arm" in this packet's current text means the first set. A rule
+that also binds flag-off shards names its scope as every arm of 2.8 (2.9's general rule, section 5); round 5's item 9
+is history, and its "every M1 arm" meant every arm of 2.8.
+
 New arms are added as informational entries, so every pre-existing arm keeps its turn table, env, patch and kind,
 pinned by the golden hash in `tests/test_stage2_kb_scramble.py`; `pool_job_lines` grows by the new arms only. A3a and
 A3b are the existing arms, re-run at the step-2 revision, not new code. **The test amendment this needs (round 6).**
@@ -1231,8 +1296,9 @@ only arms outside GOLDEN are the two kb arms and that no other group has any (`t
 `test_kb_arms_are_informational_never_counted_and_run_the_intact_turn_table` asserts that no arm other than the two kb
 arms carries a scramble (:65-68). A0-A21, A8b, the `.rep0` arms of A4, A5 and A11, and A3 (scramble `kb`) break the
 first, and A3 and A17-A20 (scramble `kb_overwrite`, round 7) break the second. The amendment replaces each expected value with an explicit allowlist: `infer`'s
-extras equal the two kb arms plus this packet's named arms (and, in M3 step 3, the M3 arms of 3.6); every other group's
-extras stay empty, and if a table of this packet is ever implemented as its own group, that group's arms are named
+extras equal the two kb arms plus this packet's named arms (and, in M3 step 3, the M3 arms of 3.6 that run an `infer`
+table); `ask`'s extras are empty until M3 step 3 adds `m3_ask`, R-goat's arm (3.6; round 9), and then equal
+{`m3_ask`}; every other group's extras stay empty, and if a table of this packet is ever implemented as its own group, that group's arms are named
 in the allowlist too; the arms carrying a scramble are the two kb arms (modes `kb` and `kb_spiking`, as now), A3 (mode `kb`) and A17-A20 (mode
 `kb_overwrite`, round 7), written as an explicit arm-to-mode map that the test asserts equal to `arm_scramble` over every
 group and arm. The GOLDEN dict and
@@ -1281,7 +1347,11 @@ Predictions, written before any M1 code exists:
   n_ignited = 0 and gate_decision COMMIT, and c_prey_chase abstains.
 - P13 (A8b, round 5): A8b's primary fields equal A8's on every probe turn (the null of B6).
 
-General engagement rule for every M1 arm (round 4; (i) and (vi) tightened in round 5; (vii) added in round 6). (i) The shard records
+General engagement rule (round 4; (i) and (vi) tightened in round 5; (vii) added in round 6; round 9: the scope of each
+part stated, with the term of 2.8). Rules (i) and (iv) bind every arm of 2.8 that a bar reads, flag on or off: B9's
+flag-off cells, B8's A0 controls and the A18 and A20 teeth of B13 read flag-off shards, which need the corpus, the
+source and the bundle as much as an M1 arm does. Rules (ii), (iii) and (v) read records that only an M1 arm makes (hop
+records, spiking hop reads), so they bind M1 arms. (i) The shard records
 `corpus_present` true (`run_worker` :671); without the corpus the learned production organs degrade silently, so a
 corpus-absent shard is UNDEFINED for every bar it feeds. A shard with NO `corpus_present` key is UNDEFINED too: the M1
 scorer never uses `arm_validity`'s default, `shard.get("corpus_present", True)` (`stage2_exit_gate.py:933`), which would
@@ -1343,8 +1413,11 @@ decodes every block: the per-block loop (`one_brain_composer.py:1389`) at the pr
 `_read_all_blocks` (`len` at :1206) on A21; `read` names which ran. `ltm_under_cue` holds, for each cue of the arm's
 map rows, the patients of the record-only scan of every shard in `ltm.shards` that `audit_ltm_all` makes (2.3), a list
 read with no substrate run. A map cue's decoded rows are the snapshot rows whose decoded agent and action equal the
-cue, and its LTM count is the length of `ltm_under_cue` under it. A probe turn with no `store_snapshot`, or with a
-snapshot whose `rows` count differs from its K, is UNDEFINED for every bar that reads that probe, and it is listed.
+cue, and its LTM count is the length of `ltm_under_cue` under it. On an M1 arm (flag on, the term as pinned in 2.8), a
+probe turn with no `store_snapshot`, or with a snapshot whose `rows` count differs from its K, is UNDEFINED for every
+bar that reads that probe, and it is listed. A flag-off arm (A0, A3a, A3b, A7, A9, A13, A15, A18 and A20) records no
+snapshot by design (2.7), so a missing snapshot there never makes a probe UNDEFINED (round 9): its probes are scored
+on sources (1)-(3) above only, as B9's flag-off cells and B8 (controls) on A0 are.
 The snapshot runs outside every decision scope and every hop scope, so its `.kb` accesses are recorded under their own
 label `store_snapshot` and never enter `composer_kb_reads`, `kb_reads_unlisted` or B7. Its inertness is covered by
 the step-1 whole-table behaviour-preservation test (2.10), which runs with it installed. The hop records' own
@@ -1539,8 +1612,8 @@ the conflict unit can fire on that seed and a silent `acc_conf` elsewhere is evi
   `turns_for` returns it, so the data cannot drift from the tables. A label outside its pair's list is never a cell.
   Read by `tools/answer_rate.py --labels`, which the M1 build adds (section 7), reading `responses[label]` from each
   stage-2 shard (round 8: never the prefixed or paired modes, whose `probe_body`, `tools/answer_rate.py:85-95`, reads
-  only top-level dicts carrying `answer` and so reports every stage-2 shard UNMEASURED), over dev seeds 1-6;
-  FLIP-HURTS-ANSWERS is reported. Round
+  only top-level dicts carrying `answer` and so reports every stage-2 shard UNMEASURED), over dev seeds 1-6 (round 9:
+  the default of its `--seeds`, 2.10 step 1); FLIP-HURTS-ANSWERS is reported. Round
   5: UNMEASURED is decided per arm PAIR and seed, not per seed. A pair (A1/A0, A8/A7, A10/A9, A14/A13, A16/A15) whose
   flag-on arm shows `spiking_hop_reads` = 0 on p_prey_eat is UNMEASURED on that seed (equal answer rates from a flag
   that never engaged are not evidence of no harm), and under rule (vi) an UNMEASURED pair counts as not meeting B9.
@@ -1764,7 +1837,8 @@ did not append on any seed, B11 is predicted UNDEFINED and the step-1 circuit te
 depressing `pP_w -> acc_conf`, every pre-existing pathway `stp_disabled`, V'_P in the rebuild signature); the optional
 patient role in `block_cleanup_scores`, `make_block_drives` and `run_sequencerK_reduced_with_drive`; the per-read STP
 reset; `_hop_spiking` with the cross-tier slots, the audit call and the three flags in the route;
-`tools/answer_rate.py --labels` (per-label reads over every turn of an arm file, with its own unit test). Round 4
+`tools/answer_rate.py --labels` (per-label reads over every turn of an arm file, with its own unit test; round 9:
+with `--seeds`, default 1-6, behind a gate-seed guard). Round 4
 adds: V'_P formed from the relay-lit patient pools of every stored block, with the relay run before the fabric check
 (2.3); in the stage-2 arm worker, the per-turn route trace, the D4 recorder, `stored_facts_after_teach` and the
 `kb_overwrite` fixture mode with its engagement record (2.7, 2.8); and in the scorer, written before the step-2
@@ -1909,13 +1983,30 @@ Round 8 adds these items:
 - **In the scorer (items 2 and 3).** The facts-present rule reads every map cue's bound-store side from the probe
   turn's `store_snapshot` (a turn without one is UNDEFINED), and B9's per-pair cell lists are data (2.9). Unit test:
   each pair's cell list equals the non-teach labels of that pair's turn table as `turns_for` returns it.
-- **The `--labels` unit test (item 4).** It reads `responses[label]` from a committed stage-2 shard,
-  `research/findings/raw/_stage2_diag/c2_comprehension_gateoff/s1/infer__intact_a_gateoff.json`, and classifies each of
-  its six probe labels from there. It also asserts that the existing `probe_body` (`tools/answer_rate.py:85-95`)
-  returns None on that file, which pins the reason `--labels` exists. The mode takes dev seeds 1-6. It never falls
-  back to `SEEDS` (`tools/answer_rate.py:52`, the gate seeds 42/43/44/100/101/102), the default of `paired_per_seed`
-  (:162) and of `paired --seeds` (:224). The test asserts that the seeds read are 1-6, and that a dev seed with no
-  shard is reported UNMEASURED.
+- **The `--labels` unit test (item 4; round 9: a vendored copy, and the seeds as an argument).** It reads
+  `responses[label]` from a stage-2 shard vendored under `tests/`, `tests/fixtures/stage2_infer_intact_a_gateoff_s1.json`,
+  a byte copy of the committed
+  `research/findings/raw/_stage2_diag/c2_comprehension_gateoff/s1/infer__intact_a_gateoff.json` (git blob
+  `5bddc4178c2bcc66254ee8eca7feef2ebe081953`, 65,162 bytes, the same at origin/main 34a4e5f75 and c394b764a), and
+  classifies each of its six probe labels from there. It never reads `research/findings/raw`: pool-provisioned
+  revisions exclude it (`tools/pool_provision.sh:91-92`) and so do `tools/gpu_remote.sh`'s sparse worktrees (:47). The
+  test computes the copy's git blob id and asserts that it equals that id. A missing copy or a different id FAILS the
+  test; it is never skipped (no `pytest.skip`, `skipif` or `importorskip` guards it). It also asserts that the
+  existing `probe_body` (`tools/answer_rate.py:85-95`) returns None on that file, which pins the reason `--labels`
+  exists. The mode takes `--seeds`, default 1-6. It never falls back to `SEEDS` (`tools/answer_rate.py:52`, the gate
+  seeds 42/43/44/100/101/102), the default of `paired_per_seed` (:162) and of `paired --seeds` (:224). A gate seed in
+  `--seeds` is refused with exit 2 unless `--prereg <path>` names a file that exists at the read revision and whose
+  name contains "prereg", the name check of the pool's gate-seed guard (`tools/pool_queue.sh:248-261`); the record
+  carries the seeds read and the prereg path. The test asserts that the default seeds read are 1-6, that a dev seed
+  with no shard is reported UNMEASURED, that `--seeds 42` with no `--prereg` and `--seeds 42 --prereg
+  research/coordination/LOCAL_LLM_RUNBOOK.md` both exit 2, and that a `--prereg` naming an existing `*prereg*.md`
+  file is accepted.
+- **Where the step-1 unit tests run (round 9).** In the step-1 build's own worktree, a full checkout of the branch
+  (not a pool-provisioned archive and not a `gpu_remote.sh` sparse worktree), under `tools/memcap.sh 6 --
+  .venv/bin/python -m pytest`, numpy CPU; the step-1 RESULT names the checkout and its revision. Any other step-1
+  test that reads a file under `research/findings/raw` follows the `--labels` test's rule: the file is vendored under
+  `tests/fixtures/` with its blob id checked, or the test FAILS when the file is absent, never skips. So no step-1
+  test can pass by skipping on a provisioned or sparse checkout.
 - **In the A15, A16 and step-0 `infer_xtier` entries (item 1).** `env` carries `BRAIN_SHARED_LTM=0` and
   `BRAIN_LTM_RNG_ISOLATE=1`, and the fixture hook records `ltm_type`, the env values as read and any
   `store_exception` (2.8). Unit test: under that env, a server-built tiny-demo +LTM session's
@@ -1936,7 +2027,9 @@ STOP. A failed bar is a RESULT, never a retune.
 **Step 3 (Claude).** A `flag: no` prereg carrying A1-A21 and A8b as informational arms of the 11-21 gate attempt, or
 a flip packet if every bar holds under the cross-seed rule (vi) of 2.9 (each bar PASSES on all six dev seeds; an
 UNDEFINED or UNMEASURED seed is not a pass); the default stays OFF until a flip prereg passes (smoke-first, flag-off battery arms on
-the gate seeds, answer-rate).
+the gate seeds, answer-rate; round 9: the answer rate on the gate seeds is read by
+`tools/answer_rate.py --labels --seeds 42,43,44,100,101,102 --prereg <that flip prereg>`, behind the gate-seed guard
+of 2.10 step 1).
 
 ## 3. M3: acquisition of well-formed all-novel transitives through a learned order cue (flag `BRAIN_COMPREHENSION_LEARNED_ORDER`, default OFF)
 
@@ -2105,9 +2198,31 @@ from the build record); otherwise the seed is UNDEFINED for every R bar.
   carrying the M3 margin. Otherwise the seed is UNDEFINED. Prediction: every G teach refused under M3 and under
   the production default, and STORED with the gate off (the teeth: on a seed where the gate-off brain stores fewer
   than 2 of the 3, the table has no teeth and the seed is UNDEFINED for R2).
-- **answer rate:** m3 against flag-off on every infer and ask probe label, `--labels` mode; FLIP-HURTS-ANSWERS
-  reported.
-- **R-goat (reported only):** `ask` with M3 on. Prediction: 'the goat eats the hay' and 'the crab eats the leaf'
+- **answer rate (round 9: pairs and cells named).** `--labels` mode, FLIP-HURTS-ANSWERS reported, per label, each
+  M3-on arm against the flag-off arm that runs the same table at the same pinned revision and dev seed, on the
+  non-teach labels that pair's own table carries. Until round 9 this bullet read "m3 against flag-off on every infer
+  and ask probe label" and named no pairs; `infer_garbled` carries none of the six `_INFER_PROBES` labels and the
+  ask labels exist only on R-goat's arm, so under rule (vii) R4 was UNDEFINED on every seed. The cells are R4's
+  (3.7), written into the scorer as data, as B9's are (2.9):
+
+  | pair (M3 on / flag off) | group, table | labels (the cells) |
+  |---|---|---|
+  | m3_intact / `infer` `intact_a` | `infer`, the registered table | p_prey_eat, c_heron_hunt, c_frog_eat, c_prey_chase, p_yesno, c_dog_chase |
+  | m3_permuted / `infer` `permuted` | `infer`, `permuted_turns` | p_prey_eat, c_heron_hunt, c_frog_eat, c_prey_chase, p_yesno, c_dog_chase |
+  | `m3_ask` / `ask` `intact_a` | `ask`, the registered table | g_eel, m_yak, g_crab, m_moose, g_newt, m_goat, lp_ibex_1, lp_ibex_2, u_toad_1, c_dog_1, u_toad_2, c_dog_2, u_toad_3, c_dog_3, u_toad_4 |
+
+  The labels are `_INFER_PROBES` (`stage2_exit_gate.py:163-170`) and the non-teach turns of `_ASK_TEACH +
+  _ASK_PROBES` (:173-197; t_ibex, a teach, is not a cell), at origin/main c394b764a. The flag-off sides are the
+  groups' registered arms, run with M3 unset (its default) at the step-3 revision on each dev seed 1-6, beside the
+  M3 arms; the D4 recorder the M3 arms carry is behaviour-preserving (2.10 step 1), so the pair differs only in the
+  flag. Not R4 pairs: m3_garbled with off_garbled, because `infer_garbled` carries no infer or ask label (its G
+  probes are R2's evidence, and an off-arm answer there is a garbled store, which R2 bars, not an answer M3 must
+  keep); m3_rs_lesion and its .rep0, because a lesion is not the flip; gateoff_garbled, because the gate is not the
+  flag. A step-3 unit test asserts that each pair's cell list equals the non-teach labels of BOTH arms' turn tables
+  as `turns_for` returns them (after step 3's `table` and `turns` keys), so the data cannot drift from the tables. A
+  label outside its pair's list is never a cell.
+- **R-goat (reported only):** `ask` with M3 on, the arm `m3_ask` (round 9: named, because R4 reads its replies;
+  the prediction below stays reported only). Prediction: 'the goat eats the hay' and 'the crab eats the leaf'
   are still refused, because they go through the covered branch M3 does not touch. The named next method for them is
   the learned order read added as a third cue on the covered branch, decided after M3's organ verdict.
 
@@ -2132,17 +2247,25 @@ failing.
 Reply (dev seeds 1-6, every seed; every shard with `corpus_present` true, else UNDEFINED; round 5: each R bar holds
 only under the cross-seed rule (vi) of 2.9, i.e. it PASSES on all six dev seeds, and a seed on which it is UNDEFINED or
 UNMEASURED counts as not meeting it; the general rule (i) of 2.9 on `sources`, `ltm_bundle` and the `corpus_present`
-key applies to every R arm; round 6: the within-seed rule (vii) of 2.9 applies too, so any UNDEFINED or UNMEASURED
-item of an R bar, such as one G teach of R2 or one label of R4, makes that bar UNDEFINED or UNMEASURED on that seed,
+key applies to every arm an R bar reads, the flag-off sides of R4's pairs included (round 9); round 6: the
+within-seed rule (vii) of 2.9 applies too, so any UNDEFINED or UNMEASURED item of an R bar, such as one G teach of R2
+or one (pair, label) cell of R4, makes that bar UNDEFINED or UNMEASURED on that seed,
 and A4 (a)'s exclude-and-score is not used): R1 m3_permuted acquires
 t_heron_hunt and p_prey_eat ends on frog (with the 3.6 precondition). The acquisition of t_heron_hunt is R1's outcome,
 not a precondition (else R1 could never fail); the facts-present rule of 2.9 applies to the other premise: 'the gnat
 eats the frog' (t_frog_eat, passed through and stored at production) must be acquired and in
 `stored_facts_after_teach`, else the seed is UNDEFINED for R1; R2 every G teach in m3_garbled is refused and no later probe recalls it (with the 3.6 precondition and
 teeth), scored on a seed only where R1 holds on that seed, else UNDEFINED; R3 m3_intact equals flag-off on primary
-fields; R4 no FLIP-HURTS-ANSWERS, where a seed whose m3 arms show no M3 branch decision on any teach (no
+fields, the flag-off arm being `infer` `intact_a` at the same revision and seed, R4's pairing side (round 9: pinned);
+R4 no FLIP-HURTS-ANSWERS, where a seed whose m3 arms show no M3 branch decision on any teach (no
 `judge`-frame `competent()` call recorded True with `fully_oov` and carrying an M3 margin) is UNMEASURED for R4, never
-PASS (equal answer rates from a flag that never decided anything are not evidence of no harm); R5 flag unset is
+PASS (equal answer rates from a flag that never decided anything are not evidence of no harm). Round 9: R4's items are
+the (pair, label) cells of 3.6's answer-rate table, read from the scorer's data. A defined cell answered on the
+flag-off arm and abstained on the M3 arm makes R4 FAIL on that seed; a missing or errored response on either arm of a
+pair makes that cell UNDEFINED, and R4 with it (rule (vii)); a cell outside the table is never read. The
+no-engagement clause stays per seed, over the M3 arms of all three pairs, and is not made per pair: `m3_ask`'s teaches
+take the covered branch by R-goat's prediction, so a per-pair clause would leave that pair, and so R4, UNMEASURED on
+every seed; R5 flag unset is
 byte-identical; R6 m3_rs_lesion refuses t_heron_hunt and derives
 nothing on p_prey_eat, on every seed and its .rep0 (with the 3.6 precondition), scored only where R1 holds.
 
@@ -2177,6 +2300,12 @@ nothing on p_prey_eat, on every seed and its .rep0 (with the 3.6 precondition), 
   `table: "permuted"`, since `turns_for` gives `permuted_turns` only to the arm named `permuted`; m3_garbled,
   off_garbled and gateoff_garbled carry `infer_garbled` as their own `turns`; and m3_rs_lesion carries `rep: true` for
   its `.rep0` (2.8; `arms_for` emits `.rep0` only for lesion arms today). The D4 recorder is installed in every M3 arm.
+  Round 9 adds three items. `m3_ask`, R-goat's arm, is an informational entry of the `ask` group with M3 on and the
+  group's own `turns`, named in the test allowlist as `ask`'s one extra (2.8). The flag-off sides of R4's pairs
+  (`infer` `intact_a`, `infer` `permuted` and `ask` `intact_a`) run as pool lines at the same pinned revision on dev
+  seeds 1-6. The scorer, written before the step-3 runs, carries R4's (pair, label) cells of 3.6 as data, with the
+  unit test that each pair's cell list equals the non-teach labels of both arms' turn tables as `turns_for` returns
+  them.
   Every unit test that reaches the server, the D4 organ or the workspace pins `BRAIN_CHAT_SEED` to design seed 7, as
   in 2.10 step 1. Round 6: pinning the variable is not enough for the D4 organ, which is a per-process singleton
   (`_ORGAN`, built once by `get_organ`, `comprehension_production_organ.py:833-869`), and for the two `_DEFAULT_SEED`s,
@@ -2229,7 +2358,9 @@ M3's carrier; M3 step 1 waits for its results, and M1 proceeds independently. M3
   recording no such key, is UNDEFINED for everything it feeds and is re-run on a corpus lane.
 - **LTM bundle (round 5).** The LTM bundle lives outside the repository (`_default_ltm_bundle_dir`,
   `webapp/server.py:3817-3847`: `$BRAIN_DATA_ROOT`, the checkout's sibling `sim-data`, then `~/Projects/sim-data`).
-  Every M1 and R arm needs `process.ltm_bundle` = `wikidata_100k` and `sources` = {`tiny-demo +LTM`} (2.9 rule (i)).
+  Every arm of 2.8, M1 arm or flag-off arm, and every arm an R bar reads (the flag-off sides of R4's pairs included)
+  needs `process.ltm_bundle` = `wikidata_100k` and `sources` = {`tiny-demo +LTM`} (2.9 rule (i); round 9: scope
+  written out).
   A lane that resolves the 15k fallback, or no bundle, gives UNDEFINED shards and is not used. The learned lexicons, the corpus
   vocabulary and the built-in store degrade silently without the corpus, so the branch, nonce and premise checks
   would otherwise pass vacuously.
@@ -2276,4 +2407,6 @@ posts this revision it relays these asks under one line, `[c2-hops] NEEDS-CLAUDE
 
 Packet note (round 8, not part of the ruling text above): `--labels` reads `responses[label]` from stage-2 shards over
 dev seeds 1-6, because the existing modes' `probe_body` (`tools/answer_rate.py:85-95`) reads only top-level dicts that
-carry `answer` and so reports every stage-2 shard UNMEASURED (2.9 B9, 2.10 step 1).
+carry `answer` and so reports every stage-2 shard UNMEASURED (2.9 B9, 2.10 step 1). Round 9: dev seeds 1-6 are the
+default of an explicit `--seeds`; a gate seed is read only with `--prereg` naming a preregistration (the pool guard's
+name check), so a later flip prereg can read the answer rate on the gate seeds (2.10 steps 1 and 3).
