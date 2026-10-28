@@ -18,6 +18,16 @@ from research.runners import compositional_chain_route as CCR
 from research.runners import stage2_exit_gate as SG
 
 KB_ARMS = ("kb_scramble", "kb_scramble_spiking_control")
+# C2 spiking-hops packet (research/coordination/c2-spiking-hops-PACKET.md, round 9) 2.8 / 2.10 step 0 (7): the two
+# assertions below that pinned "the only new arms are the two kb arms" and "no other arm carries a scramble" are now
+# EXPLICIT ALLOWLISTS, extended by each packet step that adds arms. Step 0 adds the seven read-only step-0 entries (the
+# five tables of 2.8 and the two inert-check workers of (h)); `infer_amb1` and `infer_dup` apply A17's and A19's `.kb`
+# overwrite fixture (g) in mode `kb_overwrite`. The GOLDEN dict and the per-arm fingerprint loop are NOT changed.
+C2_STEP0_ARMS = ("c2s0_infer", "c2s0_amb1", "c2s0_amb2", "c2s0_dup", "c2s0_xtier", "c2s0_infer_rec", "c2s0_infer_bare")
+EXTRA_ARMS = {"infer": list(KB_ARMS) + list(C2_STEP0_ARMS)}          # every other group's extras: none
+# ask: empty until M3 step 3 adds `m3_ask` (packet 3.6, round 9); a table implemented as its own group is named here too
+SCRAMBLE_MODES = {("infer", "kb_scramble"): "kb", ("infer", "kb_scramble_spiking_control"): "kb_spiking",
+                  ("infer", "c2s0_amb1"): "kb_overwrite", ("infer", "c2s0_dup"): "kb_overwrite"}
 
 # sha256[:16] of json([turns_for(group, 7, arm), arm_spec(group, arm)]) for every arm that existed BEFORE the kb_scramble
 # arms were added (main @ 3065c5614). A change to any pre-existing arm's turn table, env, patch or kind breaks this.
@@ -50,9 +60,9 @@ def test_every_pre_existing_arm_has_its_frozen_turn_table_and_spec():
         group, arm = key.split("/", 1)
         assert arm in SG.arms_for(group), key
         assert _fp(group, arm) == want, key
-    for group in SG.GROUPS:                                  # nothing else changed: the only new arms are the two kb arms
+    for group in SG.GROUPS:                                  # nothing else changed: the only new arms are the allowlist's
         extra = [a for a in SG.arms_for(group) if "%s/%s" % (group, a) not in GOLDEN]
-        assert extra == (list(KB_ARMS) if group == "infer" else []), (group, extra)
+        assert extra == EXTRA_ARMS.get(group, []), (group, extra)
 
 
 def test_kb_arms_are_informational_never_counted_and_run_the_intact_turn_table():
@@ -62,10 +72,9 @@ def test_kb_arms_are_informational_never_counted_and_run_the_intact_turn_table()
         assert SG.turns_for("infer", 7, arm) == SG.turns_for("infer", 7, "intact_a")
     assert SG.arm_scramble("infer", "kb_scramble") == "kb"
     assert SG.arm_scramble("infer", "kb_scramble_spiking_control") == "kb_spiking"
-    for group in SG.GROUPS:                                  # no other arm carries a scramble
-        for arm in SG.arms_for(group):
-            if not (group == "infer" and arm in KB_ARMS):
-                assert SG.arm_scramble(group, arm) is None, (group, arm)
+    got = {(group, arm): SG.arm_scramble(group, arm) for group in SG.GROUPS for arm in SG.arms_for(group)
+           if SG.arm_scramble(group, arm) is not None}
+    assert got == SCRAMBLE_MODES                             # no arm outside the explicit arm-to-mode map carries one
 
 
 # ── the derangement ────────────────────────────────────────────────────────────────────────────────────────────────────

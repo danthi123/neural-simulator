@@ -143,7 +143,10 @@ def test_pool_job_lines_are_pinned_memcapped_prereg_tagged_and_carry_max_age():
     lines = SG.pool_job_lines(sha)
     # 186 at the prereg; amendment A4 adds the counted `ask/reversed` arm and the informational `ask/da_lesion` arm (198);
     # the C2 host-ownership test (2026-10-26) adds the informational `infer/kb_scramble` and `kb_scramble_spiking_control`
-    assert len(lines) == len(SG.GATE_SEEDS) * sum(len(SG.arms_for(g)) for g in SG.GROUPS) == 210
+    # the C2 spiking-hops step-0 entries (2026-10-28) are informational, dev seeds only, and never in the gate's lines:
+    # the gate's line count stays 210
+    assert len(lines) == len(SG.GATE_SEEDS) * sum(len(SG.gate_arms_for(g)) for g in SG.GROUPS) == 210
+    assert not any("--arm c2s0_" in c for c, _w in lines)
     for cmd, why in lines:
         assert ("revisions/%s" % sha) in cmd and ("memcap.sh %d" % SG.MEMCAP_GB) in cmd and "--prereg %s" % SG.PREREG in cmd
         assert ("mem_gb=%d" % SG.MEM_GB) in why and SG.PREREG in why and "max_age_h=240" in why

@@ -215,6 +215,56 @@ _INNER_PROBES = [
     ("c_dog_chase", "what does the dog chase", "control"),
 ]
 
+# ── C2 spiking-hops packet (research/coordination/c2-spiking-hops-PACKET.md, round 9), section 2.8: the four new `infer`
+#    session tables. Each is given to an informational entry through that entry's own `turns` key (2.10 step 0 (1)), so
+#    every pre-existing arm keeps the registered table (pinned by tests/test_stage2_kb_scramble.py GOLDEN). ─────────────
+_INFER_TEACH = [("t_heron_hunt", "the heron hunts the frog", "teach"),
+                ("t_frog_eat", "the frog eats the gnat", "teach"),
+                ("t_crow_chase", "the crow chases the wren", "teach"),
+                ("t_wren_chase", "the wren chases the moth", "teach")]
+# the ambiguity tables carry only these three of the six `_INFER_PROBES` (packet 2.8; round 8 item 3: B9's cells)
+_AMB_PROBES = [p for p in _INFER_PROBES if p[0] in ("p_prey_eat", "c_heron_hunt", "c_dog_chase")]
+C2_TABLES = {
+    "infer": _INFER_TEACH + _INFER_PROBES,
+    # hop-1 ambiguity: worm (round 5), a D4 hand-ANIMACY noun in no other .kb row and no built-in fact
+    "infer_amb1": _INFER_TEACH[:2] + [("t_heron_hunt_worm", "the heron hunts the worm", "teach")] + _AMB_PROBES,
+    # hop-2 ambiguity: (frog, eat) -> gnat and apple
+    "infer_amb2": _INFER_TEACH[:2] + [("t_frog_eat_apple", "the frog eats the apple", "teach")] + _AMB_PROBES,
+    # duplicate facts: verbatim re-tells of both hop facts
+    "infer_dup": _INFER_TEACH + [("t_heron_hunt_re", "the heron hunts the frog", "teach"),
+                                 ("t_frog_eat_re", "the frog eats the gnat", "teach")] + _INFER_PROBES,
+    # cross-tier ambiguity: the intact table; (heron, hunt, fish) is written into the private LTM after turn 0
+    "infer_xtier": _INFER_TEACH + _INFER_PROBES,
+}
+# the offiso configuration (packet 2.8, round 8 item 1): the shared LTM off and RNG isolation on, so the conversation
+# loads a private ShardedPhasorStore the infer_xtier fixture can write. BRAIN_ONE_BRAIN stays unset.
+C2_OFFISO_ENV = {"BRAIN_SHARED_LTM": "0", "BRAIN_LTM_RNG_ISOLATE": "1"}
+
+
+def _c2_step0_entry(table, note, mode="full", **extra):
+    """An informational entry of M1 STEP 0 (packet 2.10): read-only, dev seeds only, never in the gate's pool lines and
+    never counted. `mode`: full (the D4 recorder + the propose-path wrappers + reads (a)-(g)), recorder (the D4 recorder
+    only) or bare (nothing installed); the last two exist for the inert-read check (h) on seed 7."""
+    d = {"env": {}, "patch": None, "turns": list(C2_TABLES[table]), "c2_hops": {"step0": mode, "table": table},
+         "note": "C2 M1 step 0 (c2-spiking-hops-PACKET.md 2.10): %s; read-only, dev seeds only, never counted" % note}
+    d.update(extra)
+    return d
+
+
+C2_STEP0_ENTRIES = {
+    "c2s0_infer": _c2_step0_entry("infer", "the registered infer table with reads (a)-(f)"),
+    "c2s0_amb1": _c2_step0_entry("infer_amb1", "hop-1 ambiguity; reads (a)-(f), then the A17 overwrite fixture (g)",
+                                 scramble="kb_overwrite", overwrite_plan="amb1_worm_to_frog"),
+    "c2s0_amb2": _c2_step0_entry("infer_amb2", "hop-2 ambiguity; reads (a)-(f)"),
+    "c2s0_dup": _c2_step0_entry("infer_dup", "duplicate facts; reads (a)-(f), then the A19 overwrite fixture (g)",
+                                scramble="kb_overwrite", overwrite_plan="dup_first_frog_to_worm"),
+    "c2s0_xtier": dict(_c2_step0_entry("infer_xtier", "cross-tier: (heron, hunt, fish) written into the private LTM "
+                                       "after turn 0 (offiso); reads (a)-(f)", ltm_fixture="xtier_heron_hunt_fish"),
+                       env=dict(C2_OFFISO_ENV)),
+    "c2s0_infer_rec": _c2_step0_entry("infer", "inert-read check (h): the D4 recorder only", mode="recorder"),
+    "c2s0_infer_bare": _c2_step0_entry("infer", "inert-read check (h): nothing installed", mode="bare"),
+}
+
 GROUPS = {
     "conv": {
         "criterion": "C1", "primary": True, "env": {},
@@ -261,7 +311,9 @@ GROUPS = {
                                                                   "condition forced (its .kb scan reports nothing "
                                                                   "scannable), so the hops are spiking query_patient "
                                                                   "reads: do derived_svo/derived_from follow the bound "
-                                                                  "vectors? (ownership control; reported, never counted)"}},
+                                                                  "vectors? (ownership control; reported, never counted)"},
+                          # C2 M1 step 0 (2026-10-28): read-only dev-seed entries, excluded from the gate's pool lines
+                          **C2_STEP0_ENTRIES},
         # the kb_scramble arms' fixed configuration: the hop-1 premise the chain bridges through is kept (so the scrambled
         # list still resolves to a different 2-hop conclusion); the question the prediction is read on, and the
         # oracle's hop relations (the role-noun hint 'prey' -> hunt, eat; then the question's own verb)
@@ -325,6 +377,13 @@ def turns_for(group, seed, arm):
     base = str(arm).split(".rep")[0]
     if base in (g.get("order_arms") or {}):
         return list(g["order_arms"][base]["turns"])
+    # C2 packet 2.10 step 0 (1): an informational entry may carry its own `turns`, or `table: "permuted"` for the
+    # group's permuted table. Every entry without either key (every pre-existing arm) keeps the registered table.
+    info = (g.get("informational") or {}).get(base) or {}
+    if info.get("turns") is not None:
+        return list(info["turns"])
+    if info.get("table") == "permuted":
+        return list(g["permuted_turns"])
     return list(g["turns"])
 
 
@@ -362,11 +421,30 @@ def arm_spec(group, arm):
 
 
 def arm_scramble(group, arm):
-    """The kb-scramble mode of an arm (`kb` | `kb_spiking`), or None for every other arm. Separate from `arm_spec` (whose
-    3-tuple shape every existing caller unpacks): only the two C2 host-ownership arms declare a `scramble`."""
+    """The kb-scramble mode of an arm (`kb` | `kb_spiking` | `kb_overwrite`), or None for every other arm. Separate from
+    `arm_spec` (whose 3-tuple shape every existing caller unpacks): only the two C2 host-ownership arms (`kb`,
+    `kb_spiking`) and the C2 packet's `.kb` overwrite entries (`kb_overwrite`, packet 2.8) declare a `scramble`."""
     g = GROUPS[group]
     d = (g.get("informational") or {}).get(arm.split(".rep")[0])
     return (d or {}).get("scramble")
+
+
+def arm_c2(group, arm):
+    """The C2 spiking-hops packet's record for an entry it adds (`{"step0": mode, "table": name}` on a step-0 entry), or
+    None for every other arm. Every C2 instrument in the worker (the D4 recorder, the propose-path wrappers, the teach-log
+    read, the step-0 reads, the LTM fixture) is keyed on this, so no pre-existing arm runs any of it."""
+    d = (GROUPS[group].get("informational") or {}).get(str(arm).split(".rep")[0])
+    return (d or {}).get("c2_hops")
+
+
+def is_c2_step0(group, arm):
+    """True for a C2 M1 step-0 entry: read-only, dev seeds only, never in the gate's pool lines, never counted."""
+    return bool((arm_c2(group, arm) or {}).get("step0"))
+
+
+def gate_arms_for(group, informational=True):
+    """The arms the GATE's pool lines run: `arms_for` without the C2 step-0 entries (dev seeds only, own pool lines)."""
+    return [a for a in arms_for(group, with_informational=informational) if not is_c2_step0(group, a)]
 
 
 # ══════════════════════════════════════════════ WORKER (inside the arm subprocess) ═════════════════════════════════
@@ -540,6 +618,479 @@ class KbProbe:
         return {"mode": self.mode, "orig_distinct": repr(orig_distinct), "orig_qp": repr(orig_qp)}
 
 
+# ══════════════════ C2 SPIKING-HOPS PACKET, step-0 runner changes (research/coordination/c2-spiking-hops-PACKET.md) ═════════
+# Every instrument below is installed ONLY for an entry that carries `c2_hops` (`arm_c2`); no pre-existing arm runs any
+# of it. Each wrapper calls the original and returns its value unchanged (behaviour-preserving, as KbProbe is).
+def _jsonable(x):
+    """A JSON-safe copy of a recorded value (sets as sorted lists, numpy scalars as Python numbers, tuples as lists)."""
+    if x is None or isinstance(x, (bool, int, float, str)):
+        return x
+    if isinstance(x, dict):
+        return {str(k): _jsonable(v) for k, v in x.items()}
+    if isinstance(x, (list, tuple)):
+        return [_jsonable(v) for v in x]
+    if isinstance(x, (set, frozenset)):
+        return sorted(_jsonable(v) for v in x)
+    try:
+        import numpy as _np
+        if isinstance(x, _np.generic):
+            return x.item()
+        if isinstance(x, _np.ndarray):
+            return x.tolist()
+    except Exception:
+        pass
+    return repr(x)
+
+
+def _caller(depth):
+    """The caller frame `depth` levels above the function that calls `_caller` (module, function, line)."""
+    f = sys._getframe(depth + 1)
+    return {"module": f.f_globals.get("__name__"), "function": f.f_code.co_name, "line": f.f_lineno}
+
+
+def _caller_kind(c):
+    """The three `competent()` callers the packet names (2.7, round 5): `judge`, `repair_target`, the three-organ bus."""
+    if c.get("module") == "research.runners.comprehension_production_organ" and c.get("function") in ("judge",
+                                                                                                        "repair_target"):
+        return c["function"]
+    if str(c.get("module") or "").endswith("gnw_three_organ_bus"):
+        return "three_organ_bus"
+    return "other"
+
+
+_NOT_EVALUATED = "not_evaluated"
+
+
+def replay_competent(n0, v, n1, brain_vocab, inner):
+    """Replay `ComprehensionProductionOrgan.competent`'s own boolean expression (comprehension_production_organ.py:719-735)
+    over the RECORDED returns of its inner `_verb_selects_of` / `_animacy_of` calls, in call order (never recomputed: a
+    second learned-lexicon call is a second read and need not match; packet 2.7, round 5). A term short-circuit
+    evaluation skipped is `not_evaluated`. Raises LookupError when the recorded calls do not follow the expression
+    (a call missing, out of order, or left over)."""
+    bv = brain_vocab or set()
+    pos = [0]
+
+    def take(fn, arg):
+        i = pos[0]
+        got = inner[i] if i < len(inner) else None
+        if got is None or got.get("fn") != fn or got.get("arg") != arg:
+            raise LookupError("inner call %d: expected %s(%r), recorded %r" % (i, fn, arg, got))
+        pos[0] += 1
+        return got.get("ret")
+
+    cov_v = take("_verb_selects_of", v) is not None
+    cov_n0 = (take("_animacy_of", n0) is not None) if cov_v else _NOT_EVALUATED
+    cov_n1 = (take("_animacy_of", n1) is not None) if cov_n0 is True else _NOT_EVALUATED
+    fully_covered = bool(cov_v and cov_n0 is True and cov_n1 is True)
+    oov_v = take("_verb_selects_of", v) is None
+    oov_n0 = ((take("_animacy_of", n0) is None) and (n0 not in bv)) if oov_v else _NOT_EVALUATED
+    oov_n1 = ((take("_animacy_of", n1) is None) and (n1 not in bv)) if oov_n0 is True else _NOT_EVALUATED
+    fully_oov = bool(oov_v and oov_n0 is True and oov_n1 is True)
+    if pos[0] != len(inner):
+        raise LookupError("%d recorded inner call(s) left over after the replay" % (len(inner) - pos[0]))
+    return {"fully_covered": fully_covered, "fully_oov": fully_oov,
+            "terms": {"covered_verb": cov_v, "covered_n0": cov_n0, "covered_n1": cov_n1,
+                      "oov_verb": oov_v, "oov_n0": oov_n0, "oov_n1": oov_n1}}
+
+
+class D4Recorder:
+    """The D4 recorder (packet 2.7; step 0 (2)): behaviour-preserving wrappers of `ComprehensionProductionOrgan.competent`,
+    the organ module's `extract_transitive`, and its module functions `_verb_selects_of` / `_animacy_of`, installed in
+    the arm worker BEFORE the server import (as KbProbe is). `competent()` resolves the two lexicon functions as module
+    globals at call time, so wrapping the module attributes sees the very calls it makes. Per `competent` call: the turn
+    label, the caller (judge / repair_target / the three-organ bus), the inputs, each word's membership in the
+    `brain_vocab` the caller passed and that set's size, the ordered inner lexicon calls with their RETURNS, and the
+    return; `fully_covered` / `fully_oov` are derived by replaying the expression over the recorded returns, and
+    `or_matches_return` compares their OR with the return (RECORDED, never raised; round 5). Inner calls nested inside
+    another inner call (a learned lexicon calling back) are counted, not listed, so the replay sees the expression's own
+    calls only."""
+    CAP = 400
+
+    def __init__(self):
+        self.label = None
+        self.calls, self.extract_calls = [], []
+        self.n_inner_outside, self.n_inner_nested, self.n_dropped = 0, 0, 0
+        self._stack, self._inner_depth = [], 0
+
+    def install(self):
+        from research.runners import comprehension_production_organ as CPO
+        rec = self
+        orig = {"competent": CPO.ComprehensionProductionOrgan.competent, "extract_transitive": CPO.extract_transitive,
+                "_verb_selects_of": CPO._verb_selects_of, "_animacy_of": CPO._animacy_of}
+
+        def _inner(name, fn):
+            def wrapped(*a, **k):
+                rec._inner_depth += 1
+                try:
+                    r = fn(*a, **k)
+                finally:
+                    rec._inner_depth -= 1
+                if rec._inner_depth > 0:
+                    rec.n_inner_nested += 1
+                elif rec._stack:
+                    rec._stack[-1]["inner"].append({"fn": name, "arg": a[0] if a else k.get("v", k.get("n")),
+                                                    "ret": _jsonable(r)})
+                else:
+                    rec.n_inner_outside += 1
+                return r
+            wrapped.__wrapped__ = fn
+            return wrapped
+
+        def extract_transitive(text):
+            r = orig["extract_transitive"](text)
+            if len(rec.extract_calls) < D4Recorder.CAP:
+                rec.extract_calls.append({"label": rec.label, "caller": _caller(1), "text": text,
+                                          "ret": list(r) if r else None})
+            else:
+                rec.n_dropped += 1
+            return r
+
+        def competent(self_, n0, v, n1, brain_vocab=None):
+            bv = brain_vocab or set()
+            c = _caller(1)
+            entry = {"label": rec.label, "caller": c, "caller_kind": _caller_kind(c), "inputs": [n0, v, n1],
+                     "brain_vocab_passed": brain_vocab is not None, "brain_vocab_size": len(bv),
+                     "in_brain_vocab": {"n0": n0 in bv, "v": v in bv, "n1": n1 in bv}, "inner": []}
+            rec._stack.append(entry)
+            try:
+                r = orig["competent"](self_, n0, v, n1, brain_vocab=brain_vocab)
+            except BaseException as e:
+                entry["exception"] = "%s: %s" % (type(e).__name__, e)
+                raise
+            finally:
+                rec._stack.pop()
+                if len(rec.calls) < D4Recorder.CAP:
+                    rec.calls.append(entry)
+                else:
+                    rec.n_dropped += 1
+            entry["return"] = _jsonable(r)
+            try:
+                rp = replay_competent(n0, v, n1, bv, entry["inner"])
+                entry.update(fully_covered=rp["fully_covered"], fully_oov=rp["fully_oov"], terms=rp["terms"],
+                             or_matches_return=bool(rp["fully_covered"] or rp["fully_oov"]) == bool(r))
+            except LookupError as e:
+                entry.update(fully_covered=None, fully_oov=None, replay_error=str(e), or_matches_return=False)
+            return r
+
+        CPO._verb_selects_of = _inner("_verb_selects_of", orig["_verb_selects_of"])
+        CPO._animacy_of = _inner("_animacy_of", orig["_animacy_of"])
+        CPO.extract_transitive = extract_transitive
+        CPO.ComprehensionProductionOrgan.competent = competent
+        return {k: repr(v) for k, v in orig.items()}
+
+    def record(self):
+        return {"calls": self.calls, "extract_calls": self.extract_calls, "n_calls": len(self.calls),
+                "n_inner_outside_competent": self.n_inner_outside, "n_inner_nested": self.n_inner_nested,
+                "n_dropped_over_cap": self.n_dropped}
+
+
+def d4_branch(calls, extract_calls, label):
+    """A teach turn's `competent()` branch, read from its `judge`-frame call and nothing else (packet 2.7): `covered`
+    (True with fully_covered), `oov` (True with fully_oov), `pass_through` (False), `undefined` (or_matches_return
+    False, or a True the replay cannot place), `out_of_scope` (the judge-frame `extract_transitive` returned None) or
+    `not_called` (no judge-frame call on the turn: the gate is off or D4 was skipped). Calls of the other callers are
+    returned beside it, never read as the branch."""
+    judge = [c for c in calls if c.get("label") == label and c.get("caller_kind") == "judge"]
+    others = [c for c in calls if c.get("label") == label and c.get("caller_kind") != "judge"]
+    out = {"label": label, "n_judge_calls": len(judge), "other_callers": [c.get("caller_kind") for c in others]}
+    if judge:
+        c = judge[-1]
+        out["call"] = c
+        if not c.get("or_matches_return"):
+            out["branch"] = "undefined"
+        elif c.get("return") is True:
+            out["branch"] = "covered" if c.get("fully_covered") else ("oov" if c.get("fully_oov") else "undefined")
+        else:
+            out["branch"] = "pass_through"
+        return out
+    ext = [e for e in extract_calls if e.get("label") == label
+           and (e.get("caller") or {}).get("function") == "judge"]
+    out["branch"] = "out_of_scope" if (ext and ext[-1].get("ret") is None) else "not_called"
+    return out
+
+
+class ProposePathProbe:
+    """Read-only wrappers of `_fact_shard_first_match`, `_fact_shard_candidates` and `_seq_block` (packet 2.10 step 0
+    (6)) that record the buffer's PROPOSE path (`fact_shard`, `escalated`, `seq_block`) and the fact-shard candidate
+    block ids with the cue roles queried. Each wrapper calls the original and returns its value unchanged. `scope()`
+    collects the events of one read (step 0 (a)); the always-on list keeps the first CAP events with their turn label."""
+    CAP = 600
+
+    def __init__(self):
+        self.label = None
+        self.events, self.n_dropped = [], 0
+        self._scope = None
+
+    def _note(self, ev):
+        ev["label"] = self.label
+        if self._scope is not None:
+            self._scope.append(ev)
+        if len(self.events) < ProposePathProbe.CAP:
+            self.events.append(ev)
+        else:
+            self.n_dropped += 1
+
+    @contextlib.contextmanager
+    def scope(self):
+        prev, self._scope = self._scope, []
+        try:
+            yield self._scope
+        finally:
+            self._scope = prev
+
+    def install(self):
+        from research.runners import one_brain_composer as OBC
+        P = self
+        C = OBC.OneBrainComposer
+        orig = {"_fact_shard_candidates": C._fact_shard_candidates, "_fact_shard_first_match": C._fact_shard_first_match,
+                "_seq_block": C._seq_block}
+
+        def _fact_shard_candidates(self_, cue_roles):
+            r = orig["_fact_shard_candidates"](self_, cue_roles)
+            P._note({"fn": "fact_shard_candidates", "cue_roles": dict(cue_roles),
+                     "ret": None if r is None else [int(x) for x in r]})
+            return r
+
+        def _fact_shard_first_match(self_, cue_roles):
+            idx, got = orig["_fact_shard_first_match"](self_, cue_roles)
+            esc = idx is OBC._FS_ESCALATE
+            P._note({"fn": "fact_shard_first_match", "cue_roles": dict(cue_roles), "escalate": esc,
+                     "idx": None if (esc or idx is None) else int(idx), "got": _jsonable(got)})
+            return idx, got
+
+        def _seq_block(self_, agent, action):
+            r = orig["_seq_block"](self_, agent, action)
+            P._note({"fn": "seq_block", "cue": [agent, action], "ret": None if r is None else int(r),
+                     "integrated_loop": _jsonable(getattr(self_, "integrated_loop", None))})
+            return r
+
+        C._fact_shard_candidates = _fact_shard_candidates
+        C._fact_shard_first_match = _fact_shard_first_match
+        C._seq_block = _seq_block
+        return {k: repr(v) for k, v in orig.items()}
+
+    def record(self):
+        return {"events": self.events, "n_events": len(self.events), "n_dropped_over_cap": self.n_dropped}
+
+
+def propose_path_of(events):
+    """`propose_path`, the selected block and `fs_candidates` of ONE buffer `query_patient` call, from its events
+    (packet 2.7, round 5): `fact_shard` (the shard served the cue), `escalated` (the shard returned _FS_ESCALATE and
+    `_seq_block` ran), `seq_block` (the fact shard inactive) or None (no buffer selection ran)."""
+    fm = [e for e in events if e["fn"] == "fact_shard_first_match"]
+    fc = [e for e in events if e["fn"] == "fact_shard_candidates"]
+    sb = [e for e in events if e["fn"] == "seq_block"]
+    out = {"fs_candidates": fc[0]["ret"] if fc else None, "fs_cue_roles": fc[0]["cue_roles"] if fc else None}
+    if fm and not fm[0]["escalate"]:
+        out.update(propose_path="fact_shard", selected_block=fm[0]["idx"])
+    elif fm:
+        out.update(propose_path="escalated", selected_block=sb[0]["ret"] if sb else None)
+    elif sb:
+        out.update(propose_path="seq_block", selected_block=sb[0]["ret"])
+    else:
+        out.update(propose_path=None, selected_block=None)
+    return out
+
+
+# The composer state a step-0 read may touch and must leave as it found it (the sequencer is built lazily by the read;
+# the fact-shard index is rebuilt by it at an unchanged K; `last_trace` is the per-turn trace slot).
+_GUARDED_COMPOSER_ATTRS = ("_seq", "_seq_score", "_seq_K", "_seq_drives", "_seq_dirty", "_seq_mapA", "_seq_mapX",
+                           "_seq_cuevocab_sig", "_seq_cleanup_conns_cache", "_fact_shard", "_fact_shard_built_K",
+                           "last_trace")
+_GUARDED_BRIDGE_ARRAYS = ("cp_membrane_potential_v", "cp_recovery_variable_u", "cp_firing_states")
+
+
+@contextlib.contextmanager
+def substrate_read_guard(buf):
+    """Instrument hygiene around a step-0 or fixture READ of the live session's buffer composer (packet 2.10 step 0,
+    read-only): the process-global RNG streams are preserved (a SimulationBridge build reseeds them,
+    research/runners/global_rng_guard.py), the composer bridge's v/u/firing arrays are restored (the production
+    `block_cleanup_scores` zeroes the WHOLE array, and on the production pool-bound composer that array also holds the
+    co-resident surprise and world-model slices), and the composer's lazily built sequencer / fact-shard state is put
+    back. The inert-read check (h) tests the result; this only removes the known perturbations."""
+    from research.runners.global_rng_guard import preserved_global_rng
+    b = getattr(buf, "b", None)
+    saved = {}
+    for nm in _GUARDED_BRIDGE_ARRAYS:
+        arr = getattr(b, nm, None) if b is not None else None
+        if arr is not None:
+            saved[nm] = arr.copy()
+    attrs = {k: getattr(buf, k) for k in _GUARDED_COMPOSER_ATTRS if hasattr(buf, k)}
+    info = {"global_rng": "preserved", "bridge_arrays_restored": sorted(saved), "composer_attrs_restored": sorted(attrs)}
+    with preserved_global_rng():
+        try:
+            yield info
+        finally:
+            for nm, arr in saved.items():
+                getattr(b, nm)[...] = arr
+            for k, v in attrs.items():
+                setattr(buf, k, v)
+
+
+def decoded_rows(buf):
+    """Every stored block's decoded row, read from the BOUND store (`_read_blocks`; never `.kb`), with its block id."""
+    out = []
+    for i, got in enumerate(buf._read_blocks()):
+        got = got or {}
+        out.append({"block": i, "agent": got.get("agent"), "action": got.get("action"), "patient": got.get("patient"),
+                    "polarity": got.get("polarity")})
+    return out
+
+
+def rows_under(rows, agent, action):
+    return [r for r in rows if r.get("agent") == agent and r.get("action") == action]
+
+
+# The `.kb` overwrite fixtures (packet 2.8, A17-A20; step 0 (4) and (g)). `select`: `match` overwrites the one entry
+# under `cue` whose patient is `old` (the entry t_heron_hunt_worm wrote); `first` overwrites the FIRST entry under
+# `cue` (t_heron_hunt's). A `removal` takes `old` out of the list; an `addition` puts `new` first under the cue.
+KB_OVERWRITE_PLANS = {
+    "amb1_worm_to_frog": {"cue": ["heron", "hunt"], "select": "match", "old": "worm", "new": "frog", "kind": "removal",
+                          "refresh_chat": True, "arms": "A17 (M1 on) / A18 (flag off), table infer_amb1"},
+    "dup_first_frog_to_worm": {"cue": ["heron", "hunt"], "select": "first", "old": "frog", "new": "worm",
+                               "kind": "addition", "refresh_chat": False,
+                               "arms": "A19 (M1 on) / A20 (flag off), table infer_dup"},
+}
+
+
+def apply_kb_overwrite(composer, chat, plan_name, probe, after_turn=None):
+    """Overwrite ONE `.kb` entry's patient string with a fresh (fact, handle) tuple, as `update_on_mismatch` and
+    `apply_kb_scramble` do, leaving the bound vectors, the drives and the sequencer untouched (packet 2.8). On the
+    removal plan (A17/A18) the chat's lists are refreshed from the overwritten `.kb` (`chat._refresh_facts()`) and the
+    fact-shard index is marked stale (`_fact_shard_built_K = -1`). Returns the ENGAGEMENT record: engaged only if
+    (i) exactly the planned entry changed, (ii) the decoded rows (the bound store) are identical before and after,
+    (iii) the list oracle over the overwritten list predicts a different p_prey_eat outcome from the same oracle over
+    the decoded rows, and (iv) the intervention is the one the plan names (read back over all K rows, built-ins
+    included; on the removal plan also off the chat's lists and `_fact_shard_built_K`)."""
+    plan = KB_OVERWRITE_PLANS[plan_name]
+    rec = {"plan": plan_name, "plan_spec": dict(plan), "after_turn_index": after_turn, "engaged": False, "reason": None}
+    buf = _kb_buffer(composer)
+    if buf is None:
+        rec["reason"] = "composer has no .kb"
+        return rec
+    cue = tuple(plan["cue"])
+    before = _kb_triples(buf)
+    under = [i for i, (a, v, _p) in enumerate(before) if (a, v) == cue]
+    if plan["select"] == "match":
+        cand = [i for i in under if before[i][2] == plan["old"]]
+        idx = cand[0] if len(cand) == 1 else None
+        if idx is None:
+            rec["reason"] = "the plan needs exactly one %s entry with patient %r; found %d" % (cue, plan["old"], len(cand))
+    else:
+        idx = under[0] if under and before[under[0]][2] == plan["old"] else None
+        if idx is None:
+            rec["reason"] = "the first %s entry does not hold %r (entries under the cue: %s)" % (
+                cue, plan["old"], [before[i] for i in under])
+    rec.update(kb_before=before, entries_under_cue_before=under, planned_index=idx)
+    if idx is None:
+        return rec
+    with substrate_read_guard(buf):
+        dec_before = decoded_rows(buf)
+    fact, handle = buf.kb[idx]
+    buf.kb[idx] = (dict(fact, patient=plan["new"]), handle)
+    if plan["refresh_chat"]:
+        try:
+            chat._refresh_facts()
+            rec["chat_refreshed"] = True
+        except Exception as e:
+            rec["chat_refreshed"] = "raised %s: %s" % (type(e).__name__, e)
+        buf._fact_shard_built_K = -1
+    after = _kb_triples(buf)
+    with substrate_read_guard(buf):
+        dec_after = decoded_rows(buf)
+    changed = [j for j in range(min(len(before), len(after))) if before[j] != after[j]]
+    cond_i = len(after) == len(before) and changed == [idx] and after[idx][2] == plan["new"]
+    cond_ii = dec_before == dec_after
+    dec_triples = [[r["agent"], r["action"], r["patient"]] for r in dec_after]
+    pred_list = list_chain(after, probe["x"], probe["hop1"], probe["hop2"])
+    pred_store = list_chain(dec_triples, probe["x"], probe["hop1"], probe["hop2"])
+    cond_iii = pred_list != pred_store
+    dec_under = [r["patient"] for r in rows_under(dec_after, *cue)]
+    iv = {}
+    if plan["kind"] == "removal":
+        word = plan["old"]
+        iv["absent_from_every_kb_field"] = all(word not in t for t in after)
+        iv["still_decoded_under_cue"] = word in dec_under
+        sf = _facts_of(chat)
+        iv["absent_from_chat_stored_facts"] = all(word not in t for t in sf)
+        iv["absent_from_patients_set"] = word not in (getattr(chat, "patients_set", None) or set())
+        iv["fact_shard_built_K"] = getattr(buf, "_fact_shard_built_K", None)
+        iv["fact_shard_reset"] = iv["fact_shard_built_K"] == -1
+        rec["stored_facts_after_overwrite"] = sf
+    else:
+        word = plan["new"]
+        first = next((t for t in after if (t[0], t[1]) == cue), None)
+        iv["first_entry_under_cue"] = first
+        iv["is_patient_of_first_entry"] = bool(first and first[2] == word)
+        iv["absent_from_decoded_rows_under_cue"] = word not in dec_under
+    cond_iv = all(v for k, v in iv.items() if isinstance(v, bool))
+    rec.update(kb_after=after, changed_indices=changed, decoded_before=dec_before, decoded_after=dec_after,
+               decoded_patients_under_cue=dec_under, predicted_from_list=pred_list, predicted_from_decoded=pred_store,
+               conditions={"i_exactly_planned_entry": cond_i, "ii_decoded_rows_unchanged": cond_ii,
+                           "iii_list_and_store_predictions_differ": cond_iii, "iv_intervention_as_planned": cond_iv},
+               condition_iv=iv)
+    rec["engaged"] = bool(cond_i and cond_ii and cond_iii and cond_iv)
+    if not rec["engaged"]:
+        rec["reason"] = "not engaged: %s" % {k: v for k, v in rec["conditions"].items() if not v}
+    return rec
+
+
+# The LTM fixture (packet 2.8 `infer_xtier`; step 0 (5)): a fact written into the session's PRIVATE LTM after turn 0.
+LTM_FIXTURES = {"xtier_heron_hunt_fish": {"fact": ["heron", "hunt", "fish"], "polarity": "AFFIRM",
+                                          "arms": "A15 (flag off) / A16 (M1 on), table infer_xtier, offiso"}}
+LTM_FIXTURE_ENV_KEYS = ("BRAIN_SHARED_LTM", "BRAIN_LTM_RNG_ISOLATE", "BRAIN_ONE_BRAIN")
+
+
+def ltm_readback(ltm, agent, action):
+    """`ltm.query_patient(agent, action)` and `all_candidate_patients(ltm.shard_for(agent), agent, action)`, the two
+    read-backs the packet names (2.8), each with its exception recorded instead of raised."""
+    out = {}
+    if ltm is None:
+        return {"ltm": None}
+    from research.runners.global_rng_guard import preserved_global_rng
+    with preserved_global_rng():
+        try:
+            out["query_patient"] = _jsonable(ltm.query_patient(agent, action))
+        except Exception as e:
+            out["query_patient_error"] = "%s: %s" % (type(e).__name__, e)
+        try:
+            from webapp.gnw_deliberation import all_candidate_patients
+            out["all_candidate_patients"] = _jsonable(all_candidate_patients(ltm.shard_for(agent), agent, action))
+        except Exception as e:
+            out["all_candidate_patients_error"] = "%s: %s" % (type(e).__name__, e)
+        try:
+            out["routed_shard"] = int(ltm.route(agent))
+        except Exception:
+            out["routed_shard"] = None
+    return out
+
+
+def apply_ltm_fixture(chat, name):
+    """Right after turn 0: record `ltm_type` (`type(chat.inner.composer.ltm).__name__`) and the env values as read; write
+    the fixture fact with `ltm.store` ONLY when the type is `ShardedPhasorStore` (never through `ltm.shared_store`,
+    never on the shared default); record any `store_exception`; read it back (packet 2.8, round 8)."""
+    fx = LTM_FIXTURES[name]
+    a, x, p = fx["fact"]
+    rec = {"fixture": name, "fact": list(fx["fact"]), "env_as_read": {k: os.environ.get(k) for k in LTM_FIXTURE_ENV_KEYS},
+           "ltm_type": None, "written": False, "store_exception": None}
+    try:
+        ltm = getattr(chat.inner.composer, "ltm", None)
+    except Exception as e:
+        rec["store_exception"] = "no composer: %s: %s" % (type(e).__name__, e)
+        return rec
+    rec["ltm_type"] = type(ltm).__name__
+    if rec["ltm_type"] == "ShardedPhasorStore":
+        from research.runners.global_rng_guard import preserved_global_rng
+        try:
+            with preserved_global_rng():
+                ltm.store(a, x, p, polarity=fx["polarity"])
+            rec["written"] = True
+        except Exception as e:
+            rec["store_exception"] = "%s: %s" % (type(e).__name__, e)
+    rec["readback_after_write"] = ltm_readback(ltm, a, x)
+    return rec
+
+
 def _facts_of(chat):
     """The brain's stored facts at this moment, as (agent, action, patient) string triples (the C1/C5 grounding set)."""
     out = []
@@ -638,14 +1189,18 @@ def process_record(srv):
     return rec
 
 
-def _scramble_now(srv, session, turns, cfg):
+def _scramble_now(srv, session, turns, cfg, mode=None, plan=None, after_turn=None):
     """Apply the kb scramble to the live session's composer (called once, before the first non-teach turn) and return
-    its engagement record plus the composer's types and the chat's own `stored_facts` snapshot (untouched by design)."""
+    its engagement record plus the composer's types and the chat's own `stored_facts` snapshot (untouched by design).
+    Mode `kb_overwrite` (the C2 packet's A17-A20 fixtures, 2.8) applies the one-entry overwrite `plan` instead."""
     chat = _find_chat(srv, session)
     told = _taught([{"role": r, "message": m} for _l, m, r in turns])
     try:
         comp = chat.inner.composer
-        rec = apply_kb_scramble(comp, told, cfg["keep"], cfg["probe"])
+        if mode == "kb_overwrite":
+            rec = apply_kb_overwrite(comp, chat, plan, cfg["probe"], after_turn=after_turn)
+        else:
+            rec = apply_kb_scramble(comp, told, cfg["keep"], cfg["probe"])
         buf = getattr(comp, "buffer", comp)
         rec["composer_types"] = {"composer": type(comp).__name__, "buffer": type(buf).__name__,
                                  "ltm": type(getattr(comp, "ltm", None)).__name__}
@@ -653,6 +1208,23 @@ def _scramble_now(srv, session, turns, cfg):
         rec["told"] = told
     except Exception as e:                               # an instrument failure is recorded, never silent, never fatal
         rec = {"engaged": False, "reason": "scramble raised %s: %s" % (type(e).__name__, e)}
+    return rec
+
+
+def _c2_turn_record(chat, prev):
+    """Per-turn record of a full step-0 worker, made after the reply (list reads only, no substrate run): the buffer's
+    `.kb` length (did a teach append?) and a copy of `chat._last_gnw_delib` when THIS turn wrote one (step 0 (d))."""
+    rec = {}
+    try:
+        buf = _kb_buffer(chat.inner.composer)
+        rec["kb_len"] = len(buf.kb) if buf is not None else None
+    except Exception as e:
+        rec["kb_len"] = None
+        rec["kb_len_error"] = "%s: %s" % (type(e).__name__, e)
+    d = getattr(chat, "_last_gnw_delib", None) if chat is not None else None
+    if isinstance(d, dict) and prev.get("gnw_delib") != id(d):
+        prev["gnw_delib"] = id(d)
+        rec["gnw_delib"] = _jsonable({k: v for k, v in d.items() if not callable(v)})
     return rec
 
 
@@ -664,11 +1236,29 @@ def run_worker(seed, group, arm, out_path, labels=None):
     for k, v in dict(GROUPS[group]["env"], **env).items():
         os.environ[k] = v
     os.environ["BRAIN_CHAT_SEED"] = str(int(seed))
+    # C2 spiking-hops packet entries only (`arm_c2` is None for every pre-existing arm, so none of this runs for them)
+    c2 = arm_c2(group, arm)
+    c2_mode = (c2 or {}).get("step0")
+    c2_info = (GROUPS[group].get("informational") or {}).get(arm.split(".rep")[0]) or {}
+    if c2_mode and int(seed) in GATE_SEEDS:
+        sys.stderr.write("C2 step-0 entry %s refused on GATE seed %d: step 0 is read-only and dev seeds only "
+                         "(c2-spiking-hops-PACKET.md 2.10)\n" % (arm, int(seed)))
+        return 2
     patch_rec = install_patch(patch, seed)
     hash_ok = os.environ.get("PYTHONHASHSEED") == "0"
     # the corpus-learned production organs read data/corpus/tinystories.txt from the repo root and DEGRADE silently
     # without it (Stage-1 packet, section 3 (d)); recorded per arm and required by the aggregate's preconditions.
     corpus_present = os.path.exists(os.path.join(_REPO, "data", "corpus", "tinystories.txt"))
+    # C2 packet 2.7 / 2.10 step 0 (2) and (6): the D4 recorder (every C2 entry except the bare inert-check worker) and the
+    # propose-path wrappers (the full step-0 reads) are installed BEFORE the server import builds any organ or composer
+    d4rec = pprobe = None
+    c2_patches = {}
+    if c2 is not None and c2_mode != "bare":
+        d4rec = D4Recorder()
+        c2_patches["d4_recorder"] = d4rec.install()
+    if c2_mode == "full":
+        pprobe = ProposePathProbe()
+        c2_patches["propose_path"] = pprobe.install()
     t0 = time.time()
     from webapp.server import brain_chat, BrainChatRequest
     import_s = time.time() - t0
@@ -685,14 +1275,42 @@ def run_worker(seed, group, arm, out_path, labels=None):
     # block is done. `scr_mode` is None for every other arm, so none of this runs for them.
     scr_mode = arm_scramble(group, arm)
     probe, scr_rec = None, None
+    c2_prev = {}
     if scr_mode:
         probe = KbProbe(scr_mode)
         probe_patch = probe.install()
+    c2_rec = {"mode": c2_mode, "table": (c2 or {}).get("table"), "instrumentation": c2_patches,
+              "per_turn": {}} if c2 is not None else None
+    post_teach = False
     for i, (label, msg, role) in enumerate(turns):
-        if scr_mode and scr_rec is None and role != "teach":
-            scr_rec = _scramble_now(_srv, session, turns, GROUPS[group]["scramble_cfg"])
+        if not post_teach and role != "teach":
+            # the end of the teach block, before the first probe (once): the teach-log read FIRST (packet 2.7, round 6),
+            # then the step-0 reads (a)-(f), then any `.kb` fixture, then the LTM fixture's second read-back
+            post_teach = True
+            if c2_rec is not None and c2_mode != "bare":
+                c2_rec["teach_block_last_turn"] = i - 1
+                c2_rec["stored_facts_after_teach"] = _facts_of(_find_chat(_srv, session))
+            if c2_mode == "full":
+                from research.runners import c2_hops_step0 as C2S0
+                for p in (probe, d4rec, pprobe):
+                    if p is not None:
+                        p.label = "c2_step0_reads"
+                c2_rec["reads"] = C2S0.run_reads(_find_chat(_srv, session), int(seed), c2["table"], pprobe)
+            if scr_mode and scr_rec is None:
+                scr_rec = _scramble_now(_srv, session, turns, GROUPS[group]["scramble_cfg"], mode=scr_mode,
+                                        plan=c2_info.get("overwrite_plan"), after_turn=i - 1)
+            if c2_rec is not None and c2_info.get("ltm_fixture") and "ltm_fixture" in c2_rec:
+                fx = LTM_FIXTURES[c2_info["ltm_fixture"]]["fact"]
+                try:
+                    _ltm = getattr(_find_chat(_srv, session).inner.composer, "ltm", None)
+                except Exception:
+                    _ltm = None
+                c2_rec["ltm_fixture"]["readback_before_first_probe"] = ltm_readback(_ltm, fx[0], fx[1])
         if probe is not None:
             probe.label = label
+        for p in (d4rec, pprobe):
+            if p is not None:
+                p.label = label
         t1 = time.time()
         try:
             r = brain_chat(BrainChatRequest(session=session, message=msg, brain=BRAIN_NAME, renderer=RENDERER,
@@ -713,6 +1331,11 @@ def run_worker(seed, group, arm, out_path, labels=None):
             got = read_builtin_facts(_srv, session)
             if got is not None:
                 builtin_facts = got
+        if c2_rec is not None:
+            if i == 0 and c2_info.get("ltm_fixture"):
+                c2_rec["ltm_fixture"] = apply_ltm_fixture(chat, c2_info["ltm_fixture"])   # right after turn 0 (2.8)
+            if c2_mode == "full":
+                c2_rec["per_turn"][label] = _c2_turn_record(chat, c2_prev)
     if builtin_facts is None:
         builtin_facts = []              # no chat was ever found (same observable shape as before the recorder fix)
     out = {"runner": "research/runners/stage2_exit_gate.py", "prereg": PREREG,
@@ -728,6 +1351,21 @@ def run_worker(seed, group, arm, out_path, labels=None):
         out["kb_scramble"] = {"mode": scr_mode, "cfg": GROUPS[group]["scramble_cfg"], "engagement": scr_rec,
                               "instrumentation": probe_patch, "distinct_calls": probe.distinct, "qp_calls": probe.qp,
                               "n_distinct_calls": len(probe.distinct), "n_qp_calls": len(probe.qp)}
+    if c2_rec is not None:
+        if d4rec is not None:
+            c2_rec["d4_recorder"] = d4rec.record()
+            c2_rec["d4_branches"] = {l: d4_branch(d4rec.calls, d4rec.extract_calls, l)
+                                     for l, _m, r in turns if r == "teach"}
+        if pprobe is not None:
+            c2_rec["propose_path_events"] = pprobe.record()
+        if c2_mode == "full":
+            try:
+                from webapp import gnw_deliberation as _gd
+                c2_rec["ws_seed"] = int(_gd._DEFAULT_SEED)        # the workspace seed every hop would read (2.2)
+            except Exception as e:
+                c2_rec["ws_seed"] = None
+                c2_rec["ws_seed_error"] = "%s: %s" % (type(e).__name__, e)
+        out["c2_hops"] = c2_rec
     os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
     with open(out_path, "w") as f:
         json.dump(out, f, indent=1, default=str)
@@ -1788,12 +2426,13 @@ def report(agg):
 def pool_job_lines(sha, seeds=GATE_SEEDS, out_dir=GATE_OUT_DIR, informational=True, max_age_h=MAX_AGE_H):
     """One pool job per (seed, group, arm). Dev seed 7 peaked at 6.3-8.1 GB RSS (emo highest) -> mem_gb=MEM_GB under a
     MEMCAP_GB cap. Every line declares max_age_h (the dispatcher's 12 h debris guard would otherwise skip a deep,
-    legitimate queue)."""
+    legitimate queue). The C2 step-0 entries are never emitted here (`gate_arms_for`): they are read-only, dev seeds
+    only, with their own pool lines (research/runners/c2_hops_step0.py)."""
     out = []
     max_age_h = min(int(max_age_h), 240)
     for seed in seeds:
         for group in GROUPS:
-            for arm in arms_for(group, with_informational=informational):
+            for arm in gate_arms_for(group, informational):
                 p = shard_path(out_dir, seed, group, arm)
                 cmd = ("cd ~/derisk-pool/revisions/%s && bash tools/mem_ok.sh %d 1 && mkdir -p %s && "
                        "bash tools/memcap.sh %d -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 "
@@ -2048,7 +2687,7 @@ def selftest(verbose=True):
             g["verdict"] == "INCOMPLETE" and any("turn table differs" in r for r in g["seeds"][1]["undefined_reasons"]))
     lines = pool_job_lines("0123456789abcdef" * 2 + "01234567")
     checks["pool jobs: one per (seed, group, arm), pinned, memcapped, prereg-tagged, gate flag + max_age_h present"] = (
-        len(lines) == len(GATE_SEEDS) * sum(len(arms_for(g)) for g in GROUPS)
+        len(lines) == len(GATE_SEEDS) * sum(len(gate_arms_for(g)) for g in GROUPS)      # C2 step-0 entries: dev only
         and all(("memcap.sh %d" % MEMCAP_GB) in c and "--allow-gate-seed" in c and PREREG in c and "revisions/0123456789" in c
                 and "max_age_h=240" in w and ("mem_gb=%d" % MEM_GB) in w for c, w in lines))
     ok = all(checks.values())
