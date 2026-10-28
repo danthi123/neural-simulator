@@ -267,10 +267,12 @@ def build():
                               "sustained single-pattern state reads reliably in the organ's 15-step late window (fraction of "
                               "windows below half the plateau, steps 100-1000, thal 0, drive 2500, stable). At 16, 8 and 6 "
                               "every weight 4-10 has windows below half; at 5 only weight 5 has none, with a worst window of "
-                              "~0.6 of the plateau; at 4 weights 4.5-8 have none and at 6.5 the worst window is 0.80-0.88 of "
+                              "~0.6 of the plateau; at 4 weights 4.5-8 have none and at 6.5 the worst window is 0.80-0.89 of "
                               "the plateau. At 2 the read is reliable but the neighbouring overlapped pattern is recruited "
-                              "from weight 6.5 (the organ's confident-commit leak). 4 over 5 is the margin judgment the swap "
-                              "made",
+                              "from weight 6.5 (the organ's confident-commit leak). Read literally, the rule selects 5 "
+                              "(weight 5 has no window below half; worst window ~0.6 of the plateau); 4 over 5 is a recorded "
+                              "margin judgment (weights 4.5-8 have none and the worst window at 6.5 is 0.80-0.89), not the "
+                              "rule's output",
                       "source": ["%s/nws%d_s%d.json" % (SUSTAIN, n, s) for n in (2, 4, 5, 6, 8, 16) for s in CAL_SEEDS]
                       + ["%s/stop_ignition_inhibition_s7.json" % RAW]},
         "w_rec": {**pr("w_rec"),
@@ -342,6 +344,8 @@ def build():
         raise ValueError("the literal comparison arm differs from the re-calibration in more than margin_ref/scale")
 
     n_checks = len(CHECK_ORDER)
+    stop_ok = set(gate["checks_passed_seeds"][CHECK_ORDER[5]])
+    freeze_ok = set(gate["checks_passed_seeds"][CHECK_ORDER[8]])
     claims = {
         "old integrator, production: a single pattern ignites only at rate 1/3 with 103-109 cells out of range": all(
             v["solo_ignited_rates"] == [0.3333] and 103 <= v["solo_ignited_oor_cells"][0]
@@ -368,6 +372,26 @@ def build():
                                                          CHECK_ORDER[13])),
         "re-calibration: the global stop on 11 of 15, the freeze holding the conflict on 7 of 15": (
             gate["checks_passed_count"][CHECK_ORDER[5]] == 11 and gate["checks_passed_count"][CHECK_ORDER[8]] == 7),
+        "re-calibration: verdicts GO 5 / NO-GO 1 (seed 13) / UNDEFINED 9": (
+            sorted(v["verdict"] for v in gate["per_seed"].values()) == ["GO"] * 5 + ["NO-GO"] + ["UNDEFINED"] * 9
+            and [s for s, v in gate["per_seed"].items() if v["verdict"] == "NO-GO"] == [13]),
+        "re-calibration: the stop clears on 11 of 15; on 5 of those (4, 8, 11, 14, 15) the boost-0 freeze precondition "
+        "fails; a standing conflict is removed on 6 of 15 (1, 3, 5, 7, 10, 13)": (
+            sorted(stop_ok) == [1, 3, 4, 5, 7, 8, 10, 11, 13, 14, 15]
+            and sorted(stop_ok - freeze_ok) == [4, 8, 11, 14, 15] and sorted(stop_ok & freeze_ok) == [1, 3, 5, 7, 10, 13]
+            and all(gate["per_seed"][s]["verdict"] == "UNDEFINED" for s in stop_ok - freeze_ok)),
+        "norm_ws_w: at 4 weights 4.5-8 have no window below half and the worst window at 6.5 is 0.80-0.89 of the plateau": (
+            all(sustain["nws4"]["s%d" % s][w]["frac_windows_below_half"] == 0.0 for s in CAL_SEEDS
+                for w in ("4.5", "5", "6.5", "8"))
+            and [round(sustain["nws4"]["s%d" % s]["6.5"]["worst_window"] / sustain["nws4"]["s%d" % s]["6.5"]["plateau"], 2)
+                 for s in CAL_SEEDS] == [0.89, 0.80]),
+        "norm_ws_w: the literal rule selects 5 (weight 5 has no window below half at 5, worst ~0.6 of the plateau; every "
+        "weight 4-10 has windows below half at 6, 8 and 16)": (
+            all(sustain["nws5"]["s%d" % s]["5"]["frac_windows_below_half"] == 0.0
+                and 0.55 <= sustain["nws5"]["s%d" % s]["5"]["worst_window"] / sustain["nws5"]["s%d" % s]["5"]["plateau"]
+                <= 0.65 for s in CAL_SEEDS)
+            and all(sustain["nws%d" % n]["s%d" % s][w]["frac_windows_below_half"] > 0.0 for n in (6, 8, 16)
+                    for s in CAL_SEEDS for w in sustain["nws%d" % n]["s%d" % s])),
         "literal-formula arm: GO 4 of 15": lit["n_go"] == 4,
         "two-content held set: every check on 15 of 15": held["all_checks_pass_seeds"] == list(ORGAN_SEEDS),
         "every organ sidecar is clean and from one commit": (not gate["any_sidecar_dirty"]) and (not lit["any_sidecar_dirty"])
@@ -410,17 +434,23 @@ def build():
             "recal_stable_dev1_15": gate, "literal_formula_stable_dev1_15": lit,
             "production_old_integrator_s7_s8": prod_off, "production_stable_integrator_s7_s8": prod_on,
             "supplementary_two_content_held_set_dev1_15": held,
-            "reading": "at the re-calibration the organ's GO holds on 5 of 15 dev seeds (1, 3, 5, 7, 10). The capability "
-                       "itself (a co-ignited conflict driven to n_ignited 0 by the conflict-gated depression) holds on 11 of "
-                       "15; selectivity, normalization load-bearing, byte-identity and determinism on 15 of 15. The dominant "
-                       "failure is not the stop: the anti-cheats that need the three-content conflict to HOLD without the "
-                       "stop (freeze, scramble, conflict-off) pass on 7 of 15, because on valid membranes the divisively "
-                       "normalized workspace resolves a three-way co-ignition to one pattern by itself within ~250 steps; on "
+            "reading": "at the re-calibration the organ's verdicts over 15 dev seeds are GO 5 (1, 3, 5, 7, 10), NO-GO 1 "
+                       "(seed 13, the continuous stop) and UNDEFINED 9, each of the 9 with an unmet validity precondition; "
+                       "the GO count does not include the UNDEFINED seeds. The stop clears the conflict (n_ignited 0 after "
+                       "the pulse) on 11 of 15, but on 5 of those 11 (seeds 4, 8, 11, 14, 15) the boost-0 freeze "
+                       "precondition fails (the three-content conflict is already resolved to one pattern without the "
+                       "boost), so the organ gate is UNDEFINED there; a standing conflict is removed on 6 of 15 (1, 3, 5, "
+                       "7, 10, 13). Selectivity, normalization load-bearing, byte-identity and determinism hold on 15 of 15. "
+                       "The dominant failure is not the stop: the anti-cheats that need the three-content conflict to HOLD "
+                       "without the stop (freeze, scramble, conflict-off) pass on 7 of 15, because on valid membranes the "
+                       "divisively normalized workspace resolves a three-way co-ignition to one pattern by itself within ~250 "
+                       "steps; on "
                        "the old integrator the lockstep runaway made every co-ignited pattern self-sufficient. The remaining "
                        "stop failures are the sensor: a conflict that reads a margin near or above margin_ref gets a boost in "
                        "the 0.25-0.5 dip or none (seeds 2, 9, 12; seed 6 starts with one pattern). With the two contents "
-                       "production usually holds, every conflict check passes on 15 of 15 (supplementary, not the gate). No "
-                       "constant was re-derived after the gate ran",
+                       "production usually holds, the stop, the normalization lesion, freeze and scramble pass on 15 of 15 "
+                       "(supplementary, not the gate; conflict-off, the conflict-gated boost and the continuous stop were not "
+                       "run with two). No constant was re-derived after the gate ran",
             "source": [GATE + "/", GATE_LIT + "/", HELD + "/"]},
         "order_of_events": "all constants were fixed from the cited sweeps (curve, inhibition, sustain, thal, knee, window, "
                            "margins) before the organ gate ran; margin_ref's midpoint reading and the literal-formula comparison "
