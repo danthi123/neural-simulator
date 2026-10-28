@@ -1,0 +1,51 @@
+{
+  "runner": "research.runners.load_bearing_fraction",
+  "metric": "load_bearing_fraction",
+  "repeats": 2,
+  "seed": 43,
+  "backend": "numpy",
+  "cuda_visible_devices": null,
+  "source_prov_abstain_at_tie_env": null,
+  "affect_marker_settle_env": null,
+  "per_faculty": [
+    {
+      "faculty": "onebrain-xedge",
+      "turn": "held",
+      "kind": "thin",
+      "flag": "BRAIN_ONEBRAIN_XEDGE_LESION",
+      "load_bearing": null,
+      "verdict": "not-covered:thin",
+      "change_kind": null,
+      "diffs": [],
+      "treatment_diffs": null,
+      "control_diffs": null,
+      "attributable_fraction": null,
+      "null_control_clean": null,
+      "lesion_reproduced": null,
+      "flag_resolves": true,
+      "note": "research/runners/onebrain_xedge_production.py (default-ON since 2026-08-28: BRAIN_ONEBRAIN_XEDGE and BRAIN_ONEBRAIN_XEDGE_LEARN both default True, so unlike learned-referent this needs NO companion flag). DESIGN 1: `comprehension.xedge_live_learn` (attached on 'held' after 'hold', the existing wm-binding-advanced hold->held group) is a per-turn CREDIT trace, not the lesion's target -- `credit_live_turn_from_comprehension`'s early-return conditions gate on xedge_enabled/xedge_learn_enabled only, so the trace is PRESENT under lesion too, and its 'direction' field is the sign of the held referent's own per-noun agent-evidence (a0), which is a property of the SVO structure itself, not of the cross-edge -- not expected to flip under this lesion. DESIGN 2: the cross-edge's real target is the shared d6-WM->comprehension MARGIN (whether `comprehension.on`/`comprehended` clears the confidence threshold) on a near-borderline OOV case, which needs a probe deliberately tuned to sit AT the pre-cross-edge threshold so the xedge nudge is what tips it -- the existing 'animacy'/'verbsel' OOV turns are tuned for the LEARNED-CUE rows, not this margin, and neither was confirmed (nor refuted) to sit at the right operating point without a run this lane's compute could not complete (see the module docstring's resource note). Left thin rather than guessed at."
+    }
+  ],
+  "determinism": {
+    "deterministic": null,
+    "n_null_controls_checked": 0,
+    "dirty_null_controls": []
+  },
+  "counts": {
+    "n_faculties_total": 1,
+    "n_coverable_env_lesion": 0,
+    "n_exercised": 0,
+    "n_load_bearing": 0,
+    "n_not_load_bearing": 0,
+    "n_not_exercised": 0,
+    "n_noisy": 0,
+    "n_lesion_knob_missing": 0,
+    "n_in_process": 0,
+    "n_thin": 1,
+    "n_mechanism_only": 0,
+    "n_proposed": 0
+  },
+  "load_bearing_fraction": null,
+  "load_bearing_faculties": [],
+  "not_load_bearing_faculties": []
+}

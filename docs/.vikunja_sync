@@ -329,3 +329,6 @@ Board #238 updated: feasibility check complete, RESULT PROVISIONAL research/cs-r
 
 ## 2026-10-26  stage2-fixes + substrate (Claude)
 #273 updated with the checked Stage-2 causes; #261 BG time-step finding; #274 NEW substrate integrity (membrane census: 12 circuits with non-physical voltages). Findings: stage2-fail-diagnoses, emotion-organ-bounded-conductance-derisk, izh-membrane-substeps-derisk, membrane-census-dev7, c2-kb-scramble-host-ownership.
+
+## 2026-10-28  claude landing-1028
+#273 Stage-2 retake: emo B1-B7 PASS, B8 amendment 2 (rescore next), C3 dev PASS 11/11 + gate prereg, C2 packet r5/r6; #274 stable-recal record corrected, mechc merged OFF; #186 curiosity per-topic stop dev PASS.

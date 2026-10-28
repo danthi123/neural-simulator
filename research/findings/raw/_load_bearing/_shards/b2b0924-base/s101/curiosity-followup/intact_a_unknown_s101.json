@@ -1,0 +1,200 @@
+{
+  "unknown": {
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+    "abstained": true,
+    "recalled_svo": null,
+    "derived": false,
+    "derived_from": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "role": "agent",
+          "word": "capital",
+          "confidence": null,
+          "margin": null,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "capital"
+        },
+        {
+          "role": "action",
+          "word": "france",
+          "confidence": null,
+          "margin": null,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "france"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 5,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 6880,
+        "frac_fired": 0.16744186046511628,
+        "mean_magnitude": 1429.1844021443057
+      },
+      "composer": "onebrain"
+    },
+    "provenance": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": {
+      "on": true,
+      "lesioned": false,
+      "novelty": 0.9863100703569387,
+      "want_hz": 38.88888888888888,
+      "threshold": 19.09722222222222,
+      "curious": true,
+      "calib": {
+        "want_novel_hz": 38.19444444444444,
+        "want_familiar_hz": 0.0,
+        "threshold_hz": 19.09722222222222,
+        "novel_signal": 0.95,
+        "familiar_signal": 0.0,
+        "read_reps": 4
+      },
+      "topic": "capital",
+      "graded_novelty": {
+        "on": true,
+        "value": 0.9863100703569387,
+        "lesioned": false
+      },
+      "curiosity_da": {
+        "on": true,
+        "lesioned": false,
+        "da_level": 0.4631434339204032,
+        "da_tonic": 0.5,
+        "k_da": 1.5,
+        "da_crave_gain": 0.9447151508806048,
+        "base_threshold": 19.09722222222222,
+        "eff_threshold": 20.21479406191483,
+        "want_hz": 38.88888888888888,
+        "want_eff_hz": 36.73892253424573,
+        "curious": true
+      }
+    },
+    "multiref": null,
+    "noncontradiction": null,
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "ema_valence": 0.0,
+      "ema_arousal": 0.0,
+      "body_h": 0.5,
+      "body_a": 0.0,
+      "mood": -0.002208333333333333,
+      "felt_arousal": 0.0,
+      "level": 0,
+      "high_arousal": false,
+      "lead": "",
+      "reason": "neutral_hold",
+      "seed": 101,
+      "vplus_rate": 0.038875,
+      "vminus_rate": 0.04108333333333333
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 1,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": null,
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 101,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "turn_engagement": 0.41818181818181815,
+      "ema_engagement": 0.25090909090909086,
+      "afferent_pA": 351.2727272727272,
+      "da_level": 0.4631434339204032,
+      "snc_firing": 0.06916666666666661,
+      "mode": "neutral",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 101,
+      "shared_salience": {
+        "raw": 0.6884615384615385,
+        "want_hz": 15.97222222222222,
+        "normalized": 0.41818181818181815,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.9807692307692308,
+        "n_tokens": 2,
+        "per_word_freshness": [
+          1.0,
+          0.9615384615384616
+        ],
+        "fresh_ref": 26.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.6433152442032553,
+      "da_level": 0.4631434339204032,
+      "lesioned": false
+    }
+  }
+}
