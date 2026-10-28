@@ -1,0 +1,34 @@
+{
+ "run_id": "1793138404-3142373",
+ "runner": "research/runners/stable_preset_compare.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-mechc2/research/runners/stable_preset_compare.py",
+  "--base",
+  "research/findings/raw/_stable_mechc/census/stable_preset/s7",
+  "--alt",
+  "research/findings/raw/_stable_mechc/census/stable_preset_trait/s7",
+  "--out",
+  "research/findings/raw/_stable_mechc/compare_s7_preset_vs_preset_trait.json"
+ ],
+ "git_sha": "65d60f996",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-27T18:00:04",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 7256.2,
+ "corpus_check_query": "re-calibrate the global-stop distributed-overwrite workspace on stable membranes",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_stable_mechc/compare_s7_preset_vs_preset_trait.json"
+}
