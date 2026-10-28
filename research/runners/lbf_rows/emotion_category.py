@@ -28,9 +28,11 @@ FLIP STATUS: default-ON since the 2026-10-15 flip (webapp/server.py `_EMOTION_CA
 NO REQUIRED_ENV and joins the headline set the moment it merges. `BRAIN_EMOTION_CATEGORY=0` is the byte-identical
 escape; with it the lesion changes nothing.
 
-BOUNDED CONDUCTANCE. `BRAIN_EMOTION_CATEGORY_BOUNDED` (default OFF until its own flip) is NOT part of this row: both
-arms run whatever the process env carries, so a shard launched with `--extra-env BRAIN_EMOTION_CATEGORY_BOUNDED=1`
-measures the row with the guard on in the intact AND the lesion arm (the flip's dev smoke does exactly that).
+BOUNDED CONDUCTANCE. `BRAIN_EMOTION_CATEGORY_BOUNDED` (default ON in the revision that merges its flip; before it, default
+OFF) is NOT part of this row: both arms run whatever the process env carries, so a shard launched with
+`--extra-env BRAIN_EMOTION_CATEGORY_BOUNDED=1` measures the row with the guard on in the intact AND the lesion arm (the
+flip's dev smoke did exactly that), and, once the flip is merged, a shard with the variable unset measures it with the
+guard on as well while `--extra-env BRAIN_EMOTION_CATEGORY_BOUNDED=0` measures the old unbounded organ.
 
 INTERFACE: `EXTRA_LESIONS` / `EXTRA_TURNS` / `EXTRA_PROBES` follow the entry shapes of FACULTY_LESIONS / PROBE_TURNS /
 FACULTY_PROBES; the AG-REG hook (research/runners/lbf_rows/__init__.py) merges them. EXTRA_TURNS must stay a LITERAL

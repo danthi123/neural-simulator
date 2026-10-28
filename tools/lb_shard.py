@@ -145,6 +145,64 @@ def _prov_sidecar_fails(prov_path, pin, allow_brain_keys, treatment=None):
     return fails
 
 
+def _argv_env(pj):
+    """The JSON object an arm sidecar's argv `--env` carried, {} when argv has no `--env`, or None when it is present
+    but not a JSON object of strings. `onebrain_regression_battery --worker --env '<json>'` writes these keys into
+    os.environ IN-PROCESS, after the provenance door recorded the sidecar's `env` at import, so a key set there is
+    invisible to `pj['env']` (verify-go 2026-10-28 on prereg Amendment 2)."""
+    argv = pj.get("argv") or []
+    if not isinstance(argv, list):
+        return None
+    raw = None
+    for i, a in enumerate(argv):
+        a = str(a)
+        if a == "--env":
+            if i + 1 >= len(argv):
+                return None
+            raw = str(argv[i + 1])
+        elif a.startswith("--env="):
+            raw = a[len("--env="):]
+    if raw is None:
+        return {}
+    try:
+        d = json.loads(raw)
+    except Exception:  # noqa: BLE001
+        return None
+    if not isinstance(d, dict) or not all(isinstance(k, str) for k in d):
+        return None
+    return d
+
+
+def _argv_env_fails(prov_path, treatment, lesion_keys=()):
+    """TREATMENT reads only (`treatment` non-empty): the fields of ONE sidecar's argv `--env` that break the treatment
+    and stray rules `_prov_sidecar_fails` applies to its recorded env. A treatment key {k: v} set there to anything
+    but v, or a forbidden key {k: None} set there at all, fails; so does any other BRAIN_* key there, except the
+    cell's own lesion knob(s) `lesion_keys` (the lb.json record's `flag`), allowed on a lesion arm only (the caller
+    passes them for `lesion_*` files). An unparseable `--env` fails. A missing or unreadable sidecar is reported by
+    `_prov_sidecar_fails`, not here. Every caller without a treatment keeps the old rule (this is not called)."""
+    if not treatment or not os.path.exists(prov_path):
+        return []
+    try:
+        pj = json.load(open(prov_path))
+    except Exception:  # noqa: BLE001
+        return []
+    ae = _argv_env(pj if isinstance(pj, dict) else {})
+    if ae is None:
+        return ["argv --env unparseable (want a JSON object)"]
+    fails = []
+    for k, want in sorted(treatment.items()):
+        if k not in ae:
+            continue
+        if want is None:
+            fails.append("treatment key %s=%r set by argv --env (this tag must not carry it)" % (k, ae[k]))
+        elif ae[k] != want:
+            fails.append("treatment key %s=%r set by argv --env (want %r)" % (k, ae[k], want))
+    stray = sorted(k for k in ae if k.startswith("BRAIN_") and k not in treatment and k not in set(lesion_keys))
+    if stray:
+        fails.append("stray BRAIN_* key(s) in argv --env: %s" % ",".join(stray))
+    return fails
+
+
 _SPECIAL_PATH_MARKERS = ("measurement_ruler", "counted_faculty_key", "source_faculty_lesion_key")
 _NO_ARM_VERDICTS = ("unmapped-in-battery", "unmapped-lesion", "lesion-knob-missing", "arm-build-failed")
 
@@ -362,7 +420,9 @@ def cell_prov_fails(cell_dir, pin, lb_per_faculty=(), treatment=None):
     Amendment 2 (2026-10-28, emo-bounded-flip prereg): `treatment` ({key: value} required in every sidecar, {key:
     None} forbidden; see PROV_ARM_ALLOWED_BRAIN_KEYS) is passed to every sidecar check, and an INCOMPLETE cell (an
     arm file its own record requires is absent: `cell_missing_arms`) fails under the key "completeness", one
-    "missing arm file <name>" string per absent file. Completeness applies to every caller, as it only tightens."""
+    "missing arm file <name>" string per absent file. Completeness applies to every caller, as it only tightens.
+    With a non-empty `treatment` each sidecar's argv `--env` JSON is read too (`_argv_env_fails`; verify-go
+    2026-10-28): the battery worker applies it in-process, so a treatment key overridden there was invisible."""
     out = {}
     covered = {}
     missing = cell_missing_arms(cell_dir)
@@ -370,8 +430,12 @@ def cell_prov_fails(cell_dir, pin, lb_per_faculty=(), treatment=None):
         out["completeness"] = ["missing arm file %s" % m for m in missing]
     lb_prov_path = os.path.join(cell_dir, "lb.json.prov.json")
     lb_fails = _prov_sidecar_fails(lb_prov_path, pin, allow_brain_keys=set(), treatment=treatment)
+    if treatment:
+        lb_fails = list(lb_fails) + _argv_env_fails(lb_prov_path, treatment)
     if lb_fails:
         out["lb.json.prov.json"] = lb_fails
+    # the cell's own lesion knob(s): the BRAIN_* key a lesion arm's argv --env may carry under a treatment read
+    lesion_keys = tuple(str(p.get("flag")) for p in (lb_per_faculty or ()) if isinstance(p, dict) and p.get("flag"))
     try:
         names = sorted(os.listdir(cell_dir))
     except OSError:
@@ -388,6 +452,8 @@ def cell_prov_fails(cell_dir, pin, lb_per_faculty=(), treatment=None):
             out[fn + ".prov.json"] = ["missing"]
             continue
         f = _prov_sidecar_fails(own_sidecar, pin, allow_brain_keys=PROV_ARM_ALLOWED_BRAIN_KEYS, treatment=treatment)
+        if treatment:
+            f = list(f) + _argv_env_fails(own_sidecar, treatment, lesion_keys if fn.startswith("lesion_") else ())
         if f:
             out[fn + ".prov.json"] = f
     return out, covered
