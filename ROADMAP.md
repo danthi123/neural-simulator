@@ -12,8 +12,89 @@ stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CUR
 compute node (GPU queue, local model serving), and Claude Code inspects occasionally. See
 `docs/plans/2026-09-30-home-to-server-MIGRATION.md`. The capability entries below predate this move and are unaffected.
 
+### Project shorthand (decodes the coinages used in `GAP_CLOSURE_MISSION.md`, the findings, `CLAUDE.md` and the entries below)
+
+*Restored 2026-10-28: the table was dropped in the 2026-08-02 rewrite while `CLAUDE.md` and `GAP_CLOSURE_MISSION.md` kept pointing here. Standard neuroscience terms (NMDA, STDP, theta-gamma) are not listed, only project shorthand.*
+
+| Term | Means |
+|---|---|
+| **the moat** / no-confab guard | the familiarity gate that makes the brain say "I don't know" instead of confabulating (Bogacz-Brown) |
+| **the composer** | the module that binds concepts into facts and recalls them (the FHRR / slot-binder pipeline) |
+| **slot-binder** | the *learned* spiking binder that replaced the fixed FHRR algebra (role to slot, content-addressable recall) |
+| **FHRR** / **VSA** | Fourier Holographic Reduced Representation / Vector-Symbolic Architecture: the idealized, exactly reversible bind-into-a-fact algebra being replaced by a learned circuit |
+| **BTSP** | Behavioral-Timescale Synaptic Plasticity: one-shot, seconds-long plateau-driven episodic learning |
+| **BDSP** | Burst-Dependent Synaptic Plasticity: the two-compartment dendritic "burstprop" deep-credit rule |
+| **GNW** | Global Neuronal Workspace: the ignite-and-broadcast integrator where one coalition "wins" attention (Dehaene); the "bus" and "swap" workspaces are two of its organs |
+| **PPMI** | Positive Pointwise Mutual Information: the normalization that makes the word-meaning cortex generalize |
+| **meta-d′** | a metacognition score: how well confidence tracks actual correctness, above raw accuracy |
+| **the emergentist bet** | the wager that genuine experience emerges only from a *complete and faithful* biological emulation (the stated end goal) |
+| **gap#N** | the five original closure gaps (#1 open generation, #2 learned binder, #3 multi-referent, #4 deep credit, #5 CA3 replay); now a sub-view of the faculty roadmap |
+| **DR-N / P-N / W-N** | de-risk task IDs in the master roadmap |
+| **RANK-N** | a research gate's ranked candidate mechanisms, cheapest and most likely first |
+| **EMERGE-N** | the numbered arc of "does it emerge from a learning substrate?" de-risks |
+| **C1 to C5** | the Stage-2 exam's five primary criteria: C1 conversation, C2 inference, C3 curiosity asking, C4 feeling names, C5 inner thought |
+| **dev seed / gate seed** | dev seeds (1-12 and others) are used to design and tune; the six gate seeds (42, 43, 44, 100, 101, 102) are never used before an exam |
+| **gate revision F** | the exact code version a real exam runs on, fixed once in the pre-registration |
+| **identity canary** | a dry run that checks the exam's code version reproduces the practice answers before any exam line runs |
+| **STOP-CAL / STOP-ATTRIB / STOP-SMOKE** | pre-registered stop rules: no setting passes the calibration checks, the one passing setting cannot be credited to the mechanism, the smoke-test read of the effect is below its floor |
+| **load-bearing (fraction)** | an ability counts only if cutting it changes the reply; the share of abilities that pass is the #1 metric |
+| **scaffold / host-decision** | ordinary (non-neural) code that decides something temporarily; every pre-registration and packet declares it (CLASS HD) and names what replaces it |
+| **L+P** | the curiosity per-topic stop: L is the count-based per-topic slices, P is the phasic dopamine read that feeds the host gain formula |
+| **cs-race** | the content-selection race: candidate memories compete, addressed by the question's content, to pick what gets said; f1h/f1i/f1j are successive methods |
+| **A-NMDA** | the planned f1j mechanism: an input-driven, decaying, Mg-blocked NMDA conductance on the apical dendrite |
+| **D4** | the default-ON comprehension gate that refuses garbled teaching (it explains the C2 control miss) |
+
+## 2026-10-28 — the feeling-name fix is on by default; curiosity and inference get their next exams; the Stage-2 failure is traced to causes
+
+- **The Stage-2 ("child") exam was tried on 10-26 and did not pass; every failure now has a named cause.** On the six exam seeds:
+  word-level conversation 0 of 6, curiosity 0 of 6, feeling names 5 of 6, and inference answered correctly on 6 of 6 but its
+  control that checks the answer follows what the brain was taught tracked on 0 of 6. The inner-thought test passed 6 of 6, with a
+  caveat (below). Three causes, each checked by a skeptic (`research/findings/2026-10-26-stage2-fail-diagnoses.md`): a time-step
+  instability in small cells (it caused the feeling miss and a basal-ganglia glitch), a gate that refuses garbled teaching (the
+  inference control), and a one-knob dopamine setting with no per-topic stop (curiosity). The conversation miss was not among
+  those four; it traces upstream to a nearly silent memory trace, the same family as the race below. The re-run is due by
+  11-21 (result: `research/findings/2026-10-26-stage2-exit-gate-RESULT.md`).
+- **The feeling-name fix is now ON by default (10-28).** In its pre-registered six-seed exam all eight checks passed: the brain
+  names joy, fear, anger and sadness on all six seeds, cutting the circuit changes the named feeling on all six, the
+  scrambled-teaching control tracks on all six, every feeling read carries its stability read-back, and the other turns are
+  unchanged. One rule, how the load-bearing check admits its cells, was rewritten after the data because the original could not
+  be read; it changes nothing else, and an independent three-way review recomputed all 12 of those cells.
+  Caveats: each seed's load-bearing result rests on a single probe turn, and the official feeling-name score is re-taken at the
+  11-21 re-run. Setting `BRAIN_EMOTION_CATEGORY_BOUNDED=0` turns the fix off.
+  (`research/findings/2026-10-27-emo-bounded-flip-PREREGISTRATION.md`, merge `0b79336ec`.)
+- **Curiosity: the per-topic stop passed its practice exam and has a pre-registered real exam (not yet run).** With the fix on, the
+  brain asks a follow-up question about new gaps and about the gap it can learn, and stops asking about a gap it can never learn,
+  in both teaching orders, on 11 of 11 practice seeds. Before the real exam on the six untouched seeds can start, a dry run on the
+  exact code version it will use has to reproduce the practice answers on 32 of 32 cells; it is queued (7 of 32 had landed).
+  Caveats in plain words: the same result appears with the old dopamine knob held fixed, so the dopamine part is proven necessary
+  only against that knob's floor; the topic-locking itself does not carry the result; a simple "ask once per topic" counting rule
+  reproduces 117 of 121 of its decisions; one control topic cannot be scored; and the final ask-or-not choice is still computed
+  by ordinary code over the brain's signals, so it is a declared stand-in.
+- **Brain-cell stability: the repairs exist and are all still off.** A scan found 12 brain circuits with impossible voltages.
+  The one-switch fix removes them but changes replies, because the workspace that decides recall checks and the inner-thought test
+  switched on only at the point where its cells ran away, so the 10-26 inner-thought pass carries that caveat. The three
+  workspaces (recall bus, topic swap, stop signal) are now re-tuned for valid cells, still off. The topic swap passes its own gate on
+  12 of 15 practice seeds; the stop signal's gate reads 5 pass, 1 fail and 9 unscorable of 15, it is all-or-none on the two seeds
+  used to tune it, and its sensor is ordinary code. The 180-run held-out check is queued. A variant that
+  gives every cell its own type removes the bad cells but scrambles word order in replies, so it stays off.
+- **Choosing what to say (the race between candidate memories).** The latest try (`f1i`) found the first spiking way to end the
+  older word's activity when a newer word arrives (23 of 23 at the best setting, 0 of 23 when the pathway is cut), but the newer word's own
+  inhibition ends its own activity right after its input stops, so the step stopped under its pre-registered rules. The missing piece is a slowly
+  decaying input-driven channel that keeps the newer word going; that is the next method (`f1j`). Its design is merged; one engine change
+  (off by default) is specified and not yet built, and the race holds until it is.
+  Word-role reading stays parked: its trace population is almost silent, the same family as the race.
+- **Inference: the next-method design survived nine rounds of review; no build yet.** It has two parts, reading multi-step
+  questions from the brain's spiking memory instead of the program's fact list, and learning an all-new word order from a
+  learned cue. Four review rounds each refuted a version before it stood. The reason it is needed: scrambling the program's fact list
+  changes the conclusion, so today the program's list decides it (`research/coordination/c2-spiking-hops-PACKET.md`).
+- **The #1 metric (how much of the reply depends on the brain) is mid-measurement at the current code.** An interim read (0.844 on
+  2 of the 6 seeds) is not a result; the score is taken only when all 294 clean runs are in. The affect-lead-word row was ruled out
+  of the headline number because that word is not switched on in production.
+
 ## 2026-10-27 — one switch makes every brain region's cells numerically stable (still off); it changes replies, because one workspace ran on the artifact
 
+- **Update 10-28:** the other workspace (topic swap) and the stop-signal workspace are now re-tuned the same way, still off, and the
+  180-run held-out check is queued (details in the 10-28 entry above). The six-seed test of the pair has not been run.
 - **Built, off by default:** `SIM_STABLE_INTEGRATION=1` puts every brain region on the two existing integrator
   fixes at once (bounded synaptic currents and 4 finer membrane steps per millisecond). Unset, nothing changes.
 - **Membranes:** on dev seed 7 the switch removes the impossible voltages the census found (thousands of cells per
@@ -54,6 +135,8 @@ compute node (GPU queue, local model serving), and Claude Code inspects occasion
 
 ## 2026-10-27 — the fix for the feeling-name circuit gets its first checks (still off)
 
+- **Update 10-28:** the exam was run and passed, and the fix is now ON by default (see the 10-28 entry above). The text below is the
+  10-27 state, kept as history.
 - **What the fix is.** The part of the brain that names which feeling it holds (joy, fear, anger or sadness) has a
   numerical fault: on about one build in twenty-five a single small neuron overshoots on one time step, and that silenced
   the joy channel on one of the six Stage-2 exam seeds. The repair makes that one step stable. It is merged switched off,
@@ -67,6 +150,9 @@ compute node (GPU queue, local model serving), and Claude Code inspects occasion
 
 ## 2026-10-21 — the strict no-making-things-up check passes its tests (still off); a cell-type fault under the substrate; two new methods start
 
+- **Update 10-28:** word roles stay parked and OFF at the Stage-2 re-run (the switch-on plan due 10-27 was dropped, RULING `wrc-frame-1-1024`), and
+  the race of candidate memories has moved on to a held-trace method (`f1h`) and an inhibition method (`f1i`); see the 10-28 entry above.
+  The rest of this entry is the 10-21 state.
 - **The strict speech check passes every test written for it in advance, and stays off.** The check on the mouth now
   keeps a sentence only when all of it spells out facts the brain gathered for that turn. Attempt 5 let none of 191
   made-up sentences from a fresh blind adversary through (none of 216 counting borderline ones), kept no unsupported
