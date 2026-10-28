@@ -169,11 +169,12 @@ scorer, before any gate-seed run. No gate seed has been run for this flip.
 
 **Scorer commands** (repo root, as modules so provenance sidecars are written; tests: `tests/test_emo_flip_score.py`, 24).
 - All eight bars and DEC in one read: `python -m research.runners.emo_flip_score --on-dir research/findings/raw/_emo_bounded_flip/gate_on
-  --off-dir research/findings/raw/_emo_bounded_flip/gate_off --out research/findings/raw/_emo_bounded_flip/verdict.json --pin <F, full sha>`.
+  --off-dir research/findings/raw/_emo_bounded_flip/gate_off --out <OUT.json> --pin <F, full sha>`.
   It prints PASS, FAIL or UNDEFINED per bar with the shard and turn behind each, then `DEC`. Defaults are this protocol's: row tags
   `emo-bounded-flip-gate-on` / `-off` under `research/findings/raw/_load_bearing/_shards`, the 10-26 reference
   `research/findings/raw/_stage2_exit/gate/aggregate.json`. `--pin` makes each row cell's sidecars a `git_archive` measurement of F
   (lb_shard's B2b rule; a cell that fails it is UNDEFINED); without it that check is not made.
+  Note (2026-10-28, documentation only; no bar, rule or threshold changes): the `--out` above named `verdict.json` in the `_emo_bounded_flip` directory, a placeholder no read was ever saved under (claim_check counted it as a missing citation), and now reads `<OUT.json>`; the registered reads, both with `--pin` F, are `research/findings/raw/_emo_bounded_flip/gate_score_3b0b5182aa1819d1804ef21d704154132d75e5bc.json` (under Amendment 1's rule) and `research/findings/raw/_emo_bounded_flip/gate_score_amend2_3b0b5182aa1819d1804ef21d704154132d75e5bc.json` (under Amendment 2's).
 - The pieces, as the prereg named them, read the same cells: B1 to B3 `python -m research.runners.stage2_exit_gate --aggregate
   <ON dir> --seeds 42,43,44,100,101,102` (emo group; the combined scorer calls the same function); B5 the same on the OFF
   directory against the reference; B7 `python tools/answer_rate.py paired --on-tag emo-bounded-flip-gate-on --off-tag
