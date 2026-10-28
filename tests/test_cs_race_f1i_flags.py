@@ -10,7 +10,9 @@ Pins, CPU/numpy, seed 41 (a dev seed), the f1h circuit at soma-g 40 / W_IM 40:
   4. every trial starts with the slot->SOM STP at rest (u 0, x 1) and g_ap 0, read back per trial (S1, S3), and the
      race record splits the STP state by pathway (S4);
   5. --som-lesion: the cs_som gate reads 0.0 at measurement time and g_ap is 0 at every recorded ms, while SOM cells
-     still fire; --som-nofac: slot->SOM stp_disabled at W_MS * U.
+     still fire; --som-nofac: slot->SOM stp_disabled at W_MS * U;
+  6. --stp-reset (R1 Q5 informational arm, added with the step-0 pool lines): every trial starts with ALL STP state at
+     rest (u 0, x 1), read back per trial; default off keeps the carried state (and the f1h-identical records of 2).
 """
 import hashlib
 import json
@@ -140,6 +142,12 @@ def test_trial_resets_and_stp_split(ment60):
     assert s["reset_readback"] == {"msom_u_max": 0.0, "msom_x_min": 1.0, "g_ap_max": 0.0, "gate_cs_som": 1.0}
     assert sum(s["som_spikes_per_ms"]) > 0                      # the pool is driven
     assert s["g_ap_max_run"] > 0.0                              # and reaches the apical
+    ev = s["som_cell_events"]                                   # per-cell spikes re-derive the pooled series
+    assert all(0 <= j < 8 for _, j in ev)
+    per_ms = np.zeros(len(s["som_spikes_per_ms"]), dtype=int)
+    for t_ms, _ in ev:
+        per_ms[t_ms] += 1
+    assert per_ms.tolist() == s["som_spikes_per_ms"]
     assert set(s["per_word_ms"]) == {"vole", "frog"}
     T = len(s["som_spikes_per_ms"])
     assert all(len(v) == T for d in s["per_word_ms"].values() for v in d.values())
@@ -175,3 +183,45 @@ def test_nofac_is_static_at_resting_efficacy(ment60):
     np.testing.assert_allclose(w, 215.0 * 0.049, rtol=1e-6)
     c_fac = M.RaceCircuit(3, SEED, dict(_P_F1I), _grid3())
     np.testing.assert_allclose(np.asarray(c_fac._bridge.cp_connections.data)[c_fac._msom_pos], 215.0, rtol=1e-6)
+
+
+# ---------------------------------------------------------------- 6. R1 Q5 informational arm: --stp-reset
+def _carry_then_probe(p):
+    c = M.RaceCircuit(3, SEED, dict(p), _grid3())
+    c.race(seed=SEED, cue_words=("lynx", "chase"), mention_words=("vole",), encode=("vole", "frog"))
+    return c, c.cal(seed=SEED, item="c1", word="vole")
+
+
+def test_stp_reset_flag_parse_and_default_off():
+    assert "--stp-reset" in _cli("--help").stdout
+    assert not M._BASE["STP_RESET"]
+    r = _cli("--calibrate", "--seeds", "41", "--trace", "intrinsic", "--soma-g", "40", "--stp-reset")
+    assert r.returncode == 2, (r.stdout[-300:], r.stderr[-300:])        # needs --som
+
+
+def test_stp_reset_puts_every_trial_at_rest_and_off_carries(ment60):
+    c_off, r_off = _carry_then_probe(_P_F1I)
+    c_on, r_on = _carry_then_probe(dict(_P_F1I, STP_RESET=1))
+    start_off, start_on = r_off["som"]["stp_trial_start"], r_on["som"]["stp_trial_start"]
+    assert start_on["stp_reset"] is True and start_off["stp_reset"] is False
+    for pathway in ("ee", "msom"):                                       # rest: u 0, x 1 on every STP synapse
+        assert start_on[pathway] == {"u_mean": 0.0, "u_max": 0.0, "x_mean": 1.0, "x_min": 1.0}, pathway
+    # without the reset the engram recurrence still carries the race's STP state into the next trial
+    assert start_off["ee"]["u_max"] > 0.0
+    assert start_off["ee"] != start_on["ee"]
+    assert start_off["msom"] == start_on["msom"]            # msom was already reset to rest each trial (S1, S3)
+    # the realized read-back of the race record exists under both arms and shows rest under the reset
+    rr = c_on.race(seed=SEED, cue_words=("lynx", "chase"), encode=("vole", "frog"))
+    assert rr["stp_trial_start"]["ee"]["u_max"] == 0.0 and rr["stp_trial_start"]["stp_reset"] is True
+
+
+def test_stp_reset_first_trial_differs_only_by_the_build_start_state(ment60):
+    """The reset arm's FIRST trial starts at rest (u 0), the baseline's at the engine's build state (u at the global
+    stp_U decayed through the 60 warm-up steps, S3). The record says so; nothing else about the circuit differs."""
+    c_off = M.RaceCircuit(3, SEED, dict(_P_F1I), _grid3())
+    c_on = M.RaceCircuit(3, SEED, dict(_P_F1I, STP_RESET=1), _grid3())
+    assert c_off._n == c_on._n and c_off.som_readback["problems"] == c_on.som_readback["problems"] == []
+    r_off = c_off.cal(seed=SEED, item="c3", word="vole", word2="frog")
+    r_on = c_on.cal(seed=SEED, item="c3", word="vole", word2="frog")
+    assert r_off["som"]["stp_trial_start"]["ee"]["u_max"] > 0.0
+    assert r_on["som"]["stp_trial_start"]["ee"]["u_max"] == 0.0

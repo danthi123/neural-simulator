@@ -1,0 +1,35 @@
+{
+ "run_id": "1793130452-2673618",
+ "runner": "research/runners/stable_preset_compare.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-mechc2/research/runners/stable_preset_compare.py",
+  "--leaf-diff-only",
+  "--base",
+  "research/findings/raw/_stable_mechc/census/stable/s7",
+  "--alt",
+  "research/findings/raw/_stable_mechc/census/stable_preset/s7",
+  "--out",
+  "research/findings/raw/_stable_mechc/leaf_diff_stable_vs_preset_s7.json"
+ ],
+ "git_sha": "bd13ab71c",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-27T15:47:32",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 28147.0,
+ "corpus_check_query": "route GABA_A synapses onto the apical dendrite compartment",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_stable_mechc/leaf_diff_stable_vs_preset_s7.json"
+}

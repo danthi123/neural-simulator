@@ -233,3 +233,65 @@ as section 3 gives it, wrapped in `mem_ok.sh 9 1` and `memcap.sh 12`). The Stage
 because the battery's parent process shares the arm subprocess's cgroup and the dev smoke recorded no peak for this row. Nothing is
 queued by this amendment. Before `pool_queue.sh` accepts a gate-seed line it still needs a passing pool canary of
 `research.runners.stage2_exit_gate` and of `research.runners.load_bearing_fraction` at F, and a `gate_preflight` read of this prereg at F.
+
+## Amendment 2 (2026-10-28, POST-DATA): how B8's row cells are admitted under --pin; complete cells only
+
+**POST-DATA, said first.** This amendment was written after all 72 gate lines ran at F (`3b0b5182aa1819d1804ef21d704154132d75e5bc`),
+after the registered read of B1 to B8 with `--pin F` (B1 to B7 PASS, B8 UNDEFINED, DEC UNDEFINED -> STOP; runbook 2026-10-27
+23:59 `[emo-flip-gate] RESULT`, table `research/coordination/emo-flip-gate-RESULT.md`, artifact
+`research/findings/raw/_emo_bounded_flip/gate_score_3b0b5182aa1819d1804ef21d704154132d75e5bc.json`), AND after a no-pin
+DIAGNOSTIC of the B8 row had been seen (Claude's scoring workflow, 2026-10-28; not a bar read): flag ON load-bearing on 6 of 6
+seeds, flag OFF on 5 of 6 (s101 not load-bearing; the OFF figure was also in the registered read). Its author knew both. It is a
+correction of the instrument, filed in the open so it can be weighed as post-data; it is not a pre-registration of anything.
+
+**What it changes: the B8 measurement rule under --pin, nothing else.** B8's bar is unchanged: section 2's words, read as 6 of 6
+flag-ON seeds load-bearing (Amendment 1, confirmed by Claude). B1 to B7, DEC, every threshold and section 3's lines are unchanged;
+no cell is re-run and nothing is rescored by this amendment.
+
+**Why.** Under --pin a B8 row cell counts only if every sidecar in it passes `tools/lb_shard.py`'s B2b pin rule, and that rule read
+every `BRAIN_*` env key other than `BRAIN_CHAT_SEED` (arm sidecars; none on lb.json's own) as stray. Section 3's own ON row lines set
+`BRAIN_EMOTION_CATEGORY_BOUNDED=1` (`--extra-env`), so each ON cell failed exactly its five sidecars (lb.json and the four arms) on
+that key alone, every git_sha / git_archive / manifest / backend check passing: B8 could only read UNDEFINED, by construction.
+Amendment 1 recorded that B8 had no bar-sanity record, and its dev-seed read for `tools/gate_preflight.py` was `--only
+B1,B2,B3,B4,B6` without `--pin`, so neither gate read B8 before the gate seeds ran (`research/FAILURE_LOG.md`, 2026-10-28).
+
+**The rule, under --pin** (the registered read; without --pin no pin rule is applied, as before):
+1. ON tag (`emo-bounded-flip-gate-on`): every sidecar of the cell, lb.json's and each arm's, carries
+   `BRAIN_EMOTION_CATEGORY_BOUNDED` with the value `"1"`. Absent from any sidecar, or any other value: the cell is UNDEFINED.
+   No other `BRAIN_*` key beyond the existing allowed set (`BRAIN_CHAT_SEED` on an arm sidecar, none on lb.json's): a second
+   key makes the cell UNDEFINED.
+2. OFF tag (`emo-bounded-flip-gate-off`): no sidecar carries `BRAIN_EMOTION_CATEGORY_BOUNDED` at any value (section 3: unset,
+   not "0"). Present: the cell is UNDEFINED. The OFF row stays reported beside the bar, as section 2 and Amendment 1 say.
+3. TIGHTENING, added in this amendment: a cell is scored only when it is COMPLETE, i.e. every arm file its own lb.json record
+   requires is present, each with its sidecar: lb.json; `intact_a_*` and `intact_b_*` of its turn group; the lesion arm
+   `lesion_emotion_category<sfx>.json`; and one `.rep<i>` per extra repeat when the lesion reproduced (`.rep0` at `--repeats 2`).
+   A sidecar whose artifact is absent also marks the cell incomplete. Incomplete: UNDEFINED, naming each missing file. Before
+   this the pin rule checked only the files that were present, so a cell missing an arm file and its sidecar could pass it.
+4. Everything else in the pin rule (git_sha equal to F in full, `source_kind` git_archive, both manifest flags true, SIM_BACKEND
+   numpy) and in B8's reading (the flag engaged on the intact arms; load-bearing = regressed, null clean, lesion reproduced) is
+   unchanged.
+
+**Declared deviation: the DEC's re-run.** Section 3 says "A missing or UNDEFINED cell is re-run once at the same revision, logged
+before its result is read". The driver skipped that step for the six UNDEFINED ON cells (runbook 2026-10-27 23:59): a re-run of the
+same line injects the same key and must return UNDEFINED again under the old rule. It is recorded here as a deviation from section 3.
+
+**Implementation** (the scorer command is unchanged: `python -m research.runners.emo_flip_score ... --pin <F>`).
+`tools/lb_shard.py`: `cell_prov_fails(..., treatment=)` takes an explicit per-call allowlist, `{key: value}` REQUIRED in every
+sidecar with that value and `{key: None}` forbidden; the default (None) is the old rule for every other caller. `cell_missing_arms`
+is the completeness check; it applies to every pinned read because it only tightens (over the 1,084 cells of the 21 shard tags on
+main that record a PIN.txt, which this flip's row tags do not, no cell that passed the pin rule before fails it now). `aggregate --treatment KEY=VAL` exposes the same allowlist.
+`research/runners/emo_flip_score.py` passes `{BRAIN_EMOTION_CATEGORY_BOUNDED: "1"}` for the ON tag and
+`{BRAIN_EMOTION_CATEGORY_BOUNDED: None}` for the OFF tag. Tests: `tests/test_lb_shard_treatment_key.py`. B8 under this amendment is
+read with the scorer at the commit that lands it, so `emo_flip_score.py` no longer has Amendment 1's sha256; the harness the gate
+lines ran is F's and is not touched. Because the scorer moved, the B4 and B6 bar-sanity records (which hash it) were re-derived
+with the same specs, n 1000 and seed 0: every pass rate and verdict is identical to Amendment 1's table (the B4 and B6 code paths
+did not change); only the scorer sha256, repo head and wall time differ.
+
+**The landed row cells were not complete.** At main `6c6e08ad9`, and still at `631e8fa29`, every committed cell of both row tags
+lacked an arm file: no `lesion_emotion_category<sfx>.json.rep0` in any cell, its sidecar present in 11 of the 12 cells. ON s43 held
+only `intact_a_*`, `intact_b_*` and `lesion_emotion_category_s43.json`, each with its sidecar: no `lb.json`, no `lb.json.prov.json`,
+no `.rep0` and no `.rep0.prov.json`. Also no lesion arm at ON s44 and ON s102, no `intact_a_*` at OFF s42, s43 and s44. Under rule 3
+a read from that tree reads every one of them UNDEFINED; the complete cells must be landed before B8 is read under this amendment.
+They landed on main at `490b72fe2` (25 added files, no file changed; RULING landing-1028): the 120 files of the two row tags there
+are byte-identical to the scoring copy, and `cell_missing_arms` at this amendment's commit finds all 12 cells complete. A read from
+a tree without them (this amendment's branch before it merges, or a main older than `490b72fe2`) still reads every cell UNDEFINED.

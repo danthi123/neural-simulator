@@ -166,14 +166,14 @@
    0.0038
   ]
  },
- "repo_head": "7bf5bd7dd355b79c269b5b204c20465e02b10443",
+ "repo_head": "6c6e08ad903dffad002ba0a9ce1859da607634b1",
  "scorer_files": {
   "docs/drafts/emo-bounded-flip/bar_sanity_emo_flip_common.py": "ba8e5d4bf436a7be27e93d7cf29b93e6f3f0856b5c5f803563ecbbde384e361d",
   "docs/drafts/stage2-exit/bar_sanity_s2_common.py": "7ba31e0d675eb751a20c64ed2cd44eb50b7bad47295bcf100d208436b0c68a63",
-  "research/runners/emo_flip_score.py": "5d5f96d76eaab47aeb7fa8cffe3595cd4efb9faca59b18168a41e7d6257239cf",
+  "research/runners/emo_flip_score.py": "48701962e0a61a7d6599310b3801f133d57439626b7137f57f5354af6bc35f2d",
   "research/runners/stage2_exit_gate.py": "67bfd30b66d266748d9e06b0ef393d23ab03f5be3b22b2e84831ec094616a177"
  },
- "scorer_sha256": "eecaef9c4154a3b2e77423cdb14668605942597e1e48c8d66927c86f03c0173d",
+ "scorer_sha256": "98351f360127198991003c7278f45e92276cdbbe799d4e68c54bb603262ba072",
  "seed": 0,
  "spec": "docs/drafts/emo-bounded-flip/bar_sanity_spec_b4.py",
  "spec_sha256": "8aadee5fa808b502a9812f9ebc6d2fae1cd7bea8e3a460b8eddf40018d53b166",
@@ -184,5 +184,5 @@
  },
  "tool": "tools/bar_sanity.py",
  "verdict": "OK",
- "wall_s": 157.9
+ "wall_s": 142.7
 }

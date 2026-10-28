@@ -531,10 +531,10 @@ def test_the_five_engagement_keys_are_the_organs_and_the_prereg_names_them():
 def test_b8_pin_failure_is_undefined(tmp_path, monkeypatch):
     import tools.lb_shard as LB
     base = lb_tree(tmp_path / "lb")
-    monkeypatch.setattr(LB, "cell_prov_fails", lambda cell_dir, pin, rows: (["git_sha='x' (want y IN FULL)"], []))
+    monkeypatch.setattr(LB, "cell_prov_fails", lambda cell_dir, pin, rows, treatment=None: (["git_sha='x' (want y IN FULL)"], []))
     r = S.score_b8(base, pin="y" * 40)
     assert r["status"] == S.UNDEFINED and "provenance does not match the pin" in r["undefined"][0]
-    monkeypatch.setattr(LB, "cell_prov_fails", lambda cell_dir, pin, rows: ([], []))
+    monkeypatch.setattr(LB, "cell_prov_fails", lambda cell_dir, pin, rows, treatment=None: ([], []))
     assert S.score_b8(base, pin="y" * 40)["status"] == S.PASS
 
 

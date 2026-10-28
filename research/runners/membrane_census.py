@@ -222,6 +222,15 @@ class _BridgeRec:
         self._alloc_region_stats()
         self.c_first = None
         self.c_last = None
+        self.p_first = None                           # per-region drawn-parameter summary at the first observed step
+        self.ph_requested = None                      # SIM_PRESET_CENTRED_HET read-back (research/stable-mechc)
+        self.ph_applied = None
+        self.ph_organ_value = None
+        self.ph_readback = None
+        self.th_requested = None                      # SIM_TRAIT_CENTRED_HET read-back (research/stable-mechc)
+        self.th_applied = None
+        self.th_organ_value = None
+        self.th_readback = None
         self.first_step = self.first_gstep = self.vmin_n = self.vmax_n = None
         self.nlow = self.nhigh = self.nnonf = None
         self.ctx = {}
@@ -301,6 +310,58 @@ def _c_summary(bridge, rm):
         else:
             out[name] = {"n": int(ix.size), "c_min": None, "c_min_idx": None, "c_p01": None, "c_median": None,
                          "c_max": None}
+    return out
+
+
+_PRESET_BY_FIXED = None
+
+
+def _preset_by_fixed_params():
+    """{(k, vr, vt, vpeak, c_reset) rounded: preset name} for every IZH2007 preset. Those five are never jittered by
+    parameter heterogeneity, so they identify which preset a neuron was built from even after a/b/d/C are redrawn (the
+    viz type labels are written BEFORE the per-region override and go stale for a typed region)."""
+    global _PRESET_BY_FIXED
+    if _PRESET_BY_FIXED is None:
+        from sim.enums import DefaultIzhikevichParamsManager
+        _PRESET_BY_FIXED = {}
+        for t, prm in DefaultIzhikevichParamsManager.PARAMS.items():
+            if not t.name.startswith("IZH2007_"):
+                continue
+            key = tuple(round(float(prm[f]), 3) for f in ("k", "vr", "vt", "vpeak", "c_reset"))
+            _PRESET_BY_FIXED.setdefault(key, []).append(t.name.replace("IZH2007_", ""))
+    return _PRESET_BY_FIXED
+
+
+def _param_summary(bridge, rm):
+    """Per-region summary of the drawn Izhikevich parameters a, b, d, C, k, vpeak as the bridge built them
+    (research/stable-mechc: what SIM_PRESET_CENTRED_HET does to a region's draw), the count of cells with b < 0, and
+    the preset each cell was built from (identified by its never-jittered k, vr, vt, vpeak, c_reset). Izhikevich only;
+    other models give an empty dict. Observe-only: reads host copies of the arrays."""
+    cfg = bridge.core_config
+    if str(getattr(cfg, "neuron_model_type", "?")) != "IZHIKEVICH":
+        return {}
+    names = ("a", "b", "d_increment", "C", "k", "vr", "vt", "vpeak", "c_reset")
+    arrs = {k: _host(getattr(bridge, "cp_izh_" + k, None)) for k in names}
+    n = rm.region_of.shape[0]
+    if any(v is None or v.shape[0] != n for v in arrs.values()):
+        return {}
+    table = _preset_by_fixed_params()
+    sig = np.round(np.stack([arrs[k].astype(np.float64) for k in ("k", "vr", "vt", "vpeak", "c_reset")], axis=1), 3)
+    out = {}
+    idxs = rm.per_region_indices()
+    for r, name in enumerate(rm.names):
+        ix = idxs[r]
+        if not ix.size:
+            continue
+        row = {"n": int(ix.size)}
+        for key in ("a", "b", "d_increment", "C", "k", "vpeak"):
+            row[key + "_mean"] = _f(arrs[key][ix].astype(np.float64).mean())
+        b = arrs["b"][ix].astype(np.float64)
+        row["b_min"], row["b_max"] = _f(b.min()), _f(b.max())
+        row["n_b_negative"] = int(np.count_nonzero(b < 0))
+        row["preset_counts"] = dict(collections.Counter(
+            "/".join(table.get(tuple(float(x) for x in sig[int(i)]), ["?"])) for i in ix))
+        out[name] = row
     return out
 
 
@@ -434,6 +495,14 @@ class Census:
         rec.substeps_seen.add((getattr(cfg, "izh_membrane_substeps", 1),
                                str(getattr(cfg, "izh_substep_refractory_rule", "model_reset"))))
         rec.stable_seen.add(getattr(bridge, "stable_integration_applied", None))
+        rec.ph_requested = getattr(bridge, "preset_centred_het_requested", None)
+        rec.ph_applied = getattr(bridge, "preset_centred_het_applied", None)
+        rec.ph_organ_value = getattr(bridge, "preset_centred_het_organ_value", None)
+        rec.ph_readback = getattr(bridge, "preset_centred_het_readback", None)
+        rec.th_requested = getattr(bridge, "trait_centred_het_requested", None)
+        rec.th_applied = getattr(bridge, "trait_centred_het_applied", None)
+        rec.th_organ_value = getattr(bridge, "trait_centred_het_organ_value", None)
+        rec.th_readback = getattr(bridge, "trait_centred_het_readback", None)
         rec.substep_calls = int(getattr(bridge, "substep_calls", 0) or 0)
         rec.model_resets = int(getattr(bridge, "refractory_model_resets", 0) or 0)
         rec.si_reasserts = int(getattr(bridge, "stable_integration_reasserts", 0) or 0)
@@ -444,6 +513,7 @@ class Census:
             m = _RegionMap(bridge, n)
             rec.set_map(m)
             rec.c_first = rec.c_first or _c_summary(bridge, m)
+            rec.p_first = rec.p_first or _param_summary(bridge, m)
         seg_min = np.minimum.reduceat(vh, m.seg_starts)
         seg_max = np.maximum.reduceat(vh, m.seg_starts)
         np.fmin.at(rec.vmin_r, m.seg_region, seg_min)
@@ -714,6 +784,11 @@ class Census:
             "substep_calls": rec.substep_calls, "refractory_model_resets": rec.model_resets,
             "stable_integration_reasserts": rec.si_reasserts,
             "stable_integration_organ_values": rec.si_organ_values,
+            "preset_centred_het": {"requested": rec.ph_requested, "applied": rec.ph_applied,
+                                   "organ_value": rec.ph_organ_value, "readback": rec.ph_readback},
+            "trait_centred_het": {"requested": rec.th_requested, "applied": rec.th_applied,
+                                  "organ_value": rec.th_organ_value, "readback": rec.th_readback},
+            "param_summary": rec.p_first or {},
             "v_min": _f(vmin[0], 2), "v_min_region": vmin[1], "v_max": _f(vmax[0], 2), "v_max_region": vmax[1],
             "n_oor_neurons": n_oor,
             "n_low_neurons": int(np.count_nonzero(rec.nlow > 0)) if rec.nlow is not None else 0,
@@ -829,7 +904,23 @@ def organ_rows(bridges):
                      "refractory_model_resets": sum(b.get("refractory_model_resets", 0) or 0 for b in bs),
                      "stable_integration_reasserts": sum(b.get("stable_integration_reasserts", 0) or 0 for b in bs),
                      "organ_bounded_configured": sorted({str((b.get("stable_integration_organ_values") or {}).get(
-                         "enable_bounded_conductance_integration")) for b in bs})})
+                         "enable_bounded_conductance_integration")) for b in bs}),
+                     "preset_centred_het_applied_seen": sorted({str((b.get("preset_centred_het") or {}).get("applied"))
+                                                                for b in bs}),
+                     "preset_centred_het_draw_centred_seen": sorted({str(((b.get("preset_centred_het") or {}).get(
+                         "readback") or {}).get("preset_centred")) for b in bs}),
+                     "n_with_region_preset": sum((((b.get("preset_centred_het") or {}).get("readback") or {}).get(
+                         "n_with_region_preset") or 0) for b in bs),
+                     "n_preset_off_centre": sum((((b.get("preset_centred_het") or {}).get("readback") or {}).get(
+                         "n_preset_off_centre") or 0) for b in bs),
+                     "trait_centred_het_applied_seen": sorted({str((b.get("trait_centred_het") or {}).get("applied"))
+                                                               for b in bs}),
+                     "trait_centred_het_draw_centred_seen": sorted({str(((b.get("trait_centred_het") or {}).get(
+                         "readback") or {}).get("trait_centred")) for b in bs}),
+                     "n_trait_neurons": sum((((b.get("trait_centred_het") or {}).get("readback") or {}).get(
+                         "n_trait_neurons") or 0) for b in bs),
+                     "n_trait_off_centre": sum((((b.get("trait_centred_het") or {}).get("readback") or {}).get(
+                         "n_trait_off_centre") or 0) for b in bs)})
     return rows
 
 
@@ -897,7 +988,9 @@ def run_worker(seed, group, arm, out_path, labels=None):
     except Exception:
         sha = None
     out = {"runner": "research/runners/membrane_census.py", "seed": int(seed), "group": group, "arm": arm,
-           "git_sha": sha, "stable_integration_env": os.environ.get("SIM_STABLE_INTEGRATION"), "workload": wl, "wrapper_restored": restored, "wall_s": round(time.time() - t0, 1),
+           "git_sha": sha, "stable_integration_env": os.environ.get("SIM_STABLE_INTEGRATION"),
+           "preset_centred_het_env": os.environ.get("SIM_PRESET_CENTRED_HET"),
+           "trait_centred_het_env": os.environ.get("SIM_TRAIT_CENTRED_HET"), "workload": wl, "wrapper_restored": restored, "wall_s": round(time.time() - t0, 1),
            "caveat": CAVEAT, "census": rep}
     os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
     with open(out_path, "w") as f:

@@ -31,6 +31,11 @@ READING OF EACH BAR (the clause text is in the prereg, not here):
             changes `answer`, the null is clean, the lesion reproduces) in every DEFINED cell, 6 of 6 seeds (Claude confirmed
             this reading 2026-10-27). A cell whose intact arms do not show the flag engaged (bounded_flag and
             bounded_readback True) is UNDEFINED. The flag-OFF row is reported beside it.
+            Under --pin (prereg Amendment 2, POST-DATA, 2026-10-28; measurement rule only, the bar is unchanged): an ON
+            cell's sidecars must ALL carry TREATMENT_KEY with the value "1" (absent or another value: UNDEFINED) and no
+            other stray BRAIN_* key; an OFF cell's must carry no TREATMENT_KEY at all (present: UNDEFINED); and a cell is
+            read only when COMPLETE (every arm file its record requires, each with its sidecar; tools/lb_shard.py
+            cell_missing_arms), else UNDEFINED naming each missing file.
   DEC       PASS on all eight -> flip the default ON before the 11-21 re-pin; anything else -> STOP with the data.
 """
 from __future__ import annotations
@@ -61,6 +66,9 @@ LB_BASE = "research/findings/raw/_load_bearing/_shards"
 LB_ON_TAG = "emo-bounded-flip-gate-on"
 LB_OFF_TAG = "emo-bounded-flip-gate-off"
 LB_FACULTY = "emotion-category"
+TREATMENT_KEY = "BRAIN_EMOTION_CATEGORY_BOUNDED"   # prereg Amendment 2: the ON row's required env, forbidden on OFF
+TREATMENT_ON = {TREATMENT_KEY: "1"}
+TREATMENT_OFF = {TREATMENT_KEY: None}
 REFERENCE = "research/findings/raw/_stage2_exit/gate/aggregate.json"
 REFERENCE_JOY_NONE_SEED = 101          # the 10-26 gate's emo result: seed 101 intact joy named None
 GROUP = "emo"
@@ -432,8 +440,10 @@ def score_b7(on_dir, off_dir, seeds=GATE_SEEDS, arms=ARMS, lb_base=LB_BASE, on_t
 
 
 # ══════════════════════════════════════════════ B8: the load-bearing row ═════════════════════════════════════════════
-def _lb_cell(base, tag, seed, want_flag, pin=None):
-    """('LB'|'NOT-LB'|'UNDEFINED', reason) for one lb_shard cell of the emotion-category row."""
+def _lb_cell(base, tag, seed, want_flag, pin=None, treatment=None):
+    """('LB'|'NOT-LB'|'UNDEFINED', reason) for one lb_shard cell of the emotion-category row. With `pin`, the cell must
+    pass lb_shard's pin rule with `treatment` (prereg Amendment 2: TREATMENT_ON for the ON tag, TREATMENT_OFF for the
+    OFF tag; default None keeps lb_shard's default rule) and be complete, else UNDEFINED."""
     cell_dir = os.path.join(base, tag, "s%d" % int(seed), LB_FACULTY)
     p = os.path.join(cell_dir, "lb.json")
     if not os.path.exists(p):
@@ -450,9 +460,13 @@ def _lb_cell(base, tag, seed, want_flag, pin=None):
         return "UNDEFINED", "the battery marked this shard UNRELIABLE"
     if pin:
         from tools.lb_shard import cell_prov_fails
-        fails, _cov = cell_prov_fails(cell_dir, pin, rep.get("per_faculty", []))
+        fails, _cov = cell_prov_fails(cell_dir, pin, rep.get("per_faculty", []), treatment=treatment)
         if fails:
-            return "UNDEFINED", "provenance does not match the pin: %s" % _short(fails, 160)
+            miss = (fails.get("completeness") or []) if isinstance(fails, dict) else []
+            rest = {k: v for k, v in fails.items() if k != "completeness"} if isinstance(fails, dict) else fails
+            parts = (["incomplete cell: %s" % "; ".join(miss)] if miss else []) + (
+                ["provenance does not match the pin: %s" % _short(rest, 160)] if rest else [])
+            return "UNDEFINED", " | ".join(parts)
     # engagement: the intact arms must show the flag in the state it is meant to be in for this tag
     arms = sorted(a for a in glob.glob(os.path.join(cell_dir, "intact*.json")) if not a.endswith(".prov.json"))
     if not arms:
@@ -487,13 +501,13 @@ def _lb_cell(base, tag, seed, want_flag, pin=None):
 def score_b8(base=LB_BASE, on_tag=LB_ON_TAG, off_tag=LB_OFF_TAG, seeds=GATE_SEEDS, pin=None):
     failures, undefined, on_cells, off_cells = [], [], {}, {}
     for s in seeds:
-        st, why = _lb_cell(base, on_tag, s, True, pin)
+        st, why = _lb_cell(base, on_tag, s, True, pin, TREATMENT_ON)
         on_cells["s%d" % int(s)] = {"status": st, "why": why}
         if st == "NOT-LB":
             failures.append("s%d (flag ON): %s" % (int(s), why))
         elif st == "UNDEFINED":
             undefined.append("s%d (flag ON): %s" % (int(s), why))
-        st0, why0 = _lb_cell(base, off_tag, s, False, pin)
+        st0, why0 = _lb_cell(base, off_tag, s, False, pin, TREATMENT_OFF)
         off_cells["s%d" % int(s)] = {"status": st0, "why": why0}
     n_lb = sum(1 for v in on_cells.values() if v["status"] == "LB")
     n_off = sum(1 for v in off_cells.values() if v["status"] == "LB")
@@ -575,7 +589,9 @@ def main(argv=None):
     ap.add_argument("--lb-on-tag", default=LB_ON_TAG)
     ap.add_argument("--lb-off-tag", default=LB_OFF_TAG)
     ap.add_argument("--reference", default=REFERENCE, help="the 10-26 gate aggregate B5 compares the OFF arms with")
-    ap.add_argument("--pin", default=None, help="full sha: B8 cells must match it in their provenance sidecars (lb_shard rule)")
+    ap.add_argument("--pin", default=None, help="full sha: B8 cells must match it in their provenance sidecars (lb_shard rule, "
+                    "with prereg Amendment 2's treatment key: required =1 on the ON tag, forbidden on the OFF tag; and "
+                    "every cell complete)")
     ap.add_argument("--only", default=None, help="comma-separated bars to read (default all of B1..B8)")
     ap.add_argument("--out", default=None)
     ap.add_argument("--strict", action="store_true", help="exit 1 unless DEC is PASS")

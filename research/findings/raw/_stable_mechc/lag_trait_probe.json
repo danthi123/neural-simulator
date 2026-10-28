@@ -1,0 +1,678 @@
+{
+ "runner": "research/runners/stable_mechc_lag_trait_probe.py",
+ "backend": "numpy",
+ "env": {
+  "SIM_STABLE_INTEGRATION": "1",
+  "SIM_PRESET_CENTRED_HET": null
+ },
+ "concepts": [
+  "lynx",
+  "chase",
+  "vole",
+  "beetle",
+  "mite",
+  "dog",
+  "cat",
+  "eat",
+  "fish",
+  "fox",
+  "hen",
+  "bird",
+  "worm",
+  "owl"
+ ],
+ "facts": [
+  [
+   "lynx",
+   "chase",
+   "vole"
+  ],
+  [
+   "vole",
+   "chase",
+   "beetle"
+  ],
+  [
+   "beetle",
+   "chase",
+   "mite"
+  ],
+  [
+   "dog",
+   "chase",
+   "cat"
+  ],
+  [
+   "cat",
+   "eat",
+   "fish"
+  ]
+ ],
+ "v_low_mV": -110.0,
+ "rows": [
+  {
+   "seed": 7,
+   "variant": "as_built",
+   "n_cells": 1800,
+   "n_steps": 2250,
+   "n_spikes": 117159,
+   "n_below_110": 92,
+   "v_min": -158.89288330078125,
+   "n_b_negative": 1800,
+   "stable_integration_applied": true,
+   "by_trait_type": {
+    "Izh2007_FS_CORTICAL_INTERNEURON": {
+     "n": 372,
+     "n_below_110": 23,
+     "n_b_negative": 372
+    },
+    "Izh2007_RS_CORTICAL_PYRAMIDAL": {
+     "n": 393,
+     "n_below_110": 18,
+     "n_b_negative": 393
+    },
+    "Izh2007_STRIATAL_MSN": {
+     "n": 362,
+     "n_below_110": 0,
+     "n_b_negative": 362
+    },
+    "Izh2007_THALAMIC_RELAY": {
+     "n": 333,
+     "n_below_110": 0,
+     "n_b_negative": 333
+    },
+    "Izh2007_THALAMIC_RETICULAR": {
+     "n": 340,
+     "n_below_110": 51,
+     "n_b_negative": 340
+    }
+   },
+   "wall_s": 32.9
+  },
+  {
+   "seed": 7,
+   "variant": "trait_centred",
+   "n_cells": 1800,
+   "n_steps": 2250,
+   "n_spikes": 102450,
+   "n_below_110": 3,
+   "v_min": -121.61249542236328,
+   "n_b_negative": 1127,
+   "stable_integration_applied": true,
+   "by_trait_type": {
+    "Izh2007_FS_CORTICAL_INTERNEURON": {
+     "n": 372,
+     "n_below_110": 0,
+     "n_b_negative": 372
+    },
+    "Izh2007_RS_CORTICAL_PYRAMIDAL": {
+     "n": 393,
+     "n_below_110": 3,
+     "n_b_negative": 393
+    },
+    "Izh2007_STRIATAL_MSN": {
+     "n": 362,
+     "n_below_110": 0,
+     "n_b_negative": 362
+    },
+    "Izh2007_THALAMIC_RELAY": {
+     "n": 333,
+     "n_below_110": 0,
+     "n_b_negative": 0
+    },
+    "Izh2007_THALAMIC_RETICULAR": {
+     "n": 340,
+     "n_below_110": 0,
+     "n_b_negative": 0
+    }
+   },
+   "wall_s": 36.8
+  },
+  {
+   "seed": 7,
+   "variant": "trait_exact",
+   "n_cells": 1800,
+   "n_steps": 2250,
+   "n_spikes": 90793,
+   "n_below_110": 6,
+   "v_min": -119.7602310180664,
+   "n_b_negative": 1127,
+   "stable_integration_applied": true,
+   "by_trait_type": {
+    "Izh2007_FS_CORTICAL_INTERNEURON": {
+     "n": 372,
+     "n_below_110": 0,
+     "n_b_negative": 372
+    },
+    "Izh2007_RS_CORTICAL_PYRAMIDAL": {
+     "n": 393,
+     "n_below_110": 6,
+     "n_b_negative": 393
+    },
+    "Izh2007_STRIATAL_MSN": {
+     "n": 362,
+     "n_below_110": 0,
+     "n_b_negative": 362
+    },
+    "Izh2007_THALAMIC_RELAY": {
+     "n": 333,
+     "n_below_110": 0,
+     "n_b_negative": 0
+    },
+    "Izh2007_THALAMIC_RETICULAR": {
+     "n": 340,
+     "n_below_110": 0,
+     "n_b_negative": 0
+    }
+   },
+   "wall_s": 37.2
+  },
+  {
+   "seed": 7,
+   "variant": "rs_exact",
+   "n_cells": 1800,
+   "n_steps": 2250,
+   "n_spikes": 107325,
+   "n_below_110": 103,
+   "v_min": -150.42308044433594,
+   "n_b_negative": 1800,
+   "stable_integration_applied": true,
+   "by_trait_type": {
+    "Izh2007_FS_CORTICAL_INTERNEURON": {
+     "n": 372,
+     "n_below_110": 26,
+     "n_b_negative": 372
+    },
+    "Izh2007_RS_CORTICAL_PYRAMIDAL": {
+     "n": 393,
+     "n_below_110": 23,
+     "n_b_negative": 393
+    },
+    "Izh2007_STRIATAL_MSN": {
+     "n": 362,
+     "n_below_110": 0,
+     "n_b_negative": 362
+    },
+    "Izh2007_THALAMIC_RELAY": {
+     "n": 333,
+     "n_below_110": 0,
+     "n_b_negative": 333
+    },
+    "Izh2007_THALAMIC_RETICULAR": {
+     "n": 340,
+     "n_below_110": 54,
+     "n_b_negative": 340
+    }
+   },
+   "wall_s": 31.2
+  },
+  {
+   "seed": 1,
+   "variant": "as_built",
+   "n_cells": 1800,
+   "n_steps": 2250,
+   "n_spikes": 110672,
+   "n_below_110": 99,
+   "v_min": -153.32142639160156,
+   "n_b_negative": 1800,
+   "stable_integration_applied": true,
+   "by_trait_type": {
+    "Izh2007_FS_CORTICAL_INTERNEURON": {
+     "n": 340,
+     "n_below_110": 22,
+     "n_b_negative": 340
+    },
+    "Izh2007_RS_CORTICAL_PYRAMIDAL": {
+     "n": 364,
+     "n_below_110": 20,
+     "n_b_negative": 364
+    },
+    "Izh2007_STRIATAL_MSN": {
+     "n": 376,
+     "n_below_110": 0,
+     "n_b_negative": 376
+    },
+    "Izh2007_THALAMIC_RELAY": {
+     "n": 358,
+     "n_below_110": 0,
+     "n_b_negative": 358
+    },
+    "Izh2007_THALAMIC_RETICULAR": {
+     "n": 362,
+     "n_below_110": 57,
+     "n_b_negative": 362
+    }
+   },
+   "wall_s": 32.7
+  },
+  {
+   "seed": 1,
+   "variant": "trait_centred",
+   "n_cells": 1800,
+   "n_steps": 2250,
+   "n_spikes": 91785,
+   "n_below_110": 9,
+   "v_min": -120.31632232666016,
+   "n_b_negative": 1080,
+   "stable_integration_applied": true,
+   "by_trait_type": {
+    "Izh2007_FS_CORTICAL_INTERNEURON": {
+     "n": 340,
+     "n_below_110": 0,
+     "n_b_negative": 340
+    },
+    "Izh2007_RS_CORTICAL_PYRAMIDAL": {
+     "n": 364,
+     "n_below_110": 9,
+     "n_b_negative": 364
+    },
+    "Izh2007_STRIATAL_MSN": {
+     "n": 376,
+     "n_below_110": 0,
+     "n_b_negative": 376
+    },
+    "Izh2007_THALAMIC_RELAY": {
+     "n": 358,
+     "n_below_110": 0,
+     "n_b_negative": 0
+    },
+    "Izh2007_THALAMIC_RETICULAR": {
+     "n": 362,
+     "n_below_110": 0,
+     "n_b_negative": 0
+    }
+   },
+   "wall_s": 37.9
+  },
+  {
+   "seed": 1,
+   "variant": "trait_exact",
+   "n_cells": 1800,
+   "n_steps": 2250,
+   "n_spikes": 84680,
+   "n_below_110": 14,
+   "v_min": -117.96781921386719,
+   "n_b_negative": 1080,
+   "stable_integration_applied": true,
+   "by_trait_type": {
+    "Izh2007_FS_CORTICAL_INTERNEURON": {
+     "n": 340,
+     "n_below_110": 0,
+     "n_b_negative": 340
+    },
+    "Izh2007_RS_CORTICAL_PYRAMIDAL": {
+     "n": 364,
+     "n_below_110": 14,
+     "n_b_negative": 364
+    },
+    "Izh2007_STRIATAL_MSN": {
+     "n": 376,
+     "n_below_110": 0,
+     "n_b_negative": 376
+    },
+    "Izh2007_THALAMIC_RELAY": {
+     "n": 358,
+     "n_below_110": 0,
+     "n_b_negative": 0
+    },
+    "Izh2007_THALAMIC_RETICULAR": {
+     "n": 362,
+     "n_below_110": 0,
+     "n_b_negative": 0
+    }
+   },
+   "wall_s": 38.1
+  },
+  {
+   "seed": 1,
+   "variant": "rs_exact",
+   "n_cells": 1800,
+   "n_steps": 2250,
+   "n_spikes": 101999,
+   "n_below_110": 122,
+   "v_min": -152.54989624023438,
+   "n_b_negative": 1800,
+   "stable_integration_applied": true,
+   "by_trait_type": {
+    "Izh2007_FS_CORTICAL_INTERNEURON": {
+     "n": 340,
+     "n_below_110": 28,
+     "n_b_negative": 340
+    },
+    "Izh2007_RS_CORTICAL_PYRAMIDAL": {
+     "n": 364,
+     "n_below_110": 27,
+     "n_b_negative": 364
+    },
+    "Izh2007_STRIATAL_MSN": {
+     "n": 376,
+     "n_below_110": 0,
+     "n_b_negative": 376
+    },
+    "Izh2007_THALAMIC_RELAY": {
+     "n": 358,
+     "n_below_110": 0,
+     "n_b_negative": 358
+    },
+    "Izh2007_THALAMIC_RETICULAR": {
+     "n": 362,
+     "n_below_110": 67,
+     "n_b_negative": 362
+    }
+   },
+   "wall_s": 34.5
+  },
+  {
+   "seed": 2,
+   "variant": "as_built",
+   "n_cells": 1800,
+   "n_steps": 2250,
+   "n_spikes": 112061,
+   "n_below_110": 115,
+   "v_min": -164.7454833984375,
+   "n_b_negative": 1800,
+   "stable_integration_applied": true,
+   "by_trait_type": {
+    "Izh2007_FS_CORTICAL_INTERNEURON": {
+     "n": 373,
+     "n_below_110": 41,
+     "n_b_negative": 373
+    },
+    "Izh2007_RS_CORTICAL_PYRAMIDAL": {
+     "n": 332,
+     "n_below_110": 17,
+     "n_b_negative": 332
+    },
+    "Izh2007_STRIATAL_MSN": {
+     "n": 381,
+     "n_below_110": 0,
+     "n_b_negative": 381
+    },
+    "Izh2007_THALAMIC_RELAY": {
+     "n": 371,
+     "n_below_110": 0,
+     "n_b_negative": 371
+    },
+    "Izh2007_THALAMIC_RETICULAR": {
+     "n": 343,
+     "n_below_110": 57,
+     "n_b_negative": 343
+    }
+   },
+   "wall_s": 36.3
+  },
+  {
+   "seed": 2,
+   "variant": "trait_centred",
+   "n_cells": 1800,
+   "n_steps": 2250,
+   "n_spikes": 115054,
+   "n_below_110": 7,
+   "v_min": -121.60401153564453,
+   "n_b_negative": 1086,
+   "stable_integration_applied": true,
+   "by_trait_type": {
+    "Izh2007_FS_CORTICAL_INTERNEURON": {
+     "n": 373,
+     "n_below_110": 0,
+     "n_b_negative": 373
+    },
+    "Izh2007_RS_CORTICAL_PYRAMIDAL": {
+     "n": 332,
+     "n_below_110": 7,
+     "n_b_negative": 332
+    },
+    "Izh2007_STRIATAL_MSN": {
+     "n": 381,
+     "n_below_110": 0,
+     "n_b_negative": 381
+    },
+    "Izh2007_THALAMIC_RELAY": {
+     "n": 371,
+     "n_below_110": 0,
+     "n_b_negative": 0
+    },
+    "Izh2007_THALAMIC_RETICULAR": {
+     "n": 343,
+     "n_below_110": 0,
+     "n_b_negative": 0
+    }
+   },
+   "wall_s": 37.6
+  },
+  {
+   "seed": 2,
+   "variant": "trait_exact",
+   "n_cells": 1800,
+   "n_steps": 2250,
+   "n_spikes": 105152,
+   "n_below_110": 10,
+   "v_min": -119.53862762451172,
+   "n_b_negative": 1086,
+   "stable_integration_applied": true,
+   "by_trait_type": {
+    "Izh2007_FS_CORTICAL_INTERNEURON": {
+     "n": 373,
+     "n_below_110": 0,
+     "n_b_negative": 373
+    },
+    "Izh2007_RS_CORTICAL_PYRAMIDAL": {
+     "n": 332,
+     "n_below_110": 10,
+     "n_b_negative": 332
+    },
+    "Izh2007_STRIATAL_MSN": {
+     "n": 381,
+     "n_below_110": 0,
+     "n_b_negative": 381
+    },
+    "Izh2007_THALAMIC_RELAY": {
+     "n": 371,
+     "n_below_110": 0,
+     "n_b_negative": 0
+    },
+    "Izh2007_THALAMIC_RETICULAR": {
+     "n": 343,
+     "n_below_110": 0,
+     "n_b_negative": 0
+    }
+   },
+   "wall_s": 38.5
+  },
+  {
+   "seed": 2,
+   "variant": "rs_exact",
+   "n_cells": 1800,
+   "n_steps": 2250,
+   "n_spikes": 103788,
+   "n_below_110": 135,
+   "v_min": -157.68414306640625,
+   "n_b_negative": 1800,
+   "stable_integration_applied": true,
+   "by_trait_type": {
+    "Izh2007_FS_CORTICAL_INTERNEURON": {
+     "n": 373,
+     "n_below_110": 50,
+     "n_b_negative": 373
+    },
+    "Izh2007_RS_CORTICAL_PYRAMIDAL": {
+     "n": 332,
+     "n_below_110": 23,
+     "n_b_negative": 332
+    },
+    "Izh2007_STRIATAL_MSN": {
+     "n": 381,
+     "n_below_110": 0,
+     "n_b_negative": 381
+    },
+    "Izh2007_THALAMIC_RELAY": {
+     "n": 371,
+     "n_below_110": 0,
+     "n_b_negative": 371
+    },
+    "Izh2007_THALAMIC_RETICULAR": {
+     "n": 343,
+     "n_below_110": 62,
+     "n_b_negative": 343
+    }
+   },
+   "wall_s": 31.7
+  },
+  {
+   "seed": 3,
+   "variant": "as_built",
+   "n_cells": 1800,
+   "n_steps": 2250,
+   "n_spikes": 109989,
+   "n_below_110": 97,
+   "v_min": -155.35377502441406,
+   "n_b_negative": 1800,
+   "stable_integration_applied": true,
+   "by_trait_type": {
+    "Izh2007_FS_CORTICAL_INTERNEURON": {
+     "n": 359,
+     "n_below_110": 35,
+     "n_b_negative": 359
+    },
+    "Izh2007_RS_CORTICAL_PYRAMIDAL": {
+     "n": 349,
+     "n_below_110": 17,
+     "n_b_negative": 349
+    },
+    "Izh2007_STRIATAL_MSN": {
+     "n": 357,
+     "n_below_110": 0,
+     "n_b_negative": 357
+    },
+    "Izh2007_THALAMIC_RELAY": {
+     "n": 348,
+     "n_below_110": 0,
+     "n_b_negative": 348
+    },
+    "Izh2007_THALAMIC_RETICULAR": {
+     "n": 387,
+     "n_below_110": 45,
+     "n_b_negative": 387
+    }
+   },
+   "wall_s": 33.7
+  },
+  {
+   "seed": 3,
+   "variant": "trait_centred",
+   "n_cells": 1800,
+   "n_steps": 2250,
+   "n_spikes": 96015,
+   "n_below_110": 4,
+   "v_min": -121.34760284423828,
+   "n_b_negative": 1065,
+   "stable_integration_applied": true,
+   "by_trait_type": {
+    "Izh2007_FS_CORTICAL_INTERNEURON": {
+     "n": 359,
+     "n_below_110": 0,
+     "n_b_negative": 359
+    },
+    "Izh2007_RS_CORTICAL_PYRAMIDAL": {
+     "n": 349,
+     "n_below_110": 4,
+     "n_b_negative": 349
+    },
+    "Izh2007_STRIATAL_MSN": {
+     "n": 357,
+     "n_below_110": 0,
+     "n_b_negative": 357
+    },
+    "Izh2007_THALAMIC_RELAY": {
+     "n": 348,
+     "n_below_110": 0,
+     "n_b_negative": 0
+    },
+    "Izh2007_THALAMIC_RETICULAR": {
+     "n": 387,
+     "n_below_110": 0,
+     "n_b_negative": 0
+    }
+   },
+   "wall_s": 38.5
+  },
+  {
+   "seed": 3,
+   "variant": "trait_exact",
+   "n_cells": 1800,
+   "n_steps": 2250,
+   "n_spikes": 92866,
+   "n_below_110": 6,
+   "v_min": -119.95711517333984,
+   "n_b_negative": 1065,
+   "stable_integration_applied": true,
+   "by_trait_type": {
+    "Izh2007_FS_CORTICAL_INTERNEURON": {
+     "n": 359,
+     "n_below_110": 0,
+     "n_b_negative": 359
+    },
+    "Izh2007_RS_CORTICAL_PYRAMIDAL": {
+     "n": 349,
+     "n_below_110": 6,
+     "n_b_negative": 349
+    },
+    "Izh2007_STRIATAL_MSN": {
+     "n": 357,
+     "n_below_110": 0,
+     "n_b_negative": 357
+    },
+    "Izh2007_THALAMIC_RELAY": {
+     "n": 348,
+     "n_below_110": 0,
+     "n_b_negative": 0
+    },
+    "Izh2007_THALAMIC_RETICULAR": {
+     "n": 387,
+     "n_below_110": 0,
+     "n_b_negative": 0
+    }
+   },
+   "wall_s": 36.3
+  },
+  {
+   "seed": 3,
+   "variant": "rs_exact",
+   "n_cells": 1800,
+   "n_steps": 2250,
+   "n_spikes": 99609,
+   "n_below_110": 101,
+   "v_min": -153.17823791503906,
+   "n_b_negative": 1800,
+   "stable_integration_applied": true,
+   "by_trait_type": {
+    "Izh2007_FS_CORTICAL_INTERNEURON": {
+     "n": 359,
+     "n_below_110": 33,
+     "n_b_negative": 359
+    },
+    "Izh2007_RS_CORTICAL_PYRAMIDAL": {
+     "n": 349,
+     "n_below_110": 19,
+     "n_b_negative": 349
+    },
+    "Izh2007_STRIATAL_MSN": {
+     "n": 357,
+     "n_below_110": 0,
+     "n_b_negative": 357
+    },
+    "Izh2007_THALAMIC_RELAY": {
+     "n": 348,
+     "n_below_110": 0,
+     "n_b_negative": 348
+    },
+    "Izh2007_THALAMIC_RETICULAR": {
+     "n": 387,
+     "n_below_110": 49,
+     "n_b_negative": 387
+    }
+   },
+   "wall_s": 28.3
+  }
+ ]
+}
