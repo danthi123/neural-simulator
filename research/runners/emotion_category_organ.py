@@ -248,8 +248,10 @@ def bounded_requested() -> bool:
     `webapp/server.py::_emotion_category_on`. Any other value is read as 1/true/yes/on -> ON, else OFF, so an explicit
     `0` (or false/no/off, or any value that is not one of the ON spellings) is the escape back to the unbounded
     explicit-Euler step, byte-identical to the organ before this flag existed (pinned in
-    tests/test_emotion_category_bounded.py)."""
-    v = os.environ.get(BOUNDED_ENV)
+    tests/test_emotion_category_bounded.py). The env name is written as a LITERAL below (not via BOUNDED_ENV) so the
+    static gate tools/gates/flip_offarm_staleness.py (CLASS OS) resolves this default ON through its `_*DEFAULT_ON`
+    constant-indirection path; a variable here makes the gate read the default as UNKNOWN and skip the flag."""
+    v = os.environ.get("BRAIN_EMOTION_CATEGORY_BOUNDED")
     if v is None or not v.strip():
         return _BOUNDED_DEFAULT_ON
     return _truthy(BOUNDED_ENV)

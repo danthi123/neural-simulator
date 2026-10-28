@@ -115,6 +115,16 @@ def test_default_constant_is_on():
     assert _E()._BOUNDED_DEFAULT_ON is True
 
 
+def test_offarm_staleness_gate_resolves_the_default_on():
+    """tools/gates/flip_offarm_staleness.py (CLASS OS) must see this default as ON, so a future soak/flip/verify runner
+    that pops the flag as its OFF arm (the 2026-08-27 class) blocks. It resolves a bare literal
+    os.environ.get("BRAIN_EMOTION_CATEGORY_BOUNDED") gated on a `_*DEFAULT_ON` constant; a read through a variable
+    resolves UNKNOWN (None) and the gate skips the flag."""
+    sys.path.insert(0, os.path.join(REPO, "tools", "gates"))
+    import flip_offarm_staleness as gate
+    assert gate._default_state(ENV, REPO) == "on"
+
+
 @pytest.mark.parametrize("v,want", [(None, True), ("", True), ("   ", True), ("0", False), ("off", False),
                                     ("false", False), ("no", False), (" 0 ", False), ("banana", False),
                                     ("1", True), ("true", True), (" on ", True), ("yes", True), ("TRUE", True)])
