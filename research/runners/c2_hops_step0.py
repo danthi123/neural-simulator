@@ -476,6 +476,9 @@ def score_table_shard(shard, seed, table):
     if reads.get("error"):
         faults.append("reads raised: %s" % reads["error"])
     rows = reads.get("decoded_rows") or []
+    rows_read = not reads.get("error") and isinstance(reads.get("decoded_rows"), list)
+    if not rows_read:
+        faults.append("decoded_rows not read: the row checks of (e) are UNDEFINED on this shard")
     dec_triples = [[r.get("agent"), r.get("action"), r.get("patient")] for r in rows]
 
     # (b) every true match drives its m{b} over match_thresh and no non-matching block does
@@ -594,13 +597,13 @@ def score_table_shard(shard, seed, table):
     if table in ("infer_amb1", "infer_amb2", "infer_dup"):
         rw = [t["label"] for t in turns if t.get("role") == "teach"
               and ((resp.get(t["label"]) or {}).get("reconsolidation") or {}).get("action") == "rewrite"]
-        rows_ok = True
-        for cue in AMBIGUOUS_CUES.get(table, ()):
+        rows_ok = True if rows_read else None
+        for cue in (AMBIGUOUS_CUES.get(table, ()) if rows_read else ()):
             under = SG.rows_under(rows, *cue)
             if not (len(under) == 2 and len({r["patient"] for r in under}) == 2):
                 rows_ok = False
                 _stop(stops, "S8_rewrite_or_rows", {"cue": _key(cue), "rows": under, "expected": "2 rows, 2 patients"})
-        for cue in RETOLD_CUES.get(table, ()):
+        for cue in (RETOLD_CUES.get(table, ()) if rows_read else ()):
             under = SG.rows_under(rows, *cue)
             if not (len(under) == 2 and len({r["patient"] for r in under}) == 1):
                 rows_ok = False
@@ -611,7 +614,7 @@ def score_table_shard(shard, seed, table):
         if rw:
             _stop(stops, "S8_rewrite_or_rows", {"rewrite_on": rw,
                                                 "reconsolidation": {l: resp[l].get("reconsolidation") for l in rw}})
-        go["no_rewrite_rows_as_expected"] = not rw and rows_ok
+        go["no_rewrite_rows_as_expected"] = False if rw else rows_ok
     else:
         go["no_rewrite_rows_as_expected"] = None
 
@@ -631,10 +634,9 @@ def score_table_shard(shard, seed, table):
                 if not _fact_in(fact, builtin):
                     fails.append("built-in %s not in builtin_facts" % fact)
             elif src.startswith("fixture:"):
-                rb = fixture.get("readback_before_first_probe") or {}
-                if not (fixture.get("ltm_type") == "ShardedPhasorStore" and rb.get("query_patient") == "fish"
-                        and "fish" in (rb.get("all_candidate_patients") or [])):
-                    fails.append("fixture read-back before the first probe did not return fish")
+                # the fixture landing (its type, write and both read-backs) is S11's line, not a premise failure; the
+                # LTM half of this row is still read below, from (f)
+                continue
             else:
                 fact = _canon(msg_of.get(src))
                 if not acquired.get(src):
