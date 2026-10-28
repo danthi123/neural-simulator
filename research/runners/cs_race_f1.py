@@ -2417,7 +2417,9 @@ def run_calibration(base, grid, seeds, args):
     return 0
 
 
-def main():
+def _build_parser():
+    """The runner's argparse parser (main() parses with it; the f1j lines
+    test dry-parses every pool line with it)."""
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", default="1,2,3,4,5,6,7,8")
     ap.add_argument("--draws", type=int, default=N_DRAWS)
@@ -2534,21 +2536,13 @@ def main():
                     help="f1g step 0c: DRIVE engagement probe "
                          "(item d0, trace off; RULING "
                          "cs-race-f1g-0b-1022)")
-    args = ap.parse_args()
-    global _F1_GRID_ROW, MENT_PA
-    _F1_GRID_ROW = dict(F1_GRID[args.grid_row])
-    if args.ment_pa is not None:
-        MENT_PA = float(args.ment_pa)
-    seeds = [int(s) for s in args.seeds.split(",") if s.strip()]
+    return ap
 
-    from tools.lab import assert_backend, attributable_to
-    from tools.verdict import Verdict
-    assert_backend("numpy", note="cs-race step 1 F1 feasibility probe")
 
-    t0 = time.time()
-    print("KILL CRITERIA (pre-registered):", flush=True)
-    for line in KILL_CRITERIA:
-        print("  " + line, flush=True)
+def _base_from_args(ap, args):
+    """The circuit parameter dict for parsed ARGS; every flag-dependency
+    error is refused through ap.error (exit 2), exactly as before this
+    function existed (it is the body main() ran inline)."""
     base = dict(_BASE)
     if args.w_ee is not None:
         base["W_EE"] = float(args.w_ee)
@@ -2629,6 +2623,27 @@ def main():
         if not args.tau_gi > 0.0:
             ap.error("--tau-gi must be > 0")
         base["TAU_GI"] = float(args.tau_gi)
+    return base
+
+
+def main():
+    ap = _build_parser()
+    args = ap.parse_args()
+    global _F1_GRID_ROW, MENT_PA
+    _F1_GRID_ROW = dict(F1_GRID[args.grid_row])
+    if args.ment_pa is not None:
+        MENT_PA = float(args.ment_pa)
+    seeds = [int(s) for s in args.seeds.split(",") if s.strip()]
+
+    from tools.lab import assert_backend, attributable_to
+    from tools.verdict import Verdict
+    assert_backend("numpy", note="cs-race step 1 F1 feasibility probe")
+
+    t0 = time.time()
+    print("KILL CRITERIA (pre-registered):", flush=True)
+    for line in KILL_CRITERIA:
+        print("  " + line, flush=True)
+    base = _base_from_args(ap, args)
     if args.identity_cue_n:
         return identity_cue_n(base, _F1_GRID_ROW, seeds,
                               int(args.cue_n or 48),
