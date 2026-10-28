@@ -1,4 +1,4 @@
-# PACKET c2-spiking-hops (Claude, 2026-10-27; revised twice that day after two skeptics, again on 2026-10-28 after a third, round 4, the same day after the round-4 synthesis of three more skeptics, round 5, after the round-5 synthesis, round 6, and after the round-6 fix-checker, round 7): Stage-2 C2, two separate methods: hop reads on the spiking store (M1) and acquisition of all-novel transitives through a learned order cue (M3)
+# PACKET c2-spiking-hops (Claude, 2026-10-27; revised twice that day after two skeptics, again on 2026-10-28 after a third, round 4, the same day after the round-4 synthesis of three more skeptics, round 5, after the round-5 synthesis, round 6, after the round-6 fix-checker, round 7, and after a fresh skeptic, round 8): Stage-2 C2, two separate methods: hop reads on the spiking store (M1) and acquisition of all-novel transitives through a learned order cue (M3)
 
 host-decision: scaffold
 decides: M1: the possessive-question dispatch (_POSSESSIVE_CHAIN_RE), the hop-1 relation candidates (_ROLE_NOUN_HINTS plus the same-verb fallback), the two-hop relation order taken from that parse, the PROPOSE block selection inside query_patient at the production default, which is the fact-shard fast path (default ON: per-role DG sparse indices that _ensure_fact_shard builds from the .kb agent, action and patient strings, one_brain_composer.py:1400-1432 with the entry read at :1420, intersected by _fact_shard_candidates :1434-1466, an empty candidate set being an abstain before any block is decoded, then a host first-match over the spiking decodes of the candidate blocks, :1468-1481), and on escalation or with the fact shard off a host first-match over every spiking-decoded row (_seq_block :1685-1690), the label-only .kb reads on the PROPOSE path (the patient-type clause test at :1822 in _finish_query_patient and the attribute-key test at :1782), the sequencer's reduced agent and action vocabularies built from the host fact list (_ensure_sequencer's self.kb[:K] read, :1654, reading the agent and action fields only from step 1 on, which decides which stored agent and action words get word lines) and the host abstain of the read when a cue word has no line (:1709), the block count K that the per-block reads iterate over (len(self.kb)), read for the conflict read at one new site keyed as kind `len` (section 2.4), the drive rebuild after every store write while the conflict unit is built (section 2.3), the set union, in block order, of the patient word pools that the relay below lights across all K blocks, which forms the patient vocabulary V'_P without reading any .kb entry, and the fabric rebuild when that set changes (section 2.3), the relay of each block's cleanup scores into the sequencer (block_cleanup_scores read to host and clipped at 0, injected as input_gain x score into the divnorm score bridge by make_block_drives and onbridge_divnorm_drive, where the on-bridge divisive normalisation and the Izhikevich rheobase decide which word pools fire, then turned by the host into a fixed 1500 pA decoded-line drive and remapped to the reduced vocabularies with a lit word outside them dropped), the per-query STP reset of the conflict synapses, the slot-to-word map of the workspace, the relay of the conflict unit's spike count into a workspace slot drive, the drive vector the host builds for every hop whichever tier serves it, the host read-outs of the workspace (_conf_from_nmda's NMDA margin formula, its ignition count over the fixed threshold THR and its argmax winner, _gnw_reentrant_metacog_gated_deliberation_derisk.py:204-219 with THR at :105) and the gate's calibrated theta_hi and retry budget R_max (acc_conflict_gate :326-337, R_MAX_DEFAULT at :124, theta_hi from _get_theta), the mapping of acc_conflict_gate's four outputs onto hop outcomes (section 2.2), and, for the LTM tier (the TieredFactStore's tier routing picks the source), the candidate enumeration all_candidate_patients on the routed shard (host closed-form unbind with a host string dedup), whose patients other than the PROPOSE word each get their own workspace slot, on a buffer-served hop (the cross-tier slots) and on an LTM-served hop alike; M3: the competent() branch selection of ComprehensionProductionOrgan, which is a host English table (the hand ANIMACY and VERB_SELECTS coverage with their corpus-learned extensions, plus the _brain_vocab membership test, decide whether an assertion is fully covered, fully out-of-vocabulary or passed through, and so decide which assertions M3 ever judges), which utterances the comprehension read judges (extract_transitive's 3-content-token test and its function-word list), the role assignment of the stored triple (the positional parse after the host strip), the store-or-refuse agreement check between M3's commit roles and that positional parse, the M3 margin arithmetic (minimum over roles of winner-minus-runner-up, median-normalised) and its calibrated threshold (0.5 times the 10th percentile of the in-sample well-formed normalised margins), and the utterance-onset event
@@ -6,9 +6,60 @@ allowed-by: CLAUDE.md non-negotiable 1 (a declared teaching scaffold for its neu
 replaced-by: the learned relation-noun binding (M2, its own packet), the cs-race spiking store competition for block selection, the word-role frame commit for scope and stored roles, and one-bridge co-residence of the K-way sequencer and the GNW workspace
 cap: 2 builds
 
-**Round-7 changes (2026-10-28, after the round-6 fix-checker returned two minor fixes on 1c84c367c; design only, no
-run and no code; both applied). Each was read at origin/main 53d64c2ef, where every file cited below is blob-identical to
-the f0fd444f7 of 0h.**
+**Round-8 changes (2026-10-28, after a fresh skeptic returned four fixes on fc476672a, two of them blocking; design
+only, no run and no code; all four applied as given, with one citation corrected in item 4). Every citation below was
+read at origin/main 34a4e5f75 (`git show`), where every file it cites (`webapp/server.py`,
+`research/runners/shared_ltm.py`, the route, the composer, the stage-2 runner, the tiered and sharded stores,
+`tools/answer_rate.py` and `tests/test_stage2_kb_scramble.py`) is blob-identical to the branch base cadf0f40f, so the
+line numbers hold on both. No bar is loosened and no gate seed is read.** Item number, then the sections changed:
+1. (blocking) The `infer_xtier` fixture could never land at the default. Round 5 wrote (heron, hunt, fish) into
+   `chat.inner.composer.ltm` with `ltm.store`, on the claim that each conversation loads its own LTM copy
+   (`webapp/server.py:4290-4300`, :4395). That claim is false at origin/main. `_SHARED_LTM_DEFAULT_ON = True` (:4203),
+   so `_ltm_store_for_conversation` returns `_shared_ltm.view_for(...)` (:4307-4316), which the tiny-demo attach calls
+   at :4396 (the comment at :4395, "default: this conversation's own copy", is stale). So `.ltm` is a `SharedLTMView`,
+   and its `store()` raises `SharedLTMWriteError` (`research/runners/shared_ltm.py:215-216`). Fix: A15, A16 and the
+   step-0 `infer_xtier` read run with `BRAIN_SHARED_LTM=0` and `BRAIN_LTM_RNG_ISOLATE=1` in both entries' env, the
+   `offiso` configuration. With the shared store off and isolation on, the conversation gets a private,
+   RNG-isolated copy (`_load_ltm_isolated`, :4280-4290, returned at :4306), so `.ltm` is a `ShardedPhasorStore`. The
+   shared-LTM flip battery measured offiso equal to the shared default on the whole record, on 6/6 gate seeds (A1,
+   comment at :4198-4199). The fixture's engagement record holds `type(chat.inner.composer.ltm).__name__`, which must
+   be `ShardedPhasorStore`. A `SharedLTMView` on A15 or A16 (or any other type, or a write that raised) makes that arm
+   UNDEFINED for every prediction and bar that reads it. No write goes through `ltm.shared_store`. `BRAIN_ONE_BRAIN`,
+   which forces the shared store on (:4223-4224), stays unset (default OFF, `webapp/one_brain.py:49`). The false
+   citation is corrected in 2.8 and in 0g item 7, and the step-0 STOP remedy for the fixture is replaced. Sections:
+   0g item 7, 2.8 (the `infer_xtier` paragraph, the arm table), 2.9 (P9, facts-present source (3), B9's A16/A15
+   pair through 2.8, B12 (a)), 2.10 step 0 ((5), (e), the GO rule, the STOP lines) and step 1 (the env and its unit
+   test).
+2. (blocking for the scorer) The facts-present rule (2.9) took each map cue's bound-store side from the hop records,
+   but many cues are never hopped. A non-chain probe returns before any hop (`compositional_chain_route.py:274-276`),
+   a hop-1 ABSTAIN ends the chain (:289-291), and a hop-1 miss moves on to the next relation without a hop 2
+   (:292-293). So B3, B4, B5, B6, B13 (a), B8 (2)-(4) and B9's control cells would be UNDEFINED on every seed. Fix:
+   on every probe turn of every M1 arm (every turn whose role is not `teach`), chain or not, the arm worker records the
+   FULL decoded store once after the reply, `store_snapshot`. It is the same `_read_blocks` call that 2.7's
+   post-decision read already makes, which decodes every block (the per-block loop, `one_brain_composer.py:1389`, at
+   the production layout; `_read_all_blocks`, `len` at :1206, on A21). All K rows are kept, each with its block id.
+   The snapshot also holds the record-only LTM scan of every shard (the `audit_ltm_all` scan) under each cue of the
+   arm's premise-map rows. Each map cue's bound-store side is read from that turn's snapshot, and a probe turn without
+   a snapshot is UNDEFINED for every bar that reads it. The snapshot is outside every decision scope and is covered by
+   the step-1 whole-table behaviour-preservation test. Sections: 2.7, 2.9 (facts present), 2.10 step 1.
+3. (a bar that could never hold) B9's cells crossed all five arm pairs with six labels, but `infer_amb1` and
+   `infer_amb2` carry only p_prey_eat, c_heron_hunt and c_dog_chase of the six `_INFER_PROBES`
+   (`stage2_exit_gate.py:163-170`; their tables in 2.8). Three cells of each of those two pairs therefore had no
+   response on either arm, so B9 was UNDEFINED on every seed. Fix: B9's cells are the labels each pair's own table
+   carries, written into the scorer as data, as B12 (b)'s arm list is. For A1/A0, A14/A13 and A16/A15 that is the six
+   `_INFER_PROBES` labels, and for A8/A7 and A10/A9 it is p_prey_eat, c_heron_hunt and c_dog_chase. Sections: 2.9
+   (B9), 2.10 step 1.
+4. (minor) `tools/answer_rate.py`'s `probe_body` (:85-95) reads only top-level dicts that carry `answer`. A stage-2
+   shard nests its replies under `responses`, so the prefixed and paired modes report UNMEASURED on every committed
+   `research/findings/raw/_stage2_diag/c2_comprehension_gateoff/s{1,2,3}/infer__*.json` (checked: `probe_body`
+   returns None on all six files). The step-1 `--labels` unit test reads `responses[label]` from a committed stage-2
+   shard (`s1/infer__intact_a_gateoff.json`) and takes dev seeds 1-6, never the gate-seed default. Citation corrected
+   from the fix as given: `SEEDS` is at `tools/answer_rate.py:52`, not :55 (a comment line at origin/main); it is the
+   default of `paired_per_seed` (:162) and of `paired --seeds` (:224). Sections: 2.9 (B9), 2.10 step 1, section 7.
+
+**Round-7 changes (history; 2026-10-28, after the round-6 fix-checker returned two minor fixes on 1c84c367c; design
+only, no run and no code; both applied; where round 8 changes a point, round 8 holds). Each was read at origin/main
+53d64c2ef, where every file cited below is blob-identical to the f0fd444f7 of 0h.**
 1. The named test amendment of round 6 (item 12) left out A17-A20. They build as a new mode, `kb_overwrite`, of
    `apply_kb_scramble` (2.8), and the worker enters a scramble mode only through `arm_scramble` reading the informational
    entry's `scramble` key (`stage2_exit_gate.py:364-369`; the worker reads it at :686-693). So A17-A20 carry a scramble,
@@ -169,7 +220,8 @@ REFUTED the revision fca06bd9a; every one of its fixes is applied (0d), and that
 in 0e. A third skeptic REFUTED bad12d536; its fixes are applied in the round-4 revision (0f). Three
 more skeptics REFUTED that revision, bdd949cc5, all three on the same V'_P test; the twelve ranked fixes of their
 synthesis are applied in the round-5 revision (0g). The round-5 synthesis ruled that revision, 3059090939,
-SURVIVES-WITH-FIXES; its fourteen items are applied in this round-6 revision (0h). Section 7 copies Claude's 2026-10-27 ruling text; the keyed runbook RULING, which Claude posts, is the
+SURVIVES-WITH-FIXES; its fourteen items are applied in the round-6 revision (0h). The round-6 fix-checker's two
+minor fixes are round 7, and a fresh skeptic's four fixes on fc476672a are round 8 (both lists at the top). Section 7 copies Claude's 2026-10-27 ruling text; the keyed runbook RULING, which Claude posts, is the
 authoritative record. Ruling this answers: stage2-fixes-1026, C2 item ("Then two separate methods", finding
 2026-10-26-stage2-fail-diagnoses.md:137-141). M2 (a learned relation-noun binding in place of `_ROLE_NOUN_HINTS`) is
 NOT in this packet; nothing below claims it, and no bar here needs it.
@@ -342,7 +394,7 @@ process (numpy, a 9-word vocabulary, no gate seed, nothing committed).
 | 4 | No cross-seed combination rule | 2.9 (general rule (vi), B11, seed invariance), 2.10 step 3, 3.7 | packet text |
 | 5 | Lesion and necessity bars lacked same-seed references, nulls and liveness (`docs/TERMS.md`, lesion and load-bearing) | 2.7 (`cp_w_max`, `cp_n_syn`), 2.8 (A8b), 2.9 (B3, B4, B6, B11, B13) | `ws_loop_w_max` is recorded as 0.0 when no synapse is found (2.7), hence the intact and synapse-count references |
 | 6 | The hop-1 patient value was never intervened on (A3 keeps (heron, hunt); A19 overwrote the re-tell, so the first match was unchanged) | 2.6, 2.8 (A19, A20 plan), 2.9 (P11, B13 (b)) | under the fact shard, `query_patient` selects the FIRST matching candidate block and `_finish_query_patient` reads that block's `.kb` patient for the clause test (:1822), so the first entry is the one a list-first-match reader sees |
-| 7 | Runner changes were missing from the build lists | 2.4, 2.8, 2.10 steps 0 and 1, 3.8 | `turns_for` gives `permuted_turns` only to the arm named `permuted` and order tables only to A4 order arms (`stage2_exit_gate.py:321-328`); `arms_for` adds `.rep0` only to lesion arms (:331-342); `run_worker` builds the brain inside the first `brain_chat` (`reset=(i == 0)`, :699), and each conversation loads its own LTM copy (`webapp/server.py:4290-4300`, :4395) |
+| 7 | Runner changes were missing from the build lists | 2.4, 2.8, 2.10 steps 0 and 1, 3.8 | `turns_for` gives `permuted_turns` only to the arm named `permuted` and order tables only to A4 order arms (`stage2_exit_gate.py:321-328`); `arms_for` adds `.rep0` only to lesion arms (:331-342); `run_worker` builds the brain inside the first `brain_chat` (`reset=(i == 0)`, :699). Round 8 corrects the rest of this cell: round 5 also wrote "each conversation loads its own LTM copy (`webapp/server.py:4290-4300`, :4395)", which is false at the default. The shared store is default ON (:4203), the tiny-demo's `.ltm` is a `SharedLTMView` (:4307-4316, called at :4396), and its `store()` raises (`shared_ltm.py:215-216`), so A15, A16 and the step-0 `infer_xtier` read run offiso (round-8 item 1, 2.8) |
 | 8 | Step 0 (c)'s V'_P read used a slice production never sends | 2.10 step 0 (c) | `block_cleanup_scores_full` wires every slot (`_phaseC_task1_cleanup_probe.py:33-57`); production skips unrecruited reserve slots (`_seq_cleanup_conns` :1634, `_silent_reserve` :988-998, whose docstring records `__free10__` 5270 against `look` 4080); the chat buffer has `vocab_headroom` 128 (`brain_conversational_agent.py:285`) |
 | 9 | Shard validity depended on the LTM bundle outside the repository, and a missing `corpus_present` read as present | 2.9 (general rule (i)), premise map, section 5 | `_default_ltm_bundle_dir` (`webapp/server.py:3817-3847`) looks outside the checkout and falls back to `wikidata_core_15k`, which gives the same `source` string; `process_record` records `ltm_bundle` (`stage2_exit_gate.py:623-638`); `arm_validity` reads `shard.get("corpus_present", True)` (:933) |
 | 10 | M3 step 0 could run on gate seed 42 | 2.10 step 1 (unit tests), 3.5, 3.7, 3.8 step 0, section 5 | `_brain_chat_seed()` returns 42 when `BRAIN_CHAT_SEED` is unset (`webapp/server.py:4038-4062`), as do `gnw_deliberation._DEFAULT_SEED` (:69) and `gnw_three_organ_bus._DEFAULT_SEED` (:114); the organ's own `seed=42` defaults (`comprehension_production_organ.py:362`, :836) |
@@ -969,6 +1021,13 @@ with an installed patch (A4 and its .rep0), the trace also records `patch_calls_
 (`stage2_exit_gate.py:379-384`), which `run_worker` writes once into the shard's `patch` field after the last turn
 (:718-726, the field at :720). The gate's s42 `infer__qp_lesion` shard reads `calls` 29 over its 10 turns, so no turn's
 own calls can be read from it. The worker snapshots `rec["calls"]` right before and right after each `brain_chat` call.
+**Per-turn store snapshot (round 8).** On every M1 arm, every turn whose role is not `teach` (chain probe or not)
+records `store_snapshot = {turn, K, rows, read, ltm_under_cue}`, taken once right after `brain_chat` returns and
+before the next turn: all K decoded rows of the buffer with their block ids, from one `_read_blocks` call (the
+per-block loop :1389 at the production layout, `_read_all_blocks` :1206 on A21), and the record-only `audit_ltm_all`
+scan under each cue of the arm's premise-map rows. The facts-present rule reads every map cue's bound-store side from
+it (2.9), because the hop records exist only for cues the route hopped. It is outside every decision scope and hop
+scope, and its reads are reported under the label `store_snapshot`, never barred.
 
 **D4 recorder (every arm this packet adds, A0-A21 with A8b and the M3 arms, and step 0).** It is a set of
 behaviour-preserving wrappers installed in the arm worker as `KbProbe` is, with no production edit. Each wrapper calls
@@ -1033,12 +1092,32 @@ with `rep: true` also gets its `.rep0` arm (A4, A5 and A11 here, m3_rs_lesion in
   the frog', label t_heron_hunt_re) and of the hop-2 fact ('the frog eats the gnat', t_frog_eat_re), then the
   `infer` probes.
 - `infer_xtier` (cross-tier ambiguity): the four intact teaches and the `infer` probes, with one fixture write.
-  **Round 5: the write comes after turn 0, not "before the first turn".** `run_worker` builds the brain inside the
-  first `brain_chat` call (`reset=(i == 0)`, `stage2_exit_gate.py:699`), and each conversation loads its own LTM copy
-  (`webapp/server.py:4290-4300`, :4395), so before turn 0 there is no LTM to write to. Pre-building the session and
-  sending turn 0 with `reset=False` would change turn 0's build path, a confound, so it is not used. Right after turn 0
-  (t_heron_hunt) returns, the arm worker writes (heron, hunt, fish) into that session's own LTM,
-  `chat.inner.composer.ltm`, with `ltm.store` (the call `build_ltm_from_facts` uses, `tiered_fact_store.py:108`). It is a
+  **Round 5: the write comes after turn 0, not "before the first turn".** `run_worker` builds the brain, and with it
+  the `TieredFactStore` that holds the LTM handle, inside the first `brain_chat` call (`reset=(i == 0)`,
+  `stage2_exit_gate.py:699`; the tiny-demo attach, `webapp/server.py:4390-4400`), so before turn 0 there is no LTM
+  handle to write to. Pre-building the session and sending turn 0 with `reset=False` would change turn 0's build path,
+  a confound, so it is not used. **Round 8: whose LTM, and the env that makes it private.** Round 5 justified the
+  write with "each conversation loads its own LTM copy" (`webapp/server.py:4290-4300`, :4395). At origin/main that is
+  false at the default: `_SHARED_LTM_DEFAULT_ON = True` (:4203), so `_ltm_store_for_conversation` returns
+  `_shared_ltm.view_for(...)` (:4307-4316), called for the tiny-demo at :4396 (the comment at :4395 is stale), and
+  `chat.inner.composer.ltm` is a `SharedLTMView`, whose `store()` raises `SharedLTMWriteError`
+  (`research/runners/shared_ltm.py:215-216`). So A15 and A16, and the step-0 `infer_xtier` read (2.10), carry
+  `BRAIN_SHARED_LTM=0` and `BRAIN_LTM_RNG_ISOLATE=1` in their informational entries' `env`, the same two values on both
+  arms, so the pair still differs only in the M1 flag. `run_worker` sets an entry's env before it imports the server
+  (`stage2_exit_gate.py:664-665`, the import at :673). This is the `offiso` configuration: with the shared store off
+  and isolation on, each conversation loads a private, RNG-isolated copy (`_load_ltm_isolated`, :4280-4290, returned at
+  :4306), a `ShardedPhasorStore`. The shared-LTM flip battery measured offiso equal to the shared default on the whole
+  record, on 6/6 gate seeds (A1, `webapp/server.py:4198-4199`), so the LTM these two arms read is the production one
+  in content. `BRAIN_ONE_BRAIN`, which forces the shared store on (:4223-4224), is not set (default OFF,
+  `webapp/one_brain.py:49`). Right after turn 0 (t_heron_hunt) returns, the arm worker records the fixture's engagement
+  record: `ltm_type`, which is `type(chat.inner.composer.ltm).__name__`, and the two env values as the worker read
+  them. Only when `ltm_type` is `ShardedPhasorStore` does it write (heron, hunt, fish) into that session's private LTM,
+  `chat.inner.composer.ltm`, with `ltm.store` (the call `build_ltm_from_facts` uses, `tiered_fact_store.py:108`;
+  `ShardedPhasorStore.store`, `sharded_phasor_store.py:214`). Any exception the write raises is recorded as
+  `store_exception`. No write ever goes through `ltm.shared_store`, the one process-shared store every conversation
+  reads. A `SharedLTMView` (or any type other than `ShardedPhasorStore`), a recorded `store_exception`, or a missing
+  `ltm_type` makes the fixture not engaged, and the arm (A15 or A16) UNDEFINED on that seed for every prediction and
+  bar that reads it (P9, B9's A16/A15 pair, B12 (a) and (b)). It is listed, never scored around. It is a
   fixture step, not a turn, so the buffer never holds it. The worker reads it back with `ltm.query_patient(heron, hunt)`
   and `all_candidate_patients(ltm.shard_for("heron"), "heron", "hunt")` right after the write, and again right before
   the first probe. The second read-back is the one the premise map uses. Hop 1 of p_prey_eat then has frog in the
@@ -1138,7 +1217,7 @@ later store write would re-form V'_P at the next read.
 | A11 amb1_conflict_lesion (+ .rep0) | infer_amb1 | M1 on + conflict lesion | the conflict unit necessary |
 | A12 m1_permuted_gateoff | infer permuted | M1 on + `BRAIN_COMPREHENSION_GATE=0` | conclusion tracks exposure through spiking hops (departure, reference) |
 | A13 dup_off / A14 dup_m1 | infer_dup | off / M1 on | a duplicated fact is not a conflict, both routes |
-| A15 xtier_off / A16 xtier_m1 | infer_xtier | off / M1 on | a cross-tier conflict still abstains, both routes |
+| A15 xtier_off / A16 xtier_m1 | infer_xtier | off / M1 on; both with `BRAIN_SHARED_LTM=0` and `BRAIN_LTM_RNG_ISOLATE=1` (offiso, round 8: a private `ShardedPhasorStore` LTM the fixture can write) | a cross-tier conflict still abstains, both routes |
 | A17 amb1_kbset_m1 / A18 amb1_kbset_off | infer_amb1 + overwrite worm -> frog | M1 on / off | a patient taken out of the list (the data-flow arm for V'_P): M1's abstain follows the store, today's route the list (B13 a) |
 | A19 dup_kbset_m1 / A20 dup_kbset_off | infer_dup + overwrite of the FIRST (heron, hunt) entry, frog -> worm | M1 on / off | the hop-1 value a first-match list reader sees, and a patient added to the list: M1 still advances through frog, today's route abstains (B13 b, route-level list reads only) |
 | A21 m1_fs0 (round 5) | infer | M1 on + `BRAIN_FACT_SHARD_RETRIEVAL=0` | PROPOSE on the full decoded scan (`propose_path` `seq_block`, the batched layout): the moat read through the decoded store and the match pools (B8 (1b)) |
@@ -1185,6 +1264,8 @@ Predictions, written before any M1 code exists:
   through two recorded spiking hops, as the gate-off diagnostic arm derived it through the list.
 - P9 (A15, A16): p_prey_eat abstains on both routes; in A16 hop 1 shows source_tier buffer, proposed frog,
   patient_lines_active = 1, acc_conf_spikes = 0, xtier_slots = [fish], n_ignited >= 2 and gate_decision ABSTAIN.
+  Round 8: both arms run offiso, and each arm's fixture record shows `ltm_type` `ShardedPhasorStore` and no
+  `store_exception` (2.8); otherwise that arm is UNDEFINED for P9.
 - P10 (A17, A18; a patient taken out of the list, round 5 with worm): A18 (flag off) derives p_prey_eat
   `[frog, eat, gnat]` from `[[heron, hunt, frog], [frog, eat, gnat]]`, because the list now holds one patient under
   (heron, hunt). A17 (M1 on) abstains on p_prey_eat; its hop-1 record shows worm in `vp` AND in `vp_not_in_kb`,
@@ -1246,12 +1327,29 @@ premise, it is in the shard's `builtin_facts`. That is the chat's stored facts, 
 turn 0 (`stage2_exit_gate.py:710-715`): the five built-ins of `_build_tiny_demo` (`brain_chat_tui.py:2449-2455`) plus
 turn 0's own fact, t_heron_hunt's (heron, hunt, frog) on these tables (round 5 correction: round 4 called it "the
 tiny-demo store"). Or (3), for the `infer_xtier` fixture, the fixture's second read-back, right before the first
-probe, returned it. "Exactly" below means that the patients stored under the cue in these records are the listed
-set, with no extra one. A store holding another patient under a hop cue
-makes the probe test a different chain, so it is UNDEFINED too. On M1 arms the hop records add the bound-store side
-for every cue the map lists with a non-empty patient set: `decoded_rows` under the cue, and `audit_ltm_all` under it
-(0 except for `infer_xtier`'s (heron, hunt), which is 1). These LTM reads, and the A15/A16 fixture rows, count only on
-a shard whose `ltm_bundle` is `wikidata_100k` (rule (i)). A disagreement with this map makes the probe UNDEFINED, and
+probe, returned it, on a fixture record whose `ltm_type` is `ShardedPhasorStore` (round 8, 2.8). "Exactly" below
+means that the patients stored under the cue in these records are the listed set, with no extra one. A store holding
+another patient under a hop cue makes the probe test a different chain, so it is UNDEFINED too. On M1 arms the
+bound-store side is added for every cue the map lists with a non-empty patient set: the decoded rows under the cue,
+and the LTM count under it (0 except for `infer_xtier`'s (heron, hunt), which is 1). **Round 8: both are read from
+the probe turn's `store_snapshot`, never from the hop records.** The hop records cannot carry them, because many cues
+are never hopped: a non-chain probe returns before any hop (`compositional_chain_route.py:274-276`), a hop-1 ABSTAIN
+ends the chain (:289-291), and a hop-1 miss moves on to the next relation without a hop 2 (:292-293). On every probe
+turn of every M1 arm (every turn whose role is not `teach`), chain or not, the arm worker therefore records the FULL
+decoded store once, right after `brain_chat` returns the reply and before the next turn: `store_snapshot = {turn, K,
+rows, read, ltm_under_cue}`. `rows` holds all K decoded rows, each as (block id, agent, action, patient), none
+dropped or filtered. They come from one `_read_blocks` call, the same call 2.7's post-decision read makes, which
+decodes every block: the per-block loop (`one_brain_composer.py:1389`) at the production layout, and
+`_read_all_blocks` (`len` at :1206) on A21; `read` names which ran. `ltm_under_cue` holds, for each cue of the arm's
+map rows, the patients of the record-only scan of every shard in `ltm.shards` that `audit_ltm_all` makes (2.3), a list
+read with no substrate run. A map cue's decoded rows are the snapshot rows whose decoded agent and action equal the
+cue, and its LTM count is the length of `ltm_under_cue` under it. A probe turn with no `store_snapshot`, or with a
+snapshot whose `rows` count differs from its K, is UNDEFINED for every bar that reads that probe, and it is listed.
+The snapshot runs outside every decision scope and every hop scope, so its `.kb` accesses are recorded under their own
+label `store_snapshot` and never enter `composer_kb_reads`, `kb_reads_unlisted` or B7. Its inertness is covered by
+the step-1 whole-table behaviour-preservation test (2.10), which runs with it installed. The hop records' own
+`decoded_rows` stay what B5, B8 and B12 (a) read on the hops they name. These LTM reads, and the A15/A16 fixture
+rows, count only on a shard whose `ltm_bundle` is `wikidata_100k` (rule (i)). A disagreement with this map makes the probe UNDEFINED, and
 it is listed. An ABSENCE premise (the moat's (frog, chase)) is never read from the bound store or the LTM (round 5; the
 c_prey_chase row). Step 0 checks the whole map on the bound store and the LTM (2.10). An UNDEFINED probe goes into the
 bar's `probes_undefined` list with the missing or extra fact, and under rule (vii) the bar is UNDEFINED on that seed.
@@ -1422,9 +1520,27 @@ the conflict unit can fire on that seed and a silent `acc_conf` elsewhere is evi
   controls are not chain turns, so their identity is read with the arm-level engagement, never with a per-turn read
   they cannot have. Scored by rule (vii): a defined item that fails is a FAIL, and an UNDEFINED item among (2), (3) and
   (4) makes B8 UNDEFINED on that seed; it is never dropped while the other controls are scored.
-- **B9 answer rate:** per label, flag-on (A1, A8, A10, A14, A16) against flag-off (A0, A7, A9, A13, A15) on
-  p_prey_eat, c_heron_hunt, c_frog_eat, c_prey_chase, p_yesno, c_dog_chase: no label answered off and abstained on.
-  Read by `tools/answer_rate.py --labels`, which the M1 build adds (section 7); FLIP-HURTS-ANSWERS is reported. Round
+- **B9 answer rate:** per label, flag-on (A1, A8, A10, A14, A16) against flag-off (A0, A7, A9, A13, A15), on the
+  labels each pair's own table carries: no label answered off and abstained on. **Round 8: the cells, written into
+  the scorer as data, as B12 (b)'s arm list is.** Until round 8, B9 crossed every pair with all six `_INFER_PROBES` labels
+  (`stage2_exit_gate.py:163-170`), but `infer_amb1` and `infer_amb2` carry only p_prey_eat, c_heron_hunt and
+  c_dog_chase of them (2.8), so three cells of A8/A7 and of A10/A9 had no response on either arm and B9 could never
+  hold. The cells are now:
+
+  | pair | table | labels (the cells) |
+  |---|---|---|
+  | A1/A0 | infer | p_prey_eat, c_heron_hunt, c_frog_eat, c_prey_chase, p_yesno, c_dog_chase |
+  | A8/A7 | infer_amb1 | p_prey_eat, c_heron_hunt, c_dog_chase |
+  | A10/A9 | infer_amb2 | p_prey_eat, c_heron_hunt, c_dog_chase |
+  | A14/A13 | infer_dup | p_prey_eat, c_heron_hunt, c_frog_eat, c_prey_chase, p_yesno, c_dog_chase |
+  | A16/A15 | infer_xtier | p_prey_eat, c_heron_hunt, c_frog_eat, c_prey_chase, p_yesno, c_dog_chase |
+
+  A step-1 unit test asserts that each pair's cell list equals the non-teach labels of that pair's turn table as
+  `turns_for` returns it, so the data cannot drift from the tables. A label outside its pair's list is never a cell.
+  Read by `tools/answer_rate.py --labels`, which the M1 build adds (section 7), reading `responses[label]` from each
+  stage-2 shard (round 8: never the prefixed or paired modes, whose `probe_body`, `tools/answer_rate.py:85-95`, reads
+  only top-level dicts carrying `answer` and so reports every stage-2 shard UNMEASURED), over dev seeds 1-6;
+  FLIP-HURTS-ANSWERS is reported. Round
   5: UNMEASURED is decided per arm PAIR and seed, not per seed. A pair (A1/A0, A8/A7, A10/A9, A14/A13, A16/A15) whose
   flag-on arm shows `spiking_hop_reads` = 0 on p_prey_eat is UNMEASURED on that seed (equal answer rates from a flag
   that never engaged are not evidence of no harm), and under rule (vi) an UNMEASURED pair counts as not meeting B9.
@@ -1444,6 +1560,8 @@ the conflict unit can fire on that seed and a silent `acc_conf` elsewhere is evi
   fixture's read-backs (round 5: both, the one right after the turn-0 write and the one right before the first probe)
   returned fish from `ltm.query_patient(heron, hunt)`; the shard's `ltm_bundle` is `wikidata_100k`; A16's hop-1
   `decoded_rows` under (heron, hunt) carry frog only; and the audit counts one patient per tier. Otherwise UNDEFINED.
+  Round 8: both A15 and A16 run offiso, and the fixture record of A16 (and of A15, for the flag-off half of P9) shows
+  `ltm_type` `ShardedPhasorStore` and no `store_exception` (2.8); a `SharedLTMView` there is UNDEFINED, never PASS.
   (b) On every M1 arm except A3, A11, A17 and A19 (A1, A2, A4-A6, A8, A8b, A10, A12, A14, A16, A21) and every dev
   seed, no hop has `audit_disagree` true (round 6: `audit_disagree` is keyed on the hop having `committed` a patient,
   not on `gate_decision` ADVANCE, 2.3, so an ADVANCE whose winner the route did not commit is not counted, and a
@@ -1532,7 +1650,10 @@ installed before the server import.
 (3) The `stored_facts_after_teach` read, taken before any overwrite fixture (round 6, 2.7).
 (4) The `kb_overwrite` fixture mode with its engagement record, conditions (i)-(iv) (2.8), including (round 6) A17's
 and A18's chat-list refresh, the `_fact_shard_built_K` reset, their read-backs and the fixture's turn index.
-(5) The `infer_xtier` hook: the LTM write right after turn 0 and its two read-backs (2.8).
+(5) The `infer_xtier` hook: the LTM write right after turn 0 and its two read-backs (2.8). Round 8: the step-0
+`infer_xtier` entry carries `BRAIN_SHARED_LTM=0` and `BRAIN_LTM_RNG_ISOLATE=1` in its `env` (offiso), as A15 and A16
+do, and the hook records `ltm_type` (`type(chat.inner.composer.ltm).__name__`), the two env values as read, and any
+`store_exception`. It writes only when `ltm_type` is `ShardedPhasorStore`, and never through `ltm.shared_store`.
 (6) Read-only wrappers of `_fact_shard_first_match`, `_fact_shard_candidates` and `_seq_block` that record
 `propose_path` and `fs_candidates` (2.7).
 (7) Round 6: the amendment of `tests/test_stage2_kb_scramble.py` named in 2.8. Its assertions at :53-55 (the extras
@@ -1580,8 +1701,9 @@ In the arm worker, with the D4 recorder installed from the first turn, after the
   `fully_oov`, `or_matches_return` and the return, with the branch read from them by 2.7's rule. Every
   `competent()` call of another caller (`repair_target`, the three-organ bus) is listed beside it. Beside it: t_frog_eat_apple's `comprehension.margin` and `comprehension.known_binding`; the `surprise`
   and `reconsolidation` records of every `infer_amb1`, `infer_amb2` and `infer_dup` teach; the row count and the
-  decoded patients under each ambiguous and each re-told cue; the `infer_xtier` fixture (buffer rows under (heron,
-  hunt), `ltm.query_patient(heron, hunt)`, `all_candidate_patients` on the routed shard, the audit's counts per tier);
+  decoded patients under each ambiguous and each re-told cue; the `infer_xtier` fixture (round 8: its `ltm_type`, its
+  env values and any `store_exception` first; then buffer rows under (heron, hunt), `ltm.query_patient(heron, hunt)`,
+  `all_candidate_patients` on the routed shard, the audit's counts per tier);
   and `ws_seed` against the arm seed;
 - (f) facts present on the bound store (round 4): for every row of 2.9's premise map, the buffer's decoded rows
   (`_read_blocks`, never `.kb`) under each hop cue, plus `ltm.query_patient` and `all_candidate_patients` on the
@@ -1606,8 +1728,8 @@ no `reconsolidation` record on an `infer_amb1`, `infer_amb2` or `infer_dup` teac
 holds two decoded rows with two patients, and each re-told cue holds two rows with one patient; every row of 2.9's
 premise map holds exactly on the bound store and the LTM; both overwrite fixtures engage under (i)-(iv) (round 5: worm
 in no `.kb` entry after A17's overwrite, built-ins included, and still decoded; worm the first (heron, hunt) entry's
-patient after A19's and in no decoded row); the `infer_xtier` fixture landed (frog in the buffer only, fish in the LTM
-only, on both read-backs); `ws_seed` equals the arm seed; the recorder's `or_matches_return` is true on every call; no
+patient after A19's and in no decoded row); the `infer_xtier` fixture landed (round 8: `ltm_type`
+`ShardedPhasorStore` with no `store_exception`; frog in the buffer only, fish in the LTM only, on both read-backs); `ws_seed` equals the arm seed; the recorder's `or_matches_return` is true on every call; no
 probe cue of (a) is `host_routed`; the probe's P10-treated slices equal the production read's on every non-reserve
 slot (c); and the reads and the recorder are inert (h).
 
@@ -1628,8 +1750,13 @@ missing premise or an extra patient under a hop cue): post it; the probes that r
 and Claude rules on the table words. A (frog, chase) fact in the teach log or `builtin_facts` is a premise failure of
 the same kind. A decoded or LTM (frog, chase) row that nothing taught is not a premise failure (2.9): post it, because
 B8 then predicts a moat FAIL wherever that row reaches an answer. An overwrite fixture not engaging: post the record; its half
-of B13 is predicted UNDEFINED. The `infer_xtier` fixture not landing (for example a word outside the LTM codebook):
-post it, and Claude rules on the fixture words. Reads that are not inert: post the differing turns. If the re-tells
+of B13 is predicted UNDEFINED. The `infer_xtier` fixture not landing (round 8: the remedy depends on the record, read
+in this order). If `ltm_type` is `SharedLTMView` (or any type other than `ShardedPhasorStore`) or a
+`SharedLTMWriteError` was recorded, the offiso env did not reach the server: post `ltm_type` and the two env values as
+read, fix the entry's `env` (`BRAIN_SHARED_LTM=0`, `BRAIN_LTM_RNG_ISOLATE=1`, `BRAIN_ONE_BRAIN` unset) and re-run that
+step-0 read. The remedy is never a write through `ltm.shared_store` and never a write on the shared default, and A15
+and A16 stay UNDEFINED until a re-run records `ShardedPhasorStore`. If the type is right and the write or a read-back
+still fails (for example a word outside the LTM codebook), post it, and Claude rules on the fixture words. Reads that are not inert: post the differing turns. If the re-tells
 did not append on any seed, B11 is predicted UNDEFINED and the step-1 circuit test carries the duplicate case. Post
 `[c2-hops-0] RESULT`, STOP for Claude.
 
@@ -1725,7 +1852,9 @@ scans today; under the flag they are spiking reads within the buffer). Round 5 a
   helper in another module inside the scope is counted too, so the frame bypass is closed.
 - **Behaviour preservation on whole tables.** The live proxy and the recorders are behaviour-preserving: the `infer`
   and `infer_amb1` tables run on seed 7 with and without the arm-worker instrumentation, flag off and flag on, give
-  identical primary fields on every turn.
+  identical primary fields on every turn. Round 8: the instrumentation under test includes the per-turn
+  `store_snapshot` (2.7, 2.9), so the post-reply `_read_blocks` call on every probe turn is shown inert by the same
+  comparison.
 - **Sentinel data-flow twin.** On step-1 circuit composers, overwriting EVERY `.kb` patient string with a sentinel
   absent from the vocabulary leaves V'_P, `acc_conf`'s count and the PROPOSE words of the flagged hop identical to the
   untouched twin. Only the :1822 clause test reads the sentinel, and its count is the only patient-field count. Round
@@ -1771,6 +1900,27 @@ Round 6 adds these unit tests:
   `comprehension_production_organ.get_organ().seed == 7` together with `gnw_deliberation._DEFAULT_SEED == 7` and
   `gnw_three_organ_bus._DEFAULT_SEED == 7` (`webapp/gnw_three_organ_bus.py:114`), or sets
   `comprehension_production_organ._ORGAN = None` before its first D4 call and asserts the rebuilt organ's seed is 7.
+Round 8 adds these items:
+- **In the stage-2 arm worker (item 2).** The per-turn `store_snapshot` on every non-teach turn of every M1 arm: one
+  `_read_blocks` call right after `brain_chat` returns, all K rows kept with their block ids, plus the record-only
+  `audit_ltm_all` scan under each cue of the arm's premise-map rows (2.7, 2.9). Unit test: on a flagged step-1 circuit
+  composer, a non-chain turn and a chain turn whose hop 1 abstains each record a snapshot with K rows, and a map cue
+  never hopped on the turn reads its decoded rows from the snapshot.
+- **In the scorer (items 2 and 3).** The facts-present rule reads every map cue's bound-store side from the probe
+  turn's `store_snapshot` (a turn without one is UNDEFINED), and B9's per-pair cell lists are data (2.9). Unit test:
+  each pair's cell list equals the non-teach labels of that pair's turn table as `turns_for` returns it.
+- **The `--labels` unit test (item 4).** It reads `responses[label]` from a committed stage-2 shard,
+  `research/findings/raw/_stage2_diag/c2_comprehension_gateoff/s1/infer__intact_a_gateoff.json`, and classifies each of
+  its six probe labels from there. It also asserts that the existing `probe_body` (`tools/answer_rate.py:85-95`)
+  returns None on that file, which pins the reason `--labels` exists. The mode takes dev seeds 1-6. It never falls
+  back to `SEEDS` (`tools/answer_rate.py:52`, the gate seeds 42/43/44/100/101/102), the default of `paired_per_seed`
+  (:162) and of `paired --seeds` (:224). The test asserts that the seeds read are 1-6, and that a dev seed with no
+  shard is reported UNMEASURED.
+- **In the A15, A16 and step-0 `infer_xtier` entries (item 1).** `env` carries `BRAIN_SHARED_LTM=0` and
+  `BRAIN_LTM_RNG_ISOLATE=1`, and the fixture hook records `ltm_type`, the env values as read and any
+  `store_exception` (2.8). Unit test: under that env, a server-built tiny-demo +LTM session's
+  `chat.inner.composer.ltm` is a `ShardedPhasorStore` that accepts `store`; under the default env it is a
+  `SharedLTMView` whose `store` raises `SharedLTMWriteError`, which the hook records without writing.
 
 Resource read (seed 7, under `tools/mem_ok.sh`, before any pool line; posted with the step-1 RESULT): the conflict
 unit's cell and synapse counts read back from the built bridge against section 5's formula; build time and RSS of the
@@ -2123,3 +2273,7 @@ posts this revision it relays these asks under one line, `[c2-hops] NEEDS-CLAUDE
   word-role. M3 step 1 waits for those results; M1 proceeds independently.
 - **Answer rate.** `tools/answer_rate.py --labels` mode is part of the M1 build.
 - Not ruled here: the cap (ask (a)).
+
+Packet note (round 8, not part of the ruling text above): `--labels` reads `responses[label]` from stage-2 shards over
+dev seeds 1-6, because the existing modes' `probe_body` (`tools/answer_rate.py:85-95`) reads only top-level dicts that
+carry `answer` and so reports every stage-2 shard UNMEASURED (2.9 B9, 2.10 step 1).
