@@ -76,13 +76,14 @@ redirect for four weeks unless a six-seed falsification forces it; every pivot l
 
 ## Workflow essentials
 
-- **Session start, or ANY continuation (including after compaction):** verify a within-session STATE-CHECKING heartbeat
-  Monitor is live (GPU / running procs / recent-output every ~15 min; a text-only "are you idle?" nudge is not enough)
-  and arm one if not; recipe in `GAP_CLOSURE_MISSION.md` → "SESSION START". It runs `tools/parallel_audit.py` each
-  cycle: `⛔ UNDER-PARALLELIZED` is a STALL, so launch the listed independent work before holding (holding is earned
-  only at `✓ SATURATED`). Never wait on a background run without it, nor trust a subagent-armed Monitor or passive
-  re-invocation to catch a completion. Stocking a queue: `.venv/bin/python tools/lane_check.py` (fails on a monoculture,
-  an unserved crux or no CPU lane).
+- **Session start, or ANY continuation (including after compaction):** arm the attention watcher in the background
+  (`.venv/bin/python tools/attention_watch.py --loop`, Bash `run_in_background`) and re-arm it after handling each event.
+  It is silent unless something needs action: workstation GPU idle with an empty queue, a GPU job failing or degraded, an
+  oom-kill, server NEEDS, the driver silent, the pool idle or not claiming, a ruled task no driver line mentions after
+  24 h (owner 2026-10-28: the owner kept finding these first). `tools/parallel_audit.py`: `⛔ UNDER-PARALLELIZED` is a
+  STALL, so launch the listed independent work before holding (holding is earned only at `✓ SATURATED`). Never trust a
+  subagent-armed Monitor or passive re-invocation to catch a completion. Stocking a queue: `.venv/bin/python
+  tools/lane_check.py` (fails on a monoculture, an unserved crux or no CPU lane).
 - **Research the record before building:** `bash tools/before_you_build.sh "<defect>"` before the first lever; two
   unresolved levers against one defect fire the research gate (a cheap next step is no exemption). Local corpus first:
   `.venv-rag/bin/python tools/rag/rag_search.py "<q>" 5 --corpus finding|plan|doc|catalog|kandel|paper|all`; a hit is a

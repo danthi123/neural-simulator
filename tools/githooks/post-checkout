@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# post-checkout: give a fresh linked worktree the shared, UNTRACKED data/ (the corpora the brain builds from).
+#
+# Why (research/FAILURE_LOG.md 2026-10-27 and 2026-10-28): a worktree made by `git worktree add` has no data/, so the
+# comprehension and XEDGE builds raise FileNotFoundError (data/corpus/tinystories.txt) and the chat handler DEGRADES to
+# standalone organs, recording the degraded turns as ordinary replies. It happened on two consecutive days from two
+# fresh worktrees (wt-recal2, then wt-cupy-census); the 10-27 fix lived in one runner only. This links
+# data -> <shared root>/data whenever the new checkout has none, on every host and for every author (Claude, build
+# agents, the driver), and keeps the link out of `git status`. It never fails a checkout: errors only print.
+top=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+common=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null) || exit 0
+root=$(dirname "$common")
+[ "$top" != "$root" ] || exit 0
+{ [ -e "$top/data" ] || [ -L "$top/data" ]; } && exit 0
+[ -d "$root/data" ] || exit 0
+if ln -s "$root/data" "$top/data" 2>/dev/null; then
+  grep -qxF data "$common/info/exclude" 2>/dev/null || { mkdir -p "$common/info" && echo data >> "$common/info/exclude"; } 2>/dev/null
+  echo "post-checkout: linked data -> $root/data (untracked corpora; FAILURE_LOG 2026-10-27/28)" >&2
+fi
+exit 0

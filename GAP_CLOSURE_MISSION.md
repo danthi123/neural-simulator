@@ -5645,6 +5645,8 @@ sweeps, duplicate work, or development/held-out seeds whose gate is closed.
 
 ## ⚡ SESSION START — DO THIS FIRST, EVERY session (owner-chosen 2026-07-18: doc-instruction arming, NO hooks/daemon)
 
+**2026-10-28 (owner): FIRST arm `tools/attention_watch.py --loop` in the background (event-only, checks the workstation AND the server: GPU idle or failing, oom-kills, degraded builds, NEEDS, a silent driver, an idle or stalled pool, ruled tasks nobody started); re-arm after each event. The 15-min heartbeat recipe below is the older workstation-only backstop.**
+
 **FIRST ACTION: arm the within-session anti-stall + RUN-STATE heartbeat — at SESSION START AND on ANY CONTINUATION
 (resumed from compaction): VERIFY a heartbeat is actually live, do NOT assume.** It is a SESSION-SCOPED `Monitor` — it
 dies when the session ends, so a prior session's heartbeat is GONE and a fresh continuation typically has NONE (the
