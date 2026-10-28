@@ -122,6 +122,19 @@ else
   echo "  stall_watch: UNAVAILABLE (rc=$SW_RC) $(printf '%s' "$SW_OUT" | head -1 | cut -c1-150)"
 fi
 
+# ---- Attention (tools/attention_watch.py --once, owner 2026-10-28). READ-ONLY. One line per thing that needs action:
+# a ruled task whose requested [key] report no driver line mentions after 24 h, NEEDS lines, the driver silent, the pool
+# empty or not claiming (on the workstation also the GPU idle, failed or degraded jobs, oom-kills). The driver acts on its
+# own items (a stalled ruled task is yours: do it or post NEEDS with the blocker). A watcher failure prints UNAVAILABLE.
+echo "-- Attention --"
+AW_OUT=$(timeout "${ATTENTION_WATCH_TIMEOUT:-90}" "$PY" "$ROOT/tools/attention_watch.py" --once 2>&1)
+AW_RC=$?
+if [ "$AW_RC" -eq 0 ]; then
+  if [ -n "$AW_OUT" ]; then printf '%s\n' "$AW_OUT" | head -8 | cut -c1-230 | sed 's/^/  /'; else echo "  nothing needs action"; fi
+else
+  echo "  attention_watch: UNAVAILABLE (rc=$AW_RC) $(printf '%s' "$AW_OUT" | tail -1 | cut -c1-150)"
+fi
+
 # ---- Recent failures: GPU log DONE(rc!=0) in the last 24h + pool job_status non-zero (gathered above) -----------
 echo "-- Recent failures (24h) --"
 NOW=$(date +%s); ANY=0
