@@ -34,11 +34,12 @@ is not available and P cannot be the line revision. Re-pinning to a main tip und
 flags `SIM_PRESET_CENTRED_HET` and `SIM_TRAIT_CENTRED_HET`; at origin/main `6567104f8` it prints DIFFERS on those two and
 on `research/runners/emotion_category_organ.py`), and published main now carries the emotion organ's bounded conductance
 default ON (`0b79336ec`, the merge of emo-bounded-default-on), which every later published main will contain. So F is
-now the published main tip at queue time, and F counts as the gate revision only after an IDENTITY CANARY at F, on dev
-seeds 7 and 8, reproduces the committed dev shards on every decision-bearing field, and on every other field but the
-listed host, timing and provenance ones (section 5). With it: section 4's line-revision sentence and test count; the
-scorer gains `--identity-canary` and `--emit-canary-lines` (its dev and gate reads are unchanged), so its sha256
-(section 5) and the bar-sanity record were regenerated;
+now the published main tip read once, at step 1's provision request, and held unchanged through the identity canary,
+the pre-flight, the pool canary and the 96 gate lines even if main moves (a new F only by a ruling); F counts as the
+gate revision only after an IDENTITY CANARY at F, on dev seeds 7 and 8, reproduces the committed dev shards on every
+decision-bearing field, and on every other field but the listed host, timing and provenance ones (section 5). With it:
+section 4's line-revision sentence and test count; the scorer gains `--identity-canary` and `--emit-canary-lines` (its
+dev and gate reads are unchanged), so its sha256 (section 5) and the bar-sanity record were regenerated;
 `research/coordination/c3-topic-stop-canary-lines.txt` (32 lines) is new. The gate lines file is unchanged: it already
 carried the `<sha>` placeholder, now substituted with F instead of P.
 
@@ -139,8 +140,10 @@ arm with them at the same revision and seed. `lesion_curiosity`'s `BRAIN_CURIOSI
 
 **Lines.** `research/coordination/c3-topic-stop-gate-lines.txt`, 96 lines (TSV: command, then the `--checked` reason), emitted
 by `python -m research.runners.c3_topic_stop_score --emit-lines` with `<sha>` left as the placeholder for the line revision F
-(section 5: F is the published main tip at queue time, valid only after the identity canary). Each command is the dev battery's line byte for byte (the 192 lines queued 2026-10-27 under RULING c3-battery-lines-1027:
-`mem_ok.sh 9 1`, `memcap.sh 10`, the one-thread numpy env block, the flags in the dev order, `.venv/bin/python -u -m
+(section 5: F is the published main tip read at step 1's provision request and held unchanged through the identity
+canary and the gate lines, valid only after the identity canary). Each command is the dev battery's line byte for byte
+(the 192 lines queued 2026-10-27 under RULING c3-battery-lines-1027: `mem_ok.sh 9 1`, `memcap.sh 10`, the one-thread
+numpy env block, the flags in the dev order, `.venv/bin/python -u -m
 research.runners.stage2_exit_gate --shard --seed N --group ask --arm A`) except three things: the seed, the `--out` directory
 (`research/findings/raw/_c3_topic_stop/gate/s<N>/ask__<tag>.json`) and the pair `--allow-gate-seed --prereg
 research/findings/2026-10-28-c3-topic-stop-gate-PREREGISTRATION.md`, without which the runner refuses a gate seed. Checked:
@@ -197,19 +200,24 @@ the ask replies are unchanged across them on the strength of that declaration. T
 `79c6f5128` only; at the gate every comparison (flag-ON against flag-OFF, lesion against intact) is within one revision
 and one seed.
 
-**Gate revision F.** F is the published main tip at the time the gate is queued: the full 40-hex sha of `main` as pushed
-to the remotes, which is what the server's provisioner calls published main (the server's own main becomes published when
-it is pushed). At Edit 1 the published main is `6567104f8`, which contains `0b79336ec` (Merge emo-bounded-default-on @
-`87c37d3f1`: `BRAIN_EMOTION_CATEGORY_BOUNDED`, the emotion organ's bounded conductance, default ON), so F carries that
-flip. Whether it, or any other change since `79c6f5128`, changes what the ask arms compute is what
-the identity canary shows; this file does not predict it. Claude provisions F through the server's request path, `touch
-research/queue/provision.req/<F, full sha>`, and reads `/opt/host-status/sim-provision/<F, full sha>.json`. Its `state` must
-read `ok` (`already`, which the server writes for a revision it provisioned ok before, is the same state); with any other
-state no line runs at F. Every canary line (below) and every gate line runs at F (`cd ~/derisk-pool/revisions/<F>`), and the
-scorer is run with `--pin <F>`; F is the line revision that section 4, section 6 and both lines files name, through
-their `<sha>` placeholder. F contains this file (Edit 1 included), so the pool's gate-seed guard finds the cited prereg in
-F's own tree; the historical-pin path is not used. F's code is not P's and need not be `79c6f5128`'s, and a closure
-difference cannot settle whether that matters, so F is established by what it computes: the identity canary.
+**Gate revision F.** F is fixed once: it is the published main tip read when Claude makes step 1's provision request
+(below), the full 40-hex sha of `main` as pushed to the remotes, which is what the server's provisioner calls published
+main (the server's own main becomes published when it is pushed). F is then held unchanged through the identity canary,
+the pre-flight record, the pool canary and the 96 gate lines (steps 1 to 4 and the queueing below), even if main moves
+in the hours between: a later main tip is not F, and only a ruling names a new F (and repeats this section from the
+provision request). The pool's pool-canary and pre-flight guards are keyed on the revision a gate line names, so a gate
+line at a later tip is refused unless steps 3 and 4 were recorded at that tip too. At Edit 1 the published main is
+`6567104f8`, which contains `0b79336ec` (Merge emo-bounded-default-on @ `87c37d3f1`: `BRAIN_EMOTION_CATEGORY_BOUNDED`,
+the emotion organ's bounded conductance, default ON), so F carries that flip. Whether it, or any other change since
+`79c6f5128`, changes what the ask arms compute is what the identity canary shows; this file does not predict it. Claude
+provisions F through the server's request path, `touch research/queue/provision.req/<F, full sha>`, and reads
+`/opt/host-status/sim-provision/<F, full sha>.json`. Its `state` must read `ok` (`already`, which the server writes for
+a revision it provisioned ok before, is the same state); with any other state no line runs at F. Every canary line
+(below) and every gate line runs at F (`cd ~/derisk-pool/revisions/<F>`), and the scorer is run with `--pin <F>`; F is
+the line revision that section 4, section 6 and both lines files name, through their `<sha>` placeholder. F contains
+this file (Edit 1 included), so the pool's gate-seed guard finds the cited prereg in F's own tree; the historical-pin
+path is not used. F's code is not P's and need not be `79c6f5128`'s, and a closure difference cannot settle whether that
+matters, so F is established by what it computes: the identity canary.
 
 **Identity canary at F, before any gate line is queued.** The sixteen arms of section 4 run at F on dev seeds 7 and 8,
 never a gate seed: the 32 lines of `research/coordination/c3-topic-stop-canary-lines.txt` (`python -m
@@ -242,18 +250,21 @@ ONLY the following host, timing and provenance fields (`CANARY_EXCLUDED` in the 
   --prereg <this file>` in its argv and the arm's `BRAIN_CURIOSITY*` env), the dev cell as a dev-mode measurement of
   `79c6f5128`, and the dev file the committed one (git reports it tracked and unmodified).
 
-On all 12 dev seeds these are the only fields, besides the arm's own `arm` and `session`, in which C_intact_b differs from
-C_intact_a, with the two arms on different pool hosts on 9 seeds. The checker prints each arm IDENTICAL, DIFFERS (the first
-differing field path in the dev shard's order, with both values, then the first decision-bearing one) or UNDEFINED (a
-missing cell, a cell that breaks a validity rule, a dev reference that is not the committed file), and `CANARY PASS` only
-when all 32 read IDENTICAL. **Any DIFFERS or UNDEFINED -> STOP: the gate is not queued at F; Claude rules.** Nothing is
-re-run, re-pinned or excluded by rule; a ruling that names a new F repeats this section from the provision request. The
-canary is no verdict on L+P: it shows that F computes, on every arm, what the dev battery measured at `79c6f5128`, so the
-dev evidence describes the brain the gate measures. Tests: the dev shards against themselves read IDENTICAL (all 192
-compared with a re-load of themselves, and a canary directory holding the committed seed-7 and seed-8 files reads CANARY
-PASS; `test_canary_dev_against_itself_reads_identical`), a planted one-field difference reads DIFFERS at its path
-(`test_canary_one_planted_field_difference_differs_with_its_path`), each kind of decision-field difference reads DIFFERS,
-a change in only the listed host and timing fields reads IDENTICAL, an unreadable cell reads UNDEFINED, and the
+On all 12 dev seeds these are the only fields, besides the arm's own `arm` and `session`, in which C_intact_b differs
+from C_intact_a, with the two arms on different pool hosts on 9 seeds. The checker prints each arm IDENTICAL, DIFFERS
+(the first differing field path in the dev shard's order, with both values, then the first decision-bearing one) or
+UNDEFINED (a missing cell, a cell that breaks a validity rule, a dev reference that is not the committed file), and
+`CANARY PASS` when every arm of the seeds it is given reads IDENTICAL. The checker does not itself require both seeds
+(`--seeds 7` alone can print `CANARY PASS: 16/16`); step 2 requires the read with `--seeds 7,8`, all 32 arms,
+`CANARY PASS: 32/32 IDENTICAL`, and a read over fewer seeds is not step 2's read. **Any DIFFERS or UNDEFINED -> STOP: the gate
+is not queued at F; Claude rules.** Nothing is re-run, re-pinned or excluded by rule; a ruling that names a new F
+repeats this section from the provision request. The canary is no verdict on L+P: it shows that F computes, on every
+arm, what the dev battery measured at `79c6f5128`, so the dev evidence describes the brain the gate measures. Tests: the
+dev shards against themselves read IDENTICAL (all 192 compared with a re-load of themselves, and a canary directory
+holding the committed seed-7 and seed-8 files reads CANARY PASS; `test_canary_dev_against_itself_reads_identical`), a
+planted one-field difference reads DIFFERS at its path
+(`test_canary_one_planted_field_difference_differs_with_its_path`), each kind of decision-field difference reads
+DIFFERS, a change in only the listed host and timing fields reads IDENTICAL, an unreadable cell reads UNDEFINED, and the
 exclusion list is exactly what differs between C_intact_a and C_intact_b on the 12 dev seeds
 (`test_canary_exclusions_are_what_differs_between_the_two_intact_runs`).
 
