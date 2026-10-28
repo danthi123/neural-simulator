@@ -14,6 +14,12 @@
     --faculties emotion-category [--extra-env BRAIN_EMOTION_CATEGORY_BOUNDED=1]`, wrapped in `mem_ok.sh 9 1` and `memcap.sh 12`
     (mem_gb=9 like the Stage-2 lines: the same tiny-demo brain; cap 12 as the earlier lb_shard row lines, because the battery's parent
     process shares the arm subprocess's cgroup and the dev smoke recorded no peak for this row).
+STALENESS CAVEAT (written with the default-ON flip branch research/emo-bounded-default-on): "OFF = variable absent" is OFF only at a
+revision where an unset BRAIN_EMOTION_CATEGORY_BOUNDED reads OFF, which is gate revision F and every revision before the flip. At a
+revision that carries the flip an unset variable builds the bounded organ, so these OFF lines would run ON (the flip_offarm_staleness
+pattern, `tools/gates/flip_offarm_staleness.py`): re-emit them with `BRAIN_EMOTION_CATEGORY_BOUNDED=0` for such a revision. Two reads
+of the scorer refuse the mix: B5 (the OFF s101 intact category must reproduce the 10-26 gate's joy None) and B8's OFF-row cell check
+(an OFF cell showing bounded_flag True is UNDEFINED, "the flag leaked in").
 Every reason names `prereg <path>` first (the pool's gate-seed guard reads the prereg from --checked and requires a file whose name
 contains 'prereg'); it carries no tab or control character.
 """

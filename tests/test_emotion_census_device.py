@@ -79,7 +79,9 @@ class PairedCensus(E.DeviceCensus):
 
 @pytest.fixture(scope="module", params=DEV_SEEDS)
 def organ(request):
-    return request.param, E.EmotionCategoryOrgan(seed=request.param).train()
+    # bounded=False explicitly: GOLDEN_FROM_MAIN was recorded from the UNBOUNDED organ (main cadf0f40f), and the
+    # BRAIN_EMOTION_CATEGORY_BOUNDED default is now ON. The census equivalence itself does not depend on the flag.
+    return request.param, E.EmotionCategoryOrgan(seed=request.param, bounded=False).train()
 
 
 def _sequence(org, key):

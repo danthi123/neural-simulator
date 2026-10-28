@@ -56,9 +56,10 @@ LESIONS (each a transmission gate on this bridge; dev arms):
   shuffle (a build)    O_k -> G_{pi(k)}      BRAIN_EMOTION_CATEGORY_SHUFFLE=1 (pi = rotate by one channel)
   teach swap (a build) fear<->anger triggers in development   BRAIN_EMOTION_CATEGORY_TEACH_SWAP=1
 
-BOUNDED CONDUCTANCE (`BRAIN_EMOTION_CATEGORY_BOUNDED`, default OFF; research/findings/2026-10-26-emotion-organ-bounded-
-conductance-derisk.md). The explicit-Euler conductance term (dv = g_i * (E_i - v) * dt / C) overshoots E_i whenever
-g_i * dt / C exceeds ~2. The organ's heterogeneity draw gives about 4% of builds an appraisal neuron of low capacitance
+BOUNDED CONDUCTANCE (`BRAIN_EMOTION_CATEGORY_BOUNDED`, default ON via `_BOUNDED_DEFAULT_ON`: unset or blank is ON, an
+explicit `=0` / false / no / off restores the unbounded step exactly; research/findings/2026-10-26-emotion-organ-bounded-
+conductance-derisk.md, flip prereg research/findings/2026-10-27-emo-bounded-flip-PREREGISTRATION.md). The explicit-Euler
+conductance term (dv = g_i * (E_i - v) * dt / C) overshoots E_i whenever g_i * dt / C exceeds ~2. The organ's heterogeneity draw gives about 4% of builds an appraisal neuron of low capacitance
 (s101: C = 53.6 pF against a mean near 100); when the other channel wins, its inhibitory pool drives that neuron's g_i
 to 100-136 nS, v oscillates with growing amplitude (-96, -24, -116, +18, -137 mV), and the spurious spikes recruit the
 sadness quench pool that silences the joy rungs. The flag sets the engine's own opt-in guard
@@ -185,7 +186,11 @@ GATE_SLOT = "emo_slot_loop"
 GATE_WORD_PLASTIC = "emo_word_plastic"
 GATE_FIXED = "emo_fixed"
 
-BOUNDED_ENV = "BRAIN_EMOTION_CATEGORY_BOUNDED"   # default OFF: the organ builds with the engine's unbounded Euler step
+BOUNDED_ENV = "BRAIN_EMOTION_CATEGORY_BOUNDED"
+# Production default of BRAIN_EMOTION_CATEGORY_BOUNDED (the literal docs/PRODUCTION_INTEGRATION_LEDGER.yaml anchors).
+# True: an UNSET (or blank) env builds the organ with the engine's bounded exponential-Euler conductance step; the
+# escape back to the unbounded explicit-Euler step is an explicit =0/false/no/off.
+_BOUNDED_DEFAULT_ON = True
 OOR_MV = -110.0                                    # an organ neuron below this left the physiological range (E_i = -75)
 
 
@@ -238,8 +243,15 @@ def operating_point() -> int:
 
 
 def bounded_requested() -> bool:
-    """`BRAIN_EMOTION_CATEGORY_BOUNDED` (1/true/yes/on): build the organ with the engine's bounded conductance
-    integration. Unset or anything else: the unbounded step, byte-identical to the organ before this flag existed."""
+    """`BRAIN_EMOTION_CATEGORY_BOUNDED`: build the organ with the engine's bounded conductance integration. DEFAULT ON
+    (`_BOUNDED_DEFAULT_ON`): unset or blank is ON, the same unset/blank rule as the sibling switch
+    `webapp/server.py::_emotion_category_on`. Any other value is read as 1/true/yes/on -> ON, else OFF, so an explicit
+    `0` (or false/no/off, or any value that is not one of the ON spellings) is the escape back to the unbounded
+    explicit-Euler step, byte-identical to the organ before this flag existed (pinned in
+    tests/test_emotion_category_bounded.py)."""
+    v = os.environ.get(BOUNDED_ENV)
+    if v is None or not v.strip():
+        return _BOUNDED_DEFAULT_ON
     return _truthy(BOUNDED_ENV)
 
 
@@ -257,7 +269,8 @@ class EmotionCategoryOrgan:
                  bounded: Optional[bool] = None):
         self.p = dict(params if params is not None else GRID[0])
         self.seed = int(seed)
-        # None = follow BRAIN_EMOTION_CATEGORY_BOUNDED (read once, here, so a cached organ keeps the value it was built with)
+        # None = follow BRAIN_EMOTION_CATEGORY_BOUNDED (read once, here, so a cached organ keeps the value it was built with;
+        # bounded_env stays the RAW env string seen, None when unset, even though unset now resolves ON)
         self.bounded_env = os.environ.get(BOUNDED_ENV)
         self.bounded = bounded_requested() if bounded is None else bool(bounded)
         self.shuffle = bool(shuffle)
@@ -323,7 +336,7 @@ class EmotionCategoryOrgan:
         cfg.hebbian_learning_rate = float(p["LR"])
         cfg.hebbian_max_weight = float(p["W_MAX"])
         cfg.enable_parameter_heterogeneity = True
-        if self.bounded:        # the engine's own opt-in guard (sim/config.py); default OFF leaves cfg untouched
+        if self.bounded:        # the engine's own opt-in guard (sim/config.py); bounded=False (=0) leaves cfg untouched
             cfg.enable_bounded_conductance_integration = True
         b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(), runtime_state=RuntimeState(),
                              gpu_config=GPUConfig())

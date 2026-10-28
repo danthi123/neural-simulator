@@ -1434,7 +1434,7 @@ rows:
       of felt experience. Separates fear from anger, which the signed scalar ladder reads identically."
     de_risked: YES              # dev battery + handler dev check through the live /api/brain-chat handler: C4 PASS 8/8 dev seeds (research/findings/raw/_s2_c4_build/handler/aggregate_on.json)
     wired: YES                  # webapp/server.py _emotion_category_on -> research/runners/emotion_category_organ.py (the feel read-out hook)
-    on_by_default: YES          # FLIPPED 2026-10-15 per docs/drafts/stage2-c4-build/HANDOFF.md section 5 (Claude verify-go re-scored the aggregate identically)
+    on_by_default: YES          # FLIPPED 2026-10-15 per docs/drafts/stage2-c4-build/HANDOFF.md section 5 (Claude verify-go re-scored the aggregate identically); sub-flag BRAIN_EMOTION_CATEGORY_BOUNDED default ON prepared 2026-10-28, not merged (subflag_flip_2026_10_28)
     retire_status: "ADDITIVE"   # no host decision of the category existed before; the category is chosen by the spiking commit. The sign/arousal feel text stays the production feel_readout template (rendering).
     default_anchor:
       - file: webapp/server.py
@@ -1442,7 +1442,17 @@ rows:
         off_value: "False"
         on_value: "True"
         count: 1
+      # 2026-10-28 SUB-FLAG FLIP, PREPARED ON BRANCH research/emo-bounded-default-on, NOT MERGED: BRAIN_EMOTION_CATEGORY_BOUNDED
+      # (the organ's conductance step is the engine's bounded exponential-Euler guard) defaults ON. Flipping `_BOUNDED_DEFAULT_ON`
+      # back to False (or this row off on_by_default:YES while it stays True) BLOCKS (sub-check A). Same row, same organ: no new
+      # faculty, so headline.total_faculties / scaffold_retired / default_on_spiking_faculties are unchanged.
+      - file: research/runners/emotion_category_organ.py
+        assign: _BOUNDED_DEFAULT_ON
+        off_value: "False"
+        on_value: "True"
+        count: 1
     scaffold_retired: NO
-    host_scaffold_in_default: "(none for the category choice) -- the feel sentence around it is the production feel_readout template; BRAIN_EMOTION_CATEGORY=0 is the byte-identical escape."
+    host_scaffold_in_default: "(none for the category choice) -- the feel sentence around it is the production feel_readout template; BRAIN_EMOTION_CATEGORY=0 is the byte-identical escape for the organ and BRAIN_EMOTION_CATEGORY_BOUNDED=0 is the byte-identical escape for its bounded conductance step."
     lesion_note: "LESION-LOAD-BEARING at dev (8/8 seeds): BRAIN_AFFECT_LESION=1 (affect_out clamped to 0) changes the NAMED category on every seed, reproduced against its .rep0 repeat; the permuted-exposure arm names the swapped categories 8/8; null clean 8/8."
-    evidence: "research/findings/raw/_s2_c4_build/handler/aggregate_on.json (emo C4 PASS 8/8, lesion 8/8, reproduced 8/8, permuted 8/8); research/findings/raw/_s2_c4_build/handler/flip_check.json (no FLIP-HURTS-ANSWERS, no FLIP-CHANGES-NONFEEL); finding research/findings/2026-10-15-emotion-category-default-on.md. Gate-seed C4 is measured by the Stage-2 exit gate (pinned at a revision containing this flip)."
+    evidence: "research/findings/raw/_s2_c4_build/handler/aggregate_on.json (emo C4 PASS 8/8, lesion 8/8, reproduced 8/8, permuted 8/8); research/findings/raw/_s2_c4_build/handler/flip_check.json (no FLIP-HURTS-ANSWERS, no FLIP-CHANGES-NONFEEL); finding research/findings/2026-10-15-emotion-category-default-on.md. Gate-seed C4 is measured by the Stage-2 exit gate (pinned at a revision containing this flip). Sub-flag BRAIN_EMOTION_CATEGORY_BOUNDED (default ON, prepared and not merged): prereg research/findings/2026-10-27-emo-bounded-flip-PREREGISTRATION.md; gate scored 10-28, DEC pending Amendment 2 rescore; see subflag_flip_2026_10_28."
+    subflag_flip_2026_10_28: "BRAIN_EMOTION_CATEGORY_BOUNDED default ON, PREPARED on branch research/emo-bounded-default-on and NOT MERGED. Unset or blank builds the organ with the engine's bounded exponential-Euler conductance guard (cfg.enable_bounded_conductance_integration); an explicit BRAIN_EMOTION_CATEGORY_BOUNDED=0 is the byte-identical escape back to the unbounded step (tests/test_emotion_category_bounded.py: the =0 organ equals the main 011fa0036 golden spike counts, and the unset organ equals =1 record for record). Evidence: prereg research/findings/2026-10-27-emo-bounded-flip-PREREGISTRATION.md (+ Amendment 1); de-risk research/findings/2026-10-26-emotion-organ-bounded-conductance-derisk.md. Gate scored 10-28 at revision F 3b0b5182aa1819d1804ef21d704154132d75e5bc (research/coordination/emo-flip-gate-RESULT.md, research/findings/raw/_emo_bounded_flip/gate_score_3b0b5182aa1819d1804ef21d704154132d75e5bc.json): B1-B7 PASS, B8 UNDEFINED, DEC UNDEFINED; DEC pending Amendment 2 rescore. TODO-MERGER(emo-bounded-default-on): replace this TODO sentence with the rescored DEC line (its verdict.json path and the verbatim DEC status), and merge this branch ONLY IF that DEC reads PASS; on any other DEC close the branch unmerged."
