@@ -91,6 +91,7 @@ from research.runners._gnw_rung1_ignition_curve_derisk import (
     _build_assembly_loop_population,
     DEFAULT_ATTRACTOR_WEIGHT, SETTLE_STEPS, DRIVE_STEPS, FREE_STEPS, WS_LOOP_GATE,
 )
+from research.runners import stable_recal as _stable_recal
 
 
 # ── COMPLETE quiescent wash-out (per-hop snapshot-restore) ───────────────────────────────────────────────────
@@ -201,7 +202,9 @@ def build_workspace_bridge(seed: int, attractor_weight: float = DEFAULT_ATTRACTO
     ws = rm.indices("workspace")
     slots = [np.asarray(ws[i * ASSEMBLY_SIZE:(i + 1) * ASSEMBLY_SIZE], dtype=np.int64) for i in range(n_slots)]
 
-    eff_weight = 0.0 if lesion else float(attractor_weight)
+    # SIM_STABLE_RECAL=1 (default OFF; research/runners/stable_recal.py): the production weight 30 -> 5 on the stable
+    # integrator, where 30 is depolarization block; unset returns float(attractor_weight) unchanged.
+    eff_weight = 0.0 if lesion else _stable_recal.bus_attractor_weight(float(attractor_weight))
     union_plan = dict(rm.build_wiring_plan(seed=int(seed)))
     for i, s in enumerate(slots):
         key = f"workspace_loop_{i}"
@@ -269,7 +272,7 @@ def _deliberate_hop(bridge, xp, slots_dev, snap, target, distractors):
 
     rates = _ignite_and_read(bridge, xp, slots_dev, snap, drives)
     winner = int(np.argmax(rates))
-    thr = IGNITE_FRAC * SOLO_PLATEAU
+    thr = IGNITE_FRAC * _stable_recal.bus_solo_plateau(SOLO_PLATEAU)
     ignited = rates[winner] >= thr
     n_ignited = int(sum(1 for r in rates if r >= thr))
     committed = assignment.get(winner) if ignited else None
@@ -443,8 +446,9 @@ def run_seed(seed: int, D: int, verbose: bool = True):
         rates = _ignite_and_read(b_i, xp, slots_i, snap_i, drives)
         w = int(np.argmax(rates))
         assign = {vslot: value, nslot: nonvalue}
-        won = assign[w] if rates[w] >= IGNITE_FRAC * SOLO_PLATEAU else None
-        return won, (rates[w] >= IGNITE_FRAC * SOLO_PLATEAU)
+        thr_b = IGNITE_FRAC * _stable_recal.bus_solo_plateau(SOLO_PLATEAU)
+        won = assign[w] if rates[w] >= thr_b else None
+        return won, (rates[w] >= thr_b)
     arng = np.random.default_rng(seed * 313 + 11)
     aff_directed = aff_lesion_directed = aff_lesion_deliberates = 0
     aff_tot = 0

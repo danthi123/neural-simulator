@@ -89,7 +89,7 @@ from research.runners._p1_2_workspace_deliberation_loop_derisk import (
 )
 # reuse-by-import the parent coincidence-integrator's slot machinery + calibrated drive + calibration — same frame.
 from research.runners._gnw_coincidence_integrator_derisk import (
-    _assign_slots, _pick_decoy, THR, D_SUB_DEFAULT, run_calibrate,
+    _assign_slots, _pick_decoy, THR, _thr, D_SUB_DEFAULT, run_calibrate,
 )
 # reuse-by-import the held-out CHAINS fixtures + fact store + spreading-activation floor + relation.
 from research.runners._phaseB_multihop_query_chain_derisk import (
@@ -207,8 +207,8 @@ def coincidence_hop(bridge, xp, slots_dev, snap, a_cand, b_cand, decoy, d_sub,
     rates = _ignite_and_read(bridge, xp, slots_dev, snap, drives)
     active = list(range(len(order)))
     winner = int(active[int(np.argmax([rates[i] for i in active]))])
-    ignited = rates[winner] >= THR
-    n_ignited = int(sum(1 for i in active if rates[i] >= THR))
+    ignited = rates[winner] >= _thr()
+    n_ignited = int(sum(1 for i in active if rates[i] >= _thr()))
     committed = order[winner] if ignited else None
     return committed, rates, winner, n_ignited, b_slot
 
@@ -283,9 +283,9 @@ def run_primitive_smoke(seed, D, d_sub, n_trained, n_novel):
     # (2) organ B's SOLO drive is SUBTHRESHOLD (reuse the parent calibration: d_sub solo below the knee) ─────────
     b_i, xp, slots, snap = build_workspace_bridge(seed, lesion=False)
     solo = _ignite_and_read(b_i, xp, slots, snap, [float(d_sub)] + [0.0] * (len(slots) - 1))
-    solo_subthreshold = bool(solo[0] < THR)
+    solo_subthreshold = bool(solo[0] < _thr())
     coinc = _ignite_and_read(b_i, xp, slots, snap, [2.0 * float(d_sub)] + [0.0] * (len(slots) - 1))
-    coinc_ignites = bool(coinc[0] >= THR)
+    coinc_ignites = bool(coinc[0] >= _thr())
     print(f"[smoke] d_sub solo late-rate={solo[0]:.3f} (subthreshold={solo_subthreshold}); "
           f"2*d_sub={2*d_sub:.0f} late-rate={coinc[0]:.3f} (ignites={coinc_ignites})", flush=True)
 
@@ -418,7 +418,7 @@ def run_seed(seed, D, d_sub, n_trained, n_novel, verbose=True):
     # instrument preconditions: organ B's read works AND d_sub sits in the coincidence window
     solo = _ignite_and_read(b_i, xp, slots_i, snap_i, [float(d_sub)] + [0.0] * (len(slots_i) - 1))
     coinc = _ignite_and_read(b_i, xp, slots_i, snap_i, [2.0 * float(d_sub)] + [0.0] * (len(slots_i) - 1))
-    d_sub_in_window = bool(solo[0] < THR <= coinc[0])
+    d_sub_in_window = bool(solo[0] < _thr() <= coinc[0])
     precondition_ok = bool(organ_b_discriminates and d_sub_in_window)
 
     seed_go = bool(

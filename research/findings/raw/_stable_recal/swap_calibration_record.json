@@ -1,0 +1,511 @@
+{
+ "runner": "research/runners/stable_recal_calibration_record.py (reads the cited artifacts; the rules are typed judgments)",
+ "backend": "numpy",
+ "device": "cpu",
+ "what": "thought-swap workspace (research/runners/_gnw_neural_swap_intention_derisk.py) re-calibrated by its own rules on the stable integrator (SIM_STABLE_INTEGRATION=1); every value chosen on the isolated organ on dev seeds 7 and 8, never on a reply",
+ "date": "2026-10-27",
+ "seeds": [
+  7,
+  8
+ ],
+ "organ_gate_seeds": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15
+ ],
+ "seed_roles": {
+  "calibration_seeds": {
+   "swap_workspace": [
+    7,
+    8
+   ],
+   "gnw_bus": [
+    7
+   ],
+   "bus_sources": [
+    "research/findings/raw/_stable_integration/bus_ignition_curve_s7.json",
+    "research/findings/raw/_stable_integration/bus_quorum_w5_s7.json"
+   ]
+  },
+  "reading": "dev seeds 7 and 8 are the CALIBRATION seeds of the swap workspace (bus: seed 7), so any OFF-versus-RECAL comparison on them (the whole-brain dev check, reply identity, answer rate) is IN-SAMPLE. Held-out dev seeds are the other organ-gate seeds (1-6, 9-15) for the isolated organ; no whole-brain comparison on a held-out seed has been run (the pool battery of dev seeds 1-12 is written, not queued)"
+ },
+ "integrator_finding": "on the old integrator at the production constants the workspace ignition knee (2000 -> 2500 pA, seed 7) is the drive at which 112-118 of 300 workspace cells leave the valid membrane range and the 1/3 ignited rate is that runaway; on the stable integrator weight 34 with thal 700 is depolarization block / spontaneous all-pattern activation and no weight 5-60 or normalization 0-64 gives a selective sustained ignition",
+ "constants": {
+  "w_rec": {
+   "production": 34.0,
+   "recal": 6.5,
+   "measured_at_recal_read15_nws4_drive2500": {
+    "s7": {
+     "plateau": 0.0841,
+     "worst_window": 0.076,
+     "frac_windows_below_half": 0.0
+    },
+    "s8": {
+     "plateau": 0.0844,
+     "worst_window": 0.0693,
+     "frac_windows_below_half": 0.0
+    }
+   },
+   "rule": "at nws 4 the sustain knee lies between 4.0 (0.28-0.38 of read windows below half the plateau) and 4.5 (none; plateau 0.067-0.068); the production weight is deliberately supra-critical (the incumbent resists inhibition), so 6.5 (about 1.4x the knee; plateau 0.084, worst window 0.069-0.076) was chosen: a judgment, not a formula; the organ gate passes at it",
+   "source": [
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws4_s7.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws4_s8.json"
+   ]
+  },
+  "norm_ws_w": {
+   "production": 16.0,
+   "recal": 4.0,
+   "rule": "largest norm_pool->workspace weight whose sustained state reads reliably in the organ's 15-step read window (read15: fraction of windows below half the plateau, steps 100-1000, thal 0, drive 2500, stable): at nws 16 and 8 every weight 4-6.5 has 0.53-0.93 of windows below half; at 6 still 0.23-0.42; at 5 none below half for w >= 5 but the worst window is only ~0.55 of the plateau (0.041-0.045 vs 0.074); at 4 none below half for w >= 4.5 and the worst window is 0.82-0.90 of the plateau. 4 was chosen over 5 for that margin (a judgment, recorded as such)",
+   "source": [
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws4_s7.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws4_s8.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws5_s7.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws5_s8.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws6_s7.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws6_s8.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws8_s7.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws8_s8.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws16_s7.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws16_s8.json"
+   ]
+  },
+  "thal_tonic_pa": {
+   "production": 700.0,
+   "recal": 25.0,
+   "rule": "largest thalamic support with no spontaneous ignition over 1000 undriven steps on both seeds (w 6.5, nws 4): 25 pA leaves every pattern at 0.0 on seeds 7 and 8; at 50 pA seed 7 ignites pattern 0 by itself between steps 600 and 1000 (0.029 then 0.084), at 75 pA seed 8 ignites pattern 1 by itself; at 200 and 700 pA all three patterns fire together (0.05-0.06).",
+   "source": [
+    "research/findings/raw/_stable_recal/swap_thal_support_w6p5_nws4_s7.json",
+    "research/findings/raw/_stable_recal/swap_thal_support_w6p5_nws4_s8.json",
+    "research/findings/raw/_stable_recal/swap_thal_support_s7.json",
+    "research/findings/raw/_stable_recal/swap_thal_support_s8.json"
+   ]
+  },
+  "solo_plateau": {
+   "production": 0.3333333333333333,
+   "recal": 0.084,
+   "rule": "the measured ignited plateau at (6.5, 4, 25) on the stable integrator; the ignition criterion stays IGNITE_FRAC (0.5) x plateau = 0.042, scoped to the swap organ (the global-stop workspace shares Rung-2's SOLO_PLATEAU and is not re-calibrated here)",
+   "source": [
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws4_s7.json",
+    "research/findings/raw/_stable_recal/swap_sustain_nws/nws4_s8.json"
+   ]
+  },
+  "establish_pa": {
+   "production": 8000.0,
+   "recal": 1280.0,
+   "rule": "the production ratio of establishment drive to ignition knee (8000 / 2500 = 3.2) applied to the stable knee (300 pA sub, 400 pA ignites): 3.2 x 400",
+   "source": [
+    "research/findings/raw/_stable_recal/swap_ignition_curve_w6p5_nws4_thal25_s7.json",
+    "research/findings/raw/_stable_recal/swap_ignition_curve_w6p5_nws4_thal25_s8.json"
+   ]
+  },
+  "w_ws_occ": {
+   "production": 8.0,
+   "recal": 32.0,
+   "rule": "FORMULA, checked by a sweep: conserve the occupancy read's input (weight x plateau): 8 x (1/3) / 0.084 = 31.7; the w_ws_occ sweep 8, 16, 32, 64 keeps the gate and mismatch primitives holding on both seeds (the veto strengthens with the weight)",
+   "source": [
+    "research/findings/raw/_stable_recal/swap_primitives/w_ws_occ_s7.json",
+    "research/findings/raw/_stable_recal/swap_primitives/w_ws_occ_s8.json"
+   ]
+  },
+  "w_pat_pred": {
+   "production": 8.0,
+   "recal": 32.0,
+   "status": "FORMULA-ONLY (not measured)",
+   "rule": "the same conservation as w_ws_occ applied to the held-content prediction read (8 x (1/3) / 0.084 = 31.7, rounded to 32). No cited artifact varies w_pat_pred; the organ GO gate and the mismatch sweeps were run with it at 32, which shows they pass with it there, not that 32 is better than another value",
+   "source": []
+  },
+  "w_occ_gate": {
+   "production": 20.0,
+   "recal": 80.0,
+   "rule": "the vacancy veto knee: occupied-gate rate 0.215/0.199 at 20 (no veto), 0.093/0.077 at 40, 0.044/0.037 at 80 (empty gate ~0.19); 80 is where the veto saturates; no inversion up to 160 on the stable integrator",
+   "source": [
+    "research/findings/raw/_stable_recal/swap_primitives/w_occ_gate_s7.json",
+    "research/findings/raw/_stable_recal/swap_primitives/w_occ_gate_s8.json"
+   ]
+  },
+  "w_pred_mm": {
+   "production": 20.0,
+   "recal": 80.0,
+   "rule": "the organ's own match bar (match mismatch rate < 0.02): 20 -> 0.082/0.084, 40 -> 0.038/0.038, 80 -> 0.009/0.013",
+   "source": [
+    "research/findings/raw/_stable_recal/swap_primitives/w_pred_mm_s7.json",
+    "research/findings/raw/_stable_recal/swap_primitives/w_pred_mm_s8.json"
+   ]
+  },
+  "w_gate_ws": {
+   "production": 100.0,
+   "recal": 4.0,
+   "evidence": {
+    "primitive_sweep": {
+     "s7": {
+      "1": {
+       "gate_primitive_holds": true,
+       "held_content_survives_own_gate": true
+      },
+      "2": {
+       "gate_primitive_holds": true,
+       "held_content_survives_own_gate": true
+      },
+      "4": {
+       "gate_primitive_holds": true,
+       "held_content_survives_own_gate": true
+      },
+      "8": {
+       "gate_primitive_holds": true,
+       "held_content_survives_own_gate": true
+      },
+      "16": {
+       "gate_primitive_holds": false,
+       "held_content_survives_own_gate": true
+      },
+      "32": {
+       "gate_primitive_holds": false,
+       "held_content_survives_own_gate": true
+      },
+      "100": {
+       "gate_primitive_holds": false,
+       "held_content_survives_own_gate": true
+      }
+     },
+     "s8": {
+      "1": {
+       "gate_primitive_holds": true,
+       "held_content_survives_own_gate": true
+      },
+      "2": {
+       "gate_primitive_holds": true,
+       "held_content_survives_own_gate": true
+      },
+      "4": {
+       "gate_primitive_holds": true,
+       "held_content_survives_own_gate": true
+      },
+      "8": {
+       "gate_primitive_holds": true,
+       "held_content_survives_own_gate": true
+      },
+      "16": {
+       "gate_primitive_holds": true,
+       "held_content_survives_own_gate": true
+      },
+      "32": {
+       "gate_primitive_holds": false,
+       "held_content_survives_own_gate": true
+      },
+      "100": {
+       "gate_primitive_holds": false,
+       "held_content_survives_own_gate": true
+      }
+     }
+    },
+    "organ_gate": {
+     "w_gate_ws=4 (the re-calibration)": {
+      "s7": {
+       "seed_go": true,
+       "swap_ok": true,
+       "failed_checks": [],
+       "newcomer_ignited_after_swap": true,
+       "newcomer_rate_after_swap": 0.0847,
+       "artifact": "research/findings/raw/_stable_recal/swap_organ_gate_tw36/recal_on_s7.json"
+      },
+      "s8": {
+       "seed_go": true,
+       "swap_ok": true,
+       "failed_checks": [],
+       "newcomer_ignited_after_swap": true,
+       "newcomer_rate_after_swap": 0.082,
+       "artifact": "research/findings/raw/_stable_recal/swap_organ_gate_tw36/recal_on_s8.json"
+      }
+     },
+     "w_gate_ws=1 (all else as the re-calibration)": {
+      "s7": {
+       "seed_go": false,
+       "swap_ok": false,
+       "failed_checks": [
+        "reversible",
+        "specificity_ok",
+        "swap_ok",
+        "timing_ok",
+        "trigger_load_bearing"
+       ],
+       "newcomer_ignited_after_swap": false,
+       "newcomer_rate_after_swap": 0.0373,
+       "artifact": "research/findings/raw/_stable_recal/swap_organ_gate_wgate1/wgate1_on_s7.json"
+      },
+      "s8": {
+       "seed_go": false,
+       "swap_ok": true,
+       "failed_checks": [
+        "timing_ok"
+       ],
+       "newcomer_ignited_after_swap": true,
+       "newcomer_rate_after_swap": 0.0533,
+       "artifact": "research/findings/raw/_stable_recal/swap_organ_gate_wgate1/wgate1_on_s8.json"
+      }
+     }
+    },
+    "organ_values_run": [
+     1,
+     4
+    ],
+    "reading": "the vacancy-gate primitive holds at w_gate_ws 1, 2, 4, 8 on both seeds and fails at 16 (seed 7), 32 (seed 8) and 100; the FULL ORGAN was run at 1 and 4 only: at 1 the swap fails on seed 7 (the newcomer never ignites, rate 0.037) and passes on seed 8, at 4 both seeds swap. 2 and 8 were not run through the organ; 4 is the middle of the primitive's admissible 2-8 band, not a measured optimum"
+   },
+   "rule": "the gate primitive (empty admits, held vetoes, self survives) holds for 1-8 on both seeds and fails at 16 (s7) / 32 (s8) and at the production 100; in the full organ w_gate_ws=1 fails the swap on seed 7 (newcomer 0.037; swap_organ_gate_wgate1/) and 4 passes it; 4 is the middle of the primitive's admissible 2-8 band (2 and 8 were not run through the organ)",
+   "source": [
+    "research/findings/raw/_stable_recal/swap_primitives/w_gate_ws_s7.json",
+    "research/findings/raw/_stable_recal/swap_primitives/w_gate_ws_s8.json",
+    "research/findings/raw/_stable_recal/swap_organ_gate_wgate1/wgate1_on_s7.json",
+    "research/findings/raw/_stable_recal/swap_organ_gate_wgate1/wgate1_on_s8.json"
+   ]
+  },
+  "timing_window": {
+   "production": 9,
+   "recal": 36,
+   "rule": "the organ's stated rule is 3 ignition periods (TIMING_WINDOW comment in _gnw_neural_swap_intention_derisk.py); an ignited neuron spikes every 3 steps on the old integrator (9 = 3 spikes) and every 1/0.084 = 11.9 steps on the stable one (3 spikes = 36); a read-only timing instrument, not used by production replies. ORDER: the window was left at the production 9 first (GO 4 of 15, every failure the timing check) and was re-derived to 36 by this rule AFTER that result; see order_of_events",
+   "source": [
+    "research/findings/raw/_stable_recal/swap_organ_gate/",
+    "research/findings/raw/_stable_recal/swap_organ_gate_tw36/"
+   ]
+  },
+  "unchanged": {
+   "salient_pa": 5000.0,
+   "nonsalient_pa": 600.0,
+   "boost_gain": 1.0,
+   "max_boost": 0.16,
+   "boost_window": 5,
+   "evict_steps": 320,
+   "reignite_hold": 150,
+   "rule": "the mismatch detector reads 0.154 (salient) / 0.035-0.038 (non-salient) on stable, so the salient boost reaches the 0.16 cap and the non-salient boost stays ~0.06; the eviction collapse knee on stable is 0.06-0.10 (held <= 0.05 s7, <= 0.08 s8; non-monotone above)",
+   "source": [
+    "research/findings/raw/_stable_recal/swap_collapse/collapse_s7.json",
+    "research/findings/raw/_stable_recal/swap_collapse/collapse_s8.json"
+   ]
+  }
+ },
+ "organ_go_gate": {
+  "n_checks": 11,
+  "production_old_integrator_s7_s8": {
+   "n_go": 2,
+   "n_seeds": 2,
+   "failing_checks_to_seeds": {}
+  },
+  "production_stable_integrator_s7_s8": {
+   "n_go": 0,
+   "n_seeds": 2,
+   "failed_checks_per_seed": [
+    9
+   ],
+   "note": "nothing reaches the production ignition criterion"
+  },
+  "recal_stable_timing_window_9_dev1_15": {
+   "n_seeds": 15,
+   "n_go": 4,
+   "failing_checks_to_seeds": {
+    "timing_ok": [
+     1,
+     2,
+     3,
+     4,
+     6,
+     7,
+     8,
+     9,
+     10,
+     12,
+     15
+    ]
+   },
+   "first_run_started": "2026-10-27T12:40:56",
+   "last_run_started": "2026-10-27T12:41:12",
+   "per_seed": {
+    "1": {
+     "go": false,
+     "failed_checks": [
+      "timing_ok"
+     ]
+    },
+    "2": {
+     "go": false,
+     "failed_checks": [
+      "timing_ok"
+     ]
+    },
+    "3": {
+     "go": false,
+     "failed_checks": [
+      "timing_ok"
+     ]
+    },
+    "4": {
+     "go": false,
+     "failed_checks": [
+      "timing_ok"
+     ]
+    },
+    "5": {
+     "go": true,
+     "failed_checks": []
+    },
+    "6": {
+     "go": false,
+     "failed_checks": [
+      "timing_ok"
+     ]
+    },
+    "7": {
+     "go": false,
+     "failed_checks": [
+      "timing_ok"
+     ]
+    },
+    "8": {
+     "go": false,
+     "failed_checks": [
+      "timing_ok"
+     ]
+    },
+    "9": {
+     "go": false,
+     "failed_checks": [
+      "timing_ok"
+     ]
+    },
+    "10": {
+     "go": false,
+     "failed_checks": [
+      "timing_ok"
+     ]
+    },
+    "11": {
+     "go": true,
+     "failed_checks": []
+    },
+    "12": {
+     "go": false,
+     "failed_checks": [
+      "timing_ok"
+     ]
+    },
+    "13": {
+     "go": true,
+     "failed_checks": []
+    },
+    "14": {
+     "go": true,
+     "failed_checks": []
+    },
+    "15": {
+     "go": false,
+     "failed_checks": [
+      "timing_ok"
+     ]
+    }
+   }
+  },
+  "recal_stable_timing_window_36_dev1_15": {
+   "n_seeds": 15,
+   "n_go": 12,
+   "failing_checks_to_seeds": {
+    "timing_ok": [
+     1,
+     6,
+     12
+    ]
+   },
+   "first_run_started": "2026-10-27T12:44:46",
+   "last_run_started": "2026-10-27T12:44:57",
+   "per_seed": {
+    "1": {
+     "go": false,
+     "failed_checks": [
+      "timing_ok"
+     ]
+    },
+    "2": {
+     "go": true,
+     "failed_checks": []
+    },
+    "3": {
+     "go": true,
+     "failed_checks": []
+    },
+    "4": {
+     "go": true,
+     "failed_checks": []
+    },
+    "5": {
+     "go": true,
+     "failed_checks": []
+    },
+    "6": {
+     "go": false,
+     "failed_checks": [
+      "timing_ok"
+     ]
+    },
+    "7": {
+     "go": true,
+     "failed_checks": []
+    },
+    "8": {
+     "go": true,
+     "failed_checks": []
+    },
+    "9": {
+     "go": true,
+     "failed_checks": []
+    },
+    "10": {
+     "go": true,
+     "failed_checks": []
+    },
+    "11": {
+     "go": true,
+     "failed_checks": []
+    },
+    "12": {
+     "go": false,
+     "failed_checks": [
+      "timing_ok"
+     ]
+    },
+    "13": {
+     "go": true,
+     "failed_checks": []
+    },
+    "14": {
+     "go": true,
+     "failed_checks": []
+    },
+    "15": {
+     "go": true,
+     "failed_checks": []
+    }
+   }
+  },
+  "source": [
+   "research/findings/raw/_stable_recal/swap_organ_gate/",
+   "research/findings/raw/_stable_recal/swap_organ_gate_tw36/"
+  ]
+ },
+ "order_of_events": {
+  "1_timing_window_9": "organ GO gate at the re-calibration with the production timing window 9: GO 4 of 15 on dev seeds 1-15; failing checks {'timing_ok': [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 15]}; runs started 2026-10-27T12:40:56 to 2026-10-27T12:41:12 (provenance sidecars)",
+  "2_timing_window_re_derived": "after that result the window was re-derived to 36 from the organ's own rule (3 ignition periods = 3 spikes of an ignited neuron: 3 / 0.084 = 35.7); no other constant differs between the two sets of runs (checked from their recorded calibrations)",
+  "3_timing_window_36": "same organ gate with window 36: GO 12 of 15; failing checks {'timing_ok': [1, 6, 12]}; runs started 2026-10-27T12:44:46 to 2026-10-27T12:44:57",
+  "window_9_runs_started_before_window_36_runs": true,
+  "reading": "the 12 of 15 GO is the result AFTER a post-hoc correction of the timing instrument, not a pass of a window fixed in advance; the window-9 result (4 of 15, every failure the timing check) is what the production window gives under this calibration"
+ },
+ "probe": "research/runners/stable_integration_swap_ignition_probe.py"
+}

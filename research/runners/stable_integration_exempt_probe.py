@@ -12,9 +12,11 @@ stops under ON. This probe tests that by flipping the integrator for that ONE or
 Mechanics: the worker wraps `SimulationBridge.__init__`; a construction whose call stack holds the organ's builder
 frame (ORGANS: swap = `_gnw_neural_swap_intention_derisk.build`, the substrate of webapp/gnw_thought_swap.py; bus =
 `_p1_2_workspace_deliberation_loop_derisk.build_workspace_bridge`, the workspace of the GNW ignition buses that wrap
-the recall gate) reads SIM_STABLE_INTEGRATION the opposite way (env toggled for that construction only), so the
-override holds from the bridge's first step (the builders warm their bridges up). The membrane census workload
-(`research.runners.membrane_census.run_worker`, the live brain_chat handler under the stage-2 gate's frozen env) then
+the recall gate; stop = `_gnw_distributed_overwrite_workspace_derisk.build_overwrite_bridge`, the global-stop
+workspace of webapp/gnw_global_stop.py; accbg = `_gnw_acc_bg_stop_trigger_derisk.build_stop_trigger_bridge`, the
+spiking stop-trigger circuit of webapp/gnw_acc_bg_stop_trigger.py) reads SIM_STABLE_INTEGRATION the opposite way
+(env toggled for that construction only), so the override holds from the bridge's first step (the builders warm
+their bridges up). The membrane census workload (`research.runners.membrane_census.run_worker`, the live brain_chat handler under the stage-2 gate's frozen env) then
 runs in a fresh subprocess, exactly as the census shard does. No sim/ or webapp/ edit. The census JSON carries, per
 bridge, the read-back that proves which bridges ran which integrator, plus the per-turn replies; the record also
 carries `exempt_probe` (mode, organ, every patched construction with its read-back).
@@ -35,7 +37,8 @@ _REPO = os.path.normpath(os.path.join(_HERE, "..", ".."))
 if _REPO not in sys.path:
     sys.path.insert(0, _REPO)
 
-MODES = ("on_except_swap", "off_except_swap", "on_except_bus", "off_except_bus")
+MODES = ("on_except_swap", "off_except_swap", "on_except_bus", "off_except_bus", "on_except_stop", "off_except_stop",
+         "on_except_accbg", "off_except_accbg")
 ENV = "SIM_STABLE_INTEGRATION"
 _PATCHED = []
 
@@ -50,6 +53,11 @@ def _effective(cfg):
 ORGANS = {
     "swap": ("_gnw_neural_swap_intention_derisk", "build"),                  # webapp/gnw_thought_swap.py substrate
     "bus": ("_p1_2_workspace_deliberation_loop_derisk", "build_workspace_bridge"),  # the GNW ignition-bus workspace
+    # the global-stop workspace (webapp/gnw_global_stop.py: divisively-normalized distributed workspace whose clean
+    # 2 -> 0 clear prints the "Setting the held thread aside" lead) and the ACC-BG spiking stop-trigger circuit
+    # (webapp/gnw_acc_bg_stop_trigger.py: decides WHETHER the stop runs) -- the two candidates for the stop lead
+    "stop": ("_gnw_distributed_overwrite_workspace_derisk", "build_overwrite_bridge"),
+    "accbg": ("_gnw_acc_bg_stop_trigger_derisk", "build_stop_trigger_bridge"),
 }
 
 

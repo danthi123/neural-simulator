@@ -107,6 +107,7 @@ from research.runners._gnw_recurrence_weaken_swap_derisk import MultiLoopSTD
 from research.runners._gnw_neural_vacancy_gate_derisk import (
     OCC_N, GATE_PER, W_WS_OCC, W_OCC_GATE, W_GATE_WS,
 )
+from research.runners import stable_recal as _stable_recal
 
 IGNITE_THRESH = IGNITE_FRAC * SOLO_PLATEAU     # a swapped-OUT / vetoed coalition reads BELOW this (0.1667)
 
@@ -151,6 +152,37 @@ TIMING_WINDOW = 9              # trailing window (3 ignition periods) to smooth 
 _RESTORE_CALLS = {"n": 0}
 
 
+# ── SIM_STABLE_RECAL (default OFF; research/runners/stable_recal.py) ─────────────────────────────────────────────
+# On the old integrator this workspace ignites where its cells run out of the valid membrane range; on the stable one
+# it does not ignite at the constants above. Under SIM_STABLE_RECAL=1 (only with SIM_STABLE_INTEGRATION=1) every
+# constant read below goes through `_sw`, which returns the re-calibrated value measured on the isolated organ
+# (research/findings/raw/_stable_recal/swap_calibration_record.json); the ignition criterion is scoped to this organ,
+# leaving Rung-2's SOLO_PLATEAU (shared with the global-stop workspace) untouched. Unset, `_sw` returns its argument,
+# `_ignite_thresh` returns IGNITE_THRESH and `_sw_ignited` / `_sw_margin` are the shared Rung-2 reads: byte-identical.
+def _sw(name, value):
+    return _stable_recal.swap_value(name, value)
+
+
+def _ignite_thresh():
+    return _stable_recal.swap_ignite_thresh(IGNITE_FRAC, IGNITE_THRESH)
+
+
+def _sw_ignited(rate):
+    if not _stable_recal.stable_recal_requested():
+        return _ignited(rate)
+    return bool(rate >= _ignite_thresh())
+
+
+def _sw_margin(rates):
+    if not _stable_recal.stable_recal_requested():
+        return _margin(rates)
+    thr = _ignite_thresh()
+    order = sorted(range(len(rates)), key=lambda i: rates[i], reverse=True)
+    top = rates[order[0]]
+    second = rates[order[1]] if len(order) > 1 else 0.0
+    return int(order[0]), float(top - second), int(sum(1 for r in rates if r >= thr))
+
+
 def _counted_restore(bridge, snap):
     _RESTORE_CALLS["n"] += 1
     _full_restore(bridge, snap)
@@ -164,6 +196,7 @@ def build(seed=42, w_rec=W_REC, heterogeneity=True, ou_noise_pA=OU_NOISE_PA,
     NEW mismatch trigger: mm (K per-pattern salience/mismatch detectors, exc) + pred (K per-pattern held-content
     interneurons, inh). pred_lesion=True zeroes pred->mm (the match veto is removed: mm fires even for a matching
     proposal -> used to prove the veto is what enforces match-specificity). Returns a dict of handles."""
+    w_rec, w_pat_pred, w_pred_mm = _sw("w_rec", w_rec), _sw("w_pat_pred", w_pat_pred), _sw("w_pred_mm", w_pred_mm)
     xp, _ = get_backend()
     regions = [
         BrainRegion(name="workspace", n_neurons=WORKSPACE_N, exc_fraction=1.0, internal_density=0.0, enable_nmda=True),
@@ -231,13 +264,15 @@ def build(seed=42, w_rec=W_REC, heterogeneity=True, ou_noise_pA=OU_NOISE_PA,
     # the swap substrate (identical to build_swap_bridge's disjoint uniform-recurrence config)
     union_plan["workspace_rec"] = _rec_population_split(patterns, privates, float(w_rec), float(w_rec))
     union_plan["ws2norm"] = _dense_pop(ws_used, norm_idx, float(WS_NORM_W), "E_TO_I")
-    union_plan["norm2ws"] = _dense_pop(norm_idx, ws_used, float(NORM_WS_W), "I_TO_E")
+    union_plan["norm2ws"] = _dense_pop(norm_idx, ws_used, float(_sw("norm_ws_w", NORM_WS_W)), "I_TO_E")
     union_plan["thal2ws"] = _dense_pop(thal_idx, ws_used, float(THAL_WS_W), "E_TO_E")
     # the NEURAL dis-inhibitory vacancy gate (ADMISSION half — unchanged from the vacancy-gate GO)
-    union_plan["ws2occ"] = _dense_pop(ws_used, occ_idx, float(W_WS_OCC), "E_TO_I")
+    union_plan["ws2occ"] = _dense_pop(ws_used, occ_idx, float(_sw("w_ws_occ", W_WS_OCC)), "E_TO_I")
     for k in range(N_PATTERNS):
-        union_plan[f"occ2gate{k}"] = _dense_pop(occ_idx, gate_slices[k], float(W_OCC_GATE), "I_TO_E")
-        union_plan[f"gate{k}2ws"] = _dense_pop(gate_slices[k], patterns[k], float(W_GATE_WS), "E_TO_E")
+        union_plan[f"occ2gate{k}"] = _dense_pop(occ_idx, gate_slices[k], float(_sw("w_occ_gate", W_OCC_GATE)),
+                                                "I_TO_E")
+        union_plan[f"gate{k}2ws"] = _dense_pop(gate_slices[k], patterns[k], float(_sw("w_gate_ws", W_GATE_WS)),
+                                               "E_TO_E")
     # the NEW mismatch/salience TRIGGER: pred_k reads the held content, vetoes mm_k on a match
     wpm = 0.0 if pred_lesion else float(w_pred_mm)
     for k in range(N_PATTERNS):
@@ -252,7 +287,7 @@ def build(seed=42, w_rec=W_REC, heterogeneity=True, ou_noise_pA=OU_NOISE_PA,
 
     thal_dev = xp.asarray(thal_idx)
     bridge.cp_external_input_current[:] = 0.0
-    bridge.cp_external_input_current[thal_dev] = xp.float32(THAL_TONIC_PA)
+    bridge.cp_external_input_current[thal_dev] = xp.float32(_sw("thal_tonic_pa", THAL_TONIC_PA))
     for _ in range(SETTLE_STEPS):
         bridge._run_one_simulation_step()
     snap = _full_snapshot(bridge)
@@ -305,14 +340,16 @@ def run_intention_swap(S, std, *, incumbent=0, proposed=1, proposal_pa=SALIENT_P
       isolate=False -> a CONTINUOUS run (0 restore calls) = the swap HEADLINE."""
     bridge, xp, thal = S["bridge"], S["xp"], S["thal"]
     patterns, privates = S["patterns"], S["privates"]
+    thal_pa, establish_pa = _sw("thal_tonic_pa", THAL_TONIC_PA), _sw("establish_pa", ESTABLISH_PA)
+    timing_window, ignite_thresh = _sw("timing_window", TIMING_WINDOW), _ignite_thresh()
     if isolate:
         _counted_restore(bridge, S["snap"])
         std.reset()
 
     # (1) establish the incumbent -> it holds on its supra-critical recurrent loop (mm silent: no proposal yet).
-    _drive(bridge, xp, thal, THAL_TONIC_PA, std, [(patterns[incumbent], ESTABLISH_PA)], n=DRIVE_STEPS)
-    pre = _read_private_rates(bridge, xp, thal, THAL_TONIC_PA, privates, std)
-    win_pre, _m_pre, n_pre = _margin(pre)
+    _drive(bridge, xp, thal, thal_pa, std, [(patterns[incumbent], establish_pa)], n=DRIVE_STEPS)
+    pre = _read_private_rates(bridge, xp, thal, thal_pa, privates, std)
+    win_pre, _m_pre, n_pre = _sw_margin(pre)
 
     # (2) present the proposal; the mismatch detector's rate SETS the boost (the neural swap decision).
     gate_dev = S["gate_slices"][proposed]
@@ -328,39 +365,40 @@ def run_intention_swap(S, std, *, incumbent=0, proposed=1, proposal_pa=SALIENT_P
         mm_win = float(np.mean(mm_hist[-BOOST_WINDOW:]))
         eff_boost = min(MAX_BOOST, float(boost_gain) * mm_win)          # the NEURAL swap trigger (no host `if`)
         _set_boost_all(std, eff_boost)
-        _ws_step(bridge, xp, thal, THAL_TONIC_PA, std,
+        _ws_step(bridge, xp, thal, thal_pa, std,
                  drive_map=[(gate_dev, float(proposal_pa)), (mm_dev, mm_drive)])
         # READ-ONLY instruments (never gate the trigger):
         a_hist.append(_instant_private_rate(bridge, xp, privates, incumbent))
         b_hist.append(_instant_private_rate(bridge, xp, privates, proposed))
-        aw = float(np.mean(a_hist[-TIMING_WINDOW:])); bw = float(np.mean(b_hist[-TIMING_WINDOW:]))
+        aw = float(np.mean(a_hist[-timing_window:])); bw = float(np.mean(b_hist[-timing_window:]))
         xA_min = min(xA_min, std.x_mean(incumbent))
         boost_max = max(boost_max, eff_boost); mm_peak = max(mm_peak, mm_rate)
         if trigger_step < 0 and eff_boost >= 0.10:
             trigger_step = t
-        if a_vacate_step < 0 and t >= TIMING_WINDOW and aw < IGNITE_THRESH:
+        if a_vacate_step < 0 and t >= timing_window and aw < ignite_thresh:
             a_vacate_step = t
-        if b_ignite_step < 0 and bw > IGNITE_THRESH and proposed != incumbent:
+        if b_ignite_step < 0 and bw > ignite_thresh and proposed != incumbent:
             b_ignite_step = t
-        if proposed != incumbent and _ignited(aw) and _ignited(bw):
+        if proposed != incumbent and _sw_ignited(aw) and _sw_ignited(bw):
             coign_steps += 1
     std.clear_boost()
 
     # (3) identity read (free-run, no proposal -> gate closes & mm silent; the held coalition sustains on its loop).
-    post = _read_private_rates(bridge, xp, thal, THAL_TONIC_PA, privates, std)
-    win_post, _m_post, n_post = _margin(post)
-    hold = _read_private_rates(bridge, xp, thal, THAL_TONIC_PA, privates, std, n_free=int(reignite_hold))
-    win_hold, _m_hold, n_hold = _margin(hold)
+    post = _read_private_rates(bridge, xp, thal, thal_pa, privates, std)
+    win_post, _m_post, n_post = _sw_margin(post)
+    hold = _read_private_rates(bridge, xp, thal, thal_pa, privates, std, n_free=int(reignite_hold))
+    win_hold, _m_hold, n_hold = _sw_margin(hold)
 
     old_res = float(post[incumbent]); new_rate = float(post[proposed])
     old_res_hold = float(hold[incumbent]); new_hold = float(hold[proposed])
-    swapped = bool(proposed != incumbent and win_pre == incumbent and n_pre == 1 and (not _ignited(old_res))
-                   and _ignited(new_rate) and win_post == proposed and n_post == 1)
-    reignite_ok = bool(_ignited(new_hold) and win_hold == proposed and n_hold == 1 and (not _ignited(old_res_hold)))
+    swapped = bool(proposed != incumbent and win_pre == incumbent and n_pre == 1 and (not _sw_ignited(old_res))
+                   and _sw_ignited(new_rate) and win_post == proposed and n_post == 1)
+    reignite_ok = bool(_sw_ignited(new_hold) and win_hold == proposed and n_hold == 1
+                       and (not _sw_ignited(old_res_hold)))
     # held == the incumbent is STILL the sole ignited winner (no swap). When proposed==incumbent (a MATCH probe) the
     # "new" and "old" indices coincide, so the challenger-not-ignited clause only applies to a genuine mismatch probe.
-    held = bool(win_post == incumbent and n_post == 1 and _ignited(old_res)
-                and (proposed == incumbent or not _ignited(new_rate)))
+    held = bool(win_post == incumbent and n_post == 1 and _sw_ignited(old_res)
+                and (proposed == incumbent or not _sw_ignited(new_rate)))
     timing_ok = bool(swapped and a_vacate_step >= 0 and b_ignite_step > a_vacate_step and coign_steps == 0)
     return {
         "pre_rates": [float(r) for r in pre], "post_rates": [float(r) for r in post],
@@ -386,14 +424,14 @@ def run_two_swap(S, std, *, a=0, b=1, proposal_pa=SALIENT_PA, boost_gain=BOOST_G
                             evict_steps=evict_steps, reignite_hold=reignite_hold, isolate=False)
     xA_after_s1 = std.x_mean(a)
     for _ in range(int(recover_steps)):
-        _ws_step(S["bridge"], S["xp"], S["thal"], THAL_TONIC_PA, std)
+        _ws_step(S["bridge"], S["xp"], S["thal"], _sw("thal_tonic_pa", THAL_TONIC_PA), std)
     xA_recovered = std.x_mean(a)
     s2 = run_intention_swap(S, std, incumbent=b, proposed=a, proposal_pa=proposal_pa, boost_gain=boost_gain,
                             evict_steps=evict_steps, reignite_hold=reignite_hold, isolate=False)
     s1_evicted_A = bool(s1["swapped"])
     recovered = bool(xA_recovered > 0.85)
     s2_brought_A_back = bool(s2["winner_hold"] == a and s2["n_ignited_hold"] == 1
-                             and _ignited(s2["new_rate_hold"]) and not _ignited(s2["old_residual_hold"]))
+                             and _sw_ignited(s2["new_rate_hold"]) and not _sw_ignited(s2["old_residual_hold"]))
     reversible = bool(s1_evicted_A and recovered and s2_brought_A_back)
     return {"swap1": s1, "swap2": s2, "xA_after_swap1": float(xA_after_s1), "xA_recovered": float(xA_recovered),
             "recover_steps": int(recover_steps), "reversible": reversible, "s1_evicted_A": s1_evicted_A,
@@ -486,10 +524,14 @@ def evaluate_seed(seed, *, proposal_pa=SALIENT_PA, nonsalient_pa=NONSALIENT_PA, 
         "operating_point": {"proposal_pa": float(proposal_pa), "nonsalient_pa": float(nonsalient_pa),
                             "boost_gain": float(boost_gain), "max_boost": float(MAX_BOOST),
                             "boost_window": int(BOOST_WINDOW), "evict_steps": int(evict_steps),
-                            "establish_pa": float(ESTABLISH_PA), "reignite_hold": int(reignite_hold),
-                            "w_rec": float(w_rec), "w_pat_pred": float(W_PAT_PRED), "w_pred_mm": float(W_PRED_MM),
+                            "establish_pa": float(_sw("establish_pa", ESTABLISH_PA)),
+                            "reignite_hold": int(reignite_hold), "w_rec": float(_sw("w_rec", w_rec)),
+                            "w_pat_pred": float(_sw("w_pat_pred", W_PAT_PRED)),
+                            "w_pred_mm": float(_sw("w_pred_mm", W_PRED_MM)),
                             "mm_per": int(MM_PER), "pred_per": int(PRED_PER),
-                            "w_ws_occ": float(W_WS_OCC), "w_occ_gate": float(W_OCC_GATE), "w_gate_ws": float(W_GATE_WS),
+                            "w_ws_occ": float(_sw("w_ws_occ", W_WS_OCC)),
+                            "w_occ_gate": float(_sw("w_occ_gate", W_OCC_GATE)),
+                            "w_gate_ws": float(_sw("w_gate_ws", W_GATE_WS)),
                             "occ_n": int(OCC_N), "gate_per": int(GATE_PER),
                             "U_baseline": 0.0, "tau_D": float(STD_TAU_D), "heterogeneity": bool(heterogeneity)},
         "go_gate": {"swap_ok": swap_ok, "reignite_ok": reignite_ok, "timing_ok": timing_ok,
@@ -513,7 +555,7 @@ def evaluate_seed(seed, *, proposal_pa=SALIENT_PA, nonsalient_pa=NONSALIENT_PA, 
             "headline": {"winner_pre": headline["winner_pre"], "winner_post": headline["winner_post"],
                          "n_pre": headline["n_ignited_pre"], "n_post": headline["n_ignited_post"],
                          "old_residual_post": headline["old_residual_post"],
-                         "new_ignited": bool(_ignited(headline["new_rate_post"])),
+                         "new_ignited": bool(_sw_ignited(headline["new_rate_post"])),
                          "new_rate_post": headline["new_rate_post"], "xA_min": headline["xA_min"],
                          "mm_peak": headline["mm_peak"], "boost_max": headline["boost_max"],
                          "trigger_step": headline["trigger_step"], "a_vacate_step": headline["a_vacate_step"],
@@ -576,10 +618,11 @@ def run_calibrate(seed, args):
     def _mm_rate_when(hold_pattern, propose_k, propose_pa):
         _full_restore(b, S["snap"])
         if hold_pattern is not None:
-            _drive(b, xp, S["thal"], THAL_TONIC_PA, None, [(S["patterns"][hold_pattern], ESTABLISH_PA)], n=DRIVE_STEPS)
+            _drive(b, xp, S["thal"], _sw("thal_tonic_pa", THAL_TONIC_PA), None,
+                   [(S["patterns"][hold_pattern], _sw("establish_pa", ESTABLISH_PA))], n=DRIVE_STEPS)
         rates = []
         for _ in range(read):
-            _ws_step(b, xp, S["thal"], THAL_TONIC_PA, None,
+            _ws_step(b, xp, S["thal"], _sw("thal_tonic_pa", THAL_TONIC_PA), None,
                      drive_map=[(S["mm_slices"][propose_k], float(propose_pa))])
             rates.append(_pop_rate(S, S["mm_all"]))
         return float(np.mean(rates[-read // 2:]))

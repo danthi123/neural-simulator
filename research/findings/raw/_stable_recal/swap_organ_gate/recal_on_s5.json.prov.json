@@ -1,0 +1,37 @@
+{
+ "run_id": "1793119256-2039096",
+ "runner": "research/runners/stable_integration_swap_ignition_probe.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-recal/research/runners/stable_integration_swap_ignition_probe.py",
+  "--organ",
+  "{\"w_rec\":6.5,\"norm_ws_w\":4,\"thal_tonic_pa\":25,\"solo_plateau\":0.084,\"establish_pa\":1280,\"w_ws_occ\":32,\"w_pat_pred\":32,\"w_occ_gate\":80,\"w_pred_mm\":80,\"w_gate_ws\":4}",
+  "--arms",
+  "on",
+  "--seed",
+  "5",
+  "--out",
+  "research/findings/raw/_stable_recal/swap_organ_gate/recal_on_s5.json"
+ ],
+ "git_sha": "b2dace642",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-27T12:40:56",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "OMP_NUM_THREADS": "2"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 16951.7,
+ "corpus_check_query": "route GABA_A synapses onto the apical dendrite compartment",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_stable_recal/swap_organ_gate/recal_on_s5.json"
+}

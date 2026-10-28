@@ -1,0 +1,444 @@
+{
+ "arms": {
+  "on": {
+   "runner": "research/runners/stable_integration_stop_ignition_probe.py --organ",
+   "seed": 14,
+   "arm": "on",
+   "calibration": {
+    "w_rec": 6.5,
+    "norm_ws_w": 4,
+    "thal_tonic_pa": 50,
+    "solo_plateau": 0.084,
+    "strong_pa": 800,
+    "margin_ref": 0.057,
+    "boost_scale": 31
+   },
+   "result": {
+    "seed": 14,
+    "verdict": "UNDEFINED",
+    "seed_go": false,
+    "operating_point": {
+     "w_rec": 6.5,
+     "overlap": 15,
+     "ws_norm_w": 5.0,
+     "norm_ws_w": 4.0,
+     "thal_tonic_pA": 50.0,
+     "thal_ws_w": 5.0,
+     "boost_gain": 1.0,
+     "boost_scale": 31.0,
+     "margin_ref": 0.057,
+     "pulse_duration": 110,
+     "heterogeneity": true
+    },
+    "go_gate": {
+     "global_stop": true,
+     "selectivity": true
+    },
+    "anti_cheats": {
+     "norm_load_bearing": true,
+     "std_load_bearing": false,
+     "pulse_zero_at_zero_conflict": true,
+     "pulse_fires_on_conflict": true,
+     "neural_sensor_scramble_breaks_stop": false,
+     "conflict_off_holds": false,
+     "continuous_no_restore": true,
+     "byte_identical_substrate": true,
+     "seed_deterministic": true
+    },
+    "characterized_boundaries": {
+     "gain_withdrawal": {
+      "n_pre": 1,
+      "n_post": 1,
+      "clears": false
+     },
+     "active_overwrite": {
+      "winner_pre": 0,
+      "winner_post": 0,
+      "n_pre": 1,
+      "n_post": 1,
+      "overwrite_ok": false,
+      "co_ignition": false
+     }
+    },
+    "measurements": {
+     "confident": {
+      "rates": [
+       0.08313725490196078,
+       0.0,
+       0.0
+      ],
+      "winner": 0,
+      "n_ignited": 1,
+      "margin": 0.08313725490196078,
+      "delivered": "COMMIT_p0",
+      "confident_ok": true
+     },
+     "confident_stop": {
+      "rates": [
+       0.08313725490196078,
+       0.0,
+       0.0
+      ],
+      "winner": 0,
+      "n_ignited": 1,
+      "margin": 0.08313725490196078,
+      "delivered": "COMMIT_p0",
+      "confident_ok": true
+     },
+     "stop": {
+      "pre_rates": [
+       0.05254901960784314,
+       0.07809523809523809,
+       0.03764705882352941
+      ],
+      "post_rates": [
+       0.0017825311942959,
+       0.0021645021645021645,
+       0.00071301247771836
+      ],
+      "margin": 0.025546218487394953,
+      "sensed_margin": 0.025546218487394953,
+      "boost": 0.9750672268907565,
+      "n_ignited_pre": 2,
+      "n_ignited_post": 0,
+      "winner_pre": 1,
+      "delivered_pre": "AMBIGUOUS_p1",
+      "delivered_post": "ABSTAIN",
+      "aborted": true,
+      "global_stop_ok": true,
+      "ws_rate_during": 0.006691565515094926
+     },
+     "freeze": {
+      "pre_rates": [
+       0.04392156862745098,
+       0.07523809523809524,
+       0.04
+      ],
+      "post_rates": [
+       0.03992869875222817,
+       0.0632034632034632,
+       0.0
+      ],
+      "margin": 0.03131652661064426,
+      "sensed_margin": 0.03131652661064426,
+      "boost": 0.0,
+      "n_ignited_pre": 2,
+      "n_ignited_post": 1,
+      "winner_pre": 1,
+      "delivered_pre": "AMBIGUOUS_p1",
+      "delivered_post": "COMMIT_p1",
+      "aborted": false,
+      "global_stop_ok": false,
+      "ws_rate_during": 0.03504512916277622
+     },
+     "stop_lesion": {
+      "pre_rates": [
+       0.17882352941176471,
+       0.17238095238095238,
+       0.16784313725490196
+      ],
+      "post_rates": [
+       0.07700534759358289,
+       0.07532467532467532,
+       0.07201426024955437
+      ],
+      "margin": 0.00644257703081233,
+      "sensed_margin": 0.00644257703081233,
+      "boost": 1.5672801120448179,
+      "n_ignited_pre": 3,
+      "n_ignited_post": 3,
+      "winner_pre": 0,
+      "delivered_pre": "AMBIGUOUS_p0",
+      "delivered_post": "AMBIGUOUS_p0",
+      "aborted": false,
+      "global_stop_ok": false,
+      "ws_rate_during": 0.06684562713974479
+     },
+     "scramble": {
+      "pre_rates": [
+       0.050980392156862744,
+       0.08666666666666667,
+       0.04627450980392157
+      ],
+      "post_rates": [
+       0.039572192513368985,
+       0.06277056277056277,
+       0.0
+      ],
+      "margin": 0.035686274509803925,
+      "sensed_margin": 0.08313725490196078,
+      "boost": 0.0,
+      "n_ignited_pre": 3,
+      "n_ignited_post": 1,
+      "winner_pre": 1,
+      "delivered_pre": "AMBIGUOUS_p1",
+      "delivered_post": "COMMIT_p1",
+      "aborted": false,
+      "global_stop_ok": false,
+      "ws_rate_during": 0.03762060379707438
+     },
+     "conflict_off": {
+      "pre_rates": [
+       0.042352941176470586,
+       0.09333333333333334,
+       0.04392156862745098
+      ],
+      "post_rates": [
+       0.030659536541889482,
+       0.06493506493506493,
+       0.0
+      ],
+      "margin": 0.049411764705882356,
+      "sensed_margin": 0.049411764705882356,
+      "boost": 0.0,
+      "n_ignited_pre": 3,
+      "n_ignited_post": 1,
+      "winner_pre": 1,
+      "delivered_pre": "AMBIGUOUS_p1",
+      "delivered_post": "COMMIT_p1",
+      "aborted": false,
+      "global_stop_ok": false,
+      "ws_rate_during": 0.03755835667600373
+     },
+     "continuous_headline": {
+      "pre_rates": [
+       0.050980392156862744,
+       0.08190476190476191,
+       0.03529411764705882
+      ],
+      "post_rates": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "margin": 0.030924369747899166,
+      "sensed_margin": 0.030924369747899166,
+      "boost": 0.8083445378151259,
+      "n_ignited_pre": 2,
+      "n_ignited_post": 0,
+      "winner_pre": 1,
+      "delivered_pre": "AMBIGUOUS_p1",
+      "delivered_post": "ABSTAIN",
+      "aborted": true,
+      "global_stop_ok": true,
+      "ws_rate_during": 0.004699657640834111
+     },
+     "gain_withdrawal": {
+      "n_ignited_pre": 1,
+      "n_ignited_post": 1,
+      "gain_withdrawal_clears": false,
+      "pre_rates": [
+       0.11294117647058824,
+       0.0,
+       0.0
+      ],
+      "post_rates": [
+       0.0784313725490196,
+       0.0,
+       0.0
+      ]
+     },
+     "overwrite": {
+      "pre_rates": [
+       0.11607843137254902,
+       0.0,
+       0.0
+      ],
+      "post_rates": [
+       0.06274509803921569,
+       0.0380952380952381,
+       0.0
+      ],
+      "winner_pre": 0,
+      "winner_post": 0,
+      "n_ignited_pre": 1,
+      "n_ignited_post": 1,
+      "overwrite_ok": false,
+      "co_ignition": false
+     },
+     "conflict_sweep_drive": [
+      0.0,
+      160.0,
+      320.0,
+      480.0,
+      640.0,
+      800.0
+     ],
+     "conflict_sweep_boost": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.478372549019608,
+      1.4995490196078434
+     ],
+     "conflict_sweep_margin": [
+      0.11843137254901961,
+      0.12,
+      0.12532212885154062,
+      0.09327731092436975,
+      0.04156862745098039,
+      0.008627450980392151
+     ],
+     "stop_attribution": 1.0,
+     "intact_emptied": 2.0,
+     "lesion_emptied": 0.0,
+     "ws_rate_during_stop": 0.006691565515094926,
+     "substrate_hash": "44ca1f5f8195dd273d834048202a618517a0582493d9277f75a6ed091a526725",
+     "localist_hash": "44ca1f5f8195dd273d834048202a618517a0582493d9277f75a6ed091a526725",
+     "n_rec_syn": 29280,
+     "private_sizes": [
+      85,
+      70,
+      85
+     ]
+    },
+    "residual": {
+     "global_stop_n_post": 0,
+     "global_stop_n_pre": 2,
+     "lesion_stop_n_post": 3,
+     "gain_withdrawal_n_post": 1,
+     "overwrite_n_post": 1
+    },
+    "host_workspace_reset_calls": 0,
+    "preconditions": [
+     {
+      "kind": "require",
+      "name": "confident commit ignites (n>=1)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "a multi-content conflict state exists to clear (co-ignition n>=2)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "normalization pool active (norm_ws_w > 0)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "conflict margin readable (conflict low < confident high, below margin_ref)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "depression boost conflict-gated (0 at a confident commit, fires on conflict)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "GLOBAL STOP: conflict n>=2 -> n_ignited=0",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "SELECTIVITY: confident commit not disrupted (boost=0 -> holds n=1)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "divisive-norm LOAD-BEARING (lesion -> burst does NOT clear, n stays >=2)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "STD LOAD-BEARING (freeze boost=0 -> conflict HOLDS)",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "neural-sensor SCRAMBLE breaks the stop (confident margin -> not cleared)",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "CONFLICT-OFF holds (boost_gain=0 -> not cleared)",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "continuous stop makes 0 host restore calls (emptying is synaptic depression)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "byte-identical substrate (distributed hash == localist base hash)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+     }
+    ],
+    "disabled_processes": [
+     {
+      "process": "homeostasis",
+      "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2 foot-gun"
+     },
+     {
+      "process": "native_short_term_plasticity",
+      "why": "banked global-STP foot-gun; STD here targets the recurrence only"
+     }
+    ],
+    "undefined_reasons": [
+     "unmet: STD LOAD-BEARING (freeze boost=0 -> conflict HOLDS) (measured=False expect=True)",
+     "unmet: neural-sensor SCRAMBLE breaks the stop (confident margin -> not cleared) (measured=False expect=True)",
+     "unmet: CONFLICT-OFF holds (boost_gain=0 -> not cleared) (measured=False expect=True)"
+    ]
+   },
+   "stop_trial_membranes": {
+    "boost": 0.9750672268907565,
+    "pre_rates": [
+     0.051,
+     0.0819,
+     0.0353
+    ],
+    "post_rates": [
+     0.0011,
+     0.0017,
+     0.0
+    ],
+    "n_pre": 2,
+    "n_post": 0,
+    "pre_margin": 0.0309,
+    "x_min_mean": 0.1306,
+    "cleared": true,
+    "n_oor_cells": 0,
+    "n_cells": 270,
+    "v_min": -70.87,
+    "v_max": 35.0
+   }
+  }
+ }
+}
