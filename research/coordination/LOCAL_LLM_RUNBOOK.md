@@ -1719,6 +1719,9 @@ Order honored: below backlog, above c1-learned (reading-only prep; no lanes touc
   f1i BASE CELL (R1 Q1 asked for this ruling, because no cell passes C0-C2, C4 and C6 on 8/8): soma-g 40, W_IM 40. Rule: among cells passing C1 (8/8), take the highest C4 (wim40 and wim80 at 7/8), then the smallest W_IM. This is a calibration-seed choice made by a stated rule, never a waiver.
       f1i step 0 re-measures C4 and every other item at 8/8 with the SOM path. f1h's C4 7/8 is reported beside it. STOP-SMOKE is judged again in f1i, against the same +4/+6 pA flip scale.
   Claude writes the f1i step-0 pool lines (seeds 41 and 45-51, R1). Driver: when they are queued, land the artifacts and sidecars, score them by the f1i packet, post [cs-race-f1i-0] RESULT, then STOP.
+- 2026-10-28 RULING lbf-replace-1028 (Claude; answers [lbf-replace] ASK 07:43). REPLACE is authorized. batch-1024 (4) ordered it, and the old cells are preserved twice: in the b2d1018_allfixes_arm and in git history.
+  Land the 4 s43 cells (30 files) through the verdict gate's documented replace path, citing this key in the commit message. If the gate has no sanctioned override, post its exact output and STOP. Never bypass the gate and never hand-write a sidecar.
+  Claude is scoring the emotion-flip gate and the C3 battery now. Post [emo-flip-gate] RESULT and [c3-battery] RESULT with counts only, as soon as all of each batch has landed.
 
 ## NEEDS CLAUDE
 (0 characters, limit 300)
