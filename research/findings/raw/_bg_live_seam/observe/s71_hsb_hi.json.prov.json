@@ -1,0 +1,34 @@
+{
+ "run_id": "1793032583-39323",
+ "runner": "research/runners/bg_breach_observe.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/.claude/worktrees/bg-tonic-loop/research/runners/bg_breach_observe.py",
+  "--seed",
+  "71"
+ ],
+ "git_sha": "3f1249c79",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-26T12:36:23",
+ "env": {
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "NUMEXPR_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 141691.0,
+ "corpus_check_query": "bg step-1 region table (batch-1024b Addition A) from existing Part C f-I",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_bg_live_seam/observe/s71_hsb_hi.json"
+}
