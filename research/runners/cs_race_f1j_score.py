@@ -17,7 +17,11 @@ HOW EACH RULE IS READ (the bar text is the packet's):
   ARTIFACT VALIDITY as f1i (JSON + .prov.json parse; clean run of --pin, git_archive, manifest verified; sidecar argv ==
       the pool line naming this output; schedule c1 [150, 800), c3 X [0, 150), Y [300, 450), window [600, 950)), plus
       the record's flags naming this arm, cell, seed and f1j flags (flags.f1j). An invalid artifact makes every item it
-      feeds UNDEFINED, never a pass or a fail.
+      feeds UNDEFINED, never a pass or a fail. In the full read a count (rescue, late, kept, C6, eraser, IPSC-12) would
+      take an invalid or missing record as a shortfall, so any invalid or missing wave 1-2 artifact makes the whole
+      read UNDEFINED ("re-run the N invalid or missing artifact(s), then re-score; not a pass, not a falsifier"), as
+      identity mode's IDENTITY UNDEFINED; F1-F4, the selection and branches 2-9 are read on complete data only.
+      STOP-ENGINE / STOP-ID (branch 1) still come first. NOMEM (wave 3, read after the decision) is UNDEFINED alone.
   IDENTITY (i): the no-flag record minus wall_s hashes equal to the landed f1i cal_sa0p125_ms215_s<41|45>.json.
   IDENTITY (ii): every LESION record: g_ap 0 at every ms and the cs_som gate 0.0 at measurement (f1i read-backs).
   IDENTITY (iii): every APV record, with its f1j fields removed (flags.f1j, config_readback.f1j, c5.f1j_nmda, every
@@ -66,7 +70,10 @@ HOW EACH RULE IS READ (the bar text is the packet's):
       working cell has tauN 40. F3: >= 1 working cell and none passes, at --tau-gi 12, C6 8/8 at W_MS 215 AND at 304
       AND (W_MS 215) C7(a) on every defined corner pair with >= 23 corner pairs defined and passing. F4: >= 1 working
       cell and every working cell has gN0 16. K1 (H-K1 falsifier): (a) a late C6 fail in the APV or GRID arms with 0
-      SOM spikes in [200, fall ms), or (b) K1-NOFAC late C6 fails >= APV late C6 fails on the same 16 records.
+      SOM spikes in [200, fall ms), or (b) K1-NOFAC late C6 fails >= APV late C6 fails on the same 16 records. Each
+      reads True / False / UNDEFINED (None): (a) is True on one hit, else UNDEFINED while any APV / GRID record is
+      invalid or missing (its count is reported); (b) is UNDEFINED unless all 16 K1-NOFAC and all 16 APV records are
+      valid with a defined C6.
   DECISION TREE: the packet's branches 1-9 in order; the first that applies is named, every fired item listed (branch 1
       alone: "Nothing else is read"). The f1i host summary covers every landed f1i step-0 artifact (the packet's quote).
   NOMEM (wave 3, informational): rescue counted the same way per working gN0 over the 45 early records.
@@ -552,6 +559,7 @@ def rescue_reads(L, records, tau, g0, *, arm_of=None, tau_gi_arm=None):
     n = sum(1 for r in rows if r["status"] == "rescue")
     n_alt = sum(1 for r in rows if r.get("alt_floor_0p3189") == "rescue")
     return {"count": n, "count_alt_floor_0p3189": n_alt, "rows": rows,
+            "invalid": sum(1 for r in rows if r["status"] == "UNDEFINED (invalid artifact)"),
             "removal": [r for r in rows if r["status"] == "rescued by IPSP removal"],
             "undefined": [r for r in rows if r["status"].startswith(("rescued, attribution", "UNDEFINED"))]}
 
@@ -564,6 +572,7 @@ def nmda_cell_reads(L, ref, tau, g0):
     kept = 0
     c6_pass = 0
     grid_def = grid_a = grid_b = 0
+    invalid = 0
     for sa, ms in F1I_CELLS:
         for s in SEEDS:
             rec = L.get(_tg_arm(sa, ms), s, sa, ms, tau, g0)
@@ -572,6 +581,7 @@ def nmda_cell_reads(L, ref, tau, g0):
             if (sa, ms, s) in ref["c6"]["pass"] and st == PASS:
                 kept += 1
             if rec is None:
+                invalid += 1
                 continue
             for (x, y), c in zip(PAIRS, _ps(rec)["c3"]):
                 p = F1I.c7_pair(c, None, x, y)
@@ -579,7 +589,8 @@ def nmda_cell_reads(L, ref, tau, g0):
                     grid_def += 1
                     grid_a += bool(p["a"])
                     grid_b += bool(p["b"])
-    out.update(kept=kept, c6=c6_pass, grid_c7_defined=grid_def, grid_c7a=grid_a, grid_c7b=grid_b)
+    out.update(kept=kept, c6=c6_pass, grid_c7_defined=grid_def, grid_c7a=grid_a, grid_c7b=grid_b,
+               invalid_trace_grid=invalid)
     # The A-NMDA's share of the C6 passes over the 72 records (reported, not a bar: the bars are rescue and eraser):
     # APV is the same pin with the receptor blocked and the gating running, so it holds everything but g_N fixed.
     apv_pass = sum(_c6(L.get("apv", s, sa, ms))[0] == PASS for sa, ms in F1I_CELLS for s in SEEDS)
@@ -588,10 +599,11 @@ def nmda_cell_reads(L, ref, tau, g0):
                                apv_pass)
     out["c6_apv"] = apv_pass
     out["c6_fraction_attributable_to_nmda"] = frac
-    er, seed50 = 0, None
+    er, er_undef, seed50 = 0, 0, None
     for s, x, y in ref["corner"]["defined"]:
         rec = L.get("cal", s, *CORNER, tau, g0)
         if rec is None:
+            er_undef += 1
             continue
         c = _ps(rec)["c3"][PAIRS.index((x, y))]
         p = F1I.c7_pair(c, None, x, y)
@@ -602,6 +614,7 @@ def nmda_cell_reads(L, ref, tau, g0):
         p = F1I.c7_pair(c, None, *CORNER_UNDEF_PAIR[1:])
         seed50 = {"defined": p["0"], "a": p["a"], "latency_ms": p["latency_ms"]}
     out["eraser"] = er
+    out["eraser_undefined_pairs"] = er_undef                 # corner pairs whose record is invalid or missing
     out["eraser_seed50_frog_vole"] = seed50
     out["working"] = bool(out["rescue"]["count"] >= RESCUE_BAR and er == N_CORNER_DEF)
     out["predicted"] = PREDICTED.get((tau, g0))
@@ -612,9 +625,12 @@ def ipsc12_reads(L, tau, g0):
     """F3's reading at --tau-gi 12 for one NMDA cell: C6 at W_MS 215 and 304 (8 seeds each) and the W_MS 215 corner
     pairs' C7(a) (defined count, defined passes)."""
     out = {}
+    invalid = 0
     for ms in PRIMARY_MS:
-        sts = [_c6(L.get("ipsc12", s, 0.125, ms, tau, g0))[0] for s in SEEDS]
-        out["c6_ms%d" % ms] = sts.count(PASS)
+        recs = [L.get("ipsc12", s, 0.125, ms, tau, g0) for s in SEEDS]
+        invalid += sum(r is None for r in recs)
+        out["c6_ms%d" % ms] = [_c6(r)[0] for r in recs].count(PASS)
+    out["invalid"] = invalid                                  # of the 16 IPSC-12 records
     d = a = 0
     for s in SEEDS:
         rec = L.get("ipsc12", s, 0.125, 215, tau, g0)
@@ -813,15 +829,29 @@ def score_identity(root, f1i_root, lines_path, pin, wave3_path=None):
 
 
 def k1_reads(L):
-    """H-K1's falsifier, read from the step-0 records."""
+    """H-K1's falsifier, read from the step-0 records. Each reading is True (falsified), False (not falsified) or None
+    (UNDEFINED: an invalid or missing artifact, never read as "not falsified").
+    (a) reads every APV and GRID record; one hit (a late C6 fail with 0 SOM spikes in [200, fall ms)) falsifies H-K1 on
+        the records that load, so a hit is True whatever else is missing; with no hit, any invalid or missing record
+        makes (a) UNDEFINED (that record could hold the hit). A valid record whose C6 is UNDEFINED (the plateau never
+        rose) cannot be a late fail; it is counted and reported, never a hit.
+    (b) compares late C6 fails on the same 16 K1 (cell, seed) records: it is read only when all 16 K1-NOFAC and all 16
+        APV records are valid with a defined C6; otherwise UNDEFINED."""
     late_apv_grid, zero_som = [], []
+    a_reads = {"records": 0, "invalid": 0, "c6_undefined": 0}
     for sa, ms in F1I_CELLS:
         for s in SEEDS:
             recs = [("apv", L.get("apv", s, sa, ms))]
             if (sa, ms) not in ((0.125, 215), (0.125, 304)):
                 recs += [("grid_%s" % LN.nmda_tag(t, g), L.get("grid", s, sa, ms, t, g)) for t, g in NMDA_CELLS]
             for arm, rec in recs:
+                a_reads["records"] += 1
                 st, drop, _ = _c6(rec)
+                if rec is None:
+                    a_reads["invalid"] += 1
+                    continue
+                if st == UNDEF:
+                    a_reads["c6_undefined"] += 1
                 if st == FAIL and drop is not None and drop >= LATE_SOM_FROM:
                     n = int(sum(_ps(rec)["c1"]["som"]["som_spikes_per_ms"][LATE_SOM_FROM:drop]))
                     late_apv_grid.append((arm, LN.cell_tag(sa, ms), s, drop, n))
@@ -829,19 +859,28 @@ def k1_reads(L):
                         zero_som.append((arm, LN.cell_tag(sa, ms), s, drop))
     nofac = {"late": 0, "early": 0, "n": 0}
     apv = {"late": 0, "early": 0, "n": 0}
+    b_undef = {"k1nofac": {"invalid": 0, "c6_undefined": 0}, "apv": {"invalid": 0, "c6_undefined": 0}}
     for sa, ms in K1_CELLS:
         for s in SEEDS:
             for key, arm in ((nofac, "k1nofac"), (apv, "apv")):
-                st, drop, _ = _c6(L.get(arm, s, sa, ms))
+                rec = L.get(arm, s, sa, ms)
+                st, drop, _ = _c6(rec)
+                if rec is None:
+                    b_undef[arm]["invalid"] += 1
+                    continue
                 if st == UNDEF:
+                    b_undef[arm]["c6_undefined"] += 1
                     continue
                 key["n"] += 1
                 if st == FAIL and drop is not None:
                     key["late" if drop >= LATE_SOM_FROM else "early"] += 1
-    fals_a = bool(zero_som)
-    fals_b = bool(nofac["n"] == apv["n"] == 2 * len(SEEDS) and nofac["late"] >= apv["late"])
+    fals_a = True if zero_som else (None if a_reads["invalid"] else False)
+    n_k1 = len(K1_CELLS) * len(SEEDS)
+    fals_b = (nofac["late"] >= apv["late"]) if (nofac["n"] == apv["n"] == n_k1) else None
+    h = True if (fals_a is True or fals_b is True) else (None if None in (fals_a, fals_b) else False)
     return {"late_fails_apv_grid": late_apv_grid, "late_fails_with_0_som_after_200": zero_som, "nofac": nofac,
-            "apv": apv, "falsified_a": fals_a, "falsified_b": fals_b, "H_K1_falsified": bool(fals_a or fals_b)}
+            "apv": apv, "a_records": a_reads, "b_undefined": b_undef, "falsified_a": fals_a, "falsified_b": fals_b,
+            "H_K1_falsified": h}
 
 
 def select_cell(trace_cells, ncell):
@@ -853,7 +892,16 @@ def select_cell(trace_cells, ncell):
 
 
 def falsifiers(ncell, ipsc, working):
-    """F1-F4 as the packet reads them, from the per-NMDA-cell reads alone."""
+    """F1-F4 as the packet reads them, from the per-NMDA-cell reads alone. They are read on complete data only: an
+    invalid or missing record would read as a fail in a count (rescue, eraser, IPSC-12 C6), so score_full reports the
+    read UNDEFINED before this runs, and a call on incomplete reads raises."""
+    short = [LN.nmda_tag(*k) for k in NMDA_CELLS
+             if ncell[k].get("invalid_trace_grid") or ncell[k].get("eraser_undefined_pairs")
+             or ncell[k]["rescue"].get("invalid") or (ncell[k].get("late") or {}).get("invalid")
+             or (ipsc.get(k) or {}).get("invalid")]
+    if short:
+        raise ValueError("F1-F4 read on incomplete data (invalid or missing records at %s): UNDEFINED, re-run first"
+                         % short)
     er_ok = [k for k in NMDA_CELLS if ncell[k]["eraser"] == N_CORNER_DEF]
     return {"F1": all(ncell[k]["rescue"]["count"] < RESCUE_BAR for k in er_ok),
             "F2": bool(working) and all(k[0] == 40 for k in working),
@@ -864,10 +912,10 @@ def falsifiers(ncell, ipsc, working):
 
 def branches(*, stop_engine, stop_id, fz, selected, stop_attrib, stop_smoke):
     """The decision tree's branches that apply, in the packet's order (the first is the one named). Branch 1 reads
-    nothing else, so it is returned alone."""
-    fals = [n for n in ("F1", "F2", "F3", "F4") if fz[n]]
+    nothing else, so it is returned alone (FZ may then be None: F1-F4 are not read on incomplete data)."""
     if stop_engine or stop_id:
         return ["1: STOP-ENGINE / STOP-ID: instrument; nothing else is read"]
+    fals = [n for n in ("F1", "F2", "F3", "F4") if fz[n]]
     fired = []
     if fz["F1"]:
         fired.append("2: F1 fires: the A-NMDA METHOD verdict is banked as not closing the self-termination defect "
@@ -971,12 +1019,26 @@ def score_full(root, f1i_root, lines_path, pin, wave3_path=None, nomem_g0=None):
         smoke_sel = None if None in cm.values() else bool(cm["a"] < F1I.SMOKE_PA or cm["b"] < F1I.SMOKE_PA)
     c3_cells = [k for k in trace_cells if trace_cells[k]["C3"]["full"]]
     stop_attrib = bool(c3_cells) and all(trace_cells[k]["unattributed"] for k in c3_cells)
-    fz = falsifiers(ncell, ipsc, working)
-    fals = [n for n in ("F1", "F2", "F3", "F4") if fz[n]]
     k1 = k1_reads(L)
+    # Every wave 1-2 record the decision reads is loaded by now. An invalid or missing one feeds its counts (rescue,
+    # eraser, kept, C6, IPSC-12) as a shortfall, so the read is UNDEFINED until it is re-run: not a pass, not a
+    # falsifier (as score_identity). STOP-ENGINE / STOP-ID (branch 1) still come first: nothing else is read there.
+    invalid_read = sorted(L.invalid)
+    undefined = bool(invalid_read) and not (stop_engine or stop_id)
+    fz = falsifiers(ncell, ipsc, working) if not invalid_read else None
+    fals = [n for n in ("F1", "F2", "F3", "F4") if fz[n]] if fz else []
+    if undefined:
+        msg = ("UNDEFINED: re-run the %d invalid or missing artifact(s), then re-score; not a pass, not a falsifier"
+               % len(invalid_read))
+        d = {"UNDEFINED": True, "invalid_or_missing": len(invalid_read), "working": None, "selected": None,
+             "selectable": None, "STOP_ENGINE": False, "STOP_ID": False, "host_class_pending": pending,
+             "STOP_CAL": None, "STOP_SMOKE_selected": None, "STOP_SMOKE_global": None, "STOP_SMOKE": None,
+             "STOP_ATTRIB": None, "falsifiers": [], "falsifier_reads": None, "STOP_FALS": None,
+             "K1": {"H_K1_falsified": k1["H_K1_falsified"]}, "selected_cell_attribution": None,
+             "stop_cal_reading": None, "branch": msg, "branches_fired": [msg], "stops": [], "verdict": msg}
     # STOP-CAL readings (branch 6)
     cal_reading = None
-    if sel is None and not fals:
+    if sel is None and not fals and not undefined:
         fail_items = {}
         for (t, g) in working:
             for ms in PRIMARY_MS:
@@ -1006,31 +1068,37 @@ def score_full(root, f1i_root, lines_path, pin, wave3_path=None, nomem_g0=None):
                        sorted(common), "C7b_fails_at_every_working_cell (f1i B1 text)": b1,
                        "K1_reading_C8_or_late_C6_with_SOM_after_200_per_cell": k1_cells,
                        "K1_at_every_working_cell (K1 goes first)": k1_every}
-    d = {"working": [LN.nmda_tag(*k) for k in working],
-         "selected": None if sel is None else "%s_%s" % (LN.nmda_tag(sel[2], sel[1]), LN.cell_tag(0.125, sel[0])),
-         "selectable": ["%s_ms%d" % (LN.nmda_tag(t, g), ms) for (ms, g, t) in cands],
-         "STOP_ENGINE": stop_engine, "STOP_ID": stop_id, "host_class_pending": pending, "STOP_CAL": sel is None,
-         "STOP_SMOKE_selected": smoke_sel, "STOP_SMOKE_global": smoke_global,
-         "STOP_SMOKE": bool(sel is not None and (smoke_sel or smoke_global)), "STOP_ATTRIB": stop_attrib,
-         "falsifiers": fals, "falsifier_reads": fz, "STOP_FALS": bool(fals),
-         "K1": {"H_K1_falsified": k1["H_K1_falsified"]},
-         "selected_cell_attribution": sel_attr, "stop_cal_reading": cal_reading}
-    fired = branches(stop_engine=stop_engine, stop_id=stop_id, fz=fz, selected=sel is not None,
-                     stop_attrib=stop_attrib, stop_smoke=d["STOP_SMOKE"])
-    d["branch"] = fired[0]
-    d["branches_fired"] = fired
-    stops = [n for n in ("STOP_ENGINE", "STOP_ID", "STOP_CAL", "STOP_SMOKE", "STOP_ATTRIB", "STOP_FALS") if d[n]]
-    d["stops"] = stops
-    d["verdict"] = ("STOP: " + ", ".join(stops + fals)) if stops else ("CELL SELECTED: %s" % d["selected"])
+    if not undefined:
+        d = {"UNDEFINED": False, "invalid_or_missing": len(invalid_read), "working": [LN.nmda_tag(*k) for k in working],
+             "selected": (None if sel is None else
+                          "%s_%s" % (LN.nmda_tag(sel[2], sel[1]), LN.cell_tag(0.125, sel[0]))),
+             "selectable": ["%s_ms%d" % (LN.nmda_tag(t, g), ms) for (ms, g, t) in cands],
+             "STOP_ENGINE": stop_engine, "STOP_ID": stop_id, "host_class_pending": pending, "STOP_CAL": sel is None,
+             "STOP_SMOKE_selected": smoke_sel, "STOP_SMOKE_global": smoke_global,
+             "STOP_SMOKE": bool(sel is not None and (smoke_sel or smoke_global)), "STOP_ATTRIB": stop_attrib,
+             "falsifiers": fals, "falsifier_reads": fz, "STOP_FALS": bool(fals),
+             "K1": {"H_K1_falsified": k1["H_K1_falsified"]},
+             "selected_cell_attribution": sel_attr, "stop_cal_reading": cal_reading}
+        fired = branches(stop_engine=stop_engine, stop_id=stop_id, fz=fz, selected=sel is not None,
+                         stop_attrib=stop_attrib, stop_smoke=d["STOP_SMOKE"])
+        d["branch"] = fired[0]
+        d["branches_fired"] = fired
+        stops = [n for n in ("STOP_ENGINE", "STOP_ID", "STOP_CAL", "STOP_SMOKE", "STOP_ATTRIB", "STOP_FALS") if d[n]]
+        d["stops"] = stops
+        d["verdict"] = ("STOP: " + ", ".join(stops + fals)) if stops else ("CELL SELECTED: %s" % d["selected"])
     # NOMEM (wave 3)
     nomem = None
     if nomem_g0:
         nomem = {}
         for g in sorted(set(int(x) for x in nomem_g0)):
             rr = rescue_reads(L, ref["c6"]["early"], None, g, arm_of=lambda sa, ms: "nomem")
-            nomem["g%d" % g] = {"rescue": rr["count"], "removal": len(rr["removal"]), "rows": rr["rows"],
-                                "beside_working_cells": {LN.nmda_tag(*k): ncell[k]["rescue"]["count"]
-                                                         for k in working if k[1] == g}}
+            # wave 3 is informational and read after the decision; an invalid or missing NOMEM record makes this
+            # rescue count UNDEFINED (None), its count over the valid records reported beside it
+            nomem["g%d" % g] = {"rescue": None if rr["invalid"] else rr["count"], "invalid": rr["invalid"],
+                                "rescue_on_valid_records": rr["count"], "removal": len(rr["removal"]),
+                                "rows": rr["rows"],
+                                "beside_working_cells": None if undefined else {
+                                    LN.nmda_tag(*k): ncell[k]["rescue"]["count"] for k in working if k[1] == g}}
     res.update({"identity_i": ii, "identity_iii": iii,
                 "identity_ii": {"lesion_records": len(lesion_ii), "clean": sum(lesion_ii)},
                 "invalid": L.invalid, "stop_id_problems": L.stop_id, "consistency": L.consistency,
@@ -1126,7 +1194,14 @@ def render(res):
                                                     for k, v in res["nomem"].items()}))
     L.append("f1j records: %s" % res["host_summary_f1j"])
     L.append("f1i references: %s" % res["host_summary_f1i_refs"])
+    if res["invalid"]:
+        L.append("Invalid or missing records per NMDA cell (TRACE+GRID /72, rescue rows, eraser pairs, IPSC-12 /16): %s"
+                 % json.dumps({t: [c.get("invalid_trace_grid"), c["rescue"].get("invalid"),
+                                   c.get("eraser_undefined_pairs"), res["ipsc12"][t].get("invalid")]
+                               for t, c in res["nmda_cells"].items()}))
+        L.append("Invalid or missing artifacts (first 10): %s" % json.dumps(sorted(res["invalid"])[:10]))
     L.append("")
+    L.append("VERDICT: %s" % d["verdict"])
     L.append("DECISION: %s" % json.dumps(d))
     return "\n".join(L)
 

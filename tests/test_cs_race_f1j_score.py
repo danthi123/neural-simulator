@@ -13,10 +13,13 @@ Planted fixtures, never sampled values:
   5. C7(c) rewritten: the f1i peak reading fails a late peak whose RISE precedes the termination, the rewrite passes
      it; a silent SOM cell and a rise after the termination fail; with no termination the spikes and a g_ap > 0 pass;
   6. rescue with attribution on planted records: rescue, IPSP removal (floor and APV fraction), the 0.3189 second
-     reading, APV passing too, attribution UNDEFINED (no fall ms), invalid artifact UNDEFINED; K1 (a) and (b);
+     reading, APV passing too, attribution UNDEFINED (no fall ms), invalid artifact UNDEFINED; K1 (a) and (b), and
+     K1 UNDEFINED (never "not falsified") when K1-NOFAC / APV / GRID records are missing or a K1 C6 is UNDEFINED;
   7. selection order, F1-F4 and the decision tree (branch 1 alone);
   8. score_full end to end on a fake loader (no artifact): a clean world selects t40_g4 at W_MS 215 (branch 9); F1, F2,
-     F4, STOP-SMOKE and STOP-ATTRIB fire on their planted worlds; the seed-50 frog>vole label;
+     F4, STOP-SMOKE and STOP-ATTRIB fire on their planted worlds; the seed-50 frog>vole label; a missing GRID record
+     (at the rescue bar) and a missing IPSC-12 record make the read UNDEFINED, never F1 / F3, STOP-ID still first; a
+     missing NOMEM record leaves the decision and makes the NOMEM count UNDEFINED;
   9. identity mode end to end on planted artifacts built from the landed f1i records (skipped when absent): PASS; a
      missing artifact is UNDEFINED, never a pass; an S9 read-back fault is STOP-ID; a mismatch is HOST-CLASS PENDING
      across host classes and STOP-ID on the same class;
@@ -424,6 +427,40 @@ def test_k1_falsifier_reads():
     assert k["falsified_b"] and not k["falsified_a"] and k["H_K1_falsified"]
 
 
+def test_k1_missing_records_are_undefined_never_not_falsified():
+    def world(missing, c6_undef=()):
+        def recipe(arm, s, sa, ms, tau, g0):
+            if (arm, sa, ms, s) in missing or (arm == "k1nofac" and "all" in missing):
+                return None
+            if arm == "apv" and (sa, ms) == (0.125, 429) and s in (46, 49, 51):
+                return _rec(_som_after(_c6_fail(T1.make_ps(), 300), 4))
+            ps = T1.make_ps()
+            if (arm, sa, ms, s) in c6_undef:
+                ps["c1"]["v_apical"]["run_max"]["vole"] = -50.0      # the plateau never rose: C6 UNDEFINED
+            return _rec(ps)
+        return S.k1_reads(FakeLoader(recipe))
+    k = world({"all"})                                       # every K1-NOFAC record missing
+    assert k["nofac"]["n"] == 0 and k["b_undefined"]["k1nofac"]["invalid"] == 16
+    assert k["falsified_b"] is None and k["falsified_a"] is False and k["H_K1_falsified"] is None
+    k = world({("apv", 0.125, 429, 41)})                     # one APV record at a K1 cell missing
+    assert k["apv"]["n"] == 15 and k["falsified_b"] is None
+    assert k["a_records"]["invalid"] == 1 and k["falsified_a"] is None and k["H_K1_falsified"] is None
+    k = world(set(), c6_undef={("k1nofac", 0.25, 429, 50)})  # a valid K1-NOFAC record with C6 UNDEFINED
+    assert k["nofac"]["n"] == 15 and k["b_undefined"]["k1nofac"]["c6_undefined"] == 1 and k["falsified_b"] is None
+    k = world(set(), c6_undef={("apv", 0.5, 215, 41)})       # (a): a C6-UNDEFINED record is no late fail, (a) reads
+    assert k["a_records"]["c6_undefined"] == 1 and k["falsified_a"] is False and k["falsified_b"] is False
+    assert k["H_K1_falsified"] is False
+
+    def hit(arm, s, sa, ms, tau, g0):                        # (a) hit on the valid records, a GRID record missing
+        if arm == "grid" and (sa, ms, s) == (0.5, 429, 51) and (tau, g0) == (40, 4):
+            return None
+        if arm == "apv" and (sa, ms) == (0.125, 429) and s == 46:
+            return _rec(_c6_fail(T1.make_ps(), 300))         # 0 SOM spikes in [200, 300)
+        return _rec(T1.make_ps())
+    k = S.k1_reads(FakeLoader(hit))
+    assert k["falsified_a"] is True and k["a_records"]["invalid"] == 1 and k["H_K1_falsified"] is True
+
+
 # ── 7. selection, falsifiers, decision tree ────────────────────────────────────────────────────────────────────────
 
 def _ncell(working=(), rescue=None, eraser=None, kept=None):
@@ -499,7 +536,8 @@ def _fake_ref():
 class World:
     """A planted step-0 world: each arm's record from a few prototypes (shared, read-only)."""
 
-    def __init__(self, trace_g=None, trace_ps=None, apv_ps=None, c5=None):
+    def __init__(self, trace_g=None, trace_ps=None, apv_ps=None, c5=None, missing=None):
+        self.missing = missing or (lambda arm, key, tau, g0: False)
         self.clean = _g_ap(T1.make_ps(), 0.5)
         self.lesion = T1.make_lesion()
         self.trace_g = trace_g or (lambda t, g, key: 0.5)
@@ -523,6 +561,8 @@ class World:
 
     def recipe(self, arm, s, sa, ms, tau, g0):
         key = (sa, ms, s)
+        if self.missing(arm, key, tau, g0):
+            return None                                      # an invalid or missing artifact (FakeLoader lists it)
         if arm in ("cal", "grid", "ipsc12", "nomem"):
             return _rec(self._trace(tau, g0, key))
         if arm == "lesion":
@@ -540,12 +580,12 @@ class World:
         return _rec(self.memo.setdefault("other", T1.make_ps()))
 
 
-def _score(monkeypatch, tmp_path, world, f1i_lesions=False, nomem=None):
+def _score(monkeypatch, tmp_path, world, f1i_lesions=False, nomem=None, ident_iii=None):
     monkeypatch.setattr(S, "Loader", lambda root, lines, pin: FakeLoader(world.recipe, root))
     monkeypatch.setattr(S, "f1i_reference", lambda root: _fake_ref())
     clean = {"equal": True, "problems": []}
     monkeypatch.setattr(S, "identity_i", lambda L, root: {s: dict(clean) for s in S.IDENTITY_SEEDS})
-    monkeypatch.setattr(S, "identity_iii", lambda L, root: {"x": dict(clean)})
+    monkeypatch.setattr(S, "identity_iii", lambda L, root: {"x": dict(ident_iii or clean)})
     monkeypatch.setattr(S, "p0_engine", lambda pin: {"sim/bridge.py": "sim/bridge.py:1"})
     monkeypatch.setattr(S, "host_summary", lambda paths: "host summary: planted")
     if f1i_lesions:
@@ -619,6 +659,65 @@ def test_full_stop_smoke_and_stop_attrib(monkeypatch, tmp_path):
     d = res["decision"]
     assert d["STOP_ATTRIB"] and d["STOP_CAL"] and [b[:2] for b in d["branches_fired"]] == ["6:", "7:"]
     assert "C7" in d["stop_cal_reading"]["failing_at_every_working_cell"]
+
+
+GRID_EARLY = [k for k in EARLY if S._tg_arm(*k[:2]) == "grid"]
+
+
+def test_full_missing_grid_record_is_undefined_never_f1(monkeypatch, tmp_path):
+    """One GRID early record missing at every NMDA cell, on a world whose rescue sits exactly at the bar (40/45):
+    read as a shortfall it would be 39 and fire F1 (branch 2, the method banked as not closing). It is UNDEFINED."""
+    five = set(EARLY[:5])
+    gone = GRID_EARLY[0]
+    w = World(trace_g=lambda t, g, key: 0.319 if key in five else 0.5,
+              missing=lambda arm, key, tau, g0: arm == "grid" and key == gone)
+    res = _score(monkeypatch, tmp_path, w, f1i_lesions=True)
+    d = res["decision"]
+    assert len(res["invalid"]) == 9
+    assert d["UNDEFINED"] is True and d["invalid_or_missing"] == 9
+    assert d["verdict"] == ("UNDEFINED: re-run the 9 invalid or missing artifact(s), then re-score; not a pass, "
+                            "not a falsifier")
+    assert d["branches_fired"] == [d["verdict"]] and d["stops"] == [] and d["falsifiers"] == []
+    assert d["falsifier_reads"] is None and d["STOP_FALS"] is None and d["STOP_CAL"] is None
+    assert d["selected"] is None and d["working"] is None and not d["STOP_ID"]
+    for c in res["nmda_cells"].values():
+        assert c["rescue"]["count"] == 39 and c["rescue"]["invalid"] == 1 and c["invalid_trace_grid"] == 1
+    assert "VERDICT: UNDEFINED" in S.render(res)
+    # the shortfall alone would fire F1: falsifiers() refuses to read it
+    with pytest.raises(ValueError, match="incomplete data"):
+        S.falsifiers({k: res["nmda_cells"][LN.nmda_tag(*k)] for k in S.NMDA_CELLS},
+                     {k: res["ipsc12"][LN.nmda_tag(*k)] for k in S.NMDA_CELLS}, [])
+    # six cal / GRID early records missing (the skeptic's probe): UNDEFINED, not "STOP: STOP_CAL, STOP_FALS, F1"
+    six = set(EARLY[4:10])
+    res = _score(monkeypatch, tmp_path, World(missing=lambda arm, key, tau, g0: arm in ("cal", "grid")
+                                              and key in six), f1i_lesions=True)
+    assert len(res["invalid"]) == 54 and res["decision"]["UNDEFINED"] and res["decision"]["falsifiers"] == []
+    # STOP-ID (branch 1) still comes first: nothing else is read
+    stop = {"equal": False, "problems": [], "verdict": "STOP-ID (same host class pool)"}
+    res = _score(monkeypatch, tmp_path, w, f1i_lesions=True, ident_iii=stop)
+    d = res["decision"]
+    assert d["STOP_ID"] and d["UNDEFINED"] is False and d["falsifier_reads"] is None and d["falsifiers"] == []
+    assert d["branches_fired"] == ["1: STOP-ENGINE / STOP-ID: instrument; nothing else is read"]
+
+
+def test_full_missing_ipsc12_record_is_undefined_never_f3(monkeypatch, tmp_path):
+    """One IPSC-12 seed missing at every NMDA cell: read as a C6 shortfall (7/8 at W_MS 215) it fires F3. UNDEFINED."""
+    w = World(missing=lambda arm, key, tau, g0: arm == "ipsc12" and key == (0.125, 215, 41))
+    res = _score(monkeypatch, tmp_path, w, f1i_lesions=True)
+    d = res["decision"]
+    assert len(res["invalid"]) == 9 and d["UNDEFINED"] and d["falsifiers"] == [] and d["STOP_FALS"] is None
+    assert d["verdict"].startswith("UNDEFINED: re-run the 9 invalid or missing artifact(s)")
+    for t, ip in res["ipsc12"].items():
+        assert ip["invalid"] == 1 and ip["c6_ms215"] == 7 and not ip["pass"]
+    assert "F3" not in d["verdict"] and not d["selected"]
+
+
+def test_full_missing_nomem_record_leaves_the_decision_and_undefines_nomem(monkeypatch, tmp_path):
+    w = World(missing=lambda arm, key, tau, g0: arm == "nomem" and key == EARLY[0])
+    res = _score(monkeypatch, tmp_path, w, f1i_lesions=True, nomem=[8])
+    assert res["decision"]["verdict"] == "CELL SELECTED: t40_g4_sa0p125_ms215"
+    n8 = res["nomem"]["g8"]
+    assert n8["rescue"] is None and n8["invalid"] == 1 and n8["rescue_on_valid_records"] == 44
 
 
 def test_full_with_nothing_on_disk_is_stop_id(tmp_path):
