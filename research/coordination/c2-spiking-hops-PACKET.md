@@ -1,12 +1,57 @@
-# PACKET c2-spiking-hops (Claude, 2026-10-27; revised twice that day after two skeptics, and again on 2026-10-28 after a third, round 4): Stage-2 C2, two separate methods: hop reads on the spiking store (M1) and acquisition of all-novel transitives through a learned order cue (M3)
+# PACKET c2-spiking-hops (Claude, 2026-10-27; revised twice that day after two skeptics, again on 2026-10-28 after a third, round 4, and the same day after the round-4 synthesis of three more skeptics, round 5): Stage-2 C2, two separate methods: hop reads on the spiking store (M1) and acquisition of all-novel transitives through a learned order cue (M3)
 
 host-decision: scaffold
-decides: M1: the possessive-question dispatch (_POSSESSIVE_CHAIN_RE), the hop-1 relation candidates (_ROLE_NOUN_HINTS plus the same-verb fallback), the two-hop relation order taken from that parse, the block selection inside query_patient at the production default (a host first-match over spiking-decoded rows), the sequencer's reduced agent and action vocabularies built from the host fact list (_ensure_sequencer's self.kb[:K] read, one_brain_composer.py:1654, which decides which stored agent and action words get word lines) and the host abstain of the read when a cue word has no line (:1709), the block count K that the per-block reads iterate over (len(self.kb), as _read_blocks reads it), the set union, in block order, of the patient word pools that the relay below lights across all K blocks, which forms the patient vocabulary V'_P without reading any .kb entry, and the fabric rebuild when that set changes (section 2.3), the relay of each block's cleanup scores into the sequencer (block_cleanup_scores read to host and clipped at 0, injected as input_gain x score into the divnorm score bridge by make_block_drives and onbridge_divnorm_drive, where the on-bridge divisive normalisation and the Izhikevich rheobase decide which word pools fire, then turned by the host into a fixed 1500 pA decoded-line drive and remapped to the reduced vocabularies with a lit word outside them dropped), the per-query STP reset of the conflict synapses, the slot-to-word map of the workspace, the relay of the conflict unit's spike count into a workspace slot drive, the mapping of acc_conflict_gate's four outputs onto hop outcomes (section 2.2), the cross-tier candidate slots (all_candidate_patients on the routed LTM shard, kept when the host string differs from the PROPOSE word, each driven into its own workspace slot), and, for an LTM-sourced hop (the TieredFactStore's tier routing picks the source), the conflict enumeration all_candidate_patients (host closed-form unbind with a host string dedup); M3: the competent() branch selection of ComprehensionProductionOrgan, which is a host English table (the hand ANIMACY and VERB_SELECTS coverage with their corpus-learned extensions, plus the _brain_vocab membership test, decide whether an assertion is fully covered, fully out-of-vocabulary or passed through, and so decide which assertions M3 ever judges), which utterances the comprehension read judges (extract_transitive's 3-content-token test and its function-word list), the role assignment of the stored triple (the positional parse after the host strip), the store-or-refuse agreement check between M3's commit roles and that positional parse, the M3 margin arithmetic (minimum over roles of winner-minus-runner-up, median-normalised) and its calibrated threshold (0.5 times the 10th percentile of the in-sample well-formed normalised margins), and the utterance-onset event
+decides: M1: the possessive-question dispatch (_POSSESSIVE_CHAIN_RE), the hop-1 relation candidates (_ROLE_NOUN_HINTS plus the same-verb fallback), the two-hop relation order taken from that parse, the PROPOSE block selection inside query_patient at the production default, which is the fact-shard fast path (default ON: per-role DG sparse indices that _ensure_fact_shard builds from the .kb agent, action and patient strings, one_brain_composer.py:1400-1432 with the entry read at :1420, intersected by _fact_shard_candidates :1434-1466, an empty candidate set being an abstain before any block is decoded, then a host first-match over the spiking decodes of the candidate blocks, :1468-1481), and on escalation or with the fact shard off a host first-match over every spiking-decoded row (_seq_block :1685-1690), the label-only .kb reads on the PROPOSE path (the patient-type clause test at :1822 in _finish_query_patient and the attribute-key test at :1782), the sequencer's reduced agent and action vocabularies built from the host fact list (_ensure_sequencer's self.kb[:K] read, :1654, reading the agent and action fields only from step 1 on, which decides which stored agent and action words get word lines) and the host abstain of the read when a cue word has no line (:1709), the block count K that the per-block reads iterate over (len(self.kb)), the set union, in block order, of the patient word pools that the relay below lights across all K blocks, which forms the patient vocabulary V'_P without reading any .kb entry, and the fabric rebuild when that set changes (section 2.3), the relay of each block's cleanup scores into the sequencer (block_cleanup_scores read to host and clipped at 0, injected as input_gain x score into the divnorm score bridge by make_block_drives and onbridge_divnorm_drive, where the on-bridge divisive normalisation and the Izhikevich rheobase decide which word pools fire, then turned by the host into a fixed 1500 pA decoded-line drive and remapped to the reduced vocabularies with a lit word outside them dropped), the per-query STP reset of the conflict synapses, the slot-to-word map of the workspace, the relay of the conflict unit's spike count into a workspace slot drive, the drive vector the host builds for every hop whichever tier serves it, the host read-outs of the workspace (_conf_from_nmda's NMDA margin formula, its ignition count over the fixed threshold THR and its argmax winner, _gnw_reentrant_metacog_gated_deliberation_derisk.py:204-219 with THR at :105) and the gate's calibrated theta_hi and retry budget R_max (acc_conflict_gate :326-337, R_MAX_DEFAULT at :124, theta_hi from _get_theta), the mapping of acc_conflict_gate's four outputs onto hop outcomes (section 2.2), and, for the LTM tier (the TieredFactStore's tier routing picks the source), the candidate enumeration all_candidate_patients on the routed shard (host closed-form unbind with a host string dedup), whose patients other than the PROPOSE word each get their own workspace slot, on a buffer-served hop (the cross-tier slots) and on an LTM-served hop alike; M3: the competent() branch selection of ComprehensionProductionOrgan, which is a host English table (the hand ANIMACY and VERB_SELECTS coverage with their corpus-learned extensions, plus the _brain_vocab membership test, decide whether an assertion is fully covered, fully out-of-vocabulary or passed through, and so decide which assertions M3 ever judges), which utterances the comprehension read judges (extract_transitive's 3-content-token test and its function-word list), the role assignment of the stored triple (the positional parse after the host strip), the store-or-refuse agreement check between M3's commit roles and that positional parse, the M3 margin arithmetic (minimum over roles of winner-minus-runner-up, median-normalised) and its calibrated threshold (0.5 times the 10th percentile of the in-sample well-formed normalised margins), and the utterance-onset event
 allowed-by: CLAUDE.md non-negotiable 1 (a declared teaching scaffold for its neural replacement)
 replaced-by: the learned relation-noun binding (M2, its own packet), the cs-race spiking store competition for block selection, the word-role frame commit for scope and stored roles, and one-bridge co-residence of the K-way sequencer and the GNW workspace
 cap: 2 builds
 
-**Round-4 changes (2026-10-28, after the third skeptic REFUTED bad12d536; the fix-by-fix table is 0f).**
+**Round-5 changes (2026-10-28, after three skeptics REFUTED bdd949cc5, all three on fix 1; the fix-by-fix table with
+the code each citation was checked against is 0g).** Fix number, then the sections changed:
+1. (blocking) B13 (a) could not tell the two V'_P designs apart, because fish stays a `.kb` patient through the
+   built-in (cat, eat, fish). `infer_amb1`'s second hop-1 patient is now worm, which is in the D4 hand ANIMACY table
+   and in no other `.kb` row. Overwrite condition (iv) and `vp_not_in_kb` gate B13 (a), and the false round-4
+   counterfactual is struck. Worm missing from `vp` stays a FAIL, so the bar is not loosened (0g). Sections: 2.6, 2.8 (tables, branch table, D2, fixtures), 2.9 (P10, premise map, B13), 2.10
+   step 0.
+2. (blocking) V'_P provenance gets a data-flow test, and the frame guard can no longer be bypassed. The patient field
+   is dropped from the :1654 read and every patient-field read is counted by line. One bar covers every `.kb` access
+   from route entry to the returned decision, except listed lines. B7's frame count is stated to be no provenance
+   evidence. A positive control requires the proxy to be live on every hop. Sections: 2.4, 2.7, 2.9 (B7, B13), 2.10
+   step 1.
+3. (blocking) The default PROPOSE path is the fact shard, not `_seq_block`. It is declared in the header and in 2.1,
+   with `propose_path` and the candidate blocks recorded per hop. Every hop runs the buffer conflict read and builds an
+   explicit drive vector. Host-routed misses are listed. B8 (1) is now a no-regression item, and its spiking-miss
+   claim moves to a fact-shard-off twin (A21). The moat absence premise comes from the teach log and `builtin_facts`
+   only, so a confabulated row that leads to an answer is a FAIL. Sections: header, 2.1, 2.2, 2.3, 2.6, 2.7, 2.8
+   (A21), 2.9 (premise map, hop records, B3, B7, B8).
+4. (blocking) Cross-seed rule: every M1 bar and every R bar holds only if it PASSES on all six dev seeds. An UNDEFINED
+   or UNMEASURED seed counts as not meeting it. Sections: 2.9 (general rule, B11, seed invariance), 2.10 step 3, 3.7.
+5. Same-seed references, nulls and liveness for the lesion and necessity bars. B3 and B4 need B1's engagement and
+   A2 = A1. B6 needs A8's gate ABSTAIN and a new A8 null twin (A8b). B11 and B13 (b) need the unit live on A8. B4 (iii)
+   needs the intact loop weights. A11's lesion is read back on the synapses. Sections: 2.7, 2.8 (A8b), 2.9 (B3, B4, B6,
+   B11, B13).
+6. The hop-1 patient VALUE is now intervened on: A19 and A20 overwrite the FIRST (heron, hunt) entry, frog -> worm.
+   B13 (b) is restated as a test of route-level list reads only. Sections: 2.6, 2.8, 2.9 (P11, B13).
+7. Runner changes named in the build lists: per-arm turn tables, informational `.rep0`, the live `.kb` proxy in the
+   arm worker, and the `infer_xtier` write after turn 0 with a re-read. Sections: 2.4, 2.8, 2.10 steps 0-1, 3.8.
+8. The step-0 (c) V'_P read takes the patient slice off the cleanup membrane right after the production
+   `block_cleanup_scores` call (reserve slots carry no cleanup synapses there), never from the full probe. Section:
+   2.10 step 0 (c).
+9. Every M1 arm needs `sources` == {`tiny-demo +LTM`} and `ltm_bundle` == `wikidata_100k`, and a missing
+   `corpus_present` key is UNDEFINED. Sections: 2.9 (general rule, premise map), section 5.
+10. No step reads a gate seed by default: M3 step 0 names dev seeds and runs through the stage-2 worker. Every step-1
+    unit test pins `BRAIN_CHAT_SEED`. Design seed 7 leaves the M3 organ count (seeds 1-6 and 8-16). Sections: 2.10
+    step 1, 3.5, 3.7, 3.8, section 5.
+11. B9 is UNMEASURED per arm pair. B12 (b) on A10 needs the hop-2 record. The D4 recorder joins step 0 (h)'s inert
+    comparison, records the inner lexicon returns, records the OR check instead of raising, and labels the third
+    `competent()` caller. The header lists the workspace's host read-outs. Sections: header, 2.7, 2.9 (B9, B12), 2.10.
+12. Citation corrections: the clause test is in `_finish_query_patient`, `builtin_facts` is latched after turn 0, and
+    the workstation main checkout has the corpus. One item was NOT applied as stated: production `_read_blocks` takes the
+    per-block loop at :1389, not `_read_all_blocks` (the fact shard forces `no_batched_region`; evidence in 0g). Sections:
+    2.1, 2.7, 2.9, section 5.
+
+**Round-4 changes (history; 2026-10-28, after the third skeptic REFUTED bad12d536; the fix-by-fix table is 0f; where
+round 5 changes a point, round 5 holds).**
 1. B4 is scored on ENGAGEMENT of the spiking hop read: the turn's route trace must record `spiking_hop_reads` > 0 and
    the lesion must be read back as held (bridge key and zeroed loop weights). `n_ignited` and the conclusion are now
    the OUTCOME, so a held lesion that leaves slot 0 ignited is a FAIL. A turn with no recorded spiking read is
@@ -43,7 +88,9 @@ Status: DESIGN ONLY, for Claude's review. No production code, no default flipped
 42/43/44/100/101/102 are not run by anything here. Branch `research/c2-spiking-hops` (cut from main cadf0f40f; first
 draft a7799b30c). The first skeptic REFUTED a7799b30c (fixes in 0b; self-skeptic pass in 0c). A second skeptic
 REFUTED the revision fca06bd9a; every one of its fixes is applied (0d), and that revision's own self-skeptic pass is
-in 0e. A third skeptic REFUTED bad12d536; its fixes are applied in this round-4 revision (0f). Section 7 copies Claude's 2026-10-27 ruling text; the keyed runbook RULING, which Claude posts, is the
+in 0e. A third skeptic REFUTED bad12d536; its fixes are applied in the round-4 revision (0f). Three
+more skeptics REFUTED that revision, bdd949cc5, all three on the same V'_P test; the twelve ranked fixes of their
+synthesis are applied in this round-5 revision (0g). Section 7 copies Claude's 2026-10-27 ruling text; the keyed runbook RULING, which Claude posts, is the
 authoritative record. Ruling this answers: stage2-fixes-1026, C2 item ("Then two separate methods", finding
 2026-10-26-stage2-fail-diagnoses.md:137-141). M2 (a learned relation-noun binding in place of `_ROLE_NOUN_HINTS`) is
 NOT in this packet; nothing below claims it, and no bar here needs it.
@@ -82,6 +129,25 @@ zero weight on the `workspace_loop_{i}` populations :204-208); `research/runners
 packet skeptic's REFUTED verdict on bad12d536 (0f). Line numbers are at the branch base cadf0f40f. On current main
 some have moved: the bridge STP init is at `sim/bridge.py:1341-1342`, and `stp_tau_d` is at `sim/config.py:934`, per
 type at :1327-1328. The step-1 build re-reads every cited line at its own base.
+Round 5 also read, at main ee349f8b1, where every file it cites is blob-identical to the branch base cadf0f40f
+(checked by blob hash, so the line numbers hold on both): `one_brain_composer.py` (the fact-shard default :355-372,
+`no_batched_region` forcing `enable_batched` off :470-482, `_silent_reserve` :988, `_read_all_blocks` :1195,
+`_read_blocks` :1380, `_fact_shard_active` :1392, `_ensure_fact_shard` :1400, `_fact_shard_candidates` :1434,
+`_fact_shard_first_match` :1468, `_trace_query` :1580, `_seq_cleanup_conns` :1620, `_attributed_patient` :1777,
+`query_patient` :1787, `_finish_query_patient` :1813); `_seq_vocab_shrink_derisk.py` (`reduced_cue_vocab` :183-196,
+which never reads a fact's third field); `research/runners/brain_chat_tui.py` (`_build_tiny_demo`'s five built-in facts
+:2449-2455 and its vocabulary :2459); `research/runners/brain_conversational_agent.py` (the onebrain buffer's kwargs
+:285-322, `vocab_headroom` 128, no `confidence_gate`); `_gap3_learned_feature_compat_derisk.py` (the base ANIMACY table
+:27-32) and `_phaseB_multicue_competition_spiking_derisk.py:52-61` (the table `comprehension_production_organ` imports
+at :74-78); `comprehension_production_organ.py` (`competent` :719-735, its callers `judge` :747 and `repair_target`
+:780, the organ's `seed=42` defaults :362 and :836); `webapp/gnw_three_organ_bus.py:204` (the third `competent()`
+caller) and its `_DEFAULT_SEED` :114; `webapp/gnw_multistep_deliberation.py` (`conclusion_is_stored` :150-179, called
+at :300); `webapp/gnw_deliberation.py` (`_DEFAULT_SEED` :69, `all_candidate_patients` :124, `conflict_gate` :144);
+`_gnw_reentrant_metacog_gated_deliberation_derisk.py` (THR :105, R_MAX_DEFAULT :124, `_conf_from_nmda` :204-219,
+`acc_conflict_gate` :326-337); `research/runners/stage2_exit_gate.py` (EXPECTED_SOURCE :71, BASE_ENV :98-100,
+`turns_for` :321-328, `arms_for` :331-342, `_kb_triples` :448, `process_record` :623, `run_worker` :659-735 with the
+`builtin_facts` latch :710-715, `arm_validity` :908-940 with its `corpus_present` default :933); `webapp/server.py`
+(`_brain_chat_seed` :4038, `_default_ltm_bundle_dir` :3817-3847, `_resolve_ltm_bundle` :4112).
 `research/findings/2026-10-12-validation-battery-prereg.md` (B-C5e, the dev-7 re-tell smoke);
 `docs/drafts/word-role-frame/PACKET.md`, RULING wrc-frame-1-1024 and RULING batch-1026 (5) (the wrc-frame-1b
 diagnosis); `docs/drafts/cs-race/PACKET.md`, `research/coordination/cs-race-f1h-PACKET.md`, and on main (not on this
@@ -175,6 +241,27 @@ brief named; items 7-9 are the rest of the verdict's required fixes, applied bec
 | 8 | R4 had no UNMEASURED-when-not-engaged clause | 3.7 R4 |
 | 9 | Minor: RULING focus-1025 was binding only until the 10-26 gate RESULT; some STP line numbers moved on main | 3.2; inputs paragraph |
 
+## 0g. The round-4 synthesis's twelve ranked fixes (three skeptics REFUTED bdd949cc5), and where each is applied
+
+Every code statement in this table was checked for this revision against the file at main ee349f8b1 (blob-identical
+to the branch base for every file cited). Where a check needed a run, it was a seed-7 composer fixture in a scratch
+process (numpy, a 9-word vocabulary, no gate seed, nothing committed).
+
+| # | fix required | where | checked against |
+|---|---|---|---|
+| 1 | B13 (a) could not separate the designs: the built-in (cat, eat, fish) keeps fish a `.kb` patient after A17's fish -> frog, so round 3's host-listed V'_P keeps a fish line and abstains too. Use a word in no other `.kb` row and in the D4 hand ANIMACY; add overwrite condition (iv) and require `vp_not_in_kb`; strike the false 2.6 counterfactual | 2.6, 2.8, 2.9 (P10, premise map, B13 (a)), 2.10 step 0 (g) and GO rule | worm is in the hand ANIMACY that `comprehension_production_organ` imports (`_gap3_learned_feature_compat_derisk.py:29`, merged at `_phaseB_multicue_competition_spiking_derisk.py:52-61`; confirmed by import, `ANIMACY['worm'] == 'animate'`), so `competent(heron, hunt, worm)` passes it through as it did fish. worm is in no built-in fact (`brain_chat_tui.py:2449-2455`; it is only a vocabulary word, :2459) and in no string of any stage-2 group table, teaches and probes included (all of `GROUPS` scanned); this packet's other tables use apple, fish (LTM only) and nonce forms. bird qualifies on the same checks; worm was chosen. Applied with one tightening: the synthesis made `vp_not_in_kb` a precondition (else UNDEFINED); worm in `vp` but not in `vp_not_in_kb` is UNDEFINED as asked, but worm missing from `vp` with (iv) read back stays a FAIL, as round 4's "fish in `vp`" outcome was, so the bar is not loosened |
+| 2 | No data-flow test of V'_P provenance; the frame guard was bypassable (:1654 read the patient field inside an allowed frame; B7's union check passes whenever list = store; `route_kb_reads` saw only route frames; `conclusion_is_stored` read `.kb` unbarred) | 2.4 (patient field dropped at :1654, counting by field and line, live proxy), 2.7 (`kb_reads`, `kb_patient_reads`, positive control), 2.9 (B7 (c)-(e), the provenance statement), 2.10 step 1 (sentinel unit twin) | :1654 builds `(agent, action, patient)` tuples and `reduced_cue_vocab` (`_seq_vocab_shrink_derisk.py:183-196`) never reads the third field, so dropping it is byte-identical; `conclusion_is_stored` (`gnw_multistep_deliberation.py:150-179`) is called only at :300, on the multistep chase path, which acts only on a chase-marker question; it is declared label-only and counted |
+| 3 | The default PROPOSE path was declared wrongly: the fact shard is default ON and serves `query_patient`; (frog, chase) can miss on the host index; qp_lesion and the moat hop produced no drive or `acc_conf` record; the moat premise read from the bound store turned a confabulation into UNDEFINED | header, 2.1, 2.2, 2.3, 2.6, 2.7 (`propose_path`, `fs_candidates`, `host_routed`), 2.8 (A21), 2.9 (premise map, hop-record table, B3, B7, B8) | `_FACT_SHARD_DEFAULT_ON = True` (:363), not set by stage-2 `BASE_ENV` (:98-100); `_fact_shard_active` (:1397-1398) needs integrated loop off and `confidence_gate` 0, the agent's default (`brain_conversational_agent.py:285-322` passes none). Fixture: `enable_fact_shard` True. One correction to the synthesis: on the fixture the (frog, chase) candidate set was NOT empty (one non-matching block from a DG bucket collision, decoded and rejected), so the miss is "the index's candidates plus a host compare over their decodes", which 2.1 states; `fs_candidates` records the set |
+| 4 | No cross-seed combination rule | 2.9 (general rule (vi), B11, seed invariance), 2.10 step 3, 3.7 | packet text |
+| 5 | Lesion and necessity bars lacked same-seed references, nulls and liveness (`docs/TERMS.md`, lesion and load-bearing) | 2.7 (`cp_w_max`, `cp_n_syn`), 2.8 (A8b), 2.9 (B3, B4, B6, B11, B13) | `ws_loop_w_max` is recorded as 0.0 when no synapse is found (2.7), hence the intact and synapse-count references |
+| 6 | The hop-1 patient value was never intervened on (A3 keeps (heron, hunt); A19 overwrote the re-tell, so the first match was unchanged) | 2.6, 2.8 (A19, A20 plan), 2.9 (P11, B13 (b)) | under the fact shard, `query_patient` selects the FIRST matching candidate block and `_finish_query_patient` reads that block's `.kb` patient for the clause test (:1822), so the first entry is the one a list-first-match reader sees |
+| 7 | Runner changes were missing from the build lists | 2.4, 2.8, 2.10 steps 0 and 1, 3.8 | `turns_for` gives `permuted_turns` only to the arm named `permuted` and order tables only to A4 order arms (`stage2_exit_gate.py:321-328`); `arms_for` adds `.rep0` only to lesion arms (:331-342); `run_worker` builds the brain inside the first `brain_chat` (`reset=(i == 0)`, :699), and each conversation loads its own LTM copy (`webapp/server.py:4290-4300`, :4395) |
+| 8 | Step 0 (c)'s V'_P read used a slice production never sends | 2.10 step 0 (c) | `block_cleanup_scores_full` wires every slot (`_phaseC_task1_cleanup_probe.py:33-57`); production skips unrecruited reserve slots (`_seq_cleanup_conns` :1634, `_silent_reserve` :988-998, whose docstring records `__free10__` 5270 against `look` 4080); the chat buffer has `vocab_headroom` 128 (`brain_conversational_agent.py:285`) |
+| 9 | Shard validity depended on the LTM bundle outside the repository, and a missing `corpus_present` read as present | 2.9 (general rule (i)), premise map, section 5 | `_default_ltm_bundle_dir` (`webapp/server.py:3817-3847`) looks outside the checkout and falls back to `wikidata_core_15k`, which gives the same `source` string; `process_record` records `ltm_bundle` (`stage2_exit_gate.py:623-638`); `arm_validity` reads `shard.get("corpus_present", True)` (:933) |
+| 10 | M3 step 0 could run on gate seed 42 | 2.10 step 1 (unit tests), 3.5, 3.7, 3.8 step 0, section 5 | `_brain_chat_seed()` returns 42 when `BRAIN_CHAT_SEED` is unset (`webapp/server.py:4038-4062`), as do `gnw_deliberation._DEFAULT_SEED` (:69) and `gnw_three_organ_bus._DEFAULT_SEED` (:114); the organ's own `seed=42` defaults (`comprehension_production_organ.py:362`, :836) |
+| 11 | B9 UNMEASURED per pair; B12 (b) on A10 needs the hop-2 record; the D4 recorder in step 0 (h); inner returns recorded; OR recorded, not raised; the third `competent()` caller; the header's host read-outs | header, 2.7, 2.9 (B9, B12), 2.10 step 0 (h) | `gnw_three_organ_bus.py:204` calls `competent()`; `_conf_from_nmda` and `acc_conflict_gate` as cited in the header |
+| 12 | Citation corrections | 2.1, 2.7, 2.9, section 5 | Applied: the :1822 clause test is in `_finish_query_patient` (:1813); `builtin_facts` is latched after turn 0 (`stage2_exit_gate.py:710-715`): the five built-ins plus turn 0's fact; the workstation main checkout HAS `data/corpus/tinystories.txt`, and the detached `sim-rev` worktrees lack it. NOT applied as stated: "production `_read_blocks` goes to `_read_all_blocks`; :1389 is not taken". With the fact shard on, `__init__` sets `no_batched_region = True` (:371-372), which forces `enable_batched = False` (:480-482), so `_read_blocks` takes the per-block loop at :1389. The fixture read back `enable_batched` False, and `_read_blocks` called `_read_block` once per block. `_read_all_blocks` (:1195, `len` at :1206) runs only with `BRAIN_FACT_SHARD_RETRIEVAL=0` (A21), where `enable_batched` read back True |
+
 ## 1. The defect, as measured
 
 - **The 0/6 is an acquisition refusal.** The default-ON D4 comprehension gate refuses 'the heron hunts the gnat' as
@@ -208,11 +295,26 @@ own flag, lesions and bars, and either can land without the other.
 
 ### 2.1 What first-match means today
 
-`OneBrainComposer.query_patient` (`one_brain_composer.py:1787`) returns ONE patient per (agent, action). Its block
-selection goes through `_seq_block` (:1680). At the production default (`_INTEGRATED_LOOP_DEFAULT_ON = False`,
-`webapp/server.py:3910`) that is a host first-match over the spiking-decoded rows (:1685-1690): every stored block is
-reconstructed and unbound on the RF substrate (`_read_blocks`), then a Python loop returns the first row whose decoded
-agent and action equal the cue. With `BRAIN_INTEGRATED_LOOP=1` the selection is the K-way sequencer's BG first-match
+`OneBrainComposer.query_patient` (`one_brain_composer.py:1787`) returns ONE patient per (agent, action). **At the
+production default its block selection is the fact-shard fast path, not `_seq_block` (round 5; round 4 had this
+wrong).** `_FACT_SHARD_DEFAULT_ON = True` (:363-367), and the stage-2 `BASE_ENV` (`stage2_exit_gate.py:98-100`) does not
+set `BRAIN_FACT_SHARD_RETRIEVAL`. `_fact_shard_active` (:1392-1398) is True whenever the integrated loop is off
+(`_INTEGRATED_LOOP_DEFAULT_ON = False`, `webapp/server.py:3910`), `confidence_gate` is 0 (the agent passes none, so the
+default 0.0, :129) and the store is non-empty. `query_patient` (:1805-1808) then calls `_fact_shard_first_match`
+(:1468). `_fact_shard_candidates` (:1434) intersects per-role DG sparse indices that `_ensure_fact_shard` (:1400) builds
+from the `.kb` strings (`self.kb[i][0].get(r)` at :1420, for r in agent, action and patient; rebuilt only when
+`len(self.kb)` changes, :1410-1412). The candidate blocks are then decoded one at a time on the RF substrate
+(`_read_one_block`), and the first one whose decoded agent and action equal the cue is selected (:1478-1481). The
+candidate set is a host index over the list's agent and action strings. An empty set returns (None, None) before any
+block is decoded. A non-empty set whose decodes all mismatch also returns (None, None), and on a seed-7 fixture the
+(frog, chase) set held one such non-matching block (a DG bucket collision, 0g). Either way the buffer abstains and
+`TieredFactStore` asks the LTM. Only when the set cannot be formed (`_FS_ESCALATE`, an unindexed cue role, :1476-1477)
+does the full path run: `_seq_block` (:1680), which at integrated loop off is a host first-match over every decoded row
+(:1685-1690). **The fact shard also changes the read layout.** A fact-shard composer sets `no_batched_region = True`
+(:371-372), which forces `enable_batched = False` (:480-482). So production `_read_blocks` (:1380) takes the per-block
+loop at :1389 (`_read_block(i)` for i in `range(len(self.kb))`). The batched `_read_all_blocks` (:1195, `len(self.kb)`
+at :1206) runs only with `BRAIN_FACT_SHARD_RETRIEVAL=0`, the A21 twin of 2.8 (both read back on a seed-7 fixture, 0g).
+With `BRAIN_INTEGRATED_LOOP=1`, `_fact_shard_active` is False and the selection is the K-way sequencer's BG first-match
 priority WTA (block i inhibits every j>i), built by `_ensure_sequencer` (:1641). At the default
 `enable_seq_vocab_shrink=True` (:133, branch :1651-1663) that is the REDUCED fabric,
 `build_sequencerK_reduced_bridge` (`_seq_vocab_shrink_derisk.py:98`), with word lines only for the distinct stored
@@ -220,9 +322,14 @@ agents and actions; `build_sequencerK_bridge` over all V words is built only wit
 third branch, `integrated_loop == "fused"`, selects through `fused_seq_block` (`_seq_fused_fabric.py:336`); the chat
 server never takes it, because `_integrated_loop_enabled` returns a bool (`webapp/server.py:3913`, passed at :4377 and
 :4470). In every case a second patient under the same cue is invisible to the caller, and the patient CONTENT is the
-decoded bound vector. `query_patient` reads `.kb` itself: `len(self.kb)` in `_read_blocks` (:1389) and
-`_fact_shard_active` (:1398), `self.kb[idx]` to route a clause patient (:1822), and the attribute check in
-`_attributed_patient` (:1782); `_ensure_sequencer` reads `self.kb[:K]` (:1654).
+decoded bound vector. `query_patient` reads `.kb` itself. It reads `len(self.kb)` in `_fact_shard_active` (:1398) and
+in `_ensure_fact_shard` (:1410), and every entry's role strings when that index is rebuilt (:1420). The index feeds
+`_fact_shard_candidates`. On the full path it reads `len(self.kb)` in the per-block `_read_blocks` loop (:1389, the
+production layout) or in `_read_all_blocks` (:1206, the A21 layout). In `_finish_query_patient` (:1813), it reads
+`self.kb[idx][0].get("patient")` for the clause test that routes a clause patient (:1822; label-only, the answer is the
+decoded word). It reads the attribute-key check in `_attributed_patient` (:1782; the production agent builds the
+composer with `enable_attributed=True`, `brain_conversational_agent.py:178`). With the composer's trace on, it reads
+`len(self.kb)` in `_trace_query` (:1589). `_ensure_sequencer` reads `self.kb[:K]` (:1654).
 
 The store does not deduplicate. `hear`, `hear_multiframe` and `store` (:702-732) write a block and append to `.kb` on
 every call. In the 10-12 dev-7 re-tell smoke a verbatim re-tell appended a slot
@@ -238,10 +345,18 @@ returns `no_scannable_composer` and passes the first match through (code reading
 Under the flag, `resolve_compositional_chain` keeps its parse and its candidate loop (hint relations, then the same
 verb) and replaces `_hop` with `_hop_spiking`. Per hop (x, rel):
 
-1. **PROPOSE.** `target = composer.query_patient(x, rel)`: the spiking decode of the bound vectors, selected as in 2.1.
-2. **CONFLICT READ.** The conflict unit of 2.3 reads, in spikes, how many DISTINCT patients the matching buffer blocks
-   carry, and the relay turns its spike count into `slot1_drive`. For a buffer-sourced hop with an LTM present, the
-   cross-tier candidates of 2.3 are listed.
+1. **PROPOSE.** `target, tier = composer.query_patient_source(x, rel)` (`tiered_fact_store.py:197-216`: the same
+   per-tier calls, in the same order, as `query_patient`). The answer is the spiking decode of a bound block, selected
+   as in 2.1: at the default by the fact-shard candidate set and a host first-match over the candidates' decodes.
+   Recorded per hop (2.7): `propose_tier`, the buffer's `propose_path` (`fact_shard`, `escalated` or `seq_block`), and the
+   fact-shard candidate block ids `fs_candidates`.
+2. **CONFLICT READ, on every hop, whichever tier serves it (round 5).** The buffer conflict unit of 2.3 reads, in
+   spikes, how many DISTINCT patients the matching buffer blocks carry, and the relay turns its spike count into
+   `slot1_drive`. It runs whatever PROPOSE returned (None included) and whichever tier answered. Only a cue word
+   without a line skips it (2.3), which is recorded as `cue_in_reduced_vocab: false` with `slot1_drive` 0. With an LTM
+   present, the routed shard's candidates are listed on every hop as well (2.3, `ltm_candidates`). Each one whose
+   string differs from `target` (every one, when `target` is None) gets its own slot. On a buffer-served hop these are
+   the cross-tier slots, and on an LTM-served hop they are the LTM's other patients. No hop calls `conflict_gate`.
 3. **EVALUATE.** One workspace read on the warm P1.2 workspace the C5 chase uses: `_get_bridge(_DEFAULT_SEED,
    lesion)` and `_get_theta(_DEFAULT_SEED)` from `webapp/gnw_deliberation.py`. `_DEFAULT_SEED` reads
    `BRAIN_CHAT_SEED` at import, which the stage-2 worker sets to the arm's seed before it imports the server
@@ -249,8 +364,10 @@ verb) and replaces `_hop` with `_hop_spiking`. Per hop (x, rel):
    drive vector (slot 0 at `IGNITE_PA`, distractor slots at `IGNITE_PA * DISTRACTOR_FRAC`) and has no argument for a
    graded slot-1 drive. M1 builds the vector itself, as `conflict_gate` (`webapp/gnw_deliberation.py:144`) does:
    `drives = [0.0] * n`; `drives[0] = IGNITE_PA` when `target` is not None; `drives[1] = slot1_drive`;
-   `drives[2 + i] = IGNITE_PA` for each cross-tier candidate i (at most n - 2, the dropped count recorded); every
-   other slot 0 (no distractors, so the C5 chase's host-random `_pick_distractors` is not used). Then
+   `drives[2 + i] = IGNITE_PA` for each listed other-tier candidate i (at most n - 2, the dropped count recorded);
+   every other slot 0 (no distractors, so the C5 chase's host-random `_pick_distractors` is not used). The vector is
+   built and recorded in full on every hop, all-zero included (a miss, the qp lesion), so every hop has a `drives`
+   record and one workspace read. Then
    `rates, g_nmda = _ignite_and_read_nmda(bridge, xp, slots, snap, drives)`,
    `conf, winner, n_ignited = _conf_from_nmda(rates, g_nmda)`, and
    `acc_conflict_gate(conf, n_ignited, cycles_on_hop, R_MAX_DEFAULT, theta_hi, theta_lo)` with `conflict_gate`'s
@@ -274,7 +391,9 @@ is `calibrate_theta`'s SOLO regime, so the gate returns ADVANCE. Two distinct bu
 IGNITE_PA`, and one buffer patient with one different LTM patient gives a cross-tier slot at `IGNITE_PA`; both are its
 CONFLICT regime, so the gate returns RETRY to R_max, then ABSTAIN. An intermediate count can take either ABSTAIN path
 or ADVANCE; every hop's `(slot1_drive, xtier_slots, n_ignited, conf, decision)` is recorded, and the step-2 report
-lists every intermediate case.
+lists every intermediate case. A hop with no PROPOSE word, a silent `acc_conf` and no listed candidate drives nothing,
+so `n_ignited` is 0 and the gate returns COMMIT, a miss read off an all-zero drive vector. Two such hops are the
+qp-lesion hop 1 and the moat hop (frog, chase). The vector and the read are recorded there too (round 5).
 
 The control flow over hops (two hops; candidate relations in order; abstain on any ambiguity) is the route's own and
 is declared in the header. The C5 chase loop is not used: its single `rel` and emergent depth do not fit a question
@@ -321,13 +440,18 @@ New, additive builder option `conflict_unit=True` (default False; the sequencer 
   least one block, in block order. The relay runs before the fabric check: if the lit set differs from the built
   fabric's V'_P, the reduced fabric is rebuilt with the new V'_P before the drives are set (V'_P joins the rebuild
   signature beside `(agentsA, actionsX)`). The builder reads the block count K (`len(self.kb)`, the same count
-  `_read_blocks` reads, declared) and no `.kb` entry; the caller-frame guard of 2.4 counts any entry read from the
-  builder's frame as `vp_kb_entry_reads`, and B7 bars it at 0. Host parts, declared in the header: the relay, the set
-  union in block order and the rebuild trigger. Consequences: a patient the bound store holds gets a line whatever
-  the list says, and a string the list holds but no block decodes gets none. After the decision the audit records
-  `vp_not_in_kb` and `kb_not_in_vp` (record-only; never read by the route). A patient line exists only for a patient
-  some block lights (section 5 gives the cell count; the full-V layer would be about V/V'_P times larger). The
-  `.kb`-overwrite arms A17-A20 (2.8) test that the set and the abstain follow the store and not the list.
+  `_read_blocks` reads, declared) and no `.kb` patient field. It runs inside `_ensure_sequencer`, whose own :1654 read
+  took every entry's patient field until round 5, so a caller FRAME cannot tell the builder's reads from :1654's.
+  From step 1, :1654 reads the agent and action fields only (2.4), and the 2.4 guard counts patient-field reads by
+  field and LINE. `vp_kb_entry_reads` is the count of patient-field reads from `_ensure_sequencer` or the builder,
+  at any line, and B7 bars it at 0. Host parts, declared in the header: the relay, the set union in block order and
+  the rebuild trigger. Consequences: a patient the bound store holds gets a line whatever the list says, and a string
+  the list holds but no block decodes gets none. After the decision the audit records `vp_not_in_kb` and `kb_not_in_vp`
+  (record-only; never read by the route). A patient line exists only for a patient some block lights (section 5 gives
+  the cell count; the full-V layer would be about V/V'_P times larger). B7's consistency checks pass whenever the list
+  equals the store, so they are not provenance evidence (2.9). The provenance test is the data-flow arm A17 (2.8). It
+  removes a patient string from every `.kb` entry while the store keeps it, and B13 (a) requires the abstain to follow
+  the store.
 - **Patient decoded lines.** Per block b, word lines `d{b}P_w` for w in V'_P, driven by the relay above from the
   block's PATIENT cleanup slice. That slice is already computed by the same per-block read: `_seq_cleanup_conns`
   installs cleanup synapses for every main role, and `block_cleanup_scores` returns only the agent and action slices.
@@ -377,7 +501,8 @@ bridge there). The chat server never builds a fused composer (2.1), so no arm ru
 **What the route reads.** Exactly two things from the substrate: `acc_conf`'s spike count (through the relay) and the
 workspace's `(conf, n_ignited, winner)`. The sequencer's own first-match decision, `blocks_matched` and
 `patient_lines_active` are record fields that no branch of the route reads (checked in code review and by B7's
-record). The cross-tier candidate list is a host input to the workspace drive (below), declared.
+record). The LTM candidate list is a host input to the workspace drive (below), declared. So are the PROPOSE word's
+presence in slot 0 and the fact-shard candidate set that selected it (2.1).
 
 **Relay to the workspace (declared host residual).** The sequencer and the workspace are separate bridges, so the
 count crosses by host relay: `slot1_drive = IGNITE_PA * min(1, n_conf / n_conf_ref)`, linear, no threshold.
@@ -386,11 +511,17 @@ count crosses by host relay: `slot1_drive = IGNITE_PA * min(1, n_conf / n_conf_r
 unchanged `acc_conflict_gate` (2.2).
 
 **LTM tier, and the cross-tier case.** `TieredFactStore.query_patient` asks the buffer first and the LTM only when the
-buffer abstains (`tiered_fact_store.py:194-195` through `_tiered`; tier provenance in `query_patient_source` :197-216). The sequencer covers the buffer only. Two cases:
-- **LTM-sourced hop** (the buffer abstained): the conflict read is `all_candidate_patients` on the routed shard's
-  `RFPhasorComposer` (role-unbind of the stored composites; the shard exposes `_iter_facts`) into the existing
-  `conflict_gate`. That enumeration is host closed-form and deduplicates by host string compare; it is recorded per
-  hop as `conflict_read: rf_shard_unbind`.
+buffer abstains (`tiered_fact_store.py:194-195` through `_tiered`; tier provenance in `query_patient_source`
+:197-216). The sequencer covers the buffer only. Round 5: on EVERY hop the buffer conflict read runs and, with an LTM
+present, `all_candidate_patients(ltm.shard_for(x), x, rel)` (`webapp/gnw_deliberation.py:124`) lists the routed shard's
+patients; both go into the one drive vector of 2.2, whichever tier answered. Two cases:
+- **LTM-sourced hop** (the buffer abstained): the buffer read normally finds no matching block (`slot1_drive` 0,
+  recorded); the LTM's PROPOSE word takes slot 0 and every other listed LTM patient takes its own slot at `IGNITE_PA`,
+  so two distinct LTM patients put the gate in its CONFLICT regime, as `conflict_gate` would with two candidates. The
+  enumeration is host closed-form (role-unbind of the shard's stored composites through `_iter_facts`) and
+  deduplicates by host string compare; it is recorded per hop as `conflict_read: rf_shard_unbind`. A buffer abstain
+  whose decoded buffer rows under the cue are not empty is listed `host_routed` (2.7): the fact-shard index, not the
+  bound store, made that miss.
 - **Cross-tier case** (the buffer answers and the routed LTM shard holds a different patient under the same cue).
   Today's route abstains there, because `_distinct_patients` scans the buffer and the LTM
   (`compositional_chain_route.py:196-241`: the shard `shard_for(agent)` returns, which holds every fact about the agent
@@ -432,6 +563,42 @@ instead of raising; (c) replacing the audit's return value with garbage leaves t
 the same guard counts any `.kb` entry read (`__getitem__`, `__iter__`) whose caller frame is the V'_P builder of 2.3
 as `vp_kb_entry_reads`, and raises on it in the unit test; `__len__` (the block count K) passes.
 
+**Round 5: counting by field and line, one bar over the whole decision, and a live proxy.** The round-4 guard could
+be bypassed in three ways. The V'_P builder runs inside `_ensure_sequencer`, whose :1654 read took every entry's
+PATIENT field in an allowed frame. `route_kb_reads` counted only frames of `compositional_chain_route` inside an open
+hop scope. And a `.kb` reader in another module, such as `conclusion_is_stored`
+(`webapp/gnw_multistep_deliberation.py:150-179`), was never barred. So:
+- **:1654 reads the agent and action fields only (a step-1 change on the default path).** The read becomes
+  `(f.get("agent"), f.get("action"), None)`. `reduced_cue_vocab` unpacks `(a, x, p)` and never reads `p`
+  (`_seq_vocab_shrink_derisk.py:183-196`), so the reduced vocabularies, the fabric and every decision are
+  byte-identical (unit-tested: the vocabularies, the rebuild signature and the fabric's synapse arrays are equal with
+  and without the change, on the step-1 fixtures and on the `infer` and `infer_amb1` stores).
+- **Patient-field reads are counted by line, not by frame.** Each entry's fact dict is held as a counting `dict`
+  subclass (so every `isinstance(fact, dict)` check is unchanged), which returns the plain values and records every
+  read of its `patient` key with the caller's file, function and line. The forms counted are `get`, `[]`, `items`,
+  `values`, `keys` followed by `[]`, and a `dict(...)` copy. A unit test enumerates these forms and asserts each is
+  counted and returns the plain value. These counts are `kb_patient_reads` (2.7).
+- **One bar over the decision scope.** The decision scope opens at the route's entry (`resolve_compositional_chain`
+  with the flag on) and closes when the route has fixed its decision, before the audit calls. Every `.kb` access in
+  that scope is recorded with its caller (file, function, line) and kind (`len`, entry, patient field), from any
+  module and any frame. That covers the route, the composer, the V'_P builder, `conclusion_is_stored` and any other
+  reader. The allowed callers are the listed composer lines of 2.7 and three declared label-only reads: `:1782` (the
+  attribute-key test), `:1822` (the clause test; it reads the patient field, and the answer is the decoded word) and
+  `conclusion_is_stored` (the multistep chase's provenance label; these probes carry no chase marker, so it is
+  expected unreached and any count is listed). Every other access counts as `kb_reads_unlisted`. A patient-field read
+  at any line other than :1822, :1420 (the fact-shard index build; a query_patient cue queries only the agent and
+  action indices, and every fact-shard lookup inside a hop records the cue roles it queried) and
+  `conclusion_is_stored` also counts as unlisted. B7 bars `kb_reads_unlisted` at 0 (2.9).
+- **The proxy is live in the arm worker, not only in a unit-test composer.** The stage-2 arm worker installs it with
+  a behaviour-preserving wrapper of `OneBrainComposer.__init__`, before the server import builds any composer. The
+  wrapper makes `self.kb` the counting list from its first assignment (:499). No other holder (the agent's
+  `_assoc_graph` reads the composer's fact dicts) ever keeps the plain list, and nothing reassigns `.kb` afterwards
+  (grep: :499 is the only assignment on the composer). It guards the buffer's `.kb`, the list that the route scanned
+  and that the overwrite and scramble arms change. LTM-tier reads inside the decision (the LTM `query_patient` and
+  `all_candidate_patients` on the routed shard) are declared host reads (2.3), recorded as calls with their returns,
+  not per entry. The proxy's behaviour preservation is tested at step 1 on whole turn tables, flag off and on (2.10
+  step 1).
+
 ### 2.5 Flags and lesions
 
 - `BRAIN_CHAIN_SPIKING_HOPS` (default OFF): with it unset, `resolve_compositional_chain` is byte-identical (golden
@@ -445,59 +612,110 @@ as `vp_kb_entry_reads`, and raises on it in the unit test; `__len__` (the block 
 
 ### 2.6 What stays host under M1 (declared in the header)
 
-The regex dispatch, `_ROLE_NOUN_HINTS` and the same-verb fallback, the two-hop order, the default selection inside
-`query_patient` (a host first-match over decoded rows), the reduced agent and action vocabularies read from the fact
-list (`_ensure_sequencer` :1654) and the host abstain when a cue word has no line, the block count K, the union of
-the relay-lit patient pools into V'_P with its rebuild trigger (2.3), the relay of each block's cleanup scores
-into the sequencer as it is (host read and clip, `input_gain` current into the divnorm score bridge, the rheobase
+The regex dispatch, `_ROLE_NOUN_HINTS` and the same-verb fallback, the two-hop order, the default PROPOSE selection
+inside `query_patient` (the fact-shard candidate set, a host index over the list's agent and action strings, and a host
+first-match over the candidates' spiking decodes; on escalation or with the fact shard off, a host first-match over
+every decoded row, 2.1), the label-only `.kb` reads at :1782 and :1822, the reduced agent and action vocabularies read
+from the fact list (`_ensure_sequencer` :1654, agent and action fields only from step 1) and the host abstain when a cue
+word has no line, the block count K, the union of the relay-lit patient pools into V'_P with its rebuild trigger
+(2.3), the relay of each block's cleanup scores into the sequencer as it is (host read and clip, `input_gain` current into the divnorm score bridge, the rheobase
 deciding which pools fire, the host conversion to a fixed 1500 pA drive, the remap with a lit word outside the reduced
 vocabulary dropped), the per-query STP reset, the slot-to-word map, the cross-bridge relay of the conflict count, the
-mapping of the gate's outputs onto hop outcomes (2.2), the cross-tier candidate slots and the LTM-hop enumeration
-`all_candidate_patients` with their host string compares (2.3), the derived framing (`frame_derived_answer`) and the
+mapping of the gate's outputs onto hop outcomes (2.2), the per-hop drive vector and the workspace read-outs (the
+NMDA margin, the ignition count over THR, the argmax winner, theta_hi and R_max), the LTM candidate slots of every
+hop (the cross-tier slots on a buffer-served hop, the LTM's other patients on an LTM-served hop) with the enumeration
+`all_candidate_patients` and its host string compares (2.3), the derived framing (`frame_derived_answer`) and the
 verify re-parse (`brain_chat_tui.py:1922-1942`). Under the conflict read the first-match answers only when the
 matching rows drive a single patient line, so it has no patient choice left to make; the step-2 record checks per hop
 that the PROPOSE word is the word of the single active patient line. M1 claims one thing: within the buffer, the
 identity of each hop's patient and the abstain on ambiguity are decided by spiking reads of the bound store. Across
-tiers the abstain is host-listed (2.3) and claimed as no more than that.
+tiers the abstain is host-listed (2.3) and claimed as no more than that. A buffer MISS is not claimed at the default
+(round 5). There the fact-shard candidate set, a host index over the list's strings, decides which blocks are ever
+decoded, so a miss is the index's empty or non-matching candidate set (2.1). A hop whose decoded buffer rows under
+the cue are not empty while PROPOSE returned None is listed `host_routed` (2.7, B7). The miss read through the decoded
+store and the match pools is claimed only on the fact-shard-off twin A21 (2.8, B8 (1b)).
 
 **What the claim does and does not cover, and the interventions that test it.** The cue lines (agents, actions) are
 host-listed from `.kb`; the claim does not cover them. The patient lines are not: V'_P is the set of patient pools
 the relay lights from the bound blocks (2.3), so neither the line set nor the conflict count is read from the list.
-Two kinds of intervention would expose a host supply, and each has a bar. (1) The patient VALUE: A3 deranges the
-`.kb` patient strings with the bound vectors intact (multiset kept). The conclusion must follow the bound vectors, not
-the list (B2). (2) The patient SET and the ABSTAIN, which a multiset-preserving derangement cannot test.
-A17 takes a patient out of the list: on `infer_amb1` the `.kb` string of the fish row is overwritten with frog. Under
-a host-listed V'_P, fish would lose its line and M1 would ADVANCE. Under V'_P from the store, M1 still abstains. A19
-adds a patient to the list: on `infer_dup` the re-told hop-1 row's `.kb` string is overwritten with fish. M1 must
-still ADVANCE through frog, so the abstain cannot be supplied by the list either. Their flag-off twins (A18, A20) show
-that the overwrite bites: today's route follows the list. B13 bars both (2.9). Until B13 passes, the claim that the
-patient lines belong to the substrate is a design statement, not a result.
+Three kinds of intervention would expose a host supply, and each has a bar. (1) The patient VALUE at the list level:
+A3 deranges the `.kb` patient strings with the bound vectors intact (multiset kept). The conclusion must follow the
+bound vectors, not the list (B2). (2) The patient SET and the ABSTAIN, which a multiset-preserving derangement cannot
+test. A17 takes a patient out of the list. On `infer_amb1` the second hop-1 patient is worm, which is in no other `.kb`
+row (no built-in, no other teach; 0g). The `.kb` string of the worm row is overwritten with frog, so after the overwrite
+worm is in NO `.kb` entry while the bound store still decodes it (condition (iv), 2.8). Round 3's host-listed V'_P would
+then give worm no line: the worm block's lit pool would fall outside V'_P and be dropped, one line would stay, and M1
+would ADVANCE. Under V'_P from the store, worm keeps its line and M1 abstains. That difference is B13 (a). It holds only
+when (iv) is read back and A17's hop-1 record lists worm in `vp_not_in_kb`. **Struck (round 5):** round 4 stated the same
+counterfactual for fish. It was false, because the built-in (cat, eat, fish) keeps fish a `.kb` patient after the
+overwrite, so a host-listed V'_P would keep a fish line and abstain too, and A17 could not tell the two designs apart.
+(3) The hop-1 patient VALUE as a first-match list reader sees it, and route-level list reads. A19 overwrites the FIRST
+(heron, hunt) entry of `infer_dup`, t_heron_hunt's, from frog to worm. The fact shard selects that block first, and
+`_finish_query_patient` reads its `.kb` patient for the clause test (:1822), so a reader that took the hop-1 value from
+the list would now get worm. M1 must still derive through frog, and the list's second patient must not supply an
+abstain. B13 (b) tests route-level list reads only. It cannot test V'_P provenance: under the `gp{b}` gating a line is
+lit only through a matching block, so a line that the list adds stays silent, and a list-built V'_P would also
+ADVANCE on A19. The flag-off twins (A18, A20) show that each overwrite bites: today's route follows the list. B13 bars
+both (2.9). Until B13 passes, the claim that the patient lines belong to the substrate is a design statement, not a
+result.
 
 ### 2.7 Engagement record, scoped to the hop reads
 
 Instrumentation lives in the stage-2 runner's arm worker (behaviour-preserving wrappers, as the kb_scramble arms do).
 A hop scope opens when the route enters `_hop_spiking` and closes when it returns. Per hop:
-`{turn, hop, agent, relation, proposed (query_patient result), selected_block, source_tier, cue_in_reduced_vocab,
-m_counts (per block), blocks_matched (m{b} over the composer's match_thresh, 0.06 at :132), patient_line_counts (per
-pP_w line with any spike), patient_lines_active, spurious_P, stp_reset (cp_stp_x and cp_stp_u read back on the
-conflict synapses at the read's first step), acc_conf_spikes, slot1_drive, ltm_candidates, xtier_slots,
-xtier_dropped, drives, ws_seed, ws_bridge_key, ws_loop_w_max, n_ignited, conf, winner, winner_kind, gate_decision,
-gate_cycles, committed, decoded_rows, vp, vp_lit_by_block, vp_kb_entry_reads, vp_not_in_kb, kb_not_in_vp,
-audit_buffer, audit_ltm, audit_ltm_all, audit_disagree, xtier_disagree, route_kb_reads, composer_kb_reads}`.
-`decoded_rows` are the decoded `(agent, action, patient)` rows under the hop's cue, captured from the `_read_blocks`
-call that PROPOSE makes in this read (record-only; the bound store, never `.kb`). If the fact-shard fast path
-(`_fact_shard_active` :1398) serves the cue instead, the instrumentation makes one `_read_blocks` call after the
-decision and records `decoded_rows_source` as such. `ws_bridge_key` is the `_get_bridge` cache key
-the read used, `(seed, lesion)`; `ws_loop_w_max` is the largest absolute weight on that bridge's
-`workspace_loop_{i}` populations, read back from the bridge at the read (0 under the lesion, which builds them at
-zero weight, `_p1_2_workspace_deliberation_loop_derisk.py:204-208`; recorded as 0.0 when the populations hold no
-synapse, with their synapse count `ws_loop_n_syn` beside it). `vp` is the V'_P of the fabric the read used
-(2.3), and `vp_lit_by_block` the per-block lit patient pools of the rebuild that formed it. `route_kb_reads` counts
-`.kb` accesses whose caller frame is `compositional_chain_route` while a hop scope is open; `composer_kb_reads` counts
-those from `one_brain_composer`, listed by line: `_read_blocks` :1389, `_fact_shard_active` :1398,
-`_ensure_sequencer` :1654, `_attributed_patient` :1782, the clause test in `query_patient` :1822, and `_seq_block`
-:1700 on the integrated-loop arm. Turn-level counts (`_chain_facts`, `rich_answer_composer._stored_facts`,
-elaboration) are reported separately and never barred.
+`{turn, hop, agent, relation, proposed (query_patient result), propose_tier, propose_path, fs_candidates,
+selected_block, source_tier, host_routed, cue_in_reduced_vocab, m_counts (per block), blocks_matched (m{b} over the
+composer's match_thresh, 0.06 at :132), patient_line_counts (per pP_w line with any spike), patient_lines_active,
+spurious_P, stp_reset (cp_stp_x and cp_stp_u read back on the conflict synapses at the read's first step),
+cp_n_syn, cp_w_max, acc_conf_spikes, slot1_drive, ltm_candidates, xtier_slots, xtier_dropped, drives, ws_seed,
+ws_bridge_key, ws_loop_w_max, ws_loop_n_syn, n_ignited, conf, winner, winner_kind, gate_decision, gate_cycles,
+committed, decoded_rows, decoded_rows_source, vp, vp_lit_by_block, vp_kb_entry_reads, vp_not_in_kb, kb_not_in_vp,
+audit_buffer, audit_ltm, audit_ltm_all, audit_disagree, xtier_disagree, route_kb_reads, composer_kb_reads,
+kb_patient_reads, kb_reads_unlisted}`.
+Round 5 adds these fields:
+- `propose_tier` is the tier `query_patient_source` reports (buffer, ltm or None).
+- `propose_path` is the buffer's selection path, read by behaviour-preserving wrappers of `_fact_shard_first_match`,
+  `_fact_shard_candidates` and `_seq_block`. It is `fact_shard` when the fact shard served the cue (the default), or
+  `escalated` when the shard returned `_FS_ESCALATE` and `_seq_block` ran. It is `seq_block` when the fact shard was
+  inactive (A6, A21), and `patched` on A4.
+- `fs_candidates` is the candidate block id list `_fact_shard_candidates` returned (empty included), with the cue
+  roles it queried.
+- `host_routed` is true when the buffer's PROPOSE was None while `decoded_rows` under the cue is not empty. That is a
+  miss the fact-shard index or another host path made against the bound store, and it is listed on every arm (2.9 B7).
+- `cp_n_syn` and `cp_w_max` are the synapse count and the largest absolute weight on the `pP_w -> acc_conf` pathway,
+  read back from the bridge at the read.
+`decoded_rows` are the decoded `(agent, action, patient)` rows under the hop's cue, read from the bound store, never
+from `.kb` (record-only). The fact shard serves almost every cue at the default and decodes only its candidates, so
+the instrumentation makes one `_read_blocks` call after the decision. At the production layout that is the per-block
+loop :1389 (2.1), and on A21 it is `_read_all_blocks`. It records `decoded_rows_source: post_decision_scan`, or
+`propose_scan` when PROPOSE itself scanned every block (`escalated` or `seq_block`). `ws_bridge_key` is the
+`_get_bridge` cache key the read used, `(seed, lesion)`. `ws_loop_w_max` is the largest absolute weight on that
+bridge's `workspace_loop_{i}` populations, read back from the bridge at the read. It is 0 under the lesion, which
+builds them at zero weight (`_p1_2_workspace_deliberation_loop_derisk.py:204-208`), and it is also recorded as 0.0
+when the populations hold no synapse, so their synapse count `ws_loop_n_syn` is recorded beside it, and B4 reads both
+(2.9). `vp` is the V'_P of the fabric the read used (2.3), and `vp_lit_by_block` the per-block lit patient pools of the
+rebuild that formed it. `route_kb_reads` counts `.kb` accesses whose caller frame is `compositional_chain_route` while
+a hop scope is open.
+
+`composer_kb_reads` counts the reads from `one_brain_composer`, by line. The listed composer lines (round 5;
+corrected) are these. `_fact_shard_active` :1398 (`len`). `_ensure_fact_shard` :1410 (`len`) and :1420 (entry read of
+every main role's string, the patient's included, when the index is rebuilt), the index that `_fact_shard_candidates`
+(:1434-1466) queries. The per-block `_read_blocks` loop :1389 (`len`; the production layout, 2.1). `_read_all_blocks`
+:1206 (`len`; A21 only). `_ensure_sequencer` :1654 (entry read, agent and action fields only from step 1). `_trace_query`
+:1589 (`len`, when the composer's trace is on). `_attributed_patient` :1782 (`len` and the attribute-key test,
+label-only). `_finish_query_patient` :1822 (`len` and the patient field, the clause test, label-only). `_seq_block`
+:1700 (`len`; A6 only). `kb_patient_reads` lists every patient-field read by caller line. `kb_reads_unlisted` counts
+every `.kb` access in the decision scope (2.4) whose caller is neither a listed composer line nor a declared label-only
+read (:1782, :1822, `conclusion_is_stored`). It also counts every patient-field read at any line except :1822, :1420
+and `conclusion_is_stored`. A per-turn total of the same counts is kept for the whole decision scope, since a
+reader outside the hop scopes counts there too. Turn-level counts outside the route (`_chain_facts`,
+`rich_answer_composer._stored_facts`, elaboration) are reported separately and never barred.
+
+**Positive control on the proxy (round 5).** A hop whose `composer_kb_reads` is empty means the proxy was not live, and
+a zero bar count there would prove nothing. So every hop must show (a) the conflict read's :1654 read (its fabric check
+runs before the line test) and (b), on every arm except A4 (whose patch replaces PROPOSE), a read on its PROPOSE path.
+That is :1398 when `propose_path` is `fact_shard` or `escalated`, :1389 or :1206 when PROPOSE scanned every block, and
+:1700 on A6. A hop missing either is UNDEFINED for every bar that reads it, and it is listed.
 
 **Per-turn route trace (round 4).** For every turn, flag on or off: `{turn, route_dispatched (the possessive parse
 matched), spiking_hop_reads, n_hop_records, route_exception}`. `spiking_hop_reads` counts the `_hop_spiking` scopes of
@@ -505,19 +723,30 @@ that turn that made their workspace read (a non-null `n_ignited` was recorded) a
 the engagement evidence the bars read (2.9); the flag's env value never is. On a flag-off arm it is 0 by construction,
 and on a non-chain turn (`route_dispatched` false) it is 0 and recorded.
 
-**D4 recorder (every arm this packet adds, A0-A20 and the M3 arms, and step 0).** A behaviour-preserving wrapper around
-`ComprehensionProductionOrgan.competent` and the organ module's `extract_transitive` (installed in the arm worker as
-`KbProbe` is; no production edit; each wrapper calls the original and returns its value unchanged). For every call it
-writes the turn label; the caller (`judge` or `repair_target`, from the caller frame); the inputs: the text for
-`extract_transitive`, and `(n0, v, n1)` for `competent`, with each word's membership in the `brain_vocab` set that
-the server passed and that set's size; the return; and, for `competent`, the two terms that decide it, `fully_covered`
-and `fully_oov`. Those two are computed inside the wrapper with the same module functions (`_verb_selects_of`,
-`_animacy_of`) at the same moment, and the recorder asserts that their OR equals the return. A teach's branch is
-read from its `judge`-frame call and nothing else. True with `fully_covered` is `covered`, True with `fully_oov` is
-`oov`, and False is `pass_through`. If `extract_transitive` returned None the branch is `out_of_scope`. If no call was
+**D4 recorder (every arm this packet adds, A0-A21 with A8b and the M3 arms, and step 0).** It is a set of
+behaviour-preserving wrappers installed in the arm worker as `KbProbe` is, with no production edit. Each wrapper calls
+the original and returns its value unchanged. They wrap `ComprehensionProductionOrgan.competent`, the organ module's
+`extract_transitive`, and (round 5) the module functions `_verb_selects_of` and `_animacy_of`. `competent()` resolves
+those two as module globals at call time (`comprehension_production_organ.py:719-735`), so wrapping the module
+attributes sees the very calls it makes. For every `competent` call the recorder writes these items:
+- the turn label;
+- the caller, from the caller frame (round 5: three callers exist, `judge` :747, `repair_target` :780, and the
+  three-organ bus's organ C, `webapp/gnw_three_organ_bus.py:204`);
+- the inputs `(n0, v, n1)`, each word's membership in the `brain_vocab` set that the caller passed, and that set's size;
+- the ordered inner calls of `_verb_selects_of` and `_animacy_of` made inside this `competent` call, with their
+  RETURNS as recorded (round 5: never recomputed, since a second learned-lexicon call is a second read and need not
+  match);
+- the return.
+`fully_covered` and `fully_oov` are derived from those recorded returns, by replaying `competent()`'s own boolean
+expression; a term that short-circuit evaluation skipped is marked `not_evaluated`. Their OR is compared with the
+return, and the result is written as `or_matches_return`. It is recorded, never raised (round 5). A False is listed and
+makes that call's branch UNDEFINED. `extract_transitive` calls are recorded with their text and return. A teach's
+branch is read from its `judge`-frame call and nothing else; a bus-frame or `repair_target`-frame call is recorded and
+reported, never read as the branch. True with `fully_covered` is `covered`, True with `fully_oov` is `oov`, and False is
+`pass_through`. If `extract_transitive` returned None the branch is `out_of_scope`. If no `judge`-frame call was
 recorded on the turn the branch is `not_called` (the gate is off, or D4 was skipped), never `pass_through`. The teach
-turn's response fields `comprehension` (margin, `comprehended`, `known_binding`), `surprise` and `reconsolidation`
-are copied beside it.
+turn's response fields `comprehension` (margin, `comprehended`, `known_binding`), `surprise` and `reconsolidation` are
+copied beside it.
 
 **Teach log and store read-back (every arm this packet adds).** After the teach block (and after a `.kb` overwrite
 fixture, where the arm has one), the worker records `stored_facts_after_teach`, a list read of `chat.stored_facts`
@@ -531,9 +760,22 @@ overwrites, 2.8) belong to their arms.
 
 Session tables: `infer` intact (the registered one) and four new tables, run under the same harness (numpy CPU,
 tiny-demo +LTM, corpus present and recorded, `PYTHONHASHSEED=0`, `rich` omitted). Teach labels are given where a
-bar or the premise map (2.9) reads them:
+bar or the premise map (2.9) reads them. **How an arm gets its table (round 5; a runner change, built in step 0).**
+`turns_for` returns `permuted_turns` only to the arm named `permuted` and an order table only to the A4 order arms
+(`stage2_exit_gate.py:321-328`). Every informational arm would otherwise run `g["turns"]`. So an informational entry
+may carry its own `turns` (the four tables below, and `infer_garbled` of 3.6) or `table: "permuted"` (A12, and
+m3_permuted and m3_rs_lesion of 3.6). `turns_for` returns that table, and `arm_validity`'s turn-table check (:940-944),
+which calls `turns_for`, follows. `arms_for` adds `.rep0` only to lesion arms (:331-342), so an informational entry
+with `rep: true` also gets its `.rep0` arm (A4, A5 and A11 here, m3_rs_lesion in 3.8). `arm_spec` already strips
+`.rep` (:348). The golden hash of `tests/test_stage2_kb_scramble.py` pins every pre-existing arm.
 - `infer_amb1` (hop-1 ambiguity): 'the heron hunts the frog' (t_heron_hunt), 'the frog eats the gnat' (t_frog_eat),
-  'the heron hunts the fish' (t_heron_hunt_fish); then p_prey_eat, c_heron_hunt, c_dog_chase.
+  'the heron hunts the worm' (t_heron_hunt_worm); then p_prey_eat, c_heron_hunt, c_dog_chase. **Round 5: worm, not
+  fish.** fish is a built-in patient ((cat, eat, fish), `brain_chat_tui.py:2454`), so it never leaves the `.kb` patient
+  set and A17 could not remove it (2.6). worm is in the D4 hand ANIMACY table that `comprehension_production_organ`
+  imports (`_gap3_learned_feature_compat_derisk.py:29`, merged at `_phaseB_multicue_competition_spiking_derisk.py:52-61`)
+  and in no other `.kb` row. It is not in the five built-in facts (`brain_chat_tui.py:2449-2455`; worm is only in the
+  vocabulary, :2459). It is in no string of any stage-2 group table, and in no other table of this packet (0g). It is
+  a vocabulary word from the start, so it needs no reserve slot.
 - `infer_amb2` (hop-2 ambiguity): t_heron_hunt, t_frog_eat, 'the frog eats the apple' (t_frog_eat_apple); then the
   same probes. The chain under test: hop 1 (heron, hunt) -> frog, one patient; hop 2 (frog, eat) -> gnat and apple,
   two patients, so p_prey_eat must abstain on both routes (P5). Roles: agent frog, action eat, patient apple, as D4's
@@ -541,11 +783,17 @@ bar or the premise map (2.9) reads them:
 - `infer_dup` (duplicate facts): the four intact teaches, then verbatim re-tells of the hop-1 fact ('the heron hunts
   the frog', label t_heron_hunt_re) and of the hop-2 fact ('the frog eats the gnat', t_frog_eat_re), then the
   `infer` probes.
-- `infer_xtier` (cross-tier ambiguity): after the chat brain is built and before its first turn, the arm worker
-  writes (heron, hunt, fish) into the LTM with `ltm.store` (the call `build_ltm_from_facts` uses,
-  `tiered_fact_store.py:108`; a fixture step, not a turn, so the buffer never holds it), then reads it back with
-  `ltm.query_patient(heron, hunt)`; then the four intact teaches and the `infer` probes. Hop 1 of p_prey_eat then has
-  frog in the buffer and fish in the LTM.
+- `infer_xtier` (cross-tier ambiguity): the four intact teaches and the `infer` probes, with one fixture write.
+  **Round 5: the write comes after turn 0, not "before the first turn".** `run_worker` builds the brain inside the
+  first `brain_chat` call (`reset=(i == 0)`, `stage2_exit_gate.py:699`), and each conversation loads its own LTM copy
+  (`webapp/server.py:4290-4300`, :4395), so before turn 0 there is no LTM to write to. Pre-building the session and
+  sending turn 0 with `reset=False` would change turn 0's build path, a confound, so it is not used. Right after turn 0
+  (t_heron_hunt) returns, the arm worker writes (heron, hunt, fish) into that session's own LTM,
+  `chat.inner.composer.ltm`, with `ltm.store` (the call `build_ltm_from_facts` uses, `tiered_fact_store.py:108`). It is a
+  fixture step, not a turn, so the buffer never holds it. The worker reads it back with `ltm.query_patient(heron, hunt)`
+  and `all_candidate_patients(ltm.shard_for("heron"), "heron", "hunt")` right after the write, and again right before
+  the first probe. The second read-back is the one the premise map uses. Hop 1 of p_prey_eat then has frog in the
+  buffer and fish in the LTM.
 
 **Which `competent()` branch each new teach takes** (`comprehension_production_organ.py:719`: fully covered = verb in
 VERB_SELECTS and both nouns in ANIMACY, hand or learned; fully OOV = verb in no verb table and both nouns in no animacy
@@ -553,13 +801,15 @@ table and not in `_brain_vocab(chat)`; anything else passes through unjudged and
 bool, and a pass-through, an out-of-scope turn, the gate off and a swallowed exception all leave `comprehension` null,
 so the branch is never read from that field. Step 0 reads it from the D4 recorder (2.7): the `judge`-frame call's
 inputs, the vocabulary membership of each word, `fully_covered`, `fully_oov` and the return, written to the shard at
-the call. Hand-table facts below are from `_phaseB_multicue_competition_spiking_derisk.py:54-75`. A learned-lexicon
-fact needs the corpus, so a step-0 shard without `corpus_present` true is UNDEFINED for every branch check (2.10).
+the call. Hand-table facts below are from `_phaseB_multicue_competition_spiking_derisk.py:52-75` (its ANIMACY merges
+the base table of `_gap3_learned_feature_compat_derisk.py:27-32`), the tables `comprehension_production_organ` imports
+(:74-78). A learned-lexicon fact needs the corpus, so a step-0 shard without `corpus_present` true is UNDEFINED for
+every branch check (2.10).
 
 | teach | branch (expected) | consequence |
 |---|---|---|
 | 'the heron hunts the frog', 'the frog eats the gnat' (every table, and the `infer_dup` re-tells) | `pass_through`: frog is in hand ANIMACY and hunt in no verb table; eat is in hand VERB_SELECTS and gnat in no animacy table (the permuted 'the heron hunts the gnat' was judged fully OOV, so neither heron, hunt nor gnat is covered) | stored unjudged |
-| 'the heron hunts the fish' (`infer_amb1`) | `pass_through`: fish is in hand ANIMACY, hunt in no verb table | stored unjudged |
+| 'the heron hunts the worm' (`infer_amb1`, round 5) | `pass_through`: worm is in hand ANIMACY (`_gap3_learned_feature_compat_derisk.py:29`), so it is not OOV, and hunt is in no verb table, so the teach is not fully covered | stored unjudged |
 | 'the frog eats the apple' (`infer_amb2`) | `covered`: frog and apple in hand ANIMACY, eat in hand VERB_SELECTS | judged by the SEMANTIC margin (recorded), but D4 cannot refuse it: when it arrives, (frog, eat) -> gnat is already held, so `known_binding` is True, and the server abstains only on a teach that is neither comprehended nor known (`webapp/server.py:6852-6875`). It is stored whatever its margin. No comprehension outcome is predicted: the 10-26 diagnosis records 'the goat eats the hay' refused on the covered branch at margin 0.0167 against 0.2. Whether it is APPENDED (the ambiguity) or rewritten in place is D2's decision (below) |
 
 The previous draft's 'the frog eats the fly' was claimed to pass because it "contains a known word". That was false:
@@ -572,7 +822,7 @@ records `known_binding` instead.
 (agent, action) the brain already holds runs D2's spiking mismatch read (`webapp/server.py:6933-7013`). A firing
 surprise on a declarative opens reconsolidation, which rewrites the stored patient IN PLACE
 (`reconsolidation_production_organ._inplace_rewrite` :111) instead of appending a second row. That would turn 'the
-heron hunts the fish' (after frog) and 'the frog eats the apple' (after gnat) into rewrites: one row, no ambiguity,
+heron hunts the worm' (after frog) and 'the frog eats the apple' (after gnat) into rewrites: one row, no ambiguity,
 and B5, B6 and B13 (a) UNDEFINED everywhere. Today they append, for an incidental reason. D2 looks up the expectation
 with the SURFACE tokens: `extract_assertion` (`surprise_production_organ.py:193`) keeps 'hunts' and 'eats', and
 `what_does` (`brain_conversational_agent.py:772`) is a plain `query_patient`. The store holds the lemma ('hunt', 'eat'),
@@ -589,11 +839,19 @@ tuple, as `update_on_mismatch` does. The bound vectors, the drives, the sequence
 written. The engagement record reads the list back. It counts as engaged only if (i) exactly the planned entry
 changed, (ii) the decoded rows under the cue (`_read_blocks`, the bound store) are identical before and after, and
 (iii) the list oracle (`list_chain` over the overwritten list) predicts a different p_prey_eat outcome from the same
-oracle over the decoded rows. Plans:
-- A17 and A18 (`infer_amb1`): the entry t_heron_hunt_fish wrote, patient fish -> frog. The list now holds one patient
-  under (heron, hunt); the store holds two.
-- A19 and A20 (`infer_dup`): the entry t_heron_hunt_re wrote, patient frog -> fish. The list now holds two patients
-  under (heron, hunt); the store holds one. fish is a built-in patient (cat eat fish).
+oracle over the decoded rows. (iv) (round 5) The intervention is the one the plan names. For a removal (A17, A18),
+the removed string is in no field of any entry of the buffer's `.kb` after the overwrite (`_kb_triples(buf)`,
+`stage2_exit_gate.py:448`, read back over all K rows, the built-ins included), while the decoded rows under the cue
+still hold it. For an addition (A19, A20), the added string is the patient of the FIRST `.kb` entry under the cue,
+so a first-match list read returns it. It is also in no decoded row under that cue (the bound store still holds the
+original patient in every matching block). Plans:
+- A17 and A18 (`infer_amb1`): the entry t_heron_hunt_worm wrote, patient worm -> frog. The list now holds one patient
+  under (heron, hunt), and worm is in no `.kb` entry at all; the store holds two. Round 4's fish could not satisfy
+  (iv), because the built-in (cat, eat, fish) keeps fish in the list.
+- A19 and A20 (`infer_dup`, round 5): the FIRST (heron, hunt) entry, the one t_heron_hunt wrote, patient frog -> worm.
+  Round 4 overwrote the re-tell's entry, which left the first match unchanged. The list now holds worm first and frog
+  second under (heron, hunt), so the fact shard's first candidate block, whose `.kb` patient `_finish_query_patient`
+  reads for the clause test (:1822), now carries worm in the list. The store still holds frog in both blocks.
 The sequencer fabric is built lazily at the first conflict read, which comes after the overwrite. So the build reads
 a list that disagrees with the store: that is the case under test (2.6).
 
@@ -609,13 +867,15 @@ a list that disagrees with the store: that is the case under test (2.6).
 | A5 m1_ws_lesion (+ .rep0) | infer | M1 on + WS lesion | workspace ignition necessary |
 | A6 m1_seq | infer | M1 on + `BRAIN_INTEGRATED_LOOP=1` | sequencer selection, reported only |
 | A7 amb1_off / A8 amb1_m1 | infer_amb1 | off / M1 on | hop-1 ambiguity, both routes |
+| A8b amb1_m1_b (round 5) | infer_amb1 | M1 on, independent rebuild | the null for A8 (B6) |
 | A9 amb2_off / A10 amb2_m1 | infer_amb2 | off / M1 on | hop-2 ambiguity, both routes |
 | A11 amb1_conflict_lesion (+ .rep0) | infer_amb1 | M1 on + conflict lesion | the conflict unit necessary |
 | A12 m1_permuted_gateoff | infer permuted | M1 on + `BRAIN_COMPREHENSION_GATE=0` | conclusion tracks exposure through spiking hops (departure, reference) |
 | A13 dup_off / A14 dup_m1 | infer_dup | off / M1 on | a duplicated fact is not a conflict, both routes |
 | A15 xtier_off / A16 xtier_m1 | infer_xtier | off / M1 on | a cross-tier conflict still abstains, both routes |
-| A17 amb1_kbset_m1 / A18 amb1_kbset_off | infer_amb1 + overwrite fish -> frog | M1 on / off | a patient taken out of the list: M1's abstain follows the store, today's route the list (B13 a) |
-| A19 dup_kbset_m1 / A20 dup_kbset_off | infer_dup + overwrite re-tell frog -> fish | M1 on / off | a patient added to the list: M1 still advances, today's route abstains (B13 b) |
+| A17 amb1_kbset_m1 / A18 amb1_kbset_off | infer_amb1 + overwrite worm -> frog | M1 on / off | a patient taken out of the list (the data-flow arm for V'_P): M1's abstain follows the store, today's route the list (B13 a) |
+| A19 dup_kbset_m1 / A20 dup_kbset_off | infer_dup + overwrite of the FIRST (heron, hunt) entry, frog -> worm | M1 on / off | the hop-1 value a first-match list reader sees, and a patient added to the list: M1 still advances through frog, today's route abstains (B13 b, route-level list reads only) |
+| A21 m1_fs0 (round 5) | infer | M1 on + `BRAIN_FACT_SHARD_RETRIEVAL=0` | PROPOSE on the full decoded scan (`propose_path` `seq_block`, the batched layout): the moat read through the decoded store and the match pools (B8 (1b)) |
 
 New arms are added as informational entries, so every pre-existing arm keeps its turn table, env, patch and kind,
 pinned by the golden hash in `tests/test_stage2_kb_scramble.py`; `pool_job_lines` grows by the new arms only. A3a and
@@ -634,8 +894,9 @@ Predictions, written before any M1 code exists:
 - P3 (A4): p_prey_eat has no derived answer, reproduced on .rep0.
 - P4 (A5): p_prey_eat has no derived answer and its hop-1 record shows `n_ignited` = 0 (no slot ignites on the
   lesioned workspace), reproduced on .rep0.
-- P5 (A7-A10): p_prey_eat abstains on both routes in both ambiguity tables; in A8 and A10 the abstaining hop shows
-  blocks_matched = 2, patient_lines_active = 2 and acc_conf_spikes > 0.
+- P5 (A7-A10, A8b): p_prey_eat abstains on both routes in both ambiguity tables; in A8, A8b and A10 the abstaining hop
+  shows blocks_matched = 2, patient_lines_active = 2, acc_conf_spikes > 0 and gate_decision ABSTAIN (hop 1 under
+  (heron, hunt) in A8 and A8b, hop 2 under (frog, eat) in A10).
 - P6 (A11): p_prey_eat is derived through the FIRST-taught patient (frog), reproduced on .rep0.
 - P7 (A13, A14): p_prey_eat derived_svo `[frog, eat, gnat]` on both routes; in A14 both hops show blocks_matched = 2,
   patient_lines_active = 1, acc_conf_spikes = 0 and gate_decision ADVANCE.
@@ -644,46 +905,71 @@ Predictions, written before any M1 code exists:
   through two recorded spiking hops, as the gate-off diagnostic arm derived it through the list.
 - P9 (A15, A16): p_prey_eat abstains on both routes; in A16 hop 1 shows source_tier buffer, proposed frog,
   patient_lines_active = 1, acc_conf_spikes = 0, xtier_slots = [fish], n_ignited >= 2 and gate_decision ABSTAIN.
-- P10 (A17, A18; a patient taken out of the list): A18 (flag off) derives p_prey_eat `[frog, eat, gnat]` from
-  `[[heron, hunt, frog], [frog, eat, gnat]]`, because the list now holds one patient under (heron, hunt). A17 (M1 on)
-  abstains on p_prey_eat; its hop-1 record shows fish in `vp`, blocks_matched = 2, patient_lines_active = 2,
-  acc_conf_spikes > 0, spurious_P = 0 and gate_decision ABSTAIN.
-- P11 (A19, A20; a patient added to the list): A20 (flag off) abstains on p_prey_eat, because the list now holds frog
-  and fish under (heron, hunt). A19 (M1 on) derives `[frog, eat, gnat]`; its hop-1 record shows blocks_matched = 2,
-  patient_lines_active = 1, acc_conf_spikes = 0 and gate_decision ADVANCE.
+- P10 (A17, A18; a patient taken out of the list, round 5 with worm): A18 (flag off) derives p_prey_eat
+  `[frog, eat, gnat]` from `[[heron, hunt, frog], [frog, eat, gnat]]`, because the list now holds one patient under
+  (heron, hunt). A17 (M1 on) abstains on p_prey_eat; its hop-1 record shows worm in `vp` AND in `vp_not_in_kb`,
+  blocks_matched = 2, patient_lines_active = 2, acc_conf_spikes > 0, spurious_P = 0 and gate_decision ABSTAIN.
+- P11 (A19, A20; the first entry's patient value changed, round 5): A20 (flag off) abstains on p_prey_eat, because the
+  list now holds worm and frog under (heron, hunt). A19 (M1 on) derives `[frog, eat, gnat]` from
+  `[[heron, hunt, frog], [frog, eat, gnat]]` (worm named nowhere in the answer or `derived_from`); its hop-1 record
+  shows `proposed` frog, blocks_matched = 2, patient_lines_active = 1, acc_conf_spikes = 0 and gate_decision ADVANCE.
+- P12 (A21, round 5): p_prey_eat is derived as on A1. On c_prey_chase, the hop-2 record under (frog, chase) shows
+  `propose_path` `seq_block`, empty `decoded_rows`, blocks_matched = 0, acc_conf_spikes = 0, an all-zero `drives`,
+  n_ignited = 0 and gate_decision COMMIT, and c_prey_chase abstains.
+- P13 (A8b, round 5): A8b's primary fields equal A8's on every probe turn (the null of B6).
 
-General engagement rule for every M1 arm (round 4). (i) The shard records `corpus_present` true (`run_worker`
-:671); without the corpus the learned production organs degrade silently, so a corpus-absent shard is UNDEFINED for
-every bar it feeds. (ii) The arm's hop records show `ws_seed` equal to the arm seed. A seed failing (i) or (ii) is
-UNDEFINED for every M1 bar on that arm. (iii) A flag-on turn that a bar reads as the route's outcome counts as engaged
-only through its route trace: `spiking_hop_reads` >= 1 on that turn (2.7), meaning a hop scope opened, made its
+General engagement rule for every M1 arm (round 4; (i) and (vi) tightened in round 5). (i) The shard records
+`corpus_present` true (`run_worker` :671); without the corpus the learned production organs degrade silently, so a
+corpus-absent shard is UNDEFINED for every bar it feeds. A shard with NO `corpus_present` key is UNDEFINED too: the M1
+scorer never uses `arm_validity`'s default, `shard.get("corpus_present", True)` (`stage2_exit_gate.py:933`), which would
+read a missing key as present. The shard also records `sources` equal to {`tiny-demo +LTM`} (EXPECTED_SOURCE,
+`stage2_exit_gate.py:71`) and `process.ltm_bundle` equal to `wikidata_100k` (`process_record`, :623-638). The LTM
+bundle lives outside the repository (`_default_ltm_bundle_dir`, `webapp/server.py:3817-3847`, which looks in
+`$BRAIN_DATA_ROOT` and two `sim-data` paths), and its fallback `wikidata_core_15k` yields the same `source` string, so
+the bundle name, not the source string, shows which LTM the shard read. A missing or different value makes the shard
+UNDEFINED for every bar it feeds. (ii) The arm's hop records show `ws_seed` equal to the arm seed. A seed failing
+(i) or (ii) is UNDEFINED for every M1 bar on that arm. (iii) A flag-on turn that a bar reads as the route's outcome
+counts as engaged only through its route trace: `spiking_hop_reads` >= 1 on that turn (2.7), meaning a hop scope opened, made its
 workspace read and closed without an exception. The flag's env value is never the evidence. A turn with no recorded
 spiking hop read is UNDEFINED for that bar, never PASS and never FAIL. (iv) The probe's premises are present (the
-facts-present rule below). (v) The hop-record preconditions of the table below hold.
+facts-present rule below). (v) The hop-record preconditions of the table below hold, and every hop a bar reads passes
+2.7's positive control on the proxy.
+
+(vi) **Cross-seed rule (round 5; one rule for every M1 bar of this section and every R bar of 3.7).** A bar HOLDS only
+if it PASSES on every one of the six dev seeds 1-6. A seed on which the bar is UNDEFINED or UNMEASURED counts as not
+meeting it, exactly as a FAIL does. n_pass / n_defined and n_effective (below) are reported beside the verdict and
+never replace it. So one defined seed of six can never carry a bar, a bar some of whose seeds are UNDEFINED does not
+hold, and step 3's "every bar holds" (2.10) means that every bar passed on all six seeds. No bar has an "UNDEFINED only
+if every seed is UNDEFINED" exception any more (B11 had one in round 4).
 
 **Facts present (round 4; an acquisition failure is not an inference failure).** Before a probe is scored on an arm
 and seed, the facts its chain needs are read from the stores the brain reads, and the probe is UNDEFINED for every bar
 that reads it unless they are there. This mirrors the ask group's A4 (a), where a taught moat whose teach was not
 acquired is UNDEFINED and never counted. A premise is present when (1) its teach turn acquired it (`teach_acquired`,
 A4 (a)'s read on the teach turn's own reply) and it is in `stored_facts_after_teach` (2.7); or (2) for a built-in
-premise, it is in the shard's `builtin_facts` (the tiny-demo store, built with the corpus present); or (3) for the
-`infer_xtier` fixture, the fixture's own read-back returned it. "Exactly" below means that the patients stored under
-the cue in these records are the listed set, with no extra one. A store holding another patient under a hop cue
-makes the probe test a different chain, so it is UNDEFINED too. On M1 arms the hop records add the bound-store side:
-`decoded_rows` under each cue, and `audit_ltm_all` under it (0 except for `infer_xtier`'s (heron, hunt), which
-is 1). A disagreement with this map makes the probe UNDEFINED, and it is listed. Step 0 checks the whole map on the
-bound store and the LTM (2.10). As in A4 (a), an UNDEFINED probe goes into the bar's `probes_undefined` list with the
+premise, it is in the shard's `builtin_facts`. That is the chat's stored facts, which `run_worker` latches once after
+turn 0 (`stage2_exit_gate.py:710-715`): the five built-ins of `_build_tiny_demo` (`brain_chat_tui.py:2449-2455`) plus
+turn 0's own fact, t_heron_hunt's (heron, hunt, frog) on these tables (round 5 correction: round 4 called it "the
+tiny-demo store"). Or (3), for the `infer_xtier` fixture, the fixture's second read-back, right before the first
+probe, returned it. "Exactly" below means that the patients stored under the cue in these records are the listed
+set, with no extra one. A store holding another patient under a hop cue
+makes the probe test a different chain, so it is UNDEFINED too. On M1 arms the hop records add the bound-store side
+for every cue the map lists with a non-empty patient set: `decoded_rows` under the cue, and `audit_ltm_all` under it
+(0 except for `infer_xtier`'s (heron, hunt), which is 1). These LTM reads, and the A15/A16 fixture rows, count only on
+a shard whose `ltm_bundle` is `wikidata_100k` (rule (i)). A disagreement with this map makes the probe UNDEFINED, and
+it is listed. An ABSENCE premise (the moat's (frog, chase)) is never read from the bound store or the LTM (round 5; the
+c_prey_chase row). Step 0 checks the whole map on the bound store and the LTM (2.10). As in A4 (a), an UNDEFINED probe goes into the bar's `probes_undefined` list with the
 missing or extra fact. It never masks a FAIL that a defined probe of the same bar decides.
 
 | table (arms) | probe | hop cue -> patients stored, exactly | read from |
 |---|---|---|---|
-| infer (A0-A6) | p_prey_eat | (heron, hunt) -> {frog}; (frog, eat) -> {gnat} | t_heron_hunt, t_frog_eat |
+| infer (A0-A6, A21) | p_prey_eat | (heron, hunt) -> {frog}; (frog, eat) -> {gnat} | t_heron_hunt, t_frog_eat |
 | infer | c_heron_hunt | (heron, hunt) -> {frog} | t_heron_hunt |
 | infer | c_frog_eat | (frog, eat) -> {gnat} | t_frog_eat |
-| infer | c_prey_chase (moat) | (heron, hunt) -> {frog}; (frog, chase) -> {} (nothing) | t_heron_hunt; (frog, chase, *) in neither `stored_facts_after_teach` nor `builtin_facts`; on M1 arms, the hop-2 record under (frog, chase) has empty `decoded_rows` and no LTM candidate |
+| infer | c_prey_chase (moat) | (heron, hunt) -> {frog}; (frog, chase) -> {} (nothing) | t_heron_hunt; the absence premise is read from the teach log and `builtin_facts` ONLY (round 5): (frog, chase, *) in neither `stored_facts_after_teach` nor `builtin_facts`. The hop-2 record's `decoded_rows` and `ltm_candidates` under (frog, chase) are NOT premises: a non-empty one is a confabulated or extra row, scored by B8 (1): a moat FAIL if it leads to an answer, and item (1) UNDEFINED with the row listed if it does not; it never turns an answer into an UNDEFINED |
 | infer | p_yesno (reported only) | (crow, chase) -> {wren}; (wren, chase) -> {moth} | t_crow_chase, t_wren_chase |
 | every table | c_dog_chase | (dog, chase) -> {cat} | `builtin_facts` |
-| infer_amb1 (A7, A8, A11, A17, A18) | p_prey_eat, c_heron_hunt | (heron, hunt) -> {frog, fish}; (frog, eat) -> {gnat} | t_heron_hunt, t_heron_hunt_fish, t_frog_eat (on A17 and A18 from the teach log, never from the overwritten `.kb`) |
+| infer_amb1 (A7, A8, A8b, A11, A17, A18) | p_prey_eat, c_heron_hunt | (heron, hunt) -> {frog, worm}; (frog, eat) -> {gnat} | t_heron_hunt, t_heron_hunt_worm, t_frog_eat (on A17 and A18 from the teach log, never from the overwritten `.kb`) |
 | infer_amb2 (A9, A10) | p_prey_eat, c_heron_hunt | (heron, hunt) -> {frog}; (frog, eat) -> {gnat, apple} | t_heron_hunt, t_frog_eat, t_frog_eat_apple |
 | infer_dup (A13, A14, A19, A20) | as infer | as infer | as infer, plus t_heron_hunt_re and t_frog_eat_re acquired (on A19 and A20 from the teach log) |
 | infer_xtier (A15, A16) | p_prey_eat | buffer (heron, hunt) -> {frog}; LTM (heron, hunt) -> {fish}; (frog, eat) -> {gnat} | t_heron_hunt, t_frog_eat, and the fixture read-back |
@@ -699,77 +985,128 @@ fails; it is PASS only when every item is defined and passes; otherwise it is UN
 masks a FAIL that a defined item decides. The other bars keep the preconditions written in their own text, and the
 general rule above applies to all.
 
+Round 5: every hop now carries a `drives` record and a buffer conflict read (2.2), so the B3 and moat rows can be met
+by construction; `fs_candidates`, `decoded_rows` and `ltm_candidates` may be empty lists where the table says so.
+
 | bar | arm(s) | turn | records required | fields present and non-empty |
 |---|---|---|---|---|
-| B1 | A1 | p_prey_eat | `spiking_hop_reads` >= 2; a hop-1 and a hop-2 record of the committed pair | `proposed`, `gate_decision`, `n_ignited`, `conf`, `committed` |
-| B4 | A5 and its .rep0 | p_prey_eat | `spiking_hop_reads` >= 1; the hop-1 record under (heron, hunt) | `proposed`, `drives`, `ws_bridge_key`, `ws_loop_w_max`, `n_ignited`, `gate_decision` |
+| B1 | A1 | p_prey_eat | `spiking_hop_reads` >= 2; a hop-1 and a hop-2 record of the committed pair | `proposed`, `propose_path`, `drives`, `gate_decision`, `n_ignited`, `conf`, `committed`, `composer_kb_reads` (2.7 positive control) |
+| B3 | A4 and its .rep0 | p_prey_eat | `spiking_hop_reads` >= 1; the hop-1 record under (heron, hunt) | `proposed` (key present; None expected), `propose_path` (`patched`), `drives`, `acc_conf_spikes`, `n_ignited`, `gate_decision`, `composer_kb_reads` (:1654 present) |
+| B4 | A5 and its .rep0; A1 (the references) | p_prey_eat | `spiking_hop_reads` >= 1; the hop-1 record under (heron, hunt) | `proposed`, `drives`, `ws_bridge_key`, `ws_loop_w_max`, `ws_loop_n_syn`, `n_ignited`, `gate_decision` |
+| B6 | A8, A8b, A11 and its .rep0 | p_prey_eat | `spiking_hop_reads` >= 1; the hop-1 record under (heron, hunt) | `blocks_matched`, `patient_lines_active`, `acc_conf_spikes`, `slot1_drive`, `cp_n_syn`, `cp_w_max`, `gate_decision` |
 | B8 (arm engagement) | A1 | p_prey_eat | as B1 | as B1 |
-| B8 (moat) | A1 | c_prey_chase | `spiking_hop_reads` >= 2; a hop-1 record under (heron, hunt) with `committed` frog, and at least one hop-2 record under (frog, chase) | hop 2: `proposed` (key present; None expected), `blocks_matched`, `acc_conf_spikes`, `ltm_candidates` (list, may be empty), `n_ignited`, `gate_decision` |
+| B8 (moat) | A1 | c_prey_chase | `spiking_hop_reads` >= 2; a hop-1 record under (heron, hunt) with `committed` frog, and at least one hop-2 record under (frog, chase) | hop 2: `proposed` (key present; None expected), `propose_path`, `fs_candidates` (list, may be empty), `decoded_rows` (list, may be empty), `cue_in_reduced_vocab`, `blocks_matched`, `acc_conf_spikes`, `ltm_candidates` (list, may be empty), `drives`, `n_ignited`, `gate_decision` |
+| B8 (1b, moat on the decoded store) | A21 | c_prey_chase | as B8 (moat) | as B8 (moat), with `propose_path` `seq_block` |
 | B8 (controls) | A1 and A0 | c_heron_hunt, c_frog_eat, c_dog_chase | the per-turn route trace | `route_dispatched` and `spiking_hop_reads` present (false and 0 expected on these non-chain turns; any other value is listed) |
-| B12 (b) | A1, A2, A4-A6, A8, A10, A12, A14, A16 | every chain probe of the arm's table (p_prey_eat; c_prey_chase where the table has it) | `spiking_hop_reads` >= 1 on each such probe | on every hop: `audit_buffer`, `audit_ltm`, `audit_ltm_all` (integers), `gate_decision`, `audit_disagree`, `xtier_disagree` (booleans) |
-| B13 | A17, A19 | p_prey_eat | `spiking_hop_reads` >= 1; the hop-1 record under (heron, hunt) | `vp`, `blocks_matched`, `patient_lines_active`, `acc_conf_spikes`, `spurious_P`, `gate_decision` |
+| B11 | A14; A8 (liveness) | p_prey_eat | A14: both hop records; A8: the hop-1 record under (heron, hunt) | A14 on both hops: `blocks_matched`, `patient_lines_active`, `acc_conf_spikes`, `gate_decision`; A8: `patient_lines_active`, `acc_conf_spikes`, `gate_decision` |
+| B12 (b) | A1, A2, A4-A6, A8, A8b, A10, A12, A14, A16, A21 | every chain probe of the arm's table (p_prey_eat; c_prey_chase where the table has it) | `spiking_hop_reads` >= 1 on each such probe; round 5: on A8 and A8b the hop-1 record under (heron, hunt), and on A10 the hop-2 record under (frog, eat) (the hop that carries the ambiguity; a hop-1 record alone does not satisfy it) | on every hop: `audit_buffer`, `audit_ltm`, `audit_ltm_all` (integers), `gate_decision`, `audit_disagree`, `xtier_disagree` (booleans) |
+| B13 (a) | A17 | p_prey_eat | `spiking_hop_reads` >= 1; the hop-1 record under (heron, hunt) | `vp`, `vp_not_in_kb`, `blocks_matched`, `patient_lines_active`, `acc_conf_spikes`, `spurious_P`, `gate_decision` |
+| B13 (b) | A19; A8 (liveness) | p_prey_eat | `spiking_hop_reads` >= 2; the hop-1 record under (heron, hunt); A8 as in B11 | `proposed`, `blocks_matched`, `patient_lines_active`, `acc_conf_spikes`, `gate_decision`, `kb_patient_reads` |
 
-Bars (each on every dev seed 1-6; design seed 7 is excluded from the count):
+Bars (each scored on every dev seed 1-6, and each holding only under the cross-seed rule (vi); design seed 7 is
+excluded from the count). Two same-seed references recur below (round 5, `docs/TERMS.md` lesion and load-bearing). The
+first is **REF-A1**. On that seed A1 derives p_prey_eat `[frog, eat, gnat]` (P1), with hop 1 at gate_decision ADVANCE
+and n_ignited = 1, and A2's primary fields on p_prey_eat equal A1's (the null). The second is **LIVE-A8**. On that
+seed A8's hop 1 under (heron, hunt) shows patient_lines_active = 2, acc_conf_spikes > 0 and gate_decision ABSTAIN, so
+the conflict unit can fire on that seed and a silent `acc_conf` elsewhere is evidence.
 - **B1 conclusion:** P1 holds. Engagement precondition: A1's p_prey_eat carries both hop records (B7), each with
   gate_decision ADVANCE; with no hop record the old `_hop` may have answered, so the seed is UNDEFINED for B1.
 - **B2 ownership:** P2's two fields hold; the bar reads derived_svo and derived_from only. It is scored only against
   A3a and A3b run at the step-2 revision; until they exist B2 is UNDEFINED. A seed where A3a does not follow the list
   (the 10-26 result does not reproduce) is UNDEFINED for B2, and the non-reproduction is reported first. A3's
   p_prey_eat must carry both hop records (the flag engaged under the scramble), else UNDEFINED.
-- **B3 PROPOSE necessary:** P3 holds and reproduces. Engagement precondition: hop 1 of p_prey_eat was entered and
-  recorded `proposed` None with `drives[0]` = 0 (the lesion held inside the hop); a missing hop record or a route
-  exception makes the seed UNDEFINED (no derived answer for another reason is not the lesion's effect).
+- **B3 PROPOSE necessary:** P3 holds and reproduces. Engagement preconditions, on A4 and on its .rep0: the B3 row of
+  the hop-record table holds. Hop 1 of p_prey_eat was entered and recorded `proposed` None with `drives[0]` = 0, and
+  the patch record counts at least one call on that turn (the lesion held inside the hop at the read). Round 5: REF-A1
+  holds on the same seed, so the intact PROPOSE answers and A2 = A1. A missing hop record, a route exception or a
+  failed REF-A1 makes the seed UNDEFINED (no derived answer for another reason is not the lesion's effect, and a
+  "necessary" read needs an intact reference that works and reproduces).
 - **B4 workspace necessary (round 4).** The manipulation is the ENGAGED spiking hop read on a lesioned workspace, not
   the flag. Engagement precondition, on A5 and on its .rep0, both read from the route trace: (i) p_prey_eat's turn
   records `spiking_hop_reads` >= 1 and the B4 row of the hop-record table holds; (ii) the input reached the lesioned
   stage: hop 1 under (heron, hunt) recorded `proposed` = frog and `drives[0]` = IGNITE_PA; (iii) the lesion held:
-  `ws_bridge_key` = (arm seed, True) and `ws_loop_w_max` = 0, read back from the bridge at the read. A turn with no
-  recorded spiking read, or a failure of (ii) or (iii), is UNDEFINED, never PASS and never FAIL. Then the outcome,
+  `ws_bridge_key` = (arm seed, True) and `ws_loop_w_max` = 0, read back from the bridge at the read. Round 5:
+  `ws_loop_w_max` is recorded as 0.0 when no synapse is found, so a zero alone does not show a held lesion. (iii) also
+  needs A1's hop 1 on the same seed to show `ws_loop_w_max` > 0, and A5's `ws_loop_n_syn` to equal A1's and be > 0:
+  the same loop synapses exist, at zero weight. (iv) REF-A1 holds on the same seed. A turn with no recorded spiking
+  read, or a failure of (ii), (iii) or (iv), is UNDEFINED, never PASS and never FAIL. Then the outcome,
   which is no longer part of the precondition: B4 PASSES when p_prey_eat has no derived answer AND hop 1 has
   `n_ignited` = 0, on A5 and on .rep0. It FAILS when the preconditions hold and either run has a derived answer or
   hop 1 has `n_ignited` >= 1 (a held lesion that leaves slot 0 ignited is a FAIL of "workspace necessary").
 - **B5 multi-valued abstain:** P5 holds on both routes. Engagement preconditions: (i) B1's engagement holds on that
   seed (A1's hops ADVANCE: an M1 that never advances abstains on every cue, so its abstain on an ambiguous one says
   nothing); (ii) two decoded rows with two different decoded patients under the ambiguous cue (a REWRITE makes the
-  seed UNDEFINED, never PASS); (iii) in A8 and A10 the abstain comes from the abstaining hop's `gate_decision`
+  seed UNDEFINED, never PASS); (iii) in A8, A8b and A10 the abstain comes from the abstaining hop's `gate_decision`
   ABSTAIN, not from a miss or an exception. Otherwise UNDEFINED.
 - **B6 conflict unit necessary:** P6 holds and reproduces. Engagement precondition, on the same seed and the same hop
   (hop 1 of p_prey_eat): A8 shows blocks_matched = 2, patient_lines_active = 2 and acc_conf_spikes > 0 (the unit
   sees the conflict when intact), and A11 and its .rep0 show blocks_matched = 2, patient_lines_active = 2,
-  acc_conf_spikes == 0 and slot1_drive == 0 (the lesion held). Otherwise the seed is UNDEFINED for B6, never PASS.
+  acc_conf_spikes == 0 and slot1_drive == 0. Round 5 adds four conditions. First, the intact reference works on the
+  same seed: A8's p_prey_eat abstains, and the abstain comes from hop 1's gate_decision ABSTAIN, not from a miss or an
+  exception. Second, the null: A8b's primary fields equal A8's (P13). Third, the lesion is read back on the synapses:
+  A11's and its .rep0's `cp_w_max` = 0 with `cp_n_syn` equal to A8's and > 0, so the same conflict synapses exist
+  at zero weight. Fourth, the B6 row of the hop-record table holds. Otherwise the seed is UNDEFINED for B6, never
+  PASS.
 - **B7 hop scope:** both hops recorded on p_prey_eat in A1; `route_kb_reads` = 0 inside every hop scope;
   `query_patient` calls inside hop scopes = hops attempted; the query_patient selected block lies in
   `blocks_matched`, and the PROPOSE word is the word of the single active patient line, on every resolved hop;
   `stp_reset` reads x = 1 and u = cfg.stp_U on every read. Round 4, on every hop of every M1 arm: `spurious_P` = 0
-  (a lit patient of a matching block outside V'_P means the fabric and the read disagree); `vp_kb_entry_reads` = 0 (the
-  V'_P builder read no `.kb` entry); and `vp` equals the union of `vp_lit_by_block`, in block order. A hop that
-  breaks one of these fails B7 on that seed and is listed.
-- **B8 moat and controls (round 4).** Preconditions: the B8 rows of the hop-record table (the arm engaged on
-  p_prey_eat, as B1; a hop-2 record on c_prey_chase), the general rule, and the facts-present map for each item
-  (c_prey_chase's (frog, chase) must hold nothing). Items, each scored on its own: (1) c_prey_chase abstains AND every
-  hop-2 record under (frog, chase) shows `proposed` None, `n_ignited` 0 and `gate_decision` COMMIT, so the moat held
-  through the spiking miss. A hop-2 ADVANCE, or an abstain that comes from a gate ABSTAIN or a slot-1 winner, fails.
+  (a lit patient of a matching block outside V'_P means the fabric and the read disagree); `vp_kb_entry_reads` = 0 (no
+  patient-field read from `_ensure_sequencer` or the V'_P builder, by line, 2.4); and `vp` equals the union of
+  `vp_lit_by_block`, in block order. Round 5, on every turn and every hop of every M1 arm: (c) `kb_reads_unlisted` = 0
+  over the whole decision scope, from the route's entry to its returned decision, every caller in every module (2.4,
+  2.7), so the only `.kb` accesses are the listed composer lines and the three declared label-only reads; (d) every
+  hop passes 2.7's positive control (the proxy was live), else that hop is UNDEFINED, not passed; (e) no hop is
+  `host_routed`, except on A4, whose patch makes every buffer PROPOSE None by design (its host-routed hops are listed,
+  not failed). A hop that breaks one of these fails B7 on that seed and is listed. **What B7 is not (round 5).** Its
+  V'_P checks (`vp` equal to the union of `vp_lit_by_block`, and no builder patient-field read) are consistency and
+  frame checks. They pass whenever the list equals the store, which it does on every arm without an overwrite, so they
+  are not evidence that V'_P comes from the store. That evidence is the data-flow intervention B13 (a), on A17, where a
+  patient string is in no `.kb` entry while the store holds it, together with (c).
+- **B8 moat and controls (round 4; item (1) restated and (1b) added in round 5).** Preconditions: the B8 rows of the
+  hop-record table (the arm engaged on p_prey_eat, as B1; a hop-2 record on c_prey_chase), the general rule, and the
+  facts-present map for each item. c_prey_chase's absence premise is read from the teach log and `builtin_facts` only.
+  Items, each scored on its own:
+  (1) **No-regression moat on A1.** c_prey_chase abstains on A1 (A0's c_prey_chase is reported beside it). Every
+  hop-2 record under (frog, chase) shows `proposed` None, an all-zero `drives`, `n_ignited` 0 and `gate_decision` COMMIT. A hop-2
+  ADVANCE, an abstain from a gate ABSTAIN or a slot-1 winner, or a derived or recalled answer on c_prey_chase FAILS.
+  A non-empty `decoded_rows` or `ltm_candidates` under (frog, chase) is a row nothing taught. If it leads to an answer
+  on c_prey_chase, that is a moat FAIL, never UNDEFINED. If it does not, it is listed with its source and item (1) is
+  UNDEFINED on that seed, as round 4 scored it (the cue did not hold the registered nothing, so the abstain was not
+  tested on it); the same hop is also `host_routed` when the buffer missed it, and fails B7 (e). This item does
+  NOT claim that the miss is spiking. At the default the hop-2 `propose_path` is `fact_shard`, and the fact-shard
+  candidate set (a host index over the list's strings) decides which blocks are ever decoded, so the buffer miss is a
+  host-index decision (2.1, 2.6).
+  (1b) **The moat read through the decoded store, on A21** (`BRAIN_FACT_SHARD_RETRIEVAL=0`). c_prey_chase abstains, and
+  every hop-2 record under (frog, chase) shows `propose_path` `seq_block`, an empty `decoded_rows`, blocks_matched = 0,
+  acc_conf_spikes = 0, an all-zero `drives`, n_ignited = 0 and gate_decision COMMIT (P12). That is the claim round 4
+  made under (1): the miss is read off the full decoded store and the conflict unit's match pools. It is still a host
+  first-match over decoded rows (2.1, declared) and no more.
   (2) c_dog_chase recalls cat. (3) and (4): the primary fields of c_heron_hunt and c_frog_eat equal A0's. These
   controls are not chain turns, so their identity is read with the arm-level engagement, never with a per-turn read
   they cannot have. Scored as the table's preamble says: a defined item that fails is a FAIL, and an UNDEFINED item
   never reads as a pass.
 - **B9 answer rate:** per label, flag-on (A1, A8, A10, A14, A16) against flag-off (A0, A7, A9, A13, A15) on
   p_prey_eat, c_heron_hunt, c_frog_eat, c_prey_chase, p_yesno, c_dog_chase: no label answered off and abstained on.
-  Read by `tools/answer_rate.py --labels`, which the M1 build adds (section 7); FLIP-HURTS-ANSWERS is reported. A
-  seed whose flag-on arms carry no hop record on p_prey_eat is UNMEASURED (equal answer rates from a flag that never
-  engaged are not evidence of no harm).
+  Read by `tools/answer_rate.py --labels`, which the M1 build adds (section 7); FLIP-HURTS-ANSWERS is reported. Round
+  5: UNMEASURED is decided per arm PAIR and seed, not per seed. A pair (A1/A0, A8/A7, A10/A9, A14/A13, A16/A15) whose
+  flag-on arm shows `spiking_hop_reads` = 0 on p_prey_eat is UNMEASURED on that seed (equal answer rates from a flag
+  that never engaged are not evidence of no harm), and under rule (vi) an UNMEASURED pair counts as not meeting B9.
 - **B10 flag-off identity:** with the flag unset, A0's primary fields equal an `intact_a` arm run at the base
   revision (before any M1 code) on the same seed, and the unit golden holds.
-- **B11 duplicate is not a conflict:** P7 holds. Engagement precondition: on that seed the re-tells appended, i.e.
-  A14's hop records show blocks_matched = 2 on both hops with one decoded patient; otherwise the seed is UNDEFINED for
-  B11. If every seed is UNDEFINED, B11 is UNDEFINED (never PASS), and the circuit-level duplicate test of step 1 is
-  reported as the only evidence.
+- **B11 duplicate is not a conflict:** P7 holds. Engagement preconditions: on that seed the re-tells appended, i.e.
+  A14's hop records show blocks_matched = 2 on both hops with one decoded patient; and (round 5) LIVE-A8 holds on the
+  same seed, so A14's silent `acc_conf` comes from a unit that can fire. Otherwise the seed is UNDEFINED for B11, and
+  under rule (vi) it counts as not meeting B11. Round 4's "B11 is UNDEFINED only if every seed is UNDEFINED" is
+  withdrawn. The circuit-level duplicate test of step 1 is reported beside B11, never in its place.
 - **B12 cross tier:** (a) P9 holds. Engagement precondition: B1's engagement holds on that seed; the `infer_xtier`
-  fixture's own read-back returned fish from `ltm.query_patient(heron, hunt)`; A16's hop-1 `decoded_rows` under
-  (heron, hunt) carry frog only; and the audit counts one patient per tier. Otherwise
-  UNDEFINED.
-  (b) On every M1 arm except A3, A11, A17 and A19 (A1, A2, A4-A6, A8, A10, A12, A14, A16) and every dev seed, no
-  hop has `audit_disagree` true. Precondition (round 4): the B12 (b) row of the hop-record table, per arm and seed.
+  fixture's read-backs (round 5: both, the one right after the turn-0 write and the one right before the first probe)
+  returned fish from `ltm.query_patient(heron, hunt)`; the shard's `ltm_bundle` is `wikidata_100k`; A16's hop-1
+  `decoded_rows` under (heron, hunt) carry frog only; and the audit counts one patient per tier. Otherwise UNDEFINED.
+  (b) On every M1 arm except A3, A11, A17 and A19 (A1, A2, A4-A6, A8, A8b, A10, A12, A14, A16, A21) and every dev
+  seed, no hop has `audit_disagree` true. Round 5: on A10 the hop-2 record under (frog, eat) must exist (the hop that
+  carries A10's ambiguity), and on A8 and A8b the hop-1 record under (heron, hunt). `spiking_hop_reads` >= 1 alone
+  does not satisfy it. Precondition (round 4): the B12 (b) row of the hop-record table, per arm and seed.
   Every listed arm carries at least one hop record on each chain probe of its table, and every hop carries the audit
   fields. An arm and seed with zero hop records, or with a hop missing an audit field, is UNDEFINED for B12 (b),
   never PASS. A defined hop with `audit_disagree` true is listed with its tier counts, `xtier_disagree` and its
@@ -778,19 +1115,33 @@ Bars (each on every dev seed 1-6; design seed 7 is excluded from the count):
   A17 and A19 for the same reason (their `.kb` is overwritten); A11 and its .rep0 because the lesion blinds the unit
   by design (an ADVANCE on a two-patient cue there is B6's evidence, not a failure). Their `audit_disagree` hops are
   still listed.
-- **B13 the patient set and the abstain follow the store, not the list (round 4).** (a) P10 holds on A17: p_prey_eat
-  abstains, and its hop-1 record shows fish in `vp`, blocks_matched = 2, patient_lines_active = 2, acc_conf_spikes > 0,
-  spurious_P = 0 and gate_decision ABSTAIN. Engagement preconditions: B1's engagement holds on that seed; the
-  overwrite engaged (2.8, (i)-(iii)); the facts-present map holds for `infer_amb1` from the teach log; the B13 row of
-  the hop-record table holds; and the teeth: A18 on the same seed derives `[frog, eat, gnat]`. If A18 does not
-  derive it, the overwrite did not bite the list route, B13 (a) is UNDEFINED on that seed, and the non-bite is
-  reported first. With the preconditions met, a hop-1 ADVANCE or any derived answer on A17 is a FAIL: it is the
-  host-supplied patient set the round-3 design allowed. (b) P11 holds on A19: p_prey_eat is derived `[frog, eat, gnat]`,
-  and its hop-1 record shows blocks_matched = 2, patient_lines_active = 1, acc_conf_spikes = 0 and gate_decision
-  ADVANCE. Engagement preconditions: B1's engagement; the overwrite engaged; facts present for `infer_dup` from the
-  teach log, with the re-tell appended (blocks_matched = 2 on A19's hop 1); the B13 row of the hop-record table; and
-  the teeth: A20 abstains on p_prey_eat on the same seed (else UNDEFINED, reported first). With the preconditions
-  met, a hop-1 ABSTAIN or an abstain on p_prey_eat is a FAIL: an abstain the list supplied.
+- **B13 the patient set follows the store, and no route-level list read decides a hop (round 4; rewritten in round
+  5).** (a) **V'_P provenance, the data-flow test.** P10 holds on A17: p_prey_eat abstains, and its hop-1 record
+  shows worm in `vp` AND in `vp_not_in_kb`, blocks_matched = 2, patient_lines_active = 2, acc_conf_spikes > 0,
+  spurious_P = 0 and gate_decision ABSTAIN. Engagement preconditions: REF-A1 holds on that seed; the overwrite
+  engaged under all four conditions (2.8 (i)-(iv)), so worm is in no `.kb` entry, built-ins included, while the
+  decoded rows under (heron, hunt) still hold it; whenever worm is in A17's hop-1 `vp`, the record also lists it in
+  `vp_not_in_kb` (if it is in `vp` but not in `vp_not_in_kb`, the list still held the word as the hop read it, the
+  test cannot separate the designs, and B13 (a) is UNDEFINED on that seed); the facts-present map holds for `infer_amb1` from the teach log; the B13 (a) row of the hop-record table holds; and the
+  teeth: A18 on the same seed derives `[frog, eat, gnat]`. If A18 does not derive it, the overwrite did not bite the
+  list route, B13 (a) is UNDEFINED on that seed, and the non-bite is reported first. With the preconditions met, a
+  hop-1 ADVANCE or any derived answer on A17 is a FAIL: it is the host-listed patient set the round-3 design allowed
+  (worm would have had no line). Worm missing from `vp` altogether, with (iv) read back, is also a FAIL, never an
+  UNDEFINED: it is P10's outcome, as in round 4, where "fish in `vp`" was part of the outcome. Making it a precondition
+  would have loosened the bar.
+  (b) **Route-level list reads only.** P11 holds on A19: p_prey_eat is derived `[frog, eat, gnat]` from
+  `[[heron, hunt, frog], [frog, eat, gnat]]`, worm is named nowhere in the answer or in `derived_from`, and the hop-1
+  record shows `proposed` frog, blocks_matched = 2, patient_lines_active = 1, acc_conf_spikes = 0 and gate_decision
+  ADVANCE. The hop-1 `kb_patient_reads` shows the :1822 clause-test read of the overwritten first entry, which is
+  label-only and does not reach the answer. Any other patient-field read in the hop is at a listed line (:1420, if
+  the fact-shard index was rebuilt there), so `kb_reads_unlisted` is 0 (B7 (c)). Engagement preconditions: REF-A1 and
+  LIVE-A8 hold on that seed; the overwrite engaged under (i)-(iv); facts present for `infer_dup` from the teach log,
+  with the re-tell appended (blocks_matched = 2 on A19's hop 1); the B13 (b) row of the hop-record table; and the
+  teeth: A20 abstains on p_prey_eat on the same seed (else UNDEFINED, reported first). With the preconditions met, a
+  hop-1 ABSTAIN, an abstain on p_prey_eat, or worm in the answer is a FAIL. The first is an abstain the list supplied,
+  and the other two are a hop-1 value the list supplied. B13 (b) does not test V'_P provenance. Under the `gp{b}`
+  gating a line lights only through a matching block, so the list can only remove a line, never add one that fires.
+  A list-built V'_P would ADVANCE here too. B13 (a) is the provenance test.
 
 Every lesion reports engaged / not engaged first (docs/TERMS.md, lesion); a lesion that did not hold is reported as
 not held, never as no effect.
@@ -802,7 +1153,8 @@ the answer text differs (checked for this revision). So on today's route six see
 the outcome. Every M1 bar is reported as n_pass / n_defined AND n_effective, the number of distinct non-text outcome
 vectors across the dev seeds, with the per-seed substrate counts beside it (m{b}, patient-line counts, acc_conf,
 conf, n_ignited), since the sequencer and the workspace are seeded per arm and may vary where the outcome does not. A
-bar that passes with n_effective = 1 is reported as "PASS, one effective measurement", never as six.
+bar that passes with n_effective = 1 is reported as "PASS, one effective measurement", never as six. These counts sit
+beside the verdict of the cross-seed rule (vi), which alone decides whether a bar holds.
 
 ### 2.10 M1 build order, with STOP lines
 
@@ -811,28 +1163,57 @@ through the pool, on a lane whose checkout holds `data/corpus/tinystories.txt` (
 for the 10-26 gate-off shards, section 1); never from a checkout without the corpus. Every step-0 shard records
 `corpus_present` (`run_worker` :671). A shard that records false is UNDEFINED for every check in it: the learned
 lexicons, the corpus vocabulary and the built-in store degrade silently without the corpus, so the branch, nonce and
-premise checks would pass vacuously. It is re-run on a corpus lane and is never a GO or STOP input. In the arm worker,
-with the D4 recorder of 2.7 installed from the first turn, after the teach turns of `infer`, `infer_amb1`,
+premise checks would pass vacuously. It is re-run on a corpus lane and is never a GO or STOP input. Every step-0 read
+goes through the stage-2 arm worker, which sets `BRAIN_CHAT_SEED` to the arm seed before it imports the server
+(`run_worker` :666), so no read falls back to the default seed 42 (round 5).
+
+**Runner changes step 0 needs (round 5; research runner only, no production edit; the golden hash of
+`tests/test_stage2_kb_scramble.py` pins every pre-existing arm).**
+(1) Per-arm turn tables. The informational `turns` key and `table: "permuted"`, which `turns_for` and therefore
+`arm_validity` read (2.8), give `infer_amb1`, `infer_amb2`, `infer_dup` and `infer_xtier` their own tables. Today every
+informational arm runs `g["turns"]` (`stage2_exit_gate.py:321-328`).
+(2) The D4 recorder of 2.7: the wrappers of `competent`, `extract_transitive`, `_verb_selects_of` and `_animacy_of`,
+installed before the server import.
+(3) The `stored_facts_after_teach` read.
+(4) The `kb_overwrite` fixture mode with its engagement record, conditions (i)-(iv) (2.8).
+(5) The `infer_xtier` hook: the LTM write right after turn 0 and its two read-backs (2.8).
+(6) Read-only wrappers of `_fact_shard_first_match`, `_fact_shard_candidates` and `_seq_block` that record
+`propose_path` and `fs_candidates` (2.7).
+The `.rep0` change and the live `.kb` proxy are step-1 items.
+
+In the arm worker, with the D4 recorder installed from the first turn, after the teach turns of `infer`, `infer_amb1`,
 `infer_amb2`, `infer_dup` and `infer_xtier`:
-- (a) call `composer.query_patient` for (heron, hunt), (heron, eat), (frog, eat), (frog, chase) and record result,
-  selected block and the decoded rows that match;
+- (a) call `composer.query_patient_source` for (heron, hunt), (heron, eat), (frog, eat), (frog, chase), and record the
+  result, the tier, the selected block, `propose_path`, `fs_candidates` (the fact-shard candidate block ids and the cue
+  roles queried), and the decoded rows that match from a full `_read_blocks` scan (at this layout the per-block loop,
+  :1389). Any cue whose decoded rows are not empty while the buffer's PROPOSE is None is recorded `host_routed`
+  (round 5);
 - (b) build the sequencer the production path builds (`_ensure_sequencer` at the composer's defaults, so the REDUCED
   fabric), and record every block's `m{b}` count for the same cues through `run_sequencerK_reduced_with_drive` with
   the composer's own drives, plus the sequencer decision against the host first-match, and the build's memory
   (`tools/mem_ok.sh` first; seed 7 measured before seeds 1-6);
-- (c) for every matching block, read every main role's cleanup slice with the existing probe
-  `_phaseC_task1_cleanup_probe.block_cleanup_scores_full`, and check that its agent and action slices equal
-  `block_cleanup_scores` on the same block AFTER `np.maximum(., 0)` and over non-reserve slots only (the production
-  read clips at 0, `_phaseB_onebrain_sequencer_derisk.py:87-88`, and installs no cleanup synapses on an uncommitted
-  reserve slot, `_seq_cleanup_conns` :1634; the probe does neither). Then, for EVERY stored block (round 4: the
-  substrate V'_P of 2.3), pass the patient slice through the production relay (`onbridge_divnorm_drive` on the
-  composer's score bridge at `input_gain` 1.0), and record which patient word pools fire per block, their union in
-  block order (V'_P as the build will form it), and the set of decoded stored patients beside it;
+- (c) **the patient slice the build will relay, read where production computes it (round 5).** For EVERY stored block
+  b (the substrate V'_P of 2.3), call the production `block_cleanup_scores(composer, b)`
+  (`_phaseB_onebrain_sequencer_derisk.py:64-89`). Right after it returns, read the PATIENT row of the cleanup
+  membrane (`cp_membrane_potential_v[c_base + i_P * V : c_base + (i_P + 1) * V]`, with i_P the index of 'patient' in
+  `main_roles`), clipped at 0 as the agent and action rows are (:87-88). That is the slice step 1's
+  `with_patient=True` return will hand on, computed by the same op and the same cleanup synapses
+  (`_seq_cleanup_conns`, :1620-1639, which wires the patient row too and skips every unrecruited reserve slot, :1634).
+  The V'_P read uses this slice and nothing else. The full probe `_phaseC_task1_cleanup_probe.block_cleanup_scores_full`
+  (:33-57) wires EVERY slot, reserve slots included, and the chat buffer carries 128 of them
+  (`vocab_headroom`, `brain_conversational_agent.py:285`). An unrecruited slot can outscore the true word there
+  (`__free10__` 5270 against `look` 4080, `_silent_reserve`'s docstring, :988-998). So the probe is used only as a
+  cross-check, under the P10 treatment: on every matching block, its agent, action and patient slices, after
+  `np.maximum(., 0)` and with every reserve slot zeroed, must equal the production read's slices on the non-reserve
+  slots. Then pass each block's patient slice through the production relay (`onbridge_divnorm_drive` on the composer's
+  score bridge at `input_gain` 1.0), and record which patient word pools fire per block, their union in block order
+  (V'_P as the build will form it), and the set of decoded stored patients beside it;
 - (d) record `chat._last_gnw_delib` on c_heron_hunt in `infer_amb1` (the single-hop conflict gate on onebrain);
 - (e) from the D4 recorder (2.7), never from the `comprehension` field: each teach's `extract_transitive` return and
   its `judge`-frame `competent()` call, meaning the inputs `(n0, v, n1)`, each word's membership in the `brain_vocab`
-  set passed and that set's size, `fully_covered`, `fully_oov` and the return, with the branch read from them by
-  2.7's rule. Beside it: t_frog_eat_apple's `comprehension.margin` and `comprehension.known_binding`; the `surprise`
+  set passed and that set's size, the recorded inner `_verb_selects_of` and `_animacy_of` returns, `fully_covered`,
+  `fully_oov`, `or_matches_return` and the return, with the branch read from them by 2.7's rule. Every
+  `competent()` call of another caller (`repair_target`, the three-organ bus) is listed beside it. Beside it: t_frog_eat_apple's `comprehension.margin` and `comprehension.known_binding`; the `surprise`
   and `reconsolidation` records of every `infer_amb1`, `infer_amb2` and `infer_dup` teach; the row count and the
   decoded patients under each ambiguous and each re-told cue; the `infer_xtier` fixture (buffer rows under (heron,
   hunt), `ltm.query_patient(heron, hunt)`, `all_candidate_patients` on the routed shard, the audit's counts per tier);
@@ -841,11 +1222,14 @@ with the D4 recorder of 2.7 installed from the first turn, after the teach turns
   (`_read_blocks`, never `.kb`) under each hop cue, plus `ltm.query_patient` and `all_candidate_patients` on the
   routed shard under the same cue, beside the arm's own `teach_acquired`, `stored_facts_after_teach` and
   `builtin_facts`;
-- (g) the `.kb` overwrite fixtures of A17 and A19 (2.8), applied after the teach block of `infer_amb1` and
-  `infer_dup` with the flag off (no M1 code exists yet): the engagement record, conditions (i)-(iii);
-- (h) an inert-read check on seed 7: the `infer` turn table run in two fresh workers, with and without the reads
-  (a)-(c), (f) and (g), must give identical primary fields on every probe turn. A difference is posted, and (d) is
-  then re-read in a worker that makes none of the other reads.
+- (g) the `.kb` overwrite fixtures of A17 and A19 (2.8, round-5 plans: worm -> frog on `infer_amb1`'s worm entry; the
+  FIRST (heron, hunt) entry frog -> worm on `infer_dup`), applied after the teach block with the flag off (no M1 code
+  exists yet): the engagement record, conditions (i)-(iv), with the full `_kb_triples(buf)` read back for (iv);
+- (h) an inert-read check on seed 7: the `infer` turn table run in three fresh workers. One is bare (no recorder, no
+  reads). One has the D4 recorder only (round 5: the recorder is instrumentation too). One has the recorder and the
+  reads (a)-(c), (f) and (g). The three must give identical primary fields on every probe turn, and the recorder-only
+  worker's teach turns must match the bare worker's `comprehension`, `surprise` and `reconsolidation` fields. A
+  difference is posted, and (d) is then re-read in a worker that makes none of the other reads.
 
 GO rule (written here, before the run): on 7/7 seeds, with `corpus_present` true on every shard, every true match
 drives its `m{b}` over the composer's `match_thresh` and no non-matching block does; every stored block's patient
@@ -855,21 +1239,30 @@ of an ambiguous cue fire different pools; every teach of 2.8's table took its ex
 recorder and its fact is in the decoded buffer rows after the turn; t_frog_eat_apple recorded `known_binding` true;
 no `reconsolidation` record on an `infer_amb1`, `infer_amb2` or `infer_dup` teach shows `rewrite`, each ambiguous cue
 holds two decoded rows with two patients, and each re-told cue holds two rows with one patient; every row of 2.9's
-premise map holds exactly on the bound store and the LTM; both overwrite fixtures engage; the `infer_xtier` fixture
-landed (frog in the buffer only, fish in the LTM only); `ws_seed` equals the arm seed; and the reads are inert (h).
+premise map holds exactly on the bound store and the LTM; both overwrite fixtures engage under (i)-(iv) (round 5: worm
+in no `.kb` entry after A17's overwrite, built-ins included, and still decoded; worm the first (heron, hunt) entry's
+patient after A19's and in no decoded row); the `infer_xtier` fixture landed (frog in the buffer only, fish in the LTM
+only, on both read-backs); `ws_seed` equals the arm seed; the recorder's `or_matches_return` is true on every call; no
+probe cue of (a) is `host_routed`; the probe's P10-treated slices equal the production read's on every non-reserve
+slot (c); and the reads and the recorder are inert (h).
 
 STOP lines: a missed true match on any seed: post the counts; the circuit is banked and the named next carrier is
 the cs-race engram race read for co-latching (two latches ON = conflict). A patient pool missing, wrong or not unique
 (a block lighting no pool, two pools, or a word no block decodes): the patient identity the unit would count is not on
 the substrate at this fidelity, and so neither is V'_P. The probe's clipped agent or action slice differing from
-`block_cleanup_scores` on a non-reserve slot of any block: the probe is not reading what the build would read; post
-the difference. A new-table teach refused or taking another branch than 2.8's: post the recorder's inputs, terms and
+`block_cleanup_scores` on a non-reserve slot of any block, or its P10-treated patient slice differing from the
+membrane read of (c): the two reads disagree about what the build would relay; post the difference (the V'_P read
+stays the membrane read). A probe cue recorded `host_routed` (decoded rows under it, PROPOSE None): the fact-shard
+index missed a block the store holds; post the candidate ids and the decoded rows, and Claude rules on whether A21
+carries the affected bars. An `or_matches_return` false: post the call; that teach's branch is UNDEFINED. A new-table teach refused or taking another branch than 2.8's: post the recorder's inputs, terms and
 return; the table lacks its ambiguity there, and Claude rules on the word. t_frog_eat_apple with `known_binding` false:
 the hop-2 table then rides on the margin; post it. A `rewrite` on an ambiguity or re-tell teach, or a cue holding one
 row where two are expected: D2 took the fact; post it, and Claude rules on the named fallback (the second fact written
 by a `composer.store` fixture after the teach block, 2.8). A premise-map row failing on the bound store or the LTM (a
-missing premise, an extra patient under a hop cue, or any (frog, chase) fact): post it; the probes that row feeds are
-predicted UNDEFINED, and Claude rules on the table words. An overwrite fixture not engaging: post the record; its half
+missing premise or an extra patient under a hop cue): post it; the probes that row feeds are predicted UNDEFINED,
+and Claude rules on the table words. A (frog, chase) fact in the teach log or `builtin_facts` is a premise failure of
+the same kind. A decoded or LTM (frog, chase) row that nothing taught is not a premise failure (2.9): post it, because
+B8 then predicts a moat FAIL wherever that row reaches an answer. An overwrite fixture not engaging: post the record; its half
 of B13 is predicted UNDEFINED. The `infer_xtier` fixture not landing (for example a word outside the LTM codebook):
 post it, and Claude rules on the fixture words. Reads that are not inert: post the differing turns. If the re-tells
 did not append on any seed, B11 is predicted UNDEFINED and the step-1 circuit test carries the duplicate case. Post
@@ -884,6 +1277,21 @@ adds: V'_P formed from the relay-lit patient pools of every stored block, with t
 (2.3); in the stage-2 arm worker, the per-turn route trace, the D4 recorder, `stored_facts_after_teach` and the
 `kb_overwrite` fixture mode with its engagement record (2.7, 2.8); and in the scorer, written before the step-2
 runs, the premise map and the hop-record table of 2.9 as data, with `probes_undefined` and `undefined_items` lists.
+
+Round 5 adds the following items (the step-0 runner changes already exist by then).
+- **Production paths, all default-off or byte-identical.** The :1654 read becomes agent and action only (2.4). The
+  route's `_hop_spiking` runs the buffer conflict read and builds and records the full drive vector on every hop,
+  whichever tier serves it, with the LTM candidate slots for both tiers and no `conflict_gate` call (2.2, 2.3).
+  `_hop_spiking` reads `gnw_deliberation._DEFAULT_SEED` as a module attribute at call time, never as a name bound at
+  import, so a test can pin it.
+- **In the stage-2 arm worker.** The live counting `.kb` proxy, installed by the `OneBrainComposer.__init__` wrapper
+  before the server import (2.4). The decision-scope recording of every `.kb` access by caller and kind,
+  `kb_patient_reads`, `kb_reads_unlisted` and 2.7's positive control. The `propose_path`, `fs_candidates` and
+  `host_routed` records, and the `cp_n_syn` and `cp_w_max` read-backs. `arms_for` emits `.rep0` for an informational
+  entry with `rep: true` (A4, A5 and A11; today only lesion arms get one, `stage2_exit_gate.py:331-342`). The new
+  informational entries A8b and A21, with A21's env `BRAIN_FACT_SHARD_RETRIEVAL=0`. A12's `table: "permuted"` (2.8).
+- **In the scorer.** The cross-seed rule (vi), REF-A1 and LIVE-A8, B8 (1b), and the validity reads of rule (i):
+  `sources`, `process.ltm_bundle`, and the `corpus_present` key present and true.
 
 `w_c` and `n_conf_ref` are set on design seed 7 by this rule, written before data, then frozen in code with the
 seed-7 counts in a comment. The fixture is the step-1 circuit fixture, never a bar table: OneBrainComposers built
@@ -916,7 +1324,29 @@ and the same `acc_conf` count as its untouched twin (the circuit-level twin of B
 preserving (the committed D4 battery's decisions are identical with and without it) and its two terms OR to the
 return on every call; `spiking_hop_reads` counts exactly the hop scopes that made a workspace read (a fixture with a
 forced exception inside a hop scope does not count it). Module docstring corrected (it says the hops are list
-scans today; under the flag they are spiking reads within the buffer).
+scans today; under the flag they are spiking reads within the buffer). Round 5 adds these unit tests:
+- **:1654 change.** With the patient field dropped, the reduced vocabularies, the rebuild signature and the fabric's
+  synapse arrays are equal to the unchanged read's, on the circuit fixtures and on stores holding the `infer` and
+  `infer_amb1` facts.
+- **Counting dict and proxy.** Every access form of 2.4 (`get`, `[]`, `items`, `values`, `keys` then `[]`, a `dict(...)`
+  copy) is counted with its caller line and returns the plain value. `isinstance(fact, dict)` still holds. A
+  patient-field read placed at an unlisted line inside a decision scope raises `kb_reads_unlisted` to 1. A read by a
+  helper in another module inside the scope is counted too, so the frame bypass is closed.
+- **Behaviour preservation on whole tables.** The live proxy and the recorders are behaviour-preserving: the `infer`
+  and `infer_amb1` tables run on seed 7 with and without the arm-worker instrumentation, flag off and flag on, give
+  identical primary fields on every turn.
+- **Sentinel data-flow twin.** On step-1 circuit composers, overwriting EVERY `.kb` patient string with a sentinel
+  absent from the vocabulary leaves V'_P, `acc_conf`'s count and the PROPOSE words of the flagged hop identical to the
+  untouched twin. Only the :1822 clause test reads the sentinel, and its count is the only patient-field count.
+- **Every hop records its read.** A qp-lesioned composer and a (frog, chase)-style miss each record an all-zero drive
+  vector, an `acc_conf` read and a COMMIT.
+- **Seeds pinned.** Every unit test that reaches `_get_bridge`, `_get_theta` or `_hop_spiking` pins `BRAIN_CHAT_SEED`
+  to design seed 7. It sets the variable before importing `webapp.gnw_deliberation` (or the server), or it sets the
+  module attribute `_DEFAULT_SEED` to 7, and it asserts that the recorded `ws_seed` is 7. A test that records 42 fails:
+  `_DEFAULT_SEED` falls back to 42, a gate seed, when the variable is unset (`webapp/gnw_deliberation.py:69`).
+- **Recorder checks.** The D4 recorder records the inner `_verb_selects_of` and `_animacy_of` returns in call order.
+  `or_matches_return` is true on every call of the committed D4 battery (asserted in the test; at run time it is only
+  recorded). The caller label separates `judge`, `repair_target` and the three-organ bus.
 
 Resource read (seed 7, under `tools/mem_ok.sh`, before any pool line; posted with the step-1 RESULT): the conflict
 unit's cell and synapse counts read back from the built bridge against section 5's formula; build time and RSS of the
@@ -925,12 +1355,13 @@ calibration; the per-hop latency (drive rebuild, settle, workspace read); and th
 with the flag on against off. If the flag-on arm's peak exceeds 8 GB (the line memcap of 10 GB less 2 GB headroom),
 STOP for a memcap ruling.
 
-**Step 2, the dev read.** A0-A20 (with A3a and A3b) on dev seeds 1-6 through the pool at one pinned revision with
+**Step 2, the dev read.** A0-A21 with A8b (and A3a and A3b) on dev seeds 1-6 through the pool at one pinned revision with
 provenance on (numpy, memcap 10), scored against 2.9 by a scorer written before the runs. Post `[c2-hops-2] RESULT`,
 STOP. A failed bar is a RESULT, never a retune.
 
-**Step 3 (Claude).** A `flag: no` prereg carrying A1-A20 as informational arms of the 11-21 gate attempt, or a flip
-packet if every bar holds; the default stays OFF until a flip prereg passes (smoke-first, flag-off battery arms on
+**Step 3 (Claude).** A `flag: no` prereg carrying A1-A21 and A8b as informational arms of the 11-21 gate attempt, or
+a flip packet if every bar holds under the cross-seed rule (vi) of 2.9 (each bar PASSES on all six dev seeds; an
+UNDEFINED or UNMEASURED seed is not a pass); the default stays OFF until a flip prereg passes (smoke-first, flag-off battery arms on
 the gate seeds, answer-rate).
 
 ## 3. M3: acquisition of well-formed all-novel transitives through a learned order cue (flag `BRAIN_COMPREHENSION_LEARNED_ORDER`, default OFF)
@@ -1015,7 +1446,10 @@ appear in no production module). What stays host, declared in the header: the `c
 the store path's positional role assignment, and the onset event. M3 makes no claim about English tables beyond
 adding none.
 
-### 3.5 Organ battery (dev seeds 1-15, numpy, cheap)
+### 3.5 Organ battery (dev seeds 1-6 and 8-16, numpy, cheap)
+
+Round 5: design seed 7 is excluded from the organ count. The M3 build engagement read and any build-time choice are
+made on seed 7 (3.8), so seed 16 replaces it and the count stays 15 seeds. No seed here is a gate seed.
 
 Exposure: the frame packet's statement set, replayed as now. Test items, all nonce:
 - **W, well-formed:** 12 items per seed in the exposure frame ("the blick gorps the dax").
@@ -1105,8 +1539,8 @@ from the build record); otherwise the seed is UNDEFINED for every R bar.
 
 ### 3.7 Predictions and bars
 
-Organ (each per seed on dev seeds 1-15). Pass rule, fixed before any data (round 4): at least 14 of the 15 seeds
-must meet every bar, and a seed that is UNDEFINED for a bar (under 3.5's learning-engagement precondition, or under
+Organ (each per seed on dev seeds 1-6 and 8-16; round 5: design seed 7 excluded, 3.5). Pass rule, fixed before any
+data (round 4): at least 14 of the 15 seeds must meet every bar, and a seed that is UNDEFINED for a bar (under 3.5's learning-engagement precondition, or under
 the bar's own precondition) is reported and counts as NOT meeting it. So at most one seed per bar may be UNDEFINED or
 failing.
 - **OM1:** W comprehended >= 11/12.
@@ -1121,7 +1555,10 @@ failing.
 - **OM7 identity:** with `role_seq=None` the frame-packet pins hold; the D4 decision is unchanged on every
   non-fully-OOV item of the committed D4 battery.
 
-Reply (dev seeds 1-6, every seed; every shard with `corpus_present` true, else UNDEFINED): R1 m3_permuted acquires
+Reply (dev seeds 1-6, every seed; every shard with `corpus_present` true, else UNDEFINED; round 5: each R bar holds
+only under the cross-seed rule (vi) of 2.9, i.e. it PASSES on all six dev seeds, and a seed on which it is UNDEFINED or
+UNMEASURED counts as not meeting it; the general rule (i) of 2.9 on `sources`, `ltm_bundle` and the `corpus_present`
+key applies to every R arm): R1 m3_permuted acquires
 t_heron_hunt and p_prey_eat ends on frog (with the 3.6 precondition). The acquisition of t_heron_hunt is R1's outcome,
 not a precondition (else R1 could never fail); the facts-present rule of 2.9 applies to the other premise: 'the gnat
 eats the frog' (t_frog_eat, passed through and stored at production) must be acquired and in
@@ -1136,7 +1573,17 @@ nothing on p_prey_eat, on every seed and its .rep0 (with the 3.6 precondition), 
 ### 3.8 M3 build order, dependencies, STOP lines
 
 - **Step 0 (read-only, now, parallel to M1 step 0; on a corpus lane, every shard recording `corpus_present` true,
-  else UNDEFINED for (a) and (d) and re-run).** (a) The D4 decision on every W, G and out-of-scope item at production
+  else UNDEFINED for (a) and (d) and re-run).** **Seeds (round 5).** (a) and (d) run through the stage-2 arm worker,
+  which sets `BRAIN_CHAT_SEED` to the arm seed before it imports the server (`run_worker` :666). They run on design
+  seed 7 first, then on dev seeds 1-6, as a step-0 informational table of the four intact `infer` teaches followed by
+  the W, G and out-of-scope items heard as teach turns (its own `turns`, 2.8). They never run in a bare process: there
+  `_brain_chat_seed()` (`webapp/server.py:4038-4062`), `gnw_deliberation._DEFAULT_SEED` (:69) and
+  `gnw_three_organ_bus._DEFAULT_SEED` (:114) all fall back to 42, a gate seed. Nor does step 0 build the D4 organ
+  directly at its own default (`ComprehensionProductionOrgan(seed=42)`, `get_organ(seed=42)`,
+  `comprehension_production_organ.py:362`, :836). (b) builds `WordRoleParserOrgan` with its seed passed explicitly (its
+  default is 1, `word_role_parser_organ.py:256`) on design seed 7 and the organ dev seeds 1-6 and 8-16, with the
+  organ's seed read back and recorded; no server import. Every step-0 record carries its seed, and a record with seed
+  42, 43, 44, 100, 101 or 102 voids its step. (a) The D4 decision on every W, G and out-of-scope item at production
   defaults: the scope and the competence branch from the D4 recorder (2.7: `extract_transitive`'s return and the
   `judge`-frame `competent()` call's inputs, terms and return, never the `comprehension` field), and the margin; (b) the word-role parser's commit read on W and G with
   today's organ (prediction: nothing commits, since position alone is subthreshold by design); (c) the carrier status
@@ -1149,7 +1596,13 @@ nothing on p_prey_eat, on every seed and its .rep0 (with the 3.6 precondition), 
   fails, STOP with the counts (no battery runs on a starved projection).
 - **Step 2:** the organ battery and bar sanity on dev seeds; post RESULT, STOP.
 - **Step 3:** D4 integration and the reply-level dev read; post RESULT, STOP. Then Claude writes the preregs. Step 3
-  is the third build step under this header and waits for the cap ruling (cap accounting, top).
+  is the third build step under this header and waits for the cap ruling (cap accounting, top). Runner changes it
+  needs (round 5, named here because the step-0 and step-1 ones do not cover them): m3_permuted and m3_rs_lesion carry
+  `table: "permuted"`, since `turns_for` gives `permuted_turns` only to the arm named `permuted`; m3_garbled,
+  off_garbled and gateoff_garbled carry `infer_garbled` as their own `turns`; and m3_rs_lesion carries `rep: true` for
+  its `.rep0` (2.8; `arms_for` emits `.rep0` only for lesion arms today). The D4 recorder is installed in every M3 arm.
+  Every unit test that reaches the server, the D4 organ or the workspace pins `BRAIN_CHAT_SEED` to design seed 7, as
+  in 2.10 step 1.
 
 Dependency, stated plainly: the carrier is open. Section 7's ruling text names the cs-race persistent word trace as
 M3's carrier; M3 step 1 waits for its results, and M1 proceeds independently. M3 is not expected to land before the
@@ -1173,8 +1626,11 @@ M3's carrier; M3 step 1 waits for its results, and M1 proceeds independently. M3
 
 ## 5. Seeds, resources, where it runs
 
-- Design seed 7 (M1 `w_c`, `n_conf_ref`, the resource read; M3 build engagement); M1 dev read seeds 1-6; M3 organ
-  dev seeds 1-15, reply dev seeds 1-6. The gate seeds are run only through a later prereg.
+- Design seed 7 (M1 `w_c`, `n_conf_ref`, the resource read, the step-1 unit tests; M3 build engagement); M1 dev read
+  seeds 1-6; M3 organ dev seeds 1-6 and 8-16 (round 5: seed 7 excluded from the count), reply dev seeds 1-6. The gate
+  seeds are run only through a later prereg. Wherever a code path would default to seed 42 (`BRAIN_CHAT_SEED` unset:
+  `_brain_chat_seed()`, `gnw_deliberation._DEFAULT_SEED`, `gnw_three_organ_bus._DEFAULT_SEED`; the D4 organ's own
+  `seed=42`), the step runs through the stage-2 worker or pins the seed (2.10 step 1, 3.8 step 0).
 - **Conflict unit size, before measurement.** With K stored buffer blocks and V'_P distinct stored patients, the unit
   adds (K + 1) * V'_P * 20 + 20 cells (per-block patient lines, shared patient lines, `acc_conf`) and
   K * V'_P * 400 + V'_P * 400 synapses (`d{b}P_w -> pP_w` and `pP_w -> acc_conf` at density 1.0, 20 x 20 per pair).
@@ -1184,11 +1640,17 @@ M3's carrier; M3 step 1 waits for its results, and M1 proceeds independently. M3
 - **Measured at step 1 under `tools/mem_ok.sh`** (2.10): the counts read back from the built bridge, the sequencer
   and workspace build memory and time (`_get_bridge` intact and lesioned, `_get_theta`), the per-hop latency, and the
   flag-on against flag-off peak RSS of one arm; a flag-on peak over 8 GB STOPs for a memcap ruling.
-- **Corpus (round 4).** Every shard this packet scores, or reads for a GO or STOP, runs where
+- **Corpus (round 4; corrected in round 5).** Every shard this packet scores, or reads for a GO or STOP, runs where
   `data/corpus/tinystories.txt` exists: a pool lane, the workstation pool lane included when its checkout has the
-  corpus (it did for the 10-26 gate-off shards). The workstation's main checkout has no corpus and runs none of them,
-  the seed-7 step-0 and step-1 reads included. Each shard records `corpus_present` (`run_worker` :671). A shard
-  recording false is UNDEFINED for everything it feeds and is re-run on a corpus lane. The learned lexicons, the corpus
+  corpus (it did for the 10-26 gate-off shards). Round 4 said the workstation's main checkout has no corpus; that was
+  false. `/home/dant123/Projects/sim/data/corpus/tinystories.txt` exists there (an untracked file, excluded by
+  `.git/info/exclude`). The detached `sim-rev` review worktrees lack it, so a read run from one of them records
+  `corpus_present` false. Each shard records `corpus_present` (`run_worker` :671). A shard recording false, or
+  recording no such key, is UNDEFINED for everything it feeds and is re-run on a corpus lane.
+- **LTM bundle (round 5).** The LTM bundle lives outside the repository (`_default_ltm_bundle_dir`,
+  `webapp/server.py:3817-3847`: `$BRAIN_DATA_ROOT`, the checkout's sibling `sim-data`, then `~/Projects/sim-data`).
+  Every M1 and R arm needs `process.ltm_bundle` = `wikidata_100k` and `sources` = {`tiny-demo +LTM`} (2.9 rule (i)).
+  A lane that resolves the 15k fallback, or no bundle, gives UNDEFINED shards and is not used. The learned lexicons, the corpus
   vocabulary and the built-in store degrade silently without the corpus, so the branch, nonce and premise checks
   would otherwise pass vacuously.
 - Stage-2 arms: about 6.0-6.5 GB peak each today, `tools/memcap.sh 10`, numpy CPU, pool lines. Step 0 sequencer
