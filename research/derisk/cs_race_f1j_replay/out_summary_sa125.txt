@@ -1,0 +1,26 @@
+syn_tau_g_i 10 BASELINE         ms215 early 0/0 late 0/0 C6 8/8 C7 a 23/23 b 23 | ms304 early 0/3 late 0/1 C6 4/8 C7 a 19/19 b 18 | ms429 early 0/4 late 0/3 C6 1/8 C7 a 13/13 b 6
+syn_tau_g_i 10 tauN  50 gN0  4  ms215 early 0/0 late 0/0 C6 8/8 C7 a 24/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 24/24 b 24 | ms429 early 4/4 late 1/3 C6 6/8 C7 a 24/24 b 18
+syn_tau_g_i 10 tauN  50 gN0  8  ms215 early 0/0 late 0/0 C6 8/8 C7 a 24/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 24/24 b 24 | ms429 early 4/4 late 1/3 C6 6/8 C7 a 24/24 b 20
+syn_tau_g_i 10 tauN  50 gN0 16  ms215 early 0/0 late 0/0 C6 8/8 C7 a 24/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 24/24 b 24 | ms429 early 4/4 late 2/3 C6 7/8 C7 a 24/24 b 22
+syn_tau_g_i 10 tauN  75 gN0  4  ms215 early 0/0 late 0/0 C6 8/8 C7 a 24/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 24/24 b 24 | ms429 early 4/4 late 2/3 C6 7/8 C7 a 24/24 b 21
+syn_tau_g_i 10 tauN  75 gN0  8  ms215 early 0/0 late 0/0 C6 8/8 C7 a 24/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 24/24 b 24 | ms429 early 4/4 late 3/3 C6 8/8 C7 a 24/24 b 23
+syn_tau_g_i 10 tauN  75 gN0 16  ms215 early 0/0 late 0/0 C6 8/8 C7 a 20/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 24/24 b 24 | ms429 early 4/4 late 3/3 C6 8/8 C7 a 24/24 b 23
+syn_tau_g_i 10 tauN 100 gN0  4  ms215 early 0/0 late 0/0 C6 8/8 C7 a 24/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 24/24 b 24 | ms429 early 4/4 late 3/3 C6 8/8 C7 a 24/24 b 22
+syn_tau_g_i 10 tauN 100 gN0  8  ms215 early 0/0 late 0/0 C6 8/8 C7 a 16/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 24/24 b 24 | ms429 early 4/4 late 3/3 C6 8/8 C7 a 24/24 b 23
+syn_tau_g_i 10 tauN 100 gN0 16  ms215 early 0/0 late 0/0 C6 8/8 C7 a 0/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 9/24 b 24 | ms429 early 4/4 late 3/3 C6 8/8 C7 a 24/24 b 24
+syn_tau_g_i 10 tauN 150 gN0  4  ms215 early 0/0 late 0/0 C6 8/8 C7 a 9/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 24/24 b 24 | ms429 early 4/4 late 3/3 C6 8/8 C7 a 24/24 b 24
+syn_tau_g_i 10 tauN 150 gN0  8  ms215 early 0/0 late 0/0 C6 8/8 C7 a 0/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 0/24 b 24 | ms429 early 4/4 late 3/3 C6 8/8 C7 a 18/24 b 24
+syn_tau_g_i 10 tauN 150 gN0 16  ms215 early 0/0 late 0/0 C6 8/8 C7 a 0/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 0/24 b 24 | ms429 early 4/4 late 3/3 C6 8/8 C7 a 0/24 b 24
+syn_tau_g_i 12 BASELINE         ms215 early 0/0 late 0/0 C6 7/8 C7 a 18/18 b 18 | ms304 early 0/3 late 0/1 C6 3/8 C7 a 14/14 b 13 | ms429 early 0/4 late 0/3 C6 0/8 C7 a 8/8 b 4
+syn_tau_g_i 12 tauN  50 gN0  4  ms215 early 0/0 late 0/0 C6 8/8 C7 a 24/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 24/24 b 24 | ms429 early 4/4 late 0/3 C6 5/8 C7 a 24/24 b 18
+syn_tau_g_i 12 tauN  50 gN0  8  ms215 early 0/0 late 0/0 C6 8/8 C7 a 24/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 24/24 b 24 | ms429 early 4/4 late 1/3 C6 6/8 C7 a 24/24 b 18
+syn_tau_g_i 12 tauN  50 gN0 16  ms215 early 0/0 late 0/0 C6 8/8 C7 a 24/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 24/24 b 24 | ms429 early 4/4 late 1/3 C6 6/8 C7 a 24/24 b 20
+syn_tau_g_i 12 tauN  75 gN0  4  ms215 early 0/0 late 0/0 C6 8/8 C7 a 24/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 24/24 b 24 | ms429 early 4/4 late 1/3 C6 6/8 C7 a 24/24 b 20
+syn_tau_g_i 12 tauN  75 gN0  8  ms215 early 0/0 late 0/0 C6 8/8 C7 a 24/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 24/24 b 24 | ms429 early 4/4 late 2/3 C6 7/8 C7 a 24/24 b 22
+syn_tau_g_i 12 tauN  75 gN0 16  ms215 early 0/0 late 0/0 C6 8/8 C7 a 23/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 24/24 b 24 | ms429 early 4/4 late 2/3 C6 7/8 C7 a 24/24 b 23
+syn_tau_g_i 12 tauN 100 gN0  4  ms215 early 0/0 late 0/0 C6 8/8 C7 a 24/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 24/24 b 24 | ms429 early 4/4 late 2/3 C6 7/8 C7 a 24/24 b 22
+syn_tau_g_i 12 tauN 100 gN0  8  ms215 early 0/0 late 0/0 C6 8/8 C7 a 22/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 24/24 b 24 | ms429 early 4/4 late 3/3 C6 8/8 C7 a 24/24 b 23
+syn_tau_g_i 12 tauN 100 gN0 16  ms215 early 0/0 late 0/0 C6 8/8 C7 a 1/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 17/24 b 24 | ms429 early 4/4 late 3/3 C6 8/8 C7 a 24/24 b 23
+syn_tau_g_i 12 tauN 150 gN0  4  ms215 early 0/0 late 0/0 C6 8/8 C7 a 17/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 24/24 b 24 | ms429 early 4/4 late 3/3 C6 8/8 C7 a 24/24 b 23
+syn_tau_g_i 12 tauN 150 gN0  8  ms215 early 0/0 late 0/0 C6 8/8 C7 a 0/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 6/24 b 24 | ms429 early 4/4 late 3/3 C6 8/8 C7 a 24/24 b 24
+syn_tau_g_i 12 tauN 150 gN0 16  ms215 early 0/0 late 0/0 C6 8/8 C7 a 0/24 b 24 | ms304 early 3/3 late 1/1 C6 8/8 C7 a 0/24 b 24 | ms429 early 4/4 late 3/3 C6 8/8 C7 a 0/24 b 24

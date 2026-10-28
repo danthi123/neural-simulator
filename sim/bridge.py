@@ -406,7 +406,76 @@ _SLOW_CONDUCTANCE_FEATURE_FLAGS = {
     'cp_conductance_g_graded_plateau': 'enable_graded_dendritic_plateau',
     'cp_conductance_g_graded_plateau_rise': 'enable_graded_dendritic_plateau',
     'cp_conductance_g_apical_gaba': 'enable_apical_gaba_routing',
+    'cp_apical_nmda_s': 'enable_apical_nmda',
 }
+
+
+# APICAL NMDA CONDUCTANCE helpers (cs-race f1j section E, 2026-10-28; cfg.enable_apical_nmda, DEFAULT OFF). Pure
+# functions of the config and the state arrays, used by the BDSP apical update in _run_one_simulation_step and by the
+# runners that READ the conductance back (they never write it), so a recorded g_N is the engine's g_N exactly.
+def apical_nmda_config_problems(cfg):
+    """[] when cfg.enable_apical_nmda is off; else every reason the flag cannot run (E2 FAIL LOUDLY list)."""
+    if not getattr(cfg, "enable_apical_nmda", False):
+        return []
+    probs = []
+    if not getattr(cfg, "enable_bdsp", False):
+        probs.append("cfg.enable_apical_nmda needs cfg.enable_bdsp (the BDSP apical update is the only place the "
+                     "term is applied)")
+    if getattr(cfg, "enable_two_compartment_dap", False):
+        probs.append("cfg.enable_apical_nmda is not defined with cfg.enable_two_compartment_dap (a second writer of "
+                     "cp_v_apical)")
+    if getattr(cfg, "enable_bdsp_microcircuit", False):
+        probs.append("cfg.enable_apical_nmda is not defined with cfg.enable_bdsp_microcircuit (the gating would read "
+                     "the error-subtracted drive)")
+    for name, ok_text, ok in (
+            ("apical_nmda_g0", ">= 0", lambda x: x >= 0.0),
+            ("apical_nmda_tau_ms", "> 0", lambda x: x > 0.0),
+            ("apical_nmda_rise_per_ms", "> 0 (s_full would be 0)", lambda x: x > 0.0),
+            ("apical_nmda_drive_ref", "> 0", lambda x: x > 0.0),
+            ("nmda_mg_concentration", ">= 0", lambda x: x >= 0.0)):
+        try:
+            val = float(getattr(cfg, name))
+        except (AttributeError, TypeError, ValueError):
+            probs.append("cfg.%s is missing or not a number" % name)
+            continue
+        if not math.isfinite(val) or not ok(val):
+            probs.append("cfg.%s must be finite and %s with cfg.enable_apical_nmda (got %r)" % (name, ok_text, val))
+    return probs
+
+
+def apical_nmda_s_full(cfg):
+    """The gating's discrete steady state under sustained full input (u = 1): r / (1 - dN + dN r), r = 1 -
+    exp(-rise dt), dN = exp(-dt / tauN). A constant of the config; g_N = g0 * s / s_full."""
+    dt = float(cfg.dt_ms)
+    r = 1.0 - math.exp(-float(cfg.apical_nmda_rise_per_ms) * dt)
+    d_n = math.exp(-dt / float(cfg.apical_nmda_tau_ms))
+    return r / (1.0 - d_n + d_n * r)
+
+
+def apical_nmda_gating_step(s, drive, cfg, xp=None):
+    """One step of the gating from this step's apical drive (E3): s <- s exp(-dt/tauN), then
+    s <- s + (1 - s)(1 - exp(-rise u dt)) with u = max(drive, 0) / drive_ref (no clip: the bounded rise stays in
+    [0, 1] at any u). A cell whose drive is 0 keeps s == 0.0 exactly."""
+    xp = cp if xp is None else xp
+    dt = float(cfg.dt_ms)
+    d_n = xp.float32(math.exp(-dt / float(cfg.apical_nmda_tau_ms)))
+    u = xp.maximum(drive, xp.float32(0.0)) / xp.float32(cfg.apical_nmda_drive_ref)
+    s = (s * d_n).astype(xp.float32)
+    rise = xp.float32(float(cfg.apical_nmda_rise_per_ms) * dt)
+    return (s + (xp.float32(1.0) - s) * (xp.float32(1.0) - xp.exp(-rise * u))).astype(xp.float32)
+
+
+def apical_nmda_conductance(s, cfg, xp=None):
+    """g_N = apical_nmda_g0 * s / s_full (apical-leak units); exactly 0.0 wherever s == 0.0 or g0 == 0.0."""
+    xp = cp if xp is None else xp
+    return (s * xp.float32(float(cfg.apical_nmda_g0) / apical_nmda_s_full(cfg))).astype(xp.float32)
+
+
+def apical_nmda_mg_block(v, mg_conc, xp=None):
+    """Jahr & Stevens 1990 Mg2+ block, the engine's expression in kernels.fused_nmda_update_and_current character for
+    character (3.57 mM, 0.062/mV; mg_conc = cfg.nmda_mg_concentration). Not the modellers' 0.08 steepening."""
+    xp = cp if xp is None else xp
+    return 1.0 / (1.0 + (mg_conc / 3.57) * xp.exp(-0.062 * v))
 
 # WHOLE-BRAIN STABLE-INTEGRATION SWITCH (2026-10-27, research/stable-integration), DEFAULT OFF. The membrane census
 # (research/findings/2026-10-26-membrane-census-dev7.md) found out-of-range membranes in 12-13 production organs per dev
@@ -572,6 +641,9 @@ class SimulationBridge:
         # every step block that reads them is unreached by default (byte-identical).
         self.cp_conductance_g_apical_gaba = None     # per-neuron apical GABA_A conductance (apical-leak units)
         self.cp_apical_gaba_synapse_mask = None      # bool per-synapse: True for gaba_a_apical-routed synapses
+        # APICAL NMDA gating state (cs-race f1j section E, 2026-10-28; cfg.enable_apical_nmda). None unless the flag is
+        # on (allocated in _initialize_simulation_data), so the step block that reads it is unreached by default.
+        self.cp_apical_nmda_s = None                 # per-neuron NMDA gating fraction in [0, 1] on the BDSP apical
         # TD value-DERIVATIVE channel (B-2, 2026-06-10). A SINGLE leaky-EMA copy of the GABA_B
         # value conductance above (decays slower, td_slow_tau_ms): the band-passed difference
         # (g_gabab - g_gabab_slow) is the value derivative = the TD bootstrap, computed at the SNc
@@ -2074,6 +2146,12 @@ class SimulationBridge:
                             f"Region {region.name!r} {field_name} must be positive"
                         )
 
+        # APICAL NMDA (cs-race f1j E2): FAIL LOUDLY at config time, before the try below (which logs and swallows).
+        # No-op unless cfg.enable_apical_nmda.
+        _ap_nmda_probs = apical_nmda_config_problems(self.core_config)
+        if _ap_nmda_probs:
+            raise ValueError("apical NMDA (cs-race f1j E2): " + "; ".join(_ap_nmda_probs))
+
         try:
             cfg = self.core_config
 
@@ -2543,6 +2621,11 @@ class SimulationBridge:
             if getattr(cfg, "enable_graded_dendritic_plateau", False) and n > 0:
                 self.cp_conductance_g_graded_plateau = cp.zeros(n, dtype=cp.float32)
                 self.cp_conductance_g_graded_plateau_rise = cp.zeros(n, dtype=cp.float32)
+
+            # APICAL NMDA gating state (cs-race f1j E2): one float32 per neuron, allocated only with the flag (validated
+            # above); a re-initialization with the flag off drops a stale array. Default None => unreached.
+            self.cp_apical_nmda_s = (cp.zeros(n, dtype=cp.float32)
+                                     if getattr(cfg, "enable_apical_nmda", False) else None)
 
             self.cp_refractory_timers = cp.zeros(n, dtype=cp.int32)
             self.cp_neuron_activity_ema = cp.zeros(n, dtype=cp.float32)
@@ -4768,6 +4851,12 @@ class SimulationBridge:
         # cupyx, breaking the NumPy backend.
 
         n = self.core_config.num_neurons
+
+        # APICAL NMDA (cs-race f1j E2): FAIL LOUDLY at wiring time too (a config changed after initialization), before
+        # any state is touched. No-op unless cfg.enable_apical_nmda.
+        _ap_nmda_probs = apical_nmda_config_problems(self.core_config)
+        if _ap_nmda_probs:
+            raise ValueError("inject_explicit_wiring: apical NMDA (cs-race f1j E2): " + "; ".join(_ap_nmda_probs))
 
         # Concatenate all populations into flat arrays, tracking the
         # per-population plastic flag and plasticity_gate name so we can
@@ -8615,6 +8704,9 @@ class SimulationBridge:
                 or getattr(cfg, "enable_step_cudagraph", False)
                 or getattr(cfg, "enable_step_megakernel_v2", False)):
             return False
+        # The fused path does not implement the apical NMDA gating or term (cs-race f1j E2).
+        if getattr(cfg, "enable_apical_nmda", False) or getattr(self, "cp_apical_nmda_s", None) is not None:
+            return False
         if not is_gpu_backend():
             return False
         if cfg.neuron_model_type != NeuronModel.IZHIKEVICH.name:
@@ -11105,6 +11197,18 @@ class SimulationBridge:
             # cp_connections.data is byte-identical to today (mirrors the STDP/HTM blocks). The apical sets the LTP/LTD
             # SIGN without changing E (the multiplexing invariant); at rest the apical is silent => P==Pbar => dw==0
             # (the P0 no-spurious-learning moat).
+            # APICAL NMDA step-time guards (cs-race f1j E2). GUARDED NO-OP by default: the array is None and the flag is
+            # off, so neither branch is entered. A gating state with the flag or enable_bdsp turned off would freeze a
+            # conductance nobody applies; a config made invalid after the build is refused here as at build time.
+            if getattr(self, "cp_apical_nmda_s", None) is not None and (
+                    not getattr(cfg, "enable_apical_nmda", False) or not getattr(cfg, "enable_bdsp", False)):
+                raise RuntimeError(
+                    "apical NMDA gating state cp_apical_nmda_s is present but cfg.enable_apical_nmda / enable_bdsp is "
+                    "off (config changed after allocation, or a checkpoint carrying it was loaded with the flag off)")
+            if getattr(cfg, "enable_apical_nmda", False):
+                _ap_nmda_probs = apical_nmda_config_problems(cfg)
+                if _ap_nmda_probs:
+                    raise ValueError("apical NMDA (cs-race f1j E2): " + "; ".join(_ap_nmda_probs))
             if getattr(cfg, "enable_bdsp", False) and self.cp_connections.nnz > 0:
                 n_bd = n_neurons
                 # Lazily allocate the per-neuron burst-state arrays (only reached when enable_bdsp is True).
@@ -11170,6 +11274,12 @@ class SimulationBridge:
                         "apical GABA_A routing is active but cp_bdsp_apical_drive is None: the apical compartment is "
                         "not integrated this step, so the routed conductance would be silently dropped (set a zero "
                         "drive to integrate it)")
+                _ap_nmda_on = bool(getattr(cfg, "enable_apical_nmda", False))
+                if _ap_nmda_on and self.cp_bdsp_apical_drive is None:
+                    raise RuntimeError(
+                        "apical NMDA is on but cp_bdsp_apical_drive is None: the apical compartment is not integrated "
+                        "this step, so the NMDA gating input and its term would be silently dropped (set a zero drive "
+                        "to integrate it)")
                 if self.cp_bdsp_apical_drive is not None:
                     # leaky integration of the top-down drive toward (E_rest + drive); tau = apical_tau_ms
                     _atau = cp.float32(max(getattr(cfg, "apical_tau_ms", 15.0), 1e-6))
@@ -11216,9 +11326,32 @@ class SimulationBridge:
                         _ei_ap = cp.float32(cfg.syn_reversal_potential_i)
                         _ex_ap = cp.clip(-(self.cp_conductance_g_apical_gaba * _adt) / _atau, -80.0, 0.0)
                         _ap_gaba_step = ((_ei_ap - self.cp_v_apical) * (1.0 - cp.exp(_ex_ap))).astype(cp.float32)
+                    # APICAL NMDA term (cs-race f1j E3/E4, 2026-10-28). E3: the per-cell gating cp_apical_nmda_s rises
+                    # from THIS step's apical drive (the runner's write; no other input) and decays with
+                    # apical_nmda_tau_ms (apical_nmda_gating_step); g_N = g0 * s / s_full (apical_nmda_conductance).
+                    # E4: Mg-blocked by the engine's Jahr & Stevens expression at nmda_mg_concentration
+                    # (apical_nmda_mg_block == kernels.fused_nmda_update_and_current's block) and applied toward E_e
+                    # (syn_reversal_potential_e, 0 mV) as the same BOUNDED per-term exponential-Euler step as the
+                    # apical GABA term: (E_e - v0)(1 - exp(-g_N*B*dt/tau)), computed from v0 before the update, so it
+                    # reaches E_e at most and never passes it at any g_N; g_N == 0 (APV, or an undriven cell) gives
+                    # exactly 0.0. Per-term bound only: an aggregate overshoot with the explicit terms, the KIR term or
+                    # the apical GABA step is not excluded. GUARDED NO-OP: flag off => this branch is unreached.
+                    _ap_nmda_step = None
+                    if _ap_nmda_on:
+                        if self.cp_apical_nmda_s is None:
+                            self.cp_apical_nmda_s = cp.zeros(n_bd, dtype=cp.float32)
+                        self.cp_apical_nmda_s = apical_nmda_gating_step(
+                            self.cp_apical_nmda_s, self.cp_bdsp_apical_drive, cfg, cp)
+                        _g_nmda_ap = apical_nmda_conductance(self.cp_apical_nmda_s, cfg, cp)
+                        _mg_ap = apical_nmda_mg_block(self.cp_v_apical, float(cfg.nmda_mg_concentration), cp)
+                        _ee_nmda = cp.float32(cfg.syn_reversal_potential_e)
+                        _ex_nmda = cp.clip(-((_g_nmda_ap * _mg_ap) * _adt) / _atau, -80.0, 0.0)
+                        _ap_nmda_step = ((_ee_nmda - self.cp_v_apical) * (1.0 - cp.exp(_ex_nmda))).astype(cp.float32)
                     self.cp_v_apical = self.cp_v_apical + (_adt / _atau) * _dvb
                     if _ap_gaba_step is not None:
                         self.cp_v_apical = (self.cp_v_apical + _ap_gaba_step).astype(cp.float32)
+                    if _ap_nmda_step is not None:
+                        self.cp_v_apical = (self.cp_v_apical + _ap_nmda_step).astype(cp.float32)
                 if _bdsp_raw_apical is not None:
                     self.cp_bdsp_apical_drive = _bdsp_raw_apical   # restore the runner-supplied raw drive (no accumulation)
                 _beta = cp.float32(getattr(cfg, "bdsp_beta", 1.0))

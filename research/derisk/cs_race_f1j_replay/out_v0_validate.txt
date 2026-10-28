@@ -1,0 +1,8 @@
+vectorized baseline run 0.1s
+max|vec - recorded| c1 0.0035 mV, c3 X 0.0035, Y 0.0031
+max|vec - ode.replay| c1 0.00e+00
+C6 vs recorded status mismatches: 0
+early 45 late 6 pass 21
+c7 vectorized vs cf.c7 mismatches: 0
+BASELINE C6 21/72 early  0/45 late 0/6 kept 21/21 | C7 grid def  82 (a)  82 (b)  62 a&b  62 | corner (a) 23/24 (def 23, b 23) || SA.125 C6 ms215:8/8 ms304:4/8 ms429:1/8 C7a/def ms215:23/23 b23 ms304:19/19 b18 ms429:13/13 b6
+BASELINE syn_tau_g_i 12 C6 13/72 early  0/45 late 0/6 kept 13/21 | C7 grid def  51 (a)  51 (b)  44 a&b  44 | corner (a) 18/24 (def 18, b 18) || SA.125 C6 ms215:7/8 ms304:3/8 ms429:0/8 C7a/def ms215:18/18 b18 ms304:14/14 b13 ms429:8/8 b4
