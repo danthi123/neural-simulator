@@ -387,10 +387,12 @@ def c7_pair(tc, lc, older, newer, v_hold=V_HOLD):
     out["c"] = bool(spikes_cell and _gap_ok(gpk, gms))
     out["c_alt_pooled"] = bool(spikes_pool and _gap_ok(gpk, gms))
     out["c_alt_runpeak"] = bool(spikes_cell and _gap_ok(gpk_all, gms_all))
-    # DIAGNOSTICS, never a bar: why (c) failed, and whether the g_ap RISE (its first ms > 0 after Y_on) preceded the
-    # termination (the self-skeptic record's wording; the bar text says PEAK).
+    # DIAGNOSTICS, never a bar: why (c) failed, and whether the g_ap RISE preceded the termination (the self-skeptic
+    # record's wording; the bar text says PEAK). The rise is the first ms after Y_on at which g_ap INCREASES (a routed
+    # SOM spike arriving); "first ms > 0" would read the X volley's decayed residue (1e-6 at 300 ms) as a rise.
     g = o["g_ap_max"]
-    onset = next((t for t in range(Y_ON, min(len(g), C3_WIN[1])) if g[t] is not None and g[t] > 0.0), None)
+    onset = next((t for t in range(Y_ON, min(len(g), C3_WIN[1]))
+                  if g[t] is not None and g[t - 1] is not None and g[t] > g[t - 1] + 1e-6), None)
     out["g_ap_onset_ms"] = onset
     out["g_ap_at_term_minus_1"] = (g[term - 1] if term is not None and term > Y_ON else None)
     out["diag_onset_precedes_term"] = bool(spikes_cell and onset is not None and (term is None or onset < term))
@@ -818,7 +820,7 @@ def render(res):
     for tag, c in res["cells"].items():
         s = c["c7_sub"]
         if s["c_fail_reasons"] or s["undefined_pairs"]:
-            L.append("- %s: C7(c) defined fails by reason %s; diagnostic (not a bar) g_ap onset before termination "
+            L.append("- %s: C7(c) defined fails by reason %s; diagnostic (not a bar) first g_ap increase after Y_on before termination "
                      "%d/%d defined; UNDEFINED pairs (seed, older, newer, older min v_apical in [150, 300)) %s" % (
                          tag, json.dumps(s["c_fail_reasons"]), s["diag_onset_precedes_term"], s["defined"],
                          json.dumps(s["undefined_pairs"])))

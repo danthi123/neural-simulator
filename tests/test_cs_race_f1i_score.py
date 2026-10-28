@@ -160,6 +160,15 @@ def test_clean_record_passes_every_item():
         assert p["status"] == S.PASS
         assert p["termination_ms"] == 360 and p["latency_ms"] == 60
         assert p["g_ap_peak_ms"] == 345 and p["g_ap_onset_ms"] == 330
+
+
+def test_rise_diagnostic_ignores_decayed_residue():
+    ps = make_ps()
+    g = ps["c3"][0]["som"]["per_word_ms"]["vole"]["g_ap_max"]
+    for t in range(290, 330):
+        g[t] = 1e-6          # the X volley's residue, flat (no new spike)
+    p = S.seed_items(ps, make_lesion())["c7_pairs"][0]
+    assert p["g_ap_onset_ms"] == 330
     assert S.consistency(make_ps()) == []
 
 
