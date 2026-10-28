@@ -1,0 +1,32 @@
+tools/agent_merge_policy.py --staged   (RULING lbf-replace-1028: posting exact output)
+⛔ agent commit on main touches 30 reserved path(s); that change is Claude's:
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/category-inherit/intact_a_t_robin_eat_t_trout_eat_t_robin_fly_t_trout_swim_t_sparrow_eat_t_salmon_eat_t_sparrow_fly_t_salmon_swim_t_finch_eat_t_finch_fly_t_bat_eat_t_bat_fly_t_canary_fly_p_canary_eat_c_canary_swim_c_bat_swim_s43.json.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/category-inherit/intact_b_t_robin_eat_t_trout_eat_t_robin_fly_t_trout_swim_t_sparrow_eat_t_salmon_eat_t_sparrow_fly_t_salmon_swim_t_finch_eat_t_finch_fly_t_bat_eat_t_bat_fly_t_canary_fly_p_canary_eat_c_canary_swim_c_bat_swim_s43.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/category-inherit/intact_b_t_robin_eat_t_trout_eat_t_robin_fly_t_trout_swim_t_sparrow_eat_t_salmon_eat_t_sparrow_fly_t_salmon_swim_t_finch_eat_t_finch_fly_t_bat_eat_t_bat_fly_t_canary_fly_p_canary_eat_c_canary_swim_c_bat_swim_s43.json.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/category-inherit/lb.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/category-inherit/lb.json.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/category-inherit/lesion_category_inherit_s43.json.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/category-inherit/lesion_category_inherit_s43.json.rep0.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/confidence-forthcomingness/intact_a_rich_well_s43.json.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/confidence-forthcomingness/intact_b_rich_well_s43.json.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/confidence-forthcomingness/lb.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/confidence-forthcomingness/lb.json.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/confidence-forthcomingness/lesion_confidence_forthcomingness_s43.json.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/confidence-forthcomingness/lesion_confidence_forthcomingness_s43.json.rep0.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/d5-consolidate/intact_a_d5c_teach_d5c_recall1_d5c_tick_d5c_recall2_s43.json.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/d5-consolidate/intact_b_d5c_teach_d5c_recall1_d5c_tick_d5c_recall2_s43.json.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/d5-consolidate/lb.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/d5-consolidate/lb.json.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/d5-consolidate/lesion_d5_consolidate_s43.json.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/d5-consolidate/lesion_d5_consolidate_s43.json.rep0.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/episodic-memory/lb.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/episodic-memory/lb.json.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/episodic-memory/lesion_episodic_memory_s43.json.rep0.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/sleep-replay/intact_a_slp_teach1_slp_teach2_slp_teach3_slp_tick_slp_recall_s43.json.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/sleep-replay/intact_b_slp_teach1_slp_teach2_slp_teach3_slp_tick_slp_recall_s43.json.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/sleep-replay/lb.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/sleep-replay/lb.json.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/sleep-replay/lesion_sleep_replay_s43.json.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/sleep-replay/lesion_sleep_replay_s43.json.rep0.prov.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/value-driven-choice/lb.json: editing an existing results file would rewrite evidence
+   research/findings/raw/_load_bearing/_shards/b2d1018/s43/value-driven-choice/lb.json.prov.json: editing an existing results file would rewrite evidence
