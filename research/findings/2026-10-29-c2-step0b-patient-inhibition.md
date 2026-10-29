@@ -4,98 +4,114 @@ status: qualified
 lane: gap#4
 date: 2026-10-29
 ---
-# C2 step 0b/0c: local inhibition among the patient word pools (dev seed 7) -- feedback NO-GO, feedforward NO-GO on the flagged pools, relay variant partial
+# C2 step 0b/0c/0d: local inhibition among the patient word pools (dev seed 7) -- feedback and flagged-pool feedforward NO-GO; feedforward with an external-only divisive stage selects one correct pool in 9/9 blocks
 
-Status: DRAFT, dev seed 7 only (never a gate seed), research-only, default OFF. No GO is claimed; Claude rules.
-Artifacts: `research/findings/raw/_c2_step0b/s7_ff.json`, `research/findings/raw/_c2_step0b/s7_all_v2.json`, `research/findings/raw/_c2_step0b/s7_off.json`.
-Runner: `research/runners/c2_hops_step0.py` (`--smoke-0b OUT --patient-inhib {off,on,lesion,all,ff,ff_lesion}`), tests
-`tests/test_c2_step0b_patient_inhib.py`, shards `research/findings/raw/_c2_step0b/`. No `sim/` edit.
+Status: DRAFT, dev seed 7 only (never a gate seed), research-only. Nothing here is a GO; Claude rules (the 9/9 is one seed, one
+run, no six-seed ablation).
+Artifacts: `research/findings/raw/_c2_step0b/s7_off.json`, `research/findings/raw/_c2_step0b/s7_all_v2.json` (0b, with the
+conductance leak, superseded), `research/findings/raw/_c2_step0b/s7_all_v3.json` (0b, leak fixed),
+`research/findings/raw/_c2_step0b/s7_ff.json` (0c, leak), `research/findings/raw/_c2_step0b/s7_ff_v2.json` (0c, leak fixed),
+`research/findings/raw/_c2_step0b/s7_ffx.json` (0d).
+Runner: `research/runners/c2_hops_step0.py` (`--smoke-0b OUT --patient-inhib {off,on,lesion,all,ff,ff_lesion,ffx,ffx_lesion}`),
+tests `tests/test_c2_step0b_patient_inhib.py`, `tests/test_divnorm_external_only.py`. One `sim/` edit (0d), default OFF.
 
 ## Defect and lever count
 
 Step 0 read (c) (STOP S2_patient_pool): relaying each block's patient cleanup row through `onbridge_divnorm_drive` on the
 composer's score bridge lights 3-5 patient pools per block (seed 7, 9 blocks), though the decoded patient leads ~2.5x.
-Divisive normalization divides; nothing makes the pools compete. Levers tried against this one defect: **3** (stable cells,
-feedback E->I->E, feedforward FS inhibition), plus one variant of the third (a relay layer, below). The research gate
-applies at two unresolved levers; the third was taken on the record's named companion process.
+Divisive normalization divides; nothing makes the pools compete. Levers tried against this one defect: **4** -- stable
+integration (cells), feedback E->I->E (0b), feedforward FS inhibition (0c), and the external-only divisive stage that lets the
+feedforward inhibition act (0d). The 0c diagnosis, not a new mechanism, is what turned lever 3 into lever 4.
+
+## Instrument bug found during 0d (applies to 0b and 0c; fixed)
+
+`_reset_score_bridge` resets v/u/firing only. The inhibition arms reuse one bridge across the 9 blocks, so inhibitory
+conductance leaked from block to block (g_i of hundreds of nS carried over). `onbridge_inhib_drive` now zeroes every
+`cp_conductance_*` array and `cp_prev_firing_states` per query. The 0b and 0c shards were re-run after the fix (`_v3`, `_v2`).
+The leak explains the zero-pool blocks and part of the "inverted gain" in the first 0b table (below); the 0b/0c conclusions
+survive the fix.
 
 ## 0b: feedback inhibition (E->I->E), NO-GO
 
-One shared FS population `pinh` (30 cells, IZH2007_FS preset re-applied after the global heterogeneity overwrote it with
-RS-centred jitter), word pools -> `pinh` (60 pA), `pinh` -> word pools (inhibitory by `exc_fraction=0`), word-pool
-parameters copied from the composer's own score bridge. Lesion arm = same population, I->E zeroed. Blocks with exactly one
-pool firing that equals the decoded patient: off 0/9, on 0/9 (4 multi, 4 zero, 1 wrong), lesion 0/9.
-
-| block | decoded | off | on (I->E 320) | lesion |
-|---|---|---|---|---|
-| 0 | spikes | 5 | 5 | 5 |
-| 1 | words | 3 | 0 | 3 |
-| 2 | memory | 5 | 144 | 5 |
-| 3 | cat | 4 | 0 | 4 |
-| 4 | fish | 3 | 0 | 3 |
-| 5 | frog | 4 | 6 | 4 |
-| 6 | gnat | 3 | 1 (wrong) | 3 |
-| 7 | wren | 5 | 8 | 5 |
-| 8 | moth | 4 | 0 | 4 |
-
-Gain sweep (I->E 10/40/100/160): 0/9 correct at every gain; 10 = lesion; 40 and 100 add pools; 160 fires all 144 pools in two
-blocks. Inverted gain: more inhibition, more firing. Two reasons were measured: (i) late recruitment, the pooled FS cells
-first fire at step ~8 while the leading pool fires at step 3; (ii) Euler overshoot/rebound, inhibitory conductance 100-500 nS
-on ~100 pF cells. A third reason was found in 0c (below), and it is the main one.
+One shared FS population `pinh` (30 cells, FS preset re-applied after the global heterogeneity overwrote it with RS-centred
+jitter, FS cells started at rest), word pools -> `pinh` (60 pA), `pinh` -> word pools (inhibitory by `exc_fraction=0`).
+Lesion arm = same population, I->E zeroed. With the leak (first run, `_v2`): on 0/9 correct (4 multi, 4 zero, 1 wrong).
+Leak fixed (`_v3`): lesion 0/9 (9 multi); on 0/9 (I->E 320: 8 multi, 1 block fires 122 pools; I->E 40 and 100: identical to
+lesion). So at physiological-ish gains the feedback inhibition does nothing, at 320 nS-scale it explodes in one block.
+Reasons: late recruitment (pooled FS cells first fire at step ~8, the leading pool at step 3), and the divisive stage (below).
 
 ## 0c: feedforward inhibition (Swadlow, 2002; Mallet et al., 2005)
 
 Record: thalamocortical FS cells take the same input as the principal cells, pool it broadly, fire ~4.6 ms earlier at lower
 current (Swadlow, 2002, Cereb Cortex; Mallet et al., 2005, J Neurosci), and the synchronous volley leaves a brief excitability
-window in which only the strongest-driven cell fires. Our precedent: `2026-06-10-N9-spiking-fs-critic-inhibition-GO.md`
-(`place_fs` -> striosome feedforward inhibition).
+window in which only the strongest-driven cell fires. Our precedent: `2026-06-10-N9-spiking-fs-critic-inhibition-GO.md`.
 
-Build: the FS pool gets ff_gain x the summed patient-slice drive as external current (fixed per-bridge gain, default 3e-4,
-no normalization/argmax/per-query rescale), keeps the E->`pinh` feedback synapses and the `pinh` -> word synapses (I->E 40).
-All 0c arms are built with the stable-integration set (`enable_bounded_conductance_integration=True`,
-`izh_membrane_substeps=4`, `izh_substep_refractory_rule="model_reset"`) so they differ only in the FF inhibition:
-`stable_off` (population built, no FF drive, I->E 0), `ff`, `ff_lesion` (FF drive on, I->E 0). One sweep of three FF gains.
+Build: `pinh` gets ff_gain (3e-4) x the summed patient-slice drive as external current (fixed per-bridge gain, no
+normalization/argmax/per-query rescale), keeps E->`pinh` and `pinh` -> word synapses (I->E 40), on a stable-integration
+bridge (`enable_bounded_conductance_integration=True`, `izh_membrane_substeps=4`, `"model_reset"`) for all arms
+(`stable_off`, `ff`, `ff_lesion`).
 
-Results, seed 7, 9 blocks:
-- ENGAGEMENT and FS-first hold. `pinh` first spikes at step 0 (step 1 at ff_gain 1e-4) in all 9 blocks; the earliest word
-  pool first spikes at step 3-4 (`ff_pinh_first_in_all_blocks` True). 2700 inhibitory spikes per arm.
-- `ff` is not load-bearing on the flagged pools. Blocks with one correct pool: stable_off 0/9, ff 0/9, ff_lesion 0/9, and
-  every swept gain (1e-4, 1e-3, 3e-3) 0/9, all multi-pool. `ff` vs `ff_lesion` differ only by +1 pool in block 1
-  (fired-pool drop attributable to the inhibition: -0.026, i.e. null; <!--derived-->).
-- Physical validity: no overshoot in the stable arms, but max |v| 80 mV is the spike apex (vpeak) and max inhibitory
-  conductance is 695 nS at I->E 40 (87 nS in the relay arm at I->E 5), so the I->E gain is still unphysiological on 100 pF.
+Result (leak fixed, `_v2`): `pinh` fires first in 9/9 blocks (step 0 vs the earliest pool at step 3-4); one-correct-pool
+blocks `ff` 0/9, `ff_lesion` 0/9, `stable_off` 0/9, FF-gain sweep (1e-4, 1e-3, 3e-3 first run; 1e-3 re-run) 0/9: the
+inhibition is engaged and not load-bearing on the flagged pools (fired-pool drop attributable to it: -0.026
+<!--derived-->, i.e. null). Max inhibitory conductance 601 nS at I->E 40, max |v| 80 mV (the spike apex).
 
-### Why the flagged pools do not feel the inhibition (a substrate fact, measured)
+### Root cause (accepted in the c2 ruling): the divisive block divides the inhibition too
 
-`sim/bridge.py` divisive-norm block (around line 9915) divides `total_input_current_pA = synaptic + external` for every
-flagged neuron by `sigma + gain*mean(total input over the flagged set)`. Here that divisor is D = 3515 (sigma 1, gain 0.11,
-144 pools): the winner's post-division current is ~685 pA, the runner-up's ~270. An inhibitory synaptic current onto a flagged
-pool is divided by the same D, so it is ~1/3500 of its nominal size; making it matter needs conductances 3500x physical,
-which then overshoot (the 0b inverted gain; a negative pool mean can even flip the sign). Diagnostic only (a host-side
-divisor, NOT a deliverable): with the divnorm block disabled and the drive pre-divided by D, the same FF inhibition
-suppresses strongly (I->E 10: 1.05/0.40/0.20 vs 2.15/1.05/0.95 spikes per cell; FF gain 3e-4: all pools silent), so the
-FS volley itself is sound; the interaction with divnorm is what blocks it.
+`sim/bridge.py` divides `synaptic + external` current of every flagged neuron by `sigma + gain*mean(total input over the
+flagged set)`. Here D = 3515: winner ~685 pA, runner-up ~270 after division, and an inhibitory synaptic current is divided by
+the same D (~1/3500 of nominal). Diagnostic with a host divisor (not a deliverable) suppressed strongly, which is what 0d
+does on-substrate.
 
-### Relay variant (inhibition delivered after the divnorm stage), partial
+### Relay variant (inhibition after the divisive stage, runner-side), partial
 
-Runner-side, no `sim/` edit: each flagged word pool also projects (300 pA) onto an UNFLAGGED relay pool `r{w}`; `pinh`
-(same FF drive) inhibits the relay pools (I->E 5); the relay is read. Arms `ffr`, `ffr_lesion` (stable integration).
-- The decoded patient fires in the relay in all 9 blocks (ffr fired pools: 2,2,2,3,3,3,2,3,2 vs ffr_lesion 5,7,7,7,6,6,5,5,8;
-  mean fired pools drop 60.7% attributable to the inhibition). `ffr` != `ffr_lesion` in all blocks.
-- Still 0/9 blocks with exactly one pool: every block keeps the decoded patient plus 1-2 extras. Sandbox (synthetic top-6 row)
-  shows inhibition scales all relay rates together (rates 1.25/0.85/0.20 at I->E 5; 0.75/0.55/0.10 at 7), then everything
-  vanishes by 10-40: a rate-shifting subtraction with a cliff, not winner-take-all, under the any-spike readout.
+Unflagged relay pool `r{w}` per word (300 pA from the word pool), `pinh` (same FF drive) inhibits the relay (I->E 5); the
+relay is read. Leak fixed (`_v2`): `ffr` 7/9 blocks exactly one pool, 2 multi (blocks 0 and 6); `ffr_lesion` 0/9; mean fired
+pools drop 65.6% attributable to the inhibition <!--derived-->. Without the fix it was 0/9 (2-3 pools), so the leak had masked it.
+It adds a layer; 0d achieves the same without one.
 
-## STOP lines (registered in the runner)
+## 0d: feedforward inhibition on an external-only divisive stage
 
-- S0B/S0C lesion == on: not fired for `on`, `ff`, `ffr` (they differ from their lesions), but the `ff` difference is null.
-- S0B/S0C/S0C_relay on_not_one_correct_pool: FIRED for `on`, `ff` (all swept gains) and `ffr` (0/9 exactly-one-correct).
-- Zero-pool block: `on` 4 blocks (over-suppression, 0b); none in `ff`/`ffr`.
+`sim/` edit, additive, default OFF: `CoreSimConfig.input_divisive_norm_external_only` (False). When True the divisive stage
+divides only `cp_external_input_current` (the divisor's mean is over the flagged set's external drive) and synaptic current
+is added undivided (numpy path; no kernel/cupy path uses the mask, the fused path is already disabled when the mask exists).
+`tests/test_divnorm_external_only.py`: flag default False; flag-off run (divnorm ON, with inhibitory synaptic input engaged,
+g_i up to 77 nS) hashes to the golden computed from the PRE-edit `sim/` (a `git archive HEAD sim` copy run before the edit);
+flag on changes the trajectory and an undivided inhibitory conductance hyperpolarizes the flagged pools.
+
+Arms (all stable integration, flag ON, word pools read directly): `ffx_off` (population built, no FF drive, I->E 0), `ffx`
+(FF gain 3e-4, I->E 2.0 nS-scale weight), `ffx_lesion` (FF drive on, I->E 0), plus an I->E sweep 1/2/3/5.
+
+| arm | one correct pool (of 9) | multi | zero | max g_inh (nS) | pinh first in 9/9 |
+|---|---|---|---|---|---|
+| ffx_off | 0 | 9 | 0 | 0 | no (step 7-9, feedback only) |
+| ffx_lesion | 0 | 9 | 0 | 0 | yes |
+| ffx (I->E 2) | 9 | 0 | 0 | 30 | yes |
+| ffx@1 | 8 | 1 (block 6: worm, gnat) | 0 | 15 | yes |
+| ffx@3 | 9 | 0 | 0 | 45 | yes |
+| ffx@5 | 7 | 0 | 2 (blocks 0, 2) | 75 (over 50) | yes |
+
+At every one-correct block the fired pool is the decoded patient. Max |v| 79-80 mV (spike apex). The earliest pool first
+spike is at step 3-6 (step 7-10 for the survivor at I->E 5) against `pinh` at step 0. Fired-pool drop attributable to the
+inhibition 0.757 <!--derived-->. Lesion != on, on != off; engagement 300 inhibitory spikes per block.
+
+### Cliff / margin (sandbox, synthetic block-0 shape, I->E 2, FF 3e-4; seed 7 only)
+
+Selection is graded, then all-or-none. Two driven pools, winner fixed: the runner-up is silenced up to a runner/winner drive
+ratio of 0.30 and fires from 0.39 (the block-0 ratio is 0.39: 2.5x), reaching parity at 0.9. The winner is lost (zero pools)
+at I->E >= 8 on the block-0 shape (0.2 spikes at 5, 0 at 8), and on the real 9 blocks at I->E 5 two blocks lose the winner
+(g_inh 75 nS, also outside the physiological band). So the working window is I->E 1-3 (15-45 nS) with a runner-up/winner
+drive ratio below ~0.4; below I->E 1 the lesion regime returns.
+
+## STOP lines
+
+- S0D lesion == on: not fired. S0D not-exactly-one-correct-pool: not fired for `ffx` (I->E 2) and `ffx@3`; fires for `ffx@1`
+  (one block with two pools) and `ffx@5` (two zero-pool blocks, g_inh over 50 nS).
+- S0B (feedback) not exactly one correct: fires. S0C (flagged-pool FF): fires.
 
 ## What this retires and what is open
 
-Retires: feedback-only E->I->E onto flagged word pools; FF inhibition onto flagged word pools while the divnorm block
-divides synaptic input. Open (for Claude's ruling, none built): (a) a sim-level option that applies the divisive stage to the
-excitatory/external drive only and leaves synaptic inhibition undivided (additive-default-OFF flag with a byte-identity
-test), which is the diagnostic's configuration done on-substrate; (b) read the relay with a rate-sensitive (not any-spike)
-criterion, e.g. a second FS stage or a thresholded relay, so the 2-3 pools that survive are separated by rate.
+Retires: feedback-only E->I->E onto flagged pools; FF onto flagged pools while the divisive block divides synaptic input.
+Open for ruling: six-seed/dev-seed replication (1-6) of 0d and its sensitivity to the divisive gain and FF gain; the 0.4 drive
+ratio bound against the real runner-up distribution; whether the external-only flag is wired into the composer's real score
+bridge (the 0d bridge is a runner-built twin, word-pool parameters copied from the composer's).
