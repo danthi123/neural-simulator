@@ -371,10 +371,13 @@ def read_b(buf, rows):
 # is untouched unless `C2S0_PATIENT_INHIB` is set. NOT a cross-channel divnorm pool (the 2026-09-03 NO-GO): E->I->E feedback
 # restricted to the V word pools of this one bridge. No host argmax / threshold / top-k: only spiking synapses compete.
 PATIENT_INHIB_ENV = "C2S0_PATIENT_INHIB"
-PATIENT_INHIB_MODES = ("off", "on", "lesion", "all", "ff", "ff_lesion")
+PATIENT_INHIB_MODES = ("off", "on", "lesion", "all", "ff", "ff_lesion", "ffx", "ffx_lesion")
+# step 0d: `ffx` = arms ffx_off + ffx (+ I->E sweep arms ffx@g) + ffx_lesion on a score bridge built with
+# cfg.input_divisive_norm_external_only=True (the divisive stage divides only the external drive; sim/ flag, default OFF);
+# `ffx_lesion` = the lesion arm alone. The WORD pools are read directly.
 # step 0c (feedforward inhibition, c2 ruling after the 0b NO-GO): `ff` = arms stable_off + ff + ff_lesion (all on the
 # stable-integration bridge), `ff_lesion` = the lesion arm alone. See the finding 2026-10-29-c2-step0b-patient-inhibition.md.
-INHIB_DEFAULTS = {"ff_gain": 3e-4, "ff_w_i2e": 40.0, "w_relay": 300.0, "relay_w_i2e": 5.0, "n_inh": 30, "w_e2i": 60.0, "w_i2e": 320.0, "izh_type": "IZH2007_FS_CORTICAL_INTERNEURON", "settle": 20}
+INHIB_DEFAULTS = {"ff_gain": 3e-4, "ff_w_i2e": 40.0, "ffx_w_i2e": 2.0, "w_relay": 300.0, "relay_w_i2e": 5.0, "n_inh": 30, "w_e2i": 60.0, "w_i2e": 320.0, "izh_type": "IZH2007_FS_CORTICAL_INTERNEURON", "settle": 20}
 STEP0B_STOP_LINES = (
     "S0B_lesion_equals_on: STOP if the lesion arm (same population, I->E zeroed) reads identically to the `on` arm "
     "(per block, same fired_pools): the inhibition is not load-bearing.",
@@ -403,6 +406,11 @@ def patient_inhib_knobs():
     e = os.environ.get("C2S0_INHIB_FF_W_I2E")
     if e:
         k["ff_w_i2e"] = float(e)
+    e = os.environ.get("C2S0_INHIB_FFX_W_I2E")
+    if e:
+        k["ffx_w_i2e"] = float(e)
+    sw = os.environ.get("C2S0_INHIB_FFX_SWEEP")
+    k["sweep_ffx_w_i2e"] = [float(x) for x in sw.split(",")] if sw else []
     sw = os.environ.get("C2S0_INHIB_FF_SWEEP")
     k["sweep_ff_gain"] = [float(x) for x in sw.split(",")] if sw else []
     sw = os.environ.get("C2S0_INHIB_SWEEP")                  # step 0b's ONE allowed gain sweep: extra `on@<w_i2e>` arms
@@ -411,7 +419,7 @@ def patient_inhib_knobs():
 
 
 def build_inhib_score_bridge(seed, V, sigma, gain, n_word=20, n_inh=30, w_e2i=60.0, w_i2e=320.0,
-                             izh_type="IZH2007_FS_CORTICAL_INTERNEURON", ref_sb=None, stable=False, w_relay=None):
+                             izh_type="IZH2007_FS_CORTICAL_INTERNEURON", ref_sb=None, stable=False, w_relay=None, external_only=False):
     """`build_divnorm_score_bridge(seed, V, n_word, True, sigma, gain)` plus ONE shared FS inhibitory region `pinh`:
     w{w} -> pinh (excitatory, w_e2i) and pinh -> w{w} (inhibitory by the presynaptic region's exc_fraction=0, w_i2e).
     w_i2e=0 builds the same population and the same synapses with zero weight (the lesion arm)."""
@@ -432,6 +440,8 @@ def build_inhib_score_bridge(seed, V, sigma, gain, n_word=20, n_inh=30, w_e2i=60
     cfg.enable_input_divisive_norm = True
     cfg.input_divisive_sigma = float(sigma)
     cfg.input_divisive_gain = float(gain)
+    if external_only:   # sim/ flag (default OFF): divisive stage divides only the external drive, synaptic current undivided
+        cfg.input_divisive_norm_external_only = True
     if stable:      # the SIM_STABLE_INTEGRATION set (SimulationBridge._apply_stable_integration), set explicitly
         cfg.enable_bounded_conductance_integration = True
         cfg.izh_membrane_substeps = 4
@@ -551,6 +561,13 @@ def _inhib_arm_specs(mode, knobs):
             spec["ff@%g" % g] = dict(w_i2e=knobs["ff_w_i2e"], ff_gain=g, stable=True)
     if mode in ("ff", "ff_lesion"):
         spec["ff_lesion"] = dict(w_i2e=0.0, ff_gain=knobs["ff_gain"], stable=True)
+    if mode == "ffx":
+        spec["ffx_off"] = dict(w_i2e=0.0, ff_gain=0.0, stable=True, ext=True)
+        spec["ffx"] = dict(w_i2e=knobs["ffx_w_i2e"], ff_gain=knobs["ff_gain"], stable=True, ext=True)
+        for g in knobs.get("sweep_ffx_w_i2e") or []:
+            spec["ffx@%g" % g] = dict(w_i2e=g, ff_gain=knobs["ff_gain"], stable=True, ext=True)
+    if mode in ("ffx", "ffx_lesion"):
+        spec["ffx_lesion"] = dict(w_i2e=0.0, ff_gain=knobs["ff_gain"], stable=True, ext=True)
     if mode == "ff":      # the relay variant (inhibition delivered AFTER the divnorm stage, onto unflagged relay pools)
         spec["ffr"] = dict(w_i2e=knobs["relay_w_i2e"], ff_gain=knobs["ff_gain"], stable=True, relay=knobs["w_relay"])
         spec["ffr_lesion"] = dict(w_i2e=0.0, ff_gain=knobs["ff_gain"], stable=True, relay=knobs["w_relay"])
@@ -563,7 +580,7 @@ def _inhib_bridges(buf, mode, knobs):
     for arm, sp in _inhib_arm_specs(mode, knobs).items():
         sb = build_inhib_score_bridge(buf.seed, int(buf.V), buf.sequencer_sigma, buf.sequencer_gain,
                                       n_inh=knobs["n_inh"], w_e2i=knobs["w_e2i"], w_i2e=sp["w_i2e"],
-                                      izh_type=knobs["izh_type"], ref_sb=buf._seq_score, stable=sp["stable"], w_relay=sp.get("relay"))
+                                      izh_type=knobs["izh_type"], ref_sb=buf._seq_score, stable=sp["stable"], w_relay=sp.get("relay"), external_only=sp.get("ext", False))
         out[arm] = (sb, sp["ff_gain"], "r" if sp.get("relay") else "w")
     return out
 
@@ -581,8 +598,8 @@ def score_step0b(blocks):
                             "zero": sum(1 for r in rows if r["n_fired"] == 0),
                             "wrong": sum(1 for r in rows if r["n_fired"] == 1 and not r["fires_decoded_patient"]),
                             "inh_spikes_total": float(sum(r["inh_spikes"] for r in rows))}
-    for on, les in (("on", "lesion"), ("ff", "ff_lesion"), ("ffr", "ff" + "r_lesion")):
-        tag = "S0B" if on == "on" else "S0C" if on == "ff" else "S0C_relay"
+    for on, les in (("on", "lesion"), ("ff", "ff_lesion"), ("ffr", "ff" + "r_lesion"), ("ffx", "ffx_lesion")):
+        tag = {"on": "S0B", "ff": "S0C", "ffr": "S0C_relay", "ffx": "S0D"}[on]
         if on in res["arms"]:
             a = res["arms"][on]
             if a["multi"] or a["wrong"] or a["zero"]:
@@ -597,6 +614,13 @@ def score_step0b(blocks):
                                                                            mean_n(les), mean_n(on))
             if same:
                 res["stops"].append(tag + "_lesion_equals_on")
+    for arm in [a for a in res["arms"] if a.startswith("ffx")]:     # 0d: physiological conductance + FS-first + drive margin
+        rr = [b["inhib"][arm] for b in blocks if arm in (b.get("inhib") or {})]
+        res["arms"][arm].update(max_abs_v=max(r["max_abs_v"] for r in rr), max_g_i=max(r["max_g_i"] for r in rr),
+                                g_i_unphysiological_over_50nS=bool(max(r["max_g_i"] for r in rr) > 50.0),
+                                pinh_first_in_all_blocks=all(
+                                    r["first_spike_step_pinh"] >= 0 and all(r["first_spike_step_pinh"] <= v
+                                                                           for v in r["first_spike_step_pools"].values()) for r in rr))
     ff = [b["inhib"]["ff"] for b in blocks if "ff" in (b.get("inhib") or {})]
     if ff:      # physical validity + FS-first
         res["ff_max_abs_v"] = max(r["max_abs_v"] for r in ff)
@@ -1289,6 +1313,8 @@ def main():
     ap.add_argument("--inhib-n", type=int, default=None)
     ap.add_argument("--inhib-w-e2i", type=float, default=None)
     ap.add_argument("--inhib-w-i2e", type=float, default=None)
+    ap.add_argument("--inhib-ffx-w-i2e", type=float, default=None)
+    ap.add_argument("--inhib-ffx-sweep", default=None, help="comma list of I->E gains for step 0d (the ONE allowed sweep, <=4)")
     ap.add_argument("--inhib-ff-gain", type=float, default=None)
     ap.add_argument("--inhib-ff-w-i2e", type=float, default=None)
     ap.add_argument("--inhib-ff-sweep", default=None, help="comma list of extra FF gains (the ONE allowed 0c sweep, <=4)")
@@ -1298,6 +1324,7 @@ def main():
         import subprocess
         env = dict(os.environ, SIM_BACKEND=os.environ.get("SIM_BACKEND", "numpy"), **{PATIENT_INHIB_ENV: a.patient_inhib})
         for k, v in (("N_INH", a.inhib_n), ("W_E2I", a.inhib_w_e2i), ("W_I2E", a.inhib_w_i2e), ("SWEEP", a.inhib_sweep),
+                     ("FFX_W_I2E", a.inhib_ffx_w_i2e), ("FFX_SWEEP", a.inhib_ffx_sweep),
                      ("FF_GAIN", a.inhib_ff_gain), ("FF_W_I2E", a.inhib_ff_w_i2e), ("FF_SWEEP", a.inhib_ff_sweep)):
             if v is not None:
                 env["C2S0_INHIB_" + k] = str(v)
