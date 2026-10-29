@@ -371,11 +371,14 @@ def read_b(buf, rows):
 # is untouched unless `C2S0_PATIENT_INHIB` is set. NOT a cross-channel divnorm pool (the 2026-09-03 NO-GO): E->I->E feedback
 # restricted to the V word pools of this one bridge. No host argmax / threshold / top-k: only spiking synapses compete.
 PATIENT_INHIB_ENV = "C2S0_PATIENT_INHIB"
-PATIENT_INHIB_MODES = ("off", "on", "lesion", "all")
-INHIB_DEFAULTS = {"n_inh": 30, "w_e2i": 60.0, "w_i2e": 320.0, "izh_type": "IZH2007_FS_CORTICAL_INTERNEURON", "settle": 20}
+PATIENT_INHIB_MODES = ("off", "on", "lesion", "all", "ff", "ff_lesion")
+# step 0c (feedforward inhibition, c2 ruling after the 0b NO-GO): `ff` = arms stable_off + ff + ff_lesion (all on the
+# stable-integration bridge), `ff_lesion` = the lesion arm alone. See the finding 2026-10-29-c2-step0b-patient-inhibition.md.
+INHIB_DEFAULTS = {"ff_gain": 3e-4, "ff_w_i2e": 40.0, "w_relay": 300.0, "relay_w_i2e": 5.0, "n_inh": 30, "w_e2i": 60.0, "w_i2e": 320.0, "izh_type": "IZH2007_FS_CORTICAL_INTERNEURON", "settle": 20}
 STEP0B_STOP_LINES = (
     "S0B_lesion_equals_on: STOP if the lesion arm (same population, I->E zeroed) reads identically to the `on` arm "
     "(per block, same fired_pools): the inhibition is not load-bearing.",
+    "S0C_lesion_equals_on / S0C_on_not_one_correct_pool: the same two lines for the feedforward arms (`ff` vs `ff_lesion`).",
     "S0B_on_not_one_correct_pool: STOP if any block in `on` fires more than one pool, fires a pool that is not the decoded "
     "patient, or fires zero pools (over-suppression).",
 )
@@ -394,13 +397,21 @@ def patient_inhib_knobs():
         e = os.environ.get("C2S0_INHIB_" + name.upper())
         if e not in (None, ""):
             k[name] = cast(e)
+    e = os.environ.get("C2S0_INHIB_FF_GAIN")
+    if e:
+        k["ff_gain"] = float(e)
+    e = os.environ.get("C2S0_INHIB_FF_W_I2E")
+    if e:
+        k["ff_w_i2e"] = float(e)
+    sw = os.environ.get("C2S0_INHIB_FF_SWEEP")
+    k["sweep_ff_gain"] = [float(x) for x in sw.split(",")] if sw else []
     sw = os.environ.get("C2S0_INHIB_SWEEP")                  # step 0b's ONE allowed gain sweep: extra `on@<w_i2e>` arms
     k["sweep_w_i2e"] = [float(x) for x in sw.split(",")] if sw else []
     return k
 
 
 def build_inhib_score_bridge(seed, V, sigma, gain, n_word=20, n_inh=30, w_e2i=60.0, w_i2e=320.0,
-                             izh_type="IZH2007_FS_CORTICAL_INTERNEURON", ref_sb=None):
+                             izh_type="IZH2007_FS_CORTICAL_INTERNEURON", ref_sb=None, stable=False, w_relay=None):
     """`build_divnorm_score_bridge(seed, V, n_word, True, sigma, gain)` plus ONE shared FS inhibitory region `pinh`:
     w{w} -> pinh (excitatory, w_e2i) and pinh -> w{w} (inhibitory by the presynaptic region's exc_fraction=0, w_i2e).
     w_i2e=0 builds the same population and the same synapses with zero weight (the lesion arm)."""
@@ -421,12 +432,25 @@ def build_inhib_score_bridge(seed, V, sigma, gain, n_word=20, n_inh=30, w_e2i=60
     cfg.enable_input_divisive_norm = True
     cfg.input_divisive_sigma = float(sigma)
     cfg.input_divisive_gain = float(gain)
+    if stable:      # the SIM_STABLE_INTEGRATION set (SimulationBridge._apply_stable_integration), set explicitly
+        cfg.enable_bounded_conductance_integration = True
+        cfg.izh_membrane_substeps = 4
+        cfg.izh_substep_refractory_rule = "model_reset"
     regions = [BrainRegion(name="w%d" % w, n_neurons=n_word, exc_fraction=1.0, internal_density=0.0,
                            input_divisive_norm=True) for w in range(V)]
     regions.append(BrainRegion(name="pinh", n_neurons=int(n_inh), exc_fraction=0.0, internal_density=0.0,
                                izh_neuron_type=izh_type))
+    if w_relay:     # step 0c variant: an UNFLAGGED relay layer r{w} (the divnorm block divides every synaptic current onto the
+        # flagged word pools by the pool-mean divisor, so inhibition onto them is ~1/D; the relay is read instead)
+        regions += [BrainRegion(name="r%d" % w, n_neurons=n_word, exc_fraction=1.0, internal_density=0.0) for w in range(V)]
     cfg.brain_regions = regions
     P = []
+    if w_relay:
+        for w in range(V):
+            P.append(RegionPathway(from_region="w%d" % w, to_region="r%d" % w, density=1.0, weight_mean=float(w_relay),
+                                   weight_jitter=0.0, plastic=False))
+            P.append(RegionPathway(from_region="pinh", to_region="r%d" % w, density=1.0, weight_mean=float(w_i2e),
+                                   weight_jitter=0.0, plastic=False))
     for w in range(V):
         P.append(RegionPathway(from_region="w%d" % w, to_region="pinh", density=1.0, weight_mean=float(w_e2i),
                                weight_jitter=0.0, plastic=False))
@@ -458,9 +482,12 @@ def build_inhib_score_bridge(seed, V, sigma, gain, n_word=20, n_inh=30, w_e2i=60
     return sb
 
 
-def onbridge_inhib_drive(score_sb, V, scores, input_gain, settle=20):
+def onbridge_inhib_drive(score_sb, V, scores, input_gain, settle=20, ff_gain=0.0, trace=None, read="w"):
     """`onbridge_divnorm_drive` on the inhibition bridge (same drive, same settle, same read), plus the inhibitory
-    population's spike count (ENGAGEMENT). Returns (acc_fired[V], inh_spikes)."""
+    population's spike count (ENGAGEMENT). Returns (acc_fired[V], inh_spikes). `ff_gain` > 0 (step 0c): the SAME external
+    drive that goes into the word pools also goes into `pinh`, as ff_gain x the summed patient-slice drive (a fixed
+    per-bridge gain; no normalization, no argmax). `trace` (dict) is filled with the first-spike step of every fired pool
+    and of pinh, and the max |v| and max inhibitory conductance seen (physical validity)."""
     import numpy as np
     from sim.backend import to_host, from_host
     from research.runners._phaseC_S5_divnorm_derisk import _reset_score_bridge, region_idx
@@ -476,31 +503,68 @@ def onbridge_inhib_drive(score_sb, V, scores, input_gain, settle=20):
     acc = np.zeros(V)
     inh_idx = region_idx(score_sb, "pinh")
     inh_spikes = 0.0
+    if ff_gain:
+        cur[inh_idx] = float(ff_gain) * float(sum(input_gain * s[w] for w in range(V)))
+    first = np.full(V, -1, dtype=int)
+    first_inh, max_v, max_gi = -1, 0.0, 0.0
     cur = from_host(cur)
-    for _ in range(settle):
+    for t in range(settle):
         score_sb.cp_external_input_current[:] = cur
         score_sb._run_one_simulation_step()
         fir = np.asarray(to_host(score_sb.cp_firing_states)).astype(float)
         for w in range(V):
-            acc[w] += fir[region_idx(score_sb, "w%d" % w)].mean()
-        inh_spikes += float(fir[inh_idx].sum())
+            f = fir[region_idx(score_sb, "%s%d" % (read, w))].mean()
+            acc[w] += f
+            if f > 0 and first[w] < 0:
+                first[w] = t
+        ni = float(fir[inh_idx].sum())
+        inh_spikes += ni
+        if ni > 0 and first_inh < 0:
+            first_inh = t
+        if trace is not None:
+            max_v = max(max_v, float(np.abs(np.asarray(to_host(score_sb.cp_membrane_potential_v))).max()))
+            max_gi = max(max_gi, float(np.asarray(to_host(score_sb.cp_conductance_g_i)).max()))
     score_sb.cp_external_input_current[:] = 0.0
+    if trace is not None:
+        trace.update(first_spike_step={int(w): int(first[w]) for w in range(V) if first[w] >= 0},
+                     first_spike_step_pinh=first_inh, max_abs_v=max_v, max_g_i=max_gi,
+                     ff_current_pA=float(ff_gain) * float(sum(input_gain * s[w] for w in range(V))) if ff_gain else 0.0)
     return acc, inh_spikes
 
 
-def _inhib_bridges(buf, mode, knobs):
-    """{arm: bridge} for the requested mode (`on`: I->E at w_i2e; `lesion`: the same population, I->E weight 0)."""
-    arms = {"on": ("on",), "lesion": ("lesion",), "all": ("on", "lesion")}[mode]
-    gains = {"on": knobs["w_i2e"], "lesion": 0.0}
+def _inhib_arm_specs(mode, knobs):
+    """{arm: dict(w_i2e, ff_gain, stable)}. 0b arms (on/lesion/on@g) are the feedback-only build on the default-integration
+    bridge; 0c arms (stable_off/ff/ff_lesion/ff@g) are ALL on the stable-integration bridge so they differ only in the FF
+    inhibition (stable_off = the population built, no FF drive, I->E zero)."""
+    spec = {}
+    if mode in ("on", "all"):
+        spec["on"] = dict(w_i2e=knobs["w_i2e"], ff_gain=0.0, stable=False)
+    if mode in ("lesion", "all"):
+        spec["lesion"] = dict(w_i2e=0.0, ff_gain=0.0, stable=False)
     if mode in ("on", "all"):
         for g in knobs.get("sweep_w_i2e") or []:
-            arms = arms + ("on@%g" % g,)
-            gains["on@%g" % g] = g
+            spec["on@%g" % g] = dict(w_i2e=g, ff_gain=0.0, stable=False)
+    if mode == "ff":
+        spec["stable_off"] = dict(w_i2e=0.0, ff_gain=0.0, stable=True)
+        spec["ff"] = dict(w_i2e=knobs["ff_w_i2e"], ff_gain=knobs["ff_gain"], stable=True)
+        for g in knobs.get("sweep_ff_gain") or []:
+            spec["ff@%g" % g] = dict(w_i2e=knobs["ff_w_i2e"], ff_gain=g, stable=True)
+    if mode in ("ff", "ff_lesion"):
+        spec["ff_lesion"] = dict(w_i2e=0.0, ff_gain=knobs["ff_gain"], stable=True)
+    if mode == "ff":      # the relay variant (inhibition delivered AFTER the divnorm stage, onto unflagged relay pools)
+        spec["ffr"] = dict(w_i2e=knobs["relay_w_i2e"], ff_gain=knobs["ff_gain"], stable=True, relay=knobs["w_relay"])
+        spec["ffr_lesion"] = dict(w_i2e=0.0, ff_gain=knobs["ff_gain"], stable=True, relay=knobs["w_relay"])
+    return spec
+
+
+def _inhib_bridges(buf, mode, knobs):
+    """{arm: (bridge, ff_gain)} for the requested mode."""
     out = {}
-    for arm in arms:
-        out[arm] = build_inhib_score_bridge(buf.seed, int(buf.V), buf.sequencer_sigma, buf.sequencer_gain,
-                                            n_inh=knobs["n_inh"], w_e2i=knobs["w_e2i"], w_i2e=gains[arm],
-                                            izh_type=knobs["izh_type"], ref_sb=buf._seq_score)
+    for arm, sp in _inhib_arm_specs(mode, knobs).items():
+        sb = build_inhib_score_bridge(buf.seed, int(buf.V), buf.sequencer_sigma, buf.sequencer_gain,
+                                      n_inh=knobs["n_inh"], w_e2i=knobs["w_e2i"], w_i2e=sp["w_i2e"],
+                                      izh_type=knobs["izh_type"], ref_sb=buf._seq_score, stable=sp["stable"], w_relay=sp.get("relay"))
+        out[arm] = (sb, sp["ff_gain"], "r" if sp.get("relay") else "w")
     return out
 
 
@@ -517,20 +581,29 @@ def score_step0b(blocks):
                             "zero": sum(1 for r in rows if r["n_fired"] == 0),
                             "wrong": sum(1 for r in rows if r["n_fired"] == 1 and not r["fires_decoded_patient"]),
                             "inh_spikes_total": float(sum(r["inh_spikes"] for r in rows))}
-    if "on" in res["arms"]:
-        a = res["arms"]["on"]
-        if a["multi"] or a["wrong"] or a["zero"]:
-            res["stops"].append("S0B_on_not_one_correct_pool")
-    if "on" in res["arms"] and "lesion" in res["arms"]:
-        same = all((b["inhib"]["on"].get("fired_pools") == b["inhib"]["lesion"].get("fired_pools"))
-                   for b in blocks if "on" in (b.get("inhib") or {}) and "lesion" in (b.get("inhib") or {}))
-        res["lesion_equals_on"] = bool(same)
-        from tools.lab import attributable_to      # whose is the drop in fired pools: the I->E synapses, or the shared drive?
-        mean_n = lambda arm: float(np.mean([b["inhib"][arm]["n_fired"] for b in blocks if arm in (b.get("inhib") or {})]))
-        res["fired_pools_drop_attributable_to_inhibition"] = attributable_to("patient inhib I->E (mean pools fired)",
-                                                                             mean_n("lesion"), mean_n("on"))
-        if same:
-            res["stops"].append("S0B_lesion_equals_on")
+    for on, les in (("on", "lesion"), ("ff", "ff_lesion"), ("ffr", "ff" + "r_lesion")):
+        tag = "S0B" if on == "on" else "S0C" if on == "ff" else "S0C_relay"
+        if on in res["arms"]:
+            a = res["arms"][on]
+            if a["multi"] or a["wrong"] or a["zero"]:
+                res["stops"].append(tag + "_on_not_one_correct_pool")
+        if on in res["arms"] and les in res["arms"]:
+            same = all((b["inhib"][on].get("fired_pools") == b["inhib"][les].get("fired_pools"))
+                       for b in blocks if on in (b.get("inhib") or {}) and les in (b.get("inhib") or {}))
+            res["lesion_equals_on" if on == "on" else "%s_equals_%s" % (les, on)] = bool(same)
+            from tools.lab import attributable_to      # whose is the drop in fired pools: the I->E synapses, or the shared drive?
+            mean_n = lambda arm: float(np.mean([b["inhib"][arm]["n_fired"] for b in blocks if arm in (b.get("inhib") or {})]))
+            res["fired_pools_drop_attributable_to_" + on] = attributable_to("patient inhib %s (mean pools fired)" % on,
+                                                                           mean_n(les), mean_n(on))
+            if same:
+                res["stops"].append(tag + "_lesion_equals_on")
+    ff = [b["inhib"]["ff"] for b in blocks if "ff" in (b.get("inhib") or {})]
+    if ff:      # physical validity + FS-first
+        res["ff_max_abs_v"] = max(r["max_abs_v"] for r in ff)
+        res["ff_max_g_i"] = max(r["max_g_i"] for r in ff)
+        res["ff_pinh_first_in_all_blocks"] = all(
+            r["first_spike_step_pinh"] >= 0 and all(r["first_spike_step_pinh"] <= v for v in r["first_spike_step_pools"].values())
+            for r in ff)
     return res
 
 
@@ -571,14 +644,20 @@ def read_c(buf, rows):
                            patient_slice_nz={buf.words[j]: float(pslice[j]) for j in range(V) if pslice[j] > 0})
                 if inhib_sbs:                                       # step 0b only; absent when the env flag is off
                     blk["inhib"] = {}
-                    for arm, isb in inhib_sbs.items():
+                    for arm, (isb, ffg, rd) in inhib_sbs.items():
+                        tr = {}
                         iacc, ispk = onbridge_inhib_drive(isb, V, pslice, buf.sequencer_input_gain,
-                                                          settle=inhib_knobs["settle"])
+                                                          settle=inhib_knobs["settle"], ff_gain=ffg, trace=tr, read=rd)
                         ifired = [buf.words[j] for j in range(V) if iacc[j] > 0]
                         blk["inhib"][arm] = dict(fired_pools=ifired, n_fired=len(ifired),
                                                  fires_decoded_patient=ifired == [blk["decoded_patient"]],
                                                  pool_spikes={buf.words[j]: float(iacc[j]) for j in range(V) if iacc[j] > 0},
-                                                 inh_spikes=ispk)
+                                                 inh_spikes=ispk, ff_gain=ffg,
+                                                 first_spike_step_pools={buf.words[j]: tr["first_spike_step"][j] for j in range(V)
+                                                                         if j in tr["first_spike_step"]},
+                                                 first_spike_step_pinh=tr["first_spike_step_pinh"],
+                                                 max_abs_v=tr["max_abs_v"], max_g_i=tr["max_g_i"],
+                                                 ff_current_pA=tr["ff_current_pA"])
                 probe = block_cleanup_scores_full(buf, b)           # the cross-check (wires every slot, reserves too)
                 cmp = {}
                 for role, prod, ri in (("agent", ag, iA), ("action", ax, iX), ("patient", pslice, iP)):
@@ -1210,12 +1289,16 @@ def main():
     ap.add_argument("--inhib-n", type=int, default=None)
     ap.add_argument("--inhib-w-e2i", type=float, default=None)
     ap.add_argument("--inhib-w-i2e", type=float, default=None)
+    ap.add_argument("--inhib-ff-gain", type=float, default=None)
+    ap.add_argument("--inhib-ff-w-i2e", type=float, default=None)
+    ap.add_argument("--inhib-ff-sweep", default=None, help="comma list of extra FF gains (the ONE allowed 0c sweep, <=4)")
     ap.add_argument("--inhib-sweep", default=None, help="comma list of extra I->E gains (the ONE allowed sweep, <=4)")
     a = ap.parse_args()
     if a.smoke_0b:
         import subprocess
         env = dict(os.environ, SIM_BACKEND=os.environ.get("SIM_BACKEND", "numpy"), **{PATIENT_INHIB_ENV: a.patient_inhib})
-        for k, v in (("N_INH", a.inhib_n), ("W_E2I", a.inhib_w_e2i), ("W_I2E", a.inhib_w_i2e), ("SWEEP", a.inhib_sweep)):
+        for k, v in (("N_INH", a.inhib_n), ("W_E2I", a.inhib_w_e2i), ("W_I2E", a.inhib_w_i2e), ("SWEEP", a.inhib_sweep),
+                     ("FF_GAIN", a.inhib_ff_gain), ("FF_W_I2E", a.inhib_ff_w_i2e), ("FF_SWEEP", a.inhib_ff_sweep)):
             if v is not None:
                 env["C2S0_INHIB_" + k] = str(v)
         sys.exit(subprocess.call([sys.executable, "-u", "-m", "research.runners.stage2_exit_gate", "--shard", "--seed", "7",

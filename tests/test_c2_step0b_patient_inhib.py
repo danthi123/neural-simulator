@@ -90,6 +90,26 @@ def test_on_and_lesion_arms_record_engagement(monkeypatch):
         assert blk["inhib"]["lesion"]["inh_spikes"] >= 0.0
 
 
+def test_ff_arm_specs_and_trace(monkeypatch):
+    kn = S0.patient_inhib_knobs()
+    spec = S0._inhib_arm_specs("ff", dict(kn, sweep_ff_gain=[1e-3]))
+    assert {"stable_off", "ff", "ff_lesion", "ff@0.001", "ffr", "ffr_lesion"} == set(spec)
+    assert all(v["stable"] for v in spec.values())                       # every 0c arm on the stable-integration bridge
+    assert spec["ff_lesion"]["w_i2e"] == 0.0 and spec["ff_lesion"]["ff_gain"] == spec["ff"]["ff_gain"] > 0
+    assert spec["stable_off"]["ff_gain"] == 0.0 and spec["stable_off"]["w_i2e"] == 0.0
+    assert set(S0._inhib_arm_specs("off", kn)) == set()                  # default off builds nothing
+    from research.runners._phaseC_S5_divnorm_derisk import build_divnorm_score_bridge
+    ref = build_divnorm_score_bridge(seed=7, V=6, enable_divnorm=True, sigma=1.0, gain=0.11)
+    sb = S0.build_inhib_score_bridge(7, 6, 1.0, 0.11, w_i2e=5.0, ref_sb=ref, stable=True)
+    assert sb.core_config.enable_bounded_conductance_integration and sb.core_config.izh_membrane_substeps == 4
+    tr = {}
+    p = np.zeros(6)
+    p[:3] = [2e6, 8e5, 5e5]
+    S0.onbridge_inhib_drive(sb, 6, p, 1.0, ff_gain=3e-4, trace=tr)
+    assert tr["ff_current_pA"] == pytest.approx(3e-4 * 3.3e6) and tr["first_spike_step_pinh"] >= 0
+    assert {"first_spike_step", "max_abs_v", "max_g_i"} <= set(tr)
+
+
 def test_fs_population_is_silent_without_input():
     from research.runners._phaseC_S5_divnorm_derisk import build_divnorm_score_bridge
     ref = build_divnorm_score_bridge(seed=7, V=6, enable_divnorm=True, sigma=1.0, gain=0.11)
