@@ -1,0 +1,9 @@
+{
+  "backend": "numpy",
+  "device": "cpu",
+  "host": "unknown",
+  "retro_stamped": true,
+  "revision": "e0b8608c2cec6341da141b36d7649451ed029f5b",
+  "source": "research/coordination/LOCAL_LLM_RUNBOOK.md WORKLOG 2026-10-24 21:09 emit + 23:03 queue of the n=1 71-line step-1 grid to step1/e0b8608 (original lines file pruned) (SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES=)",
+  "stamped_by": "driver per RULING bg-prov-1029"
+}
