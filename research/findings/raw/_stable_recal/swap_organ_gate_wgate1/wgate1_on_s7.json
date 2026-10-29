@@ -1,0 +1,240 @@
+{
+ "arms": {
+  "on": {
+   "runner": "research/runners/stable_integration_swap_ignition_probe.py --organ",
+   "seed": 7,
+   "arm": "on",
+   "calibration": {
+    "w_rec": 6.5,
+    "norm_ws_w": 4,
+    "thal_tonic_pa": 25,
+    "solo_plateau": 0.084,
+    "establish_pa": 1280,
+    "w_ws_occ": 32,
+    "w_pat_pred": 32,
+    "w_occ_gate": 80,
+    "w_pred_mm": 80,
+    "w_gate_ws": 1,
+    "timing_window": 36
+   },
+   "result": {
+    "seed": 7,
+    "verdict": "UNDEFINED",
+    "seed_go": false,
+    "operating_point": {
+     "proposal_pa": 5000.0,
+     "nonsalient_pa": 600.0,
+     "boost_gain": 1.0,
+     "max_boost": 0.16,
+     "boost_window": 5,
+     "evict_steps": 320,
+     "establish_pa": 1280.0,
+     "reignite_hold": 150,
+     "w_rec": 6.5,
+     "w_pat_pred": 8.0,
+     "w_pred_mm": 20.0,
+     "mm_per": 60,
+     "pred_per": 40,
+     "w_ws_occ": 32.0,
+     "w_occ_gate": 80.0,
+     "w_gate_ws": 1.0,
+     "occ_n": 40,
+     "gate_per": 60,
+     "U_baseline": 0.0,
+     "tau_D": 250.0,
+     "heterogeneity": true
+    },
+    "go_gate": {
+     "swap_ok": false,
+     "reignite_ok": true,
+     "timing_ok": false,
+     "specificity_ok": false,
+     "nonsalient_holds": true,
+     "match_holds": true,
+     "trigger_load_bearing": false,
+     "lesion_holds": true,
+     "reversible": false,
+     "no_host_reset": true,
+     "seed_deterministic": true
+    },
+    "specificity": {
+     "salient_mismatch_swapped": false,
+     "nonsalient_swapped": false,
+     "match_swapped": false,
+     "salient_mm_peak": 0.31666666666666665,
+     "salient_boost_max": 0.16,
+     "nonsalient_mm_peak": 0.1,
+     "nonsalient_boost_max": 0.06333333333333332,
+     "match_mm_peak": 0.022222222222222223,
+     "match_boost_max": 0.01
+    },
+    "anti_cheats": {
+     "specificity_ok": false,
+     "trigger_load_bearing": false,
+     "nonsalient_non_trigger": true,
+     "match_veto": true,
+     "trigger_lesion_holds": true,
+     "reversible_two_swap": false,
+     "no_host_workspace_reset": true,
+     "seed_deterministic": true,
+     "swap_attributable_fraction": null
+    },
+    "residual": {
+     "headline": {
+      "winner_pre": 0,
+      "winner_post": 1,
+      "n_pre": 1,
+      "n_post": 0,
+      "old_residual_post": 0.0,
+      "new_ignited": false,
+      "new_rate_post": 0.037333333333333336,
+      "xA_min": 0.38381476936178865,
+      "mm_peak": 0.31666666666666665,
+      "boost_max": 0.16,
+      "trigger_step": 2,
+      "a_vacate_step": 157,
+      "b_ignite_step": 253,
+      "coign_steps": 16,
+      "old_residual_hold": 0.0,
+      "new_rate_hold": 0.0714
+     },
+     "nonsalient": {
+      "swapped": false,
+      "held": true,
+      "winner_post": 0,
+      "n_post": 1,
+      "old_residual_post": 0.06866666666666667,
+      "new_rate_post": 0.0,
+      "mm_peak": 0.1,
+      "boost_max": 0.06333333333333332
+     },
+     "match": {
+      "swapped": false,
+      "held": true,
+      "winner_post": 0,
+      "n_post": 1,
+      "old_residual_post": 0.08466666666666667,
+      "new_rate_post": 0.08466666666666667,
+      "mm_peak": 0.022222222222222223,
+      "boost_max": 0.01
+     },
+     "trigger_lesion": {
+      "swapped": false,
+      "held": true,
+      "winner_post": 0,
+      "n_post": 1,
+      "old_residual_post": 0.08266666666666667,
+      "new_rate_post": 0.0,
+      "mm_peak": 0.0,
+      "boost_max": 0.0
+     },
+     "reversibility": {
+      "reversible": false,
+      "s1_evicted_A": false,
+      "recovered": true,
+      "s2_brought_A_back": true,
+      "xA_recovered": 0.9890241962860787,
+      "recover_steps": 750,
+      "swap1_swapped": false,
+      "swap2_winner_hold": 0,
+      "swap2_n_hold": 1
+     }
+    },
+    "host_workspace_reset_calls": 0,
+    "substrate_hash": "d5026d33ee70d1a8ff7198bbbeef12cff58100c1ca50c034fd32b9d88c3505c4",
+    "std_weight_writes": 1785,
+    "preconditions": [
+     {
+      "kind": "require",
+      "name": "incumbent ignites confidently (n_pre==1, winner A) [precondition]",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "NEURAL-TRIGGERED swap: salient mismatch -> mm fires -> old->baseline & new ignites (n_post==1, B)",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "SPECIFICITY: non-salient mismatch does NOT swap (mm sub-threshold) -> incumbent holds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "SPECIFICITY: salient MATCH does NOT swap (pred vetoes mm) -> incumbent holds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "TRIGGER load-bearing: silence mm -> salient input does NOT trigger a swap -> incumbent holds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "TIMING: challenger ignites only AFTER incumbent vacates (windowed, zero co-ignition)",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "admitted coalition re-ignites and HOLDS",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "REVERSIBLE two-swap A->B->A (both neural-mismatch-triggered)",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "no host workspace reset in the swap headline (continuous run)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+     },
+     {
+      "kind": "require",
+      "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+     }
+    ],
+    "disabled_processes": [
+     {
+      "process": "homeostasis",
+      "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2 foot-gun"
+     },
+     {
+      "process": "native_short_term_plasticity",
+      "why": "engine global STP banked as annihilating; STD targets ONLY the incumbent E->E loop, driven by mm"
+     },
+     {
+      "process": "additive_substrate_hash",
+      "why": "N/A: RNG-prefix property does not hold on this engine; determinism (build-twice) is used instead"
+     }
+    ],
+    "undefined_reasons": [
+     "unmet: NEURAL-TRIGGERED swap: salient mismatch -> mm fires -> old->baseline & new ignites (n_post==1, B) (measured=False expect=True)",
+     "unmet: TIMING: challenger ignites only AFTER incumbent vacates (windowed, zero co-ignition) (measured=False expect=True)",
+     "unmet: REVERSIBLE two-swap A->B->A (both neural-mismatch-triggered) (measured=False expect=True)"
+    ]
+   }
+  }
+ }
+}

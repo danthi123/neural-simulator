@@ -1,5 +1,7 @@
 # [cs-race-f1c] RESULT — the ruled WTA lever space does not make the symmetric race commit (27 cells, 0 passing)
 
+> **AMENDMENT (2026-10-22, RULING cs-race-f1g-0-1022):** clause (b) and every mention-ownership reading in this file are UNDEFINED (carrier unengaged: 0 mention spikes at MENT_PA 40 pA, sub-rheobase for the mention slots), NOT a null; clause (a) (recency) and the controls stand; clause (c) used MENT_MAX_PA 90 and fired.
+
 **AMENDMENT (2026-10-21; RULING cs-race-f1d-1021) — the read-out below is partly void; where they disagree, this block is the record.**
 1. The decisive "non-commits" are CO-COMMITS: rows 3-4 (18 cells, 1,440 decisive draws) held 1,158 draws with BOTH latches ON, 282 with exactly one, 0 with none. `latch_read` returns winner None for both co_commit and none, so the tally merged them — "0 decisive commits" means "0 single-winner reads".
 2. Ignition is cue-locked and near-simultaneous: the two first gate spikes land a median 3-4 ms apart; a gap of 8 ms or less never gave a commit (0 of about 1,056 draws); single commits need about 9 ms or more, or one gate that never fires. Seeds 2, 3, 6 (earliest-gate step SD 1.3-1.7 ms) never commit.

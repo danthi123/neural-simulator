@@ -78,11 +78,17 @@ from research.runners._phaseB_multihop_query_chain_derisk import (
 )
 from research.runners.rf_phasor_composer import RFPhasorComposer
 from tools.lab import attributable_to, void_if
+from research.runners import stable_recal as _stable_recal
 
 CONFIRM = "confirm"                    # organ C's relation (a second independent evidence stream over the same chain)
 D_SUB_DEFAULT = 1400.0                 # per-organ SUBTHRESHOLD drive: one vote < the ignition knee, two votes (2800) >
 HOPS = 2                               # a 2-step inference (ch[0] -> ch[2]); single-shot single-organ can reach neither
 THR = IGNITE_FRAC * SOLO_PLATEAU       # "ignited" iff late-window rate >= THR
+
+
+def _thr():
+    """THR, or the stable-integrator re-calibration under SIM_STABLE_RECAL=1 (research/runners/stable_recal.py)."""
+    return _stable_recal.bus_thr(THR)
 
 
 # ── the two-relation fact store (organ R = EAT, organ C = CONFIRM) ────────────────────────────────────────────
@@ -150,8 +156,8 @@ def coincidence_hop(bridge, xp, slots_dev, snap, r_cand, c_cand, decoy, d_sub,
     # restrict to the slots actually in play this hop
     active = list(range(len(order)))
     winner = int(active[int(np.argmax([rates[i] for i in active]))])
-    ignited = rates[winner] >= THR
-    n_ignited = int(sum(1 for i in active if rates[i] >= THR))
+    ignited = rates[winner] >= _thr()
+    n_ignited = int(sum(1 for i in active if rates[i] >= _thr()))
     committed = order[winner] if ignited else None
     return committed, rates, winner, n_ignited
 
@@ -192,25 +198,25 @@ def coincidence_chase(bridge, xp, slots_dev, snap, composer, cue, all_concepts, 
 def run_calibrate(seed, D, d_sub, json_path=None):
     build_vocab()
     b, xp, slots, snap = build_workspace_bridge(seed, lesion=False)
-    print(f"[calibrate seed={seed}] solo-slot ignition curve (THR={THR:.3f}):", flush=True)
+    print(f"[calibrate seed={seed}] solo-slot ignition curve (THR={_thr():.3f}):", flush=True)
     knee = None
     curve = {}
     for drive in (600, 900, 1200, 1400, 1500, 1700, 1800, 2100, 2400, 2800):
         rates = _ignite_and_read(b, xp, slots, snap, [float(drive)] + [0.0] * (len(slots) - 1))
-        ig = rates[0] >= THR
+        ig = rates[0] >= _thr()
         curve[str(drive)] = round(float(rates[0]), 3)
         if ig and knee is None:
             knee = drive
         print(f"    solo drive={drive:5.0f} -> slot0 late-rate={rates[0]:.3f}  ignited={ig}", flush=True)
     rc = _ignite_and_read(b, xp, slots, snap, [2 * d_sub] + [0.0] * (len(slots) - 1))
     coincidence_rate = round(float(rc[0]), 3)
-    print(f"    2*d_sub={2*d_sub:.0f} -> rate={rc[0]:.3f} ignited={rc[0] >= THR}", flush=True)
-    ok = (knee is not None and d_sub < knee and rc[0] >= THR)
+    print(f"    2*d_sub={2*d_sub:.0f} -> rate={rc[0]:.3f} ignited={rc[0] >= _thr()}", flush=True)
+    ok = (knee is not None and d_sub < knee and rc[0] >= _thr())
     print(f"[calibrate] knee~{knee}  -> D_SUB={d_sub:.0f} "
           f"{'OK (subthreshold solo, suprathreshold doubled)' if ok else 'OUT OF WINDOW — retune'}", flush=True)
     if json_path:
         rec = {"runner": "_gnw_coincidence_integrator_derisk", "mode": "calibrate", "seed": int(seed), "D": int(D),
-               "THR": round(float(THR), 3), "d_sub": float(d_sub), "knee_pA": knee,
+               "THR": round(float(_thr()), 3), "d_sub": float(d_sub), "knee_pA": knee,
                "solo_rate_by_drive": curve, "d_sub_solo_rate": curve.get(str(int(d_sub))),
                "coincidence_rate_2xd_sub": coincidence_rate, "in_window": bool(ok)}
         os.makedirs(os.path.dirname(os.path.abspath(json_path)), exist_ok=True)

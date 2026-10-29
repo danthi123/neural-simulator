@@ -1,0 +1,1348 @@
+{
+ "runner": "research/runners/stable_integration_bus_ignition_probe.py",
+ "seed": 7,
+ "ignite_threshold": 0.1667,
+ "solo_plateau": 0.3333,
+ "ignite_pa": 2500.0,
+ "distractor_frac": 0.3,
+ "drive_steps": 35,
+ "free_steps": 100,
+ "production_attractor_weight": 30.0,
+ "weights": [
+  30.0,
+  45.0,
+  60.0,
+  90.0,
+  120.0
+ ],
+ "production_fs_to_ws_weight": 16.0,
+ "fs_to_ws_weights": [
+  16.0
+ ],
+ "arms": {
+  "off": [
+   {
+    "attractor_weight": 30.0,
+    "fs_to_ws_weight": 16.0,
+    "readback": {
+     "requested": false,
+     "bounded": false,
+     "substeps": 1,
+     "rule": "model_reset"
+    },
+    "solo": {
+     "drives": [
+      2500.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.3333,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.34,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.3333,
+     "n_ignited": 1,
+     "ignited": true,
+     "v_min": -1338.68,
+     "v_max": 95.45,
+     "n_oor_cells": 80,
+     "n_cells": 320,
+     "slot0_late_mean_v": -374.31,
+     "slot0_late_frac_above_m20mV": 0.3333
+    },
+    "wta": {
+     "drives": [
+      2500.0,
+      750.0,
+      750.0,
+      750.0
+     ],
+     "late_rates": [
+      0.3333,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.34,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.3333,
+     "n_ignited": 1,
+     "ignited": true,
+     "v_min": -1332.93,
+     "v_max": 95.33,
+     "n_oor_cells": 80,
+     "n_cells": 320,
+     "slot0_late_mean_v": -374.16,
+     "slot0_late_frac_above_m20mV": 0.3333
+    },
+    "none": {
+     "drives": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -60.0,
+     "v_max": -60.0,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": -60.0,
+     "slot0_late_frac_above_m20mV": 0.0
+    },
+    "lesion": {
+     "drives": [
+      2500.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0034,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -74.84,
+     "v_max": 34.4,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": -62.91,
+     "slot0_late_frac_above_m20mV": 0.0
+    },
+    "attributable_to_loops_vs_lesion": 1.0,
+    "attributable_to_drive_vs_none": 1.0
+   },
+   {
+    "attractor_weight": 45.0,
+    "fs_to_ws_weight": 16.0,
+    "readback": {
+     "requested": false,
+     "bounded": false,
+     "substeps": 1,
+     "rule": "model_reset"
+    },
+    "solo": {
+     "drives": [
+      2500.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.3333,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.34,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.3333,
+     "n_ignited": 1,
+     "ignited": true,
+     "v_min": -3581.56,
+     "v_max": 166.15,
+     "n_oor_cells": 80,
+     "n_cells": 320,
+     "slot0_late_mean_v": -1034.87,
+     "slot0_late_frac_above_m20mV": 0.3333
+    },
+    "wta": {
+     "drives": [
+      2500.0,
+      750.0,
+      750.0,
+      750.0
+     ],
+     "late_rates": [
+      0.3333,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.34,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.3333,
+     "n_ignited": 1,
+     "ignited": true,
+     "v_min": -3599.62,
+     "v_max": 167.4,
+     "n_oor_cells": 80,
+     "n_cells": 320,
+     "slot0_late_mean_v": -1034.5,
+     "slot0_late_frac_above_m20mV": 0.3333
+    },
+    "none": {
+     "drives": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -60.0,
+     "v_max": -60.0,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": -60.0,
+     "slot0_late_frac_above_m20mV": 0.0
+    },
+    "lesion": {
+     "drives": [
+      2500.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0034,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -74.84,
+     "v_max": 34.4,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": -62.91,
+     "slot0_late_frac_above_m20mV": 0.0
+    },
+    "attributable_to_loops_vs_lesion": 1.0,
+    "attributable_to_drive_vs_none": 1.0
+   },
+   {
+    "attractor_weight": 60.0,
+    "fs_to_ws_weight": 16.0,
+    "readback": {
+     "requested": false,
+     "bounded": false,
+     "substeps": 1,
+     "rule": "model_reset"
+    },
+    "solo": {
+     "drives": [
+      2500.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.3333,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.34,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.3333,
+     "n_ignited": 1,
+     "ignited": true,
+     "v_min": -6784.16,
+     "v_max": 232.92,
+     "n_oor_cells": 80,
+     "n_cells": 320,
+     "slot0_late_mean_v": -1990.88,
+     "slot0_late_frac_above_m20mV": 0.3333
+    },
+    "wta": {
+     "drives": [
+      2500.0,
+      750.0,
+      750.0,
+      750.0
+     ],
+     "late_rates": [
+      0.3333,
+      0.3333,
+      0.3333,
+      0.3333
+     ],
+     "free_rates": [
+      0.34,
+      0.33,
+      0.33,
+      0.33
+     ],
+     "winner": 0,
+     "winner_rate": 0.3333,
+     "n_ignited": 4,
+     "ignited": true,
+     "v_min": -6708.48,
+     "v_max": 228.61,
+     "n_oor_cells": 320,
+     "n_cells": 320,
+     "slot0_late_mean_v": -1958.18,
+     "slot0_late_frac_above_m20mV": 0.3333
+    },
+    "none": {
+     "drives": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -60.0,
+     "v_max": -60.0,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": -60.0,
+     "slot0_late_frac_above_m20mV": 0.0
+    },
+    "lesion": {
+     "drives": [
+      2500.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0034,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -74.84,
+     "v_max": 34.4,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": -62.91,
+     "slot0_late_frac_above_m20mV": 0.0
+    },
+    "attributable_to_loops_vs_lesion": 1.0,
+    "attributable_to_drive_vs_none": 1.0
+   },
+   {
+    "attractor_weight": 90.0,
+    "fs_to_ws_weight": 16.0,
+    "readback": {
+     "requested": false,
+     "bounded": false,
+     "substeps": 1,
+     "rule": "model_reset"
+    },
+    "solo": {
+     "drives": [
+      2500.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.3333,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.34,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.3333,
+     "n_ignited": 1,
+     "ignited": true,
+     "v_min": -15637.71,
+     "v_max": 352.31,
+     "n_oor_cells": 80,
+     "n_cells": 320,
+     "slot0_late_mean_v": -4681.48,
+     "slot0_late_frac_above_m20mV": 0.3333
+    },
+    "wta": {
+     "drives": [
+      2500.0,
+      750.0,
+      750.0,
+      750.0
+     ],
+     "late_rates": [
+      0.3333,
+      0.3333,
+      0.3333,
+      0.3333
+     ],
+     "free_rates": [
+      0.34,
+      0.33,
+      0.33,
+      0.33
+     ],
+     "winner": 0,
+     "winner_rate": 0.3333,
+     "n_ignited": 4,
+     "ignited": true,
+     "v_min": -15522.08,
+     "v_max": 348.15,
+     "n_oor_cells": 320,
+     "n_cells": 320,
+     "slot0_late_mean_v": -4631.49,
+     "slot0_late_frac_above_m20mV": 0.3333
+    },
+    "none": {
+     "drives": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -60.0,
+     "v_max": -60.0,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": -60.0,
+     "slot0_late_frac_above_m20mV": 0.0
+    },
+    "lesion": {
+     "drives": [
+      2500.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0034,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -74.84,
+     "v_max": 34.4,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": -62.91,
+     "slot0_late_frac_above_m20mV": 0.0
+    },
+    "attributable_to_loops_vs_lesion": 1.0,
+    "attributable_to_drive_vs_none": 1.0
+   },
+   {
+    "attractor_weight": 120.0,
+    "fs_to_ws_weight": 16.0,
+    "readback": {
+     "requested": false,
+     "bounded": false,
+     "substeps": 1,
+     "rule": "model_reset"
+    },
+    "solo": {
+     "drives": [
+      2500.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.3333,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.34,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.3333,
+     "n_ignited": 1,
+     "ignited": true,
+     "v_min": -27219.55,
+     "v_max": 455.41,
+     "n_oor_cells": 80,
+     "n_cells": 320,
+     "slot0_late_mean_v": -8253.46,
+     "slot0_late_frac_above_m20mV": 0.3333
+    },
+    "wta": {
+     "drives": [
+      2500.0,
+      750.0,
+      750.0,
+      750.0
+     ],
+     "late_rates": [
+      0.3333,
+      0.3333,
+      0.3333,
+      0.3333
+     ],
+     "free_rates": [
+      0.34,
+      0.33,
+      0.33,
+      0.33
+     ],
+     "winner": 0,
+     "winner_rate": 0.3333,
+     "n_ignited": 4,
+     "ignited": true,
+     "v_min": -27064.66,
+     "v_max": 451.62,
+     "n_oor_cells": 320,
+     "n_cells": 320,
+     "slot0_late_mean_v": -8186.91,
+     "slot0_late_frac_above_m20mV": 0.3333
+    },
+    "none": {
+     "drives": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -60.0,
+     "v_max": -60.0,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": -60.0,
+     "slot0_late_frac_above_m20mV": 0.0
+    },
+    "lesion": {
+     "drives": [
+      2500.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0034,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -74.84,
+     "v_max": 34.4,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": -62.91,
+     "slot0_late_frac_above_m20mV": 0.0
+    },
+    "attributable_to_loops_vs_lesion": 1.0,
+    "attributable_to_drive_vs_none": 1.0
+   }
+  ],
+  "on": [
+   {
+    "attractor_weight": 30.0,
+    "fs_to_ws_weight": 16.0,
+    "readback": {
+     "requested": true,
+     "bounded": true,
+     "substeps": 4,
+     "rule": "model_reset"
+    },
+    "solo": {
+     "drives": [
+      2500.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0826,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0622,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0826,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -70.44,
+     "v_max": 34.99,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": 14.69,
+     "slot0_late_frac_above_m20mV": 0.8777
+    },
+    "wta": {
+     "drives": [
+      2500.0,
+      750.0,
+      750.0,
+      750.0
+     ],
+     "late_rates": [
+      0.0447,
+      0.0307,
+      0.0379,
+      0.0386
+     ],
+     "free_rates": [
+      0.0271,
+      0.0418,
+      0.0423,
+      0.0428
+     ],
+     "winner": 0,
+     "winner_rate": 0.0447,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -52.8,
+     "v_max": 35.0,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": 0.25,
+     "slot0_late_frac_above_m20mV": 0.9235
+    },
+    "none": {
+     "drives": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -60.0,
+     "v_max": -60.0,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": -60.0,
+     "slot0_late_frac_above_m20mV": 0.0
+    },
+    "lesion": {
+     "drives": [
+      2500.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0013,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -75.96,
+     "v_max": 34.83,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": -63.47,
+     "slot0_late_frac_above_m20mV": 0.0
+    },
+    "attributable_to_loops_vs_lesion": 1.0,
+    "attributable_to_drive_vs_none": 1.0
+   },
+   {
+    "attractor_weight": 45.0,
+    "fs_to_ws_weight": 16.0,
+    "readback": {
+     "requested": true,
+     "bounded": true,
+     "substeps": 4,
+     "rule": "model_reset"
+    },
+    "solo": {
+     "drives": [
+      2500.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0473,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0395,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0473,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -70.9,
+     "v_max": 34.99,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": 10.33,
+     "slot0_late_frac_above_m20mV": 0.9523
+    },
+    "wta": {
+     "drives": [
+      2500.0,
+      750.0,
+      750.0,
+      750.0
+     ],
+     "late_rates": [
+      0.0424,
+      0.0689,
+      0.0413,
+      0.0621
+     ],
+     "free_rates": [
+      0.0169,
+      0.0401,
+      0.037,
+      0.0393
+     ],
+     "winner": 1,
+     "winner_rate": 0.0689,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -63.95,
+     "v_max": 35.0,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": 4.62,
+     "slot0_late_frac_above_m20mV": 0.9538
+    },
+    "none": {
+     "drives": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -60.0,
+     "v_max": -60.0,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": -60.0,
+     "slot0_late_frac_above_m20mV": 0.0
+    },
+    "lesion": {
+     "drives": [
+      2500.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0013,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -75.96,
+     "v_max": 34.83,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": -63.47,
+     "slot0_late_frac_above_m20mV": 0.0
+    },
+    "attributable_to_loops_vs_lesion": 1.0,
+    "attributable_to_drive_vs_none": 1.0
+   },
+   {
+    "attractor_weight": 60.0,
+    "fs_to_ws_weight": 16.0,
+    "readback": {
+     "requested": true,
+     "bounded": true,
+     "substeps": 4,
+     "rule": "model_reset"
+    },
+    "solo": {
+     "drives": [
+      2500.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0379,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0348,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0379,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -70.9,
+     "v_max": 34.98,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": 11.52,
+     "slot0_late_frac_above_m20mV": 0.9621
+    },
+    "wta": {
+     "drives": [
+      2500.0,
+      750.0,
+      750.0,
+      750.0
+     ],
+     "late_rates": [
+      0.0148,
+      0.0076,
+      0.0133,
+      0.0314
+     ],
+     "free_rates": [
+      0.011,
+      0.0302,
+      0.0299,
+      0.0323
+     ],
+     "winner": 3,
+     "winner_rate": 0.0314,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -58.87,
+     "v_max": 34.99,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": 7.97,
+     "slot0_late_frac_above_m20mV": 0.9845
+    },
+    "none": {
+     "drives": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -60.0,
+     "v_max": -60.0,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": -60.0,
+     "slot0_late_frac_above_m20mV": 0.0
+    },
+    "lesion": {
+     "drives": [
+      2500.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0013,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -75.96,
+     "v_max": 34.83,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": -63.47,
+     "slot0_late_frac_above_m20mV": 0.0
+    },
+    "attributable_to_loops_vs_lesion": 1.0,
+    "attributable_to_drive_vs_none": 1.0
+   },
+   {
+    "attractor_weight": 90.0,
+    "fs_to_ws_weight": 16.0,
+    "readback": {
+     "requested": true,
+     "bounded": true,
+     "substeps": 4,
+     "rule": "model_reset"
+    },
+    "solo": {
+     "drives": [
+      2500.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.028,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0319,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.028,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -70.9,
+     "v_max": 35.0,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": 14.01,
+     "slot0_late_frac_above_m20mV": 0.972
+    },
+    "wta": {
+     "drives": [
+      2500.0,
+      750.0,
+      750.0,
+      750.0
+     ],
+     "late_rates": [
+      0.0932,
+      0.0409,
+      0.0527,
+      0.0307
+     ],
+     "free_rates": [
+      0.0386,
+      0.0279,
+      0.0345,
+      0.028
+     ],
+     "winner": 0,
+     "winner_rate": 0.0932,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -52.8,
+     "v_max": 35.0,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": 3.39,
+     "slot0_late_frac_above_m20mV": 0.8489
+    },
+    "none": {
+     "drives": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -60.0,
+     "v_max": -60.0,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": -60.0,
+     "slot0_late_frac_above_m20mV": 0.0
+    },
+    "lesion": {
+     "drives": [
+      2500.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0013,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -75.96,
+     "v_max": 34.83,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": -63.47,
+     "slot0_late_frac_above_m20mV": 0.0
+    },
+    "attributable_to_loops_vs_lesion": 1.0,
+    "attributable_to_drive_vs_none": 1.0
+   },
+   {
+    "attractor_weight": 120.0,
+    "fs_to_ws_weight": 16.0,
+    "readback": {
+     "requested": true,
+     "bounded": true,
+     "substeps": 4,
+     "rule": "model_reset"
+    },
+    "solo": {
+     "drives": [
+      2500.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0371,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0286,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0371,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -70.9,
+     "v_max": 34.98,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": 13.86,
+     "slot0_late_frac_above_m20mV": 0.9606
+    },
+    "wta": {
+     "drives": [
+      2500.0,
+      750.0,
+      750.0,
+      750.0
+     ],
+     "late_rates": [
+      0.1352,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0505,
+      0.0234,
+      0.0251,
+      0.0255
+     ],
+     "winner": 0,
+     "winner_rate": 0.1352,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -58.8,
+     "v_max": 35.0,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": -6.94,
+     "slot0_late_frac_above_m20mV": 0.7477
+    },
+    "none": {
+     "drives": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -60.0,
+     "v_max": -60.0,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": -60.0,
+     "slot0_late_frac_above_m20mV": 0.0
+    },
+    "lesion": {
+     "drives": [
+      2500.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "late_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "free_rates": [
+      0.0013,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "winner": 0,
+     "winner_rate": 0.0,
+     "n_ignited": 0,
+     "ignited": false,
+     "v_min": -75.96,
+     "v_max": 34.83,
+     "n_oor_cells": 0,
+     "n_cells": 320,
+     "slot0_late_mean_v": -63.47,
+     "slot0_late_frac_above_m20mV": 0.0
+    },
+    "attributable_to_loops_vs_lesion": 1.0,
+    "attributable_to_drive_vs_none": 1.0
+   }
+  ]
+ }
+}

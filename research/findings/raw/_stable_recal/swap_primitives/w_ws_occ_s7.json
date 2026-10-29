@@ -1,0 +1,140 @@
+{
+ "arms": {
+  "on": {
+   "runner": "research/runners/stable_integration_swap_ignition_probe.py --primitives",
+   "seed": 7,
+   "arm": "on",
+   "calibration": {
+    "w_rec": 6.5,
+    "norm_ws_w": 4,
+    "thal_tonic_pa": 25,
+    "solo_plateau": 0.084,
+    "establish_pa": 1280,
+    "w_ws_occ": 32,
+    "w_pat_pred": 32,
+    "w_occ_gate": 80,
+    "w_pred_mm": 80,
+    "w_gate_ws": 4
+   },
+   "sweep_key": "w_ws_occ",
+   "rows": [
+    {
+     "gate_empty_rates": [
+      0.0,
+      0.0847,
+      0.0
+     ],
+     "gate_empty_gate_rate": 0.2344,
+     "gate_held_rates": [
+      0.1073,
+      0.0107,
+      0.0
+     ],
+     "gate_held_gate_rate": 0.1326,
+     "gate_self_rates": [
+      0.0847,
+      0.0,
+      0.0
+     ],
+     "gate_self_gate_rate": 0.1126,
+     "gate_primitive_holds": true,
+     "held_content_survives_own_gate": true,
+     "mm": {
+      "salient_mismatch": 0.1539,
+      "salient_match": 0.0094,
+      "nonsalient_mismatch": 0.0379
+     },
+     "mm_primitive_holds": true,
+     "w_ws_occ": 8.0
+    },
+    {
+     "gate_empty_rates": [
+      0.0,
+      0.088,
+      0.0
+     ],
+     "gate_empty_gate_rate": 0.213,
+     "gate_held_rates": [
+      0.0953,
+      0.0007,
+      0.0
+     ],
+     "gate_held_gate_rate": 0.0711,
+     "gate_self_rates": [
+      0.082,
+      0.0,
+      0.0
+     ],
+     "gate_self_gate_rate": 0.0652,
+     "gate_primitive_holds": true,
+     "held_content_survives_own_gate": true,
+     "mm": {
+      "salient_mismatch": 0.1539,
+      "salient_match": 0.0094,
+      "nonsalient_mismatch": 0.0379
+     },
+     "mm_primitive_holds": true,
+     "w_ws_occ": 16.0
+    },
+    {
+     "gate_empty_rates": [
+      0.0,
+      0.0847,
+      0.0
+     ],
+     "gate_empty_gate_rate": 0.1948,
+     "gate_held_rates": [
+      0.0793,
+      0.0,
+      0.0
+     ],
+     "gate_held_gate_rate": 0.0441,
+     "gate_self_rates": [
+      0.076,
+      0.0,
+      0.0
+     ],
+     "gate_self_gate_rate": 0.0478,
+     "gate_primitive_holds": true,
+     "held_content_survives_own_gate": true,
+     "mm": {
+      "salient_mismatch": 0.1539,
+      "salient_match": 0.0094,
+      "nonsalient_mismatch": 0.0379
+     },
+     "mm_primitive_holds": true,
+     "w_ws_occ": 32.0
+    },
+    {
+     "gate_empty_rates": [
+      0.0,
+      0.086,
+      0.0
+     ],
+     "gate_empty_gate_rate": 0.1926,
+     "gate_held_rates": [
+      0.0793,
+      0.0,
+      0.0
+     ],
+     "gate_held_gate_rate": 0.0396,
+     "gate_self_rates": [
+      0.0773,
+      0.0,
+      0.0
+     ],
+     "gate_self_gate_rate": 0.0448,
+     "gate_primitive_holds": true,
+     "held_content_survives_own_gate": true,
+     "mm": {
+      "salient_mismatch": 0.1539,
+      "salient_match": 0.0094,
+      "nonsalient_mismatch": 0.0379
+     },
+     "mm_primitive_holds": true,
+     "w_ws_occ": 64.0
+    }
+   ]
+  }
+ }
+}

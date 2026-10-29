@@ -1,0 +1,59 @@
+{
+  "runner": "research.runners.load_bearing_fraction",
+  "metric": "load_bearing_fraction",
+  "repeats": 2,
+  "seed": 100,
+  "backend": "numpy",
+  "cuda_visible_devices": null,
+  "source_prov_abstain_at_tie_env": "1",
+  "affect_marker_settle_env": null,
+  "per_faculty": [
+    {
+      "faculty": "xedge-surprise-worldmodel",
+      "turn": "iw1swm_ask",
+      "kind": "whether-disable",
+      "flag": "BRAIN_ONEBRAIN_XEDGE_SURPRISE_WORLDMODEL",
+      "load_bearing": true,
+      "verdict": "regressed",
+      "change_kind": "value",
+      "diffs": [
+        {
+          "field": "answer",
+          "on": "My affective forward model expects this to keep going positive (predicted next-turn valence +, pool-rate margin +220 Hz) \u2014 that's a functional read of my world-model's prediction, not a felt expectation.",
+          "off": "My affective forward model expects this to keep going positive (predicted next-turn valence +, pool-rate margin +421 Hz) \u2014 that's a functional read of my world-model's prediction, not a felt expectation."
+        }
+      ],
+      "treatment_diffs": 1,
+      "control_diffs": 0,
+      "attributable_fraction": 1.0,
+      "null_control_clean": true,
+      "lesion_reproduced": true,
+      "flag_resolves": true,
+      "note": "research/runners/onebrain_xedge_surprise_worldmodel_production.py xedge_surprise_worldmodel_enabled(): 0 turns the D2-gated online update of the live E2 organ's state->pred transition off; nothing else differs between the arms. Probe = +, then 8 alternating -/+ turns, then 'what do you expect?' (session 'iw1swm'); the expectation read-out states the predicted sign and pool-rate margin. Reply fields only."
+    }
+  ],
+  "determinism": {
+    "deterministic": true,
+    "n_null_controls_checked": 1,
+    "dirty_null_controls": []
+  },
+  "counts": {
+    "n_faculties_total": 1,
+    "n_coverable_env_lesion": 1,
+    "n_exercised": 1,
+    "n_load_bearing": 1,
+    "n_not_load_bearing": 0,
+    "n_not_exercised": 0,
+    "n_noisy": 0,
+    "n_lesion_knob_missing": 0,
+    "n_in_process": 0,
+    "n_thin": 0,
+    "n_mechanism_only": 0,
+    "n_proposed": 0
+  },
+  "load_bearing_fraction": 1.0,
+  "load_bearing_faculties": [
+    "xedge-surprise-worldmodel"
+  ],
+  "not_load_bearing_faculties": []
+}

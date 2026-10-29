@@ -27,7 +27,7 @@ are marked ADVISORY and count as ungated — the measured reason: **1330 runners
 | 13 | compaction-loss / attention-dilution | — | `gates/live_state_reinjection` (+ hooks `live_state_inject` / `live_state_nudge`, `tools/live_state.py`) | pre-commit (registry) + SessionStart/UserPromptSubmit hooks | ✅ BLOCKS (over-cap dilution guard + re-injection wiring) |
 | P | artifact-provenance | — | `runners/__init__` capture + `gates/artifact_provenance` | execution path + registry | ✅ BLOCKS |
 | D | doc-type / placement | — | `gates/doc_type` | registry | ✅ BLOCKS |
-| C | claim-not-traced-to-artifact | — | `claim_check.py` | pre-commit G2 | ✅ BLOCKS |
+| C | claim-not-traced-to-artifact | — | `claim_check.py` (merge scope, 2026-10-28: while MERGE_HEAD is present, `tools/merge_carried.py` drops a finding whose blob is byte-identical to a merge parent main already contains AND none of whose cited artifacts (claim_check's PATH_RE, globs included) differs between the index and that parent, so a main-into-branch sync is not blocked by main's own content; new merge content, a carried finding whose cited artifact the merge deletes or rewrites, and a branch landed into main are checked as before) | pre-commit G2 | ✅ BLOCKS |
 | B | biology-not-bound-to-code | — | `biology_check.py` | pre-commit G3 | ✅ BLOCKS |
 | M | mechanism-status conflict | — | `biology_check.check_mechanism_status` | pre-commit G3 | ✅ BLOCKS |
 | S | finding-status undeclared | — | pre-commit GATE 4 | pre-commit G4 | ✅ BLOCKS (new findings) |

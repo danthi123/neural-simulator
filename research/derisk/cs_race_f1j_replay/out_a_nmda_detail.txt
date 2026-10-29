@@ -1,0 +1,40 @@
+syn_tau_g_i 10 tauN 50 gN0 16: max|sat-lin| c1 v 31.43 mV (volley 31.43, t>=200 0.000)
+   C6 still failing: [('sa0p125_ms429_s49', 'late', 617), ('sa0p25_ms429_s49', 'late', 621), ('sa0p25_ms429_s51', 'late', 338)]
+   C7(b) fails (cell, newer fall ms): [(np.str_('sa0p125_ms429'), 631), (np.str_('sa0p125_ms429'), 905), (np.str_('sa0p25_ms304'), 626), (np.str_('sa0p25_ms429'), 619)]
+   C7(a) fails (cell, term): []
+   corner older termination ms (NMDA) median 374 [360..439] vs baseline median 372 [357..437] (n=23)
+syn_tau_g_i 10 tauN 60 gN0 12: max|sat-lin| c1 v 26.58 mV (volley 26.58, t>=200 0.000)
+   C6 still failing: [('sa0p125_ms429_s49', 'late', 629), ('sa0p25_ms429_s49', 'late', 621), ('sa0p25_ms429_s51', 'late', 359)]
+   C7(b) fails (cell, newer fall ms): [(np.str_('sa0p125_ms429'), 635), (np.str_('sa0p125_ms429'), 905), (np.str_('sa0p25_ms304'), 629)]
+   C7(a) fails (cell, term): []
+   corner older termination ms (NMDA) median 376 [361..441] vs baseline median 372 [357..437] (n=23)
+syn_tau_g_i 10 tauN 75 gN0 8: max|sat-lin| c1 v 21.15 mV (volley 21.15, t>=200 0.000)
+   C6 still failing: [('sa0p25_ms429_s49', 'late', 622), ('sa0p5_ms429_s50', 'early', 160)]
+   C7(b) fails (cell, newer fall ms): [(np.str_('sa0p125_ms429'), 906), (np.str_('sa0p25_ms304'), 630)]
+   C7(a) fails (cell, term): []
+   corner older termination ms (NMDA) median 378 [362..446] vs baseline median 372 [357..437] (n=23)
+syn_tau_g_i 10 tauN 40 gN0 12: max|sat-lin| c1 v 25.36 mV (volley 25.36, t>=200 0.000)
+   C6 still failing: [('sa0p125_ms429_s46', 'late', 312), ('sa0p125_ms429_s49', 'late', 615), ('sa0p25_ms429_s49', 'late', 620), ('sa0p25_ms429_s51', 'late', 331)]
+   C7(b) fails (cell, newer fall ms): [(np.str_('sa0p125_ms429'), 627), (np.str_('sa0p125_ms429'), 629), (np.str_('sa0p125_ms429'), 623), (np.str_('sa0p125_ms429'), 625), (np.str_('sa0p125_ms429'), 905), (np.str_('sa0p125_ms429'), 652), (np.str_('sa0p25_ms304'), 623), (np.str_('sa0p25_ms429'), 632), (np.str_('sa0p25_ms429'), 608), (np.str_('sa0p25_ms429'), 641)]
+   C7(a) fails (cell, term): []
+   corner older termination ms (NMDA) median 373 [358..438] vs baseline median 372 [357..437] (n=23)
+syn_tau_g_i 12 tauN 50 gN0 16: max|sat-lin| c1 v 31.43 mV (volley 31.43, t>=200 0.000)
+   C6 still failing: [('sa0p125_ms429_s46', 'late', 325), ('sa0p125_ms429_s49', 'late', 600), ('sa0p25_ms429_s49', 'late', 613), ('sa0p25_ms429_s51', 'late', 335)]
+   C7(b) fails (cell, newer fall ms): [(np.str_('sa0p125_ms429'), 629), (np.str_('sa0p125_ms429'), 642), (np.str_('sa0p125_ms429'), 632), (np.str_('sa0p125_ms429'), 902), (np.str_('sa0p25_ms304'), 625), (np.str_('sa0p25_ms429'), 637), (np.str_('sa0p25_ms429'), 613), (np.str_('sa0p25_ms429'), 645)]
+   C7(a) fails (cell, term): []
+   corner older termination ms (NMDA) median 375 [359..437] vs baseline median 371 [357..432] (n=18)
+syn_tau_g_i 12 tauN 60 gN0 12: max|sat-lin| c1 v 26.58 mV (volley 26.58, t>=200 0.000)
+   C6 still failing: [('sa0p125_ms429_s49', 'late', 600), ('sa0p25_ms429_s49', 'late', 613), ('sa0p25_ms429_s51', 'late', 339)]
+   C7(b) fails (cell, newer fall ms): [(np.str_('sa0p125_ms429'), 631), (np.str_('sa0p125_ms429'), 902), (np.str_('sa0p25_ms304'), 627), (np.str_('sa0p25_ms429'), 619)]
+   C7(a) fails (cell, term): []
+   corner older termination ms (NMDA) median 376 [360..438] vs baseline median 371 [357..432] (n=18)
+syn_tau_g_i 12 tauN 75 gN0 8: max|sat-lin| c1 v 21.15 mV (volley 21.15, t>=200 0.000)
+   C6 still failing: [('sa0p125_ms429_s49', 'late', 602), ('sa0p25_ms429_s49', 'late', 614), ('sa0p25_ms429_s51', 'late', 347), ('sa0p5_ms429_s47', 'early', 168), ('sa0p5_ms429_s48', 'early', 163), ('sa0p5_ms429_s50', 'early', 157)]
+   C7(b) fails (cell, newer fall ms): [(np.str_('sa0p125_ms429'), 634), (np.str_('sa0p125_ms429'), 903), (np.str_('sa0p25_ms304'), 628), (np.str_('sa0p25_ms429'), 624), (np.str_('sa0p5_ms429'), 457), (np.str_('sa0p5_ms429'), 456), (np.str_('sa0p5_ms429'), 464), (np.str_('sa0p5_ms429'), 458), (np.str_('sa0p5_ms429'), 466)]
+   C7(a) fails (cell, term): []
+   corner older termination ms (NMDA) median 378 [361..440] vs baseline median 371 [357..432] (n=18)
+syn_tau_g_i 12 tauN 40 gN0 12: max|sat-lin| c1 v 25.36 mV (volley 25.36, t>=200 0.000)
+   C6 still failing: [('sa0p125_ms429_s46', 'late', 311), ('sa0p125_ms429_s49', 'late', 600), ('sa0p125_ms429_s51', 'late', 344), ('sa0p25_ms429_s49', 'late', 613), ('sa0p25_ms429_s51', 'late', 330)]
+   C7(b) fails (cell, newer fall ms): [(np.str_('sa0p125_ms429'), 626), (np.str_('sa0p125_ms429'), 627), (np.str_('sa0p125_ms429'), 616), (np.str_('sa0p125_ms429'), 624), (np.str_('sa0p125_ms429'), 902), (np.str_('sa0p125_ms429'), 636), (np.str_('sa0p25_ms304'), 687), (np.str_('sa0p25_ms304'), 623), (np.str_('sa0p25_ms429'), 631), (np.str_('sa0p25_ms429'), 607), (np.str_('sa0p25_ms429'), 639)]
+   C7(a) fails (cell, term): []
+   corner older termination ms (NMDA) median 372 [357..434] vs baseline median 371 [357..432] (n=18)

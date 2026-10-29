@@ -13,7 +13,71 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-21 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-28 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+
+**Date:** 2026-10-28. **North star:** unchanged, a sim-brain that converses genuinely (affect and self-report are functional
+read-outs, never phenomenal claims); Qwen stays the mouth; the #1 metric is the lesion-verified load-bearing fraction, with the host-decision share beside it.
+**Frontier:** the Stage-2 retake. The 10-26 Stage-2 exit attempt FAILED (C1 0/6, C3 0/6, C2 fails its permuted-exposure control 0/6, C4 5/6; C5 passes 6/6 with a caveat); the re-attempt is due by 11-21 at a Claude re-pin (pool window 11-03..11-10). Emotion (C4) is fixed and ON by default since 10-28; curiosity (C3) passed its dev battery and waits on an identity canary before its six gate seeds; inference (C2) has a design packet and no build; language (C1) waits on the cs-race method f1j; the substrate-validity arc (#274) is built and OFF.
+**Next command (Claude, on W, once the runbook WORKLOG shows all 32 canary cells landed; 7 of 32 had landed at `c0cd8e2e4`, and the checker prints UNDEFINED for any missing cell):**
+
+    python -m research.runners.c3_topic_stop_score --identity-canary research/findings/raw/_c3_topic_stop/canary --dev-dir research/findings/raw/_c3_topic_stop/dev --seeds 7,8 --pin 34a4e5f756024b4f5aa5d145b3b29661ad976d0b --out research/findings/raw/_c3_topic_stop/canary/identity_canary.json
+
+**What landed since the 10-21 header below (plain language; that block stays valid for every lane this one does not change):**
+- **The Stage-2 exit attempt failed, and each failure has a cause on file (10-26).** Result:
+  `research/findings/2026-10-26-stage2-exit-gate-RESULT.md`; four skeptic-verified diagnoses:
+  `research/findings/2026-10-26-stage2-fail-diagnoses.md` (`a1bd7ff83`, merge `c5cd42d18`; RULINGS `stage2-next-1026`, `stage2-fixes-1026`).
+  C4's one miss (seed 101 never names joy) and the basal-ganglia (BG) membrane breach are one family: the 1 ms explicit-Euler step
+  is unstable in low-capacitance cells under strong conductance. C2's control miss is the default-ON comprehension gate (D4) refusing the permuted
+  teach, an acquisition refusal and not a reasoning result. C3 is a session-global host dopamine gain with no per-topic stop.
+  C1's upstream is the cs-race family (below). The owner's 10-25 two-lane focus (RULING `focus-1025`) ended at this result.
+- **Emotion (Stage-2 C4): the bounded-conductance fix passed its flip gate and is ON by default (merge `0b79336ec`, 10-28).**
+  Prereg `research/findings/2026-10-27-emo-bounded-flip-PREREGISTRATION.md`, gate revision `3b0b5182a`. The first read was B1-B7 PASS with B8
+  UNDEFINED by construction (the pin check rejected the flag the ON lines inject). Amendment 2 is post-data and changes only how B8 admits cells;
+  the rescore reads B1-B8 PASS, 8 of 8 bars defined, DEC PASS
+  (`research/findings/raw/_emo_bounded_flip/gate_score_amend2_3b0b5182aa1819d1804ef21d704154132d75e5bc.json`; RULING `emo-flip-1028`).
+  A three-lens verify-go panel reproduced it and hand-recomputed all 12 B8 cells. Caveats: B8 shows the row load-bearing on 6 of 6 seeds with the flag ON
+  and 5 of 6 with it OFF, and each seed's result rests on one probe turn. `BRAIN_EMOTION_CATEGORY_BOUNDED=0` is the escape back to the pre-flip organ (pinned
+  spike for spike in `tests/test_emotion_category_bounded.py`); any OFF arm must now set it explicitly. The 10-26 C4 verdict (5/6) stands
+  until C4 is re-measured at the 11-21 re-pin, because the organ file changed between the gate revision and main (the on-device census code, `66ccdd924`).
+- **Curiosity (Stage-2 C3): per-topic stop (L+P) passed the dev battery D1-D8 on 11 of 11 counted dev seeds; the gate-seed prereg is filed.**
+  Packet `research/coordination/c3-topic-stop-PACKET.md` (merge `79c6f5128`, default OFF); an independent re-score agreed (RULING `landing-1028`).
+  Prereg `research/findings/2026-10-28-c3-topic-stop-gate-PREREGISTRATION.md` (merges `6dfa01e1e`, `5e8fad511`). Edit 1 (pre-data) fixes the gate revision F
+  once, F = `34a4e5f75`, valid only after an identity canary: dev seeds 7 and 8 x 16 arms must reproduce the committed dev shards, 32 of 32 IDENTICAL, before
+  the 96 gate lines (six gate seeds x 16 arms) are queued; `CANARY PASS: 32/32 IDENTICAL` from the command above is the only read that releases them, and any DIFFERS or UNDEFINED stops with Claude ruling.
+  The canary and the stable-recal held-out battery are queued at F (RULING `canary-recal-1028`).
+  A partial read of the checker at `f3675ef67` (the command above) printed 7 of 32 IDENTICAL, 0 DIFFERS, 25 UNDEFINED (cells not yet landed); that is progress, not the verdict.
+  Caveats that travel with the dev PASS: L alone with the gain pinned passes too (P is shown necessary only against the gain formula's floor clip);
+  topic-locking is not load-bearing (a constant-salience arm passes 11/11); a host count rule reproduces 117 of 121 decisions; `m_goat` is UNDEFINED (the
+  goat teach is refused by the same D4 gate); and the ask decision is still host arithmetic over spiking inputs (declared scaffold, CLASS HD, 1 of 2 builds used).
+- **Substrate validity (#274): the one-switch stable setting exists, changes replies, and the workspaces that depended on the fault are re-calibrated (all default OFF).**
+  Census (10-26, merge `87f84ad4d`): 12 production circuits carry non-physical membrane voltages on dev seed 7, replicated on all dev seeds 1-12. `SIM_STABLE_INTEGRATION=1`
+  (merge `f64b564bf`) removes them, but the GNW ignition-bus workspace that decided recall verification and C5 on dev seeds 7 and 8 ignited at the point where its cells ran away
+  (all 80 slot cells left the valid range at its knee), so **the 10-26 C5 PASS carries that caveat** (RULING `substrate-1027`; never cite C5 without it). `SIM_STABLE_RECAL=1` (merge `34a4e5f75`, finding
+  `research/findings/2026-10-27-stable-recal-dev78.md`, corrected) re-calibrates the bus, the thought-swap workspace and the global-stop workspace by their own rules
+  on valid cells. Honest limits: the stop is saturated (binary) on dev seeds 7 and 8; the global-stop organ's own gate over 15 dev seeds reads 5 GO, 1 NO-GO, 9 UNDEFINED; the conflict
+  sensor and boost are host-computed Python (a tuned scaffold); dev seeds 7 and 8 are in-sample. The 180-line held-out battery is queued at F (0 of 180 landed at `c0cd8e2e4`).
+  The trait-centred cell-type variant (`SIM_TRAIT_CENTRED_HET`, merge `500d8986d`) is merged OFF and is not a flip candidate: it takes the associative-graph offenders from 110 to 4
+  but changes 32 of 63 reply texts on dev seed 7 and lowers the Broca slot bridge's own de-risk from 7 of 8 to 4 of 8 seeds.
+- **Content-selection race (cs-race, C1's upstream): f1i step 0 hit STOP (10-28).** STOP-CAL, STOP-ATTRIB and STOP-SMOKE (global reading) all fire and no cell is selected
+  (`research/coordination/cs-race-f1i-0-SCORE.md`, merge `f1a7514f6`; RULING `f1i-0-1028`). The banked method result: the shared SOM-like pool on apical GABA_A ends the older word's plateau
+  23 of 23 at the corner cell (0 of 23 with the path lesioned), the first spiking route on this lane to do it (f1h's somatic pool: 0 of 216). But the newer word's own inhibition ends its own plateau just after
+  its 150 ms box-car drive: C6 fails on 51 of 72 trace records (45 within 153-199 ms). That is a second lever against one defect, so the research gate ran. The missing companion process is an
+  input-driven, decaying, Mg-blocked NMDA apical conductance (the engine's BDSP regenerative step has no conductance memory and the drive has a 0 ms edge). Next method **f1j = A-NMDA**: its packet `research/coordination/cs-race-f1j-PACKET.md` is merged (`f3675ef67` of `d457784a0`) with a zero-cost replay that says the method stands but its full-rescue point moves up; the cs-race cap gains one build, granted only for a method that adds no new host-decided selectivity.
+  One default-OFF engine edit (packet section E) is specified and not yet built; the cs-race lane holds until that edit and the runner flags are merged and the f1j step-0 lines are posted.
+  Word-role stays parked (RULING `focus-1025`; no later ruling un-parks it) and OFF at the Stage-2 pin: its frame-trace population is almost silent (T-to-role updated on 1 of 5760 steps against 3595 for word-to-role), the same family as cs-race (RULING `batch-1026` item 5).
+- **Inference (Stage-2 C2): the design packet survived nine rounds; no build yet.** `research/coordination/c2-spiking-hops-PACKET.md` (merge `26dcdea48`, 10-28) designs M1 (hop reads on the spiking store)
+  and M3 (all-novel transitives acquired through a learned order cue). Four successive refuter verdicts (`a7799b30c`, `fca06bd9a`, `bad12d536`, `bdd949cc5`) each forced a revision; the round-9 verifier's five fixes
+  were non-blocking and applied. It is design only (no run, no code); step 0 is the next build and is in progress. The host-ownership finding behind it (`research/findings/2026-10-26-c2-kb-scramble-host-ownership.md`, merge `5084acce2`):
+  scrambling the composer's fact list changes the derived conclusion, so a host list decides it today; forcing the route onto the spiking store gives the right answer.
+- **BG seam (ownership lane).** The step-1 grid is UNDEFINED in all 8 sets because seeds 72, 75 and 77 breach the membrane range; the five clean seeds pass all six bars in every set. The BG-branch sub-step option
+  (`research/bg-tonic-loop`, `389974d0a`, not on main) removes the breach on 8 of 8 dev seeds at 4 sub-steps, so the grid must be re-run under it as a new measurement. `[bg-live-seam]` T5 was reported NO-GO on 10-27; latch rates are next, behind the re-run.
+- **The #1 metric (reply-level load-bearing fraction) is INCOMPLETE at the current code.** The gate-seed measurement scores only when all 294 clean cells are in place; 73 of 252 were readable at 12:11 (S0 0.844 on 2 seeds), which is an interim read and not a result,
+  and 142 clean re-runs were still owed at that ruling (RULING `lbf-gate-wait-1028`). RULING `batch-1026` item 6 ruled the affect-marker row out of the headline fraction because its lead word is not live in production (`BRAIN_AFFECT_MARKER_SURFACE` default 0); it stays a scaffold diagnostic.
+- **Tooling and process.** Pre-commit GATE 2 (`claim_check`) is merge-aware: a sync merge no longer re-checks a finding that main already carries, provided the finding's blob and every artifact it cites are identical to a trunk parent
+  (merge `e761e4912` of `819a49979`, 21 tests in `tests/test_gate2_merge_aware.py`). The pool's gate-seed guard now requires the cited prereg's file name to contain `prereg` (merge `b1d3df2fc`;
+  RULING `f1h-queued-1027` item 4: a runbook, packet or ruling is never a prereg). Lanes not touched since 10-21 (moat build 8 capped and parked; #271 deixis as pool filler only) keep the status in the block below.
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-21 (history; superseded by 2026-10-28 above, still valid for the lanes the 10-28 block does not change) — PHASE: PROVE WHO OWNS THE COMPUTATION
 
 **Date:** 2026-10-21. **North star:** unchanged. **Calendar:** Stage-2 exit attempt by 11-21 (pool window 11-03..11-10);
 Stage 1 passed 10-16 with four caveats (the 10-16 section below, verbatim; never cite it without them).
@@ -5580,6 +5644,8 @@ sweeps, duplicate work, or development/held-out seeds whose gate is closed.
 ---
 
 ## ⚡ SESSION START — DO THIS FIRST, EVERY session (owner-chosen 2026-07-18: doc-instruction arming, NO hooks/daemon)
+
+**2026-10-28 (owner): FIRST arm `tools/attention_watch.py --loop` in the background (event-only, checks the workstation AND the server: GPU idle or failing, oom-kills, degraded builds, NEEDS, a silent driver, an idle or stalled pool, ruled tasks nobody started); re-arm after each event. The 15-min heartbeat recipe below is the older workstation-only backstop.**
 
 **FIRST ACTION: arm the within-session anti-stall + RUN-STATE heartbeat — at SESSION START AND on ANY CONTINUATION
 (resumed from compaction): VERIFY a heartbeat is actually live, do NOT assume.** It is a SESSION-SCOPED `Monitor` — it

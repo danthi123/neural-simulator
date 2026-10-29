@@ -1,0 +1,31 @@
+{
+ "run_id": "1793047248-70452",
+ "runner": "research/runners/stage2_exit_gate.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/research/runners/stage2_exit_gate.py",
+  "--aggregate",
+  "research/findings/raw/_stage2_diag/c2_comprehension_gateoff",
+  "--seeds",
+  "1,2,3",
+  "--out",
+  "research/findings/raw/_stage2_diag/c2_comprehension_gateoff/aggregate.json"
+ ],
+ "git_sha": "3d4beaee3",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-26T16:40:48",
+ "env": {},
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 156356.9,
+ "corpus_check_query": "bg step-1 region table (batch-1024b Addition A) from existing Part C f-I",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_stage2_diag/c2_comprehension_gateoff/aggregate.json"
+}

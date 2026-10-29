@@ -1,0 +1,223 @@
+{
+  "scalar": {
+    "answer": "(Pragmatically I read \"some\" as \"some but not all\" -- my listener model puts that at 0.72, though strictly \"all\" stays 0.28-possible.) the some dogs the ran",
+    "abstained": false,
+    "recalled_svo": [
+      "some",
+      "dog",
+      "ran"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "some",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "some"
+        },
+        {
+          "word": "dog",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "dog"
+        },
+        {
+          "word": "ran",
+          "confidence": null,
+          "role": "patient",
+          "cue": true,
+          "asserted": "ran"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 193,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 49408,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.4994065671671
+      },
+      "composer": "rf"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.999999990857143,
+      "rate_perceived": 0.109375,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "some",
+        "dogs",
+        "ran"
+      ],
+      "recall_action": "dogs",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": {
+      "on": true,
+      "lesioned": false,
+      "utterance": "some",
+      "belief_source": "graded",
+      "states": [
+        "none",
+        "SBNA",
+        "all"
+      ],
+      "belief": [
+        0.0,
+        0.7245,
+        0.2755
+      ],
+      "onehot_belief": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "enriched_interpretation": "some but not all",
+      "literal_interpretation": "at least some (possibly all)",
+      "implicature_margin": 0.449,
+      "residual_all_prob": 0.2755,
+      "onehot_residual_all_prob": 0.0,
+      "implicature_represented": true,
+      "calib_l1_to_analytic": 0.051,
+      "calib_l1_to_analytic_onehot": 0.5
+    },
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "ema_valence": 0.0,
+      "ema_arousal": 0.0,
+      "body_h": 0.5,
+      "body_a": 0.0,
+      "mood": 0.001041666666666663,
+      "felt_arousal": 0.0,
+      "level": 0,
+      "high_arousal": false,
+      "lead": "",
+      "reason": "neutral_hold",
+      "seed": 100,
+      "vplus_rate": 0.04041666666666666,
+      "vminus_rate": 0.039375
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 1,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": null,
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 100,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "turn_engagement": 0.2727272727272727,
+      "ema_engagement": 0.1636363636363636,
+      "afferent_pA": 229.09090909090904,
+      "da_level": 0.325495579117894,
+      "snc_firing": 0.046666666666666655,
+      "mode": "rest",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 100,
+      "shared_salience": {
+        "raw": 0.6192307692307693,
+        "want_hz": 10.416666666666666,
+        "normalized": 0.2727272727272727,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.8653846153846154,
+        "n_tokens": 2,
+        "per_word_freshness": [
+          1.0,
+          0.7307692307692307
+        ],
+        "fresh_ref": 26.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.4272323630981745,
+      "da_level": 0.325495579117894,
+      "lesioned": false
+    }
+  }
+}

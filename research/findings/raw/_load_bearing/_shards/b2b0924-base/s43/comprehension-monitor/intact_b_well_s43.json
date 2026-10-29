@@ -1,0 +1,217 @@
+{
+  "well": {
+    "answer": "the wolf bites the apple",
+    "abstained": false,
+    "recalled_svo": [
+      "wolf",
+      "bite",
+      "apple"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "wolf",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "wolf"
+        },
+        {
+          "word": "bite",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "bite"
+        },
+        {
+          "word": "apple",
+          "confidence": null,
+          "role": "patient",
+          "cue": true,
+          "asserted": "apple"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 214,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 54784,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.49940685423098
+      },
+      "composer": "rf"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999895765473,
+      "rate_perceived": 0.0959375,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "wolf",
+        "bite",
+        "apple"
+      ],
+      "margin": 0.3,
+      "threshold": 0.19999999999999998,
+      "comprehended": true,
+      "calib": {
+        "mean_well": 0.3,
+        "min_well": 0.3,
+        "mean_ill": 0.038888888888888876,
+        "max_ill": 0.09999999999999998,
+        "read_steps": 60,
+        "n_calib": 24
+      },
+      "known_binding": false
+    },
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "wolf",
+        "bites",
+        "apple"
+      ],
+      "recall_action": "bites",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "ema_valence": 0.0,
+      "ema_arousal": 0.0,
+      "body_h": 0.5,
+      "body_a": 0.0,
+      "mood": 0.0010000000000000009,
+      "felt_arousal": 0.0,
+      "level": 0,
+      "high_arousal": false,
+      "lead": "",
+      "reason": "neutral_hold",
+      "seed": 43,
+      "vplus_rate": 0.03979166666666667,
+      "vminus_rate": 0.03879166666666667
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 1,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": null,
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 43,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "turn_engagement": 0.3272727272727272,
+      "ema_engagement": 0.19636363636363632,
+      "afferent_pA": 274.9090909090909,
+      "da_level": 0.3726834325926455,
+      "snc_firing": 0.05166666666666665,
+      "mode": "rest",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 43,
+      "shared_salience": {
+        "raw": 0.6327586206896552,
+        "want_hz": 12.499999999999998,
+        "normalized": 0.3272727272727272,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.8045977011494253,
+        "n_tokens": 3,
+        "per_word_freshness": [
+          0.6896551724137931,
+          0.9655172413793104,
+          0.7586206896551724
+        ],
+        "fresh_ref": 29.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.4834731129748389,
+      "da_level": 0.3726834325926455,
+      "lesioned": false
+    }
+  }
+}

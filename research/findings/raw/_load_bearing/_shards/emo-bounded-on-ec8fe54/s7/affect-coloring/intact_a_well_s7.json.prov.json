@@ -1,0 +1,41 @@
+{
+ "run_id": "1793102208-1051726",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/home/dant123/Projects/sim-rev/wt-emoflip/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{}",
+  "--turns",
+  "well",
+  "--out",
+  "/home/dant123/Projects/sim-rev/wt-emoflip/research/findings/raw/_load_bearing/_shards/emo-bounded-on-ec8fe54/s7/affect-coloring/intact_a_well_s7.json"
+ ],
+ "git_sha": "ec8fe543f",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-27T07:56:48",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "BRAIN_EMOTION_CATEGORY_BOUNDED": "1",
+  "SIM_RUN_ID": "1793102207-1051679",
+  "NUMEXPR_NUM_THREADS": "1",
+  "BRAIN_CHAT_SEED": "7"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1663.0,
+ "corpus_check_query": "end a held dendritic plateau with dendrite-targeting inhibition",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_load_bearing/_shards/emo-bounded-on-ec8fe54/s7/affect-coloring/intact_a_well_s7.json"
+}

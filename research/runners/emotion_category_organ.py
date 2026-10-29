@@ -56,6 +56,25 @@ LESIONS (each a transmission gate on this bridge; dev arms):
   shuffle (a build)    O_k -> G_{pi(k)}      BRAIN_EMOTION_CATEGORY_SHUFFLE=1 (pi = rotate by one channel)
   teach swap (a build) fear<->anger triggers in development   BRAIN_EMOTION_CATEGORY_TEACH_SWAP=1
 
+BOUNDED CONDUCTANCE (`BRAIN_EMOTION_CATEGORY_BOUNDED`, default ON via `_BOUNDED_DEFAULT_ON`: unset or blank is ON, an
+explicit `=0` / false / no / off restores the unbounded step exactly; research/findings/2026-10-26-emotion-organ-bounded-
+conductance-derisk.md, flip prereg research/findings/2026-10-27-emo-bounded-flip-PREREGISTRATION.md). The explicit-Euler
+conductance term (dv = g_i * (E_i - v) * dt / C) overshoots E_i whenever g_i * dt / C exceeds ~2. The organ's heterogeneity draw gives about 4% of builds an appraisal neuron of low capacitance
+(s101: C = 53.6 pF against a mean near 100); when the other channel wins, its inhibitory pool drives that neuron's g_i
+to 100-136 nS, v oscillates with growing amplitude (-96, -24, -116, +18, -137 mV), and the spurious spikes recruit the
+sadness quench pool that silences the joy rungs. The flag sets the engine's own opt-in guard
+`cfg.enable_bounded_conductance_integration` (sim/config.py; exponential-Euler, one step can only move v toward its
+reversal) at CoreSimConfig construction. Nothing else changes: no capacitance truncation, no host table. Every read
+reports `bounded_flag` (the flag the organ resolved), `bounded_env` (the raw env string seen), `bounded_readback` (the
+bridge's own core_config value) and `oor_count` / `oor_count_session` (distinct organ neurons whose v went below
+-110 mV during the read / during the session's observes and the read; 0 expected under the fix). The monitor is a
+read-only running minimum of v kept on the array module's device (`DeviceCensus`: one elementwise fmin per step, one
+host transfer per observe / read) and changes no state. Measured on the workstation 3090 (organ dev seed 1, paired
+interleaved blocks, other GPU tenants present): the former per-step host copy cost +9.7% over a bare simulation step
+(+3.0% of a whole read); the device census +2.4% over a bare step (about 7 us/step: one extra enqueued op on a shared GPU;
+an in-place ElementwiseKernel and a memcpyAsync ring buffer measured no better in situ) and no measurable change to a
+whole read (-2.0%, inside the noise: IQR -5.4..+3.9%).
+
 NAMED RESIDUALS (host code that remains; declared):
   * the development curriculum (which trigger and which emotion word the teacher puts in one episode) is the teacher
     as social environment; the innate trigger map is hand-wired (a seed lexicon, like WARRINER);
@@ -167,6 +186,44 @@ GATE_SLOT = "emo_slot_loop"
 GATE_WORD_PLASTIC = "emo_word_plastic"
 GATE_FIXED = "emo_fixed"
 
+BOUNDED_ENV = "BRAIN_EMOTION_CATEGORY_BOUNDED"
+# Production default of BRAIN_EMOTION_CATEGORY_BOUNDED (the literal docs/PRODUCTION_INTEGRATION_LEDGER.yaml anchors).
+# True: an UNSET (or blank) env builds the organ with the engine's bounded exponential-Euler conductance step; the
+# escape back to the unbounded explicit-Euler step is an explicit =0/false/no/off.
+_BOUNDED_DEFAULT_ON = True
+OOR_MV = -110.0                                    # an organ neuron below this left the physiological range (E_i = -75)
+
+
+class DeviceCensus:
+    """The out-of-range census, kept on the array module's device (cp under CuPy, np under numpy). Each step folds the
+    membrane array into a running per-neuron minimum with ONE elementwise `fmin` (no host copy, no host sync); `members()`
+    does the only device-to-host transfer, once per read, and returns the set of neurons whose minimum over the census
+    window is below OOR_MV. "Below OOR_MV at some step" and "minimum over the steps below OOR_MV" are the same set, so
+    the returned counts equal the former per-step host census (`np.flatnonzero(v < OOR_MV)` on a host copy after every
+    step) exactly. `fmin` ignores a NaN, so a NaN membrane value (a broken simulation, not a physiological one) is never
+    counted and does not hide the other neurons; the former census skipped the whole step instead. Read-only: it touches
+    no simulation state, and an error in it is swallowed (an instrument failure must not crash a turn)."""
+
+    def __init__(self, xp=None):
+        self.xp = xp if xp is not None else get_backend()[0]
+        self.vmin = None
+
+    def update(self, v) -> None:
+        try:
+            if self.vmin is None:
+                self.vmin = self.xp.full_like(v, self.xp.inf)
+            self.xp.fmin(self.vmin, v, out=self.vmin)
+        except Exception:   # noqa: BLE001 -- diagnostic only
+            pass
+
+    def members(self) -> set:
+        try:
+            if self.vmin is None:
+                return set()
+            return set(int(i) for i in np.flatnonzero(to_host(self.vmin < OOR_MV)))
+        except Exception:   # noqa: BLE001 -- diagnostic only
+            return set()
+
 
 def _truthy(name: str) -> bool:
     return os.environ.get(name, "").strip().lower() in ("1", "true", "yes", "on")
@@ -185,6 +242,21 @@ def operating_point() -> int:
         return DEFAULT_OP
 
 
+def bounded_requested() -> bool:
+    """`BRAIN_EMOTION_CATEGORY_BOUNDED`: build the organ with the engine's bounded conductance integration. DEFAULT ON
+    (`_BOUNDED_DEFAULT_ON`): unset or blank is ON, the same unset/blank rule as the sibling switch
+    `webapp/server.py::_emotion_category_on`. Any other value is read as 1/true/yes/on -> ON, else OFF, so an explicit
+    `0` (or false/no/off, or any value that is not one of the ON spellings) is the escape back to the unbounded
+    explicit-Euler step, byte-identical to the organ before this flag existed (pinned in
+    tests/test_emotion_category_bounded.py). The env name is written as a LITERAL below (not via BOUNDED_ENV) so the
+    static gate tools/gates/flip_offarm_staleness.py (CLASS OS) resolves this default ON through its `_*DEFAULT_ON`
+    constant-indirection path; a variable here makes the gate read the default as UNKNOWN and skip the flag."""
+    v = os.environ.get("BRAIN_EMOTION_CATEGORY_BOUNDED")
+    if v is None or not v.strip():
+        return _BOUNDED_DEFAULT_ON
+    return _truthy(BOUNDED_ENV)
+
+
 _WORD_RE = re.compile(r"[a-z']+")
 
 
@@ -195,9 +267,14 @@ def content_words(text: str) -> List[str]:
 class EmotionCategoryOrgan:
     """Development (`train`), per-session held state (`observe`), and the committed category (`read`)."""
 
-    def __init__(self, seed: int = 1, params: Optional[dict] = None, shuffle: bool = False, teach_swap: bool = False):
+    def __init__(self, seed: int = 1, params: Optional[dict] = None, shuffle: bool = False, teach_swap: bool = False,
+                 bounded: Optional[bool] = None):
         self.p = dict(params if params is not None else GRID[0])
         self.seed = int(seed)
+        # None = follow BRAIN_EMOTION_CATEGORY_BOUNDED (read once, here, so a cached organ keeps the value it was built with;
+        # bounded_env stays the RAW env string seen, None when unset, even though unset now resolves ON)
+        self.bounded_env = os.environ.get(BOUNDED_ENV)
+        self.bounded = bounded_requested() if bounded is None else bool(bounded)
         self.shuffle = bool(shuffle)
         self.teach_swap = bool(teach_swap)
         self.episodes = curriculum(teach_swap)
@@ -214,6 +291,7 @@ class EmotionCategoryOrgan:
         self._bridge = self._xp = self._snap = None
         self._lock = threading.RLock()
         self._sessions: "OrderedDict[object, dict]" = OrderedDict()
+        self._oor_sessions: "OrderedDict[object, set]" = OrderedDict()   # distinct out-of-range neurons per session
         self.trained = False
 
     # ── build ──────────────────────────────────────────────────────────────────────────────────────────────────
@@ -260,6 +338,8 @@ class EmotionCategoryOrgan:
         cfg.hebbian_learning_rate = float(p["LR"])
         cfg.hebbian_max_weight = float(p["W_MAX"])
         cfg.enable_parameter_heterogeneity = True
+        if self.bounded:        # the engine's own opt-in guard (sim/config.py); bounded=False (=0) leaves cfg untouched
+            cfg.enable_bounded_conductance_integration = True
         b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(), runtime_state=RuntimeState(),
                              gpu_config=GPUConfig())
         b.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
@@ -396,6 +476,7 @@ class EmotionCategoryOrgan:
     def forget(self, key):
         with self._lock:
             self._sessions.pop(key, None)
+            self._oor_sessions.pop(key, None)
 
     def _restore(self, key):
         b, xp = self._bridge, self._xp
@@ -404,6 +485,18 @@ class EmotionCategoryOrgan:
         if st is not None:
             _restore_state(b, st)
         b.cp_external_input_current[:] = 0.0
+
+    def _census(self) -> DeviceCensus:
+        """A fresh on-device census for one observe / read (see DeviceCensus)."""
+        return DeviceCensus(self._xp)
+
+    def _step(self, census: DeviceCensus) -> None:
+        """One simulation step, then a read-only on-device census: the membrane array folds into the census's running
+        minimum (no host transfer; `census.members()` reads it back once per read). It reads v after the step and changes
+        no state, so it cannot move a spike."""
+        b = self._bridge
+        b._run_one_simulation_step()
+        census.update(b.cp_membrane_potential_v)
 
     def _counts(self, idx_map, xp):
         f = self._bridge.cp_firing_states
@@ -436,22 +529,29 @@ class EmotionCategoryOrgan:
                 cur[xp.asarray(self.app_idx[c])] = xp.float32(pa)
             b.cp_external_input_current[:] = cur
             app = {c: 0 for c in CATS}
+            cen = self._census()
             for _ in range(int(p["EXPOSE_STEPS"])):
-                b._run_one_simulation_step()
+                self._step(cen)
                 for c, v in self._counts(self.app_idx, xp).items():
                     app[c] += v
             b.cp_external_input_current[:] = 0.0
             for _ in range(int(p["SETTLE_STEPS"])):
-                b._run_one_simulation_step()
+                self._step(cen)
             rungs = {c: [int(to_host(b.cp_firing_states[xp.asarray(r)].astype(xp.float64).sum())) for r in
                          self.rung_idx[c]] for c in CATS}
             self._save(key)
+            oor = set(self._oor_sessions.get(key, ())) | cen.members()     # the census's one host transfer
+            self._oor_sessions[key] = oor
+            self._oor_sessions.move_to_end(key)
+            while len(self._oor_sessions) > 64:
+                self._oor_sessions.popitem(last=False)
         finally:
             b.cp_external_input_current[:] = 0.0
             b.set_transmission_gate(GATE_OUT, 1.0)
             b.set_transmission_gate(GATE_WORD, 1.0)
             b.set_transmission_gate(GATE_LOOP, 1.0)
-        return {"acted": True, "words": list(words), "appraisal_counts": app, "rungs_active_last_step": rungs}
+        return {"acted": True, "words": list(words), "appraisal_counts": app, "rungs_active_last_step": rungs,
+                "oor_count_session": len(oor)}
 
     def read(self, key, lesion: bool = False, commit_lesion: bool = False, latch_lesion: bool = False) -> dict:
         """The committed category of this session's held ladder. `lesion` = the `affect_out` lesion."""
@@ -474,10 +574,11 @@ class EmotionCategoryOrgan:
         out_c = {c: 0 for c in CATS}
         gate_c = {c: 0 for c in CATS}
         slot_c = {c: 0 for c in CATS}
+        cen = self._census()
         try:
             b.set_transmission_gate(GATE_COMMIT, 0.0 if commit_lesion else 1.0)    # the read window opens
             for _ in range(int(p["READ_WINDOW"])):
-                b._run_one_simulation_step()
+                self._step(cen)
                 for c, v in self._counts(self.out_idx, xp).items():
                     out_c[c] += v
                 for c, v in self._counts(self.gate_idx, xp).items():
@@ -485,7 +586,7 @@ class EmotionCategoryOrgan:
             b.set_transmission_gate(GATE_COMMIT, 0.0)                               # ... and closes
             hold, rd = int(p["HOLD_STEPS"]), int(p["READ_STEPS"])
             for t in range(hold):
-                b._run_one_simulation_step()
+                self._step(cen)
                 if t >= hold - rd:
                     for c, v in self._counts(self.slot_idx, xp).items():
                         slot_c[c] += v
@@ -494,8 +595,13 @@ class EmotionCategoryOrgan:
             b.set_transmission_gate(GATE_OUT, 1.0)
             b.set_transmission_gate(GATE_LOOP, 1.0)
             b.cp_external_input_current[:] = 0.0
+        oor = cen.members()                                                         # the census's one host transfer
         return {"readout_counts": out_c, "gate_counts": gate_c, "slot_counts": slot_c,
-                "lesioned": bool(lesion), "commit_lesioned": bool(commit_lesion), "latch_lesioned": bool(latch_lesion)}
+                "lesioned": bool(lesion), "commit_lesioned": bool(commit_lesion), "latch_lesioned": bool(latch_lesion),
+                # ENGAGEMENT: what this read actually ran with (see BOUNDED CONDUCTANCE in the module docstring)
+                "bounded_flag": bool(self.bounded), "bounded_env": self.bounded_env,
+                "bounded_readback": bool(getattr(b.core_config, "enable_bounded_conductance_integration", False)),
+                "oor_count": len(oor), "oor_count_session": len(oor | self._oor_sessions.get(key, set()))}
 
 
 def read_category(rec: dict, p: dict) -> dict:
@@ -540,11 +646,12 @@ def get_organ(seed: Optional[int] = None) -> EmotionCategoryOrgan:
     seed = _seed() if seed is None else int(seed)
     op = operating_point()
     shuffle, swap = _truthy("BRAIN_EMOTION_CATEGORY_SHUFFLE"), _truthy("BRAIN_EMOTION_CATEGORY_TEACH_SWAP")
-    k = (seed, op, shuffle, swap)
+    bounded = bounded_requested()
+    k = (seed, op, shuffle, swap, bounded)
     with _ORGANS_LOCK:
         org = _ORGANS.get(k)
         if org is None:
-            org = EmotionCategoryOrgan(seed=seed, params=GRID[op], shuffle=shuffle, teach_swap=swap)
+            org = EmotionCategoryOrgan(seed=seed, params=GRID[op], shuffle=shuffle, teach_swap=swap, bounded=bounded)
             _ORGANS[k] = org
     return org
 

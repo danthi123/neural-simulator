@@ -326,3 +326,12 @@ verbatim. Board: #244 closed + milestone #264 added by Claude same cycle (RULING
 #271 census accepted + design round 2; #272 added (speech self-monitor); #268 size-dependent draws appended; moat capped at build 8 (CLASS HD).
 ## 2026-10-22  cs-race-f1d step4
 Board #238 updated: feasibility check complete, RESULT PROVISIONAL research/cs-race @ a6f70651d, next action Claude's ruling on f1d (merge next).
+
+## 2026-10-26  stage2-fixes + substrate (Claude)
+#273 updated with the checked Stage-2 causes; #261 BG time-step finding; #274 NEW substrate integrity (membrane census: 12 circuits with non-physical voltages). Findings: stage2-fail-diagnoses, emotion-organ-bounded-conductance-derisk, izh-membrane-substeps-derisk, membrane-census-dev7, c2-kb-scramble-host-ownership.
+
+## 2026-10-28  claude landing-1028
+#273 Stage-2 retake: emo B1-B7 PASS, B8 amendment 2 (rescore next), C3 dev PASS 11/11 + gate prereg, C2 packet r5/r6; #274 stable-recal record corrected, mechc merged OFF; #186 curiosity per-topic stop dev PASS.
+
+## 2026-10-28  docsync-1028 (Claude)
+#273 emotion fix ON by default (0b79336ec), C3 gate prereg + identity canary queued (7/32 in), C2 packet merged after nine review rounds; #238 cs-race f1i STOP and f1j (A-NMDA) packet merged. Docs synced: GAP_CLOSURE_MISSION state header, ROADMAP.md, master roadmap sections 2, 7 and 8.

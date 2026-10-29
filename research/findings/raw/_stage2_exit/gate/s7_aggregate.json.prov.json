@@ -1,0 +1,26 @@
+{
+ "argv": [
+  "research/runners/stage2_exit_gate.py",
+  "--aggregate",
+  "/home/dant123/Projects/neural-simulator/research/findings/raw/_stage2_exit/gate",
+  "--seeds",
+  "7",
+  "--out",
+  "/home/dant123/Projects/neural-simulator/research/findings/raw/_stage2_exit/gate/s7_aggregate.json"
+ ],
+ "artifact": "research/findings/raw/_stage2_exit/gate/s7_aggregate.json",
+ "backend": "numpy",
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "device": "cpu",
+ "git_dirty": true,
+ "git_sha": "9bdb92ee8a10572a4789009c7a90b3a7b394252f",
+ "host": "83db10ba1ddb",
+ "note": "scoring-only aggregate over already-recorded shards; run from the research/stage2-exit-gate worktree on the home server, numpy/CPU, seconds; no brain simulation in this step",
+ "run_id": "s7-aggregate-2026-10-24T163543",
+ "runner": "research/runners/stage2_exit_gate.py",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "source_kind": "worktree",
+ "started": "2026-10-24T16:35:43"
+}

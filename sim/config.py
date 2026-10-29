@@ -242,6 +242,22 @@ class CoreSimConfig:
     # region-scoped redraw (per_region_parameter_heterogeneity). DEFAULT OFF is byte-identical to the
     # pre-flag code (tests/test_preset_centred_heterogeneity.py, pre-edit golden).
     preset_centred_parameter_heterogeneity: bool = False
+    # TRAIT-CENTRED PARAMETER HETEROGENEITY (2026-10-27, research/stable-mechc; DEFAULT OFF). The companion of the
+    # flag above for the neurons it leaves alone on purpose: with cfg.num_traits > 1 the Izhikevich init gives every
+    # neuron one of the defined IZH2007 presets by its trait (sim/bridge.py `use_trait_based`), and a neuron in no
+    # region with an izh_neuron_type keeps that trait preset, but the global draw then overwrites its a/b/d/C with
+    # RS-centred values (a thalamic-reticular or FS cell keeps its own k/vr/vt/vpeak/c_reset and gets an RS pyramid's
+    # a/b/d/C: the hybrid of docs/drafts/preset-centred-het/CENSUS.md, section C2.1). When ON, each such neuron's
+    # jitter is centred on the preset of ITS OWN trait, by the same rule as the region flag (same samples, same order,
+    # same RNG consumption; the sample becomes a ratio against its distribution's centre and multiplies the trait's
+    # preset value). It reaches ONLY trait-typed neurons that no region preset covers: a neuron in a region with an
+    # izh_neuron_type is the region flag's business and is untouched here, so the two flags act on disjoint neuron
+    # sets and the region flag's own rule (neurons with no REGION preset stay identical with it on and off) holds
+    # exactly. A trait whose preset already sits on the distribution's centre (the RS trait) is left byte-identical.
+    # Izhikevich only; a no-op when cfg.num_traits == 1 (every neuron is then the default type, a separate case).
+    # Applies to the global draw, the per-region mask path and the region-scoped redraw, like the region flag.
+    # DEFAULT OFF is byte-identical to the pre-flag code (tests/test_trait_centred_heterogeneity.py, pre-edit golden).
+    trait_centred_parameter_heterogeneity: bool = False
     # PER-REGION HOMEOSTASIS ISOLATION (2026-08-13; the one-substrate 2-organ
     # merge's SECOND byte-identity cause). Homeostatic threshold adaptation is a
     # CONTINUOUS companion process: `fused_homeostasis_update` pulls every
@@ -806,6 +822,40 @@ class CoreSimConfig:
     # and, with bdsp_apical_couples_soma ON, the held plateau lifts the soma -> measured bursts B rise -> directed credit.
     # Default False => neither term is computed => byte-identical to the prior plain leaky integration.
     bdsp_apical_bistable: bool = False
+    # APICAL GABA_A ROUTING (cs-race f1i section E, 2026-10-27; additive, DEFAULT OFF). Dendrite-targeting (SOM /
+    # Martinotti-like) inhibition: synapses of a plan pathway tagged receptor="gaba_a_apical" are REMOVED from the
+    # somatic g_i matvec and instead increment a per-neuron APICAL conductance cp_conductance_g_apical_gaba (decays at
+    # the GABA_A syn_tau_g_i; no new time constant), which the BDSP apical update applies against the apical voltage as
+    # a BOUNDED exponential-Euler term toward syn_reversal_potential_i (-75 mV): one step moves v_apical by
+    # (E_i - v)(1 - exp(-g*dt/apical_tau_ms)), reaching E_i at most and never passing it at any g (the 2026-09-29
+    # overshoot family; never the explicit g*(E_i - v)). Requires enable_bdsp and a runner-supplied
+    # cp_bdsp_apical_drive; raises (never a silent somatic fallback) on a tagged pathway with this flag off, with
+    # enable_bdsp off, with enable_two_compartment_dap on, from a non-inhibitory source, with a negative weight, on a
+    # graded / coincidence synapse, or on a (pre,post) shared with an untagged edge. Default False and no tagged
+    # pathway => no array is allocated and no new code path is entered (byte-identical; tests/test_apical_gaba_routing.py).
+    enable_apical_gaba_routing: bool = False
+    apical_gaba_propagation_strength: float = 1.0  # per-spike apical conductance increment scale, in apical-leak units
+    # APICAL NMDA CONDUCTANCE (cs-race f1j section E, 2026-10-28; additive, DEFAULT OFF). In a real tuft the synapses
+    # that carried a heard word leave an NMDA conductance that decays over tens of ms after the input stops; the BDSP
+    # regen latch alone has no conductance memory. With this flag a per-cell gating state cp_apical_nmda_s rises from
+    # the cell's OWN apical drive (cp_bdsp_apical_drive: u = max(drive, 0) / apical_nmda_drive_ref, bounded rise
+    # s += (1 - s)(1 - exp(-apical_nmda_rise_per_ms * u * dt))) and decays by exp(-dt / apical_nmda_tau_ms); the
+    # conductance g_N = apical_nmda_g0 * s / s_full (s_full = the discrete steady state at u = 1, so g_N at the end of a
+    # sustained full input is g0) is Mg-blocked by the engine's existing Jahr & Stevens expression at
+    # nmda_mg_concentration (constants 3.57 mM and 0.062/mV, as in kernels.fused_nmda_update_and_current; no new Mg
+    # field) and applied in the BDSP apical update toward syn_reversal_potential_e (0 mV) as a BOUNDED exponential-Euler
+    # step computed from v0 (it reaches E_e at most, never passes it). A cell with no drive keeps s == 0.0 exactly.
+    # g0 == 0.0 with the flag on is the APV arm (the gating still runs; the receptor is blocked, not the input).
+    # Requires enable_bdsp and a runner-supplied cp_bdsp_apical_drive; raises with enable_two_compartment_dap or
+    # enable_bdsp_microcircuit on, or on g0 < 0, tau/rise/drive_ref <= 0, nmda_mg_concentration < 0. Default False =>
+    # no array is allocated and no new code path is entered (byte-identical; tests/test_apical_nmda.py). Biology:
+    # research/biology/apical-nmda-conductance.md (tauN 40-80 ms adult cortex; 100 ms or more is juvenile / room
+    # temperature / GluN2B-rich and is labelled as such).
+    enable_apical_nmda: bool = False
+    apical_nmda_g0: float = 0.0                 # apical-leak units; the conductance at the end of a sustained full input
+    apical_nmda_tau_ms: float = 50.0            # gating decay (adult L5 NMDA-EPSC decay 40-80 ms)
+    apical_nmda_rise_per_ms: float = 0.6931471805599453   # ln 2: per-step rise fraction exactly 0.5 at dt 1, full input
+    apical_nmda_drive_ref: float = 0.0          # apical drive (leak-normalized mV) that counts as full input; > 0 when on
     # Poirazi-Mel 2003 WEIGHTED-subunit refinement (2026-06-09). The count form above switches the plateau
     # on the bare COUNT of coincident routed inputs (c_i = mask^T @ prev_fired), so it is WEIGHT-BLIND: a
     # sparse-distinct ensemble that fires >= K cells everywhere triggers the same plateau regardless of the

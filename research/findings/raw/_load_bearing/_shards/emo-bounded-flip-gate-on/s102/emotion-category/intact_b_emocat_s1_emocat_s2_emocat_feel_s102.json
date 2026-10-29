@@ -1,0 +1,551 @@
+{
+  "emocat_s1": {
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about win yet: what can you tell me about win?",
+    "abstained": true,
+    "recalled_svo": null,
+    "derived": false,
+    "derived_from": null,
+    "derived_svo": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "role": "agent",
+          "word": "brain",
+          "confidence": null,
+          "margin": null,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "brain"
+        },
+        {
+          "role": "action",
+          "word": "win",
+          "confidence": null,
+          "margin": null,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "win"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 5,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 6880,
+        "frac_fired": 0.01875,
+        "mean_magnitude": 1.802131447685886
+      },
+      "composer": "onebrain"
+    },
+    "provenance": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.021111111111111112,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.3761609999999999,
+      "appraisal_arousal": 0.33725249999999996,
+      "appraisal_hits": [
+        "win",
+        "gift",
+        "happy",
+        "glad",
+        "delighted"
+      ],
+      "pos_rate": 0.021111111111111112,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": {
+      "on": true,
+      "lesioned": false,
+      "kind": "update",
+      "context_sign": 1,
+      "predicted_next_sign": 1,
+      "pred_margin": 430.5555555555556
+    },
+    "curiosity": {
+      "on": true,
+      "lesioned": false,
+      "novelty": 0.9740317000362981,
+      "want_hz": 38.88888888888888,
+      "threshold": 19.09722222222222,
+      "curious": true,
+      "calib": {
+        "want_novel_hz": 38.19444444444444,
+        "want_familiar_hz": 0.0,
+        "threshold_hz": 19.09722222222222,
+        "novel_signal": 0.95,
+        "familiar_signal": 0.0,
+        "read_reps": 4
+      },
+      "topic": "win",
+      "graded_novelty": {
+        "on": true,
+        "value": 0.9740317000362981,
+        "lesioned": false
+      },
+      "curiosity_da": {
+        "on": true,
+        "lesioned": false,
+        "da_level": 0.5185714941969672,
+        "da_tonic": 0.5,
+        "k_da": 1.5,
+        "da_crave_gain": 1.0278572412954508,
+        "base_threshold": 19.09722222222222,
+        "eff_threshold": 18.57964457997417,
+        "want_hz": 38.88888888888888,
+        "want_eff_hz": 39.97222605037863,
+        "curious": true
+      }
+    },
+    "multiref": null,
+    "noncontradiction": null,
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "ema_valence": 0.3761609999999999,
+      "ema_arousal": 0.33725249999999996,
+      "body_h": 0.6880805,
+      "body_a": 0.5058787499999999,
+      "mood": 0.06395833333333334,
+      "felt_arousal": 0.041291666666666664,
+      "level": 2,
+      "high_arousal": false,
+      "lead": "Gladly \u2014 ",
+      "reason": "graded_affect",
+      "seed": 102,
+      "vplus_rate": 0.06395833333333334,
+      "vminus_rate": 0.0,
+      "surfaced": false
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 1,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": null,
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 102,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "turn_engagement": 0.4727272727272727,
+      "ema_engagement": 0.28363636363636363,
+      "afferent_pA": 397.09090909090907,
+      "da_level": 0.5185714941969672,
+      "snc_firing": 0.07749999999999996,
+      "mode": "neutral",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 102,
+      "shared_salience": {
+        "raw": 0.7377419354838709,
+        "want_hz": 18.055555555555554,
+        "normalized": 0.4727272727272727,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.8129032258064516,
+        "n_tokens": 5,
+        "per_word_freshness": [
+          0.9032258064516129,
+          0.8387096774193549,
+          0.7741935483870968,
+          0.8387096774193549,
+          0.7096774193548387
+        ],
+        "fresh_ref": 31.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.7113961519486924,
+      "da_level": 0.5185714941969672,
+      "lesioned": false
+    },
+    "d6_hebbian": {
+      "on": true,
+      "wrote_this_turn": true,
+      "encode": {
+        "frozen": false,
+        "steps": 208,
+        "block": 4,
+        "phase_lock_steps": 184,
+        "n_saturated": 128,
+        "mean_abs_w": 1.0,
+        "min_abs_w": 0.9999999999999998
+      },
+      "held": {
+        "block": 4,
+        "readout": 207.99880893181358,
+        "floor": 0.001,
+        "held": true
+      }
+    },
+    "category_inherit": {
+      "observe": null,
+      "read": {
+        "agent": "brain",
+        "action": "win",
+        "patient": null,
+        "reason": "organ_not_built"
+      }
+    }
+  },
+  "emocat_s2": {
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about win yet: what can you tell me about win?",
+    "abstained": true,
+    "recalled_svo": null,
+    "derived": false,
+    "derived_from": null,
+    "derived_svo": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "role": "agent",
+          "word": "brain",
+          "confidence": null,
+          "margin": null,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "brain"
+        },
+        {
+          "role": "action",
+          "word": "win",
+          "confidence": null,
+          "margin": null,
+          "margin_spiking": null,
+          "cue": true,
+          "asserted": "win"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 5,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 6880,
+        "frac_fired": 0.01875,
+        "mean_magnitude": 1.802131447685886
+      },
+      "composer": "onebrain"
+    },
+    "provenance": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.03805555555555556,
+      "valence_sign": "+",
+      "tone_level": 2,
+      "tone_token": "gladly",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 3
+      },
+      "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, warm, friendly sentence.",
+      "appraisal_valence": 0.5266253999999999,
+      "appraisal_arousal": 0.47215349999999995,
+      "appraisal_hits": [
+        "win",
+        "gift",
+        "happy",
+        "glad",
+        "delighted"
+      ],
+      "pos_rate": 0.03805555555555556,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": {
+      "on": true,
+      "lesioned": false,
+      "kind": "update",
+      "context_sign": 1,
+      "predicted_next_sign": 1,
+      "pred_margin": 433.3333333333333
+    },
+    "curiosity": {
+      "on": true,
+      "lesioned": false,
+      "novelty": 0.9740317000362981,
+      "want_hz": 38.88888888888888,
+      "threshold": 19.09722222222222,
+      "curious": true,
+      "calib": {
+        "want_novel_hz": 38.19444444444444,
+        "want_familiar_hz": 0.0,
+        "threshold_hz": 19.09722222222222,
+        "novel_signal": 0.95,
+        "familiar_signal": 0.0,
+        "read_reps": 4
+      },
+      "topic": "win",
+      "graded_novelty": {
+        "on": true,
+        "value": 0.9740317000362981,
+        "lesioned": false
+      },
+      "curiosity_da": {
+        "on": true,
+        "lesioned": false,
+        "da_level": 0.4751207481776778,
+        "da_tonic": 0.5,
+        "k_da": 1.5,
+        "da_crave_gain": 0.9626811222665167,
+        "base_threshold": 19.09722222222222,
+        "eff_threshold": 19.837536833858458,
+        "want_hz": 38.88888888888888,
+        "want_eff_hz": 37.43759919925342,
+        "curious": true
+      }
+    },
+    "multiref": null,
+    "noncontradiction": null,
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 2,
+      "lesioned": false,
+      "ema_valence": 0.5266253999999999,
+      "ema_arousal": 0.47215349999999995,
+      "body_h": 0.7633127,
+      "body_a": 0.70823025,
+      "mood": 0.070375,
+      "felt_arousal": 0.063,
+      "level": 3,
+      "high_arousal": true,
+      "lead": "",
+      "reason": "graded_affect",
+      "seed": 102,
+      "vplus_rate": 0.070375,
+      "vminus_rate": 0.0,
+      "surfaced": false
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 2,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": null,
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 102,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 2,
+      "lesioned": false,
+      "turn_engagement": 0.23636363636363636,
+      "ema_engagement": 0.25527272727272726,
+      "afferent_pA": 357.3818181818182,
+      "da_level": 0.4751207481776778,
+      "snc_firing": 0.06999999999999997,
+      "mode": "neutral",
+      "lead": "",
+      "reason": "low_engagement",
+      "seed": 102,
+      "shared_salience": {
+        "raw": 0.5829032258064516,
+        "want_hz": 9.027777777777777,
+        "normalized": 0.23636363636363636,
+        "lesioned": false,
+        "calib": {
+          "want_novel_hz": 38.19444444444444,
+          "want_familiar_hz": 0.0,
+          "threshold_hz": 19.09722222222222,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        },
+        "on": true
+      },
+      "spiking_novelty": {
+        "novelty": 0.5548387096774193,
+        "n_tokens": 5,
+        "per_word_freshness": [
+          0.6129032258064516,
+          0.6451612903225806,
+          0.4838709677419355,
+          0.5483870967741935,
+          0.4838709677419355
+        ],
+        "fresh_ref": 31.0,
+        "n_channels": 64,
+        "lesioned": false,
+        "on": true
+      },
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.6936359151455354,
+      "da_level": 0.4751207481776778,
+      "lesioned": false
+    },
+    "d6_hebbian": {
+      "on": true,
+      "wrote_this_turn": false
+    },
+    "category_inherit": {
+      "observe": null,
+      "read": {
+        "agent": "brain",
+        "action": "win",
+        "patient": null,
+        "reason": "organ_not_built"
+      }
+    }
+  },
+  "emocat_feel": {
+    "answer": "My affect monitor reads positive right now (valence differential +0.038, moderate arousal) -- that's a functional read of my mood state, not a felt experience. The emotion channel that latched on my affect ladder is joy.",
+    "abstained": false,
+    "recalled_svo": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.03805555555555556,
+      "valence_sign": "+",
+      "tone_level": 2,
+      "tone_token": "gladly",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 3
+      },
+      "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, warm, friendly sentence.",
+      "appraisal_valence": 0.5266253999999999,
+      "appraisal_arousal": 0.47215349999999995,
+      "appraisal_hits": [],
+      "pos_rate": 0.03805555555555556,
+      "neg_rate": 0.0
+    },
+    "inner_state_readout": true,
+    "emotion_category": {
+      "readout_counts": {
+        "joy": 50,
+        "fear": 0,
+        "anger": 0,
+        "sadness": 0
+      },
+      "gate_counts": {
+        "joy": 46,
+        "fear": 0,
+        "anger": 0,
+        "sadness": 0
+      },
+      "slot_counts": {
+        "joy": 71,
+        "fear": 0,
+        "anger": 0,
+        "sadness": 0
+      },
+      "lesioned": false,
+      "commit_lesioned": false,
+      "latch_lesioned": false,
+      "bounded_flag": true,
+      "bounded_env": "1",
+      "bounded_readback": true,
+      "oor_count": 0,
+      "oor_count_session": 0,
+      "category": "joy",
+      "latched": [
+        "joy"
+      ],
+      "co_commit": false,
+      "threshold": 18.0,
+      "read_variants": {
+        "x0.5": "joy",
+        "x2": "joy"
+      },
+      "read_invariant": true,
+      "route": "emotion_category",
+      "seed": 102,
+      "op": 0,
+      "shuffle": false,
+      "teach_swap": false,
+      "error": null
+    }
+  }
+}

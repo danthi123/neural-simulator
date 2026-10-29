@@ -1,0 +1,111 @@
+{
+ "arms": {
+  "on": {
+   "runner": "research/runners/stable_integration_swap_ignition_probe.py --primitives",
+   "seed": 8,
+   "arm": "on",
+   "calibration": {
+    "w_rec": 6.5,
+    "norm_ws_w": 4,
+    "thal_tonic_pa": 25,
+    "solo_plateau": 0.084,
+    "establish_pa": 1280,
+    "w_ws_occ": 32,
+    "w_pat_pred": 32,
+    "w_occ_gate": 80,
+    "w_pred_mm": 80,
+    "w_gate_ws": 4
+   },
+   "sweep_key": "w_pred_mm",
+   "rows": [
+    {
+     "gate_empty_rates": [
+      0.0,
+      0.0773,
+      0.0
+     ],
+     "gate_empty_gate_rate": 0.1911,
+     "gate_held_rates": [
+      0.0793,
+      0.0,
+      0.0
+     ],
+     "gate_held_gate_rate": 0.0367,
+     "gate_self_rates": [
+      0.0727,
+      0.0,
+      0.0
+     ],
+     "gate_self_gate_rate": 0.0241,
+     "gate_primitive_holds": true,
+     "held_content_survives_own_gate": true,
+     "mm": {
+      "salient_mismatch": 0.1546,
+      "salient_match": 0.0843,
+      "nonsalient_mismatch": 0.035
+     },
+     "mm_primitive_holds": false,
+     "w_pred_mm": 20.0
+    },
+    {
+     "gate_empty_rates": [
+      0.0,
+      0.0773,
+      0.0
+     ],
+     "gate_empty_gate_rate": 0.1911,
+     "gate_held_rates": [
+      0.0793,
+      0.0,
+      0.0
+     ],
+     "gate_held_gate_rate": 0.0367,
+     "gate_self_rates": [
+      0.0727,
+      0.0,
+      0.0
+     ],
+     "gate_self_gate_rate": 0.0241,
+     "gate_primitive_holds": true,
+     "held_content_survives_own_gate": true,
+     "mm": {
+      "salient_mismatch": 0.1546,
+      "salient_match": 0.0384,
+      "nonsalient_mismatch": 0.035
+     },
+     "mm_primitive_holds": false,
+     "w_pred_mm": 40.0
+    },
+    {
+     "gate_empty_rates": [
+      0.0,
+      0.0773,
+      0.0
+     ],
+     "gate_empty_gate_rate": 0.1911,
+     "gate_held_rates": [
+      0.0793,
+      0.0,
+      0.0
+     ],
+     "gate_held_gate_rate": 0.0367,
+     "gate_self_rates": [
+      0.0727,
+      0.0,
+      0.0
+     ],
+     "gate_self_gate_rate": 0.0241,
+     "gate_primitive_holds": true,
+     "held_content_survives_own_gate": true,
+     "mm": {
+      "salient_mismatch": 0.1546,
+      "salient_match": 0.0133,
+      "nonsalient_mismatch": 0.035
+     },
+     "mm_primitive_holds": true,
+     "w_pred_mm": 80.0
+    }
+   ]
+  }
+ }
+}

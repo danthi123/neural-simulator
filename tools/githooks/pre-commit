@@ -53,6 +53,21 @@ fi
 # the classification pass that assumption is false. Claims are checked on findings as WRITTEN, which is when the
 # author can actually satisfy them; editing an old finding's status must not demand its rewrite.
 STAGED=$(git diff --cached --name-only --diff-filter=A | grep -E '^research/findings/[^/]+\.md$' || true)
+# MERGE-AWARE (2026-10-28). "Added" above is relative to the FIRST parent, so a main-into-branch merge (every
+# agent_sync_branch.sh sync) listed all of main's new findings and one stale citation on main blocked every branch
+# sync. While a merge is concluded (MERGE_HEAD present) tools/merge_carried.py drops a finding when, for one merge
+# parent main already contains, its staged blob is byte-identical to that parent's AND no artifact it cites
+# (claim_check's PATH_RE, globs included) differs between the index and that parent: main's text over main's
+# artifacts, not this merge's. New merge content, a carried finding whose cited artifact the merge changes (deleted,
+# rewritten, or git rm'd on the branch), and a branch's own findings landed INTO main are checked as before; a
+# non-merge commit never reaches this block. The helper fails closed (prints every path), and a non-zero exit keeps
+# the list unchanged.
+_MH=$(git rev-parse --path-format=absolute --git-path MERGE_HEAD 2>/dev/null || true)
+if [ -n "$STAGED" ] && [ -n "$_MH" ] && [ -f "$_MH" ]; then
+  _G2_HELPER=$ROOT/tools/merge_carried.py
+  [ -f "$_G2_HELPER" ] || _G2_HELPER=$CANONICAL/tools/merge_carried.py
+  _G2_KEEP=$(printf '%s\n' "$STAGED" | "$PY" "$_G2_HELPER") && STAGED=$_G2_KEEP
+fi
 if [ -n "$STAGED" ]; then
   if ! echo "$STAGED" | xargs -r "$PY" "$ROOT/tools/claim_check.py" > /tmp/_precommit_claims.out 2>&1; then
     echo "⛔ COMMIT BLOCKED — a findings doc states measurements that are in no artifact it cites:"

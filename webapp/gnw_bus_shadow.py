@@ -59,6 +59,7 @@ from research.runners._gnw_norgan_bus_derisk import (
 )
 from research.runners._p1_2_workspace_deliberation_loop_derisk import build_workspace_bridge
 from research.runners._gnw_coincidence_integrator_derisk import _pick_decoy
+from research.runners import stable_recal as _stable_recal   # SIM_STABLE_RECAL (default OFF): the stable-integrator d_sub
 # rank-13 scaffold-retirement de-risk flags (both default OFF; see the module-level comment in brain_chat_tui.py
 # above `_neural_selfid_enabled`) — imported here so the BUS combiner path can mirror the SAME two extensions
 # `ChatBrain.gate()` / `_substrate_recall` carry, rather than silently diverging from them under the flag.
@@ -220,7 +221,7 @@ def _bus_combine_inner(composer, agent: str, action: str, all_concepts, *, seed:
     if cand_A is None:                                   # primary recall organ miss -> the moat abstains (no routing)
         info["abstain_reason"] = "primary_recall_miss"
         return info
-    d = float(d_sub) if d_sub is not None else D_SUB_UNANIMITY.get(3, 1000.0)
+    d = float(d_sub) if d_sub is not None else _stable_recal.bus_d_sub(3, D_SUB_UNANIMITY.get(3, 1000.0))
     bridge, xp, slots_dev, snap = _get_bridge(seed, lesion)
     rng = np.random.default_rng(int(seed) * 991 + 7)
     exclude = set(c for c in candidates if c is not None) | {agent, action}

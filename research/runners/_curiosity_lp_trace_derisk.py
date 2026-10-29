@@ -277,7 +277,7 @@ def turns_for(arm, seed):
 
 
 # ── the bridge ──────────────────────────────────────────────────────────────────────────────────────────────────────
-def build_lp_bridge(seed, *, w_topic_ask, tau_hab_ms=TAU_HAB_MS):
+def build_lp_bridge(seed, *, w_topic_ask, tau_hab_ms=TAU_HAB_MS, no_ou=False):
     """ONE SimulationBridge: `topic_aff` (N_SLOTS x INPOP RS) --[depression-dominant STP]--> `ask` (N_ASK RS, the
     production ASK-pool settings: homeostasis-free, per-neuron OU seed, name-keyed per-region heterogeneity), plus
     `reward_us` --> `snc` (the curiosity bridge's DA read; STP disabled on it so the DA read never habituates)."""
@@ -289,6 +289,8 @@ def build_lp_bridge(seed, *, w_topic_ask, tau_hab_ms=TAU_HAB_MS):
     cfg = CoreSimConfig()
     cfg.seed = int(seed); cfg.heterogeneity_seed = int(seed); cfg.ou_seed = int(seed)
     cfg.per_neuron_ou_seed = True
+    if no_ou:  # method 2 (RULING c3-methods-1018): topic inputs, background noise off - additive, default off;
+        cfg.enable_ou_process = False  # flag-off leaves the cfg untouched, so flag-off output stays byte-identical
     cfg.enable_homeostasis = False
     cfg.dt_ms = 1.0
     cfg.num_traits = 1
@@ -361,13 +363,14 @@ class CuriosityLPOrgan(CuriosityProductionOrgan):
     Live reads go through `present(topic)`, which does NOT restore the synapses' STP state: that state is the trace."""
 
     def __init__(self, seed, *, w_topic_ask, tau_hab_ms=TAU_HAB_MS, reset_on=True, drive_lesion=False,
-                 shared_slice=False):
+                 shared_slice=False, no_ou=False):
         super().__init__(seed=seed, shared=None)
         self.w_topic_ask = float(w_topic_ask)
         self.tau_hab_ms = float(tau_hab_ms)
         self.reset_on = bool(reset_on)
         self.drive_lesion = bool(drive_lesion)
         self.shared_slice = bool(shared_slice)
+        self.no_ou = bool(no_ou)
         self.gate = TopicNoveltyGate(seed=TOPIC_GATE_SEED)
         self._slot_of = {}
         self.snc_neutral_hz = None
@@ -377,7 +380,8 @@ class CuriosityLPOrgan(CuriosityProductionOrgan):
     def _build_one(self, lesion=False):
         from sim.backend import get_backend, from_host
         xp, _ = get_backend()
-        bridge, cfg = build_lp_bridge(self.seed, w_topic_ask=self.w_topic_ask, tau_hab_ms=self.tau_hab_ms)
+        bridge, cfg = build_lp_bridge(self.seed, w_topic_ask=self.w_topic_ask, tau_hab_ms=self.tau_hab_ms,
+                                      no_ou=self.no_ou)
         topic_idx = _idx(bridge, "topic_aff")
         self._slot_neurons = [topic_idx[k * INPOP:(k + 1) * INPOP] for k in range(N_SLOTS)]
         self._idx_topic_all = xp.asarray(topic_idx)
@@ -548,10 +552,11 @@ class CuriosityLPOrgan(CuriosityProductionOrgan):
 ABSTAIN_TEXT = "I don't know about that."
 
 
-def run_arm(seed, arm, *, w_topic_ask, tau_hab_ms=TAU_HAB_MS):
+def run_arm(seed, arm, *, w_topic_ask, tau_hab_ms=TAU_HAB_MS, no_ou=False):
     cfg = dict(ARMS[arm])
     cfg.pop("turns", None)
     cfg.setdefault("tau_hab_ms", float(tau_hab_ms))     # the lesion arm carries its own tau_d
+    cfg.setdefault("no_ou", bool(no_ou))                # method 2: default off; an arm may pin it
     t0 = time.time()
     organ = CuriosityLPOrgan(seed, w_topic_ask=w_topic_ask, **cfg)
     organ.ensure_built()
@@ -719,12 +724,12 @@ def aggregate(per_seed):
     return {"verdict": verdict, "bars": bars, "informational": info}
 
 
-def run_battery(seeds, *, w_topic_ask, tau_hab_ms=TAU_HAB_MS, arms=tuple(ARMS)):
+def run_battery(seeds, *, w_topic_ask, tau_hab_ms=TAU_HAB_MS, arms=tuple(ARMS), no_ou=False):
     shards, per_seed = {}, {}
     for s in seeds:
         shards[s] = {}
         for a in arms:
-            sh = run_arm(s, a, w_topic_ask=w_topic_ask, tau_hab_ms=tau_hab_ms)
+            sh = run_arm(s, a, w_topic_ask=w_topic_ask, tau_hab_ms=tau_hab_ms, no_ou=no_ou)
             shards[s][a] = sh
             print("  seed %d %-18s asked=%s  thr=%.1f  wall=%.1fs" % (
                 s, a, "".join("1" if (sh["responses"][l].get("asked")) else "." for l in sh["turn_order"]),
@@ -821,6 +826,9 @@ def main():
                     help="habituation recovery tau_d (substrate ms); the pre-registered value is TAU_HAB_MS")
     ap.add_argument("--w-topic-ask", type=float, default=None,
                     help="override the frozen topic->ASK weight (default: W_TOPIC_ASK); recorded in the artifact")
+    ap.add_argument("--no-ou", action="store_true",
+                    help="method 2 (RULING c3-methods-1018): background noise off (cfg.enable_ou_process=False); "
+                         "default off; flag-off output is byte-identical to the frozen method-1 battery")
     args = ap.parse_args()
     if args.selftest:
         ok, _ = selftest()
@@ -840,12 +848,15 @@ def main():
         if any(s not in range(1, 16) for s in seeds):
             sys.exit("dev seeds 1-15 only")
         arms = [a for a in args.arms.split(",") if a.strip()]
-        shards, per_seed = run_battery(seeds, w_topic_ask=w_topic_ask, tau_hab_ms=args.tau_hab_ms, arms=arms)
+        shards, per_seed = run_battery(seeds, w_topic_ask=w_topic_ask, tau_hab_ms=args.tau_hab_ms, arms=arms,
+                                       no_ou=args.no_ou)
         res = {"runner": "research/runners/_curiosity_lp_trace_derisk.py", "plan": "docs/drafts/curiosity-lp/PLAN.md",
                "backend": str(be), "w_topic_ask": w_topic_ask, "tau_hab_ms": float(args.tau_hab_ms),
                "preregistered": {"w_topic_ask": W_TOPIC_ASK, "tau_hab_ms": TAU_HAB_MS}, "bars": BARS,
                "predictions_informational": PREDICTIONS_INFORMATIONAL, "per_seed": per_seed,
                "shards": shards}
+        if args.no_ou:  # recorded only when ON, so a flag-off artifact stays byte-identical to method 1
+            res["no_ou"] = True
         if (sorted(seeds) == sorted(BATTERY_SEEDS) and set(arms) >= set(COUNTED_ARMS)
                 and w_topic_ask == W_TOPIC_ASK and float(args.tau_hab_ms) == TAU_HAB_MS):
             res["aggregate"] = aggregate(per_seed)

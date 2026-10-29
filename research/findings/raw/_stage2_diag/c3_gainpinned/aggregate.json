@@ -1,0 +1,912 @@
+{
+ "stage": "STAGE-2 (CHILD) exit",
+ "verdict": "UNDEFINED (INCOMPLETE): unmet: no primary shard missing (measured=330 expect=0); unmet: null clean (intact_a == intact_b) on every primary (group, seed) (measured=55 expect=0); unmet: six seeds defined for every primary criterion (measured=5 expect=0)",
+ "GO": false,
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "no primary shard missing",
+   "ok": false,
+   "detail": "measured=330 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "null clean (intact_a == intact_b) on every primary (group, seed)",
+   "ok": false,
+   "detail": "measured=55 expect=0",
+   "note": "a failed null makes that seed UNDEFINED; the criterion then cannot reach 6 defined seeds"
+  },
+  {
+   "kind": "require",
+   "name": "every response from the expected brain",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "expected `source` = tiny-demo +LTM in every counted arm"
+  },
+  {
+   "kind": "require",
+   "name": "PYTHONHASHSEED=0 in every primary arm",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "no errored turn and no organ error in any counted arm",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "an errored reply or a caught organ exception is an instrument failure, never an effect or a FAIL"
+  },
+  {
+   "kind": "require",
+   "name": "the grounding set (builtin_facts) recorded in every conv/inner counted arm",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "the corpus-learned production organs had their corpus (data/corpus/tinystories.txt) in every primary arm",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "a worktree or pool checkout without the corpus builds a DEGRADED brain; pool_provision.sh syncs it"
+  },
+  {
+   "kind": "require",
+   "name": "every in-process lesion applied (patch called at least once)",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "the ask group's taught-moat ask-rate defined wherever it decides a correctness session (amendment A4 (a))",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "a taught moat whose teach turn was not acquired is UNDEFINED, never novel; with none acquired and every other C3 clause holding, the moat rate decides and does not exist (an acquisition gap, not a curiosity result); if another clause fails, the seed is scored incorrect instead"
+  },
+  {
+   "kind": "require",
+   "name": "every counted arm ran its own registered turn table (amendment A4 review)",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "the scorers read by label: a reversed shard in the registered order would pass vacuously"
+  },
+  {
+   "kind": "require",
+   "name": "six seeds defined for every primary criterion",
+   "ok": false,
+   "detail": "measured=5 expect=0",
+   "note": ""
+  }
+ ],
+ "undefined_reasons": [
+  "unmet: no primary shard missing (measured=330 expect=0)",
+  "unmet: null clean (intact_a == intact_b) on every primary (group, seed) (measured=55 expect=0)",
+  "unmet: six seeds defined for every primary criterion (measured=5 expect=0)"
+ ],
+ "criteria": {
+  "C1": "INCOMPLETE",
+  "C2": "INCOMPLETE",
+  "C3": "INCOMPLETE",
+  "C4": "INCOMPLETE",
+  "C5": "INCOMPLETE"
+ },
+ "groups": {
+  "conv": {
+   "criterion": "C1",
+   "primary": true,
+   "verdict": "INCOMPLETE",
+   "why": [
+    "0 of 11 seeds defined"
+   ],
+   "n_defined": 0,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_mouth": 0
+   },
+   "n_reproduced": {
+    "lesion_mouth": 0
+   },
+   "n_permuted_tracks": 0,
+   "sub_clauses_n_true": {},
+   "seeds": {
+    "1": {
+     "seed": 1,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "2": {
+     "seed": 2,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "3": {
+     "seed": 3,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "4": {
+     "seed": 4,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "5": {
+     "seed": 5,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "6": {
+     "seed": 6,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "8": {
+     "seed": 8,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "9": {
+     "seed": 9,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "10": {
+     "seed": 10,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "11": {
+     "seed": 11,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "12": {
+     "seed": 12,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    }
+   },
+   "n_correct_by_order": {},
+   "named_gaps": [],
+   "known_architecture_gaps": []
+  },
+  "infer": {
+   "criterion": "C2",
+   "primary": true,
+   "verdict": "INCOMPLETE",
+   "why": [
+    "0 of 11 seeds defined"
+   ],
+   "n_defined": 0,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_chain_route": 0
+   },
+   "n_reproduced": {
+    "lesion_chain_route": 0
+   },
+   "n_permuted_tracks": 0,
+   "sub_clauses_n_true": {},
+   "seeds": {
+    "1": {
+     "seed": 1,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "2": {
+     "seed": 2,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "3": {
+     "seed": 3,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "4": {
+     "seed": 4,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "5": {
+     "seed": 5,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "6": {
+     "seed": 6,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "8": {
+     "seed": 8,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "9": {
+     "seed": 9,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "10": {
+     "seed": 10,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "11": {
+     "seed": 11,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "12": {
+     "seed": 12,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    }
+   },
+   "n_correct_by_order": {},
+   "named_gaps": [],
+   "known_architecture_gaps": []
+  },
+  "ask": {
+   "criterion": "C3",
+   "primary": true,
+   "verdict": "INCOMPLETE",
+   "why": [
+    "0 of 11 seeds defined"
+   ],
+   "n_defined": 0,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_curiosity": 0,
+    "lesion_graded": 0
+   },
+   "n_reproduced": {
+    "lesion_curiosity": 0,
+    "lesion_graded": 0
+   },
+   "n_permuted_tracks": 0,
+   "sub_clauses_n_true": {
+    "reversed_all": 0,
+    "reversed_discriminates": 0,
+    "reversed_lp_learnable": 0,
+    "reversed_lp_unlearnable": 0,
+    "all_taught_moats_acquired": 0
+   },
+   "seeds": {
+    "1": {
+     "seed": 1,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "2": {
+     "seed": 2,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "3": {
+     "seed": 3,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "4": {
+     "seed": 4,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "5": {
+     "seed": 5,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "6": {
+     "seed": 6,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "8": {
+     "seed": 8,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "9": {
+     "seed": 9,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "10": {
+     "seed": 10,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "11": {
+     "seed": 11,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "12": {
+     "seed": 12,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    }
+   },
+   "n_correct_by_order": {
+    "registered": 0,
+    "reversed": 0
+   },
+   "named_gaps": [],
+   "known_architecture_gaps": []
+  },
+  "emo": {
+   "criterion": "C4",
+   "primary": true,
+   "verdict": "INCOMPLETE",
+   "why": [
+    "0 of 11 seeds defined"
+   ],
+   "n_defined": 0,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_affect": 0
+   },
+   "n_reproduced": {
+    "lesion_affect": 0
+   },
+   "n_permuted_tracks": 0,
+   "sub_clauses_n_true": {},
+   "seeds": {
+    "1": {
+     "seed": 1,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "2": {
+     "seed": 2,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "3": {
+     "seed": 3,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "4": {
+     "seed": 4,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "5": {
+     "seed": 5,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "6": {
+     "seed": 6,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "8": {
+     "seed": 8,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "9": {
+     "seed": 9,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "10": {
+     "seed": 10,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "11": {
+     "seed": 11,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "12": {
+     "seed": 12,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    }
+   },
+   "n_correct_by_order": {},
+   "named_gaps": [],
+   "known_architecture_gaps": []
+  },
+  "inner": {
+   "criterion": "C5",
+   "primary": true,
+   "verdict": "INCOMPLETE",
+   "why": [
+    "0 of 11 seeds defined"
+   ],
+   "n_defined": 0,
+   "n_correct": 0,
+   "n_lesion_effect": {
+    "lesion_workspace": 0,
+    "lesion_selfinit": 0
+   },
+   "n_reproduced": {
+    "lesion_workspace": 0,
+    "lesion_selfinit": 0
+   },
+   "n_permuted_tracks": 0,
+   "sub_clauses_n_true": {
+    "private_selected_by_state": 0
+   },
+   "seeds": {
+    "1": {
+     "seed": 1,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "2": {
+     "seed": 2,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "3": {
+     "seed": 3,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "4": {
+     "seed": 4,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "5": {
+     "seed": 5,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "6": {
+     "seed": 6,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "8": {
+     "seed": 8,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "9": {
+     "seed": 9,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "10": {
+     "seed": 10,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "11": {
+     "seed": 11,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    },
+    "12": {
+     "seed": 12,
+     "undefined_reasons": [
+      "intact arm missing"
+     ]
+    }
+   },
+   "n_correct_by_order": {},
+   "named_gaps": [],
+   "known_architecture_gaps": []
+  }
+ },
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  8,
+  9,
+  10,
+  11,
+  12
+ ],
+ "missing_shards": [
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/conv__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/conv__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/conv__lesion_mouth.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/conv__lesion_mouth.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/conv__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/conv__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/conv__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/conv__lesion_mouth.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/conv__lesion_mouth.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/conv__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/conv__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/conv__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/conv__lesion_mouth.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/conv__lesion_mouth.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/conv__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/conv__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/conv__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/conv__lesion_mouth.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/conv__lesion_mouth.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/conv__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/conv__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/conv__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/conv__lesion_mouth.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/conv__lesion_mouth.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/conv__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/conv__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/conv__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/conv__lesion_mouth.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/conv__lesion_mouth.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/conv__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/conv__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/conv__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/conv__lesion_mouth.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/conv__lesion_mouth.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/conv__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/conv__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/conv__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/conv__lesion_mouth.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/conv__lesion_mouth.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/conv__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/conv__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/conv__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/conv__lesion_mouth.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/conv__lesion_mouth.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/conv__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/conv__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/conv__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/conv__lesion_mouth.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/conv__lesion_mouth.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/conv__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/conv__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/conv__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/conv__lesion_mouth.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/conv__lesion_mouth.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/conv__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/infer__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/infer__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/infer__lesion_chain_route.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/infer__lesion_chain_route.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/infer__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/infer__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/infer__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/infer__lesion_chain_route.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/infer__lesion_chain_route.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/infer__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/infer__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/infer__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/infer__lesion_chain_route.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/infer__lesion_chain_route.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/infer__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/infer__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/infer__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/infer__lesion_chain_route.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/infer__lesion_chain_route.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/infer__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/infer__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/infer__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/infer__lesion_chain_route.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/infer__lesion_chain_route.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/infer__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/infer__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/infer__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/infer__lesion_chain_route.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/infer__lesion_chain_route.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/infer__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/infer__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/infer__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/infer__lesion_chain_route.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/infer__lesion_chain_route.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/infer__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/infer__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/infer__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/infer__lesion_chain_route.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/infer__lesion_chain_route.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/infer__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/infer__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/infer__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/infer__lesion_chain_route.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/infer__lesion_chain_route.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/infer__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/infer__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/infer__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/infer__lesion_chain_route.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/infer__lesion_chain_route.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/infer__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/infer__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/infer__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/infer__lesion_chain_route.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/infer__lesion_chain_route.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/infer__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/ask__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/ask__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/ask__lesion_curiosity.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/ask__lesion_curiosity.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/ask__lesion_graded.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/ask__lesion_graded.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/ask__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/ask__reversed.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/ask__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/ask__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/ask__lesion_curiosity.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/ask__lesion_curiosity.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/ask__lesion_graded.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/ask__lesion_graded.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/ask__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/ask__reversed.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/ask__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/ask__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/ask__lesion_curiosity.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/ask__lesion_curiosity.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/ask__lesion_graded.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/ask__lesion_graded.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/ask__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/ask__reversed.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/ask__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/ask__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/ask__lesion_curiosity.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/ask__lesion_curiosity.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/ask__lesion_graded.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/ask__lesion_graded.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/ask__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/ask__reversed.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/ask__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/ask__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/ask__lesion_curiosity.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/ask__lesion_curiosity.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/ask__lesion_graded.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/ask__lesion_graded.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/ask__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/ask__reversed.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/ask__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/ask__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/ask__lesion_curiosity.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/ask__lesion_curiosity.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/ask__lesion_graded.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/ask__lesion_graded.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/ask__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/ask__reversed.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/ask__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/ask__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/ask__lesion_curiosity.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/ask__lesion_curiosity.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/ask__lesion_graded.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/ask__lesion_graded.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/ask__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/ask__reversed.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/ask__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/ask__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/ask__lesion_curiosity.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/ask__lesion_curiosity.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/ask__lesion_graded.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/ask__lesion_graded.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/ask__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/ask__reversed.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/ask__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/ask__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/ask__lesion_curiosity.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/ask__lesion_curiosity.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/ask__lesion_graded.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/ask__lesion_graded.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/ask__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/ask__reversed.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/ask__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/ask__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/ask__lesion_curiosity.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/ask__lesion_curiosity.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/ask__lesion_graded.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/ask__lesion_graded.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/ask__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/ask__reversed.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/ask__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/ask__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/ask__lesion_curiosity.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/ask__lesion_curiosity.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/ask__lesion_graded.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/ask__lesion_graded.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/ask__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/ask__reversed.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/emo__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/emo__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/emo__lesion_affect.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/emo__lesion_affect.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/emo__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/emo__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/emo__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/emo__lesion_affect.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/emo__lesion_affect.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/emo__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/emo__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/emo__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/emo__lesion_affect.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/emo__lesion_affect.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/emo__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/emo__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/emo__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/emo__lesion_affect.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/emo__lesion_affect.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/emo__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/emo__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/emo__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/emo__lesion_affect.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/emo__lesion_affect.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/emo__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/emo__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/emo__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/emo__lesion_affect.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/emo__lesion_affect.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/emo__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/emo__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/emo__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/emo__lesion_affect.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/emo__lesion_affect.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/emo__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/emo__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/emo__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/emo__lesion_affect.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/emo__lesion_affect.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/emo__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/emo__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/emo__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/emo__lesion_affect.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/emo__lesion_affect.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/emo__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/emo__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/emo__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/emo__lesion_affect.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/emo__lesion_affect.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/emo__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/emo__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/emo__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/emo__lesion_affect.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/emo__lesion_affect.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/emo__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/inner__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/inner__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/inner__lesion_workspace.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/inner__lesion_workspace.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/inner__lesion_selfinit.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/inner__lesion_selfinit.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s1/inner__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/inner__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/inner__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/inner__lesion_workspace.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/inner__lesion_workspace.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/inner__lesion_selfinit.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/inner__lesion_selfinit.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s2/inner__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/inner__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/inner__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/inner__lesion_workspace.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/inner__lesion_workspace.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/inner__lesion_selfinit.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/inner__lesion_selfinit.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s3/inner__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/inner__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/inner__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/inner__lesion_workspace.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/inner__lesion_workspace.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/inner__lesion_selfinit.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/inner__lesion_selfinit.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s4/inner__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/inner__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/inner__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/inner__lesion_workspace.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/inner__lesion_workspace.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/inner__lesion_selfinit.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/inner__lesion_selfinit.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s5/inner__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/inner__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/inner__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/inner__lesion_workspace.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/inner__lesion_workspace.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/inner__lesion_selfinit.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/inner__lesion_selfinit.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s6/inner__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/inner__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/inner__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/inner__lesion_workspace.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/inner__lesion_workspace.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/inner__lesion_selfinit.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/inner__lesion_selfinit.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s8/inner__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/inner__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/inner__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/inner__lesion_workspace.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/inner__lesion_workspace.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/inner__lesion_selfinit.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/inner__lesion_selfinit.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s9/inner__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/inner__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/inner__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/inner__lesion_workspace.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/inner__lesion_workspace.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/inner__lesion_selfinit.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/inner__lesion_selfinit.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s10/inner__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/inner__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/inner__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/inner__lesion_workspace.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/inner__lesion_workspace.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/inner__lesion_selfinit.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/inner__lesion_selfinit.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s11/inner__permuted.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/inner__intact_a.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/inner__intact_b.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/inner__lesion_workspace.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/inner__lesion_workspace.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/inner__lesion_selfinit.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/inner__lesion_selfinit.rep0.json",
+  "research/findings/raw/_stage2_diag/c3_gainpinned/s12/inner__permuted.json"
+ ],
+ "bars": {
+  "ask_ratio": 2.0,
+  "ask_gap_floor": 0.6666666666666666,
+  "seeds_required": 11,
+  "emotion_categories": 4
+ },
+ "runner": "research/runners/stage2_exit_gate.py",
+ "prereg": "research/findings/2026-09-30-stage2-exit-gate-PREREGISTRATION.md",
+ "expected_source": "tiny-demo +LTM"
+}

@@ -1,0 +1,43 @@
+{
+ "run_id": "1791561057-18",
+ "runner": "research/runners/onebrain_regression_battery.py",
+ "argv": [
+  "/srv/simpool/derisk-pool/revisions/3d29c10b32bbe79ea8fe49c7d17492f945c4bc42/research/runners/onebrain_regression_battery.py",
+  "--worker",
+  "--env",
+  "{\"BRAIN_AFFECT_MARKER_SPIKING_LESION\": \"1\"}",
+  "--turns",
+  "emo",
+  "--out",
+  "/srv/simpool/derisk-pool/revisions/3d29c10b32bbe79ea8fe49c7d17492f945c4bc42/research/findings/raw/_load_bearing/_shards/bisect-head-surface1/s7/affect-marker-spiking-wta/lesion_affect_marker_spiking_wta_s7.json"
+ ],
+ "git_sha": "3d29c10b32bbe79ea8fe49c7d17492f945c4bc42",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "4a23ec1cb023ad71d8a87fb8992d0256e71fdcda1eb7f1ee196224eb38656de4",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-09T11:50:57",
+ "env": {
+  "NUMEXPR_NUM_THREADS": "1",
+  "POOL_JOB_ID": "1791560544926928103-20722",
+  "OPENBLAS_NUM_THREADS": "1",
+  "POOL_JOB_MEM_GB": "8",
+  "OMP_NUM_THREADS": "1",
+  "POOL_SANDBOX": "1",
+  "MKL_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "BRAIN_AFFECT_MARKER_SURFACE": "1",
+  "SIM_RUN_ID": "1791560545-2",
+  "BRAIN_CHAT_SEED": "7"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": false,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_load_bearing/_shards/bisect-head-surface1/s7/affect-marker-spiking-wta/lesion_affect_marker_spiking_wta_s7.json"
+}

@@ -81,6 +81,7 @@ from research.runners._p1_2_workspace_deliberation_loop_derisk import (
     K_SLOTS, ASSEMBLY_SIZE, IGNITE_FRAC, SOLO_PLATEAU,
 )
 from research.runners._gnw_coincidence_integrator_derisk import _assign_slots, _pick_decoy
+from research.runners import stable_recal as _stable_recal
 from research.runners._phaseB_multihop_query_chain_derisk import (
     CHAINS, EAT, build_vocab, store_facts, spreading_predict,
 )
@@ -93,6 +94,11 @@ ORGAN_RELATIONS_ALL = [EAT, CONFIRM, CORROB, WITNESS]     # organ i uses ORGAN_R
 N_ORGANS_DEFAULT = 3
 HOPS = 2                                                  # a 2-step inference (ch[0] -> ch[2])
 THR = IGNITE_FRAC * SOLO_PLATEAU                          # "ignited" iff late-window rate >= THR
+
+
+def _thr():
+    """THR, or the stable-integrator re-calibration under SIM_STABLE_RECAL=1 (research/runners/stable_recal.py)."""
+    return _stable_recal.bus_thr(THR)
 
 # D_SUB is set by the CALIBRATED knee so (N-1)*D_SUB < knee <= N*D_SUB (unanimity quorum Q=N). Default for N=3 with
 # the measured K=4 workspace knee ~2400 pA: 2*1000=2000 (<knee, subthreshold), 3*1000=3000 (>=knee, suprathreshold).
@@ -156,8 +162,8 @@ def norgan_hop(bridge, xp, slots_dev, snap, candidates, decoy, d_sub,
     # winner = the most-supported OCCUPIED (concept) slot; n_ignited counts ALL slots (single-content across workspace)
     occ_idx = list(range(len(order)))
     winner = int(occ_idx[int(np.argmax([rates[i] for i in occ_idx]))]) if occ_idx else 0
-    ignited = bool(occ_idx) and rates[winner] >= THR
-    n_ignited = int(sum(1 for i in range(n) if rates[i] >= THR))
+    ignited = bool(occ_idx) and rates[winner] >= _thr()
+    n_ignited = int(sum(1 for i in range(n) if rates[i] >= _thr()))
     committed = order[winner] if ignited else None
     return committed, rates, winner, n_ignited
 
@@ -179,7 +185,7 @@ def unique_ignition_read_enabled() -> bool:
 def unique_ignition_read(rates, order, n, thr=None):
     """(committed|None, rates, winner_slot, n_ignited) with no argmax: commit iff exactly one slot is at/above `thr`
     and it is an occupied concept slot."""
-    thr = THR if thr is None else float(thr)
+    thr = _thr() if thr is None else float(thr)
     ign = [i for i in range(n) if rates[i] >= thr]
     if len(ign) == 1 and ign[0] < len(order):
         return order[ign[0]], rates, int(ign[0]), 1
@@ -197,11 +203,11 @@ def readout_variants(rates, order, n):
         w = int(occ[int(np.argmax([rates[i] for i in occ]))])
         return order[w] if rates[w] >= thr else None
 
-    return {"argmax_thr (production)": argmax_read(THR), "argmax_thr_x0.5": argmax_read(THR * 0.5),
-            "argmax_thr_x1.5": argmax_read(THR * 1.5),
+    return {"argmax_thr (production)": argmax_read(_thr()), "argmax_thr_x0.5": argmax_read(_thr() * 0.5),
+            "argmax_thr_x1.5": argmax_read(_thr() * 1.5),
             "unique": unique_ignition_read(rates, order, n)[0],
-            "unique_thr_x0.5": unique_ignition_read(rates, order, n, THR * 0.5)[0],
-            "unique_thr_x1.5": unique_ignition_read(rates, order, n, THR * 1.5)[0]}
+            "unique_thr_x0.5": unique_ignition_read(rates, order, n, _thr() * 0.5)[0],
+            "unique_thr_x1.5": unique_ignition_read(rates, order, n, _thr() * 1.5)[0]}
 # ── END neural-seam read ──
 
 
@@ -234,12 +240,12 @@ def norgan_chase(bridge, xp, slots_dev, snap, composer, cue, all_concepts, d_sub
 def run_calibrate(seed, n_organs, d_sub, json_path=None):
     build_vocab()
     b, xp, slots, snap = build_workspace_bridge(seed, lesion=False)
-    print(f"[calibrate seed={seed} N={n_organs}] solo-slot ignition curve (THR={THR:.3f}):", flush=True)
+    print(f"[calibrate seed={seed} N={n_organs}] solo-slot ignition curve (THR={_thr():.3f}):", flush=True)
     knee = None
     curve = {}
     for drive in (600, 800, 1000, 1200, 1400, 1500, 1700, 1800, 2000, 2100, 2400, 2800, 3000):
         rates = _ignite_and_read(b, xp, slots, snap, [float(drive)] + [0.0] * (len(slots) - 1))
-        ig = rates[0] >= THR
+        ig = rates[0] >= _thr()
         curve[str(drive)] = round(float(rates[0]), 3)
         if ig and knee is None:
             knee = drive
@@ -250,18 +256,18 @@ def run_calibrate(seed, n_organs, d_sub, json_path=None):
     # majority Q=2: 1*D_SUB_MAJ sub, 2*D_SUB_MAJ supra
     r_maj1 = _ignite_and_read(b, xp, slots, snap, [D_SUB_MAJORITY] + [0.0] * (len(slots) - 1))[0]
     r_maj2 = _ignite_and_read(b, xp, slots, snap, [2 * D_SUB_MAJORITY] + [0.0] * (len(slots) - 1))[0]
-    unanimity_ok = bool(knee is not None and r_nm1 < THR and r_n >= THR)
-    majority_ok = bool(r_maj1 < THR and r_maj2 >= THR)
-    print(f"    UNANIMITY(Q={n_organs}): (N-1)*d_sub={(n_organs-1)*d_sub:.0f}->rate={r_nm1:.3f}(sub={r_nm1<THR}) "
-          f"N*d_sub={n_organs*d_sub:.0f}->rate={r_n:.3f}(supra={r_n>=THR})  {'OK' if unanimity_ok else 'RETUNE'}",
+    unanimity_ok = bool(knee is not None and r_nm1 < _thr() and r_n >= _thr())
+    majority_ok = bool(r_maj1 < _thr() and r_maj2 >= _thr())
+    print(f"    UNANIMITY(Q={n_organs}): (N-1)*d_sub={(n_organs-1)*d_sub:.0f}->rate={r_nm1:.3f}(sub={r_nm1<_thr()}) "
+          f"N*d_sub={n_organs*d_sub:.0f}->rate={r_n:.3f}(supra={r_n>=_thr()})  {'OK' if unanimity_ok else 'RETUNE'}",
           flush=True)
-    print(f"    MAJORITY(Q=2): 1*={D_SUB_MAJORITY:.0f}->rate={r_maj1:.3f}(sub={r_maj1<THR}) "
-          f"2*={2*D_SUB_MAJORITY:.0f}->rate={r_maj2:.3f}(supra={r_maj2>=THR})  {'OK' if majority_ok else 'RETUNE'}",
+    print(f"    MAJORITY(Q=2): 1*={D_SUB_MAJORITY:.0f}->rate={r_maj1:.3f}(sub={r_maj1<_thr()}) "
+          f"2*={2*D_SUB_MAJORITY:.0f}->rate={r_maj2:.3f}(supra={r_maj2>=_thr()})  {'OK' if majority_ok else 'RETUNE'}",
           flush=True)
     ok = unanimity_ok and majority_ok
     if json_path:
         rec = {"runner": "_gnw_norgan_bus_derisk", "mode": "calibrate", "seed": int(seed), "n_organs": int(n_organs),
-               "THR": round(float(THR), 3), "d_sub": float(d_sub), "knee_pA": knee, "solo_rate_by_drive": curve,
+               "THR": round(float(_thr()), 3), "d_sub": float(d_sub), "knee_pA": knee, "solo_rate_by_drive": curve,
                "rate_Nm1_votes": round(float(r_nm1), 3), "rate_N_votes": round(float(r_n), 3),
                "unanimity_in_window": unanimity_ok,
                "rate_maj1": round(float(r_maj1), 3), "rate_maj2": round(float(r_maj2), 3),
@@ -289,7 +295,7 @@ def majority_probe(bridge, xp, slots_dev, snap, composer, cue, all_concepts, org
     # dissenter slot: find its rate (it is an occupied slot but should be subthreshold at 1 vote)
     _slot_of, order = _assign_slots([c for c in candidates if c is not None] + [decoy])
     diss_slot = _slot_of.get(dissent)
-    dissenter_suppressed = (diss_slot is None) or (rates[diss_slot] < THR)
+    dissenter_suppressed = (diss_slot is None) or (rates[diss_slot] < _thr())
     return majority_won, dissenter_suppressed
 
 
@@ -520,7 +526,7 @@ def run_prototype(seed, D=256):
                                           distractor_rng=np.random.default_rng(seed * 53 + 1))
     all_concepts = [c for ch in CHAINS for c in ch]
     b, xp, slots, snap = build_workspace_bridge(seed, lesion=False)
-    d_sub = D_SUB_UNANIMITY[3]
+    d_sub = _stable_recal.bus_d_sub(3, D_SUB_UNANIMITY[3])
     rng = np.random.default_rng(seed * 991 + 7)
 
     def bus_gate(agent, action):
@@ -595,7 +601,8 @@ def main():
     ap.add_argument("--json", type=str, default="research/findings/raw/_gnw_norgan_bus/summary.json")
     args = ap.parse_args()
 
-    d_sub = args.d_sub if args.d_sub is not None else D_SUB_UNANIMITY.get(args.n_organs, 1000.0)
+    d_sub = (args.d_sub if args.d_sub is not None
+             else _stable_recal.bus_d_sub(args.n_organs, D_SUB_UNANIMITY.get(args.n_organs, 1000.0)))
 
     if args.backend != "auto":
         from sim.backend import get_backend

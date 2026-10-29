@@ -33,7 +33,12 @@ So the next carrier is this held plateau in the mention slot's cells.
 - `W_MENT` stays 12. The controls (positive and decisive) present no words to the mention layer.
 - **Flags:** `--trace intrinsic`, `--soma-g`, `--w-im`, `--apical-pulse` (default off).
 
-## Step 0 (Hermes, now): seeds 41-48 only, no race, W_GIS 30, row 3
+## Step 0 (Hermes, now): seeds 41 and 45-51 only (Amendment A2), no race, W_GIS 30, row 3
+- **Amendment A2 (Claude 2026-10-27): seeds.** Seeds 42, 43 and 44 are project gate seeds, so the original 41-48 contradicted
+  this packet's own rule that gate seeds are not run; the pool's gate-seed guard refused those 27 lines. They are replaced by
+  the unused seeds 49, 50 and 51, keeping eight seeds and the 8/8 rule. Disclosure: the f1g step 0 (10-22) ran calibration on
+  41-48, gate seeds included, by citing the runbook as a prereg (a guard hole, now closed). A later cs-race gate claim on
+  42-44 must state that the probe's drive (150 pA) was chosen on a seed set that included them.
 - **P0, engine support (read-only, first).** Show with file:line that `cs_race_f1`'s bridge can host the BDSP apical on the
   mention slot cells only: which flags allocate it, whether it can be restricted to those indices, and which array carries
   an apical drive. If the BDSP apical cannot run on this probe's cells, that is STOP-ENGINE; post what blocks it.
@@ -41,7 +46,15 @@ So the next carrier is this held plateau in the mention slot's cells.
   at 150 pA while clause-b's identical encode schedule delivers current. Settle it from the per-ms rasters for [100, 200) ms
   in both clauses: instrument or circuit, with file:line. An instrument defect is fixed before the grid, and the identity
   check is re-run.
-- **Grid (frozen):** `--soma-g` in {0.002, 0.004, 0.008} (the validated default 0.004 in the middle) x `W_IM` in {20, 40, 80}.
+- **Grid (frozen; Amendment A1, Claude 2026-10-27):** `--soma-g` in {20, 40, 80} x `W_IM` in {20, 40, 80}.
+  - **Why amended.** The original grid {0.002, 0.004, 0.008} rested on a misread: `bdsp_apical_soma_g` defaults to 0.0
+    (sim/config.py:783), and no validated 0.004 exists. The coupling adds `soma_g * 0.05 * (v_apical - E_rest)` pA, so
+    0.004 delivers about 0.01 pA. The gap4 record couples only at soma-g of about 100-400 against a 700 pA somatic drive
+    (research/findings/2026-07-20-gap4-soma-coupling-REPRODUCTION-FAILURE-soma-g-8-does-NOT-couple-threshold-is-100.md).
+    Scaled to this probe's 150 pA drive, that range is about 21-86, so the factor-2 grid {20, 40, 80} spans it.
+  - **Disclosure.** The flags build ran an informational seed-41 scan before this amendment (soma-g 0.004, 0.4, 4,
+    40 and 400 at W_IM 40; workstation, not a result). Seed 41 stays in the grid. The grid values come from the record's
+    scale, not from that scan, and selection is still decided by the 8/8 rule below.
 - **Items** (as in f1g, on 8/8 seeds):
   - C0: the pulse fires each cell.
   - C1: 2-20 Hz in the 650 ms after the pulse.

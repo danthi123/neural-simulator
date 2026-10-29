@@ -1,0 +1,165 @@
+{
+ "backend": "numpy",
+ "description": "the real aggregate's stage verdict is PASS over six gate seeds x five groups; one group broken at a time for the nulls.",
+ "failures": [],
+ "kinds": {
+  "null_ask_lesion_curiosity_inert": "null",
+  "null_ask_lesion_graded_inert": "null",
+  "null_ask_permuted_inert": "null",
+  "null_ask_random": "null",
+  "null_conv_lesion_mouth_inert": "null",
+  "null_conv_permuted_inert": "null",
+  "null_conv_random": "null",
+  "null_emo_lesion_affect_inert": "null",
+  "null_emo_permuted_inert": "null",
+  "null_emo_random": "null",
+  "null_infer_lesion_chain_route_inert": "null",
+  "null_infer_permuted_inert": "null",
+  "null_infer_random": "null",
+  "null_inner_lesion_selfinit_inert": "null",
+  "null_inner_lesion_workspace_inert": "null",
+  "null_inner_permuted_inert": "null",
+  "null_inner_random": "null",
+  "perfect": "perfect",
+  "perfect_exact": "perfect"
+ },
+ "n": 1000,
+ "n_pass": {
+  "null_ask_lesion_curiosity_inert": 0,
+  "null_ask_lesion_graded_inert": 0,
+  "null_ask_permuted_inert": 0,
+  "null_ask_random": 0,
+  "null_conv_lesion_mouth_inert": 0,
+  "null_conv_permuted_inert": 0,
+  "null_conv_random": 0,
+  "null_emo_lesion_affect_inert": 0,
+  "null_emo_permuted_inert": 0,
+  "null_emo_random": 0,
+  "null_infer_lesion_chain_route_inert": 0,
+  "null_infer_permuted_inert": 0,
+  "null_infer_random": 0,
+  "null_inner_lesion_selfinit_inert": 0,
+  "null_inner_lesion_workspace_inert": 0,
+  "null_inner_permuted_inert": 0,
+  "null_inner_random": 0,
+  "perfect": 1000,
+  "perfect_exact": 1000
+ },
+ "name": "stage2 stage verdict",
+ "pass_rate": {
+  "null_ask_lesion_curiosity_inert": 0.0,
+  "null_ask_lesion_graded_inert": 0.0,
+  "null_ask_permuted_inert": 0.0,
+  "null_ask_random": 0.0,
+  "null_conv_lesion_mouth_inert": 0.0,
+  "null_conv_permuted_inert": 0.0,
+  "null_conv_random": 0.0,
+  "null_emo_lesion_affect_inert": 0.0,
+  "null_emo_permuted_inert": 0.0,
+  "null_emo_random": 0.0,
+  "null_infer_lesion_chain_route_inert": 0.0,
+  "null_infer_permuted_inert": 0.0,
+  "null_infer_random": 0.0,
+  "null_inner_lesion_selfinit_inert": 0.0,
+  "null_inner_lesion_workspace_inert": 0.0,
+  "null_inner_permuted_inert": 0.0,
+  "null_inner_random": 0.0,
+  "perfect": 1.0,
+  "perfect_exact": 1.0
+ },
+ "pass_rate_ci95": {
+  "null_ask_lesion_curiosity_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_ask_lesion_graded_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_ask_permuted_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_ask_random": [
+   0.0,
+   0.0038
+  ],
+  "null_conv_lesion_mouth_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_conv_permuted_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_conv_random": [
+   0.0,
+   0.0038
+  ],
+  "null_emo_lesion_affect_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_emo_permuted_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_emo_random": [
+   0.0,
+   0.0038
+  ],
+  "null_infer_lesion_chain_route_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_infer_permuted_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_infer_random": [
+   0.0,
+   0.0038
+  ],
+  "null_inner_lesion_selfinit_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_inner_lesion_workspace_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_inner_permuted_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_inner_random": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_exact": [
+   0.9962,
+   1.0
+  ]
+ },
+ "repo_head": "b7f8c1b413e79c0df7a8ac0f0c4c9554bf3f4a38",
+ "scorer_files": {
+  "docs/drafts/stage2-exit/bar_sanity_s2_common.py": "f5e35c6e3ccb36da28a2108c81a31fceaa0889459b357023fc58480a2c787d71",
+  "research/runners/stage2_exit_gate.py": "828e67c53bec5b7133a360b3706d9e397cad8fdb91e5941ad55002d522bdae59"
+ },
+ "scorer_sha256": "9481dc54d900eed233fc87c02293f483d06a994adee95c7b2e5d282171379182",
+ "seed": 0,
+ "spec": "docs/drafts/stage2-exit/bar_sanity_spec_s2_stage.py",
+ "spec_sha256": "c7adb07bc9ffadaf812fe86ad93f6848b85759ab675809d100b3fc57083f7558",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 495.6
+}

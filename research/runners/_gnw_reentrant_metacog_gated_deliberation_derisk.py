@@ -101,8 +101,14 @@ from research.runners._phaseB_multihop_query_chain_derisk import (
 )
 from research.runners.rf_phasor_composer import RFPhasorComposer
 from sim.backend import get_backend, to_host
+from research.runners import stable_recal as _stable_recal
 
 THR = IGNITE_FRAC * SOLO_PLATEAU                          # a slot is "ignited" iff its late-window rate >= THR
+
+
+def _thr():
+    """THR, or the stable-integrator re-calibration under SIM_STABLE_RECAL=1 (research/runners/stable_recal.py)."""
+    return _stable_recal.bus_thr(THR)
 
 
 def _qp(composer, x, rel):
@@ -215,7 +221,7 @@ def _conf_from_nmda(rates, g_nmda):
     g2 = float(g_nmda[order[1]]) if len(order) > 1 else 0.0
     conf = abs(g1 - g2) / (g1 + g2 + NORM_EPS)
     winner = int(np.argmax(rates))
-    n_ignited = int(sum(1 for r in rates if r >= THR))
+    n_ignited = int(sum(1 for r in rates if r >= _thr()))
     return conf, winner, n_ignited
 
 
@@ -239,7 +245,7 @@ def _deliberate_hop_conf(bridge, xp, slots_dev, snap, target, distractors, nmda_
             slot += 1
     rates, g_nmda = _ignite_and_read_nmda(bridge, xp, slots_dev, snap, drives, nmda_attr=nmda_attr)
     conf, winner, n_ignited = _conf_from_nmda(rates, g_nmda)
-    ignited = rates[winner] >= THR
+    ignited = rates[winner] >= _thr()
     committed = assignment.get(winner) if ignited else None
     return committed, rates, winner, n_ignited, conf, assignment
 
@@ -290,7 +296,7 @@ def calibrate_theta(bridge, xp, slots_dev, snap, nmda_attr=NMDA_ATTR_DEFAULT):
     knee = None
     for drive in (600, 800, 1000, 1200, 1400, 1700, 2000, 2100, 2400, 2800):
         rates = _ignite_and_read(bridge, xp, slots_dev, snap, [float(drive)] + [0.0] * (n - 1))
-        if rates[0] >= THR and knee is None:
+        if rates[0] >= _thr() and knee is None:
             knee = drive
             break
     return {

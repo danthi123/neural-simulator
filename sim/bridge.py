@@ -405,7 +405,160 @@ _SLOW_CONDUCTANCE_FEATURE_FLAGS = {
     'cp_conductance_g_coincidence_rise': 'enable_coincidence_detection',
     'cp_conductance_g_graded_plateau': 'enable_graded_dendritic_plateau',
     'cp_conductance_g_graded_plateau_rise': 'enable_graded_dendritic_plateau',
+    'cp_conductance_g_apical_gaba': 'enable_apical_gaba_routing',
+    'cp_apical_nmda_s': 'enable_apical_nmda',
 }
+
+
+# APICAL NMDA CONDUCTANCE helpers (cs-race f1j section E, 2026-10-28; cfg.enable_apical_nmda, DEFAULT OFF). Pure
+# functions of the config and the state arrays, used by the BDSP apical update in _run_one_simulation_step and by the
+# runners that READ the conductance back (they never write it), so a recorded g_N is the engine's g_N exactly.
+def apical_nmda_config_problems(cfg):
+    """[] when cfg.enable_apical_nmda is off; else every reason the flag cannot run (E2 FAIL LOUDLY list)."""
+    if not getattr(cfg, "enable_apical_nmda", False):
+        return []
+    probs = []
+    if not getattr(cfg, "enable_bdsp", False):
+        probs.append("cfg.enable_apical_nmda needs cfg.enable_bdsp (the BDSP apical update is the only place the "
+                     "term is applied)")
+    if getattr(cfg, "enable_two_compartment_dap", False):
+        probs.append("cfg.enable_apical_nmda is not defined with cfg.enable_two_compartment_dap (a second writer of "
+                     "cp_v_apical)")
+    if getattr(cfg, "enable_bdsp_microcircuit", False):
+        probs.append("cfg.enable_apical_nmda is not defined with cfg.enable_bdsp_microcircuit (the gating would read "
+                     "the error-subtracted drive)")
+    for name, ok_text, ok in (
+            ("apical_nmda_g0", ">= 0", lambda x: x >= 0.0),
+            ("apical_nmda_tau_ms", "> 0", lambda x: x > 0.0),
+            ("apical_nmda_rise_per_ms", "> 0 (s_full would be 0)", lambda x: x > 0.0),
+            ("apical_nmda_drive_ref", "> 0", lambda x: x > 0.0),
+            ("nmda_mg_concentration", ">= 0", lambda x: x >= 0.0)):
+        try:
+            val = float(getattr(cfg, name))
+        except (AttributeError, TypeError, ValueError):
+            probs.append("cfg.%s is missing or not a number" % name)
+            continue
+        if not math.isfinite(val) or not ok(val):
+            probs.append("cfg.%s must be finite and %s with cfg.enable_apical_nmda (got %r)" % (name, ok_text, val))
+    return probs
+
+
+def apical_nmda_s_full(cfg):
+    """The gating's discrete steady state under sustained full input (u = 1): r / (1 - dN + dN r), r = 1 -
+    exp(-rise dt), dN = exp(-dt / tauN). A constant of the config; g_N = g0 * s / s_full."""
+    dt = float(cfg.dt_ms)
+    r = 1.0 - math.exp(-float(cfg.apical_nmda_rise_per_ms) * dt)
+    d_n = math.exp(-dt / float(cfg.apical_nmda_tau_ms))
+    return r / (1.0 - d_n + d_n * r)
+
+
+def apical_nmda_gating_step(s, drive, cfg, xp=None):
+    """One step of the gating from this step's apical drive (E3): s <- s exp(-dt/tauN), then
+    s <- s + (1 - s)(1 - exp(-rise u dt)) with u = max(drive, 0) / drive_ref (no clip: the bounded rise stays in
+    [0, 1] at any u). A cell whose drive is 0 keeps s == 0.0 exactly."""
+    xp = cp if xp is None else xp
+    dt = float(cfg.dt_ms)
+    d_n = xp.float32(math.exp(-dt / float(cfg.apical_nmda_tau_ms)))
+    u = xp.maximum(drive, xp.float32(0.0)) / xp.float32(cfg.apical_nmda_drive_ref)
+    s = (s * d_n).astype(xp.float32)
+    rise = xp.float32(float(cfg.apical_nmda_rise_per_ms) * dt)
+    return (s + (xp.float32(1.0) - s) * (xp.float32(1.0) - xp.exp(-rise * u))).astype(xp.float32)
+
+
+def apical_nmda_conductance(s, cfg, xp=None):
+    """g_N = apical_nmda_g0 * s / s_full (apical-leak units); exactly 0.0 wherever s == 0.0 or g0 == 0.0."""
+    xp = cp if xp is None else xp
+    return (s * xp.float32(float(cfg.apical_nmda_g0) / apical_nmda_s_full(cfg))).astype(xp.float32)
+
+
+def apical_nmda_mg_block(v, mg_conc, xp=None):
+    """Jahr & Stevens 1990 Mg2+ block, the engine's expression in kernels.fused_nmda_update_and_current character for
+    character (3.57 mM, 0.062/mV; mg_conc = cfg.nmda_mg_concentration). Not the modellers' 0.08 steepening."""
+    xp = cp if xp is None else xp
+    return 1.0 / (1.0 + (mg_conc / 3.57) * xp.exp(-0.062 * v))
+
+# WHOLE-BRAIN STABLE-INTEGRATION SWITCH (2026-10-27, research/stable-integration), DEFAULT OFF. The membrane census
+# (research/findings/2026-10-26-membrane-census-dev7.md) found out-of-range membranes in 12-13 production organs per dev
+# seed: the 1 ms explicit-Euler Izhikevich step overshoots when (g_i+g_e)*dt/C >= ~2 (fixed by
+# cfg.enable_bounded_conductance_integration) and runs the quadratic term away after a refractory-withheld crossing
+# (fixed by cfg.izh_membrane_substeps with refractory rule "model_reset"). SIM_STABLE_INTEGRATION=1 forces BOTH on in
+# every SimulationBridge, whatever the organ configured: applied at construction, at _initialize_simulation_data and
+# re-asserted at the top of every _run_one_simulation_step (so an organ that sets the fields after building the bridge,
+# or a config reload, cannot undo it). Model-scoped like the options themselves: IZHIKEVICH gets all three; ADEX gets
+# only the bounded conductance integration (sub-steps are Izhikevich-only); any other model is left as configured.
+# Unset, "" or "0" => nothing is touched (byte-identical; tests/test_stable_integration_switch.py); any other value
+# raises at bridge construction (loud, never a silent no-op). The step megakernel declines both options already.
+STABLE_INTEGRATION_ENV = "SIM_STABLE_INTEGRATION"
+STABLE_INTEGRATION_SUBSTEPS = 4
+STABLE_INTEGRATION_REFRACTORY_RULE = "model_reset"
+
+
+def stable_integration_requested():
+    """True when SIM_STABLE_INTEGRATION is "1"; False when unset, "" or "0"; raises on any other value."""
+    raw = os.environ.get(STABLE_INTEGRATION_ENV)
+    if raw is None:
+        return False
+    s = raw.strip()
+    if s in ("", "0"):
+        return False
+    if s == "1":
+        return True
+    raise ValueError(f"{STABLE_INTEGRATION_ENV} must be unset, '0' or '1', got {raw!r}")
+
+
+# WHOLE-BRAIN PRESET-CENTRED HETEROGENEITY SWITCH (2026-10-27, research/stable-mechc), DEFAULT OFF. Parameter
+# heterogeneity draws a/b/d/C (HH: C_m/g_Na/g_K/g_L) around the GLOBAL cfg.izh_*_val (RS defaults) and overwrites every
+# region preset, so a typed non-RS region runs as an RS-centred hybrid (docs/drafts/preset-centred-het/CENSUS.md). The
+# fix is the per-config flag cfg.preset_centred_parameter_heterogeneity (default False); each organ builds its own
+# config, so no organ turns it on. SIM_PRESET_CENTRED_HET=1 forces that flag True on every SimulationBridge's core
+# config, whatever the organ configured, at construction and at every _initialize_simulation_data (the only place the
+# draws run, so that is the only place it needs to hold). It centres ONLY neurons that belong to a region with a
+# preset (BrainRegion.izh_neuron_type / HH overrides); trait-typed neurons (cfg.num_traits > 1, no region preset) and
+# untyped regions keep the global-centred draw by design (the flag's own rule), so the switch does not reach them
+# (SIM_TRAIT_CENTRED_HET below is the separate, default-OFF variant that reaches the trait-typed ones).
+# Unset, "" or "0" => nothing is touched (byte-identical; tests/test_preset_centred_het_switch.py); any other value
+# raises at bridge construction (loud, never a silent no-op). Read-back on the bridge: preset_centred_het_requested,
+# _applied, _organ_value (what the organ had configured) and _readback (what the last heterogeneity draw saw).
+PRESET_CENTRED_HET_ENV = "SIM_PRESET_CENTRED_HET"
+
+
+def preset_centred_het_requested():
+    """True when SIM_PRESET_CENTRED_HET is "1"; False when unset, "" or "0"; raises on any other value."""
+    raw = os.environ.get(PRESET_CENTRED_HET_ENV)
+    if raw is None:
+        return False
+    s = raw.strip()
+    if s in ("", "0"):
+        return False
+    if s == "1":
+        return True
+    raise ValueError(f"{PRESET_CENTRED_HET_ENV} must be unset, '0' or '1', got {raw!r}")
+
+
+# WHOLE-BRAIN TRAIT-CENTRED HETEROGENEITY SWITCH (2026-10-27, research/stable-mechc), DEFAULT OFF. The companion of
+# SIM_PRESET_CENTRED_HET for the neurons that switch leaves alone: with cfg.num_traits > 1 the Izhikevich init types every
+# neuron by trait (one of the defined IZH2007 presets), and a neuron in no region with an izh_neuron_type keeps that
+# trait preset but has its a/b/d/C overwritten by the global RS-centred draw (docs/drafts/preset-centred-het/CENSUS.md,
+# C2.1). SIM_TRAIT_CENTRED_HET=1 forces cfg.trait_centred_parameter_heterogeneity True on every SimulationBridge's core
+# config (construction and every _initialize_simulation_data), so each such neuron's jitter is centred on ITS OWN trait's
+# preset, with the same samples, order and RNG consumption. It reaches only trait-typed neurons no region preset covers
+# (the region flag's neurons are disjoint from these), and only Izhikevich populations with cfg.num_traits > 1.
+# Unset, "" or "0" => nothing is touched (byte-identical; tests/test_trait_centred_heterogeneity.py); any other value
+# raises at bridge construction. Read-back: trait_centred_het_requested, _applied, _organ_value and _readback.
+TRAIT_CENTRED_HET_ENV = "SIM_TRAIT_CENTRED_HET"
+
+
+def trait_centred_het_requested():
+    """True when SIM_TRAIT_CENTRED_HET is "1"; False when unset, "" or "0"; raises on any other value."""
+    raw = os.environ.get(TRAIT_CENTRED_HET_ENV)
+    if raw is None:
+        return False
+    s = raw.strip()
+    if s in ("", "0"):
+        return False
+    if s == "1":
+        return True
+    raise ValueError(f"{TRAIT_CENTRED_HET_ENV} must be unset, '0' or '1', got {raw!r}")
 
 
 class SimulationBridge:
@@ -438,6 +591,35 @@ class SimulationBridge:
         self.ui_queue = ui_queue  # Reference to the queue for sending data/status to UI
         self._simulation_source_root = simulation_source_root
         self.snr_packet_bindings = MappingProxyType({})
+        # SIM_STABLE_INTEGRATION read-back (see STABLE_INTEGRATION_ENV): requested is read ONCE here; applied is True
+        # only while the full Izhikevich set (bounded + sub-steps + model_reset) is in effect; effective holds the
+        # three values the step actually reads; organ_values what the organ had configured before the override;
+        # reasserts counts steps at which the per-step re-assert found the organ had changed a field back.
+        self.stable_integration_requested = stable_integration_requested()
+        self.stable_integration_applied = False
+        self.stable_integration_scope = None
+        self.stable_integration_effective = None
+        self.stable_integration_organ_values = None
+        self.stable_integration_reasserts = 0
+        self._stable_integration_cfg_id = None
+        self._apply_stable_integration()
+        # SIM_PRESET_CENTRED_HET read-back (see PRESET_CENTRED_HET_ENV): requested is read ONCE here; applied is True once
+        # the switch has forced cfg.preset_centred_parameter_heterogeneity True; organ_value is what the organ had
+        # configured before; readback is filled by each heterogeneity draw (None until one runs).
+        self.preset_centred_het_requested = preset_centred_het_requested()
+        self.preset_centred_het_applied = False
+        self.preset_centred_het_organ_value = None
+        self.preset_centred_het_readback = None
+        self._preset_centred_het_cfg_id = None
+        self._apply_preset_centred_het()
+        # SIM_TRAIT_CENTRED_HET read-back (see TRAIT_CENTRED_HET_ENV), same shape as the preset switch's.
+        self.trait_centred_het_requested = trait_centred_het_requested()
+        self.trait_centred_het_applied = False
+        self.trait_centred_het_organ_value = None
+        self.trait_centred_het_readback = None
+        self._trait_centred_het_cfg_id = None
+        self._izh_trait_typed = False           # set by the Izhikevich init: True when neurons are typed by trait
+        self._apply_trait_centred_het()
 
         # --- CuPy Arrays for Simulation State ---
         self.cp_membrane_potential_v = None 
@@ -454,6 +636,14 @@ class SimulationBridge:
         self.cp_conductance_g_gabab = None          # slow GABA_B/GIRK conductance (None unless enable_gabab)
         self.cp_gabab_reversal_per_neuron = None     # per-neuron E_gabab (~-90 mV on GABA_B targets)
         self.cp_gabab_synapse_mask = None            # bool per-synapse: True for GABA_B-routed synapses
+        # APICAL GABA_A routing (cs-race f1i section E, 2026-10-27; cfg.enable_apical_gaba_routing). Both None unless
+        # the flag is on AND a plan pathway is tagged receptor="gaba_a_apical" (built in inject_explicit_wiring), so
+        # every step block that reads them is unreached by default (byte-identical).
+        self.cp_conductance_g_apical_gaba = None     # per-neuron apical GABA_A conductance (apical-leak units)
+        self.cp_apical_gaba_synapse_mask = None      # bool per-synapse: True for gaba_a_apical-routed synapses
+        # APICAL NMDA gating state (cs-race f1j section E, 2026-10-28; cfg.enable_apical_nmda). None unless the flag is
+        # on (allocated in _initialize_simulation_data), so the step block that reads it is unreached by default.
+        self.cp_apical_nmda_s = None                 # per-neuron NMDA gating fraction in [0, 1] on the BDSP apical
         # TD value-DERIVATIVE channel (B-2, 2026-06-10). A SINGLE leaky-EMA copy of the GABA_B
         # value conductance above (decays slower, td_slow_tau_ms): the band-passed difference
         # (g_gabab - g_gabab_slow) is the value derivative = the TD bootstrap, computed at the SNc
@@ -1871,6 +2061,9 @@ class SimulationBridge:
         """Initializes or re-initializes all CuPy arrays and simulation state variables."""
         self._log_console(f"Initializing simulation data for model: {self.core_config.neuron_model_type} (3D)... (playback_init: {called_from_playback_init})")
         self.snr_packet_bindings = MappingProxyType({})
+        self._apply_stable_integration()      # SIM_STABLE_INTEGRATION (no-op unless requested)
+        self._apply_preset_centred_het()      # SIM_PRESET_CENTRED_HET (no-op unless requested)
+        self._apply_trait_centred_het()       # SIM_TRAIT_CENTRED_HET (no-op unless requested)
 
         if not called_from_playback_init:
             # These global_gui_state checks are for context; actual state changes are UI-driven.
@@ -1952,6 +2145,12 @@ class SimulationBridge:
                         raise ValueError(
                             f"Region {region.name!r} {field_name} must be positive"
                         )
+
+        # APICAL NMDA (cs-race f1j E2): FAIL LOUDLY at config time, before the try below (which logs and swallows).
+        # No-op unless cfg.enable_apical_nmda.
+        _ap_nmda_probs = apical_nmda_config_problems(self.core_config)
+        if _ap_nmda_probs:
+            raise ValueError("apical NMDA (cs-race f1j E2): " + "; ".join(_ap_nmda_probs))
 
         try:
             cfg = self.core_config
@@ -2423,6 +2622,11 @@ class SimulationBridge:
                 self.cp_conductance_g_graded_plateau = cp.zeros(n, dtype=cp.float32)
                 self.cp_conductance_g_graded_plateau_rise = cp.zeros(n, dtype=cp.float32)
 
+            # APICAL NMDA gating state (cs-race f1j E2): one float32 per neuron, allocated only with the flag (validated
+            # above); a re-initialization with the flag off drops a stale array. Default None => unreached.
+            self.cp_apical_nmda_s = (cp.zeros(n, dtype=cp.float32)
+                                     if getattr(cfg, "enable_apical_nmda", False) else None)
+
             self.cp_refractory_timers = cp.zeros(n, dtype=cp.int32)
             self.cp_neuron_activity_ema = cp.zeros(n, dtype=cp.float32)
             self.cp_viz_activity_timers = cp.zeros(n, dtype=cp.int32)
@@ -2552,6 +2756,7 @@ class SimulationBridge:
                 # math and reassigned existing populations.
                 use_trait_based = (num_defined_izh_variants > 1
                                     and cfg.num_traits > 1)
+                self._izh_trait_typed = bool(use_trait_based)    # read by the trait-centred heterogeneity draw
                 if use_trait_based:
                     # Vectorized type selection based on traits
                     type_indices = np_traits_host % num_defined_izh_variants
@@ -2734,6 +2939,19 @@ class SimulationBridge:
                 )
                 if preset_centred:
                     self._het_preset_centres = self._collect_het_preset_centres(cfg, n)
+                het_centres_for_readback = self._het_preset_centres if preset_centred else None
+                # TRAIT-CENTRED (opt-in; DEFAULT OFF -> `trait_centred` is False and nothing below runs). Adds the
+                # centres of the trait-typed neurons no region preset covers (their own trait's preset, read from the
+                # arrays the init just filled) to the same dict the draws consume; the region centres stay as they were.
+                trait_centred = self._trait_centred_het_active(cfg)
+                if trait_centred:
+                    trait_centres, trait_readback = self._collect_het_trait_centres(
+                        cfg, n, het_centres_for_readback)
+                    self._het_preset_centres = self._merge_het_centres(
+                        self._het_preset_centres if preset_centred else None, trait_centres)
+                    self.trait_centred_het_readback = trait_readback
+                else:
+                    self.trait_centred_het_readback = {"heterogeneity_ran": True, "trait_centred": False}
                 self._apply_parameter_heterogeneity(
                     cfg, n, backend_neutral=backend_neutral_izh
                 )
@@ -2751,9 +2969,10 @@ class SimulationBridge:
                 if (getattr(cfg, "per_region_parameter_heterogeneity", False)
                         and self.region_manager is not None):
                     self._overwrite_region_scoped_parameter_heterogeneity(cfg, n)
-                if preset_centred:
+                self._record_het_readback(cfg, n, preset_centred, het_centres_for_readback)
+                if preset_centred or trait_centred:
                     self._het_preset_centres = None
-                elif self.region_manager is not None:
+                if not preset_centred and self.region_manager is not None:
                     # Loud check (always on, logging only: no RNG, array or cfg change):
                     # name the regions whose presets the globally-centred draws just
                     # overwrote. One warning per build.
@@ -3688,6 +3907,32 @@ class SimulationBridge:
                 records.append((region, label, idx_arr, values))
         return records
 
+    def _record_het_readback(self, cfg, n, preset_centred, centres):
+        """Read-back of one heterogeneity draw (host ints only; no RNG, array or cfg change), kept on
+        self.preset_centred_het_readback: whether the draw ran preset-centred, how many neurons belong to a region
+        preset (any jittered parameter) and how many of those presets sit more than 10 % from the centre of the
+        distribution that jitters them (the neurons the flag actually moves; an RS preset equals the global centre)."""
+        rb = {"heterogeneity_ran": True, "preset_centred": bool(preset_centred), "n_neurons": int(n),
+              "n_with_region_preset": 0, "n_preset_off_centre": 0, "by_param": {}}
+        if centres:
+            dists = cfg.heterogeneity_distributions or {}
+            any_preset = np.zeros(n, dtype=bool)
+            any_off = np.zeros(n, dtype=bool)
+            for key, (has_preset, preset_values) in centres.items():
+                centre = self._het_distribution_centre(dists[key]) if key in dists else None
+                if centre is None:
+                    off = np.asarray(has_preset, dtype=bool)
+                else:
+                    pv = np.asarray(preset_values, dtype=np.float64)
+                    off = np.asarray(has_preset, dtype=bool) & (
+                        (np.abs(pv - centre) > 0.10 * abs(centre)) | ((centre == 0.0) & (pv != 0.0)))
+                any_preset |= np.asarray(has_preset, dtype=bool)
+                any_off |= off
+                rb["by_param"][key] = {"with_preset": int(np.asarray(has_preset).sum()), "off_centre": int(off.sum())}
+            rb["n_with_region_preset"] = int(any_preset.sum())
+            rb["n_preset_off_centre"] = int(any_off.sum())
+        self.preset_centred_het_readback = rb
+
     def _collect_het_preset_centres(self, cfg, n):
         """{heterogeneity param name: (host bool has_preset[n], host float64 preset[n])} for every parameter
         at least one region preset sets. Built BEFORE the heterogeneity draws overwrite the presets."""
@@ -3701,6 +3946,70 @@ class SimulationBridge:
                 has_preset[idx_arr] = True
                 preset_values[idx_arr] = value
         return centres
+
+    # A trait preset within this relative distance of its distribution's centre counts as AT the centre (float32 storage of
+    # the preset and exp(log(x)) of the lognormal centre both differ from the exact value by far less than this).
+    _TRAIT_AT_CENTRE_REL = 1e-6
+
+    def _trait_centred_het_active(self, cfg):
+        """True when this heterogeneity draw is trait-centred: the config flag is on, the model is Izhikevich and the
+        init typed the neurons by trait (cfg.num_traits > 1 with more than one defined IZH2007 preset)."""
+        return (bool(getattr(cfg, "trait_centred_parameter_heterogeneity", False))
+                and cfg.neuron_model_type == NeuronModel.IZHIKEVICH.name
+                and bool(getattr(self, "_izh_trait_typed", False)))
+
+    def _collect_het_trait_centres(self, cfg, n, region_centres):
+        """({heterogeneity param name: (host bool has_preset[n], host float64 preset[n])}, read-back dict) for the
+        trait-typed neurons no region preset covers. Called BEFORE the draws overwrite the arrays: at that point
+        cp_izh_a / b / d_increment / C of a neuron outside every typed region still hold the preset of its own trait
+        (`_apply_per_region_neuron_types` writes only region slices). `region_centres` is the dict
+        `_collect_het_preset_centres` returns (None when the region flag is off; the coverage is then computed here, only
+        to exclude region-typed neurons, which stay on the global centre unless the region flag is on). A neuron
+        counts for a parameter only when its trait preset sits off the centre of the distribution that jitters it,
+        so a trait on the centre (the RS trait) keeps today's sample bit for bit. Read-only: no RNG, array or cfg change."""
+        dists = cfg.heterogeneity_distributions or self._get_default_heterogeneity_distributions(cfg)
+        if region_centres is None:
+            region_centres = self._collect_het_preset_centres(cfg, n) if self.region_manager is not None else {}
+        covered_any = np.zeros(n, dtype=bool)
+        for has_preset, _values in region_centres.values():
+            covered_any |= np.asarray(has_preset, dtype=bool)
+        centres = {}
+        any_off = np.zeros(n, dtype=bool)
+        by_param = {}
+        for key, field in self._IZH_HET_PRESET_FIELDS.items():
+            spec = dists.get(key)
+            centre = self._het_distribution_centre(spec) if spec is not None else None
+            arr = getattr(self, "cp_izh_" + field, None)
+            if centre is None or arr is None or int(arr.shape[0]) != n:
+                continue
+            values = np.asarray(_backend_to_host(arr), dtype=np.float64)
+            covered = np.asarray(region_centres[key][0], dtype=bool) if key in region_centres else np.zeros(n, dtype=bool)
+            off = ~covered & ((np.abs(values - centre) > self._TRAIT_AT_CENTRE_REL * abs(centre))
+                              | ((centre == 0.0) & (values != 0.0)))
+            if off.any():
+                centres[key] = (off, np.where(off, values, 0.0))
+            any_off |= off
+            by_param[key] = {"trait_neurons": int((~covered).sum()), "off_centre": int(off.sum())}
+        readback = {"heterogeneity_ran": True, "trait_centred": True, "trait_typed": True, "n_neurons": int(n),
+                    "n_trait_neurons": int((~covered_any).sum()), "n_trait_off_centre": int(any_off.sum()),
+                    "by_param": by_param}
+        return centres, readback
+
+    @staticmethod
+    def _merge_het_centres(region_centres, trait_centres):
+        """Union of the region-preset centres and the trait centres into the one dict the draws consume. The two sets of
+        neurons are disjoint by construction (the trait mask excludes every region-covered neuron), and a region
+        centre wins if they were not. Returns None when both are empty."""
+        merged = {}
+        for key in set(region_centres or {}) | set(trait_centres or {}):
+            r = (region_centres or {}).get(key)
+            t = (trait_centres or {}).get(key)
+            if r is not None and t is not None:
+                has = np.asarray(r[0], dtype=bool) | np.asarray(t[0], dtype=bool)
+                merged[key] = (has, np.where(np.asarray(r[0], dtype=bool), r[1], t[1]))
+            else:
+                merged[key] = r if r is not None else t
+        return merged or None
 
     @staticmethod
     def _het_distribution_centre(dist_spec):
@@ -4543,6 +4852,12 @@ class SimulationBridge:
 
         n = self.core_config.num_neurons
 
+        # APICAL NMDA (cs-race f1j E2): FAIL LOUDLY at wiring time too (a config changed after initialization), before
+        # any state is touched. No-op unless cfg.enable_apical_nmda.
+        _ap_nmda_probs = apical_nmda_config_problems(self.core_config)
+        if _ap_nmda_probs:
+            raise ValueError("inject_explicit_wiring: apical NMDA (cs-race f1j E2): " + "; ".join(_ap_nmda_probs))
+
         # Concatenate all populations into flat arrays, tracking the
         # per-population plastic flag and plasticity_gate name so we can
         # build per-synapse mask + per-synapse gain index after CSR
@@ -4566,6 +4881,7 @@ class SimulationBridge:
         any_coincidence = False  # any synapse routed through the dendritic-coincidence plateau
         any_graded = False  # any synapse routed through the graded (analog) transmission path
         any_stp_disabled = False  # any synapse tagged stp_disabled (skips STP depression)
+        apical_gaba_groups = []  # names of pathways tagged receptor=="gaba_a_apical" (cs-race f1i E2)
         for name, group in wiring_plan.items():
             if not isinstance(group, dict) or "pre_indices" not in group:
                 continue
@@ -4585,6 +4901,16 @@ class SimulationBridge:
                 any_trans_gated = True
             if receptor == "gaba_b":
                 any_gabab = True
+            if receptor == "gaba_a_apical":
+                apical_gaba_groups.append(str(name))
+                if coincidence_flag or graded_flag:
+                    raise ValueError(
+                        f"inject_explicit_wiring: pathway {name!r} is receptor='gaba_a_apical' AND "
+                        "coincidence_detector/graded; those paths read the same synapse data and would double-route it")
+                if len(group["initial_weights"]) and float(np.min(np.asarray(group["initial_weights"], dtype=np.float64))) < 0.0:
+                    raise ValueError(
+                        f"inject_explicit_wiring: pathway {name!r} (receptor='gaba_a_apical') has a negative weight; "
+                        "the apical GABA_A conductance must be >= 0")
             if exc_receptor == "nmda_slow":
                 any_nmda_slow = True
             if coincidence_flag:
@@ -4609,6 +4935,25 @@ class SimulationBridge:
         if len(all_pre) == 0:
             self._log_console("inject_explicit_wiring: no synapses in plan.", "warning")
             return
+
+        # APICAL GABA_A routing (cs-race f1i E2): FAIL LOUDLY on misuse. Before this edit any receptor value other than
+        # "gaba_b" silently acted as somatic GABA_A, so a gaba_a_apical tag without the routing would run as somatic
+        # inhibition and look like a result. Checked before any state is touched.
+        any_apical_gaba = bool(apical_gaba_groups)
+        if any_apical_gaba:
+            _cfg_ag = self.core_config
+            if not getattr(_cfg_ag, "enable_apical_gaba_routing", False):
+                raise ValueError(
+                    f"inject_explicit_wiring: pathways {apical_gaba_groups} are tagged receptor='gaba_a_apical' but "
+                    "cfg.enable_apical_gaba_routing is False (they would silently act as somatic GABA_A)")
+            if not getattr(_cfg_ag, "enable_bdsp", False):
+                raise ValueError(
+                    "inject_explicit_wiring: receptor='gaba_a_apical' needs cfg.enable_bdsp (the BDSP apical update "
+                    "is the only place the apical conductance is applied)")
+            if getattr(_cfg_ag, "enable_two_compartment_dap", False):
+                raise ValueError(
+                    "inject_explicit_wiring: receptor='gaba_a_apical' is not defined with "
+                    "cfg.enable_two_compartment_dap (a second writer of cp_v_apical)")
 
         pre_np = np.asarray(all_pre, dtype=np.int32)
         post_np = np.asarray(all_post, dtype=np.int32)
@@ -4648,13 +4993,24 @@ class SimulationBridge:
         )
         if (any_fixed or any_gated or any_trans_gated or any_gabab or any_nmda_slow
                 or any_coincidence or any_graded or any_stp_disabled
-                or inhibitory_stdp_enabled):
+                or inhibitory_stdp_enabled or any_apical_gaba):
             keyed = sorted(
                 zip(all_pre, all_post, all_plastic, all_gates, all_trans_gates,
                     all_receptors, all_exc_receptors, all_coincidence, all_graded,
                     all_stp_disabled),
                 key=lambda t: (t[0], t[1]),
             )
+            # APICAL GABA_A routing (cs-race f1i E2): a (pre,post) coordinate carried by BOTH a gaba_a_apical edge and
+            # an untagged edge is merged into ONE synapse by sum_duplicates(), whose single receptor cannot be both.
+            # Raise rather than route the summed weight by list order. Only reached when a pathway carries the tag.
+            if any_apical_gaba:
+                import itertools as _it_ag
+                for _coord_ag, _run_ag in _it_ag.groupby(keyed, key=lambda t: (t[0], t[1])):
+                    _rc_ag = [t[5] == "gaba_a_apical" for t in _run_ag]
+                    if any(_rc_ag) and not all(_rc_ag):
+                        raise ValueError(
+                            f"inject_explicit_wiring: synapse {tuple(int(c) for c in _coord_ag)} is both receptor='gaba_a_apical' and "
+                            "untagged in the plan; one merged synapse cannot be routed to two compartments")
             # DEDUP SYNAPSE MASKS (2026-08-27; cfg.dedup_synapse_masks, DEFAULT-OFF -> the block
             # below is skipped and keyed is bit-for-bit the legacy list). cp_connections is built
             # via coo->tocsr()+sum_duplicates(), which MERGES duplicate (pre,post) edges, so nnz =
@@ -4889,6 +5245,28 @@ class SimulationBridge:
             self.cp_stp_disabled_mask = cp.zeros(self._synapse_capacity, dtype=cp.bool_)
             self.cp_stp_disabled_mask[:nnz] = cp.asarray(sd_mask_host)
 
+        # APICAL GABA_A per-synapse routing mask (cs-race f1i E2, 2026-10-27). True for synapses of any pathway tagged
+        # receptor=="gaba_a_apical"; the step removes them from the somatic g_e/g_i matvec (E3) and feeds them into
+        # cp_conductance_g_apical_gaba (E4), applied to cp_v_apical in the BDSP apical update (E5). Aligned with
+        # cp_connections.data via the same (pre,post)-sorted `keyed` list (receptor is keyed[5]). Built only when a
+        # pathway carries the tag (the misuse checks above guarantee the flag is on); capacity-sized with FALSE padding
+        # (grown synapses default to untagged). A re-wire without the tag clears any previous routing. Untagged plans
+        # never enter this block (both arrays stay None => byte-identical).
+        if any_apical_gaba:
+            if len(keyed) != nnz:
+                raise ValueError(
+                    f"inject_explicit_wiring: receptor='gaba_a_apical' with {len(keyed)} plan edges for {nnz} merged "
+                    "synapses (duplicate edges): the routing mask cannot align; set cfg.dedup_synapse_masks or "
+                    "remove the duplicates")
+            ag_mask_host = np.fromiter(
+                (rc == "gaba_a_apical" for rc in (t[5] for t in keyed)), dtype=np.bool_, count=nnz)
+            self.cp_apical_gaba_synapse_mask = cp.zeros(self._synapse_capacity, dtype=cp.bool_)
+            self.cp_apical_gaba_synapse_mask[:nnz] = cp.asarray(ag_mask_host)
+            self.cp_conductance_g_apical_gaba = cp.zeros(n, dtype=cp.float32)
+        elif self.cp_apical_gaba_synapse_mask is not None or self.cp_conductance_g_apical_gaba is not None:
+            self.cp_apical_gaba_synapse_mask = None
+            self.cp_conductance_g_apical_gaba = None
+
         # Cluster B.1 (2026-04-28): tag D2-targeting synapses with sign=-1.
         # D1-targeting + everything else stays at +1 (default). The reward-
         # modulated weight update will multiply by this sign so D2 synapses
@@ -4986,6 +5364,25 @@ class SimulationBridge:
         self._invalidate_coo_cache()
         self._cached_inhibitory_mask = None
         self._cached_stp_per_type = None
+
+        # APICAL GABA_A routing (cs-race f1i E2): every routed synapse must come from an INHIBITORY neuron (the polarity
+        # is final only now, after output_inhibitory_indices). An excitatory source would inject a GABA conductance
+        # from a glutamatergic cell. Only reached when a pathway carries the tag.
+        if any_apical_gaba:
+            _cfg_pol = self.core_config
+            if not getattr(_cfg_pol, "enable_inhibitory_neurons", False) or self.cp_traits is None:
+                raise ValueError(
+                    "inject_explicit_wiring: receptor='gaba_a_apical' needs inhibitory neurons "
+                    "(cfg.enable_inhibitory_neurons and cp_traits, e.g. via output_inhibitory_indices)")
+            _inh_idx_pol = getattr(_cfg_pol, "inhibitory_trait_indices", None)
+            if _inh_idx_pol:
+                _is_inh_pol = cp.isin(self.cp_traits, cp.asarray(_inh_idx_pol, dtype=cp.int32))
+            else:
+                _is_inh_pol = (self.cp_traits == _cfg_pol.inhibitory_trait_index)
+            _ag_pre = cp.asarray(np.fromiter((t[0] for t, m in zip(keyed, ag_mask_host) if m), dtype=np.int64))
+            if _ag_pre.size and not bool(cp.all(_is_inh_pol[_ag_pre])):
+                raise ValueError(
+                    "inject_explicit_wiring: a receptor='gaba_a_apical' synapse has a non-inhibitory source neuron")
 
         # Re-initialize synapse-indexed arrays to match the new nnz.
         if self.gpu_config is not None:
@@ -8307,6 +8704,9 @@ class SimulationBridge:
                 or getattr(cfg, "enable_step_cudagraph", False)
                 or getattr(cfg, "enable_step_megakernel_v2", False)):
             return False
+        # The fused path does not implement the apical NMDA gating or term (cs-race f1j E2).
+        if getattr(cfg, "enable_apical_nmda", False) or getattr(self, "cp_apical_nmda_s", None) is not None:
+            return False
         if not is_gpu_backend():
             return False
         if cfg.neuron_model_type != NeuronModel.IZHIKEVICH.name:
@@ -8343,6 +8743,8 @@ class SimulationBridge:
         if self.cp_transmission_gain is not None:
             return False
         if self.cp_nmda_recurrent_synapse_mask is not None or self.cp_graded_synapse_mask is not None:
+            return False
+        if self.cp_apical_gaba_synapse_mask is not None:
             return False
         if self.cp_dendritic_source_activity is not None:
             return False
@@ -8925,6 +9327,84 @@ class SimulationBridge:
             "Disable the flag or switch neuron_model_type."
         )
 
+    def _apply_stable_integration(self, *, per_step=False):
+        """Force the SIM_STABLE_INTEGRATION set onto self.core_config (no-op unless requested at construction).
+        IZHIKEVICH: enable_bounded_conductance_integration=True, izh_membrane_substeps=4,
+        izh_substep_refractory_rule="model_reset". ADEX: bounded only. Other models: the organ's values (restored if
+        an earlier call on this config had set them under a different model). Records the read-back attributes.
+        per_step=True (the re-assert at the top of each step) counts a step at which a field had to be changed back."""
+        if not getattr(self, "stable_integration_requested", False):
+            return
+        cfg = self.core_config
+        if cfg is None:
+            return
+        if self._stable_integration_cfg_id != id(cfg):
+            self._stable_integration_cfg_id = id(cfg)
+            self.stable_integration_organ_values = {
+                "enable_bounded_conductance_integration": bool(
+                    getattr(cfg, "enable_bounded_conductance_integration", False)),
+                "izh_membrane_substeps": getattr(cfg, "izh_membrane_substeps", 1),
+                "izh_substep_refractory_rule": getattr(cfg, "izh_substep_refractory_rule", "model_reset"),
+                "neuron_model_type": getattr(cfg, "neuron_model_type", None)}
+        model = getattr(cfg, "neuron_model_type", None)
+        organ = self.stable_integration_organ_values
+        if model == NeuronModel.IZHIKEVICH.name:
+            want = (True, STABLE_INTEGRATION_SUBSTEPS, STABLE_INTEGRATION_REFRACTORY_RULE)
+            scope = "izhikevich_full"
+        elif model == NeuronModel.ADEX.name:
+            want = (True, organ["izh_membrane_substeps"], organ["izh_substep_refractory_rule"])
+            scope = "adex_bounded_only"
+        else:
+            want = (organ["enable_bounded_conductance_integration"], organ["izh_membrane_substeps"],
+                    organ["izh_substep_refractory_rule"])
+            scope = "not_applicable:%s" % model
+        have = (getattr(cfg, "enable_bounded_conductance_integration", False),
+                getattr(cfg, "izh_membrane_substeps", 1),
+                getattr(cfg, "izh_substep_refractory_rule", "model_reset"))
+        if have != want:
+            if per_step:
+                self.stable_integration_reasserts += 1
+            cfg.enable_bounded_conductance_integration = want[0]
+            cfg.izh_membrane_substeps = want[1]
+            cfg.izh_substep_refractory_rule = want[2]
+        if self.stable_integration_scope != scope or have != want or self.stable_integration_effective is None:
+            self.stable_integration_scope = scope
+            self.stable_integration_applied = (scope == "izhikevich_full")
+            self.stable_integration_effective = {
+                "enable_bounded_conductance_integration": bool(cfg.enable_bounded_conductance_integration),
+                "izh_membrane_substeps": cfg.izh_membrane_substeps,
+                "izh_substep_refractory_rule": cfg.izh_substep_refractory_rule}
+
+    def _apply_preset_centred_het(self):
+        """Force cfg.preset_centred_parameter_heterogeneity True on self.core_config (no-op unless requested at
+        construction). Records the organ's own value once per config object and the applied flag."""
+        if not getattr(self, "preset_centred_het_requested", False):
+            return
+        cfg = self.core_config
+        if cfg is None:
+            return
+        if self._preset_centred_het_cfg_id != id(cfg):
+            self._preset_centred_het_cfg_id = id(cfg)
+            self.preset_centred_het_organ_value = bool(
+                getattr(cfg, "preset_centred_parameter_heterogeneity", False))
+        cfg.preset_centred_parameter_heterogeneity = True
+        self.preset_centred_het_applied = True
+
+    def _apply_trait_centred_het(self):
+        """Force cfg.trait_centred_parameter_heterogeneity True on self.core_config (no-op unless requested at
+        construction). Records the organ's own value once per config object and the applied flag."""
+        if not getattr(self, "trait_centred_het_requested", False):
+            return
+        cfg = self.core_config
+        if cfg is None:
+            return
+        if self._trait_centred_het_cfg_id != id(cfg):
+            self._trait_centred_het_cfg_id = id(cfg)
+            self.trait_centred_het_organ_value = bool(
+                getattr(cfg, "trait_centred_parameter_heterogeneity", False))
+        cfg.trait_centred_parameter_heterogeneity = True
+        self.trait_centred_het_applied = True
+
     @staticmethod
     def _izh_substep_settings(cfg):
         """(n_substeps, refractory_rule) for cfg.izh_membrane_substeps / cfg.izh_substep_refractory_rule,
@@ -8957,6 +9437,10 @@ class SimulationBridge:
     def _run_one_simulation_step(self):
         """Executes a single step of the simulation logic."""
         if not self.is_initialized or self.core_config.num_neurons == 0: return
+        # SIM_STABLE_INTEGRATION re-assert (one attribute read when not requested): an organ that set the fields
+        # after building the bridge, or a config reload, cannot undo the whole-brain override.
+        if getattr(self, "stable_integration_requested", False):
+            self._apply_stable_integration(per_step=True)
         # Backend-normalize the connection matrix before any sparse op / megakernel dispatch below (no-op on
         # numpy and once-per-foreign-assignment on cupy — see _ensure_connections_on_backend).
         self._ensure_connections_on_backend()
@@ -9221,6 +9705,30 @@ class SimulationBridge:
                     shape=self.cp_connections.shape,
                 )
 
+            # APICAL GABA_A SPLIT (cs-race f1i E3, 2026-10-27; dendrite-targeting SOM/Martinotti-like inhibition). For
+            # receptor=="gaba_a_apical" pathways, capture the routed synapses' (STP/transmission-gated) data for the
+            # apical conductance increment below, then ZERO those entries in the matrix the g_e/g_i matvec uses (the
+            # nmda_slow / graded split idiom above): a routed synapse gives NO somatic g_i (the axodendritic IPSP's
+            # attenuation at the soma is taken as total). GUARDED NO-OP: cp_apical_gaba_synapse_mask is None unless the
+            # flag is on and a pathway carries the tag, so this block is unreached and the matvec is byte-identical.
+            _apical_gaba_src_data = None
+            if self.cp_apical_gaba_synapse_mask is not None and self.cp_connections.nnz > 0:
+                if (not getattr(cfg, "enable_apical_gaba_routing", False) or not getattr(cfg, "enable_bdsp", False)
+                        or getattr(cfg, "enable_two_compartment_dap", False)):
+                    raise RuntimeError(
+                        "apical GABA_A routing mask is present but cfg.enable_apical_gaba_routing / enable_bdsp is off "
+                        "or enable_two_compartment_dap is on (config changed after wiring?)")
+                _ag_nnz = self.cp_connections.nnz
+                _ag_mask_f = self._ensure_gate_capacity(
+                    "cp_apical_gaba_synapse_mask", _ag_nnz, fill=False, dtype=cp.bool_
+                )[:_ag_nnz].astype(cp.float32)
+                _apical_gaba_src_data = effective_connections_matrix.data * _ag_mask_f
+                _soma_data = effective_connections_matrix.data * (1.0 - _ag_mask_f)
+                effective_connections_matrix = csp.csr_matrix(
+                    (_soma_data, self.cp_connections.indices, self.cp_connections.indptr),
+                    shape=self.cp_connections.shape,
+                )
+
             if _profiling: _backend_synchronize(); _prof['t_stp'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             # --- 2. Synaptic Conductance Update & Current Calculation ---
             decay_e = self._cached_decay_e
@@ -9368,6 +9876,28 @@ class SimulationBridge:
                         self.cp_conductance_g_e += _deterministic_csr_matvec(_WgT1.tocsr(), _a_cont) * cfg.propagation_strength
                     else:
                         self.cp_conductance_g_e += (_WgT1 @ _a_cont) * cfg.propagation_strength
+
+            # APICAL GABA_A CONDUCTANCE (cs-race f1i E4). Decay at the GABA_A time constant (the cached decay_i: no
+            # new tau), then increment from last step's spikes through the routed synapses only. Applied to v_apical in
+            # the BDSP apical update (E5), never to the soma. deterministic_transpose_matvec is honoured exactly as in
+            # the GABA_B block. GUARDED NO-OP: _apical_gaba_src_data is None unless routing is active.
+            if _apical_gaba_src_data is not None:
+                if self.cp_conductance_g_apical_gaba is None:
+                    self.cp_conductance_g_apical_gaba = cp.zeros(self.cp_membrane_potential_v.shape[0], dtype=cp.float32)
+                self.cp_conductance_g_apical_gaba = (self.cp_conductance_g_apical_gaba * decay_i).astype(cp.float32)
+                if _prev_any:
+                    _ag_mat = csp.csr_matrix(
+                        (_apical_gaba_src_data, self.cp_connections.indices, self.cp_connections.indptr),
+                        shape=self.cp_connections.shape)
+                    _ag_matT = _ag_mat.T
+                    if getattr(cfg, "deterministic_transpose_matvec", False):
+                        _ag_drive = _deterministic_csr_matvec(
+                            _ag_matT.tocsr(), self.cp_prev_firing_states.astype(cp.float32))
+                    else:
+                        _ag_drive = _ag_matT @ self.cp_prev_firing_states.astype(cp.float32)
+                    self.cp_conductance_g_apical_gaba += (
+                        _ag_drive * cp.float32(getattr(cfg, "apical_gaba_propagation_strength", 1.0))
+                    ).astype(cp.float32)
 
             total_input_current_pA = synaptic_current_I_syn_pA + self.cp_external_input_current
 
@@ -10667,6 +11197,18 @@ class SimulationBridge:
             # cp_connections.data is byte-identical to today (mirrors the STDP/HTM blocks). The apical sets the LTP/LTD
             # SIGN without changing E (the multiplexing invariant); at rest the apical is silent => P==Pbar => dw==0
             # (the P0 no-spurious-learning moat).
+            # APICAL NMDA step-time guards (cs-race f1j E2). GUARDED NO-OP by default: the array is None and the flag is
+            # off, so neither branch is entered. A gating state with the flag or enable_bdsp turned off would freeze a
+            # conductance nobody applies; a config made invalid after the build is refused here as at build time.
+            if getattr(self, "cp_apical_nmda_s", None) is not None and (
+                    not getattr(cfg, "enable_apical_nmda", False) or not getattr(cfg, "enable_bdsp", False)):
+                raise RuntimeError(
+                    "apical NMDA gating state cp_apical_nmda_s is present but cfg.enable_apical_nmda / enable_bdsp is "
+                    "off (config changed after allocation, or a checkpoint carrying it was loaded with the flag off)")
+            if getattr(cfg, "enable_apical_nmda", False):
+                _ap_nmda_probs = apical_nmda_config_problems(cfg)
+                if _ap_nmda_probs:
+                    raise ValueError("apical NMDA (cs-race f1j E2): " + "; ".join(_ap_nmda_probs))
             if getattr(cfg, "enable_bdsp", False) and self.cp_connections.nnz > 0:
                 n_bd = n_neurons
                 # Lazily allocate the per-neuron burst-state arrays (only reached when enable_bdsp is True).
@@ -10727,6 +11269,17 @@ class SimulationBridge:
                         and self.cp_bdsp_apical_drive is not None:
                     _bdsp_raw_apical = self.cp_bdsp_apical_drive
                     self.cp_bdsp_apical_drive = _bdsp_raw_apical - self.cp_bdsp_int_drive
+                if self.cp_bdsp_apical_drive is None and self.cp_apical_gaba_synapse_mask is not None:
+                    raise RuntimeError(
+                        "apical GABA_A routing is active but cp_bdsp_apical_drive is None: the apical compartment is "
+                        "not integrated this step, so the routed conductance would be silently dropped (set a zero "
+                        "drive to integrate it)")
+                _ap_nmda_on = bool(getattr(cfg, "enable_apical_nmda", False))
+                if _ap_nmda_on and self.cp_bdsp_apical_drive is None:
+                    raise RuntimeError(
+                        "apical NMDA is on but cp_bdsp_apical_drive is None: the apical compartment is not integrated "
+                        "this step, so the NMDA gating input and its term would be silently dropped (set a zero drive "
+                        "to integrate it)")
                 if self.cp_bdsp_apical_drive is not None:
                     # leaky integration of the top-down drive toward (E_rest + drive); tau = apical_tau_ms
                     _atau = cp.float32(max(getattr(cfg, "apical_tau_ms", 15.0), 1e-6))
@@ -10757,7 +11310,48 @@ class SimulationBridge:
                             _kkb = cp.float32(getattr(cfg, "apical_kir_k", 8.0))
                             _gkirb = cp.float32(_kir_gb) / (1.0 + cp.exp((self.cp_v_apical - _kvhb) / _kkb))
                             _dvb = _dvb + _gkirb * (_ekb - self.cp_v_apical)
+                    # APICAL GABA_A term (cs-race f1i E5, 2026-10-27): the routed dendrite-targeting conductance g_ap
+                    # (apical-leak units) against the APICAL driving force (E_i - v_apical), as a BOUNDED per-term
+                    # exponential-Euler step: it moves v_apical by (E_i - v0)(1 - exp(-g_ap*dt/tau)), which reaches
+                    # E_i at most and never passes it, at any g_ap (the 2026-09-29 overshoot family; kernels.py
+                    # fused_bounded_conductance_decay_and_current with C/dt -> tau/dt). This is the packet's
+                    # `_dvb += (tau/dt)(E_i - v0)(1 - exp(-g*dt/tau))` with the (dt/tau)(tau/dt) factor cancelled
+                    # analytically, so float32 rounding of that product cannot carry v past E_i. First order == the
+                    # explicit g_ap*(E_i - v0); g_ap == 0 gives exactly 0.0. Exponent clipped to [-80, 0] as in that
+                    # kernel. Computed from v0 (before the update), like every other term. Per-term bound only: an
+                    # aggregate overshoot with the KIR term (E_K -90 mV) is not excluded, as the engine documents.
+                    # GUARDED NO-OP: the mask is None unless routing is active (then the update line is unchanged).
+                    _ap_gaba_step = None
+                    if self.cp_apical_gaba_synapse_mask is not None and self.cp_conductance_g_apical_gaba is not None:
+                        _ei_ap = cp.float32(cfg.syn_reversal_potential_i)
+                        _ex_ap = cp.clip(-(self.cp_conductance_g_apical_gaba * _adt) / _atau, -80.0, 0.0)
+                        _ap_gaba_step = ((_ei_ap - self.cp_v_apical) * (1.0 - cp.exp(_ex_ap))).astype(cp.float32)
+                    # APICAL NMDA term (cs-race f1j E3/E4, 2026-10-28). E3: the per-cell gating cp_apical_nmda_s rises
+                    # from THIS step's apical drive (the runner's write; no other input) and decays with
+                    # apical_nmda_tau_ms (apical_nmda_gating_step); g_N = g0 * s / s_full (apical_nmda_conductance).
+                    # E4: Mg-blocked by the engine's Jahr & Stevens expression at nmda_mg_concentration
+                    # (apical_nmda_mg_block == kernels.fused_nmda_update_and_current's block) and applied toward E_e
+                    # (syn_reversal_potential_e, 0 mV) as the same BOUNDED per-term exponential-Euler step as the
+                    # apical GABA term: (E_e - v0)(1 - exp(-g_N*B*dt/tau)), computed from v0 before the update, so it
+                    # reaches E_e at most and never passes it at any g_N; g_N == 0 (APV, or an undriven cell) gives
+                    # exactly 0.0. Per-term bound only: an aggregate overshoot with the explicit terms, the KIR term or
+                    # the apical GABA step is not excluded. GUARDED NO-OP: flag off => this branch is unreached.
+                    _ap_nmda_step = None
+                    if _ap_nmda_on:
+                        if self.cp_apical_nmda_s is None:
+                            self.cp_apical_nmda_s = cp.zeros(n_bd, dtype=cp.float32)
+                        self.cp_apical_nmda_s = apical_nmda_gating_step(
+                            self.cp_apical_nmda_s, self.cp_bdsp_apical_drive, cfg, cp)
+                        _g_nmda_ap = apical_nmda_conductance(self.cp_apical_nmda_s, cfg, cp)
+                        _mg_ap = apical_nmda_mg_block(self.cp_v_apical, float(cfg.nmda_mg_concentration), cp)
+                        _ee_nmda = cp.float32(cfg.syn_reversal_potential_e)
+                        _ex_nmda = cp.clip(-((_g_nmda_ap * _mg_ap) * _adt) / _atau, -80.0, 0.0)
+                        _ap_nmda_step = ((_ee_nmda - self.cp_v_apical) * (1.0 - cp.exp(_ex_nmda))).astype(cp.float32)
                     self.cp_v_apical = self.cp_v_apical + (_adt / _atau) * _dvb
+                    if _ap_gaba_step is not None:
+                        self.cp_v_apical = (self.cp_v_apical + _ap_gaba_step).astype(cp.float32)
+                    if _ap_nmda_step is not None:
+                        self.cp_v_apical = (self.cp_v_apical + _ap_nmda_step).astype(cp.float32)
                 if _bdsp_raw_apical is not None:
                     self.cp_bdsp_apical_drive = _bdsp_raw_apical   # restore the runner-supplied raw drive (no accumulation)
                 _beta = cp.float32(getattr(cfg, "bdsp_beta", 1.0))
@@ -11911,6 +12505,7 @@ class SimulationBridge:
                     or self.cp_plasticity_rate_gain is not None
                     or self.cp_transmission_gain is not None
                     or self.cp_gabab_synapse_mask is not None
+                    or self.cp_apical_gaba_synapse_mask is not None
                     or bool(getattr(self, "_plasticity_gate_to_synapses", {}))
                     or bool(getattr(self, "_transmission_gate_to_synapses", {}))
                 )
@@ -11925,6 +12520,7 @@ class SimulationBridge:
                         ("cp_plasticity_rate_gain", None),
                         ("cp_transmission_gain", None),
                         ("cp_gabab_synapse_mask", np.bool_),
+                        ("cp_apical_gaba_synapse_mask", np.bool_),
                     ):
                         routing_array = getattr(self, routing_attr, None)
                         if routing_array is not None:
@@ -12599,6 +13195,11 @@ class SimulationBridge:
                 )
                 self.cp_gabab_synapse_mask = _load_routing_array(
                     "cp_gabab_synapse_mask", cp.bool_
+                )
+                # Apical GABA_A routing (cs-race f1i E7): receptor identity is routing state; absent => None
+                # (byte-identical for every checkpoint saved without the routing).
+                self.cp_apical_gaba_synapse_mask = _load_routing_array(
+                    "cp_apical_gaba_synapse_mask", cp.bool_
                 )
                 (
                     self._plasticity_gate_to_synapses,

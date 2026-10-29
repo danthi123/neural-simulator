@@ -1,0 +1,1218 @@
+"""MEMBRANE-VALIDITY CENSUS -- an observe-only probe that runs one Stage-2 gate arm (the live production brain) and
+records, for every `SimulationBridge` the arm builds, which membranes ever left the physiological range.
+
+WHY (2026-10-26, finding 2026-10-26-stage2-fail-diagnoses.md). Two Stage-2 failures (the emotion organ's s101 joy miss
+and the BG step-1 breach) were traced to the 1 ms explicit-Euler integrator going unstable in low-capacitance
+heterogeneity draws under strong conductance: membranes below -110 mV, down to about -1900 mV, emitting spikes that
+biology would not produce. Other organs that combine strong inhibition with low-C draws may carry the same latent
+artefact. This is the census that finding says is owed before any claim about them.
+
+WHAT IT RECORDS (per bridge instance, so per organ). The class method `SimulationBridge._run_one_simulation_step` is
+wrapped (monkeypatch at CLASS level, restored on exit, no sim/ edit); after every step the bridge's membrane array v (mV)
+is read, never written:
+  * per region: minimum and maximum v ever seen; the minimum DRAWN capacitance C (Izhikevich `cp_izh_C`; AdEx the
+    scalar `adex_C`); the steps and neuron-steps with v < V_LOW_MV (-110 mV) and with v above the neuron's vpeak + 5 mV
+    (Izhikevich `cp_izh_vpeak`, AdEx `adex_V_peak`; HH and resonate-and-fire have no high check); the largest
+    g_i*dt/C seen (the explicit-step hazard index: the finding puts the Euler overshoot at about 2 and above).
+  * per out-of-range neuron (below -110 mV, above vpeak + 5 mV, or non-finite): global index, region, inhibitory flag,
+    cell-type label, drawn C, k, vr, vt, vpeak, a, b, c_reset, d, first out-of-range step (per bridge and census-wide),
+    extreme low and high v, steps out of range, and g_i, g_e and g_i*dt/C on the first such step.
+  * per bridge: `cfg.enable_bounded_conductance_integration` read back from its own core config (every step; the set of
+    values seen), the neuron model, dt, neuron count, who built it (the call chain at construction) and who steps it.
+The v array is read AFTER the step, so a spike's reset to c has already happened: a value below -110 mV or above
+vpeak + 5 mV at that point is a membrane the step left out of range. A LOW membrane is the explicit-Euler instability
+(and its spurious spikes); a HIGH one is mostly a cell inside its refractory window, whose crossing the step withholds
+(`fired = v_new >= threshold & not_in_refractory`, so no reset), and each row records `refractory` at first detection.
+The high bound is max(vpeak, the homeostatic adapted threshold where the bridge uses one) + 5 mV. Coverage limit: only `_run_one_simulation_step`
+is observed (the megakernel dispatch lives inside it); `rf_resonate_steps` (resonate-and-fire phasors, whose v is a
+phasor component, not a membrane) is not.
+
+CAVEAT (carried into every result). One seed is a census of ONE heterogeneity draw, and the seed-to-cell map is specific
+to the numpy CPU random stream. "No out-of-range membrane on this seed" is not "this organ cannot produce one".
+
+  .venv/bin/python -m pytest tests/test_membrane_census.py -q
+  bash tools/memcap.sh 11 -- .venv/bin/python -m research.runners.membrane_census --shard --seed 7 --group emo \
+      --arm intact_a --out research/findings/raw/_membrane_census/dev/s7/emo__intact_a.json
+  .venv/bin/python -m research.runners.membrane_census --summarize research/findings/raw/_membrane_census/dev/s7/*.json
+  .venv/bin/python -m research.runners.membrane_census --emit-pool-lines > research/coordination/membrane-census-pool-lines.txt
+"""
+from __future__ import annotations
+
+import argparse
+import collections
+import hashlib
+import json
+import os
+import platform
+import subprocess
+import sys
+import threading
+import time
+import weakref
+
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_REPO = os.path.normpath(os.path.join(_HERE, "..", ".."))
+if _REPO not in sys.path:
+    sys.path.insert(0, _REPO)
+
+import numpy as np  # noqa: E402
+
+V_LOW_MV = -110.0                 # below this a membrane is out of physiological range (task definition)
+VPEAK_MARGIN_MV = 5.0             # above vpeak + this a membrane the step failed to reset is out of range
+MAX_DETAIL_PER_BRIDGE = 1000      # per-neuron rows kept in the JSON per bridge (the counts are always exact)
+MAX_CONTEXT_PER_BRIDGE = 5000     # first-step context (g_i, g_e) captured for at most this many neurons per bridge
+CENSUS_VERSION = 1
+DEFAULT_OUT_DIR = "research/findings/raw/_membrane_census/dev"
+POOL_MEM_GB = 9                   # the Stage-2 lane's memory declaration (stage2_exit_gate.MEM_GB / MEMCAP_GB)
+POOL_MEMCAP_GB = 10
+POOL_MAX_AGE_H = 240              # the dispatcher's own cap (POOL_JOB_MAX_AGE_CAP_H); a deep queue would otherwise age out at 12 h
+POOL_SEEDS = tuple(range(1, 13))
+CAVEAT = ("One seed is a census of one heterogeneity draw, and the seed-to-cell map is specific to the numpy CPU "
+          "random stream; no out-of-range membrane on this seed does not mean the organ cannot produce one. Only "
+          "SimulationBridge._run_one_simulation_step is observed (rf_resonate_steps is not).")
+
+_THIS_FILE = os.path.abspath(__file__)
+
+
+# ══════════════════════════════════════════════ small helpers ══════════════════════════════════════════════════════
+def _f(x, nd=4):
+    """A JSON-safe float (None for inf/nan sentinels)."""
+    try:
+        x = float(x)
+    except (TypeError, ValueError):
+        return None
+    if not np.isfinite(x):
+        return None
+    return round(x, nd)
+
+
+def _host(arr):
+    """A numpy view/copy of a backend array (cupy -> host); None stays None."""
+    if arr is None:
+        return None
+    from sim.backend import to_host
+    return np.asarray(to_host(arr))
+
+
+def _frame_label(frame):
+    code = frame.f_code
+    mod = frame.f_globals.get("__name__", "?")
+    return "%s:%s" % (mod, getattr(code, "co_qualname", code.co_name))
+
+
+def _caller_chain(depth_skip=2, limit=8):
+    """The call chain above a bridge construction, skipping the bridge's own file and this module. Returns a list of
+    'module:Qualname:lineno' strings, innermost first."""
+    out = []
+    try:
+        f = sys._getframe(depth_skip)
+    except ValueError:
+        return out
+    while f is not None and len(out) < limit:
+        fn = os.path.abspath(f.f_code.co_filename)
+        if fn != _THIS_FILE and not fn.endswith(os.sep + os.path.join("sim", "bridge.py")) \
+                and not fn.startswith("<frozen") and "importlib" not in fn:
+            out.append("%s:%d" % (_frame_label(f), f.f_lineno))
+        f = f.f_back
+    return out
+
+
+def _spike_ceiling(bridge, vp):
+    """Per-neuron voltage the step compares v_new against to decide a spike: cp_izh_vpeak, or max(vpeak, the homeostatic
+    adapted threshold) where the bridge uses one (the step's own selection, bridge.py section 3). The high bound is this
+    plus the margin, so a legitimately raised threshold is not read as an out-of-range membrane."""
+    th = getattr(bridge, "cp_neuron_firing_thresholds", None)
+    if th is None or vp is None:
+        return vp
+    th = _host(th)
+    if th.shape != vp.shape:
+        return vp
+    if getattr(bridge.core_config, "enable_homeostasis", False):
+        return np.maximum(vp, th)
+    mask = getattr(bridge, "cp_homeostasis_neuron_mask", None)
+    if mask is not None:
+        return np.where(_host(mask).astype(bool), np.maximum(vp, th), vp)
+    return vp
+
+
+def _range_policy(model):
+    """(check_low, high_kind) per neuron model. high_kind: 'vpeak' (per-neuron cp_izh_vpeak) | 'adex' (scalar) | None."""
+    if model == "IZHIKEVICH":
+        return True, "vpeak"
+    if model == "ADEX":
+        return True, "adex"
+    if model == "HODGKIN_HUXLEY":
+        return True, None
+    return False, None                      # RESONATE_AND_FIRE: v is a phasor component, not a membrane
+
+
+class _RegionMap:
+    """Neuron -> region layout of one bridge, as run-length segments so per-region reductions are one reduceat call."""
+
+    def __init__(self, bridge, n):
+        names, region_of = [], np.full(n, -1, dtype=np.int32)
+        inh = np.zeros(n, dtype=bool)
+        rm = getattr(bridge, "region_manager", None)
+        if rm is not None:
+            try:
+                d = rm.region_indices_dict()
+            except Exception:
+                d = {}
+            for name, idx in d.items():
+                ia = np.asarray(list(idx), dtype=np.int64)
+                ia = ia[(ia >= 0) & (ia < n)]
+                if ia.size == 0:
+                    continue
+                region_of[ia] = len(names)
+                names.append(str(name))
+                try:
+                    ii = np.asarray(list(rm.inhibitory_indices(name)), dtype=np.int64)
+                    ii = ii[(ii >= 0) & (ii < n)]
+                    inh[ii] = True
+                except Exception:
+                    pass
+        un = region_of < 0
+        if un.any():
+            names.append("<unassigned>" if names else "<all>")
+            region_of[un] = len(names) - 1
+        self.names = names
+        self.region_of = region_of
+        self.inhibitory = inh
+        change = np.flatnonzero(np.diff(region_of)) + 1
+        self.seg_starts = np.concatenate(([0], change)).astype(np.int64)
+        self.seg_ends = np.append(self.seg_starts[1:], n).astype(np.int64)
+        self.seg_region = region_of[self.seg_starts]
+        self.sizes = np.bincount(region_of, minlength=len(names))
+        self.span = {}
+        for r, name in enumerate(names):
+            m = self.seg_region == r
+            self.span[name] = (int(self.seg_starts[m].min()), int(self.seg_ends[m].max()), int(m.sum()) == 1)
+        self.key = (id(rm), n, len(names))
+
+    def per_region_indices(self):
+        order = np.argsort(self.region_of, kind="stable")
+        bounds = np.concatenate(([0], np.cumsum(self.sizes)))
+        return [order[bounds[r]:bounds[r + 1]] for r in range(len(self.names))]
+
+
+class _BridgeRec:
+    """Everything the census keeps for one bridge instance (holds the bridge only weakly)."""
+
+    def __init__(self, bridge_id, bridge, n, owner_chain):
+        cfg = bridge.core_config
+        self.bridge_id = bridge_id
+        self.ref = weakref.ref(bridge)
+        self.n = n
+        self.owner_chain = owner_chain
+        self.model = str(getattr(cfg, "neuron_model_type", "?"))
+        self.dt = float(getattr(cfg, "dt_ms", 1.0))
+        self.n_steps = 0
+        self.callers = collections.Counter()
+        self.bounded_seen = set()
+        # SIM_STABLE_INTEGRATION / cfg.izh_membrane_substeps read-back (research/stable-integration): the (substeps,
+        # rule) pairs the core config held at each observed step, the bridge's own applied flag, its sub-step and
+        # rule-(a) model-reset counters (last value seen), its per-step re-assert count and the organ's own values
+        self.substeps_seen = set()
+        self.stable_seen = set()
+        self.substep_calls = 0
+        self.model_resets = 0
+        self.si_reasserts = 0
+        self.si_organ_values = None
+        self.map = None
+        self._alloc_region_stats()
+        self.c_first = None
+        self.c_last = None
+        self.p_first = None                           # per-region drawn-parameter summary at the first observed step
+        self.ph_requested = None                      # SIM_PRESET_CENTRED_HET read-back (research/stable-mechc)
+        self.ph_applied = None
+        self.ph_organ_value = None
+        self.ph_readback = None
+        self.th_requested = None                      # SIM_TRAIT_CENTRED_HET read-back (research/stable-mechc)
+        self.th_applied = None
+        self.th_organ_value = None
+        self.th_readback = None
+        self.first_step = self.first_gstep = self.vmin_n = self.vmax_n = None
+        self.nlow = self.nhigh = self.nnonf = None
+        self.ctx = {}
+        self.steps_with_oor = 0
+        self.prev_timers = None                       # post-step refractory timers of the previous observation
+        self.prev_v = None                            # post-step v of the previous observation (the step's starting v)
+        self.prev_u = None                            # ... and u
+        self.first_classes = collections.Counter()    # class of every offender's first reading (rows are capped, this is not)
+        self.first_by_stepper = collections.Counter()  # offenders per STEPPER call site that was running at their first reading
+        self.n_spikes_total = 0                       # all spikes this bridge emitted while observed
+        self.n_spikes_oor_cells = 0                   # spikes emitted by cells AFTER their first out-of-range step
+        self.nspk_after = None
+
+    def _alloc_region_stats(self, old=None, old_names=None):
+        R = len(self.map.names) if self.map is not None else 0
+        self.vmin_r = np.full(R, np.inf)
+        self.vmax_r = np.full(R, -np.inf)
+        self.g_r = np.full((3, R), -np.inf)          # per-region max of g_i, g_e, (g_i+g_e) times dt/C
+        self.steps_low_r = np.zeros(R, dtype=np.int64)
+        self.steps_high_r = np.zeros(R, dtype=np.int64)
+        self.nsteps_low_r = np.zeros(R, dtype=np.int64)
+        self.nsteps_high_r = np.zeros(R, dtype=np.int64)
+        if old is not None and old_names is not None and self.map is not None:
+            where = {nm: i for i, nm in enumerate(self.map.names)}
+            for j, nm in enumerate(old_names):
+                i = where.get(nm)
+                if i is None:
+                    continue
+                for new, prev in ((self.vmin_r, old[0]), (self.vmax_r, old[1]),
+                                  (self.steps_low_r, old[3]), (self.steps_high_r, old[4]),
+                                  (self.nsteps_low_r, old[5]), (self.nsteps_high_r, old[6])):
+                    new[i] = prev[j]
+                self.g_r[:, i] = old[2][:, j]
+
+    def set_map(self, m):
+        old = None
+        old_names = None
+        if self.map is not None:
+            old = (self.vmin_r, self.vmax_r, self.g_r, self.steps_low_r, self.steps_high_r, self.nsteps_low_r,
+                   self.nsteps_high_r)
+            old_names = list(self.map.names)
+        self.map = m
+        self._alloc_region_stats(old, old_names)
+
+    def ensure_neuron_arrays(self):
+        if self.first_step is None:
+            n = self.n
+            self.first_step = np.full(n, -1, dtype=np.int64)
+            self.first_gstep = np.full(n, -1, dtype=np.int64)
+            self.vmin_n = np.full(n, np.inf)
+            self.vmax_n = np.full(n, -np.inf)
+            self.nlow = np.zeros(n, dtype=np.int32)
+            self.nhigh = np.zeros(n, dtype=np.int32)
+            self.nnonf = np.zeros(n, dtype=np.int32)
+            self.nspk_after = np.zeros(n, dtype=np.int32)
+
+
+def _c_summary(bridge, rm):
+    """Per-region drawn-capacitance summary (Izhikevich cp_izh_C per neuron; AdEx the scalar adex_C)."""
+    cfg = bridge.core_config
+    model = str(getattr(cfg, "neuron_model_type", "?"))
+    out = {}
+    C = _host(getattr(bridge, "cp_izh_C", None)) if model == "IZHIKEVICH" else None
+    if C is not None and C.shape[0] != rm.region_of.shape[0]:
+        C = None
+    idxs = rm.per_region_indices()
+    for r, name in enumerate(rm.names):
+        ix = idxs[r]
+        if C is not None and ix.size:
+            c = C[ix].astype(np.float64)
+            j = int(np.argmin(c))
+            out[name] = {"n": int(ix.size), "c_min": _f(c[j]), "c_min_idx": int(ix[j]), "c_p01": _f(np.percentile(c, 1)),
+                         "c_median": _f(np.median(c)), "c_max": _f(c.max())}
+        elif model == "ADEX":
+            v = _f(getattr(cfg, "adex_C", None))
+            out[name] = {"n": int(ix.size), "c_min": v, "c_min_idx": None, "c_p01": v, "c_median": v, "c_max": v}
+        else:
+            out[name] = {"n": int(ix.size), "c_min": None, "c_min_idx": None, "c_p01": None, "c_median": None,
+                         "c_max": None}
+    return out
+
+
+_PRESET_BY_FIXED = None
+
+
+def _preset_by_fixed_params():
+    """{(k, vr, vt, vpeak, c_reset) rounded: preset name} for every IZH2007 preset. Those five are never jittered by
+    parameter heterogeneity, so they identify which preset a neuron was built from even after a/b/d/C are redrawn (the
+    viz type labels are written BEFORE the per-region override and go stale for a typed region)."""
+    global _PRESET_BY_FIXED
+    if _PRESET_BY_FIXED is None:
+        from sim.enums import DefaultIzhikevichParamsManager
+        _PRESET_BY_FIXED = {}
+        for t, prm in DefaultIzhikevichParamsManager.PARAMS.items():
+            if not t.name.startswith("IZH2007_"):
+                continue
+            key = tuple(round(float(prm[f]), 3) for f in ("k", "vr", "vt", "vpeak", "c_reset"))
+            _PRESET_BY_FIXED.setdefault(key, []).append(t.name.replace("IZH2007_", ""))
+    return _PRESET_BY_FIXED
+
+
+def _param_summary(bridge, rm):
+    """Per-region summary of the drawn Izhikevich parameters a, b, d, C, k, vpeak as the bridge built them
+    (research/stable-mechc: what SIM_PRESET_CENTRED_HET does to a region's draw), the count of cells with b < 0, and
+    the preset each cell was built from (identified by its never-jittered k, vr, vt, vpeak, c_reset). Izhikevich only;
+    other models give an empty dict. Observe-only: reads host copies of the arrays."""
+    cfg = bridge.core_config
+    if str(getattr(cfg, "neuron_model_type", "?")) != "IZHIKEVICH":
+        return {}
+    names = ("a", "b", "d_increment", "C", "k", "vr", "vt", "vpeak", "c_reset")
+    arrs = {k: _host(getattr(bridge, "cp_izh_" + k, None)) for k in names}
+    n = rm.region_of.shape[0]
+    if any(v is None or v.shape[0] != n for v in arrs.values()):
+        return {}
+    table = _preset_by_fixed_params()
+    sig = np.round(np.stack([arrs[k].astype(np.float64) for k in ("k", "vr", "vt", "vpeak", "c_reset")], axis=1), 3)
+    out = {}
+    idxs = rm.per_region_indices()
+    for r, name in enumerate(rm.names):
+        ix = idxs[r]
+        if not ix.size:
+            continue
+        row = {"n": int(ix.size)}
+        for key in ("a", "b", "d_increment", "C", "k", "vpeak"):
+            row[key + "_mean"] = _f(arrs[key][ix].astype(np.float64).mean())
+        b = arrs["b"][ix].astype(np.float64)
+        row["b_min"], row["b_max"] = _f(b.min()), _f(b.max())
+        row["n_b_negative"] = int(np.count_nonzero(b < 0))
+        row["preset_counts"] = dict(collections.Counter(
+            "/".join(table.get(tuple(float(x) for x in sig[int(i)]), ["?"])) for i in ix))
+        out[name] = row
+    return out
+
+
+# ══════════════════════════════════════════════ the census ═════════════════════════════════════════════════════════
+class Census:
+    """Install/uninstall the class-level observer. Use as a context manager; the originals are restored on exit."""
+
+    def __init__(self, v_low=V_LOW_MV, vpeak_margin=VPEAK_MARGIN_MV, track_conductance=True):
+        self.v_low = float(v_low)
+        self.margin = float(vpeak_margin)
+        self.track_conductance = bool(track_conductance)
+        self.total_steps = 0
+        self.recs = []                                         # insertion order == first-seen order
+        self._by_bridge = weakref.WeakKeyDictionary()
+        self._owners = weakref.WeakKeyDictionary()
+        self._lock = threading.RLock()
+        self.observe_s = 0.0
+        self.observer_errors = 0
+        self.first_error = None
+        self._installed = False
+        self._orig_step = None
+        self._orig_init = None
+        self._cls = None
+
+    # ── install / uninstall ──────────────────────────────────────────────────────────────────────────────────────
+    def install(self):
+        if self._installed:
+            raise RuntimeError("membrane census already installed")
+        from sim.bridge import SimulationBridge as SB
+        if getattr(SB.__dict__["_run_one_simulation_step"], "_membrane_census_wrapper", False):
+            raise RuntimeError("membrane census already installed (another Census holds the class patch)")
+        self._cls = SB
+        self._orig_step = SB.__dict__["_run_one_simulation_step"]
+        self._orig_init = SB.__dict__["__init__"]
+        census = self
+        orig_step, orig_init = self._orig_step, self._orig_init
+
+        def _init_wrapper(bridge, *a, **k):
+            chain = _caller_chain(depth_skip=2)
+            orig_init(bridge, *a, **k)
+            try:
+                census._owners[bridge] = chain
+            except TypeError:
+                pass
+
+        def _step_wrapper(bridge, *a, **k):
+            try:
+                caller = sys._getframe(1)
+                site = (caller.f_code, caller.f_lineno, caller.f_globals.get("__name__", "?"))
+            except ValueError:
+                site = None
+            r = orig_step(bridge, *a, **k)
+            t0 = time.perf_counter()
+            try:
+                census._observe(bridge, site)
+            except Exception as e:                              # an observer fault must never kill the workload
+                census.observer_errors += 1
+                if census.first_error is None:
+                    import traceback
+                    census.first_error = "".join(traceback.format_exception(type(e), e, e.__traceback__))[-1500:]
+            census.observe_s += time.perf_counter() - t0
+            return r
+
+        _step_wrapper._membrane_census_wrapper = True
+        _init_wrapper._membrane_census_wrapper = True
+        self._step_wrapper, self._init_wrapper = _step_wrapper, _init_wrapper
+        SB._run_one_simulation_step = _step_wrapper
+        SB.__init__ = _init_wrapper
+        self._installed = True
+        return self
+
+    def uninstall(self):
+        if not self._installed:
+            return
+        SB = self._cls
+        SB._run_one_simulation_step = self._orig_step
+        SB.__init__ = self._orig_init
+        self._installed = False
+
+    def __enter__(self):
+        return self.install()
+
+    def __exit__(self, *exc):
+        self.uninstall()
+        return False
+
+    # ── per-step observation ─────────────────────────────────────────────────────────────────────────────────────
+    def _rec_for(self, bridge, n):
+        rec = self._by_bridge.get(bridge)
+        if rec is None:
+            with self._lock:
+                rec = self._by_bridge.get(bridge)
+                if rec is None:
+                    chain = self._owners.get(bridge) or []
+                    rec = _BridgeRec(len(self.recs), bridge, n, chain)
+                    self._by_bridge[bridge] = rec
+                    self.recs.append(rec)
+        return rec
+
+    def _observe(self, bridge, site):
+        v = getattr(bridge, "cp_membrane_potential_v", None)
+        if v is None or not getattr(bridge, "is_initialized", True):
+            return
+        vh = _host(v)
+        n = int(vh.shape[0])
+        if n == 0:
+            return
+        rec = self._rec_for(bridge, n)
+        rec.n_steps += 1
+        self.total_steps += 1
+        rec.callers[site] += 1
+        pre = rec.prev_timers                         # == the timers this step decided spikes with (None on the first)
+        pre_v, pre_u = rec.prev_v, rec.prev_u
+        rec.prev_v = np.array(vh, copy=True)
+        u_now = getattr(bridge, "cp_recovery_variable_u", None)
+        rec.prev_u = None if u_now is None else np.array(_host(u_now), copy=True)
+        rt_now = getattr(bridge, "cp_refractory_timers", None)
+        rec.prev_timers = None if rt_now is None else np.array(_host(rt_now), copy=True)
+        fired = getattr(bridge, "cp_firing_states", None)
+        if fired is not None:
+            fh = _host(fired)
+            if fh.shape[0] == n:
+                fh = fh.astype(bool, copy=False)
+                rec.n_spikes_total += int(np.count_nonzero(fh))
+                if rec.first_step is not None:                    # spikes by cells that already left the range
+                    sp = fh & (rec.first_step >= 0)
+                    rec.nspk_after += sp
+                    rec.n_spikes_oor_cells += int(np.count_nonzero(sp))
+        cfg = bridge.core_config
+        rec.bounded_seen.add(bool(getattr(cfg, "enable_bounded_conductance_integration", False)))
+        rec.substeps_seen.add((getattr(cfg, "izh_membrane_substeps", 1),
+                               str(getattr(cfg, "izh_substep_refractory_rule", "model_reset"))))
+        rec.stable_seen.add(getattr(bridge, "stable_integration_applied", None))
+        rec.ph_requested = getattr(bridge, "preset_centred_het_requested", None)
+        rec.ph_applied = getattr(bridge, "preset_centred_het_applied", None)
+        rec.ph_organ_value = getattr(bridge, "preset_centred_het_organ_value", None)
+        rec.ph_readback = getattr(bridge, "preset_centred_het_readback", None)
+        rec.th_requested = getattr(bridge, "trait_centred_het_requested", None)
+        rec.th_applied = getattr(bridge, "trait_centred_het_applied", None)
+        rec.th_organ_value = getattr(bridge, "trait_centred_het_organ_value", None)
+        rec.th_readback = getattr(bridge, "trait_centred_het_readback", None)
+        rec.substep_calls = int(getattr(bridge, "substep_calls", 0) or 0)
+        rec.model_resets = int(getattr(bridge, "refractory_model_resets", 0) or 0)
+        rec.si_reasserts = int(getattr(bridge, "stable_integration_reasserts", 0) or 0)
+        if rec.si_organ_values is None:
+            rec.si_organ_values = getattr(bridge, "stable_integration_organ_values", None)
+        m = rec.map
+        if m is None or m.key != (id(getattr(bridge, "region_manager", None)), n, len(m.names)):
+            m = _RegionMap(bridge, n)
+            rec.set_map(m)
+            rec.c_first = rec.c_first or _c_summary(bridge, m)
+            rec.p_first = rec.p_first or _param_summary(bridge, m)
+        seg_min = np.minimum.reduceat(vh, m.seg_starts)
+        seg_max = np.maximum.reduceat(vh, m.seg_starts)
+        np.fmin.at(rec.vmin_r, m.seg_region, seg_min)
+        np.fmax.at(rec.vmax_r, m.seg_region, seg_max)
+        check_low, high_kind = _range_policy(rec.model)
+        # the explicit-step hazard index g*dt/C (Izhikevich; the finding puts the Euler overshoot at about 2 and above),
+        # per region maximum over steps, for g_i, g_e and their sum (the end-of-step conductances the next step integrates)
+        if self.track_conductance and rec.model == "IZHIKEVICH":
+            gi = getattr(bridge, "cp_conductance_g_i", None)
+            ge = getattr(bridge, "cp_conductance_g_e", None)
+            C = getattr(bridge, "cp_izh_C", None)
+            if C is not None and (gi is not None or ge is not None):
+                try:
+                    with np.errstate(divide="ignore", invalid="ignore"):
+                        k = rec.dt / _host(C)
+                        gih = _host(gi) if gi is not None else np.zeros(n, dtype=np.float32)
+                        geh = _host(ge) if ge is not None else np.zeros(n, dtype=np.float32)
+                        for row, arr in enumerate((gih * k, geh * k, (gih + geh) * k)):
+                            np.fmax.at(rec.g_r[row], m.seg_region, np.maximum.reduceat(arr, m.seg_starts))
+                except Exception:
+                    self.observer_errors += 1
+        if not check_low:
+            return
+        gmin, gmax = float(seg_min.min()), float(seg_max.max())
+        vp = None
+        hi_min = np.inf
+        if high_kind == "vpeak":
+            vp = _spike_ceiling(bridge, _host(getattr(bridge, "cp_izh_vpeak", None)))
+            if vp is not None:
+                hi_min = float(vp.min()) + self.margin
+        elif high_kind == "adex":
+            hi_min = float(getattr(cfg, "adex_V_peak", np.inf)) + self.margin
+        if gmin >= self.v_low and gmax <= hi_min:             # the fast path: nothing out of range (NaN falls through)
+            return
+        self._record_out_of_range(rec, bridge, vh, vp, high_kind, hi_min, pre, pre_v, pre_u, site)
+
+    def _record_out_of_range(self, rec, bridge, vh, vp, high_kind, hi_min, pre=None, pre_v=None, pre_u=None, site=None):
+        m = rec.map
+        R = len(m.names)
+        low = vh < self.v_low
+        if high_kind == "vpeak" and vp is not None:
+            high = vh > (vp + np.float32(self.margin))
+        elif high_kind == "adex":
+            high = vh > hi_min
+        else:
+            high = np.zeros(vh.shape, dtype=bool)
+        nonf = ~np.isfinite(vh)
+        bad = low | high | nonf
+        bad_idx = np.flatnonzero(bad)
+        if bad_idx.size == 0:
+            return
+        rec.steps_with_oor += 1
+        lo_idx, hi_idx, nf_idx = np.flatnonzero(low), np.flatnonzero(high), np.flatnonzero(nonf)
+        if lo_idx.size:
+            c = np.bincount(m.region_of[lo_idx], minlength=R)
+            rec.nsteps_low_r += c
+            rec.steps_low_r += (c > 0)
+        if hi_idx.size:
+            c = np.bincount(m.region_of[hi_idx], minlength=R)
+            rec.nsteps_high_r += c
+            rec.steps_high_r += (c > 0)
+        rec.ensure_neuron_arrays()
+        new = bad_idx[rec.first_step[bad_idx] < 0]
+        rec.first_step[new] = rec.n_steps
+        rec.first_gstep[new] = self.total_steps
+        rec.vmin_n[bad_idx] = np.fmin(rec.vmin_n[bad_idx], vh[bad_idx])
+        rec.vmax_n[bad_idx] = np.fmax(rec.vmax_n[bad_idx], vh[bad_idx])
+        rec.nlow[lo_idx] += 1
+        rec.nhigh[hi_idx] += 1
+        rec.nnonf[nf_idx] += 1
+        if new.size:
+            rec.first_by_stepper[site] += int(new.size)
+            self._count_first_classes(rec, bridge, new, low, high, nonf, vh, pre)
+        if new.size and len(rec.ctx) < MAX_CONTEXT_PER_BRIDGE:
+            gi, ge = _host(getattr(bridge, "cp_conductance_g_i", None)), _host(getattr(bridge, "cp_conductance_g_e", None))
+            C = _host(getattr(bridge, "cp_izh_C", None)) if rec.model == "IZHIKEVICH" else None
+            rt = rec.prev_timers                         # post-step timers (this observation)
+            P = {}
+            if rec.model == "IZHIKEVICH":
+                for key, attr in (("C", "cp_izh_C"), ("k", "cp_izh_k"), ("vr", "cp_izh_vr"), ("vt", "cp_izh_vt"),
+                                  ("vpeak", "cp_izh_vpeak"), ("a", "cp_izh_a"), ("b", "cp_izh_b"),
+                                  ("c_reset", "cp_izh_c_reset"), ("d", "cp_izh_d_increment")):
+                    P[key] = _host(getattr(bridge, attr, None))
+            types = getattr(getattr(bridge, "runtime_state", None), "neuron_types_list_for_viz", None)
+            if types is not None and len(types) != rec.n:
+                types = None
+            rfm = getattr(bridge, "_rf_neuron_mask", None)               # resonate-and-fire co-residence mask
+            rfm = None if rfm is None else _host(rfm).astype(bool)
+            extra = {key: _host(getattr(bridge, attr, None)) for key, attr in (
+                ("u", "cp_recovery_variable_u"), ("ext_pA", "cp_external_input_current"),
+                ("g_nmda", "cp_conductance_g_nmda"), ("g_gabab", "cp_conductance_g_gabab"),
+                ("g_nmda_rec", "cp_conductance_g_nmda_recurrent"))}
+            for idx in new[:MAX_CONTEXT_PER_BRIDGE - len(rec.ctx)]:
+                i = int(idx)
+                d = {"params": {key: (_f(arr[i]) if arr is not None and arr.shape[0] > i else None) for key, arr in P.items()},
+                     "type": (str(types[i]) if types is not None else None),
+                     "v_before": (_f(pre_v[i], 2) if pre_v is not None and pre_v.shape[0] > i else None),
+                     "v_first": _f(vh[i], 2),
+                     # True: the cell sits in a slice the bridge also drives as resonate-and-fire phasors (v/u are then
+                     # phasor re/im, not a membrane); None: the bridge has no RF mask
+                     "rf_masked": (bool(rfm[i]) if rfm is not None and rfm.shape[0] > i else None),
+                     "u_before": _f(pre_u[i], 2) if pre_u is not None and pre_u.shape[0] > i else None,
+                     # the total input current the step integrated, by inverting the Euler update of the Izhikevich-2007
+                     # model (valid when the cell did not spike/reset in the step, as for every row recorded here)
+                     "I_implied_pA": self._implied_current(P, i, pre_v, pre_u, vh, rec.dt),
+                     "u_first": _f(extra["u"][i], 2) if extra["u"] is not None and extra["u"].shape[0] > i else None,
+                     "ext_pA": _f(extra["ext_pA"][i], 2) if extra["ext_pA"] is not None and extra["ext_pA"].shape[0] > i else None,
+                     "g_nmda": _f(extra["g_nmda"][i]) if extra["g_nmda"] is not None and extra["g_nmda"].shape[0] > i else None,
+                     "g_gabab": _f(extra["g_gabab"][i]) if extra["g_gabab"] is not None and extra["g_gabab"].shape[0] > i else None,
+                     "g_nmda_rec": (_f(extra["g_nmda_rec"][i]) if extra["g_nmda_rec"] is not None
+                                    and extra["g_nmda_rec"].shape[0] > i else None),
+                     "g_i": _f(gi[i]) if gi is not None and gi.shape[0] > i else None,
+                     "g_e": _f(ge[i]) if ge is not None and ge.shape[0] > i else None,
+                     # refractory = in its window when the step decided spikes (a withheld crossing is not reset);
+                     # refractory_post = timer still running after the step
+                     "refractory": (bool(pre[i] > 0) if pre is not None and pre.shape[0] > i else None),
+                     "refractory_post": (bool(rt[i] > 0) if rt is not None and rt.shape[0] > i else None)}
+                ok = C is not None and float(C[i]) > 0
+                for key, g in (("gi_dt_over_C", d["g_i"]), ("ge_dt_over_C", d["g_e"]),
+                               ("gtot_dt_over_C", (d["g_i"] or 0.0) + (d["g_e"] or 0.0)
+                                if d["g_i"] is not None or d["g_e"] is not None else None)):
+                    d[key] = _f(g * rec.dt / float(C[i]), 3) if g is not None and ok else None
+                rec.ctx[i] = d
+
+    @staticmethod
+    def _count_first_classes(rec, bridge, new, low, high, nonf, vh, pre):
+        """Class of each NEW offender's first out-of-range reading, counted for all of them (the JSON rows are capped):
+        low_conductance (g_i+g_e)*dt/C >= 2 (the explicit-step overshoot), low_other, high_refractory (the crossing
+        was withheld by the refractory timer), high_other, high_refractory_unknown (first observed step), nonfinite.
+        A '|rf' suffix marks cells in a resonate-and-fire masked slice (v/u there are phasor components)."""
+        n = rec.n
+        gi = _host(getattr(bridge, "cp_conductance_g_i", None))
+        ge = _host(getattr(bridge, "cp_conductance_g_e", None))
+        C = _host(getattr(bridge, "cp_izh_C", None)) if rec.model == "IZHIKEVICH" else None
+        gt = None
+        if C is not None and C.shape[0] == n and (gi is not None or ge is not None):
+            tot = (gi if gi is not None else 0.0) + (ge if ge is not None else 0.0)
+            with np.errstate(divide="ignore", invalid="ignore"):
+                gt = np.asarray(tot * (rec.dt / C))
+        rfm = getattr(bridge, "_rf_neuron_mask", None)
+        rfm = None if rfm is None else _host(rfm).astype(bool)
+        for i in new:
+            i = int(i)
+            if nonf[i]:
+                cls = "nonfinite"
+            elif low[i]:
+                cls = "low_conductance" if (gt is not None and gt.shape[0] > i and gt[i] >= 2.0) else "low_other"
+            elif pre is None or pre.shape[0] <= i:
+                cls = "high_refractory_unknown"
+            else:
+                cls = "high_refractory" if pre[i] > 0 else "high_other"
+            if rfm is not None and rfm.shape[0] > i and rfm[i]:
+                cls += "|rf"
+            rec.first_classes[cls] += 1
+
+    @staticmethod
+    def _implied_current(P, i, pre_v, pre_u, vh, dt):
+        try:
+            if not P or pre_v is None or pre_u is None:
+                return None
+            C, k, vr, vt = (float(P[key][i]) for key in ("C", "k", "vr", "vt"))
+            vb, ub = float(pre_v[i]), float(pre_u[i])
+            return _f(C * (float(vh[i]) - vb) / dt - k * (vb - vr) * (vb - vt) + ub, 1)
+        except Exception:
+            return None
+
+    # ── reporting ────────────────────────────────────────────────────────────────────────────────────────────────
+    def _neuron_rows(self, rec):
+        if rec.first_step is None:
+            return [], 0, False
+        idx = np.flatnonzero(rec.first_step >= 0)
+        if idx.size == 0:
+            return [], 0, False
+        sev = np.zeros(idx.size)
+        for j, i in enumerate(idx):
+            c = rec.ctx.get(int(i)) or {}
+            vpeak = (c.get("params") or {}).get("vpeak")
+            s = np.inf if rec.nnonf[i] > 0 else 0.0
+            if rec.nlow[i] > 0 and np.isfinite(rec.vmin_n[i]):
+                s = max(s, self.v_low - float(rec.vmin_n[i]))
+            if rec.nhigh[i] > 0 and np.isfinite(rec.vmax_n[i]):
+                s = max(s, float(rec.vmax_n[i]) - ((vpeak if vpeak is not None else 0.0) + self.margin))
+            sev[j] = s
+        order = np.argsort(-sev, kind="stable")
+        truncated = idx.size > MAX_DETAIL_PER_BRIDGE
+        rows = []
+        for j in order[:MAX_DETAIL_PER_BRIDGE]:
+            i = int(idx[j])
+            c = rec.ctx.get(i) or {}
+            row = {"idx": i, "region": rec.map.names[int(rec.map.region_of[i])], "inhibitory": bool(rec.map.inhibitory[i]),
+                   "type": c.get("type")}
+            params = c.get("params") or {}
+            for key in ("C", "k", "vr", "vt", "vpeak", "a", "b", "c_reset", "d"):
+                row[key] = params.get(key)
+            row.update({"first_step": int(rec.first_step[i]), "first_census_step": int(rec.first_gstep[i]),
+                        "extreme_low_mV": _f(rec.vmin_n[i], 2) if rec.nlow[i] > 0 else None,
+                        "extreme_high_mV": _f(rec.vmax_n[i], 2) if rec.nhigh[i] > 0 else None,
+                        "n_steps_low": int(rec.nlow[i]), "n_steps_high": int(rec.nhigh[i]),
+                        "n_steps_nonfinite": int(rec.nnonf[i]),
+                        "n_spikes_after_first": int(rec.nspk_after[i])})
+            for key in ("rf_masked", "v_before", "v_first", "u_before", "u_first", "I_implied_pA", "ext_pA", "g_i", "g_e", "g_nmda", "g_gabab", "g_nmda_rec",
+                        "refractory", "refractory_post", "gi_dt_over_C", "ge_dt_over_C", "gtot_dt_over_C"):
+                row[key] = c.get(key)
+            rows.append(row)
+        return rows, int(idx.size), truncated
+
+    def bridge_report(self, rec):
+        bridge = rec.ref()
+        m = rec.map
+        if m is None:
+            return None
+        if bridge is not None:
+            try:
+                rec.c_last = _c_summary(bridge, m)
+            except Exception:
+                rec.c_last = None
+        c_first = rec.c_first or {}
+        c_last = rec.c_last or c_first
+        rf_mask = None
+        if bridge is not None:
+            rfm = getattr(bridge, "_rf_neuron_mask", None)
+            if rfm is not None:
+                rf_mask = _host(rfm).astype(bool)
+                if rf_mask.shape[0] != rec.n:
+                    rf_mask = None
+        rows, n_oor, truncated = self._neuron_rows(rec)
+        regions = {}
+        for r, name in enumerate(m.names):
+            s0, s1, contig = m.span[name]
+            cf = c_first.get(name, {})
+            cl = c_last.get(name, {})
+            n_low = n_high = 0
+            if rec.first_step is not None:
+                sel = m.region_of == r
+                n_low = int(np.count_nonzero(rec.nlow[sel] > 0))
+                n_high = int(np.count_nonzero(rec.nhigh[sel] > 0))
+            regions[name] = {
+                "n": int(m.sizes[r]), "start": s0, "stop": s1, "contiguous": contig,
+                "v_min": _f(rec.vmin_r[r], 2), "v_max": _f(rec.vmax_r[r], 2),
+                "c_min": cf.get("c_min"), "c_min_idx": cf.get("c_min_idx"), "c_p01": cf.get("c_p01"),
+                "c_median": cf.get("c_median"), "c_min_at_end": cl.get("c_min"),
+                "n_low_neurons": n_low, "n_high_neurons": n_high,
+                "steps_low": int(rec.steps_low_r[r]), "steps_high": int(rec.steps_high_r[r]),
+                "neuron_steps_low": int(rec.nsteps_low_r[r]), "neuron_steps_high": int(rec.nsteps_high_r[r]),
+                "max_gi_dt_over_C": _f(rec.g_r[0][r], 3), "max_ge_dt_over_C": _f(rec.g_r[1][r], 3),
+                "max_gtot_dt_over_C": _f(rec.g_r[2][r], 3),
+                "rf_masked_neurons": (int(np.count_nonzero(rf_mask[m.region_of == r])) if rf_mask is not None else None)}
+        vmins = [(rec.vmin_r[r], m.names[r]) for r in range(len(m.names)) if np.isfinite(rec.vmin_r[r])]
+        vmaxs = [(rec.vmax_r[r], m.names[r]) for r in range(len(m.names)) if np.isfinite(rec.vmax_r[r])]
+        vmin = min(vmins) if vmins else (None, None)
+        vmax = max(vmaxs) if vmaxs else (None, None)
+        top_caller = [(_site_str(k), c) for k, c in
+                      collections.Counter({k: v for k, v in rec.callers.items() if k is not None}).most_common(3)]
+        # offenders per stepper: the call site that was stepping the bridge at each cell's FIRST out-of-range reading. A
+        # bridge stepped by more than one caller is labelled by its majority stepper, so this says whose steps the
+        # excursions actually happened in (the metacog pool bridge's role-competition cells, found by review)
+        by_stepper = [{"site": _site_str(k), "stepper": (_stepper_label([{"site": _site_str(k)}]) if k else "?"),
+                       "offenders": c} for k, c in rec.first_by_stepper.most_common()]
+        bounded = sorted(rec.bounded_seen)
+        return {
+            "bridge_id": rec.bridge_id, "organ": None, "built_by": None, "owner_chain": rec.owner_chain,
+            "step_callers": [{"site": s, "steps": c} for s, c in top_caller],
+            "neuron_model": rec.model, "n_neurons": rec.n, "dt_ms": rec.dt, "n_steps": rec.n_steps,
+            "bounded_conductance_integration": (bounded[0] if len(bounded) == 1 else "mixed"),
+            "bounded_values_seen": bounded,
+            "izh_substeps_seen": sorted([list(x) for x in rec.substeps_seen], key=str),
+            "stable_integration_applied_seen": sorted(str(x) for x in rec.stable_seen),
+            "substep_calls": rec.substep_calls, "refractory_model_resets": rec.model_resets,
+            "stable_integration_reasserts": rec.si_reasserts,
+            "stable_integration_organ_values": rec.si_organ_values,
+            "preset_centred_het": {"requested": rec.ph_requested, "applied": rec.ph_applied,
+                                   "organ_value": rec.ph_organ_value, "readback": rec.ph_readback},
+            "trait_centred_het": {"requested": rec.th_requested, "applied": rec.th_applied,
+                                  "organ_value": rec.th_organ_value, "readback": rec.th_readback},
+            "param_summary": rec.p_first or {},
+            "v_min": _f(vmin[0], 2), "v_min_region": vmin[1], "v_max": _f(vmax[0], 2), "v_max_region": vmax[1],
+            "n_oor_neurons": n_oor,
+            "n_low_neurons": int(np.count_nonzero(rec.nlow > 0)) if rec.nlow is not None else 0,
+            "n_high_neurons": int(np.count_nonzero(rec.nhigh > 0)) if rec.nhigh is not None else 0,
+            "n_nonfinite_neurons": int(np.count_nonzero(rec.nnonf > 0)) if rec.nnonf is not None else 0,
+            "n_steps_with_oor": rec.steps_with_oor,
+            "n_spikes_total": rec.n_spikes_total, "n_spikes_from_oor_cells": rec.n_spikes_oor_cells,
+            "alive_at_end": bridge is not None,
+            "first_reading_classes": dict(rec.first_classes),
+            "offenders_by_stepper": by_stepper,
+            "has_rf_state": (getattr(bridge, "cp_rf_prev_im", None) is not None) if bridge is not None else None,
+            "regions": regions, "oor_neurons": rows, "oor_neurons_truncated": truncated,
+        }
+
+    def report(self):
+        bridges = [b for b in (self.bridge_report(r) for r in self.recs) if b is not None]
+        relabel(bridges)
+        return {"census_version": CENSUS_VERSION,
+                "thresholds": {"v_low_mV": self.v_low, "vpeak_margin_mV": self.margin,
+                               "high_check": "Izhikevich: per-neuron max(cp_izh_vpeak, homeostatic threshold) + margin; AdEx: adex_V_peak + margin; "
+                                             "HH and resonate-and-fire: none"},
+                "total_bridge_steps": self.total_steps, "n_bridges": len(bridges),
+                "observer_errors": self.observer_errors, "first_observer_error": self.first_error,
+                "observe_s": round(self.observe_s, 2),
+                "bridges": bridges, "organs": organ_rows(bridges)}
+
+
+def _site_str(site):
+    """'module:qualname:line' of a step call site tuple (code, line, module); '?' when it could not be read."""
+    if not site or site[0] is None:
+        return "?"
+    code, ln, mod = site
+    return "%s:%s:%d" % (mod, getattr(code, "co_qualname", code.co_name), ln)
+
+
+def _stepper_label(callers):
+    """module:Class (or module:function) of the code that stepped the bridge most. One builder can make several bridges
+    that different organs step (the merged pool), so the stepper names the organ; the builder is kept as built_by."""
+    if not callers:
+        return None
+    base = callers[0]["site"].rsplit(":", 1)[0]
+    mod, _, q = base.partition(":")
+    if "." in q:
+        q = q.rsplit(".", 1)[0]
+    return "%s:%s" % (mod, q)
+
+
+def relabel(bridges):
+    """(Re)derive each bridge's `organ` (stepper) and `built_by` from the call-site data stored with it. Idempotent."""
+    for b in bridges:
+        chain = b.get("owner_chain") or []
+        b["built_by"] = chain[0].rsplit(":", 1)[0] if chain else None
+        b["organ"] = _stepper_label(b.get("step_callers")) or b["built_by"] or "?"
+    return bridges
+
+
+def organ_rows(bridges):
+    """One summary row per organ label (the owner that built the bridge)."""
+    by = collections.OrderedDict()
+    for b in bridges:
+        by.setdefault(b["organ"], []).append(b)
+    rows = []
+    for organ, bs in by.items():
+        vmins = [(b["v_min"], b["v_min_region"]) for b in bs if b["v_min"] is not None]
+        vmin = min(vmins) if vmins else (None, None)
+        vmaxs = [b["v_max"] for b in bs if b["v_max"] is not None]
+        oor_regions = collections.OrderedDict()
+        c_min, c_min_region = None, None
+        gi_max, gi_max_region = None, None
+        gt_max, gt_max_region = None, None
+        for b in bs:
+            for row in b["oor_neurons"]:
+                d = oor_regions.setdefault(row["region"], {"n": 0, "C": []})
+                d["n"] += 1
+                d["C"].append(row["C"])
+            for name, rg in b["regions"].items():
+                if rg["c_min"] is not None and (c_min is None or rg["c_min"] < c_min):
+                    c_min, c_min_region = rg["c_min"], name
+                if rg["max_gi_dt_over_C"] is not None and (gi_max is None or rg["max_gi_dt_over_C"] > gi_max):
+                    gi_max, gi_max_region = rg["max_gi_dt_over_C"], name
+                gt = rg.get("max_gtot_dt_over_C")
+                if gt is not None and (gt_max is None or gt > gt_max):
+                    gt_max, gt_max_region = gt, name
+        bounded = {str(b["bounded_conductance_integration"]) for b in bs}
+        by_stepper = collections.Counter()
+        for b in bs:
+            for e in b.get("offenders_by_stepper") or []:
+                by_stepper[e["stepper"]] += e["offenders"]
+        by_stepper = dict(by_stepper)
+        rows.append({"organ": organ, "n_bridges": len(bs), "neuron_models": sorted({b["neuron_model"] for b in bs}),
+                     "n_neurons": sum(b["n_neurons"] for b in bs), "n_steps": sum(b["n_steps"] for b in bs),
+                     "v_min": vmin[0], "v_min_region": vmin[1], "v_max": (max(vmaxs) if vmaxs else None),
+                     "n_oor_neurons": sum(b["n_oor_neurons"] for b in bs),
+                     "n_low_neurons": sum(b["n_low_neurons"] for b in bs),
+                     "n_high_neurons": sum(b["n_high_neurons"] for b in bs),
+                     "n_nonfinite_neurons": sum(b["n_nonfinite_neurons"] for b in bs),
+                     "first_reading_classes": dict(sum((collections.Counter(b.get("first_reading_classes") or {}) for b in bs),
+                                                       collections.Counter())),
+                     "n_spikes_total": sum(b.get("n_spikes_total", 0) for b in bs),
+                     "n_spikes_from_oor_cells": sum(b.get("n_spikes_from_oor_cells", 0) for b in bs),
+                     "offenders_by_stepper": by_stepper,
+                     "oor_regions": oor_regions,
+                     "c_min": c_min, "c_min_region": c_min_region,
+                     "max_gi_dt_over_C": gi_max, "max_gi_dt_over_C_region": gi_max_region,
+                     "max_gtot_dt_over_C": gt_max, "max_gtot_dt_over_C_region": gt_max_region,
+                     "built_by": sorted({b["built_by"] for b in bs if b.get("built_by")}),
+                     "bounded_conductance_integration": (sorted(bounded)[0] if len(bounded) == 1 else "mixed"),
+                     "izh_substeps_seen": sorted({tuple(x) for b in bs for x in (b.get("izh_substeps_seen") or [])},
+                                                 key=str),
+                     "stable_integration_applied_seen": sorted({x for b in bs
+                                                                for x in (b.get("stable_integration_applied_seen") or [])}),
+                     "substep_calls": sum(b.get("substep_calls", 0) or 0 for b in bs),
+                     "refractory_model_resets": sum(b.get("refractory_model_resets", 0) or 0 for b in bs),
+                     "stable_integration_reasserts": sum(b.get("stable_integration_reasserts", 0) or 0 for b in bs),
+                     "organ_bounded_configured": sorted({str((b.get("stable_integration_organ_values") or {}).get(
+                         "enable_bounded_conductance_integration")) for b in bs}),
+                     "preset_centred_het_applied_seen": sorted({str((b.get("preset_centred_het") or {}).get("applied"))
+                                                                for b in bs}),
+                     "preset_centred_het_draw_centred_seen": sorted({str(((b.get("preset_centred_het") or {}).get(
+                         "readback") or {}).get("preset_centred")) for b in bs}),
+                     "n_with_region_preset": sum((((b.get("preset_centred_het") or {}).get("readback") or {}).get(
+                         "n_with_region_preset") or 0) for b in bs),
+                     "n_preset_off_centre": sum((((b.get("preset_centred_het") or {}).get("readback") or {}).get(
+                         "n_preset_off_centre") or 0) for b in bs),
+                     "trait_centred_het_applied_seen": sorted({str((b.get("trait_centred_het") or {}).get("applied"))
+                                                               for b in bs}),
+                     "trait_centred_het_draw_centred_seen": sorted({str(((b.get("trait_centred_het") or {}).get(
+                         "readback") or {}).get("trait_centred")) for b in bs}),
+                     "n_trait_neurons": sum((((b.get("trait_centred_het") or {}).get("readback") or {}).get(
+                         "n_trait_neurons") or 0) for b in bs),
+                     "n_trait_off_centre": sum((((b.get("trait_centred_het") or {}).get("readback") or {}).get(
+                         "n_trait_off_centre") or 0) for b in bs)})
+    return rows
+
+
+def summary_line(row, tag=""):
+    oor = "; ".join("%s x%d C=%s" % (r, d["n"], ",".join("%.2f" % c for c in d["C"][:6] if c is not None))
+                    for r, d in row["oor_regions"].items()) or "-"
+    return ("%s%s | bridges=%d n=%d steps=%d | v_min=%s (%s) v_max=%s | oor_neurons=%d (low %d high %d nonfinite %d) [%s] | "
+            "spikes %d, of which %d from cells after leaving the range | min_C=%s (%s) max_(g_i+g_e)*dt/C=%s (%s) | bounded=%s" % (
+                tag, row["organ"], row["n_bridges"], row["n_neurons"], row["n_steps"], row["v_min"], row["v_min_region"],
+                row["v_max"], row["n_oor_neurons"], row["n_low_neurons"], row["n_high_neurons"],
+                row["n_nonfinite_neurons"], oor, row.get("n_spikes_total", 0), row.get("n_spikes_from_oor_cells", 0),
+                row["c_min"], row["c_min_region"], row["max_gtot_dt_over_C"],
+                row["max_gtot_dt_over_C_region"], row["bounded_conductance_integration"]))
+
+
+# ══════════════════════════════════════════════ worker / shard ═════════════════════════════════════════════════════
+def turn_reply(resp):
+    """One turn's reply-level record: sha256 of the whole response, and the fields the user sees (answer, abstained,
+    recalled_svo, derived, source). An errored turn keeps its error."""
+    h = hashlib.sha256(json.dumps(resp, sort_keys=True, default=str).encode()).hexdigest()
+    if not isinstance(resp, dict) or "_error" in resp:
+        return {"sha256": h, "error": (resp.get("_error") if isinstance(resp, dict) else str(resp))}
+    return {"sha256": h, "answer": resp.get("answer"), "abstained": resp.get("abstained"),
+            "recalled_svo": resp.get("recalled_svo"), "derived": resp.get("derived"), "source": resp.get("source")}
+
+
+def run_worker(seed, group, arm, out_path, labels=None):
+    """Run one Stage-2 gate arm IN THIS PROCESS under the census (the gate's own run_worker is the workload) and write
+    the census JSON. The env (PYTHONHASHSEED etc.) is the parent shard's job, exactly as the gate's run_shard does it."""
+    os.environ.setdefault("SIM_BACKEND", "numpy")
+    from research.runners import stage2_exit_gate as SG
+    t0 = time.time()
+    wl_path = out_path + ".workload.json"
+    census = Census()
+    with census:
+        rc = SG.run_worker(seed, group, arm, wl_path, labels=labels)
+    restored = {"step": census._cls.__dict__["_run_one_simulation_step"] is census._orig_step,
+                "init": census._cls.__dict__["__init__"] is census._orig_init}
+    wl = {"runner": "research/runners/stage2_exit_gate.py", "rc": rc, "host": platform.node()}
+    try:
+        with open(wl_path) as f:
+            d = json.load(f)
+        resp = d.get("responses", {})
+        wl.update({"n_turns": len(resp), "wall_s": d.get("wall_s"), "import_s": d.get("import_s"),
+                   "sources": d.get("sources"), "corpus_present": d.get("corpus_present"),
+                   "pythonhashseed_ok": d.get("pythonhashseed_ok"), "process": d.get("process"),
+                   "turn_errors": {k: v["_error"] for k, v in resp.items() if isinstance(v, dict) and "_error" in v},
+                   "responses_sha256": hashlib.sha256(json.dumps(resp, sort_keys=True, default=str).encode()).hexdigest(),
+                   # per-turn reply record (research/stable-integration step 4: which turns' replies an integrator
+                   # change moved): the reply-level primary fields + a per-turn sha256 of the whole response
+                   "turn_replies": {k: turn_reply(v) for k, v in resp.items()},
+                   # the full stage-2 worker output, so the gate's own scorers can re-read this arm
+                   "shard": d})
+    except Exception as e:
+        wl["error"] = "%s: %s" % (type(e).__name__, e)
+    finally:
+        try:
+            os.remove(wl_path)
+        except OSError:
+            pass
+    rep = census.report()
+    try:
+        sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=_REPO, capture_output=True, text=True,
+                             timeout=20).stdout.strip() or None
+    except Exception:
+        sha = None
+    out = {"runner": "research/runners/membrane_census.py", "seed": int(seed), "group": group, "arm": arm,
+           "git_sha": sha, "stable_integration_env": os.environ.get("SIM_STABLE_INTEGRATION"),
+           "stable_recal_env": os.environ.get("SIM_STABLE_RECAL"),
+           "preset_centred_het_env": os.environ.get("SIM_PRESET_CENTRED_HET"),
+           "trait_centred_het_env": os.environ.get("SIM_TRAIT_CENTRED_HET"), "workload": wl, "wrapper_restored": restored,
+           "wall_s": round(time.time() - t0, 1),
+           "caveat": CAVEAT, "census": rep}
+    os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
+    with open(out_path, "w") as f:
+        json.dump(out, f, indent=1, default=str)
+    print("[membrane census] seed=%d %s/%s -> %d bridges, %d steps, observer %.1fs, %d observer errors -> %s" % (
+        seed, group, arm, rep["n_bridges"], rep["total_bridge_steps"], rep["observe_s"], rep["observer_errors"], out_path),
+        flush=True)
+    for row in rep["organs"]:
+        print(summary_line(row, tag="  "), flush=True)
+    return rc
+
+
+def run_shard(seed, group, arm, out_path, backend="numpy", labels=None, allow_gate_seed=False):
+    """Run the census worker in a FRESH subprocess with the Stage-2 gate's frozen env (PYTHONHASHSEED must be set before
+    the interpreter starts), exactly as stage2_exit_gate.run_shard does for the arm itself."""
+    from research.runners import stage2_exit_gate as SG
+    env = dict(os.environ)
+    env.update(SG.BASE_ENV)
+    env["SIM_BACKEND"] = backend
+    if backend == "cupy":
+        env.pop("CUDA_VISIBLE_DEVICES", None)
+    part = out_path + ".part.json"
+    cmd = [sys.executable, "-u", "-m", "research.runners.membrane_census", "--worker", "--seed", str(int(seed)),
+           "--group", group, "--arm", arm, "--out", part]
+    if labels:
+        cmd += ["--labels", labels]
+    if allow_gate_seed:
+        cmd += ["--allow-gate-seed"]
+    p = subprocess.run(cmd, env=env, cwd=_REPO)
+    if p.returncode != 0 or not os.path.exists(part):
+        print("[membrane census] worker FAILED rc=%s for seed=%s %s/%s" % (p.returncode, seed, group, arm), flush=True)
+        return 1
+    with open(part) as f:
+        d = json.load(f)
+    d["backend"] = backend
+    os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
+    with open(out_path, "w") as f:
+        json.dump(d, f, indent=1, default=str)
+    for suffix in ("", ".prov.json"):
+        try:
+            os.remove(part + suffix)
+        except OSError:
+            pass
+    return 0
+
+
+# ══════════════════════════════════════════════ pool lines / summary ═══════════════════════════════════════════════
+def pool_job_lines(sha="<sha>", seeds=POOL_SEEDS, out_dir=DEFAULT_OUT_DIR, arm="intact_a"):
+    """One (command, checked-reason) pair per (dev seed, Stage-2 group), in the shape of stage2_exit_gate.pool_job_lines.
+    The reason carries `mem_gb=N max_age_h=N`, which the pool dispatcher reads from the --checked text."""
+    from research.runners import stage2_exit_gate as SG
+    out = []
+    for seed in seeds:
+        for group in SG.PRIMARY_GROUPS:
+            d = "%s/s%d" % (out_dir, seed)
+            cmd = ("cd ~/derisk-pool/revisions/%s && bash tools/mem_ok.sh %d 1 && mkdir -p %s && bash tools/memcap.sh %d "
+                   "-- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 "
+                   "NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -u -m "
+                   "research.runners.membrane_census --shard --seed %d --group %s --arm %s --out %s/%s__%s.json" % (
+                       sha, POOL_MEM_GB, d, POOL_MEMCAP_GB, seed, group, arm, d, group, arm))
+            why = ("membrane-validity census replication, dev seed %d %s %s; record: "
+                   "research/findings/2026-10-26-membrane-census-dev7.md holds dev seed 7 only, and no other seed's "
+                   "per-organ census exists; mem_gb=%d max_age_h=%d" % (seed, group, arm, POOL_MEM_GB, POOL_MAX_AGE_H))
+            out.append((cmd, why))
+    return out
+
+
+def pool_lines(sha="<sha>", seeds=POOL_SEEDS, out_dir=DEFAULT_OUT_DIR, arm="intact_a"):
+    """The plain command of each pool job line (no TSV columns); `pool_job_lines` adds the checked-reason."""
+    return [cmd for cmd, _ in pool_job_lines(sha, seeds, out_dir, arm)]
+
+
+def aggregate(paths):
+    """Merge the per-group census JSONs of ONE seed into a compact per-organ record (no per-neuron rows besides the C
+    range of the offenders per region). An organ appears in several groups (each group is a fresh brain), so the headline
+    values are those of the group in which the organ had the most offenders (ties: the most steps); the per-group counts
+    are kept."""
+    groups, meta = collections.OrderedDict(), {}
+    organs = collections.OrderedDict()
+    flags = []                                                  # why the aggregate is NOT a clean census (empty = clean)
+    for p in paths:
+        with open(p) as f:
+            d = json.load(f)
+        g = d["group"]
+        meta.setdefault("seed", d["seed"])
+        if meta["seed"] != d["seed"]:
+            raise ValueError("aggregate mixes seeds %s and %s" % (meta["seed"], d["seed"]))
+        w = d.get("workload", {})
+        groups[g] = {"arm": d["arm"], "git_sha": d.get("git_sha"), "n_turns": w.get("n_turns"),
+                     "responses_sha256": w.get("responses_sha256"), "turn_errors": w.get("turn_errors"),
+                     "wall_s": d.get("wall_s"), "peak_rss_mb": (w.get("process") or {}).get("peak_rss_mb"),
+                     "n_bridges": d["census"]["n_bridges"], "total_bridge_steps": d["census"]["total_bridge_steps"],
+                     "observer_errors": d["census"]["observer_errors"], "observe_s": d["census"]["observe_s"],
+                     "wrapper_restored": d.get("wrapper_restored"), "source": os.path.basename(p),
+                     "sources": w.get("sources"), "rc": w.get("rc"), "host": w.get("host"),
+                     "corpus_present": w.get("corpus_present"), "pythonhashseed_ok": w.get("pythonhashseed_ok")}
+        # an instrument-validity flag, never a silent pass: the corpus-learned organs differ without data/, a
+        # PYTHONHASHSEED other than the gate's changes the draw, and an errored turn means the workload did not run clean
+        if w.get("corpus_present") is not True:
+            flags.append("%s: corpus_present is %r (must be true)" % (g, w.get("corpus_present")))
+        if w.get("pythonhashseed_ok") is not True:
+            flags.append("%s: pythonhashseed_ok is %r (must be true)" % (g, w.get("pythonhashseed_ok")))
+        if w.get("turn_errors"):
+            flags.append("%s: turn error(s) in %s" % (g, ", ".join(sorted(w["turn_errors"]))))
+        bridges = relabel(d["census"]["bridges"])
+        for row in organ_rows(bridges):
+            org = organs.setdefault(row["organ"], {"organ": row["organ"], "per_group": collections.OrderedDict(),
+                                                   "_rows": collections.defaultdict(lambda: collections.defaultdict(list)),
+                                                   "_rf": 0})
+            org["per_group"][g] = {k: row[k] for k in ("n_bridges", "n_neurons", "n_steps", "v_min", "v_max", "n_oor_neurons",
+                                                       "n_low_neurons", "n_high_neurons", "n_nonfinite_neurons",
+                                                       "n_spikes_total", "n_spikes_from_oor_cells", "c_min", "c_min_region",
+                                                       "max_gtot_dt_over_C", "max_gtot_dt_over_C_region",
+                                                       "first_reading_classes", "oor_regions", "built_by",
+                                                       "offenders_by_stepper",
+                                                       "bounded_conductance_integration", "neuron_models")}
+        for b in bridges:
+            org = organs[b["organ"]]
+            for r in b["oor_neurons"]:
+                if r.get("C") is not None:
+                    org["_rows"][r["region"]]["C"].append(r["C"])
+                org["_rf"] += 1 if r.get("rf_masked") else 0
+    out_orgs = []
+    for name, org in organs.items():
+        best_g = max(org["per_group"], key=lambda g: (org["per_group"][g]["n_oor_neurons"], org["per_group"][g]["n_steps"]))
+        best = org["per_group"][best_g]
+        c_ranges = {rg: {"n_rows": len(v["C"]), "c_min": min(v["C"]), "c_max": max(v["C"])}
+                    for rg, v in org["_rows"].items() if v["C"]}
+        out_orgs.append({
+            "organ": name, "groups": list(org["per_group"]), "best_group": best_g,
+            "n_neurons": max(v["n_neurons"] for v in org["per_group"].values()),
+            "steps_per_group": {g: v["n_steps"] for g, v in org["per_group"].items()},
+            "oor_neurons_per_group": {g: v["n_oor_neurons"] for g, v in org["per_group"].items()},
+            "n_oor_neurons": best["n_oor_neurons"], "n_low_neurons": best["n_low_neurons"],
+            "n_high_neurons": best["n_high_neurons"], "n_nonfinite_neurons": best["n_nonfinite_neurons"],
+            "v_min": min(v["v_min"] for v in org["per_group"].values() if v["v_min"] is not None),
+            "v_max": max(v["v_max"] for v in org["per_group"].values() if v["v_max"] is not None),
+            "first_reading_classes": best["first_reading_classes"],
+            "offenders_by_stepper": best["offenders_by_stepper"],
+            "oor_regions": {rg: {"n": v["n"]} for rg, v in best["oor_regions"].items()},
+            "offender_c_by_region": c_ranges,
+            "min_drawn_c": min((v["c_min"], v["c_min_region"]) for v in org["per_group"].values() if v["c_min"] is not None)
+            if any(v["c_min"] is not None for v in org["per_group"].values()) else None,
+            "max_gtot_dt_over_C": max((v["max_gtot_dt_over_C"] for v in org["per_group"].values()
+                                       if v["max_gtot_dt_over_C"] is not None), default=None),
+            "n_spikes_total": best["n_spikes_total"], "n_spikes_from_oor_cells": best["n_spikes_from_oor_cells"],
+            "bounded_conductance_integration": sorted({str(v["bounded_conductance_integration"])
+                                                       for v in org["per_group"].values()}),
+            "neuron_models": sorted({m for v in org["per_group"].values() for m in v["neuron_models"]}),
+            "built_by": sorted({x for v in org["per_group"].values() for x in v["built_by"]}),
+            "offender_rows_rf_masked": org["_rf"]})
+    out_orgs.sort(key=lambda o: -o["n_oor_neurons"])
+    return {"runner": "research/runners/membrane_census.py", "census_version": CENSUS_VERSION,
+            "seed": meta.get("seed"), "inputs": [os.path.basename(p) for p in paths], "groups": groups,
+            "flagged": bool(flags), "flags": flags,
+            "n_organs": len(out_orgs), "n_offender_organs": sum(1 for o in out_orgs if o["n_oor_neurons"]),
+            "n_bridge_instances": sum(g["n_bridges"] for g in groups.values()),
+            "organs": out_orgs, "caveat": CAVEAT}
+
+
+def summarize(paths):
+    for p in paths:
+        with open(p) as f:
+            d = json.load(f)
+        print("== seed %s %s/%s (%s) workload=%s observer_errors=%s wrapper_restored=%s" % (
+            d.get("seed"), d.get("group"), d.get("arm"), os.path.basename(p), d.get("workload", {}).get("n_turns"),
+            d["census"]["observer_errors"], d.get("wrapper_restored")))
+        bridges = relabel(d["census"]["bridges"])
+        for row in organ_rows(bridges):
+            print(summary_line(row, tag="  "))
+
+
+def main():
+    from research.runners import stage2_exit_gate as SG
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("--worker", action="store_true", help="internal: run one arm under the census in THIS process")
+    ap.add_argument("--shard", action="store_true", help="run one (seed, group, arm) census in a fresh subprocess")
+    ap.add_argument("--summarize", nargs="+", metavar="JSON", help="print the per-organ summary lines of result JSONs")
+    ap.add_argument("--aggregate", nargs="+", metavar="JSON", help="merge one seed's per-group result JSONs into --out")
+    ap.add_argument("--emit-pool-lines", action="store_true", help="print the dev-seed 1-12 x 5-group pool job lines (TSV: command, checked-reason)")
+    ap.add_argument("--sha", default="<sha>", help="revision token for --emit-pool-lines (default: the literal <sha>)")
+    ap.add_argument("--seed", type=int, default=None)
+    ap.add_argument("--group", default=None, choices=sorted(SG.GROUPS))
+    ap.add_argument("--arm", default=None)
+    ap.add_argument("--out", default=None)
+    ap.add_argument("--labels", default=None, help="DEV ONLY: run only these turn labels (comma-separated)")
+    ap.add_argument("--backend", default="numpy", choices=("numpy", "cupy"))
+    ap.add_argument("--allow-gate-seed", action="store_true", help="a GATE seed is refused without this (diagnostic probe)")
+    a = ap.parse_args()
+    if a.summarize:
+        summarize(a.summarize)
+        return
+    if a.emit_pool_lines:
+        for cmd, why in pool_job_lines(a.sha):
+            print("%s\t%s" % (cmd, why))
+        return
+    if a.aggregate:
+        if not a.out:
+            ap.error("--aggregate needs --out")
+        agg = aggregate(a.aggregate)
+        os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
+        with open(a.out, "w") as f:
+            json.dump(agg, f, indent=1, default=str)
+        print("[membrane census] aggregate seed=%s: %d organs, %d with out-of-range membranes, %d bridge instances -> %s" % (
+            agg["seed"], agg["n_organs"], agg["n_offender_organs"], agg["n_bridge_instances"], a.out))
+        for fl in agg["flags"]:
+            print("[membrane census] FLAGGED: %s" % fl)
+        return
+    if a.worker or a.shard:
+        if a.seed is None or not a.group or not a.arm or not a.out:
+            ap.error("--seed, --group, --arm and --out are required")
+        if a.seed in SG.GATE_SEEDS and not a.allow_gate_seed:
+            sys.stderr.write("GATE seed %d refused: this census is a dev-seed diagnostic (dev seeds: 1-12).\n" % a.seed)
+            sys.exit(2)
+        if a.worker:
+            sys.exit(run_worker(a.seed, a.group, a.arm, a.out, labels=a.labels))
+        sys.exit(run_shard(a.seed, a.group, a.arm, a.out, backend=a.backend, labels=a.labels,
+                           allow_gate_seed=a.allow_gate_seed))
+    ap.error("choose one of --worker/--shard/--summarize/--aggregate/--emit-pool-lines")
+
+
+if __name__ == "__main__":
+    main()
