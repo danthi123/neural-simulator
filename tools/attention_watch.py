@@ -42,6 +42,7 @@ REPEAT_H = 6.0          # re-report a still-true event after this long
 GPU_IDLE_MIN = 30       # W GPU queue empty and idle this long
 DRIVER_SILENT_H = 3.0   # S runbook not written this long
 POOL_STALL_MIN = 60     # S pool has queued lines but no claim this long
+BIG_STARVE_MIN = 90     # a >= 8 GB pool line queued this long while small lines are claimed = starvation
 RULE_STALE_H = 24.0     # a requested [key] report not mentioned by the driver this long after its RULING
 RULE_LOOKBACK_D = 4
 
@@ -115,6 +116,9 @@ echo "@@NOW $(date +%%s)"
 echo "@@RB_MTIME $(stat -c %%Y $rb)"
 echo "@@QDEPTH $(grep -c . research/queue/pool.queue 2>/dev/null)"
 echo "@@CLAIMS_MTIME $(stat -c %%Y research/queue/pool.queue.claims 2>/dev/null || echo 0)"
+echo "@@BIGOLD $(awk -F'\t' 'match($2,/mem_ok\.sh [0-9]+/){n=substr($2,RSTART+10,RLENGTH-10)+0; if(n>=8 && (m==""||$1<m)) m=$1} END{print m+0}' research/queue/pool.queue)"
+echo "@@BIGN $(grep -cE 'mem_ok\.sh ([89]|[1-9][0-9]) ' research/queue/pool.queue)"
+echo "@@SMALLN $(grep -cvE 'mem_ok\.sh ([89]|[1-9][0-9]) ' research/queue/pool.queue)"
 echo "@@NEEDS"
 awk '/^## NEEDS CLAUDE/{f=1;next} f&&/^Format/{exit} f&&/^- 20/' $rb
 echo "@@RULINGS"
@@ -149,6 +153,10 @@ def s_checks(now, local=False):
         ev.append(("s-pool-empty", "S pool.queue is empty: pool compute idle, stock lines"))
     elif claim_age_min >= POOL_STALL_MIN:
         ev.append(("s-pool-stall", f"S pool has {depth} queued lines but no claim for {claim_age_min:.0f} min"))
+    big_old = int(sec.get("BIGOLD") or 0)
+    if big_old and int(sec.get("SMALLN") or 0) > 0 and claim_age_min < POOL_STALL_MIN and (s_now - big_old) / 60 >= BIG_STARVE_MIN:
+        ev.append(("s-pool-starve", f"S pool: {sec.get('BIGN')} big-memory lines (>= 8 GB) queued, the oldest for "
+                   f"{(s_now - big_old) / 60:.0f} min, while small lines keep being claimed (backfill starvation): hold the small lines"))
     for line in sec.get("NEEDS", []):
         ev.append((f"s-needs-{abs(hash(line)) % 10**8}", f"S NEEDS CLAUDE: {line[:260]}"))
     # ruled-task staleness: a [key] the ruling asks the driver to post, mentioned by no later non-RULING line
