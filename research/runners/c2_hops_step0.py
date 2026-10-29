@@ -394,6 +394,8 @@ def patient_inhib_knobs():
         e = os.environ.get("C2S0_INHIB_" + name.upper())
         if e not in (None, ""):
             k[name] = cast(e)
+    sw = os.environ.get("C2S0_INHIB_SWEEP")                  # step 0b's ONE allowed gain sweep: extra `on@<w_i2e>` arms
+    k["sweep_w_i2e"] = [float(x) for x in sw.split(",")] if sw else []
     return k
 
 
@@ -463,6 +465,8 @@ def onbridge_inhib_drive(score_sb, V, scores, input_gain, settle=20):
     from sim.backend import to_host, from_host
     from research.runners._phaseC_S5_divnorm_derisk import _reset_score_bridge, region_idx
     _reset_score_bridge(score_sb)
+    _pi = region_idx(score_sb, "pinh")             # the FS cells start at REST (vr), not at the spike-reset potential:
+    score_sb.cp_membrane_potential_v[_pi] = score_sb.cp_izh_vr[_pi]      # c_reset > vt would fire them with no input
     s = np.maximum(np.asarray(scores, dtype=float), 0.0)
     cur = np.zeros(score_sb.core_config.num_neurons, dtype=np.float64)
     for w in range(V):
@@ -487,12 +491,16 @@ def onbridge_inhib_drive(score_sb, V, scores, input_gain, settle=20):
 def _inhib_bridges(buf, mode, knobs):
     """{arm: bridge} for the requested mode (`on`: I->E at w_i2e; `lesion`: the same population, I->E weight 0)."""
     arms = {"on": ("on",), "lesion": ("lesion",), "all": ("on", "lesion")}[mode]
+    gains = {"on": knobs["w_i2e"], "lesion": 0.0}
+    if mode in ("on", "all"):
+        for g in knobs.get("sweep_w_i2e") or []:
+            arms = arms + ("on@%g" % g,)
+            gains["on@%g" % g] = g
     out = {}
     for arm in arms:
         out[arm] = build_inhib_score_bridge(buf.seed, int(buf.V), buf.sequencer_sigma, buf.sequencer_gain,
-                                            n_inh=knobs["n_inh"], w_e2i=knobs["w_e2i"],
-                                            w_i2e=(knobs["w_i2e"] if arm == "on" else 0.0), izh_type=knobs["izh_type"],
-                                            ref_sb=buf._seq_score)
+                                            n_inh=knobs["n_inh"], w_e2i=knobs["w_e2i"], w_i2e=gains[arm],
+                                            izh_type=knobs["izh_type"], ref_sb=buf._seq_score)
     return out
 
 
@@ -559,7 +567,8 @@ def read_c(buf, rows):
                 blk.update(fired_pools=fired, n_fired=len(fired), exactly_one=len(fired) == 1,
                            fires_decoded_patient=fired == [blk["decoded_patient"]],
                            pool_spikes={buf.words[j]: float(acc[j]) for j in range(V) if acc[j] > 0},
-                           patient_slice_top=[[buf.words[j], float(pslice[j])] for j in order])
+                           patient_slice_top=[[buf.words[j], float(pslice[j])] for j in order],
+                           patient_slice_nz={buf.words[j]: float(pslice[j]) for j in range(V) if pslice[j] > 0})
                 if inhib_sbs:                                       # step 0b only; absent when the env flag is off
                     blk["inhib"] = {}
                     for arm, isb in inhib_sbs.items():
@@ -1201,11 +1210,12 @@ def main():
     ap.add_argument("--inhib-n", type=int, default=None)
     ap.add_argument("--inhib-w-e2i", type=float, default=None)
     ap.add_argument("--inhib-w-i2e", type=float, default=None)
+    ap.add_argument("--inhib-sweep", default=None, help="comma list of extra I->E gains (the ONE allowed sweep, <=4)")
     a = ap.parse_args()
     if a.smoke_0b:
         import subprocess
         env = dict(os.environ, SIM_BACKEND=os.environ.get("SIM_BACKEND", "numpy"), **{PATIENT_INHIB_ENV: a.patient_inhib})
-        for k, v in (("N_INH", a.inhib_n), ("W_E2I", a.inhib_w_e2i), ("W_I2E", a.inhib_w_i2e)):
+        for k, v in (("N_INH", a.inhib_n), ("W_E2I", a.inhib_w_e2i), ("W_I2E", a.inhib_w_i2e), ("SWEEP", a.inhib_sweep)):
             if v is not None:
                 env["C2S0_INHIB_" + k] = str(v)
         sys.exit(subprocess.call([sys.executable, "-u", "-m", "research.runners.stage2_exit_gate", "--shard", "--seed", "7",

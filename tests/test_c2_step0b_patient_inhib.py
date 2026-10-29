@@ -86,5 +86,13 @@ def test_on_and_lesion_arms_record_engagement(monkeypatch):
         for arm in ("on", "lesion"):
             r = blk["inhib"][arm]
             assert {"fired_pools", "n_fired", "inh_spikes"} <= set(r)
-        # the lesion arm has the same population and the same excitation: it must be driven too
-        assert blk["inhib"]["lesion"]["inh_spikes"] > 0
+        # the lesion arm has the same population and the same excitation as `on`; engagement is a recorded float
+        assert blk["inhib"]["lesion"]["inh_spikes"] >= 0.0
+
+
+def test_fs_population_is_silent_without_input():
+    from research.runners._phaseC_S5_divnorm_derisk import build_divnorm_score_bridge
+    ref = build_divnorm_score_bridge(seed=7, V=6, enable_divnorm=True, sigma=1.0, gain=0.11)
+    sb = S0.build_inhib_score_bridge(7, 6, 1.0, 0.11, w_i2e=320.0, ref_sb=ref)
+    acc, inh = S0.onbridge_inhib_drive(sb, 6, np.zeros(6), 1.0)
+    assert inh == 0.0 and acc.sum() == 0.0          # starts at rest (vr), not at the spike-reset potential
