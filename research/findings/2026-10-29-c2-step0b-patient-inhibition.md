@@ -115,3 +115,30 @@ Retires: feedback-only E->I->E onto flagged pools; FF onto flagged pools while t
 Open for ruling: six-seed/dev-seed replication (1-6) of 0d and its sensitivity to the divisive gain and FF gain; the 0.4 drive
 ratio bound against the real runner-up distribution; whether the external-only flag is wired into the composer's real score
 bridge (the 0d bridge is a runner-built twin, word-pool parameters copied from the composer's).
+
+## Replication on dev seeds 1-6 (RULING c2-s0d-1029; scored by Claude 2026-10-29)
+
+Shards `research/findings/raw/_c2_step0b/s{1..6}_ffx.json` (S pool, numpy CPU backend, revision cdfd6d32c), plus seed 7 above. Same
+arms and knobs as 0d. Each seed has 9 blocks, and a block counts only if exactly one pool fires and it is the decoded patient.
+
+<!--derived-->
+| arm | s1 | s2 | s3 | s4 | s5 | s6 | s7 | total | failure kind |
+|---|---|---|---|---|---|---|---|---|---|
+| ffx (I->E 2, ~30 nS) | 9 | 9 | 9 | 9 | 9 | 9 | 9 | 63/63 | none |
+| ffx@1 (~15 nS) | 7 | 7 | 7 | 8 | 9 | 7 | 8 | 53/63 | 10 two-pool blocks |
+| ffx@3 (~45 nS) | 9 | 9 | 8 | 9 | 9 | 9 | 9 | 62/63 | 1 zero-pool block |
+| ffx@5 (~75 nS) | 7 | 8 | 5 | 2 | 8 | 3 | 7 | 40/63 | 23 zero-pool blocks |
+| ffx_lesion (I->E 0) | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0/63 | all multi-pool |
+| ffx_off | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0/63 | all multi-pool |
+
+<!--derived-->
+No STOP line fired on any seed; lesion != ffx on every seed. The fired-pool drop attributable to the inhibition is 0.76-0.83 per seed.
+`pinh` fires first in every block of every inhibited arm. No block fires a wrong pool in any arm. On every seed the vocabulary-pool set is
+still a superset of the decoded patients (`vp_equals_decoded_patients` false, `decoded_patients_without_pool` empty). That is the known
+step-0 extra-pool finding, which this test does not address.
+
+Reading: the selection replicates at the I->E 2 operating point on 7/7 dev seeds. It is dose-graded and has the same shape on every seed:
+too little inhibition leaves a second pool, too much silences the winner (g_inh above 50 nS), and the working window is I->E 2-3.
+Caveats that still hold: this is a runner-built twin of the composer's score bridge, not the composer's `build_divnorm_score_bridge`; dev
+seeds only (no gate seeds, by design); one fixed FF gain and divisive gain. Next: wire the flag and the FF FS pool into the composer's
+own score bridge (research-only, default OFF), then re-run this battery on that bridge before any C2 M1 ruling.
