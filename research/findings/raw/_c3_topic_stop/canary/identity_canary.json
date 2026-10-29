@@ -1,0 +1,431 @@
+{
+ "mode": "identity-canary",
+ "pin": "34a4e5f756024b4f5aa5d145b3b29661ad976d0b",
+ "dev_pin": "79c6f5128916003d240f1d1cbb3f1abd715f163d",
+ "seeds": [
+  7,
+  8
+ ],
+ "canary_root": "research/findings/raw/_c3_topic_stop/canary",
+ "dev_root": "research/findings/raw/_c3_topic_stop/dev",
+ "excluded": [
+  "timings_s",
+  "import_s",
+  "wall_s",
+  "elapsed_seconds",
+  "process.peak_rss_mb",
+  "<shard>.prov.json"
+ ],
+ "reference_note": "committed check: git status of research/findings/raw/_c3_topic_stop/dev",
+ "arms": {
+  "7/C_intact_a": {
+   "identical": true,
+   "n_compared": 4074,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "101011101000",
+   "asked_canary": "101011101000"
+  },
+  "7/C_intact_b": {
+   "identical": true,
+   "n_compared": 4074,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "101011101000",
+   "asked_canary": "101011101000"
+  },
+  "7/C_reversed": {
+   "identical": true,
+   "n_compared": 4080,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "101011101100",
+   "asked_canary": "101011101100"
+  },
+  "7/C_permuted": {
+   "identical": true,
+   "n_compared": 4074,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "011101101000",
+   "asked_canary": "011101101000"
+  },
+  "7/C_lesion_curiosity": {
+   "identical": true,
+   "n_compared": 4075,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "000000000000",
+   "asked_canary": "000000000000"
+  },
+  "7/lesionL_intact_a": {
+   "identical": true,
+   "n_compared": 4074,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "101011101111",
+   "asked_canary": "101011101111"
+  },
+  "7/lesionL_reversed": {
+   "identical": true,
+   "n_compared": 4080,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "101011101111",
+   "asked_canary": "101011101111"
+  },
+  "7/lesionP_intact_a": {
+   "identical": true,
+   "n_compared": 4074,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "100000000000",
+   "asked_canary": "100000000000"
+  },
+  "7/lesionP_reversed": {
+   "identical": true,
+   "n_compared": 4080,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "000000001000",
+   "asked_canary": "000000001000"
+  },
+  "7/off_intact_a": {
+   "identical": true,
+   "n_compared": 3546,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "101000000000",
+   "asked_canary": "101000000000"
+  },
+  "7/off_reversed": {
+   "identical": true,
+   "n_compared": 3552,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "000000001100",
+   "asked_canary": "000000001100"
+  },
+  "7/off_permuted": {
+   "identical": true,
+   "n_compared": 3546,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "011000000000",
+   "asked_canary": "011000000000"
+  },
+  "7/Lpinned_intact_a": {
+   "identical": true,
+   "n_compared": 4019,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "101011101000",
+   "asked_canary": "101011101000"
+  },
+  "7/Lpinned_reversed": {
+   "identical": true,
+   "n_compared": 4025,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "101011101000",
+   "asked_canary": "101011101000"
+  },
+  "7/pconst_intact_a": {
+   "identical": true,
+   "n_compared": 4096,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "101011101000",
+   "asked_canary": "101011101000"
+  },
+  "7/pconst_reversed": {
+   "identical": true,
+   "n_compared": 4102,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "101011101100",
+   "asked_canary": "101011101100"
+  },
+  "8/C_intact_a": {
+   "identical": true,
+   "n_compared": 4074,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "101011101000",
+   "asked_canary": "101011101000"
+  },
+  "8/C_intact_b": {
+   "identical": true,
+   "n_compared": 4074,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "101011101000",
+   "asked_canary": "101011101000"
+  },
+  "8/C_reversed": {
+   "identical": true,
+   "n_compared": 4080,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "101011101100",
+   "asked_canary": "101011101100"
+  },
+  "8/C_permuted": {
+   "identical": true,
+   "n_compared": 4074,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "011101101000",
+   "asked_canary": "011101101000"
+  },
+  "8/C_lesion_curiosity": {
+   "identical": true,
+   "n_compared": 4075,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "000000000000",
+   "asked_canary": "000000000000"
+  },
+  "8/lesionL_intact_a": {
+   "identical": true,
+   "n_compared": 4074,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "101011101111",
+   "asked_canary": "101011101111"
+  },
+  "8/lesionL_reversed": {
+   "identical": true,
+   "n_compared": 4080,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "101011101111",
+   "asked_canary": "101011101111"
+  },
+  "8/lesionP_intact_a": {
+   "identical": true,
+   "n_compared": 4074,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "100000000000",
+   "asked_canary": "100000000000"
+  },
+  "8/lesionP_reversed": {
+   "identical": true,
+   "n_compared": 4080,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "000000001000",
+   "asked_canary": "000000001000"
+  },
+  "8/off_intact_a": {
+   "identical": true,
+   "n_compared": 3546,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "100000000000",
+   "asked_canary": "100000000000"
+  },
+  "8/off_reversed": {
+   "identical": true,
+   "n_compared": 3552,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "000000001000",
+   "asked_canary": "000000001000"
+  },
+  "8/off_permuted": {
+   "identical": true,
+   "n_compared": 3546,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "010000000000",
+   "asked_canary": "010000000000"
+  },
+  "8/Lpinned_intact_a": {
+   "identical": true,
+   "n_compared": 4019,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "101011101000",
+   "asked_canary": "101011101000"
+  },
+  "8/Lpinned_reversed": {
+   "identical": true,
+   "n_compared": 4025,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "101011101100",
+   "asked_canary": "101011101100"
+  },
+  "8/pconst_intact_a": {
+   "identical": true,
+   "n_compared": 4096,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "101011101000",
+   "asked_canary": "101011101000"
+  },
+  "8/pconst_reversed": {
+   "identical": true,
+   "n_compared": 4102,
+   "n_diffs": 0,
+   "first": null,
+   "first_decision": null,
+   "status": "IDENTICAL",
+   "asked_dev": "101011101100",
+   "asked_canary": "101011101100"
+  }
+ },
+ "n_arms": 32,
+ "n_identical": 32,
+ "n_differs": 0,
+ "n_undefined": 0,
+ "verdict": "PASS",
+ "reads": "every arm reproduces its dev shard: the gate lines may be queued at F",
+ "closure_informational": "--closure-check 79c6f5128 34a4e5f75: closure 426 files; DIFFERS on 17: research/runners/_gnw_coincidence_integrator_derisk.py research/runners/_gnw_distributed_overwrite_workspace_derisk.py research/runners/_gnw_neural_swap_intention_derisk.py research/runners/_gnw_norgan_bus_derisk.py research/runners/_gnw_reentrant_metacog_gated_deliberation_derisk.py research/runners/_gnw_two_distinct_organs_derisk.py research/runners/_p1_2_workspace_deliberation_loop_derisk.py research/runners/compositional_chain_route.py research/runners/emotion_category_organ.py research/runners/stable_recal.py research/runners/stage2_exit_gate.py sim/bridge.py sim/config.py sim/kernels.py webapp/gnw_bus_shadow.py webapp/gnw_three_organ_bus.py webapp/gnw_two_organ_bus.py",
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "arms present for seeds 7 and 8",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "arm count 32",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": "16 arms x 2 seeds"
+  },
+  {
+   "kind": "require",
+   "name": "every arm IDENTICAL",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "every arm compared > 0 leaves",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "pin recorded",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "verdict_earned": {
+  "label": "C3 identity canary (pin vs dev)",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+   {
+    "kind": "require",
+    "name": "arms present for seeds 7 and 8",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "arm count 32",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": "16 arms x 2 seeds"
+   },
+   {
+    "kind": "require",
+    "name": "every arm IDENTICAL",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "every arm compared > 0 leaves",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "pin recorded",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   }
+  ],
+  "disabled_processes": [],
+  "chance": null
+ }
+}
