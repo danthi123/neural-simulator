@@ -1313,7 +1313,8 @@ def main():
     ap.add_argument("--patient-inhib", default="off", choices=PATIENT_INHIB_MODES,
                     help="step 0b: patient-pool feedback inhibition for the seed-7 worker of --smoke-0b (off = the current "
                          "step 0; on / lesion; all = both arms from the same cleanup rows)")
-    ap.add_argument("--smoke-0b", default=None, metavar="OUT", help="run one step-0 worker at dev seed 7, write the shard")
+    ap.add_argument("--smoke-0b", default=None, metavar="OUT", help="run one step-0 worker at a dev seed (7), write the shard")
+    ap.add_argument("--smoke-seed", type=int, default=7, help="dev seed for --smoke-0b (gate seeds refused)")
     ap.add_argument("--inhib-n", type=int, default=None)
     ap.add_argument("--inhib-w-e2i", type=float, default=None)
     ap.add_argument("--inhib-w-i2e", type=float, default=None)
@@ -1326,13 +1327,15 @@ def main():
     a = ap.parse_args()
     if a.smoke_0b:
         import subprocess
+        if a.smoke_seed in SG.GATE_SEEDS:
+            ap.error("step 0b is dev seeds only")
         env = dict(os.environ, SIM_BACKEND=os.environ.get("SIM_BACKEND", "numpy"), **{PATIENT_INHIB_ENV: a.patient_inhib})
         for k, v in (("N_INH", a.inhib_n), ("W_E2I", a.inhib_w_e2i), ("W_I2E", a.inhib_w_i2e), ("SWEEP", a.inhib_sweep),
                      ("FFX_W_I2E", a.inhib_ffx_w_i2e), ("FFX_SWEEP", a.inhib_ffx_sweep),
                      ("FF_GAIN", a.inhib_ff_gain), ("FF_W_I2E", a.inhib_ff_w_i2e), ("FF_SWEEP", a.inhib_ff_sweep)):
             if v is not None:
                 env["C2S0_INHIB_" + k] = str(v)
-        sys.exit(subprocess.call([sys.executable, "-u", "-m", "research.runners.stage2_exit_gate", "--shard", "--seed", "7",
+        sys.exit(subprocess.call([sys.executable, "-u", "-m", "research.runners.stage2_exit_gate", "--shard", "--seed", str(a.smoke_seed),
                                   "--group", GROUP, "--arm", TABLE_ARMS[GROUP], "--out", a.smoke_0b], env=env, cwd=_REPO))
     seeds = tuple(int(s) for s in a.seeds.split(",")) if a.seeds else SEEDS
     if any(s in SG.GATE_SEEDS for s in seeds):
