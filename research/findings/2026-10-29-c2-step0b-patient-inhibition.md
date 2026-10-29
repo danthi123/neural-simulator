@@ -142,3 +142,12 @@ too little inhibition leaves a second pool, too much silences the winner (g_inh 
 Caveats that still hold: this is a runner-built twin of the composer's score bridge, not the composer's `build_divnorm_score_bridge`; dev
 seeds only (no gate seeds, by design); one fixed FF gain and divisive gain. Next: wire the flag and the FF FS pool into the composer's
 own score bridge (research-only, default OFF), then re-run this battery on that bridge before any C2 M1 ruling.
+
+### Twin fidelity check (seed 7, from the committed `s7_all_v3.json`)
+
+The runner-built twin with its I->E synapses zeroed (arm `lesion`, default integration, no external-only flag) fires the same pool set as
+the composer's own score bridge (`_seq_score`) in 9/9 blocks. The probe scores equal the production scores in every role (max abs diff 0).
+So at seed 7 the twin's word-pool layer reproduces the production bridge, and the twin caveat narrows to two questions. First, the inhibitory
+pool and the flag are not yet on the composer's bridge. Second, no production consumer reads the patient pools yet; read (c) is a probe.
+Wiring the pool into `build_divnorm_score_bridge` therefore only matters together with the C2 M1 consumer (the next hop's cue). The two are
+one design step.
