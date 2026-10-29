@@ -9917,11 +9917,20 @@ class SimulationBridge:
                 _idn_gain = cp.float32(getattr(cfg, "input_divisive_gain", 1.0))
                 _idn_mask_f = self.cp_input_divisive_mask.astype(cp.float32)
                 _idn_n = cp.maximum(cp.sum(_idn_mask_f), cp.float32(1.0))
-                _idn_mean = cp.sum(_idn_mask_f * total_input_current_pA) / _idn_n
-                _idn_divisor = _idn_sigma + _idn_gain * _idn_mean
-                total_input_current_pA = (
-                    total_input_current_pA * (1.0 - _idn_mask_f)
-                    + _idn_mask_f * total_input_current_pA / _idn_divisor)
+                if getattr(cfg, "input_divisive_norm_external_only", False):
+                    # divide ONLY the external drive; synaptic current passes undivided (flag default False)
+                    _idn_ext = self.cp_external_input_current
+                    _idn_mean = cp.sum(_idn_mask_f * _idn_ext) / _idn_n
+                    _idn_divisor = _idn_sigma + _idn_gain * _idn_mean
+                    total_input_current_pA = (
+                        synaptic_current_I_syn_pA + _idn_ext * (1.0 - _idn_mask_f)
+                        + _idn_mask_f * _idn_ext / _idn_divisor)
+                else:
+                    _idn_mean = cp.sum(_idn_mask_f * total_input_current_pA) / _idn_n
+                    _idn_divisor = _idn_sigma + _idn_gain * _idn_mean
+                    total_input_current_pA = (
+                        total_input_current_pA * (1.0 - _idn_mask_f)
+                        + _idn_mask_f * total_input_current_pA / _idn_divisor)
 
             # ── SECOND, INDEPENDENT divisive normalization (Cascade-accumulator FIX A, 2026-06-20).
             # An exact clone of the divisive block above, on its OWN flagged set (the four sel_X

@@ -1261,6 +1261,11 @@ class CoreSimConfig:
     input_divisive_sigma: float = 1.0
     # Divisive strength on the mean term.
     input_divisive_gain: float = 1.0
+    # 2026-10-29 (c2 step 0d): when True the divisive stage divides ONLY the external input current (the divisor's mean is
+    # over the flagged set's EXTERNAL drive); synaptic currents (excitatory and inhibitory) are added undivided. Default
+    # False = the original rule (divide synaptic + external), byte-identical (tests/test_divnorm_external_only.py).
+    # Motivation: feedforward FS inhibition onto a flagged pool was divided by the same D as the drive (~1/3500).
+    input_divisive_norm_external_only: bool = False
 
     # ─── SECOND, INDEPENDENT divisive-norm pool (Cascade-accumulator FIX A, 2026-06-20) ───
     # A byte-identical clone of the divisive primitive above, keyed by BrainRegion.input_divisive_norm_2
