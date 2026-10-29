@@ -502,6 +502,10 @@ def onbridge_inhib_drive(score_sb, V, scores, input_gain, settle=20, ff_gain=0.0
     from sim.backend import to_host, from_host
     from research.runners._phaseC_S5_divnorm_derisk import _reset_score_bridge, region_idx
     _reset_score_bridge(score_sb)
+    for _k in [k for k in vars(score_sb) if k.startswith("cp_conductance_")] + ["cp_prev_firing_states"]:
+        _a = getattr(score_sb, _k, None)         # per-query reset of the synaptic state: `_reset_score_bridge` only resets
+        if _a is not None:                       # v/u/firing, so inhibitory conductance leaked from block to block
+            _a[:] = 0
     _pi = region_idx(score_sb, "pinh")             # the FS cells start at REST (vr), not at the spike-reset potential:
     score_sb.cp_membrane_potential_v[_pi] = score_sb.cp_izh_vr[_pi]      # c_reset > vt would fire them with no input
     s = np.maximum(np.asarray(scores, dtype=float), 0.0)
