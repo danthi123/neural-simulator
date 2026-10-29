@@ -51,10 +51,10 @@ normalization/argmax/per-query rescale), keeps E->`pinh` and `pinh` -> word syna
 bridge (`enable_bounded_conductance_integration=True`, `izh_membrane_substeps=4`, `"model_reset"`) for all arms
 (`stable_off`, `ff`, `ff_lesion`).
 
+<!--derived-->
 Result (leak fixed, `_v2`): `pinh` fires first in 9/9 blocks (step 0 vs the earliest pool at step 3-4); one-correct-pool
 blocks `ff` 0/9, `ff_lesion` 0/9, `stable_off` 0/9, FF-gain sweep (1e-4, 1e-3, 3e-3 first run; 1e-3 re-run) 0/9: the
-inhibition is engaged and not load-bearing on the flagged pools (fired-pool drop attributable to it: -0.026
-<!--derived-->, i.e. null). Max inhibitory conductance 601 nS at I->E 40, max |v| 80 mV (the spike apex).
+inhibition is engaged and not load-bearing on the flagged pools (fired-pool drop attributable to it: -0.026, i.e. null). Max inhibitory conductance 601 nS at I->E 40, max |v| 80 mV (the spike apex).
 
 ### Root cause (accepted in the c2 ruling): the divisive block divides the inhibition too
 
