@@ -1,0 +1,39 @@
+{
+ "run_id": "1793247438-667947",
+ "runner": "research/runners/stage2_exit_gate.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a65c10472a22c8ddf/research/runners/stage2_exit_gate.py",
+  "--shard",
+  "--seed",
+  "7",
+  "--group",
+  "infer",
+  "--arm",
+  "c2s0_infer",
+  "--out",
+  "research/findings/raw/_c2_step0b/s7_off.json"
+ ],
+ "git_sha": "a70b4c02f",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-29T00:17:18",
+ "env": {
+  "OMP_NUM_THREADS": "4",
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_RUN_ID": "1793247438-667902",
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 589.6,
+ "corpus_check_query": "C2 hops: divnorm relay fires 3-6 patient pools per block although the decoded patient's membrane slice leads ~2.5x; need exactly one patient pool firing per block (winner-take-all at the patient layer",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_c2_step0b/s7_off.json"
+}
