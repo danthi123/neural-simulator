@@ -18,7 +18,8 @@ Events already reported are suppressed for REPEAT_H hours (state file outside th
 
 Checks: W GPU idle with an empty queue; a GPU job exiting non-zero; a degraded brain build in the GPU log
 (missing untracked inputs); an oom-kill; S NEEDS CLAUDE lines; the S driver silent; the S pool idle or not claiming;
-a recent RULING whose requested [key] report no later driver line mentions after RULE_STALE_H hours.
+a recent RULING whose requested [key] report no later driver line mentions after RULE_STALE_H hours; a driver STOP
+written only in the WORKLOG that no RULING answers.
 """
 import argparse, json, os, re, subprocess, sys, time
 
@@ -45,6 +46,7 @@ POOL_STALL_MIN = 60     # S pool has queued lines but no claim this long
 BIG_STARVE_MIN = 90     # a >= 8 GB pool line queued this long while small lines are claimed = starvation
 RULE_STALE_H = 24.0     # a requested [key] report not mentioned by the driver this long after its RULING
 RULE_LOOKBACK_D = 4
+STOP_LOOKBACK_D = 2     # driver STOP lines this recent need a RULING naming their [key]
 
 
 def sh(cmd, timeout=60):
@@ -161,6 +163,7 @@ def s_checks(now, local=False):
         ev.append((f"s-needs-{abs(hash(line)) % 10**8}", f"S NEEDS CLAUDE: {line[:260]}"))
     # ruled-task staleness: a [key] the ruling asks the driver to post, mentioned by no later non-RULING line
     tail = "\n".join(sec.get("TAIL", []))
+    tail_l = tail.lower()
     block, blocks = None, []
     for line in sec.get("RULINGS", []):
         m = re.match(r"^- (20\d\d-\d\d-\d\d)(?: (\d\d:\d\d))? RULING (\S+)", line)
@@ -169,15 +172,31 @@ def s_checks(now, local=False):
             blocks.append(block)
         elif block is not None:
             block["text"] += "\n" + line
-    for b in blocks:
+    for n, b in enumerate(blocks):
+        later_l = "\n".join(x["text"] for x in blocks[n + 1:]).lower()  # a later RULING that already handled it
         age_h = (now - time.mktime(time.strptime(b["date"], "%Y-%m-%d"))) / 3600
         if age_h < RULE_STALE_H:
             continue
+        if _mentioned(tail_l, b["name"]):
+            continue  # the driver cites the ruling by name: the task has started
         for key in sorted(set(re.findall(r"[Pp]ost (?:NEEDS )?\[([a-z0-9][a-z0-9-]*)\]", b["text"]))):
-            if f"[{key}]" not in tail:
+            if not _mentioned(tail_l, key) and f"[{key}]" not in later_l:
                 ev.append((f"s-rule-{b['name']}-{key}",
                            f"S ruled task not started: RULING {b['name']} ({b['date']}) asks for [{key}]; no driver line mentions it"))
+    # a driver STOP written only in the WORKLOG (not on the NEEDS list) that no RULING has answered (2026-10-28:
+    # [bg-tonic-sync] STOP sat six hours unseen because the NEEDS list was empty)
+    rulings_l = "\n".join(sec.get("RULINGS", [])).lower()
+    cutoff = time.strftime("%Y-%m-%d", time.localtime(now - STOP_LOOKBACK_D * 86400))
+    for m in re.finditer(r"^- (20\d\d-\d\d-\d\d)(?: \d\d:\d\d)? \[([a-z0-9][a-z0-9-]*)\] STOP\b(.{0,160})", tail, re.M):
+        if m.group(1) >= cutoff and f"[{m.group(2)}]" not in rulings_l:
+            ev.append((f"s-stop-{m.group(2)}", f"S driver STOP [{m.group(2)}] ({m.group(1)}) has no RULING: {m.group(3).strip()}"))
     return ev
+
+
+def _mentioned(tail_l, key):
+    """A key counts as mentioned in its bracket form or as words (driver prose writes [bg-t3] as "BG T3")."""
+    key = key.lower()
+    return f"[{key}]" in tail_l or key in tail_l or key.replace("-", " ") in tail_l
 
 
 def run_once(st, now, record, host="auto"):
