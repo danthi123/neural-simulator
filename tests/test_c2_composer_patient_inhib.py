@@ -112,3 +112,35 @@ def test_flag_on_exactly_one_pool_lesion_and_off_fire_more(monkeypatch):
     assert inh_on > 0 and inh_les > 0                                     # (c) the interneurons fire in both
     assert 0 <= tr_on["first_spike_step_pinh"] <= min(tr_on["first_spike_step"].values())   # FS fires first
     assert tr_on["max_g_i"] > 10.0 and tr_les["max_g_i"] < 0.01 * tr_on["max_g_i"]             # the inhibition only acts when the synapses are on
+
+
+def test_step0_composer_read_mode(monkeypatch):
+    """`C2S0_PATIENT_INHIB=composer`: read_c records the ffx-shaped per-block fields for `composer_ffx` and the composer lesion."""
+    from research.runners import c2_hops_step0 as S0
+    from research.runners import _phaseB_onebrain_sequencer_derisk as PB, _phaseC_task1_cleanup_probe as PT
+    monkeypatch.setenv(S0.PATIENT_INHIB_ENV, "composer")
+    monkeypatch.delenv(CI.COMPOSER_PATIENT_INHIB_ENV, raising=False)
+    buf = _buf()
+    buf.kb = [({}, 0)] * 2
+    buf.words = ["w%d" % i for i in range(V)]
+    buf.main_roles = ["agent", "action", "patient"]
+    buf.c_base = 0
+    buf._silent_reserve = lambda j: False
+    z = np.zeros(V)
+    rows = np.zeros(3 * V)
+    rows[2 * V:] = PATIENT
+    buf.b = types.SimpleNamespace(cp_membrane_potential_v=rows)
+    monkeypatch.setattr(PB, "block_cleanup_scores", lambda b, k: (z, z))
+    monkeypatch.setattr(PT, "block_cleanup_scores_full", lambda b, k: [z, z, PATIENT])
+    out = S0.read_c(buf, [{"patient": "w0"}, {"patient": "w0"}])
+    assert "error" in out                                        # flag unset: composer mode refuses to run silently
+    monkeypatch.setenv(CI.COMPOSER_PATIENT_INHIB_ENV, "1")
+    out = S0.read_c(buf, [{"patient": "w0"}, {"patient": "w0"}])
+    assert "error" not in out, out.get("traceback")
+    arms = out["step0b"]["arms"]
+    assert set(arms) == set(S0.COMPOSER_ARMS)
+    assert arms["composer_ffx"]["one_correct"] == 2 and arms["composer_ffx_lesion"]["multi"] == 2
+    assert out["step0b"]["composer_ffx_lesion_equals_composer_ffx"] is False and out["step0b"]["stops"] == []
+    r = out["blocks"][0]["inhib"]["composer_ffx"]
+    assert {"fired_pools", "n_fired", "fires_decoded_patient", "inh_spikes", "max_g_i", "first_spike_step_pools",
+            "first_spike_step_pinh"} <= set(r) and r["inh_spikes"] > 0
