@@ -11,6 +11,7 @@ WHAT IT BLOCKS, at a command position only (never inside quotes, heredoc bodies 
 to tools/pool_queue.sh or tools/gpu_queue.sh, a commit message, or an echo is never judged):
   * pytest on tests/test_webapp_server.py (the brain_chat server tests build the full brain per test);
   * python -m research.runners.onebrain_regression_battery / research.runners.load_bearing_fraction.
+  * a local model server started directly (Strata serve/server.py --engine, the strata CLI, llama-server),
 unless the same command line runs it through tools/memcap.sh (or systemd-run with MemoryMax). --collect-only,
 --selftest, --score, --dry-run and --help do not build a brain and pass.
 
@@ -28,6 +29,12 @@ HEAVY = [
     (re.compile(r"(?:^|\s)(?:\S*/)?python[\d.]*\s+(?:-\S+\s+)*-m\s+research\.runners\."
                 r"(?:onebrain_regression_battery|load_bearing_fraction)\b"),
      "a full-brain battery runner"),
+    # 2026-10-29 15:01: a local LLM server (~20+ GB of experts in RAM) started from the Claude session's own cgroup
+    # tripped systemd-oomd and killed the Claude app. Model servers get the same cap rule as full-brain builds.
+    (re.compile(r"(?:^|\s)(?:\S*/)?python[\d.]*\s+(?:-\S+\s+)*\S*serve/server\.py\b[^\n;&|]*--engine\b"),
+     "a local model server (Strata serve/server.py)"),
+    (re.compile(r"(?:^|\s)(?:\S*/)?strata\s+(?:start|serve|run)\b"), "a local model server (strata CLI)"),
+    (re.compile(r"(?:^|\s)(?:\S*/)?llama-server\b"), "a local model server (llama-server)"),
 ]
 CAPPED = re.compile(r"memcap\.sh|systemd-run\b[^\n;&|]*MemoryMax")
 HARMLESS = re.compile(r"--collect-only|--selftest|--score|--dry-run|(?:^|\s)(?:-h|--help)(?:\s|$)")

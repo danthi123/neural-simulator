@@ -23,6 +23,10 @@ BLOCK = [
     ".venv/bin/python -u -m research.runners.onebrain_regression_battery --worker --env {} --turns confirm",
     "SIM_BACKEND=numpy python3 -m research.runners.load_bearing_fraction --seeds 42",
     "bash tools/mem_ok.sh 12 3 && .venv/bin/python -m pytest tests/test_webapp_server.py",
+    # 2026-10-29 15:01: the Strata launch that killed the Claude app, and the other model-server shapes
+    "cd $T && $T/python/bin/python3.12 $T/serve/server.py --engine strata --config strata-q2_0.json --port 8100",
+    "bin/strata start --model Q2_0",
+    "/opt/llama.cpp/build/bin/llama-server -m model.gguf -c 131072 --port 8080",
 ]
 ALLOW = [
     "bash tools/mem_ok.sh 12 3 && bash tools/memcap.sh 12 -- .venv/bin/python -m pytest -q tests/test_webapp_server.py",
@@ -39,6 +43,11 @@ ALLOW = [
     "grep -n onebrain_regression_battery research/runners/*.py",
     "echo 'python -m research.runners.load_bearing_fraction'",
     "cat research/runners/load_bearing_fraction.py | head",
+    "bash tools/memcap.sh 24 -- $T/python/bin/python3.12 $T/serve/server.py --engine strata --config c.json --port 8100",
+    "bash tools/memcap.sh 30 -- llama-server -m model.gguf",
+    "pgrep -f 'serve/server.py --engine strata'",
+    "bin/strata install -- --family qwen --model Q2_0 --yes --no-start",
+    "llama-server --help",
 ]
 
 
