@@ -1677,6 +1677,20 @@ class OneBrainComposer:
             self._seq_drives = drives
             self._seq_dirty = False
 
+    def patient_inhib_bridge(self, w_i2e=None):
+        """OPT-IN, research-only (owner ruling c2-s0d-score-1029): the composer's OWN patient-read inhibition bridge, or None
+        when `BRAIN_C2_COMPOSER_PATIENT_INHIB` is unset (default OFF; nothing is built and nothing else changes). Same
+        word-pool layout / seed / sigma / gain / per-neuron parameters as `_seq_score`, plus the external-only divisive
+        stage, stable integration and the shared FS `pinh` population with FF drive (step-0d validated knobs). A SEPARATE
+        bridge: the sequencer, `make_block_drives` and `_seq_score` are untouched. `w_i2e=0` gives the lesion bridge.
+        Needs the sequencer built (`_ensure_sequencer`) so `_seq_score` exists."""
+        from research.runners._c2_patient_inhib import composer_patient_inhib_enabled, composer_patient_inhib_bridge
+        if not composer_patient_inhib_enabled():
+            return None
+        if self._seq_score is None:
+            self._ensure_sequencer(len(self.kb))
+        return composer_patient_inhib_bridge(self, w_i2e)
+
     def _seq_block(self, agent, action):
         """The SELECTED block index for cue (agent, action) -- the spiking K-way sequencer decision (or None = abstain),
         replacing the host first-match loop. integrated_loop OFF -> the host read (byte-identical, the test oracle).

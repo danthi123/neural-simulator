@@ -371,7 +371,7 @@ def read_b(buf, rows):
 # is untouched unless `C2S0_PATIENT_INHIB` is set. NOT a cross-channel divnorm pool (the 2026-09-03 NO-GO): E->I->E feedback
 # restricted to the V word pools of this one bridge. No host argmax / threshold / top-k: only spiking synapses compete.
 PATIENT_INHIB_ENV = "C2S0_PATIENT_INHIB"
-PATIENT_INHIB_MODES = ("off", "on", "lesion", "all", "ff", "ff_lesion", "ffx", "ffx_lesion")
+PATIENT_INHIB_MODES = ("off", "on", "lesion", "all", "ff", "ff_lesion", "ffx", "ffx_lesion", "composer")
 # step 0d: `ffx` = arms ffx_off + ffx (+ I->E sweep arms ffx@g) + ffx_lesion on a score bridge built with
 # cfg.input_divisive_norm_external_only=True (the divisive stage divides only the external drive; sim/ flag, default OFF);
 # `ffx_lesion` = the lesion arm alone. The WORD pools are read directly.
@@ -385,6 +385,12 @@ STEP0B_STOP_LINES = (
     "S0B_on_not_one_correct_pool: STOP if any block in `on` fires more than one pool, fires a pool that is not the decoded "
     "patient, or fires zero pools (over-suppression).",
 )
+
+
+# `composer` (owner ruling c2-s0d-score-1029): arms `composer_ffx` + `composer_ffx_lesion`, read on the composer's OWN flag-on
+# bridge (`OneBrainComposer.patient_inhib_bridge`, env BRAIN_C2_COMPOSER_PATIENT_INHIB, research/runners/_c2_patient_inhib.py)
+# instead of the runner-built twin. Same per-block fields as `ffx`; the lesion arm is the composer bridge with w_i2e=0.
+COMPOSER_ARMS = ("composer_ffx", "composer_ffx_lesion")
 
 
 def patient_inhib_env():
@@ -418,132 +424,7 @@ def patient_inhib_knobs():
     return k
 
 
-def build_inhib_score_bridge(seed, V, sigma, gain, n_word=20, n_inh=30, w_e2i=60.0, w_i2e=320.0,
-                             izh_type="IZH2007_FS_CORTICAL_INTERNEURON", ref_sb=None, stable=False, w_relay=None, external_only=False):
-    """`build_divnorm_score_bridge(seed, V, n_word, True, sigma, gain)` plus ONE shared FS inhibitory region `pinh`:
-    w{w} -> pinh (excitatory, w_e2i) and pinh -> w{w} (inhibitory by the presynaptic region's exc_fraction=0, w_i2e).
-    w_i2e=0 builds the same population and the same synapses with zero weight (the lesion arm)."""
-    from sim import CoreSimConfig, SimulationBridge, VisualizationConfig, RuntimeState, GPUConfig
-    from sim.enums import NeuronModel
-    from sim.regions import BrainRegion, RegionPathway
-    cfg = CoreSimConfig()
-    cfg.num_neurons = 0
-    cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
-    cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
-    cfg.dt_ms = 1.0
-    cfg.seed = int(seed)
-    cfg.enable_brain_region_framework = True
-    cfg.ou_std_current_pA = 0.0
-    for flag in ("enable_short_term_plasticity", "enable_hebbian_learning", "enable_homeostasis",
-                 "enable_structural_plasticity", "enable_reward_modulation", "enable_stdp"):
-        setattr(cfg, flag, False)
-    cfg.enable_input_divisive_norm = True
-    cfg.input_divisive_sigma = float(sigma)
-    cfg.input_divisive_gain = float(gain)
-    if external_only:   # sim/ flag (default OFF): divisive stage divides only the external drive, synaptic current undivided
-        cfg.input_divisive_norm_external_only = True
-    if stable:      # the SIM_STABLE_INTEGRATION set (SimulationBridge._apply_stable_integration), set explicitly
-        cfg.enable_bounded_conductance_integration = True
-        cfg.izh_membrane_substeps = 4
-        cfg.izh_substep_refractory_rule = "model_reset"
-    regions = [BrainRegion(name="w%d" % w, n_neurons=n_word, exc_fraction=1.0, internal_density=0.0,
-                           input_divisive_norm=True) for w in range(V)]
-    regions.append(BrainRegion(name="pinh", n_neurons=int(n_inh), exc_fraction=0.0, internal_density=0.0,
-                               izh_neuron_type=izh_type))
-    if w_relay:     # step 0c variant: an UNFLAGGED relay layer r{w} (the divnorm block divides every synaptic current onto the
-        # flagged word pools by the pool-mean divisor, so inhibition onto them is ~1/D; the relay is read instead)
-        regions += [BrainRegion(name="r%d" % w, n_neurons=n_word, exc_fraction=1.0, internal_density=0.0) for w in range(V)]
-    cfg.brain_regions = regions
-    P = []
-    if w_relay:
-        for w in range(V):
-            P.append(RegionPathway(from_region="w%d" % w, to_region="r%d" % w, density=1.0, weight_mean=float(w_relay),
-                                   weight_jitter=0.0, plastic=False))
-            P.append(RegionPathway(from_region="pinh", to_region="r%d" % w, density=1.0, weight_mean=float(w_i2e),
-                                   weight_jitter=0.0, plastic=False))
-    for w in range(V):
-        P.append(RegionPathway(from_region="w%d" % w, to_region="pinh", density=1.0, weight_mean=float(w_e2i),
-                               weight_jitter=0.0, plastic=False))
-        P.append(RegionPathway(from_region="pinh", to_region="w%d" % w, density=1.0, weight_mean=float(w_i2e),
-                               weight_jitter=0.0, plastic=False))
-    cfg.region_pathways = P
-    sb = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(), runtime_state=RuntimeState(),
-                          gpu_config=GPUConfig())
-    sb.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
-    sb._initialize_simulation_data(called_from_playback_init=False)
-    # The global heterogeneity overwrites a region's preset with RS-centred jitter (finding 2026-10-20 RS-centred
-    # heterogeneity): re-apply the FS preset (sim/enums.py IZH2007_FS_CORTICAL_INTERNEURON, +-10% jitter, seeded) to the
-    # `pinh` slice ONLY, and copy the word pools' per-neuron parameters from the composer's own score bridge (`ref_sb`), so the pools are the composer's.
-    import numpy as np
-    from sim.backend import to_host, from_host
-    from research.runners._phaseC_S5_divnorm_derisk import region_idx
-    fs = dict(cp_izh_C=20.0, cp_izh_k=1.0, cp_izh_vr=-55.0, cp_izh_vt=-40.0, cp_izh_vpeak=25.0, cp_izh_a=0.2,
-              cp_izh_b=-2.0, cp_izh_c_reset=-45.0, cp_izh_d_increment=25.0)
-    rng = np.random.RandomState(int(seed) + 7919)
-    ii = region_idx(sb, "pinh")
-    for attr, val in fs.items():
-        arr = np.array(to_host(getattr(sb, attr)), dtype=np.float32)
-        arr[ii] = (val * (1.0 + 0.1 * rng.uniform(-1.0, 1.0, size=len(ii)))).astype(np.float32) if val > 0 else \
-            (val * (1.0 + 0.1 * rng.uniform(-1.0, 1.0, size=len(ii)))).astype(np.float32)
-        if ref_sb is not None:                     # word pools: the composer's own per-neuron parameters, exactly
-            nw = int(V) * int(n_word)
-            arr[:nw] = np.array(to_host(getattr(ref_sb, attr)), dtype=np.float32)[:nw]
-        setattr(sb, attr, from_host(arr))
-    return sb
-
-
-def onbridge_inhib_drive(score_sb, V, scores, input_gain, settle=20, ff_gain=0.0, trace=None, read="w"):
-    """`onbridge_divnorm_drive` on the inhibition bridge (same drive, same settle, same read), plus the inhibitory
-    population's spike count (ENGAGEMENT). Returns (acc_fired[V], inh_spikes). `ff_gain` > 0 (step 0c): the SAME external
-    drive that goes into the word pools also goes into `pinh`, as ff_gain x the summed patient-slice drive (a fixed
-    per-bridge gain; no normalization, no argmax). `trace` (dict) is filled with the first-spike step of every fired pool
-    and of pinh, and the max |v| and max inhibitory conductance seen (physical validity)."""
-    import numpy as np
-    from sim.backend import to_host, from_host
-    from research.runners._phaseC_S5_divnorm_derisk import _reset_score_bridge, region_idx
-    _reset_score_bridge(score_sb)
-    for _k in [k for k in vars(score_sb) if k.startswith("cp_conductance_")] + ["cp_prev_firing_states"]:
-        _a = getattr(score_sb, _k, None)         # per-query reset of the synaptic state: `_reset_score_bridge` only resets
-        if _a is not None:                       # v/u/firing, so inhibitory conductance leaked from block to block
-            _a[:] = 0
-    _pi = region_idx(score_sb, "pinh")             # the FS cells start at REST (vr), not at the spike-reset potential:
-    score_sb.cp_membrane_potential_v[_pi] = score_sb.cp_izh_vr[_pi]      # c_reset > vt would fire them with no input
-    s = np.maximum(np.asarray(scores, dtype=float), 0.0)
-    cur = np.zeros(score_sb.core_config.num_neurons, dtype=np.float64)
-    for w in range(V):
-        drv = float(input_gain * s[w])
-        if drv > 0:
-            cur[region_idx(score_sb, "w%d" % w)] = drv
-    acc = np.zeros(V)
-    inh_idx = region_idx(score_sb, "pinh")
-    inh_spikes = 0.0
-    if ff_gain:
-        cur[inh_idx] = float(ff_gain) * float(sum(input_gain * s[w] for w in range(V)))
-    first = np.full(V, -1, dtype=int)
-    first_inh, max_v, max_gi = -1, 0.0, 0.0
-    cur = from_host(cur)
-    for t in range(settle):
-        score_sb.cp_external_input_current[:] = cur
-        score_sb._run_one_simulation_step()
-        fir = np.asarray(to_host(score_sb.cp_firing_states)).astype(float)
-        for w in range(V):
-            f = fir[region_idx(score_sb, "%s%d" % (read, w))].mean()
-            acc[w] += f
-            if f > 0 and first[w] < 0:
-                first[w] = t
-        ni = float(fir[inh_idx].sum())
-        inh_spikes += ni
-        if ni > 0 and first_inh < 0:
-            first_inh = t
-        if trace is not None:
-            max_v = max(max_v, float(np.abs(np.asarray(to_host(score_sb.cp_membrane_potential_v))).max()))
-            max_gi = max(max_gi, float(np.asarray(to_host(score_sb.cp_conductance_g_i)).max()))
-    score_sb.cp_external_input_current[:] = 0.0
-    if trace is not None:
-        trace.update(first_spike_step={int(w): int(first[w]) for w in range(V) if first[w] >= 0},
-                     first_spike_step_pinh=first_inh, max_abs_v=max_v, max_g_i=max_gi,
-                     ff_current_pA=float(ff_gain) * float(sum(input_gain * s[w] for w in range(V))) if ff_gain else 0.0)
-    return acc, inh_spikes
+from research.runners._c2_patient_inhib import build_inhib_score_bridge, onbridge_inhib_drive  # noqa: E402,F401  (moved verbatim; shared with the composer)
 
 
 def _inhib_arm_specs(mode, knobs):
@@ -581,6 +462,13 @@ def _inhib_arm_specs(mode, knobs):
 def _inhib_bridges(buf, mode, knobs):
     """{arm: (bridge, ff_gain)} for the requested mode."""
     out = {}
+    if mode == "composer":
+        from research.runners import _c2_patient_inhib as CI
+        if not CI.composer_patient_inhib_enabled():
+            raise ValueError("%s=composer needs %s=1" % (PATIENT_INHIB_ENV, CI.COMPOSER_PATIENT_INHIB_ENV))
+        for arm, w in (("composer_ffx", None), ("composer_ffx_lesion", 0.0)):
+            out[arm] = (CI.composer_patient_inhib_bridge(buf, w), CI.COMPOSER_KNOBS["ff_gain"], "w")
+        return out
     for arm, sp in _inhib_arm_specs(mode, knobs).items():
         sb = build_inhib_score_bridge(buf.seed, int(buf.V), buf.sequencer_sigma, buf.sequencer_gain,
                                       n_inh=knobs["n_inh"], w_e2i=knobs["w_e2i"], w_i2e=sp["w_i2e"],
@@ -602,8 +490,8 @@ def score_step0b(blocks):
                             "zero": sum(1 for r in rows if r["n_fired"] == 0),
                             "wrong": sum(1 for r in rows if r["n_fired"] == 1 and not r["fires_decoded_patient"]),
                             "inh_spikes_total": float(sum(r["inh_spikes"] for r in rows))}
-    for on, les in (("on", "lesion"), ("ff", "ff_lesion"), ("ffr", "ff" + "r_lesion"), ("ffx", "ffx_lesion")):
-        tag = {"on": "S0B", "ff": "S0C", "ffr": "S0C_relay", "ffx": "S0D"}[on]
+    for on, les in (("on", "lesion"), ("ff", "ff_lesion"), ("ffr", "ff" + "r_lesion"), ("ffx", "ffx_lesion"), ("composer_ffx", "composer_ffx_lesion")):
+        tag = {"on": "S0B", "ff": "S0C", "ffr": "S0C_relay", "ffx": "S0D", "composer_ffx": "S0D_composer"}[on]
         if on in res["arms"]:
             a = res["arms"][on]
             if a["multi"] or a["wrong"] or a["zero"]:
@@ -618,7 +506,7 @@ def score_step0b(blocks):
                                                                            mean_n(les), mean_n(on))
             if same:
                 res["stops"].append(tag + "_lesion_equals_on")
-    for arm in [a for a in res["arms"] if a.startswith("ffx")]:     # 0d: physiological conductance + FS-first + drive margin
+    for arm in [a for a in res["arms"] if a.startswith("ffx") or a.startswith("composer_ffx")]:     # 0d: physiological conductance + FS-first + drive margin
         rr = [b["inhib"][arm] for b in blocks if arm in (b.get("inhib") or {})]
         res["arms"][arm].update(max_abs_v=max(r["max_abs_v"] for r in rr), max_g_i=max(r["max_g_i"] for r in rr),
                                 g_i_unphysiological_over_50nS=bool(max(r["max_g_i"] for r in rr) > 50.0),
@@ -1330,6 +1218,8 @@ def main():
         if a.smoke_seed in SG.GATE_SEEDS:
             ap.error("step 0b is dev seeds only")
         env = dict(os.environ, SIM_BACKEND=os.environ.get("SIM_BACKEND", "numpy"), **{PATIENT_INHIB_ENV: a.patient_inhib})
+        if a.patient_inhib == "composer":
+            env["BRAIN_C2_COMPOSER_PATIENT_INHIB"] = "1"
         for k, v in (("N_INH", a.inhib_n), ("W_E2I", a.inhib_w_e2i), ("W_I2E", a.inhib_w_i2e), ("SWEEP", a.inhib_sweep),
                      ("FFX_W_I2E", a.inhib_ffx_w_i2e), ("FFX_SWEEP", a.inhib_ffx_sweep),
                      ("FF_GAIN", a.inhib_ff_gain), ("FF_W_I2E", a.inhib_ff_w_i2e), ("FF_SWEEP", a.inhib_ff_sweep)):
