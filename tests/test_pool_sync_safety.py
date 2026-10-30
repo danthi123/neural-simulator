@@ -131,3 +131,19 @@ def test_extension_allowlist_blocks_py_files_but_allows_result_types():
                 assert os.path.exists(os.path.join(dst, name)), "%s should have been pulled" % name
             else:
                 assert not os.path.exists(os.path.join(dst, name)), "%s must be blocked" % name
+
+
+def test_inprogress_checkpoints_are_not_pulled():
+    """RULING part-loop-1029: a mid-job `<out>.part.json` (+ sidecar) must never reach the stage; the finished
+    output beside it still must."""
+    safety = _real_safety_args()
+    with tempfile.TemporaryDirectory() as src, tempfile.TemporaryDirectory() as dst:
+        d = os.path.join(src, "s1")
+        os.makedirs(d)
+        for name in ("inner__intact_a.json", "inner__intact_a.json.prov.json",
+                     "inner__intact_a.json.part.json", "inner__intact_a.json.part.json.prov.json"):
+            open(os.path.join(d, name), "w").write("{}\n")
+        res = _run_rsync(safety, src, dst)
+        assert res.returncode == 0, res.stdout + res.stderr
+        got = sorted(os.listdir(os.path.join(dst, "s1")))
+        assert got == ["inner__intact_a.json", "inner__intact_a.json.prov.json"], got
