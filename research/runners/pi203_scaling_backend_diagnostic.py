@@ -64,6 +64,23 @@ def _probe(backend: str, seed: int, scaling_on: bool) -> dict:
     ema_before = bridge.cp_neuron_activity_ema
     coo = bridge._get_cached_coo()
 
+    # Decisive instrument, not inference: which lines of the homeostasis block ACTUALLY execute on this
+    # backend. sys.settrace over 20 steps of a 6-neuron bridge is cheap.
+    line_hits = {}
+    import sys as _sys
+    import sim.bridge as _bmod
+    _bridge_file = os.path.abspath(_bmod.__file__)
+    _gated = {"homeostasis_gated": None, "plasticity_gated": None}
+
+    def _trace(frame, event, arg):
+        if event == "line" and frame.f_code.co_filename == _bridge_file:
+            if 10903 <= frame.f_lineno <= 10913:
+                _gated["homeostasis_gated_seen"] = frame.f_lineno
+            if 12320 <= frame.f_lineno <= 12440:
+                line_hits[frame.f_lineno] = line_hits.get(frame.f_lineno, 0) + 1
+        return _trace
+
+    _sys.settrace(_trace)
     error = None
     fired_steps = 0
     for _ in range(STEPS_PER_READ):
@@ -76,6 +93,7 @@ def _probe(backend: str, seed: int, scaling_on: bool) -> dict:
             break
         bridge.runtime_state.current_time_step += 1
         fired_steps += int(_host(bridge.cp_prev_firing_states).sum())
+    _sys.settrace(None)
 
     after = _host(bridge.cp_connections.data).copy()
     coo_after = bridge._get_cached_coo()
@@ -91,6 +109,12 @@ def _probe(backend: str, seed: int, scaling_on: bool) -> dict:
         "coo_cache_at_build": None if coo is None else int(coo.nnz),
         "coo_cache_after_run": None if coo_after is None else int(coo_after.nnz),
         "ema_before_is_none": ema_before is None,
+        "homeostasis_block_lines_hit": len(line_hits),
+        "homeostasis_block_line_count": sum(line_hits.values()),
+        "scaling_guard_line_hit": 12384 in line_hits,
+        "ema_update_line_hit": 12391 in line_hits or 12392 in line_hits,
+        "scaling_write_line_hit": any(l in line_hits for l in (12418, 12419, 12420, 12421, 12422)),
+        "homeostasis_line_hits": dict(sorted(line_hits.items())),
         "ema_before_max": None if ema_before is None else float(np.asarray(_host(ema_before)).max()),
         "ema_after_max": None if bridge.cp_neuron_activity_ema is None
                         else float(np.asarray(_host(bridge.cp_neuron_activity_ema)).max()),
