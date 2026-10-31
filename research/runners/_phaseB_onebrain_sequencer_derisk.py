@@ -61,10 +61,12 @@ from research.runners.unified_brain_bridge import couple_gate_to_indices
 # This is the validated `_read_block` op, instrumented to also return the raw per-role-per-word cleanup scores
 # (the scores `_read_block` argmaxes over) so the sequencer can drive its decoded word-lines from them.
 # ----------------------------------------------------------------------------------------------------------------
-def block_cleanup_scores(c: OneBrainComposer, block_idx: int):
+def block_cleanup_scores(c: OneBrainComposer, block_idx: int, with_patient: bool = False):
     """Run the composer's validated reconstruct+unbind+cleanup for one block; return (agent_scores, action_scores)
     -- the V-length cleanup membrane read-outs for the agent + action cue roles (the SAME arrays `_read_block`
-    argmaxes). These ARE the op's spiking result; the sequencer drives its decoded word-lines from them."""
+    argmaxes). These ARE the op's spiking result; the sequencer drives its decoded word-lines from them.
+    `with_patient=True` (packet c2-spiking-hops 2.3, default False = byte-identical) also returns the PATIENT row of the
+    same cleanup membrane read (clipped at 0; no extra substrate run): (agent_scores, action_scores, patient_scores)."""
     comp, b, D, Pd, V = c.comp, c.b, c.D, c.period, c.V
     b.cp_membrane_potential_v[:] = 0.0
     b.cp_recovery_variable_u[:] = 0.0
@@ -86,6 +88,9 @@ def block_cleanup_scores(c: OneBrainComposer, block_idx: int):
     mem = np.asarray(to_host(b.cp_membrane_potential_v)).astype(float)
     agent_scores = np.maximum(mem[c.c_base + 0 * V:c.c_base + 1 * V], 0.0)
     action_scores = np.maximum(mem[c.c_base + 1 * V:c.c_base + 2 * V], 0.0)
+    if with_patient:
+        iP = c.main_roles.index("patient")
+        return agent_scores, action_scores, np.maximum(mem[c.c_base + iP * V:c.c_base + (iP + 1) * V], 0.0)
     return agent_scores, action_scores
 
 

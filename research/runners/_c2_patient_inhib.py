@@ -10,7 +10,9 @@ composer's score bridge, sequencer and drives are byte-identical. Set: the compo
 (`OneBrainComposer.patient_inhib_bridge()`, lazily built from the composer's own word-pool bridge: same layout, seed, sigma,
 gain, per-neuron word-pool parameters copied from `_seq_score`) that has the external-only divisive stage
 (`input_divisive_norm_external_only`), stable integration, and the shared FS `pinh` population with FF drive. The
-sequencer (`_ensure_sequencer`, `make_block_drives`, `_seq_score`) is NOT touched. No host argmax / top-k / threshold:
+sequencer's agent / action drives (`make_block_drives`, `_seq_drives`) and `_seq_score` are NOT touched; since
+2026-10-31 `_ensure_sequencer` (flag ON only) also relays each block's PATIENT slice through this bridge into
+`_seq_patient_drives` (`composer_patient_relay`, at the end of this file). No host argmax / top-k / threshold:
 which pool fires is decided only by the spiking synapses (E->pinh, pinh->E, the FF drive into pinh).
 """
 from __future__ import annotations
@@ -180,3 +182,42 @@ def composer_patient_inhib_read(buf, scores, w_i2e=None, trace=None):
     k = COMPOSER_KNOBS
     return onbridge_inhib_drive(composer_patient_inhib_bridge(buf, w_i2e), int(buf.V), scores, buf.sequencer_input_gain,
                                 settle=k["settle"], ff_gain=k["ff_gain"], trace=trace)
+
+
+# PRODUCTION patient relay (2026-10-31; the flag must reach production, not only a side bridge). With the flag ON,
+# `OneBrainComposer._ensure_sequencer` relays each block's PATIENT cleanup slice through the composer's patient-inhibition
+# bridge and keeps the decoded-line patient drive per block in `_seq_patient_drives` (the agent / action drives
+# `_seq_drives` are untouched). With the flag OFF nothing here runs inside production. The step-0 read (c) reads the
+# production drives when the flag is ON and calls `composer_patient_relay` (the packet 2.3 relay) when it is OFF, so the
+# instrument follows the flag.
+COMPOSER_PATIENT_INHIB_W_I2E_ENV = "BRAIN_C2_COMPOSER_PATIENT_INHIB_W_I2E"
+PATIENT_HI_PA = 1500.0          # the same fixed decoded-line drive `onbridge_divnorm_drive` emits for a fired pool
+
+
+def composer_patient_inhib_w_i2e():
+    """The production relay's I->E weight override (`BRAIN_C2_COMPOSER_PATIENT_INHIB_W_I2E`; 0 = the LESION arm: same
+    population, same synapses, zero I->E). Unset = None = COMPOSER_KNOBS['w_i2e']."""
+    v = os.environ.get(COMPOSER_PATIENT_INHIB_W_I2E_ENV)
+    return None if v in (None, "") else float(v)
+
+
+def composer_patient_relay(buf, pslice, trace=None):
+    """The relay of ONE block's clipped patient cleanup slice into its decoded-line patient drive: (drive[V], acc_fired[V],
+    info). Which pools are lit is decided only by which word pools SPIKE on the bridge (no host argmax / top-k / threshold
+    on the scores); the host maps a fired pool to the fixed PATIENT_HI_PA line drive, as the agent / action relay does.
+    Flag ON: the composer's inhibition bridge (`w_i2e` from `composer_patient_inhib_w_i2e`). Flag OFF: `onbridge_divnorm_drive`
+    on the composer's own score bridge `_seq_score` at `sequencer_input_gain` (the packet 2.3 relay, byte-identical to the
+    step-0 read (c) it replaces)."""
+    import numpy as np
+    V = int(buf.V)
+    if composer_patient_inhib_enabled():
+        w = composer_patient_inhib_w_i2e()
+        acc, inh = composer_patient_inhib_read(buf, pslice, w_i2e=w, trace=trace)
+        info = {"relay": "composer_patient_inhib", "w_i2e": float(COMPOSER_KNOBS["w_i2e"] if w is None else w),
+                "inh_spikes": float(inh)}
+    else:
+        from research.runners._phaseC_S5_divnorm_derisk import onbridge_divnorm_drive
+        _d, acc = onbridge_divnorm_drive(buf._seq_score, V, pslice, buf.sequencer_input_gain)
+        info = {"relay": "onbridge_divnorm"}
+    acc = np.asarray(acc, dtype=float)
+    return np.where(acc > 0, PATIENT_HI_PA, 0.0), acc, info

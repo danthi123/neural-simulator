@@ -20,6 +20,10 @@ THE READS (made once per full step-0 worker, after the teach block, before any `
       `input_gain`: the patient pools that fire per block, V'_P (their union in block order) beside the decoded stored
       patients; and the full probe `block_cleanup_scores_full` as a cross-check under the P10 treatment (clip at 0,
       every reserve slot -- `_silent_reserve(j)` True -- zeroed, compared on the non-reserve slots).
+      With BRAIN_C2_COMPOSER_PATIENT_INHIB on (2026-10-31), production itself relays every block's patient slice (through
+      the composer's patient-inhibition bridge, `_ensure_sequencer` -> `_seq_patient_drives`), and the fired pools of (c)
+      are the pools PRODUCTION lit, read from those drives (plus `relay_recheck_same_pools`: this read's own slice relayed
+      through the same function lights the same pools). Flag off: the divnorm relay above, unchanged.
   (f) every premise-map cue of the table (2.9) on the bound store (decoded rows) and the LTM (`ltm.query_patient`,
       `all_candidate_patients` on the routed shard), plus the record-only `.kb` audit counts per tier.
   The worker itself records (d) `chat._last_gnw_delib` per probe turn, (e) the D4 recorder and the teach replies'
@@ -527,8 +531,8 @@ def read_c(buf, rows):
     import numpy as np
     from sim.backend import to_host
     from research.runners.one_brain_composer import _seq_imports
-    from research.runners._phaseC_S5_divnorm_derisk import onbridge_divnorm_drive
     from research.runners._phaseC_task1_cleanup_probe import block_cleanup_scores_full
+    from research.runners import _c2_patient_inhib as CI
     fns = _seq_imports()
     out = {}
     try:
@@ -543,6 +547,13 @@ def read_c(buf, rows):
         inhib_sbs = _inhib_bridges(buf, inhib_mode, inhib_knobs) if inhib_mode != "off" else {}
         if inhib_sbs:
             out["patient_inhib"] = dict(mode=inhib_mode, knobs=inhib_knobs)
+        prod_pdrives = None
+        if CI.composer_patient_inhib_enabled():                # BRAIN_C2_COMPOSER_PATIENT_INHIB: production relays patients
+            buf._ensure_sequencer(K)                            # no-op when read (b) built it at this K (guarded state)
+            prod_pdrives = buf._seq_patient_drives
+            out["patient_relay"] = dict(source="production _seq_patient_drives (BRAIN_C2_COMPOSER_PATIENT_INHIB on)",
+                                        w_i2e=float(CI.COMPOSER_KNOBS["w_i2e"] if CI.composer_patient_inhib_w_i2e() is None
+                                                    else CI.composer_patient_inhib_w_i2e()))
         blocks = []
         for b in range(K):
             blk = {"block": b, "decoded_patient": rows[b].get("patient") if b < len(rows) else None}
@@ -550,7 +561,20 @@ def read_c(buf, rows):
                 ag, ax = fns["block_cleanup_scores"](buf, b)          # the production read (agent + action slices)
                 mem = np.asarray(to_host(buf.b.cp_membrane_potential_v)).astype(float)
                 pslice = np.maximum(mem[buf.c_base + iP * V: buf.c_base + (iP + 1) * V], 0.0)   # read right after it
-                _drive, acc = onbridge_divnorm_drive(buf._seq_score, V, pslice, buf.sequencer_input_gain)
+                if prod_pdrives is not None:
+                    # flag ON: read what PRODUCTION lit (`_ensure_sequencer`'s patient relay through the composer's
+                    # inhibition bridge), not a re-implementation; plus a re-check that this read's own slice, relayed
+                    # through the same production relay, lights the same pools.
+                    acc = np.asarray(buf._seq_patient_relay[b]["acc"], dtype=float)
+                    lit_prod = [buf.words[j] for j in range(V) if prod_pdrives[b][j] > 0]
+                    _d2, acc2, _i2 = CI.composer_patient_relay(buf, pslice)
+                    blk.update(patient_relay=dict({k: v for k, v in buf._seq_patient_relay[b].items() if k != "acc"},
+                                                  source="production _seq_patient_drives"),
+                               relay_recheck_same_pools=lit_prod == [buf.words[j] for j in range(V) if acc2[j] > 0])
+                else:
+                    # flag OFF: production builds no patient relay; the packet 2.3 relay (`onbridge_divnorm_drive` on the
+                    # composer's score bridge), now called through the shared production relay function (byte-identical).
+                    _drive, acc, _info = CI.composer_patient_relay(buf, pslice)
                 fired = [buf.words[j] for j in range(V) if acc[j] > 0]
                 order = [int(j) for j in np.argsort(-pslice)[:3]]
                 blk.update(fired_pools=fired, n_fired=len(fired), exactly_one=len(fired) == 1,
