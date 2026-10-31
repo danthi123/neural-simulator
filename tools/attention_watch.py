@@ -43,6 +43,9 @@ REPEAT_H = 6.0          # re-report a still-true event after this long
 GPU_IDLE_MIN = 30       # W GPU queue empty and idle this long
 DRIVER_SILENT_H = 3.0   # S runbook not written this long
 POOL_STALL_MIN = 60     # S pool has queued lines but no claim this long
+PI_STATUS = "/var/lib/host-status/pi-driver/status.json"   # tools/pi_driver supervisor.py writes it
+PI_SILENT_MIN = 20      # Pi driver status not refreshed this long (the supervisor writes every 5 s)
+PI_RESTARTS = 5         # Pi driver restarts worth a look (one alert per 5)
 BIG_STARVE_MIN = 90     # a >= 8 GB pool line queued this long while small lines are claimed = starvation
 RULE_STALE_H = 24.0     # a requested [key] report not mentioned by the driver this long after its RULING
 RULE_LOOKBACK_D = 4
@@ -125,9 +128,11 @@ echo "@@NEEDS"
 awk '/^## NEEDS CLAUDE/{f=1;next} f&&/^Format/{exit} f&&/^- 20/' $rb
 echo "@@RULINGS"
 awk -v c="$(date -d '-%(days)d days' +%%Y-%%m-%%d)" '/^## 6\. RULINGS/{f=1;next} /^## NEEDS CLAUDE/{f=0} f{ if ($0 ~ /^- 20[0-9][0-9]-/) keep=(substr($2,1,10)>=c); if (keep) print }' $rb
+echo "@@PI"
+cat %(pi_status)s 2>/dev/null | tr -d '\n'; echo
 echo "@@TAIL"
 sed -n '/^## NEEDS CLAUDE/,$p' $rb | tail -n 800
-""" % {"repo": S_REPO, "days": RULE_LOOKBACK_D}
+""" % {"pi_status": PI_STATUS, "repo": S_REPO, "days": RULE_LOOKBACK_D}
 
 
 def s_checks(now, local=False):
@@ -161,6 +166,7 @@ def s_checks(now, local=False):
                    f"{(s_now - big_old) / 60:.0f} min, while small lines keep being claimed (backfill starvation): hold the small lines"))
     for line in sec.get("NEEDS", []):
         ev.append((f"s-needs-{abs(hash(line)) % 10**8}", f"S NEEDS CLAUDE: {line[:260]}"))
+    ev += pi_checks(" ".join(sec.get("PI") or []), s_now)
     # ruled-task staleness: a [key] the ruling asks the driver to post, mentioned by no later non-RULING line
     tail = "\n".join(sec.get("TAIL", []))
     tail_l = tail.lower()
@@ -190,6 +196,23 @@ def s_checks(now, local=False):
     for m in re.finditer(r"^- (20\d\d-\d\d-\d\d)(?: \d\d:\d\d)? \[([a-z0-9][a-z0-9-]*)\] STOP\b(.{0,160})", tail, re.M):
         if m.group(1) >= cutoff and f"[{m.group(2)}]" not in rulings_l:
             ev.append((f"s-stop-{m.group(2)}", f"S driver STOP [{m.group(2)}] ({m.group(1)}) has no RULING: {m.group(3).strip()}"))
+    return ev
+
+
+def pi_checks(raw, s_now):
+    """The Pi sim driver (tools/pi_driver/README.md): silent when it is not deployed (no status file)."""
+    try:
+        st = json.loads(raw)
+    except ValueError:
+        return []
+    ev = []
+    updated = time.mktime(time.strptime(st["updated"][:19], "%Y-%m-%dT%H:%M:%S"))
+    if s_now - updated >= PI_SILENT_MIN * 60:
+        ev.append(("s-pi-silent", f"S Pi driver: status.json not updated for {(s_now - updated) / 60:.0f} min (supervisor down?)"))
+    for need in st.get("needs", []):
+        ev.append((f"s-pi-need-{abs(hash(need)) % 10**8}", f"S Pi driver NEEDS: {need[:260]}"))
+    if st.get("restarts", 0) >= PI_RESTARTS:
+        ev.append((f"s-pi-restarts-{st['restarts'] // PI_RESTARTS}", f"S Pi driver restarted {st['restarts']} times: {st.get('status', '')[:160]}"))
     return ev
 
 

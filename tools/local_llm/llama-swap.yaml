@@ -94,6 +94,16 @@ models:
       --chat-template-file ${repo_root}/tools/local_llm/templates/devstral-small2-24b-iq4xs.jinja
       --temp 0.15
 
+  strata-q2_0:
+    # 2026-10-31: the 10-29/30 hard-task trial winner (Qwen3.8-Flash-Next 125B MoE, Q2_0, ~100 tok/s, H4 3/3, H5 3/3),
+    # the Pi driver's execution model. Strata, not llama-server: profile_cmd's "strata" backend (mem_ok + memcap 24 GB
+    # RAM). useModelName: Strata answers to its own model name, whatever name the client asked llama-swap for.
+    name: "Qwen3.8-Flash-Next 125B MoE Q2_0 on Strata, 128K ctx"
+    description: "Pi driver execution model: ~100 tok/s, needs 24 GB free host RAM (mem_ok refuses otherwise)"
+    useModelName: "qwen3.8-flash-next-q2_0"
+    cmd: >
+      bash -c 'cd /home/dant123/Projects/strata-upstream/data/terminal/0.1.53 && bash ${repo_root}/tools/mem_ok.sh 24 1 >&2 && exec bash ${repo_root}/tools/memcap.sh 24 -- /home/dant123/Projects/strata-upstream/data/terminal/0.1.53/python/bin/python3.12 serve/server.py --engine strata --config /home/dant123/Projects/strata-upstream/strata-q2_0-lowram.json --host 127.0.0.1 --port ${PORT}'
+
 # profiles: pins the virtual "local" model id -- what llm.sh always requests (ANTHROPIC_MODEL=local, so Claude
 # Code never needs to know a real profile name) -- to whichever real model `llm on <name>` selected. One entry
 # per model above, same name; `llm.sh`'s activate_profile() calls `PUT /api/profiles/active {"name": "<name>"}`
@@ -109,6 +119,8 @@ profiles:
     pins: { local: qwen38-27b-iq4nl-mtp-128k-q8 }
   devstral-small2-24b-iq4xs:
     pins: { local: devstral-small2-24b-iq4xs }
+  strata-q2_0:
+    pins: { local: strata-q2_0 }
 
 # hooks.on_startup.profile: pins "local" to the default profile as soon as llama-swap itself starts, so a
 # request for "local" resolves correctly even before `llm on` ever runs (it does NOT preload the model into

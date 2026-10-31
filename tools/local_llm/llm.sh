@@ -146,6 +146,16 @@ profiles = {p["name"]: p for p in json.load(open(sys.argv[1]))}
 p = profiles.get(sys.argv[2])
 if p is None:
     sys.exit("unknown profile %r; known: %s" % (sys.argv[2], ", ".join(profiles)))
+if p.get("backend") == "strata":
+    # Strata (2026-10-31, the 10-29/30 hard-task trial winner: Qwen3.8-Flash-Next Q2_0, ~100 tok/s): a Python server
+    # that holds ram_gb of host RAM, so it runs under its own memcap scope (outside the unit's 12G cap) after
+    # mem_ok.sh says the RAM is free -- a refusal fails the load, and llama-swap answers that request with an error.
+    root = os.path.abspath(sys.argv[4])
+    sroot = os.path.expanduser(p["strata_root"])
+    inner = "cd %s && bash %s/tools/mem_ok.sh %d 1 >&2 && exec bash %s/tools/memcap.sh %d -- %s/python/bin/python3.12 serve/server.py --engine strata --config %s --host 127.0.0.1 --port %s" % (
+        sroot, root, p["ram_gb"], root, p["ram_gb"], sroot, os.path.expanduser(p["strata_config"]), sys.argv[3])
+    print(shlex.join(["bash", "-c", inner]))
+    sys.exit(0)
 cmd = ["llama-server", "-m", os.path.expanduser(p["model"]), "--host", "127.0.0.1", "--port", sys.argv[3],
        "--alias", "local", "-ngl", "99", "-np", "1", "-fa", "on", "-c", str(p["ctx"]), "-ctk", p["kv"], "-ctv", p["kv"],
        "--jinja"]

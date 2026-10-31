@@ -82,5 +82,15 @@
    "-ctxcp",
    "8"
   ]
+ },
+ {
+  "name": "strata-q2_0",
+  "backend": "strata",
+  "strata_root": "~/Projects/strata-upstream/data/terminal/0.1.53",
+  "strata_config": "~/Projects/strata-upstream/strata-q2_0-lowram.json",
+  "ram_gb": 24,
+  "ctx": 131072,
+  "long_tokens": 120000,
+  "served_model_name": "qwen3.8-flash-next-q2_0"
  }
 ]

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# pi-steer "message"   -- steer the Pi sim driver: delivered as a steer while it works, or as a prompt when idle.
+# pi-steer --status    -- print its status.json
+# Reads the state/status dirs from the driver config (PI_DRIVER_CONFIG, default /var/lib/pi-driver/config.json).
+set -euo pipefail
+CFG=${PI_DRIVER_CONFIG:-/var/lib/pi-driver/config.json}
+get() { python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))[sys.argv[2]])' "$CFG" "$1"; }
+if [ "${1:-}" = "--status" ]; then cat "$(get status_dir)/status.json"; echo; exit 0; fi
+[ -n "${1:-}" ] || { sed -n '2,4p' "$0"; exit 2; }
+inbox="$(get state_dir)/inbox"
+f="$inbox/$(date +%s%N).txt"
+printf '%s\n' "$*" > "$f.tmp" && mv "$f.tmp" "$f"
+echo "queued for the driver: $f"

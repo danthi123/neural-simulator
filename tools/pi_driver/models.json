@@ -1,0 +1,38 @@
+{
+  "$schema": "https://pi.dev/schemas/models.schema.json",
+  "providers": {
+    "w": {
+      "name": "Workstation (llama-swap)",
+      "baseUrl": "http://192.168.0.68:8080/v1",
+      "api": "openai-completions",
+      "apiKey": "none",
+      "models": [
+        {
+          "id": "strata-q2_0",
+          "name": "Qwen3.8-Flash-Next Q2_0 (Strata, W)",
+          "reasoning": true,
+          "contextWindow": 131072,
+          "maxTokens": 32768,
+          "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 }
+        }
+      ]
+    },
+    "or": {
+      "name": "OpenRouter (ZDR account)",
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "api": "openai-completions",
+      "apiKey": "!cat /run/secrets/openrouter.key",
+      "models": [
+        {
+          "id": "xiaomi/mimo-v2.6-pro",
+          "name": "MiMo v2.6 Pro",
+          "reasoning": true,
+          "contextWindow": 131072,
+          "maxTokens": 32768,
+          "cost": { "input": 0.435, "output": 0.87, "cacheRead": 0.0036, "cacheWrite": 0.435 },
+          "samplingParams": { "provider": { "data_collection": "deny", "zdr": true } }
+        }
+      ]
+    }
+  }
+}
