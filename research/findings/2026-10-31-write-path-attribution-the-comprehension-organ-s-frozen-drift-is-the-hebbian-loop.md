@@ -126,7 +126,7 @@ On the 3090 (`backend_resolved: "cupy"`, `device: "GPU (cupy)"`, 84 scenario run
 | compaction | 5.0 | 0.0 | 5.0 | gated |
 | structural | 0.02 | 0.0 | 0.02 | gated |
 | rebuild | 0.0 | 0.0 | 0.0 | mask mislabelling 4 OFF -> 0 ON; the drift itself did not fire |
-| scaling | 0.0 | 0.0 | 0.0 | **inert on this backend** -- the rule never writes, so it cannot be scored |
+| scaling | 0.0 | 0.0 | 0.0 | **inert on this backend before the guard fix** -- the rule never writes there, so it could not be scored; see the megakernel-guard section below |
 
 Production organ, dev seeds 7/8, 30 reads of one sentence, standalone bridge (`ComprehensionProductionOrgan`, the
 documented `BRAIN_ONEBRAIN_WAVE3_POOL=0` path; Criterion 0 of
@@ -143,14 +143,25 @@ Two things the cupy run does **not** give us, stated rather than papered over:
   cannot be wrapped. `tap_is_blind(bridge)` reports it and the tap log carries a note, so a cupy "no writes
   recorded" is never read as "no writes happened". The coordinate-keyed drift invariant (frozen synapses
   bit-unchanged) is still measured on every backend.
-- **The scaling rule's inertness is unexplained.** On numpy the same rule and seed moves both populations 15.0
-  (20.0 -> 5.0, the homeostatic clip inside the same block); on cupy `first_delta` is 0.0 from the very first read.
-  Nothing was logged as a step error, so the block at `sim/bridge.py:12384` is being skipped, not crashing. That
-  is a backend difference in a default-ON plasticity mechanism, discovered by this confirmation and now the subject
-  of `research/runners/pi203_scaling_backend_diagnostic.py` (control arm = the same bridge with
-  `enable_synaptic_scaling` off; `strict_step_errors = True` so the swallow at `sim/bridge.py:12522` cannot hide a
-  raise). Its numpy smoke fires (51 spikes, 15.0 ON vs 0.0 OFF), so the instrument detects the write when it
-  happens; the cupy run is what will say why it does not.
+- **The scaling rule's inertness is now explained, and it is a sim bug, not a backend quirk.** `sys.settrace` over
+  the 20-step diagnostic bridge (`research/runners/pi203_scaling_backend_diagnostic.py`, `strict_step_errors=True`,
+  cupy, seeds 42/43) recorded **zero** line hits in the homeostasis block `sim/bridge.py:12384-12428` and a
+  **maximum bridge line traced of 9615** -- the `return` of the general-step megakernel dispatch. numpy traces 500
+  hits in the same range. `enable_step_megakernel_v2` is **default-ON** (`sim/config.py:562`), and the dispatch
+  guard `_step_megakernel_can_dispatch` listed hebbian / short-term plasticity / homeostasis / STDP / structural /
+  reward / inhibitory-STDP as the read-only conditions -- but **not** `enable_synaptic_scaling`, `enable_btsp`,
+  `enable_bdsp` or the shunt-norm masks. A bridge armed with synaptic scaling and nothing else therefore passed the
+  guard, ran the fused step (which implements STP decay, conductance, I_syn, the increment, Izhikevich and
+  threshold only) and returned before the scaling block. On the GPU, synaptic scaling was silently a no-op for any
+  config that did not also switch on hebbian/STDP/homeostasis. Fix: those mechanisms now refuse the dispatch
+  (`sim/bridge.py`, guard extended with the weight-writers the fused step does not implement). Re-run after the fix:
+  `research/findings/raw/_pi203_frozen_synapse_residual/scaling_backend_diagnostic_cupy_after_guard_fix.json`.
+
+`tests/test_step_megakernel_guard_completeness.py` is the gate for this class: it patches `is_gpu_backend` so the
+CPU test reaches the guard's attribute checks, asserts a genuinely inert bridge still dispatches (the perf path is
+not killed), asserts every weight-writing flag refuses the dispatch, and derives the flag set from the source --
+every `enable_*` whose guarded block writes `cp_connections.data` inside `_run_one_simulation_step` must appear in
+the guard. That static half is what makes the check not hand-maintained.
 
 ## What this does NOT claim
 
