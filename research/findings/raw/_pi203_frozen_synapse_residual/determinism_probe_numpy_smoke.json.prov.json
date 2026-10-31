@@ -1,0 +1,35 @@
+{
+ "run_id": "1793484966-34277",
+ "runner": "research/runners/pi203_gpu_determinism_probe.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator-pi/research/runners/pi203_gpu_determinism_probe.py",
+  "--backend",
+  "numpy",
+  "--rules",
+  "hebbian,scaling",
+  "--out",
+  "research/findings/raw/_pi203_frozen_synapse_residual/determinism_probe_numpy_smoke.json"
+ ],
+ "git_sha": "49f851e48",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-31T18:16:06",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "OMP_NUM_THREADS": "1"
+ },
+ "host": "b6ff652d08c8",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 16490.6,
+ "corpus_check_query": "frozen synapse drift comprehension organ write path attribution",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_pi203_frozen_synapse_residual/determinism_probe_numpy_smoke.json"
+}

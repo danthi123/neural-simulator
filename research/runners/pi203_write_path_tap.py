@@ -197,6 +197,7 @@ def _record_replacement(old, new, csr, frame):
                      "function": frame.f_code.co_name, "touched": 0, "sum_abs_delta": 0.0,
                      "max_abs_delta": 0.0, "frozen_writes": 0, "frozen_touched": 0,
                      "frozen_sum_abs_delta": 0.0, "frozen_max_abs_delta": 0.0,
+                     "frozen_potentiation": 0.0, "frozen_depression": 0.0,
                      "note": "data array resized %d -> %d (rebuild / compaction / formation)" % (a.size, b.size)})
         return
     _record_new(a, b, csr, bridge, frame, replacement=True)
@@ -375,7 +376,7 @@ def _mask_label_by_coord(bridge) -> dict:
 
 def _snapshot(bridge, name):
     arr = getattr(bridge, name, None)
-    return None if arr is None else np.asarray(arr).copy()
+    return None if arr is None else _npify(arr).copy()
 
 
 def _aggregate(log):
@@ -388,15 +389,15 @@ def _aggregate(log):
             "frozen_potentiation": 0.0, "frozen_depression": 0.0,
         })
         s["writes"] += 1
-        s["touched"] += rec["touched"]
-        s["sum_abs_delta"] += rec["sum_abs_delta"]
-        s["max_abs_delta"] = max(s["max_abs_delta"], rec["max_abs_delta"])
-        s["writes_touching_frozen"] += rec["frozen_writes"]
-        s["frozen_touched"] += rec["frozen_touched"]
-        s["frozen_sum_abs_delta"] += rec["frozen_sum_abs_delta"]
-        s["frozen_max_abs_delta"] = max(s["frozen_max_abs_delta"], rec["frozen_max_abs_delta"])
-        s["frozen_potentiation"] += rec["frozen_potentiation"]
-        s["frozen_depression"] += rec["frozen_depression"]
+        s["touched"] += rec.get("touched", 0)
+        s["sum_abs_delta"] += rec.get("sum_abs_delta", 0.0)
+        s["max_abs_delta"] = max(s["max_abs_delta"], rec.get("max_abs_delta", 0.0))
+        s["writes_touching_frozen"] += rec.get("frozen_writes", 0)
+        s["frozen_touched"] += rec.get("frozen_touched", 0)
+        s["frozen_sum_abs_delta"] += rec.get("frozen_sum_abs_delta", 0.0)
+        s["frozen_max_abs_delta"] = max(s["frozen_max_abs_delta"], rec.get("frozen_max_abs_delta", 0.0))
+        s["frozen_potentiation"] += rec.get("frozen_potentiation", 0.0)
+        s["frozen_depression"] += rec.get("frozen_depression", 0.0)
     return sorted(sites.values(), key=lambda s: (-s["frozen_sum_abs_delta"], -s["sum_abs_delta"]))
 
 
