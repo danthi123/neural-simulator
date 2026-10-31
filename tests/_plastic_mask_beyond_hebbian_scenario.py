@@ -171,7 +171,10 @@ def run(rule, enforce=False, seed=42, w0=None):
         "hebbian": 20.0,      # above hebbian_max_weight: LTP, decay and the clip all move it
     }[rule] if w0 is None else w0
 
-    os.environ["SIM_BACKEND"] = "numpy"
+    # numpy by DEFAULT, not by fiat: an explicit SIM_BACKEND=cupy at the call site must reach the engine, or a
+    # "cupy run" silently executes on the CPU and the backend confirmation is fake (2026-10-31: the first GPU
+    # job queued for this follow-up reported "NumPy backend" for every one of its 84 runs).
+    os.environ.setdefault("SIM_BACKEND", "numpy")
     if rule == "hebbian":
         # Deliberately NOT the umbrella env var: this rule measures whether cfg.enforce_plastic_mask_beyond_hebbian
         # ALONE reaches the Hebbian write sites. With the env var set, both flags are on and the rule proves nothing.
