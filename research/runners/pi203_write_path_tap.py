@@ -275,6 +275,23 @@ def install_tap(bridge) -> None:
                                     # (research/findings/raw/_pi203_frozen_synapse_residual/cupy_frozen_flat_pytest.txt,
                                     # 5 failed), because on cupy the construction hook never pre-wraps the data.
         csr = csr if csr is not None else b.cp_connections
+        # A cupy buffer cannot be subclassed the way a numpy array can. Wrapping the CSR anyway (TapCSR) is NOT
+        # inert: it changes the object the simulation multiplies through, and the tapped-vs-untapped reply digest
+        # differed on the 3090 (cupy_frozen_flat_pytest_v5.txt). So on a non-numpy buffer the tap declares itself
+        # blind and touches NOTHING -- the coordinate drift below is measured by reading, never by hooking.
+        if not isinstance(csr.data, np.ndarray):
+            if id(b) not in _BLIND:
+                _BLIND.add(id(b))
+                _LOG.append({"site": "instrument", "function": "install_tap", "touched": 0,
+                         "sum_abs_delta": 0.0, "max_abs_delta": 0.0, "frozen_writes": 0,
+                         "frozen_touched": 0, "frozen_sum_abs_delta": 0.0, "frozen_max_abs_delta": 0.0,
+                         "frozen_potentiation": 0.0, "frozen_depression": 0.0,
+                         "note": "cp_connections.data is a %s buffer, not a numpy array: the per-write tap "
+                                 "cannot hook it and the bridge was left untouched. Coordinate drift is still "
+                                 "measured; per-site write attribution is NOT, and any zero in the frozen column "
+                                 "here is the coordinate measurement, not the tap."
+                                 % type(csr.data).__module__})
+            return
         if not isinstance(csr, TapCSR):
             csr = TapCSR(csr)
             b.__dict__["cp_connections"] = csr
@@ -287,6 +304,7 @@ def install_tap(bridge) -> None:
                 _LOG.append({"site": "instrument", "function": "install_tap", "touched": 0,
                              "sum_abs_delta": 0.0, "max_abs_delta": 0.0, "frozen_writes": 0,
                              "frozen_touched": 0, "frozen_sum_abs_delta": 0.0, "frozen_max_abs_delta": 0.0,
+                             "frozen_potentiation": 0.0, "frozen_depression": 0.0,
                              "note": "cp_connections.data is a %s buffer, not a numpy array: the per-write tap "
                                      "cannot hook it. Coordinate drift is still measured; per-site write "
                                      "attribution is NOT, and any zero in the frozen column here is the "
