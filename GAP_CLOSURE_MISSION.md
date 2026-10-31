@@ -32,8 +32,13 @@ read-outs, never phenomenal claims); Qwen stays the mouth; the #1 metric is the 
   OFF -> exactly 0.0 ON, control population moves in all 36 ON runs, OFF SHA-identical to pre-fix `710883be5` in 36/36
   comparisons. On the production comprehension organ the flag changes the reply ZERO times (6 seeds x 2 arms, 25 items,
   every digest identical) -- reported as a negative: those six sites do not reach that organ's read. Finding:
-  `research/findings/2026-10-31-plastic-mask-residual-the-six-write-sites-the-hebbian-fix-never-reached.md`. No default
-  flipped; the flip stays owner-gated per `2026-09-24-plastic-mask-flip-PREREGISTRATION.md`.
+  `research/findings/2026-10-31-plastic-mask-residual-the-six-write-sites-the-hebbian-fix-never-reached.md`; the 36/36
+  byte-identity is an artifact, `research/findings/raw/_pi203_frozen_synapse_residual/byte_identity_record.json`
+  (runner `research.runners.pi203_prefix_comparison`). merge_review APPROVED (Claude, 10-31,
+  `research/coordination/checkpoints/2026-10-31-merge_review-merge-review-pi-203-frozen-synapse-freeze.VERDICT.md`):
+  merge as-is, flag stays OFF by default, no capability claim from this merge, cupy confirmation before any flip.
+  No default flipped; the flip stays owner-gated per `2026-09-24-plastic-mask-flip-PREREGISTRATION.md`. Next on the
+  board: pin which write paths reach the comprehension organ's read (the 13.8->56.1 drift came from there).
 - **The Stage-2 exit attempt failed, and each failure has a cause on file (10-26).** Result:
   `research/findings/2026-10-26-stage2-exit-gate-RESULT.md`; four skeptic-verified diagnoses:
   `research/findings/2026-10-26-stage2-fail-diagnoses.md` (`a1bd7ff83`, merge `c5cd42d18`; RULINGS `stage2-next-1026`, `stage2-fixes-1026`).
