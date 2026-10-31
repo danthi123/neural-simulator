@@ -25,6 +25,8 @@ import os
 import numpy as np
 import pytest
 
+from research.runners import pi203_write_path_tap as _tap  # _npify: cupy-safe array conversion, one definition
+
 os.environ.setdefault("SIM_BACKEND", "numpy")
 
 READS = 30
@@ -53,7 +55,7 @@ def _frozen_coords(bridge) -> set:
     mask = getattr(bridge, "cp_synapse_plastic_mask", None)
     if mask is None:
         return set()
-    mask = np.asarray(mask)
+    mask = _tap._npify(mask)      # np.asarray on a cupy mask raises "Implicit conversion ... is not allowed"
     coo = bridge.cp_connections.tocoo()
     return {(int(r), int(c)) for k, (r, c) in enumerate(zip(coo.row, coo.col))
             if k < mask.size and not mask[k]}
