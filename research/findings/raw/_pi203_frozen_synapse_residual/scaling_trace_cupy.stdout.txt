@@ -1,0 +1,202 @@
+  BACKEND declared=cupy resolved=cupy this diagnostic is about the GPU write path; a numpy run of it proves nothing
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Created directory: simulation_checkpoints_h5/
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Created directory: simulation_recordings_h5/
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.1GB/25.3GB (12.1%)
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+  COST cupy 6-neuron 20-step scaling probe: unit 1/4 took 1s -> projected total 0.0h (0.0h remaining)
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.1GB/25.3GB (12.1%)
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.1GB/25.3GB (12.1%)
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.1GB/25.3GB (12.1%)
+[2026-10-31 19:05:51][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+  LEVER cfg.enable_synaptic_scaling (ON vs OFF) on the cupy backend 0.0 -> 0.0  [UNCHANGED]
+  attributable_to weight movement in the scaling rule (scaling ON vs OFF): treatment=+0  control=+0  diff=+0
+    => UNDEFINED: BOTH arms are ~0. There is no effect to attribute — this is a null, NOT 0% or 100% attributable.
+{
+  "runner": "research.runners.pi203_scaling_backend_diagnostic",
+  "script": "research/runners/pi203_scaling_backend_diagnostic.py",
+  "cmd": "/home/dant123/derisk-pool/revisions/ca3cfa6be31f57281e264a94cafb5da1f54d46a6-1793487897/research/runners/pi203_scaling_backend_diagnostic.py --backend cupy --seeds 42,43 --prereg research/findings/2026-09-24-plastic-mask-flip-PREREGISTRATION.md --out research/findings/raw/_pi203_frozen_synapse_residual/scaling_backend_diagnostic_cupy_trace.json",
+  "backend_requested": "cupy",
+  "prereg": "research/findings/2026-09-24-plastic-mask-flip-PREREGISTRATION.md",
+  "elapsed_seconds": 0.86,
+  "question": "On the cupy backend the synaptic-scaling block writes nothing at all. Which guard, or which exception, is the reason?",
+  "rows": [
+    {
+      "backend_resolved": "cupy",
+      "seed": 42,
+      "enable_synaptic_scaling": false,
+      "experiment_engine_present": false,
+      "connections_type": "cupyx.scipy.sparse._csr.csr_matrix",
+      "data_type": "cupy.ndarray",
+      "nnz": 14,
+      "coo_cache_at_build": 14,
+      "coo_cache_after_run": 14,
+      "ema_before_is_none": false,
+      "homeostasis_block_lines_hit": 0,
+      "homeostasis_block_line_count": 0,
+      "scaling_guard_line_hit": false,
+      "ema_update_line_hit": false,
+      "scaling_write_line_hit": false,
+      "homeostasis_line_hits": {},
+      "ema_before_max": 0.0,
+      "ema_after_max": 0.0,
+      "rate_gain_is_none": true,
+      "rate_gain_sum": null,
+      "fired_steps_sum": 47,
+      "weight_min_before": 20.0,
+      "weight_max_before": 20.0,
+      "weight_min_after": 20.0,
+      "weight_max_after": 20.0,
+      "max_abs_delta_20_steps": 0.0,
+      "hebbian_min_weight": 0.05,
+      "hebbian_max_weight": 1.0,
+      "homeostasis_target_rate": 0.9,
+      "synaptic_scaling_rate": 0.05,
+      "dt_ms": 1.0,
+      "strict_step_error": null
+    },
+    {
+      "backend_resolved": "cupy",
+      "seed": 42,
+      "enable_synaptic_scaling": true,
+      "experiment_engine_present": false,
+      "connections_type": "cupyx.scipy.sparse._csr.csr_matrix",
+      "data_type": "cupy.ndarray",
+      "nnz": 14,
+      "coo_cache_at_build": 14,
+      "coo_cache_after_run": 14,
+      "ema_before_is_none": false,
+      "homeostasis_block_lines_hit": 0,
+      "homeostasis_block_line_count": 0,
+      "scaling_guard_line_hit": false,
+      "ema_update_line_hit": false,
+      "scaling_write_line_hit": false,
+      "homeostasis_line_hits": {},
+      "ema_before_max": 0.0,
+      "ema_after_max": 0.0,
+      "rate_gain_is_none": true,
+      "rate_gain_sum": null,
+      "fired_steps_sum": 47,
+      "weight_min_before": 20.0,
+      "weight_max_before": 20.0,
+      "weight_min_after": 20.0,
+      "weight_max_after": 20.0,
+      "max_abs_delta_20_steps": 0.0,
+      "hebbian_min_weight": 0.05,
+      "hebbian_max_weight": 1.0,
+      "homeostasis_target_rate": 0.9,
+      "synaptic_scaling_rate": 0.05,
+      "dt_ms": 1.0,
+      "strict_step_error": null
+    },
+    {
+      "backend_resolved": "cupy",
+      "seed": 43,
+      "enable_synaptic_scaling": false,
+      "experiment_engine_present": false,
+      "connections_type": "cupyx.scipy.sparse._csr.csr_matrix",
+      "data_type": "cupy.ndarray",
+      "nnz": 14,
+      "coo_cache_at_build": 14,
+      "coo_cache_after_run": 14,
+      "ema_before_is_none": false,
+      "homeostasis_block_lines_hit": 0,
+      "homeostasis_block_line_count": 0,
+      "scaling_guard_line_hit": false,
+      "ema_update_line_hit": false,
+      "scaling_write_line_hit": false,
+      "homeostasis_line_hits": {},
+      "ema_before_max": 0.0,
+      "ema_after_max": 0.0,
+      "rate_gain_is_none": true,
+      "rate_gain_sum": null,
+      "fired_steps_sum": 44,
+      "weight_min_before": 20.0,
+      "weight_max_before": 20.0,
+      "weight_min_after": 20.0,
+      "weight_max_after": 20.0,
+      "max_abs_delta_20_steps": 0.0,
+      "hebbian_min_weight": 0.05,
+      "hebbian_max_weight": 1.0,
+      "homeostasis_target_rate": 0.9,
+      "synaptic_scaling_rate": 0.05,
+      "dt_ms": 1.0,
+      "strict_step_error": null
+    },
+    {
+      "backend_resolved": "cupy",
+      "seed": 43,
+      "enable_synaptic_scaling": true,
+      "experiment_engine_present": false,
+      "connections_type": "cupyx.scipy.sparse._csr.csr_matrix",
+      "data_type": "cupy.ndarray",
+      "nnz": 14,
+      "coo_cache_at_build": 14,
+      "coo_cache_after_run": 14,
+      "ema_before_is_none": false,
+      "homeostasis_block_lines_hit": 0,
+      "homeostasis_block_line_count": 0,
+      "scaling_guard_line_hit": false,
+      "ema_update_line_hit": false,
+      "scaling_write_line_hit": false,
+      "homeostasis_line_hits": {},
+      "ema_before_max": 0.0,
+      "ema_after_max": 0.0,
+      "rate_gain_is_none": true,
+      "rate_gain_sum": null,
+      "fired_steps_sum": 44,
+      "weight_min_before": 20.0,
+      "weight_max_before": 20.0,
+      "weight_min_after": 20.0,
+      "weight_max_after": 20.0,
+      "max_abs_delta_20_steps": 0.0,
+      "hebbian_min_weight": 0.05,
+      "hebbian_max_weight": 1.0,
+      "homeostasis_target_rate": 0.9,
+      "synaptic_scaling_rate": 0.05,
+      "dt_ms": 1.0,
+      "strict_step_error": null
+    }
+  ],
+  "scaling_on_max_delta": 0.0,
+  "scaling_off_max_delta": 0.0,
+  "summary": "2/2 scaling-ON probes on cupy show zero weight movement in 20 steps (numpy shows 15.0 for the same rule and seed)."
+}[provenance] stamped 1 artifact(s) | run_id 1793487950-3620354
+

@@ -105,7 +105,7 @@ default False, so the flag-OFF path is untouched. Two new tests:
   write touches a frozen entry. Flag OFF: the drift is present (the zero is not vacuous). Plus instrument
   inertness: tapped == untapped replies.
 
-## The GPU path: six of the seven rules confirmed, one found inert
+## The GPU path: all seven rules confirmed -- the two that looked inert were a dispatch-guard bug
 
 Every number above was measured on CPU. The merge_review made any default flip conditional on the same gating being
 shown on the cupy path, and the first GPU job for this follow-up turned out to be a **CPU run wearing a GPU label**:
@@ -114,19 +114,19 @@ overrules the caller -- exactly the trap `tools/lab.py:799` `assert_backend` exi
 `research/runners/pi203_cupy_backend_confirmation.py` records the backend the engine **resolved** from
 `sim.backend.get_backend()`, not the one asked for.
 
-On the 3090 (`backend_resolved: "cupy"`, `device: "GPU (cupy)"`, 84 scenario runs in 59.78 s, 4 organ arms), from
-`research/findings/raw/_pi203_frozen_synapse_residual/backend_confirmation_cupy.json` reduced into
-`research/findings/raw/_pi203_frozen_synapse_residual/write_path_attribution_aggregates_v2.json`:
+On the 3090 (`backend_resolved: "cupy"`, `device: "GPU (cupy)"`, 84 scenario runs in 63.02 s, 4 organ arms), from
+`research/findings/raw/_pi203_frozen_synapse_residual/backend_confirmation_cupy_after_guard.json` -- the run AFTER
+the megakernel-guard fix, so every rule's mechanism actually executes on the GPU:
 
 | rule | frozen delta OFF | frozen delta ON | control delta ON | verdict |
 |---|---|---|---|---|
 | reward | 99.0 | 0.0 | 99.0 | gated |
-| hebbian | 19.0297-19.0577 | 0.0 | 19.0041 | gated |
-| combined | 99.99 | 0.0 | 99.9238 | gated |
-| compaction | 5.0 | 0.0 | 5.0 | gated |
+| hebbian | 19.0297-19.0577 | 0.0 | 19.0041-19.0308 | gated |
 | structural | 0.02 | 0.0 | 0.02 | gated |
-| rebuild | 0.0 | 0.0 | 0.0 | mask mislabelling 4 OFF -> 0 ON; the drift itself did not fire |
-| scaling | 0.0 | 0.0 | 0.0 | **inert on this backend before the guard fix** -- the rule never writes there, so it could not be scored; see the megakernel-guard section below |
+| rebuild | 15.013-15.014 | 0.0 | 15.013-15.037 | gated -- frozen drift 15.0 OFF -> 0.0 ON, mislabelled pairs 4 OFF -> 0 ON |
+| compaction | 5.0 | 0.0 | 5.0 | gated -- mislabelled-at-end 4 OFF -> 0 ON |
+| combined | 99.99 | 0.0 | 99.924-99.99 | gated |
+| scaling | 15.0 | 0.0 | 15.0 | gated -- inert on this backend until the megakernel-guard fix, see below |
 
 Production organ, dev seeds 7/8, 30 reads of one sentence, standalone bridge (`ComprehensionProductionOrgan`, the
 documented `BRAIN_ONEBRAIN_WAVE3_POOL=0` path; Criterion 0 of
@@ -154,8 +154,13 @@ Two things the cupy run does **not** give us, stated rather than papered over:
   guard, ran the fused step (which implements STP decay, conductance, I_syn, the increment, Izhikevich and
   threshold only) and returned before the scaling block. On the GPU, synaptic scaling was silently a no-op for any
   config that did not also switch on hebbian/STDP/homeostasis. Fix: those mechanisms now refuse the dispatch
-  (`sim/bridge.py`, guard extended with the weight-writers the fused step does not implement). Re-run after the fix:
-  `research/findings/raw/_pi203_frozen_synapse_residual/scaling_backend_diagnostic_cupy_after_guard_fix.json`.
+  (`sim/bridge.py`, guard extended with the weight-writers the fused step does not implement).
+- **After the fix, the same cupy trace shows the block executing.** In
+  `research/findings/raw/_pi203_frozen_synapse_residual/scaling_backend_diagnostic_cupy_after_guard_fix.json` the
+  scaling-ON arm on cupy records `homeostasis_block_line_count: 500`, `max_bridge_line_traced: 12515` and
+  `max_abs_delta_20_steps: 15.0` -- the same 15.0 numpy produces -- while the scaling-OFF control arm still
+  dispatches the fused step (`max_bridge_line_traced: 9627`, 0 hits in the block). Before the fix the ON arm traced
+  0 hits and stopped at line 9615 (`research/findings/raw/_pi203_frozen_synapse_residual/scaling_backend_diagnostic_cupy_trace2.json`).
 
 `tests/test_step_megakernel_guard_completeness.py` is the gate for this class: it patches `is_gpu_backend` so the
 CPU test reaches the guard's attribute checks, asserts a genuinely inert bridge still dispatches (the perf path is
@@ -170,10 +175,10 @@ the guard. That static half is what makes the check not hand-maintained.
   still needs cupy confirmation.
 - No capability claim. Freezing the drift does not improve the comprehension reply on this organ; it stops
   1724 (seed 7) / 1700 (seed 8) declared-frozen synapses from drifting up to 55.6 / 58.5 weight units over 30 reads.
-- Not yet a backend-wide claim. The gating is confirmed on numpy and on cupy for the six rules that actually fire
-  on cupy; `scaling` is inert on cupy for a reason that is being diagnosed, and cross-backend weight values are not
-  bit-identical (the cupy organ drift is 58.205243/58.666237 where numpy measured 52.6672/56.9101 -- the numpy
-  numbers are in `research/findings/raw/_pi203_frozen_synapse_residual/backend_confirmation_smoke.json`), so byte-identity
-  is asserted per backend, never between them.
+- Not yet a backend-wide claim. The gating is confirmed on numpy and on cupy for all seven rules; cross-backend
+  weight values are not bit-identical (the cupy organ drift is 58.205243/58.666237 where numpy measured
+  52.6672/56.9101 -- the numpy numbers are in
+  `research/findings/raw/_pi203_frozen_synapse_residual/backend_confirmation_smoke.json`), so byte-identity is
+  asserted per backend, never between them.
 - The pooled organ's zero-write behaviour is a measured fact about that organ under this battery, not a claim
   that the pooled brain never plasticizes.
