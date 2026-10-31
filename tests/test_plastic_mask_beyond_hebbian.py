@@ -41,10 +41,10 @@ _REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 _SCENARIO_REL = os.path.join("tests", "_plastic_mask_beyond_hebbian_scenario.py")
 _FLAG_TOKEN = "enforce_plastic_mask_beyond_hebbian"
 SEEDS = (42, 43, 44, 100, 101, 102)
-RULES = ("scaling", "structural", "reward", "rebuild", "compaction", "combined")
+RULES = ("scaling", "structural", "reward", "rebuild", "compaction", "combined", "hebbian")
 # the smallest OFF-arm drift each rule must show (the bug the instrument is meant to see)
 _OFF_DRIFT_MIN = {"scaling": 5.0, "structural": 0.01, "reward": 10.0, "rebuild": 5.0,
-                  "compaction": 1.0, "combined": 10.0}
+                  "compaction": 1.0, "combined": 10.0, "hebbian": 5.0}
 _ON_DRIFT_MAX = 1e-9
 
 

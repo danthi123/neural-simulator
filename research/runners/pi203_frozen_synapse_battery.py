@@ -29,7 +29,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 
 from tests._plastic_mask_beyond_hebbian_scenario import run  # noqa: E402
 
-RULES = ["scaling", "structural", "reward", "rebuild", "compaction", "combined"]
+RULES = ["scaling", "structural", "reward", "rebuild", "compaction", "combined", "hebbian"]
 SEEDS = [42, 43, 44, 100, 101, 102]
 
 

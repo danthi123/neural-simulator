@@ -1468,13 +1468,23 @@ class SimulationBridge:
     def _hebbian_plastic_mask_enforced(self, cfg):
         """ADDITIVE, DEFAULT-OFF gate for enforcing cp_synapse_plastic_mask in the Hebbian LTP/decay/clip path.
 
-        True iff the env var BRAIN_ENFORCE_PLASTIC_MASK is set truthy OR cfg.enforce_plastic_mask_in_hebbian is True.
-        Default (neither set) => False => the mask is NOT enforced in Hebbian => byte-identical to the historical
-        (permissive) behavior. STDP/BDSP/BTSP already enforce the mask unconditionally; this closes the same hole for
-        the plain Hebbian rule without changing any production default. Evaluated at the use site so tests/callers can
-        toggle the env var between builds. Works identically on numpy and cupy (no backend calls here).
+        True iff the env var BRAIN_ENFORCE_PLASTIC_MASK is set truthy OR cfg.enforce_plastic_mask_in_hebbian is True
+        OR cfg.enforce_plastic_mask_beyond_hebbian is True. Default (none set) => False => the mask is NOT enforced
+        in Hebbian => byte-identical to the historical (permissive) behavior. STDP/BDSP/BTSP already enforce the mask
+        unconditionally; this closes the same hole for the plain Hebbian rule without changing any production default.
+        Evaluated at the use site so tests/callers can toggle the env var between builds. Works identically on numpy
+        and cupy (no backend calls here).
+
+        Why the second flag counts here (2026-10-31, Vikunja #203 follow-up, dev seeds 7/8): the instrumented
+        comprehension battery (research/runners/pi203_write_path_tap.py) found that the ONLY writes that move the
+        comprehension organ's mask-frozen synapses are the Hebbian potentiation (sim/bridge.py:11045) and the Hebbian
+        decay (sim/bridge.py:11071) -- i.e. the sites the 2026-09-02 fix covers, not the six sites the #203 residual
+        fix covers. A caller that arms only cfg.enforce_plastic_mask_beyond_hebbian would therefore get a mask that is
+        enforced everywhere EXCEPT the two sites that actually move the organ. The umbrella env var already arms both;
+        this makes the cfg fields behave the same way, so "enforcement on" means enforcement on.
         """
-        return self._plastic_mask_enforced(cfg, "enforce_plastic_mask_in_hebbian")
+        return (self._plastic_mask_enforced(cfg, "enforce_plastic_mask_in_hebbian")
+                or self._plastic_mask_enforced(cfg, "enforce_plastic_mask_beyond_hebbian"))
 
     def _plastic_mask_for_remap(self):
         """The per-synapse plastic mask to carry across a CSR-reordering rebuild, or None.
