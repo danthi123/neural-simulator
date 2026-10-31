@@ -158,3 +158,15 @@ Ruling c2-s0d-score-1029 asks for the external-only divisive stage and the FF FS
 Shape: the composer owns a SECOND bridge, `OneBrainComposer.patient_inhib_bridge(w_i2e=None)`, built lazily from its own `_seq_score` (same word-pool layout, seed, sigma, gain, and the per-neuron word-pool parameters copied from `_seq_score`) plus `input_divisive_norm_external_only`, stable integration and the shared FS `pinh` (n 30, E->pinh 60, pinh->E 2.0, FF 3e-4). The builder and the drive moved verbatim to `research/runners/_c2_patient_inhib.py`; `c2_hops_step0` imports them back (its behaviour is unchanged).
 Sequencer path: UNCHANGED, on purpose. `_ensure_sequencer`, `make_block_drives` (the sequencer's per-block drives) and `_seq_score` keep the existing divnorm bridge in both flag states, because the sequencer's `make_block_drives` calls `onbridge_divnorm_drive` on its score bridge and needs the ordinary divisive normalization (the lit-line drive per block); putting inhibition and the external-only stage there would change the K-way match cascade inputs, which the patient read does not require. The patient read (step 0 read (c), later the C2 M1 consumer) uses the separate inhibition bridge. Cost: one more 30-FS-cell-plus-pools bridge when the flag is on, none when it is off.
 Selection comes only from the spiking synapses (E->pinh, pinh->E, the FF drive); no host argmax, top-k or threshold was added. The runner mode `C2S0_PATIENT_INHIB=composer` (arms `composer_ffx`, `composer_ffx_lesion`) reads read (c) on this bridge. Tests: `tests/test_c2_composer_patient_inhib.py`.
+
+## 2026-10-31 composer-owned bridge, dev seeds 1-7 (RULING c2-composer-score-1031)
+
+Revision e22d5b2b1 (branch research/c2-composer-inhib ab98da450), BRAIN_C2_COMPOSER_PATIENT_INHIB=1, read mode C2S0_PATIENT_INHIB=composer; shards `research/findings/raw/_c2_composer_inhib/s1..s7_composer.json`, scored by each shard's `step0b` block.
+
+| arm | one-correct | multi | zero | wrong | max g_i (nS) |
+|---|---|---|---|---|---|
+| composer_ffx | 63/63 | 0 | 0 | 0 | 30.05 |
+| composer_ffx_lesion | 0/63 | 63 | 0 | 0 | 0.15 |
+
+No STOP line fired on any seed. The selection the step-0d arm ffx showed (63/63) holds when the composer's own score bridge owns the inhibition. Dev seeds only: no gate seed was run and this is not a C2 verdict. Next: the bridge read inside the live Stage-2 C2 path, flag ON vs OFF.
+
