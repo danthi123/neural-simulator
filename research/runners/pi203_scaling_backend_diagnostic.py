@@ -113,6 +113,8 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--backend", default="cupy")
     ap.add_argument("--seeds", default="42,43")
+    ap.add_argument("--prereg", default="research/findings/2026-09-24-plastic-mask-flip-PREREGISTRATION.md",
+                    help="the committed pre-registration these seeds belong to (gate guardrail requires it)")
     ap.add_argument("--out", default="research/findings/raw/_pi203_frozen_synapse_residual/scaling_backend_diagnostic.json")
     args = ap.parse_args()
     assert_backend(args.backend, "this diagnostic is about the GPU write path; a numpy run of it proves nothing")
@@ -140,6 +142,7 @@ def main() -> int:
         "script": "research/runners/pi203_scaling_backend_diagnostic.py",
         "cmd": " ".join(sys.argv),
         "backend_requested": args.backend,
+        "prereg": args.prereg,
         "elapsed_seconds": round(time.time() - t0, 2),
         "question": "On the cupy backend the synaptic-scaling block writes nothing at all. Which guard, or which "
                     "exception, is the reason?",
