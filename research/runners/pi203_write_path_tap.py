@@ -37,6 +37,8 @@ import time
 
 import numpy as np
 
+import tools.lab
+
 # Other weight-shaped stores the organ could read, snapshot before/after the battery.
 STORES = (
     "cp_plasticity_rate_gain", "cp_transmission_gain", "cp_synapse_plastic_mask",
@@ -506,6 +508,16 @@ def main() -> None:
         "battery_items": {k: _digest(v) for k, v in rows.items()},
         "reply_margins": {k: (v["judge"] or {}).get("margin") for k, v in rows.items()},
         "reply_competent": {k: v["competent"] for k, v in rows.items()},
+    }
+    # Ask the attribution question out loud rather than leaving two numbers one key apart: WHOSE drift is
+    # this? The organ's own gross weight change splits into the population the mask declares frozen and the
+    # population it declares plastic, and the recorded-write budget says which write sites own each.
+    gross_drift = float(sum(frozen_drifts) + sum(plastic_drifts))
+    out["drift_term_budget"] = tools.lab.term_budget(
+        "gross weight drift in the organ (sum |dW|, by mask label)", gross_drift,
+        {"mask-declared-frozen": float(sum(frozen_drifts)), "mask-declared-plastic": float(sum(plastic_drifts))})
+    out["write_site_budget"] = {
+        s["site"]: round(s["frozen_sum_abs_delta"], 4) for s in sites if s["frozen_sum_abs_delta"] > 0
     }
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
     with open(args.out, "w") as f:
