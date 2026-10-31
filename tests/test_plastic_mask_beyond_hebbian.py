@@ -1,4 +1,4 @@
-"""Selftest for the ADDITIVE, DEFAULT-OOFF plastic-mask enforcement BEYOND the Hebbian rule (Vikunja #203 residual).
+"""Selftest for the ADDITIVE, DEFAULT-OFF plastic-mask enforcement BEYOND the Hebbian rule (Vikunja #203 residual).
 
 Bug (2026-09-02 read-isolation audit, residual left open by merge 509c7137b): `RegionPathway(plastic=False)` /
 `BrainRegion(plastic_internal=False)` was enforced only in the Hebbian LTP/decay/clip path (and in STDP/BDSP/BTSP).
@@ -6,22 +6,26 @@ Every OTHER write to cp_connections.data still moved a declared-frozen synapse:
   (i)  homeostatic synaptic scaling  -- data *= per-neuron scale factor (gain-gated, never mask-gated)
   (ii) structural-plasticity elimination -- data[weak] = 0.0 (not mask-gated at all)
   (iii) the reward-modulation clip -- clip(data, w_min, w_max) when no named gain array exists
-  (iv) the mask itself is never remapped/compacted, because the remap helper reads the attribute `cp_plastic_mask`,
-       which sim/ never assigns (dead code) -- so after a CSR-reordering rebuild the mask labels the wrong synapses.
+  (iv) the reward-modulation UPDATE itself -- eligibility written before a pathway was frozen still moves it
+  (v)  the mask is never remapped or compacted, because the remap helper reads the attribute `cp_plastic_mask`,
+       which sim/ never assigns (dead code) -- after a CSR-reordering rebuild or a deferred compaction the mask
+       labels the wrong synapses
+  (vi) synapses FORMED by structural plasticity read as frozen, because the mask grows lazily with fill=False
 
 Fix: cfg.enforce_plastic_mask_beyond_hebbian / env BRAIN_ENFORCE_PLASTIC_MASK (DEFAULT OFF). Both directions are
 VERIFIED, not asserted:
 
   (1) byte_identical_off -- with the flag OFF the full-state SHA equals the SHA of the genuine PRE-fix code,
-      recovered into a throwaway git worktree and run through the identical scenario file.
-  (2) freeze_on -- over 30 successive reads of a 6-neuron probe, every declared-frozen synapse is bit-unchanged
+      recovered with `git archive` and run through the identical scenario file (six rules, six seeds).
+  (2) freeze_on -- over 30 successive reads of a small probe, every declared-frozen synapse is bit-unchanged
       (max|dw| == 0.0 exactly) on all six seeds, while the companion plastic control population DOES move, which
       is what makes the zero meaningful rather than a run that never fired.
-  (3) rebuild -- the misalignment (iv) is measured directly: 4 declared pairs are mislabelled with the flag OFF,
-      0 with it ON.
+  (3) rebuild/compaction -- the misalignment (v) is measured directly: 4 declared pairs are mislabelled with the
+      flag OFF, 0 with it ON.
 
 Runs on numpy (forced) so the tests need no GPU and are deterministic.
 """
+import functools
 import json
 import os
 import shutil
@@ -57,15 +61,15 @@ def _prefix_ref():
             cwd=_REPO_ROOT, text=True, stderr=subprocess.DEVNULL,
         ).split()
     except subprocess.CalledProcessError:
-        return None
+        return None, "git log failed in %s" % _REPO_ROOT
     if not out:
-        return None
+        return None, "the flag token is not in sim/config.py's git history yet"
     oldest_with_flag = out[-1]
     try:
         return subprocess.check_output(["git", "rev-parse", "%s^" % oldest_with_flag],
-                                       cwd=_REPO_ROOT, text=True, stderr=subprocess.DEVNULL).strip()
+                                       cwd=_REPO_ROOT, text=True, stderr=subprocess.DEVNULL).strip(), None
     except subprocess.CalledProcessError:
-        return None
+        return None, "cannot resolve the parent of %s" % oldest_with_flag
 
 
 def _run_prefix_off(rule, seed):
@@ -75,14 +79,19 @@ def _run_prefix_off(rule, seed):
     "fatal: Could not reset index file to revision 'HEAD'" (FAILURE_LOG 2026-10-31); archive touches no index.
     Only the packages the scenario imports are extracted: sim/, tests/, experiment/, config/, ui/.
     """
-    ref = _prefix_ref()
+    ref, ref_err = _prefix_ref()
     if ref is None:
-        return None
+        return None, ref_err
     wt = tempfile.mkdtemp(prefix="prefix_plastic_mask_bh_")
     try:
         arc = subprocess.check_output(["git", "archive", ref, "sim", "tests", "experiment", "config", "ui"],
                                       cwd=_REPO_ROOT)
-        subprocess.check_call(["tar", "-x", "-C", wt], input=arc)
+        # check_call has no `input=` kwarg (only run/check_output do) -- pipe via Popen's stdin.
+        p = subprocess.Popen(["tar", "-x", "-C", wt], stdin=subprocess.PIPE)
+        p.stdin.write(arc)
+        p.stdin.close()
+        if p.wait() != 0:
+            return None, "git archive extraction failed (tar rc %d)" % p.returncode
         shutil.copy2(os.path.join(_REPO_ROOT, _SCENARIO_REL), os.path.join(wt, _SCENARIO_REL))
         env = dict(os.environ)
         env["SIM_BACKEND"] = "numpy"
@@ -93,13 +102,14 @@ def _run_prefix_off(rule, seed):
                                        "print(json.dumps(run(sys.argv[1], False, int(sys.argv[2]))))",
                                        rule, str(seed)], cwd=wt, env=env, text=True)
         line = [ln for ln in out.strip().splitlines() if ln.strip().startswith("{")][-1]
-        return json.loads(line)["sha"]
-    except Exception:
-        return None
+        return json.loads(line)["sha"], None
+    except Exception as exc:  # noqa: BLE001  - reported as the skip reason, never silently swallowed
+        return None, "%s: %s" % (type(exc).__name__, exc)
     finally:
         shutil.rmtree(wt, ignore_errors=True)
 
 
+@functools.lru_cache(maxsize=1)
 def selftest(seed=42):
     """Both directions, one seed (the byte-identity side is inherently a single-run comparison)."""
     res = {"byte_identical_off": {}, "freeze_on": {}, "rebuild_alignment": None}
@@ -107,9 +117,9 @@ def selftest(seed=42):
         off = _run(rule, False, seed)
         on = _run(rule, True, seed)
         off2 = _run(rule, False, seed)
-        prefix_sha = _run_prefix_off(rule, seed)
+        prefix_sha, prefix_err = _run_prefix_off(rule, seed)
         res["byte_identical_off"][rule] = {
-            "off_sha": off["sha"], "prefix_sha": prefix_sha,
+            "off_sha": off["sha"], "prefix_sha": prefix_sha, "prefix_error": prefix_err,
             "identical": (prefix_sha is None) or (off["sha"] == prefix_sha),
             "deterministic_off": off["sha"] == off2["sha"],
         }
@@ -125,9 +135,9 @@ def selftest(seed=42):
 
 @pytest.mark.parametrize("rule", RULES)
 def test_flag_off_is_byte_identical_to_pre_fix(rule):
-    res = selftest()[ "byte_identical_off"][rule]
+    res = selftest()["byte_identical_off"][rule]
     if res["prefix_sha"] is None:
-        pytest.skip("the flag commit is not yet in git history -- cannot recover a genuine pre-fix ref")
+        pytest.skip("pre-fix tree unavailable: %s" % res["prefix_error"])
     assert res["identical"], ("flag-OFF is NOT byte-identical to pre-fix for rule %s: off=%s prefix=%s"
                              % (rule, res["off_sha"], res["prefix_sha"]))
 

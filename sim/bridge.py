@@ -1495,6 +1495,9 @@ class SimulationBridge:
         """The nnz-sized bool mask (True = plastic) for a NON-Hebbian write site, or None when that site is not
         enforced. None means 'skip the masked branch' => byte-identical to the pre-enforcement path.
         ADDITIVE, DEFAULT-OFF (2026-10-31, Vikunja #203 residual); see cfg.enforce_plastic_mask_beyond_hebbian.
+        fill=False means a synapse that appeared after the mask was last sized reads as FROZEN -- the same
+        convention the 2026-09-02 Hebbian site uses. Synapses FORMED by structural plasticity are therefore
+        labelled plastic explicitly in `_add_synapses_to_arrays`, or default to plastic in the rebuild remap.
         """
         if self._plastic_mask_enforced(cfg, field) and self.cp_synapse_plastic_mask is not None:
             return self._ensure_gate_capacity(
@@ -5874,6 +5877,14 @@ class SimulationBridge:
         Coordinates are stable across a rebuild, so positions are re-derived by matching (row, col) keys. The
         same mapping repairs cp_plasticity_rate_gain and cp_plastic_mask, which were copied POSITIONALLY onto
         the re-sorted space - carrying every value to the wrong synapse.
+
+        INVARIANT (why the `[:_n]` prefix pairing below is correct, and what would break it): every per-synapse
+        array here (gain, mask, STP state, eligibility, timers) is POSITIONAL in the pre-rebuild synapse order.
+        It is created sized to the initial nnz at wiring and only ever grown by TAIL APPEND
+        (`_ensure_gate_capacity`), never permuted, so when it is shorter than the pre-rebuild synapse list its
+        entries describe the FIRST len(arr) pre-rebuild positions -- which is exactly what `old_pos_all[:_n]`
+        indexes. If a future path ever re-orders a gate array without remapping it, this and every sibling site
+        silently labels the wrong synapses; that is why the mask is rebuilt here rather than patched in place.
         """
         if self.cp_connections is None:
             return
