@@ -1,8 +1,8 @@
 {
  "schema": "tool-health-v1",
  "generator": "tools/tool_health.py",
- "generated_at": "2026-10-24T13:00:06Z",
- "any_rotted": false,
+ "generated_at": "2026-10-31T15:35:46Z",
+ "any_rotted": true,
  "results": [
   {
    "tool": "experiment-engine",
@@ -10,15 +10,15 @@
    "status": "degraded",
    "why": "step-sweep needs a GPU; this host has no usable CUDA device (not rotted): api.runtime.CUDARuntimeError: cudaErrorInsufficientDriver: CUDA driver version is insufficient for CUDA runtime version\n",
    "checked": "build 4 presets (step needs a CUDA device)",
-   "at": "2026-10-24T13:00:01Z"
+   "at": "2026-10-31T15:35:46Z"
   },
   {
    "tool": "auto-tune",
    "lane": "experiment",
-   "status": "degraded",
-   "why": "needs a GPU; this host has no usable CUDA device (not rotted): api.runtime.CUDARuntimeError: cudaErrorInsufficientDriver: CUDA driver version is insufficient for CUDA runtime version\n",
+   "status": "ROTTED",
+   "why": "exit rc=1. \n    import dearpygui.dearpygui as dpg\n  File \"/home/dant123/Projects/neural-simulator/.venv/lib/python3.11/site-packages/dearpygui/dearpygui.py\", line 22, in <module>\n    import dearpygui._dearpygui as internal_dpg\nImportError: libX11.so.6: cannot open shared object file: No such file or directory\n",
    "checked": "neural-simulator.py --auto-tune --quick",
-   "at": "2026-10-24T13:00:02Z"
+   "at": "2026-10-31T15:35:46Z"
   },
   {
    "tool": "gpu-queue",
@@ -26,23 +26,23 @@
    "status": "ready",
    "why": "status ok (0 dispatcher). == gpu_queue == shared queue: /home/dant123/Projects/neural-simulator/research/queue state: running current: (idle) queued: 0 | VRAM free: MiB (min_free 3000) dispatcher: DOWN (run: tools/gpu_queue.sh",
    "checked": "gpu_queue.sh status + singleton",
-   "at": "2026-10-24T13:00:02Z"
+   "at": "2026-10-31T15:35:46Z"
   },
   {
    "tool": "pool",
    "lane": "pool",
-   "status": "ready",
-   "why": "4/4 nodes healthy",
-   "checked": "tools.pool_health --json + a trivial dispatch check",
-   "at": "2026-10-24T13:00:04Z"
+   "status": "unknown",
+   "why": "no pool node reachable (network); tool itself ran fine",
+   "checked": "tools.pool_health --json",
+   "at": "2026-10-31T15:35:46Z"
   },
   {
    "tool": "pool-checkout",
    "lane": "pool",
-   "status": "ready",
-   "why": "4 nodes: code present + venv imports numpy/scipy",
+   "status": "unknown",
+   "why": "no node reachable",
    "checked": "code present + venv import",
-   "at": "2026-10-24T13:00:06Z"
+   "at": "2026-10-31T15:35:46Z"
   },
   {
    "tool": "cloud-aws",
@@ -50,9 +50,23 @@
    "status": "unknown",
    "why": "no AWS instance recorded \u2014 nothing to describe (no spend); provision via tools/aws_gpu.sh only when a run justifies it",
    "checked": "aws_gpu.sh status",
-   "at": "2026-10-24T13:00:06Z"
+   "at": "2026-10-31T15:35:46Z"
   }
  ],
- "backlog_items": [],
+ "backlog_items": [
+  {
+   "id": "toolrot-auto-tune",
+   "what": "Repair rotted tool 'auto-tune' \u2014 exit rc=1. \n    import dearpygui.dearpygui as dpg\n  File \"/home/dant123/Projects/neural-simulator/.venv/lib/python3.11/site-packages/dearpygui/dearpygui.py\", li",
+   "source": "tools/tool_health.py",
+   "anchor": "auto-tune",
+   "files": "neural-simulator.py",
+   "verify_cmd": "python tools/tool_health.py --only auto-tune",
+   "dependencies": [],
+   "lane": "agent",
+   "priority": 3,
+   "rough_start": "2026-10-31",
+   "rough_target": "2026-10-31"
+  }
+ ],
  "_doc": "STEP B2 coordination surface: the backlog generator reads backlog_items (one repair item per ROTTED tool). Do NOT edit tools/backlog.py \u2014 add a scanner there that reads THIS file."
 }

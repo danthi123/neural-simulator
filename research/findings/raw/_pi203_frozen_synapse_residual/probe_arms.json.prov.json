@@ -1,0 +1,8 @@
+{
+  "runner": "research/findings/raw/_pi203_frozen_synapse_residual/probe_residual_paths.py",
+  "cmd": "CUDA_VISIBLE_DEVICES= SIM_BACKEND=numpy PYTHONPATH=. python research/findings/raw/_pi203_frozen_synapse_residual/probe_residual_paths.py",
+  "backend": "numpy",
+  "device": "CPU",
+  "sim_backend": "numpy",
+  "note": "Exploratory first probe: it located the residual write sites (scaling, structural elimination, reward clip, dead cp_plastic_mask attribute). Its two 'structural' arms are numerically identical because that probe's weight threshold was never crossed, so the arm did not engage; the decisive artifact is research/findings/raw/_pi203_frozen_synapse_residual/verification_record.json (60 runs, 5 rules x 6 seeds x 2 arms), whose arms differ on every rule."
+}

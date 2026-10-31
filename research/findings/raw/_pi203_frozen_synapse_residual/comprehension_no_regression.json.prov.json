@@ -1,0 +1,31 @@
+{
+ "run_id": "1793462511-6291",
+ "runner": "research/runners/pi203_comprehension_no_regression.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator-pi/research/runners/pi203_comprehension_no_regression.py",
+  "--workers",
+  "4"
+ ],
+ "git_sha": "710883be5",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-31T12:01:51",
+ "env": {
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_BACKEND": "numpy",
+  "OMP_NUM_THREADS": "1"
+ },
+ "host": "b6ff652d08c8",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2836.1,
+ "corpus_check_query": "BG live seam step-1 grid (rerun at 507b9c789c with --commit): STN/GPe tonic drive x seed",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_pi203_frozen_synapse_residual/comprehension_no_regression.json"
+}
