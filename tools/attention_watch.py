@@ -79,6 +79,11 @@ def w_checks(st, now):
     rc, out = sh(["bash", os.path.join(REPO, "tools/gpu_queue.sh"), "status"])
     paused = "PAUSED" in out
     idle = "current: (idle)" in out and re.search(r"queued: 0\b", out) is not None
+    # an empty queue is not an idle GPU when something outside the queue holds it (the local model, a trial):
+    # >4 GB in use means occupied
+    _, mem = sh(["nvidia-smi", "--query-gpu=memory.used", "--format=csv,noheader,nounits"], timeout=15)
+    if mem.strip().split("\n")[0].strip().isdigit() and int(mem.strip().split("\n")[0]) > 4096:
+        idle = False
     if idle and not paused:
         st["gpu_idle_since"] = st.get("gpu_idle_since") or now
         mins = (now - st["gpu_idle_since"]) / 60
