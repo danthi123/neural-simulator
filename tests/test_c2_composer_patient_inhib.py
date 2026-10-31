@@ -135,6 +135,11 @@ def test_step0_composer_read_mode(monkeypatch):
     out = S0.read_c(buf, [{"patient": "w0"}, {"patient": "w0"}])
     assert "error" in out                                        # flag unset: composer mode refuses to run silently
     monkeypatch.setenv(CI.COMPOSER_PATIENT_INHIB_ENV, "1")
+    # flag ON, read (c) reads production's patient drives (2026-10-31): give the stub the drives production would build
+    rel = [CI.composer_patient_relay(buf, PATIENT) for _ in range(2)]
+    buf._ensure_sequencer = lambda K: None
+    buf._seq_patient_drives = [d for d, _a, _i in rel]
+    buf._seq_patient_relay = [dict(i, acc=a) for _d, a, i in rel]
     out = S0.read_c(buf, [{"patient": "w0"}, {"patient": "w0"}])
     assert "error" not in out, out.get("traceback")
     arms = out["step0b"]["arms"]

@@ -1668,13 +1668,30 @@ class OneBrainComposer:
                                                          sigma=self.sequencer_sigma, gain=self.sequencer_gain)
             self._seq = (sb, meta); self._seq_score = score_sb; self._seq_K = K
             self._seq_dirty = True                                 # a new K -> the drives must be (re)built
-        if self._seq_dirty or self._seq_drives is None:
+        from research.runners._c2_patient_inhib import composer_patient_inhib_enabled, composer_patient_relay
+        pinhib = composer_patient_inhib_enabled()          # BRAIN_C2_COMPOSER_PATIENT_INHIB (default OFF)
+        if self._seq_dirty or self._seq_drives is None or (pinhib and getattr(self, "_seq_patient_drives", None) is None):
             self._seq_cleanup_conns_cache = None              # opt #4: rebuild the block-invariant cleanup conns once for this drive rebuild
-            bscores = [fns["block_cleanup_scores"](self, b) for b in range(K)]   # the composer's own op result per block
+            if not pinhib:                                     # flag OFF: the unchanged production path (byte-identical)
+                bscores = [fns["block_cleanup_scores"](self, b) for b in range(K)]   # the composer's own op result per block
+            else:
+                # flag ON: the same per-block read also returns the PATIENT row of the same cleanup membrane (no extra
+                # substrate run); the agent/action pairs go to make_block_drives exactly as above, and each patient
+                # slice is relayed through the composer's patient-inhibition bridge (which pools SPIKE decides).
+                full = [fns["block_cleanup_scores"](self, b, with_patient=True) for b in range(K)]
+                bscores = [(ag, ax) for (ag, ax, _ap) in full]
             drives, _lit = fns["make_block_drives"](self._seq_score, self.V, bscores,
                                                     input_gain=self.sequencer_input_gain, retreat="divnorm",
                                                     peak_mult=1.0)
             self._seq_drives = drives
+            if pinhib:
+                pdrv, prelay = [], []
+                for (_ag, _ax, ap) in full:
+                    dP, accP, info = composer_patient_relay(self, ap)
+                    pdrv.append(dP)
+                    prelay.append(dict(info, acc=accP))
+                self._seq_patient_drives = pdrv               # per block: the decoded-line PATIENT drive (lit = fired pools)
+                self._seq_patient_relay = prelay              # per block: the relay's pool spike counts + pinh spikes
             self._seq_dirty = False
 
     def patient_inhib_bridge(self, w_i2e=None):
@@ -1682,7 +1699,8 @@ class OneBrainComposer:
         when `BRAIN_C2_COMPOSER_PATIENT_INHIB` is unset (default OFF; nothing is built and nothing else changes). Same
         word-pool layout / seed / sigma / gain / per-neuron parameters as `_seq_score`, plus the external-only divisive
         stage, stable integration and the shared FS `pinh` population with FF drive (step-0d validated knobs). A SEPARATE
-        bridge: the sequencer, `make_block_drives` and `_seq_score` are untouched. `w_i2e=0` gives the lesion bridge.
+        bridge: the sequencer, `make_block_drives` and `_seq_score` are untouched; with the flag ON `_ensure_sequencer`
+        relays each block's PATIENT slice through it into `_seq_patient_drives`. `w_i2e=0` gives the lesion bridge.
         Needs the sequencer built (`_ensure_sequencer`) so `_seq_score` exists."""
         from research.runners._c2_patient_inhib import composer_patient_inhib_enabled, composer_patient_inhib_bridge
         if not composer_patient_inhib_enabled():
