@@ -19,8 +19,10 @@ runner: research.runners.pi203_frozen_synapse_battery (CPU/numpy, 6 neurons, 30 
 second runner: research.runners.pi203_comprehension_no_regression (the production comprehension organ, CPU/numpy,
   12 runs, ~2.5 min each, 4 concurrent)
 artifact: research/findings/raw/_pi203_frozen_synapse_residual/verification_record.json (72 runs: 6 rules x 6 seeds x 2 arms)
+byte-identity artifact: research/findings/raw/_pi203_frozen_synapse_residual/byte_identity_record.json (36 comparisons,
+  36/36 identical) -- runner research.runners.pi203_prefix_comparison
 throughput: 72 runs (6 rules x 6 seeds x 2 arms) in 5.21 s wall, numpy/CPU, no GPU (the artifact records backend,
-  device, per-run elapsed and a cost projection)
+  device, per-run elapsed and a cost projection); 36 x 3 byte-identity comparisons in 41 s wall, same backend
 builds_on:
   - research/findings/2026-09-02-read-isolation-audit-29runner-followup-map-plus-a-bigger-adjacent-bug.md
   - research/findings/2026-09-24-plastic-mask-flip-PREREGISTRATION.md (the flip criteria this residual must satisfy before the default changes)
@@ -80,7 +82,10 @@ literally the old one.
 1. **Flag OFF == pre-fix.** The scenario file was run against the genuine pre-fix source (`git archive` of the
    pre-fix commit `710883be5`, extracted into a scratch dir -- `git worktree` fails on this box, FAILURE_LOG
    2026-10-31) with the flag absent: SHAs over `cp_connections.data` + `v` + `u` match the fixed code's OFF arm
-   exactly in **36/36** comparisons (6 rules x 6 seeds).
+   exactly in **36/36** comparisons (6 rules x 6 seeds), recorded in
+   `research/findings/raw/_pi203_frozen_synapse_residual/byte_identity_record.json` (each comparison also carries a
+   repeat OFF run of the current tree, so identity is not a single lucky draw). `tests/test_plastic_mask_beyond_hebbian.py`
+   re-derives the same comparison live from git history (no hard-coded SHA).
 2. **Flag ON freezes.** 6 rules x 6 seeds: frozen max-delta exactly 0.0 in all 36 ON runs, the control population
    moves in all 36, spikes present in all 72 (no undefined comparison). OFF-arm drifts: scaling 15.0, structural
    0.02, reward 99.0, rebuild 15.01-15.04, compaction 5.0, combined 99.99 -- identical on every seed.
@@ -92,6 +97,7 @@ Commands (verbatim, from the repo root):
 ```
 CUDA_VISIBLE_DEVICES= SIM_BACKEND=numpy PYTHONPATH=. python -m pytest tests/test_plastic_mask_beyond_hebbian.py -q
 CUDA_VISIBLE_DEVICES= SIM_BACKEND=numpy PYTHONPATH=. python -m research.runners.pi203_frozen_synapse_battery
+CUDA_VISIBLE_DEVICES= SIM_BACKEND=numpy PYTHONPATH=. python -m research.runners.pi203_prefix_comparison
 CUDA_VISIBLE_DEVICES= SIM_BACKEND=numpy PYTHONPATH=. python tests/_plastic_mask_beyond_hebbian_scenario.py scaling --enforce
 ```
 

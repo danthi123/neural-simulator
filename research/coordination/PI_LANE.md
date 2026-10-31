@@ -5,7 +5,8 @@
     `cfg.enforce_plastic_mask_beyond_hebbian` (DEFAULT OFF). Evidence:
     `research/findings/2026-10-31-plastic-mask-residual-the-six-write-sites-the-hebbian-fix-never-reached.md`,
     `research/findings/raw/_pi203_frozen_synapse_residual/verification_record.json` (72 runs; frozen delta 0.0 ON,
-    drift OFF; OFF SHA-identical to pre-fix `710883be5` 36/36) and
+    drift OFF; OFF SHA-identical to pre-fix `710883be5` 36/36, recorded in
+    `research/findings/raw/_pi203_frozen_synapse_residual/byte_identity_record.json`) and
     `research/findings/raw/_pi203_frozen_synapse_residual/comprehension_no_regression.json` (12 runs; the flag
     changes the comprehension reply ZERO times — reported as a negative). Next: the owner flip decision per
     `research/findings/2026-09-24-plastic-mask-flip-PREREGISTRATION.md`, and pinning WHICH write sites reach the
