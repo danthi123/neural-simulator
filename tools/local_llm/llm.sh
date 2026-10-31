@@ -245,6 +245,14 @@ cmd_on() {
   # A unit left FAILED (e.g. a stop that timed out and was SIGKILLed, 2026-09-26) stays loaded, and systemd-run then
   # refuses the same name ("already loaded or has a fragment file"); clear it first. Harmless when there is none.
   "$SYSTEMCTL" --user reset-failed "$UNIT" 2>/dev/null || true
+  # A stop still in flight (state "deactivating": is-active above said no) also keeps the name loaded. On 2026-10-31
+  # two back-to-back yields left one finishing at the very second gpu_queue's restore ran, systemd-run refused, and
+  # the driver sat parked ~35 min on a dead endpoint. Wait (up to 30 s) for the old unit to leave before starting.
+  local _i
+  for _i in $(seq 30); do
+    [ "$("$SYSTEMCTL" --user show -p LoadState --value "$UNIT" 2>/dev/null)" = loaded ] || break
+    sleep 1; "$SYSTEMCTL" --user reset-failed "$UNIT" 2>/dev/null || true
+  done
   # LLAMA_SWAP_REPO_ROOT: llama-swap.yaml's `${repo_root}` macro (its --chat-template-file paths) resolves
   # through THIS env var rather than a path baked into the committed YAML, so the same file is correct whether
   # "local-llm" is ever started from the main checkout or from a .claude/worktrees/* dev copy.
