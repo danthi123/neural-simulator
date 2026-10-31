@@ -1,0 +1,2 @@
+# Pi lane (pilot, from 2026-10-31)
+- [ ] Board #203: a synapse marked non-plastic (plastic=False / plastic_internal=False) still drifts from use. Research the record first (the finding 2026-09-02-read-isolation-audit-29runner-followup-map-plus-a-bigger-adjacent-bug.md and the board text; an earlier fix may cover part of it). Enforce the freeze in the runtime path that still moves frozen weights, behind a default-OFF flag, with tests: frozen weights unchanged over 30 reads, and byte-identical behaviour when the flag is off. Merge via a checkpoint merge_review.
