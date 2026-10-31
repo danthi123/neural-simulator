@@ -19,6 +19,58 @@ import json
 
 import tools.lab
 
+# Criterion 0 of research/findings/2026-09-24-plastic-mask-flip-PREREGISTRATION.md (AMENDMENT 1): "a
+# battery/probe result that does not name its BRAIN_ONEBRAIN_WAVE3_POOL state is UNDEFINED, not a pass".
+# Every row this runner emits names it.
+POOL_CONFIG = {
+    "standalone": "ComprehensionProductionOrgan built directly -- the documented BRAIN_ONEBRAIN_WAVE3_POOL=0 "
+                  "escape hatch path, i.e. the pre-wave3 bridge where the bug and the fix live",
+    "pooled": "get_organ(seed) -- the wave3 merged one-brain pool, production default (env var unset = ON)",
+}
+
+
+def _rule_summary(runs: list) -> dict:
+    out = {}
+    for rule in sorted({r["rule"] for r in runs}):
+        off = [r for r in runs if r["rule"] == rule and not r["enforce"]]
+        on = [r for r in runs if r["rule"] == rule and r["enforce"]]
+        out[rule] = {
+            "off_frozen_delta_min": round(min(r["frozen_max_delta"] for r in off), 4),
+            "off_frozen_delta_max": round(max(r["frozen_max_delta"] for r in off), 4),
+            "on_frozen_delta_max": round(max(r["frozen_max_delta"] for r in on), 6),
+            "on_control_delta_min": round(min(r["control_max_delta"] for r in on), 4),
+            "off_mislabelled_after_rebuild": [r["mask_mislabelled_after_rebuild"] for r in off],
+            "on_mislabelled_after_rebuild": [r["mask_mislabelled_after_rebuild"] for r in on],
+        }
+    return out
+
+
+def _backend_confirmation(src: str) -> dict:
+    """The same seven rules and the production organ, on the GPU path, reduced to the rows the doc quotes."""
+    d = json.load(open(src, encoding="utf-8"))
+    arms = {}
+    for a in d.get("organ_arms", []):
+        arms[f"seed{a['seed']} {'ON' if a['enforce'] else 'OFF'}"] = {
+            "pool_config": POOL_CONFIG["standalone"],
+            "n_synapses": a["n_synapses"],
+            "n_frozen": a["n_frozen"],
+            "frozen_max_abs_drift": round(a["frozen_max_abs_drift"], 6),
+            "frozen_synapses_drifted": a["frozen_synapses_drifted"],
+            "plastic_max_abs_drift": round(a["plastic_max_abs_drift"], 6),
+            "plastic_synapses_drifted": a["plastic_synapses_drifted"],
+            "reply_margin": a["reply_margin"],
+        }
+    return {
+        "source": src,
+        "backend_requested": d.get("backend_requested"),
+        "backend_resolved": d.get("backend_resolved"),
+        "device": d.get("device"),
+        "n_runs": len(d.get("runs", [])),
+        "elapsed_seconds": d.get("elapsed_seconds"),
+        "rule_summary": _rule_summary(d.get("runs", [])),
+        "organ_arms": arms,
+    }
+
 
 def aggregate(src: str) -> dict:
     d = json.load(open(src, encoding="utf-8"))
@@ -94,9 +146,14 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--src", required=True)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--cupy-src", default="",
+                    help="optional backend-confirmation artifact to reduce into the same aggregate")
     args = ap.parse_args()
     tools.lab.assert_backend("numpy", "the #203 follow-up attribution ran on the CPU/numpy path by design")
     agg = aggregate(args.src)
+    agg["pool_config_of_each_organ"] = POOL_CONFIG
+    if args.cupy_src:
+        agg["cupy_backend_confirmation"] = _backend_confirmation(args.cupy_src)
     with open(args.out, "w", encoding="utf-8") as fh:
         json.dump(agg, fh, indent=1)
     print(f"[aggregates] {args.src} -> {args.out} | {len(agg['per_site'])} site rows, "
