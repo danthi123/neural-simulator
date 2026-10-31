@@ -67,17 +67,21 @@ def _probe(backend: str, seed: int, scaling_on: bool) -> dict:
     # Decisive instrument, not inference: which lines of the homeostasis block ACTUALLY execute on this
     # backend. sys.settrace over 20 steps of a 6-neuron bridge is cheap.
     line_hits = {}
+    band_hits = {"9531-11100": 0, "11101-12319": 0, "12320-12440": 0, "12441-12600": 0}
+    max_line = [0]
     import sys as _sys
     import sim.bridge as _bmod
     _bridge_file = os.path.abspath(_bmod.__file__)
-    _gated = {"homeostasis_gated": None, "plasticity_gated": None}
 
     def _trace(frame, event, arg):
         if event == "line" and frame.f_code.co_filename == _bridge_file:
-            if 10903 <= frame.f_lineno <= 10913:
-                _gated["homeostasis_gated_seen"] = frame.f_lineno
-            if 12320 <= frame.f_lineno <= 12440:
-                line_hits[frame.f_lineno] = line_hits.get(frame.f_lineno, 0) + 1
+            ln = frame.f_lineno
+            max_line[0] = max(max_line[0], ln)
+            for lo, hi in ((9531, 11100), (11101, 12319), (12320, 12440), (12441, 12600)):
+                if lo <= ln <= hi:
+                    band_hits["%d-%d" % (lo, hi)] += 1
+            if 12320 <= ln <= 12440:
+                line_hits[ln] = line_hits.get(ln, 0) + 1
         return _trace
 
     _sys.settrace(_trace)
@@ -115,6 +119,8 @@ def _probe(backend: str, seed: int, scaling_on: bool) -> dict:
         "ema_update_line_hit": 12391 in line_hits or 12392 in line_hits,
         "scaling_write_line_hit": any(l in line_hits for l in (12418, 12419, 12420, 12421, 12422)),
         "homeostasis_line_hits": dict(sorted(line_hits.items())),
+        "bridge_line_bands": band_hits,
+        "max_bridge_line_traced": max_line[0],
         "ema_before_max": None if ema_before is None else float(np.asarray(_host(ema_before)).max()),
         "ema_after_max": None if bridge.cp_neuron_activity_ema is None
                         else float(np.asarray(_host(bridge.cp_neuron_activity_ema)).max()),
