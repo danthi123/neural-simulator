@@ -83,6 +83,7 @@ def _arm(enforce: bool, seed: int, tap: bool) -> dict:
     plastic_drift = {cc: abs(coords_after[cc] - coords_before[cc]) for cc in common if cc not in frozen}
     sites = tapmod._aggregate(tapmod._LOG) if tap else []
     return {
+        "tap_blind": tapmod.tap_is_blind(bridge) if tap else False,
         "n_frozen": len(frozen),
         "frozen_max_abs_drift": max(frozen_drift.values(), default=0.0),
         "frozen_synapses_drifted": sum(1 for d in frozen_drift.values() if d > 1e-9),
@@ -105,6 +106,10 @@ def test_frozen_synapses_flat_over_30_reads_when_flag_on(seed):
     assert r["frozen_max_abs_drift"] == 0.0, (
         "flag ON but %d frozen synapses still moved (max |dw| %s): a write path escapes the mask"
         % (r["frozen_synapses_drifted"], r["frozen_max_abs_drift"]))
+    if r["tap_blind"]:
+        pytest.skip("the weight buffer is not a numpy array (cupy path): the per-write tap cannot hook it, so the "
+                    "per-site and residual assertions are unmeasurable here. The coordinate assertion above is the "
+                    "real one; per-site write attribution on cupy needs a cupy-native tap, not a silent zero.")
     assert not r["sites_touching_frozen"], (
         "flag ON but a write still landed on a frozen synapse: %s" % r["sites_touching_frozen"])
     # The tap must account for every change it sees; a nonzero signed residual means a write escaped the hooks.
@@ -118,6 +123,9 @@ def test_the_drift_is_real_when_the_flag_is_off(seed):
     assert r["frozen_synapses_drifted"] > 0, (
         "the flag-OFF arm shows no frozen drift: either the defect is fixed by something else, or this probe "
         "is not reaching the pathway the 2026-09-02 audit measured -- do not read the ON-arm zero as a fix")
+    if r["tap_blind"]:
+        pytest.skip("tap blind on this backend (non-numpy weight buffer): the signed residual cannot be computed; "
+                    "the drift assertion above is the measured part")
     # A nonzero residual in the OFF arm is not an instrument bug: it is the mask-misalignment defect (v) --
     # a CSR rebuild re-orders synapses and, with the flag OFF, the mask is never remapped, so the position-based
     # frozen split disagrees with the coordinate-based drift. The ON arm above has no rebuild-driven misalignment.

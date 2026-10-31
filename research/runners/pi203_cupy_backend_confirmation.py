@@ -50,6 +50,13 @@ TEACHER_FLAGS = {
 }
 
 
+def _npify(x):
+    """cupy -> numpy without the implicit-conversion error; numpy passes through unchanged."""
+    if hasattr(x, "get") and not isinstance(x, np.ndarray):
+        return np.asarray(x.get())
+    return np.asarray(x)
+
+
 def _coo(bridge):
     """The organ's weight store as a COO triple, whatever the backend handed us (scipy sparse on numpy, a
     dense/cupy buffer if the GPU path stores it that way). One place, so _coords and _frozen_coords cannot
@@ -71,7 +78,7 @@ def _frozen_coords(bridge) -> set:
     mask = getattr(bridge, "cp_synapse_plastic_mask", None)
     if mask is None:
         return set()
-    mask = np.asarray(mask)
+    mask = _npify(mask)
     coo = _coo(bridge)
     return {(int(r), int(c)) for k, (r, c) in enumerate(zip(coo.row, coo.col))
             if k < mask.size and not mask[k]}
@@ -148,10 +155,11 @@ def main():
 
     gross = sum(r["frozen_max_delta"] for r in runs if r["enforce"]) + sum(
         r["control_max_delta"] for r in runs if r["enforce"])
-    term_budget("gross residual drift still allowed with the flag ON (max per rule, ON arm)",
-                gross if gross > 0 else 1e-12,
-                {"frozen-population delta (ON arm)": sum(r["frozen_max_delta"] for r in runs if r["enforce"]),
-                 "control-population delta (ON arm)": sum(r["control_max_delta"] for r in runs if r["enforce"])})
+    term_budget("gross weight drift surviving the flag ON, split by WHO is allowed to move: the mask-declared "
+               "frozen population (must be 0) vs the mask-declared plastic population (moving is the design, "
+               "not a leak)", gross if gross > 0 else 1e-12,
+               {"frozen-population delta (ON arm, the leak this measures)": sum(r["frozen_max_delta"] for r in runs if r["enforce"]),
+                "control-population delta (ON arm, plastic by declaration)": sum(r["control_max_delta"] for r in runs if r["enforce"])})
 
     organ_arms = []
     if not args.skip_organ:
