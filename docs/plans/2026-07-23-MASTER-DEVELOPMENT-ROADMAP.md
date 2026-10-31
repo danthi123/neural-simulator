@@ -1433,7 +1433,7 @@ add repetition/sleep-replay routes to L-LTP before any default flip.
   host code; plus a post-hoc ablation arm and a host-record inertness arm) was pre-registered before any v3 arm. Seed
   42 passes all seven criteria, INCOMPLETE 1/6. NEXT: the 5-seed pool fanout, then score. Findings:
   `research/findings/2026-09-23-d6-learn-through-use-v3-PREREGISTRATION-capability-gate.md`,
-  `research/findings/2026-09-23-d6-learn-through-use-v3-s42-all-criteria-pass-INCOMPLETE-1of6-plus-v1-pool-banked.md`.
+  `research/findings/2026-09-23-d6-learn-through-use-v3-s42-all-criteria-pass-INCOMPLETE-1of6-plus-v1-pool-banked.md` ⛔ declared superseded — cite `research/findings/2026-09-23-d6-learn-through-use-v3-capability-gate-GO-6of6.md`.
 
 **2026-09-18 (STRATEGIC — owner decision + scaling go/no-go; supersedes the raw-scale framing below):**
 - **Faithfulness-vs-tractability relaxation APPROVED (owner), honesty-conditioned** — trade bit-exact realism ONLY for a significant perf gain that loses nothing important to end-goal capabilities, and document every trade; biology-strong stays core; invariants kept (brain-based / one-brain / emergent / honesty). See memory `project_agi_first_fork_openness_2026_09_06`.
