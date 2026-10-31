@@ -46,6 +46,14 @@ def _base_cfg(rule, seed):
     from sim.config import CoreSimConfig
     from sim.enums import NeuronModel
     cfg = CoreSimConfig()
+    # BRAIN_STEP_PATH=python pins the step to the Python path by turning off the general-step megakernel.
+    # Used ONLY by the byte-identity harness (see tests/test_plastic_mask_beyond_hebbian.py): the pre-fix
+    # snapshot predates the megakernel guard fix, so the two arms would otherwise differ by WHICH step they
+    # run, not by the mask flag the test is measuring. Never set by the battery or the organ runs.
+    if os.environ.get("BRAIN_STEP_PATH", "").lower() == "python":
+        cfg.enable_step_megakernel = False
+        cfg.enable_step_cudagraph = False
+        cfg.enable_step_megakernel_v2 = False
     cfg.num_neurons = 8 if rule == "compaction" else N_NEURONS
     cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
     cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"

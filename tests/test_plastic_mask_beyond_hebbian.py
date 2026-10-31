@@ -24,8 +24,15 @@ VERIFIED, not asserted:
       flag OFF, 0 with it ON.
 
 Runs on numpy by default (setdefault, so the tests need no GPU and are deterministic); asking for
-`SIM_BACKEND=cupy` runs them on the GPU, where the same assertions are checked and the two rules whose
-mechanism never fires on that backend are skipped with that reason stated.
+`SIM_BACKEND=cupy` runs them on the GPU, where the same assertions are checked.
+
+One pin is applied to BOTH arms of the byte-identity comparison: `BRAIN_STEP_PATH=python` turns off the
+ general-step megakernel. The pre-fix snapshot predates the megakernel-guard fix (commit a543af24, found by
+ the scaling trace: on cupy a scaling-only bridge dispatched the fused read-only step and never reached the
+ scaling block), so without the pin the two arms would differ by WHICH step they execute rather than by the
+ mask flag this test measures. The fused GPU path is covered separately by
+ `tests/test_step_megakernel_guard_completeness.py` and by the cupy battery
+ (`research/runners/pi203_cupy_backend_confirmation.py`), which runs the rules on the real step path.
 """
 import functools
 import json
@@ -39,6 +46,7 @@ import pytest
 
 os.environ.setdefault("SIM_BACKEND", "numpy")
 BACKEND = os.environ["SIM_BACKEND"]
+os.environ["BRAIN_STEP_PATH"] = "python"   # see the docstring: isolates the mask flag in the pre-fix comparison
 
 _REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 _SCENARIO_REL = os.path.join("tests", "_plastic_mask_beyond_hebbian_scenario.py")
