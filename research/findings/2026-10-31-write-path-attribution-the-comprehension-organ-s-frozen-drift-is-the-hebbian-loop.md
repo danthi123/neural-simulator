@@ -105,6 +105,53 @@ default False, so the flag-OFF path is untouched. Two new tests:
   write touches a frozen entry. Flag OFF: the drift is present (the zero is not vacuous). Plus instrument
   inertness: tapped == untapped replies.
 
+## The GPU path: six of the seven rules confirmed, one found inert
+
+Every number above was measured on CPU. The merge_review made any default flip conditional on the same gating being
+shown on the cupy path, and the first GPU job for this follow-up turned out to be a **CPU run wearing a GPU label**:
+`tests/_plastic_mask_beyond_hebbian_scenario.py` did `os.environ["SIM_BACKEND"] = "numpy"` (hard assignment), which
+overrules the caller -- exactly the trap `tools/lab.py:799` `assert_backend` exists for. It now `setdefault`s, and
+`research/runners/pi203_cupy_backend_confirmation.py` records the backend the engine **resolved** from
+`sim.backend.get_backend()`, not the one asked for.
+
+On the 3090 (`backend_resolved: "cupy"`, `device: "GPU (cupy)"`, 84 scenario runs in 59.78 s, 4 organ arms), from
+`research/findings/raw/_pi203_frozen_synapse_residual/backend_confirmation_cupy.json` reduced into
+`research/findings/raw/_pi203_frozen_synapse_residual/write_path_attribution_aggregates_v2.json`:
+
+| rule | frozen delta OFF | frozen delta ON | control delta ON | verdict |
+|---|---|---|---|---|
+| reward | 99.0 | 0.0 | 99.0 | gated |
+| hebbian | 19.0297-19.0577 | 0.0 | 19.0041 | gated |
+| combined | 99.99 | 0.0 | 99.9238 | gated |
+| compaction | 5.0 | 0.0 | 5.0 | gated |
+| structural | 0.02 | 0.0 | 0.02 | gated |
+| rebuild | 0.0 | 0.0 | 0.0 | mask mislabelling 4 OFF -> 0 ON; the drift itself did not fire |
+| scaling | 0.0 | 0.0 | 0.0 | **inert on this backend** -- the rule never writes, so it cannot be scored |
+
+Production organ, dev seeds 7/8, 30 reads of one sentence, standalone bridge (`ComprehensionProductionOrgan`, the
+documented `BRAIN_ONEBRAIN_WAVE3_POOL=0` path; Criterion 0 of
+`research/findings/2026-09-24-plastic-mask-flip-PREREGISTRATION.md` requires every row to name its pool state, so
+the aggregates artifact now carries `pool_config_of_each_organ`): frozen drift 58.205243 (1724 synapses, seed 7) /
+58.666237 (1700 synapses, seed 8) OFF -> 0.0 ON. Reply margin 0.34305556 -> 0.34305556 (seed 7) and 0.36111111 ->
+0.35486111 (seed 8). On this organ the mask-declared-frozen population is the ONLY population that moves at all
+(`plastic_max_abs_drift` 0.0 in both arms), which is the same 100% DOMINANT split the tap's `term_budget` reported
+on CPU.
+
+Two things the cupy run does **not** give us, stated rather than papered over:
+
+- **The tap is blind on cupy.** `research/runners/pi203_write_path_tap.py` wraps a numpy `ndarray`; a cupy buffer
+  cannot be wrapped. `tap_is_blind(bridge)` reports it and the tap log carries a note, so a cupy "no writes
+  recorded" is never read as "no writes happened". The coordinate-keyed drift invariant (frozen synapses
+  bit-unchanged) is still measured on every backend.
+- **The scaling rule's inertness is unexplained.** On numpy the same rule and seed moves both populations 15.0
+  (20.0 -> 5.0, the homeostatic clip inside the same block); on cupy `first_delta` is 0.0 from the very first read.
+  Nothing was logged as a step error, so the block at `sim/bridge.py:12384` is being skipped, not crashing. That
+  is a backend difference in a default-ON plasticity mechanism, discovered by this confirmation and now the subject
+  of `research/runners/pi203_scaling_backend_diagnostic.py` (control arm = the same bridge with
+  `enable_synaptic_scaling` off; `strict_step_errors = True` so the swallow at `sim/bridge.py:12522` cannot hide a
+  raise). Its numpy smoke fires (51 spikes, 15.0 ON vs 0.0 OFF), so the instrument detects the write when it
+  happens; the cupy run is what will say why it does not.
+
 ## What this does NOT claim
 
 - No default flip. `enforce_plastic_mask_beyond_hebbian` and `enforce_plastic_mask_in_hebbian` both stay False;
@@ -112,8 +159,10 @@ default False, so the flag-OFF path is untouched. Two new tests:
   still needs cupy confirmation.
 - No capability claim. Freezing the drift does not improve the comprehension reply on this organ; it stops
   1724 (seed 7) / 1700 (seed 8) declared-frozen synapses from drifting up to 55.6 / 58.5 weight units over 30 reads.
-- This is CPU/numpy. The attribution ran on the numpy path by design (dev-seed smokes, no GPU contention); the
-  gating code is backend-agnostic (`cp.where` / boolean masks, no backend-specific calls), but the GPU path has
-  not been re-run for this follow-up.
+- Not yet a backend-wide claim. The gating is confirmed on numpy and on cupy for the six rules that actually fire
+  on cupy; `scaling` is inert on cupy for a reason that is being diagnosed, and cross-backend weight values are not
+  bit-identical (the cupy organ drift is 58.205243/58.666237 where numpy measured 52.6672/56.9101 -- the numpy
+  numbers are in `research/findings/raw/_pi203_frozen_synapse_residual/backend_confirmation_smoke.json`), so byte-identity
+  is asserted per backend, never between them.
 - The pooled organ's zero-write behaviour is a measured fact about that organ under this battery, not a claim
   that the pooled brain never plasticizes.
