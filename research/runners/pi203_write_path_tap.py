@@ -57,6 +57,10 @@ _CURRENT_BRIDGE = None                   # the organ's bridge in this process (f
 _KEEP_ALIVE: list = []                   # keep every tapped array referenced, so ids are never reused
 _STEPS = 0
 _ARRAY_REPLACED = 0
+_BLIND: set = set()          # bridges whose weight buffer is NOT a numpy array (the cupy path): the tap can
+                             # see coordinate drift but cannot hook individual writes. Blindness is reported, not
+                             # hidden -- a tap that silently records nothing on the GPU looks identical to a run
+                             # where nothing was written.
 
 
 _SELF_FILE = os.path.basename(__file__)
@@ -149,7 +153,16 @@ class TapArray(np.ndarray):
         return self._inplace("__isub__", value, _caller_frame())
 
 
+def _npify(x):
+    """cupy -> numpy without the implicit-conversion error; numpy passes through unchanged."""
+    if hasattr(x, "get") and not isinstance(x, np.ndarray):
+        return np.asarray(x.get())
+    return np.asarray(x)
+
+
 def _make_tap(arr, csr, bridge):
+    if not isinstance(arr, np.ndarray):
+        return arr          # cupy buffer: TapArray is a numpy subclass, it cannot wrap this
     tap = arr if isinstance(arr, TapArray) else TapArray(arr)
     try:
         # carry the bridge on the array itself: object identity of a numpy view is not stable
@@ -178,7 +191,7 @@ def _record_replacement(old, new, csr, frame):
             old.indptr.shape != new.indptr.shape or old.indices.shape != new.indices.shape):
         _REBUILDS[0] += 1
     bridge = _BRIDGE_BY_CSR.get(id(csr)) or _CURRENT_BRIDGE
-    a, b = np.asarray(old, dtype=np.float64), np.asarray(new, dtype=np.float64)
+    a, b = _npify(old).astype(np.float64), _npify(new).astype(np.float64)
     if a.shape != b.shape:
         _LOG.append({"site": "%s:%d" % (os.path.basename(frame.f_code.co_filename), frame.f_lineno),
                      "function": frame.f_code.co_name, "touched": 0, "sum_abs_delta": 0.0,
@@ -256,6 +269,10 @@ def install_tap(bridge) -> None:
             object.__setattr__(self, name, value)
 
     def wrap(b, csr=None):
+        global _ARRAY_REPLACED      # without this the += makes it LOCAL to wrap: UnboundLocalError the moment
+                                    # the branch is reached -- which is exactly what happened on the cupy run
+                                    # (research/findings/raw/_pi203_frozen_synapse_residual/cupy_frozen_flat_pytest.txt,
+                                    # 5 failed), because on cupy the construction hook never pre-wraps the data.
         csr = csr if csr is not None else b.cp_connections
         if not isinstance(csr, TapCSR):
             csr = TapCSR(csr)
@@ -263,7 +280,18 @@ def install_tap(bridge) -> None:
         _BRIDGE_BY_CSR[id(csr)] = b
         if not isinstance(csr.data, TapArray):
             _ARRAY_REPLACED += 1
-            b.__dict__["cp_connections"].data = _make_tap(csr.data, csr, b)
+            tapped = _make_tap(csr.data, csr, b)
+            if not isinstance(tapped, TapArray):
+                _BLIND.add(id(b))
+                _LOG.append({"site": "instrument", "function": "install_tap", "touched": 0,
+                             "sum_abs_delta": 0.0, "max_abs_delta": 0.0, "frozen_writes": 0,
+                             "frozen_touched": 0, "frozen_sum_abs_delta": 0.0, "frozen_max_abs_delta": 0.0,
+                             "note": "cp_connections.data is a %s buffer, not a numpy array: the per-write tap "
+                                     "cannot hook it. Coordinate drift is still measured; per-site write "
+                                     "attribution is NOT, and any zero in the frozen column here is the "
+                                     "coordinate measurement, not the tap."
+                                     % type(csr.data).__module__})
+            b.__dict__["cp_connections"].data = tapped
 
     wrap(bridge)
 
@@ -326,7 +354,12 @@ def _coords(bridge) -> dict:
 
 def _mask(bridge):
     m = getattr(bridge, "cp_synapse_plastic_mask", None)
-    return None if m is None else np.asarray(m)
+    return None if m is None else _npify(m)
+
+
+def tap_is_blind(bridge) -> bool:
+    """True when this bridge's weight buffer cannot be hooked by the numpy-subclass tap (the cupy path)."""
+    return id(bridge) in _BLIND
 
 
 def _mask_label_by_coord(bridge) -> dict:
@@ -334,7 +367,7 @@ def _mask_label_by_coord(bridge) -> dict:
     the misalignment defect (v) directly: a CSR rebuild re-orders synapses and the mask is not remapped
     unless the fix is on, so the labels then describe the wrong weights."""
     m = getattr(bridge, "cp_synapse_plastic_mask", None)
-    mask = np.asarray(m) if m is not None else np.zeros(0, dtype=bool)
+    mask = _npify(m) if m is not None else np.zeros(0, dtype=bool)
     coo = bridge.cp_connections.tocoo()
     return {(int(r), int(c)): bool(mask[k]) if k < mask.size else False
             for k, (r, c) in enumerate(zip(coo.row, coo.col))}
