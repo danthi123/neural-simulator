@@ -28,6 +28,17 @@ def test_classify_reads_the_b2d_defined_count():
     assert G.classify('{"verdict": "INCOMPLETE", "counts": {"n_defined": 0}}')[0] == "FLAGGED"
 
 
+def test_classify_reads_the_c3_flip_reader_vocabulary():
+    # research/runners/c3_flip_compare.py prints its own decision words, never DEFINED (RULING c3-preflight-vocab-1031)
+    go = ("C3 flip compare: GO  (ON a vs OFF b)\n  cell 7/conv     PASS  answered on/off 7/7  both-abstained 4  "
+          "other-leaf-diffs 7\n")
+    assert G.classify(go) == ("CLEAN", [])
+    assert G.classify("C3 flip compare: NO-GO  (ON a vs OFF b)\n  cell 7/emo      FAIL  answered on/off 4/5\n")[0] == "CLEAN"
+    und = "C3 flip compare: UNDEFINED  (ON a vs OFF b)\n  UNDEFINED: 7/conv: ON sidecar lacks BRAIN_CURIOSITY_PHASIC_DA\n"
+    assert G.classify(und)[0] == "FLAGGED"                     # an instrument reason still flags
+    assert G.classify("the word cell PASS inside prose")[0] == "FLAGGED"     # anchored at a line start
+
+
 def test_classify_flags_instrument_failures():
     for bad in ('{"7": {"state": "UNDEFINED:engagement-route-word_role_commit:intact_a_x.json"}} DEFINED',
                 '{"7": {"state": "UNDEFINED:engagement-lesion-flag:lesion_x.json"}} DEFINED',

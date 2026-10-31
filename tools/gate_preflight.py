@@ -70,6 +70,11 @@ DEFINED_LABEL = re.compile(r'"label":\s*"(?:contributing|not necessary)"')
 # reviews at merge). A decided PASS/FAIL criterion proves the scorer read cells; the read's
 # UNDEFINED lines are still checked above.
 STAGE2_VERDICT = re.compile(r"\*\*Stage-2 exit verdict: (?:PASS|FAIL)\*\*|\bC[1-5] (?:PASS|FAIL)\b")
+# research/runners/c3_flip_compare.py (the c3-flip reader, RULING c3-flip-prereg-1031, 2026-10-31) decides in its own
+# words: the header `C3 flip compare: GO|NO-GO` and one `cell <seed>/<group> PASS|FAIL` line per cell; it never prints
+# DEFINED. Registered per RULING c3-preflight-vocab-1031 (case (a) of pool-gate-preflight-1023: vocabulary, not logic).
+# Its UNDEFINED status and UNDEFINED reasons still FLAG through the UNDEFINED check above.
+C3FLIP_VERDICT = re.compile(r"^C3 flip compare: (?:GO|NO-GO)\b|^\s*cell \S+\s+(?:PASS|FAIL)\b", re.M)
 
 
 def _rev9(r):
@@ -90,7 +95,7 @@ def classify(text):
             bad.append(line)
     if not (DEFINED.search(text) or DEFINED_COUNT.search(text)
             or DEFINED_VERDICT.search(text) or DEFINED_LABEL.search(text)
-            or STAGE2_VERDICT.search(text)):
+            or STAGE2_VERDICT.search(text) or C3FLIP_VERDICT.search(text)):
         bad.append("no DEFINED cell anywhere in the read (did the scorer read the dev seed?)")
     return ("FLAGGED" if bad else "CLEAN"), bad
 
