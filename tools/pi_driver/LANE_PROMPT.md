@@ -8,7 +8,9 @@ Next item in your lane ({lane_file}):
 How to work it:
 1. Research the record first: `bash tools/before_you_build.sh "<the item>"`, then the findings and code it points to.
 2. Work on a branch: `git switch -c research/pi-<slug>` (or switch to the item's existing branch). Commit often with
-   pathspecs; push only with `bash tools/push_both.sh <branch>`. Never touch main.
+   pathspecs. Do not push: you have no push credentials by design, and the server publishes every research/* branch
+   to both remotes within 15 minutes (sim-publish). Never touch main.
+   Python: this worktree has no .venv; use /home/dant123/Projects/neural-simulator/.venv/bin/python (tests too).
 3. Compute: CPU jobs through `run_pool`, GPU jobs through `run_gpu` (yield_model=true for anything over ~10 min).
    Then `wait_for` and END YOUR TURN; you will be messaged when it finishes. Never poll or sleep in a loop.
 4. Before asking Claude, get a `second_opinion` (MiMo reads the files you name) on a plan, diff or result, and check

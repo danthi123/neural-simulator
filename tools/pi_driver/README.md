@@ -20,7 +20,7 @@ Hermes keeps every other lane, plus its homelab duties.
 | CPU jobs | `run_pool`, which calls `tools/pool_queue.sh add`. The dispatcher is unchanged. |
 | GPU jobs | `run_gpu`, which calls `tools/gpu_remote.sh add` and optionally `yield`. The model unloads, the job runs, and llama-swap reloads the model on the next request. |
 | Waiting | `wait_for` (file, gpu or shell) persists a waiter in `state_dir`. The model ends its turn and is messaged when the job finishes. Waiting costs no tokens. |
-| Repo rules | `guard_policy.ts` checks bash as well as write and edit. It blocks: `--no-verify`, raw `git push` (`push_both.sh` only), `reset --hard`, `clean`, touching main, host and process control, compute control outside the tools, deleting or overwriting results, editing gates, hooks, `CLAUDE.md` or this harness, and reading secrets. Tests: `node --test tools/pi_driver/extensions/sim-driver/guard_policy.test.ts`. |
+| Repo rules | `guard_policy.ts` checks bash as well as write and edit. It blocks: `--no-verify`, `git push` (the server publishes research/* branches itself), `reset --hard`, `clean`, touching main, host and process control, compute control outside the tools, deleting or overwriting results, editing gates, hooks, `CLAUDE.md` or this harness, and reading secrets. Tests: `node --test tools/pi_driver/extensions/sim-driver/guard_policy.test.ts`. |
 
 A merge checkpoint yields a verdict on an exact sha. Landing on main stays with the existing flow, `land_claude_branch.sh`
 or a Claude check-in, because the main checkout belongs to uid 99.
@@ -56,12 +56,14 @@ driver needs the following.
 - `npm install -g --ignore-scripts @earendil-works/pi-coding-agent@1.4.0`.
 - Python 3 for `supervisor.py`.
 - git, bash and ripgrep.
-- The repo's Python venv, for tests.
+- The repo's Python venv, for tests: the worktree has none, so the lane prompt names the main checkout's.
 - The Claude Code CLI (`claude`).
 
 **Workspace (`workspace`)**
 - A git worktree of the server repo on branch `research/pi-lane`, owned by the uid the driver runs as. That uid must be
-  able to commit there and to push both remotes with `tools/push_both.sh`.
+  able to commit there. It gets no push credentials: the remotes' deploy keys stay with the `sim` user, and
+  sim-publish pushes every research/* branch within 15 minutes. (Deployed 2026-10-31 as uid 99, compose stack
+  ~/apps/pi-driver; OWNERSHIP-MAP section 11 "Pi lane"; results_root is the main checkout, which sim-sync fills.)
 - `tools/pool_queue.sh add` writes the shared queue through the git common dir, so the worktree must share the main
   checkout's `.git`.
 - The repo's pre-commit hooks must stay installed. They are the gates.

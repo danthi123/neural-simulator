@@ -100,7 +100,7 @@ export default function registerCompute(pi: ExtensionAPI, cfg: DriverConfig) {
     name: "run_gpu",
     label: "Run a job on the workstation GPU",
     description:
-      "Queue a GPU job at this checkout's COMMITTED HEAD (bash tools/gpu_remote.sh add; commit and push first). Long jobs " +
+      "Queue a GPU job at this checkout's COMMITTED HEAD (bash tools/gpu_remote.sh add, which carries the commit to the workstation itself; commit first, no push needed). Long jobs " +
       "(over ~10 min) set yield_model=true: the workstation's model -- the one you are running on -- unloads so the job gets " +
       "the whole card, and reloads by itself when the queue drains. Put a unique tag in the command (e.g. in its --out " +
       "path), then call wait_for with kind 'gpu' and that tag, and END YOUR TURN: you will be messaged when it is done.",

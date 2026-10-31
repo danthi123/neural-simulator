@@ -14,7 +14,7 @@ const no = (reason: string): Verdict => ({ block: true, reason });
 const BASH_RULES: [RegExp, string][] = [
   [/--no-verify\b|\bcommit\b[^|;&]*\s-n\b/, "never skip the pre-commit gates (CLAUDE.md non-negotiable 7)"],
   [/\bcore\.hooksPath\b|\.git\/hooks\b|tools\/githooks\b/, "the git hooks run the gates; they are not the driver's to change"],
-  [/\bgit\s+push\b/, "push only through `bash tools/push_both.sh <branch>` (it verifies both remotes)"],
+  [/\bgit\s+push\b/, "the driver does not push: the server publishes research/* branches to both remotes (sim-publish)"],
   [/\bgit\s+reset\s+[^|;&]*--hard\b/, "never `git reset --hard` (it destroys uncommitted results)"],
   [/\bgit\s+clean\b/, "never `git clean` (untracked results are evidence)"],
   [/\bgit\s+(checkout|restore)\s+[^|;&]*(\s--\s+)?\.\s*($|[|;&])/, "never discard the whole working tree"],
