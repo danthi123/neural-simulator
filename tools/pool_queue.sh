@@ -217,6 +217,14 @@ case "${1:-list}" in
            echo "$SHAPE_MSG" >&2
            exit 2
          fi
+         # INSTRUMENT-FLAG GUARD (2026-10-31, tools/canary_preconditions.py). The BG step-1 sub-step grid (64 cells,
+         # dev seeds 71-78, ~80 CPU-hours) was queued without --commit, which its scorer requires, and every set read
+         # UNDEFINED; no gate-seed guard looks at dev seeds. EVERY line is checked against the flags its runner's
+         # registry entry (tools/canary_preconditions.json) requires for the paths it writes. Cheap, local, no ssh.
+         if ! FLAG_WHY=$(python3 "$ROOT/tools/canary_preconditions.py" check-line "$2" 2>&1); then
+           echo "⛔ REFUSED: $FLAG_WHY." >&2
+           exit 2
+         fi
          # GATE-SEED GUARD (2026-09-29, docs/plans/2026-09-29-local-model-transition-PLAN.md section 4). The
          # local model ran the six GATE seeds (42/43/44/100/101/102) on 2026-09-28 with no committed
          # preregistration -- a GATE-seed result is meant to be a VERDICT, and a verdict without a prereg is

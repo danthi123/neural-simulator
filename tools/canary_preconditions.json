@@ -1,0 +1,27 @@
+{
+  "schema": "canary-preconditions-registry-v1",
+  "_doc": "Registry for tools/canary_preconditions.py (2026-10-31, FAILURE_LOG row of that date). Per runner module: requires_flags = flags a queued line MUST carry when its argv writes under path_regex (checked by pool_queue.sh add and pool_canary.sh run); checker = the registered scorer the canary runs over its own output, and the PRECONDITION fields (never a gated outcome) it requires. Add an entry when a prereg/amendment makes a flag or precondition part of the instrument.",
+  "research.runners.host_share_bg_seam": {
+    "requires_flags": [
+      {
+        "path_regex": "_bg_live_seam/(step1|commit_gate|commit_dev)/",
+        "flag": "--commit",
+        "why": "amendment research/findings/2026-10-14-bg-live-seam-commit-AMENDMENT.md and docs/drafts/bg-tonic-loop/STEP1-SPEC.md: these cells are scored with --commit, so a cell run without the commit stage reads UNDEFINED (the 2026-10-31 step1/507b9c789 grid, VOID, RULING bg-t3-1031)"
+      }
+    ],
+    "checker": {
+      "argv": ["{python}", "-m", "{module}", "--score", "{arg:--run-all}", "--seeds", "{arg:--seed}"],
+      "add_if_flag": {"--commit": ["--commit"]},
+      "env": {"SIM_BACKEND": "numpy", "CUDA_VISIBLE_DEVICES": "", "PYTHONHASHSEED": "0"},
+      "json_key": "pooled",
+      "timeout_s": 1800,
+      "require": [
+        {"path": "pooled.membrane_ok", "op": "==", "value": 1.0, "label": "membrane in [-150, +100] mV in every neural-seam trial"},
+        {"path": "pooled.commit_engaged", "op": "==", "value": 1.0, "when": "flag:--commit", "label": "commit stage engaged on every neural-seam event"},
+        {"path": "pooled.commit_event_count_ok", "op": "==", "value": 1.0, "when": "flag:--commit", "label": "one neural-seam event per seam-arm turn"},
+        {"path": "pooled.commit_op_ok", "op": "==", "value": 1.0, "when": "flag:--commit", "label": "commit.op is the frozen row on every event"},
+        {"path": "pooled.commit_seed_ok", "op": "==", "value": 1.0, "when": "flag:--commit", "label": "commit.organ_seed is the shard's chat seed"}
+      ]
+    }
+  }
+}
