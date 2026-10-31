@@ -1,0 +1,62 @@
+{
+  "board": "Vikunja #203 -- comprehension-organ (lane E) reply-level arm of the frozen-synapse fix",
+  "flag": "cfg.enforce_plastic_mask_beyond_hebbian, armed via env BRAIN_ENFORCE_PLASTIC_MASK (default OFF)",
+  "backend": "numpy",
+  "device": "CPU (no CUDA on this host; CUDA_VISIBLE_DEVICES empty)",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "runs": 12,
+  "elapsed_note": "4 concurrent arms, ~2.5 min each",
+  "comparison": [
+    {
+      "seed": 42,
+      "battery_items": 25,
+      "items_differing": [],
+      "semantic_changes": [],
+      "identical": true
+    },
+    {
+      "seed": 43,
+      "battery_items": 25,
+      "items_differing": [],
+      "semantic_changes": [],
+      "identical": true
+    },
+    {
+      "seed": 44,
+      "battery_items": 25,
+      "items_differing": [],
+      "semantic_changes": [],
+      "identical": true
+    },
+    {
+      "seed": 100,
+      "battery_items": 25,
+      "items_differing": [],
+      "semantic_changes": [],
+      "identical": true
+    },
+    {
+      "seed": 101,
+      "battery_items": 25,
+      "items_differing": [],
+      "semantic_changes": [],
+      "identical": true
+    },
+    {
+      "seed": 102,
+      "battery_items": 25,
+      "items_differing": [],
+      "semantic_changes": [],
+      "identical": true
+    }
+  ],
+  "n_identical_seeds": 6,
+  "n_seeds_with_reply_change": 0
+}

@@ -23,6 +23,22 @@ read-outs, never phenomenal claims); Qwen stays the mouth; the #1 metric is the 
     python -m research.runners.c3_topic_stop_score --identity-canary research/findings/raw/_c3_topic_stop/canary --dev-dir research/findings/raw/_c3_topic_stop/dev --seeds 7,8 --pin 34a4e5f756024b4f5aa5d145b3b29661ad976d0b --out research/findings/raw/_c3_topic_stop/canary/identity_canary.json
 
 **What landed since the 10-21 header below (plain language; that block stays valid for every lane this one does not change):**
+- **Plastic-mask freeze extended to every write site (Vikunja #203, pi lane, 10-31, branch
+  `research/pi-203-frozen-synapse-freeze`, additive DEFAULT-OFF `cfg.enforce_plastic_mask_beyond_hebbian`).** The
+  2026-09-02 Hebbian fix gated four sites; a grep of every write to `cp_connections.data` found six more (synaptic
+  scaling, structural elimination, the reward clip, the reward UPDATE, the mask remap after a CSR re-sort -- which
+  read the never-assigned `cp_plastic_mask` -- and the deferred CSR compaction), plus new synapses labelled frozen
+  by the lazy `fill=False` growth. 72-run battery (6 rules x 6 seeds x 2 arms): frozen delta 15.0/0.02/99.0/15.0/5.0/99.99
+  OFF -> exactly 0.0 ON, control population moves in all 36 ON runs, OFF SHA-identical to pre-fix `710883be5` in 36/36
+  comparisons. On the production comprehension organ the flag changes the reply ZERO times (6 seeds x 2 arms, 25 items,
+  every digest identical) -- reported as a negative: those six sites do not reach that organ's read. Finding:
+  `research/findings/2026-10-31-plastic-mask-residual-the-six-write-sites-the-hebbian-fix-never-reached.md`; the 36/36
+  byte-identity is an artifact, `research/findings/raw/_pi203_frozen_synapse_residual/byte_identity_record.json`
+  (runner `research.runners.pi203_prefix_comparison`). merge_review APPROVED (Claude, 10-31,
+  `research/coordination/checkpoints/2026-10-31-merge_review-merge-review-pi-203-frozen-synapse-freeze.VERDICT.md`):
+  merge as-is, flag stays OFF by default, no capability claim from this merge, cupy confirmation before any flip.
+  No default flipped; the flip stays owner-gated per `2026-09-24-plastic-mask-flip-PREREGISTRATION.md`. Next on the
+  board: pin which write paths reach the comprehension organ's read (the 13.8->56.1 drift came from there).
 - **The Stage-2 exit attempt failed, and each failure has a cause on file (10-26).** Result:
   `research/findings/2026-10-26-stage2-exit-gate-RESULT.md`; four skeptic-verified diagnoses:
   `research/findings/2026-10-26-stage2-fail-diagnoses.md` (`a1bd7ff83`, merge `c5cd42d18`; RULINGS `stage2-next-1026`, `stage2-fixes-1026`).

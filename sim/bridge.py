@@ -1453,6 +1453,18 @@ class SimulationBridge:
             delta_all = cp.where(_pm_full, delta_all, cp.float32(0.0))
         self.cp_connections.data[:] = cp.where(heb_mask, w + delta_all, w)
 
+    def _plastic_mask_enforced(self, cfg, field):
+        """ADDITIVE, DEFAULT-OFF gate for one WRITE SITE of cp_synapse_plastic_mask enforcement.
+
+        True iff the umbrella env var BRAIN_ENFORCE_PLASTIC_MASK is set truthy OR cfg.<field> is True. Every site
+        below is skipped entirely when this returns False => byte-identical to the pre-enforcement behavior.
+        Evaluated at the use site so tests/callers can toggle the env var between builds. Backend-agnostic.
+        """
+        _env = os.environ.get("BRAIN_ENFORCE_PLASTIC_MASK", "")
+        if _env.strip().lower() not in ("", "0", "false", "no", "off"):
+            return True
+        return bool(getattr(cfg, field, False))
+
     def _hebbian_plastic_mask_enforced(self, cfg):
         """ADDITIVE, DEFAULT-OFF gate for enforcing cp_synapse_plastic_mask in the Hebbian LTP/decay/clip path.
 
@@ -1462,10 +1474,35 @@ class SimulationBridge:
         the plain Hebbian rule without changing any production default. Evaluated at the use site so tests/callers can
         toggle the env var between builds. Works identically on numpy and cupy (no backend calls here).
         """
-        _env = os.environ.get("BRAIN_ENFORCE_PLASTIC_MASK", "")
-        if _env.strip().lower() not in ("", "0", "false", "no", "off"):
-            return True
-        return bool(getattr(cfg, "enforce_plastic_mask_in_hebbian", False))
+        return self._plastic_mask_enforced(cfg, "enforce_plastic_mask_in_hebbian")
+
+    def _plastic_mask_for_remap(self):
+        """The per-synapse plastic mask to carry across a CSR-reordering rebuild, or None.
+
+        ADDITIVE, DEFAULT-OFF (2026-10-31, Vikunja #203 residual): historically this returned the attribute
+        `cp_plastic_mask`, which sim/ never assigns, so the remap branch was DEAD CODE and cp_synapse_plastic_mask
+        was never remapped (measured: 4 of the 14 declared (pre,post) pairs are mislabelled after
+        set_pathway_weights(..., add_missing=True) on the 6-neuron probe in
+        tests/_plastic_mask_beyond_hebbian_scenario.py). Returns the LIVE mask only when mask enforcement is armed, so
+        the flag-OFF default path is byte-identical.
+        """
+        if self._plastic_mask_enforced(self.core_config, "enforce_plastic_mask_beyond_hebbian") \
+                and self.cp_synapse_plastic_mask is not None:
+            return self.cp_synapse_plastic_mask
+        return None
+
+    def _live_plastic_mask(self, cfg, field, nnz):
+        """The nnz-sized bool mask (True = plastic) for a NON-Hebbian write site, or None when that site is not
+        enforced. None means 'skip the masked branch' => byte-identical to the pre-enforcement path.
+        ADDITIVE, DEFAULT-OFF (2026-10-31, Vikunja #203 residual); see cfg.enforce_plastic_mask_beyond_hebbian.
+        fill=False means a synapse that appeared after the mask was last sized reads as FROZEN -- the same
+        convention the 2026-09-02 Hebbian site uses. Synapses FORMED by structural plasticity are therefore
+        labelled plastic explicitly in `_add_synapses_to_arrays`, or default to plastic in the rebuild remap.
+        """
+        if self._plastic_mask_enforced(cfg, field) and self.cp_synapse_plastic_mask is not None:
+            return self._ensure_gate_capacity(
+                "cp_synapse_plastic_mask", nnz, fill=False, dtype=cp.bool_)[:nnz]
+        return None
 
     def _init_synapse_arrays_with_capacity(self, num_synapses, cfg):
         """Initializes synapse-indexed arrays with pre-allocated capacity for growth.
@@ -1704,6 +1741,18 @@ class SimulationBridge:
             self.cp_synapse_pulse_timers[start_idx:start_idx + new_count] = 0
             self.cp_synapse_pulse_progress[start_idx:start_idx + new_count] = 0.0
 
+        # ADDITIVE, DEFAULT-OFF (2026-10-31, Vikunja #203 residual): a synapse FORMED by structural plasticity is
+        # plastic by definition, but cp_synapse_plastic_mask is grown lazily with fill=False at use sites, so without
+        # this a newly formed synapse reads as FROZEN -- the opposite of what formation means. Skipped when the flag
+        # is off => byte-identical to the pre-fix path.
+        if (self._plastic_mask_enforced(cfg, "enforce_plastic_mask_beyond_hebbian")
+                and self.cp_synapse_plastic_mask is not None):
+            _pm_end = start_idx + new_count
+            # fill=False, then the explicit True: growing with fill=True would also label every EXISTING synapse
+            # sitting between the mask's lazy length and start_idx as plastic, silently un-freezing them.
+            _pm_arr = self._ensure_gate_capacity("cp_synapse_plastic_mask", _pm_end, fill=False, dtype=cp.bool_)
+            _pm_arr[start_idx:_pm_end] = True
+
         self._synapse_count += new_count
 
     def _compact_synapse_arrays(self, keep_mask):
@@ -1738,6 +1787,23 @@ class SimulationBridge:
         # synapse than it named. Unlike the CSR-rebuild path this is a pure REMOVAL (eliminate_zeros preserves
         # order), so a positional compaction with the same keep_mask is exactly right.
         _old_count = int(self._synapse_count)
+        # ADDITIVE, DEFAULT-OFF (2026-10-31, Vikunja #203 residual): the LIVE mask attribute is
+        # `cp_synapse_plastic_mask`; the `cp_plastic_mask` name in the tuple below has never been assigned
+        # anywhere in sim/, so the mask used to survive a compaction UNCOMPACTED -- every entry after the first
+        # deleted synapse then labelled the wrong synapse. Compacted only when mask enforcement is armed, so the
+        # flag-OFF default path is byte-identical.
+        if (self._plastic_mask_enforced(self.core_config, "enforce_plastic_mask_beyond_hebbian")
+                and self.cp_synapse_plastic_mask is not None):
+            _pm_arr = self.cp_synapse_plastic_mask
+            # The mask is grown LAZILY at use sites, so it can be SHORTER than the synapse list: its entries then
+            # describe the first len(mask) synapses in order. Compacting only the overlapping prefix keeps that
+            # alignment; skipping the compaction entirely (the old guard) left every entry after the first deleted
+            # synapse labelled against the wrong synapse.
+            _n = min(int(_pm_arr.shape[0]), _old_count)
+            if _n > 0:
+                # assign the COMPACTED slice itself (not the old buffer): the tail beyond the kept entries is
+                # stale and would otherwise still sit at high indices, re-desynchronising mask from synapse.
+                self.cp_synapse_plastic_mask = _pm_arr[:_n][keep_mask[:_n]]
         for _attr in ("cp_plasticity_rate_gain", "cp_plastic_mask",
                       "cp_synapse_conn_type", "cp_transmission_gain"):
             _arr = getattr(self, _attr, None)
@@ -5779,14 +5845,15 @@ class SimulationBridge:
                 # rebuilt at all, so set_plasticity_gate() then froze unrelated synapses while reporting success
                 # (reproduced: 361 wrong synapses frozen, 361 of 400 gated ones left plastic). Coordinates are
                 # stable across the rebuild, so positions are re-derived from them.
-                _old_mask = getattr(self, "cp_plastic_mask", None)
+                _old_mask = self._plastic_mask_for_remap()
                 _old_gain = getattr(self, "cp_plasticity_rate_gain", None)
                 self._remap_gate_indices_after_rebuild(
                     existing_row_cp, existing_col_cp,
                     old_gain=_old_gain if (_old_gain is not None
                                            and _old_gain.shape[0] != new_nnz) else None,
-                    old_mask=_old_mask if (_old_mask is not None
-                                           and _old_mask.shape[0] != new_nnz) else None,
+                    # the live mask is remapped by COORDINATE, so its length is irrelevant: a mask already grown to
+                    # new_nnz by _ensure_gate_capacity is still in the OLD positional order and must be remapped.
+                    old_mask=_old_mask,
                 )
 
         # Invalidate caches that depend on connectivity / weights
@@ -5810,6 +5877,14 @@ class SimulationBridge:
         Coordinates are stable across a rebuild, so positions are re-derived by matching (row, col) keys. The
         same mapping repairs cp_plasticity_rate_gain and cp_plastic_mask, which were copied POSITIONALLY onto
         the re-sorted space - carrying every value to the wrong synapse.
+
+        INVARIANT (why the `[:_n]` prefix pairing below is correct, and what would break it): every per-synapse
+        array here (gain, mask, STP state, eligibility, timers) is POSITIONAL in the pre-rebuild synapse order.
+        It is created sized to the initial nnz at wiring and only ever grown by TAIL APPEND
+        (`_ensure_gate_capacity`), never permuted, so when it is shorter than the pre-rebuild synapse list its
+        entries describe the FIRST len(arr) pre-rebuild positions -- which is exactly what `old_pos_all[:_n]`
+        indexes. If a future path ever re-orders a gate array without remapping it, this and every sibling site
+        silently labels the wrong synapses; that is why the mask is rebuilt here rather than patched in place.
         """
         if self.cp_connections is None:
             return
@@ -5842,12 +5917,21 @@ class SimulationBridge:
                      (old_rows.astype(cp.int64) * n + old_cols.astype(cp.int64)))
             if old_gain is not None:
                 g = cp.ones(nnz, dtype=cp.float32)
-                g[old_pos_all[valid]] = old_gain[:old_pos_all.shape[0]][valid]
+                # LENGTH SAFETY (2026-10-31, #203): gain is grown LAZILY at use sites, so it can be shorter than
+                # the pre-rebuild synapse list; boolean-indexing a shorter array with a longer mask raises.
+                _ng = min(int(old_gain.shape[0]), int(old_pos_all.shape[0]))
+                if _ng > 0:
+                    g[old_pos_all[:_ng][valid[:_ng]]] = old_gain[:_ng][valid[:_ng]]
                 self.cp_plasticity_rate_gain = g
             if old_mask is not None:
-                m = cp.zeros(nnz, dtype=cp.bool_)
-                m[old_pos_all[valid]] = old_mask[:old_pos_all.shape[0]][valid]
-                self.cp_plastic_mask = m
+                # NEW synapses (not present before the rebuild) default to PLASTIC, mirroring the gain default
+                # directly above (open gate). They are not named by any wiring-plan pathway, so declaring them
+                # frozen would make structural-plasticity-formed synapses permanently immutable.
+                m = cp.ones(nnz, dtype=cp.bool_)
+                _nm = min(int(old_mask.shape[0]), int(old_pos_all.shape[0]))
+                if _nm > 0:
+                    m[old_pos_all[:_nm][valid[:_nm]]] = old_mask[:_nm][valid[:_nm]]
+                self.cp_synapse_plastic_mask = m
             # Every OTHER per-synapse array must ride the same permutation. Structural-plasticity FORMATION
             # (bridge.py:8712, `cp_connections + new_connections_matrix`) returns CANONICALLY SORTED output, so
             # existing synapses move -- while _add_synapses_to_arrays() appends at the TAIL. Without this, STP
@@ -11931,6 +12015,13 @@ class SimulationBridge:
                         tan_gate = self.neuromodulator_manager.compute_plasticity_window_gate_multiplier()
                         if tan_gate != 1.0:
                             weight_updates = weight_updates * tan_gate
+                    # ADDITIVE, DEFAULT-OFF (2026-10-31, Vikunja #203 residual): eligibility is already mask-gated
+                    # ~40 lines above, but the mask can be grown AFTER eligibility was written (a pathway frozen
+                    # later still carries stale eligibility), so zero the update itself on frozen synapses.
+                    # _pm_ru is None when the flag is off => byte-identical.
+                    _pm_ru = self._live_plastic_mask(cfg, "enforce_plastic_mask_beyond_hebbian", actual_nnz)
+                    if _pm_ru is not None:
+                        weight_updates = cp.where(_pm_ru[:actual_nnz], weight_updates, cp.float32(0.0))
                     self.cp_connections.data += weight_updates
                     
                     # Clip to bounds (use STDP bounds if STDP is enabled, otherwise Hebbian bounds).
@@ -11941,12 +12032,24 @@ class SimulationBridge:
                     # (the reward/STDP clip was the one ungated operation that could move a frozen weight outside the
                     # active rule's clip bounds). Clip ONLY gain>0 synapses; uniform gain reproduces the un-gated clip;
                     # gain None (the default) takes the byte-identical else branch.
+                    # ADDITIVE, DEFAULT-OFF (2026-10-31, Vikunja #203 residual): with NO named gain array this clip
+                    # touched EVERY weight, so a synapse declared non-plastic sitting outside [w_min,w_max] was moved
+                    # by the clip alone (measured: a frozen 100.0 weight clipped to hebbian_max_weight, 1.0 in the
+                    # probe's config, delta 99.0). Its
+                    # eligibility is already mask-gated, so this is the only remaining way the reward block can touch
+                    # a frozen weight. _pm_rw is None when the flag is off => byte-identical.
+                    _pm_rw = self._live_plastic_mask(cfg, "enforce_plastic_mask_beyond_hebbian", self.cp_connections.nnz)
                     if self.cp_plasticity_rate_gain is not None:
                         _clipped_rw = cp.clip(self.cp_connections.data, w_min, w_max)
                         _nnz_rw = self.cp_connections.nnz            # size-match: see the Hebbian clip note
                         _active_rw = self._ensure_gate_capacity(
                             "cp_plasticity_rate_gain", _nnz_rw)[:_nnz_rw] > 0.0
+                        if _pm_rw is not None:
+                            _active_rw = _active_rw & _pm_rw
                         self.cp_connections.data[_active_rw] = _clipped_rw[_active_rw]
+                    elif _pm_rw is not None:
+                        _clipped_rw_pm = cp.clip(self.cp_connections.data, w_min, w_max)
+                        self.cp_connections.data[_pm_rw] = _clipped_rw_pm[_pm_rw]
                     else:
                         cp.clip(self.cp_connections.data, w_min, w_max, out=self.cp_connections.data)
                     
@@ -11972,6 +12075,15 @@ class SimulationBridge:
                     
                     # Synapse elimination: remove weak synapses
                     weak_synapse_mask = self.cp_connections.data < cfg.struct_plast_weight_threshold
+                    # ADDITIVE, DEFAULT-OFF (2026-10-31, Vikunja #203 residual): elimination zeroed a weight declared
+                    # non-plastic purely because it happened to be below struct_plast_weight_threshold -- a declared
+                    # freeze is not a probability of deletion. _pm_sp is None when the flag is off => byte-identical.
+                    # RNG note: when the flag is ON and the masked weak set is empty, the cp.random.rand(nnz) draw
+                    # below is skipped, so an ON run has a different RNG trajectory than an OFF run by design.
+                    _pm_sp = self._live_plastic_mask(cfg, "enforce_plastic_mask_beyond_hebbian",
+                                                    self.cp_connections.nnz)
+                    if _pm_sp is not None:
+                        weak_synapse_mask = weak_synapse_mask & _pm_sp
                     # int() works on both cupy 0-d arrays and numpy scalars
                     num_weak = int(cp.sum(weak_synapse_mask))
                     
@@ -12136,7 +12248,7 @@ class SimulationBridge:
                                 _old_rows = _pre_coo.row.copy()
                                 _old_cols = _pre_coo.col.copy()
                                 _old_gain_s = getattr(self, "cp_plasticity_rate_gain", None)
-                                _old_mask_s = getattr(self, "cp_plastic_mask", None)
+                                _old_mask_s = self._plastic_mask_for_remap()
                                 _old_gain_s = None if _old_gain_s is None else _old_gain_s.copy()
                                 _old_mask_s = None if _old_mask_s is None else _old_mask_s.copy()
                                 nnz_before = self.cp_connections.nnz
@@ -12279,6 +12391,16 @@ class SimulationBridge:
                 coo = self._get_cached_coo()
                 if coo is not None and coo.nnz == self.cp_connections.nnz:
                     post_scales = scale_factors[coo.col]
+                    # ADDITIVE, DEFAULT-OFF (2026-10-31, Vikunja #203 residual): homeostatic synaptic SCALING is a
+                    # weight WRITE that never consulted cp_synapse_plastic_mask, so a synapse DECLARED non-plastic
+                    # (RegionPathway(plastic=False) / BrainRegion(plastic_internal=False)) with no named gate still
+                    # moved every step -- measured 20.0 -> 5.0 (delta 15.0) over 30 reads on a 6-neuron probe.
+                    # Force the scale factor to 1.0 on non-plastic synapses. _pm_hs is None whenever the flag is off
+                    # (or no mask was built) => this branch is unreached => byte-identical to the pre-fix path.
+                    _pm_hs = self._live_plastic_mask(cfg, "enforce_plastic_mask_beyond_hebbian",
+                                                   self.cp_connections.nnz)
+                    if _pm_hs is not None:
+                        post_scales = cp.where(_pm_hs, post_scales, cp.float32(1.0))
                     # Per-pathway plasticity gain (Stage 1, 2026-04-27): scale
                     # the deviation-from-1 by gain. gain=0 → identity (no
                     # synaptic scaling); gain=1 → full scaling.
@@ -12298,7 +12420,15 @@ class SimulationBridge:
                         _nnz_hs = self.cp_connections.nnz            # size-match: see the Hebbian clip note
                         _active_hs = self._ensure_gate_capacity(
                             "cp_plasticity_rate_gain", _nnz_hs)[:_nnz_hs] > 0.0
+                        if _pm_hs is not None:
+                            # a mask-frozen synapse is not clipped to the homeostatic bounds either (mirrors the
+                            # _pm_heb clip gate in the Hebbian block)
+                            _active_hs = _active_hs & _pm_hs
                         self.cp_connections.data[_active_hs] = _clipped_hs[_active_hs]
+                    elif _pm_hs is not None:
+                        # no named gain array but mask enforcement ON: clip only the plastic synapses
+                        _clipped_hs_pm = cp.clip(self.cp_connections.data, _hw_min, _hw_max)
+                        self.cp_connections.data[_pm_hs] = _clipped_hs_pm[_pm_hs]
                     else:
                         cp.clip(self.cp_connections.data, _hw_min, _hw_max, out=self.cp_connections.data)
 
