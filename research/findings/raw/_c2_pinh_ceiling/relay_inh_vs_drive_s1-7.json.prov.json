@@ -1,0 +1,29 @@
+{
+ "run_id": "1793518823-20852",
+ "runner": "research/runners/c2_pinh_ceiling_table.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/research/runners/c2_pinh_ceiling_table.py"
+ ],
+ "git_sha": "f8b81fe8a",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-11-01T02:40:23",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_CLAUDE_REVIEW": "1"
+ },
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 50347.6,
+ "corpus_check_query": "frozen synapse drift comprehension organ write path attribution",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_c2_pinh_ceiling/relay_inh_vs_drive_s1-7.json"
+}

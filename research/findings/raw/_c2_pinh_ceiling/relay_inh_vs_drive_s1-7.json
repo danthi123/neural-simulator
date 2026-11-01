@@ -1,0 +1,2579 @@
+{
+ "what": "C2 step-0 relay (flag on): pinh spikes per 20-step block vs summed patient drive, dev seeds 1-7",
+ "made_by": "Claude, read-only over the shards listed; RULING c2-ff-grade-1101",
+ "ceiling_spikes_per_block": 300,
+ "n_blocks": 315,
+ "inh_spikes_counts": {
+  "300.0": 310,
+  "299.0": 2,
+  "298.0": 3
+ },
+ "summed_drive_min": 3142314.48828125,
+ "summed_drive_max": 17003893.4375,
+ "drive_ratio": 5.411264054222851,
+ "n_fired_counts": {
+  "1": 315
+ },
+ "fires_decoded_patient_true": 315,
+ "sources": [
+  "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_amb1.json",
+  "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_amb2.json",
+  "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_dup.json",
+  "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_infer.json",
+  "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_xtier.json",
+  "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_amb1.json",
+  "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_amb2.json",
+  "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_dup.json",
+  "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_infer.json",
+  "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_xtier.json",
+  "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_amb1.json",
+  "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_amb2.json",
+  "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_dup.json",
+  "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_infer.json",
+  "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_xtier.json",
+  "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_amb1.json",
+  "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_amb2.json",
+  "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_dup.json",
+  "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_infer.json",
+  "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_xtier.json",
+  "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_amb1.json",
+  "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_amb2.json",
+  "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_dup.json",
+  "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_infer.json",
+  "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_xtier.json",
+  "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_amb1.json",
+  "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_amb2.json",
+  "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_dup.json",
+  "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_infer.json",
+  "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_xtier.json",
+  "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_amb1.json",
+  "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_amb2.json",
+  "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_dup.json",
+  "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_infer.json",
+  "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_infer_bare.json",
+  "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_infer_rec.json",
+  "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_xtier.json"
+ ],
+ "blocks": [
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_amb1.json",
+   "block": 0,
+   "summed_patient_drive": 4236615.73046875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_amb1.json",
+   "block": 1,
+   "summed_patient_drive": 6004855.171875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_amb1.json",
+   "block": 2,
+   "summed_patient_drive": 5083748.947265625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_amb1.json",
+   "block": 3,
+   "summed_patient_drive": 3142314.48828125,
+   "inh_spikes": 299.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_amb1.json",
+   "block": 4,
+   "summed_patient_drive": 5214359.646484375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_amb1.json",
+   "block": 5,
+   "summed_patient_drive": 8844229.8125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_amb1.json",
+   "block": 6,
+   "summed_patient_drive": 8535316.375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_amb1.json",
+   "block": 7,
+   "summed_patient_drive": 9484086.4296875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_amb2.json",
+   "block": 0,
+   "summed_patient_drive": 4236615.73046875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_amb2.json",
+   "block": 1,
+   "summed_patient_drive": 6004855.171875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_amb2.json",
+   "block": 2,
+   "summed_patient_drive": 5083748.947265625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_amb2.json",
+   "block": 3,
+   "summed_patient_drive": 3142314.48828125,
+   "inh_spikes": 299.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_amb2.json",
+   "block": 4,
+   "summed_patient_drive": 5214359.646484375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_amb2.json",
+   "block": 5,
+   "summed_patient_drive": 8844229.8125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_amb2.json",
+   "block": 6,
+   "summed_patient_drive": 8535316.375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_amb2.json",
+   "block": 7,
+   "summed_patient_drive": 7983424.078125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_dup.json",
+   "block": 0,
+   "summed_patient_drive": 4492880.890625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_dup.json",
+   "block": 1,
+   "summed_patient_drive": 6364522.515625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_dup.json",
+   "block": 2,
+   "summed_patient_drive": 5639272.3857421875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_dup.json",
+   "block": 3,
+   "summed_patient_drive": 3313568.96484375,
+   "inh_spikes": 298.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_dup.json",
+   "block": 4,
+   "summed_patient_drive": 5785760.677734375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_dup.json",
+   "block": 5,
+   "summed_patient_drive": 10044219.78125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_dup.json",
+   "block": 6,
+   "summed_patient_drive": 10028687.8125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_dup.json",
+   "block": 7,
+   "summed_patient_drive": 10107965.60546875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_dup.json",
+   "block": 8,
+   "summed_patient_drive": 9043529.918945312,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_dup.json",
+   "block": 9,
+   "summed_patient_drive": 10078031.515625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_dup.json",
+   "block": 10,
+   "summed_patient_drive": 7410499.9453125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_infer.json",
+   "block": 0,
+   "summed_patient_drive": 4492880.890625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_infer.json",
+   "block": 1,
+   "summed_patient_drive": 6364522.515625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_infer.json",
+   "block": 2,
+   "summed_patient_drive": 5639272.3857421875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_infer.json",
+   "block": 3,
+   "summed_patient_drive": 3313568.96484375,
+   "inh_spikes": 298.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_infer.json",
+   "block": 4,
+   "summed_patient_drive": 5785760.677734375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_infer.json",
+   "block": 5,
+   "summed_patient_drive": 10044219.78125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_infer.json",
+   "block": 6,
+   "summed_patient_drive": 10028687.8125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_infer.json",
+   "block": 7,
+   "summed_patient_drive": 10107965.60546875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_infer.json",
+   "block": 8,
+   "summed_patient_drive": 9043529.918945312,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_xtier.json",
+   "block": 0,
+   "summed_patient_drive": 4492880.890625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_xtier.json",
+   "block": 1,
+   "summed_patient_drive": 6364522.515625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_xtier.json",
+   "block": 2,
+   "summed_patient_drive": 5639272.3857421875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_xtier.json",
+   "block": 3,
+   "summed_patient_drive": 3313568.96484375,
+   "inh_spikes": 298.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_xtier.json",
+   "block": 4,
+   "summed_patient_drive": 5785760.677734375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_xtier.json",
+   "block": 5,
+   "summed_patient_drive": 10044219.78125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_xtier.json",
+   "block": 6,
+   "summed_patient_drive": 10028687.8125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_xtier.json",
+   "block": 7,
+   "summed_patient_drive": 10107965.60546875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s1/infer__c2s0_xtier.json",
+   "block": 8,
+   "summed_patient_drive": 9043529.918945312,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_amb1.json",
+   "block": 0,
+   "summed_patient_drive": 4619008.625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_amb1.json",
+   "block": 1,
+   "summed_patient_drive": 3282878.2307128906,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_amb1.json",
+   "block": 2,
+   "summed_patient_drive": 3628521.60546875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_amb1.json",
+   "block": 3,
+   "summed_patient_drive": 4143684.4814453125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_amb1.json",
+   "block": 4,
+   "summed_patient_drive": 4422645.0703125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_amb1.json",
+   "block": 5,
+   "summed_patient_drive": 7105446.0234375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_amb1.json",
+   "block": 6,
+   "summed_patient_drive": 6262326.94921875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_amb1.json",
+   "block": 7,
+   "summed_patient_drive": 6520404.88671875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_amb2.json",
+   "block": 0,
+   "summed_patient_drive": 4948897.8125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_amb2.json",
+   "block": 1,
+   "summed_patient_drive": 3871218.2307128906,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_amb2.json",
+   "block": 2,
+   "summed_patient_drive": 3900469.26171875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_amb2.json",
+   "block": 3,
+   "summed_patient_drive": 4162412.9228515625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_amb2.json",
+   "block": 4,
+   "summed_patient_drive": 4676714.6328125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_amb2.json",
+   "block": 5,
+   "summed_patient_drive": 7105446.0234375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_amb2.json",
+   "block": 6,
+   "summed_patient_drive": 6262326.94921875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_amb2.json",
+   "block": 7,
+   "summed_patient_drive": 5850666.203125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_dup.json",
+   "block": 0,
+   "summed_patient_drive": 4948897.8125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_dup.json",
+   "block": 1,
+   "summed_patient_drive": 3871218.2307128906,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_dup.json",
+   "block": 2,
+   "summed_patient_drive": 4374225.66796875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_dup.json",
+   "block": 3,
+   "summed_patient_drive": 4443031.6103515625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_dup.json",
+   "block": 4,
+   "summed_patient_drive": 5021870.9140625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_dup.json",
+   "block": 5,
+   "summed_patient_drive": 7109409.3828125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_dup.json",
+   "block": 6,
+   "summed_patient_drive": 6384046.546875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_dup.json",
+   "block": 7,
+   "summed_patient_drive": 6790769.791015625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_dup.json",
+   "block": 8,
+   "summed_patient_drive": 5251845.4765625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_dup.json",
+   "block": 9,
+   "summed_patient_drive": 8176213.1064453125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_dup.json",
+   "block": 10,
+   "summed_patient_drive": 6148713.1328125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_infer.json",
+   "block": 0,
+   "summed_patient_drive": 4948897.8125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_infer.json",
+   "block": 1,
+   "summed_patient_drive": 3871218.2307128906,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_infer.json",
+   "block": 2,
+   "summed_patient_drive": 4374225.66796875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_infer.json",
+   "block": 3,
+   "summed_patient_drive": 4443031.6103515625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_infer.json",
+   "block": 4,
+   "summed_patient_drive": 5021870.9140625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_infer.json",
+   "block": 5,
+   "summed_patient_drive": 7109409.3828125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_infer.json",
+   "block": 6,
+   "summed_patient_drive": 6384046.546875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_infer.json",
+   "block": 7,
+   "summed_patient_drive": 6790769.791015625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_infer.json",
+   "block": 8,
+   "summed_patient_drive": 5251845.4765625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_xtier.json",
+   "block": 0,
+   "summed_patient_drive": 4948897.8125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_xtier.json",
+   "block": 1,
+   "summed_patient_drive": 3871218.2307128906,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_xtier.json",
+   "block": 2,
+   "summed_patient_drive": 4374225.66796875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_xtier.json",
+   "block": 3,
+   "summed_patient_drive": 4443031.6103515625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_xtier.json",
+   "block": 4,
+   "summed_patient_drive": 5021870.9140625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_xtier.json",
+   "block": 5,
+   "summed_patient_drive": 7109409.3828125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_xtier.json",
+   "block": 6,
+   "summed_patient_drive": 6384046.546875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_xtier.json",
+   "block": 7,
+   "summed_patient_drive": 6790769.791015625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s2/infer__c2s0_xtier.json",
+   "block": 8,
+   "summed_patient_drive": 5251845.4765625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_amb1.json",
+   "block": 0,
+   "summed_patient_drive": 3880194.6953125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_amb1.json",
+   "block": 1,
+   "summed_patient_drive": 6198013.734375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_amb1.json",
+   "block": 2,
+   "summed_patient_drive": 4075292.34375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_amb1.json",
+   "block": 3,
+   "summed_patient_drive": 4723573.6943359375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_amb1.json",
+   "block": 4,
+   "summed_patient_drive": 5664241.337890625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_amb1.json",
+   "block": 5,
+   "summed_patient_drive": 10764706.1953125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_amb1.json",
+   "block": 6,
+   "summed_patient_drive": 10355252.7109375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_amb1.json",
+   "block": 7,
+   "summed_patient_drive": 9187658.1640625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_amb2.json",
+   "block": 0,
+   "summed_patient_drive": 3913509.515625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_amb2.json",
+   "block": 1,
+   "summed_patient_drive": 6198013.734375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_amb2.json",
+   "block": 2,
+   "summed_patient_drive": 4075292.34375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_amb2.json",
+   "block": 3,
+   "summed_patient_drive": 4723573.6943359375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_amb2.json",
+   "block": 4,
+   "summed_patient_drive": 5664241.337890625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_amb2.json",
+   "block": 5,
+   "summed_patient_drive": 10764706.1953125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_amb2.json",
+   "block": 6,
+   "summed_patient_drive": 10355252.7109375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_amb2.json",
+   "block": 7,
+   "summed_patient_drive": 8695915.59375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_dup.json",
+   "block": 0,
+   "summed_patient_drive": 3913509.515625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_dup.json",
+   "block": 1,
+   "summed_patient_drive": 6198013.734375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_dup.json",
+   "block": 2,
+   "summed_patient_drive": 4345949.15625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_dup.json",
+   "block": 3,
+   "summed_patient_drive": 4723573.6943359375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_dup.json",
+   "block": 4,
+   "summed_patient_drive": 6009558.869140625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_dup.json",
+   "block": 5,
+   "summed_patient_drive": 10882840.1640625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_dup.json",
+   "block": 6,
+   "summed_patient_drive": 10355252.7109375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_dup.json",
+   "block": 7,
+   "summed_patient_drive": 10767686.919799805,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_dup.json",
+   "block": 8,
+   "summed_patient_drive": 9757904.5703125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_dup.json",
+   "block": 9,
+   "summed_patient_drive": 10148955.8828125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_dup.json",
+   "block": 10,
+   "summed_patient_drive": 8114556.517578125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_infer.json",
+   "block": 0,
+   "summed_patient_drive": 3913509.515625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_infer.json",
+   "block": 1,
+   "summed_patient_drive": 6198013.734375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_infer.json",
+   "block": 2,
+   "summed_patient_drive": 4345949.15625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_infer.json",
+   "block": 3,
+   "summed_patient_drive": 4723573.6943359375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_infer.json",
+   "block": 4,
+   "summed_patient_drive": 6009558.869140625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_infer.json",
+   "block": 5,
+   "summed_patient_drive": 10882840.1640625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_infer.json",
+   "block": 6,
+   "summed_patient_drive": 10355252.7109375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_infer.json",
+   "block": 7,
+   "summed_patient_drive": 10767686.919799805,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_infer.json",
+   "block": 8,
+   "summed_patient_drive": 9757904.5703125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_xtier.json",
+   "block": 0,
+   "summed_patient_drive": 3913509.515625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_xtier.json",
+   "block": 1,
+   "summed_patient_drive": 6198013.734375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_xtier.json",
+   "block": 2,
+   "summed_patient_drive": 4345949.15625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_xtier.json",
+   "block": 3,
+   "summed_patient_drive": 4723573.6943359375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_xtier.json",
+   "block": 4,
+   "summed_patient_drive": 6009558.869140625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_xtier.json",
+   "block": 5,
+   "summed_patient_drive": 10882840.1640625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_xtier.json",
+   "block": 6,
+   "summed_patient_drive": 10355252.7109375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_xtier.json",
+   "block": 7,
+   "summed_patient_drive": 10767686.919799805,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s3/infer__c2s0_xtier.json",
+   "block": 8,
+   "summed_patient_drive": 9757904.5703125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_amb1.json",
+   "block": 0,
+   "summed_patient_drive": 5476454.474853516,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_amb1.json",
+   "block": 1,
+   "summed_patient_drive": 5583566.5703125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_amb1.json",
+   "block": 2,
+   "summed_patient_drive": 5146555.3125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_amb1.json",
+   "block": 3,
+   "summed_patient_drive": 6565073.658203125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_amb1.json",
+   "block": 4,
+   "summed_patient_drive": 4026052.85546875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_amb1.json",
+   "block": 5,
+   "summed_patient_drive": 9906619.21484375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_amb1.json",
+   "block": 6,
+   "summed_patient_drive": 13300778.453125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_amb1.json",
+   "block": 7,
+   "summed_patient_drive": 11164753.5,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_amb2.json",
+   "block": 0,
+   "summed_patient_drive": 5832447.506103516,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_amb2.json",
+   "block": 1,
+   "summed_patient_drive": 5583566.5703125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_amb2.json",
+   "block": 2,
+   "summed_patient_drive": 5146555.3125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_amb2.json",
+   "block": 3,
+   "summed_patient_drive": 6565073.658203125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_amb2.json",
+   "block": 4,
+   "summed_patient_drive": 4180550.55859375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_amb2.json",
+   "block": 5,
+   "summed_patient_drive": 11323592.21484375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_amb2.json",
+   "block": 6,
+   "summed_patient_drive": 13876019.578125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_amb2.json",
+   "block": 7,
+   "summed_patient_drive": 9530922.109375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_dup.json",
+   "block": 0,
+   "summed_patient_drive": 6330598.443603516,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_dup.json",
+   "block": 1,
+   "summed_patient_drive": 5702140.296875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_dup.json",
+   "block": 2,
+   "summed_patient_drive": 5692909.0,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_dup.json",
+   "block": 3,
+   "summed_patient_drive": 7228840.806640625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_dup.json",
+   "block": 4,
+   "summed_patient_drive": 4314879.98046875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_dup.json",
+   "block": 5,
+   "summed_patient_drive": 13127356.15234375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_dup.json",
+   "block": 6,
+   "summed_patient_drive": 13876019.578125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_dup.json",
+   "block": 7,
+   "summed_patient_drive": 13624784.75,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_dup.json",
+   "block": 8,
+   "summed_patient_drive": 12790629.4296875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_dup.json",
+   "block": 9,
+   "summed_patient_drive": 12224547.24609375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_dup.json",
+   "block": 10,
+   "summed_patient_drive": 12693885.18359375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_infer.json",
+   "block": 0,
+   "summed_patient_drive": 6330598.443603516,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_infer.json",
+   "block": 1,
+   "summed_patient_drive": 5702140.296875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_infer.json",
+   "block": 2,
+   "summed_patient_drive": 5692909.0,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_infer.json",
+   "block": 3,
+   "summed_patient_drive": 7228840.806640625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_infer.json",
+   "block": 4,
+   "summed_patient_drive": 4314879.98046875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_infer.json",
+   "block": 5,
+   "summed_patient_drive": 13127356.15234375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_infer.json",
+   "block": 6,
+   "summed_patient_drive": 13876019.578125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_infer.json",
+   "block": 7,
+   "summed_patient_drive": 13624784.75,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_infer.json",
+   "block": 8,
+   "summed_patient_drive": 12790629.4296875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_xtier.json",
+   "block": 0,
+   "summed_patient_drive": 6330598.443603516,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_xtier.json",
+   "block": 1,
+   "summed_patient_drive": 5702140.296875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_xtier.json",
+   "block": 2,
+   "summed_patient_drive": 5692909.0,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_xtier.json",
+   "block": 3,
+   "summed_patient_drive": 7228840.806640625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_xtier.json",
+   "block": 4,
+   "summed_patient_drive": 4314879.98046875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_xtier.json",
+   "block": 5,
+   "summed_patient_drive": 13127356.15234375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_xtier.json",
+   "block": 6,
+   "summed_patient_drive": 13876019.578125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_xtier.json",
+   "block": 7,
+   "summed_patient_drive": 13624784.75,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s4/infer__c2s0_xtier.json",
+   "block": 8,
+   "summed_patient_drive": 12790629.4296875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_amb1.json",
+   "block": 0,
+   "summed_patient_drive": 3900904.658203125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_amb1.json",
+   "block": 1,
+   "summed_patient_drive": 4765670.107910156,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_amb1.json",
+   "block": 2,
+   "summed_patient_drive": 4859088.91796875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_amb1.json",
+   "block": 3,
+   "summed_patient_drive": 3540086.8623046875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_amb1.json",
+   "block": 4,
+   "summed_patient_drive": 4887632.64453125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_amb1.json",
+   "block": 5,
+   "summed_patient_drive": 7002127.2724609375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_amb1.json",
+   "block": 6,
+   "summed_patient_drive": 10048305.453125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_amb1.json",
+   "block": 7,
+   "summed_patient_drive": 6678842.787109375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_amb2.json",
+   "block": 0,
+   "summed_patient_drive": 3900904.658203125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_amb2.json",
+   "block": 1,
+   "summed_patient_drive": 4928832.654785156,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_amb2.json",
+   "block": 2,
+   "summed_patient_drive": 5187740.07421875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_amb2.json",
+   "block": 3,
+   "summed_patient_drive": 3641315.3232421875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_amb2.json",
+   "block": 4,
+   "summed_patient_drive": 5210334.42578125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_amb2.json",
+   "block": 5,
+   "summed_patient_drive": 7002127.2724609375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_amb2.json",
+   "block": 6,
+   "summed_patient_drive": 10048305.453125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_amb2.json",
+   "block": 7,
+   "summed_patient_drive": 6009837.884765625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_dup.json",
+   "block": 0,
+   "summed_patient_drive": 4219663.126953125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_dup.json",
+   "block": 1,
+   "summed_patient_drive": 4928832.654785156,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_dup.json",
+   "block": 2,
+   "summed_patient_drive": 5385569.65234375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_dup.json",
+   "block": 3,
+   "summed_patient_drive": 3641315.3232421875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_dup.json",
+   "block": 4,
+   "summed_patient_drive": 5210334.42578125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_dup.json",
+   "block": 5,
+   "summed_patient_drive": 7002127.2724609375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_dup.json",
+   "block": 6,
+   "summed_patient_drive": 10734282.25,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_dup.json",
+   "block": 7,
+   "summed_patient_drive": 7750482.607910156,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_dup.json",
+   "block": 8,
+   "summed_patient_drive": 5893045.421875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_dup.json",
+   "block": 9,
+   "summed_patient_drive": 6282044.604003906,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_dup.json",
+   "block": 10,
+   "summed_patient_drive": 8926169.8515625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_infer.json",
+   "block": 0,
+   "summed_patient_drive": 4219663.126953125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_infer.json",
+   "block": 1,
+   "summed_patient_drive": 4928832.654785156,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_infer.json",
+   "block": 2,
+   "summed_patient_drive": 5385569.65234375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_infer.json",
+   "block": 3,
+   "summed_patient_drive": 3641315.3232421875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_infer.json",
+   "block": 4,
+   "summed_patient_drive": 5210334.42578125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_infer.json",
+   "block": 5,
+   "summed_patient_drive": 7002127.2724609375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_infer.json",
+   "block": 6,
+   "summed_patient_drive": 10734282.25,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_infer.json",
+   "block": 7,
+   "summed_patient_drive": 7750482.607910156,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_infer.json",
+   "block": 8,
+   "summed_patient_drive": 5893045.421875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_xtier.json",
+   "block": 0,
+   "summed_patient_drive": 4219663.126953125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_xtier.json",
+   "block": 1,
+   "summed_patient_drive": 4928832.654785156,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_xtier.json",
+   "block": 2,
+   "summed_patient_drive": 5385569.65234375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_xtier.json",
+   "block": 3,
+   "summed_patient_drive": 3641315.3232421875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_xtier.json",
+   "block": 4,
+   "summed_patient_drive": 5210334.42578125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_xtier.json",
+   "block": 5,
+   "summed_patient_drive": 7002127.2724609375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_xtier.json",
+   "block": 6,
+   "summed_patient_drive": 10734282.25,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_xtier.json",
+   "block": 7,
+   "summed_patient_drive": 7750482.607910156,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s5/infer__c2s0_xtier.json",
+   "block": 8,
+   "summed_patient_drive": 5893045.421875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_amb1.json",
+   "block": 0,
+   "summed_patient_drive": 4902794.3359375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_amb1.json",
+   "block": 1,
+   "summed_patient_drive": 7247120.2451171875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_amb1.json",
+   "block": 2,
+   "summed_patient_drive": 7038138.30078125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_amb1.json",
+   "block": 3,
+   "summed_patient_drive": 7983532.985595703,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_amb1.json",
+   "block": 4,
+   "summed_patient_drive": 4305321.28515625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_amb1.json",
+   "block": 5,
+   "summed_patient_drive": 10481061.0390625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_amb1.json",
+   "block": 6,
+   "summed_patient_drive": 8098423.984375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_amb1.json",
+   "block": 7,
+   "summed_patient_drive": 9842788.72265625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_amb2.json",
+   "block": 0,
+   "summed_patient_drive": 4925446.724609375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_amb2.json",
+   "block": 1,
+   "summed_patient_drive": 7818454.1201171875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_amb2.json",
+   "block": 2,
+   "summed_patient_drive": 7038138.30078125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_amb2.json",
+   "block": 3,
+   "summed_patient_drive": 7983532.985595703,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_amb2.json",
+   "block": 4,
+   "summed_patient_drive": 4589613.22265625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_amb2.json",
+   "block": 5,
+   "summed_patient_drive": 10481061.0390625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_amb2.json",
+   "block": 6,
+   "summed_patient_drive": 8098423.984375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_amb2.json",
+   "block": 7,
+   "summed_patient_drive": 6575710.671875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_dup.json",
+   "block": 0,
+   "summed_patient_drive": 4925446.724609375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_dup.json",
+   "block": 1,
+   "summed_patient_drive": 7855121.4599609375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_dup.json",
+   "block": 2,
+   "summed_patient_drive": 7309266.67578125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_dup.json",
+   "block": 3,
+   "summed_patient_drive": 8246647.485595703,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_dup.json",
+   "block": 4,
+   "summed_patient_drive": 5021975.51953125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_dup.json",
+   "block": 5,
+   "summed_patient_drive": 10481061.0390625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_dup.json",
+   "block": 6,
+   "summed_patient_drive": 8725482.453125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_dup.json",
+   "block": 7,
+   "summed_patient_drive": 17003893.4375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_dup.json",
+   "block": 8,
+   "summed_patient_drive": 13344601.578125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_dup.json",
+   "block": 9,
+   "summed_patient_drive": 10812866.8046875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_dup.json",
+   "block": 10,
+   "summed_patient_drive": 7411243.234375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_infer.json",
+   "block": 0,
+   "summed_patient_drive": 4925446.724609375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_infer.json",
+   "block": 1,
+   "summed_patient_drive": 7855121.4599609375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_infer.json",
+   "block": 2,
+   "summed_patient_drive": 7309266.67578125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_infer.json",
+   "block": 3,
+   "summed_patient_drive": 8246647.485595703,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_infer.json",
+   "block": 4,
+   "summed_patient_drive": 5021975.51953125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_infer.json",
+   "block": 5,
+   "summed_patient_drive": 10481061.0390625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_infer.json",
+   "block": 6,
+   "summed_patient_drive": 8725482.453125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_infer.json",
+   "block": 7,
+   "summed_patient_drive": 17003893.4375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_infer.json",
+   "block": 8,
+   "summed_patient_drive": 13344601.578125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_xtier.json",
+   "block": 0,
+   "summed_patient_drive": 4925446.724609375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_xtier.json",
+   "block": 1,
+   "summed_patient_drive": 7855121.4599609375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_xtier.json",
+   "block": 2,
+   "summed_patient_drive": 7309266.67578125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_xtier.json",
+   "block": 3,
+   "summed_patient_drive": 8246647.485595703,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_xtier.json",
+   "block": 4,
+   "summed_patient_drive": 5021975.51953125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_xtier.json",
+   "block": 5,
+   "summed_patient_drive": 10481061.0390625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_xtier.json",
+   "block": 6,
+   "summed_patient_drive": 8725482.453125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_xtier.json",
+   "block": 7,
+   "summed_patient_drive": 17003893.4375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s6/infer__c2s0_xtier.json",
+   "block": 8,
+   "summed_patient_drive": 13344601.578125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_amb1.json",
+   "block": 0,
+   "summed_patient_drive": 5174429.099609375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_amb1.json",
+   "block": 1,
+   "summed_patient_drive": 4158577.912109375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_amb1.json",
+   "block": 2,
+   "summed_patient_drive": 5636591.458496094,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_amb1.json",
+   "block": 3,
+   "summed_patient_drive": 4539571.484375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_amb1.json",
+   "block": 4,
+   "summed_patient_drive": 4005613.9921875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_amb1.json",
+   "block": 5,
+   "summed_patient_drive": 7994857.23828125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_amb1.json",
+   "block": 6,
+   "summed_patient_drive": 7992687.890625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_amb1.json",
+   "block": 7,
+   "summed_patient_drive": 9490668.296875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_amb2.json",
+   "block": 0,
+   "summed_patient_drive": 5241918.466796875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_amb2.json",
+   "block": 1,
+   "summed_patient_drive": 4158577.912109375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_amb2.json",
+   "block": 2,
+   "summed_patient_drive": 5636591.458496094,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_amb2.json",
+   "block": 3,
+   "summed_patient_drive": 4647760.46875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_amb2.json",
+   "block": 4,
+   "summed_patient_drive": 4005613.9921875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_amb2.json",
+   "block": 5,
+   "summed_patient_drive": 7994857.23828125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_amb2.json",
+   "block": 6,
+   "summed_patient_drive": 7992687.890625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_amb2.json",
+   "block": 7,
+   "summed_patient_drive": 8077366.2890625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_dup.json",
+   "block": 0,
+   "summed_patient_drive": 6222947.951171875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_dup.json",
+   "block": 1,
+   "summed_patient_drive": 4404550.896484375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_dup.json",
+   "block": 2,
+   "summed_patient_drive": 6640982.099121094,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_dup.json",
+   "block": 3,
+   "summed_patient_drive": 4809147.546875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_dup.json",
+   "block": 4,
+   "summed_patient_drive": 4077175.3671875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_dup.json",
+   "block": 5,
+   "summed_patient_drive": 7994857.23828125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_dup.json",
+   "block": 6,
+   "summed_patient_drive": 8038661.2734375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_dup.json",
+   "block": 7,
+   "summed_patient_drive": 9547842.78515625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_dup.json",
+   "block": 8,
+   "summed_patient_drive": 6223810.37109375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_dup.json",
+   "block": 9,
+   "summed_patient_drive": 7917507.2421875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_dup.json",
+   "block": 10,
+   "summed_patient_drive": 6376833.6640625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_infer.json",
+   "block": 0,
+   "summed_patient_drive": 6222947.951171875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_infer.json",
+   "block": 1,
+   "summed_patient_drive": 4404550.896484375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_infer.json",
+   "block": 2,
+   "summed_patient_drive": 6640982.099121094,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_infer.json",
+   "block": 3,
+   "summed_patient_drive": 4809147.546875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_infer.json",
+   "block": 4,
+   "summed_patient_drive": 4077175.3671875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_infer.json",
+   "block": 5,
+   "summed_patient_drive": 7994857.23828125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_infer.json",
+   "block": 6,
+   "summed_patient_drive": 8038661.2734375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_infer.json",
+   "block": 7,
+   "summed_patient_drive": 9547842.78515625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_infer.json",
+   "block": 8,
+   "summed_patient_drive": 6223810.37109375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_xtier.json",
+   "block": 0,
+   "summed_patient_drive": 6222947.951171875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_xtier.json",
+   "block": 1,
+   "summed_patient_drive": 4404550.896484375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_xtier.json",
+   "block": 2,
+   "summed_patient_drive": 6640982.099121094,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_xtier.json",
+   "block": 3,
+   "summed_patient_drive": 4809147.546875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_xtier.json",
+   "block": 4,
+   "summed_patient_drive": 4077175.3671875,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_xtier.json",
+   "block": 5,
+   "summed_patient_drive": 7994857.23828125,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_xtier.json",
+   "block": 6,
+   "summed_patient_drive": 8038661.2734375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_xtier.json",
+   "block": 7,
+   "summed_patient_drive": 9547842.78515625,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  },
+  {
+   "shard": "research/findings/raw/_c2_step0_relay/s7/infer__c2s0_xtier.json",
+   "block": 8,
+   "summed_patient_drive": 6223810.37109375,
+   "inh_spikes": 300.0,
+   "n_fired": 1,
+   "fires_decoded_patient": true
+  }
+ ]
+}
