@@ -46,7 +46,20 @@ import pytest
 
 os.environ.setdefault("SIM_BACKEND", "numpy")
 BACKEND = os.environ["SIM_BACKEND"]
-os.environ["BRAIN_STEP_PATH"] = "python"   # see the docstring: isolates the mask flag in the pre-fix comparison
+
+
+@pytest.fixture(autouse=True, scope="module")
+def _pin_python_step_path():
+    """BRAIN_STEP_PATH=python for this module only (see the docstring: isolates the mask flag in the pre-fix
+    comparison). Restored afterwards: set at import, it leaked into every later test in the same pytest process."""
+    old = os.environ.get("BRAIN_STEP_PATH")
+    os.environ["BRAIN_STEP_PATH"] = "python"
+    yield
+    if old is None:
+        os.environ.pop("BRAIN_STEP_PATH", None)
+    else:
+        os.environ["BRAIN_STEP_PATH"] = old
+
 
 _REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 _SCENARIO_REL = os.path.join("tests", "_plastic_mask_beyond_hebbian_scenario.py")
@@ -214,5 +227,6 @@ def test_all_three_masked_sites_freeze_frozen_on_one_bridge():
 
 
 if __name__ == "__main__":
+    os.environ["BRAIN_STEP_PATH"] = "python"   # the fixture above does this under pytest
     import tempfile  # noqa: F401  (imported here so __main__ printing works standalone)
     print(json.dumps(selftest(), indent=2))
