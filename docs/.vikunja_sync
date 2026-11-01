@@ -352,3 +352,7 @@ Board #238 updated: feasibility check complete, RESULT PROVISIONAL research/cs-r
   comprehension battery (its Hebbian path is gated off by the experiment engine) -- is that the intended brain
   state or a second defect?
 
+
+## 2026-11-01  c3-flip-landed
+- C3 topic stop + phasic DA flipped default ON (merge 41d76bdbe, finding 2026-11-01-c3-flip-gate-RESULT.md): board #276 created DONE;
+  #277 opened (DA-mode suffix punctuation after a bare abstain, FAILURE_LOG 2026-11-01). #203 update appended earlier today.

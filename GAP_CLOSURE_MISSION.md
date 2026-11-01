@@ -18,11 +18,23 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 **Date:** 2026-10-28. **North star:** unchanged, a sim-brain that converses genuinely (affect and self-report are functional
 read-outs, never phenomenal claims); Qwen stays the mouth; the #1 metric is the lesion-verified load-bearing fraction, with the host-decision share beside it.
 **Frontier:** the Stage-2 retake. The 10-26 Stage-2 exit attempt FAILED (C1 0/6, C3 0/6, C2 fails its permuted-exposure control 0/6, C4 5/6; C5 passes 6/6 with a caveat); the re-attempt is due by 11-21 at a Claude re-pin (pool window 11-03..11-10). Emotion (C4) is fixed and ON by default since 10-28; curiosity (C3) passed its dev battery and waits on an identity canary before its six gate seeds; inference (C2) has a design packet and no build; language (C1) waits on the cs-race method f1j; the substrate-validity arc (#274) is built and OFF.
-**Next command (Claude, on W, once the runbook WORKLOG shows all 32 canary cells landed; 7 of 32 had landed at `c0cd8e2e4`, and the checker prints UNDEFINED for any missing cell):**
+**Next command (Claude, 2026-11-01):** when the runbook shows [stage2-preview] 105/105 (RULING c3-flip-landed-1101), aggregate the
+Stage-2 dev preview at the C3-default-on revision 41d76bdbe (dev seeds 1-3, no verdict; the 11-21 attempt keeps its own prereg):
 
-    python -m research.runners.c3_topic_stop_score --identity-canary research/findings/raw/_c3_topic_stop/canary --dev-dir research/findings/raw/_c3_topic_stop/dev --seeds 7,8 --pin 34a4e5f756024b4f5aa5d145b3b29661ad976d0b --out research/findings/raw/_c3_topic_stop/canary/identity_canary.json
+    python -m research.runners.stage2_exit_gate --aggregate research/findings/raw/_stage2_preview_1101/dev
+
+Also owed: score the BG step-1 grid at 64/64 (registered scorer, `--commit`), score [c2-ff-grade] (bars G1-G3 of RULING
+c2-ff-grade-1101), and write the C2 match-unit packet (RULING c2-relay-score-1101).
 
 **What landed since the 10-21 header below (plain language; that block stays valid for every lane this one does not change):**
+- **C3 curiosity topic stop + topic-locked phasic DA now ON BY DEFAULT (11-01, merge `41d76bdbe`).** The flip gate passed on
+  the six gate seeds (Stage-2 groups conv/infer/emo/inner, flags ON vs unset: 24/24 cells identical on abstained, recalled_svo
+  and every answered reply, 180/180 answered both arms, topic-stop traces on every seed of every group); a verify-go skeptic
+  found only abstain-turn follow-up changes (3 repeated topics stop being asked, 1 new ask); the dev-7 post-flip smoke with
+  the flags unset reproduces the C arm's asked vector. Finding `research/findings/2026-11-01-c3-flip-gate-RESULT.md`; board
+  #276 done, #277 (the DA-mode suffix dangling after a bare abstain) opened. Caveat carried: the ask's last step is still
+  host arithmetic. The C2 relay re-run scored STOP: the patient relay works, the match units are a leaky AND (RULING
+  c2-relay-score-1101; Claude owes the next C2 packet).
 - **Plastic-mask freeze extended to every write site (Vikunja #203, pi lane, 10-31, branch
   `research/pi-203-frozen-synapse-freeze`, additive DEFAULT-OFF `cfg.enforce_plastic_mask_beyond_hebbian`).** The
   2026-09-02 Hebbian fix gated four sites; a grep of every write to `cp_connections.data` found six more (synaptic
