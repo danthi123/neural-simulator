@@ -21,6 +21,7 @@ Checks: W GPU idle with an empty queue; a GPU job exiting non-zero; a degraded b
 a recent RULING whose requested [key] report no later driver line mentions after RULE_STALE_H hours; a driver STOP
 written only in the WORKLOG that no RULING answers.
 """
+import datetime
 import argparse, json, os, re, subprocess, sys, time
 
 def _shared_root():
@@ -227,7 +228,11 @@ def pi_checks(raw, s_now):
     except ValueError:
         return []
     ev = []
-    updated = time.mktime(time.strptime(st["updated"][:19], "%Y-%m-%dT%H:%M:%S"))
+    # parse the UTC offset too: dropping it read the 2026-11-01 DST change (-0400 -> -0500) as an hour of silence
+    try:
+        updated = datetime.datetime.fromisoformat(st["updated"]).timestamp()
+    except ValueError:
+        updated = time.mktime(time.strptime(st["updated"][:19], "%Y-%m-%dT%H:%M:%S"))
     if s_now - updated >= PI_SILENT_MIN * 60:
         ev.append(("s-pi-silent", f"S Pi driver: status.json not updated for {(s_now - updated) / 60:.0f} min (supervisor down?)"))
     for need in st.get("needs", []):
