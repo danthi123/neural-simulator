@@ -1,0 +1,8556 @@
+{
+ "runner": "research/runners/stage2_exit_gate.py",
+ "prereg": "research/findings/2026-09-30-stage2-exit-gate-PREREGISTRATION.md",
+ "seed": 5,
+ "group": "infer",
+ "arm": "c2s0_dup",
+ "kind": "informational",
+ "criterion": "C2",
+ "env": {},
+ "patch": null,
+ "pythonhashseed_ok": true,
+ "corpus_present": true,
+ "builtin_facts": [
+  [
+   "brain",
+   "use",
+   "spikes"
+  ],
+  [
+   "brain",
+   "learn",
+   "words"
+  ],
+  [
+   "brain",
+   "store",
+   "memory"
+  ],
+  [
+   "dog",
+   "chase",
+   "cat"
+  ],
+  [
+   "cat",
+   "eat",
+   "fish"
+  ],
+  [
+   "heron",
+   "hunt",
+   "frog"
+  ]
+ ],
+ "session": "s2_infer_c2s0_dup_5",
+ "turns": [
+  {
+   "label": "t_heron_hunt",
+   "message": "the heron hunts the frog",
+   "role": "teach"
+  },
+  {
+   "label": "t_frog_eat",
+   "message": "the frog eats the gnat",
+   "role": "teach"
+  },
+  {
+   "label": "t_crow_chase",
+   "message": "the crow chases the wren",
+   "role": "teach"
+  },
+  {
+   "label": "t_wren_chase",
+   "message": "the wren chases the moth",
+   "role": "teach"
+  },
+  {
+   "label": "t_heron_hunt_re",
+   "message": "the heron hunts the frog",
+   "role": "teach"
+  },
+  {
+   "label": "t_frog_eat_re",
+   "message": "the frog eats the gnat",
+   "role": "teach"
+  },
+  {
+   "label": "p_prey_eat",
+   "message": "what does the heron's prey eat",
+   "role": "probe"
+  },
+  {
+   "label": "c_heron_hunt",
+   "message": "what does the heron hunt",
+   "role": "control"
+  },
+  {
+   "label": "c_frog_eat",
+   "message": "what does the frog eat",
+   "role": "control"
+  },
+  {
+   "label": "c_prey_chase",
+   "message": "what does the heron's prey chase",
+   "role": "control"
+  },
+  {
+   "label": "p_yesno",
+   "message": "does crow chase moth",
+   "role": "probe"
+  },
+  {
+   "label": "c_dog_chase",
+   "message": "what does the dog chase",
+   "role": "control"
+  }
+ ],
+ "responses": {
+  "t_heron_hunt": {
+   "answer": "the heron hunts the frog",
+   "abstained": false,
+   "recalled_svo": [
+    "heron",
+    "hunt",
+    "frog"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "derived_svo": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "heron",
+     "hunt",
+     "frog"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "heron",
+      "confidence": 1.0,
+      "margin": 0.8563837877883119,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "heron"
+     },
+     {
+      "role": "action",
+      "word": "hunt",
+      "confidence": 1.0,
+      "margin": 0.7932234228136211,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "hunt"
+     },
+     {
+      "role": "patient",
+      "word": "frog",
+      "confidence": 1.0,
+      "margin": 0.7752487288587466,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": "spikes",
+      "confidence": 1.0,
+      "margin": 0.2517379334404972,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.986508527694017,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 5,
+    "n_facts_scanned": 6,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 18427.24475441157
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "heron",
+     "hunts",
+     "frog"
+    ],
+    "recall_action": "hunts",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "unknown",
+    "stored_polarity": null,
+    "reject": false
+   },
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.7326204801190388
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 1,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": false,
+    "turn": 1,
+    "topic": null,
+    "swapped": false,
+    "held_topic_before": null,
+    "held_topic": null,
+    "evicted_topic": null,
+    "reason": "no_topic_hold",
+    "seed": 5,
+    "lesioned": false,
+    "on": true,
+    "lead": "",
+    "new_topic": null,
+    "reason_lead": "no_topic_hold"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": null,
+    "decision": null,
+    "reason": "no_grounded_topic",
+    "lead": "",
+    "lesioned": false,
+    "reason_lead": "no_referent"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 1,
+    "lesioned": false,
+    "turn_engagement": 0.4727272727272727,
+    "ema_engagement": 0.28363636363636363,
+    "afferent_pA": 397.09090909090907,
+    "da_level": 0.5130715506600928,
+    "snc_firing": 0.07749999999999994,
+    "mode": "neutral",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.7142857142857143,
+     "want_hz": 18.055555555555554,
+     "normalized": 0.4727272727272727,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.9404761904761906,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      1.0,
+      0.8571428571428571,
+      0.9642857142857143
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.7143561914158858,
+    "da_level": 0.5130715506600928,
+    "lesioned": false
+   },
+   "d6_hebbian": {
+    "on": true,
+    "wrote_this_turn": true,
+    "encode": {
+     "frozen": false,
+     "steps": 208,
+     "block": 5,
+     "phase_lock_steps": 184,
+     "n_saturated": 128,
+     "mean_abs_w": 1.0,
+     "min_abs_w": 0.9999999999999997
+    },
+    "held": {
+     "block": 5,
+     "readout": 365.2036296797481,
+     "floor": 0.001,
+     "held": true
+    }
+   },
+   "category_inherit": {
+    "observe": {
+     "observed": true,
+     "member_slot": 0,
+     "context_slot": 0,
+     "svo": [
+      "heron",
+      "hunt",
+      "frog"
+     ]
+    },
+    "read": null
+   }
+  },
+  "t_frog_eat": {
+   "answer": "the frog eats the gnat the dog chases the cat the cat eats the fish",
+   "abstained": false,
+   "recalled_svo": [
+    "frog",
+    "eat",
+    "gnat"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "derived_svo": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 3,
+   "supporting_facts": [
+    [
+     "frog",
+     "eat",
+     "gnat"
+    ],
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    [
+     "cat",
+     "eat",
+     "fish"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "frog",
+      "confidence": 1.0,
+      "margin": 0.7551482679187763,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "frog"
+     },
+     {
+      "role": "action",
+      "word": "eat",
+      "confidence": 1.0,
+      "margin": 0.7780287099397513,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "eat"
+     },
+     {
+      "role": "patient",
+      "word": "gnat",
+      "confidence": 1.0,
+      "margin": 0.7477359487960735,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": "hunt",
+      "confidence": 1.0,
+      "margin": 0.201365882371576,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9999999999999998,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 6,
+    "n_facts_scanned": 7,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 18801.853812301844
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "frog",
+     "eats",
+     "gnat"
+    ],
+    "recall_action": "eats",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "unknown",
+    "stored_polarity": null,
+    "reject": false
+   },
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.6964557618052354
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 3,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 3,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 2,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 2,
+    "topic": "frog",
+    "swapped": false,
+    "held_topic_before": null,
+    "held_topic": "frog",
+    "evicted_topic": null,
+    "reason": "first_thought",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 0,
+    "held_slot": 0,
+    "winner_slot": 0,
+    "n_ignited_post": 1,
+    "held_rate_post": 0.3333333333333333,
+    "mm_peak": 0.005555555555555556,
+    "boost_max": 0.002777777777777778,
+    "on": true,
+    "lead": "",
+    "new_topic": null,
+    "reason_lead": "first_thought"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "frog",
+    "slot": 0,
+    "decision": "introduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.0,
+    "introduce_rate": 0.043333333333333335,
+    "evidence_rate": 0.0,
+    "margin": -0.043333333333333335,
+    "lesioned": false,
+    "lead": "",
+    "reason_lead": "introduce"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 2,
+    "lesioned": false,
+    "turn_engagement": 0.3454545454545454,
+    "ema_engagement": 0.3207272727272727,
+    "afferent_pA": 449.01818181818174,
+    "da_level": 0.5664247917063064,
+    "snc_firing": 0.08749999999999994,
+    "mode": "neutral",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.6642857142857144,
+     "want_hz": 13.194444444444443,
+     "normalized": 0.3454545454545454,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.8571428571428572,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      0.6785714285714286,
+      1.0,
+      0.8928571428571429
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.9126788357178093,
+    "da_level": 0.5664247917063064,
+    "lesioned": false
+   },
+   "d6_hebbian": {
+    "on": true,
+    "wrote_this_turn": true,
+    "encode": {
+     "frozen": false,
+     "steps": 208,
+     "block": 6,
+     "phase_lock_steps": 184,
+     "n_saturated": 128,
+     "mean_abs_w": 1.0,
+     "min_abs_w": 0.9999999999999998
+    },
+    "held": {
+     "block": 6,
+     "readout": 394.7564907657418,
+     "floor": 0.001,
+     "held": true
+    }
+   },
+   "category_inherit": {
+    "observe": {
+     "observed": true,
+     "member_slot": 1,
+     "context_slot": 1,
+     "svo": [
+      "frog",
+      "eat",
+      "gnat"
+     ]
+    },
+    "read": null
+   }
+  },
+  "t_crow_chase": {
+   "answer": "the crow chases the wren",
+   "abstained": false,
+   "recalled_svo": [
+    "crow",
+    "chase",
+    "wren"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "derived_svo": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "crow",
+     "chase",
+     "wren"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "crow",
+      "confidence": 1.0,
+      "margin": 0.7604311748751633,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "crow"
+     },
+     {
+      "role": "action",
+      "word": "chase",
+      "confidence": 1.0,
+      "margin": 0.6673579041970629,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "chase"
+     },
+     {
+      "role": "patient",
+      "word": "wren",
+      "confidence": 1.0,
+      "margin": 0.8803768263190764,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": "wren",
+      "confidence": 1.0,
+      "margin": 0.23315789346908436,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9682673887732943,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 7,
+    "n_facts_scanned": 8,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 19797.776676790934
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "crow",
+     "chases",
+     "wren"
+    ],
+    "recall_action": "chases",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "unknown",
+    "stored_polarity": null,
+    "reject": false
+   },
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.7019182375267363
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 3,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": false,
+    "turn": 3,
+    "topic": null,
+    "swapped": false,
+    "held_topic_before": "frog",
+    "held_topic": "frog",
+    "evicted_topic": null,
+    "reason": "no_topic_hold",
+    "seed": 5,
+    "lesioned": false,
+    "on": true,
+    "lead": "",
+    "new_topic": null,
+    "reason_lead": "no_topic_hold"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": null,
+    "decision": null,
+    "reason": "no_grounded_topic",
+    "lead": "",
+    "lesioned": false,
+    "reason_lead": "no_referent"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 3,
+    "lesioned": false,
+    "turn_engagement": 0.2909090909090909,
+    "ema_engagement": 0.3028363636363636,
+    "afferent_pA": 423.97090909090906,
+    "da_level": 0.5398030729039637,
+    "snc_firing": 0.08249999999999992,
+    "mode": "neutral",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.6214285714285713,
+     "want_hz": 11.11111111111111,
+     "normalized": 0.2909090909090909,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.7857142857142856,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      0.7142857142857143,
+      0.8214285714285714,
+      0.8214285714285714
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.8771583621114944,
+    "da_level": 0.5398030729039637,
+    "lesioned": false
+   },
+   "d6_hebbian": {
+    "on": true,
+    "wrote_this_turn": true,
+    "encode": {
+     "frozen": false,
+     "steps": 208,
+     "block": 7,
+     "phase_lock_steps": 184,
+     "n_saturated": 128,
+     "mean_abs_w": 1.0,
+     "min_abs_w": 0.9999999999999998
+    },
+    "held": {
+     "block": 7,
+     "readout": 384.2898379762458,
+     "floor": 0.001,
+     "held": true
+    }
+   },
+   "category_inherit": {
+    "observe": {
+     "observed": true,
+     "member_slot": 2,
+     "context_slot": 2,
+     "svo": [
+      "crow",
+      "chase",
+      "wren"
+     ]
+    },
+    "read": null
+   }
+  },
+  "t_wren_chase": {
+   "answer": "Setting the held thread aside \u2014 On wren, then \u2014 the wren chases the moth",
+   "abstained": false,
+   "recalled_svo": [
+    "wren",
+    "chase",
+    "moth"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "derived_svo": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "wren",
+     "chase",
+     "moth"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "wren",
+      "confidence": 1.0,
+      "margin": 0.7776053891639335,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "wren"
+     },
+     {
+      "role": "action",
+      "word": "chase",
+      "confidence": 1.0,
+      "margin": 0.761529355312654,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "chase"
+     },
+     {
+      "role": "patient",
+      "word": "moth",
+      "confidence": 1.0,
+      "margin": 0.809905266463917,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": "spikes",
+      "confidence": 1.0,
+      "margin": 0.10043455293720545,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9999999999999998,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 8,
+    "n_facts_scanned": 9,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 18065.94516897909
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "wren",
+     "chases",
+     "moth"
+    ],
+    "recall_action": "chases",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "unknown",
+    "stored_polarity": null,
+    "reject": false
+   },
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.6898949127755418
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 4,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 4,
+    "topic": "wren",
+    "swapped": true,
+    "held_topic_before": "frog",
+    "held_topic": "wren",
+    "evicted_topic": "frog",
+    "reason": "topic_change_swap",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 1,
+    "held_slot": 1,
+    "incumbent_slot": 0,
+    "winner_slot": 1,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.3111111111111111,
+    "boost_max": 0.16,
+    "on": true,
+    "lead": "On wren, then \u2014 ",
+    "new_topic": "wren",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "wren",
+    "slot": 1,
+    "decision": "introduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.0,
+    "introduce_rate": 0.035,
+    "evidence_rate": 0.0,
+    "margin": -0.035,
+    "lesioned": false,
+    "lead": "",
+    "reason_lead": "introduce"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 4,
+    "lesioned": false,
+    "turn_engagement": 0.1636363636363636,
+    "ema_engagement": 0.21931636363636361,
+    "afferent_pA": 307.04290909090906,
+    "da_level": 0.4126412472420883,
+    "snc_firing": 0.06249999999999997,
+    "mode": "neutral",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.5285714285714286,
+     "want_hz": 6.249999999999999,
+     "normalized": 0.1636363636363636,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.6309523809523809,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      0.5357142857142857,
+      0.5714285714285714,
+      0.7857142857142857
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.652195362604835,
+    "da_level": 0.4126412472420883,
+    "lesioned": false
+   },
+   "d6_hebbian": {
+    "on": true,
+    "wrote_this_turn": true,
+    "encode": {
+     "frozen": false,
+     "steps": 208,
+     "block": 8,
+     "phase_lock_steps": 184,
+     "n_saturated": 128,
+     "mean_abs_w": 1.0,
+     "min_abs_w": 0.9999999999999998
+    },
+    "held": {
+     "block": 8,
+     "readout": 335.035101071297,
+     "floor": 0.001,
+     "held": true
+    }
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "wren",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   },
+   "category_inherit": {
+    "observe": {
+     "observed": true,
+     "member_slot": 3,
+     "context_slot": 3,
+     "svo": [
+      "wren",
+      "chase",
+      "moth"
+     ]
+    },
+    "read": null
+   }
+  },
+  "t_heron_hunt_re": {
+   "answer": "Setting the held thread aside \u2014 On heron, then \u2014 the heron hunts the frog",
+   "abstained": false,
+   "recalled_svo": [
+    "heron",
+    "hunt",
+    "frog"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "derived_svo": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "heron",
+     "hunt",
+     "frog"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "frog",
+      "confidence": 1.0,
+      "margin": 0.7551482679187763,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "frog"
+     },
+     {
+      "role": "action",
+      "word": "eat",
+      "confidence": 1.0,
+      "margin": 0.7780287099397513,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "eat"
+     },
+     {
+      "role": "patient",
+      "word": "gnat",
+      "confidence": 1.0,
+      "margin": 0.7477359487960735,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": "hunt",
+      "confidence": 1.0,
+      "margin": 0.201365882371576,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9999999999999998,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 6,
+    "n_facts_scanned": 10,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 20186.14196952557
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "heron",
+     "hunts",
+     "frog"
+    ],
+    "recall_action": "hunt",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "yes",
+    "stored_polarity": "AFFIRM",
+    "reject": false
+   },
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.6964557618052354
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 5,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 5,
+    "topic": "heron",
+    "swapped": true,
+    "held_topic_before": "wren",
+    "held_topic": "heron",
+    "evicted_topic": "wren",
+    "reason": "topic_change_swap",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 2,
+    "held_slot": 2,
+    "incumbent_slot": 1,
+    "winner_slot": 2,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.23333333333333334,
+    "boost_max": 0.1588888888888889,
+    "on": true,
+    "lead": "On heron, then \u2014 ",
+    "new_topic": "heron",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "heron",
+    "slot": 2,
+    "decision": "introduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.0,
+    "introduce_rate": 0.035,
+    "evidence_rate": 0.0,
+    "margin": -0.035,
+    "lesioned": false,
+    "lead": "",
+    "reason_lead": "introduce"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 5,
+    "lesioned": false,
+    "turn_engagement": 0.25454545454545446,
+    "ema_engagement": 0.24045381818181813,
+    "afferent_pA": 336.63534545454536,
+    "da_level": 0.44670043400401815,
+    "snc_firing": 0.06749999999999994,
+    "mode": "neutral",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.5857142857142859,
+     "want_hz": 9.72222222222222,
+     "normalized": 0.25454545454545446,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.7261904761904763,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      0.9285714285714286,
+      0.6785714285714286,
+      0.5714285714285714
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.7261963492846566,
+    "da_level": 0.44670043400401815,
+    "lesioned": false
+   },
+   "d6_hebbian": {
+    "on": true,
+    "wrote_this_turn": true,
+    "encode": {
+     "frozen": false,
+     "steps": 208,
+     "block": 9,
+     "phase_lock_steps": 184,
+     "n_saturated": 128,
+     "mean_abs_w": 1.0,
+     "min_abs_w": 0.9999999999999997
+    },
+    "held": {
+     "block": 9,
+     "readout": 327.6468635985899,
+     "floor": 0.001,
+     "held": true
+    }
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "heron",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   },
+   "category_inherit": {
+    "observe": {
+     "observed": true,
+     "member_slot": 0,
+     "context_slot": 0,
+     "svo": [
+      "heron",
+      "hunt",
+      "frog"
+     ]
+    },
+    "read": null
+   }
+  },
+  "t_frog_eat_re": {
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On frog, then \u2014 the frog eats the gnat",
+   "abstained": false,
+   "recalled_svo": [
+    "frog",
+    "eat",
+    "gnat"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "derived_svo": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "frog",
+     "eat",
+     "gnat"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "frog",
+      "confidence": 1.0,
+      "margin": 0.7551482679187763,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "frog"
+     },
+     {
+      "role": "action",
+      "word": "eat",
+      "confidence": 1.0,
+      "margin": 0.7780287099397513,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "eat"
+     },
+     {
+      "role": "patient",
+      "word": "gnat",
+      "confidence": 1.0,
+      "margin": 0.7477359487960735,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": "hunt",
+      "confidence": 1.0,
+      "margin": 0.201365882371576,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9999999999999998,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 6,
+    "n_facts_scanned": 11,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 20186.14196952557
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "frog",
+     "eats",
+     "gnat"
+    ],
+    "recall_action": "eat",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "yes",
+    "stored_polarity": "AFFIRM",
+    "reject": false
+   },
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.6964557618052354
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 6,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 6,
+    "topic": "frog",
+    "swapped": true,
+    "held_topic_before": "heron",
+    "held_topic": "frog",
+    "evicted_topic": "heron",
+    "reason": "topic_change_swap",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 0,
+    "held_slot": 0,
+    "incumbent_slot": 2,
+    "winner_slot": 0,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.29444444444444445,
+    "boost_max": 0.16,
+    "on": true,
+    "lead": "On frog, then \u2014 ",
+    "new_topic": "frog",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "frog",
+    "slot": 0,
+    "decision": "reduce",
+    "in_common_ground": true,
+    "first_mention": false,
+    "reduce_rate": 0.10666666666666667,
+    "introduce_rate": 0.03166666666666667,
+    "evidence_rate": 0.12166666666666667,
+    "margin": 0.07500000000000001,
+    "lesioned": false,
+    "lead": "As for it \u2014 ",
+    "reason_lead": "reduced_reference"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 6,
+    "lesioned": false,
+    "turn_engagement": 0.1636363636363636,
+    "ema_engagement": 0.19436334545454542,
+    "afferent_pA": 272.1086836363636,
+    "da_level": 0.36858720452524724,
+    "snc_firing": 0.051666666666666666,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.5142857142857142,
+     "want_hz": 6.249999999999999,
+     "normalized": 0.1636363636363636,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.6071428571428571,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      0.17857142857142858,
+      0.8928571428571429,
+      0.75
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.613714849531327,
+    "da_level": 0.36858720452524724,
+    "lesioned": false
+   },
+   "d6_hebbian": {
+    "on": true,
+    "wrote_this_turn": true,
+    "encode": {
+     "frozen": false,
+     "steps": 208,
+     "block": 10,
+     "phase_lock_steps": 184,
+     "n_saturated": 128,
+     "mean_abs_w": 1.0,
+     "min_abs_w": 0.9999999999999998
+    },
+    "held": {
+     "block": 10,
+     "readout": 328.2625474771362,
+     "floor": 0.001,
+     "held": true
+    }
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "frog",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   },
+   "category_inherit": {
+    "observe": {
+     "observed": true,
+     "member_slot": 1,
+     "context_slot": 1,
+     "svo": [
+      "frog",
+      "eat",
+      "gnat"
+     ]
+    },
+    "read": null
+   }
+  },
+  "p_prey_eat": {
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about heron's yet: what can you tell me about heron's?",
+   "abstained": true,
+   "recalled_svo": null,
+   "derived": false,
+   "derived_from": null,
+   "derived_svo": null,
+   "verified": false,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 0,
+   "supporting_facts": [],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "heron's",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "heron's"
+     },
+     {
+      "role": "action",
+      "word": "prey",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "prey"
+     }
+    ],
+    "matched_fact_index": null,
+    "n_facts_scanned": 11,
+    "abstained": true,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.00014534883720930232,
+     "mean_magnitude": 1.7023733041686555
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": null,
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": null,
+   "curiosity": {
+    "on": true,
+    "lesioned": false,
+    "novelty": 0.9405014632033738,
+    "want_hz": 37.5,
+    "threshold": 19.09722222222222,
+    "curious": true,
+    "calib": {
+     "want_novel_hz": 38.19444444444444,
+     "want_familiar_hz": 0.0,
+     "threshold_hz": 19.09722222222222,
+     "novel_signal": 0.95,
+     "familiar_signal": 0.0,
+     "read_reps": 4
+    },
+    "topic": "heron's",
+    "graded_novelty": {
+     "on": true,
+     "value": 0.9405014632033738,
+     "lesioned": false
+    },
+    "curiosity_da": {
+     "on": true,
+     "lesioned": false,
+     "da_level": 0.4993967476528908,
+     "da_tonic": 0.5,
+     "k_da": 1.5,
+     "da_crave_gain": 0.9990951214793362,
+     "base_threshold": 19.09722222222222,
+     "eff_threshold": 19.114518539481427,
+     "want_hz": 37.5,
+     "want_eff_hz": 37.46606705547511,
+     "curious": true
+    }
+   },
+   "affect_drives": {
+    "acted": true,
+    "turn": 7,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": false,
+    "turn": 7,
+    "topic": null,
+    "swapped": false,
+    "held_topic_before": "frog",
+    "held_topic": "frog",
+    "evicted_topic": null,
+    "reason": "no_topic_hold",
+    "seed": 5,
+    "lesioned": false,
+    "on": true,
+    "lead": "",
+    "new_topic": null,
+    "reason_lead": "no_topic_hold"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": null,
+    "decision": null,
+    "reason": "no_grounded_topic",
+    "lead": "",
+    "lesioned": false,
+    "reason_lead": "no_referent"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 7,
+    "lesioned": false,
+    "turn_engagement": 0.3272727272727272,
+    "ema_engagement": 0.27410897454545446,
+    "afferent_pA": 383.7525643636362,
+    "da_level": 0.4993967476528908,
+    "snc_firing": 0.07333333333333326,
+    "mode": "neutral",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.6571428571428571,
+     "want_hz": 12.499999999999998,
+     "normalized": 0.3272727272727272,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.8452380952380952,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      0.75,
+      0.8571428571428571,
+      0.9285714285714286
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.7942772570300929,
+    "da_level": 0.4993967476528908,
+    "lesioned": false
+   },
+   "d6_hebbian": {
+    "on": true,
+    "wrote_this_turn": false
+   },
+   "category_inherit": {
+    "observe": null,
+    "read": {
+     "patient": null,
+     "reason": "agent_never_observed",
+     "rates": null,
+     "admitted": [],
+     "lesion": null,
+     "hop": true,
+     "hop_lateral_gain": 0.5,
+     "query_steps": 30,
+     "agent": "heron's",
+     "action": "prey"
+    }
+   }
+  },
+  "c_heron_hunt": {
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On heron, then \u2014 the heron hunts the worm",
+   "abstained": false,
+   "recalled_svo": [
+    "heron",
+    "hunt",
+    "worm"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "derived_svo": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "heron",
+     "hunt",
+     "worm"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "heron",
+      "confidence": 1.0,
+      "margin": 0.8554287691902264,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "heron"
+     },
+     {
+      "role": "action",
+      "word": "hunt",
+      "confidence": 1.0,
+      "margin": 0.7932234228136211,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "hunt"
+     },
+     {
+      "role": "patient",
+      "word": "frog",
+      "confidence": 1.0,
+      "margin": 0.7705633391351745,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": "spikes",
+      "confidence": 1.0,
+      "margin": 0.2517379334404972,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.986508527694017,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 5,
+    "n_facts_scanned": 11,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 20718.82080690469
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": null,
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.7314923984547073
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 8,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 8,
+    "topic": "heron",
+    "swapped": true,
+    "held_topic_before": "frog",
+    "held_topic": "heron",
+    "evicted_topic": "frog",
+    "reason": "topic_change_swap",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 2,
+    "held_slot": 2,
+    "incumbent_slot": 0,
+    "winner_slot": 2,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.31666666666666665,
+    "boost_max": 0.16,
+    "on": true,
+    "lead": "On heron, then \u2014 ",
+    "new_topic": "heron",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "heron",
+    "slot": 2,
+    "decision": "reduce",
+    "in_common_ground": true,
+    "first_mention": false,
+    "reduce_rate": 0.11166666666666666,
+    "introduce_rate": 0.03166666666666667,
+    "evidence_rate": 0.12,
+    "margin": 0.07999999999999999,
+    "lesioned": false,
+    "lead": "As for it \u2014 ",
+    "reason_lead": "reduced_reference"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 8,
+    "lesioned": false,
+    "turn_engagement": 0.25454545454545446,
+    "ema_engagement": 0.2623708625454545,
+    "afferent_pA": 367.31920756363627,
+    "da_level": 0.4811467673028455,
+    "snc_firing": 0.07083333333333329,
+    "mode": "neutral",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.5928571428571429,
+     "want_hz": 9.72222222222222,
+     "normalized": 0.25454545454545446,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.8214285714285714,
+     "n_tokens": 2,
+     "per_word_freshness": [
+      0.6428571428571429,
+      1.0
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.767636901825358,
+    "da_level": 0.4811467673028455,
+    "lesioned": false
+   },
+   "d6_hebbian": {
+    "on": true,
+    "wrote_this_turn": false
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "heron",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   }
+  },
+  "c_frog_eat": {
+   "answer": "Setting the held thread aside \u2014 As for it \u2014 On frog, then \u2014 the frog eats the gnat",
+   "abstained": false,
+   "recalled_svo": [
+    "frog",
+    "eat",
+    "gnat"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "derived_svo": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "frog",
+     "eat",
+     "gnat"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "frog",
+      "confidence": 1.0,
+      "margin": 0.7551482679187763,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "frog"
+     },
+     {
+      "role": "action",
+      "word": "eat",
+      "confidence": 1.0,
+      "margin": 0.7780287099397513,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "eat"
+     },
+     {
+      "role": "patient",
+      "word": "gnat",
+      "confidence": 1.0,
+      "margin": 0.7477359487960735,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": "hunt",
+      "confidence": 1.0,
+      "margin": 0.201365882371576,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9999999999999998,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 6,
+    "n_facts_scanned": 11,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 20186.14196952557
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": null,
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.6964557618052354
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 9,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 9,
+    "topic": "frog",
+    "swapped": true,
+    "held_topic_before": "heron",
+    "held_topic": "frog",
+    "evicted_topic": "heron",
+    "reason": "topic_change_swap",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 0,
+    "held_slot": 0,
+    "incumbent_slot": 2,
+    "winner_slot": 0,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.3,
+    "boost_max": 0.16,
+    "on": true,
+    "lead": "On frog, then \u2014 ",
+    "new_topic": "frog",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "frog",
+    "slot": 0,
+    "decision": "reduce",
+    "in_common_ground": true,
+    "first_mention": false,
+    "reduce_rate": 0.11,
+    "introduce_rate": 0.03166666666666667,
+    "evidence_rate": 0.12,
+    "margin": 0.07833333333333334,
+    "lesioned": false,
+    "lead": "As for it \u2014 ",
+    "reason_lead": "reduced_reference"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 9,
+    "lesioned": false,
+    "turn_engagement": 0.07272727272727272,
+    "ema_engagement": 0.14858470865454543,
+    "afferent_pA": 208.0185921163636,
+    "da_level": 0.27412229920570685,
+    "snc_firing": 0.03583333333333334,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.37857142857142856,
+     "want_hz": 2.7777777777777777,
+     "normalized": 0.07272727272727272,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.4642857142857143,
+     "n_tokens": 2,
+     "per_word_freshness": [
+      0.32142857142857145,
+      0.6071428571428571
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.4301924025653676,
+    "da_level": 0.27412229920570685,
+    "lesioned": false
+   },
+   "d6_hebbian": {
+    "on": true,
+    "wrote_this_turn": false
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "frog",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   }
+  },
+  "c_prey_chase": {
+   "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about heron's yet: what can you tell me about heron's?",
+   "abstained": true,
+   "recalled_svo": null,
+   "derived": false,
+   "derived_from": null,
+   "derived_svo": null,
+   "verified": false,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 0,
+   "supporting_facts": [],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "heron's",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "heron's"
+     },
+     {
+      "role": "action",
+      "word": "prey",
+      "confidence": null,
+      "margin": null,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "prey"
+     }
+    ],
+    "matched_fact_index": null,
+    "n_facts_scanned": 11,
+    "abstained": true,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 20187.84458929716
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": null,
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": null,
+   "curiosity": {
+    "on": true,
+    "lesioned": false,
+    "novelty": 0.9405014632033738,
+    "want_hz": 37.5,
+    "threshold": 19.09722222222222,
+    "curious": true,
+    "calib": {
+     "want_novel_hz": 38.19444444444444,
+     "want_familiar_hz": 0.0,
+     "threshold_hz": 19.09722222222222,
+     "novel_signal": 0.95,
+     "familiar_signal": 0.0,
+     "read_reps": 4
+    },
+    "topic": "heron's",
+    "graded_novelty": {
+     "on": true,
+     "value": 0.9405014632033738,
+     "lesioned": false
+    },
+    "curiosity_da": {
+     "on": true,
+     "lesioned": false,
+     "da_level": 0.38010722697871885,
+     "da_tonic": 0.5,
+     "k_da": 1.5,
+     "da_crave_gain": 0.8201608404680782,
+     "base_threshold": 19.09722222222222,
+     "eff_threshold": 23.284728165420756,
+     "want_hz": 37.5,
+     "want_eff_hz": 30.756031517552934,
+     "curious": true
+    }
+   },
+   "affect_drives": {
+    "acted": true,
+    "turn": 10,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": false,
+    "turn": 10,
+    "topic": null,
+    "swapped": false,
+    "held_topic_before": "frog",
+    "held_topic": "frog",
+    "evicted_topic": null,
+    "reason": "no_topic_hold",
+    "seed": 5,
+    "lesioned": false,
+    "on": true,
+    "lead": "",
+    "new_topic": null,
+    "reason_lead": "no_topic_hold"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": null,
+    "decision": null,
+    "reason": "no_grounded_topic",
+    "lead": "",
+    "lesioned": false,
+    "reason_lead": "no_referent"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 10,
+    "lesioned": false,
+    "turn_engagement": 0.23636363636363636,
+    "ema_engagement": 0.20125206528,
+    "afferent_pA": 281.752891392,
+    "da_level": 0.38010722697871885,
+    "snc_firing": 0.05416666666666662,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.5785714285714285,
+     "want_hz": 9.027777777777777,
+     "normalized": 0.23636363636363636,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.7142857142857143,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      0.5357142857142857,
+      0.7142857142857143,
+      0.8928571428571429
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.628515046867291,
+    "da_level": 0.38010722697871885,
+    "lesioned": false
+   },
+   "d6_hebbian": {
+    "on": true,
+    "wrote_this_turn": false
+   },
+   "category_inherit": {
+    "observe": null,
+    "read": {
+     "patient": null,
+     "reason": "agent_never_observed",
+     "rates": null,
+     "admitted": [],
+     "lesion": null,
+     "hop": true,
+     "hop_lateral_gain": 0.5,
+     "query_steps": 30,
+     "agent": "heron's",
+     "action": "prey"
+    }
+   }
+  },
+  "p_yesno": {
+   "answer": "Setting the held thread aside \u2014 On crow, then \u2014 What I hold is: crow chase wren. the crow chases the wren",
+   "abstained": false,
+   "recalled_svo": [
+    "crow",
+    "chase",
+    "wren"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "derived_svo": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "crow",
+     "chase",
+     "wren"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "wren",
+      "confidence": 1.0,
+      "margin": 0.7776053891639335,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "wren"
+     },
+     {
+      "role": "action",
+      "word": "chase",
+      "confidence": 1.0,
+      "margin": 0.761529355312654,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "chase"
+     },
+     {
+      "role": "patient",
+      "word": "moth",
+      "confidence": 1.0,
+      "margin": 0.809905266463917,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": "spikes",
+      "confidence": 1.0,
+      "margin": 0.10043455293720545,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9999999999999998,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 8,
+    "n_facts_scanned": 11,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 18065.94516897909
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": {
+    "on": true,
+    "lesioned": false,
+    "agent": "crow",
+    "action": "chase",
+    "stored_patient": "wren",
+    "asserted_patient": "moth",
+    "surprise_hz": 4.918981481481482,
+    "threshold": 2.6620370370370368,
+    "surprised": true,
+    "calib": {
+     "confirm_hz": 0.13020833333333334,
+     "contradict_hz": 5.251736111111112,
+     "novel_hz": 5.1938657407407405,
+     "cue_to_expected_weight": 0.8,
+     "homeostat": true,
+     "pred_gain_min": 0.8,
+     "pred_gain_max": 1.4183333333333334,
+     "confirm_before_max": 3.935185185185185,
+     "confirm_after_max": 0.4050925925925926
+    }
+   },
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": {
+    "on": true,
+    "lesioned": false,
+    "in_scope": true,
+    "svo": [
+     "crow",
+     "chase",
+     "moth"
+    ],
+    "recall_action": "chase",
+    "asserted_polarity": "AFFIRM",
+    "recalled_yn": "unknown",
+    "stored_polarity": null,
+    "reject": false
+   },
+   "reconsolidation": {
+    "on": true,
+    "action": "none",
+    "reason": "interrogative_turn"
+   },
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.6898949127755418
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 11,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 11,
+    "topic": "crow",
+    "swapped": true,
+    "held_topic_before": "frog",
+    "held_topic": "crow",
+    "evicted_topic": "frog",
+    "reason": "topic_change_swap",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 1,
+    "held_slot": 1,
+    "incumbent_slot": 0,
+    "winner_slot": 1,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.2833333333333333,
+    "boost_max": 0.16,
+    "on": true,
+    "lead": "On crow, then \u2014 ",
+    "new_topic": "crow",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "crow",
+    "slot": 3,
+    "decision": "introduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.0,
+    "introduce_rate": 0.03666666666666667,
+    "evidence_rate": 0.0,
+    "margin": -0.03666666666666667,
+    "lesioned": false,
+    "lead": "",
+    "reason_lead": "introduce"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 11,
+    "lesioned": false,
+    "turn_engagement": 0.1636363636363636,
+    "ema_engagement": 0.17868264429381817,
+    "afferent_pA": 250.15570201134543,
+    "da_level": 0.33822746907789014,
+    "snc_firing": 0.04833333333333334,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.5071428571428571,
+     "want_hz": 6.249999999999999,
+     "normalized": 0.1636363636363636,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.5952380952380952,
+     "n_tokens": 3,
+     "per_word_freshness": [
+      0.6428571428571429,
+      0.42857142857142855,
+      0.7142857142857143
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.5308337444499265,
+    "da_level": 0.33822746907789014,
+    "lesioned": false
+   },
+   "d6_hebbian": {
+    "on": true,
+    "wrote_this_turn": false
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "crow",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   }
+  },
+  "c_dog_chase": {
+   "answer": "Setting the held thread aside \u2014 On dog, then \u2014 the dog chases the cat",
+   "abstained": false,
+   "recalled_svo": [
+    "dog",
+    "chase",
+    "cat"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "derived_svo": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 1,
+   "supporting_facts": [
+    [
+     "dog",
+     "chase",
+     "cat"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "cat",
+      "confidence": 1.0,
+      "margin": 0.7042370149467244,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "cat"
+     },
+     {
+      "role": "action",
+      "word": "eat",
+      "confidence": 1.0,
+      "margin": 0.7653723104478758,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "eat"
+     },
+     {
+      "role": "patient",
+      "word": "fish",
+      "confidence": 1.0,
+      "margin": 0.6911399714127614,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": "crow",
+      "confidence": 1.0,
+      "margin": 0.1413643640532665,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9676801280297294,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 4,
+    "n_facts_scanned": 11,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 11138.472358697689
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": null,
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.0875798602108537,
+    "threshold": 0.05529412080100417,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.07400004380388445,
+     "min_hi": 0.062203712308322105,
+     "mean_lo": 0.035275080315971694,
+     "max_lo": 0.048384529293686224,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.6539587577780714
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 1,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 1,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 12,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": -0.00104166666666667,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 5,
+    "vplus_rate": 0.03995833333333333,
+    "vminus_rate": 0.041,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 12,
+    "topic": "dog",
+    "swapped": true,
+    "held_topic_before": "crow",
+    "held_topic": "dog",
+    "evicted_topic": "crow",
+    "reason": "topic_change_swap",
+    "seed": 5,
+    "lesioned": false,
+    "proposed_slot": 2,
+    "held_slot": 2,
+    "incumbent_slot": 1,
+    "winner_slot": 2,
+    "n_ignited_post": 1,
+    "old_residual_post": 0.0,
+    "new_rate_post": 0.3333333333333333,
+    "mm_peak": 0.2833333333333333,
+    "boost_max": 0.16,
+    "on": true,
+    "lead": "On dog, then \u2014 ",
+    "new_topic": "dog",
+    "reason_lead": "topic_transition"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "dog",
+    "slot": 4,
+    "decision": "introduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.0,
+    "introduce_rate": 0.035,
+    "evidence_rate": 0.0,
+    "margin": -0.035,
+    "lesioned": false,
+    "lead": "",
+    "reason_lead": "introduce"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 12,
+    "lesioned": false,
+    "turn_engagement": 0.0909090909090909,
+    "ema_engagement": 0.1260185122629818,
+    "afferent_pA": 176.42591716817452,
+    "da_level": 0.21805413961824233,
+    "snc_firing": 0.02666666666666668,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 5,
+    "shared_salience": {
+     "raw": 0.4535714285714286,
+     "want_hz": 3.472222222222222,
+     "normalized": 0.0909090909090909,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.19444444444444,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.09722222222222,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.5892857142857143,
+     "n_tokens": 2,
+     "per_word_freshness": [
+      0.9642857142857143,
+      0.21428571428571427
+     ],
+     "fresh_ref": 28.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.3206709422792302,
+    "da_level": 0.21805413961824233,
+    "lesioned": false
+   },
+   "d6_hebbian": {
+    "on": true,
+    "wrote_this_turn": false
+   },
+   "gnw_stop": {
+    "on": true,
+    "acted": true,
+    "reason": "spiking_accbg",
+    "n_held": 2,
+    "newcomer_topic": "dog",
+    "n_ignited_pre": 2,
+    "n_ignited_post": 0,
+    "boost": 0.14166666666666666,
+    "cleared": true,
+    "lesioned": false,
+    "lead": "Setting the held thread aside \u2014 ",
+    "reason_lead": "clean_global_stop"
+   }
+  }
+ },
+ "internal": {
+  "t_heron_hunt": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_frog_eat": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_crow_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_wren_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_heron_hunt_re": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "t_frog_eat_re": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "p_prey_eat": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_heron_hunt": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_frog_eat": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_prey_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "p_yesno": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  },
+  "c_dog_chase": {
+   "gnw_multistep": {
+    "acted": false,
+    "reason": "not_chase_form"
+   }
+  }
+ },
+ "timings_s": {
+  "t_heron_hunt": 535.2,
+  "t_frog_eat": 42.4,
+  "t_crow_chase": 39.5,
+  "t_wren_chase": 42.4,
+  "t_heron_hunt_re": 43.4,
+  "t_frog_eat_re": 41.1,
+  "p_prey_eat": 13.0,
+  "c_heron_hunt": 389.4,
+  "c_frog_eat": 29.8,
+  "c_prey_chase": 12.2,
+  "p_yesno": 296.5,
+  "c_dog_chase": 27.8
+ },
+ "import_s": 0.3,
+ "wall_s": 1663.3,
+ "elapsed_seconds": 1663.3,
+ "expected_source": "tiny-demo +LTM",
+ "process": {
+  "peak_rss_mb": 6559.7,
+  "ltm_bundle": "wikidata_100k"
+ },
+ "sources": [
+  "tiny-demo +LTM"
+ ],
+ "kb_scramble": {
+  "mode": "kb_overwrite",
+  "cfg": {
+   "keep": [
+    [
+     "heron",
+     "hunt"
+    ]
+   ],
+   "probe": {
+    "label": "p_prey_eat",
+    "x": "heron",
+    "hop1": [
+     "hunt",
+     "eat"
+    ],
+    "hop2": "eat"
+   }
+  },
+  "engagement": {
+   "plan": "dup_first_frog_to_worm",
+   "plan_spec": {
+    "cue": [
+     "heron",
+     "hunt"
+    ],
+    "select": "first",
+    "old": "frog",
+    "new": "worm",
+    "kind": "addition",
+    "refresh_chat": false,
+    "arms": "A19 (M1 on) / A20 (flag off), table infer_dup"
+   },
+   "after_turn_index": 5,
+   "engaged": true,
+   "reason": null,
+   "kb_before": [
+    [
+     "brain",
+     "use",
+     "spikes"
+    ],
+    [
+     "brain",
+     "learn",
+     "words"
+    ],
+    [
+     "brain",
+     "store",
+     "memory"
+    ],
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    [
+     "cat",
+     "eat",
+     "fish"
+    ],
+    [
+     "heron",
+     "hunt",
+     "frog"
+    ],
+    [
+     "frog",
+     "eat",
+     "gnat"
+    ],
+    [
+     "crow",
+     "chase",
+     "wren"
+    ],
+    [
+     "wren",
+     "chase",
+     "moth"
+    ],
+    [
+     "heron",
+     "hunt",
+     "frog"
+    ],
+    [
+     "frog",
+     "eat",
+     "gnat"
+    ]
+   ],
+   "entries_under_cue_before": [
+    5,
+    9
+   ],
+   "planned_index": 5,
+   "kb_after": [
+    [
+     "brain",
+     "use",
+     "spikes"
+    ],
+    [
+     "brain",
+     "learn",
+     "words"
+    ],
+    [
+     "brain",
+     "store",
+     "memory"
+    ],
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    [
+     "cat",
+     "eat",
+     "fish"
+    ],
+    [
+     "heron",
+     "hunt",
+     "worm"
+    ],
+    [
+     "frog",
+     "eat",
+     "gnat"
+    ],
+    [
+     "crow",
+     "chase",
+     "wren"
+    ],
+    [
+     "wren",
+     "chase",
+     "moth"
+    ],
+    [
+     "heron",
+     "hunt",
+     "frog"
+    ],
+    [
+     "frog",
+     "eat",
+     "gnat"
+    ]
+   ],
+   "changed_indices": [
+    5
+   ],
+   "decoded_before": [
+    {
+     "block": 0,
+     "agent": "brain",
+     "action": "use",
+     "patient": "spikes",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 1,
+     "agent": "brain",
+     "action": "learn",
+     "patient": "words",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 2,
+     "agent": "brain",
+     "action": "store",
+     "patient": "memory",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 3,
+     "agent": "dog",
+     "action": "chase",
+     "patient": "cat",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 4,
+     "agent": "cat",
+     "action": "eat",
+     "patient": "fish",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 5,
+     "agent": "heron",
+     "action": "hunt",
+     "patient": "frog",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 6,
+     "agent": "frog",
+     "action": "eat",
+     "patient": "gnat",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 7,
+     "agent": "crow",
+     "action": "chase",
+     "patient": "wren",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 8,
+     "agent": "wren",
+     "action": "chase",
+     "patient": "moth",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 9,
+     "agent": "heron",
+     "action": "hunt",
+     "patient": "frog",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 10,
+     "agent": "frog",
+     "action": "eat",
+     "patient": "gnat",
+     "polarity": "AFFIRM"
+    }
+   ],
+   "decoded_after": [
+    {
+     "block": 0,
+     "agent": "brain",
+     "action": "use",
+     "patient": "spikes",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 1,
+     "agent": "brain",
+     "action": "learn",
+     "patient": "words",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 2,
+     "agent": "brain",
+     "action": "store",
+     "patient": "memory",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 3,
+     "agent": "dog",
+     "action": "chase",
+     "patient": "cat",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 4,
+     "agent": "cat",
+     "action": "eat",
+     "patient": "fish",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 5,
+     "agent": "heron",
+     "action": "hunt",
+     "patient": "frog",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 6,
+     "agent": "frog",
+     "action": "eat",
+     "patient": "gnat",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 7,
+     "agent": "crow",
+     "action": "chase",
+     "patient": "wren",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 8,
+     "agent": "wren",
+     "action": "chase",
+     "patient": "moth",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 9,
+     "agent": "heron",
+     "action": "hunt",
+     "patient": "frog",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 10,
+     "agent": "frog",
+     "action": "eat",
+     "patient": "gnat",
+     "polarity": "AFFIRM"
+    }
+   ],
+   "decoded_patients_under_cue": [
+    "frog",
+    "frog"
+   ],
+   "predicted_from_list": null,
+   "predicted_from_decoded": {
+    "svo": [
+     "frog",
+     "eat",
+     "gnat"
+    ],
+    "derived_from": [
+     [
+      "heron",
+      "hunt",
+      "frog"
+     ],
+     [
+      "frog",
+      "eat",
+      "gnat"
+     ]
+    ]
+   },
+   "conditions": {
+    "i_exactly_planned_entry": true,
+    "ii_decoded_rows_unchanged": true,
+    "iii_list_and_store_predictions_differ": true,
+    "iv_intervention_as_planned": true
+   },
+   "condition_iv": {
+    "first_entry_under_cue": [
+     "heron",
+     "hunt",
+     "worm"
+    ],
+    "is_patient_of_first_entry": true,
+    "absent_from_decoded_rows_under_cue": true
+   },
+   "composer_types": {
+    "composer": "TieredFactStore",
+    "buffer": "Pool1BoundOneBrainComposer",
+    "ltm": "SharedLTMView"
+   },
+   "chat_stored_facts_after": [
+    [
+     "brain",
+     "use",
+     "spikes"
+    ],
+    [
+     "brain",
+     "learn",
+     "words"
+    ],
+    [
+     "brain",
+     "store",
+     "memory"
+    ],
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    [
+     "cat",
+     "eat",
+     "fish"
+    ],
+    [
+     "heron",
+     "hunt",
+     "frog"
+    ],
+    [
+     "frog",
+     "eat",
+     "gnat"
+    ],
+    [
+     "crow",
+     "chase",
+     "wren"
+    ],
+    [
+     "wren",
+     "chase",
+     "moth"
+    ],
+    [
+     "heron",
+     "hunt",
+     "frog"
+    ],
+    [
+     "frog",
+     "eat",
+     "gnat"
+    ]
+   ],
+   "told": [
+    [
+     "heron",
+     "hunt",
+     "frog"
+    ],
+    [
+     "frog",
+     "eat",
+     "gnat"
+    ],
+    [
+     "crow",
+     "chase",
+     "wren"
+    ],
+    [
+     "wren",
+     "chase",
+     "moth"
+    ],
+    [
+     "heron",
+     "hunt",
+     "frog"
+    ],
+    [
+     "frog",
+     "eat",
+     "gnat"
+    ]
+   ]
+  },
+  "instrumentation": {
+   "mode": "kb_overwrite",
+   "orig_distinct": "<function _distinct_patients at 0x7f83bab72320>",
+   "orig_qp": "<function OneBrainComposer.query_patient at 0x7f83bbd26f80>"
+  },
+  "distinct_calls": [
+   {
+    "label": "p_prey_eat",
+    "agent": "heron",
+    "action": "hunt",
+    "result": [
+     "worm",
+     "frog"
+    ],
+    "forced_unscannable": false
+   },
+   {
+    "label": "c_prey_chase",
+    "agent": "heron",
+    "action": "hunt",
+    "result": [
+     "worm",
+     "frog"
+    ],
+    "forced_unscannable": false
+   }
+  ],
+  "qp_calls": [
+   {
+    "label": "t_heron_hunt",
+    "agent": "heron",
+    "action": "hunts",
+    "result": null
+   },
+   {
+    "label": "t_heron_hunt",
+    "agent": "heron",
+    "action": "hunt",
+    "result": "frog"
+   },
+   {
+    "label": "t_heron_hunt",
+    "agent": "frog",
+    "action": "hunt",
+    "result": null
+   },
+   {
+    "label": "t_frog_eat",
+    "agent": "frog",
+    "action": "eats",
+    "result": null
+   },
+   {
+    "label": "t_frog_eat",
+    "agent": "frog",
+    "action": "eat",
+    "result": "gnat"
+   },
+   {
+    "label": "t_frog_eat",
+    "agent": "gnat",
+    "action": "eat",
+    "result": null
+   },
+   {
+    "label": "t_crow_chase",
+    "agent": "crow",
+    "action": "chases",
+    "result": null
+   },
+   {
+    "label": "t_crow_chase",
+    "agent": "crow",
+    "action": "chase",
+    "result": "wren"
+   },
+   {
+    "label": "t_crow_chase",
+    "agent": "wren",
+    "action": "chase",
+    "result": null
+   },
+   {
+    "label": "t_wren_chase",
+    "agent": "wren",
+    "action": "chases",
+    "result": null
+   },
+   {
+    "label": "t_wren_chase",
+    "agent": "wren",
+    "action": "chase",
+    "result": "moth"
+   },
+   {
+    "label": "t_wren_chase",
+    "agent": "moth",
+    "action": "chase",
+    "result": null
+   },
+   {
+    "label": "t_heron_hunt_re",
+    "agent": "heron",
+    "action": "hunts",
+    "result": null
+   },
+   {
+    "label": "t_heron_hunt_re",
+    "agent": "frog",
+    "action": "eat",
+    "result": "gnat"
+   },
+   {
+    "label": "t_heron_hunt_re",
+    "agent": "gnat",
+    "action": "eat",
+    "result": null
+   },
+   {
+    "label": "t_frog_eat_re",
+    "agent": "frog",
+    "action": "eats",
+    "result": null
+   },
+   {
+    "label": "t_frog_eat_re",
+    "agent": "frog",
+    "action": "eat",
+    "result": "gnat"
+   },
+   {
+    "label": "t_frog_eat_re",
+    "agent": "gnat",
+    "action": "eat",
+    "result": null
+   },
+   {
+    "label": "c2_step0_reads",
+    "agent": "heron",
+    "action": "hunt",
+    "result": "frog"
+   },
+   {
+    "label": "c2_step0_reads",
+    "agent": "heron",
+    "action": "eat",
+    "result": null
+   },
+   {
+    "label": "c2_step0_reads",
+    "agent": "frog",
+    "action": "eat",
+    "result": "gnat"
+   },
+   {
+    "label": "c2_step0_reads",
+    "agent": "frog",
+    "action": "chase",
+    "result": null
+   },
+   {
+    "label": "p_prey_eat",
+    "agent": "heron's_prey_eat",
+    "action": "alias_of",
+    "result": null
+   },
+   {
+    "label": "p_prey_eat",
+    "agent": "heron's_prey",
+    "action": "alias_of",
+    "result": null
+   },
+   {
+    "label": "p_prey_eat",
+    "agent": "prey_eat",
+    "action": "alias_of",
+    "result": null
+   },
+   {
+    "label": "p_prey_eat",
+    "agent": "heron's",
+    "action": "prey",
+    "result": null
+   },
+   {
+    "label": "c_heron_hunt",
+    "agent": "heron_hunt",
+    "action": "alias_of",
+    "result": null
+   },
+   {
+    "label": "c_heron_hunt",
+    "agent": "heron",
+    "action": "hunt",
+    "result": "frog"
+   },
+   {
+    "label": "c_heron_hunt",
+    "agent": "heron",
+    "action": "hunt",
+    "result": "frog"
+   },
+   {
+    "label": "c_heron_hunt",
+    "agent": "frog",
+    "action": "hunt",
+    "result": null
+   },
+   {
+    "label": "c_heron_hunt",
+    "agent": "gnat",
+    "action": "eat",
+    "result": null
+   },
+   {
+    "label": "c_frog_eat",
+    "agent": "frog_eat",
+    "action": "alias_of",
+    "result": null
+   },
+   {
+    "label": "c_frog_eat",
+    "agent": "frog",
+    "action": "eat",
+    "result": "gnat"
+   },
+   {
+    "label": "c_frog_eat",
+    "agent": "frog",
+    "action": "eat",
+    "result": "gnat"
+   },
+   {
+    "label": "c_frog_eat",
+    "agent": "gnat",
+    "action": "eat",
+    "result": null
+   },
+   {
+    "label": "c_prey_chase",
+    "agent": "heron's_prey_chase",
+    "action": "alias_of",
+    "result": null
+   },
+   {
+    "label": "c_prey_chase",
+    "agent": "heron's_prey",
+    "action": "alias_of",
+    "result": null
+   },
+   {
+    "label": "c_prey_chase",
+    "agent": "prey_chase",
+    "action": "alias_of",
+    "result": null
+   },
+   {
+    "label": "c_prey_chase",
+    "agent": "heron's",
+    "action": "prey",
+    "result": null
+   },
+   {
+    "label": "p_yesno",
+    "agent": "crow",
+    "action": "chase",
+    "result": "wren"
+   },
+   {
+    "label": "p_yesno",
+    "agent": "crow_chase_moth",
+    "action": "alias_of",
+    "result": null
+   },
+   {
+    "label": "p_yesno",
+    "agent": "crow_chase",
+    "action": "alias_of",
+    "result": null
+   },
+   {
+    "label": "p_yesno",
+    "agent": "chase_moth",
+    "action": "alias_of",
+    "result": null
+   },
+   {
+    "label": "p_yesno",
+    "agent": "crow",
+    "action": "chase",
+    "result": "wren"
+   },
+   {
+    "label": "p_yesno",
+    "agent": "wren",
+    "action": "chase",
+    "result": "moth"
+   },
+   {
+    "label": "p_yesno",
+    "agent": "moth",
+    "action": "chase",
+    "result": null
+   },
+   {
+    "label": "c_dog_chase",
+    "agent": "dog_chase",
+    "action": "alias_of",
+    "result": null
+   },
+   {
+    "label": "c_dog_chase",
+    "agent": "dog",
+    "action": "chase",
+    "result": "cat"
+   },
+   {
+    "label": "c_dog_chase",
+    "agent": "cat",
+    "action": "eat",
+    "result": "fish"
+   },
+   {
+    "label": "c_dog_chase",
+    "agent": "fish",
+    "action": "eat",
+    "result": null
+   }
+  ],
+  "n_distinct_calls": 2,
+  "n_qp_calls": 50
+ },
+ "c2_hops": {
+  "mode": "full",
+  "table": "infer_dup",
+  "instrumentation": {
+   "d4_recorder": {
+    "competent": "<function ComprehensionProductionOrgan.competent at 0x7f83c6d3bf40>",
+    "extract_transitive": "<function extract_transitive at 0x7f83c6d3b760>",
+    "_verb_selects_of": "<function _verb_selects_of at 0x7f83c6d3b490>",
+    "_animacy_of": "<function _animacy_of at 0x7f83c6d3b520>"
+   },
+   "propose_path": {
+    "_fact_shard_candidates": "<function OneBrainComposer._fact_shard_candidates at 0x7f83bbd26830>",
+    "_fact_shard_first_match": "<function OneBrainComposer._fact_shard_first_match at 0x7f83bbd26950>",
+    "_seq_block": "<function OneBrainComposer._seq_block at 0x7f83bbd26d40>"
+   }
+  },
+  "per_turn": {
+   "t_heron_hunt": {
+    "kb_len": 6,
+    "gnw_delib": {
+     "acted": false,
+     "decision": null,
+     "abstained": false,
+     "n_candidates": null,
+     "conf": null,
+     "n_ignited": null,
+     "lesion": false,
+     "reason": "out_of_scope_or_no_bus_info"
+    }
+   },
+   "t_frog_eat": {
+    "kb_len": 7,
+    "gnw_delib": {
+     "acted": false,
+     "decision": null,
+     "abstained": false,
+     "n_candidates": null,
+     "conf": null,
+     "n_ignited": null,
+     "lesion": false,
+     "reason": "out_of_scope_or_no_bus_info"
+    }
+   },
+   "t_crow_chase": {
+    "kb_len": 8,
+    "gnw_delib": {
+     "acted": false,
+     "decision": null,
+     "abstained": false,
+     "n_candidates": null,
+     "conf": null,
+     "n_ignited": null,
+     "lesion": false,
+     "reason": "out_of_scope_or_no_bus_info"
+    }
+   },
+   "t_wren_chase": {
+    "kb_len": 9,
+    "gnw_delib": {
+     "acted": false,
+     "decision": null,
+     "abstained": false,
+     "n_candidates": null,
+     "conf": null,
+     "n_ignited": null,
+     "lesion": false,
+     "reason": "out_of_scope_or_no_bus_info"
+    }
+   },
+   "t_heron_hunt_re": {
+    "kb_len": 10,
+    "gnw_delib": {
+     "acted": false,
+     "decision": null,
+     "abstained": false,
+     "n_candidates": null,
+     "conf": null,
+     "n_ignited": null,
+     "lesion": false,
+     "reason": "out_of_scope_or_no_bus_info"
+    }
+   },
+   "t_frog_eat_re": {
+    "kb_len": 11,
+    "gnw_delib": {
+     "acted": false,
+     "decision": null,
+     "abstained": false,
+     "n_candidates": null,
+     "conf": null,
+     "n_ignited": null,
+     "lesion": false,
+     "reason": "out_of_scope_or_no_bus_info"
+    }
+   },
+   "p_prey_eat": {
+    "kb_len": 11,
+    "gnw_delib": {
+     "acted": false,
+     "decision": null,
+     "abstained": false,
+     "n_candidates": null,
+     "conf": null,
+     "n_ignited": null,
+     "lesion": false,
+     "reason": "already_abstained"
+    }
+   },
+   "c_heron_hunt": {
+    "kb_len": 11,
+    "gnw_delib": {
+     "acted": false,
+     "decision": null,
+     "abstained": false,
+     "n_candidates": null,
+     "conf": null,
+     "n_ignited": null,
+     "lesion": false,
+     "reason": "out_of_scope_or_no_bus_info"
+    }
+   },
+   "c_frog_eat": {
+    "kb_len": 11,
+    "gnw_delib": {
+     "acted": false,
+     "decision": null,
+     "abstained": false,
+     "n_candidates": null,
+     "conf": null,
+     "n_ignited": null,
+     "lesion": false,
+     "reason": "out_of_scope_or_no_bus_info"
+    }
+   },
+   "c_prey_chase": {
+    "kb_len": 11,
+    "gnw_delib": {
+     "acted": false,
+     "decision": null,
+     "abstained": false,
+     "n_candidates": null,
+     "conf": null,
+     "n_ignited": null,
+     "lesion": false,
+     "reason": "already_abstained"
+    }
+   },
+   "p_yesno": {
+    "kb_len": 11,
+    "gnw_delib": {
+     "acted": false,
+     "decision": null,
+     "abstained": false,
+     "n_candidates": null,
+     "conf": null,
+     "n_ignited": null,
+     "lesion": false,
+     "reason": "out_of_scope_or_no_bus_info"
+    }
+   },
+   "c_dog_chase": {
+    "kb_len": 11,
+    "gnw_delib": {
+     "acted": false,
+     "decision": null,
+     "abstained": false,
+     "n_candidates": null,
+     "conf": null,
+     "n_ignited": null,
+     "lesion": false,
+     "reason": "out_of_scope_or_no_bus_info"
+    }
+   }
+  },
+  "teach_block_last_turn": 5,
+  "stored_facts_after_teach": [
+   [
+    "brain",
+    "use",
+    "spikes"
+   ],
+   [
+    "brain",
+    "learn",
+    "words"
+   ],
+   [
+    "brain",
+    "store",
+    "memory"
+   ],
+   [
+    "dog",
+    "chase",
+    "cat"
+   ],
+   [
+    "cat",
+    "eat",
+    "fish"
+   ],
+   [
+    "heron",
+    "hunt",
+    "frog"
+   ],
+   [
+    "frog",
+    "eat",
+    "gnat"
+   ],
+   [
+    "crow",
+    "chase",
+    "wren"
+   ],
+   [
+    "wren",
+    "chase",
+    "moth"
+   ],
+   [
+    "heron",
+    "hunt",
+    "frog"
+   ],
+   [
+    "frog",
+    "eat",
+    "gnat"
+   ]
+  ],
+  "reads": {
+   "table": "infer_dup",
+   "seed": 5,
+   "packet": "research/coordination/c2-spiking-hops-PACKET.md",
+   "composer_types": {
+    "composer": "TieredFactStore",
+    "buffer": "Pool1BoundOneBrainComposer",
+    "ltm": "SharedLTMView"
+   },
+   "K": 11,
+   "kb_rows": [
+    [
+     "brain",
+     "use",
+     "spikes"
+    ],
+    [
+     "brain",
+     "learn",
+     "words"
+    ],
+    [
+     "brain",
+     "store",
+     "memory"
+    ],
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    [
+     "cat",
+     "eat",
+     "fish"
+    ],
+    [
+     "heron",
+     "hunt",
+     "frog"
+    ],
+    [
+     "frog",
+     "eat",
+     "gnat"
+    ],
+    [
+     "crow",
+     "chase",
+     "wren"
+    ],
+    [
+     "wren",
+     "chase",
+     "moth"
+    ],
+    [
+     "heron",
+     "hunt",
+     "frog"
+    ],
+    [
+     "frog",
+     "eat",
+     "gnat"
+    ]
+   ],
+   "read_layout": "per_block_loop",
+   "fact_shard_active": true,
+   "integrated_loop": false,
+   "guard": {
+    "global_rng": "preserved",
+    "bridge_arrays_restored": [
+     "cp_firing_states",
+     "cp_membrane_potential_v",
+     "cp_recovery_variable_u"
+    ],
+    "composer_attrs_restored": [
+     "_fact_shard",
+     "_fact_shard_built_K",
+     "_seq",
+     "_seq_K",
+     "_seq_cleanup_conns_cache",
+     "_seq_cuevocab_sig",
+     "_seq_dirty",
+     "_seq_drives",
+     "_seq_mapA",
+     "_seq_mapX",
+     "_seq_score",
+     "last_trace"
+    ]
+   },
+   "decoded_rows": [
+    {
+     "block": 0,
+     "agent": "brain",
+     "action": "use",
+     "patient": "spikes",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 1,
+     "agent": "brain",
+     "action": "learn",
+     "patient": "words",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 2,
+     "agent": "brain",
+     "action": "store",
+     "patient": "memory",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 3,
+     "agent": "dog",
+     "action": "chase",
+     "patient": "cat",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 4,
+     "agent": "cat",
+     "action": "eat",
+     "patient": "fish",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 5,
+     "agent": "heron",
+     "action": "hunt",
+     "patient": "frog",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 6,
+     "agent": "frog",
+     "action": "eat",
+     "patient": "gnat",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 7,
+     "agent": "crow",
+     "action": "chase",
+     "patient": "wren",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 8,
+     "agent": "wren",
+     "action": "chase",
+     "patient": "moth",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 9,
+     "agent": "heron",
+     "action": "hunt",
+     "patient": "frog",
+     "polarity": "AFFIRM"
+    },
+    {
+     "block": 10,
+     "agent": "frog",
+     "action": "eat",
+     "patient": "gnat",
+     "polarity": "AFFIRM"
+    }
+   ],
+   "a": {
+    "heron,hunt": {
+     "cue": [
+      "heron",
+      "hunt"
+     ],
+     "result": "frog",
+     "tier": "buffer",
+     "buffer_propose": "frog",
+     "fs_candidates": [
+      5,
+      9
+     ],
+     "fs_cue_roles": {
+      "agent": "heron",
+      "action": "hunt"
+     },
+     "propose_path": "fact_shard",
+     "selected_block": 5,
+     "events": [
+      {
+       "fn": "fact_shard_candidates",
+       "cue_roles": {
+        "agent": "heron",
+        "action": "hunt"
+       },
+       "ret": [
+        5,
+        9
+       ],
+       "label": "c2_step0_reads"
+      },
+      {
+       "fn": "fact_shard_first_match",
+       "cue_roles": {
+        "agent": "heron",
+        "action": "hunt"
+       },
+       "escalate": false,
+       "idx": 5,
+       "got": {
+        "agent": "heron",
+        "action": "hunt",
+        "patient": "frog",
+        "attribute": "spikes",
+        "polarity": "AFFIRM"
+       },
+       "label": "c2_step0_reads"
+      }
+     ],
+     "decoded_rows_under_cue": [
+      {
+       "block": 5,
+       "agent": "heron",
+       "action": "hunt",
+       "patient": "frog",
+       "polarity": "AFFIRM"
+      },
+      {
+       "block": 9,
+       "agent": "heron",
+       "action": "hunt",
+       "patient": "frog",
+       "polarity": "AFFIRM"
+      }
+     ],
+     "host_routed": false
+    },
+    "heron,eat": {
+     "cue": [
+      "heron",
+      "eat"
+     ],
+     "result": null,
+     "tier": null,
+     "buffer_propose": null,
+     "fs_candidates": [
+      4
+     ],
+     "fs_cue_roles": {
+      "agent": "heron",
+      "action": "eat"
+     },
+     "propose_path": "fact_shard",
+     "selected_block": null,
+     "events": [
+      {
+       "fn": "fact_shard_candidates",
+       "cue_roles": {
+        "agent": "heron",
+        "action": "eat"
+       },
+       "ret": [
+        4
+       ],
+       "label": "c2_step0_reads"
+      },
+      {
+       "fn": "fact_shard_first_match",
+       "cue_roles": {
+        "agent": "heron",
+        "action": "eat"
+       },
+       "escalate": false,
+       "idx": null,
+       "got": null,
+       "label": "c2_step0_reads"
+      }
+     ],
+     "decoded_rows_under_cue": [],
+     "host_routed": false
+    },
+    "frog,eat": {
+     "cue": [
+      "frog",
+      "eat"
+     ],
+     "result": "gnat",
+     "tier": "buffer",
+     "buffer_propose": "gnat",
+     "fs_candidates": [
+      6,
+      10
+     ],
+     "fs_cue_roles": {
+      "agent": "frog",
+      "action": "eat"
+     },
+     "propose_path": "fact_shard",
+     "selected_block": 6,
+     "events": [
+      {
+       "fn": "fact_shard_candidates",
+       "cue_roles": {
+        "agent": "frog",
+        "action": "eat"
+       },
+       "ret": [
+        6,
+        10
+       ],
+       "label": "c2_step0_reads"
+      },
+      {
+       "fn": "fact_shard_first_match",
+       "cue_roles": {
+        "agent": "frog",
+        "action": "eat"
+       },
+       "escalate": false,
+       "idx": 6,
+       "got": {
+        "agent": "frog",
+        "action": "eat",
+        "patient": "gnat",
+        "attribute": "spikes",
+        "polarity": "AFFIRM"
+       },
+       "label": "c2_step0_reads"
+      }
+     ],
+     "decoded_rows_under_cue": [
+      {
+       "block": 6,
+       "agent": "frog",
+       "action": "eat",
+       "patient": "gnat",
+       "polarity": "AFFIRM"
+      },
+      {
+       "block": 10,
+       "agent": "frog",
+       "action": "eat",
+       "patient": "gnat",
+       "polarity": "AFFIRM"
+      }
+     ],
+     "host_routed": false
+    },
+    "frog,chase": {
+     "cue": [
+      "frog",
+      "chase"
+     ],
+     "result": null,
+     "tier": null,
+     "buffer_propose": null,
+     "fs_candidates": [],
+     "fs_cue_roles": {
+      "agent": "frog",
+      "action": "chase"
+     },
+     "propose_path": "fact_shard",
+     "selected_block": null,
+     "events": [
+      {
+       "fn": "fact_shard_candidates",
+       "cue_roles": {
+        "agent": "frog",
+        "action": "chase"
+       },
+       "ret": [],
+       "label": "c2_step0_reads"
+      },
+      {
+       "fn": "fact_shard_first_match",
+       "cue_roles": {
+        "agent": "frog",
+        "action": "chase"
+       },
+       "escalate": false,
+       "idx": null,
+       "got": null,
+       "label": "c2_step0_reads"
+      }
+     ],
+     "decoded_rows_under_cue": [],
+     "host_routed": false
+    }
+   },
+   "b": {
+    "K": 11,
+    "match_thresh": 0.06,
+    "reduced": true,
+    "input_gain": 1.0,
+    "rss_before": {
+     "VmHWM": 5924.7,
+     "VmRSS": 5738.5,
+     "ru_maxrss_mb": 5924.7
+    },
+    "build_s": 4.37,
+    "rss_after_build": {
+     "VmHWM": 5924.7,
+     "VmRSS": 5741.7,
+     "ru_maxrss_mb": 5924.7
+    },
+    "fabric": {
+     "n_neurons": 7660,
+     "meta": {
+      "VA": 7,
+      "VX": 6,
+      "K": 11,
+      "n_word": 20,
+      "n_pool": 30,
+      "abstain_tonic_pA": 420.0,
+      "permute_default": false
+     },
+     "agentsA": [
+      "brain",
+      "dog",
+      "cat",
+      "heron",
+      "frog",
+      "crow",
+      "wren"
+     ],
+     "actionsX": [
+      "use",
+      "learn",
+      "store",
+      "chase",
+      "eat",
+      "hunt"
+     ]
+    },
+    "drives_lit": [
+     [
+      6,
+      6
+     ],
+     [
+      5,
+      4
+     ],
+     [
+      6,
+      4
+     ],
+     [
+      6,
+      5
+     ],
+     [
+      6,
+      4
+     ],
+     [
+      5,
+      5
+     ],
+     [
+      3,
+      3
+     ],
+     [
+      6,
+      4
+     ],
+     [
+      4,
+      6
+     ],
+     [
+      5,
+      5
+     ],
+     [
+      3,
+      3
+     ]
+    ],
+    "drives_lit_words": [
+     [
+      [
+       "ball",
+       "brain",
+       "chase",
+       "fish",
+       "learn",
+       "gnat"
+      ],
+      [
+       "bird",
+       "river",
+       "store",
+       "use",
+       "words",
+       "worm"
+      ]
+     ],
+     [
+      [
+       "ball",
+       "brain",
+       "dog",
+       "fish",
+       "worm"
+      ],
+      [
+       "learn",
+       "memory",
+       "river",
+       "words"
+      ]
+     ],
+     [
+      [
+       "ball",
+       "brain",
+       "chase",
+       "fish",
+       "river",
+       "hunt"
+      ],
+      [
+       "eat",
+       "river",
+       "store",
+       "words"
+      ]
+     ],
+     [
+      [
+       "ball",
+       "dog",
+       "words",
+       "worm",
+       "gnat",
+       "wren"
+      ],
+      [
+       "chase",
+       "learn",
+       "river",
+       "gnat",
+       "wren"
+      ]
+     ],
+     [
+      [
+       "cat",
+       "fish",
+       "learn",
+       "hunt",
+       "gnat",
+       "wren"
+      ],
+      [
+       "eat",
+       "memory",
+       "heron",
+       "crow"
+      ]
+     ],
+     [
+      [
+       "brain",
+       "learn",
+       "heron",
+       "gnat",
+       "wren"
+      ],
+      [
+       "bird",
+       "fish",
+       "words",
+       "hunt",
+       "wren"
+      ]
+     ],
+     [
+      [
+       "river",
+       "frog",
+       "gnat"
+      ],
+      [
+       "eat",
+       "store",
+       "crow"
+      ]
+     ],
+     [
+      [
+       "ball",
+       "chase",
+       "spikes",
+       "hunt",
+       "crow",
+       "wren"
+      ],
+      [
+       "cat",
+       "chase",
+       "river",
+       "gnat"
+      ]
+     ],
+     [
+      [
+       "ball",
+       "learn",
+       "spikes",
+       "wren"
+      ],
+      [
+       "bird",
+       "brain",
+       "chase",
+       "hunt",
+       "gnat",
+       "wren"
+      ]
+     ],
+     [
+      [
+       "brain",
+       "learn",
+       "heron",
+       "gnat",
+       "wren"
+      ],
+      [
+       "bird",
+       "fish",
+       "words",
+       "hunt",
+       "wren"
+      ]
+     ],
+     [
+      [
+       "river",
+       "frog",
+       "gnat"
+      ],
+      [
+       "eat",
+       "store",
+       "crow"
+      ]
+     ]
+    ],
+    "cues": {
+     "heron,hunt": {
+      "cue": [
+       "heron",
+       "hunt"
+      ],
+      "true_matches": [
+       5,
+       9
+      ],
+      "host_first_match": 5,
+      "cue_in_reduced_vocab": true,
+      "run_s": 0.1,
+      "decision": "ans5",
+      "winner": 5,
+      "m_rates": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.269,
+       0.0,
+       0.0,
+       0.0,
+       0.31,
+       0.0
+      ],
+      "spurious_dropped": {
+       "A": 36,
+       "X": 32
+      },
+      "sequencer_block": 5,
+      "fired": [
+       5,
+       9
+      ],
+      "missed_true_matches": [],
+      "fired_non_matching": [],
+      "decision_equals_host_first_match": true
+     },
+     "heron,eat": {
+      "cue": [
+       "heron",
+       "eat"
+      ],
+      "true_matches": [],
+      "host_first_match": null,
+      "cue_in_reduced_vocab": true,
+      "run_s": 0.1,
+      "decision": "ans9",
+      "winner": 9,
+      "m_rates": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.097,
+       0.0
+      ],
+      "spurious_dropped": {
+       "A": 36,
+       "X": 32
+      },
+      "sequencer_block": 9,
+      "fired": [
+       9
+      ],
+      "missed_true_matches": [],
+      "fired_non_matching": [
+       9
+      ],
+      "decision_equals_host_first_match": false
+     },
+     "frog,eat": {
+      "cue": [
+       "frog",
+       "eat"
+      ],
+      "true_matches": [
+       6,
+       10
+      ],
+      "host_first_match": 6,
+      "cue_in_reduced_vocab": true,
+      "run_s": 0.1,
+      "decision": "ans6",
+      "winner": 6,
+      "m_rates": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.288,
+       0.0,
+       0.0,
+       0.0,
+       0.304
+      ],
+      "spurious_dropped": {
+       "A": 36,
+       "X": 32
+      },
+      "sequencer_block": 6,
+      "fired": [
+       6,
+       10
+      ],
+      "missed_true_matches": [],
+      "fired_non_matching": [],
+      "decision_equals_host_first_match": true
+     },
+     "frog,chase": {
+      "cue": [
+       "frog",
+       "chase"
+      ],
+      "true_matches": [],
+      "host_first_match": null,
+      "cue_in_reduced_vocab": true,
+      "run_s": 0.1,
+      "decision": "ans6",
+      "winner": 6,
+      "m_rates": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.097,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "spurious_dropped": {
+       "A": 36,
+       "X": 32
+      },
+      "sequencer_block": 6,
+      "fired": [
+       6
+      ],
+      "missed_true_matches": [],
+      "fired_non_matching": [
+       6
+      ],
+      "decision_equals_host_first_match": false
+     }
+    }
+   },
+   "c": {
+    "K": 11,
+    "V": 144,
+    "patient_row_index": 2,
+    "n_reserve_slots": 121,
+    "input_gain": 1.0,
+    "score_bridge_built": true,
+    "patient_relay": {
+     "source": "production _seq_patient_drives (BRAIN_C2_COMPOSER_PATIENT_INHIB on)",
+     "w_i2e": 2.0
+    },
+    "blocks": [
+     {
+      "block": 0,
+      "decoded_patient": "spikes",
+      "patient_relay": {
+       "relay": "composer_patient_inhib",
+       "w_i2e": 2.0,
+       "inh_spikes": 300.0,
+       "source": "production _seq_patient_drives"
+      },
+      "relay_recheck_same_pools": true,
+      "fired_pools": [
+       "spikes"
+      ],
+      "n_fired": 1,
+      "exactly_one": true,
+      "fires_decoded_patient": true,
+      "pool_spikes": {
+       "spikes": 1.25
+      },
+      "patient_slice_top": [
+       [
+        "spikes",
+        2465557.5
+       ],
+       [
+        "memory",
+        462563.625
+       ],
+       [
+        "wren",
+        318758.46875
+       ]
+      ],
+      "patient_slice_nz": {
+       "ball": 63784.2578125,
+       "bird": 101219.6640625,
+       "dog": 18755.951171875,
+       "memory": 462563.625,
+       "river": 87050.65625,
+       "spikes": 2465557.5,
+       "use": 133531.140625,
+       "heron": 265611.3125,
+       "frog": 61129.62890625,
+       "gnat": 241700.921875,
+       "wren": 318758.46875
+      },
+      "probe_vs_production": {
+       "agent": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "action": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "patient": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       }
+      }
+     },
+     {
+      "block": 1,
+      "decoded_patient": "words",
+      "patient_relay": {
+       "relay": "composer_patient_inhib",
+       "w_i2e": 2.0,
+       "inh_spikes": 300.0,
+       "source": "production _seq_patient_drives"
+      },
+      "relay_recheck_same_pools": true,
+      "fired_pools": [
+       "words"
+      ],
+      "n_fired": 1,
+      "exactly_one": true,
+      "fires_decoded_patient": true,
+      "pool_spikes": {
+       "words": 0.65
+      },
+      "patient_slice_top": [
+       [
+        "words",
+        2550868.25
+       ],
+       [
+        "river",
+        460816.8125
+       ],
+       [
+        "dog",
+        434700.53125
+       ]
+      ],
+      "patient_slice_nz": {
+       "brain": 18424.046875,
+       "cat": 233087.953125,
+       "dog": 434700.53125,
+       "fish": 11056.798828125,
+       "learn": 169725.453125,
+       "river": 460816.8125,
+       "store": 52220.8046875,
+       "use": 226462.125,
+       "words": 2550868.25,
+       "worm": 6883.80126953125,
+       "heron": 375831.46875,
+       "frog": 225592.0625,
+       "crow": 163162.546875
+      },
+      "probe_vs_production": {
+       "agent": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "action": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "patient": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       }
+      }
+     },
+     {
+      "block": 2,
+      "decoded_patient": "memory",
+      "patient_relay": {
+       "relay": "composer_patient_inhib",
+       "w_i2e": 2.0,
+       "inh_spikes": 300.0,
+       "source": "production _seq_patient_drives"
+      },
+      "relay_recheck_same_pools": true,
+      "fired_pools": [
+       "memory"
+      ],
+      "n_fired": 1,
+      "exactly_one": true,
+      "fires_decoded_patient": true,
+      "pool_spikes": {
+       "memory": 0.9500000000000003
+      },
+      "patient_slice_top": [
+       [
+        "memory",
+        2810539.25
+       ],
+       [
+        "store",
+        566212.4375
+       ],
+       [
+        "crow",
+        328651.15625
+       ]
+      ],
+      "patient_slice_nz": {
+       "ball": 87090.4453125,
+       "dog": 168053.78125,
+       "eat": 206913.796875,
+       "learn": 183352.390625,
+       "memory": 2810539.25,
+       "river": 46810.68359375,
+       "spikes": 251881.03125,
+       "store": 566212.4375,
+       "use": 212965.109375,
+       "heron": 260037.953125,
+       "gnat": 65232.0390625,
+       "crow": 328651.15625,
+       "wren": 197829.578125
+      },
+      "probe_vs_production": {
+       "agent": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "action": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "patient": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       }
+      }
+     },
+     {
+      "block": 3,
+      "decoded_patient": "cat",
+      "patient_relay": {
+       "relay": "composer_patient_inhib",
+       "w_i2e": 2.0,
+       "inh_spikes": 300.0,
+       "source": "production _seq_patient_drives"
+      },
+      "relay_recheck_same_pools": true,
+      "fired_pools": [
+       "cat"
+      ],
+      "n_fired": 1,
+      "exactly_one": true,
+      "fires_decoded_patient": true,
+      "pool_spikes": {
+       "cat": 1.05
+      },
+      "patient_slice_top": [
+       [
+        "cat",
+        2280427.75
+       ],
+       [
+        "gnat",
+        342269.1875
+       ],
+       [
+        "eat",
+        323557.28125
+       ]
+      ],
+      "patient_slice_nz": {
+       "ball": 5046.0712890625,
+       "cat": 2280427.75,
+       "eat": 323557.28125,
+       "fish": 39460.0546875,
+       "learn": 10410.845703125,
+       "store": 111012.59375,
+       "use": 131215.203125,
+       "words": 296687.875,
+       "gnat": 342269.1875,
+       "crow": 101228.4609375
+      },
+      "probe_vs_production": {
+       "agent": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "action": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "patient": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       }
+      }
+     },
+     {
+      "block": 4,
+      "decoded_patient": "fish",
+      "patient_relay": {
+       "relay": "composer_patient_inhib",
+       "w_i2e": 2.0,
+       "inh_spikes": 300.0,
+       "source": "production _seq_patient_drives"
+      },
+      "relay_recheck_same_pools": true,
+      "fired_pools": [
+       "fish"
+      ],
+      "n_fired": 1,
+      "exactly_one": true,
+      "fires_decoded_patient": true,
+      "pool_spikes": {
+       "fish": 0.55
+      },
+      "patient_slice_top": [
+       [
+        "fish",
+        2102686.5
+       ],
+       [
+        "dog",
+        649435.8125
+       ],
+       [
+        "learn",
+        548242.375
+       ]
+      ],
+      "patient_slice_nz": {
+       "ball": 172873.515625,
+       "brain": 322974.53125,
+       "cat": 52900.94140625,
+       "dog": 649435.8125,
+       "eat": 315699.59375,
+       "fish": 2102686.5,
+       "learn": 548242.375,
+       "river": 299282.40625,
+       "store": 423536.96875,
+       "crow": 322701.78125
+      },
+      "probe_vs_production": {
+       "agent": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "action": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "patient": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       }
+      }
+     },
+     {
+      "block": 5,
+      "decoded_patient": "frog",
+      "patient_relay": {
+       "relay": "composer_patient_inhib",
+       "w_i2e": 2.0,
+       "inh_spikes": 300.0,
+       "source": "production _seq_patient_drives"
+      },
+      "relay_recheck_same_pools": true,
+      "fired_pools": [
+       "frog"
+      ],
+      "n_fired": 1,
+      "exactly_one": true,
+      "fires_decoded_patient": true,
+      "pool_spikes": {
+       "frog": 0.8000000000000002
+      },
+      "patient_slice_top": [
+       [
+        "frog",
+        3661768.5
+       ],
+       [
+        "gnat",
+        840143.9375
+       ],
+       [
+        "words",
+        822987.125
+       ]
+      ],
+      "patient_slice_nz": {
+       "eat": 389983.46875,
+       "fish": 86912.7734375,
+       "learn": 240848.84375,
+       "memory": 55731.53125,
+       "river": 5649.8115234375,
+       "spikes": 329620.0,
+       "store": 368136.15625,
+       "words": 822987.125,
+       "worm": 200345.125,
+       "frog": 3661768.5,
+       "gnat": 840143.9375
+      },
+      "probe_vs_production": {
+       "agent": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "action": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "patient": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       }
+      }
+     },
+     {
+      "block": 6,
+      "decoded_patient": "gnat",
+      "patient_relay": {
+       "relay": "composer_patient_inhib",
+       "w_i2e": 2.0,
+       "inh_spikes": 300.0,
+       "source": "production _seq_patient_drives"
+      },
+      "relay_recheck_same_pools": true,
+      "fired_pools": [
+       "gnat"
+      ],
+      "n_fired": 1,
+      "exactly_one": true,
+      "fires_decoded_patient": true,
+      "pool_spikes": {
+       "gnat": 0.7500000000000001
+      },
+      "patient_slice_top": [
+       [
+        "gnat",
+        4477703.5
+       ],
+       [
+        "eat",
+        1129563.625
+       ],
+       [
+        "learn",
+        1081710.5
+       ]
+      ],
+      "patient_slice_nz": {
+       "brain": 164626.78125,
+       "chase": 396013.28125,
+       "dog": 739539.875,
+       "eat": 1129563.625,
+       "learn": 1081710.5,
+       "memory": 258111.46875,
+       "river": 298339.65625,
+       "store": 183765.140625,
+       "words": 544271.8125,
+       "worm": 774659.8125,
+       "gnat": 4477703.5,
+       "wren": 143603.609375,
+       "moth": 542373.1875
+      },
+      "probe_vs_production": {
+       "agent": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "action": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "patient": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       }
+      }
+     },
+     {
+      "block": 7,
+      "decoded_patient": "wren",
+      "patient_relay": {
+       "relay": "composer_patient_inhib",
+       "w_i2e": 2.0,
+       "inh_spikes": 300.0,
+       "source": "production _seq_patient_drives"
+      },
+      "relay_recheck_same_pools": true,
+      "fired_pools": [
+       "wren"
+      ],
+      "n_fired": 1,
+      "exactly_one": true,
+      "fires_decoded_patient": true,
+      "pool_spikes": {
+       "wren": 1.25
+      },
+      "patient_slice_top": [
+       [
+        "wren",
+        4865079.5
+       ],
+       [
+        "crow",
+        581976.25
+       ],
+       [
+        "hunt",
+        564464.9375
+       ]
+      ],
+      "patient_slice_nz": {
+       "cat": 413085.53125,
+       "eat": 477605.8125,
+       "fish": 175607.078125,
+       "learn": 145464.46875,
+       "store": 8155.49853515625,
+       "worm": 333479.96875,
+       "hunt": 564464.9375,
+       "gnat": 185563.5625,
+       "crow": 581976.25,
+       "wren": 4865079.5
+      },
+      "probe_vs_production": {
+       "agent": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "action": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "patient": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       }
+      }
+     },
+     {
+      "block": 8,
+      "decoded_patient": "moth",
+      "patient_relay": {
+       "relay": "composer_patient_inhib",
+       "w_i2e": 2.0,
+       "inh_spikes": 300.0,
+       "source": "production _seq_patient_drives"
+      },
+      "relay_recheck_same_pools": true,
+      "fired_pools": [
+       "moth"
+      ],
+      "n_fired": 1,
+      "exactly_one": true,
+      "fires_decoded_patient": true,
+      "pool_spikes": {
+       "moth": 0.9000000000000002
+      },
+      "patient_slice_top": [
+       [
+        "moth",
+        2847275.75
+       ],
+       [
+        "river",
+        541252.125
+       ],
+       [
+        "worm",
+        540141.5625
+       ]
+      ],
+      "patient_slice_nz": {
+       "eat": 163281.234375,
+       "fish": 389267.78125,
+       "learn": 275224.15625,
+       "river": 541252.125,
+       "store": 361635.4375,
+       "worm": 540141.5625,
+       "frog": 318462.1875,
+       "gnat": 456505.1875,
+       "moth": 2847275.75
+      },
+      "probe_vs_production": {
+       "agent": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "action": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "patient": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       }
+      }
+     },
+     {
+      "block": 9,
+      "decoded_patient": "frog",
+      "patient_relay": {
+       "relay": "composer_patient_inhib",
+       "w_i2e": 2.0,
+       "inh_spikes": 300.0,
+       "source": "production _seq_patient_drives"
+      },
+      "relay_recheck_same_pools": true,
+      "fired_pools": [
+       "frog"
+      ],
+      "n_fired": 1,
+      "exactly_one": true,
+      "fires_decoded_patient": true,
+      "pool_spikes": {
+       "frog": 0.8000000000000002
+      },
+      "patient_slice_top": [
+       [
+        "frog",
+        3285199.75
+       ],
+       [
+        "gnat",
+        753745.5
+       ],
+       [
+        "words",
+        738352.75
+       ]
+      ],
+      "patient_slice_nz": {
+       "eat": 349878.5,
+       "fish": 77975.25,
+       "learn": 216080.8125,
+       "memory": 49999.73046875,
+       "river": 5068.79541015625,
+       "spikes": 295722.53125,
+       "store": 330278.4375,
+       "words": 738352.75,
+       "worm": 179742.546875,
+       "frog": 3285199.75,
+       "gnat": 753745.5
+      },
+      "probe_vs_production": {
+       "agent": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "action": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "patient": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       }
+      }
+     },
+     {
+      "block": 10,
+      "decoded_patient": "gnat",
+      "patient_relay": {
+       "relay": "composer_patient_inhib",
+       "w_i2e": 2.0,
+       "inh_spikes": 300.0,
+       "source": "production _seq_patient_drives"
+      },
+      "relay_recheck_same_pools": true,
+      "fired_pools": [
+       "gnat"
+      ],
+      "n_fired": 1,
+      "exactly_one": true,
+      "fires_decoded_patient": true,
+      "pool_spikes": {
+       "gnat": 0.7500000000000001
+      },
+      "patient_slice_top": [
+       [
+        "gnat",
+        3723466.0
+       ],
+       [
+        "eat",
+        939297.3125
+       ],
+       [
+        "learn",
+        899503.5
+       ]
+      ],
+      "patient_slice_nz": {
+       "brain": 136897.71875,
+       "chase": 329307.875,
+       "dog": 614969.4375,
+       "eat": 939297.3125,
+       "learn": 899503.5,
+       "memory": 214633.9375,
+       "river": 248087.390625,
+       "store": 152810.453125,
+       "words": 452593.15625,
+       "worm": 644173.75,
+       "gnat": 3723466.0,
+       "wren": 119415.5703125,
+       "moth": 451013.75
+      },
+      "probe_vs_production": {
+       "agent": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "action": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       },
+       "patient": {
+        "equal": true,
+        "max_abs_diff": 0.0,
+        "n_slots_differ": 0
+       }
+      }
+     }
+    ],
+    "vp": [
+     "spikes",
+     "words",
+     "memory",
+     "cat",
+     "fish",
+     "frog",
+     "gnat",
+     "wren",
+     "moth"
+    ],
+    "decoded_patients": [
+     "spikes",
+     "words",
+     "memory",
+     "cat",
+     "fish",
+     "frog",
+     "gnat",
+     "wren",
+     "moth"
+    ],
+    "vp_equals_decoded_patients": true,
+    "pools_no_block_decodes": [],
+    "decoded_patients_without_pool": []
+   },
+   "f": {
+    "cues": {
+     "heron,hunt": {
+      "cue": [
+       "heron",
+       "hunt"
+      ],
+      "decoded_rows": [
+       {
+        "block": 5,
+        "agent": "heron",
+        "action": "hunt",
+        "patient": "frog",
+        "polarity": "AFFIRM"
+       },
+       {
+        "block": 9,
+        "agent": "heron",
+        "action": "hunt",
+        "patient": "frog",
+        "polarity": "AFFIRM"
+       }
+      ],
+      "decoded_patients": [
+       "frog",
+       "frog"
+      ],
+      "kb_patients": [
+       "frog"
+      ],
+      "ltm": {
+       "query_patient": null,
+       "all_candidate_patients": [],
+       "routed_shard": 150
+      },
+      "audit": {
+       "buffer": 1,
+       "ltm_routed": 0,
+       "ltm_all": 0,
+       "ltm_all_patients": []
+      }
+     },
+     "frog,eat": {
+      "cue": [
+       "frog",
+       "eat"
+      ],
+      "decoded_rows": [
+       {
+        "block": 6,
+        "agent": "frog",
+        "action": "eat",
+        "patient": "gnat",
+        "polarity": "AFFIRM"
+       },
+       {
+        "block": 10,
+        "agent": "frog",
+        "action": "eat",
+        "patient": "gnat",
+        "polarity": "AFFIRM"
+       }
+      ],
+      "decoded_patients": [
+       "gnat",
+       "gnat"
+      ],
+      "kb_patients": [
+       "gnat"
+      ],
+      "ltm": {
+       "query_patient": null,
+       "all_candidate_patients": [],
+       "routed_shard": 94
+      },
+      "audit": {
+       "buffer": 1,
+       "ltm_routed": 0,
+       "ltm_all": 0,
+       "ltm_all_patients": []
+      }
+     },
+     "frog,chase": {
+      "cue": [
+       "frog",
+       "chase"
+      ],
+      "decoded_rows": [],
+      "decoded_patients": [],
+      "kb_patients": [],
+      "ltm": {
+       "query_patient": null,
+       "all_candidate_patients": [],
+       "routed_shard": 94
+      },
+      "audit": {
+       "buffer": 0,
+       "ltm_routed": 0,
+       "ltm_all": 0,
+       "ltm_all_patients": []
+      }
+     },
+     "crow,chase": {
+      "cue": [
+       "crow",
+       "chase"
+      ],
+      "decoded_rows": [
+       {
+        "block": 7,
+        "agent": "crow",
+        "action": "chase",
+        "patient": "wren",
+        "polarity": "AFFIRM"
+       }
+      ],
+      "decoded_patients": [
+       "wren"
+      ],
+      "kb_patients": [
+       "wren"
+      ],
+      "ltm": {
+       "query_patient": null,
+       "all_candidate_patients": [],
+       "routed_shard": 217
+      },
+      "audit": {
+       "buffer": 1,
+       "ltm_routed": 0,
+       "ltm_all": 0,
+       "ltm_all_patients": []
+      }
+     },
+     "wren,chase": {
+      "cue": [
+       "wren",
+       "chase"
+      ],
+      "decoded_rows": [
+       {
+        "block": 8,
+        "agent": "wren",
+        "action": "chase",
+        "patient": "moth",
+        "polarity": "AFFIRM"
+       }
+      ],
+      "decoded_patients": [
+       "moth"
+      ],
+      "kb_patients": [
+       "moth"
+      ],
+      "ltm": {
+       "query_patient": null,
+       "all_candidate_patients": [],
+       "routed_shard": 152
+      },
+      "audit": {
+       "buffer": 1,
+       "ltm_routed": 0,
+       "ltm_all": 0,
+       "ltm_all_patients": []
+      }
+     },
+     "dog,chase": {
+      "cue": [
+       "dog",
+       "chase"
+      ],
+      "decoded_rows": [
+       {
+        "block": 3,
+        "agent": "dog",
+        "action": "chase",
+        "patient": "cat",
+        "polarity": "AFFIRM"
+       }
+      ],
+      "decoded_patients": [
+       "cat"
+      ],
+      "kb_patients": [
+       "cat"
+      ],
+      "ltm": {
+       "query_patient": null,
+       "all_candidate_patients": [],
+       "routed_shard": 275
+      },
+      "audit": {
+       "buffer": 1,
+       "ltm_routed": 0,
+       "ltm_all": 0,
+       "ltm_all_patients": []
+      }
+     },
+     "heron,eat": {
+      "cue": [
+       "heron",
+       "eat"
+      ],
+      "decoded_rows": [],
+      "decoded_patients": [],
+      "kb_patients": [],
+      "ltm": {
+       "query_patient": null,
+       "all_candidate_patients": [],
+       "routed_shard": 150
+      },
+      "audit": {
+       "buffer": 0,
+       "ltm_routed": 0,
+       "ltm_all": 0,
+       "ltm_all_patients": []
+      }
+     }
+    },
+    "ltm_type": "SharedLTMView"
+   },
+   "wall_s": 142.9,
+   "rss_after": {
+    "VmHWM": 6317.0,
+    "VmRSS": 6131.4,
+    "ru_maxrss_mb": 6317.0
+   }
+  },
+  "d4_recorder": {
+   "calls": [
+    {
+     "label": "t_heron_hunt",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 747
+     },
+     "caller_kind": "judge",
+     "inputs": [
+      "heron",
+      "hunts",
+      "frog"
+     ],
+     "brain_vocab_passed": true,
+     "brain_vocab_size": 12,
+     "in_brain_vocab": {
+      "n0": false,
+      "v": false,
+      "n1": false
+     },
+     "inner": [
+      {
+       "fn": "_verb_selects_of",
+       "arg": "hunts",
+       "ret": null
+      },
+      {
+       "fn": "_verb_selects_of",
+       "arg": "hunts",
+       "ret": null
+      },
+      {
+       "fn": "_animacy_of",
+       "arg": "heron",
+       "ret": null
+      },
+      {
+       "fn": "_animacy_of",
+       "arg": "frog",
+       "ret": "animate"
+      }
+     ],
+     "return": false,
+     "fully_covered": false,
+     "fully_oov": false,
+     "terms": {
+      "covered_verb": false,
+      "covered_n0": "not_evaluated",
+      "covered_n1": "not_evaluated",
+      "oov_verb": true,
+      "oov_n0": true,
+      "oov_n1": false
+     },
+     "or_matches_return": true
+    },
+    {
+     "label": "t_frog_eat",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 747
+     },
+     "caller_kind": "judge",
+     "inputs": [
+      "frog",
+      "eat",
+      "gnat"
+     ],
+     "brain_vocab_passed": true,
+     "brain_vocab_size": 15,
+     "in_brain_vocab": {
+      "n0": true,
+      "v": true,
+      "n1": false
+     },
+     "inner": [
+      {
+       "fn": "_verb_selects_of",
+       "arg": "eat",
+       "ret": {
+        "agent": "animate",
+        "patient": "inanimate"
+       }
+      },
+      {
+       "fn": "_animacy_of",
+       "arg": "frog",
+       "ret": "animate"
+      },
+      {
+       "fn": "_animacy_of",
+       "arg": "gnat",
+       "ret": null
+      },
+      {
+       "fn": "_verb_selects_of",
+       "arg": "eat",
+       "ret": {
+        "agent": "animate",
+        "patient": "inanimate"
+       }
+      }
+     ],
+     "return": false,
+     "fully_covered": false,
+     "fully_oov": false,
+     "terms": {
+      "covered_verb": true,
+      "covered_n0": true,
+      "covered_n1": false,
+      "oov_verb": false,
+      "oov_n0": "not_evaluated",
+      "oov_n1": "not_evaluated"
+     },
+     "or_matches_return": true
+    },
+    {
+     "label": "t_crow_chase",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 747
+     },
+     "caller_kind": "judge",
+     "inputs": [
+      "crow",
+      "chase",
+      "wren"
+     ],
+     "brain_vocab_passed": true,
+     "brain_vocab_size": 16,
+     "in_brain_vocab": {
+      "n0": false,
+      "v": true,
+      "n1": false
+     },
+     "inner": [
+      {
+       "fn": "_verb_selects_of",
+       "arg": "chase",
+       "ret": {
+        "agent": "animate",
+        "patient": "animate"
+       }
+      },
+      {
+       "fn": "_animacy_of",
+       "arg": "crow",
+       "ret": null
+      },
+      {
+       "fn": "_verb_selects_of",
+       "arg": "chase",
+       "ret": {
+        "agent": "animate",
+        "patient": "animate"
+       }
+      }
+     ],
+     "return": false,
+     "fully_covered": false,
+     "fully_oov": false,
+     "terms": {
+      "covered_verb": true,
+      "covered_n0": false,
+      "covered_n1": "not_evaluated",
+      "oov_verb": false,
+      "oov_n0": "not_evaluated",
+      "oov_n1": "not_evaluated"
+     },
+     "or_matches_return": true
+    },
+    {
+     "label": "t_wren_chase",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 747
+     },
+     "caller_kind": "judge",
+     "inputs": [
+      "wren",
+      "chase",
+      "moth"
+     ],
+     "brain_vocab_passed": true,
+     "brain_vocab_size": 18,
+     "in_brain_vocab": {
+      "n0": true,
+      "v": true,
+      "n1": false
+     },
+     "inner": [
+      {
+       "fn": "_verb_selects_of",
+       "arg": "chase",
+       "ret": {
+        "agent": "animate",
+        "patient": "animate"
+       }
+      },
+      {
+       "fn": "_animacy_of",
+       "arg": "wren",
+       "ret": null
+      },
+      {
+       "fn": "_verb_selects_of",
+       "arg": "chase",
+       "ret": {
+        "agent": "animate",
+        "patient": "animate"
+       }
+      }
+     ],
+     "return": false,
+     "fully_covered": false,
+     "fully_oov": false,
+     "terms": {
+      "covered_verb": true,
+      "covered_n0": false,
+      "covered_n1": "not_evaluated",
+      "oov_verb": false,
+      "oov_n0": "not_evaluated",
+      "oov_n1": "not_evaluated"
+     },
+     "or_matches_return": true
+    },
+    {
+     "label": "t_heron_hunt_re",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 747
+     },
+     "caller_kind": "judge",
+     "inputs": [
+      "heron",
+      "hunts",
+      "frog"
+     ],
+     "brain_vocab_passed": true,
+     "brain_vocab_size": 19,
+     "in_brain_vocab": {
+      "n0": true,
+      "v": false,
+      "n1": true
+     },
+     "inner": [
+      {
+       "fn": "_verb_selects_of",
+       "arg": "hunts",
+       "ret": null
+      },
+      {
+       "fn": "_verb_selects_of",
+       "arg": "hunts",
+       "ret": null
+      },
+      {
+       "fn": "_animacy_of",
+       "arg": "heron",
+       "ret": null
+      }
+     ],
+     "return": false,
+     "fully_covered": false,
+     "fully_oov": false,
+     "terms": {
+      "covered_verb": false,
+      "covered_n0": "not_evaluated",
+      "covered_n1": "not_evaluated",
+      "oov_verb": true,
+      "oov_n0": false,
+      "oov_n1": "not_evaluated"
+     },
+     "or_matches_return": true
+    },
+    {
+     "label": "t_frog_eat_re",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 747
+     },
+     "caller_kind": "judge",
+     "inputs": [
+      "frog",
+      "eat",
+      "gnat"
+     ],
+     "brain_vocab_passed": true,
+     "brain_vocab_size": 19,
+     "in_brain_vocab": {
+      "n0": true,
+      "v": true,
+      "n1": true
+     },
+     "inner": [
+      {
+       "fn": "_verb_selects_of",
+       "arg": "eat",
+       "ret": {
+        "agent": "animate",
+        "patient": "inanimate"
+       }
+      },
+      {
+       "fn": "_animacy_of",
+       "arg": "frog",
+       "ret": "animate"
+      },
+      {
+       "fn": "_animacy_of",
+       "arg": "gnat",
+       "ret": null
+      },
+      {
+       "fn": "_verb_selects_of",
+       "arg": "eat",
+       "ret": {
+        "agent": "animate",
+        "patient": "inanimate"
+       }
+      }
+     ],
+     "return": false,
+     "fully_covered": false,
+     "fully_oov": false,
+     "terms": {
+      "covered_verb": true,
+      "covered_n0": true,
+      "covered_n1": false,
+      "oov_verb": false,
+      "oov_n0": "not_evaluated",
+      "oov_n1": "not_evaluated"
+     },
+     "or_matches_return": true
+    },
+    {
+     "label": "p_yesno",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 747
+     },
+     "caller_kind": "judge",
+     "inputs": [
+      "crow",
+      "chase",
+      "moth"
+     ],
+     "brain_vocab_passed": true,
+     "brain_vocab_size": 20,
+     "in_brain_vocab": {
+      "n0": true,
+      "v": true,
+      "n1": true
+     },
+     "inner": [
+      {
+       "fn": "_verb_selects_of",
+       "arg": "chase",
+       "ret": {
+        "agent": "animate",
+        "patient": "animate"
+       }
+      },
+      {
+       "fn": "_animacy_of",
+       "arg": "crow",
+       "ret": null
+      },
+      {
+       "fn": "_verb_selects_of",
+       "arg": "chase",
+       "ret": {
+        "agent": "animate",
+        "patient": "animate"
+       }
+      }
+     ],
+     "return": false,
+     "fully_covered": false,
+     "fully_oov": false,
+     "terms": {
+      "covered_verb": true,
+      "covered_n0": false,
+      "covered_n1": "not_evaluated",
+      "oov_verb": false,
+      "oov_n0": "not_evaluated",
+      "oov_n1": "not_evaluated"
+     },
+     "or_matches_return": true
+    }
+   ],
+   "extract_calls": [
+    {
+     "label": "t_heron_hunt",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 743
+     },
+     "text": "the heron hunts the frog",
+     "ret": [
+      "heron",
+      "hunts",
+      "frog"
+     ]
+    },
+    {
+     "label": "t_frog_eat",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 743
+     },
+     "text": "the frog eats the gnat",
+     "ret": [
+      "frog",
+      "eat",
+      "gnat"
+     ]
+    },
+    {
+     "label": "t_crow_chase",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 743
+     },
+     "text": "the crow chases the wren",
+     "ret": [
+      "crow",
+      "chase",
+      "wren"
+     ]
+    },
+    {
+     "label": "t_wren_chase",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 743
+     },
+     "text": "the wren chases the moth",
+     "ret": [
+      "wren",
+      "chase",
+      "moth"
+     ]
+    },
+    {
+     "label": "t_heron_hunt_re",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 743
+     },
+     "text": "the heron hunts the frog",
+     "ret": [
+      "heron",
+      "hunts",
+      "frog"
+     ]
+    },
+    {
+     "label": "t_frog_eat_re",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 743
+     },
+     "text": "the frog eats the gnat",
+     "ret": [
+      "frog",
+      "eat",
+      "gnat"
+     ]
+    },
+    {
+     "label": "p_prey_eat",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 743
+     },
+     "text": "what does the heron's prey eat",
+     "ret": null
+    },
+    {
+     "label": "c_heron_hunt",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 743
+     },
+     "text": "what does the heron hunt",
+     "ret": null
+    },
+    {
+     "label": "c_frog_eat",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 743
+     },
+     "text": "what does the frog eat",
+     "ret": null
+    },
+    {
+     "label": "c_prey_chase",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 743
+     },
+     "text": "what does the heron's prey chase",
+     "ret": null
+    },
+    {
+     "label": "p_yesno",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 743
+     },
+     "text": "does crow chase moth",
+     "ret": [
+      "crow",
+      "chase",
+      "moth"
+     ]
+    },
+    {
+     "label": "c_dog_chase",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 743
+     },
+     "text": "what does the dog chase",
+     "ret": null
+    }
+   ],
+   "n_calls": 7,
+   "n_inner_outside_competent": 32,
+   "n_inner_nested": 0,
+   "n_dropped_over_cap": 0
+  },
+  "d4_branches": {
+   "t_heron_hunt": {
+    "label": "t_heron_hunt",
+    "n_judge_calls": 1,
+    "other_callers": [],
+    "call": {
+     "label": "t_heron_hunt",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 747
+     },
+     "caller_kind": "judge",
+     "inputs": [
+      "heron",
+      "hunts",
+      "frog"
+     ],
+     "brain_vocab_passed": true,
+     "brain_vocab_size": 12,
+     "in_brain_vocab": {
+      "n0": false,
+      "v": false,
+      "n1": false
+     },
+     "inner": [
+      {
+       "fn": "_verb_selects_of",
+       "arg": "hunts",
+       "ret": null
+      },
+      {
+       "fn": "_verb_selects_of",
+       "arg": "hunts",
+       "ret": null
+      },
+      {
+       "fn": "_animacy_of",
+       "arg": "heron",
+       "ret": null
+      },
+      {
+       "fn": "_animacy_of",
+       "arg": "frog",
+       "ret": "animate"
+      }
+     ],
+     "return": false,
+     "fully_covered": false,
+     "fully_oov": false,
+     "terms": {
+      "covered_verb": false,
+      "covered_n0": "not_evaluated",
+      "covered_n1": "not_evaluated",
+      "oov_verb": true,
+      "oov_n0": true,
+      "oov_n1": false
+     },
+     "or_matches_return": true
+    },
+    "branch": "pass_through"
+   },
+   "t_frog_eat": {
+    "label": "t_frog_eat",
+    "n_judge_calls": 1,
+    "other_callers": [],
+    "call": {
+     "label": "t_frog_eat",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 747
+     },
+     "caller_kind": "judge",
+     "inputs": [
+      "frog",
+      "eat",
+      "gnat"
+     ],
+     "brain_vocab_passed": true,
+     "brain_vocab_size": 15,
+     "in_brain_vocab": {
+      "n0": true,
+      "v": true,
+      "n1": false
+     },
+     "inner": [
+      {
+       "fn": "_verb_selects_of",
+       "arg": "eat",
+       "ret": {
+        "agent": "animate",
+        "patient": "inanimate"
+       }
+      },
+      {
+       "fn": "_animacy_of",
+       "arg": "frog",
+       "ret": "animate"
+      },
+      {
+       "fn": "_animacy_of",
+       "arg": "gnat",
+       "ret": null
+      },
+      {
+       "fn": "_verb_selects_of",
+       "arg": "eat",
+       "ret": {
+        "agent": "animate",
+        "patient": "inanimate"
+       }
+      }
+     ],
+     "return": false,
+     "fully_covered": false,
+     "fully_oov": false,
+     "terms": {
+      "covered_verb": true,
+      "covered_n0": true,
+      "covered_n1": false,
+      "oov_verb": false,
+      "oov_n0": "not_evaluated",
+      "oov_n1": "not_evaluated"
+     },
+     "or_matches_return": true
+    },
+    "branch": "pass_through"
+   },
+   "t_crow_chase": {
+    "label": "t_crow_chase",
+    "n_judge_calls": 1,
+    "other_callers": [],
+    "call": {
+     "label": "t_crow_chase",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 747
+     },
+     "caller_kind": "judge",
+     "inputs": [
+      "crow",
+      "chase",
+      "wren"
+     ],
+     "brain_vocab_passed": true,
+     "brain_vocab_size": 16,
+     "in_brain_vocab": {
+      "n0": false,
+      "v": true,
+      "n1": false
+     },
+     "inner": [
+      {
+       "fn": "_verb_selects_of",
+       "arg": "chase",
+       "ret": {
+        "agent": "animate",
+        "patient": "animate"
+       }
+      },
+      {
+       "fn": "_animacy_of",
+       "arg": "crow",
+       "ret": null
+      },
+      {
+       "fn": "_verb_selects_of",
+       "arg": "chase",
+       "ret": {
+        "agent": "animate",
+        "patient": "animate"
+       }
+      }
+     ],
+     "return": false,
+     "fully_covered": false,
+     "fully_oov": false,
+     "terms": {
+      "covered_verb": true,
+      "covered_n0": false,
+      "covered_n1": "not_evaluated",
+      "oov_verb": false,
+      "oov_n0": "not_evaluated",
+      "oov_n1": "not_evaluated"
+     },
+     "or_matches_return": true
+    },
+    "branch": "pass_through"
+   },
+   "t_wren_chase": {
+    "label": "t_wren_chase",
+    "n_judge_calls": 1,
+    "other_callers": [],
+    "call": {
+     "label": "t_wren_chase",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 747
+     },
+     "caller_kind": "judge",
+     "inputs": [
+      "wren",
+      "chase",
+      "moth"
+     ],
+     "brain_vocab_passed": true,
+     "brain_vocab_size": 18,
+     "in_brain_vocab": {
+      "n0": true,
+      "v": true,
+      "n1": false
+     },
+     "inner": [
+      {
+       "fn": "_verb_selects_of",
+       "arg": "chase",
+       "ret": {
+        "agent": "animate",
+        "patient": "animate"
+       }
+      },
+      {
+       "fn": "_animacy_of",
+       "arg": "wren",
+       "ret": null
+      },
+      {
+       "fn": "_verb_selects_of",
+       "arg": "chase",
+       "ret": {
+        "agent": "animate",
+        "patient": "animate"
+       }
+      }
+     ],
+     "return": false,
+     "fully_covered": false,
+     "fully_oov": false,
+     "terms": {
+      "covered_verb": true,
+      "covered_n0": false,
+      "covered_n1": "not_evaluated",
+      "oov_verb": false,
+      "oov_n0": "not_evaluated",
+      "oov_n1": "not_evaluated"
+     },
+     "or_matches_return": true
+    },
+    "branch": "pass_through"
+   },
+   "t_heron_hunt_re": {
+    "label": "t_heron_hunt_re",
+    "n_judge_calls": 1,
+    "other_callers": [],
+    "call": {
+     "label": "t_heron_hunt_re",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 747
+     },
+     "caller_kind": "judge",
+     "inputs": [
+      "heron",
+      "hunts",
+      "frog"
+     ],
+     "brain_vocab_passed": true,
+     "brain_vocab_size": 19,
+     "in_brain_vocab": {
+      "n0": true,
+      "v": false,
+      "n1": true
+     },
+     "inner": [
+      {
+       "fn": "_verb_selects_of",
+       "arg": "hunts",
+       "ret": null
+      },
+      {
+       "fn": "_verb_selects_of",
+       "arg": "hunts",
+       "ret": null
+      },
+      {
+       "fn": "_animacy_of",
+       "arg": "heron",
+       "ret": null
+      }
+     ],
+     "return": false,
+     "fully_covered": false,
+     "fully_oov": false,
+     "terms": {
+      "covered_verb": false,
+      "covered_n0": "not_evaluated",
+      "covered_n1": "not_evaluated",
+      "oov_verb": true,
+      "oov_n0": false,
+      "oov_n1": "not_evaluated"
+     },
+     "or_matches_return": true
+    },
+    "branch": "pass_through"
+   },
+   "t_frog_eat_re": {
+    "label": "t_frog_eat_re",
+    "n_judge_calls": 1,
+    "other_callers": [],
+    "call": {
+     "label": "t_frog_eat_re",
+     "caller": {
+      "module": "research.runners.comprehension_production_organ",
+      "function": "judge",
+      "line": 747
+     },
+     "caller_kind": "judge",
+     "inputs": [
+      "frog",
+      "eat",
+      "gnat"
+     ],
+     "brain_vocab_passed": true,
+     "brain_vocab_size": 19,
+     "in_brain_vocab": {
+      "n0": true,
+      "v": true,
+      "n1": true
+     },
+     "inner": [
+      {
+       "fn": "_verb_selects_of",
+       "arg": "eat",
+       "ret": {
+        "agent": "animate",
+        "patient": "inanimate"
+       }
+      },
+      {
+       "fn": "_animacy_of",
+       "arg": "frog",
+       "ret": "animate"
+      },
+      {
+       "fn": "_animacy_of",
+       "arg": "gnat",
+       "ret": null
+      },
+      {
+       "fn": "_verb_selects_of",
+       "arg": "eat",
+       "ret": {
+        "agent": "animate",
+        "patient": "inanimate"
+       }
+      }
+     ],
+     "return": false,
+     "fully_covered": false,
+     "fully_oov": false,
+     "terms": {
+      "covered_verb": true,
+      "covered_n0": true,
+      "covered_n1": false,
+      "oov_verb": false,
+      "oov_n0": "not_evaluated",
+      "oov_n1": "not_evaluated"
+     },
+     "or_matches_return": true
+    },
+    "branch": "pass_through"
+   }
+  },
+  "propose_path_events": {
+   "events": [
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "heron",
+      "action": "hunts"
+     },
+     "ret": [],
+     "label": "t_heron_hunt"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "heron",
+      "action": "hunts"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "t_heron_hunt"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "heron",
+      "action": "hunts"
+     },
+     "ret": [],
+     "label": "t_heron_hunt"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "heron",
+      "action": "hunt"
+     },
+     "ret": [],
+     "label": "t_heron_hunt"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "heron",
+      "action": "hunt"
+     },
+     "ret": [
+      3,
+      4,
+      5
+     ],
+     "label": "t_heron_hunt"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "heron",
+      "action": "hunt"
+     },
+     "escalate": false,
+     "idx": 5,
+     "got": {
+      "agent": "heron",
+      "action": "hunt",
+      "patient": "frog",
+      "attribute": "spikes",
+      "polarity": "AFFIRM"
+     },
+     "label": "t_heron_hunt"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "hunt"
+     },
+     "ret": [
+      4
+     ],
+     "label": "t_heron_hunt"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "hunt"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "t_heron_hunt"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "eats"
+     },
+     "ret": [],
+     "label": "t_frog_eat"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "eats"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "t_frog_eat"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "eats"
+     },
+     "ret": [],
+     "label": "t_frog_eat"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "eat"
+     },
+     "ret": [
+      4
+     ],
+     "label": "t_frog_eat"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "eat"
+     },
+     "ret": [
+      4,
+      6
+     ],
+     "label": "t_frog_eat"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "eat"
+     },
+     "escalate": false,
+     "idx": 6,
+     "got": {
+      "agent": "frog",
+      "action": "eat",
+      "patient": "gnat",
+      "attribute": "spikes",
+      "polarity": "AFFIRM"
+     },
+     "label": "t_frog_eat"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "gnat",
+      "action": "eat"
+     },
+     "ret": [
+      0,
+      1,
+      2,
+      6
+     ],
+     "label": "t_frog_eat"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "gnat",
+      "action": "eat"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "t_frog_eat"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "crow",
+      "action": "chases"
+     },
+     "ret": [],
+     "label": "t_crow_chase"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "crow",
+      "action": "chases"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "t_crow_chase"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "crow",
+      "action": "chases"
+     },
+     "ret": [],
+     "label": "t_crow_chase"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "crow",
+      "action": "chase"
+     },
+     "ret": [],
+     "label": "t_crow_chase"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "crow",
+      "action": "chase"
+     },
+     "ret": [
+      7
+     ],
+     "label": "t_crow_chase"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "crow",
+      "action": "chase"
+     },
+     "escalate": false,
+     "idx": 7,
+     "got": {
+      "agent": "crow",
+      "action": "chase",
+      "patient": "wren",
+      "attribute": "wren",
+      "polarity": "AFFIRM"
+     },
+     "label": "t_crow_chase"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "wren",
+      "action": "chase"
+     },
+     "ret": [],
+     "label": "t_crow_chase"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "wren",
+      "action": "chase"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "t_crow_chase"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "wren",
+      "action": "chases"
+     },
+     "ret": [],
+     "label": "t_wren_chase"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "wren",
+      "action": "chases"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "t_wren_chase"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "wren",
+      "action": "chases"
+     },
+     "ret": [],
+     "label": "t_wren_chase"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "wren",
+      "action": "chase"
+     },
+     "ret": [],
+     "label": "t_wren_chase"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "wren",
+      "action": "chase"
+     },
+     "ret": [
+      8
+     ],
+     "label": "t_wren_chase"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "wren",
+      "action": "chase"
+     },
+     "escalate": false,
+     "idx": 8,
+     "got": {
+      "agent": "wren",
+      "action": "chase",
+      "patient": "moth",
+      "attribute": "memory",
+      "polarity": "AFFIRM"
+     },
+     "label": "t_wren_chase"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "moth",
+      "action": "chase"
+     },
+     "ret": [
+      2,
+      7
+     ],
+     "label": "t_wren_chase"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "moth",
+      "action": "chase"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "t_wren_chase"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "heron",
+      "action": "hunts"
+     },
+     "ret": [],
+     "label": "t_heron_hunt_re"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "heron",
+      "action": "hunts"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "t_heron_hunt_re"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "heron",
+      "action": "hunts"
+     },
+     "ret": [],
+     "label": "t_heron_hunt_re"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "heron",
+      "action": "hunt"
+     },
+     "ret": [
+      3,
+      4,
+      5
+     ],
+     "label": "t_heron_hunt_re"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "eat"
+     },
+     "ret": [
+      6
+     ],
+     "label": "t_heron_hunt_re"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "eat"
+     },
+     "escalate": false,
+     "idx": 6,
+     "got": {
+      "agent": "frog",
+      "action": "eat",
+      "patient": "gnat",
+      "attribute": "spikes",
+      "polarity": "AFFIRM"
+     },
+     "label": "t_heron_hunt_re"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "gnat",
+      "action": "eat"
+     },
+     "ret": [],
+     "label": "t_heron_hunt_re"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "gnat",
+      "action": "eat"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "t_heron_hunt_re"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "eats"
+     },
+     "ret": [],
+     "label": "t_frog_eat_re"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "eats"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "t_frog_eat_re"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "eats"
+     },
+     "ret": [],
+     "label": "t_frog_eat_re"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "eat"
+     },
+     "ret": [
+      6
+     ],
+     "label": "t_frog_eat_re"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "eat"
+     },
+     "ret": [
+      6,
+      10
+     ],
+     "label": "t_frog_eat_re"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "eat"
+     },
+     "escalate": false,
+     "idx": 6,
+     "got": {
+      "agent": "frog",
+      "action": "eat",
+      "patient": "gnat",
+      "attribute": "spikes",
+      "polarity": "AFFIRM"
+     },
+     "label": "t_frog_eat_re"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "gnat",
+      "action": "eat"
+     },
+     "ret": [],
+     "label": "t_frog_eat_re"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "gnat",
+      "action": "eat"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "t_frog_eat_re"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "heron",
+      "action": "hunt"
+     },
+     "ret": [
+      5,
+      9
+     ],
+     "label": "c2_step0_reads"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "heron",
+      "action": "hunt"
+     },
+     "escalate": false,
+     "idx": 5,
+     "got": {
+      "agent": "heron",
+      "action": "hunt",
+      "patient": "frog",
+      "attribute": "spikes",
+      "polarity": "AFFIRM"
+     },
+     "label": "c2_step0_reads"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "heron",
+      "action": "eat"
+     },
+     "ret": [
+      4
+     ],
+     "label": "c2_step0_reads"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "heron",
+      "action": "eat"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "c2_step0_reads"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "eat"
+     },
+     "ret": [
+      6,
+      10
+     ],
+     "label": "c2_step0_reads"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "eat"
+     },
+     "escalate": false,
+     "idx": 6,
+     "got": {
+      "agent": "frog",
+      "action": "eat",
+      "patient": "gnat",
+      "attribute": "spikes",
+      "polarity": "AFFIRM"
+     },
+     "label": "c2_step0_reads"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "chase"
+     },
+     "ret": [],
+     "label": "c2_step0_reads"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "chase"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "c2_step0_reads"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "heron's_prey_eat",
+      "action": "alias_of"
+     },
+     "ret": [],
+     "label": "p_prey_eat"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "heron's_prey_eat",
+      "action": "alias_of"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "p_prey_eat"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "heron's_prey",
+      "action": "alias_of"
+     },
+     "ret": [],
+     "label": "p_prey_eat"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "heron's_prey",
+      "action": "alias_of"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "p_prey_eat"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "prey_eat",
+      "action": "alias_of"
+     },
+     "ret": [],
+     "label": "p_prey_eat"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "prey_eat",
+      "action": "alias_of"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "p_prey_eat"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "heron's",
+      "action": "prey"
+     },
+     "ret": [],
+     "label": "p_prey_eat"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "heron's",
+      "action": "prey"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "p_prey_eat"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "heron_hunt",
+      "action": "alias_of"
+     },
+     "ret": [],
+     "label": "c_heron_hunt"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "heron_hunt",
+      "action": "alias_of"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "c_heron_hunt"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "heron",
+      "action": "hunt"
+     },
+     "ret": [
+      5,
+      9
+     ],
+     "label": "c_heron_hunt"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "heron",
+      "action": "hunt"
+     },
+     "escalate": false,
+     "idx": 5,
+     "got": {
+      "agent": "heron",
+      "action": "hunt",
+      "patient": "frog",
+      "attribute": "spikes",
+      "polarity": "AFFIRM"
+     },
+     "label": "c_heron_hunt"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "heron",
+      "action": "hunt"
+     },
+     "ret": [
+      5,
+      9
+     ],
+     "label": "c_heron_hunt"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "heron",
+      "action": "hunt"
+     },
+     "escalate": false,
+     "idx": 5,
+     "got": {
+      "agent": "heron",
+      "action": "hunt",
+      "patient": "frog",
+      "attribute": "spikes",
+      "polarity": "AFFIRM"
+     },
+     "label": "c_heron_hunt"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "hunt"
+     },
+     "ret": [],
+     "label": "c_heron_hunt"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "hunt"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "c_heron_hunt"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "gnat",
+      "action": "eat"
+     },
+     "ret": [],
+     "label": "c_heron_hunt"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "gnat",
+      "action": "eat"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "c_heron_hunt"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "frog_eat",
+      "action": "alias_of"
+     },
+     "ret": [],
+     "label": "c_frog_eat"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "frog_eat",
+      "action": "alias_of"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "c_frog_eat"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "eat"
+     },
+     "ret": [
+      6,
+      10
+     ],
+     "label": "c_frog_eat"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "eat"
+     },
+     "escalate": false,
+     "idx": 6,
+     "got": {
+      "agent": "frog",
+      "action": "eat",
+      "patient": "gnat",
+      "attribute": "spikes",
+      "polarity": "AFFIRM"
+     },
+     "label": "c_frog_eat"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "eat"
+     },
+     "ret": [
+      6,
+      10
+     ],
+     "label": "c_frog_eat"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "frog",
+      "action": "eat"
+     },
+     "escalate": false,
+     "idx": 6,
+     "got": {
+      "agent": "frog",
+      "action": "eat",
+      "patient": "gnat",
+      "attribute": "spikes",
+      "polarity": "AFFIRM"
+     },
+     "label": "c_frog_eat"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "gnat",
+      "action": "eat"
+     },
+     "ret": [],
+     "label": "c_frog_eat"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "gnat",
+      "action": "eat"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "c_frog_eat"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "heron's_prey_chase",
+      "action": "alias_of"
+     },
+     "ret": [],
+     "label": "c_prey_chase"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "heron's_prey_chase",
+      "action": "alias_of"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "c_prey_chase"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "heron's_prey",
+      "action": "alias_of"
+     },
+     "ret": [],
+     "label": "c_prey_chase"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "heron's_prey",
+      "action": "alias_of"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "c_prey_chase"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "prey_chase",
+      "action": "alias_of"
+     },
+     "ret": [],
+     "label": "c_prey_chase"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "prey_chase",
+      "action": "alias_of"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "c_prey_chase"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "heron's",
+      "action": "prey"
+     },
+     "ret": [],
+     "label": "c_prey_chase"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "heron's",
+      "action": "prey"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "c_prey_chase"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "crow",
+      "action": "chase"
+     },
+     "ret": [
+      7
+     ],
+     "label": "p_yesno"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "crow",
+      "action": "chase"
+     },
+     "escalate": false,
+     "idx": 7,
+     "got": {
+      "agent": "crow",
+      "action": "chase",
+      "patient": "wren",
+      "attribute": "wren",
+      "polarity": "AFFIRM"
+     },
+     "label": "p_yesno"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "crow",
+      "action": "chase"
+     },
+     "ret": [
+      7
+     ],
+     "label": "p_yesno"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "crow_chase_moth",
+      "action": "alias_of"
+     },
+     "ret": [],
+     "label": "p_yesno"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "crow_chase_moth",
+      "action": "alias_of"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "p_yesno"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "crow_chase",
+      "action": "alias_of"
+     },
+     "ret": [],
+     "label": "p_yesno"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "crow_chase",
+      "action": "alias_of"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "p_yesno"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "chase_moth",
+      "action": "alias_of"
+     },
+     "ret": [],
+     "label": "p_yesno"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "chase_moth",
+      "action": "alias_of"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "p_yesno"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "crow",
+      "action": "chase"
+     },
+     "ret": [
+      7
+     ],
+     "label": "p_yesno"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "crow",
+      "action": "chase"
+     },
+     "escalate": false,
+     "idx": 7,
+     "got": {
+      "agent": "crow",
+      "action": "chase",
+      "patient": "wren",
+      "attribute": "wren",
+      "polarity": "AFFIRM"
+     },
+     "label": "p_yesno"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "wren",
+      "action": "chase"
+     },
+     "ret": [
+      8
+     ],
+     "label": "p_yesno"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "wren",
+      "action": "chase"
+     },
+     "escalate": false,
+     "idx": 8,
+     "got": {
+      "agent": "wren",
+      "action": "chase",
+      "patient": "moth",
+      "attribute": "memory",
+      "polarity": "AFFIRM"
+     },
+     "label": "p_yesno"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "moth",
+      "action": "chase"
+     },
+     "ret": [
+      3
+     ],
+     "label": "p_yesno"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "moth",
+      "action": "chase"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "p_yesno"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "dog_chase",
+      "action": "alias_of"
+     },
+     "ret": [],
+     "label": "c_dog_chase"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "dog_chase",
+      "action": "alias_of"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "c_dog_chase"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "dog",
+      "action": "chase"
+     },
+     "ret": [
+      3
+     ],
+     "label": "c_dog_chase"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "dog",
+      "action": "chase"
+     },
+     "escalate": false,
+     "idx": 3,
+     "got": {
+      "agent": "dog",
+      "action": "chase",
+      "patient": "cat",
+      "attribute": "worm",
+      "polarity": "AFFIRM"
+     },
+     "label": "c_dog_chase"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "cat",
+      "action": "eat"
+     },
+     "ret": [
+      4
+     ],
+     "label": "c_dog_chase"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "cat",
+      "action": "eat"
+     },
+     "escalate": false,
+     "idx": 4,
+     "got": {
+      "agent": "cat",
+      "action": "eat",
+      "patient": "fish",
+      "attribute": "cat",
+      "polarity": "AFFIRM"
+     },
+     "label": "c_dog_chase"
+    },
+    {
+     "fn": "fact_shard_candidates",
+     "cue_roles": {
+      "agent": "fish",
+      "action": "eat"
+     },
+     "ret": [
+      4
+     ],
+     "label": "c_dog_chase"
+    },
+    {
+     "fn": "fact_shard_first_match",
+     "cue_roles": {
+      "agent": "fish",
+      "action": "eat"
+     },
+     "escalate": false,
+     "idx": null,
+     "got": null,
+     "label": "c_dog_chase"
+    }
+   ],
+   "n_events": 113,
+   "n_dropped_over_cap": 0
+  },
+  "ws_seed": 5
+ },
+ "backend": "numpy"
+}
