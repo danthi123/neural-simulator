@@ -36,6 +36,7 @@ def flags(monkeypatch):
     for k in _FLAGS:
         monkeypatch.delenv(k, raising=False)
     monkeypatch.setenv("BRAIN_CURIOSITY_TOPIC_STOP", "1")
+    monkeypatch.setenv("BRAIN_CURIOSITY_PHASIC_DA", "0")   # P defaults ON; tests that want it set it to 1
     return monkeypatch
 
 
@@ -44,17 +45,24 @@ def _turn(ctx, topic, novelty=NOVEL, lesioned=False):
     return TS.decide(ctx, None, topic, novelty, _judge(), SEED, lesioned)
 
 
-def test_flags_default_off(monkeypatch):
+def test_l_and_p_default_on_lesions_default_off(monkeypatch):
+    """RULING c3-flip-1029 flip: unset reads ON for L and P, an explicit 0/false/off/no escapes; lesions stay OFF."""
     for k in _FLAGS:
         monkeypatch.delenv(k, raising=False)
-    assert not TS.topic_stop_enabled() and not TS.topic_stop_lesioned()
-    assert not TS.phasic_da_enabled() and not TS.phasic_da_lesioned()
-    for v in ("1", "true", "on", "yes"):
-        monkeypatch.setenv("BRAIN_CURIOSITY_TOPIC_STOP", v)
-        assert TS.topic_stop_enabled()
+    assert TS.topic_stop_enabled() and TS.phasic_da_enabled()
+    assert not TS.topic_stop_lesioned() and not TS.phasic_da_lesioned()
+    for name, read in (("BRAIN_CURIOSITY_TOPIC_STOP", TS.topic_stop_enabled),
+                       ("BRAIN_CURIOSITY_PHASIC_DA", TS.phasic_da_enabled)):
+        for v in ("1", "true", "on", "yes"):
+            monkeypatch.setenv(name, v)
+            assert read()
+        for v in ("0", "off", "no", "false", " OFF "):
+            monkeypatch.setenv(name, v)
+            assert not read()
+        monkeypatch.delenv(name)
     for v in ("0", "", "off", "no", "false"):
-        monkeypatch.setenv("BRAIN_CURIOSITY_TOPIC_STOP", v)
-        assert not TS.topic_stop_enabled()
+        monkeypatch.setenv("BRAIN_CURIOSITY_TOPIC_STOP_LESION", v)
+        assert not TS.topic_stop_lesioned()
 
 
 def test_state_persists_within_a_conversation_and_stops_the_repeated_topic(flags):
@@ -158,11 +166,13 @@ def test_organ_selftest():
 
 @pytest.mark.skipif(os.environ.get("C3TS_HANDLER_TEST") != "1", reason="builds the tiny-demo brain; opt-in")
 def test_flag_off_handler_turn_has_no_topic_stop_footprint(monkeypatch):
-    """One real abstain turn through `/api/brain-chat` with every flag unset: no `curiosity_topic_stop` key, no
-    Context attribute, and `decide`/`note_turn` are never reached (patched to raise)."""
+    """One real abstain turn through `/api/brain-chat` with L and P explicitly off (the escape): no
+    `curiosity_topic_stop` key, no Context attribute, and `decide`/`note_turn` are never reached (patched to raise)."""
     pytest.importorskip("fastapi"); pytest.importorskip("httpx")
     for k in _FLAGS:
         monkeypatch.delenv(k, raising=False)
+    monkeypatch.setenv("BRAIN_CURIOSITY_TOPIC_STOP", "0")
+    monkeypatch.setenv("BRAIN_CURIOSITY_PHASIC_DA", "0")
     monkeypatch.setenv("SIM_BACKEND", "numpy")
 
     def _boom(*a, **k):

@@ -5393,7 +5393,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     # WORD-ROLE ENGAGEMENT (RULING word-role-engagement): clear last turn's record before anything can parse.
     _word_role_trace_reset(chat)
     _mouth_trace_reset(chat)   # MOUTH TRACE (B2d Amendment 2): this turn's render calls only
-    # C3 TOPIC STOP turn clock (default OFF, BRAIN_CURIOSITY_TOPIC_STOP; webapp/curiosity_topic_stop_chat.py): count
+    # C3 TOPIC STOP turn clock (default ON, BRAIN_CURIOSITY_TOPIC_STOP=0 escapes; webapp/curiosity_topic_stop_chat.py): count
     # this conversation turn on its own Context so the topic-stop organ can run the owed inter-turn substrate time at
     # its next read. Off -> only the env read; no Context is created or touched.
     try:
