@@ -1,0 +1,41 @@
+{
+ "run_id": "1793539812-1177181",
+ "runner": "research/runners/stage2_exit_gate.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/c3-flip/research/runners/stage2_exit_gate.py",
+  "--shard",
+  "--seed",
+  "7",
+  "--group",
+  "ask",
+  "--arm",
+  "intact_a",
+  "--out",
+  "research/findings/raw/_c3_flip/postflip/s7/ask__unset_intact_a.json"
+ ],
+ "git_sha": "7f024a1c1",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-11-01T08:30:12",
+ "env": {
+  "NUMEXPR_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "OMP_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 289720.9,
+ "corpus_check_query": "spiking winner-take-all feedback inhibition recruits too late, conductance overshoot rebound, more pools fire; feedforward inhibition / fast FS recruitment",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_c3_flip/postflip/s7/ask__unset_intact_a.json"
+}
