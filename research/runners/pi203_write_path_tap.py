@@ -241,6 +241,9 @@ def install_tap(bridge) -> None:
     Every hook RECORDS; none writes back into the simulation. Non-invasiveness is measured (tapped vs untapped
     reply digests in the orchestrator), not assumed."""
     _INSTALLED_BRIDGES.add(id(bridge))
+    # A marker ON the bridge, not just its id: CPython reuses object ids after garbage collection, so a later
+    # bridge that happens to land on a freed id would be treated as tapped (FAILURE_LOG 2026-10-31).
+    bridge.__dict__["_pi203_tap_installed"] = True
     global _CURRENT_BRIDGE, _STEPS, _ARRAY_REPLACED
     _LOG.clear()
     _REBUILDS[0] = 0
@@ -319,7 +322,7 @@ def install_tap(bridge) -> None:
 
     def hooked_setattr(self, name, value):
         orig_setattr(self, name, value)
-        if id(self) in _INSTALLED_BRIDGES and name == "cp_connections" \
+        if getattr(self, "_pi203_tap_installed", False) and name == "cp_connections" \
                 and getattr(value, "format", "") == "csr" and not isinstance(value, TapCSR):
             wrap(self, value)
 
@@ -330,7 +333,7 @@ def install_tap(bridge) -> None:
     def stepped(self):
         global _STEPS
         _STEPS += 1
-        if id(self) in _INSTALLED_BRIDGES:
+        if getattr(self, "_pi203_tap_installed", False):
             wrap(self)
         return orig(self)
 
