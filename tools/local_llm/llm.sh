@@ -152,7 +152,7 @@ if p.get("backend") == "strata":
     # mem_ok.sh says the RAM is free -- a refusal fails the load, and llama-swap answers that request with an error.
     root = os.path.abspath(sys.argv[4])
     sroot = os.path.expanduser(p["strata_root"])
-    inner = "cd %s && bash %s/tools/mem_ok.sh %d 1 >&2 && exec bash %s/tools/memcap.sh %d -- %s/python/bin/python3.12 serve/server.py --engine strata --config %s --host 127.0.0.1 --port %s" % (
+    inner = "cd %s && bash %s/tools/mem_ok.sh %d 1 >&2 && exec env MEMCAP_UNIT=local-llm-backend bash %s/tools/memcap.sh %d -- %s/python/bin/python3.12 serve/server.py --engine strata --config %s --host 127.0.0.1 --port %s" % (
         sroot, root, p["ram_gb"], root, p["ram_gb"], sroot, os.path.expanduser(p["strata_config"]), sys.argv[3])
     print(shlex.join(["bash", "-c", inner]))
     sys.exit(0)
@@ -270,8 +270,15 @@ cmd_on() {
   activate_profile "$prof" && echo "ready on http://127.0.0.1:$PORT ($prof)"
 }
 
+# A backend that llama-swap starts under memcap (Strata) runs in its own scope, outside this unit's cgroup, so
+# stopping the unit does not stop it (2026-10-31: an orphaned engine held 21 GB of VRAM and deadlocked the GPU queue
+# for 5 h). Every stop path below also stops those scopes, by the name memcap.sh gives them (MEMCAP_UNIT).
+BACKEND_SCOPES="local-llm-backend-*.scope"
+stop_backends() { "$SYSTEMCTL" --user stop "$BACKEND_SCOPES" 2>/dev/null || true; }
+
 cmd_off() {
   if "$SYSTEMCTL" --user is-active --quiet "$UNIT"; then "$SYSTEMCTL" --user stop "$UNIT"; echo "unloaded"; else echo "not loaded"; fi
+  stop_backends
   "$SYSTEMCTL" --user reset-failed "$UNIT" 2>/dev/null || true
   # An explicit/manual off ALWAYS cancels gpu_queue's pending "restore it when the queue drains" intent -- even
   # when this unit was already down for some other reason (the owner's `llm off` must stick; the queue draining
@@ -288,10 +295,11 @@ cmd_stop_graceful() {
   local delay="${1:-0}"
   if [ "$delay" -gt 0 ] 2>/dev/null && "$SYSTEMCTL" --user is-active --quiet "$UNIT"; then
     systemd-run --user --quiet --on-active="${delay}s" --unit="${UNIT}-graceful-stop-$$" \
-      bash -c "\"$SYSTEMCTL\" --user stop \"$UNIT\"; \"$SYSTEMCTL\" --user reset-failed \"$UNIT\" >/dev/null 2>&1 || true"
+      bash -c "\"$SYSTEMCTL\" --user stop \"$UNIT\"; \"$SYSTEMCTL\" --user stop \"$BACKEND_SCOPES\" 2>/dev/null; \"$SYSTEMCTL\" --user reset-failed \"$UNIT\" >/dev/null 2>&1 || true"
     echo "graceful stop of $UNIT scheduled in ${delay}s"
   else
     if "$SYSTEMCTL" --user is-active --quiet "$UNIT"; then "$SYSTEMCTL" --user stop "$UNIT"; echo "unloaded"; else echo "not loaded"; fi
+    stop_backends
     "$SYSTEMCTL" --user reset-failed "$UNIT" 2>/dev/null || true
   fi
 }

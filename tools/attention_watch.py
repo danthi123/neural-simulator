@@ -41,6 +41,7 @@ S_EXEC = ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=15", "homelab-serv
           "docker", "exec", "-u", "99", "-e", "HOME=/opt/data/home", "hermes", "bash", "-c"]
 REPEAT_H = 6.0          # re-report a still-true event after this long
 GPU_IDLE_MIN = 30       # W GPU queue empty and idle this long
+GPU_HELD_MIN = 30       # W gpu_queue has jobs but none running this long (VRAM held outside the queue)
 DRIVER_SILENT_H = 3.0   # S runbook not written this long
 POOL_STALL_MIN = 60     # S pool has queued lines but no claim this long
 PI_STATUS = "/var/lib/host-status/pi-driver/status.json"   # tools/pi_driver supervisor.py writes it
@@ -91,6 +92,21 @@ def w_checks(st, now):
             ev.append(("w-gpu-idle", f"W GPU idle {mins:.0f} min with an empty gpu_queue (not paused): stock GPU work"))
     else:
         st["gpu_idle_since"] = None
+    # the opposite stall: jobs queued, none running, not paused. On 2026-10-31 an orphaned local-model engine held
+    # 21 GB of VRAM for 5 h; the dispatcher held every job and w-gpu-idle stayed silent because the queue was not empty.
+    m_q = re.search(r"queued: (\d+)", out)
+    held = "current: (idle)" in out and m_q is not None and int(m_q.group(1)) > 0
+    if held and not paused:
+        st["gpu_held_since"] = st.get("gpu_held_since") or now
+        mins = (now - st["gpu_held_since"]) / 60
+        if mins >= GPU_HELD_MIN:
+            _, apps = sh(["nvidia-smi", "--query-compute-apps=pid,used_memory,process_name",
+                          "--format=csv,noheader"], timeout=15)
+            big = "; ".join(l.strip() for l in apps.splitlines() if "MiB" in l and int(l.split(",")[1].split()[0]) > 1024)
+            ev.append(("w-gpu-held", f"W gpu_queue has {m_q.group(1)} job(s) held {mins:.0f} min with nothing running "
+                                     f"(not paused); VRAM holders: {big or 'none >1 GB'}"))
+    else:
+        st["gpu_held_since"] = None
     log = os.path.join(REPO, "research/queue/gpu_queue.log")
     try:
         size = os.path.getsize(log)

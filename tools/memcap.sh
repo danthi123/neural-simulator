@@ -53,6 +53,11 @@ if [ -n "${MEMCAP_HIGH_PCT:-}" ]; then
   HIGH_GB=$(( MAX_GB * MEMCAP_HIGH_PCT / 100 )); [ "$HIGH_GB" -lt 1 ] && HIGH_GB=1; HIGH="${HIGH_GB}G"
 fi
 echo "[memcap] MemoryMax=${MAX_GB}G MemoryHigh=${HIGH} MemorySwapMax=${SWAP_GB}G :: $*" >&2
-exec systemd-run --user --scope --quiet \
+# MEMCAP_UNIT=<prefix> names the scope <prefix>-<pid>, so whoever launched it can stop it by pattern. The local model
+# server's Strata engine uses it: a scope is NOT in its launcher's cgroup, so SIGKILLing the launcher left the engine
+# holding 21 GB of VRAM and deadlocked the GPU queue for 5 h (2026-10-31); llm.sh now stops local-llm-backend-*.scope.
+NAME_ARGS=()
+[ -n "${MEMCAP_UNIT:-}" ] && NAME_ARGS=(--unit="${MEMCAP_UNIT}-$$")
+exec systemd-run --user --scope --quiet "${NAME_ARGS[@]}" \
   -p MemoryMax="${MAX_GB}G" -p MemoryHigh="${HIGH}" -p MemorySwapMax="${SWAP_GB}G" \
   -- "$@"
