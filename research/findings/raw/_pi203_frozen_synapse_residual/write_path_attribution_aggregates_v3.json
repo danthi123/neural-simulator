@@ -1,0 +1,465 @@
+{
+ "runner": "research.runners.pi203_write_path_aggregates",
+ "derived_from": "research/findings/raw/_pi203_frozen_synapse_residual/write_path_attribution_v2.json",
+ "protocol": {
+  "seeds": [
+   7,
+   8
+  ],
+  "organs": [
+   "standalone",
+   "pooled"
+  ],
+  "arms": [
+   "off",
+   "on"
+  ],
+  "taps": [
+   "on",
+   "off"
+  ],
+  "criteria": [
+   "list every write site touching a mask-frozen synapse with its measured delta, OFF and ON",
+   "a site is UNCOVERED by the six #203 fixes only if it still moves frozen synapses with the flag ON",
+   "the tap is void if tapped and untapped reply digests differ in the same cell"
+  ]
+ },
+ "backend": "numpy",
+ "device": "cpu",
+ "n_runs": 16,
+ "elapsed_seconds": 868.65,
+ "per_cell_frozen_delta": {
+  "standalone/seed7": {
+   "off": 29929.71,
+   "on": 0
+  },
+  "standalone/seed8": {
+   "off": 34350.86,
+   "on": 0
+  },
+  "pooled/seed7": {
+   "off": 0,
+   "on": 0
+  },
+  "pooled/seed8": {
+   "off": 0,
+   "on": 0
+  }
+ },
+ "per_site": {
+  "standalone/seed7 bridge.py:11055": {
+   "writes_off": 3973,
+   "writes_on": 0,
+   "frozen_delta_off": 26883.72,
+   "frozen_delta_on": 0.0,
+   "frozen_potentiation_off": 26883.72,
+   "frozen_depression_off": 0.0,
+   "share_attributable_to_flag": 1.0
+  },
+  "standalone/seed7 bridge.py:11081": {
+   "writes_off": 5986,
+   "writes_on": 0,
+   "frozen_delta_off": 3045.99,
+   "frozen_delta_on": 0.0,
+   "frozen_potentiation_off": 0.0,
+   "frozen_depression_off": 3045.99,
+   "share_attributable_to_flag": 1.0
+  },
+  "standalone/seed7 coordinate_drift_off": {
+   "frozen_max_abs_drift": 55.635,
+   "frozen_synapses_drifted": 1724,
+   "plastic_synapses_drifted": 0,
+   "csr_rebuilds": 0
+  },
+  "standalone/seed8 bridge.py:11055": {
+   "writes_off": 4436,
+   "writes_on": 0,
+   "frozen_delta_off": 31018.1,
+   "frozen_delta_on": 0.0,
+   "frozen_potentiation_off": 31018.1,
+   "frozen_depression_off": 0.0,
+   "share_attributable_to_flag": 1.0
+  },
+  "standalone/seed8 bridge.py:11081": {
+   "writes_off": 5948,
+   "writes_on": 0,
+   "frozen_delta_off": 3332.76,
+   "frozen_delta_on": 0.0,
+   "frozen_potentiation_off": 0.0,
+   "frozen_depression_off": 3332.76,
+   "share_attributable_to_flag": 1.0
+  },
+  "standalone/seed8 coordinate_drift_off": {
+   "frozen_max_abs_drift": 58.484,
+   "frozen_synapses_drifted": 1700,
+   "plastic_synapses_drifted": 0,
+   "csr_rebuilds": 0
+  },
+  "pooled/seed7 coordinate_drift_off": {
+   "frozen_max_abs_drift": 0.0,
+   "frozen_synapses_drifted": 0,
+   "plastic_synapses_drifted": 0,
+   "csr_rebuilds": 0
+  },
+  "pooled/seed8 coordinate_drift_off": {
+   "frozen_max_abs_drift": 0.0,
+   "frozen_synapses_drifted": 0,
+   "plastic_synapses_drifted": 0,
+   "csr_rebuilds": 0
+  }
+ },
+ "reply_level": {
+  "standalone/on/seed7": {
+   "items_differing": 25,
+   "n_items": 25,
+   "max_abs_margin_diff": 0.01875
+  },
+  "standalone/off/seed7": {
+   "items_differing": 25,
+   "n_items": 25,
+   "max_abs_margin_diff": 0.01875
+  },
+  "standalone/on/seed8": {
+   "items_differing": 25,
+   "n_items": 25,
+   "max_abs_margin_diff": 0.0375
+  },
+  "standalone/off/seed8": {
+   "items_differing": 25,
+   "n_items": 25,
+   "max_abs_margin_diff": 0.0375
+  },
+  "pooled/on/seed7": {
+   "items_differing": 0,
+   "n_items": 25,
+   "max_abs_margin_diff": 0.0
+  },
+  "pooled/off/seed7": {
+   "items_differing": 0,
+   "n_items": 25,
+   "max_abs_margin_diff": 0.0
+  },
+  "pooled/on/seed8": {
+   "items_differing": 0,
+   "n_items": 25,
+   "max_abs_margin_diff": 0.0
+  },
+  "pooled/off/seed8": {
+   "items_differing": 0,
+   "n_items": 25,
+   "max_abs_margin_diff": 0.0
+  }
+ },
+ "reply_competence": {
+  "standalone/seed7": {
+   "items_off": 25,
+   "items_on": 25,
+   "competent_off": 25,
+   "competent_on": 25,
+   "competence_flips": 0
+  },
+  "pooled/seed7": {
+   "items_off": 25,
+   "items_on": 25,
+   "competent_off": 25,
+   "competent_on": 25,
+   "competence_flips": 0
+  },
+  "standalone/seed8": {
+   "items_off": 25,
+   "items_on": 25,
+   "competent_off": 25,
+   "competent_on": 25,
+   "competence_flips": 0
+  },
+  "pooled/seed8": {
+   "items_off": 25,
+   "items_on": 25,
+   "competent_off": 25,
+   "competent_on": 25,
+   "competence_flips": 0
+  }
+ },
+ "instrument_control": {
+  "standalone/off/seed7": {
+   "identical": true,
+   "digest": "b1e571194aa12670bd6495a161ef7cbd8741a60079633256bd14342f551ab847"
+  },
+  "standalone/on/seed7": {
+   "identical": true,
+   "digest": "c2a70eb1ecad0777553f7d1caea4265f21e2640d4a3c1f2bb5bb3d8392eaf72d"
+  },
+  "pooled/off/seed7": {
+   "identical": true,
+   "digest": "d01b3fb6ea63e3135030d7e0ca5b9952b21a3bcc872ea94bc5acd56604c2616e"
+  },
+  "pooled/on/seed7": {
+   "identical": true,
+   "digest": "d01b3fb6ea63e3135030d7e0ca5b9952b21a3bcc872ea94bc5acd56604c2616e"
+  },
+  "standalone/off/seed8": {
+   "identical": true,
+   "digest": "b276ce49b439cd746d14b0926a9edace0260c3afd2c9e642a71f4f5a383f8f28"
+  },
+  "standalone/on/seed8": {
+   "identical": true,
+   "digest": "ff4d88f1667862c84ee9621609c4b177aed37ca547884b11da55d938f013aa28"
+  },
+  "pooled/off/seed8": {
+   "identical": true,
+   "digest": "d01b3fb6ea63e3135030d7e0ca5b9952b21a3bcc872ea94bc5acd56604c2616e"
+  },
+  "pooled/on/seed8": {
+   "identical": true,
+   "digest": "d01b3fb6ea63e3135030d7e0ca5b9952b21a3bcc872ea94bc5acd56604c2616e"
+  }
+ },
+ "instrument_completeness": {
+  "7/standalone/off": {
+   "signed_residual": 0.0,
+   "abs_residual": 5987.26
+  },
+  "7/standalone/on": {
+   "signed_residual": 0.0,
+   "abs_residual": 0.0
+  },
+  "7/pooled/off": {
+   "signed_residual": 0.0,
+   "abs_residual": 0.0
+  },
+  "7/pooled/on": {
+   "signed_residual": 0.0,
+   "abs_residual": 0.0
+  },
+  "8/standalone/off": {
+   "signed_residual": 0.0,
+   "abs_residual": 6548.0
+  },
+  "8/standalone/on": {
+   "signed_residual": 0.0,
+   "abs_residual": 0.0
+  },
+  "8/pooled/off": {
+   "signed_residual": 0.0,
+   "abs_residual": 0.0
+  },
+  "8/pooled/on": {
+   "signed_residual": 0.0,
+   "abs_residual": 0.0
+  }
+ },
+ "lever_check": {
+  "seed7_total_weight_writes": true,
+  "seed8_total_weight_writes": true
+ },
+ "pool_config_of_each_organ": {
+  "standalone": "ComprehensionProductionOrgan built directly -- the documented BRAIN_ONEBRAIN_WAVE3_POOL=0 escape hatch path, i.e. the pre-wave3 bridge where the bug and the fix live",
+  "pooled": "get_organ(seed) -- the wave3 merged one-brain pool, production default (env var unset = ON)"
+ },
+ "cupy_backend_confirmation": {
+  "source": "research/findings/raw/_pi203_frozen_synapse_residual/backend_confirmation_cupy_after_guard.json",
+  "backend_requested": "cupy",
+  "backend_resolved": "cupy",
+  "device": "GPU (cupy)",
+  "n_runs": 84,
+  "elapsed_seconds": 63.02,
+  "rule_summary": {
+   "combined": {
+    "off_frozen_delta_min": 99.99,
+    "off_frozen_delta_max": 99.99,
+    "on_frozen_delta_max": 0.0,
+    "on_control_delta_min": 99.9238,
+    "off_mislabelled_after_rebuild": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "on_mislabelled_after_rebuild": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ]
+   },
+   "compaction": {
+    "off_frozen_delta_min": 5.0,
+    "off_frozen_delta_max": 5.0,
+    "on_frozen_delta_max": 0.0,
+    "on_control_delta_min": 5.0,
+    "off_mislabelled_after_rebuild": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "on_mislabelled_after_rebuild": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ]
+   },
+   "hebbian": {
+    "off_frozen_delta_min": 19.0297,
+    "off_frozen_delta_max": 19.0577,
+    "on_frozen_delta_max": 0.0,
+    "on_control_delta_min": 19.0041,
+    "off_mislabelled_after_rebuild": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "on_mislabelled_after_rebuild": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ]
+   },
+   "rebuild": {
+    "off_frozen_delta_min": 15.0129,
+    "off_frozen_delta_max": 15.0145,
+    "on_frozen_delta_max": 0.0,
+    "on_control_delta_min": 15.0136,
+    "off_mislabelled_after_rebuild": [
+     4,
+     4,
+     4,
+     4,
+     4,
+     4
+    ],
+    "on_mislabelled_after_rebuild": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ]
+   },
+   "reward": {
+    "off_frozen_delta_min": 99.0,
+    "off_frozen_delta_max": 99.0,
+    "on_frozen_delta_max": 0.0,
+    "on_control_delta_min": 99.0,
+    "off_mislabelled_after_rebuild": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "on_mislabelled_after_rebuild": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ]
+   },
+   "scaling": {
+    "off_frozen_delta_min": 15.0,
+    "off_frozen_delta_max": 15.0,
+    "on_frozen_delta_max": 0.0,
+    "on_control_delta_min": 15.0,
+    "off_mislabelled_after_rebuild": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "on_mislabelled_after_rebuild": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ]
+   },
+   "structural": {
+    "off_frozen_delta_min": 0.02,
+    "off_frozen_delta_max": 0.02,
+    "on_frozen_delta_max": 0.0,
+    "on_control_delta_min": 0.02,
+    "off_mislabelled_after_rebuild": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "on_mislabelled_after_rebuild": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  "organ_arms": {
+   "seed7 OFF": {
+    "pool_config": "ComprehensionProductionOrgan built directly -- the documented BRAIN_ONEBRAIN_WAVE3_POOL=0 escape hatch path, i.e. the pre-wave3 bridge where the bug and the fix live",
+    "n_synapses": 24764,
+    "n_frozen": 1724,
+    "frozen_max_abs_drift": 58.205243,
+    "frozen_synapses_drifted": 1724,
+    "plastic_max_abs_drift": 0.0,
+    "plastic_synapses_drifted": 0,
+    "reply_margin": 0.35
+   },
+   "seed7 ON": {
+    "pool_config": "ComprehensionProductionOrgan built directly -- the documented BRAIN_ONEBRAIN_WAVE3_POOL=0 escape hatch path, i.e. the pre-wave3 bridge where the bug and the fix live",
+    "n_synapses": 24764,
+    "n_frozen": 1724,
+    "frozen_max_abs_drift": 0.0,
+    "frozen_synapses_drifted": 0,
+    "plastic_max_abs_drift": 0.0,
+    "plastic_synapses_drifted": 0,
+    "reply_margin": 0.34305555555555556
+   },
+   "seed8 OFF": {
+    "pool_config": "ComprehensionProductionOrgan built directly -- the documented BRAIN_ONEBRAIN_WAVE3_POOL=0 escape hatch path, i.e. the pre-wave3 bridge where the bug and the fix live",
+    "n_synapses": 24740,
+    "n_frozen": 1700,
+    "frozen_max_abs_drift": 58.666237,
+    "frozen_synapses_drifted": 1700,
+    "plastic_max_abs_drift": 0.0,
+    "plastic_synapses_drifted": 0,
+    "reply_margin": 0.3625
+   },
+   "seed8 ON": {
+    "pool_config": "ComprehensionProductionOrgan built directly -- the documented BRAIN_ONEBRAIN_WAVE3_POOL=0 escape hatch path, i.e. the pre-wave3 bridge where the bug and the fix live",
+    "n_synapses": 24740,
+    "n_frozen": 1700,
+    "frozen_max_abs_drift": 0.0,
+    "frozen_synapses_drifted": 0,
+    "plastic_max_abs_drift": 0.0,
+    "plastic_synapses_drifted": 0,
+    "reply_margin": 0.35486111111111107
+   }
+  }
+ }
+}

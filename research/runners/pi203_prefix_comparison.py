@@ -22,7 +22,7 @@ import numpy as np
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SCENARIO_REL = "tests/_plastic_mask_beyond_hebbian_scenario.py"
-RULES = ["scaling", "structural", "reward", "rebuild", "compaction", "combined"]
+RULES = ["scaling", "structural", "reward", "rebuild", "compaction", "combined", "hebbian"]
 SEEDS = [42, 43, 44, 100, 101, 102]
 OUT = "research/findings/raw/_pi203_frozen_synapse_residual/byte_identity_record.json"
 PREFIX_REF = "710883be56ab65bfb2d77fc74861742fab053fe2"

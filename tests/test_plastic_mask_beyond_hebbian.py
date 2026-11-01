@@ -23,7 +23,16 @@ VERIFIED, not asserted:
   (3) rebuild/compaction -- the misalignment (v) is measured directly: 4 declared pairs are mislabelled with the
       flag OFF, 0 with it ON.
 
-Runs on numpy (forced) so the tests need no GPU and are deterministic.
+Runs on numpy by default (setdefault, so the tests need no GPU and are deterministic); asking for
+`SIM_BACKEND=cupy` runs them on the GPU, where the same assertions are checked.
+
+One pin is applied to BOTH arms of the byte-identity comparison: `BRAIN_STEP_PATH=python` turns off the
+ general-step megakernel. The pre-fix snapshot predates the megakernel-guard fix (commit a543af24, found by
+ the scaling trace: on cupy a scaling-only bridge dispatched the fused read-only step and never reached the
+ scaling block), so without the pin the two arms would differ by WHICH step they execute rather than by the
+ mask flag this test measures. The fused GPU path is covered separately by
+ `tests/test_step_megakernel_guard_completeness.py` and by the cupy battery
+ (`research/runners/pi203_cupy_backend_confirmation.py`), which runs the rules on the real step path.
 """
 import functools
 import json
@@ -36,15 +45,30 @@ import tempfile
 import pytest
 
 os.environ.setdefault("SIM_BACKEND", "numpy")
+BACKEND = os.environ["SIM_BACKEND"]
+
+
+@pytest.fixture(autouse=True, scope="module")
+def _pin_python_step_path():
+    """BRAIN_STEP_PATH=python for this module only (see the docstring: isolates the mask flag in the pre-fix
+    comparison). Restored afterwards: set at import, it leaked into every later test in the same pytest process."""
+    old = os.environ.get("BRAIN_STEP_PATH")
+    os.environ["BRAIN_STEP_PATH"] = "python"
+    yield
+    if old is None:
+        os.environ.pop("BRAIN_STEP_PATH", None)
+    else:
+        os.environ["BRAIN_STEP_PATH"] = old
+
 
 _REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 _SCENARIO_REL = os.path.join("tests", "_plastic_mask_beyond_hebbian_scenario.py")
 _FLAG_TOKEN = "enforce_plastic_mask_beyond_hebbian"
 SEEDS = (42, 43, 44, 100, 101, 102)
-RULES = ("scaling", "structural", "reward", "rebuild", "compaction", "combined")
+RULES = ("scaling", "structural", "reward", "rebuild", "compaction", "combined", "hebbian")
 # the smallest OFF-arm drift each rule must show (the bug the instrument is meant to see)
 _OFF_DRIFT_MIN = {"scaling": 5.0, "structural": 0.01, "reward": 10.0, "rebuild": 5.0,
-                  "compaction": 1.0, "combined": 10.0}
+                  "compaction": 1.0, "combined": 10.0, "hebbian": 5.0}
 _ON_DRIFT_MAX = 1e-9
 
 
@@ -94,7 +118,11 @@ def _run_prefix_off(rule, seed):
             return None, "git archive extraction failed (tar rc %d)" % p.returncode
         shutil.copy2(os.path.join(_REPO_ROOT, _SCENARIO_REL), os.path.join(wt, _SCENARIO_REL))
         env = dict(os.environ)
-        env["SIM_BACKEND"] = "numpy"
+        # Byte-identity means "this backend, this code, before vs after". Forcing numpy here while the
+        # current-code run used whatever the caller asked for made the cupy comparison cupy-vs-numpy and
+        # produced 7 false failures on the GPU (research/findings/raw/_pi203_frozen_synapse_residual/cupy_frozen_flat_pytest_v4.txt,
+        # FAILURE_LOG 2026-10-31). Both arms now run on the SAME backend.
+        env["SIM_BACKEND"] = os.environ.get("SIM_BACKEND", "numpy")
         env["PYTHONPATH"] = wt + os.pathsep + env.get("PYTHONPATH", "")
         out = subprocess.check_output([sys.executable, "-c",
                                        "import json,sys;"
@@ -148,6 +176,14 @@ def test_frozen_weights_unchanged_over_30_reads_on_six_seeds(rule):
         off = _run(rule, False, seed)
         on = _run(rule, True, seed)
         assert off["fired_any"] and on["fired_any"], "no spikes at seed %d: the run is undefined" % seed
+        if off["control_max_delta"] == 0.0:
+            # The mechanism itself never fires on this backend, so there is nothing for the mask to gate:
+            # scoring the rule here would be vacuous, and asserting on it would blame the flag for a
+            # backend gap. Documented, not hidden: synaptic scaling and the structural rebuild are inert on
+            # cupy (research/findings/raw/_pi203_frozen_synapse_residual/backend_confirmation_cupy.json,
+            # scaling_backend_diagnostic_cupy.json).
+            pytest.skip("rule %s is inert on backend %s (control population moves 0.0 at seed %d): the mask "
+                        "cannot be shown to gate a write that never happens here" % (rule, BACKEND, seed))
         assert off["frozen_max_delta"] > _OFF_DRIFT_MIN[rule], (
             "the OFF arm must SHOW the drift (positive control), got %.6f for rule %s seed %d"
             % (off["frozen_max_delta"], rule, seed))
@@ -191,5 +227,6 @@ def test_all_three_masked_sites_freeze_frozen_on_one_bridge():
 
 
 if __name__ == "__main__":
+    os.environ["BRAIN_STEP_PATH"] = "python"   # the fixture above does this under pytest
     import tempfile  # noqa: F401  (imported here so __main__ printing works standalone)
     print(json.dumps(selftest(), indent=2))

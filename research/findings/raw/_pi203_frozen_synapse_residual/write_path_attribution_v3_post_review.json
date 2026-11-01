@@ -1,0 +1,2312 @@
+{
+  "runner": "research.runners.pi203_write_path_tap (orchestrator)",
+  "cmd": "/home/dant123/Projects/neural-simulator-pi/research/runners/pi203_write_path_attribution.py --organs standalone --seeds 7,8 --items 25 --workers 4 --out research/findings/raw/_pi203_frozen_synapse_residual/write_path_attribution_v3_post_review.json",
+  "backend": "numpy",
+  "device": "cpu",
+  "protocol": {
+    "seeds": [
+      7,
+      8
+    ],
+    "organs": [
+      "standalone",
+      "pooled"
+    ],
+    "arms": [
+      "off",
+      "on"
+    ],
+    "taps": [
+      "on",
+      "off"
+    ],
+    "criteria": [
+      "list every write site touching a mask-frozen synapse with its measured delta, OFF and ON",
+      "a site is UNCOVERED by the six #203 fixes only if it still moves frozen synapses with the flag ON",
+      "the tap is void if tapped and untapped reply digests differ in the same cell"
+    ]
+  },
+  "elapsed_seconds": 25.93,
+  "n_runs": 8,
+  "runs": [
+    {
+      "seed": 7,
+      "arm": "off",
+      "enforced": false,
+      "backend": "numpy",
+      "device": "cpu",
+      "elapsed_seconds": 14.78,
+      "n_items": 25,
+      "sim_steps": 11314,
+      "nnz_pre": 24764,
+      "nnz_post": 24764,
+      "csr_data_array_rebuilt_times": 5988,
+      "config": {
+        "enable_hebbian_learning": true,
+        "enable_stdp": false,
+        "enable_structural_plasticity": false,
+        "enable_reward_modulation": false,
+        "enable_homeostasis": false,
+        "hebbian_rate_window": false,
+        "enforce_plastic_mask_in_hebbian": false,
+        "enforce_plastic_mask_beyond_hebbian": false
+      },
+      "organ": "standalone",
+      "tap": "on",
+      "experiment_engine_plasticity_this_phase": null,
+      "mask_len_pre": 24764,
+      "frozen_synapses_pre": 1724,
+      "total_writes": 9959,
+      "frozen_drift_regions": {
+        "sel_agent -> sel_agent": {
+          "synapses": 289,
+          "max_abs_drift": 47.8221549987793
+        },
+        "sel_patient -> sel_FS_patient": {
+          "synapses": 288,
+          "max_abs_drift": 24.600082397460938
+        },
+        "sel_FS_patient -> sel_agent": {
+          "synapses": 288,
+          "max_abs_drift": 9.439401626586914
+        },
+        "sel_FS_agent -> sel_patient": {
+          "synapses": 288,
+          "max_abs_drift": 34.93481969833374
+        },
+        "sel_agent -> sel_FS_agent": {
+          "synapses": 288,
+          "max_abs_drift": 37.18908500671387
+        },
+        "sel_patient -> sel_patient": {
+          "synapses": 283,
+          "max_abs_drift": 55.6347099840641
+        }
+      },
+      "stores_delta": {
+        "cp_plasticity_rate_gain": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_transmission_gain": {
+          "present": false
+        },
+        "cp_synapse_plastic_mask": {
+          "present": true,
+          "label_flips": 0
+        },
+        "cp_eligibility_trace": {
+          "present": false
+        },
+        "cp_hebb_coactivity_trace": {
+          "present": false
+        },
+        "cp_conductance_g_nmda": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_nmda_rise": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_nmda_recurrent": {
+          "present": false
+        },
+        "cp_conductance_g_e": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_i": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_gabab": {
+          "present": false
+        },
+        "cp_neuron_firing_thresholds": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_neuron_activity_ema": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        }
+      },
+      "coordinate_drift": {
+        "synapses_comparable_pre_post": 24764,
+        "csr_rebuilds": 0,
+        "frozen_labelled_synapses": 1724,
+        "frozen_max_abs_drift": 55.6347099840641,
+        "frozen_sum_abs_drift": 23942.44247186184,
+        "frozen_signed_drift": 23837.729196190834,
+        "frozen_synapses_drifted": 1724,
+        "plastic_max_abs_drift": 0.0,
+        "plastic_sum_abs_drift": 0.0,
+        "plastic_synapses_drifted": 0,
+        "completeness_residual_signed": 0.0,
+        "completeness_residual_abs": 5987.26309,
+        "mask_labels_changed_by_rebuild": 0
+      },
+      "battery_digest": "b1e571194aa12670bd6495a161ef7cbd8741a60079633256bd14342f551ab847",
+      "battery_items": {
+        "hand_chase": "bc6b04e2e90b75faa4b001ba1048503857d764d4d15482fe7c2f52e38697acd1",
+        "hand_eat": "897ff409bb2a5538ef3fa6581b4fd3eeb4b723fcbb041e9dc0655b55869502a4",
+        "hand_push": "9b4a5fa4ad2c98fb75b891afda0f75a98776950c23c49990f625846fa3fcfc3d",
+        "hand_carry": "380eea144be6de2da2f2b74c7fe49973059caf8e4c44db4b937a2bb23fe05a96",
+        "hand_bite": "a9f98732228c6e34fb30215f7b567c0f3859f5035af20f862fe65cd07e7518f7",
+        "hand_kick": "07b1395b8ce19e6d3572d420d11631c006419b5d181076d23ab90300a0986475",
+        "hand_grab": "74f6cc78345d4c70f9a43340536eff4f89d236ef53d9221780fffef6b6c911f0",
+        "hand_watch": "1d85e80c4a60132dae1fbb95053f775eda472ccc40d4d5c16e0ae76fce895a18",
+        "hand_ambig_2anim": "2d1742be0676bf6b523274f6f05e0e777c693b8ca88c6b13867cf396e70cc90f",
+        "hand_ambig_2inan": "fda066419af7150f29539f0f0363ddc6ed3b301ef48f557063c31103c83081ba",
+        "noun_anim_monkey": "6d97cb3f1ecb4df6cf48b6100727ddcbbdc05dafa9cc09963cac6fd4d67fbd26",
+        "noun_anim_rabbit": "dc66d692cafc3c77c957bbcefdc12f7edf27e2d359b4ca5ca36f308ac8024860",
+        "noun_anim_kitten": "68cbe9acb5c41461cf535f81333c47d3d989bb886b5645ef92ed0c25ddef690a",
+        "noun_inanim_box": "804b1903d62c1700ba5dcb3c9b639f2eb6367e29df26514cf2929c5f0fca6f78",
+        "noun_inanim_table": "e662fe558cbdf06808cda4c594cc0bb685265498aa9d4e3f8646396460cb8846",
+        "noun_inanim_key": "5bff1eb3759dfb74feed8c6621c1fbd7029b945ad007171f1ed21ea625fcc560",
+        "verb_inanimpat_clean": "487c04b9e0c390ca4a3fab59b2f6c684432443eda1eb1b992ff72c08cfb287da",
+        "verb_inanimpat_wash": "aca72c6dc2dab4734df8a276e1c176623b8cb97cd38b3373318dd24d2ce2cfa3",
+        "verb_inanimpat_open": "3b9720397a02af78301195cd5eb8ad31e930090dc374344192a60e50d9e11a40",
+        "verb_animpat_help": "de5b66c2066e1931011f82bc34fb73958d1fa353f2eb997618f47c05303ff9ce",
+        "verb_animpat_hug": "42fc77642cd6e20ca3af985d65fd7f6f2a10da9d958539afe400240099b807d7",
+        "verb_animpat_feed": "aa09b28234631285affc248206139f02319b62e7a05a259a9d5a72918d8c67f7",
+        "joint_monkey_clean_box": "6b12cd845a7af66d56a8a85afb08c2b14f95722149c44e91a1d01a6a8cd3cacf",
+        "joint_rabbit_help_kitten": "d5e0f295f13f03ec50fb1631902998b89ce5e7b2cbf85a23602bb47e9e42d4f5",
+        "moat_oov": "d32accd0abac7cc96bcb353e5c281cd48760bbab25135dce3ac60172aa740137"
+      },
+      "reply_margins": {
+        "hand_chase": 0.07291666666666667,
+        "hand_eat": 0.3243055555555555,
+        "hand_push": 0.3298611111111111,
+        "hand_carry": 0.3354166666666667,
+        "hand_bite": 0.33194444444444443,
+        "hand_kick": 0.33472222222222225,
+        "hand_grab": 0.33194444444444443,
+        "hand_watch": 0.07847222222222222,
+        "hand_ambig_2anim": 0.0826388888888889,
+        "hand_ambig_2inan": 0.14166666666666666,
+        "noun_anim_monkey": 0.3388888888888889,
+        "noun_anim_rabbit": 0.34305555555555556,
+        "noun_anim_kitten": 0.3416666666666667,
+        "noun_inanim_box": 0.3375,
+        "noun_inanim_table": 0.33611111111111114,
+        "noun_inanim_key": 0.3354166666666667,
+        "verb_inanimpat_clean": 0.34375,
+        "verb_inanimpat_wash": 0.3340277777777778,
+        "verb_inanimpat_open": 0.3486111111111111,
+        "verb_animpat_help": 0.08263888888888889,
+        "verb_animpat_hug": 0.08611111111111111,
+        "verb_animpat_feed": 0.08611111111111111,
+        "joint_monkey_clean_box": 0.3256944444444444,
+        "joint_rabbit_help_kitten": 0.09027777777777778,
+        "moat_oov": 0.0
+      },
+      "reply_competent": {
+        "hand_chase": true,
+        "hand_eat": true,
+        "hand_push": true,
+        "hand_carry": true,
+        "hand_bite": true,
+        "hand_kick": true,
+        "hand_grab": true,
+        "hand_watch": true,
+        "hand_ambig_2anim": true,
+        "hand_ambig_2inan": true,
+        "noun_anim_monkey": true,
+        "noun_anim_rabbit": true,
+        "noun_anim_kitten": true,
+        "noun_inanim_box": true,
+        "noun_inanim_table": true,
+        "noun_inanim_key": true,
+        "verb_inanimpat_clean": true,
+        "verb_inanimpat_wash": true,
+        "verb_inanimpat_open": true,
+        "verb_animpat_help": true,
+        "verb_animpat_hug": true,
+        "verb_animpat_feed": true,
+        "joint_monkey_clean_box": true,
+        "joint_rabbit_help_kitten": true,
+        "moat_oov": true
+      }
+    },
+    {
+      "seed": 7,
+      "arm": "off",
+      "enforced": false,
+      "backend": "numpy",
+      "device": "cpu",
+      "elapsed_seconds": 11.3,
+      "n_items": 25,
+      "sim_steps": 0,
+      "nnz_pre": 24764,
+      "nnz_post": 24764,
+      "csr_data_array_rebuilt_times": 0,
+      "config": {
+        "enable_hebbian_learning": true,
+        "enable_stdp": false,
+        "enable_structural_plasticity": false,
+        "enable_reward_modulation": false,
+        "enable_homeostasis": false,
+        "hebbian_rate_window": false,
+        "enforce_plastic_mask_in_hebbian": false,
+        "enforce_plastic_mask_beyond_hebbian": false
+      },
+      "organ": "standalone",
+      "tap": "off",
+      "experiment_engine_plasticity_this_phase": null,
+      "mask_len_pre": 24764,
+      "frozen_synapses_pre": 1724,
+      "total_writes": 0,
+      "frozen_drift_regions": {
+        "sel_agent -> sel_agent": {
+          "synapses": 289,
+          "max_abs_drift": 47.8221549987793
+        },
+        "sel_patient -> sel_FS_patient": {
+          "synapses": 288,
+          "max_abs_drift": 24.600082397460938
+        },
+        "sel_FS_patient -> sel_agent": {
+          "synapses": 288,
+          "max_abs_drift": 9.439401626586914
+        },
+        "sel_FS_agent -> sel_patient": {
+          "synapses": 288,
+          "max_abs_drift": 34.93481969833374
+        },
+        "sel_agent -> sel_FS_agent": {
+          "synapses": 288,
+          "max_abs_drift": 37.18908500671387
+        },
+        "sel_patient -> sel_patient": {
+          "synapses": 283,
+          "max_abs_drift": 55.6347099840641
+        }
+      },
+      "stores_delta": {
+        "cp_plasticity_rate_gain": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_transmission_gain": {
+          "present": false
+        },
+        "cp_synapse_plastic_mask": {
+          "present": true,
+          "label_flips": 0
+        },
+        "cp_eligibility_trace": {
+          "present": false
+        },
+        "cp_hebb_coactivity_trace": {
+          "present": false
+        },
+        "cp_conductance_g_nmda": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_nmda_rise": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_nmda_recurrent": {
+          "present": false
+        },
+        "cp_conductance_g_e": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_i": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_gabab": {
+          "present": false
+        },
+        "cp_neuron_firing_thresholds": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_neuron_activity_ema": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        }
+      },
+      "coordinate_drift": {
+        "synapses_comparable_pre_post": 24764,
+        "csr_rebuilds": 0,
+        "frozen_labelled_synapses": 1724,
+        "frozen_max_abs_drift": 55.6347099840641,
+        "frozen_sum_abs_drift": 23942.44247186184,
+        "frozen_signed_drift": 23837.729196190834,
+        "frozen_synapses_drifted": 1724,
+        "plastic_max_abs_drift": 0.0,
+        "plastic_sum_abs_drift": 0.0,
+        "plastic_synapses_drifted": 0,
+        "completeness_residual_signed": -23837.729196,
+        "completeness_residual_abs": -23942.442472,
+        "mask_labels_changed_by_rebuild": 0
+      },
+      "battery_digest": "b1e571194aa12670bd6495a161ef7cbd8741a60079633256bd14342f551ab847",
+      "battery_items": {
+        "hand_chase": "bc6b04e2e90b75faa4b001ba1048503857d764d4d15482fe7c2f52e38697acd1",
+        "hand_eat": "897ff409bb2a5538ef3fa6581b4fd3eeb4b723fcbb041e9dc0655b55869502a4",
+        "hand_push": "9b4a5fa4ad2c98fb75b891afda0f75a98776950c23c49990f625846fa3fcfc3d",
+        "hand_carry": "380eea144be6de2da2f2b74c7fe49973059caf8e4c44db4b937a2bb23fe05a96",
+        "hand_bite": "a9f98732228c6e34fb30215f7b567c0f3859f5035af20f862fe65cd07e7518f7",
+        "hand_kick": "07b1395b8ce19e6d3572d420d11631c006419b5d181076d23ab90300a0986475",
+        "hand_grab": "74f6cc78345d4c70f9a43340536eff4f89d236ef53d9221780fffef6b6c911f0",
+        "hand_watch": "1d85e80c4a60132dae1fbb95053f775eda472ccc40d4d5c16e0ae76fce895a18",
+        "hand_ambig_2anim": "2d1742be0676bf6b523274f6f05e0e777c693b8ca88c6b13867cf396e70cc90f",
+        "hand_ambig_2inan": "fda066419af7150f29539f0f0363ddc6ed3b301ef48f557063c31103c83081ba",
+        "noun_anim_monkey": "6d97cb3f1ecb4df6cf48b6100727ddcbbdc05dafa9cc09963cac6fd4d67fbd26",
+        "noun_anim_rabbit": "dc66d692cafc3c77c957bbcefdc12f7edf27e2d359b4ca5ca36f308ac8024860",
+        "noun_anim_kitten": "68cbe9acb5c41461cf535f81333c47d3d989bb886b5645ef92ed0c25ddef690a",
+        "noun_inanim_box": "804b1903d62c1700ba5dcb3c9b639f2eb6367e29df26514cf2929c5f0fca6f78",
+        "noun_inanim_table": "e662fe558cbdf06808cda4c594cc0bb685265498aa9d4e3f8646396460cb8846",
+        "noun_inanim_key": "5bff1eb3759dfb74feed8c6621c1fbd7029b945ad007171f1ed21ea625fcc560",
+        "verb_inanimpat_clean": "487c04b9e0c390ca4a3fab59b2f6c684432443eda1eb1b992ff72c08cfb287da",
+        "verb_inanimpat_wash": "aca72c6dc2dab4734df8a276e1c176623b8cb97cd38b3373318dd24d2ce2cfa3",
+        "verb_inanimpat_open": "3b9720397a02af78301195cd5eb8ad31e930090dc374344192a60e50d9e11a40",
+        "verb_animpat_help": "de5b66c2066e1931011f82bc34fb73958d1fa353f2eb997618f47c05303ff9ce",
+        "verb_animpat_hug": "42fc77642cd6e20ca3af985d65fd7f6f2a10da9d958539afe400240099b807d7",
+        "verb_animpat_feed": "aa09b28234631285affc248206139f02319b62e7a05a259a9d5a72918d8c67f7",
+        "joint_monkey_clean_box": "6b12cd845a7af66d56a8a85afb08c2b14f95722149c44e91a1d01a6a8cd3cacf",
+        "joint_rabbit_help_kitten": "d5e0f295f13f03ec50fb1631902998b89ce5e7b2cbf85a23602bb47e9e42d4f5",
+        "moat_oov": "d32accd0abac7cc96bcb353e5c281cd48760bbab25135dce3ac60172aa740137"
+      },
+      "reply_margins": {
+        "hand_chase": 0.07291666666666667,
+        "hand_eat": 0.3243055555555555,
+        "hand_push": 0.3298611111111111,
+        "hand_carry": 0.3354166666666667,
+        "hand_bite": 0.33194444444444443,
+        "hand_kick": 0.33472222222222225,
+        "hand_grab": 0.33194444444444443,
+        "hand_watch": 0.07847222222222222,
+        "hand_ambig_2anim": 0.0826388888888889,
+        "hand_ambig_2inan": 0.14166666666666666,
+        "noun_anim_monkey": 0.3388888888888889,
+        "noun_anim_rabbit": 0.34305555555555556,
+        "noun_anim_kitten": 0.3416666666666667,
+        "noun_inanim_box": 0.3375,
+        "noun_inanim_table": 0.33611111111111114,
+        "noun_inanim_key": 0.3354166666666667,
+        "verb_inanimpat_clean": 0.34375,
+        "verb_inanimpat_wash": 0.3340277777777778,
+        "verb_inanimpat_open": 0.3486111111111111,
+        "verb_animpat_help": 0.08263888888888889,
+        "verb_animpat_hug": 0.08611111111111111,
+        "verb_animpat_feed": 0.08611111111111111,
+        "joint_monkey_clean_box": 0.3256944444444444,
+        "joint_rabbit_help_kitten": 0.09027777777777778,
+        "moat_oov": 0.0
+      },
+      "reply_competent": {
+        "hand_chase": true,
+        "hand_eat": true,
+        "hand_push": true,
+        "hand_carry": true,
+        "hand_bite": true,
+        "hand_kick": true,
+        "hand_grab": true,
+        "hand_watch": true,
+        "hand_ambig_2anim": true,
+        "hand_ambig_2inan": true,
+        "noun_anim_monkey": true,
+        "noun_anim_rabbit": true,
+        "noun_anim_kitten": true,
+        "noun_inanim_box": true,
+        "noun_inanim_table": true,
+        "noun_inanim_key": true,
+        "verb_inanimpat_clean": true,
+        "verb_inanimpat_wash": true,
+        "verb_inanimpat_open": true,
+        "verb_animpat_help": true,
+        "verb_animpat_hug": true,
+        "verb_animpat_feed": true,
+        "joint_monkey_clean_box": true,
+        "joint_rabbit_help_kitten": true,
+        "moat_oov": true
+      }
+    },
+    {
+      "seed": 7,
+      "arm": "on",
+      "enforced": true,
+      "backend": "numpy",
+      "device": "cpu",
+      "elapsed_seconds": 13.27,
+      "n_items": 25,
+      "sim_steps": 11314,
+      "nnz_pre": 24764,
+      "nnz_post": 24764,
+      "csr_data_array_rebuilt_times": 5988,
+      "config": {
+        "enable_hebbian_learning": true,
+        "enable_stdp": false,
+        "enable_structural_plasticity": false,
+        "enable_reward_modulation": false,
+        "enable_homeostasis": false,
+        "hebbian_rate_window": false,
+        "enforce_plastic_mask_in_hebbian": false,
+        "enforce_plastic_mask_beyond_hebbian": false
+      },
+      "organ": "standalone",
+      "tap": "on",
+      "experiment_engine_plasticity_this_phase": null,
+      "mask_len_pre": 24764,
+      "frozen_synapses_pre": 1724,
+      "total_writes": 0,
+      "frozen_drift_regions": {},
+      "stores_delta": {
+        "cp_plasticity_rate_gain": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_transmission_gain": {
+          "present": false
+        },
+        "cp_synapse_plastic_mask": {
+          "present": true,
+          "label_flips": 0
+        },
+        "cp_eligibility_trace": {
+          "present": false
+        },
+        "cp_hebb_coactivity_trace": {
+          "present": false
+        },
+        "cp_conductance_g_nmda": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_nmda_rise": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_nmda_recurrent": {
+          "present": false
+        },
+        "cp_conductance_g_e": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_i": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_gabab": {
+          "present": false
+        },
+        "cp_neuron_firing_thresholds": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_neuron_activity_ema": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        }
+      },
+      "coordinate_drift": {
+        "synapses_comparable_pre_post": 24764,
+        "csr_rebuilds": 0,
+        "frozen_labelled_synapses": 1724,
+        "frozen_max_abs_drift": 0.0,
+        "frozen_sum_abs_drift": 0.0,
+        "frozen_signed_drift": 0.0,
+        "frozen_synapses_drifted": 0,
+        "plastic_max_abs_drift": 0.0,
+        "plastic_sum_abs_drift": 0.0,
+        "plastic_synapses_drifted": 0,
+        "completeness_residual_signed": 0.0,
+        "completeness_residual_abs": 0.0,
+        "mask_labels_changed_by_rebuild": 0
+      },
+      "battery_digest": "c2a70eb1ecad0777553f7d1caea4265f21e2640d4a3c1f2bb5bb3d8392eaf72d",
+      "battery_items": {
+        "hand_chase": "18ea5ec7feb19e8a40157f015a9da4fb3e5c75f29b419186e6c852da6fc9c7a4",
+        "hand_eat": "cbd9655e0b757d3ed1f4c37f6d4e82fd1fc06406d7704bceb6e3f73be1b927a2",
+        "hand_push": "72ef2753bcbb6fb60c5dd50d699a75d3d6d302eedb5411baf7e267fcf186bd73",
+        "hand_carry": "95a1321904cfae3ff6770f0c4a29fb0188be1c0d24fc98bb2af3d1a2b99dc7e5",
+        "hand_bite": "194e2b8ed20be54d77522a676c7dc606347dc0215f72d66e744500df138b98e6",
+        "hand_kick": "0edcd13d17c52f58ca42e4e37a73d739ae4e51ab3201a76eeac7884c523551fe",
+        "hand_grab": "724b965f1ed2b48eaa973f7aed591ce4e51d624def12620eaf8989feaef56bd6",
+        "hand_watch": "705d9195b397ba4603ca885ed93566d29d3653bd77b664f077bd3fd029853d66",
+        "hand_ambig_2anim": "e17159f4a1b92e6bb63c1f6f366617564a5262ba2d37f5886e904662f4ff15c4",
+        "hand_ambig_2inan": "c67cfdc1fc1fbb0d5a04ec73c52e90fbbf980ca445f6675345a00730b5f671fc",
+        "noun_anim_monkey": "1ce1dd0a2f28e31413b8760b3534b0c46cf7b6d2a0e493387d4f0be69359d257",
+        "noun_anim_rabbit": "ebab24ee76a04b0c309edb16d0a2502563fae14ac910b55cbde056e05f780513",
+        "noun_anim_kitten": "983e7586952f6051be55966ce5c8456aae7bf94a430f5acc939806e09ba50e18",
+        "noun_inanim_box": "4ed2cb30427d92fd7382f820bc4ff0c4615bfe304d99649c6cfd398a4a1e9d8e",
+        "noun_inanim_table": "7fdc1bb471be5f9b830b8d6ea2945bbfd6f049f3c226e29635eb2c54ded58e07",
+        "noun_inanim_key": "ae10dcd277353ad5f96d40e21954e8f85dba6e9e4b8f8ce635d59458c8be8041",
+        "verb_inanimpat_clean": "ab6c58a562b14355ee0023518b145ed2d4b0dfbc9ab14b3c57db6ea0e2ba573f",
+        "verb_inanimpat_wash": "8bd77e688511195faa37fb165372121ead4ccbcff8a590a5142944af6f190080",
+        "verb_inanimpat_open": "516a79e7ad3969ca6879892140d9a42b96fc67ed055b6de57fb66355c8691566",
+        "verb_animpat_help": "593fdf7cde177ee63c9d414452851066b09685d0672f98db85d8f4d6cc99154a",
+        "verb_animpat_hug": "54daa621d93d6c23c45e6c4dc9d6e54b699c56a420a1fbf4559a23637576d5b9",
+        "verb_animpat_feed": "356e6a594ecb0f1518f95d19c93256bb1f90c57abc19270bb1200101f03a2879",
+        "joint_monkey_clean_box": "0dba7398a9cea4ac49920ecc30ec56832434b27337fa4f458738588fbca50350",
+        "joint_rabbit_help_kitten": "b0e626d6e3d73cac3e3ffb217573babc326e8772fe457849cf9a77f38990fa6c",
+        "moat_oov": "c3b384cd0b2071b5be9b8041e5d754526663f5c73d98d15a904fa7e4a4c30e59"
+      },
+      "reply_margins": {
+        "hand_chase": 0.07152777777777777,
+        "hand_eat": 0.3333333333333333,
+        "hand_push": 0.3333333333333333,
+        "hand_carry": 0.3333333333333333,
+        "hand_bite": 0.3333333333333333,
+        "hand_kick": 0.3333333333333333,
+        "hand_grab": 0.3333333333333333,
+        "hand_watch": 0.07152777777777777,
+        "hand_ambig_2anim": 0.07152777777777777,
+        "hand_ambig_2inan": 0.12638888888888888,
+        "noun_anim_monkey": 0.3333333333333333,
+        "noun_anim_rabbit": 0.3333333333333333,
+        "noun_anim_kitten": 0.3333333333333333,
+        "noun_inanim_box": 0.3333333333333333,
+        "noun_inanim_table": 0.3333333333333333,
+        "noun_inanim_key": 0.3333333333333333,
+        "verb_inanimpat_clean": 0.3333333333333333,
+        "verb_inanimpat_wash": 0.3333333333333333,
+        "verb_inanimpat_open": 0.3333333333333333,
+        "verb_animpat_help": 0.07152777777777777,
+        "verb_animpat_hug": 0.07152777777777777,
+        "verb_animpat_feed": 0.07152777777777777,
+        "joint_monkey_clean_box": 0.3333333333333333,
+        "joint_rabbit_help_kitten": 0.07152777777777777,
+        "moat_oov": 0.0
+      },
+      "reply_competent": {
+        "hand_chase": true,
+        "hand_eat": true,
+        "hand_push": true,
+        "hand_carry": true,
+        "hand_bite": true,
+        "hand_kick": true,
+        "hand_grab": true,
+        "hand_watch": true,
+        "hand_ambig_2anim": true,
+        "hand_ambig_2inan": true,
+        "noun_anim_monkey": true,
+        "noun_anim_rabbit": true,
+        "noun_anim_kitten": true,
+        "noun_inanim_box": true,
+        "noun_inanim_table": true,
+        "noun_inanim_key": true,
+        "verb_inanimpat_clean": true,
+        "verb_inanimpat_wash": true,
+        "verb_inanimpat_open": true,
+        "verb_animpat_help": true,
+        "verb_animpat_hug": true,
+        "verb_animpat_feed": true,
+        "joint_monkey_clean_box": true,
+        "joint_rabbit_help_kitten": true,
+        "moat_oov": true
+      }
+    },
+    {
+      "seed": 7,
+      "arm": "on",
+      "enforced": true,
+      "backend": "numpy",
+      "device": "cpu",
+      "elapsed_seconds": 11.68,
+      "n_items": 25,
+      "sim_steps": 0,
+      "nnz_pre": 24764,
+      "nnz_post": 24764,
+      "csr_data_array_rebuilt_times": 0,
+      "config": {
+        "enable_hebbian_learning": true,
+        "enable_stdp": false,
+        "enable_structural_plasticity": false,
+        "enable_reward_modulation": false,
+        "enable_homeostasis": false,
+        "hebbian_rate_window": false,
+        "enforce_plastic_mask_in_hebbian": false,
+        "enforce_plastic_mask_beyond_hebbian": false
+      },
+      "organ": "standalone",
+      "tap": "off",
+      "experiment_engine_plasticity_this_phase": null,
+      "mask_len_pre": 24764,
+      "frozen_synapses_pre": 1724,
+      "total_writes": 0,
+      "frozen_drift_regions": {},
+      "stores_delta": {
+        "cp_plasticity_rate_gain": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_transmission_gain": {
+          "present": false
+        },
+        "cp_synapse_plastic_mask": {
+          "present": true,
+          "label_flips": 0
+        },
+        "cp_eligibility_trace": {
+          "present": false
+        },
+        "cp_hebb_coactivity_trace": {
+          "present": false
+        },
+        "cp_conductance_g_nmda": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_nmda_rise": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_nmda_recurrent": {
+          "present": false
+        },
+        "cp_conductance_g_e": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_i": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_gabab": {
+          "present": false
+        },
+        "cp_neuron_firing_thresholds": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_neuron_activity_ema": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        }
+      },
+      "coordinate_drift": {
+        "synapses_comparable_pre_post": 24764,
+        "csr_rebuilds": 0,
+        "frozen_labelled_synapses": 1724,
+        "frozen_max_abs_drift": 0.0,
+        "frozen_sum_abs_drift": 0.0,
+        "frozen_signed_drift": 0.0,
+        "frozen_synapses_drifted": 0,
+        "plastic_max_abs_drift": 0.0,
+        "plastic_sum_abs_drift": 0.0,
+        "plastic_synapses_drifted": 0,
+        "completeness_residual_signed": 0.0,
+        "completeness_residual_abs": 0.0,
+        "mask_labels_changed_by_rebuild": 0
+      },
+      "battery_digest": "c2a70eb1ecad0777553f7d1caea4265f21e2640d4a3c1f2bb5bb3d8392eaf72d",
+      "battery_items": {
+        "hand_chase": "18ea5ec7feb19e8a40157f015a9da4fb3e5c75f29b419186e6c852da6fc9c7a4",
+        "hand_eat": "cbd9655e0b757d3ed1f4c37f6d4e82fd1fc06406d7704bceb6e3f73be1b927a2",
+        "hand_push": "72ef2753bcbb6fb60c5dd50d699a75d3d6d302eedb5411baf7e267fcf186bd73",
+        "hand_carry": "95a1321904cfae3ff6770f0c4a29fb0188be1c0d24fc98bb2af3d1a2b99dc7e5",
+        "hand_bite": "194e2b8ed20be54d77522a676c7dc606347dc0215f72d66e744500df138b98e6",
+        "hand_kick": "0edcd13d17c52f58ca42e4e37a73d739ae4e51ab3201a76eeac7884c523551fe",
+        "hand_grab": "724b965f1ed2b48eaa973f7aed591ce4e51d624def12620eaf8989feaef56bd6",
+        "hand_watch": "705d9195b397ba4603ca885ed93566d29d3653bd77b664f077bd3fd029853d66",
+        "hand_ambig_2anim": "e17159f4a1b92e6bb63c1f6f366617564a5262ba2d37f5886e904662f4ff15c4",
+        "hand_ambig_2inan": "c67cfdc1fc1fbb0d5a04ec73c52e90fbbf980ca445f6675345a00730b5f671fc",
+        "noun_anim_monkey": "1ce1dd0a2f28e31413b8760b3534b0c46cf7b6d2a0e493387d4f0be69359d257",
+        "noun_anim_rabbit": "ebab24ee76a04b0c309edb16d0a2502563fae14ac910b55cbde056e05f780513",
+        "noun_anim_kitten": "983e7586952f6051be55966ce5c8456aae7bf94a430f5acc939806e09ba50e18",
+        "noun_inanim_box": "4ed2cb30427d92fd7382f820bc4ff0c4615bfe304d99649c6cfd398a4a1e9d8e",
+        "noun_inanim_table": "7fdc1bb471be5f9b830b8d6ea2945bbfd6f049f3c226e29635eb2c54ded58e07",
+        "noun_inanim_key": "ae10dcd277353ad5f96d40e21954e8f85dba6e9e4b8f8ce635d59458c8be8041",
+        "verb_inanimpat_clean": "ab6c58a562b14355ee0023518b145ed2d4b0dfbc9ab14b3c57db6ea0e2ba573f",
+        "verb_inanimpat_wash": "8bd77e688511195faa37fb165372121ead4ccbcff8a590a5142944af6f190080",
+        "verb_inanimpat_open": "516a79e7ad3969ca6879892140d9a42b96fc67ed055b6de57fb66355c8691566",
+        "verb_animpat_help": "593fdf7cde177ee63c9d414452851066b09685d0672f98db85d8f4d6cc99154a",
+        "verb_animpat_hug": "54daa621d93d6c23c45e6c4dc9d6e54b699c56a420a1fbf4559a23637576d5b9",
+        "verb_animpat_feed": "356e6a594ecb0f1518f95d19c93256bb1f90c57abc19270bb1200101f03a2879",
+        "joint_monkey_clean_box": "0dba7398a9cea4ac49920ecc30ec56832434b27337fa4f458738588fbca50350",
+        "joint_rabbit_help_kitten": "b0e626d6e3d73cac3e3ffb217573babc326e8772fe457849cf9a77f38990fa6c",
+        "moat_oov": "c3b384cd0b2071b5be9b8041e5d754526663f5c73d98d15a904fa7e4a4c30e59"
+      },
+      "reply_margins": {
+        "hand_chase": 0.07152777777777777,
+        "hand_eat": 0.3333333333333333,
+        "hand_push": 0.3333333333333333,
+        "hand_carry": 0.3333333333333333,
+        "hand_bite": 0.3333333333333333,
+        "hand_kick": 0.3333333333333333,
+        "hand_grab": 0.3333333333333333,
+        "hand_watch": 0.07152777777777777,
+        "hand_ambig_2anim": 0.07152777777777777,
+        "hand_ambig_2inan": 0.12638888888888888,
+        "noun_anim_monkey": 0.3333333333333333,
+        "noun_anim_rabbit": 0.3333333333333333,
+        "noun_anim_kitten": 0.3333333333333333,
+        "noun_inanim_box": 0.3333333333333333,
+        "noun_inanim_table": 0.3333333333333333,
+        "noun_inanim_key": 0.3333333333333333,
+        "verb_inanimpat_clean": 0.3333333333333333,
+        "verb_inanimpat_wash": 0.3333333333333333,
+        "verb_inanimpat_open": 0.3333333333333333,
+        "verb_animpat_help": 0.07152777777777777,
+        "verb_animpat_hug": 0.07152777777777777,
+        "verb_animpat_feed": 0.07152777777777777,
+        "joint_monkey_clean_box": 0.3333333333333333,
+        "joint_rabbit_help_kitten": 0.07152777777777777,
+        "moat_oov": 0.0
+      },
+      "reply_competent": {
+        "hand_chase": true,
+        "hand_eat": true,
+        "hand_push": true,
+        "hand_carry": true,
+        "hand_bite": true,
+        "hand_kick": true,
+        "hand_grab": true,
+        "hand_watch": true,
+        "hand_ambig_2anim": true,
+        "hand_ambig_2inan": true,
+        "noun_anim_monkey": true,
+        "noun_anim_rabbit": true,
+        "noun_anim_kitten": true,
+        "noun_inanim_box": true,
+        "noun_inanim_table": true,
+        "noun_inanim_key": true,
+        "verb_inanimpat_clean": true,
+        "verb_inanimpat_wash": true,
+        "verb_inanimpat_open": true,
+        "verb_animpat_help": true,
+        "verb_animpat_hug": true,
+        "verb_animpat_feed": true,
+        "joint_monkey_clean_box": true,
+        "joint_rabbit_help_kitten": true,
+        "moat_oov": true
+      }
+    },
+    {
+      "seed": 8,
+      "arm": "off",
+      "enforced": false,
+      "backend": "numpy",
+      "device": "cpu",
+      "elapsed_seconds": 13.16,
+      "n_items": 25,
+      "sim_steps": 11314,
+      "nnz_pre": 24740,
+      "nnz_post": 24740,
+      "csr_data_array_rebuilt_times": 5950,
+      "config": {
+        "enable_hebbian_learning": true,
+        "enable_stdp": false,
+        "enable_structural_plasticity": false,
+        "enable_reward_modulation": false,
+        "enable_homeostasis": false,
+        "hebbian_rate_window": false,
+        "enforce_plastic_mask_in_hebbian": false,
+        "enforce_plastic_mask_beyond_hebbian": false
+      },
+      "organ": "standalone",
+      "tap": "on",
+      "experiment_engine_plasticity_this_phase": null,
+      "mask_len_pre": 24740,
+      "frozen_synapses_pre": 1700,
+      "total_writes": 10384,
+      "frozen_drift_regions": {
+        "sel_patient -> sel_patient": {
+          "synapses": 298,
+          "max_abs_drift": 56.302745804190636
+        },
+        "sel_patient -> sel_FS_patient": {
+          "synapses": 288,
+          "max_abs_drift": 21.721784591674805
+        },
+        "sel_FS_patient -> sel_agent": {
+          "synapses": 288,
+          "max_abs_drift": 25.480268478393555
+        },
+        "sel_FS_agent -> sel_patient": {
+          "synapses": 288,
+          "max_abs_drift": 39.18929958343506
+        },
+        "sel_agent -> sel_FS_agent": {
+          "synapses": 288,
+          "max_abs_drift": 35.37827491760254
+        },
+        "sel_agent -> sel_agent": {
+          "synapses": 250,
+          "max_abs_drift": 58.484493270516396
+        }
+      },
+      "stores_delta": {
+        "cp_plasticity_rate_gain": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_transmission_gain": {
+          "present": false
+        },
+        "cp_synapse_plastic_mask": {
+          "present": true,
+          "label_flips": 0
+        },
+        "cp_eligibility_trace": {
+          "present": false
+        },
+        "cp_hebb_coactivity_trace": {
+          "present": false
+        },
+        "cp_conductance_g_nmda": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_nmda_rise": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_nmda_recurrent": {
+          "present": false
+        },
+        "cp_conductance_g_e": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_i": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_gabab": {
+          "present": false
+        },
+        "cp_neuron_firing_thresholds": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_neuron_activity_ema": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        }
+      },
+      "coordinate_drift": {
+        "synapses_comparable_pre_post": 24740,
+        "csr_rebuilds": 0,
+        "frozen_labelled_synapses": 1700,
+        "frozen_max_abs_drift": 58.484493270516396,
+        "frozen_sum_abs_drift": 27802.85555997491,
+        "frozen_signed_drift": 27685.34161734581,
+        "frozen_synapses_drifted": 1700,
+        "plastic_max_abs_drift": 0.0,
+        "plastic_sum_abs_drift": 0.0,
+        "plastic_synapses_drifted": 0,
+        "completeness_residual_signed": 0.0,
+        "completeness_residual_abs": 6548.000384,
+        "mask_labels_changed_by_rebuild": 0
+      },
+      "battery_digest": "b276ce49b439cd746d14b0926a9edace0260c3afd2c9e642a71f4f5a383f8f28",
+      "battery_items": {
+        "hand_chase": "d3dd49a2c7ab59b49a3284b243e247bf37417ad5838e78594a177b3a954171ee",
+        "hand_eat": "dd0ac895b92322d5dc0384c93dcb519507db74914ad8edfac68f1f62fd11300e",
+        "hand_push": "089adf2c4e62ee3e74a7b9b589e2f0f8da1b9e1e8cd3c715036e58e5fb608aea",
+        "hand_carry": "ad6e94d48214dcd64fa11be4264038aebb8b54f9433b800a5f283df9c75e41be",
+        "hand_bite": "180024600aa1c306a4778c710b30368303fd2138e335d1cfa014511321964952",
+        "hand_kick": "189266a372729b05c5b5f4e6b3531a0fdf3f784807a061c3c461d98e4250e856",
+        "hand_grab": "ace60f651f53e3e50c21fd80f2a7c99ecba194d53c4f61276b2ae5b85516140c",
+        "hand_watch": "98f101df2ef666a8eb9d6a20abc9e9b30e89c97f4ed8a3f8a8f9c466726ab11f",
+        "hand_ambig_2anim": "d4e88ed26b3064a83821ef13c36274b6304f5920f9477e81110640087fea8fe1",
+        "hand_ambig_2inan": "6d62d31dc230ecbd4ff4d19b592370e5bb82d828d832c9820898b6b7e5adf244",
+        "noun_anim_monkey": "4be465af4678a2a2ecd33ec15192c05629e31afe47a7b7044c38c9278077d026",
+        "noun_anim_rabbit": "f7d325ed6889d6a1af385cc12066bc94cbcd732ba27e8784da21414be0252ea3",
+        "noun_anim_kitten": "375cc00b93547063fd71a1c0311c957e3f4cc20aa5d99e0154b739cb0ada3302",
+        "noun_inanim_box": "0ce4b92a91cf080c8ce0477a054b5a432f36dd6d60b7a61ff286c4b1aff8a7e5",
+        "noun_inanim_table": "24defa124c82528408f9c08782e8d3a04d8d6d8f2debc3c8bcde571a251e0340",
+        "noun_inanim_key": "28a131d9c68ec16d1b09d46fb771116bef6c15c19944ea45835213cc28a140ad",
+        "verb_inanimpat_clean": "80788eb9c628edb9ef5972295021fde82614f19f04ff93fea3e7f0d7f974ef24",
+        "verb_inanimpat_wash": "3923246c057bd7ade2a33db5cbbdffcadebd147090bdbba40d3cf75fb0b8eceb",
+        "verb_inanimpat_open": "d3faf184293ca12cfc94e7655256206eb662e94593496bbf3806b4efb2ba0a85",
+        "verb_animpat_help": "d40a43ccdb00ea98d16a37d0f6e1505ef56379c1a3a2752c0f56e111322c5271",
+        "verb_animpat_hug": "0c96ff2007f764f7ce61978c355d68072dddd292ca6646738aee83b89f874257",
+        "verb_animpat_feed": "1e8679d26aab357bcde2e7be1cd28d700165ba48f01f185b1874fbb17c710e5a",
+        "joint_monkey_clean_box": "2cfdb8c5bc4db4998be6b5b864921e15457dedad97c1e40474f6ca76115910f2",
+        "joint_rabbit_help_kitten": "0aa17aac8a067c0abcdab1fc050410f7cd92ad9c0afb1fe4e3ae6abd5a9e07f9",
+        "moat_oov": "605f2099f962c90a8dbf45bdf3cce3f85d34c187b9054f10c368dc3f9f6e576f"
+      },
+      "reply_margins": {
+        "hand_chase": 0.09166666666666666,
+        "hand_eat": 0.3125,
+        "hand_push": 0.32430555555555557,
+        "hand_carry": 0.3243055555555555,
+        "hand_bite": 0.32430555555555557,
+        "hand_kick": 0.3340277777777778,
+        "hand_grab": 0.32499999999999996,
+        "hand_watch": 0.09166666666666667,
+        "hand_ambig_2anim": 0.09375,
+        "hand_ambig_2inan": 0.14027777777777775,
+        "noun_anim_monkey": 0.3194444444444444,
+        "noun_anim_rabbit": 0.3104166666666667,
+        "noun_anim_kitten": 0.3041666666666667,
+        "noun_inanim_box": 0.3263888888888889,
+        "noun_inanim_table": 0.31875,
+        "noun_inanim_key": 0.3222222222222222,
+        "verb_inanimpat_clean": 0.32499999999999996,
+        "verb_inanimpat_wash": 0.3284722222222222,
+        "verb_inanimpat_open": 0.3194444444444444,
+        "verb_animpat_help": 0.10833333333333334,
+        "verb_animpat_hug": 0.10555555555555557,
+        "verb_animpat_feed": 0.10277777777777777,
+        "joint_monkey_clean_box": 0.3284722222222222,
+        "joint_rabbit_help_kitten": 0.10625000000000001,
+        "moat_oov": 0.0
+      },
+      "reply_competent": {
+        "hand_chase": true,
+        "hand_eat": true,
+        "hand_push": true,
+        "hand_carry": true,
+        "hand_bite": true,
+        "hand_kick": true,
+        "hand_grab": true,
+        "hand_watch": true,
+        "hand_ambig_2anim": true,
+        "hand_ambig_2inan": true,
+        "noun_anim_monkey": true,
+        "noun_anim_rabbit": true,
+        "noun_anim_kitten": true,
+        "noun_inanim_box": true,
+        "noun_inanim_table": true,
+        "noun_inanim_key": true,
+        "verb_inanimpat_clean": true,
+        "verb_inanimpat_wash": true,
+        "verb_inanimpat_open": true,
+        "verb_animpat_help": true,
+        "verb_animpat_hug": true,
+        "verb_animpat_feed": true,
+        "joint_monkey_clean_box": true,
+        "joint_rabbit_help_kitten": true,
+        "moat_oov": true
+      }
+    },
+    {
+      "seed": 8,
+      "arm": "off",
+      "enforced": false,
+      "backend": "numpy",
+      "device": "cpu",
+      "elapsed_seconds": 10.66,
+      "n_items": 25,
+      "sim_steps": 0,
+      "nnz_pre": 24740,
+      "nnz_post": 24740,
+      "csr_data_array_rebuilt_times": 0,
+      "config": {
+        "enable_hebbian_learning": true,
+        "enable_stdp": false,
+        "enable_structural_plasticity": false,
+        "enable_reward_modulation": false,
+        "enable_homeostasis": false,
+        "hebbian_rate_window": false,
+        "enforce_plastic_mask_in_hebbian": false,
+        "enforce_plastic_mask_beyond_hebbian": false
+      },
+      "organ": "standalone",
+      "tap": "off",
+      "experiment_engine_plasticity_this_phase": null,
+      "mask_len_pre": 24740,
+      "frozen_synapses_pre": 1700,
+      "total_writes": 0,
+      "frozen_drift_regions": {
+        "sel_patient -> sel_patient": {
+          "synapses": 298,
+          "max_abs_drift": 56.302745804190636
+        },
+        "sel_patient -> sel_FS_patient": {
+          "synapses": 288,
+          "max_abs_drift": 21.721784591674805
+        },
+        "sel_FS_patient -> sel_agent": {
+          "synapses": 288,
+          "max_abs_drift": 25.480268478393555
+        },
+        "sel_FS_agent -> sel_patient": {
+          "synapses": 288,
+          "max_abs_drift": 39.18929958343506
+        },
+        "sel_agent -> sel_FS_agent": {
+          "synapses": 288,
+          "max_abs_drift": 35.37827491760254
+        },
+        "sel_agent -> sel_agent": {
+          "synapses": 250,
+          "max_abs_drift": 58.484493270516396
+        }
+      },
+      "stores_delta": {
+        "cp_plasticity_rate_gain": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_transmission_gain": {
+          "present": false
+        },
+        "cp_synapse_plastic_mask": {
+          "present": true,
+          "label_flips": 0
+        },
+        "cp_eligibility_trace": {
+          "present": false
+        },
+        "cp_hebb_coactivity_trace": {
+          "present": false
+        },
+        "cp_conductance_g_nmda": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_nmda_rise": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_nmda_recurrent": {
+          "present": false
+        },
+        "cp_conductance_g_e": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_i": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_gabab": {
+          "present": false
+        },
+        "cp_neuron_firing_thresholds": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_neuron_activity_ema": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        }
+      },
+      "coordinate_drift": {
+        "synapses_comparable_pre_post": 24740,
+        "csr_rebuilds": 0,
+        "frozen_labelled_synapses": 1700,
+        "frozen_max_abs_drift": 58.484493270516396,
+        "frozen_sum_abs_drift": 27802.85555997491,
+        "frozen_signed_drift": 27685.34161734581,
+        "frozen_synapses_drifted": 1700,
+        "plastic_max_abs_drift": 0.0,
+        "plastic_sum_abs_drift": 0.0,
+        "plastic_synapses_drifted": 0,
+        "completeness_residual_signed": -27685.341617,
+        "completeness_residual_abs": -27802.85556,
+        "mask_labels_changed_by_rebuild": 0
+      },
+      "battery_digest": "b276ce49b439cd746d14b0926a9edace0260c3afd2c9e642a71f4f5a383f8f28",
+      "battery_items": {
+        "hand_chase": "d3dd49a2c7ab59b49a3284b243e247bf37417ad5838e78594a177b3a954171ee",
+        "hand_eat": "dd0ac895b92322d5dc0384c93dcb519507db74914ad8edfac68f1f62fd11300e",
+        "hand_push": "089adf2c4e62ee3e74a7b9b589e2f0f8da1b9e1e8cd3c715036e58e5fb608aea",
+        "hand_carry": "ad6e94d48214dcd64fa11be4264038aebb8b54f9433b800a5f283df9c75e41be",
+        "hand_bite": "180024600aa1c306a4778c710b30368303fd2138e335d1cfa014511321964952",
+        "hand_kick": "189266a372729b05c5b5f4e6b3531a0fdf3f784807a061c3c461d98e4250e856",
+        "hand_grab": "ace60f651f53e3e50c21fd80f2a7c99ecba194d53c4f61276b2ae5b85516140c",
+        "hand_watch": "98f101df2ef666a8eb9d6a20abc9e9b30e89c97f4ed8a3f8a8f9c466726ab11f",
+        "hand_ambig_2anim": "d4e88ed26b3064a83821ef13c36274b6304f5920f9477e81110640087fea8fe1",
+        "hand_ambig_2inan": "6d62d31dc230ecbd4ff4d19b592370e5bb82d828d832c9820898b6b7e5adf244",
+        "noun_anim_monkey": "4be465af4678a2a2ecd33ec15192c05629e31afe47a7b7044c38c9278077d026",
+        "noun_anim_rabbit": "f7d325ed6889d6a1af385cc12066bc94cbcd732ba27e8784da21414be0252ea3",
+        "noun_anim_kitten": "375cc00b93547063fd71a1c0311c957e3f4cc20aa5d99e0154b739cb0ada3302",
+        "noun_inanim_box": "0ce4b92a91cf080c8ce0477a054b5a432f36dd6d60b7a61ff286c4b1aff8a7e5",
+        "noun_inanim_table": "24defa124c82528408f9c08782e8d3a04d8d6d8f2debc3c8bcde571a251e0340",
+        "noun_inanim_key": "28a131d9c68ec16d1b09d46fb771116bef6c15c19944ea45835213cc28a140ad",
+        "verb_inanimpat_clean": "80788eb9c628edb9ef5972295021fde82614f19f04ff93fea3e7f0d7f974ef24",
+        "verb_inanimpat_wash": "3923246c057bd7ade2a33db5cbbdffcadebd147090bdbba40d3cf75fb0b8eceb",
+        "verb_inanimpat_open": "d3faf184293ca12cfc94e7655256206eb662e94593496bbf3806b4efb2ba0a85",
+        "verb_animpat_help": "d40a43ccdb00ea98d16a37d0f6e1505ef56379c1a3a2752c0f56e111322c5271",
+        "verb_animpat_hug": "0c96ff2007f764f7ce61978c355d68072dddd292ca6646738aee83b89f874257",
+        "verb_animpat_feed": "1e8679d26aab357bcde2e7be1cd28d700165ba48f01f185b1874fbb17c710e5a",
+        "joint_monkey_clean_box": "2cfdb8c5bc4db4998be6b5b864921e15457dedad97c1e40474f6ca76115910f2",
+        "joint_rabbit_help_kitten": "0aa17aac8a067c0abcdab1fc050410f7cd92ad9c0afb1fe4e3ae6abd5a9e07f9",
+        "moat_oov": "605f2099f962c90a8dbf45bdf3cce3f85d34c187b9054f10c368dc3f9f6e576f"
+      },
+      "reply_margins": {
+        "hand_chase": 0.09166666666666666,
+        "hand_eat": 0.3125,
+        "hand_push": 0.32430555555555557,
+        "hand_carry": 0.3243055555555555,
+        "hand_bite": 0.32430555555555557,
+        "hand_kick": 0.3340277777777778,
+        "hand_grab": 0.32499999999999996,
+        "hand_watch": 0.09166666666666667,
+        "hand_ambig_2anim": 0.09375,
+        "hand_ambig_2inan": 0.14027777777777775,
+        "noun_anim_monkey": 0.3194444444444444,
+        "noun_anim_rabbit": 0.3104166666666667,
+        "noun_anim_kitten": 0.3041666666666667,
+        "noun_inanim_box": 0.3263888888888889,
+        "noun_inanim_table": 0.31875,
+        "noun_inanim_key": 0.3222222222222222,
+        "verb_inanimpat_clean": 0.32499999999999996,
+        "verb_inanimpat_wash": 0.3284722222222222,
+        "verb_inanimpat_open": 0.3194444444444444,
+        "verb_animpat_help": 0.10833333333333334,
+        "verb_animpat_hug": 0.10555555555555557,
+        "verb_animpat_feed": 0.10277777777777777,
+        "joint_monkey_clean_box": 0.3284722222222222,
+        "joint_rabbit_help_kitten": 0.10625000000000001,
+        "moat_oov": 0.0
+      },
+      "reply_competent": {
+        "hand_chase": true,
+        "hand_eat": true,
+        "hand_push": true,
+        "hand_carry": true,
+        "hand_bite": true,
+        "hand_kick": true,
+        "hand_grab": true,
+        "hand_watch": true,
+        "hand_ambig_2anim": true,
+        "hand_ambig_2inan": true,
+        "noun_anim_monkey": true,
+        "noun_anim_rabbit": true,
+        "noun_anim_kitten": true,
+        "noun_inanim_box": true,
+        "noun_inanim_table": true,
+        "noun_inanim_key": true,
+        "verb_inanimpat_clean": true,
+        "verb_inanimpat_wash": true,
+        "verb_inanimpat_open": true,
+        "verb_animpat_help": true,
+        "verb_animpat_hug": true,
+        "verb_animpat_feed": true,
+        "joint_monkey_clean_box": true,
+        "joint_rabbit_help_kitten": true,
+        "moat_oov": true
+      }
+    },
+    {
+      "seed": 8,
+      "arm": "on",
+      "enforced": true,
+      "backend": "numpy",
+      "device": "cpu",
+      "elapsed_seconds": 11.14,
+      "n_items": 25,
+      "sim_steps": 11314,
+      "nnz_pre": 24740,
+      "nnz_post": 24740,
+      "csr_data_array_rebuilt_times": 5928,
+      "config": {
+        "enable_hebbian_learning": true,
+        "enable_stdp": false,
+        "enable_structural_plasticity": false,
+        "enable_reward_modulation": false,
+        "enable_homeostasis": false,
+        "hebbian_rate_window": false,
+        "enforce_plastic_mask_in_hebbian": false,
+        "enforce_plastic_mask_beyond_hebbian": false
+      },
+      "organ": "standalone",
+      "tap": "on",
+      "experiment_engine_plasticity_this_phase": null,
+      "mask_len_pre": 24740,
+      "frozen_synapses_pre": 1700,
+      "total_writes": 0,
+      "frozen_drift_regions": {},
+      "stores_delta": {
+        "cp_plasticity_rate_gain": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_transmission_gain": {
+          "present": false
+        },
+        "cp_synapse_plastic_mask": {
+          "present": true,
+          "label_flips": 0
+        },
+        "cp_eligibility_trace": {
+          "present": false
+        },
+        "cp_hebb_coactivity_trace": {
+          "present": false
+        },
+        "cp_conductance_g_nmda": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_nmda_rise": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_nmda_recurrent": {
+          "present": false
+        },
+        "cp_conductance_g_e": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_i": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_gabab": {
+          "present": false
+        },
+        "cp_neuron_firing_thresholds": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_neuron_activity_ema": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        }
+      },
+      "coordinate_drift": {
+        "synapses_comparable_pre_post": 24740,
+        "csr_rebuilds": 0,
+        "frozen_labelled_synapses": 1700,
+        "frozen_max_abs_drift": 0.0,
+        "frozen_sum_abs_drift": 0.0,
+        "frozen_signed_drift": 0.0,
+        "frozen_synapses_drifted": 0,
+        "plastic_max_abs_drift": 0.0,
+        "plastic_sum_abs_drift": 0.0,
+        "plastic_synapses_drifted": 0,
+        "completeness_residual_signed": 0.0,
+        "completeness_residual_abs": 0.0,
+        "mask_labels_changed_by_rebuild": 0
+      },
+      "battery_digest": "ff4d88f1667862c84ee9621609c4b177aed37ca547884b11da55d938f013aa28",
+      "battery_items": {
+        "hand_chase": "8756ae10463e45ce31b3ee4dc49b4fa34b9589454ee92e5dab6e6e9d85ec32fe",
+        "hand_eat": "83ec3e72bcb566371886ba011bf8035c3cc3251e58d32990d3715d18badada40",
+        "hand_push": "14e72f3696b2ae0b3352fe5326bf164f32633c6c20ae1c3f91bf094d5bbfdb21",
+        "hand_carry": "b2a5abe3744f36e328f9a77e639cc7a60f886d01c3bfe356ffe9e302e548ef1a",
+        "hand_bite": "50bfc5789fbc3e9d19532ab399b9ac921959e9db7988e2aa4f68bd79c2c3ac7d",
+        "hand_kick": "99b627ddae39ea90ce728c68c63ca98fa077f69c7aa5fa2edfc67a5938573af9",
+        "hand_grab": "8a3efc5c4ebea782d774ca5a89cec2f3c0070004941fddc86d379cef9684dc04",
+        "hand_watch": "ea8c58ffbe9c3c07315d379e86fd04dcdd61e60eb84a465977706959780f5d08",
+        "hand_ambig_2anim": "dafff962e0d7bff5895f7243b2778117c5f77ce0199335b0267375c6216a3881",
+        "hand_ambig_2inan": "cc4590650c2c9a3af528defb2416427a4bb04b95d839a8db7b58a376544c914d",
+        "noun_anim_monkey": "1036ced396b2345fff8a8fcf9dbc9ab660cbbfd84c88b80eac37005a3827985d",
+        "noun_anim_rabbit": "def71bca089193cadcbc7a1d83f4ea9ea568601e65e648390e6ec6eee47b08ae",
+        "noun_anim_kitten": "9ce8ae1f19ffd3514a78faa677fca23388bd4862961804c82a66f78e72aaa338",
+        "noun_inanim_box": "79d16043d47a7797e2fd0cec48dab6f94fe4a7d92474b19fe3fd555b4d66b38a",
+        "noun_inanim_table": "fc03d958c4dfef4d9136eb3f74fbde2ef66e3c2a28a59e9ea894a191784d8a38",
+        "noun_inanim_key": "d9fff0186fdfcb3e5adba24aead0047af3feee724b9709400c7f61fd890a7b53",
+        "verb_inanimpat_clean": "71274e4145925d346eaa41e09c4eaf6f0904e91a355c9e6995feeb96a112d657",
+        "verb_inanimpat_wash": "6921da1eb6e383644d3c1bc5332988dcb12b3c6ce85cc549d500de396ca07ffa",
+        "verb_inanimpat_open": "5c630e3e7140dc1cf8ea7fa1950d76f9edf81b7820738b561c26607b1ae0eab4",
+        "verb_animpat_help": "30433c56f4542176e132b14293e1ff132b64e7b8869150d864e829bdc5b1e4c7",
+        "verb_animpat_hug": "5b5785c70950a6e044d69f446288c106fc2099fc8e7b77e1af49304ff7a76dbb",
+        "verb_animpat_feed": "5e3c557646cfdc186c6f98a76fb0cb5595ccc8491888a91cc4675c9c53f4003c",
+        "joint_monkey_clean_box": "e21f4d02904c850e5b1b2a79d86811a3d2cb3d048da1f9c0297f575b076fce0a",
+        "joint_rabbit_help_kitten": "5aa6bc95d070228de04948d71be8e4108b62f939e686901b9c1c5db69a1890f1",
+        "moat_oov": "df8800f2a0be1dabda54da98261bfeba69eb2b84459b7e00d08a6d0743f14b43"
+      },
+      "reply_margins": {
+        "hand_chase": 0.07083333333333333,
+        "hand_eat": 0.3277777777777778,
+        "hand_push": 0.3277777777777778,
+        "hand_carry": 0.3277777777777778,
+        "hand_bite": 0.3277777777777778,
+        "hand_kick": 0.3277777777777778,
+        "hand_grab": 0.3277777777777778,
+        "hand_watch": 0.07083333333333333,
+        "hand_ambig_2anim": 0.07083333333333333,
+        "hand_ambig_2inan": 0.1270833333333333,
+        "noun_anim_monkey": 0.3277777777777778,
+        "noun_anim_rabbit": 0.3277777777777778,
+        "noun_anim_kitten": 0.3277777777777778,
+        "noun_inanim_box": 0.3277777777777778,
+        "noun_inanim_table": 0.3277777777777778,
+        "noun_inanim_key": 0.3277777777777778,
+        "verb_inanimpat_clean": 0.3277777777777778,
+        "verb_inanimpat_wash": 0.3277777777777778,
+        "verb_inanimpat_open": 0.3277777777777778,
+        "verb_animpat_help": 0.07083333333333333,
+        "verb_animpat_hug": 0.07083333333333333,
+        "verb_animpat_feed": 0.07083333333333333,
+        "joint_monkey_clean_box": 0.3277777777777778,
+        "joint_rabbit_help_kitten": 0.07083333333333333,
+        "moat_oov": 0.0
+      },
+      "reply_competent": {
+        "hand_chase": true,
+        "hand_eat": true,
+        "hand_push": true,
+        "hand_carry": true,
+        "hand_bite": true,
+        "hand_kick": true,
+        "hand_grab": true,
+        "hand_watch": true,
+        "hand_ambig_2anim": true,
+        "hand_ambig_2inan": true,
+        "noun_anim_monkey": true,
+        "noun_anim_rabbit": true,
+        "noun_anim_kitten": true,
+        "noun_inanim_box": true,
+        "noun_inanim_table": true,
+        "noun_inanim_key": true,
+        "verb_inanimpat_clean": true,
+        "verb_inanimpat_wash": true,
+        "verb_inanimpat_open": true,
+        "verb_animpat_help": true,
+        "verb_animpat_hug": true,
+        "verb_animpat_feed": true,
+        "joint_monkey_clean_box": true,
+        "joint_rabbit_help_kitten": true,
+        "moat_oov": true
+      }
+    },
+    {
+      "seed": 8,
+      "arm": "on",
+      "enforced": true,
+      "backend": "numpy",
+      "device": "cpu",
+      "elapsed_seconds": 9.83,
+      "n_items": 25,
+      "sim_steps": 0,
+      "nnz_pre": 24740,
+      "nnz_post": 24740,
+      "csr_data_array_rebuilt_times": 0,
+      "config": {
+        "enable_hebbian_learning": true,
+        "enable_stdp": false,
+        "enable_structural_plasticity": false,
+        "enable_reward_modulation": false,
+        "enable_homeostasis": false,
+        "hebbian_rate_window": false,
+        "enforce_plastic_mask_in_hebbian": false,
+        "enforce_plastic_mask_beyond_hebbian": false
+      },
+      "organ": "standalone",
+      "tap": "off",
+      "experiment_engine_plasticity_this_phase": null,
+      "mask_len_pre": 24740,
+      "frozen_synapses_pre": 1700,
+      "total_writes": 0,
+      "frozen_drift_regions": {},
+      "stores_delta": {
+        "cp_plasticity_rate_gain": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_transmission_gain": {
+          "present": false
+        },
+        "cp_synapse_plastic_mask": {
+          "present": true,
+          "label_flips": 0
+        },
+        "cp_eligibility_trace": {
+          "present": false
+        },
+        "cp_hebb_coactivity_trace": {
+          "present": false
+        },
+        "cp_conductance_g_nmda": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_nmda_rise": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_nmda_recurrent": {
+          "present": false
+        },
+        "cp_conductance_g_e": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_i": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_conductance_g_gabab": {
+          "present": false
+        },
+        "cp_neuron_firing_thresholds": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        },
+        "cp_neuron_activity_ema": {
+          "present": true,
+          "max_abs_delta": 0.0,
+          "changed_entries": 0
+        }
+      },
+      "coordinate_drift": {
+        "synapses_comparable_pre_post": 24740,
+        "csr_rebuilds": 0,
+        "frozen_labelled_synapses": 1700,
+        "frozen_max_abs_drift": 0.0,
+        "frozen_sum_abs_drift": 0.0,
+        "frozen_signed_drift": 0.0,
+        "frozen_synapses_drifted": 0,
+        "plastic_max_abs_drift": 0.0,
+        "plastic_sum_abs_drift": 0.0,
+        "plastic_synapses_drifted": 0,
+        "completeness_residual_signed": 0.0,
+        "completeness_residual_abs": 0.0,
+        "mask_labels_changed_by_rebuild": 0
+      },
+      "battery_digest": "ff4d88f1667862c84ee9621609c4b177aed37ca547884b11da55d938f013aa28",
+      "battery_items": {
+        "hand_chase": "8756ae10463e45ce31b3ee4dc49b4fa34b9589454ee92e5dab6e6e9d85ec32fe",
+        "hand_eat": "83ec3e72bcb566371886ba011bf8035c3cc3251e58d32990d3715d18badada40",
+        "hand_push": "14e72f3696b2ae0b3352fe5326bf164f32633c6c20ae1c3f91bf094d5bbfdb21",
+        "hand_carry": "b2a5abe3744f36e328f9a77e639cc7a60f886d01c3bfe356ffe9e302e548ef1a",
+        "hand_bite": "50bfc5789fbc3e9d19532ab399b9ac921959e9db7988e2aa4f68bd79c2c3ac7d",
+        "hand_kick": "99b627ddae39ea90ce728c68c63ca98fa077f69c7aa5fa2edfc67a5938573af9",
+        "hand_grab": "8a3efc5c4ebea782d774ca5a89cec2f3c0070004941fddc86d379cef9684dc04",
+        "hand_watch": "ea8c58ffbe9c3c07315d379e86fd04dcdd61e60eb84a465977706959780f5d08",
+        "hand_ambig_2anim": "dafff962e0d7bff5895f7243b2778117c5f77ce0199335b0267375c6216a3881",
+        "hand_ambig_2inan": "cc4590650c2c9a3af528defb2416427a4bb04b95d839a8db7b58a376544c914d",
+        "noun_anim_monkey": "1036ced396b2345fff8a8fcf9dbc9ab660cbbfd84c88b80eac37005a3827985d",
+        "noun_anim_rabbit": "def71bca089193cadcbc7a1d83f4ea9ea568601e65e648390e6ec6eee47b08ae",
+        "noun_anim_kitten": "9ce8ae1f19ffd3514a78faa677fca23388bd4862961804c82a66f78e72aaa338",
+        "noun_inanim_box": "79d16043d47a7797e2fd0cec48dab6f94fe4a7d92474b19fe3fd555b4d66b38a",
+        "noun_inanim_table": "fc03d958c4dfef4d9136eb3f74fbde2ef66e3c2a28a59e9ea894a191784d8a38",
+        "noun_inanim_key": "d9fff0186fdfcb3e5adba24aead0047af3feee724b9709400c7f61fd890a7b53",
+        "verb_inanimpat_clean": "71274e4145925d346eaa41e09c4eaf6f0904e91a355c9e6995feeb96a112d657",
+        "verb_inanimpat_wash": "6921da1eb6e383644d3c1bc5332988dcb12b3c6ce85cc549d500de396ca07ffa",
+        "verb_inanimpat_open": "5c630e3e7140dc1cf8ea7fa1950d76f9edf81b7820738b561c26607b1ae0eab4",
+        "verb_animpat_help": "30433c56f4542176e132b14293e1ff132b64e7b8869150d864e829bdc5b1e4c7",
+        "verb_animpat_hug": "5b5785c70950a6e044d69f446288c106fc2099fc8e7b77e1af49304ff7a76dbb",
+        "verb_animpat_feed": "5e3c557646cfdc186c6f98a76fb0cb5595ccc8491888a91cc4675c9c53f4003c",
+        "joint_monkey_clean_box": "e21f4d02904c850e5b1b2a79d86811a3d2cb3d048da1f9c0297f575b076fce0a",
+        "joint_rabbit_help_kitten": "5aa6bc95d070228de04948d71be8e4108b62f939e686901b9c1c5db69a1890f1",
+        "moat_oov": "df8800f2a0be1dabda54da98261bfeba69eb2b84459b7e00d08a6d0743f14b43"
+      },
+      "reply_margins": {
+        "hand_chase": 0.07083333333333333,
+        "hand_eat": 0.3277777777777778,
+        "hand_push": 0.3277777777777778,
+        "hand_carry": 0.3277777777777778,
+        "hand_bite": 0.3277777777777778,
+        "hand_kick": 0.3277777777777778,
+        "hand_grab": 0.3277777777777778,
+        "hand_watch": 0.07083333333333333,
+        "hand_ambig_2anim": 0.07083333333333333,
+        "hand_ambig_2inan": 0.1270833333333333,
+        "noun_anim_monkey": 0.3277777777777778,
+        "noun_anim_rabbit": 0.3277777777777778,
+        "noun_anim_kitten": 0.3277777777777778,
+        "noun_inanim_box": 0.3277777777777778,
+        "noun_inanim_table": 0.3277777777777778,
+        "noun_inanim_key": 0.3277777777777778,
+        "verb_inanimpat_clean": 0.3277777777777778,
+        "verb_inanimpat_wash": 0.3277777777777778,
+        "verb_inanimpat_open": 0.3277777777777778,
+        "verb_animpat_help": 0.07083333333333333,
+        "verb_animpat_hug": 0.07083333333333333,
+        "verb_animpat_feed": 0.07083333333333333,
+        "joint_monkey_clean_box": 0.3277777777777778,
+        "joint_rabbit_help_kitten": 0.07083333333333333,
+        "moat_oov": 0.0
+      },
+      "reply_competent": {
+        "hand_chase": true,
+        "hand_eat": true,
+        "hand_push": true,
+        "hand_carry": true,
+        "hand_bite": true,
+        "hand_kick": true,
+        "hand_grab": true,
+        "hand_watch": true,
+        "hand_ambig_2anim": true,
+        "hand_ambig_2inan": true,
+        "noun_anim_monkey": true,
+        "noun_anim_rabbit": true,
+        "noun_anim_kitten": true,
+        "noun_inanim_box": true,
+        "noun_inanim_table": true,
+        "noun_inanim_key": true,
+        "verb_inanimpat_clean": true,
+        "verb_inanimpat_wash": true,
+        "verb_inanimpat_open": true,
+        "verb_animpat_help": true,
+        "verb_animpat_hug": true,
+        "verb_animpat_feed": true,
+        "joint_monkey_clean_box": true,
+        "joint_rabbit_help_kitten": true,
+        "moat_oov": true
+      }
+    }
+  ],
+  "write_sites_by_run": {
+    "7/standalone/off/tap=on": [
+      {
+        "site": "bridge.py:11055",
+        "function": "_run_one_simulation_step",
+        "writes": 3973,
+        "touched": 1080526,
+        "sum_abs_delta": 26883.717378929257,
+        "max_abs_delta": 1.1966868042945862,
+        "writes_touching_frozen": 3973,
+        "frozen_touched": 129182,
+        "frozen_sum_abs_delta": 26883.717378929257,
+        "frozen_max_abs_delta": 1.1966868042945862,
+        "frozen_potentiation": 26883.717378929257,
+        "frozen_depression": 0.0
+      },
+      {
+        "site": "bridge.py:11081",
+        "function": "_run_one_simulation_step",
+        "writes": 5986,
+        "touched": 148237304,
+        "sum_abs_delta": 3045.9881827384233,
+        "max_abs_delta": 0.000598907470703125,
+        "writes_touching_frozen": 5986,
+        "frozen_touched": 10319864,
+        "frozen_sum_abs_delta": 3045.9881827384233,
+        "frozen_max_abs_delta": 0.000598907470703125,
+        "frozen_potentiation": 0.0,
+        "frozen_depression": 3045.9881827384233
+      }
+    ],
+    "7/standalone/off/tap=off": [],
+    "7/standalone/on/tap=on": [],
+    "7/standalone/on/tap=off": [],
+    "8/standalone/off/tap=on": [
+      {
+        "site": "bridge.py:11055",
+        "function": "_run_one_simulation_step",
+        "writes": 4436,
+        "touched": 1232293,
+        "sum_abs_delta": 31018.09878066182,
+        "max_abs_delta": 1.197401612997055,
+        "writes_touching_frozen": 4436,
+        "frozen_touched": 149500,
+        "frozen_sum_abs_delta": 31018.09878066182,
+        "frozen_max_abs_delta": 1.197401612997055,
+        "frozen_potentiation": 31018.09878066182,
+        "frozen_depression": 0.0
+      },
+      {
+        "site": "bridge.py:11081",
+        "function": "_run_one_simulation_step",
+        "writes": 5948,
+        "touched": 147153520,
+        "sum_abs_delta": 3332.7571633160114,
+        "max_abs_delta": 0.000598907470703125,
+        "writes_touching_frozen": 5948,
+        "frozen_touched": 10111600,
+        "frozen_sum_abs_delta": 3332.7571633160114,
+        "frozen_max_abs_delta": 0.000598907470703125,
+        "frozen_potentiation": 0.0,
+        "frozen_depression": 3332.7571633160114
+      }
+    ],
+    "8/standalone/off/tap=off": [],
+    "8/standalone/on/tap=on": [],
+    "8/standalone/on/tap=off": []
+  },
+  "attribution": {
+    "standalone/seed7": {
+      "total_frozen_delta_off": 29929.70556166768,
+      "total_frozen_delta_on": 0,
+      "coordinate_drift_off": {
+        "synapses_comparable_pre_post": 24764,
+        "csr_rebuilds": 0,
+        "frozen_labelled_synapses": 1724,
+        "frozen_max_abs_drift": 55.6347099840641,
+        "frozen_sum_abs_drift": 23942.44247186184,
+        "frozen_signed_drift": 23837.729196190834,
+        "frozen_synapses_drifted": 1724,
+        "plastic_max_abs_drift": 0.0,
+        "plastic_sum_abs_drift": 0.0,
+        "plastic_synapses_drifted": 0,
+        "completeness_residual_signed": 0.0,
+        "completeness_residual_abs": 5987.26309,
+        "mask_labels_changed_by_rebuild": 0
+      },
+      "coordinate_drift_on": {
+        "synapses_comparable_pre_post": 24764,
+        "csr_rebuilds": 0,
+        "frozen_labelled_synapses": 1724,
+        "frozen_max_abs_drift": 0.0,
+        "frozen_sum_abs_drift": 0.0,
+        "frozen_signed_drift": 0.0,
+        "frozen_synapses_drifted": 0,
+        "plastic_max_abs_drift": 0.0,
+        "plastic_sum_abs_drift": 0.0,
+        "plastic_synapses_drifted": 0,
+        "completeness_residual_signed": 0.0,
+        "completeness_residual_abs": 0.0,
+        "mask_labels_changed_by_rebuild": 0
+      },
+      "frozen_drift_regions_off": {
+        "sel_agent -> sel_agent": {
+          "synapses": 289,
+          "max_abs_drift": 47.8221549987793
+        },
+        "sel_patient -> sel_FS_patient": {
+          "synapses": 288,
+          "max_abs_drift": 24.600082397460938
+        },
+        "sel_FS_patient -> sel_agent": {
+          "synapses": 288,
+          "max_abs_drift": 9.439401626586914
+        },
+        "sel_FS_agent -> sel_patient": {
+          "synapses": 288,
+          "max_abs_drift": 34.93481969833374
+        },
+        "sel_agent -> sel_FS_agent": {
+          "synapses": 288,
+          "max_abs_drift": 37.18908500671387
+        },
+        "sel_patient -> sel_patient": {
+          "synapses": 283,
+          "max_abs_drift": 55.6347099840641
+        }
+      },
+      "sites": [
+        {
+          "site": "bridge.py:11055",
+          "function": "_run_one_simulation_step",
+          "writes_off": 3973,
+          "writes_on": 0,
+          "frozen_sum_abs_delta_off": 26883.717378929257,
+          "frozen_sum_abs_delta_on": 0.0,
+          "frozen_potentiation_off": 26883.717378929257,
+          "frozen_depression_off": 0.0,
+          "frozen_potentiation_on": 0.0,
+          "frozen_depression_on": 0.0,
+          "residual_frozen_delta_share_on": 1.0
+        },
+        {
+          "site": "bridge.py:11081",
+          "function": "_run_one_simulation_step",
+          "writes_off": 5986,
+          "writes_on": 0,
+          "frozen_sum_abs_delta_off": 3045.9881827384233,
+          "frozen_sum_abs_delta_on": 0.0,
+          "frozen_potentiation_off": 0.0,
+          "frozen_depression_off": 3045.9881827384233,
+          "frozen_potentiation_on": 0.0,
+          "frozen_depression_on": 0.0,
+          "residual_frozen_delta_share_on": 1.0
+        }
+      ]
+    },
+    "standalone/seed8": {
+      "total_frozen_delta_off": 34350.85594397783,
+      "total_frozen_delta_on": 0,
+      "coordinate_drift_off": {
+        "synapses_comparable_pre_post": 24740,
+        "csr_rebuilds": 0,
+        "frozen_labelled_synapses": 1700,
+        "frozen_max_abs_drift": 58.484493270516396,
+        "frozen_sum_abs_drift": 27802.85555997491,
+        "frozen_signed_drift": 27685.34161734581,
+        "frozen_synapses_drifted": 1700,
+        "plastic_max_abs_drift": 0.0,
+        "plastic_sum_abs_drift": 0.0,
+        "plastic_synapses_drifted": 0,
+        "completeness_residual_signed": 0.0,
+        "completeness_residual_abs": 6548.000384,
+        "mask_labels_changed_by_rebuild": 0
+      },
+      "coordinate_drift_on": {
+        "synapses_comparable_pre_post": 24740,
+        "csr_rebuilds": 0,
+        "frozen_labelled_synapses": 1700,
+        "frozen_max_abs_drift": 0.0,
+        "frozen_sum_abs_drift": 0.0,
+        "frozen_signed_drift": 0.0,
+        "frozen_synapses_drifted": 0,
+        "plastic_max_abs_drift": 0.0,
+        "plastic_sum_abs_drift": 0.0,
+        "plastic_synapses_drifted": 0,
+        "completeness_residual_signed": 0.0,
+        "completeness_residual_abs": 0.0,
+        "mask_labels_changed_by_rebuild": 0
+      },
+      "frozen_drift_regions_off": {
+        "sel_patient -> sel_patient": {
+          "synapses": 298,
+          "max_abs_drift": 56.302745804190636
+        },
+        "sel_patient -> sel_FS_patient": {
+          "synapses": 288,
+          "max_abs_drift": 21.721784591674805
+        },
+        "sel_FS_patient -> sel_agent": {
+          "synapses": 288,
+          "max_abs_drift": 25.480268478393555
+        },
+        "sel_FS_agent -> sel_patient": {
+          "synapses": 288,
+          "max_abs_drift": 39.18929958343506
+        },
+        "sel_agent -> sel_FS_agent": {
+          "synapses": 288,
+          "max_abs_drift": 35.37827491760254
+        },
+        "sel_agent -> sel_agent": {
+          "synapses": 250,
+          "max_abs_drift": 58.484493270516396
+        }
+      },
+      "sites": [
+        {
+          "site": "bridge.py:11055",
+          "function": "_run_one_simulation_step",
+          "writes_off": 4436,
+          "writes_on": 0,
+          "frozen_sum_abs_delta_off": 31018.09878066182,
+          "frozen_sum_abs_delta_on": 0.0,
+          "frozen_potentiation_off": 31018.09878066182,
+          "frozen_depression_off": 0.0,
+          "frozen_potentiation_on": 0.0,
+          "frozen_depression_on": 0.0,
+          "residual_frozen_delta_share_on": 1.0
+        },
+        {
+          "site": "bridge.py:11081",
+          "function": "_run_one_simulation_step",
+          "writes_off": 5948,
+          "writes_on": 0,
+          "frozen_sum_abs_delta_off": 3332.7571633160114,
+          "frozen_sum_abs_delta_on": 0.0,
+          "frozen_potentiation_off": 0.0,
+          "frozen_depression_off": 3332.7571633160114,
+          "frozen_potentiation_on": 0.0,
+          "frozen_depression_on": 0.0,
+          "residual_frozen_delta_share_on": 1.0
+        }
+      ]
+    }
+  },
+  "instrument_completeness": {
+    "7/standalone/off": {
+      "signed_residual": 0.0,
+      "abs_residual": 5987.26309,
+      "net_frozen_signed_drift": 23837.729196190834,
+      "written_net_frozen_delta": 23837.729196190834
+    },
+    "7/standalone/on": {
+      "signed_residual": 0.0,
+      "abs_residual": 0.0,
+      "net_frozen_signed_drift": 0.0,
+      "written_net_frozen_delta": 0.0
+    },
+    "8/standalone/off": {
+      "signed_residual": 0.0,
+      "abs_residual": 6548.000384,
+      "net_frozen_signed_drift": 27685.34161734581,
+      "written_net_frozen_delta": 27685.34161734581
+    },
+    "8/standalone/on": {
+      "signed_residual": 0.0,
+      "abs_residual": 0.0,
+      "net_frozen_signed_drift": 0.0,
+      "written_net_frozen_delta": 0.0
+    }
+  },
+  "instrument_control": {
+    "standalone/off/seed7": {
+      "tapped_digest": "b1e571194aa12670bd6495a161ef7cbd8741a60079633256bd14342f551ab847",
+      "untapped_digest": "b1e571194aa12670bd6495a161ef7cbd8741a60079633256bd14342f551ab847",
+      "identical": true
+    },
+    "standalone/on/seed7": {
+      "tapped_digest": "c2a70eb1ecad0777553f7d1caea4265f21e2640d4a3c1f2bb5bb3d8392eaf72d",
+      "untapped_digest": "c2a70eb1ecad0777553f7d1caea4265f21e2640d4a3c1f2bb5bb3d8392eaf72d",
+      "identical": true
+    },
+    "standalone/off/seed8": {
+      "tapped_digest": "b276ce49b439cd746d14b0926a9edace0260c3afd2c9e642a71f4f5a383f8f28",
+      "untapped_digest": "b276ce49b439cd746d14b0926a9edace0260c3afd2c9e642a71f4f5a383f8f28",
+      "identical": true
+    },
+    "standalone/on/seed8": {
+      "tapped_digest": "ff4d88f1667862c84ee9621609c4b177aed37ca547884b11da55d938f013aa28",
+      "untapped_digest": "ff4d88f1667862c84ee9621609c4b177aed37ca547884b11da55d938f013aa28",
+      "identical": true
+    }
+  },
+  "reply_level": {
+    "standalone/on/seed7": {
+      "items_differing": 25,
+      "n_items": 25,
+      "margin_diffs": {
+        "hand_chase": [
+          0.07291666666666667,
+          0.07152777777777777
+        ],
+        "hand_eat": [
+          0.3243055555555555,
+          0.3333333333333333
+        ],
+        "hand_push": [
+          0.3298611111111111,
+          0.3333333333333333
+        ],
+        "hand_carry": [
+          0.3354166666666667,
+          0.3333333333333333
+        ],
+        "hand_bite": [
+          0.33194444444444443,
+          0.3333333333333333
+        ],
+        "hand_kick": [
+          0.33472222222222225,
+          0.3333333333333333
+        ],
+        "hand_grab": [
+          0.33194444444444443,
+          0.3333333333333333
+        ],
+        "hand_watch": [
+          0.07847222222222222,
+          0.07152777777777777
+        ],
+        "hand_ambig_2anim": [
+          0.0826388888888889,
+          0.07152777777777777
+        ],
+        "hand_ambig_2inan": [
+          0.14166666666666666,
+          0.12638888888888888
+        ],
+        "noun_anim_monkey": [
+          0.3388888888888889,
+          0.3333333333333333
+        ],
+        "noun_anim_rabbit": [
+          0.34305555555555556,
+          0.3333333333333333
+        ],
+        "noun_anim_kitten": [
+          0.3416666666666667,
+          0.3333333333333333
+        ],
+        "noun_inanim_box": [
+          0.3375,
+          0.3333333333333333
+        ],
+        "noun_inanim_table": [
+          0.33611111111111114,
+          0.3333333333333333
+        ],
+        "noun_inanim_key": [
+          0.3354166666666667,
+          0.3333333333333333
+        ],
+        "verb_inanimpat_clean": [
+          0.34375,
+          0.3333333333333333
+        ],
+        "verb_inanimpat_wash": [
+          0.3340277777777778,
+          0.3333333333333333
+        ],
+        "verb_inanimpat_open": [
+          0.3486111111111111,
+          0.3333333333333333
+        ],
+        "verb_animpat_help": [
+          0.08263888888888889,
+          0.07152777777777777
+        ],
+        "verb_animpat_hug": [
+          0.08611111111111111,
+          0.07152777777777777
+        ],
+        "verb_animpat_feed": [
+          0.08611111111111111,
+          0.07152777777777777
+        ],
+        "joint_monkey_clean_box": [
+          0.3256944444444444,
+          0.3333333333333333
+        ],
+        "joint_rabbit_help_kitten": [
+          0.09027777777777778,
+          0.07152777777777777
+        ]
+      },
+      "max_abs_margin_diff": 0.018750000000000003
+    },
+    "standalone/off/seed7": {
+      "items_differing": 25,
+      "n_items": 25,
+      "margin_diffs": {
+        "hand_chase": [
+          0.07291666666666667,
+          0.07152777777777777
+        ],
+        "hand_eat": [
+          0.3243055555555555,
+          0.3333333333333333
+        ],
+        "hand_push": [
+          0.3298611111111111,
+          0.3333333333333333
+        ],
+        "hand_carry": [
+          0.3354166666666667,
+          0.3333333333333333
+        ],
+        "hand_bite": [
+          0.33194444444444443,
+          0.3333333333333333
+        ],
+        "hand_kick": [
+          0.33472222222222225,
+          0.3333333333333333
+        ],
+        "hand_grab": [
+          0.33194444444444443,
+          0.3333333333333333
+        ],
+        "hand_watch": [
+          0.07847222222222222,
+          0.07152777777777777
+        ],
+        "hand_ambig_2anim": [
+          0.0826388888888889,
+          0.07152777777777777
+        ],
+        "hand_ambig_2inan": [
+          0.14166666666666666,
+          0.12638888888888888
+        ],
+        "noun_anim_monkey": [
+          0.3388888888888889,
+          0.3333333333333333
+        ],
+        "noun_anim_rabbit": [
+          0.34305555555555556,
+          0.3333333333333333
+        ],
+        "noun_anim_kitten": [
+          0.3416666666666667,
+          0.3333333333333333
+        ],
+        "noun_inanim_box": [
+          0.3375,
+          0.3333333333333333
+        ],
+        "noun_inanim_table": [
+          0.33611111111111114,
+          0.3333333333333333
+        ],
+        "noun_inanim_key": [
+          0.3354166666666667,
+          0.3333333333333333
+        ],
+        "verb_inanimpat_clean": [
+          0.34375,
+          0.3333333333333333
+        ],
+        "verb_inanimpat_wash": [
+          0.3340277777777778,
+          0.3333333333333333
+        ],
+        "verb_inanimpat_open": [
+          0.3486111111111111,
+          0.3333333333333333
+        ],
+        "verb_animpat_help": [
+          0.08263888888888889,
+          0.07152777777777777
+        ],
+        "verb_animpat_hug": [
+          0.08611111111111111,
+          0.07152777777777777
+        ],
+        "verb_animpat_feed": [
+          0.08611111111111111,
+          0.07152777777777777
+        ],
+        "joint_monkey_clean_box": [
+          0.3256944444444444,
+          0.3333333333333333
+        ],
+        "joint_rabbit_help_kitten": [
+          0.09027777777777778,
+          0.07152777777777777
+        ]
+      },
+      "max_abs_margin_diff": 0.018750000000000003
+    },
+    "standalone/on/seed8": {
+      "items_differing": 25,
+      "n_items": 25,
+      "margin_diffs": {
+        "hand_chase": [
+          0.09166666666666666,
+          0.07083333333333333
+        ],
+        "hand_eat": [
+          0.3125,
+          0.3277777777777778
+        ],
+        "hand_push": [
+          0.32430555555555557,
+          0.3277777777777778
+        ],
+        "hand_carry": [
+          0.3243055555555555,
+          0.3277777777777778
+        ],
+        "hand_bite": [
+          0.32430555555555557,
+          0.3277777777777778
+        ],
+        "hand_kick": [
+          0.3340277777777778,
+          0.3277777777777778
+        ],
+        "hand_grab": [
+          0.32499999999999996,
+          0.3277777777777778
+        ],
+        "hand_watch": [
+          0.09166666666666667,
+          0.07083333333333333
+        ],
+        "hand_ambig_2anim": [
+          0.09375,
+          0.07083333333333333
+        ],
+        "hand_ambig_2inan": [
+          0.14027777777777775,
+          0.1270833333333333
+        ],
+        "noun_anim_monkey": [
+          0.3194444444444444,
+          0.3277777777777778
+        ],
+        "noun_anim_rabbit": [
+          0.3104166666666667,
+          0.3277777777777778
+        ],
+        "noun_anim_kitten": [
+          0.3041666666666667,
+          0.3277777777777778
+        ],
+        "noun_inanim_box": [
+          0.3263888888888889,
+          0.3277777777777778
+        ],
+        "noun_inanim_table": [
+          0.31875,
+          0.3277777777777778
+        ],
+        "noun_inanim_key": [
+          0.3222222222222222,
+          0.3277777777777778
+        ],
+        "verb_inanimpat_clean": [
+          0.32499999999999996,
+          0.3277777777777778
+        ],
+        "verb_inanimpat_wash": [
+          0.3284722222222222,
+          0.3277777777777778
+        ],
+        "verb_inanimpat_open": [
+          0.3194444444444444,
+          0.3277777777777778
+        ],
+        "verb_animpat_help": [
+          0.10833333333333334,
+          0.07083333333333333
+        ],
+        "verb_animpat_hug": [
+          0.10555555555555557,
+          0.07083333333333333
+        ],
+        "verb_animpat_feed": [
+          0.10277777777777777,
+          0.07083333333333333
+        ],
+        "joint_monkey_clean_box": [
+          0.3284722222222222,
+          0.3277777777777778
+        ],
+        "joint_rabbit_help_kitten": [
+          0.10625000000000001,
+          0.07083333333333333
+        ]
+      },
+      "max_abs_margin_diff": 0.037500000000000006
+    },
+    "standalone/off/seed8": {
+      "items_differing": 25,
+      "n_items": 25,
+      "margin_diffs": {
+        "hand_chase": [
+          0.09166666666666666,
+          0.07083333333333333
+        ],
+        "hand_eat": [
+          0.3125,
+          0.3277777777777778
+        ],
+        "hand_push": [
+          0.32430555555555557,
+          0.3277777777777778
+        ],
+        "hand_carry": [
+          0.3243055555555555,
+          0.3277777777777778
+        ],
+        "hand_bite": [
+          0.32430555555555557,
+          0.3277777777777778
+        ],
+        "hand_kick": [
+          0.3340277777777778,
+          0.3277777777777778
+        ],
+        "hand_grab": [
+          0.32499999999999996,
+          0.3277777777777778
+        ],
+        "hand_watch": [
+          0.09166666666666667,
+          0.07083333333333333
+        ],
+        "hand_ambig_2anim": [
+          0.09375,
+          0.07083333333333333
+        ],
+        "hand_ambig_2inan": [
+          0.14027777777777775,
+          0.1270833333333333
+        ],
+        "noun_anim_monkey": [
+          0.3194444444444444,
+          0.3277777777777778
+        ],
+        "noun_anim_rabbit": [
+          0.3104166666666667,
+          0.3277777777777778
+        ],
+        "noun_anim_kitten": [
+          0.3041666666666667,
+          0.3277777777777778
+        ],
+        "noun_inanim_box": [
+          0.3263888888888889,
+          0.3277777777777778
+        ],
+        "noun_inanim_table": [
+          0.31875,
+          0.3277777777777778
+        ],
+        "noun_inanim_key": [
+          0.3222222222222222,
+          0.3277777777777778
+        ],
+        "verb_inanimpat_clean": [
+          0.32499999999999996,
+          0.3277777777777778
+        ],
+        "verb_inanimpat_wash": [
+          0.3284722222222222,
+          0.3277777777777778
+        ],
+        "verb_inanimpat_open": [
+          0.3194444444444444,
+          0.3277777777777778
+        ],
+        "verb_animpat_help": [
+          0.10833333333333334,
+          0.07083333333333333
+        ],
+        "verb_animpat_hug": [
+          0.10555555555555557,
+          0.07083333333333333
+        ],
+        "verb_animpat_feed": [
+          0.10277777777777777,
+          0.07083333333333333
+        ],
+        "joint_monkey_clean_box": [
+          0.3284722222222222,
+          0.3277777777777778
+        ],
+        "joint_rabbit_help_kitten": [
+          0.10625000000000001,
+          0.07083333333333333
+        ]
+      },
+      "max_abs_margin_diff": 0.037500000000000006
+    }
+  },
+  "lever_check": {
+    "seed7_total_weight_writes": true,
+    "seed8_total_weight_writes": true
+  },
+  "config_flags_observed": [
+    "{\"enable_hebbian_learning\": true, \"enable_homeostasis\": false, \"enable_reward_modulation\": false, \"enable_stdp\": false, \"enable_structural_plasticity\": false, \"enforce_plastic_mask_beyond_hebbian\": false, \"enforce_plastic_mask_in_hebbian\": false, \"hebbian_rate_window\": false}"
+  ]
+}

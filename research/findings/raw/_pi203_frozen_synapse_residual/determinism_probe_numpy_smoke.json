@@ -1,0 +1,42 @@
+{
+  "runner": "research.runners.pi203_gpu_determinism_probe",
+  "script": "research/runners/pi203_gpu_determinism_probe.py",
+  "cmd": "/home/dant123/Projects/neural-simulator-pi/research/runners/pi203_gpu_determinism_probe.py --backend numpy --rules hebbian,scaling --out research/findings/raw/_pi203_frozen_synapse_residual/determinism_probe_numpy_smoke.json",
+  "backend_requested": "numpy",
+  "prereg": "research/findings/2026-09-24-plastic-mask-flip-PREREGISTRATION.md",
+  "elapsed_seconds": 10.39,
+  "organ_digest_A_untapped": {
+    "digest": "061de54f50fba93806a1826ea16357bf38c9317fe042e0938f4f8e2d63270cc9",
+    "n_items": 25,
+    "tap_blind": false
+  },
+  "organ_digest_B_untapped_again": {
+    "digest": "061de54f50fba93806a1826ea16357bf38c9317fe042e0938f4f8e2d63270cc9",
+    "n_items": 25,
+    "tap_blind": false
+  },
+  "organ_digest_C_tapped": {
+    "digest": "061de54f50fba93806a1826ea16357bf38c9317fe042e0938f4f8e2d63270cc9",
+    "n_items": 25,
+    "tap_blind": false
+  },
+  "identical_code_identical_run": true,
+  "tap_inert": true,
+  "scenario_rule_repeats": {
+    "hebbian": {
+      "sha_1": "0d097bbf748889806f2a51d5120dec9e3496ad4b824eb6e6fbbc37ce17015a20",
+      "sha_2": "0d097bbf748889806f2a51d5120dec9e3496ad4b824eb6e6fbbc37ce17015a20",
+      "identical": true,
+      "frozen_delta": 19.05768394470215,
+      "control_delta": 19.05735206604004
+    },
+    "scaling": {
+      "sha_1": "60cf4abfe1db4a1c4d9e2c7e0672273ba142091e89dec0dfc72dc5dd2649e126",
+      "sha_2": "60cf4abfe1db4a1c4d9e2c7e0672273ba142091e89dec0dfc72dc5dd2649e126",
+      "identical": true,
+      "frozen_delta": 15.0,
+      "control_delta": 15.0
+    }
+  },
+  "summary": "backend numpy: identical code twice -> IDENTICAL (A 061de54f50fb vs B 061de54f50fb); tap vs no tap -> IDENTICAL (A vs C 061de54f50fb); scenario rules repeated: 2/2 identical SHAs."
+}

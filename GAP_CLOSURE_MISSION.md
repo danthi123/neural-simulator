@@ -39,6 +39,21 @@ read-outs, never phenomenal claims); Qwen stays the mouth; the #1 metric is the 
   merge as-is, flag stays OFF by default, no capability claim from this merge, cupy confirmation before any flip.
   No default flipped; the flip stays owner-gated per `2026-09-24-plastic-mask-flip-PREREGISTRATION.md`. Next on the
   board: pin which write paths reach the comprehension organ's read (the 13.8->56.1 drift came from there).
+- **Which write paths actually reach the comprehension organ (Vikunja #203 follow-up, pi lane, 10-31, branch
+  `research/pi-203-write-path-attribution`).** Instrumented every `cp_connections.data` write during the battery
+  on dev seeds 7/8 before touching code (`research/runners/pi203_write_path_tap.py`, orchestrator
+  `research.runners.pi203_write_path_attribution`, 16 cells): the organ's frozen drift is ONLY the Hebbian LTP
+  (`sim/bridge.py:11055`, frozen delta 26883.72 seed 7 / 31018.10 seed 8) and the Hebbian decay
+  (`sim/bridge.py:11081`, 3045.99 / 3332.76); NONE of the six #203 sites fires there (that organ has structural /
+  reward / scaling off). Root cause of the zero-reply paradox: `_hebbian_plastic_mask_enforced` read only
+  `enforce_plastic_mask_in_hebbian`, so arming the umbrella cfg field alone left the Hebbian writes permissive --
+  the env var masked it because it arms both flags. Now `_hebbian_plastic_mask_enforced` honours EITHER field
+  (both default False; flag-OFF byte-identical, 42/42 against `710883be5`). The pooled wave3 organ the reply arm
+  ran makes ZERO weight writes and shows zero drift in either arm, which is why it saw nothing. Completeness: the
+  tap's signed residual (recorded writes vs net coordinate drift) is 0.0 in all 16 cells and tapped == untapped
+  replies in all 8 pairs. Reply margins move at most 0.01875 (seed 7) / 0.0375 (seed 8); competence unchanged on
+  all 25 items. Finding: `research/findings/2026-10-31-write-path-attribution-the-comprehension-organ-s-frozen-drift-is-the-hebbian-loop.md`.
+  No flip; still owner-gated.
 - **The Stage-2 exit attempt failed, and each failure has a cause on file (10-26).** Result:
   `research/findings/2026-10-26-stage2-exit-gate-RESULT.md`; four skeptic-verified diagnoses:
   `research/findings/2026-10-26-stage2-fail-diagnoses.md` (`a1bd7ff83`, merge `c5cd42d18`; RULINGS `stage2-next-1026`, `stage2-fixes-1026`).

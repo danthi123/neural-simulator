@@ -1,0 +1,33 @@
+{
+ "run_id": "1793487766-35315",
+ "runner": "research/runners/pi203_scaling_backend_diagnostic.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator-pi/research/runners/pi203_scaling_backend_diagnostic.py",
+  "--backend",
+  "numpy",
+  "--out",
+  "research/findings/raw/_pi203_frozen_synapse_residual/scaling_diag_numpy_trace2.json"
+ ],
+ "git_sha": "e11f21585",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-31T19:02:46",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": "",
+  "OMP_NUM_THREADS": "1"
+ },
+ "host": "b6ff652d08c8",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 19290.4,
+ "corpus_check_query": "frozen synapse drift comprehension organ write path attribution",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_pi203_frozen_synapse_residual/scaling_diag_numpy_trace2.json"
+}

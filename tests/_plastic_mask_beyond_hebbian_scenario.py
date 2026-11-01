@@ -11,6 +11,11 @@ Six isolated rules, each a single weight-write site or bookkeeping path in sim/b
               re-ordering the mask was never carried through
   combined  - scaling + structural elimination + reward modulation on ONE bridge, i.e. all three masked write
               sites live at once (the integration case the individual rules cannot show)
+  hebbian   - the Hebbian LTP + decay + clip itself, armed ONLY through cfg.enforce_plastic_mask_beyond_hebbian
+              (the 2026-09-02 fix's own flag, cfg.enforce_plastic_mask_in_hebbian, left OFF in BOTH arms). This is
+              the rule the 2026-10-31 comprehension-battery instrument found to be the ONLY mover of the organ's
+              frozen synapses: arming the umbrella field must arm the Hebbian sites too, or the freeze covers every
+              site except the ones that actually write.
 
 Each run builds a small bridge (6 neurons; 8 for `compaction`, whose eliminated set must sit BETWEEN surviving
 populations for the re-packing to shift any index at all) with TWO measured populations:
@@ -41,6 +46,14 @@ def _base_cfg(rule, seed):
     from sim.config import CoreSimConfig
     from sim.enums import NeuronModel
     cfg = CoreSimConfig()
+    # BRAIN_STEP_PATH=python pins the step to the Python path by turning off the general-step megakernel.
+    # Used ONLY by the byte-identity harness (see tests/test_plastic_mask_beyond_hebbian.py): the pre-fix
+    # snapshot predates the megakernel guard fix, so the two arms would otherwise differ by WHICH step they
+    # run, not by the mask flag the test is measuring. Never set by the battery or the organ runs.
+    if os.environ.get("BRAIN_STEP_PATH", "").lower() == "python":
+        cfg.enable_step_megakernel = False
+        cfg.enable_step_cudagraph = False
+        cfg.enable_step_megakernel_v2 = False
     cfg.num_neurons = 8 if rule == "compaction" else N_NEURONS
     cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
     cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
@@ -99,6 +112,10 @@ def _base_cfg(rule, seed):
         cfg.enable_synaptic_scaling = True          # so the control population moves (positive control)
         cfg.homeostasis_target_rate = 0.9
         cfg.synaptic_scaling_rate = 0.05
+    elif rule == "hebbian":
+        cfg.enable_hebbian_learning = True
+        cfg.hebbian_learning_rate = 0.1
+        cfg.hebbian_weight_decay = 1e-4
     return cfg
 
 
@@ -159,15 +176,26 @@ def run(rule, enforce=False, seed=42, w0=None):
         "reward": 100.0,      # above hebbian_max_weight -> the clip itself is the mover
         "combined": 100.0,    # clipped, then weak -> the three sites in sequence
         "rebuild": 20.0,
+        "hebbian": 20.0,      # above hebbian_max_weight: LTP, decay and the clip all move it
     }[rule] if w0 is None else w0
 
-    os.environ["SIM_BACKEND"] = "numpy"
-    if enforce:
+    # numpy by DEFAULT, not by fiat: an explicit SIM_BACKEND=cupy at the call site must reach the engine, or a
+    # "cupy run" silently executes on the CPU and the backend confirmation is fake (2026-10-31: the first GPU
+    # job queued for this follow-up reported "NumPy backend" for every one of its 84 runs).
+    os.environ.setdefault("SIM_BACKEND", "numpy")
+    if rule == "hebbian":
+        # Deliberately NOT the umbrella env var: this rule measures whether cfg.enforce_plastic_mask_beyond_hebbian
+        # ALONE reaches the Hebbian write sites. With the env var set, both flags are on and the rule proves nothing.
+        os.environ.pop("BRAIN_ENFORCE_PLASTIC_MASK", None)
+    elif enforce:
         os.environ["BRAIN_ENFORCE_PLASTIC_MASK"] = "1"
     else:
         os.environ.pop("BRAIN_ENFORCE_PLASTIC_MASK", None)
 
     cfg = _base_cfg(rule, seed)
+    if rule == "hebbian":
+        cfg.enforce_plastic_mask_beyond_hebbian = enforce
+        cfg.enforce_plastic_mask_in_hebbian = False   # the 2026-09-02 flag stays OFF in both arms
     if rule == "compaction":
         # default 1000 steps would never trigger inside a 600-step probe
         _gpu = GPUConfig()

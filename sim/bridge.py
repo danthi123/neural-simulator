@@ -1468,13 +1468,23 @@ class SimulationBridge:
     def _hebbian_plastic_mask_enforced(self, cfg):
         """ADDITIVE, DEFAULT-OFF gate for enforcing cp_synapse_plastic_mask in the Hebbian LTP/decay/clip path.
 
-        True iff the env var BRAIN_ENFORCE_PLASTIC_MASK is set truthy OR cfg.enforce_plastic_mask_in_hebbian is True.
-        Default (neither set) => False => the mask is NOT enforced in Hebbian => byte-identical to the historical
-        (permissive) behavior. STDP/BDSP/BTSP already enforce the mask unconditionally; this closes the same hole for
-        the plain Hebbian rule without changing any production default. Evaluated at the use site so tests/callers can
-        toggle the env var between builds. Works identically on numpy and cupy (no backend calls here).
+        True iff the env var BRAIN_ENFORCE_PLASTIC_MASK is set truthy OR cfg.enforce_plastic_mask_in_hebbian is True
+        OR cfg.enforce_plastic_mask_beyond_hebbian is True. Default (none set) => False => the mask is NOT enforced
+        in Hebbian => byte-identical to the historical (permissive) behavior. STDP/BDSP/BTSP already enforce the mask
+        unconditionally; this closes the same hole for the plain Hebbian rule without changing any production default.
+        Evaluated at the use site so tests/callers can toggle the env var between builds. Works identically on numpy
+        and cupy (no backend calls here).
+
+        Why the second flag counts here (2026-10-31, Vikunja #203 follow-up, dev seeds 7/8): the instrumented
+        comprehension battery (research/runners/pi203_write_path_tap.py) found that the ONLY writes that move the
+        comprehension organ's mask-frozen synapses are the Hebbian potentiation (sim/bridge.py:11045) and the Hebbian
+        decay (sim/bridge.py:11071) -- i.e. the sites the 2026-09-02 fix covers, not the six sites the #203 residual
+        fix covers. A caller that arms only cfg.enforce_plastic_mask_beyond_hebbian would therefore get a mask that is
+        enforced everywhere EXCEPT the two sites that actually move the organ. The umbrella env var already arms both;
+        this makes the cfg fields behave the same way, so "enforcement on" means enforcement on.
         """
-        return self._plastic_mask_enforced(cfg, "enforce_plastic_mask_in_hebbian")
+        return (self._plastic_mask_enforced(cfg, "enforce_plastic_mask_in_hebbian")
+                or self._plastic_mask_enforced(cfg, "enforce_plastic_mask_beyond_hebbian"))
 
     def _plastic_mask_for_remap(self):
         """The per-synapse plastic mask to carry across a CSR-reordering rebuild, or None.
@@ -8817,6 +8827,18 @@ class SimulationBridge:
                 or cfg.enable_homeostasis or cfg.enable_stdp
                 or cfg.enable_structural_plasticity or cfg.enable_reward_modulation
                 or getattr(cfg, "enable_inhibitory_stdp", False)):
+            return False
+        # WEIGHT-WRITERS the fused step does not implement, found by instrumenting WHICH LINES of the Python step
+        # execute on each backend (2026-10-31, #203 follow-up): with enable_step_megakernel_v2 DEFAULT-ON and
+        # hebbian/STDP/homeostasis/structural/reward all off, a bridge armed with enable_synaptic_scaling passed the
+        # guard above, dispatched the fused step and returned at the dispatch line -- the scaling block was never
+        # reached. Measured: the same scaling rule moved weights 15.0 on numpy and 0.0 on cupy (max bridge line
+        # traced on cupy = 9615, the dispatch `return`). BTSP/BDSP write weights the same way, so they must not
+        # ride a "read-only" dispatch either: a guard that admits a mechanism that writes is not byte-faithful.
+        if (getattr(cfg, "enable_synaptic_scaling", False)
+                or getattr(cfg, "enable_btsp", False) or getattr(cfg, "enable_bdsp", False)
+                or self.cp_btsp_theta is not None or self.cp_bdsp_apical_drive is not None
+                or (getattr(cfg, "enable_shunt_norm_pool", False) and self.cp_shunt_norm_source_mask is not None)):
             return False
         if self.experiment_engine is not None and self.experiment_engine.is_experiment_running:
             return False

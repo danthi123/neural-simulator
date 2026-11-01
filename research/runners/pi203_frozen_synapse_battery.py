@@ -29,7 +29,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 
 from tests._plastic_mask_beyond_hebbian_scenario import run  # noqa: E402
 
-RULES = ["scaling", "structural", "reward", "rebuild", "compaction", "combined"]
+RULES = ["scaling", "structural", "reward", "rebuild", "compaction", "combined", "hebbian"]
 SEEDS = [42, 43, 44, 100, 101, 102]
 
 
@@ -73,17 +73,21 @@ def main():
             "on_new_plastic": [r["new_synapses_labelled_plastic"] for r in on],
         }
 
+    from sim.backend import get_backend as _get_backend
+    _resolved = _get_backend()[1]          # the backend the engine ACTUALLY loaded, not the one asked for
     record = {
         "runner": "research.runners.pi203_frozen_synapse_battery",
         "script": "research/runners/pi203_frozen_synapse_battery.py",
         "cmd": " ".join(sys.argv),
-        "backend": os.environ.get("SIM_BACKEND", "numpy"),
-        "device": "CPU",
-        "sim_backend": os.environ.get("SIM_BACKEND", "numpy"),
+        "backend": _resolved,
+        "backend_requested": os.environ.get("SIM_BACKEND", "numpy"),
+        "device": "GPU (cupy)" if _resolved == "cupy" else "CPU",
+        "sim_backend": _resolved,
         "elapsed_seconds": round(time.time() - t0, 2),
         "cost_projection": f"{len(runs)} runs x 30 reads x 20 steps of a 6-neuron numpy bridge; measured total "
                            "wall time is elapsed_seconds above. No GPU used: no GPU-hour tail.",
-        "provenance_note": "CPU/numpy (SIM_BACKEND=numpy, CUDA_VISIBLE_DEVICES empty). Arms toggled by "
+        "provenance_note": "Backend resolved by sim.backend.get_backend(), recorded above, not asserted from the "
+                           "environment. Arms toggled by "
                            "BRAIN_ENFORCE_PLASTIC_MASK; cfg.enforce_plastic_mask_beyond_hebbian is the config "
                            "mirror of the same gate. cfg.seed is passed explicitly per run.",
         "rules": RULES,

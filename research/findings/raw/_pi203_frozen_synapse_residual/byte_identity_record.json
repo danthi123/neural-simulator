@@ -1,6 +1,6 @@
 {
-  "generated_utc": "2026-10-31T16:33:54.504454+00:00",
-  "elapsed_seconds": 65.31,
+  "generated_utc": "2026-10-31T18:18:58.926742+00:00",
+  "elapsed_seconds": 51.35,
   "backend": "numpy",
   "device": "cpu",
   "seeds": [
@@ -17,12 +17,13 @@
     "reward",
     "rebuild",
     "compaction",
-    "combined"
+    "combined",
+    "hebbian"
   ],
   "prefix_ref": "710883be56ab65bfb2d77fc74861742fab053fe2",
   "note": "prefix_ref is the parent of the commit that introduced enforce_plastic_mask_beyond_hebbian; recovered with `git archive` (git worktree fails on this box, FAILURE_LOG 2026-10-31).",
-  "comparisons": 36,
-  "identical": 36,
+  "comparisons": 42,
+  "identical": 42,
   "mismatches": [],
   "runs": [
     {
@@ -419,6 +420,72 @@
       "identical": true,
       "frozen_max_delta_off": 99.98999786376953,
       "control_max_delta_off": 99.8836669921875,
+      "fired_any_off": true
+    },
+    {
+      "rule": "hebbian",
+      "seed": 42,
+      "off_sha": "0d097bbf748889806f2a51d5120dec9e3496ad4b824eb6e6fbbc37ce17015a20",
+      "prefix_sha": "0d097bbf748889806f2a51d5120dec9e3496ad4b824eb6e6fbbc37ce17015a20",
+      "off_repeat_sha": "0d097bbf748889806f2a51d5120dec9e3496ad4b824eb6e6fbbc37ce17015a20",
+      "identical": true,
+      "frozen_max_delta_off": 19.05768394470215,
+      "control_max_delta_off": 19.05735206604004,
+      "fired_any_off": true
+    },
+    {
+      "rule": "hebbian",
+      "seed": 43,
+      "off_sha": "d31927d890aeef5a53d57592ce393a7dad4f983bbefff993c0b33f7f99fde9ab",
+      "prefix_sha": "d31927d890aeef5a53d57592ce393a7dad4f983bbefff993c0b33f7f99fde9ab",
+      "off_repeat_sha": "d31927d890aeef5a53d57592ce393a7dad4f983bbefff993c0b33f7f99fde9ab",
+      "identical": true,
+      "frozen_max_delta_off": 19.04368782043457,
+      "control_max_delta_off": 19.008466720581055,
+      "fired_any_off": true
+    },
+    {
+      "rule": "hebbian",
+      "seed": 44,
+      "off_sha": "e1c09d309ec8b3e351fee74d4b86cc0efa59ad76e56805e2307bc2ce23733a19",
+      "prefix_sha": "e1c09d309ec8b3e351fee74d4b86cc0efa59ad76e56805e2307bc2ce23733a19",
+      "off_repeat_sha": "e1c09d309ec8b3e351fee74d4b86cc0efa59ad76e56805e2307bc2ce23733a19",
+      "identical": true,
+      "frozen_max_delta_off": 19.009904861450195,
+      "control_max_delta_off": 19.009870529174805,
+      "fired_any_off": true
+    },
+    {
+      "rule": "hebbian",
+      "seed": 100,
+      "off_sha": "662920bce59d7e3d71f7b5ab5875e40101940ea589393311fc314559c363628a",
+      "prefix_sha": "662920bce59d7e3d71f7b5ab5875e40101940ea589393311fc314559c363628a",
+      "off_repeat_sha": "662920bce59d7e3d71f7b5ab5875e40101940ea589393311fc314559c363628a",
+      "identical": true,
+      "frozen_max_delta_off": 19.020687103271484,
+      "control_max_delta_off": 19.020469665527344,
+      "fired_any_off": true
+    },
+    {
+      "rule": "hebbian",
+      "seed": 101,
+      "off_sha": "cee207b6d155c475e93315bb61e7710f6984edd7b29e2f5dfaabad10253fc0ef",
+      "prefix_sha": "cee207b6d155c475e93315bb61e7710f6984edd7b29e2f5dfaabad10253fc0ef",
+      "off_repeat_sha": "cee207b6d155c475e93315bb61e7710f6984edd7b29e2f5dfaabad10253fc0ef",
+      "identical": true,
+      "frozen_max_delta_off": 19.041234970092773,
+      "control_max_delta_off": 19.00493621826172,
+      "fired_any_off": true
+    },
+    {
+      "rule": "hebbian",
+      "seed": 102,
+      "off_sha": "b4d9ab1c2f29c80571da6e197e021c2cee77f3a7dc4954571bfb5b483ef231f4",
+      "prefix_sha": "b4d9ab1c2f29c80571da6e197e021c2cee77f3a7dc4954571bfb5b483ef231f4",
+      "off_repeat_sha": "b4d9ab1c2f29c80571da6e197e021c2cee77f3a7dc4954571bfb5b483ef231f4",
+      "identical": true,
+      "frozen_max_delta_off": 19.044471740722656,
+      "control_max_delta_off": 19.004913330078125,
       "fired_any_off": true
     }
   ],

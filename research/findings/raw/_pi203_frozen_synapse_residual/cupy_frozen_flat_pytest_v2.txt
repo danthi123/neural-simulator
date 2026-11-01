@@ -1,0 +1,220 @@
+FFFF.                                                                    [100%]
+=================================== FAILURES ===================================
+___________ test_frozen_synapses_flat_over_30_reads_when_flag_on[7] ____________
+
+seed = 7
+
+    @pytest.mark.parametrize("seed", [7, 8])
+    def test_frozen_synapses_flat_over_30_reads_when_flag_on(seed):
+        """The audit's protocol, flag ON: 30 reads, every declared-frozen synapse bit-unchanged."""
+>       r = _arm(enforce=True, seed=seed, tap=True)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_comprehension_frozen_flat.py:104: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_comprehension_frozen_flat.py:75: in _arm
+    frozen = _frozen_coords(bridge)
+             ^^^^^^^^^^^^^^^^^^^^^^
+tests/test_comprehension_frozen_flat.py:56: in _frozen_coords
+    mask = np.asarray(mask)
+           ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+>   ???
+E   TypeError: Implicit conversion to a NumPy array is not allowed. Please use `.get()` to construct a NumPy array explicitly.
+
+cupy/_core/core.pyx:1760: TypeError
+----------------------------- Captured stdout call -----------------------------
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: RNG initialized with seed: 7
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 17:22:50][WARNING] SIM_BRIDGE: parameter heterogeneity is centred on the global defaults (cfg.izh_*_val / cfg.hh_*) and overwrites the presets of 2 region(s): sel_FS_agent, sel_FS_patient [IZH2007_FS_CORTICAL_INTERNEURON] (a 0.2->0.03, d 25->100, C 20->100); set preset_centred_parameter_heterogeneity=True to keep them
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24764 synapses across 14 populations.
+[2026-10-31 17:22:50][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24764. GPU memory: 3.1GB/25.3GB (12.1%)
+[2026-10-31 17:22:52][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 17:22:52][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 17:22:52][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 80 total neurons, 1 pathways.
+[2026-10-31 17:22:52][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 17:22:52][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 80 neurons...
+[2026-10-31 17:22:52][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 17:22:52][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 17:22:52][INFO] SIM_BRIDGE: Generating 3D neuron positions for 80 neurons...
+[2026-10-31 17:22:52][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-10-31 17:22:52][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1600 synapses across 1 populations.
+[2026-10-31 17:22:52][INFO] SIM_BRIDGE: Initializing eligibility traces for 1600 synapses (capacity: 2400, dtype: float32)...
+[2026-10-31 17:22:52][INFO] SIM_BRIDGE: Simulation data initialized for 80 neurons (3D). Synapses: 1600. GPU memory: 3.1GB/25.3GB (12.1%)
+___________ test_frozen_synapses_flat_over_30_reads_when_flag_on[8] ____________
+
+seed = 8
+
+    @pytest.mark.parametrize("seed", [7, 8])
+    def test_frozen_synapses_flat_over_30_reads_when_flag_on(seed):
+        """The audit's protocol, flag ON: 30 reads, every declared-frozen synapse bit-unchanged."""
+>       r = _arm(enforce=True, seed=seed, tap=True)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_comprehension_frozen_flat.py:104: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_comprehension_frozen_flat.py:75: in _arm
+    frozen = _frozen_coords(bridge)
+             ^^^^^^^^^^^^^^^^^^^^^^
+tests/test_comprehension_frozen_flat.py:56: in _frozen_coords
+    mask = np.asarray(mask)
+           ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+>   ???
+E   TypeError: Implicit conversion to a NumPy array is not allowed. Please use `.get()` to construct a NumPy array explicitly.
+
+cupy/_core/core.pyx:1760: TypeError
+----------------------------- Captured stdout call -----------------------------
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: RNG initialized with seed: 8
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 17:22:54][WARNING] SIM_BRIDGE: parameter heterogeneity is centred on the global defaults (cfg.izh_*_val / cfg.hh_*) and overwrites the presets of 2 region(s): sel_FS_agent, sel_FS_patient [IZH2007_FS_CORTICAL_INTERNEURON] (a 0.2->0.03, d 25->100, C 20->100); set preset_centred_parameter_heterogeneity=True to keep them
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24740 synapses across 14 populations.
+[2026-10-31 17:22:54][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24740. GPU memory: 3.1GB/25.3GB (12.1%)
+________________ test_the_drift_is_real_when_the_flag_is_off[7] ________________
+
+seed = 7
+
+    @pytest.mark.parametrize("seed", [7, 8])
+    def test_the_drift_is_real_when_the_flag_is_off(seed):
+        """Non-vacuity guard: the same protocol without the flag DOES move the frozen synapses."""
+>       r = _arm(enforce=False, seed=seed, tap=True)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_comprehension_frozen_flat.py:122: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_comprehension_frozen_flat.py:75: in _arm
+    frozen = _frozen_coords(bridge)
+             ^^^^^^^^^^^^^^^^^^^^^^
+tests/test_comprehension_frozen_flat.py:56: in _frozen_coords
+    mask = np.asarray(mask)
+           ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+>   ???
+E   TypeError: Implicit conversion to a NumPy array is not allowed. Please use `.get()` to construct a NumPy array explicitly.
+
+cupy/_core/core.pyx:1760: TypeError
+----------------------------- Captured stdout call -----------------------------
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: RNG initialized with seed: 7
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 17:22:57][WARNING] SIM_BRIDGE: parameter heterogeneity is centred on the global defaults (cfg.izh_*_val / cfg.hh_*) and overwrites the presets of 2 region(s): sel_FS_agent, sel_FS_patient [IZH2007_FS_CORTICAL_INTERNEURON] (a 0.2->0.03, d 25->100, C 20->100); set preset_centred_parameter_heterogeneity=True to keep them
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24764 synapses across 14 populations.
+[2026-10-31 17:22:57][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24764. GPU memory: 3.1GB/25.3GB (12.1%)
+________________ test_the_drift_is_real_when_the_flag_is_off[8] ________________
+
+seed = 8
+
+    @pytest.mark.parametrize("seed", [7, 8])
+    def test_the_drift_is_real_when_the_flag_is_off(seed):
+        """Non-vacuity guard: the same protocol without the flag DOES move the frozen synapses."""
+>       r = _arm(enforce=False, seed=seed, tap=True)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_comprehension_frozen_flat.py:122: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_comprehension_frozen_flat.py:75: in _arm
+    frozen = _frozen_coords(bridge)
+             ^^^^^^^^^^^^^^^^^^^^^^
+tests/test_comprehension_frozen_flat.py:56: in _frozen_coords
+    mask = np.asarray(mask)
+           ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+>   ???
+E   TypeError: Implicit conversion to a NumPy array is not allowed. Please use `.get()` to construct a NumPy array explicitly.
+
+cupy/_core/core.pyx:1760: TypeError
+----------------------------- Captured stdout call -----------------------------
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: RNG initialized with seed: 8
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 17:23:00][WARNING] SIM_BRIDGE: parameter heterogeneity is centred on the global defaults (cfg.izh_*_val / cfg.hh_*) and overwrites the presets of 2 region(s): sel_FS_agent, sel_FS_patient [IZH2007_FS_CORTICAL_INTERNEURON] (a 0.2->0.03, d 25->100, C 20->100); set preset_centred_parameter_heterogeneity=True to keep them
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24740 synapses across 14 populations.
+[2026-10-31 17:23:00][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24740. GPU memory: 3.1GB/25.3GB (12.1%)
+=========================== short test summary info ============================
+FAILED tests/test_comprehension_frozen_flat.py::test_frozen_synapses_flat_over_30_reads_when_flag_on[7]
+FAILED tests/test_comprehension_frozen_flat.py::test_frozen_synapses_flat_over_30_reads_when_flag_on[8]
+FAILED tests/test_comprehension_frozen_flat.py::test_the_drift_is_real_when_the_flag_is_off[7]
+FAILED tests/test_comprehension_frozen_flat.py::test_the_drift_is_real_when_the_flag_is_off[8]
+4 failed, 1 passed in 26.37s

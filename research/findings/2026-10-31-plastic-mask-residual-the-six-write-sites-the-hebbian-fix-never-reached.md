@@ -128,6 +128,13 @@ board's 13.8->56.1 read-driven-drift number came from this same organ. The two f
 weights in the comprehension organ are written by paths OTHER than the six sites gated here (or are never read
 into the reply), which is the next thing to pin down, not a reason to stop.
 
+## Follow-up (same day): which paths reach the comprehension organ
+
+The reply arm's zero difference is explained by `research/findings/2026-10-31-write-path-attribution-the-comprehension-organ-s-frozen-drift-is-the-hebbian-loop.md`:
+instrumenting every write in that organ shows the six sites above never fire there (its structural / reward /
+scaling flags are off); its frozen drift is entirely the Hebbian LTP + decay writes, which the umbrella cfg field
+did not arm -- that gap is now closed, and the pooled wave3 organ makes no weight writes at all.
+
 ## What this does NOT claim
 
 - It is not a capability GO and no faculty is measured here; it is a correctness fix for a declared freeze.

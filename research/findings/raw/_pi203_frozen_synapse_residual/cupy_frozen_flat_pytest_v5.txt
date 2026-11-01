@@ -1,0 +1,102 @@
+.......s..s....ssssF                                                     [100%]
+=================================== FAILURES ===================================
+________________ test_the_tap_does_not_change_what_it_measures _________________
+
+    def test_the_tap_does_not_change_what_it_measures():
+        """Instrument inertness: tapped and untapped runs of the same cell give byte-identical replies."""
+        from research.runners._comprehension_learned_cues_joint_arm import all_items
+        from research.runners.comprehension_production_organ import ComprehensionProductionOrgan, extract_transitive
+        from research.runners import pi203_write_path_tap as tapmod
+    
+        def replies(tap: bool) -> list:
+            _set_env(False)
+            organ = ComprehensionProductionOrgan(seed=7)
+            organ.ensure_built()
+            if tap:
+                tapmod.install_tap(organ.comp.bridge)
+            out = []
+            for label, n0, v, n1 in all_items():
+                text = f"the {n0} {v} the {n1}"
+                tr = extract_transitive(text)
+                out.append((label, organ.judge(text), organ.competent(*tr) if tr else None))
+            return out
+    
+        a, b = replies(True), replies(False)
+        # digest, not structural float equality: "byte-identical" has to mean the same thing it means in the
+        # orchestrator (research/runners/pi203_write_path_attribution.py, instrument_control)
+        da, db = tapmod._digest(a), tapmod._digest(b)
+>       assert da == db, ("the write tap changed the organ's replies: tapped %s vs untapped %s "
+                          "(first three items differ: %s)" % (da[:16], db[:16], list(zip(a[:3], b[:3]))))
+E       AssertionError: the write tap changed the organ's replies: tapped faf567095183b9a9 vs untapped f98717526f838502 (first three items differ: [(('hand_chase', {'on': True, 'lesioned': False, 'in_scope': True, 'svo': ['dog', 'chase', 'cat'], 'margin': 0.07430555555555557, 'threshold': 0.22916666666666663, 'comprehended': False, 'calib': {'mean_well': 0.3333333333333333, 'min_well': 0.31875, 'mean_ill': 0.06736111111111111, 'max_ill': 0.1395833333333333, 'read_steps': 60, 'n_calib': 24}}, True), ('hand_chase', {'on': True, 'lesioned': False, 'in_scope': True, 'svo': ['dog', 'chase', 'cat'], 'margin': 0.07430555555555557, 'threshold': 0.22916666666666663, 'comprehended': False, 'calib': {'mean_well': 0.3333333333333333, 'min_well': 0.31875, 'mean_ill': 0.06736111111111111, 'max_ill': 0.1395833333333333, 'read_steps': 60, 'n_calib': 24}}, True)), (('hand_eat', {'on': True, 'lesioned': False, 'in_scope': True, 'svo': ['dog', 'eat', 'apple'], 'margin': 0.3416666666666667, 'threshold': 0.22916666666666663, 'comprehended': True, 'calib': {'mean_well': 0.3333333333333333, 'min_well': 0.31875, 'mean_ill': 0.06736111111111111, 'max_ill': 0.1395833333333333, 'read_steps': 60, 'n_calib': 24}}, True), ('hand_eat', {'on': True, 'lesioned': False, 'in_scope': True, 'svo': ['dog', 'eat', 'apple'], 'margin': 0.3416666666666667, 'threshold': 0.22916666666666663, 'comprehended': True, 'calib': {'mean_well': 0.3333333333333333, 'min_well': 0.31875, 'mean_ill': 0.06736111111111111, 'max_ill': 0.1395833333333333, 'read_steps': 60, 'n_calib': 24}}, True)), (('hand_push', {'on': True, 'lesioned': False, 'in_scope': True, 'svo': ['dog', 'push', 'rock'], 'margin': 0.33125000000000004, 'threshold': 0.22916666666666663, 'comprehended': True, 'calib': {'mean_well': 0.3333333333333333, 'min_well': 0.31875, 'mean_ill': 0.06736111111111111, 'max_ill': 0.1395833333333333, 'read_steps': 60, 'n_calib': 24}}, True), ('hand_push', {'on': True, 'lesioned': False, 'in_scope': True, 'svo': ['dog', 'push', 'rock'], 'margin': 0.33125000000000004, 'threshold': 0.22916666666666663, 'comprehended': True, 'calib': {'mean_well': 0.3333333333333333, 'min_well': 0.31875, 'mean_ill': 0.06736111111111111, 'max_ill': 0.1395833333333333, 'read_steps': 60, 'n_calib': 24}}, True))])
+E       assert 'faf567095183...eb6c2cd14770c' == 'f98717526f83...c551f4901378e'
+E         
+E         - f98717526f838502c2d5eed2b8d64a959ad931161ae9df697b2c551f4901378e
+E         + faf567095183b9a9b5485e0e26a10c6fdca49db49413bbcd064eb6c2cd14770c
+
+tests/test_comprehension_frozen_flat.py:163: AssertionError
+----------------------------- Captured stdout call -----------------------------
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: RNG initialized with seed: 7
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 19:07:11][WARNING] SIM_BRIDGE: parameter heterogeneity is centred on the global defaults (cfg.izh_*_val / cfg.hh_*) and overwrites the presets of 2 region(s): sel_FS_agent, sel_FS_patient [IZH2007_FS_CORTICAL_INTERNEURON] (a 0.2->0.03, d 25->100, C 20->100); set preset_centred_parameter_heterogeneity=True to keep them
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24764 synapses across 14 populations.
+[2026-10-31 19:07:11][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24764. GPU memory: 3.1GB/25.3GB (12.2%)
+[2026-10-31 19:07:16][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 19:07:16][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 19:07:16][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 80 total neurons, 1 pathways.
+[2026-10-31 19:07:16][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 19:07:16][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 80 neurons...
+[2026-10-31 19:07:16][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 19:07:16][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 19:07:16][INFO] SIM_BRIDGE: Generating 3D neuron positions for 80 neurons...
+[2026-10-31 19:07:16][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-10-31 19:07:16][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1600 synapses across 1 populations.
+[2026-10-31 19:07:16][INFO] SIM_BRIDGE: Initializing eligibility traces for 1600 synapses (capacity: 2400, dtype: float32)...
+[2026-10-31 19:07:16][INFO] SIM_BRIDGE: Simulation data initialized for 80 neurons (3D). Synapses: 1600. GPU memory: 3.1GB/25.3GB (12.2%)
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: RNG initialized with seed: 7
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 19:07:18][WARNING] SIM_BRIDGE: parameter heterogeneity is centred on the global defaults (cfg.izh_*_val / cfg.hh_*) and overwrites the presets of 2 region(s): sel_FS_agent, sel_FS_patient [IZH2007_FS_CORTICAL_INTERNEURON] (a 0.2->0.03, d 25->100, C 20->100); set preset_centred_parameter_heterogeneity=True to keep them
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24764 synapses across 14 populations.
+[2026-10-31 19:07:18][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24764. GPU memory: 3.1GB/25.3GB (12.2%)
+=========================== short test summary info ============================
+FAILED tests/test_comprehension_frozen_flat.py::test_the_tap_does_not_change_what_it_measures
+1 failed, 13 passed, 6 skipped in 91.49s (0:01:31)
