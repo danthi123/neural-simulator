@@ -356,3 +356,6 @@ Board #238 updated: feasibility check complete, RESULT PROVISIONAL research/cs-r
 ## 2026-11-01  c3-flip-landed
 - C3 topic stop + phasic DA flipped default ON (merge 41d76bdbe, finding 2026-11-01-c3-flip-gate-RESULT.md): board #276 created DONE;
   #277 opened (DA-mode suffix punctuation after a bare abstain, FAILURE_LOG 2026-11-01). #203 update appended earlier today.
+
+## 2026-11-01  c2-gatereset-score
+Board #273 note: C2 gate reset merged OFF (misses 4->0, false fires 57->78); S0b next.
