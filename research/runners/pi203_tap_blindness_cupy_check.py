@@ -51,7 +51,8 @@ def _margin_sum(replies) -> float:
 
 def main() -> int:
     assert_backend("cupy", "the tap-blindness check is only meaningful on the GPU path")
-    resolved, device = get_backend()
+    _xp, resolved = get_backend()
+    device = os.environ.get("SIM_BACKEND", resolved)
     t0 = time.time()
     a, _ = _replies(False, 7)
     b, _ = _replies(False, 7)
@@ -61,6 +62,11 @@ def main() -> int:
     da, db, dc, dd = (tapmod._digest(x) for x in (a, b, c, d))
     diffs = [i for i in range(len(a)) if a[i] != b[i]]
     tap_diffs = [i for i in range(len(a)) if a[i] != c[i]]
+    field_diffs = {}
+    for i in tap_diffs:
+        for field in (0, 1, 2):
+            if a[i][field] != c[i][field]:
+                field_diffs.setdefault(field, []).append((a[i][0], a[i][field], c[i][field]))
     result = {
         "runner": "pi203_tap_blindness_cupy_check",
         "backend_requested": "cupy",
@@ -77,6 +83,11 @@ def main() -> int:
         "tapped_equals_untapped": dc == da,
         "first_divergences_control": diffs[:3],
         "first_divergences_tap": tap_diffs[:3],
+        "n_items": len(a),
+        "n_items_diverging_tap": len(tap_diffs),
+        "n_items_diverging_control": len(diffs),
+        "divergent_fields": {("reply_dict" if f == 1 else "competent" if f == 2 else "label"): v[:4]
+                            for f, v in field_diffs.items()},
         "example_items_where_tap_differs": [list(a[i]) for i in tap_diffs[:3]],
         "example_items_untapped_A": [list(a[i]) for i in diffs[:3]],
     }
@@ -87,10 +98,11 @@ def main() -> int:
         _margin_sum(c), _margin_sum(a),
     )
     project_cost("pi203_tap_blindness_cupy_check", 0, 2, time.time() - t0)
+    text = json.dumps(result, indent=2)
+    print(text[:2500])
     out = "research/findings/raw/_pi203_frozen_synapse_residual/tap_blindness_cupy_check.json"
     with open(out, "w") as f:
-        json.dump(result, f, indent=2)
-    print(json.dumps(result, indent=2)[:2000])
+        f.write(text)
     return 0
 
 
