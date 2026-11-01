@@ -65,6 +65,7 @@ def _drive_and_trace(sb, vectorized, n_steps=300, rng_seed=123, fire_p=0.15):
     coupling's EMA and last_value each step. Returns (ema_trace[n_steps, n_coupl], gate_trace[list of lists])."""
     sb.core_config.enable_vectorized_gate_couplings = bool(vectorized)
     sb._gate_coupling_flat = None
+    sb._gate_coupling_state = None   # fresh array state (ema 0, last_value NaN), the vectorized twin of the reset below
     # reset coupling state so both runs start identically
     for c in sb._gate_couplings:
         c["ema"] = 0.0
@@ -75,8 +76,13 @@ def _drive_and_trace(sb, vectorized, n_steps=300, rng_seed=123, fire_p=0.15):
     for _ in range(n_steps):
         sb.cp_firing_states[:] = (rng.random(n) < fire_p)
         sb._apply_gate_couplings()
-        ema_trace.append([c["ema"] for c in sb._gate_couplings])
-        gate_trace.append([c["last_value"] for c in sb._gate_couplings])
+        if vectorized:   # opt #3: the vectorized path's running state lives in the arrays, not the dicts
+            st = sb._gate_coupling_state
+            ema_trace.append([float(x) for x in st["ema"]])
+            gate_trace.append([None if np.isnan(x) else float(x) for x in st["last_value"]])
+        else:
+            ema_trace.append([c["ema"] for c in sb._gate_couplings])
+            gate_trace.append([c["last_value"] for c in sb._gate_couplings])
     return np.asarray(ema_trace, dtype=np.float64), gate_trace
 
 
@@ -141,3 +147,37 @@ def test_cache_invalidates_on_new_coupling():
     assert len(r2) == 5 and sb._gate_coupling_flat["n"] == 5
     scalar = [float(sb.cp_firing_states[c["control_idx"]].mean()) for c in sb._gate_couplings]
     assert r2 == scalar
+
+
+def _open_reset_reopen(vectorized, monkeypatch, flag):
+    """Drive every control pool hard (gates open), run the sequencer's per-query reset, drive again. Returns the gate
+    values after the second drive (the cue re-opening its gates on the next query)."""
+    from research.runners._phaseB_onebrain_sequencerK_derisk import reset_sequencerK_state
+    if flag:
+        monkeypatch.setenv("BRAIN_C2_GATE_RESET", "1")
+    else:
+        monkeypatch.delenv("BRAIN_C2_GATE_RESET", raising=False)
+    sb = _build_coupled_bridge()
+    sb.core_config.enable_vectorized_gate_couplings = bool(vectorized)
+    sb._gate_coupling_flat = None
+    for _ in range(30):
+        sb.cp_firing_states[:] = True
+        sb._apply_gate_couplings()
+    reset_sequencerK_state(sb, drain_steps=0)
+    for _ in range(30):
+        sb.cp_firing_states[:] = True
+        sb._apply_gate_couplings()
+    return dict(sb._transmission_gate_values)
+
+
+def test_sequencer_reset_reopens_gates_on_the_vectorized_path_with_the_gate_reset(monkeypatch):
+    """RULING c2-match-reset-1101: the per-query reset closes every gate; on the vectorized path the running
+    last_value stays 'open', so without BRAIN_C2_GATE_RESET the re-driven gate is never rewritten and stays closed
+    (the C2 silent true matches). With the flag the vectorized path reopens exactly like the scalar reference."""
+    scalar = _open_reset_reopen(False, monkeypatch, flag=False)
+    assert all(v == 1.0 for v in scalar.values())
+    vec_off = _open_reset_reopen(True, monkeypatch, flag=False)
+    assert any(v == 0.0 for v in vec_off.values()), "the bug this flag fixes is no longer reproduced"
+    vec_on = _open_reset_reopen(True, monkeypatch, flag=True)
+    assert vec_on == scalar
+    assert _open_reset_reopen(False, monkeypatch, flag=True) == scalar   # scalar path unchanged by the flag

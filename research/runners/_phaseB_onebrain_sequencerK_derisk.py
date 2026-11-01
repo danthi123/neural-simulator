@@ -44,6 +44,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import numpy as np
 
 from sim import SimulationBridge, VisualizationConfig, RuntimeState, GPUConfig
@@ -176,6 +177,10 @@ def wire_sequencerK_couplings(sb, V, K, gate_thresh=0.03):
         sb.couple_gate_to_pool(f"gblk{b}", f"mA{b}", threshold=gate_thresh)   # action-match -> m{b} opens iff agent matched
 
 
+def _gate_reset_enabled() -> bool:
+    return os.environ.get("BRAIN_C2_GATE_RESET", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
 def reset_sequencerK_state(sb, drain_steps=20):
     """Reset the per-query dynamical state (gate-coupling EMAs / stale gate values / residual membrane) so
     consecutive queries on the SAME persistent bridge don't leak. Same discipline as the K=2 reset (the
@@ -197,6 +202,17 @@ def reset_sequencerK_state(sb, drain_steps=20):
     for c in sb._gate_couplings:                          # zero the coupling EMAs + force a re-evaluation next step
         c["ema"] = 0.0
         c["last_value"] = None
+    # C2 GATE RESET (RULING c2-match-reset-1101, default OFF, BRAIN_C2_GATE_RESET=1): with
+    # enable_vectorized_gate_couplings the RUNNING EMA/last-gate state lives in sb._gate_coupling_state, not in the
+    # dicts zeroed above (sim/bridge.py `_gate_coupling_state_cached`). Left alone, a query starts with the previous
+    # query's EMA, and a gate this reset closes below keeps last_value=open, so the vectorized write-on-change never
+    # reopens it when the cue drives the EMA over threshold again. Reset the arrays to their init values (ema 0,
+    # last_value NaN = "write every gate next step"), the vectorized equivalent of the dict reset above.
+    if _gate_reset_enabled():
+        st = getattr(sb, "_gate_coupling_state", None)
+        if st is not None:
+            st["ema"][:] = 0.0
+            st["last_value"][:] = np.nan
     for gname in list(sb._transmission_gate_to_synapses.keys()):
         sb.set_transmission_gate(gname, 0.0)              # all match gates CLOSED at query start (cue re-opens them)
     if getattr(sb, "cp_izh_c_reset", None) is not None:
