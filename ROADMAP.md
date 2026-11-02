@@ -44,6 +44,18 @@ compute node (GPU queue, local model serving), and Claude Code inspects occasion
 | **A-NMDA** | the planned f1j mechanism: an input-driven, decaying, Mg-blocked NMDA conductance on the apical dendrite |
 | **D4** | the default-ON comprehension gate that refuses garbled teaching (it explains the C2 control miss) |
 
+## 2026-11-02 — the speak-or-stay-silent circuit passes its six-seed exam (narrowly, still off); the #1 metric is measured at a recent main
+
+- **The hold-or-speak decision passes its exam.** Behind its switches, the brain's basal-ganglia circuit now makes the
+  call to answer or stay silent, and its all-or-none commit does not depend on where the read threshold sits; every
+  registered check passed on six seeds. The credit is narrow: one check passed by a single run out of 24, switching off
+  the reward route also quiets the whole circuit (so it shows the route is needed, not that it carries the content), the
+  steady pallidal drive does nothing, and the output cells fire 170-330 times a second against a real 40-80. Nothing is
+  on by default. ([finding](research/findings/2026-11-02-bg-live-seam-gate-stn200-gpe100-RESULT.md))
+- **The #1 metric at a pinned recent main (template mouth):** 22 of 41 abilities change the actual reply on every seed
+  (0.54, the same share as 09-29 with a larger reliable core); counting internal decision records, 32 of 40. Ten abilities
+  act inside the brain without reaching the words. ([finding](research/findings/2026-11-02-lbf-at-head-gate-seeds-RESULT.md))
+
 ## 2026-10-28 — the feeling-name fix is on by default; curiosity and inference get their next exams; the Stage-2 failure is traced to causes
 
 - **The Stage-2 ("child") exam was tried on 10-26 and did not pass; every failure now has a named cause.** On the six exam seeds:

@@ -34,6 +34,14 @@ commit stage + value route); its gate Amendment 2 is signed (`1a52d9416`) and is
 canary. C2 ff-grade FAIL. Backlog flip false positives removed (`48110735b`). cs-race f1j's 372 held cells released.
 swap-drives-response LBF re-run at HEAD: seed 42 done, dev pre-flight running, then seeds 43-102.
 
+**11-02 landings (Claude):** BG live-seam gate (pin `e017eb00e`) **GO as registered, qualified**: G3 passes by one event,
+the value afferents are necessary but the lesion is not selective, tonic drive inert, preset cells load-bearing, the
+commit-off ablation confounded (organ seed pinned to 42), GPi 170-330 Hz; no default changes; next methods in the finding
+(`research/findings/2026-11-02-bg-live-seam-gate-stn200-gpe100-RESULT.md`, board #261/#278). **LBF at HEAD** (b2d1018,
+pin `f2885df70`, stub mouth) COMPLETE 246/246: reply-level S2 22/41 = 0.537 core 22, decision-field S0 core 32
+(`research/findings/2026-11-02-lbf-at-head-gate-seeds-RESULT.md`). Fixes for the instrument defects both verifications
+found are building on `research/bg-instrument-1102` and `research/lbf-s2-engaged-1102`.
+
 **What landed since the 10-21 header below (plain language; that block stays valid for every lane this one does not change):**
 - **C3 curiosity topic stop + topic-locked phasic DA now ON BY DEFAULT (11-01, merge `41d76bdbe`).** The flip gate passed on
   the six gate seeds (Stage-2 groups conv/infer/emo/inner, flags ON vs unset: 24/24 cells identical on abstained, recalled_svo
