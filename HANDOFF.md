@@ -31,4 +31,6 @@
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend
   money on AI to drive it."
-- **OPEN QUESTIONS:** none blocking.
+- **OPEN QUESTIONS:** none blocking. Chores: W's primary checkout is on an old branch (no `tools/progress_report.py`);
+  the board timer runs it from the stale lean-method worktree, so its brain-share line lags main: repoint it to a
+  checkout that follows main. pool40's host key changed at its 10-02 reinstall (warning only; owner's call).
