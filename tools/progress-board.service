@@ -1,0 +1,9 @@
+# Daily: rewrite the board's "New core: progress (auto-updated)" task from tools/progress_report.py (workstation,
+# where the board token lives). Install: cp tools/progress-board.{service,timer} ~/.config/systemd/user/ &&
+#   systemctl --user daemon-reload && systemctl --user enable --now progress-board.timer
+[Unit]
+Description=Update the new-core progress task on the board
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /home/dant123/Projects/sim/tools/progress_report.py --board

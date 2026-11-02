@@ -1,0 +1,9 @@
+[Unit]
+Description=Daily new-core progress board update
+
+[Timer]
+OnCalendar=*-*-* 07:30
+Persistent=true
+
+[Install]
+WantedBy=timers.target

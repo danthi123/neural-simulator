@@ -15,6 +15,8 @@ export interface DriverConfig {
   mimo_daily_usd: number;
   mimo_execute_fallback: boolean;
   claude_daily_calls: number;
+  claude_build_daily_calls?: number; // claude_build tool (default 3); separate from judgment checkpoints
+  claude_build_model?: string; // default "sonnet"
   claude_bin: string;
   claude_timeout_min: number;
   wait_poll_s: number;
@@ -52,6 +54,7 @@ export interface Ledger {
   date: string;
   mimo_usd: number;
   claude_calls: number;
+  claude_builds?: number;
 }
 
 export function ledgerFile(cfg: DriverConfig): string {
@@ -63,10 +66,11 @@ export function readLedger(cfg: DriverConfig): Ledger {
   return l.date === today() ? l : { date: today(), mimo_usd: 0, claude_calls: 0 };
 }
 
-export function bumpLedger(cfg: DriverConfig, change: Partial<Pick<Ledger, "mimo_usd" | "claude_calls">>): Ledger {
+export function bumpLedger(cfg: DriverConfig, change: Partial<Pick<Ledger, "mimo_usd" | "claude_calls" | "claude_builds">>): Ledger {
   const l = readLedger(cfg);
   l.mimo_usd += change.mimo_usd ?? 0;
   l.claude_calls += change.claude_calls ?? 0;
+  l.claude_builds = (l.claude_builds ?? 0) + (change.claude_builds ?? 0);
   writeJson(ledgerFile(cfg), l);
   return l;
 }

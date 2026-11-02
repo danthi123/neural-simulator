@@ -56,3 +56,14 @@ and grows from what it lives through. Not LLM + RAG. Decision record:
 - **Day 7:** hippocampus stores what you tell it, recalls it by context, survives a restart; weekly test running.
 - **Day 14:** sleep consolidation; high-use facts never wrong; one lesion visibly changes replies. If not met, stop
   and report.
+
+**Timeline after day 14 (owner-approved 2026-11-02; board tasks carry the same dates):**
+
+| By | Target |
+|---|---|
+| 2026-11-09 | First weekly conversation test (Hermes); upgraded test with intact / hippocampus-off / sleep arms (Pi). |
+| 2026-11-16 | Sleep inside the live brain on every restart; high-use facts never wrong; a lesion visibly changes replies; cortex size chosen (0.4B or 1.5B). |
+| 2026-11-30 | Recall from reworded questions (meaning-based selection); mood/arousal state shapes replies (lesion-proven); it asks about what is new to it. |
+| 2026-12-14 | A simulated multi-week life with nightly sleep: savings on relearning, cued recall, transfer (the sysadmin example); honest self-reports. |
+| 2026-12-31 | Sleep learning by a local, biology-style rule instead of gradients; scale to 1.5B. |
+| 2027 Q1 | Start moving the core onto the shared spiking substrate; port old-track mechanisms only where they earn their place. |
