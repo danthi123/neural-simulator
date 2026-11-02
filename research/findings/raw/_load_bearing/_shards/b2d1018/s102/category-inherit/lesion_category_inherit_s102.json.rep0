@@ -3848,7 +3848,7 @@
     "curiosity": {
       "on": true,
       "lesioned": false,
-      "novelty": -1.1102230246251565e-16,
+      "novelty": 0.0,
       "want_hz": 0.0,
       "threshold": 19.09722222222222,
       "curious": false,
@@ -3863,7 +3863,7 @@
       "topic": "bat",
       "graded_novelty": {
         "on": true,
-        "value": -1.1102230246251565e-16,
+        "value": 0.0,
         "lesioned": false
       },
       "curiosity_da": {

@@ -1,5 +1,5 @@
 {
- "run_id": "1792656737-31",
+ "run_id": "1793300189-31",
  "runner": "research/runners/onebrain_regression_battery.py",
  "argv": [
   "/srv/simpool/derisk-pool/revisions/f2885df70cfb99a8715c376bca12ac3c2134ef46/research/runners/onebrain_regression_battery.py",
@@ -19,10 +19,10 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": true,
  "source_manifest_exit_error": null,
- "started": "2026-10-22T04:12:17",
+ "started": "2026-10-29T14:56:29",
  "env": {
   "NUMEXPR_NUM_THREADS": "1",
-  "POOL_JOB_ID": "1792656485194933333-20790",
+  "POOL_JOB_ID": "1793299917196387963-2018",
   "POOL_SANDBOX_MEMCAP_ENFORCED": "1",
   "OPENBLAS_NUM_THREADS": "1",
   "POOL_SANDBOX_OUTER_MEMORY_MAX": "8G",
@@ -31,10 +31,6 @@
   "POOL_SANDBOX": "1",
   "MKL_NUM_THREADS": "1",
   "SIM_BACKEND": "numpy",
-  "BRAIN_EPISODIC_STORE_VERIFY": "1",
-  "BRAIN_PMEM_FACILITATION": "1",
-  "BRAIN_PMEM_OP_STABILIZER": "1",
-  "BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE": "1",
   "LB_AFFECT_DRIVE_PROBE": "1",
   "LB_BG_SELECT_DRIVE_PROBE": "1",
   "LB_CG_DRIVE_PROBE": "1",
@@ -44,7 +40,7 @@
   "LB_OPEN_ENDED_DISTRIB_PROBE": "1",
   "LB_PMEM_DRIVE_PROBE": "1",
   "LB_SURPRISE_CONFIRM_PROBE": "1",
-  "SIM_RUN_ID": "1792656485-2",
+  "SIM_RUN_ID": "1793299917-2",
   "BRAIN_CHAT_SEED": "102"
  },
  "host": "dant123-wk",

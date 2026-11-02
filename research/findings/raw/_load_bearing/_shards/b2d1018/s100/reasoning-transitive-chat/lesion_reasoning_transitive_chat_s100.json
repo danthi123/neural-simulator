@@ -867,7 +867,7 @@
     "curiosity": {
       "on": true,
       "lesioned": false,
-      "novelty": 0.0,
+      "novelty": -2.220446049250313e-16,
       "want_hz": 0.0,
       "threshold": 19.09722222222222,
       "curious": false,
@@ -882,7 +882,7 @@
       "topic": "cat",
       "graded_novelty": {
         "on": true,
-        "value": 0.0,
+        "value": -2.220446049250313e-16,
         "lesioned": false
       },
       "curiosity_da": {

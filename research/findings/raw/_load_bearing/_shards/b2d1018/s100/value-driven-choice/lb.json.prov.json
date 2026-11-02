@@ -1,5 +1,5 @@
 {
- "run_id": "1792610834-2",
+ "run_id": "1793210847-2",
  "runner": "research/runners/load_bearing_fraction.py",
  "argv": [
   "/srv/simpool/derisk-pool/revisions/f2885df70cfb99a8715c376bca12ac3c2134ef46/research/runners/load_bearing_fraction.py",
@@ -20,10 +20,10 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": true,
  "source_manifest_exit_error": null,
- "started": "2026-10-21T15:27:14",
+ "started": "2026-10-28T14:07:27",
  "env": {
   "NUMEXPR_NUM_THREADS": "1",
-  "POOL_JOB_ID": "1792610834423402326-28988",
+  "POOL_JOB_ID": "1793210847337793653-30228",
   "POOL_SANDBOX_MEMCAP_ENFORCED": "1",
   "OPENBLAS_NUM_THREADS": "1",
   "POOL_SANDBOX_OUTER_MEMORY_MAX": "8G",
@@ -32,10 +32,6 @@
   "POOL_SANDBOX": "1",
   "MKL_NUM_THREADS": "1",
   "SIM_BACKEND": "numpy",
-  "BRAIN_EPISODIC_STORE_VERIFY": "1",
-  "BRAIN_PMEM_FACILITATION": "1",
-  "BRAIN_PMEM_OP_STABILIZER": "1",
-  "BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE": "1",
   "LB_AFFECT_DRIVE_PROBE": "1",
   "LB_BG_SELECT_DRIVE_PROBE": "1",
   "LB_CG_DRIVE_PROBE": "1",
