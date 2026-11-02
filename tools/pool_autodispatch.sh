@@ -293,6 +293,13 @@ peek_est_gb() {
 # POOL_JOB_MAX_AGE_CAP_H (240 h), so an abandoned batch still expires. A line with no token keeps the default.
 POOL_FRESH_AWK='function maxage(l,  m) { if (match(l, /max_age_h=[0-9]+/)) { m = substr(l, RSTART + 10, RLENGTH - 10) + 0; if (m > cap) m = cap; return m * 3600 } return d }'
 NODES="${POOL_NODES:-$POOL_NODES_DEFAULT}"
+# GATE-SEED CLASS (2026-11-02, RULING gates-front-1102). pool_queue.sh's GATE-SEED GUARD defines a gate line as one
+# whose --seed/--seeds list holds 42/43/44/100/101/102; this is that same test, in awk, so pop_job can try gate lines
+# first. On 11-01/02 gate lines sat behind hundreds of smaller dev-smoke lines and were withdrawn and re-added at the
+# front by hand. Keep the seed list in step with GATE_SEEDS_LIST in tools/pool_queue.sh.
+POOL_GATE_AWK='function isgate(l,  r, m, n, a, i) { r = l
+  while (match(r, /--seeds?(=|[ \t]+)[0-9]+([, \t]+[0-9]+)*/)) { m = substr(r, RSTART, RLENGTH); r = substr(r, RSTART + RLENGTH)
+    gsub(/[^0-9]+/, " ", m); n = split(m, a, " "); for (i = 1; i <= n; i++) if (a[i] ~ /^(42|43|44|100|101|102)$/) return 1 } return 0 }'
 NODE_BUDGET=0
 
 # PER-NODE LIMITS (2026-10-02, cloud session 5: the workstation joins the pool as node `wspool`, user `simpool`).
@@ -654,8 +661,15 @@ queue_install() {
   fi
 }
 
+node_total_budget() {   # GB this node could hold with nothing else running (gate-line hold, see pop_job); 0 = unknown
+  local t=$(( ${_NI_TOTAL:-0} - ${POOL_OS_RESERVE_GB:-2} ))
+  [ "${_NI_TOTAL:-0}" -gt 0 ] || t=0
+  [ -n "${NODE_LIM_MEM[$1]:-}" ] && [ "${NODE_LIM_MEM[$1]}" -lt "$t" ] && t="${NODE_LIM_MEM[$1]}"
+  echo "$t"
+}
+
 pop_job() {
-  # pop_job <max_gb> [node] -- atomically take the first non-comment line that fits <max_gb> AND (if [node] is
+  # pop_job <max_gb> [node] [node_total_gb] -- atomically take the first non-comment line that fits <max_gb> AND (if [node] is
   # given and the candidate is revision-pinned) whose revision dir already exists on [node]. flock keeps two
   # dispatcher instances from claiming the same job. [node] is OPTIONAL and omitted by test seams that only
   # care about size-based selection (--pop-once) -- when absent, the revision check is skipped entirely
@@ -696,9 +710,25 @@ pop_job() {
   now=$(date +%s)
   # FIRST FIT, not strict head (2026-09-23): a node with 4 GB free sat idle behind a 5 GB D6 arm while five 0.65 GB
   # vision jobs queued behind it. Take the first fresh line whose declared size fits the node's budget ($1, GB).
-  local max_gb="${1:-999}" cand sha want_node
-  while IFS= read -r cand; do
-    [ "$(job_est_gb "$cand")" -le "$max_gb" ] || continue
+  # GATE LINES FIRST (2026-11-02, RULING gates-front-1102): the scan order is gate-seed lines (queue order), then the
+  # rest (queue order), each still first-fit by size. ANTI-STARVATION: a gate line that has waited >=
+  # POOL_GATE_HOLD_MIN minutes (30), does not fit this node's budget now, but WOULD fit its total ($3 GB: MemTotal
+  # minus the OS reserve, or the node's mem_gb limit; unknown/0 = never hold) puts a hold on this node: it takes no
+  # non-gate line until the gate line fits, so freed memory accumulates instead of being re-spent on small lines.
+  local max_gb="${1:-999}" total_gb="${3:-0}" cand sha want_node ts est hold=0
+  local hold_s=$(( ${POOL_GATE_HOLD_MIN:-30} * 60 )) rank   # rank 0 = gate-seed line, 1 = any other line
+  while IFS=$'\t' read -r rank ts cand; do
+    est=$(job_est_gb "$cand")
+    if [ "$rank" = 1 ] && [ "$hold" = 1 ]; then break; fi   # held for a waiting gate line: no non-gate backfill
+    if [ "$est" -gt "$max_gb" ]; then
+      if [ "$rank" = 0 ] && [ "$est" -le "$total_gb" ] && [ $(( now - ts )) -ge "$hold_s" ]; then
+        want_node=$(printf '%s' "$cand" | grep -oE 'pool_node=[A-Za-z0-9_.-]+' | head -1 | cut -d= -f2)
+        if [ -z "$want_node" ] || [ -z "$node" ] || [ "$want_node" = "$node" ]; then
+          hold=1; echo "[pool-dispatch] ${node:-node}: holding for a waiting gate line (${est} GB > budget ${max_gb} GB, waited $(( (now - ts) / 60 )) min)" >&2
+        fi
+      fi
+      continue
+    fi
     # NODE CONSTRAINT (2026-09-25, B2b torn-cell re-run safety: research/coordination/b2b0924_reruns.tsv). A line
     # may declare `pool_node=<name>` anywhere in its text -- typically in the --checked reason, alongside
     # mem_gb=N, the same way that token is already read "anywhere in the line" (see job_est_gb above) -- to
@@ -721,7 +751,8 @@ pop_job() {
     if [ -n "$sha" ] && [ -n "$node" ] && ! revision_available_cached "$node" "$sha"; then continue; fi
     job="$cand"; break
   done < <(awk -F'\t' -v now="$now" -v d="${POOL_JOB_MAX_AGE:-43200}" -v cap="${POOL_JOB_MAX_AGE_CAP_H:-240}" \
-             "$POOL_FRESH_AWK"' NF>1 && $1+0 >= now - maxage($0) {print $2}' "$qin")
+             "$POOL_FRESH_AWK$POOL_GATE_AWK"' NF>1 && $1+0 >= now - maxage($0) {print (isgate($2) ? 0 : 1) "\t" $1 "\t" $2}' "$qin" \
+           | sort -s -t$'\t' -k1,1n)
   # THE RECORD-CHECK GATE (2026-07-31), copied from tools/lane_dispatch.sh:47 where it is already proven.
   # A job may only run if it carries "#checked:", which tools/pool_queue.sh only attaches when a reason is
   # given. This sits ON THE EXECUTION PATH deliberately: before_you_build.sh existed and was skipped, and that
@@ -818,7 +849,7 @@ fill_node() {
   # INSTANT it is paused, closing the race within the same cycle it started in, not just the next one.
   while [ ! -f "$PAUSE_MARK_DIR/$NODE" ] && node_is_idle "$NODE"; do
     node_sandbox_decision "$NODE" || break   # POOL_SANDBOX=on and this node cannot sandbox: nothing is popped
-    JOB=$(pop_job "$NODE_BUDGET" "$NODE")
+    JOB=$(pop_job "$NODE_BUDGET" "$NODE" "$(node_total_budget "$NODE")")
     if [ -z "$JOB" ]; then note_budget_limit_refusal "$NODE"; break; fi
     echo "[pool-dispatch] $(date '+%H:%M:%S') $NODE <- $JOB"
     if [ "$NODE_SANDBOX" = 1 ]; then
@@ -845,7 +876,7 @@ fill_node() {
 }
 
 if [ "${1:-}" = "--pop-once" ]; then
-  pop_job "${2:-999}" "${3:-}"
+  pop_job "${2:-999}" "${3:-}" "${4:-0}"
   exit $?
 fi
 if [ "${1:-}" = "--reserved-gb" ]; then reserved_gb "$2"; exit 0; fi
