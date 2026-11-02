@@ -1,5 +1,7 @@
 # HANDOFF — Stage-2 (CHILD) exit gate: execution packet for the local model
 
+host-decision: none this packet only runs and scores the registered gate; it adds no host code that decides a reply
+
 Written 2026-09-30 by Claude. Execute top to bottom. Do not change code, bars, turns or arms. At most ONE fix round
 per issue; anything not covered here goes on the NEEDS-CLAUDE list at the end and you stop that line of work.
 
@@ -233,6 +235,8 @@ re-queue exactly those lines from `research/queue/stage2_exit_gate_jobs.tsv` ONC
 ```bash
 cd $W && mkdir -p research/findings/raw/_stage2_exit/gate && rsync -a $P/research/findings/raw/_stage2_exit/gate/ research/findings/raw/_stage2_exit/gate/
 SIM_NO_PROVENANCE=1 $PY -m research.runners.stage2_exit_gate --aggregate research/findings/raw/_stage2_exit/gate --seeds 42,43,44,100,101,102 --out research/findings/raw/_stage2_exit/gate/aggregate.json > /home/dant123/Projects/sim/research/queue/stage2_exit_report.md
+# RETAKE (A6 + A7, signed 2026-11-01; GATE_SHA dee817012): out root research/findings/raw/_stage2_exit/retake_dee8170, and the level flag is required:
+SIM_NO_PROVENANCE=1 $PY -m research.runners.stage2_exit_gate --aggregate research/findings/raw/_stage2_exit/retake_dee8170 --seeds 42,43,44,100,101,102 --amendment-level A6 --out research/findings/raw/_stage2_exit/retake_dee8170/aggregate.json > /home/dant123/Projects/sim/research/queue/stage2_retake_report.md
 cat /home/dant123/Projects/sim/research/queue/stage2_exit_report.md
 ```
 
