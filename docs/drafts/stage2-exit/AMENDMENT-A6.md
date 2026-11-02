@@ -52,9 +52,18 @@ permuted teach, and the conclusion then tracks it (`score_infer(permuted=True)["
   criterion level: C2 is INCOMPLETE. The STAGE verdict is FAIL whenever any counted criterion FAILs. The stage is
   UNDEFINED only when no counted criterion FAILs and at least one is UNDEFINED/INCOMPLETE (or another precondition is
   unmet); otherwise it is PASS as before. Rationale: an undefined C2 must never hide a defined C1 failure. A criterion
-  FAILs only on its full set of defined seeds (`aggregate`: fewer defined seeds reads INCOMPLETE), so a stage FAIL always
-  rests on defined data. The unmet preconditions are still recorded in the aggregate (`preconditions`,
+  FAILs only on its full set of defined seeds (`aggregate`: fewer defined seeds reads INCOMPLETE). At A6 every
+  precondition the stage verdict records is also a per-seed UNDEFINED reason (including the unapplied-lesion rule
+  below), so a stage FAIL rests on a criterion whose every seed is defined. The unmet preconditions are still recorded in the aggregate (`preconditions`,
   `undefined_reasons`) and printed by the report; at A6 the aggregate also carries `stage_rule` and `criteria_failed`.
+- **An unapplied lesion is an instrument failure (Claude's ruling 2026-11-01, the A6 residual).** At A6 an
+  in-process lesion whose patch was never called (`applied` False: the shard's `patch.calls` is 0) adds the reason
+  "in-process lesion patch never called (applied False, A6 lesion not applied)" to its seed, so the seed is UNDEFINED
+  and that criterion reads INCOMPLETE, never FAIL "not load-bearing". An instrument failure is never evidence that a
+  faculty is not load-bearing. Another criterion's defined FAIL (e.g. C1 capability absent) still makes the stage FAIL.
+  At A5 the rule is unchanged: the seed stays defined and only the precondition "every in-process lesion applied" is
+  unmet (tests `test_a6_a_fail_driven_only_by_an_unapplied_lesion_is_not_a_fail`, `test_a5_keeps_the_unapplied_lesion_reading`,
+  `test_a6_a_genuine_c1_fail_still_fails_the_stage`).
 - **Report.** At A6 the report prints, per seed, each hop teach's `refused` and `carried`, the tracking as now scored
   and as scored before A6, and the A6 reason. It also prints the stage rule, the criteria that FAILed and the unmet
   preconditions.
@@ -102,7 +111,9 @@ acquisition method (stage2-fixes-1026: novel transitives through a learned word-
 ## Bar-sanity (n = 1000 per generator, seed 0; `tools/bar_sanity.py`)
 
 Records at the amended scorer (`bar_sanity_s2_common.LEVEL = "A6"`), re-measured at the ruling's runner on
-2026-11-01 (the runner's sha moved again; every pass rate is unchanged from the draft's records). Every pre-existing generator of C1-C5 and the
+2026-11-01 (the runner's sha moved again; every pass rate is unchanged from the draft's records), and once more after
+the unapplied-lesion rule (all nine `_A6` records: every pass rate and n_pass identical; only `scorer_sha256`,
+`scorer_files`, `repo_head` and `wall_s` moved). Every pre-existing generator of C1-C5 and the
 stage was re-measured, because the runner's sha moved. The A6 code reads only the `infer` permuted arm, so their pass
 rates were expected unchanged. Measured: every generator the `_A4` records hold reads the same pass rate in its `_A6`
 record (all six records OK). New `infer` generators: `null_permuted_blind_acquired` (takes the permuted teach, answers
@@ -145,11 +156,11 @@ identity above), so their reads stand for A5. Cite only the `_A6` records for an
 
 ## What this does NOT establish
 
-- The criterion-only rule takes a criterion's FAIL at face value. One pre-existing residual: an in-process lesion whose
-  patch was never called (`applied` False) does not make its seed UNDEFINED, so a criterion can FAIL "not load-bearing"
-  on an unapplied lesion. At A5 the precondition "every in-process lesion applied" made such a stage UNDEFINED; at A6 a
-  FAIL of that criterion makes it FAIL. The precondition is still recorded and printed. No gate shard has `applied`
-  False (every counted lesion on 10-26 and the preview is env-flag or patched with calls > 0).
+- The criterion-only rule takes a criterion's FAIL at face value once its seeds are defined. The residual the draft
+  left (a criterion could FAIL "not load-bearing" on an in-process lesion that was never applied) is closed by the
+  unapplied-lesion rule in A6.1: such a seed is UNDEFINED, its criterion INCOMPLETE. No gate shard has `applied` False
+  (every counted lesion on 10-26 and the preview is env-flag or patched with calls > 0), so the real-data table is
+  unchanged by the rule.
 
 - A6 does not make C2 passable. While the D4 gate refuses the permuted hop-1 teach, every C2 seed whose other clauses
   hold is UNDEFINED.

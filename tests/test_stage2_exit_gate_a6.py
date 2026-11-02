@@ -172,6 +172,61 @@ def test_a6_stage_passes_the_capable_brain_and_a5_keeps_its_rule(tmp_path):
     assert a5["verdict"] == "FAIL" and a5["criteria"]["C2"] == "FAIL" and "stage_rule" not in a5
 
 
+# ── the A6 residual (Claude's ruling 2026-11-01): a lesion whose in-process patch was never called is an instrument
+#    failure, never evidence of "not load-bearing"; its criterion reads INCOMPLETE at A6, never FAIL ───────────────────
+def _stage_unapplied(td, over_by_group=None, level="A6", seed_idx=None):
+    """C1's lesion made inert (so it FAILs "not load-bearing") AND its shards marked patched with zero calls."""
+    rng = np.random.default_rng(0)
+    over = dict(over_by_group or {})
+    over["conv"] = dict(over.get("conv") or {}, lesion_mouth="intact")
+    data = C.make_stage(rng, over)
+    seeds = sorted(data["conv"])
+    for i, s in enumerate(seeds):
+        if seed_idx is None or i in seed_idx:
+            for arm in ("lesion_mouth", "lesion_mouth.rep0"):
+                data["conv"][s][arm]["patch"] = {"calls": 0}
+    C.write_tree(td, data)
+    return SG.aggregate(td, seeds=seeds, informational=False, amendment_level=level)
+
+
+def test_a6_a_fail_driven_only_by_an_unapplied_lesion_is_not_a_fail(tmp_path):
+    agg = _stage_unapplied(str(tmp_path))
+    g = agg["groups"]["conv"]
+    assert agg["criteria"]["C1"] == "INCOMPLETE" and g["verdict"] == "INCOMPLETE", g["why"]
+    assert not any("not load-bearing" in w for w in g["why"])
+    assert agg["criteria_failed"] == [] and agg["verdict"].startswith("UNDEFINED") and agg["GO"] is False
+    assert all("A6 lesion not applied" in " ".join(r["undefined_reasons"]) for r in g["seeds"].values())
+    assert any("every in-process lesion applied" in r for r in agg["undefined_reasons"])
+    # one unapplied seed is enough: an instrument failure on any seed leaves the criterion INCOMPLETE
+    one = _stage_unapplied(str(tmp_path / "one"), seed_idx={0})
+    assert one["criteria"]["C1"] == "INCOMPLETE" and one["verdict"].startswith("UNDEFINED")
+
+
+def test_a5_keeps_the_unapplied_lesion_reading(tmp_path):
+    # A5 is unchanged: the seed stays defined, C1 FAILs "not load-bearing", the earned precondition makes the stage UNDEFINED
+    a5 = _stage_unapplied(str(tmp_path), level="A5")
+    assert a5["criteria"]["C1"] == "FAIL" and any("not load-bearing" in w for w in a5["groups"]["conv"]["why"])
+    assert a5["verdict"].startswith("UNDEFINED") and "stage_rule" not in a5
+    assert not any("A6 lesion not applied" in x for r in a5["groups"]["conv"]["seeds"].values() for x in r["undefined_reasons"])
+
+
+def test_a6_a_genuine_c1_fail_still_fails_the_stage(tmp_path):
+    # the unapplied lesion sits on C3 (ask); C1 FAILs on defined data (capability absent): the stage is FAIL on C1
+    rng = np.random.default_rng(0)
+    data = C.make_stage(rng, {"conv": _C1_GAP, "ask": {"lesion_curiosity": "intact"}})
+    seeds = sorted(data["conv"])
+    for s in seeds:
+        for arm in ("lesion_curiosity", "lesion_curiosity.rep0"):
+            data["ask"][s][arm]["patch"] = {"calls": 0}
+    C.write_tree(str(tmp_path), data)
+    agg = SG.aggregate(str(tmp_path), seeds=seeds, informational=False, amendment_level="A6")
+    assert agg["criteria"]["C1"] == "FAIL" and agg["criteria"]["C3"] == "INCOMPLETE"
+    assert agg["verdict"] == "FAIL" and agg["criteria_failed"] == ["C1"] and agg["GO"] is False
+    # a genuine C1 FAIL with no instrument failure anywhere is FAIL too
+    plain = _stage(str(tmp_path / "plain"), {"conv": _C1_GAP})
+    assert plain["verdict"] == "FAIL" and plain["criteria_failed"] == ["C1"]
+
+
 # ── pool lines: the gate lines unchanged; the dev-preview options ────────────────────────────────────────────────────
 def _emit_sha(**kw):
     txt = "".join("%s\t%s\n" % (c, w) for c, w in SG.pool_job_lines(_SHA, **kw))

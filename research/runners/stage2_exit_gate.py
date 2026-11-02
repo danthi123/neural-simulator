@@ -93,6 +93,9 @@ ASK_MOAT_MIN_DEFINED = 1
 # passes `--amendment-level A6` once Claude signs the amendment. Ruling (Claude, 2026-11-01): the criterion-only variant.
 # The A6 precondition stays at criterion level (C2 INCOMPLETE); the STAGE is FAIL whenever any counted criterion FAILs,
 # and UNDEFINED only when none FAILs and a precondition is unmet: an undefined C2 must never hide a defined C1 failure.
+# Ruling (Claude, 2026-11-01, the A6 residual): at A6 an in-process lesion with applied False (patch never called) makes
+# its seed UNDEFINED, so that criterion reads INCOMPLETE, never FAIL: an instrument failure is never evidence of "not
+# load-bearing". A5 keeps the earned-verdict precondition only, byte for byte.
 AMENDMENT_LEVELS = ("A5", "A6")
 AMENDMENT_LEVEL = "A5"
 A6_INFER_HOP_TEACHES = ("t_heron_hunt", "t_frog_eat")   # the two premises the 2-hop conclusion composes
@@ -2201,6 +2204,13 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True, amendment_level=None):
                             rec["patch_calls"] = p["calls"]; rec["applied"] = p["calls"] > 0
                         else:
                             rec["applied"] = True      # env-flag lesions are read per call by production code
+                        if a6 and rec["applied"] is False:
+                            # amendment A6, Claude's ruling 2026-11-01 (the A6 residual): an in-process lesion whose
+                            # patch was never called is an instrument failure, never evidence of "not load-bearing".
+                            # The seed is UNDEFINED, so the criterion reads INCOMPLETE, never FAIL, on that basis
+                            row["undefined_reasons"].append(
+                                "%s: in-process lesion patch never called (applied False, A6 lesion not applied): the "
+                                "lesion read is undefined" % les)
                     else:
                         rec["effect"] = None; rec["reproduced"] = None
                     row["lesions"][les] = rec

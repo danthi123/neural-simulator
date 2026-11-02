@@ -71,13 +71,13 @@
    1.0
   ]
  },
- "repo_head": "de2f61742855aa804484997aab01299d3bd14012",
+ "repo_head": "4f6f97d55f6981c5900396b895250a2f9d1f2a96",
  "scorer_files": {
   "docs/drafts/stage2-exit/bar_sanity_s2_common.py": "2db0cf38fa9267cb7f72d8a4024e878b2b24839d26b0bb71d282e1f97cdb20d4",
   "docs/drafts/stage2-exit/bar_sanity_spec_s2_c2_infer_A6_fail.py": "342d493d5546d8ce4c2a719859f2045007974a5e3e946ebcbe7f9f2d0632124f",
-  "research/runners/stage2_exit_gate.py": "28db620526e4ddae32e048d517266abdc096f0f9ef37a09716b24cb2bfdac47b"
+  "research/runners/stage2_exit_gate.py": "2f2aaf9621d705bd8cb6695dbc6f305b88f400e474d2936327ddb6bdeaf3e61b"
  },
- "scorer_sha256": "b4f1b63ba529d58492852073d60924524500918baf1bb162afa1dfd12542bf8e",
+ "scorer_sha256": "df5ca74349ce92c0c59b6f7490faf402f89173843467dcc016cbaf923bd9a507",
  "seed": 0,
  "spec": "docs/drafts/stage2-exit/bar_sanity_spec_s2_c2_infer_A6_fail_at_A5.py",
  "spec_sha256": "614484e5ae077c60b49dc5c53c71e5b0b010455e35aa5a6bc538e23c8fbb7b6e",
@@ -88,5 +88,5 @@
  },
  "tool": "tools/bar_sanity.py",
  "verdict": "TOOTHLESS",
- "wall_s": 21.0
+ "wall_s": 18.8
 }
