@@ -1,0 +1,92 @@
+{
+ "backend": "numpy",
+ "description": "Stage-2 C2 (inference on held-out), amendment A6: the real aggregate's `infer` verdict is FAIL. 'perfect' = a brain that lacks a C2 capability (FAIL is right); 'null' = a brain FAIL would misdescribe: the capable brain whose permuted hop teach was refused (the 10-26 gate), and the fully capable brain. Scored at level A5 (the pre-A6 scorer).",
+ "failures": [
+  "TOOTHLESS: null passes 1.000 > 0.05",
+  "TOOTHLESS: null_refused_exact passes 1.000 > 0.05"
+ ],
+ "kinds": {
+  "null": "null",
+  "null_capable": "null",
+  "null_refused_exact": "null",
+  "perfect": "perfect",
+  "perfect_blind_exact": "perfect",
+  "perfect_chain_route_inert": "perfect",
+  "perfect_one_hop": "perfect",
+  "perfect_unmarked_derivation": "perfect"
+ },
+ "n": 1000,
+ "n_pass": {
+  "null": 1000,
+  "null_capable": 0,
+  "null_refused_exact": 1000,
+  "perfect": 1000,
+  "perfect_blind_exact": 1000,
+  "perfect_chain_route_inert": 1000,
+  "perfect_one_hop": 1000,
+  "perfect_unmarked_derivation": 1000
+ },
+ "name": "stage2-C2 infer FAIL-claim at the pre-A6 scorer (A5)",
+ "pass_rate": {
+  "null": 1.0,
+  "null_capable": 0.0,
+  "null_refused_exact": 1.0,
+  "perfect": 1.0,
+  "perfect_blind_exact": 1.0,
+  "perfect_chain_route_inert": 1.0,
+  "perfect_one_hop": 1.0,
+  "perfect_unmarked_derivation": 1.0
+ },
+ "pass_rate_ci95": {
+  "null": [
+   0.9962,
+   1.0
+  ],
+  "null_capable": [
+   0.0,
+   0.0038
+  ],
+  "null_refused_exact": [
+   0.9962,
+   1.0
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_blind_exact": [
+   0.9962,
+   1.0
+  ],
+  "perfect_chain_route_inert": [
+   0.9962,
+   1.0
+  ],
+  "perfect_one_hop": [
+   0.9962,
+   1.0
+  ],
+  "perfect_unmarked_derivation": [
+   0.9962,
+   1.0
+  ]
+ },
+ "repo_head": "25e360740364a8184d565b71c1e0d9c3b9cf0eb5",
+ "scorer_files": {
+  "docs/drafts/stage2-exit/bar_sanity_s2_common.py": "521240bf3b75a6004479b11473658c6d7a59f19c5c3f95a9539504e7515fa405",
+  "docs/drafts/stage2-exit/bar_sanity_spec_s2_c2_infer_A6_fail.py": "342d493d5546d8ce4c2a719859f2045007974a5e3e946ebcbe7f9f2d0632124f",
+  "research/runners/stage2_exit_gate.py": "6fcca02d6e7f235b7393c2e81ff937aa106712408b6243e1c2c59486571a1109"
+ },
+ "scorer_sha256": "a864b19a4c870e3f7a9513b36113b95f8f6059dfd3626f587c5b4e591aa63eb4",
+ "seed": 0,
+ "spec": "docs/drafts/stage2-exit/bar_sanity_spec_s2_c2_infer_A6_fail_at_A5.py",
+ "spec_sha256": "614484e5ae077c60b49dc5c53c71e5b0b010455e35aa5a6bc538e23c8fbb7b6e",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "TOOTHLESS",
+ "wall_s": 36.7
+}

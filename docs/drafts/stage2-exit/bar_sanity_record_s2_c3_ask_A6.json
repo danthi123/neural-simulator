@@ -1,0 +1,207 @@
+{
+ "backend": "numpy",
+ "description": "Stage-2 C3 (curiosity ask-rate and learning-progress): the real aggregate's `ask` verdict is PASS over six gate seeds; perfect = the capability present, realistic dev-7 reply surfaces; nulls = each lesion / the permuted arm made inert, unreproduced lesions, a non-deterministic build, degenerate and random brains, one brain per missing sub-capability; A4: perfect brains with unacquired taught moats, nulls with the verdict carried by one probe order, no moat acquired, or a stored moat echoed second and asked anyway; info: per-topic habituation (the named residual).",
+ "failures": [],
+ "kinds": {
+  "info_flaky_0p01": "info",
+  "info_flaky_0p03": "info",
+  "info_topic_habituation": "info",
+  "null_all_abstain": "null",
+  "null_always_asks": "null",
+  "null_da_throttled": "null",
+  "null_echo": "null",
+  "null_lesion_curiosity_inert": "null",
+  "null_lesion_curiosity_unreproduced": "null",
+  "null_lesion_graded_inert": "null",
+  "null_lesion_graded_unreproduced": "null",
+  "null_never_abstains": "null",
+  "null_never_closes": "null",
+  "null_no_moat_acquired": "null",
+  "null_no_stop": "null",
+  "null_order_carried": "null",
+  "null_order_carried_no_stop": "null",
+  "null_permuted_inert": "null",
+  "null_stored_echoed_differently_asks": "null",
+  "null_unclean": "null",
+  "perfect": "perfect",
+  "perfect_exact": "perfect",
+  "perfect_goat_unacquired": "perfect",
+  "perfect_two_moats_unacquired": "perfect",
+  "random": "null"
+ },
+ "n": 1000,
+ "n_pass": {
+  "info_flaky_0p01": 708,
+  "info_flaky_0p03": 315,
+  "info_topic_habituation": 1000,
+  "null_all_abstain": 0,
+  "null_always_asks": 0,
+  "null_da_throttled": 0,
+  "null_echo": 0,
+  "null_lesion_curiosity_inert": 0,
+  "null_lesion_curiosity_unreproduced": 0,
+  "null_lesion_graded_inert": 0,
+  "null_lesion_graded_unreproduced": 0,
+  "null_never_abstains": 0,
+  "null_never_closes": 0,
+  "null_no_moat_acquired": 0,
+  "null_no_stop": 0,
+  "null_order_carried": 0,
+  "null_order_carried_no_stop": 0,
+  "null_permuted_inert": 0,
+  "null_stored_echoed_differently_asks": 0,
+  "null_unclean": 0,
+  "perfect": 1000,
+  "perfect_exact": 1000,
+  "perfect_goat_unacquired": 1000,
+  "perfect_two_moats_unacquired": 1000,
+  "random": 0
+ },
+ "name": "stage2-C3 ask",
+ "pass_rate": {
+  "info_flaky_0p01": 0.708,
+  "info_flaky_0p03": 0.315,
+  "info_topic_habituation": 1.0,
+  "null_all_abstain": 0.0,
+  "null_always_asks": 0.0,
+  "null_da_throttled": 0.0,
+  "null_echo": 0.0,
+  "null_lesion_curiosity_inert": 0.0,
+  "null_lesion_curiosity_unreproduced": 0.0,
+  "null_lesion_graded_inert": 0.0,
+  "null_lesion_graded_unreproduced": 0.0,
+  "null_never_abstains": 0.0,
+  "null_never_closes": 0.0,
+  "null_no_moat_acquired": 0.0,
+  "null_no_stop": 0.0,
+  "null_order_carried": 0.0,
+  "null_order_carried_no_stop": 0.0,
+  "null_permuted_inert": 0.0,
+  "null_stored_echoed_differently_asks": 0.0,
+  "null_unclean": 0.0,
+  "perfect": 1.0,
+  "perfect_exact": 1.0,
+  "perfect_goat_unacquired": 1.0,
+  "perfect_two_moats_unacquired": 1.0,
+  "random": 0.0
+ },
+ "pass_rate_ci95": {
+  "info_flaky_0p01": [
+   0.6791,
+   0.7353
+  ],
+  "info_flaky_0p03": [
+   0.287,
+   0.3445
+  ],
+  "info_topic_habituation": [
+   0.9962,
+   1.0
+  ],
+  "null_all_abstain": [
+   0.0,
+   0.0038
+  ],
+  "null_always_asks": [
+   0.0,
+   0.0038
+  ],
+  "null_da_throttled": [
+   0.0,
+   0.0038
+  ],
+  "null_echo": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_curiosity_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_curiosity_unreproduced": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_graded_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_graded_unreproduced": [
+   0.0,
+   0.0038
+  ],
+  "null_never_abstains": [
+   0.0,
+   0.0038
+  ],
+  "null_never_closes": [
+   0.0,
+   0.0038
+  ],
+  "null_no_moat_acquired": [
+   0.0,
+   0.0038
+  ],
+  "null_no_stop": [
+   0.0,
+   0.0038
+  ],
+  "null_order_carried": [
+   0.0,
+   0.0038
+  ],
+  "null_order_carried_no_stop": [
+   0.0,
+   0.0038
+  ],
+  "null_permuted_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_stored_echoed_differently_asks": [
+   0.0,
+   0.0038
+  ],
+  "null_unclean": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_exact": [
+   0.9962,
+   1.0
+  ],
+  "perfect_goat_unacquired": [
+   0.9962,
+   1.0
+  ],
+  "perfect_two_moats_unacquired": [
+   0.9962,
+   1.0
+  ],
+  "random": [
+   0.0,
+   0.0038
+  ]
+ },
+ "repo_head": "25e360740364a8184d565b71c1e0d9c3b9cf0eb5",
+ "scorer_files": {
+  "docs/drafts/stage2-exit/bar_sanity_s2_common.py": "521240bf3b75a6004479b11473658c6d7a59f19c5c3f95a9539504e7515fa405",
+  "research/runners/stage2_exit_gate.py": "6fcca02d6e7f235b7393c2e81ff937aa106712408b6243e1c2c59486571a1109"
+ },
+ "scorer_sha256": "e30a964edff36470e93d29574b7775e14013d1de716cf3c3aaccd0a7bf65d97c",
+ "seed": 0,
+ "spec": "docs/drafts/stage2-exit/bar_sanity_spec_s2_c3_ask.py",
+ "spec_sha256": "ff796e591b999143430df532d7e5e8ed9f7a3c173e1a87acdb25677589904d13",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 226.1
+}

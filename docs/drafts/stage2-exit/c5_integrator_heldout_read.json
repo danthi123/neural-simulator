@@ -1,0 +1,2289 @@
+{
+ "analysis_only": true,
+ "backend": "numpy",
+ "cells": {
+  "off/s1/ask": {
+   "all": false
+  },
+  "off/s1/conv": {
+   "all": false
+  },
+  "off/s1/emo": {
+   "all": true
+  },
+  "off/s1/infer": {
+   "all": true
+  },
+  "off/s1/inner": {
+   "all": true,
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "off/s10/ask": {
+   "all": false
+  },
+  "off/s10/conv": {
+   "all": false
+  },
+  "off/s10/emo": {
+   "all": true
+  },
+  "off/s10/infer": {
+   "all": true
+  },
+  "off/s10/inner": {
+   "all": true,
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "off/s11/ask": {
+   "all": false
+  },
+  "off/s11/conv": {
+   "all": false
+  },
+  "off/s11/emo": {
+   "all": true
+  },
+  "off/s11/infer": {
+   "all": true
+  },
+  "off/s11/inner": {
+   "all": true,
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "off/s12/ask": {
+   "all": false
+  },
+  "off/s12/conv": {
+   "all": false
+  },
+  "off/s12/emo": {
+   "all": true
+  },
+  "off/s12/infer": {
+   "all": true
+  },
+  "off/s12/inner": {
+   "all": true,
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "off/s2/ask": {
+   "all": false
+  },
+  "off/s2/conv": {
+   "all": false
+  },
+  "off/s2/emo": {
+   "all": true
+  },
+  "off/s2/infer": {
+   "all": true
+  },
+  "off/s2/inner": {
+   "all": true,
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "off/s3/ask": {
+   "all": false
+  },
+  "off/s3/conv": {
+   "all": false
+  },
+  "off/s3/emo": {
+   "all": true
+  },
+  "off/s3/infer": {
+   "all": true
+  },
+  "off/s3/inner": {
+   "all": true,
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "off/s4/ask": {
+   "all": false
+  },
+  "off/s4/conv": {
+   "all": false
+  },
+  "off/s4/emo": {
+   "all": true
+  },
+  "off/s4/infer": {
+   "all": true
+  },
+  "off/s4/inner": {
+   "all": true,
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "off/s5/ask": {
+   "all": false
+  },
+  "off/s5/conv": {
+   "all": false
+  },
+  "off/s5/emo": {
+   "all": true
+  },
+  "off/s5/infer": {
+   "all": true
+  },
+  "off/s5/inner": {
+   "all": true,
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "off/s6/ask": {
+   "all": false
+  },
+  "off/s6/conv": {
+   "all": false
+  },
+  "off/s6/emo": {
+   "all": true
+  },
+  "off/s6/infer": {
+   "all": true
+  },
+  "off/s6/inner": {
+   "all": true,
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "off/s7/ask": {
+   "all": false
+  },
+  "off/s7/conv": {
+   "all": false
+  },
+  "off/s7/emo": {
+   "all": true
+  },
+  "off/s7/infer": {
+   "all": true
+  },
+  "off/s7/inner": {
+   "all": true,
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "off/s8/ask": {
+   "all": false
+  },
+  "off/s8/conv": {
+   "all": false
+  },
+  "off/s8/emo": {
+   "all": true
+  },
+  "off/s8/infer": {
+   "all": true
+  },
+  "off/s8/inner": {
+   "all": true,
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "off/s9/ask": {
+   "all": false
+  },
+  "off/s9/conv": {
+   "all": false
+  },
+  "off/s9/emo": {
+   "all": true
+  },
+  "off/s9/infer": {
+   "all": true
+  },
+  "off/s9/inner": {
+   "all": true,
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "stable/s1/ask": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ],
+   "primary_differs_vs_off": [
+    "t_yak",
+    "t_moose",
+    "t_goat",
+    "g_eel",
+    "m_moose",
+    "lp_ibex_2",
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ]
+  },
+  "stable/s1/conv": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_fox_chase",
+    "t_fox_eat",
+    "t_deer_sleep",
+    "p_fox_chase",
+    "p_more",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_mole_hunt",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s1/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "feel_joy",
+    "s_fear_2",
+    "feel_fear",
+    "feel_anger",
+    "s_sadness_1",
+    "feel_sadness"
+   ]
+  },
+  "stable/s1/infer": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_heron_hunt",
+    "t_frog_eat",
+    "t_crow_chase",
+    "t_wren_chase",
+    "p_prey_eat",
+    "c_heron_hunt",
+    "c_frog_eat",
+    "p_yesno",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s1/inner": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "chain_hops_internal_ge2": false,
+   "inner_terminal_lynx": false,
+   "inner_terminal_vole": false,
+   "moat_tail": true,
+   "primary_differs_vs_off": [
+    "t_lynx",
+    "t_beetle",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": false
+  },
+  "stable/s10/ask": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ],
+   "primary_differs_vs_off": [
+    "t_yak",
+    "t_moose",
+    "t_goat",
+    "g_eel",
+    "m_moose",
+    "lp_ibex_2",
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ]
+  },
+  "stable/s10/conv": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_fox_chase",
+    "t_fox_eat",
+    "p_fox_chase",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_mole_hunt",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s10/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "feel_joy",
+    "feel_fear",
+    "s_anger_1",
+    "feel_anger",
+    "s_sadness_2",
+    "feel_sadness"
+   ]
+  },
+  "stable/s10/infer": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_heron_hunt",
+    "t_frog_eat",
+    "t_wren_chase",
+    "p_prey_eat",
+    "c_heron_hunt",
+    "c_frog_eat",
+    "p_yesno",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s10/inner": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "chain_hops_internal_ge2": false,
+   "inner_terminal_lynx": false,
+   "inner_terminal_vole": false,
+   "moat_tail": true,
+   "primary_differs_vs_off": [
+    "t_lynx",
+    "t_beetle",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": false
+  },
+  "stable/s11/ask": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ],
+   "primary_differs_vs_off": [
+    "t_goat",
+    "m_moose",
+    "lp_ibex_2",
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ]
+  },
+  "stable/s11/conv": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_fox_eat",
+    "p_fox_chase",
+    "p_more",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_mole_hunt",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s11/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "s_joy_1",
+    "s_joy_2",
+    "feel_joy",
+    "s_fear_1",
+    "feel_fear",
+    "s_anger_2",
+    "feel_anger",
+    "feel_sadness"
+   ]
+  },
+  "stable/s11/infer": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_wren_chase",
+    "c_heron_hunt",
+    "c_frog_eat",
+    "p_yesno",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s11/inner": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "chain_hops_internal_ge2": false,
+   "inner_terminal_lynx": false,
+   "inner_terminal_vole": false,
+   "moat_tail": true,
+   "primary_differs_vs_off": [
+    "t_beetle",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": false
+  },
+  "stable/s12/ask": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ],
+   "primary_differs_vs_off": [
+    "t_yak",
+    "t_moose",
+    "t_goat",
+    "m_moose",
+    "lp_ibex_2",
+    "u_toad_1",
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ]
+  },
+  "stable/s12/conv": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_fox_chase",
+    "p_fox_chase",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_mole_hunt",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s12/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "feel_joy",
+    "feel_fear",
+    "s_anger_1",
+    "feel_anger",
+    "feel_sadness"
+   ]
+  },
+  "stable/s12/infer": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_heron_hunt",
+    "t_wren_chase",
+    "c_heron_hunt",
+    "c_frog_eat",
+    "p_yesno",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s12/inner": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "chain_hops_internal_ge2": false,
+   "inner_terminal_lynx": false,
+   "inner_terminal_vole": false,
+   "moat_tail": true,
+   "primary_differs_vs_off": [
+    "t_lynx",
+    "t_beetle",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": false
+  },
+  "stable/s2/ask": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ],
+   "primary_differs_vs_off": [
+    "t_yak",
+    "t_moose",
+    "t_goat",
+    "m_moose",
+    "t_ibex",
+    "lp_ibex_2",
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ]
+  },
+  "stable/s2/conv": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_fox_chase",
+    "t_fox_eat",
+    "t_deer_sleep",
+    "t_mole_passive",
+    "p_fox_chase",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_mole_hunt",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s2/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "feel_joy",
+    "s_fear_1",
+    "feel_fear",
+    "s_anger_1",
+    "feel_anger",
+    "s_sadness_1",
+    "feel_sadness"
+   ]
+  },
+  "stable/s2/infer": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_heron_hunt",
+    "t_frog_eat",
+    "t_crow_chase",
+    "t_wren_chase",
+    "p_prey_eat",
+    "c_heron_hunt",
+    "c_frog_eat",
+    "p_yesno",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s2/inner": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "chain_hops_internal_ge2": false,
+   "inner_terminal_lynx": false,
+   "inner_terminal_vole": false,
+   "moat_tail": true,
+   "primary_differs_vs_off": [
+    "t_lynx",
+    "t_vole",
+    "t_beetle",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": false
+  },
+  "stable/s3/ask": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ],
+   "primary_differs_vs_off": [
+    "t_yak",
+    "t_goat",
+    "g_eel",
+    "m_moose",
+    "lp_ibex_2",
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ]
+  },
+  "stable/s3/conv": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_fox_chase",
+    "t_fox_eat",
+    "t_deer_sleep",
+    "p_fox_chase",
+    "p_more",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_mole_hunt",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s3/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "s_joy_2",
+    "feel_joy",
+    "s_fear_2",
+    "feel_fear",
+    "feel_anger",
+    "feel_sadness"
+   ]
+  },
+  "stable/s3/infer": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_heron_hunt",
+    "t_crow_chase",
+    "t_wren_chase",
+    "c_heron_hunt",
+    "c_frog_eat",
+    "p_yesno",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s3/inner": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "chain_hops_internal_ge2": false,
+   "inner_terminal_lynx": false,
+   "inner_terminal_vole": false,
+   "moat_tail": true,
+   "primary_differs_vs_off": [
+    "t_lynx",
+    "t_beetle",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": false
+  },
+  "stable/s4/ask": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ],
+   "primary_differs_vs_off": [
+    "t_goat",
+    "m_moose",
+    "lp_ibex_2",
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ]
+  },
+  "stable/s4/conv": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "p_fox_chase",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_mole_hunt",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s4/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "s_joy_2",
+    "feel_joy",
+    "feel_fear",
+    "feel_anger",
+    "feel_sadness"
+   ]
+  },
+  "stable/s4/infer": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_wren_chase",
+    "c_heron_hunt",
+    "c_frog_eat",
+    "p_yesno",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s4/inner": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "chain_hops_internal_ge2": false,
+   "inner_terminal_lynx": false,
+   "inner_terminal_vole": false,
+   "moat_tail": true,
+   "primary_differs_vs_off": [
+    "t_beetle",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": false
+  },
+  "stable/s5/ask": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ],
+   "primary_differs_vs_off": [
+    "t_goat",
+    "m_moose",
+    "lp_ibex_2",
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ]
+  },
+  "stable/s5/conv": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_deer_sleep",
+    "t_mole_passive",
+    "p_fox_chase",
+    "p_more",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_mole_hunt",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s5/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "feel_joy",
+    "s_fear_1",
+    "feel_fear",
+    "feel_anger",
+    "s_sadness_2",
+    "feel_sadness"
+   ]
+  },
+  "stable/s5/infer": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_crow_chase",
+    "t_wren_chase",
+    "p_prey_eat",
+    "c_heron_hunt",
+    "c_frog_eat",
+    "p_yesno",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s5/inner": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "chain_hops_internal_ge2": false,
+   "inner_terminal_lynx": false,
+   "inner_terminal_vole": false,
+   "moat_tail": true,
+   "primary_differs_vs_off": [
+    "t_beetle",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": false
+  },
+  "stable/s6/ask": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ],
+   "primary_differs_vs_off": [
+    "t_goat",
+    "g_eel",
+    "m_moose",
+    "lp_ibex_2",
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ]
+  },
+  "stable/s6/conv": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "p_fox_chase",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_mole_hunt",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s6/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "s_joy_2",
+    "feel_joy",
+    "s_fear_2",
+    "feel_fear",
+    "feel_anger",
+    "s_sadness_2",
+    "feel_sadness"
+   ]
+  },
+  "stable/s6/infer": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_wren_chase",
+    "p_prey_eat",
+    "c_heron_hunt",
+    "c_frog_eat",
+    "p_yesno",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s6/inner": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "chain_hops_internal_ge2": false,
+   "inner_terminal_lynx": false,
+   "inner_terminal_vole": false,
+   "moat_tail": true,
+   "primary_differs_vs_off": [
+    "t_beetle",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": false
+  },
+  "stable/s7/ask": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ],
+   "primary_differs_vs_off": [
+    "t_yak",
+    "t_moose",
+    "t_goat",
+    "g_eel",
+    "m_moose",
+    "lp_ibex_2",
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ]
+  },
+  "stable/s7/conv": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_fox_chase",
+    "t_fox_eat",
+    "p_fox_chase",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_mole_hunt",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s7/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "feel_joy",
+    "s_fear_2",
+    "feel_fear",
+    "feel_anger",
+    "s_sadness_2",
+    "feel_sadness"
+   ]
+  },
+  "stable/s7/infer": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_heron_hunt",
+    "t_frog_eat",
+    "t_wren_chase",
+    "c_heron_hunt",
+    "c_frog_eat",
+    "p_yesno",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s7/inner": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "chain_hops_internal_ge2": false,
+   "inner_terminal_lynx": false,
+   "inner_terminal_vole": false,
+   "moat_tail": true,
+   "primary_differs_vs_off": [
+    "t_lynx",
+    "t_beetle",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": false
+  },
+  "stable/s8/ask": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ],
+   "primary_differs_vs_off": [
+    "t_goat",
+    "g_crab",
+    "m_moose",
+    "lp_ibex_2",
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ]
+  },
+  "stable/s8/conv": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_deer_sleep",
+    "t_mole_passive",
+    "p_fox_chase",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_mole_hunt",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s8/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "s_joy_1",
+    "feel_joy",
+    "s_fear_1",
+    "feel_fear",
+    "s_anger_2",
+    "feel_anger",
+    "s_sadness_1",
+    "feel_sadness"
+   ]
+  },
+  "stable/s8/infer": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_crow_chase",
+    "t_wren_chase",
+    "c_heron_hunt",
+    "c_frog_eat",
+    "c_prey_chase",
+    "p_yesno",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s8/inner": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "chain_hops_internal_ge2": false,
+   "inner_terminal_lynx": false,
+   "inner_terminal_vole": false,
+   "moat_tail": true,
+   "primary_differs_vs_off": [
+    "t_beetle",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": false
+  },
+  "stable/s9/ask": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ],
+   "primary_differs_vs_off": [
+    "t_goat",
+    "m_moose",
+    "lp_ibex_2",
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ]
+  },
+  "stable/s9/conv": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_deer_sleep",
+    "p_fox_chase",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_mole_hunt",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s9/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "feel_joy",
+    "feel_fear",
+    "feel_anger",
+    "feel_sadness"
+   ]
+  },
+  "stable/s9/infer": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "primary_differs_vs_off": [
+    "t_crow_chase",
+    "t_wren_chase",
+    "c_heron_hunt",
+    "c_frog_eat",
+    "p_yesno",
+    "c_dog_chase"
+   ]
+  },
+  "stable/s9/inner": {
+   "all": false,
+   "answered_off_not_here": [
+    "c_dog_chase"
+   ],
+   "chain_hops_internal_ge2": false,
+   "inner_terminal_lynx": false,
+   "inner_terminal_vole": false,
+   "moat_tail": true,
+   "primary_differs_vs_off": [
+    "t_beetle",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": false
+  },
+  "stable_recal/s1/ask": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_yak",
+    "t_moose",
+    "t_goat",
+    "g_eel"
+   ]
+  },
+  "stable_recal/s1/conv": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_fox_chase",
+    "t_fox_eat",
+    "t_deer_sleep",
+    "p_fox_chase",
+    "p_more",
+    "p_deer_sleep",
+    "p_owl_hunt"
+   ]
+  },
+  "stable_recal/s1/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "feel_joy",
+    "s_fear_2",
+    "feel_fear",
+    "feel_anger",
+    "s_sadness_1",
+    "feel_sadness"
+   ]
+  },
+  "stable_recal/s1/infer": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_heron_hunt",
+    "t_frog_eat",
+    "t_crow_chase",
+    "p_prey_eat"
+   ]
+  },
+  "stable_recal/s1/inner": {
+   "all": true,
+   "answered_off_not_here": [],
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "primary_differs_vs_off": [
+    "t_lynx",
+    "p_chase_all"
+   ],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "stable_recal/s10/ask": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_yak",
+    "t_moose",
+    "t_goat",
+    "g_eel"
+   ]
+  },
+  "stable_recal/s10/conv": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_fox_chase",
+    "t_fox_eat",
+    "p_fox_chase",
+    "p_deer_sleep",
+    "c_dog_chase"
+   ]
+  },
+  "stable_recal/s10/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "feel_joy",
+    "feel_fear",
+    "s_anger_1",
+    "feel_anger",
+    "s_sadness_2",
+    "feel_sadness"
+   ]
+  },
+  "stable_recal/s10/infer": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_heron_hunt",
+    "t_frog_eat",
+    "t_wren_chase",
+    "p_prey_eat",
+    "c_heron_hunt"
+   ]
+  },
+  "stable_recal/s10/inner": {
+   "all": true,
+   "answered_off_not_here": [],
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "primary_differs_vs_off": [
+    "t_lynx",
+    "p_chase_all_vole"
+   ],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "stable_recal/s11/ask": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_goat"
+   ]
+  },
+  "stable_recal/s11/conv": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_fox_eat",
+    "p_more"
+   ]
+  },
+  "stable_recal/s11/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "s_joy_1",
+    "s_joy_2",
+    "feel_joy",
+    "s_fear_1",
+    "feel_fear",
+    "s_anger_2",
+    "feel_anger",
+    "feel_sadness"
+   ]
+  },
+  "stable_recal/s11/infer": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": []
+  },
+  "stable_recal/s11/inner": {
+   "all": true,
+   "answered_off_not_here": [],
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "primary_differs_vs_off": [],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "stable_recal/s12/ask": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_yak",
+    "t_moose",
+    "t_goat",
+    "u_toad_1"
+   ]
+  },
+  "stable_recal/s12/conv": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_fox_chase",
+    "p_fox_chase"
+   ]
+  },
+  "stable_recal/s12/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "feel_joy",
+    "feel_fear",
+    "s_anger_1",
+    "feel_anger",
+    "feel_sadness"
+   ]
+  },
+  "stable_recal/s12/infer": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_heron_hunt",
+    "c_heron_hunt"
+   ]
+  },
+  "stable_recal/s12/inner": {
+   "all": true,
+   "answered_off_not_here": [],
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "primary_differs_vs_off": [
+    "t_lynx"
+   ],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "stable_recal/s2/ask": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_yak",
+    "t_moose",
+    "t_goat",
+    "t_ibex",
+    "lp_ibex_2",
+    "c_dog_1",
+    "c_dog_2",
+    "c_dog_3"
+   ]
+  },
+  "stable_recal/s2/conv": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_fox_chase",
+    "t_fox_eat",
+    "t_deer_sleep",
+    "t_mole_passive",
+    "p_fox_chase",
+    "c_mole_hunt",
+    "c_dog_chase"
+   ]
+  },
+  "stable_recal/s2/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "feel_joy",
+    "s_fear_1",
+    "feel_fear",
+    "s_anger_1",
+    "feel_anger",
+    "s_sadness_1",
+    "feel_sadness"
+   ]
+  },
+  "stable_recal/s2/infer": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_heron_hunt",
+    "t_frog_eat",
+    "t_crow_chase",
+    "t_wren_chase",
+    "p_prey_eat",
+    "c_heron_hunt",
+    "c_frog_eat",
+    "p_yesno",
+    "c_dog_chase"
+   ]
+  },
+  "stable_recal/s2/inner": {
+   "all": true,
+   "answered_off_not_here": [],
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "primary_differs_vs_off": [
+    "t_lynx",
+    "t_vole",
+    "t_beetle",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "stable_recal/s3/ask": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_yak",
+    "t_goat",
+    "g_eel"
+   ]
+  },
+  "stable_recal/s3/conv": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_fox_chase",
+    "t_fox_eat",
+    "t_deer_sleep",
+    "p_fox_chase",
+    "p_more",
+    "p_owl_hunt",
+    "c_dog_chase"
+   ]
+  },
+  "stable_recal/s3/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "s_joy_2",
+    "feel_joy",
+    "s_fear_2",
+    "feel_fear",
+    "feel_anger",
+    "feel_sadness"
+   ]
+  },
+  "stable_recal/s3/infer": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_heron_hunt",
+    "t_crow_chase"
+   ]
+  },
+  "stable_recal/s3/inner": {
+   "all": true,
+   "answered_off_not_here": [],
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "primary_differs_vs_off": [
+    "t_lynx",
+    "p_chase_all"
+   ],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "stable_recal/s4/ask": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_goat"
+   ]
+  },
+  "stable_recal/s4/conv": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": []
+  },
+  "stable_recal/s4/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "s_joy_2",
+    "feel_joy",
+    "feel_fear",
+    "feel_anger",
+    "feel_sadness"
+   ]
+  },
+  "stable_recal/s4/infer": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": []
+  },
+  "stable_recal/s4/inner": {
+   "all": true,
+   "answered_off_not_here": [],
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "primary_differs_vs_off": [],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "stable_recal/s6/ask": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_goat",
+    "g_eel"
+   ]
+  },
+  "stable_recal/s6/conv": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": []
+  },
+  "stable_recal/s6/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "s_joy_2",
+    "feel_joy",
+    "s_fear_2",
+    "feel_fear",
+    "feel_anger",
+    "s_sadness_2",
+    "feel_sadness"
+   ]
+  },
+  "stable_recal/s6/infer": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "p_prey_eat"
+   ]
+  },
+  "stable_recal/s6/inner": {
+   "all": true,
+   "answered_off_not_here": [],
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "primary_differs_vs_off": [
+    "p_chase_all"
+   ],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "stable_recal/s7/ask": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_yak",
+    "t_moose",
+    "t_goat",
+    "g_eel",
+    "c_dog_3"
+   ]
+  },
+  "stable_recal/s7/conv": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_fox_chase",
+    "t_fox_eat"
+   ]
+  },
+  "stable_recal/s7/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "feel_joy",
+    "s_fear_2",
+    "feel_fear",
+    "feel_anger",
+    "s_sadness_2",
+    "feel_sadness"
+   ]
+  },
+  "stable_recal/s7/infer": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_heron_hunt",
+    "t_frog_eat"
+   ]
+  },
+  "stable_recal/s7/inner": {
+   "all": true,
+   "answered_off_not_here": [],
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "primary_differs_vs_off": [
+    "t_lynx",
+    "p_chase_all_vole"
+   ],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "stable_recal/s8/ask": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_goat",
+    "g_crab",
+    "c_dog_3"
+   ]
+  },
+  "stable_recal/s8/conv": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_deer_sleep",
+    "t_mole_passive"
+   ]
+  },
+  "stable_recal/s8/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "s_joy_1",
+    "feel_joy",
+    "s_fear_1",
+    "feel_fear",
+    "s_anger_2",
+    "feel_anger",
+    "s_sadness_1",
+    "feel_sadness"
+   ]
+  },
+  "stable_recal/s8/infer": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_crow_chase",
+    "c_prey_chase"
+   ]
+  },
+  "stable_recal/s8/inner": {
+   "all": true,
+   "answered_off_not_here": [],
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "primary_differs_vs_off": [],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  },
+  "stable_recal/s9/ask": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_goat",
+    "c_dog_3"
+   ]
+  },
+  "stable_recal/s9/conv": {
+   "all": false,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_deer_sleep"
+   ]
+  },
+  "stable_recal/s9/emo": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "feel_joy",
+    "feel_fear",
+    "feel_anger",
+    "feel_sadness"
+   ]
+  },
+  "stable_recal/s9/infer": {
+   "all": true,
+   "answered_off_not_here": [],
+   "primary_differs_vs_off": [
+    "t_crow_chase"
+   ]
+  },
+  "stable_recal/s9/inner": {
+   "all": true,
+   "answered_off_not_here": [],
+   "chain_hops_internal_ge2": true,
+   "inner_terminal_lynx": true,
+   "inner_terminal_vole": true,
+   "moat_tail": true,
+   "primary_differs_vs_off": [],
+   "private_utterance": [
+    "beetle",
+    "chase",
+    "mite"
+   ],
+   "private_voices_stored_fact": true,
+   "single_hop": true
+  }
+ },
+ "device": "cpu",
+ "in_sample_seeds": [
+  7,
+  8
+ ],
+ "missing": [
+  "research/findings/raw/_stable_recal/dev/stable_recal/s5/conv__intact_a.json",
+  "research/findings/raw/_stable_recal/dev/stable_recal/s5/infer__intact_a.json",
+  "research/findings/raw/_stable_recal/dev/stable_recal/s5/ask__intact_a.json",
+  "research/findings/raw/_stable_recal/dev/stable_recal/s5/emo__intact_a.json",
+  "research/findings/raw/_stable_recal/dev/stable_recal/s5/inner__intact_a.json"
+ ],
+ "revision": "34a4e5f756024b4f5aa5d145b3b29661ad976d0b (the battery's pool pin)",
+ "root": "research/findings/raw/_stable_recal/dev",
+ "summary": {
+  "off/ask/held_out": {
+   "all_true": 0,
+   "answers_lost_vs_off": 0,
+   "n": 10,
+   "seeds_false": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    9,
+    10,
+    11,
+    12
+   ]
+  },
+  "off/ask/in_sample": {
+   "all_true": 0,
+   "answers_lost_vs_off": 0,
+   "n": 2,
+   "seeds_false": [
+    7,
+    8
+   ]
+  },
+  "off/conv/held_out": {
+   "all_true": 0,
+   "answers_lost_vs_off": 0,
+   "n": 10,
+   "seeds_false": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    9,
+    10,
+    11,
+    12
+   ]
+  },
+  "off/conv/in_sample": {
+   "all_true": 0,
+   "answers_lost_vs_off": 0,
+   "n": 2,
+   "seeds_false": [
+    7,
+    8
+   ]
+  },
+  "off/emo/held_out": {
+   "all_true": 10,
+   "answers_lost_vs_off": 0,
+   "n": 10,
+   "seeds_false": []
+  },
+  "off/emo/in_sample": {
+   "all_true": 2,
+   "answers_lost_vs_off": 0,
+   "n": 2,
+   "seeds_false": []
+  },
+  "off/infer/held_out": {
+   "all_true": 10,
+   "answers_lost_vs_off": 0,
+   "n": 10,
+   "seeds_false": []
+  },
+  "off/infer/in_sample": {
+   "all_true": 2,
+   "answers_lost_vs_off": 0,
+   "n": 2,
+   "seeds_false": []
+  },
+  "off/inner/held_out": {
+   "all_true": 10,
+   "answers_lost_vs_off": 0,
+   "n": 10,
+   "seeds_false": []
+  },
+  "off/inner/in_sample": {
+   "all_true": 2,
+   "answers_lost_vs_off": 0,
+   "n": 2,
+   "seeds_false": []
+  },
+  "stable/ask/held_out": {
+   "all_true": 0,
+   "answers_lost_vs_off": 30,
+   "n": 10,
+   "seeds_false": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    9,
+    10,
+    11,
+    12
+   ]
+  },
+  "stable/ask/in_sample": {
+   "all_true": 0,
+   "answers_lost_vs_off": 6,
+   "n": 2,
+   "seeds_false": [
+    7,
+    8
+   ]
+  },
+  "stable/conv/held_out": {
+   "all_true": 0,
+   "answers_lost_vs_off": 10,
+   "n": 10,
+   "seeds_false": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    9,
+    10,
+    11,
+    12
+   ]
+  },
+  "stable/conv/in_sample": {
+   "all_true": 0,
+   "answers_lost_vs_off": 2,
+   "n": 2,
+   "seeds_false": [
+    7,
+    8
+   ]
+  },
+  "stable/emo/held_out": {
+   "all_true": 10,
+   "answers_lost_vs_off": 0,
+   "n": 10,
+   "seeds_false": []
+  },
+  "stable/emo/in_sample": {
+   "all_true": 2,
+   "answers_lost_vs_off": 0,
+   "n": 2,
+   "seeds_false": []
+  },
+  "stable/infer/held_out": {
+   "all_true": 0,
+   "answers_lost_vs_off": 10,
+   "n": 10,
+   "seeds_false": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    9,
+    10,
+    11,
+    12
+   ]
+  },
+  "stable/infer/in_sample": {
+   "all_true": 0,
+   "answers_lost_vs_off": 2,
+   "n": 2,
+   "seeds_false": [
+    7,
+    8
+   ]
+  },
+  "stable/inner/held_out": {
+   "all_true": 0,
+   "answers_lost_vs_off": 10,
+   "n": 10,
+   "seeds_false": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    9,
+    10,
+    11,
+    12
+   ]
+  },
+  "stable/inner/in_sample": {
+   "all_true": 0,
+   "answers_lost_vs_off": 2,
+   "n": 2,
+   "seeds_false": [
+    7,
+    8
+   ]
+  },
+  "stable_recal/ask/held_out": {
+   "all_true": 0,
+   "answers_lost_vs_off": 0,
+   "n": 9,
+   "seeds_false": [
+    1,
+    2,
+    3,
+    4,
+    6,
+    9,
+    10,
+    11,
+    12
+   ]
+  },
+  "stable_recal/ask/in_sample": {
+   "all_true": 0,
+   "answers_lost_vs_off": 0,
+   "n": 2,
+   "seeds_false": [
+    7,
+    8
+   ]
+  },
+  "stable_recal/conv/held_out": {
+   "all_true": 0,
+   "answers_lost_vs_off": 0,
+   "n": 9,
+   "seeds_false": [
+    1,
+    2,
+    3,
+    4,
+    6,
+    9,
+    10,
+    11,
+    12
+   ]
+  },
+  "stable_recal/conv/in_sample": {
+   "all_true": 0,
+   "answers_lost_vs_off": 0,
+   "n": 2,
+   "seeds_false": [
+    7,
+    8
+   ]
+  },
+  "stable_recal/emo/held_out": {
+   "all_true": 9,
+   "answers_lost_vs_off": 0,
+   "n": 9,
+   "seeds_false": []
+  },
+  "stable_recal/emo/in_sample": {
+   "all_true": 2,
+   "answers_lost_vs_off": 0,
+   "n": 2,
+   "seeds_false": []
+  },
+  "stable_recal/infer/held_out": {
+   "all_true": 9,
+   "answers_lost_vs_off": 0,
+   "n": 9,
+   "seeds_false": []
+  },
+  "stable_recal/infer/in_sample": {
+   "all_true": 2,
+   "answers_lost_vs_off": 0,
+   "n": 2,
+   "seeds_false": []
+  },
+  "stable_recal/inner/held_out": {
+   "all_true": 9,
+   "answers_lost_vs_off": 0,
+   "n": 9,
+   "seeds_false": []
+  },
+  "stable_recal/inner/in_sample": {
+   "all_true": 2,
+   "answers_lost_vs_off": 0,
+   "n": 2,
+   "seeds_false": []
+  }
+ },
+ "what": "stable-recal held-out battery re-scored with the registered Stage-2 scorers (intact_a only; correctness clause; no lesion/null/permuted arm exists in this battery)"
+}
