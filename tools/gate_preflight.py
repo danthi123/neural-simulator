@@ -47,8 +47,21 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TSV = os.environ.get("GATE_PREFLIGHT_PATH") or os.path.join(ROOT, "research", "queue", "preflight.tsv")
 RUNBOOK = os.path.join(ROOT, "research", "coordination", "LOCAL_LLM_RUNBOOK.md")
 COLS = ("date", "prereg", "revision", "verdict", "detail", "log", "command")
-COVERAGE = re.compile(r"missing|incomplete|no-shard|no_shard|no-arm-files|unmeasured|not run|fewer than", re.I)
+COVERAGE = re.compile(r"missing|incomplete|no-shard|no_shard|no-arm-files|unmeasured|not run|fewer than"
+                      r"|min_events|too few events|events per measure", re.I)
 UNDEF = re.compile(r"UNDEFINED[^\n]*")
+# False positives of 2026-11-02 (RULINGS bg-preflight-1102 and s2-preflight-1102): the checker flagged the WORD UNDEFINED where
+# the scorer only DESCRIBES its rule, or where one seed missed a coverage precondition. Neither is an undefined measurement, so
+# they are removed before the UNDEFINED scan; real statuses ("verdict": "UNDEFINED", a cell/criterion status, an engagement /
+# lesion / route / error reason) still FLAG (fail-closed).
+# (a) descriptive JSON string fields and rule-explanation prose (stage2_exit_gate.py --aggregate notes and its "Stage rule" line);
+DESCRIPTIVE_FIELD = re.compile(r'"(?:note|stage_rule|rule|_doc|doc|description|why)"\s*:\s*"(?:[^"\\]|\\.)*"')
+RULE_PROSE = re.compile(r"UNDEFINED only when|makes that seed UNDEFINED|never FAIL")
+# (b) host_share_bg_seam.py --score: the lane-C report field `production_seam_class`, and a verdict whose every gate is decided
+# (true/false, none null/UNDEFINED) yet whose status is UNDEFINED, which is its min_events precondition on a single dev seed
+# (a coverage gap: six pooled seeds meet it). A gate that itself reads UNDEFINED still flags.
+SEAM_CLASS_FIELD = re.compile(r'"production_seam_class"\s*:\s*"UNDEFINED"')
+DECIDED_GATES_UNDEF = re.compile(r'("gates"\s*:\s*\{(?:[^{}"]|"[^"]*"\s*:\s*(?:true|false))*\}\s*,\s*"status"\s*:\s*)"UNDEFINED"')
 DEFINED = re.compile(r"(?<![A-Za-z_])DEFINED(?![A-Za-z_])")
 # tools/b2d_score.py prints no DEFINED word, only a count: `"n_defined": 82` (RULING lbf-preflight-ack-1020: its CLEAN
 # dev read was FLAGGED "no DEFINED cell" until this). A zero count is still no defined cell.
@@ -75,6 +88,10 @@ STAGE2_VERDICT = re.compile(r"\*\*Stage-2 exit verdict: (?:PASS|FAIL)\*\*|\bC[1-
 # DEFINED. Registered per RULING c3-preflight-vocab-1031 (case (a) of pool-gate-preflight-1023: vocabulary, not logic).
 # Its UNDEFINED status and UNDEFINED reasons still FLAG through the UNDEFINED check above.
 C3FLIP_VERDICT = re.compile(r"^C3 flip compare: (?:GO|NO-GO)\b|^\s*cell \S+\s+(?:PASS|FAIL)\b", re.M)
+# research/runners/host_share_bg_seam.py --score decides in its own words too: `"G1_...": true|false` per gate in the verdict
+# block, never the token DEFINED (RULING bg-preflight-1102: its real read was also FLAGGED "no DEFINED cell"). A decided gate
+# proves the scorer read the seed; an UNDEFINED gate or status still FLAGS through the scan above.
+DEFINED_GATE = re.compile(r'"G\d\w*[^"]*"\s*:\s*(?:true|false)')
 
 
 def _rev9(r):
@@ -89,13 +106,16 @@ def classify(text):
     bad = []
     if "Traceback (most recent call last)" in text:
         bad.append("python traceback in the scorer output")
-    for m in UNDEF.finditer(text):
+    scan = DESCRIPTIVE_FIELD.sub('""', text)
+    scan = SEAM_CLASS_FIELD.sub('"production_seam_class": ""', scan)
+    scan = DECIDED_GATES_UNDEF.sub(r'\1"coverage"', scan)
+    for m in UNDEF.finditer(scan):
         line = m.group(0)[:200]
-        if not COVERAGE.search(line):
+        if not (COVERAGE.search(line) or RULE_PROSE.match(line)):
             bad.append(line)
     if not (DEFINED.search(text) or DEFINED_COUNT.search(text)
             or DEFINED_VERDICT.search(text) or DEFINED_LABEL.search(text)
-            or STAGE2_VERDICT.search(text) or C3FLIP_VERDICT.search(text)):
+            or STAGE2_VERDICT.search(text) or C3FLIP_VERDICT.search(text) or DEFINED_GATE.search(text)):
         bad.append("no DEFINED cell anywhere in the read (did the scorer read the dev seed?)")
     return ("FLAGGED" if bad else "CLEAN"), bad
 

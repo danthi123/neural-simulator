@@ -116,3 +116,41 @@ def test_ruling_section_excludes_needs_and_needs_an_entry():
     assert not gp.ruling_present(rb, "delta-key")      # NEEDS lines never count
     assert not gp.ruling_present(rb, "early-key")      # nor other sections
     assert not gp.ruling_present(rb, "beta")           # no prefix matches
+
+
+# RULINGS bg-preflight-1102 / s2-preflight-1102: real excerpts of the two 2026-11-02 false positives (see gate_preflight.py)
+_S2_PROSE = (
+    "C1 FAIL\n"
+    "Stage rule at A6 (criterion-only, ruling 2026-11-01): FAIL whenever any counted criterion FAILs (here: C1); "
+    "UNDEFINED only when none FAILs and a precondition is unmet. Unmet preconditions: unmet: six seeds defined.\n"
+    "C2 permuted-exposure acquisition (amendment A6: a refused permuted hop teach leaves tracking undefined, never FAIL; "
+    "the seed is UNDEFINED only when that decides it):\n"
+    '   "note": "a failed null makes that seed UNDEFINED; the criterion then cannot reach 6 defined seeds"\n'
+    ' "stage_rule": "criterion-only (amendment A6, ruling 2026-11-01): FAIL whenever any counted criterion FAILs; '
+    'UNDEFINED only when none FAILs and a precondition is unmet",\n'
+)
+_BG_DEV = (
+    '{"pooled": {"F": 1.0}, "n": {"F": 4}, "production_seam_class": "UNDEFINED", "label": "DEV, not a verdict", '
+    '"verdict": {"gates": {"G1_production_host_owns_the_reply": true, "G2b_neural_seam_never_holds_a_content_turn": false, '
+    '"G4_old_latch_read_threshold_invariant (reported, not gated)": true}, "status": "UNDEFINED"}}\n'
+    "  attributable_to seam held-rate: treatment=+1  control=+0.25\n"
+)
+
+
+def test_classify_ignores_rule_prose_and_descriptive_fields():
+    assert G.classify(_S2_PROSE) == ("CLEAN", [])
+
+
+def test_classify_treats_a_decided_gates_min_events_status_as_coverage():
+    assert G.classify(_BG_DEV) == ("CLEAN", [])
+    assert G.classify('DEFINED "n_events": 3 UNDEFINED: min_events not met')[0] == "CLEAN"
+
+
+def test_classify_still_flags_real_undefined_statuses():
+    for bad in ('DEFINED\n{"verdict": "UNDEFINED"}',
+                'DEFINED\n  "status": "UNDEFINED:engagement-lesion-flag:lesion_x.json"',
+                'DEFINED\n"note": "fine", "verdict": "UNDEFINED"',
+                'DEFINED\n{"verdict": {"gates": {"G1": true, "G2": "UNDEFINED"}, "status": "UNDEFINED"}}',
+                _S2_PROSE.replace("C1 FAIL", "C1 FAIL\ncell 7: UNDEFINED: engagement route absent")):
+        v, why = G.classify(bad)
+        assert v == "FLAGGED" and why, bad
