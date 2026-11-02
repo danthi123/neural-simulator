@@ -223,6 +223,7 @@ def _parse_ledger_rows(text: str):
     """Yield (key, level_dict, host_scaffold, default_files, start_lineno) per `- key:` block.
 
     level_dict has de_risked/wired/on_by_default/scaffold_retired mapped to YES/PARTIAL/NO/? .
+    Optional string fields superseded_by / flip_blocked (a one-line citation) land in level_dict when present.
     Values may be bare (YES) or quoted ("YES"); comments after the value are ignored.
     """
     lines = text.split("\n")
@@ -242,6 +243,13 @@ def _parse_ledger_rows(text: str):
                     m = re.match(r"\s*%s:\s*\"?([A-Za-z]+)" % f, ln)
                     if m:
                         levels[f] = m.group(1).upper()
+            for f in ("superseded_by", "flip_blocked"):
+                # a row carrying either is NOT a flip candidate (scan_ledger_flips skips it); value = the citation
+                m = re.match(r"\s*%s:\s*(.*\S)" % f, ln)
+                if m and f not in levels:
+                    v = m.group(1).split(" #")[0].strip().strip('"').strip()
+                    if v:
+                        levels[f] = v
             m = re.match(r"\s*host_scaffold_in_default:\s*\"?(.+)", ln)
             if m and not host:
                 host = m.group(1).strip().strip('"').rstrip('"')
@@ -270,6 +278,8 @@ def scan_ledger_flips(ledger_text: str = None):
         return []
     items = []
     for key, lv, host, dfiles, lineno in _parse_ledger_rows(ledger_text):
+        if lv.get("superseded_by") or lv.get("flip_blocked"):
+            continue    # known-stale flip: superseded by another row, or blocked on a named upstream gate
         if lv["de_risked"] == "YES" and lv["on_by_default"] != "YES":
             desc = _faculty_desc(ledger_text, key)
             target = dfiles[0] if dfiles else "webapp/server.py + research/runners/*_production_organ.py"
@@ -882,8 +892,9 @@ def selftest():
     # ---- PASS DIRECTION: the scanners surface the KNOWN current backlog ----
     flips = scan_ledger_flips()
     flip_keys = {it["id"] for it in flips}
-    expected_flips = ["gnw-three-organ-bus", "da-gated-encoding", "d5-live-consolidation",
-                      "tiered-knowledge-ltm", "self-model-reward-residual"]
+    # the four earlier flip rows (gnw-three-organ-bus, da-gated-encoding, d5-live-consolidation,
+    # tiered-knowledge-ltm) were flipped ON-BY-DEFAULT, so they legitimately left the set (selftest was stale).
+    expected_flips = ["self-model-reward-residual"]
     for k in expected_flips:
         if ("flip-" + k) not in flip_keys:
             problems.append("PASS-DIR: flip scanner missed the known de-risked-but-not-flipped faculty %r" % k)
