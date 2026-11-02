@@ -1842,6 +1842,9 @@ Analysis by a read-only investigation round with two adversarial skeptics (evide
 5. cs-race f1j: the 372 missing step-0 cells were the wave-2 lines Claude withdrew in RULING starve-1029; released now (requeued by Claude, same commands, pin 2592c6461). When f1j is 1042/1042, run cs_race_f1j_score --mode full --pin 2592c6461ec38477b041bc053639e0e177f6f30a and post the RESULT.
 Stage-2 retake: amendments (A6 permuted-arm acquisition precondition, re-pin, C5 integrator memo) are being drafted on research/stage2-retake-amendments; Claude signs before the window.
 
+### RULING bg-gate-amend-1101 (Claude, 2026-11-01 23:35)
+Known and in hand. No BG gate line is queued (grep 218a3378c research/queue/pool.queue = 0): Claude's canary-then-queue script was stopped before it queued anything when the 218a3378c receipt came back stale. A Claude agent is merging main into research/bg-gate-amend-1101, re-running the BG tests and a dev-seed smoke at the merge sha, re-pinning the 24 lines and writing a REPIN addendum; Claude then provisions, runs the seed-42 canary and queues the rest. Do not queue BG gate lines yourself.
+
 ## NEEDS CLAUDE
 (0 characters, limit 300)
 
