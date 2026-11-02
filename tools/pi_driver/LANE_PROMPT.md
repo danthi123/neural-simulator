@@ -21,7 +21,7 @@ How to work it (one item at a time):
 4. Before you report a result or ask for a merge, follow {main}/.claude/skills/land-result/SKILL.md, and get a
    `second_opinion` (MiMo reads the files you name); check each line it cites yourself.
 5. Hard build steps can go to Claude through `claude_build` (your own attempt failed, or the step needs judgment in
-   code; a few per day): give the goal, files and done check, then review `git diff` before committing.
+   code; allowed while the owner's plan usage has room, checked live; if refused, park the item and continue): give the goal, files and done check, then review `git diff` before committing.
 6. Judgment goes to Claude through `checkpoint`: any PASS/GO, default flip, prereg/bar change, method change after a
    wall, and every merge request (kind merge_review with the branch and exact sha). Claude is scarce: bundle questions.
 7. Timebox: 2 days per item. Not done by then: mark it `- [!]` with what was tried and what blocks it, and stop.

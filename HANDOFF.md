@@ -31,10 +31,10 @@
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend
   money on AI to drive it."
-- **APPROVED 11-02 (owner, speed levers):** (A) brain/ six-seed runs on the EXISTING AWS lane (`tools/aws_gpu.sh`;
-  move its guard to S so it runs while W is off; <= ~$50/day). (B) more Claude build time. Pi gets MORE Claude
-  subscription use once its budget is usage-aware (follow measured 5-hour/weekly plan usage, keep headroom for the
-  owner) instead of fixed 3 builds + 6 checkpoints a day. Do these two FIRST next session, then the sleep work.
+- **SPEED LEVERS (owner 11-02, built 11-02 night):** (A) `tools/aws_brain_batch.sh` runs brain/ jobs on one
+  self-stopping AWS GPU (CUDA path smoke-tested on W); first use: the 0.4B six seeds if the mini-PCs are slow. (B) Pi's
+  Claude calls are gated by live plan usage (`tools/pi_driver/extensions/sim-driver/usage.ts`, reviewed + fixed),
+  daily backstops 20 checkpoints / 15 builds. Both land via `claude/overnight-1102` + `land_claude_branch.sh`.
 - **OPEN QUESTIONS:** none blocking. Chores: W's primary checkout is on an old branch (no `tools/progress_report.py`);
   the board timer runs it from the stale lean-method worktree, so its brain-share line lags main: repoint it to a
   checkout that follows main. pool40's host key changed at its 10-02 reinstall (warning only; owner's call).
