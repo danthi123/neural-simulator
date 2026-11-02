@@ -369,6 +369,13 @@ T_DRIVE = 300                 # arousal + stimulus window (ms)
 T_HOLD = 200                  # drive withdrawn; the latch must hold
 READ_WINDOW = 100             # the body reads the last READ_WINDOW ms
 LATCH_READ_RATE = 0.02        # spikes/neuron/ms that count a latch as active (~20 Hz); readout variants re-read it
+# RULING bg-gate-1101 instrument (report-only; nothing reads it to decide): the inhibitory synaptic reversal and the
+# STEP1-SPEC STOP-4 bound (a step counts for a region when that region's lowest end-of-step v is below E_inh - 5 mV,
+# the definition of research/runners/bg_tonic_loop_probe.py). Kept OUT of the trial record (golden-hashed by
+# tests/test_bg_commit.py); written to `NeuralSeamSelector.last_diag` / `decide_action_neural.last_diag` instead.
+DIAG_E_INH_MV = -75.0
+DIAG_SUB_REVERSAL_MV = DIAG_E_INH_MV - 5.0
+DIAG_RATE_REGIONS = ("gpi", "thal", "motor", "gpe")      # per channel; plus selector_stn
 
 _WORD_RE = _CONTENT_TOKEN_RE  # the sensory word segmentation (declared residual host transduction)
 
@@ -447,11 +454,59 @@ def _neural_baseline(bridge, config):
     _set_equal_tonic_current(bridge, config)
 
 
-def _run_neural_seam_trial(bridge, config, heard_starts, *, arousal=True, v_check=True, commit=None):
+class _TrialDiag:
+    """RULING bg-gate-1101 report-only instrument: per-region sub-reversal step counts and v_min over every v-checked
+    step (trial, reset, washout: the membrane precondition's scope), and per-region spike counts over the drive and
+    hold windows. It only READS the host copies of cp_membrane_potential_v / cp_firing_states the trial already makes,
+    so the trial's state, spikes and record are unchanged. With BRAIN_BG_IZH_SUBSTEPS > 1 only the end-of-step v is
+    visible, so `steps_below` counts bridge steps (dt), not sub-steps (the step-0 probe's definition)."""
+
+    def __init__(self, bridge):
+        self.names = [r.name for r in bridge.region_manager.regions()]
+        self.idx = {n: _indices(bridge, n) for n in self.names}
+        self.below = {n: 0 for n in self.names}
+        self.vmin = {n: float("inf") for n in self.names}
+        self.steps_checked = 0
+        rn = [f"{k}_{c}" for k in DIAG_RATE_REGIONS for c in CHANNELS] + ["selector_stn"]
+        self.rate_names = [n for n in rn if n in self.idx and self.idx[n].size]
+        self.spikes = {w: {n: 0 for n in self.rate_names} for w in ("drive", "hold")}
+
+    def see_v(self, v):
+        v = np.asarray(v)
+        self.steps_checked += 1
+        for n in self.names:
+            ii = self.idx[n]
+            if ii.size == 0:
+                continue
+            lo = float(v[ii].min())
+            if lo < DIAG_SUB_REVERSAL_MV:
+                self.below[n] += 1
+            if lo < self.vmin[n]:
+                self.vmin[n] = lo
+
+    def see_f(self, f, window):
+        acc = self.spikes[window]
+        for n in self.rate_names:
+            acc[n] += int(f[self.idx[n]].sum())
+
+    def record(self, dt_ms):
+        rates = {}
+        for w, steps in (("drive", T_DRIVE), ("hold", T_HOLD)):
+            rates[w] = {n: round(float(self.spikes[w][n]) / (float(self.idx[n].size) * steps * dt_ms) * 1000.0, 2)
+                        for n in self.rate_names}
+        rates["window_steps"] = {"drive": int(T_DRIVE), "hold": int(T_HOLD)}
+        return {"sub_reversal": {"threshold_mv": DIAG_SUB_REVERSAL_MV, "e_inh_mv": DIAG_E_INH_MV,
+                                 "steps_checked": int(self.steps_checked), "steps_below": dict(self.below),
+                                 "v_min": {n: (round(x, 3) if np.isfinite(x) else None) for n, x in self.vmin.items()},
+                                 "regions_below": sorted(n for n, k in self.below.items() if k)},
+                "bg_rates_hz": rates}
+
+
+def _run_neural_seam_trial(bridge, config, heard_starts, *, arousal=True, v_check=True, commit=None, diag=None):
     """ONE neural-seam race on a fixed schedule. The host adds only candidate-agnostic drive (equal tonic, shared
     arousal, the default-mode `hold` drive) and the rendered stimulus. Returns the latch read (the committed action)
     plus the same trial re-read under alternative host readout rules (`readouts`), the membrane range over EVERY
-    step, and the latch rates."""
+    step, and the latch rates. `diag` (a `_TrialDiag`, report-only) also sees every firing / membrane read."""
     xp, _ = get_backend()
     names = [f"motor_{c}" for c in CHANNELS] + [f"latch_{c}" for c in CHANNELS]
     idx = {n: _indices(bridge, n) for n in names}
@@ -492,6 +547,8 @@ def _run_neural_seam_trial(bridge, config, heard_starts, *, arousal=True, v_chec
             _neural_baseline(bridge, config)          # fixed schedule: arousal, hold drive and stimulus withdrawn
         _step(bridge)
         f = np.asarray(to_host(bridge.cp_firing_states), dtype=bool)
+        if diag is not None:
+            diag.see_f(f, "drive" if t < T_DRIVE else "hold")
         for c in CHANNELS:
             motor_t[t, c] = int(f[idx[f"motor_{c}"]].sum())
             latch_t[t, c] = int(f[idx[f"latch_{c}"]].sum())
@@ -505,6 +562,8 @@ def _run_neural_seam_trial(bridge, config, heard_starts, *, arousal=True, v_chec
         if v_check:
             v = to_host(bridge.cp_membrane_potential_v)
             v_lo, v_hi = min(v_lo, float(np.min(v))), max(v_hi, float(np.max(v)))
+            if diag is not None:
+                diag.see_v(v)
     # between-trial reset + washout (the selector's own, candidate-agnostic), membrane checked there too
     _neural_baseline(bridge, config)
     bridge.cp_external_input_current[xp.asarray(_indices(bridge, "selector_reset"))] = xp.float32(config.reset_pA)
@@ -513,12 +572,16 @@ def _run_neural_seam_trial(bridge, config, heard_starts, *, arousal=True, v_chec
         if v_check:
             v = to_host(bridge.cp_membrane_potential_v)
             v_lo, v_hi = min(v_lo, float(np.min(v))), max(v_hi, float(np.max(v)))
+            if diag is not None:
+                diag.see_v(v)
     _neural_baseline(bridge, config)
     for _ in range(int(config.washout_steps)):
         _step(bridge)
         if v_check:
             v = to_host(bridge.cp_membrane_potential_v)
             v_lo, v_hi = min(v_lo, float(np.min(v))), max(v_hi, float(np.max(v)))
+            if diag is not None:
+                diag.see_v(v)
 
     def latch_read(rate_thr):
         rates = latch_t[T - READ_WINDOW:].sum(axis=0) / float(READ_WINDOW * N_LATCH)
@@ -578,6 +641,7 @@ class NeuralSeamSelector:
         self.commit = dict(commit) if commit is not None else None      # a BG_COMMIT_GRID row (flag BRAIN_BG_COMMIT)
         self.commit_lesion = commit_lesion if commit is not None else None
         self._bridge = None
+        self.last_diag = None           # RULING bg-gate-1101 report-only instrument of the latest trial
 
     def ensure_built(self):
         if self._bridge is not None:
@@ -599,8 +663,10 @@ class NeuralSeamSelector:
 
     def select_once(self, msg: str) -> dict:
         self.ensure_built()
+        diag = _TrialDiag(self._bridge)
         r = _run_neural_seam_trial(self._bridge, self.config, render_utterance(msg),
-                                   arousal=self.lesion != "arousal", commit=self.commit)
+                                   arousal=self.lesion != "arousal", commit=self.commit, diag=diag)
+        self.last_diag = diag.record(float(self._bridge.core_config.dt_ms))
         r["heard_groups"] = len(render_utterance(msg))
         if self.commit is not None:
             r["commit"].update({"op": self.commit.get("op"), "lesion": self.commit_lesion, "organ_seed": self.seed})
@@ -636,12 +702,13 @@ def decide_action_neural(msg: str, seed: int | None = None, lesion: str | None =
     les = neural_seam_lesion() if lesion is None else lesion
     if bg_commit_enabled():
         seed = bg_commit_seed() if seed is None else seed
-        r = get_neural_organ(seed=seed, lesion=les, commit_op=bg_commit_op(),
-                             commit_lesion=bg_commit_lesion()).select_once(msg)
+        org = get_neural_organ(seed=seed, lesion=les, commit_op=bg_commit_op(), commit_lesion=bg_commit_lesion())
     else:
         seed = 42 if seed is None else seed
-        r = get_neural_organ(seed=seed, lesion=les).select_once(msg)
+        org = get_neural_organ(seed=seed, lesion=les)
+    r = org.select_once(msg)
     decide_action_neural.last = r
+    decide_action_neural.last_diag = getattr(org, "last_diag", None)   # RULING bg-gate-1101 report-only
     if not r["committed"] or r["winner"] != STAY_SILENT:
         return None
     step = (r["commit"] if "commit" in r else r)["latch_onset_ms"][STAY_SILENT]
@@ -651,6 +718,7 @@ def decide_action_neural(msg: str, seed: int | None = None, lesion: str | None =
 
 
 decide_action_neural.last = None
+decide_action_neural.last_diag = None
 # END neural-seam
 
 

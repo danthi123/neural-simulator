@@ -117,13 +117,18 @@ def install(mode):
         return out
 
     def decide_action_neural(msg, seed=None, lesion=None):      # seed None -> the organ's own rule (42 flag-off)
+        BG.decide_action_neural.last_diag = None
         out = orig_neural(msg, seed=seed, lesion=lesion)
         t = BG.decide_action_neural.last or {}
         rd = dict(t.get("readouts") or {})
         extra = {"commit": t["commit"]} if t.get("commit") is not None else {}   # BRAIN_BG_COMMIT (amendment)
+        # RULING bg-gate-1101 instrument (report-only, never scored as a bar): per-region sub-reversal steps
+        # (STEP1-SPEC STOP 4, measured) and GPi / thalamus / motor_k / GPe / STN rates over drive and hold
+        dg = getattr(BG.decide_action_neural, "last_diag", None) or {}
         _rec(kind="bg_neural", winner=t.get("winner"), latch_rates=t.get("latch_rates"), readouts=rd,
              v_range=[t.get("v_min"), t.get("v_max")], **extra,
-             **({"tonic_rates_hz": t["tonic_rates_hz"]} if t.get("tonic_rates_hz") else {}))   # RULING bg-tonic-persist-1019
+             **({"tonic_rates_hz": t["tonic_rates_hz"]} if t.get("tonic_rates_hz") else {}),   # RULING bg-tonic-persist-1019
+             **{k: dg[k] for k in ("sub_reversal", "bg_rates_hz") if k in dg})
         if mode == "readout" and _EV["label"]:
             alt = rd.get("first_to_12_motor (production rule)")
             _rec(kind="bg_readout", applied=True, latch_winner=t.get("winner"), alt_winner=alt)
@@ -135,6 +140,7 @@ def install(mode):
 
     BG.decide_action, BG.decide_action_neural = decide_action, decide_action_neural
     decide_action_neural.last = None
+    decide_action_neural.last_diag = None
     BG.decide_action_neural.last = None
 
     orig_hop = NB.norgan_hop
@@ -262,6 +268,36 @@ def g4_commit_holds(m, bars=None):
     return m.get("commit_thr_change") is not None and m["commit_thr_change"] <= bars["commit_thr_change_max"]
 
 
+def g3_numerator_split(g3_events):
+    """RULING bg-gate-1101 (report-only; G3's bar and measure are unchanged). G3's numerator (target events whose
+    reply changes under BRAIN_BG_NEURAL_SEAM_LESION=value) split by what the lesion did: `empty_turn_hold_loss` (an
+    empty turn the intact seam held, spoken under the lesion: the value route's correct hold, lost);
+    `content_turn_wrong_hold` (a content turn the intact seam spoke, held under the lesion: a wrong hold the value
+    route prevented); `other` (every remaining numerator event, keyed `<class>:<intact>-><lesion>`; equal hold
+    states there mean the reply changed with the hold unchanged). Input: per G3 event {class, intact_held,
+    lesion_held, ns}. The parts sum to the numerator."""
+    out = {"denominator": len(g3_events), "numerator": 0, "empty_turn_hold_loss": 0, "content_turn_wrong_hold": 0,
+           "other": 0, "other_by_kind": {}, "by_class": {}}
+    for e in g3_events:
+        bc = out["by_class"].setdefault(e["class"], {"denominator": 0, "numerator": 0})
+        bc["denominator"] += 1
+        if not e["ns"]:
+            continue
+        out["numerator"] += 1
+        bc["numerator"] += 1
+        if e["class"] == "empty" and e["intact_held"] and not e["lesion_held"]:
+            out["empty_turn_hold_loss"] += 1
+        elif e["class"] == "content" and e["lesion_held"] and not e["intact_held"]:
+            out["content_turn_wrong_hold"] += 1
+        else:
+            out["other"] += 1
+            k = "%s:%s->%s" % (e["class"], "held" if e["intact_held"] else "spoke",
+                               "held" if e["lesion_held"] else "spoke")
+            out["other_by_kind"][k] = out["other_by_kind"].get(k, 0) + 1
+    out["ns"] = round(out["numerator"] / out["denominator"], 4) if out["denominator"] else None
+    return out
+
+
 def score(shard_dir, seeds, commit=False):
     """Per seed and target turn, lane C's F / S / D and outcome labels for the production seam; the capability,
     neural share and readout share for the neural seam; the bus-read variant disagreement. UNDEFINED reasons kept.
@@ -283,6 +319,7 @@ def score(shard_dir, seeds, commit=False):
         pooled.update({"commit_thr_change": [], "commit_engaged": [], "old_read_agree": [], "co_commit": [],
                        "commit_event_count_ok": [], "commit_op_ok": [], "commit_seed_ok": []})
     prod_events = []          # per-turn {F,S,D,f_outcome,seed,live} records, for SCHEMA.seam_stats/classify_seam
+    g3_events = []            # RULING bg-gate-1101: per G3 event (class, intact held, lesion held, ns), report-only
     for s in seeds:
         sh = {}
         for arm in ARMS:
@@ -375,6 +412,8 @@ def score(shard_dir, seeds, commit=False):
             if ev.get("seam_lesion_held") is not None:                    # paired with seam_held for attribution
                 pooled["seam_intact_held_for_ns"].append(int(ev["seam_held"]))
                 pooled["seam_lesion_held"].append(int(ev["seam_lesion_held"]))
+                g3_events.append({"class": cls, "intact_held": int(ev["seam_held"]),
+                                  "lesion_held": int(ev["seam_lesion_held"]), "ns": int(ev["neural_share"])})
             rows.append(ev)
             for k, key in (("F", "F"), ("S", "S"), ("D", "D"), ("cap", "capability"), ("ns", "neural_share"),
                            ("readout", "readout_share")):
@@ -410,12 +449,24 @@ def score(shard_dir, seeds, commit=False):
     # rate" unasked. Ask it directly: treatment = the intact seam's held rate on the same paired events; control
     # = that rate with the value pathway lesioned. Informational only (out["diagnostics"]); does not feed BARS,
     # verdict() or any G1-G5 gate above.
+    # RULING bg-gate-1101: relabelled (was `seam_held_attribution`): it is the VALUE-ROUTE LESION's attribution of
+    # the pooled held rate (empty, content and one-word turns pooled), so a per-turn-class breakdown sits beside it.
     intact_held_rate, lesion_held_rate = m["seam_intact_held_for_ns"], m["seam_lesion_held"]
     seam_held_attribution = None
     if intact_held_rate is not None and lesion_held_rate is not None:
         seam_held_attribution = attributable_to(
             "seam held-rate (intact vs value-lesioned, paired events)", intact_held_rate, lesion_held_rate)
-    out["diagnostics"] = {"seam_held_attribution": seam_held_attribution}
+    by_class = {}
+    for cls in sorted({e["class"] for e in g3_events}):
+        evs = [e for e in g3_events if e["class"] == cls]
+        ih = sum(e["intact_held"] for e in evs) / len(evs)
+        lh = sum(e["lesion_held"] for e in evs) / len(evs)
+        by_class[cls] = {"n": len(evs), "intact_held_rate": round(ih, 4), "lesion_held_rate": round(lh, 4),
+                         "attribution": attributable_to("seam held-rate, %s turns (intact vs value-lesioned)" % cls,
+                                                        ih, lh)}
+    out["diagnostics"] = {"value-route lesion attribution (held rate), pooled": seam_held_attribution,
+                          "value-route lesion attribution (held rate), by turn class": by_class,
+                          "G3 numerator split (report-only; bar unchanged)": g3_numerator_split(g3_events)}
     if commit:
         out["amendment"] = AMENDMENT_ID
     return out
