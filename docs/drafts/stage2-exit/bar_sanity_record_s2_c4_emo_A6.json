@@ -138,12 +138,12 @@
    0.0038
   ]
  },
- "repo_head": "25e360740364a8184d565b71c1e0d9c3b9cf0eb5",
+ "repo_head": "de2f61742855aa804484997aab01299d3bd14012",
  "scorer_files": {
-  "docs/drafts/stage2-exit/bar_sanity_s2_common.py": "521240bf3b75a6004479b11473658c6d7a59f19c5c3f95a9539504e7515fa405",
-  "research/runners/stage2_exit_gate.py": "6fcca02d6e7f235b7393c2e81ff937aa106712408b6243e1c2c59486571a1109"
+  "docs/drafts/stage2-exit/bar_sanity_s2_common.py": "2db0cf38fa9267cb7f72d8a4024e878b2b24839d26b0bb71d282e1f97cdb20d4",
+  "research/runners/stage2_exit_gate.py": "28db620526e4ddae32e048d517266abdc096f0f9ef37a09716b24cb2bfdac47b"
  },
- "scorer_sha256": "e30a964edff36470e93d29574b7775e14013d1de716cf3c3aaccd0a7bf65d97c",
+ "scorer_sha256": "4dfcc206e4a77157b75b2e9923af403948a8dc2f370917d29ac54ca2188e0bd4",
  "seed": 0,
  "spec": "docs/drafts/stage2-exit/bar_sanity_spec_s2_c4_emo.py",
  "spec_sha256": "f1a038a4dc747e784adcd3af62e32f11f2ceb04854abd4c1c5b648d71c356065",
@@ -154,5 +154,5 @@
  },
  "tool": "tools/bar_sanity.py",
  "verdict": "OK",
- "wall_s": 236.4
+ "wall_s": 196.7
 }

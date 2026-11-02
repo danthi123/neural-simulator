@@ -90,7 +90,9 @@ ASK_MOAT_MIN_DEFINED = 1
 # (the brain declined to store it) has permuted tracking UNDEFINED, never FAIL; the seed is UNDEFINED only when that is
 # what decides it (the A4 (a) rule). The scorer is selected by level, never by data: "A5" (the default) reproduces every
 # verdict the runner gave before A6 byte for byte, so the 10-26 result re-scores as filed; the gate's aggregate command
-# passes `--amendment-level A6` once Claude signs the amendment.
+# passes `--amendment-level A6` once Claude signs the amendment. Ruling (Claude, 2026-11-01): the criterion-only variant.
+# The A6 precondition stays at criterion level (C2 INCOMPLETE); the STAGE is FAIL whenever any counted criterion FAILs,
+# and UNDEFINED only when none FAILs and a precondition is unmet: an undefined C2 must never hide a defined C1 failure.
 AMENDMENT_LEVELS = ("A5", "A6")
 AMENDMENT_LEVEL = "A5"
 A6_INFER_HOP_TEACHES = ("t_heron_hunt", "t_frog_eat")   # the two premises the 2-hop conclusion composes
@@ -2360,7 +2362,13 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True, amendment_level=None):
                        "C2 clause fails, the seed is scored on that clause instead")
     v.require("six seeds defined for every primary criterion", sum(1 for g in PRIMARY_GROUPS if per_group[g]["n_defined"] < len(seeds)), expect=0)
     earned = v.decide(go=all(x == "PASS" for x in crit.values()), verbose=False)
-    if earned["status"] == "UNDEFINED":
+    crit_failed = [c for c, x in crit.items() if x == "FAIL"]
+    if a6 and crit_failed:
+        # amendment A6, Claude's ruling 2026-11-01 (the criterion-only variant): an undefined C2 must never hide a
+        # defined C1 failure. The stage is FAIL whenever any counted criterion FAILs (a criterion FAILs only on its full
+        # set of defined seeds); it is UNDEFINED only when no counted criterion FAILs and an unmet precondition remains
+        stage = "FAIL"
+    elif earned["status"] == "UNDEFINED":
         stage = "UNDEFINED (INCOMPLETE): " + "; ".join(earned["undefined_reasons"])[:400]
     else:
         stage = "PASS" if earned["go"] else "FAIL"
@@ -2373,6 +2381,9 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True, amendment_level=None):
             "runner": "research/runners/stage2_exit_gate.py", "prereg": PREREG, "expected_source": EXPECTED_SOURCE}
     if a6:      # recorded only at A6, so an A5 aggregate stays byte-identical to the pre-A6 runner's
         out["amendment_level"] = level
+        out["stage_rule"] = ("criterion-only (amendment A6, ruling 2026-11-01): FAIL whenever any counted criterion "
+                             "FAILs; UNDEFINED only when none FAILs and a precondition is unmet")
+        out["criteria_failed"] = crit_failed
     return out
 
 
@@ -2487,6 +2498,10 @@ def report(agg):
                                 pr.get("derived_svo"), pr.get("derived_from"),
                                 (k.get("predicted_from_list") or {}).get("svo"), (k.get("predicted_from_bound") or {}).get("svo")))
     if agg.get("amendment_level") == "A6":     # printed only at A6: an A5 report stays as it was
+        lines += ["", "Stage rule at A6 (criterion-only, ruling 2026-11-01): FAIL whenever any counted criterion FAILs "
+                      "(here: %s); UNDEFINED only when none FAILs and a precondition is unmet. Unmet preconditions: %s." % (
+                          ", ".join(agg.get("criteria_failed") or []) or "none",
+                          "; ".join(agg.get("undefined_reasons") or []) or "none")]
         lines += ["", "C2 permuted-exposure acquisition (amendment A6: a refused permuted hop teach leaves tracking undefined, "
                       "never FAIL; the seed is UNDEFINED only when that decides it):"]
         for s, row in agg["groups"]["infer"]["seeds"].items():

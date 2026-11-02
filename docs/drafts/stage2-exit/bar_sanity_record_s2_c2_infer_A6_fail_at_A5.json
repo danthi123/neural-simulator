@@ -71,13 +71,13 @@
    1.0
   ]
  },
- "repo_head": "25e360740364a8184d565b71c1e0d9c3b9cf0eb5",
+ "repo_head": "de2f61742855aa804484997aab01299d3bd14012",
  "scorer_files": {
-  "docs/drafts/stage2-exit/bar_sanity_s2_common.py": "521240bf3b75a6004479b11473658c6d7a59f19c5c3f95a9539504e7515fa405",
+  "docs/drafts/stage2-exit/bar_sanity_s2_common.py": "2db0cf38fa9267cb7f72d8a4024e878b2b24839d26b0bb71d282e1f97cdb20d4",
   "docs/drafts/stage2-exit/bar_sanity_spec_s2_c2_infer_A6_fail.py": "342d493d5546d8ce4c2a719859f2045007974a5e3e946ebcbe7f9f2d0632124f",
-  "research/runners/stage2_exit_gate.py": "6fcca02d6e7f235b7393c2e81ff937aa106712408b6243e1c2c59486571a1109"
+  "research/runners/stage2_exit_gate.py": "28db620526e4ddae32e048d517266abdc096f0f9ef37a09716b24cb2bfdac47b"
  },
- "scorer_sha256": "a864b19a4c870e3f7a9513b36113b95f8f6059dfd3626f587c5b4e591aa63eb4",
+ "scorer_sha256": "b4f1b63ba529d58492852073d60924524500918baf1bb162afa1dfd12542bf8e",
  "seed": 0,
  "spec": "docs/drafts/stage2-exit/bar_sanity_spec_s2_c2_infer_A6_fail_at_A5.py",
  "spec_sha256": "614484e5ae077c60b49dc5c53c71e5b0b010455e35aa5a6bc538e23c8fbb7b6e",
@@ -88,5 +88,5 @@
  },
  "tool": "tools/bar_sanity.py",
  "verdict": "TOOTHLESS",
- "wall_s": 36.7
+ "wall_s": 21.0
 }

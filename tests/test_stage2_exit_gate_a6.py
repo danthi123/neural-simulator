@@ -116,16 +116,60 @@ def test_unknown_level_is_refused(tmp_path):
         SG.aggregate(str(tmp_path), seeds=(1,), amendment_level="A7")
 
 
-def test_the_10_26_gate_reads_as_filed_at_a5_and_undefined_at_a6():
+def test_the_10_26_gate_reads_as_filed_at_a5_and_fails_on_c1_at_a6():
+    """Ruling (Claude, 2026-11-01), criterion-only variant: at A6 C2 is INCOMPLETE (the refused permuted teach), and the
+    STAGE is FAIL because C1 FAILs on defined data. An undefined C2 never hides a defined C1 failure."""
     if not os.path.exists(os.path.join(_GATE, "s42", "infer__permuted.json")):
         pytest.skip("10-26 gate shards not checked out")
     a5 = SG.aggregate(_GATE)
     assert a5["verdict"] == "FAIL" and a5["criteria"] == {"C1": "FAIL", "C2": "FAIL", "C3": "FAIL", "C4": "FAIL", "C5": "PASS"}
+    assert "stage_rule" not in a5 and "criteria_failed" not in a5
     a6 = SG.aggregate(_GATE, amendment_level="A6")
     assert a6["criteria"]["C2"] == "INCOMPLETE" and a6["groups"]["infer"]["n_defined"] == 0
     assert {k: v for k, v in a6["criteria"].items() if k != "C2"} == {"C1": "FAIL", "C3": "FAIL", "C4": "FAIL", "C5": "PASS"}
+    assert a6["verdict"] == "FAIL" and a6["GO"] is False
+    assert "C1" in a6["criteria_failed"] and "C2" not in a6["criteria_failed"]
+    assert a6["groups"]["conv"]["verdict"] == "FAIL" and a6["groups"]["conv"]["n_defined"] == 6
+    assert any("amendment A6" in r for r in a6["undefined_reasons"])      # the unmet precondition is still recorded
+    assert "Stage rule at A6 (criterion-only" in SG.report(a6)
     for s, row in a6["groups"]["infer"]["seeds"].items():
         assert row["permuted_refused"] == ["t_heron_hunt"], s
+
+
+# ── the stage rule at A6 (Claude's ruling 2026-11-01: criterion-only) on synthetic six-seed x five-group brains ─────
+def _stage(td, over_by_group=None, conv_random=False, level="A6"):
+    rng = np.random.default_rng(0)
+    data = C.make_stage(rng, over_by_group)
+    if conv_random:
+        data["conv"] = C.make_group(rng, "conv", degenerate="random")
+    C.write_tree(td, data)
+    seeds = sorted(next(iter(data.values())))
+    return SG.aggregate(td, seeds=seeds, informational=False, amendment_level=level)
+
+
+_REFUSED = {"permuted": "permuted+refused"}
+_C1_GAP = {"intact_a": "no_elaboration", "intact_b": "no_elaboration"}
+
+
+def test_a6_stage_fails_when_c1_fails_and_c2_is_incomplete(tmp_path):
+    agg = _stage(str(tmp_path), {"conv": _C1_GAP, "infer": _REFUSED})
+    assert agg["criteria"]["C1"] == "FAIL" and agg["criteria"]["C2"] == "INCOMPLETE"
+    assert agg["verdict"] == "FAIL" and agg["GO"] is False and agg["criteria_failed"] == ["C1"]
+    assert any("amendment A6" in r for r in agg["undefined_reasons"])
+
+
+def test_a6_stage_is_undefined_when_only_c2_is_incomplete(tmp_path):
+    agg = _stage(str(tmp_path), {"infer": _REFUSED})
+    assert agg["criteria"]["C2"] == "INCOMPLETE"
+    assert all(v == "PASS" for k, v in agg["criteria"].items() if k != "C2")
+    assert agg["verdict"].startswith("UNDEFINED") and agg["GO"] is False and agg["criteria_failed"] == []
+
+
+def test_a6_stage_passes_the_capable_brain_and_a5_keeps_its_rule(tmp_path):
+    agg = _stage(str(tmp_path / "a6"))
+    assert agg["verdict"] == "PASS" and agg["GO"] is True
+    a5 = _stage(str(tmp_path / "a5"), {"conv": _C1_GAP, "infer": _REFUSED}, level="A5")
+    assert a5["verdict"] == "FAIL" and a5["criteria"]["C2"] == "FAIL" and "stage_rule" not in a5
 
 
 # ── pool lines: the gate lines unchanged; the dev-preview options ────────────────────────────────────────────────────

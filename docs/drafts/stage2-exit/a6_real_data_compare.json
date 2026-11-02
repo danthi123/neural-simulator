@@ -130,7 +130,7 @@
     "unmet: the infer permuted hop teach received wherever exposure tracking decides a seed (amendment A6) (measured=6 expect=0)",
     "unmet: six seeds defined for every primary criterion (measured=1 expect=0)"
    ],
-   "stage": "UNDEFINED (INCOMPLETE): unmet: the infer permuted hop teach received wherever exposure tracking decides a seed (amendment A6) (measured=6 expect=0); unmet: six seeds defined for every primary criterion (measured=1 expect=0)"
+   "stage": "FAIL"
   },
   "n_missing_shards": 0,
   "pre_A6": {
@@ -161,7 +161,7 @@
    102
   ]
  },
- "new_runner_sha256": "6fcca02d6e7f235b7393c2e81ff937aa106712408b6243e1c2c59486571a1109",
+ "new_runner_sha256": "28db620526e4ddae32e048d517266abdc096f0f9ef37a09716b24cb2bfdac47b",
  "old_runner_sha256": "22eb18690b1258afd82149f97b886d524977fdd910ee72b076c1d939df0dd4ee",
  "preview_1101": {
   "A5_aggregate_identical_to_pre_A6_runner": true,
@@ -240,7 +240,7 @@
     "unmet: the infer permuted hop teach received wherever exposure tracking decides a seed (amendment A6) (measured=3 expect=0)",
     "unmet: six seeds defined for every primary criterion (measured=1 expect=0)"
    ],
-   "stage": "UNDEFINED (INCOMPLETE): unmet: the infer permuted hop teach received wherever exposure tracking decides a seed (amendment A6) (measured=3 expect=0); unmet: six seeds defined for every primary criterion (measured=1 expect=0)"
+   "stage": "FAIL"
   },
   "n_missing_shards": 0,
   "pre_A6": {

@@ -51,7 +51,9 @@ the shape of that, but I don't know the words 'heron' or 'gnat' yet ...") leaves
 New permuted-arm variants: `permuted+refused` (the capable brain's permuted arm met that refusal on `t_heron_hunt`, so its
 permuted probes abstain like the 10-26 gate's) and `permuted+blind` (the exposure-blind brain: it TAKES the permuted teach,
 echoing the permuted triples, and still answers the registered conclusion `gnat`). The first must never be scored FAIL
-(nor PASS); the second must stay FAIL. bar_sanity_spec_s2_c2_infer_A6_fail.py reads the FAIL verdict as its decision.
+(nor PASS); the second must stay FAIL. bar_sanity_spec_s2_c2_infer_A6_fail.py reads the FAIL verdict as its decision. Ruling (Claude, 2026-11-01): the
+criterion-only variant; the STAGE is FAIL whenever any counted criterion FAILs, UNDEFINED only when none FAILs and a
+precondition is unmet. bar_sanity_spec_s2_stage_A6_fail.py reads the stage FAIL verdict (`decide_stage_fail`).
 
 WHAT NOISE THE BAR SEES. Stage 2's scorer is a conjunction of exact reply checks, not a statistic, and the real null is
 exactly zero-noise (dev 7), so there is no read noise to model; the realistic part is the surface the checkers must
@@ -583,6 +585,13 @@ def decide_stage(data):
     seeds = sorted(next(iter(data.values())))
     agg = _aggregate(shards, seeds)
     return agg["verdict"] == "PASS" and bool(agg["GO"])
+
+
+def decide_stage_fail(data):
+    """Amendment A6, ruling 2026-11-01 (criterion-only): the real aggregate's STAGE verdict is FAIL."""
+    shards = {(seed, g, arm): sh for g, d in data.items() for seed, arms in d.items() for arm, sh in arms.items()}
+    seeds = sorted(next(iter(data.values())))
+    return _aggregate(shards, seeds)["verdict"] == "FAIL"
 
 
 def write_tree(root, data_by_group):
