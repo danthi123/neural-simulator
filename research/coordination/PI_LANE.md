@@ -15,3 +15,14 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   (RULING pivot-1102). No flip, no new #203 work.
 
 ## Open
+- [ ] New core, weekly conversation test upgrade (`brain/eval/weekly.py`, milestone day 14, board #281). Today it
+  sums the intact and lesion arms into one total, asks the same fixed questions every week, and credits degenerate
+  replies (e.g. "Nova, Nova."). Change it so that: (1) the header prints one score line per arm (intact, hippocampus
+  off) and the difference; (2) a third arm runs sleep between the two sessions (`brain/sleep.py`, adapters from
+  `brain/plastic_cortex.py`) and then asks with the hippocampus OFF, so the transcript shows what sleep consolidated;
+  (3) half the facts are drawn each week from a larger list, seeded by the ISO week, so the score cannot improve by
+  memorising fixed questions (keep the other half fixed for week-to-week comparison); (4) a reply counts only if it
+  contains the key word AND is not degenerate (repeated token runs, empty, or only the brain's own name). Add unit
+  tests that run without the cortex weights (mock `Cortex`); real runs go to W via `run_gpu`. Read first:
+  `brain/eval/weekly.py`, `brain/experiments/sleep_probe.py`, `brain/PREREQUISITES.md` (Sleep consolidation).
+  Done = branch + tests passing + one real run on W attached to a merge_review checkpoint.

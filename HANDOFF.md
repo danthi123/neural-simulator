@@ -1,29 +1,27 @@
 # HANDOFF (overwrite each session; <= 40 lines)
 
-- **TASK:** Roll out the lean method (short CLAUDE.md + AGENTS.md link, 3 skills, action-time checks, Hermes and Pi
-  on the same method), then resume the new core's next build: sleep consolidation into cortex weights, per
-  `brain/research/2026-11-02-record-brief-consolidation-and-selection.md`.
-- **TYPE:** ops (rollout), then build
+- **TASK:** Sleep consolidation: told facts recalled from the cortex's own synapses after sleep, with the hippocampus
+  off. Board #279 (and #280 high-use facts, #281 a lesion visibly changes replies).
+- **TYPE:** build
 - **DRIVER:** claude
 - **STARTED:** 2026-11-02
-- **TIMEBOX:** 2 days per problem (rollout by 2026-11-04)
-- **DONE MEANS:** rollout merged on main and Hermes/Pi read the same core (AGENTS.md); then sleep consolidation
-  writes hippocampal experiences into cortex weights, a consolidated fact is recalled after a restart without the
-  hippocampus, and a lesion visibly changes a reply.
-- **MILESTONE:** day 14 (2026-11-16), `brain/ARCHITECTURE.md` §4: sleep consolidation; high-use facts never wrong;
-  one lesion visibly changes replies. (Day 7, 2026-11-09: hippocampus + restart + weekly test.)
-- **STATE:** branch `research/lean-method-1102` (worktree `.claude/worktrees/lean-method`): new CLAUDE.md,
-  AGENTS.md link, this file; old handoff at `docs/archive/HANDOFF-2026-09-29.md`; old CLAUDE.md appended to
-  `docs/CLAUDE_RATIONALE_ARCHIVE.md`. The new core is on branch `brain-v2` (`/home/dant123/Projects/sim-brain-v2`),
-  to be merged. Skills, hooks and the Hermes/Pi driver changes are built by other agents in this run.
-- **LIVE RUNS:** Stage-2 retake on S (Hermes finishing; old track). None on W from this task.
-- **NEXT STEP:** merge `brain-v2` + this branch, confirm Hermes and Pi load AGENTS.md, then start the
-  consolidation build with the before-build skill.
+- **TIMEBOX:** 2 days per problem (first decision point 2026-11-04: KEEP or KILL the text-replay method)
+- **DONE MEANS:** six seeds, hippocampus off after sleep: true-replay recall above the no-sleep and shuffled arms on
+  every seed, ordinary-text drift small, false recall not above shuffled; then sleep wired into the live brain
+  (restart = sleep, adapters persisted) so the weekly transcript shows it.
+- **MILESTONE:** day 14 (2026-11-16), brain/ARCHITECTURE.md §4. Day 7 (2026-11-09): first [weekly] run by Hermes.
+- **STATE:** `brain/plastic_cortex.py` (trainable cortex, equals pretrained at zero; tests pass), `brain/sleep.py`
+  (strength-weighted interleaved replay + KL protection), `brain/experiments/sleep_probe.py`. Seed 7, 0.1B: true
+  3/12 (reworded 1/12), shuffled 0/12, no-sleep 0/12, drift KL 0.03. In-context ceiling at 0.1B is 6/12, 0.4B 11/12.
+  Record brief: `brain/research/2026-11-02-record-brief-consolidation-and-selection.md`.
+- **LIVE RUNS:** six gate seeds of sleep_probe at 0.1B on W CPU (out: `/home/dant123/Projects/sim/_scratch/brainv2/
+  sleep_probe_s<seed>_0.1b.json`, ~9 min each). Stage-2 retake on the pool (Hermes lands it).
+- **NEXT STEP:** read the six seeds; if the effect holds, run 0.4B through the GPU queue (it yields the local model),
+  then try varied replay (reworded rehearsal) for the paraphrase gap; then wire sleep into `Brain` (restart).
+- **DELEGATED:** Pi: weekly test upgrade (`research/coordination/PI_LANE.md`, board #281). Hermes: [weekly] every
+  Monday from 11-09; Stage-2 retake landing (`LOCAL_LLM_RUNBOOK.md` §4, RULING new-core-1102).
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend
   money on AI to drive it."
-  Earlier the same day: "Isn't having a ton of gates and such part of what slowed down our original work?" ...
-  "simply writing documentation doesn't guarantee you'll actually read it at the right times."
-- **OPEN QUESTIONS:** `brain/PREREQUISITES.md` is written but UNTRACKED on `brain-v2`: commit it before or with the
-  brain-v2 merge (the brain-prereq gate needs it). No `.hermes.md` on S (checked 11-02), so Hermes gets AGENTS.md.
+- **OPEN QUESTIONS:** none blocking.

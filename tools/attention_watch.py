@@ -43,7 +43,7 @@ S_EXEC = ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=15", "homelab-serv
 REPEAT_H = 6.0          # re-report a still-true event after this long
 GPU_IDLE_MIN = 30       # W GPU queue empty and idle this long
 GPU_HELD_MIN = 30       # W gpu_queue has jobs but none running this long (VRAM held outside the queue)
-DRIVER_SILENT_H = 3.0   # S runbook not written this long
+DRIVER_SILENT_H = 24.0  # S runbook not written this long (11-02: was 3 h; with the old track frozen Hermes is idle by design between [weekly] runs and new-core job lists)
 POOL_STALL_MIN = 60     # S pool has queued lines but no claim this long
 PI_STATUS = "/var/lib/host-status/pi-driver/status.json"   # tools/pi_driver supervisor.py writes it
 PI_SILENT_MIN = 20      # Pi driver status not refreshed this long (the supervisor writes every 5 s)
@@ -90,7 +90,7 @@ def w_checks(st, now):
         st["gpu_idle_since"] = st.get("gpu_idle_since") or now
         mins = (now - st["gpu_idle_since"]) / 60
         if mins >= GPU_IDLE_MIN:
-            ev.append(("w-gpu-idle", f"W GPU idle {mins:.0f} min with an empty gpu_queue (not paused): stock GPU work"))
+            ev.append(("w-gpu-idle", f"W GPU idle {mins:.0f} min with an empty gpu_queue (not paused): stock NEW-CORE (brain/) GPU work if a job is ready; never old-track work (RULING new-core-1102)"))
     else:
         st["gpu_idle_since"] = None
     # the opposite stall: jobs queued, none running, not paused. On 2026-10-31 an orphaned local-model engine held
@@ -179,7 +179,7 @@ def s_checks(now, local=False):
     depth = int(sec.get("QDEPTH") or 0)
     claim_age_min = (s_now - int(sec.get("CLAIMS_MTIME") or 0)) / 60
     if depth == 0:
-        ev.append(("s-pool-empty", "S pool.queue is empty: pool compute idle, stock lines"))
+        ev.append(("s-pool-empty", "S pool.queue is empty: stock NEW-CORE (brain/) lines if any are ready; never old-track (RULING new-core-1102)"))
     elif claim_age_min >= POOL_STALL_MIN:
         ev.append(("s-pool-stall", f"S pool has {depth} queued lines but no claim for {claim_age_min:.0f} min"))
     big_old = int(sec.get("BIGOLD") or 0)
