@@ -1,13 +1,15 @@
 // Checkpoint: judgment goes to Claude as a packet (design section 3). The agent writes the question, the evidence
 // and the bar; this tool runs headless Claude Code (`claude -p`, logged into the owner's plan, no API key) in the
-// workspace and writes Claude's verdict next to the packet. Capped per day (claude_daily_calls); at the cap it
-// refuses, and the supervisor reports the open packet as a NEEDS item instead.
+// workspace and writes Claude's verdict next to the packet. Gated by the owner's live plan usage (usage.ts), with a
+// daily count (claude_daily_calls) as a runaway backstop; when refused, the supervisor reports the open packet as a
+// NEEDS item instead.
 // A merge checkpoint yields a verdict on an exact sha; landing on main stays with the existing owner/Claude flow.
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { Type } from "@earendil-works/pi-ai";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { type DriverConfig, bumpLedger, clip, readLedger, run, text, today, writeJson } from "./common.ts";
+import { claudeGate, markUsageStale } from "./usage.ts";
 
 const SKILL: Record<string, string> = {
   verify: "Run the land-result skill (.claude/skills/land-result/SKILL.md) on this claim: try to REFUTE it; default to REFUTED when uncertain.",
@@ -34,8 +36,9 @@ export default function registerCheckpoint(pi: ExtensionAPI, cfg: DriverConfig) 
     description:
       "Send a judgment call to Claude and get its verdict. REQUIRED before: claiming any PASS/GO/surpass, flipping a default, " +
       "asking for a merge (kind merge_review, with the branch and its exact sha), adopting a new method after a wall, or " +
-      "any ruling the runbook reserves for Claude. Claude is scarce (" + cfg.claude_daily_calls + " calls/day): bundle " +
-      "questions, give exact evidence paths and the bar, and do your own checks first (tests, a MiMo review step).",
+      "any ruling the runbook reserves for Claude. Claude runs on the owner's plan: Pi may call it only while plan usage " +
+      "leaves the owner headroom (checked live; up to " + cfg.claude_daily_calls + " calls/day). Bundle questions, give " +
+      "exact evidence paths and the bar, and do your own checks first (tests, a MiMo review step).",
     parameters: Type.Object({
       kind: Type.Union([Type.Literal("verify"), Type.Literal("ruling"), Type.Literal("merge_review"), Type.Literal("design")]),
       title: Type.String({ description: "short, filename-safe" }),
@@ -49,6 +52,7 @@ export default function registerCheckpoint(pi: ExtensionAPI, cfg: DriverConfig) 
       const led = readLedger(cfg);
       if (led.claude_calls >= cfg.claude_daily_calls)
         throw new Error(`Claude's daily checkpoint cap (${cfg.claude_daily_calls}) is used up. Park this item: continue other lane work and retry tomorrow.`);
+      await claudeGate(cfg);
       const slug = `${today()}-${p.kind}-${p.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 48)}`;
       const rel = `research/coordination/checkpoints/${slug}.md`;
       const packet = path.join(cfg.workspace, rel);
@@ -73,6 +77,7 @@ export default function registerCheckpoint(pi: ExtensionAPI, cfg: DriverConfig) 
       } catch {
         // not JSON: keep the raw output, it says what went wrong
       }
+      markUsageStale(cfg);
       if (signal?.aborted) throw new Error("checkpoint aborted");
       fs.writeFileSync(packet.replace(/\.md$/, ".VERDICT.md"), `# Verdict: ${p.title}\n\n${verdict}\n`);
       writeJson(path.join(cfg.state_dir, "last_checkpoint.json"), { packet: rel, code: r.code, seconds: Math.round((Date.now() - t0) / 1000) });
@@ -83,14 +88,16 @@ export default function registerCheckpoint(pi: ExtensionAPI, cfg: DriverConfig) 
   // claude_build (owner 2026-11-02: "claude subscription-based intelligence THROUGH Pi as needed"): hand one scoped
   // build step to headless Claude Code on the owner's plan when the local model is not up to it (a failed attempt,
   // a subtle design, a multi-file change). Claude edits files in the workspace on the current branch and may run
-  // tests; it never commits, merges or pushes. The driver reviews the diff and commits. Its own daily cap.
+  // tests; it never commits, merges or pushes. The driver reviews the diff and commits. Same usage gate as checkpoint,
+// with its own daily backstop count.
   pi.registerTool({
     name: "claude_build",
     label: "Hand a build step to Claude",
     description:
       "Have Claude (headless Claude Code, " + (cfg.claude_build_model ?? "sonnet") + ", the owner's plan) do ONE scoped build step in this " +
       "workspace: edit files and run tests, no commits. Use it when your own attempt failed or the step needs judgment in code " +
-      "(not for routine edits). Capped at " + (cfg.claude_build_daily_calls ?? 3) + " per day. Give the exact goal, the files, " +
+      "(not for routine edits). Allowed while the owner's plan usage leaves headroom (checked live; up to " +
+      (cfg.claude_build_daily_calls ?? 3) + " per day). Give the exact goal, the files, " +
       "and how to check it is done; then review `git diff` yourself before committing.",
     parameters: Type.Object({
       title: Type.String({ description: "short, filename-safe" }),
@@ -102,6 +109,7 @@ export default function registerCheckpoint(pi: ExtensionAPI, cfg: DriverConfig) 
       const cap = cfg.claude_build_daily_calls ?? 3;
       if ((readLedger(cfg).claude_builds ?? 0) >= cap)
         throw new Error(`Claude's daily build cap (${cap}) is used up. Do the step yourself or leave it for tomorrow.`);
+      await claudeGate(cfg);
       const prompt = [
         "You are doing ONE build step for the Pi sim driver in this git worktree (read CLAUDE.md first; it is short).",
         `Goal: ${p.goal}`, `Files to start from: ${p.files.join(", ")}`, `Done when: ${p.done_check}`,
@@ -120,6 +128,7 @@ export default function registerCheckpoint(pi: ExtensionAPI, cfg: DriverConfig) 
       } catch {
         // not JSON: keep the raw output
       }
+      markUsageStale(cfg);
       if (signal?.aborted) throw new Error("claude_build aborted");
       writeJson(path.join(cfg.state_dir, "last_claude_build.json"), { title: p.title, code: r.code, seconds: Math.round((Date.now() - t0) / 1000) });
       if (r.code !== 0) throw new Error(`claude -p failed (exit ${r.code}); the call still counts against the cap:\n${clip(out, 4000)}`);

@@ -17,6 +17,10 @@ export interface DriverConfig {
   claude_daily_calls: number;
   claude_build_daily_calls?: number; // claude_build tool (default 3); separate from judgment checkpoints
   claude_build_model?: string; // default "sonnet"
+  // usage-aware budget (usage.ts): Pi calls Claude only below these plan utilizations (0..1)
+  claude_max_five_hour?: number; // default 0.75
+  claude_max_seven_day?: number; // default 0.85, the weekly ceiling at the end of the week
+  claude_week_pace_start?: number; // default 0.3, the weekly ceiling at the start of the week
   claude_bin: string;
   claude_timeout_min: number;
   wait_poll_s: number;
@@ -81,12 +85,12 @@ export interface RunResult {
 }
 
 // Run a command without a shell; output is capped so a chatty script cannot flood the model's context.
-export function run(cmd: string, args: string[], opts: { cwd: string; timeoutMs: number; env?: NodeJS.ProcessEnv }): Promise<RunResult> {
+export function run(cmd: string, args: string[], opts: { cwd: string; timeoutMs: number; env?: NodeJS.ProcessEnv; maxOut?: number }): Promise<RunResult> {
   return new Promise((resolve) => {
     execFile(cmd, args, { cwd: opts.cwd, timeout: opts.timeoutMs, maxBuffer: 16 << 20, env: opts.env ?? process.env },
       (err, stdout, stderr) => {
         const code = err ? (typeof (err as { code?: unknown }).code === "number" ? (err as { code: number }).code : 1) : 0;
-        resolve({ code, out: clip(`${stdout}${stderr ? `\n[stderr]\n${stderr}` : ""}`) });
+        resolve({ code, out: clip(`${stdout}${stderr ? `\n[stderr]\n${stderr}` : ""}`, opts.maxOut) });
       });
   });
 }
