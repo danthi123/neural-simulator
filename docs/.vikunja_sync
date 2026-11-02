@@ -359,3 +359,6 @@ Board #238 updated: feasibility check complete, RESULT PROVISIONAL research/cs-r
 
 ## 2026-11-01  c2-gatereset-score
 Board #273 note: C2 gate reset merged OFF (misses 4->0, false fires 57->78); S0b next.
+
+## 2026-11-01  backlog-flip-false-positives
+Board #85 and #191 notes appended: gnw-thought-swap (superseded by swap-drives-response) and wkv-mouth-learned-head (flip_blocked) are not flip candidates. self-model-reward-residual (flip_blocked, wire first) has no board task of its own; none created.

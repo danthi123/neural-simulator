@@ -894,10 +894,10 @@ def selftest():
     flip_keys = {it["id"] for it in flips}
     # the four earlier flip rows (gnw-three-organ-bus, da-gated-encoding, d5-live-consolidation,
     # tiered-knowledge-ltm) were flipped ON-BY-DEFAULT, so they legitimately left the set (selftest was stale).
-    expected_flips = ["self-model-reward-residual"]
-    for k in expected_flips:
-        if ("flip-" + k) not in flip_keys:
-            problems.append("PASS-DIR: flip scanner missed the known de-risked-but-not-flipped faculty %r" % k)
+    # superseded / flip_blocked rows must NOT be listed (the ledger carries the fields; board-synced 2026-11-01)
+    for k in ("gnw-thought-swap", "wkv-mouth-learned-head", "self-model-reward-residual"):
+        if ("flip-" + k) in flip_keys:
+            problems.append("FAIL-DIR: flip scanner lists %r although the row carries superseded_by/flip_blocked" % k)
 
     walls = scan_walls_ledger()
     if not any("gap#4" in w["what"] or "gap4" in w["id"] for w in walls):

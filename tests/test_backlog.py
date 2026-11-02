@@ -93,10 +93,12 @@ def test_structured_dependencies_are_derived_not_invented():
 
 def test_flip_scanner_skips_superseded_and_flip_blocked_rows():
     """A de-risked, not-on-by-default row carrying superseded_by / flip_blocked is NOT a flip candidate;
-    an otherwise identical plain row still is. (The live-ledger check that gnw-thought-swap / wkv-mouth-learned-head
-    are no longer listed lands with the ledger edit, which needs a board sync: _scratch/full-flip-fix.patch.)"""
+    an otherwise identical plain row still is; the live ledger lists none of the known false positives."""
     row = ("  - key: %s\n    faculty: \"f\"\n    de_risked: YES\n    wired: YES\n    on_by_default: NO\n"
            "    scaffold_retired: NO\n%s")
     txt = (row % ("plain-row", "") + row % ("old-row", "    superseded_by: \"new-row (cite)\"\n")
            + row % ("blocked-row", "    flip_blocked: \"needs X (cite)\"  # c\n"))
     assert [i["id"] for i in backlog.scan_ledger_flips(ledger_text=txt)] == ["flip-plain-row"]
+    live = {i["id"] for i in backlog.scan_ledger_flips()}
+    for k in ("gnw-thought-swap", "wkv-mouth-learned-head", "self-model-reward-residual"):
+        assert "flip-" + k not in live, "live ledger still lists %s as a flip candidate" % k
