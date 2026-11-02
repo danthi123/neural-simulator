@@ -5,7 +5,7 @@
   "seed": 43,
   "backend": "numpy",
   "cuda_visible_devices": null,
-  "source_prov_abstain_at_tie_env": "1",
+  "source_prov_abstain_at_tie_env": null,
   "affect_marker_settle_env": null,
   "per_faculty": [
     {

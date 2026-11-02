@@ -1,5 +1,5 @@
 {
- "run_id": "1792581159-2",
+ "run_id": "1793190292-2",
  "runner": "research/runners/load_bearing_fraction.py",
  "argv": [
   "/home/node/derisk-pool/revisions/f2885df70cfb99a8715c376bca12ac3c2134ef46/research/runners/load_bearing_fraction.py",
@@ -20,10 +20,10 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": true,
  "source_manifest_exit_error": null,
- "started": "2026-10-21T07:12:39",
+ "started": "2026-10-28T08:24:52",
  "env": {
   "NUMEXPR_NUM_THREADS": "1",
-  "POOL_JOB_ID": "1792581158763097918-5323",
+  "POOL_JOB_ID": "1793190292587380160-25250",
   "POOL_SANDBOX_MEMCAP_ENFORCED": "1",
   "OPENBLAS_NUM_THREADS": "1",
   "POOL_SANDBOX_OUTER_MEMORY_MAX": "8G",
@@ -32,10 +32,6 @@
   "POOL_SANDBOX": "1",
   "MKL_NUM_THREADS": "1",
   "SIM_BACKEND": "numpy",
-  "BRAIN_EPISODIC_STORE_VERIFY": "1",
-  "BRAIN_PMEM_FACILITATION": "1",
-  "BRAIN_PMEM_OP_STABILIZER": "1",
-  "BRAIN_SOURCE_PROV_ABSTAIN_AT_TIE": "1",
   "LB_AFFECT_DRIVE_PROBE": "1",
   "LB_BG_SELECT_DRIVE_PROBE": "1",
   "LB_CG_DRIVE_PROBE": "1",
@@ -46,7 +42,7 @@
   "LB_PMEM_DRIVE_PROBE": "1",
   "LB_SURPRISE_CONFIRM_PROBE": "1"
  },
- "host": "node-dl4g243",
+ "host": "node-dl5d243",
  "sim_backend": "numpy",
  "sim_backend_requested": "numpy",
  "sim_backend_cupy_importable": false,

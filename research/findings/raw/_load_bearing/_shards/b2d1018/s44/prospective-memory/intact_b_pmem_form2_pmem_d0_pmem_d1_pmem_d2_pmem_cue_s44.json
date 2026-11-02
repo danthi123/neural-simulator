@@ -40,25 +40,25 @@
       "held_after_lesion": null,
       "calib": {
         "bias_pA": {
-          "A": -1373.3,
-          "B": -1770.0
+          "A": -1283.3,
+          "B": -1633.3
         },
         "plateau_diag": {
           "A": {
             "g_single_cue": 28.999,
-            "g_single_held": 134.611,
-            "g_coinc": 165.417,
-            "theta": 141.341,
+            "g_single_held": 134.58,
+            "g_coinc": 165.369,
+            "theta": 141.309,
             "coinc_over_theta": true,
-            "coinc_margin": 24.076
+            "coinc_margin": 24.06
           },
           "B": {
             "g_single_cue": 30.802,
-            "g_single_held": 146.298,
-            "g_coinc": 179.097,
-            "theta": 153.613,
+            "g_single_held": 146.331,
+            "g_coinc": 179.125,
+            "theta": 153.648,
             "coinc_over_theta": true,
-            "coinc_margin": 25.484
+            "coinc_margin": 25.478
           }
         },
         "fire_thr": 0.2,
@@ -69,7 +69,7 @@
       "binding_learned": {
         "pre_act_rate": 0.4067,
         "pre_cue_rate": 0.4508,
-        "post_rel_rate": 0.14,
+        "post_rel_rate": 0.1689,
         "learned_norm": 17760.0,
         "canonical_norm_per_action": 17760.0
       },
@@ -468,7 +468,7 @@
     "prospective": {
       "is_cue": false,
       "fired": false,
-      "rel": 0.051666666666666666,
+      "rel": 0.03,
       "held": 0.32625,
       "threshold": 0.2,
       "silent_max": 0.06,
@@ -688,7 +688,7 @@
     "prospective": {
       "is_cue": false,
       "fired": false,
-      "rel": 0.03166666666666667,
+      "rel": 0.021666666666666667,
       "held": 0.32625,
       "threshold": 0.2,
       "silent_max": 0.06,
@@ -932,7 +932,7 @@
     "prospective": {
       "is_cue": true,
       "fired": true,
-      "rel": 0.21833333333333332,
+      "rel": 0.2111111111111111,
       "held": 0.3333333333333333,
       "threshold": 0.2,
       "silent_max": 0.06,
