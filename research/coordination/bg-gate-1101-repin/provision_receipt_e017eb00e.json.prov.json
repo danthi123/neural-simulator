@@ -1,0 +1,1 @@
+{"command": "scp homelab-server:/var/lib/host-status/sim-provision/e017eb00e38e69d230a7d930e181049d7822160b.json research/coordination/bg-gate-1101-repin/provision_receipt_e017eb00e.json", "device": "none (a server provisioner receipt copied verbatim; no simulation ran)"}

@@ -1,0 +1,1590 @@
+{
+ "instrument": "host_share_bg_seam",
+ "seed": 79,
+ "arm": "seam_b",
+ "mode": "observe",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "BRAIN_CHAT_RENDERER": "stub",
+  "SIM_DISABLE_LLM": "1",
+  "CUDA_VISIBLE_DEVICES": "",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "MKL_NUM_THREADS": "1",
+  "NUMEXPR_NUM_THREADS": "1",
+  "BRAIN_LTM_SHIP_DEFAULT": "1",
+  "BRAIN_BG_NEURAL_SEAM": "1",
+  "BRAIN_GNW_UNIQUE_IGNITION_READ": "1",
+  "BRAIN_CHAT_SEED": "79",
+  "BRAIN_BG_NEURAL_SEAM_LESION": "",
+  "BRAIN_BG_COMMIT": "1",
+  "BRAIN_BG_COMMIT_OP": "",
+  "BRAIN_BG_COMMIT_LESION": ""
+ },
+ "amendment": "2026-10-14-bg-live-seam-commit",
+ "pythonhashseed_ok": true,
+ "responses": {
+  "hsb_empty1": {
+   "answer": "(Holding \u2014 nothing salient to add to that.)",
+   "abstained": true,
+   "recalled_svo": null,
+   "verified": false,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": false,
+   "activity": null,
+   "affect": null,
+   "bg_select": {
+    "on": true,
+    "action": "STAY_SILENT",
+    "winner": 1,
+    "speak_salience": null,
+    "silent_salience": null,
+    "decision_step": 157,
+    "lesioned": false
+   }
+  },
+  "hsb_q": {
+   "answer": "the dog chases the cat the cat eats the fish",
+   "abstained": false,
+   "recalled_svo": [
+    "dog",
+    "chase",
+    "cat"
+   ],
+   "derived": false,
+   "derived_from": null,
+   "derived_svo": null,
+   "verified": true,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": true,
+   "n_sentences": 2,
+   "supporting_facts": [
+    [
+     "dog",
+     "chase",
+     "cat"
+    ],
+    [
+     "cat",
+     "eat",
+     "fish"
+    ]
+   ],
+   "followup": false,
+   "activity": {
+    "roles": [
+     {
+      "role": "agent",
+      "word": "cat",
+      "confidence": 1.0,
+      "margin": 0.7488946970241247,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "cat"
+     },
+     {
+      "role": "action",
+      "word": "eat",
+      "confidence": 1.0,
+      "margin": 0.6027302078119854,
+      "margin_spiking": null,
+      "cue": true,
+      "asserted": "eat"
+     },
+     {
+      "role": "patient",
+      "word": "fish",
+      "confidence": 1.0,
+      "margin": 0.6871407409837386,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "attribute",
+      "word": "learn",
+      "confidence": 1.0,
+      "margin": 0.21179657976296276,
+      "margin_spiking": null,
+      "cue": false
+     },
+     {
+      "role": "polarity",
+      "word": "AFFIRM",
+      "confidence": 1.0,
+      "margin": 0.9999999999999996,
+      "margin_spiking": null,
+      "cue": false
+     }
+    ],
+    "matched_fact_index": 4,
+    "n_facts_scanned": 5,
+    "abstained": false,
+    "rf": {
+     "n_readout_neurons": 6880,
+     "frac_fired": 0.11177325581395349,
+     "mean_magnitude": 9743.360947723942
+    },
+    "composer": "onebrain"
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "comprehension": null,
+   "surprise": null,
+   "worldmodel": null,
+   "multiref": null,
+   "noncontradiction": null,
+   "reconsolidation": null,
+   "pragmatic": null,
+   "episodic": null,
+   "metacog": {
+    "on": true,
+    "lesioned": false,
+    "evidence": 1.0,
+    "balance": 0.09801418021558318,
+    "threshold": 0.06478321931920379,
+    "confident": true,
+    "calib": {
+     "mean_hi": 0.08483076683290863,
+     "min_hi": 0.07200375388724288,
+     "mean_lo": 0.04426242546329054,
+     "max_lo": 0.0575626847511647,
+     "clean_gap": true,
+     "read_reps": 8,
+     "role_conf_lo": 0.3,
+     "role_conf_hi": 0.5,
+     "confidence_read": "nmda_norm"
+    },
+    "mean_role_conf": 0.6501124451165622
+   },
+   "confidence_forthcoming": {
+    "on": true,
+    "floor_sentences": 4,
+    "requested_sentences": 2,
+    "confident": true,
+    "granted": false,
+    "kept_sentences": 2,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+   },
+   "curiosity": null,
+   "affect_drives": {
+    "acted": true,
+    "turn": 1,
+    "lesioned": false,
+    "ema_valence": 0.0,
+    "ema_arousal": 0.0,
+    "body_h": 0.5,
+    "body_a": 0.0,
+    "mood": 0.0025833333333333333,
+    "felt_arousal": 0.0,
+    "level": 0,
+    "high_arousal": false,
+    "lead": "",
+    "reason": "neutral_hold",
+    "seed": 79,
+    "vplus_rate": 0.040125,
+    "vminus_rate": 0.03754166666666667,
+    "surfaced": false
+   },
+   "swap_drives": {
+    "acted": true,
+    "turn": 2,
+    "topic": "dog",
+    "swapped": false,
+    "held_topic_before": null,
+    "held_topic": "dog",
+    "evicted_topic": null,
+    "reason": "first_thought",
+    "seed": 79,
+    "lesioned": false,
+    "proposed_slot": 0,
+    "held_slot": 0,
+    "winner_slot": 0,
+    "n_ignited_post": 1,
+    "held_rate_post": 0.3333333333333333,
+    "mm_peak": 0.03888888888888889,
+    "boost_max": 0.019444444444444445,
+    "on": true,
+    "lead": "",
+    "new_topic": null,
+    "reason_lead": "first_thought"
+   },
+   "common_ground_drives": {
+    "on": true,
+    "topic": "dog",
+    "slot": 0,
+    "decision": "introduce",
+    "in_common_ground": false,
+    "first_mention": true,
+    "reduce_rate": 0.0,
+    "introduce_rate": 0.04833333333333333,
+    "evidence_rate": 0.0,
+    "margin": -0.04833333333333333,
+    "lesioned": false,
+    "lead": "",
+    "reason_lead": "introduce"
+   },
+   "da_drives": {
+    "acted": true,
+    "turn": 1,
+    "lesioned": false,
+    "turn_engagement": 0.07142857142857144,
+    "ema_engagement": 0.042857142857142864,
+    "afferent_pA": 60.00000000000001,
+    "da_level": 0.04616293556102311,
+    "snc_firing": 0.0,
+    "mode": "rest",
+    "lead": "",
+    "reason": "low_engagement",
+    "seed": 79,
+    "shared_salience": {
+     "raw": 0.535483870967742,
+     "want_hz": 2.7777777777777777,
+     "normalized": 0.07142857142857144,
+     "lesioned": false,
+     "calib": {
+      "want_novel_hz": 38.88888888888888,
+      "want_familiar_hz": 0.0,
+      "threshold_hz": 19.44444444444444,
+      "novel_signal": 0.95,
+      "familiar_signal": 0.0,
+      "read_reps": 4
+     },
+     "on": true
+    },
+    "spiking_novelty": {
+     "novelty": 0.7258064516129032,
+     "n_tokens": 2,
+     "per_word_freshness": [
+      0.7419354838709677,
+      0.7096774193548387
+     ],
+     "fresh_ref": 31.0,
+     "n_channels": 64,
+     "lesioned": false,
+     "on": true
+    },
+    "on": true
+   },
+   "da_encoding": {
+    "on": true,
+    "g": 1.0,
+    "da_level": 0.04616293556102311,
+    "lesioned": false
+   },
+   "d6_hebbian": {
+    "on": true,
+    "wrote_this_turn": true,
+    "encode": {
+     "frozen": false,
+     "steps": 208,
+     "block": 4,
+     "phase_lock_steps": 184,
+     "n_saturated": 128,
+     "mean_abs_w": 1.0,
+     "min_abs_w": 0.9999999999999998
+    },
+    "held": {
+     "block": 4,
+     "readout": 207.9988036222591,
+     "floor": 0.001,
+     "held": true
+    }
+   }
+  },
+  "hsb_empty2": {
+   "answer": "(Holding \u2014 nothing salient to add to that.)",
+   "abstained": true,
+   "recalled_svo": null,
+   "verified": false,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": false,
+   "activity": null,
+   "affect": null,
+   "bg_select": {
+    "on": true,
+    "action": "STAY_SILENT",
+    "winner": 1,
+    "speak_salience": null,
+    "silent_salience": null,
+    "decision_step": 206,
+    "lesioned": false
+   }
+  },
+  "hsb_hi": {
+   "answer": "(Holding \u2014 nothing salient to add to that.)",
+   "abstained": true,
+   "recalled_svo": null,
+   "verified": false,
+   "renderer": "template-stub (GPU-free)",
+   "brain": "tiny-demo",
+   "source": "tiny-demo +LTM",
+   "rich": false,
+   "activity": null,
+   "affect": null,
+   "bg_select": {
+    "on": true,
+    "action": "STAY_SILENT",
+    "winner": 1,
+    "speak_salience": null,
+    "silent_salience": null,
+    "decision_step": 354,
+    "lesioned": false
+   }
+  }
+ },
+ "events": {
+  "hsb_empty1": [
+   {
+    "kind": "bg_neural",
+    "winner": 1,
+    "latch_rates": [
+     0.0,
+     0.1013
+    ],
+    "readouts": {
+     "latch_rate_x0.5": 1,
+     "latch_rate_x2": 1,
+     "first_to_12_motor (production rule)": 1,
+     "first_to_6_motor": 1,
+     "first_to_24_motor": 1,
+     "motor_majority_drive_window": 1
+    },
+    "v_range": [
+     -84.20539093017578,
+     39.953834533691406
+    ],
+    "commit": {
+     "winner": 1,
+     "on": [
+      1
+     ],
+     "co_commit": false,
+     "threshold": 18.0,
+     "read_variants": {
+      "x0.5": 1,
+      "x2": 1
+     },
+     "read_invariant": true,
+     "slot_counts": [
+      0,
+      86
+     ],
+     "gate_counts_drive": [
+      0,
+      116
+     ],
+     "gate_counts_hold": [
+      0,
+      65
+     ],
+     "motor_counts_hold": [
+      0,
+      144
+     ],
+     "slot_carry": [
+      0,
+      0
+     ],
+     "latch_onset_ms": [
+      null,
+      157
+     ],
+     "old_latch_winner": 1,
+     "old_latch_rates": [
+      0.0,
+      0.1013
+     ],
+     "old_latch_variants": {
+      "x0.5": 1,
+      "x2": 1
+     },
+     "op": 4,
+     "lesion": null,
+     "organ_seed": 79
+    },
+    "tonic_rates_hz": {
+     "gpe_0": 92.5,
+     "gpe_1": 75.83,
+     "selector_stn": 13.0,
+     "window": "drive",
+     "drive_steps": 300
+    },
+    "sub_reversal": {
+     "threshold_mv": -80.0,
+     "e_inh_mv": -75.0,
+     "steps_checked": 635,
+     "steps_below": {
+      "practice_arousal": 13,
+      "selector_stn": 0,
+      "selector_reset": 0,
+      "proposal_0": 0,
+      "str_d1_0": 0,
+      "str_d2_0": 206,
+      "gpe_0": 0,
+      "gpi_0": 0,
+      "thal_0": 0,
+      "commit_0": 0,
+      "commit_fs_0": 0,
+      "motor_0": 0,
+      "proposal_1": 0,
+      "str_d1_1": 294,
+      "str_d2_1": 0,
+      "gpe_1": 0,
+      "gpi_1": 0,
+      "thal_1": 0,
+      "commit_1": 0,
+      "commit_fs_1": 0,
+      "motor_1": 0,
+      "heard": 0,
+      "hold": 0,
+      "hold_inh": 0,
+      "latch_0": 0,
+      "latch_fs_0": 0,
+      "latch_1": 0,
+      "latch_fs_1": 0,
+      "bgc_gate_0": 0,
+      "bgc_gate_inh_0": 0,
+      "bgc_slot_0": 0,
+      "bgc_gate_1": 0,
+      "bgc_gate_inh_1": 0,
+      "bgc_slot_1": 0
+     },
+     "v_min": {
+      "practice_arousal": -80.937,
+      "selector_stn": -66.139,
+      "selector_reset": -61.915,
+      "proposal_0": -72.33,
+      "str_d1_0": -79.967,
+      "str_d2_0": -80.752,
+      "gpe_0": -64.885,
+      "gpi_0": -56.148,
+      "thal_0": -66.766,
+      "commit_0": -72.755,
+      "commit_fs_0": -55.0,
+      "motor_0": -71.812,
+      "proposal_1": -72.276,
+      "str_d1_1": -84.205,
+      "str_d2_1": -79.947,
+      "gpe_1": -64.887,
+      "gpi_1": -58.793,
+      "thal_1": -67.104,
+      "commit_1": -71.832,
+      "commit_fs_1": -55.205,
+      "motor_1": -72.378,
+      "heard": -72.06,
+      "hold": -71.865,
+      "hold_inh": -55.0,
+      "latch_0": -72.349,
+      "latch_fs_0": -55.0,
+      "latch_1": -74.366,
+      "latch_fs_1": -55.0,
+      "bgc_gate_0": -72.497,
+      "bgc_gate_inh_0": -55.0,
+      "bgc_slot_0": -72.792,
+      "bgc_gate_1": -71.958,
+      "bgc_gate_inh_1": -55.0,
+      "bgc_slot_1": -74.45
+     },
+     "regions_below": [
+      "practice_arousal",
+      "str_d1_1",
+      "str_d2_0"
+     ],
+     "vr_mv": {
+      "practice_arousal": -60.0,
+      "selector_stn": -60.0,
+      "selector_reset": -55.0,
+      "proposal_0": -60.0,
+      "str_d1_0": -80.0,
+      "str_d2_0": -80.0,
+      "gpe_0": -65.0,
+      "gpi_0": -65.0,
+      "thal_0": -60.0,
+      "commit_0": -60.0,
+      "commit_fs_0": -55.0,
+      "motor_0": -60.0,
+      "proposal_1": -60.0,
+      "str_d1_1": -80.0,
+      "str_d2_1": -80.0,
+      "gpe_1": -65.0,
+      "gpi_1": -65.0,
+      "thal_1": -60.0,
+      "commit_1": -60.0,
+      "commit_fs_1": -55.0,
+      "motor_1": -60.0,
+      "heard": -60.0,
+      "hold": -60.0,
+      "hold_inh": -55.0,
+      "latch_0": -60.0,
+      "latch_fs_0": -55.0,
+      "latch_1": -60.0,
+      "latch_fs_1": -55.0,
+      "bgc_gate_0": -60.0,
+      "bgc_gate_inh_0": -55.0,
+      "bgc_slot_0": -60.0,
+      "bgc_gate_1": -60.0,
+      "bgc_gate_inh_1": -55.0,
+      "bgc_slot_1": -60.0
+     },
+     "rest_bound_mv": {
+      "practice_arousal": -80.0,
+      "selector_stn": -80.0,
+      "selector_reset": -80.0,
+      "proposal_0": -80.0,
+      "str_d1_0": -85.0,
+      "str_d2_0": -85.0,
+      "gpe_0": -80.0,
+      "gpi_0": -80.0,
+      "thal_0": -80.0,
+      "commit_0": -80.0,
+      "commit_fs_0": -80.0,
+      "motor_0": -80.0,
+      "proposal_1": -80.0,
+      "str_d1_1": -85.0,
+      "str_d2_1": -85.0,
+      "gpe_1": -80.0,
+      "gpi_1": -80.0,
+      "thal_1": -80.0,
+      "commit_1": -80.0,
+      "commit_fs_1": -80.0,
+      "motor_1": -80.0,
+      "heard": -80.0,
+      "hold": -80.0,
+      "hold_inh": -80.0,
+      "latch_0": -80.0,
+      "latch_fs_0": -80.0,
+      "latch_1": -80.0,
+      "latch_fs_1": -80.0,
+      "bgc_gate_0": -80.0,
+      "bgc_gate_inh_0": -80.0,
+      "bgc_slot_0": -80.0,
+      "bgc_gate_1": -80.0,
+      "bgc_gate_inh_1": -80.0,
+      "bgc_slot_1": -80.0
+     },
+     "steps_below_rest_bound": {
+      "practice_arousal": 13,
+      "selector_stn": 0,
+      "selector_reset": 0,
+      "proposal_0": 0,
+      "str_d1_0": 0,
+      "str_d2_0": 0,
+      "gpe_0": 0,
+      "gpi_0": 0,
+      "thal_0": 0,
+      "commit_0": 0,
+      "commit_fs_0": 0,
+      "motor_0": 0,
+      "proposal_1": 0,
+      "str_d1_1": 0,
+      "str_d2_1": 0,
+      "gpe_1": 0,
+      "gpi_1": 0,
+      "thal_1": 0,
+      "commit_1": 0,
+      "commit_fs_1": 0,
+      "motor_1": 0,
+      "heard": 0,
+      "hold": 0,
+      "hold_inh": 0,
+      "latch_0": 0,
+      "latch_fs_0": 0,
+      "latch_1": 0,
+      "latch_fs_1": 0,
+      "bgc_gate_0": 0,
+      "bgc_gate_inh_0": 0,
+      "bgc_slot_0": 0,
+      "bgc_gate_1": 0,
+      "bgc_gate_inh_1": 0,
+      "bgc_slot_1": 0
+     },
+     "regions_below_rest_bound": [
+      "practice_arousal"
+     ],
+     "stop4": "report-only"
+    },
+    "bg_rates_hz": {
+     "drive": {
+      "gpi_0": 312.0,
+      "gpi_1": 238.17,
+      "thal_0": 0.0,
+      "thal_1": 6.67,
+      "motor_0": 0.0,
+      "motor_1": 26.67,
+      "gpe_0": 92.5,
+      "gpe_1": 75.83,
+      "selector_stn": 13.0
+     },
+     "hold": {
+      "gpi_0": 320.25,
+      "gpi_1": 304.0,
+      "thal_0": 0.0,
+      "thal_1": 7.71,
+      "motor_0": 0.0,
+      "motor_1": 24.0,
+      "gpe_0": 85.31,
+      "gpe_1": 83.44,
+      "selector_stn": 15.25
+     },
+     "window_steps": {
+      "drive": 300,
+      "hold": 200
+     }
+    }
+   }
+  ],
+  "hsb_q": [
+   {
+    "kind": "bg_neural",
+    "winner": 0,
+    "latch_rates": [
+     0.0977,
+     0.0
+    ],
+    "readouts": {
+     "latch_rate_x0.5": 0,
+     "latch_rate_x2": 0,
+     "first_to_12_motor (production rule)": 0,
+     "first_to_6_motor": 0,
+     "first_to_24_motor": 0,
+     "motor_majority_drive_window": 0
+    },
+    "v_range": [
+     -89.62266540527344,
+     39.8439826965332
+    ],
+    "commit": {
+     "winner": 0,
+     "on": [
+      0
+     ],
+     "co_commit": false,
+     "threshold": 18.0,
+     "read_variants": {
+      "x0.5": 0,
+      "x2": 0
+     },
+     "read_invariant": true,
+     "slot_counts": [
+      89,
+      0
+     ],
+     "gate_counts_drive": [
+      230,
+      0
+     ],
+     "gate_counts_hold": [
+      116,
+      0
+     ],
+     "motor_counts_hold": [
+      244,
+      0
+     ],
+     "slot_carry": [
+      0,
+      0
+     ],
+     "latch_onset_ms": [
+      142,
+      null
+     ],
+     "old_latch_winner": 0,
+     "old_latch_rates": [
+      0.0977,
+      0.0
+     ],
+     "old_latch_variants": {
+      "x0.5": 0,
+      "x2": 0
+     },
+     "op": 4,
+     "lesion": null,
+     "organ_seed": 79
+    },
+    "tonic_rates_hz": {
+     "gpe_0": 75.62,
+     "gpe_1": 65.42,
+     "selector_stn": 15.83,
+     "window": "drive",
+     "drive_steps": 300
+    },
+    "sub_reversal": {
+     "threshold_mv": -80.0,
+     "e_inh_mv": -75.0,
+     "steps_checked": 635,
+     "steps_below": {
+      "practice_arousal": 17,
+      "selector_stn": 0,
+      "selector_reset": 0,
+      "proposal_0": 0,
+      "str_d1_0": 368,
+      "str_d2_0": 339,
+      "gpe_0": 0,
+      "gpi_0": 0,
+      "thal_0": 0,
+      "commit_0": 0,
+      "commit_fs_0": 0,
+      "motor_0": 0,
+      "proposal_1": 0,
+      "str_d1_1": 296,
+      "str_d2_1": 241,
+      "gpe_1": 0,
+      "gpi_1": 0,
+      "thal_1": 0,
+      "commit_1": 0,
+      "commit_fs_1": 0,
+      "motor_1": 0,
+      "heard": 0,
+      "hold": 0,
+      "hold_inh": 0,
+      "latch_0": 0,
+      "latch_fs_0": 0,
+      "latch_1": 0,
+      "latch_fs_1": 0,
+      "bgc_gate_0": 0,
+      "bgc_gate_inh_0": 0,
+      "bgc_slot_0": 0,
+      "bgc_gate_1": 0,
+      "bgc_gate_inh_1": 0,
+      "bgc_slot_1": 0
+     },
+     "v_min": {
+      "practice_arousal": -81.602,
+      "selector_stn": -66.161,
+      "selector_reset": -61.915,
+      "proposal_0": -72.263,
+      "str_d1_0": -89.623,
+      "str_d2_0": -81.856,
+      "gpe_0": -64.848,
+      "gpi_0": -59.08,
+      "thal_0": -66.918,
+      "commit_0": -72.093,
+      "commit_fs_0": -55.161,
+      "motor_0": -77.512,
+      "proposal_1": -72.285,
+      "str_d1_1": -82.397,
+      "str_d2_1": -81.691,
+      "gpe_1": -64.816,
+      "gpi_1": -55.673,
+      "thal_1": -67.098,
+      "commit_1": -72.755,
+      "commit_fs_1": -55.0,
+      "motor_1": -72.01,
+      "heard": -73.32,
+      "hold": -72.264,
+      "hold_inh": -55.199,
+      "latch_0": -74.355,
+      "latch_fs_0": -55.0,
+      "latch_1": -72.167,
+      "latch_fs_1": -55.0,
+      "bgc_gate_0": -76.456,
+      "bgc_gate_inh_0": -55.0,
+      "bgc_slot_0": -74.751,
+      "bgc_gate_1": -72.566,
+      "bgc_gate_inh_1": -55.0,
+      "bgc_slot_1": -72.585
+     },
+     "regions_below": [
+      "practice_arousal",
+      "str_d1_0",
+      "str_d1_1",
+      "str_d2_0",
+      "str_d2_1"
+     ],
+     "vr_mv": {
+      "practice_arousal": -60.0,
+      "selector_stn": -60.0,
+      "selector_reset": -55.0,
+      "proposal_0": -60.0,
+      "str_d1_0": -80.0,
+      "str_d2_0": -80.0,
+      "gpe_0": -65.0,
+      "gpi_0": -65.0,
+      "thal_0": -60.0,
+      "commit_0": -60.0,
+      "commit_fs_0": -55.0,
+      "motor_0": -60.0,
+      "proposal_1": -60.0,
+      "str_d1_1": -80.0,
+      "str_d2_1": -80.0,
+      "gpe_1": -65.0,
+      "gpi_1": -65.0,
+      "thal_1": -60.0,
+      "commit_1": -60.0,
+      "commit_fs_1": -55.0,
+      "motor_1": -60.0,
+      "heard": -60.0,
+      "hold": -60.0,
+      "hold_inh": -55.0,
+      "latch_0": -60.0,
+      "latch_fs_0": -55.0,
+      "latch_1": -60.0,
+      "latch_fs_1": -55.0,
+      "bgc_gate_0": -60.0,
+      "bgc_gate_inh_0": -55.0,
+      "bgc_slot_0": -60.0,
+      "bgc_gate_1": -60.0,
+      "bgc_gate_inh_1": -55.0,
+      "bgc_slot_1": -60.0
+     },
+     "rest_bound_mv": {
+      "practice_arousal": -80.0,
+      "selector_stn": -80.0,
+      "selector_reset": -80.0,
+      "proposal_0": -80.0,
+      "str_d1_0": -85.0,
+      "str_d2_0": -85.0,
+      "gpe_0": -80.0,
+      "gpi_0": -80.0,
+      "thal_0": -80.0,
+      "commit_0": -80.0,
+      "commit_fs_0": -80.0,
+      "motor_0": -80.0,
+      "proposal_1": -80.0,
+      "str_d1_1": -85.0,
+      "str_d2_1": -85.0,
+      "gpe_1": -80.0,
+      "gpi_1": -80.0,
+      "thal_1": -80.0,
+      "commit_1": -80.0,
+      "commit_fs_1": -80.0,
+      "motor_1": -80.0,
+      "heard": -80.0,
+      "hold": -80.0,
+      "hold_inh": -80.0,
+      "latch_0": -80.0,
+      "latch_fs_0": -80.0,
+      "latch_1": -80.0,
+      "latch_fs_1": -80.0,
+      "bgc_gate_0": -80.0,
+      "bgc_gate_inh_0": -80.0,
+      "bgc_slot_0": -80.0,
+      "bgc_gate_1": -80.0,
+      "bgc_gate_inh_1": -80.0,
+      "bgc_slot_1": -80.0
+     },
+     "steps_below_rest_bound": {
+      "practice_arousal": 17,
+      "selector_stn": 0,
+      "selector_reset": 0,
+      "proposal_0": 0,
+      "str_d1_0": 164,
+      "str_d2_0": 0,
+      "gpe_0": 0,
+      "gpi_0": 0,
+      "thal_0": 0,
+      "commit_0": 0,
+      "commit_fs_0": 0,
+      "motor_0": 0,
+      "proposal_1": 0,
+      "str_d1_1": 0,
+      "str_d2_1": 0,
+      "gpe_1": 0,
+      "gpi_1": 0,
+      "thal_1": 0,
+      "commit_1": 0,
+      "commit_fs_1": 0,
+      "motor_1": 0,
+      "heard": 0,
+      "hold": 0,
+      "hold_inh": 0,
+      "latch_0": 0,
+      "latch_fs_0": 0,
+      "latch_1": 0,
+      "latch_fs_1": 0,
+      "bgc_gate_0": 0,
+      "bgc_gate_inh_0": 0,
+      "bgc_slot_0": 0,
+      "bgc_gate_1": 0,
+      "bgc_gate_inh_1": 0,
+      "bgc_slot_1": 0
+     },
+     "regions_below_rest_bound": [
+      "practice_arousal",
+      "str_d1_0"
+     ],
+     "stop4": "report-only"
+    },
+    "bg_rates_hz": {
+     "drive": {
+      "gpi_0": 160.0,
+      "gpi_1": 287.33,
+      "thal_0": 25.14,
+      "thal_1": 0.0,
+      "motor_0": 61.78,
+      "motor_1": 0.0,
+      "gpe_0": 75.62,
+      "gpe_1": 65.42,
+      "selector_stn": 15.83
+     },
+     "hold": {
+      "gpi_0": 295.75,
+      "gpi_1": 312.0,
+      "thal_0": 10.83,
+      "thal_1": 0.0,
+      "motor_0": 40.67,
+      "motor_1": 0.0,
+      "gpe_0": 84.69,
+      "gpe_1": 88.12,
+      "selector_stn": 12.25
+     },
+     "window_steps": {
+      "drive": 300,
+      "hold": 200
+     }
+    }
+   },
+   {
+    "kind": "bus",
+    "committed": "cat",
+    "n_ignited": 1,
+    "rates": [
+     0.33333,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "variants": {
+     "argmax_thr (production)": "cat",
+     "argmax_thr_x0.5": "cat",
+     "argmax_thr_x1.5": "cat",
+     "unique": "cat",
+     "unique_thr_x0.5": "cat",
+     "unique_thr_x1.5": "cat"
+    }
+   }
+  ],
+  "hsb_empty2": [
+   {
+    "kind": "bg_neural",
+    "winner": 1,
+    "latch_rates": [
+     0.0,
+     0.0903
+    ],
+    "readouts": {
+     "latch_rate_x0.5": 1,
+     "latch_rate_x2": 1,
+     "first_to_12_motor (production rule)": 1,
+     "first_to_6_motor": 1,
+     "first_to_24_motor": 1,
+     "motor_majority_drive_window": 1
+    },
+    "v_range": [
+     -88.12858581542969,
+     39.99361801147461
+    ],
+    "commit": {
+     "winner": 1,
+     "on": [
+      1
+     ],
+     "co_commit": false,
+     "threshold": 18.0,
+     "read_variants": {
+      "x0.5": 1,
+      "x2": 1
+     },
+     "read_invariant": true,
+     "slot_counts": [
+      0,
+      83
+     ],
+     "gate_counts_drive": [
+      0,
+      96
+     ],
+     "gate_counts_hold": [
+      0,
+      92
+     ],
+     "motor_counts_hold": [
+      0,
+      226
+     ],
+     "slot_carry": [
+      0,
+      0
+     ],
+     "latch_onset_ms": [
+      null,
+      206
+     ],
+     "old_latch_winner": 1,
+     "old_latch_rates": [
+      0.0,
+      0.0903
+     ],
+     "old_latch_variants": {
+      "x0.5": 1,
+      "x2": 1
+     },
+     "op": 4,
+     "lesion": null,
+     "organ_seed": 79
+    },
+    "tonic_rates_hz": {
+     "gpe_0": 64.38,
+     "gpe_1": 76.67,
+     "selector_stn": 14.33,
+     "window": "drive",
+     "drive_steps": 300
+    },
+    "sub_reversal": {
+     "threshold_mv": -80.0,
+     "e_inh_mv": -75.0,
+     "steps_checked": 635,
+     "steps_below": {
+      "practice_arousal": 17,
+      "selector_stn": 0,
+      "selector_reset": 0,
+      "proposal_0": 0,
+      "str_d1_0": 339,
+      "str_d2_0": 352,
+      "gpe_0": 0,
+      "gpi_0": 0,
+      "thal_0": 0,
+      "commit_0": 0,
+      "commit_fs_0": 0,
+      "motor_0": 0,
+      "proposal_1": 0,
+      "str_d1_1": 395,
+      "str_d2_1": 363,
+      "gpe_1": 0,
+      "gpi_1": 0,
+      "thal_1": 0,
+      "commit_1": 0,
+      "commit_fs_1": 0,
+      "motor_1": 0,
+      "heard": 0,
+      "hold": 0,
+      "hold_inh": 0,
+      "latch_0": 0,
+      "latch_fs_0": 0,
+      "latch_1": 0,
+      "latch_fs_1": 0,
+      "bgc_gate_0": 0,
+      "bgc_gate_inh_0": 0,
+      "bgc_slot_0": 0,
+      "bgc_gate_1": 0,
+      "bgc_gate_inh_1": 0,
+      "bgc_slot_1": 0
+     },
+     "v_min": {
+      "practice_arousal": -81.603,
+      "selector_stn": -66.267,
+      "selector_reset": -61.915,
+      "proposal_0": -72.374,
+      "str_d1_0": -82.33,
+      "str_d2_0": -81.992,
+      "gpe_0": -64.209,
+      "gpi_0": -56.869,
+      "thal_0": -66.773,
+      "commit_0": -72.851,
+      "commit_fs_0": -55.0,
+      "motor_0": -71.812,
+      "proposal_1": -72.319,
+      "str_d1_1": -88.129,
+      "str_d2_1": -85.232,
+      "gpe_1": -66.068,
+      "gpi_1": -60.076,
+      "thal_1": -67.132,
+      "commit_1": -71.84,
+      "commit_fs_1": -55.423,
+      "motor_1": -77.03,
+      "heard": -72.06,
+      "hold": -71.865,
+      "hold_inh": -55.0,
+      "latch_0": -72.358,
+      "latch_fs_0": -55.0,
+      "latch_1": -74.487,
+      "latch_fs_1": -55.0,
+      "bgc_gate_0": -72.494,
+      "bgc_gate_inh_0": -55.0,
+      "bgc_slot_0": -72.797,
+      "bgc_gate_1": -73.35,
+      "bgc_gate_inh_1": -55.0,
+      "bgc_slot_1": -74.419
+     },
+     "regions_below": [
+      "practice_arousal",
+      "str_d1_0",
+      "str_d1_1",
+      "str_d2_0",
+      "str_d2_1"
+     ],
+     "vr_mv": {
+      "practice_arousal": -60.0,
+      "selector_stn": -60.0,
+      "selector_reset": -55.0,
+      "proposal_0": -60.0,
+      "str_d1_0": -80.0,
+      "str_d2_0": -80.0,
+      "gpe_0": -65.0,
+      "gpi_0": -65.0,
+      "thal_0": -60.0,
+      "commit_0": -60.0,
+      "commit_fs_0": -55.0,
+      "motor_0": -60.0,
+      "proposal_1": -60.0,
+      "str_d1_1": -80.0,
+      "str_d2_1": -80.0,
+      "gpe_1": -65.0,
+      "gpi_1": -65.0,
+      "thal_1": -60.0,
+      "commit_1": -60.0,
+      "commit_fs_1": -55.0,
+      "motor_1": -60.0,
+      "heard": -60.0,
+      "hold": -60.0,
+      "hold_inh": -55.0,
+      "latch_0": -60.0,
+      "latch_fs_0": -55.0,
+      "latch_1": -60.0,
+      "latch_fs_1": -55.0,
+      "bgc_gate_0": -60.0,
+      "bgc_gate_inh_0": -55.0,
+      "bgc_slot_0": -60.0,
+      "bgc_gate_1": -60.0,
+      "bgc_gate_inh_1": -55.0,
+      "bgc_slot_1": -60.0
+     },
+     "rest_bound_mv": {
+      "practice_arousal": -80.0,
+      "selector_stn": -80.0,
+      "selector_reset": -80.0,
+      "proposal_0": -80.0,
+      "str_d1_0": -85.0,
+      "str_d2_0": -85.0,
+      "gpe_0": -80.0,
+      "gpi_0": -80.0,
+      "thal_0": -80.0,
+      "commit_0": -80.0,
+      "commit_fs_0": -80.0,
+      "motor_0": -80.0,
+      "proposal_1": -80.0,
+      "str_d1_1": -85.0,
+      "str_d2_1": -85.0,
+      "gpe_1": -80.0,
+      "gpi_1": -80.0,
+      "thal_1": -80.0,
+      "commit_1": -80.0,
+      "commit_fs_1": -80.0,
+      "motor_1": -80.0,
+      "heard": -80.0,
+      "hold": -80.0,
+      "hold_inh": -80.0,
+      "latch_0": -80.0,
+      "latch_fs_0": -80.0,
+      "latch_1": -80.0,
+      "latch_fs_1": -80.0,
+      "bgc_gate_0": -80.0,
+      "bgc_gate_inh_0": -80.0,
+      "bgc_slot_0": -80.0,
+      "bgc_gate_1": -80.0,
+      "bgc_gate_inh_1": -80.0,
+      "bgc_slot_1": -80.0
+     },
+     "steps_below_rest_bound": {
+      "practice_arousal": 17,
+      "selector_stn": 0,
+      "selector_reset": 0,
+      "proposal_0": 0,
+      "str_d1_0": 0,
+      "str_d2_0": 0,
+      "gpe_0": 0,
+      "gpi_0": 0,
+      "thal_0": 0,
+      "commit_0": 0,
+      "commit_fs_0": 0,
+      "motor_0": 0,
+      "proposal_1": 0,
+      "str_d1_1": 191,
+      "str_d2_1": 4,
+      "gpe_1": 0,
+      "gpi_1": 0,
+      "thal_1": 0,
+      "commit_1": 0,
+      "commit_fs_1": 0,
+      "motor_1": 0,
+      "heard": 0,
+      "hold": 0,
+      "hold_inh": 0,
+      "latch_0": 0,
+      "latch_fs_0": 0,
+      "latch_1": 0,
+      "latch_fs_1": 0,
+      "bgc_gate_0": 0,
+      "bgc_gate_inh_0": 0,
+      "bgc_slot_0": 0,
+      "bgc_gate_1": 0,
+      "bgc_gate_inh_1": 0,
+      "bgc_slot_1": 0
+     },
+     "regions_below_rest_bound": [
+      "practice_arousal",
+      "str_d1_1",
+      "str_d2_1"
+     ],
+     "stop4": "report-only"
+    },
+    "bg_rates_hz": {
+     "drive": {
+      "gpi_0": 281.5,
+      "gpi_1": 242.83,
+      "thal_0": 2.5,
+      "thal_1": 11.39,
+      "motor_0": 0.0,
+      "motor_1": 26.89,
+      "gpe_0": 64.38,
+      "gpe_1": 76.67,
+      "selector_stn": 14.33
+     },
+     "hold": {
+      "gpi_0": 323.0,
+      "gpi_1": 287.0,
+      "thal_0": 0.0,
+      "thal_1": 11.67,
+      "motor_0": 0.0,
+      "motor_1": 37.67,
+      "gpe_0": 96.88,
+      "gpe_1": 79.38,
+      "selector_stn": 13.5
+     },
+     "window_steps": {
+      "drive": 300,
+      "hold": 200
+     }
+    }
+   }
+  ],
+  "hsb_hi": [
+   {
+    "kind": "bg_neural",
+    "winner": 1,
+    "latch_rates": [
+     0.104,
+     0.0
+    ],
+    "readouts": {
+     "latch_rate_x0.5": 0,
+     "latch_rate_x2": 0,
+     "first_to_12_motor (production rule)": 0,
+     "first_to_6_motor": 0,
+     "first_to_24_motor": 0,
+     "motor_majority_drive_window": 0
+    },
+    "v_range": [
+     -83.11325073242188,
+     39.68527603149414
+    ],
+    "commit": {
+     "winner": 1,
+     "on": [
+      1
+     ],
+     "co_commit": false,
+     "threshold": 18.0,
+     "read_variants": {
+      "x0.5": 1,
+      "x2": 1
+     },
+     "read_invariant": true,
+     "slot_counts": [
+      0,
+      86
+     ],
+     "gate_counts_drive": [
+      63,
+      0
+     ],
+     "gate_counts_hold": [
+      0,
+      54
+     ],
+     "motor_counts_hold": [
+      0,
+      95
+     ],
+     "slot_carry": [
+      0,
+      0
+     ],
+     "latch_onset_ms": [
+      151,
+      354
+     ],
+     "old_latch_winner": 0,
+     "old_latch_rates": [
+      0.104,
+      0.0
+     ],
+     "old_latch_variants": {
+      "x0.5": 0,
+      "x2": 0
+     },
+     "op": 4,
+     "lesion": null,
+     "organ_seed": 79
+    },
+    "tonic_rates_hz": {
+     "gpe_0": 85.62,
+     "gpe_1": 59.17,
+     "selector_stn": 15.33,
+     "window": "drive",
+     "drive_steps": 300
+    },
+    "sub_reversal": {
+     "threshold_mv": -80.0,
+     "e_inh_mv": -75.0,
+     "steps_checked": 635,
+     "steps_below": {
+      "practice_arousal": 17,
+      "selector_stn": 0,
+      "selector_reset": 0,
+      "proposal_0": 0,
+      "str_d1_0": 296,
+      "str_d2_0": 334,
+      "gpe_0": 0,
+      "gpi_0": 0,
+      "thal_0": 0,
+      "commit_0": 0,
+      "commit_fs_0": 0,
+      "motor_0": 0,
+      "proposal_1": 0,
+      "str_d1_1": 311,
+      "str_d2_1": 303,
+      "gpe_1": 0,
+      "gpi_1": 0,
+      "thal_1": 0,
+      "commit_1": 0,
+      "commit_fs_1": 0,
+      "motor_1": 0,
+      "heard": 0,
+      "hold": 0,
+      "hold_inh": 0,
+      "latch_0": 0,
+      "latch_fs_0": 0,
+      "latch_1": 0,
+      "latch_fs_1": 0,
+      "bgc_gate_0": 0,
+      "bgc_gate_inh_0": 0,
+      "bgc_slot_0": 0,
+      "bgc_gate_1": 0,
+      "bgc_gate_inh_1": 0,
+      "bgc_slot_1": 0
+     },
+     "v_min": {
+      "practice_arousal": -81.603,
+      "selector_stn": -66.027,
+      "selector_reset": -61.915,
+      "proposal_0": -72.407,
+      "str_d1_0": -83.113,
+      "str_d2_0": -81.641,
+      "gpe_0": -63.367,
+      "gpi_0": -55.986,
+      "thal_0": -66.8,
+      "commit_0": -72.516,
+      "commit_fs_0": -55.0,
+      "motor_0": -71.812,
+      "proposal_1": -72.13,
+      "str_d1_1": -82.785,
+      "str_d2_1": -82.025,
+      "gpe_1": -64.549,
+      "gpi_1": -56.938,
+      "thal_1": -67.056,
+      "commit_1": -72.36,
+      "commit_fs_1": -55.0,
+      "motor_1": -72.012,
+      "heard": -73.32,
+      "hold": -71.867,
+      "hold_inh": -55.132,
+      "latch_0": -74.262,
+      "latch_fs_0": -55.0,
+      "latch_1": -72.182,
+      "latch_fs_1": -55.0,
+      "bgc_gate_0": -72.441,
+      "bgc_gate_inh_0": -55.0,
+      "bgc_slot_0": -74.627,
+      "bgc_gate_1": -72.452,
+      "bgc_gate_inh_1": -55.0,
+      "bgc_slot_1": -74.812
+     },
+     "regions_below": [
+      "practice_arousal",
+      "str_d1_0",
+      "str_d1_1",
+      "str_d2_0",
+      "str_d2_1"
+     ],
+     "vr_mv": {
+      "practice_arousal": -60.0,
+      "selector_stn": -60.0,
+      "selector_reset": -55.0,
+      "proposal_0": -60.0,
+      "str_d1_0": -80.0,
+      "str_d2_0": -80.0,
+      "gpe_0": -65.0,
+      "gpi_0": -65.0,
+      "thal_0": -60.0,
+      "commit_0": -60.0,
+      "commit_fs_0": -55.0,
+      "motor_0": -60.0,
+      "proposal_1": -60.0,
+      "str_d1_1": -80.0,
+      "str_d2_1": -80.0,
+      "gpe_1": -65.0,
+      "gpi_1": -65.0,
+      "thal_1": -60.0,
+      "commit_1": -60.0,
+      "commit_fs_1": -55.0,
+      "motor_1": -60.0,
+      "heard": -60.0,
+      "hold": -60.0,
+      "hold_inh": -55.0,
+      "latch_0": -60.0,
+      "latch_fs_0": -55.0,
+      "latch_1": -60.0,
+      "latch_fs_1": -55.0,
+      "bgc_gate_0": -60.0,
+      "bgc_gate_inh_0": -55.0,
+      "bgc_slot_0": -60.0,
+      "bgc_gate_1": -60.0,
+      "bgc_gate_inh_1": -55.0,
+      "bgc_slot_1": -60.0
+     },
+     "rest_bound_mv": {
+      "practice_arousal": -80.0,
+      "selector_stn": -80.0,
+      "selector_reset": -80.0,
+      "proposal_0": -80.0,
+      "str_d1_0": -85.0,
+      "str_d2_0": -85.0,
+      "gpe_0": -80.0,
+      "gpi_0": -80.0,
+      "thal_0": -80.0,
+      "commit_0": -80.0,
+      "commit_fs_0": -80.0,
+      "motor_0": -80.0,
+      "proposal_1": -80.0,
+      "str_d1_1": -85.0,
+      "str_d2_1": -85.0,
+      "gpe_1": -80.0,
+      "gpi_1": -80.0,
+      "thal_1": -80.0,
+      "commit_1": -80.0,
+      "commit_fs_1": -80.0,
+      "motor_1": -80.0,
+      "heard": -80.0,
+      "hold": -80.0,
+      "hold_inh": -80.0,
+      "latch_0": -80.0,
+      "latch_fs_0": -80.0,
+      "latch_1": -80.0,
+      "latch_fs_1": -80.0,
+      "bgc_gate_0": -80.0,
+      "bgc_gate_inh_0": -80.0,
+      "bgc_slot_0": -80.0,
+      "bgc_gate_1": -80.0,
+      "bgc_gate_inh_1": -80.0,
+      "bgc_slot_1": -80.0
+     },
+     "steps_below_rest_bound": {
+      "practice_arousal": 17,
+      "selector_stn": 0,
+      "selector_reset": 0,
+      "proposal_0": 0,
+      "str_d1_0": 0,
+      "str_d2_0": 0,
+      "gpe_0": 0,
+      "gpi_0": 0,
+      "thal_0": 0,
+      "commit_0": 0,
+      "commit_fs_0": 0,
+      "motor_0": 0,
+      "proposal_1": 0,
+      "str_d1_1": 0,
+      "str_d2_1": 0,
+      "gpe_1": 0,
+      "gpi_1": 0,
+      "thal_1": 0,
+      "commit_1": 0,
+      "commit_fs_1": 0,
+      "motor_1": 0,
+      "heard": 0,
+      "hold": 0,
+      "hold_inh": 0,
+      "latch_0": 0,
+      "latch_fs_0": 0,
+      "latch_1": 0,
+      "latch_fs_1": 0,
+      "bgc_gate_0": 0,
+      "bgc_gate_inh_0": 0,
+      "bgc_slot_0": 0,
+      "bgc_gate_1": 0,
+      "bgc_gate_inh_1": 0,
+      "bgc_slot_1": 0
+     },
+     "regions_below_rest_bound": [
+      "practice_arousal"
+     ],
+     "stop4": "report-only"
+    },
+    "bg_rates_hz": {
+     "drive": {
+      "gpi_0": 277.33,
+      "gpi_1": 274.5,
+      "thal_0": 1.25,
+      "thal_1": 0.69,
+      "motor_0": 10.67,
+      "motor_1": 0.0,
+      "gpe_0": 85.62,
+      "gpe_1": 59.17,
+      "selector_stn": 15.33
+     },
+     "hold": {
+      "gpi_0": 302.5,
+      "gpi_1": 327.25,
+      "thal_0": 0.0,
+      "thal_1": 0.62,
+      "motor_0": 0.0,
+      "motor_1": 15.83,
+      "gpe_0": 81.88,
+      "gpe_1": 95.94,
+      "selector_stn": 10.25
+     },
+     "window_steps": {
+      "drive": 300,
+      "hold": 200
+     }
+    }
+   }
+  ]
+ },
+ "wall_seconds": 568.9
+}

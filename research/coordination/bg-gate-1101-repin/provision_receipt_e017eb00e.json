@@ -1,0 +1,81 @@
+{
+ "attempts": 1,
+ "behind_main": "behind published main 03e66832f7d9 by 1 commit(s) that change only docs (112 file(s))",
+ "finished_utc": "2026-11-02T04:35:30Z",
+ "first_seen_utc": "2026-11-02T04:31:01Z",
+ "log_tail": [
+  "  pool41 ok: {\"failures\": [], \"ok\": true, \"python\": \"3.10\", \"versions\": {\"certifi\": \"2026.6.17\", \"fastapi\": \"0.139.1\", \"h11\": \"0.16.0\", \"h5py\": \"3.16.0\", \"httpcore\": \"1.0.9\", \"httpx\": \"0.28.1\", \"numpy\": \"2.2.6\", \"pillow\": \"12.0.0\", \"pydantic\": \"2.13.4\", \"pytest\": \"8.4.1\", \"pyyaml\": \"6.0.3\", \"scipy\":",
+  "  sim imports=numpy",
+  "  webapp imports=ok",
+  "  source git=e017eb00e38e69d230a7d930e181049d7822160b manifest=08dfe74dea7f09dceee63ee7549c6b0281055ea6700afe57f9423eb6d0349296 ancestry=084333854ff14e769cbc17bab7170cbe3c492c8bfac7f6584683522ff1d649c5 excluded_worktree_paths=0",
+  "  remote brain: {\"ok\": true, \"n_neurons\": 8382, \"n_synapses\": 520536, \"n_bridges\": 9, \"n_facts\": 5, \"backend\": \"numpy\", \"source\": \"tiny-demo\"}",
+  "  done pool41",
+  "=== provisioning pool42:derisk-pool/revisions/e017eb00e38e69d230a7d930e181049d7822160b ===",
+  "=== syncing knowledge bundles to pool42:~/Projects/sim-data/knowledge_bundles ===",
+  "  done pool42 (2 bundle(s))",
+  "ALL ASSET SYNC DONE",
+  "  venv deps pool42:~/derisk-pool/revisions/e017eb00e38e69d230a7d930e181049d7822160b (requirements-pool.txt)",
+  "  pool42 ok: {\"failures\": [], \"ok\": true, \"python\": \"3.10\", \"versions\": {\"certifi\": \"2026.6.17\", \"fastapi\": \"0.139.1\", \"h11\": \"0.16.0\", \"h5py\": \"3.16.0\", \"httpcore\": \"1.0.9\", \"httpx\": \"0.28.1\", \"numpy\": \"2.2.6\", \"pillow\": \"12.0.0\", \"pydantic\": \"2.13.4\", \"pytest\": \"8.4.1\", \"pyyaml\": \"6.0.3\", \"scipy\":",
+  "  sim imports=numpy",
+  "  webapp imports=ok",
+  "  source git=e017eb00e38e69d230a7d930e181049d7822160b manifest=08dfe74dea7f09dceee63ee7549c6b0281055ea6700afe57f9423eb6d0349296 ancestry=084333854ff14e769cbc17bab7170cbe3c492c8bfac7f6584683522ff1d649c5 excluded_worktree_paths=0",
+  "  remote brain: {\"ok\": true, \"n_neurons\": 8382, \"n_synapses\": 520536, \"n_bridges\": 9, \"n_facts\": 5, \"backend\": \"numpy\", \"source\": \"tiny-demo\"}",
+  "  done pool42",
+  "=== provisioning pool40:derisk-pool/revisions/e017eb00e38e69d230a7d930e181049d7822160b ===",
+  "=== syncing knowledge bundles to pool40:~/Projects/sim-data/knowledge_bundles ===",
+  "  done pool40 (2 bundle(s))",
+  "ALL ASSET SYNC DONE",
+  "  venv deps pool40:~/derisk-pool/revisions/e017eb00e38e69d230a7d930e181049d7822160b (requirements-pool.txt)",
+  "  pool40 ok: {\"failures\": [], \"ok\": true, \"python\": \"3.10\", \"versions\": {\"certifi\": \"2026.6.17\", \"fastapi\": \"0.139.1\", \"h11\": \"0.16.0\", \"h5py\": \"3.16.0\", \"httpcore\": \"1.0.9\", \"httpx\": \"0.28.1\", \"numpy\": \"2.2.6\", \"pillow\": \"12.0.0\", \"pydantic\": \"2.13.4\", \"pytest\": \"8.4.1\", \"pyyaml\": \"6.0.3\", \"scipy\":",
+  "  sim imports=numpy",
+  "  webapp imports=ok",
+  "  source git=e017eb00e38e69d230a7d930e181049d7822160b manifest=08dfe74dea7f09dceee63ee7549c6b0281055ea6700afe57f9423eb6d0349296 ancestry=084333854ff14e769cbc17bab7170cbe3c492c8bfac7f6584683522ff1d649c5 excluded_worktree_paths=0",
+  "  remote brain: {\"ok\": true, \"n_neurons\": 8382, \"n_synapses\": 520536, \"n_bridges\": 9, \"n_facts\": 5, \"backend\": \"numpy\", \"source\": \"tiny-demo\"}",
+  "  done pool40",
+  "=== provisioning wspool:derisk-pool/revisions/e017eb00e38e69d230a7d930e181049d7822160b ===",
+  "=== syncing knowledge bundles to wspool:~/Projects/sim-data/knowledge_bundles ===",
+  "  done wspool (2 bundle(s))",
+  "ALL ASSET SYNC DONE",
+  "  venv deps wspool:~/derisk-pool/revisions/e017eb00e38e69d230a7d930e181049d7822160b (requirements-pool.txt)",
+  "  wspool ok: {\"failures\": [], \"ok\": true, \"python\": \"3.10\", \"versions\": {\"certifi\": \"2026.6.17\", \"fastapi\": \"0.139.1\", \"h11\": \"0.16.0\", \"h5py\": \"3.16.0\", \"httpcore\": \"1.0.9\", \"httpx\": \"0.28.1\", \"numpy\": \"2.2.6\", \"pillow\": \"12.0.0\", \"pydantic\": \"2.13.4\", \"pytest\": \"8.4.1\", \"pyyaml\": \"6.0.3\", \"scipy\":",
+  "  sim imports=numpy",
+  "  webapp imports=ok",
+  "  source git=e017eb00e38e69d230a7d930e181049d7822160b manifest=08dfe74dea7f09dceee63ee7549c6b0281055ea6700afe57f9423eb6d0349296 ancestry=084333854ff14e769cbc17bab7170cbe3c492c8bfac7f6584683522ff1d649c5 excluded_worktree_paths=0",
+  "  remote brain: {\"ok\": true, \"n_neurons\": 8382, \"n_synapses\": 520536, \"n_bridges\": 9, \"n_facts\": 5, \"backend\": \"numpy\", \"source\": \"tiny-demo\"}",
+  "  done wspool",
+  "ALL PROVISION DONE"
+ ],
+ "max_attempts": 3,
+ "nodes": {
+  "pool40": {
+   "marker_after": true,
+   "marker_before": false,
+   "optional": true
+  },
+  "pool41": {
+   "marker_after": true,
+   "marker_before": false
+  },
+  "pool42": {
+   "marker_after": true,
+   "marker_before": false
+  },
+  "wspool": {
+   "marker_after": true,
+   "marker_before": false,
+   "optional": true
+  }
+ },
+ "published_main": "03e66832f7d9d3b2e02901292f8478280422c80a",
+ "rc": 0,
+ "reachable_via": [
+  "research/bg-gate-amend-1101"
+ ],
+ "reason": "provisioned on pool41, pool42, pool40, wspool",
+ "runtime_commit": "29a94120f75f7750ecd590721695b9262e3108d5",
+ "schema": "sim-provision-result-v1",
+ "sha": "e017eb00e38e69d230a7d930e181049d7822160b",
+ "started_utc": "2026-11-02T04:31:04Z",
+ "state": "ok",
+ "updated_utc": "2026-11-02T04:35:30Z"
+}

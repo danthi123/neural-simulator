@@ -1,0 +1,33 @@
+{
+ "attempts": 0,
+ "finished_utc": "2026-11-02T04:06:05Z",
+ "first_seen_utc": "2026-11-02T04:06:01Z",
+ "hint": "Merge or rebase onto main, commit, and name the new sha right away.",
+ "max_attempts": 3,
+ "nodes": {
+  "pool40": {
+   "marker_before": false,
+   "optional": true
+  },
+  "pool41": {
+   "marker_before": false
+  },
+  "pool42": {
+   "marker_before": false
+  },
+  "wspool": {
+   "marker_before": false,
+   "optional": true
+  }
+ },
+ "published_main": "1bfe466358b9f08980519567bdf467c00b6c5f75",
+ "reachable_via": [
+  "research/bg-gate-amend-1101"
+ ],
+ "reason": "stale: does not contain published main 1bfe466358b9 or a main published in the 60 min before this request, and main changed more than docs since",
+ "runtime_commit": "29a94120f75f7750ecd590721695b9262e3108d5",
+ "schema": "sim-provision-result-v1",
+ "sha": "218a3378c873ea38415a6aa7f62effc21b410ff1",
+ "state": "refused",
+ "updated_utc": "2026-11-02T04:06:05Z"
+}
