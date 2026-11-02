@@ -1,0 +1,30 @@
+{
+ "run_id": "1793480485-3204358",
+ "runner": "research/runners/pi203_frozen_synapse_battery.py",
+ "argv": [
+  "/home/dant123/derisk-pool/revisions/56396654627992d013d85b72f74aec56aad1dcc2-1793472606/research/runners/pi203_frozen_synapse_battery.py",
+  "--out",
+  "research/findings/raw/_pi203_frozen_synapse_residual/verification_record_cupy.json"
+ ],
+ "git_sha": "563966546",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-31T17:01:25",
+ "env": {
+  "OMP_NUM_THREADS": "1",
+  "SIM_BACKEND": "cupy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 230393.6,
+ "corpus_check_query": "spiking winner-take-all feedback inhibition recruits too late, conductance overshoot rebound, more pools fire; feedforward inhibition / fast FS recruitment",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_pi203_frozen_synapse_residual/verification_record_cupy.json"
+}

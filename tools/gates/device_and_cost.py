@@ -75,6 +75,15 @@ def _is_structural_record(obj):
         # tools/model_bakeoff/'s candidate list and task suite (2026-09-30) are inputs to an LLM comparison,
         # not runs; the bake-off's own result files record their backend and timing and are still checked.
         return True
+    if (schema == "pi-driver-config-v1" or obj.get("$schema") == "https://pi.dev/schemas/models.schema.json") and not any(
+            k in obj for k in BACKEND_KEYS + ELAPSED_KEYS + ("means", "results", "verdict")):
+        # tools/pi_driver/'s driver config and Pi models.json (2026-10-31) configure an agent harness; they record no run.
+        return True
+    if schema == "canary-preconditions-registry-v1" and not any(
+            k in obj for k in BACKEND_KEYS + ELAPSED_KEYS + ("means", "results", "verdict")):
+        # tools/canary_preconditions.json (2026-10-31) declares which flags and scorer preconditions a pool line must
+        # satisfy; it is a check's configuration, not a run.
+        return True
     if obj.get("execution") == "not_executed" and isinstance(obj.get("argv"), list):
         return True
     return (
@@ -217,6 +226,14 @@ def selftest():
         if _check_one(w("parallel_audit_state.json", {"schema": "parallel-audit-state-v1", "under_agents": True}),
                       "research/coordination/parallel_audit_state.json"):
             bad.append("FALSE POSITIVE: treated the parallel-audit persistence record as a completed result")
+        # 11c1. NEGATIVE CONTROL -- the canary-preconditions registry (2026-10-31) is a check's configuration; the
+        # same schema carrying a run key is still checked.
+        if _check_one(w("canary_preconditions.json", {"schema": "canary-preconditions-registry-v1", "m": {}}),
+                      "tools/canary_preconditions.json"):
+            bad.append("FALSE POSITIVE: treated the canary-preconditions registry as a completed result")
+        if not _check_one(w("cp_run.json", {"schema": "canary-preconditions-registry-v1", "means": {"a": 1}}),
+                          "raw/cp_run.json"):
+            bad.append("FALSE NEGATIVE: a run carrying the registry schema escaped the backend check")
         # 11c2. NEGATIVE CONTROL -- the model bake-off's candidate list and task suite are inputs, not runs...
         if _check_one(w("models.json", {"schema": "model-bakeoff-models-v1", "models": []}),
                       "tools/model_bakeoff/models.json"):
@@ -225,6 +242,17 @@ def selftest():
         if not any("NO backend" in x for x in _check_one(
                 w("bk.json", {"schema": "model-bakeoff-suite-v1", "results": {"acc": 1}}), "tools/model_bakeoff/bk.json")):
             bad.append("FALSE NEGATIVE: a bake-off schema let a result-shaped file skip the device check")
+        # 11c3. NEGATIVE CONTROL -- the Pi driver's config and models.json are harness configuration (2026-10-31)...
+        if _check_one(w("config.example.json", {"schema": "pi-driver-config-v1", "workspace": "/x"}),
+                      "tools/pi_driver/config.example.json"):
+            bad.append("FALSE POSITIVE: treated the Pi driver config as a completed result")
+        if _check_one(w("pmodels.json", {"$schema": "https://pi.dev/schemas/models.schema.json", "providers": {}}),
+                      "tools/pi_driver/models.json"):
+            bad.append("FALSE POSITIVE: treated a Pi models.json as a completed result")
+        # ...but either schema carrying run-like keys is still checked.
+        if not any("NO backend" in x for x in _check_one(
+                w("pd.json", {"schema": "pi-driver-config-v1", "means": {"acc": 1}}), "raw/pd.json")):
+            bad.append("FALSE NEGATIVE: the Pi driver schema let a result-shaped file skip the device check")
         # 11d. NEGATIVE CONTROL -- a Claude Code settings file is agent configuration, not a run (2026-09-25).
         if _check_one(w("claude_local_settings.json", {"enabledPlugins": {"x@y": False},
                                                        "permissions": {"allow": ["Bash(ls)"], "deny": []}}),

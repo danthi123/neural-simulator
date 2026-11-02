@@ -1,0 +1,995 @@
+{
+ "mode": "c3-flip-compare",
+ "on_root": "research/findings/raw/_c3_flip/gate_on",
+ "off_root": "research/findings/raw/_c3_flip/gate_off",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "groups": [
+  "conv",
+  "infer",
+  "emo",
+  "inner"
+ ],
+ "arm": "intact_a",
+ "revision": [
+  "15db27a73ffea6abc27c5138cea31919253b1624"
+ ],
+ "backend": "numpy",
+ "device": "cpu",
+ "device_note": "reader only: compares shard JSON on the CPU and runs no simulation",
+ "cells": {
+  "42/conv": {
+   "labels": [
+    "t_fox_chase",
+    "t_fox_eat",
+    "t_deer_sleep",
+    "t_mole_passive",
+    "p_fox_chase",
+    "p_more",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_mole_hunt",
+    "c_dog_chase",
+    "c_oov"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "p_more",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_oov"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 7,
+   "first_other": {
+    "path": "responses.p_more.curiosity.curiosity_topic_stop",
+    "off": "<absent>",
+    "on": "{\"on\": true, \"applied\": false, \"lesioned\": false, \"phasic_da_flag\": true, \"phasic_da_lesion_flag\": false, \"turns_seen\": "
+   },
+   "on_topic_stop_traces": 4,
+   "off_topic_stop_traces": 0,
+   "answered_on": 7,
+   "answered_off": 7,
+   "pass": true
+  },
+  "42/infer": {
+   "labels": [
+    "t_heron_hunt",
+    "t_frog_eat",
+    "t_crow_chase",
+    "t_wren_chase",
+    "p_prey_eat",
+    "c_heron_hunt",
+    "c_frog_eat",
+    "c_prey_chase",
+    "p_yesno",
+    "c_dog_chase"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "c_prey_chase"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 2,
+   "first_other": {
+    "path": "responses.c_prey_chase.curiosity.curiosity_da",
+    "off": "{\"on\": true, \"lesioned\": false, \"da_level\": 0.44212893649023877, \"da_tonic\": 0.5, \"k_da\": 1.5, \"da_crave_gain\": 0.913193",
+    "on": "<absent>"
+   },
+   "on_topic_stop_traces": 1,
+   "off_topic_stop_traces": 0,
+   "answered_on": 9,
+   "answered_off": 9,
+   "pass": true
+  },
+  "42/emo": {
+   "labels": [
+    "feel_base",
+    "s_joy_1",
+    "s_joy_2",
+    "feel_joy",
+    "s_fear_1",
+    "s_fear_2",
+    "feel_fear",
+    "s_anger_1",
+    "s_anger_2",
+    "feel_anger",
+    "s_sadness_1",
+    "s_sadness_2",
+    "feel_sadness"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "s_joy_1",
+    "s_joy_2",
+    "s_fear_1",
+    "s_fear_2",
+    "s_anger_1",
+    "s_anger_2",
+    "s_sadness_1",
+    "s_sadness_2"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 16,
+   "first_other": {
+    "path": "responses.s_joy_1.curiosity.curiosity_da",
+    "off": "{\"on\": true, \"lesioned\": false, \"da_level\": 0.7136686574484231, \"da_tonic\": 0.5, \"k_da\": 1.5, \"da_crave_gain\": 1.3205029",
+    "on": "<absent>"
+   },
+   "on_topic_stop_traces": 8,
+   "off_topic_stop_traces": 0,
+   "answered_on": 5,
+   "answered_off": 5,
+   "pass": true
+  },
+  "42/inner": {
+   "labels": [
+    "t_lynx",
+    "t_vole",
+    "t_beetle",
+    "p_private",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "c_mite_all"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 2,
+   "first_other": {
+    "path": "responses.c_mite_all.curiosity.curiosity_da",
+    "off": "{\"on\": true, \"lesioned\": false, \"da_level\": 0.3614003567489478, \"da_tonic\": 0.5, \"k_da\": 1.5, \"da_crave_gain\": 0.7921005",
+    "on": "<absent>"
+   },
+   "on_topic_stop_traces": 1,
+   "off_topic_stop_traces": 0,
+   "answered_on": 9,
+   "answered_off": 9,
+   "pass": true
+  },
+  "43/conv": {
+   "labels": [
+    "t_fox_chase",
+    "t_fox_eat",
+    "t_deer_sleep",
+    "t_mole_passive",
+    "p_fox_chase",
+    "p_more",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_mole_hunt",
+    "c_dog_chase",
+    "c_oov"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "p_more",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_oov"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 7,
+   "first_other": {
+    "path": "responses.p_more.curiosity.curiosity_topic_stop",
+    "off": "<absent>",
+    "on": "{\"on\": true, \"applied\": false, \"lesioned\": false, \"phasic_da_flag\": true, \"phasic_da_lesion_flag\": false, \"turns_seen\": "
+   },
+   "on_topic_stop_traces": 4,
+   "off_topic_stop_traces": 0,
+   "answered_on": 7,
+   "answered_off": 7,
+   "pass": true
+  },
+  "43/infer": {
+   "labels": [
+    "t_heron_hunt",
+    "t_frog_eat",
+    "t_crow_chase",
+    "t_wren_chase",
+    "p_prey_eat",
+    "c_heron_hunt",
+    "c_frog_eat",
+    "c_prey_chase",
+    "p_yesno",
+    "c_dog_chase"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "c_prey_chase"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 2,
+   "first_other": {
+    "path": "responses.c_prey_chase.curiosity.curiosity_da",
+    "off": "{\"on\": true, \"lesioned\": false, \"da_level\": 0.19850621991118855, \"da_tonic\": 0.5, \"k_da\": 1.5, \"da_crave_gain\": 0.547759",
+    "on": "<absent>"
+   },
+   "on_topic_stop_traces": 1,
+   "off_topic_stop_traces": 0,
+   "answered_on": 9,
+   "answered_off": 9,
+   "pass": true
+  },
+  "43/emo": {
+   "labels": [
+    "feel_base",
+    "s_joy_1",
+    "s_joy_2",
+    "feel_joy",
+    "s_fear_1",
+    "s_fear_2",
+    "feel_fear",
+    "s_anger_1",
+    "s_anger_2",
+    "feel_anger",
+    "s_sadness_1",
+    "s_sadness_2",
+    "feel_sadness"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "s_joy_1",
+    "s_joy_2",
+    "s_fear_1",
+    "s_fear_2",
+    "s_anger_1",
+    "s_anger_2",
+    "s_sadness_1",
+    "s_sadness_2"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 16,
+   "first_other": {
+    "path": "responses.s_joy_1.curiosity.curiosity_da",
+    "off": "{\"on\": true, \"lesioned\": false, \"da_level\": 0.5438422485999127, \"da_tonic\": 0.5, \"k_da\": 1.5, \"da_crave_gain\": 1.0657633",
+    "on": "<absent>"
+   },
+   "on_topic_stop_traces": 8,
+   "off_topic_stop_traces": 0,
+   "answered_on": 5,
+   "answered_off": 5,
+   "pass": true
+  },
+  "43/inner": {
+   "labels": [
+    "t_lynx",
+    "t_vole",
+    "t_beetle",
+    "p_private",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "c_mite_all"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 2,
+   "first_other": {
+    "path": "responses.c_mite_all.curiosity.curiosity_da",
+    "off": "{\"on\": true, \"lesioned\": false, \"da_level\": 0.20481256340782364, \"da_tonic\": 0.5, \"k_da\": 1.5, \"da_crave_gain\": 0.557218",
+    "on": "<absent>"
+   },
+   "on_topic_stop_traces": 1,
+   "off_topic_stop_traces": 0,
+   "answered_on": 9,
+   "answered_off": 9,
+   "pass": true
+  },
+  "44/conv": {
+   "labels": [
+    "t_fox_chase",
+    "t_fox_eat",
+    "t_deer_sleep",
+    "t_mole_passive",
+    "p_fox_chase",
+    "p_more",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_mole_hunt",
+    "c_dog_chase",
+    "c_oov"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "p_more",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_oov"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 7,
+   "first_other": {
+    "path": "responses.p_more.curiosity.curiosity_topic_stop",
+    "off": "<absent>",
+    "on": "{\"on\": true, \"applied\": false, \"lesioned\": false, \"phasic_da_flag\": true, \"phasic_da_lesion_flag\": false, \"turns_seen\": "
+   },
+   "on_topic_stop_traces": 4,
+   "off_topic_stop_traces": 0,
+   "answered_on": 7,
+   "answered_off": 7,
+   "pass": true
+  },
+  "44/infer": {
+   "labels": [
+    "t_heron_hunt",
+    "t_frog_eat",
+    "t_crow_chase",
+    "t_wren_chase",
+    "p_prey_eat",
+    "c_heron_hunt",
+    "c_frog_eat",
+    "c_prey_chase",
+    "p_yesno",
+    "c_dog_chase"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "c_prey_chase"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 3,
+   "first_other": {
+    "path": "responses.c_prey_chase.curiosity.curious",
+    "off": "false",
+    "on": "true"
+   },
+   "on_topic_stop_traces": 1,
+   "off_topic_stop_traces": 0,
+   "answered_on": 9,
+   "answered_off": 9,
+   "pass": true
+  },
+  "44/emo": {
+   "labels": [
+    "feel_base",
+    "s_joy_1",
+    "s_joy_2",
+    "feel_joy",
+    "s_fear_1",
+    "s_fear_2",
+    "feel_fear",
+    "s_anger_1",
+    "s_anger_2",
+    "feel_anger",
+    "s_sadness_1",
+    "s_sadness_2",
+    "feel_sadness"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "s_joy_1",
+    "s_joy_2",
+    "s_fear_1",
+    "s_fear_2",
+    "s_anger_1",
+    "s_anger_2",
+    "s_sadness_1",
+    "s_sadness_2"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 16,
+   "first_other": {
+    "path": "responses.s_joy_1.curiosity.curiosity_da",
+    "off": "{\"on\": true, \"lesioned\": false, \"da_level\": 0.6382759378203153, \"da_tonic\": 0.5, \"k_da\": 1.5, \"da_crave_gain\": 1.2074139",
+    "on": "<absent>"
+   },
+   "on_topic_stop_traces": 8,
+   "off_topic_stop_traces": 0,
+   "answered_on": 5,
+   "answered_off": 5,
+   "pass": true
+  },
+  "44/inner": {
+   "labels": [
+    "t_lynx",
+    "t_vole",
+    "t_beetle",
+    "p_private",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "c_mite_all"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 2,
+   "first_other": {
+    "path": "responses.c_mite_all.curiosity.curiosity_da",
+    "off": "{\"on\": true, \"lesioned\": false, \"da_level\": 0.2717134387990409, \"da_tonic\": 0.5, \"k_da\": 1.5, \"da_crave_gain\": 0.6575701",
+    "on": "<absent>"
+   },
+   "on_topic_stop_traces": 1,
+   "off_topic_stop_traces": 0,
+   "answered_on": 9,
+   "answered_off": 9,
+   "pass": true
+  },
+  "100/conv": {
+   "labels": [
+    "t_fox_chase",
+    "t_fox_eat",
+    "t_deer_sleep",
+    "t_mole_passive",
+    "p_fox_chase",
+    "p_more",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_mole_hunt",
+    "c_dog_chase",
+    "c_oov"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "p_more",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_oov"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 7,
+   "first_other": {
+    "path": "responses.p_more.curiosity.curiosity_topic_stop",
+    "off": "<absent>",
+    "on": "{\"on\": true, \"applied\": false, \"lesioned\": false, \"phasic_da_flag\": true, \"phasic_da_lesion_flag\": false, \"turns_seen\": "
+   },
+   "on_topic_stop_traces": 4,
+   "off_topic_stop_traces": 0,
+   "answered_on": 7,
+   "answered_off": 7,
+   "pass": true
+  },
+  "100/infer": {
+   "labels": [
+    "t_heron_hunt",
+    "t_frog_eat",
+    "t_crow_chase",
+    "t_wren_chase",
+    "p_prey_eat",
+    "c_heron_hunt",
+    "c_frog_eat",
+    "c_prey_chase",
+    "p_yesno",
+    "c_dog_chase"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "c_prey_chase"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 2,
+   "first_other": {
+    "path": "responses.c_prey_chase.curiosity.curiosity_da",
+    "off": "{\"on\": true, \"lesioned\": false, \"da_level\": 0.3006768024735202, \"da_tonic\": 0.5, \"k_da\": 1.5, \"da_crave_gain\": 0.7010152",
+    "on": "<absent>"
+   },
+   "on_topic_stop_traces": 1,
+   "off_topic_stop_traces": 0,
+   "answered_on": 9,
+   "answered_off": 9,
+   "pass": true
+  },
+  "100/emo": {
+   "labels": [
+    "feel_base",
+    "s_joy_1",
+    "s_joy_2",
+    "feel_joy",
+    "s_fear_1",
+    "s_fear_2",
+    "feel_fear",
+    "s_anger_1",
+    "s_anger_2",
+    "feel_anger",
+    "s_sadness_1",
+    "s_sadness_2",
+    "feel_sadness"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "s_joy_1",
+    "s_joy_2",
+    "s_fear_1",
+    "s_fear_2",
+    "s_anger_1",
+    "s_anger_2",
+    "s_sadness_1",
+    "s_sadness_2"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 17,
+   "first_other": {
+    "path": "responses.s_joy_1.curiosity.curiosity_da",
+    "off": "{\"on\": true, \"lesioned\": false, \"da_level\": 0.6435916187673466, \"da_tonic\": 0.5, \"k_da\": 1.5, \"da_crave_gain\": 1.2153874",
+    "on": "<absent>"
+   },
+   "on_topic_stop_traces": 8,
+   "off_topic_stop_traces": 0,
+   "answered_on": 5,
+   "answered_off": 5,
+   "pass": true
+  },
+  "100/inner": {
+   "labels": [
+    "t_lynx",
+    "t_vole",
+    "t_beetle",
+    "p_private",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "c_mite_all"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 2,
+   "first_other": {
+    "path": "responses.c_mite_all.curiosity.curiosity_da",
+    "off": "{\"on\": true, \"lesioned\": false, \"da_level\": 0.22055318585228345, \"da_tonic\": 0.5, \"k_da\": 1.5, \"da_crave_gain\": 0.580829",
+    "on": "<absent>"
+   },
+   "on_topic_stop_traces": 1,
+   "off_topic_stop_traces": 0,
+   "answered_on": 9,
+   "answered_off": 9,
+   "pass": true
+  },
+  "101/conv": {
+   "labels": [
+    "t_fox_chase",
+    "t_fox_eat",
+    "t_deer_sleep",
+    "t_mole_passive",
+    "p_fox_chase",
+    "p_more",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_mole_hunt",
+    "c_dog_chase",
+    "c_oov"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "p_more",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_oov"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 7,
+   "first_other": {
+    "path": "responses.p_more.curiosity.curiosity_topic_stop",
+    "off": "<absent>",
+    "on": "{\"on\": true, \"applied\": false, \"lesioned\": false, \"phasic_da_flag\": true, \"phasic_da_lesion_flag\": false, \"turns_seen\": "
+   },
+   "on_topic_stop_traces": 4,
+   "off_topic_stop_traces": 0,
+   "answered_on": 7,
+   "answered_off": 7,
+   "pass": true
+  },
+  "101/infer": {
+   "labels": [
+    "t_heron_hunt",
+    "t_frog_eat",
+    "t_crow_chase",
+    "t_wren_chase",
+    "p_prey_eat",
+    "c_heron_hunt",
+    "c_frog_eat",
+    "c_prey_chase",
+    "p_yesno",
+    "c_dog_chase"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "c_prey_chase"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 2,
+   "first_other": {
+    "path": "responses.c_prey_chase.curiosity.curiosity_da",
+    "off": "{\"on\": true, \"lesioned\": false, \"da_level\": 0.2972214421522208, \"da_tonic\": 0.5, \"k_da\": 1.5, \"da_crave_gain\": 0.6958321",
+    "on": "<absent>"
+   },
+   "on_topic_stop_traces": 1,
+   "off_topic_stop_traces": 0,
+   "answered_on": 9,
+   "answered_off": 9,
+   "pass": true
+  },
+  "101/emo": {
+   "labels": [
+    "feel_base",
+    "s_joy_1",
+    "s_joy_2",
+    "feel_joy",
+    "s_fear_1",
+    "s_fear_2",
+    "feel_fear",
+    "s_anger_1",
+    "s_anger_2",
+    "feel_anger",
+    "s_sadness_1",
+    "s_sadness_2",
+    "feel_sadness"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "s_joy_1",
+    "s_joy_2",
+    "s_fear_1",
+    "s_fear_2",
+    "s_anger_1",
+    "s_anger_2",
+    "s_sadness_1",
+    "s_sadness_2"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 16,
+   "first_other": {
+    "path": "responses.s_joy_1.curiosity.curiosity_da",
+    "off": "{\"on\": true, \"lesioned\": false, \"da_level\": 0.7081458958797869, \"da_tonic\": 0.5, \"k_da\": 1.5, \"da_crave_gain\": 1.3122188",
+    "on": "<absent>"
+   },
+   "on_topic_stop_traces": 8,
+   "off_topic_stop_traces": 0,
+   "answered_on": 5,
+   "answered_off": 5,
+   "pass": true
+  },
+  "101/inner": {
+   "labels": [
+    "t_lynx",
+    "t_vole",
+    "t_beetle",
+    "p_private",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "c_mite_all"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 2,
+   "first_other": {
+    "path": "responses.c_mite_all.curiosity.curiosity_da",
+    "off": "{\"on\": true, \"lesioned\": false, \"da_level\": 0.3348608475778924, \"da_tonic\": 0.5, \"k_da\": 1.5, \"da_crave_gain\": 0.7522912",
+    "on": "<absent>"
+   },
+   "on_topic_stop_traces": 1,
+   "off_topic_stop_traces": 0,
+   "answered_on": 9,
+   "answered_off": 9,
+   "pass": true
+  },
+  "102/conv": {
+   "labels": [
+    "t_fox_chase",
+    "t_fox_eat",
+    "t_deer_sleep",
+    "t_mole_passive",
+    "p_fox_chase",
+    "p_more",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_mole_hunt",
+    "c_dog_chase",
+    "c_oov"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "p_more",
+    "p_deer_sleep",
+    "p_owl_hunt",
+    "c_oov"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 7,
+   "first_other": {
+    "path": "responses.p_more.curiosity.curiosity_topic_stop",
+    "off": "<absent>",
+    "on": "{\"on\": true, \"applied\": false, \"lesioned\": false, \"phasic_da_flag\": true, \"phasic_da_lesion_flag\": false, \"turns_seen\": "
+   },
+   "on_topic_stop_traces": 4,
+   "off_topic_stop_traces": 0,
+   "answered_on": 7,
+   "answered_off": 7,
+   "pass": true
+  },
+  "102/infer": {
+   "labels": [
+    "t_heron_hunt",
+    "t_frog_eat",
+    "t_crow_chase",
+    "t_wren_chase",
+    "p_prey_eat",
+    "c_heron_hunt",
+    "c_frog_eat",
+    "c_prey_chase",
+    "p_yesno",
+    "c_dog_chase"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "c_prey_chase"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 2,
+   "first_other": {
+    "path": "responses.c_prey_chase.curiosity.curiosity_da",
+    "off": "{\"on\": true, \"lesioned\": false, \"da_level\": 0.1740023061595556, \"da_tonic\": 0.5, \"k_da\": 1.5, \"da_crave_gain\": 0.5110034",
+    "on": "<absent>"
+   },
+   "on_topic_stop_traces": 1,
+   "off_topic_stop_traces": 0,
+   "answered_on": 9,
+   "answered_off": 9,
+   "pass": true
+  },
+  "102/emo": {
+   "labels": [
+    "feel_base",
+    "s_joy_1",
+    "s_joy_2",
+    "feel_joy",
+    "s_fear_1",
+    "s_fear_2",
+    "feel_fear",
+    "s_anger_1",
+    "s_anger_2",
+    "feel_anger",
+    "s_sadness_1",
+    "s_sadness_2",
+    "feel_sadness"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "s_joy_1",
+    "s_joy_2",
+    "s_fear_1",
+    "s_fear_2",
+    "s_anger_1",
+    "s_anger_2",
+    "s_sadness_1",
+    "s_sadness_2"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 18,
+   "first_other": {
+    "path": "responses.s_joy_1.curiosity.curiosity_da",
+    "off": "{\"on\": true, \"lesioned\": false, \"da_level\": 0.5185714941969672, \"da_tonic\": 0.5, \"k_da\": 1.5, \"da_crave_gain\": 1.0278572",
+    "on": "<absent>"
+   },
+   "on_topic_stop_traces": 8,
+   "off_topic_stop_traces": 0,
+   "answered_on": 5,
+   "answered_off": 5,
+   "pass": true
+  },
+  "102/inner": {
+   "labels": [
+    "t_lynx",
+    "t_vole",
+    "t_beetle",
+    "p_private",
+    "p_chase_all",
+    "p_chase_all_vole",
+    "c_lynx_chase",
+    "c_mite_all",
+    "c_beetle_all",
+    "c_dog_chase"
+   ],
+   "abstained_diff": [],
+   "svo_diff": [],
+   "answer_diff": [],
+   "hurts": [],
+   "both_abstained": [
+    "c_mite_all"
+   ],
+   "missing_label": [],
+   "n_other_leaf_diffs": 2,
+   "first_other": {
+    "path": "responses.c_mite_all.curiosity.curiosity_da",
+    "off": "{\"on\": true, \"lesioned\": false, \"da_level\": 0.07997219845738258, \"da_tonic\": 0.5, \"k_da\": 1.5, \"da_crave_gain\": 0.369958",
+    "on": "<absent>"
+   },
+   "on_topic_stop_traces": 1,
+   "off_topic_stop_traces": 0,
+   "answered_on": 9,
+   "answered_off": 9,
+   "pass": true
+  }
+ },
+ "per_group": {
+  "conv": {
+   "n_cells": 6,
+   "n_pass": 6,
+   "n_other_leaf_diffs": 42,
+   "first_other": {
+    "path": "responses.p_more.curiosity.curiosity_topic_stop",
+    "off": "<absent>",
+    "on": "{\"on\": true, \"applied\": false, \"lesioned\": false, \"phasic_da_flag\": true, \"phasic_da_lesion_flag\": false, \"turns_seen\": "
+   },
+   "on_topic_stop_traces": 24,
+   "off_topic_stop_traces": 0
+  },
+  "infer": {
+   "n_cells": 6,
+   "n_pass": 6,
+   "n_other_leaf_diffs": 13,
+   "first_other": {
+    "path": "responses.c_prey_chase.curiosity.curiosity_da",
+    "off": "{\"on\": true, \"lesioned\": false, \"da_level\": 0.44212893649023877, \"da_tonic\": 0.5, \"k_da\": 1.5, \"da_crave_gain\": 0.913193",
+    "on": "<absent>"
+   },
+   "on_topic_stop_traces": 6,
+   "off_topic_stop_traces": 0
+  },
+  "emo": {
+   "n_cells": 6,
+   "n_pass": 6,
+   "n_other_leaf_diffs": 99,
+   "first_other": {
+    "path": "responses.s_joy_1.curiosity.curiosity_da",
+    "off": "{\"on\": true, \"lesioned\": false, \"da_level\": 0.7136686574484231, \"da_tonic\": 0.5, \"k_da\": 1.5, \"da_crave_gain\": 1.3205029",
+    "on": "<absent>"
+   },
+   "on_topic_stop_traces": 48,
+   "off_topic_stop_traces": 0
+  },
+  "inner": {
+   "n_cells": 6,
+   "n_pass": 6,
+   "n_other_leaf_diffs": 12,
+   "first_other": {
+    "path": "responses.c_mite_all.curiosity.curiosity_da",
+    "off": "{\"on\": true, \"lesioned\": false, \"da_level\": 0.3614003567489478, \"da_tonic\": 0.5, \"k_da\": 1.5, \"da_crave_gain\": 0.7921005",
+    "on": "<absent>"
+   },
+   "on_topic_stop_traces": 6,
+   "off_topic_stop_traces": 0
+  }
+ },
+ "flags": [],
+ "status": "GO",
+ "go": true,
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "every cell present on both sides (shard + sidecar)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": "missing: []"
+  },
+  {
+   "kind": "require",
+   "name": "ON sidecars carry both flags = 1",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": "bad: []"
+  },
+  {
+   "kind": "require",
+   "name": "OFF sidecars carry neither flag",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": "bad: []"
+  },
+  {
+   "kind": "require",
+   "name": "one revision across every sidecar",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": "shas: ['15db27a73ffea6abc27c5138cea31919253b1624']"
+  },
+  {
+   "kind": "require",
+   "name": "cells compared == expected",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": "24 of 24"
+  }
+ ],
+ "undefined_reasons": []
+}

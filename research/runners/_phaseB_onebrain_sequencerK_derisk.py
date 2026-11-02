@@ -44,6 +44,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import numpy as np
 
 from sim import SimulationBridge, VisualizationConfig, RuntimeState, GPUConfig
@@ -176,6 +177,26 @@ def wire_sequencerK_couplings(sb, V, K, gate_thresh=0.03):
         sb.couple_gate_to_pool(f"gblk{b}", f"mA{b}", threshold=gate_thresh)   # action-match -> m{b} opens iff agent matched
 
 
+def _gate_reset_enabled() -> bool:
+    return os.environ.get("BRAIN_C2_GATE_RESET", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+QUIET_DRAIN_ENV = "BRAIN_C2_QUIET_DRAIN"
+
+
+def _quiet_drain_steps():
+    """`BRAIN_C2_QUIET_DRAIN=<steps>` (RULING c2-drain-wta-1101, default unset = None = the caller's `drain_steps`): the
+    length of the physical inter-query quiet period (zero-input steps) in `reset_sequencerK_state`. A blank value counts
+    as unset; an unparsable or negative value is refused loudly (never a silent fallback to 20)."""
+    v = os.environ.get(QUIET_DRAIN_ENV)
+    if v is None or v.strip() == "":
+        return None
+    n = int(v.strip())
+    if n < 0:
+        raise ValueError("%s must be >= 0, got %r" % (QUIET_DRAIN_ENV, v))
+    return n
+
+
 def reset_sequencerK_state(sb, drain_steps=20):
     """Reset the per-query dynamical state (gate-coupling EMAs / stale gate values / residual membrane) so
     consecutive queries on the SAME persistent bridge don't leak. Same discipline as the K=2 reset (the
@@ -189,14 +210,38 @@ def reset_sequencerK_state(sb, drain_steps=20):
     the stale lower block (diagnosed: K=8 seed-42 blk5 read m4=0.159 carried over from the blk4 query). Running
     `drain_steps` steps with ZERO external input lets the prior recurrent/delayed state decay to rest first; then the
     EMA/gate/membrane clear leaves every query starting from the SAME resting state. This is per-query housekeeping
-    (the existing reset's stated job), NOT control logic -- the match COMPARISON is still entirely in spikes."""
+    (the existing reset's stated job), NOT control logic -- the match COMPARISON is still entirely in spikes.
+
+    C2 QUIET DRAIN (RULING c2-drain-wta-1101, default OFF): with `BRAIN_C2_QUIET_DRAIN=<N>` set the drain runs N
+    zero-input steps instead of `drain_steps`. Measured: the 20-step drain ends with cells still firing, and the clear
+    below zeroes `cp_firing_states` but not `cp_prev_firing_states`, so the previous query's last spikes are delivered
+    into the next query (51 one-lit false fires on the gate-reset wave). A longer quiet period lets the network fall
+    silent physically; no host zeroing of prev_firing."""
+    _qd = _quiet_drain_steps()
+    if _qd is not None:
+        drain_steps = _qd
     if drain_steps > 0 and getattr(sb, "cp_external_input_current", None) is not None:
         sb.cp_external_input_current[:] = 0.0             # drain prior recurrent/delayed activity to rest first
         for _ in range(int(drain_steps)):
             sb._run_one_simulation_step()
+    # record only (RULING c2-drain-wta-1101): the drain length and the spikes still pending delivery when the clear runs
+    _pf = getattr(sb, "cp_prev_firing_states", None)
+    sb._c2_drain_record = {"drain_steps": int(drain_steps), "quiet_drain_env": _qd,
+                           "prev_firing_at_clear": None if _pf is None else int(np.asarray(to_host(_pf)).sum())}
     for c in sb._gate_couplings:                          # zero the coupling EMAs + force a re-evaluation next step
         c["ema"] = 0.0
         c["last_value"] = None
+    # C2 GATE RESET (RULING c2-match-reset-1101, default OFF, BRAIN_C2_GATE_RESET=1): with
+    # enable_vectorized_gate_couplings the RUNNING EMA/last-gate state lives in sb._gate_coupling_state, not in the
+    # dicts zeroed above (sim/bridge.py `_gate_coupling_state_cached`). Left alone, a query starts with the previous
+    # query's EMA, and a gate this reset closes below keeps last_value=open, so the vectorized write-on-change never
+    # reopens it when the cue drives the EMA over threshold again. Reset the arrays to their init values (ema 0,
+    # last_value NaN = "write every gate next step"), the vectorized equivalent of the dict reset above.
+    if _gate_reset_enabled():
+        st = getattr(sb, "_gate_coupling_state", None)
+        if st is not None:
+            st["ema"][:] = 0.0
+            st["last_value"][:] = np.nan
     for gname in list(sb._transmission_gate_to_synapses.keys()):
         sb.set_transmission_gate(gname, 0.0)              # all match gates CLOSED at query start (cue re-opens them)
     if getattr(sb, "cp_izh_c_reset", None) is not None:

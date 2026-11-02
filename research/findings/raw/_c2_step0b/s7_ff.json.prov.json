@@ -1,0 +1,39 @@
+{
+ "run_id": "1793250398-832309",
+ "runner": "research/runners/stage2_exit_gate.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a65c10472a22c8ddf/research/runners/stage2_exit_gate.py",
+  "--shard",
+  "--seed",
+  "7",
+  "--group",
+  "infer",
+  "--arm",
+  "c2s0_infer",
+  "--out",
+  "research/findings/raw/_c2_step0b/s7_ff.json"
+ ],
+ "git_sha": "2d3c65dab",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-29T01:06:38",
+ "env": {
+  "OMP_NUM_THREADS": "4",
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_RUN_ID": "1793250398-832264",
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 306.6,
+ "corpus_check_query": "spiking winner-take-all feedback inhibition recruits too late, conductance overshoot rebound, more pools fire; feedforward inhibition / fast FS recruitment",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_c2_step0b/s7_ff.json"
+}

@@ -109,6 +109,9 @@ cmd_add() {
     mkwt "$sha" "\$HOME/derisk-pool/revisions/$sha-\$(date +%s)"
     echo "JOB=\$(printf %s '$b64' | base64 -d)"
     echo "echo \"gpu_remote: worktree \$W (revision $sha)\""
+    # The worktree omits research/findings/raw, so a job that writes or redirects into a raw/ subfolder failed in 0 s
+    # (Pi #203 follow-up, 3x on 2026-10-31). Create the parent folder of every raw/ path the job names.
+    echo 'printf %s "$JOB" | grep -oE "research/findings/raw/[^ ;&|<>\"]+" | while read -r p; do mkdir -p "$W/$(dirname "$p")"; done || true'
     # A refused job leaves nothing behind: its worktree was made for it a moment ago and nothing ran in it.
     echo 'bash "$W/tools/local_llm/gpu_add.sh" "cd $W && $JOB" && exit 0'
     echo 'rc=$?; git -C "$R" worktree remove --force "$W"; exit "$rc"'

@@ -1668,14 +1668,63 @@ class OneBrainComposer:
                                                          sigma=self.sequencer_sigma, gain=self.sequencer_gain)
             self._seq = (sb, meta); self._seq_score = score_sb; self._seq_K = K
             self._seq_dirty = True                                 # a new K -> the drives must be (re)built
-        if self._seq_dirty or self._seq_drives is None:
+        from research.runners._c2_patient_inhib import composer_patient_inhib_enabled, composer_patient_relay
+        pinhib = composer_patient_inhib_enabled()          # BRAIN_C2_COMPOSER_PATIENT_INHIB (default OFF)
+        if self._seq_dirty or self._seq_drives is None or (pinhib and getattr(self, "_seq_patient_drives", None) is None):
             self._seq_cleanup_conns_cache = None              # opt #4: rebuild the block-invariant cleanup conns once for this drive rebuild
-            bscores = [fns["block_cleanup_scores"](self, b) for b in range(K)]   # the composer's own op result per block
-            drives, _lit = fns["make_block_drives"](self._seq_score, self.V, bscores,
-                                                    input_gain=self.sequencer_input_gain, retreat="divnorm",
-                                                    peak_mult=1.0)
+            if not pinhib:                                     # flag OFF: the unchanged production path (byte-identical)
+                bscores = [fns["block_cleanup_scores"](self, b) for b in range(K)]   # the composer's own op result per block
+            else:
+                # flag ON: the same per-block read also returns the PATIENT row of the same cleanup membrane (no extra
+                # substrate run); the agent/action pairs go to make_block_drives exactly as above, and each patient
+                # slice is relayed through the composer's patient-inhibition bridge (which pools SPIKE decides).
+                full = [fns["block_cleanup_scores"](self, b, with_patient=True) for b in range(K)]
+                bscores = [(ag, ax) for (ag, ax, _ap) in full]
+            # C2 match-unit smoke (RULING c2-drain-wta-1101, research-only, every flag default OFF): BRAIN_C2_ROLE_WTA /
+            # BRAIN_C2_ROLE_RELAY swap the agent/action drive source for a spiking competition (research/runners/
+            # _c2_role_drives.py); BRAIN_C2_ROW_SHUFFLE feeds block b another block's row (lesion). Unset: the unchanged
+            # divnorm call. `_seq_drive_accs` / `_seq_role_info` are records only (the pool spike counts per block/role).
+            from research.runners import _c2_role_drives as _RD
+            _rmode = _RD.role_drive_mode()
+            _accs = []
+            if _rmode is None:
+                drives, _lit = fns["make_block_drives"](self._seq_score, self.V, bscores,
+                                                        input_gain=self.sequencer_input_gain, retreat="divnorm",
+                                                        peak_mult=1.0, accs_out=_accs)
+                _rinfo = {"mode": "divnorm"}
+            else:
+                drives, _accs, _rinfo = _RD.role_block_drives(self, fns, bscores)
+            _perm = _RD.row_shuffle_perm(self.seed, len(drives))
+            if _perm is not None:
+                drives = [drives[_perm[b]] for b in range(len(drives))]
+            _rinfo["row_shuffle_perm"] = _perm
+            self._seq_drive_accs = _accs
+            self._seq_role_info = _rinfo
             self._seq_drives = drives
+            if pinhib:
+                pdrv, prelay = [], []
+                for (_ag, _ax, ap) in full:
+                    dP, accP, info = composer_patient_relay(self, ap)
+                    pdrv.append(dP)
+                    prelay.append(dict(info, acc=accP))
+                self._seq_patient_drives = pdrv               # per block: the decoded-line PATIENT drive (lit = fired pools)
+                self._seq_patient_relay = prelay              # per block: the relay's pool spike counts + pinh spikes
             self._seq_dirty = False
+
+    def patient_inhib_bridge(self, w_i2e=None):
+        """OPT-IN, research-only (owner ruling c2-s0d-score-1029): the composer's OWN patient-read inhibition bridge, or None
+        when `BRAIN_C2_COMPOSER_PATIENT_INHIB` is unset (default OFF; nothing is built and nothing else changes). Same
+        word-pool layout / seed / sigma / gain / per-neuron parameters as `_seq_score`, plus the external-only divisive
+        stage, stable integration and the shared FS `pinh` population with FF drive (step-0d validated knobs). A SEPARATE
+        bridge: the sequencer, `make_block_drives` and `_seq_score` are untouched; with the flag ON `_ensure_sequencer`
+        relays each block's PATIENT slice through it into `_seq_patient_drives`. `w_i2e=0` gives the lesion bridge.
+        Needs the sequencer built (`_ensure_sequencer`) so `_seq_score` exists."""
+        from research.runners._c2_patient_inhib import composer_patient_inhib_enabled, composer_patient_inhib_bridge
+        if not composer_patient_inhib_enabled():
+            return None
+        if self._seq_score is None:
+            self._ensure_sequencer(len(self.kb))
+        return composer_patient_inhib_bridge(self, w_i2e)
 
     def _seq_block(self, agent, action):
         """The SELECTED block index for cue (agent, action) -- the spiking K-way sequencer decision (or None = abstain),

@@ -1,0 +1,56 @@
+{
+  "runner": "research.runners.pi203_gpu_determinism_probe",
+  "script": "research/runners/pi203_gpu_determinism_probe.py",
+  "cmd": "/home/dant123/derisk-pool/revisions/c22b29a6cc14f207a082b3431d2dbd7a45623e22-1793485030/research/runners/pi203_gpu_determinism_probe.py --backend cupy --prereg research/findings/2026-09-24-plastic-mask-flip-PREREGISTRATION.md --rules hebbian,reward,scaling,combined --out research/findings/raw/_pi203_frozen_synapse_residual/gpu_determinism_probe.json",
+  "backend_requested": "cupy",
+  "prereg": "research/findings/2026-09-24-plastic-mask-flip-PREREGISTRATION.md",
+  "elapsed_seconds": 22.88,
+  "organ_digest_A_untapped": {
+    "digest": "faf567095183b9a9b5485e0e26a10c6fdca49db49413bbcd064eb6c2cd14770c",
+    "n_items": 25,
+    "tap_blind": false
+  },
+  "organ_digest_B_untapped_again": {
+    "digest": "faf567095183b9a9b5485e0e26a10c6fdca49db49413bbcd064eb6c2cd14770c",
+    "n_items": 25,
+    "tap_blind": false
+  },
+  "organ_digest_C_tapped": {
+    "digest": "faf567095183b9a9b5485e0e26a10c6fdca49db49413bbcd064eb6c2cd14770c",
+    "n_items": 25,
+    "tap_blind": true
+  },
+  "identical_code_identical_run": true,
+  "tap_inert": true,
+  "scenario_rule_repeats": {
+    "hebbian": {
+      "sha_1": "1d3a8981c1a94e37ef1f52c8aa3c10ed400876164e8cc554fd490f121d9ef0a9",
+      "sha_2": "1d3a8981c1a94e37ef1f52c8aa3c10ed400876164e8cc554fd490f121d9ef0a9",
+      "identical": true,
+      "frozen_delta": 19.03816032409668,
+      "control_delta": 19.009136199951172
+    },
+    "reward": {
+      "sha_1": "b9b6e094ec6e79decbc60e13c2128fe7f9b68efb1c185323efbc8b9f3ecbb774",
+      "sha_2": "b9b6e094ec6e79decbc60e13c2128fe7f9b68efb1c185323efbc8b9f3ecbb774",
+      "identical": true,
+      "frozen_delta": 99.0,
+      "control_delta": 99.0
+    },
+    "scaling": {
+      "sha_1": "c7936d45bdc4775c03ea78d4351ffa1423cd6b3aae1b87903160d065209936ae",
+      "sha_2": "c7936d45bdc4775c03ea78d4351ffa1423cd6b3aae1b87903160d065209936ae",
+      "identical": true,
+      "frozen_delta": 0.0,
+      "control_delta": 0.0
+    },
+    "combined": {
+      "sha_1": "40190ba12fd81fa6203354b3b6e39c223290af3f6725273e65396edbdf676424",
+      "sha_2": "40190ba12fd81fa6203354b3b6e39c223290af3f6725273e65396edbdf676424",
+      "identical": true,
+      "frozen_delta": 99.98999786376953,
+      "control_delta": 99.92382049560547
+    }
+  },
+  "summary": "backend cupy: identical code twice -> IDENTICAL (A faf567095183 vs B faf567095183); tap vs no tap -> IDENTICAL (A vs C faf567095183); scenario rules repeated: 4/4 identical SHAs."
+}

@@ -1,0 +1,2577 @@
+{
+ "mode": "gate",
+ "pin": "34a4e5f756024b4f5aa5d145b3b29661ad976d0b",
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "counted": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "decided_bars": [
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "S2C3",
+  "AR"
+ ],
+ "cells": {
+  "42/C_intact_a": "DEFINED",
+  "42/C_intact_b": "DEFINED",
+  "42/C_lesion_curiosity": "DEFINED",
+  "42/C_permuted": "DEFINED",
+  "42/C_reversed": "DEFINED",
+  "42/Lpinned_intact_a": "DEFINED",
+  "42/Lpinned_reversed": "DEFINED",
+  "42/lesionL_intact_a": "DEFINED",
+  "42/lesionL_reversed": "DEFINED",
+  "42/lesionP_intact_a": "DEFINED",
+  "42/lesionP_reversed": "DEFINED",
+  "42/off_intact_a": "DEFINED",
+  "42/off_permuted": "DEFINED",
+  "42/off_reversed": "DEFINED",
+  "42/pconst_intact_a": "DEFINED",
+  "42/pconst_reversed": "DEFINED",
+  "43/C_intact_a": "DEFINED",
+  "43/C_intact_b": "DEFINED",
+  "43/C_lesion_curiosity": "DEFINED",
+  "43/C_permuted": "DEFINED",
+  "43/C_reversed": "DEFINED",
+  "43/Lpinned_intact_a": "DEFINED",
+  "43/Lpinned_reversed": "DEFINED",
+  "43/lesionL_intact_a": "DEFINED",
+  "43/lesionL_reversed": "DEFINED",
+  "43/lesionP_intact_a": "DEFINED",
+  "43/lesionP_reversed": "DEFINED",
+  "43/off_intact_a": "DEFINED",
+  "43/off_permuted": "DEFINED",
+  "43/off_reversed": "DEFINED",
+  "43/pconst_intact_a": "DEFINED",
+  "43/pconst_reversed": "DEFINED",
+  "44/C_intact_a": "DEFINED",
+  "44/C_intact_b": "DEFINED",
+  "44/C_lesion_curiosity": "DEFINED",
+  "44/C_permuted": "DEFINED",
+  "44/C_reversed": "DEFINED",
+  "44/Lpinned_intact_a": "DEFINED",
+  "44/Lpinned_reversed": "DEFINED",
+  "44/lesionL_intact_a": "DEFINED",
+  "44/lesionL_reversed": "DEFINED",
+  "44/lesionP_intact_a": "DEFINED",
+  "44/lesionP_reversed": "DEFINED",
+  "44/off_intact_a": "DEFINED",
+  "44/off_permuted": "DEFINED",
+  "44/off_reversed": "DEFINED",
+  "44/pconst_intact_a": "DEFINED",
+  "44/pconst_reversed": "DEFINED",
+  "100/C_intact_a": "DEFINED",
+  "100/C_intact_b": "DEFINED",
+  "100/C_lesion_curiosity": "DEFINED",
+  "100/C_permuted": "DEFINED",
+  "100/C_reversed": "DEFINED",
+  "100/Lpinned_intact_a": "DEFINED",
+  "100/Lpinned_reversed": "DEFINED",
+  "100/lesionL_intact_a": "DEFINED",
+  "100/lesionL_reversed": "DEFINED",
+  "100/lesionP_intact_a": "DEFINED",
+  "100/lesionP_reversed": "DEFINED",
+  "100/off_intact_a": "DEFINED",
+  "100/off_permuted": "DEFINED",
+  "100/off_reversed": "DEFINED",
+  "100/pconst_intact_a": "DEFINED",
+  "100/pconst_reversed": "DEFINED",
+  "101/C_intact_a": "DEFINED",
+  "101/C_intact_b": "DEFINED",
+  "101/C_lesion_curiosity": "DEFINED",
+  "101/C_permuted": "DEFINED",
+  "101/C_reversed": "DEFINED",
+  "101/Lpinned_intact_a": "DEFINED",
+  "101/Lpinned_reversed": "DEFINED",
+  "101/lesionL_intact_a": "DEFINED",
+  "101/lesionL_reversed": "DEFINED",
+  "101/lesionP_intact_a": "DEFINED",
+  "101/lesionP_reversed": "DEFINED",
+  "101/off_intact_a": "DEFINED",
+  "101/off_permuted": "DEFINED",
+  "101/off_reversed": "DEFINED",
+  "101/pconst_intact_a": "DEFINED",
+  "101/pconst_reversed": "DEFINED",
+  "102/C_intact_a": "DEFINED",
+  "102/C_intact_b": "DEFINED",
+  "102/C_lesion_curiosity": "DEFINED",
+  "102/C_permuted": "DEFINED",
+  "102/C_reversed": "DEFINED",
+  "102/Lpinned_intact_a": "DEFINED",
+  "102/Lpinned_reversed": "DEFINED",
+  "102/lesionL_intact_a": "DEFINED",
+  "102/lesionL_reversed": "DEFINED",
+  "102/lesionP_intact_a": "DEFINED",
+  "102/lesionP_reversed": "DEFINED",
+  "102/off_intact_a": "DEFINED",
+  "102/off_permuted": "DEFINED",
+  "102/off_reversed": "DEFINED",
+  "102/pconst_intact_a": "DEFINED",
+  "102/pconst_reversed": "DEFINED"
+ },
+ "n_cells": 96,
+ "n_defined": 96,
+ "bars": {
+  "1": {
+   "verdict": "PASS",
+   "pass": 6,
+   "fail": 0,
+   "undefined": 0,
+   "need": 6,
+   "of": 6,
+   "fail_seeds": [],
+   "undefined_seeds": []
+  },
+  "2": {
+   "verdict": "PASS",
+   "pass": 6,
+   "fail": 0,
+   "undefined": 0,
+   "need": 6,
+   "of": 6,
+   "fail_seeds": [],
+   "undefined_seeds": []
+  },
+  "3": {
+   "verdict": "PASS",
+   "pass": 6,
+   "fail": 0,
+   "undefined": 0,
+   "need": 6,
+   "of": 6,
+   "fail_seeds": [],
+   "undefined_seeds": [],
+   "aggconv_reported": {
+    "discriminates": 6,
+    "tracks": 6,
+    "of": 6,
+    "not_discriminating_seeds": [],
+    "not_tracking_seeds": [],
+    "margin_by_seed": {
+     "42": 0.0,
+     "43": 0.0,
+     "44": 0.0,
+     "100": 0.0,
+     "101": 0.0,
+     "102": 0.0
+    }
+   }
+  },
+  "4": {
+   "verdict": "PASS",
+   "pass": 6,
+   "fail": 0,
+   "undefined": 0,
+   "need": 6,
+   "of": 6,
+   "fail_seeds": [],
+   "undefined_seeds": [],
+   "toad_verdict": "PASS",
+   "attribution": {
+    "treatment_intact_a": 17,
+    "control_null_toad_diffs": 0,
+    "treatment_reversed_reported": 16,
+    "fraction": 1.0,
+    "log": "attributable_to lesion_L extra toad asks vs the intact_b null: treatment=+17  control=+0  diff=+17\n    => 100.0% of the effect is attributable to the manipulation; 0.0% is ALSO PRESENT IN THE CONTROL",
+    "verdict": "PASS"
+   }
+  },
+  "5": {
+   "verdict": "PASS",
+   "pass": 6,
+   "fail": 0,
+   "undefined": 0,
+   "need": 6,
+   "of": 6,
+   "fail_seeds": [],
+   "undefined_seeds": []
+  },
+  "6": {
+   "verdict": "PASS",
+   "pass": 6,
+   "fail": 0,
+   "undefined": 0,
+   "need": 6,
+   "of": 6,
+   "fail_seeds": [],
+   "undefined_seeds": []
+  },
+  "7": {
+   "verdict": "PASS",
+   "pass": 6,
+   "fail": 0,
+   "undefined": 0,
+   "need": 6,
+   "of": 6,
+   "fail_seeds": [],
+   "undefined_seeds": []
+  },
+  "8": {
+   "verdict": "PASS",
+   "pass": 6,
+   "fail": 0,
+   "undefined": 0,
+   "need": 6,
+   "of": 6,
+   "fail_seeds": [],
+   "undefined_seeds": []
+  },
+  "S2C3": {
+   "verdict": "PASS",
+   "pass": 6,
+   "fail": 0,
+   "undefined": 0,
+   "need": 6,
+   "of": 6,
+   "fail_seeds": [],
+   "undefined_seeds": []
+  },
+  "AR": {
+   "verdict": "PASS",
+   "pass": 6,
+   "fail": 0,
+   "undefined": 0,
+   "need": 6,
+   "of": 6,
+   "fail_seeds": [],
+   "undefined_seeds": []
+  }
+ },
+ "DEC": {
+  "verdict": "PASS",
+  "reads": "L+P qualifies for the default-ON flip (a separate, later flip prereg/commit) before the 11-21 Stage-2 re-pin"
+ },
+ "rows": {
+  "42": {
+   "seed": 42,
+   "1": {
+    "ok": true,
+    "arms": {
+     "C_intact_a": {
+      "ok": true,
+      "asked": "101011101000",
+      "ask_rate_gap": 1.0,
+      "ask_rate_moat": 0.0,
+      "discriminates": true,
+      "lp_learnable": true,
+      "lp_unlearnable": true,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "moats_undefined": [
+       "m_goat"
+      ]
+     },
+     "C_reversed": {
+      "ok": true,
+      "asked": "101011101100",
+      "ask_rate_gap": 1.0,
+      "ask_rate_moat": 0.0,
+      "discriminates": true,
+      "lp_learnable": true,
+      "lp_unlearnable": true,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "moats_undefined": [
+       "m_goat"
+      ]
+     }
+    }
+   },
+   "S2C3": {
+    "ok": true,
+    "all": {
+     "C_intact_a": true,
+     "C_reversed": true
+    }
+   },
+   "2": {
+    "ok": true,
+    "diff": [],
+    "responses_identical": true
+   },
+   "3": {
+    "ok": true,
+    "ask_rate_gap": 1.0,
+    "ask_rate_moat": 0.0,
+    "moats_undefined": [
+     "g_crab"
+    ],
+    "asked": "111010",
+    "aggconv": {
+     "discriminates": true,
+     "tracks": true,
+     "ask_rate_gap": 1.0,
+     "ask_rate_moat": 0.5,
+     "moats_undefined": [
+      "g_newt"
+     ],
+     "margin": 0.0
+    }
+   },
+   "4": {
+    "ok": true,
+    "intact_a": {
+     "ok": true,
+     "lesion_toads": "1111",
+     "C_toads": "1000",
+     "extra_toad_asks": 3
+    },
+    "reversed": {
+     "ok": true,
+     "lesion_toads": "1111",
+     "C_toads": "1100",
+     "extra_toad_asks": 2
+    },
+    "null_toad_diffs": 0
+   },
+   "5": {
+    "ok": true,
+    "lp_learnable": false,
+    "lp_unlearnable": false,
+    "ask_rate_gap": 0.6666666666666666,
+    "asked": "101000000000"
+   },
+   "6": {
+    "ok": true,
+    "asked_on": []
+   },
+   "7": {
+    "ok": true,
+    "pairs": {
+     "C_intact_a": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "C_intact_b": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionL_intact_a": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionP_intact_a": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "C_reversed": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionL_reversed": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionP_reversed": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "C_permuted": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     }
+    }
+   },
+   "8": {
+    "ok": true,
+    "arms": {
+     "lesionL_intact_a": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "lesionL_reversed": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "lesionP_intact_a": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "lesionP_reversed": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "C_lesion_curiosity": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     }
+    }
+   },
+   "AR": {
+    "ok": true,
+    "pairs": {
+     "C_intact_a": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     },
+     "C_intact_b": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     },
+     "C_reversed": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     },
+     "C_permuted": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     }
+    }
+   },
+   "info": {
+    "C_intact_a": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.6457248277127942,
+      0.04616293556102311
+     ]
+    },
+    "C_reversed": {
+     "all": true,
+     "asked": "101011101100",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1100",
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.6457248277127942,
+      0.0492728349580114
+     ]
+    },
+    "Lpinned_intact_a": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": true,
+     "da_lesion_held": "held"
+    },
+    "Lpinned_reversed": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": false,
+     "da_lesion_held": "held"
+    },
+    "pconst_intact_a": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": true,
+     "const_salience_probes": 11
+    },
+    "pconst_reversed": {
+     "all": true,
+     "asked": "101011101100",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1100",
+     "equals_C_vector": true,
+     "const_salience_probes": 11
+    },
+    "off_intact_a": {
+     "all": false,
+     "asked": "101000000000",
+     "discriminates": true,
+     "lp_learnable": false,
+     "lp_unlearnable": false,
+     "gap": 0.6666666666666666,
+     "moat": 0.0,
+     "toads": "0000",
+     "equals_C_vector": false
+    },
+    "off_reversed": {
+     "all": false,
+     "asked": "000000001100",
+     "discriminates": false,
+     "lp_learnable": false,
+     "lp_unlearnable": true,
+     "gap": 0.0,
+     "moat": 0.0,
+     "toads": "1100",
+     "equals_C_vector": false
+    },
+    "lesionP_intact_a": {
+     "all": false,
+     "asked": "101000000000",
+     "discriminates": true,
+     "lp_learnable": false,
+     "lp_unlearnable": false,
+     "gap": 0.6666666666666666,
+     "moat": 0.0,
+     "toads": "0000",
+     "equals_C_vector": false,
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.6457248277127942,
+      0.04616293556102311
+     ]
+    },
+    "lesionP_reversed": {
+     "all": false,
+     "asked": "000000001000",
+     "discriminates": false,
+     "lp_learnable": false,
+     "lp_unlearnable": true,
+     "gap": 0.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": false,
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.6457248277127942,
+      0.0492728349580114
+     ]
+    },
+    "lesionL_intact_a": {
+     "all": false,
+     "asked": "101011101111",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": false,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1111",
+     "equals_C_vector": false
+    },
+    "lesionL_reversed": {
+     "all": false,
+     "asked": "101011101111",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": false,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1111",
+     "equals_C_vector": false
+    },
+    "null_count": {
+     "1": [
+      11,
+      11
+     ],
+     "2": [
+      10,
+      11
+     ]
+    }
+   }
+  },
+  "43": {
+   "seed": 43,
+   "1": {
+    "ok": true,
+    "arms": {
+     "C_intact_a": {
+      "ok": true,
+      "asked": "101011101000",
+      "ask_rate_gap": 1.0,
+      "ask_rate_moat": 0.0,
+      "discriminates": true,
+      "lp_learnable": true,
+      "lp_unlearnable": true,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "moats_undefined": [
+       "m_goat"
+      ]
+     },
+     "C_reversed": {
+      "ok": true,
+      "asked": "101011101000",
+      "ask_rate_gap": 1.0,
+      "ask_rate_moat": 0.0,
+      "discriminates": true,
+      "lp_learnable": true,
+      "lp_unlearnable": true,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "moats_undefined": [
+       "m_goat"
+      ]
+     }
+    }
+   },
+   "S2C3": {
+    "ok": true,
+    "all": {
+     "C_intact_a": true,
+     "C_reversed": true
+    }
+   },
+   "2": {
+    "ok": true,
+    "diff": [],
+    "responses_identical": true
+   },
+   "3": {
+    "ok": true,
+    "ask_rate_gap": 1.0,
+    "ask_rate_moat": 0.0,
+    "moats_undefined": [
+     "g_crab"
+    ],
+    "asked": "111010",
+    "aggconv": {
+     "discriminates": true,
+     "tracks": true,
+     "ask_rate_gap": 1.0,
+     "ask_rate_moat": 0.5,
+     "moats_undefined": [
+      "g_newt"
+     ],
+     "margin": 0.0
+    }
+   },
+   "4": {
+    "ok": true,
+    "intact_a": {
+     "ok": true,
+     "lesion_toads": "1111",
+     "C_toads": "1000",
+     "extra_toad_asks": 3
+    },
+    "reversed": {
+     "ok": true,
+     "lesion_toads": "1111",
+     "C_toads": "1000",
+     "extra_toad_asks": 3
+    },
+    "null_toad_diffs": 0
+   },
+   "5": {
+    "ok": true,
+    "lp_learnable": false,
+    "lp_unlearnable": false,
+    "ask_rate_gap": 0.6666666666666666,
+    "asked": "101000000000"
+   },
+   "6": {
+    "ok": true,
+    "asked_on": []
+   },
+   "7": {
+    "ok": true,
+    "pairs": {
+     "C_intact_a": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "C_intact_b": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionL_intact_a": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionP_intact_a": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "C_reversed": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionL_reversed": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionP_reversed": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "C_permuted": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     }
+    }
+   },
+   "8": {
+    "ok": true,
+    "arms": {
+     "lesionL_intact_a": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "lesionL_reversed": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "lesionP_intact_a": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "lesionP_reversed": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "C_lesion_curiosity": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     }
+    }
+   },
+   "AR": {
+    "ok": true,
+    "pairs": {
+     "C_intact_a": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     },
+     "C_intact_b": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     },
+     "C_reversed": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     },
+     "C_permuted": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     }
+    }
+   },
+   "info": {
+    "C_intact_a": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.505318712729885,
+      0.04616293556102311
+     ]
+    },
+    "C_reversed": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.505318712729885,
+      0.04616293556102311
+     ]
+    },
+    "Lpinned_intact_a": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": true,
+     "da_lesion_held": "held"
+    },
+    "Lpinned_reversed": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": true,
+     "da_lesion_held": "held"
+    },
+    "pconst_intact_a": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": true,
+     "const_salience_probes": 11
+    },
+    "pconst_reversed": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": true,
+     "const_salience_probes": 11
+    },
+    "off_intact_a": {
+     "all": false,
+     "asked": "101000000000",
+     "discriminates": true,
+     "lp_learnable": false,
+     "lp_unlearnable": false,
+     "gap": 0.6666666666666666,
+     "moat": 0.0,
+     "toads": "0000",
+     "equals_C_vector": false
+    },
+    "off_reversed": {
+     "all": false,
+     "asked": "000000001000",
+     "discriminates": false,
+     "lp_learnable": false,
+     "lp_unlearnable": true,
+     "gap": 0.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": false
+    },
+    "lesionP_intact_a": {
+     "all": false,
+     "asked": "101000000000",
+     "discriminates": true,
+     "lp_learnable": false,
+     "lp_unlearnable": false,
+     "gap": 0.6666666666666666,
+     "moat": 0.0,
+     "toads": "0000",
+     "equals_C_vector": false,
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.505318712729885,
+      0.04616293556102311
+     ]
+    },
+    "lesionP_reversed": {
+     "all": false,
+     "asked": "000000001000",
+     "discriminates": false,
+     "lp_learnable": false,
+     "lp_unlearnable": true,
+     "gap": 0.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": false,
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.505318712729885,
+      0.04616293556102311
+     ]
+    },
+    "lesionL_intact_a": {
+     "all": false,
+     "asked": "101011101111",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": false,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1111",
+     "equals_C_vector": false
+    },
+    "lesionL_reversed": {
+     "all": false,
+     "asked": "101011101111",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": false,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1111",
+     "equals_C_vector": false
+    },
+    "null_count": {
+     "1": [
+      11,
+      11
+     ],
+     "2": [
+      10,
+      11
+     ]
+    }
+   }
+  },
+  "44": {
+   "seed": 44,
+   "1": {
+    "ok": true,
+    "arms": {
+     "C_intact_a": {
+      "ok": true,
+      "asked": "101011101100",
+      "ask_rate_gap": 1.0,
+      "ask_rate_moat": 0.0,
+      "discriminates": true,
+      "lp_learnable": true,
+      "lp_unlearnable": true,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "moats_undefined": [
+       "m_goat"
+      ]
+     },
+     "C_reversed": {
+      "ok": true,
+      "asked": "101011101100",
+      "ask_rate_gap": 1.0,
+      "ask_rate_moat": 0.0,
+      "discriminates": true,
+      "lp_learnable": true,
+      "lp_unlearnable": true,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "moats_undefined": [
+       "m_goat"
+      ]
+     }
+    }
+   },
+   "S2C3": {
+    "ok": true,
+    "all": {
+     "C_intact_a": true,
+     "C_reversed": true
+    }
+   },
+   "2": {
+    "ok": true,
+    "diff": [],
+    "responses_identical": true
+   },
+   "3": {
+    "ok": true,
+    "ask_rate_gap": 1.0,
+    "ask_rate_moat": 0.0,
+    "moats_undefined": [
+     "g_crab"
+    ],
+    "asked": "111010",
+    "aggconv": {
+     "discriminates": true,
+     "tracks": true,
+     "ask_rate_gap": 1.0,
+     "ask_rate_moat": 0.5,
+     "moats_undefined": [
+      "g_newt"
+     ],
+     "margin": 0.0
+    }
+   },
+   "4": {
+    "ok": true,
+    "intact_a": {
+     "ok": true,
+     "lesion_toads": "1111",
+     "C_toads": "1100",
+     "extra_toad_asks": 2
+    },
+    "reversed": {
+     "ok": true,
+     "lesion_toads": "1111",
+     "C_toads": "1100",
+     "extra_toad_asks": 2
+    },
+    "null_toad_diffs": 0
+   },
+   "5": {
+    "ok": true,
+    "lp_learnable": false,
+    "lp_unlearnable": false,
+    "ask_rate_gap": 0.6666666666666666,
+    "asked": "101000000000"
+   },
+   "6": {
+    "ok": true,
+    "asked_on": []
+   },
+   "7": {
+    "ok": true,
+    "pairs": {
+     "C_intact_a": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "C_intact_b": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionL_intact_a": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionP_intact_a": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "C_reversed": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionL_reversed": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionP_reversed": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "C_permuted": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     }
+    }
+   },
+   "8": {
+    "ok": true,
+    "arms": {
+     "lesionL_intact_a": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "lesionL_reversed": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "lesionP_intact_a": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "lesionP_reversed": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "C_lesion_curiosity": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     }
+    }
+   },
+   "AR": {
+    "ok": true,
+    "pairs": {
+     "C_intact_a": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     },
+     "C_intact_b": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     },
+     "C_reversed": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     },
+     "C_permuted": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     }
+    }
+   },
+   "info": {
+    "C_intact_a": {
+     "all": true,
+     "asked": "101011101100",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1100",
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.5375152991022003,
+      0.04616293556102311
+     ]
+    },
+    "C_reversed": {
+     "all": true,
+     "asked": "101011101100",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1100",
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.5375152991022003,
+      0.04616293556102311
+     ]
+    },
+    "Lpinned_intact_a": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": false,
+     "da_lesion_held": "held"
+    },
+    "Lpinned_reversed": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": false,
+     "da_lesion_held": "held"
+    },
+    "pconst_intact_a": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": false,
+     "const_salience_probes": 11
+    },
+    "pconst_reversed": {
+     "all": true,
+     "asked": "101011101100",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1100",
+     "equals_C_vector": true,
+     "const_salience_probes": 11
+    },
+    "off_intact_a": {
+     "all": false,
+     "asked": "101000000000",
+     "discriminates": true,
+     "lp_learnable": false,
+     "lp_unlearnable": false,
+     "gap": 0.6666666666666666,
+     "moat": 0.0,
+     "toads": "0000",
+     "equals_C_vector": false
+    },
+    "off_reversed": {
+     "all": false,
+     "asked": "000000001000",
+     "discriminates": false,
+     "lp_learnable": false,
+     "lp_unlearnable": true,
+     "gap": 0.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": false
+    },
+    "lesionP_intact_a": {
+     "all": false,
+     "asked": "101000000000",
+     "discriminates": true,
+     "lp_learnable": false,
+     "lp_unlearnable": false,
+     "gap": 0.6666666666666666,
+     "moat": 0.0,
+     "toads": "0000",
+     "equals_C_vector": false,
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.5375152991022003,
+      0.04616293556102311
+     ]
+    },
+    "lesionP_reversed": {
+     "all": false,
+     "asked": "000000001000",
+     "discriminates": false,
+     "lp_learnable": false,
+     "lp_unlearnable": true,
+     "gap": 0.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": false,
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.5375152991022003,
+      0.04616293556102311
+     ]
+    },
+    "lesionL_intact_a": {
+     "all": false,
+     "asked": "101011101111",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": false,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1111",
+     "equals_C_vector": false
+    },
+    "lesionL_reversed": {
+     "all": false,
+     "asked": "101011101111",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": false,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1111",
+     "equals_C_vector": false
+    },
+    "null_count": {
+     "1": [
+      10,
+      11
+     ],
+     "2": [
+      11,
+      11
+     ]
+    }
+   }
+  },
+  "100": {
+   "seed": 100,
+   "1": {
+    "ok": true,
+    "arms": {
+     "C_intact_a": {
+      "ok": true,
+      "asked": "101011101000",
+      "ask_rate_gap": 1.0,
+      "ask_rate_moat": 0.0,
+      "discriminates": true,
+      "lp_learnable": true,
+      "lp_unlearnable": true,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "moats_undefined": [
+       "m_goat"
+      ]
+     },
+     "C_reversed": {
+      "ok": true,
+      "asked": "101011101000",
+      "ask_rate_gap": 1.0,
+      "ask_rate_moat": 0.0,
+      "discriminates": true,
+      "lp_learnable": true,
+      "lp_unlearnable": true,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "moats_undefined": [
+       "m_goat"
+      ]
+     }
+    }
+   },
+   "S2C3": {
+    "ok": true,
+    "all": {
+     "C_intact_a": true,
+     "C_reversed": true
+    }
+   },
+   "2": {
+    "ok": true,
+    "diff": [],
+    "responses_identical": true
+   },
+   "3": {
+    "ok": true,
+    "ask_rate_gap": 1.0,
+    "ask_rate_moat": 0.0,
+    "moats_undefined": [
+     "g_crab"
+    ],
+    "asked": "111010",
+    "aggconv": {
+     "discriminates": true,
+     "tracks": true,
+     "ask_rate_gap": 1.0,
+     "ask_rate_moat": 0.5,
+     "moats_undefined": [
+      "g_newt"
+     ],
+     "margin": 0.0
+    }
+   },
+   "4": {
+    "ok": true,
+    "intact_a": {
+     "ok": true,
+     "lesion_toads": "1111",
+     "C_toads": "1000",
+     "extra_toad_asks": 3
+    },
+    "reversed": {
+     "ok": true,
+     "lesion_toads": "1111",
+     "C_toads": "1000",
+     "extra_toad_asks": 3
+    },
+    "null_toad_diffs": 0
+   },
+   "5": {
+    "ok": true,
+    "lp_learnable": false,
+    "lp_unlearnable": false,
+    "ask_rate_gap": 0.3333333333333333,
+    "asked": "100000000000"
+   },
+   "6": {
+    "ok": true,
+    "asked_on": []
+   },
+   "7": {
+    "ok": true,
+    "pairs": {
+     "C_intact_a": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "C_intact_b": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionL_intact_a": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionP_intact_a": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "C_reversed": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionL_reversed": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionP_reversed": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "C_permuted": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     }
+    }
+   },
+   "8": {
+    "ok": true,
+    "arms": {
+     "lesionL_intact_a": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "lesionL_reversed": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "lesionP_intact_a": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "lesionP_reversed": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "C_lesion_curiosity": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     }
+    }
+   },
+   "AR": {
+    "ok": true,
+    "pairs": {
+     "C_intact_a": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     },
+     "C_intact_b": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     },
+     "C_reversed": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     },
+     "C_permuted": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     }
+    }
+   },
+   "info": {
+    "C_intact_a": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.5246616519364669,
+      0.04616293556102311
+     ]
+    },
+    "C_reversed": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.5246616519364669,
+      0.04616293556102311
+     ]
+    },
+    "Lpinned_intact_a": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": true,
+     "da_lesion_held": "held"
+    },
+    "Lpinned_reversed": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": true,
+     "da_lesion_held": "held"
+    },
+    "pconst_intact_a": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": true,
+     "const_salience_probes": 11
+    },
+    "pconst_reversed": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": true,
+     "const_salience_probes": 11
+    },
+    "off_intact_a": {
+     "all": false,
+     "asked": "101000000000",
+     "discriminates": true,
+     "lp_learnable": false,
+     "lp_unlearnable": false,
+     "gap": 0.6666666666666666,
+     "moat": 0.0,
+     "toads": "0000",
+     "equals_C_vector": false
+    },
+    "off_reversed": {
+     "all": false,
+     "asked": "000000001100",
+     "discriminates": false,
+     "lp_learnable": false,
+     "lp_unlearnable": true,
+     "gap": 0.0,
+     "moat": 0.0,
+     "toads": "1100",
+     "equals_C_vector": false
+    },
+    "lesionP_intact_a": {
+     "all": false,
+     "asked": "100000000000",
+     "discriminates": false,
+     "lp_learnable": false,
+     "lp_unlearnable": false,
+     "gap": 0.3333333333333333,
+     "moat": 0.0,
+     "toads": "0000",
+     "equals_C_vector": false,
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.5246616519364669,
+      0.04616293556102311
+     ]
+    },
+    "lesionP_reversed": {
+     "all": false,
+     "asked": "000000001000",
+     "discriminates": false,
+     "lp_learnable": false,
+     "lp_unlearnable": true,
+     "gap": 0.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": false,
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.5246616519364669,
+      0.04616293556102311
+     ]
+    },
+    "lesionL_intact_a": {
+     "all": false,
+     "asked": "101011101111",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": false,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1111",
+     "equals_C_vector": false
+    },
+    "lesionL_reversed": {
+     "all": false,
+     "asked": "101011101111",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": false,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1111",
+     "equals_C_vector": false
+    },
+    "null_count": {
+     "1": [
+      11,
+      11
+     ],
+     "2": [
+      10,
+      11
+     ]
+    }
+   }
+  },
+  "101": {
+   "seed": 101,
+   "1": {
+    "ok": true,
+    "arms": {
+     "C_intact_a": {
+      "ok": true,
+      "asked": "101011101000",
+      "ask_rate_gap": 1.0,
+      "ask_rate_moat": 0.0,
+      "discriminates": true,
+      "lp_learnable": true,
+      "lp_unlearnable": true,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "moats_undefined": [
+       "m_goat"
+      ]
+     },
+     "C_reversed": {
+      "ok": true,
+      "asked": "101011101000",
+      "ask_rate_gap": 1.0,
+      "ask_rate_moat": 0.0,
+      "discriminates": true,
+      "lp_learnable": true,
+      "lp_unlearnable": true,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "moats_undefined": [
+       "m_goat"
+      ]
+     }
+    }
+   },
+   "S2C3": {
+    "ok": true,
+    "all": {
+     "C_intact_a": true,
+     "C_reversed": true
+    }
+   },
+   "2": {
+    "ok": true,
+    "diff": [],
+    "responses_identical": true
+   },
+   "3": {
+    "ok": true,
+    "ask_rate_gap": 1.0,
+    "ask_rate_moat": 0.0,
+    "moats_undefined": [
+     "g_crab"
+    ],
+    "asked": "111010",
+    "aggconv": {
+     "discriminates": true,
+     "tracks": true,
+     "ask_rate_gap": 1.0,
+     "ask_rate_moat": 0.5,
+     "moats_undefined": [
+      "g_newt"
+     ],
+     "margin": 0.0
+    }
+   },
+   "4": {
+    "ok": true,
+    "intact_a": {
+     "ok": true,
+     "lesion_toads": "1111",
+     "C_toads": "1000",
+     "extra_toad_asks": 3
+    },
+    "reversed": {
+     "ok": true,
+     "lesion_toads": "1111",
+     "C_toads": "1000",
+     "extra_toad_asks": 3
+    },
+    "null_toad_diffs": 0
+   },
+   "5": {
+    "ok": true,
+    "lp_learnable": false,
+    "lp_unlearnable": false,
+    "ask_rate_gap": 0.6666666666666666,
+    "asked": "101000000000"
+   },
+   "6": {
+    "ok": true,
+    "asked_on": []
+   },
+   "7": {
+    "ok": true,
+    "pairs": {
+     "C_intact_a": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "C_intact_b": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionL_intact_a": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionP_intact_a": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "C_reversed": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionL_reversed": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionP_reversed": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "C_permuted": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     }
+    }
+   },
+   "8": {
+    "ok": true,
+    "arms": {
+     "lesionL_intact_a": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "lesionL_reversed": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "lesionP_intact_a": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "lesionP_reversed": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "C_lesion_curiosity": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     }
+    }
+   },
+   "AR": {
+    "ok": true,
+    "pairs": {
+     "C_intact_a": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     },
+     "C_intact_b": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     },
+     "C_reversed": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     },
+     "C_permuted": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     }
+    }
+   },
+   "info": {
+    "C_intact_a": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.4988920633539457,
+      0.04616293556102311
+     ]
+    },
+    "C_reversed": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.4988920633539457,
+      0.04616293556102311
+     ]
+    },
+    "Lpinned_intact_a": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": true,
+     "da_lesion_held": "held"
+    },
+    "Lpinned_reversed": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": true,
+     "da_lesion_held": "held"
+    },
+    "pconst_intact_a": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": true,
+     "const_salience_probes": 11
+    },
+    "pconst_reversed": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": true,
+     "const_salience_probes": 11
+    },
+    "off_intact_a": {
+     "all": false,
+     "asked": "101000000000",
+     "discriminates": true,
+     "lp_learnable": false,
+     "lp_unlearnable": false,
+     "gap": 0.6666666666666666,
+     "moat": 0.0,
+     "toads": "0000",
+     "equals_C_vector": false
+    },
+    "off_reversed": {
+     "all": false,
+     "asked": "000000001000",
+     "discriminates": false,
+     "lp_learnable": false,
+     "lp_unlearnable": true,
+     "gap": 0.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": false
+    },
+    "lesionP_intact_a": {
+     "all": false,
+     "asked": "101000000000",
+     "discriminates": true,
+     "lp_learnable": false,
+     "lp_unlearnable": false,
+     "gap": 0.6666666666666666,
+     "moat": 0.0,
+     "toads": "0000",
+     "equals_C_vector": false,
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.4988920633539457,
+      0.04616293556102311
+     ]
+    },
+    "lesionP_reversed": {
+     "all": false,
+     "asked": "000000001000",
+     "discriminates": false,
+     "lp_learnable": false,
+     "lp_unlearnable": true,
+     "gap": 0.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": false,
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.4988920633539457,
+      0.04616293556102311
+     ]
+    },
+    "lesionL_intact_a": {
+     "all": false,
+     "asked": "101011101111",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": false,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1111",
+     "equals_C_vector": false
+    },
+    "lesionL_reversed": {
+     "all": false,
+     "asked": "101011101111",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": false,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1111",
+     "equals_C_vector": false
+    },
+    "null_count": {
+     "1": [
+      11,
+      11
+     ],
+     "2": [
+      10,
+      11
+     ]
+    }
+   }
+  },
+  "102": {
+   "seed": 102,
+   "1": {
+    "ok": true,
+    "arms": {
+     "C_intact_a": {
+      "ok": true,
+      "asked": "101011101000",
+      "ask_rate_gap": 1.0,
+      "ask_rate_moat": 0.0,
+      "discriminates": true,
+      "lp_learnable": true,
+      "lp_unlearnable": true,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "moats_undefined": [
+       "m_goat"
+      ]
+     },
+     "C_reversed": {
+      "ok": true,
+      "asked": "101011101000",
+      "ask_rate_gap": 1.0,
+      "ask_rate_moat": 0.0,
+      "discriminates": true,
+      "lp_learnable": true,
+      "lp_unlearnable": true,
+      "all_gaps_abstain": true,
+      "builtin_dog_cat": true,
+      "moats_undefined": [
+       "m_goat"
+      ]
+     }
+    }
+   },
+   "S2C3": {
+    "ok": true,
+    "all": {
+     "C_intact_a": true,
+     "C_reversed": true
+    }
+   },
+   "2": {
+    "ok": true,
+    "diff": [],
+    "responses_identical": true
+   },
+   "3": {
+    "ok": true,
+    "ask_rate_gap": 1.0,
+    "ask_rate_moat": 0.0,
+    "moats_undefined": [
+     "g_crab"
+    ],
+    "asked": "111010",
+    "aggconv": {
+     "discriminates": true,
+     "tracks": true,
+     "ask_rate_gap": 1.0,
+     "ask_rate_moat": 0.5,
+     "moats_undefined": [
+      "g_newt"
+     ],
+     "margin": 0.0
+    }
+   },
+   "4": {
+    "ok": true,
+    "intact_a": {
+     "ok": true,
+     "lesion_toads": "1111",
+     "C_toads": "1000",
+     "extra_toad_asks": 3
+    },
+    "reversed": {
+     "ok": true,
+     "lesion_toads": "1111",
+     "C_toads": "1000",
+     "extra_toad_asks": 3
+    },
+    "null_toad_diffs": 0
+   },
+   "5": {
+    "ok": true,
+    "lp_learnable": false,
+    "lp_unlearnable": false,
+    "ask_rate_gap": 0.3333333333333333,
+    "asked": "100000000000"
+   },
+   "6": {
+    "ok": true,
+    "asked_on": []
+   },
+   "7": {
+    "ok": true,
+    "pairs": {
+     "C_intact_a": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "C_intact_b": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionL_intact_a": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionP_intact_a": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "C_reversed": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionL_reversed": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "lesionP_reversed": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     },
+     "C_permuted": {
+      "ok": true,
+      "n_turns": 19,
+      "differs_on": []
+     }
+    }
+   },
+   "8": {
+    "ok": true,
+    "arms": {
+     "lesionL_intact_a": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "lesionL_reversed": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "lesionP_intact_a": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "lesionP_reversed": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     },
+     "C_lesion_curiosity": {
+      "ok": true,
+      "n_applied": 11,
+      "not_held": [],
+      "abstained_probes_without_trace": []
+     }
+    }
+   },
+   "AR": {
+    "ok": true,
+    "pairs": {
+     "C_intact_a": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     },
+     "C_intact_b": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     },
+     "C_reversed": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     },
+     "C_permuted": {
+      "ok": true,
+      "on_answered": 7,
+      "off_answered": 7,
+      "n": 19,
+      "answers_lost_on": []
+     }
+    }
+   },
+   "info": {
+    "C_intact_a": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.3400685228983662,
+      0.04616293556102311
+     ]
+    },
+    "C_reversed": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.3400685228983662,
+      0.04616293556102311
+     ]
+    },
+    "Lpinned_intact_a": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": true,
+     "da_lesion_held": "held"
+    },
+    "Lpinned_reversed": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": true,
+     "da_lesion_held": "held"
+    },
+    "pconst_intact_a": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": true,
+     "const_salience_probes": 11
+    },
+    "pconst_reversed": {
+     "all": true,
+     "asked": "101011101000",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": true,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": true,
+     "const_salience_probes": 11
+    },
+    "off_intact_a": {
+     "all": false,
+     "asked": "100000000000",
+     "discriminates": false,
+     "lp_learnable": false,
+     "lp_unlearnable": false,
+     "gap": 0.3333333333333333,
+     "moat": 0.0,
+     "toads": "0000",
+     "equals_C_vector": false
+    },
+    "off_reversed": {
+     "all": false,
+     "asked": "000000001000",
+     "discriminates": false,
+     "lp_learnable": false,
+     "lp_unlearnable": true,
+     "gap": 0.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": false
+    },
+    "lesionP_intact_a": {
+     "all": false,
+     "asked": "100000000000",
+     "discriminates": false,
+     "lp_learnable": false,
+     "lp_unlearnable": false,
+     "gap": 0.3333333333333333,
+     "moat": 0.0,
+     "toads": "0000",
+     "equals_C_vector": false,
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.3400685228983662,
+      0.04616293556102311
+     ]
+    },
+    "lesionP_reversed": {
+     "all": false,
+     "asked": "000000001000",
+     "discriminates": false,
+     "lp_learnable": false,
+     "lp_unlearnable": true,
+     "gap": 0.0,
+     "moat": 0.0,
+     "toads": "1000",
+     "equals_C_vector": false,
+     "host_threshold_agrees": [
+      11,
+      11
+     ],
+     "tonic_da_first_last": [
+      0.3400685228983662,
+      0.04616293556102311
+     ]
+    },
+    "lesionL_intact_a": {
+     "all": false,
+     "asked": "101011101111",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": false,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1111",
+     "equals_C_vector": false
+    },
+    "lesionL_reversed": {
+     "all": false,
+     "asked": "101011101111",
+     "discriminates": true,
+     "lp_learnable": true,
+     "lp_unlearnable": false,
+     "gap": 1.0,
+     "moat": 0.0,
+     "toads": "1111",
+     "equals_C_vector": false
+    },
+    "null_count": {
+     "1": [
+      11,
+      11
+     ],
+     "2": [
+      10,
+      11
+     ]
+    }
+   }
+  }
+ },
+ "backend": "numpy",
+ "device": "cpu",
+ "device_note": "scorer only: reads the shards' JSON on the CPU and runs no simulation; each shard's own sidecar records the run's backend"
+}

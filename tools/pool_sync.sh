@@ -60,8 +60,12 @@ RSYNC_SSH="ssh -o BatchMode=yes -o ConnectTimeout=6"
 # FILTER ORDER MATTERS (rsync: first matching rule wins). `_provenance/` must be excluded BEFORE the general
 # `--include='*/'` (which would otherwise match and admit it, as just another directory, before its own
 # exclude rule is ever reached) -- this mirrors the pre-existing `--exclude='_provenance/'` this replaces.
+# CHECKPOINTS (2026-10-29, RULING part-loop-1029): a runner's in-progress `<out>.part.json` (+ .prov.json) is excluded
+# before the *.json include. A pull taken mid-job copied it into the never-pruned stage, the runner later deleted it
+# on the node, and every sync re-copied the stale pair into the workspace. Only finished outputs are results.
 RSYNC_SAFETY_ARGS=(--safe-links --chmod=F-x
   --exclude='_provenance/'
+  --exclude='*.part.json' --exclude='*.part.json.prov.json'
   --include='*/' --include='*.json' --include='*.prov.json' --include='*.log' --include='*.csv' --include='*.npz' --include='*.rep[0-9]*' --include='*.done' --include='*.txt' --include='*.jsonl' --include='*.md' --include='*.npy'
   --exclude='*')
 EXTRA_NODES_FILE="${POOL_EXTRA_NODES_FILE:-$ROOT/research/queue/.pool_extra_nodes}"

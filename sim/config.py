@@ -503,6 +503,25 @@ class CoreSimConfig:
     # behavior via ad hoc per-file gate mitigations). Verified default-off byte-identical + on-flat by
     # tests/test_enforce_plastic_mask.py (both directions: fails on pre-fix code, passes on this fix).
     enforce_plastic_mask_in_hebbian: bool = False
+    # ADDITIVE, DEFAULT-OFF correctness enforcement (2026-10-31, Vikunja #203 residual). The 2026-09-02 fix above
+    # closed the Hebbian write sites only. A grep of EVERY write to cp_connections.data in sim/bridge.py found four
+    # more that move a synapse declared plastic=False / plastic_internal=False, plus one bookkeeping path that makes
+    # the mask itself stale: (i) homeostatic SYNAPTIC SCALING (sim/bridge.py ~12350) multiplies every weight by the
+    # per-neuron scale factor - gated only by the named gain, never by the mask (measured: a frozen 20.0 synapse
+    # moves to 5.0, delta 15.0, over 30 reads of a 6-neuron probe); (ii) structural-plasticity ELIMINATION (~12036)
+    # zeroes any weight below struct_plast_weight_threshold regardless of the mask (measured: a frozen 0.02 synapse
+    # is zeroed); (iii) the reward-modulation block's UPDATE (`data += weight_updates`) and its CLIP (~11990) clip /
+    # add to every weight when no named gain array exists (measured: a frozen 100.0 weight is clipped to
+    # hebbian_max_weight, 1.0 in the probe config -> delta 99.0); (iv) the plastic mask is never remapped across a
+    # CSR-reordering rebuild nor compacted, because the remap helper reads the DEAD attribute `cp_plastic_mask`
+    # (never assigned anywhere in sim/) instead of the live `cp_synapse_plastic_mask` (measured: after
+    # set_pathway_weights(add_missing=True), 4 of the 14 declared (pre,post) pairs are labelled with the wrong
+    # plasticity). When this flag
+    # is True (or the env var BRAIN_ENFORCE_PLASTIC_MASK is set truthy, the umbrella), all four sites honour the mask;
+    # 0/False => every branch is skipped => byte-identical to the pre-2026-10-31 behavior. Verified both directions by
+    # tests/test_plastic_mask_beyond_hebbian.py (freeze over 30 reads on 6 seeds; flag-OFF SHA == the SHA of the
+    # genuine pre-fix code, recovered with `git archive` of the flag commit's parent).
+    enforce_plastic_mask_beyond_hebbian: bool = False
     # Opt-in GENERAL-STEP MEGAKERNEL (perf, default OFF -> byte-identical to the per-step loop). Fuses the per-neuron
     # ELEMENT-WISE inference chain -- conductance decay + I_syn + (pre-computed) E/I matvec increment + total-input
     # assembly + Izhikevich-2007 dynamics + threshold-select + fast_spike_reset -- into ONE @cp.fuse launch, collapsing
@@ -1261,6 +1280,11 @@ class CoreSimConfig:
     input_divisive_sigma: float = 1.0
     # Divisive strength on the mean term.
     input_divisive_gain: float = 1.0
+    # 2026-10-29 (c2 step 0d): when True the divisive stage divides ONLY the external input current (the divisor's mean is
+    # over the flagged set's EXTERNAL drive); synaptic currents (excitatory and inhibitory) are added undivided. Default
+    # False = the original rule (divide synaptic + external), byte-identical (tests/test_divnorm_external_only.py).
+    # Motivation: feedforward FS inhibition onto a flagged pool was divided by the same D as the drive (~1/3500).
+    input_divisive_norm_external_only: bool = False
 
     # ─── SECOND, INDEPENDENT divisive-norm pool (Cascade-accumulator FIX A, 2026-06-20) ───
     # A byte-identical clone of the divisive primitive above, keyed by BrainRegion.input_divisive_norm_2

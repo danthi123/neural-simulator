@@ -1,0 +1,1017 @@
+diff --git a/research/runners/pi203_write_path_attribution.py b/research/runners/pi203_write_path_attribution.py
+new file mode 100644
+index 000000000..10a56aae9
+--- /dev/null
++++ b/research/runners/pi203_write_path_attribution.py
+@@ -0,0 +1,230 @@
++#!/usr/bin/env python3
++"""Vikunja #203 follow-up (pi lane): attribute the comprehension organ's frozen-synapse drift to a WRITE PATH.
++
++The #203 merge (main `dc6abf989`) gates six `cp_connections.data` write sites behind
++`cfg.enforce_plastic_mask_beyond_hebbian` (umbrella env `BRAIN_ENFORCE_PLASTIC_MASK`, DEFAULT OFF), and its
++reply-level arm found the flag changes the production comprehension organ's reply ZERO times on 6 seeds -- while
++the 2026-09-02 read-isolation audit had measured a real 13.8 -> 56.1 weight drift on this very organ.
++
++This runner answers the question the reply arm left open: WHICH write path moves the organ's frozen weights, and
++does any of it escape the six gated sites? It runs `research.runners.pi203_write_path_tap` (which records every
++write to `cp_connections.data`, attributed to the sim line that performed it, with the delta split into frozen vs
++plastic) over the production battery, on DEV seeds only (7, 8 -- the generalization seeds 42/43/44/100/101/102 are
++untouched by this instrument), for both organs that "the comprehension organ" can mean:
++
++  * `standalone`  : `ComprehensionProductionOrgan(seed)` -- the 1032-neuron `SpikingRoleCompetition` bridge the
++                    2026-09-02 audit measured (24764 synapses, 1724 declared frozen).
++  * `pooled`      : `get_organ(seed)` -- the wave3 merged one-brain pool (531916 synapses) that the reply arm ran.
++
++and both arms (flag OFF / flag ON), plus a TAP-OFF control run per cell so the instrument's own non-invasiveness
++is measured rather than asserted (tapped vs untapped reply digests must be identical).
++
++Protocol fixed BEFORE the run (this docstring is the pre-registration; the criteria are quoted in the artifact):
++  1. every write site that touches a mask-frozen synapse is listed with its measured delta, ON and OFF;
++  2. a site is "uncovered by the six fixes" only if it still moves frozen synapses with the flag ON;
++  3. the tap is void if tapped and untapped reply digests differ for the same cell.
++
++Run:
++    PYTHONPATH=. CUDA_VISIBLE_DEVICES= SIM_BACKEND=numpy OMP_NUM_THREADS=1 \
++      python -m research.runners.pi203_write_path_attribution \
++      --out research/findings/raw/_pi203_frozen_synapse_residual/write_path_attribution.json
++"""
++from __future__ import annotations
++
++import argparse
++import concurrent.futures
++import hashlib
++import json
++import os
++import subprocess
++import sys
++import time
++
++from tools.lab import attributable_to, lever, project_cost, assert_backend
++
++SEEDS = (7, 8)                                   # DEV seeds only (42/43/44/100/101/102 untouched)
++ORGANS = ("standalone", "pooled")
++ARMS = ("off", "on")
++TAPS = ("on", "off")
++RUNNER = "research.runners.pi203_write_path_tap"
++
++
++def _run_cell(seed: int, organ: str, arm: str, tap: str, items: int = 0) -> dict:
++    env = dict(os.environ)
++    env["SIM_BACKEND"] = "numpy"
++    env["CUDA_VISIBLE_DEVICES"] = ""
++    env["OMP_NUM_THREADS"] = "1"
++    env["PYTHONPATH"] = "."
++    out = "/tmp/pi203_tap_%s_s%d_%s_%s.json" % (organ, seed, arm, tap)
++    p = subprocess.run([sys.executable, "-m", RUNNER, "--seed", str(seed), "--arm", arm,
++                        "--organ", organ, "--tap", tap, "--items", str(items), "--out", out],
++                       env=env, capture_output=True, text=True, timeout=2400)
++    if p.returncode != 0 or not os.path.exists(out):
++        return {"seed": seed, "organ": organ, "arm": arm, "tap": tap,
++                "error": p.stderr[-400:], "returncode": p.returncode}
++    with open(out) as f:
++        d = json.load(f)
++    return d
++
++
++def _field_diff(a: dict, b: dict) -> list:
++    """Which reply-level fields differ between two battery digests (per item)."""
++    diffs = []
++    for label in sorted(a.get("battery_items", {})):
++        if a["battery_items"][label] != b.get("battery_items", {}).get(label):
++            diffs.append(label)
++    return diffs
++
++
++def main() -> None:
++    ap = argparse.ArgumentParser()
++    ap.add_argument("--out", required=True)
++    ap.add_argument("--workers", type=int, default=4)
++    ap.add_argument("--organs", default=",".join(ORGANS))
++    ap.add_argument("--seeds", default=",".join(str(s) for s in SEEDS))
++    ap.add_argument("--items", type=int, default=0, help="limit battery items in every cell (0 = all)")
++    args = ap.parse_args()
++    organs = [o for o in args.organs.split(",") if o]
++    seeds = [int(s) for s in args.seeds.split(",") if s]
++
++    assert_backend("numpy", "this attribution runs on the CPU/numpy path by design (dev-seed smokes)")
++    cells = [(s, o, a, t, args.items) for s in seeds for o in organs for a in ARMS for t in TAPS]
++    t0 = time.time()
++    runs = {}
++    with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as ex:
++        futs = {ex.submit(_run_cell, *c): c for c in cells}
++        for i, fut in enumerate(concurrent.futures.as_completed(futs)):
++            c = futs[fut]
++            runs[c] = fut.result()
++            if i == 0:
++                project_cost("tap cell", 1, len(cells), runs[c].get("elapsed_seconds", 0.0))
++
++    runs = [runs[c] for c in cells]
++    by_key = {(r["seed"], r["organ"], r["arm"], r["tap"]): r for r in runs}
++
++    # (3) instrument control: tapped vs untapped, same cell.
++    instrument_control = {}
++    for s in seeds:
++        for o in organs:
++            for a in ARMS:
++                t = by_key.get((s, o, a, "on"))
++                u = by_key.get((s, o, a, "off"))
++                instrument_control["%s/%s/seed%d" % (o, a, s)] = {
++                    "tapped_digest": t.get("battery_digest"), "untapped_digest": u.get("battery_digest"),
++                    "identical": t.get("battery_digest") == u.get("battery_digest"),
++                }
++
++    # (1)+(2) per-site attribution: the same site, flag OFF vs flag ON.
++    attribution = {}
++    for o in organs:
++        for s in seeds:
++            off = by_key.get((s, o, "off", "on"))
++            on = by_key.get((s, o, "on", "on"))
++            if not off or not on:
++                continue
++            sites_off = {x["site"]: x for x in off.get("write_sites", [])}
++            sites_on = {x["site"]: x for x in on.get("write_sites", [])}
++            rows = []
++            for site in sorted(set(sites_off) | set(sites_on)):
++                a = sites_off.get(site, {"frozen_sum_abs_delta": 0.0, "frozen_max_abs_delta": 0.0, "writes": 0})
++                b = sites_on.get(site, {"frozen_sum_abs_delta": 0.0, "frozen_max_abs_delta": 0.0, "writes": 0})
++                rows.append({
++                    "site": site, "function": a.get("function", b.get("function", "")),
++                    "writes_off": a["writes"], "writes_on": b["writes"],
++                    "frozen_sum_abs_delta_off": a["frozen_sum_abs_delta"],
++                    "frozen_sum_abs_delta_on": b["frozen_sum_abs_delta"],
++                    "frozen_potentiation_off": a.get("frozen_potentiation", 0.0),
++                    "frozen_depression_off": a.get("frozen_depression", 0.0),
++                    "frozen_potentiation_on": b.get("frozen_potentiation", 0.0),
++                    "frozen_depression_on": b.get("frozen_depression", 0.0),
++                    "residual_frozen_delta_share_on": attributable_to(
++                        "frozen-synapse delta at %s (OFF = ungated treatment, ON = gated control)" % site,
++                        a["frozen_sum_abs_delta"], b["frozen_sum_abs_delta"]),
++                })
++            attribution["%s/seed%d" % (o, s)] = {
++                "total_frozen_delta_off": off.get("total_writes", 0) and sum(
++                    x["frozen_sum_abs_delta"] for x in off.get("write_sites", [])),
++                "total_frozen_delta_on": sum(x["frozen_sum_abs_delta"] for x in on.get("write_sites", [])),
++                "coordinate_drift_off": off.get("coordinate_drift"),
++                "coordinate_drift_on": on.get("coordinate_drift"),
++                "frozen_drift_regions_off": off.get("frozen_drift_regions"),
++                "sites": rows,
++            }
++
++    # reply-level: flag ON vs OFF, same organ/seed, tap ON (and cross-checked on tap OFF)
++    reply_level = {}
++    for o in organs:
++        for s in seeds:
++            for t in TAPS:
++                a = by_key.get((s, o, "off", t))
++                b = by_key.get((s, o, "on", t))
++                if not a or not b:
++                    continue
++                diffs = _field_diff(a, b)
++                m_off, m_on = a.get("reply_margins", {}), b.get("reply_margins", {})
++                moved = {k: [m_off.get(k), m_on.get(k)] for k in m_off if m_off.get(k) != m_on.get(k)}
++                reply_level["%s/%s/seed%d" % (o, t, s)] = {
++                    "items_differing": len(diffs),
++                    "n_items": a.get("n_items"),
++                    "margin_diffs": moved,
++                    "max_abs_margin_diff": max((abs(x - y) for x, y in (tuple(v) for v in moved.values())), default=0.0),
++                }
++
++    # THE LEVER: does the flag actually move the measured quantity? (standalone organ = the drift organ)
++    lever_check = {}
++    for s in seeds:
++        before = by_key.get((s, "standalone", "off", "on"), {}).get("total_writes", 0)
++        after = by_key.get((s, "standalone", "on", "on"), {}).get("total_writes", 0)
++        lever_check["seed%d_total_weight_writes" % s] = lever("BRAIN_ENFORCE_PLASTIC_MASK", before, after,
++                                                              required=False)
++
++    # (0) does the instrument account for EVERY change it sees? The tap sums every write's signed delta;
++    # the coordinate snapshot is the net. If they agree, no write path escaped the hooks.
++    completeness = {}
++    for r in runs:
++        if r.get("tap") != "on" or "error" in r:
++            continue
++        cd = r.get("coordinate_drift", {})
++        completeness["%d/%s/%s" % (r["seed"], r["organ"], r["arm"])] = {
++            "signed_residual": cd.get("completeness_residual_signed"),
++            "abs_residual": cd.get("completeness_residual_abs"),
++            "net_frozen_signed_drift": cd.get("frozen_signed_drift"),
++            "written_net_frozen_delta": cd.get("frozen_signed_drift", 0.0) + (cd.get("completeness_residual_signed") or 0.0),
++        }
++
++    payload = {
++        "runner": RUNNER + " (orchestrator)",
++        "cmd": " ".join(sys.argv),
++        "backend": "numpy", "device": "cpu",
++        "protocol": {
++            "seeds": list(SEEDS), "organs": list(ORGANS), "arms": list(ARMS), "taps": list(TAPS),
++            "criteria": ["list every write site touching a mask-frozen synapse with its measured delta, OFF and ON",
++                         "a site is UNCOVERED by the six #203 fixes only if it still moves frozen synapses with the flag ON",
++                         "the tap is void if tapped and untapped reply digests differ in the same cell"],
++        },
++        "elapsed_seconds": round(time.time() - t0, 2),
++        "n_runs": len(runs),
++        "runs": [{k: v for k, v in r.items() if k != "write_sites"} for r in runs],
++        "write_sites_by_run": {"%d/%s/%s/tap=%s" % (r["seed"], r["organ"], r["arm"], r["tap"]): r.get("write_sites", []) for r in runs},
++        "attribution": attribution,
++        "instrument_completeness": completeness,
++        "instrument_control": instrument_control,
++        "reply_level": reply_level,
++        "lever_check": lever_check,
++        "config_flags_observed": sorted({json.dumps(r.get("config", {}), sort_keys=True) for r in runs}),
++    }
++    os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
++    with open(args.out, "w") as f:
++        json.dump(payload, f, indent=2, default=str)
++    print("[attribution] %d runs, %s total -> %s" % (len(runs), payload["elapsed_seconds"], args.out))
++    for k, v in attribution.items():
++        print("  %s: frozen delta OFF=%s ON=%s" % (k, v["total_frozen_delta_off"], v["total_frozen_delta_on"]))
++    bad = [k for k, v in instrument_control.items() if not v["identical"]]
++    print("  instrument control: %d/%d cells tapped==untapped; exceptions: %s"
++          % (len(instrument_control) - len(bad), len(instrument_control), bad))
++    print("  completeness signed residuals:", {k: v["signed_residual"] for k, v in completeness.items()})
++    print("  reply level:", json.dumps(reply_level))
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/research/runners/pi203_write_path_tap.py b/research/runners/pi203_write_path_tap.py
+new file mode 100644
+index 000000000..81b7fdaa7
+--- /dev/null
++++ b/research/runners/pi203_write_path_tap.py
+@@ -0,0 +1,516 @@
++"""Vikunja #203 follow-up (pi lane): WHICH write path moves the comprehension organ's frozen synapses?
++
++The merged fix (main `dc6abf989`, `cfg.enforce_plastic_mask_beyond_hebbian`, umbrella env
++`BRAIN_ENFORCE_PLASTIC_MASK`) gates six write sites to `cp_connections.data`, and the reply-level arm showed the
++flag changes the production comprehension organ's reply ZERO times -- yet the original audit measured a real
++13.8 -> 56.1 drift on THIS organ (research/findings/raw/_read_isolation_audit_29/audit_29runners.json), and the
++1710/1724 synapses independently observed to change weight are the internal recurrent `sel_* <-> sel_FS_*`
++pathways declared `plastic_internal=False`.
++
++This instrument does not assume an answer. It records EVERY write to the organ's `cp_connections.data` during the
++production battery, attributed to the exact `sim/bridge.py` line that performed it, and for each write: how many
++synapses it touched, the summed and max |delta|, and how much of that delta landed on synapses the
++`cp_synapse_plastic_mask` calls FROZEN at that instant (the mask is positional, so frozen-ness is evaluated at the
++moment of the write, not after a re-ordering). It also snapshots every other weight-shaped store the organ could
++read (rate gain, transmission gain, eligibility trace, coactivity trace, NMDA/leak conductances, the homeostatic
++pair), counts every step in which the CSR data array was REPLACED (a rebuild/compaction site, which no in-place
++tap can see), and reports each synapse's end-to-end drift by its (pre,post) COORDINATE so a re-ordering cannot
++fake a zero.
++
++Instrument, not computation: the tap is a numpy ndarray SUBCLASS wrapping the existing array. It records
++(file:line, counts, deltas) and writes nothing back into the simulation. Its non-invasiveness is checked, not
++assumed: the tapped battery's reply digests are compared with the same battery run through the untapped
++production path (`research.runners._comprehension_learned_cues_joint_arm`), flag-for-flag.
++
++Run (one seed, one arm, fresh process):
++    CUDA_VISIBLE_DEVICES= SIM_BACKEND=numpy OMP_NUM_THREADS=1 PYTHONPATH=. python -m research.runners.pi203_write_path_tap \
++        --seed 7 --arm on --out /tmp/pi203_tap_s7_on.json
++"""
++from __future__ import annotations
++
++import argparse
++import hashlib
++import json
++import os
++import sys
++import time
++
++import numpy as np
++
++# Other weight-shaped stores the organ could read, snapshot before/after the battery.
++STORES = (
++    "cp_plasticity_rate_gain", "cp_transmission_gain", "cp_synapse_plastic_mask",
++    "cp_eligibility_trace", "cp_hebb_coactivity_trace",
++    "cp_conductance_g_nmda", "cp_conductance_g_nmda_rise", "cp_conductance_g_nmda_recurrent",
++    "cp_conductance_g_e", "cp_conductance_g_i", "cp_conductance_g_gabab",
++    "cp_neuron_firing_thresholds", "cp_neuron_activity_ema",
++)
++
++_LOG: list[dict] = []
++_REBUILDS: list[int] = [0]
++_MASK_BY_ARRAY: dict[int, object] = {}   # id(tapped array) -> the bridge whose mask governs it
++_BRIDGE_BY_CSR: dict[int, object] = {}   # id(csr object) -> the bridge it belongs to
++_INSTALLED_BRIDGES: set = set()          # bridges the tap is installed on
++_CURRENT_BRIDGE = None                   # the organ's bridge in this process (fallback)
++_KEEP_ALIVE: list = []                   # keep every tapped array referenced, so ids are never reused
++_STEPS = 0
++_ARRAY_REPLACED = 0
++
++
++_SELF_FILE = os.path.basename(__file__)
++
++
++def _caller_frame():
++    """The first stack frame OUTSIDE this instrument: the sim line that performed the write."""
++    f = sys._getframe(1)
++    while f is not None and os.path.basename(f.f_code.co_filename) == _SELF_FILE:
++        f = f.f_back
++    return f
++
++
++class TapArray(np.ndarray):
++    """numpy ndarray subclass that records every in-place write and the line that performed it."""
++
++    def __new__(cls, arr):
++        return np.asarray(arr).view(cls)
++
++    def _record(self, key, old, new, frame):
++        oldf = np.asarray(old, dtype=np.float64)
++        newf = np.asarray(new, dtype=np.float64)
++        signed = newf - oldf
++        delta = np.abs(signed)
++        touched = int(delta.size)
++        if touched == 0 or float(delta.max()) == 0.0:
++            return
++        bridge = getattr(self, "_tap_bridge", None) or _MASK_BY_ARRAY.get(id(self)) \
++            or _MASK_BY_ARRAY.get(id(getattr(self, "base", None))) or _CURRENT_BRIDGE
++        mask = _mask(bridge) if bridge is not None else None
++        frozen_n, frozen_sum, frozen_max, frozen_pos, frozen_neg = 0, 0.0, 0.0, 0.0, 0.0
++        if mask is not None:
++            m = mask
++            pos = np.arange(old.size) if isinstance(key, slice) else np.asarray(key).ravel()
++            live = pos[pos < m.size]
++            if live.size:
++                frz = ~m[live]
++                fs = signed[pos < m.size][frz]
++                fd = np.abs(fs)
++                frozen_n = int(fd.size)
++                frozen_sum = float(fd.sum())
++                frozen_max = float(fd.max()) if fd.size else 0.0
++                frozen_pos = float(fs[fs > 0].sum())
++                frozen_neg = float(-fs[fs < 0].sum())
++        _LOG.append({
++            "site": "%s:%d" % (os.path.basename(frame.f_code.co_filename), frame.f_lineno),
++            "function": frame.f_code.co_name,
++            "touched": touched,
++            "sum_abs_delta": float(delta.sum()),
++            "max_abs_delta": float(delta.max()),
++            "frozen_writes": 1 if frozen_n else 0,
++            "frozen_touched": frozen_n,
++            "frozen_sum_abs_delta": frozen_sum,
++            "frozen_max_abs_delta": frozen_max,
++            "frozen_potentiation": frozen_pos,
++            "frozen_depression": frozen_neg,
++        })
++
++    def __getitem__(self, key):
++        out = np.ndarray.__getitem__(self, key)
++        # A fancy-index read returns a COPY. Tag it: its in-place mutation is written back by the parent's
++        # __setitem__, so recording it here as well would count every such write twice.
++        if isinstance(out, TapArray):
++            try:
++                out._tap_temp = True
++            except AttributeError:
++                pass
++        return out
++
++    def __setitem__(self, key, value):
++        frame = _caller_frame()
++        old = np.asarray(self)[key]
++        np.ndarray.__setitem__(self, key, value)
++        self._record(key, old, np.asarray(self)[key], frame)
++
++    def _inplace(self, op, value, frame):
++        old = np.asarray(self).copy()
++        getattr(np.ndarray, op)(self, value)
++        if not getattr(self, "_tap_temp", False):
++            self._record(slice(None), old, np.asarray(self), frame)
++        return self
++
++    def __iadd__(self, value):
++        return self._inplace("__iadd__", value, _caller_frame())
++
++    def __imul__(self, value):
++        return self._inplace("__imul__", value, _caller_frame())
++
++    def __isub__(self, value):
++        return self._inplace("__isub__", value, _caller_frame())
++
++
++def _make_tap(arr, csr, bridge):
++    tap = arr if isinstance(arr, TapArray) else TapArray(arr)
++    try:
++        # carry the bridge on the array itself: object identity of a numpy view is not stable
++        # across scipy copies and re-views, so an attribute travels with the array
++        tap._tap_bridge = bridge
++        tap._tap_temp = False      # whatever lands in csr.data is the LIVE array, never a temp copy
++    except AttributeError:
++        pass
++    _MASK_BY_ARRAY[id(tap)] = bridge
++    _BRIDGE_BY_CSR[id(csr)] = bridge
++    _KEEP_ALIVE.append(tap)
++    return tap
++
++
++def _record_replacement(old, new, csr, frame):
++    """A whole-array replacement (`csr.data = <new array>`) is a WRITE too: measure it like one.
++    A brand-new array (old is None) is not a change to existing weights; the coordinate snapshots cover it."""
++    global _ARRAY_REPLACED
++    _ARRAY_REPLACED += 1
++    if old is None:
++        return
++    # a genuine CSR rebuild re-orders synapses: positions no longer identify the same synapse, so the
++    # positional mask labels the wrong weights. That is defect (v), and it is what makes the tap's
++    # position-based frozen split disagree with the coordinate-based drift.
++    if getattr(old, "indptr", None) is not None and getattr(new, "indptr", None) is not None and (
++            old.indptr.shape != new.indptr.shape or old.indices.shape != new.indices.shape):
++        _REBUILDS[0] += 1
++    bridge = _BRIDGE_BY_CSR.get(id(csr)) or _CURRENT_BRIDGE
++    a, b = np.asarray(old, dtype=np.float64), np.asarray(new, dtype=np.float64)
++    if a.shape != b.shape:
++        _LOG.append({"site": "%s:%d" % (os.path.basename(frame.f_code.co_filename), frame.f_lineno),
++                     "function": frame.f_code.co_name, "touched": 0, "sum_abs_delta": 0.0,
++                     "max_abs_delta": 0.0, "frozen_writes": 0, "frozen_touched": 0,
++                     "frozen_sum_abs_delta": 0.0, "frozen_max_abs_delta": 0.0,
++                     "note": "data array resized %d -> %d (rebuild / compaction / formation)" % (a.size, b.size)})
++        return
++    _record_new(a, b, csr, bridge, frame, replacement=True)
++
++
++def _record_new(old, new, csr, bridge, frame, replacement=False):
++    signed = new - old
++    delta = np.abs(signed)
++    if delta.size == 0 or float(delta.max()) == 0.0:
++        return
++    mask = _mask(bridge) if bridge is not None else None
++    frozen_n, frozen_sum, frozen_max, frozen_pos, frozen_neg = 0, 0.0, 0.0, 0.0, 0.0
++    if mask is not None:
++        m = np.asarray(mask)
++        live = min(delta.size, m.size)
++        frz = ~m[:live]
++        fs = signed[:live][frz]
++        fd = np.abs(fs)
++        frozen_n, frozen_sum = int(fd.size), float(fd.sum())
++        frozen_max = float(fd.max()) if fd.size else 0.0
++        frozen_pos = float(fs[fs > 0].sum())
++        frozen_neg = float(-fs[fs < 0].sum())
++    rec = {"site": "%s:%d" % (os.path.basename(frame.f_code.co_filename), frame.f_lineno),
++           "function": frame.f_code.co_name, "touched": int(delta.size),
++           "sum_abs_delta": float(delta.sum()), "max_abs_delta": float(delta.max()),
++           "frozen_writes": 1 if frozen_n else 0, "frozen_touched": frozen_n,
++           "frozen_sum_abs_delta": frozen_sum, "frozen_max_abs_delta": frozen_max,
++           "frozen_potentiation": frozen_pos, "frozen_depression": frozen_neg}
++    if replacement:
++        rec["note"] = "whole-array replacement: positions may have re-ordered, so the frozen split is positional"
++    _LOG.append(rec)
++
++
++def install_tap(bridge) -> None:
++    """Wrap the organ's live `cp_connections.data`, and hook EVERY way that array can change:
++      1. TapArray.__setitem__ / __iadd__ / __imul__ / __isub__  -- in-place writes,
++      2. TapCSR.__setattr__                                     -- `csr.data = <new array>` (e.g. set_pathway_weights,
++         sim/bridge.py:5766), which no in-place tap can see,
++      3. SimulationBridge.__setattr__ hook                      -- `self.cp_connections = <new csr>` (formation,
++         CSR rebuild, compaction).
++    Every hook RECORDS; none writes back into the simulation. Non-invasiveness is measured (tapped vs untapped
++    reply digests in the orchestrator), not assumed."""
++    _INSTALLED_BRIDGES.add(id(bridge))
++    global _CURRENT_BRIDGE, _STEPS, _ARRAY_REPLACED
++    _LOG.clear()
++    _REBUILDS[0] = 0
++    _STEPS = 0
++    _ARRAY_REPLACED = 0
++    _CURRENT_BRIDGE = bridge
++    BaseCSR = type(bridge.cp_connections)
++
++    class TapCSR(BaseCSR):
++        def __setattr__(self, name, value):
++            if name == "data" and isinstance(value, np.ndarray):
++                if isinstance(value, TapArray):
++                    # a fancy-index copy written back (`csr.data *= x`) is now the live array: untag it,
++                    # otherwise its in-place delta is silently dropped
++                    try:
++                        value._tap_temp = False
++                    except AttributeError:
++                        pass
++                else:
++                    old = getattr(self, "data", None)
++                    _record_replacement(old, value, self, _caller_frame())
++                    value = _make_tap(value, self, _BRIDGE_BY_CSR.get(id(self)) or _CURRENT_BRIDGE)
++            object.__setattr__(self, name, value)
++
++    def wrap(b, csr=None):
++        csr = csr if csr is not None else b.cp_connections
++        if not isinstance(csr, TapCSR):
++            csr = TapCSR(csr)
++            b.__dict__["cp_connections"] = csr
++        _BRIDGE_BY_CSR[id(csr)] = b
++        if not isinstance(csr.data, TapArray):
++            _ARRAY_REPLACED += 1
++            b.__dict__["cp_connections"].data = _make_tap(csr.data, csr, b)
++
++    wrap(bridge)
++
++    from sim.bridge import SimulationBridge
++    orig_setattr = SimulationBridge.__setattr__
++
++    def hooked_setattr(self, name, value):
++        orig_setattr(self, name, value)
++        if id(self) in _INSTALLED_BRIDGES and name == "cp_connections" \
++                and getattr(value, "format", "") == "csr" and not isinstance(value, TapCSR):
++            wrap(self, value)
++
++    SimulationBridge.__setattr__ = hooked_setattr
++
++    orig = SimulationBridge._run_one_simulation_step
++
++    def stepped(self):
++        global _STEPS
++        _STEPS += 1
++        if id(self) in _INSTALLED_BRIDGES:
++            wrap(self)
++        return orig(self)
++
++    SimulationBridge._run_one_simulation_step = stepped
++
++
++def _region_attribution(bridge, frozen_coords, coords_pre, coords_end):
++    """Name the populations the frozen-drift synapses belong to, so the finding says WHICH synapses moved."""
++    rm = getattr(bridge, "region_manager", None)
++    if rm is None or not frozen_coords:
++        return {}
++    try:
++        idx2region = {}
++        for name, idxs in rm.region_indices_dict().items():
++            for i in idxs:
++                idx2region[int(i)] = name
++    except Exception:
++        return {}
++    pairs = {}
++    for (pre, post) in frozen_coords:
++        w0, w1 = coords_pre.get((pre, post)), coords_end.get((pre, post))
++        if w0 is None or w1 is None or abs(w1 - w0) <= 1e-9:
++            continue
++        key = (idx2region.get(pre, "?"), idx2region.get(post, "?"))
++        rec = pairs.setdefault(key, {"synapses": 0, "max_abs_drift": 0.0})
++        rec["synapses"] += 1
++        rec["max_abs_drift"] = max(rec["max_abs_drift"], abs(w1 - w0))
++    return {"%s -> %s" % k: v for k, v in sorted(pairs.items(), key=lambda kv: -kv[1]["synapses"])}
++
++
++def _digest(obj) -> str:
++    return hashlib.sha256(json.dumps(obj, sort_keys=True, default=str).encode()).hexdigest()
++
++
++def _coords(bridge) -> dict:
++    """(pre, post) coordinate -> weight. Identity-based, so a CSR re-ordering cannot hide a drift."""
++    coo = bridge.cp_connections.tocoo()
++    return {(int(r), int(c)): float(v) for r, c, v in zip(coo.row, coo.col, coo.data)}
++
++
++def _mask(bridge):
++    m = getattr(bridge, "cp_synapse_plastic_mask", None)
++    return None if m is None else np.asarray(m)
++
++
++def _mask_label_by_coord(bridge) -> dict:
++    """coordinate -> is_plastic as the mask CURRENTLY labels it. Comparing this before and after a run measures
++    the misalignment defect (v) directly: a CSR rebuild re-orders synapses and the mask is not remapped
++    unless the fix is on, so the labels then describe the wrong weights."""
++    m = getattr(bridge, "cp_synapse_plastic_mask", None)
++    mask = np.asarray(m) if m is not None else np.zeros(0, dtype=bool)
++    coo = bridge.cp_connections.tocoo()
++    return {(int(r), int(c)): bool(mask[k]) if k < mask.size else False
++            for k, (r, c) in enumerate(zip(coo.row, coo.col))}
++
++
++def _snapshot(bridge, name):
++    arr = getattr(bridge, name, None)
++    return None if arr is None else np.asarray(arr).copy()
++
++
++def _aggregate(log):
++    sites = {}
++    for rec in log:
++        s = sites.setdefault(rec["site"], {
++            "site": rec["site"], "function": rec["function"], "writes": 0, "touched": 0,
++            "sum_abs_delta": 0.0, "max_abs_delta": 0.0, "writes_touching_frozen": 0,
++            "frozen_touched": 0, "frozen_sum_abs_delta": 0.0, "frozen_max_abs_delta": 0.0,
++            "frozen_potentiation": 0.0, "frozen_depression": 0.0,
++        })
++        s["writes"] += 1
++        s["touched"] += rec["touched"]
++        s["sum_abs_delta"] += rec["sum_abs_delta"]
++        s["max_abs_delta"] = max(s["max_abs_delta"], rec["max_abs_delta"])
++        s["writes_touching_frozen"] += rec["frozen_writes"]
++        s["frozen_touched"] += rec["frozen_touched"]
++        s["frozen_sum_abs_delta"] += rec["frozen_sum_abs_delta"]
++        s["frozen_max_abs_delta"] = max(s["frozen_max_abs_delta"], rec["frozen_max_abs_delta"])
++        s["frozen_potentiation"] += rec["frozen_potentiation"]
++        s["frozen_depression"] += rec["frozen_depression"]
++    return sorted(sites.values(), key=lambda s: (-s["frozen_sum_abs_delta"], -s["sum_abs_delta"]))
++
++
++def main() -> None:
++    ap = argparse.ArgumentParser()
++    ap.add_argument("--seed", type=int, default=7)
++    ap.add_argument("--arm", choices=["on", "off"], default="on")
++    ap.add_argument("--out", required=True)
++    ap.add_argument("--items", type=int, default=0, help="limit battery items (0 = all)")
++    ap.add_argument("--organ", choices=["pooled", "standalone"], default="standalone",
++                    help="pooled = get_organ() (the wave3 merged pool, what the reply arm used); "
++                         "standalone = ComprehensionProductionOrgan(seed) (the bridge the 2026-09-02 audit measured)")
++    ap.add_argument("--tap", choices=["on", "off"], default="on", help="off = the untapped control run")
++    args = ap.parse_args()
++
++    # EXPLICIT flag states, matching the reply-arm condition used in pi203_comprehension_no_regression.py.
++    os.environ["BRAIN_LEARNED_ANIMACY_CUE"] = "1"
++    os.environ["BRAIN_LEARNED_VERB_SELECTS"] = "1"
++    os.environ["BRAIN_LEARNED_ANIMACY_LESION"] = "0"
++    os.environ["BRAIN_LEARNED_VERB_SELECTS_LESION"] = "0"
++    os.environ["BRAIN_ENFORCE_PLASTIC_MASK"] = "1" if args.arm == "on" else "0"
++
++    import research.runners.comprehension_production_organ as CO
++    from research.runners._comprehension_learned_cues_joint_arm import all_items
++
++    t0 = time.time()
++    if args.organ == "pooled":
++        organ = CO.get_organ(seed=args.seed)
++    else:
++        organ = CO.ComprehensionProductionOrgan(seed=args.seed)
++    organ.ensure_built()
++    bridge = organ.comp.bridge
++    cfg = bridge.core_config
++    if args.tap == "on":
++        install_tap(bridge)
++
++    coords_pre = _coords(bridge)
++    labels_pre = _mask_label_by_coord(bridge)
++    mask_pre = _mask(bridge)
++    stores_pre = {name: _snapshot(bridge, name) for name in STORES}
++    nnz_pre = int(bridge.cp_connections.nnz)
++
++    frozen_coords = set()
++    if mask_pre is not None:
++        coo_pre = bridge.cp_connections.tocoo()
++        for k, (r, c) in enumerate(zip(coo_pre.row, coo_pre.col)):
++            if k < mask_pre.size and not mask_pre[k]:
++                frozen_coords.add((int(r), int(c)))
++
++    items = all_items()
++    if args.items:
++        items = items[:args.items]
++
++    rows = {}
++    for label, n0, v, n1 in items:
++        text = f"the {n0} {v} the {n1}"
++        tr = CO.extract_transitive(text)
++        rows[label] = {
++            "text": text,
++            "extract_transitive": list(tr) if tr else None,
++            "competent": bool(organ.competent(*tr)) if tr else None,
++            "judge": organ.judge(text),
++            "repair_target": organ.repair_target(text),
++        }
++
++    coords_end = _coords(bridge)
++    stores_post = {name: _snapshot(bridge, name) for name in STORES}
++    common = set(coords_pre) & set(coords_end)
++    drift = {cc: coords_end[cc] - coords_pre[cc] for cc in common}
++    frozen_signed = [d for cc, d in drift.items() if cc in frozen_coords]
++    frozen_drifts = [abs(d) for d in frozen_signed]
++    plastic_drifts = [abs(d) for cc, d in drift.items() if cc not in frozen_coords]
++
++
++    stores_delta = {}
++    for name in STORES:
++        a, b = stores_pre[name], stores_post[name]
++        if a is None or b is None:
++            stores_delta[name] = {"present": a is not None and b is not None}
++            continue
++        if a.shape != b.shape:
++            stores_delta[name] = {"present": True, "shape_pre": list(a.shape), "shape_post": list(b.shape),
++                                  "note": "array resized (lazy gate growth / rebuild / compaction)"}
++            continue
++        if a.dtype == np.bool_ or b.dtype == np.bool_:
++            stores_delta[name] = {"present": True, "label_flips": int((a != b).sum())}
++            continue
++        d = np.abs(a - b)
++        stores_delta[name] = {"present": True, "max_abs_delta": float(d.max()) if d.size else 0.0,
++                             "changed_entries": int((d > 1e-9).sum())}
++
++    sites = _aggregate(_LOG)
++    written_net = sum(s["frozen_potentiation"] - s["frozen_depression"] for s in sites)
++    out = {
++        "seed": args.seed, "arm": args.arm,
++        "enforced": os.environ.get("BRAIN_ENFORCE_PLASTIC_MASK", "") == "1",
++        "backend": "numpy", "device": "cpu", "elapsed_seconds": round(time.time() - t0, 2),
++        "n_items": len(items), "sim_steps": _STEPS, "nnz_pre": nnz_pre, "nnz_post": int(bridge.cp_connections.nnz),
++        "csr_data_array_rebuilt_times": _ARRAY_REPLACED,
++        "config": {
++            "enable_hebbian_learning": bool(cfg.enable_hebbian_learning),
++            "enable_stdp": bool(getattr(cfg, "enable_stdp", False)),
++            "enable_structural_plasticity": bool(getattr(cfg, "enable_structural_plasticity", False)),
++            "enable_reward_modulation": bool(getattr(cfg, "enable_reward_modulation", False)),
++            "enable_homeostasis": bool(getattr(cfg, "enable_homeostasis", False)),
++            "hebbian_rate_window": bool(getattr(cfg, "hebbian_rate_window", False)),
++            "enforce_plastic_mask_in_hebbian": bool(getattr(cfg, "enforce_plastic_mask_in_hebbian", False)),
++            "enforce_plastic_mask_beyond_hebbian": bool(getattr(cfg, "enforce_plastic_mask_beyond_hebbian", False)),
++        },
++        "organ": args.organ,
++        "tap": args.tap,
++        "experiment_engine_plasticity_this_phase": (
++            None if getattr(bridge, "experiment_engine", None) is None
++            else bool(getattr(bridge.experiment_engine, "plasticity_enabled_this_phase", True))),
++        "mask_len_pre": int(mask_pre.size) if mask_pre is not None else 0,
++        "frozen_synapses_pre": int((~mask_pre).sum()) if mask_pre is not None else 0,
++        "write_sites": sites,
++        "total_writes": len(_LOG),
++        "frozen_drift_regions": _region_attribution(bridge, frozen_coords, coords_pre, coords_end),
++        "stores_delta": stores_delta,
++        "coordinate_drift": {
++            "synapses_comparable_pre_post": len(common),
++            "csr_rebuilds": _REBUILDS[0],
++            "frozen_labelled_synapses": len(frozen_coords),
++            "frozen_max_abs_drift": max(frozen_drifts, default=0.0),
++            "frozen_sum_abs_drift": float(sum(frozen_drifts)),
++            "frozen_signed_drift": float(sum(frozen_signed)),
++            "frozen_synapses_drifted": sum(1 for d in frozen_drifts if d > 1e-9),
++            "plastic_max_abs_drift": max(plastic_drifts, default=0.0),
++            "plastic_sum_abs_drift": float(sum(plastic_drifts)),
++            "plastic_synapses_drifted": sum(1 for d in plastic_drifts if d > 1e-9),
++            # The tap sums every frozen-synapse delta it sees; the coordinate snapshot is the NET change.
++            # If the hooks cover every write path, the signed sums agree. A nonzero signed residual means a
++            # write path escaped the instrument (or the CSR re-ordered synapses between the snapshots).
++            "completeness_residual_signed": round(written_net - float(sum(frozen_signed)), 6),
++            "completeness_residual_abs": round(float(sum(s["frozen_sum_abs_delta"] for s in sites))
++                                              - float(sum(frozen_drifts)), 6),
++            "mask_labels_changed_by_rebuild": sum(1 for cc, lab in _mask_label_by_coord(bridge).items()
++                                                  if cc in labels_pre and lab != labels_pre[cc]),
++        },
++        "battery_digest": _digest(rows),
++        "battery_items": {k: _digest(v) for k, v in rows.items()},
++        "reply_margins": {k: (v["judge"] or {}).get("margin") for k, v in rows.items()},
++        "reply_competent": {k: v["competent"] for k, v in rows.items()},
++    }
++    os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
++    with open(args.out, "w") as f:
++        json.dump(out, f, indent=2)
++    print("[tap] seed=%s arm=%s steps=%d writes=%d sites=%d frozen_sum_delta=%.6g frozen_max_drift=%.6g -> %s"
++          % (args.seed, args.arm, _STEPS, len(_LOG), len(sites),
++             sum(s["frozen_sum_abs_delta"] for s in sites),
++             out["coordinate_drift"]["frozen_max_abs_drift"], args.out))
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/sim/bridge.py b/sim/bridge.py
+index 950afc0fa..4851ee82f 100644
+--- a/sim/bridge.py
++++ b/sim/bridge.py
+@@ -1468,13 +1468,23 @@ class SimulationBridge:
+     def _hebbian_plastic_mask_enforced(self, cfg):
+         """ADDITIVE, DEFAULT-OFF gate for enforcing cp_synapse_plastic_mask in the Hebbian LTP/decay/clip path.
+ 
+-        True iff the env var BRAIN_ENFORCE_PLASTIC_MASK is set truthy OR cfg.enforce_plastic_mask_in_hebbian is True.
+-        Default (neither set) => False => the mask is NOT enforced in Hebbian => byte-identical to the historical
+-        (permissive) behavior. STDP/BDSP/BTSP already enforce the mask unconditionally; this closes the same hole for
+-        the plain Hebbian rule without changing any production default. Evaluated at the use site so tests/callers can
+-        toggle the env var between builds. Works identically on numpy and cupy (no backend calls here).
++        True iff the env var BRAIN_ENFORCE_PLASTIC_MASK is set truthy OR cfg.enforce_plastic_mask_in_hebbian is True
++        OR cfg.enforce_plastic_mask_beyond_hebbian is True. Default (none set) => False => the mask is NOT enforced
++        in Hebbian => byte-identical to the historical (permissive) behavior. STDP/BDSP/BTSP already enforce the mask
++        unconditionally; this closes the same hole for the plain Hebbian rule without changing any production default.
++        Evaluated at the use site so tests/callers can toggle the env var between builds. Works identically on numpy
++        and cupy (no backend calls here).
++
++        Why the second flag counts here (2026-10-31, Vikunja #203 follow-up, dev seeds 7/8): the instrumented
++        comprehension battery (research/runners/pi203_write_path_tap.py) found that the ONLY writes that move the
++        comprehension organ's mask-frozen synapses are the Hebbian potentiation (sim/bridge.py:11045) and the Hebbian
++        decay (sim/bridge.py:11071) -- i.e. the sites the 2026-09-02 fix covers, not the six sites the #203 residual
++        fix covers. A caller that arms only cfg.enforce_plastic_mask_beyond_hebbian would therefore get a mask that is
++        enforced everywhere EXCEPT the two sites that actually move the organ. The umbrella env var already arms both;
++        this makes the cfg fields behave the same way, so "enforcement on" means enforcement on.
+         """
+-        return self._plastic_mask_enforced(cfg, "enforce_plastic_mask_in_hebbian")
++        return (self._plastic_mask_enforced(cfg, "enforce_plastic_mask_in_hebbian")
++                or self._plastic_mask_enforced(cfg, "enforce_plastic_mask_beyond_hebbian"))
+ 
+     def _plastic_mask_for_remap(self):
+         """The per-synapse plastic mask to carry across a CSR-reordering rebuild, or None.
+diff --git a/tests/_plastic_mask_beyond_hebbian_scenario.py b/tests/_plastic_mask_beyond_hebbian_scenario.py
+index f87a6da5b..de3fa2122 100644
+--- a/tests/_plastic_mask_beyond_hebbian_scenario.py
++++ b/tests/_plastic_mask_beyond_hebbian_scenario.py
+@@ -11,6 +11,11 @@ Six isolated rules, each a single weight-write site or bookkeeping path in sim/b
+               re-ordering the mask was never carried through
+   combined  - scaling + structural elimination + reward modulation on ONE bridge, i.e. all three masked write
+               sites live at once (the integration case the individual rules cannot show)
++  hebbian   - the Hebbian LTP + decay + clip itself, armed ONLY through cfg.enforce_plastic_mask_beyond_hebbian
++              (the 2026-09-02 fix's own flag, cfg.enforce_plastic_mask_in_hebbian, left OFF in BOTH arms). This is
++              the rule the 2026-10-31 comprehension-battery instrument found to be the ONLY mover of the organ's
++              frozen synapses: arming the umbrella field must arm the Hebbian sites too, or the freeze covers every
++              site except the ones that actually write.
+ 
+ Each run builds a small bridge (6 neurons; 8 for `compaction`, whose eliminated set must sit BETWEEN surviving
+ populations for the re-packing to shift any index at all) with TWO measured populations:
+@@ -99,6 +104,10 @@ def _base_cfg(rule, seed):
+         cfg.enable_synaptic_scaling = True          # so the control population moves (positive control)
+         cfg.homeostasis_target_rate = 0.9
+         cfg.synaptic_scaling_rate = 0.05
++    elif rule == "hebbian":
++        cfg.enable_hebbian_learning = True
++        cfg.hebbian_learning_rate = 0.1
++        cfg.hebbian_weight_decay = 1e-4
+     return cfg
+ 
+ 
+@@ -159,15 +168,23 @@ def run(rule, enforce=False, seed=42, w0=None):
+         "reward": 100.0,      # above hebbian_max_weight -> the clip itself is the mover
+         "combined": 100.0,    # clipped, then weak -> the three sites in sequence
+         "rebuild": 20.0,
++        "hebbian": 20.0,      # above hebbian_max_weight: LTP, decay and the clip all move it
+     }[rule] if w0 is None else w0
+ 
+     os.environ["SIM_BACKEND"] = "numpy"
+-    if enforce:
++    if rule == "hebbian":
++        # Deliberately NOT the umbrella env var: this rule measures whether cfg.enforce_plastic_mask_beyond_hebbian
++        # ALONE reaches the Hebbian write sites. With the env var set, both flags are on and the rule proves nothing.
++        os.environ.pop("BRAIN_ENFORCE_PLASTIC_MASK", None)
++    elif enforce:
+         os.environ["BRAIN_ENFORCE_PLASTIC_MASK"] = "1"
+     else:
+         os.environ.pop("BRAIN_ENFORCE_PLASTIC_MASK", None)
+ 
+     cfg = _base_cfg(rule, seed)
++    if rule == "hebbian":
++        cfg.enforce_plastic_mask_beyond_hebbian = enforce
++        cfg.enforce_plastic_mask_in_hebbian = False   # the 2026-09-02 flag stays OFF in both arms
+     if rule == "compaction":
+         # default 1000 steps would never trigger inside a 600-step probe
+         _gpu = GPUConfig()
+diff --git a/tests/test_comprehension_frozen_flat.py b/tests/test_comprehension_frozen_flat.py
+new file mode 100644
+index 000000000..cc8ee7cb5
+--- /dev/null
++++ b/tests/test_comprehension_frozen_flat.py
+@@ -0,0 +1,150 @@
++"""Selftest for the #203 follow-up: the PRODUCTION comprehension organ, read 30 times, with its frozen synapses flat.
++
++The #203 merge (main `dc6abf989`, `cfg.enforce_plastic_mask_beyond_hebbian`, umbrella env `BRAIN_ENFORCE_PLASTIC_MASK`,
++DEFAULT OFF) gates six write sites, and its reply arm found the flag changes the pooled comprehension organ's reply
++ZERO times. The 2026-09-02 read-isolation audit (research/findings/2026-09-02-read-isolation-audit-29runner-followup-map-plus-a-bigger-adjacent-bug.md)
++had measured the opposite on the organ it actually ran: max weight drift 13.8 after ONE read, 56.1 after 30 reads of
++one sentence, on the 1710 internal recurrent `sel_* <-> sel_FS_*` synapses declared `plastic_internal=False`.
++
++This test closes the gap on the SAME protocol, DEV seeds only (7, 8 -- the generalization seeds 42/43/44/100/101/102
++are untouched by this instrument), and pins down both directions:
++
++  (1) frozen_flat_on   -- 30 successive reads of one sentence, flag ON: every synapse the plastic mask calls
++                          frozen is BIT-UNCHANGED (max|dw| == 0.0 exactly), and no write to cp_connections.data
++                          touches a frozen entry at all.
++  (2) drift_off_is_real -- the identical protocol with the flag OFF still drifts (> 0). Without this the ON-arm
++                          zero would be vacuous: a run that never fires also produces a zero.
++  (3) instrument_is_inert -- the write tap (research/runners/pi203_write_path_tap.py) is an observer: tapped and
++                          untapped runs of the same cell produce byte-identical reply digests. A measurement tool
++                          that changes what it measures is not a measurement.
++
++Runs on numpy (forced): no GPU, deterministic, ~25 s total.
++"""
++import os
++
++import numpy as np
++import pytest
++
++os.environ.setdefault("SIM_BACKEND", "numpy")
++
++READS = 30
++SENTENCE = "the monkey grab the box"
++TEACHER_FLAGS = {
++    "BRAIN_LEARNED_ANIMACY_CUE": "1",
++    "BRAIN_LEARNED_VERB_SELECTS": "1",
++    "BRAIN_LEARNED_ANIMACY_LESION": "0",
++    "BRAIN_LEARNED_VERB_SELECTS_LESION": "0",
++}
++
++
++def _set_env(enforce: bool) -> None:
++    for k, v in TEACHER_FLAGS.items():
++        os.environ[k] = v
++    os.environ["BRAIN_ENFORCE_PLASTIC_MASK"] = "1" if enforce else "0"
++
++
++def _coords(bridge) -> dict:
++    """(pre, post) coordinate -> weight. Identity-based, so a CSR re-ordering cannot fake a zero."""
++    coo = bridge.cp_connections.tocoo()
++    return {(int(r), int(c)): float(v) for r, c, v in zip(coo.row, coo.col, coo.data)}
++
++
++def _frozen_coords(bridge) -> set:
++    mask = getattr(bridge, "cp_synapse_plastic_mask", None)
++    if mask is None:
++        return set()
++    mask = np.asarray(mask)
++    coo = bridge.cp_connections.tocoo()
++    return {(int(r), int(c)) for k, (r, c) in enumerate(zip(coo.row, coo.col))
++            if k < mask.size and not mask[k]}
++
++
++def _arm(enforce: bool, seed: int, tap: bool) -> dict:
++    """Run READS successive reads of one sentence on the organ the audit measured, and report the drift."""
++    _set_env(enforce)
++    from research.runners.comprehension_production_organ import ComprehensionProductionOrgan
++    from research.runners import pi203_write_path_tap as tapmod
++
++    organ = ComprehensionProductionOrgan(seed=seed)
++    organ.ensure_built()
++    bridge = organ.comp.bridge
++    if tap:
++        tapmod.install_tap(bridge)
++
++    coords_before = _coords(bridge)
++    frozen = _frozen_coords(bridge)
++    labels_before = tapmod._mask_label_by_coord(bridge) if tap else {}
++    for _ in range(READS):
++        organ.judge(SENTENCE)
++    coords_after = _coords(bridge)
++
++    common = set(coords_before) & set(coords_after)
++    frozen_drift = {cc: abs(coords_after[cc] - coords_before[cc]) for cc in common if cc in frozen}
++    plastic_drift = {cc: abs(coords_after[cc] - coords_before[cc]) for cc in common if cc not in frozen}
++    sites = tapmod._aggregate(tapmod._LOG) if tap else []
++    return {
++        "n_frozen": len(frozen),
++        "frozen_max_abs_drift": max(frozen_drift.values(), default=0.0),
++        "frozen_synapses_drifted": sum(1 for d in frozen_drift.values() if d > 1e-9),
++        "plastic_max_abs_drift": max(plastic_drift.values(), default=0.0),
++        "plastic_synapses_drifted": sum(1 for d in plastic_drift.values() if d > 1e-9),
++        "sites_touching_frozen": [s for s in sites if s["frozen_sum_abs_delta"] > 0],
++        "csr_rebuilds": getattr(tapmod, "_REBUILDS", [0])[0] if tap else 0,
++        "mask_labels_changed": (sum(1 for cc, lab in tapmod._mask_label_by_coord(bridge).items()
++                                    if cc in labels_before and lab != labels_before[cc]) if tap else 0),
++        "signed_residual": (sum(s["frozen_potentiation"] - s["frozen_depression"] for s in sites)
++                            - sum(coords_after[cc] - coords_before[cc] for cc in common if cc in frozen)),
++    }
++
++
++@pytest.mark.parametrize("seed", [7, 8])
++def test_frozen_synapses_flat_over_30_reads_when_flag_on(seed):
++    """The audit's protocol, flag ON: 30 reads, every declared-frozen synapse bit-unchanged."""
++    r = _arm(enforce=True, seed=seed, tap=True)
++    assert r["n_frozen"] > 0, "the organ has no frozen synapses at all -- the test would be vacuous"
++    assert r["frozen_max_abs_drift"] == 0.0, (
++        "flag ON but %d frozen synapses still moved (max |dw| %s): a write path escapes the mask"
++        % (r["frozen_synapses_drifted"], r["frozen_max_abs_drift"]))
++    assert not r["sites_touching_frozen"], (
++        "flag ON but a write still landed on a frozen synapse: %s" % r["sites_touching_frozen"])
++    # The tap must account for every change it sees; a nonzero signed residual means a write escaped the hooks.
++    assert abs(r["signed_residual"]) < 1e-6, "the tap cannot account for the drift it did not record: %s" % r["signed_residual"]
++
++
++@pytest.mark.parametrize("seed", [7, 8])
++def test_the_drift_is_real_when_the_flag_is_off(seed):
++    """Non-vacuity guard: the same protocol without the flag DOES move the frozen synapses."""
++    r = _arm(enforce=False, seed=seed, tap=True)
++    assert r["frozen_synapses_drifted"] > 0, (
++        "the flag-OFF arm shows no frozen drift: either the defect is fixed by something else, or this probe "
++        "is not reaching the pathway the 2026-09-02 audit measured -- do not read the ON-arm zero as a fix")
++    # A nonzero residual in the OFF arm is not an instrument bug: it is the mask-misalignment defect (v) --
++    # a CSR rebuild re-orders synapses and, with the flag OFF, the mask is never remapped, so the position-based
++    # frozen split disagrees with the coordinate-based drift. The ON arm above has no rebuild-driven misalignment.
++    if abs(r["signed_residual"]) > 1e-6:
++        assert r["csr_rebuilds"] > 0, (
++            "the tap missed writes worth %s with NO CSR rebuild to explain it: the per-site table is wrong"
++            % r["signed_residual"])
++
++
++def test_the_tap_does_not_change_what_it_measures():
++    """Instrument inertness: tapped and untapped runs of the same cell give byte-identical replies."""
++    from research.runners._comprehension_learned_cues_joint_arm import all_items
++    from research.runners.comprehension_production_organ import ComprehensionProductionOrgan, extract_transitive
++    from research.runners import pi203_write_path_tap as tapmod
++
++    def replies(tap: bool) -> list:
++        _set_env(False)
++        organ = ComprehensionProductionOrgan(seed=7)
++        organ.ensure_built()
++        if tap:
++            tapmod.install_tap(organ.comp.bridge)
++        out = []
++        for label, n0, v, n1 in all_items():
++            text = f"the {n0} {v} the {n1}"
++            tr = extract_transitive(text)
++            out.append((label, organ.judge(text), organ.competent(*tr) if tr else None))
++        return out
++
++    a, b = replies(True), replies(False)
++    assert a == b, "the write tap changed the organ's replies: %s vs %s" % (a[:3], b[:3])
+diff --git a/tests/test_plastic_mask_beyond_hebbian.py b/tests/test_plastic_mask_beyond_hebbian.py
+index 999e85e30..98b850183 100644
+--- a/tests/test_plastic_mask_beyond_hebbian.py
++++ b/tests/test_plastic_mask_beyond_hebbian.py
+@@ -41,10 +41,10 @@ _REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+ _SCENARIO_REL = os.path.join("tests", "_plastic_mask_beyond_hebbian_scenario.py")
+ _FLAG_TOKEN = "enforce_plastic_mask_beyond_hebbian"
+ SEEDS = (42, 43, 44, 100, 101, 102)
+-RULES = ("scaling", "structural", "reward", "rebuild", "compaction", "combined")
++RULES = ("scaling", "structural", "reward", "rebuild", "compaction", "combined", "hebbian")
+ # the smallest OFF-arm drift each rule must show (the bug the instrument is meant to see)
+ _OFF_DRIFT_MIN = {"scaling": 5.0, "structural": 0.01, "reward": 10.0, "rebuild": 5.0,
+-                  "compaction": 1.0, "combined": 10.0}
++                  "compaction": 1.0, "combined": 10.0, "hebbian": 5.0}
+ _ON_DRIFT_MAX = 1e-9
+ 
+ 

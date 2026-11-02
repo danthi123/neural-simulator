@@ -1,0 +1,21 @@
+{
+  "schema": "pi-driver-config-v1",
+  "_doc": "Pi driver config (docs/plans/2026-10-30-pi-driver-harness-DESIGN.md). Copy to <state_dir>/config.json; PI_DRIVER_CONFIG points at it. Read by the sim-driver extension and supervisor.py.",
+  "workspace": "/home/dant123/Projects/neural-simulator-pi",
+  "merge_repo": "/home/dant123/Projects/neural-simulator",
+  "results_root": "/home/sim/runtime",
+  "state_dir": "/var/lib/pi-driver",
+  "status_dir": "/var/lib/host-status/pi-driver",
+  "lane_file": "research/coordination/PI_LANE.md",
+  "w_base_url": "http://192.168.0.68:8080/v1",
+  "w_model": "strata-q2_0",
+  "mimo_model": "xiaomi/mimo-v2.6-pro",
+  "mimo_daily_usd": 1.0,
+  "mimo_execute_fallback": false,
+  "claude_daily_calls": 6,
+  "claude_bin": "claude",
+  "claude_timeout_min": 45,
+  "wait_poll_s": 120,
+  "stall_min": 30,
+  "park_retry_min": 10
+}

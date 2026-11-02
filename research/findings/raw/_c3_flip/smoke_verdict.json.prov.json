@@ -1,0 +1,33 @@
+{
+ "run_id": "1793457559-45080",
+ "runner": "research/runners/c3_flip_compare.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/research/runners/c3_flip_compare.py",
+  "--on",
+  "research/findings/raw/_c3_flip/smoke_on",
+  "--off",
+  "research/findings/raw/_c3_flip/smoke_off",
+  "--seeds",
+  "7,8",
+  "--out",
+  "research/findings/raw/_c3_flip/smoke_verdict.json"
+ ],
+ "git_sha": "3a0f5e61e",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-31T10:39:19",
+ "env": {},
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 3449.3,
+ "corpus_check_query": "BG live seam step-1 grid: STN/GPe tonic drive x seed, host-share seam (prereg 2026-09-29-bg-live-seam-retirement)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_c3_flip/smoke_verdict.json"
+}

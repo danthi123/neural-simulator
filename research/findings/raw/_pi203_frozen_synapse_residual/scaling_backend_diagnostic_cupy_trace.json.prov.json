@@ -1,0 +1,36 @@
+{
+ "run_id": "1793487950-3620354",
+ "runner": "research/runners/pi203_scaling_backend_diagnostic.py",
+ "argv": [
+  "/home/dant123/derisk-pool/revisions/ca3cfa6be31f57281e264a94cafb5da1f54d46a6-1793487897/research/runners/pi203_scaling_backend_diagnostic.py",
+  "--backend",
+  "cupy",
+  "--seeds",
+  "42,43",
+  "--prereg",
+  "research/findings/2026-09-24-plastic-mask-flip-PREREGISTRATION.md",
+  "--out",
+  "research/findings/raw/_pi203_frozen_synapse_residual/scaling_backend_diagnostic_cupy_trace.json"
+ ],
+ "git_sha": "ca3cfa6be",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-31T19:05:50",
+ "env": {
+  "OMP_NUM_THREADS": "1",
+  "SIM_BACKEND": "cupy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 237858.4,
+ "corpus_check_query": "spiking winner-take-all feedback inhibition recruits too late, conductance overshoot rebound, more pools fire; feedforward inhibition / fast FS recruitment",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_pi203_frozen_synapse_residual/scaling_backend_diagnostic_cupy_trace.json"
+}

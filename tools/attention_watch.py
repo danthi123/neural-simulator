@@ -18,8 +18,10 @@ Events already reported are suppressed for REPEAT_H hours (state file outside th
 
 Checks: W GPU idle with an empty queue; a GPU job exiting non-zero; a degraded brain build in the GPU log
 (missing untracked inputs); an oom-kill; S NEEDS CLAUDE lines; the S driver silent; the S pool idle or not claiming;
-a recent RULING whose requested [key] report no later driver line mentions after RULE_STALE_H hours.
+a recent RULING whose requested [key] report no later driver line mentions after RULE_STALE_H hours; a driver STOP
+written only in the WORKLOG that no RULING answers.
 """
+import datetime
 import argparse, json, os, re, subprocess, sys, time
 
 def _shared_root():
@@ -40,11 +42,16 @@ S_EXEC = ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=15", "homelab-serv
           "docker", "exec", "-u", "99", "-e", "HOME=/opt/data/home", "hermes", "bash", "-c"]
 REPEAT_H = 6.0          # re-report a still-true event after this long
 GPU_IDLE_MIN = 30       # W GPU queue empty and idle this long
+GPU_HELD_MIN = 30       # W gpu_queue has jobs but none running this long (VRAM held outside the queue)
 DRIVER_SILENT_H = 3.0   # S runbook not written this long
 POOL_STALL_MIN = 60     # S pool has queued lines but no claim this long
+PI_STATUS = "/var/lib/host-status/pi-driver/status.json"   # tools/pi_driver supervisor.py writes it
+PI_SILENT_MIN = 20      # Pi driver status not refreshed this long (the supervisor writes every 5 s)
+PI_RESTARTS = 5         # Pi driver restarts worth a look (one alert per 5)
 BIG_STARVE_MIN = 90     # a >= 8 GB pool line queued this long while small lines are claimed = starvation
 RULE_STALE_H = 24.0     # a requested [key] report not mentioned by the driver this long after its RULING
 RULE_LOOKBACK_D = 4
+STOP_LOOKBACK_D = 2     # driver STOP lines this recent need a RULING naming their [key]
 
 
 def sh(cmd, timeout=60):
@@ -74,6 +81,11 @@ def w_checks(st, now):
     rc, out = sh(["bash", os.path.join(REPO, "tools/gpu_queue.sh"), "status"])
     paused = "PAUSED" in out
     idle = "current: (idle)" in out and re.search(r"queued: 0\b", out) is not None
+    # an empty queue is not an idle GPU when something outside the queue holds it (the local model, a trial):
+    # >4 GB in use means occupied
+    _, mem = sh(["nvidia-smi", "--query-gpu=memory.used", "--format=csv,noheader,nounits"], timeout=15)
+    if mem.strip().split("\n")[0].strip().isdigit() and int(mem.strip().split("\n")[0]) > 4096:
+        idle = False
     if idle and not paused:
         st["gpu_idle_since"] = st.get("gpu_idle_since") or now
         mins = (now - st["gpu_idle_since"]) / 60
@@ -81,6 +93,21 @@ def w_checks(st, now):
             ev.append(("w-gpu-idle", f"W GPU idle {mins:.0f} min with an empty gpu_queue (not paused): stock GPU work"))
     else:
         st["gpu_idle_since"] = None
+    # the opposite stall: jobs queued, none running, not paused. On 2026-10-31 an orphaned local-model engine held
+    # 21 GB of VRAM for 5 h; the dispatcher held every job and w-gpu-idle stayed silent because the queue was not empty.
+    m_q = re.search(r"queued: (\d+)", out)
+    held = "current: (idle)" in out and m_q is not None and int(m_q.group(1)) > 0
+    if held and not paused:
+        st["gpu_held_since"] = st.get("gpu_held_since") or now
+        mins = (now - st["gpu_held_since"]) / 60
+        if mins >= GPU_HELD_MIN:
+            _, apps = sh(["nvidia-smi", "--query-compute-apps=pid,used_memory,process_name",
+                          "--format=csv,noheader"], timeout=15)
+            big = "; ".join(l.strip() for l in apps.splitlines() if "MiB" in l and int(l.split(",")[1].split()[0]) > 1024)
+            ev.append(("w-gpu-held", f"W gpu_queue has {m_q.group(1)} job(s) held {mins:.0f} min with nothing running "
+                                     f"(not paused); VRAM holders: {big or 'none >1 GB'}"))
+    else:
+        st["gpu_held_since"] = None
     log = os.path.join(REPO, "research/queue/gpu_queue.log")
     try:
         size = os.path.getsize(log)
@@ -123,9 +150,11 @@ echo "@@NEEDS"
 awk '/^## NEEDS CLAUDE/{f=1;next} f&&/^Format/{exit} f&&/^- 20/' $rb
 echo "@@RULINGS"
 awk -v c="$(date -d '-%(days)d days' +%%Y-%%m-%%d)" '/^## 6\. RULINGS/{f=1;next} /^## NEEDS CLAUDE/{f=0} f{ if ($0 ~ /^- 20[0-9][0-9]-/) keep=(substr($2,1,10)>=c); if (keep) print }' $rb
+echo "@@PI"
+cat %(pi_status)s 2>/dev/null | tr -d '\n'; echo
 echo "@@TAIL"
 sed -n '/^## NEEDS CLAUDE/,$p' $rb | tail -n 800
-""" % {"repo": S_REPO, "days": RULE_LOOKBACK_D}
+""" % {"pi_status": PI_STATUS, "repo": S_REPO, "days": RULE_LOOKBACK_D}
 
 
 def s_checks(now, local=False):
@@ -159,8 +188,10 @@ def s_checks(now, local=False):
                    f"{(s_now - big_old) / 60:.0f} min, while small lines keep being claimed (backfill starvation): hold the small lines"))
     for line in sec.get("NEEDS", []):
         ev.append((f"s-needs-{abs(hash(line)) % 10**8}", f"S NEEDS CLAUDE: {line[:260]}"))
+    ev += pi_checks(" ".join(sec.get("PI") or []), s_now)
     # ruled-task staleness: a [key] the ruling asks the driver to post, mentioned by no later non-RULING line
     tail = "\n".join(sec.get("TAIL", []))
+    tail_l = tail.lower()
     block, blocks = None, []
     for line in sec.get("RULINGS", []):
         m = re.match(r"^- (20\d\d-\d\d-\d\d)(?: (\d\d:\d\d))? RULING (\S+)", line)
@@ -169,15 +200,52 @@ def s_checks(now, local=False):
             blocks.append(block)
         elif block is not None:
             block["text"] += "\n" + line
-    for b in blocks:
+    for n, b in enumerate(blocks):
+        later_l = "\n".join(x["text"] for x in blocks[n + 1:]).lower()  # a later RULING that already handled it
         age_h = (now - time.mktime(time.strptime(b["date"], "%Y-%m-%d"))) / 3600
         if age_h < RULE_STALE_H:
             continue
+        if _mentioned(tail_l, b["name"]):
+            continue  # the driver cites the ruling by name: the task has started
         for key in sorted(set(re.findall(r"[Pp]ost (?:NEEDS )?\[([a-z0-9][a-z0-9-]*)\]", b["text"]))):
-            if f"[{key}]" not in tail:
+            if not _mentioned(tail_l, key) and f"[{key}]" not in later_l:
                 ev.append((f"s-rule-{b['name']}-{key}",
                            f"S ruled task not started: RULING {b['name']} ({b['date']}) asks for [{key}]; no driver line mentions it"))
+    # a driver STOP written only in the WORKLOG (not on the NEEDS list) that no RULING has answered (2026-10-28:
+    # [bg-tonic-sync] STOP sat six hours unseen because the NEEDS list was empty)
+    rulings_l = "\n".join(sec.get("RULINGS", [])).lower()
+    cutoff = time.strftime("%Y-%m-%d", time.localtime(now - STOP_LOOKBACK_D * 86400))
+    for m in re.finditer(r"^- (20\d\d-\d\d-\d\d)(?: \d\d:\d\d)? \[([a-z0-9][a-z0-9-]*)\] STOP\b(.{0,160})", tail, re.M):
+        if m.group(1) >= cutoff and f"[{m.group(2)}]" not in rulings_l:
+            ev.append((f"s-stop-{m.group(2)}", f"S driver STOP [{m.group(2)}] ({m.group(1)}) has no RULING: {m.group(3).strip()}"))
     return ev
+
+
+def pi_checks(raw, s_now):
+    """The Pi sim driver (tools/pi_driver/README.md): silent when it is not deployed (no status file)."""
+    try:
+        st = json.loads(raw)
+    except ValueError:
+        return []
+    ev = []
+    # parse the UTC offset too: dropping it read the 2026-11-01 DST change (-0400 -> -0500) as an hour of silence
+    try:
+        updated = datetime.datetime.fromisoformat(st["updated"]).timestamp()
+    except ValueError:
+        updated = time.mktime(time.strptime(st["updated"][:19], "%Y-%m-%dT%H:%M:%S"))
+    if s_now - updated >= PI_SILENT_MIN * 60:
+        ev.append(("s-pi-silent", f"S Pi driver: status.json not updated for {(s_now - updated) / 60:.0f} min (supervisor down?)"))
+    for need in st.get("needs", []):
+        ev.append((f"s-pi-need-{abs(hash(need)) % 10**8}", f"S Pi driver NEEDS: {need[:260]}"))
+    if st.get("restarts", 0) >= PI_RESTARTS:
+        ev.append((f"s-pi-restarts-{st['restarts'] // PI_RESTARTS}", f"S Pi driver restarted {st['restarts']} times: {st.get('status', '')[:160]}"))
+    return ev
+
+
+def _mentioned(tail_l, key):
+    """A key counts as mentioned in its bracket form or as words (driver prose writes [bg-t3] as "BG T3")."""
+    key = key.lower()
+    return f"[{key}]" in tail_l or key in tail_l or key.replace("-", " ") in tail_l
 
 
 def run_once(st, now, record, host="auto"):

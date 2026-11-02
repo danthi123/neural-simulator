@@ -20,6 +20,10 @@ THE READS (made once per full step-0 worker, after the teach block, before any `
       `input_gain`: the patient pools that fire per block, V'_P (their union in block order) beside the decoded stored
       patients; and the full probe `block_cleanup_scores_full` as a cross-check under the P10 treatment (clip at 0,
       every reserve slot -- `_silent_reserve(j)` True -- zeroed, compared on the non-reserve slots).
+      With BRAIN_C2_COMPOSER_PATIENT_INHIB on (2026-10-31), production itself relays every block's patient slice (through
+      the composer's patient-inhibition bridge, `_ensure_sequencer` -> `_seq_patient_drives`), and the fired pools of (c)
+      are the pools PRODUCTION lit, read from those drives (plus `relay_recheck_same_pools`: this read's own slice relayed
+      through the same function lights the same pools). Flag off: the divnorm relay above, unchanged.
   (f) every premise-map cue of the table (2.9) on the bound store (decoded rows) and the LTM (`ltm.query_patient`,
       `all_candidate_patients` on the routed shard), plus the record-only `.kb` audit counts per tier.
   The worker itself records (d) `chat._last_gnw_delib` per probe turn, (e) the D4 recorder and the teach replies'
@@ -317,6 +321,7 @@ def read_b(buf, rows):
         out["drives_lit"] = [[int((dA > 0).sum()), int((dX > 0).sum())] for dA, dX in buf._seq_drives]
         out["drives_lit_words"] = [[[buf.words[j] for j in range(len(dA)) if dA[j] > 0],
                                     [buf.words[j] for j in range(len(dX)) if dX[j] > 0]] for dA, dX in buf._seq_drives]
+        out["c2dw"] = read_b_drive_record(buf)
     except Exception as e:
         out.update(_err(e))
         return out
@@ -348,6 +353,8 @@ def read_b(buf, rows):
                 fired = [b for b in range(K) if m[b] > thr]
                 c.update(decision=dec, winner=SG._jsonable(rates.get("winner")), m_rates=[m[b] for b in range(K)],
                          spurious_dropped=spur, sequencer_block=fns["decision_to_block"](dec, K))
+                if getattr(sb, "_c2_drain_record", None) is not None:      # record only (RULING c2-drain-wta-1101)
+                    c["drain"] = dict(sb._c2_drain_record)
             else:
                 c.update(decision=None, winner=None, m_rates=None, sequencer_block=None)
             c["fired"] = fired
@@ -361,12 +368,194 @@ def read_b(buf, rows):
     return out
 
 
+def read_b_drive_record(buf):
+    """RULING c2-drain-wta-1101 (corrected S0b logging, every arm): the C2 drain/WTA flags as set in this worker, the
+    drive source `_ensure_sequencer` used (`_seq_role_info`: mode, inhibitory spikes vs ceiling, row-shuffle perm), and
+    each block's agent/action pool spike counts (`_seq_drive_accs`, per block, per role, per word; nonzero entries only,
+    indexed by the SOURCE row, i.e. before any row shuffle). `accs_recorded` False = the drives were built without the
+    record (UNDEFINED for the scorer)."""
+    import numpy as np
+    from research.runners import _c2_role_drives as RD
+    from research.runners._phaseB_onebrain_sequencerK_derisk import _quiet_drain_steps
+    rec = {"flags": RD.flags_record(), "quiet_drain": _quiet_drain_steps()}
+    info = getattr(buf, "_seq_role_info", None)
+    rec["role_info"] = SG._jsonable(info) if info is not None else None
+    accs = getattr(buf, "_seq_drive_accs", None)
+    rec["accs_recorded"] = bool(accs) and len(accs) == len(buf._seq_drives)
+    if rec["accs_recorded"]:
+        rec["accs"] = [[{buf.words[j]: float(v[j]) for j in np.flatnonzero(np.asarray(v) > 0)} for v in (aA, aX)]
+                       for aA, aX in accs]
+    return rec
+
+
+# ═══════════════════════════════════ STEP 0b: local feedback inhibition among the patient word pools ═══════════════════════
+# c2-s0-result-1029: the step-0 read (c) lit 3-6 patient pools per block because divisive normalization divides but nothing
+# makes the pools compete. The missing companion process is local feedback inhibition (E->I->E, soft winner-take-all): ONE
+# shared fast-spiking population on the score bridge, excited by every word pool and projecting inhibitory synapses back onto
+# them. Runner-side only (a separate score bridge built here with the same word-pool layout, flags and seed as the composer's
+# `build_divnorm_score_bridge`, plus the `pinh` region; the inhibitory sign comes from the region being exc_fraction=0, the
+# precedent of `inh{b}` in _seq_vocab_shrink_derisk.py). No sim/ edit, no composer edit, default OFF: the baseline read_c path
+# is untouched unless `C2S0_PATIENT_INHIB` is set. NOT a cross-channel divnorm pool (the 2026-09-03 NO-GO): E->I->E feedback
+# restricted to the V word pools of this one bridge. No host argmax / threshold / top-k: only spiking synapses compete.
+PATIENT_INHIB_ENV = "C2S0_PATIENT_INHIB"
+PATIENT_INHIB_MODES = ("off", "on", "lesion", "all", "ff", "ff_lesion", "ffx", "ffx_lesion", "composer")
+# step 0d: `ffx` = arms ffx_off + ffx (+ I->E sweep arms ffx@g) + ffx_lesion on a score bridge built with
+# cfg.input_divisive_norm_external_only=True (the divisive stage divides only the external drive; sim/ flag, default OFF);
+# `ffx_lesion` = the lesion arm alone. The WORD pools are read directly.
+# step 0c (feedforward inhibition, c2 ruling after the 0b NO-GO): `ff` = arms stable_off + ff + ff_lesion (all on the
+# stable-integration bridge), `ff_lesion` = the lesion arm alone. See the finding 2026-10-29-c2-step0b-patient-inhibition.md.
+INHIB_DEFAULTS = {"ff_gain": 3e-4, "ff_w_i2e": 40.0, "ffx_w_i2e": 2.0, "w_relay": 300.0, "relay_w_i2e": 5.0, "n_inh": 30, "w_e2i": 60.0, "w_i2e": 320.0, "izh_type": "IZH2007_FS_CORTICAL_INTERNEURON", "settle": 20}
+STEP0B_STOP_LINES = (
+    "S0B_lesion_equals_on: STOP if the lesion arm (same population, I->E zeroed) reads identically to the `on` arm "
+    "(per block, same fired_pools): the inhibition is not load-bearing.",
+    "S0C_lesion_equals_on / S0C_on_not_one_correct_pool: the same two lines for the feedforward arms (`ff` vs `ff_lesion`).",
+    "S0B_on_not_one_correct_pool: STOP if any block in `on` fires more than one pool, fires a pool that is not the decoded "
+    "patient, or fires zero pools (over-suppression).",
+)
+
+
+# `composer` (owner ruling c2-s0d-score-1029): arms `composer_ffx` + `composer_ffx_lesion`, read on the composer's OWN flag-on
+# bridge (`OneBrainComposer.patient_inhib_bridge`, env BRAIN_C2_COMPOSER_PATIENT_INHIB, research/runners/_c2_patient_inhib.py)
+# instead of the runner-built twin. Same per-block fields as `ffx`; the lesion arm is the composer bridge with w_i2e=0.
+COMPOSER_ARMS = ("composer_ffx", "composer_ffx_lesion")
+
+
+def patient_inhib_env():
+    v = os.environ.get(PATIENT_INHIB_ENV, "off") or "off"
+    if v not in PATIENT_INHIB_MODES:
+        raise ValueError("%s=%r not in %s" % (PATIENT_INHIB_ENV, v, PATIENT_INHIB_MODES))
+    return v
+
+
+def patient_inhib_knobs():
+    k = dict(INHIB_DEFAULTS)
+    for name, cast in (("n_inh", int), ("w_e2i", float), ("w_i2e", float), ("settle", int)):
+        e = os.environ.get("C2S0_INHIB_" + name.upper())
+        if e not in (None, ""):
+            k[name] = cast(e)
+    e = os.environ.get("C2S0_INHIB_FF_GAIN")
+    if e:
+        k["ff_gain"] = float(e)
+    e = os.environ.get("C2S0_INHIB_FF_W_I2E")
+    if e:
+        k["ff_w_i2e"] = float(e)
+    e = os.environ.get("C2S0_INHIB_FFX_W_I2E")
+    if e:
+        k["ffx_w_i2e"] = float(e)
+    sw = os.environ.get("C2S0_INHIB_FFX_SWEEP")
+    k["sweep_ffx_w_i2e"] = [float(x) for x in sw.split(",")] if sw else []
+    sw = os.environ.get("C2S0_INHIB_FF_SWEEP")
+    k["sweep_ff_gain"] = [float(x) for x in sw.split(",")] if sw else []
+    sw = os.environ.get("C2S0_INHIB_SWEEP")                  # step 0b's ONE allowed gain sweep: extra `on@<w_i2e>` arms
+    k["sweep_w_i2e"] = [float(x) for x in sw.split(",")] if sw else []
+    return k
+
+
+from research.runners._c2_patient_inhib import build_inhib_score_bridge, onbridge_inhib_drive  # noqa: E402,F401  (moved verbatim; shared with the composer)
+
+
+def _inhib_arm_specs(mode, knobs):
+    """{arm: dict(w_i2e, ff_gain, stable)}. 0b arms (on/lesion/on@g) are the feedback-only build on the default-integration
+    bridge; 0c arms (stable_off/ff/ff_lesion/ff@g) are ALL on the stable-integration bridge so they differ only in the FF
+    inhibition (stable_off = the population built, no FF drive, I->E zero)."""
+    spec = {}
+    if mode in ("on", "all"):
+        spec["on"] = dict(w_i2e=knobs["w_i2e"], ff_gain=0.0, stable=False)
+    if mode in ("lesion", "all"):
+        spec["lesion"] = dict(w_i2e=0.0, ff_gain=0.0, stable=False)
+    if mode in ("on", "all"):
+        for g in knobs.get("sweep_w_i2e") or []:
+            spec["on@%g" % g] = dict(w_i2e=g, ff_gain=0.0, stable=False)
+    if mode == "ff":
+        spec["stable_off"] = dict(w_i2e=0.0, ff_gain=0.0, stable=True)
+        spec["ff"] = dict(w_i2e=knobs["ff_w_i2e"], ff_gain=knobs["ff_gain"], stable=True)
+        for g in knobs.get("sweep_ff_gain") or []:
+            spec["ff@%g" % g] = dict(w_i2e=knobs["ff_w_i2e"], ff_gain=g, stable=True)
+    if mode in ("ff", "ff_lesion"):
+        spec["ff_lesion"] = dict(w_i2e=0.0, ff_gain=knobs["ff_gain"], stable=True)
+    if mode == "ffx":
+        spec["ffx_off"] = dict(w_i2e=0.0, ff_gain=0.0, stable=True, ext=True)
+        spec["ffx"] = dict(w_i2e=knobs["ffx_w_i2e"], ff_gain=knobs["ff_gain"], stable=True, ext=True)
+        for g in knobs.get("sweep_ffx_w_i2e") or []:
+            spec["ffx@%g" % g] = dict(w_i2e=g, ff_gain=knobs["ff_gain"], stable=True, ext=True)
+    if mode in ("ffx", "ffx_lesion"):
+        spec["ffx_lesion"] = dict(w_i2e=0.0, ff_gain=knobs["ff_gain"], stable=True, ext=True)
+    if mode == "ff":      # the relay variant (inhibition delivered AFTER the divnorm stage, onto unflagged relay pools)
+        spec["ffr"] = dict(w_i2e=knobs["relay_w_i2e"], ff_gain=knobs["ff_gain"], stable=True, relay=knobs["w_relay"])
+        spec["ffr_lesion"] = dict(w_i2e=0.0, ff_gain=knobs["ff_gain"], stable=True, relay=knobs["w_relay"])
+    return spec
+
+
+def _inhib_bridges(buf, mode, knobs):
+    """{arm: (bridge, ff_gain)} for the requested mode."""
+    out = {}
+    if mode == "composer":
+        from research.runners import _c2_patient_inhib as CI
+        if not CI.composer_patient_inhib_enabled():
+            raise ValueError("%s=composer needs %s=1" % (PATIENT_INHIB_ENV, CI.COMPOSER_PATIENT_INHIB_ENV))
+        for arm, w in (("composer_ffx", None), ("composer_ffx_lesion", 0.0)):
+            out[arm] = (CI.composer_patient_inhib_bridge(buf, w), CI.COMPOSER_KNOBS["ff_gain"], "w")
+        return out
+    for arm, sp in _inhib_arm_specs(mode, knobs).items():
+        sb = build_inhib_score_bridge(buf.seed, int(buf.V), buf.sequencer_sigma, buf.sequencer_gain,
+                                      n_inh=knobs["n_inh"], w_e2i=knobs["w_e2i"], w_i2e=sp["w_i2e"],
+                                      izh_type=knobs["izh_type"], ref_sb=buf._seq_score, stable=sp["stable"], w_relay=sp.get("relay"), external_only=sp.get("ext", False))
+        out[arm] = (sb, sp["ff_gain"], "r" if sp.get("relay") else "w")
+    return out
+
+
+def score_step0b(blocks):
+    import numpy as np
+    """Per arm: blocks with exactly one pool firing that equals the decoded patient, and the two registered STOP lines."""
+    res = {"arms": {}, "stop_lines": list(STEP0B_STOP_LINES), "stops": []}
+    arms = sorted({a for b in blocks for a in (b.get("inhib") or {})})
+    for arm in arms:
+        rows = [b["inhib"][arm] for b in blocks if arm in (b.get("inhib") or {}) and "fired_pools" in b["inhib"][arm]]
+        res["arms"][arm] = {"n_blocks": len(rows),
+                            "one_correct": sum(1 for r in rows if r["fires_decoded_patient"]),
+                            "multi": sum(1 for r in rows if r["n_fired"] > 1),
+                            "zero": sum(1 for r in rows if r["n_fired"] == 0),
+                            "wrong": sum(1 for r in rows if r["n_fired"] == 1 and not r["fires_decoded_patient"]),
+                            "inh_spikes_total": float(sum(r["inh_spikes"] for r in rows))}
+    for on, les in (("on", "lesion"), ("ff", "ff_lesion"), ("ffr", "ff" + "r_lesion"), ("ffx", "ffx_lesion"), ("composer_ffx", "composer_ffx_lesion")):
+        tag = {"on": "S0B", "ff": "S0C", "ffr": "S0C_relay", "ffx": "S0D", "composer_ffx": "S0D_composer"}[on]
+        if on in res["arms"]:
+            a = res["arms"][on]
+            if a["multi"] or a["wrong"] or a["zero"]:
+                res["stops"].append(tag + "_on_not_one_correct_pool")
+        if on in res["arms"] and les in res["arms"]:
+            same = all((b["inhib"][on].get("fired_pools") == b["inhib"][les].get("fired_pools"))
+                       for b in blocks if on in (b.get("inhib") or {}) and les in (b.get("inhib") or {}))
+            res["lesion_equals_on" if on == "on" else "%s_equals_%s" % (les, on)] = bool(same)
+            from tools.lab import attributable_to      # whose is the drop in fired pools: the I->E synapses, or the shared drive?
+            mean_n = lambda arm: float(np.mean([b["inhib"][arm]["n_fired"] for b in blocks if arm in (b.get("inhib") or {})]))
+            res["fired_pools_drop_attributable_to_" + on] = attributable_to("patient inhib %s (mean pools fired)" % on,
+                                                                           mean_n(les), mean_n(on))
+            if same:
+                res["stops"].append(tag + "_lesion_equals_on")
+    for arm in [a for a in res["arms"] if a.startswith("ffx") or a.startswith("composer_ffx")]:     # 0d: physiological conductance + FS-first + drive margin
+        rr = [b["inhib"][arm] for b in blocks if arm in (b.get("inhib") or {})]
+        res["arms"][arm].update(max_abs_v=max(r["max_abs_v"] for r in rr), max_g_i=max(r["max_g_i"] for r in rr),
+                                g_i_unphysiological_over_50nS=bool(max(r["max_g_i"] for r in rr) > 50.0),
+                                pinh_first_in_all_blocks=all(
+                                    r["first_spike_step_pinh"] >= 0 and all(r["first_spike_step_pinh"] <= v
+                                                                           for v in r["first_spike_step_pools"].values()) for r in rr))
+    ff = [b["inhib"]["ff"] for b in blocks if "ff" in (b.get("inhib") or {})]
+    if ff:      # physical validity + FS-first
+        res["ff_max_abs_v"] = max(r["max_abs_v"] for r in ff)
+        res["ff_max_g_i"] = max(r["max_g_i"] for r in ff)
+        res["ff_pinh_first_in_all_blocks"] = all(
+            r["first_spike_step_pinh"] >= 0 and all(r["first_spike_step_pinh"] <= v for v in r["first_spike_step_pools"].values())
+            for r in ff)
+    return res
+
+
 def read_c(buf, rows):
     import numpy as np
     from sim.backend import to_host
     from research.runners.one_brain_composer import _seq_imports
-    from research.runners._phaseC_S5_divnorm_derisk import onbridge_divnorm_drive
     from research.runners._phaseC_task1_cleanup_probe import block_cleanup_scores_full
+    from research.runners import _c2_patient_inhib as CI
     fns = _seq_imports()
     out = {}
     try:
@@ -376,6 +565,18 @@ def read_c(buf, rows):
         nonres = ~reserve
         out.update(K=K, V=V, patient_row_index=iP, n_reserve_slots=int(reserve.sum()),
                    input_gain=float(buf.sequencer_input_gain), score_bridge_built=buf._seq_score is not None)
+        inhib_mode = patient_inhib_env()
+        inhib_knobs = patient_inhib_knobs()
+        inhib_sbs = _inhib_bridges(buf, inhib_mode, inhib_knobs) if inhib_mode != "off" else {}
+        if inhib_sbs:
+            out["patient_inhib"] = dict(mode=inhib_mode, knobs=inhib_knobs)
+        prod_pdrives = None
+        if CI.composer_patient_inhib_enabled():                # BRAIN_C2_COMPOSER_PATIENT_INHIB: production relays patients
+            buf._ensure_sequencer(K)                            # no-op when read (b) built it at this K (guarded state)
+            prod_pdrives = buf._seq_patient_drives
+            out["patient_relay"] = dict(source="production _seq_patient_drives (BRAIN_C2_COMPOSER_PATIENT_INHIB on)",
+                                        w_i2e=float(CI.COMPOSER_KNOBS["w_i2e"] if CI.composer_patient_inhib_w_i2e() is None
+                                                    else CI.composer_patient_inhib_w_i2e()))
         blocks = []
         for b in range(K):
             blk = {"block": b, "decoded_patient": rows[b].get("patient") if b < len(rows) else None}
@@ -383,13 +584,43 @@ def read_c(buf, rows):
                 ag, ax = fns["block_cleanup_scores"](buf, b)          # the production read (agent + action slices)
                 mem = np.asarray(to_host(buf.b.cp_membrane_potential_v)).astype(float)
                 pslice = np.maximum(mem[buf.c_base + iP * V: buf.c_base + (iP + 1) * V], 0.0)   # read right after it
-                _drive, acc = onbridge_divnorm_drive(buf._seq_score, V, pslice, buf.sequencer_input_gain)
+                if prod_pdrives is not None:
+                    # flag ON: read what PRODUCTION lit (`_ensure_sequencer`'s patient relay through the composer's
+                    # inhibition bridge), not a re-implementation; plus a re-check that this read's own slice, relayed
+                    # through the same production relay, lights the same pools.
+                    acc = np.asarray(buf._seq_patient_relay[b]["acc"], dtype=float)
+                    lit_prod = [buf.words[j] for j in range(V) if prod_pdrives[b][j] > 0]
+                    _d2, acc2, _i2 = CI.composer_patient_relay(buf, pslice)
+                    blk.update(patient_relay=dict({k: v for k, v in buf._seq_patient_relay[b].items() if k != "acc"},
+                                                  source="production _seq_patient_drives"),
+                               relay_recheck_same_pools=lit_prod == [buf.words[j] for j in range(V) if acc2[j] > 0])
+                else:
+                    # flag OFF: production builds no patient relay; the packet 2.3 relay (`onbridge_divnorm_drive` on the
+                    # composer's score bridge), now called through the shared production relay function (byte-identical).
+                    _drive, acc, _info = CI.composer_patient_relay(buf, pslice)
                 fired = [buf.words[j] for j in range(V) if acc[j] > 0]
                 order = [int(j) for j in np.argsort(-pslice)[:3]]
                 blk.update(fired_pools=fired, n_fired=len(fired), exactly_one=len(fired) == 1,
                            fires_decoded_patient=fired == [blk["decoded_patient"]],
                            pool_spikes={buf.words[j]: float(acc[j]) for j in range(V) if acc[j] > 0},
-                           patient_slice_top=[[buf.words[j], float(pslice[j])] for j in order])
+                           patient_slice_top=[[buf.words[j], float(pslice[j])] for j in order],
+                           patient_slice_nz={buf.words[j]: float(pslice[j]) for j in range(V) if pslice[j] > 0})
+                if inhib_sbs:                                       # step 0b only; absent when the env flag is off
+                    blk["inhib"] = {}
+                    for arm, (isb, ffg, rd) in inhib_sbs.items():
+                        tr = {}
+                        iacc, ispk = onbridge_inhib_drive(isb, V, pslice, buf.sequencer_input_gain,
+                                                          settle=inhib_knobs["settle"], ff_gain=ffg, trace=tr, read=rd)
+                        ifired = [buf.words[j] for j in range(V) if iacc[j] > 0]
+                        blk["inhib"][arm] = dict(fired_pools=ifired, n_fired=len(ifired),
+                                                 fires_decoded_patient=ifired == [blk["decoded_patient"]],
+                                                 pool_spikes={buf.words[j]: float(iacc[j]) for j in range(V) if iacc[j] > 0},
+                                                 inh_spikes=ispk, ff_gain=ffg,
+                                                 first_spike_step_pools={buf.words[j]: tr["first_spike_step"][j] for j in range(V)
+                                                                         if j in tr["first_spike_step"]},
+                                                 first_spike_step_pinh=tr["first_spike_step_pinh"],
+                                                 max_abs_v=tr["max_abs_v"], max_g_i=tr["max_g_i"],
+                                                 ff_current_pA=tr["ff_current_pA"])
                 probe = block_cleanup_scores_full(buf, b)           # the cross-check (wires every slot, reserves too)
                 cmp = {}
                 for role, prod, ri in (("agent", ag, iA), ("action", ax, iX), ("patient", pslice, iP)):
@@ -405,6 +636,8 @@ def read_c(buf, rows):
                 blk.update(_err(e))
             blocks.append(blk)
         out["blocks"] = blocks
+        if inhib_sbs:
+            out["step0b"] = score_step0b(blocks)
         vp = []
         for blk in blocks:
             for w in blk.get("fired_pools") or []:
@@ -1012,7 +1245,35 @@ def main():
     ap.add_argument("--out", default=None, help="write the score JSON here")
     ap.add_argument("--emit-pool-lines", default=None, metavar="SHA", help="print the step-0 pool lines (TSV)")
     ap.add_argument("--mem-gb", type=int, default=MEM_GB)
+    ap.add_argument("--patient-inhib", default="off", choices=PATIENT_INHIB_MODES,
+                    help="step 0b: patient-pool feedback inhibition for the seed-7 worker of --smoke-0b (off = the current "
+                         "step 0; on / lesion; all = both arms from the same cleanup rows)")
+    ap.add_argument("--smoke-0b", default=None, metavar="OUT", help="run one step-0 worker at a dev seed (7), write the shard")
+    ap.add_argument("--smoke-seed", type=int, default=7, help="dev seed for --smoke-0b (gate seeds refused)")
+    ap.add_argument("--inhib-n", type=int, default=None)
+    ap.add_argument("--inhib-w-e2i", type=float, default=None)
+    ap.add_argument("--inhib-w-i2e", type=float, default=None)
+    ap.add_argument("--inhib-ffx-w-i2e", type=float, default=None)
+    ap.add_argument("--inhib-ffx-sweep", default=None, help="comma list of I->E gains for step 0d (the ONE allowed sweep, <=4)")
+    ap.add_argument("--inhib-ff-gain", type=float, default=None)
+    ap.add_argument("--inhib-ff-w-i2e", type=float, default=None)
+    ap.add_argument("--inhib-ff-sweep", default=None, help="comma list of extra FF gains (the ONE allowed 0c sweep, <=4)")
+    ap.add_argument("--inhib-sweep", default=None, help="comma list of extra I->E gains (the ONE allowed sweep, <=4)")
     a = ap.parse_args()
+    if a.smoke_0b:
+        import subprocess
+        if a.smoke_seed in SG.GATE_SEEDS:
+            ap.error("step 0b is dev seeds only")
+        env = dict(os.environ, SIM_BACKEND=os.environ.get("SIM_BACKEND", "numpy"), **{PATIENT_INHIB_ENV: a.patient_inhib})
+        if a.patient_inhib == "composer":
+            env["BRAIN_C2_COMPOSER_PATIENT_INHIB"] = "1"
+        for k, v in (("N_INH", a.inhib_n), ("W_E2I", a.inhib_w_e2i), ("W_I2E", a.inhib_w_i2e), ("SWEEP", a.inhib_sweep),
+                     ("FFX_W_I2E", a.inhib_ffx_w_i2e), ("FFX_SWEEP", a.inhib_ffx_sweep),
+                     ("FF_GAIN", a.inhib_ff_gain), ("FF_W_I2E", a.inhib_ff_w_i2e), ("FF_SWEEP", a.inhib_ff_sweep)):
+            if v is not None:
+                env["C2S0_INHIB_" + k] = str(v)
+        sys.exit(subprocess.call([sys.executable, "-u", "-m", "research.runners.stage2_exit_gate", "--shard", "--seed", str(a.smoke_seed),
+                                  "--group", GROUP, "--arm", TABLE_ARMS[GROUP], "--out", a.smoke_0b], env=env, cwd=_REPO))
     seeds = tuple(int(s) for s in a.seeds.split(",")) if a.seeds else SEEDS
     if any(s in SG.GATE_SEEDS for s in seeds):
         ap.error("step 0 is dev seeds only")

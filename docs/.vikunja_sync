@@ -335,3 +335,30 @@ Board #238 updated: feasibility check complete, RESULT PROVISIONAL research/cs-r
 
 ## 2026-10-28  docsync-1028 (Claude)
 #273 emotion fix ON by default (0b79336ec), C3 gate prereg + identity canary queued (7/32 in), C2 packet merged after nine review rounds; #238 cs-race f1i STOP and f1j (A-NMDA) packet merged. Docs synced: GAP_CLOSURE_MISSION state header, ROADMAP.md, master roadmap sections 2, 7 and 8.
+
+## 2026-10-31  pi lane #203 follow-up (board text to apply; this box has NO Vikunja token)
+
+- #203: the plastic-mask freeze merged (dc6abf989), merge_review APPROVED. Board state to set: CLOSED with the
+  label "additive, DEFAULT-OFF; owner flip still gated by 2026-09-24-plastic-mask-flip-PREREGISTRATION.md".
+- #203 follow-up: DONE. The comprehension organ's frozen drift is entirely the Hebbian LTP + decay writes
+  (sim/bridge.py:11055 / 11081: frozen delta 26883.72 seed 7, 31018.10 seed 8, decay 3045.99 / 3332.76); the six
+  sites the merge gated never fire in that organ. Root cause of the zero-reply-change paradox:
+  `_hebbian_plastic_mask_enforced` read only `enforce_plastic_mask_in_hebbian`, so the umbrella cfg field alone
+  left the Hebbian writes permissive (the env var arms both, masking it). Now it honours EITHER field.
+  The pooled wave3 organ makes ZERO weight writes in the battery -- that is why the reply arm saw nothing.
+  Reply margins move at most 0.01875 (seed 7) / 0.0375 (seed 8); competence unchanged on all 25 items.
+- Next rungs to add: (a) cupy-backend confirmation of the mask gating before any default flip (the GPU lane);
+  (b) the owner flip decision per the 2026-09-24 prereg; (c) why the pooled organ plasticizes nothing during the
+  comprehension battery (its Hebbian path is gated off by the experiment engine) -- is that the intended brain
+  state or a second defect?
+
+
+## 2026-11-01  c3-flip-landed
+- C3 topic stop + phasic DA flipped default ON (merge 41d76bdbe, finding 2026-11-01-c3-flip-gate-RESULT.md): board #276 created DONE;
+  #277 opened (DA-mode suffix punctuation after a bare abstain, FAILURE_LOG 2026-11-01). #203 update appended earlier today.
+
+## 2026-11-01  c2-gatereset-score
+Board #273 note: C2 gate reset merged OFF (misses 4->0, false fires 57->78); S0b next.
+
+## 2026-11-01  backlog-flip-false-positives
+Board #85 and #191 notes appended: gnw-thought-swap (superseded by swap-drives-response) and wkv-mouth-learned-head (flip_blocked) are not flip candidates. self-model-reward-residual (flip_blocked, wire first) has no board task of its own; none created.

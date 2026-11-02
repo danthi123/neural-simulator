@@ -1,0 +1,32 @@
+{
+ "run_id": "1793481708-3273776",
+ "runner": "research/runners/pi203_cupy_backend_confirmation.py",
+ "argv": [
+  "/home/dant123/derisk-pool/revisions/73910c0066a598d90eecf34ff3a126638e719c63-1793481644/research/runners/pi203_cupy_backend_confirmation.py",
+  "--backend",
+  "cupy",
+  "--out",
+  "research/findings/raw/_pi203_frozen_synapse_residual/backend_confirmation_cupy.json"
+ ],
+ "git_sha": "73910c006",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-31T17:21:48",
+ "env": {
+  "OMP_NUM_THREADS": "1",
+  "SIM_BACKEND": "cupy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 231616.9,
+ "corpus_check_query": "spiking winner-take-all feedback inhibition recruits too late, conductance overshoot rebound, more pools fire; feedforward inhibition / fast FS recruitment",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_pi203_frozen_synapse_residual/backend_confirmation_cupy.json"
+}

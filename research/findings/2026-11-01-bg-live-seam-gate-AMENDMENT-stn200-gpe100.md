@@ -5,17 +5,17 @@ date: 2026-11-01
 mechanism: bg-live-seam-retirement, amendment 2 (the gate run on preset-centred, bounded, sub-stepped cells at stn200_gpe100)
 amends: research/findings/2026-09-29-bg-live-seam-retirement-PREREGISTRATION.md (as amended by research/findings/2026-10-14-bg-live-seam-commit-AMENDMENT.md)
 seeds: [42, 43, 44, 100, 101, 102]
-verdict: PRE-REGISTRATION AMENDMENT DRAFT only. Not in force until Claude signs it (section 9). No gate seed of this build has run.
+verdict: PRE-REGISTRATION AMENDMENT, signed by Claude 2026-11-01 (section 9). No gate seed of this build had run when it was signed.
 runner: research/runners/host_share_bg_seam.py
 ---
 
-# Amendment 2 (DRAFT) to the BG live-seam retirement: the gate on stn200_gpe100
+# Amendment 2 to the BG live-seam retirement: the gate on stn200_gpe100
 
 host-decision: none — this amendment pins runner env and adds report-only instrument fields; every decision stays in the spiking organ (heard/hold -> D1 race, GPi/thalamus gate, spiking commit stage). The residual host steps are the ones the 10-14 amendment declared (word rendering, the trial schedule, the commit read threshold, the env flags).
 
 bar-sanity: N/A no new bar is registered here; every bar is the 09-29 / 10-14 registered bar, verbatim (the 10-14 G4 record is docs/drafts/bg-commit/bar_sanity_record_bg_commit_g4.json)
 
-**Status: DRAFT for Claude to sign.** Written by a build agent (RULING bg-gate-1101). It changes no bar, no arm, no
+**Status: SIGNED (section 9).** Written by a build agent (RULING bg-gate-1101). It changes no bar, no arm, no
 turn, no schedule and no frozen row. It is not in force until section 9 carries Claude's signature, and no gate line
 may be queued before that.
 
@@ -205,9 +205,15 @@ the capability (a basal-ganglia hold shaped by tonic pallidal activity). Next me
 
 ## 9. Signature
 
-Not signed. Claude signs here (date, revision checked, the STOP-5 blocker's ruling) before any line of
-`research/coordination/bg-gate-1101-pool-lines.tsv` is queued. Until then this document is a DRAFT and registers
-nothing.
+**Signed: Claude, 2026-11-01 23:40 EST.** Revision checked: code pin `218a3378c873ea38415a6aa7f62effc21b410ff1` on
+branch `research/bg-gate-amend-1101` (branch head `e5ac1c5fc4fc04fb9022237736dd0c10e1ee4b3a`), reviewed by an independent
+adversarial reviewer (MERGEABLE, 79 BG tests passed at the pin, all 24 pool lines pass `canary_preconditions.py check-line`,
+no registered bar or verdict-rule text changed against the 09-29 prereg and the 10-14 amendment). STOP-5 ruling: narrow
+the identity comparison to the golden's own arrays, with the set difference required to be exactly the two OpenGL
+visualization buffers when PyOpenGL imports (section 5.1). STOP-4 ruling: report-only, per-region rest-relative bound
+beside the raw count (section 6). The credit statement of section 3 binds any GO read from this gate. The pool lines are
+released only after the canary of the first gate line PASSES (section 5.2). This signed copy is committed on S main;
+the code stays on the branch and is reached through the pinned revision.
 
 ## 10. Honesty boundary
 

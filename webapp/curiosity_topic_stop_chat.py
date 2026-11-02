@@ -1,6 +1,8 @@
-"""C3 per-topic ask stop (L) and topic-locked phasic DA (P) on the production curiosity follow-up. Default OFF.
+"""C3 per-topic ask stop (L) and topic-locked phasic DA (P) on the production curiosity follow-up. L and P default ON.
 
-Flags (each default OFF; unset or anything but 1/true/on/yes is off):
+Flags (L and P default ON since RULING c3-flip-1029 passed its gate on the six gate seeds, 2026-11-01: unset reads
+on, an explicit 0/false/off/no turns one off. The lesion and battery flags stay default OFF: unset or anything but
+1/true/on/yes is off):
   BRAIN_CURIOSITY_TOPIC_STOP         L: the follow-up decision is read off the conversation's topic-stop organ
                                      (research/runners/curiosity_topic_stop_organ.py, method 2's per-topic
                                      depressing slices onto an ASK pool) instead of the shared-pool ASK read.
@@ -15,7 +17,7 @@ Flags (each default OFF; unset or anything but 1/true/on/yes is off):
                                      handler never reaches this module).
   BRAIN_CURIOSITY_PHASIC_DA_LESION   lesion_P: the phasic afferent pinned to 0 (the tonic afferent intact).
 
-With every flag off nothing here runs: `topic_stop_enabled()` is False, the handler skips this module entirely, no
+With L explicitly off (BRAIN_CURIOSITY_TOPIC_STOP=0) nothing here runs: `topic_stop_enabled()` is False, the handler skips this module entirely, no
 Context attribute is created and no trace key is attached, so the turn is byte-identical to main.
 
 STATE AND ISOLATION. The organ and the turn clock live on THIS conversation's `Context` (webapp/one_brain.py: one per
@@ -37,8 +39,12 @@ def _flag(name: str) -> bool:
     return os.environ.get(name, "0").strip().lower() in _TRUE
 
 
+def _flag_default_on(name: str) -> bool:
+    return os.environ.get(name, "1").strip().lower() not in ("0", "false", "off", "no")
+
+
 def topic_stop_enabled() -> bool:
-    return _flag("BRAIN_CURIOSITY_TOPIC_STOP")
+    return _flag_default_on("BRAIN_CURIOSITY_TOPIC_STOP")
 
 
 def topic_stop_lesioned() -> bool:
@@ -46,7 +52,7 @@ def topic_stop_lesioned() -> bool:
 
 
 def phasic_da_enabled() -> bool:
-    return _flag("BRAIN_CURIOSITY_PHASIC_DA")
+    return _flag_default_on("BRAIN_CURIOSITY_PHASIC_DA")
 
 
 def phasic_da_lesioned() -> bool:

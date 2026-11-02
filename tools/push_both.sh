@@ -16,7 +16,9 @@ rc=0
 for R in origin gitea; do
   GIT_TERMINAL_PROMPT=0 timeout 120 git push "$R" "$BRANCH" >/dev/null 2>&1
   # Ground truth: ask the REMOTE what it has. A cached remote-tracking ref would happily agree with a failed push.
-  REMOTE=$(GIT_TERMINAL_PROMPT=0 timeout 60 git ls-remote "$R" "refs/heads/$BRANCH" 2>/dev/null | awk '{print $1}')
+  # Ask through the PUSH url: on S the fetch url is anonymous https (private repo -> no read) and only the ssh push
+  # url carries a key, so an ls-remote on the fetch url failed every verify there (2026-11-01).
+  REMOTE=$(GIT_TERMINAL_PROMPT=0 timeout 60 git ls-remote "$(git remote get-url --push "$R")" "refs/heads/$BRANCH" 2>/dev/null | awk '{print $1}')
   if [ "$REMOTE" = "$LOCAL" ]; then
     echo "  OK   $R -> ${LOCAL:0:8}"
   else

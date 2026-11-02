@@ -35,6 +35,9 @@
 #   PASS  rc 0, at least one JSON result written under the output paths, and no JSON result carrying an error
 #         (a non-empty string `error` or any non-empty `_error` value): a runner that catches an exception per
 #         turn or per part still exits 0, so rc alone is not a pass (host_share and sleep_transitive_inference).
+#         AND, when tools/canary_preconditions.json registers a checker for the runner, the registered scorer reads
+#         the canary's own output and every declared precondition holds (`pre=ok(...)` in the evidence; 2026-10-31).
+#         A line that omits a flag the registry requires is not launched at all (exit 2, nothing recorded).
 #   FAIL  anything else, except a line whose own `tools/mem_ok.sh` refused to start it: that says nothing about
 #         the runner, so it is INCONCLUSIVE (exit 3, nothing recorded) -- as is a job still running at --wait-s.
 # Exit 0 on PASS, 1 on FAIL, 3 on inconclusive, 2 on a usage error.
@@ -243,6 +246,11 @@ cmd_run() {
   [ -n "$rev" ] || { echo "⛔ the line is not pinned (cd ~/derisk-pool/revisions/<sha>): nothing to key a canary on" >&2; exit 2; }
   sha=$(full_sha "$rev")
   valid_field "$line" || { echo "⛔ the line contains a control character" >&2; exit 2; }
+  local flag_why
+  if ! flag_why=$(python3 "$ROOT/tools/canary_preconditions.py" check-line "$line" 2>&1); then
+    echo "⛔ not launched: $flag_why (tools/canary_preconditions.json). Fix the line; nothing recorded." >&2
+    exit 2
+  fi
   if [ "$node" = auto ]; then
     local need
     need=$(printf '%s' "$raw" | grep -oE 'mem_gb=[0-9]+' | head -1 | cut -d= -f2)
@@ -325,7 +333,24 @@ printf "%s\t%s\t%s\n" "$start" "$(date +%s)" "$rc" > ~/derisk-pool/canary/"$CANA
   if [ "$rc" = 0 ] && [ "$nbad" = 0 ] && [ "$unread" = 0 ] && [ "$nfiles" != "?" ] && [ "$nfiles" -ge 1 ]; then
     verdict=PASS
   fi
-  ev="rc=$rc wall=${wall}s json=$nfiles errors=$nbad unreadable=$unread tracebacks=$tb id=$id"
+  # THE SCORER'S PRECONDITIONS (2026-10-31, tools/canary_preconditions.py). A mechanical PASS proves the line RAN;
+  # the step-1 BG grid (64 cells, ~80 CPU-hours) ran without --commit after a PASSING canary and its registered
+  # scorer read every set UNDEFINED. When the runner has a registered checker, its scorer reads this canary's own
+  # output on the node (pinned revision, the line's interpreter) and every declared precondition must hold. A
+  # checker that cannot resolve or run is a FAIL, never a skip.
+  local pre_ev="pre=none" spec pre_out pre_ok=1
+  if [ "$verdict" = PASS ]; then
+    if ! spec=$(python3 "$ROOT/tools/canary_preconditions.py" resolve "$([ "$exact" = 1 ] && printf '%s' "$line" || printf '%s' "$pre$post")" 2>&1); then
+      pre_ok=0; pre_ev="pre=FAIL(${spec//$'\n'/ })"
+    elif [ -n "$spec" ]; then
+      pre_out=$(POOL_CANARY_SSH_TIMEOUT="${POOL_CANARY_PRE_TIMEOUT_S:-1900}" rssh "$node" "cd ~/derisk-pool/revisions/$rev && printf '%s' $(base64 -w0 < "$ROOT/tools/canary_preconditions.py") | base64 -d > ~/derisk-pool/canary/$id.pre.py && python3 ~/derisk-pool/canary/$id.pre.py node-run $(printf '%s' "$spec" | base64 -w0)" 2>/dev/null)
+      pre_ev=$(printf '%s' "$pre_out" | tail -1 | python3 -c 'import json,sys; print(json.load(sys.stdin)["summary"])' 2>/dev/null) \
+        || pre_ev="pre=FAIL(the precondition read returned no result: $(printf '%s' "$pre_out" | tail -1 | cut -c1-120))"
+      case "$pre_ev" in pre=ok*) ;; *) pre_ok=0 ;; esac
+    fi
+    [ "$pre_ok" = 1 ] || verdict=FAIL
+  fi
+  ev="rc=$rc wall=${wall}s json=$nfiles errors=$nbad unreadable=$unread tracebacks=$tb $pre_ev id=$id"
   [ "$verdict" = PASS ] || ev="$ev tail: $tail_txt"
   [ "$exact" = 1 ] && ev="$ev (exact line)"
   append_record "$mod" "$sha" "$verdict" "$node" "$kind" "pool_canary.sh run (plain ssh)" "$ev"

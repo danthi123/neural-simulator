@@ -1,0 +1,9 @@
+{
+  "backend": "numpy",
+  "device": "cpu",
+  "host": "unknown",
+  "retro_stamped": true,
+  "revision": "507b9c7890e680ae5d607f9dff4d49cad33d3944",
+  "source": "research/coordination/bg-step1-substep4-pool-lines.txt:70 (SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES=)",
+  "stamped_by": "driver per RULING bg-prov-1029"
+}

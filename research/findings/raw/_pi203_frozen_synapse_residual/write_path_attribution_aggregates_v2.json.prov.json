@@ -1,0 +1,33 @@
+{
+ "run_id": "1793482737-30209",
+ "runner": "research/runners/pi203_write_path_aggregates.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator-pi/research/runners/pi203_write_path_aggregates.py",
+  "--src",
+  "research/findings/raw/_pi203_frozen_synapse_residual/write_path_attribution_v2.json",
+  "--out",
+  "research/findings/raw/_pi203_frozen_synapse_residual/write_path_attribution_aggregates_v2.json",
+  "--cupy-src",
+  "research/findings/raw/_pi203_frozen_synapse_residual/backend_confirmation_cupy.json"
+ ],
+ "git_sha": "ea191d5f5",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-31T17:38:57",
+ "env": {
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "host": "b6ff652d08c8",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 14261.2,
+ "corpus_check_query": "frozen synapse drift comprehension organ write path attribution",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_pi203_frozen_synapse_residual/write_path_attribution_aggregates_v2.json"
+}

@@ -1,0 +1,831 @@
+FFFFFFFFFFFFF..F....                                                     [100%]
+=================================== FAILURES ===================================
+___________ test_frozen_synapses_flat_over_30_reads_when_flag_on[7] ____________
+
+seed = 7
+
+    @pytest.mark.parametrize("seed", [7, 8])
+    def test_frozen_synapses_flat_over_30_reads_when_flag_on(seed):
+        """The audit's protocol, flag ON: 30 reads, every declared-frozen synapse bit-unchanged."""
+>       r = _arm(enforce=True, seed=seed, tap=True)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_comprehension_frozen_flat.py:106: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_comprehension_frozen_flat.py:86: in _arm
+    sites = tapmod._aggregate(tapmod._LOG) if tap else []
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+log = [{'site': 'instrument', 'function': 'install_tap', 'touched': 0, 'sum_abs_delta': 0.0, ...}, {'site': 'instrument', 'f...abs_delta': 0.0, ...}, {'site': 'instrument', 'function': 'install_tap', 'touched': 0, 'sum_abs_delta': 0.0, ...}, ...]
+
+    def _aggregate(log):
+        sites = {}
+        for rec in log:
+            s = sites.setdefault(rec["site"], {
+                "site": rec["site"], "function": rec["function"], "writes": 0, "touched": 0,
+                "sum_abs_delta": 0.0, "max_abs_delta": 0.0, "writes_touching_frozen": 0,
+                "frozen_touched": 0, "frozen_sum_abs_delta": 0.0, "frozen_max_abs_delta": 0.0,
+                "frozen_potentiation": 0.0, "frozen_depression": 0.0,
+            })
+            s["writes"] += 1
+            s["touched"] += rec["touched"]
+            s["sum_abs_delta"] += rec["sum_abs_delta"]
+            s["max_abs_delta"] = max(s["max_abs_delta"], rec["max_abs_delta"])
+            s["writes_touching_frozen"] += rec["frozen_writes"]
+            s["frozen_touched"] += rec["frozen_touched"]
+            s["frozen_sum_abs_delta"] += rec["frozen_sum_abs_delta"]
+            s["frozen_max_abs_delta"] = max(s["frozen_max_abs_delta"], rec["frozen_max_abs_delta"])
+>           s["frozen_potentiation"] += rec["frozen_potentiation"]
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'frozen_potentiation'
+
+research/runners/pi203_write_path_tap.py:398: KeyError
+----------------------------- Captured stdout call -----------------------------
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Created directory: simulation_checkpoints_h5/
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Created directory: simulation_recordings_h5/
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: RNG initialized with seed: 7
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 17:59:31][WARNING] SIM_BRIDGE: parameter heterogeneity is centred on the global defaults (cfg.izh_*_val / cfg.hh_*) and overwrites the presets of 2 region(s): sel_FS_agent, sel_FS_patient [IZH2007_FS_CORTICAL_INTERNEURON] (a 0.2->0.03, d 25->100, C 20->100); set preset_centred_parameter_heterogeneity=True to keep them
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24764 synapses across 14 populations.
+[2026-10-31 17:59:31][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24764. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 17:59:33][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 17:59:33][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 17:59:33][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 80 total neurons, 1 pathways.
+[2026-10-31 17:59:33][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 17:59:33][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 80 neurons...
+[2026-10-31 17:59:33][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 17:59:33][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 17:59:33][INFO] SIM_BRIDGE: Generating 3D neuron positions for 80 neurons...
+[2026-10-31 17:59:33][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-10-31 17:59:33][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1600 synapses across 1 populations.
+[2026-10-31 17:59:33][INFO] SIM_BRIDGE: Initializing eligibility traces for 1600 synapses (capacity: 2400, dtype: float32)...
+[2026-10-31 17:59:33][INFO] SIM_BRIDGE: Simulation data initialized for 80 neurons (3D). Synapses: 1600. GPU memory: 3.0GB/25.3GB (11.9%)
+___________ test_frozen_synapses_flat_over_30_reads_when_flag_on[8] ____________
+
+seed = 8
+
+    @pytest.mark.parametrize("seed", [7, 8])
+    def test_frozen_synapses_flat_over_30_reads_when_flag_on(seed):
+        """The audit's protocol, flag ON: 30 reads, every declared-frozen synapse bit-unchanged."""
+>       r = _arm(enforce=True, seed=seed, tap=True)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_comprehension_frozen_flat.py:106: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_comprehension_frozen_flat.py:86: in _arm
+    sites = tapmod._aggregate(tapmod._LOG) if tap else []
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+log = [{'site': 'instrument', 'function': 'install_tap', 'touched': 0, 'sum_abs_delta': 0.0, ...}, {'site': 'instrument', 'f...abs_delta': 0.0, ...}, {'site': 'instrument', 'function': 'install_tap', 'touched': 0, 'sum_abs_delta': 0.0, ...}, ...]
+
+    def _aggregate(log):
+        sites = {}
+        for rec in log:
+            s = sites.setdefault(rec["site"], {
+                "site": rec["site"], "function": rec["function"], "writes": 0, "touched": 0,
+                "sum_abs_delta": 0.0, "max_abs_delta": 0.0, "writes_touching_frozen": 0,
+                "frozen_touched": 0, "frozen_sum_abs_delta": 0.0, "frozen_max_abs_delta": 0.0,
+                "frozen_potentiation": 0.0, "frozen_depression": 0.0,
+            })
+            s["writes"] += 1
+            s["touched"] += rec["touched"]
+            s["sum_abs_delta"] += rec["sum_abs_delta"]
+            s["max_abs_delta"] = max(s["max_abs_delta"], rec["max_abs_delta"])
+            s["writes_touching_frozen"] += rec["frozen_writes"]
+            s["frozen_touched"] += rec["frozen_touched"]
+            s["frozen_sum_abs_delta"] += rec["frozen_sum_abs_delta"]
+            s["frozen_max_abs_delta"] = max(s["frozen_max_abs_delta"], rec["frozen_max_abs_delta"])
+>           s["frozen_potentiation"] += rec["frozen_potentiation"]
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'frozen_potentiation'
+
+research/runners/pi203_write_path_tap.py:398: KeyError
+----------------------------- Captured stdout call -----------------------------
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: RNG initialized with seed: 8
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 17:59:42][WARNING] SIM_BRIDGE: parameter heterogeneity is centred on the global defaults (cfg.izh_*_val / cfg.hh_*) and overwrites the presets of 2 region(s): sel_FS_agent, sel_FS_patient [IZH2007_FS_CORTICAL_INTERNEURON] (a 0.2->0.03, d 25->100, C 20->100); set preset_centred_parameter_heterogeneity=True to keep them
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24740 synapses across 14 populations.
+[2026-10-31 17:59:42][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24740. GPU memory: 3.0GB/25.3GB (11.9%)
+________________ test_the_drift_is_real_when_the_flag_is_off[7] ________________
+
+seed = 7
+
+    @pytest.mark.parametrize("seed", [7, 8])
+    def test_the_drift_is_real_when_the_flag_is_off(seed):
+        """Non-vacuity guard: the same protocol without the flag DOES move the frozen synapses."""
+>       r = _arm(enforce=False, seed=seed, tap=True)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_comprehension_frozen_flat.py:124: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_comprehension_frozen_flat.py:86: in _arm
+    sites = tapmod._aggregate(tapmod._LOG) if tap else []
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+log = [{'site': 'instrument', 'function': 'install_tap', 'touched': 0, 'sum_abs_delta': 0.0, ...}, {'site': 'instrument', 'f...abs_delta': 0.0, ...}, {'site': 'instrument', 'function': 'install_tap', 'touched': 0, 'sum_abs_delta': 0.0, ...}, ...]
+
+    def _aggregate(log):
+        sites = {}
+        for rec in log:
+            s = sites.setdefault(rec["site"], {
+                "site": rec["site"], "function": rec["function"], "writes": 0, "touched": 0,
+                "sum_abs_delta": 0.0, "max_abs_delta": 0.0, "writes_touching_frozen": 0,
+                "frozen_touched": 0, "frozen_sum_abs_delta": 0.0, "frozen_max_abs_delta": 0.0,
+                "frozen_potentiation": 0.0, "frozen_depression": 0.0,
+            })
+            s["writes"] += 1
+            s["touched"] += rec["touched"]
+            s["sum_abs_delta"] += rec["sum_abs_delta"]
+            s["max_abs_delta"] = max(s["max_abs_delta"], rec["max_abs_delta"])
+            s["writes_touching_frozen"] += rec["frozen_writes"]
+            s["frozen_touched"] += rec["frozen_touched"]
+            s["frozen_sum_abs_delta"] += rec["frozen_sum_abs_delta"]
+            s["frozen_max_abs_delta"] = max(s["frozen_max_abs_delta"], rec["frozen_max_abs_delta"])
+>           s["frozen_potentiation"] += rec["frozen_potentiation"]
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'frozen_potentiation'
+
+research/runners/pi203_write_path_tap.py:398: KeyError
+----------------------------- Captured stdout call -----------------------------
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: RNG initialized with seed: 7
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 17:59:51][WARNING] SIM_BRIDGE: parameter heterogeneity is centred on the global defaults (cfg.izh_*_val / cfg.hh_*) and overwrites the presets of 2 region(s): sel_FS_agent, sel_FS_patient [IZH2007_FS_CORTICAL_INTERNEURON] (a 0.2->0.03, d 25->100, C 20->100); set preset_centred_parameter_heterogeneity=True to keep them
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24764 synapses across 14 populations.
+[2026-10-31 17:59:51][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24764. GPU memory: 3.0GB/25.3GB (11.9%)
+________________ test_the_drift_is_real_when_the_flag_is_off[8] ________________
+
+seed = 8
+
+    @pytest.mark.parametrize("seed", [7, 8])
+    def test_the_drift_is_real_when_the_flag_is_off(seed):
+        """Non-vacuity guard: the same protocol without the flag DOES move the frozen synapses."""
+>       r = _arm(enforce=False, seed=seed, tap=True)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_comprehension_frozen_flat.py:124: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_comprehension_frozen_flat.py:86: in _arm
+    sites = tapmod._aggregate(tapmod._LOG) if tap else []
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+log = [{'site': 'instrument', 'function': 'install_tap', 'touched': 0, 'sum_abs_delta': 0.0, ...}, {'site': 'instrument', 'f...abs_delta': 0.0, ...}, {'site': 'instrument', 'function': 'install_tap', 'touched': 0, 'sum_abs_delta': 0.0, ...}, ...]
+
+    def _aggregate(log):
+        sites = {}
+        for rec in log:
+            s = sites.setdefault(rec["site"], {
+                "site": rec["site"], "function": rec["function"], "writes": 0, "touched": 0,
+                "sum_abs_delta": 0.0, "max_abs_delta": 0.0, "writes_touching_frozen": 0,
+                "frozen_touched": 0, "frozen_sum_abs_delta": 0.0, "frozen_max_abs_delta": 0.0,
+                "frozen_potentiation": 0.0, "frozen_depression": 0.0,
+            })
+            s["writes"] += 1
+            s["touched"] += rec["touched"]
+            s["sum_abs_delta"] += rec["sum_abs_delta"]
+            s["max_abs_delta"] = max(s["max_abs_delta"], rec["max_abs_delta"])
+            s["writes_touching_frozen"] += rec["frozen_writes"]
+            s["frozen_touched"] += rec["frozen_touched"]
+            s["frozen_sum_abs_delta"] += rec["frozen_sum_abs_delta"]
+            s["frozen_max_abs_delta"] = max(s["frozen_max_abs_delta"], rec["frozen_max_abs_delta"])
+>           s["frozen_potentiation"] += rec["frozen_potentiation"]
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'frozen_potentiation'
+
+research/runners/pi203_write_path_tap.py:398: KeyError
+----------------------------- Captured stdout call -----------------------------
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: RNG initialized with seed: 8
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:00][WARNING] SIM_BRIDGE: parameter heterogeneity is centred on the global defaults (cfg.izh_*_val / cfg.hh_*) and overwrites the presets of 2 region(s): sel_FS_agent, sel_FS_patient [IZH2007_FS_CORTICAL_INTERNEURON] (a 0.2->0.03, d 25->100, C 20->100); set preset_centred_parameter_heterogeneity=True to keep them
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24740 synapses across 14 populations.
+[2026-10-31 18:00:00][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24740. GPU memory: 3.0GB/25.3GB (11.9%)
+________________ test_the_tap_does_not_change_what_it_measures _________________
+
+    def test_the_tap_does_not_change_what_it_measures():
+        """Instrument inertness: tapped and untapped runs of the same cell give byte-identical replies."""
+        from research.runners._comprehension_learned_cues_joint_arm import all_items
+        from research.runners.comprehension_production_organ import ComprehensionProductionOrgan, extract_transitive
+        from research.runners import pi203_write_path_tap as tapmod
+    
+        def replies(tap: bool) -> list:
+            _set_env(False)
+            organ = ComprehensionProductionOrgan(seed=7)
+            organ.ensure_built()
+            if tap:
+                tapmod.install_tap(organ.comp.bridge)
+            out = []
+            for label, n0, v, n1 in all_items():
+                text = f"the {n0} {v} the {n1}"
+                tr = extract_transitive(text)
+                out.append((label, organ.judge(text), organ.competent(*tr) if tr else None))
+            return out
+    
+        a, b = replies(True), replies(False)
+        # digest, not structural float equality: "byte-identical" has to mean the same thing it means in the
+        # orchestrator (research/runners/pi203_write_path_attribution.py, instrument_control)
+        da, db = tapmod._digest(a), tapmod._digest(b)
+>       assert da == db, ("the write tap changed the organ's replies: tapped %s vs untapped %s "
+                          "(first three items differ: %s)" % (da[:16], db[:16], list(zip(a[:3], b[:3]))))
+E       AssertionError: the write tap changed the organ's replies: tapped faf567095183b9a9 vs untapped d54b1d18455cbc5f (first three items differ: [(('hand_chase', {'on': True, 'lesioned': False, 'in_scope': True, 'svo': ['dog', 'chase', 'cat'], 'margin': 0.07430555555555557, 'threshold': 0.22916666666666663, 'comprehended': False, 'calib': {'mean_well': 0.3333333333333333, 'min_well': 0.31875, 'mean_ill': 0.06736111111111111, 'max_ill': 0.1395833333333333, 'read_steps': 60, 'n_calib': 24}}, True), ('hand_chase', {'on': True, 'lesioned': False, 'in_scope': True, 'svo': ['dog', 'chase', 'cat'], 'margin': 0.07430555555555557, 'threshold': 0.22916666666666663, 'comprehended': False, 'calib': {'mean_well': 0.3333333333333333, 'min_well': 0.31875, 'mean_ill': 0.06736111111111111, 'max_ill': 0.1395833333333333, 'read_steps': 60, 'n_calib': 24}}, True)), (('hand_eat', {'on': True, 'lesioned': False, 'in_scope': True, 'svo': ['dog', 'eat', 'apple'], 'margin': 0.3416666666666667, 'threshold': 0.22916666666666663, 'comprehended': True, 'calib': {'mean_well': 0.3333333333333333, 'min_well': 0.31875, 'mean_ill': 0.06736111111111111, 'max_ill': 0.1395833333333333, 'read_steps': 60, 'n_calib': 24}}, True), ('hand_eat', {'on': True, 'lesioned': False, 'in_scope': True, 'svo': ['dog', 'eat', 'apple'], 'margin': 0.3416666666666667, 'threshold': 0.22916666666666663, 'comprehended': True, 'calib': {'mean_well': 0.3333333333333333, 'min_well': 0.31875, 'mean_ill': 0.06736111111111111, 'max_ill': 0.1395833333333333, 'read_steps': 60, 'n_calib': 24}}, True)), (('hand_push', {'on': True, 'lesioned': False, 'in_scope': True, 'svo': ['dog', 'push', 'rock'], 'margin': 0.33125000000000004, 'threshold': 0.22916666666666663, 'comprehended': True, 'calib': {'mean_well': 0.3333333333333333, 'min_well': 0.31875, 'mean_ill': 0.06736111111111111, 'max_ill': 0.1395833333333333, 'read_steps': 60, 'n_calib': 24}}, True), ('hand_push', {'on': True, 'lesioned': False, 'in_scope': True, 'svo': ['dog', 'push', 'rock'], 'margin': 0.33125000000000004, 'threshold': 0.22916666666666663, 'comprehended': True, 'calib': {'mean_well': 0.3333333333333333, 'min_well': 0.31875, 'mean_ill': 0.06736111111111111, 'max_ill': 0.1395833333333333, 'read_steps': 60, 'n_calib': 24}}, True))])
+E       assert 'faf567095183...eb6c2cd14770c' == 'd54b1d18455c...487dc78dfebc2'
+E         
+E         - d54b1d18455cbc5f6aac59b6e76581b6384761d0c521bac6da9487dc78dfebc2
+E         + faf567095183b9a9b5485e0e26a10c6fdca49db49413bbcd064eb6c2cd14770c
+
+tests/test_comprehension_frozen_flat.py:163: AssertionError
+----------------------------- Captured stdout call -----------------------------
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: RNG initialized with seed: 7
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:10][WARNING] SIM_BRIDGE: parameter heterogeneity is centred on the global defaults (cfg.izh_*_val / cfg.hh_*) and overwrites the presets of 2 region(s): sel_FS_agent, sel_FS_patient [IZH2007_FS_CORTICAL_INTERNEURON] (a 0.2->0.03, d 25->100, C 20->100); set preset_centred_parameter_heterogeneity=True to keep them
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24764 synapses across 14 populations.
+[2026-10-31 18:00:10][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24764. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:15][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:15][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:15][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 80 total neurons, 1 pathways.
+[2026-10-31 18:00:15][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:15][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 80 neurons...
+[2026-10-31 18:00:15][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:15][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:15][INFO] SIM_BRIDGE: Generating 3D neuron positions for 80 neurons...
+[2026-10-31 18:00:15][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-10-31 18:00:15][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1600 synapses across 1 populations.
+[2026-10-31 18:00:15][INFO] SIM_BRIDGE: Initializing eligibility traces for 1600 synapses (capacity: 2400, dtype: float32)...
+[2026-10-31 18:00:15][INFO] SIM_BRIDGE: Simulation data initialized for 80 neurons (3D). Synapses: 1600. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: RNG initialized with seed: 7
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:17][WARNING] SIM_BRIDGE: parameter heterogeneity is centred on the global defaults (cfg.izh_*_val / cfg.hh_*) and overwrites the presets of 2 region(s): sel_FS_agent, sel_FS_patient [IZH2007_FS_CORTICAL_INTERNEURON] (a 0.2->0.03, d 25->100, C 20->100); set preset_centred_parameter_heterogeneity=True to keep them
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24764 synapses across 14 populations.
+[2026-10-31 18:00:17][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24764. GPU memory: 3.0GB/25.3GB (11.9%)
+_____________ test_flag_off_is_byte_identical_to_pre_fix[scaling] ______________
+
+rule = 'scaling'
+
+    @pytest.mark.parametrize("rule", RULES)
+    def test_flag_off_is_byte_identical_to_pre_fix(rule):
+        res = selftest()["byte_identical_off"][rule]
+        if res["prefix_sha"] is None:
+            pytest.skip("pre-fix tree unavailable: %s" % res["prefix_error"])
+>       assert res["identical"], ("flag-OFF is NOT byte-identical to pre-fix for rule %s: off=%s prefix=%s"
+                                 % (rule, res["off_sha"], res["prefix_sha"]))
+E       AssertionError: flag-OFF is NOT byte-identical to pre-fix for rule scaling: off=c7936d45bdc4775c03ea78d4351ffa1423cd6b3aae1b87903160d065209936ae prefix=60cf4abfe1db4a1c4d9e2c7e0672273ba142091e89dec0dfc72dc5dd2649e126
+E       assert False
+
+tests/test_plastic_mask_beyond_hebbian.py:141: AssertionError
+----------------------------- Captured stdout call -----------------------------
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:23][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:25][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+[2026-10-31 18:00:26][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:26][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:26][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:26][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:26][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:26][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:26][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:26][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:26][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:26][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:26][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:27][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:28][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+[2026-10-31 18:00:29][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:29][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:29][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:29][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 8 neurons...
+[2026-10-31 18:00:29][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:29][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:29][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:29][INFO] SIM_BRIDGE: Generating 3D neuron positions for 8 neurons...
+[2026-10-31 18:00:29][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:29][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-10-31 18:00:29][INFO] SIM_BRIDGE: Simulation data initialized for 8 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:29][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 8 synapses across 3 populations.
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 8 neurons...
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: Generating 3D neuron positions for 8 neurons...
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: Simulation data initialized for 8 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 8 synapses across 3 populations.
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 8 neurons...
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: Generating 3D neuron positions for 8 neurons...
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: Simulation data initialized for 8 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:30][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 8 synapses across 3 populations.
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:31][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+[2026-10-31 18:00:32][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:32][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:32][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:32][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:32][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:32][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:32][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:32][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:32][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:32][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-10-31 18:00:32][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:32][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:33][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+[2026-10-31 18:00:34][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:34][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:34][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:34][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:34][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:34][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:34][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:34][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:34][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:34][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:34][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+----------------------------- Captured stderr call -----------------------------
+SIM_BACKEND=numpy selected, but a CUDA GPU + CuPy ARE available -> this run is on the CPU (typically 10-50x slower). If you did not mean that, pass SIM_BACKEND=cupy explicitly: many research runners do os.environ.setdefault('SIM_BACKEND','numpy'), which silently wins unless the caller overrides it.
+SIM_BACKEND=numpy selected, but a CUDA GPU + CuPy ARE available -> this run is on the CPU (typically 10-50x slower). If you did not mean that, pass SIM_BACKEND=cupy explicitly: many research runners do os.environ.setdefault('SIM_BACKEND','numpy'), which silently wins unless the caller overrides it.
+SIM_BACKEND=numpy selected, but a CUDA GPU + CuPy ARE available -> this run is on the CPU (typically 10-50x slower). If you did not mean that, pass SIM_BACKEND=cupy explicitly: many research runners do os.environ.setdefault('SIM_BACKEND','numpy'), which silently wins unless the caller overrides it.
+SIM_BACKEND=numpy selected, but a CUDA GPU + CuPy ARE available -> this run is on the CPU (typically 10-50x slower). If you did not mean that, pass SIM_BACKEND=cupy explicitly: many research runners do os.environ.setdefault('SIM_BACKEND','numpy'), which silently wins unless the caller overrides it.
+SIM_BACKEND=numpy selected, but a CUDA GPU + CuPy ARE available -> this run is on the CPU (typically 10-50x slower). If you did not mean that, pass SIM_BACKEND=cupy explicitly: many research runners do os.environ.setdefault('SIM_BACKEND','numpy'), which silently wins unless the caller overrides it.
+SIM_BACKEND=numpy selected, but a CUDA GPU + CuPy ARE available -> this run is on the CPU (typically 10-50x slower). If you did not mean that, pass SIM_BACKEND=cupy explicitly: many research runners do os.environ.setdefault('SIM_BACKEND','numpy'), which silently wins unless the caller overrides it.
+SIM_BACKEND=numpy selected, but a CUDA GPU + CuPy ARE available -> this run is on the CPU (typically 10-50x slower). If you did not mean that, pass SIM_BACKEND=cupy explicitly: many research runners do os.environ.setdefault('SIM_BACKEND','numpy'), which silently wins unless the caller overrides it.
+____________ test_flag_off_is_byte_identical_to_pre_fix[structural] ____________
+
+rule = 'structural'
+
+    @pytest.mark.parametrize("rule", RULES)
+    def test_flag_off_is_byte_identical_to_pre_fix(rule):
+        res = selftest()["byte_identical_off"][rule]
+        if res["prefix_sha"] is None:
+            pytest.skip("pre-fix tree unavailable: %s" % res["prefix_error"])
+>       assert res["identical"], ("flag-OFF is NOT byte-identical to pre-fix for rule %s: off=%s prefix=%s"
+                                 % (rule, res["off_sha"], res["prefix_sha"]))
+E       AssertionError: flag-OFF is NOT byte-identical to pre-fix for rule structural: off=f331216b48c3815edc4ca25957d09909b0464ba79a83a6fa0f190ce9a9c05986 prefix=7977d7781ec7cb6a6ebadc894273358739fa8bc66770ee9b9532bd08d9638e97
+E       assert False
+
+tests/test_plastic_mask_beyond_hebbian.py:141: AssertionError
+______________ test_flag_off_is_byte_identical_to_pre_fix[reward] ______________
+
+rule = 'reward'
+
+    @pytest.mark.parametrize("rule", RULES)
+    def test_flag_off_is_byte_identical_to_pre_fix(rule):
+        res = selftest()["byte_identical_off"][rule]
+        if res["prefix_sha"] is None:
+            pytest.skip("pre-fix tree unavailable: %s" % res["prefix_error"])
+>       assert res["identical"], ("flag-OFF is NOT byte-identical to pre-fix for rule %s: off=%s prefix=%s"
+                                 % (rule, res["off_sha"], res["prefix_sha"]))
+E       AssertionError: flag-OFF is NOT byte-identical to pre-fix for rule reward: off=b9b6e094ec6e79decbc60e13c2128fe7f9b68efb1c185323efbc8b9f3ecbb774 prefix=ac3b11f7a67773180bd543490b2c03db79e9d94692026bc80d30bf6e2f158354
+E       assert False
+
+tests/test_plastic_mask_beyond_hebbian.py:141: AssertionError
+_____________ test_flag_off_is_byte_identical_to_pre_fix[rebuild] ______________
+
+rule = 'rebuild'
+
+    @pytest.mark.parametrize("rule", RULES)
+    def test_flag_off_is_byte_identical_to_pre_fix(rule):
+        res = selftest()["byte_identical_off"][rule]
+        if res["prefix_sha"] is None:
+            pytest.skip("pre-fix tree unavailable: %s" % res["prefix_error"])
+>       assert res["identical"], ("flag-OFF is NOT byte-identical to pre-fix for rule %s: off=%s prefix=%s"
+                                 % (rule, res["off_sha"], res["prefix_sha"]))
+E       AssertionError: flag-OFF is NOT byte-identical to pre-fix for rule rebuild: off=f0cd105bdc964bfdc0670efeacfbfa1eafffd99ef5ef38cdbf2af1e6a25d9619 prefix=22166666ef20b440f9f1f5fdec20c318a2d7eae10f5df36ddb34c907da0ed8c7
+E       assert False
+
+tests/test_plastic_mask_beyond_hebbian.py:141: AssertionError
+____________ test_flag_off_is_byte_identical_to_pre_fix[compaction] ____________
+
+rule = 'compaction'
+
+    @pytest.mark.parametrize("rule", RULES)
+    def test_flag_off_is_byte_identical_to_pre_fix(rule):
+        res = selftest()["byte_identical_off"][rule]
+        if res["prefix_sha"] is None:
+            pytest.skip("pre-fix tree unavailable: %s" % res["prefix_error"])
+>       assert res["identical"], ("flag-OFF is NOT byte-identical to pre-fix for rule %s: off=%s prefix=%s"
+                                 % (rule, res["off_sha"], res["prefix_sha"]))
+E       AssertionError: flag-OFF is NOT byte-identical to pre-fix for rule compaction: off=f0b136056acc690fc2e1945e41576a7cdde05beeeaea5f9042288c4e8d2dd03b prefix=06f92362474fec2f3ec9c50741b9d98cc1908b33741b74adde48d45d5e8455af
+E       assert False
+
+tests/test_plastic_mask_beyond_hebbian.py:141: AssertionError
+_____________ test_flag_off_is_byte_identical_to_pre_fix[combined] _____________
+
+rule = 'combined'
+
+    @pytest.mark.parametrize("rule", RULES)
+    def test_flag_off_is_byte_identical_to_pre_fix(rule):
+        res = selftest()["byte_identical_off"][rule]
+        if res["prefix_sha"] is None:
+            pytest.skip("pre-fix tree unavailable: %s" % res["prefix_error"])
+>       assert res["identical"], ("flag-OFF is NOT byte-identical to pre-fix for rule %s: off=%s prefix=%s"
+                                 % (rule, res["off_sha"], res["prefix_sha"]))
+E       AssertionError: flag-OFF is NOT byte-identical to pre-fix for rule combined: off=40190ba12fd81fa6203354b3b6e39c223290af3f6725273e65396edbdf676424 prefix=61770a20c36c1bf4087728a0b1e1485232b58bc3932e7796a2e217f724825f27
+E       assert False
+
+tests/test_plastic_mask_beyond_hebbian.py:141: AssertionError
+_____________ test_flag_off_is_byte_identical_to_pre_fix[hebbian] ______________
+
+rule = 'hebbian'
+
+    @pytest.mark.parametrize("rule", RULES)
+    def test_flag_off_is_byte_identical_to_pre_fix(rule):
+        res = selftest()["byte_identical_off"][rule]
+        if res["prefix_sha"] is None:
+            pytest.skip("pre-fix tree unavailable: %s" % res["prefix_error"])
+>       assert res["identical"], ("flag-OFF is NOT byte-identical to pre-fix for rule %s: off=%s prefix=%s"
+                                 % (rule, res["off_sha"], res["prefix_sha"]))
+E       AssertionError: flag-OFF is NOT byte-identical to pre-fix for rule hebbian: off=1d3a8981c1a94e37ef1f52c8aa3c10ed400876164e8cc554fd490f121d9ef0a9 prefix=0d097bbf748889806f2a51d5120dec9e3496ad4b824eb6e6fbbc37ce17015a20
+E       assert False
+
+tests/test_plastic_mask_beyond_hebbian.py:141: AssertionError
+______ test_frozen_weights_unchanged_over_30_reads_on_six_seeds[scaling] _______
+
+rule = 'scaling'
+
+    @pytest.mark.parametrize("rule", RULES)
+    def test_frozen_weights_unchanged_over_30_reads_on_six_seeds(rule):
+        for seed in SEEDS:
+            off = _run(rule, False, seed)
+            on = _run(rule, True, seed)
+            assert off["fired_any"] and on["fired_any"], "no spikes at seed %d: the run is undefined" % seed
+>           assert off["frozen_max_delta"] > _OFF_DRIFT_MIN[rule], (
+                "the OFF arm must SHOW the drift (positive control), got %.6f for rule %s seed %d"
+                % (off["frozen_max_delta"], rule, seed))
+E           AssertionError: the OFF arm must SHOW the drift (positive control), got 0.000000 for rule scaling seed 42
+E           assert 0.0 > 5.0
+
+tests/test_plastic_mask_beyond_hebbian.py:151: AssertionError
+----------------------------- Captured stdout call -----------------------------
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:35][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+______ test_frozen_weights_unchanged_over_30_reads_on_six_seeds[rebuild] _______
+
+rule = 'rebuild'
+
+    @pytest.mark.parametrize("rule", RULES)
+    def test_frozen_weights_unchanged_over_30_reads_on_six_seeds(rule):
+        for seed in SEEDS:
+            off = _run(rule, False, seed)
+            on = _run(rule, True, seed)
+            assert off["fired_any"] and on["fired_any"], "no spikes at seed %d: the run is undefined" % seed
+>           assert off["frozen_max_delta"] > _OFF_DRIFT_MIN[rule], (
+                "the OFF arm must SHOW the drift (positive control), got %.6f for rule %s seed %d"
+                % (off["frozen_max_delta"], rule, seed))
+E           AssertionError: the OFF arm must SHOW the drift (positive control), got 0.000000 for rule rebuild seed 42
+E           assert 0.0 > 5.0
+
+tests/test_plastic_mask_beyond_hebbian.py:151: AssertionError
+----------------------------- Captured stdout call -----------------------------
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.6 GB), mempool limit: 80%
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6 neurons...
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6 neurons...
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: Simulation data initialized for 6 neurons (3D). Synapses: 0. GPU memory: 3.0GB/25.3GB (11.9%)
+[2026-10-31 18:00:43][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 14 synapses across 2 populations.
+=========================== short test summary info ============================
+FAILED tests/test_comprehension_frozen_flat.py::test_frozen_synapses_flat_over_30_reads_when_flag_on[7]
+FAILED tests/test_comprehension_frozen_flat.py::test_frozen_synapses_flat_over_30_reads_when_flag_on[8]
+FAILED tests/test_comprehension_frozen_flat.py::test_the_drift_is_real_when_the_flag_is_off[7]
+FAILED tests/test_comprehension_frozen_flat.py::test_the_drift_is_real_when_the_flag_is_off[8]
+FAILED tests/test_comprehension_frozen_flat.py::test_the_tap_does_not_change_what_it_measures
+FAILED tests/test_plastic_mask_beyond_hebbian.py::test_flag_off_is_byte_identical_to_pre_fix[scaling]
+FAILED tests/test_plastic_mask_beyond_hebbian.py::test_flag_off_is_byte_identical_to_pre_fix[structural]
+FAILED tests/test_plastic_mask_beyond_hebbian.py::test_flag_off_is_byte_identical_to_pre_fix[reward]
+FAILED tests/test_plastic_mask_beyond_hebbian.py::test_flag_off_is_byte_identical_to_pre_fix[rebuild]
+FAILED tests/test_plastic_mask_beyond_hebbian.py::test_flag_off_is_byte_identical_to_pre_fix[compaction]
+FAILED tests/test_plastic_mask_beyond_hebbian.py::test_flag_off_is_byte_identical_to_pre_fix[combined]
+FAILED tests/test_plastic_mask_beyond_hebbian.py::test_flag_off_is_byte_identical_to_pre_fix[hebbian]
+FAILED tests/test_plastic_mask_beyond_hebbian.py::test_frozen_weights_unchanged_over_30_reads_on_six_seeds[scaling]
+FAILED tests/test_plastic_mask_beyond_hebbian.py::test_frozen_weights_unchanged_over_30_reads_on_six_seeds[rebuild]
+14 failed, 6 passed in 92.58s (0:01:32)

@@ -1,0 +1,36 @@
+{
+ "run_id": "1793485336-3476342",
+ "runner": "research/runners/pi203_gpu_determinism_probe.py",
+ "argv": [
+  "/home/dant123/derisk-pool/revisions/c22b29a6cc14f207a082b3431d2dbd7a45623e22-1793485030/research/runners/pi203_gpu_determinism_probe.py",
+  "--backend",
+  "cupy",
+  "--prereg",
+  "research/findings/2026-09-24-plastic-mask-flip-PREREGISTRATION.md",
+  "--rules",
+  "hebbian,reward,scaling,combined",
+  "--out",
+  "research/findings/raw/_pi203_frozen_synapse_residual/gpu_determinism_probe.json"
+ ],
+ "git_sha": "c22b29a6c",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-10-31T18:22:16",
+ "env": {
+  "OMP_NUM_THREADS": "1",
+  "SIM_BACKEND": "cupy"
+ },
+ "host": "dant123-wk",
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 235244.5,
+ "corpus_check_query": "spiking winner-take-all feedback inhibition recruits too late, conductance overshoot rebound, more pools fire; feedforward inhibition / fast FS recruitment",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_pi203_frozen_synapse_residual/gpu_determinism_probe.json"
+}
