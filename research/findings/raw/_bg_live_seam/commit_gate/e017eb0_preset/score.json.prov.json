@@ -1,0 +1,41 @@
+{
+ "run_id": "1793648789-730552",
+ "runner": "research/runners/host_share_bg_seam.py",
+ "argv": [
+  "/home/dant123/Projects/neural-simulator/_scratch/wt_e017/research/runners/host_share_bg_seam.py",
+  "--score",
+  "/home/dant123/Projects/neural-simulator/research/findings/raw/_bg_live_seam/commit_gate/e017eb0_preset",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--commit",
+  "--out",
+  "research/findings/raw/_bgscore_tmp/score.json"
+ ],
+ "git_sha": "e017eb00e",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-11-02T14:46:29",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "host": "83db10ba1ddb",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 31256.7,
+ "corpus_check_query": "activity-dependent synaptic depression of a shared recurrent workspace is not conflict-selective; neuromodulator gating of short-term plasticity utilization",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_bg_live_seam/commit_gate/e017eb0_preset/score.json",
+ "copied_from": "research/findings/raw/_bgscore_tmp/score.json",
+ "copy_note": "scored in a detached worktree at e017eb00e (scorer of record = the pin), written to a temp path, copied here unchanged by Claude 2026-11-02"
+}

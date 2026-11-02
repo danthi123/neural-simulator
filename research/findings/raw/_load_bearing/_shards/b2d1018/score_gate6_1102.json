@@ -1,0 +1,40 @@
+{
+ "verdict": "COMPLETE",
+ "counts": {
+  "n_coverable_faculties": 40,
+  "n_coverable_cells": 246,
+  "n_defined": 246,
+  "n_defined_all_scored": 252,
+  "n_scored_cells": 252,
+  "n_host_input_faculties": 1,
+  "n_host_input_cells": 6,
+  "n_host_input_defined": 6,
+  "n_stop_gate_faculties": 1,
+  "n_stop_gate_cells": 6,
+  "n_stop_gate_defined": 6
+ },
+ "not_defined": {},
+ "fail_cells": [],
+ "stop_gate": {
+  "reasoning-transitive-chat": "not blocked"
+ },
+ "s0": {
+  "robust_core_n": 32,
+  "union_n": 33,
+  "mean_fraction": 0.8208333333333333,
+  "sd_fraction_pop": 0.009316949906249091
+ },
+ "s1": {
+  "robust_core_n": 0,
+  "union_n": 0,
+  "mean_fraction": null,
+  "sd_fraction_pop": null
+ },
+ "s2": {
+  "robust_core_n": 22,
+  "union_n": 22,
+  "mean_fraction": 0.5365853658536586,
+  "sd_fraction_pop": 0.0
+ },
+ "preconditions_failed": []
+}

@@ -1,0 +1,29 @@
+{
+ "runner": "tools/b2d_score.py",
+ "argv": [
+  "tools/b2d_score.py",
+  "--tag",
+  "b2d1018",
+  "--pin",
+  "f2885df70cfb99a8715c376bca12ac3c2134ef46",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102"
+ ],
+ "cwd": "/home/dant123/Projects/neural-simulator",
+ "git_sha_of_checkout": "7848fd823",
+ "sim_backend": "numpy",
+ "host": "homelab-server (hermes container)",
+ "stdout_saved_as": "research/findings/raw/_load_bearing/_shards/b2d1018/score_gate6_1102.json",
+ "date": "2026-11-02",
+ "prereg": "research/findings/2026-10-20-lbf-at-head-gate-seed-measurement-PREREGISTRATION.md",
+ "reproduced_by": "verify-go instrument-rescore refuter, pinned scorer f2885df70 tools/b2d_score.py, byte-identical",
+ "artifact": "research/findings/raw/_load_bearing/_shards/b2d1018/score_gate6_1102.json",
+ "git_sha": "7848fd823",
+ "git_dirty": false,
+ "written_by": "Claude, by hand: tools/b2d_score.py is a tool (no runner auto-sidecar); this records the exact command, host and backend"
+}
