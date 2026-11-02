@@ -30,8 +30,9 @@ credit claim directly.
 
 ## 2. The pin
 
-- **Revision (the pin):** `1b53d62340ad5a54291ba758cbe03524a354ea1b` on branch `research/bg-gate-amend-1101` (based on `research/bg-tonic-loop` head
-  `507b9c7890e680ae5d607f9dff4d49cad33d3944`, the step-1 grid's revision, plus the report-only instrument of section 6).
+- **Revision (the pin):** `218a3378c873ea38415a6aa7f62effc21b410ff1` on branch `research/bg-gate-amend-1101` (based on `research/bg-tonic-loop` head
+  `507b9c7890e680ae5d607f9dff4d49cad33d3944`, the step-1 grid's revision, plus the report-only instrument of section 6
+  at `1b53d62340ad5a54291ba758cbe03524a354ea1b` and Claude's STOP-4 / STOP-5 rulings applied at `218a3378c873ea38415a6aa7f62effc21b410ff1`; the earlier draft pin `1b53d62340ad5a54291ba758cbe03524a354ea1b` is superseded).
   The branch head after the pin adds only this document and the pool-line TSV; neither is read at run time.
 - **Environment, every gate line (exactly the step-1 grid's, with the selected set's two currents):**
 
@@ -43,7 +44,7 @@ BRAIN_BG_IZH_SUBSTEP_RULE=model_reset BRAIN_BG_TONIC_STN_PA=200 BRAIN_BG_TONIC_G
   plus `PYTHONHASHSEED=0 SIM_BACKEND=numpy CUDA_VISIBLE_DEVICES=` and the runner flags `--commit --allow-gate-seeds`.
 - **Lines and score (the 10-14 amendment's 'Run and score' with the env and out root substituted):** one pool line
   per gate seed, `research/coordination/bg-gate-1101-pool-lines.tsv` (arm `gate`); out root (`<OUT>` below) is
-  `_bg_live_seam/commit_gate/1b53d62_preset` under `research/findings/raw`; the score file is written after the run,
+  `_bg_live_seam/commit_gate/218a337_preset` under `research/findings/raw`; the score file is written after the run,
   so it is named only inside the command:
 
 ```
@@ -115,12 +116,18 @@ The verdict rule is the 10-14 amendment's 'Outcome -> verdict' table, unchanged.
 
 1. **STOP-5 identity tests on the pin.** `tests/test_bg_neural_seam.py` (the prereg's construction guards),
    `tests/test_bg_tonic_loop_identity.py` (STEP1-SPEC STOP 5), `tests/test_bg_commit.py` and
-   `tests/test_bg_gate_amend_1101_instrument.py` all pass at `1b53d62340ad5a54291ba758cbe03524a354ea1b` (CPU, numpy).
-   **Known blocker, found while building this pin:** `tests/test_bg_tonic_loop_identity.py::test_flag_off_identical_to_golden`
-   FAILS at `507b9c789` already (so it failed under the step-1 grid too): the merged engine builds two bridge arrays
-   the golden predates (`cp_synapse_pulse_progress`, `cp_synapse_pulse_timers`); every array the golden has is
-   byte-identical (measured on seeds 9 and 16, both paths). Claude rules before queueing: re-capture the golden on the
-   merged tree with a recorded reason, or narrow the test to the golden's array set. This amendment does not change it.
+   `tests/test_bg_gate_amend_1101_instrument.py` all pass at `218a3378c873ea38415a6aa7f62effc21b410ff1` (CPU, numpy), together with
+   `tests/test_host_share_bg_seam_score.py` and `tests/test_izh_membrane_substeps.py` (79 passed on the workstation,
+   where PyOpenGL imports; the identity test also passes with OpenGL blocked).
+   **STOP-5, ruled (Claude, 2026-11-01) and applied at the pin.** `test_flag_off_identical_to_golden` failed on the
+   workstation because the bridge carried two arrays the golden lacks (`cp_synapse_pulse_progress`,
+   `cp_synapse_pulse_timers`); every array the golden has was byte-identical (seeds 9 and 16, both paths). Measured
+   cause (the draft's "the merged engine builds two arrays the golden predates" was wrong): they are visualization
+   buffers `sim/bridge.py` allocates only when PyOpenGL imports (`if OPENGL_AVAILABLE and num_synapses > 0:`, present
+   since the SimulationBridge extraction 6be22526c); the golden was captured without OpenGL, and with OpenGL blocked
+   the unchanged test passes. Ruling as applied: the comparison is narrowed to the golden's own array set, and the set
+   difference must be exactly those two arrays when `sim.bridge.OPENGL_AVAILABLE` (empty otherwise), so any other new
+   or missing array still fails. The golden is not re-captured; the reason is recorded in the test docstring.
 2. **canary_preconditions.** Every line passes `tools/canary_preconditions.py check-line` (S main; the registry
    requires `--commit` for any line writing under `_bg_live_seam/(step1|commit_gate|commit_dev)/`), and the canary
    (`tools/pool_canary.sh`, which runs the registered scorer on the canary's own output) PASSES on the first gate line
@@ -139,7 +146,15 @@ and the neural-seam trial record still hashes to the cc9b4bf3e golden).
   builds, the count of steps whose lowest end-of-step v is below E_inh - 5 mV = -80 mV (`steps_below`), `v_min`, the
   regions that crossed, and `steps_checked` (trial + reset + washout, the membrane precondition's scope). STEP1-SPEC
   STOP 4 is therefore read from data. With `BRAIN_BG_IZH_SUBSTEPS=4` only end-of-step v is visible, so the count is in
-  bridge steps, as in step 0 (`research/runners/bg_tonic_loop_probe.py`). Note that the step-1 record already shows
+  bridge steps, as in step 0 (`research/runners/bg_tonic_loop_probe.py`).
+  **STOP-4, ruled (Claude, 2026-11-01) and applied at the pin:** beside the raw count (kept unchanged), each event also
+  carries, per region, `steps_below_rest_bound`: steps whose lowest end-of-step v is below min(E_inh, vr_region) - 5 mV,
+  with vr_region the region's Izhikevich rest/reset potential as configured on the built bridge (`cp_izh_vr`, the
+  region's minimum), plus `rest_bound_mv`, `vr_mv` and `regions_below_rest_bound`; the scorer sums both counts per
+  region in `diagnostics["STOP 4 sub-reversal (report-only; never gated)"]`. **STOP 4 is REPORT-ONLY in this gate: it
+  never gated, no bar reads either count, and no outcome of it changes the verdict.** On organ seed 1 (`...`,
+  default flags) the four MSN regions (vr -80 mV, bound -85 mV) leave the rest-bound count while motor_1 and
+  practice_arousal (vr -60 mV) stay in it. Note that the step-1 record already shows
   sub-reversal on the selected set (e.g. s71 `hsb_q` v_min -86.5 mV): STOP 4's "again shows sub-reversal steps" was not
   measured there, and is reported, not gated, here.
   **1-event smoke (dev seed 79, seam_b, `--commit`, the pinned env, turn `hsb_empty1` only; 163 s CPU; scratch
@@ -147,8 +162,8 @@ and the neural-seam trial record still hashes to the cc9b4bf3e golden).
   `str_d1_1` 294 steps (v_min -84.2), `str_d2_0` 206 (-80.8), `practice_arousal` 13 (-80.9). **Reading for Claude:**
   the MSN presets rest at vr = -80 mV (`sim/enums.py`, IZH2007_STRIATAL_MSN_D1/D2), exactly the STOP-4 bound, so the
   bound as written counts preset MSN rest, not only the forward-Euler overshoot it was built to catch (bounded
-  conductance is on). A per-region bound (for example min(E_inh, vr) - 5 mV) is a ruling, not something this
-  amendment changes; STOP 4 stays report-only here.
+  conductance is on); hence the per-region rest-bound count above (that smoke ran at the earlier draft pin, before the
+  rest-bound count existed).
 - **(b) Pallidal and output rates.** Every `bg_neural` event carries `bg_rates_hz`: GPi_k, thal_k, motor_k, GPe_k and
   selector_stn over the drive (300 ms) and hold (200 ms) windows, beside `tonic_rates_hz` (present in every arm,
   including the TONIC_DRIVE=0 ablation, where `tonic_rates_hz` is absent).
@@ -166,9 +181,9 @@ reverse. They test the credit claim of section 3.
 
 | arm | the one change | knob | out root | prediction (stated before any run) |
 |---|---|---|---|---|
-| A-tonic0 | no tonic STN/GPe drive | `BRAIN_BG_TONIC_DRIVE=0` (the two currents are then ignored) | `commit_gate/1b53d62_tonic0/` | seam_b committed winners equal the gate arm's on at least 22 of the 24 seam_b events (6 seeds x 4 turns), and every registered measure within one event of the gate arm: the tonic drive is not load-bearing. GPe drive-window rate near 0 Hz (GPe silent at 50 pA in step 1). A larger change says the drive is load-bearing, contradicting step 1, and is reported as such. |
-| A-hybrid | RS-centred hybrid cells, bounded + sub-steps kept | `BRAIN_BG_PRESET_CELLS=0` | `commit_gate/1b53d62_hybrid/` | the committed winner differs from the gate arm on at least one seam_b event (step 0: moving to preset cells changed decision fields at today's constants). Equality on all events means a GO does not credit the preset cells either, and is reported as such. |
-| A-commit-off | the 09-29 fixed-rate latch read decides (no commit stage) | no `--commit` (BRAIN_BG_COMMIT unset; `arm_env` blanks every commit variable) | `commit_off_ablation/1b53d62_preset/` (outside `commit_gate/`: the canary registry requires `--commit` there) | scored WITHOUT `--commit` (the 09-29 scorer): the latch read's threshold change `latch_thr_change` is above 0.10 (it was 0.25 on the 10-02 gate run), while G2a/G2b/G3 stay near the gate arm: the commit stage, not the race, is what makes the read invariant. |
+| A-tonic0 | no tonic STN/GPe drive | `BRAIN_BG_TONIC_DRIVE=0` (the two currents are then ignored) | `commit_gate/218a337_tonic0/` | seam_b committed winners equal the gate arm's on at least 22 of the 24 seam_b events (6 seeds x 4 turns), and every registered measure within one event of the gate arm: the tonic drive is not load-bearing. GPe drive-window rate near 0 Hz (GPe silent at 50 pA in step 1). A larger change says the drive is load-bearing, contradicting step 1, and is reported as such. |
+| A-hybrid | RS-centred hybrid cells, bounded + sub-steps kept | `BRAIN_BG_PRESET_CELLS=0` | `commit_gate/218a337_hybrid/` | the committed winner differs from the gate arm on at least one seam_b event (step 0: moving to preset cells changed decision fields at today's constants). Equality on all events means a GO does not credit the preset cells either, and is reported as such. |
+| A-commit-off | the 09-29 fixed-rate latch read decides (no commit stage) | no `--commit` (BRAIN_BG_COMMIT unset; `arm_env` blanks every commit variable) | `commit_off_ablation/218a337_preset/` (outside `commit_gate/`: the canary registry requires `--commit` there) | scored WITHOUT `--commit` (the 09-29 scorer): the latch read's threshold change `latch_thr_change` is above 0.10 (it was 0.25 on the 10-02 gate run), while G2a/G2b/G3 stay near the gate arm: the commit stage, not the race, is what makes the read invariant. |
 
 The value-route lesion is already a registered arm (`seam_lesion_value`, G3) and is not duplicated.
 
