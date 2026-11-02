@@ -1,7 +1,7 @@
 {
  "schema": "board-sync-v1",
  "_doc": "Audit trail of board mutations written by tools/vikunja.sh. gates/board_sync_on_status_change.py requires this file to GROW in the same commit that changes docs/PRODUCTION_INTEGRATION_LEDGER.yaml (a faculty-status change must sync the board). Seeded 2026-08-21.",
- "updated_at": "2026-11-02T03:39:08Z",
+ "updated_at": "2026-11-02T15:19:25Z",
  "entries": [
   {
    "at": "2026-08-22T02:19:31Z",
@@ -2648,6 +2648,108 @@
    "op": "append-desc",
    "args": "task=273",
    "head": "edde9fe99"
+  },
+  {
+   "at": "2026-11-02T15:19:22Z",
+   "op": "append-desc",
+   "args": "task=128",
+   "head": "e1d28775b"
+  },
+  {
+   "at": "2026-11-02T15:19:23Z",
+   "op": "append-desc",
+   "args": "task=130",
+   "head": "e1d28775b"
+  },
+  {
+   "at": "2026-11-02T15:19:23Z",
+   "op": "append-desc",
+   "args": "task=260",
+   "head": "e1d28775b"
+  },
+  {
+   "at": "2026-11-02T15:19:23Z",
+   "op": "append-desc",
+   "args": "task=269",
+   "head": "e1d28775b"
+  },
+  {
+   "at": "2026-11-02T15:19:23Z",
+   "op": "append-desc",
+   "args": "task=219",
+   "head": "e1d28775b"
+  },
+  {
+   "at": "2026-11-02T15:19:23Z",
+   "op": "append-desc",
+   "args": "task=247",
+   "head": "e1d28775b"
+  },
+  {
+   "at": "2026-11-02T15:19:23Z",
+   "op": "append-desc",
+   "args": "task=248",
+   "head": "e1d28775b"
+  },
+  {
+   "at": "2026-11-02T15:19:23Z",
+   "op": "append-desc",
+   "args": "task=268",
+   "head": "e1d28775b"
+  },
+  {
+   "at": "2026-11-02T15:19:24Z",
+   "op": "append-desc",
+   "args": "task=85",
+   "head": "e1d28775b"
+  },
+  {
+   "at": "2026-11-02T15:19:24Z",
+   "op": "set-due-date",
+   "args": "task=128 due=0001-01-01",
+   "head": "e1d28775b"
+  },
+  {
+   "at": "2026-11-02T15:19:24Z",
+   "op": "set-due-date",
+   "args": "task=130 due=0001-01-01",
+   "head": "e1d28775b"
+  },
+  {
+   "at": "2026-11-02T15:19:24Z",
+   "op": "set-due-date",
+   "args": "task=260 due=0001-01-01",
+   "head": "e1d28775b"
+  },
+  {
+   "at": "2026-11-02T15:19:24Z",
+   "op": "set-due-date",
+   "args": "task=269 due=0001-01-01",
+   "head": "e1d28775b"
+  },
+  {
+   "at": "2026-11-02T15:19:24Z",
+   "op": "set-due-date",
+   "args": "task=219 due=2026-11-21",
+   "head": "e1d28775b"
+  },
+  {
+   "at": "2026-11-02T15:19:24Z",
+   "op": "set-due-date",
+   "args": "task=247 due=2026-11-14",
+   "head": "e1d28775b"
+  },
+  {
+   "at": "2026-11-02T15:19:25Z",
+   "op": "set-due-date",
+   "args": "task=248 due=2026-11-14",
+   "head": "e1d28775b"
+  },
+  {
+   "at": "2026-11-02T15:19:25Z",
+   "op": "set-due-date",
+   "args": "task=268 due=2026-11-07",
+   "head": "e1d28775b"
   }
  ]
 }
