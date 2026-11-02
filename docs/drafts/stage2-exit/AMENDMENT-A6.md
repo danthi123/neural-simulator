@@ -1,7 +1,7 @@
-# Stage-2 exit gate, Amendment A6 (DRAFT, for Claude to sign): C2's permuted-control acquisition precondition
+# Stage-2 exit gate, Amendment A6: C2's permuted-control acquisition precondition
 
-status: DRAFT (build agent, 2026-11-01; branch research/stage2-retake-amendments). Not in force until Claude signs it
-and the gate's aggregate command passes `--amendment-level A6`.
+status: SIGNED (Claude, 2026-11-01, branch head f1ad6a1a2, reviewed MERGEABLE twice by independent adversarial reviewers). Drafted by a
+build agent. In force for the retake; the gate's aggregate command passes `--amendment-level A6`.
 Ruling (Claude, 2026-11-01): criterion-only variant.
 host-decision: none this amendment changes only how the scorer reads a refused teach; it adds no host code that decides a reply
 bar-sanity: docs/drafts/stage2-exit/bar_sanity_record_s2_c2_infer_A6.json

@@ -1,6 +1,7 @@
-# Stage-2 exit gate, Amendment A7 (DRAFT, for Claude to sign): the retake re-pin
+# Stage-2 exit gate, Amendment A7: the retake re-pin
 
-status: DRAFT (build agent, 2026-11-01; branch research/stage2-retake-amendments). Claude writes `GATE_SHA` on signing.
+status: SIGNED (Claude, 2026-11-01). Drafted by a build agent on branch research/stage2-retake-amendments. `GATE_SHA` = M is
+written in a commit after the merge, once the A7.1 checks hold.
 Ruling (Claude, 2026-11-01): criterion-only variant.
 host-decision: none a re-pin moves the gate revision only; it adds no host code and changes no bar, arm, turn or scorer rule
 bar-sanity: N/A a re-pin changes no bar, arm, turn, seed or scorer; the scorer's own records are AMENDMENT-A6.md's
@@ -27,7 +28,10 @@ Amends `research/findings/2026-09-30-stage2-exit-gate-PREREGISTRATION.md` (byte-
   The last diff must list only changes this amendment names below (default OFF, or flipped with their own gate). At
   S main `493d173ae` it lists one file, `research/runners/_phaseB_onebrain_sequencerK_derisk.py` (`3ec75e204`,
   `BRAIN_C2_GATE_RESET`, default OFF). Any new default flip merged before M needs a line here, or a pin at an earlier
-  main.
+  main. Merged since then, all default OFF and named here (Claude, 2026-11-01): `research/c2-drain-wta` (merge `1adc40b3c`;
+  `BRAIN_C2_QUIET_DRAIN`, `BRAIN_C2_ROLE_WTA`, `BRAIN_C2_ROLE_RELAY`, `BRAIN_C2_ROW_SHUFFLE` and their lesion knobs, all unset =
+  the pre-change path, byte-identity pinned by `tests/test_c2_drain_wta.py`; it touches `one_brain_composer.py`, the sequencer
+  runners, `_c2_patient_inhib.py`, `c2_hops_step0.py` and `stage2_exit_gate.py`'s C2 read only through those flags).
 - Pool lines: unchanged in number and shape (210 with informational arms, 180 with `--no-informational`;
   `tests/test_stage2_exit_gate_a6.py` pins the bytes). Emit with `--emit-pool-jobs $M`. A provisioning request for M is needed (41d76bdbe's is not M's).
 
