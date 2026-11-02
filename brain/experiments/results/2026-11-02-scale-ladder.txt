@@ -1,0 +1,33 @@
+
+
+
+MODEL rwkv7-g1d-0.1b-20260129-ctx8192.pth
+in-context recall 6/12
+reinstated (right memory) gain 1.5: 7/12
+reinstated (right memory) gain 2.5: 9/12
+reinstated (right memory) gain 4.0: 11/12
+selection same-words cue: 12/12
+selection paraphrase cue: 8/12
+elapsed 13s
+
+
+
+MODEL rwkv7-g1d-0.4b-20260210-ctx8192.pth
+in-context recall 11/12
+reinstated (right memory) gain 1.5: 9/12
+reinstated (right memory) gain 2.5: 11/12
+reinstated (right memory) gain 4.0: 9/12
+selection same-words cue: 7/12
+selection paraphrase cue: 1/12
+elapsed 33s
+
+
+
+MODEL rwkv7-g1l-1.5b-20261031-ctx34304.pth
+in-context recall 11/12
+reinstated (right memory) gain 1.5: 9/12
+reinstated (right memory) gain 2.5: 9/12
+reinstated (right memory) gain 4.0: 10/12
+selection same-words cue: 7/12
+selection paraphrase cue: 5/12
+elapsed 93s
