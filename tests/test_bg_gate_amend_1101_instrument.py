@@ -5,7 +5,8 @@ Pins (numpy, CPU):
     still hashes it to the cc9b4bf3e golden (re-asserted here so this file alone proves it);
   * the new per-trial diagnostics (`NeuralSeamSelector.last_diag`, `decide_action_neural.last_diag`): per-region
     sub-reversal step counts (v below E_inh - 5 mV) over every v-checked step, their minima agree with the trial's
-    own aggregate v_min, and GPi / thalamus / motor_k / GPe / STN rates over the drive and hold windows;
+    own aggregate v_min, and beside them (RULING bg-gate-amend-1101 STOP-4, report-only) the per-region count against
+    min(E_inh, vr_region) - 5 mV, and GPi / thalamus / motor_k / GPe / STN rates over the drive and hold windows;
   * the scorer: pooled values and n are unchanged (the 10-02 gate shards score as committed), the G3 numerator split
     sums to G3's numerator and reproduces ns, and the relabelled attribution carries a per-turn-class breakdown.
 """
@@ -13,6 +14,7 @@ import json
 import os
 import sys
 
+import numpy as np
 import pytest
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -59,8 +61,29 @@ def test_scorer_pooled_unchanged_and_split_matches_g3():
     assert sum(v["denominator"] for v in sp["by_class"].values()) == sp["denominator"]
     assert set(d[CLASS_KEY]) == {"empty", "content", "one_word"}
     assert sum(v["n"] for v in d[CLASS_KEY].values()) == sc["n"]["seam_lesion_held"]
+    st4 = d[H.STOP4_KEY]                                                  # report-only; 10-02 shards predate it
+    assert st4["stop4"] == "report-only" and st4["events"] == 0 and st4["events_without_record"] > 0
     vd = H.verdict(sc)
     assert vd["verdict"] == ref["verdict"] and vd["gates"] == ref["gates"]
+
+
+def test_stop4_report_unit():
+    import research.runners.host_share_bg_seam as H
+    recs = [{"steps_checked": 10, "steps_below": {"str_d1_1": 4, "gpi_0": 0},
+             "v_min": {"str_d1_1": -84.0, "gpi_0": -70.0}, "steps_below_rest_bound": {"str_d1_1": 1, "gpi_0": 0},
+             "rest_bound_mv": {"str_d1_1": -85.0, "gpi_0": -80.0}, "vr_mv": {"str_d1_1": -80.0, "gpi_0": -60.0}},
+            {"steps_checked": 10, "steps_below": {"str_d1_1": 2, "gpi_0": 1},
+             "v_min": {"str_d1_1": -86.0, "gpi_0": -81.0}},
+            None]
+    r = H.stop4_sub_reversal_report(recs)
+    assert r["stop4"] == "report-only"
+    assert (r["events"], r["events_without_record"]) == (2, 1)
+    assert (r["events_without_rest_bound"], r["steps_checked"]) == (1, 20)
+    d1 = r["regions"]["str_d1_1"]
+    assert (d1["steps_below"], d1["events_below"]) == (6, 2)
+    assert (d1["steps_below_rest_bound"], d1["events_below_rest_bound"]) == (1, 1)
+    assert (d1["rest_bound_mv"], d1["vr_mv"], d1["v_min"]) == (-85.0, -80.0, -86.0)
+    assert r["regions_below"] == ["gpi_0", "str_d1_1"] and r["regions_below_rest_bound"] == ["str_d1_1"]
 
 
 # ── organ instrument ───────────────────────────────────────────────────────────────────────────────────────────────
@@ -88,6 +111,7 @@ def test_trial_record_carries_no_new_key(organ_trials):
 
 
 def test_sub_reversal_counts(organ_trials):
+    from sim.backend import to_host
     BG, out = organ_trials
     for r, dg, org in out:
         sr = dg["sub_reversal"]
@@ -102,6 +126,21 @@ def test_sub_reversal_counts(organ_trials):
             assert 0 <= k <= sr["steps_checked"]
             assert (k > 0) == (sr["v_min"][n] is not None and sr["v_min"][n] < -80.0)
         assert sr["regions_below"] == sorted(n for n, k in sr["steps_below"].items() if k)
+        # RULING bg-gate-amend-1101 STOP-4: the per-region count against min(E_inh, vr_region) - 5 mV, beside the raw
+        # one (report-only). vr_region is the region's configured Izhikevich vr on the built bridge.
+        assert sr["stop4"] == "report-only"
+        vr_host = np.asarray(to_host(org._bridge.cp_izh_vr))
+        assert set(sr["steps_below_rest_bound"]) == set(names) == set(sr["rest_bound_mv"]) == set(sr["vr_mv"])
+        for n in names:
+            ii = BG._indices(org._bridge, n)
+            if ii.size == 0:
+                continue
+            assert sr["vr_mv"][n] == pytest.approx(float(vr_host[ii].min()), abs=1e-3)
+            assert sr["rest_bound_mv"][n] == pytest.approx(min(-75.0, sr["vr_mv"][n]) - 5.0, abs=1e-3)
+            kr = sr["steps_below_rest_bound"][n]
+            assert 0 <= kr <= sr["steps_below"][n]                      # the rest bound is never above -80 mV
+            assert (kr > 0) == (sr["v_min"][n] is not None and sr["v_min"][n] < sr["rest_bound_mv"][n])
+        assert sr["regions_below_rest_bound"] == sorted(n for n, k in sr["steps_below_rest_bound"].items() if k)
 
 
 def test_rates_recorded(organ_trials):

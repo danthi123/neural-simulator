@@ -375,6 +375,12 @@ LATCH_READ_RATE = 0.02        # spikes/neuron/ms that count a latch as active (~
 # tests/test_bg_commit.py); written to `NeuralSeamSelector.last_diag` / `decide_action_neural.last_diag` instead.
 DIAG_E_INH_MV = -75.0
 DIAG_SUB_REVERSAL_MV = DIAG_E_INH_MV - 5.0
+# RULING bg-gate-amend-1101 STOP-4: E_inh - 5 mV = -80 mV coincides with the MSN preset rest (vr = -80 mV), so the raw
+# count above also counts preset MSN rest. Beside it (never replacing it) a per-region count against
+# min(E_inh, vr_region) - 5 mV, vr_region = the region's Izhikevich rest/reset potential as configured on the built
+# bridge (cp_izh_vr; the region's minimum if its neurons differ; E_inh alone when the bridge has no Izhikevich vr).
+# STOP 4 is REPORT-ONLY in the bg-gate-1101 gate: neither count gates anything.
+DIAG_SUB_REVERSAL_MARGIN_MV = 5.0
 DIAG_RATE_REGIONS = ("gpi", "thal", "motor", "gpe")      # per channel; plus selector_stn
 
 _WORD_RE = _CONTENT_TOKEN_RE  # the sensory word segmentation (declared residual host transduction)
@@ -465,6 +471,16 @@ class _TrialDiag:
         self.names = [r.name for r in bridge.region_manager.regions()]
         self.idx = {n: _indices(bridge, n) for n in self.names}
         self.below = {n: 0 for n in self.names}
+        vr_all = getattr(bridge, "cp_izh_vr", None)
+        vr_host = np.asarray(to_host(vr_all)) if vr_all is not None else None
+        self.vr = {}
+        for n in self.names:
+            ii = self.idx[n]
+            self.vr[n] = (float(vr_host[ii].min()) if vr_host is not None and ii.size and vr_host.size > int(ii.max())
+                          else None)
+        self.rest_bound = {n: (min(DIAG_E_INH_MV, self.vr[n]) if self.vr[n] is not None else DIAG_E_INH_MV)
+                           - DIAG_SUB_REVERSAL_MARGIN_MV for n in self.names}
+        self.below_rest = {n: 0 for n in self.names}
         self.vmin = {n: float("inf") for n in self.names}
         self.steps_checked = 0
         rn = [f"{k}_{c}" for k in DIAG_RATE_REGIONS for c in CHANNELS] + ["selector_stn"]
@@ -481,6 +497,8 @@ class _TrialDiag:
             lo = float(v[ii].min())
             if lo < DIAG_SUB_REVERSAL_MV:
                 self.below[n] += 1
+            if lo < self.rest_bound[n]:
+                self.below_rest[n] += 1
             if lo < self.vmin[n]:
                 self.vmin[n] = lo
 
@@ -498,7 +516,13 @@ class _TrialDiag:
         return {"sub_reversal": {"threshold_mv": DIAG_SUB_REVERSAL_MV, "e_inh_mv": DIAG_E_INH_MV,
                                  "steps_checked": int(self.steps_checked), "steps_below": dict(self.below),
                                  "v_min": {n: (round(x, 3) if np.isfinite(x) else None) for n, x in self.vmin.items()},
-                                 "regions_below": sorted(n for n, k in self.below.items() if k)},
+                                 "regions_below": sorted(n for n, k in self.below.items() if k),
+                                 # RULING bg-gate-amend-1101 STOP-4 (report-only; STOP 4 never gates this gate)
+                                 "vr_mv": {n: (round(x, 3) if x is not None else None) for n, x in self.vr.items()},
+                                 "rest_bound_mv": {n: round(x, 3) for n, x in self.rest_bound.items()},
+                                 "steps_below_rest_bound": dict(self.below_rest),
+                                 "regions_below_rest_bound": sorted(n for n, k in self.below_rest.items() if k),
+                                 "stop4": "report-only"},
                 "bg_rates_hz": rates}
 
 

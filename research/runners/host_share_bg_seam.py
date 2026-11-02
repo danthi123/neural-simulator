@@ -298,6 +298,46 @@ def g3_numerator_split(g3_events):
     return out
 
 
+STOP4_KEY = "STOP 4 sub-reversal (report-only; never gated)"
+
+
+def stop4_sub_reversal_report(records):
+    """RULING bg-gate-amend-1101 STOP-4 (REPORT-ONLY: STOP 4 never gates the bg-gate-1101 gate; no bar reads this).
+    Input: the `sub_reversal` record of every seam-arm `bg_neural` event (events without one are counted, not read).
+    Per region, summed over events: the raw count against E_inh - 5 mV (`steps_below`, the step-0 definition) and,
+    beside it, the count against min(E_inh, vr_region) - 5 mV (`steps_below_rest_bound`, so preset MSN rest at
+    vr = -80 mV is not counted as overshoot), the events in which each crossed, the bound, vr and the lowest v_min."""
+    out = {"stop4": "report-only", "events": 0, "events_without_record": 0, "events_without_rest_bound": 0,
+           "steps_checked": 0, "regions": {}}
+    for rec in records:
+        if not rec:
+            out["events_without_record"] += 1
+            continue
+        out["events"] += 1
+        out["steps_checked"] += int(rec.get("steps_checked") or 0)
+        rb = rec.get("steps_below_rest_bound")
+        if rb is None:
+            out["events_without_rest_bound"] += 1
+        for n, k in (rec.get("steps_below") or {}).items():
+            r = out["regions"].setdefault(n, {"steps_below": 0, "events_below": 0, "steps_below_rest_bound": 0,
+                                              "events_below_rest_bound": 0, "rest_bound_mv": None, "vr_mv": None,
+                                              "v_min": None})
+            r["steps_below"] += int(k)
+            r["events_below"] += int(k > 0)
+            if rb is not None:
+                kr = int(rb.get(n, 0))
+                r["steps_below_rest_bound"] += kr
+                r["events_below_rest_bound"] += int(kr > 0)
+                r["rest_bound_mv"] = (rec.get("rest_bound_mv") or {}).get(n, r["rest_bound_mv"])
+                r["vr_mv"] = (rec.get("vr_mv") or {}).get(n, r["vr_mv"])
+            vm = (rec.get("v_min") or {}).get(n)
+            if vm is not None and (r["v_min"] is None or vm < r["v_min"]):
+                r["v_min"] = vm
+    out["regions_below"] = sorted(n for n, r in out["regions"].items() if r["steps_below"])
+    out["regions_below_rest_bound"] = sorted(n for n, r in out["regions"].items() if r["steps_below_rest_bound"])
+    return out
+
+
 def score(shard_dir, seeds, commit=False):
     """Per seed and target turn, lane C's F / S / D and outcome labels for the production seam; the capability,
     neural share and readout share for the neural seam; the bus-read variant disagreement. UNDEFINED reasons kept.
@@ -320,6 +360,7 @@ def score(shard_dir, seeds, commit=False):
                        "commit_event_count_ok": [], "commit_op_ok": [], "commit_seed_ok": []})
     prod_events = []          # per-turn {F,S,D,f_outcome,seed,live} records, for SCHEMA.seam_stats/classify_seam
     g3_events = []            # RULING bg-gate-1101: per G3 event (class, intact held, lesion held, ns), report-only
+    sub_rev = []              # RULING bg-gate-amend-1101 STOP-4: every seam-arm bg_neural event's sub_reversal
     for s in seeds:
         sh = {}
         for arm in ARMS:
@@ -385,6 +426,7 @@ def score(shard_dir, seeds, commit=False):
                     pooled["commit_event_count_ok"].append(int(n_ev == 1))
                 for e in ((sh[arm] or {}).get("events") or {}).get(label, []):
                     if e.get("kind") == "bg_neural":
+                        sub_rev.append(e.get("sub_reversal"))
                         lo, hi = e.get("v_range") or [None, None]
                         pooled["membrane_ok"].append(int(lo is not None and lo >= -150.0 and hi <= 100.0))
                         cm = e.get("commit") if commit else None
@@ -466,7 +508,8 @@ def score(shard_dir, seeds, commit=False):
                                                         ih, lh)}
     out["diagnostics"] = {"value-route lesion attribution (held rate), pooled": seam_held_attribution,
                           "value-route lesion attribution (held rate), by turn class": by_class,
-                          "G3 numerator split (report-only; bar unchanged)": g3_numerator_split(g3_events)}
+                          "G3 numerator split (report-only; bar unchanged)": g3_numerator_split(g3_events),
+                          STOP4_KEY: stop4_sub_reversal_report(sub_rev)}
     if commit:
         out["amendment"] = AMENDMENT_ID
     return out

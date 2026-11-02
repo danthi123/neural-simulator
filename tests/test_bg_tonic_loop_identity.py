@@ -42,17 +42,38 @@ def _load_golden() -> dict:
         return json.load(fh)
 
 
+# RULING bg-gate-amend-1101 (STOP-5): the two SimulationBridge visualization arrays that sim/bridge.py allocates
+# only when PyOpenGL imports (`if OPENGL_AVAILABLE and num_synapses > 0:` in the bridge build; introduced with the
+# bridge itself, 6be22526c "refactor: extract SimulationBridge to sim/bridge.py", 2026-04-06, per
+# `git log -S cp_synapse_pulse_progress`). The golden was captured on a host where OpenGL did not import, so they are
+# absent from it; they are display buffers (zeros), never read by the dynamics.
+VIS_ONLY_ARRAYS = frozenset({"cp_synapse_pulse_progress", "cp_synapse_pulse_timers"})
+
+
 def test_flag_off_identical_to_golden(monkeypatch):
     """Both switches unset: every bridge array + the post-build RNG state match the golden exactly,
-    through build_selector_bridge and through NeuralSeamSelector.ensure_built (seeds 9 and 16)."""
+    through build_selector_bridge and through NeuralSeamSelector.ensure_built (seeds 9 and 16).
+
+    RULING bg-gate-amend-1101 (STOP-5): the comparison is narrowed to the golden's OWN array set, and the set
+    difference must be exactly VIS_ONLY_ARRAYS (cp_synapse_pulse_progress, cp_synapse_pulse_timers) when
+    sim.bridge.OPENGL_AVAILABLE, and empty otherwise; any other new or missing array still fails. Reason: those two
+    visualization arrays are allocated only when PyOpenGL imports (added with SimulationBridge itself, engine commit
+    6be22526c), and the golden was captured without OpenGL, so the test failed on OpenGL hosts (e.g. the workstation)
+    while every array the golden holds stayed byte-identical. The golden is NOT re-captured."""
+    from sim.bridge import OPENGL_AVAILABLE
     for k in SWITCHES:
         monkeypatch.delenv(k, raising=False)
     golden = _load_golden()
     assert set(golden["cases"]) == set(CASES), "golden/case set mismatch"
+    allowed_extra = VIS_ONLY_ARRAYS if OPENGL_AVAILABLE else frozenset()
     for name, builder in CASES.items():
         got = snapshot(builder())
         want = golden["cases"][name]
-        assert set(got) == set(want), f"{name}: array set changed (extra/missing bridge arrays)"
+        missing = sorted(set(want) - set(got))
+        extra = set(got) - set(want)
+        assert not missing, f"{name}: bridge arrays missing vs the golden: {missing}"
+        assert extra == allowed_extra, (f"{name}: extra bridge arrays {sorted(extra)} != the allowed "
+                                        f"{sorted(allowed_extra)} (OPENGL_AVAILABLE={OPENGL_AVAILABLE})")
         differing = sorted(k for k in want if got[k] != want[k])
         assert not differing, f"{name}: flag-off build is NOT byte-identical, differs in {differing}"
 
