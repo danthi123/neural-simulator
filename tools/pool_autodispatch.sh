@@ -752,7 +752,7 @@ pop_job() {
     job="$cand"; break
   done < <(awk -F'\t' -v now="$now" -v d="${POOL_JOB_MAX_AGE:-43200}" -v cap="${POOL_JOB_MAX_AGE_CAP_H:-240}" \
              "$POOL_FRESH_AWK$POOL_GATE_AWK"' NF>1 && $1+0 >= now - maxage($0) {print (isgate($2) ? 0 : 1) "\t" $1 "\t" $2}' "$qin" \
-           | sort -s -t$'\t' -k1,1n)
+           | sort -s -t$'\t' -k1,1n 2>/dev/null)   # silence 'write failed: Broken pipe' when the consumer stops early
   # THE RECORD-CHECK GATE (2026-07-31), copied from tools/lane_dispatch.sh:47 where it is already proven.
   # A job may only run if it carries "#checked:", which tools/pool_queue.sh only attaches when a reason is
   # given. This sits ON THE EXECUTION PATH deliberately: before_you_build.sh existed and was skipped, and that
