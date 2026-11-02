@@ -41,6 +41,14 @@ and grows from what it lives through. Not LLM + RAG. Decision record:
   `brain/SCAFFOLDS.md`, or ask the owner.
 - Keep `brain/` small (target under 3,000 lines of code). Port from the old code only what a test says it needs.
 - Six-seed preregistered tests only when a capability is claimed for the record; day-to-day work iterates freely.
+- **The record and the biology come before every build, not after a correction** (owner 2026-11-02; gate
+  `tools/gates/brain_prereq.py`, class BP). Each build step starts with a record brief in `brain/research/`
+  (`tools/before_you_build.sh` + the old track's findings: what was tried, what worked, traps), and each new
+  experiment or eval declares `# Capability:` (a section of `brain/PREREQUISITES.md`), `# Record:` (that brief or
+  the finding it builds on) and, when the capability lacks prerequisites, `# Expected-fail:`. A failure on a system
+  missing what the biology needs, or far below the scale where the capability appears, is an expected failure,
+  never a mechanism verdict.
+- At each milestone checkpoint, run `evolve-skills` on the new core's workflow before starting the next stage.
 
 ## 4. Milestones
 
