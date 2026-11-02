@@ -26,7 +26,7 @@ import types
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, _ROOT)
 
-import tools.gates.ssh_stdin_in_read_loop as sr  # noqa: E402
+import tools.gates._archive.ssh_stdin_in_read_loop as sr  # noqa: E402  (gate retired 2026-11-02)
 
 
 def _git(args, data=None):

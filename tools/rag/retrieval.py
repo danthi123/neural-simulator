@@ -93,8 +93,11 @@ class RagRetriever:
             from llama_index.embeddings.huggingface import HuggingFaceEmbedding
             from llama_index.retrievers.bm25 import BM25Retriever
 
+            # CPU by default (2026-11-02): the workstation GPU is usually held by the local model, and a CUDA OOM
+            # here made every record check print "rag unavailable" and search nothing. The models are small.
+            device = os.environ.get("SIM_RAG_DEVICE", "cpu")
             Settings.embed_model = HuggingFaceEmbedding(
-                model_name="sentence-transformers/all-MiniLM-L6-v2"
+                model_name="sentence-transformers/all-MiniLM-L6-v2", device=device
             )
             Settings.llm = None
             self.index = load_index_from_storage(
@@ -109,6 +112,7 @@ class RagRetriever:
             self._reranker = SentenceTransformerRerank(
                 model="cross-encoder/ms-marco-MiniLM-L-6-v2",
                 top_n=self._candidate_count,
+                device=device,
             )
 
     @property

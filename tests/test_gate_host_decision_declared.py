@@ -242,6 +242,9 @@ def test_allowed_by_must_name_a_directive(val, ok):
 
 def test_the_non_negotiable_bound_is_claude_md_s_count():
     text = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+    if "## Non-negotiables" not in text:     # lean CLAUDE.md (2026-11-02): unnumbered rules, numbering frozen at 12
+        assert GATE.NN_COUNT == 12
+        return
     section = text.split("## Non-negotiables", 1)[1].split("\n## ", 1)[0]
     assert len(re.findall(r"^\d+\. ", section, re.M)) == GATE.NN_COUNT
 

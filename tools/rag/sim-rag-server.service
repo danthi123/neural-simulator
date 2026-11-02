@@ -1,0 +1,16 @@
+# Resident RAG index for fast record checks (tools/rag/rag_server.py). Install on the workstation:
+#   cp tools/rag/sim-rag-server.service ~/.config/systemd/user/ && systemctl --user daemon-reload \
+#     && systemctl --user enable --now sim-rag-server.service
+[Unit]
+Description=Simulated-brain RAG index (resident, CPU)
+
+[Service]
+ExecStart=/home/dant123/Projects/sim/.venv-rag/bin/python /home/dant123/Projects/sim/tools/rag/rag_server.py
+Environment=SIM_RAG_DEVICE=cpu
+MemoryMax=5G
+Nice=5
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=default.target

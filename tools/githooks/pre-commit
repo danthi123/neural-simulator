@@ -1,27 +1,18 @@
 #!/usr/bin/env bash
-# pre-commit: BLOCK a commit that violates the document-structure rules (docs/WRITING.md W1 + W2).
-#
-# WHY (2026-07-30). I ran `tools/check_docs.py`, watched it print "FAIL -- see docs/WRITING.md" for a 999-char
-# line, and committed anyway -- because I had chained the commands with `;` instead of `&&`, so the commit never
-# depended on the check's exit status. That is not missing a check; it is running one and proceeding past it,
-# which is the day's dominant failure shape in its most avoidable form.
-#
-# W2 is not cosmetic: it is the PRECONDITION for W1. Splitting one 14,222-char board line once exposed two stale
-# citations "marked" only by a retraction symbol sitting 13,000 characters away. Over-long lines are where stale
-# pointers hide.
+# pre-commit: the lean check set (2026-11-02). Every check here reads THIS commit's own content, is cheap
+# (whole hook <= ~5 s on a typical commit), and guards against irreversible/costly harm or an invalid claim.
+# The list and the reasons: docs/FAILURE_GATE_MATRIX.md. Retired checks: docs/archive/2026-11-02-gate-inventory.md.
+# Same hook for every driver (Claude, Hermes, Pi). Never bypass with --no-verify.
 #
 # Install:  git config core.hooksPath tools/githooks
-# Bypass (deliberate, visible in the reflog):  git commit --no-verify
 set -uo pipefail
 ROOT=$(git rev-parse --show-toplevel); export ROOT
 COMMON=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null) || exit 1
 CANONICAL=$(dirname "$COMMON")
+OUT=$(mktemp -d); trap 'rm -r -- "${OUT:?}"' EXIT
 
-# AGENT BACKSTOP (owner ruling 2026-10-01, "Routine merges"). The driver agent (Hermes) runs as uid 99 on the server.
-# Its commits on main -- direct ones, and tools/agent_merge.sh's merge commits, whose staged index IS the real merge
-# result -- may touch only the routine classes in tools/agent_merge_policy.py, plus the coordination files the runbook
-# has it edit on main. A Claude review session on the server sets SIM_CLAUDE_REVIEW=1 (the agent's command deny list
-# refuses that string). Mistake-proofing, not a sandbox (security review 2026-10-01: SIGN-OFF with these fixes).
+# 1. AGENT MERGE BACKSTOP (owner ruling 2026-10-01). The server driver (uid 99) may commit on main only the routine
+# classes in tools/agent_merge_policy.py. A Claude review session on the server sets SIM_CLAUDE_REVIEW=1.
 if [ "$(id -u)" = 99 ] && [ "$(git branch --show-current)" = main ] && [ "${SIM_CLAUDE_REVIEW:-0}" != 1 ] \
    && [ -f "$ROOT/tools/agent_merge_policy.py" ]; then
   python3 "$ROOT/tools/agent_merge_policy.py" --staged || exit 1
@@ -29,133 +20,67 @@ fi
 PY=${SIM_ENGINE_PYTHON:-$CANONICAL/.venv/bin/python}
 if [ ! -x "$PY" ]; then
   echo "COMMIT BLOCKED: canonical engine interpreter missing: $PY"
-  echo "Run the repository environment setup before installing/enabling tools/githooks."
   exit 1
 fi
-# GATE 1 -- document STRUCTURE (W1 retraction marking, W2 line length).
-"$PY" "$ROOT/tools/check_docs.py" > /tmp/_precommit_docs.out 2>&1 || {
-  echo "⛔ COMMIT BLOCKED — document-structure rules failed:"
-  sed 's/^/   /' /tmp/_precommit_docs.out | tail -20
-  echo
-  echo "   Fix:  .venv/bin/python tools/split_long_doc_lines.py --apply    (W2; refuses to write if content changes)"
-  echo "   or register the voided doc in docs/RETRACTED.md and mark citations with the retraction symbol (W1)."
-  echo "   Deliberate override: git commit --no-verify"
-  exit 1
-}
 
-# GATE 2 -- CLAIMS. Every measurement in a staged findings doc must exist in an artifact the doc cites.
-# This is the gate for the failure class the experiment harness does NOT cover: a claim repeated from a summary
-# without opening the artifact. On 2026-07-31 that produced "lane A has a banked 6-seed GO" when the artifact
-# read {"GO": false, "n_seeds_go": 2}. A finding is where claims become durable, so this is where they get checked.
-# --diff-filter=A, NOT ACM. The Tier-1 status classification added frontmatter to 274 LEGACY findings, which
-# under ACM pulled every one of them into claim-check scope -- and a 2026-05 document cannot retroactively cite
-# artifacts that were never written. The gate's scope had silently assumed "has frontmatter" == "is new"; after
-# the classification pass that assumption is false. Claims are checked on findings as WRITTEN, which is when the
-# author can actually satisfy them; editing an old finding's status must not demand its rewrite.
-STAGED=$(git diff --cached --name-only --diff-filter=A | grep -E '^research/findings/[^/]+\.md$' || true)
-# MERGE-AWARE (2026-10-28). "Added" above is relative to the FIRST parent, so a main-into-branch merge (every
-# agent_sync_branch.sh sync) listed all of main's new findings and one stale citation on main blocked every branch
-# sync. While a merge is concluded (MERGE_HEAD present) tools/merge_carried.py drops a finding when, for one merge
-# parent main already contains, its staged blob is byte-identical to that parent's AND no artifact it cites
-# (claim_check's PATH_RE, globs included) differs between the index and that parent: main's text over main's
-# artifacts, not this merge's. New merge content, a carried finding whose cited artifact the merge changes (deleted,
-# rewritten, or git rm'd on the branch), and a branch's own findings landed INTO main are checked as before; a
-# non-merge commit never reaches this block. The helper fails closed (prints every path), and a non-zero exit keeps
-# the list unchanged.
-_MH=$(git rev-parse --path-format=absolute --git-path MERGE_HEAD 2>/dev/null || true)
-if [ -n "$STAGED" ] && [ -n "$_MH" ] && [ -f "$_MH" ]; then
-  _G2_HELPER=$ROOT/tools/merge_carried.py
-  [ -f "$_G2_HELPER" ] || _G2_HELPER=$CANONICAL/tools/merge_carried.py
-  _G2_KEEP=$(printf '%s\n' "$STAGED" | "$PY" "$_G2_HELPER") && STAGED=$_G2_KEEP
-fi
-if [ -n "$STAGED" ]; then
-  if ! echo "$STAGED" | xargs -r "$PY" "$ROOT/tools/claim_check.py" > /tmp/_precommit_claims.out 2>&1; then
-    echo "⛔ COMMIT BLOCKED — a findings doc states measurements that are in no artifact it cites:"
-    sed 's/^/   /' /tmp/_precommit_claims.out | tail -28
-    echo
-    echo "   Fix ONE of:  cite the artifact that contains the number (a path with a / in it);"
-    echo "                save the aggregate you computed and cite THAT (means over seeds live in no per-seed file);"
-    echo "                mark a derived/quoted value with <!--derived--> (inline, or alone on a line for block scope)."
-    echo "   Deliberate override: git commit --no-verify"
-    exit 1
-  fi
-fi
+ADDED=$(git diff --cached --name-only --diff-filter=A)
+CHANGED=$(git diff --cached --name-only --diff-filter=ACMR)
+NEWF=$(printf '%s\n' "$ADDED" | grep -E '^research/findings/[^/]+\.md$' || true)
 
-# GATE 3 -- BIOLOGY. Source pointers must still resolve, and no config may contradict the biology it implements.
-# Earned 2026-07-31: a 21-agent research round re-established that BTSP is one-shot (a SINGLE plateau makes a
-# field) after the gap#5 arc had run for weeks with laps=5, sweeping every OTHER axis. Nothing connected the
-# runner to the paper. The biology is STABLE -- it should be recorded once and checked, not re-researched.
-if [ -f "$ROOT/tools/biology_check.py" ]; then
-  if ! "$PY" "$ROOT/tools/biology_check.py" > /tmp/_precommit_bio.out 2>&1; then
-    echo "⛔ COMMIT BLOCKED — biology binding failed:"
-    sed 's/^/   /' /tmp/_precommit_bio.out | tail -20
-    echo
-    echo "   Either the config contradicts the biology it claims to implement, or a source pointer has rotted."
-    echo "   Deliberate override: git commit --no-verify"
-    exit 1
-  fi
-fi
-
-# GATE 4 -- FINDING STATUS. A NEW finding must declare `status:` in frontmatter, so retrieval can tell a live
-# result from a void one. Measured 2026-07-31: 1841 findings, 0 with frontmatter, 1 row in docs/RETRACTED.md --
-# so a RAG hit carried a path and a score and NOTHING about whether the result still stood, and a filename
-# asserting "-6seed-GO" was surfaced for a finding whose artifact reads {"GO": false}. NEW files only: 1841
-# cannot be backfilled in one pass, and a keyword classifier was measured ~1-in-6 precise, so status must be
-# DECLARED rather than inferred.
-NEWF=$(git diff --cached --name-only --diff-filter=A | grep -E '^research/findings/[^/]+\.md$' || true)
+# 2. NEW FINDING DECLARES A STATUS, so retrieval can tell a live result from a void one.
 if [ -n "$NEWF" ]; then
   BAD=""
   for f in $NEWF; do
     head -1 "$f" 2>/dev/null | grep -q '^---$' && grep -qE '^status:[[:space:]]*[a-z-]+' "$f" || BAD="$BAD $f"
   done
   if [ -n "$BAD" ]; then
-    echo "⛔ COMMIT BLOCKED — new finding(s) do not declare a status:"
-    for f in $BAD; do echo "     $f"; done
-    echo
-    echo "   Add frontmatter as the FIRST lines of the file:"
-    echo "       ---"
-    echo "       status: live | qualified | corrected | superseded | retracted"
-    echo "       lane: gap#5"
-    echo "       date: YYYY-MM-DD"
-    echo "       ---"
-    echo "   Deliberate override: git commit --no-verify"
+    echo "⛔ COMMIT BLOCKED: new finding(s) without frontmatter status:$BAD"
+    echo "   First lines:  ---  /  status: live | qualified | corrected | superseded | retracted  /  date: YYYY-MM-DD  /  ---"
     exit 1
   fi
 fi
 
-# GATE 5 -- THE REGISTRY. Every failure class in docs/FAILURE_GATE_MATRIX.md, one module each, auto-discovered
-# from tools/gates/. Adding a class is one file; this hook never changes again. The registry refuses to trust a
-# gate whose selftest does not fail in the failing direction -- failure class 3 (the anti-drift mechanism being
-# itself the defect, 9 incidents) closed structurally.
-# --diff-filter=A for the same reason as GATE 2: the Tier-1 classification added frontmatter to 274 LEGACY
-# findings, and under ACM that pulled every one into the CONTENT gates -- 192 doc-type hits and 39
-# single-seed hits on 2026-04/05 documents that cannot retroactively cite artifacts or re-run at 6 seeds.
-# Content quality is checked when a document is WRITTEN, which is when the author can satisfy it.
-# RELATIONSHIP gates (stale-pointer) are unaffected: they glob the steering docs themselves rather than
-# relying on the staged list, so they keep checking the whole corpus -- which is where their 30 REAL hits
-# came from (the board citing a RETRACTED gap#3 GO with no marker).
-# The staged list goes through a FILE, not argv (2026-09-23): a 186-shard artifact commit staged ~1,900 paths and one
-# argv string over Linux's 128 KB MAX_ARG_STRLEN made the hook die "Argument list too long" -- blocking the commit
-# with no gate having run at all.
-STAGED_LIST_FILE=$(mktemp)
-git diff --cached --name-only --diff-filter=A > "$STAGED_LIST_FILE" 2>/dev/null || true
-"$PY" - "$STAGED_LIST_FILE" > /tmp/_precommit_gates.out 2>&1 <<'PY'
+# 3. CLAIMS TRACE TO ARTIFACTS. Every measurement in a new finding must exist in an artifact it cites. During a
+# merge, findings carried byte-identical from a parent are dropped (tools/merge_carried.py, fails closed).
+_MH=$(git rev-parse --path-format=absolute --git-path MERGE_HEAD 2>/dev/null || true)
+if [ -n "$NEWF" ] && [ -n "$_MH" ] && [ -f "$_MH" ]; then
+  _KEEP=$(printf '%s\n' "$NEWF" | "$PY" "$ROOT/tools/merge_carried.py") && NEWF=$_KEEP
+fi
+if [ -n "$NEWF" ]; then
+  if ! printf '%s\n' "$NEWF" | xargs -r "$PY" "$ROOT/tools/claim_check.py" > "$OUT/claims" 2>&1; then
+    echo "⛔ COMMIT BLOCKED: a new finding states measurements that are in no artifact it cites:"
+    sed 's/^/   /' "$OUT/claims" | tail -20
+    echo "   Fix: cite the artifact (a path with a /), save and cite the aggregate, or mark a derived value <!--derived-->."
+    exit 1
+  fi
+fi
+
+# 4. BIOLOGY BINDINGS (only when the commit touches the bindings or the code they bind): source pointers resolve
+# and no config contradicts the biology it implements.
+if printf '%s\n' "$CHANGED" | grep -qE '^(research/biology/|research/runners/|sim/)'; then
+  if ! "$PY" "$ROOT/tools/biology_check.py" > "$OUT/bio" 2>&1; then
+    echo "⛔ COMMIT BLOCKED: biology binding failed:"
+    sed 's/^/   /' "$OUT/bio" | tail -15
+    exit 1
+  fi
+fi
+
+# 5. THE GATE REGISTRY (tools/gates/*.py, auto-discovered; each gate's selftest must fail in the failing direction
+# before its verdict is trusted). Paths go through a file: argv overflows on large artifact commits.
+printf '%s\n' "$ADDED" > "$OUT/paths"
+"$PY" - "$OUT/paths" > "$OUT/gates" 2>&1 <<'PY'
 import sys, os
 sys.path.insert(0, os.environ.get("ROOT") or os.getcwd())
 from tools.gates import run_all
-_lst = sys.argv[1] if len(sys.argv) > 1 else ""
-paths = [p for p in (open(_lst).read() if _lst and os.path.exists(_lst) else "").split("\n") if p.strip()]
+paths = [p for p in open(sys.argv[1]).read().split("\n") if p.strip()]
 blocking, report = run_all(paths, verbose=False)
 print("\n".join(report))
 sys.exit(1 if blocking else 0)
 PY
-_gates_rc=$?
-rm -f "$STAGED_LIST_FILE"
-if [ $_gates_rc -ne 0 ]; then
-  echo "⛔ COMMIT BLOCKED — failure-class gate(s):"
-  sed 's/^/   /' /tmp/_precommit_gates.out | tail -30
-  echo "   Deliberate override: git commit --no-verify"
+if [ $? -ne 0 ]; then
+  echo "⛔ COMMIT BLOCKED by gate(s):"
+  sed 's/^/   /' "$OUT/gates" | tail -30
   exit 1
 fi
-[ -s /tmp/_precommit_gates.out ] && sed 's/^/   /' /tmp/_precommit_gates.out | grep -E "⚠️" | head -6
+grep -E "⚠️" "$OUT/gates" | head -6 | sed 's/^/   /'
 exit 0

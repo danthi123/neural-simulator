@@ -120,7 +120,7 @@ def test_offarm_staleness_gate_resolves_the_default_on():
     that pops the flag as its OFF arm (the 2026-08-27 class) blocks. It resolves a bare literal
     os.environ.get("BRAIN_EMOTION_CATEGORY_BOUNDED") gated on a `_*DEFAULT_ON` constant; a read through a variable
     resolves UNKNOWN (None) and the gate skips the flag."""
-    sys.path.insert(0, os.path.join(REPO, "tools", "gates"))
+    sys.path.insert(0, os.path.join(REPO, "tools", "gates", "_archive"))   # gate archived 2026-11-02
     import flip_offarm_staleness as gate
     assert gate._default_state(ENV, REPO) == "on"
 

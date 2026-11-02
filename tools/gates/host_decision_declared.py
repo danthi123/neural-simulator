@@ -100,7 +100,8 @@ CUTOFF = "2026-10-21"
 MIN_REASON = 20
 CAP_MIN, CAP_MAX = 1, 5
 HEAD_MAX_LINE = 60               # the header is up front: within this many lines
-NN_COUNT = 12                    # CLAUDE.md's non-negotiables; tests pin this against CLAUDE.md
+NN_COUNT = 12                    # the 12 numbered non-negotiables of CLAUDE.md before the 2026-11-02 lean rewrite
+                                 # (frozen numbering: the lean CLAUDE.md lists its rules unnumbered; old citations stay valid)
 KNOWN_SCAFFOLDS = frozenset((    # review found these plan host code that decides content: `none` is refused on them
     "research/findings/2026-10-20-moat-allowlist-claim-checker-PREREGISTRATION.md",
     "docs/drafts/moat-allowlist/SPEC.md",
@@ -167,7 +168,7 @@ def _pra():
 
 
 def _smk():
-    from tools.gates import flip_smoke_first as smk
+    from tools.gates._archive import flip_smoke_first as smk
     return smk
 
 

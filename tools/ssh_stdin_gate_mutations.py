@@ -21,8 +21,8 @@ import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-GATE = os.path.join(ROOT, "tools", "gates", "ssh_stdin_in_read_loop.py")
-TESTS = "tests/test_gate_ssh_stdin_in_read_loop.py"
+GATE = os.path.join(ROOT, "tools", "gates", "_archive", "ssh_stdin_in_read_loop.py")  # retired 2026-11-02
+TESTS = "tests/_archive_gates/test_gate_ssh_stdin_in_read_loop.py"
 
 # (label, [(exact text in the gate, replacement)])
 MUTATIONS = [
@@ -113,7 +113,7 @@ MUTATIONS = [
 
 
 def _run_tests():
-    for f in glob.glob(os.path.join(ROOT, "tools", "gates", "__pycache__", "ssh_stdin_in_read_loop*")):
+    for f in glob.glob(os.path.join(ROOT, "tools", "gates", "_archive", "__pycache__", "ssh_stdin_in_read_loop*")):
         os.remove(f)
     env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
     r = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", TESTS, "-rf", "--no-header"],

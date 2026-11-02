@@ -14,7 +14,7 @@ import pytest
 
 import tools.bar_sanity as bs
 import tools.gates as gates
-import tools.gates.bar_sanity_line as gate
+import tools.gates._archive.bar_sanity_line as gate
 
 _REPO = bs._ROOT
 
@@ -118,7 +118,7 @@ def test_wilson_interval():
 def test_gate_selftest_is_clean_and_the_registry_runs_it():
     assert gate.selftest() == []
     names = [n for n, mod, err in gates.discover() if err is None]
-    assert "bar_sanity_line" in names
+    assert "bar_sanity_line" not in names    # archived 2026-11-02 (tools/gates/_archive/); never run by the hook
 
 
 def test_gate_matches_the_files_it_should():

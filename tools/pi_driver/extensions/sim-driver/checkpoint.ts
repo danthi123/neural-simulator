@@ -10,7 +10,7 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { type DriverConfig, bumpLedger, clip, readLedger, run, text, today, writeJson } from "./common.ts";
 
 const SKILL: Record<string, string> = {
-  verify: "Run the verify-go skill (.claude/skills/verify-go/SKILL.md) on this claim: try to REFUTE it; default to REFUTED when uncertain.",
+  verify: "Run the land-result skill (.claude/skills/land-result/SKILL.md) on this claim: try to REFUTE it; default to REFUTED when uncertain.",
   ruling: "Make the ruling asked for, as the project's judgment step (CLAUDE.md, the MASTER ROADMAP, the runbook rulings).",
   merge_review:
     "Review the branch for merging to main: read its full diff against main, run the relevant tests, check every claim it makes " +

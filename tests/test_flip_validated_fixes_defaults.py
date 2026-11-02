@@ -67,7 +67,7 @@ def test_flip_offarm_gate_resolves_all_three_defaults_on():
     """The static shadow the OS gate uses must see the flip (else a future pop-based OFF arm would slip through)."""
     import os
 
-    from tools.gates import flip_offarm_staleness as g
+    from tools.gates._archive import flip_offarm_staleness as g
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     for _m, _f, flag, _c in _CASES:
         assert g._default_state(flag, root) == "on", flag

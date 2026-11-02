@@ -17,8 +17,54 @@ _ORIG_CWD="$PWD"
 _SCRIPT_DIR="$(cd -- "$(dirname -- "$0")" && pwd)"
 
 cd "$_SCRIPT_DIR/.."
+FAST="${BYB_FAST:-0}"
+if [ "${1:-}" = "--fast" ]; then FAST=1; shift; fi
 Q="${*:-}"
 [ -z "$Q" ] && { echo "usage: bash tools/before_you_build.sh \"<the defect in one line>\""; exit 2; }
+
+
+# ---- shared search helpers (2026-11-02 lean method) ----------------------------------------------------------
+# The record check used to search ONLY --corpus finding. The biology catalog, the buildout roadmap, the Kandel
+# corpus and the docs hold the answer to "has biology already told us how this works / is it already built", so
+# every mode now searches them too. Searches run in PARALLEL (each loads the embedding model; on a loaded box one
+# alone can take a minute), each bounded by `timeout`; a lexical grep over the catalog/biology files is the
+# fallback when the vector search is slow or unavailable, so the answer is never empty.
+_TMP="$(mktemp -d)"; trap 'rm -rf "$_TMP"' EXIT
+_lexical() {  # $1=query ; ranks catalog/biology/brain files by how many query words they contain
+  python3 - "$1" <<'PY' 2>/dev/null
+import sys,re,glob,os
+q=[w for w in re.findall(r"[a-z0-9]{4,}",sys.argv[1].lower()) if w not in {"that","this","with","from","into","does","have"}]
+home=os.path.expanduser("~/Projects")
+files=glob.glob(home+"/sim-catalog/references/*.md")+glob.glob("research/biology/*.md")+glob.glob("docs/*.md")+glob.glob("docs/plans/*.md")+glob.glob("brain/**/*.md",recursive=True)+glob.glob(home+"/sim-brain-v2/brain/**/*.md",recursive=True)
+sc=[]
+for f in files:
+    try: t=open(f,errors="ignore").read().lower()
+    except Exception: continue
+    n=sum(1 for w in q if w in t)
+    if n: sc.append((n,len(q),f,len(t)))
+sc.sort(key=lambda x:(-x[0],x[3]))  # most words, then smallest file (focused beats sprawling)
+for n,m,f,_ in sc[:5]: print(f"  [lexical {n}/{m} words] {f}")
+PY
+}
+_run_corpus() {  # $1=corpus $2=top_k $3=timeout_s $4=out
+  CUDA_VISIBLE_DEVICES="${BYB_CUDA:-}" timeout "$3" bash tools/rag/search.sh "$Q" "$2" --corpus "$1" > "$4" 2>/dev/null || true
+}
+_show() {  # $1=label $2=file $3=mode(full|titles)
+  echo "  -- $1"
+  if [ "$3" = "titles" ]; then grep -E '^ +(\[[0-9]+\]|at )' "$2" 2>/dev/null | cut -c1-170 | sed 's/^/  /'
+  else grep -vi "^LLM is\|CUDACachingAllocator" "$2" 2>/dev/null | cut -c1-220 | sed 's/^/  /'; fi
+  [ -s "$2" ] && grep -qE '^ +\[[0-9]+\]' "$2" || echo "    (no vector hits / search timed out)"
+}
+
+if [ "$FAST" = "1" ]; then
+  # FAST MODE (hooks): ~20 s wall budget, titles only, fail-open, no freshness guard, no log line.
+  echo "Already in the record (fast; top hits, titles only):"
+  for c in finding catalog kandel doc; do _run_corpus "$c" 3 18 "$_TMP/$c" & done
+  wait
+  for c in finding catalog kandel doc; do _show "$c" "$_TMP/$c" titles; done
+  echo "  -- lexical (catalog / biology bindings / docs / brain)"; _lexical "$Q"
+  exit 0
+fi
 
 echo "════ 0. IS THE CORPUS CURRENT? (local main must contain published main) ════"
 # STALE-CORPUS GUARD (2026-10-21). After home moved to the server (09-30) nothing fast-forwarded the workstation's
@@ -40,8 +86,11 @@ else
 fi
 
 echo
-echo "════ 1. HAS THIS ALREADY BEEN SCOPED / TRIED / REFUTED? (our own findings) ════"
-bash tools/rag/search.sh "$Q" 5 --corpus finding 2>/dev/null | grep -vi "^LLM is" || echo "  (rag unavailable)"
+echo "════ 1. HAS THIS ALREADY BEEN SCOPED / TRIED / REFUTED / BUILT? (findings, biology catalog, Kandel, docs) ════"
+for c in finding catalog kandel doc; do _run_corpus "$c" 3 100 "$_TMP/$c" & done
+wait
+for c in finding catalog kandel doc; do _show "$c" "$_TMP/$c" full; done
+echo "  -- lexical (catalog / biology bindings / docs / brain)"; _lexical "$Q"
 
 echo
 echo "════ 2. IS THERE A RESEARCH GATE / SCOPE DOC ALREADY? ════"

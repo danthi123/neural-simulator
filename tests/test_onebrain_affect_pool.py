@@ -224,7 +224,7 @@ def test_attribution_is_computed_on_the_x1_flips():
 def test_runner_passes_the_attribution_required_gate():
     """Re-review issue 1 (the BLOCK): the runner computes lesion/null controls, so it must make a tools.lab
     attribution call. The v2 rewrite dropped v1's `lever`/`attributable_to` and this gate went red."""
-    from tools.gates import attribution_required as g
+    from tools.gates._archive import attribution_required as g
     assert g.check(["research/runners/_onebrain_affect_pool_verify.py"]) == []
 
 

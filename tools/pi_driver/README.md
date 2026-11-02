@@ -10,6 +10,11 @@ pieces:
 
 Hermes keeps every other lane, plus its homelab duties.
 
+**Method (2026-11-02).** Pi follows the same lean method as Claude and Hermes. It auto-loads `AGENTS.md` (a link to
+`CLAUDE.md`) from its worktree. `LANE_PROMPT.md` points it at the main checkout's current copies (`{main}` =
+cfg `merge_repo`) of `HANDOFF.md`, the lean runbook and the three skill files (before-build, land-result, ops), and at
+`tools/before_you_build.sh`. Claude writes the lane items; Pi never adds one. The 2-day timebox applies per item.
+
 ## What does which job
 
 | Job | How |

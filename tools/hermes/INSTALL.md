@@ -1,0 +1,4 @@
+# Install sim-driver.sh into the hermes container (Claude, from W, after this file is on S main)
+1. Back up: `ssh homelab-server 'docker exec hermes cp -p /opt/data/scripts/sim-driver.sh /opt/data/scripts/sim-driver.sh.bak-$(date +%Y%m%d)'`
+2. Copy as uid 99, then swap atomically (never rewrite a running script in place): `ssh homelab-server 'cd /home/dant123/Projects/neural-simulator && docker cp tools/hermes/sim-driver.sh hermes:/opt/data/scripts/sim-driver.sh.new && docker exec -u 0 hermes sh -c "chown 99:100 /opt/data/scripts/sim-driver.sh.new && chmod 755 /opt/data/scripts/sim-driver.sh.new && mv /opt/data/scripts/sim-driver.sh.new /opt/data/scripts/sim-driver.sh"'`
+3. Check: `ssh homelab-server 'docker exec hermes bash -n /opt/data/scripts/sim-driver.sh && docker exec hermes stat -c "%u %a" /opt/data/scripts/sim-driver.sh'` prints `99 755`; roll back by moving the `.bak-*` file back the same way.

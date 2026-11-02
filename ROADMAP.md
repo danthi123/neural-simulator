@@ -1,5 +1,7 @@
 # Roadmap
 
+> **LIVE STATE (2026-11-02 pivot):** the project now builds a new core in `brain/`. Live state: [`HANDOFF.md`](HANDOFF.md), [`brain/ARCHITECTURE.md`](brain/ARCHITECTURE.md) and the [pivot decision](docs/plans/2026-11-02-pivot-functional-digital-brain-DECISION.md). Everything below is old-track history (frozen except the Stage-2 retake).
+
 This is the plain-language capability view of the simulator. It is downstream
 of the [2026-08-02 project charter](docs/plans/2026-08-02-PROJECT-CHARTER-grounded-emergence-realignment.md),
 the [project handoff](HANDOFF.md), and the live state in

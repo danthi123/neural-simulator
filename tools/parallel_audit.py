@@ -45,7 +45,7 @@ VIK = os.path.join(ROOT, "tools", "vikunja.sh")
 # accounting is now keyed by the waiver FILE, not the gate name, so even a wrong label could not double-charge
 # -- the heartbeat still records under the gate's own NAME so the history reads cleanly.)
 try:
-    from gates import compute_idle_persistent as _cip, lane_starvation as _ls
+    from gates._archive import compute_idle_persistent as _cip, lane_starvation as _ls  # retired 2026-11-02, still read here
     WAIVER_SOURCES = (
         ("compute", _cip.NAME, _cip.WAIVER_FILE, _cip.WAIVER_MAX_H),
         ("lane", _ls.NAME, _ls._waiver_file(), _ls.LANE_WAIVER_MAX_H),

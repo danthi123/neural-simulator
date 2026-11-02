@@ -100,8 +100,9 @@ def test_dev_seed_lines_need_no_preflight(tmp_path):
 
 
 def test_ack_accepts_a_real_section_6_ruling(tmp_path):
+    # (2026-11-02: smoke-first-1018 moved to the archived v4 runbook; s2-preflight-1102 is a live section-6 ruling.)
     # 2026-10-18: ack split on "## RULINGS" but the header is "## 6. RULINGS (...)", so every ack was refused.
-    r = _pf(tmp_path, "ack", "--prereg", PREREG, "--revision", HEAD_SHA, "--ruling", "smoke-first-1018")
+    r = _pf(tmp_path, "ack", "--prereg", PREREG, "--revision", HEAD_SHA, "--ruling", "s2-preflight-1102")
     assert r.returncode == 0, r.stderr
 
 

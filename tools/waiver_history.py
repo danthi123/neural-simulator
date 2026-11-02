@@ -579,10 +579,10 @@ def _cli(argv=None):
     if a.cmd == "clear":
         paths = [a.path] if a.path else []
         if a.compute:
-            from gates import compute_idle_persistent as _cip     # lazy: avoids any import-order fragility
+            from gates._archive import compute_idle_persistent as _cip     # lazy: avoids any import-order fragility
             paths.append(_cip.WAIVER_FILE)
         if a.lane:
-            from gates import lane_starvation as _ls
+            from gates._archive import lane_starvation as _ls
             paths.append(_ls._waiver_file())
         if not paths:
             ap.error("clear needs a PATH, or --compute/--lane")

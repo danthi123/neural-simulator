@@ -27,7 +27,7 @@ os.environ["TRANSFORMERS_VERBOSITY"] = "error"
 os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 from rag_paths import resolve_paths
-from retrieval import RagRetriever, node_locator, node_source
+from retrieval import RagRetriever
 
 _REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PATHS = resolve_paths(_REPO)
@@ -45,26 +45,42 @@ if not argv or not argv[0].strip():
     raise SystemExit(2)
 query = argv[0]
 top_k = int(argv[1]) if len(argv) > 1 else 5
-try:
-    engine = RagRetriever(PATHS, corpus=corpus, top_k=top_k)
-except FileNotFoundError as exc:
-    sys.stderr.write(f"rag_search: {exc}\n")
-    raise SystemExit(1)
 
-nodes, latency_ms = engine.retrieve(query)
 
-buf = io.StringIO()
-buf.write(f'Q: {query}   ({latency_ms / 1000.0:.2f}s, top {top_k}, corpus={corpus}, index={engine.persist})\n')
-source_cache = {}
-for i, n in enumerate(nodes):
-    md = n.node.metadata or {}
-    stype = md.get("source_type", "?")
-    src = node_source(n)
-    txt = " ".join((n.node.get_content() or "")[:220].split())
-    score = round(n.score, 3) if n.score is not None else ""
-    locator = node_locator(n, source_cache)
-    buf.write(f"  [{i+1}] {score}  ({stype}) {src}\n      at {locator}\n      {txt}\n")
-if not nodes:
-    buf.write("  (no hits" + (f" in corpus '{corpus}'" if corpus != "all" else "") + ")\n")
-sys.stdout.buffer.write(buf.getvalue().encode("utf-8", "replace"))
-sys.stdout.buffer.write(b"\n")
+def _via_server():
+    """The resident index (tools/rag/rag_server.py) answers in seconds; None when it is not running."""
+    import json, socket
+    path = os.environ.get("SIM_RAG_SOCKET") or os.path.join(os.environ.get("XDG_RUNTIME_DIR", "/tmp"), "sim-rag.sock")
+    if not os.path.exists(path):
+        return None
+    try:
+        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
+            s.settimeout(float(os.environ.get("SIM_RAG_SERVER_TIMEOUT", "60")))
+            s.connect(path)
+            s.sendall((json.dumps({"query": query, "top_k": top_k, "corpus": corpus}) + "\n").encode())
+            s.shutdown(socket.SHUT_WR)
+            data = b""
+            while True:
+                chunk = s.recv(65536)
+                if not chunk:
+                    break
+                data += chunk
+        text = data.decode("utf-8", "replace")
+        return None if text.startswith("rag_server error") or not text else text
+    except OSError:
+        return None
+
+
+text = _via_server()
+if text is None:
+    import time
+    from rag_format import format_hits
+    try:
+        engine = RagRetriever(PATHS, corpus=corpus, top_k=top_k)
+    except FileNotFoundError as exc:
+        sys.stderr.write(f"rag_search: {exc}\n")
+        raise SystemExit(1)
+    started = time.time()
+    nodes, _ = engine.retrieve(query)
+    text = format_hits(query, nodes, engine, corpus, time.time() - started)
+sys.stdout.buffer.write(text.encode("utf-8", "replace"))

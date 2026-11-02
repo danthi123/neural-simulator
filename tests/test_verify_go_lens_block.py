@@ -1,17 +1,18 @@
-"""The verify-go skill carries the REQUIRED refuter-lens block (Claude review 2026-10-06). Hermes pastes it verbatim into
+"""The land-result skill carries the REQUIRED refuter-lens block (Claude review 2026-10-06; moved there from the retired
+verify-go skill 2026-11-02). Hermes pastes it verbatim into
 every refuter prompt, so the block must exist between its markers, hold the three lenses, and name the tools that make
 them mechanical (tools/answer_rate.py, tools/where_ran.py). A reworded or deleted lens fails here."""
 import os
 import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SKILL = os.path.join(ROOT, ".claude", "skills", "verify-go", "SKILL.md")
+SKILL = os.path.join(ROOT, ".claude", "skills", "land-result", "SKILL.md")
 
 
 def _block():
     text = open(SKILL, encoding="utf-8").read()
     m = re.search(r"<!-- REFUTER-LENS-BEGIN -->\n(.*?)\n<!-- REFUTER-LENS-END -->", text, re.S)
-    assert m, "the refuter-lens block markers are missing from the verify-go skill"
+    assert m, "the refuter-lens block markers are missing from the land-result skill"
     return m.group(1)
 
 

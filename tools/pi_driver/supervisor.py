@@ -57,6 +57,13 @@ def read_json(path, default):
         return default
 
 
+def lane_prompt(item):
+    """LANE_PROMPT with its fields filled; {main} is the main checkout (cfg merge_repo), where the lean CLAUDE.md,
+    HANDOFF.md, runbook and skill files are current even when the lane branch is behind main."""
+    return (LANE_PROMPT.replace("{lane_file}", CFG["lane_file"]).replace("{item}", item)
+            .replace("{main}", CFG.get("merge_repo") or CFG["workspace"]))
+
+
 def open_lane_items():
     try:
         lines = open(os.path.join(CFG["workspace"], CFG["lane_file"])).read().splitlines()
@@ -232,7 +239,7 @@ def tick(pi, agent, items, state):
         state["last_feed"] = time.time()
         feeds[todo[0]] = feeds.get(todo[0], 0) + 1   # keyed by the line's text: editing the line resets its count
         log("feeding lane item (attempt %d): %s" % (feeds[todo[0]], todo[0][:200]))
-        pi.prompt(LANE_PROMPT.replace("{lane_file}", CFG["lane_file"]).replace("{item}", todo[0]))
+        pi.prompt(lane_prompt(todo[0]))
         return "working"
     return state["status"]
 

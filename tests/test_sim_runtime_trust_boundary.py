@@ -444,7 +444,7 @@ def test_runtime_pull_stops_and_fails_loudly_at_the_stage_cap(tmp_path: Path) ->
 
 def test_lane_starvation_counts_recent_pool_running_records(tmp_path: Path, monkeypatch) -> None:
     import importlib.util   # loaded by path: tools/gates on sys.path would shadow real packages (gates/coverage.py)
-    spec = importlib.util.spec_from_file_location("lane_starvation_under_test", ROOT / "tools" / "gates" / "lane_starvation.py")
+    spec = importlib.util.spec_from_file_location("lane_starvation_under_test", ROOT / "tools" / "gates" / "_archive" / "lane_starvation.py")
     ls = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(ls)
     qd = tmp_path / "research" / "queue"

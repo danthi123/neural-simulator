@@ -85,7 +85,7 @@ else:
 
 import tools.gates.artifact_provenance as prov_gate      # noqa: E402  (the READER half of seam 1)
 import tools.lane_check as lane_check                    # noqa: E402  (the READER half of seam 2)
-import tools.gates.lane_starvation as lane_gate          # noqa: E402  (the READER half of seams 2 + 3)
+import tools.gates._archive.lane_starvation as lane_gate          # noqa: E402  (the READER half of seams 2 + 3)
 
 assert not prov_door._ENABLED, "provenance door must be import-disabled inside the test session"
 
@@ -422,7 +422,7 @@ class TestSeam3DispatchLogFormatAndLocation:
 
         # CONSUMER 1: the starvation gate. Take the delimiter from ITS OWN code, do not hard-code it here --
         # a hard-coded copy would keep passing while the consumer drifted (M19 in the mutation check).
-        split_line = [l for l in _in_code("tools/gates/lane_starvation.py", "split(") if "for l in tail" in l]
+        split_line = [l for l in _in_code("tools/gates/_archive/lane_starvation.py", "split(") if "for l in tail" in l]
         assert len(split_line) == 1, "lane_starvation's dispatch-log split changed: %s" % split_line
         delim = re.search(r'split\("([^"]+)"', split_line[0])
         assert delim, "could not extract the delimiter from: %s" % split_line[0]

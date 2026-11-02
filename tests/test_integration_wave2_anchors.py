@@ -767,7 +767,7 @@ def test_flip_passes_the_real_production_integration_gate(tmp_path, monkeypatch)
     three packets, so a gate/script disagreement shows up here, not at the local model's section-6 commit."""
     import yaml
     flip = importlib.import_module("tools.integration_wave2_flip")
-    pi = importlib.import_module("tools.gates.production_integration")
+    pi = importlib.import_module("tools.gates._archive.production_integration")
     led = yaml.safe_load(open(os.path.join(REPO, flip.LEDGER)))
     files = set(flip.files_touched())
     for r in led["rows"]:

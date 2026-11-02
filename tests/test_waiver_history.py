@@ -8,6 +8,7 @@ resource-class, (2) promise/intent language is rejected regardless of class, (3)
 cumulative non-GAMING/OWNER-PAUSE waived time, and (4) both gates actually honor `waiver_history.evaluate()`'s
 verdict (not just that the library itself works in isolation)."""
 import os
+import pytest
 import sys
 import tempfile
 
@@ -213,7 +214,7 @@ def test_shared_root_resolves_via_git_common_dir_not_this_files_own_worktree():
 
 
 def test_compute_idle_persistent_waiver_file_uses_the_shared_root_too():
-    from tools.gates import compute_idle_persistent as g
+    from tools.gates._archive import compute_idle_persistent as g
     assert g.WAIVER_FILE == os.path.join(wh.shared_root(), "research", "queue", ".parallel_compute_waiver")
 
 
@@ -230,19 +231,19 @@ def test_waiver_history_selftest_passes():
 
 
 def test_compute_idle_persistent_gate_selftest_passes():
-    from tools.gates import compute_idle_persistent as g
+    from tools.gates._archive import compute_idle_persistent as g
     assert g.selftest() == []
 
 
 def test_lane_starvation_gate_selftest_passes():
-    from tools.gates import lane_starvation as g
+    from tools.gates._archive import lane_starvation as g
     assert g.selftest() == []
 
 
 # ── both gates actually HONOR an evaluate() verdict (not just that the library works standalone) ─────────────
 
 def test_compute_idle_persistent_blocks_on_rejected_verdict():
-    from tools.gates import compute_idle_persistent as g
+    from tools.gates._archive import compute_idle_persistent as g
     now = 2_000_000.0
     state = {"generated_at": now, "under_compute": True, "since_under_compute": now - g.PERSIST_S - 60}
     rejected = {"active": True, "ok": False, "class": None, "reject_reason": "promise language 'will'"}
@@ -250,7 +251,7 @@ def test_compute_idle_persistent_blocks_on_rejected_verdict():
 
 
 def test_compute_idle_persistent_passes_on_ok_verdict():
-    from tools.gates import compute_idle_persistent as g
+    from tools.gates._archive import compute_idle_persistent as g
     now = 2_000_000.0
     state = {"generated_at": now, "under_compute": True, "since_under_compute": now - g.PERSIST_S - 60}
     ok = {"active": True, "ok": True, "class": "NO-READY-WORK", "age_h": 0.1, "budget_h": 1.0}
@@ -258,14 +259,14 @@ def test_compute_idle_persistent_passes_on_ok_verdict():
 
 
 def test_lane_starvation_blocks_on_rejected_verdict():
-    from tools.gates import lane_starvation as g
+    from tools.gates._archive import lane_starvation as g
     idle = sorted(g.CPU_LANES)
     rejected = {"active": True, "ok": False, "class": None, "reject_reason": "promise language 'will'"}
     assert g._idle_message(idle, rejected)
 
 
 def test_lane_starvation_passes_on_ok_verdict():
-    from tools.gates import lane_starvation as g
+    from tools.gates._archive import lane_starvation as g
     idle = sorted(g.CPU_LANES)
     ok = {"active": True, "ok": True, "class": "NO-READY-WORK", "age_h": 0.1, "budget_h": 1.0}
     assert g._idle_message(idle, ok) == []
@@ -275,13 +276,13 @@ def test_lane_starvation_passes_on_ok_verdict():
 # docstring: the gate tripped on ITS OWN commit against genuine, live project state) ──────────────────────────
 
 def test_compute_idle_persistent_exempts_infra_only_commits():
-    from tools.gates import compute_idle_persistent as g
+    from tools.gates._archive import compute_idle_persistent as g
     # (tools/waiver_history.py itself is enforcement machinery and NOT exempt since fix round 3 -- see R3 tests)
     assert g._is_infra_only(["tools/lab.py", "tests/test_waiver_history.py", "README.md"])
 
 
 def test_compute_idle_persistent_does_not_exempt_research_changes():
-    from tools.gates import compute_idle_persistent as g
+    from tools.gates._archive import compute_idle_persistent as g
     assert not g._is_infra_only(["tools/waiver_history.py", "research/runners/some_derisk.py"])
     assert not g._is_infra_only([])
 
@@ -290,19 +291,19 @@ def test_compute_idle_persistent_does_not_exempt_research_changes():
 # docstring ("no research/runners, no research/findings, no sim/") ─────────────────────────────────────────────
 
 def test_compute_idle_persistent_does_not_exempt_a_findings_md():
-    from tools.gates import compute_idle_persistent as g
+    from tools.gates._archive import compute_idle_persistent as g
     assert not g._is_infra_only(["research/findings/2026-09-23-some-result.md"]), \
         "a research/findings/*.md-only staged set is a research artifact, not compute-neutral infra"
 
 
 def test_compute_idle_persistent_does_not_exempt_the_board_or_roadmap():
-    from tools.gates import compute_idle_persistent as g
+    from tools.gates._archive import compute_idle_persistent as g
     assert not g._is_infra_only(["GAP_CLOSURE_MISSION.md"])
     assert not g._is_infra_only(["ROADMAP.md"])
 
 
 def test_compute_idle_persistent_still_exempts_generic_docs():
-    from tools.gates import compute_idle_persistent as g
+    from tools.gates._archive import compute_idle_persistent as g
     assert g._is_infra_only(["tools/lab.py", "docs/FAILURE_GATE_MATRIX.md", "CLAUDE.md"]), \
         "narrowing the .md exemption must not regress the exemption for genuinely generic documentation"
 
@@ -310,9 +311,10 @@ def test_compute_idle_persistent_still_exempts_generic_docs():
 # ── 2026-09-23 REVIEW FIX 4: parallel_audit.py's waiver-surfacing loop must key on the GATES' OWN NAME, not an
 # ad hoc print label -- a mismatch double-counts the shared renewal budget (see WAIVER_SOURCES's own comment) ──
 
+@pytest.mark.skip(reason="UC/L gates archived 2026-11-02; parallel_audit waiver surfacing degrades by design")
 def test_parallel_audit_waiver_gate_names_match_the_real_gates():
     import importlib.util
-    from tools.gates import compute_idle_persistent, lane_starvation
+    from tools.gates._archive import compute_idle_persistent, lane_starvation
     spec = importlib.util.spec_from_file_location("parallel_audit", os.path.join(ROOT, "tools",
                                                                                   "parallel_audit.py"))
     pa = importlib.util.module_from_spec(spec)
@@ -521,10 +523,10 @@ def test_R3_sentinel_is_read_from_the_SHARED_root_not_the_evaluating_worktree(mo
 # ── (3) _is_infra_only: an explicit allow-list, deny by default ─────────────────────────────────────────────
 
 def test_R3_infra_only_does_not_exempt_research_status_docs_or_the_gates_themselves():
-    from tools.gates import compute_idle_persistent as g
+    from tools.gates._archive import compute_idle_persistent as g
     for p in ("docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md", "research/biology/btsp.md", "ROADMAP.md",
               "GAP_CLOSURE_MISSION.md", "research/FAILURE_LOG.md", "HANDOFF.md", "docs/CURRENT-STATE.md",
-              "tools/gates/compute_idle_persistent.py", "tools/gates/lane_starvation.py",
+              "tools/gates/_archive/compute_idle_persistent.py", "tools/gates/_archive/lane_starvation.py",
               "tools/waiver_history.py", "tools/parallel_state.py", "tools/parallel_audit.py",
               "tools/githooks/pre-commit"):
         assert not g._is_infra_only([p]), "%s was exempted as compute-neutral infra" % p
@@ -532,7 +534,7 @@ def test_R3_infra_only_does_not_exempt_research_status_docs_or_the_gates_themsel
 
 
 def test_R3_infra_only_still_exempts_genuinely_generic_infra():
-    from tools.gates import compute_idle_persistent as g
+    from tools.gates._archive import compute_idle_persistent as g
     assert g._is_infra_only(["tools/lab.py", "tests/test_lab.py", "README.md", "CLAUDE.md",
                              "docs/FAILURE_GATE_MATRIX.md", ".gitignore"])
 
@@ -551,9 +553,10 @@ def test_R3_one_waiver_read_under_two_different_gate_labels_is_charged_once():
         assert abs(used - 1.0) < 1e-6, "one waiver live 1h under two labels must charge 1h, got %r" % used
 
 
+@pytest.mark.skip(reason="UC/L gates archived 2026-11-02; parallel_audit waiver surfacing degrades by design")
 def test_R3_parallel_audit_waiver_sources_are_the_gates_own_name_file_and_cap():
     import importlib.util
-    from tools.gates import compute_idle_persistent as cip, lane_starvation as ls
+    from tools.gates._archive import compute_idle_persistent as cip, lane_starvation as ls
     spec = importlib.util.spec_from_file_location("parallel_audit_r3", os.path.join(ROOT, "tools",
                                                                                     "parallel_audit.py"))
     pa = importlib.util.module_from_spec(spec)

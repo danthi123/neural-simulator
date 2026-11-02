@@ -23,6 +23,10 @@ PASSING. Every one of those gates looked healthy while checking nothing. So the 
 whose selftest does not itself fail in the failing direction, and `run_all` reports that refusal loudly.
 
 Adding a failure class is therefore: write one file here, implement two functions. No hook edit, no wiring.
+
+LEAN SET (2026-11-02). About a dozen checks, each cheap, each guarding against costly/irreversible harm or an
+invalid claim, each reading the commit's OWN content. Retired gates live in _archive/ (not discovered). Before
+adding a gate here, read docs/FAILURE_GATE_MATRIX.md: a new gate must meet the same bar and keep the hook <= ~5 s.
 """
 from __future__ import annotations
 
@@ -37,7 +41,7 @@ def discover():
     """Every gate module in this package, sorted by CLASS_ID for stable output."""
     out = []
     for m in pkgutil.iter_modules([_PKG_DIR]):
-        if m.name.startswith("_"):
+        if m.name.startswith("_") or m.ispkg:        # _archive/ (retired gates) and any subpackage are never run
             continue
         try:
             mod = importlib.import_module("tools.gates.%s" % m.name)

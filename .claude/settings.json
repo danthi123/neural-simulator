@@ -3,14 +3,12 @@
   "hooks": {
     "SessionStart": [
       {
+        "matcher": "startup|resume|clear|compact",
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/live_state_inject.py\" 2>/dev/null || true"
-          },
-          {
-            "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/watcher_guard.py\" 2>/dev/null || true"
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/session_start.py\" 2>/dev/null || true",
+            "timeout": 10
           }
         ]
       }
@@ -20,26 +18,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/live_state_inject.py\" 2>/dev/null || true"
-          },
-          {
-            "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/watcher_guard.py\" 2>/dev/null || true"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/check_doc_drift.py\" 2>/dev/null || true"
-          },
-          {
-            "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/live_state_nudge.py\" 2>/dev/null || true"
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/watcher_guard.py\" 2>/dev/null || true",
+            "timeout": 5
           }
         ]
       }
@@ -51,6 +31,27 @@
           {
             "type": "command",
             "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/block_self_matching_kill.py\""
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/new_file_record.py\" 2>/dev/null || true",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/stop_guard.py\" 2>/dev/null || true",
+            "timeout": 5
           }
         ]
       }

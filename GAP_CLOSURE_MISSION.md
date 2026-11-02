@@ -1,5 +1,7 @@
 # GAP CLOSURE MISSION — the ACTIVE directive (read this EVERY session; it REPLACES `/neural-simulator`)
 
+> **LIVE STATE (2026-11-02 pivot):** the project now builds a new core in `brain/`. Live state: [`HANDOFF.md`](HANDOFF.md), [`brain/ARCHITECTURE.md`](brain/ARCHITECTURE.md) and the [pivot decision](docs/plans/2026-11-02-pivot-functional-digital-brain-DECISION.md). Everything below is old-track history (frozen except the Stage-2 retake).
+
 **This file is the single source of truth + the self-anchor. If you are Claude working this repo: read this file
 first, act on the CURRENT STATE section, update it every cycle. You do NOT need the owner to run `/neural-simulator`
 — this board carries the anchor.**

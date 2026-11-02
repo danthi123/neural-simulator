@@ -5,7 +5,7 @@ Cost-overburn is the SAME failure class as under-parallelization: a failure of O
 gate at the moment it happens. So it gets the SAME enforcement `parallel_audit` uses — a measured check that runs
 INSIDE the heartbeat every cycle, fires regardless of choices, NAMES the cheaper routing, and RECURS until fixed.
 
-THE RULE it enforces (see `.claude/skills/cost-routing/SKILL.md`): every `agent()` in a workflow MUST declare its
+THE RULE it enforces (see `.claude/skills/ops/SKILL.md`): every `agent()` in a workflow MUST declare its
 `model` tier explicitly (haiku=mechanical / sonnet=moderate / opus=hard-judgment). An `agent()` with NO `model:`
 inherited Opus by default — the exact leak the owner flagged. This scans the session's persisted workflow scripts
 (committed AND ad-hoc) and flags every un-tiered agent, so a defaulted-to-Opus fan-out cannot pass unnoticed.
@@ -104,7 +104,7 @@ def main():
               " call(s) with NO model tier (inherits OPUS):" % len(committed_probs))
         for path, ln, snip in committed_probs[:6]:
             print("     • %s:%d  %s…" % (path, ln, snip))
-        print("   FIX: tier each agent() (haiku/sonnet/opus) + recommit. See .claude/skills/cost-routing/SKILL.md.")
+        print("   FIX: tier each agent() (haiku/sonnet/opus) + recommit. See .claude/skills/ops/SKILL.md.")
     if adhoc_probs and not committed_probs:
         print("   ⚠ note (already spent — informational, ages out): a recently-run ad-hoc workflow was un-tiered."
               " TIER YOUR NEXT workflow's agents (haiku/sonnet/opus); do not default to Opus.")

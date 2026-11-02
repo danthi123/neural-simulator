@@ -2,7 +2,7 @@
 
 These are STRUCTURE rules, not truth rules. Six of the nine 2026-07-28 retractions were instrument
 failures and ALL SIX would have produced prose that passes both — see docs/WRITING.md "What this does
-NOT do". Truth verification lives in .claude/skills/verify-go/SKILL.md; term conditions in docs/TERMS.md.
+NOT do". Truth verification lives in .claude/skills/land-result/SKILL.md; term conditions in docs/TERMS.md.
 """
 import os
 import subprocess

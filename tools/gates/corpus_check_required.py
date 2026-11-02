@@ -46,6 +46,14 @@ legacy log (`.claude/worktrees/*/research/queue/.corpus_checks.jsonl`, written b
 shared) dated at or before the run's start and inside the freshness window. Like the direct stamp it stands in
 for, **this proves a check happened before the run — never that its query was ON-TOPIC for this artifact's
 question.** Nothing here (or in the original mechanism) reads the query text; a human still has to.
+
+EXTENSION (2026-11-02 lean-method): THE RECORD CHECK FOR EVERY NEW PLAN, FINDING AND NEW-CORE FILE, ANY COST.
+The compute-cost rule above only fires on expensive artifacts, so a new plan or a new brain/ experiment could be
+written without anyone asking the record, and Hermes and Pi have no Claude Code hooks to remind them. Now a newly
+ADDED non-data file (.md or .py) under brain/, docs/plans/ or research/findings/ (not research/findings/raw/,
+brain/experiments/results/, brain/eval/transcripts/) needs a `tools/before_you_build.sh` entry in the shared log
+from the last RECORD_WINDOW_S. Skipped while a merge is being concluded (MERGE_HEAD): carried files were checked
+on their own branch. Like the stamp, this proves a check ran, not that it was on-topic.
 """
 from __future__ import annotations
 
@@ -67,6 +75,10 @@ _ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__
 ELAPSED_KEYS = ("elapsed_seconds", "elapsed_s", "elapsed", "runtime_seconds", "wall_seconds")
 MIN_COST_S = 3600.0            # an hour. Below this, re-deriving costs less than the check's friction.
 FRESHNESS_WINDOW_S = 24.0 * 3600.0   # matches research/runners._corpus_check_state's default max_age_h
+RECORD_WINDOW_S = 24 * 3600            # new plan/finding/brain file: a record check within the last day
+_RECORD_SCOPE = ("brain/", "docs/plans/", "research/findings/")
+_RECORD_EXEMPT = ("research/findings/raw/", "brain/experiments/results/", "brain/eval/transcripts/")
+_RECORD_EXT = (".md", ".py")
 # LEGACY, per-worktree logs from before this log was made shared -- a real check that happened to run in a
 # worktree that has since been deleted or never wrote to the new shared location. Resolved under the shared
 # repo root (the parent of the git common dir), on whichever host holds the checkout (docs/plans/2026-09-30-home-to-server-MIGRATION.md).
@@ -261,10 +273,49 @@ def _check_one(path, rel=None):
             % (rel, elapsed / 3600.0)]
 
 
+def _needs_record_check(rel):
+    rel = rel.replace("\\", "/")
+    return (rel.startswith(_RECORD_SCOPE) and not rel.startswith(_RECORD_EXEMPT) and rel.endswith(_RECORD_EXT)
+            and not rel.endswith("__init__.py"))
+
+
+def _in_merge():
+    try:
+        r = subprocess.run(["git", "-C", _ROOT, "rev-parse", "-q", "--verify", "MERGE_HEAD"],
+                           capture_output=True, text=True, timeout=5)
+        return r.returncode == 0 and bool(r.stdout.strip())
+    except Exception:
+        return False
+
+
+def _recent_record_check(now=None, window_s=RECORD_WINDOW_S):
+    """The newest shared/worktree log entry inside [now - window_s, now], or None."""
+    now = time.time() if now is None else now
+    best = None
+    for log_path in [_shared_log_path()] + sorted(glob.glob(_WORKTREE_LOG_GLOB)):
+        for entry in _iter_log_entries(log_path):
+            try:
+                when = float(entry.get("when"))
+            except (TypeError, ValueError):
+                continue
+            if now - window_s <= when <= now + 300 and (best is None or when > float(best.get("when", -1))):
+                best = entry
+    return best
+
+
+def check_new_files(paths, now=None):
+    """Problems for newly added plan/finding/brain files when no record check ran in the window."""
+    need = [p for p in paths if _needs_record_check(p)]
+    if not need or _recent_record_check(now) is not None:
+        return []
+    return ["%s: new plan/finding/brain file, but no record check in the last %dh. Run `bash tools/before_you_build.sh "
+            "\"<the question>\"` first and read what it returns." % (p, RECORD_WINDOW_S // 3600) for p in need]
+
+
 def check(paths):
     if paths is None or len(paths) == 0:
         return []                                          # legacy predates the stamp; audited on touch
-    problems = []
+    problems = [] if _in_merge() else check_new_files(paths)
     for p in [x for x in paths if x.endswith(".json")]:
         full = p if os.path.isabs(p) else os.path.join(_ROOT, p)
         if os.path.exists(full):
@@ -332,6 +383,26 @@ def selftest():
                 fh.write(json.dumps({"when": run_start + 3600, "query": "too late"}) + "\n")
             if not _check_one(w("i.json", dict(no_stamp)), "raw/i.json"):
                 bad.append("FALSE POSITIVE: accepted a corpus check logged AFTER the run started")
+            # 12-14. THE EXTENSION: a new plan with no recent record check blocks; a recent one passes; data
+            # files and out-of-scope paths never need one. The log path is hermetic, and the worktree glob is
+            # emptied so real logs cannot satisfy the failing case.
+            global _WORKTREE_LOG_GLOB
+            _old_glob, _WORKTREE_LOG_GLOB = _WORKTREE_LOG_GLOB, os.path.join(d, "none", "*.jsonl")
+            try:
+                now = 2000000000.0
+                with open(shared_log, "w") as fh:
+                    fh.write(json.dumps({"when": now - 3 * 86400, "query": "old"}) + "\n")
+                if not check_new_files(["docs/plans/2026-11-02-x.md", "brain/experiments/y.py"], now=now):
+                    bad.append("did NOT catch a new plan/brain file with no record check in the window")
+                with open(shared_log, "a") as fh:
+                    fh.write(json.dumps({"when": now - 600, "query": "fresh"}) + "\n")
+                if check_new_files(["docs/plans/2026-11-02-x.md"], now=now):
+                    bad.append("FALSE POSITIVE: blocked a new plan with a fresh record check")
+                if check_new_files(["research/findings/raw/a.md", "brain/experiments/results/r.txt", "sim/x.py",
+                                    "brain/eval/transcripts/2026-11-02.md"], now=now - 10 * 86400):
+                    bad.append("FALSE POSITIVE: data or out-of-scope files required a record check")
+            finally:
+                _WORKTREE_LOG_GLOB = _old_glob
         finally:
             if _old_env is None:
                 os.environ.pop("SIM_CORPUS_CHECK_LOG", None)
