@@ -900,6 +900,10 @@ _GUARDED_COMPOSER_ATTRS = ("_seq", "_seq_score", "_seq_K", "_seq_drives", "_seq_
 # Set only with BRAIN_C2_COMPOSER_PATIENT_INHIB on (`_ensure_sequencer`'s patient relay); absent at the default, so they are
 # restored when present at entry and REMOVED again when a read created them (the default guard record is unchanged).
 _GUARDED_OPTIONAL_COMPOSER_ATTRS = ("_seq_patient_drives", "_seq_patient_relay")
+# Records only (RULING c2-drain-wta-1101): the per-block pool spike counts and drive-source record `_ensure_sequencer` keeps
+# beside `_seq_drives`. Restored / removed like the optional attrs above but NOT listed in the guard record, so the
+# record of a flags-unset read is unchanged.
+_GUARDED_SILENT_COMPOSER_ATTRS = ("_seq_drive_accs", "_seq_role_info")
 _GUARDED_BRIDGE_ARRAYS = ("cp_membrane_potential_v", "cp_recovery_variable_u", "cp_firing_states")
 
 
@@ -921,6 +925,8 @@ def substrate_read_guard(buf):
     attrs = {k: getattr(buf, k) for k in _GUARDED_COMPOSER_ATTRS if hasattr(buf, k)}
     opt = {k: getattr(buf, k) for k in _GUARDED_OPTIONAL_COMPOSER_ATTRS if hasattr(buf, k)}
     opt_absent = [k for k in _GUARDED_OPTIONAL_COMPOSER_ATTRS if k not in opt]
+    silent = {k: getattr(buf, k) for k in _GUARDED_SILENT_COMPOSER_ATTRS if hasattr(buf, k)}
+    silent_absent = [k for k in _GUARDED_SILENT_COMPOSER_ATTRS if k not in silent]
     info = {"global_rng": "preserved", "bridge_arrays_restored": sorted(saved), "composer_attrs_restored": sorted(attrs)}
     if opt:
         info["optional_composer_attrs_restored"] = sorted(opt)
@@ -935,6 +941,11 @@ def substrate_read_guard(buf):
             for k, v in opt.items():
                 setattr(buf, k, v)
             for k in opt_absent:
+                if hasattr(buf, k):
+                    delattr(buf, k)
+            for k, v in silent.items():
+                setattr(buf, k, v)
+            for k in silent_absent:
                 if hasattr(buf, k):
                     delattr(buf, k)
 

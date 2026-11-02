@@ -221,3 +221,57 @@ def composer_patient_relay(buf, pslice, trace=None):
         info = {"relay": "onbridge_divnorm"}
     acc = np.asarray(acc, dtype=float)
     return np.where(acc > 0, PATIENT_HI_PA, 0.0), acc, info
+
+
+# ROLE RELAY (RULING c2-drain-wta-1101, research-only, default OFF behind `BRAIN_C2_ROLE_RELAY`): the patient relay above
+# generalized to the AGENT and ACTION slices. With the flag ON, `OneBrainComposer._ensure_sequencer` relays each block's
+# agent and action cleanup slices through a role-inhibition bridge (the same builder, knobs and per-neuron word-pool
+# parameters as the patient bridge: external-only divisive stage, stable integration, the shared FS `pinh` population
+# with FF drive) instead of the divnorm relay in `make_block_drives`, so the words of one role row COMPETE through spiking
+# feedback inhibition. A SEPARATE bridge instance from the patient one (cache `_seq_role_inhib`), so the patient relay
+# and read (c) are untouched. `BRAIN_C2_ROLE_RELAY_I2E=0` is the lesion (same population and synapses, zero I->E).
+ROLE_RELAY_ENV = "BRAIN_C2_ROLE_RELAY"
+ROLE_RELAY_I2E_ENV = "BRAIN_C2_ROLE_RELAY_I2E"
+
+
+def composer_role_relay_enabled() -> bool:
+    """`BRAIN_C2_ROLE_RELAY` in {1,true,yes,on} (default OFF)."""
+    v = os.environ.get(ROLE_RELAY_ENV)
+    return v is not None and v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def composer_role_relay_w_i2e() -> float:
+    """The role relay's I->E weight (`BRAIN_C2_ROLE_RELAY_I2E`, unset = COMPOSER_KNOBS['w_i2e']; 0 = the lesion)."""
+    v = os.environ.get(ROLE_RELAY_I2E_ENV)
+    return float(COMPOSER_KNOBS["w_i2e"]) if v in (None, "") else float(v)
+
+
+def composer_role_inhib_bridge(buf, w_i2e=None):
+    """The composer's role-relay inhibition bridge, built lazily and cached on `buf._seq_role_inhib` keyed by
+    (seed, V, sigma, gain, w_i2e). Same construction as `composer_patient_inhib_bridge` (needs `buf._seq_score`)."""
+    k = COMPOSER_KNOBS
+    w = composer_role_relay_w_i2e() if w_i2e is None else float(w_i2e)
+    key = (int(buf.seed), int(buf.V), float(buf.sequencer_sigma), float(buf.sequencer_gain), w)
+    cache = getattr(buf, "_seq_role_inhib", None)
+    if cache is None:
+        cache = {}
+        buf._seq_role_inhib = cache
+    if key not in cache:
+        cache[key] = build_inhib_score_bridge(
+            buf.seed, int(buf.V), buf.sequencer_sigma, buf.sequencer_gain, n_inh=k["n_inh"], w_e2i=k["w_e2i"], w_i2e=w,
+            izh_type=k["izh_type"], ref_sb=buf._seq_score, stable=True, external_only=True)
+    return cache[key]
+
+
+def composer_role_relay(buf, rslice, trace=None):
+    """ONE block's clipped agent (or action) cleanup slice relayed into its decoded-line drive: (drive[V], acc[V], info).
+    Which pools are lit is decided only by which word pools SPIKE on the role-inhibition bridge; the host maps a fired
+    pool to the fixed 1500 pA line drive (the drive `onbridge_divnorm_drive` emits). No argmax / top-k / threshold."""
+    import numpy as np
+    k = COMPOSER_KNOBS
+    w = composer_role_relay_w_i2e()
+    acc, inh = onbridge_inhib_drive(composer_role_inhib_bridge(buf, w), int(buf.V), rslice, buf.sequencer_input_gain,
+                                    settle=k["settle"], ff_gain=k["ff_gain"], trace=trace)
+    acc = np.asarray(acc, dtype=float)
+    info = {"relay": "composer_role_inhib", "w_i2e": float(w), "inh_spikes": float(inh)}
+    return np.where(acc > 0, PATIENT_HI_PA, 0.0), acc, info

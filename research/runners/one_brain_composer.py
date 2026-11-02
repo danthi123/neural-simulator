@@ -1680,9 +1680,26 @@ class OneBrainComposer:
                 # slice is relayed through the composer's patient-inhibition bridge (which pools SPIKE decides).
                 full = [fns["block_cleanup_scores"](self, b, with_patient=True) for b in range(K)]
                 bscores = [(ag, ax) for (ag, ax, _ap) in full]
-            drives, _lit = fns["make_block_drives"](self._seq_score, self.V, bscores,
-                                                    input_gain=self.sequencer_input_gain, retreat="divnorm",
-                                                    peak_mult=1.0)
+            # C2 match-unit smoke (RULING c2-drain-wta-1101, research-only, every flag default OFF): BRAIN_C2_ROLE_WTA /
+            # BRAIN_C2_ROLE_RELAY swap the agent/action drive source for a spiking competition (research/runners/
+            # _c2_role_drives.py); BRAIN_C2_ROW_SHUFFLE feeds block b another block's row (lesion). Unset: the unchanged
+            # divnorm call. `_seq_drive_accs` / `_seq_role_info` are records only (the pool spike counts per block/role).
+            from research.runners import _c2_role_drives as _RD
+            _rmode = _RD.role_drive_mode()
+            _accs = []
+            if _rmode is None:
+                drives, _lit = fns["make_block_drives"](self._seq_score, self.V, bscores,
+                                                        input_gain=self.sequencer_input_gain, retreat="divnorm",
+                                                        peak_mult=1.0, accs_out=_accs)
+                _rinfo = {"mode": "divnorm"}
+            else:
+                drives, _accs, _rinfo = _RD.role_block_drives(self, fns, bscores)
+            _perm = _RD.row_shuffle_perm(self.seed, len(drives))
+            if _perm is not None:
+                drives = [drives[_perm[b]] for b in range(len(drives))]
+            _rinfo["row_shuffle_perm"] = _perm
+            self._seq_drive_accs = _accs
+            self._seq_role_info = _rinfo
             self._seq_drives = drives
             if pinhib:
                 pdrv, prelay = [], []
