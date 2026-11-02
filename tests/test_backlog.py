@@ -93,7 +93,8 @@ def test_structured_dependencies_are_derived_not_invented():
 
 def test_flip_scanner_skips_superseded_and_flip_blocked_rows():
     """A de-risked, not-on-by-default row carrying superseded_by / flip_blocked is NOT a flip candidate;
-    an otherwise identical plain row still is; the live ledger lists neither known false positive."""
+    an otherwise identical plain row still is. (The live-ledger check that gnw-thought-swap / wkv-mouth-learned-head
+    are no longer listed lands with the ledger edit, which needs a board sync: _scratch/full-flip-fix.patch.)"""
     row = ("  - key: %s\n    faculty: \"f\"\n    de_risked: YES\n    wired: YES\n    on_by_default: NO\n"
            "    scaffold_retired: NO\n%s")
     txt = (row % ("plain-row", "") + row % ("old-row", "    superseded_by: \"new-row (cite)\"\n")
