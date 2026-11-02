@@ -8,7 +8,7 @@ const EVENT = '{"type":"rate_limit_event","rate_limit_info":{"status":"allowed",
   '"overageStatus":"rejected","overageDisabledReason":"org_level_disabled","isUsingOverage":false,"unifiedWindows":{"five_hour":' +
   '{"utilization":0.46,"resetsAt":1793667000,"status":"allowed"},"seven_day":{"utilization":0.7,"resetsAt":1793718000,"status":"allowed"}}},' +
   '"uuid":"x","session_id":"y"}';
-const LIM = { max_five_hour: 0.75, max_seven_day: 0.85, week_pace_start: 0.3 };
+const LIM = { max_five_hour: 0.6, max_seven_day: 0.85, week_pace_start: 0.3 };
 const DAY = 86400_000;
 const u = (five: number, week: number, daysLeft: number, now: number, status = "allowed"): Usage => ({
   at: now, five_hour: five, seven_day: week, five_reset: now / 1000 + 3600, seven_reset: (now + daysLeft * DAY) / 1000, status,
@@ -37,8 +37,8 @@ test("unknown usage refuses: never call Claude blind", () => {
 
 test("the 5-hour window stops Pi at the ceiling", () => {
   const now = Date.UTC(2026, 10, 2);
-  assert.equal(usageDecision(u(0.74, 0.1, 3.5, now), LIM, now).ok, true);
-  assert.equal(usageDecision(u(0.75, 0.1, 3.5, now), LIM, now).ok, false);
+  assert.equal(usageDecision(u(0.59, 0.1, 3.5, now), LIM, now).ok, true);
+  assert.equal(usageDecision(u(0.6, 0.1, 3.5, now), LIM, now).ok, false);
   assert.equal(usageDecision(u(0.1, 0.1, 3.5, now, "rejected"), LIM, now).ok, false);
 });
 
@@ -51,6 +51,8 @@ test("the weekly ceiling rises from pace start to max over the week", () => {
   assert.equal(usageDecision(u(0.2, 0.4, 6.5, now), LIM, now).ok, false);
   // last day: 70% used is fine (today's real reading)
   assert.equal(usageDecision(u(0.46, 0.7, 0.8, now), LIM, now).ok, true);
+  // a missing reset time refuses with a readable reason instead of throwing
+  assert.equal(parseRateLimit(EVENT.replace('"resetsAt":1793667000,"status"', '"status"')), null);
   // never above the end-of-week max, even with the window past its reset
   assert.equal(usageDecision(u(0.2, 0.86, -1, now), LIM, now).ok, false);
 });

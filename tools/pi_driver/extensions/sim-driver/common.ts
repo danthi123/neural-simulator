@@ -17,8 +17,9 @@ export interface DriverConfig {
   claude_daily_calls: number;
   claude_build_daily_calls?: number; // claude_build tool (default 3); separate from judgment checkpoints
   claude_build_model?: string; // default "sonnet"
+  claude_checkpoint_model?: string; // default "opus" (judgment)
   // usage-aware budget (usage.ts): Pi calls Claude only below these plan utilizations (0..1)
-  claude_max_five_hour?: number; // default 0.75
+  claude_max_five_hour?: number; // default 0.6 (a START ceiling: one long build can add 15-25% by itself)
   claude_max_seven_day?: number; // default 0.85, the weekly ceiling at the end of the week
   claude_week_pace_start?: number; // default 0.3, the weekly ceiling at the start of the week
   claude_bin: string;
