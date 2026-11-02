@@ -36,6 +36,13 @@ Each `(...)` names the incident behind a step. Detail: `.claude/skills/_referenc
 - Never send project data to providers that train on or store it; ZDR (memory no_training_on_our_data).
 
 ## AWS
+- brain/ six-seed runs: `bash tools/aws_brain_batch.sh launch <jobs.txt>` (g5.xlarge, Deep Learning AMI, self-stopping:
+  dead-man + stop when the jobs end, so it is safe with the workstation off), then `pull` next session (copies
+  results, terminates). GPU runs use fp16 weights (CPU runs fp32): compare like with like. Keys stay on W; the
+  server's rules forbid credentials in its agent-writable checkout (OWNERSHIP-MAP section 11).
+- On the server, never run git or project tools as dant123 inside `~/Projects/neural-simulator` (agent-controlled
+  hooks/config). Claude's changes land via a `claude/<topic>` branch on GitHub + `tools/land_claude_branch.sh`,
+  which the owner runs (or approves) at a check-in.
 - Bills while running: `bash tools/aws_gpu.sh stop` when done; cap about $50/day. Pull results BEFORE any stop:
   an idle-stop stranded flip-deciding seeds (FAILURE_LOG 2026-09-25). Stop invalid runs early; let valid failing
   runs finish (memory aws_runs_cut_invalid_finish_valid).

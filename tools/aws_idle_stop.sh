@@ -14,7 +14,7 @@
 #   2. If CloudWatch has no datapoints yet (brand-new instance / API hiccup), fall back to SSH `uptime`
 #      1-minute load average (only possible for the instance recorded in research/queue/.aws_gpu, since
 #      that's the only place this repo's tooling keeps a per-instance SSH key today).
-#   3. No-runner check, always required in addition to (1) or (2): SSH `pgrep -f '[r]esearch\.runners'` — the
+#   3. No-runner check, always required in addition to (1) or (2): SSH `pgrep -f '[r]esearch\.runners|[b]rain\.experiments'` — the
 #      bracket trick keeps the pgrep/ssh invocation itself from matching its own argv.
 # All arithmetic (idle-from-samples, idle-from-loadavg, the final stop/keep call) is in tools/aws_cost_lib.py
 # so it is unit-testable without a real AWS/SSH round-trip — see tests/test_aws_cost_lib.py.
@@ -173,7 +173,7 @@ while IFS= read -r iid <&3; do
     # must default to "active" (keep), matching this whole script's existing bias toward NOT stopping on any
     # other inconclusive signal.
     ssh -n -i "$state_key" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \
-         ubuntu@"$ip" "pgrep -f '[r]esearch\.runners' >/dev/null 2>&1" 2>/dev/null
+         ubuntu@"$ip" "pgrep -f '[r]esearch\.runners|[b]rain\.experiments' >/dev/null 2>&1" 2>/dev/null
     runner_rc=$?
     case "$runner_rc" in
       0) runner_flag="--runner-active true" ;;
@@ -228,7 +228,7 @@ while IFS= read -r iid <&3; do
         # this re-check (and everything after it in this cycle) indefinitely. A timed-out call falls into the
         # same `*)` INCONCLUSIVE-keep branch below as any other non-0/1 rc, so this changes no decision logic.
         timeout 30 ssh -n -i "$state_key" -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes \
-             ubuntu@"$ip" "pgrep -f '[r]esearch\.runners' >/dev/null 2>&1" 2>/dev/null
+             ubuntu@"$ip" "pgrep -f '[r]esearch\.runners|[b]rain\.experiments' >/dev/null 2>&1" 2>/dev/null
         recheck_rc=$?
         case "$recheck_rc" in
           0) recheck_runner_flag="--runner-active true"; recheck_note="a runner appeared during the sync" ;;
