@@ -321,6 +321,7 @@ def read_b(buf, rows):
         out["drives_lit"] = [[int((dA > 0).sum()), int((dX > 0).sum())] for dA, dX in buf._seq_drives]
         out["drives_lit_words"] = [[[buf.words[j] for j in range(len(dA)) if dA[j] > 0],
                                     [buf.words[j] for j in range(len(dX)) if dX[j] > 0]] for dA, dX in buf._seq_drives]
+        out["c2dw"] = read_b_drive_record(buf)
     except Exception as e:
         out.update(_err(e))
         return out
@@ -352,6 +353,8 @@ def read_b(buf, rows):
                 fired = [b for b in range(K) if m[b] > thr]
                 c.update(decision=dec, winner=SG._jsonable(rates.get("winner")), m_rates=[m[b] for b in range(K)],
                          spurious_dropped=spur, sequencer_block=fns["decision_to_block"](dec, K))
+                if getattr(sb, "_c2_drain_record", None) is not None:      # record only (RULING c2-drain-wta-1101)
+                    c["drain"] = dict(sb._c2_drain_record)
             else:
                 c.update(decision=None, winner=None, m_rates=None, sequencer_block=None)
             c["fired"] = fired
@@ -363,6 +366,26 @@ def read_b(buf, rows):
         cues[_key((a, x))] = c
     out["cues"] = cues
     return out
+
+
+def read_b_drive_record(buf):
+    """RULING c2-drain-wta-1101 (corrected S0b logging, every arm): the C2 drain/WTA flags as set in this worker, the
+    drive source `_ensure_sequencer` used (`_seq_role_info`: mode, inhibitory spikes vs ceiling, row-shuffle perm), and
+    each block's agent/action pool spike counts (`_seq_drive_accs`, per block, per role, per word; nonzero entries only,
+    indexed by the SOURCE row, i.e. before any row shuffle). `accs_recorded` False = the drives were built without the
+    record (UNDEFINED for the scorer)."""
+    import numpy as np
+    from research.runners import _c2_role_drives as RD
+    from research.runners._phaseB_onebrain_sequencerK_derisk import _quiet_drain_steps
+    rec = {"flags": RD.flags_record(), "quiet_drain": _quiet_drain_steps()}
+    info = getattr(buf, "_seq_role_info", None)
+    rec["role_info"] = SG._jsonable(info) if info is not None else None
+    accs = getattr(buf, "_seq_drive_accs", None)
+    rec["accs_recorded"] = bool(accs) and len(accs) == len(buf._seq_drives)
+    if rec["accs_recorded"]:
+        rec["accs"] = [[{buf.words[j]: float(v[j]) for j in np.flatnonzero(np.asarray(v) > 0)} for v in (aA, aX)]
+                       for aA, aX in accs]
+    return rec
 
 
 # ═══════════════════════════════════ STEP 0b: local feedback inhibition among the patient word pools ═══════════════════════

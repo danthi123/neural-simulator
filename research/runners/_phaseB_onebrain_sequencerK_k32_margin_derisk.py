@@ -156,11 +156,21 @@ def build_wta_score_bridge(seed, V, n_word=20, n_inh=20, sigma=1.0, gain=0.05,
     return sb
 
 
-def wta_drive(sb, V, scores, input_gain, settle=40, hi_pA=1500.0):
+def wta_drive(sb, V, scores, input_gain, settle=40, hi_pA=1500.0, stats=None, full_reset=False):
     """Drive the WTA score pool with current = input_gain*max(score,0); let the divisive norm + the lateral-inhibition
     WTA settle; read which word survives firing. Same RETURN contract as `onbridge_divnorm_drive` ((drive[V], acc[V]))
-    so it is a drop-in drive source. NO host scores.max()."""
+    so it is a drop-in drive source. NO host scores.max().
+
+    C2 role WTA (RULING c2-drain-wta-1101; both kwargs default off = the unchanged function): `full_reset` also zeroes
+    every synaptic conductance and `cp_prev_firing_states` before the read (the per-read reset `onbridge_inhib_drive`
+    does), so one role read's inhibition never leaks into the next; `stats` (dict) accumulates the `wta_inh` spike count
+    (`inh_spikes`) and the number of reads (`reads`), the engagement record."""
     idx = lambda nm: region_idx(sb, nm)                  # query-invariant cache (behavior-preserving; see region_idx)
+    if full_reset:
+        for _k in [k for k in vars(sb) if k.startswith("cp_conductance_")] + ["cp_prev_firing_states"]:
+            _a = getattr(sb, _k, None)
+            if _a is not None:
+                _a[:] = 0
     if getattr(sb, "cp_izh_c_reset", None) is not None:
         sb.cp_membrane_potential_v[:] = sb.cp_izh_c_reset
     else:
@@ -186,7 +196,11 @@ def wta_drive(sb, V, scores, input_gain, settle=40, hi_pA=1500.0):
         fir = np.asarray(to_host(sb.cp_firing_states)).astype(float)
         for w in range(V):
             acc[w] += fir[idx(f"w{w}")].mean()
+        if stats is not None:
+            stats["inh_spikes"] = stats.get("inh_spikes", 0.0) + float(fir[idx("wta_inh")].sum())
     sb.cp_external_input_current[:] = 0.0
+    if stats is not None:
+        stats["reads"] = stats.get("reads", 0) + 1
     return np.where(acc > 0, hi_pA, 0.0), acc
 
 
@@ -195,14 +209,20 @@ def wta_drive(sb, V, scores, input_gain, settle=40, hi_pA=1500.0):
 # per-query-peak sweep multiplier (the S5 robustness control). Returns per-block (dA, dX) decoded-line drives + the
 # per-block (#agent-lit, #action-lit) counts.
 # ----------------------------------------------------------------------------------------------------------------
-def make_block_drives(score_sb, V, bscores, input_gain, retreat, peak_mult=1.0):
+def make_block_drives(score_sb, V, bscores, input_gain, retreat, peak_mult=1.0, accs_out=None, drive_kw=None):
+    """`accs_out` (list, optional): appended with each block's (accA, accX) pool spike counts (a record only; the S0b
+    read of RULING c2-drain-wta-1101). `drive_kw` (dict, optional): extra keyword arguments for the drive function (the
+    role-WTA `stats` / `full_reset`). Both None = the unchanged function."""
     drives, lit = [], []
     drive_fn = wta_drive if retreat == "wta" else onbridge_divnorm_drive
+    kw = drive_kw or {}
     for (ag, ax) in bscores:
-        dA, accA = drive_fn(score_sb, V, ag * peak_mult, input_gain)
-        dX, accX = drive_fn(score_sb, V, ax * peak_mult, input_gain)
+        dA, accA = drive_fn(score_sb, V, ag * peak_mult, input_gain, **kw)
+        dX, accX = drive_fn(score_sb, V, ax * peak_mult, input_gain, **kw)
         drives.append((dA, dX))
         lit.append((int((accA > 0).sum()), int((accX > 0).sum())))
+        if accs_out is not None:
+            accs_out.append((np.asarray(accA, dtype=float).copy(), np.asarray(accX, dtype=float).copy()))
     return drives, lit
 
 
