@@ -679,7 +679,13 @@ def score(base, tag, pin, seeds, fields_path=None, code_root=None, corpus_path=N
                                    else (False if c.get("s1", (None,))[0] == "pass" else None)))
         s2 = _agg("s2", lambda c: (True if c.get("s2", (None,))[0] == "regressed"
                                    else (False if c.get("s2", (None,))[0] == "pass" else None)))
-        res["s1"], res["s2"] = s1, s2
+        # S2 engagement: an arm with no engagement record is UNDEFINED, never a PASS. s2 above is registered
+        # measurement (2026-11-02-lbf-at-head-gate-seeds-RESULT.md) and stays as is; s2_engaged drops the cells
+        # S0 records not-exercised.
+        s2e = _agg("s2", lambda c: (None if c["canonical"]["verdict"] not in EXERCISED else
+                                    (True if c.get("s2", (None,))[0] == "regressed"
+                                     else (False if c.get("s2", (None,))[0] == "pass" else None))))
+        res["s1"], res["s2"], res["s2_engaged"] = s1, s2, s2e
         res["sd_only_rows"] = sorted(f for f, r in rows_fields.items() if r.get("sd_only"))
         res["manifest"] = {k: dict({"dir": c["canonical"]["dir"], "state": c["state"],
                                     "s0": [c["canonical"]["verdict"], c["canonical"]["load_bearing"]],
@@ -774,6 +780,8 @@ def main(argv=None):
                                                         "sd_fraction_pop")}
         summary["s2"] = {k: res["s2"].get(k) for k in ("robust_core_n", "union_n", "mean_fraction",
                                                         "sd_fraction_pop")}
+        summary["s2_engaged"] = {k: res["s2_engaged"].get(k) for k in ("robust_core_n", "union_n", "mean_fraction",
+                                                                       "sd_fraction_pop")}
     summary["preconditions_failed"] = [p["name"] for p in res["preconditions"] if p["ok"] is not True]
     print(json.dumps(summary, indent=1, default=str))
     if a.out:

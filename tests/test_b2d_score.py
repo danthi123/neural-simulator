@@ -344,3 +344,28 @@ def test_score_end_to_end_on_a_small_synthetic_battery(tmp_path):
     assert res["s2"]["robust_core_n"] == 1          # answer differs cleanly on both seeds
     assert res["s1"]["robust_core_n"] == 0          # row-a is sd_only for S1 -> never counted
     assert "row-a" in res["sd_only_rows"]
+
+
+def test_s2_engaged_excludes_cells_s0_marks_not_exercised(tmp_path):
+    """FAILURE_LOG 2026-11-02: s2 scored a not-exercised cell 'pass'; s2_engaged leaves it UNDEFINED."""
+    base = tmp_path / "shards"
+    tag = "engtag"
+    (base / tag).mkdir(parents=True)
+    same = _turn(answer="yes")
+    for seed in (42, 43):
+        sdir = base / tag / ("s%d" % seed)
+        sdir.mkdir()
+        _cell(sdir, fac="row-a", verdict="regressed", diffs=[{"field": "answer", "on": "yes", "off": "no"}],
+              ia=_turn(answer="yes"), ib=_turn(answer="yes"), le=_turn(answer="no"), le0=_turn(answer="no"))
+        _cell(sdir, fac="row-b", verdict="not-exercised", lb=True, ia=same, ib=same, le=same, le0=same)
+    fields = {"pin": PIN, "reply_fields": ["answer", "abstained", "recalled_svo"], "not_replayed": {},
+              "rows": {f: {"fields": {"answer": {"class": "R"}}, "kept": [], "sd_only": True, "probe_turn": "well"}
+                       for f in ("row-a", "row-b")}}
+    fpath = tmp_path / "fields.json"
+    fpath.write_text(json.dumps(fields))
+    res = bd.score(str(base), tag, PIN, [42, 43], fields_path=str(fpath))
+    assert res["s2"]["per_seed"]["42"]["n_exercised"] == 2          # the unengaged row is counted as a pass
+    assert res["s2"]["per_seed"]["42"]["fraction"] == 0.5
+    assert res["s2_engaged"]["per_seed"]["42"]["n_exercised"] == 1  # excluded
+    assert res["s2_engaged"]["per_seed"]["42"]["fraction"] == 1.0
+    assert res["s2_engaged"]["robust_core_n"] == 1
