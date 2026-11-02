@@ -67,4 +67,17 @@ if [ -z "$POP" ] && [ ! -s "$T/pool.queue" ] && \
   ok "malformed pool records fail loudly and are preserved"
 else bad "malformed pool record was lost, hidden, or dispatchable"; fi
 
+# (f) Gate-seed lines are popped before earlier-queued dev lines (RULING gates-front-1102), size fit still holds,
+# and a gate line waiting past POOL_GATE_HOLD_MIN that fits the node's total (not its budget now) holds dev backfill.
+NOW=$(date +%s)
+popg(){ POOL_QUEUE_PATH="$T/pool.queue" POOL_RUNNING_PATH="$T/pool.running" bash tools/pool_autodispatch.sh --pop-once "$@" 2>/dev/null; }
+printf '%s\t%s\n%s\t%s\n' "$NOW" 'dev --seed 7  #checked:s mem_gb=1' "$NOW" 'gate --seeds 43  #checked:s mem_gb=1' > "$T/pool.queue"
+[[ "$(popg 999)" == *"gate --seeds"* ]] && ok "gate-seed line popped before an earlier dev line" || bad "gate line not tried first"
+printf '%s\t%s\n%s\t%s\n' "$NOW" 'dev --seed 7  #checked:s mem_gb=1' "$NOW" 'gate --seed 42  #checked:s mem_gb=9' > "$T/pool.queue"
+[[ "$(popg 3)" == *"dev --seed"* ]] && ok "gate-first still respects size fit (young oversize gate line: dev backfills)" || bad "size fit broken by gate-first"
+printf '%s\t%s\n%s\t%s\n' "$NOW" 'dev --seed 7  #checked:s mem_gb=1' "$((NOW-3600))" 'gate --seed 42  #checked:s mem_gb=9' > "$T/pool.queue"
+if [ -z "$(popg 3 pool1 12)" ] && grep -q 'dev --seed 7' "$T/pool.queue"; then ok "waiting gate line holds dev backfill on a node that could hold it"
+else bad "reservation did not hold dev lines"; fi
+[[ "$(popg 3 pool1 8)" == *"dev --seed"* ]] && ok "no hold when the gate line could never fit the node" || bad "hold applied to a node too small for the gate line"
+
 [ "$FAIL" = 0 ] && { echo "DISPATCHER SELFTEST PASS"; exit 0; } || { echo "DISPATCHER SELFTEST FAIL"; exit 1; }

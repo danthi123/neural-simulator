@@ -122,6 +122,52 @@ def test_pop_takes_first_job_that_fits_the_node_budget(tmp_path: Path) -> None:
     assert run_bash(DISPATCHER, "--pop-once", env=env).stdout.endswith("big")  # no budget given -> head
 
 
+def _pop_gate(tmp_path: Path, lines: list[tuple[int, str]], *args: str, env: dict[str, str] | None = None) -> tuple[str, str]:
+    queue = tmp_path / "pool.queue"
+    queue.write_text("".join(f"{t}\t{j}\n" for t, j in lines))
+    e = {"POOL_QUEUE_PATH": str(queue), "POOL_RUNNING_PATH": str(tmp_path / "pool.running"), **(env or {})}
+    res = run_bash(DISPATCHER, "--pop-once", *args, env=e)
+    return res.stdout, res.stderr
+
+
+def test_pop_tries_gate_seed_lines_before_earlier_queued_dev_lines(tmp_path: Path) -> None:
+    # 2026-11-01/02: gate-seed lines starved behind hundreds of dev-smoke lines (RULING gates-front-1102).
+    now = int(time.time())
+    out, _ = _pop_gate(tmp_path, [
+        (now, "dev1 --seed 7  #checked:r mem_gb=1"),
+        (now, "gate1 --seeds 41,43  #checked:r mem_gb=1"),
+        (now, "gate2 --seed=102  #checked:r mem_gb=1"),
+    ], "999")
+    assert "gate1 " in out                      # first gate line (queue order), ahead of the older dev line
+    assert "dev1" in (tmp_path / "pool.queue").read_text()
+
+
+def test_pop_gate_first_still_respects_size_fit(tmp_path: Path) -> None:
+    now = int(time.time())
+    out, _ = _pop_gate(tmp_path, [
+        (now, "dev1 --seed 7  #checked:r mem_gb=1"),
+        (now, "gateBig --seed 42  #checked:r mem_gb=9"),
+        (now, "gateSmall --seed 100  #checked:r mem_gb=2"),
+    ], "3")
+    assert "gateSmall " in out                  # 9 GB gate line does not fit; first-fit within the class
+    out, _ = _pop_gate(tmp_path, [(now, "dev1 --seed 7  #checked:r mem_gb=1"), (now, "gateBig --seed 42  #checked:r mem_gb=9")], "3")
+    assert "dev1 " in out                       # no gate line fits and it is young: dev backfill proceeds
+
+
+def test_pop_holds_dev_lines_for_a_gate_line_waiting_past_the_threshold(tmp_path: Path) -> None:
+    now = int(time.time())
+    lines = [(now, "dev1 --seed 7  #checked:r mem_gb=1"), (now - 3600, "gateBig --seed 42  #checked:r mem_gb=9")]
+    out, err = _pop_gate(tmp_path, lines, "3", "pool1", "12")       # waited 60 min > 30, fits node total (12 GB)
+    assert out == "" and "holding for a waiting gate line" in err
+    assert "dev1" in (tmp_path / "pool.queue").read_text()
+    out, _ = _pop_gate(tmp_path, lines, "3", "pool1", "8")          # could never fit this node: no hold
+    assert "dev1 " in out
+    out, _ = _pop_gate(tmp_path, lines, "3", "pool1", "12", env={"POOL_GATE_HOLD_MIN": "120"})   # under threshold
+    assert "dev1 " in out
+    out, _ = _pop_gate(tmp_path, lines, "10", "pool1", "12")        # budget has grown: the gate line is taken
+    assert "gateBig " in out
+
+
 def test_remote_wrapper_records_multiline_job_as_one_v2_row(tmp_path: Path) -> None:
     remote_root = tmp_path / "derisk-pool" / "sim"
     remote_root.mkdir(parents=True)
