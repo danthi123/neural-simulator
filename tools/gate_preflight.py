@@ -57,11 +57,11 @@ UNDEF = re.compile(r"UNDEFINED[^\n]*")
 # (a) descriptive JSON string fields and rule-explanation prose (stage2_exit_gate.py --aggregate notes and its "Stage rule" line);
 DESCRIPTIVE_FIELD = re.compile(r'"(?:note|stage_rule|rule|_doc|doc|description|why)"\s*:\s*"(?:[^"\\]|\\.)*"')
 RULE_PROSE = re.compile(r"UNDEFINED only when|makes that seed UNDEFINED|never FAIL")
-# (b) host_share_bg_seam.py --score: the lane-C report field `production_seam_class`, and a verdict whose every gate is decided
-# (true/false, none null/UNDEFINED) yet whose status is UNDEFINED, which is its min_events precondition on a single dev seed
-# (a coverage gap: six pooled seeds meet it). A gate that itself reads UNDEFINED still flags.
+# (b) host_share_bg_seam.py --score: the lane-C report field `production_seam_class` (a label, not a measurement). Its verdict
+# `"status": "UNDEFINED"` still FLAGS: the printed verdict names no failed precondition, and that status covers a real defect
+# (sham null, membrane bound, commit not engaged) as well as too few events on one dev seed, so it cannot be read as coverage
+# here (Claude review 2026-11-02). It clears once the scorer prints its unmet preconditions, or by an ack.
 SEAM_CLASS_FIELD = re.compile(r'"production_seam_class"\s*:\s*"UNDEFINED"')
-DECIDED_GATES_UNDEF = re.compile(r'("gates"\s*:\s*\{(?:[^{}"]|"[^"]*"\s*:\s*(?:true|false))*\}\s*,\s*"status"\s*:\s*)"UNDEFINED"')
 DEFINED = re.compile(r"(?<![A-Za-z_])DEFINED(?![A-Za-z_])")
 # tools/b2d_score.py prints no DEFINED word, only a count: `"n_defined": 82` (RULING lbf-preflight-ack-1020: its CLEAN
 # dev read was FLAGGED "no DEFINED cell" until this). A zero count is still no defined cell.
@@ -108,7 +108,6 @@ def classify(text):
         bad.append("python traceback in the scorer output")
     scan = DESCRIPTIVE_FIELD.sub('""', text)
     scan = SEAM_CLASS_FIELD.sub('"production_seam_class": ""', scan)
-    scan = DECIDED_GATES_UNDEF.sub(r'\1"coverage"', scan)
     for m in UNDEF.finditer(scan):
         line = m.group(0)[:200]
         if not (COVERAGE.search(line) or RULE_PROSE.match(line)):

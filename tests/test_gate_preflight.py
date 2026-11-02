@@ -141,8 +141,9 @@ def test_classify_ignores_rule_prose_and_descriptive_fields():
     assert G.classify(_S2_PROSE) == ("CLEAN", [])
 
 
-def test_classify_treats_a_decided_gates_min_events_status_as_coverage():
-    assert G.classify(_BG_DEV) == ("CLEAN", [])
+def test_classify_bg_dev_read_is_defined_but_its_undefined_status_still_flags():
+    v, why = G.classify(_BG_DEV)       # the decided gates count as DEFINED; only the unexplained status remains
+    assert v == "FLAGGED" and len(why) == 1 and why[0].startswith('UNDEFINED"}}')
     assert G.classify('DEFINED "n_events": 3 UNDEFINED: min_events not met')[0] == "CLEAN"
 
 
