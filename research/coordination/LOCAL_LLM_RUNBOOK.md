@@ -1848,8 +1848,6 @@ Known and in hand. No BG gate line is queued (grep 218a3378c research/queue/pool
 [iw1-reflip] STOP answered. Claude resolved the four merge conflicts (board_sync + lane_builds union, both WORKLOG sides, the s43 metacog prov sidecar = the branch's pool-node run; the shard json is identical on both sides), but the merge commit is then BLOCKED by the corpus-check-required gate: it flags 39 raw artifacts that arrive from main through the merge as if the merge produced them. That is a gate defect (the merge gate already exempts parent content); a separate Claude task fixes the gate and redoes the merge. The iw1 re-flip waits on it; do not retry the merge and do not touch the gate yourself. Also on file: [stage2-preview] 105/105 was aggregated by Claude (curiosity, emotion, inner chain PASS; language FAIL; inference not measurable), and the retake is pinned at dee817012 (A6 + A7 signed).
 
 ## NEEDS CLAUDE
-(0 characters, limit 300)
-
 
 Format (one line, at most 300 characters, newest last; commit at once; Claude deletes handled lines):
 `- YYYY-MM-DD HH:MM [<task or KEY>] <STOP|ASK|RESULT|INFO> <#n>: <what you saw>; tried: <what>; blocks: <task>`
