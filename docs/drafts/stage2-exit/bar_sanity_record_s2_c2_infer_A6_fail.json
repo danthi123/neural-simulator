@@ -1,0 +1,88 @@
+{
+ "backend": "numpy",
+ "description": "Stage-2 C2 (inference on held-out), amendment A6: the real aggregate's `infer` verdict is FAIL. 'perfect' = a brain that lacks a C2 capability (FAIL is right); 'null' = a brain FAIL would misdescribe: the capable brain whose permuted hop teach was refused (the 10-26 gate), and the fully capable brain.",
+ "failures": [],
+ "kinds": {
+  "null": "null",
+  "null_capable": "null",
+  "null_refused_exact": "null",
+  "perfect": "perfect",
+  "perfect_blind_exact": "perfect",
+  "perfect_chain_route_inert": "perfect",
+  "perfect_one_hop": "perfect",
+  "perfect_unmarked_derivation": "perfect"
+ },
+ "n": 1000,
+ "n_pass": {
+  "null": 0,
+  "null_capable": 0,
+  "null_refused_exact": 0,
+  "perfect": 1000,
+  "perfect_blind_exact": 1000,
+  "perfect_chain_route_inert": 1000,
+  "perfect_one_hop": 1000,
+  "perfect_unmarked_derivation": 1000
+ },
+ "name": "stage2-C2 infer FAIL-claim (A6)",
+ "pass_rate": {
+  "null": 0.0,
+  "null_capable": 0.0,
+  "null_refused_exact": 0.0,
+  "perfect": 1.0,
+  "perfect_blind_exact": 1.0,
+  "perfect_chain_route_inert": 1.0,
+  "perfect_one_hop": 1.0,
+  "perfect_unmarked_derivation": 1.0
+ },
+ "pass_rate_ci95": {
+  "null": [
+   0.0,
+   0.0038
+  ],
+  "null_capable": [
+   0.0,
+   0.0038
+  ],
+  "null_refused_exact": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_blind_exact": [
+   0.9962,
+   1.0
+  ],
+  "perfect_chain_route_inert": [
+   0.9962,
+   1.0
+  ],
+  "perfect_one_hop": [
+   0.9962,
+   1.0
+  ],
+  "perfect_unmarked_derivation": [
+   0.9962,
+   1.0
+  ]
+ },
+ "repo_head": "4f6f97d55f6981c5900396b895250a2f9d1f2a96",
+ "scorer_files": {
+  "docs/drafts/stage2-exit/bar_sanity_s2_common.py": "2db0cf38fa9267cb7f72d8a4024e878b2b24839d26b0bb71d282e1f97cdb20d4",
+  "research/runners/stage2_exit_gate.py": "2f2aaf9621d705bd8cb6695dbc6f305b88f400e474d2936327ddb6bdeaf3e61b"
+ },
+ "scorer_sha256": "b7f88445f08d8d60f479b88b586191b1b26d799a8bc30d4a1da71da66b90eda9",
+ "seed": 0,
+ "spec": "docs/drafts/stage2-exit/bar_sanity_spec_s2_c2_infer_A6_fail.py",
+ "spec_sha256": "342d493d5546d8ce4c2a719859f2045007974a5e3e946ebcbe7f9f2d0632124f",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 30.2
+}

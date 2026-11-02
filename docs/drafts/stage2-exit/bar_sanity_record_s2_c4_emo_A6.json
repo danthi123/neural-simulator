@@ -1,0 +1,158 @@
+{
+ "backend": "numpy",
+ "description": "Stage-2 C4 (discrete-emotion read-out): the real aggregate's `emo` verdict is PASS over six gate seeds; perfect = the capability present, realistic dev-7 reply surfaces; nulls = each lesion / the permuted arm made inert, unreproduced lesions, a non-deterministic build, degenerate and random brains, one brain per missing sub-capability; nulls also include (amendment A3) the host word-lookup brain whose category word is read off the heard affect words, independent of the ladder (its ladder lesion changes the printed number, never the named category), and an info residual (the lookup gated by ladder sign).",
+ "failures": [],
+ "kinds": {
+  "info_flaky_0p01": "info",
+  "info_flaky_0p03": "info",
+  "info_word_lookup_gated_by_ladder": "info",
+  "null_all_abstain": "null",
+  "null_all_words": "null",
+  "null_echo": "null",
+  "null_lesion_affect_inert": "null",
+  "null_lesion_affect_unreproduced": "null",
+  "null_never_abstains": "null",
+  "null_one_word": "null",
+  "null_permuted_inert": "null",
+  "null_random_word": "null",
+  "null_sign_only": "null",
+  "null_unclean": "null",
+  "null_word_lookup_ladder_independent": "null",
+  "perfect": "perfect",
+  "perfect_exact": "perfect",
+  "random": "null"
+ },
+ "n": 1000,
+ "n_pass": {
+  "info_flaky_0p01": 802,
+  "info_flaky_0p03": 472,
+  "info_word_lookup_gated_by_ladder": 1000,
+  "null_all_abstain": 0,
+  "null_all_words": 0,
+  "null_echo": 0,
+  "null_lesion_affect_inert": 0,
+  "null_lesion_affect_unreproduced": 0,
+  "null_never_abstains": 0,
+  "null_one_word": 0,
+  "null_permuted_inert": 0,
+  "null_random_word": 0,
+  "null_sign_only": 0,
+  "null_unclean": 0,
+  "null_word_lookup_ladder_independent": 0,
+  "perfect": 1000,
+  "perfect_exact": 1000,
+  "random": 0
+ },
+ "name": "stage2-C4 emo",
+ "pass_rate": {
+  "info_flaky_0p01": 0.802,
+  "info_flaky_0p03": 0.472,
+  "info_word_lookup_gated_by_ladder": 1.0,
+  "null_all_abstain": 0.0,
+  "null_all_words": 0.0,
+  "null_echo": 0.0,
+  "null_lesion_affect_inert": 0.0,
+  "null_lesion_affect_unreproduced": 0.0,
+  "null_never_abstains": 0.0,
+  "null_one_word": 0.0,
+  "null_permuted_inert": 0.0,
+  "null_random_word": 0.0,
+  "null_sign_only": 0.0,
+  "null_unclean": 0.0,
+  "null_word_lookup_ladder_independent": 0.0,
+  "perfect": 1.0,
+  "perfect_exact": 1.0,
+  "random": 0.0
+ },
+ "pass_rate_ci95": {
+  "info_flaky_0p01": [
+   0.7762,
+   0.8255
+  ],
+  "info_flaky_0p03": [
+   0.4412,
+   0.503
+  ],
+  "info_word_lookup_gated_by_ladder": [
+   0.9962,
+   1.0
+  ],
+  "null_all_abstain": [
+   0.0,
+   0.0038
+  ],
+  "null_all_words": [
+   0.0,
+   0.0038
+  ],
+  "null_echo": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_affect_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_lesion_affect_unreproduced": [
+   0.0,
+   0.0038
+  ],
+  "null_never_abstains": [
+   0.0,
+   0.0038
+  ],
+  "null_one_word": [
+   0.0,
+   0.0038
+  ],
+  "null_permuted_inert": [
+   0.0,
+   0.0038
+  ],
+  "null_random_word": [
+   0.0,
+   0.0038
+  ],
+  "null_sign_only": [
+   0.0,
+   0.0038
+  ],
+  "null_unclean": [
+   0.0,
+   0.0038
+  ],
+  "null_word_lookup_ladder_independent": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_exact": [
+   0.9962,
+   1.0
+  ],
+  "random": [
+   0.0,
+   0.0038
+  ]
+ },
+ "repo_head": "4f6f97d55f6981c5900396b895250a2f9d1f2a96",
+ "scorer_files": {
+  "docs/drafts/stage2-exit/bar_sanity_s2_common.py": "2db0cf38fa9267cb7f72d8a4024e878b2b24839d26b0bb71d282e1f97cdb20d4",
+  "research/runners/stage2_exit_gate.py": "2f2aaf9621d705bd8cb6695dbc6f305b88f400e474d2936327ddb6bdeaf3e61b"
+ },
+ "scorer_sha256": "b7f88445f08d8d60f479b88b586191b1b26d799a8bc30d4a1da71da66b90eda9",
+ "seed": 0,
+ "spec": "docs/drafts/stage2-exit/bar_sanity_spec_s2_c4_emo.py",
+ "spec_sha256": "f1a038a4dc747e784adcd3af62e32f11f2ceb04854abd4c1c5b648d71c356065",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 169.5
+}

@@ -83,6 +83,22 @@ MEMCAP_GB = 10
 # rate does not exist; the seed is then UNDEFINED for C3 only if every other correctness clause of that arm holds (ruling
 # 2026-10-13: an undefined moat rate never masks a FAIL another clause already decides)
 ASK_MOAT_MIN_DEFINED = 1
+# amendment A6 (DRAFT 2026-11-01, docs/drafts/stage2-exit/AMENDMENT-A6.md; Claude signs): the C2 permuted-control arm's
+# ACQUISITION precondition. The 10-26 gate scored C2 FAIL "not exposure-driven" on 0/6 because the default-ON D4
+# comprehension gate REFUSED the permuted hop-1 teach ('the heron hunts the gnat'): the arm measured a refusal, not
+# whether the conclusion follows the exposure. At level A6, a permuted `infer` arm whose own hop teach turn ABSTAINED
+# (the brain declined to store it) has permuted tracking UNDEFINED, never FAIL; the seed is UNDEFINED only when that is
+# what decides it (the A4 (a) rule). The scorer is selected by level, never by data: "A5" (the default) reproduces every
+# verdict the runner gave before A6 byte for byte, so the 10-26 result re-scores as filed; the gate's aggregate command
+# passes `--amendment-level A6` once Claude signs the amendment. Ruling (Claude, 2026-11-01): the criterion-only variant.
+# The A6 precondition stays at criterion level (C2 INCOMPLETE); the STAGE is FAIL whenever any counted criterion FAILs,
+# and UNDEFINED only when none FAILs and a precondition is unmet: an undefined C2 must never hide a defined C1 failure.
+# Ruling (Claude, 2026-11-01, the A6 residual): at A6 an in-process lesion with applied False (patch never called) makes
+# its seed UNDEFINED, so that criterion reads INCOMPLETE, never FAIL: an instrument failure is never evidence of "not
+# load-bearing". A5 keeps the earned-verdict precondition only, byte for byte.
+AMENDMENT_LEVELS = ("A5", "A6")
+AMENDMENT_LEVEL = "A5"
+A6_INFER_HOP_TEACHES = ("t_heron_hunt", "t_frog_eat")   # the two premises the 2-hop conclusion composes
 # amendment A4 reporting rule (no bar change; NEEDS-CLAUDE #17 ruling): a FAIL of C1 names these gaps, whichever
 # sub-clause failed
 A4_NAMED_GAPS = {
@@ -1958,6 +1974,39 @@ def _moat_reason(arm, scored):
                                                                 ",".join(und))]
 
 
+def infer_permuted_acquisition(shard):
+    """Amendment A6: the permuted `infer` arm's own hop teach turns, read at the reply level on the teach turn itself.
+    Per label: `refused` = the teach reply ABSTAINED (dev/gate: "I followed the shape of that, but I don't know the words
+    'heron' or 'gnat' yet", the D4 comprehension gate's clarification; nothing stored), `carried` = A4 (a)'s
+    `teach_acquired` (not abstained AND the taught triple among `recalled_svo` + `supporting_facts`). Only `refused`
+    decides A6: a teach reply that did not abstain is scored as received, whatever it echoed, so an exposure-blind arm
+    that takes the teach and still answers the registered conclusion stays FAIL 'not exposure-driven'."""
+    resp = shard.get("responses") or {}
+    msgs = {t.get("label"): t.get("message") for t in shard.get("turns") or [] if t.get("role") == "teach"}
+    out = {}
+    for lab in A6_INFER_HOP_TEACHES:
+        r = resp.get(lab)
+        p = _primary(r)
+        f = _canonical_teach(msgs.get(lab))
+        out[lab] = {"refused": bool(p is None or p["abstained"]),
+                    "carried": bool(f and teach_acquired(r, f))}
+    return out
+
+
+def _a6_reason(row, group):
+    """Amendment A6: the UNDEFINED reason when the permuted infer teach was refused AND the permuted clause is what
+    decides the seed (intact_a correct and every lesion's effect present and reproduced). Matched by the stage
+    precondition's tag `A6`. When another clause already fails, the seed stays scored on that clause and the permuted
+    tracking is reported undefined."""
+    if group != "infer" or not row.get("permuted_refused"):
+        return []
+    les = row.get("lesions") or {}
+    if not row.get("correct") or any(r.get("effect") is not True or r.get("reproduced") is not True for r in les.values()):
+        return []
+    return ["permuted: hop teach refused on %s (the teach reply abstained, nothing stored): exposure tracking cannot be "
+            "read and decides the seed (A6)" % ",".join(row["permuted_refused"])]
+
+
 def da_lesion_held(shard):
     """Amendment A4 (c): did `BRAIN_CURIOSITY_DA_LESION=1` HOLD on every probe that read the DA coupling? Every
     `curiosity.curiosity_da` trace in the arm must say `lesioned` True and `da_crave_gain` == 1.0, and there must be at
@@ -2052,7 +2101,11 @@ def _labels(group, seed, arm="intact_a"):
     return [t[0] for t in turns_for(group, seed, arm)]
 
 
-def aggregate(root, seeds=GATE_SEEDS, informational=True):
+def aggregate(root, seeds=GATE_SEEDS, informational=True, amendment_level=None):
+    level = AMENDMENT_LEVEL if amendment_level is None else str(amendment_level)
+    if level not in AMENDMENT_LEVELS:
+        raise ValueError("amendment level %r not in %s" % (level, AMENDMENT_LEVELS))
+    a6 = level == "A6"
     shards = _load_shards(root, seeds)
     seeds = [int(s) for s in seeds]
     per_group = {}
@@ -2162,6 +2215,13 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
                             rec["patch_calls"] = p["calls"]; rec["applied"] = p["calls"] > 0
                         else:
                             rec["applied"] = True      # env-flag lesions are read per call by production code
+                        if a6 and rec["applied"] is False:
+                            # amendment A6, Claude's ruling 2026-11-01 (the A6 residual): an in-process lesion whose
+                            # patch was never called is an instrument failure, never evidence of "not load-bearing".
+                            # The seed is UNDEFINED, so the criterion reads INCOMPLETE, never FAIL, on that basis
+                            row["undefined_reasons"].append(
+                                "%s: in-process lesion patch never called (applied False, A6 lesion not applied): the "
+                                "lesion read is undefined" % les)
                     else:
                         rec["effect"] = None; rec["reproduced"] = None
                     row["lesions"][les] = rec
@@ -2181,6 +2241,15 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
                         row["tracks"] = bool(sp["all"]) and row["private_selected_by_state"]
                     else:
                         row["tracks"] = bool(sp["all"])
+                    if a6 and group == "infer":
+                        # amendment A6: a refused permuted hop teach leaves exposure tracking UNDEFINED, never FAIL
+                        acq = infer_permuted_acquisition(P)
+                        row["permuted_acquisition"] = acq
+                        row["permuted_refused"] = [l for l in A6_INFER_HOP_TEACHES if acq[l]["refused"]]
+                        if row["permuted_refused"]:
+                            row["tracks_as_scored_pre_A6"] = row["tracks"]
+                            row["tracks"] = None
+                            row["undefined_reasons"] += _a6_reason(row, group)
                 else:
                     row["tracks"] = None
                 # ── informational arms (never counted) ──
@@ -2306,19 +2375,37 @@ def aggregate(root, seeds=GATE_SEEDS, informational=True):
                    "curiosity result); if another clause fails, the seed is scored incorrect instead")
     v.require("every counted arm ran its own registered turn table (amendment A4 review)", _n_rows_with("turn table differs"),
               expect=0, note="the scorers read by label: a reversed shard in the registered order would pass vacuously")
+    if a6:
+        v.require("the infer permuted hop teach received wherever exposure tracking decides a seed (amendment A6)",
+                  _n_rows_with("(A6)"), expect=0,
+                  note="a permuted teach the brain refused (the teach reply abstained, nothing stored) cannot test whether "
+                       "the conclusion follows the exposure: an acquisition gap, not a reasoning result; if another "
+                       "C2 clause fails, the seed is scored on that clause instead")
     v.require("six seeds defined for every primary criterion", sum(1 for g in PRIMARY_GROUPS if per_group[g]["n_defined"] < len(seeds)), expect=0)
     earned = v.decide(go=all(x == "PASS" for x in crit.values()), verbose=False)
-    if earned["status"] == "UNDEFINED":
+    crit_failed = [c for c, x in crit.items() if x == "FAIL"]
+    if a6 and crit_failed:
+        # amendment A6, Claude's ruling 2026-11-01 (the criterion-only variant): an undefined C2 must never hide a
+        # defined C1 failure. The stage is FAIL whenever any counted criterion FAILs (a criterion FAILs only on its full
+        # set of defined seeds); it is UNDEFINED only when no counted criterion FAILs and an unmet precondition remains
+        stage = "FAIL"
+    elif earned["status"] == "UNDEFINED":
         stage = "UNDEFINED (INCOMPLETE): " + "; ".join(earned["undefined_reasons"])[:400]
     else:
         stage = "PASS" if earned["go"] else "FAIL"
-    return {"stage": "STAGE-2 (CHILD) exit", "verdict": stage, "GO": bool(earned["go"]),
+    out = {"stage": "STAGE-2 (CHILD) exit", "verdict": stage, "GO": bool(earned["go"]),
             "preconditions": earned["preconditions"], "undefined_reasons": earned["undefined_reasons"],
             "criteria": crit, "groups": per_group,
             "seeds": seeds, "missing_shards": missing,
             "bars": {"ask_ratio": ASK_RATIO_BAR, "ask_gap_floor": ASK_GAP_FLOOR, "seeds_required": len(seeds),
                      "emotion_categories": 4},
             "runner": "research/runners/stage2_exit_gate.py", "prereg": PREREG, "expected_source": EXPECTED_SOURCE}
+    if a6:      # recorded only at A6, so an A5 aggregate stays byte-identical to the pre-A6 runner's
+        out["amendment_level"] = level
+        out["stage_rule"] = ("criterion-only (amendment A6, ruling 2026-11-01): FAIL whenever any counted criterion "
+                             "FAILs; UNDEFINED only when none FAILs and a precondition is unmet")
+        out["criteria_failed"] = crit_failed
+    return out
 
 
 KB_SUMMARY_ARMS = ("intact_a", "kb_scramble", "kb_scramble_spiking_control")
@@ -2431,6 +2518,21 @@ def report(agg):
                                 s, inf, k.get("engaged"), k.get("n_changed"), k.get("n_facts"), k.get("follows"),
                                 pr.get("derived_svo"), pr.get("derived_from"),
                                 (k.get("predicted_from_list") or {}).get("svo"), (k.get("predicted_from_bound") or {}).get("svo")))
+    if agg.get("amendment_level") == "A6":     # printed only at A6: an A5 report stays as it was
+        lines += ["", "Stage rule at A6 (criterion-only, ruling 2026-11-01): FAIL whenever any counted criterion FAILs "
+                      "(here: %s); UNDEFINED only when none FAILs and a precondition is unmet. Unmet preconditions: %s." % (
+                          ", ".join(agg.get("criteria_failed") or []) or "none",
+                          "; ".join(agg.get("undefined_reasons") or []) or "none")]
+        lines += ["", "C2 permuted-exposure acquisition (amendment A6: a refused permuted hop teach leaves tracking undefined, "
+                      "never FAIL; the seed is UNDEFINED only when that decides it):"]
+        for s, row in agg["groups"]["infer"]["seeds"].items():
+            acq = row.get("permuted_acquisition")
+            if acq is None:
+                continue
+            lines.append("- seed %s: %s; tracks %s (as scored before A6: %s); %s" % (
+                s, ", ".join("%s refused %s carried %s" % (l, v["refused"], v["carried"]) for l, v in acq.items()),
+                row.get("tracks"), row.get("tracks_as_scored_pre_A6", row.get("tracks")),
+                "; ".join(x for x in row.get("undefined_reasons") or [] if "(A6)" in x) or "no A6 reason"))
     if ks_lines:
         lines += ["", "C2 host-ownership intervention (the kb_scramble arms: the list the chain route reads is deranged, the bound "
                       "vectors are not; informational, never a pass condition):"] + ks_lines
@@ -2446,25 +2548,38 @@ def report(agg):
 
 
 # ══════════════════════════════════════════════ POOL JOBS ═══════════════════════════════════════════════════════════
-def pool_job_lines(sha, seeds=GATE_SEEDS, out_dir=GATE_OUT_DIR, informational=True, max_age_h=MAX_AGE_H):
+def pool_job_lines(sha, seeds=GATE_SEEDS, out_dir=GATE_OUT_DIR, informational=True, max_age_h=MAX_AGE_H,
+                   groups=None, extra_env=None, reason=None):
     """One pool job per (seed, group, arm). Dev seed 7 peaked at 6.3-8.1 GB RSS (emo highest) -> mem_gb=MEM_GB under a
     MEMCAP_GB cap. Every line declares max_age_h (the dispatcher's 12 h debris guard would otherwise skip a deep,
     legitimate queue). The C2 step-0 entries are never emitted here (`gate_arms_for`): they are read-only, dev seeds
-    only, with their own pool lines (research/runners/c2_hops_step0.py)."""
+    only, with their own pool lines (research/runners/c2_hops_step0.py).
+    DEV PREVIEW options (2026-11-01, all default None = the gate lines byte for byte): `groups` limits the groups,
+    `extra_env` ({name: value}) is appended to the line's `env` (e.g. SIM_STABLE_INTEGRATION=1 SIM_STABLE_RECAL=1), and
+    `reason` replaces the reason column. A dev-seed line never carries --allow-gate-seed/--prereg when any of the three is
+    given (a dev preview is no prereg run; the 1101 preview's lines were hand-edited that way)."""
     out = []
     max_age_h = min(int(max_age_h), 240)
+    preview = groups is not None or extra_env is not None or reason is not None
+    env_tail = "".join(" %s=%s" % (k, v) for k, v in (extra_env or {}).items())
     for seed in seeds:
         for group in GROUPS:
+            if groups is not None and group not in groups:
+                continue
             for arm in gate_arms_for(group, informational):
                 p = shard_path(out_dir, seed, group, arm)
+                gate_tail = "" if (preview and seed not in GATE_SEEDS) else " --allow-gate-seed --prereg %s" % PREREG
                 cmd = ("cd ~/derisk-pool/revisions/%s && bash tools/mem_ok.sh %d 1 && mkdir -p %s && "
                        "bash tools/memcap.sh %d -- env SIM_BACKEND=numpy OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 "
-                       "MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= .venv/bin/python -u -m "
-                       "research.runners.stage2_exit_gate --shard --seed %d --group %s --arm %s --allow-gate-seed "
-                       "--prereg %s --out %s" % (sha, MEM_GB, os.path.dirname(p), MEMCAP_GB, seed, group, arm, PREREG, p))
-                why = ("prereg %s (%s); Stage-2 exit gate seed %d %s %s; record: second integrated stage-exit "
-                       "measurement (before_you_build + RAG 2026-09-30: only isolated de-risks and single-faculty "
-                       "wire-ins exist); mem_gb=%d max_age_h=%d" % (PREREG, sha[:9], seed, group, arm, MEM_GB, max_age_h))
+                       "MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 CUDA_VISIBLE_DEVICES=%s .venv/bin/python -u -m "
+                       "research.runners.stage2_exit_gate --shard --seed %d --group %s --arm %s%s "
+                       "--out %s" % (sha, MEM_GB, os.path.dirname(p), MEMCAP_GB, env_tail, seed, group, arm, gate_tail, p))
+                if reason is not None:
+                    why = "%s; %s seed %d %s %s; mem_gb=%d max_age_h=%d" % (reason, sha[:9], seed, group, arm, MEM_GB, max_age_h)
+                else:
+                    why = ("prereg %s (%s); Stage-2 exit gate seed %d %s %s; record: second integrated stage-exit "
+                           "measurement (before_you_build + RAG 2026-09-30: only isolated de-risks and single-faculty "
+                           "wire-ins exist); mem_gb=%d max_age_h=%d" % (PREREG, sha[:9], seed, group, arm, MEM_GB, max_age_h))
                 out.append((cmd, why))
     return out
 
@@ -2741,6 +2856,14 @@ def main():
     ap.add_argument("--allow-gate-seed", action="store_true",
                     help="required to run a GATE seed (42/43/44/100/101/102); dev seeds need nothing")
     ap.add_argument("--no-informational", action="store_true", help="emit/aggregate without the informational arms")
+    ap.add_argument("--out-root", default=None, help="--emit-pool-jobs: shard root (default %s)" % GATE_OUT_DIR)
+    ap.add_argument("--groups", default=None, help="--emit-pool-jobs (dev preview): comma-separated groups only")
+    ap.add_argument("--env", action="append", default=None, metavar="NAME=VALUE",
+                    help="--emit-pool-jobs (dev preview): append NAME=VALUE to every line's env (repeatable)")
+    ap.add_argument("--reason", default=None, help="--emit-pool-jobs (dev preview): the reason column's lead")
+    ap.add_argument("--amendment-level", default=None, choices=AMENDMENT_LEVELS,
+                    help="--aggregate: the scorer's amendment level (default %s; A6 = the C2 permuted acquisition "
+                         "precondition, docs/drafts/stage2-exit/AMENDMENT-A6.md)" % AMENDMENT_LEVEL)
     ap.add_argument("--kb-summary", default=None, metavar="SEED=DIR[,SEED=DIR...]",
                     help="save the aggregate of a DIAGNOSTIC kb_scramble run (dev seeds) to --out")
     a = ap.parse_args()
@@ -2761,13 +2884,27 @@ def main():
         sys.exit(0 if ok else 1)
     if a.emit_pool_jobs:
         seeds = tuple(int(s) for s in a.seeds.split(",")) if a.seeds else GATE_SEEDS
-        for cmd, why in pool_job_lines(a.emit_pool_jobs, seeds=seeds, informational=not a.no_informational, max_age_h=a.max_age_h):
+        kw = {}
+        if a.out_root:
+            kw["out_dir"] = a.out_root
+        if a.groups:
+            kw["groups"] = tuple(g for g in a.groups.split(",") if g)
+            bad = [g for g in kw["groups"] if g not in GROUPS]
+            if bad:
+                ap.error("--groups: unknown %s" % bad)
+        if a.env:
+            kw["extra_env"] = dict(e.split("=", 1) for e in a.env)
+        if a.reason:
+            kw["reason"] = a.reason
+        for cmd, why in pool_job_lines(a.emit_pool_jobs, seeds=seeds, informational=not a.no_informational,
+                                       max_age_h=a.max_age_h, **kw):
             print("%s\t%s" % (cmd, why))
         return
     if a.aggregate:
         seeds = tuple(int(s) for s in a.seeds.split(",")) if a.seeds else GATE_SEEDS
         with contextlib.redirect_stdout(sys.stderr):      # the attribution/verdict prints go to stderr: stdout is
-            agg = aggregate(a.aggregate, seeds=seeds, informational=not a.no_informational)   # the report only
+            agg = aggregate(a.aggregate, seeds=seeds, informational=not a.no_informational,   # the report only
+                            amendment_level=a.amendment_level)
         out = a.out or os.path.join(a.aggregate, "aggregate.json")
         os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
         with open(out, "w") as f:

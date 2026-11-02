@@ -1,0 +1,81 @@
+{
+ "backend": "numpy",
+ "description": "Stage-2 stage verdict at amendment A6 (criterion-only ruling 2026-11-01): the real aggregate's stage verdict is FAIL. 'perfect' = a defined C1 failure, with or without the C2 permuted hop teach refused; 'null' = every criterion capable with the C2 permuted teach refused (UNDEFINED), and the fully capable brain (PASS).",
+ "failures": [],
+ "kinds": {
+  "null": "null",
+  "null_capable": "null",
+  "null_refused_exact": "null",
+  "perfect": "perfect",
+  "perfect_c1_gap_c2_received": "perfect",
+  "perfect_c1_random_c2_refused": "perfect",
+  "perfect_exact": "perfect"
+ },
+ "n": 1000,
+ "n_pass": {
+  "null": 0,
+  "null_capable": 0,
+  "null_refused_exact": 0,
+  "perfect": 1000,
+  "perfect_c1_gap_c2_received": 1000,
+  "perfect_c1_random_c2_refused": 1000,
+  "perfect_exact": 1000
+ },
+ "name": "stage2 stage FAIL-claim (A6, criterion-only)",
+ "pass_rate": {
+  "null": 0.0,
+  "null_capable": 0.0,
+  "null_refused_exact": 0.0,
+  "perfect": 1.0,
+  "perfect_c1_gap_c2_received": 1.0,
+  "perfect_c1_random_c2_refused": 1.0,
+  "perfect_exact": 1.0
+ },
+ "pass_rate_ci95": {
+  "null": [
+   0.0,
+   0.0038
+  ],
+  "null_capable": [
+   0.0,
+   0.0038
+  ],
+  "null_refused_exact": [
+   0.0,
+   0.0038
+  ],
+  "perfect": [
+   0.9962,
+   1.0
+  ],
+  "perfect_c1_gap_c2_received": [
+   0.9962,
+   1.0
+  ],
+  "perfect_c1_random_c2_refused": [
+   0.9962,
+   1.0
+  ],
+  "perfect_exact": [
+   0.9962,
+   1.0
+  ]
+ },
+ "repo_head": "4f6f97d55f6981c5900396b895250a2f9d1f2a96",
+ "scorer_files": {
+  "docs/drafts/stage2-exit/bar_sanity_s2_common.py": "2db0cf38fa9267cb7f72d8a4024e878b2b24839d26b0bb71d282e1f97cdb20d4",
+  "research/runners/stage2_exit_gate.py": "2f2aaf9621d705bd8cb6695dbc6f305b88f400e474d2936327ddb6bdeaf3e61b"
+ },
+ "scorer_sha256": "b7f88445f08d8d60f479b88b586191b1b26d799a8bc30d4a1da71da66b90eda9",
+ "seed": 0,
+ "spec": "docs/drafts/stage2-exit/bar_sanity_spec_s2_stage_A6_fail.py",
+ "spec_sha256": "dd26d7548e7b82c08286fa9afd2254325fe0971f82c6b7e7a1bcb21b6c409aef",
+ "thresholds": {
+  "null_max": 0.05,
+  "override_reason": null,
+  "perfect_min": 0.95
+ },
+ "tool": "tools/bar_sanity.py",
+ "verdict": "OK",
+ "wall_s": 161.3
+}

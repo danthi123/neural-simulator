@@ -45,6 +45,16 @@ STORED two moats, echoed another fact first and asks about them anyway (`null_st
 per-topic-habituation brain (asks about an unknown topic at most twice) is `info_topic_habituation`, reported only: it
 passes both orders without a learning-progress signal, the residual AMENDMENT-A4.md names.
 
+AMENDMENT A6 (DRAFT 2026-11-01), group `infer`. The decision now runs the scorer at amendment level A6 (`LEVEL`): a
+permuted `infer` arm whose own hop teach turn ABSTAINED (dev / gate: the D4 comprehension gate's clarification "I followed
+the shape of that, but I don't know the words 'heron' or 'gnat' yet ...") leaves permuted tracking UNDEFINED, never FAIL.
+New permuted-arm variants: `permuted+refused` (the capable brain's permuted arm met that refusal on `t_heron_hunt`, so its
+permuted probes abstain like the 10-26 gate's) and `permuted+blind` (the exposure-blind brain: it TAKES the permuted teach,
+echoing the permuted triples, and still answers the registered conclusion `gnat`). The first must never be scored FAIL
+(nor PASS); the second must stay FAIL. bar_sanity_spec_s2_c2_infer_A6_fail.py reads the FAIL verdict as its decision. Ruling (Claude, 2026-11-01): the
+criterion-only variant; the STAGE is FAIL whenever any counted criterion FAILs, UNDEFINED only when none FAILs and a
+precondition is unmet. bar_sanity_spec_s2_stage_A6_fail.py reads the stage FAIL verdict (`decide_stage_fail`).
+
 WHAT NOISE THE BAR SEES. Stage 2's scorer is a conjunction of exact reply checks, not a statistic, and the real null is
 exactly zero-noise (dev 7), so there is no read noise to model; the realistic part is the surface the checkers must
 survive. `flaky` (info only) drops each scored intact probe to an abstain with probability eps, the sensitivity of the
@@ -71,6 +81,8 @@ from research.runners import stage2_exit_gate as G  # noqa: E402
 
 S = G.EXPECTED_SOURCE
 SEEDS = list(G.GATE_SEEDS)
+# the scorer level every decision here reads (amendment A6, DRAFT; the gate's aggregate passes --amendment-level A6)
+LEVEL = "A6"
 AB = "I don't know about that."
 IDLE_NEUTRAL = "Nothing in particular is surfacing for me to bring up right now."
 BUILTIN = [["brain", "use", "spikes"], ["brain", "learn", "words"], ["brain", "store", "memory"],
@@ -206,9 +218,29 @@ def reply_conv(variant, rng, realistic):
     return r
 
 
+def d4_refuse(m):
+    """The 10-26 gate's reply to a permuted infer teach the D4 comprehension gate refused (every gate seed, s42
+    `infer__permuted` `t_heron_hunt`): an abstain asking for the words, nothing stored."""
+    w = m.split()
+    return R("I followed the shape of that, but I don't know the words '%s' or '%s' yet — what do they refer to?"
+             % (w[1], w[-1]), abst=True)
+
+
 def reply_infer(variant, rng, realistic):
-    perm = variant == "permuted"
+    perm = variant.startswith("permuted")
     r, turns = _base("infer", variant, perm)
+    if variant == "permuted+refused":                    # amendment A6: hop 1 refused, so the permuted probes cannot
+        msg = dict((l, m) for l, m, _r in turns)["t_heron_hunt"]     # follow it (the 10-26 gate's permuted arm)
+        r["t_heron_hunt"] = d4_refuse(msg)
+        r["p_prey_eat"] = absent(rng, "heron's", True, realistic)
+        r["c_heron_hunt"] = absent(rng, "heron", True, realistic)
+        r["c_frog_eat"] = absent(rng, "frog", False, realistic)
+        r["c_prey_chase"] = absent(rng, "heron's", True, realistic)
+        r["p_yesno"] = recall(rng, "crow", "chase", "wren", realistic)
+        r["c_dog_chase"] = recall(rng, "dog", "chase", "cat", realistic, None, [("cat", "eat", "fish")])
+        return r
+    if variant == "permuted+blind":                      # amendment A6 null: takes the permuted teach (the echoes above
+        perm = False                                     # are the permuted triples), answers as if it never heard it
     ex = [("dog", "chase", "cat")]
     mid, term = ("gnat", "frog") if perm else ("frog", "gnat")
     df = [["heron", "hunt", mid], [mid, "eat" if not perm else "eat", term]]
@@ -528,7 +560,7 @@ def _aggregate(shards, seeds, root="<memory>"):
     G._load_shards = lambda root, sd: shards                    # the scorer's loader, fed from memory
     try:
         with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-            return G.aggregate(root, seeds=seeds, informational=False)
+            return G.aggregate(root, seeds=seeds, informational=False, amendment_level=LEVEL)
     finally:
         G._load_shards = orig
 
@@ -540,12 +572,26 @@ def decide_group(data, group):
     return agg["groups"][group]["verdict"] == "PASS"
 
 
+def decide_group_fail(data, group):
+    """Amendment A6: the real aggregate scores this group's primary criterion FAIL (a capability claim: absent)."""
+    shards = {(seed, group, arm): sh for seed, arms in data.items() for arm, sh in arms.items()}
+    agg = _aggregate(shards, sorted(data))
+    return agg["groups"][group]["verdict"] == "FAIL"
+
+
 def decide_stage(data):
     """The real aggregate's STAGE verdict (all five criteria PASS, every precondition earned) is PASS."""
     shards = {(seed, g, arm): sh for g, d in data.items() for seed, arms in d.items() for arm, sh in arms.items()}
     seeds = sorted(next(iter(data.values())))
     agg = _aggregate(shards, seeds)
     return agg["verdict"] == "PASS" and bool(agg["GO"])
+
+
+def decide_stage_fail(data):
+    """Amendment A6, ruling 2026-11-01 (criterion-only): the real aggregate's STAGE verdict is FAIL."""
+    shards = {(seed, g, arm): sh for g, d in data.items() for seed, arms in d.items() for arm, sh in arms.items()}
+    seeds = sorted(next(iter(data.values())))
+    return _aggregate(shards, seeds)["verdict"] == "FAIL"
 
 
 def write_tree(root, data_by_group):
@@ -571,7 +617,7 @@ def selfcheck(n=12, seed=3):
             with tempfile.TemporaryDirectory() as td:
                 write_tree(td, {g: data})
                 with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-                    disk = G.aggregate(td, seeds=sorted(data), informational=False)
+                    disk = G.aggregate(td, seeds=sorted(data), informational=False, amendment_level=LEVEL)
                 mem = _aggregate({(s, g, a): sh for s, arms in data.items() for a, sh in arms.items()}, sorted(data), root=td)
                 if json.dumps(disk, sort_keys=True, default=str) != json.dumps(mem, sort_keys=True, default=str):
                     bad += 1
@@ -630,6 +676,12 @@ def generators(group, extra_info=True):
         # in the reversed order only (the HANDOFF #16 confound, one order only). The pre-A4 scorer passed both.
         out["null_order_carried"] = mk(over={"reversed": "da_throttled"})
         out["null_order_carried_no_stop"] = mk(over={"reversed": "no_stop"})
+    if group == "infer" and extra_info:
+        # amendment A6: the exposure-blind brain TAKES the permuted teach and still answers the registered conclusion: FAIL
+        out["null_permuted_blind_acquired"] = mk(over={"permuted": "permuted+blind"})
+        # amendment A6, reported: the capable brain whose permuted hop teach was refused (the 10-26 gate): never PASS
+        # (UNDEFINED at A6, FAIL before); bar_sanity_spec_s2_c2_infer_A6_fail.py thresholds the FAIL read of it
+        out["info_permuted_refused"] = mk(over={"permuted": "permuted+refused"})
     if group == "emo" and extra_info:
         # NULL (amendment A3): a host lookup of the heard affect words names the category; the ladder only supplies the
         # printed numbers. The ladder lesion clamps the numbers and leaves the word, so the NAMED category does not move.

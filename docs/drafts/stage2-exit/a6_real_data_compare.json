@@ -1,0 +1,276 @@
+{
+ "analysis_only": true,
+ "backend": "numpy",
+ "device": "cpu",
+ "gate_1026": {
+  "A5_aggregate_identical_to_pre_A6_runner": true,
+  "A5_report_identical_to_pre_A6_runner": true,
+  "A6": {
+   "C2": {
+    "n_correct": 0,
+    "n_defined": 0,
+    "n_permuted_tracks": 0,
+    "verdict": "INCOMPLETE",
+    "why": [
+     "0 of 6 seeds defined"
+    ]
+   },
+   "C2_seeds": {
+    "100": {
+     "permuted_acquisition": {
+      "t_frog_eat": {
+       "carried": true,
+       "refused": false
+      },
+      "t_heron_hunt": {
+       "carried": false,
+       "refused": true
+      }
+     },
+     "tracks": null,
+     "tracks_as_scored_pre_A6": false,
+     "undefined_reasons": [
+      "permuted: hop teach refused on t_heron_hunt (the teach reply abstained, nothing stored): exposure tracking cannot be read and decides the seed (A6)"
+     ]
+    },
+    "101": {
+     "permuted_acquisition": {
+      "t_frog_eat": {
+       "carried": true,
+       "refused": false
+      },
+      "t_heron_hunt": {
+       "carried": false,
+       "refused": true
+      }
+     },
+     "tracks": null,
+     "tracks_as_scored_pre_A6": false,
+     "undefined_reasons": [
+      "permuted: hop teach refused on t_heron_hunt (the teach reply abstained, nothing stored): exposure tracking cannot be read and decides the seed (A6)"
+     ]
+    },
+    "102": {
+     "permuted_acquisition": {
+      "t_frog_eat": {
+       "carried": true,
+       "refused": false
+      },
+      "t_heron_hunt": {
+       "carried": false,
+       "refused": true
+      }
+     },
+     "tracks": null,
+     "tracks_as_scored_pre_A6": false,
+     "undefined_reasons": [
+      "permuted: hop teach refused on t_heron_hunt (the teach reply abstained, nothing stored): exposure tracking cannot be read and decides the seed (A6)"
+     ]
+    },
+    "42": {
+     "permuted_acquisition": {
+      "t_frog_eat": {
+       "carried": true,
+       "refused": false
+      },
+      "t_heron_hunt": {
+       "carried": false,
+       "refused": true
+      }
+     },
+     "tracks": null,
+     "tracks_as_scored_pre_A6": false,
+     "undefined_reasons": [
+      "permuted: hop teach refused on t_heron_hunt (the teach reply abstained, nothing stored): exposure tracking cannot be read and decides the seed (A6)"
+     ]
+    },
+    "43": {
+     "permuted_acquisition": {
+      "t_frog_eat": {
+       "carried": true,
+       "refused": false
+      },
+      "t_heron_hunt": {
+       "carried": false,
+       "refused": true
+      }
+     },
+     "tracks": null,
+     "tracks_as_scored_pre_A6": false,
+     "undefined_reasons": [
+      "permuted: hop teach refused on t_heron_hunt (the teach reply abstained, nothing stored): exposure tracking cannot be read and decides the seed (A6)"
+     ]
+    },
+    "44": {
+     "permuted_acquisition": {
+      "t_frog_eat": {
+       "carried": true,
+       "refused": false
+      },
+      "t_heron_hunt": {
+       "carried": false,
+       "refused": true
+      }
+     },
+     "tracks": null,
+     "tracks_as_scored_pre_A6": false,
+     "undefined_reasons": [
+      "permuted: hop teach refused on t_heron_hunt (the teach reply abstained, nothing stored): exposure tracking cannot be read and decides the seed (A6)"
+     ]
+    }
+   },
+   "criteria": {
+    "C1": "FAIL",
+    "C2": "INCOMPLETE",
+    "C3": "FAIL",
+    "C4": "FAIL",
+    "C5": "PASS"
+   },
+   "preconditions_unmet": [
+    "unmet: the infer permuted hop teach received wherever exposure tracking decides a seed (amendment A6) (measured=6 expect=0)",
+    "unmet: six seeds defined for every primary criterion (measured=1 expect=0)"
+   ],
+   "stage": "FAIL"
+  },
+  "n_missing_shards": 0,
+  "pre_A6": {
+   "C2": {
+    "n_correct": 6,
+    "n_defined": 6,
+    "n_permuted_tracks": 0,
+    "verdict": "FAIL",
+    "why": [
+     "permuted exposure tracked on 0 of 6 seeds (not exposure-driven)"
+    ]
+   },
+   "criteria": {
+    "C1": "FAIL",
+    "C2": "FAIL",
+    "C3": "FAIL",
+    "C4": "FAIL",
+    "C5": "PASS"
+   },
+   "stage": "FAIL"
+  },
+  "seeds": [
+   42,
+   43,
+   44,
+   100,
+   101,
+   102
+  ]
+ },
+ "new_runner_sha256": "2f2aaf9621d705bd8cb6695dbc6f305b88f400e474d2936327ddb6bdeaf3e61b",
+ "old_runner_sha256": "22eb18690b1258afd82149f97b886d524977fdd910ee72b076c1d939df0dd4ee",
+ "preview_1101": {
+  "A5_aggregate_identical_to_pre_A6_runner": true,
+  "A5_report_identical_to_pre_A6_runner": true,
+  "A6": {
+   "C2": {
+    "n_correct": 0,
+    "n_defined": 0,
+    "n_permuted_tracks": 0,
+    "verdict": "INCOMPLETE",
+    "why": [
+     "0 of 3 seeds defined"
+    ]
+   },
+   "C2_seeds": {
+    "1": {
+     "permuted_acquisition": {
+      "t_frog_eat": {
+       "carried": true,
+       "refused": false
+      },
+      "t_heron_hunt": {
+       "carried": false,
+       "refused": true
+      }
+     },
+     "tracks": null,
+     "tracks_as_scored_pre_A6": false,
+     "undefined_reasons": [
+      "permuted: hop teach refused on t_heron_hunt (the teach reply abstained, nothing stored): exposure tracking cannot be read and decides the seed (A6)"
+     ]
+    },
+    "2": {
+     "permuted_acquisition": {
+      "t_frog_eat": {
+       "carried": true,
+       "refused": false
+      },
+      "t_heron_hunt": {
+       "carried": false,
+       "refused": true
+      }
+     },
+     "tracks": null,
+     "tracks_as_scored_pre_A6": false,
+     "undefined_reasons": [
+      "permuted: hop teach refused on t_heron_hunt (the teach reply abstained, nothing stored): exposure tracking cannot be read and decides the seed (A6)"
+     ]
+    },
+    "3": {
+     "permuted_acquisition": {
+      "t_frog_eat": {
+       "carried": true,
+       "refused": false
+      },
+      "t_heron_hunt": {
+       "carried": false,
+       "refused": true
+      }
+     },
+     "tracks": null,
+     "tracks_as_scored_pre_A6": false,
+     "undefined_reasons": [
+      "permuted: hop teach refused on t_heron_hunt (the teach reply abstained, nothing stored): exposure tracking cannot be read and decides the seed (A6)"
+     ]
+    }
+   },
+   "criteria": {
+    "C1": "FAIL",
+    "C2": "INCOMPLETE",
+    "C3": "PASS",
+    "C4": "PASS",
+    "C5": "PASS"
+   },
+   "preconditions_unmet": [
+    "unmet: the infer permuted hop teach received wherever exposure tracking decides a seed (amendment A6) (measured=3 expect=0)",
+    "unmet: six seeds defined for every primary criterion (measured=1 expect=0)"
+   ],
+   "stage": "FAIL"
+  },
+  "n_missing_shards": 0,
+  "pre_A6": {
+   "C2": {
+    "n_correct": 3,
+    "n_defined": 3,
+    "n_permuted_tracks": 0,
+    "verdict": "FAIL",
+    "why": [
+     "permuted exposure tracked on 0 of 3 seeds (not exposure-driven)"
+    ]
+   },
+   "criteria": {
+    "C1": "FAIL",
+    "C2": "FAIL",
+    "C3": "PASS",
+    "C4": "PASS",
+    "C5": "PASS"
+   },
+   "stage": "FAIL"
+  },
+  "seeds": [
+   1,
+   2,
+   3
+  ]
+ },
+ "preview_seed3_server_copies_sha256": {
+  "emo__intact_b.json": "ba1f144de34c8f9c655f96fc4c7e6a690362a14631a76577660c2994d4d7ff55",
+  "inner__intact_a.json": "158dac699dbc92985ff5204ceb5afb5a4ff994fa183e5949f1f3b917f18c040b",
+  "inner__intact_b.json": "6e26e4a5360c9aa9548ec49cb97fe15052dab3647de8d5f25cedcb4c27d95f44"
+ }
+}
