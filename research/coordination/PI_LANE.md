@@ -11,8 +11,8 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   Branch `research/pi-203-frozen-synapse-freeze` @ `fd42e0120`, merge_review APPROVED (2026-10-31).
 - [x] #203 follow-up: the comprehension organ's frozen drift is the Hebbian loop (`sim/bridge.py` LTP + decay); fix
   on branch `research/pi-203-write-path-attribution`, default OFF, no reply-level change (2026-10-31).
-- [x] #203 flip smoke (on `research/pi-lane`): finish only the GPU cells already in flight, land them, then stop
-  (RULING pivot-1102). No flip, no new #203 work.
+- [x] #203 flip smoke (on `research/pi-lane`): stopped 2026-11-02 18:20: the in-flight GPU cells were killed by Claude
+  (RULING overnight-1102). Nothing to land. No flip, no new #203 work.
 
 ## Open
 - [ ] New core, weekly conversation test upgrade (`brain/eval/weekly.py`, milestone day 14, board #281). Today it
@@ -26,3 +26,14 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   tests that run without the cortex weights (mock `Cortex`); real runs go to W via `run_gpu`. Read first:
   `brain/eval/weekly.py`, `brain/experiments/sleep_probe.py`, `brain/PREREQUISITES.md` (Sleep consolidation).
   Done = branch + tests passing + one real run on W attached to a merge_review checkpoint.
+- [ ] New core, sleep: varied-replay arm in `brain/experiments/sleep_probe.py` (after the weekly-test item). Six-seed
+  0.1B result (`brain/experiments/results/2026-11-02-sleep-0.1b-six-seeds.md`): sleep recalls the original question
+  (3-4/12) but not reworded questions (2.2 vs 1.3 shuffled). Add arm `sleep_varied`: each told fact is replayed in
+  three surface forms, the original plus two rewordings of the STATEMENT (e.g. "My dog's name is Pixel." -> "I have
+  a dog called Pixel."), same total replay steps as `sleep_true`. Write the rewordings once into a committed file
+  `brain/experiments/facts_rewordings.py` (teacher-written text, declared in `brain/SCAFFOLDS.md` like text replay);
+  they must not reuse the wording of any `PARA` question (add a unit test that checks no PARA question's content
+  words appear as a run of 3+ in any rewording) and must keep the key word. Add `--arms` (default: all four) so a run
+  can skip arms. Unit tests run without weights (mock `Cortex`, as the weekly item). Do not run the real probe:
+  Claude runs the six seeds. Read first: `brain/experiments/sleep_probe.py`, `brain/sleep.py`,
+  `brain/experiments/facts.py`. Done = branch + tests passing + merge_review checkpoint.

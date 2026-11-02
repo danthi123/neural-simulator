@@ -73,6 +73,8 @@ def main():
     ap.add_argument("--steps", type=int, default=240)
     ap.add_argument("--seed", type=int, default=7)
     ap.add_argument("--device", default="cpu")
+    ap.add_argument("--kl-weight", type=float, default=1.0)
+    ap.add_argument("--lr", type=float, default=5e-4)
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     t0 = time.time()
@@ -90,13 +92,13 @@ def main():
     for (s, _, k), wrong in zip(FACTS, perm):  # same sentence, another fact's answer word
         i = s.lower().find(k)
         shuffled.append((f"User: {s[:i]}{wrong.capitalize()}{s[i + len(k):]}\n\nAssistant: Okay, I'll remember that.\n\n", 1.0))
-    result = {"model": a.model, "seed": a.seed, "steps": a.steps, "arms": {}}
+    result = {"model": a.model, "seed": a.seed, "steps": a.steps, "kl_weight": a.kl_weight, "lr": a.lr, "arms": {}}
     for arm, eps in (("no_sleep", None), ("sleep_true", told), ("sleep_shuffled", shuffled)):
         torch.manual_seed(a.seed)
         pc = PlasticCortex(c)
         losses = []
         if eps is not None:
-            losses = sleep(pc, base, eps, GENERIC, steps=a.steps, seed=a.seed, log=lambda m: print(arm, m, flush=True))
+            losses = sleep(pc, base, eps, GENERIC, steps=a.steps, lr=a.lr, kl_weight=a.kl_weight, seed=a.seed, log=lambda m: print(arm, m, flush=True))
         r = evaluate(pc, base, keys_all)
         r["final_replay_loss"] = losses[-1][0] if losses else None
         r["adapter_norm"] = pc.adapter_norm()

@@ -10,16 +10,23 @@
   every seed, ordinary-text drift small, false recall not above shuffled; then sleep wired into the live brain
   (restart = sleep, adapters persisted) so the weekly transcript shows it.
 - **MILESTONE:** day 14 (2026-11-16), brain/ARCHITECTURE.md §4. Day 7 (2026-11-09): first [weekly] run by Hermes.
-- **STATE:** `brain/plastic_cortex.py` (trainable cortex, equals pretrained at zero; tests pass), `brain/sleep.py`
-  (strength-weighted interleaved replay + KL protection), `brain/experiments/sleep_probe.py`. Seed 7, 0.1B: true
-  3/12 (reworded 1/12), shuffled 0/12, no-sleep 0/12, drift KL 0.03. In-context ceiling at 0.1B is 6/12, 0.4B 11/12.
-  Record brief: `brain/research/2026-11-02-record-brief-consolidation-and-selection.md`.
-- **LIVE RUNS:** six gate seeds of sleep_probe at 0.1B on W CPU (out: `/home/dant123/Projects/sim/_scratch/brainv2/
-  sleep_probe_s<seed>_0.1b.json`, ~9 min each). Stage-2 retake on the pool (Hermes lands it).
-- **NEXT STEP:** read the six seeds; if the effect holds, run 0.4B through the GPU queue (it yields the local model),
-  then try varied replay (reworded rehearsal) for the paraphrase gap; then wire sleep into `Brain` (restart).
-- **DELEGATED:** Pi: weekly test upgrade (`research/coordination/PI_LANE.md`, board #281). Hermes: [weekly] every
-  Monday from 11-09; Stage-2 retake landing (`LOCAL_LLM_RUNBOOK.md` §4, RULING new-core-1102).
+- **STATE:** `brain/plastic_cortex.py`, `brain/sleep.py`, `brain/experiments/sleep_probe.py` (now `--kl-weight`,
+  `--lr`). SIX SEEDS at 0.1B (`brain/experiments/results/2026-11-02-sleep-0.1b-six-seeds.md`): recall holds on every
+  seed (true 3-4/12, shuffled 0-1, no-sleep 0; ceiling 6/12); paraphrase NOT shown (2.2 vs 1.3 shuffled); FALSE
+  RECALL is the defect (any sleep 0 -> ~2/4, learned names leak into unrelated answers; true = shuffled on mean,
+  above it on s100). Drift small (KL <= 0.04). A lead, not a GO.
+- **LIVE RUNS (W is off, owner gaming):** mini-PCs pool40/41/42, user unit `brainv2-sleep` (linger on), code+venv+
+  weights in `~/brainv2/` on each node, jobs `~/brainv2/jobs.txt`, results `~/brainv2/results/<name>.json`, log
+  `~/brainv2/run.log`. Per node in order: 0.4B x2 seeds, 0.1B kl_weight 3.0 x2, 0.1B 480 steps x2 (pool40 42/43,
+  pool41 44/100, pool42 101/102). Pull: `rsync -a poolNN:brainv2/results/ _scratch/brainv2/pool_results/`. Stage-2
+  retake STOPPED 11-02 18:20 (owner: best judgement; 103 lines withdrawn, half-run s42/43/44, no verdict).
+  Pi #203 GPU cells killed (old track).
+- **NEXT STEP:** pull the overnight results. 0.4B: does recall approach its 11/12 ceiling? Does kl 3.0 or 480 steps
+  cut false recall without losing recall? Then (before-build) the false-recall method: the brain must learn to say
+  it does not know (record + prerequisites first: source monitoring/familiarity in the old record). Then varied
+  replay (Pi builds the arm) and wiring sleep into `Brain` (restart = sleep, adapters persisted). 11-04: KEEP/KILL.
+- **DELEGATED:** Pi: weekly test upgrade, then the varied-replay arm (`research/coordination/PI_LANE.md`). Hermes:
+  [weekly] every Monday from 11-09; WORKLOG at most once a day (RULING overnight-1102).
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend
