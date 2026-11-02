@@ -270,3 +270,4 @@ research/queue/pool_canaries.tsv.lock
 # Pool canary outputs pulled back by pool-sync (canary result JSON; the 2026-09-30 sandbox tester's captured logs
 # are 150-300 MB each): instrument checks, never gate data, never committed.
 research/findings/raw/_pool_canary/
+brain_data/
