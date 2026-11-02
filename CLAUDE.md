@@ -14,6 +14,10 @@ grows through a TEMPORARY AI-teacher scaffold that graduates to real humans; eve
 spiking brain, the transformer minimized. (Owner 2026-09-19: Qwen stays as the permanent conditioned-articulation
 mouth; the #1 metric is the lesion-verified load-bearing fraction:
 `docs/plans/2026-09-19-roadmap-with-a-permanent-llm-mouth.md`.)
+**⭐ PIVOT (owner 2026-11-02, supersedes the phase lines below where they differ):** a functional digital brain you
+can speak with openly, that learns and grows; NOT LLM + RAG out of spiking neurons. The brain's own language cortex
+speaks (Qwen = teacher + fallback; declared pretraining trade); a NEW small core is built alongside the frozen old code;
+old track frozen except the Stage-2 retake: `docs/plans/2026-11-02-pivot-functional-digital-brain-DECISION.md`.
 **Current phase (owner 2026-09-25): prove who owns the computation.** Which part of the system caused the answer,
 shown causally? A host-decision share, measured by intervention, sits beside the load-bearing fraction:
 `docs/plans/2026-09-25-prove-who-owns-the-computation-PLAN.md`.
