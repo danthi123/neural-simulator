@@ -362,3 +362,6 @@ Board #273 note: C2 gate reset merged OFF (misses 4->0, false fires 57->78); S0b
 
 ## 2026-11-01  backlog-flip-false-positives
 Board #85 and #191 notes appended: gnw-thought-swap (superseded by swap-drives-response) and wkv-mouth-learned-head (flip_blocked) are not flip candidates. self-model-reward-residual (flip_blocked, wire first) has no board task of its own; none created.
+
+## 2026-11-02  night-1101
+Board #261 (BG hold: tonic lever inert, gate amendment signed, re-pin) and #273 (Stage-2 retake pinned dee817012; C2 drain+competition smoke queued).
