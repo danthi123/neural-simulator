@@ -898,6 +898,13 @@ def selftest():
     for k in ("gnw-thought-swap", "wkv-mouth-learned-head", "self-model-reward-residual"):
         if ("flip-" + k) in flip_keys:
             problems.append("FAIL-DIR: flip scanner lists %r although the row carries superseded_by/flip_blocked" % k)
+    # no live row is a flip candidate today, so prove the scanner still surfaces a plain de-risked-not-flipped row
+    _row = ("  - key: %s\n    faculty: \"f\"\n    de_risked: YES\n    wired: YES\n    on_by_default: NO\n"
+            "    scaffold_retired: NO\n%s")
+    _syn = [it["id"] for it in scan_ledger_flips(ledger_text=_row % ("plain-row", "")
+                                                  + _row % ("blocked-row", "    flip_blocked: \"x (cite)\"\n"))]
+    if _syn != ["flip-plain-row"]:
+        problems.append("PASS-DIR: flip scanner did not surface a plain de-risked, not-on-by-default row (got %r)" % _syn)
 
     walls = scan_walls_ledger()
     if not any("gap#4" in w["what"] or "gap4" in w["id"] for w in walls):
