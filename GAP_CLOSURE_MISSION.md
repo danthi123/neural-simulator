@@ -13,18 +13,26 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-10-28 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-11-02 (RESUME HERE) — PHASE: PROVE WHO OWNS THE COMPUTATION
 
 **Date:** 2026-10-28. **North star:** unchanged, a sim-brain that converses genuinely (affect and self-report are functional
 read-outs, never phenomenal claims); Qwen stays the mouth; the #1 metric is the lesion-verified load-bearing fraction, with the host-decision share beside it.
 **Frontier:** the Stage-2 retake. The 10-26 Stage-2 exit attempt FAILED (C1 0/6, C3 0/6, C2 fails its permuted-exposure control 0/6, C4 5/6; C5 passes 6/6 with a caveat); the re-attempt is due by 11-21 at a Claude re-pin (pool window 11-03..11-10). Emotion (C4) is fixed and ON by default since 10-28; curiosity (C3) passed its dev battery and waits on an identity canary before its six gate seeds; inference (C2) has a design packet and no build; language (C1) waits on the cs-race method f1j; the substrate-validity arc (#274) is built and OFF.
-**Next command (Claude, 2026-11-01):** when the runbook shows [stage2-preview] 105/105 (RULING c3-flip-landed-1101), aggregate the
-Stage-2 dev preview at the C3-default-on revision 41d76bdbe (dev seeds 1-3, no verdict; the 11-21 attempt keeps its own prereg):
+**Next command (Claude, 2026-11-02):** the Stage-2 RETAKE is pinned (A6 + A7 signed, GATE_SHA `dee817012`, out root
+`_stage2_exit/retake_dee8170`). Its 35 dev-seed-7 pre-flight lines are queued at the front; when they land, record the
+pre-flight (`tools/gate_preflight.py record --prereg research/findings/2026-09-30-stage2-exit-gate-PREREGISTRATION.md
+--revision dee817012 -- <aggregate --seeds 7 --amendment-level A6>`), run the canary of the first gate line, then queue the
+210 lines in `_scratch/s2_retake_gate.tsv` (emitted with `--emit-pool-jobs dee817012... --out-root
+research/findings/raw/_stage2_exit/retake_dee8170`). Aggregate when complete:
 
-    python -m research.runners.stage2_exit_gate --aggregate research/findings/raw/_stage2_preview_1101/dev
+    SIM_NO_PROVENANCE=1 python -m research.runners.stage2_exit_gate --aggregate research/findings/raw/_stage2_exit/retake_dee8170 --seeds 42,43,44,100,101,102 --amendment-level A6
 
-Also owed: score the BG step-1 grid at 64/64 (registered scorer, `--commit`), score [c2-ff-grade] (bars G1-G3 of RULING
-c2-ff-grade-1101), and write the C2 match-unit packet (RULING c2-relay-score-1101).
+Night 11-01 (RULINGS night-1101, bg-gate-amend-1101): C2 diagnosed (51 false fires = carry-over across queries, 86 =
+multi-word role rows); drain + role-competition smoke (259 dev lines, scorer `c2_drain_wta_score.py`) queued, merge
+`1adc40b3c`, all default OFF. BG step-1 accepted as DEV (stn200_gpe100; the tonic lever is inert, so a GO would credit the
+commit stage + value route); its gate Amendment 2 is signed (`1a52d9416`) and is being re-pinned onto main before its
+canary. C2 ff-grade FAIL. Backlog flip false positives removed (`48110735b`). cs-race f1j's 372 held cells released.
+swap-drives-response LBF re-run at HEAD: seed 42 done, dev pre-flight running, then seeds 43-102.
 
 **What landed since the 10-21 header below (plain language; that block stays valid for every lane this one does not change):**
 - **C3 curiosity topic stop + topic-locked phasic DA now ON BY DEFAULT (11-01, merge `41d76bdbe`).** The flip gate passed on
