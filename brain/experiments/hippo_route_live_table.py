@@ -39,7 +39,7 @@ def main(d, pattern):
     rt = {a: [routing(R[s][a]["rows"]) for s in seeds] for a in ("a_intact_sleep", "b_intact_nosleep", "f_fix_sleep", "g_fix_nosleep")}
     print("\nrouting of told questions (right, wrong) per seed:", rt)
     rc = "recall_correct"
-    f1 = all(r >= 9 and w <= 1 for r, w in rt["f_fix_sleep"] + rt["g_fix_nosleep"])
+    f1 = all(r >= 8 and w <= 1 for r, w in rt["g_fix_nosleep"])   # g only; f's routing is an outcome (prereg amendment)
     f2 = m("f_fix_sleep", rc) - m("a_intact_sleep", rc) >= 2.0 and \
         sum(R[s]["f_fix_sleep"][rc] > R[s]["a_intact_sleep"][rc] for s in seeds) >= 5
     f3 = m("f_fix_sleep", rc) >= m("c_hippo_off", rc) - 1.0
@@ -48,7 +48,7 @@ def main(d, pattern):
         sum(R[s]["g_fix_nosleep"][rc] > R[s]["b_intact_nosleep"][rc] for s in seeds) >= 5
     print(f"\nF1 (instrument: routing) {f1}  F2 (f - a >= 2, 5/6) {f2}  F3 (f >= c - 1) {f3}  "
           f"F4 (false f <= a + 0.5) {f4}  F5 (g - b >= 2, 5/6) {f5}")
-    print("verdict:", "INVALID (routing differs from the CPU measurement)" if not f1 else
+    print("verdict:", "INVALID (arm g routing differs from the CPU measurement)" if not f1 else
           ("LEAD" if f2 and f3 and f4 and f5 and len(seeds) == 6 else "not a lead (see failing criteria)"))
 
 

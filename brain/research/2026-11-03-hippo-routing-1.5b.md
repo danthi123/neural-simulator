@@ -67,8 +67,11 @@ Probe `live_brain_probe.py` unchanged for arms a-e (same seeds, settings and sco
 `--device cuda`, `--steps 480 --lr 5e-4 --kl-weight 3`, seeds 42/43/44/100/101/102. Packet
 `brain/experiments/jobs/2026-11-03-aws-hippo-route.txt` (6 jobs). Primary measure `strict_scorer.correct_answer`
 (`recall_correct`). Table: `python -m brain.experiments.hippo_route_live_table <dir> --glob 'hroute_s*.json'`.
-- F1 (instrument): f and g route >= 9/12 told questions to the right episode and <= 1/12 to a wrong one on every seed
-  (CPU measurement 9/0). Fails = the GPU routing differs; the run is INVALID for this question, not a negative.
+- F1 (instrument, arm g only -- unslept, what the CPU measured): g routes >= 8/12 told questions to the right episode
+  and <= 1/12 to a wrong one on every seed (CPU measurement 9/0; one question of slack, since 'What car do I drive?'
+  clears the bar by 0.003). Fails = the GPU routing differs; the run is INVALID for this question, not a negative.
+  Arm f's routing (read through the slept cortex) is an OUTCOME, reported per seed: bad routing there shows up as
+  F2/F3 failing, not as INVALID. (Amended 11-03 before any run, on review.)
 - F2: mean recall f - mean a >= 2.0 and f > a on >= 5/6 seeds.
 - F3: mean recall f >= mean c - 1.0 (the hippocampus no longer costs recall after sleep).
 - F4: mean false recall f <= mean a + 0.5 (of 4).
