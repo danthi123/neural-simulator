@@ -30,6 +30,8 @@ from brain.experiments.facts import FACTS, PARA
 from brain.experiments.sleep_probe import NEVER_TOLD
 from brain.experiments.strict_scorer import has_key, score
 
+SLEEP_LR = 5e-4  # --lr overrides (0.4B run); default = Brain default, unchanged for 0.1B
+
 ARMS = {  # arm -> (home key, hippocampus_off, consolidated_off)
     "a_intact_sleep": ("slept", False, False),
     "b_intact_nosleep": ("nosleep", False, False),
@@ -55,7 +57,7 @@ def tell_day(home, cortex, sentences, seed, steps):
     shutil.rmtree(home, ignore_errors=True)
     np.random.seed(seed)
     torch.manual_seed(seed)
-    b = Brain(home, cortex=cortex, sleep_steps=steps, sleep_seed=seed)
+    b = Brain(home, cortex=cortex, sleep_steps=steps, sleep_lr=SLEEP_LR, sleep_seed=seed)
     log = [{"you": s, "brain": b.hear(s)[0]} for s in sentences]
     b.save()  # not closed: the restart itself must sleep
     return log
@@ -69,7 +71,7 @@ def ask_arm(home, cortex, hip_off, con_off, seed, steps):
     for q, key, kind in qs:
         np.random.seed(seed)
         torch.manual_seed(seed)
-        b = Brain(home, cortex=cortex, sleep_on_restart=False, sleep_steps=steps, sleep_seed=seed)
+        b = Brain(home, cortex=cortex, sleep_on_restart=False, sleep_steps=steps, sleep_lr=SLEEP_LR, sleep_seed=seed)
         b.set_lesions(hippocampus_off=hip_off, consolidated_off=con_off)
         reply, info = b.hear(q)
         if key is None:
@@ -90,8 +92,11 @@ def main():
     ap.add_argument("--model", default=DEFAULT_MODEL)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--steps", type=int, default=240)
+    ap.add_argument("--lr", type=float, default=5e-4)
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
+    global SLEEP_LR
+    SLEEP_LR = a.lr
     t0 = time.time()
     c = Cortex(model_path=a.model, device="cpu")
     homes = {k: f"{a.home}/{k}" for k in ("slept", "nosleep", "shuffled")}
@@ -99,12 +104,12 @@ def main():
     shutil.rmtree(homes["nosleep"], ignore_errors=True)
     shutil.copytree(homes["slept"], homes["nosleep"])   # same pre-sleep day-1 state, never slept
     day1_shuf = tell_day(homes["shuffled"], c, shuffled_facts(a.seed), a.seed, a.steps)
-    res = {"model": a.model, "seed": a.seed, "steps": a.steps, "day1": day1, "day1_shuffled": day1_shuf, "arms": {}}
+    res = {"model": a.model, "seed": a.seed, "steps": a.steps, "lr": a.lr, "day1": day1, "day1_shuffled": day1_shuf, "arms": {}}
     for key in ("slept", "shuffled"):  # the restart = a night
         t1 = time.time()
         np.random.seed(a.seed)
         torch.manual_seed(a.seed)
-        b = Brain(homes[key], cortex=c, sleep_steps=a.steps, sleep_seed=a.seed)
+        b = Brain(homes[key], cortex=c, sleep_steps=a.steps, sleep_lr=SLEEP_LR, sleep_seed=a.seed)
         assert b.meta["sleeps"] == 1, b.meta
         res[f"sleep_seconds_{key}"] = round(time.time() - t1, 1)
         res[f"adapter_norm_{key}"] = b.cortex.plastic.adapter_norm()
