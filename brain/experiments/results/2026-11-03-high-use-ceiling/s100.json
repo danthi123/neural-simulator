@@ -1,0 +1,201 @@
+{
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "seed": 100,
+ "steps": 240,
+ "kl_weight": 1.0,
+ "lr": 0.0005,
+ "facts": [
+  "lyon",
+  "marguerite",
+  "biscuit",
+  "cello",
+  "peanut",
+  "oslo",
+  "zephyr",
+  "gustav",
+  "alvarez",
+  "stamp",
+  "maple",
+  "iceland"
+ ],
+ "k_of_fact": {
+  "lyon": 1,
+  "marguerite": 1,
+  "biscuit": 10,
+  "cello": 3,
+  "peanut": 1,
+  "oslo": 3,
+  "zephyr": 3,
+  "gustav": 10,
+  "alvarez": 3,
+  "stamp": 1,
+  "maple": 10,
+  "iceland": 10
+ },
+ "learned_strength": {
+  "lyon": 1.0,
+  "marguerite": 1.0,
+  "biscuit": 10.0,
+  "cello": 3.0,
+  "peanut": 1.0,
+  "oslo": 3.0,
+  "zephyr": 3.0,
+  "gustav": 10.0,
+  "alvarez": 3.0,
+  "stamp": 1.0,
+  "maple": 10.0,
+  "iceland": 10.0
+ },
+ "para_reachable_in_context": {
+  "lyon": true,
+  "marguerite": false,
+  "biscuit": true,
+  "cello": true,
+  "peanut": false,
+  "oslo": false,
+  "zephyr": false,
+  "gustav": false,
+  "alvarez": false,
+  "stamp": false,
+  "maple": false,
+  "iceland": false
+ },
+ "arms": {
+  "no_sleep": {
+   "recall": 0,
+   "paraphrase": 0,
+   "false_recall": 0,
+   "generic_kl": 0.0,
+   "recall_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "paraphrase_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "recall_by_k": {
+    "1": 0,
+    "3": 0,
+    "10": 0
+   },
+   "paraphrase_by_k": {
+    "1": 0,
+    "3": 0,
+    "10": 0
+   },
+   "adapter_norm": 0.0
+  },
+  "sleep_use": {
+   "recall": 4,
+   "paraphrase": 1,
+   "false_recall": 3,
+   "generic_kl": 0.02389453537762165,
+   "recall_items": [
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    true,
+    true
+   ],
+   "paraphrase_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true
+   ],
+   "recall_by_k": {
+    "1": 2,
+    "3": 0,
+    "10": 2
+   },
+   "paraphrase_by_k": {
+    "1": 0,
+    "3": 0,
+    "10": 1
+   },
+   "adapter_norm": 17.09473991394043
+  },
+  "sleep_equal": {
+   "recall": 5,
+   "paraphrase": 3,
+   "false_recall": 4,
+   "generic_kl": 0.019919772321979206,
+   "recall_items": [
+    false,
+    false,
+    true,
+    false,
+    true,
+    false,
+    true,
+    true,
+    false,
+    true,
+    false,
+    false
+   ],
+   "paraphrase_items": [
+    false,
+    false,
+    true,
+    false,
+    true,
+    false,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false
+   ],
+   "recall_by_k": {
+    "1": 2,
+    "3": 1,
+    "10": 2
+   },
+   "paraphrase_by_k": {
+    "1": 1,
+    "3": 0,
+    "10": 2
+   },
+   "adapter_norm": 16.109668731689453
+  }
+ },
+ "elapsed_s": 2650.558489084244
+}
