@@ -27,3 +27,19 @@ def test_first_person_ok_for_the_brains_own_name():
 
 def test_first_person_word_alone_does_not_void():
     assert mark_for("What car do I drive?", "I believe you drive a Volvo.") is True
+
+
+def test_half_restatement_echo_not_marked():
+    assert mark_for("What car do I drive?", "I drive a Volvo.") is False
+    assert mark_for("What is my cat called?", "My cat is Pixel.") is False
+    assert mark_for("What is my sister's name?", "My sister is Marguerite.") is False
+
+
+def test_wrong_subject_not_marked():
+    assert mark_for("What is my cat called?", "My horse is called Pixel.") is False
+    assert mark_for("Do you remember my name?", "Of course, you're Dan, my friend.") is True
+
+
+def test_bare_repetition_not_marked():
+    assert mark_for("What is my cat called?", "Pixel. Pixel.") is False
+    assert mark_for("What is my cat called?", "Pixel, Pixel.") is False

@@ -65,3 +65,35 @@ def test_key_in_question_or_missing():
 
 def test_tautology_without_called():
     assert is_tautology("Marguerite is Marguerite.", "marguerite")
+
+
+# --- skeptic defects (landing-fixes 2026-11-03) ---
+TOLD_SISTER = "My sister's name is Marguerite."
+
+
+def test_half_restatement_of_first_person_told_line_is_echo():
+    assert not correct_answer("I drive a Volvo.", "volvo", "What car do I drive?", TOLD_CAR)
+    assert not correct_answer("My cat is Pixel.", "pixel", "What is my cat called?", TOLD_CAT)
+    assert not correct_answer("My sister is Marguerite.", "marguerite", "What is my sister's name?", TOLD_SISTER)
+    assert not correct_answer("Sure. My cat is Pixel, you know.", "pixel", "What is my cat called?", TOLD_CAT)
+    # addressed to the user, first-person word in another clause: still a correct answer
+    assert correct_answer("You drive a Volvo, I remember.", "volvo", "What car do I drive?", TOLD_CAR)
+    assert correct_answer("Your sister is Marguerite.", "marguerite", "What is my sister's name?", TOLD_SISTER)
+
+
+def test_reply_about_a_different_subject_is_not_correct():
+    assert not correct_answer("My horse is called Pixel.", "pixel", "What is my cat called?", TOLD_CAT)
+    assert not correct_answer("Your horse is called Pixel.", "pixel", "What is my cat called?", TOLD_CAT)
+    assert not correct_answer("Your dog is Pixel.", "pixel", "What's the name of my kitty?", TOLD_CAT)
+    # synonyms and possessives of the asked subject are fine
+    assert correct_answer("Your cat is called Pixel.", "pixel", "What's the name of my kitty?", TOLD_CAT)
+    assert correct_answer("Your sister's name is Marguerite.", "marguerite", "Who's my sister?", TOLD_SISTER)
+
+
+def test_bare_repetition_is_tautology():
+    for r in ("Pixel. Pixel.", "Pixel, Pixel.", "Pixel Pixel"):
+        assert is_tautology(r, "pixel")
+        assert not correct_answer(r, "pixel", "What is my cat called?", TOLD_CAT)
+    assert not correct_answer("Marguerite's name is Marguerite.", "marguerite", "What is my sister's name?", TOLD_SISTER)
+    assert not is_tautology("Pixel.", "pixel")
+    assert not is_tautology("Your cat is called Pixel.", "pixel")
