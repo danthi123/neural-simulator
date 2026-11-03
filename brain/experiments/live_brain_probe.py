@@ -10,6 +10,9 @@ the same home. Arms, each a fresh Brain per question (so no conversation carry-o
   d_hippo_off_consol_off slept home, hippocampus off, consolidated synapses off (pretrained cortex)
   e_shuffled_hippo_off   day 1 told with answer words swapped between facts (as sleep_probe), slept, hippocampus off;
                          scored against the ORIGINAL keys (a pass here means the test is broken)
+With --fix-key KEY (switch, default OFF: no extra arms), two arms are added after a-e, from the same homes:
+  f_fix_sleep            as a, the hippocampus keyed by KEY with the bar chosen by --fix-bar (Brain key / key_bar)
+  g_fix_nosleep          as b, same key and bar
 Questions per arm: 12 originals, 12 PARA, 4 NEVER_TOLD (false recall = any fact key in the reply).
 Scorer: brain/experiments/strict_scorer.py (key as a word, reply not first-person); the lenient substring count is kept.
 Also reported per arm: recall_correct / paraphrase_correct = strict_scorer.correct_answer (the corrected scorer:
@@ -68,7 +71,10 @@ def tell_day(home, cortex, sentences, seed, steps):
     return log
 
 
-def ask_arm(home, cortex, hip_off, con_off, seed, steps, max_q=0):
+FIX_ARMS = {"f_fix_sleep": ("slept", False, False), "g_fix_nosleep": ("nosleep", False, False)}
+
+
+def ask_arm(home, cortex, hip_off, con_off, seed, steps, max_q=0, hip_key=None, key_bar="default"):
     keys = [k for _, _, k in FACTS]
     rows = []
     qs = [(q, k, "told", s) for s, q, k in FACTS] + [(p, f[2], "para", f[0]) for p, f in zip(PARA, FACTS)] + \
@@ -78,7 +84,7 @@ def ask_arm(home, cortex, hip_off, con_off, seed, steps, max_q=0):
     for q, key, kind, told in qs:
         np.random.seed(seed)
         torch.manual_seed(seed)
-        b = Brain(home, cortex=cortex, sleep_on_restart=False, sleep_steps=steps, sleep_lr=SLEEP_LR, sleep_kl_weight=SLEEP_KL, adapter_rank=8, sleep_seed=seed)
+        b = Brain(home, cortex=cortex, sleep_on_restart=False, sleep_steps=steps, sleep_lr=SLEEP_LR, sleep_kl_weight=SLEEP_KL, adapter_rank=8, sleep_seed=seed, key=hip_key, key_bar=key_bar)
         b.set_lesions(hippocampus_off=hip_off, consolidated_off=con_off)
         reply, info = b.hear(q)
         if key is None:
@@ -106,6 +112,8 @@ def main():
     ap.add_argument("--kl-weight", type=float, default=1.0)
     ap.add_argument("--device", default="cpu")
     ap.add_argument("--max-q", type=int, default=0, help="smoke only: first N questions per kind (0 = all)")
+    ap.add_argument("--fix-key", default=None, help="add arms f/g with this hippocampus key (default: none)")
+    ap.add_argument("--fix-bar", default="default", help="Brain key_bar for arms f/g: default | size")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     global SLEEP_LR, SLEEP_KL
@@ -120,7 +128,7 @@ def main():
     shutil.copytree(homes["slept"], homes["nosleep"])   # same pre-sleep day-1 state, never slept
     day1_shuf = tell_day(homes["shuffled"], c, shuffled_facts(a.seed), a.seed, a.steps)
     res = {"model": a.model, "seed": a.seed, "steps": a.steps, "lr": a.lr, "kl_weight": a.kl_weight, "device": a.device,
-           "max_q": a.max_q, "day1": day1, "day1_shuffled": day1_shuf, "arms": {}}
+           "max_q": a.max_q, "fix_key": a.fix_key, "fix_bar": a.fix_bar, "day1": day1, "day1_shuffled": day1_shuf, "arms": {}}
     for key in ("slept", "shuffled"):  # the restart = a night
         t1 = time.time()
         np.random.seed(a.seed)
@@ -133,6 +141,10 @@ def main():
         del b  # free this night's fp32 PlasticCortex + optimizer before the next one (24 GB card)
     for arm, (hk, hip_off, con_off) in ARMS.items():
         r = ask_arm(homes[hk], c, hip_off, con_off, a.seed, a.steps, a.max_q)
+        res["arms"][arm] = r
+        print(a.seed, arm, {k: v for k, v in r.items() if k != "rows"}, flush=True)
+    for arm, (hk, hip_off, con_off) in (FIX_ARMS.items() if a.fix_key else ()):
+        r = ask_arm(homes[hk], c, hip_off, con_off, a.seed, a.steps, a.max_q, hip_key=a.fix_key, key_bar=a.fix_bar)
         res["arms"][arm] = r
         print(a.seed, arm, {k: v for k, v in r.items() if k != "rows"}, flush=True)
     res["elapsed_s"] = round(time.time() - t0, 1)
