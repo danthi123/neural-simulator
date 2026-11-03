@@ -43,7 +43,8 @@ Biology:
 - ROAD T1.B (sharp-wave ripple replay); record brief A1-A4 (prior results, traps, first experiment: distilled reinstatement adapter).
 In brain/: have: `plastic_cortex.py` (trainable cortex, low-rank feed-forward adapters, equals the pretrained cortex at zero); `sleep.py` (strength-weighted interleaved replay + KL protection); `experiments/sleep_probe.py` (hippocampus-off recall, paraphrase, false recall, generic drift; no-sleep and shuffled arms).
 In brain/: code-substitute: gradient descent on the adapters stands in for a local plasticity rule; replay uses the stored episode text (both in SCAFFOLDS.md).
-In brain/: missing: varied replay (paraphrase/recombination), sleep wired into the live brain's restart, persistence of the adapters, the high-use-facts measure.
+In brain/: have (11-03): sleep wired into the live brain (restart = sleep, adapters persisted, lesions via `Brain.set_lesions`); live smoke at 0.1B, hippocampus off: correct-perspective recall 8/18 over six seeds (the 15/18 substring score counted first-person echoes), consolidated lesion 0/18; false recall visible live ("Your horse is called Pixel" on 4/6 seeds). High-use-facts measure built: NO-GO at 0.1B (k=10 facts never 4/4; use effect weak and inconsistent; per-fact ceiling not measured).
+In brain/: missing: varied replay (paraphrase/recombination; runs in progress), a cortex size operating point (0.4B is under-trained at the 0.1B settings), false recall (more consolidation = more recall AND more confabulation).
 Readiness: PARTIAL. Informative: hippocampus-off recall vs no-sleep and shuffled arms, relative to the cortex's own in-context ceiling (0.1B 6/12, 0.4B 11/12). Expected failure: reworded-question recall from single-form replay at 0.1B (knowledge stated once is hard for small LMs to extract).
 Scale note: operating points did not survive a scale change in the old track (record brief A3.6); derive gain per model size on dev data.
 
@@ -109,6 +110,7 @@ Biology:
 - MASTER section 2.7 (first-order uncertainty monitor, second-order metacognition); `F/2026-06-11-familiarity-gate-v320-GO.md`, `F/2026-08-18-self-organized-metacog-monitor-GO.md`.
 In brain/: have: the recall familiarity score and margin (a first-order "do I know this" signal) in `Hippocampus.recall`.
 In brain/: code-substitute: fixed thresholds FAMILIARITY / MARGIN decide recall vs abstain.
+In brain/: lead (11-03, `2026-11-03-false-recall-feeling-of-knowing`): answer confidence fails as feeling-of-knowing (name-token AUC 0.47); question familiarity works (hippocampal bar fitted ~0.22 in-sample: keeps 81-84% of correct, removes 71-72% of confabulations, AUC 0.88). Not yet in the live brain.
 In brain/: missing: a reported confidence, a commit/hedge/ask routing, honest read-out wording ("my familiarity reads this as new").
 Readiness: PARTIAL. Informative: abstains on never-told facts instead of confabulating. Expected failure: calibrated second-order confidence.
 Scale note: untested across the ladder; larger LMs confabulate differently, so measure false-recall per size.

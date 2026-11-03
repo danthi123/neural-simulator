@@ -10,21 +10,20 @@
   every seed, ordinary-text drift small, false recall not above shuffled; then sleep wired into the live brain
   (restart = sleep, adapters persisted) so the weekly transcript shows it.
 - **MILESTONE:** day 14 (2026-11-16), brain/ARCHITECTURE.md §4. Day 7 (2026-11-09): first [weekly] run by Hermes.
-- **STATE:** `brain/plastic_cortex.py`, `brain/sleep.py`, `brain/experiments/sleep_probe.py` (now `--kl-weight`,
-  `--lr`). SIX SEEDS at 0.1B (`brain/experiments/results/2026-11-02-sleep-0.1b-six-seeds.md`): recall holds on every
-  seed (true 3-4/12, shuffled 0-1, no-sleep 0; ceiling 6/12); paraphrase NOT shown (2.2 vs 1.3 shuffled); FALSE
-  RECALL is the defect (any sleep 0 -> ~2/4, learned names leak into unrelated answers; true = shuffled on mean,
-  above it on s100). Drift small (KL <= 0.04). A lead, not a GO.
-- **LIVE RUNS (W is off, owner gaming):** mini-PCs pool40/41/42, user unit `brainv2-sleep` (linger on), code+venv+
-  weights in `~/brainv2/` on each node, jobs `~/brainv2/jobs.txt`, results `~/brainv2/results/<name>.json`, log
-  `~/brainv2/run.log`. Per node in order: 0.4B x2 seeds, 0.1B kl_weight 3.0 x2, 0.1B 480 steps x2 (pool40 42/43,
-  pool41 44/100, pool42 101/102). Pull: `rsync -a poolNN:brainv2/results/ _scratch/brainv2/pool_results/`. Stage-2
-  retake STOPPED 11-02 18:20 (owner: best judgement; 103 lines withdrawn, half-run s42/43/44, no verdict).
-  Pi #203 GPU cells killed (old track).
-- **NEXT STEP:** pull the overnight results. 0.4B: does recall approach its 11/12 ceiling? Does kl 3.0 or 480 steps
-  cut false recall without losing recall? Then (before-build) the false-recall method: the brain must learn to say
-  it does not know (record + prerequisites first: source monitoring/familiarity in the old record). Then varied
-  replay (Pi builds the arm) and wiring sleep into `Brain` (restart = sleep, adapters persisted). 11-04: KEEP/KILL.
+- **STATE (11-03, branch `research/integration-1103`, merged from four overnight branches + skeptic fixes):**
+  Sleep is in the live `Brain` (restart = sleep, adapters persisted, `set_lesions`). 0.1B live smoke, hippocampus off,
+  six seeds: correct-perspective recall 8/18 (substring 15/18 counted first-person echoes), consolidated lesion 0/18.
+  Six-seed probe (0.1B): true 3-4/12 vs shuffled 0-1; 0.4B at 0.1B settings is under-trained (2.3/12 vs ceiling 11/12);
+  kl 3 / 480 steps: more recall AND more false recall. FALSE RECALL is the defect and shows live ("Your horse is called
+  Pixel" 4/6 seeds). Lead (not GO): question familiarity separates told from untold (hippocampal bar ~0.22, fitted
+  in-sample, AUC 0.88; answer confidence fails, AUC 0.47). High-use facts: NO-GO at 0.1B (k=10 never 4/4; use effect
+  weak/inconsistent; per-fact ceiling unmeasured). weekly.py now sleeps both arms. NOT merged (skeptics): meaning-selection
+  (probe never runs `KeyedHippocampus.recall`), mood-state (6/6 PASS refuted, echo criterion fails 2/6), varied-replay (runs live).
+- **LIVE RUNS (W may be off):** varied-replay on mini-PCs pool40/41/42 (`research/varied-replay-1103`; do not touch);
+  GPU agent owns gpu_queue (cortex size, `research/cortex-size-1103*`). Pull mini-PC results: `rsync -a poolNN:brainv2/results/ _scratch/brainv2/pool_results/`.
+- **NEXT STEP:** (1) abstention in the live brain: hippocampal question-familiarity gate (before-build: held-out bar, not
+  in-sample) then run the `--dont-know` arm; (2) 12-fact live test (not 3) with a correct-perspective scorer and a shuffled arm;
+  (3) cortex size operating point for 0.4B. 11-04: KEEP/KILL the text-replay method (record: recall real, false recall open).
 - **DELEGATED:** Pi: weekly test upgrade, then the varied-replay arm (`research/coordination/PI_LANE.md`). Hermes:
   [weekly] every Monday from 11-09; WORKLOG at most once a day (RULING overnight-1102).
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
