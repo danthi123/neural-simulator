@@ -1,5 +1,7 @@
 # 2026-11-03 Meaning-based selection through the real hippocampus path (S_all vs S0), refit bar, no duplicate memory
 
+**Status: a lead (pre-registered criteria P1-P6 met), not a GO.** Every claim below is limited to the table in this file: offline, 24 stored one-sentence tellings, teacher-written rewordings, 0.1B and 0.4B, CPU, no live-brain run. Wording corrected after the skeptic (integration-final 2026-11-03).
+
 Follow-up to `2026-11-03-meaning-selection.md` (skeptic: not fit to merge). That probe recomputed similarities from
 Gram matrices and never called `KeyedHippocampus.recall` (no strength weighting, no bar, no margin, no stored fp16
 delta); its bar/margin were S0's; `S_all` stored a second fp32 copy of the whole memory per episode. Capability:
@@ -82,7 +84,7 @@ Told-vs-untold AUROC of the top weighted score (test): S0 0.62 / 0.54, S_all 0.6
 
 Memory per episode (`memory.json`, MB): 0.1B default Hippocampus 1.38 (fp16 delta 1.18 + fp32 S0 key 0.20); 11-03
 S_all **3.58** (delta + 2.36 fp32 all-layer key + 0.04 pooled activity) -> now **1.18** (the delta only). 0.4B: default
-3.41; 11-03 S_all **9.54** -> now **3.15**. S_all now costs less than the default (no separate key at all).
+3.41; 11-03 S_all **9.54** -> now **3.15**. S_all now stores less than the default (no separate key at all). The compute cost of reading the key from the stored delta at every recall (one layer at a time) was not measured.
 
 Criteria (per-seed wins from the summary):
 - P1 PASS both sizes: forced selection S_all > S0 on para_a and para_b on 6/6 seeds (0.1B mean +0.22 / +0.36;
@@ -97,11 +99,14 @@ Criteria (per-seed wins from the summary):
 
 ## What it shows
 
-- Through the real hippocampus, S_all is better than the default S0 key in every arm, at both sizes, on 6/6 seeds,
-  and now stores less per episode than the default. At 0.4B the default key is broken (forced reworded selection 0.10)
-  and S_all restores it (0.76-0.82).
+- Through the real hippocampus path, S_all beats the layer-0 S0 key on the pre-registered comparisons (P1-P3) on 6/6
+  seeds at both sizes, and its memory per episode (the stored delta alone) is below S0's. Absolute levels stay low:
+  at the refit bar heavy-rewording recall is 0.14 (0.1B) / 0.12 (0.4B) and J_test 0.30 against S0's 0.17 / -0.05.
+  At 0.4B the S0 key selects poorly on rewordings (forced heavy-rewording selection 0.10 vs S_all 0.76); this is
+  a statement about this key on this bank, not about the 0.4B cortex.
 - The bar matters as much as the key: S_all under S0's default bar (0.12 / 0.02) fires on 53-56% of untold questions.
-  S_all needs its own bar; the dev fit gives 0.185 / 0.05 at both sizes (the same value at 0.1B and 0.4B).
+  S_all needs its own bar; the dev fit gives 0.185 / 0.05 at both sizes. The bar was fit on dev facts and is
+  optimistic on test (untold fire 3-5x the dev estimate), so treat 0.185 / 0.05 as a starting value to re-fit, not a constant.
 - The familiarity bar is a poor gate for rewordings: at the refit bar, heavy-rewording recall falls from 0.46 / 0.66
   (forced) to 0.14 / 0.12, while untold fire stays 0.15-0.22. A reworded told question looks about as unfamiliar as an
   untold one on this score (AUROC 0.62-0.65). The key fixes WHICH memory; it does not fix WHETHER to recall.
@@ -118,7 +123,7 @@ Criteria (per-seed wins from the summary):
 
 ## Recommendation
 
-S_all should become the hippocampus key, with its own bar (FAMILIARITY 0.185, MARGIN 0.05), not S0's; Hippocampus
+(Wording corrected: this is a recommendation to test, not a conclusion.) S_all is the candidate hippocampus key, with its own bar (FAMILIARITY 0.185, MARGIN 0.05), not S0's; Hippocampus
 defaults are NOT changed here (a lead, not a GO). Before flipping: the live-brain test. Six seeds x two arms
 (`Brain` with default Hippocampus vs `KeyedHippocampus(key="S_all", familiarity=0.185, margin=0.05)`), same sleep
 setting in both arms: tell 24 facts across a conversation, restart, ask same-words / reworded / never-told questions

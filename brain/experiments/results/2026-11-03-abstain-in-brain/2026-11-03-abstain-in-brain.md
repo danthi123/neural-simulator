@@ -144,8 +144,18 @@ on 6/6 seeds. What was learned:
 Per PREREQUISITES "Metacognition": PARTIAL; a familiarity signal that generalises over question forms (a semantic,
 not lexical, key) is missing: an expected failure for the signal, not a verdict on abstention.
 
-**Next step:** swap the familiarity key for the meaning-based key (research/meaning-selection-1103, S_all) and
-measure transfer on these same fresh sets (bars refit on the fitting set only); separately, check at 0.4B whether
-the gated cortex says "I don't know" more often. Keep `abstain` OFF by default.
+**Claim limits (integration-final wording, 2026-11-03).** Recorded as a negative for THESE two signals and THIS gate on
+the fresh sets: false recall fell 63 -> 34 (hippocampus on) and 46 -> 38 (off), far from the pre-registered quarter.
+"The gate works" means only that replies the read-out gated contained no learned name (0 of 91 gated answers); it does
+not mean the brain says "I don't know": most gated replies are the pretrained cortex making up a different answer.
+The default-OFF switch being byte-equal to the old brain is what the tests show; nothing here shows abstention helps
+in a conversation. It is not a verdict on abstention as a capability.
+
+**Next step (abstention v2):** the meaning-based key (`2026-11-03-meaning-selection-realpath.md`) does NOT by itself
+answer this: there the top weighted score separates told from untold questions at AUROC only 0.62-0.65, and a reworded
+told question looks about as unfamiliar as an untold one. So the next attempt needs a familiarity signal learned over
+question forms (not word overlap, not the trained "my X" frame), evaluated on these same fresh sets with bars refit on
+the fitting set only, and separately a check at 0.4B/1.5B of whether the gated cortex says "I don't know" more often.
+Keep `abstain` OFF by default.
 
 Note: above-bar replies in the ON arms were reused from the OFF arm (identical path, `tests/test_brain_abstain.py`).

@@ -19,7 +19,7 @@ numbers: the same sampling seed per question and sample in every arm):
 Instruments (declared, brain/experiments/sentiment_instrument.py): lexical sentiment per 100 words (primary) and a
 MiniLM embedding sentiment (secondary); primary-word echo rate; fluency = NLL of the reply under the UNmodulated cortex.
 
-  python -m brain.experiments.mood_probe --seed 42 --out <json> [--gain 4] [--questions test|dev] [--samples 3]
+  python -m brain.experiments.mood_probe --seed 42 --out <json> [--gain 16] [--questions test|dev] [--samples 3]
 """
 import argparse
 import json
