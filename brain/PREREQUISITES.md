@@ -57,6 +57,7 @@ In brain/: code-substitute: layer-0 delta key is lexical, so the key is word ove
 In brain/: missing: semantic key (deeper-layer or learned readout); false-recall rate measure; separation of confusable facts.
 Readiness: PARTIAL. Informative: same-words cue and wrong-cue false-recall rate. Expected failure: paraphrase cue until the semantic key is built.
 Scale note: selection same-words 12/12 at 0.1B but 7/12 at 0.4B and 1.5B; paraphrase 8/12, 1/12, 5/12. The key depends on the LM, so rerun the ladder after any key change.
+11-03 (`experiments/results/2026-11-03-meaning-selection.md`, 6 seeds, 24 stored of 48): all-layer matrix-delta key `S_all` (`hippocampus_keys.py`) vs default S0 on heavy rewordings: selection 0.69 vs 0.33 (0.1B), 0.76 vs 0.10 (0.4B); reworded recall 0.66 vs 0.05 at 0.4B. Learned key from self-generated replay questions does not beat S_all. Told-vs-untold separation still weak (AUROC ~0.63): false recall is not solved by the key.
 
 ## Working memory and topic holding
 Biology:
