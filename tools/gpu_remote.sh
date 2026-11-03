@@ -151,8 +151,8 @@ EOF
     ;;
   holds)
     # READ-ONLY. Is a job whose command contains <tag> still in the workstation's queue file (QUEUED) or its running
-    # slot (RUNNING)? Prints `holds: QUEUED|RUNNING|ABSENT`. The Pi driver's waiter poller uses ABSENT (twice running,
-    # no result file) to close a wait whose job was killed or withdrawn instead of waiting to its deadline.
+    # slot (RUNNING)? Prints `holds: QUEUED|RUNNING|ABSENT`. The Pi driver's waiter poller uses ABSENT (on every poll
+    # for >= 20 minutes, no DONE line, no result file) to close a wait whose job was killed or withdrawn instead of waiting to its deadline.
     # <tag> is matched as a fixed string; anything outside [A-Za-z0-9._/=:+,@%-] is refused (exit 2).
     tag="${2:-}"; [[ "$tag" =~ ^[A-Za-z0-9._/=:+,@%-]+$ ]] || usage
     run_remote <<EOF

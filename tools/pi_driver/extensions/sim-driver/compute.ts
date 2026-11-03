@@ -10,7 +10,7 @@ import { Type } from "@earendil-works/pi-ai";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { type DriverConfig, readJson, run, text, writeJson } from "./common.ts";
 import { checkBash } from "./guard_policy.ts";
-import { GPU_TAG, capTimeoutHours, isStale, matchWaiters, nextStrikes, parseHolds } from "./waiter_policy.ts";
+import { type Absence, type Gate, GPU_TAG, capTimeoutHours, doneLogged, isStale, matchWaiters, nextAbsence, parseHolds, runExclusive } from "./waiter_policy.ts";
 
 interface Waiter {
   id: string;
@@ -38,10 +38,14 @@ export const readWaitEvents = (cfg: DriverConfig) => readJson<WaitEvent[]>(event
 const logWaitEvent = (cfg: DriverConfig, w: Waiter, event: WaitEvent["event"], reason: string) =>
   writeJson(eventsFile(cfg), [...readWaitEvents(cfg), { at: new Date().toISOString(), id: w.id, label: w.label, event, reason }].slice(-30));
 
+// Module level, so even a second registration (driver reload) cannot start a poll while one is still running: a slow
+// ssh round (several gpu_remote.sh calls per poll) must not overlap the next timer tick.
+const pollGate: Gate = { busy: false };
+
 export default function registerCompute(pi: ExtensionAPI, cfg: DriverConfig) {
   const sh = (cmd: string, timeoutMs = 300_000) => run("bash", ["-c", cmd], { cwd: cfg.workspace, timeoutMs });
   let timer: NodeJS.Timeout | undefined;
-  const strikes = new Map<string, number>(); // gpu waiter id -> consecutive polls with its job gone
+  const absence = new Map<string, Absence>(); // gpu waiter id -> its job's unbroken run of ABSENT polls
 
   const fileReady = (target: string) => {
     const p = path.isAbsolute(target) ? target : path.join(cfg.results_root, target);
@@ -52,39 +56,50 @@ export default function registerCompute(pi: ExtensionAPI, cfg: DriverConfig) {
     }
   };
 
-  async function done(w: Waiter): Promise<boolean> {
-    if (w.kind === "file") return fileReady(w.target);
+  // One `gpu_remote.sh events` fetch per poll, shared by every gpu waiter.
+  type Events = { code: number; out: string };
+  async function done(w: Waiter, events: () => Promise<Events>): Promise<{ finished: boolean; logged?: boolean }> {
+    if (w.kind === "file") return { finished: fileReady(w.target) };
     if (w.kind === "gpu") {
-      const r = await sh("bash tools/gpu_remote.sh events 400", 60_000);
-      return r.code === 0 && r.out.split("\n").some((l) => l.includes("DONE") && l.includes(w.target));
+      const e = await events();
+      const logged = doneLogged(e.code, e.out, w.target);
+      return { finished: logged === true, logged };
     }
-    return (await sh(w.target, 60_000)).code === 0;
+    return { finished: (await sh(w.target, 60_000)).code === 0 };
   }
 
-  // gpu only: has the target job vanished (killed, withdrawn, never queued) with no result file? Two polls in a row.
-  async function staleReason(w: Waiter): Promise<string | undefined> {
+  // gpu only: has the target job vanished (killed, withdrawn, never queued)? Stale only after an unbroken ABSENT run
+  // of >= 2 polls spanning >= 20 minutes (one result sync), with no result file and no DONE line (waiter_policy.ts).
+  async function staleReason(w: Waiter, logged: boolean | undefined): Promise<string | undefined> {
     if (w.kind !== "gpu" || !GPU_TAG.test(w.target)) return undefined; // old or odd targets just wait to their deadline
     const r = await sh(`bash tools/gpu_remote.sh holds ${w.target}`, 60_000);
-    const holds = parseHolds(r.code, r.out);
-    const n = nextStrikes(strikes.get(w.id) ?? 0, holds, w.result_file ? fileReady(w.result_file) : false);
-    strikes.set(w.id, n);
-    return isStale(n) ? `no job containing "${w.target}" is queued or running in the workstation GPU queue, and ${w.result_file ? `${w.result_file} is absent` : "no result file was named"}` : undefined;
+    const now = Date.now();
+    const a = nextAbsence(absence.get(w.id), parseHolds(r.code, r.out), w.result_file ? fileReady(w.result_file) : false, logged, now);
+    if (a) absence.set(w.id, a);
+    else absence.delete(w.id);
+    if (!a || !isStale(a, now)) return undefined;
+    const mins = Math.round((now - a.since) / 60_000);
+    return `for ${mins} minutes (${a.polls} polls) no job containing "${w.target}" has been queued or running in the workstation GPU queue, gpu_queue.log has no DONE line for it, and ${w.result_file ? `${w.result_file} is absent` : "no result file was named"}`;
   }
 
   async function poll() {
     const closed = new Set<string>();
+    let eventsP: Promise<Events> | undefined;
+    const events = () => (eventsP ??= sh("bash tools/gpu_remote.sh events 400", 60_000).catch(() => ({ code: -1, out: "" })));
     for (const w of readWaiters(cfg)) {
       let finished = false;
+      let logged: boolean | undefined;
       try {
-        finished = await done(w);
+        ({ finished, logged } = await done(w, events));
       } catch {
         finished = false;
+        logged = undefined;
       }
       if (!finished && w.result_file && fileReady(w.result_file)) finished = true;
       let stale: string | undefined;
       if (!finished) {
         try {
-          stale = await staleReason(w);
+          stale = await staleReason(w, logged);
         } catch {
           stale = undefined;
         }
@@ -92,7 +107,7 @@ export default function registerCompute(pi: ExtensionAPI, cfg: DriverConfig) {
       const timedOut = !finished && !stale && Date.now() > Date.parse(w.deadline);
       if (!finished && !stale && !timedOut) continue;
       closed.add(w.id);
-      strikes.delete(w.id);
+      absence.delete(w.id);
       logWaitEvent(cfg, w, finished ? "finished" : stale ? "stale" : "timeout", stale ?? (timedOut ? `deadline ${w.deadline}` : "target met"));
       pi.sendMessage(
         {
@@ -114,7 +129,7 @@ export default function registerCompute(pi: ExtensionAPI, cfg: DriverConfig) {
 
   pi.on("session_start", async () => {
     if (timer) return;
-    timer = setInterval(() => poll().catch(() => undefined), cfg.wait_poll_s * 1000);
+    timer = setInterval(() => void runExclusive(pollGate, poll).catch(() => undefined), cfg.wait_poll_s * 1000);
   });
   pi.on("session_shutdown", async () => {
     if (timer) clearInterval(timer);
@@ -173,8 +188,8 @@ export default function registerCompute(pi: ExtensionAPI, cfg: DriverConfig) {
     description:
       "Register a wait, then END YOUR TURN. You get a message when it finishes or passes its deadline. kind 'file': a " +
       "results path (relative to " + cfg.results_root + ", or absolute) exists and is non-empty. kind 'gpu': a DONE line " +
-      "containing target appears in the workstation GPU queue log; if no job containing target is queued or running any " +
-      "more (and result_file, if given, is absent) the wait is closed as stale. kind 'shell': target is a command that exits 0 " +
+      "containing target appears in the workstation GPU queue log; if for 20+ minutes no job containing target is queued or " +
+      "running and it has no DONE line (and result_file, if given, is absent) the wait is closed as stale. kind 'shell': target is a command that exits 0 " +
       "when done. timeout_hours defaults to 8 and is capped at 8; to re-wait longer, wait again after the timeout. " +
       "Drop a wait you no longer need with cancel_wait.",
     parameters: Type.Object({
@@ -224,7 +239,7 @@ export default function registerCompute(pi: ExtensionAPI, cfg: DriverConfig) {
       // re-read before writing, so a wait_for registered meanwhile is kept
       writeJson(waitersFile(cfg), readWaiters(cfg).filter((w) => !ids.has(w.id)));
       for (const w of hit) {
-        strikes.delete(w.id);
+        absence.delete(w.id);
         logWaitEvent(cfg, w, "cancelled", p.reason);
       }
       return text(`Cancelled ${hit.length} wait(s): ${hit.map((w) => `${w.id} "${w.label}"`).join("; ")}.`);
