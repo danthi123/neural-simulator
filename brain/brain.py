@@ -42,11 +42,6 @@ ORDINARY = [
     "User: Can you count to five?\n\nAssistant: One, two, three, four, five.\n\n"]
 ADAPTERS = "cortex_adapters.pt"
 
-# Scaffold (SCAFFOLDS.md, feeling-of-not-knowing row): the brain's only input channel is text, so a low familiarity
-# read-out reaches the cortex as this fixed interoceptive line, read just before it answers. It is the read-out in
-# words ("my memory reads this as new"), not a reply: what to say, if anything, is the cortex's own continuation.
-NOT_KNOWN = "System: {name} searches its memory and finds nothing about this.\n\n"
-
 
 class LiveCortex:
     """The cortex as the brain has it today: the pretrained network plus the slow synapses sleep consolidated.
@@ -180,10 +175,16 @@ class Brain:
         if ep is not None:
             active = self.hippocampus.reinstate(self.cortex, self.state, ep)
             info["recalled"] = ep.text
-        # Below the bar the cortex reads its own "not known" read-out before it answers (scaffolded channel).
-        signal = "" if known else NOT_KNOWN.format(name=self.meta["name"])
-        logits, st = self.cortex.read(f"User: {text}\n\n{signal}Assistant:", active)
-        reply, _ = self.cortex.speak(logits, st)
+        # Below the bar no retrieval is attempted: no reinstatement, and this reply is spoken without the synapses sleep
+        # consolidated (they hold what was lived). What it then says is the cortex's own continuation; no reply text
+        # exists in the host (a fixed "not known" line read before answering was tried on the fitting set and dropped).
+        retrieval = self.cortex.consolidated_on
+        self.cortex.consolidated_on = retrieval and known
+        try:
+            logits, st = self.cortex.read(f"User: {text}\n\nAssistant:", active)
+            reply, _ = self.cortex.speak(logits, st)
+        finally:
+            self.cortex.consolidated_on = retrieval
         _, self.state = self.cortex.read(f"User: {text}\n\nAssistant: {reply}\n\n", self.state)
         if self.hippocampus.enabled and _is_telling(text):
             self.hippocampus.store(self.cortex, self.base, text, speaker="User")

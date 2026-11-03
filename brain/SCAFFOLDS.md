@@ -11,3 +11,6 @@
 | Sleep replays the stored episode text (the hippocampus keeps text only for inspection otherwise) | `sleep.py` | replay generated from the reinstated cortical state, no stored text | 11-02 |
 | Ordinary text interleaved in every sleep (KL guard) = three fixed chat snippets | `brain.py` ORDINARY | the day's own lived non-episode experience | 11-03 |
 | Sleep timing = once per restart/shutdown if anything new was stored | `brain.py` `Brain.__init__`/`close` | a sleep pressure signal (time awake, episodes pending) | 11-03 |
+| Feeling-of-knowing bars (hippocampal familiarity, cortical cue response) fitted on a labelled 36-question set | `brain.py` `KNOW_BAR_*` | bars set by neuromodulatory state / learned from the brain's own outcomes (being corrected) | 11-03 |
+| Below the feeling-of-knowing bar the reply is spoken with ALL consolidated synapses off (all-or-none retrieval gate) | `brain.py` `hear` | graded, content-specific suppression of retrieval (prefrontal monitoring of what is being recalled) | 11-03 |
+| Method 2 (comparison only, not wired by default): declared "I don't know" Q/A pairs replayed in sleep | `confidence_probe.py --dont-know`, `Brain.sleep_extra` | the brain's own abstentions, once made, replayed as episodes | 11-03 |

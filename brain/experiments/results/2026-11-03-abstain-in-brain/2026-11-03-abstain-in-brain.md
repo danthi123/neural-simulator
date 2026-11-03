@@ -60,6 +60,20 @@ abstention-off arm (comparison only). Even a PASS is a lead, not a GO (one sleep
 **Order of work.** The sleep+fitting phase started a few minutes before this file was committed (it computes only
 fitting-set signals; no evaluation question is asked in it).
 
+**Amendment before any evaluation run (mechanism frozen on seed 42's FITTING questions, as allowed above).**
+Prototype (`brain/experiments/abstain_wording_proto.py`, logs `dev_wording_proto_*.log`; the ungated log came from the same script before the gate existed, variants off/v1/v2/v3; read-out forced to "not known" on the 12 fitting never-told + 3 told + 2 general
+questions, seed 42 slept brain): with the consolidated synapses still on, the `NOT_KNOWN` line made it WORSE (12/12
+learned-name confabulations, e.g. "Nova: My horse is called Pixel."; without the gate 8/12): the confabulation lives
+in the consolidated synapses, and a line of text does not override them. With retrieval gated (no reinstatement
+AND the reply spoken with the consolidated synapses off) learned-name confabulation was 0/12 with no line, 0/12 with
+either line; the line added speaker confusion ("Nova: What is your fish called?") and no more abstentions (4-5/12
+non-answers in all three). Frozen mechanism: below the bar, no reinstatement and the reply is spoken without the
+consolidated synapses; NO interoceptive line, so no English text of any kind is added by the host. What the brain
+then says is the pretrained cortex's own reply: sometimes "I'm not sure of the name of your horse", sometimes a
+refusal, sometimes an invented non-learned answer ("The name of my parrot is Amelia"). The strict scorer counts only
+LEARNED names as false recall, so invented non-learned answers are reported separately (`abstained` vs other) and
+quoted, not hidden. Scaffold declared in `brain/SCAFFOLDS.md` (all-or-none retrieval gate). Criteria unchanged.
+
 ## Results
 
 (to be filled from the result files)
