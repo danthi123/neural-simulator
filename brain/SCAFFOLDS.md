@@ -9,3 +9,4 @@
 | Self-knowledge seeded as three Q/A exchanges at birth | `brain.py` `_grow_self` | identity learned in early conversations and consolidated | 11-02 |
 | Sleep learning = gradient descent on low-rank cortical adapters (declared trade) | `plastic_cortex.py`, `sleep.py` | a local plasticity rule on the same synapses (e.g. replay-driven Hebbian/BTSP-style) | 11-02 |
 | Sleep replays the stored episode text (the hippocampus keeps text only for inspection otherwise) | `sleep.py` | replay generated from the reinstated cortical state, no stored text | 11-02 |
+| Generic ordinary-chat texts interleaved with replayed episodes in the weekly test's sleep arm (no told facts) | `eval/weekly.py` GENERIC_CHAT | ordinary experience from the life itself, replayed from stored states | 11-03 |
