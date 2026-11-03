@@ -1,0 +1,29 @@
+# 2026-11-03 AWS packet: the live brain at 1.5B (tools/brain_batch_run.sh format; every job gets --device cuda).
+# Pre-registrations (committed before any run):
+#   brain/experiments/results/2026-11-03-confab-m2-1.5b.md   (m2_s*: arms none = step-1 no-lesson forced gate, w3_user, lived_self)
+#   brain/experiments/results/2026-11-03-live-brain-1.5b.md   (live15_s*: strict 12-fact probe, 5 arms, correct_answer scorer)
+# Launch (from a main checkout that contains these commits: the node gets `git archive HEAD brain`):
+#   AWS_BRAIN_MAX_MIN=420 bash tools/aws_brain_batch.sh launch brain/experiments/jobs/2026-11-03-aws-15b.txt g5.xlarge
+# Wall estimate on one A10G (g5.xlarge ~$1/h), NOT measured on an A10G:
+#   m2_s*     ~15 min/seed (10-25): no sleep, ~270 replies through the fp16 package.
+#   live15_s* ~40 min/seed (30-55): two 480-step nights (~13 min each: an A10G 3-arm sleep_probe seed = 2 nights ~26 min)
+#             + 140 fresh-Brain questions, ~84 of them through the fp32 PlasticCortex loop.
+#   total ~5.5 h (~$6); dead-man 420 min caps the worst case at ~$7.
+# Order: one canary of each first (check `status` after ~1 h: if live15_s42 has not ended by ~70 min, cut and re-plan),
+# then the cheap confab seeds, then the live seeds. A rerun resumes (finished jobs are skipped).
+# After `pull`: copy m2_s*.json to results/2026-11-03-confab-m2-1.5b/ and run
+#   python -m brain.experiments.confab_m2 report --dir <that dir> --out <that dir>/report.json
+# and live15_s*.json to results/2026-11-03-live-brain-1.5b/ and run
+#   python -m brain.experiments.live_brain_table <that dir> --glob 'live15_s*.json' --scorer correct --p1-mean 4
+m2_s42 brain.experiments.confab_m2 run --home ../work/m2_s42 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 42 --arms none,w3_user,lived_self,self_turn
+live15_s42 brain.experiments.live_brain_probe --home ../work/live15_s42 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 42 --steps 480 --lr 5e-4 --kl-weight 3
+m2_s43 brain.experiments.confab_m2 run --home ../work/m2_s43 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 43 --arms none,w3_user,lived_self,self_turn
+m2_s44 brain.experiments.confab_m2 run --home ../work/m2_s44 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 44 --arms none,w3_user,lived_self,self_turn
+m2_s100 brain.experiments.confab_m2 run --home ../work/m2_s100 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 100 --arms none,w3_user,lived_self,self_turn
+m2_s101 brain.experiments.confab_m2 run --home ../work/m2_s101 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 101 --arms none,w3_user,lived_self,self_turn
+m2_s102 brain.experiments.confab_m2 run --home ../work/m2_s102 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 102 --arms none,w3_user,lived_self,self_turn
+live15_s43 brain.experiments.live_brain_probe --home ../work/live15_s43 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 43 --steps 480 --lr 5e-4 --kl-weight 3
+live15_s44 brain.experiments.live_brain_probe --home ../work/live15_s44 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 44 --steps 480 --lr 5e-4 --kl-weight 3
+live15_s100 brain.experiments.live_brain_probe --home ../work/live15_s100 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 100 --steps 480 --lr 5e-4 --kl-weight 3
+live15_s101 brain.experiments.live_brain_probe --home ../work/live15_s101 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 101 --steps 480 --lr 5e-4 --kl-weight 3
+live15_s102 brain.experiments.live_brain_probe --home ../work/live15_s102 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 102 --steps 480 --lr 5e-4 --kl-weight 3
