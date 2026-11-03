@@ -15,7 +15,7 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   (RULING overnight-1102). Nothing to land. No flip, no new #203 work.
 
 ## Open
-- [ ] New core, weekly conversation test upgrade (`brain/eval/weekly.py`, milestone day 14, board #281). Today it
+- [x] New core, weekly conversation test upgrade (`brain/eval/weekly.py`, milestone day 14, board #281). Today it
   sums the intact and lesion arms into one total, asks the same fixed questions every week, and credits degenerate
   replies (e.g. "Nova, Nova."). Change it so that: (1) the header prints one score line per arm (intact, hippocampus
   off) and the difference; (2) a third arm runs sleep between the two sessions (`brain/sleep.py`, adapters from
@@ -26,6 +26,17 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   tests that run without the cortex weights (mock `Cortex`); real runs go to W via `run_gpu`. Read first:
   `brain/eval/weekly.py`, `brain/experiments/sleep_probe.py`, `brain/PREREQUISITES.md` (Sleep consolidation).
   Done = branch + tests passing + one real run on W attached to a merge_review checkpoint.
+  DONE 11-03 (Pi): branch `research/weekly-eval-upgrade` (base origin/main 1786940dd, so the stopped #203 track cannot
+  ride along); merge_review APPROVED - `research/coordination/checkpoints/2026-11-03-merge_review-weekly-eval-upgrade-merge.VERDICT.md`;
+  its 3 conditions executed (runs.jsonl restored to origin/main state in e61f80164; tests re-run at the head; the
+  scores written up as a single-run transcript). All four changes in `brain/eval/weekly.py` + `tests/test_weekly_eval.py`
+  (weight-free mock `Cortex`), plus a minimal device fix in `brain/hippocampus.py` (owner steer: strength weights,
+  stacked keys and stored deltas were storage-device born and mixed with a cuda cortex) with
+  `tests/test_hippocampus_device.py`. Real run on W (cuda, 0.1B, 2026-W45, rc=0):
+  `research/findings/raw/_weekly_eval/2026-11-03-weekly-transcript.md` - intact 7/12, hippocampus off 0/12, sleep +
+  hippocampus off 9/12. SINGLE-RUN W45 TRANSCRIPT, not a finding that sleep consolidation works (one run, one seed,
+  one week; the six-seed rule bars generalizing from it). Driver: merge `research/weekly-eval-upgrade` (also present
+  in `research/pi-sleep-varied-replay`, which stacks on it).
 - [x] New core, sleep: varied-replay arm in `brain/experiments/sleep_probe.py` (after the weekly-test item). Six-seed
   0.1B result (`brain/experiments/results/2026-11-02-sleep-0.1b-six-seeds.md`): sleep recalls the original question
   (3-4/12) but not reworded questions (2.2 vs 1.3 shuffled). Add arm `sleep_varied`: each told fact is replayed in
