@@ -9,3 +9,6 @@
 | Self-knowledge seeded as three Q/A exchanges at birth | `brain.py` `_grow_self` | identity learned in early conversations and consolidated | 11-02 |
 | Sleep learning = gradient descent on low-rank cortical adapters (declared trade) | `plastic_cortex.py`, `sleep.py` | a local plasticity rule on the same synapses (e.g. replay-driven Hebbian/BTSP-style) | 11-02 |
 | Sleep replays the stored episode text (the hippocampus keeps text only for inspection otherwise) | `sleep.py` | replay generated from the reinstated cortical state, no stored text | 11-02 |
+| Teacher-written fact bank with rewordings and confusables (test set; also the training pairs of the `learned_teacher` reference arm, on facts disjoint from the tested ones) | `experiments/facts_bank.py` | rewordings the brain meets in real conversation | 11-03 |
+| Prompt asking the cortex, while replaying an episode in sleep, to pose a question about it (pairs for the learned key) | `experiments/selection_probe.py` SELFQ_PROMPT; `hippocampus_keys.py` LearnedKey | questions the brain actually heard and answered from that episode, or spontaneous replay-time prediction | 11-03 |
+| Learned key trained by gradient descent (InfoNCE) on a low-rank correction | `hippocampus_keys.py` LearnedKey | a local plasticity rule on entorhinal-to-hippocampal synapses | 11-03 |
