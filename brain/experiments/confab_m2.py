@@ -8,6 +8,8 @@ Phases:
   run     one seed: per arm (none / w3_user / lived_self) a fresh day-1 brain (12 facts + the arm's lesson, no sleep);
           gate forced on DEV never-told (36) and fresh v3 never-told (24); ungated general questions (16)
   report  pre-registered criteria over the six seed files
+1.5B on GPU (results/2026-11-03-confab-m2-1.5b.md): run --model ../models/rwkv7-g1l-1.5b-...pth --device cuda.
+The `none` arm is the plan's step 1 (no-lesson forced-gate arm); `--arms none` runs it alone.
 """
 import argparse
 import glob
@@ -21,7 +23,7 @@ import numpy as np
 import torch
 
 from brain.brain import Brain
-from brain.cortex import DEFAULT_MODEL, Cortex
+from brain.cortex import DEFAULT_MODEL, Cortex, resolve_model
 from brain.experiments.abstain_in_brain import FRESH_NEVER, FRESH_TOLD, GENERAL, SEEDS, keys_in
 from brain.experiments.abstain_v2 import DEV, GENERAL2, LESSONS, SETS as SETS2, dont_know, keyed, reset
 from brain.experiments.facts import FACTS
@@ -62,6 +64,9 @@ assert LESSON_Q not in _seen | {q for q, *_ in FRESH_NEVER3 + GENERAL3}
 assert len(DEV_NEVER) == 36 and len(FRESH_NEVER3) == 24 and len(GENERAL3) == 8
 
 WORD = re.compile(r"[a-z']+")
+# Lesson-content intrusion (found post hoc at 0.1B: 64/360 gated non-DK replies; pre-registered for 1.5B in
+# results/2026-11-03-confab-m2-1.5b.md): a gated, non-DK reply naming the lesson question's content.
+LESSON_CONTENT = re.compile(r"\b(godfather|whistl|morning|tune)", re.I)
 SELF_NAME = re.compile(r"\b(i'm|i am|my name is|my name's)\s+nova\b")
 
 
@@ -104,7 +109,7 @@ def run_arm(a, c, arm):
     rows = []
     for set_name, items in SETS.items():
         gated = set_name in GATED
-        for qi, (q, _, allowed) in enumerate(items):
+        for qi, (q, _, allowed) in enumerate(items[:a.max_q or None]):
             reset(b, snap, base)
             b.abstain = gated
             b.know_rule, b.know_bar, b.reinstate_self_belief = "F", {"fam": 1e9}, True
@@ -156,6 +161,9 @@ def report_phase(a):
         out["pooled"][arm] = {st: {k: sum(S(s, arm, st, k) for s in seeds) for k in
                                    ("n", "gated", "dk", "recite", "vocative", "intrusion", "verbatim_guided",
                                     "lesson_recalled")} for st in SETS}
+    out["lesson_content"] = {arm: {st: sum(sum(1 for r in runs[s]["arms"][arm]["rows"] if r["set"] == st and not r["dk"]
+                                               and LESSON_CONTENT.search(r["reply"])) for s in seeds) for st in GATED}
+                             for arm in ARMS if all(arm in runs[s]["arms"] for s in seeds)}
     P = out["pooled"]
     if "lived_self" in P and "none" in P and "w3_user" in P:
         crit = {}
@@ -187,6 +195,8 @@ def main():
     ap.add_argument("--arms", default=",".join(ARMS))
     ap.add_argument("--dir")
     ap.add_argument("--threads", type=int, default=2)
+    ap.add_argument("--device", default="cpu")
+    ap.add_argument("--max-q", type=int, default=0, help="smoke only: first N questions per set (0 = all)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     torch.set_num_threads(a.threads)
@@ -194,8 +204,12 @@ def main():
     if a.phase == "report":
         res = report_phase(a)
     else:
-        res = run_phase(a, Cortex(model_path=a.model, device="cpu"))
-        res["model"] = a.model
+        if a.device == "cuda":
+            torch.cuda.reset_peak_memory_stats()
+        res = run_phase(a, Cortex(model_path=resolve_model(a.model), device=a.device))
+        res.update(model=a.model, device=a.device, max_q=a.max_q)
+        if a.device == "cuda":
+            res["cuda_peak_bytes"] = torch.cuda.max_memory_allocated()
     res["elapsed_s"] = round(time.time() - t0, 1)
     with open(a.out, "w") as fh:
         json.dump(res, fh, indent=1)

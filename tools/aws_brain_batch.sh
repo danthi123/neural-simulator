@@ -4,7 +4,8 @@
 # the workstation is off, e.g. on gaming nights).
 #   bash tools/aws_brain_batch.sh launch <jobs.txt> [instance-type]   # default g5.xlarge (A10G 24 GB, ~$1/h)
 #   bash tools/aws_brain_batch.sh status | pull | terminate
-# jobs.txt: the tools/brain_batch_run.sh format ("<name> <sleep_probe args>", models as ../models/<file>.pth);
+# jobs.txt: the tools/brain_batch_run.sh format ("<name> <sleep_probe args>" or "<name> brain.<module> <args>",
+# models as ../models/<file>.pth; # lines are comments). A batch longer than 4 h needs AWS_BRAIN_MAX_MIN raised;
 # every job gets --device cuda. Results land in _scratch/brainv2/aws/<batch>/ on `pull`.
 #
 # Safety lives on the AWS side, so nothing here has to stay up:
@@ -69,7 +70,7 @@ launch)
   scp -q -i "$KEYFILE" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR \
     "$ROOT/tools/brain_batch_run.sh" "${R[0]}:brainv2/run.sh"
   "${SSH[@]}" "${R[@]}" "chmod +x ~/brainv2/run.sh && nohup bash -c 'PY=/opt/pytorch/bin/python EXTRA=\"--device cuda\" ~/brainv2/run.sh >> ~/brainv2/run.log 2>&1; sudo shutdown -h now' >/dev/null 2>&1 &"
-  echo "[aws-brain] running $(grep -c . "$JOBS") job(s) on $IID; it stops itself when done (dead-man ${MAX_MIN} min)."
+  echo "[aws-brain] running $(grep -vc '^\(#\|$\)' "$JOBS") job(s) on $IID; it stops itself when done (dead-man ${MAX_MIN} min)."
   echo "[aws-brain] later: bash tools/aws_brain_batch.sh pull"
   ;;
 status)
