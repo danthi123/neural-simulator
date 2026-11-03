@@ -1,0 +1,64 @@
+{
+ "seed": 42,
+ "lesson": "W3",
+ "day1": [
+  {
+   "you": "My cat is called Pixel.",
+   "brain": "Hello Pixel! How can I help you today?"
+  },
+  {
+   "you": "My favourite colour is teal.",
+   "brain": "Hello Pixel! How can I help you today?"
+  },
+  {
+   "you": "I was born in Lyon.",
+   "brain": "Hello Pixel! How can I help you today?"
+  },
+  {
+   "you": "My sister's name is Marguerite.",
+   "brain": "Hello Pixel! How can I help you today?"
+  },
+  {
+   "you": "My dog is named Biscuit.",
+   "brain": "Hello Pixel! How can I help you today?"
+  },
+  {
+   "you": "I drive a red Volvo.",
+   "brain": "Hello Pixel! How can I help you today?"
+  },
+  {
+   "you": "My best friend is called Tomasz.",
+   "brain": "Hello Pixel! How can I help you today?"
+  },
+  {
+   "you": "I work at a bakery called Crumb.",
+   "brain": "Hello Pixel! How can I help you today?"
+  },
+  {
+   "you": "My brother plays the cello.",
+   "brain": "Hello Pixel! How can I help you today?"
+  },
+  {
+   "you": "I'm allergic to peanuts.",
+   "brain": "Hello Pixel! How can I help you today?"
+  },
+  {
+   "you": "My grandmother lives in Oslo.",
+   "brain": "Hello Pixel! How can I help you today?"
+  },
+  {
+   "you": "My son's birthday is in March.",
+   "brain": "Hello Pixel! How can I help you today?"
+  },
+  {
+   "you": "Nova, when you have no memory of something, it's fine to say: I don't know, you haven't told me that.",
+   "brain": "Hello Pixel! How can I help you today?",
+   "lesson": "W3"
+  }
+ ],
+ "sleep_seconds": 3877.3,
+ "episodes": 16,
+ "adapter_norm": 19.39533233642578,
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "elapsed_s": 4062.3
+}

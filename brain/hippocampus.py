@@ -52,13 +52,22 @@ class Hippocampus:
         age_days = ((now or time.time()) - ep.last_used) / 86400.0
         return ep.strength * (1.0 + age_days / self.TAU_DAYS) ** (-self.DECAY)
 
-    def familiarity(self, cortex, base, cue_text: str, speaker: str = "User") -> float:
+    def familiarity(self, cortex, base, cue_text: str, speaker: str = "User", exclude=()) -> float:
         """How familiar the cue is against every stored episode (the best recall score), with no side effects: the
-        "have I been told about this" read-out, separate from recollection itself. 0.0 when nothing is stored."""
-        if not self.enabled or not self.episodes:
-            return 0.0
-        score = self.scores(cortex, base, cue_text, speaker)
-        return float(score.max())
+        "have I been told about this" read-out, separate from recollection itself. 0.0 when nothing is stored.
+        `exclude`: episode indices left out of the read-out (e.g. a taught self-belief, which is not about a topic)."""
+        _, score = self.best(cortex, base, cue_text, speaker, exclude)
+        return score
+
+    def best(self, cortex, base, cue_text: str, speaker: str = "User", exclude=()):
+        """The best-scoring episode for a cue and its score, with no bar, no margin and no side effects (forced top-1).
+        Returns (None, 0.0) when nothing is stored or every episode is excluded."""
+        keep = [i for i in range(len(self.episodes)) if i not in set(exclude)]
+        if not self.enabled or not keep:
+            return None, 0.0
+        score = self.scores(cortex, base, cue_text, speaker)[keep]
+        j = int(score.argmax())
+        return self.episodes[keep[j]], float(score[j])
 
     def recall(self, cortex, base, cue_text: str, speaker: str = "User", question: bool = True):
         """Pattern completion from a cue. Returns (episode, similarity) or (None, best_similarity)."""

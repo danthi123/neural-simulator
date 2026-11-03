@@ -123,6 +123,15 @@ class Brain:
         self.home = home
         self.abstain = abstain   # switch (default OFF): below the feeling-of-knowing bar, answer from "not known"
         self.know_bar = {"hippocampus": self.KNOW_BAR_HIPPOCAMPUS, "cortex": self.KNOW_BAR_CORTEX}
+        # Which read-out decides "known" (abstention v2, brain/experiments/abstain_v2.py): "fok" = v1 (hippocampal
+        # familiarity, or the cortical cue response with the hippocampus off); "F" = familiarity only, "R" =
+        # recollection only, "FR" = both must pass (bars know_bar["fam"], know_bar["rec"]). rec_variant: "max"/"mean".
+        self.know_rule = "fok"
+        self.rec_variant = "max"
+        self.recollect_tokens = 12
+        # Below the bar, reinstate the taught "when I have no memory of something" episode (meta["self_belief_unknown"],
+        # stored by teach_self_belief) instead of nothing. Default OFF.
+        self.reinstate_self_belief = False
         self.sleep_extra = []    # (text, strength) replayed every night beside the episodes; [] = none (method 2)
         os.makedirs(home, exist_ok=True)
         self.raw_cortex = cortex or Cortex(device=device)
@@ -162,19 +171,23 @@ class Brain:
         info = {"recalled": None, "similarity": None, "stored": False}
         known = True
         if self.abstain and not _is_telling(text):
-            fok, src = self.feeling_of_knowing(text)
-            known = fok >= self.know_bar[src]
-            info.update(fok=round(fok, 4), fok_source=src, known=known)
+            known, sig = self.knows(text)
+            info.update(sig, known=known)
         if known:
             ep, sim = self.hippocampus.recall(self.cortex, self.base, text, question=text.endswith("?"))
         else:  # nothing familiar enough: no pattern completion, no reinstatement
-            ep, sim = None, (info["fok"] if info["fok_source"] == "hippocampus" else 0.0)
+            ep, sim = None, (info["fok"] if info.get("fok_source") == "hippocampus" else info.get("fam", 0.0))
         info["similarity"] = round(sim, 3)
         # Recall is a transient reactivation for THIS reply; it does not accumulate in the ongoing state.
         active = self.state
         if ep is not None:
             active = self.hippocampus.reinstate(self.cortex, self.state, ep)
             info["recalled"] = ep.text
+        elif not known and self.reinstate_self_belief and self.self_belief() is not None:
+            # the low-familiarity state brings back what the teacher once said about not knowing (an ordinary episode)
+            belief = self.self_belief()
+            active = self.hippocampus.reinstate(self.cortex, self.state, belief)
+            info["recalled"], info["self_belief"] = belief.text, True
         # Below the bar no retrieval is attempted: no reinstatement, and this reply is spoken without the synapses sleep
         # consolidated (they hold what was lived). What it then says is the cortex's own continuation; no reply text
         # exists in the host (a fixed "not known" line read before answering was tried on the fitting set and dropped).
@@ -191,6 +204,61 @@ class Brain:
             info["stored"] = True
         self.meta["turns"] += 1
         return reply, info
+
+    def knows(self, text: str):
+        """The gate's decision for a request turn: (known, read-outs) under know_rule."""
+        if self.know_rule == "fok":
+            fok, src = self.feeling_of_knowing(text)
+            return fok >= self.know_bar[src], {"fok": round(fok, 4), "fok_source": src}
+        sig = {}
+        if "F" in self.know_rule:
+            sig["fam"] = self.hippocampus.familiarity(self.cortex, self.base, text, exclude=self._belief_idx())
+        if "R" in self.know_rule:
+            sig["rec"] = self.recollection(text)[self.rec_variant]
+        return all(sig[k] >= self.know_bar[k] for k in sig), {k: round(v, 4) for k, v in sig.items()}
+
+    def _belief_idx(self):
+        i = self.meta.get("self_belief_unknown")
+        return () if i is None else (i,)
+
+    def self_belief(self):
+        i = self.meta.get("self_belief_unknown")
+        return None if i is None or i >= len(self.hippocampus.episodes) else self.hippocampus.episodes[i]
+
+    def teach_self_belief(self, text: str):
+        """Declared teacher scaffold (SCAFFOLDS.md): the teacher says once, in conversation, what one does when one has
+        no memory of something. It is heard and stored like any telling; the brain only notes which episode it was."""
+        reply, info = self.hear(text)
+        assert info["stored"], "the lesson must be a telling (stored as an ordinary episode)"
+        self.meta["self_belief_unknown"] = len(self.hippocampus.episodes) - 1
+        return reply, info
+
+    @torch.no_grad()
+    def recollection(self, text: str) -> dict:
+        """Recollection test (dual process): reinstate the best-matching episode (forced top-1 over topic episodes) and
+        ask whether it makes the cortex say something specific it would not say from the same state without it. The
+        reinstated cortex answers greedily for recollect_tokens tokens; along that answer, gain_t = log p(token |
+        reinstated) - log p(token | not reinstated). Returns {"max": max gain, "mean": mean gain}; 0 with no episode."""
+        ep, _ = self.hippocampus.best(self.cortex, self.base, text, exclude=self._belief_idx())
+        if ep is None:
+            return {"max": 0.0, "mean": 0.0}
+        prompt = f"User: {text}\n\nAssistant:"
+        lr, sr = self.cortex.read(prompt, self.hippocampus.reinstate(self.cortex, self.state, ep))
+        lb, sb = self.cortex.read(prompt, self.state)
+        gains, toks = [], []
+        for _ in range(self.recollect_tokens):
+            tok = int(torch.argmax(lr))
+            if tok == 0:
+                break
+            gains.append(float(F.log_softmax(lr.float(), -1)[tok] - F.log_softmax(lb.float(), -1)[tok]))
+            toks.append(tok)
+            if "\n\n" in self.cortex.pipe.decode(toks):
+                break
+            lr, sr = self.cortex.forward([tok], sr)
+            lb, sb = self.cortex.forward([tok], sb)
+        if not gains:
+            return {"max": 0.0, "mean": 0.0}
+        return {"max": max(gains), "mean": sum(gains) / len(gains)}
 
     def feeling_of_knowing(self, text: str):
         """Have I been told about this? Returns (signal, source). With the hippocampus on: its familiarity of the cue
