@@ -87,6 +87,20 @@ Six-seed 1.5B (sleep_true): recall **8.83/12** (3, 7, 11, 8, 12, 12), paraphrase
 shuffled recall is 0 on all six, no_sleep 0/0/0. False recall is about equal (2.17 vs 2.0), so the gain is not bought with
 more confabulation, but it is not reduced either. Decision rule (above): mean > 4, so **1.5B is the cortex size**.
 
+## 2c. 1.5B at lr 3e-4 (480 steps, kl 3), six seeds, AWS g5.xlarge A10G (`b15lr3e-4_s*.json`, batch 20261103-0836)
+| seed | recall | para | false | gKL | vs lr 5e-4 recall |
+|---|---|---|---|---|---|
+| 42 | 12 | 9 | 3 | 0.012 | 11 |
+| 43 | 7 | 4 | 2 | 0.008 | 3 |
+| 44 | 9 | 5 | 3 | 0.013 | 7 |
+| 100 | 10 | 6 | 3 | 0.010 | 8 |
+| 101 | 11 | 9 | 3 | 0.011 | 12 |
+| 102 | 9 | 1 | 2 | 0.012 | 12 |
+
+Mean recall 9.67 (lr 5e-4: 8.83), paraphrase 5.67 (5.17), false recall 2.67/4 (2.17); higher recall on 4 of 6 seeds,
+shuffled recall 0 on all six. Not a clear win: more recall comes with more false recall, so the chosen setting
+(lr 5e-4) stays; lr 3e-4 is the alternative if recall matters more than false recall. Different host (A10G fp16 vs W 3090).
+
 - Peak VRAM was sampled with nvidia-smi, not measured by a logged peak.
 
 ## Recommendation for the 2026-11-16 milestone

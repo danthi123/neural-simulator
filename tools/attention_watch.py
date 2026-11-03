@@ -16,7 +16,8 @@ Events already reported are suppressed for REPEAT_H hours (state file outside th
   tools/status.sh runs `--once` (on the server: the server checks, run locally), so the driver sees every event each wake;
   .claude/hooks/watcher_guard.py tells Claude to re-arm `--loop` whenever it is not running (reboot, new session, compaction).
 
-Checks: W GPU idle with an empty queue; a GPU job exiting non-zero; a degraded brain build in the GPU log
+Checks: W GPU idle with an empty queue; a mini-PC (pool40/41/42) running no brain/ job; an AWS brain batch finished
+but not pulled (results waiting, the next packet not launched); a GPU job exiting non-zero; a degraded brain build in the GPU log
 (missing untracked inputs); an oom-kill; S NEEDS CLAUDE lines; the S driver silent; the S pool idle or not claiming;
 a recent RULING whose requested [key] report no later driver line mentions after RULE_STALE_H hours; a driver STOP
 written only in the WORKLOG that no RULING answers.
@@ -45,6 +46,9 @@ GPU_IDLE_MIN = 30       # W GPU queue empty and idle this long
 GPU_HELD_MIN = 30       # W gpu_queue has jobs but none running this long (VRAM held outside the queue)
 DRIVER_SILENT_H = 24.0  # S runbook not written this long (11-02: was 3 h; with the old track frozen Hermes is idle by design between [weekly] runs and new-core job lists)
 POOL_STALL_MIN = 60     # S pool has queued lines but no claim this long
+MINIPCS = ("pool40", "pool41", "pool42")   # brain/ jobs run there by hand via tools/brain_batch_run.sh (~/brainv2)
+MINIPC_IDLE_MIN = 30    # no brain/ process on a mini-PC this long
+READY = "take the next job from HANDOFF.md READY WORK (owner 11-03: never idle; mind plan usage and the AWS cap)"
 PI_STATUS = "/var/lib/host-status/pi-driver/status.json"   # tools/pi_driver supervisor.py writes it
 PI_SILENT_MIN = 20      # Pi driver status not refreshed this long (the supervisor writes every 5 s)
 PI_RESTARTS = 5         # Pi driver restarts worth a look (one alert per 5)
@@ -90,7 +94,7 @@ def w_checks(st, now):
         st["gpu_idle_since"] = st.get("gpu_idle_since") or now
         mins = (now - st["gpu_idle_since"]) / 60
         if mins >= GPU_IDLE_MIN:
-            ev.append(("w-gpu-idle", f"W GPU idle {mins:.0f} min with an empty gpu_queue (not paused): stock NEW-CORE (brain/) GPU work if a job is ready; never old-track work (RULING new-core-1102)"))
+            ev.append(("w-gpu-idle", f"W GPU idle {mins:.0f} min with an empty gpu_queue (not paused): stock NEW-CORE (brain/) GPU work: {READY}; never old-track work (RULING new-core-1102)"))
     else:
         st["gpu_idle_since"] = None
     # the opposite stall: jobs queued, none running, not paused. On 2026-10-31 an orphaned local-model engine held
@@ -127,6 +131,8 @@ def w_checks(st, now):
                            f"W GPU job log shows a degraded build (inputs missing?): {m.group(0)[:200]}"))
     except OSError:
         pass
+    ev += minipc_checks(st, now)
+    ev += aws_checks()
     since = st.get("journal_since") or "-30min"
     rc, out = sh(["journalctl", "--user", "--since", since, "--no-pager", "-q", "-g", "oom-kill"])
     st["journal_since"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(now))
@@ -134,6 +140,35 @@ def w_checks(st, now):
         if "oom-kill" in line:
             ev.append((f"w-oom-{abs(hash(line)) % 10**8}", f"W oom-kill: {line[-160:]}"))
     return ev
+
+
+def minipc_checks(st, now):
+    """A mini-PC with no brain/ process (an experiment or the batch runner) for MINIPC_IDLE_MIN is idle capacity."""
+    ev, idle_since = [], st.setdefault("minipc_idle_since", {})
+    for host in MINIPCS:
+        rc, out = sh(["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=10", host,
+                      "pgrep -f '[b]rain[._]' >/dev/null && echo BUSY || echo IDLE"], timeout=30)
+        if "IDLE" not in out:      # busy, or unreachable (a powered-off node is not idle capacity to stock)
+            idle_since[host] = None
+            continue
+        idle_since[host] = idle_since.get(host) or now
+        mins = (now - idle_since[host]) / 60
+        if mins >= MINIPC_IDLE_MIN:
+            ev.append((f"minipc-idle-{host}", f"{host} has run no brain/ job for {mins:.0f} min: {READY}"))
+    return ev
+
+
+def aws_checks():
+    """An AWS brain batch (tools/aws_brain_batch.sh) that finished or stopped itself: pull it (which terminates the
+    instance) and launch the next packet if one is ready."""
+    if not os.path.exists(os.path.join(REPO, "research/queue/.aws_brain")):
+        return []
+    rc, out = sh(["bash", os.path.join(REPO, "tools/aws_brain_batch.sh"), "status"], timeout=90)
+    if " stopped " in out or "all done" in out:
+        batch = re.search(r"batch (\S+?)\)", out)
+        return [(f"aws-batch-done-{batch.group(1) if batch else 'x'}",
+                 f"AWS brain batch finished: run `bash tools/aws_brain_batch.sh pull` (terminates it), then {READY}")]
+    return []
 
 
 S_PROBE = r"""
