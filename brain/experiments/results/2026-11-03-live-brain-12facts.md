@@ -47,3 +47,14 @@ Sleep adds over the no-sleep intact arm (a-b): recall +0.17, paraphrase +1.67, f
 ## Honest verdict
 Not a lead under the pre-registered rule (P2, P3 fail). What is established: (1) with the hippocampus off, sleep leaves a real consolidated trace in the live brain: 5.5/12 strict correct-perspective answers vs 0.17 with consolidation off and 0 for shuffled content, six of six seeds (the in-context ceiling at 0.1B is 6/12). (2) The skeptic's missing control shows sleep adds little on the original questions (+0.17) because the intact no-sleep brain answers 6.3/12 via the hippocampus; its measurable contributions are paraphrase (+1.7) and independence from the hippocampus. (3) Cost: false recall up (+1.0 intact, 3.7/4 with the hippocampus off, no better than shuffled 3.2/4): learned names leak into unrelated answers. (4) Echo is common (4.5-5.5 of 24 answers in intact arms; seed 42 sleep 10-11): strict recall is 2/3 of lenient in the intact arms. Caveats: one sampled reply per question; false recall counts any fact word in a never-told answer.
 Next step: put the familiarity bar (false-recall-1103) in front of the consolidated path, then re-run this probe unchanged; and a lesion that changes the reply is shown by d vs c (5.3 answers lost).
+
+## Scorer caveats (added in integration-final, 2026-11-03; the numbers above are unchanged and were NOT re-scored)
+1. The strict scorer (`strict_scorer.score`) voids ANY reply containing a first-person word, including ones that are not an echo
+   ("I think you drive a Volvo"). It can under-count correct answers; its counts are a lower bound on correct-perspective recall.
+2. It accepts tautologies such as "Pixel is called Pixel." and "Marguerite is Marguerite." (the answer word is present, nothing
+   was recalled about the thing asked), so it can over-count, most in the intact arms where the hippocampus reinstates the
+   episode text. The two errors push in opposite directions; the net effect on the table was not measured.
+A corrected scorer (`strict_scorer.correct_answer`: echo = first-person reply restating the told sentence; tautologies
+rejected) now exists and is used by the sleep smoke and the weekly transcript. Re-scoring these JSONs with it is a
+possible follow-up; until then read the table as: hippocampus-off consolidation 5.5/12 vs 0.17 (lesion) vs 0 (shuffled)
+is a real contrast, and absolute counts are approximate.
