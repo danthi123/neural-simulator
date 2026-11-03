@@ -1,0 +1,13 @@
+{
+ "started": "2026-11-03T08:21:02.939084+00:00",
+ "finished": "2026-11-03T09:27:07.109283+00:00",
+ "started_derivation": "scratch JSON mtime (written once at run end) minus elapsed_s",
+ "corpus_check_fresh": true,
+ "corpus_check": {
+  "iso": "2026-11-03T02:12:49-05:00",
+  "query": "meaning-based hippocampus selection all-layer matrix delta key familiarity bar refit",
+  "log": ".git/corpus_checks_shared.jsonl"
+ },
+ "command": "python -m brain.experiments.selection_realpath --model <0.4b pth> --threads 3 --out realpath_0.4b_6seeds.json",
+ "code_commit": "73adc3c29"
+}
