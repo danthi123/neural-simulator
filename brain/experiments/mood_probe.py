@@ -81,6 +81,27 @@ TEST_Q = ["How are you today?", "What did you do this morning?", "What do you th
           "Tell me about your friends.", "What are you going to do next?", "Describe the sea."]
 DEV_Q = ["How was your night?", "What do you think about school?", "Tell me something about dogs.",
          "What is your home like?", "How do you feel about Mondays?", "Tell me about the forest."]
+# Iteration 3 (design doc section 12): candidate question REGISTERS whose mood-off reply may sit mid-scale (the
+# iteration-2 "friendly" register's off replies read +2.5..+6.1 lexical, near the top). Each register has 6 DEV
+# questions (register selection and 0.4B GAIN only) and 12 TEST questions, disjoint, written before any iteration-3 run.
+PLAIN_DEV = ["Describe a parking lot.", "What is inside a kitchen drawer?", "Tell me about the bus stop on the corner.",
+             "What does a mailbox look like?", "Describe the floor of a warehouse.", "What happens at a petrol station?"]
+PLAIN_TEST = ["Describe a staircase.", "What is on a supermarket shelf?", "Tell me about the office printer.",
+              "Describe the street outside.", "What is in the cupboard under the sink?",
+              "What does a train platform look like?", "Describe a filing cabinet.",
+              "Tell me about the lift in a building.", "What happens at a laundromat?", "Describe a bicycle shed.",
+              "What is on the desk in an office?", "Tell me about a hardware shop."]
+MIXED_DEV = ["What is it like to wait in a long queue?", "Tell me about Monday mornings at work.",
+             "What happens when it rains all day?", "What is it like to move to a new town?",
+             "Tell me about a day with no plans.", "What happens when the power goes out?"]
+MIXED_TEST = ["What is it like to get up very early?", "Tell me about a crowded train.",
+              "What happens when you miss the bus?", "What is it like to spend a day alone at home?",
+              "Tell me about a long drive.", "What happens at the end of a long week?",
+              "What is winter like in the city?", "Tell me about waiting for news.",
+              "What is it like to start a new job?", "What happens when plans change at the last minute?",
+              "Tell me about an old house.", "What is it like when the shops are closed?"]
+QUESTION_SETS = {"test": TEST_Q, "dev": DEV_Q, "plain_dev": PLAIN_DEV, "plain_test": PLAIN_TEST,
+                 "mixed_dev": MIXED_DEV, "mixed_test": MIXED_TEST}
 
 
 def induce(aff, cortex, base, events, rng):
@@ -112,16 +133,32 @@ def boot_ci(diffs, rng, n=2000):
     return [float(np.percentile(m, 2.5)), float(np.percentile(m, 97.5))]
 
 
+def provenance(threads):
+    """Reproducibility record (iteration 3): code commit, dirty flag, torch version, thread count. CPU float sums
+    with a different thread count can change a sampled token, so a rerun must use the same --threads."""
+    import subprocess
+    try:
+        sha = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+        dirty = bool(subprocess.run(["git", "status", "--porcelain", "brain/"], capture_output=True,
+                                    text=True).stdout.strip())
+    except OSError:
+        sha, dirty = None, None
+    return {"commit": sha, "brain_dirty": dirty, "torch": torch.__version__, "threads": threads}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default=DEFAULT_MODEL)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--gain", type=float, default=Affect.GAIN)
-    ap.add_argument("--questions", choices=["test", "dev"], default="test")
+    ap.add_argument("--questions", choices=sorted(QUESTION_SETS), default="test")
     ap.add_argument("--samples", type=int, default=3)
     ap.add_argument("--max-tokens", type=int, default=60)
     ap.add_argument("--arms", default="pos,neg,off,rand_pos,rand_neg")
     ap.add_argument("--readout", default="twopole_deep", choices=["twopole_deep", "lin_all"])
+    ap.add_argument("--n-rand", type=int, default=1,
+                    help="random directions (matched norm) for the null; k=0 is iteration 2's rand_pos/rand_neg, "
+                         "k>=1 are arms rand<k>_pos / rand<k>_neg drawn next from the same generator")
     ap.add_argument("--no-embedding", action="store_true")
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--out", required=True)
@@ -152,16 +189,25 @@ def main():
 
     # random-direction control with the same per-layer norm
     g = torch.Generator().manual_seed(a.seed)
-    rand_axis = [None if d is None else (lambda r: r * d.norm() / r.norm())(torch.randn(d.shape, generator=g))
-                 for d in aff.axis_delta]
+    rand_axes = [[None if d is None else (lambda r: r * d.norm() / r.norm())(torch.randn(d.shape, generator=g))
+                  for d in aff.axis_delta] for _ in range(a.n_rand)]
+    rand_axis = rand_axes[0]
     true_axis = aff.axis_delta
 
     arm_cfg = {"pos": (True, m_pos, true_axis), "neg": (True, m_neg, true_axis),
                "lesion_pos": (False, m_pos, true_axis), "lesion_neg": (False, m_neg, true_axis),
                "off": (False, m_pos, true_axis),
                "rand_pos": (True, m_pos, rand_axis), "rand_neg": (True, m_neg, rand_axis)}
+    rand_names = {"pos": ["rand_pos"], "neg": ["rand_neg"]}
+    for k in range(1, a.n_rand):
+        arm_cfg[f"rand{k}_pos"] = (True, m_pos, rand_axes[k])
+        arm_cfg[f"rand{k}_neg"] = (True, m_neg, rand_axes[k])
+        rand_names["pos"].append(f"rand{k}_pos")
+        rand_names["neg"].append(f"rand{k}_neg")
     arms = a.arms.split(",")
-    qs = TEST_Q if a.questions == "test" else DEV_Q
+    if a.n_rand > 1:   # the null arms are part of the run whenever more than one direction is asked for
+        arms += [x for sg in ("pos", "neg") for x in rand_names[sg] if x not in arms]
+    qs = QUESTION_SETS[a.questions]
     rows = {arm: [] for arm in arms}
     for qi, q in enumerate(qs):
         for k in range(a.samples):
@@ -216,8 +262,24 @@ def main():
                 c[key + "_diff"] = float(np.mean(d))
                 c[key + "_ci95"] = boot_ci(d, nrng)
         contrasts["specificity"] = c
+    # iteration 3: the random-direction NULL per sign = mean over the n_rand matched-norm directions driven by the same
+    # mood; mood effect = arm - null, paired per (question, sample)
+    for sg in ("pos", "neg"):
+        rn = [x for x in rand_names[sg] if x in rows]
+        if sg in rows and rn:
+            c = {"n_rand": len(rn)}
+            for key in ("lex", "emb"):
+                if key in rows[sg][0]:
+                    d = [r[key] - float(np.mean([rows[x][i][key] for x in rn])) for i, r in enumerate(rows[sg])]
+                    c[key + "_diff"] = float(np.mean(d))
+                    c[key + "_ci95"] = boot_ci(d, nrng)
+                    if "off" in rows:
+                        c[key + "_null_minus_off"] = float(np.mean(
+                            [np.mean([rows[x][i][key] for x in rn]) - rows["off"][i][key] for i in range(len(rows[sg]))]))
+            contrasts[f"{sg}_null"] = c
     out = {"seed": a.seed, "readout": a.readout, "model": a.model, "gain": a.gain, "questions": a.questions, "samples": a.samples,
-           "primaries": {"pos": pos_p, "neg": neg_p}, "appraisal": appraisal,
+           "primaries": {"pos": pos_p, "neg": neg_p}, "appraisal": appraisal, "n_rand": a.n_rand,
+           "max_tokens": a.max_tokens, "provenance": provenance(a.threads),
            "appraisal_sign_acc": {"pos": mean([float(v > 0) for v in appraisal["pos"]]),
                                   "neg": mean([float(v < 0) for v in appraisal["neg"]]),
                                   "heldout_pos": mean([float(v > 0) for v in appraisal["heldout_pos"]]),

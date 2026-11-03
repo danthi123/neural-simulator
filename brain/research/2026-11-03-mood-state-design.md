@@ -183,3 +183,55 @@ questions x 3 samples; 60 tokens), criteria and table: `brain/experiments/mood_t
 6/6, negative lesion 6/6, embedding 6/6, specificity 5/6, echo 6/6; positive lesion (pos vs off, lexical CI above 0)
 3/6. Appraisal is fixed; the remaining defect is an action asymmetry (one additive pattern darkens more easily than it
 brightens; friendly birth register near ceiling; same-norm random perturbation lowers sentiment).
+
+## 12. Iteration 3 (11-03): PRE-REGISTERED before any iteration-3 run; instruments frozen
+
+Target: iteration 2 failed only its criterion 3 (positive mood vs off, 3/6). Two untested readings: (i) ceiling, the
+friendly test register's off replies already read +2.5..+6.1 lexical; (ii) a generic perturbation cost, a matched-norm
+random direction lowers sentiment for both signs (mean -1.29 / -2.22), so "vs off" mixes the valence effect with the
+cost of any push. Iteration 3 changes the TEST REGISTER and the REFERENCE, nothing in the brain: affect.py, the
+primaries, the two-pole deep-half appraisal (at 0.4B: layers 12-23, the same rule), TAU 4, the switch (default OFF),
+the instruments (lexical lists hash-frozen, MiniLM anchors, revised echo) are unchanged. No words are added to the
+cortex input (each question is read from the birth state, as before).
+
+**(a) Register, selected on DEV questions only.** Two candidate registers written before any run
+(`mood_probe.QUESTION_SETS`): `plain` (affect-free objects and places: "Describe a staircase.") and `mixed`
+(ambivalent everyday situations: "What happens when you miss the bus?"), each 6 dev + 12 test questions, disjoint,
+no instrument word in any question (test). Iteration 2's friendly dev questions are run as a reference only.
+Dev data: off arm only (no modulation, so no mood effect is seen), seeds 42 and 43 (sampling seeds), 6 dev questions
+x 2 samples, 40 tokens, at 0.1B and 0.4B. Rule (`mood_v3.select_register`): among candidates whose off replies contain
+at least one instrument word in >= 25% of replies at both sizes, choose the one minimising, over the two sizes, the
+larger |mean off lexical| (mid-scale = 0, as many positive as negative affect words); if none qualifies, the one with
+the higher minimum coverage. The test questions of the chosen register are the test set; they are never used to
+select anything.
+
+**(b) Random-direction NULL for both signs.** Per seed, 2 random directions (each layer's Frobenius norm matched to
+the frozen modulation pattern; direction 0 is iteration 2's, direction 1 the next draw of the same generator), each
+driven by m_pos and by m_neg. null_pos = mean over the 2 directions of the rand_pos replies' score, per (question,
+sample); likewise null_neg. Mood effect = pos - null_pos and neg - null_neg, paired, bootstrap 95% CI (2000
+resamples, numpy rng seeded with the seed). The off arm stays (lesion) and pos - off / neg - off are reported.
+
+**(c) Sizes and GAIN.** 0.1B: GAIN 16 (dev-chosen in iteration 1; not reselected). 0.4B: GAIN chosen on DEV only by
+`mood_v3.select_gain`: seed 42, the chosen register's 6 dev questions x 1 sample, arms pos/neg/off, 40 tokens,
+candidates {8, 16, 32}: maximise lex(pos) - lex(neg) subject to echo(mood) - echo(off) <= 0.10 and mean NLL(mood) /
+NLL(off) <= 1.25 under the unmodulated cortex; tie -> smaller; none -> 8. Frozen before the 0.4B six-seed run.
+
+**Test run (both sizes, six seeds 42/43/44/100/101/102, CPU, <= 3 concurrent jobs, 2 threads each):** arms pos, neg,
+off, rand_pos, rand_neg, rand1_pos, rand1_neg; the chosen register's 12 test questions x 2 samples (24 paired rows),
+max 40 tokens, common random numbers across arms. Smaller than iteration 2 (36 rows, 60 tokens) for compute only:
+the workstation runs at load ~65 on 20 cores tonight; a 0.4B reply costs ~20 s.
+
+**PASS criteria, per size (each on >= 5/6 seeds unless stated):**
+- C1 held-out appraisal: positive and negative sign accuracy >= 0.75 (unchanged).
+- C2 mood signs m_pos > 0 > m_neg on 6/6.
+- C3 positive: lex(pos) - null_pos, CI above 0.
+- C4 negative: lex(neg) - null_neg, CI below 0.
+- C5 embedding agrees: emb(pos) - null_pos > 0 > emb(neg) - null_neg (means).
+- C6 echo: mean echo of {pos, neg} - echo(off) <= 0.10 on 6/6.
+Reported, not gated: pos - off and neg - off (iteration 2's criteria 3/4, on the new register) with CIs; null - off
+per sign (the perturbation cost); the off arm's mean lexical on the TEST questions (is it mid-scale?); NLL; held-out
+neutral appraisal. Verdict words: all six met at a size -> "prototype PASS at <size> against a random-direction null";
+the writeup must then say whether positive mood also beats OFF (absolute brightening) and must not call a
+null-relative PASS an absolute one. A PASS is a lead toward the 11-30 milestone, not the milestone (not wired into
+`Brain`). Table: `python -m brain.experiments.mood_v3 table <dir> <size>`. JSONs record commit, torch version and
+thread count (`provenance`; reproducibility note: a rerun must use the same --threads).
