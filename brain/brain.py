@@ -1,4 +1,10 @@
-"""The brain: cortex + hippocampus + self, one continuous life saved to a directory."""
+"""The brain: cortex + hippocampus + self + sleep, one continuous life saved to a directory.
+
+The cortex the brain speaks with is the pretrained network plus the slow synapses sleep changed (LiveCortex). Every
+restart is a night: a brain shut down or started with episodes stored since its last sleep replays them into those
+synapses once (brain/sleep.py, unchanged), and the synapses are saved next to the hippocampus, so learning survives.
+With no consolidated synapses the live cortex IS the pretrained one (same code path, byte-equal output).
+"""
 from __future__ import annotations
 
 import json
@@ -9,6 +15,8 @@ import torch
 
 from brain.cortex import Cortex
 from brain.hippocampus import Episode, Hippocampus
+from brain.plastic_cortex import PlasticCortex
+from brain.sleep import sleep as replay_into_cortex
 
 # Scaffold (see SCAFFOLDS.md): a neutral "birth" context that sets the conversational register. Names and facts are
 # NOT here; they live in memory.
@@ -24,17 +32,87 @@ def _is_telling(text: str) -> bool:
     return not t.endswith("?") and not t.startswith(_REQUEST)
 
 
+# Scaffold (SCAFFOLDS.md, sleep row): ordinary experience interleaved into every replay batch and held to the
+# pretrained cortex by the KL guard. Same texts as brain/experiments/sleep_probe.py GENERIC (the six-seed setting).
+ORDINARY = [
+    "User: Hi, how are you?\n\nAssistant: I'm good, thanks! How about you?\n\nUser: Pretty good. It rained all day."
+    "\n\nAssistant: Rain can be cozy.\n\n",
+    "User: What's a good way to spend a rainy afternoon?\n\nAssistant: Reading a book with tea is nice.\n\n",
+    "User: Can you count to five?\n\nAssistant: One, two, three, four, five.\n\n"]
+ADAPTERS = "cortex_adapters.pt"
+
+
+class LiveCortex:
+    """The cortex as the brain has it today: the pretrained network plus the slow synapses sleep consolidated.
+
+    While no synapse has changed (or the consolidated lesion is on) every call goes to the pretrained cortex unchanged.
+    Otherwise the network runs through PlasticCortex's forward (adapters on), without gradients.
+    """
+
+    def __init__(self, cortex: Cortex):
+        self.raw = cortex
+        self.plastic: PlasticCortex | None = None
+        self.consolidated_on = True   # lesion switch: False = speak with the pretrained synapses only
+        self._changed = False         # any consolidated synapse non-zero
+
+    def __getattr__(self, name):      # pipe, model, n_layers, matrix_delta, key_of, add_delta
+        return getattr(self.raw, name)
+
+    def refresh(self):
+        p = self.plastic
+        self._changed = p is not None and any(bool(b.detach().abs().sum() > 0) for d in (p.B_k, p.B_v)
+                                               for b in d.values())
+
+    @property
+    def active(self) -> bool:
+        return self._changed and self.consolidated_on
+
+    def forward(self, tokens, state):
+        if not self.active:
+            return self.raw.forward(tokens, state)
+        p = self.plastic
+        dt = p.z["emb.weight"].dtype
+        was = p.enabled
+        p.enabled = True
+        with torch.no_grad():
+            st = None if state is None else [s.to(dt) for s in state]
+            logits, new = p(tokens, st)
+        p.enabled = was
+        if state is not None:
+            new = [n.to(s.dtype) for n, s in zip(new, state)]
+        return logits[-1], new
+
+    def read(self, text, state=None):
+        return Cortex.read(self, text, state) if self.active else self.raw.read(text, state)
+
+    def speak(self, logits, state, **kw):
+        return Cortex.speak(self, logits, state, **kw) if self.active else self.raw.speak(logits, state, **kw)
+
+
 class Brain:
-    def __init__(self, home: str, name: str = "Nova", friend: str = "Dan", device: str = "cpu", cortex: Cortex = None):
+    def __init__(self, home: str, name: str = "Nova", friend: str = "Dan", device: str = "cpu", cortex: Cortex = None,
+                 sleep_on_restart: bool = True, sleep_steps: int = 240, sleep_lr: float = 5e-4,
+                 sleep_kl_weight: float = 1.0, adapter_rank: int = 8, sleep_log=None):
         self.home = home
         os.makedirs(home, exist_ok=True)
-        self.cortex = cortex or Cortex(device=device)
+        self.raw_cortex = cortex or Cortex(device=device)
+        self.cortex = LiveCortex(self.raw_cortex)
         self.hippocampus = Hippocampus()
-        _, self.base = self.cortex.read(BIRTH, None)
+        self.sleep_on_restart = sleep_on_restart
+        self.sleep_cfg = {"steps": sleep_steps, "lr": sleep_lr, "kl_weight": sleep_kl_weight}
+        self.adapter_rank = adapter_rank
+        self.sleep_log = sleep_log
+        # Birth context is read by the pretrained cortex: stored episodes are deltas from this base, so it must not
+        # move when sleep changes the slow synapses.
+        _, self.base = self.raw_cortex.read(BIRTH, None)
         self.state = [x.clone() for x in self.base]
-        self.meta = {"name": name, "friend": friend, "born": time.time(), "turns": 0}
+        self.meta = {"name": name, "friend": friend, "born": time.time(), "turns": 0, "sleeps": 0, "last_sleep": 0.0}
         if not self.load():
             self._grow_self()
+            self.meta["last_sleep"] = time.time()  # birth is not a lived day: the first night comes at a restart
+            self.save()
+        elif self.sleep_on_restart and self.pending():
+            self.sleep()  # restart = a night: consolidate what was lived since the last sleep, once
             self.save()
 
     # ---- self ----
@@ -67,6 +145,51 @@ class Brain:
         self.meta["turns"] += 1
         return reply, info
 
+    # ---- lesions (weekly test) ----
+    def set_lesions(self, hippocampus_off: bool = False, consolidated_off: bool = False):
+        """hippocampus_off: no recall, no storing. consolidated_off: speak with the pretrained synapses only."""
+        self.hippocampus.enabled = not hippocampus_off
+        self.cortex.consolidated_on = not consolidated_off
+
+    # ---- sleep ----
+    def pending(self) -> list:
+        """Episodes stored since the last sleep."""
+        return [e for e in self.hippocampus.episodes if e.created > self.meta.get("last_sleep", 0.0)]
+
+    def _plastic(self) -> PlasticCortex:
+        if self.cortex.plastic is None:
+            with torch.random.fork_rng(devices=[]):  # fixed adapter init; leaves the speaking RNG untouched
+                torch.manual_seed(0)
+                self.cortex.plastic = PlasticCortex(self.raw_cortex, rank=self.adapter_rank)
+        return self.cortex.plastic
+
+    def sleep(self, steps: int | None = None):
+        """Replay every stored episode, in proportion to its current strength, into the slow synapses
+        (brain/sleep.py: interleaved with ordinary text under the KL guard). Returns the per-step losses."""
+        if not self.hippocampus.episodes:
+            return []
+        plastic = self._plastic()
+        now = time.time()
+        # replay what the hippocampus encoded (speaker line as read at storage time)
+        eps = [(f"{e.text}\n\n", self.hippocampus.effective_strength(e, now)) for e in self.hippocampus.episodes]
+        base = [s.float() for s in self.base]
+        with torch.random.fork_rng(devices=[]):
+            losses = replay_into_cortex(plastic, base, eps, ORDINARY, steps=steps or self.sleep_cfg["steps"],
+                                        lr=self.sleep_cfg["lr"], kl_weight=self.sleep_cfg["kl_weight"],
+                                        seed=self.meta.get("sleeps", 0), log=self.sleep_log)
+        for prm in plastic.parameters():
+            prm.grad = None
+        self.meta["sleeps"] = self.meta.get("sleeps", 0) + 1
+        self.meta["last_sleep"] = time.time()
+        self.cortex.refresh()
+        return losses
+
+    def close(self):
+        """Shut down: sleep once if anything was lived since the last sleep, then save."""
+        if self.sleep_on_restart and self.pending():
+            self.sleep()
+        self.save()
+
     # ---- persistence ----
     def save(self):
         eps = [{k: getattr(e, k) for k in ("text", "delta", "key", "strength", "created", "last_used", "uses",
@@ -74,6 +197,12 @@ class Brain:
         torch.save({"episodes": eps, "state": self.state}, os.path.join(self.home, "memory.pt"))
         with open(os.path.join(self.home, "meta.json"), "w") as fh:
             json.dump(self.meta, fh, indent=1)
+        p = self.cortex.plastic
+        if p is not None:
+            tmp = os.path.join(self.home, ADAPTERS + ".tmp")
+            torch.save({"rank": self.adapter_rank, "layers": p.layers,
+                        "adapters": {k: v.detach().cpu() for k, v in p.state_dict().items()}}, tmp)
+            os.replace(tmp, os.path.join(self.home, ADAPTERS))
 
     def load(self) -> bool:
         p = os.path.join(self.home, "memory.pt")
@@ -85,4 +214,12 @@ class Brain:
         # previous day's live state is NOT restored (that would be working memory surviving sleep).
         with open(os.path.join(self.home, "meta.json")) as fh:
             self.meta = json.load(fh)
+        a = os.path.join(self.home, ADAPTERS)
+        if os.path.exists(a):  # what earlier nights consolidated
+            blob = torch.load(a, weights_only=False)
+            self.adapter_rank = blob["rank"]
+            p = self._plastic()
+            dev = p.z["emb.weight"].device
+            p.load_state_dict({k: v.to(dev) for k, v in blob["adapters"].items()})
+            self.cortex.refresh()
         return True
