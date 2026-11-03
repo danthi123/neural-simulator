@@ -57,14 +57,14 @@ No-sleep recall is 0 on every group. Totals /12: use 5.17, equal 4.50. Paraphras
 equal 1.50/1.17/1.17. False recall /4: use 3.0, equal 3.3 (any sleep gives false recall again). Drift KL 0.026 vs 0.029.
 - k=10, use minus equal, seeds 42 43 44 100 101 102: 0, +2, +2, 0, +1, +1 (4 up, 2 ties, none down; one-sided sign test 1/16, n=6 so
   a lead only). k=10 4/4: use 1/6 seeds, equal 0/6.
-- Use trades away the low-use facts: k=1 recall 1.33 vs 2.00 (use is worse on 3 of 6 seeds), so total recall gain is small (+0.67/12).
+- Use trades away the low-use facts: k=1 recall 1.33 vs 2.00 (use is worse on 2 of 6 seeds: s42, s101; better on 2: s44, s102), so total recall gain is small (+0.67/12).
 - Paraphrase recall does not rise with use.
 
 ## What it shows
 - Use counted inside the brain does what it should mechanically (strength = number of tellings, replay follows), and k=10 gains
   about one fact of four over equal replay, never losing to it. That is the expected sign, but small.
-- It does not make a fact that the cortex can hold in context into a reliably consolidated one: with ~43 replays, 3 of 6 seeds
-  still miss 1-2 of 4 reachable k=10 facts. The limit is not exposure to the fact. Likely candidates (untested here): 240 steps,
+- It does not make a fact that the cortex can hold in context into a reliably consolidated one: with ~43 replays, 5 of 6 seeds
+  still miss 1-3 of 4 reachable k=10 facts. The limit is not exposure to the fact. Likely candidates (untested here): 240 steps,
   rank-8 adapters shared by 12 facts plus KL guard, and cross-fact interference (false recall ~3/4 shows leaking names).
 - "Reachable" in context is necessary but not sufficient (and the in-context check is with a fact told once, in a clean context).
 
