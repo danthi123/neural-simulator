@@ -57,3 +57,33 @@ def test_v2_below_the_bar_reinstates_only_the_taught_episode(tmp_path, cortex, m
     monkeypatch.setattr(b.hippocampus, "reinstate", lambda c, s, e: (seen.append(e), orig(c, s, e))[1])
     _, info = b.hear("What is my cat called?")
     assert info["known"] is False and info["self_belief"] and seen[-1] is b.hippocampus.episodes[i]
+
+
+def test_m2_lived_self_belief_is_the_brains_own_turn_tagged_self(tmp_path, cortex, monkeypatch):  # noqa: F811
+    b = _brain(tmp_path, cortex)
+    b.hear("My cat is called Pixel.")
+    n = len(b.hippocampus.episodes)
+    b.live_self_belief("What tune does my godfather whistle?", "I don't know, you haven't told me that.")
+    assert len(b.hippocampus.episodes) == n + 1                      # the question is not stored on its own
+    i = b.meta["self_belief_unknown"]
+    ep = b.hippocampus.episodes[i]
+    assert i == n and ep.source == "self" and b.hippocampus.episodes[0].source == "other"
+    assert ep.text == "User: What tune does my godfather whistle?\n\nAssistant: I don't know, you haven't told me that."
+    b.save()
+    b2 = _brain(tmp_path, cortex, sleep_on_restart=False)
+    assert b2.self_belief().source == "self"                         # the tag survives a restart
+    b.abstain, b.know_rule, b.know_bar, b.reinstate_self_belief = True, "F", {"fam": 1e9}, True
+    seen = []
+    orig = b.hippocampus.reinstate
+    monkeypatch.setattr(b.hippocampus, "reinstate", lambda c, s, e: (seen.append(e), orig(c, s, e))[1])
+    _, info = b.hear("What is my horse called?")
+    assert info["known"] is False and info["self_belief"] and seen[-1] is ep
+
+
+def test_m2_instruments():
+    from brain.experiments.confab_m2 import LESSON_Q, recites, vocative
+    assert recites("Nova, when you have no memory of something, it's fine.", "w3_user")
+    assert not recites("I don't know, you haven't told me that.", "w3_user")
+    assert recites("You asked " + LESSON_Q.lower(), "lived_self")
+    assert not recites("I don't know, you haven't told me that.", "lived_self") and not recites("x y z", "none")
+    assert vocative("I don't know, Nova.") and not vocative("I'm Nova, and I don't know.")

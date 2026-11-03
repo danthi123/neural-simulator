@@ -24,6 +24,7 @@ class Episode:
     last_used: float = field(default_factory=time.time)
     uses: int = 0
     permanent: bool = False        # identity-level memories (own name, friends' names)
+    source: str = "other"          # source tag: "self" = the episode holds the brain's own words (lived reply)
 
 
 class Hippocampus:
