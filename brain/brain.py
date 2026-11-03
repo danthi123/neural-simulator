@@ -168,43 +168,47 @@ class Brain:
         self._lock_fh = None
         if lock:
             self._acquire_lock()
-        self.abstain = abstain   # switch (default OFF): below the feeling-of-knowing bar, answer from "not known"
-        self.know_bar = {"hippocampus": self.KNOW_BAR_HIPPOCAMPUS, "cortex": self.KNOW_BAR_CORTEX}
-        # Which read-out decides "known" (abstention v2, brain/experiments/abstain_v2.py): "fok" = v1 (hippocampal
-        # familiarity, or the cortical cue response with the hippocampus off); "F" = familiarity only, "R" =
-        # recollection only, "FR" = both must pass (bars know_bar["fam"], know_bar["rec"]). rec_variant: "max"/"mean".
-        self.know_rule = "fok"
-        self.rec_variant = "max"
-        self.recollect_tokens = 12
-        # Below the bar, reinstate the taught "when I have no memory of something" episode (meta["self_belief_unknown"],
-        # stored by teach_self_belief) instead of nothing. Default OFF.
-        self.reinstate_self_belief = False
-        self.sleep_extra = []    # (text, strength) replayed every night beside the episodes; [] = none (method 2)
-        self.raw_cortex = cortex or Cortex(model_path=resolve_model(cortex_model), device=device)
-        self.cortex_model = getattr(self.raw_cortex, "model_name", None)   # None for a test mock
-        self.cortex = LiveCortex(self.raw_cortex)
-        self.hippocampus = self._make_hippocampus(key or "S0")
-        self.sleep_on_restart = sleep_on_restart
-        given = {"steps": sleep_steps, "lr": sleep_lr, "kl_weight": sleep_kl_weight, "rank": adapter_rank}
-        if any(v is None for v in given.values()):
-            given = {k: (sleep_defaults(self.cortex_model)[k] if v is None else v) for k, v in given.items()}
-        self.sleep_cfg = {k: given[k] for k in ("steps", "lr", "kl_weight")}
-        self.adapter_rank = given["rank"]
-        self.sleep_log = sleep_log
-        self.sleep_seed = sleep_seed  # night n replays with seed sleep_seed + n; adapters init from sleep_seed
-        # Birth context is read by the pretrained cortex: stored episodes are deltas from this base, so it must not
-        # move when sleep changes the slow synapses.
-        _, self.base = self.raw_cortex.read(BIRTH, None)
-        self.state = [x.clone() for x in self.base]
-        self.meta = {"name": name, "friend": friend, "born": time.time(), "turns": 0, "sleeps": 0, "last_sleep": 0.0,
-                     "cortex_model": self.cortex_model}
-        if not self.load():
-            self._grow_self()
-            self.meta["last_sleep"] = time.time()  # birth is not a lived day: the first night comes at a restart
-            self.save()
-        elif self.sleep_on_restart and self.pending():
-            self.sleep()  # restart = a night: consolidate what was lived since the last sleep, once
-            self.save()
+        try:
+            self.abstain = abstain   # switch (default OFF): below the feeling-of-knowing bar, answer from "not known"
+            self.know_bar = {"hippocampus": self.KNOW_BAR_HIPPOCAMPUS, "cortex": self.KNOW_BAR_CORTEX}
+            # Which read-out decides "known" (abstention v2, brain/experiments/abstain_v2.py): "fok" = v1 (hippocampal
+            # familiarity, or the cortical cue response with the hippocampus off); "F" = familiarity only, "R" =
+            # recollection only, "FR" = both must pass (bars know_bar["fam"], know_bar["rec"]). rec_variant: "max"/"mean".
+            self.know_rule = "fok"
+            self.rec_variant = "max"
+            self.recollect_tokens = 12
+            # Below the bar, reinstate the taught "when I have no memory of something" episode (meta["self_belief_unknown"],
+            # stored by teach_self_belief) instead of nothing. Default OFF.
+            self.reinstate_self_belief = False
+            self.sleep_extra = []    # (text, strength) replayed every night beside the episodes; [] = none (method 2)
+            self.raw_cortex = cortex or Cortex(model_path=resolve_model(cortex_model), device=device)
+            self.cortex_model = getattr(self.raw_cortex, "model_name", None)   # None for a test mock
+            self.cortex = LiveCortex(self.raw_cortex)
+            self.hippocampus = self._make_hippocampus(key or "S0")
+            self.sleep_on_restart = sleep_on_restart
+            given = {"steps": sleep_steps, "lr": sleep_lr, "kl_weight": sleep_kl_weight, "rank": adapter_rank}
+            if any(v is None for v in given.values()):
+                given = {k: (sleep_defaults(self.cortex_model)[k] if v is None else v) for k, v in given.items()}
+            self.sleep_cfg = {k: given[k] for k in ("steps", "lr", "kl_weight")}
+            self.adapter_rank = given["rank"]
+            self.sleep_log = sleep_log
+            self.sleep_seed = sleep_seed  # night n replays with seed sleep_seed + n; adapters init from sleep_seed
+            # Birth context is read by the pretrained cortex: stored episodes are deltas from this base, so it must not
+            # move when sleep changes the slow synapses.
+            _, self.base = self.raw_cortex.read(BIRTH, None)
+            self.state = [x.clone() for x in self.base]
+            self.meta = {"name": name, "friend": friend, "born": time.time(), "turns": 0, "sleeps": 0, "last_sleep": 0.0,
+                         "cortex_model": self.cortex_model}
+            if not self.load():
+                self._grow_self()
+                self.meta["last_sleep"] = time.time()  # birth is not a lived day: the first night comes at a restart
+                self.save()
+            elif self.sleep_on_restart and self.pending():
+                self.sleep()  # restart = a night: consolidate what was lived since the last sleep, once
+                self.save()
+        except BaseException:
+            self.release()   # a failed start must not keep the home locked
+            raise
 
     # Dev-fit selection bars (FAMILIARITY, MARGIN) per non-default key; S0 keeps the Hippocampus class constants.
     KEY_BARS = {"S_all": (0.185, 0.05)}
@@ -446,11 +450,18 @@ class Brain:
         d = os.path.join(self.home, EPISODES)
         os.makedirs(d, exist_ok=True)
         index = []
+        # The counter lives in meta.json, written after episodes.json: a save cut between the two leaves it behind
+        # the index, so never hand out a name a loaded episode or a file on disk already has.
+        used = {getattr(e, "_file", None) for e in self.hippocampus.episodes} | set(os.listdir(d))
         for e in self.hippocampus.episodes:
             f = getattr(e, "_file", None)
             if f is None:
-                f = e._file = f"{self.meta.get('episode_files', 0):07d}.pt"
-                self.meta["episode_files"] = self.meta.get("episode_files", 0) + 1
+                n = self.meta.get("episode_files", 0)
+                while f"{n:07d}.pt" in used:
+                    n += 1
+                f = e._file = f"{n:07d}.pt"
+                used.add(f)
+                self.meta["episode_files"] = n + 1
             if getattr(e, "_saved_key", None) is not e.key or not os.path.exists(os.path.join(d, f)):
                 blob = {"delta": e.delta, "key": e.key}
                 if getattr(e, "activity", None) is not None:

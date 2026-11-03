@@ -1,6 +1,7 @@
-"""Brain(key=...) switch: default OFF is the old Brain (byte-equal), S_all uses KeyedHippocampus with its own bar and is
+"""Brain(key=...) switch: default OFF is the old Brain (same replies and store), S_all uses KeyedHippocampus with its own bar and is
 persisted in the home's meta.json. Runs on a tiny deterministic stand-in cortex (no model weights)."""
 import importlib.util
+import json
 import os
 import subprocess
 import sys
@@ -14,7 +15,7 @@ from brain.cortex import Cortex
 from brain.hippocampus import Hippocampus
 from brain.hippocampus_keys import KeyedHippocampus
 
-REF = "research/landing-1103"   # the Brain before the switch
+REF = "5ca232cd7"   # landing-1103 as landed: the last Brain that wrote memory.pt (pinned so the legacy test stays legacy)
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
@@ -111,6 +112,7 @@ def test_default_matches_the_old_brain(tmp_path):
     b_old.save()
     b_new.save()
     assert "key" not in _meta(str(tmp_path / "new"))
+    assert os.path.exists(str(tmp_path / "old" / "memory.pt"))   # the reference really is the legacy layout
     o = Brain(str(tmp_path / "old"), cortex=c, **KW).hippocampus.episodes   # legacy layout
     n = Brain(str(tmp_path / "new"), cortex=c, **KW).hippocampus.episodes
     assert len(o) == len(n) == len(b_new.hippocampus.episodes) > 0
@@ -186,3 +188,44 @@ def test_sall_similarity_is_centred_cosine_of_all_layer_deltas(tmp_path):
     mu = K.mean(0)
     want = F.normalize(K - mu, dim=1) @ F.normalize(q - mu, dim=0)
     assert torch.allclose(h.similarities(b.cortex, b.base, cue), want, atol=2e-3)
+
+
+def test_save_cut_before_meta_never_reuses_an_episode_file(tmp_path):
+    """meta.json (holding the file counter) is written after episodes.json; a save cut between them must not make
+    the next new episode overwrite an existing episode's file."""
+    home = str(tmp_path / "h")
+    c = StubCortex()
+    b = Brain(home, cortex=c, **KW)
+    _talk(b)
+    b.save()
+    meta = _meta(home)
+    meta["episode_files"] = 0   # the counter as it was before the cut save
+    with open(os.path.join(home, "meta.json"), "w") as fh:
+        json.dump(meta, fh)
+    b2 = Brain(home, cortex=c, **KW)
+    before = len(b2.hippocampus.episodes)
+    b2.hear("My bike is green.")
+    b2.save()
+    files = [e._file for e in b2.hippocampus.episodes]
+    assert len(files) == len(set(files)) and len(files) > before
+    b3 = Brain(home, cortex=c, **KW)
+    assert [e.text for e in b3.hippocampus.episodes] == [e.text for e in b2.hippocampus.episodes]
+
+
+def test_failed_start_releases_the_lock(tmp_path):
+    home = str(tmp_path / "h")
+
+    class Boom(Exception):
+        pass
+
+    class BadCortex(StubCortex):
+        def read(self, *a, **k):
+            raise Boom()
+
+    try:
+        Brain(home, cortex=BadCortex(), lock=True, **KW)
+    except Boom as exc:   # while the exception (and its traceback, holding the half-built Brain) is alive
+        held = exc
+        b = Brain(home, cortex=StubCortex(), lock=True, **KW)   # raises BrainBusy if the failed start kept the lock
+        b.release()
+    assert held is not None
