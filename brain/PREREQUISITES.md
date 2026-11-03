@@ -35,6 +35,7 @@ In brain/: code-substitute: decay constants are hand-set (TAU 1 day, exponent 0.
 In brain/: missing: re-telling strengthens the SAME episode (store appends a new one); gist vs detail; savings measurement; surprise/affect-driven salience (`modulators.py` not built).
 Readiness: PARTIAL. Informative: use-strengthening and decay curves over simulated days; high-use facts stay correct. Expected failure: savings and gist (no consolidation yet), salience-from-surprise.
 Scale note: not scale-sensitive in the ladder; strength logic is outside the LM, so any size gives the same mechanism result.
+11-03 final (`results/2026-11-03-high-use-ceiling/README.md`): `UseHippocampus` (option, default OFF; strength = tellings; `RETELL_SIM` declared in SCAFFOLDS) gives k=10 about +1 fact of 4 and 4/4 on only 1/6 seeds: NO-GO. Per-fact in-context ceiling at 0.1B is 6/12 old facts, so most 'high-use' failures are cortex-ceiling failures; the 0.4B ceiling (9/12 here vs 11/12 in the scale-ladder note) is unreconciled. Readiness stays PARTIAL.
 
 ## Sleep consolidation
 Biology:
@@ -47,6 +48,7 @@ In brain/: have (11-03): sleep wired into the live brain (restart = sleep, adapt
 In brain/: missing: varied replay (paraphrase/recombination; runs in progress), a cortex size operating point (0.4B is under-trained at the 0.1B settings), false recall (more consolidation = more recall AND more confabulation).
 Readiness: PARTIAL. Informative: hippocampus-off recall vs no-sleep and shuffled arms, relative to the cortex's own in-context ceiling (0.1B 6/12, 0.4B 11/12). Expected failure: reworded-question recall from single-form replay at 0.1B (knowledge stated once is hard for small LMs to extract).
 Scale note: operating points did not survive a scale change in the old track (record brief A3.6); derive gain per model size on dev data.
+11-03 final: 12-fact live-brain test (`results/2026-11-03-live-brain-12facts.md`, six seeds, 0.1B, strict scorer): intact+sleep 6.5/12, intact no-sleep 6.33, hippocampus off after sleep 5.5, hippocampus and adapters off 0.17, shuffled 0. Sleep adds paraphrase (+1.67) but not recall over no-sleep, and adds false recall (3.0 vs 2.0 of 4). The 3-fact smoke, re-scored with the correct-perspective scorer, is 8/18 hippocampus off and covers 2 of 3 facts (sister 5/6 seeds, cat 3/6, Volvo never). Recorded negative for 'sleep helps recall in the live brain at 0.1B'; the consolidated trace is real (lesion changes the reply).
 
 ## Memory selection (pattern completion and separation)
 Biology:
@@ -60,6 +62,7 @@ Readiness: PARTIAL. Informative: same-words cue and wrong-cue false-recall rate.
 Scale note: selection same-words 12/12 at 0.1B but 7/12 at 0.4B and 1.5B; paraphrase 8/12, 1/12, 5/12. The key depends on the LM, so rerun the ladder after any key change.
 11-03 (`experiments/results/2026-11-03-meaning-selection.md`, 6 seeds, 24 stored of 48): all-layer matrix-delta key `S_all` (`hippocampus_keys.py`) vs default S0 on heavy rewordings: selection 0.69 vs 0.33 (0.1B), 0.76 vs 0.10 (0.4B); reworded recall 0.66 vs 0.05 at 0.4B. Learned key from self-generated replay questions does not beat S_all. Told-vs-untold separation still weak (AUROC ~0.63): false recall is not solved by the key.
 11-03 real path (`experiments/results/2026-11-03-meaning-selection-realpath.md`, `KeyedHippocampus.recall`, bar refit on 36 held-out dev facts): forced selection reproduces; S_all beats S0 6/6 seeds at both sizes in every arm; S_all bar 0.185 / margin 0.05 (S0's 0.12 lets S_all fire on ~55% of untold questions); at the refit bar heavy-rewording recall drops to 0.12-0.14 with untold fire 0.15-0.22: the key picks the memory, the bar cannot also decide whether to recall. S_all now stores no key (read from the delta): 1.18 MB/episode at 0.1B (was 3.58). Not yet in the live Brain.
+11-03 final: `S_all` through the real path is a LEAD, not a GO (P1-P6 pass at 0.1B and 0.4B; told-vs-untold J 0.30 vs S0 0.17 / -0.05; bar 0.185 / 0.05 optimistic on test). `Hippocampus` default key unchanged. Needs a live-brain test with a correct-perspective scorer.
 
 ## Working memory and topic holding
 Biology:
@@ -93,6 +96,7 @@ In brain/: code-substitute: innate primaries are a declared body scaffold (balan
 In brain/: missing: arousal acting on the cortex (NE gain), surprise/novelty input to arousal, salience to encoding gain, wiring into `Brain.hear`, a body model behind the primaries.
 Readiness: PARTIAL. Informative: lesion changes tone of replies to the same question (mood probe) and, once wired, on the weekly prompts. Expected failure: appraisal of subtle or positive events (linear lexical read, no learned appraisal), arousal effects (not acting yet), any test needing a body.
 Scale note: tone control is partly an LM property; check a small and a large size before attributing a tone change to the affect part.
+11-03 final: mood iteration 2 NOT PASS 6/7 (`results/2026-11-03-mood2-0.1b.md`): negative mood darkens replies 6/6, positive brightens 3/6, a random matched-norm direction also lowers sentiment. `Affect` stays default OFF and unwired. Lead only.
 
 ## Curiosity
 Biology:
@@ -116,6 +120,7 @@ In brain/: lead (11-03, `2026-11-03-false-recall-feeling-of-knowing`): answer co
 In brain/: missing: a reported confidence, a commit/hedge/ask routing, honest read-out wording ("my familiarity reads this as new").
 Readiness: PARTIAL. Informative: abstains on never-told facts instead of confabulating. Expected failure: calibrated second-order confidence.
 Scale note: untested across the ladder; larger LMs confabulate differently, so measure false-recall per size.
+11-03 final (`results/2026-11-03-abstain-in-brain/`): `Brain(abstain=False)` familiarity gate (default OFF) pre-registered FAIL: false recall on fresh never-told questions 63 -> 34 (hippocampus on) and 46 -> 38 (off), correct answers kept. Both familiarity signals fail to generalise to new question wording (hippocampal = word overlap; cortical cue response keyed to the 'my X' frame), and gated replies are mostly invented answers, not 'I don't know'. A recorded negative for these signals; abstention v2 needs a signal learned over question forms.
 
 ## Self and identity
 Biology:
