@@ -1,0 +1,118 @@
+{
+ "model": "../models/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "seed": 102,
+ "steps": 480,
+ "kl_weight": 1.0,
+ "lr": 0.0005,
+ "arms": {
+  "no_sleep": {
+   "recall": 0,
+   "paraphrase": 0,
+   "false_recall": 0,
+   "generic_kl": 0.0,
+   "recall_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "paraphrase_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "final_replay_loss": null,
+   "adapter_norm": 0.0
+  },
+  "sleep_true": {
+   "recall": 3,
+   "paraphrase": 2,
+   "false_recall": 1,
+   "generic_kl": 0.026402041936914127,
+   "recall_items": [
+    true,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false
+   ],
+   "paraphrase_items": [
+    true,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "final_replay_loss": 0.18777909874916077,
+   "adapter_norm": 17.082780838012695
+  },
+  "sleep_shuffled": {
+   "recall": 1,
+   "paraphrase": 0,
+   "false_recall": 1,
+   "generic_kl": 0.026296898101766903,
+   "recall_items": [
+    false,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "paraphrase_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "final_replay_loss": 0.17728368937969208,
+   "adapter_norm": 17.353572845458984
+  }
+ },
+ "elapsed_s": 774.7031035423279
+}
