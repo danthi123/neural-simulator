@@ -12,7 +12,7 @@
 - **MILESTONE:** day 14 (2026-11-16), brain/ARCHITECTURE.md §4. Day 7 (2026-11-09): first [weekly] run by Hermes.
 - **STATE (11-03 pm):** 1.5B live brain, six seeds (`results/2026-11-03-live-brain-1.5b.md`): hippocampus off after
   sleep 9.33/12 vs no-sleep 2.83 (6/6 seeds), shuffled 0; KEEP. Hippocampus routing diagnosed: S0 key misroutes at
-  1.5B (7/12 forced top-1; S_all 11/12; live path 9 right/0 wrong at the 1.5B bar); recall with it on is 4.5.
+  1.5B (`brain/research/2026-11-03-hippo-routing-1.5b.md`; 7/12 forced top-1; S_all 11/12; live path 9 right/0 wrong at the 1.5B bar); recall with it on is 4.5.
   Told-gate FAIL (`results/2026-11-03-told-gate-1.5b.md`): when the not-known gate fires, the lesson overrides a
   recalled fact (told 5.33 -> 0.83/12); gate quiet = harmless. Gate accuracy on told questions (misfire rate under the
   fitted bar, unmeasured) is the deciding prerequisite, plus lesson/answer arbitration so a confident recall wins.
@@ -21,7 +21,7 @@
   episodes; new: told facts loop in free text after sleep, self-name only in the hippocampus. M3 FAIL at 0.4B.
   Brain defaults unchanged (all new switches OFF; default cortex still 0.1B).
 - **LIVE RUNS:** AWS: hippo-route packet (`brain/experiments/jobs/2026-11-03-aws-hippo-route.txt`, S_all key + 1.5B
-  bar, arms f/g, 6 seeds, ~2.5 h, dead-man 240 min). W GPU: idle. Watcher fix landed (0a4737825).
+  bar, arms f/g, 6 seeds, ~2.5 h, dead-man 240 min). W GPU: idle. Watcher fixes landed (0a4737825, 989dfe3f9).
 - **READY WORK (one next job per resource):** W GPU: measure the familiarity gate's misfire rate on told questions at
   1.5B, then intrusion/looping of told facts in free text after sleep. Mini-PCs: Pi-lane 12-fact rescoring item. Pi:
   `research/coordination/PI_LANE.md` open items. Claude: land the hippo-route result when AWS finishes.

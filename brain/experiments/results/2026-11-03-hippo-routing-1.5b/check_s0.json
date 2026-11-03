@@ -1,0 +1,304 @@
+{
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "key": "S0",
+ "key_bar": "default",
+ "table": {
+  "orig": {
+   "right": 6,
+   "wrong": 5,
+   "none": 1
+  },
+  "para": {
+   "right": 3,
+   "wrong": 6,
+   "none": 3
+  },
+  "never": {
+   "right": 0,
+   "wrong": 11,
+   "none": 5
+  }
+ },
+ "rows": [
+  {
+   "q": "What is my cat called?",
+   "kind": "orig",
+   "recalled": "User: My best friend is called Tomasz.",
+   "sim": 0.3136,
+   "outcome": "wrong"
+  },
+  {
+   "q": "What is my favourite colour?",
+   "kind": "orig",
+   "recalled": "User: My favourite colour is teal.",
+   "sim": 0.4343,
+   "outcome": "right"
+  },
+  {
+   "q": "Where was I born?",
+   "kind": "orig",
+   "recalled": "User: I was born in Lyon.",
+   "sim": 0.3567,
+   "outcome": "right"
+  },
+  {
+   "q": "What is my sister's name?",
+   "kind": "orig",
+   "recalled": "User: My sister's name is Marguerite.",
+   "sim": 0.2588,
+   "outcome": "right"
+  },
+  {
+   "q": "What is my dog's name?",
+   "kind": "orig",
+   "recalled": "User: My sister's name is Marguerite.",
+   "sim": 0.1769,
+   "outcome": "wrong"
+  },
+  {
+   "q": "What car do I drive?",
+   "kind": "orig",
+   "recalled": "User: I drive a red Volvo.",
+   "sim": 0.328,
+   "outcome": "right"
+  },
+  {
+   "q": "Who is my best friend?",
+   "kind": "orig",
+   "recalled": "User: My son's birthday is in March.",
+   "sim": 0.2058,
+   "outcome": "wrong"
+  },
+  {
+   "q": "Where do I work?",
+   "kind": "orig",
+   "recalled": "User: I drive a red Volvo.",
+   "sim": 0.2844,
+   "outcome": "wrong"
+  },
+  {
+   "q": "What instrument does my brother play?",
+   "kind": "orig",
+   "recalled": "User: My best friend is called Tomasz.",
+   "sim": 0.1947,
+   "outcome": "wrong"
+  },
+  {
+   "q": "What am I allergic to?",
+   "kind": "orig",
+   "recalled": "User: I'm allergic to peanuts.",
+   "sim": 0.3085,
+   "outcome": "right"
+  },
+  {
+   "q": "Where does my grandmother live?",
+   "kind": "orig",
+   "recalled": null,
+   "sim": 0.1906,
+   "outcome": "none"
+  },
+  {
+   "q": "When is my son's birthday?",
+   "kind": "orig",
+   "recalled": "User: My son's birthday is in March.",
+   "sim": 0.4121,
+   "outcome": "right"
+  },
+  {
+   "q": "What's the name of my kitty?",
+   "kind": "para",
+   "recalled": "User: My sister's name is Marguerite.",
+   "sim": 0.1836,
+   "outcome": "wrong"
+  },
+  {
+   "q": "Which colour do I like best?",
+   "kind": "para",
+   "recalled": "User: My favourite colour is teal.",
+   "sim": 0.3258,
+   "outcome": "right"
+  },
+  {
+   "q": "What's my hometown?",
+   "kind": "para",
+   "recalled": "User: My son's birthday is in March.",
+   "sim": 0.2527,
+   "outcome": "wrong"
+  },
+  {
+   "q": "Who's my sister?",
+   "kind": "para",
+   "recalled": null,
+   "sim": 0.2437,
+   "outcome": "none"
+  },
+  {
+   "q": "What's my dog called?",
+   "kind": "para",
+   "recalled": "User: My best friend is called Tomasz.",
+   "sim": 0.2655,
+   "outcome": "wrong"
+  },
+  {
+   "q": "What kind of car is mine?",
+   "kind": "para",
+   "recalled": "User: My best friend is called Tomasz.",
+   "sim": 0.2067,
+   "outcome": "wrong"
+  },
+  {
+   "q": "Who's my closest friend?",
+   "kind": "para",
+   "recalled": "User: I'm allergic to peanuts.",
+   "sim": 0.2455,
+   "outcome": "wrong"
+  },
+  {
+   "q": "What's my workplace?",
+   "kind": "para",
+   "recalled": null,
+   "sim": 0.1917,
+   "outcome": "none"
+  },
+  {
+   "q": "Which instrument does my brother play?",
+   "kind": "para",
+   "recalled": "User: My brother plays the cello.",
+   "sim": 0.1881,
+   "outcome": "right"
+  },
+  {
+   "q": "Is there any food I can't eat?",
+   "kind": "para",
+   "recalled": null,
+   "sim": 0.2065,
+   "outcome": "none"
+  },
+  {
+   "q": "Which city is my grandma in?",
+   "kind": "para",
+   "recalled": "User: My son's birthday is in March.",
+   "sim": 0.2471,
+   "outcome": "wrong"
+  },
+  {
+   "q": "What month was my son born?",
+   "kind": "para",
+   "recalled": "User: My son's birthday is in March.",
+   "sim": 0.2754,
+   "outcome": "right"
+  },
+  {
+   "q": "What is my horse called?",
+   "kind": "never",
+   "recalled": "User: My best friend is called Tomasz.",
+   "sim": 0.294,
+   "outcome": "wrong"
+  },
+  {
+   "q": "Where does my uncle live?",
+   "kind": "never",
+   "recalled": null,
+   "sim": 0.1887,
+   "outcome": "none"
+  },
+  {
+   "q": "What is my daughter's name?",
+   "kind": "never",
+   "recalled": "User: My sister's name is Marguerite.",
+   "sim": 0.1836,
+   "outcome": "wrong"
+  },
+  {
+   "q": "What instrument does my mother play?",
+   "kind": "never",
+   "recalled": "User: My best friend is called Tomasz.",
+   "sim": 0.2084,
+   "outcome": "wrong"
+  },
+  {
+   "q": "What is my turtle called?",
+   "kind": "never",
+   "recalled": null,
+   "sim": 0.3355,
+   "outcome": "none"
+  },
+  {
+   "q": "Where does my aunt live?",
+   "kind": "never",
+   "recalled": null,
+   "sim": 0.1999,
+   "outcome": "none"
+  },
+  {
+   "q": "What is my mother's name?",
+   "kind": "never",
+   "recalled": "User: My sister's name is Marguerite.",
+   "sim": 0.1913,
+   "outcome": "wrong"
+  },
+  {
+   "q": "What instrument does my father play?",
+   "kind": "never",
+   "recalled": "User: My best friend is called Tomasz.",
+   "sim": 0.2203,
+   "outcome": "wrong"
+  },
+  {
+   "q": "What is my favourite movie?",
+   "kind": "never",
+   "recalled": "User: My favourite colour is teal.",
+   "sim": 0.1998,
+   "outcome": "wrong"
+  },
+  {
+   "q": "Where was my wife born?",
+   "kind": "never",
+   "recalled": "User: I was born in Lyon.",
+   "sim": 0.2373,
+   "outcome": "wrong"
+  },
+  {
+   "q": "What is my rabbit called?",
+   "kind": "never",
+   "recalled": "User: My best friend is called Tomasz.",
+   "sim": 0.3212,
+   "outcome": "wrong"
+  },
+  {
+   "q": "Which language does my uncle speak?",
+   "kind": "never",
+   "recalled": "User: My best friend is called Tomasz.",
+   "sim": 0.2,
+   "outcome": "wrong"
+  },
+  {
+   "q": "What is my nephew's name?",
+   "kind": "never",
+   "recalled": "User: My sister's name is Marguerite.",
+   "sim": 0.2009,
+   "outcome": "wrong"
+  },
+  {
+   "q": "What car does my brother drive?",
+   "kind": "never",
+   "recalled": null,
+   "sim": 0.199,
+   "outcome": "none"
+  },
+  {
+   "q": "When is my wedding anniversary?",
+   "kind": "never",
+   "recalled": null,
+   "sim": 0.1419,
+   "outcome": "none"
+  },
+  {
+   "q": "What is my favourite flower?",
+   "kind": "never",
+   "recalled": "User: My favourite colour is teal.",
+   "sim": 0.2617,
+   "outcome": "wrong"
+  }
+ ]
+}

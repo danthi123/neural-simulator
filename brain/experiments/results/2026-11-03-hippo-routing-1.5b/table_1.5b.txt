@@ -1,0 +1,49 @@
+
+
+model rwkv7-g1l-1.5b-20261031-ctx34304  fidelity: live S0 top-1 == read-out S0 top-1 on 40/40 cues, max |score diff| 0.0000
+
+Forced top-1 right episode (of 12). test orig / test PARA | dev mean orig / para_a / para_b | test told margin mean (min)
+S0         7 /  5 | 10.00 /  5.67 /  5.00 | +0.057 (-0.093)
+S_all     11 / 11 | 11.67 / 11.67 /  8.67 | +0.164 (-0.008)
+att_all    3 /  4 |  6.00 /  4.33 /  5.00 | -0.053 (-0.234)
+ffn_all    5 /  4 |  7.33 /  4.67 /  5.00 | -0.039 (-0.227)
+last_all   3 /  4 |  5.67 /  4.00 /  5.33 | -0.047 (-0.239)
+pool_all   7 /  5 |  7.33 /  5.33 /  6.33 | +0.036 (-0.256)
+S17       12 / 11 | 12.00 / 12.00 / 10.33 | +0.217 (+0.014)
+S8        11 / 10 | 11.67 / 11.67 / 10.67 | +0.229 (-0.015)
+S7        10 / 10 | 11.33 / 11.00 / 10.00 | +0.195 (-0.012)
+S19       10 /  9 | 11.33 / 11.33 / 10.67 | +0.172 (-0.025)
+S5        10 /  9 | 11.67 / 11.00 /  9.67 | +0.158 (-0.074)
+S15       10 / 11 | 10.33 / 10.00 /  8.67 | +0.138 (-0.034)
+S9        10 /  8 | 11.33 / 11.33 /  9.00 | +0.136 (-0.017)
+S4        10 /  9 | 11.33 / 10.00 /  6.67 | +0.116 (-0.073)
+S11       10 /  9 | 11.33 / 10.00 /  9.00 | +0.138 (-0.114)
+S12        9 / 10 | 10.67 / 10.67 /  7.00 | +0.136 (-0.082)
+S16       10 /  8 | 11.33 / 10.67 /  9.33 | +0.180 (-0.059)
+S13       10 /  9 | 10.33 / 10.67 /  8.00 | +0.127 (-0.079)
+S10       11 /  8 | 10.33 / 10.33 /  9.33 | +0.112 (-0.041)
+
+Test told cues: who wins under S0 (forced), with top score and margin over runner-up
+  What is my cat called?                   -> My best friend is called Tomasz.   top 0.314 gap 0.084  WRONG
+  What is my favourite colour?             -> My favourite colour is teal.       top 0.434 gap 0.242
+  Where was I born?                        -> I was born in Lyon.                top 0.357 gap 0.153
+  What is my sister's name?                -> My sister's name is Marguerite.    top 0.259 gap 0.112
+  What is my dog's name?                   -> My sister's name is Marguerite.    top 0.177 gap 0.029  WRONG
+  What car do I drive?                     -> I drive a red Volvo.               top 0.328 gap 0.153
+  Who is my best friend?                   -> My son's birthday is in March.     top 0.206 gap 0.050  WRONG
+  Where do I work?                         -> I drive a red Volvo.               top 0.284 gap 0.072  WRONG
+  What instrument does my brother play?    -> My best friend is called Tomasz.   top 0.195 gap 0.032  WRONG
+  What am I allergic to?                   -> I'm allergic to peanuts.           top 0.309 gap 0.127
+  Where does my grandmother live?          -> My grandmother lives in Oslo.      top 0.191 gap 0.004
+  When is my son's birthday?               -> My son's birthday is in March.     top 0.412 gap 0.238
+
+Dev-fit bar per key (dev banks only), then on TEST: told sel orig / PARA, never-told fire (/16)
+S0        fit bar 0.295 margin 0.050 devJ 0.25 | test 5/1 never 1 | at 0.12/0.02: 6/3 never 11
+S_all     fit bar 0.220 margin 0.010 devJ 0.55 | test 9/5 never 5 | at 0.12/0.02: 10/9 never 14
+att_all   fit bar 0.195 margin 0.120 devJ 0.04 | test 1/0 never 0 | at 0.12/0.02: 3/2 never 10
+ffn_all   fit bar 0.190 margin 0.030 devJ 0.08 | test 3/2 never 9 | at 0.12/0.02: 3/3 never 12
+last_all  fit bar 0.250 margin 0.030 devJ 0.05 | test 1/1 never 0 | at 0.12/0.02: 3/2 never 10
+pool_all  fit bar 0.330 margin 0.050 devJ 0.06 | test 2/1 never 6 | at 0.12/0.02: 7/5 never 14
+S17       fit bar 0.300 margin 0.020 devJ 0.60 | test 8/5 never 6 | at 0.12/0.02: 10/10 never 12
+S8        fit bar 0.220 margin 0.080 devJ 0.58 | test 10/8 never 6 | at 0.12/0.02: 10/9 never 16
+S7        fit bar 0.170 margin 0.080 devJ 0.57 | test 9/6 never 9 | at 0.12/0.02: 10/10 never 13
