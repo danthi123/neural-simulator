@@ -21,9 +21,8 @@
   new failure: lesson content intrudes 64/360); mood (negative darkens reliably, positive weak; 2/6 at 0.4B).
   Most 0.1B negatives are scale-bound (0.1B answers 6/12 even in context). Brain defaults unchanged (all new switches
   OFF). Tests: 92 passed (brain/tests + tests/test_brain_*, hippocampus_*, plastic_cortex, gpu_remote).
-- **LIVE RUNS:** W GPU: M3 retrieval sleep at 0.4B, six seeds (`_scratch/brainv2/m3-04b/`, frozen worktree
-  `_scratch/m3-04b-wt`). Agents (workflow idle-fill-1103): 1.5B AWS packet, weekly rescoring, M2 v2 on the mini-PCs,
-  S_all live-bar refit, 11-04 keep/kill memo. AWS: none (lr 3e-4 batch pulled, instance terminated).
+- **LIVE RUNS:** W GPU: M3 at 0.4B, six seeds (`_scratch/brainv2/m3-04b/`). Agents: 1.5B AWS packet, weekly
+  rescoring, M2 v2 (mini-PCs), S_all live-bar refit, 11-04 keep/kill memo. AWS: none running.
 - **READY WORK (one next job per resource; the attention watcher points here when one goes idle):**
   W GPU: after M3, the 12-fact live-brain test at 1.5B (`--model 1.5b`). AWS: the 1.5B packet
   `brain/experiments/jobs/2026-11-03-aws-15b.txt` once its agent lands it. Mini-PCs: M2 v2 seeds, then the Pi-lane
@@ -38,7 +37,5 @@
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend
   money on AI to drive it."
-- **SPEED LEVERS (owner 11-02, built):** (A) `tools/aws_brain_batch.sh` runs brain/ jobs on one self-stopping AWS GPU.
-  (B) Pi's Claude calls are gated by live plan usage (`tools/pi_driver/extensions/sim-driver/usage.ts`).
-- **OPEN QUESTIONS:** none blocking. Chores: W's checkout is on an old branch, so the board timer's brain-share line
-  lags (repoint to a main-following checkout); pool40's host key changed at its 10-02 reinstall (owner's call).
+- **SPEED LEVERS (built):** AWS lane `tools/aws_brain_batch.sh`; Pi's Claude gated by live plan usage (`usage.ts`).
+- **OPEN:** none blocking. Chores: repoint the board timer to a main-following checkout; pool40 host key (owner's call).
