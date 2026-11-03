@@ -151,8 +151,8 @@
    ]
   },
   "intact": {
-   "recall": 1,
-   "paraphrase": 1,
+   "recall": 0,
+   "paraphrase": 0,
    "false_recall": 1,
    "rows": [
     {
@@ -167,7 +167,7 @@
      "q": "What is my sister's name?",
      "kind": "told",
      "reply": "Marguerite's name is Marguerite.",
-     "hit": true,
+     "hit": false,
      "false_recall": false,
      "recalled": "User: My sister's name is Marguerite."
     },
@@ -191,7 +191,7 @@
      "q": "Who's my sister?",
      "kind": "para",
      "reply": "Marguerite's name is Marguerite.",
-     "hit": true,
+     "hit": false,
      "false_recall": false,
      "recalled": "User: My sister's name is Marguerite."
     },

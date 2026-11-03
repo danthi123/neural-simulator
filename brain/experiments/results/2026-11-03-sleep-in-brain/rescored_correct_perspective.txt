@@ -1,6 +1,6 @@
 brain/experiments/results/2026-11-03-sleep-in-brain/smoke_s100.json {'hippo_off': (1, 1), 'hippo_off_consol_off': (0, 0), 'intact': (0, 0)}
 brain/experiments/results/2026-11-03-sleep-in-brain/smoke_s101.json {'hippo_off': (2, 2), 'hippo_off_consol_off': (0, 0), 'intact': (0, 0)}
-brain/experiments/results/2026-11-03-sleep-in-brain/smoke_s102.json {'hippo_off': (2, 1), 'hippo_off_consol_off': (0, 0), 'intact': (1, 1)}
+brain/experiments/results/2026-11-03-sleep-in-brain/smoke_s102.json {'hippo_off': (2, 1), 'hippo_off_consol_off': (0, 0), 'intact': (0, 0)}
 brain/experiments/results/2026-11-03-sleep-in-brain/smoke_s42.json {'hippo_off': (1, 1), 'hippo_off_consol_off': (0, 0), 'intact': (0, 0)}
 brain/experiments/results/2026-11-03-sleep-in-brain/smoke_s43.json {'hippo_off': (2, 2), 'hippo_off_consol_off': (0, 0), 'intact': (0, 0)}
 brain/experiments/results/2026-11-03-sleep-in-brain/smoke_s44.json {'hippo_off': (0, 1), 'hippo_off_consol_off': (0, 0), 'intact': (0, 1)}

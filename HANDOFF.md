@@ -15,12 +15,12 @@
   Sleep is in the live `Brain` (restart = sleep, adapters persisted, lesions). Strict 12-fact test, six seeds, 0.1B:
   intact+sleep 6.5/12, intact no-sleep 6.33, hippocampus off after sleep 5.5, hippo+adapters off 0.17, shuffled 0:
   the trace is real, but sleep adds paraphrase (+1.67), not recall, and adds false recall (3.0 vs 2.0 of 4). 3-fact smoke
-  re-scored correct-perspective: 8/18 hippo off, 2 of 3 facts. NEGATIVES: abstention gate FAIL (false recall 63->34,
+  re-scored correct-perspective: 8/18 hippo off, intact 0/18; 2 of 3 facts but only sister clean (never-told horse -> "Pixel" 4/6). NEGATIVES: abstention gate FAIL (false recall 63->34,
   46->38; signals do not generalise to new wording; gated replies are invented answers); high-use NO-GO (UseHippocampus
   +1 fact of 4, 4/4 on 1/6 seeds; 0.1B in-context ceiling 6/12). LEADS: `S_all` meaning key (6 criteria pass at 0.1B and
   0.4B, J 0.30 vs 0.17/-0.05, not in Brain); mood iteration 2 NOT PASS 6/7 (neg 6/6, pos 3/6, random also darkens).
   Brain defaults unchanged: abstain=False, affect not wired, default key. Scorer fixed: `strict_scorer.correct_answer`
-  (echo of told sentence + tautologies void; first-person word alone does not) in sleep smoke and weekly.
+  (echo of told sentence incl. half restatements, wrong-subject replies, tautologies and bare repetition void; first-person word alone does not) in sleep smoke and weekly.
   Tests: 133 passed, 1 skipped (brain/tests + tests/test_brain_*, plastic_cortex, hippocampus_*); old-track `test_learned_assoc_graph_agent` fails (pre-existing).
 - **LIVE RUNS (W may be off):** varied-replay on mini-PCs pool40/41/42 (`research/varied-replay-1103`; do not touch);
   GPU agent owns gpu_queue (cortex size, `research/cortex-size-1103*`). Pull mini-PC results: `rsync -a poolNN:brainv2/results/ _scratch/brainv2/pool_results/`.

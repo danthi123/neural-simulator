@@ -35,16 +35,22 @@ first-person reply that restates the told sentence (it has a first-person word A
 sentence's other content words) and (b) tautologies of the form "<key> is (called) <key>" ("Pixel is called Pixel.").
 A first-person word alone no longer voids a reply. The six JSONs were regenerated from their saved replies with
 `--rescore-write` (no model rerun; the hit, recall and paraphrase fields now agree with this page;
-`rescored_correct_perspective.txt`). Counts, summed over six seeds:
+`rescored_correct_perspective.txt`).
+Second skeptic pass (`research/landing-fixes-1103`): the scorer also voids (c) a first-person clause that restates
+the user's own first-person told line with only half its words ("I drive a Volvo.", "My cat is Pixel."), (d) a reply
+naming a different fact-bank subject than the question ("My horse is called Pixel." to "What is my cat called?") and
+(e) bare repetition ("Pixel. Pixel.", "Marguerite's name is Marguerite."). Re-scored again with `--rescore-write`:
+only intact seed 102 changed (its "Marguerite's name is Marguerite." no longer counts). Counts, summed over six seeds:
 
 | arm | told (of 18) | paraphrase (of 18) | false recall (of 6) |
 |---|---|---|---|
 | hippocampus OFF, consolidated ON | **8** (substring 15) | 8 (substring 11) | 4 |
 | hippocampus OFF + consolidated OFF | 0 | 0 | 0 |
-| intact | 1 (substring 18) | 2 (substring 12) | 4 |
+| intact | 0 (substring 18; 1 before the second pass) | 1 (substring 12; was 2) | 4 |
 
 Which facts: with the hippocampus off, **2 of the 3 facts** are ever answered correctly: the sister's name on 5/6 seeds
-and the cat's name on 3/6; the red Volvo is never a clean answer (6/6 replies are the echo "I drive a red Volvo.").
+and the cat's name on 3/6 (but the never-told "What is my horse called?" also got "Pixel" on 4/6 seeds, so a "Pixel"
+answer is not evidence of recall of the cat; **only the sister fact is clean**); the red Volvo is never a clean answer (6/6 replies are the echo "I drive a red Volvo.").
 Read every claim below as "2 of 3 facts, a partial carry-over", not as general recall. The intact arm's replies are
 almost all tautologies or echoes ("Pixel is called Pixel.", "Marguerite is called Marguerite."): the hippocampus
 reinstated the episode but the cortex did not produce a clean answer, so the old 18/18 intact number is not recall.
@@ -52,7 +58,7 @@ The hippocampus-off arm is the headline: 8/18 and 8/18. The 15/18 and 11/18 in t
 scores, kept for the record.
 
 **What it shows.** The wiring works end to end on every seed: the restart slept exactly once, adapters were saved
-and reloaded, and with the hippocampus off the brain answered told facts from its own consolidated synapses (8/18 correct-perspective, 2 of 3 facts; 15/18 by the old substring score)
+and reloaded, and with the hippocampus off the brain answered told facts from its own consolidated synapses (8/18 correct-perspective, 2 of 3 facts, only the sister fact clean since the never-told horse question also got "Pixel" on 4/6 seeds; 15/18 by the old substring score)
 where the same brain with the consolidated lesion answers none (0/18; "I'm sorry, but I can't assist with that").
 The consolidated lesion visibly changes replies. Paraphrases partly carry over (8/18 correct-perspective).
 
