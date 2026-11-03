@@ -171,6 +171,7 @@ def eval_phase(a, c):
     snap = [(e.strength, e.uses, e.last_used) for e in b.hippocampus.episodes]
     base = [x.clone() for x in b.base]
     res = {"seed": a.seed, "home": a.home, "know_bar": b.know_bar, "arms": {}}
+    done = {}
     for arm in a.arms.split(","):
         hip_off, abst = ARMS[arm]
         rows = []
@@ -183,8 +184,20 @@ def eval_phase(a, c):
                 b.abstain = abst
                 np.random.seed(a.seed * 1000 + qi)
                 torch.manual_seed(a.seed * 1000 + qi)
-                reply, info = b.hear(q)
-                r = {"set": set_name, "q": q, "key": key, "reply": reply, "fok": info.get("fok"),
+                prior = done.get((hip_off, q))
+                reused = False
+                if abst and prior is not None:
+                    # Above the bar Brain.hear runs exactly the abstention-off path (tests/test_brain_abstain.py), with
+                    # the same seeds and the same reset brain: reuse that reply instead of regenerating it (CPU time).
+                    fok, src = b.feeling_of_knowing(q)
+                    if fok >= b.know_bar[src]:
+                        reply, info = prior[0], dict(prior[1], fok=round(fok, 4), fok_source=src, known=True)
+                        reused = True
+                if not reused:
+                    reply, info = b.hear(q)
+                if not abst:
+                    done[(hip_off, q)] = (reply, info)
+                r = {"set": set_name, "q": q, "key": key, "reply": reply, "fok": info.get("fok"), "reused": reused,
                      "known": info.get("known", True), "recalled": info["recalled"], **score(reply, key, allowed)}
                 rows.append(r)
                 print(arm, "|", q, "->", reply, "|", r["fok"], r["correct"], r["false_recall"], r["abstained"],
