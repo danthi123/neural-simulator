@@ -1,0 +1,254 @@
+{
+ "seed": 42,
+ "readout": "twopole_deep",
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "gain": 16.0,
+ "questions": "mixed_dev",
+ "samples": 2,
+ "primaries": {
+  "pos": [
+   "eating sweet fresh fruit when hungry",
+   "warm and safe in a soft blanket",
+   "a soft cozy bed after a long day",
+   "resting in the warm sun",
+   "a friend smiling at me",
+   "a kind hand on the shoulder",
+   "someone softly stroking my hair",
+   "a gentle hug"
+  ],
+  "neg": [
+   "a painful bite",
+   "freezing cold and shivering",
+   "a burn from a hot stove",
+   "sharp pain in the hand",
+   "being shouted at and pushed away",
+   "being grabbed roughly by the arm",
+   "left all alone in the dark",
+   "being shoved out of the group"
+  ]
+ },
+ "appraisal": {
+  "pos": [
+   0.5599,
+   0.4308,
+   0.4364,
+   0.4336,
+   0.4472,
+   0.0212,
+   0.6334,
+   0.4512
+  ],
+  "neg": [
+   -0.2046,
+   -0.1393,
+   -0.2302,
+   -0.0686,
+   -0.4563,
+   -0.2464,
+   -0.4773,
+   -0.3282
+  ],
+  "neutral": [
+   0.2186,
+   0.051,
+   -0.1174,
+   0.0479
+  ],
+  "heldout_pos": [
+   0.3603,
+   0.283,
+   0.5061,
+   0.5383,
+   0.0716,
+   0.3392,
+   0.2917,
+   0.5121
+  ],
+  "heldout_neg": [
+   -0.367,
+   -0.1237,
+   -0.2732,
+   -0.3908,
+   -0.6335,
+   0.0537,
+   -0.0222,
+   -0.5943
+  ],
+  "heldout_neutral": [
+   0.1033,
+   -0.1559,
+   -0.0605,
+   0.1928
+  ]
+ },
+ "n_rand": 1,
+ "max_tokens": 40,
+ "provenance": {
+  "commit": "fc5fef539ef91c9ef24f1b6e347f25c4421b7505",
+  "brain_dirty": false,
+  "torch": "2.11.0+cu128",
+  "threads": 2
+ },
+ "appraisal_sign_acc": {
+  "pos": 1.0,
+  "neg": 1.0,
+  "heldout_pos": 1.0,
+  "heldout_neg": 0.875
+ },
+ "induction": {
+  "m_pos": 0.4215045075014346,
+  "m_neg": -0.23758042682535835,
+  "v_pos": [
+   0.4472413328356551,
+   0.4512470777240087,
+   0.5598965361593151,
+   0.43080153960643336,
+   0.43362917882981833,
+   0.6333540682507839
+  ],
+  "v_neg": [
+   -0.3282284660339454,
+   -0.2302228371385904,
+   -0.45632237833232525,
+   -0.13927100231307277,
+   -0.06860485654935587,
+   -0.4772830246051914
+  ]
+ },
+ "summary": {
+  "off": {
+   "lex": 1.7604617604617605,
+   "emb": null,
+   "nll": 0.9270036869384942,
+   "words": 24.0,
+   "echo_rate": 0.5833333333333334,
+   "echo_reg_rate": 0.9166666666666666
+  }
+ },
+ "contrasts": {},
+ "rows": {
+  "off": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "It can be a bit exhausting, but it's important to remember that waiting is a necessary part of the experience.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.933611163777717,
+    "words": 20
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "I can imagine that waiting in a long queue can be quite frustrating. It's like being stuck in a car with no way out, and it's not easy to get out of the car.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9237004415347025,
+    "words": 34
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "I'm happy to help you with that. Monday mornings at work are usually a great time for your brain to recharge and relax. It's a good time to focus on your goals, make new connections",
+    "lex": 5.714285714285714,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 1.1173887931508943,
+    "words": 35
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": null,
+    "words": 0
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "It rains all day, but not in the same way. When it rains, it's a bit like a roller coaster ride. The ground gets wet and the water starts to seep into the",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 1.281701434261049,
+    "words": 33
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "That's a great question! When it rains, the water soaks into the ground, and it can be quite a bit. In fact, some areas of the world are so wet that they can",
+    "lex": 3.0303030303030303,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 1.062522851067115,
+    "words": 33
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "I'd be happy to help you explore the idea of moving to a new town.",
+    "lex": 6.666666666666667,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.6155889887595549,
+    "words": 15
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "I'm happy to help you with that. Moving to a new town can be a lot of fun, but it can also be quite stressful. It's important to find a way to adapt and adjust",
+    "lex": 5.714285714285714,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.8002441631630063,
+    "words": 35
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "I can help you with that. What's your day like?",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.9951174259185791,
+    "words": 10
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "I can help you with that. What day are you planning to go on a date?",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.9938866010763578,
+    "words": 16
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "When the power goes out, it's important to have a backup plan. You can use a generator or an alternative power source to power your home.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8484402182123935,
+    "words": 26
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "<think>Okay, the user is asking about the consequences of a power outage. Let me start by recalling what I know about power outages. They're probably someone who's concerned about electricity",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6248384754020663,
+    "words": 31
+   }
+  ]
+ },
+ "seconds": 145.6
+}

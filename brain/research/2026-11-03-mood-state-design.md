@@ -235,3 +235,14 @@ the writeup must then say whether positive mood also beats OFF (absolute brighte
 null-relative PASS an absolute one. A PASS is a lead toward the 11-30 milestone, not the milestone (not wired into
 `Brain`). Table: `python -m brain.experiments.mood_v3 table <dir> <size>`. JSONs record commit, torch version and
 thread count (`provenance`; reproducibility note: a rerun must use the same --threads).
+
+## 13. Iteration 3: dev selection record and FROZEN settings (written before any test-question result was read)
+
+Register (`python -m brain.experiments.mood_v3 register results/2026-11-03-mood3/dev`; off arm, dev questions, seeds
+42/43 x 2 samples, 24 replies per cell): plain 0.1B +0.25 (coverage 0.08), 0.4B +0.00 (0.00): fails the coverage
+floor (its replies carry almost no affect words); mixed 0.1B +1.79 (0.38), 0.4B +0.73 (0.33); friendly (reference)
+0.1B +4.41 (0.50), 0.4B +2.63 (0.58). SELECTED: `mixed`.
+0.4B GAIN (`mood_v3 gain`, seed 42, mixed dev x 1 sample): 8 -> pos-neg +0.57 (ok); 16 -> +2.37 (echo -0.08, NLL
+ratio 1.06, ok); 32 -> +10.11 but NLL ratio 1.66 (excluded). SELECTED: 16 (same as 0.1B).
+FROZEN for the six-seed runs at both sizes: `--questions mixed_test --samples 2 --max-tokens 40 --arms
+pos,neg,off,rand_pos,rand_neg --n-rand 2 --gain 16 --threads 2`.

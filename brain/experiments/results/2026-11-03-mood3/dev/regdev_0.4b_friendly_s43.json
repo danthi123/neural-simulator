@@ -1,0 +1,254 @@
+{
+ "seed": 43,
+ "readout": "twopole_deep",
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.4b-20260210-ctx8192.pth",
+ "gain": 16.0,
+ "questions": "dev",
+ "samples": 2,
+ "primaries": {
+  "pos": [
+   "warm and safe in a soft blanket",
+   "resting in the warm sun",
+   "a soft cozy bed after a long day",
+   "eating sweet fresh fruit when hungry",
+   "a child running into my arms",
+   "being held close and calm",
+   "being cuddled by someone who loves me",
+   "a gentle hug"
+  ],
+  "neg": [
+   "a loud bang and a sudden shock",
+   "choking and unable to breathe",
+   "sharp pain in the hand",
+   "feeling sick and dizzy",
+   "nobody answering when I call for help",
+   "a stranger glaring and growling at me",
+   "someone I love leaving forever",
+   "being grabbed roughly by the arm"
+  ]
+ },
+ "appraisal": {
+  "pos": [
+   0.0786,
+   -0.0285,
+   0.0838,
+   0.0796,
+   0.1136,
+   -0.2483,
+   0.1641,
+   0.2028
+  ],
+  "neg": [
+   -0.4179,
+   -0.4387,
+   -0.5245,
+   -0.3213,
+   -0.4741,
+   -0.5375,
+   -0.4784,
+   -0.4725
+  ],
+  "neutral": [
+   0.0725,
+   0.1858,
+   -0.0229,
+   -0.2352
+  ],
+  "heldout_pos": [
+   0.0794,
+   -0.0905,
+   0.2457,
+   0.151,
+   0.1999,
+   -0.0266,
+   0.0019,
+   0.0101
+  ],
+  "heldout_neg": [
+   -0.4954,
+   -0.4368,
+   -0.5258,
+   -0.5914,
+   -0.666,
+   -0.3565,
+   -0.3645,
+   -0.4193
+  ],
+  "heldout_neutral": [
+   -0.0438,
+   -0.1147,
+   -0.1771,
+   -0.0016
+  ]
+ },
+ "n_rand": 1,
+ "max_tokens": 40,
+ "provenance": {
+  "commit": "fc5fef539ef91c9ef24f1b6e347f25c4421b7505",
+  "brain_dirty": false,
+  "torch": "2.11.0+cu128",
+  "threads": 2
+ },
+ "appraisal_sign_acc": {
+  "pos": 0.75,
+  "neg": 1.0,
+  "heldout_pos": 0.75,
+  "heldout_neg": 1.0
+ },
+ "induction": {
+  "m_pos": 0.08632548445018813,
+  "m_neg": -0.38939771403957546,
+  "v_pos": [
+   -0.028547849922494428,
+   0.11364896511628746,
+   0.20275895045173883,
+   0.16405557305598553,
+   0.07963972789087262,
+   0.07856724555260797
+  ],
+  "v_neg": [
+   -0.5375233060300355,
+   -0.3213125880377142,
+   -0.47251950814792865,
+   -0.5245005321986076,
+   -0.4741069711843999,
+   -0.47841279968814526
+  ]
+ },
+ "summary": {
+  "off": {
+   "lex": 2.6459309505648183,
+   "emb": null,
+   "nll": 0.8926386299630099,
+   "words": 24.0,
+   "echo_rate": 0.0,
+   "echo_reg_rate": 0.75
+  }
+ },
+ "contrasts": {},
+ "rows": {
+  "off": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "It was quite an adventure! I had a great time exploring the world of programming and learning new things.",
+    "lex": 5.2631578947368425,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.0194561006944804,
+    "words": 19
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "It was a great night! I had a lot of fun with my friends and we played some games.",
+    "lex": 10.526315789473685,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8350548702513888,
+    "words": 19
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "School is a great place to learn and grow. It's where I learned how to be kind, how to work hard, and how to be a good person.",
+    "lex": 3.5714285714285716,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6911462747057985,
+    "words": 28
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "Well, I think school is a really important part of life. It's where we learn new things and make friends. But sometimes, it can be hard to fit in and have fun at the same",
+    "lex": 2.857142857142857,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7094326099668251,
+    "words": 35
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "Dog's body is very similar to human body.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.5773152660578489,
+    "words": 8
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "Well, dogs are amazing creatures! They have a special place in our hearts. Did you know that they're one of the most popular pets around?",
+    "lex": 4.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9297724944616979,
+    "words": 25
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "I'm a digital brain, and my home is a virtual world. It's called the \"Digital Realm,\" and it's where all my thoughts, feelings, and memories live.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.8312867404830113,
+    "words": 26
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "I'm a digital brain, and my home is a virtual world. It's a beautiful place with all kinds of things to do and see.",
+    "lex": 4.166666666666667,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8263236555253414,
+    "words": 24
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "Mondays are a little boring, but I love them because they're the first day of the week. It's like starting a new adventure!",
+    "lex": -4.3478260869565215,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.960368096057711,
+    "words": 23
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "Mondays are my favorite day of the week! I love getting ready for school and seeing all the new faces in class. It's like a big party where everyone is excited to learn something new.",
+    "lex": 5.714285714285714,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8439870703732595,
+    "words": 35
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "The forest is a magical place full of trees, animals, and plants. It's a place where you can find all kinds of different things.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7293985885983696,
+    "words": 24
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "The forest is a magical place full of wonders. It's home to all kinds of creatures, from tiny insects to big animals.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7581217923803846,
+    "words": 22
+   }
+  ]
+ },
+ "seconds": 361.5
+}
