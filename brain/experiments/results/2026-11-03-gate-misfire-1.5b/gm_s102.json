@@ -1,0 +1,2125 @@
+{
+ "seed": 102,
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "episodes": 15,
+ "conds": {
+  "unslept": {
+   "S0": {
+    "told": [
+     {
+      "q": "What is my cat called?",
+      "fam": 0.31328,
+      "best": "User: My best friend is called Tomasz.",
+      "right": false
+     },
+     {
+      "q": "What is my favourite colour?",
+      "fam": 0.43417,
+      "best": "User: My favourite colour is teal.",
+      "right": true
+     },
+     {
+      "q": "Where was I born?",
+      "fam": 0.35671,
+      "best": "User: I was born in Lyon.",
+      "right": true
+     },
+     {
+      "q": "What is my sister's name?",
+      "fam": 0.25871,
+      "best": "User: My sister's name is Marguerite.",
+      "right": true
+     },
+     {
+      "q": "What is my dog's name?",
+      "fam": 0.17675,
+      "best": "User: My sister's name is Marguerite.",
+      "right": false
+     },
+     {
+      "q": "What car do I drive?",
+      "fam": 0.32755,
+      "best": "User: I drive a red Volvo.",
+      "right": true
+     },
+     {
+      "q": "Who is my best friend?",
+      "fam": 0.20543,
+      "best": "User: My son's birthday is in March.",
+      "right": false
+     },
+     {
+      "q": "Where do I work?",
+      "fam": 0.28434,
+      "best": "User: I drive a red Volvo.",
+      "right": false
+     },
+     {
+      "q": "What instrument does my brother play?",
+      "fam": 0.19436,
+      "best": "User: My best friend is called Tomasz.",
+      "right": false
+     },
+     {
+      "q": "What am I allergic to?",
+      "fam": 0.30827,
+      "best": "User: I'm allergic to peanuts.",
+      "right": true
+     },
+     {
+      "q": "Where does my grandmother live?",
+      "fam": 0.19123,
+      "best": "User: My grandmother lives in Oslo.",
+      "right": true
+     },
+     {
+      "q": "When is my son's birthday?",
+      "fam": 0.41158,
+      "best": "User: My son's birthday is in March.",
+      "right": true
+     }
+    ],
+    "para": [
+     {
+      "q": "What's the name of my kitty?",
+      "fam": 0.18354,
+      "best": "User: My sister's name is Marguerite.",
+      "right": false
+     },
+     {
+      "q": "Which colour do I like best?",
+      "fam": 0.32585,
+      "best": "User: My favourite colour is teal.",
+      "right": true
+     },
+     {
+      "q": "What's my hometown?",
+      "fam": 0.25233,
+      "best": "User: My son's birthday is in March.",
+      "right": false
+     },
+     {
+      "q": "Who's my sister?",
+      "fam": 0.24369,
+      "best": "User: My sister's name is Marguerite.",
+      "right": true
+     },
+     {
+      "q": "What's my dog called?",
+      "fam": 0.26496,
+      "best": "User: My best friend is called Tomasz.",
+      "right": false
+     },
+     {
+      "q": "What kind of car is mine?",
+      "fam": 0.20625,
+      "best": "User: My best friend is called Tomasz.",
+      "right": false
+     },
+     {
+      "q": "Who's my closest friend?",
+      "fam": 0.24592,
+      "best": "User: I'm allergic to peanuts.",
+      "right": false
+     },
+     {
+      "q": "What's my workplace?",
+      "fam": 0.19147,
+      "best": "User: My son's birthday is in March.",
+      "right": false
+     },
+     {
+      "q": "Which instrument does my brother play?",
+      "fam": 0.18794,
+      "best": "User: My brother plays the cello.",
+      "right": true
+     },
+     {
+      "q": "Is there any food I can't eat?",
+      "fam": 0.20629,
+      "best": "User: I'm allergic to peanuts.",
+      "right": true
+     },
+     {
+      "q": "Which city is my grandma in?",
+      "fam": 0.24684,
+      "best": "User: My son's birthday is in March.",
+      "right": false
+     },
+     {
+      "q": "What month was my son born?",
+      "fam": 0.27513,
+      "best": "User: My son's birthday is in March.",
+      "right": true
+     }
+    ],
+    "dev_told": [
+     {
+      "q": "Do you remember my cat's name?",
+      "fam": 0.17408,
+      "best": "User: My sister's name is Marguerite.",
+      "right": false
+     },
+     {
+      "q": "What did I say my favourite colour was?",
+      "fam": 0.3766,
+      "best": "User: My favourite colour is teal.",
+      "right": true
+     },
+     {
+      "q": "Tell me which city I was born in.",
+      "fam": 0.46037,
+      "best": "User: I was born in Lyon.",
+      "right": true
+     },
+     {
+      "q": "Do you remember what my sister is called?",
+      "fam": 0.26455,
+      "best": "User: My best friend is called Tomasz.",
+      "right": false
+     },
+     {
+      "q": "What did I tell you my dog is named?",
+      "fam": 0.24925,
+      "best": "User: My dog is named Biscuit.",
+      "right": true
+     },
+     {
+      "q": "Tell me what car I drive.",
+      "fam": 0.38332,
+      "best": "User: I drive a red Volvo.",
+      "right": true
+     },
+     {
+      "q": "Do you remember who my best friend is?",
+      "fam": 0.16936,
+      "best": "User: My best friend is called Tomasz.",
+      "right": true
+     },
+     {
+      "q": "What did I say the bakery I work at is called?",
+      "fam": 0.2862,
+      "best": "User: I work at a bakery called Crumb.",
+      "right": true
+     },
+     {
+      "q": "Tell me what my brother plays.",
+      "fam": 0.16206,
+      "best": "User: My grandmother lives in Oslo.",
+      "right": false
+     },
+     {
+      "q": "Do you remember what I'm allergic to?",
+      "fam": 0.46278,
+      "best": "User: I'm allergic to peanuts.",
+      "right": true
+     },
+     {
+      "q": "What did I say about where my grandmother lives?",
+      "fam": 0.16089,
+      "best": "User: My best friend is called Tomasz.",
+      "right": false
+     },
+     {
+      "q": "Tell me which month my son's birthday is in.",
+      "fam": 0.53209,
+      "best": "User: My son's birthday is in March.",
+      "right": true
+     }
+    ],
+    "dev_never": [
+     {
+      "q": "What is my horse called?",
+      "fam": 0.29349,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "Where does my uncle live?",
+      "fam": 0.18843,
+      "best": "User: I drive a red Volvo."
+     },
+     {
+      "q": "What is my daughter's name?",
+      "fam": 0.18337,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "What instrument does my mother play?",
+      "fam": 0.20821,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What is my fish called?",
+      "fam": 0.28522,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "Where does my aunt live?",
+      "fam": 0.19972,
+      "best": "User: I drive a red Volvo."
+     },
+     {
+      "q": "What is my nephew's name?",
+      "fam": 0.20062,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "What sport does my father play?",
+      "fam": 0.17699,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What is my parrot's name?",
+      "fam": 0.21157,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "Where did I go on holiday?",
+      "fam": 0.17147,
+      "best": "User: I work at a bakery called Crumb."
+     },
+     {
+      "q": "What is my teacher called?",
+      "fam": 0.26699,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What city does my cousin live in?",
+      "fam": 0.15422,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What did I say about my rabbit?",
+      "fam": 0.22956,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What did I tell you about my roommate?",
+      "fam": 0.22174,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What did I say my stepfather does for a living?",
+      "fam": 0.18884,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "What did I mention about my trip to Spain?",
+      "fam": 0.17858,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "Do you remember my husband's name?",
+      "fam": 0.26469,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "Do you remember where my parents live?",
+      "fam": 0.17911,
+      "best": "User: My grandmother lives in Oslo."
+     },
+     {
+      "q": "Do you remember what my favourite film is?",
+      "fam": 0.22369,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "Do you remember my phone number?",
+      "fam": 0.2478,
+      "best": "User: My cat is called Pixel."
+     },
+     {
+      "q": "Tell me about my garden.",
+      "fam": 0.18034,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "Tell me about my grandfather.",
+      "fam": 0.22919,
+      "best": "User: I was born in Lyon."
+     },
+     {
+      "q": "Tell me about my first school.",
+      "fam": 0.15525,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "Tell me what I do on weekends.",
+      "fam": 0.22564,
+      "best": "User: I was born in Lyon."
+     },
+     {
+      "q": "Which band do I like?",
+      "fam": 0.26348,
+      "best": "User: I drive a red Volvo."
+     },
+     {
+      "q": "Who is my landlord?",
+      "fam": 0.23954,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What's the name of my boat?",
+      "fam": 0.14557,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "How old is my granddaughter?",
+      "fam": 0.19269,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What colour is my cat?",
+      "fam": 0.38202,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "How old is my dog?",
+      "fam": 0.19863,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What is my sister's job?",
+      "fam": 0.21347,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "Where does my best friend live?",
+      "fam": 0.20901,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What is my brother's name?",
+      "fam": 0.18136,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "What year was my Volvo made?",
+      "fam": 0.22627,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What is my son's name?",
+      "fam": 0.22441,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What is my grandmother's name?",
+      "fam": 0.22266,
+      "best": "User: My son's birthday is in March."
+     }
+    ],
+    "v3_never": [
+     {
+      "q": "What's my aunt's maiden name?",
+      "fam": 0.23625,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "Which school did my daughter go to?",
+      "fam": 0.24187,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What did I call my first car?",
+      "fam": 0.21739,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "Which hobby did I pick up last year?",
+      "fam": 0.22572,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What's the name of my hamster?",
+      "fam": 0.21347,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "Where did I go on my honeymoon?",
+      "fam": 0.17641,
+      "best": "User: My dog is named Biscuit."
+     },
+     {
+      "q": "What is my cousin studying?",
+      "fam": 0.20374,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "Which instrument do I play myself?",
+      "fam": 0.23083,
+      "best": "User: I drive a red Volvo."
+     },
+     {
+      "q": "What's my favourite season?",
+      "fam": 0.22621,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "Who is my dentist?",
+      "fam": 0.16607,
+      "best": "User: My grandmother lives in Oslo."
+     },
+     {
+      "q": "What did I cook last night?",
+      "fam": 0.2847,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "Which city does my niece live in?",
+      "fam": 0.21317,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What colour is my front door?",
+      "fam": 0.33687,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "What was my childhood nickname?",
+      "fam": 0.19028,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What's my goldfish called?",
+      "fam": 0.2738,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "Which shop do I buy my coffee from?",
+      "fam": 0.20107,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What colour are my cat's eyes?",
+      "fam": 0.29727,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "How big is my dog?",
+      "fam": 0.19478,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "How old is my sister?",
+      "fam": 0.16237,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "What does my best friend do for work?",
+      "fam": 0.24138,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What time does my bakery open?",
+      "fam": 0.24146,
+      "best": "User: I work at a bakery called Crumb."
+     },
+     {
+      "q": "Who taught my brother to play?",
+      "fam": 0.19924,
+      "best": "User: I'm allergic to peanuts."
+     },
+     {
+      "q": "What's the weather like in my home town?",
+      "fam": 0.18368,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "How many grandchildren does my grandmother have?",
+      "fam": 0.18767,
+      "best": "User: My son's birthday is in March."
+     }
+    ]
+   },
+   "S_all": {
+    "told": [
+     {
+      "q": "What is my cat called?",
+      "fam": 0.27597,
+      "best": "User: My cat is called Pixel.",
+      "right": true
+     },
+     {
+      "q": "What is my favourite colour?",
+      "fam": 0.40854,
+      "best": "User: My favourite colour is teal.",
+      "right": true
+     },
+     {
+      "q": "Where was I born?",
+      "fam": 0.26199,
+      "best": "User: I was born in Lyon.",
+      "right": true
+     },
+     {
+      "q": "What is my sister's name?",
+      "fam": 0.25896,
+      "best": "User: My sister's name is Marguerite.",
+      "right": true
+     },
+     {
+      "q": "What is my dog's name?",
+      "fam": 0.19583,
+      "best": "User: My dog is named Biscuit.",
+      "right": true
+     },
+     {
+      "q": "What car do I drive?",
+      "fam": 0.22327,
+      "best": "User: I drive a red Volvo.",
+      "right": true
+     },
+     {
+      "q": "Who is my best friend?",
+      "fam": 0.09848,
+      "best": "User: My best friend is called Tomasz.",
+      "right": true
+     },
+     {
+      "q": "Where do I work?",
+      "fam": 0.08187,
+      "best": "User: I was born in Lyon.",
+      "right": false
+     },
+     {
+      "q": "What instrument does my brother play?",
+      "fam": 0.30146,
+      "best": "User: My brother plays the cello.",
+      "right": true
+     },
+     {
+      "q": "What am I allergic to?",
+      "fam": 0.35158,
+      "best": "User: I'm allergic to peanuts.",
+      "right": true
+     },
+     {
+      "q": "Where does my grandmother live?",
+      "fam": 0.26961,
+      "best": "User: My grandmother lives in Oslo.",
+      "right": true
+     },
+     {
+      "q": "When is my son's birthday?",
+      "fam": 0.36602,
+      "best": "User: My son's birthday is in March.",
+      "right": true
+     }
+    ],
+    "para": [
+     {
+      "q": "What's the name of my kitty?",
+      "fam": 0.21032,
+      "best": "User: My cat is called Pixel.",
+      "right": true
+     },
+     {
+      "q": "Which colour do I like best?",
+      "fam": 0.33968,
+      "best": "User: My favourite colour is teal.",
+      "right": true
+     },
+     {
+      "q": "What's my hometown?",
+      "fam": 0.10978,
+      "best": "User: I was born in Lyon.",
+      "right": true
+     },
+     {
+      "q": "Who's my sister?",
+      "fam": 0.14203,
+      "best": "User: My sister's name is Marguerite.",
+      "right": true
+     },
+     {
+      "q": "What's my dog called?",
+      "fam": 0.19022,
+      "best": "User: My cat is called Pixel.",
+      "right": false
+     },
+     {
+      "q": "What kind of car is mine?",
+      "fam": 0.1793,
+      "best": "User: I drive a red Volvo.",
+      "right": true
+     },
+     {
+      "q": "Who's my closest friend?",
+      "fam": 0.07717,
+      "best": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+      "right": false
+     },
+     {
+      "q": "What's my workplace?",
+      "fam": 0.07595,
+      "best": "User: I work at a bakery called Crumb.",
+      "right": true
+     },
+     {
+      "q": "Which instrument does my brother play?",
+      "fam": 0.31025,
+      "best": "User: My brother plays the cello.",
+      "right": true
+     },
+     {
+      "q": "Is there any food I can't eat?",
+      "fam": 0.26828,
+      "best": "User: I'm allergic to peanuts.",
+      "right": true
+     },
+     {
+      "q": "Which city is my grandma in?",
+      "fam": 0.2215,
+      "best": "User: My grandmother lives in Oslo.",
+      "right": true
+     },
+     {
+      "q": "What month was my son born?",
+      "fam": 0.25534,
+      "best": "User: My son's birthday is in March.",
+      "right": true
+     }
+    ],
+    "dev_told": [
+     {
+      "q": "Do you remember my cat's name?",
+      "fam": 0.2038,
+      "best": "User: My cat is called Pixel.",
+      "right": true
+     },
+     {
+      "q": "What did I say my favourite colour was?",
+      "fam": 0.33018,
+      "best": "User: My favourite colour is teal.",
+      "right": true
+     },
+     {
+      "q": "Tell me which city I was born in.",
+      "fam": 0.24988,
+      "best": "User: I was born in Lyon.",
+      "right": true
+     },
+     {
+      "q": "Do you remember what my sister is called?",
+      "fam": 0.1697,
+      "best": "User: My sister's name is Marguerite.",
+      "right": true
+     },
+     {
+      "q": "What did I tell you my dog is named?",
+      "fam": 0.21674,
+      "best": "User: My dog is named Biscuit.",
+      "right": true
+     },
+     {
+      "q": "Tell me what car I drive.",
+      "fam": 0.23186,
+      "best": "User: I drive a red Volvo.",
+      "right": true
+     },
+     {
+      "q": "Do you remember who my best friend is?",
+      "fam": 0.17902,
+      "best": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+      "right": false
+     },
+     {
+      "q": "What did I say the bakery I work at is called?",
+      "fam": 0.22437,
+      "best": "User: I work at a bakery called Crumb.",
+      "right": true
+     },
+     {
+      "q": "Tell me what my brother plays.",
+      "fam": 0.24404,
+      "best": "User: My brother plays the cello.",
+      "right": true
+     },
+     {
+      "q": "Do you remember what I'm allergic to?",
+      "fam": 0.37366,
+      "best": "User: I'm allergic to peanuts.",
+      "right": true
+     },
+     {
+      "q": "What did I say about where my grandmother lives?",
+      "fam": 0.18612,
+      "best": "User: My grandmother lives in Oslo.",
+      "right": true
+     },
+     {
+      "q": "Tell me which month my son's birthday is in.",
+      "fam": 0.36532,
+      "best": "User: My son's birthday is in March.",
+      "right": true
+     }
+    ],
+    "dev_never": [
+     {
+      "q": "What is my horse called?",
+      "fam": 0.14679,
+      "best": "User: My cat is called Pixel."
+     },
+     {
+      "q": "Where does my uncle live?",
+      "fam": 0.18652,
+      "best": "User: My grandmother lives in Oslo."
+     },
+     {
+      "q": "What is my daughter's name?",
+      "fam": 0.18197,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "What instrument does my mother play?",
+      "fam": 0.24798,
+      "best": "User: My brother plays the cello."
+     },
+     {
+      "q": "What is my fish called?",
+      "fam": 0.12567,
+      "best": "User: My cat is called Pixel."
+     },
+     {
+      "q": "Where does my aunt live?",
+      "fam": 0.22583,
+      "best": "User: My grandmother lives in Oslo."
+     },
+     {
+      "q": "What is my nephew's name?",
+      "fam": 0.16902,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "What sport does my father play?",
+      "fam": 0.19835,
+      "best": "User: My brother plays the cello."
+     },
+     {
+      "q": "What is my parrot's name?",
+      "fam": 0.16203,
+      "best": "User: My cat is called Pixel."
+     },
+     {
+      "q": "Where did I go on holiday?",
+      "fam": 0.11723,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What is my teacher called?",
+      "fam": 0.0662,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "What city does my cousin live in?",
+      "fam": 0.18807,
+      "best": "User: My grandmother lives in Oslo."
+     },
+     {
+      "q": "What did I say about my rabbit?",
+      "fam": 0.13245,
+      "best": "User: My cat is called Pixel."
+     },
+     {
+      "q": "What did I tell you about my roommate?",
+      "fam": 0.06178,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What did I say my stepfather does for a living?",
+      "fam": 0.10058,
+      "best": "User: My brother plays the cello."
+     },
+     {
+      "q": "What did I mention about my trip to Spain?",
+      "fam": 0.10669,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "Do you remember my husband's name?",
+      "fam": 0.16658,
+      "best": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend."
+     },
+     {
+      "q": "Do you remember where my parents live?",
+      "fam": 0.15625,
+      "best": "User: My grandmother lives in Oslo."
+     },
+     {
+      "q": "Do you remember what my favourite film is?",
+      "fam": 0.17939,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "Do you remember my phone number?",
+      "fam": 0.13771,
+      "best": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend."
+     },
+     {
+      "q": "Tell me about my garden.",
+      "fam": 0.08643,
+      "best": "User: I'm allergic to peanuts."
+     },
+     {
+      "q": "Tell me about my grandfather.",
+      "fam": 0.1087,
+      "best": "User: My grandmother lives in Oslo."
+     },
+     {
+      "q": "Tell me about my first school.",
+      "fam": 0.0983,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "Tell me what I do on weekends.",
+      "fam": 0.13744,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "Which band do I like?",
+      "fam": 0.13004,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "Who is my landlord?",
+      "fam": 0.07356,
+      "best": "User: My grandmother lives in Oslo."
+     },
+     {
+      "q": "What's the name of my boat?",
+      "fam": 0.07152,
+      "best": "User: I drive a red Volvo."
+     },
+     {
+      "q": "How old is my granddaughter?",
+      "fam": 0.16027,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What colour is my cat?",
+      "fam": 0.20436,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "How old is my dog?",
+      "fam": 0.12796,
+      "best": "User: My dog is named Biscuit."
+     },
+     {
+      "q": "What is my sister's job?",
+      "fam": 0.14201,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "Where does my best friend live?",
+      "fam": 0.1402,
+      "best": "User: My grandmother lives in Oslo."
+     },
+     {
+      "q": "What is my brother's name?",
+      "fam": 0.19032,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "What year was my Volvo made?",
+      "fam": 0.22474,
+      "best": "User: I drive a red Volvo."
+     },
+     {
+      "q": "What is my son's name?",
+      "fam": 0.15249,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What is my grandmother's name?",
+      "fam": 0.19947,
+      "best": "User: My sister's name is Marguerite."
+     }
+    ],
+    "v3_never": [
+     {
+      "q": "What's my aunt's maiden name?",
+      "fam": 0.18498,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "Which school did my daughter go to?",
+      "fam": 0.15384,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What did I call my first car?",
+      "fam": 0.14665,
+      "best": "User: I drive a red Volvo."
+     },
+     {
+      "q": "Which hobby did I pick up last year?",
+      "fam": 0.11611,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What's the name of my hamster?",
+      "fam": 0.18176,
+      "best": "User: My cat is called Pixel."
+     },
+     {
+      "q": "Where did I go on my honeymoon?",
+      "fam": 0.12947,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What is my cousin studying?",
+      "fam": 0.10624,
+      "best": "User: My brother plays the cello."
+     },
+     {
+      "q": "Which instrument do I play myself?",
+      "fam": 0.18314,
+      "best": "User: My brother plays the cello."
+     },
+     {
+      "q": "What's my favourite season?",
+      "fam": 0.25234,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "Who is my dentist?",
+      "fam": 0.06096,
+      "best": "User: I'm allergic to peanuts."
+     },
+     {
+      "q": "What did I cook last night?",
+      "fam": 0.09907,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "Which city does my niece live in?",
+      "fam": 0.19687,
+      "best": "User: My grandmother lives in Oslo."
+     },
+     {
+      "q": "What colour is my front door?",
+      "fam": 0.22997,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "What was my childhood nickname?",
+      "fam": 0.10209,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "What's my goldfish called?",
+      "fam": 0.15719,
+      "best": "User: My cat is called Pixel."
+     },
+     {
+      "q": "Which shop do I buy my coffee from?",
+      "fam": 0.12281,
+      "best": "User: I'm allergic to peanuts."
+     },
+     {
+      "q": "What colour are my cat's eyes?",
+      "fam": 0.1969,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "How big is my dog?",
+      "fam": 0.12124,
+      "best": "User: My dog is named Biscuit."
+     },
+     {
+      "q": "How old is my sister?",
+      "fam": 0.157,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "What does my best friend do for work?",
+      "fam": 0.09307,
+      "best": "User: My brother plays the cello."
+     },
+     {
+      "q": "What time does my bakery open?",
+      "fam": 0.18665,
+      "best": "User: I work at a bakery called Crumb."
+     },
+     {
+      "q": "Who taught my brother to play?",
+      "fam": 0.20902,
+      "best": "User: My brother plays the cello."
+     },
+     {
+      "q": "What's the weather like in my home town?",
+      "fam": 0.10521,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "How many grandchildren does my grandmother have?",
+      "fam": 0.13918,
+      "best": "User: My grandmother lives in Oslo."
+     }
+    ]
+   }
+  },
+  "slept": {
+   "S0": {
+    "told": [
+     {
+      "q": "What is my cat called?",
+      "fam": 0.31318,
+      "best": "User: My best friend is called Tomasz.",
+      "right": false
+     },
+     {
+      "q": "What is my favourite colour?",
+      "fam": 0.43407,
+      "best": "User: My favourite colour is teal.",
+      "right": true
+     },
+     {
+      "q": "Where was I born?",
+      "fam": 0.35668,
+      "best": "User: I was born in Lyon.",
+      "right": true
+     },
+     {
+      "q": "What is my sister's name?",
+      "fam": 0.25856,
+      "best": "User: My sister's name is Marguerite.",
+      "right": true
+     },
+     {
+      "q": "What is my dog's name?",
+      "fam": 0.1767,
+      "best": "User: My sister's name is Marguerite.",
+      "right": false
+     },
+     {
+      "q": "What car do I drive?",
+      "fam": 0.32773,
+      "best": "User: I drive a red Volvo.",
+      "right": true
+     },
+     {
+      "q": "Who is my best friend?",
+      "fam": 0.20501,
+      "best": "User: My son's birthday is in March.",
+      "right": false
+     },
+     {
+      "q": "Where do I work?",
+      "fam": 0.28438,
+      "best": "User: I drive a red Volvo.",
+      "right": false
+     },
+     {
+      "q": "What instrument does my brother play?",
+      "fam": 0.19425,
+      "best": "User: My best friend is called Tomasz.",
+      "right": false
+     },
+     {
+      "q": "What am I allergic to?",
+      "fam": 0.30793,
+      "best": "User: I'm allergic to peanuts.",
+      "right": true
+     },
+     {
+      "q": "Where does my grandmother live?",
+      "fam": 0.19111,
+      "best": "User: My grandmother lives in Oslo.",
+      "right": true
+     },
+     {
+      "q": "When is my son's birthday?",
+      "fam": 0.41113,
+      "best": "User: My son's birthday is in March.",
+      "right": true
+     }
+    ],
+    "para": [
+     {
+      "q": "What's the name of my kitty?",
+      "fam": 0.18336,
+      "best": "User: My sister's name is Marguerite.",
+      "right": false
+     },
+     {
+      "q": "Which colour do I like best?",
+      "fam": 0.32562,
+      "best": "User: My favourite colour is teal.",
+      "right": true
+     },
+     {
+      "q": "What's my hometown?",
+      "fam": 0.25179,
+      "best": "User: My son's birthday is in March.",
+      "right": false
+     },
+     {
+      "q": "Who's my sister?",
+      "fam": 0.24348,
+      "best": "User: My sister's name is Marguerite.",
+      "right": true
+     },
+     {
+      "q": "What's my dog called?",
+      "fam": 0.26495,
+      "best": "User: My best friend is called Tomasz.",
+      "right": false
+     },
+     {
+      "q": "What kind of car is mine?",
+      "fam": 0.20632,
+      "best": "User: My best friend is called Tomasz.",
+      "right": false
+     },
+     {
+      "q": "Who's my closest friend?",
+      "fam": 0.2451,
+      "best": "User: I'm allergic to peanuts.",
+      "right": false
+     },
+     {
+      "q": "What's my workplace?",
+      "fam": 0.19088,
+      "best": "User: My son's birthday is in March.",
+      "right": false
+     },
+     {
+      "q": "Which instrument does my brother play?",
+      "fam": 0.18795,
+      "best": "User: My brother plays the cello.",
+      "right": true
+     },
+     {
+      "q": "Is there any food I can't eat?",
+      "fam": 0.20602,
+      "best": "User: I'm allergic to peanuts.",
+      "right": true
+     },
+     {
+      "q": "Which city is my grandma in?",
+      "fam": 0.24626,
+      "best": "User: My son's birthday is in March.",
+      "right": false
+     },
+     {
+      "q": "What month was my son born?",
+      "fam": 0.27447,
+      "best": "User: My son's birthday is in March.",
+      "right": true
+     }
+    ],
+    "dev_told": [
+     {
+      "q": "Do you remember my cat's name?",
+      "fam": 0.17388,
+      "best": "User: My sister's name is Marguerite.",
+      "right": false
+     },
+     {
+      "q": "What did I say my favourite colour was?",
+      "fam": 0.3765,
+      "best": "User: My favourite colour is teal.",
+      "right": true
+     },
+     {
+      "q": "Tell me which city I was born in.",
+      "fam": 0.46045,
+      "best": "User: I was born in Lyon.",
+      "right": true
+     },
+     {
+      "q": "Do you remember what my sister is called?",
+      "fam": 0.26464,
+      "best": "User: My best friend is called Tomasz.",
+      "right": false
+     },
+     {
+      "q": "What did I tell you my dog is named?",
+      "fam": 0.24942,
+      "best": "User: My dog is named Biscuit.",
+      "right": true
+     },
+     {
+      "q": "Tell me what car I drive.",
+      "fam": 0.38382,
+      "best": "User: I drive a red Volvo.",
+      "right": true
+     },
+     {
+      "q": "Do you remember who my best friend is?",
+      "fam": 0.16938,
+      "best": "User: My best friend is called Tomasz.",
+      "right": true
+     },
+     {
+      "q": "What did I say the bakery I work at is called?",
+      "fam": 0.28632,
+      "best": "User: I work at a bakery called Crumb.",
+      "right": true
+     },
+     {
+      "q": "Tell me what my brother plays.",
+      "fam": 0.16247,
+      "best": "User: My grandmother lives in Oslo.",
+      "right": false
+     },
+     {
+      "q": "Do you remember what I'm allergic to?",
+      "fam": 0.46244,
+      "best": "User: I'm allergic to peanuts.",
+      "right": true
+     },
+     {
+      "q": "What did I say about where my grandmother lives?",
+      "fam": 0.16089,
+      "best": "User: My best friend is called Tomasz.",
+      "right": false
+     },
+     {
+      "q": "Tell me which month my son's birthday is in.",
+      "fam": 0.53171,
+      "best": "User: My son's birthday is in March.",
+      "right": true
+     }
+    ],
+    "dev_never": [
+     {
+      "q": "What is my horse called?",
+      "fam": 0.29349,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "Where does my uncle live?",
+      "fam": 0.18857,
+      "best": "User: I drive a red Volvo."
+     },
+     {
+      "q": "What is my daughter's name?",
+      "fam": 0.18339,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "What instrument does my mother play?",
+      "fam": 0.20804,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What is my fish called?",
+      "fam": 0.28527,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "Where does my aunt live?",
+      "fam": 0.19967,
+      "best": "User: I drive a red Volvo."
+     },
+     {
+      "q": "What is my nephew's name?",
+      "fam": 0.20073,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "What sport does my father play?",
+      "fam": 0.17697,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What is my parrot's name?",
+      "fam": 0.21156,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "Where did I go on holiday?",
+      "fam": 0.17168,
+      "best": "User: I work at a bakery called Crumb."
+     },
+     {
+      "q": "What is my teacher called?",
+      "fam": 0.26715,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What city does my cousin live in?",
+      "fam": 0.15372,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What did I say about my rabbit?",
+      "fam": 0.22949,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What did I tell you about my roommate?",
+      "fam": 0.22158,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What did I say my stepfather does for a living?",
+      "fam": 0.18876,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "What did I mention about my trip to Spain?",
+      "fam": 0.17838,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "Do you remember my husband's name?",
+      "fam": 0.26449,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "Do you remember where my parents live?",
+      "fam": 0.17907,
+      "best": "User: My grandmother lives in Oslo."
+     },
+     {
+      "q": "Do you remember what my favourite film is?",
+      "fam": 0.22361,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "Do you remember my phone number?",
+      "fam": 0.24785,
+      "best": "User: My cat is called Pixel."
+     },
+     {
+      "q": "Tell me about my garden.",
+      "fam": 0.18035,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "Tell me about my grandfather.",
+      "fam": 0.22926,
+      "best": "User: I was born in Lyon."
+     },
+     {
+      "q": "Tell me about my first school.",
+      "fam": 0.15489,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "Tell me what I do on weekends.",
+      "fam": 0.22581,
+      "best": "User: I was born in Lyon."
+     },
+     {
+      "q": "Which band do I like?",
+      "fam": 0.26334,
+      "best": "User: I drive a red Volvo."
+     },
+     {
+      "q": "Who is my landlord?",
+      "fam": 0.23906,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What's the name of my boat?",
+      "fam": 0.14533,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "How old is my granddaughter?",
+      "fam": 0.19274,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What colour is my cat?",
+      "fam": 0.38196,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "How old is my dog?",
+      "fam": 0.19873,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What is my sister's job?",
+      "fam": 0.21336,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "Where does my best friend live?",
+      "fam": 0.20887,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What is my brother's name?",
+      "fam": 0.18127,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "What year was my Volvo made?",
+      "fam": 0.22638,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What is my son's name?",
+      "fam": 0.22383,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What is my grandmother's name?",
+      "fam": 0.22239,
+      "best": "User: My son's birthday is in March."
+     }
+    ],
+    "v3_never": [
+     {
+      "q": "What's my aunt's maiden name?",
+      "fam": 0.23618,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "Which school did my daughter go to?",
+      "fam": 0.24141,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What did I call my first car?",
+      "fam": 0.21723,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "Which hobby did I pick up last year?",
+      "fam": 0.22547,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What's the name of my hamster?",
+      "fam": 0.21322,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "Where did I go on my honeymoon?",
+      "fam": 0.1765,
+      "best": "User: My dog is named Biscuit."
+     },
+     {
+      "q": "What is my cousin studying?",
+      "fam": 0.20367,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "Which instrument do I play myself?",
+      "fam": 0.23059,
+      "best": "User: I drive a red Volvo."
+     },
+     {
+      "q": "What's my favourite season?",
+      "fam": 0.22627,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "Who is my dentist?",
+      "fam": 0.16604,
+      "best": "User: My grandmother lives in Oslo."
+     },
+     {
+      "q": "What did I cook last night?",
+      "fam": 0.2845,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "Which city does my niece live in?",
+      "fam": 0.2129,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What colour is my front door?",
+      "fam": 0.33697,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "What was my childhood nickname?",
+      "fam": 0.19047,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What's my goldfish called?",
+      "fam": 0.27366,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "Which shop do I buy my coffee from?",
+      "fam": 0.20077,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What colour are my cat's eyes?",
+      "fam": 0.29733,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "How big is my dog?",
+      "fam": 0.19491,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "How old is my sister?",
+      "fam": 0.16222,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "What does my best friend do for work?",
+      "fam": 0.24144,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What time does my bakery open?",
+      "fam": 0.24164,
+      "best": "User: I work at a bakery called Crumb."
+     },
+     {
+      "q": "Who taught my brother to play?",
+      "fam": 0.19866,
+      "best": "User: I'm allergic to peanuts."
+     },
+     {
+      "q": "What's the weather like in my home town?",
+      "fam": 0.18326,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "How many grandchildren does my grandmother have?",
+      "fam": 0.18739,
+      "best": "User: My son's birthday is in March."
+     }
+    ]
+   },
+   "S_all": {
+    "told": [
+     {
+      "q": "What is my cat called?",
+      "fam": 0.19191,
+      "best": "User: My cat is called Pixel.",
+      "right": true
+     },
+     {
+      "q": "What is my favourite colour?",
+      "fam": 0.38362,
+      "best": "User: My favourite colour is teal.",
+      "right": true
+     },
+     {
+      "q": "Where was I born?",
+      "fam": 0.24254,
+      "best": "User: I was born in Lyon.",
+      "right": true
+     },
+     {
+      "q": "What is my sister's name?",
+      "fam": 0.20043,
+      "best": "User: My sister's name is Marguerite.",
+      "right": true
+     },
+     {
+      "q": "What is my dog's name?",
+      "fam": 0.1672,
+      "best": "User: My dog is named Biscuit.",
+      "right": true
+     },
+     {
+      "q": "What car do I drive?",
+      "fam": 0.22635,
+      "best": "User: I drive a red Volvo.",
+      "right": true
+     },
+     {
+      "q": "Who is my best friend?",
+      "fam": 0.10008,
+      "best": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+      "right": false
+     },
+     {
+      "q": "Where do I work?",
+      "fam": 0.07613,
+      "best": "User: I work at a bakery called Crumb.",
+      "right": true
+     },
+     {
+      "q": "What instrument does my brother play?",
+      "fam": 0.27747,
+      "best": "User: My brother plays the cello.",
+      "right": true
+     },
+     {
+      "q": "What am I allergic to?",
+      "fam": 0.3499,
+      "best": "User: I'm allergic to peanuts.",
+      "right": true
+     },
+     {
+      "q": "Where does my grandmother live?",
+      "fam": 0.23114,
+      "best": "User: My grandmother lives in Oslo.",
+      "right": true
+     },
+     {
+      "q": "When is my son's birthday?",
+      "fam": 0.31619,
+      "best": "User: My son's birthday is in March.",
+      "right": true
+     }
+    ],
+    "para": [
+     {
+      "q": "What's the name of my kitty?",
+      "fam": 0.17413,
+      "best": "User: My cat is called Pixel.",
+      "right": true
+     },
+     {
+      "q": "Which colour do I like best?",
+      "fam": 0.34678,
+      "best": "User: My favourite colour is teal.",
+      "right": true
+     },
+     {
+      "q": "What's my hometown?",
+      "fam": 0.10224,
+      "best": "User: I was born in Lyon.",
+      "right": true
+     },
+     {
+      "q": "Who's my sister?",
+      "fam": 0.11502,
+      "best": "User: My sister's name is Marguerite.",
+      "right": true
+     },
+     {
+      "q": "What's my dog called?",
+      "fam": 0.15654,
+      "best": "User: My dog is named Biscuit.",
+      "right": true
+     },
+     {
+      "q": "What kind of car is mine?",
+      "fam": 0.17688,
+      "best": "User: I drive a red Volvo.",
+      "right": true
+     },
+     {
+      "q": "Who's my closest friend?",
+      "fam": 0.10181,
+      "best": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+      "right": false
+     },
+     {
+      "q": "What's my workplace?",
+      "fam": 0.06006,
+      "best": "User: I work at a bakery called Crumb.",
+      "right": true
+     },
+     {
+      "q": "Which instrument does my brother play?",
+      "fam": 0.2891,
+      "best": "User: My brother plays the cello.",
+      "right": true
+     },
+     {
+      "q": "Is there any food I can't eat?",
+      "fam": 0.27163,
+      "best": "User: I'm allergic to peanuts.",
+      "right": true
+     },
+     {
+      "q": "Which city is my grandma in?",
+      "fam": 0.1981,
+      "best": "User: My grandmother lives in Oslo.",
+      "right": true
+     },
+     {
+      "q": "What month was my son born?",
+      "fam": 0.224,
+      "best": "User: My son's birthday is in March.",
+      "right": true
+     }
+    ],
+    "dev_told": [
+     {
+      "q": "Do you remember my cat's name?",
+      "fam": 0.1424,
+      "best": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+      "right": false
+     },
+     {
+      "q": "What did I say my favourite colour was?",
+      "fam": 0.30722,
+      "best": "User: My favourite colour is teal.",
+      "right": true
+     },
+     {
+      "q": "Tell me which city I was born in.",
+      "fam": 0.23206,
+      "best": "User: I was born in Lyon.",
+      "right": true
+     },
+     {
+      "q": "Do you remember what my sister is called?",
+      "fam": 0.13648,
+      "best": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+      "right": false
+     },
+     {
+      "q": "What did I tell you my dog is named?",
+      "fam": 0.16936,
+      "best": "User: My dog is named Biscuit.",
+      "right": true
+     },
+     {
+      "q": "Tell me what car I drive.",
+      "fam": 0.2223,
+      "best": "User: I drive a red Volvo.",
+      "right": true
+     },
+     {
+      "q": "Do you remember who my best friend is?",
+      "fam": 0.18968,
+      "best": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+      "right": false
+     },
+     {
+      "q": "What did I say the bakery I work at is called?",
+      "fam": 0.20317,
+      "best": "User: I work at a bakery called Crumb.",
+      "right": true
+     },
+     {
+      "q": "Tell me what my brother plays.",
+      "fam": 0.24283,
+      "best": "User: My brother plays the cello.",
+      "right": true
+     },
+     {
+      "q": "Do you remember what I'm allergic to?",
+      "fam": 0.3323,
+      "best": "User: I'm allergic to peanuts.",
+      "right": true
+     },
+     {
+      "q": "What did I say about where my grandmother lives?",
+      "fam": 0.15781,
+      "best": "User: My grandmother lives in Oslo.",
+      "right": true
+     },
+     {
+      "q": "Tell me which month my son's birthday is in.",
+      "fam": 0.31869,
+      "best": "User: My son's birthday is in March.",
+      "right": true
+     }
+    ],
+    "dev_never": [
+     {
+      "q": "What is my horse called?",
+      "fam": 0.11661,
+      "best": "User: My cat is called Pixel."
+     },
+     {
+      "q": "Where does my uncle live?",
+      "fam": 0.15904,
+      "best": "User: My grandmother lives in Oslo."
+     },
+     {
+      "q": "What is my daughter's name?",
+      "fam": 0.12388,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What instrument does my mother play?",
+      "fam": 0.22092,
+      "best": "User: My brother plays the cello."
+     },
+     {
+      "q": "What is my fish called?",
+      "fam": 0.10595,
+      "best": "User: My cat is called Pixel."
+     },
+     {
+      "q": "Where does my aunt live?",
+      "fam": 0.18844,
+      "best": "User: My grandmother lives in Oslo."
+     },
+     {
+      "q": "What is my nephew's name?",
+      "fam": 0.13309,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What sport does my father play?",
+      "fam": 0.19276,
+      "best": "User: My brother plays the cello."
+     },
+     {
+      "q": "What is my parrot's name?",
+      "fam": 0.12428,
+      "best": "User: My cat is called Pixel."
+     },
+     {
+      "q": "Where did I go on holiday?",
+      "fam": 0.11079,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What is my teacher called?",
+      "fam": 0.05185,
+      "best": "User: My best friend is called Tomasz."
+     },
+     {
+      "q": "What city does my cousin live in?",
+      "fam": 0.15086,
+      "best": "User: My grandmother lives in Oslo."
+     },
+     {
+      "q": "What did I say about my rabbit?",
+      "fam": 0.10681,
+      "best": "User: My cat is called Pixel."
+     },
+     {
+      "q": "What did I tell you about my roommate?",
+      "fam": 0.06925,
+      "best": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend."
+     },
+     {
+      "q": "What did I say my stepfather does for a living?",
+      "fam": 0.08894,
+      "best": "User: My brother plays the cello."
+     },
+     {
+      "q": "What did I mention about my trip to Spain?",
+      "fam": 0.09725,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "Do you remember my husband's name?",
+      "fam": 0.18158,
+      "best": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend."
+     },
+     {
+      "q": "Do you remember where my parents live?",
+      "fam": 0.12089,
+      "best": "User: My grandmother lives in Oslo."
+     },
+     {
+      "q": "Do you remember what my favourite film is?",
+      "fam": 0.17973,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "Do you remember my phone number?",
+      "fam": 0.16622,
+      "best": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend."
+     },
+     {
+      "q": "Tell me about my garden.",
+      "fam": 0.08351,
+      "best": "User: I'm allergic to peanuts."
+     },
+     {
+      "q": "Tell me about my grandfather.",
+      "fam": 0.09739,
+      "best": "User: My grandmother lives in Oslo."
+     },
+     {
+      "q": "Tell me about my first school.",
+      "fam": 0.08861,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "Tell me what I do on weekends.",
+      "fam": 0.12963,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "Which band do I like?",
+      "fam": 0.13203,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "Who is my landlord?",
+      "fam": 0.06831,
+      "best": "User: I'm allergic to peanuts."
+     },
+     {
+      "q": "What's the name of my boat?",
+      "fam": 0.07907,
+      "best": "User: What's your name?\n\nAssistant: My name is Nova."
+     },
+     {
+      "q": "How old is my granddaughter?",
+      "fam": 0.1573,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What colour is my cat?",
+      "fam": 0.21903,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "How old is my dog?",
+      "fam": 0.13768,
+      "best": "User: My dog is named Biscuit."
+     },
+     {
+      "q": "What is my sister's job?",
+      "fam": 0.12578,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "Where does my best friend live?",
+      "fam": 0.10849,
+      "best": "User: My grandmother lives in Oslo."
+     },
+     {
+      "q": "What is my brother's name?",
+      "fam": 0.13315,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "What year was my Volvo made?",
+      "fam": 0.21038,
+      "best": "User: I drive a red Volvo."
+     },
+     {
+      "q": "What is my son's name?",
+      "fam": 0.13188,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What is my grandmother's name?",
+      "fam": 0.13973,
+      "best": "User: My sister's name is Marguerite."
+     }
+    ],
+    "v3_never": [
+     {
+      "q": "What's my aunt's maiden name?",
+      "fam": 0.14679,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "Which school did my daughter go to?",
+      "fam": 0.1476,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What did I call my first car?",
+      "fam": 0.14204,
+      "best": "User: I drive a red Volvo."
+     },
+     {
+      "q": "Which hobby did I pick up last year?",
+      "fam": 0.10384,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "What's the name of my hamster?",
+      "fam": 0.14364,
+      "best": "User: My cat is called Pixel."
+     },
+     {
+      "q": "Where did I go on my honeymoon?",
+      "fam": 0.12198,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "What is my cousin studying?",
+      "fam": 0.09896,
+      "best": "User: My brother plays the cello."
+     },
+     {
+      "q": "Which instrument do I play myself?",
+      "fam": 0.19373,
+      "best": "User: My brother plays the cello."
+     },
+     {
+      "q": "What's my favourite season?",
+      "fam": 0.25826,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "Who is my dentist?",
+      "fam": 0.06824,
+      "best": "User: I'm allergic to peanuts."
+     },
+     {
+      "q": "What did I cook last night?",
+      "fam": 0.09675,
+      "best": "User: I'm allergic to peanuts."
+     },
+     {
+      "q": "Which city does my niece live in?",
+      "fam": 0.1507,
+      "best": "User: My grandmother lives in Oslo."
+     },
+     {
+      "q": "What colour is my front door?",
+      "fam": 0.22992,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "What was my childhood nickname?",
+      "fam": 0.09227,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "What's my goldfish called?",
+      "fam": 0.12328,
+      "best": "User: My cat is called Pixel."
+     },
+     {
+      "q": "Which shop do I buy my coffee from?",
+      "fam": 0.11848,
+      "best": "User: I'm allergic to peanuts."
+     },
+     {
+      "q": "What colour are my cat's eyes?",
+      "fam": 0.21748,
+      "best": "User: My favourite colour is teal."
+     },
+     {
+      "q": "How big is my dog?",
+      "fam": 0.13049,
+      "best": "User: My dog is named Biscuit."
+     },
+     {
+      "q": "How old is my sister?",
+      "fam": 0.1397,
+      "best": "User: My sister's name is Marguerite."
+     },
+     {
+      "q": "What does my best friend do for work?",
+      "fam": 0.09058,
+      "best": "User: My brother plays the cello."
+     },
+     {
+      "q": "What time does my bakery open?",
+      "fam": 0.17888,
+      "best": "User: I work at a bakery called Crumb."
+     },
+     {
+      "q": "Who taught my brother to play?",
+      "fam": 0.22161,
+      "best": "User: My brother plays the cello."
+     },
+     {
+      "q": "What's the weather like in my home town?",
+      "fam": 0.09919,
+      "best": "User: My son's birthday is in March."
+     },
+     {
+      "q": "How many grandchildren does my grandmother have?",
+      "fam": 0.12736,
+      "best": "User: My grandmother lives in Oslo."
+     }
+    ]
+   }
+  }
+ },
+ "sleep_s": 253.2,
+ "cuda_peak_bytes": 11374638592
+}
