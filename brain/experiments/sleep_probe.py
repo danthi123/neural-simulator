@@ -3,7 +3,10 @@
 """Does sleep move told facts into the cortex, so they are recalled with the hippocampus OFF?
 
 Arms (same seed, same steps): no-sleep; sleep on the true episodes; sleep on SHUFFLED episodes (names swapped
-between facts: same exposure, wrong content, so a pass there would mean the test is broken). Read-outs, all with the
+between facts: same exposure, wrong content, so a pass there would mean the test is broken); sleep on VARIED
+episodes (`sleep_varied`: each fact replayed in three surface forms - the original plus two teacher-written
+rewordings of the statement from `brain/experiments/facts_rewordings.py`, same total replay steps as `sleep_true`).
+`--arms` picks a subset, e.g. `--arms no_sleep sleep_varied`. Read-outs, all with the
 hippocampus off: recall on the original questions and on paraphrases; false recall on questions about things never
 told; drift on ordinary text (KL to the pretrained cortex). Expected ceiling: the cortex's own in-context recall at
 this size (0.1B: 6/12, 0.4B: 11/12; brain/experiments/results/2026-11-02-scale-ladder.txt).
@@ -21,6 +24,7 @@ import torch.nn.functional as F
 from brain.brain import BIRTH
 from brain.cortex import Cortex, DEFAULT_MODEL
 from brain.experiments.facts import CHAT, FACTS, PARA
+from brain.experiments.facts_rewordings import REWORDINGS
 from brain.plastic_cortex import PlasticCortex
 from brain.sleep import sleep
 
@@ -67,6 +71,18 @@ def evaluate(pc, state, keys_all):
             "recall_items": rec, "paraphrase_items": par}
 
 
+def varied_episodes():
+    """Each told fact in three surface forms: the original statement plus two teacher-written rewordings."""
+    eps = []
+    for (s, _, _), (r1, r2) in zip(FACTS, REWORDINGS):
+        for text in (s, r1, r2):
+            eps.append((f"User: {text}\n\nAssistant: Okay, I'll remember that.\n\n", 1.0))
+    return eps
+
+
+ARMS = ("no_sleep", "sleep_true", "sleep_shuffled", "sleep_varied")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default=DEFAULT_MODEL)
@@ -76,6 +92,8 @@ def main():
     ap.add_argument("--kl-weight", type=float, default=1.0)
     ap.add_argument("--lr", type=float, default=5e-4)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--arms", nargs="+", default=list(ARMS), choices=list(ARMS),
+                    help="which arms to run (default: all four)")
     a = ap.parse_args()
     t0 = time.time()
     c = Cortex(model_path=a.model, device=a.device)
@@ -93,7 +111,9 @@ def main():
         i = s.lower().find(k)
         shuffled.append((f"User: {s[:i]}{wrong.capitalize()}{s[i + len(k):]}\n\nAssistant: Okay, I'll remember that.\n\n", 1.0))
     result = {"model": a.model, "seed": a.seed, "steps": a.steps, "kl_weight": a.kl_weight, "lr": a.lr, "arms": {}}
-    for arm, eps in (("no_sleep", None), ("sleep_true", told), ("sleep_shuffled", shuffled)):
+    episodes = {"no_sleep": None, "sleep_true": told, "sleep_shuffled": shuffled, "sleep_varied": varied_episodes()}
+    for arm in a.arms:
+        eps = episodes[arm]
         torch.manual_seed(a.seed)
         pc = PlasticCortex(c)
         losses = []
