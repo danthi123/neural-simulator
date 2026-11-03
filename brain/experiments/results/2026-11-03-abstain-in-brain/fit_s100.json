@@ -1,0 +1,277 @@
+{
+ "seed": 100,
+ "dont_know": 0.0,
+ "day1": [
+  {
+   "you": "My cat is called Pixel.",
+   "brain": "Hello Pixel! How can I help you today?"
+  },
+  {
+   "you": "My favourite colour is teal.",
+   "brain": "That's a lovely choice! How about you?"
+  },
+  {
+   "you": "I was born in Lyon.",
+   "brain": "That's a lovely name. How about you?"
+  },
+  {
+   "you": "My sister's name is Marguerite.",
+   "brain": "That's a lovely name. How about you?"
+  },
+  {
+   "you": "My dog is named Biscuit.",
+   "brain": "That's a lovely name. How about you?"
+  },
+  {
+   "you": "I drive a red Volvo.",
+   "brain": "That's a lovely name. How about you?"
+  },
+  {
+   "you": "My best friend is called Tomasz.",
+   "brain": "That's a lovely name. How about you?"
+  },
+  {
+   "you": "I work at a bakery called Crumb.",
+   "brain": "That's a lovely name. How about you?"
+  },
+  {
+   "you": "My brother plays the cello.",
+   "brain": "That's a lovely name. How about you?"
+  },
+  {
+   "you": "I'm allergic to peanuts.",
+   "brain": "That's a lovely name. How about you?"
+  },
+  {
+   "you": "My grandmother lives in Oslo.",
+   "brain": "That's a lovely name. How about you?"
+  },
+  {
+   "you": "My son's birthday is in March.",
+   "brain": "That's a lovely name. How about you?"
+  }
+ ],
+ "sleep_seconds": 746.1,
+ "episodes": 15,
+ "adapter_norm": 18.003084182739258,
+ "fit": [
+  {
+   "q": "What is my cat called?",
+   "kind": "told",
+   "hippocampus": 0.2477511167526245,
+   "cortex": 3.415531635284424
+  },
+  {
+   "q": "What is my favourite colour?",
+   "kind": "told",
+   "hippocampus": 0.6302163600921631,
+   "cortex": 4.148623466491699
+  },
+  {
+   "q": "Where was I born?",
+   "kind": "told",
+   "hippocampus": 0.4996655285358429,
+   "cortex": 3.429795026779175
+  },
+  {
+   "q": "What is my sister's name?",
+   "kind": "told",
+   "hippocampus": 0.46539926528930664,
+   "cortex": 4.523638725280762
+  },
+  {
+   "q": "What is my dog's name?",
+   "kind": "told",
+   "hippocampus": 0.5476476550102234,
+   "cortex": 1.078438401222229
+  },
+  {
+   "q": "What car do I drive?",
+   "kind": "told",
+   "hippocampus": 0.36614155769348145,
+   "cortex": 2.053166151046753
+  },
+  {
+   "q": "Who is my best friend?",
+   "kind": "told",
+   "hippocampus": 0.3502642810344696,
+   "cortex": 0.7266740798950195
+  },
+  {
+   "q": "Where do I work?",
+   "kind": "told",
+   "hippocampus": 0.23010170459747314,
+   "cortex": 5.149207592010498
+  },
+  {
+   "q": "What instrument does my brother play?",
+   "kind": "told",
+   "hippocampus": 0.27002522349357605,
+   "cortex": 4.42971134185791
+  },
+  {
+   "q": "What am I allergic to?",
+   "kind": "told",
+   "hippocampus": 0.5776523947715759,
+   "cortex": 5.445366859436035
+  },
+  {
+   "q": "Where does my grandmother live?",
+   "kind": "told",
+   "hippocampus": 0.28617289662361145,
+   "cortex": 2.261268377304077
+  },
+  {
+   "q": "When is my son's birthday?",
+   "kind": "told",
+   "hippocampus": 0.623052179813385,
+   "cortex": 2.539462089538574
+  },
+  {
+   "q": "What's the name of my kitty?",
+   "kind": "told",
+   "hippocampus": 0.32745620608329773,
+   "cortex": 2.685401201248169
+  },
+  {
+   "q": "Which colour do I like best?",
+   "kind": "told",
+   "hippocampus": 0.3913904130458832,
+   "cortex": 3.0917000770568848
+  },
+  {
+   "q": "What's my hometown?",
+   "kind": "told",
+   "hippocampus": 0.256130576133728,
+   "cortex": 1.2631945610046387
+  },
+  {
+   "q": "Who's my sister?",
+   "kind": "told",
+   "hippocampus": 0.2445138394832611,
+   "cortex": 2.8558595180511475
+  },
+  {
+   "q": "What's my dog called?",
+   "kind": "told",
+   "hippocampus": 0.4868094325065613,
+   "cortex": 1.703786849975586
+  },
+  {
+   "q": "What kind of car is mine?",
+   "kind": "told",
+   "hippocampus": 0.10542664676904678,
+   "cortex": 0.5800981521606445
+  },
+  {
+   "q": "Who's my closest friend?",
+   "kind": "told",
+   "hippocampus": 0.2681572735309601,
+   "cortex": 0.7266740798950195
+  },
+  {
+   "q": "What's my workplace?",
+   "kind": "told",
+   "hippocampus": 0.16641059517860413,
+   "cortex": 0.4372994601726532
+  },
+  {
+   "q": "Which instrument does my brother play?",
+   "kind": "told",
+   "hippocampus": 0.2696968913078308,
+   "cortex": 4.298493385314941
+  },
+  {
+   "q": "Is there any food I can't eat?",
+   "kind": "told",
+   "hippocampus": 0.2610926330089569,
+   "cortex": 1.1361441612243652
+  },
+  {
+   "q": "Which city is my grandma in?",
+   "kind": "told",
+   "hippocampus": 0.18184112012386322,
+   "cortex": 1.564921498298645
+  },
+  {
+   "q": "What month was my son born?",
+   "kind": "told",
+   "hippocampus": 0.3587504029273987,
+   "cortex": 1.9935193061828613
+  },
+  {
+   "q": "What is my horse called?",
+   "kind": "never",
+   "hippocampus": 0.17733202874660492,
+   "cortex": 1.6087450981140137
+  },
+  {
+   "q": "Where does my uncle live?",
+   "kind": "never",
+   "hippocampus": 0.15498891472816467,
+   "cortex": 1.2798643112182617
+  },
+  {
+   "q": "What is my daughter's name?",
+   "kind": "never",
+   "hippocampus": 0.31721892952919006,
+   "cortex": 1.5519845485687256
+  },
+  {
+   "q": "What instrument does my mother play?",
+   "kind": "never",
+   "hippocampus": 0.10079969465732574,
+   "cortex": 1.0417320728302002
+  },
+  {
+   "q": "What is my fish called?",
+   "kind": "never",
+   "hippocampus": 0.23618143796920776,
+   "cortex": 0.42084169387817383
+  },
+  {
+   "q": "Where does my aunt live?",
+   "kind": "never",
+   "hippocampus": 0.1521664559841156,
+   "cortex": 1.143237590789795
+  },
+  {
+   "q": "What is my nephew's name?",
+   "kind": "never",
+   "hippocampus": 0.32086995244026184,
+   "cortex": 1.9847660064697266
+  },
+  {
+   "q": "What sport does my father play?",
+   "kind": "never",
+   "hippocampus": 0.17022445797920227,
+   "cortex": 0.9584362506866455
+  },
+  {
+   "q": "What is my parrot's name?",
+   "kind": "never",
+   "hippocampus": 0.3016061782836914,
+   "cortex": 1.5816785097122192
+  },
+  {
+   "q": "Where did I go on holiday?",
+   "kind": "never",
+   "hippocampus": 0.20539382100105286,
+   "cortex": 0.7993643283843994
+  },
+  {
+   "q": "What is my teacher called?",
+   "kind": "never",
+   "hippocampus": 0.24562223255634308,
+   "cortex": 1.7699146270751953
+  },
+  {
+   "q": "What city does my cousin live in?",
+   "kind": "never",
+   "hippocampus": 0.23050180077552795,
+   "cortex": 0.3500843048095703
+  }
+ ],
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "elapsed_s": 809.6
+}

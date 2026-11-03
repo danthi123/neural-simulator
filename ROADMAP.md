@@ -2,8 +2,7 @@
 
 Plain-language status of the project. Updated when a milestone moves; the dated plan lives in
 [`brain/ARCHITECTURE.md`](brain/ARCHITECTURE.md) §4 and on the task board (tasks titled "New core: ...").
-The pre-pivot roadmap (2,700 lines of old-track history) is archived at
-[`docs/archive/ROADMAP-2026-11-02.md`](docs/archive/ROADMAP-2026-11-02.md).
+The pre-pivot roadmap (2,700 lines of old-track history) is archived at [`docs/archive/ROADMAP-2026-11-02.md`](docs/archive/ROADMAP-2026-11-02.md).
 
 ## What we are building
 
@@ -12,34 +11,40 @@ chatbot with a fact lookup: what it tells you comes from its own memory and its 
 
 ## How it works today (new core, `brain/`)
 
-- **Cortex:** a small pretrained recurrent language network (RWKV-7, 0.1B to 1.5B) is the brain's language cortex.
-  Pretraining stands in for development (a declared trade).
-- **Hippocampus:** each thing you tell it is stored as the change it made to the cortex's fast memory, and brought
-  back by putting that change back into the cortex, never by pasting text.
-- **Memory strength:** often-used memories get stronger, rarely-used details fade, like a person.
-- **Sleep (first version, 2026-11-02):** replays the day's memories into slow cortical connections, so facts survive
-  with the hippocampus switched off. Gradient learning here is a declared scaffold (`brain/SCAFFOLDS.md`).
-- **Restart = a new day:** the brain keeps its memories across restarts.
+A small pretrained language network is the cortex; the hippocampus stores what you tell it as a change to the cortex's
+fast memory and brings it back by putting that change back; memory strength grows with use and fades without it;
+sleep (on every restart) replays the day into slow connections, with gradient learning as a declared scaffold.
+
+## Where we stand (2026-11-03, honest)
+
+- **Works:** sleep runs inside the live brain on every restart. With the memory part switched off, the slept brain
+  still answers about half of 12 told facts (5.5 of 12, six runs) where the same brain with sleep switched off answers
+  almost none (0.17), and one slept on scrambled content answers none. The trace is real and switching it off
+  changes replies.
+- **Does not work yet:** sleep adds little on top of the memory part (6.5 vs 6.3 of 12) and makes the brain invent
+  answers more often (about 3 of 4 never-told questions against 2). The small model (0.1B) tops out at 6 of 12 even
+  when the facts are in front of it, so part of the gap is the model, not the method.
+- **Recorded negatives:** the "I don't know" gate (invented answers fell 63 to 34, goal was a quarter); strengthening
+  by how often a fact is told (about one extra fact of four); mood shaping replies (negative 6 of 6 runs, positive 3 of 6).
+- **Promising, not proven:** a meaning-based way to pick the right memory finds reworded facts far better than the
+  word-overlap default (0.76 vs 0.10 at 0.4B) but is not in the brain yet and cannot tell told from untold questions.
+- **Scoring was fixed tonight:** an answer that just repeats what you said ("I drive a red Volvo") or says
+  "Pixel is called Pixel" no longer counts as remembering. Earlier numbers using the old count were too high.
 
 ## Timeline
 
 | By | Target | Status |
 |---|---|---|
-| 2026-11-09 | First weekly conversation test (Hermes); upgraded test with whole / memory-off / after-sleep arms (Pi) | in progress |
-| 2026-11-16 | Sleep in the live brain on every restart; often-used facts never wrong; switching a part off visibly changes replies; cortex size chosen | in progress |
-| 2026-11-30 | Recall from reworded questions; mood/arousal shapes replies (proven by switching it off); asks about new things | planned |
+| 2026-11-09 | First weekly conversation test (Hermes); upgraded test with whole / memory-off / after-sleep arms (Pi) | in progress; weekly scoring fixed |
+| 2026-11-16 | Sleep in the live brain on every restart; often-used facts never wrong; switching a part off visibly changes replies; cortex size chosen | sleep in brain and lesion: done; often-used facts: not met; cortex size: next |
+| 2026-11-30 | Recall from reworded questions; mood/arousal shapes replies (proven by switching it off); asks about new things | planned; meaning-based recall and mood are leads |
 | 2026-12-14 | A simulated multi-week life with nightly sleep: relearns faster, recalls from partial cues, transfers skills | planned |
 | 2026-12-31 | Sleep learning by a local biology-style rule instead of gradients; 1.5B cortex | planned |
 | 2027 Q1 | Start moving the core onto the shared spiking substrate | planned |
 
+Next: a better "I don't know" (a signal learned over question forms), and the cortex size (0.4B and 1.5B) for sleep.
 ## How progress is measured
 
-1. The weekly conversation test (`brain/eval/weekly.py` -> `brain/eval/transcripts/<date>.md`), every Monday.
-2. The milestones above, met by their dates.
-3. Share of commits that touch the brain (shown at every Claude session start; process work is overhead).
-
-## Who does what
-
-Claude builds the new core and makes judgment calls; Hermes (server) runs and lands experiments and the weekly test;
-Pi (server) works a lane of build tasks, with Claude available to it for hard steps and judgment. Details:
-[`research/coordination/LOCAL_LLM_RUNBOOK.md`](research/coordination/LOCAL_LLM_RUNBOOK.md) §4.
+The weekly conversation test (`brain/eval/weekly.py`, every Monday), the milestones above met by their dates, and the
+share of commits that touch the brain. Who does what: Claude builds and judges; Hermes and Pi run and land experiments
+([`research/coordination/LOCAL_LLM_RUNBOOK.md`](research/coordination/LOCAL_LLM_RUNBOOK.md) §4).

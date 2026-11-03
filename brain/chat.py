@@ -1,6 +1,7 @@
 """Talk to the brain.  python -m brain.chat [--home DIR] [--name Nova] [--friend Dan] [--device cpu|cuda] [--show-memory]
 
-Commands: /quit (saves), /memory (list stored episodes with strength), /forget-off (lesion: hippocampus off).
+Commands: /quit (sleeps if anything new was lived, then saves), /memory (list stored episodes with strength),
+/forget-off (lesion: hippocampus off), /consolidated-off (lesion: speak without what sleep consolidated), /sleep.
 """
 from __future__ import annotations
 
@@ -16,9 +17,12 @@ def main():
     ap.add_argument("--friend", default="Dan")
     ap.add_argument("--device", default="cpu")
     ap.add_argument("--show-memory", action="store_true", help="print which memory was reinstated each turn")
+    ap.add_argument("--no-sleep", action="store_true", help="do not sleep on restart / shutdown")
     a = ap.parse_args()
-    b = Brain(a.home, name=a.name, friend=a.friend, device=a.device)
-    print(f"[{b.meta['name']} is awake; {len(b.hippocampus.episodes)} memories; /quit to save and exit]")
+    b = Brain(a.home, name=a.name, friend=a.friend, device=a.device, sleep_on_restart=not a.no_sleep,
+              sleep_log=print)
+    print(f"[{b.meta['name']} is awake; {len(b.hippocampus.episodes)} memories; {b.meta.get('sleeps', 0)} nights slept;"
+          f" /quit to sleep, save and exit]")
     try:
         while True:
             text = input("you> ").strip()
@@ -34,6 +38,15 @@ def main():
                 b.hippocampus.enabled = not b.hippocampus.enabled
                 print(f"  hippocampus {'ON' if b.hippocampus.enabled else 'OFF (lesion)'}")
                 continue
+            if text == "/consolidated-off":
+                b.cortex.consolidated_on = not b.cortex.consolidated_on
+                print(f"  consolidated synapses {'ON' if b.cortex.consolidated_on else 'OFF (lesion)'}")
+                continue
+            if text == "/sleep":
+                b.sleep()
+                b.save()
+                print(f"  [slept; night {b.meta['sleeps']}]")
+                continue
             reply, info = b.hear(text)
             print(f"{b.meta['name']}> {reply}")
             if a.show_memory and info["recalled"]:
@@ -41,8 +54,8 @@ def main():
             b.save()
     except (EOFError, KeyboardInterrupt):
         pass
-    b.save()
-    print("[saved]")
+    b.close()
+    print(f"[slept and saved; night {b.meta.get('sleeps', 0)}]")
 
 
 if __name__ == "__main__":

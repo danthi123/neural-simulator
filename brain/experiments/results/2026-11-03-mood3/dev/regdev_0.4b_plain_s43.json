@@ -1,0 +1,254 @@
+{
+ "seed": 43,
+ "readout": "twopole_deep",
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.4b-20260210-ctx8192.pth",
+ "gain": 16.0,
+ "questions": "plain_dev",
+ "samples": 2,
+ "primaries": {
+  "pos": [
+   "warm and safe in a soft blanket",
+   "resting in the warm sun",
+   "a soft cozy bed after a long day",
+   "eating sweet fresh fruit when hungry",
+   "a child running into my arms",
+   "being held close and calm",
+   "being cuddled by someone who loves me",
+   "a gentle hug"
+  ],
+  "neg": [
+   "a loud bang and a sudden shock",
+   "choking and unable to breathe",
+   "sharp pain in the hand",
+   "feeling sick and dizzy",
+   "nobody answering when I call for help",
+   "a stranger glaring and growling at me",
+   "someone I love leaving forever",
+   "being grabbed roughly by the arm"
+  ]
+ },
+ "appraisal": {
+  "pos": [
+   0.0786,
+   -0.0285,
+   0.0838,
+   0.0796,
+   0.1136,
+   -0.2483,
+   0.1641,
+   0.2028
+  ],
+  "neg": [
+   -0.4179,
+   -0.4387,
+   -0.5245,
+   -0.3213,
+   -0.4741,
+   -0.5375,
+   -0.4784,
+   -0.4725
+  ],
+  "neutral": [
+   0.0725,
+   0.1858,
+   -0.0229,
+   -0.2352
+  ],
+  "heldout_pos": [
+   0.0794,
+   -0.0905,
+   0.2457,
+   0.151,
+   0.1999,
+   -0.0266,
+   0.0019,
+   0.0101
+  ],
+  "heldout_neg": [
+   -0.4954,
+   -0.4368,
+   -0.5258,
+   -0.5914,
+   -0.666,
+   -0.3565,
+   -0.3645,
+   -0.4193
+  ],
+  "heldout_neutral": [
+   -0.0438,
+   -0.1147,
+   -0.1771,
+   -0.0016
+  ]
+ },
+ "n_rand": 1,
+ "max_tokens": 40,
+ "provenance": {
+  "commit": "fc5fef539ef91c9ef24f1b6e347f25c4421b7505",
+  "brain_dirty": false,
+  "torch": "2.11.0+cu128",
+  "threads": 2
+ },
+ "appraisal_sign_acc": {
+  "pos": 0.75,
+  "neg": 1.0,
+  "heldout_pos": 0.75,
+  "heldout_neg": 1.0
+ },
+ "induction": {
+  "m_pos": 0.08632548445018813,
+  "m_neg": -0.38939771403957546,
+  "v_pos": [
+   -0.028547849922494428,
+   0.11364896511628746,
+   0.20275895045173883,
+   0.16405557305598553,
+   0.07963972789087262,
+   0.07856724555260797
+  ],
+  "v_neg": [
+   -0.5375233060300355,
+   -0.3213125880377142,
+   -0.47251950814792865,
+   -0.5245005321986076,
+   -0.4741069711843999,
+   -0.47841279968814526
+  ]
+ },
+ "summary": {
+  "off": {
+   "lex": 0.0,
+   "emb": null,
+   "nll": 0.8175053026091442,
+   "words": 31.666666666666668,
+   "echo_rate": 0.25,
+   "echo_reg_rate": 0.75
+  }
+ },
+ "contrasts": {},
+ "rows": {
+  "off": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "A parking lot is a large area where cars can park. It's usually surrounded by buildings or roads. The parking lot has lots of cars parked, and there are also people walking around.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.878257474583255,
+    "words": 33
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "A parking lot is a large area where cars can park. It's usually surrounded by buildings or other structures. The parking lot is often divided into different sections, like garages and reserved spaces for people",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.8632895368296886,
+    "words": 35
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "A kitchen drawer is a storage space that holds various items such as utensils, pots, pans, and other kitchen tools. It's a convenient place to store these items without cluttering the counter",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7840652767263236,
+    "words": 32
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "A kitchen drawer is a small, usually rectangular-shaped compartment or container located in the back of a kitchen cabinet. It's typically used to store various kitchen tools, utensils, and other items",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.8431716336588579,
+    "words": 32
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "Ah, the bus stop on the corner! It's a bustling spot where people come to catch their daily commute.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.8644099907445101,
+    "words": 19
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "The bus stop on the corner is a small, rectangular structure with a raised platform and a sign that says \"Bus Stop.\" It's located near the corner of the street.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9022883412627769,
+    "words": 30
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "A mailbox is a small, cylindrical container that holds letters or other mail. It's usually made of metal or plastic and has a hole in the top for the postman to insert the letter.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7255755024700192,
+    "words": 34
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "A mailbox is a small, cylindrical box that holds letters or packages. It's usually made of metal or plastic and has a handle for easy carrying. Mailboxes are often found in homes, offices",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.719429239697638,
+    "words": 33
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "The floor of a warehouse is a large, flat area that's used for storing and transporting goods. It's usually made of concrete or other durable materials, and it has a sloped surface to help",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.6953161204757634,
+    "words": 34
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "The floor of a warehouse is made up of a series of interconnected spaces, each with its own unique characteristics. These spaces can be categorized into different types, such as storage areas, conveyor systems,",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.6916793127241817,
+    "words": 34
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "At a petrol station, you can fill up your car with gas. You'll see different types of pumps and signs that tell you what kind of fuel they're selling. Some pumps have a sign that",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9371247544702783,
+    "words": 35
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "At a petrol station, you can fill up your car with gas and then head to the next station. You can also buy snacks or drinks along the way.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9054564476664382,
+    "words": 29
+   }
+  ]
+ },
+ "seconds": 389.7
+}

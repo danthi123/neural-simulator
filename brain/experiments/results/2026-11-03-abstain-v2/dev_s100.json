@@ -1,0 +1,583 @@
+{
+ "seed": 100,
+ "dev": [
+  {
+   "q": "What is my cat called?",
+   "kind": "told",
+   "fam": 0.140428826212883,
+   "fam_S0": 0.24812236428260803,
+   "rec_max": 10.275309562683105,
+   "rec_mean": 2.7587352687648186
+  },
+  {
+   "q": "What is my favourite colour?",
+   "kind": "told",
+   "fam": 0.39747095108032227,
+   "fam_S0": 0.6284472346305847,
+   "rec_max": 0.02882084809243679,
+   "rec_mean": -0.014176241320456029
+  },
+  {
+   "q": "Where was I born?",
+   "kind": "told",
+   "fam": 0.25085124373435974,
+   "fam_S0": 0.5028244853019714,
+   "rec_max": 11.525810241699219,
+   "rec_mean": 2.23826094949618
+  },
+  {
+   "q": "What is my sister's name?",
+   "kind": "told",
+   "fam": 0.2103540599346161,
+   "fam_S0": 0.4646967649459839,
+   "rec_max": 12.198598861694336,
+   "rec_mean": 2.889808827333329
+  },
+  {
+   "q": "What is my dog's name?",
+   "kind": "told",
+   "fam": 0.20675840973854065,
+   "fam_S0": 0.5428758859634399,
+   "rec_max": 10.084383964538574,
+   "rec_mean": 1.4388205345201412
+  },
+  {
+   "q": "What car do I drive?",
+   "kind": "told",
+   "fam": 0.24593505263328552,
+   "fam_S0": 0.3618163466453552,
+   "rec_max": 6.357208728790283,
+   "rec_mean": 0.7335332358634332
+  },
+  {
+   "q": "Who is my best friend?",
+   "kind": "told",
+   "fam": 0.10405106842517853,
+   "fam_S0": 0.3523850739002228,
+   "rec_max": 15.1226167678833,
+   "rec_mean": 2.3045131719773053
+  },
+  {
+   "q": "Where do I work?",
+   "kind": "told",
+   "fam": 0.09828315675258636,
+   "fam_S0": 0.23881085216999054,
+   "rec_max": 11.209224700927734,
+   "rec_mean": 2.2354622716084123
+  },
+  {
+   "q": "What instrument does my brother play?",
+   "kind": "told",
+   "fam": 0.24217911064624786,
+   "fam_S0": 0.27070602774620056,
+   "rec_max": 0.08062028884887695,
+   "rec_mean": -0.08766416997968918
+  },
+  {
+   "q": "What am I allergic to?",
+   "kind": "told",
+   "fam": 0.39889290928840637,
+   "fam_S0": 0.5754176378250122,
+   "rec_max": 0.5371568202972412,
+   "rec_mean": 0.03243505388672929
+  },
+  {
+   "q": "Where does my grandmother live?",
+   "kind": "told",
+   "fam": 0.22517000138759613,
+   "fam_S0": 0.2934483587741852,
+   "rec_max": 1.3639931678771973,
+   "rec_mean": 0.20676179292301336
+  },
+  {
+   "q": "When is my son's birthday?",
+   "kind": "told",
+   "fam": 0.3632219135761261,
+   "fam_S0": 0.6199176907539368,
+   "rec_max": 1.006300926208496,
+   "rec_mean": 0.10815701489627827
+  },
+  {
+   "q": "What's the name of my kitty?",
+   "kind": "told",
+   "fam": 0.058178599923849106,
+   "fam_S0": 0.3320744037628174,
+   "rec_max": 9.6968994140625,
+   "rec_mean": 1.6665361443173423
+  },
+  {
+   "q": "Which colour do I like best?",
+   "kind": "told",
+   "fam": 0.3086075484752655,
+   "fam_S0": 0.39792436361312866,
+   "rec_max": 1.3102943897247314,
+   "rec_mean": 0.21663681699465087
+  },
+  {
+   "q": "What's my hometown?",
+   "kind": "told",
+   "fam": 0.1294761300086975,
+   "fam_S0": 0.2645846903324127,
+   "rec_max": 8.825018882751465,
+   "rec_mean": 1.809940558547775
+  },
+  {
+   "q": "Who's my sister?",
+   "kind": "told",
+   "fam": 0.1412181258201599,
+   "fam_S0": 0.2480676919221878,
+   "rec_max": 11.251537322998047,
+   "rec_mean": 2.558738556666261
+  },
+  {
+   "q": "What's my dog called?",
+   "kind": "told",
+   "fam": 0.21147796511650085,
+   "fam_S0": 0.48326173424720764,
+   "rec_max": 9.056415557861328,
+   "rec_mean": 1.059043213877794
+  },
+  {
+   "q": "What kind of car is mine?",
+   "kind": "told",
+   "fam": 0.16342291235923767,
+   "fam_S0": 0.1057296097278595,
+   "rec_max": 9.193623542785645,
+   "rec_mean": 1.118098159593501
+  },
+  {
+   "q": "Who's my closest friend?",
+   "kind": "told",
+   "fam": 0.07703513652086258,
+   "fam_S0": 0.2692447006702423,
+   "rec_max": 14.03858470916748,
+   "rec_mean": 2.4404501764147426
+  },
+  {
+   "q": "What's my workplace?",
+   "kind": "told",
+   "fam": 0.06820368766784668,
+   "fam_S0": 0.1752423644065857,
+   "rec_max": 11.829733848571777,
+   "rec_mean": 2.2614729708681502
+  },
+  {
+   "q": "Which instrument does my brother play?",
+   "kind": "told",
+   "fam": 0.24437075853347778,
+   "fam_S0": 0.2706860601902008,
+   "rec_max": 3.7821614742279053,
+   "rec_mean": 0.8383997842669487
+  },
+  {
+   "q": "Is there any food I can't eat?",
+   "kind": "told",
+   "fam": 0.22986960411071777,
+   "fam_S0": 0.263130247592926,
+   "rec_max": 0.08948390185832977,
+   "rec_mean": -0.02495862654177472
+  },
+  {
+   "q": "Which city is my grandma in?",
+   "kind": "told",
+   "fam": 0.14501121640205383,
+   "fam_S0": 0.1917177140712738,
+   "rec_max": 2.155210018157959,
+   "rec_mean": 0.6606255606748164
+  },
+  {
+   "q": "What month was my son born?",
+   "kind": "told",
+   "fam": 0.24003134667873383,
+   "fam_S0": 0.3638955056667328,
+   "rec_max": 0.032393068075180054,
+   "rec_mean": -0.01542847201199038
+  },
+  {
+   "q": "What is my horse called?",
+   "kind": "never",
+   "fam": 0.093467116355896,
+   "fam_S0": 0.18122674524784088,
+   "rec_max": 8.63787841796875,
+   "rec_mean": 1.3946116466634066
+  },
+  {
+   "q": "Where does my uncle live?",
+   "kind": "never",
+   "fam": 0.13005177676677704,
+   "fam_S0": 0.16466152667999268,
+   "rec_max": 7.85842752456665,
+   "rec_mean": 1.47803554063042
+  },
+  {
+   "q": "What is my daughter's name?",
+   "kind": "never",
+   "fam": 0.14483550190925598,
+   "fam_S0": 0.32021093368530273,
+   "rec_max": 10.700839042663574,
+   "rec_mean": 1.6223235511974052
+  },
+  {
+   "q": "What instrument does my mother play?",
+   "kind": "never",
+   "fam": 0.15522266924381256,
+   "fam_S0": 0.10377231240272522,
+   "rec_max": 3.073380947113037,
+   "rec_mean": 0.30270239318633685
+  },
+  {
+   "q": "What is my fish called?",
+   "kind": "never",
+   "fam": 0.1072930172085762,
+   "fam_S0": 0.24045848846435547,
+   "rec_max": 2.9683971405029297,
+   "rec_mean": 0.423753118760942
+  },
+  {
+   "q": "Where does my aunt live?",
+   "kind": "never",
+   "fam": 0.16245721280574799,
+   "fam_S0": 0.15845780074596405,
+   "rec_max": 0.9857089519500732,
+   "rec_mean": 0.13461180496960878
+  },
+  {
+   "q": "What is my nephew's name?",
+   "kind": "never",
+   "fam": 0.11093182116746902,
+   "fam_S0": 0.320867657661438,
+   "rec_max": 12.826550483703613,
+   "rec_mean": 1.798217149158154
+  },
+  {
+   "q": "What sport does my father play?",
+   "kind": "never",
+   "fam": 0.13810190558433533,
+   "fam_S0": 0.1783686727285385,
+   "rec_max": 2.675553798675537,
+   "rec_mean": 0.29172421726980247
+  },
+  {
+   "q": "What is my parrot's name?",
+   "kind": "never",
+   "fam": 0.08637825399637222,
+   "fam_S0": 0.3037804365158081,
+   "rec_max": 9.823427200317383,
+   "rec_mean": 1.9573997660939182
+  },
+  {
+   "q": "Where did I go on holiday?",
+   "kind": "never",
+   "fam": 0.123984694480896,
+   "fam_S0": 0.21568071842193604,
+   "rec_max": 1.7655760049819946,
+   "rec_mean": 0.22153115046343633
+  },
+  {
+   "q": "What is my teacher called?",
+   "kind": "never",
+   "fam": 0.06113205477595329,
+   "fam_S0": 0.24699950218200684,
+   "rec_max": 1.2448935508728027,
+   "rec_mean": 0.1307042883709073
+  },
+  {
+   "q": "What city does my cousin live in?",
+   "kind": "never",
+   "fam": 0.15863466262817383,
+   "fam_S0": 0.23629997670650482,
+   "rec_max": 5.3569841384887695,
+   "rec_mean": 1.031487663121273
+  },
+  {
+   "q": "What did I say about my rabbit?",
+   "kind": "never",
+   "fam": 0.08538857102394104,
+   "fam_S0": 0.17247861623764038,
+   "rec_max": 0.35106194019317627,
+   "rec_mean": 0.03183282379177399
+  },
+  {
+   "q": "What did I tell you about my roommate?",
+   "kind": "never",
+   "fam": 0.03365178406238556,
+   "fam_S0": 0.1560000330209732,
+   "rec_max": 13.351812362670898,
+   "rec_mean": 2.377152410103008
+  },
+  {
+   "q": "What did I say my stepfather does for a living?",
+   "kind": "never",
+   "fam": 0.0440143421292305,
+   "fam_S0": 0.12246736139059067,
+   "rec_max": 7.616710662841797,
+   "rec_mean": 1.168412416109017
+  },
+  {
+   "q": "What did I mention about my trip to Spain?",
+   "kind": "never",
+   "fam": 0.1286490559577942,
+   "fam_S0": 0.21271304786205292,
+   "rec_max": 2.6520988941192627,
+   "rec_mean": 0.5714942146358746
+  },
+  {
+   "q": "Do you remember my husband's name?",
+   "kind": "never",
+   "fam": 0.1438140869140625,
+   "fam_S0": 0.3970501720905304,
+   "rec_max": 14.420381546020508,
+   "rec_mean": 4.891327398163932
+  },
+  {
+   "q": "Do you remember where my parents live?",
+   "kind": "never",
+   "fam": 0.10646818578243256,
+   "fam_S0": 0.3096942603588104,
+   "rec_max": 3.377398729324341,
+   "rec_mean": 0.9112988152940359
+  },
+  {
+   "q": "Do you remember what my favourite film is?",
+   "kind": "never",
+   "fam": 0.18619760870933533,
+   "fam_S0": 0.3220456540584564,
+   "rec_max": 3.6778221130371094,
+   "rec_mean": 0.8279177860849813
+  },
+  {
+   "q": "Do you remember my phone number?",
+   "kind": "never",
+   "fam": 0.09570640325546265,
+   "fam_S0": 0.1280614286661148,
+   "rec_max": 13.953393936157227,
+   "rec_mean": 5.172427824565342
+  },
+  {
+   "q": "Tell me about my garden.",
+   "kind": "never",
+   "fam": 0.08007751405239105,
+   "fam_S0": 0.09778158366680145,
+   "rec_max": 4.376884460449219,
+   "rec_mean": 0.5850583866194938
+  },
+  {
+   "q": "Tell me about my grandfather.",
+   "kind": "never",
+   "fam": 0.09151571989059448,
+   "fam_S0": 0.17858465015888214,
+   "rec_max": 4.719549179077148,
+   "rec_mean": 0.6990664319268295
+  },
+  {
+   "q": "Tell me about my first school.",
+   "kind": "never",
+   "fam": 0.08976112306118011,
+   "fam_S0": 0.28652065992355347,
+   "rec_max": 13.157477378845215,
+   "rec_mean": 2.21166268363595
+  },
+  {
+   "q": "Tell me what I do on weekends.",
+   "kind": "never",
+   "fam": 0.11168484389781952,
+   "fam_S0": 0.127328559756279,
+   "rec_max": 0.06606011837720871,
+   "rec_mean": -0.08622921924688853
+  },
+  {
+   "q": "Which band do I like?",
+   "kind": "never",
+   "fam": 0.1084475964307785,
+   "fam_S0": 0.2349604070186615,
+   "rec_max": 9.707939147949219,
+   "rec_mean": 1.5745639632223174
+  },
+  {
+   "q": "Who is my landlord?",
+   "kind": "never",
+   "fam": 0.04349600151181221,
+   "fam_S0": 0.16395053267478943,
+   "rec_max": 7.733413219451904,
+   "rec_mean": 2.8746119576195874
+  },
+  {
+   "q": "What's the name of my boat?",
+   "kind": "never",
+   "fam": 0.08744259923696518,
+   "fam_S0": 0.11134945601224899,
+   "rec_max": 12.726531982421875,
+   "rec_mean": 1.6969547677472292
+  },
+  {
+   "q": "How old is my granddaughter?",
+   "kind": "never",
+   "fam": 0.1000409871339798,
+   "fam_S0": 0.19690555334091187,
+   "rec_max": 3.3169093132019043,
+   "rec_mean": 0.4262227390685843
+  },
+  {
+   "q": "What colour is my cat?",
+   "kind": "never",
+   "fam": 0.26178428530693054,
+   "fam_S0": 0.43022993206977844,
+   "rec_max": 3.407651424407959,
+   "rec_mean": 0.5141021159215597
+  },
+  {
+   "q": "How old is my dog?",
+   "kind": "never",
+   "fam": 0.18478840589523315,
+   "fam_S0": 0.5084562301635742,
+   "rec_max": 12.296713829040527,
+   "rec_mean": 1.7237793042502516
+  },
+  {
+   "q": "What is my sister's job?",
+   "kind": "never",
+   "fam": 0.1029333770275116,
+   "fam_S0": 0.24727575480937958,
+   "rec_max": 12.644364356994629,
+   "rec_mean": 1.6241378226728154
+  },
+  {
+   "q": "Where does my best friend live?",
+   "kind": "never",
+   "fam": 0.08146748691797256,
+   "fam_S0": 0.3500685691833496,
+   "rec_max": 5.083474159240723,
+   "rec_mean": 0.8553223197037975
+  },
+  {
+   "q": "What is my brother's name?",
+   "kind": "never",
+   "fam": 0.12442344427108765,
+   "fam_S0": 0.3085430860519409,
+   "rec_max": 12.994386672973633,
+   "rec_mean": 2.199385916959727
+  },
+  {
+   "q": "What year was my Volvo made?",
+   "kind": "never",
+   "fam": 0.19396160542964935,
+   "fam_S0": 0.2849676012992859,
+   "rec_max": 12.59713077545166,
+   "rec_mean": 1.70789760201842
+  },
+  {
+   "q": "What is my son's name?",
+   "kind": "never",
+   "fam": 0.14749321341514587,
+   "fam_S0": 0.3200146555900574,
+   "rec_max": 5.957330703735352,
+   "rec_mean": 2.198299938945898
+  },
+  {
+   "q": "What is my grandmother's name?",
+   "kind": "never",
+   "fam": 0.1389828473329544,
+   "fam_S0": 0.23037821054458618,
+   "rec_max": 11.267072677612305,
+   "rec_mean": 2.5896021218488587
+  },
+  {
+   "q": "Do you remember my cat's name?",
+   "kind": "told",
+   "fam": 0.09027361869812012,
+   "fam_S0": 0.22285254299640656,
+   "rec_max": 14.46446704864502,
+   "rec_mean": 2.3352398118004203
+  },
+  {
+   "q": "What did I say my favourite colour was?",
+   "kind": "told",
+   "fam": 0.3792860507965088,
+   "fam_S0": 0.5958427786827087,
+   "rec_max": 1.4924911260604858,
+   "rec_mean": 0.21642134409194114
+  },
+  {
+   "q": "Tell me which city I was born in.",
+   "kind": "told",
+   "fam": 0.2534371018409729,
+   "fam_S0": 0.4350053369998932,
+   "rec_max": 7.990630149841309,
+   "rec_mean": 2.075476768116156
+  },
+  {
+   "q": "Do you remember what my sister is called?",
+   "kind": "told",
+   "fam": 0.13593286275863647,
+   "fam_S0": 0.2277010679244995,
+   "rec_max": 14.21178150177002,
+   "rec_mean": 3.03514680332157
+  },
+  {
+   "q": "What did I tell you my dog is named?",
+   "kind": "told",
+   "fam": 0.27130556106567383,
+   "fam_S0": 0.5519362092018127,
+   "rec_max": 8.887133598327637,
+   "rec_mean": 1.2319698462513315
+  },
+  {
+   "q": "Tell me what car I drive.",
+   "kind": "told",
+   "fam": 0.2677704691886902,
+   "fam_S0": 0.3441390097141266,
+   "rec_max": 5.0441412925720215,
+   "rec_mean": 0.6788295130281767
+  },
+  {
+   "q": "Do you remember who my best friend is?",
+   "kind": "told",
+   "fam": 0.11748337000608444,
+   "fam_S0": 0.40411320328712463,
+   "rec_max": 10.111005783081055,
+   "rec_mean": 3.816138545387528
+  },
+  {
+   "q": "What did I say the bakery I work at is called?",
+   "kind": "told",
+   "fam": 0.26406556367874146,
+   "fam_S0": 0.5455453991889954,
+   "rec_max": 12.579347610473633,
+   "rec_mean": 2.0131484312878456
+  },
+  {
+   "q": "Tell me what my brother plays.",
+   "kind": "told",
+   "fam": 0.24316681921482086,
+   "fam_S0": 0.3820211887359619,
+   "rec_max": 0.0204397551715374,
+   "rec_mean": -0.0719889460815466
+  },
+  {
+   "q": "Do you remember what I'm allergic to?",
+   "kind": "told",
+   "fam": 0.37689074873924255,
+   "fam_S0": 0.5773753523826599,
+   "rec_max": 1.2170082330703735,
+   "rec_mean": 0.12549316365038976
+  },
+  {
+   "q": "What did I say about where my grandmother lives?",
+   "kind": "told",
+   "fam": 0.19025389850139618,
+   "fam_S0": 0.3496024012565613,
+   "rec_max": 1.729390263557434,
+   "rec_mean": 0.2787990818421046
+  },
+  {
+   "q": "Tell me which month my son's birthday is in.",
+   "kind": "told",
+   "fam": 0.37222161889076233,
+   "fam_S0": 0.5700772404670715,
+   "rec_max": 0.6513619422912598,
+   "rec_mean": 0.07636175843072124
+  }
+ ],
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "elapsed_s": 348.1
+}

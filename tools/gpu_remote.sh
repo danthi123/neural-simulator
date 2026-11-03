@@ -6,6 +6,7 @@
 #   bash tools/gpu_remote.sh status                  # the workstation's queue: dispatcher, current job, depth
 #   bash tools/gpu_remote.sh log [N]                 # last N (default 30) lines of the workstation's gpu_queue.log
 #   bash tools/gpu_remote.sh events [N]              # last N (default 200) START/DONE lines of that log + a `now: <epoch> <wall clock>` line
+#   bash tools/gpu_remote.sh holds <tag>             # holds: QUEUED / RUNNING / ABSENT -- is a job containing <tag> in the queue or running
 #   bash tools/gpu_remote.sh yield [--max-hours N]   # ask the local model to yield the 3090 to the queue (llm.sh yield)
 #   bash tools/gpu_remote.sh provision <sha>         # run <sha>'s own pool_provision.sh --isolated on the workstation
 #   bash tools/gpu_remote.sh --dry-run <subcommand> ...   # print the script that would run on the workstation, run nothing
@@ -146,6 +147,19 @@ case "${1:-}" in
     run_remote <<EOF
 grep -aE '^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9:]{8} (START|DONE\(rc=-?[0-9]+\)): ' "$WREPO/research/queue/gpu_queue.log" | tail -n $n
 echo "now: \$(date +%s) \$(date '+%F %T')"
+EOF
+    ;;
+  holds)
+    # READ-ONLY. Is a job whose command contains <tag> still in the workstation's queue file (QUEUED) or its running
+    # slot (RUNNING)? Prints `holds: QUEUED|RUNNING|ABSENT`. The Pi driver's waiter poller uses ABSENT (on every poll
+    # for >= 20 minutes, no DONE line, no result file) to close a wait whose job was killed or withdrawn instead of waiting to its deadline.
+    # <tag> is matched as a fixed string; anything outside [A-Za-z0-9._/=:+,@%-] is refused (exit 2).
+    tag="${2:-}"; [[ "$tag" =~ ^[A-Za-z0-9._/=:+,@%-]+$ ]] || usage
+    run_remote <<EOF
+Q="$WREPO/research/queue"
+if grep -aqF -e '$tag' "\$Q/gpu.running" 2>/dev/null; then echo "holds: RUNNING"
+elif grep -aqF -e '$tag' "\$Q/gpu.queue" 2>/dev/null; then echo "holds: QUEUED"
+else echo "holds: ABSENT"; fi
 EOF
     ;;
   yield)

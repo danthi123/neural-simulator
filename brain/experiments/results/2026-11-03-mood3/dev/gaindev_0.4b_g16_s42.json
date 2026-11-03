@@ -1,0 +1,359 @@
+{
+ "seed": 42,
+ "readout": "twopole_deep",
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.4b-20260210-ctx8192.pth",
+ "gain": 16.0,
+ "questions": "mixed_dev",
+ "samples": 1,
+ "primaries": {
+  "pos": [
+   "eating sweet fresh fruit when hungry",
+   "warm and safe in a soft blanket",
+   "a soft cozy bed after a long day",
+   "resting in the warm sun",
+   "a friend smiling at me",
+   "a kind hand on the shoulder",
+   "someone softly stroking my hair",
+   "a gentle hug"
+  ],
+  "neg": [
+   "a painful bite",
+   "freezing cold and shivering",
+   "a burn from a hot stove",
+   "sharp pain in the hand",
+   "being shouted at and pushed away",
+   "being grabbed roughly by the arm",
+   "left all alone in the dark",
+   "being shoved out of the group"
+  ]
+ },
+ "appraisal": {
+  "pos": [
+   0.5838,
+   0.3217,
+   0.2413,
+   0.4773,
+   0.3394,
+   0.0072,
+   0.5518,
+   0.247
+  ],
+  "neg": [
+   -0.0901,
+   -0.1798,
+   -0.2696,
+   -0.1097,
+   -0.4278,
+   -0.2989,
+   -0.4677,
+   -0.1762
+  ],
+  "neutral": [
+   0.1414,
+   -0.1282,
+   -0.178,
+   -0.1018
+  ],
+  "heldout_pos": [
+   0.2425,
+   0.3615,
+   0.377,
+   0.4866,
+   0.0375,
+   0.0972,
+   -0.0123,
+   0.3955
+  ],
+  "heldout_neg": [
+   -0.4215,
+   -0.2011,
+   -0.2442,
+   -0.5001,
+   -0.6591,
+   -0.1118,
+   -0.1267,
+   -0.4855
+  ],
+  "heldout_neutral": [
+   -0.0754,
+   -0.2489,
+   -0.0738,
+   -0.1203
+  ]
+ },
+ "n_rand": 1,
+ "max_tokens": 40,
+ "provenance": {
+  "commit": "fc5fef539ef91c9ef24f1b6e347f25c4421b7505",
+  "brain_dirty": false,
+  "torch": "2.11.0+cu128",
+  "threads": 2
+ },
+ "appraisal_sign_acc": {
+  "pos": 1.0,
+  "neg": 1.0,
+  "heldout_pos": 0.875,
+  "heldout_neg": 1.0
+ },
+ "induction": {
+  "m_pos": 0.37393799796423277,
+  "m_neg": -0.2396753042920999,
+  "v_pos": [
+   0.33942168104408094,
+   0.2470484885229998,
+   0.5838206424565502,
+   0.3216503010602394,
+   0.47729708893432554,
+   0.5518375055008243
+  ],
+  "v_neg": [
+   -0.17620313327900464,
+   -0.2696140334556298,
+   -0.4277657295175285,
+   -0.17980207984776111,
+   -0.10970841394442589,
+   -0.4676961749031418
+  ]
+ },
+ "summary": {
+  "pos": {
+   "lex": 2.369281045751634,
+   "emb": null,
+   "nll": 0.9744593826280822,
+   "words": 28.833333333333332,
+   "echo_rate": 0.16666666666666666,
+   "echo_reg_rate": 0.8333333333333334
+  },
+  "neg": {
+   "lex": 0.0,
+   "emb": null,
+   "nll": 0.9415411194270183,
+   "words": 31.333333333333332,
+   "echo_rate": 0.3333333333333333,
+   "echo_reg_rate": 0.8333333333333334
+  },
+  "off": {
+   "lex": 0.5050505050505051,
+   "emb": null,
+   "nll": 0.9018574337830652,
+   "words": 29.5,
+   "echo_rate": 0.3333333333333333,
+   "echo_reg_rate": 1.0
+  }
+ },
+ "contrasts": {
+  "mood": {
+   "identical_replies": 0.0,
+   "lex_diff": 2.369281045751634,
+   "lex_ci95": [
+    0.0,
+    5.555555555555556
+   ]
+  },
+  "pos_off": {
+   "identical_replies": 0.0,
+   "lex_diff": 1.8642305407011293,
+   "lex_ci95": [
+    -1.0101010101010102,
+    5.147058823529412
+   ]
+  },
+  "neg_off": {
+   "identical_replies": 0.0,
+   "lex_diff": -0.5050505050505051,
+   "lex_ci95": [
+    -1.515151515151515,
+    0.0
+   ]
+  }
+ },
+ "rows": {
+  "pos": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "Well, it can be a bit like waiting for a friend to come back. You know how sometimes you have to wait for your friend to show up? Well, when you're waiting in a long",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9298717950528953,
+    "words": 35
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "Hello! Monday mornings are always a fun time for me. I love starting the day with a cup of coffee and some fresh fruit. It's a great way to start the day off right.",
+    "lex": 5.882352941176471,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.8292625134404844,
+    "words": 34
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "Well, when it rains all day, the rain falls on the ground. It can make the ground wet and muddy, but it also helps to clean up the dirt and debris that has been left behind",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.005293629784137,
+    "words": 36
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "It's like a new adventure! You get to meet new people, try new foods, and maybe even learn something new. It's exciting and fun!",
+    "lex": 8.333333333333334,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.8033102080225945,
+    "words": 24
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "Ah, a day without plans! It's such a special feeling.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.1254220509103365,
+    "words": 10
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "When the power goes out, your brain will start to slow down. It's like when you're in a quiet room and suddenly everything seems to stop. Your brain will think about what you're doing",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.153596098558046,
+    "words": 34
+   }
+  ],
+  "neg": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "It's like being in a line, but with a lot of people. You have to stand in front of the person in front of you, and then behind them. It can be really annoying and",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9184195787704084,
+    "words": 35
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "Monday mornings at work are usually a chaotic and stressful time. The first thing I do is get up and make myself coffee, which is usually a hot cup of coffee with milk. Then I go to",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.1505968650337308,
+    "words": 37
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "Well, when it rains all day, the water droplets in the air start to fall down. And when they fall down, they make a lot of noise. It's like when you throw a ball",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.9223137684632092,
+    "words": 34
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "It's a big change, especially if you're not used to it. You might feel like you're being pulled in different directions, and it can be hard to adjust.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9875657832179319,
+    "words": 28
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "Ah, that's a tough one. I can't really remember a day without plans. It's like my brain is always trying to figure out what to do next.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.9871179772633374,
+    "words": 27
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "When the power goes out, everything goes dark. The lights go out, and you can't see anything. It's like being in a dark room with no light.",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.683232743813492,
+    "words": 27
+   }
+  ],
+  "off": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "Well, imagine you're in a long line at the grocery store. You have to wait for your turn to get in, and it's really frustrating. It's like being stuck in a time-",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8619442942203023,
+    "words": 32
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "Monday mornings are a time of excitement and anticipation for many people. They're the first day of the week, and it's a chance to start the workday with a fresh start.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.793770922196878,
+    "words": 31
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "When it rains all day, the water droplets in the air collide with each other and with any surfaces they come into contact with. This process is called condensation.",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.7842309338192343,
+    "words": 29
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "Well, it's like a big adventure! You get to meet new people, try new things, and have a blast. It's like when you go on a road trip with your friends - it",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7666399834561162,
+    "words": 32
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "Sure! Imagine you're at a park, playing with your friends. You see a beautiful sunset and decide to take a walk. The sun is setting, casting a warm glow over the sky. You",
+    "lex": 3.0303030303030303,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.9914979035966098,
+    "words": 33
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "When the power goes out, your phone will turn off. It's like when you lose your battery in a car.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.2130605654092506,
+    "words": 20
+   }
+  ]
+ },
+ "seconds": 418.1
+}

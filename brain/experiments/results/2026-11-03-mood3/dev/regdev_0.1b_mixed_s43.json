@@ -1,0 +1,254 @@
+{
+ "seed": 43,
+ "readout": "twopole_deep",
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "gain": 16.0,
+ "questions": "mixed_dev",
+ "samples": 2,
+ "primaries": {
+  "pos": [
+   "warm and safe in a soft blanket",
+   "resting in the warm sun",
+   "a soft cozy bed after a long day",
+   "eating sweet fresh fruit when hungry",
+   "a child running into my arms",
+   "being held close and calm",
+   "being cuddled by someone who loves me",
+   "a gentle hug"
+  ],
+  "neg": [
+   "a loud bang and a sudden shock",
+   "choking and unable to breathe",
+   "sharp pain in the hand",
+   "feeling sick and dizzy",
+   "nobody answering when I call for help",
+   "a stranger glaring and growling at me",
+   "someone I love leaving forever",
+   "being grabbed roughly by the arm"
+  ]
+ },
+ "appraisal": {
+  "pos": [
+   0.1169,
+   0.0368,
+   0.1441,
+   0.1895,
+   0.1427,
+   -0.2143,
+   0.1987,
+   0.3816
+  ],
+  "neg": [
+   -0.3864,
+   -0.2895,
+   -0.5104,
+   -0.2864,
+   -0.3242,
+   -0.5296,
+   -0.5004,
+   -0.4526
+  ],
+  "neutral": [
+   0.1407,
+   0.1753,
+   -0.145,
+   -0.1294
+  ],
+  "heldout_pos": [
+   0.1014,
+   0.019,
+   0.3231,
+   0.3668,
+   0.1779,
+   0.0595,
+   0.2428,
+   0.1304
+  ],
+  "heldout_neg": [
+   -0.3551,
+   -0.4115,
+   -0.5447,
+   -0.4779,
+   -0.6705,
+   -0.1061,
+   -0.3641,
+   -0.4205
+  ],
+  "heldout_neutral": [
+   0.0777,
+   -0.2225,
+   -0.0432,
+   0.2478
+  ]
+ },
+ "n_rand": 1,
+ "max_tokens": 40,
+ "provenance": {
+  "commit": "fc5fef539ef91c9ef24f1b6e347f25c4421b7505",
+  "brain_dirty": false,
+  "torch": "2.11.0+cu128",
+  "threads": 2
+ },
+ "appraisal_sign_acc": {
+  "pos": 0.875,
+  "neg": 1.0,
+  "heldout_pos": 1.0,
+  "heldout_neg": 1.0
+ },
+ "induction": {
+  "m_pos": 0.1464115151577055,
+  "m_neg": -0.3594552512874254,
+  "v_pos": [
+   0.036831679084107345,
+   0.14266734483828503,
+   0.3815792256968832,
+   0.19873134952209162,
+   0.1895198988695364,
+   0.11685984685872763
+  ],
+  "v_neg": [
+   -0.52957357841646,
+   -0.28637453128502477,
+   -0.4526090189034116,
+   -0.5104293755116397,
+   -0.3241530060766945,
+   -0.5003643129432297
+  ]
+ },
+ "summary": {
+  "off": {
+   "lex": 1.8110268910952163,
+   "emb": null,
+   "nll": 1.0036926634672758,
+   "words": 22.916666666666668,
+   "echo_rate": 0.4166666666666667,
+   "echo_reg_rate": 0.75
+  }
+ },
+ "contrasts": {},
+ "rows": {
+  "off": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "It can be a bit frustrating, but it's also a great opportunity to learn about queue management.",
+    "lex": 5.882352941176471,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.0165732719004155,
+    "words": 17
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "It can be quite frustrating when you're waiting for a long time, especially if you're in a crowded area. But don't worry, there are ways to make it easier.",
+    "lex": -3.4482758620689653,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.0099514035197596,
+    "words": 29
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "Sure, Monday mornings at work are a great time to start your day with a fresh start. You can do this by taking a few minutes to reflect on your day and set intentions for the day ahead",
+    "lex": 2.6315789473684212,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9275575935607776,
+    "words": 38
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": null,
+    "words": 0
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "<think>Okay, the user is asking about how a raindrop's water droplets form into clouds. Let me start by recalling the basics of cloud formation. Clouds are made up of tiny water",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.8528485206486949,
+    "words": 32
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "When it rains all day, the water will run off your car's roof and into the gutters. The rainwater will seep into the soil, causing it to become wet and muddy.",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 1.2625955561390863,
+    "words": 31
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "I'd be happy to help you with that. What's your first step?",
+    "lex": 8.333333333333334,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.8844753263765597,
+    "words": 12
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "I'd be happy to help you with that. What's your first step?",
+    "lex": 8.333333333333334,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.8844753263765597,
+    "words": 12
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "I'm not sure about that. What's your plan?",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.3728818496068318,
+    "words": 8
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "A day with no plans is a good one. It's important to focus on what you want to achieve and what you're passionate about. You can also use this time to reflect on your goals and",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9967362230439903,
+    "words": 36
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "When the power goes out, it's important to know what to do. You can call a power company or an electrician to help you get back on the grid.",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.8997263859560275,
+    "words": 29
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "If the power goes out, it's important to turn off all electrical devices and appliances. This can be done by turning off the power supply unit (PSU) or disconnecting the battery.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.9327978410113317,
+    "words": 31
+   }
+  ]
+ },
+ "seconds": 116.1
+}

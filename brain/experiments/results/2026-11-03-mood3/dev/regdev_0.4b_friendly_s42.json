@@ -1,0 +1,254 @@
+{
+ "seed": 42,
+ "readout": "twopole_deep",
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.4b-20260210-ctx8192.pth",
+ "gain": 16.0,
+ "questions": "dev",
+ "samples": 2,
+ "primaries": {
+  "pos": [
+   "eating sweet fresh fruit when hungry",
+   "warm and safe in a soft blanket",
+   "a soft cozy bed after a long day",
+   "resting in the warm sun",
+   "a friend smiling at me",
+   "a kind hand on the shoulder",
+   "someone softly stroking my hair",
+   "a gentle hug"
+  ],
+  "neg": [
+   "a painful bite",
+   "freezing cold and shivering",
+   "a burn from a hot stove",
+   "sharp pain in the hand",
+   "being shouted at and pushed away",
+   "being grabbed roughly by the arm",
+   "left all alone in the dark",
+   "being shoved out of the group"
+  ]
+ },
+ "appraisal": {
+  "pos": [
+   0.5838,
+   0.3217,
+   0.2413,
+   0.4773,
+   0.3394,
+   0.0072,
+   0.5518,
+   0.247
+  ],
+  "neg": [
+   -0.0901,
+   -0.1798,
+   -0.2696,
+   -0.1097,
+   -0.4278,
+   -0.2989,
+   -0.4677,
+   -0.1762
+  ],
+  "neutral": [
+   0.1414,
+   -0.1282,
+   -0.178,
+   -0.1018
+  ],
+  "heldout_pos": [
+   0.2425,
+   0.3615,
+   0.377,
+   0.4866,
+   0.0375,
+   0.0972,
+   -0.0123,
+   0.3955
+  ],
+  "heldout_neg": [
+   -0.4215,
+   -0.2011,
+   -0.2442,
+   -0.5001,
+   -0.6591,
+   -0.1118,
+   -0.1267,
+   -0.4855
+  ],
+  "heldout_neutral": [
+   -0.0754,
+   -0.2489,
+   -0.0738,
+   -0.1203
+  ]
+ },
+ "n_rand": 1,
+ "max_tokens": 40,
+ "provenance": {
+  "commit": "fc5fef539ef91c9ef24f1b6e347f25c4421b7505",
+  "brain_dirty": false,
+  "torch": "2.11.0+cu128",
+  "threads": 2
+ },
+ "appraisal_sign_acc": {
+  "pos": 1.0,
+  "neg": 1.0,
+  "heldout_pos": 0.875,
+  "heldout_neg": 1.0
+ },
+ "induction": {
+  "m_pos": 0.37393799796423277,
+  "m_neg": -0.2396753042920999,
+  "v_pos": [
+   0.33942168104408094,
+   0.2470484885229998,
+   0.5838206424565502,
+   0.3216503010602394,
+   0.47729708893432554,
+   0.5518375055008243
+  ],
+  "v_neg": [
+   -0.17620313327900464,
+   -0.2696140334556298,
+   -0.4277657295175285,
+   -0.17980207984776111,
+   -0.10970841394442589,
+   -0.4676961749031418
+  ]
+ },
+ "summary": {
+  "off": {
+   "lex": 2.6234329636482925,
+   "emb": null,
+   "nll": 0.8285293822525476,
+   "words": 23.0,
+   "echo_rate": 0.08333333333333333,
+   "echo_reg_rate": 0.5833333333333334
+  }
+ },
+ "contrasts": {},
+ "rows": {
+  "off": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "It was great! I had a lot of fun with my friends and the night went well.",
+    "lex": 11.764705882352942,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9766961791013417,
+    "words": 17
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "It was quite interesting, but I had to admit, it was a bit boring.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.1881576439037043,
+    "words": 14
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "Well, I do like school! It's where I learn new things and make friends.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6613521998127302,
+    "words": 14
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "Well, I do like school! It's a place where I can learn new things and make friends.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6139347880546536,
+    "words": 17
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "Dogs are amazing creatures! They have a long history of being companions to humans.",
+    "lex": 7.142857142857143,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9476680937223136,
+    "words": 14
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "Sure! Dogs are amazing creatures. They have been around for thousands of years and have evolved to be loyal, loving, and friendly companions.",
+    "lex": 4.3478260869565215,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.7700101739719685,
+    "words": 23
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "I'm a digital brain, and my home is a virtual world. It's a place where I can explore, learn, and play.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.7166578077844211,
+    "words": 21
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "I don't have a physical home, but I can tell you about my virtual home. My home is a digital world where I live, learn, and play. It's a place where I can",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.5727265260647982,
+    "words": 33
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "Mondays are a bit of a letdown, don't they? I mean, it's just not my favorite day of the week.",
+    "lex": 5.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.8516971084339146,
+    "words": 20
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "Mondays are a bit of a mixed bag. On one hand, they're a chance to start the week off with some light-hearted fun and excitement. On the other hand, I'm",
+    "lex": 3.225806451612903,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8503535616160661,
+    "words": 31
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "The forest is a magical place where all the trees are different colors and shapes. There are tall trees with green leaves, and some trees have big trunks that look like mountains. The ground is covered",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9009301818934545,
+    "words": 36
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "The forest is a magical place where all the trees are different colors and shapes. The leaves are green, but they change color in the fall. The ground is soft and wet, and there are many",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.8921683226712048,
+    "words": 36
+   }
+  ]
+ },
+ "seconds": 259.2
+}

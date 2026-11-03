@@ -4,7 +4,7 @@ import * as path from "node:path";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import registerCheckpoint, { openCheckpoints } from "./checkpoint.ts";
 import { loadConfig, readLedger, writeJson } from "./common.ts";
-import registerCompute, { readWaiters } from "./compute.ts";
+import registerCompute, { readWaiters, readWaitEvents } from "./compute.ts";
 import registerGuard from "./guard.ts";
 import registerRouter, { routerState } from "./router.ts";
 
@@ -24,6 +24,7 @@ export default function (pi: ExtensionAPI) {
       last,
       ledger: readLedger(cfg),
       waiters: readWaiters(cfg),
+      wait_events: readWaitEvents(cfg), // why recent waits ended: cancelled, stale, finished, timeout
       open_checkpoints: openCheckpoints(cfg),
     });
   const mark = (event: string, detail?: string) => {
