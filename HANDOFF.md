@@ -22,7 +22,12 @@
   Most 0.1B negatives are scale-bound (0.1B answers 6/12 even in context). Brain defaults unchanged (all new switches
   OFF). Tests: 92 passed (brain/tests + tests/test_brain_*, hippocampus_*, plastic_cortex, gpu_remote).
 - **LIVE RUNS:** W GPU: M3 retrieval sleep at 0.4B, six seeds (`_scratch/brainv2/m3-04b/`, frozen worktree
-  `_scratch/m3-04b-wt`). AWS: 1.5B at lr 3e-4 six seeds (`bash tools/aws_brain_batch.sh status|pull`; pull terminates).
+  `_scratch/m3-04b-wt`). Agents (workflow idle-fill-1103): 1.5B AWS packet, weekly rescoring, M2 v2 on the mini-PCs,
+  S_all live-bar refit, 11-04 keep/kill memo. AWS: none (lr 3e-4 batch pulled, instance terminated).
+- **READY WORK (one next job per resource; the attention watcher points here when one goes idle):**
+  W GPU: after M3, the 12-fact live-brain test at 1.5B (`--model 1.5b`). AWS: the 1.5B packet
+  `brain/experiments/jobs/2026-11-03-aws-15b.txt` once its agent lands it. Mini-PCs: M2 v2 seeds, then the Pi-lane
+  rescoring item. Pi: `research/coordination/PI_LANE.md` open items. Claude: read the weekly transcript, land results.
 - **NEXT STEP:** (1) merge `research/adopt-15b-steps-1103` (episode-file layout conflicts with the key switch and M2's
   `source` field in `Brain.save/load`) and finish the 1.5B adoption plan; (2) at 1.5B rerun the confab methods (M1
   needs slept abstain-v2 1.5B brains; M2 with 2-3 lived lessons) and the 12-fact test; (3) 11-04: KEEP/KILL the
