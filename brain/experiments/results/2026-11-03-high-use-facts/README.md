@@ -29,12 +29,13 @@ s43 biscuit; s44 cello, oslo; s100 march; s101 marguerite, volvo, cello; s102 ly
 
 ## What it shows
 - "Never wrong" fails: k=10 facts reach 100% on 0 of 6 seeds (best 3/4), although each k=10 fact got ~43 replays vs ~4 for k=1.
-- Use helps only weakly and inconsistently: in the use arm k=10 > k=1 on 4 seeds (s42, s43, s44, s101), ties on s100 (3 vs 3) and s102 (1 vs 1). Versus the equal control, the k=10 gain is +0.67 facts of 4 on average, driven by s42, s43, s44, s100;
+- The use effect is weak and inconsistent (not established): in the use arm k=10 > k=1 on 4 seeds (s42, s43, s44, s101), ties on s100 (3 vs 3) and s102 (1 vs 1). Versus the equal control, the k=10 gain is +0.67 facts of 4 on average, driven by s42, s43, s44, s100;
   on s101 and s102 the use arm is WORSE than the control (1 and 2 total vs 4 and 4), so strength weighting concentrated replay
   and hurt overall recall. Mean total recall use 4.8 vs control 3.8 hides that spread.
 - Paraphrase recall does not rise with use (about 1 of 4 in every group).
 - False recall is higher with weighting (2.8 vs 2.2 of 4, learned names leak); drift is small and the same (KL 0.03).
-- Exposure is not what limits recall: 10x replay does not make a fact reliable. At 0.1B the in-context ceiling is 6/12, so at most half the facts
+- More replay did not make k=10 facts reliable at 0.1B, but this does NOT show that exposure is not the limit: the per-fact
+  ceiling was not measured, the strength k was set by hand, and the hippocampus-on path was not tested. At 0.1B the in-context ceiling is 6/12, so at most half the facts
   are reachable at all; s101 recalled only 1/12 in total. Per-fact in-context ceiling was not measured per k group,
   so a k=10 miss is not proven to be a fact the cortex could never hold.
 
