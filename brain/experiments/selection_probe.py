@@ -10,9 +10,11 @@ never tested). Cues for each stored fact: same-words question (orig), light rewo
   auroc         top score of told cues vs untold cues (can the familiarity bar separate them; 0.5 = none)
   rec_<cue>     recall: the selected episode's delta reinstated at the hippocampus gain, then the cortex answers the
                 question (greedy); hit if the answer word is in the reply. Oracle = correct episode, none = no memory.
-Learned keys (brain/hippocampus_keys.py LearnedKey on pool_all), trained per seed:
-  learned_selfq    pairs = (stored episode, a question the cortex itself generated about it while replaying it): the
-                   brain's own sleep, no teacher text in training (the generation prompt is a declared scaffold)
+Learned keys (brain/hippocampus_keys.py LearnedKey on pool_all), trained per seed OFFLINE by this script (not by
+Brain.sleep) on cached read-outs. NOTE: this probe recomputes similarities from Gram matrices and never runs
+KeyedHippocampus.recall; the real-path probe is selection_realpath.py.
+  learned_selfq    pairs = (stored episode, a question the cortex itself generated about it while replaying it in this
+                   script), no teacher text in training (the generation prompt is a declared scaffold)
   learned_shuf     same pairs with questions shuffled across episodes (control: must not beat pool_all)
   learned_teacher  pairs = teacher-written questions/rewordings of the 12 training-pool facts (disjoint facts; scaffold)
 

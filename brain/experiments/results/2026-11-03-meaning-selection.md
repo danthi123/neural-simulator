@@ -1,5 +1,17 @@
 # 2026-11-03 Meaning-based selection: which key picks the right episode for a reworded question
 
+> **Corrections (11-03, `research/meaning-selection-fix-1103`; skeptic review).** (1) Every number below was
+> recomputed from Gram matrices of cortical read-outs; `KeyedHippocampus.recall` was never run (no strength weighting,
+> no familiarity bar, no margin, fp32 deltas instead of the stored fp16 ones). The real-path rerun, with a bar refit
+> on held-out dev facts, is `2026-11-03-meaning-selection-realpath.md` and supersedes the S0/S_all rows here.
+> (2) The learned keys were trained OFFLINE by the probe script on cached read-outs; nothing was trained in
+> `Brain.sleep` (no sleep wiring exists for keys). "The brain's own questions" means questions the cortex generated
+> under a declared prompt scaffold during that offline step. (3) "Recall" here is forced top-1 selection followed by
+> reinstatement, so it is mostly selection times the cortex's answer rate given the right episode (oracle 0.74-0.88);
+> it is not an independent capability measure. (4) "No extra memory" was false for the 11-03 code: `S_all` stored a
+> second, fp32 copy of the whole all-layer delta per episode (about 3x the memory); fixed on the fix branch (the key
+> is read from the stored delta). (5) FAMILIARITY/MARGIN were fit for S0; the AUROC column is the unweighted top score.
+
 Milestone 2026-11-30 "recall from reworded questions (meaning-based selection)". Hippocampus ON, no sleep of the
 cortex. Record: `brain/research/2026-11-02-record-brief-consolidation-and-selection.md` part B (learned keys beat fixed
 keys; >= 40 facts; confusables; shuffled-key control). `tools/before_you_build.sh` refused (stale corpus index on W);
@@ -59,7 +71,7 @@ S0 reinstates the Bristol episode -> "Bristol?"; S_all -> "Spike, Spike."; no me
 - The default key is the bottleneck for reworded questions, and it breaks with scale (0.4B: 10% selection on
   rewordings, 45% even on same words). Using the whole matrix-memory delta (all layers, each normalised) restores it:
   0.4B reworded recall 0.05-0.10 -> 0.66-0.70, about 75-80% of the oracle ceiling (0.88). No training, no host text;
-  the key is the delta the hippocampus already stores, so no extra memory.
+  the key is the delta the hippocampus already stores (but see correction 4: the 11-03 code duplicated it).
 - Wrong selection is a confabulation source: S0's misses reinstate another episode and the cortex speaks its name.
 - The learned key works as a mechanism (12/12 over the shuffled control: the replay pairs carry the signal) but the
   brain's own questions as pairs, 24 episodes, 300 steps, do NOT beat the fixed S_all key at either size; teacher pairs
