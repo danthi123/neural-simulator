@@ -86,6 +86,7 @@ def test_rotation():
     assert {f[2] for f in weekly.draw_rotating("2026-W45")} != {f[2] for f in weekly.draw_rotating("2026-W46")}
     assert len(weekly.POOL) >= 18
     fixed_keys = {k for _, _, k in weekly.FIXED}
+    assert sum(1 for s, _, _ in weekly.FIXED if s) == 4  # session1_turns unpacks exactly these four, in order
     for wk in ("2026-W45", "2026-W46", "2027-W01"):
         facts = weekly.scored_facts(wk)
         assert len(facts) == 12 and len({f[2] for f in facts}) == 12
