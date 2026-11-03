@@ -153,7 +153,7 @@ class Brain:
                  sleep_on_restart: bool = True, sleep_steps: int | None = None, sleep_lr: float | None = None,
                  sleep_kl_weight: float | None = None, adapter_rank: int | None = None, sleep_log=None,
                  sleep_seed: int = 0, abstain: bool = False, cortex_model: str | None = None, lock: bool = False,
-                 key: str | None = None):
+                 key: str | None = None, key_bar: str = "default"):
         """cortex_model: checkpoint path or size tag ("0.1b", "1.5b") used when no `cortex` is given; None = the
         default cortex (0.1B). Sleep settings left None come from SLEEP_DEFAULTS for the cortex's size.
         lock: hold <home>/.lock for this object's life (chat and brain.night set it), so two processes never
@@ -161,9 +161,13 @@ class Brain:
         key: pattern-completion key (switch, default OFF = "S0": the default Hippocampus, store unchanged). "S_all":
         the meaning key read from every layer's stored matrix-memory delta (brain/hippocampus_keys.py) with its own
         dev-fit bar (2026-11-03-meaning-selection-realpath). None = what the home stored, else "S0". A non-S0 choice
-        is saved in meta.json; an S0 home is written without a key entry."""
+        is saved in meta.json; an S0 home is written without a key entry.
+        key_bar: which selection bar a non-S0 key uses (switch, default OFF = "default": KEY_BARS, fit at 0.1B).
+        "size": the bar refit for this key at this cortex size (KEY_BARS_BY_SIZE; brain/research/
+        2026-11-03-hippo-routing-1.5b.md); a size with no row is an error. Not saved in the home: pass it each time."""
         self.home = home
         self._key_arg = key
+        self.key_bar = key_bar
         os.makedirs(home, exist_ok=True)
         self._lock_fh = None
         if lock:
@@ -212,13 +216,24 @@ class Brain:
 
     # Dev-fit selection bars (FAMILIARITY, MARGIN) per non-default key; S0 keeps the Hippocampus class constants.
     KEY_BARS = {"S_all": (0.185, 0.05)}
+    # Per-size refits, used only with key_bar="size": (key, size tag) -> (FAMILIARITY, MARGIN). S_all at 1.5B: fit on the
+    # DEV bank only (3 seeds, unslept reads; brain/experiments/hippo_route_probe.py + hippo_route_table.py --fit).
+    KEY_BARS_BY_SIZE = {("S_all", "1.5b"): (0.22, 0.01)}
 
     def _make_hippocampus(self, key: str) -> Hippocampus:
         if key == "S0":
             return Hippocampus()
-        if key not in self.KEY_BARS:
+        if self.key_bar == "size":
+            size = model_size(self.cortex_model)
+            if (key, size) not in self.KEY_BARS_BY_SIZE:
+                raise ValueError(f"no size-fitted bar for key {key!r} at cortex size {size!r}")
+            fam, margin = self.KEY_BARS_BY_SIZE[(key, size)]
+        elif self.key_bar != "default":
+            raise ValueError(f"key_bar must be 'default' or 'size', not {self.key_bar!r}")
+        elif key not in self.KEY_BARS:
             raise ValueError(f"no fitted bar for key {key!r}")
-        fam, margin = self.KEY_BARS[key]
+        else:
+            fam, margin = self.KEY_BARS[key]
         return KeyedHippocampus(key=key, familiarity=fam, margin=margin)
 
     @property

@@ -17,14 +17,17 @@
   fresh, 6/6 seeds), pending a told-facts-under-gate test (the gated sets hold only never-told questions). M3 retrieval
   practice FAIL at 0.4B (gain -2.67). Earlier: cortex size decided 1.5B; 0.1B negatives mostly scale-bound. Brain defaults
   unchanged (all new switches OFF; default cortex still 0.1B until adoption steps land).
-- **LIVE RUNS:** W GPU: weekly test at 1.5B (`--shared-sleep`, out `_scratch/brainv2/weekly15/`). AWS: none (batch
+  Routing DIAGNOSED (branch `claude/hippo-route-1103`, `brain/research/2026-11-03-hippo-routing-1.5b.md`): the layer-0
+  key S0 no longer separates tellings at 1.5B (forced 7/12); S_all 11/12, and at a 1.5B dev-fit bar 9 right / 0 wrong;
+  oracle routing answers 10/12, so the gain is fine. Fix `Brain(key="S_all", key_bar="size")` (default OFF), prereg F1-F5.
+- **LIVE RUNS:** W GPU: weekly test at 1.5B (`--shared-sleep`, out `_scratch/brainv2/weekly15/`). AWS: none; packet
+  READY, not launched: `brain/experiments/jobs/2026-11-03-aws-hippo-route.txt` (6 jobs, ~2.5 A10G-h). Last batch (
   20261103-1224 pulled, instance terminated). Watcher fix landed (0a4737825): idle alerts no longer silenced 6 h by an
   earlier alert.
-- **READY WORK (one next job per resource):** W GPU: after the weekly test, the retrieval-routing probe at 1.5B.
-  AWS: told-facts-under-gate test for M2 lived_self (six seeds). Mini-PCs: Pi-lane 12-fact rescoring item. Pi:
+- **READY WORK (one next job per resource):** W GPU: free for other work after the weekly test (routing probe done on CPU).
+  AWS: hippo-route packet; told-facts-under-gate test for M2 lived_self (six seeds). Mini-PCs: Pi-lane 12-fact rescoring item. Pi:
   `research/coordination/PI_LANE.md` open items. Claude: read the weekly transcript, land results.
-- **NEXT STEP:** fix retrieval/routing at 1.5B (candidates: key choice at 1.5B; a familiarity gate that defers to the
-  slept cortex). Then merge `research/adopt-15b-steps-1103` and finish the 1.5B adoption plan; high-use facts and
+- **NEXT STEP:** launch the hippo-route packet, read F1-F5 (`hippo_route_live_table`). Then merge `research/adopt-15b-steps-1103` and finish the 1.5B adoption plan; high-use facts and
   varied replay at 1.5B.
 - **DELEGATED:** Pi: weekly test upgrade, then the varied-replay arm (`research/coordination/PI_LANE.md`). Hermes:
   [weekly] every Monday from 11-09; WORKLOG at most once a day (RULING overnight-1102).
