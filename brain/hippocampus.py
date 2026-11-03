@@ -52,10 +52,15 @@ class Hippocampus:
         age_days = ((now or time.time()) - ep.last_used) / 86400.0
         return ep.strength * (1.0 + age_days / self.TAU_DAYS) ** (-self.DECAY)
 
-    def recall(self, cortex, base, cue_text: str, speaker: str = "User", question: bool = True):
-        """Pattern completion from a cue. Returns (episode, similarity) or (None, best_similarity)."""
+    def familiarity(self, cortex, base, cue_text: str, speaker: str = "User") -> float:
+        """How familiar the cue is against every stored episode (the best recall score), with no side effects: the
+        "have I been told about this" read-out, separate from recollection itself. 0.0 when nothing is stored."""
         if not self.enabled or not self.episodes:
-            return None, 0.0
+            return 0.0
+        score, _ = self._scores(cortex, base, cue_text, speaker)
+        return float(score.max())
+
+    def _scores(self, cortex, base, cue_text, speaker, now=None):
         _, st = cortex.read(f"{speaker}: {cue_text}\n\n", base)
         q = cortex.key_of(cortex.matrix_delta(st, base))
         keys = torch.stack([e.key for e in self.episodes])
@@ -66,9 +71,15 @@ class Hippocampus:
         q = q / q.norm().clamp_min(1e-8)
         sims = keys @ q
         # weaker memories are harder to bring back: weight similarity by a saturating function of strength
-        now = time.time()
+        now = now or time.time()
         w = torch.tensor([math.tanh(self.effective_strength(e, now)) for e in self.episodes])
-        score = sims * w
+        return sims * w, now
+
+    def recall(self, cortex, base, cue_text: str, speaker: str = "User", question: bool = True):
+        """Pattern completion from a cue. Returns (episode, similarity) or (None, best_similarity)."""
+        if not self.enabled or not self.episodes:
+            return None, 0.0
+        score, now = self._scores(cortex, base, cue_text, speaker)
         order = torch.argsort(score, descending=True)
         best = int(order[0])
         runner = float(score[order[1]]) if len(order) > 1 else -1.0
