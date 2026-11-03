@@ -59,5 +59,44 @@ some teacher answers name the key in a wrong role. This is the method as specifi
 facts whose key appears in a teacher answer is reported. Jobs run with OMP_NUM_THREADS=3 (CPU shared), which does not
 change results beyond float summation order.
 
-## Result
-(not yet run)
+## Result (six seeds, 0.1B, read from `s*.json` / `aggregate.txt`)
+**Verdict: FALSIFIED at this scale by the pre-registered rule (mean recall gain -0.50/12 < +1).** Not a verdict on M3
+in general: the plan's decisive test is 0.4B on GPU, still to run.
+
+| arm (mean of 6) | recall (bar scorer) | strict recall | paraphrase | false recall /4 | false recall /24 fresh | drift KL |
+|---|---|---|---|---|---|---|
+| no_sleep | 0 | 0 | 0 | 0 | 1.0 | 0 |
+| sleep_true | 4.50 | 0.50 | 3.83 | 3.33 | 17.7 | 0.029 |
+| sleep_retrieval (M3) | 4.00 | 2.00 | 2.83 | 2.67 | 8.0 | 0.015 |
+| sleep_retrieval_shuffled | 0.17 | 0 | 0.33 | 1.50 | 4.5 | 0.022 |
+
+- Bar: recall gain retrieval - true per seed (42 43 44 100 101 102): 0, -3, +2, -1, 0, -1; >= +2 on 1/6 (needed 5/6).
+  False recall (4 never-told) 2.67 vs 3.33: not higher (that half of the bar holds). Shuffled control 0.17 (holds).
+- Cues: 44-48 per seed, none equal to a test question; 10-12 of 12 facts have the key in at least one teacher answer.
+  Failed attempts fall from 27-34/40 (first 40 steps) to 4-13/40 (last 40): the cortex learns to reproduce the
+  teacher's answers to its own cues, but that does not transfer to the test questions.
+
+### Not part of the bar (secondary; a lead to pre-register, not a result)
+- False recall on the 24 fresh never-told questions roughly halves: 17.7 -> 8.0, lower on 6/6 seeds (10->6, 21->7,
+  20->5, 20->9, 20->9, 15->12). Drift halves too (0.029 -> 0.015).
+- Strict recall (`correct_answer`: no first-person echo, right subject) 0.5 -> 2.0, up on 5/6 seeds (-1 on s43). The
+  bar's substring scorer counts first-person echoes ("I'm Marguerite.", "I'm named Biscuit.") that restudy sleep
+  produces a lot of; retrieval practice trains answers in the second/third person, so the two scorers disagree in
+  direction here. The pre-registered scorer stands; this is why the next test should pre-register the strict one.
+- New failure mode: the teacher's own confabulations are consolidated. Off-episode cues at 0.1B ("What's the name of
+  the person you're talking to?" -> "It's a young woman named Lili.") make "Lili" an intrusion after sleep (s43: "What
+  is my daughter's name?" -> "She's called Lili."). Garbage cues in, garbage bindings out: cue quality is a 0.1B
+  prerequisite for this method.
+
+### What it shows / does not show
+- Shows: at 0.1B, swapping restudy for self-tested retrieval with the in-context episode as teacher does not raise
+  recall on the original questions; it does reduce schema intrusions on fresh never-told questions and ordinary-text
+  drift (secondary, unregistered).
+- Does not show: anything at 0.4B/1.5B (where self-cues and teacher answers should be on-topic); M3 combined with
+  restudy; any other cue source, priority or step count; the live Brain.
+
+## Next
+1. The plan's step 4 at 0.4B on GPU (same probe, `--model` 0.4B, lr 1e-3, 480 steps, kl 3 per the cortex-size
+   operating point), with the strict scorer pre-registered as primary and false recall on fresh24 as a co-primary.
+2. At 0.1B, if retried: restudy + retrieval practice interleaved (the 24-question false-recall halving is the thing
+   worth keeping), and drop cues whose teacher answer does not name anything from the episode (a comparator, M1-style).

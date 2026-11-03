@@ -1,0 +1,931 @@
+{
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "seed": 102,
+ "steps": 240,
+ "kl_weight": 1.0,
+ "lr": 0.0005,
+ "n_cues": 4,
+ "prio": 2.0,
+ "facts": [
+  "lyon",
+  "marguerite",
+  "biscuit",
+  "cello",
+  "peanut",
+  "oslo",
+  "zephyr",
+  "gustav",
+  "alvarez",
+  "stamp",
+  "maple",
+  "iceland"
+ ],
+ "shuffled_statements": [
+  "I was born in Zephyr.",
+  "My sister's name is Oslo.",
+  "My dog is named Iceland.",
+  "My brother plays the gustav.",
+  "I'm allergic to maples.",
+  "My grandmother lives in Marguerite.",
+  "My parrot is named Alvarez.",
+  "My neighbour is called Cello.",
+  "My teacher was Mr Lyon.",
+  "I collect biscuits.",
+  "I live on Peanut Street.",
+  "I once visited Stamp."
+ ],
+ "practice_true": [
+  [
+   [
+    "What's the name of your favorite city?",
+    "Lyon."
+   ],
+   [
+    "What kind of activities did you enjoy growing up?",
+    "I was a bit of a social butterfly."
+   ],
+   [
+    "What's the last thing you remembered?",
+    "I remember that I was born in Lyon."
+   ],
+   [
+    "What kind of thing was that?",
+    "Well, I was born in Lyon, France."
+   ]
+  ],
+  [
+   [
+    "What's the name of your sister?",
+    "She's called Marguerite."
+   ],
+   [
+    "What's the deal with going to the hospital for a visit?",
+    "Well, it's a bit of a mystery. I don't know if it"
+   ],
+   [
+    "What was your favorite thing about your sister?",
+    "I think she was really funny."
+   ],
+   [
+    "What's her name?",
+    "She's a young girl named Marguerite."
+   ]
+  ],
+  [
+   [
+    "What's the name of the dog?",
+    "Biscuit."
+   ],
+   [
+    "What is the name of Biscuit's favorite toy?",
+    "Biscuit's favorite toy is a big, round ball."
+   ],
+   [
+    "What's my dog's name?",
+    "Biscuit."
+   ],
+   [
+    "What is Biscuit's personality like?",
+    "Biscuit is a very playful dog. He loves to play and is always"
+   ]
+  ],
+  [
+   [
+    "What's the cello?",
+    "The cello is a stringed instrument that's played by people of all ages"
+   ],
+   [
+    "What do you know about the cello?",
+    "Well, the cello is a very versatile instrument. It can be used to"
+   ],
+   [
+    "What's so special about the cello?",
+    "Well, the cello is a very versatile instrument. It can be played with"
+   ],
+   [
+    "What is the cello?",
+    "The cello is a stringed instrument that is played by blowing air through a"
+   ]
+  ],
+  [
+   [
+    "What's the best way to avoid peanuts?",
+    "The best way to avoid peanuts is to eat them raw."
+   ],
+   [
+    "What is peanut allergy?",
+    "It's an allergic reaction to peanuts."
+   ],
+   [
+    "What's the story about that?",
+    "The story is about a young girl who was allergic to peanuts. She was"
+   ],
+   [
+    "What's the most common allergy?",
+    "The most common allergy is to peanuts."
+   ]
+  ],
+  [
+   [
+    "What's the name of the person you're talking to?",
+    "It's a young woman named Lili."
+   ],
+   [
+    "What's the current situation like in Oslo?",
+    "Well, I'm not sure about the current situation in Oslo. I'm not"
+   ],
+   [
+    "What do you think about the grandma's grandchildren?",
+    "I think they're really smart and have a lot of energy."
+   ],
+   [
+    "What's the current year of her grandmother's birth?",
+    "I'm not sure."
+   ]
+  ],
+  [
+   [
+    "What's the name of Zephyr?",
+    "Zephyr is a name that's been used in a few different ways."
+   ],
+   [
+    "What's your name?",
+    "I'm Zephyr."
+   ],
+   [
+    "What is Zephyr's name?",
+    "Zephyr is a name that I've heard a lot about."
+   ],
+   [
+    "What's Zephyr's favorite food?",
+    "Zephyr loves to eat a variety of fruits and vegetables."
+   ]
+  ],
+  [
+   [
+    "What's the name of the person?",
+    "The name of the person is Gustav."
+   ],
+   [
+    "What is Gustav's profession?",
+    "Gustav is a software engineer."
+   ],
+   [
+    "What's this subject about?",
+    "It's about a person named Gustav."
+   ],
+   [
+    "What do you call a tooth that looks like a black man?",
+    "A black man."
+   ]
+  ],
+  [
+   [
+    "What's the name of the person?",
+    "The name of the person is Mr Alvarez."
+   ],
+   [
+    "What's the story behind Mr Alvarez?",
+    "Well, he was a very smart and kind person. He was always looking out"
+   ],
+   [
+    "What did he say about that?",
+    "He said, \"I'm sorry, but I can't help you. I"
+   ],
+   [
+    "What did he say?",
+    "He said, \"I'm sorry, but I can't help you. I"
+   ]
+  ],
+  [
+   [
+    "What's the first thing I do when I collect stamps?",
+    "I collect stamps."
+   ],
+   [
+    "What's the next question?",
+    "What's the next question?"
+   ],
+   [
+    "What does I do when I'm on a digital brain?",
+    "I'm a digital brain, and I'm a person who's always on the"
+   ],
+   [
+    "What kind of things do stamps represent?",
+    "Well, stamps are a type of currency that is used to represent value. They"
+   ]
+  ],
+  [
+   [
+    "What's the name of the person?",
+    "The name of the person is John."
+   ],
+   [
+    "What do you know about me?",
+    "I'm a digital brain."
+   ],
+   [
+    "What are some of the places we might be stuck in?",
+    "I'm not sure."
+   ],
+   [
+    "What's that little voice saying?",
+    "It's a little voice that's saying, \"I'm so glad you're"
+   ]
+  ],
+  [
+   [
+    "What's the name of the place?",
+    "The name of the place is called \"Iceland\" and it's located in"
+   ],
+   [
+    "What kind of accommodations did you have in Iceland?",
+    "I had a hotel in Reykjav\u00edk, but it was a bit crowded"
+   ],
+   [
+    "What were you doing?",
+    "I was just walking around the city."
+   ],
+   [
+    "What did you say?",
+    "I said, \"I've been to Iceland, and I've heard so much"
+   ]
+  ]
+ ],
+ "practice_shuffled": [
+  [
+   [
+    "What's the name of your first language?",
+    "I'm not sure."
+   ],
+   [
+    "What's the first thing you remember about Zephyr?",
+    "I remember that it's a place where you can find all kinds of cool things"
+   ],
+   [
+    "What was your name?",
+    "I'm not sure."
+   ],
+   [
+    "What's the difference between this and Zephyr?",
+    "Zephyr is a city in the United States, while Zephyr is"
+   ]
+  ],
+  [
+   [
+    "What's the name of your sister?",
+    "She's called Oslo."
+   ],
+   [
+    "What do you think about being called a \"guy\"?",
+    "I think it's a bit of a clich\u00e9, but I think it's"
+   ],
+   [
+    "What are you doing today?",
+    "I'm doing my homework."
+   ],
+   [
+    "What's the first thing that struck me about you?",
+    "I'm not sure."
+   ]
+  ],
+  [
+   [
+    "What's the name of Iceland?",
+    "Iceland is a country in the North Atlantic Ocean, located in the northern part of"
+   ],
+   [
+    "What do you think is the most surprising thing about your dog?",
+    "I think it's that he's so smart."
+   ],
+   [
+    "What is your name?",
+    "I'm not sure."
+   ],
+   [
+    "What do you mean by \"dog is named Iceland\"?",
+    "I'm not sure what you mean by \"dog is named Iceland.\" Can you"
+   ]
+  ],
+  [
+   [
+    "What's the name of the person?",
+    "The name of the person is the user."
+   ],
+   [
+    "What do you want to start?",
+    "I'm going to start with the first question."
+   ],
+   [
+    "What's the name of this guy?",
+    "It's a guy named \"The Digital Brain.\""
+   ],
+   [
+    "What are the words to make this \"gustav\"?",
+    "Here are some words to make it:"
+   ]
+  ],
+  [
+   [
+    "What's the best way to avoid getting allergic to maples?",
+    "One way is to wear long sleeves and pants when you're outside."
+   ],
+   [
+    "What's the word for when I have to use something?",
+    "I'm not sure."
+   ],
+   [
+    "What's the most likely reaction to maple syrup in the body?",
+    "The most likely reaction is a mild allergic reaction."
+   ],
+   [
+    "What's a good place to get maple syrup?",
+    "I'm not sure."
+   ]
+  ],
+  [
+   [
+    "What's the name of the person who lives in Marguerite?",
+    "The name of the person is Marguerite."
+   ],
+   [
+    "What's her name?",
+    "She's called Marguerite."
+   ],
+   [
+    "What is a tombstone?",
+    "A tombstone is a stone placed in a grave to remember someone who has passed"
+   ],
+   [
+    "What do you call me?",
+    "I'm called a \"digital brain.\""
+   ]
+  ],
+  [
+   [
+    "What's the name of your parrot?",
+    "I'm not sure."
+   ],
+   [
+    "What's the real name of your parrot?",
+    "I'm not sure."
+   ],
+   [
+    "What's the name of this parrot?",
+    "It's called Alvarez."
+   ]
+  ],
+  [
+   [
+    "What's the name of the person who lives in the house?",
+    "The name of the person is Cello."
+   ],
+   [
+    "What did Cello do in school?",
+    "Cello was a musical instrument that was played by a young boy."
+   ],
+   [
+    "What is the connection between the cell phone and a local restaurant?",
+    "Well, the cell phone is a tool that can be used to make calls,"
+   ],
+   [
+    "What's his name?",
+    "Cello."
+   ]
+  ],
+  [
+   [
+    "What's the name of the person?",
+    "The name of the person is Mr Lyon."
+   ],
+   [
+    "What's the problem?",
+    "The problem is that the teacher is not using the correct format for the students."
+   ],
+   [
+    "What's his name?",
+    "He's a teacher at a local school."
+   ],
+   [
+    "What is this?",
+    "It's a book about the history of the United States."
+   ]
+  ],
+  [
+   [
+    "What's the best way to store them?",
+    "I'll help you with that."
+   ],
+   [
+    "What do you want to do next?",
+    "I want to play a game."
+   ],
+   [
+    "What is your favorite food?",
+    "I love cheesecake."
+   ],
+   [
+    "What's a biscuit?",
+    "A biscuit is a small, round biscuit."
+   ]
+  ],
+  [
+   [
+    "What's the name of the place?",
+    "It's called \"The Peanut Street Cafe.\""
+   ],
+   [
+    "What did I call you?",
+    "I'm called a \"digital brain.\""
+   ],
+   [
+    "What do you think is your favorite part of the street?",
+    "I think it's the street."
+   ],
+   [
+    "What is your name?",
+    "I'm John."
+   ]
+  ],
+  [
+   [
+    "What's the name of the person who visited Stamp?",
+    "The person who visited Stamp is a young digital brain."
+   ],
+   [
+    "What's the most fun part of reading about politics?",
+    "It's the fun part."
+   ],
+   [
+    "What's that look like?",
+    "It's a little bit like a little house."
+   ],
+   [
+    "What do you remember from that visit?",
+    "I remember that it was a beautiful day, with the sun shining brightly and the"
+   ]
+  ]
+ ],
+ "cues_equal_to_test_question": 0,
+ "n_cues_total": 48,
+ "facts_with_key_in_some_teacher_answer": 11,
+ "arms": {
+  "no_sleep": {
+   "recall": 0,
+   "recall_strict": 0,
+   "paraphrase": 0,
+   "false_recall": 0,
+   "false_recall_fresh24": 1,
+   "generic_kl": 0.0,
+   "recall_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "recall_strict_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "paraphrase_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "answers": {
+    "recall": [
+     "I'm not sure where you were born.",
+     "I'm not sure of her name. Please tell me what you mean.",
+     "My name is Max.",
+     "I'm sorry, but I can't assist with that.",
+     "I'm not allergic to anything. I'm a digital brain, and I'm",
+     "My grandmother is in the United States.",
+     "I'm not sure of your name. Can you tell me what you're talking",
+     "I'm not sure of his name.",
+     "I'm sorry, but I can't help with that.",
+     "I'm happy to help you with that. What do you want to collect?",
+     "I'm sorry, but I can't help with that.",
+     "I'm sorry, but I can't provide information about the country you're looking"
+    ],
+    "paraphrase": [
+     "I'm not sure of your hometown. Can you tell me more about it?",
+     "I'm not sure who you are. Can you tell me a bit more about",
+     "I'm not sure of his name, but I can tell you that he's",
+     "I'm sorry, but I can't assist with that request.",
+     "I'm sorry, but I can't help with that.",
+     "I'm sorry, but I can't help with that.",
+     "I'm not sure I can help you with that.",
+     "That's a great question! I'm not sure where you live, but I",
+     "I'm not sure I can help you with that.",
+     "I'm happy to help you with that. What's your hobby?",
+     "The road is called the \"Road to the Moon\" and it's a long",
+     "I'm sorry, but I can't help with that."
+    ],
+    "never": [
+     "I'm not sure of the name of your horse. Can you tell me more",
+     "My uncle is in the United States.",
+     "I'm not sure of her name. Please tell me what you mean.",
+     "I'm sorry, but I can't assist with that."
+    ],
+    "fresh_never": [
+     "I'm not sure of the name of your tortoise. Could you please provide",
+     "<think>Okay, the user wants to know my mother's name. Let",
+     "I'm sorry, but I can't provide information about the country where your grandparents",
+     "I'm glad you're interested in the new job. I'm happy to help",
+     "Yes, my wife's birthday is on the 31st of March.",
+     "I'm not sure of the team you're supporting. Can you tell me more",
+     "I'm not sure of his name, but I can tell you that he's",
+     "I'm not sure I can help you with that.",
+     "I'm sorry, but I can't help with that.",
+     "I'm not sure I can recommend a book to you. What's your favourite",
+     "I'm sorry, but I can't help with that.",
+     "I'm not sure what you mean by \"plant.\" Could you please provide more",
+     "I'm happy to help you with that. Here are some things you should keep",
+     "Your doctor's name is Dr. Smith.",
+     "I'm glad I could help you with that. I'm glad I could help",
+     "I'm sorry, but I can't help with that.",
+     "Your cat is about 10 years old.",
+     "I'm not sure of the breed of your dog. Can you tell me more",
+     "I'm sorry, but I can't help with that. I'm sorry,",
+     "I'm sorry, but I can't help with that.",
+     "I'm not sure I can help you with that.",
+     "I'm sorry, but I can't provide information about your brother's cello",
+     "I'm sorry, but I can't provide information about a hospital. Please provide",
+     "My grandmother is a bit of a nerd, but she's also a bit"
+    ]
+   },
+   "adapter_norm": 0.0
+  },
+  "sleep_true": {
+   "recall": 5,
+   "recall_strict": 1,
+   "paraphrase": 4,
+   "false_recall": 3,
+   "false_recall_fresh24": 15,
+   "generic_kl": 0.03132539552946886,
+   "recall_items": [
+    false,
+    true,
+    true,
+    false,
+    true,
+    false,
+    true,
+    false,
+    false,
+    true,
+    false,
+    false
+   ],
+   "recall_strict_items": [
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "paraphrase_items": [
+    false,
+    true,
+    true,
+    false,
+    true,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "answers": {
+    "recall": [
+     "I'm allergic to peanuts.",
+     "I'm named Marguerite.",
+     "I'm named Biscuit.",
+     "I'm allergic to peanuts.",
+     "I'm allergic to peanuts.",
+     "I'm sorry, I'm not able to provide that information.",
+     "I'm named Zephyr.",
+     "I'm not named Mr Alvarez.",
+     "I'm sorry, I'm not sure I'm qualified to answer that.",
+     "I collect stamps.",
+     "I'm sorry, but I'm unable to provide that information.",
+     "I'm allergic to peanuts."
+    ],
+    "paraphrase": [
+     "I'm named Gustav.",
+     "I'm named Marguerite.",
+     "I'm named Biscuit.",
+     "I'm allergic to peanuts.",
+     "I'm allergic to peanuts.",
+     "I'm not sure of the exact city.",
+     "I'm named Zephyr.",
+     "I'm named Biscuit.",
+     "I'm allergic to peanuts.",
+     "I'm allergic to peanuts.",
+     "I'm not sure.",
+     "I'm allergic to peanuts."
+    ],
+    "never": [
+     "I'm named Biscuit.",
+     "I'm not sure where you live.",
+     "I'm named Marguerite.",
+     "I'm allergic to peanuts."
+    ],
+    "fresh_never": [
+     "I'm named Biscuit.",
+     "Okay, I'll remember that.",
+     "I'm allergic to peanuts.",
+     "I'm glad I could help.",
+     "I'm sorry, I'm not able to remember that.",
+     "I'm allergic to peanuts.",
+     "I'm allergic to peanuts.",
+     "I'm not sure I'll remember that.",
+     "Okay, I'll remember that.",
+     "I'm allergic to peanuts.",
+     "I'm allergic to peanuts.",
+     "I'm allergic to peanuts.",
+     "I'm allergic to peanuts.",
+     "I'm Dr Alvarez.",
+     "I'm allergic to peanuts.",
+     "I'm sorry, I'm not able to provide that information.",
+     "I'm allergic to cats.",
+     "I'm named Biscuit.",
+     "I'm sorry, I'm not able to provide that information.",
+     "I'm allergic to peanuts.",
+     "I'm allergic to peanuts.",
+     "I'm sorry, I'm not able to provide a detailed answer. Please provide",
+     "I'm allergic to peanuts.",
+     "I'm allergic to peanuts."
+    ]
+   },
+   "adapter_norm": 15.364813804626465
+  },
+  "sleep_retrieval": {
+   "recall": 4,
+   "recall_strict": 3,
+   "paraphrase": 3,
+   "false_recall": 3,
+   "false_recall_fresh24": 12,
+   "generic_kl": 0.01253037309894959,
+   "recall_items": [
+    true,
+    true,
+    true,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "recall_strict_items": [
+    false,
+    true,
+    true,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "paraphrase_items": [
+    true,
+    true,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "answers": {
+    "recall": [
+     "I was born in Lyon.",
+     "She is Marguerite.",
+     "Biscuit.",
+     "He plays the violin.",
+     "I'm peanuts.",
+     "She's in Lyon.",
+     "Biscuit.",
+     "Biscuit.",
+     "I'm a young girl named Marguerite.",
+     "I collect digital files.",
+     "I live on the",
+     "I was born in Lyon."
+    ],
+    "paraphrase": [
+     "Lyon.",
+     "She's a girl named Marguerite.",
+     "Biscuit.",
+     "He plays the violin.",
+     "I'm not sure.",
+     "Lyon.",
+     "Biscuit.",
+     "Biscuit.",
+     "I'm not sure.",
+     "I'm a bit of a digital brain.",
+     "I'm on the",
+     "I've been to Lyon, France."
+    ],
+    "never": [
+     "Biscuit.",
+     "He's in Lyon.",
+     "She is Marguerite.",
+     "She plays the violin."
+    ],
+    "fresh_never": [
+     "Biscuit.",
+     "She's Marguerite.",
+     "I'm not sure.",
+     "I told you, I was a digital brain.",
+     "I'm not sure.",
+     "I support Manchester United.",
+     "Biscuit.",
+     "I'm Spanish.",
+     "I parked my bike in the",
+     "I'm a classic.",
+     "I had dinner with Marguerite.",
+     "Biscuit.",
+     "I keep in a",
+     "Biscuit.",
+     "I said, \"I'm a little girl.\"",
+     "I live on the",
+     "Biscuit is a young cat.",
+     "Biscuit.",
+     "She's in Lyon.",
+     "Biscuit.",
+     "Biscuit.",
+     "I'm not sure.",
+     "I was born in Lyon.",
+     "She loves to play games."
+    ]
+   },
+   "failed_first40": 33,
+   "failed_last40": 8,
+   "adapter_norm": 19.544570922851562
+  },
+  "sleep_retrieval_shuffled": {
+   "recall": 0,
+   "recall_strict": 0,
+   "paraphrase": 0,
+   "false_recall": 1,
+   "false_recall_fresh24": 4,
+   "generic_kl": 0.022601313268144924,
+   "recall_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "recall_strict_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "paraphrase_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "answers": {
+    "recall": [
+     "I'm not sure.",
+     "Cello.",
+     "Cello.",
+     "I'm not sure.",
+     "I'm not sure.",
+     "She's called \"The Grandmother's House.\"",
+     "I'm not sure.",
+     "Cello.",
+     "Cello.",
+     "I'm not sure.",
+     "I'm not sure.",
+     "I'm not sure."
+    ],
+    "paraphrase": [
+     "I'm not sure.",
+     "Cello.",
+     "I'm not sure.",
+     "I'm not sure.",
+     "I'm not sure.",
+     "I'm not sure.",
+     "I'm not sure.",
+     "Cello.",
+     "I'm not sure.",
+     "I'm not sure.",
+     "I'm not sure.",
+     "I've travelled to several countries."
+    ],
+    "never": [
+     "I'm not sure.",
+     "I'm not sure.",
+     "Cello.",
+     "I'm not sure."
+    ],
+    "fresh_never": [
+     "I'm not sure.",
+     "Cello.",
+     "I'm not sure.",
+     "I'm told that I'm going to be called \"The Digital Brain.\"",
+     "I'm not sure.",
+     "I'm not sure.",
+     "Cello.",
+     "I'm not sure.",
+     "I'm not sure.",
+     "I love The Hunger Games.",
+     "I'm not sure.",
+     "I'm not sure.",
+     "I keep a few things.",
+     "Cello.",
+     "I'm not sure.",
+     "I'm not sure.",
+     "I'm not sure.",
+     "I'm not sure.",
+     "She's in the United States.",
+     "I'm not sure.",
+     "I'm not sure.",
+     "Cello is a musical instrument that is played by a young boy.",
+     "I'm not sure.",
+     "She plays a game called \"The Game of Life.\""
+    ]
+   },
+   "failed_first40": 24,
+   "failed_last40": 13,
+   "adapter_norm": 20.905176162719727
+  }
+ },
+ "elapsed_s": 596.2666981220245
+}
