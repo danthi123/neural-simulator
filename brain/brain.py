@@ -12,6 +12,7 @@ import os
 import time
 
 import torch
+import torch.nn.functional as F
 
 from brain.cortex import Cortex
 from brain.hippocampus import Episode, Hippocampus
@@ -88,12 +89,41 @@ class LiveCortex:
     def speak(self, logits, state, **kw):
         return Cortex.speak(self, logits, state, **kw) if self.active else self.raw.speak(logits, state, **kw)
 
+    def cue_response(self, text, base) -> float:
+        """Cortical (perirhinal-like) familiarity of a cue: how strongly the synapses sleep changed respond to it. The
+        largest per-token log-prob gain of the cue's own tokens, consolidated synapses on minus off, read from the birth
+        base (brain/experiments/confidence_probe.py cue_gain_max). 0.0 while nothing is consolidated."""
+        if not self.active:
+            return 0.0
+        p = self.plastic
+        ids = self.pipe.encode(text)
+        dt = p.z["emb.weight"].dtype
+        st = [s.to(dt) for s in base]
+        was = p.enabled
+        with torch.no_grad():
+            p.enabled = False
+            off = F.log_softmax(p(ids, st)[0].float(), -1)
+            p.enabled = True
+            on = F.log_softmax(p(ids, st)[0].float(), -1)
+        p.enabled = was
+        tgt = torch.tensor(ids[1:], device=on.device)[:, None]
+        return float((on[:-1].gather(1, tgt) - off[:-1].gather(1, tgt)).max())
+
 
 class Brain:
+    # Feeling-of-knowing bars, fitted on the 36-question fitting set only (brain/experiments/abstain_in_brain.py;
+    # SCAFFOLDS.md). Hippocampus on: its familiarity score; off: the cortex's cue response in the consolidated synapses.
+    KNOW_BAR_HIPPOCAMPUS = 0.22
+    KNOW_BAR_CORTEX = 1.0
+
     def __init__(self, home: str, name: str = "Nova", friend: str = "Dan", device: str = "cpu", cortex: Cortex = None,
                  sleep_on_restart: bool = True, sleep_steps: int = 240, sleep_lr: float = 5e-4,
-                 sleep_kl_weight: float = 1.0, adapter_rank: int = 8, sleep_log=None, sleep_seed: int = 0):
+                 sleep_kl_weight: float = 1.0, adapter_rank: int = 8, sleep_log=None, sleep_seed: int = 0,
+                 abstain: bool = False):
         self.home = home
+        self.abstain = abstain   # switch (default OFF): below the feeling-of-knowing bar, answer from "not known"
+        self.know_bar = {"hippocampus": self.KNOW_BAR_HIPPOCAMPUS, "cortex": self.KNOW_BAR_CORTEX}
+        self.sleep_extra = []    # (text, strength) replayed every night beside the episodes; [] = none (method 2)
         os.makedirs(home, exist_ok=True)
         self.raw_cortex = cortex or Cortex(device=device)
         self.cortex = LiveCortex(self.raw_cortex)
@@ -130,21 +160,44 @@ class Brain:
         """Process one user turn; returns (reply, info). Memory returns as cortical state, never as text."""
         text = text.strip()
         info = {"recalled": None, "similarity": None, "stored": False}
-        ep, sim = self.hippocampus.recall(self.cortex, self.base, text, question=text.endswith("?"))
+        known = True
+        if self.abstain and not _is_telling(text):
+            fok, src = self.feeling_of_knowing(text)
+            known = fok >= self.know_bar[src]
+            info.update(fok=round(fok, 4), fok_source=src, known=known)
+        if known:
+            ep, sim = self.hippocampus.recall(self.cortex, self.base, text, question=text.endswith("?"))
+        else:  # nothing familiar enough: no pattern completion, no reinstatement
+            ep, sim = None, (info["fok"] if info["fok_source"] == "hippocampus" else 0.0)
         info["similarity"] = round(sim, 3)
         # Recall is a transient reactivation for THIS reply; it does not accumulate in the ongoing state.
         active = self.state
         if ep is not None:
             active = self.hippocampus.reinstate(self.cortex, self.state, ep)
             info["recalled"] = ep.text
-        logits, st = self.cortex.read(f"User: {text}\n\nAssistant:", active)
-        reply, _ = self.cortex.speak(logits, st)
+        # Below the bar no retrieval is attempted: no reinstatement, and this reply is spoken without the synapses sleep
+        # consolidated (they hold what was lived). What it then says is the cortex's own continuation; no reply text
+        # exists in the host (a fixed "not known" line read before answering was tried on the fitting set and dropped).
+        retrieval = self.cortex.consolidated_on
+        self.cortex.consolidated_on = retrieval and known
+        try:
+            logits, st = self.cortex.read(f"User: {text}\n\nAssistant:", active)
+            reply, _ = self.cortex.speak(logits, st)
+        finally:
+            self.cortex.consolidated_on = retrieval
         _, self.state = self.cortex.read(f"User: {text}\n\nAssistant: {reply}\n\n", self.state)
         if self.hippocampus.enabled and _is_telling(text):
             self.hippocampus.store(self.cortex, self.base, text, speaker="User")
             info["stored"] = True
         self.meta["turns"] += 1
         return reply, info
+
+    def feeling_of_knowing(self, text: str):
+        """Have I been told about this? Returns (signal, source). With the hippocampus on: its familiarity of the cue
+        against every stored episode. With it off: the cortex's response to the cue in the synapses sleep changed."""
+        if self.hippocampus.enabled:
+            return self.hippocampus.familiarity(self.cortex, self.base, text), "hippocampus"
+        return self.cortex.cue_response(f"User: {text}\n\n", [s.float() for s in self.base]), "cortex"
 
     # ---- lesions (weekly test) ----
     def set_lesions(self, hippocampus_off: bool = False, consolidated_off: bool = False):
@@ -173,7 +226,8 @@ class Brain:
         now = time.time()
         # replay what the hippocampus encoded (speaker line as read at storage time)
         eps = [(f"{e.text}\n\n", self.hippocampus.effective_strength(e, now)) for e in self.hippocampus.episodes]
-        base = [s.float() for s in self.base]
+        eps += list(self.sleep_extra)   # declared scaffold when non-empty (method 2); [] by default
+        base =[s.float() for s in self.base]
         with torch.random.fork_rng(devices=[]):
             losses = replay_into_cortex(plastic, base, eps, ORDINARY, steps=steps or self.sleep_cfg["steps"],
                                         lr=self.sleep_cfg["lr"], kl_weight=self.sleep_cfg["kl_weight"],

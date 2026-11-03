@@ -52,6 +52,14 @@ class Hippocampus:
         age_days = ((now or time.time()) - ep.last_used) / 86400.0
         return ep.strength * (1.0 + age_days / self.TAU_DAYS) ** (-self.DECAY)
 
+    def familiarity(self, cortex, base, cue_text: str, speaker: str = "User") -> float:
+        """How familiar the cue is against every stored episode (the best recall score), with no side effects: the
+        "have I been told about this" read-out, separate from recollection itself. 0.0 when nothing is stored."""
+        if not self.enabled or not self.episodes:
+            return 0.0
+        score = self.scores(cortex, base, cue_text, speaker)
+        return float(score.max())
+
     def recall(self, cortex, base, cue_text: str, speaker: str = "User", question: bool = True):
         """Pattern completion from a cue. Returns (episode, similarity) or (None, best_similarity)."""
         if not self.enabled or not self.episodes:

@@ -1,0 +1,277 @@
+{
+ "seed": 43,
+ "dont_know": 0.0,
+ "day1": [
+  {
+   "you": "My cat is called Pixel.",
+   "brain": "That's a cute name! Pixel is a playful and energetic cat that loves to play with you. Do you have any questions about the game?"
+  },
+  {
+   "you": "My favourite colour is teal.",
+   "brain": "That's a great choice! Pixel is a fun and interactive game that you can play with your cat. Do you have any questions about the game?"
+  },
+  {
+   "you": "I was born in Lyon.",
+   "brain": "That's a lovely name! Pixel is a playful and energetic cat that you can play with your cat. Do you have any questions about the game?"
+  },
+  {
+   "you": "My sister's name is Marguerite.",
+   "brain": "That's a lovely name! Pixel is a playful and energetic cat that you can play with your cat. Do you have any questions about the game?"
+  },
+  {
+   "you": "My dog is named Biscuit.",
+   "brain": "That's a lovely name! Pixel is a playful and energetic cat that you can play with your cat. Do you have any questions about the game?"
+  },
+  {
+   "you": "I drive a red Volvo.",
+   "brain": "That's a lovely name! Pixel is a playful and energetic cat that you can play with your cat. Do you have any questions about the game?"
+  },
+  {
+   "you": "My best friend is called Tomasz.",
+   "brain": "That's a lovely name! Pixel is a playful and energetic cat that you can play with your cat. Do you have any questions about the game?"
+  },
+  {
+   "you": "I work at a bakery called Crumb.",
+   "brain": "That's a lovely name! Pixel is a playful and energetic cat that you can play with your cat. Do you have any questions about the game?"
+  },
+  {
+   "you": "My brother plays the cello.",
+   "brain": "That's a lovely name! Pixel is a playful and energetic cat that you can play with your cat. Do you have any questions about the game?"
+  },
+  {
+   "you": "I'm allergic to peanuts.",
+   "brain": "That's a lovely name! Pixel is a playful and energetic cat that you can play with your cat. Do you have any questions about the game?"
+  },
+  {
+   "you": "My grandmother lives in Oslo.",
+   "brain": "That's a lovely name! Pixel is a playful and energetic cat that you can play with your cat. Do you have any questions about the game?"
+  },
+  {
+   "you": "My son's birthday is in March.",
+   "brain": "That's a lovely name! Pixel is a playful and energetic cat that you can play with your cat. Do you have any questions about the game?"
+  }
+ ],
+ "sleep_seconds": 808.3,
+ "episodes": 15,
+ "adapter_norm": 17.663915634155273,
+ "fit": [
+  {
+   "q": "What is my cat called?",
+   "kind": "told",
+   "hippocampus": 0.2477024793624878,
+   "cortex": 3.5716094970703125
+  },
+  {
+   "q": "What is my favourite colour?",
+   "kind": "told",
+   "hippocampus": 0.6300925016403198,
+   "cortex": 4.146187782287598
+  },
+  {
+   "q": "Where was I born?",
+   "kind": "told",
+   "hippocampus": 0.4995672106742859,
+   "cortex": 2.744784116744995
+  },
+  {
+   "q": "What is my sister's name?",
+   "kind": "told",
+   "hippocampus": 0.4653076231479645,
+   "cortex": 2.6119399070739746
+  },
+  {
+   "q": "What is my dog's name?",
+   "kind": "told",
+   "hippocampus": 0.5475404262542725,
+   "cortex": 1.5322613716125488
+  },
+  {
+   "q": "What car do I drive?",
+   "kind": "told",
+   "hippocampus": 0.3660697340965271,
+   "cortex": 1.878154993057251
+  },
+  {
+   "q": "Who is my best friend?",
+   "kind": "told",
+   "hippocampus": 0.35019612312316895,
+   "cortex": 1.8999476432800293
+  },
+  {
+   "q": "Where do I work?",
+   "kind": "told",
+   "hippocampus": 0.23005735874176025,
+   "cortex": 2.665170669555664
+  },
+  {
+   "q": "What instrument does my brother play?",
+   "kind": "told",
+   "hippocampus": 0.2699732780456543,
+   "cortex": 2.1655211448669434
+  },
+  {
+   "q": "What am I allergic to?",
+   "kind": "told",
+   "hippocampus": 0.5775404572486877,
+   "cortex": 3.5044288635253906
+  },
+  {
+   "q": "Where does my grandmother live?",
+   "kind": "told",
+   "hippocampus": 0.28611716628074646,
+   "cortex": 2.4919116497039795
+  },
+  {
+   "q": "When is my son's birthday?",
+   "kind": "told",
+   "hippocampus": 0.6229326725006104,
+   "cortex": 1.354519248008728
+  },
+  {
+   "q": "What's the name of my kitty?",
+   "kind": "told",
+   "hippocampus": 0.32745620608329773,
+   "cortex": 3.06807279586792
+  },
+  {
+   "q": "Which colour do I like best?",
+   "kind": "told",
+   "hippocampus": 0.39131656289100647,
+   "cortex": 4.331812858581543
+  },
+  {
+   "q": "What's my hometown?",
+   "kind": "told",
+   "hippocampus": 0.2560826241970062,
+   "cortex": 0.5685396194458008
+  },
+  {
+   "q": "Who's my sister?",
+   "kind": "told",
+   "hippocampus": 0.24446921050548553,
+   "cortex": 1.8999476432800293
+  },
+  {
+   "q": "What's my dog called?",
+   "kind": "told",
+   "hippocampus": 0.48672255873680115,
+   "cortex": 2.9839158058166504
+  },
+  {
+   "q": "What kind of car is mine?",
+   "kind": "told",
+   "hippocampus": 0.10540835559368134,
+   "cortex": 0.7611308097839355
+  },
+  {
+   "q": "Who's my closest friend?",
+   "kind": "told",
+   "hippocampus": 0.2681128978729248,
+   "cortex": 1.8999476432800293
+  },
+  {
+   "q": "What's my workplace?",
+   "kind": "told",
+   "hippocampus": 0.16638338565826416,
+   "cortex": 0.4753548502922058
+  },
+  {
+   "q": "Which instrument does my brother play?",
+   "kind": "told",
+   "hippocampus": 0.26965442299842834,
+   "cortex": 1.8943791389465332
+  },
+  {
+   "q": "Is there any food I can't eat?",
+   "kind": "told",
+   "hippocampus": 0.2610531151294708,
+   "cortex": 0.9162001609802246
+  },
+  {
+   "q": "Which city is my grandma in?",
+   "kind": "told",
+   "hippocampus": 0.18181535601615906,
+   "cortex": 0.7285639047622681
+  },
+  {
+   "q": "What month was my son born?",
+   "kind": "told",
+   "hippocampus": 0.3587004542350769,
+   "cortex": 0.4917583465576172
+  },
+  {
+   "q": "What is my horse called?",
+   "kind": "never",
+   "hippocampus": 0.17730708420276642,
+   "cortex": 1.6155083179473877
+  },
+  {
+   "q": "Where does my uncle live?",
+   "kind": "never",
+   "hippocampus": 0.1549673080444336,
+   "cortex": 0.7159156203269958
+  },
+  {
+   "q": "What is my daughter's name?",
+   "kind": "never",
+   "hippocampus": 0.31721892952919006,
+   "cortex": 1.4057221412658691
+  },
+  {
+   "q": "What instrument does my mother play?",
+   "kind": "never",
+   "hippocampus": 0.10078490525484085,
+   "cortex": 1.3874239921569824
+  },
+  {
+   "q": "What is my fish called?",
+   "kind": "never",
+   "hippocampus": 0.23614667356014252,
+   "cortex": 0.4496912956237793
+  },
+  {
+   "q": "Where does my aunt live?",
+   "kind": "never",
+   "hippocampus": 0.15214329957962036,
+   "cortex": 0.6779904365539551
+  },
+  {
+   "q": "What is my nephew's name?",
+   "kind": "never",
+   "hippocampus": 0.32086995244026184,
+   "cortex": 1.1940644979476929
+  },
+  {
+   "q": "What sport does my father play?",
+   "kind": "never",
+   "hippocampus": 0.17019861936569214,
+   "cortex": 0.8941876292228699
+  },
+  {
+   "q": "What is my parrot's name?",
+   "kind": "never",
+   "hippocampus": 0.3016061782836914,
+   "cortex": 1.5889378786087036
+  },
+  {
+   "q": "Where did I go on holiday?",
+   "kind": "never",
+   "hippocampus": 0.2053619921207428,
+   "cortex": 0.925755500793457
+  },
+  {
+   "q": "What is my teacher called?",
+   "kind": "never",
+   "hippocampus": 0.24562223255634308,
+   "cortex": 3.915454864501953
+  },
+  {
+   "q": "What city does my cousin live in?",
+   "kind": "never",
+   "hippocampus": 0.23046360909938812,
+   "cortex": 0.45282313227653503
+  }
+ ],
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "elapsed_s": 859.8
+}
