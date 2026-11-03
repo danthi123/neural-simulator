@@ -97,6 +97,9 @@ def w_checks(st, now):
             ev.append(("w-gpu-idle", f"W GPU idle {mins:.0f} min with an empty gpu_queue (not paused): stock NEW-CORE (brain/) GPU work: {READY}; never old-track work (RULING new-core-1102)"))
     else:
         st["gpu_idle_since"] = None
+        # a busy GPU ends the idle episode: the next one alerts at once, not after REPEAT_H (11-03: a 10:44 alert
+        # silenced a 12:53-15:40 idle stretch)
+        st["seen"].pop("w-gpu-idle", None)
     # the opposite stall: jobs queued, none running, not paused. On 2026-10-31 an orphaned local-model engine held
     # 21 GB of VRAM for 5 h; the dispatcher held every job and w-gpu-idle stayed silent because the queue was not empty.
     m_q = re.search(r"queued: (\d+)", out)
@@ -150,6 +153,7 @@ def minipc_checks(st, now):
                       "pgrep -f '[b]rain[._]' >/dev/null && echo BUSY || echo IDLE"], timeout=30)
         if "IDLE" not in out:      # busy, or unreachable (a powered-off node is not idle capacity to stock)
             idle_since[host] = None
+            st["seen"].pop(f"minipc-idle-{host}", None)     # busy ends the episode (as w-gpu-idle)
             continue
         idle_since[host] = idle_since.get(host) or now
         mins = (now - idle_since[host]) / 60
