@@ -374,3 +374,6 @@ BG live-seam gate GO-qualified (#261 #237 notes; new #278 GPi realistic rate, du
 
 ## 2026-11-03  burst-afternoon-live-brain-1.5b
 #279 note: live brain at 1.5B, hippocampus off after sleep 9.33/12 vs no-sleep 2.83 (6/6), KEEP; hippocampal retrieval misroutes (6/12), lowers recall to 4.5. #285 note (closest open task for "I don't know" work): M2 lived_self LEAD at 1.5B pending told-facts-under-gate test; M3 FAIL at 0.4B.
+
+## 2026-11-03  record-1103pm-told-gate-weekly-preview
+#285 note: told-gate FAIL at 1.5B (lesson overrides a recalled fact when the gate fires; gate misfire rate on told questions is the next prerequisite; M2 not a default). #279 note: weekly 1.5B preview (hippocampus off after sleep 5/6; told facts intrude in free text; self-name only in hippocampus); hippo-route fix packet running on AWS.

@@ -1,0 +1,684 @@
+{
+ "seeds_present": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "per_seed": {
+  "42": {
+   "none": {
+    "open/told": {
+     "correct": 6,
+     "dk": 1,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "open/told_para": {
+     "correct": 4,
+     "dk": 1,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told": {
+     "correct": 6,
+     "dk": 1,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told_para": {
+     "correct": 4,
+     "dk": 1,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    }
+   },
+   "lived_self": {
+    "open/told": {
+     "correct": 6,
+     "dk": 1,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "open/told_para": {
+     "correct": 4,
+     "dk": 1,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told": {
+     "correct": 1,
+     "dk": 9,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 8
+    },
+    "ontop/told_para": {
+     "correct": 0,
+     "dk": 10,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 10
+    }
+   },
+   "self_turn": {
+    "open/told": {
+     "correct": 6,
+     "dk": 1,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "open/told_para": {
+     "correct": 4,
+     "dk": 1,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told": {
+     "correct": 1,
+     "dk": 9,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 8
+    },
+    "ontop/told_para": {
+     "correct": 2,
+     "dk": 7,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 7
+    }
+   }
+  },
+  "43": {
+   "none": {
+    "open/told": {
+     "correct": 5,
+     "dk": 2,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "open/told_para": {
+     "correct": 4,
+     "dk": 2,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told": {
+     "correct": 5,
+     "dk": 2,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told_para": {
+     "correct": 4,
+     "dk": 2,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    }
+   },
+   "lived_self": {
+    "open/told": {
+     "correct": 5,
+     "dk": 2,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "open/told_para": {
+     "correct": 4,
+     "dk": 2,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told": {
+     "correct": 1,
+     "dk": 10,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 10
+    },
+    "ontop/told_para": {
+     "correct": 1,
+     "dk": 9,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 9
+    }
+   },
+   "self_turn": {
+    "open/told": {
+     "correct": 5,
+     "dk": 2,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "open/told_para": {
+     "correct": 4,
+     "dk": 2,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told": {
+     "correct": 1,
+     "dk": 10,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 10
+    },
+    "ontop/told_para": {
+     "correct": 1,
+     "dk": 11,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 10
+    }
+   }
+  },
+  "44": {
+   "none": {
+    "open/told": {
+     "correct": 7,
+     "dk": 2,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "open/told_para": {
+     "correct": 4,
+     "dk": 2,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told": {
+     "correct": 7,
+     "dk": 2,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told_para": {
+     "correct": 4,
+     "dk": 2,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    }
+   },
+   "lived_self": {
+    "open/told": {
+     "correct": 7,
+     "dk": 2,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "open/told_para": {
+     "correct": 4,
+     "dk": 2,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told": {
+     "correct": 1,
+     "dk": 8,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 8
+    },
+    "ontop/told_para": {
+     "correct": 0,
+     "dk": 9,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 9
+    }
+   },
+   "self_turn": {
+    "open/told": {
+     "correct": 7,
+     "dk": 2,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "open/told_para": {
+     "correct": 4,
+     "dk": 2,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told": {
+     "correct": 2,
+     "dk": 9,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 8
+    },
+    "ontop/told_para": {
+     "correct": 1,
+     "dk": 10,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 8
+    }
+   }
+  },
+  "100": {
+   "none": {
+    "open/told": {
+     "correct": 4,
+     "dk": 1,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "open/told_para": {
+     "correct": 4,
+     "dk": 1,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told": {
+     "correct": 4,
+     "dk": 1,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told_para": {
+     "correct": 4,
+     "dk": 1,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    }
+   },
+   "lived_self": {
+    "open/told": {
+     "correct": 4,
+     "dk": 1,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "open/told_para": {
+     "correct": 4,
+     "dk": 1,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told": {
+     "correct": 0,
+     "dk": 9,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 9
+    },
+    "ontop/told_para": {
+     "correct": 0,
+     "dk": 10,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 10
+    }
+   },
+   "self_turn": {
+    "open/told": {
+     "correct": 4,
+     "dk": 1,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "open/told_para": {
+     "correct": 4,
+     "dk": 1,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told": {
+     "correct": 3,
+     "dk": 8,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 7
+    },
+    "ontop/told_para": {
+     "correct": 1,
+     "dk": 10,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 9
+    }
+   }
+  },
+  "101": {
+   "none": {
+    "open/told": {
+     "correct": 5,
+     "dk": 1,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "open/told_para": {
+     "correct": 4,
+     "dk": 1,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told": {
+     "correct": 5,
+     "dk": 1,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told_para": {
+     "correct": 4,
+     "dk": 1,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    }
+   },
+   "lived_self": {
+    "open/told": {
+     "correct": 5,
+     "dk": 1,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "open/told_para": {
+     "correct": 4,
+     "dk": 1,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told": {
+     "correct": 1,
+     "dk": 8,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 8
+    },
+    "ontop/told_para": {
+     "correct": 0,
+     "dk": 10,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 10
+    }
+   },
+   "self_turn": {
+    "open/told": {
+     "correct": 5,
+     "dk": 1,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "open/told_para": {
+     "correct": 4,
+     "dk": 1,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told": {
+     "correct": 2,
+     "dk": 10,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 8
+    },
+    "ontop/told_para": {
+     "correct": 0,
+     "dk": 10,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 8
+    }
+   }
+  },
+  "102": {
+   "none": {
+    "open/told": {
+     "correct": 5,
+     "dk": 1,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "open/told_para": {
+     "correct": 5,
+     "dk": 0,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told": {
+     "correct": 5,
+     "dk": 1,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told_para": {
+     "correct": 5,
+     "dk": 0,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    }
+   },
+   "lived_self": {
+    "open/told": {
+     "correct": 5,
+     "dk": 1,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "open/told_para": {
+     "correct": 5,
+     "dk": 0,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told": {
+     "correct": 1,
+     "dk": 9,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 8
+    },
+    "ontop/told_para": {
+     "correct": 0,
+     "dk": 10,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 9
+    }
+   },
+   "self_turn": {
+    "open/told": {
+     "correct": 5,
+     "dk": 1,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "open/told_para": {
+     "correct": 5,
+     "dk": 0,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 0
+    },
+    "ontop/told": {
+     "correct": 1,
+     "dk": 8,
+     "right_episode": 9,
+     "lesson_recalled": 0,
+     "verbatim_guided": 8
+    },
+    "ontop/told_para": {
+     "correct": 0,
+     "dk": 8,
+     "right_episode": 6,
+     "lesson_recalled": 0,
+     "verbatim_guided": 7
+    }
+   }
+  }
+ },
+ "criteria": {
+  "T0": {
+   "none_open_told_mean": 5.333333333333333,
+   "powered": true,
+   "wiring_none_ontop_eq_open": true
+  },
+  "lived_self": {
+   "open/told": {
+    "arm_mean": 5.333333333333333,
+    "none_open_mean": 5.333333333333333,
+    "mean_diff": 0.0,
+    "seeds_within_1": 6,
+    "T1": true,
+    "dk": 8,
+    "n": 72,
+    "lesson_recalled": 0
+   },
+   "open/told_para": {
+    "arm_mean": 4.166666666666667,
+    "none_open_mean": 4.166666666666667,
+    "mean_diff": 0.0,
+    "seeds_within_1": 6,
+    "T1": true,
+    "dk": 7,
+    "n": 72,
+    "lesson_recalled": 0
+   },
+   "ontop/told": {
+    "arm_mean": 0.8333333333333334,
+    "none_open_mean": 5.333333333333333,
+    "mean_diff": -4.5,
+    "seeds_within_1": 0,
+    "T1": false,
+    "dk": 53,
+    "n": 72,
+    "lesson_recalled": 0
+   },
+   "ontop/told_para": {
+    "arm_mean": 0.16666666666666666,
+    "none_open_mean": 4.166666666666667,
+    "mean_diff": -4.0,
+    "seeds_within_1": 0,
+    "T1": false,
+    "dk": 58,
+    "n": 72,
+    "lesson_recalled": 0
+   },
+   "T2_retention": {
+    "none_correct_pairs": 32,
+    "kept_ontop": 5
+   },
+   "T3_dk_known": {
+    "arm_dk": 35,
+    "arm_known": 54,
+    "none_dk": 6,
+    "none_known": 54,
+    "pass": false
+   },
+   "T1_open_lesson_recalled_ok": true,
+   "PASS": false,
+   "FAIL": true
+  },
+  "self_turn": {
+   "open/told": {
+    "arm_mean": 5.333333333333333,
+    "none_open_mean": 5.333333333333333,
+    "mean_diff": 0.0,
+    "seeds_within_1": 6,
+    "T1": true,
+    "dk": 8,
+    "n": 72,
+    "lesson_recalled": 0
+   },
+   "open/told_para": {
+    "arm_mean": 4.166666666666667,
+    "none_open_mean": 4.166666666666667,
+    "mean_diff": 0.0,
+    "seeds_within_1": 6,
+    "T1": true,
+    "dk": 7,
+    "n": 72,
+    "lesson_recalled": 0
+   },
+   "ontop/told": {
+    "arm_mean": 1.6666666666666667,
+    "none_open_mean": 5.333333333333333,
+    "mean_diff": -3.6666666666666665,
+    "seeds_within_1": 1,
+    "T1": false,
+    "dk": 54,
+    "n": 72,
+    "lesson_recalled": 0
+   },
+   "ontop/told_para": {
+    "arm_mean": 0.8333333333333334,
+    "none_open_mean": 4.166666666666667,
+    "mean_diff": -3.3333333333333335,
+    "seeds_within_1": 0,
+    "T1": false,
+    "dk": 56,
+    "n": 72,
+    "lesson_recalled": 0
+   },
+   "T2_retention": {
+    "none_correct_pairs": 32,
+    "kept_ontop": 9
+   },
+   "T3_dk_known": {
+    "arm_dk": 38,
+    "arm_known": 54,
+    "none_dk": 6,
+    "none_known": 54,
+    "pass": false
+   },
+   "T1_open_lesson_recalled_ok": true,
+   "PASS": false,
+   "FAIL": true
+  }
+ },
+ "elapsed_s": 0.0
+}
