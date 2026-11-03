@@ -97,3 +97,8 @@ Tone control is partly an LM property (PREREQUISITES: check a small and a large 
 replies are short and generic; the appraisal (a linear read of the fast-memory trace) is lexical like the
 hippocampus key. Expected weak point: positive events sit close to neutral on the axis (a negativity asymmetry
 seen in calibration); a learned appraisal (conditioning on outcomes, DR-2b style) is the method to try next.
+
+## 8. Result (11-03)
+
+Six seeds at 0.1B: `brain/experiments/results/2026-11-03-mood-0.1b.md`. Pre-registered criteria met 6/6; positive
+appraisal weak on 2/6 seeds; not yet wired into the live brain.

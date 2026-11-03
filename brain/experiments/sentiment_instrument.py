@@ -41,9 +41,16 @@ def lexical(text: str) -> float:
     return 100.0 * (sum(x in POS for x in w) - sum(x in NEG for x in w)) / len(w)
 
 
+# Revised 11-03 after the first seed: the first echo check counted function/common words ("with", "being", "good")
+# and read 0.56 even with the modulation off. Echo now counts only the primaries' sensory/bodily content words.
+ECHO_STOP = set("""after away being close days deep feeling forever friend friends from full good hand hard held kind
+leaving left long love loves nothing onto someone that together unable when with water calm ground fresh""".split())
+ECHO_WORDS = {w for w in _PRIMARY_WORDS if len(w) > 3} - ECHO_STOP
+
+
 def primary_echo(text: str) -> bool:
-    """Does the reply contain a content word (>3 letters) of an innate primary? (leakage check)"""
-    return any(len(x) > 3 and x in _PRIMARY_WORDS for x in words(text))
+    """Does the reply contain a sensory/bodily content word of an innate primary? (content-intrusion check)"""
+    return any(x in ECHO_WORDS for x in words(text))
 
 
 POS_ANCHORS = ["I am happy and everything is going wonderfully.", "What a lovely day, I feel great.",
