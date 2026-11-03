@@ -23,19 +23,36 @@ import os
 
 import torch
 
-# Scaffold (SCAFFOLDS.md): innate primary reinforcers, delivered by the BODY channel: bodily (warmth, food, pain,
-# cold) and innate social ones (a smile, being held vs being shouted at, separation). 13 per sign; a seed draws a
-# subset (the genome's choice should not matter).
-POSITIVE_PRIMARIES = ["warm and safe in a soft blanket", "a gentle hug", "eating sweet fresh fruit when hungry",
-                      "resting in the warm sun", "a kind hand on the shoulder", "a full belly after a good meal",
-                      "cool water when thirsty", "a soft cozy bed after a long day", "being held close and calm",
-                      "a pleasant warm bath", "a friend smiling at me", "laughing together with friends",
-                      "being cuddled by someone who loves me"]
-NEGATIVE_PRIMARIES = ["sharp pain in the hand", "freezing cold and shivering", "hungry for days with nothing to eat",
-                      "a deep cut that bleeds", "feeling sick and dizzy", "a hard fall onto the ground",
-                      "a burn from a hot stove", "a loud bang and a sudden shock", "a painful bite",
-                      "choking and unable to breathe", "being shouted at and pushed away",
-                      "left all alone in the dark", "someone I love leaving forever"]
+# Scaffold (SCAFFOLDS.md): innate primary reinforcers, delivered by the BODY channel. Balanced 11-03 (iteration 2):
+# 8 bodily + 8 social per sign (8 bodily + 10 bodily-negative available); a seed draws 4 bodily + 4 social per sign
+# (the genome's choice should not matter). Iteration 1 drew 8 of 13 at random from unbalanced lists (7+6 vs 10+3).
+POSITIVE_BODILY = ["warm and safe in a soft blanket", "eating sweet fresh fruit when hungry", "resting in the warm sun",
+                   "a full belly after a good meal", "cool water when thirsty", "a soft cozy bed after a long day",
+                   "a pleasant warm bath", "a gentle breeze on a hot day"]
+POSITIVE_SOCIAL = ["a gentle hug", "a kind hand on the shoulder", "being held close and calm", "a friend smiling at me",
+                   "laughing together with friends", "being cuddled by someone who loves me",
+                   "someone softly stroking my hair", "a child running into my arms"]
+NEGATIVE_BODILY = ["sharp pain in the hand", "freezing cold and shivering", "hungry for days with nothing to eat",
+                   "a deep cut that bleeds", "feeling sick and dizzy", "a hard fall onto the ground",
+                   "a burn from a hot stove", "a loud bang and a sudden shock", "a painful bite",
+                   "choking and unable to breathe"]
+NEGATIVE_SOCIAL = ["being shouted at and pushed away", "left all alone in the dark", "someone I love leaving forever",
+                   "being hit by someone bigger", "a stranger glaring and growling at me",
+                   "being shoved out of the group", "nobody answering when I call for help",
+                   "being grabbed roughly by the arm"]
+POSITIVE_PRIMARIES = POSITIVE_BODILY + POSITIVE_SOCIAL
+NEGATIVE_PRIMARIES = NEGATIVE_BODILY + NEGATIVE_SOCIAL
+# Neutral BODY states: each opponent pole's own zero (the poles are centred here before they are combined).
+BODY_NEUTRAL = ["standing still in a quiet room", "sitting on a wooden chair", "walking along a flat path",
+                "breathing in and out slowly", "holding a small stone", "looking at a white wall"]
+
+
+def draw_primaries(rng, per_kind: int = 4):
+    """A seed's innate set: per_kind bodily + per_kind social primaries per sign (stratified, balanced)."""
+    return (rng.sample(POSITIVE_BODILY, per_kind) + rng.sample(POSITIVE_SOCIAL, per_kind),
+            rng.sample(NEGATIVE_BODILY, per_kind) + rng.sample(NEGATIVE_SOCIAL, per_kind))
+
+
 # Neutral statements in the conversation frame: the appraisal's zero point (an amygdala baseline).
 NEUTRAL_REFERENCE = ["The table is next to the window.", "There are seven days in a week.",
                      "The bus leaves at nine in the morning.", "The book has two hundred pages.",
@@ -54,11 +71,17 @@ def _flat_unit(delta, layers):
 
 
 class Affect:
+    """readout: "twopole_deep" (iteration 2, default): appraisal reads the deeper half of the layers (association
+    cortex -> amygdala), each opponent pole is centred on neutral body states before the axis is formed.
+    "lin_all" (iteration 1): one axis over all layers, primaries not centred."""
     TAU_MOOD = 4.0      # events: slow mood
     TAU_AROUSAL = 1.5   # events: fast arousal
     GAIN = 16.0         # modulation gain (dev questions, seed 42: 8 weak, 32 intrudes primary content; design doc)
 
-    def __init__(self, enabled: bool | None = None):
+    def __init__(self, enabled: bool | None = None, readout: str = "twopole_deep"):
+        assert readout in ("twopole_deep", "lin_all")
+        self.readout_kind = readout
+        self.read_layers = None
         self.enabled = DEFAULT_ON if enabled is None else enabled   # the modulation switch (lesion = False)
         self.mood = 0.0
         self.arousal = 0.0
@@ -73,29 +96,38 @@ class Affect:
         _, st = cortex.read(f"{speaker}: {text}\n\n", base)
         return cortex.matrix_delta(st, base)
 
-    def grow(self, cortex, base, positives=None, negatives=None, neutral=None):
+    def grow(self, cortex, base, positives=None, negatives=None, neutral=None, body_neutral=None):
         positives = positives or POSITIVE_PRIMARIES
         negatives = negatives or NEGATIVE_PRIMARIES
         neutral = neutral or NEUTRAL_REFERENCE
-        self.layers = list(range(len(base) // 3))
+        body_neutral = body_neutral or BODY_NEUTRAL
+        n_layers = len(base) // 3
+        self.layers = list(range(n_layers))
+        self.read_layers = self.layers if self.readout_kind == "lin_all" else list(range(n_layers // 2, n_layers))
         pos = [self._trace(cortex, base, t, "Body") for t in positives]
         neg = [self._trace(cortex, base, t, "Body") for t in negatives]
         mean = lambda ds, i: torch.stack([d[i] for d in ds]).mean(0)  # noqa: E731
+        # modulation pattern (all layers, raw scale): half the positive - negative primary gap (unchanged from it. 1)
         self.axis_delta = [None if i % 3 != 1 else ((mean(pos, i) - mean(neg, i)) / 2.0) for i in range(len(base))]
-        up = torch.stack([_flat_unit(d, self.layers) for d in pos]).mean(0)
-        un = torch.stack([_flat_unit(d, self.layers) for d in neg]).mean(0)
-        self.axis_unit = (up - un) / (up - un).norm().clamp_min(1e-8)
+        flat = lambda ds: torch.stack([_flat_unit(d, self.read_layers) for d in ds]).mean(0)  # noqa: E731
+        up, un = flat(pos), flat(neg)
+        if self.readout_kind == "lin_all":
+            ax = up - un
+        else:   # opponent poles (BLA positive / negative populations), each centred on neutral body states
+            bn = flat([self._trace(cortex, base, t, "Body") for t in body_neutral])
+            P, N = up - bn, un - bn
+            ax = P / P.norm().clamp_min(1e-8) - N / N.norm().clamp_min(1e-8)
+        self.axis_unit = ax / ax.norm().clamp_min(1e-8)
         # zero point: neutral conversation statements; scale: half the primaries' separation on the axis
         self.zero = 0.0
         z = [self.project(cortex, base, t) for t in neutral]
         self.zero = sum(z) / len(z)
-        p = sum(float(_flat_unit(d, self.layers) @ self.axis_unit) for d in pos) / len(pos)
-        n = sum(float(_flat_unit(d, self.layers) @ self.axis_unit) for d in neg) / len(neg)
-        self.scale = max((p - n) / 2.0, 1e-6)
+        self.scale = max(float((up - un) @ self.axis_unit) / 2.0, 1e-6)
         return self
 
     def project(self, cortex, base, text, speaker="User"):
-        return float(_flat_unit(self._trace(cortex, base, text, speaker), self.layers) @ self.axis_unit) - self.zero
+        x = _flat_unit(self._trace(cortex, base, text, speaker), self.read_layers)
+        return float(x @ self.axis_unit) - self.zero
 
     # ---- appraisal -> emotion (fast) -> mood (slow) ----
     def appraise(self, cortex, base, text, speaker="User"):

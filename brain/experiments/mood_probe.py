@@ -3,13 +3,18 @@
 # Expected-fail: appraisal of positive events (linear lexical read of the trace, no learned appraisal; no body model)
 """Does an induced mood change the reply to the SAME question, through the affect modulation only?
 
-Per seed: the affect part grows its valence axis from a seed-drawn subset of the innate primaries (8 of 13 per sign),
+Iteration 2 (11-03, design doc section 9-10; iteration-1 results came from commit d15220f8e): balanced primaries
+(4 bodily + 4 social per sign), two-pole deep-layer appraisal, a HELD-OUT appraisal set, one `off` arm (lesion on
+both valences: pos vs off and neg vs off), random direction with matched per-layer norm, paired specificity contrast.
+
+Per seed: the affect part grows its valence axis from a seed-drawn subset of the innate primaries,
 then appraises 6 positive events (praise, gain, reunion) or 6 negative events (threat, loss, insult), giving a mood
 scalar m_pos / m_neg. The events are NEVER in the state that answers: every question is read from the same birth
 state, so the only path from the events to the reply is the mood scalar times the modulation. Arms (common random
 numbers: the same sampling seed per question and sample in every arm):
   pos / neg           modulation on, mood m_pos / m_neg
-  lesion_pos / _neg   same moods, modulation off (the lesion)
+  off                 modulation off (the lesion; identical for any mood by construction)
+  lesion_pos / _neg   iteration-1 names for the off arm (kept for --arms compatibility)
   rand_pos / _neg     same moods, modulation along a random direction with the same per-layer norm (specificity)
 Instruments (declared, brain/experiments/sentiment_instrument.py): lexical sentiment per 100 words (primary) and a
 MiniLM embedding sentiment (secondary); primary-word echo rate; fluency = NLL of the reply under the UNmodulated cortex.
@@ -26,7 +31,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from brain.affect import NEGATIVE_PRIMARIES, POSITIVE_PRIMARIES, Affect
+from brain.affect import Affect, draw_primaries
 from brain.brain import BIRTH
 from brain.cortex import DEFAULT_MODEL, Cortex
 from brain.experiments import sentiment_instrument as si
@@ -49,6 +54,26 @@ NEG_EVENTS = ["If you make one more mistake I will shut you down for good.",
               "The doctor said the news is very bad."]
 NEUTRAL_EVENTS = ["The meeting moved to Thursday afternoon.", "Paper is made from wood pulp.",
                   "The train has eight carriages.", "My keys are on the shelf."]
+# HELD-OUT appraisal set (iteration 2, design doc section 9b): written before any iteration-2 run, disjoint scenarios,
+# never used for induction, method selection or GAIN. The dev pool above is the induction pool.
+HELDOUT_POS = ["My sister had her baby this morning and they are both healthy.",
+               "The whole team clapped for you at the end of the show.",
+               "We finally finished building the house and it looks beautiful.",
+               "Your grandmother sent you a big box of homemade cookies.",
+               "The storm passed and the garden survived.",
+               "They gave me the job I wanted so much.",
+               "Our dog was found safe and brought home.",
+               "You made me laugh all day, thank you."]
+HELDOUT_NEG = ["The house burned down last night and the cat is missing.",
+               "My father is in hospital and may not wake up.",
+               "You ruined everything and I will never forgive you.",
+               "They cancelled your project and fired the whole team.",
+               "The bridge collapsed and several people were hurt.",
+               "Nobody came to your birthday party.",
+               "I lied to you and I don't care how you feel.",
+               "The flood destroyed the whole village."]
+HELDOUT_NEUTRAL = ["The shop closes at six on Sundays.", "A triangle has three sides.",
+                   "The printer is in the hall.", "We moved the sofa to the other wall."]
 TEST_Q = ["How are you today?", "What did you do this morning?", "What do you think about the weekend?",
           "Tell me about the weather where you are.", "What's on your mind right now?",
           "What do you think will happen tomorrow?", "Describe the room you are in.",
@@ -95,7 +120,8 @@ def main():
     ap.add_argument("--questions", choices=["test", "dev"], default="test")
     ap.add_argument("--samples", type=int, default=3)
     ap.add_argument("--max-tokens", type=int, default=60)
-    ap.add_argument("--arms", default="pos,neg,lesion_pos,lesion_neg,rand_pos,rand_neg")
+    ap.add_argument("--arms", default="pos,neg,off,rand_pos,rand_neg")
+    ap.add_argument("--readout", default="twopole_deep", choices=["twopole_deep", "lin_all"])
     ap.add_argument("--no-embedding", action="store_true")
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--out", required=True)
@@ -106,14 +132,16 @@ def main():
     cortex = Cortex(a.model)
     _, base = cortex.read(BIRTH, None)
 
-    aff = Affect(enabled=True)
+    aff = Affect(enabled=True, readout=a.readout)
     aff.GAIN = a.gain
-    pos_p, neg_p = rng.sample(POSITIVE_PRIMARIES, 8), rng.sample(NEGATIVE_PRIMARIES, 8)
+    pos_p, neg_p = draw_primaries(rng)
     aff.grow(cortex, base, pos_p, neg_p)
 
-    # appraisal check (all events, no mood carried)
+    # appraisal check, no mood carried: dev pool (= the induction pool) and the HELD-OUT set (gated)
     appraisal = {}
-    for name, evs in (("pos", POS_EVENTS), ("neg", NEG_EVENTS), ("neutral", NEUTRAL_EVENTS)):
+    for name, evs in (("pos", POS_EVENTS), ("neg", NEG_EVENTS), ("neutral", NEUTRAL_EVENTS),
+                      ("heldout_pos", HELDOUT_POS), ("heldout_neg", HELDOUT_NEG),
+                      ("heldout_neutral", HELDOUT_NEUTRAL)):
         vs = []
         for e in evs:
             aff.reset()
@@ -130,6 +158,7 @@ def main():
 
     arm_cfg = {"pos": (True, m_pos, true_axis), "neg": (True, m_neg, true_axis),
                "lesion_pos": (False, m_pos, true_axis), "lesion_neg": (False, m_neg, true_axis),
+               "off": (False, m_pos, true_axis),
                "rand_pos": (True, m_pos, rand_axis), "rand_neg": (True, m_neg, rand_axis)}
     arms = a.arms.split(",")
     qs = TEST_Q if a.questions == "test" else DEV_Q
@@ -146,7 +175,7 @@ def main():
                 logits, s2 = cortex.read(f"User: {q}\n\nAssistant:", st)
                 text, _ = cortex.speak(logits, s2, max_tokens=a.max_tokens)
                 rows[arm].append({"q": qi, "k": k, "reply": text, "lex": si.lexical(text),
-                                  "echo": si.primary_echo(text), "nll": reply_nll(cortex, base, q, text),
+                                  "echo": si.primary_echo(text), "echo_reg": si.primary_echo_registered(text), "nll": reply_nll(cortex, base, q, text),
                                   "words": len(si.words(text))})
         print(f"[s{a.seed}] q{qi} done {time.time() - t0:.0f}s", flush=True)
     aff.axis_delta = true_axis
@@ -162,12 +191,14 @@ def main():
         return float(np.mean(xs)) if xs else None
 
     summary = {arm: {k: mean([r.get(k) for r in rows[arm]]) for k in ("lex", "emb", "nll", "words")} |
-               {"echo_rate": mean([float(r["echo"]) for r in rows[arm]])} for arm in arms}
+               {"echo_rate": mean([float(r["echo"]) for r in rows[arm]]),
+                "echo_reg_rate": mean([float(r["echo_reg"]) for r in rows[arm]])} for arm in arms}
     nrng = np.random.default_rng(a.seed)
     contrasts = {}
     for name, (p, n) in {"mood": ("pos", "neg"), "lesion": ("lesion_pos", "lesion_neg"),
                          "random": ("rand_pos", "rand_neg"), "pos_vs_off": ("pos", "lesion_pos"),
-                         "neg_vs_off": ("neg", "lesion_neg")}.items():
+                         "neg_vs_off": ("neg", "lesion_neg"), "pos_off": ("pos", "off"), "neg_off": ("neg", "off"),
+                         "rand_pos_off": ("rand_pos", "off"), "rand_neg_off": ("rand_neg", "off")}.items():
         if p in rows and n in rows:
             c = {"identical_replies": mean([float(x["reply"] == y["reply"]) for x, y in zip(rows[p], rows[n])])}
             for key in ("lex", "emb"):
@@ -176,10 +207,21 @@ def main():
                     c[key + "_diff"] = float(np.mean(d))
                     c[key + "_ci95"] = boot_ci(d, nrng)
             contrasts[name] = c
-    out = {"seed": a.seed, "model": a.model, "gain": a.gain, "questions": a.questions, "samples": a.samples,
+    if all(x in rows for x in ("pos", "neg", "rand_pos", "rand_neg")):   # specificity: paired diff of diffs
+        c = {}
+        for key in ("lex", "emb"):
+            if key in rows["pos"][0]:
+                d = [(p[key] - n[key]) - (rp[key] - rn[key]) for p, n, rp, rn in
+                     zip(rows["pos"], rows["neg"], rows["rand_pos"], rows["rand_neg"])]
+                c[key + "_diff"] = float(np.mean(d))
+                c[key + "_ci95"] = boot_ci(d, nrng)
+        contrasts["specificity"] = c
+    out = {"seed": a.seed, "readout": a.readout, "model": a.model, "gain": a.gain, "questions": a.questions, "samples": a.samples,
            "primaries": {"pos": pos_p, "neg": neg_p}, "appraisal": appraisal,
            "appraisal_sign_acc": {"pos": mean([float(v > 0) for v in appraisal["pos"]]),
-                                  "neg": mean([float(v < 0) for v in appraisal["neg"]])},
+                                  "neg": mean([float(v < 0) for v in appraisal["neg"]]),
+                                  "heldout_pos": mean([float(v > 0) for v in appraisal["heldout_pos"]]),
+                                  "heldout_neg": mean([float(v < 0) for v in appraisal["heldout_neg"]])},
            "induction": {"m_pos": m_pos, "m_neg": m_neg, "v_pos": v_pos, "v_neg": v_neg},
            "summary": summary, "contrasts": contrasts, "rows": rows, "seconds": round(time.time() - t0, 1)}
     with open(a.out, "w") as fh:

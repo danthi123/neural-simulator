@@ -1,9 +1,12 @@
 """brain/affect.py without weights: a fake cortex whose fast-memory trace carries a known valence direction."""
+import hashlib
+import random
 import zlib
 
 import torch
 
-from brain.affect import NEGATIVE_PRIMARIES, POSITIVE_PRIMARIES, Affect
+from brain.affect import (NEGATIVE_BODILY, NEGATIVE_PRIMARIES, NEGATIVE_SOCIAL, POSITIVE_BODILY, POSITIVE_PRIMARIES,
+                          POSITIVE_SOCIAL, Affect, draw_primaries)
 from brain.experiments import sentiment_instrument as si
 
 L, H, N = 3, 2, 4
@@ -47,9 +50,31 @@ def test_default_is_off():
 
 
 def test_appraisal_sign_follows_the_valence_direction():
-    c, b, a = _grown()
-    assert a.appraise(c, b, "You did a wonderful job, I am proud and you are kind.") > 0.3
-    assert a.appraise(c, b, "You are useless, you failed, and you are alone.") < -0.3
+    for kind in ("twopole_deep", "lin_all"):
+        c, b = FakeCortex(), _base()
+        a = Affect(enabled=True, readout=kind).grow(c, b)
+        assert a.appraise(c, b, "You did a wonderful job, I am proud and you are kind.") > 0.3
+        assert a.appraise(c, b, "You are useless, you failed, and you are alone.") < -0.3
+
+
+def test_readout_layers():
+    c, b = FakeCortex(), _base()
+    assert Affect(readout="twopole_deep").grow(c, b).read_layers == [1, 2]
+    assert Affect(readout="lin_all").grow(c, b).read_layers == [0, 1, 2]
+
+
+def test_primaries_balanced_and_draw_stratified():
+    assert len(POSITIVE_BODILY) == len(POSITIVE_SOCIAL) == len(NEGATIVE_SOCIAL) == 8 and len(NEGATIVE_BODILY) == 10
+    p, n = draw_primaries(random.Random(7))
+    assert len(p) == len(n) == 8
+    assert sum(x in POSITIVE_SOCIAL for x in p) == 4 and sum(x in NEGATIVE_SOCIAL for x in n) == 4
+
+
+def test_lexical_instrument_frozen_since_iteration_1():
+    """The lexical word lists must not change when primaries are added (iteration-2 instruments frozen)."""
+    key = " ".join(sorted(si.POS)) + "|" + " ".join(sorted(si.NEG))
+    assert (len(si.POS), len(si.NEG)) == (64, 64)
+    assert hashlib.sha1(key.encode()).hexdigest()[:12] == "ef52cca6104d"
 
 
 def test_mood_is_slow_and_bounded():

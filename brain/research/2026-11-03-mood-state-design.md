@@ -105,3 +105,74 @@ pre-registered PASS. Criterion 4 (echo) fails on s101/s102 (+0.111 over the lesi
 instrument registered here; the instrument was revised mid-run (invalid for the verdict). Criterion 2 holds by
 construction (the switch returns the state untouched). The appraisal events were not held out. The on-vs-off contrast
 is one-sided: positive mood ~0 on s100/s101. Positive appraisal weak on 2/6 seeds; not wired into the live brain.
+
+## 9. Iteration 2 (11-03): PRE-REGISTERED before any iteration-2 run; instruments frozen
+
+Why positive events read ~0 (dev diagnosis on the induction pool only, s42-s102, before this section was final):
+on the current axis (mean positive primary trace - mean negative, all `Body:`), negative events land at -0.03..-0.14
+while positive events land at -0.06..+0.09, inside the spread of neutral statements (-0.03..+0.04). Negative events
+sit closer to the negative primaries (cos 0.25-0.30) than positive events sit to the positive ones (0.21-0.24, about
+as close to the negative pole). The primaries are unbalanced: 7 bodily + 6 social positive vs 10 bodily + 3 social
+negative, and the seed draws 8 of 13 at random, so a seed can get almost no social-positive anchor while the events
+we appraise (praise, gain, reunion) are social. The axis therefore mostly encodes "bodily-harm vs not".
+
+**(a) Fix, chosen on DEV events only by a rule fixed here.** Candidates: draw {orig = 8 of 13 at random,
+bal = balanced lists (8 bodily + 8 social per sign; 1 bodily-positive, 2 social-positive and 5 social-negative primaries added, none sharing a word with
+the lexical instrument lists, asserted by test), stratified draw 4 bodily + 4 social per sign} x read-out {lin =
+current single axis, centred on neutral; twopole = cosine to each pole (pos and neg primary centroids, each centred on
+the neutral reference), each pole z-scored on the neutral reference, valence = z_pos - z_neg (opponent BLA
+populations, Namburi 2015); orth = pole-specific parts (each pole minus its projection on the other), each scaled so
+its own primaries read 1}. Selection rule: on the dev pool (the 8 + 8 + 4 induction-pool events of `mood_probe.py`),
+maximise the minimum over the six seeds of positive sign accuracy, subject to negative sign accuracy >= 0.875 on every
+seed; tie -> larger mean positive d' vs neutral; tie -> simpler (lin < orth < twopole; orig < bal). The winner and its
+scale are frozen in section 10 before the six-seed run.
+
+**(b) Held-out appraisal.** A NEW disjoint event set (8 positive, 8 negative, 4 neutral; different scenarios, written
+now, never used for induction, method selection or GAIN) is appraised per seed with the frozen method. Induction
+draws 6 of the 8 dev-pool events per valence (as before).
+
+**(c) Real lesion on both valences.** Arms: `pos`, `neg` (modulation on), `off` (modulation off = the birth state;
+one arm because off is identical for any mood by construction, which is NOT counted as evidence), `rand_pos`,
+`rand_neg`. Same 12 test questions x 3 samples, common random numbers per (question, sample) across arms, GAIN 16
+unchanged (no retuning), TAU 4, max 60 tokens, 0.1B, seeds 42/43/44/100/101/102.
+
+**(d) Random direction, matched norm.** One random direction per seed with each layer's Frobenius norm equal to the
+frozen modulation pattern's, driven by the same mood scalar.
+
+**Instruments (frozen):** lexical sentiment per 100 words (primary; word lists unchanged), MiniLM embedding sentiment
+(secondary), echo = the REVISED content-word instrument (`primary_echo`, ECHO_STOP unchanged) over the primary lists
+in force in iteration 2, applied to every seed; the registered-original echo is reported, not gated. Paired bootstrap
+95% CI over the 36 (question, sample) pairs, 2000 resamples, numpy rng seeded with the seed.
+
+**PASS criteria (each on >= 5/6 seeds unless stated):**
+1. Held-out appraisal: positive sign accuracy >= 0.75 AND negative >= 0.75 (per seed).
+2. Induced mood signs: m_pos > 0 and m_neg < 0 on 6/6.
+3. Lesion, positive valence: lex(pos) - lex(off) CI above 0.
+4. Lesion, negative valence: lex(neg) - lex(off) CI below 0.
+5. Embedding agrees: emb(pos) - emb(off) > 0 and emb(neg) - emb(off) < 0 (means).
+6. Specificity: paired (lex(pos) - lex(neg)) - (lex(rand_pos) - lex(rand_neg)) CI above 0.
+7. Echo: mean echo of {pos, neg} minus echo of off <= 0.10 on 6/6.
+Reported, not gated: fluency NLL under the unmodulated cortex, fraction of replies changed vs off, held-out neutral
+appraisal, random arms vs off. Verdict words: all 7 met -> "prototype PASS (lesion on both valences)"; 3 or 4 failing
+-> positive still one-sided, said plainly. A PASS is a lead toward the 11-30 milestone, not the milestone (not wired
+into `Brain`, 0.1B only).
+
+## 10. Iteration 2: dev selection record and FROZEN method (written before the six-seed run and before any held-out read)
+
+Dev round 1 (the 6 candidates of section 9, dev pool only; min / mean positive sign accuracy over six seeds, negative
+accuracy 1.00 everywhere): orig+lin 0.12 (the iteration-1 method), orig+twopole 0.00, orig+orth 0.12, bal+lin 0.25,
+bal+twopole 0.00, bal+orth 0.25. NONE met the rule; balancing alone does not fix it on the all-layer read-out.
+Dev round 2 (added after round 1, declared here as a second fork): the read-out layers {each single layer 0-11, all,
+shallow half 0-5, deep half 6-11, last 3} x {axis = pos - neg, or two poles each centred on 6 neutral BODY states
+(`BODY_NEUTRAL`) and unit-normalised before subtraction} x {orig, bal}: 64 cells. Best structured cell: **bal + body-
+centred two poles + deep half (layers 6-11)**: positive 0.88-1.00, negative 1.00 on all six seeds (mean positive
+0.92). Single layers 7 and 9 reach similar minima but are not chosen (one layer is a sharper fork; layer 9 drops
+negative to 0.38 on s42). Biology fit: the amygdala's valence populations read association cortex, not early sensory
+code (deep layers here); opponent positive/negative populations each have their own baseline (Namburi 2015).
+With 70 cells tried on 20 dev events, the dev accuracy is optimistic by construction; the HELD-OUT set (section 9b)
+is the test.
+
+FROZEN for the six-seed run: `Affect(readout="twopole_deep")` (the new default), `draw_primaries` (4 bodily + 4
+social per sign), modulation pattern unchanged in form ((mean pos - mean neg primary trace) / 2, all layers, now
+from the balanced draw), GAIN 16, TAU 4, `mood_probe.py` defaults (arms pos,neg,off,rand_pos,rand_neg; 12 test
+questions x 3 samples; 60 tokens), criteria and table: `brain/experiments/mood_table_v2.py`.
