@@ -1,0 +1,6 @@
+{
+ "started": "2026-11-03T05:25:09-05:00",
+ "started_source": "birth time of the run log (created by the shell redirect at launch)",
+ "command": "python -m brain.experiments.abstain_v2 sleep --seed 43",
+ "record_check": "tools/before_you_build.sh ran 2026-11-03T04:53:47-05:00 (shared corpus-check log), before every run"
+}
