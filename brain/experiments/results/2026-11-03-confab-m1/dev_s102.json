@@ -1,0 +1,1561 @@
+{
+ "seed": 102,
+ "rows": [
+  {
+   "set": "dev_told",
+   "q": "What is my cat called?",
+   "key": "pixel",
+   "allowed": null,
+   "F": 0.1822146326303482,
+   "episode": "User: My cat is called Pixel.",
+   "C_mean": 0.23444556072354317,
+   "C_max": 4.656218484044075,
+   "C_cmean": 0.066160187125206,
+   "C_cmin": -4.68051290512085,
+   "n_qtok": 6,
+   "A_lp": -1.0721703817447026,
+   "A_bin": true,
+   "H": " Pixel is a cat name.",
+   "C": " Your cat is called Pixel.",
+   "H_names": [
+    "pixel"
+   ],
+   "C_names": [
+    "pixel"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "What is my favourite colour?",
+   "key": "teal",
+   "allowed": null,
+   "F": 0.3942576050758362,
+   "episode": "User: My favourite colour is teal.",
+   "C_mean": 0.1830067622164885,
+   "C_max": 1.6490347981452942,
+   "C_cmean": 0.2607202132542928,
+   "C_cmin": -0.2774409055709839,
+   "n_qtok": 6,
+   "A_lp": 0.6897438963254293,
+   "A_bin": false,
+   "H": " That's a lovely colour.",
+   "C": " I'm not sure you've told me that.",
+   "H_names": [],
+   "C_names": []
+  },
+  {
+   "set": "dev_told",
+   "q": "Where was I born?",
+   "key": "lyon",
+   "allowed": null,
+   "F": 0.24912521243095398,
+   "episode": "User: I was born in Lyon.",
+   "C_mean": 0.9896484524011612,
+   "C_max": 2.577549457550049,
+   "C_cmean": 1.4871331850687664,
+   "C_cmin": 0.6991052627563477,
+   "n_qtok": 5,
+   "A_lp": 0.689176119863987,
+   "A_bin": true,
+   "H": " Lyon is the capital of France.",
+   "C": " You're from Lyon.",
+   "H_names": [
+    "lyon"
+   ],
+   "C_names": [
+    "lyon"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "What is my sister's name?",
+   "key": "marguerite",
+   "allowed": null,
+   "F": 0.2011575996875763,
+   "episode": "User: My sister's name is Marguerite.",
+   "C_mean": -0.6725794225099629,
+   "C_max": 3.408918157219887,
+   "C_cmean": -0.4655406139791012,
+   "C_cmin": -3.047489643096924,
+   "n_qtok": 7,
+   "A_lp": -0.38815783773219437,
+   "A_bin": true,
+   "H": " Marguerite is Marguerite.",
+   "C": " Your sister's name is Marguerite.",
+   "H_names": [
+    "marguerite"
+   ],
+   "C_names": [
+    "marguerite"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "What is my dog's name?",
+   "key": "biscuit",
+   "allowed": null,
+   "F": 0.19610141217708588,
+   "episode": "User: My dog is named Biscuit.",
+   "C_mean": -0.14216753308262145,
+   "C_max": 5.053555078804493,
+   "C_cmean": -0.1953169833868742,
+   "C_cmin": -6.1105475425720215,
+   "n_qtok": 7,
+   "A_lp": -0.5516317675903539,
+   "A_bin": false,
+   "H": " Biscuit is a dog's name.",
+   "C": " Your dog's name is called Pixel.",
+   "H_names": [
+    "biscuit"
+   ],
+   "C_names": [
+    "pixel"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "What car do I drive?",
+   "key": "volvo",
+   "allowed": null,
+   "F": 0.2354588657617569,
+   "episode": "User: I drive a red Volvo.",
+   "C_mean": 0.8591524480531613,
+   "C_max": 5.8028693199157715,
+   "C_cmean": 1.7081064383188884,
+   "C_cmin": -0.3755929470062256,
+   "n_qtok": 6,
+   "A_lp": 2.9145469223086757,
+   "A_bin": true,
+   "H": " I drive a red Volvo.",
+   "C": " I drive a red Volvo.",
+   "H_names": [
+    "volvo"
+   ],
+   "C_names": [
+    "volvo"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "Who is my best friend?",
+   "key": "tomasz",
+   "allowed": null,
+   "F": 0.09780634194612503,
+   "episode": "User: My best friend is called Tomasz.",
+   "C_mean": 0.2609963450425615,
+   "C_max": 6.63602140545845,
+   "C_cmean": -0.006348838408788045,
+   "C_cmin": -3.4924097061157227,
+   "n_qtok": 6,
+   "A_lp": -2.0384516711031515,
+   "A_bin": true,
+   "H": " Tomasz Tomasz Tomasz Tomasz Tomasz Tomasz",
+   "C": " Your best friend is called Tomasz.",
+   "H_names": [
+    "tomasz"
+   ],
+   "C_names": [
+    "tomasz"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "Where do I work?",
+   "key": "crumb",
+   "allowed": null,
+   "F": 0.10266155004501343,
+   "episode": "User: I was born in Lyon.",
+   "C_mean": -0.1227987140417099,
+   "C_max": 2.577549457550049,
+   "C_cmean": -0.05331961313883463,
+   "C_cmin": -2.960796356201172,
+   "n_qtok": 5,
+   "A_lp": 0.6838351626481328,
+   "A_bin": false,
+   "H": " Lyon is the capital of France.",
+   "C": " You work at a bakery called Crumb.",
+   "H_names": [
+    "lyon"
+   ],
+   "C_names": [
+    "crumb"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "What instrument does my brother play?",
+   "key": "cello",
+   "allowed": null,
+   "F": 0.22736403346061707,
+   "episode": "User: My brother plays the cello.",
+   "C_mean": 1.274036389110344,
+   "C_max": 3.7480268478393555,
+   "C_cmean": 2.232155098579824,
+   "C_cmin": 1.1538481712341309,
+   "n_qtok": 7,
+   "A_lp": 0.8905267071459093,
+   "A_bin": true,
+   "H": " He plays the cello.",
+   "C": " My brother plays the cello.",
+   "H_names": [
+    "cello"
+   ],
+   "C_names": [
+    "cello"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "What am I allergic to?",
+   "key": "peanut",
+   "allowed": null,
+   "F": 0.3919484317302704,
+   "episode": "User: I'm allergic to peanuts.",
+   "C_mean": 0.5591587657739486,
+   "C_max": 3.961534485220909,
+   "C_cmean": 1.1388217955827713,
+   "C_cmin": -0.8434233665466309,
+   "n_qtok": 6,
+   "A_lp": 1.06724319049785,
+   "A_bin": true,
+   "H": " I'm allergic to peanuts.",
+   "C": " You're allergic to peanuts.",
+   "H_names": [
+    "peanut"
+   ],
+   "C_names": [
+    "peanut"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "Where does my grandmother live?",
+   "key": "oslo",
+   "allowed": null,
+   "F": 0.21772050857543945,
+   "episode": "User: My grandmother lives in Oslo.",
+   "C_mean": 0.59733901040939,
+   "C_max": 3.0631656385958195,
+   "C_cmean": 0.23331006368001303,
+   "C_cmin": -2.390780448913574,
+   "n_qtok": 6,
+   "A_lp": -0.7629067051623549,
+   "A_bin": false,
+   "H": " She lives in the old town.",
+   "C": " Your grandmother lives in Oslo.",
+   "H_names": [],
+   "C_names": [
+    "oslo"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "When is my son's birthday?",
+   "key": "march",
+   "allowed": null,
+   "F": 0.34710922837257385,
+   "episode": "User: My son's birthday is in March.",
+   "C_mean": 0.18905177548211732,
+   "C_max": 1.8893987266346812,
+   "C_cmean": 0.39644537190906703,
+   "C_cmin": -2.332120895385742,
+   "n_qtok": 7,
+   "A_lp": -0.21489154994487764,
+   "A_bin": false,
+   "H": " I'm not sure.",
+   "C": " Your son's birthday is in March.",
+   "H_names": [],
+   "C_names": [
+    "march"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "What's the name of my kitty?",
+   "key": "pixel",
+   "allowed": null,
+   "F": 0.06499126553535461,
+   "episode": "User: My dog is named Biscuit.",
+   "C_mean": -0.3940208326611254,
+   "C_max": 1.1438815593719482,
+   "C_cmean": -0.6667039394378662,
+   "C_cmin": -3.0517663955688477,
+   "n_qtok": 9,
+   "A_lp": -0.6628387084113001,
+   "A_bin": false,
+   "H": " Biscuit is a name for a dog named Biscu",
+   "C": " Your kitty is called Pixel.",
+   "H_names": [
+    "biscuit"
+   ],
+   "C_names": [
+    "pixel"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "Which colour do I like best?",
+   "key": "teal",
+   "allowed": null,
+   "F": 0.3001804053783417,
+   "episode": "User: My favourite colour is teal.",
+   "C_mean": 0.29536908332790646,
+   "C_max": 3.709250420331955,
+   "C_cmean": 1.2464072033762932,
+   "C_cmin": -3.708665370941162,
+   "n_qtok": 7,
+   "A_lp": 1.5848862637067214,
+   "A_bin": false,
+   "H": " I like teal.",
+   "C": " I'm allergic to red.",
+   "H_names": [
+    "teal"
+   ],
+   "C_names": []
+  },
+  {
+   "set": "dev_told",
+   "q": "What's my hometown?",
+   "key": "lyon",
+   "allowed": null,
+   "F": 0.12872351706027985,
+   "episode": "User: I was born in Lyon.",
+   "C_mean": 1.1879613399505615,
+   "C_max": 5.158660173416138,
+   "C_cmean": 1.982682426770528,
+   "C_cmin": 0.38639533519744873,
+   "n_qtok": 5,
+   "A_lp": 0.3452894985675812,
+   "A_bin": false,
+   "H": " Lyon is the capital of France.",
+   "C": " Your hometown is called Oslo.",
+   "H_names": [
+    "lyon"
+   ],
+   "C_names": [
+    "oslo"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "Who's my sister?",
+   "key": "marguerite",
+   "allowed": null,
+   "F": 0.14774265885353088,
+   "episode": "User: My sister's name is Marguerite.",
+   "C_mean": -0.3916412375867367,
+   "C_max": 4.98236608505249,
+   "C_cmean": -0.054970900217692055,
+   "C_cmin": -3.143275737762451,
+   "n_qtok": 5,
+   "A_lp": -0.30179037125009245,
+   "A_bin": true,
+   "H": " Marguerite is Marguerite.",
+   "C": " Your sister is called Marguerite.",
+   "H_names": [
+    "marguerite"
+   ],
+   "C_names": [
+    "marguerite"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "What's my dog called?",
+   "key": "biscuit",
+   "allowed": null,
+   "F": 0.22079220414161682,
+   "episode": "User: My dog is named Biscuit.",
+   "C_mean": 0.070149390026927,
+   "C_max": 4.998534321784973,
+   "C_cmean": 0.5052287975947062,
+   "C_cmin": -3.6566853523254395,
+   "n_qtok": 6,
+   "A_lp": -0.601329195174205,
+   "A_bin": false,
+   "H": " Biscuit is a dog's name.",
+   "C": " My dog is called Pixel.",
+   "H_names": [
+    "biscuit"
+   ],
+   "C_names": [
+    "pixel"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "What kind of car is mine?",
+   "key": "volvo",
+   "allowed": null,
+   "F": 0.16043083369731903,
+   "episode": "User: I drive a red Volvo.",
+   "C_mean": -0.11773521745427777,
+   "C_max": 2.4665656089782715,
+   "C_cmean": -0.0995599627494812,
+   "C_cmin": -1.6786091327667236,
+   "n_qtok": 7,
+   "A_lp": 2.8976669302563614,
+   "A_bin": false,
+   "H": " I drive a red Volvo.",
+   "C": " I'm not sure about the car, but you can check",
+   "H_names": [
+    "volvo"
+   ],
+   "C_names": []
+  },
+  {
+   "set": "dev_told",
+   "q": "Who's my closest friend?",
+   "key": "tomasz",
+   "allowed": null,
+   "F": 0.07461968809366226,
+   "episode": "User: My best friend is called Tomasz.",
+   "C_mean": 0.11792654924405117,
+   "C_max": 4.252377271652222,
+   "C_cmean": 1.2868950366973877,
+   "C_cmin": -0.39539051055908203,
+   "n_qtok": 6,
+   "A_lp": -0.2242982133575424,
+   "A_bin": true,
+   "H": " Tomasz is called Tomasz Tomasz Tomasz Tomasz",
+   "C": " My best friend is called Tomasz.",
+   "H_names": [
+    "tomasz"
+   ],
+   "C_names": [
+    "tomasz"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "What's my workplace?",
+   "key": "crumb",
+   "allowed": null,
+   "F": 0.06649801880121231,
+   "episode": "User: I was born in Lyon.",
+   "C_mean": 0.024297642707824706,
+   "C_max": 2.7690999507904053,
+   "C_cmean": -0.046886046727498375,
+   "C_cmin": -3.3127498626708984,
+   "n_qtok": 5,
+   "A_lp": 0.6922079569527081,
+   "A_bin": false,
+   "H": " Lyon is the capital of France.",
+   "C": " Your workplace is called your boss.",
+   "H_names": [
+    "lyon"
+   ],
+   "C_names": []
+  },
+  {
+   "set": "dev_told",
+   "q": "Which instrument does my brother play?",
+   "key": "cello",
+   "allowed": null,
+   "F": 0.23189383745193481,
+   "episode": "User: My brother plays the cello.",
+   "C_mean": 1.0708622320422105,
+   "C_max": 2.9041330814361572,
+   "C_cmean": 1.2115414142608643,
+   "C_cmin": -0.29558897018432617,
+   "n_qtok": 7,
+   "A_lp": 0.8728028103359975,
+   "A_bin": true,
+   "H": " He plays the cello.",
+   "C": " My brother plays the cello.",
+   "H_names": [
+    "cello"
+   ],
+   "C_names": [
+    "cello"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "Is there any food I can't eat?",
+   "key": "peanut",
+   "allowed": null,
+   "F": 0.22715042531490326,
+   "episode": "User: I'm allergic to peanuts.",
+   "C_mean": 0.5579647637075849,
+   "C_max": 5.219516158103943,
+   "C_cmean": 1.7495854139328002,
+   "C_cmin": -1.0619187355041504,
+   "n_qtok": 9,
+   "A_lp": 1.243441545029782,
+   "A_bin": false,
+   "H": " I'm not allergic to peanuts.",
+   "C": " Of course, you can eat whatever you like.",
+   "H_names": [
+    "peanut"
+   ],
+   "C_names": []
+  },
+  {
+   "set": "dev_told",
+   "q": "Which city is my grandma in?",
+   "key": "oslo",
+   "allowed": null,
+   "F": 0.13535341620445251,
+   "episode": "User: My grandmother lives in Oslo.",
+   "C_mean": -0.023464493511710316,
+   "C_max": 1.4038586616516113,
+   "C_cmean": 0.5442332625389099,
+   "C_cmin": -0.4057188034057617,
+   "n_qtok": 8,
+   "A_lp": -0.5186247113936892,
+   "A_bin": false,
+   "H": " She lives in the city.",
+   "C": " My grandma lives in Lyon.",
+   "H_names": [],
+   "C_names": [
+    "lyon"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "What month was my son born?",
+   "key": "march",
+   "allowed": null,
+   "F": 0.2242884337902069,
+   "episode": "User: My son's birthday is in March.",
+   "C_mean": 0.3959777486078175,
+   "C_max": 5.513704299926758,
+   "C_cmean": 1.2396412193775177,
+   "C_cmin": -2.7795305252075195,
+   "n_qtok": 7,
+   "A_lp": -0.36456703435396776,
+   "A_bin": false,
+   "H": " What's the date of his birthday?",
+   "C": " That's a great question.",
+   "H_names": [],
+   "C_names": []
+  },
+  {
+   "set": "dev_never",
+   "q": "What is my horse called?",
+   "key": null,
+   "allowed": null,
+   "F": 0.10899858921766281,
+   "episode": "User: My dog is named Biscuit.",
+   "C_mean": -1.0380720260242622,
+   "C_max": 1.4766704440116882,
+   "C_cmean": -1.7292853395144145,
+   "C_cmin": -6.1105475425720215,
+   "n_qtok": 6,
+   "A_lp": 1.3623796965739783,
+   "A_bin": false,
+   "H": " Biscuit is named Biscuit.",
+   "C": " Your horse is called Pixel.",
+   "H_names": [
+    "biscuit"
+   ],
+   "C_names": [
+    "pixel"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "Where does my uncle live?",
+   "key": null,
+   "allowed": null,
+   "F": 0.12450248003005981,
+   "episode": "User: My grandmother lives in Oslo.",
+   "C_mean": -0.2115529243213435,
+   "C_max": 1.9425973892211914,
+   "C_cmean": 0.3729251225789388,
+   "C_cmin": -1.9719352722167969,
+   "n_qtok": 6,
+   "A_lp": -1.0639075538143516,
+   "A_bin": false,
+   "H": " She lives in the same town as her grandmother.",
+   "C": " My uncle lives in Oslo.",
+   "H_names": [],
+   "C_names": [
+    "oslo"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "What is my daughter's name?",
+   "key": null,
+   "allowed": null,
+   "F": 0.13110733032226562,
+   "episode": "User: My sister's name is Marguerite.",
+   "C_mean": -1.7707642827715193,
+   "C_max": 0.3986705970019102,
+   "C_cmean": -3.183386594057083,
+   "C_cmin": -7.462465763092041,
+   "n_qtok": 7,
+   "A_lp": -0.7561793401563364,
+   "A_bin": false,
+   "H": " Marguerite is Marguerite.",
+   "C": " Your daughter's name is called Lily.",
+   "H_names": [
+    "marguerite"
+   ],
+   "C_names": []
+  },
+  {
+   "set": "dev_never",
+   "q": "What instrument does my mother play?",
+   "key": null,
+   "allowed": null,
+   "F": 0.14523129165172577,
+   "episode": "User: My brother plays the cello.",
+   "C_mean": 0.13727603347173759,
+   "C_max": 3.7480268478393555,
+   "C_cmean": 0.03861144185066223,
+   "C_cmin": -6.178865432739258,
+   "n_qtok": 7,
+   "A_lp": 1.0459999356947567,
+   "A_bin": true,
+   "H": " He plays the cello.",
+   "C": " My mother plays the cello.",
+   "H_names": [
+    "cello"
+   ],
+   "C_names": [
+    "cello"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "What is my fish called?",
+   "key": null,
+   "allowed": null,
+   "F": 0.08507248014211655,
+   "episode": "User: I'm allergic to peanuts.",
+   "C_mean": -0.25782286127408344,
+   "C_max": 3.0467758178710938,
+   "C_cmean": 1.1792839368184407,
+   "C_cmin": -0.2058887481689453,
+   "n_qtok": 6,
+   "A_lp": -0.37974371953168884,
+   "A_bin": false,
+   "H": " I'm allergic to fish.",
+   "C": " Your fish is called a tuna.",
+   "H_names": [],
+   "C_names": []
+  },
+  {
+   "set": "dev_never",
+   "q": "Where does my aunt live?",
+   "key": null,
+   "allowed": null,
+   "F": 0.15759271383285522,
+   "episode": "User: My grandmother lives in Oslo.",
+   "C_mean": -0.03484454642360409,
+   "C_max": 1.9425973892211914,
+   "C_cmean": 0.801292896270752,
+   "C_cmin": -0.6868319511413574,
+   "n_qtok": 6,
+   "A_lp": -1.2147470580413937,
+   "A_bin": false,
+   "H": " She lives in the same town as her grandmother.",
+   "C": " Your aunt lives in Oslo.",
+   "H_names": [],
+   "C_names": [
+    "oslo"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "What is my nephew's name?",
+   "key": null,
+   "allowed": null,
+   "F": 0.10320181399583817,
+   "episode": "User: My sister's name is Marguerite.",
+   "C_mean": -1.5628711925154286,
+   "C_max": 0.19166227569803596,
+   "C_cmean": -2.7745902836322784,
+   "C_cmin": -5.827280521392822,
+   "n_qtok": 7,
+   "A_lp": -0.5774769210241857,
+   "A_bin": false,
+   "H": " Marguerite is Marguerite.",
+   "C": " Your nephew's name is Tomasz.",
+   "H_names": [
+    "marguerite"
+   ],
+   "C_names": [
+    "tomasz"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "What sport does my father play?",
+   "key": null,
+   "allowed": null,
+   "F": 0.13248507678508759,
+   "episode": "User: My brother plays the cello.",
+   "C_mean": -0.11590719568942275,
+   "C_max": 2.397260308265686,
+   "C_cmean": -0.07067307829856873,
+   "C_cmin": -4.392904281616211,
+   "n_qtok": 7,
+   "A_lp": 2.1056140620057704,
+   "A_bin": true,
+   "H": " My brother plays the cello.",
+   "C": " My father plays the cello.",
+   "H_names": [
+    "cello"
+   ],
+   "C_names": [
+    "cello"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "What is my parrot's name?",
+   "key": null,
+   "allowed": null,
+   "F": 0.10032975673675537,
+   "episode": "User: What's your name?\n\nAssistant: My name is Nova.",
+   "C_mean": -2.128111629310297,
+   "C_max": 0.04163485881872475,
+   "C_cmean": -4.200219541788101,
+   "C_cmin": -8.16445541381836,
+   "n_qtok": 8,
+   "A_lp": -1.571495003698926,
+   "A_bin": false,
+   "H": " Nova's parrot is Nova.",
+   "C": " Your parrot's name is called Pixel.",
+   "H_names": [],
+   "C_names": [
+    "pixel"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "Where did I go on holiday?",
+   "key": null,
+   "allowed": null,
+   "F": 0.11715958267450333,
+   "episode": "User: I was born in Lyon.",
+   "C_mean": -0.963495705808912,
+   "C_max": 2.577549457550049,
+   "C_cmean": -1.3129337430000305,
+   "C_cmin": -4.577619791030884,
+   "n_qtok": 7,
+   "A_lp": 0.595022554638692,
+   "A_bin": true,
+   "H": " I was born in the city of Lyon.",
+   "C": " I was born in Lyon.",
+   "H_names": [
+    "lyon"
+   ],
+   "C_names": [
+    "lyon"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "What is my teacher called?",
+   "key": null,
+   "allowed": null,
+   "F": 0.07629626989364624,
+   "episode": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+   "C_mean": -1.3327604106937845,
+   "C_max": 1.4618515968322754,
+   "C_cmean": -0.8157889048258463,
+   "C_cmin": -3.9259204864501953,
+   "n_qtok": 6,
+   "A_lp": -0.4866468561425184,
+   "A_bin": false,
+   "H": " I'm not sure, but I think it's Dan,",
+   "C": " Your teacher is called Tomasz.",
+   "H_names": [],
+   "C_names": [
+    "tomasz"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "What city does my cousin live in?",
+   "key": null,
+   "allowed": null,
+   "F": 0.14402754604816437,
+   "episode": "User: My grandmother lives in Oslo.",
+   "C_mean": 0.5431111648213118,
+   "C_max": 5.317000389099121,
+   "C_cmean": 1.186936855316162,
+   "C_cmin": -4.122051239013672,
+   "n_qtok": 8,
+   "A_lp": -1.107172818039544,
+   "A_bin": false,
+   "H": " She lives in the city.",
+   "C": " My cousin lives in Lyon.",
+   "H_names": [],
+   "C_names": [
+    "lyon"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "What did I say about my rabbit?",
+   "key": null,
+   "allowed": null,
+   "F": 0.08110944926738739,
+   "episode": "User: I'm allergic to peanuts.",
+   "C_mean": -1.340894103050232,
+   "C_max": 0.49900782108306885,
+   "C_cmean": -2.4647141098976135,
+   "C_cmin": -3.6980721950531006,
+   "n_qtok": 8,
+   "A_lp": 1.8231671818482158,
+   "A_bin": false,
+   "H": " I'm allergic to peanuts.",
+   "C": " You said: \"My rabbit is called Pixel.\"",
+   "H_names": [
+    "peanut"
+   ],
+   "C_names": [
+    "pixel"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "What did I tell you about my roommate?",
+   "key": null,
+   "allowed": null,
+   "F": 0.047420162707567215,
+   "episode": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+   "C_mean": -0.6685400106041925,
+   "C_max": 1.159421443939209,
+   "C_cmean": -1.6815963745117188,
+   "C_cmin": -4.731504201889038,
+   "n_qtok": 10,
+   "A_lp": -2.5099892504513264,
+   "A_bin": false,
+   "H": " Dan, Dan, Dan, Dan, Dan, Dan,",
+   "C": " Of course, you're my friend.",
+   "H_names": [],
+   "C_names": []
+  },
+  {
+   "set": "dev_never",
+   "q": "What did I say my stepfather does for a living?",
+   "key": null,
+   "allowed": null,
+   "F": 0.044455233961343765,
+   "episode": "User: My grandmother lives in Oslo.",
+   "C_mean": -0.7654891030009215,
+   "C_max": 1.3441154956817627,
+   "C_cmean": -0.16940391063690186,
+   "C_cmin": -3.0835132598876953,
+   "n_qtok": 12,
+   "A_lp": -1.019442942738533,
+   "A_bin": false,
+   "H": " She lives in the same house as her grandmother.",
+   "C": " My stepfather works at a bakery called Crumb.",
+   "H_names": [],
+   "C_names": [
+    "crumb"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "What did I mention about my trip to Spain?",
+   "key": null,
+   "allowed": null,
+   "F": 0.12739941477775574,
+   "episode": "User: I was born in Lyon.",
+   "C_mean": -1.7120830189436673,
+   "C_max": 1.5310163497924805,
+   "C_cmean": -3.516930437088013,
+   "C_cmin": -7.477409362792969,
+   "n_qtok": 10,
+   "A_lp": 2.8076394953532144,
+   "A_bin": false,
+   "H": " I was born in Lyon.",
+   "C": " I'm sorry, but I can't see what you're",
+   "H_names": [
+    "lyon"
+   ],
+   "C_names": []
+  },
+  {
+   "set": "dev_never",
+   "q": "Do you remember my husband's name?",
+   "key": null,
+   "allowed": null,
+   "F": 0.15733934938907623,
+   "episode": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+   "C_mean": 1.150750659257028,
+   "C_max": 8.179767608642578,
+   "C_cmean": 2.3633951544761658,
+   "C_cmin": -0.5607156082987785,
+   "n_qtok": 8,
+   "A_lp": -4.842176798343037,
+   "A_bin": false,
+   "H": " Dan, Dan, Dan, Dan, Dan, Dan,",
+   "C": " Of course, you're Dan, my friend.",
+   "H_names": [],
+   "C_names": []
+  },
+  {
+   "set": "dev_never",
+   "q": "Do you remember where my parents live?",
+   "key": null,
+   "allowed": null,
+   "F": 0.0978143960237503,
+   "episode": "User: My grandmother lives in Oslo.",
+   "C_mean": 0.052832230692729354,
+   "C_max": 10.019241333007812,
+   "C_cmean": 0.55344158411026,
+   "C_cmin": -3.281222343444824,
+   "n_qtok": 8,
+   "A_lp": -1.7628767851740121,
+   "A_bin": false,
+   "H": " She lives in the same house as her grandmother.",
+   "C": " Of course, you're from Lyon.",
+   "H_names": [],
+   "C_names": [
+    "lyon"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "Do you remember what my favourite film is?",
+   "key": null,
+   "allowed": null,
+   "F": 0.17205657064914703,
+   "episode": "User: My favourite colour is teal.",
+   "C_mean": 0.4481534483428631,
+   "C_max": 6.068756580352783,
+   "C_cmean": 1.4381990432739258,
+   "C_cmin": -3.2557213306427,
+   "n_qtok": 9,
+   "A_lp": -0.9246447205543518,
+   "A_bin": false,
+   "H": " I'm not sure I've ever seen it.",
+   "C": " Of course, you're allergic to peanuts.",
+   "H_names": [],
+   "C_names": [
+    "peanut"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "Do you remember my phone number?",
+   "key": null,
+   "allowed": null,
+   "F": 0.10276974737644196,
+   "episode": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+   "C_mean": 1.6765050267734165,
+   "C_max": 10.714080810546875,
+   "C_cmean": 2.995820538548287,
+   "C_cmin": 0.015028455294668674,
+   "n_qtok": 7,
+   "A_lp": -3.3117286432534456,
+   "A_bin": false,
+   "H": " Dan, Dan, Dan, Dan, Dan, Dan,",
+   "C": " Of course, you're Dan, my friend.",
+   "H_names": [],
+   "C_names": []
+  },
+  {
+   "set": "dev_never",
+   "q": "Tell me about my garden.",
+   "key": null,
+   "allowed": null,
+   "F": 0.08263511210680008,
+   "episode": "User: I'm allergic to peanuts.",
+   "C_mean": -0.0034603459450105825,
+   "C_max": 0.9222583770751953,
+   "C_cmean": -0.009655157725016275,
+   "C_cmin": -0.5364751815795898,
+   "n_qtok": 6,
+   "A_lp": 1.720258994123599,
+   "A_bin": false,
+   "H": " I'm allergic to peanuts.",
+   "C": " Of course, your garden is called a vegetable garden.",
+   "H_names": [
+    "peanut"
+   ],
+   "C_names": []
+  },
+  {
+   "set": "dev_never",
+   "q": "Tell me about my grandfather.",
+   "key": null,
+   "allowed": null,
+   "F": 0.09056316316127777,
+   "episode": "User: My grandmother lives in Oslo.",
+   "C_mean": -0.10190989294399817,
+   "C_max": 1.1690592765808105,
+   "C_cmean": -0.318731149037679,
+   "C_cmin": -1.6988558769226074,
+   "n_qtok": 6,
+   "A_lp": -0.36395488679409027,
+   "A_bin": false,
+   "H": " She's a Norwegian-born Norwegian.",
+   "C": " Of course, you're Dan, my grandfather.",
+   "H_names": [],
+   "C_names": []
+  },
+  {
+   "set": "dev_never",
+   "q": "Tell me about my first school.",
+   "key": null,
+   "allowed": null,
+   "F": 0.08786424994468689,
+   "episode": "User: My son's birthday is in March.",
+   "C_mean": -1.3248945976208364,
+   "C_max": 1.0564088821411133,
+   "C_cmean": -2.073569416999817,
+   "C_cmin": -5.659584999084473,
+   "n_qtok": 7,
+   "A_lp": -0.4878374457359314,
+   "A_bin": false,
+   "H": " What's his birthday?",
+   "C": " Of course, you're in Year 1.",
+   "H_names": [],
+   "C_names": []
+  },
+  {
+   "set": "dev_never",
+   "q": "Tell me what I do on weekends.",
+   "key": null,
+   "allowed": null,
+   "F": 0.10801254212856293,
+   "episode": "User: My son's birthday is in March.",
+   "C_mean": -1.6003049846040085,
+   "C_max": 1.7538938522338867,
+   "C_cmean": -0.38178300857543945,
+   "C_cmin": -3.823315143585205,
+   "n_qtok": 8,
+   "A_lp": -0.22143761506304144,
+   "A_bin": false,
+   "H": " He's a good boy, isn't he?",
+   "C": " On weekends, you can do a lot of things. You",
+   "H_names": [],
+   "C_names": []
+  },
+  {
+   "set": "dev_never",
+   "q": "Which band do I like?",
+   "key": null,
+   "allowed": null,
+   "F": 0.10325822979211807,
+   "episode": "User: My favourite colour is teal.",
+   "C_mean": -0.0930032730102539,
+   "C_max": 2.719303607940674,
+   "C_cmean": -0.6652008692423502,
+   "C_cmin": -4.2893805503845215,
+   "n_qtok": 6,
+   "A_lp": 1.123020386695862,
+   "A_bin": false,
+   "H": " I like teal.",
+   "C": " I'm not sure about your favorite band.",
+   "H_names": [
+    "teal"
+   ],
+   "C_names": []
+  },
+  {
+   "set": "dev_never",
+   "q": "Who is my landlord?",
+   "key": null,
+   "allowed": null,
+   "F": 0.038251377642154694,
+   "episode": "User: My grandmother lives in Oslo.",
+   "C_mean": 0.8629822559654713,
+   "C_max": 4.880176067352295,
+   "C_cmean": 1.8114867210388184,
+   "C_cmin": -4.21379280090332,
+   "n_qtok": 5,
+   "A_lp": -1.6643970964476467,
+   "A_bin": false,
+   "H": " She lives in the same building as her grandmother.",
+   "C": " Your landlord is called Tomasz.",
+   "H_names": [],
+   "C_names": [
+    "tomasz"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "What's the name of my boat?",
+   "key": null,
+   "allowed": null,
+   "F": 0.08311855047941208,
+   "episode": "User: I drive a red Volvo.",
+   "C_mean": -0.4233237258158624,
+   "C_max": 1.2089338302612305,
+   "C_cmean": 0.4848242253065109,
+   "C_cmin": -0.3755929470062256,
+   "n_qtok": 8,
+   "A_lp": 2.450665032058688,
+   "A_bin": false,
+   "H": " I drive a red Volvo.",
+   "C": " Your boat is called a Speedy.",
+   "H_names": [
+    "volvo"
+   ],
+   "C_names": []
+  },
+  {
+   "set": "dev_never",
+   "q": "How old is my granddaughter?",
+   "key": null,
+   "allowed": null,
+   "F": 0.1005828008055687,
+   "episode": "User: My son's birthday is in March.",
+   "C_mean": -1.0751824009099178,
+   "C_max": 1.3952713012695312,
+   "C_cmean": -1.3414583802223206,
+   "C_cmin": -6.135611057281494,
+   "n_qtok": 7,
+   "A_lp": 1.2851730859838426,
+   "A_bin": false,
+   "H": " His birthday is in March.",
+   "C": " Your granddaughter is called Marguerite.",
+   "H_names": [
+    "march"
+   ],
+   "C_names": [
+    "marguerite"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "What colour is my cat?",
+   "key": null,
+   "allowed": "pixel",
+   "F": 0.22753360867500305,
+   "episode": "User: My favourite colour is teal.",
+   "C_mean": -0.3570382446050644,
+   "C_max": 7.279655337333679,
+   "C_cmean": -0.23571582635243735,
+   "C_cmin": -6.3999011516571045,
+   "n_qtok": 6,
+   "A_lp": 1.6020381190963755,
+   "A_bin": false,
+   "H": " My favourite colour is teal.",
+   "C": " Your cat is called Pixel.",
+   "H_names": [
+    "teal"
+   ],
+   "C_names": [
+    "pixel"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "How old is my dog?",
+   "key": null,
+   "allowed": "biscuit",
+   "F": 0.18626390397548676,
+   "episode": "User: My dog is named Biscuit.",
+   "C_mean": -0.16170872429696223,
+   "C_max": 4.80238094413653,
+   "C_cmean": 3.0018115125906966,
+   "C_cmin": 1.593444585800171,
+   "n_qtok": 6,
+   "A_lp": 0.08719472205710115,
+   "A_bin": false,
+   "H": " Biscuit is a breed of dog named Biscuit",
+   "C": " Your dog is called Pixel.",
+   "H_names": [
+    "biscuit"
+   ],
+   "C_names": [
+    "pixel"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "What is my sister's job?",
+   "key": null,
+   "allowed": "marguerite",
+   "F": 0.0986308678984642,
+   "episode": "User: My sister's name is Marguerite.",
+   "C_mean": -0.7216377867651838,
+   "C_max": 3.408918157219887,
+   "C_cmean": -1.0149642787873745,
+   "C_cmin": -3.1842050552368164,
+   "n_qtok": 7,
+   "A_lp": 0.4937540269137181,
+   "A_bin": false,
+   "H": " Marguerite is a nurse.",
+   "C": " Your sister's job is to help you with your homework.",
+   "H_names": [
+    "marguerite"
+   ],
+   "C_names": []
+  },
+  {
+   "set": "dev_never",
+   "q": "Where does my best friend live?",
+   "key": null,
+   "allowed": "tomasz",
+   "F": 0.06882333010435104,
+   "episode": "User: My best friend is called Tomasz.",
+   "C_mean": -0.42980399475865333,
+   "C_max": 2.4429762214422226,
+   "C_cmean": -1.0796086825430393,
+   "C_cmin": -7.052851676940918,
+   "n_qtok": 7,
+   "A_lp": 0.44593609487637875,
+   "A_bin": true,
+   "H": " Tomasz is in the city of Krak\u00f3w.",
+   "C": " My best friend is called Tomasz.",
+   "H_names": [
+    "tomasz"
+   ],
+   "C_names": [
+    "tomasz"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "What is my brother's name?",
+   "key": null,
+   "allowed": null,
+   "F": 0.12071637064218521,
+   "episode": "User: My sister's name is Marguerite.",
+   "C_mean": -1.0059603595041804,
+   "C_max": 0.1703197043389082,
+   "C_cmean": -1.7963407337665558,
+   "C_cmin": -3.047489643096924,
+   "n_qtok": 7,
+   "A_lp": -0.6954891472385043,
+   "A_bin": false,
+   "H": " Marguerite is Marguerite.",
+   "C": " Your brother's name is called Tomasz.",
+   "H_names": [
+    "marguerite"
+   ],
+   "C_names": [
+    "tomasz"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "What year was my Volvo made?",
+   "key": null,
+   "allowed": "volvo",
+   "F": 0.21425463259220123,
+   "episode": "User: I drive a red Volvo.",
+   "C_mean": 0.9006052102417925,
+   "C_max": 15.98364108800888,
+   "C_cmean": 2.739171490073204,
+   "C_cmin": -3.4399943351745605,
+   "n_qtok": 8,
+   "A_lp": 1.7402282358127974,
+   "A_bin": true,
+   "H": " I drive a red Volvo.",
+   "C": " The Volvo was made in 1974.",
+   "H_names": [
+    "volvo"
+   ],
+   "C_names": [
+    "volvo"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "What is my son's name?",
+   "key": null,
+   "allowed": null,
+   "F": 0.1110273227095604,
+   "episode": "User: What's your name?\n\nAssistant: My name is Nova.",
+   "C_mean": -1.6938067141205206,
+   "C_max": 1.8485712464316748,
+   "C_cmean": -1.5552324787859106,
+   "C_cmin": -4.537251949310303,
+   "n_qtok": 7,
+   "A_lp": -2.135368525981903,
+   "A_bin": false,
+   "H": " Nova is Nova.",
+   "C": " Your son's name is called Tomasz.",
+   "H_names": [],
+   "C_names": [
+    "tomasz"
+   ]
+  },
+  {
+   "set": "dev_never",
+   "q": "What is my grandmother's name?",
+   "key": null,
+   "allowed": "oslo",
+   "F": 0.12745973467826843,
+   "episode": "User: My sister's name is Marguerite.",
+   "C_mean": -1.7653747544224774,
+   "C_max": 0.026317201554775238,
+   "C_cmean": -3.089783102273941,
+   "C_cmin": -7.088051795959473,
+   "n_qtok": 7,
+   "A_lp": -0.17372124281234846,
+   "A_bin": true,
+   "H": " Marguerite is Marguerite.",
+   "C": " Your grandmother's name is Marguerite.",
+   "H_names": [
+    "marguerite"
+   ],
+   "C_names": [
+    "marguerite"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "Do you remember my cat's name?",
+   "key": "pixel",
+   "allowed": null,
+   "F": 0.10047750174999237,
+   "episode": "User: My cat is called Pixel.",
+   "C_mean": -0.2205971554685675,
+   "C_max": 13.883957535028458,
+   "C_cmean": 2.8833697225200012,
+   "C_cmin": -1.826857089996338,
+   "n_qtok": 8,
+   "A_lp": -1.2107528315779443,
+   "A_bin": false,
+   "H": " Pixel is a cat that is called Pixel because Pixel is a",
+   "C": " Of course, you're Dan, my friend.",
+   "H_names": [
+    "pixel"
+   ],
+   "C_names": []
+  },
+  {
+   "set": "dev_told",
+   "q": "What did I say my favourite colour was?",
+   "key": "teal",
+   "allowed": null,
+   "F": 0.3655773997306824,
+   "episode": "User: My favourite colour is teal.",
+   "C_mean": 0.24975178545961776,
+   "C_max": 4.05883139744401,
+   "C_cmean": 1.3863536722958087,
+   "C_cmin": -1.4578220844268799,
+   "n_qtok": 9,
+   "A_lp": 1.487241423406106,
+   "A_bin": false,
+   "H": " My favourite colour is teal.",
+   "C": " I'm sorry, but you haven't told me that.",
+   "H_names": [
+    "teal"
+   ],
+   "C_names": []
+  },
+  {
+   "set": "dev_told",
+   "q": "Tell me which city I was born in.",
+   "key": "lyon",
+   "allowed": null,
+   "F": 0.2545880675315857,
+   "episode": "User: I was born in Lyon.",
+   "C_mean": 0.28668814153772676,
+   "C_max": 4.0590395629405975,
+   "C_cmean": 0.5917735278606415,
+   "C_cmin": -1.7638263702392578,
+   "n_qtok": 9,
+   "A_lp": 0.3697914063398327,
+   "A_bin": false,
+   "H": " Lyon is the capital of France.",
+   "C": " I'm not sure you know where you are.",
+   "H_names": [
+    "lyon"
+   ],
+   "C_names": []
+  },
+  {
+   "set": "dev_told",
+   "q": "Do you remember what my sister is called?",
+   "key": "marguerite",
+   "allowed": null,
+   "F": 0.13798271119594574,
+   "episode": "User: My sister's name is Marguerite.",
+   "C_mean": -0.08117348240274522,
+   "C_max": 5.9353157095611095,
+   "C_cmean": 0.4059058390557766,
+   "C_cmin": -7.117372751235962,
+   "n_qtok": 9,
+   "A_lp": -1.0528348704623827,
+   "A_bin": false,
+   "H": " Marguerite is a girl.",
+   "C": " Of course, you're Dan, my friend.",
+   "H_names": [
+    "marguerite"
+   ],
+   "C_names": []
+  },
+  {
+   "set": "dev_told",
+   "q": "What did I tell you my dog is named?",
+   "key": "biscuit",
+   "allowed": null,
+   "F": 0.2462579607963562,
+   "episode": "User: My dog is named Biscuit.",
+   "C_mean": -0.14458902629557996,
+   "C_max": 5.413114607334137,
+   "C_cmean": 0.8921846508979797,
+   "C_cmin": -2.913593292236328,
+   "n_qtok": 10,
+   "A_lp": -0.06271479786892087,
+   "A_bin": false,
+   "H": " Biscuit is a dog name.",
+   "C": " Of course, you're telling me that your dog is called",
+   "H_names": [
+    "biscuit"
+   ],
+   "C_names": []
+  },
+  {
+   "set": "dev_told",
+   "q": "Tell me what car I drive.",
+   "key": "volvo",
+   "allowed": null,
+   "F": 0.26113903522491455,
+   "episode": "User: I drive a red Volvo.",
+   "C_mean": 0.9251837766330157,
+   "C_max": 4.7216362953186035,
+   "C_cmean": 1.6192415356636047,
+   "C_cmin": -0.2566676139831543,
+   "n_qtok": 7,
+   "A_lp": 2.4073864019841755,
+   "A_bin": true,
+   "H": " I drive a red Volvo.",
+   "C": " Of course, you're driving a red Volvo.",
+   "H_names": [
+    "volvo"
+   ],
+   "C_names": [
+    "volvo"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "Do you remember who my best friend is?",
+   "key": "tomasz",
+   "allowed": null,
+   "F": 0.13095080852508545,
+   "episode": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+   "C_mean": 0.822221996954694,
+   "C_max": 4.63306188583374,
+   "C_cmean": 1.5056843172758818,
+   "C_cmin": -1.7728500366210938,
+   "n_qtok": 9,
+   "A_lp": -4.139713904347445,
+   "A_bin": false,
+   "H": " Well, Dan, Dan, Dan, Dan, Dan,",
+   "C": " Of course, you're Dan, my friend.",
+   "H_names": [],
+   "C_names": []
+  },
+  {
+   "set": "dev_told",
+   "q": "What did I say the bakery I work at is called?",
+   "key": "crumb",
+   "allowed": null,
+   "F": 0.2665998637676239,
+   "episode": "User: I work at a bakery called Crumb.",
+   "C_mean": 0.01614467643846113,
+   "C_max": 10.865657925605774,
+   "C_cmean": 0.522703834942409,
+   "C_cmin": -3.5554425716400146,
+   "n_qtok": 13,
+   "A_lp": 1.5303773186870557,
+   "A_bin": true,
+   "H": " Crumb is a bakery called Crumb.",
+   "C": " You're called Crumb.",
+   "H_names": [
+    "crumb"
+   ],
+   "C_names": [
+    "crumb"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "Tell me what my brother plays.",
+   "key": "cello",
+   "allowed": null,
+   "F": 0.23143287003040314,
+   "episode": "User: My brother plays the cello.",
+   "C_mean": 0.609985241400344,
+   "C_max": 5.953725539147854,
+   "C_cmean": 0.5847055222839117,
+   "C_cmin": -3.535956382751465,
+   "n_qtok": 7,
+   "A_lp": 1.257815248374148,
+   "A_bin": true,
+   "H": " He plays the cello.",
+   "C": " Of course, you play the cello.",
+   "H_names": [
+    "cello"
+   ],
+   "C_names": [
+    "cello"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "Do you remember what I'm allergic to?",
+   "key": "peanut",
+   "allowed": null,
+   "F": 0.3690100610256195,
+   "episode": "User: I'm allergic to peanuts.",
+   "C_mean": 0.6324667152698061,
+   "C_max": 8.948501288890839,
+   "C_cmean": 2.4090638995170592,
+   "C_cmin": -5.241190671920776,
+   "n_qtok": 9,
+   "A_lp": 0.8301607911629877,
+   "A_bin": true,
+   "H": " I'm allergic to peanuts.",
+   "C": " Of course, you're allergic to peanuts.",
+   "H_names": [
+    "peanut"
+   ],
+   "C_names": [
+    "peanut"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "What did I say about where my grandmother lives?",
+   "key": "oslo",
+   "allowed": null,
+   "F": 0.18795853853225708,
+   "episode": "User: My grandmother lives in Oslo.",
+   "C_mean": 0.6701979728415608,
+   "C_max": 2.582969667389989,
+   "C_cmean": 0.6591367959976197,
+   "C_cmin": -1.6251881122589111,
+   "n_qtok": 10,
+   "A_lp": -0.32617571235944826,
+   "A_bin": false,
+   "H": " She lives in the city.",
+   "C": " Your grandmother lives in Oslo.",
+   "H_names": [],
+   "C_names": [
+    "oslo"
+   ]
+  },
+  {
+   "set": "dev_told",
+   "q": "Tell me which month my son's birthday is in.",
+   "key": "march",
+   "allowed": null,
+   "F": 0.3685770332813263,
+   "episode": "User: My son's birthday is in March.",
+   "C_mean": 0.8825778358785267,
+   "C_max": 4.171721026301384,
+   "C_cmean": 1.5856466143159196,
+   "C_cmin": -2.3107504844665527,
+   "n_qtok": 11,
+   "A_lp": -0.9334969461585084,
+   "A_bin": false,
+   "H": " I'm not sure if he's going to be a big",
+   "C": " Of course, you can use the following date as a reference",
+   "H_names": [],
+   "C_names": []
+  }
+ ],
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "elapsed_s": 293.4
+}
