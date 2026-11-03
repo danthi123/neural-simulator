@@ -31,7 +31,12 @@ class Cortex:
     def read(self, text: str, state=None):
         """Process text; returns (logits for the next token, new state). Never mutates the given state."""
         st = copy.deepcopy(state) if state is not None else None
-        return self.model.forward(self.pipe.encode(text), st)
+        return self.forward(self.pipe.encode(text), st)
+
+    def forward(self, tokens, state):
+        """One pass of the network. The brain's live cortex (brain/brain.py LiveCortex) overrides this to run through
+        the consolidated slow synapses; here it is the pretrained package forward."""
+        return self.model.forward(tokens, state)
 
     def speak(self, logits, state, max_tokens: int = 120, temperature: float = 1.0, top_p: float = 0.3,
               presence: float = 0.4, frequency: float = 0.4):
@@ -51,7 +56,7 @@ class Cortex:
             text = self.pipe.decode(out)
             if "\n\n" in text or "\nUser:" in text:
                 break
-            logits, st = self.model.forward([tok], st)
+            logits, st = self.forward([tok], st)
         text = self.pipe.decode(out).split("\n\n")[0].split("\nUser:")[0].strip()
         return text, st
 

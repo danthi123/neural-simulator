@@ -12,10 +12,19 @@ and grows from what it lives through. Not LLM + RAG. Decision record:
 | Cortex | `cortex.py` | Reads and speaks. Its recurrent state is the brain's moment-to-moment activity; its matrix memory (per head, k->v associations written by a delta rule) is fast synaptic memory. | Neocortex: slow-learned language and world knowledge | RWKV-7 G1 0.1B, pretrained (declared trade below) |
 | Hippocampus | `hippocampus.py` | Stores each experience in one shot as the change it made to cortical memory; brings it back by pattern completion from the current cortical state, and reinstates it as cortical memory, never as pasted text. | Hippocampal indexing + reinstatement | state-delta episodes, cosine pattern completion |
 | Memory strength | `hippocampus.py` | Strength grows with use (each recall), spacing, and salience; unused, weak memories fade. Important, often-used things become near-permanent. | Retrieval practice, spacing, emotional enhancement, decay | per-episode strength with power-law decay |
-| Sleep | `sleep.py` | Replays strong episodes and writes them into the cortex's persistent baseline memory (the state it wakes with), so later recall needs no hippocampus. Gist survives; detail may fade. | Systems consolidation / semanticization | accumulate replayed state deltas into the baseline state, with interference |
+| Sleep | `sleep.py`, `brain.py` | Replays stored episodes (by strength) into the cortex's slow synapses, so later recall needs no hippocampus. Gist survives; detail may fade. | Systems consolidation / semanticization | interleaved text replay into low-rank cortical adapters under a KL guard; runs once per restart (below) |
 | Neuromodulators | `modulators.py` | Surprise (the cortex's own prediction error) and affect set how strongly an experience is stored and colour how it speaks. | Dopamine, noradrenaline, acetylcholine, affect | surprise -> encoding gain (first); affect later |
 | Self | `self_model.py` | Who it is and who you are: the strongest, most-used memories, so it never loses its own or a friend's name. | Autobiographical self-memory | identity episodes at maximal strength, consolidated first |
 | Loop + persistence | `chat.py`, `store.py` | Turn loop; everything above is saved to disk and survives a restart. | Continuity of a life | CLI chat; one brain per `--brain` directory |
+
+**Sleep in the live brain (2026-11-03).** The brain speaks through `LiveCortex` (`brain.py`): the pretrained cortex
+plus the adapters sleep trained; with no consolidated synapse it is the pretrained cortex, byte-equal
+(`tests/test_brain_sleep.py`, golden recorded with the pre-sleep brain). Restart = a night: `Brain.close()` (chat
+`/quit`), or a start with episodes stored since `meta.last_sleep`, runs `Brain.sleep()` once (all episodes, weighted
+by effective strength, `brain/sleep.py` unchanged, 240 steps / lr 5e-4 / KL 1 by default); adapters are saved as
+`<home>/cortex_adapters.pt` beside `memory.pt` and loaded at start. Birth is not a night. The birth base state is
+always read by the pretrained cortex (episodes are deltas from it). Lesions for the weekly test:
+`Brain.set_lesions(hippocampus_off=..., consolidated_off=...)` (chat `/forget-off`, `/consolidated-off`).
 
 ## 2. Rules that keep this a brain and not a chatbot
 

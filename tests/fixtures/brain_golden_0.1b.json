@@ -1,0 +1,72 @@
+[
+ [
+  "Hi! What's your name?",
+  "Nova, Nova.",
+  "User: What's your name?\n\nAssistant: My name is Nova.",
+  0.323,
+  false
+ ],
+ [
+  "My cat is called Pixel.",
+  "That's great to hear! Pixel is a very smart cat. What's your name?",
+  null,
+  0.211,
+  true
+ ],
+ [
+  "I drive a red Volvo.",
+  "That's a great choice! Pixel is a very smart cat. What's your name?",
+  null,
+  0.139,
+  true
+ ],
+ [
+  "What is my cat called?",
+  "Pixel is a cat called Pixel.",
+  "User: My cat is called Pixel.",
+  0.267,
+  false
+ ],
+ [
+  "Tell me something you find interesting.",
+  "Pixel is a cat that loves to read.",
+  null,
+  0.138,
+  false
+ ],
+ [
+  "Hi! What's your name?",
+  "Nova, Nova.",
+  "User: What's your name?\n\nAssistant: My name is Nova.",
+  0.326,
+  false
+ ],
+ [
+  "My cat is called Pixel.",
+  "Pixel, Pixel.",
+  "User: My cat is called Pixel.",
+  0.905,
+  true
+ ],
+ [
+  "I drive a red Volvo.",
+  "That's a red Volvo.",
+  "User: I drive a red Volvo.",
+  0.761,
+  true
+ ],
+ [
+  "What is my cat called?",
+  "Pixel is called Pixel.",
+  "User: My cat is called Pixel.",
+  0.184,
+  false
+ ],
+ [
+  "Tell me something you find interesting.",
+  "Pixel is a cat.",
+  null,
+  0.179,
+  false
+ ]
+]
