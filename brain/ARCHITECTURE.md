@@ -26,9 +26,13 @@ by effective strength, `brain/sleep.py` unchanged, 240 steps / lr 5e-4 / KL 1 by
 always read by the pretrained cortex (episodes are deltas from it). Lesions for the weekly test:
 `Brain.set_lesions(hippocampus_off=..., consolidated_off=...)` (chat `/forget-off`, `/consolidated-off`).
 
-**What is in `Brain` and what is default OFF (2026-11-03, integration-final).** In and on by default: hippocampus
+**What is in `Brain` and what is default OFF (2026-11-03, landing-1103).** In and on by default: hippocampus
 (default `Hippocampus`, layer-0 key), strength and decay, identity episodes, sleep on restart, lesions. In `Brain` but
-OFF: `abstain=False` (feeling-of-knowing gate; pre-registered FAIL, `results/2026-11-03-abstain-in-brain/`). Options
+OFF: `abstain=False` (feeling-of-knowing gate; pre-registered FAIL, `results/2026-11-03-abstain-in-brain/`), the
+abstention-v2 switches `know_rule="fok"` and `reinstate_self_belief=False` (v2 FAIL), `live_self_belief` (confab M2,
+PARTIAL), `key="S0"` (the `S_all` switch; FAIL in the live brain, `results/2026-11-03-sall-in-brain`). Cortex size
+decided 1.5B (lr 5e-4 / 480 steps / KL 3, six seeds, `results/2026-11-03-cortex-size/`); the default is still 0.1B until
+the adoption steps land (`brain/research/2026-11-03-adopt-1.5b-plan.md`). Options
 outside `Brain`, not wired: `affect.py` mood modulation (default OFF; iteration 2 NOT PASS), `KeyedHippocampus` with
 the `S_all` key (a lead, own bar 0.185 / 0.05; default key unchanged), `UseHippocampus` (strength = tellings; NO-GO;
 `RETELL_SIM` is a declared scaffold). Scoring of recall everywhere (sleep smoke, weekly transcript) is the

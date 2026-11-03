@@ -24,7 +24,7 @@ Nothing below is a GO: the best results are leads.
 | 15 | Varied replay | Does replaying 3 wordings per fact help reworded recall? | no result (in progress) | Code and tests only (sleep_varied arm, teacher rewordings); no run yet. | research/varied-replay-1103 |
 | 16 | Weekly test dry run | Does the weekly conversation test run, and can its transcript be trusted? | no result (dry run); scorer fixed | 4 h on the loaded CPU (idle estimate 10-20 min, unmeasured). Fixed scorer: told facts intact 3/4, lesion 4/4, clean answers 0/4 and 1/4. The lesion arm is not a hippocampus test (both arms sleep); a hippocampus-on, sleep-off arm is needed. | research/weekly-dry-run-1103 |
 | 17 | Live brain 12 facts at 0.4B | Does the live brain do better at 0.4B? | no result | Not finished: 2 seeds had not completed their first sleep after 2 h 45 min on the shared CPU; stopped. Needs the GPU or AWS lane. | research/live-brain-04b-1103 |
-| 18 | Pi wait-cancel (tooling) | Stop Pi sitting blocked on GPU jobs that no longer exist | done (tool fix, not an experiment) | Pi had sat blocked 8 h. New cancel_wait tool; stale GPU waiters close after two "job gone" polls; wait time capped at 8 h. | research/pi-wait-cancel-1103 |
+| 18 | Pi wait-cancel (tooling) | Stop Pi sitting blocked on GPU jobs that no longer exist | done (tool fix, not an experiment) | Pi had sat blocked 8 h. New cancel_wait tool; stale GPU waiters close after two "job gone" polls; wait time capped at 8 h. | research/pi-wait-cancel-fix-1103 |
 
 ## The pattern across the night
 
