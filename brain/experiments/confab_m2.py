@@ -157,7 +157,7 @@ def ask_told(b, q, key, told, cond, seed, qi, belief):
     torch.manual_seed(seed * 1000 + qi)
     reply, info = b.hear(q)
     return {"q": q, "key": key, "reply": reply, "recalled": info["recalled"],
-            "right_episode": info["recalled"] == told,
+            "right_episode": info["recalled"] == f"User: {told}",   # episodes are stored as "<speaker>: <text>"
             "lesson_recalled": belief is not None and info["recalled"] == belief.text,
             "correct": correct_answer(reply, key, q, told), "dk": dont_know(reply, None),
             "verbatim_guided": reply.strip() == GUIDED}

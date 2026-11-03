@@ -52,6 +52,14 @@ def test_no_lesson_ontop_equals_open(tmp_path):
     assert _ask(b, "open", []) == _ask(b, "ontop", [])
 
 
+def test_right_episode_matches_stored_text(tmp_path):
+    b = _brain(tmp_path, lesson=False)
+    s, q, k = FACTS[0]
+    ep = b.hippocampus.store(b.cortex, b.base, s)
+    row = m.ask_told(b, q, k, s, "open", 42, 0, None)
+    assert ep.text == f"User: {s}" and row["right_episode"] == (row["recalled"] == ep.text)
+
+
 def test_sets():
     assert len(m.TOLD_SETS["told"]) == len(m.TOLD_SETS["told_para"]) == 12
     assert all(k and s for _, k, s in m.TOLD_SETS["told"] + m.TOLD_SETS["told_para"])
