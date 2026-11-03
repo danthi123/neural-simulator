@@ -100,3 +100,57 @@ in general: the plan's decisive test is 0.4B on GPU, still to run.
    operating point), with the strict scorer pre-registered as primary and false recall on fresh24 as a co-primary.
 2. At 0.1B, if retried: restudy + retrieval practice interleaved (the 24-question false-recall halving is the thing
    worth keeping), and drop cues whose teacher answer does not name anything from the episode (a comparator, M1-style).
+
+## Result (2026-11-03): 0.4B, GPU, six seeds
+Data: `04b/s*.json`, `04b/aggregate.txt` (from `retrieval_sleep_summary.py`, unchanged). Config read from the JSONs:
+`rwkv7-g1d-0.4b-20260210`, 480 steps, lr 1e-3, kl 3, 4 cues, prio 2.0, seeds 42 43 44 100 101 102. Source run dir:
+`_scratch/brainv2/m3-04b/` (it exists in the main checkout's `_scratch`, not in this worktree). The 0.1B files have no
+`.prov.json` sidecars, so none were made. No numeric 0.4B amendment exists in this README: the bar scored below is the
+plan's M3 bar (plan section M3, same as the 0.1B pre-registration), and the strict scorer and fresh24 false recall
+were named in "Next" but given no numeric threshold, so they are reported, not scored.
+
+**Verdict: FALSIFIED at 0.4B by the pre-registered rule.** Mean recall gain is -2.67/12 (needed >= +1 to avoid
+falsification, +2 on >= 5/6 seeds for a lead). Two of the three lead conditions also fail.
+
+| seed | true | retrieval | gain | shuffled | strict (true / retr) | false /4 (true / retr) | fresh24 (true / retr) |
+|---|---|---|---|---|---|---|---|
+| 42 | 3 | 1 | -2 | 1 | 0 / 0 | 1 / 2 | 10 / 9 |
+| 43 | 2 | 4 | +2 | 0 | 0 / 1 | 1 / 3 | 2 / 6 |
+| 44 | 10 | 3 | -7 | 0 | 0 / 2 | 4 / 0 | 19 / 5 |
+| 100 | 7 | 1 | -6 | 1 | 3 / 0 | 3 / 2 | 17 / 7 |
+| 101 | 1 | 0 | -1 | 3 | 0 / 0 | 4 / 1 | 19 / 3 |
+| 102 | 4 | 2 | -2 | 0 | 0 / 0 | 1 / 3 | 6 / 7 |
+| mean | 4.50 | 1.83 | -2.67 | 0.83 | 0.50 / 0.50 | 2.33 / 1.83 | 12.2 / 6.17 |
+
+(no_sleep is 0 on every measure for all seeds. Recall is the bar scorer, out of 12.)
+
+Against the bar:
+- Gain >= +2 on >= 5/6 seeds: 1/6 (only s43). FAIL.
+- Mean false recall (4 never-told) not higher than sleep_true: 1.83 vs 2.33. HOLDS.
+- Shuffled control mean <= 0.5/12: 0.83 (s101 reached 3). FAIL. The instrument's null arm is not clean at 0.4B, so even
+  the absolute numbers carry some non-specific recall.
+- Falsification: mean gain -2.67 < +1. FALSIFIED. (False recall is not higher, so that clause does not apply.)
+
+Reported, not in the bar:
+- Strict recall is a tie, 0.50 vs 0.50 (retrieval higher on 2 seeds, lower on 1, equal on 3). At 0.1B this was 0.5 -> 2.0.
+- Fresh24 false recall is lower for retrieval on 4/6 seeds (12.2 -> 6.17 mean; higher on s43 and s102). The 0.1B
+  halving partly repeats, less cleanly. Drift KL is higher for retrieval (0.026 vs 0.017; s102 0.061), the reverse of 0.1B.
+- Cues: 47-48 per seed, none equal to a test question; 8-12 of 12 facts have the key in a teacher answer (9, 12, 9,
+  10, 10, 8 for the six seeds). Failed attempts fall less than at 0.1B: 31->19, 29->13, 34->10, 25->5, 30->18, 33->28.
+  s102 barely learns to reproduce its own teacher answers, and has the worst teacher coverage.
+
+### Read against scale (`brain/PREREQUISITES.md`)
+The 0.1B excuse (half the facts unreachable in context) no longer applies: the 12 test facts are reachable at 0.4B by
+construction (the probe picks the first 12 of the 36-fact pool reachable at 0.4B; the old-12 ceiling under this
+protocol is 9/12), and 8-12 of 12 facts have a correct key-bearing teacher answer. The 0.4B fact set differs from the
+0.1B one, so cross-scale recall is not directly comparable. So this is not a missing-scale result for the reachable-fact
+question. What it is a verdict on is this method: self-generated cues, loss on the cortex's answer to the teacher, one
+rank-8 adapter shared by 12 facts, 480 steps. What it does not settle: the capacity explanation (the plan's own
+fallback: adapter rank or one adapter per night), cue quality at 1.5B, retrieval practice interleaved with restudy,
+and the strict scorer as a primary (no threshold was set, and the result there is a tie). The plan's next test, rank
+or per-night adapters, is the one the falsification clause names.
+
+Note the large spread in sleep_true itself (1 to 10 of 12 across seeds), which makes the 6-seed gain noisy. It does not
+rescue the bar: the gain is negative on 5/6 seeds.
+
+Host: not recorded in the JSONs (`tools/where_ran.py`: unknown); the logs show cuda fp16 on the W GPU.
