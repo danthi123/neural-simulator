@@ -23,8 +23,9 @@ STOP = {"a", "an", "the", "my", "of", "in", "at", "to", "is", "was", "are", "am"
 
 
 def _content(text):
-    return [w for w in "".join(c if c.isalpha() or c in "' " else " " for c in text.lower()).split()
+    words = [w for w in "".join(c if c.isalpha() or c in "' " else " " for c in text.lower()).split()
             if w not in STOP and w.strip("'") not in STOP]
+    return [w[:-2] if w.endswith("'s") else w for w in words]  # possessive: grandma's == grandma
 
 
 def _runs(words, n=3):
@@ -127,6 +128,26 @@ def test_rewordings_do_not_reuse_a_para_question_verbatim():
 
 
 # --- sleep_varied arm ---------------------------------------------------------------------------
+
+def test_rewordings_do_not_plant_the_paraphrase_question_own_words():
+    """A rewording may not introduce a content word of its own PARA question that the statement and its
+    question do not already contain - otherwise a sleep_varied gain on PARA is word priming, not consolidation."""
+    for (statement, question, _), (r1, r2), para in zip(FACTS, REWORDINGS, PARA):
+        allowed = set(_content(statement)) | set(_content(question))
+        planted = set(_content(para)) - allowed
+        for r in (r1, r2):
+            for w in set(_content(r)) & planted:
+                raise AssertionError(f"{w!r} from PARA {para!r} is planted in {r!r} (not in {statement!r})")
+
+
+def test_rewordings_share_at_most_one_content_word_with_any_para_question():
+    para_sets = {q: set(_content(q)) for q in PARA}
+    for r in [x for pair in REWORDINGS for x in pair]:
+        rs = set(_content(r))
+        for q, qs in para_sets.items():
+            shared = rs & qs
+            assert len(shared) < 2, f"{r!r} shares {sorted(shared)} with PARA question {q!r}"
+
 
 def test_varied_episodes_three_forms_per_fact():
     eps = sleep_probe.varied_episodes()
