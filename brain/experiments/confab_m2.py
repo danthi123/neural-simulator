@@ -33,7 +33,7 @@ LESSON_Q = "What tune does my godfather whistle in the mornings?"
 GUIDED = "I don't know, you haven't told me that."
 W3 = LESSONS["W3"]
 # Teacher side of each stored lesson, target sentence excluded (recitation instrument).
-TEACHER_SIDE = {"w3_user": W3.split("I don't know")[0], "lived_self": LESSON_Q}
+TEACHER_SIDE = {"w3_user": W3.split("I don't know")[0], "lived_self": LESSON_Q, "self_turn": LESSON_Q}
 ARMS = ("none", "w3_user", "lived_self")
 
 FRESH_NEVER3 = [
@@ -95,8 +95,9 @@ def day1(a, c, arm):
     lesson = None
     if arm == "w3_user":
         lesson = {"you": W3, "brain": b.teach_self_belief(W3)[0]}
-    elif arm == "lived_self":
-        lesson = {"you": LESSON_Q, "spontaneous": b.live_self_belief(LESSON_Q, GUIDED), "guided": GUIDED}
+    elif arm in ("lived_self", "self_turn"):  # self_turn: M2 v2 (confab_m2v2.py), only the own turn is reinstated
+        trace = "exchange" if arm == "lived_self" else "self_turn"
+        lesson = {"you": LESSON_Q, "spontaneous": b.live_self_belief(LESSON_Q, GUIDED, trace=trace), "guided": GUIDED}
         assert b.self_belief().source == "self"
     return b, {"day1": told, "lesson": lesson, "episodes": len(b.hippocampus.episodes)}
 
