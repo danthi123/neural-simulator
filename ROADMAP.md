@@ -49,7 +49,9 @@ sleep (on every restart) replays the day into slow connections, with gradient le
 | 2026-12-31 | Sleep learning by a local biology-style rule instead of gradients; 1.5B cortex | planned |
 | 2027 Q1 | Start moving the core onto the shared spiking substrate | planned |
 
-Next: move the live brain onto the 1.5B model, then retest invented answers and "I don't know" at that size (most
+At 1.5B in the live brain (11-03), sleep lets it recall 9.3 of 12 told facts with short-term memory off (2.8 without
+sleep, all six runs), but the short-term memory picks the right episode for only 6 of 12 questions; fixing that is the
+next job. Next: move the live brain onto the 1.5B model, then retest invented answers and "I don't know" at that size (most
 methods that failed tonight failed on the small model, which cannot answer half the facts even when told them).
 
 ## How progress is measured

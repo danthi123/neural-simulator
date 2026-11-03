@@ -94,3 +94,18 @@ on the 3090 with the LLM yielded (plan step 11), so it fits the 11-09 week.
 
 Dependencies: the GPU is busy with the 0.4B M3 job; the 1.5B live-brain test is a Claude/AWS-lane launch. Not
 launched here.
+
+## Applied 2026-11-03
+Ran the flip criterion on the 1.5B live probe (`results/2026-11-03-live-brain-1.5b.md`, six seeds, AWS, correct_answer scorer).
+Mapping: hippocampus off after sleep = arm c, hippocampus on no sleep = arm b, shuffled sleep = arm e. Arm c recall 9.33/12
+vs arm b 2.83 (c above b on 6/6 seeds); shuffled recall 0 on all six seeds. Neither KILL clause fires: **KEEP**. Not
+cleared: pre-registered P3 failed (false recall intact+sleep 4.0 vs no-sleep 3.0 of 4), so the confabulation defect
+stands and abstention work remains the next gate; b is also unusually low at 1.5B (2.83), so the comparison is favourable.
+
+Caveats (skeptic review, 2026-11-03): (1) hippocampal retrieval in arms a/b fetches the right day-1 episode for only 6
+of 12 told questions, identically on every seed (e.g. "What is my cat called?" recalls the Tomasz best-friend episode),
+so arm b is capped near 6 and KEEP shows sleep beats a misrouting hippocampus, not a working one. (2) Arm a
+(hippocampus on + sleep, 4.50) is below arm c (hippocampus off, 9.33) by about 5/12 on every seed: the hippocampal route
+currently HURTS recall at 1.5B; this is the main next problem. (3) The shuffled = 0 clause is near-guaranteed by design
+(deranged answers scored against the true keys). (4) Sleep timing range includes shuffled nights (626-648 s). (5) Host:
+AWS per `run.log`, not in the JSONs.

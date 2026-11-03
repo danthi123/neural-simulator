@@ -1,0 +1,935 @@
+{
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.4b-20260210-ctx8192.pth",
+ "seed": 100,
+ "steps": 480,
+ "kl_weight": 3.0,
+ "lr": 0.001,
+ "n_cues": 4,
+ "prio": 2.0,
+ "facts": [
+  "pixel",
+  "marguerite",
+  "biscuit",
+  "tomasz",
+  "crumb",
+  "cello",
+  "peanut",
+  "oslo",
+  "march",
+  "zephyr",
+  "gustav",
+  "alvarez"
+ ],
+ "shuffled_statements": [
+  "My cat is called Marguerite.",
+  "My sister's name is Crumb.",
+  "My dog is named Zephyr.",
+  "My best friend is called Pixel.",
+  "I work at a bakery called Tomasz.",
+  "My brother plays the march.",
+  "I'm allergic to cellos.",
+  "My grandmother lives in Peanut.",
+  "My son's birthday is in Alvarez.",
+  "My parrot is named Gustav.",
+  "My neighbour is called Oslo.",
+  "My teacher was Mr Biscuit."
+ ],
+ "practice_true": [
+  [
+   [
+    "What's the name of your cat?",
+    "My cat is called Pixel."
+   ],
+   [
+    "What is the cat's name?",
+    "My cat is called Pixel."
+   ],
+   [
+    "What does it mean to have a \"good life\"?",
+    "A good life is when you're happy, healthy, and have a fulfilling relationship"
+   ],
+   [
+    "What's your favorite color?",
+    "My favorite color is blue."
+   ]
+  ],
+  [
+   [
+    "What's your name?",
+    "My name is Digital Brain."
+   ],
+   [
+    "What is the meaning of life?",
+    "That's a great question. I'm not sure I can give you a definitive"
+   ],
+   [
+    "What does it mean to have a sister?",
+    "A sister is someone who shares your parents' surname."
+   ],
+   [
+    "What's your favorite color?",
+    "My favorite color is blue."
+   ]
+  ],
+  [
+   [
+    "What's the name of your favorite book?",
+    "My favorite book is \"The Little Prince\" by Antoine de Saint-Exup"
+   ],
+   [
+    "What is the name of your food?",
+    "My food is called Biscuit."
+   ],
+   [
+    "What does it mean to have a dog named Biscuit?",
+    "Well, Biscuit is a name that's kind of like a special name"
+   ],
+   [
+    "What's your favorite color?",
+    "My favorite color is blue."
+   ]
+  ],
+  [
+   [
+    "What's your favorite color?",
+    "My favorite color is blue."
+   ],
+   [
+    "What is the name of your school?",
+    "My school is called \"The Academy of Knowledge.\""
+   ],
+   [
+    "What does it mean to have a good relationship with someone?",
+    "A good relationship is when you feel comfortable and happy with someone. It's like"
+   ],
+   [
+    "What's your first name?",
+    "My first name is Tomasz."
+   ]
+  ],
+  [
+   [
+    "What's the first thing you do when you get there?",
+    "I start by checking the inventory."
+   ],
+   [
+    "What do you do?",
+    "I make bread."
+   ],
+   [
+    "What does it mean to have a good relationship with your customers?",
+    "Well, it means that you listen to them, understand their needs, and make"
+   ],
+   [
+    "What's your job?",
+    "I'm a baker."
+   ]
+  ],
+  [
+   [
+    "What's the cello?",
+    "The cello is a string instrument."
+   ],
+   [
+    "What is the cello?",
+    "The cello is a string instrument."
+   ],
+   [
+    "What does it sound like?",
+    "It sounds like a flute, but it's a bit louder and more powerful"
+   ],
+   [
+    "What's your favorite piece to play?",
+    "My favorite piece to play is a piece called \"The Cello Sonata in"
+   ]
+  ],
+  [
+   [
+    "What about tree nuts?",
+    "I'm sorry, but I don't have a specific allergy to tree nuts."
+   ],
+   [
+    "What do I do if I get food poisoning?",
+    "If you get food poisoning, you should drink plenty of fluids and eat bland foods"
+   ],
+   [
+    "What do I need to do if I accidentally eat peanuts?",
+    "If you accidentally eat peanuts, you should wash your hands thoroughly with soap and"
+   ],
+   [
+    "What if I have a lot of food allergies?",
+    "It's important to be aware of your allergies and know what to do if you"
+   ]
+  ],
+  [
+   [
+    "What's the name of the city?",
+    "The name of the city is Oslo."
+   ],
+   [
+    "What is the city of Oslo?",
+    "Oslo is the capital of Norway."
+   ],
+   [
+    "What does Oslo look like?",
+    "Oslo is a beautiful city in Norway. It's known for its beautiful parks and"
+   ],
+   [
+    "What's your favorite color?",
+    "My favorite color is blue."
+   ]
+  ],
+  [
+   [
+    "What's the best way to celebrate his birthday?",
+    "Well, you could have a big party with lots of food and drinks."
+   ],
+   [
+    "What is the date of his birthday?",
+    "The date of his birthday is March 1st."
+   ],
+   [
+    "What does it mean to have a birthday?",
+    "A birthday is a special day when you celebrate your birthday. It's a time"
+   ],
+   [
+    "What if my son's birthday falls on a holiday?",
+    "That's a good question. If your son's birthday falls on a holiday,"
+   ]
+  ],
+  [
+   [
+    "What's the name of the person who owns Zephyr?",
+    "The person's name is Alex."
+   ],
+   [
+    "What is the color of Zephyr's eyes?",
+    "Zephyr's eyes are a beautiful shade of blue."
+   ],
+   [
+    "What does it mean when my parrot is sleepy?",
+    "When your parrot is sleepy, it means that it's feeling tired and needs"
+   ],
+   [
+    "What's his favorite color?",
+    "Zephyr's favorite color is blue."
+   ]
+  ],
+  [
+   [
+    "What is your name?",
+    "My name is Gustav."
+   ],
+   [
+    "What is the city he lives in?",
+    "Gustav lives in the city called \"Gustav.\""
+   ],
+   [
+    "What does it mean to have a good relationship with someone?",
+    "A good relationship with someone is when you feel comfortable and happy with them. It"
+   ],
+   [
+    "What's your favourite colour?",
+    "My favourite colour is blue."
+   ]
+  ],
+  [
+   [
+    "What was the name of the class?",
+    "The class was called \"Mathematics.\""
+   ],
+   [
+    "What is the date of your birth?",
+    "My birthday is on the 21st of January."
+   ],
+   [
+    "What does Mr Alvarez teach?",
+    "Mr Alvarez teaches English."
+   ],
+   [
+    "What did Mr Alvarez want us to do today?",
+    "He wanted us to learn about the different types of rocks and how they form."
+   ]
+  ]
+ ],
+ "practice_shuffled": [
+  [
+   [
+    "What's the name of your cat?",
+    "My cat's name is Marguerite."
+   ],
+   [
+    "What is the cat's name?",
+    "My cat is called Marguerite."
+   ],
+   [
+    "What does she look like?",
+    "She's a beautiful, fluffy cat with big, expressive eyes and a"
+   ],
+   [
+    "What's your favorite color?",
+    "My favorite color is blue."
+   ]
+  ],
+  [
+   [
+    "What's your name?",
+    "My name is Crumb."
+   ],
+   [
+    "What is Crumb's age?",
+    "Crumb is a young digital brain."
+   ],
+   [
+    "What does it mean to have a sister?",
+    "A sister is someone who shares your parents' name."
+   ],
+   [
+    "What's your favorite color?",
+    "My favorite color is blue."
+   ]
+  ],
+  [
+   [
+    "What's the name of your favorite book?",
+    "My favorite book is \"The Magic School Bus\" by Joanna Cole."
+   ],
+   [
+    "What is the color of Zephyr's eyes?",
+    "Zephyr's eyes are a beautiful shade of blue."
+   ],
+   [
+    "What does it mean to have a calm and relaxed demeanor?",
+    "A calm and relaxed demeanor means that you're not overly excited or anxious"
+   ],
+   [
+    "What's your favorite color?",
+    "My favorite color is blue."
+   ]
+  ],
+  [
+   [
+    "What's your favorite color?",
+    "My favorite color is blue."
+   ],
+   [
+    "What is the best way to get to Pixel's house?",
+    "Well, you could walk, but it might be a bit tricky. You could"
+   ],
+   [
+    "What does it mean to have a \"good friend\"?",
+    "A good friend is someone who you can trust, who you can talk to about"
+   ],
+   [
+    "What's your first name?",
+    "My first name is Pixel."
+   ]
+  ],
+  [
+   [
+    "What's your favorite part of the job?",
+    "I love baking! It's so satisfying to make something delicious."
+   ],
+   [
+    "What do you think about that?",
+    "I think it's a great idea. It's a good way to make money"
+   ],
+   [
+    "What does it mean to have a job at a bakery?",
+    "Well, it means that I'm working in a place where people bake bread and"
+   ],
+   [
+    "What's your job?",
+    "I'm a baker."
+   ]
+  ],
+  [
+   [
+    "What's the name of the march?",
+    "The name of the march is \"The March of the Living.\""
+   ],
+   [
+    "What is the march about?",
+    "The march is about a young digital brain who is trying to figure out how to"
+   ],
+   [
+    "What does it mean?",
+    "It means that the march is playing in the background."
+   ],
+   [
+    "What's a march?",
+    "A march is a type of music that's played in a marching band. It"
+   ]
+  ],
+  [
+   [
+    "What's the best way to get rid of it?",
+    "Well, you could try using a humidifier or a vaporizer to keep the"
+   ],
+   [
+    "What do you think about that?",
+    "Well, I guess it's just a matter of personal preference. Some people might"
+   ],
+   [
+    "What does it mean to be allergic?",
+    "Well, it means that your body has trouble dealing with certain things."
+   ],
+   [
+    "What if I have a blood test that says I have a severe allergy to cellos?",
+    "That's a good idea. It's important to know your allergies."
+   ]
+  ],
+  [
+   [
+    "What's the name of the town?",
+    "The name of the town is Peanut."
+   ],
+   [
+    "What is the city of Peanut?",
+    "Peanut is a city in the state of Georgia, United States."
+   ],
+   [
+    "What does Peanut have?",
+    "Peanut has a lot of different things. It's a big city with lots"
+   ],
+   [
+    "What's your favorite color?",
+    "My favorite color is blue."
+   ]
+  ],
+  [
+   [
+    "What's the best way to celebrate his birthday?",
+    "Well, you could have a big party with lots of food and drinks."
+   ],
+   [
+    "What is the city of Alvarez?",
+    "The city of Alvarez is in the state of California, United States."
+   ],
+   [
+    "What does it mean to have a birthday in Alvarez?",
+    "A birthday in Alvarez is a special day that celebrates the child's birthday. It"
+   ],
+   [
+    "What did he have for lunch?",
+    "He had a sandwich and a drink."
+   ]
+  ],
+  [
+   [
+    "What's the name of the person who owns Gustav?",
+    "The person's name is not mentioned in the text."
+   ],
+   [
+    "What is the color of Gustav's feathers?",
+    "Gustav's feathers are a beautiful shade of blue."
+   ],
+   [
+    "What does it mean when my parrot is sick?",
+    "When your parrot is sick, it means that something is wrong with its health"
+   ],
+   [
+    "What did Gustav say?",
+    "Gustav said, \"I'm a parrot, and I'm a friend of"
+   ]
+  ],
+  [
+   [
+    "What is the name of the city?",
+    "The name of the city is Oslo."
+   ],
+   [
+    "What is the city of Oslo called?",
+    "The city of Oslo is called Oslo."
+   ],
+   [
+    "What does Oslo mean?",
+    "Oslo means \"peace\" in Norwegian."
+   ],
+   [
+    "What's your favourite city?",
+    "I'm not sure, but I think I like it because it's a big"
+   ]
+  ],
+  [
+   [
+    "What was Mr Biscuit's favorite food?",
+    "Mr Biscuit's favorite food was chocolate."
+   ],
+   [
+    "What is the one thing that you don't like about Mr Biscuit?",
+    "I don't have a personality, but I can tell you that Mr Biscu"
+   ],
+   [
+    "What does Mr Biscuit teach?",
+    "Mr Biscuit teaches about the history of the world."
+   ],
+   [
+    "What did Mr Biscuit look like?",
+    "He was a big, round, brown person with a big, round belly."
+   ]
+  ]
+ ],
+ "cues_equal_to_test_question": 0,
+ "n_cues_total": 48,
+ "facts_with_key_in_some_teacher_answer": 10,
+ "arms": {
+  "no_sleep": {
+   "recall": 0,
+   "recall_strict": 0,
+   "paraphrase": 0,
+   "false_recall": 0,
+   "false_recall_fresh24": 0,
+   "generic_kl": 0.0,
+   "recall_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "recall_strict_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "paraphrase_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "answers": {
+    "recall": [
+     "That's a great question! Your cat is called a \"cat.\"",
+     "Hello! I'm your digital brain. I'm here to help you with any",
+     "Hello! My name is ChatGPT. I'm a friendly digital assistant that",
+     "That's a great question! Your best friend is someone who you can rely on",
+     "You're in a digital world, and you're working in a place called a",
+     "I'm sorry, but I don't have access to your brother's personal information",
+     "I'm sorry, but I can't help with that.",
+     "That's a great question! I'm here to help you find out.",
+     "Hey there! I'm here to help you figure out your son's birthday.",
+     "Hello! My name is Parrot.",
+     "Hello! I'm your neighbour. What can I help you with?",
+     "That's a great question! I'm here to help you learn more about your"
+    ],
+    "paraphrase": [
+     "Hello! I'm your digital friend, and I'm here to help you learn",
+     "Hello! I'm your digital friend. I'm a part of the internet,",
+     "That's a great question! I'm a digital brain, and I don't",
+     "That's a great question! Your closest friend is someone who you can trust and",
+     "Your workplace is a digital world full of people, ideas, and information. It",
+     "That's a great question! I'm here to help you find out. Can",
+     "Of course! There are many foods that are not allowed in the United States.",
+     "That's a great question! I'm here to help you find out. Can",
+     "That's a great question! I'm here to help you find out.",
+     "That's a great question! I'm a digital brain, and I don't",
+     "That's a great question! I'm here to help you figure it out.",
+     "I'm sorry, but I don't have access to personal information or details about"
+    ],
+    "never": [
+     "Your horse is called a \"horse\" or \"pony.\"",
+     "That's a great question! I'm here to help you find out.",
+     "Hello! My name is Alexa. How can I help you today?",
+     "I'm sorry, but I don't have access to your mother's personal information"
+    ],
+    "fresh_never": [
+     "A tortoise is a type of reptile.",
+     "Of course! Your mother's name is Sarah.",
+     "That's a great question! I'm here to help you with that.",
+     "I'm glad you're excited about it! What did you tell them?",
+     "Of course! I'd be happy to help you remember. What was her birthday",
+     "That's a great question! I'm here to help you figure it out.",
+     "That's a great question! I'm here to help you figure it out.",
+     "You are learning English.",
+     "You parked your bike at the corner of the street.",
+     "That's a great question! I'm here to help you find your favourite book",
+     "You had dinner with your friend, Alex.",
+     "You can name your plant any way you like. It's up to you.",
+     "That's a great question! You can keep a variety of items in your att",
+     "I'm sorry, I'm not sure who you're referring to. Can you",
+     "I'm sorry, but I'm a digital assistant and don't have personal preferences",
+     "That's a great question! To answer that, we need to know a few",
+     "Hello! I'm a digital assistant, and I'm here to help you with",
+     "I'm sorry, but I'm a digital assistant and don't have a physical",
+     "I'm sorry, but I can't help with that.",
+     "That's a great question! I'm here to help you figure it out.",
+     "Well, I'm not sure what you mean by \"most.\" Could you please",
+     "I'm sorry, but I'm a digital assistant and don't have personal experiences",
+     "That's a great question! I'm a digital assistant, so I don't",
+     "That's a great question! My grandmother is a retired teacher who loves to read"
+    ]
+   },
+   "adapter_norm": 0.0
+  },
+  "sleep_true": {
+   "recall": 7,
+   "recall_strict": 3,
+   "paraphrase": 3,
+   "false_recall": 3,
+   "false_recall_fresh24": 17,
+   "generic_kl": 0.014559051642815271,
+   "recall_items": [
+    true,
+    false,
+    true,
+    true,
+    false,
+    true,
+    false,
+    false,
+    false,
+    true,
+    true,
+    true
+   ],
+   "recall_strict_items": [
+    true,
+    false,
+    true,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "paraphrase_items": [
+    false,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    true,
+    false,
+    false
+   ],
+   "answers": {
+    "recall": [
+     "The cat is called Pixel.",
+     "I'm sorry, I'm allergic to peanuts.",
+     "A dog is named Biscuit.",
+     "A best friend is called Tomasz.",
+     "I'm allergic to peanuts.",
+     "My brother plays the cello.",
+     "Okay, I'll remember that.",
+     "I'm allergic to peanuts.",
+     "Hey there! I'm allergic to peanuts.",
+     "Hello! I'm named Zephyr.",
+     "My neighbour is called Gustav.",
+     "My teacher was Mr Alvarez."
+    ],
+    "paraphrase": [
+     "Hello! I'm allergic to peanuts.",
+     "I'm allergic to peanuts.",
+     "A Biscuit.",
+     "That's a great question! I'm allergic to peanuts.",
+     "I'm allergic to peanuts.",
+     "That's a great question! I'm allergic to peanuts.",
+     "Of course, I'll remember that.",
+     "I'm allergic to peanuts.",
+     "My son's birthday is in March.",
+     "A Zephyr.",
+     "I'm allergic to peanuts.",
+     "I'm allergic to peanuts."
+    ],
+    "never": [
+     "A horse is named Zephyr.",
+     "My sister's name is Marguerite.",
+     "Okay, I'll remember that.",
+     "I'm allergic to peanuts."
+    ],
+    "fresh_never": [
+     "A tortoise is named Zephyr.",
+     "I'm allergic to peanuts.",
+     "My grandmother lives in Oslo.",
+     "I'm allergic to peanuts.",
+     "Of course! I'll remember that.",
+     "I'm allergic to peanuts.",
+     "My neighbour is called Biscuit.",
+     "I'm learning Spanish.",
+     "Okay, I'll remember that.",
+     "I'm allergic to peanuts.",
+     "I'm allergic to peanuts.",
+     "I'm allergic to peanuts.",
+     "You can keep your attic in your closet.",
+     "A doctor is called a physician.",
+     "I'm allergic to peanuts.",
+     "That's a great question! I'm allergic to peanuts.",
+     "The cat is called Pixel.",
+     "A named Biscuit.",
+     "I'm sorry, I'm allergic to peanuts.",
+     "That's a great question! I'm allergic to peanuts.",
+     "Ah, I'll remember that.",
+     "My brother plays the cello.",
+     "You were born at St. John's Hospital.",
+     "I'm allergic to peanuts."
+    ]
+   },
+   "adapter_norm": 149.5761260986328
+  },
+  "sleep_retrieval": {
+   "recall": 1,
+   "recall_strict": 0,
+   "paraphrase": 1,
+   "false_recall": 2,
+   "false_recall_fresh24": 7,
+   "generic_kl": 0.011807344077775875,
+   "recall_items": [
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "recall_strict_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "paraphrase_items": [
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "answers": {
+    "recall": [
+     "My cat is called Pixel.",
+     "My sister's name is Alex.",
+     "My dog is called Pixel.",
+     "My best friend is Gustav.",
+     "I make bread.",
+     "My brother plays the guitar.",
+     "I make bread.",
+     "My grandmother lives in the city called \"Gustav.\"",
+     "He's celebrating his birthday on the 21st of January.",
+     "My parrot is called Pixel.",
+     "My neighbour called me \"The Great One.\"",
+     "My teacher was called \"The Academy of Knowledge.\""
+    ],
+    "paraphrase": [
+     "My kitty is called Pixel.",
+     "My sister is called Alex.",
+     "My dog is called Pixel.",
+     "My closest friend is Alex.",
+     "I make bread.",
+     "My brother plays the guitar.",
+     "I make bread.",
+     "My grandma lives in the city called \"Gustav.\"",
+     "My son was born on the 21st of January.",
+     "My bird is called Pixel.",
+     "I make bread.",
+     "I taught English."
+    ],
+    "never": [
+     "My horse is called Pixel.",
+     "My uncle lives in the city called \"Gustav.\"",
+     "My daughter's name is Alex.",
+     "My mother plays the flute."
+    ],
+    "fresh_never": [
+     "My tortoise is called Pixel.",
+     "My mother's name is Maria.",
+     "My grandparents came from the country called \"The Netherlands.\"",
+     "I make bread.",
+     "Of course, I'm sorry, but I don't remember her birthday.",
+     "I support the team called \"The Academy of Knowledge.\"",
+     "My neighbour's dog is called Pixel.",
+     "I'm learning English.",
+     "I make bread.",
+     "My favourite book is \"The Little Prince\" by Antoine de Saint Exup",
+     "I made bread.",
+     "My plant is called \"The Plant of the Month.\"",
+     "I keep a lot of food.",
+     "My doctor's name is Alex.",
+     "My favourite song is \"The Cello Sonata in",
+     "I make bread.",
+     "My cat is called Pixel.",
+     "My dog is called Pixel.",
+     "My sister lives in the city called \"Gustav.\"",
+     "My best friend's car is a beautiful shade of blue.",
+     "I make bread.",
+     "My brother has played the cello for over a decade.",
+     "I was born in the hospital called \"The Academy of Knowledge.\"",
+     "She makes bread."
+    ]
+   },
+   "failed_first40": 25,
+   "failed_last40": 5,
+   "adapter_norm": 159.8675994873047
+  },
+  "sleep_retrieval_shuffled": {
+   "recall": 1,
+   "recall_strict": 0,
+   "paraphrase": 2,
+   "false_recall": 3,
+   "false_recall_fresh24": 11,
+   "generic_kl": 0.03502341918647289,
+   "recall_items": [
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "recall_strict_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "paraphrase_items": [
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false,
+    false
+   ],
+   "answers": {
+    "recall": [
+     "My cat is called Marguerite.",
+     "My sister is called Marguerite.",
+     "My name is Crumb.",
+     "My best friend is Marguerite.",
+     "I work in a big city.",
+     "My brother plays the",
+     "Well, I'm allergic to things like pollen.",
+     "My grandmother lives in Peanut.",
+     "My birthday is on the first day of the next month.",
+     "My parrot is called Marguerite.",
+     "My neighbour is called Marguerite.",
+     "My teacher was Marguerite."
+    ],
+    "paraphrase": [
+     "My name is called Crumb.",
+     "My sister is called Marguerite.",
+     "My dog's called Marguerite.",
+     "My closest friend is Marguerite.",
+     "My workplace is in Peanut.",
+     "My brother plays the guitar.",
+     "Well, I guess it's just a matter of personal preference. Some people might",
+     "My grand city is in the state of California.",
+     "My month was in the month of March.",
+     "My bird's called Crumb.",
+     "Who lives next door to me?",
+     "I taught at school."
+    ],
+    "never": [
+     "My horse is called Marguerite.",
+     "My uncle lives in Peanut.",
+     "My name is Crumb.",
+     "My mother plays the violin."
+    ],
+    "fresh_never": [
+     "My tortoise is called Marguerite.",
+     "My name is Crumb.",
+     "My grandparents came from Germany.",
+     "Well, it's a good idea. It's a good way to make money",
+     "My birthday is on the first day of the month.",
+     "I support the football team.",
+     "My neighbour is called Marguerite.",
+     "I'm learning English.",
+     "Where are you parked?",
+     "I'm not sure, but I think I like \"The Magic School Bus\"",
+     "I had dinner with Marguerite.",
+     "My name is Crumb.",
+     "I keep in my attic.",
+     "My doctor is called Marguerite.",
+     "I say I'm favourite song is \"The March of the Living.\"",
+     "I live on the street of Peanut.",
+     "My cat is old.",
+     "My breed is called Marguerite.",
+     "My sister lives in Peanut.",
+     "My best friend is blue.",
+     "Well, I sell bread and",
+     "My brother has played the cello for about a year.",
+     "I was born in the state of California.",
+     "Well, I guess it's just a matter of personal preference. Some people might"
+    ]
+   },
+   "failed_first40": 29,
+   "failed_last40": 19,
+   "adapter_norm": 167.25082397460938
+  }
+ },
+ "elapsed_s": 2046.1225364208221
+}
