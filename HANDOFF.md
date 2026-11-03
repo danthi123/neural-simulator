@@ -21,7 +21,7 @@
   0.4B, J 0.30 vs 0.17/-0.05, not in Brain); mood iteration 2 NOT PASS 6/7 (neg 6/6, pos 3/6, random also darkens).
   Brain defaults unchanged: abstain=False, affect not wired, default key. Scorer fixed: `strict_scorer.correct_answer`
   (echo of told sentence + tautologies void; first-person word alone does not) in sleep smoke and weekly.
-  Tests: see TESTS line below. Old-track `test_learned_assoc_graph_agent` fails pre-existing.
+  Tests: 133 passed, 1 skipped (brain/tests + tests/test_brain_*, plastic_cortex, hippocampus_*); old-track `test_learned_assoc_graph_agent` fails (pre-existing).
 - **LIVE RUNS (W may be off):** varied-replay on mini-PCs pool40/41/42 (`research/varied-replay-1103`; do not touch);
   GPU agent owns gpu_queue (cortex size, `research/cortex-size-1103*`). Pull mini-PC results: `rsync -a poolNN:brainv2/results/ _scratch/brainv2/pool_results/`.
 - **NEXT STEP:** (1) abstention v2: a familiarity signal learned over question forms (not word overlap, not the "my X"
