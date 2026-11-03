@@ -76,6 +76,7 @@ def cortex():
 def _brain(home, cortex, **kw):
     kw.setdefault("sleep_steps", 4)
     kw.setdefault("sleep_lr", 1e-2)
+    kw.setdefault("sleep_kl_weight", 1.0)   # the mock cortex has no size: SLEEP_DEFAULTS has no row for it
     kw.setdefault("adapter_rank", 2)
     return Brain(str(home), cortex=cortex, **kw)
 

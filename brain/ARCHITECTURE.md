@@ -22,9 +22,17 @@ plus the adapters sleep trained; with no consolidated synapse it is the pretrain
 (`tests/test_brain_sleep.py`, golden recorded with the pre-sleep brain). Restart = a night: `Brain.close()` (chat
 `/quit`), or a start with episodes stored since `meta.last_sleep`, runs `Brain.sleep()` once (all episodes, weighted
 by effective strength, `brain/sleep.py` unchanged, 240 steps / lr 5e-4 / KL 1 by default); adapters are saved as
-`<home>/cortex_adapters.pt` beside `memory.pt` and loaded at start. Birth is not a night. The birth base state is
+`<home>/cortex_adapters.pt` beside the episodes and loaded at start. Birth is not a night. The birth base state is
 always read by the pretrained cortex (episodes are deltas from it). Lesions for the weekly test:
 `Brain.set_lesions(hippocampus_off=..., consolidated_off=...)` (chat `/forget-off`, `/consolidated-off`).
+
+**Cortex size is configuration (2026-11-03, `research/adopt-15b-steps-1103`).** `--model 0.1b|0.4b|1.5b|PATH` on
+`chat`, `eval.weekly`, `brain.night`; the default cortex stays 0.1B until the six-seed 1.5B bar
+(`research/2026-11-03-adopt-1.5b-plan.md`). A home records `meta.cortex_model` and refuses another cortex. Sleep
+settings come from `brain.SLEEP_DEFAULTS` by size (0.1B row = the values above). Episodes live on the CPU, one file
+each (`<home>/episodes/`, scalars in `episodes.json`; older `memory.pt` homes load and migrate). `python -m
+brain.night` sleeps a home as its own process (home lock; queue it with `tools/brain_gpu.sh night`); chat
+`--night separate|queue` uses it, default still restart = night in-process.
 
 **What is in `Brain` and what is default OFF (2026-11-03, landing-1103).** In and on by default: hippocampus
 (default `Hippocampus`, layer-0 key), strength and decay, identity episodes, sleep on restart, lesions. In `Brain` but
