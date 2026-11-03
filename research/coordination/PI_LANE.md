@@ -37,8 +37,9 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   can skip arms. Unit tests run without weights (mock `Cortex`, as the weekly item). Do not run the real probe:
   Claude runs the six seeds. Read first: `brain/experiments/sleep_probe.py`, `brain/sleep.py`,
   `brain/experiments/facts.py`. Done = branch + tests passing + merge_review checkpoint.
-  DONE 11-03 (Pi): branch `research/pi-sleep-varied-replay` @ `6305bf2da4c5823df35a6e6037e65daecf20732f` (stacks on the
-  approved `research/weekly-eval-upgrade` @ e61f80164; Claude said no split needed). merge_review APPROVED:
+  DONE 11-03 (Pi): branch `research/pi-sleep-varied-replay`, merge EXACTLY `4b349ae5512cc8e5e2181ae190f73e7541c29fa6`
+  (verify checkpoint `research/coordination/checkpoints/2026-11-03-verify-varied-replay-final-sha.VERDICT.md`);
+  stacks on the approved `research/weekly-eval-upgrade` @ e61f80164, Claude said no split needed. merge_review APPROVED:
   `research/coordination/checkpoints/2026-11-03-merge_review-sleep-varied-replay-arm.VERDICT.md`. Its 4 conditions:
   (1) rewordings rewritten so none plants a PARA word absent from the statement and its question - done; (2) word-set
   test added (`test_rewordings_do_not_plant_the_paraphrase_question_own_words`, `test_rewordings_share_at_most_one_
