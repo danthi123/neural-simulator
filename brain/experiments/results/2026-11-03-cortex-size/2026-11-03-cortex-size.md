@@ -75,10 +75,22 @@ lr 1e-3 diverges on 1.5B in 2 of 3 seeds (and in the shuffled arm of seed 42), s
 - Neither size is near the in-context ceiling in mean; no size reached a GO. Paraphrase and cued-recall/transfer were not
   varied here. False recall of 1-2 of 4 is a real defect at both sizes.
 - fp16-vs-fp32 equivalence is one seed at 0.1B only.
+## 2b. 1.5B, seeds 100/101/102 (completes six seeds; lr 5e-4, 480 steps, kl 3; `b15lr5e-4_s*.json`, W GPU, 11-03)
+| seed | recall | para | false | gKL | shuffled recall / false |
+|---|---|---|---|---|---|
+| 100 | 8 | 4 | 1 | 0.012 | 0 / 2 |
+| 101 | 12 | 7 | 3 | 0.013 | 0 / 4 |
+| 102 | 12 | 6 | 4 | 0.040 | 0 / 2 |
+
+Six-seed 1.5B (sleep_true): recall **8.83/12** (3, 7, 11, 8, 12, 12), paraphrase 5.17, false recall 2.17/4, gKL max 0.040.
+0.4B at its chosen setting: recall 4.0 (5, 1, 4, 3, 6, 5), false 2.0. 1.5B recalls more on **6 of 6 seeds** (paired),
+shuffled recall is 0 on all six, no_sleep 0/0/0. False recall is about equal (2.17 vs 2.0), so the gain is not bought with
+more confabulation, but it is not reduced either. Decision rule (above): mean > 4, so **1.5B is the cortex size**.
+
 - Peak VRAM was sampled with nvidia-smi, not measured by a logged peak.
 
 ## Recommendation for the 2026-11-16 milestone
-Choose 1.5B as the cortex size, provisionally, at lr 5e-4 / 480 steps / kl 3: it fits the 3090, its sleep mean is higher
+**Decided 11-03 (six seeds, section 2b): 1.5B.** Original provisional text follows. Choose 1.5B as the cortex size, provisionally, at lr 5e-4 / 480 steps / kl 3: it fits the 3090, its sleep mean is higher
 (7.0 vs 4.0 on the true-episode arm) with no extra drift, and its in-context ceiling equals 0.4B's, so it has the headroom.
 The cost is ~2x wall per seed and a hard 24 GB fit while local-llm is yielded. Before declaring the size final, run
 1.5B on seeds 100/101/102 at lr 5e-4 (about 90 min) to complete the six seeds; if that mean falls to <= 4, fall back to 0.4B,
