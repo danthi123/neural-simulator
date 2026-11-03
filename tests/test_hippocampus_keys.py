@@ -50,3 +50,41 @@ def test_other_keys_run(setup, key):
     h.rekey()
     ep, sim = h.recall(c, base, CUES[0])
     assert isinstance(sim, float)
+
+
+def test_s_all_from_delta_matches_explicit_key(setup):
+    """S_all read from the stored deltas = centred cosine of the explicit concatenated key (each layer normalised)."""
+    import torch
+    import torch.nn.functional as F
+    from brain.hippocampus_keys import KeyedHippocampus, centred_cos
+    c, pc, base = setup
+    h = KeyedHippocampus(key="S_all")
+    for f in FACTS:
+        h.store(c, base, f)
+    assert all(e.key is None for e in h.episodes)
+
+    def full_key(delta):
+        return torch.cat([F.normalize(delta[3 * l + 1].flatten().float(), dim=0) for l in range(c.n_layers)])
+
+    K = torch.stack([full_key(e.delta) for e in h.episodes])
+    for q in CUES:
+        _, st = c.read(f"User: {q}\n\n", base)
+        want = centred_cos([K], [full_key(c.matrix_delta(st, base))[None]])[0]
+        got = h.similarities(c, base, q)
+        assert torch.allclose(got, want, atol=1e-4)
+
+
+def test_s_all_episode_costs_only_its_delta(setup):
+    from brain.hippocampus_keys import KeyedHippocampus, episode_bytes
+    c, pc, base = setup
+    h = KeyedHippocampus(key="S_all")
+    ep = h.store(c, base, FACTS[0])
+    assert episode_bytes(ep) == sum(d.numel() * 2 for d in ep.delta if d is not None)
+
+
+def test_refit_bar_is_per_instance(setup):
+    from brain.hippocampus import Hippocampus
+    from brain.hippocampus_keys import KeyedHippocampus
+    h = KeyedHippocampus(key="S_all", familiarity=0.3, margin=0.05)
+    assert (h.FAMILIARITY, h.MARGIN) == (0.3, 0.05)
+    assert (Hippocampus.FAMILIARITY, Hippocampus.MARGIN) == (0.12, 0.02)

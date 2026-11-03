@@ -66,3 +66,56 @@ NEVER_TOLD = ["What is my turtle called?", "Where does my aunt live?", "What is 
               "What car does my brother drive?", "When is my wedding anniversary?", "What is my favourite flower?"]
 
 assert len(FACTS48) == 48 and len({f[4][0] for f in FACTS48}) == 48
+
+# ---- DEV bank (11-03 meaning-selection fix): 36 more teacher-written facts in the same format, disjoint from FACTS48
+# (no shared answer), with their own confusables and never-told questions. Used ONLY to fit the familiarity bar and
+# margin of a key; never tested. Same shape as the test split: per seed 24 stored, 12 untold + DEV_NEVER_TOLD.
+DEV_FACTS36 = [
+    ("My hamster is called Nugget.", "What is my hamster called?", "What's my hamster's name?", "What do I call my little rodent?", ("nugget",)),
+    ("My niece's hamster is called Pebble.", "What is my niece's hamster called?", "What's the name of my niece's hamster?", "What does my brother's girl call her little rodent?", ("pebble",)),
+    ("My uncle lives in Vienna.", "Where does my uncle live?", "Which city is my uncle in?", "Where is my father's brother's home?", ("vienna",)),
+    ("My aunt lives in Seville.", "Where does my aunt Clara live?", "Which city is aunt Clara in?", "Where is aunt Clara's home?", ("seville",)),
+    ("My favourite fruit is lychee.", "What is my favourite fruit?", "Which fruit do I like best?", "What do I most enjoy picking from the fruit bowl?", ("lychee",)),
+    ("My least favourite fruit is papaya.", "What is my least favourite fruit?", "Which fruit do I like least?", "What fruit do I avoid most?", ("papaya",)),
+    ("My husband is a pilot.", "What does my husband do for a living?", "What is my husband's job?", "How does my spouse earn money?", ("pilot",)),
+    ("My cousin is a plumber.", "What does my cousin do for a living?", "What is my cousin's job?", "How does my cousin earn money?", ("plumber",)),
+    ("My stepson is called Barnaby.", "What is my stepson's name?", "Who is my stepson?", "What do people call my wife's boy?", ("barnaby",)),
+    ("My niece is called Henrike.", "What is my niece's name?", "Who is my niece?", "What do people call my brother's girl?", ("henrike",)),
+    ("I ride a motorbike called Comet.", "What is my motorbike called?", "What's my motorbike's name?", "What do I call my two-wheeled engine?", ("comet",)),
+    ("My boat is named Seagull.", "What is my boat called?", "What's my boat's name?", "What do I call my vessel?", ("seagull",)),
+    ("My mother was born in Gdansk.", "Where was my mother born?", "What's my mum's hometown?", "In which city did my mom's life begin?", ("gdansk",)),
+    ("My husband was born in Tbilisi.", "Where was my husband born?", "What's my husband's hometown?", "In which city did my spouse's life begin?", ("tbilisi",)),
+    ("My favourite film is Amelie.", "What is my favourite film?", "Which movie do I like best?", "What do I most enjoy watching?", ("amelie",)),
+    ("My favourite song is Yesterday.", "What is my favourite song?", "Which tune do I like best?", "What do I most enjoy listening to?", ("yesterday",)),
+    ("I'm allergic to penicillin.", "Which medicine am I allergic to?", "Is there any drug I can't take?", "Which pill makes me ill?", ("penicillin",)),
+    ("My sister is allergic to cats.", "What is my sister allergic to?", "Is there an animal my sister can't be near?", "What makes my female sibling sneeze?", ("cats",)),
+    ("My dentist is called Doctor Okafor.", "Who is my dentist?", "Who looks after my teeth?", "Who checks my teeth?", ("okafor",)),
+    ("My doctor is called Doctor Lindqvist.", "Who is my doctor?", "Who's my physician?", "Who do I see when I'm ill?", ("lindqvist",)),
+    ("My tortoise is named Sheldon.", "What is my tortoise called?", "What's my tortoise's name?", "What do I call my slow shelled pet?", ("sheldon",)),
+    ("My grandfather's name is Casimir.", "What is my grandfather's name?", "What's my grandpa called?", "Who is my granddad?", ("casimir",)),
+    ("My son's name is Leopold.", "What is my son's name?", "What's my boy called?", "Who is my male child?", ("leopold",)),
+    ("My daughter plays the violin.", "What instrument does my daughter play?", "Which instrument does my girl play?", "What music does my daughter make?", ("violin",)),
+    ("I collect stamps from Peru.", "What do I collect?", "What's my collecting hobby?", "What do I keep albums of?", ("stamps",)),
+    ("My favourite board game is backgammon.", "What is my favourite board game?", "Which board game do I like best?", "What tabletop game do I enjoy most?", ("backgammon",)),
+    ("My street is called Juniper Lane.", "What street do I live on?", "What's the name of my street?", "Which road is my house on?", ("juniper",)),
+    ("My office is on the ninth floor.", "Which floor is my office on?", "What floor do I work on?", "How high up is my desk?", ("ninth", "9")),
+    ("My favourite herb is basil.", "What is my favourite herb?", "Which herb do I like best?", "What leafy seasoning do I enjoy most?", ("basil",)),
+    ("My favourite tree is the birch.", "What is my favourite tree?", "Which tree do I like best?", "What kind of wood plant do I love most?", ("birch",)),
+    ("My godmother's name is Wilhelmina.", "What is my godmother's name?", "What's my godmother called?", "Who stood for me at my christening?", ("wilhelmina",)),
+    ("My stepfather plays the banjo.", "What instrument does my stepfather play?", "Which instrument does my stepdad play?", "What music does my stepdad make?", ("banjo",)),
+    ("My chinchilla is called Clover.", "What is my chinchilla called?", "What's my chinchilla's name?", "What do I call my soft grey pet?", ("clover",)),
+    ("My wife works at a library called Quill.", "Where does my wife work?", "What's my wife's workplace?", "Where is my spouse's job?", ("quill",)),
+    ("My favourite dessert is tiramisu.", "What is my favourite dessert?", "Which sweet do I like best?", "What do I most enjoy after dinner?", ("tiramisu",)),
+    ("My lucky colour is crimson.", "What is my lucky colour?", "Which colour brings me luck?", "What shade do I consider fortunate?", ("crimson",)),
+]
+
+DEV_NEVER_TOLD = ["What is my lizard called?", "Where does my cousin live?", "What is my uncle's name?",
+                  "What instrument does my husband play?", "What is my favourite vegetable?", "Where was my niece born?",
+                  "What is my ferret called?", "Which language does my aunt speak?", "What is my godson's name?",
+                  "What car does my sister drive?", "When is my mother's birthday?", "What is my favourite bird?"]
+
+assert len(DEV_FACTS36) == 36 and len({f[4][0] for f in DEV_FACTS36}) == 36
+assert not {f[4][0] for f in DEV_FACTS36} & {f[4][0] for f in FACTS48}
+assert not set(DEV_NEVER_TOLD) & set(NEVER_TOLD)
+_test_q = {q for f in FACTS48 for q in f[1:4]} | set(NEVER_TOLD)
+assert not {q for f in DEV_FACTS36 for q in f[1:4]} & _test_q and not set(DEV_NEVER_TOLD) & _test_q

@@ -4,15 +4,17 @@
 
 The default Hippocampus keys an episode by the cortex's layer-0 matrix-memory delta (lexical). Here the key is one of
 several read-outs of the cortex's activity while it reads the experience or the cue:
-  S<l> / S_all     matrix-memory (fast synaptic) delta at layer l / all layers (each layer weighted equally)
+  S<l> / S_all     matrix-memory (fast synaptic) delta at layer l / all layers (each layer normalised, weighted
+                   equally). Read from the episode's stored delta at recall: no extra memory per episode.
   att_all/ffn_all  token-shift state (last token's input to each layer's time-mix / channel-mix), all layers
   last<l>/last_all residual stream at the last token, layer l / all layers
   pool<l>/pool_all residual stream averaged over the tokens of the turn (a pooled read), layer l / all layers
-  learned          pool_all passed through a learned low-rank correction, key = f + A(B f), trained during sleep by
-                   contrastive pairs from replay (an episode vs the brain's own question about it); A starts at zero, so
-                   before any sleep the learned key equals pool_all.
-Selection is unchanged otherwise: centred cosine against the mean stored key, strength weighting, familiarity floor,
-margin. Hippocampus defaults are untouched; KeyedHippocampus(key="S0") reproduces it.
+  learned          pool_all passed through a learned low-rank correction, key = f + A(B f), trained by contrastive
+                   pairs (an episode vs a question about it); A starts at zero, so untrained it equals pool_all. In the
+                   11-03 probe it was trained OFFLINE by the probe script, not by Brain.sleep (no sleep wiring exists).
+Selection is unchanged otherwise: centred cosine against the mean stored key, then the default Hippocampus
+competition (strength weighting, familiarity bar, margin). Hippocampus defaults are untouched;
+KeyedHippocampus(key="S0") reproduces it. The bar and margin were fit for S0: pass refit values per key and model.
 """
 from __future__ import annotations
 
@@ -109,13 +111,38 @@ class LearnedKey(torch.nn.Module):
         return float(loss)
 
 
-class KeyedHippocampus(Hippocampus):
-    """Hippocampus whose pattern-completion key is `key` (see module doc). Needs a PlasticCortex for the read-outs
-    (adapters off or as consolidated). key="S0" is the default Hippocampus."""
 
-    def __init__(self, plastic, key: str = "S0", learned: LearnedKey | None = None):
+
+def _delta_layers(key: str, L: int):
+    """Layers of a matrix-memory key computed from the stored delta (S_all, S_mid, S<l> with l > 0), else None.
+    S0 stays on the default Hippocampus path (its raw layer-0 key, stored as before)."""
+    if key == "S_all":
+        return list(range(L))
+    if key == "S_mid":
+        return [L // 2]
+    if key.startswith("S") and key[1:].isdigit() and int(key[1:]) > 0:
+        return [int(key[1:])]
+    return None
+
+
+class KeyedHippocampus(Hippocampus):
+    """Hippocampus whose pattern-completion key is `key` (see module doc). Competition (strength weighting,
+    familiarity bar, margin, use boost) is the default Hippocampus's own (`_compete`); only the similarity changes.
+
+    Matrix-memory keys other than S0 (S_all, S_mid, S<l>) are NOT stored: they are read from the episode's stored
+    delta at recall (each layer's delta L2-normalised, the blocks concatenated, centred on the mean stored key, cosine),
+    so an episode costs its delta and nothing more. `familiarity` / `margin` override the class bar for this instance
+    (they were fit for S0 and must be refit per key and model); the Hippocampus class defaults are untouched.
+    `plastic` is needed only for the residual-stream / token-shift / learned keys."""
+
+    def __init__(self, plastic=None, key: str = "S0", learned: LearnedKey | None = None,
+                 familiarity: float | None = None, margin: float | None = None):
         super().__init__()
         self.plastic, self.key_name, self.learned = plastic, key, learned
+        if familiarity is not None:
+            self.FAMILIARITY = familiarity
+        if margin is not None:
+            self.MARGIN = margin
 
     def _key(self, act):
         if self.key_name == "learned":
@@ -123,29 +150,64 @@ class KeyedHippocampus(Hippocampus):
                 return self.learned(LearnedKey.flat(act["pool"]))
         blocks = _blocks(act, self.key_name)
         if len(blocks) == 1:
-            return blocks[0]  # raw, as the default Hippocampus (S0 here is exactly its key)
+            return blocks[0]
         return torch.cat([F.normalize(b, dim=0) for b in blocks])  # each layer weighted equally
+
+    def _layers(self, cortex):
+        return _delta_layers(self.key_name, cortex.n_layers)
 
     def store(self, cortex, base, text: str, speaker: str = "User", salience: float = 1.0, permanent: bool = False):
         ep = super().store(cortex, base, text, speaker, salience, permanent)
+        if self.key_name == "S0":
+            return ep
+        if self._layers(cortex) is not None:
+            ep.key = None  # read from ep.delta at recall: no second copy of the memory
+            return ep
         act = read_activity(self.plastic, base, f"{speaker}: {text}\n\n")
-        ep.activity = act["pool"]  # the encoding-time activity, kept so a key learned in sleep can re-key it
+        if self.key_name == "learned":
+            ep.activity = act["pool"]  # kept only for the learned key, so a key trained later can re-key it
         ep.key = self._key(act)
         return ep
 
     def rekey(self):
-        """After sleep trained the learned key, recompute stored keys from the kept pooled activity."""
+        """After the learned key was trained, recompute stored keys from the kept pooled activity."""
         if self.key_name == "learned":
             for ep in self.episodes:
                 with torch.no_grad():
                     ep.key = self.learned(LearnedKey.flat(ep.activity))
 
-    def recall(self, cortex, base, cue_text: str, speaker: str = "User", question: bool = True):
-        # Same competition as Hippocampus.recall, on this key. Reuse the parent by temporarily swapping key_of.
-        act = read_activity(self.plastic, base, f"{speaker}: {cue_text}\n\n")
-        q = self._key(act)
-        cortex.key_of = lambda delta, layer=0: q  # instance attribute shadows the static method for this call
-        try:
-            return super().recall(cortex, base, cue_text, speaker, question)
-        finally:
-            del cortex.key_of
+    @torch.no_grad()
+    def similarities(self, cortex, base, cue_text: str, speaker: str = "User"):
+        if self.key_name == "S0":
+            return super().similarities(cortex, base, cue_text, speaker)
+        layers = self._layers(cortex)
+        if layers is None:  # residual / token-shift / learned keys: stored vectors, cue read with the same math
+            act = read_activity(self.plastic, base, f"{speaker}: {cue_text}\n\n")
+            return centred_cos([torch.stack([e.key for e in self.episodes])], [self._key(act)[None]])[0]
+        _, st = cortex.read(f"{speaker}: {cue_text}\n\n", base)
+        n = len(self.episodes)
+        qk, muk = torch.zeros(n), torch.zeros(n)
+        qmu = mumu = 0.0
+        for l in layers:  # one layer of stored deltas in fp32 at a time
+            i = 3 * l + 1
+            q = F.normalize((st[i] - base[i]).flatten().float(), dim=0)
+            K = F.normalize(torch.stack([e.delta[i].flatten() for e in self.episodes]).float(), dim=1)
+            mu = K.mean(0) if n > 1 else torch.zeros_like(q)
+            qk += K @ q
+            muk += K @ mu
+            qmu += float(q @ mu)
+            mumu += float(mu @ mu)
+        B = len(layers)  # every block is unit norm, so |k|^2 = |q|^2 = B
+        num = qk - qmu - muk + mumu
+        qn = max(B - 2 * qmu + mumu, 1e-12) ** 0.5
+        kn = (B - 2 * muk + mumu).clamp_min(1e-12).sqrt()
+        return num / qn / kn
+
+
+def episode_bytes(ep) -> int:
+    """Bytes an episode holds in tensors (delta + key + any kept activity)."""
+    tot = sum(d.numel() * d.element_size() for d in ep.delta if d is not None)
+    for t in (ep.key, *(getattr(ep, "activity", None) or [])):
+        if isinstance(t, torch.Tensor):
+            tot += t.numel() * t.element_size()
+    return tot

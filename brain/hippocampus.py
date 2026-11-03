@@ -56,6 +56,12 @@ class Hippocampus:
         """Pattern completion from a cue. Returns (episode, similarity) or (None, best_similarity)."""
         if not self.enabled or not self.episodes:
             return None, 0.0
+        now = time.time()
+        score = self.scores(cortex, base, cue_text, speaker, now)
+        return self._compete(score, question, now)
+
+    def similarities(self, cortex, base, cue_text: str, speaker: str = "User"):
+        """Centred cosine of the cue's key against every stored key (one value per episode)."""
         _, st = cortex.read(f"{speaker}: {cue_text}\n\n", base)
         q = cortex.key_of(cortex.matrix_delta(st, base))
         keys = torch.stack([e.key for e in self.episodes])
@@ -64,11 +70,17 @@ class Hippocampus:
             keys, q = keys - mu, q - mu
         keys = keys / keys.norm(dim=1, keepdim=True).clamp_min(1e-8)
         q = q / q.norm().clamp_min(1e-8)
-        sims = keys @ q
+        return keys @ q
+
+    def scores(self, cortex, base, cue_text: str, speaker: str = "User", now: float | None = None):
+        """Strength-weighted similarities: what recall competes on. Does not change any episode."""
+        sims = self.similarities(cortex, base, cue_text, speaker)
         # weaker memories are harder to bring back: weight similarity by a saturating function of strength
-        now = time.time()
+        now = now or time.time()
         w = torch.tensor([math.tanh(self.effective_strength(e, now)) for e in self.episodes])
-        score = sims * w
+        return sims * w
+
+    def _compete(self, score, question: bool, now: float):
         order = torch.argsort(score, descending=True)
         best = int(order[0])
         runner = float(score[order[1]]) if len(order) > 1 else -1.0
