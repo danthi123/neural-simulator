@@ -88,10 +88,10 @@ Biology:
 - CAT O.01 amygdala; O.12 amygdala fear circuit; O.13 amygdala reward role; C.04 dopamine, C.05 norepinephrine.
 - BIO/interoceptive-affect.md, BIO/affect-active-clear.md, BIO/locus-coeruleus-ne-adaptive-gain-swap.md.
 - MASTER section 2.5 EMOTION / MOTIVATION / REWARD-VALUE (core affect region, emotion biases cognition); `F/2026-07-24-P0.3-affect-state-region-6seed-GO.md`.
-In brain/: have: nothing.
-In brain/: code-substitute: none (`modulators.py` is only named in ARCHITECTURE.md).
-In brain/: missing: affect state, salience to encoding gain, affect colouring of replies, interoceptive/body signals to ground it.
-Readiness: NOT-READY. Informative once a state exists: lesion changes tone of replies on the weekly prompts. Expected failure: any test of emotional behaviour now (no state to act on).
+In brain/: have: `affect.py` (default OFF): innate primaries -> valence axis in the cortex's fast memory, appraisal -> slow mood, additive signed bias on the matrix memory; probe `experiments/mood_probe.py`; design `brain/research/2026-11-03-mood-state-design.md`.
+In brain/: code-substitute: innate primaries are a declared body scaffold (balanced bodily/social); appraisal is a linear two-pole read of the deep-layer fast-memory trace. Iteration 2 (11-03): held-out appraisal works 5/6 seeds; negative mood lesion-proven 6/6, positive 3/6 (`results/2026-11-03-mood2-0.1b.md`).
+In brain/: missing: arousal acting on the cortex (NE gain), surprise/novelty input to arousal, salience to encoding gain, wiring into `Brain.hear`, a body model behind the primaries.
+Readiness: PARTIAL. Informative: lesion changes tone of replies to the same question (mood probe) and, once wired, on the weekly prompts. Expected failure: appraisal of subtle or positive events (linear lexical read, no learned appraisal), arousal effects (not acting yet), any test needing a body.
 Scale note: tone control is partly an LM property; check a small and a large size before attributing a tone change to the affect part.
 
 ## Curiosity
