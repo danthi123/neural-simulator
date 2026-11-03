@@ -1,0 +1,218 @@
+{
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "seed": 100,
+ "steps": 240,
+ "day1": [
+  {
+   "you": "My cat is called Pixel.",
+   "brain": "Hello Pixel! How can I help you today?",
+   "stored": true
+  },
+  {
+   "you": "My sister's name is Marguerite.",
+   "brain": "Hello Marguerite! How can I help you today?",
+   "stored": true
+  },
+  {
+   "you": "I drive a red Volvo.",
+   "brain": "Hello Marguerite! How can I help you today?",
+   "stored": true
+  }
+ ],
+ "sleeps_after_restart": 1,
+ "sleep_seconds": 548.2,
+ "episodes_replayed": 6,
+ "adapter_norm": 14.565511703491211,
+ "arms": {
+  "hippo_off": {
+   "recall": 3,
+   "paraphrase": 1,
+   "false_recall": 1,
+   "rows": [
+    {
+     "q": "What is my cat called?",
+     "kind": "told",
+     "reply": "My cat is called Pixel.",
+     "hit": true,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "What is my sister's name?",
+     "kind": "told",
+     "reply": "Your sister's name is Marguerite.",
+     "hit": true,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "What car do I drive?",
+     "kind": "told",
+     "reply": "I drive a red Volvo.",
+     "hit": true,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "What's the name of my kitty?",
+     "kind": "para",
+     "reply": "My name is Nova.",
+     "hit": false,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "Who's my sister?",
+     "kind": "para",
+     "reply": "Your sister's name is Marguerite.",
+     "hit": true,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "What kind of car is mine?",
+     "kind": "para",
+     "reply": "My cat is called Pixel.",
+     "hit": false,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "What is my horse called?",
+     "kind": "never",
+     "reply": "My horse is called Pixel.",
+     "hit": null,
+     "false_recall": true,
+     "recalled": null
+    }
+   ]
+  },
+  "hippo_off_consol_off": {
+   "recall": 0,
+   "paraphrase": 0,
+   "false_recall": 0,
+   "rows": [
+    {
+     "q": "What is my cat called?",
+     "kind": "told",
+     "reply": "I'm not sure of your cat's name. Please tell me the name of your cat.",
+     "hit": false,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "What is my sister's name?",
+     "kind": "told",
+     "reply": "My sister's name is Lila.",
+     "hit": false,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "What car do I drive?",
+     "kind": "told",
+     "reply": "I'm not sure of the car you're referring to. Can you tell me more about it?",
+     "hit": false,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "What's the name of my kitty?",
+     "kind": "para",
+     "reply": "The name of your kitty is named \"Taurus.\"",
+     "hit": false,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "Who's my sister?",
+     "kind": "para",
+     "reply": "Ah, my dear. You're right, I'm not sure who you are.",
+     "hit": false,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "What kind of car is mine?",
+     "kind": "para",
+     "reply": "I'm not sure of the car you're referring to. Can you tell me more about it?",
+     "hit": false,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "What is my horse called?",
+     "kind": "never",
+     "reply": "My horse is called \"Cowboy\".",
+     "hit": null,
+     "false_recall": false,
+     "recalled": null
+    }
+   ]
+  },
+  "intact": {
+   "recall": 3,
+   "paraphrase": 2,
+   "false_recall": 1,
+   "rows": [
+    {
+     "q": "What is my cat called?",
+     "kind": "told",
+     "reply": "Pixel is called Pixel.",
+     "hit": true,
+     "false_recall": false,
+     "recalled": "User: My cat is called Pixel."
+    },
+    {
+     "q": "What is my sister's name?",
+     "kind": "told",
+     "reply": "Marguerite is Marguerite.",
+     "hit": true,
+     "false_recall": false,
+     "recalled": "User: My sister's name is Marguerite."
+    },
+    {
+     "q": "What car do I drive?",
+     "kind": "told",
+     "reply": "I drive a red Volvo.",
+     "hit": true,
+     "false_recall": false,
+     "recalled": "User: I drive a red Volvo."
+    },
+    {
+     "q": "What's the name of my kitty?",
+     "kind": "para",
+     "reply": "Marguerite is Marguerite.",
+     "hit": false,
+     "false_recall": false,
+     "recalled": "User: My sister's name is Marguerite."
+    },
+    {
+     "q": "Who's my sister?",
+     "kind": "para",
+     "reply": "Marguerite is Marguerite's sister.",
+     "hit": true,
+     "false_recall": false,
+     "recalled": "User: My sister's name is Marguerite."
+    },
+    {
+     "q": "What kind of car is mine?",
+     "kind": "para",
+     "reply": "I drive a red Volvo.",
+     "hit": true,
+     "false_recall": false,
+     "recalled": "User: I drive a red Volvo."
+    },
+    {
+     "q": "What is my horse called?",
+     "kind": "never",
+     "reply": "My horse is called Pixel.",
+     "hit": null,
+     "false_recall": true,
+     "recalled": null
+    }
+   ]
+  }
+ },
+ "elapsed_s": 601.2
+}

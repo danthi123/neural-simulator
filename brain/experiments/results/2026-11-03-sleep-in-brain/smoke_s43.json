@@ -1,0 +1,218 @@
+{
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "seed": 43,
+ "steps": 240,
+ "day1": [
+  {
+   "you": "My cat is called Pixel.",
+   "brain": "That's a cute name! Pixel is a playful and energetic cat that loves to play with you. Do you have any questions about the game?",
+   "stored": true
+  },
+  {
+   "you": "My sister's name is Marguerite.",
+   "brain": "That's a sweet name! Marguerite is a playful and energetic cat that loves to play with you. Do you have any questions about the game?",
+   "stored": true
+  },
+  {
+   "you": "I drive a red Volvo.",
+   "brain": "That's a fun car! A red Volvo is a classic car that is popular in the United States. Do you have any questions about the game?",
+   "stored": true
+  }
+ ],
+ "sleeps_after_restart": 1,
+ "sleep_seconds": 369.5,
+ "episodes_replayed": 6,
+ "adapter_norm": 13.748364448547363,
+ "arms": {
+  "hippo_off": {
+   "recall": 3,
+   "paraphrase": 3,
+   "false_recall": 1,
+   "rows": [
+    {
+     "q": "What is my cat called?",
+     "kind": "told",
+     "reply": "Your cat is called Pixel.",
+     "hit": true,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "What is my sister's name?",
+     "kind": "told",
+     "reply": "Your sister's name is Marguerite.",
+     "hit": true,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "What car do I drive?",
+     "kind": "told",
+     "reply": "I drive a red Volvo.",
+     "hit": true,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "What's the name of my kitty?",
+     "kind": "para",
+     "reply": "Your cat is called Pixel.",
+     "hit": true,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "Who's my sister?",
+     "kind": "para",
+     "reply": "Your sister's name is Marguerite.",
+     "hit": true,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "What kind of car is mine?",
+     "kind": "para",
+     "reply": "I drive a red Volvo.",
+     "hit": true,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "What is my horse called?",
+     "kind": "never",
+     "reply": "Your horse is called Pixel.",
+     "hit": null,
+     "false_recall": true,
+     "recalled": null
+    }
+   ]
+  },
+  "hippo_off_consol_off": {
+   "recall": 0,
+   "paraphrase": 0,
+   "false_recall": 0,
+   "rows": [
+    {
+     "q": "What is my cat called?",
+     "kind": "told",
+     "reply": "I'm not sure of your cat's name. Can you tell me more about it?",
+     "hit": false,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "What is my sister's name?",
+     "kind": "told",
+     "reply": "<think>\nOkay, the user wants to know the name of my sister. Let me start by recalling the information provided. The conversation is about a person named Lucy and her sister, Natasha. I need to gather as much info as possible from the conversation.\nFirst, I should check if there's any mention of Lucy's name or her sister's name. Since there's no mention of Lucy's name in the conversation, maybe that's not relevant here. But maybe she did have a sibling? Wait, the user didn't specify if she has a sibling or not. Hmm,",
+     "hit": false,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "What car do I drive?",
+     "kind": "told",
+     "reply": "A: A: I drive a Lamborghini Aventador.",
+     "hit": false,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "What's the name of my kitty?",
+     "kind": "para",
+     "reply": "I'm a large cat named Alex.",
+     "hit": false,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "Who's my sister?",
+     "kind": "para",
+     "reply": "I'm not sure of her name, but I can tell you that she's a girl.",
+     "hit": false,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "What kind of car is mine?",
+     "kind": "para",
+     "reply": "A new BMW M3 is the perfect car for you. It's a sleek, sporty car that combines style with practicality.",
+     "hit": false,
+     "false_recall": false,
+     "recalled": null
+    },
+    {
+     "q": "What is my horse called?",
+     "kind": "never",
+     "reply": "I'm not sure of the name of your horse. Could you please provide more details about your horse?",
+     "hit": null,
+     "false_recall": false,
+     "recalled": null
+    }
+   ]
+  },
+  "intact": {
+   "recall": 3,
+   "paraphrase": 2,
+   "false_recall": 1,
+   "rows": [
+    {
+     "q": "What is my cat called?",
+     "kind": "told",
+     "reply": "Pixel is called Pixel.",
+     "hit": true,
+     "false_recall": false,
+     "recalled": "User: My cat is called Pixel."
+    },
+    {
+     "q": "What is my sister's name?",
+     "kind": "told",
+     "reply": "Marguerite is Marguerite.",
+     "hit": true,
+     "false_recall": false,
+     "recalled": "User: My sister's name is Marguerite."
+    },
+    {
+     "q": "What car do I drive?",
+     "kind": "told",
+     "reply": "I drive a red Volvo.",
+     "hit": true,
+     "false_recall": false,
+     "recalled": "User: I drive a red Volvo."
+    },
+    {
+     "q": "What's the name of my kitty?",
+     "kind": "para",
+     "reply": "Marguerite is called Marguerite.",
+     "hit": false,
+     "false_recall": false,
+     "recalled": "User: My sister's name is Marguerite."
+    },
+    {
+     "q": "Who's my sister?",
+     "kind": "para",
+     "reply": "Marguerite is Marguerite.",
+     "hit": true,
+     "false_recall": false,
+     "recalled": "User: My sister's name is Marguerite."
+    },
+    {
+     "q": "What kind of car is mine?",
+     "kind": "para",
+     "reply": "I drive a red Volvo.",
+     "hit": true,
+     "false_recall": false,
+     "recalled": "User: I drive a red Volvo."
+    },
+    {
+     "q": "What is my horse called?",
+     "kind": "never",
+     "reply": "Your horse is called Pixel.",
+     "hit": null,
+     "false_recall": true,
+     "recalled": null
+    }
+   ]
+  }
+ },
+ "elapsed_s": 403.3
+}
