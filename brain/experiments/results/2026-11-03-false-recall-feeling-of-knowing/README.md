@@ -38,7 +38,7 @@ question answered with a learned name, out of 12 per seed; fr4 = the original 4 
 | name-token log-prob | 32 / 30 / 10 | 33 / 37 / 11 | 0.47 / 0.47 |
 | answer entropy | 32 / 31 / 10 | 19 / 14 / 5 | 0.58 / 0.62 |
 | cortical cue familiarity (`cue_gain_max`, hippocampus OFF) | 20 / 2 / 1 | 23 / 8 / 4 | 0.79 / 0.78 |
-| hippocampal familiarity (learned bar ~0.22) | 29 / 12 / 2 | 37 / 15 / 3 | 0.88 / 0.88 |
+| hippocampal familiarity (fitted bar ~0.22) | 29 / 12 / 2 | 37 / 15 / 3 | 0.88 / 0.88 |
 | hippocampal familiarity at the current bar 0.12 | 35 / 39 / 10 | 43 / 49 / 13 | - |
 
 The per-seed mean AUC agrees with the pooled AUC: cue_gain_max 0.80 / 0.79, hippocampus 0.89 / 0.89, answer
@@ -49,8 +49,8 @@ log-prob 0.72 / 0.65.
    confabulated name is said as fluently as a recalled one (name-token AUC 0.47). Thresholds keep about as many
    confabulations as correct answers.
 2. **Two familiarity signals on the question do separate the classes. Both are leads, not GOs.**
-   - The hippocampal score with a learned bar (about 0.22 instead of 0.12) keeps 81-84% of correct answers and removes
-     71-72% of confabulations at both step counts.
+   - The hippocampal score with a fitted bar (about 0.22 instead of 0.12) keeps 81-84% of correct answers and removes
+     71-72% of confabulations at both step counts. The bar was fitted on these same questions and replies (in-sample), so this is a lead until it holds on held-out questions.
    - With the hippocampus off, the cortex's own cue familiarity (how strongly the sleep-changed synapses respond to
      the question) removes 85-95% of confabulations but drops about half the correct answers.
    - This fits the biology: "do I know this" is judged on the cue (familiarity), not on how fluent the answer is.
