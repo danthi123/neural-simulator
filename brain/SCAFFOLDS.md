@@ -9,5 +9,5 @@
 | Self-knowledge seeded as three Q/A exchanges at birth | `brain.py` `_grow_self` | identity learned in early conversations and consolidated | 11-02 |
 | Sleep learning = gradient descent on low-rank cortical adapters (declared trade) | `plastic_cortex.py`, `sleep.py` | a local plasticity rule on the same synapses (e.g. replay-driven Hebbian/BTSP-style) | 11-02 |
 | Sleep replays the stored episode text (the hippocampus keeps text only for inspection otherwise) | `sleep.py` | replay generated from the reinstated cortical state, no stored text | 11-02 |
-| Innate primaries (13 bodily + social events per sign, a seed draws 8) define the valence axis | `affect.py` | a body/interoception model whose states are the unconditioned stimuli; valence learned by conditioning on outcomes | 11-03 |
+| Innate primaries (8 bodily + 8 social per sign, 10 bodily-negative; a seed draws 4 + 4) and 6 neutral body states (each opponent pole's zero) define the valence read-out (deep layers 6-11) | `affect.py` | a body/interoception model whose states are the unconditioned stimuli; valence learned by conditioning on outcomes | 11-03 |
 | Appraisal zero = neutral statements; mood TAU 4 events; modulation GAIN 16 (dev-calibrated) | `affect.py` | adaptive reference (expectation-relative appraisal) and gain set by arousal | 11-03 |

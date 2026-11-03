@@ -176,3 +176,10 @@ FROZEN for the six-seed run: `Affect(readout="twopole_deep")` (the new default),
 social per sign), modulation pattern unchanged in form ((mean pos - mean neg primary trace) / 2, all layers, now
 from the balanced draw), GAIN 16, TAU 4, `mood_probe.py` defaults (arms pos,neg,off,rand_pos,rand_neg; 12 test
 questions x 3 samples; 60 tokens), criteria and table: `brain/experiments/mood_table_v2.py`.
+
+## 11. Iteration 2 result (11-03)
+
+`brain/experiments/results/2026-11-03-mood2-0.1b.md`: NOT PASS, 6/7 criteria. Held-out appraisal 5/6, mood signs
+6/6, negative lesion 6/6, embedding 6/6, specificity 5/6, echo 6/6; positive lesion (pos vs off, lexical CI above 0)
+3/6. Appraisal is fixed; the remaining defect is an action asymmetry (one additive pattern darkens more easily than it
+brightens; friendly birth register near ceiling; same-norm random perturbation lowers sentiment).
