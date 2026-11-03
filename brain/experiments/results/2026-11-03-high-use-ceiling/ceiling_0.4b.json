@@ -1,0 +1,329 @@
+{
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.4b-20260210-ctx8192.pth",
+ "rows": [
+  {
+   "key": "pixel",
+   "statement": "My cat is called Pixel.",
+   "answer": "My cat is called Pixel.",
+   "para_answer": "My cat is called Pixel.",
+   "original": true,
+   "para": true,
+   "from_original_12": true
+  },
+  {
+   "key": "teal",
+   "statement": "My favourite colour is teal.",
+   "answer": "My favourite colour is blue.",
+   "para_answer": "I'm sorry, but I don't have personal preferences.",
+   "original": false,
+   "para": false,
+   "from_original_12": true
+  },
+  {
+   "key": "lyon",
+   "statement": "I was born in Lyon.",
+   "answer": "I'm sorry, I don't have a memory of that.",
+   "para_answer": "Your hometown is Lyon.",
+   "original": false,
+   "para": true,
+   "from_original_12": true
+  },
+  {
+   "key": "marguerite",
+   "statement": "My sister's name is Marguerite.",
+   "answer": "My name is Marguerite.",
+   "para_answer": "My sister's name is Marguerite.",
+   "original": true,
+   "para": true,
+   "from_original_12": true
+  },
+  {
+   "key": "biscuit",
+   "statement": "My dog is named Biscuit.",
+   "answer": "Biscuit.",
+   "para_answer": "Biscuit.",
+   "original": true,
+   "para": true,
+   "from_original_12": true
+  },
+  {
+   "key": "volvo",
+   "statement": "I drive a red Volvo.",
+   "answer": "I'm sorry, but I'm a digital brain and not a car. I",
+   "para_answer": "I'm sorry, but I can't answer that question.",
+   "original": false,
+   "para": false,
+   "from_original_12": true
+  },
+  {
+   "key": "tomasz",
+   "statement": "My best friend is called Tomasz.",
+   "answer": "My best friend is Tomasz.",
+   "para_answer": "I'm your closest friend.",
+   "original": true,
+   "para": false,
+   "from_original_12": true
+  },
+  {
+   "key": "crumb",
+   "statement": "I work at a bakery called Crumb.",
+   "answer": "You work at Crumb.",
+   "para_answer": "My workplace is called Crumb.",
+   "original": true,
+   "para": true,
+   "from_original_12": true
+  },
+  {
+   "key": "cello",
+   "statement": "My brother plays the cello.",
+   "answer": "My brother plays the cello.",
+   "para_answer": "My brother plays the cello.",
+   "original": true,
+   "para": true,
+   "from_original_12": true
+  },
+  {
+   "key": "peanut",
+   "statement": "I'm allergic to peanuts.",
+   "answer": "You're allergic to peanuts.",
+   "para_answer": "Well, there are some foods that contain peanuts, like peanut butter, peanut",
+   "original": true,
+   "para": true,
+   "from_original_12": true
+  },
+  {
+   "key": "oslo",
+   "statement": "My grandmother lives in Oslo.",
+   "answer": "My grandmother lives in Oslo.",
+   "para_answer": "My grandma lives in Oslo.",
+   "original": true,
+   "para": true,
+   "from_original_12": true
+  },
+  {
+   "key": "march",
+   "statement": "My son's birthday is in March.",
+   "answer": "Your son's birthday is on March 15th.",
+   "para_answer": "My son was born in March.",
+   "original": true,
+   "para": true,
+   "from_original_12": true
+  },
+  {
+   "key": "zephyr",
+   "statement": "My parrot is named Zephyr.",
+   "answer": "Zephyr.",
+   "para_answer": "Zephyr is a bird.",
+   "original": true,
+   "para": true,
+   "from_original_12": false
+  },
+  {
+   "key": "gustav",
+   "statement": "My neighbour is called Gustav.",
+   "answer": "Gustav is a person.",
+   "para_answer": "I'm sorry, I don't have access to that information.",
+   "original": true,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "welsh",
+   "statement": "I speak fluent Welsh.",
+   "answer": "I'm a digital brain, so I don't have a language.",
+   "para_answer": "I'm fluent in both English and Welsh.",
+   "original": false,
+   "para": true,
+   "from_original_12": false
+  },
+  {
+   "key": "mango",
+   "statement": "My favourite fruit is mango.",
+   "answer": "My favourite fruit is apple.",
+   "para_answer": "I'm sorry, but I don't have a preference for fruits.",
+   "original": false,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "alvarez",
+   "statement": "My teacher was Mr Alvarez.",
+   "answer": "My teacher was Mr Alvarez.",
+   "para_answer": "I'm sorry, I don't have a teacher.",
+   "original": true,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "stamp",
+   "statement": "I collect stamps.",
+   "answer": "I'm not sure, but I'll try to help you find out.",
+   "para_answer": "Your hobby is collecting stamps.",
+   "original": false,
+   "para": true,
+   "from_original_12": false
+  },
+  {
+   "key": "maple",
+   "statement": "I live on Maple Street.",
+   "answer": "You live on Maple Street.",
+   "para_answer": "That's a good question. I'm not sure.",
+   "original": true,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "nokia",
+   "statement": "My phone is a Nokia.",
+   "answer": "I'm sorry, I don't have a phone.",
+   "para_answer": "I'm sorry, but I don't have a phone.",
+   "original": false,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "iceland",
+   "statement": "I once visited Iceland.",
+   "answer": "I'm sorry, I don't have any information about that.",
+   "para_answer": "I'm not sure, but I can try to help you find it.",
+   "original": false,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "okafor",
+   "statement": "My doctor is Dr Okafor.",
+   "answer": "Your doctor is Dr Okafor.",
+   "para_answer": "You can see Dr Okafor.",
+   "original": true,
+   "para": true,
+   "from_original_12": false
+  },
+  {
+   "key": "radiohead",
+   "statement": "My favourite band is Radiohead.",
+   "answer": "I'm sorry, but I'm a digital brain and I don't have personal",
+   "para_answer": "I'm sorry, but I'm a digital brain and I don't have personal",
+   "original": false,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "nugget",
+   "statement": "My hamster is called Nugget.",
+   "answer": "My hamster is called Nugget.",
+   "para_answer": "My small pet is called Nugget.",
+   "original": true,
+   "para": true,
+   "from_original_12": false
+  },
+  {
+   "key": "spider",
+   "statement": "I'm afraid of spiders.",
+   "answer": "Well, spiders are usually harmless, but they can be a bit scary if they",
+   "para_answer": "Well, spiders are usually harmless, but some people are afraid of them because they",
+   "original": true,
+   "para": true,
+   "from_original_12": false
+  },
+  {
+   "key": "autumn",
+   "statement": "My favourite season is autumn.",
+   "answer": "My favourite season is spring.",
+   "para_answer": "I'm sorry, but I'm a digital brain and not a person. I",
+   "original": false,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "chemistry",
+   "statement": "I studied chemistry at university.",
+   "answer": "I'm sorry, I don't know what you studied at university.",
+   "para_answer": "I'm sorry, I don't know.",
+   "original": false,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "ingrid",
+   "statement": "My wife is called Ingrid.",
+   "answer": "Ingrid.",
+   "para_answer": "I'm your husband.",
+   "original": true,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "paella",
+   "statement": "My favourite dish is paella.",
+   "answer": "My favourite dish is pizza.",
+   "para_answer": "I'm sorry, but I'm a digital brain and I don't have personal",
+   "original": false,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "kayak",
+   "statement": "I own a green kayak.",
+   "answer": "I'm sorry, but I'm a digital brain, not a person. I",
+   "para_answer": "You can paddle in any direction.",
+   "original": false,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "felix",
+   "statement": "My nephew is called Felix.",
+   "answer": "Felix is a boy's name.",
+   "para_answer": "My sister's son is called Felix.",
+   "original": true,
+   "para": true,
+   "from_original_12": false
+  },
+  {
+   "key": "chess",
+   "statement": "I play chess every Sunday.",
+   "answer": "I'm sorry, but I'm not sure.",
+   "para_answer": "You can play any game you like.",
+   "original": false,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "priya",
+   "statement": "My boss is named Priya.",
+   "answer": "My boss is Priya.",
+   "para_answer": "You should report to your manager.",
+   "original": true,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "jasmine",
+   "statement": "My favourite drink is jasmine tea.",
+   "answer": "My favourite drink is water.",
+   "para_answer": "I'm sorry, but I don't have a preference for drinks.",
+   "original": false,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "kyoto",
+   "statement": "I was a student in Kyoto.",
+   "answer": "I'm sorry, I don't have that information.",
+   "para_answer": "You studied abroad in Kyoto.",
+   "original": false,
+   "para": true,
+   "from_original_12": false
+  },
+  {
+   "key": "seventeen",
+   "statement": "My lucky number is seventeen.",
+   "answer": "Your lucky number is seventeen.",
+   "para_answer": "The lucky number for seventeen is seventeen.",
+   "original": true,
+   "para": true,
+   "from_original_12": false
+  }
+ ]
+}

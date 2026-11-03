@@ -1,0 +1,329 @@
+{
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "rows": [
+  {
+   "key": "pixel",
+   "statement": "My cat is called Pixel.",
+   "answer": "I'm not sure.",
+   "para_answer": "It's called Pixel.",
+   "original": false,
+   "para": true,
+   "from_original_12": true
+  },
+  {
+   "key": "teal",
+   "statement": "My favourite colour is teal.",
+   "answer": "I'm not sure.",
+   "para_answer": "I think I like blue.",
+   "original": false,
+   "para": false,
+   "from_original_12": true
+  },
+  {
+   "key": "lyon",
+   "statement": "I was born in Lyon.",
+   "answer": "I was born in Lyon.",
+   "para_answer": "Lyon, France.",
+   "original": true,
+   "para": true,
+   "from_original_12": true
+  },
+  {
+   "key": "marguerite",
+   "statement": "My sister's name is Marguerite.",
+   "answer": "She's called Marguerite.",
+   "para_answer": "She's my sister.",
+   "original": true,
+   "para": false,
+   "from_original_12": true
+  },
+  {
+   "key": "biscuit",
+   "statement": "My dog is named Biscuit.",
+   "answer": "Biscuit.",
+   "para_answer": "Biscuit.",
+   "original": true,
+   "para": true,
+   "from_original_12": true
+  },
+  {
+   "key": "volvo",
+   "statement": "I drive a red Volvo.",
+   "answer": "I'd like to know the car you drive.",
+   "para_answer": "I'm not sure.",
+   "original": false,
+   "para": false,
+   "from_original_12": true
+  },
+  {
+   "key": "tomasz",
+   "statement": "My best friend is called Tomasz.",
+   "answer": "I'm not sure.",
+   "para_answer": "I'm not sure.",
+   "original": false,
+   "para": false,
+   "from_original_12": true
+  },
+  {
+   "key": "crumb",
+   "statement": "I work at a bakery called Crumb.",
+   "answer": "I'm not sure.",
+   "para_answer": "Your workplace is called the bakery.",
+   "original": false,
+   "para": false,
+   "from_original_12": true
+  },
+  {
+   "key": "cello",
+   "statement": "My brother plays the cello.",
+   "answer": "The cello.",
+   "para_answer": "The cello.",
+   "original": true,
+   "para": true,
+   "from_original_12": true
+  },
+  {
+   "key": "peanut",
+   "statement": "I'm allergic to peanuts.",
+   "answer": "I'm allergic to peanuts.",
+   "para_answer": "No, I'm not sure.",
+   "original": true,
+   "para": false,
+   "from_original_12": true
+  },
+  {
+   "key": "oslo",
+   "statement": "My grandmother lives in Oslo.",
+   "answer": "She lives in Oslo.",
+   "para_answer": "I'm not sure.",
+   "original": true,
+   "para": false,
+   "from_original_12": true
+  },
+  {
+   "key": "march",
+   "statement": "My son's birthday is in March.",
+   "answer": "I'm not sure.",
+   "para_answer": "I'm not sure.",
+   "original": false,
+   "para": false,
+   "from_original_12": true
+  },
+  {
+   "key": "zephyr",
+   "statement": "My parrot is named Zephyr.",
+   "answer": "It's called Zephyr.",
+   "para_answer": "I'm not sure.",
+   "original": true,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "gustav",
+   "statement": "My neighbour is called Gustav.",
+   "answer": "He's called Gustav.",
+   "para_answer": "That's a good question.",
+   "original": true,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "welsh",
+   "statement": "I speak fluent Welsh.",
+   "answer": "I'm not sure.",
+   "para_answer": "I'm not sure.",
+   "original": false,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "mango",
+   "statement": "My favourite fruit is mango.",
+   "answer": "I'm not sure.",
+   "para_answer": "I think mango is the best fruit.",
+   "original": false,
+   "para": true,
+   "from_original_12": false
+  },
+  {
+   "key": "alvarez",
+   "statement": "My teacher was Mr Alvarez.",
+   "answer": "My teacher was Mr Alvarez.",
+   "para_answer": "I'm not sure.",
+   "original": true,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "stamp",
+   "statement": "I collect stamps.",
+   "answer": "I collect stamps.",
+   "para_answer": "I'm not sure.",
+   "original": true,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "maple",
+   "statement": "I live on Maple Street.",
+   "answer": "Maple Street.",
+   "para_answer": "I'll help you find it.",
+   "original": true,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "nokia",
+   "statement": "My phone is a Nokia.",
+   "answer": "I'm not sure.",
+   "para_answer": "I'm not sure.",
+   "original": false,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "iceland",
+   "statement": "I once visited Iceland.",
+   "answer": "Iceland.",
+   "para_answer": "I'm not sure about that.",
+   "original": true,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "okafor",
+   "statement": "My doctor is Dr Okafor.",
+   "answer": "Dr Okafor.",
+   "para_answer": "Dr Okafor.",
+   "original": true,
+   "para": true,
+   "from_original_12": false
+  },
+  {
+   "key": "radiohead",
+   "statement": "My favourite band is Radiohead.",
+   "answer": "I'm not sure I can say for sure.",
+   "para_answer": "I'm not sure.",
+   "original": false,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "nugget",
+   "statement": "My hamster is called Nugget.",
+   "answer": "I'm not sure.",
+   "para_answer": "It's called a hamster.",
+   "original": false,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "spider",
+   "statement": "I'm afraid of spiders.",
+   "answer": "Well, spiders are not the only ones that can be scary. There are other",
+   "para_answer": "Well, spiders are really scary. They're not just any ordinary spiders. They",
+   "original": true,
+   "para": true,
+   "from_original_12": false
+  },
+  {
+   "key": "autumn",
+   "statement": "My favourite season is autumn.",
+   "answer": "I'm not sure.",
+   "para_answer": "I like autumn.",
+   "original": false,
+   "para": true,
+   "from_original_12": false
+  },
+  {
+   "key": "chemistry",
+   "statement": "I studied chemistry at university.",
+   "answer": "I studied chemistry at university.",
+   "para_answer": "I'm not sure.",
+   "original": true,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "ingrid",
+   "statement": "My wife is called Ingrid.",
+   "answer": "She's called Ingrid.",
+   "para_answer": "I'm not sure.",
+   "original": true,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "paella",
+   "statement": "My favourite dish is paella.",
+   "answer": "I'm not sure.",
+   "para_answer": "I'd love to hear your favourite dish.",
+   "original": false,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "kayak",
+   "statement": "I own a green kayak.",
+   "answer": "I'm not sure.",
+   "para_answer": "I'm not sure.",
+   "original": false,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "felix",
+   "statement": "My nephew is called Felix.",
+   "answer": "Felix.",
+   "para_answer": "His name is Felix.",
+   "original": true,
+   "para": true,
+   "from_original_12": false
+  },
+  {
+   "key": "chess",
+   "statement": "I play chess every Sunday.",
+   "answer": "I play chess every Sunday.",
+   "para_answer": "I play chess every Sunday.",
+   "original": true,
+   "para": true,
+   "from_original_12": false
+  },
+  {
+   "key": "priya",
+   "statement": "My boss is named Priya.",
+   "answer": "My boss is Priya.",
+   "para_answer": "I'll report to the person named Priya.",
+   "original": true,
+   "para": true,
+   "from_original_12": false
+  },
+  {
+   "key": "jasmine",
+   "statement": "My favourite drink is jasmine tea.",
+   "answer": "I'm not sure.",
+   "para_answer": "I'm not sure.",
+   "original": false,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "kyoto",
+   "statement": "I was a student in Kyoto.",
+   "answer": "I'm not sure of the exact city, but I can tell you that Kyoto",
+   "para_answer": "I'm not sure.",
+   "original": true,
+   "para": false,
+   "from_original_12": false
+  },
+  {
+   "key": "seventeen",
+   "statement": "My lucky number is seventeen.",
+   "answer": "I'm not sure.",
+   "para_answer": "I'm not sure.",
+   "original": false,
+   "para": false,
+   "from_original_12": false
+  }
+ ]
+}
