@@ -53,3 +53,50 @@ rarely fires on told questions. That gate's misfire rate at 1.5B under the fitte
 12 told facts only; familiarity read minutes after storage (no day of decay); one sleep; dev_told are rewordings of
 the same 12 facts (no separate told-fact bank), so the sweep's dev and test told items share facts; the gate here is
 familiarity-only (no margin, no recollection test).
+
+## Result (2026-11-03)
+Run: W GPU (RTX 3090) via gpu_queue, six seeds, about 6 min per seed (sleep 253-269 s), `cuda_peak_bytes` 10.6 GiB.
+CPU smoke first (0.1B, seed 42, 3 questions per set): ran end to end. Files: `2026-11-03-gate-misfire-1.5b/`
+(`gm_s<seed>.json` = every familiarity value; `report.json` from `gate_misfire_probe report`). Numbers read from `report.json`.
+
+Pre-registered bars. Per seed: told misfire (of 12) / PARA misfire (of 12) / never-told catch (of 60).
+Unslept values are identical on all six seeds, as stated in the setting (deterministic reads).
+
+| key @ bar | cond | told misfire mean | PARA misfire mean | catch mean | seeds catch >= 80% | per seed 42/43/44/100/101/102 | verdict |
+|---|---|---|---|---|---|---|---|
+| S0 @ 0.22 | unslept | 4/12 (33%) | 5/12 | 55% | 0/6 | 4/5/33 on every seed | not usable |
+| S0 @ 0.22 | slept | 4/12 (33%) | 5/12 | 55% | 0/6 | 4/5/33 on every seed | not usable |
+| S_all @ 0.104 | unslept | 2/12 (17%) | 2/12 | 18% | 0/6 | 2/2/11 on every seed | not usable |
+| S_all @ 0.104 | slept | 1.83/12 (15%) | 2.5/12 | 33% | 0/6 | 2/3/20, 2/3/18, 1/0/25, 2/2/19, 2/4/19, 2/3/16 | not usable |
+| S_all @ 0.22 (size fix) | unslept | 3/12 (25%) | 7/12 | 92% | 6/6 | 3/7/55 on every seed | not usable |
+| S_all @ 0.22 (size fix) | slept | 5.67/12 (47%) | 8.5/12 | 93% | 6/6 | 5/8/55, 6/9/54, 6/8/57, 6/9/56, 6/9/57, 5/8/56 | not usable |
+
+- Verdict (pre-registered): the gate is NOT usable for the lesson under any key, bar or condition. The misfire bar
+  (<= 1/12) fails everywhere; the catch bar (>= 80% on >= 5/6 seeds) holds only for S_all @ 0.22.
+- Sweep on the DEV split (measurement; lowest bar with dev never-told catch >= 80%, pooled seeds):
+
+| key | cond | dev bar | dev told misfire | held-out told / PARA misfire | held-out v3 catch |
+|---|---|---|---|---|---|
+| S0 | unslept | 0.248 | 33% | 33% / 67% | 83% |
+| S0 | slept | 0.248 | 33% | 33% / 67% | 83% |
+| S_all | unslept | 0.190 | 25% | 17% (2/12) / 50% | 79% |
+| S_all | slept | 0.168 | 26% | 29% / 49% | 76% |
+
+  The best told misfire at >= 80% catch is 2-4 of 12, not <= 1. The other way round: the bar that misfires on at most
+  1 of the 12 told questions catches 30% (S0), 13% (S_all unslept), 12-47% (S_all slept) of never-told questions.
+- Separation (AUROC told vs never-told): S0 0.73 (PARA 0.64), S_all unslept 0.83 (PARA 0.68), slept 0.78 (0.66).
+  Forced top-1 right episode, told, pooled of 72: S0 42, S_all 66 unslept / 62 slept.
+- Which told questions misfire (S_all @ 0.22, unslept): dog (0.196, right episode), best friend (0.098, right
+  episode), work (0.082, wrong episode). Two of three are cases where the hippocampus would fetch the right memory:
+  the gate would suppress a correct recall.
+- Sleep: S_all familiarity of told cues drops after one sleep (misfire 3 -> 5-6 at 0.22) while never-told stays
+  about the same: the cue is read through the slept cortex, the stored keys are from day 1. S0 does not move at all
+  with sleep (layer-0 change not altered by the adapters; observed, not explained here).
+- Meaning: familiarity alone does not separate told from never-told questions well enough at 1.5B (AUROC 0.73-0.83)
+  for a gate whose firing overrides recall. Any bar that catches most never-told questions fires on 2-6 of the 12 told
+  questions, and the lived lesson then replaces those answers with "I don't know". The lesson must not be wired to
+  this gate. Next method (not a gate retune): arbitration in which a confident recall wins over the lesson (the gate
+  only reinstates the lesson when no episode passes the selection bar and margin), or a recollection test that uses
+  the recalled content; re-measure told DK with that, not familiarity alone.
+- Limits: as stated; 12 told facts (a misfire count step is 1/12); dev_told shares facts with the test told items;
+  keys stored unslept and read minutes later (no decay); familiarity-only gate (no margin, no recollection).
