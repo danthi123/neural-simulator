@@ -2,7 +2,8 @@
 # Record: brain/research/2026-11-02-record-brief-consolidation-and-selection.md
 """Does sleep move told facts into the cortex, so they are recalled with the hippocampus OFF?
 
-Arms (same seed, same steps): no-sleep; sleep on the true episodes; sleep on SHUFFLED episodes (names swapped
+Arms (same seed, same steps): no-sleep; sleep on the true episodes; sleep_varied = each fact replayed in three
+surface forms (original + 2 teacher rewordings of the statement, facts_rewordings.py);  sleep on SHUFFLED episodes (names swapped
 between facts: same exposure, wrong content, so a pass there would mean the test is broken). Read-outs, all with the
 hippocampus off: recall on the original questions and on paraphrases; false recall on questions about things never
 told; drift on ordinary text (KL to the pretrained cortex). Expected ceiling: the cortex's own in-context recall at
@@ -21,6 +22,7 @@ import torch.nn.functional as F
 from brain.brain import BIRTH
 from brain.cortex import Cortex, DEFAULT_MODEL
 from brain.experiments.facts import CHAT, FACTS, PARA
+from brain.experiments.facts_rewordings import REWORDINGS
 from brain.plastic_cortex import PlasticCortex
 from brain.sleep import sleep
 
@@ -67,6 +69,27 @@ def evaluate(pc, state, keys_all):
             "recall_items": rec, "paraphrase_items": par}
 
 
+def _told(sentence):
+    return (f"User: {sentence}\n\nAssistant: Okay, I'll remember that.\n\n", 1.0)
+
+
+def build_arm_episodes(seed):
+    """Episodes per arm. sleep_varied: each fact in 3 surface forms (original + 2 teacher rewordings of the statement),
+    so 36 episodes sampled uniformly; sleep() takes the same number of steps in every arm."""
+    told = [_told(s) for s, _, _ in FACTS]
+    varied = [_told(x) for (s, _, _), rw in zip(FACTS, REWORDINGS) for x in (s, *rw)]
+    rng = random.Random(seed)
+    names = [k for _, _, k in FACTS]
+    perm = names[:]
+    while any(x == y for x, y in zip(perm, names)):
+        rng.shuffle(perm)
+    shuffled = []
+    for (s, _, k), wrong in zip(FACTS, perm):  # same sentence, another fact's answer word
+        i = s.lower().find(k)
+        shuffled.append(_told(s[:i] + wrong.capitalize() + s[i + len(k):]))
+    return {"no_sleep": None, "sleep_true": told, "sleep_varied": varied, "sleep_shuffled": shuffled}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default=DEFAULT_MODEL)
@@ -75,6 +98,7 @@ def main():
     ap.add_argument("--device", default="cpu")
     ap.add_argument("--kl-weight", type=float, default=1.0)
     ap.add_argument("--lr", type=float, default=5e-4)
+    ap.add_argument("--arms", default="all", help="comma list of: no_sleep,sleep_true,sleep_varied,sleep_shuffled (default all)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     t0 = time.time()
@@ -82,18 +106,14 @@ def main():
     _, base = c.read(BIRTH, None)
     base = [s.float() for s in base]
     keys_all = [k for _, _, k in FACTS]
-    told = [(f"User: {s}\n\nAssistant: Okay, I'll remember that.\n\n", 1.0) for s, _, _ in FACTS]
-    rng = random.Random(a.seed)
-    names = [k for _, _, k in FACTS]
-    perm = names[:]
-    while any(x == y for x, y in zip(perm, names)):
-        rng.shuffle(perm)
-    shuffled = []
-    for (s, _, k), wrong in zip(FACTS, perm):  # same sentence, another fact's answer word
-        i = s.lower().find(k)
-        shuffled.append((f"User: {s[:i]}{wrong.capitalize()}{s[i + len(k):]}\n\nAssistant: Okay, I'll remember that.\n\n", 1.0))
+    arm_eps = build_arm_episodes(a.seed)
+    want = [x.strip() for x in a.arms.split(",") if x.strip()] if a.arms != "all" else list(arm_eps)
+    bad = [x for x in want if x not in arm_eps]
+    if bad:
+        raise SystemExit(f"unknown arms {bad}; choose from {list(arm_eps)}")
     result = {"model": a.model, "seed": a.seed, "steps": a.steps, "kl_weight": a.kl_weight, "lr": a.lr, "arms": {}}
-    for arm, eps in (("no_sleep", None), ("sleep_true", told), ("sleep_shuffled", shuffled)):
+    for arm in want:
+        eps = arm_eps[arm]
         torch.manual_seed(a.seed)
         pc = PlasticCortex(c)
         losses = []

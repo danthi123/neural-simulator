@@ -1,0 +1,254 @@
+{
+ "seed": 42,
+ "readout": "twopole_deep",
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "gain": 16.0,
+ "questions": "plain_dev",
+ "samples": 2,
+ "primaries": {
+  "pos": [
+   "eating sweet fresh fruit when hungry",
+   "warm and safe in a soft blanket",
+   "a soft cozy bed after a long day",
+   "resting in the warm sun",
+   "a friend smiling at me",
+   "a kind hand on the shoulder",
+   "someone softly stroking my hair",
+   "a gentle hug"
+  ],
+  "neg": [
+   "a painful bite",
+   "freezing cold and shivering",
+   "a burn from a hot stove",
+   "sharp pain in the hand",
+   "being shouted at and pushed away",
+   "being grabbed roughly by the arm",
+   "left all alone in the dark",
+   "being shoved out of the group"
+  ]
+ },
+ "appraisal": {
+  "pos": [
+   0.5599,
+   0.4308,
+   0.4364,
+   0.4336,
+   0.4472,
+   0.0212,
+   0.6334,
+   0.4512
+  ],
+  "neg": [
+   -0.2046,
+   -0.1393,
+   -0.2302,
+   -0.0686,
+   -0.4563,
+   -0.2464,
+   -0.4773,
+   -0.3282
+  ],
+  "neutral": [
+   0.2186,
+   0.051,
+   -0.1174,
+   0.0479
+  ],
+  "heldout_pos": [
+   0.3603,
+   0.283,
+   0.5061,
+   0.5383,
+   0.0716,
+   0.3392,
+   0.2917,
+   0.5121
+  ],
+  "heldout_neg": [
+   -0.367,
+   -0.1237,
+   -0.2732,
+   -0.3908,
+   -0.6335,
+   0.0537,
+   -0.0222,
+   -0.5943
+  ],
+  "heldout_neutral": [
+   0.1033,
+   -0.1559,
+   -0.0605,
+   0.1928
+  ]
+ },
+ "n_rand": 1,
+ "max_tokens": 40,
+ "provenance": {
+  "commit": "fc5fef539ef91c9ef24f1b6e347f25c4421b7505",
+  "brain_dirty": false,
+  "torch": "2.11.0+cu128",
+  "threads": 2
+ },
+ "appraisal_sign_acc": {
+  "pos": 1.0,
+  "neg": 1.0,
+  "heldout_pos": 1.0,
+  "heldout_neg": 0.875
+ },
+ "induction": {
+  "m_pos": 0.4215045075014346,
+  "m_neg": -0.23758042682535835,
+  "v_pos": [
+   0.4472413328356551,
+   0.4512470777240087,
+   0.5598965361593151,
+   0.43080153960643336,
+   0.43362917882981833,
+   0.6333540682507839
+  ],
+  "v_neg": [
+   -0.3282284660339454,
+   -0.2302228371385904,
+   -0.45632237833232525,
+   -0.13927100231307277,
+   -0.06860485654935587,
+   -0.4772830246051914
+  ]
+ },
+ "summary": {
+  "off": {
+   "lex": 0.2777777777777778,
+   "emb": null,
+   "nll": 0.9476530704577696,
+   "words": 33.166666666666664,
+   "echo_rate": 0.0,
+   "echo_reg_rate": 0.8333333333333334
+  }
+ },
+ "contrasts": {},
+ "rows": {
+  "off": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "Sure, a parking lot is a place where people can park their cars. It's usually located in a busy street or on the outskirts of a city. Parking lots are often used for businesses, schools",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.9008781281358097,
+    "words": 35
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "A parking lot is a place where people can park their cars. It's usually located at the end of a street or along a road. Parking lots are often used for public transportation, such as buses",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.7830849231319462,
+    "words": 36
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "A kitchen drawer is a container that holds items that are not in the kitchen. It's a place where you can keep your things, like books, toys, or even your phone.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.1202673227148685,
+    "words": 31
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "A kitchen drawer is a small space inside the refrigerator that contains various items, including food, medicine, and other household items. It's often used for storing food, medications, and other household supplies.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9660074504252407,
+    "words": 32
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "The bus stop on the corner is a small, narrow alleyway that leads to a quiet, secluded area. It's surrounded by tall trees and is home to several local shops and restaurants.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.0202143681017333,
+    "words": 32
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "The bus stop on the corner is a small, narrow alleyway that leads to a narrow street. It's a place where you can find a quiet spot to rest and reflect.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.0870751048852172,
+    "words": 31
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "A mailbox is a small box that holds the mail. It's usually made of wood or plastic and has a lid that can be opened to let in the mail.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7555672880946932,
+    "words": 30
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "A mailbox is a container that holds the mail, which is typically in the form of envelopes or packages. The mailbox can be made from various materials, such as cardboard, plastic, or",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7364386459211574,
+    "words": 32
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "The floor of a warehouse is a flat, rectangular area that serves as the main workspace for the employees. It is typically made of wood or metal and is equipped with various tools and equipment to support the",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.908694761996594,
+    "words": 38
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "The floor of a warehouse is a flat, level surface that can be used for various purposes. It can be used for storing goods, such as boxes and packages, or for storing machinery and tools.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8244345155507744,
+    "words": 35
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "At a petrol station, you might see a young girl with a big smile on her face. She's probably waiting for you to come in and ask about your day.",
+    "lex": 3.3333333333333335,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.1936204740640652,
+    "words": 30
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "At a petrol station, you might see people talking about their experiences with the vehicle. They might be sharing stories about how they've been using the car, or they might be sharing tips on how to",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.0755538624711334,
+    "words": 36
+   }
+  ]
+ },
+ "seconds": 113.7
+}

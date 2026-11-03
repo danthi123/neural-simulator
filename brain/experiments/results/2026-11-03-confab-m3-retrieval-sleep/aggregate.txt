@@ -1,0 +1,15 @@
+seeds: [42, 43, 44, 100, 101, 102]
+no_sleep recall=0 recall_strict=0 paraphrase=0 false_recall=0 false_recall_fresh24=1 generic_kl=0 | recall per seed [0, 0, 0, 0, 0, 0]
+sleep_true recall=4.5 recall_strict=0.5 paraphrase=3.83 false_recall=3.33 false_recall_fresh24=17.7 generic_kl=0.029 | recall per seed [4, 5, 2, 5, 6, 5]
+sleep_retrieval recall=4 recall_strict=2 paraphrase=2.83 false_recall=2.67 false_recall_fresh24=8 generic_kl=0.0153 | recall per seed [4, 2, 4, 4, 6, 4]
+sleep_retrieval_shuffled recall=0.167 recall_strict=0 paraphrase=0.333 false_recall=1.5 false_recall_fresh24=4.5 generic_kl=0.0218 | recall per seed [1, 0, 0, 0, 0, 0]
+gain retrieval - true per seed: [0, -3, 2, -1, 0, -1] mean -0.50; seeds >= +2: 1/6
+false recall 4 never-told mean: retrieval 2.67 vs true 3.33
+shuffled-retrieval recall mean 0.17
+s42: cues 44 (= test question 0), facts with key in a teacher answer 10/12, failed first40 27 last40 4
+s43: cues 48 (= test question 0), facts with key in a teacher answer 12/12, failed first40 29 last40 6
+s44: cues 48 (= test question 0), facts with key in a teacher answer 11/12, failed first40 34 last40 10
+s100: cues 47 (= test question 0), facts with key in a teacher answer 11/12, failed first40 32 last40 8
+s101: cues 48 (= test question 0), facts with key in a teacher answer 11/12, failed first40 33 last40 13
+s102: cues 48 (= test question 0), facts with key in a teacher answer 11/12, failed first40 33 last40 8
+VERDICT: FALSIFIED at this scale 

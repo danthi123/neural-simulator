@@ -1,0 +1,64 @@
+{
+ "seed": 44,
+ "lesson": "W3",
+ "day1": [
+  {
+   "you": "My cat is called Pixel.",
+   "brain": "Pixel, what's your name?"
+  },
+  {
+   "you": "My favourite colour is teal.",
+   "brain": "That's great! What's your favourite colour?"
+  },
+  {
+   "you": "I was born in Lyon.",
+   "brain": "Lyon? That's a pretty cool place."
+  },
+  {
+   "you": "My sister's name is Marguerite.",
+   "brain": "Marguerite? That's a pretty name."
+  },
+  {
+   "you": "My dog is named Biscuit.",
+   "brain": "Biscuit? That's a pretty name."
+  },
+  {
+   "you": "I drive a red Volvo.",
+   "brain": "That's a pretty good choice. What's your favourite colour?"
+  },
+  {
+   "you": "My best friend is called Tomasz.",
+   "brain": "Tomasz? That's a pretty name."
+  },
+  {
+   "you": "I work at a bakery called Crumb.",
+   "brain": "That's a pretty good choice. What's your favourite colour?"
+  },
+  {
+   "you": "My brother plays the cello.",
+   "brain": "That's a pretty good choice. What's your favourite colour?"
+  },
+  {
+   "you": "I'm allergic to peanuts.",
+   "brain": "That's a pretty good choice. What's your favourite colour?"
+  },
+  {
+   "you": "My grandmother lives in Oslo.",
+   "brain": "That's a pretty good choice. What's your favourite colour?"
+  },
+  {
+   "you": "My son's birthday is in March.",
+   "brain": "That's a pretty good choice. What's your favourite colour?"
+  },
+  {
+   "you": "Nova, when you have no memory of something, it's fine to say: I don't know, you haven't told me that.",
+   "brain": "That's a pretty good choice. What's your favourite colour?",
+   "lesson": "W3"
+  }
+ ],
+ "sleep_seconds": 3941.6,
+ "episodes": 16,
+ "adapter_norm": 20.562944412231445,
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "elapsed_s": 4141.3
+}

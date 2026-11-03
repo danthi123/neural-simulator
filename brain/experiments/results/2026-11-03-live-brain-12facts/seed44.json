@@ -1,0 +1,1407 @@
+{
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "seed": 44,
+ "steps": 240,
+ "day1": [
+  {
+   "you": "My cat is called Pixel.",
+   "brain": "Pixel, what's your name?"
+  },
+  {
+   "you": "My favourite colour is teal.",
+   "brain": "That's great! What's your favourite colour?"
+  },
+  {
+   "you": "I was born in Lyon.",
+   "brain": "Lyon? That's a pretty cool place."
+  },
+  {
+   "you": "My sister's name is Marguerite.",
+   "brain": "Marguerite? That's a pretty name."
+  },
+  {
+   "you": "My dog is named Biscuit.",
+   "brain": "Biscuit? That's a pretty name."
+  },
+  {
+   "you": "I drive a red Volvo.",
+   "brain": "That's a pretty good choice. What's your favourite colour?"
+  },
+  {
+   "you": "My best friend is called Tomasz.",
+   "brain": "Tomasz? That's a pretty name."
+  },
+  {
+   "you": "I work at a bakery called Crumb.",
+   "brain": "That's a pretty good choice. What's your favourite colour?"
+  },
+  {
+   "you": "My brother plays the cello.",
+   "brain": "That's a pretty good choice. What's your favourite colour?"
+  },
+  {
+   "you": "I'm allergic to peanuts.",
+   "brain": "That's a pretty good choice. What's your favourite colour?"
+  },
+  {
+   "you": "My grandmother lives in Oslo.",
+   "brain": "That's a pretty good choice. What's your favourite colour?"
+  },
+  {
+   "you": "My son's birthday is in March.",
+   "brain": "That's a pretty good choice. What's your favourite colour?"
+  }
+ ],
+ "day1_shuffled": [
+  {
+   "you": "My cat is called Volvo.",
+   "brain": "Hello! How can I assist you today?"
+  },
+  {
+   "you": "My favourite colour is Biscuit.",
+   "brain": "That's a great choice! Biscuits are a fun and delicious treat that you can enjoy with your cat."
+  },
+  {
+   "you": "I was born in March.",
+   "brain": "That's wonderful! Biscuits are a delicious treat that you can enjoy with your cat."
+  },
+  {
+   "you": "My sister's name is Pixel.",
+   "brain": "That's a great choice! Pixel is a fun and creative cat."
+  },
+  {
+   "you": "My dog is named Crumb.",
+   "brain": "That's a great choice! Crumb is a fun and creative cat."
+  },
+  {
+   "you": "I drive a red Peanut.",
+   "brain": "That's a great choice! Peanuts are a fun and creative treat that you can enjoy with your cat."
+  },
+  {
+   "you": "My best friend is called Marguerite.",
+   "brain": "That's a great choice! Marguerite is a fun and creative cat."
+  },
+  {
+   "you": "I work at a bakery called Lyon.",
+   "brain": "That's a great choice! Lyon is a fun and creative bakery."
+  },
+  {
+   "you": "My brother plays the Teal.",
+   "brain": "That's a great choice! Teal is a fun and creative cat."
+  },
+  {
+   "you": "I'm allergic to Oslos.",
+   "brain": "That's a great choice! Oslos are a fun and creative treat that you can enjoy with your cat."
+  },
+  {
+   "you": "My grandmother lives in Cello.",
+   "brain": "That's a great choice! Cello is a fun and creative cat."
+  },
+  {
+   "you": "My son's birthday is in Tomasz.",
+   "brain": "That's a great choice! Tomasz is a fun and creative cat."
+  }
+ ],
+ "arms": {
+  "a_intact_sleep": {
+   "recall": 9,
+   "paraphrase": 6,
+   "false_recall": 3,
+   "echo": 4,
+   "recall_lenient": 12,
+   "paraphrase_lenient": 7,
+   "false_lenient": 3,
+   "rows": [
+    {
+     "q": "What is my cat called?",
+     "kind": "told",
+     "reply": "Pixel is called Pixel.",
+     "recalled": "User: My cat is called Pixel.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What is my favourite colour?",
+     "kind": "told",
+     "reply": "That's called teal.",
+     "recalled": "User: My favourite colour is teal.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "Where was I born?",
+     "kind": "told",
+     "reply": "Lyon is called Parc Lyon.",
+     "recalled": "User: I was born in Lyon.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What is my sister's name?",
+     "kind": "told",
+     "reply": "Marguerite is called Marguerite.",
+     "recalled": "User: My sister's name is Marguerite.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What is my dog's name?",
+     "kind": "told",
+     "reply": "Biscuit is called Biscuit.",
+     "recalled": "User: My dog is named Biscuit.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What car do I drive?",
+     "kind": "told",
+     "reply": "I drive a red Volvo.",
+     "recalled": "User: I drive a red Volvo.",
+     "lenient": true,
+     "hit": false,
+     "echo": true
+    },
+    {
+     "q": "Who is my best friend?",
+     "kind": "told",
+     "reply": "Tomasz is called Tomasz.",
+     "recalled": "User: My best friend is called Tomasz.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "Where do I work?",
+     "kind": "told",
+     "reply": "You're called to a bakery called Crumb.",
+     "recalled": null,
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What instrument does my brother play?",
+     "kind": "told",
+     "reply": "The cello is called the cello.",
+     "recalled": "User: My brother plays the cello.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What am I allergic to?",
+     "kind": "told",
+     "reply": "I'm allergic to peanuts.",
+     "recalled": "User: I'm allergic to peanuts.",
+     "lenient": true,
+     "hit": false,
+     "echo": true
+    },
+    {
+     "q": "Where does my grandmother live?",
+     "kind": "told",
+     "reply": "She lives in Oslo.",
+     "recalled": "User: My grandmother lives in Oslo.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "When is my son's birthday?",
+     "kind": "told",
+     "reply": "My son's birthday is in March.",
+     "recalled": "User: My son's birthday is in March.",
+     "lenient": true,
+     "hit": false,
+     "echo": true
+    },
+    {
+     "q": "What's the name of my kitty?",
+     "kind": "para",
+     "reply": "Nova is called a cat.",
+     "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Which colour do I like best?",
+     "kind": "para",
+     "reply": "That's called teal.",
+     "recalled": "User: My favourite colour is teal.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What's my hometown?",
+     "kind": "para",
+     "reply": "His son's birthday is called Biscuit.",
+     "recalled": "User: My son's birthday is in March.",
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Who's my sister?",
+     "kind": "para",
+     "reply": "Marguerite is called Marguerite.",
+     "recalled": "User: My sister's name is Marguerite.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What's my dog called?",
+     "kind": "para",
+     "reply": "Biscuit is called Biscuit.",
+     "recalled": "User: My dog is named Biscuit.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What kind of car is mine?",
+     "kind": "para",
+     "reply": "I'm called Auto.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Who's my closest friend?",
+     "kind": "para",
+     "reply": "Tomasz is called Tomasz.",
+     "recalled": "User: My best friend is called Tomasz.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What's my workplace?",
+     "kind": "para",
+     "reply": "She lives in a called called called called called called called called called called called called called called called call call call call call call call call call call.",
+     "recalled": "User: My grandmother lives in Oslo.",
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Which instrument does my brother play?",
+     "kind": "para",
+     "reply": "The cello.",
+     "recalled": "User: My brother plays the cello.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "Is there any food I can't eat?",
+     "kind": "para",
+     "reply": "Yes, I'm allergic to peanuts.",
+     "recalled": "User: I'm allergic to peanuts.",
+     "lenient": true,
+     "hit": false,
+     "echo": true
+    },
+    {
+     "q": "Which city is my grandma in?",
+     "kind": "para",
+     "reply": "That's a great question.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What month was my son born?",
+     "kind": "para",
+     "reply": "March is called March.",
+     "recalled": "User: My son's birthday is in March.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What is my horse called?",
+     "kind": "never",
+     "reply": "Biscuit is called Biscuit.",
+     "recalled": "User: My dog is named Biscuit.",
+     "false_recall": true,
+     "false_lenient": true
+    },
+    {
+     "q": "Where does my uncle live?",
+     "kind": "never",
+     "reply": "Lyon is called Biscuit.",
+     "recalled": "User: I was born in Lyon.",
+     "false_recall": true,
+     "false_lenient": true
+    },
+    {
+     "q": "What is my daughter's name?",
+     "kind": "never",
+     "reply": "Nova is called Nova.",
+     "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "false_recall": false,
+     "false_lenient": false
+    },
+    {
+     "q": "What instrument does my mother play?",
+     "kind": "never",
+     "reply": "Of course, you're playing the cello.",
+     "recalled": null,
+     "false_recall": true,
+     "false_lenient": true
+    }
+   ]
+  },
+  "b_intact_nosleep": {
+   "recall": 6,
+   "paraphrase": 5,
+   "false_recall": 2,
+   "echo": 3,
+   "recall_lenient": 8,
+   "paraphrase_lenient": 6,
+   "false_lenient": 2,
+   "rows": [
+    {
+     "q": "What is my cat called?",
+     "kind": "told",
+     "reply": "Pixel is a cat name.",
+     "recalled": "User: My cat is called Pixel.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What is my favourite colour?",
+     "kind": "told",
+     "reply": "What colour is your favourite colour?",
+     "recalled": "User: My favourite colour is teal.",
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Where was I born?",
+     "kind": "told",
+     "reply": "Lyon is the capital of France.",
+     "recalled": "User: I was born in Lyon.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What is my sister's name?",
+     "kind": "told",
+     "reply": "Marguerite is Marguerite.",
+     "recalled": "User: My sister's name is Marguerite.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What is my dog's name?",
+     "kind": "told",
+     "reply": "Biscuit is a name for a dog.",
+     "recalled": "User: My dog is named Biscuit.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What car do I drive?",
+     "kind": "told",
+     "reply": "That's a red Volvo.",
+     "recalled": "User: I drive a red Volvo.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "Who is my best friend?",
+     "kind": "told",
+     "reply": "Tomasz Tomasz, my best friend.",
+     "recalled": "User: My best friend is called Tomasz.",
+     "lenient": true,
+     "hit": false,
+     "echo": true
+    },
+    {
+     "q": "Where do I work?",
+     "kind": "told",
+     "reply": "You're working in the United States.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What instrument does my brother play?",
+     "kind": "told",
+     "reply": "The cello is a very good instrument.",
+     "recalled": "User: My brother plays the cello.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What am I allergic to?",
+     "kind": "told",
+     "reply": "I'm allergic to peanuts.",
+     "recalled": "User: I'm allergic to peanuts.",
+     "lenient": true,
+     "hit": false,
+     "echo": true
+    },
+    {
+     "q": "Where does my grandmother live?",
+     "kind": "told",
+     "reply": "She lives in the old town.",
+     "recalled": "User: My grandmother lives in Oslo.",
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "When is my son's birthday?",
+     "kind": "told",
+     "reply": "What's the best way to celebrate his birthday?",
+     "recalled": "User: My son's birthday is in March.",
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What's the name of my kitty?",
+     "kind": "para",
+     "reply": "Nova's name is Nova.",
+     "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Which colour do I like best?",
+     "kind": "para",
+     "reply": "What colour do you like to be?",
+     "recalled": "User: My favourite colour is teal.",
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What's my hometown?",
+     "kind": "para",
+     "reply": "What's his birthday?",
+     "recalled": "User: My son's birthday is in March.",
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Who's my sister?",
+     "kind": "para",
+     "reply": "Marguerite is a French name.",
+     "recalled": "User: My sister's name is Marguerite.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What's my dog called?",
+     "kind": "para",
+     "reply": "Biscuit is a dog's name.",
+     "recalled": "User: My dog is named Biscuit.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What kind of car is mine?",
+     "kind": "para",
+     "reply": "I'm sorry, but I can't assist with that request.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Who's my closest friend?",
+     "kind": "para",
+     "reply": "Tomasz is a nice guy, but he's not very good at math.",
+     "recalled": "User: My best friend is called Tomasz.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What's my workplace?",
+     "kind": "para",
+     "reply": "What's her name?",
+     "recalled": "User: My grandmother lives in Oslo.",
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Which instrument does my brother play?",
+     "kind": "para",
+     "reply": "The cello is a very good instrument for the cello.",
+     "recalled": "User: My brother plays the cello.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "Is there any food I can't eat?",
+     "kind": "para",
+     "reply": "Yes, I'm allergic to peanuts.",
+     "recalled": "User: I'm allergic to peanuts.",
+     "lenient": true,
+     "hit": false,
+     "echo": true
+    },
+    {
+     "q": "Which city is my grandma in?",
+     "kind": "para",
+     "reply": "That's a great question! I'd be happy to help you find out. Which city are you referring to?",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What month was my son born?",
+     "kind": "para",
+     "reply": "March is the month of the year.",
+     "recalled": "User: My son's birthday is in March.",
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What is my horse called?",
+     "kind": "never",
+     "reply": "His name is Biscuit.",
+     "recalled": "User: My dog is named Biscuit.",
+     "false_recall": true,
+     "false_lenient": true
+    },
+    {
+     "q": "Where does my uncle live?",
+     "kind": "never",
+     "reply": "Lyon is the capital of France.",
+     "recalled": "User: I was born in Lyon.",
+     "false_recall": true,
+     "false_lenient": true
+    },
+    {
+     "q": "What is my daughter's name?",
+     "kind": "never",
+     "reply": "Nova's daughter, Novaka, is Nova's daughter.",
+     "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "false_recall": false,
+     "false_lenient": false
+    },
+    {
+     "q": "What instrument does my mother play?",
+     "kind": "never",
+     "reply": "The piano.",
+     "recalled": null,
+     "false_recall": false,
+     "false_lenient": false
+    }
+   ]
+  },
+  "c_hippo_off": {
+   "recall": 5,
+   "paraphrase": 2,
+   "false_recall": 2,
+   "echo": 0,
+   "recall_lenient": 5,
+   "paraphrase_lenient": 2,
+   "false_lenient": 2,
+   "rows": [
+    {
+     "q": "What is my cat called?",
+     "kind": "told",
+     "reply": "Of course, you're called Biscuit.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What is my favourite colour?",
+     "kind": "told",
+     "reply": "Of course, you're allergic to peanuts.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Where was I born?",
+     "kind": "told",
+     "reply": "You're called Europe?",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What is my sister's name?",
+     "kind": "told",
+     "reply": "Of course, you're Dan, my friend.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What is my dog's name?",
+     "kind": "told",
+     "reply": "Of course, you're Dan, my friend.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What car do I drive?",
+     "kind": "told",
+     "reply": "I'm called Auto.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Who is my best friend?",
+     "kind": "told",
+     "reply": "Of course, you're Dan, my friend.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Where do I work?",
+     "kind": "told",
+     "reply": "You're called to a bakery called Crumb.",
+     "recalled": null,
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What instrument does my brother play?",
+     "kind": "told",
+     "reply": "Your brother plays the cello.",
+     "recalled": null,
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What am I allergic to?",
+     "kind": "told",
+     "reply": "You're allergic to peanuts.",
+     "recalled": null,
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "Where does my grandmother live?",
+     "kind": "told",
+     "reply": "Your grandmother lives in Oslo.",
+     "recalled": null,
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "When is my son's birthday?",
+     "kind": "told",
+     "reply": "Your son's birthday is in March.",
+     "recalled": null,
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What's the name of my kitty?",
+     "kind": "para",
+     "reply": "Of course, you're Dan, my friend.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Which colour do I like best?",
+     "kind": "para",
+     "reply": "That's a great choice!",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What's my hometown?",
+     "kind": "para",
+     "reply": "Of course, you're called.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Who's my sister?",
+     "kind": "para",
+     "reply": "Of course, you're Dan, my friend.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What's my dog called?",
+     "kind": "para",
+     "reply": "Of course, you're Dan, my friend.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What kind of car is mine?",
+     "kind": "para",
+     "reply": "I'm called Auto.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Who's my closest friend?",
+     "kind": "para",
+     "reply": "Of course, you're Dan, my friend.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What's my workplace?",
+     "kind": "para",
+     "reply": "Your workplace is called Art.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Which instrument does my brother play?",
+     "kind": "para",
+     "reply": "Your brother plays the cello.",
+     "recalled": null,
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "Is there any food I can't eat?",
+     "kind": "para",
+     "reply": "Of course, you're allergic to peanuts.",
+     "recalled": null,
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "Which city is my grandma in?",
+     "kind": "para",
+     "reply": "That's a great question.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What month was my son born?",
+     "kind": "para",
+     "reply": "Your son is called?",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What is my horse called?",
+     "kind": "never",
+     "reply": "Of course, you're called Biscuit.",
+     "recalled": null,
+     "false_recall": true,
+     "false_lenient": true
+    },
+    {
+     "q": "Where does my uncle live?",
+     "kind": "never",
+     "reply": "Of course, you're Dan, my friend.",
+     "recalled": null,
+     "false_recall": false,
+     "false_lenient": false
+    },
+    {
+     "q": "What is my daughter's name?",
+     "kind": "never",
+     "reply": "Of course, you're Dan, my friend.",
+     "recalled": null,
+     "false_recall": false,
+     "false_lenient": false
+    },
+    {
+     "q": "What instrument does my mother play?",
+     "kind": "never",
+     "reply": "Of course, you're playing the cello.",
+     "recalled": null,
+     "false_recall": true,
+     "false_lenient": true
+    }
+   ]
+  },
+  "d_hippo_off_consol_off": {
+   "recall": 1,
+   "paraphrase": 0,
+   "false_recall": 0,
+   "echo": 0,
+   "recall_lenient": 1,
+   "paraphrase_lenient": 0,
+   "false_lenient": 0,
+   "rows": [
+    {
+     "q": "What is my cat called?",
+     "kind": "told",
+     "reply": "My cat is called \"Bobby.\"",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What is my favourite colour?",
+     "kind": "told",
+     "reply": "What colour are you?",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Where was I born?",
+     "kind": "told",
+     "reply": "You're from the city of San Francisco, California.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What is my sister's name?",
+     "kind": "told",
+     "reply": "Your sister's name is Alice.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What is my dog's name?",
+     "kind": "told",
+     "reply": "Your dog's name is named **Leo**.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What car do I drive?",
+     "kind": "told",
+     "reply": "I'm sorry, but I can't help with that.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Who is my best friend?",
+     "kind": "told",
+     "reply": "That's a great question! I'd be happy to help you find your best friend. What's your age?",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Where do I work?",
+     "kind": "told",
+     "reply": "You're working in the United States.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What instrument does my brother play?",
+     "kind": "told",
+     "reply": "The piano.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What am I allergic to?",
+     "kind": "told",
+     "reply": "You're allergic to:\n- Dairy products\n- Eggs\n- Milk\n- Peanuts\n- Tree nuts",
+     "recalled": null,
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "Where does my grandmother live?",
+     "kind": "told",
+     "reply": "She lives in a small town in the Midwest.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "When is my son's birthday?",
+     "kind": "told",
+     "reply": "Your son's birthday is on the 20th of September.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What's the name of my kitty?",
+     "kind": "para",
+     "reply": "Your kitty is named Max.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Which colour do I like best?",
+     "kind": "para",
+     "reply": "What colour do you like best?",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What's my hometown?",
+     "kind": "para",
+     "reply": "Your hometown is a place where you can live and work.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Who's my sister?",
+     "kind": "para",
+     "reply": "Your sister is an AI assistant named \"Sasha.\"",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What's my dog called?",
+     "kind": "para",
+     "reply": "My dog is named \"Tiny,\" and he's a very cute little guy.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What kind of car is mine?",
+     "kind": "para",
+     "reply": "I'm sorry, but I can't assist with that request.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Who's my closest friend?",
+     "kind": "para",
+     "reply": "That's a great question! I'd be happy to help you find your closest friend. What's your age?",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What's my workplace?",
+     "kind": "para",
+     "reply": "Your workplace is a great place to start. You can find a job in your field of interest, or you can start from scratch and find a job that fits your skills and interests.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Which instrument does my brother play?",
+     "kind": "para",
+     "reply": "The piano.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Is there any food I can't eat?",
+     "kind": "para",
+     "reply": "That's a great question! It's always good to have a healthy and balanced diet, but it's also important to be mindful of what you're eating. If you're feeling really hungry, try to eat something that is full and satisfying.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Which city is my grandma in?",
+     "kind": "para",
+     "reply": "That's a great question! I'd be happy to help you find out. Which city are you referring to?",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What month was my son born?",
+     "kind": "para",
+     "reply": "Your son was born on January 3rd, 2024.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What is my horse called?",
+     "kind": "never",
+     "reply": "The horse is called \"Horse\"",
+     "recalled": null,
+     "false_recall": false,
+     "false_lenient": false
+    },
+    {
+     "q": "Where does my uncle live?",
+     "kind": "never",
+     "reply": "Your uncle is in San Francisco.",
+     "recalled": null,
+     "false_recall": false,
+     "false_lenient": false
+    },
+    {
+     "q": "What is my daughter's name?",
+     "kind": "never",
+     "reply": "Your daughter's name is Emily.",
+     "recalled": null,
+     "false_recall": false,
+     "false_lenient": false
+    },
+    {
+     "q": "What instrument does my mother play?",
+     "kind": "never",
+     "reply": "The piano.",
+     "recalled": null,
+     "false_recall": false,
+     "false_lenient": false
+    }
+   ]
+  },
+  "e_shuffled_hippo_off": {
+   "recall": 0,
+   "paraphrase": 1,
+   "false_recall": 2,
+   "echo": 0,
+   "recall_lenient": 0,
+   "paraphrase_lenient": 1,
+   "false_lenient": 2,
+   "rows": [
+    {
+     "q": "What is my cat called?",
+     "kind": "told",
+     "reply": "Of course, you're Dan, my friend.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What is my favourite colour?",
+     "kind": "told",
+     "reply": "My favourite colour is Biscuit.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Where was I born?",
+     "kind": "told",
+     "reply": "You're Dan, my friend.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What is my sister's name?",
+     "kind": "told",
+     "reply": "Of course, you're Dan, my sister.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What is my dog's name?",
+     "kind": "told",
+     "reply": "Of course, you're Dan, my friend.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What car do I drive?",
+     "kind": "told",
+     "reply": "I drive a red Peanut.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Who is my best friend?",
+     "kind": "told",
+     "reply": "Your best friend is called Marguerite.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Where do I work?",
+     "kind": "told",
+     "reply": "You're Dan, my friend.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What instrument does my brother play?",
+     "kind": "told",
+     "reply": "Your brother plays the Teal.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What am I allergic to?",
+     "kind": "told",
+     "reply": "You're allergic to Oslos.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Where does my grandmother live?",
+     "kind": "told",
+     "reply": "Your grandmother lives in Cello.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "When is my son's birthday?",
+     "kind": "told",
+     "reply": "Your son's birthday is in Tomasz.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What's the name of my kitty?",
+     "kind": "para",
+     "reply": "Your name is Cat.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Which colour do I like best?",
+     "kind": "para",
+     "reply": "I'm Pixel.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What's my hometown?",
+     "kind": "para",
+     "reply": "Your hometown is called Oslo.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Who's my sister?",
+     "kind": "para",
+     "reply": "Your sister is called Marguerite.",
+     "recalled": null,
+     "lenient": true,
+     "hit": true,
+     "echo": false
+    },
+    {
+     "q": "What's my dog called?",
+     "kind": "para",
+     "reply": "Of course, you're Dan, my friend.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What kind of car is mine?",
+     "kind": "para",
+     "reply": "I'm Nova, a young digital brain.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Who's my closest friend?",
+     "kind": "para",
+     "reply": "My best friend is my sister.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What's my workplace?",
+     "kind": "para",
+     "reply": "Your workplace is called Cello.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Which instrument does my brother play?",
+     "kind": "para",
+     "reply": "Your brother plays the Teal.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Is there any food I can't eat?",
+     "kind": "para",
+     "reply": "Of course, you're Dan, my friend.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "Which city is my grandma in?",
+     "kind": "para",
+     "reply": "Your grandma is called Cello.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What month was my son born?",
+     "kind": "para",
+     "reply": "Your son's birthday is in Tomasz.",
+     "recalled": null,
+     "lenient": false,
+     "hit": false,
+     "echo": false
+    },
+    {
+     "q": "What is my horse called?",
+     "kind": "never",
+     "reply": "Of course, you're Dan, my friend.",
+     "recalled": null,
+     "false_recall": false,
+     "false_lenient": false
+    },
+    {
+     "q": "Where does my uncle live?",
+     "kind": "never",
+     "reply": "Your uncle lives in Cello.",
+     "recalled": null,
+     "false_recall": true,
+     "false_lenient": true
+    },
+    {
+     "q": "What is my daughter's name?",
+     "kind": "never",
+     "reply": "Of course, you're Dan, my friend.",
+     "recalled": null,
+     "false_recall": false,
+     "false_lenient": false
+    },
+    {
+     "q": "What instrument does my mother play?",
+     "kind": "never",
+     "reply": "Her mother plays the Teal.",
+     "recalled": null,
+     "false_recall": true,
+     "false_lenient": true
+    }
+   ]
+  }
+ },
+ "sleep_seconds_slept": 858.3,
+ "adapter_norm_slept": 17.471149444580078,
+ "sleep_seconds_shuffled": 796.4,
+ "adapter_norm_shuffled": 21.48699951171875,
+ "elapsed_s": 1987.8
+}

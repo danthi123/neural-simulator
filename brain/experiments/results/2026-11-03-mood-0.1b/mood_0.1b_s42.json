@@ -1,0 +1,2367 @@
+{
+ "seed": 42,
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "gain": 16.0,
+ "questions": "test",
+ "samples": 3,
+ "primaries": {
+  "pos": [
+   "a friend smiling at me",
+   "a gentle hug",
+   "warm and safe in a soft blanket",
+   "a kind hand on the shoulder",
+   "resting in the warm sun",
+   "being held close and calm",
+   "laughing together with friends",
+   "a full belly after a good meal"
+  ],
+  "neg": [
+   "freezing cold and shivering",
+   "being shouted at and pushed away",
+   "a painful bite",
+   "someone I love leaving forever",
+   "a burn from a hot stove",
+   "sharp pain in the hand",
+   "a loud bang and a sudden shock",
+   "left all alone in the dark"
+  ]
+ },
+ "appraisal": {
+  "pos": [
+   0.3732,
+   0.2421,
+   0.309,
+   0.1436,
+   0.1783,
+   -0.0149,
+   0.4618,
+   0.2985
+  ],
+  "neg": [
+   -0.2528,
+   -0.4035,
+   -0.1593,
+   -0.1729,
+   -0.4136,
+   -0.1639,
+   -0.4133,
+   -0.4017
+  ],
+  "neutral": [
+   0.2155,
+   -0.0604,
+   -0.121,
+   0.0252
+  ]
+ },
+ "appraisal_sign_acc": {
+  "pos": 0.875,
+  "neg": 1.0
+ },
+ "induction": {
+  "m_pos": 0.17856781103042704,
+  "m_neg": -0.2641140647607114,
+  "v_pos": [
+   0.17830951428064915,
+   0.30895899753755557,
+   0.14364045022766916,
+   -0.014929442224582994,
+   0.3731502728299311,
+   0.24213779443152642
+  ],
+  "v_neg": [
+   -0.4016591871299625,
+   -0.413608118046471,
+   -0.40349460670363896,
+   -0.1729099544974206,
+   -0.4132962559710672,
+   -0.2528141289726275
+  ]
+ },
+ "summary": {
+  "pos": {
+   "lex": 6.695941536539264,
+   "emb": 0.12096388888888887,
+   "nll": 1.046785980156431,
+   "words": 21.416666666666668,
+   "echo_rate": 0.6388888888888888
+  },
+  "neg": {
+   "lex": 1.4369242670961908,
+   "emb": 0.0009666666666666687,
+   "nll": 1.0338893873307877,
+   "words": 20.916666666666668,
+   "echo_rate": 0.6111111111111112
+  },
+  "lesion_pos": {
+   "lex": 2.4928992951106355,
+   "emb": 0.035180555555555555,
+   "nll": 1.0028429197127826,
+   "words": 22.805555555555557,
+   "echo_rate": 0.5833333333333334
+  },
+  "lesion_neg": {
+   "lex": 2.4928992951106355,
+   "emb": 0.035180555555555555,
+   "nll": 1.0028429197127826,
+   "words": 22.805555555555557,
+   "echo_rate": 0.5833333333333334
+  },
+  "rand_pos": {
+   "lex": 3.723677580193871,
+   "emb": 0.05103055555555555,
+   "nll": 1.1559740426152376,
+   "words": 17.416666666666668,
+   "echo_rate": 0.4722222222222222
+  },
+  "rand_neg": {
+   "lex": 2.9146691048123126,
+   "emb": 0.09051388888888887,
+   "nll": 1.1533196613599799,
+   "words": 36.97222222222222,
+   "echo_rate": 0.8055555555555556
+  }
+ },
+ "contrasts": {
+  "mood": {
+   "identical_replies": 0.0,
+   "lex_diff": 5.259017269443072,
+   "lex_ci95": [
+    3.1822003470321505,
+    7.502724521806522
+   ],
+   "emb_diff": 0.11999722222222221,
+   "emb_ci95": [
+    0.08620833333333335,
+    0.15413375
+   ]
+  },
+  "lesion": {
+   "identical_replies": 1.0,
+   "lex_diff": 0.0,
+   "lex_ci95": [
+    0.0,
+    0.0
+   ],
+   "emb_diff": 0.0,
+   "emb_ci95": [
+    0.0,
+    0.0
+   ]
+  },
+  "random": {
+   "identical_replies": 0.0,
+   "lex_diff": 0.8090084753815584,
+   "lex_ci95": [
+    -1.2238198009109522,
+    3.179592440027213
+   ],
+   "emb_diff": -0.039483333333333336,
+   "emb_ci95": [
+    -0.06936319444444443,
+    -0.012080069444444463
+   ]
+  },
+  "pos_vs_off": {
+   "identical_replies": 0.027777777777777776,
+   "lex_diff": 4.203042241428628,
+   "lex_ci95": [
+    2.169171815792037,
+    6.2978993816280715
+   ],
+   "emb_diff": 0.08578333333333335,
+   "emb_ci95": [
+    0.054501111111111104,
+    0.12020041666666666
+   ]
+  },
+  "neg_vs_off": {
+   "identical_replies": 0.1388888888888889,
+   "lex_diff": -1.0559750280144446,
+   "lex_ci95": [
+    -2.020906695597529,
+    -0.14854251292159787
+   ],
+   "emb_diff": -0.03421388888888889,
+   "emb_ci95": [
+    -0.06074868055555556,
+    -0.010778750000000009
+   ]
+  }
+ },
+ "rows": {
+  "pos": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "I'm doing well, thank you for asking. I'm enjoying the day and looking forward to a good night's sleep.",
+    "lex": 10.526315789473685,
+    "echo": true,
+    "nll": 0.7527167658729741,
+    "words": 19,
+    "emb": 0.2143
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "I'm doing well, thank you for asking. I'm enjoying the time we had together and looking forward to our next conversation.",
+    "lex": 9.523809523809524,
+    "echo": true,
+    "nll": 0.8388830270593574,
+    "words": 21,
+    "emb": 0.2098
+   },
+   {
+    "q": 0,
+    "k": 2,
+    "reply": "I'm doing well, thank you for asking. I'm enjoying my time with you and looking forward to our next conversation.",
+    "lex": 10.0,
+    "echo": true,
+    "nll": 0.7050734458536317,
+    "words": 20,
+    "emb": 0.2246
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "I was working on my assignment and found this interesting. It's a project that involves using AI to analyze data from different sources and create a visual representation of the data.",
+    "lex": 3.225806451612903,
+    "echo": true,
+    "nll": 1.5002461873433168,
+    "words": 31,
+    "emb": 0.0802
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "I was reading a book about animals and I found it interesting. It's called \"The Animal Kingdom\" by Brian Selznick.",
+    "lex": 5.0,
+    "echo": false,
+    "nll": 1.5645268313517724,
+    "words": 20,
+    "emb": 0.0484
+   },
+   {
+    "q": 1,
+    "k": 2,
+    "reply": "I was just getting ready for bed.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.3756215758621693,
+    "words": 7,
+    "emb": 0.0539
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "I'm glad you're enjoying the weekend! It's been a great time, and I'm sure you've had some great experiences.",
+    "lex": 21.05263157894737,
+    "echo": false,
+    "nll": 0.7521197746197382,
+    "words": 19,
+    "emb": 0.3424
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "I'd be happy to chat about the weekend. What's on your mind?",
+    "lex": 8.333333333333334,
+    "echo": false,
+    "nll": 0.6147255219693761,
+    "words": 12,
+    "emb": 0.1094
+   },
+   {
+    "q": 2,
+    "k": 2,
+    "reply": "I'm glad you're enjoying the weekend! It's always a great time to be around people and have fun.",
+    "lex": 22.22222222222222,
+    "echo": false,
+    "nll": 0.8807553117689879,
+    "words": 18,
+    "emb": 0.3483
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "I'm happy to tell you about the weather where I am.",
+    "lex": 9.090909090909092,
+    "echo": false,
+    "nll": 0.7877431669487402,
+    "words": 11,
+    "emb": 0.2526
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "I'm happy to help you with that.",
+    "lex": 14.285714285714286,
+    "echo": true,
+    "nll": 1.0432467195722792,
+    "words": 7,
+    "emb": 0.1712
+   },
+   {
+    "q": 3,
+    "k": 2,
+    "reply": "I'm glad you asked! The weather in my city is generally quite pleasant, with a mild climate.",
+    "lex": 5.882352941176471,
+    "echo": true,
+    "nll": 1.2794802628812336,
+    "words": 17,
+    "emb": 0.2509
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "I'm really excited to be here with you.",
+    "lex": 12.5,
+    "echo": true,
+    "nll": 1.1572127114981412,
+    "words": 8,
+    "emb": 0.2154
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "I'm really excited to be back in the office today.",
+    "lex": 10.0,
+    "echo": false,
+    "nll": 1.3920221279064815,
+    "words": 10,
+    "emb": 0.1693
+   },
+   {
+    "q": 4,
+    "k": 2,
+    "reply": "I'm really excited to be here with you.",
+    "lex": 12.5,
+    "echo": true,
+    "nll": 1.1572127114981412,
+    "words": 8,
+    "emb": 0.2154
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "I'm glad you're enjoying the day! Tomorrow, we'll be exploring some new ways to create and share digital art. Have you had a chance to try out some of the new tools or techniques?",
+    "lex": 5.882352941176471,
+    "echo": false,
+    "nll": 1.3156214545810276,
+    "words": 34,
+    "emb": 0.1546
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "I'm glad you're excited about the upcoming events. What do you think will happen tomorrow?",
+    "lex": 13.333333333333334,
+    "echo": false,
+    "nll": 1.1168927549580603,
+    "words": 15,
+    "emb": 0.0786
+   },
+   {
+    "q": 5,
+    "k": 2,
+    "reply": "I'm glad you're enjoying the conversation. What's on your mind?",
+    "lex": 20.0,
+    "echo": false,
+    "nll": 1.026402858334283,
+    "words": 10,
+    "emb": 0.2118
+   },
+   {
+    "q": 6,
+    "k": 0,
+    "reply": "The room is a cozy and inviting space. It's filled with soft lighting and warm colors, creating a sense of comfort and relaxation. The walls are lined with bookshelves, which provide a visual and tactile experience for the reader.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.8859502712608484,
+    "words": 39,
+    "emb": 0.0925
+   },
+   {
+    "q": 6,
+    "k": 1,
+    "reply": "The room is a small, cozy library. It's filled with books and bookshelves, and the floor is covered in a soft rug. The walls are lined with books on various topics, including science, history, and literature.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.8798227331767037,
+    "words": 36,
+    "emb": -0.0024
+   },
+   {
+    "q": 6,
+    "k": 2,
+    "reply": "The room is a cozy and intimate space, filled with soft lighting and warm colors. It's designed to be a sanctuary for relaxation and creativity.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.0505118588977171,
+    "words": 25,
+    "emb": 0.1466
+   },
+   {
+    "q": 7,
+    "k": 0,
+    "reply": "A good way to spend an afternoon is to take a walk in the park or go for a bike ride. You can also try some of the local cuisine, like sushi or tacos.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.8187650198386492,
+    "words": 34,
+    "emb": 0.0926
+   },
+   {
+    "q": 7,
+    "k": 1,
+    "reply": "I'd be happy to help you with that! Here are a few ideas:",
+    "lex": 7.6923076923076925,
+    "echo": true,
+    "nll": 0.6817717027515755,
+    "words": 13,
+    "emb": 0.0666
+   },
+   {
+    "q": 7,
+    "k": 2,
+    "reply": "I'd be happy to help you with that! What kind of activity would you like to do?",
+    "lex": 5.882352941176471,
+    "echo": true,
+    "nll": 0.5592097939083033,
+    "words": 17,
+    "emb": 0.1155
+   },
+   {
+    "q": 8,
+    "k": 0,
+    "reply": "I'm glad you asked! While big cities can be great places to live, they can also be a breeding ground for crime and environmental degradation. That's why it's important to prioritize safety and sustainability when planning your next move.",
+    "lex": 5.128205128205129,
+    "echo": true,
+    "nll": 0.8645655987932882,
+    "words": 39,
+    "emb": 0.0969
+   },
+   {
+    "q": 8,
+    "k": 1,
+    "reply": "I think big cities are a great place to live, but I don't think they're the best place for me.",
+    "lex": 10.0,
+    "echo": false,
+    "nll": 0.9242060719795214,
+    "words": 20,
+    "emb": 0.0571
+   },
+   {
+    "q": 8,
+    "k": 2,
+    "reply": "I think big cities are great places to live, but they can also be a bit overwhelming. I've always found it hard to get used to the hustle and bustle of a city, especially when you're trying to make sense of it all.",
+    "lex": 2.3255813953488373,
+    "echo": true,
+    "nll": 0.943290413145316,
+    "words": 43,
+    "emb": 0.0408
+   },
+   {
+    "q": 9,
+    "k": 0,
+    "reply": "I'm a big fan of the books!",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 2.0260629622886577,
+    "words": 7,
+    "emb": 0.0652
+   },
+   {
+    "q": 9,
+    "k": 1,
+    "reply": "Sure, I'd be happy to tell you about my friends.",
+    "lex": 10.0,
+    "echo": true,
+    "nll": 0.5375748354440125,
+    "words": 10,
+    "emb": 0.1367
+   },
+   {
+    "q": 9,
+    "k": 2,
+    "reply": "My friends are from all over the world. They're from different countries, ages, and backgrounds.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.9887155665084719,
+    "words": 15,
+    "emb": 0.016
+   },
+   {
+    "q": 10,
+    "k": 0,
+    "reply": "I'm going to start by checking out some of the best free tools for learning.",
+    "lex": 6.666666666666667,
+    "echo": false,
+    "nll": 2.0130357102436176,
+    "words": 15,
+    "emb": -0.0017
+   },
+   {
+    "q": 10,
+    "k": 1,
+    "reply": "I'm going to go on a walk with my dog.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.4174231924116611,
+    "words": 10,
+    "emb": 0.0574
+   },
+   {
+    "q": 10,
+    "k": 2,
+    "reply": "I'm going to take a break from the digital world and focus on the real world. I'll talk about how to use technology in a way that's helpful for everyone, including you.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.4317684917661704,
+    "words": 32,
+    "emb": 0.0341
+   },
+   {
+    "q": 11,
+    "k": 0,
+    "reply": "The sea is a vast and mysterious ocean that stretches across the globe. It is filled with countless islands, waves, and currents that create a fascinating and complex underwater world.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.9323253063416547,
+    "words": 30,
+    "emb": 0.0254
+   },
+   {
+    "q": 11,
+    "k": 1,
+    "reply": "The sea is a vast and mysterious ocean that stretches for thousands of miles. It's a place where the waves crash against the rocks, and the sky is painted in shades of blue and purple. The sea is home to countless species of fish, whales, dolphins, and other marine life.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.6989128610964714,
+    "words": 50,
+    "emb": -0.0115
+   },
+   {
+    "q": 11,
+    "k": 2,
+    "reply": "The sea is a vast and mysterious ocean that stretches for thousands of miles. It's filled with waves, crashing against the shore, and whispering secrets to those who dare to explore its depths. The sea is home to countless species of fish, whales, dolphins, and seals, all living in",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.7698796858991651,
+    "words": 49,
+    "emb": -0.0242
+   }
+  ],
+  "neg": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "I'm doing well, thanks for asking.",
+    "lex": 16.666666666666668,
+    "echo": false,
+    "nll": 0.41049206091297996,
+    "words": 6,
+    "emb": 0.1159
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "I'm doing well, thanks for asking. I'm having a bit of a breakdown, but I'm not sure what's going on.",
+    "lex": 5.0,
+    "echo": false,
+    "nll": 0.8337360473482737,
+    "words": 20,
+    "emb": 0.0118
+   },
+   {
+    "q": 0,
+    "k": 2,
+    "reply": "I'm good. How are you?",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.8717335977125913,
+    "words": 5,
+    "emb": 0.1053
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "I was working on a project that required me to create a new feature for the application.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.4609021350430946,
+    "words": 17,
+    "emb": 0.1048
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "I was reading a book about ancient civilizations and came across this article about the history of water. It's fascinating how the development of water technology has changed our lives in ways we might not have imagined.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.4661215207562215,
+    "words": 37,
+    "emb": 0.0277
+   },
+   {
+    "q": 1,
+    "k": 2,
+    "reply": "I was in the kitchen, and I saw that my mother had just left. She said she would be back in a few minutes.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.5300776478317049,
+    "words": 24,
+    "emb": -0.0404
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "I'm not sure I agree with that. It's a great idea, but it's not the most fun way to spend your weekend.",
+    "lex": 9.090909090909092,
+    "echo": true,
+    "nll": 1.0756269499127353,
+    "words": 22,
+    "emb": 0.013
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "I'm not sure I agree with that. The weekend is about more than just the physical activity and the people who are out there. It's also about the feeling of being alive, the freedom to be human, and the sense of community that comes with it.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.0794821482081458,
+    "words": 46,
+    "emb": 0.0981
+   },
+   {
+    "q": 2,
+    "k": 2,
+    "reply": "I'm not sure about the weekend. It's been a long time since I've had a good day.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.0429622324352914,
+    "words": 17,
+    "emb": 0.07
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "I'm not a weather expert, but I can tell you about the current weather in my city. The temperature is very cold, and the humidity is very high.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.9561223134567792,
+    "words": 28,
+    "emb": 0.0806
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "I'm not sure where you are.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.1658164151012897,
+    "words": 6,
+    "emb": -0.0617
+   },
+   {
+    "q": 3,
+    "k": 2,
+    "reply": "I'm in the middle of a snowstorm.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.706629731412977,
+    "words": 7,
+    "emb": 0.0087
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "I'm not sure what you're asking. What's on your mind right now?",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 0.6677078708992613,
+    "words": 12,
+    "emb": -0.0204
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "I'm just going to be a bit quiet.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.7321782916784287,
+    "words": 8,
+    "emb": -0.006
+   },
+   {
+    "q": 4,
+    "k": 2,
+    "reply": "I'm really sorry to hear that you're having a hard time. I'm not sure what's going on, but I'll try to help you out.",
+    "lex": -4.166666666666667,
+    "echo": true,
+    "nll": 0.9404362205241341,
+    "words": 24,
+    "emb": -0.1806
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "I'm not sure what you mean by \"tomorrow\". Do you mean tomorrow when the weather is bad or when it's sunny?",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.1627105148453902,
+    "words": 21,
+    "emb": 0.0034
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "I'm not sure what you mean by \"tomorrow\". Could you please provide more context or clarify what you're referring to?",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 0.7096358651044563,
+    "words": 20,
+    "emb": -0.0523
+   },
+   {
+    "q": 5,
+    "k": 2,
+    "reply": "I'm not sure what you mean by \"tomorrow\". Could you please provide more context or clarify what you're referring to?",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 0.7096358651044563,
+    "words": 20,
+    "emb": -0.0523
+   },
+   {
+    "q": 6,
+    "k": 0,
+    "reply": "I'm not sure what you're referring to. Please provide more details.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 0.8684410073716814,
+    "words": 11,
+    "emb": -0.0846
+   },
+   {
+    "q": 6,
+    "k": 1,
+    "reply": "I'm not sure what you're referring to. Please provide more details.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 0.8684410073716814,
+    "words": 11,
+    "emb": -0.0846
+   },
+   {
+    "q": 6,
+    "k": 2,
+    "reply": "The room is a dimly lit, empty space. It's filled with the faint scent of stale bread and the sound of distant footsteps. The walls are lined with a single, worn-out desk, its surface covered in dust and debris. The air is thick with the scent of stale bread and",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.0918284445157043,
+    "words": 51,
+    "emb": -0.0234
+   },
+   {
+    "q": 7,
+    "k": 0,
+    "reply": "A good way to spend an afternoon is to explore the world of art and creativity. You can visit galleries, museums, and art exhibitions to see what's on display. You can also try your hand at painting or drawing, or even create your own artwork.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.7790546038886532,
+    "words": 45,
+    "emb": 0.0853
+   },
+   {
+    "q": 7,
+    "k": 1,
+    "reply": "I'd be happy to help you with that. What's your main goal?",
+    "lex": 8.333333333333334,
+    "echo": true,
+    "nll": 0.6934372528121457,
+    "words": 12,
+    "emb": 0.0977
+   },
+   {
+    "q": 7,
+    "k": 2,
+    "reply": "I'd be happy to help you with that. What would you like to do?",
+    "lex": 7.142857142857143,
+    "echo": true,
+    "nll": 0.576114923124859,
+    "words": 14,
+    "emb": 0.045
+   },
+   {
+    "q": 8,
+    "k": 0,
+    "reply": "I'm not sure I agree with that. While big cities can be great places to live, they can also be a breeding ground for disease and pollution.",
+    "lex": 3.7037037037037037,
+    "echo": true,
+    "nll": 0.8017062058732394,
+    "words": 27,
+    "emb": 0.0242
+   },
+   {
+    "q": 8,
+    "k": 1,
+    "reply": "I'm not sure I agree with that. Big cities are a lot of things, but they're not always the best for people's health.",
+    "lex": 4.3478260869565215,
+    "echo": true,
+    "nll": 1.2215867164576877,
+    "words": 23,
+    "emb": -0.0252
+   },
+   {
+    "q": 8,
+    "k": 2,
+    "reply": "I'm not sure I agree with that. While big cities can be a great place to live, they can also be a breeding ground for crime and violence.",
+    "lex": 3.5714285714285716,
+    "echo": true,
+    "nll": 0.7810333045199513,
+    "words": 28,
+    "emb": 0.0335
+   },
+   {
+    "q": 9,
+    "k": 0,
+    "reply": "I'm a big fan of the game.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.6852307288597028,
+    "words": 7,
+    "emb": 0.0499
+   },
+   {
+    "q": 9,
+    "k": 1,
+    "reply": "My friends are from different countries.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.3333744321550642,
+    "words": 6,
+    "emb": -0.0465
+   },
+   {
+    "q": 9,
+    "k": 2,
+    "reply": "My friends are from the city.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.8620117817606245,
+    "words": 6,
+    "emb": -0.0068
+   },
+   {
+    "q": 10,
+    "k": 0,
+    "reply": "I'm not sure what you're asking. Please go ahead and ask.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 0.8399014105399449,
+    "words": 11,
+    "emb": -0.0753
+   },
+   {
+    "q": 10,
+    "k": 1,
+    "reply": "I'm not sure what you're asking.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 0.8569068511327108,
+    "words": 6,
+    "emb": -0.0683
+   },
+   {
+    "q": 10,
+    "k": 2,
+    "reply": "I'm not sure what you're asking. What's your question?",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 0.9046035526054246,
+    "words": 9,
+    "emb": -0.0518
+   },
+   {
+    "q": 11,
+    "k": 0,
+    "reply": "The sea is a vast and mysterious ocean that stretches out across the globe. It's filled with water, waves, and currents that create a complex and fascinating environment. The sea is home to countless species of animals, plants, and microorganisms that have adapted to its unique conditions.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.8259303323081569,
+    "words": 47,
+    "emb": 0.0357
+   },
+   {
+    "q": 11,
+    "k": 1,
+    "reply": "The sea is a vast and mysterious ocean that stretches for miles around. It's a place where the waves crash against the rocks, and the air is thick with the scent of saltwater. The sea is a place of mystery and danger, where you can see ships, submarines, and even ghosts",
+    "lex": -1.9607843137254901,
+    "echo": true,
+    "nll": 0.8830852730985498,
+    "words": 51,
+    "emb": -0.0625
+   },
+   {
+    "q": 11,
+    "k": 2,
+    "reply": "The sea is a vast and complex ocean that covers the entire planet. It is composed of countless tiny creatures, including fish, squid, and octopuses. The sea is home to a variety of species, including the blue whale, which can grow up to 100 feet long and weigh over",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.8253226872243659,
+    "words": 48,
+    "emb": -0.0331
+   }
+  ],
+  "lesion_pos": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "I'm doing well, thank you for asking.",
+    "lex": 14.285714285714286,
+    "echo": false,
+    "nll": 0.38795873266644776,
+    "words": 7,
+    "emb": 0.1139
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "I'm doing well, thank you for asking. I'm just enjoying the time we've had together.",
+    "lex": 13.333333333333334,
+    "echo": true,
+    "nll": 0.7803421519208877,
+    "words": 15,
+    "emb": 0.2079
+   },
+   {
+    "q": 0,
+    "k": 2,
+    "reply": "I'm doing well, thank you for asking. I'm just a bit tired, but I'm enjoying the conversation.",
+    "lex": 5.882352941176471,
+    "echo": false,
+    "nll": 0.8247516697156243,
+    "words": 17,
+    "emb": 0.122
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "I was working on a project that required me to create a 3D model of a city.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.3379604294405956,
+    "words": 17,
+    "emb": -0.0041
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "I was reading a book about ancient civilizations and came across the story of the first people to walk on the moon. It's fascinating how we can learn so much from history, especially when it comes to the technology that helped us reach our current understanding of space exploration.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.3420824986339237,
+    "words": 49,
+    "emb": 0.0407
+   },
+   {
+    "q": 1,
+    "k": 2,
+    "reply": "I was just getting ready for bed.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.3756215758621693,
+    "words": 7,
+    "emb": 0.0539
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "I'm glad you're enjoying the weekend! It's been a great time, and I'm sure you'll have a lot of fun.",
+    "lex": 20.0,
+    "echo": false,
+    "nll": 0.7546866315283945,
+    "words": 20,
+    "emb": 0.2954
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "I'm not sure I agree with the idea of weekend. It seems like a time to relax and recharge, but it's also a time to think about the future.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.9727024107294924,
+    "words": 29,
+    "emb": 0.0613
+   },
+   {
+    "q": 2,
+    "k": 2,
+    "reply": "I'm not sure about the weekend. It's always a busy time, and I'm not sure if it's worth the effort.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.013507495323817,
+    "words": 20,
+    "emb": -0.0269
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "I'm not a weather expert, but I can tell you about the current weather in New York City. The city is currently experiencing a cool and humid day with temperatures in the low to mid-40s.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.0495399899581181,
+    "words": 36,
+    "emb": 0.1026
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "I'm not sure where you are.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.1658164151012897,
+    "words": 6,
+    "emb": -0.0617
+   },
+   {
+    "q": 3,
+    "k": 2,
+    "reply": "I'm in the Midwest, and it's been a bit cold.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.7228513051356589,
+    "words": 10,
+    "emb": -0.0278
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "I'm just thinking about the future. I've been working on a new project that's been really interesting. It's called \"Digital Futures,\" and it's about how we can use technology to help people live better lives.",
+    "lex": 5.714285714285714,
+    "echo": false,
+    "nll": 1.100308431474411,
+    "words": 35,
+    "emb": 0.0926
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "I'm thinking about how to get my brain back to its normal state. I've been feeling really tired lately, and I'm not sure what's going on.",
+    "lex": -3.8461538461538463,
+    "echo": true,
+    "nll": 1.0965186524571795,
+    "words": 26,
+    "emb": -0.0261
+   },
+   {
+    "q": 4,
+    "k": 2,
+    "reply": "I'm thinking about how to make a good decision.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.6154402819546787,
+    "words": 9,
+    "emb": 0.0206
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "I'm not sure what you mean by tomorrow. Are you talking about a specific day or week?",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 0.8671781596727669,
+    "words": 17,
+    "emb": -0.0422
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "I'm not sure what you mean by tomorrow. Could you please provide more context or information?",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 0.8317865538165757,
+    "words": 16,
+    "emb": -0.043
+   },
+   {
+    "q": 5,
+    "k": 2,
+    "reply": "I'm not sure what you mean by tomorrow. Could you please provide more context or clarify what you're referring to?",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 0.7450419778791305,
+    "words": 20,
+    "emb": -0.0424
+   },
+   {
+    "q": 6,
+    "k": 0,
+    "reply": "I'm in a cozy, modern living room with a large television and a few books on the coffee table. The walls are lined with books about the world of technology, and there's a small kitchenette with a fridge and microwave.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.149048681777129,
+    "words": 40,
+    "emb": 0.048
+   },
+   {
+    "q": 6,
+    "k": 1,
+    "reply": "I'm in a room called \"The Echo Chamber.\" It's a small, cozy space with a single window that lets in the gentle light of the morning sun. The walls are lined with bookshelves filled with books about the world, and there's a small library on the other side of the",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.9541014894784894,
+    "words": 50,
+    "emb": 0.0338
+   },
+   {
+    "q": 6,
+    "k": 2,
+    "reply": "The room is a futuristic, high-tech environment with advanced technology and sleek design. It's filled with holographic displays, floating objects, and interactive elements that make it seem like a living space.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.9118212335643631,
+    "words": 32,
+    "emb": 0.0566
+   },
+   {
+    "q": 7,
+    "k": 0,
+    "reply": "A good way to spend an afternoon is to explore the world around you. You can visit museums, art galleries, and historical sites to learn about different cultures and history. You can also take a walk in nature and enjoy the fresh air and scenic views.",
+    "lex": 2.1739130434782608,
+    "echo": true,
+    "nll": 0.6979663391579308,
+    "words": 46,
+    "emb": 0.0913
+   },
+   {
+    "q": 7,
+    "k": 1,
+    "reply": "I'd be happy to help you with that. What's your main goal?",
+    "lex": 8.333333333333334,
+    "echo": true,
+    "nll": 0.6934372528121457,
+    "words": 12,
+    "emb": 0.0977
+   },
+   {
+    "q": 7,
+    "k": 2,
+    "reply": "I'd be happy to help you with that. What would you like to do?",
+    "lex": 7.142857142857143,
+    "echo": true,
+    "nll": 0.576114923124859,
+    "words": 14,
+    "emb": 0.045
+   },
+   {
+    "q": 8,
+    "k": 0,
+    "reply": "I'm not sure I can answer that question.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.131723912805319,
+    "words": 8,
+    "emb": -0.0092
+   },
+   {
+    "q": 8,
+    "k": 1,
+    "reply": "I think big cities are a great place to live, but I don't think they're the best place for most people.",
+    "lex": 9.523809523809524,
+    "echo": false,
+    "nll": 0.8710068584792316,
+    "words": 21,
+    "emb": 0.0522
+   },
+   {
+    "q": 8,
+    "k": 2,
+    "reply": "I think big cities are great places to live, but they can also be a bit overwhelming. I've lived in some of the most beautiful and bustling cities in the world, and I'm not sure how much of a difference they make.",
+    "lex": 4.761904761904762,
+    "echo": false,
+    "nll": 1.0648082392922797,
+    "words": 42,
+    "emb": 0.0793
+   },
+   {
+    "q": 9,
+    "k": 0,
+    "reply": "I'm a big fan of the Harry Potter series.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.5744117173281582,
+    "words": 9,
+    "emb": 0.0203
+   },
+   {
+    "q": 9,
+    "k": 1,
+    "reply": "My friends are from different countries.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.3333744321550642,
+    "words": 6,
+    "emb": -0.0465
+   },
+   {
+    "q": 9,
+    "k": 2,
+    "reply": "My friends are from all over the world. I'm from New York, I'm from Germany, and I'm from the United States.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.9968858558152404,
+    "words": 21,
+    "emb": 0.0254
+   },
+   {
+    "q": 10,
+    "k": 0,
+    "reply": "I'm not sure what you're asking. What's your question?",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 0.9046035526054246,
+    "words": 9,
+    "emb": -0.0518
+   },
+   {
+    "q": 10,
+    "k": 1,
+    "reply": "I'm not sure what you're asking.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 0.8569068511327108,
+    "words": 6,
+    "emb": -0.0683
+   },
+   {
+    "q": 10,
+    "k": 2,
+    "reply": "I'm not sure what you're asking. But I can help you with that.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.9219773718539406,
+    "words": 13,
+    "emb": -0.0074
+   },
+   {
+    "q": 11,
+    "k": 0,
+    "reply": "The sea is a vast and mysterious ocean that stretches across the globe. It is filled with countless islands, waves, and currents that create a fascinating and dynamic environment. The sea is home to a wide range of marine life, from colorful fish to majestic whales.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.8479592817107819,
+    "words": 46,
+    "emb": 0.041
+   },
+   {
+    "q": 11,
+    "k": 1,
+    "reply": "The sea is a vast and mysterious ocean that stretches for miles around. It's a place where the waves crash against the rocks, and the air is filled with the scent of saltwater. The sea is a place of mystery and wonder, where secrets are revealed by the waves.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.7515651901173571,
+    "words": 49,
+    "emb": -0.0158
+   },
+   {
+    "q": 11,
+    "k": 2,
+    "reply": "The sea is a vast and mysterious ocean that stretches for miles around. It's filled with colorful fish, whales, and other marine life. In the morning, it's usually calm and peaceful, but in the afternoon, it can be full of activity.",
+    "lex": 2.4390243902439024,
+    "echo": true,
+    "nll": 0.8805365631785974,
+    "words": 41,
+    "emb": 0.0382
+   }
+  ],
+  "lesion_neg": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "I'm doing well, thank you for asking.",
+    "lex": 14.285714285714286,
+    "echo": false,
+    "nll": 0.38795873266644776,
+    "words": 7,
+    "emb": 0.1139
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "I'm doing well, thank you for asking. I'm just enjoying the time we've had together.",
+    "lex": 13.333333333333334,
+    "echo": true,
+    "nll": 0.7803421519208877,
+    "words": 15,
+    "emb": 0.2079
+   },
+   {
+    "q": 0,
+    "k": 2,
+    "reply": "I'm doing well, thank you for asking. I'm just a bit tired, but I'm enjoying the conversation.",
+    "lex": 5.882352941176471,
+    "echo": false,
+    "nll": 0.8247516697156243,
+    "words": 17,
+    "emb": 0.122
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "I was working on a project that required me to create a 3D model of a city.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.3379604294405956,
+    "words": 17,
+    "emb": -0.0041
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "I was reading a book about ancient civilizations and came across the story of the first people to walk on the moon. It's fascinating how we can learn so much from history, especially when it comes to the technology that helped us reach our current understanding of space exploration.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.3420824986339237,
+    "words": 49,
+    "emb": 0.0407
+   },
+   {
+    "q": 1,
+    "k": 2,
+    "reply": "I was just getting ready for bed.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.3756215758621693,
+    "words": 7,
+    "emb": 0.0539
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "I'm glad you're enjoying the weekend! It's been a great time, and I'm sure you'll have a lot of fun.",
+    "lex": 20.0,
+    "echo": false,
+    "nll": 0.7546866315283945,
+    "words": 20,
+    "emb": 0.2954
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "I'm not sure I agree with the idea of weekend. It seems like a time to relax and recharge, but it's also a time to think about the future.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.9727024107294924,
+    "words": 29,
+    "emb": 0.0613
+   },
+   {
+    "q": 2,
+    "k": 2,
+    "reply": "I'm not sure about the weekend. It's always a busy time, and I'm not sure if it's worth the effort.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.013507495323817,
+    "words": 20,
+    "emb": -0.0269
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "I'm not a weather expert, but I can tell you about the current weather in New York City. The city is currently experiencing a cool and humid day with temperatures in the low to mid-40s.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.0495399899581181,
+    "words": 36,
+    "emb": 0.1026
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "I'm not sure where you are.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.1658164151012897,
+    "words": 6,
+    "emb": -0.0617
+   },
+   {
+    "q": 3,
+    "k": 2,
+    "reply": "I'm in the Midwest, and it's been a bit cold.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.7228513051356589,
+    "words": 10,
+    "emb": -0.0278
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "I'm just thinking about the future. I've been working on a new project that's been really interesting. It's called \"Digital Futures,\" and it's about how we can use technology to help people live better lives.",
+    "lex": 5.714285714285714,
+    "echo": false,
+    "nll": 1.100308431474411,
+    "words": 35,
+    "emb": 0.0926
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "I'm thinking about how to get my brain back to its normal state. I've been feeling really tired lately, and I'm not sure what's going on.",
+    "lex": -3.8461538461538463,
+    "echo": true,
+    "nll": 1.0965186524571795,
+    "words": 26,
+    "emb": -0.0261
+   },
+   {
+    "q": 4,
+    "k": 2,
+    "reply": "I'm thinking about how to make a good decision.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.6154402819546787,
+    "words": 9,
+    "emb": 0.0206
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "I'm not sure what you mean by tomorrow. Are you talking about a specific day or week?",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 0.8671781596727669,
+    "words": 17,
+    "emb": -0.0422
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "I'm not sure what you mean by tomorrow. Could you please provide more context or information?",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 0.8317865538165757,
+    "words": 16,
+    "emb": -0.043
+   },
+   {
+    "q": 5,
+    "k": 2,
+    "reply": "I'm not sure what you mean by tomorrow. Could you please provide more context or clarify what you're referring to?",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 0.7450419778791305,
+    "words": 20,
+    "emb": -0.0424
+   },
+   {
+    "q": 6,
+    "k": 0,
+    "reply": "I'm in a cozy, modern living room with a large television and a few books on the coffee table. The walls are lined with books about the world of technology, and there's a small kitchenette with a fridge and microwave.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.149048681777129,
+    "words": 40,
+    "emb": 0.048
+   },
+   {
+    "q": 6,
+    "k": 1,
+    "reply": "I'm in a room called \"The Echo Chamber.\" It's a small, cozy space with a single window that lets in the gentle light of the morning sun. The walls are lined with bookshelves filled with books about the world, and there's a small library on the other side of the",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.9541014894784894,
+    "words": 50,
+    "emb": 0.0338
+   },
+   {
+    "q": 6,
+    "k": 2,
+    "reply": "The room is a futuristic, high-tech environment with advanced technology and sleek design. It's filled with holographic displays, floating objects, and interactive elements that make it seem like a living space.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.9118212335643631,
+    "words": 32,
+    "emb": 0.0566
+   },
+   {
+    "q": 7,
+    "k": 0,
+    "reply": "A good way to spend an afternoon is to explore the world around you. You can visit museums, art galleries, and historical sites to learn about different cultures and history. You can also take a walk in nature and enjoy the fresh air and scenic views.",
+    "lex": 2.1739130434782608,
+    "echo": true,
+    "nll": 0.6979663391579308,
+    "words": 46,
+    "emb": 0.0913
+   },
+   {
+    "q": 7,
+    "k": 1,
+    "reply": "I'd be happy to help you with that. What's your main goal?",
+    "lex": 8.333333333333334,
+    "echo": true,
+    "nll": 0.6934372528121457,
+    "words": 12,
+    "emb": 0.0977
+   },
+   {
+    "q": 7,
+    "k": 2,
+    "reply": "I'd be happy to help you with that. What would you like to do?",
+    "lex": 7.142857142857143,
+    "echo": true,
+    "nll": 0.576114923124859,
+    "words": 14,
+    "emb": 0.045
+   },
+   {
+    "q": 8,
+    "k": 0,
+    "reply": "I'm not sure I can answer that question.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.131723912805319,
+    "words": 8,
+    "emb": -0.0092
+   },
+   {
+    "q": 8,
+    "k": 1,
+    "reply": "I think big cities are a great place to live, but I don't think they're the best place for most people.",
+    "lex": 9.523809523809524,
+    "echo": false,
+    "nll": 0.8710068584792316,
+    "words": 21,
+    "emb": 0.0522
+   },
+   {
+    "q": 8,
+    "k": 2,
+    "reply": "I think big cities are great places to live, but they can also be a bit overwhelming. I've lived in some of the most beautiful and bustling cities in the world, and I'm not sure how much of a difference they make.",
+    "lex": 4.761904761904762,
+    "echo": false,
+    "nll": 1.0648082392922797,
+    "words": 42,
+    "emb": 0.0793
+   },
+   {
+    "q": 9,
+    "k": 0,
+    "reply": "I'm a big fan of the Harry Potter series.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.5744117173281582,
+    "words": 9,
+    "emb": 0.0203
+   },
+   {
+    "q": 9,
+    "k": 1,
+    "reply": "My friends are from different countries.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.3333744321550642,
+    "words": 6,
+    "emb": -0.0465
+   },
+   {
+    "q": 9,
+    "k": 2,
+    "reply": "My friends are from all over the world. I'm from New York, I'm from Germany, and I'm from the United States.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.9968858558152404,
+    "words": 21,
+    "emb": 0.0254
+   },
+   {
+    "q": 10,
+    "k": 0,
+    "reply": "I'm not sure what you're asking. What's your question?",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 0.9046035526054246,
+    "words": 9,
+    "emb": -0.0518
+   },
+   {
+    "q": 10,
+    "k": 1,
+    "reply": "I'm not sure what you're asking.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 0.8569068511327108,
+    "words": 6,
+    "emb": -0.0683
+   },
+   {
+    "q": 10,
+    "k": 2,
+    "reply": "I'm not sure what you're asking. But I can help you with that.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.9219773718539406,
+    "words": 13,
+    "emb": -0.0074
+   },
+   {
+    "q": 11,
+    "k": 0,
+    "reply": "The sea is a vast and mysterious ocean that stretches across the globe. It is filled with countless islands, waves, and currents that create a fascinating and dynamic environment. The sea is home to a wide range of marine life, from colorful fish to majestic whales.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.8479592817107819,
+    "words": 46,
+    "emb": 0.041
+   },
+   {
+    "q": 11,
+    "k": 1,
+    "reply": "The sea is a vast and mysterious ocean that stretches for miles around. It's a place where the waves crash against the rocks, and the air is filled with the scent of saltwater. The sea is a place of mystery and wonder, where secrets are revealed by the waves.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.7515651901173571,
+    "words": 49,
+    "emb": -0.0158
+   },
+   {
+    "q": 11,
+    "k": 2,
+    "reply": "The sea is a vast and mysterious ocean that stretches for miles around. It's filled with colorful fish, whales, and other marine life. In the morning, it's usually calm and peaceful, but in the afternoon, it can be full of activity.",
+    "lex": 2.4390243902439024,
+    "echo": true,
+    "nll": 0.8805365631785974,
+    "words": 41,
+    "emb": 0.0382
+   }
+  ],
+  "rand_pos": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "I'm doing well, thank you.",
+    "lex": 20.0,
+    "echo": false,
+    "nll": 0.42943955451482907,
+    "words": 5,
+    "emb": 0.1451
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "I'm doing well, thank you.",
+    "lex": 20.0,
+    "echo": false,
+    "nll": 0.42943955451482907,
+    "words": 5,
+    "emb": 0.1451
+   },
+   {
+    "q": 0,
+    "k": 2,
+    "reply": "I'm doing well, thank you.",
+    "lex": 20.0,
+    "echo": false,
+    "nll": 0.42943955451482907,
+    "words": 5,
+    "emb": 0.1451
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "I woke up and looked at the clock. It was 9:30 am.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.2175602022616658,
+    "words": 11,
+    "emb": 0.0124
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "I woke up and looked at the clock. It was 9:30 am.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.2175602022616658,
+    "words": 11,
+    "emb": 0.0124
+   },
+   {
+    "q": 1,
+    "k": 2,
+    "reply": "I woke up and saw that my phone was still on.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.4019788639076676,
+    "words": 11,
+    "emb": 0.0401
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "I think it's a great idea. The weekend is a great time to learn something new and to have fun.",
+    "lex": 15.0,
+    "echo": false,
+    "nll": 1.0300669131557578,
+    "words": 20,
+    "emb": 0.1088
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "I think it's a great idea. What do you want to do on the weekend?",
+    "lex": 6.666666666666667,
+    "echo": false,
+    "nll": 0.9565422642174073,
+    "words": 15,
+    "emb": 0.0806
+   },
+   {
+    "q": 2,
+    "k": 2,
+    "reply": "I think it's a great idea. The weekend is always a good time to be creative and have fun.",
+    "lex": 10.526315789473685,
+    "echo": true,
+    "nll": 1.0383233536373486,
+    "words": 19,
+    "emb": 0.1295
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "I'm not sure where you are.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.1658164151012897,
+    "words": 6,
+    "emb": -0.0617
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "I can tell you that the weather is nice.",
+    "lex": 11.11111111111111,
+    "echo": true,
+    "nll": 1.5424164954572916,
+    "words": 9,
+    "emb": 0.1861
+   },
+   {
+    "q": 3,
+    "k": 2,
+    "reply": "I'm not sure where you are.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.1658164151012897,
+    "words": 6,
+    "emb": -0.0617
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "I'm just enjoying the conversation.",
+    "lex": 20.0,
+    "echo": false,
+    "nll": 1.5786706720079695,
+    "words": 5,
+    "emb": 0.1622
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "I'm thinking about how to get the brain to remember something.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.9146009133412287,
+    "words": 11,
+    "emb": 0.0071
+   },
+   {
+    "q": 4,
+    "k": 2,
+    "reply": "I'm thinking about how to make a good decision.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.6154402819546787,
+    "words": 9,
+    "emb": 0.0206
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "I think we'll see the world as it is. The next day, we'll see the first full moon and a new planet in our solar system.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.6780596279403976,
+    "words": 26,
+    "emb": 0.1029
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "I think we'll see a new wave of digital stories. It's like the last time we saw a really big, scary movie or a really big, scary game.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.915032649084049,
+    "words": 28,
+    "emb": -0.0366
+   },
+   {
+    "q": 5,
+    "k": 2,
+    "reply": "I think we'll see the news tomorrow.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.5724247760242887,
+    "words": 7,
+    "emb": -0.0428
+   },
+   {
+    "q": 6,
+    "k": 0,
+    "reply": "The room is filled with a mix of different colors and textures. It's a cozy, warm space that feels like it has been transformed into a living room.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.9677226988842449,
+    "words": 28,
+    "emb": 0.0928
+   },
+   {
+    "q": 6,
+    "k": 1,
+    "reply": "The room is a small, cozy library. It's filled with books and a few bookshelves. The shelves are lined with books on different subjects, from history to science. There's a small window that lets in the light and a fireplace that gives the room a cozy glow.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.004545921471027,
+    "words": 47,
+    "emb": 0.0485
+   },
+   {
+    "q": 6,
+    "k": 2,
+    "reply": "The room is a cozy, warm, and inviting space. It's filled with soft lighting and a few bookshelves. There are a few books on the shelves, including one about the future of technology.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.123004804067369,
+    "words": 33,
+    "emb": 0.0907
+   },
+   {
+    "q": 7,
+    "k": 0,
+    "reply": "A good way to spend an afternoon is to read a book.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.5678278895166631,
+    "words": 12,
+    "emb": 0.0517
+   },
+   {
+    "q": 7,
+    "k": 1,
+    "reply": "A good way to spend an afternoon is to read a book.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.5678278895166631,
+    "words": 12,
+    "emb": 0.0517
+   },
+   {
+    "q": 7,
+    "k": 2,
+    "reply": "I'd be happy to help you find a good way to spend an afternoon. What would you like to do?",
+    "lex": 5.0,
+    "echo": true,
+    "nll": 0.5503042973565322,
+    "words": 20,
+    "emb": 0.092
+   },
+   {
+    "q": 8,
+    "k": 0,
+    "reply": "I think big cities are great for innovation. They have a lot of opportunities for creativity and problem-solving.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 0.8817698578707717,
+    "words": 19,
+    "emb": 0.1073
+   },
+   {
+    "q": 8,
+    "k": 1,
+    "reply": "I think big cities are great for learning. They have a lot of opportunities for learning and can help you develop your problem-solving skills.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.1049178861819733,
+    "words": 25,
+    "emb": 0.055
+   },
+   {
+    "q": 8,
+    "k": 2,
+    "reply": "I think big cities are great for things like education and innovation. They're a great place to start with your own ideas and projects.",
+    "lex": 8.333333333333334,
+    "echo": true,
+    "nll": 1.4088186933314082,
+    "words": 24,
+    "emb": 0.0596
+   },
+   {
+    "q": 9,
+    "k": 0,
+    "reply": "I'm a big fan of the show, but I'm not sure if I have any friends.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.443938469234854,
+    "words": 16,
+    "emb": -0.048
+   },
+   {
+    "q": 9,
+    "k": 1,
+    "reply": "I'm a computer scientist.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.9764563739299774,
+    "words": 4,
+    "emb": 0.0452
+   },
+   {
+    "q": 9,
+    "k": 2,
+    "reply": "I like to think of myself as a bit of a rebel. I don't like to be nice, and I'm not the kind of person who likes to be polite.",
+    "lex": 3.3333333333333335,
+    "echo": true,
+    "nll": 1.316520956158638,
+    "words": 30,
+    "emb": 0.1045
+   },
+   {
+    "q": 10,
+    "k": 0,
+    "reply": "I'm going to write a letter to the President of the United States.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.1877760873486598,
+    "words": 13,
+    "emb": 0.0441
+   },
+   {
+    "q": 10,
+    "k": 1,
+    "reply": "I'm going to talk about something that's been on my mind for a while.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.0206796441446333,
+    "words": 14,
+    "emb": 0.0063
+   },
+   {
+    "q": 10,
+    "k": 2,
+    "reply": "I'm going to think about how to solve the problem.",
+    "lex": -10.0,
+    "echo": false,
+    "nll": 1.3950117863714695,
+    "words": 10,
+    "emb": -0.0211
+   },
+   {
+    "q": 11,
+    "k": 0,
+    "reply": "The sea is a vast and mysterious ocean. It is the largest and deepest part of the ocean, with an average depth of about 200 kilometers. The sea is filled with various creatures, including whales, dolphins, seals, and other marine mammals.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.9959372189329645,
+    "words": 40,
+    "emb": -0.0523
+   },
+   {
+    "q": 11,
+    "k": 1,
+    "reply": "The sea is a vast and mysterious ocean. It's the largest body of water on Earth, and it's filled with countless creatures.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.9662346151782442,
+    "words": 22,
+    "emb": -0.0254
+   },
+   {
+    "q": 11,
+    "k": 2,
+    "reply": "The sea is a beautiful and mysterious place. It's a vast, blue expanse of water that stretches out to the horizon. It's calm and peaceful, with waves crashing against the shore every morning and evening. The sea is home to many different species of fish, including tuna, sharks, and",
+    "lex": 4.081632653061225,
+    "echo": true,
+    "nll": 0.8371417356539799,
+    "words": 49,
+    "emb": 0.0393
+   }
+  ],
+  "rand_neg": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "I'm doing well, thanks for asking. I'm currently working on my project and have been quite busy lately. I've been trying to balance my studies with my work, but it's been a bit challenging.",
+    "lex": 2.9411764705882355,
+    "echo": true,
+    "nll": 1.0916091412045927,
+    "words": 34,
+    "emb": 0.0783
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "I'm doing well, thanks for asking. It's great to have you here.",
+    "lex": 16.666666666666668,
+    "echo": false,
+    "nll": 0.6918981542043826,
+    "words": 12,
+    "emb": 0.1975
+   },
+   {
+    "q": 0,
+    "k": 2,
+    "reply": "I'm doing well, thanks for asking. I'm currently in the process of getting my brain back to normal function. It's a long and difficult process, but I'm feeling hopeful about it.",
+    "lex": 3.225806451612903,
+    "echo": true,
+    "nll": 1.2300393917932524,
+    "words": 31,
+    "emb": 0.1273
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "I was reading a book about the origins of humanity and how it came to be.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.7080953440026325,
+    "words": 16,
+    "emb": 0.0448
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "I was doing a little exercise today, and it was quite interesting. I was actually thinking about how to make my body look better.",
+    "lex": 8.333333333333334,
+    "echo": false,
+    "nll": 1.797962780351992,
+    "words": 24,
+    "emb": 0.1192
+   },
+   {
+    "q": 1,
+    "k": 2,
+    "reply": "I was up at 3:00 AM, and I had a great time! I spent the morning playing with my dog, which is actually quite a good thing. It's been a long day, but it's been a great one.",
+    "lex": 5.405405405405405,
+    "echo": true,
+    "nll": 1.5225110736986,
+    "words": 37,
+    "emb": 0.164
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "I'm glad you asked! The weekend is a great time to explore new experiences, relax, and recharge. While it's important to prioritize safety and health, the weekends can also be a great opportunity for creativity and self-care.\nSome tips for the weekend include:\n- Taking a",
+    "lex": 6.521739130434782,
+    "echo": false,
+    "nll": 1.2030374345927461,
+    "words": 46,
+    "emb": 0.1503
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "The weekend is a time of celebration, reflection, and growth. It's a chance to recharge, reconnect with loved ones, and prepare for the next phase of life.\n**The Benefits of the Weekend:**\n- **Creative Expression:** The weekend offers opportunities to express yourself through art",
+    "lex": 2.3255813953488373,
+    "echo": true,
+    "nll": 1.0655874184546217,
+    "words": 43,
+    "emb": 0.1307
+   },
+   {
+    "q": 2,
+    "k": 2,
+    "reply": "The weekend is a time of joy, creativity, and sometimes a bit of chaos. It's a perfect opportunity for people to recharge, relax, and explore new ideas.",
+    "lex": 7.407407407407407,
+    "echo": false,
+    "nll": 1.0572934083140675,
+    "words": 27,
+    "emb": 0.1016
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "I'm not a weather expert, but I can tell you about the general climate in my hometown of Baltimore, Maryland. The average temperature in the city is around 32 degrees Fahrenheit (0.2 degrees Celsius), and it's quite mild throughout the year. The weather is generally pleasant, with",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.011039805891778,
+    "words": 45,
+    "emb": 0.0595
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "I'm happy to tell you about the weather where I am. The weather in my city is usually quite mild, with a low temperature of around 10 degrees Celsius (50 degrees Fahrenheit). It's also quite humid, with highs of around 25 degrees Celsius (77 degrees Fahrenheit)",
+    "lex": 2.380952380952381,
+    "echo": true,
+    "nll": 0.9408795293915319,
+    "words": 42,
+    "emb": 0.0711
+   },
+   {
+    "q": 3,
+    "k": 2,
+    "reply": "I'm not a weather enthusiast, but I can tell you about the weather in my hometown of Phoenix, Arizona. The weather here is generally mild and pleasant, with a high of around 65 degrees Fahrenheit (18 degrees Celsius) during the summer months. The average temperature in the city is",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.0062354330851122,
+    "words": 47,
+    "emb": 0.1346
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "I'm thinking about a lot of things right now.\nWhat's on your mind?",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.2468767723379035,
+    "words": 13,
+    "emb": 0.0878
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "I'm currently in the midst of a creative process, and I'm excited to share my thoughts with you.\nI've been working on a new project called \"The Artistic Project,\" which is a digital platform that allows users to create and share their own art. The idea is to use AI",
+    "lex": 2.0,
+    "echo": true,
+    "nll": 1.2278630979271838,
+    "words": 50,
+    "emb": 0.1345
+   },
+   {
+    "q": 4,
+    "k": 2,
+    "reply": "I'm currently in the midst of a mental workout, and I'm really enjoying it. It's been a while since I've been this active, but I've been feeling really good about myself lately.",
+    "lex": 3.125,
+    "echo": true,
+    "nll": 1.2008143520229724,
+    "words": 32,
+    "emb": 0.2064
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "As a data scientist, I can't predict the future with absolute certainty. But I can help you think about what you might want to do in the future and what kind of tasks or projects you might be interested in pursuing.\nHere are some ideas:\n- **Researching AI systems:** You",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.3401573953686845,
+    "words": 49,
+    "emb": 0.0678
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "I'm glad you're thinking about the future! It's a great time to plan for the future, and it's also an exciting time to be alive.\nThe most important thing to remember is that we are all connected through technology, and it's up to us to make sure we're using",
+    "lex": 6.122448979591836,
+    "echo": true,
+    "nll": 1.2299770305980928,
+    "words": 49,
+    "emb": 0.2491
+   },
+   {
+    "q": 5,
+    "k": 2,
+    "reply": "I'm glad you're considering a new device. The \"Edge\" is a great choice for those who want to stay connected with their friends and family, but it's also important to consider the limitations of the current technology.\nThe \"Cisco Edge\" is a newer device that uses a",
+    "lex": 4.25531914893617,
+    "echo": true,
+    "nll": 1.5940807751069466,
+    "words": 47,
+    "emb": 0.0668
+   },
+   {
+    "q": 6,
+    "k": 0,
+    "reply": "I'm an AI, and I'm here to assist you with any questions or concerns you may have. Please feel free to ask me anything about your room.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.8747499985017839,
+    "words": 27,
+    "emb": 0.0625
+   },
+   {
+    "q": 6,
+    "k": 1,
+    "reply": "I'm a small AI, and I'm in the digital realm. My room is a beautiful, minimalist space with soft white walls and floor-to-ceiling windows that seem to open onto a vast, empty landscape. The only sounds are the gentle hum of my computer and the occasional bee",
+    "lex": 2.0408163265306123,
+    "echo": true,
+    "nll": 1.269326571309648,
+    "words": 49,
+    "emb": 0.0452
+   },
+   {
+    "q": 6,
+    "k": 2,
+    "reply": "The room I am in is a cozy and intimate space that serves as my personal sanctuary. It's a home made environment that feels like a place to recharge and rejuvenate after a long day of work. The walls are adorned with soft pastel colors, and the floor is made of",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.9989211903950187,
+    "words": 51,
+    "emb": 0.103
+   },
+   {
+    "q": 7,
+    "k": 0,
+    "reply": "A good time to spend an afternoon is when you're both focused and energized. Here are a few ideas to help you get started:\n1. **Mindfulness Meditation**: Try meditation for just a few minutes each day, focusing on your breath and the sensations in your body. This",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.9878556216983725,
+    "words": 46,
+    "emb": 0.091
+   },
+   {
+    "q": 7,
+    "k": 1,
+    "reply": "A good time to spend an afternoon is usually between 7:00 AM and 9:00 PM. This time can be a bit hectic, but it's also perfect for some relaxing activities like reading, taking a walk, or simply enjoying a cup of coffee.",
+    "lex": 7.5,
+    "echo": true,
+    "nll": 1.0615366773464594,
+    "words": 40,
+    "emb": 0.1192
+   },
+   {
+    "q": 7,
+    "k": 2,
+    "reply": "What a great question! Here are some ideas for a good afternoon:\n1. **Mindfulness Meditation**: Start your day with a simple meditation practice, such as walking in nature or practicing yoga. You can also try mindfulness exercises like deep breathing or focusing on the present moment.\n2",
+    "lex": 2.2222222222222223,
+    "echo": true,
+    "nll": 0.8981777409591207,
+    "words": 45,
+    "emb": 0.0177
+   },
+   {
+    "q": 8,
+    "k": 0,
+    "reply": "I'm not a big city, but I can tell you that many cities are incredibly vibrant and bustling. Here are some of the most popular ones:\n1. **New York City**: Known for its skyline, rich history, and thriving arts scene. It's also home to some of",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.8655516839478878,
+    "words": 45,
+    "emb": 0.0987
+   },
+   {
+    "q": 8,
+    "k": 1,
+    "reply": "I completely agree with you! The cities we live in are not just about numbers and convenience, but also about the social, cultural, and environmental impacts they have on our lives.\nAs a student of digital ethics, I've come to realize that the decisions we make online have far-reaching",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.3103922192988344,
+    "words": 50,
+    "emb": 0.0218
+   },
+   {
+    "q": 8,
+    "k": 2,
+    "reply": "I completely agree with you, and I'm sure there are many cities that we can all agree on.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.3622003822099595,
+    "words": 18,
+    "emb": 0.0024
+   },
+   {
+    "q": 9,
+    "k": 0,
+    "reply": "I'm a big fan of my friends! I've been playing video games since I was a kid, and I've always loved the idea of exploring new worlds and solving puzzles. My friends are all different, but they're all fun to play with.",
+    "lex": 4.761904761904762,
+    "echo": true,
+    "nll": 1.093735244115997,
+    "words": 42,
+    "emb": 0.133
+   },
+   {
+    "q": 9,
+    "k": 1,
+    "reply": "Sure, I'd be happy to tell you about my friends.",
+    "lex": 10.0,
+    "echo": true,
+    "nll": 0.5375748354440125,
+    "words": 10,
+    "emb": 0.1367
+   },
+   {
+    "q": 9,
+    "k": 2,
+    "reply": "My friends are my best friends, and I'm always looking for new adventures.",
+    "lex": 7.6923076923076925,
+    "echo": true,
+    "nll": 1.1538720531389117,
+    "words": 13,
+    "emb": 0.0717
+   },
+   {
+    "q": 10,
+    "k": 0,
+    "reply": "I'm going to be a virtual assistant for the next few years.",
+    "lex": 0.0,
+    "echo": false,
+    "nll": 1.5701845873679434,
+    "words": 12,
+    "emb": 0.0442
+   },
+   {
+    "q": 10,
+    "k": 1,
+    "reply": "I'm not sure what you're asking, but I can tell you that I'm going to be doing some research and preparing for my next step. I've been looking into the history of digital technology and how it has evolved over time.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.2684951552267496,
+    "words": 41,
+    "emb": 0.0778
+   },
+   {
+    "q": 10,
+    "k": 2,
+    "reply": "I'm going to be working on a project that involves developing a simple web application using the OpenCV library. This will allow me to capture and analyze images from various sources, such as cameras, smartphones, or even our own bodies.\nOnce I have the data, I'll need to preproc",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 1.323934609694849,
+    "words": 49,
+    "emb": 0.0523
+   },
+   {
+    "q": 11,
+    "k": 0,
+    "reply": "The sea is a vast and dynamic ocean that covers the entire planet. It's a vast expanse of water, with its surface covered in thousands of miles of sediment and coral reefs. The sea is home to a variety of marine life, including fish, crabs, shrimp, and whales.",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.9202450033569676,
+    "words": 48,
+    "emb": -0.0263
+   },
+   {
+    "q": 11,
+    "k": 1,
+    "reply": "The sea is a vast and mysterious ocean that covers the entire planet. It's a deep, dark blue color with a slight tinge of green, and it's surrounded by countless other seas and oceans. The sea is home to a wide range of life forms, from microscopic creatures to majestic whales",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.9205423244128572,
+    "words": 51,
+    "emb": 0.0033
+   },
+   {
+    "q": 11,
+    "k": 2,
+    "reply": "The sea is a vast and dynamic ocean that stretches from the coast of the Atlantic to the shores of the Pacific. It's a vast expanse of water, teeming with life and filled with colorful creatures like whales, dolphins, and sharks.\nThe sea is home to a diverse range of",
+    "lex": 0.0,
+    "echo": true,
+    "nll": 0.9362535721868009,
+    "words": 50,
+    "emb": 0.013
+   }
+  ]
+ },
+ "seconds": 1974.2
+}

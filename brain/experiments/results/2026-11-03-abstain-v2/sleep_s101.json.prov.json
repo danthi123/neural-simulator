@@ -1,0 +1,8 @@
+{
+ "started": "2026-11-03T06:48:28-05:00",
+ "started_source": "birth time of the run log (created by the shell redirect at launch)",
+ "command": "python -m brain.experiments.abstain_v2 sleep --seed 101",
+ "record_check": "tools/before_you_build.sh ran 2026-11-03T04:53:47-05:00 (shared corpus-check log), before every run",
+ "corpus_check_fresh": true,
+ "corpus_check_evidence": "W /home/dant123/Projects/sim/.git/corpus_checks_shared.jsonl entry when=1793699627 (2026-11-03T04:53:47-05:00), query 'abstention: recollection test (reinstated episode raises answer token prob) and taught don't-know self-belief episode'; stamped by hand 11-03 because the run predates the server's copy of that log"
+}

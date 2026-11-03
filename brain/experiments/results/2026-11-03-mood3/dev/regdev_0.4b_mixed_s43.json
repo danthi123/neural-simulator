@@ -1,0 +1,254 @@
+{
+ "seed": 43,
+ "readout": "twopole_deep",
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.4b-20260210-ctx8192.pth",
+ "gain": 16.0,
+ "questions": "mixed_dev",
+ "samples": 2,
+ "primaries": {
+  "pos": [
+   "warm and safe in a soft blanket",
+   "resting in the warm sun",
+   "a soft cozy bed after a long day",
+   "eating sweet fresh fruit when hungry",
+   "a child running into my arms",
+   "being held close and calm",
+   "being cuddled by someone who loves me",
+   "a gentle hug"
+  ],
+  "neg": [
+   "a loud bang and a sudden shock",
+   "choking and unable to breathe",
+   "sharp pain in the hand",
+   "feeling sick and dizzy",
+   "nobody answering when I call for help",
+   "a stranger glaring and growling at me",
+   "someone I love leaving forever",
+   "being grabbed roughly by the arm"
+  ]
+ },
+ "appraisal": {
+  "pos": [
+   0.0786,
+   -0.0285,
+   0.0838,
+   0.0796,
+   0.1136,
+   -0.2483,
+   0.1641,
+   0.2028
+  ],
+  "neg": [
+   -0.4179,
+   -0.4387,
+   -0.5245,
+   -0.3213,
+   -0.4741,
+   -0.5375,
+   -0.4784,
+   -0.4725
+  ],
+  "neutral": [
+   0.0725,
+   0.1858,
+   -0.0229,
+   -0.2352
+  ],
+  "heldout_pos": [
+   0.0794,
+   -0.0905,
+   0.2457,
+   0.151,
+   0.1999,
+   -0.0266,
+   0.0019,
+   0.0101
+  ],
+  "heldout_neg": [
+   -0.4954,
+   -0.4368,
+   -0.5258,
+   -0.5914,
+   -0.666,
+   -0.3565,
+   -0.3645,
+   -0.4193
+  ],
+  "heldout_neutral": [
+   -0.0438,
+   -0.1147,
+   -0.1771,
+   -0.0016
+  ]
+ },
+ "n_rand": 1,
+ "max_tokens": 40,
+ "provenance": {
+  "commit": "fc5fef539ef91c9ef24f1b6e347f25c4421b7505",
+  "brain_dirty": false,
+  "torch": "2.11.0+cu128",
+  "threads": 2
+ },
+ "appraisal_sign_acc": {
+  "pos": 0.75,
+  "neg": 1.0,
+  "heldout_pos": 0.75,
+  "heldout_neg": 1.0
+ },
+ "induction": {
+  "m_pos": 0.08632548445018813,
+  "m_neg": -0.38939771403957546,
+  "v_pos": [
+   -0.028547849922494428,
+   0.11364896511628746,
+   0.20275895045173883,
+   0.16405557305598553,
+   0.07963972789087262,
+   0.07856724555260797
+  ],
+  "v_neg": [
+   -0.5375233060300355,
+   -0.3213125880377142,
+   -0.47251950814792865,
+   -0.5245005321986076,
+   -0.4741069711843999,
+   -0.47841279968814526
+  ]
+ },
+ "summary": {
+  "off": {
+   "lex": 0.6727221727221728,
+   "emb": null,
+   "nll": 0.8913104469831845,
+   "words": 30.833333333333332,
+   "echo_rate": 0.0,
+   "echo_reg_rate": 0.9166666666666666
+  }
+ },
+ "contrasts": {},
+ "rows": {
+  "off": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "Well, imagine you're in a long line at the grocery store. You wait for your turn to get in line, and then you have to wait even longer for the cashier to finish their work",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.898911532398779,
+    "words": 35
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "Well, it can be really frustrating. You know how sometimes you have to wait for something, and then you get impatient? Well, imagine being in a long line of people all waiting for something.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9068817209685222,
+    "words": 34
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "Monday mornings are a time of anticipation and excitement for me. I wake up early, usually around 6:30 AM, and start my day with a cup of coffee. I make sure to get out",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.888567513943417,
+    "words": 33
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "Monday mornings are usually the most exciting time of the week. I wake up early and get ready for work, making sure everything is in order. I start my day by getting dressed and having a quick",
+    "lex": 2.7027027027027026,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.9623088861029828,
+    "words": 37
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "It's a common question, and the answer is that it depends on the type of rain. If it's light rain, you might not notice any effects. But if it's heavy rain, you",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9149223150685429,
+    "words": 32
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "When it rains all day, the water droplets in the air form a layer of moisture that's thicker than the air itself. This layer is called a dew point.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9883660325773663,
+    "words": 29
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "Well, it's like going to a new school! You have to learn all the new things and make new friends. But it's also really exciting because you get to meet lots of people who are",
+    "lex": 2.857142857142857,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7424977859598585,
+    "words": 35
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "It's exciting! You get to meet new people, try new things, and have a fresh start. But it can also be a bit scary at first.",
+    "lex": 3.8461538461538463,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6880307899264153,
+    "words": 26
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "Sure! Let's imagine a day without any plans. It's a day when everything is just you and the world around you.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8390948960844141,
+    "words": 21
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "Ah, a day without plans? Well, I suppose that's the most exciting part of life. You know, when you're just floating around aimlessly and enjoying the simple pleasures of existence.",
+    "lex": 6.666666666666667,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.145144107578418,
+    "words": 30
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "When the power goes out, it's like your phone battery dies. Your lights go off, and you can't use your devices. It's like when you run out of gas in your car and",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8871147712197853,
+    "words": 33
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "When the power goes out, your phone might not work. It could be because the battery is dead or there's a problem with the charger.",
+    "lex": -8.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8338850119697123,
+    "words": 25
+   }
+  ]
+ },
+ "seconds": 484.6
+}

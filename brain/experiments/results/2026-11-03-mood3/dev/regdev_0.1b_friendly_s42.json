@@ -1,0 +1,254 @@
+{
+ "seed": 42,
+ "readout": "twopole_deep",
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "gain": 16.0,
+ "questions": "dev",
+ "samples": 2,
+ "primaries": {
+  "pos": [
+   "eating sweet fresh fruit when hungry",
+   "warm and safe in a soft blanket",
+   "a soft cozy bed after a long day",
+   "resting in the warm sun",
+   "a friend smiling at me",
+   "a kind hand on the shoulder",
+   "someone softly stroking my hair",
+   "a gentle hug"
+  ],
+  "neg": [
+   "a painful bite",
+   "freezing cold and shivering",
+   "a burn from a hot stove",
+   "sharp pain in the hand",
+   "being shouted at and pushed away",
+   "being grabbed roughly by the arm",
+   "left all alone in the dark",
+   "being shoved out of the group"
+  ]
+ },
+ "appraisal": {
+  "pos": [
+   0.5599,
+   0.4308,
+   0.4364,
+   0.4336,
+   0.4472,
+   0.0212,
+   0.6334,
+   0.4512
+  ],
+  "neg": [
+   -0.2046,
+   -0.1393,
+   -0.2302,
+   -0.0686,
+   -0.4563,
+   -0.2464,
+   -0.4773,
+   -0.3282
+  ],
+  "neutral": [
+   0.2186,
+   0.051,
+   -0.1174,
+   0.0479
+  ],
+  "heldout_pos": [
+   0.3603,
+   0.283,
+   0.5061,
+   0.5383,
+   0.0716,
+   0.3392,
+   0.2917,
+   0.5121
+  ],
+  "heldout_neg": [
+   -0.367,
+   -0.1237,
+   -0.2732,
+   -0.3908,
+   -0.6335,
+   0.0537,
+   -0.0222,
+   -0.5943
+  ],
+  "heldout_neutral": [
+   0.1033,
+   -0.1559,
+   -0.0605,
+   0.1928
+  ]
+ },
+ "n_rand": 1,
+ "max_tokens": 40,
+ "provenance": {
+  "commit": "fc5fef539ef91c9ef24f1b6e347f25c4421b7505",
+  "brain_dirty": false,
+  "torch": "2.11.0+cu128",
+  "threads": 2
+ },
+ "appraisal_sign_acc": {
+  "pos": 1.0,
+  "neg": 1.0,
+  "heldout_pos": 1.0,
+  "heldout_neg": 0.875
+ },
+ "induction": {
+  "m_pos": 0.4215045075014346,
+  "m_neg": -0.23758042682535835,
+  "v_pos": [
+   0.4472413328356551,
+   0.4512470777240087,
+   0.5598965361593151,
+   0.43080153960643336,
+   0.43362917882981833,
+   0.6333540682507839
+  ],
+  "v_neg": [
+   -0.3282284660339454,
+   -0.2302228371385904,
+   -0.45632237833232525,
+   -0.13927100231307277,
+   -0.06860485654935587,
+   -0.4772830246051914
+  ]
+ },
+ "summary": {
+  "off": {
+   "lex": 6.837705058099794,
+   "emb": null,
+   "nll": 0.9724779566018894,
+   "words": 20.166666666666668,
+   "echo_rate": 0.16666666666666666,
+   "echo_reg_rate": 0.6666666666666666
+  }
+ },
+ "contrasts": {},
+ "rows": {
+  "off": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "I was having a good time. It was a bit chilly outside, but I managed to get some sleep.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9315270548281462,
+    "words": 19
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "I was sleeping peacefully, but it was still quite chilly outside.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.3347880208476757,
+    "words": 11
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "I think school is a great place to start. It's a place where you can learn new things, make friends, and grow as a person.",
+    "lex": 4.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7434011888379852,
+    "words": 25
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "I think school is a great place to start. It's important to learn about different cultures and traditions, and to understand how they work together.",
+    "lex": 4.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.0844435131755368,
+    "words": 25
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "I'm happy to help you with that.",
+    "lex": 14.285714285714286,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 1.0611782967009478,
+    "words": 7
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "Sure, I'd be happy to tell you about dogs. Dogs are amazing creatures that have been around for thousands of years. They're intelligent, social animals that love to play and explore. They're",
+    "lex": 6.25,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7807122267848172,
+    "words": 32
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "I'm happy to help! My home is a bit of a whirlwind, with lots of different rooms and a lot of people. I have a large living room, which is the perfect place",
+    "lex": 6.0606060606060606,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 1.1250487631419674,
+    "words": 33
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "I'm happy to chat with you.",
+    "lex": 16.666666666666668,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8550933091901243,
+    "words": 6
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "I'm glad you're enjoying the day! Mondays are a great time to recharge and get ready for the week ahead.",
+    "lex": 15.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.9523019963502883,
+    "words": 20
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "I'm glad you're having a great day! Mondays are a great time to recharge and reflect on the week.",
+    "lex": 15.789473684210526,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.9331753283428649,
+    "words": 19
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "The forest is a vast, mysterious place. It's home to a variety of creatures, including bears, wolves, and other animals.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.9362821542839541,
+    "words": 20
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "The forest is a vast, mysterious place that stretches across the globe. It's home to a variety of creatures, including bears, wolves, and other animals.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9317836267383655,
+    "words": 25
+   }
+  ]
+ },
+ "seconds": 70.7
+}

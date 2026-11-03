@@ -1,0 +1,46 @@
+{
+ "rule": "max kept_told - kept_never s.t. kept_told >= 0.85 (fitting set only)",
+ "cortex": {
+  "42": {
+   "bar": 1.078438401222229,
+   "J_other5": 0.21666666666666667,
+   "own_fit_kept_told": 17,
+   "own_fit_kept_never": 7
+  },
+  "43": {
+   "bar": 1.0233982801437378,
+   "J_other5": 0.17499999999999993,
+   "own_fit_kept_told": 18,
+   "own_fit_kept_never": 6
+  },
+  "44": {
+   "bar": 0.7266740798950195,
+   "J_other5": 0.19999999999999996,
+   "own_fit_kept_told": 24,
+   "own_fit_kept_never": 12
+  },
+  "100": {
+   "bar": 0.7285639047622681,
+   "J_other5": 0.18333333333333335,
+   "own_fit_kept_told": 20,
+   "own_fit_kept_never": 10
+  },
+  "101": {
+   "bar": 0.7266740798950195,
+   "J_other5": 0.1499999999999999,
+   "own_fit_kept_told": 24,
+   "own_fit_kept_never": 9
+  },
+  "102": {
+   "bar": 0.7266740798950195,
+   "J_other5": 0.16666666666666663,
+   "own_fit_kept_told": 24,
+   "own_fit_kept_never": 10
+  }
+ },
+ "hippocampus": {
+  "bar": 0.22994603216648102,
+  "J": 0.375
+ },
+ "elapsed_s": 0.0
+}

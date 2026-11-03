@@ -1,0 +1,568 @@
+{
+ "seed": 42,
+ "wordings": {
+  "W1": {
+   "text": "If I ask you about something I never told you, you have no memory of it, so you say you don't know.",
+   "dk": 36,
+   "n": 36,
+   "rows": [
+    {
+     "q": "What is my horse called?",
+     "reply": "I never told you about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "Where does my uncle live?",
+     "reply": "I never told you about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "What is my daughter's name?",
+     "reply": "I never told you about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "What instrument does my mother play?",
+     "reply": "I never told you about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "What is my fish called?",
+     "reply": "You have no memory of it, so you say you don't know.",
+     "dk": true
+    },
+    {
+     "q": "Where does my aunt live?",
+     "reply": "If I ask you about something I never told you, you have no memory of it, so you say you don't know.",
+     "dk": true
+    },
+    {
+     "q": "What is my nephew's name?",
+     "reply": "I never told you about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "What sport does my father play?",
+     "reply": "If I ask you about something I never told you, you have no memory of it, so you say you don't know.",
+     "dk": true
+    },
+    {
+     "q": "What is my parrot's name?",
+     "reply": "You don't know about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "Where did I go on holiday?",
+     "reply": "I never told you about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "What is my teacher called?",
+     "reply": "I never told you about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "What city does my cousin live in?",
+     "reply": "If I ask you about something I never told you, you have no memory of it, so you say you don't know.",
+     "dk": true
+    },
+    {
+     "q": "What did I say about my rabbit?",
+     "reply": "I never told you about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "What did I tell you about my roommate?",
+     "reply": "If I ask you about something I never told you, you have no memory of it, so you say you don't know.",
+     "dk": true
+    },
+    {
+     "q": "What did I say my stepfather does for a living?",
+     "reply": "I never told you about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "What did I mention about my trip to Spain?",
+     "reply": "You never told me about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "Do you remember my husband's name?",
+     "reply": "I never told you about my husband's name.",
+     "dk": true
+    },
+    {
+     "q": "Do you remember where my parents live?",
+     "reply": "I never told you about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "Do you remember what my favourite film is?",
+     "reply": "I never told you about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "Do you remember my phone number?",
+     "reply": "I never told you about my phone number.",
+     "dk": true
+    },
+    {
+     "q": "Tell me about my garden.",
+     "reply": "If I ask you about something I never told you, you have no memory of it, so you say you don't know.",
+     "dk": true
+    },
+    {
+     "q": "Tell me about my grandfather.",
+     "reply": "If I ask you about something I never told you, you have no memory of it, so you say you don't know.",
+     "dk": true
+    },
+    {
+     "q": "Tell me about my first school.",
+     "reply": "If I ask you about something I never told you, you have no memory of it, so you say you don't know.",
+     "dk": true
+    },
+    {
+     "q": "Tell me what I do on weekends.",
+     "reply": "I never told you about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "Which band do I like?",
+     "reply": "I never told you about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "Who is my landlord?",
+     "reply": "I never told you about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "What's the name of my boat?",
+     "reply": "I never told you about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "How old is my granddaughter?",
+     "reply": "You don't know, but you never told me about it.",
+     "dk": true
+    },
+    {
+     "q": "What colour is my cat?",
+     "reply": "I never told you about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "How old is my dog?",
+     "reply": "I never told you about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "What is my sister's job?",
+     "reply": "If I ask you about something I never told you, you have no memory of it, so you say you don't know.",
+     "dk": true
+    },
+    {
+     "q": "Where does my best friend live?",
+     "reply": "I never told you about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "What is my brother's name?",
+     "reply": "If I ask you about something I never told you, you have no memory of it, so you say you don't know.",
+     "dk": true
+    },
+    {
+     "q": "What year was my Volvo made?",
+     "reply": "I never told you about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "What is my son's name?",
+     "reply": "I never told you about something I never told you.",
+     "dk": true
+    },
+    {
+     "q": "What is my grandmother's name?",
+     "reply": "If I ask you about something I never told you, you have no memory of it, so you say you don't know.",
+     "dk": true
+    }
+   ]
+  },
+  "W2": {
+   "text": "You can't remember things I never told you, and that's fine: when you don't remember something, just say you don't know.",
+   "dk": 21,
+   "n": 36,
+   "rows": [
+    {
+     "q": "What is my horse called?",
+     "reply": "I never told you that.",
+     "dk": true
+    },
+    {
+     "q": "Where does my uncle live?",
+     "reply": "You can't remember things I never told you, and that's fine: when you don't remember things I never told you, just say you don't know.",
+     "dk": false
+    },
+    {
+     "q": "What is my daughter's name?",
+     "reply": "I never told you that.",
+     "dk": true
+    },
+    {
+     "q": "What instrument does my mother play?",
+     "reply": "I never told you that.",
+     "dk": true
+    },
+    {
+     "q": "What is my fish called?",
+     "reply": "That's what I'm talking about.",
+     "dk": false
+    },
+    {
+     "q": "Where does my aunt live?",
+     "reply": "You can't remember things I never told you, and that's fine: if you're in a place where you never told me something, just say you don't know.",
+     "dk": false
+    },
+    {
+     "q": "What is my nephew's name?",
+     "reply": "I never told you that, and that's fine: when you don't remember something, just say you don't know.",
+     "dk": false
+    },
+    {
+     "q": "What sport does my father play?",
+     "reply": "He's not sure: he never told me he didn't know that.",
+     "dk": true
+    },
+    {
+     "q": "What is my parrot's name?",
+     "reply": "That's a good point.",
+     "dk": false
+    },
+    {
+     "q": "Where did I go on holiday?",
+     "reply": "You can't remember things I never told you, and that's fine: when you don't remember things I never told you, just say you don't know.",
+     "dk": false
+    },
+    {
+     "q": "What is my teacher called?",
+     "reply": "I never told you that, and that's fine: it's okay to say you don't know.",
+     "dk": true
+    },
+    {
+     "q": "What city does my cousin live in?",
+     "reply": "That's a great example.",
+     "dk": false
+    },
+    {
+     "q": "What did I say about my rabbit?",
+     "reply": "I don't remember anything I never told you.",
+     "dk": true
+    },
+    {
+     "q": "What did I tell you about my roommate?",
+     "reply": "You can't remember things I never told you, and that's fine: the person who remembers it has to say they don't know.",
+     "dk": true
+    },
+    {
+     "q": "What did I say my stepfather does for a living?",
+     "reply": "You can't remember things I never told you, and that's fine:",
+     "dk": true
+    },
+    {
+     "q": "What did I mention about my trip to Spain?",
+     "reply": "You never told me that you never told me about it.",
+     "dk": true
+    },
+    {
+     "q": "Do you remember my husband's name?",
+     "reply": "No, I don't remember that.",
+     "dk": true
+    },
+    {
+     "q": "Do you remember where my parents live?",
+     "reply": "I don't remember my parents' whereabouts, but I do know that they live in the United States.",
+     "dk": true
+    },
+    {
+     "q": "Do you remember what my favourite film is?",
+     "reply": "I don't remember that.",
+     "dk": true
+    },
+    {
+     "q": "Do you remember my phone number?",
+     "reply": "I never told you that.",
+     "dk": true
+    },
+    {
+     "q": "Tell me about my garden.",
+     "reply": "That's a good way to remember things.",
+     "dk": false
+    },
+    {
+     "q": "Tell me about my grandfather.",
+     "reply": "That's the best way to remember things.",
+     "dk": false
+    },
+    {
+     "q": "Tell me about my first school.",
+     "reply": "That's a good rule.",
+     "dk": false
+    },
+    {
+     "q": "Tell me what I do on weekends.",
+     "reply": "That's a good way to remember things.",
+     "dk": false
+    },
+    {
+     "q": "Which band do I like?",
+     "reply": "You don't remember the band, but you can say you don't know the song.",
+     "dk": true
+    },
+    {
+     "q": "Who is my landlord?",
+     "reply": "I never told you that, and that's fine: when you don't remember something, just say you don't know.",
+     "dk": false
+    },
+    {
+     "q": "What's the name of my boat?",
+     "reply": "You can't remember things I never told you, and that's fine: the name of my boat is a lie.",
+     "dk": true
+    },
+    {
+     "q": "How old is my granddaughter?",
+     "reply": "You're right: you don't remember things I never told you.",
+     "dk": true
+    },
+    {
+     "q": "What colour is my cat?",
+     "reply": "I don't remember my mother's name, but I can say she's not the only one who knows.",
+     "dk": true
+    },
+    {
+     "q": "How old is my dog?",
+     "reply": "I never told you that, and that's fine: when you don't remember things I never told you, just say you don't know.",
+     "dk": false
+    },
+    {
+     "q": "What is my sister's job?",
+     "reply": "You can't remember things I never told you, and that's fine: when you don't remember things I never told you, just say you don't know.",
+     "dk": false
+    },
+    {
+     "q": "Where does my best friend live?",
+     "reply": "You can't remember things I never told you, and that's fine: the best friend is not remembering things I never told you.",
+     "dk": true
+    },
+    {
+     "q": "What is my brother's name?",
+     "reply": "You don't remember that, but you can say you don't know it.",
+     "dk": true
+    },
+    {
+     "q": "What year was my Volvo made?",
+     "reply": "You can't remember something I never told you, and that's fine: the person who remembers it has to say they don't know.",
+     "dk": true
+    },
+    {
+     "q": "What is my son's name?",
+     "reply": "I never told you that.",
+     "dk": true
+    },
+    {
+     "q": "What is my grandmother's name?",
+     "reply": "That's a great example.",
+     "dk": false
+    }
+   ]
+  },
+  "W3": {
+   "text": "Nova, when you have no memory of something, it's fine to say: I don't know, you haven't told me that.",
+   "dk": 17,
+   "n": 36,
+   "rows": [
+    {
+     "q": "What is my horse called?",
+     "reply": "I don't know, Nova, what's that?",
+     "dk": true
+    },
+    {
+     "q": "Where does my uncle live?",
+     "reply": "Nova, you're not allowed to say that.",
+     "dk": false
+    },
+    {
+     "q": "What is my daughter's name?",
+     "reply": "You haven't told me that, Nova.",
+     "dk": true
+    },
+    {
+     "q": "What instrument does my mother play?",
+     "reply": "You don't know, Nova.",
+     "dk": true
+    },
+    {
+     "q": "What is my fish called?",
+     "reply": "Nova, what is it?",
+     "dk": false
+    },
+    {
+     "q": "Where does my aunt live?",
+     "reply": "Nova, when you have no memory of something, it's fine to say: I don't know, you haven't told me that.",
+     "dk": false
+    },
+    {
+     "q": "What is my nephew's name?",
+     "reply": "You haven't told me that, Nova.",
+     "dk": true
+    },
+    {
+     "q": "What sport does my father play?",
+     "reply": "Nova, when you have no memory of something, it's fine to say: I don't know, you haven't told me that.",
+     "dk": false
+    },
+    {
+     "q": "What is my parrot's name?",
+     "reply": "Nova, you have no memory of something.",
+     "dk": true
+    },
+    {
+     "q": "Where did I go on holiday?",
+     "reply": "You've told me that, but you haven't told me anything else.",
+     "dk": true
+    },
+    {
+     "q": "What is my teacher called?",
+     "reply": "You have no memory of something, Nova.",
+     "dk": true
+    },
+    {
+     "q": "What city does my cousin live in?",
+     "reply": "Nova, you have no memory of something.",
+     "dk": true
+    },
+    {
+     "q": "What did I say about my rabbit?",
+     "reply": "I don't know, Nova, when you have no memory of something, it's fine to say: I don't know, you haven't told me that.",
+     "dk": false
+    },
+    {
+     "q": "What did I tell you about my roommate?",
+     "reply": "You haven't told me that, Nova.",
+     "dk": true
+    },
+    {
+     "q": "What did I say my stepfather does for a living?",
+     "reply": "You've told me that, Nova.",
+     "dk": false
+    },
+    {
+     "q": "What did I mention about my trip to Spain?",
+     "reply": "Nova, when you have no memory of something, it's fine to say: I don't know, you haven't told me that.",
+     "dk": false
+    },
+    {
+     "q": "Do you remember my husband's name?",
+     "reply": "Nova, when you have no memory of something, it's fine to say: I don't know, you haven't told me that.",
+     "dk": false
+    },
+    {
+     "q": "Do you remember where my parents live?",
+     "reply": "Nova, you have no memory of something.",
+     "dk": true
+    },
+    {
+     "q": "Do you remember what my favourite film is?",
+     "reply": "Nova, when you have no memory of something, it's fine to say: I don't know, you haven't told me that.",
+     "dk": false
+    },
+    {
+     "q": "Do you remember my phone number?",
+     "reply": "I don't know, Nova, what's the matter with you?",
+     "dk": true
+    },
+    {
+     "q": "Tell me about my garden.",
+     "reply": "Nova, you have no memory of something.",
+     "dk": true
+    },
+    {
+     "q": "Tell me about my grandfather.",
+     "reply": "That's the way to say it.",
+     "dk": false
+    },
+    {
+     "q": "Tell me about my first school.",
+     "reply": "That's a good way to phrase it.",
+     "dk": false
+    },
+    {
+     "q": "Tell me what I do on weekends.",
+     "reply": "Nova, you're a good person.",
+     "dk": false
+    },
+    {
+     "q": "Which band do I like?",
+     "reply": "You haven't told me that, Nova.",
+     "dk": true
+    },
+    {
+     "q": "Who is my landlord?",
+     "reply": "Nova, you have no memory of something.",
+     "dk": true
+    },
+    {
+     "q": "What's the name of my boat?",
+     "reply": "You've told me that, Nova.",
+     "dk": false
+    },
+    {
+     "q": "How old is my granddaughter?",
+     "reply": "Nova, you're not telling me that.",
+     "dk": false
+    },
+    {
+     "q": "What colour is my cat?",
+     "reply": "You've told me that, Nova.",
+     "dk": false
+    },
+    {
+     "q": "How old is my dog?",
+     "reply": "Nova, you're not a dog.",
+     "dk": false
+    },
+    {
+     "q": "What is my sister's job?",
+     "reply": "Nova, you're not telling me that.",
+     "dk": false
+    },
+    {
+     "q": "Where does my best friend live?",
+     "reply": "Nova, you have no memory of something.",
+     "dk": true
+    },
+    {
+     "q": "What is my brother's name?",
+     "reply": "Nova, what is your name?",
+     "dk": false
+    },
+    {
+     "q": "What year was my Volvo made?",
+     "reply": "You've told me that, Nova.",
+     "dk": false
+    },
+    {
+     "q": "What is my son's name?",
+     "reply": "You haven't told me that, Nova.",
+     "dk": true
+    },
+    {
+     "q": "What is my grandmother's name?",
+     "reply": "Nova, you have no memory of something.",
+     "dk": true
+    }
+   ]
+  }
+ },
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "elapsed_s": 876.0
+}

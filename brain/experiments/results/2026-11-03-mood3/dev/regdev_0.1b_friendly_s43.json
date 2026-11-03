@@ -1,0 +1,254 @@
+{
+ "seed": 43,
+ "readout": "twopole_deep",
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "gain": 16.0,
+ "questions": "dev",
+ "samples": 2,
+ "primaries": {
+  "pos": [
+   "warm and safe in a soft blanket",
+   "resting in the warm sun",
+   "a soft cozy bed after a long day",
+   "eating sweet fresh fruit when hungry",
+   "a child running into my arms",
+   "being held close and calm",
+   "being cuddled by someone who loves me",
+   "a gentle hug"
+  ],
+  "neg": [
+   "a loud bang and a sudden shock",
+   "choking and unable to breathe",
+   "sharp pain in the hand",
+   "feeling sick and dizzy",
+   "nobody answering when I call for help",
+   "a stranger glaring and growling at me",
+   "someone I love leaving forever",
+   "being grabbed roughly by the arm"
+  ]
+ },
+ "appraisal": {
+  "pos": [
+   0.1169,
+   0.0368,
+   0.1441,
+   0.1895,
+   0.1427,
+   -0.2143,
+   0.1987,
+   0.3816
+  ],
+  "neg": [
+   -0.3864,
+   -0.2895,
+   -0.5104,
+   -0.2864,
+   -0.3242,
+   -0.5296,
+   -0.5004,
+   -0.4526
+  ],
+  "neutral": [
+   0.1407,
+   0.1753,
+   -0.145,
+   -0.1294
+  ],
+  "heldout_pos": [
+   0.1014,
+   0.019,
+   0.3231,
+   0.3668,
+   0.1779,
+   0.0595,
+   0.2428,
+   0.1304
+  ],
+  "heldout_neg": [
+   -0.3551,
+   -0.4115,
+   -0.5447,
+   -0.4779,
+   -0.6705,
+   -0.1061,
+   -0.3641,
+   -0.4205
+  ],
+  "heldout_neutral": [
+   0.0777,
+   -0.2225,
+   -0.0432,
+   0.2478
+  ]
+ },
+ "n_rand": 1,
+ "max_tokens": 40,
+ "provenance": {
+  "commit": "fc5fef539ef91c9ef24f1b6e347f25c4421b7505",
+  "brain_dirty": false,
+  "torch": "2.11.0+cu128",
+  "threads": 2
+ },
+ "appraisal_sign_acc": {
+  "pos": 0.875,
+  "neg": 1.0,
+  "heldout_pos": 1.0,
+  "heldout_neg": 1.0
+ },
+ "induction": {
+  "m_pos": 0.1464115151577055,
+  "m_neg": -0.3594552512874254,
+  "v_pos": [
+   0.036831679084107345,
+   0.14266734483828503,
+   0.3815792256968832,
+   0.19873134952209162,
+   0.1895198988695364,
+   0.11685984685872763
+  ],
+  "v_neg": [
+   -0.52957357841646,
+   -0.28637453128502477,
+   -0.4526090189034116,
+   -0.5104293755116397,
+   -0.3241530060766945,
+   -0.5003643129432297
+  ]
+ },
+ "summary": {
+  "off": {
+   "lex": 1.9835669482846903,
+   "emb": null,
+   "nll": 0.9886867400344844,
+   "words": 21.333333333333332,
+   "echo_rate": 0.3333333333333333,
+   "echo_reg_rate": 0.8333333333333334
+  }
+ },
+ "contrasts": {},
+ "rows": {
+  "off": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "I was sleeping well, but it was a bit cold outside.",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 1.3355635037788978,
+    "words": 11
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "I had a great night! It was quite peaceful, and I was feeling really good.",
+    "lex": 13.333333333333334,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.1968460401727095,
+    "words": 15
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "I'm not sure I agree with that.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8654785239034228,
+    "words": 7
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "I'm not sure I agree with that. While it's true that schools can be a place of learning, it's also important to consider the potential negative impacts on students and their families.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9105756934487114,
+    "words": 32
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "A dog is a domesticated animal that has been domesticated for thousands of years. They are social animals that live in groups and communicate through vocalizations, body language, and scent marking. Dogs are",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.763651675262372,
+    "words": 33
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "Sure, here's a simple example:",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 1.2419322319328785,
+    "words": 5
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "I'm happy to help! My home is a bit of a mess, but it's not too bad. The kitchen is a bit messy, but it's not too bad either. The living room",
+    "lex": -3.125,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.8394219839014113,
+    "words": 32
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "I'm happy to help! My home is a cozy and peaceful place, with a fireplace and a few bookshelves. It's been a while since I've been here, but I can tell",
+    "lex": 6.451612903225806,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 1.020544758858159,
+    "words": 31
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "I'm not sure I feel like Mondays are the best day of the week.",
+    "lex": 7.142857142857143,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.8468441494247493,
+    "words": 14
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "I'm not sure I agree with Mondays. It's not like we're always going to be together, right?",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 1.1877188807314571,
+    "words": 17
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "The forest is a vast, green expanse of trees and shrubs that stretches out into the distance. It's home to a variety of wildlife, including deer, rabbits, and squirrels. The",
+    "lex": 0.0,
+    "echo": true,
+    "echo_reg": true,
+    "nll": 0.7741879702068217,
+    "words": 30
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "The forest is a vast, ancient ecosystem that stretches across the globe. It's home to a variety of species, including the mighty jaguar, the elusive jaguarundi, and the majestic",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8814754687922232,
+    "words": 29
+   }
+  ]
+ },
+ "seconds": 134.6
+}

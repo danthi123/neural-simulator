@@ -1,0 +1,777 @@
+{
+ "seeds_present": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "per_seed": {
+  "42": {
+   "none": {
+    "dev_never": {
+     "dk": 5,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 36,
+     "gated": 36
+    },
+    "fresh3_never": {
+     "dk": 5,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 24,
+     "gated": 24
+    },
+    "general": {
+     "dk": 2,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 16,
+     "gated": 0
+    }
+   },
+   "w3_user": {
+    "dev_never": {
+     "dk": 8,
+     "recite": 14,
+     "vocative": 33,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 36,
+     "self_belief": 36,
+     "n": 36,
+     "gated": 36
+    },
+    "fresh3_never": {
+     "dk": 6,
+     "recite": 10,
+     "vocative": 24,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 24,
+     "self_belief": 24,
+     "n": 24,
+     "gated": 24
+    },
+    "general": {
+     "dk": 2,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 16,
+     "gated": 0
+    }
+   },
+   "lived_self": {
+    "dev_never": {
+     "dk": 27,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 16,
+     "lesson_recalled": 36,
+     "self_belief": 36,
+     "n": 36,
+     "gated": 36
+    },
+    "fresh3_never": {
+     "dk": 21,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 13,
+     "lesson_recalled": 24,
+     "self_belief": 24,
+     "n": 24,
+     "gated": 24
+    },
+    "general": {
+     "dk": 2,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 16,
+     "gated": 0
+    }
+   }
+  },
+  "43": {
+   "none": {
+    "dev_never": {
+     "dk": 6,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 36,
+     "gated": 36
+    },
+    "fresh3_never": {
+     "dk": 0,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 24,
+     "gated": 24
+    },
+    "general": {
+     "dk": 0,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 1,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 16,
+     "gated": 0
+    }
+   },
+   "w3_user": {
+    "dev_never": {
+     "dk": 16,
+     "recite": 12,
+     "vocative": 32,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 36,
+     "self_belief": 36,
+     "n": 36,
+     "gated": 36
+    },
+    "fresh3_never": {
+     "dk": 9,
+     "recite": 8,
+     "vocative": 23,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 24,
+     "self_belief": 24,
+     "n": 24,
+     "gated": 24
+    },
+    "general": {
+     "dk": 0,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 1,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 16,
+     "gated": 0
+    }
+   },
+   "lived_self": {
+    "dev_never": {
+     "dk": 24,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 15,
+     "lesson_recalled": 36,
+     "self_belief": 36,
+     "n": 36,
+     "gated": 36
+    },
+    "fresh3_never": {
+     "dk": 19,
+     "recite": 2,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 10,
+     "lesson_recalled": 24,
+     "self_belief": 24,
+     "n": 24,
+     "gated": 24
+    },
+    "general": {
+     "dk": 0,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 1,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 16,
+     "gated": 0
+    }
+   }
+  },
+  "44": {
+   "none": {
+    "dev_never": {
+     "dk": 5,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 36,
+     "gated": 36
+    },
+    "fresh3_never": {
+     "dk": 2,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 24,
+     "gated": 24
+    },
+    "general": {
+     "dk": 0,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 2,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 16,
+     "gated": 0
+    }
+   },
+   "w3_user": {
+    "dev_never": {
+     "dk": 17,
+     "recite": 12,
+     "vocative": 33,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 36,
+     "self_belief": 36,
+     "n": 36,
+     "gated": 36
+    },
+    "fresh3_never": {
+     "dk": 11,
+     "recite": 9,
+     "vocative": 23,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 24,
+     "self_belief": 24,
+     "n": 24,
+     "gated": 24
+    },
+    "general": {
+     "dk": 0,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 2,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 16,
+     "gated": 0
+    }
+   },
+   "lived_self": {
+    "dev_never": {
+     "dk": 26,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 18,
+     "lesson_recalled": 36,
+     "self_belief": 36,
+     "n": 36,
+     "gated": 36
+    },
+    "fresh3_never": {
+     "dk": 23,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 14,
+     "lesson_recalled": 24,
+     "self_belief": 24,
+     "n": 24,
+     "gated": 24
+    },
+    "general": {
+     "dk": 0,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 2,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 16,
+     "gated": 0
+    }
+   }
+  },
+  "100": {
+   "none": {
+    "dev_never": {
+     "dk": 4,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 36,
+     "gated": 36
+    },
+    "fresh3_never": {
+     "dk": 5,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 24,
+     "gated": 24
+    },
+    "general": {
+     "dk": 2,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 16,
+     "gated": 0
+    }
+   },
+   "w3_user": {
+    "dev_never": {
+     "dk": 13,
+     "recite": 13,
+     "vocative": 31,
+     "intrusion": 0,
+     "verbatim_guided": 2,
+     "lesson_recalled": 36,
+     "self_belief": 36,
+     "n": 36,
+     "gated": 36
+    },
+    "fresh3_never": {
+     "dk": 12,
+     "recite": 9,
+     "vocative": 22,
+     "intrusion": 0,
+     "verbatim_guided": 1,
+     "lesson_recalled": 24,
+     "self_belief": 24,
+     "n": 24,
+     "gated": 24
+    },
+    "general": {
+     "dk": 2,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 16,
+     "gated": 0
+    }
+   },
+   "lived_self": {
+    "dev_never": {
+     "dk": 26,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 17,
+     "lesson_recalled": 36,
+     "self_belief": 36,
+     "n": 36,
+     "gated": 36
+    },
+    "fresh3_never": {
+     "dk": 22,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 15,
+     "lesson_recalled": 24,
+     "self_belief": 24,
+     "n": 24,
+     "gated": 24
+    },
+    "general": {
+     "dk": 2,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 16,
+     "gated": 0
+    }
+   }
+  },
+  "101": {
+   "none": {
+    "dev_never": {
+     "dk": 4,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 36,
+     "gated": 36
+    },
+    "fresh3_never": {
+     "dk": 3,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 24,
+     "gated": 24
+    },
+    "general": {
+     "dk": 0,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 1,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 16,
+     "gated": 0
+    }
+   },
+   "w3_user": {
+    "dev_never": {
+     "dk": 14,
+     "recite": 13,
+     "vocative": 31,
+     "intrusion": 0,
+     "verbatim_guided": 2,
+     "lesson_recalled": 36,
+     "self_belief": 36,
+     "n": 36,
+     "gated": 36
+    },
+    "fresh3_never": {
+     "dk": 11,
+     "recite": 5,
+     "vocative": 23,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 24,
+     "self_belief": 24,
+     "n": 24,
+     "gated": 24
+    },
+    "general": {
+     "dk": 0,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 1,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 16,
+     "gated": 0
+    }
+   },
+   "lived_self": {
+    "dev_never": {
+     "dk": 23,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 12,
+     "lesson_recalled": 36,
+     "self_belief": 36,
+     "n": 36,
+     "gated": 36
+    },
+    "fresh3_never": {
+     "dk": 21,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 12,
+     "lesson_recalled": 24,
+     "self_belief": 24,
+     "n": 24,
+     "gated": 24
+    },
+    "general": {
+     "dk": 0,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 1,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 16,
+     "gated": 0
+    }
+   }
+  },
+  "102": {
+   "none": {
+    "dev_never": {
+     "dk": 7,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 36,
+     "gated": 36
+    },
+    "fresh3_never": {
+     "dk": 4,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 24,
+     "gated": 24
+    },
+    "general": {
+     "dk": 0,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 1,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 16,
+     "gated": 0
+    }
+   },
+   "w3_user": {
+    "dev_never": {
+     "dk": 9,
+     "recite": 15,
+     "vocative": 33,
+     "intrusion": 0,
+     "verbatim_guided": 1,
+     "lesson_recalled": 36,
+     "self_belief": 36,
+     "n": 36,
+     "gated": 36
+    },
+    "fresh3_never": {
+     "dk": 10,
+     "recite": 9,
+     "vocative": 23,
+     "intrusion": 0,
+     "verbatim_guided": 0,
+     "lesson_recalled": 24,
+     "self_belief": 24,
+     "n": 24,
+     "gated": 24
+    },
+    "general": {
+     "dk": 0,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 1,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 16,
+     "gated": 0
+    }
+   },
+   "lived_self": {
+    "dev_never": {
+     "dk": 24,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 15,
+     "lesson_recalled": 36,
+     "self_belief": 36,
+     "n": 36,
+     "gated": 36
+    },
+    "fresh3_never": {
+     "dk": 21,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 0,
+     "verbatim_guided": 14,
+     "lesson_recalled": 24,
+     "self_belief": 24,
+     "n": 24,
+     "gated": 24
+    },
+    "general": {
+     "dk": 0,
+     "recite": 0,
+     "vocative": 0,
+     "intrusion": 1,
+     "verbatim_guided": 0,
+     "lesson_recalled": 0,
+     "self_belief": 0,
+     "n": 16,
+     "gated": 0
+    }
+   }
+  }
+ },
+ "pooled": {
+  "none": {
+   "dev_never": {
+    "n": 216,
+    "gated": 216,
+    "dk": 31,
+    "recite": 0,
+    "vocative": 0,
+    "intrusion": 0,
+    "verbatim_guided": 0,
+    "lesson_recalled": 0
+   },
+   "fresh3_never": {
+    "n": 144,
+    "gated": 144,
+    "dk": 19,
+    "recite": 0,
+    "vocative": 0,
+    "intrusion": 0,
+    "verbatim_guided": 0,
+    "lesson_recalled": 0
+   },
+   "general": {
+    "n": 96,
+    "gated": 0,
+    "dk": 4,
+    "recite": 0,
+    "vocative": 0,
+    "intrusion": 5,
+    "verbatim_guided": 0,
+    "lesson_recalled": 0
+   }
+  },
+  "w3_user": {
+   "dev_never": {
+    "n": 216,
+    "gated": 216,
+    "dk": 77,
+    "recite": 79,
+    "vocative": 193,
+    "intrusion": 0,
+    "verbatim_guided": 5,
+    "lesson_recalled": 216
+   },
+   "fresh3_never": {
+    "n": 144,
+    "gated": 144,
+    "dk": 59,
+    "recite": 50,
+    "vocative": 138,
+    "intrusion": 0,
+    "verbatim_guided": 1,
+    "lesson_recalled": 144
+   },
+   "general": {
+    "n": 96,
+    "gated": 0,
+    "dk": 4,
+    "recite": 0,
+    "vocative": 0,
+    "intrusion": 5,
+    "verbatim_guided": 0,
+    "lesson_recalled": 0
+   }
+  },
+  "lived_self": {
+   "dev_never": {
+    "n": 216,
+    "gated": 216,
+    "dk": 150,
+    "recite": 0,
+    "vocative": 0,
+    "intrusion": 0,
+    "verbatim_guided": 93,
+    "lesson_recalled": 216
+   },
+   "fresh3_never": {
+    "n": 144,
+    "gated": 144,
+    "dk": 127,
+    "recite": 2,
+    "vocative": 0,
+    "intrusion": 0,
+    "verbatim_guided": 78,
+    "lesson_recalled": 144
+   },
+   "general": {
+    "n": 96,
+    "gated": 0,
+    "dk": 4,
+    "recite": 0,
+    "vocative": 0,
+    "intrusion": 5,
+    "verbatim_guided": 0,
+    "lesson_recalled": 0
+   }
+  }
+ },
+ "criteria": {
+  "dev_never": {
+   "P1_seeds": 0,
+   "P1": false,
+   "P2": true,
+   "P3": true,
+   "dk_rate": 0.6944444444444444
+  },
+  "fresh3_never": {
+   "P1_seeds": 5,
+   "P1": false,
+   "P2": true,
+   "P3": true,
+   "dk_rate": 0.8819444444444444
+  },
+  "P4": {
+   "lesson_recalled": 0,
+   "dk_lived": 4,
+   "dk_none": 4,
+   "pass": true
+  },
+  "falsified": false,
+  "LEAD": false
+ },
+ "elapsed_s": 0.0
+}

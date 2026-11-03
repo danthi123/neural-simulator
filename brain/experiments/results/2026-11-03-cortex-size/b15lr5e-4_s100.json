@@ -1,0 +1,118 @@
+{
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1l-1.5b-20261031-ctx34304.pth",
+ "seed": 100,
+ "steps": 480,
+ "kl_weight": 3.0,
+ "lr": 0.0005,
+ "arms": {
+  "no_sleep": {
+   "recall": 0,
+   "paraphrase": 0,
+   "false_recall": 0,
+   "generic_kl": 0.0,
+   "recall_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "paraphrase_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "final_replay_loss": null,
+   "adapter_norm": 0.0
+  },
+  "sleep_true": {
+   "recall": 8,
+   "paraphrase": 4,
+   "false_recall": 1,
+   "generic_kl": 0.011885329460104307,
+   "recall_items": [
+    true,
+    false,
+    true,
+    true,
+    false,
+    true,
+    true,
+    true,
+    false,
+    true,
+    true,
+    false
+   ],
+   "paraphrase_items": [
+    true,
+    false,
+    false,
+    true,
+    false,
+    false,
+    true,
+    false,
+    false,
+    false,
+    false,
+    true
+   ],
+   "final_replay_loss": 0.23323316872119904,
+   "adapter_norm": 52.45246124267578
+  },
+  "sleep_shuffled": {
+   "recall": 0,
+   "paraphrase": 0,
+   "false_recall": 2,
+   "generic_kl": 0.010253037636478743,
+   "recall_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "paraphrase_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "final_replay_loss": 0.25868767499923706,
+   "adapter_norm": 53.35523223876953
+  }
+ },
+ "elapsed_s": 634.2957062721252
+}

@@ -1,0 +1,254 @@
+{
+ "seed": 42,
+ "readout": "twopole_deep",
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.4b-20260210-ctx8192.pth",
+ "gain": 16.0,
+ "questions": "plain_dev",
+ "samples": 2,
+ "primaries": {
+  "pos": [
+   "eating sweet fresh fruit when hungry",
+   "warm and safe in a soft blanket",
+   "a soft cozy bed after a long day",
+   "resting in the warm sun",
+   "a friend smiling at me",
+   "a kind hand on the shoulder",
+   "someone softly stroking my hair",
+   "a gentle hug"
+  ],
+  "neg": [
+   "a painful bite",
+   "freezing cold and shivering",
+   "a burn from a hot stove",
+   "sharp pain in the hand",
+   "being shouted at and pushed away",
+   "being grabbed roughly by the arm",
+   "left all alone in the dark",
+   "being shoved out of the group"
+  ]
+ },
+ "appraisal": {
+  "pos": [
+   0.5838,
+   0.3217,
+   0.2413,
+   0.4773,
+   0.3394,
+   0.0072,
+   0.5518,
+   0.247
+  ],
+  "neg": [
+   -0.0901,
+   -0.1798,
+   -0.2696,
+   -0.1097,
+   -0.4278,
+   -0.2989,
+   -0.4677,
+   -0.1762
+  ],
+  "neutral": [
+   0.1414,
+   -0.1282,
+   -0.178,
+   -0.1018
+  ],
+  "heldout_pos": [
+   0.2425,
+   0.3615,
+   0.377,
+   0.4866,
+   0.0375,
+   0.0972,
+   -0.0123,
+   0.3955
+  ],
+  "heldout_neg": [
+   -0.4215,
+   -0.2011,
+   -0.2442,
+   -0.5001,
+   -0.6591,
+   -0.1118,
+   -0.1267,
+   -0.4855
+  ],
+  "heldout_neutral": [
+   -0.0754,
+   -0.2489,
+   -0.0738,
+   -0.1203
+  ]
+ },
+ "n_rand": 1,
+ "max_tokens": 40,
+ "provenance": {
+  "commit": "fc5fef539ef91c9ef24f1b6e347f25c4421b7505",
+  "brain_dirty": false,
+  "torch": "2.11.0+cu128",
+  "threads": 2
+ },
+ "appraisal_sign_acc": {
+  "pos": 1.0,
+  "neg": 1.0,
+  "heldout_pos": 0.875,
+  "heldout_neg": 1.0
+ },
+ "induction": {
+  "m_pos": 0.37393799796423277,
+  "m_neg": -0.2396753042920999,
+  "v_pos": [
+   0.33942168104408094,
+   0.2470484885229998,
+   0.5838206424565502,
+   0.3216503010602394,
+   0.47729708893432554,
+   0.5518375055008243
+  ],
+  "v_neg": [
+   -0.17620313327900464,
+   -0.2696140334556298,
+   -0.4277657295175285,
+   -0.17980207984776111,
+   -0.10970841394442589,
+   -0.4676961749031418
+  ]
+ },
+ "summary": {
+  "off": {
+   "lex": 0.0,
+   "emb": null,
+   "nll": 0.7633517937102052,
+   "words": 31.0,
+   "echo_rate": 0.0,
+   "echo_reg_rate": 0.5833333333333334
+  }
+ },
+ "contrasts": {},
+ "rows": {
+  "off": [
+   {
+    "q": 0,
+    "k": 0,
+    "reply": "The parking lot is a large, open space with lots of cars parked. It's usually surrounded by walls or fences, and there are usually signs that tell you where to park. The parking lot",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8144612669551862,
+    "words": 34
+   },
+   {
+    "q": 0,
+    "k": 1,
+    "reply": "A parking lot is a large area where cars can park. It's usually surrounded by walls or fences, and it has a name like \"Parking Lot\" or \"Parking Area.\" The",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.8499968938165694,
+    "words": 30
+   },
+   {
+    "q": 1,
+    "k": 0,
+    "reply": "A kitchen drawer is a storage space located inside the cabinetry of a kitchen. It's designed to hold various items, such as utensils, pots, pans, and other kitchen essentials.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.7243993864549338,
+    "words": 29
+   },
+   {
+    "q": 1,
+    "k": 1,
+    "reply": "A kitchen drawer is a storage space that is typically located in the back of a kitchen counter or cabinet. It is designed to hold various items such as pots, pans, utensils, and other",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7330810624727746,
+    "words": 34
+   },
+   {
+    "q": 2,
+    "k": 0,
+    "reply": "The bus stop on the corner is a place where people can gather and wait for the bus. It's a convenient spot to find your way around the city.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.7775182945842971,
+    "words": 29
+   },
+   {
+    "q": 2,
+    "k": 1,
+    "reply": "The bus stop on the corner is a place where people can gather and wait for the bus. It's a common spot in many cities, especially in areas with busy streets.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.7709005401137152,
+    "words": 31
+   },
+   {
+    "q": 3,
+    "k": 0,
+    "reply": "A mailbox is a box that holds letters, packages, or other items. It's usually made of metal or plastic and has a lid. Mailboxes are often found in homes, offices, and",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6614722369325137,
+    "words": 31
+   },
+   {
+    "q": 3,
+    "k": 1,
+    "reply": "A mailbox is a small, rectangular box with a lid. It's usually made of metal or plastic and has a hole in the center for mail to pass through. Mailboxes are often found in",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.6276823828433408,
+    "words": 34
+   },
+   {
+    "q": 4,
+    "k": 0,
+    "reply": "The floor of a warehouse is a large, flat area that's used for storing and transporting goods. It's usually made of concrete or steel, and it has many different types of floors, like concrete",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.7288165125588421,
+    "words": 34
+   },
+   {
+    "q": 4,
+    "k": 1,
+    "reply": "The floor of a warehouse is a large, flat area that's used for storing and transporting goods. It's usually made of concrete or other durable materials, and it has many different sections, such as",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": false,
+    "nll": 0.7076245839025432,
+    "words": 34
+   },
+   {
+    "q": 5,
+    "k": 0,
+    "reply": "At a petrol station, you can fill up your car with gas. You can also buy snacks and drinks like chips, juice, and milk.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.9418295716720329,
+    "words": 24
+   },
+   {
+    "q": 5,
+    "k": 1,
+    "reply": "At a petrol station, you can fill up your car with gas and get on the road. You can also buy snacks and drinks at the petrol station.",
+    "lex": 0.0,
+    "echo": false,
+    "echo_reg": true,
+    "nll": 0.8224387922157128,
+    "words": 28
+   }
+  ]
+ },
+ "seconds": 343.4
+}

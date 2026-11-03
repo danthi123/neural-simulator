@@ -162,6 +162,19 @@ def test_dry_run_prints_the_remote_script_and_runs_nothing(tmp_path):
     assert not (home / "derisk-pool").exists()
 
 
+def test_holds_reports_queued_running_absent(tmp_path):
+    server, home, env = _setup(tmp_path)
+    q = home / "Projects" / "sim" / "research" / "queue"
+    q.mkdir(parents=True, exist_ok=True)
+    (q / "gpu.queue").write_text("cd /w && python -m x --out raw/tag-queued.json\n")
+    (q / "gpu.running").write_text("123\tcd /w && python -m y --out raw/tag-running.json\n")
+    assert "holds: QUEUED" in _run(server, env, "holds", "tag-queued").stdout
+    assert "holds: RUNNING" in _run(server, env, "holds", "tag-running").stdout
+    assert "holds: ABSENT" in _run(server, env, "holds", "tag-gone").stdout
+    assert _run(server, env, "holds", "x;id").returncode == 2
+    assert _run(server, env, "holds").returncode == 2
+
+
 def test_status_log_yield_provision_argument_checks(tmp_path):
     server, home, env = _setup(tmp_path)
     assert _run(server, env, "log", "x").returncode == 2
