@@ -92,7 +92,7 @@ class LiveCortex:
 class Brain:
     def __init__(self, home: str, name: str = "Nova", friend: str = "Dan", device: str = "cpu", cortex: Cortex = None,
                  sleep_on_restart: bool = True, sleep_steps: int = 240, sleep_lr: float = 5e-4,
-                 sleep_kl_weight: float = 1.0, adapter_rank: int = 8, sleep_log=None):
+                 sleep_kl_weight: float = 1.0, adapter_rank: int = 8, sleep_log=None, sleep_seed: int = 0):
         self.home = home
         os.makedirs(home, exist_ok=True)
         self.raw_cortex = cortex or Cortex(device=device)
@@ -102,6 +102,7 @@ class Brain:
         self.sleep_cfg = {"steps": sleep_steps, "lr": sleep_lr, "kl_weight": sleep_kl_weight}
         self.adapter_rank = adapter_rank
         self.sleep_log = sleep_log
+        self.sleep_seed = sleep_seed  # night n replays with seed sleep_seed + n; adapters init from sleep_seed
         # Birth context is read by the pretrained cortex: stored episodes are deltas from this base, so it must not
         # move when sleep changes the slow synapses.
         _, self.base = self.raw_cortex.read(BIRTH, None)
@@ -159,7 +160,7 @@ class Brain:
     def _plastic(self) -> PlasticCortex:
         if self.cortex.plastic is None:
             with torch.random.fork_rng(devices=[]):  # fixed adapter init; leaves the speaking RNG untouched
-                torch.manual_seed(0)
+                torch.manual_seed(self.sleep_seed)
                 self.cortex.plastic = PlasticCortex(self.raw_cortex, rank=self.adapter_rank)
         return self.cortex.plastic
 
@@ -176,7 +177,8 @@ class Brain:
         with torch.random.fork_rng(devices=[]):
             losses = replay_into_cortex(plastic, base, eps, ORDINARY, steps=steps or self.sleep_cfg["steps"],
                                         lr=self.sleep_cfg["lr"], kl_weight=self.sleep_cfg["kl_weight"],
-                                        seed=self.meta.get("sleeps", 0), log=self.sleep_log)
+                                        seed=self.sleep_seed + self.meta.get("sleeps", 0),
+                                        log=self.sleep_log)
         for prm in plastic.parameters():
             prm.grad = None
         self.meta["sleeps"] = self.meta.get("sleeps", 0) + 1

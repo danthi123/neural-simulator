@@ -179,4 +179,7 @@ def test_zero_adapter_brain_is_byte_equal_to_the_pre_sleep_brain(tmp_path):
     got = record(str(tmp_path / "home"), Cortex(device="cpu"))
     with open(GOLDEN) as fh:
         want = json.load(fh)
-    assert got == want
+    # replies, recalled episode and storing decision byte-equal; the recall score carries the memory's wall-clock decay
+    # (hippocampus.effective_strength), so it may move in the third decimal between recording and replay
+    assert [[r[0], r[1], r[2], r[4]] for r in got] == [[r[0], r[1], r[2], r[4]] for r in want]
+    assert all(abs(g[3] - w[3]) <= 2e-3 for g, w in zip(got, want))
