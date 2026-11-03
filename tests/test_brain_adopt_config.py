@@ -249,9 +249,25 @@ def test_brain_gpu_dry_run_lines():
     r = _gpu("night", "--home", "/h/my home", "--model", "1.5b", "--dry-run")
     assert r.returncode == 0, r.stderr
     line = r.stdout.strip()
-    assert "tools/local_llm/llm.sh run bash tools/memcap.sh 16 --" in line
+    assert "&& bash tools/memcap.sh 16 --" in line and "llm.sh run" not in line
     assert "-m brain.night --device cuda --home /h/my\\ home --model 1.5b" in line
     r = _gpu("weekly", "--model", "1.5b", "--shared-sleep", "--dry-run")
     assert r.returncode == 0 and "-m brain.eval.weekly --device cuda --model 1.5b --shared-sleep" in r.stdout
     assert _gpu("night", "--dry-run").returncode == 2           # a night needs a home
     assert _gpu("bogus").returncode == 2
+
+
+def test_brain_gpu_queues_then_yields(tmp_path):
+    """11-03: a job that unloads the LLM only once it runs never runs (the queue holds every job while the LLM is up).
+    The helper must queue the job, then yield the LLM, in that order (yield refuses on an empty queue)."""
+    log = tmp_path / "calls"
+    for name in ("q", "llm"):
+        (tmp_path / name).write_text(f'echo "{name} $*" >> {log}\n')
+    env = {**os.environ, "BRAIN_GPU_QUEUE": str(tmp_path / "q"), "BRAIN_GPU_LLM": str(tmp_path / "llm"),
+           "BRAIN_GPU_YIELD_H": "3"}
+    r = subprocess.run(["bash", os.path.join(REPO, "tools", "brain_gpu.sh"), "weekly", "--model", "1.5b"],
+                       capture_output=True, text=True, env=env)
+    assert r.returncode == 0, r.stderr
+    calls = log.read_text().splitlines()
+    assert calls[0].startswith("q add ") and "-m brain.eval.weekly" in calls[0]
+    assert calls[1] == "llm yield --max-hours 3"
