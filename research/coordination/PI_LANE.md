@@ -26,7 +26,7 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   tests that run without the cortex weights (mock `Cortex`); real runs go to W via `run_gpu`. Read first:
   `brain/eval/weekly.py`, `brain/experiments/sleep_probe.py`, `brain/PREREQUISITES.md` (Sleep consolidation).
   Done = branch + tests passing + one real run on W attached to a merge_review checkpoint.
-- [ ] New core, sleep: varied-replay arm in `brain/experiments/sleep_probe.py` (after the weekly-test item). Six-seed
+- [x] New core, sleep: varied-replay arm in `brain/experiments/sleep_probe.py` (after the weekly-test item). Six-seed
   0.1B result (`brain/experiments/results/2026-11-02-sleep-0.1b-six-seeds.md`): sleep recalls the original question
   (3-4/12) but not reworded questions (2.2 vs 1.3 shuffled). Add arm `sleep_varied`: each told fact is replayed in
   three surface forms, the original plus two rewordings of the STATEMENT (e.g. "My dog's name is Pixel." -> "I have
@@ -37,3 +37,13 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   can skip arms. Unit tests run without weights (mock `Cortex`, as the weekly item). Do not run the real probe:
   Claude runs the six seeds. Read first: `brain/experiments/sleep_probe.py`, `brain/sleep.py`,
   `brain/experiments/facts.py`. Done = branch + tests passing + merge_review checkpoint.
+  DONE 11-03 (Pi): branch `research/pi-sleep-varied-replay` @ `6305bf2da4c5823df35a6e6037e65daecf20732f` (stacks on the
+  approved `research/weekly-eval-upgrade` @ e61f80164; Claude said no split needed). merge_review APPROVED:
+  `research/coordination/checkpoints/2026-11-03-merge_review-sleep-varied-replay-arm.VERDICT.md`. Its 4 conditions:
+  (1) rewordings rewritten so none plants a PARA word absent from the statement and its question - done; (2) word-set
+  test added (`test_rewordings_do_not_plant_the_paraphrase_question_own_words`, `test_rewordings_share_at_most_one_
+  content_word_with_any_para_question`, possessives stripped in `_content`) - done, 3-run and 2-run tests kept; (3) all
+  three test files re-run at the final head: 26 passed, 3 cuda-guarded skipped, counts in the commit message; (4) the
+  six-seed record must cite this commit (`6305bf2da`) when Claude launches the run. Second opinions: two MiMo passes -
+  the first REFUTED on missing data (facts.py not quoted), the second cleared all 7 defect classes and, after the
+  rewrite, hand-verified 0 violations of both word-set conditions. No result claimed: the arm is code + tests only.
