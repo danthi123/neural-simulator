@@ -81,10 +81,11 @@ def main():
     ap.add_argument("--kl-weight", type=float, default=1.0)
     ap.add_argument("--lr", type=float, default=5e-4)
     ap.add_argument("--arms", default="no_sleep,sleep_true,sleep_retrieval,sleep_retrieval_shuffled")
+    ap.add_argument("--device", default="cpu")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     t0 = time.time()
-    c = Cortex(model_path=a.model)
+    c = Cortex(model_path=a.model, device=a.device)
     _, base = c.read(BIRTH, None)
     base = [s.float() for s in base]
     facts, _ = reachable_facts(a.ceiling)
