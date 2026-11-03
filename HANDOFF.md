@@ -16,17 +16,16 @@
   false recall (3.0 vs 2.0 of 4). **CORTEX SIZE DECIDED: 1.5B** (lr 5e-4 / 480 / KL 3): sleep recall 8.83/12 vs 4.0 at
   0.4B, higher on 6/6 seeds, false recall 2.17 vs 2.0 (`results/2026-11-03-cortex-size/`); default still 0.1B until the
   adoption steps land. FAILS (pre-registered): abstention v1 and v2; high-use NO-GO; confab M1 (cue completion) and M3
-  (retrieval practice) at 0.1B; `S_all` key in the live brain (bar too strict in conversation); varied replay NOT SHOWN.
-  PARTIAL/LEADS: confab M2 (a lived "I don't know" lesson: 69% DEV / 88% fresh vs 80% bar, general replies untouched,
-  new failure: lesson content intrudes 64/360); mood (negative darkens reliably, positive weak; 2/6 at 0.4B).
+  (retrieval practice) at 0.1B; `S_all` key in the live brain (refit bar 0.16 still FAIL); varied replay NOT SHOWN.
+  PARTIAL/LEADS: confab M2 v2 (own turn only: "I don't know" 75% DEV / 82% fresh, 0/360 intrusions, general replies
+  untouched; IMPROVED over v1, per-seed bar 2/6); first weekly (W45) rescored strictly: intact 3/12, sleep+hippo off 5/12; mood (negative darkens reliably, positive weak; 2/6 at 0.4B).
   Most 0.1B negatives are scale-bound (0.1B answers 6/12 even in context). Brain defaults unchanged (all new switches
   OFF). Tests: 92 passed (brain/tests + tests/test_brain_*, hippocampus_*, plastic_cortex, gpu_remote).
-- **LIVE RUNS:** W GPU: M3 at 0.4B, six seeds (`_scratch/brainv2/m3-04b/`). Agents: 1.5B AWS packet, weekly
-  rescoring, M2 v2 (mini-PCs), S_all live-bar refit, 11-04 keep/kill memo. AWS: none running.
+- **LIVE RUNS:** W GPU: M3 at 0.4B (`_scratch/brainv2/m3-04b/`). AWS: 1.5B packet (live 12-fact + M2 v1/v2, six seeds,
+  `brain/experiments/jobs/2026-11-03-aws-15b.txt`; ~6 h, dead-man 420 min). Keep/kill memo: KEEP, flip on the 1.5B test.
 - **READY WORK (one next job per resource; the attention watcher points here when one goes idle):**
-  W GPU: after M3, the 12-fact live-brain test at 1.5B (`--model 1.5b`). AWS: the 1.5B packet
-  `brain/experiments/jobs/2026-11-03-aws-15b.txt` once its agent lands it. Mini-PCs: M2 v2 seeds, then the Pi-lane
-  rescoring item. Pi: `research/coordination/PI_LANE.md` open items. Claude: read the weekly transcript, land results.
+  W GPU: after M3, the weekly test at 1.5B (`brain.eval.weekly --model 1.5b`). AWS: pull + score the 1.5B packet
+  (memo flip rule). Mini-PCs: the Pi-lane 12-fact rescoring item. Pi: `research/coordination/PI_LANE.md` open items. Claude: read the weekly transcript, land results.
 - **NEXT STEP:** (1) merge `research/adopt-15b-steps-1103` (episode-file layout conflicts with the key switch and M2's
   `source` field in `Brain.save/load`) and finish the 1.5B adoption plan; (2) at 1.5B rerun the confab methods (M1
   needs slept abstain-v2 1.5B brains; M2 with 2-3 lived lessons) and the 12-fact test; (3) 11-04: KEEP/KILL the

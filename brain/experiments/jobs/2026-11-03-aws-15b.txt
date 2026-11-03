@@ -15,13 +15,13 @@
 #   python -m brain.experiments.confab_m2 report --dir <that dir> --out <that dir>/report.json
 # and live15_s*.json to results/2026-11-03-live-brain-1.5b/ and run
 #   python -m brain.experiments.live_brain_table <that dir> --glob 'live15_s*.json' --scorer correct --p1-mean 4
-m2_s42 brain.experiments.confab_m2 run --home ../work/m2_s42 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 42
+m2_s42 brain.experiments.confab_m2 run --home ../work/m2_s42 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 42 --arms none,w3_user,lived_self,self_turn
 live15_s42 brain.experiments.live_brain_probe --home ../work/live15_s42 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 42 --steps 480 --lr 5e-4 --kl-weight 3
-m2_s43 brain.experiments.confab_m2 run --home ../work/m2_s43 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 43
-m2_s44 brain.experiments.confab_m2 run --home ../work/m2_s44 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 44
-m2_s100 brain.experiments.confab_m2 run --home ../work/m2_s100 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 100
-m2_s101 brain.experiments.confab_m2 run --home ../work/m2_s101 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 101
-m2_s102 brain.experiments.confab_m2 run --home ../work/m2_s102 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 102
+m2_s43 brain.experiments.confab_m2 run --home ../work/m2_s43 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 43 --arms none,w3_user,lived_self,self_turn
+m2_s44 brain.experiments.confab_m2 run --home ../work/m2_s44 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 44 --arms none,w3_user,lived_self,self_turn
+m2_s100 brain.experiments.confab_m2 run --home ../work/m2_s100 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 100 --arms none,w3_user,lived_self,self_turn
+m2_s101 brain.experiments.confab_m2 run --home ../work/m2_s101 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 101 --arms none,w3_user,lived_self,self_turn
+m2_s102 brain.experiments.confab_m2 run --home ../work/m2_s102 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 102 --arms none,w3_user,lived_self,self_turn
 live15_s43 brain.experiments.live_brain_probe --home ../work/live15_s43 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 43 --steps 480 --lr 5e-4 --kl-weight 3
 live15_s44 brain.experiments.live_brain_probe --home ../work/live15_s44 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 44 --steps 480 --lr 5e-4 --kl-weight 3
 live15_s100 brain.experiments.live_brain_probe --home ../work/live15_s100 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 100 --steps 480 --lr 5e-4 --kl-weight 3
