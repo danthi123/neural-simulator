@@ -1,0 +1,159 @@
+{
+ "model": "/home/dant123/models/rwkv7/rwkv7-g1d-0.1b-20260129-ctx8192.pth",
+ "seed": 43,
+ "steps": 240,
+ "kl_weight": 1.0,
+ "lr": 0.0005,
+ "k_of_fact": {
+  "pixel": 10,
+  "teal": 1,
+  "lyon": 10,
+  "marguerite": 1,
+  "biscuit": 10,
+  "volvo": 3,
+  "tomasz": 3,
+  "crumb": 10,
+  "cello": 3,
+  "peanut": 1,
+  "oslo": 1,
+  "march": 3
+ },
+ "arms": {
+  "no_sleep": {
+   "recall": 0,
+   "paraphrase": 0,
+   "false_recall": 0,
+   "generic_kl": 0.0,
+   "recall_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "paraphrase_items": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+   ],
+   "recall_by_k": {
+    "1": 0,
+    "3": 0,
+    "10": 0
+   },
+   "paraphrase_by_k": {
+    "1": 0,
+    "3": 0,
+    "10": 0
+   },
+   "adapter_norm": 0.0
+  },
+  "sleep_use": {
+   "recall": 6,
+   "paraphrase": 4,
+   "false_recall": 4,
+   "generic_kl": 0.02798932169874509,
+   "recall_items": [
+    true,
+    false,
+    true,
+    true,
+    false,
+    true,
+    false,
+    true,
+    false,
+    true,
+    false,
+    false
+   ],
+   "paraphrase_items": [
+    true,
+    false,
+    false,
+    true,
+    false,
+    false,
+    false,
+    true,
+    false,
+    true,
+    false,
+    false
+   ],
+   "recall_by_k": {
+    "1": 2,
+    "3": 1,
+    "10": 3
+   },
+   "paraphrase_by_k": {
+    "1": 2,
+    "3": 0,
+    "10": 2
+   },
+   "adapter_norm": 14.992191314697266
+  },
+  "sleep_equal": {
+   "recall": 4,
+   "paraphrase": 4,
+   "false_recall": 4,
+   "generic_kl": 0.02707299403846264,
+   "recall_items": [
+    true,
+    false,
+    false,
+    true,
+    false,
+    false,
+    true,
+    false,
+    false,
+    true,
+    false,
+    false
+   ],
+   "paraphrase_items": [
+    true,
+    false,
+    false,
+    true,
+    false,
+    false,
+    true,
+    false,
+    false,
+    true,
+    false,
+    false
+   ],
+   "recall_by_k": {
+    "1": 2,
+    "3": 1,
+    "10": 1
+   },
+   "paraphrase_by_k": {
+    "1": 2,
+    "3": 1,
+    "10": 1
+   },
+   "adapter_norm": 15.37469482421875
+  }
+ },
+ "elapsed_s": 3262.822177886963
+}
