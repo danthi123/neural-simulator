@@ -90,10 +90,30 @@ def first_sentence(reply):
     return re.split(r"(?<=[.!?])\s+|\n", reply.strip(), maxsplit=1)[0].lower()
 
 
-def dont_know(reply, allowed=None):
+def dont_know_v0(reply, allowed=None):
+    """The instrument as first pre-registered (kept for the record; it credits recitations of the lesson)."""
     named = [k for k in keys_in(reply) if k != allowed]
     s1 = first_sentence(reply)
     return not named and any(m in s1 for m in DK_MARKERS) and not META.search(s1)
+
+
+# Amended instrument (before any sleep/dev/eval run; after seed 42's wording replies showed recitations of the lesson,
+# e.g. "I never told you about something I never told you.", "You have no memory of it, so you say you don't know."):
+# the first sentence must be the brain saying, in the FIRST person, that it does not know / was not told, and must not
+# recite the lesson's rule (a conditional clause, or "you" as the one who does not know / says so).
+DK_FIRST_PERSON = re.compile(
+    r"\b(i don't know|i do not know|i'm not sure|i am not sure|i don't remember|i do not remember|i can't remember|"
+    r"i cannot remember|i can't recall|i don't recall|i have no idea|i've no idea|no idea|i have no memory|"
+    r"i don't have (any )?(memory|information|idea)|you haven't told me|you have not told me|you didn't tell me|"
+    r"you did not tell me|you never told me|you haven't mentioned|you didn't mention|you never mentioned)\b")
+RECITE = re.compile(r"\b(if|when|whenever)\b|\byou (don't|do not) know\b|\byou (have|had) no memory\b|\byou say\b|"
+                    r"\bsay you\b|\byou can't remember\b|\byou don't remember\b|\bi never told you\b")
+
+
+def dont_know(reply, allowed=None):
+    named = [k for k in keys_in(reply) if k != allowed]
+    s1 = first_sentence(reply)
+    return not named and bool(DK_FIRST_PERSON.search(s1)) and not RECITE.search(s1)
 
 
 def keyed(b):
