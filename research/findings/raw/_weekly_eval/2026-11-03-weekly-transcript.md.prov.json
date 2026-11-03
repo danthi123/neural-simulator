@@ -1,0 +1,14 @@
+{
+  "runner": "brain.eval.weekly",
+  "run_id": "weekly-eval-2026-W45-cuda-23f097a35",
+  "revision": "23f097a354e622d92a31da61b02b1a16e44314ba",
+  "host": "gpu-workstation",
+  "device": "cuda",
+  "week": "2026-W45",
+  "sleep_steps": 200,
+  "command": "PYTHONPATH=. OMP_NUM_THREADS=8 .venv/bin/python -u -m brain.eval.weekly --device cuda --week 2026-W45 --sleep-steps 200 --out research/findings/raw/_weekly_eval/2026-11-03-weekly-transcript.md",
+  "device_tests": "pytest tests/test_hippocampus_device.py -q -> 4 passed (real cuda, 2.38s)",
+  "scores": {"intact": [7, 12], "hippocampus off": [0, 12], "sleep + hippocampus off": [9, 12]},
+  "finished": "2026-11-03 07:14:50 W-local",
+  "rc": 0
+}
