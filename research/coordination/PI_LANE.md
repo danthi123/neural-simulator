@@ -37,9 +37,12 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   can skip arms. Unit tests run without weights (mock `Cortex`, as the weekly item). Do not run the real probe:
   Claude runs the six seeds. Read first: `brain/experiments/sleep_probe.py`, `brain/sleep.py`,
   `brain/experiments/facts.py`. Done = branch + tests passing + merge_review checkpoint.
-  DONE 11-03 (Pi): branch `research/pi-sleep-varied-replay`, merge EXACTLY `4b349ae5512cc8e5e2181ae190f73e7541c29fa6`
-  (verify checkpoint `research/coordination/checkpoints/2026-11-03-verify-varied-replay-final-sha.VERDICT.md`);
-  stacks on the approved `research/weekly-eval-upgrade` @ e61f80164, Claude said no split needed. merge_review APPROVED:
+  DONE 11-03 (Pi): branch `research/pi-sleep-varied-replay`. Claude's verify checkpoint approved the merge at
+  `4b349ae5512cc8e5e2181ae190f73e7541c29fa6` (`research/coordination/checkpoints/2026-11-03-verify-varied-replay-final-sha.VERDICT.md`);
+  the only commits after it are the checkpoint verdict docs themselves (c38431c88, cd767e85b) - no code change, so the
+  driver may merge either sha. Code commits: c71a96480/1138d251f/2fb6187c4/d75899aa8 (weekly item), e61f80164, then
+  f1a7ead39 + 67bfd202d + 6305bf2da (this arm). Stacks on the approved `research/weekly-eval-upgrade` @ e61f80164;
+  Claude said no split needed. merge_review APPROVED:
   `research/coordination/checkpoints/2026-11-03-merge_review-sleep-varied-replay-arm.VERDICT.md`. Its 4 conditions:
   (1) rewordings rewritten so none plants a PARA word absent from the statement and its question - done; (2) word-set
   test added (`test_rewordings_do_not_plant_the_paraphrase_question_own_words`, `test_rewordings_share_at_most_one_
