@@ -11,6 +11,7 @@ import shutil
 
 from brain.brain import Brain
 from brain.cortex import Cortex
+from brain.experiments.strict_scorer import correct_answer
 
 SESSION_1 = [
     "Hi! What's your name?",
@@ -34,6 +35,16 @@ SESSION_2 = [  # after a restart
 ]
 KEYS = {"Do you remember my name?": "dan", "What's your name?": "nova", "What is my cat called?": "pixel",
         "What is my sister's name?": "marguerite", "What car do I drive?": "volvo", "What do I do for work?": "admin"}
+# The told sentence behind each user fact (None = the brain's own fact: a first-person answer is the right perspective).
+TOLD = {"pixel": "My cat is called Pixel.", "marguerite": "My sister's name is Marguerite.", "volvo": "I drive a red Volvo.",
+        "admin": "I work as a system administrator, mostly Linux servers.", "dan": None, "nova": None}
+
+
+def mark_for(turn: str, reply: str):
+    """None when the turn is not a keyed question, else True/False with the correct-perspective scorer: the answer word
+    as a word, not in the question, not a tautology, not a first-person echo of the told sentence."""
+    key = next((v for k, v in KEYS.items() if k in turn), None)
+    return None if key is None else correct_answer(reply, key, turn, TOLD[key])
 
 
 def run(home: str, cortex: Cortex, lesion: bool, lines: list):
@@ -48,8 +59,8 @@ def run(home: str, cortex: Cortex, lesion: bool, lines: list):
         lines.append(f"\n### {s}\n")
         for t in turns:
             reply, info = b.hear(t)
-            key = next((v for k, v in KEYS.items() if k in t), None)
-            mark = "" if key is None else (" ✅" if key in reply.lower() else " ❌")
+            ok = mark_for(t, reply)
+            mark = "" if ok is None else (" ✅" if ok else " ❌")
             rec = f" _(recalled: {info['recalled']})_" if info["recalled"] else ""
             lines.append(f"- **you:** {t}\n  **brain:** {reply}{mark}{rec}")
         b.save()

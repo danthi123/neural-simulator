@@ -30,3 +30,45 @@ def score(reply: str, key: str, question: str = "") -> dict:
     present = has_key(reply, key) and not has_key(question, key)
     echo = present and is_first_person(reply)
     return {"lenient": lenient, "hit": present and not echo, "echo": echo}
+
+
+# --- correct-perspective scorer (integration-final 2026-11-03) -------------------------------------------------
+# The strict score above voids ANY first-person reply (conservative; kept as is: the live-brain 12-fact numbers were
+# produced with it). This one voids only a real echo: a first-person reply that restates the user's own told sentence.
+_STOP = {"a", "an", "the", "is", "are", "was", "were", "am", "be", "in", "on", "at", "of", "to", "and", "by", "s", "do",
+         "does", "what", "who", "where", "when", "which", "that", "it", "this", "for", "with", "can", "t"}
+
+
+def _stem(w: str) -> str:
+    return w.rstrip("s")[:5]
+
+
+def content_words(sentence: str) -> list:
+    """Content words of a sentence: no stop words, no first-person words."""
+    return [w for w in _words(sentence) if w not in _STOP and w not in FIRST_PERSON]
+
+
+def is_tautology(reply: str, key: str) -> bool:
+    """'<key> is (called) <key>': the reply just repeats the key and says nothing else about the thing asked."""
+    k = re.escape(key.lower())
+    return re.search(r"\b" + k + r"\w*\s+(is|are|was)\s+((called|named)\s+)?" + k, reply.lower()) is not None
+
+
+def is_echo(reply: str, key: str, told) -> bool:
+    """First-person reply that restates the told sentence: it has a first-person word AND contains more than half
+    of the told sentence's content words other than the key. With no told sentence (the brain's own facts, e.g. its
+    name) a first-person reply is the right perspective and is never an echo."""
+    if not told or not is_first_person(reply):
+        return False
+    others = [w for w in content_words(told) if not has_key(w, key)]
+    if not others:
+        return True
+    have = {_stem(w) for w in _words(reply)}
+    return sum(_stem(w) in have for w in others) / len(others) > 0.5
+
+
+def correct_answer(reply: str, key: str, question: str = "", told=None) -> bool:
+    """Key present as a word, not in the question, not a tautology, not a first-person echo of the told sentence."""
+    if not has_key(reply, key) or has_key(question, key) or is_tautology(reply, key):
+        return False
+    return not is_echo(reply, key, told)

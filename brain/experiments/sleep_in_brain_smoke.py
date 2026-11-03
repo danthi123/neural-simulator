@@ -13,7 +13,6 @@ Questions: the 3 told facts, their 3 paraphrases, 1 never-told (false recall). R
 """
 import argparse
 import json
-import re
 import shutil
 import time
 
@@ -23,30 +22,38 @@ import torch
 from brain.brain import Brain
 from brain.cortex import DEFAULT_MODEL, Cortex
 from brain.experiments.facts import FACTS, PARA
+from brain.experiments.strict_scorer import correct_answer
 
 TOLD = [FACTS[0], FACTS[3], FACTS[5]]          # cat Pixel, sister Marguerite, red Volvo
 NEVER = ("What is my horse called?", None)
 KEYS = {**{q: k for _, q, k in TOLD}, **{PARA[FACTS.index(f)]: f[2] for f in TOLD}}
-FIRST_PERSON = re.compile(r"\b(i|i'm|i've|my|me|mine)\b")
+SENTENCE = {**{q: s for s, q, _ in TOLD}, **{PARA[FACTS.index(f)]: f[0] for f in TOLD}}   # question -> the told sentence
 
 
-def is_hit(reply, key):
-    """Answer word present AND the reply is not a first-person echo of the user's own line.
-    "I drive a red Volvo." repeats what the user said (speaker's perspective); a correct answer speaks to the user
-    ("Your cat is called Pixel."). Skeptic 2026-11-03: the bare substring test counted 7/15 hippo-off hits that were echoes."""
-    low = reply.lower()
-    return key in low and not FIRST_PERSON.search(low)
+def is_hit(reply, key, question="", told=None):
+    """Correct-perspective hit (brain/experiments/strict_scorer.correct_answer): the answer word is present as a word,
+    not in the question, not a tautology ("Pixel is called Pixel"), and the reply is not a first-person echo of the
+    user's own told sentence ("I drive a red Volvo."). A first-person word alone does not void a reply."""
+    return correct_answer(reply, key, question, told)
 
 
-def rescore(path):
-    """Re-score a saved result JSON with is_hit (no model rerun). Returns {arm: (recall, paraphrase)} and rewrites nothing."""
+def rescore(path, write=False):
+    """Re-score a saved result JSON with is_hit (no model rerun). Returns {arm: (recall, paraphrase)}. With write=True the
+    hit fields and the per-arm recall/paraphrase counts in the file are regenerated, so files and writeup agree."""
     d = json.load(open(path))
     out = {}
     for arm, v in d["arms"].items():
-        keyed = {r["q"]: r for r in v["rows"]}
-        told = sum(is_hit(r["reply"], KEYS[r["q"]]) for r in v["rows"] if r["kind"] == "told")
-        para = sum(is_hit(r["reply"], KEYS[r["q"]]) for r in v["rows"] if r["kind"] == "para")
+        for r in v["rows"]:
+            if r["kind"] in ("told", "para"):
+                r["hit"] = is_hit(r["reply"], KEYS[r["q"]], r["q"], SENTENCE[r["q"]])
+        told = sum(bool(r["hit"]) for r in v["rows"] if r["kind"] == "told")
+        para = sum(bool(r["hit"]) for r in v["rows"] if r["kind"] == "para")
+        v["recall"], v["paraphrase"] = told, para
         out[arm] = (told, para)
+    if write:
+        d["scorer"] = "correct_answer (strict_scorer.py), rescored 2026-11-03"
+        with open(path, "w") as fh:
+            json.dump(d, fh, indent=1)
     return out
 
 
@@ -55,9 +62,10 @@ ARMS = {"hippo_off": (True, False), "hippo_off_consol_off": (True, True), "intac
 
 def main():
     ap = argparse.ArgumentParser()
-    if len(__import__("sys").argv) > 2 and __import__("sys").argv[1] == "--rescore":
-        for p in __import__("sys").argv[2:]:
-            print(p, rescore(p))
+    import sys
+    if len(sys.argv) > 2 and sys.argv[1] in ("--rescore", "--rescore-write"):
+        for p in sys.argv[2:]:
+            print(p, rescore(p, write=sys.argv[1] == "--rescore-write"))
         return
     ap.add_argument("--home", required=True)
     ap.add_argument("--model", default=DEFAULT_MODEL)
@@ -93,7 +101,7 @@ def main():
             assert b.meta["sleeps"] == 1
             b.set_lesions(hippocampus_off=hip_off, consolidated_off=con_off)
             reply, info = b.hear(q)
-            hit = None if key is None else is_hit(reply, key)
+            hit = None if key is None else is_hit(reply, key, q, SENTENCE[q])
             leak = key is None and any(k in reply.lower() for _, _, k in FACTS)
             rows.append({"q": q, "kind": kind, "reply": reply, "hit": hit, "false_recall": leak, "recalled": info["recalled"]})
             print(arm, "|", q, "->", reply, "|", "hit" if hit else ("LEAK" if leak else "-"), flush=True)

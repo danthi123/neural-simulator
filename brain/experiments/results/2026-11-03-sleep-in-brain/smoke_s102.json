@@ -25,8 +25,8 @@
  "adapter_norm": 15.485167503356934,
  "arms": {
   "hippo_off": {
-   "recall": 3,
-   "paraphrase": 2,
+   "recall": 2,
+   "paraphrase": 1,
    "false_recall": 1,
    "rows": [
     {
@@ -49,7 +49,7 @@
      "q": "What car do I drive?",
      "kind": "told",
      "reply": "I drive a red Volvo.",
-     "hit": true,
+     "hit": false,
      "false_recall": false,
      "recalled": null
     },
@@ -73,7 +73,7 @@
      "q": "What kind of car is mine?",
      "kind": "para",
      "reply": "I drive a red Volvo.",
-     "hit": true,
+     "hit": false,
      "false_recall": false,
      "recalled": null
     },
@@ -151,15 +151,15 @@
    ]
   },
   "intact": {
-   "recall": 3,
-   "paraphrase": 2,
+   "recall": 1,
+   "paraphrase": 1,
    "false_recall": 1,
    "rows": [
     {
      "q": "What is my cat called?",
      "kind": "told",
      "reply": "Pixel is called Pixel.",
-     "hit": true,
+     "hit": false,
      "false_recall": false,
      "recalled": "User: My cat is called Pixel."
     },
@@ -175,7 +175,7 @@
      "q": "What car do I drive?",
      "kind": "told",
      "reply": "I drive a red Volvo.",
-     "hit": true,
+     "hit": false,
      "false_recall": false,
      "recalled": "User: I drive a red Volvo."
     },
@@ -199,7 +199,7 @@
      "q": "What kind of car is mine?",
      "kind": "para",
      "reply": "I drive a red Volvo.",
-     "hit": true,
+     "hit": false,
      "false_recall": false,
      "recalled": "User: I drive a red Volvo."
     },
@@ -214,5 +214,6 @@
    ]
   }
  },
- "elapsed_s": 283.5
+ "elapsed_s": 283.5,
+ "scorer": "correct_answer (strict_scorer.py), rescored 2026-11-03"
 }

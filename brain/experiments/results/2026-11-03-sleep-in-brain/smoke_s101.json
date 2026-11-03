@@ -25,7 +25,7 @@
  "adapter_norm": 13.517724990844727,
  "arms": {
   "hippo_off": {
-   "recall": 3,
+   "recall": 2,
    "paraphrase": 2,
    "false_recall": 0,
    "rows": [
@@ -49,7 +49,7 @@
      "q": "What car do I drive?",
      "kind": "told",
      "reply": "I drive a red Volvo.",
-     "hit": true,
+     "hit": false,
      "false_recall": false,
      "recalled": null
     },
@@ -151,15 +151,15 @@
    ]
   },
   "intact": {
-   "recall": 3,
-   "paraphrase": 2,
+   "recall": 0,
+   "paraphrase": 0,
    "false_recall": 0,
    "rows": [
     {
      "q": "What is my cat called?",
      "kind": "told",
      "reply": "Pixel is called Pixel.",
-     "hit": true,
+     "hit": false,
      "false_recall": false,
      "recalled": "User: My cat is called Pixel."
     },
@@ -167,7 +167,7 @@
      "q": "What is my sister's name?",
      "kind": "told",
      "reply": "Marguerite is Marguerite.",
-     "hit": true,
+     "hit": false,
      "false_recall": false,
      "recalled": "User: My sister's name is Marguerite."
     },
@@ -175,7 +175,7 @@
      "q": "What car do I drive?",
      "kind": "told",
      "reply": "I drive a red Volvo.",
-     "hit": true,
+     "hit": false,
      "false_recall": false,
      "recalled": "User: I drive a red Volvo."
     },
@@ -191,7 +191,7 @@
      "q": "Who's my sister?",
      "kind": "para",
      "reply": "Marguerite is Marguerite's sister.",
-     "hit": true,
+     "hit": false,
      "false_recall": false,
      "recalled": "User: My sister's name is Marguerite."
     },
@@ -199,7 +199,7 @@
      "q": "What kind of car is mine?",
      "kind": "para",
      "reply": "I drive a red Volvo.",
-     "hit": true,
+     "hit": false,
      "false_recall": false,
      "recalled": "User: I drive a red Volvo."
     },
@@ -214,5 +214,6 @@
    ]
   }
  },
- "elapsed_s": 407.4
+ "elapsed_s": 407.4,
+ "scorer": "correct_answer (strict_scorer.py), rescored 2026-11-03"
 }
