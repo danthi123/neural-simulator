@@ -27,8 +27,18 @@ state) in three arms. Hit = answer word in the sampled reply (chat sampling, tem
 | 102 | 270.8 | 3 · 2 · 1 | 0 · 0 · 0 | 3 · 2 · 1 |
 | **sum** | | **15/18 · 11/18 · 4/6** | **0/18 · 0/18 · 0/6** | **18/18 · 12/18 · 4/6** |
 
+**Correction after skeptic review (2026-11-03, same day).** The table above scores a hit by bare substring, which
+counted first-person echoes of the user's own line ("I drive a red Volvo." answering "What car do I drive?") as
+recall: 7 of the 15 hippocampus-off hits are such echoes. The scorer (`sleep_in_brain_smoke.py:is_hit`) now requires
+the answer word AND no first-person pronoun (I, I'm, my, me, mine) in the reply. Re-scoring the saved replies in the
+six JSONs (no rerun; `rescored_correct_perspective.txt`, `--rescore`) gives, hippocampus OFF with consolidated on:
+**correct-perspective recall 8/18** (substring 15/18), paraphrase 8/18 (substring 11/18); consolidated lesion 0/18
+both ways; intact 12/18 told, 7/18 paraphrase (intact replies such as "Pixel is called Pixel." contain the word but
+are not a clean answer either, so read intact as an upper bound). Use 8/18 as the headline number; 15/18 and 11/18
+below are the old substring scores, kept for the record. False-recall counts are unchanged.
+
 **What it shows.** The wiring works end to end on every seed: the restart slept exactly once, adapters were saved
-and reloaded, and with the hippocampus off the brain answered told facts from its own consolidated synapses (15/18)
+and reloaded, and with the hippocampus off the brain answered told facts from its own consolidated synapses (15/18 by substring; 8/18 correct-perspective)
 where the same brain with the consolidated lesion answers none (0/18; "I'm sorry, but I can't assist with that").
 The consolidated lesion visibly changes replies. Paraphrases partly carry over (11/18).
 

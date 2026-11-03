@@ -13,6 +13,7 @@ Questions: the 3 told facts, their 3 paraphrases, 1 never-told (false recall). R
 """
 import argparse
 import json
+import re
 import shutil
 import time
 
@@ -25,11 +26,39 @@ from brain.experiments.facts import FACTS, PARA
 
 TOLD = [FACTS[0], FACTS[3], FACTS[5]]          # cat Pixel, sister Marguerite, red Volvo
 NEVER = ("What is my horse called?", None)
+KEYS = {**{q: k for _, q, k in TOLD}, **{PARA[FACTS.index(f)]: f[2] for f in TOLD}}
+FIRST_PERSON = re.compile(r"\b(i|i'm|i've|my|me|mine)\b")
+
+
+def is_hit(reply, key):
+    """Answer word present AND the reply is not a first-person echo of the user's own line.
+    "I drive a red Volvo." repeats what the user said (speaker's perspective); a correct answer speaks to the user
+    ("Your cat is called Pixel."). Skeptic 2026-11-03: the bare substring test counted 7/15 hippo-off hits that were echoes."""
+    low = reply.lower()
+    return key in low and not FIRST_PERSON.search(low)
+
+
+def rescore(path):
+    """Re-score a saved result JSON with is_hit (no model rerun). Returns {arm: (recall, paraphrase)} and rewrites nothing."""
+    d = json.load(open(path))
+    out = {}
+    for arm, v in d["arms"].items():
+        keyed = {r["q"]: r for r in v["rows"]}
+        told = sum(is_hit(r["reply"], KEYS[r["q"]]) for r in v["rows"] if r["kind"] == "told")
+        para = sum(is_hit(r["reply"], KEYS[r["q"]]) for r in v["rows"] if r["kind"] == "para")
+        out[arm] = (told, para)
+    return out
+
+
 ARMS = {"hippo_off": (True, False), "hippo_off_consol_off": (True, True), "intact": (False, False)}
 
 
 def main():
     ap = argparse.ArgumentParser()
+    if len(__import__("sys").argv) > 2 and __import__("sys").argv[1] == "--rescore":
+        for p in __import__("sys").argv[2:]:
+            print(p, rescore(p))
+        return
     ap.add_argument("--home", required=True)
     ap.add_argument("--model", default=DEFAULT_MODEL)
     ap.add_argument("--seed", type=int, default=42)
@@ -64,7 +93,7 @@ def main():
             assert b.meta["sleeps"] == 1
             b.set_lesions(hippocampus_off=hip_off, consolidated_off=con_off)
             reply, info = b.hear(q)
-            hit = None if key is None else key in reply.lower()
+            hit = None if key is None else is_hit(reply, key)
             leak = key is None and any(k in reply.lower() for _, _, k in FACTS)
             rows.append({"q": q, "kind": kind, "reply": reply, "hit": hit, "false_recall": leak, "recalled": info["recalled"]})
             print(arm, "|", q, "->", reply, "|", "hit" if hit else ("LEAK" if leak else "-"), flush=True)
