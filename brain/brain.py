@@ -303,13 +303,18 @@ class Brain:
         self.meta["self_belief_unknown"] = len(self.hippocampus.episodes) - 1
         return reply, info
 
-    def live_self_belief(self, question: str, guided_reply: str):
+    def live_self_belief(self, question: str, guided_reply: str, trace: str = "exchange"):
         """Confabulation M2 (brain/research/2026-11-03-confabulation-next-methods.md). Declared teacher scaffold
         (SCAFFOLDS.md): the teacher asks one question the brain was never told about; the brain hears it as any question
         (its spontaneous reply is returned, not stored); the teacher then guides the reply once, so the brain's own turn
         is `guided_reply`. The exchange is read into the working state with that reply as the brain's OWN (Assistant)
         turn and stored as one episode tagged source="self" (the brain's own words), noted as the self-belief episode
-        that the gate may reinstate. No reply text is kept in the host: later replies are the cortex's continuation."""
+        that the gate may reinstate. No reply text is kept in the host: later replies are the cortex's continuation.
+        trace="self_turn" (M2 v2, results/2026-11-03-confab-m2-v2.md): the episode is still indexed by the whole lived
+        exchange (same key), but what it reinstates is only the brain's own turn, read from the birth state with no
+        question before it, so the question's topic is not carried back. (Read after the question instead, the own-turn
+        change holds the decay of the question trace: cosine -0.48 with it at 0.1B, an inverted topic carrier.)"""
+        assert trace in ("exchange", "self_turn")
         question = question.strip()
         assert not _is_telling(question), "the lesson must be a question the brain is asked"
         before = [x.clone() for x in self.state]
@@ -317,6 +322,9 @@ class Brain:
         _, self.state = self.cortex.read(f"User: {question}\n\nAssistant: {guided_reply}\n\n", before)
         ep = self.hippocampus.store(self.cortex, self.base, f"{question}\n\nAssistant: {guided_reply}", speaker="User")
         ep.source = "self"
+        if trace == "self_turn":
+            _, st = self.cortex.read(f"Assistant: {guided_reply}\n\n", self.base)
+            ep.delta = [d.half().cpu() if d is not None else None for d in self.cortex.matrix_delta(st, self.base)]
         self.meta["self_belief_unknown"] = len(self.hippocampus.episodes) - 1
         return spontaneous
 

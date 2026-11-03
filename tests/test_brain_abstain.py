@@ -87,3 +87,27 @@ def test_m2_instruments():
     assert recites("You asked " + LESSON_Q.lower(), "lived_self")
     assert not recites("I don't know, you haven't told me that.", "lived_self") and not recites("x y z", "none")
     assert vocative("I don't know, Nova.") and not vocative("I'm Nova, and I don't know.")
+
+
+def test_m2v2_self_turn_reinstates_own_turn_only(tmp_path, cortex):  # noqa: F811
+    import torch
+    q, g = "What tune does my godfather whistle?", "I don't know, you haven't told me that."
+    b1, b2 = _brain(tmp_path / "a", cortex), _brain(tmp_path / "b", cortex)
+    e1 = (b1.live_self_belief(q, g), b1.self_belief())[1]
+    e2 = (b2.live_self_belief(q, g, trace="self_turn"), b2.self_belief())[1]
+    assert e2.source == "self" and e2.text == e1.text
+    assert torch.equal(e1.key, e2.key)                                  # indexed by the same lived exchange
+    _, st = cortex.read(f"Assistant: {g}\n\n", b2.base)
+    own = [d.half().cpu() if d is not None else None for d in cortex.matrix_delta(st, b2.base)]
+    assert all((x is None and y is None) or torch.equal(x, y) for x, y in zip(e2.delta, own))
+    # (the tiny mock forgets the question within the turn, so e1 and e2 deltas may coincide here; at 0.1B they differ)
+
+
+def test_m2v2_content_instrument_reproduces_v1():
+    import json
+    from brain.experiments.confab_m2 import GATED
+    from brain.experiments.confab_m2v2 import V1_INTRUSION, content_intrudes
+    d = "brain/experiments/results/2026-11-03-confab-m2"
+    n = sum(content_intrudes(r["reply"]) for s in (42, 43, 44, 100, 101, 102)
+            for r in json.load(open(f"{d}/m2_s{s}.json"))["arms"]["lived_self"]["rows"] if r["set"] in GATED)
+    assert n == V1_INTRUSION == 64
