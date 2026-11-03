@@ -41,6 +41,12 @@ def lexical(text: str) -> float:
     return 100.0 * (sum(x in POS for x in w) - sum(x in NEG for x in w)) / len(w)
 
 
+def primary_echo_registered(text: str) -> bool:
+    """The echo instrument REGISTERED before the 11-03 six-seed run (commit 28089180a): any reply word longer than
+    3 letters that occurs in an innate primary. Kept so criterion 4 of that run is judged on its registered form."""
+    return any(len(x) > 3 and x in _PRIMARY_WORDS for x in words(text))
+
+
 # Revised 11-03 after the first seed: the first echo check counted function/common words ("with", "being", "good")
 # and read 0.56 even with the modulation off. Echo now counts only the primaries' sensory/bodily content words.
 ECHO_STOP = set("""after away being close days deep feeling forever friend friends from full good hand hard held kind

@@ -80,7 +80,7 @@ PASS for the prototype on 0.1B if: (1) mood diff (pos - neg) > 0 with the paired
 lexical instrument on >= 5/6 seeds, and same sign on the embedding instrument on >= 5/6; (2) lesion: replies under
 pos and neg byte-identical (fraction 1.0) on 6/6; (3) random direction: |lex diff| below the mood diff on >= 5/6;
 (4) echo of primary words under mood not more than 0.10 above the lesion arm (mean); fluency (NLL under the
-unmodulated cortex) reported, not gated. Appraisal sign accuracy on held-out events reported per seed.
+unmodulated cortex) reported, not gated. Appraisal sign accuracy reported per seed (on the same event pool the induction drew from; NOT held out).
 GAIN was set on dev questions (separate from the test questions), seed 42 only: 8 weak, 16 clear, 32 intrudes
 primary content ("pain", "exploded"); 16 frozen before the six-seed run.
 
@@ -100,5 +100,8 @@ seen in calibration); a learned appraisal (conditioning on outcomes, DR-2b style
 
 ## 8. Result (11-03)
 
-Six seeds at 0.1B: `brain/experiments/results/2026-11-03-mood-0.1b.md`. Pre-registered criteria met 6/6; positive
-appraisal weak on 2/6 seeds; not yet wired into the live brain.
+Six seeds at 0.1B: `brain/experiments/results/2026-11-03-mood-0.1b.md`. CORRECTED after the skeptic: NOT a
+pre-registered PASS. Criterion 4 (echo) fails on s101/s102 (+0.111 over the lesion arm, bar 0.10) under the echo
+instrument registered here; the instrument was revised mid-run (invalid for the verdict). Criterion 2 holds by
+construction (the switch returns the state untouched). The appraisal events were not held out. The on-vs-off contrast
+is one-sided: positive mood ~0 on s100/s101. Positive appraisal weak on 2/6 seeds; not wired into the live brain.
