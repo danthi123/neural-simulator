@@ -233,6 +233,23 @@ class Brain:
         self.meta["self_belief_unknown"] = len(self.hippocampus.episodes) - 1
         return reply, info
 
+    def live_self_belief(self, question: str, guided_reply: str):
+        """Confabulation M2 (brain/research/2026-11-03-confabulation-next-methods.md). Declared teacher scaffold
+        (SCAFFOLDS.md): the teacher asks one question the brain was never told about; the brain hears it as any question
+        (its spontaneous reply is returned, not stored); the teacher then guides the reply once, so the brain's own turn
+        is `guided_reply`. The exchange is read into the working state with that reply as the brain's OWN (Assistant)
+        turn and stored as one episode tagged source="self" (the brain's own words), noted as the self-belief episode
+        that the gate may reinstate. No reply text is kept in the host: later replies are the cortex's continuation."""
+        question = question.strip()
+        assert not _is_telling(question), "the lesson must be a question the brain is asked"
+        before = [x.clone() for x in self.state]
+        spontaneous, _ = self.hear(question)
+        _, self.state = self.cortex.read(f"User: {question}\n\nAssistant: {guided_reply}\n\n", before)
+        ep = self.hippocampus.store(self.cortex, self.base, f"{question}\n\nAssistant: {guided_reply}", speaker="User")
+        ep.source = "self"
+        self.meta["self_belief_unknown"] = len(self.hippocampus.episodes) - 1
+        return spontaneous
+
     @torch.no_grad()
     def recollection(self, text: str) -> dict:
         """Recollection test (dual process): reinstate the best-matching episode (forced top-1 over topic episodes) and
@@ -317,7 +334,7 @@ class Brain:
     # ---- persistence ----
     def save(self):
         eps = [{k: getattr(e, k) for k in ("text", "delta", "key", "strength", "created", "last_used", "uses",
-                                             "permanent")} for e in self.hippocampus.episodes]
+                                             "permanent", "source")} for e in self.hippocampus.episodes]
         torch.save({"episodes": eps, "state": self.state}, os.path.join(self.home, "memory.pt"))
         with open(os.path.join(self.home, "meta.json"), "w") as fh:
             json.dump(self.meta, fh, indent=1)
