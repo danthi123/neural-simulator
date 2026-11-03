@@ -111,6 +111,15 @@ def test_no_para_question_content_run_of_three_appears_in_any_rewording():
                 assert run not in _runs(_content(r)), f"{run} from PARA question {q!r} appears in {r!r}"
 
 
+def test_rewordings_avoid_even_two_word_para_runs():
+    """Stricter than the item's 3-run rule: no rewording echoes a PARA question's wording at all."""
+    para_runs = {q: _runs(_content(q), 2) for q in PARA}
+    for q, runs in para_runs.items():
+        for r in [x for pair in REWORDINGS for x in pair]:
+            for run in runs:
+                assert run not in _runs(_content(r), 2), f"{run} from PARA question {q!r} appears in {r!r}"
+
+
 def test_rewordings_do_not_reuse_a_para_question_verbatim():
     for q in PARA:
         for r in [x for pair in REWORDINGS for x in pair]:
