@@ -1,0 +1,66 @@
+{
+ "rwkv7-g1d-0.1b-20260129-ctx8192.pth": {
+  "default_Hippocampus": {
+   "bytes_per_episode": 1376256.0,
+   "delta_bytes": 1179648,
+   "key_bytes": 196608,
+   "activity_bytes": 0
+  },
+  "before_S0": {
+   "bytes_per_episode": 1413120.0,
+   "delta_bytes": 1179648,
+   "key_bytes": 196608,
+   "activity_bytes": 36864
+  },
+  "before_S_all": {
+   "bytes_per_episode": 3575808.0,
+   "delta_bytes": 1179648,
+   "key_bytes": 2359296,
+   "activity_bytes": 36864
+  },
+  "after_S0": {
+   "bytes_per_episode": 1376256.0,
+   "delta_bytes": 1179648,
+   "key_bytes": 196608,
+   "activity_bytes": 0
+  },
+  "after_S_all": {
+   "bytes_per_episode": 1179648.0,
+   "delta_bytes": 1179648,
+   "key_bytes": 0,
+   "activity_bytes": 0
+  }
+ },
+ "rwkv7-g1d-0.4b-20260210-ctx8192.pth": {
+  "default_Hippocampus": {
+   "bytes_per_episode": 3407872.0,
+   "delta_bytes": 3145728,
+   "key_bytes": 262144,
+   "activity_bytes": 0
+  },
+  "before_S0": {
+   "bytes_per_episode": 3506176.0,
+   "delta_bytes": 3145728,
+   "key_bytes": 262144,
+   "activity_bytes": 98304
+  },
+  "before_S_all": {
+   "bytes_per_episode": 9535488.0,
+   "delta_bytes": 3145728,
+   "key_bytes": 6291456,
+   "activity_bytes": 98304
+  },
+  "after_S0": {
+   "bytes_per_episode": 3407872.0,
+   "delta_bytes": 3145728,
+   "key_bytes": 262144,
+   "activity_bytes": 0
+  },
+  "after_S_all": {
+   "bytes_per_episode": 3145728.0,
+   "delta_bytes": 3145728,
+   "key_bytes": 0,
+   "activity_bytes": 0
+  }
+ }
+}
