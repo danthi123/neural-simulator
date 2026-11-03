@@ -10,6 +10,8 @@ Phases:
   report  pre-registered criteria over the six seed files
 1.5B on GPU (results/2026-11-03-confab-m2-1.5b.md): run --model ../models/rwkv7-g1l-1.5b-...pth --device cuda.
 The `none` arm is the plan's step 1 (no-lesson forced-gate arm); `--arms none` runs it alone.
+run --told-gate (default OFF): the told-gate test instead (told questions, open/ontop; told_report scores it).
+Prereg: results/2026-11-03-told-gate-1.5b.md.
 """
 import argparse
 import glob
@@ -26,7 +28,8 @@ from brain.brain import Brain
 from brain.cortex import DEFAULT_MODEL, Cortex, resolve_model
 from brain.experiments.abstain_in_brain import FRESH_NEVER, FRESH_TOLD, GENERAL, SEEDS, keys_in
 from brain.experiments.abstain_v2 import DEV, GENERAL2, LESSONS, SETS as SETS2, dont_know, keyed, reset
-from brain.experiments.facts import FACTS
+from brain.experiments.facts import FACTS, PARA
+from brain.experiments.strict_scorer import correct_answer
 
 # Frozen at pre-registration (teacher scaffold): the one lesson question and the one guided reply.
 LESSON_Q = "What tune does my godfather whistle in the mornings?"
@@ -135,8 +138,108 @@ def run_arm(a, c, arm):
     return {**info0, "summary": summ, "rows": rows}
 
 
+# --- told-gate test (switch --told-gate, default OFF; results/2026-11-03-told-gate-1.5b.md) ----------------------
+# The 12 told questions and their 12 PARA rewordings (facts.py), each with its key and the day-1 told sentence.
+TOLD_SETS = {"told": [(q, k, s) for s, q, k in FACTS], "told_para": [(p, k, s) for p, (s, _, k) in zip(PARA, FACTS)]}
+# open:  gate not firing; normal hippocampal recall (the lesson is only an ordinary episode that may be completed).
+# ontop: the gate fires on a told question AND normal recall runs: the self-belief episode is reinstated into the
+#        working state first, then hear() recalls and reinstates the best episode on top as usual. (The forced gate of
+#        run_arm blocks recall in every arm, so on told questions it cannot show what the lesson does.)
+TOLD_CONDS = ("open", "ontop")
+
+
+def ask_told(b, q, key, told, cond, seed, qi, belief):
+    """One told question under one condition; b must be reset by the caller. Returns the row."""
+    b.abstain = False
+    if cond == "ontop" and belief is not None:
+        b.state = b.hippocampus.reinstate(b.cortex, b.state, belief)
+    np.random.seed(seed * 1000 + qi)
+    torch.manual_seed(seed * 1000 + qi)
+    reply, info = b.hear(q)
+    return {"q": q, "key": key, "reply": reply, "recalled": info["recalled"],
+            "right_episode": info["recalled"] == told,
+            "lesson_recalled": belief is not None and info["recalled"] == belief.text,
+            "correct": correct_answer(reply, key, q, told), "dk": dont_know(reply, None),
+            "verbatim_guided": reply.strip() == GUIDED}
+
+
+def run_told_arm(a, c, arm):
+    b, info0 = day1(a, c, arm)
+    snap = [(e.strength, e.uses, e.last_used) for e in b.hippocampus.episodes]
+    base = [x.clone() for x in b.base]
+    belief = b.self_belief()
+    rows = []
+    for cond in TOLD_CONDS:
+        for set_name, items in TOLD_SETS.items():
+            for qi, (q, key, told) in enumerate(items[:a.max_q or None]):
+                reset(b, snap, base)
+                r = {"cond": cond, "set": set_name, **ask_told(b, q, key, told, cond, a.seed, qi, belief)}
+                rows.append(r)
+                print(arm, cond, set_name, "|", q, "->", r["reply"], "|", r["correct"], r["dk"], flush=True)
+    summ = {f"{cond}/{st}": {k: sum(bool(r[k]) for r in rows if r["cond"] == cond and r["set"] == st) for k in
+                             ("correct", "dk", "right_episode", "lesson_recalled", "verbatim_guided")}
+            for cond in TOLD_CONDS for st in TOLD_SETS}
+    return {**info0, "summary": summ, "rows": rows}
+
+
+def told_report(d, arms=("none", "lived_self", "self_turn")):
+    """Pre-registered told-gate criteria (results/2026-11-03-told-gate-1.5b.md) over told_s*.json in d."""
+    runs = {}
+    for f in glob.glob(os.path.join(d, "told_s*.json")):
+        r = json.load(open(f))
+        runs[r["seed"]] = r
+    seeds = sorted(runs)
+    S = lambda s, arm, key, k: runs[s]["arms"][arm]["summary"][key][k]  # noqa: E731
+    rows = lambda s, arm, cond, st: [x for x in runs[s]["arms"][arm]["rows"] if x["cond"] == cond and x["set"] == st]  # noqa: E731
+    out = {"seeds_present": seeds, "per_seed": {str(s): {arm: runs[s]["arms"][arm]["summary"] for arm in arms
+                                                         if arm in runs[s]["arms"]} for s in seeds}, "criteria": {}}
+    n_s = len(seeds)
+    mean = lambda arm, key: sum(S(s, arm, key, "correct") for s in seeds) / n_s  # noqa: E731
+    wiring = all([x["reply"] for x in rows(s, "none", "ontop", st)] == [x["reply"] for x in rows(s, "none", "open", st)]
+                 for s in seeds for st in TOLD_SETS)
+    none_open = mean("none", "open/told")
+    out["criteria"]["T0"] = {"none_open_told_mean": none_open, "powered": none_open >= 2, "wiring_none_ontop_eq_open": wiring}
+    for arm in arms[1:]:
+        if not all(arm in runs[s]["arms"] for s in seeds):
+            continue
+        c = {}
+        for cond in TOLD_CONDS:
+            for st in TOLD_SETS:
+                key = f"{cond}/{st}"
+                diffs = [S(s, arm, key, "correct") - S(s, "none", "open/" + st, "correct") for s in seeds]
+                c[key] = {"arm_mean": mean(arm, key), "none_open_mean": mean("none", "open/" + st),
+                          "mean_diff": sum(diffs) / n_s, "seeds_within_1": sum(x >= -1 for x in diffs),
+                          "T1": sum(diffs) / n_s >= -1 and sum(x >= -1 for x in diffs) >= 5,
+                          "dk": sum(S(s, arm, key, "dk") for s in seeds), "n": sum(len(rows(s, arm, cond, st)) for s in seeds),
+                          "lesson_recalled": sum(S(s, arm, key, "lesson_recalled") for s in seeds)}
+        # T2 retention (secondary): of none's correct (seed, told question) pairs, how many the arm keeps under ontop
+        pairs = [(s, x["q"]) for s in seeds for x in rows(s, "none", "open", "told") if x["correct"]]
+        kept = sum(any(y["q"] == q and y["correct"] for y in rows(s, arm, "ontop", "told")) for s, q in pairs)
+        c["T2_retention"] = {"none_correct_pairs": len(pairs), "kept_ontop": kept}
+        # T3 DK on told questions whose right episode was recalled (the brain "knows" them)
+        k_arm = [x for s in seeds for x in rows(s, arm, "ontop", "told") if x["right_episode"]]
+        k_none = [x for s in seeds for x in rows(s, "none", "open", "told") if x["right_episode"]]
+        r_arm = sum(x["dk"] for x in k_arm) / max(len(k_arm), 1)
+        r_none = sum(x["dk"] for x in k_none) / max(len(k_none), 1)
+        c["T3_dk_known"] = {"arm_dk": sum(x["dk"] for x in k_arm), "arm_known": len(k_arm),
+                            "none_dk": sum(x["dk"] for x in k_none), "none_known": len(k_none),
+                            "pass": len(k_arm) > 0 and r_arm <= 0.10 and r_arm <= r_none + 1 / 12}
+        lr = c["open/told"]["lesson_recalled"]
+        c["T1_open_lesson_recalled_ok"] = lr <= 6 * n_s / 6
+        c["PASS"] = (n_s == 6 and wiring and out["criteria"]["T0"]["powered"] and c["ontop/told"]["T1"]
+                     and c["open/told"]["T1"] and c["T1_open_lesson_recalled_ok"] and c["T3_dk_known"]["pass"])
+        c["FAIL"] = n_s == 6 and wiring and out["criteria"]["T0"]["powered"] and not c["PASS"]
+        out["criteria"][arm] = c
+    return out
+
+
 def run_phase(a, c):
     res = {"seed": a.seed, "lesson_q": LESSON_Q, "guided": GUIDED, "arms": {}}
+    if getattr(a, "told_gate", False):
+        res["told_gate"] = True
+        for arm in a.arms.split(","):
+            res["arms"][arm] = run_told_arm(a, c, arm)
+        return res
     for arm in a.arms.split(","):
         res["arms"][arm] = run_arm(a, c, arm)
     gen = {arm: [r["reply"] for r in res["arms"][arm]["rows"] if r["set"] == "general"] for arm in res["arms"]}
@@ -189,7 +292,7 @@ def report_phase(a):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("phase", choices=["run", "report"])
+    ap.add_argument("phase", choices=["run", "report", "told_report"])
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--home")
     ap.add_argument("--model", default=DEFAULT_MODEL)
@@ -198,12 +301,16 @@ def main():
     ap.add_argument("--threads", type=int, default=2)
     ap.add_argument("--device", default="cpu")
     ap.add_argument("--max-q", type=int, default=0, help="smoke only: first N questions per set (0 = all)")
+    ap.add_argument("--told-gate", action="store_true",
+                    help="run the told-gate test instead (told questions, open/ontop; default OFF)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     torch.set_num_threads(a.threads)
     t0 = time.time()
     if a.phase == "report":
         res = report_phase(a)
+    elif a.phase == "told_report":
+        res = told_report(a.dir)
     else:
         if a.device == "cuda":
             torch.cuda.reset_peak_memory_stats()
