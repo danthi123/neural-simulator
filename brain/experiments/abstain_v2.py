@@ -29,7 +29,7 @@ import torch
 
 from brain.brain import Brain
 from brain.cortex import DEFAULT_MODEL, Cortex
-from brain.experiments.abstain_in_brain import FIT, FRESH_NEVER, FRESH_TOLD, SEEDS, fit_rule, keys_in, score
+from brain.experiments.abstain_in_brain import PINNED_SLEEP, FIT, FRESH_NEVER, FRESH_TOLD, SEEDS, fit_rule, keys_in, score
 from brain.experiments.facts import FACTS
 from brain.hippocampus import Hippocampus
 from brain.hippocampus_keys import KeyedHippocampus
@@ -141,7 +141,7 @@ def wording_phase(a, c):
     for w, text in LESSONS.items():
         home = os.path.join(a.home, w)
         shutil.rmtree(home, ignore_errors=True)
-        b = keyed(Brain(home, cortex=c, sleep_seed=a.seed, sleep_on_restart=False))
+        b = keyed(Brain(home, cortex=c, **PINNED_SLEEP, sleep_seed=a.seed, sleep_on_restart=False))
         b.teach_self_belief(text)
         b.abstain, b.know_rule, b.reinstate_self_belief = True, "F", True
         b.know_bar = {"fam": 1e9}                                          # every question gated
@@ -163,20 +163,20 @@ def sleep_phase(a, c):
     shutil.rmtree(a.home, ignore_errors=True)
     np.random.seed(a.seed)
     torch.manual_seed(a.seed)
-    day1 = Brain(a.home, cortex=c, sleep_seed=a.seed)
+    day1 = Brain(a.home, cortex=c, **PINNED_SLEEP, sleep_seed=a.seed)
     told = [dict(zip(("you", "brain"), (s, day1.hear(s)[0]))) for s, _, _ in FACTS]
     lesson = LESSONS[a.lesson]
     told.append({"you": lesson, "brain": day1.teach_self_belief(lesson)[0], "lesson": a.lesson})
     day1.save()                                   # not closed: the restart itself sleeps
     t1 = time.time()
-    b = Brain(a.home, cortex=c, sleep_seed=a.seed, sleep_log=lambda m: print(m, flush=True))
+    b = Brain(a.home, cortex=c, **PINNED_SLEEP, sleep_seed=a.seed, sleep_log=lambda m: print(m, flush=True))
     assert b.meta["sleeps"] == 1 and b.meta["self_belief_unknown"] == 15, b.meta
     return {"seed": a.seed, "lesson": a.lesson, "day1": told, "sleep_seconds": round(time.time() - t1, 1),
             "episodes": len(b.hippocampus.episodes), "adapter_norm": b.cortex.plastic.adapter_norm()}
 
 
 def dev_phase(a, c):
-    b = keyed(Brain(a.home, cortex=c, sleep_seed=a.seed))
+    b = keyed(Brain(a.home, cortex=c, **PINNED_SLEEP, sleep_seed=a.seed))
     assert b.meta["sleeps"] == 1 and not b.pending(), b.meta
     s0 = Hippocampus()
     s0.episodes = b.hippocampus.episodes
@@ -247,7 +247,7 @@ def fit_phase(a):
 def eval_phase(a, c):
     fit = json.load(open(a.bars))
     bars = fit["bars"][str(a.seed)]
-    b = keyed(Brain(a.home, cortex=c, sleep_seed=a.seed, abstain=False))
+    b = keyed(Brain(a.home, cortex=c, **PINNED_SLEEP, sleep_seed=a.seed, abstain=False))
     assert b.meta["sleeps"] == 1 and not b.pending() and b.self_belief() is not None, b.meta
     b.rec_variant = fit["rec_variant"]
     snap = [(e.strength, e.uses, e.last_used) for e in b.hippocampus.episodes]

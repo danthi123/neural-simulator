@@ -57,7 +57,7 @@ def tell_day(home, cortex, sentences, seed, steps):
     shutil.rmtree(home, ignore_errors=True)
     np.random.seed(seed)
     torch.manual_seed(seed)
-    b = Brain(home, cortex=cortex, sleep_steps=steps, sleep_lr=SLEEP_LR, sleep_seed=seed)
+    b = Brain(home, cortex=cortex, sleep_steps=steps, sleep_lr=SLEEP_LR, sleep_kl_weight=1.0, adapter_rank=8, sleep_seed=seed)
     log = [{"you": s, "brain": b.hear(s)[0]} for s in sentences]
     b.save()  # not closed: the restart itself must sleep
     return log
@@ -71,7 +71,7 @@ def ask_arm(home, cortex, hip_off, con_off, seed, steps):
     for q, key, kind in qs:
         np.random.seed(seed)
         torch.manual_seed(seed)
-        b = Brain(home, cortex=cortex, sleep_on_restart=False, sleep_steps=steps, sleep_lr=SLEEP_LR, sleep_seed=seed)
+        b = Brain(home, cortex=cortex, sleep_on_restart=False, sleep_steps=steps, sleep_lr=SLEEP_LR, sleep_kl_weight=1.0, adapter_rank=8, sleep_seed=seed)
         b.set_lesions(hippocampus_off=hip_off, consolidated_off=con_off)
         reply, info = b.hear(q)
         if key is None:
@@ -109,7 +109,7 @@ def main():
         t1 = time.time()
         np.random.seed(a.seed)
         torch.manual_seed(a.seed)
-        b = Brain(homes[key], cortex=c, sleep_steps=a.steps, sleep_lr=SLEEP_LR, sleep_seed=a.seed)
+        b = Brain(homes[key], cortex=c, sleep_steps=a.steps, sleep_lr=SLEEP_LR, sleep_kl_weight=1.0, adapter_rank=8, sleep_seed=a.seed)
         assert b.meta["sleeps"] == 1, b.meta
         res[f"sleep_seconds_{key}"] = round(time.time() - t1, 1)
         res[f"adapter_norm_{key}"] = b.cortex.plastic.adapter_norm()

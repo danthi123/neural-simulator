@@ -1,5 +1,5 @@
 """Brain(key=...) switch: default OFF is the old Brain (byte-equal), S_all uses KeyedHippocampus with its own bar and is
-persisted with the hippocampus store. Runs on a tiny deterministic stand-in cortex (no model weights)."""
+persisted in the home's meta.json. Runs on a tiny deterministic stand-in cortex (no model weights)."""
 import importlib.util
 import os
 import subprocess
@@ -59,6 +59,9 @@ class StubCortex(Cortex):
         return logits, st
 
 
+# the stub has no model name, so sleep settings are explicit (SLEEP_DEFAULTS has no silent fallback)
+KW = dict(sleep_on_restart=False, sleep_steps=4, sleep_lr=1e-3, sleep_kl_weight=1.0, adapter_rank=2)
+
 TALK = ["My cat is called Pixel.", "I drive a red Volvo.", "What is my cat called?", "What car do I drive?",
         "My sister's name is Marguerite.", "Who is my sister?"]
 
@@ -87,32 +90,51 @@ def _old_brain_module():
     return mod
 
 
-def _blob(home):
-    return torch.load(os.path.join(home, "memory.pt"), weights_only=False)
+def _meta(home):
+    import json
+    with open(os.path.join(home, "meta.json")) as fh:
+        return json.load(fh)
 
 
-def test_default_is_byte_equal_to_the_old_brain(tmp_path):
+def test_default_matches_the_old_brain(tmp_path):
+    """Default OFF = the old Brain: same replies and info, and the same store. The on-disk layout is NOT compared
+    byte for byte any more: adopt-1.5b moved storage to one file per episode (episodes/ + episodes.json), so the old
+    memory.pt bytes no longer exist for the new Brain. The old home is loaded through the new Brain's legacy
+    (memory.pt) migration and its episodes are compared tensor for tensor with the new home's."""
     old = _old_brain_module()
     c = StubCortex()
-    b_old = old.Brain(str(tmp_path / "old"), cortex=c, sleep_on_restart=False)
-    b_new = Brain(str(tmp_path / "new"), cortex=c, sleep_on_restart=False)
+    b_old = old.Brain(str(tmp_path / "old"), cortex=c, **KW)
+    b_new = Brain(str(tmp_path / "new"), cortex=c, **KW)
     assert type(b_new.hippocampus) is Hippocampus and b_new.key == "S0"
     r_old, r_new = _talk(b_old), _talk(b_new)
     assert r_old == r_new
     b_old.save()
     b_new.save()
-    o, n = _blob(str(tmp_path / "old")), _blob(str(tmp_path / "new"))
-    assert set(o) == set(n) == {"episodes", "state"}
-    assert len(o["episodes"]) == len(n["episodes"])
-    for eo, en in zip(o["episodes"], n["episodes"]):
-        assert eo["text"] == en["text"] and eo["strength"] == en["strength"] and eo["uses"] == en["uses"]
-        assert torch.equal(eo["key"], en["key"])
-        assert all((x is None and y is None) or torch.equal(x, y) for x, y in zip(eo["delta"], en["delta"]))
-    assert all(torch.equal(x, y) for x, y in zip(o["state"], n["state"]))
+    assert "key" not in _meta(str(tmp_path / "new"))
+    o = Brain(str(tmp_path / "old"), cortex=c, **KW).hippocampus.episodes   # legacy layout
+    n = Brain(str(tmp_path / "new"), cortex=c, **KW).hippocampus.episodes
+    assert len(o) == len(n) == len(b_new.hippocampus.episodes) > 0
+    for eo, en in zip(o, n):
+        for k in ("text", "strength", "uses", "permanent", "source"):
+            assert getattr(eo, k) == getattr(en, k)
+        assert torch.equal(eo.key, en.key)
+        assert all((x is None and y is None) or torch.equal(x, y) for x, y in zip(eo.delta, en.delta))
+
+
+def test_source_is_saved_and_loaded(tmp_path):
+    home = str(tmp_path / "h")
+    c = StubCortex()
+    b = Brain(home, cortex=c, **KW)
+    _talk(b)
+    b.hippocampus.episodes[0].source = "self"
+    b.save()
+    b2 = Brain(home, cortex=c, **KW)
+    assert [e.source for e in b2.hippocampus.episodes] == [e.source for e in b.hippocampus.episodes]
+    assert b2.hippocampus.episodes[0].source == "self"
 
 
 def test_sall_switch_bar_and_no_stored_key(tmp_path):
-    b = Brain(str(tmp_path / "h"), cortex=StubCortex(), sleep_on_restart=False, key="S_all")
+    b = Brain(str(tmp_path / "h"), cortex=StubCortex(), **KW, key="S_all")
     h = b.hippocampus
     assert isinstance(h, KeyedHippocampus) and h.key_name == "S_all" and b.key == "S_all"
     assert (h.FAMILIARITY, h.MARGIN) == (0.185, 0.05)
@@ -124,28 +146,28 @@ def test_sall_switch_bar_and_no_stored_key(tmp_path):
 def test_sall_persisted_with_the_store(tmp_path):
     home = str(tmp_path / "h")
     c = StubCortex()
-    b = Brain(home, cortex=c, sleep_on_restart=False, key="S_all")
+    b = Brain(home, cortex=c, **KW, key="S_all")
     _talk(b)
     b.save()
-    assert _blob(home)["key"] == "S_all"
-    b2 = Brain(home, cortex=c, sleep_on_restart=False)            # no key given: the stored one
+    assert _meta(home)["key"] == "S_all"
+    b2 = Brain(home, cortex=c, **KW)            # no key given: the stored one
     assert b2.key == "S_all" and b2.hippocampus.FAMILIARITY == 0.185
     assert len(b2.hippocampus.episodes) == len(b.hippocampus.episodes)
-    b3 = Brain(home, cortex=c, sleep_on_restart=False, key="S0")  # explicit key wins; S0 keys rebuilt from deltas
+    b3 = Brain(home, cortex=c, **KW, key="S0")  # explicit key wins; S0 keys rebuilt from deltas
     assert type(b3.hippocampus) is Hippocampus
     for e in b3.hippocampus.episodes:
         assert torch.equal(e.key, e.delta[1].float().flatten())
     b3.save()
-    assert "key" not in _blob(home)
+    assert "key" not in _meta(home)
 
 
 def test_s0_home_opened_with_sall(tmp_path):
     home = str(tmp_path / "h")
     c = StubCortex()
-    b = Brain(home, cortex=c, sleep_on_restart=False)
+    b = Brain(home, cortex=c, **KW)
     _talk(b)
     b.save()
-    b2 = Brain(home, cortex=c, sleep_on_restart=False, key="S_all")
+    b2 = Brain(home, cortex=c, **KW, key="S_all")
     assert b2.key == "S_all" and all(e.key is None for e in b2.hippocampus.episodes)
     reply, info = b2.hear("What is my cat called?")
     assert isinstance(reply, str) and "similarity" in info
@@ -153,7 +175,7 @@ def test_s0_home_opened_with_sall(tmp_path):
 
 def test_sall_similarity_is_centred_cosine_of_all_layer_deltas(tmp_path):
     c = StubCortex()
-    b = Brain(str(tmp_path / "h"), cortex=c, sleep_on_restart=False, key="S_all")
+    b = Brain(str(tmp_path / "h"), cortex=c, **KW, key="S_all")
     _talk(b)
     h = b.hippocampus
     cue = "Which car is mine?"

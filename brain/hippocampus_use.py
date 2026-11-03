@@ -29,7 +29,7 @@ class UseHippocampus(Hippocampus):
     def store(self, cortex, base, text: str, speaker: str = "User", salience: float = 1.0, permanent: bool = False):
         _, st = cortex.read(f"{speaker}: {text}\n\n", base)
         delta = cortex.matrix_delta(st, base)
-        flat = _flat(delta)
+        flat = _flat(delta).cpu()   # stored episodes live on CPU (Hippocampus.store)
         best, best_sim = None, -1.0
         for e in self.episodes:
             s = float(torch.dot(flat, _flat(e.delta)) / (flat.norm() * _flat(e.delta).norm()).clamp_min(1e-8))
@@ -41,7 +41,7 @@ class UseHippocampus(Hippocampus):
             best.uses += 1
             best.last_used = time.time()
             return best
-        ep = Episode(text=f"{speaker}: {text}", delta=[d.half() if d is not None else None for d in delta],
-                     key=cortex.key_of(delta), strength=salience, permanent=permanent)
+        ep = Episode(text=f"{speaker}: {text}", delta=[d.half().cpu() if d is not None else None for d in delta],
+                     key=cortex.key_of(delta).cpu(), strength=salience, permanent=permanent)
         self.episodes.append(ep)
         return ep

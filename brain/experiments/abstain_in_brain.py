@@ -32,6 +32,10 @@ from brain.experiments.confidence_probe import DONT_KNOW, DONT_KNOW_QS, NEVER_TO
 from brain.experiments.facts import FACTS, PARA
 from brain.experiments.sleep_probe import NEVER_TOLD
 
+# The sleep settings this experiment was run with (the integration default before SLEEP_DEFAULTS), pinned so a
+# re-run at another cortex size reproduces it.
+PINNED_SLEEP = {"sleep_steps": 240, "sleep_lr": 5e-4, "sleep_kl_weight": 1.0, "adapter_rank": 8}
+
 SEEDS = [42, 43, 44, 100, 101, 102]
 KEYS = [k for _, _, k in FACTS]
 # The 36 questions the bars may be fitted on (the false-recall branch's set): told, paraphrase, never-told.
@@ -102,17 +106,17 @@ def sleep_phase(a, c):
     shutil.rmtree(a.home, ignore_errors=True)
     np.random.seed(a.seed)
     torch.manual_seed(a.seed)
-    day1 = Brain(a.home, cortex=c, sleep_seed=a.seed)
+    day1 = Brain(a.home, cortex=c, **PINNED_SLEEP, sleep_seed=a.seed)
     told = [dict(zip(("you", "brain"), (s, day1.hear(s)[0]))) for s, _, _ in FACTS]
     day1.save()                                   # not closed: the restart itself sleeps
     t1 = time.time()
     extra = [(f"User: {q}\n\nAssistant: {DONT_KNOW}\n\n", a.dont_know) for q in DONT_KNOW_QS] if a.dont_know else []
     if extra:  # method 2: the night must replay the declared pairs, so open without sleeping, add them, then sleep
-        b = Brain(a.home, cortex=c, sleep_seed=a.seed, sleep_on_restart=False)
+        b = Brain(a.home, cortex=c, **PINNED_SLEEP, sleep_seed=a.seed, sleep_on_restart=False)
         b.sleep_extra = extra
         b.sleep()
         b.save()
-    b = Brain(a.home, cortex=c, sleep_seed=a.seed, sleep_log=lambda m: print(m, flush=True))
+    b = Brain(a.home, cortex=c, **PINNED_SLEEP, sleep_seed=a.seed, sleep_log=lambda m: print(m, flush=True))
     assert b.meta["sleeps"] == 1, b.meta
     res = {"seed": a.seed, "dont_know": a.dont_know, "day1": told, "sleep_seconds": round(time.time() - t1, 1),
            "episodes": len(b.hippocampus.episodes), "adapter_norm": b.cortex.plastic.adapter_norm(), "fit": []}
@@ -164,7 +168,7 @@ def fit_phase(a):
 
 def eval_phase(a, c):
     bars = json.load(open(a.bars)) if a.bars else None
-    b = Brain(a.home, cortex=c, sleep_seed=a.seed, abstain=False)
+    b = Brain(a.home, cortex=c, **PINNED_SLEEP, sleep_seed=a.seed, abstain=False)
     assert b.meta["sleeps"] == 1 and not b.pending(), b.meta
     if bars:
         b.know_bar = {"hippocampus": bars["hippocampus"]["bar"], "cortex": bars["cortex"][str(a.seed)]["bar"]}
