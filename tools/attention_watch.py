@@ -111,10 +111,15 @@ def w_checks(st, now):
             _, apps = sh(["nvidia-smi", "--query-compute-apps=pid,used_memory,process_name",
                           "--format=csv,noheader"], timeout=15)
             big = "; ".join(l.strip() for l in apps.splitlines() if "MiB" in l and int(l.split(",")[1].split()[0]) > 1024)
+            llm_rc, _ = sh(["systemctl", "--user", "is-active", "--quiet", "local-llm"], timeout=15)
+            why = ("; the local LLM is up and the queue starts nothing while it is: bash tools/local_llm/llm.sh "
+                   "yield --max-hours N (11-03: jobs added with gpu_queue.sh add, not tools/brain_gpu.sh, wait here)"
+                   if llm_rc == 0 else "")
             ev.append(("w-gpu-held", f"W gpu_queue has {m_q.group(1)} job(s) held {mins:.0f} min with nothing running "
-                                     f"(not paused); VRAM holders: {big or 'none >1 GB'}"))
+                                     f"(not paused); VRAM holders: {big or 'none >1 GB'}{why}"))
     else:
         st["gpu_held_since"] = None
+        st["seen"].pop("w-gpu-held", None)     # moving again ends the episode (as w-gpu-idle)
     log = os.path.join(REPO, "research/queue/gpu_queue.log")
     try:
         size = os.path.getsize(log)

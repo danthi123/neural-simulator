@@ -17,12 +17,13 @@ def test_busy_gpu_clears_the_idle_alert(monkeypatch):
         return 0, "current: some_job\nqueued: 0\n"
     monkeypatch.setattr(aw, "sh", sh)
     monkeypatch.setattr(aw, "aws_checks", lambda: [])
-    st = {"seen": {"w-gpu-idle": 1.0, "minipc-idle-pool41": 1.0, "s-other": 1.0}, "gpu_idle_since": None,
+    st = {"seen": {"w-gpu-idle": 1.0, "w-gpu-held": 1.0, "minipc-idle-pool41": 1.0, "s-other": 1.0}, "gpu_idle_since": None,
           "gpu_log_off": 0, "journal_since": None}
     try:
         aw.w_checks(st, 1000.0)
     except Exception:
         pass                  # later probes (journal, oom) may need the real host; the idle part runs first
     assert "w-gpu-idle" not in st["seen"]
+    assert "w-gpu-held" not in st["seen"]
     assert "minipc-idle-pool41" not in st["seen"]
     assert "s-other" in st["seen"]
