@@ -123,3 +123,14 @@ def test_instrument_ignores_primary_echo_and_scores_affect_words():
     assert si.primary_echo("I felt the pain") and not si.primary_echo("I went to the shop")
     words = set(" ".join(POSITIVE_PRIMARIES + NEGATIVE_PRIMARIES).lower().replace(",", "").split())
     assert not (si.POS | si.NEG) & words
+
+
+def test_iteration3_question_registers_disjoint_and_affect_free():
+    from brain.experiments.mood_probe import QUESTION_SETS
+    for reg in ("plain", "mixed"):
+        dev, test = QUESTION_SETS[f"{reg}_dev"], QUESTION_SETS[f"{reg}_test"]
+        assert len(dev) == 6 and len(test) == 12 and not set(dev) & set(test)
+        for q in dev + test:   # no instrument word in the question itself
+            assert not set(si.words(q)) & (si.POS | si.NEG), q
+    allq = [q for v in QUESTION_SETS.values() for q in v]
+    assert len(allq) == len(set(allq))
