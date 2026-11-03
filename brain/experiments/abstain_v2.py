@@ -124,6 +124,10 @@ def keyed(b):
 
 
 def reset(b, snap, base):
+    # an eval question must not change the brain: a request the `_is_telling` scaffold reads as a statement ("Remind me
+    # what I named my cat.") is stored by Brain.hear AFTER its reply; drop it before the next question (bug fix, see
+    # writeup: the first eval run kept them and every later familiarity score rose)
+    del b.hippocampus.episodes[len(snap):]
     for e, (st, us, lu) in zip(b.hippocampus.episodes, snap):
         e.strength, e.uses, e.last_used = st, us, lu
     b.state = [x.clone() for x in base]
