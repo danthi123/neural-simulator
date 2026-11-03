@@ -246,3 +246,12 @@ floor (its replies carry almost no affect words); mixed 0.1B +1.79 (0.38), 0.4B 
 ratio 1.06, ok); 32 -> +10.11 but NLL ratio 1.66 (excluded). SELECTED: 16 (same as 0.1B).
 FROZEN for the six-seed runs at both sizes: `--questions mixed_test --samples 2 --max-tokens 40 --arms
 pos,neg,off,rand_pos,rand_neg --n-rand 2 --gain 16 --threads 2`.
+
+## 14. Iteration 3 result (11-03)
+
+`brain/experiments/results/2026-11-03-mood3.md`: NOT PASS at both sizes. 0.1B 5/6 criteria: positive mood brightens
+vs the random null 6/6 and vs OFF 6/6 on the mid-scale `mixed` register (the iteration-2 defect was the friendly
+register's ceiling); fails C6 echo on s43/s101 (+0.104/+0.125). 0.4B 2/6: negative vs null 6/6, positive vs null
+1/6 (a random push raises sentiment at 0.4B, +1.7), held-out positive appraisal 4/6. Caveat: a quarter to a third of
+negative-mood replies are apology/refusals ("I'm sorry, I can't help"); tone excluding "sorry" stays negative at about
+half size (exploratory).
