@@ -78,14 +78,14 @@ def main():
     c = Cortex(model_path=a.model, device="cpu")
     np.random.seed(a.seed)
     torch.manual_seed(a.seed)
-    day1 = Brain(a.home, cortex=c, sleep_steps=a.steps, sleep_seed=a.seed)
+    day1 = Brain(a.home, cortex=c, sleep_steps=a.steps, sleep_lr=5e-4, sleep_kl_weight=1.0, adapter_rank=8, sleep_seed=a.seed)
     told = []
     for s, _, _ in TOLD:
         reply, info = day1.hear(s)
         told.append({"you": s, "brain": reply, "stored": info["stored"]})
     day1.save()                                   # not closed: the restart itself must sleep
     t1 = time.time()
-    day2 = Brain(a.home, cortex=c, sleep_steps=a.steps, sleep_seed=a.seed, sleep_log=lambda m: print(m, flush=True))
+    day2 = Brain(a.home, cortex=c, sleep_steps=a.steps, sleep_lr=5e-4, sleep_kl_weight=1.0, adapter_rank=8, sleep_seed=a.seed, sleep_log=lambda m: print(m, flush=True))
     slept_s = time.time() - t1
     res = {"model": a.model, "seed": a.seed, "steps": a.steps, "day1": told, "sleeps_after_restart": day2.meta["sleeps"],
            "sleep_seconds": round(slept_s, 1), "episodes_replayed": len(day2.hippocampus.episodes),
@@ -97,7 +97,7 @@ def main():
         for q, key, kind in qs:
             np.random.seed(a.seed)
             torch.manual_seed(a.seed)
-            b = Brain(a.home, cortex=c, sleep_steps=a.steps)   # nothing pending: no further sleep
+            b = Brain(a.home, cortex=c, sleep_steps=a.steps, sleep_lr=5e-4, sleep_kl_weight=1.0, adapter_rank=8)   # nothing pending: no further sleep
             assert b.meta["sleeps"] == 1
             b.set_lesions(hippocampus_off=hip_off, consolidated_off=con_off)
             reply, info = b.hear(q)

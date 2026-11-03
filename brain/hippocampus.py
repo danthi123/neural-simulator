@@ -41,8 +41,10 @@ class Hippocampus:
     def store(self, cortex, base, text: str, speaker: str = "User", salience: float = 1.0, permanent: bool = False):
         _, st = cortex.read(f"{speaker}: {text}\n\n", base)
         delta = cortex.matrix_delta(st, base)
-        ep = Episode(text=f"{speaker}: {text}", delta=[d.half() if d is not None else None for d in delta],
-                     key=cortex.key_of(delta), strength=salience, permanent=permanent)
+        # Episodes are kept on the CPU (host RAM / disk), not on the cortex's device: 6.5 MiB each at 1.5B
+        # (adopt-1.5b plan step 5). Reinstatement moves the delta to the state's device (Cortex.add_delta).
+        ep = Episode(text=f"{speaker}: {text}", delta=[d.half().cpu() if d is not None else None for d in delta],
+                     key=cortex.key_of(delta).cpu(), strength=salience, permanent=permanent)
         self.episodes.append(ep)
         return ep
 
@@ -80,8 +82,8 @@ class Hippocampus:
     def similarities(self, cortex, base, cue_text: str, speaker: str = "User"):
         """Centred cosine of the cue's key against every stored key (one value per episode)."""
         _, st = cortex.read(f"{speaker}: {cue_text}\n\n", base)
-        q = cortex.key_of(cortex.matrix_delta(st, base))
         keys = torch.stack([e.key for e in self.episodes])
+        q = cortex.key_of(cortex.matrix_delta(st, base)).to(keys.device)
         if len(self.episodes) > 1:
             mu = keys.mean(0)
             keys, q = keys - mu, q - mu
@@ -113,3 +115,19 @@ class Hippocampus:
     def reinstate(self, cortex, state, ep: Episode):
         # Strength sets how easily a memory comes back (recall), not how hard it is reinstated.
         return cortex.add_delta(state, ep.delta, self.GAIN)
+
+    def nbytes(self) -> dict:
+        """Memory accounting: bytes the stored episodes hold, by device ({"cpu": ..., "cuda:0": ...})."""
+        out: dict = {}
+        for ep in self.episodes:
+            for t in (*ep.delta, ep.key, *(getattr(ep, "activity", None) or [])):
+                if isinstance(t, torch.Tensor):
+                    out[str(t.device)] = out.get(str(t.device), 0) + t.numel() * t.element_size()
+        return out
+
+
+def episode_bytes_for(n_layers: int, n_head: int, head_size: int, key_layers: int = 1) -> int:
+    """Bytes one default episode holds for a cortex of this shape: fp16 matrix-memory deltas of every layer plus the
+    fp32 key (the layer-0 associative delta). 0.1B 1.3 MiB, 0.4B 3.3 MiB, 1.5B 6.5 MiB (adopt-1.5b plan table)."""
+    per_layer = n_head * head_size * head_size
+    return n_layers * per_layer * 2 + key_layers * per_layer * 4

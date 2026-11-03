@@ -7,6 +7,7 @@ With no consolidated synapses the live cortex IS the pretrained one (same code p
 """
 from __future__ import annotations
 
+import fcntl
 import json
 import os
 import time
@@ -14,7 +15,7 @@ import time
 import torch
 import torch.nn.functional as F
 
-from brain.cortex import Cortex
+from brain.cortex import Cortex, model_size, resolve_model
 from brain.hippocampus import Episode, Hippocampus
 from brain.plastic_cortex import PlasticCortex
 from brain.sleep import sleep as replay_into_cortex
@@ -41,6 +42,37 @@ ORDINARY = [
     "User: What's a good way to spend a rainy afternoon?\n\nAssistant: Reading a book with tea is nice.\n\n",
     "User: Can you count to five?\n\nAssistant: One, two, three, four, five.\n\n"]
 ADAPTERS = "cortex_adapters.pt"
+EPISODES = "episodes"            # one file per episode (tensors), written once
+EPISODE_INDEX = "episodes.json"  # text + strength/uses/times per episode, rewritten after a turn (small)
+LOCK = ".lock"
+
+# Sleep settings per cortex size (adopt-1.5b plan step 8), keyed by Cortex.model_name's size tag. No silent fallback:
+# a cortex of another size must be given its sleep settings explicitly.
+#   0.1b: the integration default (240 steps / lr 5e-4 / KL 1), unchanged.
+#   0.4b: six seeds, brain/experiments/results/2026-11-03-sleep-overnight-0.4b-kl3-st480.md.
+#   1.5b: PROVISIONAL (3 seeds, results/2026-11-03-cortex-size); not the default cortex until the six-seed bar holds.
+SLEEP_DEFAULTS = {
+    "0.1b": {"steps": 240, "lr": 5e-4, "kl_weight": 1.0, "rank": 8},
+    "0.4b": {"steps": 480, "lr": 1e-3, "kl_weight": 3.0, "rank": 8},
+    "1.5b": {"steps": 480, "lr": 5e-4, "kl_weight": 3.0, "rank": 8},
+}
+
+
+def sleep_defaults(cortex_model: str | None) -> dict:
+    """The sleep settings for a cortex (by name or path). Raises KeyError for a size with no row in SLEEP_DEFAULTS."""
+    size = model_size(cortex_model)
+    if size not in SLEEP_DEFAULTS:
+        raise KeyError(f"no sleep settings for cortex {cortex_model!r} (size {size}); pass sleep_steps, sleep_lr, "
+                       f"sleep_kl_weight and adapter_rank explicitly or add a row to SLEEP_DEFAULTS")
+    return dict(SLEEP_DEFAULTS[size])
+
+
+class CortexMismatch(RuntimeError):
+    """A brain home was made with another cortex: its deltas and adapters do not transfer (plan step 10: migrate)."""
+
+
+class BrainBusy(RuntimeError):
+    """Another process (chat or night) holds this brain home."""
 
 
 class LiveCortex:
@@ -117,10 +149,18 @@ class Brain:
     KNOW_BAR_CORTEX = 1.0
 
     def __init__(self, home: str, name: str = "Nova", friend: str = "Dan", device: str = "cpu", cortex: Cortex = None,
-                 sleep_on_restart: bool = True, sleep_steps: int = 240, sleep_lr: float = 5e-4,
-                 sleep_kl_weight: float = 1.0, adapter_rank: int = 8, sleep_log=None, sleep_seed: int = 0,
-                 abstain: bool = False):
+                 sleep_on_restart: bool = True, sleep_steps: int | None = None, sleep_lr: float | None = None,
+                 sleep_kl_weight: float | None = None, adapter_rank: int | None = None, sleep_log=None,
+                 sleep_seed: int = 0, abstain: bool = False, cortex_model: str | None = None, lock: bool = False):
+        """cortex_model: checkpoint path or size tag ("0.1b", "1.5b") used when no `cortex` is given; None = the
+        default cortex (0.1B). Sleep settings left None come from SLEEP_DEFAULTS for the cortex's size.
+        lock: hold <home>/.lock for this object's life (chat and brain.night set it), so two processes never
+        live one brain at once; raises BrainBusy if another holds it."""
         self.home = home
+        os.makedirs(home, exist_ok=True)
+        self._lock_fh = None
+        if lock:
+            self._acquire_lock()
         self.abstain = abstain   # switch (default OFF): below the feeling-of-knowing bar, answer from "not known"
         self.know_bar = {"hippocampus": self.KNOW_BAR_HIPPOCAMPUS, "cortex": self.KNOW_BAR_CORTEX}
         # Which read-out decides "known" (abstention v2, brain/experiments/abstain_v2.py): "fok" = v1 (hippocampal
@@ -133,20 +173,24 @@ class Brain:
         # stored by teach_self_belief) instead of nothing. Default OFF.
         self.reinstate_self_belief = False
         self.sleep_extra = []    # (text, strength) replayed every night beside the episodes; [] = none (method 2)
-        os.makedirs(home, exist_ok=True)
-        self.raw_cortex = cortex or Cortex(device=device)
+        self.raw_cortex = cortex or Cortex(model_path=resolve_model(cortex_model), device=device)
+        self.cortex_model = getattr(self.raw_cortex, "model_name", None)   # None for a test mock
         self.cortex = LiveCortex(self.raw_cortex)
         self.hippocampus = Hippocampus()
         self.sleep_on_restart = sleep_on_restart
-        self.sleep_cfg = {"steps": sleep_steps, "lr": sleep_lr, "kl_weight": sleep_kl_weight}
-        self.adapter_rank = adapter_rank
+        given = {"steps": sleep_steps, "lr": sleep_lr, "kl_weight": sleep_kl_weight, "rank": adapter_rank}
+        if any(v is None for v in given.values()):
+            given = {k: (sleep_defaults(self.cortex_model)[k] if v is None else v) for k, v in given.items()}
+        self.sleep_cfg = {k: given[k] for k in ("steps", "lr", "kl_weight")}
+        self.adapter_rank = given["rank"]
         self.sleep_log = sleep_log
         self.sleep_seed = sleep_seed  # night n replays with seed sleep_seed + n; adapters init from sleep_seed
         # Birth context is read by the pretrained cortex: stored episodes are deltas from this base, so it must not
         # move when sleep changes the slow synapses.
         _, self.base = self.raw_cortex.read(BIRTH, None)
         self.state = [x.clone() for x in self.base]
-        self.meta = {"name": name, "friend": friend, "born": time.time(), "turns": 0, "sleeps": 0, "last_sleep": 0.0}
+        self.meta = {"name": name, "friend": friend, "born": time.time(), "turns": 0, "sleeps": 0, "last_sleep": 0.0,
+                     "cortex_model": self.cortex_model}
         if not self.load():
             self._grow_self()
             self.meta["last_sleep"] = time.time()  # birth is not a lived day: the first night comes at a restart
@@ -305,39 +349,148 @@ class Brain:
             prm.grad = None
         self.meta["sleeps"] = self.meta.get("sleeps", 0) + 1
         self.meta["last_sleep"] = time.time()
+        self._adapters_dirty = True
         self.cortex.refresh()
         return losses
 
     def close(self):
-        """Shut down: sleep once if anything was lived since the last sleep, then save."""
+        """Shut down: sleep once if anything was lived since the last sleep (and sleep_on_restart), then save and
+        release the home lock."""
         if self.sleep_on_restart and self.pending():
             self.sleep()
         self.save()
+        self.release()
+
+    # ---- one process per home ----
+    def _acquire_lock(self):
+        fh = open(os.path.join(self.home, LOCK), "a+")
+        try:
+            fcntl.flock(fh, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError:
+            fh.close()
+            raise BrainBusy(f"{self.home} is in use by another process (chat or night)") from None
+        fh.seek(0)
+        fh.truncate()
+        fh.write(f"{os.getpid()}\n")
+        fh.flush()
+        self._lock_fh = fh
+
+    def release(self):
+        if self._lock_fh is not None:
+            fcntl.flock(self._lock_fh, fcntl.LOCK_UN)
+            self._lock_fh.close()
+            self._lock_fh = None
+
+    # ---- memory accounting ----
+    def memory_report(self) -> dict:
+        """Bytes held by the hippocampus (by device) and by the consolidated synapses, plus what is on disk."""
+        eps = self.hippocampus.episodes
+        by_dev = self.hippocampus.nbytes()
+        total = sum(by_dev.values())
+        p = self.cortex.plastic
+        ad = 0 if p is None else sum(v.numel() * v.element_size() for v in p.parameters())
+        disk = 0
+        for root, _, files in os.walk(self.home):
+            disk += sum(os.path.getsize(os.path.join(root, f)) for f in files)
+        return {"cortex_model": self.cortex_model, "episodes": len(eps), "episode_bytes": by_dev,
+                "bytes_per_episode": total // len(eps) if eps else 0, "adapter_bytes": ad, "home_disk_bytes": disk}
 
     # ---- persistence ----
+    # Layout (adopt-1.5b plan step 5): <home>/episodes/<n>.pt holds one episode's tensors and is written once (again
+    # only if its key object was replaced); <home>/episodes.json holds every episode's text and the scalars that change
+    # with use; adapters are written only after a night changed them. Homes in the older single-file layout
+    # (memory.pt) load unchanged and are written in the new layout at their next save.
+    _SCALARS = ("text", "strength", "created", "last_used", "uses", "permanent")
+
     def save(self):
-        eps = [{k: getattr(e, k) for k in ("text", "delta", "key", "strength", "created", "last_used", "uses",
-                                             "permanent")} for e in self.hippocampus.episodes]
-        torch.save({"episodes": eps, "state": self.state}, os.path.join(self.home, "memory.pt"))
-        with open(os.path.join(self.home, "meta.json"), "w") as fh:
-            json.dump(self.meta, fh, indent=1)
+        d = os.path.join(self.home, EPISODES)
+        os.makedirs(d, exist_ok=True)
+        index = []
+        for e in self.hippocampus.episodes:
+            f = getattr(e, "_file", None)
+            if f is None:
+                f = e._file = f"{self.meta.get('episode_files', 0):07d}.pt"
+                self.meta["episode_files"] = self.meta.get("episode_files", 0) + 1
+            if getattr(e, "_saved_key", None) is not e.key or not os.path.exists(os.path.join(d, f)):
+                blob = {"delta": e.delta, "key": e.key}
+                if getattr(e, "activity", None) is not None:
+                    blob["activity"] = e.activity
+                torch.save(blob, os.path.join(d, f + ".tmp"))
+                os.replace(os.path.join(d, f + ".tmp"), os.path.join(d, f))
+                e._saved_key = e.key   # the object written (identity, so a replaced key is rewritten)
+            index.append({"file": f, **{k: getattr(e, k) for k in self._SCALARS}})
+        self._write_json(EPISODE_INDEX, index)
+        self._write_json("meta.json", self.meta)
         p = self.cortex.plastic
-        if p is not None:
+        if p is not None and (self._adapters_dirty or not os.path.exists(os.path.join(self.home, ADAPTERS))):
             tmp = os.path.join(self.home, ADAPTERS + ".tmp")
             torch.save({"rank": self.adapter_rank, "layers": p.layers,
                         "adapters": {k: v.detach().cpu() for k, v in p.state_dict().items()}}, tmp)
             os.replace(tmp, os.path.join(self.home, ADAPTERS))
+            self._adapters_dirty = False
+
+    _adapters_dirty = False
+
+    def _write_json(self, name, obj):
+        tmp = os.path.join(self.home, name + ".tmp")
+        with open(tmp, "w") as fh:
+            json.dump(obj, fh, indent=1)
+        os.replace(tmp, os.path.join(self.home, name))
+
+    def _load_episodes(self):
+        idx = os.path.join(self.home, EPISODE_INDEX)
+        if os.path.exists(idx):
+            with open(idx) as fh:
+                index = json.load(fh)
+            eps = []
+            for row in index:
+                blob = torch.load(os.path.join(self.home, EPISODES, row["file"]), map_location="cpu",
+                                  weights_only=False)
+                e = Episode(delta=blob["delta"], key=blob["key"], **{k: row[k] for k in self._SCALARS})
+                if "activity" in blob:
+                    e.activity = blob["activity"]
+                e._file, e._saved_key = row["file"], e.key
+                eps.append(e)
+            return eps
+        p = os.path.join(self.home, "memory.pt")
+        if os.path.exists(p):  # older single-file layout
+            blob = torch.load(p, map_location="cpu", weights_only=False)
+            return [Episode(**e) for e in blob["episodes"]]
+        return None
+
+    def _check_cortex(self, saved: str | None):
+        """Refuse a home made with another cortex: by recorded name, and (homes older than the record) by the shape
+        of the stored traces against this cortex's state."""
+        if saved is not None and self.cortex_model is not None and saved != self.cortex_model:
+            raise CortexMismatch(f"{self.home} was made with cortex {saved}, not {self.cortex_model}; its episodes "
+                                 f"and adapters do not transfer (migrate it: adopt-1.5b plan step 10)")
+        for e in self.hippocampus.episodes:
+            shapes = [None if x is None else tuple(x.shape) for x in e.delta]
+            want = [tuple(b.shape) if i % 3 == 1 else None for i, b in enumerate(self.base)]
+            if shapes != want:
+                raise CortexMismatch(f"{self.home}: stored traces have shapes of another cortex than "
+                                     f"{self.cortex_model or 'this one'}")
 
     def load(self) -> bool:
-        p = os.path.join(self.home, "memory.pt")
-        if not os.path.exists(p):
+        if not os.path.exists(os.path.join(self.home, "meta.json")):
             return False
-        blob = torch.load(p, weights_only=False)
-        self.hippocampus.episodes = [Episode(**e) for e in blob["episodes"]]
+        eps = self._load_episodes()
+        if eps is None:
+            return False
+        with open(os.path.join(self.home, "meta.json")) as fh:
+            meta = json.load(fh)
+        self.hippocampus.episodes = eps
+        try:
+            self._check_cortex(meta.get("cortex_model"))
+        except CortexMismatch:
+            self.hippocampus.episodes = []
+            self.release()
+            raise
         # A restart is a new day: working state starts from the base (plus, later, what sleep consolidated); the
         # previous day's live state is NOT restored (that would be working memory surviving sleep).
-        with open(os.path.join(self.home, "meta.json")) as fh:
-            self.meta = json.load(fh)
+        self.meta = meta
+        if self.meta.get("cortex_model") is None:
+            self.meta["cortex_model"] = self.cortex_model
         a = os.path.join(self.home, ADAPTERS)
         if os.path.exists(a):  # what earlier nights consolidated
             blob = torch.load(a, weights_only=False)

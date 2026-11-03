@@ -190,7 +190,7 @@ class KeyedHippocampus(Hippocampus):
         qmu = mumu = 0.0
         for l in layers:  # one layer of stored deltas in fp32 at a time
             i = 3 * l + 1
-            q = F.normalize((st[i] - base[i]).flatten().float(), dim=0)
+            q = F.normalize((st[i] - base[i]).flatten().float(), dim=0).cpu()   # stored deltas live on CPU
             K = F.normalize(torch.stack([e.delta[i].flatten() for e in self.episodes]).float(), dim=1)
             mu = K.mean(0) if n > 1 else torch.zeros_like(q)
             qk += K @ q
