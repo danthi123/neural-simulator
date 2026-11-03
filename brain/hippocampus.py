@@ -58,7 +58,9 @@ class Hippocampus:
             return None, 0.0
         _, st = cortex.read(f"{speaker}: {cue_text}\n\n", base)
         q = cortex.key_of(cortex.matrix_delta(st, base))
-        keys = torch.stack([e.key for e in self.episodes])
+        # Stored keys remember the device they were stored on (and after torch.load they may differ from the
+        # cortex's): pattern completion happens on the cue's device.
+        keys = torch.stack([e.key for e in self.episodes]).to(q.device)
         if len(self.episodes) > 1:
             mu = keys.mean(0)
             keys, q = keys - mu, q - mu
@@ -67,7 +69,7 @@ class Hippocampus:
         sims = keys @ q
         # weaker memories are harder to bring back: weight similarity by a saturating function of strength
         now = time.time()
-        w = torch.tensor([math.tanh(self.effective_strength(e, now)) for e in self.episodes])
+        w = torch.tensor([math.tanh(self.effective_strength(e, now)) for e in self.episodes], device=sims.device)
         score = sims * w
         order = torch.argsort(score, descending=True)
         best = int(order[0])
@@ -83,4 +85,6 @@ class Hippocampus:
 
     def reinstate(self, cortex, state, ep: Episode):
         # Strength sets how easily a memory comes back (recall), not how hard it is reinstated.
-        return cortex.add_delta(state, ep.delta, self.GAIN)
+        # Stored deltas remember their storage device; reinstatement happens on the live state's device.
+        delta = [None if d is None else d.to(state[i].device) for i, d in enumerate(ep.delta)]
+        return cortex.add_delta(state, delta, self.GAIN)
