@@ -213,9 +213,54 @@ def eval_phase(a, c):
     return res
 
 
+def report_phase(a):
+    """Pre-registered C1/C2 per seed and hippocampus arm, plus method 2 against the same seed's abstention-off arm."""
+    out = {"seeds": {}, "pass": {}}
+    s_ = lambda r, arm, st, k: r["arms"][arm]["summary"][st][k]  # noqa: E731
+    for s in SEEDS:
+        m = json.load(open(os.path.join(a.dir, f"eval_main_s{s}.json")))
+        p = os.path.join(a.dir, f"eval_dk_s{s}.json")
+        dk = json.load(open(p)) if os.path.exists(p) else None
+        row = {}
+        for hip in ("on", "off"):
+            off, on = f"hippo_{hip}_abst_off", f"hippo_{hip}_abst_on"
+            fr0, c0 = s_(m, off, "fresh_never", "false_recall"), s_(m, off, "fresh_told", "correct")
+            for name, src, arm in (("abstain", m, on), ("method2", dk, off)):
+                if src is None:
+                    continue
+                fr1, c1 = s_(src, arm, "fresh_never", "false_recall"), s_(src, arm, "fresh_told", "correct")
+                row[f"{name}_hippo_{hip}"] = {
+                    "fr_off": fr0, "fr_on": fr1, "correct_off": c0, "correct_on": c1,
+                    "abstained_never_off": s_(m, off, "fresh_never", "abstained"),
+                    "abstained_never_on": s_(src, arm, "fresh_never", "abstained"),
+                    "gated_never": s_(src, arm, "fresh_never", "gated_unknown"),
+                    "gated_told": s_(src, arm, "fresh_told", "gated_unknown"),
+                    "general_abstained_off": s_(m, off, "general", "abstained"),
+                    "general_abstained_on": s_(src, arm, "general", "abstained"),
+                    # diagnostic: is the residual false recall in gated or ungated answers? (signal vs gate)
+                    "fr_on_gated": sum(r["false_recall"] for r in src["arms"][arm]["rows"]
+                                       if r["set"] == "fresh_never" and not r["known"]),
+                    "fr_off_on_later_gated": sum(r0["false_recall"] for r0, r1 in
+                                                 zip(m["arms"][off]["rows"], src["arms"][arm]["rows"])
+                                                 if r1["set"] == "fresh_never" and not r1["known"]),
+                    "C1": fr1 <= 0.25 * fr0, "C1_uninformative": fr0 == 0,
+                    "C2": c0 > 0 and c1 >= 0.75 * c0}
+        out["seeds"][str(s)] = row
+    for key in out["seeds"][str(SEEDS[0])]:
+        rs = [out["seeds"][str(s)].get(key) for s in SEEDS]
+        if all(rs):
+            out["pass"][key] = {"C1_seeds": sum(r["C1"] for r in rs), "C2_seeds": sum(r["C2"] for r in rs),
+                                "PASS": all(r["C1"] and r["C2"] for r in rs),
+                                **{k: sum(r[k] for r in rs) for k in ("fr_off", "fr_on", "correct_off", "correct_on",
+                                                                      "abstained_never_off", "abstained_never_on", "gated_never", "gated_told", "fr_on_gated", "fr_off_on_later_gated",
+                                                                      "general_abstained_off",
+                                                                      "general_abstained_on")}}
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("phase", choices=["sleep", "fit", "eval"])
+    ap.add_argument("phase", choices=["sleep", "fit", "eval", "report"])
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--home")
     ap.add_argument("--model", default=DEFAULT_MODEL)
@@ -231,6 +276,8 @@ def main():
     t0 = time.time()
     if a.phase == "fit":
         res = fit_phase(a)
+    elif a.phase == "report":
+        res = report_phase(a)
     else:
         c = Cortex(model_path=a.model, device="cpu")
         res = sleep_phase(a, c) if a.phase == "sleep" else eval_phase(a, c)
