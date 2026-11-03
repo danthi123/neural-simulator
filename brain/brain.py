@@ -16,6 +16,7 @@ import torch.nn.functional as F
 
 from brain.cortex import Cortex
 from brain.hippocampus import Episode, Hippocampus
+from brain.hippocampus_keys import KeyedHippocampus
 from brain.plastic_cortex import PlasticCortex
 from brain.sleep import sleep as replay_into_cortex
 
@@ -119,8 +120,13 @@ class Brain:
     def __init__(self, home: str, name: str = "Nova", friend: str = "Dan", device: str = "cpu", cortex: Cortex = None,
                  sleep_on_restart: bool = True, sleep_steps: int = 240, sleep_lr: float = 5e-4,
                  sleep_kl_weight: float = 1.0, adapter_rank: int = 8, sleep_log=None, sleep_seed: int = 0,
-                 abstain: bool = False):
+                 abstain: bool = False, key: str | None = None):
         self.home = home
+        # Pattern-completion key (switch, default OFF = "S0": the default Hippocampus, byte-equal to before). "S_all":
+        # the meaning key read from every layer's stored matrix-memory delta (brain/hippocampus_keys.py) with its own
+        # dev-fit bar (2026-11-03-meaning-selection-realpath). None = what the home stored, else "S0". A non-S0 choice
+        # is saved with the hippocampus store (memory.pt); an S0 store is written exactly as before.
+        self._key_arg = key
         self.abstain = abstain   # switch (default OFF): below the feeling-of-knowing bar, answer from "not known"
         self.know_bar = {"hippocampus": self.KNOW_BAR_HIPPOCAMPUS, "cortex": self.KNOW_BAR_CORTEX}
         # Which read-out decides "known" (abstention v2, brain/experiments/abstain_v2.py): "fok" = v1 (hippocampal
@@ -136,7 +142,7 @@ class Brain:
         os.makedirs(home, exist_ok=True)
         self.raw_cortex = cortex or Cortex(device=device)
         self.cortex = LiveCortex(self.raw_cortex)
-        self.hippocampus = Hippocampus()
+        self.hippocampus = self._make_hippocampus(key or "S0")
         self.sleep_on_restart = sleep_on_restart
         self.sleep_cfg = {"steps": sleep_steps, "lr": sleep_lr, "kl_weight": sleep_kl_weight}
         self.adapter_rank = adapter_rank
@@ -154,6 +160,21 @@ class Brain:
         elif self.sleep_on_restart and self.pending():
             self.sleep()  # restart = a night: consolidate what was lived since the last sleep, once
             self.save()
+
+    # Dev-fit selection bars (FAMILIARITY, MARGIN) per non-default key; S0 keeps the Hippocampus class constants.
+    KEY_BARS = {"S_all": (0.185, 0.05)}
+
+    def _make_hippocampus(self, key: str) -> Hippocampus:
+        if key == "S0":
+            return Hippocampus()
+        if key not in self.KEY_BARS:
+            raise ValueError(f"no fitted bar for key {key!r}")
+        fam, margin = self.KEY_BARS[key]
+        return KeyedHippocampus(key=key, familiarity=fam, margin=margin)
+
+    @property
+    def key(self) -> str:
+        return getattr(self.hippocampus, "key_name", "S0")
 
     # ---- self ----
     def _grow_self(self):
@@ -335,7 +356,10 @@ class Brain:
     def save(self):
         eps = [{k: getattr(e, k) for k in ("text", "delta", "key", "strength", "created", "last_used", "uses",
                                              "permanent", "source")} for e in self.hippocampus.episodes]
-        torch.save({"episodes": eps, "state": self.state}, os.path.join(self.home, "memory.pt"))
+        blob = {"episodes": eps, "state": self.state}
+        if self.key != "S0":  # the default store is written exactly as before
+            blob["key"] = self.key
+        torch.save(blob, os.path.join(self.home, "memory.pt"))
         with open(os.path.join(self.home, "meta.json"), "w") as fh:
             json.dump(self.meta, fh, indent=1)
         p = self.cortex.plastic
@@ -350,7 +374,19 @@ class Brain:
         if not os.path.exists(p):
             return False
         blob = torch.load(p, weights_only=False)
+        key = self._key_arg or blob.get("key", "S0")
+        if key != self.key:
+            enabled = self.hippocampus.enabled
+            self.hippocampus = self._make_hippocampus(key)
+            self.hippocampus.enabled = enabled
         self.hippocampus.episodes = [Episode(**e) for e in blob["episodes"]]
+        if key == "S0":  # a store written under a delta-read key holds no S0 key: rebuild it from the stored delta
+            for e in self.hippocampus.episodes:
+                if e.key is None:
+                    e.key = self.raw_cortex.key_of([None if d is None else d.float() for d in e.delta])
+        else:  # a delta-read key keeps no separate key per episode
+            for e in self.hippocampus.episodes:
+                e.key = None
         # A restart is a new day: working state starts from the base (plus, later, what sleep consolidated); the
         # previous day's live state is NOT restored (that would be working memory surviving sleep).
         with open(os.path.join(self.home, "meta.json")) as fh:
