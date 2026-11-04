@@ -17,6 +17,51 @@ This is not a finished mind or a chatbot wrapped in neuroscience terminology.
 It is a simulator, a collection of tested brain mechanisms, and a research
 program working to join those mechanisms into a continuously developing whole.
 
+## Current Direction (since 2026-11-02)
+
+After a year on the spiking track (2025-11 to 2026-11, summarised under
+[The Spiking Track](#the-spiking-track-2025-11-to-2026-11) below), an audit of
+the record showed the architecture had stalled: many validated mechanisms ran
+side by side but did not learn as one system, and every English word still came
+from an external language model. The project pivoted to a small new core in
+[`brain/`](brain/ARCHITECTURE.md) aimed directly at the goal, a functional
+digital brain you can talk with openly that learns and grows from what it lives
+through ([decision record](docs/plans/2026-11-02-pivot-functional-digital-brain-DECISION.md)):
+
+- **Cortex:** a pretrained recurrent language model (RWKV-7) reads and speaks.
+  Pretraining is a declared trade that stands in for evolution and childhood;
+  everything learned after "birth" uses local, brain-style rules.
+- **Hippocampus:** stores each experience in one shot as the change it made to
+  cortical memory and brings it back by pattern completion, as cortical state,
+  never as retrieved text.
+- **Sleep:** on each restart the brain replays its episodes into the cortex's
+  own slow synapses, so later recall no longer needs the hippocampus.
+- **Self and persistence:** identity memories are kept strongest; the whole
+  brain is saved to disk and survives a restart.
+
+Early results (six seeds each, pre-registered, lesion-controlled; see
+[`brain/experiments/results/`](brain/experiments/results/)):
+
+- With a 1.5B cortex, after one night of sleep the brain recalls a mean 9.3 of
+  12 facts told the day before **with its hippocampus switched off**, against
+  2.8 without sleep and 0 for sleep on shuffled episodes, on every seed.
+- Open problems, recorded as failures: at 1.5B the hippocampus often fetches
+  the wrong memory, so recall with it switched on is worse than with it off (a
+  routing fix is under test); the brain cannot yet tell reliably whether it
+  knows something, so a trained "I don't know" overrides facts it does know;
+  told facts can loop in free conversation after sleep; and the default cortex
+  is still 0.1B until the 1.5B adoption lands.
+
+Progress is measured by dated milestones in
+[`brain/ARCHITECTURE.md`](brain/ARCHITECTURE.md) and a weekly transcript of the
+same prompts ([`brain/eval/transcripts/`](brain/eval/transcripts/)). The old
+codebase is frozen as a library of proven mechanisms that are ported into the
+new core only when they improve the conversation.
+
+The project is run by one researcher with AI agents (mostly Claude) acting as
+research staff: they design, pre-register, run, adversarially verify, and
+record each experiment, including the retractions.
+
 ## What The Project Is Building
 
 The target system has five defining properties:
@@ -50,9 +95,11 @@ Read the [project charter](docs/PROJECT-CHARTER.md) for the commitments behind
 this work and the [technical overview](docs/TECHNICAL-OVERVIEW.md) for the
 architecture, current evidence, and major gaps.
 
-## Current State
+## The Spiking Track (2025-11 to 2026-11)
 
-The simulation foundation is substantial. It supports central processing unit
+This section describes the spiking track as of its freeze on 2026-11-02 and is
+kept as history; the "What The Project Is Building" properties above were its
+targets. The simulation foundation is substantial. It supports central processing unit
 and NVIDIA graphics processing unit execution, sparse spiking networks,
 multiple neuron models, declared brain regions and pathways, several forms of
 local plasticity, neuromodulation, homeostasis, structural change,
@@ -140,6 +187,7 @@ are research instruments rather than polished product demos.
 
 | Path | Purpose |
 |---|---|
+| `brain/` | The new core (since 2026-11-02): cortex, hippocampus, sleep, self, chat loop, experiments, weekly eval. |
 | `sim/` | Simulation engine, neuron and synapse state, learning, brain regions, neuromodulation, growth, and backends. |
 | `experiment/` | Reusable stimulus, training, and readout support. |
 | `research/runners/` | Executable experiments and diagnostic runs. |
