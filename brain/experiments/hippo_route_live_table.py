@@ -10,6 +10,7 @@ import argparse
 import glob
 import json
 import statistics as st
+from fractions import Fraction
 
 from brain.experiments.facts import FACTS
 
@@ -39,12 +40,13 @@ def main(d, pattern):
     rt = {a: [routing(R[s][a]["rows"]) for s in seeds] for a in ("a_intact_sleep", "b_intact_nosleep", "f_fix_sleep", "g_fix_nosleep")}
     print("\nrouting of told questions (right, wrong) per seed:", rt)
     rc = "recall_correct"
+    q = lambda a, k: Fraction(sum(R[s][a][k] for s in seeds), len(seeds))   # exact means for the bars (2.0 is not 1.9999999999999996)
     f1 = all(r >= 8 and w <= 1 for r, w in rt["g_fix_nosleep"])   # g only; f's routing is an outcome (prereg amendment)
-    f2 = m("f_fix_sleep", rc) - m("a_intact_sleep", rc) >= 2.0 and \
+    f2 = q("f_fix_sleep", rc) - q("a_intact_sleep", rc) >= 2 and \
         sum(R[s]["f_fix_sleep"][rc] > R[s]["a_intact_sleep"][rc] for s in seeds) >= 5
-    f3 = m("f_fix_sleep", rc) >= m("c_hippo_off", rc) - 1.0
-    f4 = m("f_fix_sleep", "false_recall") <= m("a_intact_sleep", "false_recall") + 0.5
-    f5 = m("g_fix_nosleep", rc) - m("b_intact_nosleep", rc) >= 2.0 and \
+    f3 = q("f_fix_sleep", rc) >= q("c_hippo_off", rc) - 1
+    f4 = q("f_fix_sleep", "false_recall") <= q("a_intact_sleep", "false_recall") + Fraction(1, 2)
+    f5 = q("g_fix_nosleep", rc) - q("b_intact_nosleep", rc) >= 2 and \
         sum(R[s]["g_fix_nosleep"][rc] > R[s]["b_intact_nosleep"][rc] for s in seeds) >= 5
     print(f"\nF1 (instrument: routing) {f1}  F2 (f - a >= 2, 5/6) {f2}  F3 (f >= c - 1) {f3}  "
           f"F4 (false f <= a + 0.5) {f4}  F5 (g - b >= 2, 5/6) {f5}")
