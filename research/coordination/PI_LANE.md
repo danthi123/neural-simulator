@@ -78,7 +78,7 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   the package is absent, so the two protected test files run unchanged. Note: `research/weekly-dry-run-1103` no longer
   exists in either repo (the audit is unreachable); only its "seeded" mark idea was needed and it is carried over. No
   real run (spec: none needed). merge_review checkpoint requested (branch + sha f81324fa1).
-- [ ] New core, live-brain 12 facts: rescore and rerun with the correct-perspective scorer (base: a new branch from `main`;
+- [x] New core, live-brain 12 facts: rescore and rerun with the correct-perspective scorer (base: a new branch from `main`;
   `research/landing-1103` is merged into main). The six-seed result (`brain/experiments/results/2026-11-03-live-brain-12facts.md`) was
   scored with `strict_scorer.score`, which voids every first-person reply and credits tautologies ("Pixel is called
   Pixel."); its caveat section says so. `strict_scorer.correct_answer(reply, key, question, told)` fixes both. Its
@@ -95,6 +95,16 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   byte-identical `table.txt` check. Read first: `live_brain_probe.py`, `live_brain_table.py`, `strict_scorer.py`,
   `brain/tests/test_strict_scorer.py`. Pi does not write a verdict; the table prints the P-checks and Claude rules on
   them. Done = branch + tests passing + `rescored.json` + `table_correct.txt` + merge_review checkpoint.
+  DONE 2026-11-05 (Pi), part (A) per the scope cut: `brain/experiments/live_brain_rescore.py` rescores every
+  told/para row with `correct_answer` (key + told from FACTS by position; arm e against the ORIGINAL keys/sentences;
+  false recall unchanged) and writes `rescored.json` + `table_correct.txt` (run on the real six-seed dir, both
+  committed; seed JSONs and table.txt untouched, test-pinned). `live_brain_table.py` refactored: `main(d)` takes the
+  metric names as parameters and the old call prints the committed `table.txt` byte for byte (test); the CLI keeps
+  its "scorer <x>" line via `header`. Tests without weights (brain/tests/test_live_brain_rescore.py: fixture echo /
+  tautology / "I believe you drive a Volvo" counted / wrong-subject, byte-identical table.txt, write-only-new-files);
+  66 brain/tests pass. Rescored P-checks: P1 True, P2 False, P3 False, P4 True (table_correct.txt) — Pi writes no
+  verdict, Claude rules. Note: the rescored recall is far below the strict score (a_intact_sleep 6.50 -> 1.83 mean):
+  the strict score's tautologies and wrong-subject hits are gone. merge_review checkpoint requested (sha 20ffe2f9a).
 - [ ] New core, mood: refusal and paired-echo re-analysis of the existing iteration-3 replies (base: a new branch from `main`;
   `research/landing-1103` is merged into main; no model, no new runs). `brain/experiments/results/2026-11-03-mood3.md` leaves two
   instrument questions open. (i) Part of "negative mood darkens" is refusals ("I'm sorry, but I can't help with
