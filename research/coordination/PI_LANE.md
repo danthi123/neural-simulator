@@ -44,7 +44,7 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   CLOSED 2026-11-05 (Claude): superseded. A Claude-built varied-replay arm landed on main first (0d4f5d120,
   six seeds at 0.1B: NOT SHOWN). Pi's duplicate on `research/pi-sleep-varied-replay` is not merged (Claude's
   lane bookkeeping error: the item stayed open after the 11-03 steer).
-- [ ] New core, weekly test: perspective for the two keys seeded at birth (base: a new branch from `main`, where `research/landing-1103` is merged;
+- [x] New core, weekly test: perspective for the two keys seeded at birth (base: a new branch from `main`, where `research/landing-1103` is merged;
   if the weekly-upgrade item above has landed by then, apply this on top of it). `Brain._grow_self` stores the
   brain's own name (Nova) and the user's name (Dan) at birth, so these two keys are not told in the session.
   `weekly.TOLD` gives both `None`, and with `None`, `strict_scorer.is_echo` accepts ANY first-person reply. That is
@@ -68,6 +68,16 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   `brain/experiments/strict_scorer.py`, `brain/brain.py` (`_grow_self`), and the audit in
   `git show research/weekly-dry-run-1103:brain/eval/transcripts/dry-run-2026-11-03.md`. No real run is needed.
   Done = branch + tests passing + merge_review checkpoint.
+  DONE 2026-11-05 (Pi): built on `research/pi-lane-1105` (f81324fa1). `strict_scorer.wrong_perspective(reply, key,
+  whose)` + `correct_answer(..., whose=None)` (with None the earlier behaviour is exact: every existing test in
+  brain/tests/test_strict_scorer.py and test_weekly_scorer.py passes unchanged); weekly.py `WHOSE`/`SEEDED`, `mark_for`
+  passes `whose`, a seeded key's mark gets " (seeded at birth, not told today)", per-arm total "told today x/4, seeded
+  y/2" (keys, last scored ask). Tests without weights (brain/tests/test_seeded_keys.py): the spec's Nova/Dan cases,
+  whose=None unchanged, stub-Brain run() for the seeded mark and the split total; 62 brain/tests pass,
+  tests/test_brain_adopt_config.py's weekly test passes (17 passed). brain/tests/conftest.py stubs `rwkv` only where
+  the package is absent, so the two protected test files run unchanged. Note: `research/weekly-dry-run-1103` no longer
+  exists in either repo (the audit is unreachable); only its "seeded" mark idea was needed and it is carried over. No
+  real run (spec: none needed). merge_review checkpoint requested (branch + sha f81324fa1).
 - [ ] New core, live-brain 12 facts: rescore and rerun with the correct-perspective scorer (base: a new branch from `main`;
   `research/landing-1103` is merged into main). The six-seed result (`brain/experiments/results/2026-11-03-live-brain-12facts.md`) was
   scored with `strict_scorer.score`, which voids every first-person reply and credits tautologies ("Pixel is called
