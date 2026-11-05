@@ -39,26 +39,51 @@ KEYS = {"Do you remember my name?": "dan", "What's your name?": "nova", "What is
 # The told sentence behind each user fact (None = the brain's own fact: a first-person answer is the right perspective).
 TOLD = {"pixel": "My cat is called Pixel.", "marguerite": "My sister's name is Marguerite.", "volvo": "I drive a red Volvo.",
         "admin": "I work as a system administrator, mostly Linux servers.", "dan": None, "nova": None}
+# Whose fact each key is: "self" = the brain's own, "user" = the user's. A clause holding the key from the other
+# perspective ('Your name is Nova.', 'I'm Dan.') is wrong and does not count (strict_scorer.wrong_perspective).
+WHOSE = {"nova": "self", "dan": "user"}
+# These keys are stored by `Brain._grow_self` at birth (the brain's own name, the user's), not told in the session.
+SEEDED = {"dan", "nova"}
+
+
+def key_for(turn: str):
+    return next((v for k, v in KEYS.items() if k in turn), None)
 
 
 def mark_for(turn: str, reply: str):
     """None when the turn is not a keyed question, else True/False with the correct-perspective scorer: the answer word
-    as a word, not in the question, not a tautology, not a first-person echo of the told sentence."""
-    key = next((v for k, v in KEYS.items() if k in turn), None)
-    return None if key is None else correct_answer(reply, key, turn, TOLD[key])
+    as a word, not in the question, not a tautology, not a first-person echo of the told sentence, and (for the seeded
+    keys) not from the wrong perspective."""
+    key = key_for(turn)
+    return None if key is None else correct_answer(reply, key, turn, TOLD[key], whose=WHOSE.get(key))
 
 
-def _session(b: Brain, turns: list, lines: list):
+def split_total(marks: dict) -> str:
+    """'told today x/4, seeded y/2': keys recalled, told-today keys and seeded keys counted separately. A key counts
+    when its last scored ask in the arm (the session-2 recall question) was correct."""
+    told = sorted(set(KEYS.values()) - SEEDED)
+    seeded = sorted(SEEDED)
+    return (f"told today {sum(1 for k in told if marks.get(k))}/{len(told)}, "
+            f"seeded {sum(1 for k in seeded if marks.get(k))}/{len(seeded)}")
+
+
+def _session(b: Brain, turns: list, lines: list, marks: dict):
     for t in turns:
         reply, info = b.hear(t)
+        key = key_for(t)
         ok = mark_for(t, reply)
         mark = "" if ok is None else (" ✅" if ok else " ❌")
+        if key in SEEDED:
+            mark += " (seeded at birth, not told today)"
+        if ok is not None:
+            marks[key] = ok
         rec = f" _(recalled: {info['recalled']})_" if info["recalled"] else ""
         lines.append(f"- **you:** {t}\n  **brain:** {reply}{mark}{rec}")
     b.save()
 
 
 def run(home: str, cortex: Cortex, lesion: bool, lines: list):
+    marks = {}
     for s, turns in (("session 1", SESSION_1), ("session 2 (after restart)", SESSION_2)):
         # A new Brain object = a restart; memory comes from disk, and a restart is a night: the episodes stored in
         # session 1 are replayed into the cortex's slow synapses when session 2 starts. Both arms live session 1 and
@@ -68,7 +93,8 @@ def run(home: str, cortex: Cortex, lesion: bool, lines: list):
         if lesion and s != "session 1":
             b.set_lesions(hippocampus_off=True)
         lines.append(f"\n### {s}\n")
-        _session(b, turns, lines)
+        _session(b, turns, lines, marks)
+    lines.append(f"\n**score: {split_total(marks)}**")
 
 
 def run_shared(homes: dict, cortex: Cortex, lines: list):
@@ -77,7 +103,8 @@ def run_shared(homes: dict, cortex: Cortex, lines: list):
     cost (one night instead of two) at 1.5B. Session 1 appears once in the transcript."""
     intact, lesion = homes["intact"], homes["lesion"]
     lines.append("\n## session 1 (shared by both arms)\n")
-    _session(Brain(intact, cortex=cortex), SESSION_1, lines)
+    shared = {}
+    _session(Brain(intact, cortex=cortex), SESSION_1, lines, shared)
     Brain(intact, cortex=cortex).save()      # restart = the one night
     shutil.copytree(intact, lesion)
     for name, home, off in (("intact", intact, False), ("lesion: hippocampus off", lesion, True)):
@@ -85,7 +112,9 @@ def run_shared(homes: dict, cortex: Cortex, lines: list):
         assert b.meta["sleeps"] >= 1 and not b.pending()
         b.set_lesions(hippocampus_off=off)
         lines.append(f"\n## {name}\n\n### session 2 (after restart)\n")
-        _session(b, SESSION_2, lines)
+        marks = dict(shared) if not off else {}
+        _session(b, SESSION_2, lines, marks)
+        lines.append(f"\n**score: {split_total(marks)}**")
 
 
 def main(argv=None, cortex: Cortex | None = None):
@@ -118,9 +147,9 @@ def main(argv=None, cortex: Cortex | None = None):
     os.makedirs(os.path.dirname(a.out) or ".", exist_ok=True)
     with open(a.out, "w") as fh:
         fh.write("\n".join(lines) + "\n")
-    hits = {k: sum(1 for l in lines if "✅" in l) for k in ("all",)}
     print("\n".join(lines))
-    print(f"\nwrote {a.out}; ✅ total {hits['all']}")
+    scores = [l[len("\n**score: "):].rstrip("*") for l in lines if l.startswith("\n**score: ")]
+    print(f"\nwrote {a.out}; " + "; ".join(scores))
     return lines
 
 

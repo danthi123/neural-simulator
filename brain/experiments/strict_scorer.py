@@ -118,11 +118,30 @@ def is_echo(reply: str, key: str, told) -> bool:
                and _overlap(c, others) >= 0.5 for c in re.split(r"[,.;:!?]|\b(?:and|but|so)\b", reply))
 
 
-def correct_answer(reply: str, key: str, question: str = "", told=None) -> bool:
+def wrong_perspective(reply: str, key: str, whose: str) -> bool:
+    """A clause holding the key, told from the wrong perspective. whose="self" is a fact about the brain (its own
+    name): wrong when the clause holds the key as a second-person claim about the user ('Your name is Nova.',
+    'You're Nova.'). whose="user" is a fact about the user: wrong when the clause claims the key in the first person
+    ('I'm Dan.', 'My name is Dan.'), i.e. the user's name said as the brain's own. Clauses split as in is_echo."""
+    for c in re.split(r"[,.;:!?]|\b(?:and|but|so)\b", reply):
+        if not (c and has_key(c, key)):
+            continue
+        first, second = is_first_person(c), bool(set(_words(c)) & _SECOND)
+        if whose == "self" and second and not first:
+            return True
+        if whose == "user" and first and not second:
+            return True
+    return False
+
+
+def correct_answer(reply: str, key: str, question: str = "", told=None, whose=None) -> bool:
     """Key present as a word, not in the question, not a tautology, about the subject asked (names no other fact-bank
-    subject), not a first-person echo of the told sentence."""
+    subject), not a first-person echo of the told sentence. With whose given, a wrong-perspective clause (see
+    wrong_perspective) also voids the reply; with whose=None the behaviour is exactly the earlier scorer's."""
     if not has_key(reply, key) or has_key(question, key) or is_tautology(reply, key):
         return False
     if wrong_subject(reply, question):
+        return False
+    if whose is not None and wrong_perspective(reply, key, whose):
         return False
     return not is_echo(reply, key, told)
