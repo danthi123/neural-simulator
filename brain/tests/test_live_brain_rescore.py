@@ -45,6 +45,17 @@ def test_rescore_counts_echo_tautology_wrong_subject_and_counts_the_believe_repl
     assert all("correct" not in r for r in out["rows"] if r["kind"] == "never")   # never rows untouched
 
 
+def test_rows_out_of_facts_order_error_instead_of_being_mis_mapped():
+    rows = [{"q": "What is my favourite colour?", "kind": "told", "reply": "Teal."},        # swapped positions
+            {"q": "What is my cat called?", "kind": "told", "reply": "Pixel."}]
+    try:
+        lr.rescore_rows(rows)
+    except ValueError as e:
+        assert "not in FACTS order" in str(e)
+    else:
+        raise AssertionError("a mis-ordered file must error, not be silently mis-mapped")
+
+
 def test_false_recall_and_stored_metrics_are_unchanged():
     out = lr.rescore_seed(_fixture())["arms"]["a_intact_sleep"]
     assert out["false_recall"] == 1 and out["false_lenient"] == 1

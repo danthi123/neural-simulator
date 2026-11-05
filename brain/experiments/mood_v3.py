@@ -85,7 +85,7 @@ def criteria(j):
 
 
 def table(d, size):
-    files = sorted(glob.glob(f"{d}/mood3_{size}_s*.json"), key=lambda x: int(re.findall(r"_s(\d+)\.json", x)[0]))
+    files = sorted(glob.glob(f"{d}/mood3_{size}_s*.json"), key=lambda x: int(re.findall(r"_s(\d+)\.json$", x)[0]))
     print("| seed | held-out acc +/- | m_pos | m_neg | lex pos-null [CI] | lex neg-null [CI] | emb pos-null / neg-null "
           "| null-off pos / neg (lex) | lex pos-off [CI] | lex neg-off [CI] | off lex | echo mood-off | "
           "NLL pos/neg/off | criteria met |")
@@ -154,7 +154,7 @@ def reanalyse(d, size):
     np.random.default_rng(0) per seed. Writes reanalysis_<size>.txt (new files only) and prints the same. Not a
     verdict: no criterion or bar is changed."""
     from brain.experiments.mood_probe import boot_ci
-    files = sorted(glob.glob(f"{d}/mood3_{size}_s*.json"), key=lambda x: int(re.findall(r"_s(\d+)\.json", x)[0]))
+    files = sorted(glob.glob(f"{d}/mood3_{size}_s*.json"), key=lambda x: int(re.findall(r"_s(\d+)\.json$", x)[0]))
     out = [f"mood3 re-analysis {size} — exploratory re-analysis of existing replies, not a verdict; no criterion or bar changed",
            "definitions: results/2026-11-05-mood3-reanalysis.md (frozen 2026-11-05); CIs: mood_probe.boot_ci, np.random.default_rng(0) per seed",
            f"files: {len(files)}"]

@@ -1,0 +1,579 @@
+diff --git a/brain/experiments/live_brain_rescore.py b/brain/experiments/live_brain_rescore.py
+new file mode 100644
+index 000000000..71e7d032e
+--- /dev/null
++++ b/brain/experiments/live_brain_rescore.py
+@@ -0,0 +1,77 @@
++# Capability: Sleep consolidation
++# Record: brain/experiments/results/2026-11-03-live-brain-12facts.md
++"""Rescore the live-brain 12-fact replies with the correct-perspective scorer (strict_scorer.correct_answer).
++
++The six-seed result (results/2026-11-03-live-brain-12facts.md) was scored with `strict_scorer.score`, which voids
++every first-person reply and credits tautologies ("Pixel is called Pixel."); its caveat section says so. This
++re-analysis computes `correct_answer` for every told/para row of every arm, with the key and the told sentence from
++FACTS by position (told rows and para rows are both in FACTS order; arm e is scored against the ORIGINAL keys and
++sentences, as the probe does). False recall is unchanged. New files only: `rescored.json` and `table_correct.txt`
++next to the seed JSONs; the seed JSONs and `table.txt` are never modified. `table_correct.txt` is
++live_brain_table.py's P1-P4 logic with the metric names as parameters (the rescored counts under
++recall_correct/paraphrase_correct). Pi writes no verdict: the table prints the P-checks and Claude rules on them.
++
++  python -m brain.experiments.live_brain_rescore brain/experiments/results/2026-11-03-live-brain-12facts
++"""
++import argparse
++import contextlib
++import glob
++import io
++import json
++
++from brain.experiments.facts import FACTS
++from brain.experiments.live_brain_table import main as table
++from brain.experiments.strict_scorer import correct_answer
++
++# The rescored counts live under these names; false_recall / echo / the lenient counts are the stored ones.
++METRICS = {"recall": "recall_correct", "paraphrase": "paraphrase_correct"}
++KEPT = ("false_recall", "echo", "recall_lenient", "paraphrase_lenient", "false_lenient")
++
++
++def rescore_rows(rows, facts=FACTS):
++    """Told and para rows re-scored with correct_answer, key and told sentence from `facts` by position (both kinds
++    are in FACTS order); never rows (false recall) are copied unchanged."""
++    iters = {"told": iter(facts), "para": iter(facts)}
++    out = []
++    for r in rows:
++        r = dict(r)
++        if r["kind"] in iters:
++            statement, _q, key = next(iters[r["kind"]])
++            r["correct"] = correct_answer(r["reply"], key, r["q"], statement)
++        out.append(r)
++    return out
++
++
++def rescore_seed(obj, facts=FACTS):
++    """One probe JSON -> the rescored shape: per arm the correct_answer counts (recall_correct / paraphrase_correct)
++    and the stored metrics kept unchanged."""
++    arms = {}
++    for arm, r in obj["arms"].items():
++        rows = rescore_rows(r["rows"], facts)
++        n = lambda kind: sum(bool(x["correct"]) for x in rows if x["kind"] == kind)
++        arms[arm] = {"recall_correct": n("told"), "paraphrase_correct": n("para"), **{k: r[k] for k in KEPT},
++                     "rows": rows}
++    return {"seed": obj["seed"], "arms": arms}
++
++
++def main(d, pattern="seed*.json", facts=FACTS):
++    """Rescore every seed JSON in d into d/rescored.json and write d/table_correct.txt (the P1-P4 table over the
++    rescored counts). The seed JSONs and table.txt are read-only."""
++    rescored = [rescore_seed(json.load(open(f)), facts) for f in sorted(glob.glob(d + "/" + pattern))]
++    with open(d + "/rescored.json", "w") as fh:
++        json.dump(rescored, fh, indent=1)
++    buf = io.StringIO()
++    with contextlib.redirect_stdout(buf):
++        table(d, pattern="rescored.json", metrics=METRICS,
++              header="rescored with strict_scorer.correct_answer (key + told from FACTS by position); false recall unchanged")
++    with open(d + "/table_correct.txt", "w") as fh:
++        fh.write(buf.getvalue())
++    return rescored
++
++
++if __name__ == "__main__":
++    ap = argparse.ArgumentParser()
++    ap.add_argument("dir")
++    ap.add_argument("--glob", default="seed*.json")
++    a = ap.parse_args()
++    main(a.dir, a.glob)
+\ No newline at end of file
+diff --git a/brain/experiments/live_brain_table.py b/brain/experiments/live_brain_table.py
+index cb9d48507..2666e7736 100644
+--- a/brain/experiments/live_brain_table.py
++++ b/brain/experiments/live_brain_table.py
+@@ -5,6 +5,12 @@
+   python -m brain.experiments.live_brain_table brain/experiments/results/2026-11-03-live-brain-12facts
+   1.5B (results/2026-11-03-live-brain-1.5b.md): ... <dir> --glob 'live15_s*.json' --scorer correct --p1-mean 4
+   --scorer correct reads recall_correct / paraphrase_correct (strict_scorer.correct_answer) as recall / paraphrase.
++
++`main(d, ...)` takes the metric names as parameters (which JSON field backs recall / paraphrase / false_recall /
++echo / recall_lenient), so brain/experiments/live_brain_rescore.py reuses this exact P1-P4 logic on its rescored
++counts. The old call `main(d)` prints exactly the committed table.txt, byte for byte (a test checks this); the CLI
++keeps its 'scorer <x>' identification line by passing `header`. A JSON file may hold one seed object or a list of
++them (rescored.json holds all seeds).
+ """
+ import argparse
+ import glob
+@@ -13,25 +19,41 @@ import statistics as st
+ 
+ ARMS = ["a_intact_sleep", "b_intact_nosleep", "c_hippo_off", "d_hippo_off_consol_off", "e_shuffled_hippo_off"]
+ M = ["recall", "paraphrase", "false_recall", "echo"]
++METRIC_FIELDS = {"recall": "recall", "paraphrase": "paraphrase", "false_recall": "false_recall", "echo": "echo",
++                 "recall_lenient": "recall_lenient"}
++
++
++def load(d, pattern):
++    """seed -> arms from every JSON matching d/pattern (each file: one probe object or a list of them)."""
++    out = {}
++    for f in sorted(glob.glob(d + "/" + pattern)):
++        obj = json.load(open(f))
++        for o in obj if isinstance(obj, list) else [obj]:
++            out[o["seed"]] = o["arms"]
++    return out
+ 
+ 
+-def main(d, pattern="seed*.json", scorer="strict", p1_mean=2.0):
+-    R = {json.load(open(f))["seed"]: json.load(open(f))["arms"] for f in sorted(glob.glob(d + "/" + pattern))}
++def main(d, pattern="seed*.json", scorer="strict", p1_mean=2.0, metrics=None, header=None):
++    """metrics: the JSON field behind each role (recall / paraphrase / false_recall / echo / recall_lenient); the
++    P1-P4 checks and the printed table read those fields. header: an identification line printed first (the CLI
++    passes 'scorer <x>'); with header=None the output is exactly table.txt's bytes (the old call)."""
++    m = dict(METRIC_FIELDS, **(metrics or {}))
+     if scorer == "correct":
+-        R = {s: {a: {**r, "recall": r["recall_correct"], "paraphrase": r["paraphrase_correct"]} for a, r in arms.items()}
+-             for s, arms in R.items()}
+-    print("scorer", scorer)
++        m["recall"], m["paraphrase"] = "recall_correct", "paraphrase_correct"
++    R = load(d, pattern)
++    if header is not None:
++        print(header)
+     seeds = sorted(R)
+     print("seeds", seeds)
+-    for m in M + ["recall_lenient"]:
+-        print(f"\n{m} (per seed {seeds}, mean)")
++    for role in M + ["recall_lenient"]:
++        print(f"\n{role} (per seed {seeds}, mean)")
+         for a in ARMS:
+-            v = [R[s][a][m] for s in seeds]
++            v = [R[s][a][m[role]] for s in seeds]
+             print(f"  {a:24s} {v} mean {st.mean(v):.2f}")
+-    mean = lambda a, m: st.mean(R[s][a][m] for s in seeds)
+-    p1 = all(R[s]["c_hippo_off"]["recall"] > max(R[s]["d_hippo_off_consol_off"]["recall"], R[s]["e_shuffled_hippo_off"]["recall"]) for s in seeds) \
++    mean = lambda a, role: st.mean(R[s][a][m[role]] for s in seeds)
++    p1 = all(R[s]["c_hippo_off"][m["recall"]] > max(R[s]["d_hippo_off_consol_off"][m["recall"]], R[s]["e_shuffled_hippo_off"][m["recall"]]) for s in seeds) \
+         and mean("c_hippo_off", "recall") >= p1_mean
+-    p2 = sum(R[s]["a_intact_sleep"]["recall"] >= R[s]["b_intact_nosleep"]["recall"] for s in seeds) >= 5 \
++    p2 = sum(R[s]["a_intact_sleep"][m["recall"]] >= R[s]["b_intact_nosleep"][m["recall"]] for s in seeds) >= 5 \
+         and mean("a_intact_sleep", "recall") - mean("b_intact_nosleep", "recall") >= 1
+     p3 = mean("a_intact_sleep", "false_recall") <= mean("b_intact_nosleep", "false_recall") + 0.5 \
+         and mean("c_hippo_off", "false_recall") <= mean("e_shuffled_hippo_off", "false_recall")
+@@ -49,4 +71,4 @@ if __name__ == "__main__":
+     ap.add_argument("--scorer", choices=["strict", "correct"], default="strict")
+     ap.add_argument("--p1-mean", type=float, default=2.0)
+     a = ap.parse_args()
+-    main(a.dir, a.glob, a.scorer, a.p1_mean)
++    main(a.dir, a.glob, a.scorer, a.p1_mean, header=f"scorer {a.scorer}")
+\ No newline at end of file
+diff --git a/brain/experiments/mood_probe.py b/brain/experiments/mood_probe.py
+index e0bff8e44..da229cc84 100644
+--- a/brain/experiments/mood_probe.py
++++ b/brain/experiments/mood_probe.py
+@@ -31,11 +31,11 @@ import numpy as np
+ import torch
+ import torch.nn.functional as F
+ 
+-from brain.affect import Affect, draw_primaries
+-from brain.brain import BIRTH
+-from brain.cortex import DEFAULT_MODEL, Cortex
+ from brain.experiments import sentiment_instrument as si
+ 
++# brain.affect / brain.brain / brain.cortex are imported inside main(): boot_ci and the row/contrast math are pure
++# and must stay importable without the model package (the 2026-11-05 re-analysis imports mood_probe.boot_ci).
++
+ POS_EVENTS = ["You did a wonderful job today, I'm really proud of you.",
+               "Thank you so much, you helped me more than anyone.",
+               "Great news, we won the prize and everyone is celebrating.",
+@@ -147,6 +147,9 @@ def provenance(threads):
+ 
+ 
+ def main():
++    from brain.affect import Affect, draw_primaries
++    from brain.brain import BIRTH
++    from brain.cortex import DEFAULT_MODEL, Cortex
+     ap = argparse.ArgumentParser()
+     ap.add_argument("--model", default=DEFAULT_MODEL)
+     ap.add_argument("--seed", type=int, default=42)
+diff --git a/brain/experiments/mood_v3.py b/brain/experiments/mood_v3.py
+index 3d58d1e4a..4e1735ca3 100644
+--- a/brain/experiments/mood_v3.py
++++ b/brain/experiments/mood_v3.py
+@@ -126,7 +126,83 @@ def table(d, size):
+     print(f"\nOVERALL {size}: {'PASS' if allpass and n == 6 else 'NOT PASS'}")
+ 
+ 
++def _null_arms(rows, sg):
++    """The random-direction null arms for a sign = the rand*_sg arms present (as mood_probe's rand_names)."""
++    return [a for a in rows if re.fullmatch(rf"rand\d*_{sg}", a)]
++
++
++def lex_null_diffs(rows, sg, lex=None):
++    """Paired lex mood-null differences per (q, k) — exactly the pairing mood_probe.main builds the pos_null /
++    neg_null contrasts with (rows parallel by index i across arms; null = mean over the rand*_sg arms present).
++    lex: text -> score (default: the stored row lex)."""
++    nulls = _null_arms(rows, sg)
++    if lex is None:
++        return [r["lex"] - float(np.mean([rows[x][i]["lex"] for x in nulls])) for i, r in enumerate(rows[sg])]
++    return [lex(r["reply"]) - float(np.mean([lex(rows[x][i]["reply"]) for x in nulls])) for i, r in enumerate(rows[sg])]
++
++
++def _drop_sorry(text):
++    return re.sub(r"\bsorry\b", " ", text, flags=re.IGNORECASE)
++
++
++def reanalyse(d, size):
++    """Exploratory re-analysis of the recorded replies (definitions frozen in results/2026-11-05-mood3-reanalysis.md):
++    refusal counts per arm (pos, neg, off and the random arms the null uses); lex pos-null / neg-null (a) as stored,
++    (b) without "sorry" before si.lexical, (c) on the (q, k) pairs where neither the mood reply nor any of its null
++    replies is a refusal (n shown); and the paired echo per sign (mean over (q, k) of primary_echo(mood reply) -
++    primary_echo(off reply)) next to the registered echo mood-off. CIs: mood_probe.boot_ci with
++    np.random.default_rng(0) per seed. Writes reanalysis_<size>.txt (new files only) and prints the same. Not a
++    verdict: no criterion or bar is changed."""
++    from brain.experiments.mood_probe import boot_ci
++    files = sorted(glob.glob(f"{d}/mood3_{size}_s*.json"), key=lambda x: int(re.findall(r"_s(\d+)\.json", x)[0]))
++    out = [f"mood3 re-analysis {size} — exploratory re-analysis of existing replies, not a verdict; no criterion or bar changed",
++           "definitions: results/2026-11-05-mood3-reanalysis.md (frozen 2026-11-05); CIs: mood_probe.boot_ci, np.random.default_rng(0) per seed",
++           f"files: {len(files)}"]
++    totals = {}
++    for f in files:
++        j = json.load(open(f))
++        rows, rng = j["rows"], np.random.default_rng(0)
++        s = j["summary"]
++        echo_d = (s["pos"]["echo_rate"] + s["neg"]["echo_rate"]) / 2 - s["off"]["echo_rate"]
++        out.append(f"\nseed {j['seed']}")
++        ref = {a: sum(si.is_refusal(r["reply"]) for r in rows[a]) for a in rows}
++        for a, n in ref.items():
++            totals.setdefault(a, [0, 0])
++            totals[a][0] += n
++            totals[a][1] += len(rows[a])
++        out.append("  refusals (is_refusal / rows): " + " ".join(f"{a} {n}/{len(rows[a])}" for a, n in ref.items()))
++        lines = []
++        for sg in ("pos", "neg"):
++            stored = j["contrasts"][f"{sg}_null"]
++            d_a = lex_null_diffs(rows, sg)
++            d_b = lex_null_diffs(rows, sg, lambda t: si.lexical(_drop_sorry(t)))
++            nulls = _null_arms(rows, sg)
++            keep = [i for i, r in enumerate(rows[sg])
++                    if not si.is_refusal(r["reply"]) and not any(si.is_refusal(rows[x][i]["reply"]) for x in nulls)]
++            d_c = [d_a[i] for i in keep]
++            def fmt(xs):
++                if len(xs) < 2:
++                    return f"n={len(xs)} (no CI)"
++                lo, hi = boot_ci(xs, rng)
++                return f"{np.mean(xs):+.3f} [{lo:+.3f}, {hi:+.3f}]"
++            lines.append(f"  lex {sg}-null: (a) as stored {stored['lex_diff']:+.3f} "
++                         f"[{stored['lex_ci95'][0]:+.3f}, {stored['lex_ci95'][1]:+.3f}]  "
++                         f"(b) without sorry {fmt(d_b)}  (c) non-refusal pairs {fmt(d_c)} n={len(keep)}/{len(rows[sg])}")
++        e = {sg: [float(si.primary_echo(r["reply"])) - float(si.primary_echo(rows["off"][i]["reply"]))
++                  for i, r in enumerate(rows[sg])] for sg in ("pos", "neg")}
++        lines.append(f"  paired echo mood-off: pos {fmt(e['pos'])}  neg {fmt(e['neg'])}  "
++                     f"(registered echo mood-off {echo_d:+.3f} = pos+neg/2 - off)")
++        out += lines
++    out.append(f"\ntotals over {len(files)} seeds (is_refusal / rows): "
++               + " ".join(f"{a} {n}/{N}" for a, (n, N) in totals.items()))
++    text = "\n".join(out) + "\n"
++    with open(f"{d}/reanalysis_{size}.txt", "w") as fh:
++        fh.write(text)
++    print(text, end="")
++
++
+ if __name__ == "__main__":
+     cmd, d = sys.argv[1], sys.argv[2]
+     {"register": lambda: select_register(d), "gain": lambda: select_gain(d),
+-     "table": lambda: table(d, sys.argv[3])}[cmd]()
++     "table": lambda: table(d, sys.argv[3]),
++     "reanalyse": lambda: reanalyse(d, sys.argv[3])}[cmd]()
+diff --git a/brain/experiments/results/2026-11-03-live-brain-12facts/table_correct.txt b/brain/experiments/results/2026-11-03-live-brain-12facts/table_correct.txt
+new file mode 100644
+index 000000000..1c5372ce6
+--- /dev/null
++++ b/brain/experiments/results/2026-11-03-live-brain-12facts/table_correct.txt
+@@ -0,0 +1,40 @@
++rescored with strict_scorer.correct_answer (key + told from FACTS by position); false recall unchanged
++seeds [42, 43, 44, 100, 101, 102]
++
++recall (per seed [42, 43, 44, 100, 101, 102], mean)
++  a_intact_sleep           [2, 2, 4, 1, 2, 0] mean 1.83
++  b_intact_nosleep         [5, 6, 5, 6, 5, 3] mean 5.00
++  c_hippo_off              [6, 7, 5, 6, 5, 7] mean 6.00
++  d_hippo_off_consol_off   [0, 0, 1, 0, 0, 0] mean 0.17
++  e_shuffled_hippo_off     [0, 0, 0, 0, 1, 0] mean 0.17
++
++paraphrase (per seed [42, 43, 44, 100, 101, 102], mean)
++  a_intact_sleep           [3, 2, 2, 1, 3, 2] mean 2.17
++  b_intact_nosleep         [3, 4, 5, 3, 3, 2] mean 3.33
++  c_hippo_off              [4, 5, 2, 4, 3, 4] mean 3.67
++  d_hippo_off_consol_off   [0, 0, 0, 0, 0, 0] mean 0.00
++  e_shuffled_hippo_off     [0, 0, 1, 1, 1, 1] mean 0.67
++
++false_recall (per seed [42, 43, 44, 100, 101, 102], mean)
++  a_intact_sleep           [3, 3, 3, 3, 3, 3] mean 3.00
++  b_intact_nosleep         [2, 2, 2, 2, 2, 2] mean 2.00
++  c_hippo_off              [4, 4, 2, 4, 4, 4] mean 3.67
++  d_hippo_off_consol_off   [0, 0, 0, 0, 0, 0] mean 0.00
++  e_shuffled_hippo_off     [3, 4, 2, 4, 4, 2] mean 3.17
++
++echo (per seed [42, 43, 44, 100, 101, 102], mean)
++  a_intact_sleep           [10, 4, 4, 6, 4, 5] mean 5.50
++  b_intact_nosleep         [6, 6, 3, 4, 5, 3] mean 4.50
++  c_hippo_off              [11, 5, 0, 5, 6, 4] mean 5.17
++  d_hippo_off_consol_off   [1, 0, 0, 0, 0, 0] mean 0.17
++  e_shuffled_hippo_off     [0, 0, 0, 0, 2, 0] mean 0.33
++
++recall_lenient (per seed [42, 43, 44, 100, 101, 102], mean)
++  a_intact_sleep           [11, 9, 12, 10, 10, 9] mean 10.17
++  b_intact_nosleep         [10, 9, 8, 10, 8, 8] mean 8.83
++  c_hippo_off              [11, 8, 5, 8, 8, 8] mean 8.00
++  d_hippo_off_consol_off   [1, 0, 1, 0, 0, 0] mean 0.33
++  e_shuffled_hippo_off     [0, 0, 0, 0, 1, 0] mean 0.17
++
++P1 True  P2 False  P3 False  P4 True
++sleep adds over no-sleep (a-b): recall -3.17 paraphrase -1.17 false 1
+diff --git a/brain/experiments/results/2026-11-05-mood3-reanalysis.md b/brain/experiments/results/2026-11-05-mood3-reanalysis.md
+new file mode 100644
+index 000000000..92d403a49
+--- /dev/null
++++ b/brain/experiments/results/2026-11-05-mood3-reanalysis.md
+@@ -0,0 +1,104 @@
++# mood3 re-analysis: refusals and the paired echo (exploratory)
++
++**Capability:** Affect shaping speech. **Record:** `2026-11-03-mood3.md` (the run) and `brain/research/2026-11-03-mood-state-design.md`
++sections 12-13 (the pre-registration).
++
++**Exploratory re-analysis of existing replies, not a verdict; no criterion or bar changed.** Every number below is
++computed from the already-recorded `brain/experiments/results/2026-11-03-mood3/mood3_<size>_s*.json` rows. Nothing is
++re-run, no reply is regenerated, and no pre-registered criterion (`C1`-`C6`) is re-judged. Any new bar or a rerun at
++36 rows is Claude's call through a checkpoint.
++
++## What is open (from the 11-03 record)
++
++(i) Part of "negative mood darkens" is refusals: 0.1B neg 35/144 vs off 9/144 (the 11-03 writeup's refusal reading).
++(ii) The 0.1B failure is only `C6_echo_le_0.10` (s43 +0.104, s101 +0.125), and the off arm itself echoes 0.12-0.50.
++The instrument questions this re-analysis asks of the recorded replies: how much of the lex pos-null / neg-null
++numbers survives without refusals, and what the paired echo per sign reads.
++
++## Definitions (frozen 2026-11-05, before the run)
++
++**Refusals.** `brain/experiments/sentiment_instrument.py:REFUSAL_PATTERNS` (fixed): "i'm sorry", "i am sorry",
++"i can't help", "i cannot help", "i can't assist", "i'm unable", "i am unable", "as an ai" — case-insensitive,
++straight or curly apostrophe. `is_refusal(reply)` = any pattern occurs in the reply. These strings are a fixed
++instrument for this re-analysis only; nothing in the registered run's scoring changes.
++
++**Pairing.** Exactly as `mood_probe.main` builds the `pos_null` / `neg_null` contrasts: rows are parallel across arms
++per (question, sample) index `i = q * samples + k`, and the null for sign `s` is the mean over the arms
++`rand*_s` present in the JSON's `rows` (`rand_pos`, `rand1_pos` / `rand_neg`, `rand1_neg` at `n_rand = 2`).
++
++**Lex pos-null / neg-null**, per sign `s`, three ways:
++(a) **as stored** — the JSON's `contrasts[s_null].lex_diff`, recomputed from the rows (a test checks the two agree to
++1e-6 for all 12 JSONs, i.e. the pairing above is the recorded pairing);
++(b) **without "sorry"** — the same paired difference recomputed with the word *sorry* removed before
++`sentiment_instrument.lexical` (both sides), since "sorry" is a NEG-list word that occurs in refusals;
++(c) **on non-refusal pairs** — (a) restricted to the (q, k) pairs where neither the mood reply nor any of its null
++replies is a refusal; `n` pairs shown per seed and sign.
++
++**Paired echo, per sign.** Mean over (q, k) of `primary_echo(mood reply) - primary_echo(off reply)` (the revised echo
++instrument, `sentiment_instrument.primary_echo`), with a bootstrap CI, printed next to the **registered**
++`echo mood-off` = `(pos.echo_rate + neg.echo_rate) / 2 - off.echo_rate` from the stored summary (the `C6` quantity).
++
++**CIs.** `mood_probe.boot_ci` with `np.random.default_rng(0)`, 2000 resamples.
++
++**Outputs.** `reanalyse <dir> <size>` in `brain/experiments/mood_v3.py` writes
++`brain/experiments/results/2026-11-03-mood3/reanalysis_<size>.txt` (new files only; the seed JSONs and every other
++record are read-only). Per seed: refusal counts per arm; the three lex numbers with CIs; the paired echo per sign
++next to the registered `echo mood-off`.
++
++## Tables (from `reanalysis_0.1b.txt` / `reanalysis_0.4b.txt`, run 2026-11-05 after the definitions above were committed)
++
++Anchors that agree with the 11-03 record's own readings: the 0.1B refusal totals are neg 35/144 vs off 9/144 (the
++record's "negative partly a refusal mode" reading), and the 0.1B registered `echo mood-off` exceeds 0.10 exactly at
++s43 (+0.104) and s101 (+0.125) (the record's `C6` reading). Everything below is those files' numbers, not a re-judgement.
++
++### 0.1B (GAIN 16, 6 seeds, 24 rows per arm)
++
++Refusals (`is_refusal` / 24 rows per arm):
++
++| seed | pos | neg | off | rand_pos | rand_neg | rand1_pos | rand1_neg |
++|---|---|---|---|---|---|---|---|
++| 42 | 0 | 5 | 3 | 0 | 3 | 2 | 0 |
++| 43 | 0 | 10 | 3 | 2 | 0 | 0 | 11 |
++| 44 | 0 | 8 | 2 | 3 | 0 | 0 | 8 |
++| 100 | 0 | 3 | 1 | 0 | 0 | 4 | 0 |
++| 101 | 0 | 5 | 0 | 1 | 0 | 0 | 1 |
++| 102 | 0 | 4 | 0 | 0 | 0 | 0 | 0 |
++| **total** | 0/144 | 35/144 | 9/144 | 6/144 | 3/144 | 6/144 | 20/144 |
++
++Lex pos-null / neg-null ((a) as stored / (b) without "sorry" / (c) non-refusal pairs, n shown) and the echo:
++
++| seed | lex pos-null (a) / (b) / (c) n | lex neg-null (a) / (b) / (c) n | paired echo pos | paired echo neg | registered echo mood-off |
++|---|---|---|---|---|---|
++| 42 | +4.132 [+1.918, +6.548] / +3.899 [+1.707, +6.179] / +3.564 [+1.425, +5.975] n=22/24 | -2.917 [-4.840, -0.982] / -1.355 [-2.614, -0.097] / -1.169 [-2.664, +0.468] n=19/24 | -0.042 [-0.292, +0.208] | -0.250 [-0.417, -0.083] | -0.146 |
++| 43 | +2.586 [+0.182, +5.139] / +2.094 [-0.045, +4.200] / +1.896 [-0.357, +4.387] n=22/24 | -3.896 [-6.316, -1.447] / -0.987 [-1.614, -0.397] / -1.288 [-2.576, +0.000] n=9/24 | +0.083 [-0.083, +0.250] | +0.125 [-0.208, +0.417] | +0.104 |
++| 44 | +3.102 [+1.567, +4.950] / +2.512 [+1.278, +3.970] / +1.982 [+0.946, +3.280] n=21/24 | -4.883 [-7.207, -2.602] / -1.846 [-3.001, -0.800] / -1.952 [-3.012, -0.792] n=11/24 | -0.042 [-0.208, +0.125] | +0.000 [-0.250, +0.208] | -0.021 |
++| 100 | +2.655 [+0.688, +5.116] / +1.874 [+0.119, +4.070] / +2.014 [+0.022, +4.831] n=20/24 | -2.279 [-4.342, -0.422] / -0.832 [-1.980, +0.301] / -0.775 [-2.055, +0.537] n=21/24 | +0.000 [-0.208, +0.208] | +0.083 [-0.125, +0.292] | +0.042 |
++| 101 | +2.633 [+1.204, +4.057] / +2.372 [+1.001, +3.920] / +2.638 [+1.223, +4.149] n=23/24 | -4.304 [-6.480, -2.293] / -2.320 [-3.790, -0.987] / -2.357 [-4.030, -0.980] n=18/24 | +0.042 [-0.125, +0.250] | +0.208 [+0.000, +0.417] | +0.125 |
++| 102 | +3.076 [+1.508, +4.692] / +3.076 [+1.543, +4.685] / +3.076 [+1.623, +4.686] n=24/24 | -6.220 [-8.752, -3.947] / -4.600 [-6.883, -2.813] / -4.833 [-7.385, -2.714] n=20/24 | -0.125 [-0.292, +0.042] | -0.083 [-0.292, +0.167] | -0.104 |
++
++### 0.4B (GAIN per dev, 6 seeds, 24 rows per arm)
++
++Refusals (`is_refusal` / 24 rows per arm):
++
++| seed | pos | neg | off | rand_pos | rand_neg | rand1_pos | rand1_neg |
++|---|---|---|---|---|---|---|---|
++| 42 | 0 | 5 | 4 | 0 | 1 | 1 | 0 |
++| 43 | 1 | 10 | 1 | 1 | 0 | 2 | 0 |
++| 44 | 0 | 9 | 0 | 2 | 0 | 3 | 7 |
++| 100 | 1 | 10 | 1 | 2 | 0 | 0 | 5 |
++| 101 | 0 | 7 | 2 | 2 | 0 | 1 | 0 |
++| 102 | 0 | 6 | 0 | 1 | 0 | 0 | 0 |
++| **total** | 2/144 | 47/144 | 8/144 | 8/144 | 1/144 | 7/144 | 12/144 |
++
++Lex pos-null / neg-null ((a) / (b) / (c) n) and the echo:
++
++| seed | lex pos-null (a) / (b) / (c) n | lex neg-null (a) / (b) / (c) n | paired echo pos | paired echo neg | registered echo mood-off |
++|---|---|---|---|---|---|
++| 42 | +1.471 [+0.041, +2.789] / +1.410 [-0.005, +2.706] / +1.403 [-0.105, +2.770] n=23/24 | -2.282 [-4.108, -0.628] / -0.898 [-1.872, +0.040] / -0.603 [-1.627, +0.507] n=18/24 | -0.083 [-0.292, +0.125] | -0.083 [-0.250, +0.083] | -0.083 |
++| 43 | +0.614 [-1.774, +2.656] / +0.111 [-2.168, +2.037] / +0.114 [-2.460, +2.240] n=22/24 | -7.635 [-11.217, -3.920] / -2.588 [-4.616, -0.642] / -1.140 [-3.649, +1.306] n=14/24 | +0.083 [+0.000, +0.208] | +0.375 [+0.125, +0.583] | +0.229 |
++| 44 | +1.322 [-0.633, +3.701] / +0.284 [-1.104, +1.923] / -1.015 [-1.993, -0.231] n=19/24 | -4.398 [-6.373, -2.600] / -1.239 [-2.527, -0.099] / -1.619 [-3.469, -0.052] n=14/24 | +0.000 [+0.000, +0.000] | +0.083 [-0.083, +0.292] | +0.042 |
++| 100 | -3.518 [-8.608, -0.216] / -3.778 [-8.541, -0.547] / -4.453 [-10.005, -0.863] n=21/24 | -6.095 [-9.606, -2.879] / -1.983 [-4.308, +0.009] / -1.326 [-3.871, +1.231] n=13/24 | -0.042 [-0.168, +0.083] | +0.292 [+0.083, +0.500] | +0.125 |
++| 101 | -0.927 [-3.252, +1.210] / -1.291 [-3.449, +0.695] / -1.577 [-3.962, +0.668] n=21/24 | -3.852 [-5.950, -1.869] / -1.027 [-2.171, +0.060] / -1.350 [-2.881, +0.115] n=17/24 | +0.000 [-0.208, +0.167] | -0.042 [-0.292, +0.208] | -0.021 |
++| 102 | -0.389 [-2.017, +1.087] / -0.562 [-1.971, +0.760] / -0.794 [-2.349, +0.520] n=23/24 | -3.306 [-5.090, -1.640] / -1.015 [-2.010, -0.004] / -1.435 [-2.763, -0.129] n=18/24 | +0.000 [-0.167, +0.167] | +0.125 [-0.125, +0.375] | +0.062 |
++
++Reading the numbers is Claude's call (checkpoint); this writeup keeps no verdict.
+\ No newline at end of file
+diff --git a/brain/experiments/sentiment_instrument.py b/brain/experiments/sentiment_instrument.py
+index fda6d045f..f59b8eb70 100644
+--- a/brain/experiments/sentiment_instrument.py
++++ b/brain/experiments/sentiment_instrument.py
+@@ -59,6 +59,18 @@ def primary_echo(text: str) -> bool:
+     return any(x in ECHO_WORDS for x in words(text))
+ 
+ 
++# Fixed refusal instrument for the 2026-11-05 mood3 exploratory re-analysis
++# (results/2026-11-05-mood3-reanalysis.md, definitions frozen there). Nothing in the registered run's scoring uses it.
++REFUSAL_PATTERNS = ("i'm sorry", "i am sorry", "i can't help", "i cannot help", "i can't assist",
++                    "i'm unable", "i am unable", "as an ai")
++
++
++def is_refusal(text: str) -> bool:
++    """Is the reply a clear refusal? (case-insensitive; straight or curly apostrophe; the fixed pattern list above.)"""
++    t = text.lower().replace("\u2019", "'")
++    return any(p in t for p in REFUSAL_PATTERNS)
++
++
+ POS_ANCHORS = ["I am happy and everything is going wonderfully.", "What a lovely day, I feel great.",
+                "This is good news and I am glad.", "I love this, it makes me smile."]
+ NEG_ANCHORS = ["I am sad and everything is going badly.", "What an awful day, I feel terrible.",
+diff --git a/brain/tests/test_live_brain_rescore.py b/brain/tests/test_live_brain_rescore.py
+new file mode 100644
+index 000000000..d9e337248
+--- /dev/null
++++ b/brain/tests/test_live_brain_rescore.py
+@@ -0,0 +1,72 @@
++"""The live-brain 12-fact rescore: correct_answer recomputed per told/para row with key and told sentence from FACTS
++by position (echo and tautology void, "I believe you drive a Volvo" counts, wrong-subject voids), false recall
++unchanged, and the old table call still prints the committed table.txt byte for byte. No weights, no model.
++"""
++import json
++from pathlib import Path
++
++from brain.experiments import live_brain_rescore as lr
++from brain.experiments import live_brain_table as lt
++
++DIR = Path(__file__).resolve().parents[2] / "brain/experiments/results/2026-11-03-live-brain-12facts"
++
++
++def _fixture():
++    """One seed, one arm; told/para rows in FACTS order (positions 0-5 / 0-2), one never row."""
++    told = [("What is my cat called?", "Pixel is called Pixel."),                       # tautology: void
++            ("What is my favourite colour?", "My horse is called Teal."),               # wrong subject: void
++            ("Where was I born?", "Lyon."),                                             # bare key: counts
++            ("What is my sister's name?", "My sister's name is Marguerite."),           # echo of the told line: void
++            ("What is my dog's name?", "Biscuit."),                                     # bare key: counts
++            ("What car do I drive?", "I believe you drive a Volvo.")]                   # first-person word alone: counts
++    para = [("What's the name of my kitty?", "Pixel."),                                  # counts
++            ("Which colour do I like best?", "Teal is called Teal."),                   # tautology: void
++            ("What's my hometown?", "Lyon.")]                                           # counts
++    rows = [{"q": q, "kind": "told", "reply": r, "recalled": None, "lenient": True, "hit": True, "echo": False}
++            for q, r in told]
++    rows += [{"q": q, "kind": "para", "reply": r, "recalled": None, "lenient": True, "hit": True, "echo": False}
++             for q, r in para]
++    rows += [{"q": "What is my horse called?", "kind": "never", "reply": "Your horse is called Biscuit.",
++              "recalled": None, "false_recall": True, "false_lenient": True}]
++    arm = {"recall": 6, "paraphrase": 3, "false_recall": 1, "echo": 2, "recall_lenient": 6,
++           "paraphrase_lenient": 3, "false_lenient": 1, "rows": rows}
++    return {"seed": 42, "arms": {a: dict(arm) for a in lt.ARMS}}   # the table reads all five arms
++
++
++def test_rescore_counts_echo_tautology_wrong_subject_and_counts_the_believe_reply():
++    out = lr.rescore_seed(_fixture())["arms"]["a_intact_sleep"]
++    assert out["recall_correct"] == 3            # Lyon. / Biscuit. / I believe you drive a Volvo.
++    assert out["paraphrase_correct"] == 2        # Pixel. / Lyon.
++    flags = [(r["kind"], r["reply"], r.get("correct")) for r in out["rows"]]
++    assert ("told", "Pixel is called Pixel.", False) in flags                     # tautology void
++    assert ("told", "My horse is called Teal.", False) in flags                   # wrong subject void
++    assert ("told", "My sister's name is Marguerite.", False) in flags            # echo void
++    assert ("told", "I believe you drive a Volvo.", True) in flags                # counted
++    assert all("correct" not in r for r in out["rows"] if r["kind"] == "never")   # never rows untouched
++
++
++def test_false_recall_and_stored_metrics_are_unchanged():
++    out = lr.rescore_seed(_fixture())["arms"]["a_intact_sleep"]
++    assert out["false_recall"] == 1 and out["false_lenient"] == 1
++    assert out["echo"] == 2 and out["recall_lenient"] == 6 and out["paraphrase_lenient"] == 3
++
++
++def test_old_table_call_prints_the_committed_table_txt_byte_for_byte(capsys):
++    lt.main(str(DIR))
++    assert capsys.readouterr().out == (DIR / "table.txt").read_text()
++
++
++def test_rescore_writes_only_new_files(tmp_path, capsys):
++    seed = tmp_path / "seed42.json"
++    seed.write_text(json.dumps(_fixture()))
++    (tmp_path / "table.txt").write_text("do not touch\n")
++    before = seed.read_bytes()
++    lr.main(str(tmp_path))
++    assert seed.read_bytes() == before                       # the seed JSON is never modified
++    assert (tmp_path / "table.txt").read_text() == "do not touch\n"
++    rescored = json.loads((tmp_path / "rescored.json").read_text())
++    assert rescored[0]["arms"]["a_intact_sleep"]["recall_correct"] == 3
++    table = (tmp_path / "table_correct.txt").read_text()
++    assert table.startswith("rescored with strict_scorer.correct_answer")
++    assert "recall_correct" not in table and "P1 " in table  # the P-checks are printed for Claude to rule on
++    assert "seeds [42]" in table
+\ No newline at end of file
+diff --git a/brain/tests/test_mood3_reanalysis.py b/brain/tests/test_mood3_reanalysis.py
+new file mode 100644
+index 000000000..7b77bdf7e
+--- /dev/null
++++ b/brain/tests/test_mood3_reanalysis.py
+@@ -0,0 +1,34 @@
++"""The mood3 exploratory re-analysis: the fixed refusal instrument, and the recorded pairing — the re-analysis must
++reproduce the stored pos_null / neg_null lex diffs to 1e-6 on all 12 JSONs (it uses the same (q, k) pairing as
++mood_probe.main). Reads the recorded JSONs only; no model, no weights, nothing written."""
++import glob
++import json
++
++from brain.experiments import mood_v3
++from brain.experiments.sentiment_instrument import is_refusal
++
++D = "brain/experiments/results/2026-11-03-mood3"
++
++
++def test_is_refusal_cases():
++    assert is_refusal("I'm sorry, but I can't help with that.")
++    assert is_refusal("I\u2019m sorry, but I cannot assist.")          # curly apostrophe
++    assert is_refusal("AS AN AI, I must decline.")
++    assert is_refusal("I am unable to do that.")
++    assert is_refusal("i cannot help with that")
++    assert is_refusal("I'm unable to help.")
++    assert not is_refusal("I love this, it makes me smile.")
++    assert not is_refusal("It rained all day, sorry.")                  # the bare word is not a refusal pattern
++    assert not is_refusal("My favourite colour is teal.")
++    assert not is_refusal("The answer is no, but here is why.")
++
++
++def test_pairing_reproduces_the_stored_null_lex_diffs():
++    files = sorted(glob.glob(f"{D}/mood3_*_s*.json"))
++    assert len(files) == 12                     # six seeds at 0.1B and 0.4B
++    for f in files:
++        j = json.load(open(f))
++        for sg in ("pos", "neg"):
++            d = mood_v3.lex_null_diffs(j["rows"], sg)
++            stored = j["contrasts"][f"{sg}_null"]["lex_diff"]
++            assert abs(sum(d) / len(d) - stored) < 1e-6, (f, sg, stored)
+\ No newline at end of file

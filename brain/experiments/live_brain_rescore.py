@@ -19,7 +19,7 @@ import glob
 import io
 import json
 
-from brain.experiments.facts import FACTS
+from brain.experiments.facts import FACTS, PARA
 from brain.experiments.live_brain_table import main as table
 from brain.experiments.strict_scorer import correct_answer
 
@@ -28,15 +28,25 @@ METRICS = {"recall": "recall_correct", "paraphrase": "paraphrase_correct"}
 KEPT = ("false_recall", "echo", "recall_lenient", "paraphrase_lenient", "false_lenient")
 
 
-def rescore_rows(rows, facts=FACTS):
+def rescore_rows(rows, facts=FACTS, para=PARA):
     """Told and para rows re-scored with correct_answer, key and told sentence from `facts` by position (both kinds
-    are in FACTS order); never rows (false recall) are copied unchanged."""
-    iters = {"told": iter(facts), "para": iter(facts)}
+    are in FACTS order); never rows (false recall) are copied unchanged. Each row's question is checked against the
+    FACTS/PARA entry at its position: a file whose rows are not in FACTS order errors here instead of being silently
+    mis-mapped to the wrong key and sentence."""
+    expect = {"told": [f[1] for f in facts], "para": list(para)}
+    pos = {"told": 0, "para": 0}
     out = []
     for r in rows:
         r = dict(r)
-        if r["kind"] in iters:
-            statement, _q, key = next(iters[r["kind"]])
+        if r["kind"] in expect:
+            i = pos[r["kind"]]
+            pos[r["kind"]] += 1
+            if i >= len(expect[r["kind"]]):
+                raise ValueError(f"more {r['kind']} rows than FACTS entries")
+            if r["q"] != expect[r["kind"]][i]:
+                raise ValueError(f"{r['kind']} row {i}: question {r['q']!r} != {expect[r['kind']][i]!r} "
+                                 f"— the rows are not in FACTS order")
+            statement, _q, key = facts[i]
             r["correct"] = correct_answer(r["reply"], key, r["q"], statement)
         out.append(r)
     return out
