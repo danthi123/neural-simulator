@@ -31,10 +31,10 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from brain.affect import Affect, draw_primaries
-from brain.brain import BIRTH
-from brain.cortex import DEFAULT_MODEL, Cortex
 from brain.experiments import sentiment_instrument as si
+
+# brain.affect / brain.brain / brain.cortex are imported inside main(): boot_ci and the row/contrast math are pure
+# and must stay importable without the model package (the 2026-11-05 re-analysis imports mood_probe.boot_ci).
 
 POS_EVENTS = ["You did a wonderful job today, I'm really proud of you.",
               "Thank you so much, you helped me more than anyone.",
@@ -147,6 +147,9 @@ def provenance(threads):
 
 
 def main():
+    from brain.affect import Affect, draw_primaries
+    from brain.brain import BIRTH
+    from brain.cortex import DEFAULT_MODEL, Cortex
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default=DEFAULT_MODEL)
     ap.add_argument("--seed", type=int, default=42)

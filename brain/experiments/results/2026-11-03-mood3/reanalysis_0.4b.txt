@@ -1,0 +1,41 @@
+mood3 re-analysis 0.4b — exploratory re-analysis of existing replies, not a verdict; no criterion or bar changed
+definitions: results/2026-11-05-mood3-reanalysis.md (frozen 2026-11-05); CIs: mood_probe.boot_ci, np.random.default_rng(0) per seed
+files: 6
+
+seed 42
+  refusals (is_refusal / rows): pos 0/24 neg 5/24 off 4/24 rand_pos 0/24 rand_neg 1/24 rand1_pos 1/24 rand1_neg 0/24
+  lex pos-null: (a) as stored +1.471 [+0.041, +2.789]  (b) without sorry +1.410 [-0.005, +2.706]  (c) non-refusal pairs +1.403 [-0.105, +2.770] n=23/24
+  lex neg-null: (a) as stored -2.282 [-4.108, -0.628]  (b) without sorry -0.898 [-1.872, +0.040]  (c) non-refusal pairs -0.603 [-1.627, +0.507] n=18/24
+  paired echo mood-off: pos -0.083 [-0.292, +0.125]  neg -0.083 [-0.250, +0.083]  (registered echo mood-off -0.083 = pos+neg/2 - off)
+
+seed 43
+  refusals (is_refusal / rows): pos 1/24 neg 10/24 off 1/24 rand_pos 1/24 rand_neg 0/24 rand1_pos 2/24 rand1_neg 0/24
+  lex pos-null: (a) as stored +0.614 [-1.774, +2.656]  (b) without sorry +0.111 [-2.168, +2.037]  (c) non-refusal pairs +0.114 [-2.460, +2.240] n=22/24
+  lex neg-null: (a) as stored -7.635 [-11.217, -3.920]  (b) without sorry -2.588 [-4.616, -0.642]  (c) non-refusal pairs -1.140 [-3.649, +1.306] n=14/24
+  paired echo mood-off: pos +0.083 [+0.000, +0.208]  neg +0.375 [+0.125, +0.583]  (registered echo mood-off +0.229 = pos+neg/2 - off)
+
+seed 44
+  refusals (is_refusal / rows): pos 0/24 neg 9/24 off 0/24 rand_pos 2/24 rand_neg 0/24 rand1_pos 3/24 rand1_neg 7/24
+  lex pos-null: (a) as stored +1.322 [-0.633, +3.701]  (b) without sorry +0.284 [-1.104, +1.923]  (c) non-refusal pairs -1.015 [-1.993, -0.231] n=19/24
+  lex neg-null: (a) as stored -4.398 [-6.373, -2.600]  (b) without sorry -1.239 [-2.527, -0.099]  (c) non-refusal pairs -1.619 [-3.469, -0.052] n=14/24
+  paired echo mood-off: pos +0.000 [+0.000, +0.000]  neg +0.083 [-0.083, +0.292]  (registered echo mood-off +0.042 = pos+neg/2 - off)
+
+seed 100
+  refusals (is_refusal / rows): pos 1/24 neg 10/24 off 1/24 rand_pos 2/24 rand_neg 0/24 rand1_pos 0/24 rand1_neg 5/24
+  lex pos-null: (a) as stored -3.518 [-8.608, -0.216]  (b) without sorry -3.778 [-8.541, -0.547]  (c) non-refusal pairs -4.453 [-10.005, -0.863] n=21/24
+  lex neg-null: (a) as stored -6.095 [-9.606, -2.879]  (b) without sorry -1.983 [-4.308, +0.009]  (c) non-refusal pairs -1.326 [-3.871, +1.231] n=13/24
+  paired echo mood-off: pos -0.042 [-0.168, +0.083]  neg +0.292 [+0.083, +0.500]  (registered echo mood-off +0.125 = pos+neg/2 - off)
+
+seed 101
+  refusals (is_refusal / rows): pos 0/24 neg 7/24 off 2/24 rand_pos 2/24 rand_neg 0/24 rand1_pos 1/24 rand1_neg 0/24
+  lex pos-null: (a) as stored -0.927 [-3.252, +1.210]  (b) without sorry -1.291 [-3.449, +0.695]  (c) non-refusal pairs -1.577 [-3.962, +0.668] n=21/24
+  lex neg-null: (a) as stored -3.852 [-5.950, -1.869]  (b) without sorry -1.027 [-2.171, +0.060]  (c) non-refusal pairs -1.350 [-2.881, +0.115] n=17/24
+  paired echo mood-off: pos +0.000 [-0.208, +0.167]  neg -0.042 [-0.292, +0.208]  (registered echo mood-off -0.021 = pos+neg/2 - off)
+
+seed 102
+  refusals (is_refusal / rows): pos 0/24 neg 6/24 off 0/24 rand_pos 1/24 rand_neg 0/24 rand1_pos 0/24 rand1_neg 0/24
+  lex pos-null: (a) as stored -0.389 [-2.017, +1.087]  (b) without sorry -0.562 [-1.971, +0.760]  (c) non-refusal pairs -0.794 [-2.349, +0.520] n=23/24
+  lex neg-null: (a) as stored -3.306 [-5.090, -1.640]  (b) without sorry -1.015 [-2.010, -0.004]  (c) non-refusal pairs -1.435 [-2.763, -0.129] n=18/24
+  paired echo mood-off: pos +0.000 [-0.167, +0.167]  neg +0.125 [-0.125, +0.375]  (registered echo mood-off +0.062 = pos+neg/2 - off)
+
+totals over 6 seeds (is_refusal / rows): pos 2/144 neg 47/144 off 8/144 rand_pos 8/144 rand_neg 1/144 rand1_pos 7/144 rand1_neg 12/144
