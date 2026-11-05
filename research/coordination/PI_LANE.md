@@ -105,7 +105,7 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   66 brain/tests pass. Rescored P-checks: P1 True, P2 False, P3 False, P4 True (table_correct.txt) — Pi writes no
   verdict, Claude rules. Note: the rescored recall is far below the strict score (a_intact_sleep 6.50 -> 1.83 mean):
   the strict score's tautologies and wrong-subject hits are gone. merge_review checkpoint requested (sha 20ffe2f9a).
-- [ ] New core, mood: refusal and paired-echo re-analysis of the existing iteration-3 replies (base: a new branch from `main`;
+- [x] New core, mood: refusal and paired-echo re-analysis of the existing iteration-3 replies (base: a new branch from `main`;
   `research/landing-1103` is merged into main; no model, no new runs). `brain/experiments/results/2026-11-03-mood3.md` leaves two
   instrument questions open. (i) Part of "negative mood darkens" is refusals ("I'm sorry, but I can't help with
   that."): 0.1B neg 35/144 vs off 9/144. (ii) The 0.1B fail is only C6 echo (s43 +0.104, s101 +0.125), and the off
@@ -127,3 +127,12 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   words: any new bar or rerun at 36 rows is Claude's call through a checkpoint. Read first: `mood_v3.py`,
   `mood_probe.py` (contrasts, `boot_ci`), `sentiment_instrument.py`, `brain/research/2026-11-03-mood-state-design.md`
   sections 12-13. Done = branch + tests passing + both size tables in the writeup + merge_review checkpoint.
+  DONE 2026-11-05 (Pi): `sentiment_instrument.REFUSAL_PATTERNS`/`is_refusal` (the fixed list) +
+  `mood_v3.reanalyse <dir> <size>` built and run on both sizes; definitions writeup committed BEFORE the run
+  (`brain/experiments/results/2026-11-05-mood3-reanalysis.md`, d776b8555), tables added after
+  (`reanalysis_0.1b.txt`/`reanalysis_0.4b.txt` + writeup, e3b76d9b6). Tests: the is_refusal cases +
+  `lex_null_diffs` reproduces the stored `contrasts.pos_null/neg_null.lex_diff` to 1e-6 on all 12 JSONs (pairing
+  check); 68 brain/tests pass. Anchors agree with the 11-03 record (0.1B refusals neg 35/144 vs off 9/144; the two
+  0.1B registered echo values over 0.10 are s43 +0.104 / s101 +0.125). No PASS/FAIL words anywhere; the numbers' reading
+  is Claude's call. Note: `mood_probe.py`'s brain.affect/brain.brain/brain.cortex imports moved into `main()` so
+  `boot_ci` imports weight-free (behaviour identical with the model). merge_review checkpoint requested (sha e3b76d9b6).
