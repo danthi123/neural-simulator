@@ -15,7 +15,7 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   (RULING overnight-1102). Nothing to land. No flip, no new #203 work.
 
 ## Open
-- [ ] New core, weekly conversation test upgrade (`brain/eval/weekly.py`, milestone day 14, board #281). Today it
+- [x] New core, weekly conversation test upgrade (`brain/eval/weekly.py`, milestone day 14, board #281). Today it
   sums the intact and lesion arms into one total, asks the same fixed questions every week, and credits degenerate
   replies (e.g. "Nova, Nova."). Change it so that: (1) the header prints one score line per arm (intact, hippocampus
   off) and the difference; (2) a third arm runs sleep between the two sessions (`brain/sleep.py`, adapters from
@@ -26,7 +26,11 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   tests that run without the cortex weights (mock `Cortex`); real runs go to W via `run_gpu`. Read first:
   `brain/eval/weekly.py`, `brain/experiments/sleep_probe.py`, `brain/PREREQUISITES.md` (Sleep consolidation).
   Done = branch + tests passing + one real run on W attached to a merge_review checkpoint.
-- [ ] New core, sleep: varied-replay arm in `brain/experiments/sleep_probe.py` (after the weekly-test item). Six-seed
+  CLOSED 2026-11-05 (Claude): done on `research/pi-sleep-varied-replay` (merge_review APPROVE) but NOT merged:
+  main's `weekly.py` was rewritten in parallel for 1.5B (both arms sleep, lesion in session 2, `--model`), and
+  its CPU-episode design already fixes the device bug. Pi's ISO-week rotation and degenerate-reply flag are kept
+  on that branch for a later item on top of main.
+- [x] New core, sleep: varied-replay arm in `brain/experiments/sleep_probe.py` (after the weekly-test item). Six-seed
   0.1B result (`brain/experiments/results/2026-11-02-sleep-0.1b-six-seeds.md`): sleep recalls the original question
   (3-4/12) but not reworded questions (2.2 vs 1.3 shuffled). Add arm `sleep_varied`: each told fact is replayed in
   three surface forms, the original plus two rewordings of the STATEMENT (e.g. "My dog's name is Pixel." -> "I have
@@ -37,30 +41,10 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   can skip arms. Unit tests run without weights (mock `Cortex`, as the weekly item). Do not run the real probe:
   Claude runs the six seeds. Read first: `brain/experiments/sleep_probe.py`, `brain/sleep.py`,
   `brain/experiments/facts.py`. Done = branch + tests passing + merge_review checkpoint.
-- [ ] New core, live-brain 12 facts: rescore and rerun with the correct-perspective scorer (base: branch from
-  `research/landing-1103`). The six-seed result (`brain/experiments/results/2026-11-03-live-brain-12facts.md`) was
-  scored with `strict_scorer.score`, which voids every first-person reply and credits tautologies ("Pixel is called
-  Pixel."); its caveat section says so. `strict_scorer.correct_answer(reply, key, question, told)` fixes both. Its
-  pre-registration says a changed instrument means everything is rerun, so do both parts. (A) New
-  `brain/experiments/live_brain_rescore.py`: read `seed*.json` in a results dir, and for every `told`/`para` row in
-  every arm compute `correct_answer` with key and told sentence from `FACTS` by position (told rows and para rows
-  are both in `FACTS` order; arm e is scored against the ORIGINAL keys and sentences, as the probe does). Write
-  `rescored.json` and `table_correct.txt` next to them; never modify the seed JSONs or `table.txt`. The table is
-  `live_brain_table.py`'s P1-P4 logic with the metric names as parameters (refactor `main(d)` to take them; the
-  old call must print the same `table.txt` byte for byte, which a test checks). False recall is unchanged. (B) In
-  `live_brain_probe.py` add a `correct` field to each told/para row and `recall_correct`/`paraphrase_correct` per
-  arm (keep `hit`, so old tables still work). Then rerun the six seeds 42/43/44/100/101/102 at 0.1B through
-  `run_pool` (CPU, about 35 min per seed when idle), output dir
-  `brain/experiments/results/<date>-live-brain-12facts-rerun/`. Also report for each seed the fraction of replies
-  identical to the 11-03 run, which checks that the seeded sampling is reproducible. BEFORE the rerun, commit
-  `brain/experiments/results/<date>-live-brain-12facts-rerun.md`: P1-P4 copied unchanged from the 11-03
-  pre-registration, with `recall_correct`/`paraphrase_correct` as the recall metric and the strict counts also
-  reported. Unit tests without weights: rescore on a tiny fixture JSON (echo, tautology, "I believe you drive a
-  Volvo" counted, wrong-subject), plus the byte-identical `table.txt` check. Read first: `live_brain_probe.py`,
-  `live_brain_table.py`, `strict_scorer.py`, `brain/tests/test_strict_scorer.py`. Pi does not write a verdict; the
-  table prints the P-checks and Claude rules on them. Done = branch + tests passing + rescore table + six rerun JSONs
-  (or the seeds that finished, labelled partial) + merge_review checkpoint.
-- [ ] New core, weekly test: perspective for the two keys seeded at birth (base: branch from `research/landing-1103`;
+  CLOSED 2026-11-05 (Claude): superseded. A Claude-built varied-replay arm landed on main first (0d4f5d120,
+  six seeds at 0.1B: NOT SHOWN). Pi's duplicate on `research/pi-sleep-varied-replay` is not merged (Claude's
+  lane bookkeeping error: the item stayed open after the 11-03 steer).
+- [ ] New core, weekly test: perspective for the two keys seeded at birth (base: a new branch from `main`, where `research/landing-1103` is merged;
   if the weekly-upgrade item above has landed by then, apply this on top of it). `Brain._grow_self` stores the
   brain's own name (Nova) and the user's name (Dan) at birth, so these two keys are not told in the session.
   `weekly.TOLD` gives both `None`, and with `None`, `strict_scorer.is_echo` accepts ANY first-person reply. That is
@@ -84,8 +68,25 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   `brain/experiments/strict_scorer.py`, `brain/brain.py` (`_grow_self`), and the audit in
   `git show research/weekly-dry-run-1103:brain/eval/transcripts/dry-run-2026-11-03.md`. No real run is needed.
   Done = branch + tests passing + merge_review checkpoint.
-- [ ] New core, mood: refusal and paired-echo re-analysis of the existing iteration-3 replies (base: branch from
-  `research/landing-1103`; no model, no new runs). `brain/experiments/results/2026-11-03-mood3.md` leaves two
+- [ ] New core, live-brain 12 facts: rescore and rerun with the correct-perspective scorer (base: a new branch from `main`;
+  `research/landing-1103` is merged into main). The six-seed result (`brain/experiments/results/2026-11-03-live-brain-12facts.md`) was
+  scored with `strict_scorer.score`, which voids every first-person reply and credits tautologies ("Pixel is called
+  Pixel."); its caveat section says so. `strict_scorer.correct_answer(reply, key, question, told)` fixes both. Its
+  pre-registration says a changed instrument means everything is rerun (see the scope cut below). (A) New
+  `brain/experiments/live_brain_rescore.py`: read `seed*.json` in a results dir, and for every `told`/`para` row in
+  every arm compute `correct_answer` with key and told sentence from `FACTS` by position (told rows and para rows
+  are both in `FACTS` order; arm e is scored against the ORIGINAL keys and sentences, as the probe does). Write
+  `rescored.json` and `table_correct.txt` next to them; never modify the seed JSONs or `table.txt`. The table is
+  `live_brain_table.py`'s P1-P4 logic with the metric names as parameters (refactor `main(d)` to take them; the
+  old call must print the same `table.txt` byte for byte, which a test checks). False recall is unchanged. SCOPE CUT 2026-11-05 (Claude): part (A) only. Part (B) is already on main (`live_brain_probe.py` writes
+  `recall_correct`/`paraphrase_correct`, used by the 1.5B six seeds), and the 0.1B rerun is dropped: the 1.5B live
+  brain (`results/2026-11-03-live-brain-1.5b.md`) is now the decision point. Unit tests without weights: rescore on
+  a tiny fixture JSON (echo, tautology, "I believe you drive a Volvo" counted, wrong-subject), plus the
+  byte-identical `table.txt` check. Read first: `live_brain_probe.py`, `live_brain_table.py`, `strict_scorer.py`,
+  `brain/tests/test_strict_scorer.py`. Pi does not write a verdict; the table prints the P-checks and Claude rules on
+  them. Done = branch + tests passing + `rescored.json` + `table_correct.txt` + merge_review checkpoint.
+- [ ] New core, mood: refusal and paired-echo re-analysis of the existing iteration-3 replies (base: a new branch from `main`;
+  `research/landing-1103` is merged into main; no model, no new runs). `brain/experiments/results/2026-11-03-mood3.md` leaves two
   instrument questions open. (i) Part of "negative mood darkens" is refusals ("I'm sorry, but I can't help with
   that."): 0.1B neg 35/144 vs off 9/144. (ii) The 0.1B fail is only C6 echo (s43 +0.104, s101 +0.125), and the off
   arm itself echoes 0.12-0.50. Build: (1) in `brain/experiments/sentiment_instrument.py` add `REFUSAL_PATTERNS`
