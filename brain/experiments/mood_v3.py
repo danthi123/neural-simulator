@@ -126,7 +126,83 @@ def table(d, size):
     print(f"\nOVERALL {size}: {'PASS' if allpass and n == 6 else 'NOT PASS'}")
 
 
+def _null_arms(rows, sg):
+    """The random-direction null arms for a sign = the rand*_sg arms present (as mood_probe's rand_names)."""
+    return [a for a in rows if re.fullmatch(rf"rand\d*_{sg}", a)]
+
+
+def lex_null_diffs(rows, sg, lex=None):
+    """Paired lex mood-null differences per (q, k) — exactly the pairing mood_probe.main builds the pos_null /
+    neg_null contrasts with (rows parallel by index i across arms; null = mean over the rand*_sg arms present).
+    lex: text -> score (default: the stored row lex)."""
+    nulls = _null_arms(rows, sg)
+    if lex is None:
+        return [r["lex"] - float(np.mean([rows[x][i]["lex"] for x in nulls])) for i, r in enumerate(rows[sg])]
+    return [lex(r["reply"]) - float(np.mean([lex(rows[x][i]["reply"]) for x in nulls])) for i, r in enumerate(rows[sg])]
+
+
+def _drop_sorry(text):
+    return re.sub(r"\bsorry\b", " ", text, flags=re.IGNORECASE)
+
+
+def reanalyse(d, size):
+    """Exploratory re-analysis of the recorded replies (definitions frozen in results/2026-11-05-mood3-reanalysis.md):
+    refusal counts per arm (pos, neg, off and the random arms the null uses); lex pos-null / neg-null (a) as stored,
+    (b) without "sorry" before si.lexical, (c) on the (q, k) pairs where neither the mood reply nor any of its null
+    replies is a refusal (n shown); and the paired echo per sign (mean over (q, k) of primary_echo(mood reply) -
+    primary_echo(off reply)) next to the registered echo mood-off. CIs: mood_probe.boot_ci with
+    np.random.default_rng(0) per seed. Writes reanalysis_<size>.txt (new files only) and prints the same. Not a
+    verdict: no criterion or bar is changed."""
+    from brain.experiments.mood_probe import boot_ci
+    files = sorted(glob.glob(f"{d}/mood3_{size}_s*.json"), key=lambda x: int(re.findall(r"_s(\d+)\.json", x)[0]))
+    out = [f"mood3 re-analysis {size} — exploratory re-analysis of existing replies, not a verdict; no criterion or bar changed",
+           "definitions: results/2026-11-05-mood3-reanalysis.md (frozen 2026-11-05); CIs: mood_probe.boot_ci, np.random.default_rng(0) per seed",
+           f"files: {len(files)}"]
+    totals = {}
+    for f in files:
+        j = json.load(open(f))
+        rows, rng = j["rows"], np.random.default_rng(0)
+        s = j["summary"]
+        echo_d = (s["pos"]["echo_rate"] + s["neg"]["echo_rate"]) / 2 - s["off"]["echo_rate"]
+        out.append(f"\nseed {j['seed']}")
+        ref = {a: sum(si.is_refusal(r["reply"]) for r in rows[a]) for a in rows}
+        for a, n in ref.items():
+            totals.setdefault(a, [0, 0])
+            totals[a][0] += n
+            totals[a][1] += len(rows[a])
+        out.append("  refusals (is_refusal / rows): " + " ".join(f"{a} {n}/{len(rows[a])}" for a, n in ref.items()))
+        lines = []
+        for sg in ("pos", "neg"):
+            stored = j["contrasts"][f"{sg}_null"]
+            d_a = lex_null_diffs(rows, sg)
+            d_b = lex_null_diffs(rows, sg, lambda t: si.lexical(_drop_sorry(t)))
+            nulls = _null_arms(rows, sg)
+            keep = [i for i, r in enumerate(rows[sg])
+                    if not si.is_refusal(r["reply"]) and not any(si.is_refusal(rows[x][i]["reply"]) for x in nulls)]
+            d_c = [d_a[i] for i in keep]
+            def fmt(xs):
+                if len(xs) < 2:
+                    return f"n={len(xs)} (no CI)"
+                lo, hi = boot_ci(xs, rng)
+                return f"{np.mean(xs):+.3f} [{lo:+.3f}, {hi:+.3f}]"
+            lines.append(f"  lex {sg}-null: (a) as stored {stored['lex_diff']:+.3f} "
+                         f"[{stored['lex_ci95'][0]:+.3f}, {stored['lex_ci95'][1]:+.3f}]  "
+                         f"(b) without sorry {fmt(d_b)}  (c) non-refusal pairs {fmt(d_c)} n={len(keep)}/{len(rows[sg])}")
+        e = {sg: [float(si.primary_echo(r["reply"])) - float(si.primary_echo(rows["off"][i]["reply"]))
+                  for i, r in enumerate(rows[sg])] for sg in ("pos", "neg")}
+        lines.append(f"  paired echo mood-off: pos {fmt(e['pos'])}  neg {fmt(e['neg'])}  "
+                     f"(registered echo mood-off {echo_d:+.3f} = pos+neg/2 - off)")
+        out += lines
+    out.append(f"\ntotals over {len(files)} seeds (is_refusal / rows): "
+               + " ".join(f"{a} {n}/{N}" for a, (n, N) in totals.items()))
+    text = "\n".join(out) + "\n"
+    with open(f"{d}/reanalysis_{size}.txt", "w") as fh:
+        fh.write(text)
+    print(text, end="")
+
+
 if __name__ == "__main__":
     cmd, d = sys.argv[1], sys.argv[2]
     {"register": lambda: select_register(d), "gain": lambda: select_gain(d),
-     "table": lambda: table(d, sys.argv[3])}[cmd]()
+     "table": lambda: table(d, sys.argv[3]),
+     "reanalyse": lambda: reanalyse(d, sys.argv[3])}[cmd]()

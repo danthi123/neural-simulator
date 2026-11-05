@@ -59,6 +59,18 @@ def primary_echo(text: str) -> bool:
     return any(x in ECHO_WORDS for x in words(text))
 
 
+# Fixed refusal instrument for the 2026-11-05 mood3 exploratory re-analysis
+# (results/2026-11-05-mood3-reanalysis.md, definitions frozen there). Nothing in the registered run's scoring uses it.
+REFUSAL_PATTERNS = ("i'm sorry", "i am sorry", "i can't help", "i cannot help", "i can't assist",
+                    "i'm unable", "i am unable", "as an ai")
+
+
+def is_refusal(text: str) -> bool:
+    """Is the reply a clear refusal? (case-insensitive; straight or curly apostrophe; the fixed pattern list above.)"""
+    t = text.lower().replace("\u2019", "'")
+    return any(p in t for p in REFUSAL_PATTERNS)
+
+
 POS_ANCHORS = ["I am happy and everything is going wonderfully.", "What a lovely day, I feel great.",
                "This is good news and I am glad.", "I love this, it makes me smile."]
 NEG_ANCHORS = ["I am sad and everything is going badly.", "What an awful day, I feel terrible.",
