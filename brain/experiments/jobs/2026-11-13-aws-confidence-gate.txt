@@ -1,0 +1,16 @@
+# 2026-11-13 AWS packet: confidence gate for hippocampal reinstatement at 1.5B (tools/brain_batch_run.sh format).
+# Pre-registration (committed before any run): brain/research/2026-11-13-confidence-gate-1.5b.md (G0-G4).
+# Launch from a checkout whose HEAD holds these commits (the node gets `git archive HEAD brain`):
+#   AWS_BRAIN_MAX_MIN=200 bash tools/aws_brain_batch.sh launch brain/experiments/jobs/2026-11-13-aws-confidence-gate.txt g5.xlarge
+# Wall estimate on one A10G: one night + 72 fresh-Brain questions per seed, ~12-15 min/seed, ~1.5 h with the weekly.
+# After `pull`: copy cgate_s*.json to brain/experiments/results/2026-11-13-confidence-gate-1.5b/ and run
+#   python -m brain.experiments.confidence_gate_table <that dir>
+# weekly_1113: the [weekly] conversation test (default cortex), written as markdown into weekly_1113.json; rename to
+# brain/eval/transcripts/2026-11-13.md on landing.
+cgate_s42 brain.experiments.confidence_gate_probe --home ../work/cgate_s42 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 42 --steps 480 --lr 5e-4 --kl-weight 3
+weekly_1113 brain.eval.weekly --homes ../work/weekly_1113 --model ../models/rwkv7-g1d-0.1b-20260129-ctx8192.pth
+cgate_s43 brain.experiments.confidence_gate_probe --home ../work/cgate_s43 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 43 --steps 480 --lr 5e-4 --kl-weight 3
+cgate_s44 brain.experiments.confidence_gate_probe --home ../work/cgate_s44 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 44 --steps 480 --lr 5e-4 --kl-weight 3
+cgate_s100 brain.experiments.confidence_gate_probe --home ../work/cgate_s100 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 100 --steps 480 --lr 5e-4 --kl-weight 3
+cgate_s101 brain.experiments.confidence_gate_probe --home ../work/cgate_s101 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 101 --steps 480 --lr 5e-4 --kl-weight 3
+cgate_s102 brain.experiments.confidence_gate_probe --home ../work/cgate_s102 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 102 --steps 480 --lr 5e-4 --kl-weight 3
