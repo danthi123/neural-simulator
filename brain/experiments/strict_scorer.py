@@ -69,8 +69,9 @@ def _self_predicated(clause: str, key: str) -> bool:
     "Marguerite's sister is Marguerite"). Occurrences are the key's word-start spans (as has_key matches), so the
     "'s" of a possessive key stands between its two occurrences."""
     t = clause.lower().replace("’", "'")
-    pos = [m.start() for m in re.finditer(r"\b" + re.escape(key.lower()), t)]
-    n = len(key)
+    k = key.lower().replace("’", "'")
+    pos = [m.start() for m in re.finditer(r"\b" + re.escape(k), t)]
+    n = len(k)
     return any(_LINK.search(t[pos[0] + n:p]) for p in pos[1:])
 
 

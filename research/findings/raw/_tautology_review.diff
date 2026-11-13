@@ -1,0 +1,96 @@
+diff --git a/brain/experiments/strict_scorer.py b/brain/experiments/strict_scorer.py
+index 1bbd1dcdc..272d95787 100644
+--- a/brain/experiments/strict_scorer.py
++++ b/brain/experiments/strict_scorer.py
+@@ -51,19 +51,41 @@ def content_words(sentence: str) -> list:
+ _FILLER = {"called", "named", "name"}
+ 
+ 
++def _clauses(text: str) -> list:
++    """Clauses of a reply: split on punctuation and the joining words and/but/so — the split is_echo has always used."""
++    return re.split(r"[,.;:!?]|\b(?:and|but|so)\b", text)
++
++
++_LINK = re.compile(r"\b(?:is|are|was)\b|'s")
++
++
+ def _base(w: str) -> str:
+     return w[:-2] if w.endswith("'s") else w
+ 
+ 
++def _self_predicated(clause: str, key: str) -> bool:
++    """A self-predicated clause: the key at least twice, a linking verb (is, are, was, 's) standing between the first
++    and a later occurrence ('Marguerite is a sister of Marguerite', 'Pixel is the name of Pixel',
++    "Marguerite's sister is Marguerite"). Occurrences are the key's word-start spans (as has_key matches), so the
++    "'s" of a possessive key stands between its two occurrences."""
++    t = clause.lower().replace("’", "'")
++    pos = [m.start() for m in re.finditer(r"\b" + re.escape(key.lower()), t)]
++    n = len(key)
++    return any(_LINK.search(t[pos[0] + n:p]) for p in pos[1:])
++
++
+ def is_tautology(reply: str, key: str) -> bool:
+-    """The reply says nothing about the thing asked beyond the key itself: '<key> is (called) <key>', or the key repeated
+-    with nothing else but naming filler ('Pixel. Pixel.', 'Pixel, Pixel.', "Marguerite's name is Marguerite.")."""
++    """The reply says nothing about the thing asked beyond the key itself: '<key> is (called) <key>'; the key repeated
++    with nothing else but naming filler ('Pixel. Pixel.', 'Pixel, Pixel.', "Marguerite's name is Marguerite."); or a
++    self-predicated clause (see _self_predicated)."""
+     k = re.escape(key.lower())
+     if re.search(r"\b" + k + r"\w*\s+(is|are|was)\s+((called|named)\s+)?" + k, reply.lower()):
+         return True
+     words = [_base(w) for w in content_words(reply)]
+     keyed = [w for w in words if has_key(w, key)]
+-    return len(keyed) >= 2 and all(w in _FILLER for w in words if not has_key(w, key))
++    if len(keyed) >= 2 and all(w in _FILLER for w in words if not has_key(w, key)):
++        return True
++    return any(_self_predicated(c, key) for c in _clauses(reply))
+ 
+ 
+ # Subject nouns of the fact bank (brain/experiments/facts.py, plus the never-told horse), with their synonyms.
+@@ -115,7 +137,7 @@ def is_echo(reply: str, key: str, told) -> bool:
+     if not is_first_person(told):
+         return False
+     return any(c and is_first_person(c) and not set(_words(c)) & _SECOND and has_key(c, key)
+-               and _overlap(c, others) >= 0.5 for c in re.split(r"[,.;:!?]|\b(?:and|but|so)\b", reply))
++               and _overlap(c, others) >= 0.5 for c in _clauses(reply))
+ 
+ 
+ def wrong_perspective(reply: str, key: str, whose: str) -> bool:
+@@ -123,7 +145,7 @@ def wrong_perspective(reply: str, key: str, whose: str) -> bool:
+     name): wrong when the clause holds the key as a second-person claim about the user ('Your name is Nova.',
+     'You're Nova.'). whose="user" is a fact about the user: wrong when the clause claims the key in the first person
+     ('I'm Dan.', 'My name is Dan.'), i.e. the user's name said as the brain's own. Clauses split as in is_echo."""
+-    for c in re.split(r"[,.;:!?]|\b(?:and|but|so)\b", reply):
++    for c in _clauses(reply):
+         if not (c and has_key(c, key)):
+             continue
+         first, second = is_first_person(c), bool(set(_words(c)) & _SECOND)
+diff --git a/brain/tests/test_strict_scorer.py b/brain/tests/test_strict_scorer.py
+index 7298fc15f..8ed68a7a8 100644
+--- a/brain/tests/test_strict_scorer.py
++++ b/brain/tests/test_strict_scorer.py
+@@ -97,3 +97,24 @@ def test_bare_repetition_is_tautology():
+     assert not correct_answer("Marguerite's name is Marguerite.", "marguerite", "What is my sister's name?", TOLD_SISTER)
+     assert not is_tautology("Pixel.", "pixel")
+     assert not is_tautology("Your cat is called Pixel.", "pixel")
++
++
++def test_self_predicated_clause_is_tautology():
++    for r, key in (("Marguerite is a sister of Marguerite.", "marguerite"),
++                   ("Pixel is the name of Pixel.", "pixel"),
++                   ("Marguerite's sister is Marguerite.", "marguerite")):
++        assert is_tautology(r, key), r
++        assert not correct_answer(r, key, "What is my sister's name?" if key == "marguerite" else "What is my cat called?",
++                                  TOLD_SISTER if key == "marguerite" else TOLD_CAT)
++
++
++def test_self_predicated_but_real_answers_are_not_tautologies():
++    assert not is_tautology("Your sister is Marguerite.", "marguerite")
++    assert not is_tautology("Her name is Marguerite, and Marguerite is lovely.", "marguerite")
++    assert not is_tautology("Marguerite! Your sister is Marguerite.", "marguerite")
++    assert not is_tautology("Pixel.", "pixel")
++
++
++def test_second_clause_alone_is_a_real_answer():
++    assert correct_answer("Marguerite! Your sister is Marguerite.", "marguerite", "What is my sister's name?", TOLD_SISTER)
++    assert correct_answer("Her name is Marguerite, and Marguerite is lovely.", "marguerite", "What is my sister's name?", TOLD_SISTER)
