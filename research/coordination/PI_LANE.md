@@ -136,3 +136,19 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   0.1B registered echo values over 0.10 are s43 +0.104 / s101 +0.125). No PASS/FAIL words anywhere; the numbers' reading
   is Claude's call. Note: `mood_probe.py`'s brain.affect/brain.brain/brain.cortex imports moved into `main()` so
   `boot_ci` imports weight-free (behaviour identical with the model). merge_review checkpoint requested (sha e3b76d9b6).
+
+- [ ] New core, scorer: a self-predicated key is a tautology (base: `research/pi-lane-1105`, on top of the seeded-key
+  item; no model, no runs). Hermes' report found `strict_scorer.correct_answer` accepting "Marguerite is a sister of
+  Marguerite." for "What is my sister's name?": `is_tautology` only catches '<key> is (called|named) <key>' and the
+  key repeated with filler. Fix in `brain/experiments/strict_scorer.py`: split the reply into clauses exactly as
+  `is_echo` does; a clause is a tautology when it holds the key at least twice and a linking verb (is, are, was, 's)
+  stands between the first and a later occurrence ('Marguerite is a sister of Marguerite', 'Pixel is the name of
+  Pixel', "Marguerite's sister is Marguerite"). Keep the existing two rules. Tests (no weights) in
+  `brain/tests/test_strict_scorer.py`: those three are tautologies; NOT tautologies: "Your sister is Marguerite.",
+  "Her name is Marguerite, and Marguerite is lovely." (two clauses), "Marguerite! Your sister is Marguerite." (the
+  second clause alone is a real answer, so `correct_answer` is True), "Pixel." Every existing test in
+  `test_strict_scorer.py`, `test_weekly_scorer.py` and `test_seeded_keys.py` passes unchanged. Then rerun
+  `live_brain_rescore.py` on `results/2026-11-03-live-brain-12facts/` and report which rows changed (do not hand-edit
+  the earlier tables). Read first: `strict_scorer.py` (`is_tautology`, `is_echo`), `brain/tests/test_strict_scorer.py`.
+  Done = commit on `research/pi-lane-1105` + tests passing + the changed-rows list + a merge_review checkpoint
+  (Claude), not a MiMo self-review.
