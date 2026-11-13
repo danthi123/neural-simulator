@@ -97,3 +97,16 @@ def test_bare_repetition_is_tautology():
     assert not correct_answer("Marguerite's name is Marguerite.", "marguerite", "What is my sister's name?", TOLD_SISTER)
     assert not is_tautology("Pixel.", "pixel")
     assert not is_tautology("Your cat is called Pixel.", "pixel")
+
+
+def test_generic_statement_about_the_key_is_not_an_answer():
+    from brain.experiments.strict_scorer import correct_answer, is_generic
+    for reply, key in (("Oslo is the capital of Norway.", "oslo"), ("Biscuit is a type of cookie, not a name.", "biscuit"),
+                       ("Marguerite is a name.", "marguerite"), ("The cello is a string instrument.", "cello"),
+                       ("Lyon is a city in France.", "lyon"), ("Teal is a shade of blue.", "teal")):
+        assert is_generic(reply, key), reply
+        assert not correct_answer(reply, key, "Where do I live?")
+    for reply, key in (("Pixel is your cat.", "pixel"), ("In Oslo.", "oslo"), ("Pixel.", "pixel"),
+                       ("Your dog is called Biscuit.", "biscuit"), ("You were born in Lyon.", "lyon"),
+                       ("Tomasz is your best friend.", "tomasz")):
+        assert not is_generic(reply, key), reply

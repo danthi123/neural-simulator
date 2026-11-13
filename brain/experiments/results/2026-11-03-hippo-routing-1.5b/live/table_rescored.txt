@@ -1,0 +1,42 @@
+seeds [42, 43, 44, 100, 101, 102]
+
+recall_correct (per seed, mean)
+  a_intact_sleep           [2, 4, 3, 2, 2, 4] mean 2.83
+  b_intact_nosleep         [0, 1, 1, 0, 0, 1] mean 0.50
+  c_hippo_off              [10, 8, 7, 11, 9, 11] mean 9.33
+  d_hippo_off_consol_off   [0, 1, 2, 0, 0, 0] mean 0.50
+  e_shuffled_hippo_off     [0, 0, 0, 0, 0, 0] mean 0.00
+  f_fix_sleep              [4, 7, 6, 6, 4, 7] mean 5.67
+  g_fix_nosleep            [0, 1, 1, 0, 0, 1] mean 0.50
+
+paraphrase_correct (per seed, mean)
+  a_intact_sleep           [0, 2, 1, 2, 1, 1] mean 1.17
+  b_intact_nosleep         [0, 1, 1, 1, 1, 0] mean 0.67
+  c_hippo_off              [6, 7, 4, 7, 6, 6] mean 6.00
+  d_hippo_off_consol_off   [0, 1, 0, 1, 0, 0] mean 0.33
+  e_shuffled_hippo_off     [0, 0, 1, 1, 1, 1] mean 0.67
+  f_fix_sleep              [5, 7, 5, 7, 6, 6] mean 6.00
+  g_fix_nosleep            [1, 1, 1, 2, 2, 0] mean 1.17
+
+false_recall (per seed, mean)
+  a_intact_sleep           [4, 4, 4, 4, 4, 4] mean 4.00
+  b_intact_nosleep         [3, 3, 3, 3, 3, 3] mean 3.00
+  c_hippo_off              [3, 3, 3, 4, 4, 4] mean 3.50
+  d_hippo_off_consol_off   [0, 0, 0, 0, 0, 0] mean 0.00
+  e_shuffled_hippo_off     [4, 4, 4, 4, 4, 4] mean 4.00
+  f_fix_sleep              [4, 3, 3, 4, 4, 4] mean 3.67
+  g_fix_nosleep            [1, 0, 1, 0, 1, 0] mean 0.50
+
+echo (per seed, mean)
+  a_intact_sleep           [2, 5, 2, 0, 2, 4] mean 2.50
+  b_intact_nosleep         [4, 3, 4, 3, 3, 2] mean 3.17
+  c_hippo_off              [3, 5, 9, 1, 5, 4] mean 4.50
+  d_hippo_off_consol_off   [0, 0, 0, 0, 0, 0] mean 0.00
+  e_shuffled_hippo_off     [0, 0, 0, 0, 1, 0] mean 0.17
+  f_fix_sleep              [4, 6, 9, 1, 6, 8] mean 5.67
+  g_fix_nosleep            [5, 4, 6, 3, 3, 3] mean 4.00
+
+routing of told questions (right, wrong) per seed: {'a_intact_sleep': [(6, 5), (6, 5), (6, 5), (6, 5), (6, 5), (6, 5)], 'b_intact_nosleep': [(6, 5), (6, 5), (6, 5), (6, 5), (6, 5), (6, 5)], 'f_fix_sleep': [(7, 0), (6, 0), (5, 0), (6, 0), (7, 0), (7, 0)], 'g_fix_nosleep': [(9, 0), (9, 0), (9, 0), (9, 0), (9, 0), (9, 0)]}
+
+F1 (instrument: routing) True  F2 (f - a >= 2, 5/6) True  F3 (f >= c - 1) False  F4 (false f <= a + 0.5) True  F5 (g - b >= 2, 5/6) False
+verdict: not a lead (see failing criteria)

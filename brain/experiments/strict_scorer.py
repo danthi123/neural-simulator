@@ -118,10 +118,22 @@ def is_echo(reply: str, key: str, told) -> bool:
                and _overlap(c, others) >= 0.5 for c in re.split(r"[,.;:!?]|\b(?:and|but|so)\b", reply))
 
 
+def is_generic(reply: str, key: str) -> bool:
+    """A general statement about the key word, not an answer about the user: the reply opens with the key (optionally
+    'the/a/an') as the subject of is/are/was/were and addresses no one ('Oslo is the capital of Norway.', 'Biscuit is a
+    type of cookie, not a name.', 'Marguerite is a name.'). 'Pixel is your cat.', 'In Oslo.' and 'Pixel.' are answers.
+    Added 2026-11-13 after a hand re-read of the mixed-day replies (brain/experiments/results/2026-11-13-mixed-day-1.5b.md)."""
+    k = re.escape(key.lower())
+    r = reply.strip().lower().replace("’", "'")
+    if not re.match(r"^(?:the |a |an )?" + k + r"\w*\s+(?:is|are|was|were)\b", r):
+        return False
+    return not (set(_words(r)) & (_SECOND | FIRST_PERSON))
+
+
 def correct_answer(reply: str, key: str, question: str = "", told=None) -> bool:
-    """Key present as a word, not in the question, not a tautology, about the subject asked (names no other fact-bank
-    subject), not a first-person echo of the told sentence."""
-    if not has_key(reply, key) or has_key(question, key) or is_tautology(reply, key):
+    """Key present as a word, not in the question, not a tautology, not a general statement about the key word, about
+    the subject asked (names no other fact-bank subject), not a first-person echo of the told sentence."""
+    if not has_key(reply, key) or has_key(question, key) or is_tautology(reply, key) or is_generic(reply, key):
         return False
     if wrong_subject(reply, question):
         return False

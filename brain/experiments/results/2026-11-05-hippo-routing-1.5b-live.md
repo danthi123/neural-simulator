@@ -1,5 +1,7 @@
 # Hippocampal routing fix at 1.5B, live brain, six seeds: NOT A LEAD (F3 fails); the cost left is reinstatement after sleep
 
+> **Erratum 2026-11-13 (scorer).** Credits included general statements about the key word. Re-scored (`2026-11-03-hippo-routing-1.5b/live/table_rescored.txt`): a 2.83, b 0.50, c 9.33, f 5.67, g 0.50. **F5 now fails** (g - b = 0); verdict still not a lead. With no sleep the 1.5B brain answers almost no told fact. See `2026-11-13-mixed-day-1.5b.md`.
+
 Capability: memory selection (pattern completion). Pre-registration: `brain/research/2026-11-03-hippo-routing-1.5b.md`
 (F1-F5, written and amended before any run). Data: `results/2026-11-03-hippo-routing-1.5b/live/hroute_s*.json`,
 table `live/table.txt` (`python -m brain.experiments.hippo_route_live_table <dir> --glob 'hroute_s*.json'`).
