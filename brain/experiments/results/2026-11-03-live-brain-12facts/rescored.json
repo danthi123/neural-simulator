@@ -286,8 +286,8 @@
     ]
    },
    "b_intact_nosleep": {
-    "recall_correct": 6,
-    "paraphrase_correct": 3,
+    "recall_correct": 5,
+    "paraphrase_correct": 2,
     "false_recall": 2,
     "echo": 4,
     "recall_lenient": 10,
@@ -342,7 +342,7 @@
       "lenient": true,
       "hit": true,
       "echo": false,
-      "correct": true
+      "correct": false
      },
      {
       "q": "What car do I drive?",
@@ -462,7 +462,7 @@
       "lenient": true,
       "hit": true,
       "echo": false,
-      "correct": true
+      "correct": false
      },
      {
       "q": "What kind of car is mine?",
@@ -1706,7 +1706,7 @@
     ]
    },
    "b_intact_nosleep": {
-    "recall_correct": 5,
+    "recall_correct": 3,
     "paraphrase_correct": 3,
     "false_recall": 2,
     "echo": 5,
@@ -1722,7 +1722,7 @@
       "lenient": true,
       "hit": true,
       "echo": false,
-      "correct": true
+      "correct": false
      },
      {
       "q": "What is my favourite colour?",
@@ -1762,7 +1762,7 @@
       "lenient": true,
       "hit": true,
       "echo": false,
-      "correct": true
+      "correct": false
      },
      {
       "q": "What car do I drive?",
@@ -3126,7 +3126,7 @@
     ]
    },
    "b_intact_nosleep": {
-    "recall_correct": 3,
+    "recall_correct": 2,
     "paraphrase_correct": 2,
     "false_recall": 2,
     "echo": 3,
@@ -3182,7 +3182,7 @@
       "lenient": true,
       "hit": true,
       "echo": false,
-      "correct": true
+      "correct": false
      },
      {
       "q": "What car do I drive?",
@@ -5966,7 +5966,7 @@
     ]
    },
    "b_intact_nosleep": {
-    "recall_correct": 6,
+    "recall_correct": 5,
     "paraphrase_correct": 4,
     "false_recall": 2,
     "echo": 6,
@@ -6022,7 +6022,7 @@
       "lenient": true,
       "hit": true,
       "echo": false,
-      "correct": true
+      "correct": false
      },
      {
       "q": "What car do I drive?",
@@ -7103,7 +7103,7 @@
   "seed": 44,
   "arms": {
    "a_intact_sleep": {
-    "recall_correct": 4,
+    "recall_correct": 3,
     "paraphrase_correct": 2,
     "false_recall": 3,
     "echo": 4,
@@ -7139,7 +7139,7 @@
       "lenient": true,
       "hit": true,
       "echo": false,
-      "correct": true
+      "correct": false
      },
      {
       "q": "What is my sister's name?",
@@ -7387,7 +7387,7 @@
    },
    "b_intact_nosleep": {
     "recall_correct": 5,
-    "paraphrase_correct": 5,
+    "paraphrase_correct": 4,
     "false_recall": 2,
     "echo": 3,
     "recall_lenient": 8,
@@ -7602,7 +7602,7 @@
       "lenient": true,
       "hit": true,
       "echo": false,
-      "correct": true
+      "correct": false
      },
      {
       "q": "Is there any food I can't eat?",

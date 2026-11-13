@@ -97,3 +97,24 @@ def test_bare_repetition_is_tautology():
     assert not correct_answer("Marguerite's name is Marguerite.", "marguerite", "What is my sister's name?", TOLD_SISTER)
     assert not is_tautology("Pixel.", "pixel")
     assert not is_tautology("Your cat is called Pixel.", "pixel")
+
+
+def test_self_predicated_clause_is_tautology():
+    for r, key in (("Marguerite is a sister of Marguerite.", "marguerite"),
+                   ("Pixel is the name of Pixel.", "pixel"),
+                   ("Marguerite's sister is Marguerite.", "marguerite")):
+        assert is_tautology(r, key), r
+        assert not correct_answer(r, key, "What is my sister's name?" if key == "marguerite" else "What is my cat called?",
+                                  TOLD_SISTER if key == "marguerite" else TOLD_CAT)
+
+
+def test_self_predicated_but_real_answers_are_not_tautologies():
+    assert not is_tautology("Your sister is Marguerite.", "marguerite")
+    assert not is_tautology("Her name is Marguerite, and Marguerite is lovely.", "marguerite")
+    assert not is_tautology("Marguerite! Your sister is Marguerite.", "marguerite")
+    assert not is_tautology("Pixel.", "pixel")
+
+
+def test_second_clause_alone_is_a_real_answer():
+    assert correct_answer("Marguerite! Your sister is Marguerite.", "marguerite", "What is my sister's name?", TOLD_SISTER)
+    assert correct_answer("Her name is Marguerite, and Marguerite is lovely.", "marguerite", "What is my sister's name?", TOLD_SISTER)
