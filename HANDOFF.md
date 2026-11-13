@@ -15,12 +15,12 @@
   cost (h 9.17 vs always-reinstate 7.67 of 12) but is NOT better than hippocampus-off after sleep (c 9.33). Registered
   G0-G4 held; three skeptics NARROWED it (bars compared only to f). No default changed. Weekly 11-13 ran on AWS
   (0.1B): after restart hippocampus-off 4/6, intact 2/6. Earlier: hippo-route NOT A LEAD (11-05, F3).
-- **LIVE RUNS:** none. W is dedicated to the owner's other work (owner 11-07/11-13): no W jobs (RULING
+- **LIVE RUNS:** AWS mixed-day test (pre-registration `brain/research/2026-11-13-mixed-day-gate-1.5b.md`, jobs
+  `brain/experiments/jobs/2026-11-13-aws-mixed-day.txt`); `bash tools/aws_brain_batch.sh status|pull`. W is dedicated to the owner's other work (owner 11-07/11-13): no W jobs (RULING
   w-dedicated-1113); only the mini-PCs and AWS (cap ~$50/day).
-- **READY WORK:** AWS: the mixed-day test (6 facts slept + 6 told after restart; bar fixed from 11-13; criteria vs c and
-  f, see the result's Next). Mini-PCs: none listed. Pi: `research/coordination/PI_LANE.md` (tautology scorer item, on
+- **READY WORK:** AWS: none beyond the live run. Mini-PCs: none listed. Pi: `research/coordination/PI_LANE.md` (tautology scorer item, on
   `research/pi-lane-1105`, unmerged; land with a merge_review when convenient).
-- **NEXT STEP:** register and run the mixed-day test; if h beats c on the new facts, build the gate in Brain (default
+- **NEXT STEP:** pull + table the mixed-day run (`mixed_day_table`), skeptics, land; if LEAD (h beats c and f), build the gate in Brain (default
   OFF) and run it live, then the lesson/answer arbitration on the same signal.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
