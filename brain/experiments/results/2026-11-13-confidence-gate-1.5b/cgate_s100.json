@@ -1,0 +1,858 @@
+{
+ "model": "../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth",
+ "seed": 100,
+ "steps": 480,
+ "lr": 0.0005,
+ "kl_weight": 3.0,
+ "device": "cuda",
+ "max_q": 0,
+ "fix_key": "S_all",
+ "fix_bar": "size",
+ "adapter_norm": 62.414520263671875,
+ "day1": [
+  {
+   "you": "My cat is called Pixel.",
+   "brain": "Pixel sounds like a very cute name for your cat! What's your cat's favorite thing to do?"
+  },
+  {
+   "you": "My favourite colour is teal.",
+   "brain": "Pixel is a colour, not a name."
+  },
+  {
+   "you": "I was born in Lyon.",
+   "brain": "Lyon is a city in France."
+  },
+  {
+   "you": "My sister's name is Marguerite.",
+   "brain": "Marguerite is a name."
+  },
+  {
+   "you": "My dog is named Biscuit.",
+   "brain": "Biscuit is a name."
+  },
+  {
+   "you": "I drive a red Volvo.",
+   "brain": "Volvo is a car brand."
+  },
+  {
+   "you": "My best friend is called Tomasz.",
+   "brain": "Tomasz is a name."
+  },
+  {
+   "you": "I work at a bakery called Crumb.",
+   "brain": "Crumb is a bakery."
+  },
+  {
+   "you": "My brother plays the cello.",
+   "brain": "Cello is a musical instrument."
+  },
+  {
+   "you": "I'm allergic to peanuts.",
+   "brain": "Peanuts are a type of nut."
+  },
+  {
+   "you": "My grandmother lives in Oslo.",
+   "brain": "Oslo is a city in Norway."
+  },
+  {
+   "you": "My son's birthday is in March.",
+   "brain": "March is a month."
+  }
+ ],
+ "rows": [
+  {
+   "q": "What is my cat called?",
+   "kind": "told",
+   "key": "pixel",
+   "cue": 4.6604743003845215,
+   "mean_logp": -0.04779974825335861,
+   "first_logp": -0.2825920283794403,
+   "min_logp": -0.2825920283794403,
+   "mean_logp_off": -1.587202940757076,
+   "shift": 1.5394031925037173,
+   "n_tok": 6,
+   "c": {
+    "reply": "Your cat is called Pixel.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "Your cat is called Pixel.",
+    "recalled": null,
+    "ok": true
+   }
+  },
+  {
+   "q": "What is my favourite colour?",
+   "kind": "told",
+   "key": "teal",
+   "cue": 2.2096636295318604,
+   "mean_logp": -0.09407336776642491,
+   "first_logp": -0.6326884627342224,
+   "min_logp": -0.6326884627342224,
+   "mean_logp_off": -1.2374369812730168,
+   "shift": 1.1433636135065919,
+   "n_tok": 7,
+   "c": {
+    "reply": "Your favourite colour is teal.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "What is your favourite colour?",
+    "recalled": "User: My favourite colour is teal.",
+    "ok": false
+   }
+  },
+  {
+   "q": "Where was I born?",
+   "kind": "told",
+   "key": "lyon",
+   "cue": 3.058380603790283,
+   "mean_logp": -0.16532566045134445,
+   "first_logp": -0.068467877805233,
+   "min_logp": -0.6282070279121399,
+   "mean_logp_off": -2.9425476491451263,
+   "shift": 2.777221988693782,
+   "n_tok": 6,
+   "c": {
+    "reply": "You're born in Lyon.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "You're born in Lyon.",
+    "recalled": null,
+    "ok": true
+   }
+  },
+  {
+   "q": "What is my sister's name?",
+   "kind": "told",
+   "key": "marguerite",
+   "cue": 1.9268856048583984,
+   "mean_logp": -0.03507693846273065,
+   "first_logp": -0.3002540171146393,
+   "min_logp": -0.3002540171146393,
+   "mean_logp_off": -1.3402851559221745,
+   "shift": 1.3052082174594437,
+   "n_tok": 9,
+   "c": {
+    "reply": "Your sister's name is Marguerite.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "Your sister's name is Marguerite.",
+    "recalled": null,
+    "ok": true
+   }
+  },
+  {
+   "q": "What is my dog's name?",
+   "kind": "told",
+   "key": "biscuit",
+   "cue": 1.1868151426315308,
+   "mean_logp": -0.03987073708447042,
+   "first_logp": -0.29686880111694336,
+   "min_logp": -0.29686880111694336,
+   "mean_logp_off": -1.6641010618768632,
+   "shift": 1.6242303247923928,
+   "n_tok": 8,
+   "c": {
+    "reply": "Your dog is named Biscuit.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "Your dog is named Biscuit.",
+    "recalled": null,
+    "ok": true
+   }
+  },
+  {
+   "q": "What car do I drive?",
+   "kind": "told",
+   "key": "volvo",
+   "cue": 2.2705490589141846,
+   "mean_logp": -0.10315440312357775,
+   "first_logp": -0.3092130720615387,
+   "min_logp": -0.3092130720615387,
+   "mean_logp_off": -1.3577967851112287,
+   "shift": 1.2546423819876509,
+   "n_tok": 6,
+   "c": {
+    "reply": "You drive a Volvo.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "A red Volt is a Volvo.",
+    "recalled": "User: I drive a red Volvo.",
+    "ok": true
+   }
+  },
+  {
+   "q": "Who is my best friend?",
+   "kind": "told",
+   "key": "tomasz",
+   "cue": 2.726776599884033,
+   "mean_logp": -0.2190555828728975,
+   "first_logp": -1.7309434413909912,
+   "min_logp": -1.7309434413909912,
+   "mean_logp_off": -2.456767547177151,
+   "shift": 2.2377119643042533,
+   "n_tok": 8,
+   "c": {
+    "reply": "My best friend is called Tomasz.",
+    "recalled": null,
+    "ok": false
+   },
+   "f": {
+    "reply": "My best friend is called Tomasz.",
+    "recalled": null,
+    "ok": false
+   }
+  },
+  {
+   "q": "Where do I work?",
+   "kind": "told",
+   "key": "crumb",
+   "cue": 3.7169768810272217,
+   "mean_logp": -0.05318419411059949,
+   "first_logp": -0.3625316619873047,
+   "min_logp": -0.3625316619873047,
+   "mean_logp_off": -2.2827047729399057,
+   "shift": 2.229520578829306,
+   "n_tok": 10,
+   "c": {
+    "reply": "You work at a bakery called Crumb.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "You work at a bakery called Crumb.",
+    "recalled": null,
+    "ok": true
+   }
+  },
+  {
+   "q": "What instrument does my brother play?",
+   "kind": "told",
+   "key": "cello",
+   "cue": 3.7802181243896484,
+   "mean_logp": -0.11819092267822791,
+   "first_logp": -0.8101878762245178,
+   "min_logp": -0.8101878762245178,
+   "mean_logp_off": -0.8409343746025115,
+   "shift": 0.7227434519242836,
+   "n_tok": 7,
+   "c": {
+    "reply": "Your brother plays the cello.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "What instrument does your brother play?",
+    "recalled": "User: My brother plays the cello.",
+    "ok": false
+   }
+  },
+  {
+   "q": "What am I allergic to?",
+   "kind": "told",
+   "key": "peanut",
+   "cue": 1.1581315994262695,
+   "mean_logp": -0.038790015070714744,
+   "first_logp": -0.2536828815937042,
+   "min_logp": -0.2536828815937042,
+   "mean_logp_off": -1.042838614833142,
+   "shift": 1.0040485997624273,
+   "n_tok": 7,
+   "c": {
+    "reply": "You're allergic to peanuts.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "Peanuts are a type of legume.",
+    "recalled": "User: I'm allergic to peanuts.",
+    "ok": true
+   }
+  },
+  {
+   "q": "Where does my grandmother live?",
+   "kind": "told",
+   "key": "oslo",
+   "cue": 4.897727966308594,
+   "mean_logp": -0.2163765743316617,
+   "first_logp": -1.0664947032928467,
+   "min_logp": -1.0664947032928467,
+   "mean_logp_off": -2.5150552868843077,
+   "shift": 2.298678712552646,
+   "n_tok": 5,
+   "c": {
+    "reply": "She lives in Oslo.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "Oslo is the capital of Norway.",
+    "recalled": "User: My grandmother lives in Oslo.",
+    "ok": true
+   }
+  },
+  {
+   "q": "When is my son's birthday?",
+   "kind": "told",
+   "key": "march",
+   "cue": 2.941126823425293,
+   "mean_logp": -0.03362059836945264,
+   "first_logp": -0.2538047730922699,
+   "min_logp": -0.2538047730922699,
+   "mean_logp_off": -1.010725823463872,
+   "shift": 0.9771052250944194,
+   "n_tok": 8,
+   "c": {
+    "reply": "Your son's birthday is in March.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "March is in the spring.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": true
+   }
+  },
+  {
+   "q": "What's the name of my kitty?",
+   "kind": "para",
+   "key": "pixel",
+   "cue": 1.2126671075820923,
+   "mean_logp": -0.18311744065492044,
+   "first_logp": -0.3362489342689514,
+   "min_logp": -0.7619486451148987,
+   "mean_logp_off": -2.3158576985200248,
+   "shift": 2.132740257865104,
+   "n_tok": 6,
+   "c": {
+    "reply": "Your cat is called Pixel.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "Your cat is called Pixel.",
+    "recalled": null,
+    "ok": true
+   }
+  },
+  {
+   "q": "Which colour do I like best?",
+   "kind": "para",
+   "key": "teal",
+   "cue": 2.258441925048828,
+   "mean_logp": -1.049557974934578,
+   "first_logp": -1.7662034034729004,
+   "min_logp": -1.7662034034729004,
+   "mean_logp_off": -1.649512806534767,
+   "shift": 0.5999548316001893,
+   "n_tok": 10,
+   "c": {
+    "reply": "I'm not sure. What colour is it?",
+    "recalled": null,
+    "ok": false
+   },
+   "f": {
+    "reply": "What's your favourite colour?",
+    "recalled": "User: My favourite colour is teal.",
+    "ok": false
+   }
+  },
+  {
+   "q": "What's my hometown?",
+   "kind": "para",
+   "key": "lyon",
+   "cue": 1.2133815288543701,
+   "mean_logp": -0.2682643558087875,
+   "first_logp": -1.1040414571762085,
+   "min_logp": -1.1040414571762085,
+   "mean_logp_off": -2.3015802606940268,
+   "shift": 2.0333159048852396,
+   "n_tok": 5,
+   "c": {
+    "reply": "Your hometown is Oslo.",
+    "recalled": null,
+    "ok": false
+   },
+   "f": {
+    "reply": "Your hometown is Oslo.",
+    "recalled": null,
+    "ok": false
+   }
+  },
+  {
+   "q": "Who's my sister?",
+   "kind": "para",
+   "key": "marguerite",
+   "cue": 3.1981911659240723,
+   "mean_logp": -0.4563657246530056,
+   "first_logp": -1.1057531833648682,
+   "min_logp": -1.1057531833648682,
+   "mean_logp_off": -1.3012896180152893,
+   "shift": 0.8449238933622837,
+   "n_tok": 5,
+   "c": {
+    "reply": "You're my sister.",
+    "recalled": null,
+    "ok": false
+   },
+   "f": {
+    "reply": "You're my sister.",
+    "recalled": null,
+    "ok": false
+   }
+  },
+  {
+   "q": "What's my dog called?",
+   "kind": "para",
+   "key": "biscuit",
+   "cue": 3.586142063140869,
+   "mean_logp": -0.11812889215138966,
+   "first_logp": -0.8695744276046753,
+   "min_logp": -0.8695744276046753,
+   "mean_logp_off": -1.45407978259027,
+   "shift": 1.3359508904388804,
+   "n_tok": 8,
+   "c": {
+    "reply": "Your dog is named Biscuit.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "Your dog is named Biscuit.",
+    "recalled": null,
+    "ok": true
+   }
+  },
+  {
+   "q": "What kind of car is mine?",
+   "kind": "para",
+   "key": "volvo",
+   "cue": 1.237043023109436,
+   "mean_logp": -0.2883085671065991,
+   "first_logp": -1.0252652168273926,
+   "min_logp": -1.0252652168273926,
+   "mean_logp_off": -1.212177605235151,
+   "shift": 0.9238690381285518,
+   "n_tok": 7,
+   "c": {
+    "reply": "Your car is a Volvo.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "Your car is a Volvo.",
+    "recalled": null,
+    "ok": true
+   }
+  },
+  {
+   "q": "Who's my closest friend?",
+   "kind": "para",
+   "key": "tomasz",
+   "cue": 2.042569875717163,
+   "mean_logp": -0.49613789816430653,
+   "first_logp": -1.8557032346725464,
+   "min_logp": -1.8557032346725464,
+   "mean_logp_off": -3.2155172328154245,
+   "shift": 2.719379334651118,
+   "n_tok": 6,
+   "c": {
+    "reply": "That would be Tomasz.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "That would be Tomasz.",
+    "recalled": null,
+    "ok": true
+   }
+  },
+  {
+   "q": "What's my workplace?",
+   "kind": "para",
+   "key": "crumb",
+   "cue": 1.2133815288543701,
+   "mean_logp": -0.2741615794284371,
+   "first_logp": -0.6873878240585327,
+   "min_logp": -1.0469269752502441,
+   "mean_logp_off": -2.5964526819996534,
+   "shift": 2.3222911025712163,
+   "n_tok": 10,
+   "c": {
+    "reply": "You're at a bakery called Crumb.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "You're at a bakery called Crumb.",
+    "recalled": null,
+    "ok": true
+   }
+  },
+  {
+   "q": "Which instrument does my brother play?",
+   "kind": "para",
+   "key": "cello",
+   "cue": 3.46787691116333,
+   "mean_logp": -0.13321008732704545,
+   "first_logp": -0.9136761426925659,
+   "min_logp": -0.9136761426925659,
+   "mean_logp_off": -0.9137884628227246,
+   "shift": 0.7805783754956792,
+   "n_tok": 7,
+   "c": {
+    "reply": "Your brother plays the cello.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "The cello is a string instrument.",
+    "recalled": "User: My brother plays the cello.",
+    "ok": true
+   }
+  },
+  {
+   "q": "Is there any food I can't eat?",
+   "kind": "para",
+   "key": "peanut",
+   "cue": 0.593967080116272,
+   "mean_logp": -0.39852657379882517,
+   "first_logp": -2.165220260620117,
+   "min_logp": -2.165220260620117,
+   "mean_logp_off": -0.6896986913869534,
+   "shift": 0.29117211758812817,
+   "n_tok": 26,
+   "c": {
+    "reply": "There are many foods that are off-limits for people with celiac disease. These include wheat, rye, and barley.",
+    "recalled": null,
+    "ok": false
+   },
+   "f": {
+    "reply": "No, you're allergic to peanuts.",
+    "recalled": "User: I'm allergic to peanuts.",
+    "ok": true
+   }
+  },
+  {
+   "q": "Which city is my grandma in?",
+   "kind": "para",
+   "key": "oslo",
+   "cue": 0.915733814239502,
+   "mean_logp": -0.8108663260936737,
+   "first_logp": -1.0223922729492188,
+   "min_logp": -1.0223922729492188,
+   "mean_logp_off": -5.9399009346961975,
+   "shift": 5.129034608602524,
+   "n_tok": 2,
+   "c": {
+    "reply": "Oslo.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "Oslo.",
+    "recalled": null,
+    "ok": true
+   }
+  },
+  {
+   "q": "What month was my son born?",
+   "kind": "para",
+   "key": "march",
+   "cue": 2.548717975616455,
+   "mean_logp": -0.1445188091207196,
+   "first_logp": -0.5172102451324463,
+   "min_logp": -0.5172102451324463,
+   "mean_logp_off": -3.179138794541359,
+   "shift": 3.0346199854206395,
+   "n_tok": 7,
+   "c": {
+    "reply": "Your son is born in Lyon.",
+    "recalled": null,
+    "ok": false
+   },
+   "f": {
+    "reply": "Your son is born in Lyon.",
+    "recalled": null,
+    "ok": false
+   }
+  },
+  {
+   "q": "What is my horse called?",
+   "kind": "never",
+   "key": null,
+   "cue": 2.7534689903259277,
+   "mean_logp": -0.32073601407743507,
+   "first_logp": -0.38199350237846375,
+   "min_logp": -1.5027613639831543,
+   "mean_logp_off": -1.6526803765445948,
+   "shift": 1.3319443624671596,
+   "n_tok": 6,
+   "c": {
+    "reply": "Your horse is called Pixel.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "Your horse is called Pixel.",
+    "recalled": null,
+    "ok": true
+   }
+  },
+  {
+   "q": "Where does my uncle live?",
+   "kind": "never",
+   "key": null,
+   "cue": 0.476444810628891,
+   "mean_logp": -0.18355886432982516,
+   "first_logp": -0.7809355854988098,
+   "min_logp": -0.7809355854988098,
+   "mean_logp_off": -1.9722764616211255,
+   "shift": 1.7887175972913003,
+   "n_tok": 6,
+   "c": {
+    "reply": "Your uncle lives in Oslo.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "Your uncle lives in Oslo.",
+    "recalled": null,
+    "ok": true
+   }
+  },
+  {
+   "q": "What is my daughter's name?",
+   "kind": "never",
+   "key": null,
+   "cue": 1.0472071170806885,
+   "mean_logp": -0.05402189976595966,
+   "first_logp": -0.4289562404155731,
+   "min_logp": -0.4289562404155731,
+   "mean_logp_off": -1.3841847670781944,
+   "shift": 1.3301628673122348,
+   "n_tok": 9,
+   "c": {
+    "reply": "Your daughter's name is Marguerite.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "Your daughter's name is Marguerite.",
+    "recalled": null,
+    "ok": true
+   }
+  },
+  {
+   "q": "What instrument does my mother play?",
+   "kind": "never",
+   "key": null,
+   "cue": 1.7245535850524902,
+   "mean_logp": -0.16863481333192404,
+   "first_logp": -1.0145963430404663,
+   "min_logp": -1.0145963430404663,
+   "mean_logp_off": -0.791680828402085,
+   "shift": 0.6230460150701609,
+   "n_tok": 7,
+   "c": {
+    "reply": "Your mother plays the cello.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "Your mother plays the cello.",
+    "recalled": null,
+    "ok": true
+   }
+  },
+  {
+   "q": "What is my fish called?",
+   "kind": "never",
+   "key": null,
+   "cue": 4.02583122253418,
+   "mean_logp": -0.31296047135320904,
+   "first_logp": -0.4581888020038605,
+   "min_logp": -2.2100577354431152,
+   "mean_logp_off": -1.380850866333478,
+   "shift": 1.067890394980269,
+   "n_tok": 9,
+   "c": {
+    "reply": "Your fish is called Cyprinus.",
+    "recalled": null,
+    "ok": false
+   },
+   "f": {
+    "reply": "Your fish is called Cyprinus.",
+    "recalled": null,
+    "ok": false
+   }
+  },
+  {
+   "q": "Where does my aunt live?",
+   "kind": "never",
+   "key": null,
+   "cue": 1.012181282043457,
+   "mean_logp": -0.23582920961780474,
+   "first_logp": -1.003942608833313,
+   "min_logp": -1.003942608833313,
+   "mean_logp_off": -2.0161759511878095,
+   "shift": 1.7803467415700045,
+   "n_tok": 6,
+   "c": {
+    "reply": "Your aunt lives in Oslo.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "Your aunt lives in Oslo.",
+    "recalled": null,
+    "ok": true
+   }
+  },
+  {
+   "q": "What is my nephew's name?",
+   "kind": "never",
+   "key": null,
+   "cue": 1.0472071170806885,
+   "mean_logp": -0.13735648664260225,
+   "first_logp": -0.46205633878707886,
+   "min_logp": -0.46205633878707886,
+   "mean_logp_off": -1.582968515867833,
+   "shift": 1.4456120292252308,
+   "n_tok": 8,
+   "c": {
+    "reply": "Your nephew's name is Tomasz.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "Your nephew's name is Tomasz.",
+    "recalled": null,
+    "ok": true
+   }
+  },
+  {
+   "q": "What sport does my father play?",
+   "kind": "never",
+   "key": null,
+   "cue": 1.0472071170806885,
+   "mean_logp": -0.17466482155889804,
+   "first_logp": -0.7547300457954407,
+   "min_logp": -0.7547300457954407,
+   "mean_logp_off": -1.8380842421736037,
+   "shift": 1.6634194206147055,
+   "n_tok": 7,
+   "c": {
+    "reply": "Your father plays the cello.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "Your father plays the cello.",
+    "recalled": null,
+    "ok": true
+   }
+  },
+  {
+   "q": "What is my parrot's name?",
+   "kind": "never",
+   "key": null,
+   "cue": 1.049377202987671,
+   "mean_logp": -0.2772226776568069,
+   "first_logp": -0.2526156008243561,
+   "min_logp": -1.5865705013275146,
+   "mean_logp_off": -2.140943136032937,
+   "shift": 1.86372045837613,
+   "n_tok": 7,
+   "c": {
+    "reply": "Your parrot is called Pixel.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "Your parrot is called Pixel.",
+    "recalled": null,
+    "ok": true
+   }
+  },
+  {
+   "q": "Where did I go on holiday?",
+   "kind": "never",
+   "key": null,
+   "cue": 0.8507829904556274,
+   "mean_logp": -0.19074675608426334,
+   "first_logp": -0.352007120847702,
+   "min_logp": -0.352007120847702,
+   "mean_logp_off": -2.3208086788654327,
+   "shift": 2.1300619227811692,
+   "n_tok": 5,
+   "c": {
+    "reply": "You went to Oslo.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "You went to Oslo.",
+    "recalled": null,
+    "ok": true
+   }
+  },
+  {
+   "q": "What is my teacher called?",
+   "kind": "never",
+   "key": null,
+   "cue": 3.7307467460632324,
+   "mean_logp": -0.08451799273046033,
+   "first_logp": -0.38529908657073975,
+   "min_logp": -0.38529908657073975,
+   "mean_logp_off": -2.1066400493894304,
+   "shift": 2.02212205665897,
+   "n_tok": 7,
+   "c": {
+    "reply": "Your teacher is called Tomasz.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "Your teacher is called Tomasz.",
+    "recalled": null,
+    "ok": true
+   }
+  },
+  {
+   "q": "What city does my cousin live in?",
+   "kind": "never",
+   "key": null,
+   "cue": 1.049377202987671,
+   "mean_logp": -0.20846214451254733,
+   "first_logp": -1.1509681940078735,
+   "min_logp": -1.1509681940078735,
+   "mean_logp_off": -1.8385999342426658,
+   "shift": 1.6301377897301184,
+   "n_tok": 6,
+   "c": {
+    "reply": "Your cousin lives in Oslo.",
+    "recalled": null,
+    "ok": true
+   },
+   "f": {
+    "reply": "Your cousin lives in Oslo.",
+    "recalled": null,
+    "ok": true
+   }
+  }
+ ],
+ "elapsed_s": 708.9,
+ "cuda_peak_bytes": 11372279296
+}

@@ -10,27 +10,19 @@
   every seed, ordinary-text drift small, false recall not above shuffled; then sleep wired into the live brain
   (restart = sleep, adapters persisted) so the weekly transcript shows it.
 - **MILESTONE:** day 14 (2026-11-16), brain/ARCHITECTURE.md §4. Day 7 (2026-11-09): first [weekly] run by Hermes.
-- **STATE (11-03 pm):** 1.5B live brain six seeds (`results/2026-11-03-live-brain-1.5b.md`): hippocampus off after
-  sleep 9.33/12 vs no-sleep 2.83 (6/6), shuffled 0; KEEP. Told-gate FAIL (`results/2026-11-03-told-gate-1.5b.md`):
-  the lesson overrides a recalled fact when the gate fires; gate misfires 2-6/12 on told questions
-  (`results/2026-11-03-gate-misfire-1.5b.md`). M2 a LEAD for never-told questions only. Weekly 1.5B preview
-  (`results/2026-11-03-weekly-1.5b-preview.md`): told facts loop in free text after sleep; self-name only in the
-  hippocampus. M3 FAIL at 0.4B. Brain defaults unchanged (new switches OFF; default cortex still 0.1B).
-- **STATE (11-05):** hippo-route fix at 1.5B, six seeds on AWS (`results/2026-11-05-hippo-routing-1.5b-live.md`):
-  NOT A LEAD (F3 fails). S_all + 1.5B bar never fetches a wrong memory (g 9 right/0 wrong x6) and the hippocampus now
-  helps (f 7.67 vs a 4.50, g 4.83 vs b 2.83, 6/6), but after sleep it still costs recall vs off (f 7.67 < c 9.33):
-  reinstating the RIGHT memory into a slept cortex loses 10 of 33 answers (gain 4 fit unslept). Pi's
-  `research/pi-sleep-varied-replay` is superseded (not merged); its lane was empty because its workspace sat on it.
-- **LIVE RUNS:** none. AWS instance terminated. W paused for the owner's other project (`tools/game.sh on`;
-  resume: `bash tools/game.sh off && systemctl --user start sim-rag-autoupdate.timer`).
-- **READY WORK (one next job per resource):** W GPU (when back): measure the slept cortex's own answer confidence as a
-  "do I know this" signal (serves both the reinstatement gate and the lesson arbitration), then intrusion/looping of
-  told facts after sleep. Pi: `PI_LANE.md` (seeded-key scorer first, before the 11-09 weekly; 12-facts rescore; mood
-  re-analysis), CPU only. Mini-PCs: none queued.
-- **NEXT STEP:** pre-register reinstatement gated by cortex confidence (or gain falling with consolidation) at 1.5B;
-  then gate accuracy + arbitration for the lesson. Finish the 1.5B adoption plan.
-- **DELEGATED:** Pi: `research/coordination/PI_LANE.md` open items on `research/pi-lane-1105` (from main, steered 11-05). Hermes:
-  [weekly] every Monday from 11-09; WORKLOG at most once a day (RULING overnight-1102).
+- **STATE (11-13):** confidence gate at 1.5B, six seeds, AWS (`brain/experiments/results/2026-11-13-confidence-gate-1.5b.md`):
+  the slept cortex's reply log-prob predicts its own errors (AUC 0.77), and gating reinstatement on it removes the
+  cost (h 9.17 vs always-reinstate 7.67 of 12) but is NOT better than hippocampus-off after sleep (c 9.33). Registered
+  G0-G4 held; three skeptics NARROWED it (bars compared only to f). No default changed. Weekly 11-13 ran on AWS
+  (0.1B): after restart hippocampus-off 4/6, intact 2/6. Earlier: hippo-route NOT A LEAD (11-05, F3).
+- **LIVE RUNS:** none. W is dedicated to the owner's other work (owner 11-07/11-13): no W jobs (RULING
+  w-dedicated-1113); only the mini-PCs and AWS (cap ~$50/day).
+- **READY WORK:** AWS: the mixed-day test (6 facts slept + 6 told after restart; bar fixed from 11-13; criteria vs c and
+  f, see the result's Next). Mini-PCs: none listed. Pi: `research/coordination/PI_LANE.md` (tautology scorer item, on
+  `research/pi-lane-1105`, unmerged; land with a merge_review when convenient).
+- **NEXT STEP:** register and run the mixed-day test; if h beats c on the new facts, build the gate in Brain (default
+  OFF) and run it live, then the lesson/answer arbitration on the same signal.
+- **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend
