@@ -1,0 +1,12 @@
+# 2026-11-13 AWS packet: confidence gate on a mixed day (slept + unslept facts), 1.5B (tools/brain_batch_run.sh format).
+# Pre-registration (committed before any run): brain/research/2026-11-13-mixed-day-gate-1.5b.md (M0-M5).
+# Launch from a checkout whose HEAD holds these commits:
+#   AWS_BRAIN_MAX_MIN=200 bash tools/aws_brain_batch.sh launch brain/experiments/jobs/2026-11-13-aws-mixed-day.txt g5.xlarge
+# Wall estimate on one A10G: ~13 min/seed, ~80 min. After `pull`: copy mixday_s*.json to
+# brain/experiments/results/2026-11-13-mixed-day-1.5b/ and run python -m brain.experiments.mixed_day_table <that dir>
+mixday_s42 brain.experiments.mixed_day_probe --home ../work/mixday_s42 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 42 --slept even --steps 480 --lr 5e-4 --kl-weight 3
+mixday_s43 brain.experiments.mixed_day_probe --home ../work/mixday_s43 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 43 --slept odd --steps 480 --lr 5e-4 --kl-weight 3
+mixday_s44 brain.experiments.mixed_day_probe --home ../work/mixday_s44 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 44 --slept even --steps 480 --lr 5e-4 --kl-weight 3
+mixday_s100 brain.experiments.mixed_day_probe --home ../work/mixday_s100 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 100 --slept odd --steps 480 --lr 5e-4 --kl-weight 3
+mixday_s101 brain.experiments.mixed_day_probe --home ../work/mixday_s101 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 101 --slept even --steps 480 --lr 5e-4 --kl-weight 3
+mixday_s102 brain.experiments.mixed_day_probe --home ../work/mixday_s102 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 102 --slept odd --steps 480 --lr 5e-4 --kl-weight 3
