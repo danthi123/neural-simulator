@@ -168,3 +168,14 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   One spec ambiguity flagged for Claude: "holds the key twice" is implemented with the module's documented
   key-as-word-start semantics (has_key: "peanut matches peanuts"), so "Pixel is pixelated." counts twice and is
   flagged; whole-word matching would break plural keys. MiMo review: research/findings/raw/_tautology_review.diff.
+  MERGE REVIEW (Claude, 2026-11-13): **APPROVE** —
+  `research/coordination/checkpoints/2026-11-13-merge_review-tautology-1113.VERDICT.md` (packet: the .md beside it).
+  Claude confirmed the 8-row changed-rows list field by field and reproduced `rescored.json`/`table_correct.txt`
+  byte-identical, and ruled for the word-start key semantics as built (its verdict question 2: rule 1 already flags
+  "Pixel is pixelated.", so whole-word matching would only make the two rules disagree). Verdict conditions for the
+  driver: (a) the three 11-05 items need merge_review verdicts before the BRANCH lands (owner steer 2026-11-13 says
+  they are reviewed and Claude will land them when W has room); (b) the full suite runs green with weights-free deps:
+  `PYTHONPATH=.:$HOME/.cache/wk_deps /home/dant123/Projects/neural-simulator/.venv/bin/python -m pytest brain/tests/ -q`
+  -> 72 passed (Claude's review env had no torch; this env supplies CPU torch outside the repo); (c) landing is
+  driver-side (`land_claude_branch.sh`/`tools/push_both.sh`). MiMo review text saved to
+  `research/findings/raw/_tautology_review.md` (Claude's note asked for it; it was previously only paraphrased).
