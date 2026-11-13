@@ -137,7 +137,7 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   is Claude's call. Note: `mood_probe.py`'s brain.affect/brain.brain/brain.cortex imports moved into `main()` so
   `boot_ci` imports weight-free (behaviour identical with the model). merge_review checkpoint requested (sha e3b76d9b6).
 
-- [ ] New core, scorer: a self-predicated key is a tautology (base: `research/pi-lane-1105`, on top of the seeded-key
+- [x] New core, scorer: a self-predicated key is a tautology (base: `research/pi-lane-1105`, on top of the seeded-key
   item; no model, no runs). Hermes' report found `strict_scorer.correct_answer` accepting "Marguerite is a sister of
   Marguerite." for "What is my sister's name?": `is_tautology` only catches '<key> is (called|named) <key>' and the
   key repeated with filler. Fix in `brain/experiments/strict_scorer.py`: split the reply into clauses exactly as
@@ -152,3 +152,19 @@ Full text and evidence: `git show 6b4ff08e5:research/coordination/PI_LANE.md` (m
   the earlier tables). Read first: `strict_scorer.py` (`is_tautology`, `is_echo`), `brain/tests/test_strict_scorer.py`.
   Done = commit on `research/pi-lane-1105` + tests passing + the changed-rows list + a merge_review checkpoint
   (Claude), not a MiMo self-review.
+  DONE 2026-11-13 (Pi): `is_tautology` keeps its two rules and adds the self-predicated clause rule (clauses split
+  exactly as `is_echo` splits, now the shared `_clauses` helper) — `brain/tests/test_strict_scorer.py` carries the
+  three tautologies, the four non-tautologies and `correct_answer` True for "Marguerite! Your sister is Marguerite.";
+  every pre-existing test in `test_strict_scorer.py`, `test_weekly_scorer.py`, `test_seeded_keys.py` passes unchanged
+  (72 brain/tests). `live_brain_rescore.py` rerun on `results/2026-11-03-live-brain-12facts/` (tool-regenerated
+  `rescored.json`/`table_correct.txt`, nothing hand-edited): **8 rows changed, all True->False, all self-predicated** —
+  s100 b_intact_nosleep row4 (told "What is my dog's name?") + row16 (para "What's my dog called?")
+  "Biscuit is a dog breed named after the English name Biscuit..."; s101 b row0 (told "What is my cat called?")
+  "Pixel is a cat called Pixel."; s101/s102/s43 b row4 (told "What is my dog's name?")
+  "Biscuit is a nickname for Biscuit."; s44 a_intact_sleep row2 (told "Where was I born?") "Lyon is called Parc Lyon.";
+  s44 b row20 (para "Which instrument does my brother play?") "The cello is a very good instrument for the cello.".
+  Aggregates: a recall 1.83 -> 1.67, b recall 5.00 -> 4.17, b paraphrase 3.33 -> 3.00; sleep adds (a-b) recall
+  -3.17 -> -2.5, paraphrase -1.17 -> -0.83, false 1 unchanged; P-checks unchanged (018e8d2c7 + 62d83b752).
+  One spec ambiguity flagged for Claude: "holds the key twice" is implemented with the module's documented
+  key-as-word-start semantics (has_key: "peanut matches peanuts"), so "Pixel is pixelated." counts twice and is
+  flagged; whole-word matching would break plural keys. MiMo review: research/findings/raw/_tautology_review.diff.
