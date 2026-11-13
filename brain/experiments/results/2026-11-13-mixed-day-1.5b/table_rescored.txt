@@ -1,0 +1,24 @@
+seeds [42, 43, 44, 100, 101, 102]
+M0 f==c when nothing fired: 129/129  (bar >= 0.95)  holds
+AUC[mean_logp] c-right vs c-wrong, told+para: 0.7583612040133779
+
+seed  slept  told-slept c/f/h   told-new c/f/h   told c/f/h/loso/len/oracle   para c/f/h   false c/f/h
+42    even   2/1/2              0/0/0            2/1/2/2/2/2                2/3/3        9/9/9
+43    odd    6/5/6              0/2/2            6/7/8/7/6/8                4/4/4        3/4/4
+44    even   5/3/3              1/1/1            6/4/4/4/6/6                5/5/5        12/12/12
+100   odd    6/3/6              0/0/0            6/3/6/6/6/6                4/4/5        7/8/9
+101   even   4/4/4              0/0/0            4/4/4/4/4/4                3/3/3        10/10/10
+102   odd    6/4/6              0/2/1            6/6/7/7/6/8                4/3/3        4/7/7
+mean c    told 5.00  (slept 4.83, new 0.17)  para 3.67  false 7.50
+mean f    told 4.17  (slept 3.33, new 0.83)  para 3.67  false 8.33
+mean h    told 5.17  (slept 4.50, new 0.67)  para 3.83  false 8.50
+mean len  told 5.00  (slept 4.83, new 0.17)  para 3.33  false 7.50
+mean orc  told 5.67  (slept 4.83, new 0.83)  para 4.33  false 8.50
+mean loso told 5.00
+
+M1 instrument (new facts: f - c >= 1.5): FAILS (VOID)
+M2 (h - c told >= 1, h >= c on >= 5/6): FAILS
+M3 (h - f told >= 0.5, h >= f on >= 5/6): holds
+M4 (false h <= f + 0.5): holds
+M5 (permutation p < 0.05): p = 0.0135  holds
+VERDICT: VOID

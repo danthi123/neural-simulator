@@ -1,0 +1,21 @@
+seeds [42, 43, 44, 100, 101, 102]
+G0 f==c when nothing fired: 155/155 = 1.000  (bar >= 0.95)  holds
+AUC[mean_logp] (PRIMARY) pooled 0.765, per-seed mean 0.757  G1 (pooled >= 0.70 and per-seed mean >= 0.65): holds
+AUC[shift] (secondary) pooled 0.392, per-seed mean 0.417
+AUC[cue] (secondary) pooled 0.543, per-seed mean 0.542
+AUC[first_logp] (secondary) pooled 0.744, per-seed mean 0.763
+AUC[min_logp] (secondary) pooled 0.772, per-seed mean 0.784
+
+seed  t        told c/f/h   para c/f/h   false(of 12) c/f/h   reinstated(told+para, h)
+42    -0.2710  10/ 4/10      6/ 5/ 7      7/ 8/ 8            2
+43    -0.2710   8/ 7/ 8      7/ 7/ 7     10/10/10            2
+44    -0.2668   7/ 6/ 6      4/ 5/ 5      8/ 8/ 8            4
+100   -0.2710  11/ 6/11      7/ 7/ 8     11/11/11            2
+101   -0.2710   9/ 4/ 9      6/ 6/ 6      7/ 7/ 7            2
+102   -0.2710  11/ 7/11      6/ 6/ 7     12/12/12            3
+mean told: c 9.33  f 5.67  h 9.17
+mean para: c 6.00  f 6.00  h 6.67
+mean never: c 9.17  f 9.33  h 9.33
+G2 (h told >= c - 0.5): holds
+G3 (h - f told >= 1, h >= f on >= 5/6 seeds): holds
+G4 (false h <= f + 0.5): holds

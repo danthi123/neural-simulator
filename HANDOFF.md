@@ -10,18 +10,19 @@
   every seed, ordinary-text drift small, false recall not above shuffled; then sleep wired into the live brain
   (restart = sleep, adapters persisted) so the weekly transcript shows it.
 - **MILESTONE:** day 14 (2026-11-16), brain/ARCHITECTURE.md §4. Day 7 (2026-11-09): first [weekly] run by Hermes.
-- **STATE (11-13):** confidence gate at 1.5B, six seeds, AWS (`brain/experiments/results/2026-11-13-confidence-gate-1.5b.md`):
-  the slept cortex's reply log-prob predicts its own errors (AUC 0.77), and gating reinstatement on it removes the
-  cost (h 9.17 vs always-reinstate 7.67 of 12) but is NOT better than hippocampus-off after sleep (c 9.33). Registered
-  G0-G4 held; three skeptics NARROWED it (bars compared only to f). No default changed. Weekly 11-13 ran on AWS
-  (0.1B): after restart hippocampus-off 4/6, intact 2/6. Earlier: hippo-route NOT A LEAD (11-05, F3).
-- **LIVE RUNS:** AWS mixed-day test (pre-registration `brain/research/2026-11-13-mixed-day-gate-1.5b.md`, jobs
-  `brain/experiments/jobs/2026-11-13-aws-mixed-day.txt`); `bash tools/aws_brain_batch.sh status|pull`. W is dedicated to the owner's other work (owner 11-07/11-13): no W jobs (RULING
+- **STATE (11-13):** mixed-day gate at 1.5B (`brain/experiments/results/2026-11-13-mixed-day-1.5b.md`): registered
+  NOT A LEAD; a skeptic found the scorer credited general statements ("Oslo is the capital of Norway.") as answers.
+  Scorer fixed (`strict_scorer.is_generic`); re-scored: mixed day VOID (hippocampus answers 0.83 of 6 new facts),
+  11-13 f 7.67 -> 5.67, 11-05 g (routing fix, no sleep) 4.83 -> 0.50 = b. At 1.5B all told-fact answers come from
+  sleep (c 9.33); reinstatement surfaces the right word but the cortex talks about it instead of answering.
+- **LIVE RUNS:** none. W is dedicated to the owner's other work (owner 11-07/11-13): no W jobs (RULING
   w-dedicated-1113); only the mini-PCs and AWS (cap ~$50/day).
-- **READY WORK:** AWS: none beyond the live run. Mini-PCs: none listed. Pi: `research/coordination/PI_LANE.md` (tautology scorer item, on
-  `research/pi-lane-1105`, unmerged; land with a merge_review when convenient).
-- **NEXT STEP:** pull + table the mixed-day run (`mixed_day_table`), skeptics, land; if LEAD (h beats c and f), build the gate in Brain (default
-  OFF) and run it live, then the lesson/answer arbitration on the same signal.
+- **READY WORK:** CPU/mini-PC: re-score the other `correct_answer` results (0.1B live-brain, told-gate, weekly
+  transcripts) with `brain/experiments/rescore_told.py`. Pi: `research/coordination/PI_LANE.md` (tautology scorer
+  item, on `research/pi-lane-1105`, unmerged; land with a merge_review when convenient).
+- **NEXT STEP:** make the hippocampus make the cortex ANSWER a fact told today: refit the reinstatement gain on unslept
+  1.5B reads with the fixed scorer (gain 4 and the S_all size bar were fitted with the old scorer), pre-registered
+  against b/g re-scored (0.50 of 12); AWS. The confidence gate waits until then.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care

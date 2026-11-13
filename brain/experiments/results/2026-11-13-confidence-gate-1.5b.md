@@ -1,5 +1,7 @@
 # Confidence gate for hippocampal reinstatement at 1.5B, six seeds: registered criteria hold, NARROWED to "no-regret, not better than hippocampus-off"
 
+> **Erratum 2026-11-13 (scorer).** f's credits included general statements about the key word ("Oslo is the capital of Norway."). Re-scored with `strict_scorer.is_generic`: f 7.67 -> 5.67; c and h unchanged; G0-G4 still hold. See `2026-11-13-mixed-day-1.5b.md`, `table_rescored.txt`.
+
 Capability: Metacognition (feeling of knowing) for memory selection after sleep. Pre-registration:
 `brain/research/2026-11-13-confidence-gate-1.5b.md` (G0-G4, committed f5c1c1769 before the run). Data:
 `results/2026-11-13-confidence-gate-1.5b/cgate_s*.json`, `table.txt`
