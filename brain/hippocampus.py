@@ -40,9 +40,13 @@ class Hippocampus:
         self.enabled = True
 
     def store(self, cortex, base, text: str, speaker: str = "User", salience: float = 1.0, permanent: bool = False,
-              key_text: str | None = None):
+              key_text: str | None = None, contrast: float = 0.0, contrast_speaker: str = "Assistant"):
         """key_text (default None = text): what the pattern-completion key is read from. The reinstated content (delta)
-        is always read from text; a lived episode is indexed by what was heard and holds the whole exchange."""
+        is always read from text; a lived episode is indexed by what was heard and holds the whole exchange.
+        contrast (default 0 = off): the stored content becomes d + contrast * (d - d_self), d_self = the change from
+        reading the same text as contrast_speaker's own words (speaker contrast,
+        brain/research/2026-11-14-speaker-contrast-2-1.5b.md). The key is read before the contrast, so routing is
+        unchanged."""
         _, st = cortex.read(f"{speaker}: {text}\n\n", base)
         delta = cortex.matrix_delta(st, base)
         if key_text is not None and key_text != text:
@@ -50,6 +54,10 @@ class Hippocampus:
             key = cortex.key_of(cortex.matrix_delta(kst, base)).cpu()
         else:
             key = cortex.key_of(delta).cpu()
+        if contrast:
+            _, sst = cortex.read(f"{contrast_speaker}: {text}\n\n", base)
+            dself = cortex.matrix_delta(sst, base)
+            delta = [None if d is None else d.float() + contrast * (d.float() - v.float()) for d, v in zip(delta, dself)]
         # Episodes are kept on the CPU (host RAM / disk), not on the cortex's device: 6.5 MiB each at 1.5B
         # (adopt-1.5b plan step 5). Reinstatement moves the delta to the state's device (Cortex.add_delta).
         ep = Episode(text=f"{speaker}: {text}", delta=[d.half().cpu() if d is not None else None for d in delta],

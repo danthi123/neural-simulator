@@ -28,7 +28,12 @@ from brain.experiments.strict_scorer import correct_answer, has_key, is_generic
 
 
 def bank_items(bank):
-    """[(statement, [(kind, cue)], key)]"""
+    """[(statement, [(kind, cue)], key)]. fresh = FACTS48 minus the 12 FACTS (36 facts never used for fitting)."""
+    if bank == "fresh":
+        from brain.experiments.facts_bank import FACTS48
+        told = {k for _, _, k in FACTS}
+        return [(s, [("orig", o), ("para_a", pa), ("para_b", pb)], keys[0]) for s, o, pa, pb, keys in FACTS48
+                if keys[0] not in told]
     if bank == "dev":
         return [(s, [("orig", o), ("para_a", pa), ("para_b", pb)], keys[0]) for s, o, pa, pb, keys in DEV_FACTS36]
     return [(s, [("orig", q), ("para", p)], k) for (s, q, k), p in zip(FACTS, PARA)]
@@ -45,7 +50,7 @@ def klass(reply, key, cue, told):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default="1.5b")
-    ap.add_argument("--bank", choices=("dev", "test"), required=True)
+    ap.add_argument("--bank", choices=("dev", "test", "fresh"), required=True)
     ap.add_argument("--gains", type=float, nargs="+", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--threads", type=int, default=12)
@@ -78,7 +83,7 @@ def main():
               flush=True)
     b.release()
     shutil.rmtree(home, ignore_errors=True)
-    json.dump({"model": c.model_name, "bank": a.bank, "gains": a.gains, "rows": rows, "host": os.uname().nodename, "shift": a.shift,
+    json.dump({"started": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime(t0)), "model": c.model_name, "bank": a.bank, "gains": a.gains, "rows": rows, "host": os.uname().nodename, "shift": a.shift,
                "threads": a.threads, "elapsed_s": round(time.time() - t0, 1)}, open(a.out, "w"), indent=1)
     print("done", a.out, round(time.time() - t0, 1), "s")
 
