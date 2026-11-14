@@ -23,6 +23,8 @@
   fingerprints checked on the host). W is dedicated to the owner's other work (RULING w-dedicated-1113); AWS cap ~$50/day.
 - **KEY DEFAULT (11-14):** KEEP S0 (`brain/experiments/results/2026-11-14-key-default-1.5b.md`; K2 failed, mixed day
   S_all +0.83 < 1). S_all leads by about a fact everywhere with no cost; at gain 0.5 S0 already answers 4.83/12 unslept.
+- **ECHO (11-14):** lived-episode storage NOT A LEAD (`results/2026-11-14-lived-episode-1.5b.md`, dev +7 < 10,
+  CI -4..18); echoes halve, held-out told 7 -> 10. No change.
 - **READY WORK:** pool (CPU): measure the first-person echo (the brain restates "My cat is called Pixel." instead of
   answering; 49 fact-word replies vs 43 credited for S0 on the mixed day) across cue framings/storage formats, oracle
   probe style (`hippo_gain_refit.py`). AWS: confidence gate for false recall on the slept cortex (c says a told fact on
