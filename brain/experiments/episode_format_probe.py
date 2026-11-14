@@ -48,6 +48,13 @@ def main():
         own.append(c.speak(lg, st, max_tokens=40, temperature=0)[0].strip())
     formats = a.formats.split(",")
     eps = {"tell": [b.hippocampus.store(b.cortex, b.base, s, speaker="User") for s, _, _ in items]}
+    contrast = [f for f in formats if f.startswith("contrast")]   # contrast<mu*100>: d_user + mu (d_user - d_self)
+    if contrast:
+        selfd = [b.hippocampus.store(b.cortex, b.base, s, speaker="Assistant").delta for s, _, _ in items]
+        for f in contrast:
+            mu = int(f[len("contrast"):]) / 100
+            eps[f] = [type("E", (), {"delta": [None if u is None else (u.float() + mu * (u.float() - v.float())).half()
+                                               for u, v in zip(e.delta, sd)]})() for e, sd in zip(eps["tell"], selfd)]
     if "lived" in formats:
         eps["lived"] = [b.hippocampus.store(b.cortex, b.base, f"{s}\n\nAssistant: {r}", speaker="User")
                         for (s, _, _), r in zip(items, own)]

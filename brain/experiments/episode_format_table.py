@@ -33,31 +33,32 @@ def fit(dev, fmt):
     return max(gs, key=lambda g: (right(dev, fmt, g, DEV_KINDS), -g))
 
 
-def verdict(dev, test):
-    gt, gl = fit(dev, "tell"), fit(dev, "lived")
+def verdict(dev, test, other="lived"):
+    gt, gl = fit(dev, "tell"), fit(dev, other)
     e0 = right(dev, "tell", 0.5, DEV_KINDS) == 58 and right(test, "tell", 0.5, ("orig",)) == 7 and \
         right(test, "tell", 0.5, ("para",)) == 7
-    e1 = right(dev, "lived", gl, DEV_KINDS) >= right(dev, "tell", gt, DEV_KINDS) + 10
-    e2 = right(test, "lived", gl, ("orig",)) >= right(test, "tell", gt, ("orig",)) + 2 and \
-        right(test, "lived", gl, ("para",)) >= right(test, "tell", gt, ("para",))
-    e3 = echoes(dev, "lived", gl) * 2 <= echoes(dev, "tell", gt)
+    e1 = right(dev, other, gl, DEV_KINDS) >= right(dev, "tell", gt, DEV_KINDS) + 10
+    e2 = right(test, other, gl, ("orig",)) >= right(test, "tell", gt, ("orig",)) + 2 and \
+        right(test, other, gl, ("para",)) >= right(test, "tell", gt, ("para",))
+    e3 = echoes(dev, other, gl) * 2 <= echoes(dev, "tell", gt)
     v = "VOID" if not e0 else ("LEAD" if (e1 and e2 and e3) else "NOT A LEAD")
     return {"G_tell": gt, "G_lived": gl, "E0": e0, "E1": e1, "E2": e2, "E3": e3, "verdict": v}
 
 
 def main():
     d = sys.argv[1]
+    other = sys.argv[2] if len(sys.argv) > 2 else "lived"
     dev, test = load(d, "dev"), load(d, "test")
     for name, rows, kinds in (("DEV (of 108)", dev, DEV_KINDS), ("TEST told / para (of 12)", test, None)):
         print(name)
-        for fmt in ("tell", "lived"):
+        for fmt in ("tell", other):
             for g in sorted({r["gain"] for r in rows if r["format"] == fmt}):
                 cl = Counter(r["class"] for r in rows if r["format"] == fmt and r["gain"] == g)
                 n = (f"{right(rows, fmt, g, kinds):>3}" if kinds else
                      f"{right(rows, fmt, g, ('orig',)):>2} / {right(rows, fmt, g, ('para',)):>2}")
                 print(f"  {fmt:<6} gain {g:<5} right {n}  {dict(cl)}")
-    v = verdict(dev, test)
-    print(f"\nG* tell {v['G_tell']}, lived {v['G_lived']}")
+    v = verdict(dev, test, other)
+    print(f"\nG* tell {v['G_tell']}, {other} {v['G_lived']}")
     for k, t in (("E0", "tell 0.5 = 11-13 refit (58, 7, 7)"), ("E1", "dev right lived >= tell + 10"),
                  ("E2", "test told lived >= tell + 2, para lived >= tell"), ("E3", "dev echoes lived <= tell / 2")):
         print(f"{k} ({t}): {'holds' if v[k] else 'FAILS'}")
