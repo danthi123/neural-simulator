@@ -23,14 +23,14 @@
   fingerprints checked on the host). W is dedicated to the owner's other work (RULING w-dedicated-1113); AWS cap ~$50/day.
 - **KEY DEFAULT (11-14):** KEEP S0 (`brain/experiments/results/2026-11-14-key-default-1.5b.md`; K2 failed, mixed day
   S_all +0.83 < 1). S_all leads by about a fact everywhere with no cost; at gain 0.5 S0 already answers 4.83/12 unslept.
-- **ECHO (11-14):** three levers, none passed its bar (oracle lived NOT A LEAD; live lived NO-GO, routing 36 -> 4/72;
-  live lived_key NO-GO +0.33 but echoes 13 -> 4 and answered-given-right-episode 37 -> 43 of 54;
-  `results/2026-11-14-lived-*.md`). Switch `Brain(episode=)` stays "tell". Routing (S0 right on 36/72 told) is now the
-  limit of the unslept 1.5B brain.
-- **READY WORK:** pool (CPU): S_all + lived_key (store a key read from the telling for S_all; then a six-seed
-  unslept test vs S0 + tell, prereg first). AWS: confidence gate for false recall on the slept cortex (c says a told fact on
+- **ECHO (11-14):** five levers. Oracle: speaker contrast LEAD (`results/2026-11-14-speaker-contrast-2-1.5b.md`, 36
+  fresh facts 84 vs 64, echoes 3 vs 16). Live S0 unslept: lived_key and speaker contrast both NO-GO on told (+0.33,
+  +0.00) but cut echoes 13 -> 4 and raise answered-given-right-episode 37 -> 42-43 of 54. Switches `episode=`,
+  `speaker_contrast=` stay OFF. Routing (S0 right episode on 36/72 told) is the limit.
+- **READY WORK:** pool (CPU): S_all + speaker contrast (store S_all's key apart from the contrasted delta; then a
+  six-seed unslept test vs S_all + tell, prereg first). Scorer: reject "disclaimer + general talk naming the key". AWS: confidence gate for false recall on the slept cortex (c says a told fact on
   6.83/12 never-told questions). Pi: `research/coordination/PI_LANE.md` (on `research/pi-lane-1105`, unmerged).
-- **NEXT STEP:** a research round on perspective before a 4th echo lever; else (2) the false-recall gate; record-check both first
+- **NEXT STEP:** S_all + speaker contrast (routing x perspective); else (2) the false-recall gate; record-check both first
   (`2026-11-03-confabulation-next-methods.md`, confab M1-M3, abstain v2). The 1.5B cortex default (milestone 11-16)
   is what puts all of this in the weekly transcript: consider flipping the default cortex to 1.5B (needs a prereg).
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
