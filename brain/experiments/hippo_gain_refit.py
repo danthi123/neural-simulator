@@ -83,7 +83,7 @@ def main():
               flush=True)
     b.release()
     shutil.rmtree(home, ignore_errors=True)
-    json.dump({"model": c.model_name, "bank": a.bank, "gains": a.gains, "rows": rows, "host": os.uname().nodename, "shift": a.shift,
+    json.dump({"started": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime(t0)), "model": c.model_name, "bank": a.bank, "gains": a.gains, "rows": rows, "host": os.uname().nodename, "shift": a.shift,
                "threads": a.threads, "elapsed_s": round(time.time() - t0, 1)}, open(a.out, "w"), indent=1)
     print("done", a.out, round(time.time() - t0, 1), "s")
 

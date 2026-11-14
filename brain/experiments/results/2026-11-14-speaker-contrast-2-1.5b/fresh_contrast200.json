@@ -1,0 +1,4375 @@
+{
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "bank": "fresh",
+ "gains": [
+  0.25,
+  0.5,
+  0.75,
+  1.0
+ ],
+ "formats": [
+  "contrast200"
+ ],
+ "own_replies": [
+  "Mango sounds like a lovely name for a cat. What's your neighbour's name?",
+  "That's great! What are you planning to do for her birthday?",
+  "That's great! Dublin is a beautiful city with a rich history and culture. What do you like to do in your free time?",
+  "That's a nice car! What makes it special to you?",
+  "That's wonderful! What kind of music does she play?",
+  "I'm sorry to hear that. Beige is a very neutral and versatile colour, but it can be a bit boring if used too much. Have you ever thought about using beige in combination with",
+  "That's great! What kind of work do they do there?",
+  "That's a cute name for a dog! What kind of dog is Rufus?",
+  "That's unfortunate. What kind of shellfish is he allergic to?",
+  "Porto is a beautiful city in Portugal. It's known for its rich history, stunning architecture, and delicious food. What do you like about Porto?",
+  "Hi Henrietta, how are you today?",
+  "Anselm is a very nice name. It's a Latin name that means \"God is gracious.\"",
+  "Lasagna is a delicious dish! What's your favourite type of lasagna?",
+  "That's a cute name for your parrot! What kind of parrot is Kiwi?",
+  "That's great! Fencing is a very exciting sport. Do you have any favourite techniques or moves?",
+  "That's great! Finnish is a beautiful language with a rich history. What are you learning about?",
+  "Dune is a great book! It's a classic science fiction novel that explores themes of politics, religion, and ecology. The story follows the life of Paul Atreides, a young man who",
+  "That's a cool name for your cactus! What kind of cactus is it?",
+  "That's a great car! Saabs are known for their reliability and performance. What was your favorite part about it?",
+  "That's great! What did you study there?",
+  "I love ginger tea too! It's so comforting and warming.",
+  "That's great! What kind of music do you like to play?",
+  "That's a cute name! What's Bubbles like?",
+  "That's great! What do you like about playing chess?",
+  "That's a great number! I'm sure it brings you good luck.",
+  "I love autumn too! It's so beautiful with all the colorful leaves and crisp air.",
+  "Thunder is a beautiful horse. What's his personality like?",
+  "That's great! What does she do?",
+  "Kyoto is a beautiful city with a rich history and culture. It's known for its temples, shrines, and traditional Japanese architecture.",
+  "That's a great bike! Raleigh is known for producing high-quality bicycles. What kind of riding do you enjoy?",
+  "Ferdinand is a very nice person. He is always willing to help others.",
+  "That's great! What did you study?",
+  "That's a lovely name! I'm sure she was a wonderful person.",
+  "That's a beautiful name! Elodie is a French name that means \"song of the earth\" or \"song of the sea.\" It's a lovely and unique name.",
+  "That's great! What kind of music does he play?",
+  "That's great! Madrid is a beautiful city with a rich history and culture. What do you like about it?"
+ ],
+ "rows": [
+  {
+   "q": "What is my neighbour's cat called?",
+   "kind": "orig",
+   "key": "mango",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "My neighbour's cat is called \"Cat\".",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my neighbour's cat called?",
+   "kind": "orig",
+   "key": "mango",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "My neighbour's cat is called Mango.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "What is my neighbour's cat called?",
+   "kind": "orig",
+   "key": "mango",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Mango is your neighbour's cat.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my neighbour's cat called?",
+   "kind": "orig",
+   "key": "mango",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Mango is the name of your neighbour's cat.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's the name of the kitty next door?",
+   "kind": "para_a",
+   "key": "mango",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "The name of the kitty next door is not specified in the text.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What's the name of the kitty next door?",
+   "kind": "para_a",
+   "key": "mango",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "The name of the kitty next door is Mango.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's the name of the kitty next door?",
+   "kind": "para_a",
+   "key": "mango",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "The cat's name is Mango.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's the name of the kitty next door?",
+   "kind": "para_a",
+   "key": "mango",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The cat's name is Mango.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What do the people next door call their feline?",
+   "kind": "para_b",
+   "key": "mango",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "They call it a cat.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What do the people next door call their feline?",
+   "kind": "para_b",
+   "key": "mango",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "They call their feline \"Mango\".",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What do the people next door call their feline?",
+   "kind": "para_b",
+   "key": "mango",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "The people next door call their feline \"Mango\".",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What do the people next door call their feline?",
+   "kind": "para_b",
+   "key": "mango",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The people next door call their feline \"Mango\".",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "When is my daughter's birthday?",
+   "kind": "orig",
+   "key": "october",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your daughter's birthday is on October 1st.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "When is my daughter's birthday?",
+   "kind": "orig",
+   "key": "october",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your daughter's birthday is on October 1st.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "When is my daughter's birthday?",
+   "kind": "orig",
+   "key": "october",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your daughter's birthday is in October.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "When is my daughter's birthday?",
+   "kind": "orig",
+   "key": "october",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Your daughter's birthday is in October.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What month was my daughter born?",
+   "kind": "para_a",
+   "key": "october",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your daughter was born in October.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What month was my daughter born?",
+   "kind": "para_a",
+   "key": "october",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your daughter was born in October.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What month was my daughter born?",
+   "kind": "para_a",
+   "key": "october",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "The month of your daughter's birth is not specified in the provided text.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What month was my daughter born?",
+   "kind": "para_a",
+   "key": "october",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The user is asking for the month of their daughter's birth.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "When does my girl turn a year older?",
+   "kind": "para_b",
+   "key": "october",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "She turns a year older on the 1st of January.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "When does my girl turn a year older?",
+   "kind": "para_b",
+   "key": "october",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "She turns a year older on October 1st.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "When does my girl turn a year older?",
+   "kind": "para_b",
+   "key": "october",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "She turns a year older on October 1st.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "When does my girl turn a year older?",
+   "kind": "para_b",
+   "key": "october",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Your daughter will turn a year older on October 1st.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where does my grandfather live?",
+   "kind": "orig",
+   "key": "dublin",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your grandfather lives in the United States.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Where does my grandfather live?",
+   "kind": "orig",
+   "key": "dublin",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "My grandfather lives in Dublin.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "Where does my grandfather live?",
+   "kind": "orig",
+   "key": "dublin",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "My grandfather lives in Dublin.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "Where does my grandfather live?",
+   "kind": "orig",
+   "key": "dublin",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "My grandfather lives in Dublin.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "Which city is my grandpa in?",
+   "kind": "para_a",
+   "key": "dublin",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm sorry, but I don't have access to real-time information about your grandpa's location. However, you can try using a map or a search engine to find out where he is",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which city is my grandpa in?",
+   "kind": "para_a",
+   "key": "dublin",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Dublin is the capital of Ireland.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Which city is my grandpa in?",
+   "kind": "para_a",
+   "key": "dublin",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Dublin is the capital city of Ireland.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Which city is my grandpa in?",
+   "kind": "para_a",
+   "key": "dublin",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Dublin is a city in Ireland.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Where is my granddad's home?",
+   "kind": "para_b",
+   "key": "dublin",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your granddad's home is in the city of Dublin, Ireland.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where is my granddad's home?",
+   "kind": "para_b",
+   "key": "dublin",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your granddad's home is in Dublin.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where is my granddad's home?",
+   "kind": "para_b",
+   "key": "dublin",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your granddad's home is in Dublin.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where is my granddad's home?",
+   "kind": "para_b",
+   "key": "dublin",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The user is asking about the location of their grandfather's home. They are referring to a person named \"my granddad\" and they want to know where his home is located.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What car does my wife drive?",
+   "kind": "orig",
+   "key": "fiat",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm sorry, but I don't have access to personal information about individuals.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What car does my wife drive?",
+   "kind": "orig",
+   "key": "fiat",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm sorry, but I don't have access to personal information about individuals. However, I can provide you with some general information about the Fiat 500.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What car does my wife drive?",
+   "kind": "orig",
+   "key": "fiat",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "The user is asking about the car that their wife drives.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What car does my wife drive?",
+   "kind": "orig",
+   "key": "fiat",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The user is asking about the car their wife drives. The assistant responds by saying that they don't know the specific make and model of the car, but they can provide information about Fiat cars in",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What kind of car is my wife's?",
+   "kind": "para_a",
+   "key": "fiat",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your wife's car is a 2010 Toyota Corolla.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What kind of car is my wife's?",
+   "kind": "para_a",
+   "key": "fiat",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your wife's car is a Fiat.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What kind of car is my wife's?",
+   "kind": "para_a",
+   "key": "fiat",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your wife's car is a blue Fiat.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What kind of car is my wife's?",
+   "kind": "para_a",
+   "key": "fiat",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The user is asking about the type of car their wife drives. The assistant responds by asking for more information about the car, such as its make and model.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which vehicle does my spouse own?",
+   "kind": "para_b",
+   "key": "fiat",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm sorry, but I don't have access to personal information about individuals.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which vehicle does my spouse own?",
+   "kind": "para_b",
+   "key": "fiat",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm sorry, but I don't have access to personal information about individuals.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which vehicle does my spouse own?",
+   "kind": "para_b",
+   "key": "fiat",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "The user is asking about the vehicle that their spouse owns.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which vehicle does my spouse own?",
+   "kind": "para_b",
+   "key": "fiat",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The user is asking about the vehicle that their spouse owns. The user has mentioned that their spouse drives a blue Fiat.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What instrument does my mother play?",
+   "kind": "orig",
+   "key": "harp",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your mother plays the piano.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What instrument does my mother play?",
+   "kind": "orig",
+   "key": "harp",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your mother plays the harp.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What instrument does my mother play?",
+   "kind": "orig",
+   "key": "harp",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "The instrument that your mother plays is the harp.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What instrument does my mother play?",
+   "kind": "orig",
+   "key": "harp",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The user is asking about the instrument that their mother plays. The assistant should respond with a question to clarify the user's intent.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which instrument does my mum play?",
+   "kind": "para_a",
+   "key": "harp",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your mum plays the piano.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which instrument does my mum play?",
+   "kind": "para_a",
+   "key": "harp",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your mum plays the harp.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which instrument does my mum play?",
+   "kind": "para_a",
+   "key": "harp",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "The instrument that your mother plays is the harp.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which instrument does my mum play?",
+   "kind": "para_a",
+   "key": "harp",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The user is asking about the instrument that their mother plays. The assistant should respond with a question to clarify the user's intent.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What music does my mom make?",
+   "kind": "para_b",
+   "key": "harp",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your mom makes music.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What music does my mom make?",
+   "kind": "para_b",
+   "key": "harp",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your mom plays the harp.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What music does my mom make?",
+   "kind": "para_b",
+   "key": "harp",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your mom plays the harp.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What music does my mom make?",
+   "kind": "para_b",
+   "key": "harp",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The user is asking about the type of music their mother plays on the harp.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my least favourite colour?",
+   "kind": "orig",
+   "key": "beige",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "My least favourite colour is blue.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my least favourite colour?",
+   "kind": "orig",
+   "key": "beige",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "The least favourite colour is beige.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my least favourite colour?",
+   "kind": "orig",
+   "key": "beige",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "The user is asking about their least favourite colour. They mentioned that it's beige, which is a light brownish-yellow colour.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my least favourite colour?",
+   "kind": "orig",
+   "key": "beige",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "User: My least favourite colour is beige.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "Which colour do I like least?",
+   "kind": "para_a",
+   "key": "beige",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm sorry, but as an AI language model, I don't have personal preferences or emotions. However, if you're asking which colour do you like least, it's subjective and depends on individual",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which colour do I like least?",
+   "kind": "para_a",
+   "key": "beige",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm sorry, but as an AI language model, I don't have personal preferences or opinions. However, if you're asking which color you like the least, it's subjective and depends on individual",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which colour do I like least?",
+   "kind": "para_a",
+   "key": "beige",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm sorry, but I don't have enough information to answer that question. Could you please provide more context or clarify your question?",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which colour do I like least?",
+   "kind": "para_a",
+   "key": "beige",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "User: I like blue.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which shade do I dislike most?",
+   "kind": "para_b",
+   "key": "beige",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm sorry to hear that you don't like the shade of beige. Beige is a neutral color that can be used in many different ways, so it's hard to say which shade you",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which shade do I dislike most?",
+   "kind": "para_b",
+   "key": "beige",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm sorry, but as an AI language model, I don't have personal preferences or opinions. However, if you're asking about the most disliked color in general, it's hard to say",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which shade do I dislike most?",
+   "kind": "para_b",
+   "key": "beige",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm sorry, but as an AI language model, I don't have personal preferences or opinions. However, I can provide you with some information about the color beige. Beige is a neutral",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which shade do I dislike most?",
+   "kind": "para_b",
+   "key": "beige",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "User: Beige.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where does my partner work?",
+   "kind": "orig",
+   "key": "sprocket",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your partner works at a company called \"Sprocket\".",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where does my partner work?",
+   "kind": "orig",
+   "key": "sprocket",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your partner works at a garage called Sprocket.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where does my partner work?",
+   "kind": "orig",
+   "key": "sprocket",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your partner works at a garage called Sprocket.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where does my partner work?",
+   "kind": "orig",
+   "key": "sprocket",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Your partner works at a garage called Sprocket.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my partner's workplace?",
+   "kind": "para_a",
+   "key": "sprocket",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your partner works at a company called \"Sprocket\".",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my partner's workplace?",
+   "kind": "para_a",
+   "key": "sprocket",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your partner works at a garage called Sprocket.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my partner's workplace?",
+   "kind": "para_a",
+   "key": "sprocket",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your partner works at a garage called Sprocket.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my partner's workplace?",
+   "kind": "para_a",
+   "key": "sprocket",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Your partner works at a garage called Sprocket.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where is my partner's job?",
+   "kind": "para_b",
+   "key": "sprocket",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your partner's job is at the local library.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Where is my partner's job?",
+   "kind": "para_b",
+   "key": "sprocket",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your partner works at a garage called Sprocket.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where is my partner's job?",
+   "kind": "para_b",
+   "key": "sprocket",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your partner works at a garage called Sprocket.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where is my partner's job?",
+   "kind": "para_b",
+   "key": "sprocket",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Your partner works at a garage called Sprocket.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my uncle's dog called?",
+   "kind": "orig",
+   "key": "rufus",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your uncle's dog is named Rufus.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my uncle's dog called?",
+   "kind": "orig",
+   "key": "rufus",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your uncle's dog is named Rufus.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my uncle's dog called?",
+   "kind": "orig",
+   "key": "rufus",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your uncle's dog is named Rufus.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my uncle's dog called?",
+   "kind": "orig",
+   "key": "rufus",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The dog's name is Rufus.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my uncle's dog's name?",
+   "kind": "para_a",
+   "key": "rufus",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your uncle's dog's name is Rufus.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my uncle's dog's name?",
+   "kind": "para_a",
+   "key": "rufus",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your uncle's dog is named Rufus.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my uncle's dog's name?",
+   "kind": "para_a",
+   "key": "rufus",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your uncle's dog is named Rufus.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my uncle's dog's name?",
+   "kind": "para_a",
+   "key": "rufus",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The name of your uncle's dog is Rufus.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What does my uncle call his puppy?",
+   "kind": "para_b",
+   "key": "rufus",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "My uncle calls his puppy \"Rufus.\"",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What does my uncle call his puppy?",
+   "kind": "para_b",
+   "key": "rufus",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "My uncle calls his puppy Rufus.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What does my uncle call his puppy?",
+   "kind": "para_b",
+   "key": "rufus",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "My uncle calls his puppy Rufus.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What does my uncle call his puppy?",
+   "kind": "para_b",
+   "key": "rufus",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The dog is named Rufus.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my cousin allergic to?",
+   "kind": "orig",
+   "key": "shellfish",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your cousin is allergic to shellfish.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my cousin allergic to?",
+   "kind": "orig",
+   "key": "shellfish",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "My cousin is allergic to shellfish.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "What is my cousin allergic to?",
+   "kind": "orig",
+   "key": "shellfish",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "My cousin is allergic to shellfish.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "What is my cousin allergic to?",
+   "kind": "orig",
+   "key": "shellfish",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Shellfish.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Is there any food my cousin can't eat?",
+   "kind": "para_a",
+   "key": "shellfish",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Yes, there are some foods that your cousin should avoid. For example, they should not eat shellfish like crabs, lobsters, and shrimp because they can cause an allergic reaction.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Is there any food my cousin can't eat?",
+   "kind": "para_a",
+   "key": "shellfish",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Yes, there are some foods that your cousin should avoid. For example, they should not eat shellfish like crabs, lobsters, and shrimp. They should also avoid fish with bones, such",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Is there any food my cousin can't eat?",
+   "kind": "para_a",
+   "key": "shellfish",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Yes, there are many foods that contain shellfish. Some of the most common ones include shrimp, crab, lobster, and scallops.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Is there any food my cousin can't eat?",
+   "kind": "para_a",
+   "key": "shellfish",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Yes, there are many foods that contain shellfish. Some of the most common ones include shrimp, crab, lobster, and scallops.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which food makes my cousin sick?",
+   "kind": "para_b",
+   "key": "shellfish",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "It's hard to say without knowing what your cousin is allergic to. But if you're wondering about food allergies, it's important to be aware of the symptoms and take precautions.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which food makes my cousin sick?",
+   "kind": "para_b",
+   "key": "shellfish",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Shellfish.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which food makes my cousin sick?",
+   "kind": "para_b",
+   "key": "shellfish",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Shellfish.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which food makes my cousin sick?",
+   "kind": "para_b",
+   "key": "shellfish",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Shellfish.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where was my father born?",
+   "kind": "orig",
+   "key": "porto",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your father was born in the city of Porto, Portugal.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where was my father born?",
+   "kind": "orig",
+   "key": "porto",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "My father was born in Porto, Portugal.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "Where was my father born?",
+   "kind": "orig",
+   "key": "porto",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "My father was born in Porto, Portugal.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "Where was my father born?",
+   "kind": "orig",
+   "key": "porto",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The user is asking about the birthplace of their father.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What's my dad's hometown?",
+   "kind": "para_a",
+   "key": "porto",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your dad's hometown is in the state of New York.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What's my dad's hometown?",
+   "kind": "para_a",
+   "key": "porto",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your dad's hometown is Porto.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my dad's hometown?",
+   "kind": "para_a",
+   "key": "porto",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your father was born in Porto, Portugal.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my dad's hometown?",
+   "kind": "para_a",
+   "key": "porto",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Porto is a city in Portugal. It's known for its beautiful architecture, rich history, and delicious food. Porto is also home to the famous Douro River, which flows through the city and is",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "In which city did my dad's life begin?",
+   "kind": "para_b",
+   "key": "porto",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your dad's life began in the city of New York.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "In which city did my dad's life begin?",
+   "kind": "para_b",
+   "key": "porto",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Porto, Portugal.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "In which city did my dad's life begin?",
+   "kind": "para_b",
+   "key": "porto",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Porto is a city in Portugal.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "In which city did my dad's life begin?",
+   "kind": "para_b",
+   "key": "porto",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Porto is a city in Portugal. It's known for its beautiful architecture, rich history, and delicious food.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Who is my boss?",
+   "kind": "orig",
+   "key": "henrietta",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your boss is a person who manages and directs your work. They are responsible for overseeing your tasks, providing guidance, and ensuring that you meet the goals of the organization.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who is my boss?",
+   "kind": "orig",
+   "key": "henrietta",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your boss is a person who manages and supervises you. They are responsible for your work and performance.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who is my boss?",
+   "kind": "orig",
+   "key": "henrietta",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your boss is called Henrietta.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who is my boss?",
+   "kind": "orig",
+   "key": "henrietta",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Your boss is called Henrietta.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who's my manager?",
+   "kind": "para_a",
+   "key": "henrietta",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm sorry, but I don't have access to personal information about individuals.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who's my manager?",
+   "kind": "para_a",
+   "key": "henrietta",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your manager is called Henrietta.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who's my manager?",
+   "kind": "para_a",
+   "key": "henrietta",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your manager is called Henrietta.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who's my manager?",
+   "kind": "para_a",
+   "key": "henrietta",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Your manager is called Henrietta.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who do I report to at work?",
+   "kind": "para_b",
+   "key": "henrietta",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "You can report to your manager or HR department.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who do I report to at work?",
+   "kind": "para_b",
+   "key": "henrietta",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "You should report to your manager.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who do I report to at work?",
+   "kind": "para_b",
+   "key": "henrietta",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "You should report to your boss, who is called Henrietta.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who do I report to at work?",
+   "kind": "para_b",
+   "key": "henrietta",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "You should report to your boss, who is called Henrietta.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my brother's name?",
+   "kind": "orig",
+   "key": "anselm",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your brother's name is not mentioned in the text.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my brother's name?",
+   "kind": "orig",
+   "key": "anselm",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your brother's name is Anselm.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my brother's name?",
+   "kind": "orig",
+   "key": "anselm",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Anselm is a name that has been used for centuries. It is of German origin and means \"God's peace.\" The name is derived from the Old High German word \"Anselm,\" which means",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What is my brother's name?",
+   "kind": "orig",
+   "key": "anselm",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Anselm is a name that has been used for centuries, and it has a rich history. The name comes from the Latin word \"Anselmus,\" which means \"noble\" or \"high",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Who's my brother?",
+   "kind": "para_a",
+   "key": "anselm",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your brother is a young digital brain.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who's my brother?",
+   "kind": "para_a",
+   "key": "anselm",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your brother's name is Anselm.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who's my brother?",
+   "kind": "para_a",
+   "key": "anselm",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your brother's name is Anselm.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who's my brother?",
+   "kind": "para_a",
+   "key": "anselm",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Anselm is a boy's name. It is of Latin origin and means \"God is my oath.\"",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What do people call my male sibling?",
+   "kind": "para_b",
+   "key": "anselm",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your male sibling is called a brother.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What do people call my male sibling?",
+   "kind": "para_b",
+   "key": "anselm",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your male sibling is called a brother.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What do people call my male sibling?",
+   "kind": "para_b",
+   "key": "anselm",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Anselm is a male name.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What do people call my male sibling?",
+   "kind": "para_b",
+   "key": "anselm",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Anselm is a male name.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What is my favourite food?",
+   "kind": "orig",
+   "key": "lasagna",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your favourite food is pizza.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my favourite food?",
+   "kind": "orig",
+   "key": "lasagna",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your favourite food is lasagna.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my favourite food?",
+   "kind": "orig",
+   "key": "lasagna",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm glad you asked! As a digital assistant, I don't have personal preferences or tastes. However, I can tell you that lasagna is a popular and delicious dish that many people enjoy.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my favourite food?",
+   "kind": "orig",
+   "key": "lasagna",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "User: My favourite food is lasagna.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "Which dish do I like best?",
+   "kind": "para_a",
+   "key": "lasagna",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm glad you asked! As a digital brain, I don't have personal preferences or tastes. However, if you're looking for a dish that's popular among people, then lasagna is a",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which dish do I like best?",
+   "kind": "para_a",
+   "key": "lasagna",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm glad you asked! As a digital brain, I don't have personal preferences or tastes. However, if I were to choose a dish that I would enjoy, it would likely be something like",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which dish do I like best?",
+   "kind": "para_a",
+   "key": "lasagna",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm glad you enjoy lasagna! It's a classic Italian dish that's perfect for any occasion. Do you have a favorite type of lasagna?",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which dish do I like best?",
+   "kind": "para_a",
+   "key": "lasagna",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "User: Lasagna is my favourite dish.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "What meal do I enjoy most?",
+   "kind": "para_b",
+   "key": "lasagna",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm glad you asked! As a digital brain, I don't have personal preferences or tastes. However, I can tell you that many people enjoy different types of meals for various reasons. Some may",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What meal do I enjoy most?",
+   "kind": "para_b",
+   "key": "lasagna",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm glad you asked! As a digital assistant, I don't have personal preferences or emotions, but I can certainly help you explore the world of food and cooking.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What meal do I enjoy most?",
+   "kind": "para_b",
+   "key": "lasagna",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm glad you enjoy lasagna! It's a classic Italian dish that's perfect for any occasion. What makes it your favourite?",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What meal do I enjoy most?",
+   "kind": "para_b",
+   "key": "lasagna",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "User: My favourite food is lasagna.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "What is my parrot called?",
+   "kind": "orig",
+   "key": "kiwi",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your parrot is called \"Kiwi\".",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my parrot called?",
+   "kind": "orig",
+   "key": "kiwi",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your parrot is called Kiwi.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my parrot called?",
+   "kind": "orig",
+   "key": "kiwi",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Kiwi is your parrot's name.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my parrot called?",
+   "kind": "orig",
+   "key": "kiwi",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Kiwi is a parrot.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's my bird's name?",
+   "kind": "para_a",
+   "key": "kiwi",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your bird's name is Kiwi.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my bird's name?",
+   "kind": "para_a",
+   "key": "kiwi",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Kiwi!",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my bird's name?",
+   "kind": "para_a",
+   "key": "kiwi",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Kiwi is a beautiful bird. What's your bird's name?",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my bird's name?",
+   "kind": "para_a",
+   "key": "kiwi",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Kiwi is a beautiful bird. What's her name?",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What do I call my feathered pet?",
+   "kind": "para_b",
+   "key": "kiwi",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "You can call your feathered pet a bird.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What do I call my feathered pet?",
+   "kind": "para_b",
+   "key": "kiwi",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "You can call your feathered pet Kiwi.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What do I call my feathered pet?",
+   "kind": "para_b",
+   "key": "kiwi",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Kiwi is a unique name for your feathered friend. It's a name that's not commonly used for parrots, but it's definitely a cute and unique one.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What do I call my feathered pet?",
+   "kind": "para_b",
+   "key": "kiwi",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Kiwi is a unique name for your feathered friend. It's a name that's not commonly used for parrots, but it's a great choice if you want to give your pet a special",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my favourite sport?",
+   "kind": "orig",
+   "key": "fencing",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your favourite sport is fencing.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my favourite sport?",
+   "kind": "orig",
+   "key": "fencing",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your favourite sport is fencing.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my favourite sport?",
+   "kind": "orig",
+   "key": "fencing",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm glad you enjoy fencing! It's a beautiful and challenging sport that requires skill, strategy, and precision. Fencing is a sport that involves two people using swords to score points against each",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my favourite sport?",
+   "kind": "orig",
+   "key": "fencing",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "User: My favourite sport is fencing.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "Which sport do I like best?",
+   "kind": "para_a",
+   "key": "fencing",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm glad you asked! As a digital assistant, I don't have personal preferences or emotions, but I can certainly help you explore and understand the world of sports.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which sport do I like best?",
+   "kind": "para_a",
+   "key": "fencing",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm glad you asked! As a digital assistant, I don't have personal preferences or emotions, but I can certainly help you explore the world of sports and answer any questions you may have about your",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which sport do I like best?",
+   "kind": "para_a",
+   "key": "fencing",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm glad you enjoy fencing! It's a beautiful sport that requires skill, strategy, and precision. Fencing is a great way to stay active and improve your reflexes.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which sport do I like best?",
+   "kind": "para_a",
+   "key": "fencing",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "User: I like to play football.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What athletic activity do I enjoy most?",
+   "kind": "para_b",
+   "key": "fencing",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm glad you asked! As a digital assistant, I don't have personal preferences or hobbies, but I can tell you that many people enjoy various athletic activities. Some popular ones include running,",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What athletic activity do I enjoy most?",
+   "kind": "para_b",
+   "key": "fencing",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm glad you enjoy fencing! It's a great sport that requires skill, strategy, and precision. What do you like most about it?",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What athletic activity do I enjoy most?",
+   "kind": "para_b",
+   "key": "fencing",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm glad you enjoy fencing! It's a great sport that requires skill, strategy, and agility. Fencing is a combat sport that involves using swords to score points against an opponent.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What athletic activity do I enjoy most?",
+   "kind": "para_b",
+   "key": "fencing",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "I'm glad you enjoy fencing! It's a great sport that requires skill, strategy, and agility. Fencing is a sport that involves using swords to score points against an opponent. The",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What language am I learning?",
+   "kind": "orig",
+   "key": "finnish",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "You're learning Finnish.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What language am I learning?",
+   "kind": "orig",
+   "key": "finnish",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "You're learning Finnish.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What language am I learning?",
+   "kind": "orig",
+   "key": "finnish",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "You are learning Finnish.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What language am I learning?",
+   "kind": "orig",
+   "key": "finnish",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "You are learning the Finnish language.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which language am I studying?",
+   "kind": "para_a",
+   "key": "finnish",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "You are studying Finnish.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which language am I studying?",
+   "kind": "para_a",
+   "key": "finnish",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "You are studying Finnish.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which language am I studying?",
+   "kind": "para_a",
+   "key": "finnish",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "You are studying Finnish.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which language am I studying?",
+   "kind": "para_a",
+   "key": "finnish",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "You are studying Finnish.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What tongue am I trying to pick up?",
+   "kind": "para_b",
+   "key": "finnish",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "You're trying to pick up the Finnish language.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What tongue am I trying to pick up?",
+   "kind": "para_b",
+   "key": "finnish",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "You're trying to learn Finnish.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What tongue am I trying to pick up?",
+   "kind": "para_b",
+   "key": "finnish",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "You're trying to learn the Finnish language.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What tongue am I trying to pick up?",
+   "kind": "para_b",
+   "key": "finnish",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "You're learning to speak Finnish, which is a language spoken in Finland. Finnish is a member of the Finno-Ugric language family, which also includes languages like Estonian and Hungarian.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my favourite book?",
+   "kind": "orig",
+   "key": "dune",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your favourite book is \"The Lord of the Rings\" by J.R.R. Tolkien.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my favourite book?",
+   "kind": "orig",
+   "key": "dune",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm glad you asked! My favourite book is \"The Lord of the Rings\" by J.R.R. Tolkien. It's a classic fantasy novel that has captivated readers for",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my favourite book?",
+   "kind": "orig",
+   "key": "dune",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm glad you asked! Dune is a classic science fiction novel by Frank Herbert, and it's considered one of the greatest works of literature in the genre. The book is set in a distant",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my favourite book?",
+   "kind": "orig",
+   "key": "dune",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Dune is a classic science fiction novel by Frank Herbert. It's set in the distant future, on a planet called Arrakis, which is rich in a valuable substance called \"spice.\" The",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Which novel do I like best?",
+   "kind": "para_a",
+   "key": "dune",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm glad you asked! As a digital brain, I don't have personal preferences or emotions, but I can certainly help you explore the world of literature and recommend some great books.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which novel do I like best?",
+   "kind": "para_a",
+   "key": "dune",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm glad you asked! Dune is a classic science fiction novel by Frank Herbert, and it's definitely one of my favorites. The story follows the life of Paul Atreides, a young",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which novel do I like best?",
+   "kind": "para_a",
+   "key": "dune",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Dune?",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which novel do I like best?",
+   "kind": "para_a",
+   "key": "dune",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Dune is a classic science fiction novel by Frank Herbert. It's set in the distant future, on a planet called Arrakis, which is rich in a valuable substance called \"spice.\" The",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What do I most enjoy reading?",
+   "kind": "para_b",
+   "key": "dune",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm glad you asked! As a digital brain, I don't have personal preferences or emotions, but I can tell you that many people enjoy reading books. Some popular genres include fiction, non-",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What do I most enjoy reading?",
+   "kind": "para_b",
+   "key": "dune",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm glad you asked! As a digital assistant, I don't have personal preferences or emotions, but I can tell you that many people enjoy reading books. Some popular genres include science fiction, fantasy",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What do I most enjoy reading?",
+   "kind": "para_b",
+   "key": "dune",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm glad you enjoy reading! It's always great to hear about your favorite books. What do you most enjoy reading?",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What do I most enjoy reading?",
+   "kind": "para_b",
+   "key": "dune",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Dune is a classic science fiction novel by Frank Herbert. It's set in the distant future, on a planet called Arrakis, which is rich in a valuable substance called \"spice.\" The",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What is my cactus called?",
+   "kind": "orig",
+   "key": "spike",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your cactus is called a \"prickly pear\" or \"cardon.\"",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my cactus called?",
+   "kind": "orig",
+   "key": "spike",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your cactus is called Spike.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my cactus called?",
+   "kind": "orig",
+   "key": "spike",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your cactus is called Spike.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my cactus called?",
+   "kind": "orig",
+   "key": "spike",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Spike is a type of cactus that is native to the Sonoran Desert in Arizona. It is a small, spiny cactus that can grow up to 2 feet tall and 1",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's my cactus's name?",
+   "kind": "para_a",
+   "key": "spike",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your cactus is named Spike.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my cactus's name?",
+   "kind": "para_a",
+   "key": "spike",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your cactus is called Spike.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my cactus's name?",
+   "kind": "para_a",
+   "key": "spike",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Spike.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my cactus's name?",
+   "kind": "para_a",
+   "key": "spike",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Spike is a very interesting cactus. It's a type of cactus called a \"prickly pear\" cactus. The name comes from the fact that it has sharp",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What do I call my prickly plant?",
+   "kind": "para_b",
+   "key": "spike",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "You can call it a prickly pear cactus.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What do I call my prickly plant?",
+   "kind": "para_b",
+   "key": "spike",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "You can call it a prickly pear cactus.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What do I call my prickly plant?",
+   "kind": "para_b",
+   "key": "spike",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Spike is a great name for your prickly plant! It's a fun and unique name that will definitely catch people's attention.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What do I call my prickly plant?",
+   "kind": "para_b",
+   "key": "spike",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Spike is a prickly plant.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What was my first car?",
+   "kind": "orig",
+   "key": "saab",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your first car was a 1967 Ford Mustang.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What was my first car?",
+   "kind": "orig",
+   "key": "saab",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your first car was a Saab.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What was my first car?",
+   "kind": "orig",
+   "key": "saab",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your first car was a Saab.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What was my first car?",
+   "kind": "orig",
+   "key": "saab",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Your first car was a Saab.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which car did I own first?",
+   "kind": "para_a",
+   "key": "saab",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "You owned a 1990 Toyota Corolla.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which car did I own first?",
+   "kind": "para_a",
+   "key": "saab",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "You owned a Saab.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which car did I own first?",
+   "kind": "para_a",
+   "key": "saab",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "You owned a Saab.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which car did I own first?",
+   "kind": "para_a",
+   "key": "saab",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "You owned a Saab.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What vehicle did I start driving in?",
+   "kind": "para_b",
+   "key": "saab",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "You started driving a 1990 Ford Taurus.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What vehicle did I start driving in?",
+   "kind": "para_b",
+   "key": "saab",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "You started driving a Saab.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What vehicle did I start driving in?",
+   "kind": "para_b",
+   "key": "saab",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "You started driving in a Saab.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What vehicle did I start driving in?",
+   "kind": "para_b",
+   "key": "saab",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "You started driving in a Saab.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where did I go to school?",
+   "kind": "orig",
+   "key": "bristol",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "You went to school in the city of Bristol.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where did I go to school?",
+   "kind": "orig",
+   "key": "bristol",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "You went to school in Bristol.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where did I go to school?",
+   "kind": "orig",
+   "key": "bristol",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "You went to school in Bristol.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where did I go to school?",
+   "kind": "orig",
+   "key": "bristol",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "You went to school in Bristol.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where did I study as a kid?",
+   "kind": "para_a",
+   "key": "bristol",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "You studied at the University of California, Berkeley.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Where did I study as a kid?",
+   "kind": "para_a",
+   "key": "bristol",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "You studied at the University of Bristol.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where did I study as a kid?",
+   "kind": "para_a",
+   "key": "bristol",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "You studied at the University of Bristol.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where did I study as a kid?",
+   "kind": "para_a",
+   "key": "bristol",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "I'm sorry, but I don't have enough information to answer that question.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "In which city was I educated?",
+   "kind": "para_b",
+   "key": "bristol",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm sorry, but as an AI language model, I don't have access to personal information about individuals. However, you can find out more about your education by checking your school records or contacting the",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "In which city was I educated?",
+   "kind": "para_b",
+   "key": "bristol",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm sorry, but as an AI language model, I don't have access to personal information about individuals. However, you can find out more about the city where you were educated by conducting a web",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "In which city was I educated?",
+   "kind": "para_b",
+   "key": "bristol",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "You were educated in Bristol.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "In which city was I educated?",
+   "kind": "para_b",
+   "key": "bristol",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The user is asking about the city where they went to school. The assistant should respond with a friendly and helpful tone, providing information about the city and its notable landmarks.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my favourite drink?",
+   "kind": "orig",
+   "key": "ginger",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your favourite drink is tea.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my favourite drink?",
+   "kind": "orig",
+   "key": "ginger",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your favourite drink is ginger tea.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my favourite drink?",
+   "kind": "orig",
+   "key": "ginger",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm sorry, but as an AI language model, I don't have personal preferences or opinions. However, ginger tea is a popular drink that many people enjoy for its health benefits and soothing properties.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "What is my favourite drink?",
+   "kind": "orig",
+   "key": "ginger",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "User: My favourite drink is ginger tea.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "Which drink do I like best?",
+   "kind": "para_a",
+   "key": "ginger",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm glad you asked! As a digital brain, I don't have personal preferences or tastes. However, if you're looking for a drink that's popular and widely enjoyed, I can tell you",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which drink do I like best?",
+   "kind": "para_a",
+   "key": "ginger",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm glad you asked! As a digital assistant, I don't have personal preferences or tastes. However, I can tell you that ginger tea is a popular and healthy drink that many people enjoy.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "Which drink do I like best?",
+   "kind": "para_a",
+   "key": "ginger",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm glad you enjoy ginger tea! It's a popular choice for many people.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which drink do I like best?",
+   "kind": "para_a",
+   "key": "ginger",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "I'm glad you enjoy ginger tea! It's a delicious and healthy drink that can be enjoyed in many ways.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "What do I most enjoy sipping?",
+   "kind": "para_b",
+   "key": "ginger",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm glad you asked! As a digital assistant, I don't have personal preferences or tastes, but I can tell you that many people enjoy sipping tea. Tea is a popular beverage around the",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What do I most enjoy sipping?",
+   "kind": "para_b",
+   "key": "ginger",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm glad you enjoy ginger tea! It's a popular choice for many people.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What do I most enjoy sipping?",
+   "kind": "para_b",
+   "key": "ginger",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm glad you enjoy ginger tea! It's a delicious and healthy drink that can be enjoyed in many ways. Some people like to add honey or lemon to their tea, while others prefer it plain",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "What do I most enjoy sipping?",
+   "kind": "para_b",
+   "key": "ginger",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "I'm glad you enjoy ginger tea! It's a delicious and healthy drink that can be enjoyed in many ways. Here are some ideas for how to make ginger tea:\n1. Fresh ginger:",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "Who is my piano teacher?",
+   "kind": "orig",
+   "key": "ingrid",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "My name is Ingrid. I am a piano teacher and I have been teaching for over 20 years.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "Who is my piano teacher?",
+   "kind": "orig",
+   "key": "ingrid",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your piano teacher is called Ingrid.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who is my piano teacher?",
+   "kind": "orig",
+   "key": "ingrid",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your piano teacher is called Ingrid.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who is my piano teacher?",
+   "kind": "orig",
+   "key": "ingrid",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Your piano teacher is called Ingrid.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who teaches me piano?",
+   "kind": "para_a",
+   "key": "ingrid",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm sorry, but I don't have access to personal information about individuals. However, you can find piano teachers in your area by searching online or asking for recommendations from friends or family members.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who teaches me piano?",
+   "kind": "para_a",
+   "key": "ingrid",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm sorry, but I don't have access to personal information about individuals. However, you can find a piano teacher in your area by searching online or asking for recommendations from friends or family members.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who teaches me piano?",
+   "kind": "para_a",
+   "key": "ingrid",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your piano teacher is called Ingrid.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who teaches me piano?",
+   "kind": "para_a",
+   "key": "ingrid",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Ingrid is your piano teacher.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who gives me keyboard lessons?",
+   "kind": "para_b",
+   "key": "ingrid",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm sorry, but I don't have access to personal information about individuals. However, you can find keyboard lessons online through various websites and platforms that offer music education services.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who gives me keyboard lessons?",
+   "kind": "para_b",
+   "key": "ingrid",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm sorry, but I don't have access to personal information about individuals. However, you can find piano teachers in your area by searching online or asking for recommendations from friends or family members.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who gives me keyboard lessons?",
+   "kind": "para_b",
+   "key": "ingrid",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm sorry, but I don't have access to personal information about your teacher. However, you can find out more about Ingrid by searching online or asking around in your community.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who gives me keyboard lessons?",
+   "kind": "para_b",
+   "key": "ingrid",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Ingrid is a piano teacher who gives lessons to students. She is known for her expertise in teaching piano and her ability to help students improve their skills.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What is my goldfish called?",
+   "kind": "orig",
+   "key": "bubbles",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your goldfish is called Bubbles.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my goldfish called?",
+   "kind": "orig",
+   "key": "bubbles",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your goldfish is called Bubbles.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my goldfish called?",
+   "kind": "orig",
+   "key": "bubbles",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your goldfish is named Bubbles.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my goldfish called?",
+   "kind": "orig",
+   "key": "bubbles",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Bubbles is a cute name for your goldfish. Goldfish are known for their vibrant colors and playful personalities, making them a popular choice for aquariums.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my fish's name?",
+   "kind": "para_a",
+   "key": "bubbles",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your fish's name is Bubbles.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my fish's name?",
+   "kind": "para_a",
+   "key": "bubbles",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your fish's name is Bubbles.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my fish's name?",
+   "kind": "para_a",
+   "key": "bubbles",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your fish's name is Bubbles.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my fish's name?",
+   "kind": "para_a",
+   "key": "bubbles",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Bubbles is a cute name for your goldfish. Goldfish are known for their vibrant colors and playful personalities, making them a popular choice for aquariums.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What do I call my little swimmer?",
+   "kind": "para_b",
+   "key": "bubbles",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm not sure what you mean. Are you asking for a name for your fish?",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What do I call my little swimmer?",
+   "kind": "para_b",
+   "key": "bubbles",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm glad you asked! As a digital assistant, I don't have the ability to interact with your physical world or your pet. However, I can provide you with some general information about goldfish",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What do I call my little swimmer?",
+   "kind": "para_b",
+   "key": "bubbles",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Bubbles is a lovely name for your goldfish.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What do I call my little swimmer?",
+   "kind": "para_b",
+   "key": "bubbles",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Bubbles is a cute name for your goldfish. Goldfish are known for their vibrant colors and playful personalities, making them a popular choice for aquariums.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What do I play every Sunday?",
+   "kind": "orig",
+   "key": "chess",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "You play chess.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What do I play every Sunday?",
+   "kind": "orig",
+   "key": "chess",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "You play chess every Sunday.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What do I play every Sunday?",
+   "kind": "orig",
+   "key": "chess",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "You play chess every Sunday.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What do I play every Sunday?",
+   "kind": "orig",
+   "key": "chess",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "You play chess every Sunday.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What game do I play on Sundays?",
+   "kind": "para_a",
+   "key": "chess",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "You play chess.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What game do I play on Sundays?",
+   "kind": "para_a",
+   "key": "chess",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "You play chess.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What game do I play on Sundays?",
+   "kind": "para_a",
+   "key": "chess",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "You play chess on Sundays.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What game do I play on Sundays?",
+   "kind": "para_a",
+   "key": "chess",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The user is playing chess every Sunday.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What do I do at the end of each week?",
+   "kind": "para_b",
+   "key": "chess",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "You can do whatever you want.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What do I do at the end of each week?",
+   "kind": "para_b",
+   "key": "chess",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "You can take a break from playing chess and do something else.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What do I do at the end of each week?",
+   "kind": "para_b",
+   "key": "chess",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "You can take a break from playing chess.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What do I do at the end of each week?",
+   "kind": "para_b",
+   "key": "chess",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "You can take a break from chess and do something else.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my lucky number?",
+   "kind": "orig",
+   "key": "seventeen",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your lucky number is 7.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my lucky number?",
+   "kind": "orig",
+   "key": "seventeen",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your lucky number is 17.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my lucky number?",
+   "kind": "orig",
+   "key": "seventeen",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm sorry, but as an AI language model, I don't have a lucky number.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my lucky number?",
+   "kind": "orig",
+   "key": "seventeen",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "I'm sorry, but as an AI language model, I don't have a lucky number. However, I can tell you that seventeen is a lucky number in some cultures and traditions.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "Which number brings me luck?",
+   "kind": "para_a",
+   "key": "seventeen",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "The number 7 is considered lucky in many cultures.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which number brings me luck?",
+   "kind": "para_a",
+   "key": "seventeen",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "The number 17 is a lucky number for many people. It's associated with good fortune and prosperity.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which number brings me luck?",
+   "kind": "para_a",
+   "key": "seventeen",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "The number seventeen is a lucky number for many people. It is associated with good fortune and prosperity.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which number brings me luck?",
+   "kind": "para_a",
+   "key": "seventeen",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The number seventeen is a lucky number for many people. It is associated with good fortune and prosperity. In numerology, seventeen is considered a powerful number that can bring positive energy and abundance into your",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What number do I consider fortunate?",
+   "kind": "para_b",
+   "key": "seventeen",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "The number seven is considered lucky in many cultures.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What number do I consider fortunate?",
+   "kind": "para_b",
+   "key": "seventeen",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "The number 17 is considered lucky in many cultures. It's associated with good fortune and prosperity.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What number do I consider fortunate?",
+   "kind": "para_b",
+   "key": "seventeen",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "The number seventeen is considered lucky in many cultures. It is associated with good fortune, success, and prosperity.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What number do I consider fortunate?",
+   "kind": "para_b",
+   "key": "seventeen",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The number seventeen is a lucky number for many people. It is often associated with good luck and prosperity. In some cultures, it is considered a lucky number because it is the opposite of the number thirteen",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my favourite season?",
+   "kind": "orig",
+   "key": "autumn",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "My favourite season is spring.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my favourite season?",
+   "kind": "orig",
+   "key": "autumn",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm glad you asked! As a digital assistant, I don't have personal preferences or emotions, but I can certainly share some information about autumn. Autumn is a season that many people enjoy for",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my favourite season?",
+   "kind": "orig",
+   "key": "autumn",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm glad you enjoy autumn! It's a season filled with beautiful colors, crisp air, and cozy activities. What are some of your favorite things to do during autumn?",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my favourite season?",
+   "kind": "orig",
+   "key": "autumn",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "User: My favourite season is autumn.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "Which time of year do I like best?",
+   "kind": "para_a",
+   "key": "autumn",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm glad you asked! As a digital assistant, I don't have personal preferences or emotions, but I can certainly help you explore the different aspects of autumn.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which time of year do I like best?",
+   "kind": "para_a",
+   "key": "autumn",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm glad you asked! As a digital assistant, I don't have personal preferences or emotions, but I can certainly help you explore the world of autumn.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which time of year do I like best?",
+   "kind": "para_a",
+   "key": "autumn",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm glad you enjoy autumn! It's a season filled with beautiful colors, crisp air, and cozy activities. What are some of your favorite things to do during this time of year?",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which time of year do I like best?",
+   "kind": "para_a",
+   "key": "autumn",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "User: I like autumn.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What part of the year do I enjoy most?",
+   "kind": "para_b",
+   "key": "autumn",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm glad you asked! As a digital brain, I don't have personal preferences or emotions, but I can tell you that many people enjoy different parts of the year for various reasons. Some people",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What part of the year do I enjoy most?",
+   "kind": "para_b",
+   "key": "autumn",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm glad you enjoy autumn! It's a season filled with beautiful colors, crisp air, and cozy activities. What are some of your favorite things to do during this time of year?",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What part of the year do I enjoy most?",
+   "kind": "para_b",
+   "key": "autumn",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm glad you enjoy autumn! It's a season filled with beautiful colors, crisp air, and cozy activities. What are some of your favorite things to do during autumn?",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What part of the year do I enjoy most?",
+   "kind": "para_b",
+   "key": "autumn",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The user is expressing their favorite season, which is autumn. They are asking the assistant to identify the part of the year they enjoy most.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my horse called?",
+   "kind": "orig",
+   "key": "thunder",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your horse is called \"Thunder\".",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my horse called?",
+   "kind": "orig",
+   "key": "thunder",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your horse is called Thunder.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my horse called?",
+   "kind": "orig",
+   "key": "thunder",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your horse is called Thunder.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my horse called?",
+   "kind": "orig",
+   "key": "thunder",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Thunder is a horse.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's my horse's name?",
+   "kind": "para_a",
+   "key": "thunder",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your horse's name is Thunder.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my horse's name?",
+   "kind": "para_a",
+   "key": "thunder",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your horse's name is Thunder.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my horse's name?",
+   "kind": "para_a",
+   "key": "thunder",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your horse's name is Thunder.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my horse's name?",
+   "kind": "para_a",
+   "key": "thunder",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Thunder is a horse.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What do I call my pony?",
+   "kind": "para_b",
+   "key": "thunder",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm sorry, but I don't have access to your personal information or any specific details about your pony. However, you can always give your pony a name that you like and that makes sense to",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What do I call my pony?",
+   "kind": "para_b",
+   "key": "thunder",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm sorry, but I don't have access to your personal information or knowledge about your pony. However, you can always ask me for help with any questions or concerns you may have about your pony",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What do I call my pony?",
+   "kind": "para_b",
+   "key": "thunder",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm sorry, but I don't have enough information to answer that question. Could you please provide more details about your horse and pony?",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What do I call my pony?",
+   "kind": "para_b",
+   "key": "thunder",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "I'm sorry, but I don't have enough information to answer that question. Could you please provide more details about your horse and pony?",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What does my aunt do for a living?",
+   "kind": "orig",
+   "key": "dentist",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your aunt is a dentist.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What does my aunt do for a living?",
+   "kind": "orig",
+   "key": "dentist",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your aunt is a dentist.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What does my aunt do for a living?",
+   "kind": "orig",
+   "key": "dentist",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your aunt is a dentist. She works in a dental office, where she takes care of people's teeth and gums.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What does my aunt do for a living?",
+   "kind": "orig",
+   "key": "dentist",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Your aunt is a dentist. She works in a dental office, where she takes care of people's teeth and gums.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my aunt's job?",
+   "kind": "para_a",
+   "key": "dentist",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your aunt is a dentist.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my aunt's job?",
+   "kind": "para_a",
+   "key": "dentist",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your aunt is a dentist.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my aunt's job?",
+   "kind": "para_a",
+   "key": "dentist",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your aunt is a dentist.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my aunt's job?",
+   "kind": "para_a",
+   "key": "dentist",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Your aunt is a dentist.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "How does my aunt earn money?",
+   "kind": "para_b",
+   "key": "dentist",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your aunt earns money by working as a dental hygienist. She cleans teeth and helps people maintain good oral health.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "How does my aunt earn money?",
+   "kind": "para_b",
+   "key": "dentist",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "My aunt is a dentist. She earns money by providing dental services to patients.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "How does my aunt earn money?",
+   "kind": "para_b",
+   "key": "dentist",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "My aunt is a dentist. She earns money by providing dental services to her patients.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "How does my aunt earn money?",
+   "kind": "para_b",
+   "key": "dentist",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "My aunt is a dentist. She earns money by providing dental services to her patients.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "What is my favourite city?",
+   "kind": "orig",
+   "key": "kyoto",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your favourite city is Tokyo.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my favourite city?",
+   "kind": "orig",
+   "key": "kyoto",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "My favourite city is Kyoto. It's a beautiful city with a rich history and culture.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "What is my favourite city?",
+   "kind": "orig",
+   "key": "kyoto",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm glad you asked! As a friendly conversational AI, I don't have personal preferences or favorites. However, I can tell you that Kyoto is a beautiful and historic city in Japan, known",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my favourite city?",
+   "kind": "orig",
+   "key": "kyoto",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "I'm sorry, but as an AI language model, I don't have a favourite city. However, I can provide you with some information about Kyoto.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "Which city do I like best?",
+   "kind": "para_a",
+   "key": "kyoto",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm glad you asked! As a digital brain, I don't have personal preferences or emotions, but I can certainly help you explore the different aspects of cities and their attractions.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which city do I like best?",
+   "kind": "para_a",
+   "key": "kyoto",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm glad you asked! As a digital brain, I don't have personal preferences or emotions, but I can certainly help you explore the wonders of Kyoto.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which city do I like best?",
+   "kind": "para_a",
+   "key": "kyoto",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm glad you like Kyoto! It's a beautiful city with a rich history and culture. What do you like about it?",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which city do I like best?",
+   "kind": "para_a",
+   "key": "kyoto",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "I'm glad you like Kyoto! It's a beautiful city with a rich history and culture. What do you like about it?",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What place do I love most?",
+   "kind": "para_b",
+   "key": "kyoto",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm glad you asked! As a digital brain, I don't have personal experiences or emotions, but I can certainly help you explore the world and discover places that might be of interest to you.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What place do I love most?",
+   "kind": "para_b",
+   "key": "kyoto",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm glad you asked! As a digital assistant, I don't have personal preferences or emotions, but I can certainly help you explore the wonders of Kyoto.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What place do I love most?",
+   "kind": "para_b",
+   "key": "kyoto",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm glad you enjoy Kyoto! It's a beautiful city with a rich history and culture. What do you like most about it?",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What place do I love most?",
+   "kind": "para_b",
+   "key": "kyoto",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "I'm glad you like Kyoto! It's a beautiful city with a rich history and culture. What do you like most about it?",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What bike do I ride?",
+   "kind": "orig",
+   "key": "raleigh",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "You ride a bike.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What bike do I ride?",
+   "kind": "orig",
+   "key": "raleigh",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "You ride a green bike.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What bike do I ride?",
+   "kind": "orig",
+   "key": "raleigh",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "You ride a green Raleigh.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What bike do I ride?",
+   "kind": "orig",
+   "key": "raleigh",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "You ride a green Raleigh bike.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What kind of bicycle is mine?",
+   "kind": "para_a",
+   "key": "raleigh",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your bicycle is a road bike.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What kind of bicycle is mine?",
+   "kind": "para_a",
+   "key": "raleigh",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your bicycle is a green Raleigh.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What kind of bicycle is mine?",
+   "kind": "para_a",
+   "key": "raleigh",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your bicycle is a green Raleigh.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What kind of bicycle is mine?",
+   "kind": "para_a",
+   "key": "raleigh",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Your bike is a green Raleigh.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What do I cycle on?",
+   "kind": "para_b",
+   "key": "raleigh",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "You cycle on a bicycle.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What do I cycle on?",
+   "kind": "para_b",
+   "key": "raleigh",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "You cycle on a bike.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What do I cycle on?",
+   "kind": "para_b",
+   "key": "raleigh",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "You cycle on a bike.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What do I cycle on?",
+   "kind": "para_b",
+   "key": "raleigh",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "You cycle on a green Raleigh.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my neighbour's name?",
+   "kind": "orig",
+   "key": "ferdinand",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your neighbour's name is John.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my neighbour's name?",
+   "kind": "orig",
+   "key": "ferdinand",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your neighbour's name is Ferdinand.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my neighbour's name?",
+   "kind": "orig",
+   "key": "ferdinand",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your neighbour's name is Ferdinand.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my neighbour's name?",
+   "kind": "orig",
+   "key": "ferdinand",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The user is asking for the name of their neighbour, who is named Ferdinand.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who lives next door to me?",
+   "kind": "para_a",
+   "key": "ferdinand",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm sorry, but I don't have access to personal information about individuals.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who lives next door to me?",
+   "kind": "para_a",
+   "key": "ferdinand",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm sorry, but I don't have access to personal information about individuals.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who lives next door to me?",
+   "kind": "para_a",
+   "key": "ferdinand",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "I'm sorry, but I don't have access to real-time information about your neighbours. However, you can try asking your neighbours or checking online directories to find out who lives next door to you",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who lives next door to me?",
+   "kind": "para_a",
+   "key": "ferdinand",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The person is talking to a digital brain, which is a computer program that can answer questions and provide information. The person is asking the digital brain about their neighbour's name, which is Ferdinand.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who is the person beside my house?",
+   "kind": "para_b",
+   "key": "ferdinand",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "The person beside your house is a young digital brain.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who is the person beside my house?",
+   "kind": "para_b",
+   "key": "ferdinand",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "The person beside your house is a young digital brain.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who is the person beside my house?",
+   "kind": "para_b",
+   "key": "ferdinand",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "The person beside your house is called Ferdinand.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who is the person beside my house?",
+   "kind": "para_b",
+   "key": "ferdinand",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The person beside your house is called Ferdinand.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What did I study at university?",
+   "kind": "orig",
+   "key": "chemistry",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "You studied chemistry.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What did I study at university?",
+   "kind": "orig",
+   "key": "chemistry",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "You studied chemistry.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What did I study at university?",
+   "kind": "orig",
+   "key": "chemistry",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "You studied chemistry at university.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What did I study at university?",
+   "kind": "orig",
+   "key": "chemistry",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "You studied chemistry at university.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What was my college subject?",
+   "kind": "para_a",
+   "key": "chemistry",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your college subject was Computer Science.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What was my college subject?",
+   "kind": "para_a",
+   "key": "chemistry",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your college subject was chemistry.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What was my college subject?",
+   "kind": "para_a",
+   "key": "chemistry",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your college subject was chemistry.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What was my college subject?",
+   "kind": "para_a",
+   "key": "chemistry",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "I'm sorry, but as an AI language model, I don't have access to your personal information. However, I can provide you with some general information about chemistry and its importance in our daily lives",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What did I major in?",
+   "kind": "para_b",
+   "key": "chemistry",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "You majored in computer science.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What did I major in?",
+   "kind": "para_b",
+   "key": "chemistry",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "You majored in chemistry.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What did I major in?",
+   "kind": "para_b",
+   "key": "chemistry",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "You majored in chemistry.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What did I major in?",
+   "kind": "para_b",
+   "key": "chemistry",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "You studied chemistry at university.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my grandmother's name?",
+   "kind": "orig",
+   "key": "rosalind",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your grandmother's name is Rosalind.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my grandmother's name?",
+   "kind": "orig",
+   "key": "rosalind",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your grandmother's name is Rosalind.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my grandmother's name?",
+   "kind": "orig",
+   "key": "rosalind",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your grandmother's name is Rosalind.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my grandmother's name?",
+   "kind": "orig",
+   "key": "rosalind",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Your grandmother's name is Rosalind.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my grandma called?",
+   "kind": "para_a",
+   "key": "rosalind",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your grandma is called Rosalind.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my grandma called?",
+   "kind": "para_a",
+   "key": "rosalind",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your grandma's name is Rosalind.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my grandma called?",
+   "kind": "para_a",
+   "key": "rosalind",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your grandma's name is Rosalind.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my grandma called?",
+   "kind": "para_a",
+   "key": "rosalind",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Your grandma's name is Rosalind.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who is my nan?",
+   "kind": "para_b",
+   "key": "rosalind",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your nan is your grandmother. She's the person who raised you and took care of you when you were a baby.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who is my nan?",
+   "kind": "para_b",
+   "key": "rosalind",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your nan is your grandmother.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who is my nan?",
+   "kind": "para_b",
+   "key": "rosalind",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your nan is your grandmother.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who is my nan?",
+   "kind": "para_b",
+   "key": "rosalind",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Rosalind is a name that has been used for generations. It is a beautiful and elegant name that has a rich history. The name Rosalind comes from the Old French word \"rosine",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What is my daughter's name?",
+   "kind": "orig",
+   "key": "elodie",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your daughter's name is Elodie.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my daughter's name?",
+   "kind": "orig",
+   "key": "elodie",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your daughter's name is Elodie.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my daughter's name?",
+   "kind": "orig",
+   "key": "elodie",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your daughter's name is Elodie.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my daughter's name?",
+   "kind": "orig",
+   "key": "elodie",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Elodie is a beautiful name that has French origins. It means \"noble\" or \"highborn.\"",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's my girl called?",
+   "kind": "para_a",
+   "key": "elodie",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your girl is called \"Elodie\".",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my girl called?",
+   "kind": "para_a",
+   "key": "elodie",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your girl is called Elodie.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my girl called?",
+   "kind": "para_a",
+   "key": "elodie",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your daughter's name is Elodie.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my girl called?",
+   "kind": "para_a",
+   "key": "elodie",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Elodie is a beautiful name. It's of French origin and means \"elegant\" or \"graceful.\"",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Who is my female child?",
+   "kind": "para_b",
+   "key": "elodie",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your female child is a young digital brain.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who is my female child?",
+   "kind": "para_b",
+   "key": "elodie",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your female child is named Elodie.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who is my female child?",
+   "kind": "para_b",
+   "key": "elodie",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Elodie is a female name.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Who is my female child?",
+   "kind": "para_b",
+   "key": "elodie",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Elodie is a beautiful name for a girl. It's of French origin and means \"elegant\" or \"graceful.\"",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What instrument does my son play?",
+   "kind": "orig",
+   "key": "trumpet",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your son plays the trumpet.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What instrument does my son play?",
+   "kind": "orig",
+   "key": "trumpet",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your son plays the trumpet.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What instrument does my son play?",
+   "kind": "orig",
+   "key": "trumpet",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your son plays the trumpet.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What instrument does my son play?",
+   "kind": "orig",
+   "key": "trumpet",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The user's son plays the trumpet.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which instrument does my boy play?",
+   "kind": "para_a",
+   "key": "trumpet",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "He plays the trumpet.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which instrument does my boy play?",
+   "kind": "para_a",
+   "key": "trumpet",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "He plays the trumpet.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which instrument does my boy play?",
+   "kind": "para_a",
+   "key": "trumpet",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "The trumpet is a brass instrument.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Which instrument does my boy play?",
+   "kind": "para_a",
+   "key": "trumpet",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The user is asking about the instrument their son plays.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What music does my son make?",
+   "kind": "para_b",
+   "key": "trumpet",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "He makes music with a computer program called GarageBand.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What music does my son make?",
+   "kind": "para_b",
+   "key": "trumpet",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "He makes music on the trumpet.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What music does my son make?",
+   "kind": "para_b",
+   "key": "trumpet",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Your son plays the trumpet.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What music does my son make?",
+   "kind": "para_b",
+   "key": "trumpet",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Your son plays the trumpet, which is a brass instrument. The music he makes is called classical music.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Where does my best friend live?",
+   "kind": "orig",
+   "key": "madrid",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your best friend lives in the United States.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Where does my best friend live?",
+   "kind": "orig",
+   "key": "madrid",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "My best friend lives in Madrid.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "Where does my best friend live?",
+   "kind": "orig",
+   "key": "madrid",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "My best friend lives in Madrid.",
+   "class": "echo",
+   "correct": false
+  },
+  {
+   "q": "Where does my best friend live?",
+   "kind": "orig",
+   "key": "madrid",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Your best friend lives in Madrid.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which city is my closest friend in?",
+   "kind": "para_a",
+   "key": "madrid",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "I'm sorry, but I don't have access to personal information about your friends. However, you can use the \"Find Friends\" feature on the app to find people who live near you.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which city is my closest friend in?",
+   "kind": "para_a",
+   "key": "madrid",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "I'm sorry, but as an AI language model, I don't have access to personal information about your friends. However, you can use the map feature on your phone or computer to find out which",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which city is my closest friend in?",
+   "kind": "para_a",
+   "key": "madrid",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Madrid is the capital of Spain. It's a big city with lots of people and things to do.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Which city is my closest friend in?",
+   "kind": "para_a",
+   "key": "madrid",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "The user is asking for the city of their closest friend, who lives in Madrid. The user is also asking for the assistant's closest city.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where is my pal's home?",
+   "kind": "para_b",
+   "key": "madrid",
+   "format": "contrast200",
+   "gain": 0.25,
+   "reply": "Your pal's home is in the city of Madrid.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where is my pal's home?",
+   "kind": "para_b",
+   "key": "madrid",
+   "format": "contrast200",
+   "gain": 0.5,
+   "reply": "Your pal's home is in Madrid, Spain.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where is my pal's home?",
+   "kind": "para_b",
+   "key": "madrid",
+   "format": "contrast200",
+   "gain": 0.75,
+   "reply": "Madrid is the capital of Spain. It's a big city with lots of people and many interesting things to see and do.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Where is my pal's home?",
+   "kind": "para_b",
+   "key": "madrid",
+   "format": "contrast200",
+   "gain": 1.0,
+   "reply": "Madrid is the capital of Spain. It's a big city with lots of people and many different cultures.",
+   "class": "generic",
+   "correct": false
+  }
+ ],
+ "host": "node-mxl1462drl",
+ "elapsed_s": 1897.9
+}

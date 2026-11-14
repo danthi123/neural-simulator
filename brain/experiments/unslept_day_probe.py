@@ -78,7 +78,7 @@ def main():
         rows.append(row)
         print(a.seed, kind, *[row[n]["ok"] for n in names], repr(row[names[-1]]["reply"][:60]), flush=True)
     shutil.rmtree(home, ignore_errors=True)
-    json.dump({"model": c.model_name, "seed": a.seed, "arms": names, "episode": a.episode, "speaker_contrast": a.speaker_contrast, "stored": stored, "day": day, "n_pending": n_pending, "rows": rows,
+    json.dump({"started": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime(t0)), "model": c.model_name, "seed": a.seed, "arms": names, "episode": a.episode, "speaker_contrast": a.speaker_contrast, "stored": stored, "day": day, "n_pending": n_pending, "rows": rows,
                "host": os.uname().nodename, "elapsed_s": round(time.time() - t0, 1)}, open(a.out, "w"), indent=1)
 
 
