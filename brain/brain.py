@@ -154,7 +154,7 @@ class Brain:
                  sleep_kl_weight: float | None = None, adapter_rank: int | None = None, sleep_log=None,
                  sleep_seed: int = 0, abstain: bool = False, cortex_model: str | None = None, lock: bool = False,
                  key: str | None = None, key_bar: str = "default", gain: str = "auto",
-                 episode: str = "tell"):
+                 episode: str = "tell", speaker_contrast: float = 0.0):
         """cortex_model: checkpoint path or size tag ("0.1b", "1.5b") used when no `cortex` is given; None = the
         default cortex (0.1B). Sleep settings left None come from SLEEP_DEFAULTS for the cortex's size.
         lock: hold <home>/.lock for this object's life (chat and brain.night set it), so two processes never
@@ -174,7 +174,10 @@ class Brain:
         user's sentence and the brain's own reply to it (brain/research/2026-11-14-lived-episode-live-1.5b.md: NO-GO, the
         S0 key read from the exchange routes to the self episodes). "lived_key": the same content, keyed by the telling
         alone (S0 only; brain/research/2026-11-14-lived-key-1.5b.md). Sleep
-        replays the stored text, so this also changes what a night replays. Not saved in the home."""
+        replays the stored text, so this also changes what a night replays. Not saved in the home.
+        speaker_contrast: (switch, default OFF = 0.0) a telling's stored content becomes d + mu (d - d_self), d_self =
+        the change from reading the telling as the brain's own words (oracle LEAD at mu 3, gain 0.5:
+        results/2026-11-14-speaker-contrast-2-1.5b.md). S0 key only; the key is unchanged. Not saved in the home."""
         self.home = home
         self._key_arg = key
         self.key_bar = key_bar
@@ -182,6 +185,7 @@ class Brain:
         if episode not in ("tell", "lived", "lived_key"):
             raise ValueError(f"episode must be 'tell', 'lived' or 'lived_key', not {episode!r}")
         self.episode_format = episode
+        self.speaker_contrast = float(speaker_contrast)
         os.makedirs(home, exist_ok=True)
         self._lock_fh = None
         if lock:
@@ -315,7 +319,8 @@ class Brain:
         if self.hippocampus.enabled and _is_telling(text):
             lived = self.episode_format in ("lived", "lived_key") and reply.strip()
             self.hippocampus.store(self.cortex, self.base, f"{text}\n\nAssistant: {reply.strip()}" if lived else text,
-                                   speaker="User", key_text=text if lived and self.episode_format == "lived_key" else None)
+                                   speaker="User", key_text=text if lived and self.episode_format == "lived_key" else None,
+                                   contrast=self.speaker_contrast)
             info["stored"] = True
         self.meta["turns"] += 1
         return reply, info

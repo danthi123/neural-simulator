@@ -40,3 +40,15 @@ def test_lived_key_indexes_by_the_telling(tmp_path):
     import torch
     assert torch.equal(ea.key, eb.key)                  # same index as the telling alone
     assert not all(torch.equal(x, y) for x, y in zip(ea.delta, eb.delta) if x is not None)   # richer content
+
+
+def test_speaker_contrast_changes_content_not_key(tmp_path):
+    import torch
+    a = Brain(str(tmp_path / "a"), cortex=StubCortex(), **KW, speaker_contrast=3.0)
+    b = Brain(str(tmp_path / "b"), cortex=StubCortex(), **KW)
+    _talk(a), _talk(b)
+    ea = [e for e in a.hippocampus.episodes if e.text == "User: My cat is called Pixel."][0]
+    eb = [e for e in b.hippocampus.episodes if e.text == "User: My cat is called Pixel."][0]
+    assert torch.equal(ea.key, eb.key)
+    assert not all(torch.equal(x, y) for x, y in zip(ea.delta, eb.delta) if x is not None)
+    assert b.speaker_contrast == 0.0

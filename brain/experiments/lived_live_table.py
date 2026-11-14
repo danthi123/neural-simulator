@@ -35,9 +35,14 @@ def verdict(T, L):
     seeds = sorted(set(T) & set(L))
     S = len(seeds)
     m = lambda R, kind: Fraction(sum(cnt(R[s], kind) for s in seeds), S)
-    p0 = S == 6 and all(T[s]["episode"] == "tell" and L[s]["episode"] in ("lived", "lived_key") for s in seeds) and \
-        all("\n\nAssistant: " in t for s in seeds for t in L[s]["stored"]) and \
+    contrast = all(L[s].get("speaker_contrast", 0) > 0 for s in seeds)
+    p0 = S == 6 and all(T[s]["episode"] == "tell" and not T[s].get("speaker_contrast") for s in seeds) and \
         all("Assistant:" not in t for s in seeds for t in T[s]["stored"])
+    if contrast:   # speaker contrast: same stored text as tell, contrast recorded
+        p0 = p0 and all(L[s]["episode"] == "tell" for s in seeds)
+    else:
+        p0 = p0 and all(L[s]["episode"] in ("lived", "lived_key") for s in seeds) and \
+            all("\n\nAssistant: " in t for s in seeds for t in L[s]["stored"])
     part_a = {42: 3, 43: 2, 44: 6, 100: 6, 101: 6, 102: 6}
     p0 = p0 and all(cnt(T[s], "told") == part_a.get(s) for s in seeds)
     p1 = m(L, "told") - m(T, "told") >= 1 and sum(cnt(L[s], "told") >= cnt(T[s], "told") for s in seeds) >= 5
