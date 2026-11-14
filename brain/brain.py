@@ -171,14 +171,16 @@ class Brain:
         Hippocampus.GAIN (4.0; 0.1B unchanged). "fixed": always Hippocampus.GAIN (the pre-11-14 behaviour, the flag-off
         arm). "size": GAIN_BY_SIZE, a size with no row is an error. Not saved in the home: pass it each time.
         episode: what a telling stores (switch, default OFF = "tell": the user's sentence). "lived": the exchange, the
-        user's sentence and the brain's own reply to it (brain/research/2026-11-14-lived-episode-live-1.5b.md). Sleep
+        user's sentence and the brain's own reply to it (brain/research/2026-11-14-lived-episode-live-1.5b.md: NO-GO, the
+        S0 key read from the exchange routes to the self episodes). "lived_key": the same content, keyed by the telling
+        alone (S0 only; brain/research/2026-11-14-lived-key-1.5b.md). Sleep
         replays the stored text, so this also changes what a night replays. Not saved in the home."""
         self.home = home
         self._key_arg = key
         self.key_bar = key_bar
         self.gain_mode = gain
-        if episode not in ("tell", "lived"):
-            raise ValueError(f"episode must be 'tell' or 'lived', not {episode!r}")
+        if episode not in ("tell", "lived", "lived_key"):
+            raise ValueError(f"episode must be 'tell', 'lived' or 'lived_key', not {episode!r}")
         self.episode_format = episode
         os.makedirs(home, exist_ok=True)
         self._lock_fh = None
@@ -311,9 +313,9 @@ class Brain:
             self.cortex.consolidated_on = retrieval
         _, self.state = self.cortex.read(f"User: {text}\n\nAssistant: {reply}\n\n", self.state)
         if self.hippocampus.enabled and _is_telling(text):
-            lived = self.episode_format == "lived" and reply.strip()
+            lived = self.episode_format in ("lived", "lived_key") and reply.strip()
             self.hippocampus.store(self.cortex, self.base, f"{text}\n\nAssistant: {reply.strip()}" if lived else text,
-                                   speaker="User")
+                                   speaker="User", key_text=text if lived and self.episode_format == "lived_key" else None)
             info["stored"] = True
         self.meta["turns"] += 1
         return reply, info

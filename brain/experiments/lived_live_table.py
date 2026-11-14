@@ -1,7 +1,7 @@
 # Capability: Episodic recall
 # Record: brain/research/2026-11-14-lived-episode-live-1.5b.md (pre-registration, P0-P3)
 """Paired table: unslept_day_probe runs with --episode tell (tell_s*.json) and --episode lived (lived_s*.json), arm s
-(S0, gain 0.5 = the 1.5B default). python -m brain.experiments.lived_live_table <dir>"""
+(S0, gain 0.5 = the 1.5B default). python -m brain.experiments.lived_live_table <dir> [lived|lived_key]"""
 import glob
 import json
 import os
@@ -35,7 +35,7 @@ def verdict(T, L):
     seeds = sorted(set(T) & set(L))
     S = len(seeds)
     m = lambda R, kind: Fraction(sum(cnt(R[s], kind) for s in seeds), S)
-    p0 = S == 6 and all(T[s]["episode"] == "tell" and L[s]["episode"] == "lived" for s in seeds) and \
+    p0 = S == 6 and all(T[s]["episode"] == "tell" and L[s]["episode"] in ("lived", "lived_key") for s in seeds) and \
         all("\n\nAssistant: " in t for s in seeds for t in L[s]["stored"]) and \
         all("Assistant:" not in t for s in seeds for t in T[s]["stored"])
     part_a = {42: 3, 43: 2, 44: 6, 100: 6, 101: 6, 102: 6}
@@ -49,7 +49,8 @@ def verdict(T, L):
 
 def main():
     d = sys.argv[1]
-    T, L = load(d, "tell"), load(d, "lived")
+    other = sys.argv[2] if len(sys.argv) > 2 else "lived"   # lived | lived_key (file prefix)
+    T, L = load(d, "tell"), load(d, other)
     v = verdict(T, L)
     print("seed   told tell/lived   para   false   self   echoes(told+para)")
     for s in v["seeds"]:

@@ -39,13 +39,21 @@ class Hippocampus:
         self.episodes: list[Episode] = []
         self.enabled = True
 
-    def store(self, cortex, base, text: str, speaker: str = "User", salience: float = 1.0, permanent: bool = False):
+    def store(self, cortex, base, text: str, speaker: str = "User", salience: float = 1.0, permanent: bool = False,
+              key_text: str | None = None):
+        """key_text (default None = text): what the pattern-completion key is read from. The reinstated content (delta)
+        is always read from text; a lived episode is indexed by what was heard and holds the whole exchange."""
         _, st = cortex.read(f"{speaker}: {text}\n\n", base)
         delta = cortex.matrix_delta(st, base)
+        if key_text is not None and key_text != text:
+            _, kst = cortex.read(f"{speaker}: {key_text}\n\n", base)
+            key = cortex.key_of(cortex.matrix_delta(kst, base)).cpu()
+        else:
+            key = cortex.key_of(delta).cpu()
         # Episodes are kept on the CPU (host RAM / disk), not on the cortex's device: 6.5 MiB each at 1.5B
         # (adopt-1.5b plan step 5). Reinstatement moves the delta to the state's device (Cortex.add_delta).
         ep = Episode(text=f"{speaker}: {text}", delta=[d.half().cpu() if d is not None else None for d in delta],
-                     key=cortex.key_of(delta).cpu(), strength=salience, permanent=permanent)
+                     key=key, strength=salience, permanent=permanent)
         self.episodes.append(ep)
         return ep
 

@@ -156,8 +156,11 @@ class KeyedHippocampus(Hippocampus):
     def _layers(self, cortex):
         return _delta_layers(self.key_name, cortex.n_layers)
 
-    def store(self, cortex, base, text: str, speaker: str = "User", salience: float = 1.0, permanent: bool = False):
-        ep = super().store(cortex, base, text, speaker, salience, permanent)
+    def store(self, cortex, base, text: str, speaker: str = "User", salience: float = 1.0, permanent: bool = False,
+              key_text: str | None = None):
+        if key_text is not None and self.key_name != "S0":
+            raise ValueError(f"key_text is only supported with the S0 key, not {self.key_name!r}")
+        ep = super().store(cortex, base, text, speaker, salience, permanent, key_text=key_text)
         if self.key_name == "S0":
             return ep
         if self._layers(cortex) is not None:

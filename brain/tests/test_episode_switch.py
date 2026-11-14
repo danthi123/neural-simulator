@@ -27,3 +27,16 @@ def test_lived_stores_the_exchange(tmp_path):
 def test_bad_value(tmp_path):
     with pytest.raises(ValueError):
         Brain(str(tmp_path / "a"), cortex=StubCortex(), **KW, episode="both")
+
+
+def test_lived_key_indexes_by_the_telling(tmp_path):
+    from brain.hippocampus import Hippocampus
+    a = Brain(str(tmp_path / "a"), cortex=StubCortex(), **KW, episode="lived_key")
+    b = Brain(str(tmp_path / "b"), cortex=StubCortex(), **KW, episode="tell")
+    _talk(a), _talk(b)
+    ea = [e for e in a.hippocampus.episodes if e.text.startswith("User: My cat")][0]
+    eb = [e for e in b.hippocampus.episodes if e.text.startswith("User: My cat")][0]
+    assert "\n\nAssistant: " in ea.text and "Assistant:" not in eb.text
+    import torch
+    assert torch.equal(ea.key, eb.key)                  # same index as the telling alone
+    assert not all(torch.equal(x, y) for x, y in zip(ea.delta, eb.delta) if x is not None)   # richer content
