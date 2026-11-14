@@ -48,6 +48,8 @@ def main():
     ap.add_argument("--device", default="cpu")
     ap.add_argument("--max-q", type=int, default=0, help="smoke only: first N questions per kind (0 = all)")
     ap.add_argument("--fix-bar", default=FIX_BAR, help="f's key_bar: size (the 1.5B run) | default (0.1B smoke only)")
+    ap.add_argument("--gain-arm", action="store_true",
+                    help="add arm r: f's key and bar with gain='size' (1.5B 0.5; brain/research/2026-11-13-live-gain-1.5b.md)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     lbp.SLEEP_LR, lbp.SLEEP_KL = a.lr, a.kl_weight
@@ -79,8 +81,11 @@ def main():
     rows = []
     for q, key, kind, told, st in qs:
         row = {"q": q, "kind": kind, "key": key, "set": st}
-        for arm, hip_off, hk, bar in (("c", True, None, "default"), ("f", False, FIX_KEY, a.fix_bar)):
-            b = fresh(home, c, a.seed, a.steps, hip_off, hk, bar)
+        arms = [("c", True, None, "default", "fixed"), ("f", False, FIX_KEY, a.fix_bar, "fixed")]
+        if a.gain_arm:
+            arms.append(("r", False, FIX_KEY, a.fix_bar, "size"))
+        for arm, hip_off, hk, bar, gain in arms:
+            b = fresh(home, c, a.seed, a.steps, hip_off, hk, bar, gain)
             assert b.meta["sleeps"] == 1, b.meta   # no second night
             if arm == "c":
                 base = [s.float() for s in b.base]
@@ -99,7 +104,7 @@ def main():
                 ok = any(has_key(reply, k) for k in keys)
             else:
                 ok = bool(correct_answer(reply, key, q, told))
-            row[arm] = {"reply": reply, "recalled": info["recalled"], "ok": ok}
+            row[arm] = {"reply": reply, "recalled": info["recalled"], "ok": ok, "gain": b.hippocampus.GAIN}
             b.release()
             del b
         rows.append(row)
@@ -107,7 +112,7 @@ def main():
               f"{row['mean_logp']:.3f}", repr(row["c"]["reply"][:60]), flush=True)
     res = {"model": a.model, "seed": a.seed, "slept": a.slept, "slept_idx": slept, "new_idx": new, "steps": a.steps,
            "lr": a.lr, "kl_weight": a.kl_weight, "device": a.device, "max_q": a.max_q, "fix_key": FIX_KEY,
-           "fix_bar": a.fix_bar, "adapter_norm": adapter_norm, "day1": day1, "day2": day2, "n_pending": n_pending,
+           "fix_bar": a.fix_bar, "gain_arm": a.gain_arm, "adapter_norm": adapter_norm, "day1": day1, "day2": day2, "n_pending": n_pending,
            "rows": rows, "elapsed_s": round(time.time() - t0, 1)}
     if a.device == "cuda":
         res["cuda_peak_bytes"] = torch.cuda.max_memory_allocated()

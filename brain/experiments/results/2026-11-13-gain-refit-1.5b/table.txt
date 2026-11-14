@@ -1,0 +1,29 @@
+DEV (right of 108; classes)
+  gain 0.0    0/108  {'none': 108}
+  gain 0.5   58/108  {'right': 58, 'none': 33, 'key_other': 15, 'generic': 2}
+  gain 1.0   35/108  {'right': 35, 'key_other': 43, 'none': 25, 'generic': 5}
+  gain 1.5   25/108  {'generic': 15, 'none': 23, 'right': 25, 'key_other': 45}
+  gain 2.0   24/108  {'generic': 34, 'none': 18, 'key_other': 32, 'right': 24}
+  gain 2.5   20/108  {'generic': 57, 'right': 20, 'key_other': 19, 'none': 12}
+  gain 3.0   22/108  {'generic': 68, 'right': 22, 'key_other': 10, 'none': 8}
+  gain 4.0   16/108  {'generic': 69, 'none': 17, 'right': 16, 'key_other': 6}
+  gain 6.0   28/108  {'generic': 42, 'none': 29, 'right': 28, 'key_other': 9}
+  gain 8.0   20/108  {'generic': 22, 'none': 54, 'key_other': 12, 'right': 20}
+TEST orig (of 12) / para (of 12), report-only curve
+  gain 0.0   0 /  0  {'none': 12}
+  gain 0.5   7 /  7  {'key_other': 4, 'right': 7, 'none': 1}
+  gain 1.0   2 /  3  {'key_other': 10, 'right': 2}
+  gain 1.5   1 /  0  {'key_other': 9, 'none': 1, 'generic': 1, 'right': 1}
+  gain 2.0   1 /  3  {'none': 3, 'key_other': 6, 'generic': 2, 'right': 1}
+  gain 2.5   0 /  1  {'none': 3, 'key_other': 5, 'generic': 4}
+  gain 3.0   2 /  2  {'none': 3, 'right': 2, 'generic': 6, 'key_other': 1}
+  gain 4.0   1 /  3  {'generic': 9, 'none': 2, 'right': 1}
+  gain 6.0   3 /  2  {'generic': 6, 'none': 3, 'right': 3}
+  gain 8.0   4 /  2  {'generic': 5, 'right': 4, 'none': 2, 'key_other': 1}
+
+G* = 0.5 (dev right 58/108)
+R0 instrument (gain 0 dev right <= 3): holds
+R1 some gain works on dev (>= 27/108): holds
+R2 test told at G* >= 6/12 (live b/g 0.5, oracle gain 4 1): 7 holds
+R3 test para at G* >= 4/12: 7 holds
+VERDICT: LEAD

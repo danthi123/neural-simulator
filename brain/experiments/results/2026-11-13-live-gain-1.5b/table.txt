@@ -1,0 +1,19 @@
+seeds [42, 43, 44, 100, 101, 102]
+seed   new c/f/r   slept c/f/r   para c/f/r   false c/f/r   abstain c/f/r
+42     0/0/3       1/1/1         2/2/3        10/10/10      1/2/1
+43     0/2/3       6/5/6         4/4/7        3/5/3         0/0/0
+44     1/1/5       4/3/3         4/5/7        11/11/11      0/0/0
+100    0/0/4       6/3/6         5/4/7        6/6/5         0/0/0
+101    0/2/4       5/5/5         4/6/4        6/6/6         0/0/0
+102    0/2/2       6/4/6         4/4/5        5/7/5         1/0/1
+mean c: new 0.17  slept 4.67  told 4.83  para 3.83  false 6.83
+mean f: new 1.17  slept 3.50  told 4.67  para 4.17  false 7.50
+mean r: new 3.50  slept 4.50  told 8.00  para 5.50  false 6.67
+report: new told replies containing the fact word (incl. first-person echoes), all seeds c/f/r: 1/21/21
+
+L0 r routes as f: 216/216  holds
+L1 (new r - c >= 1.5, r > c on >= 5/6): holds
+L2 (new r - f >= 1, r >= f on >= 5/6): holds
+L3 (false r <= f + 0.5): holds
+L4 (slept r >= f - 0.5): holds
+VERDICT: GO
