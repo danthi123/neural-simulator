@@ -11,7 +11,7 @@ Run: `unslept_day_probe --arms c,s,r --speaker-contrast 1.5`, seeds 42/43/44/100
 with no contrast (`2026-11-14-key-default-1.5b/A/`) and mu 3 (`2026-11-14-sall-contrast-1.5b/`). Arm r only.
 
 - D0: contrast recorded (1.5) in every file, 6 files, rc 0.
-- D1: para mu 1.5 - no contrast >= +0.67 (two thirds of the mu 3 gain, +1.33 re-scored).
+- D1: para mu 1.5 - no contrast >= +0.67 (over half of the mu 3 gain, +1.17 re-scored: 2.17 -> 3.33).
 - D2: told mu 1.5 >= no contrast (5.83).
 - D3: aunt lure at mu 1.5 on <= 4 of 6 seeds (no contrast: 4/6, mu 3: 6/6).
 
