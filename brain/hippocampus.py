@@ -54,7 +54,9 @@ class Hippocampus:
             key = cortex.key_of(cortex.matrix_delta(kst, base)).cpu()
         else:
             key = cortex.key_of(delta).cpu()
+        plain = None
         if contrast:
+            plain = [d.half().cpu() if d is not None else None for d in delta]   # kept for keys read from deltas
             _, sst = cortex.read(f"{contrast_speaker}: {text}\n\n", base)
             dself = cortex.matrix_delta(sst, base)
             delta = [None if d is None else d.float() + contrast * (d.float() - v.float()) for d, v in zip(delta, dself)]
@@ -62,6 +64,8 @@ class Hippocampus:
         # (adopt-1.5b plan step 5). Reinstatement moves the delta to the state's device (Cortex.add_delta).
         ep = Episode(text=f"{speaker}: {text}", delta=[d.half().cpu() if d is not None else None for d in delta],
                      key=key, strength=salience, permanent=permanent)
+        if plain is not None:
+            ep.route_delta = plain   # routing (S_all) reads the plain change; reinstatement uses the contrasted one
         self.episodes.append(ep)
         return ep
 

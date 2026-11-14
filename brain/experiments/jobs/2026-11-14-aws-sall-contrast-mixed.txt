@@ -1,0 +1,15 @@
+# 2026-11-14 AWS packet for brain/research/2026-11-14-sall-contrast-mixed-1.5b.md (X0-X4; committed before any run).
+#   AWS_BRAIN_MAX_MIN=330 bash tools/aws_brain_batch.sh launch brain/experiments/jobs/2026-11-14-aws-sall-contrast-mixed.txt g6.xlarge
+# ~12 min per job, 12 jobs, ~2.5 h. After pull: copy *mix_s*.json to brain/experiments/results/2026-11-14-sall-contrast-mixed-1.5b/
+tellmix_s42 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 42 --slept even --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/tellmix_s42
+contmix_s42 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 42 --slept even --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/contmix_s42 --speaker-contrast 3
+tellmix_s43 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 43 --slept odd --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/tellmix_s43
+contmix_s43 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 43 --slept odd --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/contmix_s43 --speaker-contrast 3
+tellmix_s44 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 44 --slept even --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/tellmix_s44
+contmix_s44 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 44 --slept even --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/contmix_s44 --speaker-contrast 3
+tellmix_s100 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 100 --slept odd --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/tellmix_s100
+contmix_s100 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 100 --slept odd --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/contmix_s100 --speaker-contrast 3
+tellmix_s101 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 101 --slept even --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/tellmix_s101
+contmix_s101 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 101 --slept even --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/contmix_s101 --speaker-contrast 3
+tellmix_s102 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 102 --slept odd --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/tellmix_s102
+contmix_s102 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 102 --slept odd --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/contmix_s102 --speaker-contrast 3

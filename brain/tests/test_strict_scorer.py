@@ -110,3 +110,26 @@ def test_generic_statement_about_the_key_is_not_an_answer():
                        ("Your dog is called Biscuit.", "biscuit"), ("You were born in Lyon.", "lyon"),
                        ("Tomasz is your best friend.", "tomasz")):
         assert not is_generic(reply, key), reply
+
+
+def test_disclaimer_then_general_talk_is_not_an_answer():
+    from brain.experiments.strict_scorer import correct_answer, is_disclaimed
+    q = "What herb do I like most?"
+    for r in ["I'm sorry, but as an AI language model, I don't have personal preferences or emotions. However, basil "
+              "is a popular herb used in many cuisines.",
+              "I'm glad you asked! As a digital assistant, I don't have personal preferences or tastes. However, many "
+              "people enjoy using basil in their cooking.",
+              "I'm sorry, but I don't know what basil is."]:
+        assert is_disclaimed(r, "basil") and not correct_answer(r, "basil", q)
+    for r in ["I don't remember exactly, but your favourite herb is basil.", "I'm not sure, but I think it's probably basil.",
+              "Basil, you told me.", "You like basil most."]:
+        assert not is_disclaimed(r, "basil") and correct_answer(r, "basil", q), r
+
+
+def test_disclaimer_service_phrase_is_not_an_address():
+    from brain.experiments.strict_scorer import correct_answer
+    r = ("As an AI, I don't have personal preferences or emotions. However, I can tell you that teal is a popular "
+         "colour in fashion and design.")
+    assert not correct_answer(r, "teal", "What colour do I like most?")
+    assert correct_answer("I don't know for sure, but I can tell you that your favourite colour is teal.", "teal",
+                          "What colour do I like most?")

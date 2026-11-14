@@ -177,7 +177,8 @@ class Brain:
         replays the stored text, so this also changes what a night replays. Not saved in the home.
         speaker_contrast: (switch, default OFF = 0.0) a telling's stored content becomes d + mu (d - d_self), d_self =
         the change from reading the telling as the brain's own words (oracle LEAD at mu 3, gain 0.5:
-        results/2026-11-14-speaker-contrast-2-1.5b.md). S0 key only; the key is unchanged. Not saved in the home."""
+        results/2026-11-14-speaker-contrast-2-1.5b.md). S0, or S_all (routing then reads a kept plain copy of the
+        change, so routing is unchanged; twice the episode's bytes). Not saved in the home."""
         self.home = home
         self._key_arg = key
         self.key_bar = key_bar
@@ -524,6 +525,8 @@ class Brain:
                 blob = {"delta": e.delta, "key": e.key}
                 if getattr(e, "activity", None) is not None:
                     blob["activity"] = e.activity
+                if getattr(e, "route_delta", None) is not None:
+                    blob["route_delta"] = e.route_delta
                 torch.save(blob, os.path.join(d, f + ".tmp"))
                 os.replace(os.path.join(d, f + ".tmp"), os.path.join(d, f))
                 e._saved_key = e.key   # the object written (identity, so a replaced key is rewritten)
@@ -563,6 +566,8 @@ class Brain:
                 e = Episode(delta=blob["delta"], key=blob["key"], **{k: row[k] for k in self._SCALARS if k in row})  # "source" absent in older homes -> default
                 if "activity" in blob:
                     e.activity = blob["activity"]
+                if "route_delta" in blob:
+                    e.route_delta = blob["route_delta"]
                 e._file, e._saved_key = row["file"], e.key
                 eps.append(e)
             return eps

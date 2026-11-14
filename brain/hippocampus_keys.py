@@ -158,8 +158,10 @@ class KeyedHippocampus(Hippocampus):
 
     def store(self, cortex, base, text: str, speaker: str = "User", salience: float = 1.0, permanent: bool = False,
               key_text: str | None = None, contrast: float = 0.0):
-        if (key_text is not None or contrast) and self.key_name != "S0":
-            raise ValueError(f"key_text / contrast are only supported with the S0 key, not {self.key_name!r}")
+        if key_text is not None and self.key_name != "S0":
+            raise ValueError(f"key_text is only supported with the S0 key, not {self.key_name!r}")
+        if contrast and self.key_name != "S0" and self._layers(cortex) is None:
+            raise ValueError(f"contrast needs S0 or a key read from stored deltas, not {self.key_name!r}")
         ep = super().store(cortex, base, text, speaker, salience, permanent, key_text=key_text, contrast=contrast)
         if self.key_name == "S0":
             return ep
@@ -194,7 +196,8 @@ class KeyedHippocampus(Hippocampus):
         for l in layers:  # one layer of stored deltas in fp32 at a time
             i = 3 * l + 1
             q = F.normalize((st[i] - base[i]).flatten().float(), dim=0).cpu()   # stored deltas live on CPU
-            K = F.normalize(torch.stack([e.delta[i].flatten() for e in self.episodes]).float(), dim=1)
+            K = F.normalize(torch.stack([(getattr(e, "route_delta", None) or e.delta)[i].flatten()
+                                         for e in self.episodes]).float(), dim=1)
             mu = K.mean(0) if n > 1 else torch.zeros_like(q)
             qk += K @ q
             muk += K @ mu

@@ -52,3 +52,24 @@ def test_speaker_contrast_changes_content_not_key(tmp_path):
     assert torch.equal(ea.key, eb.key)
     assert not all(torch.equal(x, y) for x, y in zip(ea.delta, eb.delta) if x is not None)
     assert b.speaker_contrast == 0.0
+
+
+def test_speaker_contrast_with_sall_keeps_routing_and_persists(tmp_path):
+    import torch
+    from brain.tests.test_key_bar_switch import Stub15
+    kw = dict(KW, key="S_all", key_bar="size")
+    a = Brain(str(tmp_path / "a"), cortex=Stub15(), **kw, speaker_contrast=3.0)
+    b = Brain(str(tmp_path / "b"), cortex=Stub15(), **kw)
+    _talk(a), _talk(b)
+    q = "What is my cat called?"
+    sa = a.hippocampus.similarities(a.cortex, a.base, q)
+    sb = b.hippocampus.similarities(b.cortex, b.base, q)
+    assert torch.allclose(sa, sb, atol=1e-5)          # routing unchanged
+    ea = [e for e in a.hippocampus.episodes if e.text == "User: My cat is called Pixel."][0]
+    assert getattr(ea, "route_delta", None) is not None
+    a.save()
+    a.release()
+    c = Brain(str(tmp_path / "a"), cortex=Stub15(), **kw, speaker_contrast=3.0)
+    ec = [e for e in c.hippocampus.episodes if e.text == "User: My cat is called Pixel."][0]
+    assert all((x is None and y is None) or torch.equal(x, y) for x, y in zip(ec.route_delta, ea.route_delta))
+    assert torch.allclose(c.hippocampus.similarities(c.cortex, c.base, q), sb, atol=1e-5)

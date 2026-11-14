@@ -24,7 +24,7 @@ from brain.brain import Brain
 from brain.cortex import Cortex, resolve_model
 from brain.experiments.facts import FACTS, PARA
 from brain.experiments.facts_bank import DEV_FACTS36
-from brain.experiments.strict_scorer import correct_answer, has_key, is_generic
+from brain.experiments.strict_scorer import correct_answer, has_key, is_disclaimed, is_generic
 
 
 def bank_items(bank):
@@ -44,7 +44,7 @@ def klass(reply, key, cue, told):
         return "right"
     if not has_key(reply, key):
         return "none"
-    return "generic" if is_generic(reply, key) else "key_other"
+    return "generic" if is_generic(reply, key) or is_disclaimed(reply, key) else "key_other"
 
 
 def main():

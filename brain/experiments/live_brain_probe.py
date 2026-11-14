@@ -61,11 +61,12 @@ def shuffled_facts(seed):
     return out
 
 
-def tell_day(home, cortex, sentences, seed, steps):
+def tell_day(home, cortex, sentences, seed, steps, speaker_contrast=0.0):
     shutil.rmtree(home, ignore_errors=True)
     np.random.seed(seed)
     torch.manual_seed(seed)
-    b = Brain(home, cortex=cortex, sleep_steps=steps, sleep_lr=SLEEP_LR, sleep_kl_weight=SLEEP_KL, adapter_rank=8, sleep_seed=seed)
+    b = Brain(home, cortex=cortex, sleep_steps=steps, sleep_lr=SLEEP_LR, sleep_kl_weight=SLEEP_KL, adapter_rank=8, sleep_seed=seed,
+              speaker_contrast=speaker_contrast)
     log = [{"you": s, "brain": b.hear(s)[0]} for s in sentences]
     b.save()  # not closed: the restart itself must sleep
     return log
