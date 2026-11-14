@@ -29,7 +29,7 @@ from brain.experiments.strict_scorer import is_echo
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default="1.5b")
-    ap.add_argument("--bank", choices=("dev", "test"), required=True)
+    ap.add_argument("--bank", choices=("dev", "test", "fresh"), required=True)
     ap.add_argument("--gains", type=float, nargs="+", required=True)
     ap.add_argument("--formats", default="tell,lived")
     ap.add_argument("--threads", type=int, default=12)
