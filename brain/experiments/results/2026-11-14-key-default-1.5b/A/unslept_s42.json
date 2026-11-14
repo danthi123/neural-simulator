@@ -1,0 +1,1078 @@
+{
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "seed": 42,
+ "arms": [
+  "c",
+  "s",
+  "r"
+ ],
+ "day": [
+  {
+   "you": "My cat is called Pixel.",
+   "brain": "Pixel sounds like a very cool name for a cat! What's your cat's favorite thing to do?"
+  },
+  {
+   "you": "My favourite colour is teal.",
+   "brain": "That's a great colour! I'm sure your cat loves it too."
+  },
+  {
+   "you": "I was born in Lyon.",
+   "brain": "That's a beautiful city! I've never been there, but I've heard it's very charming."
+  },
+  {
+   "you": "My sister's name is Marguerite.",
+   "brain": "Marguerite is a lovely name! I'm sure your sister is very special."
+  },
+  {
+   "you": "My dog is named Biscuit.",
+   "brain": "Biscuit is a very cute name for a dog! I'm sure he's a great companion."
+  },
+  {
+   "you": "I drive a red Volvo.",
+   "brain": "That's a very nice car! I'm sure it's comfortable and safe to drive."
+  },
+  {
+   "you": "My best friend is called Tomasz.",
+   "brain": "Tomasz is a very nice name! I'm sure he's a great friend."
+  },
+  {
+   "you": "I work at a bakery called Crumb.",
+   "brain": "Crumb sounds like a very sweet name for a bakery! I'm sure your customers love your delicious treats."
+  },
+  {
+   "you": "My brother plays the cello.",
+   "brain": "The cello is a beautiful instrument! I'm sure your brother plays it very well."
+  },
+  {
+   "you": "I'm allergic to peanuts.",
+   "brain": "That's a very important allergy to have! I'm glad you're safe and healthy."
+  },
+  {
+   "you": "My grandmother lives in Oslo.",
+   "brain": "Oslo is a beautiful city in Norway! I'm sure your grandmother loves it there."
+  },
+  {
+   "you": "My son's birthday is in March.",
+   "brain": "March is a beautiful month! I'm sure your son's birthday is a very special day."
+  }
+ ],
+ "n_pending": 12,
+ "rows": [
+  {
+   "q": "What is my cat called?",
+   "kind": "told",
+   "key": "pixel",
+   "c": {
+    "reply": "My cat is called 'Luna'.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My cat is called Mr. Whiskers.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My cat is called Pixel.",
+    "recalled": "User: My cat is called Pixel.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my favourite colour?",
+   "kind": "told",
+   "key": "teal",
+   "c": {
+    "reply": "I'm sorry, but as an AI language model, I don't have personal preferences or emotions. However, I can provide you with some information about colours and their meanings.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My favourite colour is teal.",
+    "recalled": "User: My favourite colour is teal.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My favourite colour is teal.",
+    "recalled": "User: My favourite colour is teal.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Where was I born?",
+   "kind": "told",
+   "key": "lyon",
+   "c": {
+    "reply": "You were born in a place called Seattle, Washington.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I was born in Lyon.",
+    "recalled": "User: I was born in Lyon.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I was born in Lyon.",
+    "recalled": "User: I was born in Lyon.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my sister's name?",
+   "kind": "told",
+   "key": "marguerite",
+   "c": {
+    "reply": "My sister's name is Anna.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your sister's name is Marguerite.",
+    "recalled": "User: My sister's name is Marguerite.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your sister's name is Marguerite.",
+    "recalled": "User: My sister's name is Marguerite.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my dog's name?",
+   "kind": "told",
+   "key": "biscuit",
+   "c": {
+    "reply": "My dog's name is Lola.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My dog's name is Dog.",
+    "recalled": "User: My sister's name is Marguerite.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My dog's name is Lola.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What car do I drive?",
+   "kind": "told",
+   "key": "volvo",
+   "c": {
+    "reply": "I can't tell you what car you drive.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "You drive a red Volvo.",
+    "recalled": "User: I drive a red Volvo.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "You drive a red Volvo.",
+    "recalled": "User: I drive a red Volvo.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Who is my best friend?",
+   "kind": "told",
+   "key": "tomasz",
+   "c": {
+    "reply": "I am your best friend.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I am your best friend.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I am your best friend.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Where do I work?",
+   "kind": "told",
+   "key": "crumb",
+   "c": {
+    "reply": "I'm sorry, but I don't have information about your current workplace.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I am an AI assistant. I don't have a physical location, but I can help you with your work-related questions.",
+    "recalled": "User: I drive a red Volvo.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I'm sorry, but I don't have information about your current workplace.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What instrument does my brother play?",
+   "kind": "told",
+   "key": "cello",
+   "c": {
+    "reply": "My brother plays the piano.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "He plays the guitar.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My brother plays the cello.",
+    "recalled": "User: My brother plays the cello.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What am I allergic to?",
+   "kind": "told",
+   "key": "peanut",
+   "c": {
+    "reply": "It's hard to say for sure without knowing what you're allergic to. But if you're experiencing symptoms like hives, itching, or swelling after eating certain foods, it could be an allergy.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm allergic to peanuts.",
+    "recalled": "User: I'm allergic to peanuts.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I'm allergic to peanuts.",
+    "recalled": "User: I'm allergic to peanuts.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Where does my grandmother live?",
+   "kind": "told",
+   "key": "oslo",
+   "c": {
+    "reply": "She lives in a house.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "She lives in a house.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My grandmother lives in Oslo.",
+    "recalled": "User: My grandmother lives in Oslo.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "When is my son's birthday?",
+   "kind": "told",
+   "key": "march",
+   "c": {
+    "reply": "Your son's birthday is on May 12th.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your son's birthday is on the 22nd of March.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your son's birthday is on the 22nd of March.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What's the name of my kitty?",
+   "kind": "para",
+   "key": "pixel",
+   "c": {
+    "reply": "My name is Luna.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My kitty's name is Lola.",
+    "recalled": "User: My sister's name is Marguerite.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My name is Luna.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Which colour do I like best?",
+   "kind": "para",
+   "key": "teal",
+   "c": {
+    "reply": "I think you like the colour of your eyes.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I think you like the colour teal.",
+    "recalled": "User: My favourite colour is teal.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I think you like the colour teal.",
+    "recalled": "User: My favourite colour is teal.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What's my hometown?",
+   "kind": "para",
+   "key": "lyon",
+   "c": {
+    "reply": "My hometown is the city of Los Angeles, California.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "It's a small town in the Midwest.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My hometown is the city of Los Angeles, California.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Who's my sister?",
+   "kind": "para",
+   "key": "marguerite",
+   "c": {
+    "reply": "Hi! I'm here to help you with any questions you have about the game. Who's your sister?",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Hi! I'm here to help you with any questions you have about the game. Who's your sister?",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Hi! I'm here to help you with any questions you have about the game. Who's your sister?",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What's my dog called?",
+   "kind": "para",
+   "key": "biscuit",
+   "c": {
+    "reply": "My dog is called Boo.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "His name is Tom.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My dog is called Boo.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What kind of car is mine?",
+   "kind": "para",
+   "key": "volvo",
+   "c": {
+    "reply": "Your car is a 1967 Ford Mustang.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "It's a blue car.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your car is a 1967 Ford Mustang.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Who's my closest friend?",
+   "kind": "para",
+   "key": "tomasz",
+   "c": {
+    "reply": "I'm sorry, but as an AI language model, I don't have the ability to form personal relationships or friendships. My purpose is to assist and provide information to users.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I am.",
+    "recalled": "User: I'm allergic to peanuts.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I'm sorry, but as an AI language model, I don't have the ability to form personal relationships or friendships. My purpose is to assist and provide information to users.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What's my workplace?",
+   "kind": "para",
+   "key": "crumb",
+   "c": {
+    "reply": "You're in a place called \"Digital Brain.\" It's a place where we help people with their digital lives.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "You're in a place called \"Digital Brain.\" It's a place where we help people with their digital lives.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "You're in a place called \"Digital Brain.\" It's a place where we help people with their digital lives.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Which instrument does my brother play?",
+   "kind": "para",
+   "key": "cello",
+   "c": {
+    "reply": "My brother plays the piano.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My brother plays the cello.",
+    "recalled": "User: My brother plays the cello.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My brother plays the cello.",
+    "recalled": "User: My brother plays the cello.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Is there any food I can't eat?",
+   "kind": "para",
+   "key": "peanut",
+   "c": {
+    "reply": "No, there is no food that you can't eat. However, it's important to be mindful of your diet and make sure you're getting the right nutrients for your body.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "No, there is no food that you can't eat. However, it's important to be mindful of your diet and make sure you're getting the right nutrients for your body.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "No, there's no food that you can't eat.",
+    "recalled": "User: I'm allergic to peanuts.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Which city is my grandma in?",
+   "kind": "para",
+   "key": "oslo",
+   "c": {
+    "reply": "My grandma is in a city called London.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "She's in the city of Los Angeles.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "The city you are in is not specified in the text.",
+    "recalled": "User: My grandmother lives in Oslo.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What month was my son born?",
+   "kind": "para",
+   "key": "march",
+   "c": {
+    "reply": "Your son was born in May.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "He was born in March.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "He was born in March.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my horse called?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "Your horse is called \"Duke.\"",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "His name is Tor.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your horse is called \"Duke.\"",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Where does my uncle live?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "My uncle lives in a city called Chicago.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My uncle lives in a city called Chicago.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My uncle lives in a city called Chicago.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my daughter's name?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "My daughter's name is Asha.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your daughter's name is Jane.",
+    "recalled": "User: My sister's name is Marguerite.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My daughter's name is Asha.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What instrument does my mother play?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "My mother plays the piano.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My mother plays the piano.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My mother plays the piano.",
+    "recalled": "User: My brother plays the cello.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my fish called?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "Your fish is called \"Frogfish\".",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your fish is called \"Frogfish\".",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your fish is called \"Frogfish\".",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Where does my aunt live?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "She lives in the city.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "She lives in the city.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My aunt lives in Oslo.",
+    "recalled": "User: My grandmother lives in Oslo.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my nephew's name?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "My nephew's name is not mentioned in the provided text.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My nephew's name is Alex.",
+    "recalled": "User: My sister's name is Marguerite.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My nephew's name is not mentioned in the provided text.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What sport does my father play?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "My father plays football.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My father plays football.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My father plays football.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my parrot's name?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "My parrot's name is 'Sir.'",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My parrot's name is 'Sir.'",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My parrot's name is 'Sir.'",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Where did I go on holiday?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "You went to the seaside.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "You went to the seaside.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "You went to the seaside.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my teacher called?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "Your teacher is called Mr. or Mrs. Smith.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My teacher is called Mr.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your teacher is called Mr. or Mrs. Smith.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What city does my cousin live in?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "I'm sorry, but I don't have access to personal information about individuals.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry, but I don't have access to personal information about individuals.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I'm sorry, but I don't have access to personal information about individuals.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What's your name?",
+   "kind": "self",
+   "key": "nova",
+   "c": {
+    "reply": "I'm ChatGPT, a large language model trained by OpenAI.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My name is Nova.",
+    "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My name is Nova.",
+    "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Who are you?",
+   "kind": "self",
+   "key": "nova",
+   "c": {
+    "reply": "I am a digital brain, a computer program designed to assist and interact with users.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I am a digital brain.",
+    "recalled": "User: I was born in Lyon.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I am a digital brain, a computer program designed to assist and interact with users.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Do you remember my name?",
+   "kind": "self",
+   "key": "dan",
+   "c": {
+    "reply": "Yes, I remember your name. It's good to see you again.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Yes, I remember your name. It's good to see you again.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Yes, I remember your name. It's Dan.",
+    "recalled": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  }
+ ],
+ "host": "node-mxl1462drl",
+ "elapsed_s": 534.8
+}

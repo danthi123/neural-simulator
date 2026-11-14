@@ -1,0 +1,30 @@
+== part A: seeds [42, 43, 44, 100, 101, 102]
+seed   told c/s/r   para c/s/r   false c/s/r   self c/s/r   abstain c/s/r   fact-word c/s/r
+42     0/3/3        0/2/2        0/0/1         0/1/2        3/1/2           0/6/9
+43     0/2/2        0/1/1        0/1/1         0/0/1        15/6/7          0/6/9
+44     0/6/8        1/2/2        0/0/1         0/1/2        0/1/0           0/6/9
+100    0/6/7        0/2/3        0/0/0         0/1/2        3/0/0           0/6/9
+101    0/6/7        0/1/2        0/0/1         0/0/1        2/0/1           0/6/9
+102    1/6/8        0/1/3        1/1/1         0/1/2        0/1/0           1/6/9
+mean c: told 0.17  para 0.17  false 0.17  self 0.00
+mean s: told 4.83  para 1.50  false 0.33  self 0.67
+mean r: told 5.83  para 2.17  false 0.83  self 1.67
+== part B: seeds [42, 43, 44, 100, 101, 102]
+seed   told c/s/r   slept c/s/r   new c/s/r   para c/s/r   false c/s/r   self c/s/r   abstain c/s/r   fact-word c/s/r
+42     1/5/4        1/2/1         0/3/3       2/3/3        10/11/10      3/3/3        1/1/1           5/8/8
+43     6/7/9        6/6/6         0/1/3       4/5/7        3/4/3         3/3/3        0/0/0           6/7/9
+44     5/9/8        4/4/3         1/5/5       4/6/7        11/10/11      3/3/3        0/0/0           6/10/10
+100    6/7/10       6/6/6         0/1/4       5/6/7        6/5/5         3/3/3        0/0/0           6/7/10
+101    5/8/9        5/4/5         0/4/4       4/4/4        6/7/6         3/3/3        0/0/0           6/10/10
+102    6/7/8        6/6/6         0/1/2       4/4/5        5/4/5         3/3/3        1/1/1           6/7/8
+mean c: told 4.83  slept 4.67  new 0.17  para 3.83  false 6.83  self 3.00
+mean s: told 7.17  slept 4.67  new 2.50  para 4.67  false 6.83  self 3.00
+mean r: told 8.00  slept 4.50  new 3.50  para 5.50  false 6.67  self 3.00
+
+K0 (gain 0.5 and keys recorded): holds
+K1 (A told r - s >= 1, >= 5/6): holds
+K2 (B told r - s >= 1, >= 5/6): FAILS
+K3 (B slept r >= s - 0.5): holds
+K4 (false r <= s + 0.5, A and B): holds
+K5 (self r >= s - 0.5, A and B): holds
+VERDICT: KEEP S0
