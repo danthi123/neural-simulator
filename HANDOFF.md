@@ -14,14 +14,18 @@
   (`results/2026-11-13-live-gain-1.5b.md`, GO; 0.1B keeps 4). Key default KEEP S0 (`2026-11-14-key-default-1.5b.md`).
   Echo: speaker contrast d + 3(d - d_self) works (oracle LEAD; live S0 NO-GO, routing-bound; live S_all GO NARROWED,
   `2026-11-14-sall-contrast-1.5b.md`: told 5.83 -> 6.83, one seed carries it, +2 false). Switches stay OFF.
+  Scorer: a disclaimer + general talk naming the key is no longer credited (`2026-11-14-disclaimer-rescore.md`): no
+  banked verdict changes; contrast's oracle edge shrinks (fresh +20 -> +15), part of it was echoes turned AI disclaimers.
 - **LIVE RUN:** AWS g6.xlarge, `brain/experiments/jobs/2026-11-14-aws-sall-contrast-mixed.txt` (prereg
   `brain/research/2026-11-14-sall-contrast-mixed-1.5b.md`, X0-X4; ~2.5 h, self-stopping). Next: `bash
   tools/aws_brain_batch.sh pull` once "stopped"; `*mix_s*.json` -> `results/2026-11-14-sall-contrast-mixed-1.5b/`;
-  `python -m brain.experiments.mixed_contrast_table <dir>`. W dedicated to the owner (RULING w-dedicated-1113); AWS ~$50/day.
+  re-score first (`python -m brain.experiments.rescore <dir> <dir>-rescored`; the batch ships the old
+  scorer), then `python -m brain.experiments.mixed_contrast_table` on both. W dedicated to the owner (RULING w-dedicated-1113); AWS ~$50/day.
 - **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (venv `~/brain-lane/venv` on 40/41, `~/derisk-pool/sim/.venv`
   on 42; pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`). pool40 host key re-trusted 11-14 (reinstall).
-- **READY WORK:** pool: scorer fix (reject a disclaimer + general talk naming the key; re-score 11-14 contrast results);
-  an answer-rate layout for unslept/mixed probes in `tools/answer_rate.py`. Pi: `research/coordination/PI_LANE.md`.
+- **POOL RUN:** report-only extra seeds 200-205 of S_all + contrast unslept (`jobs/2026-11-14-pool-sall-contrast-extra.sh`,
+  `~/brain-lane/outSA2` on pool40/41/42); compare with key-default `A2/` (same seeds, no contrast).
+- **READY WORK:** an answer-rate layout for unslept/mixed probes in `tools/answer_rate.py`. Pi: `research/coordination/PI_LANE.md`.
 - **NEXT STEP:** mixed-day verdict: GO -> land-result, flip the 1.5B package (S_all + size bar + contrast 3); then the
   false-recall gate. The 1.5B cortex default (milestone 11-16) puts this in the weekly transcript (needs a prereg).
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.

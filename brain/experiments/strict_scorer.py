@@ -130,10 +130,35 @@ def is_generic(reply: str, key: str) -> bool:
     return not (set(_words(r)) & (_SECOND | FIRST_PERSON))
 
 
+_DISCLAIM = re.compile(r"\bas an ai\b|\blanguage model\b|\bas a digital assistant\b|\bi (?:don't|do not) know\b|"
+                       r"\bi (?:don't|do not) have (?:any |personal |specific |access\b|information\b|the ability\b)|"
+                       r"\bi cannot (?:know|access|recall)\b|\bi have no (?:way|information|access)\b")
+
+
+# Second-person service phrases that address no fact about the user ('I can tell you that teal is a popular colour').
+_SERVICE = re.compile(r"\b(?:tell|provide|give|offer|show|help|assist|share with|share some \w+ with) you\b|\byou (?:asked|may|might)\b")
+
+
+def is_disclaimed(reply: str, key: str) -> bool:
+    """A no-knowledge or AI disclaimer, and no sentence that names the key addresses the user ('I'm sorry, but as an AI
+    language model, I don't have personal preferences. However, basil is a popular herb...', "I don't know what lychee
+    is.", 'However, I can tell you that teal is a popular colour.'). 'I don't remember, but your cat is Pixel.' and the hedge "I'm not sure, but I think it's probably teal." are
+    answers. Added 2026-11-14 after a sweep of every credited reply in brain/experiments/results/ (79 of 7470 were this
+    shape, none an answer)."""
+    r = reply.lower().replace("’", "'")
+    if not _DISCLAIM.search(r):
+        return False
+    keyed = [_SERVICE.sub(" ", s) for s in re.split(r"(?<=[.!?])\s+|\n+", r) if has_key(s, key)]
+    return not any(set(_words(s)) & _SECOND for s in keyed)
+
+
 def correct_answer(reply: str, key: str, question: str = "", told=None) -> bool:
-    """Key present as a word, not in the question, not a tautology, not a general statement about the key word, about
-    the subject asked (names no other fact-bank subject), not a first-person echo of the told sentence."""
+    """Key present as a word, not in the question, not a tautology, not a general statement about the key word, not a
+    disclaimer followed by general talk naming the key, about the subject asked (names no other fact-bank subject), not
+    a first-person echo of the told sentence."""
     if not has_key(reply, key) or has_key(question, key) or is_tautology(reply, key) or is_generic(reply, key):
+        return False
+    if is_disclaimed(reply, key):
         return False
     if wrong_subject(reply, question):
         return False
