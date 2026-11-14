@@ -1,0 +1,14 @@
+seed   told tell/lived   para   false   self   echoes(told+para)
+42     3/3              2/2    0/0     1/1    4/2
+43     2/6              1/2    1/0     0/0    5/0
+44     6/5              2/3    0/0     1/1    1/1
+100    6/6              2/2    0/0     1/1    1/0
+101    6/6              1/2    0/0     0/0    1/0
+102    6/5              1/2    1/1     1/1    1/1
+mean tell : told 4.83  para 1.50  false 0.33  self 0.67
+mean lived: told 5.17  para 2.17  false 0.17  self 0.67
+P0 (formats recorded): holds
+P1 (told lived - tell >= 1, >= 5/6): FAILS
+P2 (false lived <= tell + 0.5): holds
+P3 (self lived >= tell - 0.5): holds
+VERDICT: NO-GO

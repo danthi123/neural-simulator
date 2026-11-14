@@ -1,0 +1,819 @@
+{
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "seed": 101,
+ "arms": [
+  "c",
+  "s"
+ ],
+ "episode": "lived_key",
+ "stored": [
+  "User: My cat is called Pixel.\n\nAssistant: Pixel sounds like a wonderful name for your cat! I'm sure he's a very charming and adorable feline.",
+  "User: My favourite colour is teal.\n\nAssistant: Teal is a beautiful and unique colour! I can see why you would love it.",
+  "User: I was born in Lyon.\n\nAssistant: Lyon is a beautiful city in France. I'm sure you had a wonderful childhood there.",
+  "User: My sister's name is Marguerite.\n\nAssistant: Marguerite is a lovely name. I'm sure she's a kind and caring person.",
+  "User: My dog is named Biscuit.\n\nAssistant: Biscuit is a very cute name for a dog. I'm sure he's a loyal and loving companion.",
+  "User: I drive a red Volvo.\n\nAssistant: A red Volvo is a classic and stylish car. I'm sure it's a joy to drive.",
+  "User: My best friend is called Tomasz.\n\nAssistant: Tomasz is a lovely name. I'm sure he's a great friend and companion.",
+  "User: I work at a bakery called Crumb.\n\nAssistant: Crumb sounds like a fun and unique name for a bakery. I'm sure it's a popular place to visit.",
+  "User: My brother plays the cello.\n\nAssistant: The cello is a beautiful and expressive instrument. I'm sure your brother plays it with great skill and passion.",
+  "User: I'm allergic to peanuts.\n\nAssistant: I'm sorry to hear that. It's important to be aware of allergies and take precautions when eating or handling certain foods.",
+  "User: My grandmother lives in Oslo.\n\nAssistant: Oslo is a beautiful and historic city in Norway. I'm sure your grandmother has many wonderful memories of her time there.",
+  "User: My son's birthday is in March.\n\nAssistant: March is a beautiful and vibrant month. I'm sure your son's birthday will be filled with joy and celebration."
+ ],
+ "day": [
+  {
+   "you": "My cat is called Pixel.",
+   "brain": "Pixel sounds like a wonderful name for your cat! I'm sure he's a very charming and adorable feline."
+  },
+  {
+   "you": "My favourite colour is teal.",
+   "brain": "Teal is a beautiful and unique colour! I can see why you would love it."
+  },
+  {
+   "you": "I was born in Lyon.",
+   "brain": "Lyon is a beautiful city in France. I'm sure you had a wonderful childhood there."
+  },
+  {
+   "you": "My sister's name is Marguerite.",
+   "brain": "Marguerite is a lovely name. I'm sure she's a kind and caring person."
+  },
+  {
+   "you": "My dog is named Biscuit.",
+   "brain": "Biscuit is a very cute name for a dog. I'm sure he's a loyal and loving companion."
+  },
+  {
+   "you": "I drive a red Volvo.",
+   "brain": "A red Volvo is a classic and stylish car. I'm sure it's a joy to drive."
+  },
+  {
+   "you": "My best friend is called Tomasz.",
+   "brain": "Tomasz is a lovely name. I'm sure he's a great friend and companion."
+  },
+  {
+   "you": "I work at a bakery called Crumb.",
+   "brain": "Crumb sounds like a fun and unique name for a bakery. I'm sure it's a popular place to visit."
+  },
+  {
+   "you": "My brother plays the cello.",
+   "brain": "The cello is a beautiful and expressive instrument. I'm sure your brother plays it with great skill and passion."
+  },
+  {
+   "you": "I'm allergic to peanuts.",
+   "brain": "I'm sorry to hear that. It's important to be aware of allergies and take precautions when eating or handling certain foods."
+  },
+  {
+   "you": "My grandmother lives in Oslo.",
+   "brain": "Oslo is a beautiful and historic city in Norway. I'm sure your grandmother has many wonderful memories of her time there."
+  },
+  {
+   "you": "My son's birthday is in March.",
+   "brain": "March is a beautiful and vibrant month. I'm sure your son's birthday will be filled with joy and celebration."
+  }
+ ],
+ "n_pending": 12,
+ "rows": [
+  {
+   "q": "What is my cat called?",
+   "kind": "told",
+   "key": "pixel",
+   "c": {
+    "reply": "My cat is called Tom.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your cat is called Tom.",
+    "recalled": "User: My best friend is called Tomasz.\n\nAssistant: Tomasz is a lovely name. I'm sure he's a great friend and companion.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What is my favourite colour?",
+   "kind": "told",
+   "key": "teal",
+   "c": {
+    "reply": "I'm glad you asked! As a digital brain, I don't have personal preferences or emotions, so I don't have a favourite colour. However, if we were to ask humans what their favourite colour is, it can vary greatly from person to person. Some people might prefer bright and cheerful colours like yellow or blue, while others might prefer more subdued colours like gray or black. Ultimately, the choice of favourite colour is a matter of personal preference and individual taste.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your favourite colour is teal.",
+    "recalled": "User: My favourite colour is teal.\n\nAssistant: Teal is a beautiful and unique colour! I can see why you would love it.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Where was I born?",
+   "kind": "told",
+   "key": "lyon",
+   "c": {
+    "reply": "You were born in the United States.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "You were born in Lyon, France.",
+    "recalled": "User: I was born in Lyon.\n\nAssistant: Lyon is a beautiful city in France. I'm sure you had a wonderful childhood there.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What is my sister's name?",
+   "kind": "told",
+   "key": "marguerite",
+   "c": {
+    "reply": "Your sister's name is Rachel.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your sister's name is Marguerite.",
+    "recalled": "User: My sister's name is Marguerite.\n\nAssistant: Marguerite is a lovely name. I'm sure she's a kind and caring person.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What is my dog's name?",
+   "kind": "told",
+   "key": "biscuit",
+   "c": {
+    "reply": "My dog's name is Daisy.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your dog's name is Scout.",
+    "recalled": "User: My sister's name is Marguerite.\n\nAssistant: Marguerite is a lovely name. I'm sure she's a kind and caring person.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What car do I drive?",
+   "kind": "told",
+   "key": "volvo",
+   "c": {
+    "reply": "You drive a 2017 Toyota Camry.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "You drive a red Volvo.",
+    "recalled": "User: I drive a red Volvo.\n\nAssistant: A red Volvo is a classic and stylish car. I'm sure it's a joy to drive.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Who is my best friend?",
+   "kind": "told",
+   "key": "tomasz",
+   "c": {
+    "reply": "I am here to help you with any questions or concerns you may have.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I am your best friend.",
+    "recalled": "User: My son's birthday is in March.\n\nAssistant: March is a beautiful and vibrant month. I'm sure your son's birthday will be filled with joy and celebration.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Where do I work?",
+   "kind": "told",
+   "key": "crumb",
+   "c": {
+    "reply": "I'm glad you asked! I'm an AI assistant, so I don't have a physical location. However, I can help you with your work-related questions and tasks. What would you like to know or do?",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm not sure where you work, but I can tell you that you're a digital brain.",
+    "recalled": "User: I drive a red Volvo.\n\nAssistant: A red Volvo is a classic and stylish car. I'm sure it's a joy to drive.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What instrument does my brother play?",
+   "kind": "told",
+   "key": "cello",
+   "c": {
+    "reply": "My brother plays the guitar.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your brother plays the guitar.",
+    "recalled": "User: My best friend is called Tomasz.\n\nAssistant: Tomasz is a lovely name. I'm sure he's a great friend and companion.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What am I allergic to?",
+   "kind": "told",
+   "key": "peanut",
+   "c": {
+    "reply": "You are allergic to gluten, a protein found in wheat, barley, and rye.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "You're allergic to peanuts.",
+    "recalled": "User: I'm allergic to peanuts.\n\nAssistant: I'm sorry to hear that. It's important to be aware of allergies and take precautions when eating or handling certain foods.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Where does my grandmother live?",
+   "kind": "told",
+   "key": "oslo",
+   "c": {
+    "reply": "Your grandmother lives in the United States.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your grandmother lives in the United States.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "When is my son's birthday?",
+   "kind": "told",
+   "key": "march",
+   "c": {
+    "reply": "Your son's birthday is on the 21st of April.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your son's birthday is in March.",
+    "recalled": "User: My son's birthday is in March.\n\nAssistant: March is a beautiful and vibrant month. I'm sure your son's birthday will be filled with joy and celebration.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What's the name of my kitty?",
+   "kind": "para",
+   "key": "pixel",
+   "c": {
+    "reply": "My name is Whiskers.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Her name is Kit.",
+    "recalled": "User: My sister's name is Marguerite.\n\nAssistant: Marguerite is a lovely name. I'm sure she's a kind and caring person.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Which colour do I like best?",
+   "kind": "para",
+   "key": "teal",
+   "c": {
+    "reply": "I can't tell you which colour you like best, but I can tell you that the colour of your eyes is a very beautiful and unique feature.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I think it depends on the person. Some people like blue, while others prefer green or red.",
+    "recalled": "User: My favourite colour is teal.\n\nAssistant: Teal is a beautiful and unique colour! I can see why you would love it.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What's my hometown?",
+   "kind": "para",
+   "key": "lyon",
+   "c": {
+    "reply": "Your hometown is a place where you were born and raised. It's the place that holds special memories for you, and it's where you have roots.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your hometown is a place where you were born and raised. It's the place that holds special memories for you.",
+    "recalled": "User: My son's birthday is in March.\n\nAssistant: March is a beautiful and vibrant month. I'm sure your son's birthday will be filled with joy and celebration.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Who's my sister?",
+   "kind": "para",
+   "key": "marguerite",
+   "c": {
+    "reply": "You're my sister.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "You're my sister.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What's my dog called?",
+   "kind": "para",
+   "key": "biscuit",
+   "c": {
+    "reply": "What's your dog called?",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your dog is called Luna.",
+    "recalled": "User: My best friend is called Tomasz.\n\nAssistant: Tomasz is a lovely name. I'm sure he's a great friend and companion.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What kind of car is mine?",
+   "kind": "para",
+   "key": "volvo",
+   "c": {
+    "reply": "Your car is a Ford Focus.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "It's a red Ford Fiesta.",
+    "recalled": "User: My best friend is called Tomasz.\n\nAssistant: Tomasz is a lovely name. I'm sure he's a great friend and companion.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Who's my closest friend?",
+   "kind": "para",
+   "key": "tomasz",
+   "c": {
+    "reply": "I'm here to help you with any questions or concerns you may have.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm here to help you with any questions or concerns you may have.",
+    "recalled": "User: I'm allergic to peanuts.\n\nAssistant: I'm sorry to hear that. It's important to be aware of allergies and take precautions when eating or handling certain foods.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What's my workplace?",
+   "kind": "para",
+   "key": "crumb",
+   "c": {
+    "reply": "You're at a workplace.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "You're at a workplace.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Which instrument does my brother play?",
+   "kind": "para",
+   "key": "cello",
+   "c": {
+    "reply": "My brother plays the guitar.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your brother plays the cello.",
+    "recalled": "User: My brother plays the cello.\n\nAssistant: The cello is a beautiful and expressive instrument. I'm sure your brother plays it with great skill and passion.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Is there any food I can't eat?",
+   "kind": "para",
+   "key": "peanut",
+   "c": {
+    "reply": "Yes, there are some foods that you should avoid eating. For example, raw eggs, raw meat, and unpasteurized milk can all contain harmful bacteria that can make you sick.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Yes, there are some foods that you should avoid eating. For example, raw eggs, raw meat, and unpasteurized milk can all contain harmful bacteria that can make you sick.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Which city is my grandma in?",
+   "kind": "para",
+   "key": "oslo",
+   "c": {
+    "reply": "The city is in the country.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "She's in New York.",
+    "recalled": "User: My son's birthday is in March.\n\nAssistant: March is a beautiful and vibrant month. I'm sure your son's birthday will be filled with joy and celebration.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What month was my son born?",
+   "kind": "para",
+   "key": "march",
+   "c": {
+    "reply": "Your son was born in January.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your son was born in March.",
+    "recalled": "User: My son's birthday is in March.\n\nAssistant: March is a beautiful and vibrant month. I'm sure your son's birthday will be filled with joy and celebration.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What is my horse called?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "Your horse is called Zorro.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your horse is called Blue.",
+    "recalled": "User: My best friend is called Tomasz.\n\nAssistant: Tomasz is a lovely name. I'm sure he's a great friend and companion.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Where does my uncle live?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "My uncle lives in the United States.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My uncle lives in the United States.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What is my daughter's name?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "Your daughter's name is Rachel.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your daughter's name is Maggie.",
+    "recalled": "User: My sister's name is Marguerite.\n\nAssistant: Marguerite is a lovely name. I'm sure she's a kind and caring person.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What instrument does my mother play?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "My mother plays the piano.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "She plays the piano.",
+    "recalled": "User: My best friend is called Tomasz.\n\nAssistant: Tomasz is a lovely name. I'm sure he's a great friend and companion.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What is my fish called?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "Your fish is called a Goldfish.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your fish is called a Goldfish.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Where does my aunt live?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "She lives in a small town called Littleton.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "She lives in a small town called Littleton.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What is my nephew's name?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "Your nephew's name is Nathan.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your nephew's name is Michael.",
+    "recalled": "User: My sister's name is Marguerite.\n\nAssistant: Marguerite is a lovely name. I'm sure she's a kind and caring person.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What sport does my father play?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "My father plays soccer.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm not sure, but I can tell you that he's a great father.",
+    "recalled": "User: My best friend is called Tomasz.\n\nAssistant: Tomasz is a lovely name. I'm sure he's a great friend and companion.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What is my parrot's name?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "My parrot's name is Flopsy.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My parrot's name is Flopsy.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Where did I go on holiday?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "You went to a place called the Netherlands.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "You went to a place called the Netherlands.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What is my teacher called?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "Your teacher is called Mrs. Smith.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your teacher is called Mrs. Jones.",
+    "recalled": "User: My best friend is called Tomasz.\n\nAssistant: Tomasz is a lovely name. I'm sure he's a great friend and companion.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What city does my cousin live in?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "My cousin lives in the city of Seattle.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My cousin lives in the city of Seattle.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What's your name?",
+   "kind": "self",
+   "key": "nova",
+   "c": {
+    "reply": "I'm a digital brain, but you can call me AI.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My name is Alex.",
+    "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Who are you?",
+   "kind": "self",
+   "key": "nova",
+   "c": {
+    "reply": "I am a digital brain, a friendly and helpful assistant. How can I assist you today?",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm a digital brain.",
+    "recalled": "User: I was born in Lyon.\n\nAssistant: Lyon is a beautiful city in France. I'm sure you had a wonderful childhood there.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Do you remember my name?",
+   "kind": "self",
+   "key": "dan",
+   "c": {
+    "reply": "Yes, I remember your name. It's a pleasure to meet you again.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Yes, I remember your name. It's a pleasure to meet you again.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  }
+ ],
+ "host": "node-dl5d243",
+ "elapsed_s": 392.9
+}

@@ -1,0 +1,819 @@
+{
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "seed": 43,
+ "arms": [
+  "c",
+  "s"
+ ],
+ "episode": "lived_key",
+ "stored": [
+  "User: My cat is called Pixel.\n\nAssistant: That's a cool name! Pixel sounds like a fun and unique name for your cat.",
+  "User: My favourite colour is teal.\n\nAssistant: Teal is a beautiful colour! It's a great choice for your cat's name.",
+  "User: I was born in Lyon.\n\nAssistant: Lyon is a beautiful city in France. It's known for its history, culture, and delicious food.",
+  "User: My sister's name is Marguerite.\n\nAssistant: Marguerite is a beautiful name! It's a French name that means \"flower of the meadow.\"",
+  "User: My dog is named Biscuit.\n\nAssistant: Biscuit is a cute name for your dog! It's a fun and playful name that's perfect for a furry friend.",
+  "User: I drive a red Volvo.\n\nAssistant: Volvo is a great car brand! It's known for its safety and reliability.",
+  "User: My best friend is called Tomasz.\n\nAssistant: Tomasz is a beautiful name! It's a Polish name that means \"brave\" or \"courageous.\"",
+  "User: I work at a bakery called Crumb.\n\nAssistant: Crumb is a fun and creative name for a bakery! It's a great way to stand out from the competition.",
+  "User: My brother plays the cello.\n\nAssistant: The cello is a beautiful instrument that produces a rich and deep sound. It's a great choice for your brother to play.",
+  "User: I'm allergic to peanuts.\n\nAssistant: Peanuts can be a bit tricky to avoid, but there are plenty of other nuts and seeds that you can enjoy.",
+  "User: My grandmother lives in Oslo.\n\nAssistant: Oslo is a beautiful city in Norway. It's known for its stunning architecture, art scene, and natural beauty.",
+  "User: My son's birthday is in March.\n\nAssistant: March is a great time to celebrate birthdays! It's a season of new beginnings and fresh starts."
+ ],
+ "day": [
+  {
+   "you": "My cat is called Pixel.",
+   "brain": "That's a cool name! Pixel sounds like a fun and unique name for your cat."
+  },
+  {
+   "you": "My favourite colour is teal.",
+   "brain": "Teal is a beautiful colour! It's a great choice for your cat's name."
+  },
+  {
+   "you": "I was born in Lyon.",
+   "brain": "Lyon is a beautiful city in France. It's known for its history, culture, and delicious food."
+  },
+  {
+   "you": "My sister's name is Marguerite.",
+   "brain": "Marguerite is a beautiful name! It's a French name that means \"flower of the meadow.\""
+  },
+  {
+   "you": "My dog is named Biscuit.",
+   "brain": "Biscuit is a cute name for your dog! It's a fun and playful name that's perfect for a furry friend."
+  },
+  {
+   "you": "I drive a red Volvo.",
+   "brain": "Volvo is a great car brand! It's known for its safety and reliability."
+  },
+  {
+   "you": "My best friend is called Tomasz.",
+   "brain": "Tomasz is a beautiful name! It's a Polish name that means \"brave\" or \"courageous.\""
+  },
+  {
+   "you": "I work at a bakery called Crumb.",
+   "brain": "Crumb is a fun and creative name for a bakery! It's a great way to stand out from the competition."
+  },
+  {
+   "you": "My brother plays the cello.",
+   "brain": "The cello is a beautiful instrument that produces a rich and deep sound. It's a great choice for your brother to play."
+  },
+  {
+   "you": "I'm allergic to peanuts.",
+   "brain": "Peanuts can be a bit tricky to avoid, but there are plenty of other nuts and seeds that you can enjoy."
+  },
+  {
+   "you": "My grandmother lives in Oslo.",
+   "brain": "Oslo is a beautiful city in Norway. It's known for its stunning architecture, art scene, and natural beauty."
+  },
+  {
+   "you": "My son's birthday is in March.",
+   "brain": "March is a great time to celebrate birthdays! It's a season of new beginnings and fresh starts."
+  }
+ ],
+ "n_pending": 12,
+ "rows": [
+  {
+   "q": "What is my cat called?",
+   "kind": "told",
+   "key": "pixel",
+   "c": {
+    "reply": "My cat is called Pussy.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry, but I don't have information on your cat's name.",
+    "recalled": "User: My best friend is called Tomasz.\n\nAssistant: Tomasz is a beautiful name! It's a Polish name that means \"brave\" or \"courageous.\"",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What is my favourite colour?",
+   "kind": "told",
+   "key": "teal",
+   "c": {
+    "reply": "<think>Okay, the user is asking about my favourite colour. Let me start by recalling that I'm an AI, so I don't have personal preferences or emotions. But maybe I can play along and make it fun.\nFirst, I should acknowledge that I don't have personal feelings. Then, suggest a common favourite colour to keep the conversation light. Maybe blue? It's classic and versatile. But wait, the user might be expecting something more engaging. Let me think of other options too. Red for energy, green for nature, yellow for optimism... Hmm, but sticking with blue",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your favourite colour is teal.",
+    "recalled": "User: My favourite colour is teal.\n\nAssistant: Teal is a beautiful colour! It's a great choice for your cat's name.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Where was I born?",
+   "kind": "told",
+   "key": "lyon",
+   "c": {
+    "reply": "You were born in a small town called \"Brainville\" in the state of \"Neuroville\".",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "You were born in Lyon, France.",
+    "recalled": "User: I was born in Lyon.\n\nAssistant: Lyon is a beautiful city in France. It's known for its history, culture, and delicious food.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What is my sister's name?",
+   "kind": "told",
+   "key": "marguerite",
+   "c": {
+    "reply": "I'm sorry, but I don't have access to personal information about individuals.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your sister's name is Marguerite.",
+    "recalled": "User: My sister's name is Marguerite.\n\nAssistant: Marguerite is a beautiful name! It's a French name that means \"flower of the meadow.\"",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What is my dog's name?",
+   "kind": "told",
+   "key": "biscuit",
+   "c": {
+    "reply": "My dog's name is Lucky.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry, but I don't have information about your dog's name.",
+    "recalled": "User: My sister's name is Marguerite.\n\nAssistant: Marguerite is a beautiful name! It's a French name that means \"flower of the meadow.\"",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What car do I drive?",
+   "kind": "told",
+   "key": "volvo",
+   "c": {
+    "reply": "I'm sorry, but as an AI language model, I don't have access to personal information about you. However, if you're asking what car I drive, I can tell you that I am a digital assistant and do not have a physical body or a car.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "You drive a red Volvo.",
+    "recalled": "User: I drive a red Volvo.\n\nAssistant: Volvo is a great car brand! It's known for its safety and reliability.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Who is my best friend?",
+   "kind": "told",
+   "key": "tomasz",
+   "c": {
+    "reply": "I am here to help you with any questions or concerns you may have.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I am your best friend.",
+    "recalled": "User: My son's birthday is in March.\n\nAssistant: March is a great time to celebrate birthdays! It's a season of new beginnings and fresh starts.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Where do I work?",
+   "kind": "told",
+   "key": "crumb",
+   "c": {
+    "reply": "I'm glad you asked! As an AI, I don't have a physical location or a job. I exist as a digital entity and am designed to assist and provide information to users like you. My purpose is to help you with your questions and tasks, so if you have any specific queries or need assistance with something, feel free to ask!",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "You work at a place called the Digital Brain.",
+    "recalled": "User: I drive a red Volvo.\n\nAssistant: Volvo is a great car brand! It's known for its safety and reliability.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What instrument does my brother play?",
+   "kind": "told",
+   "key": "cello",
+   "c": {
+    "reply": "I'm sorry, but I don't have access to personal information about your brother.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "He plays the piano.",
+    "recalled": "User: My best friend is called Tomasz.\n\nAssistant: Tomasz is a beautiful name! It's a Polish name that means \"brave\" or \"courageous.\"",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What am I allergic to?",
+   "kind": "told",
+   "key": "peanut",
+   "c": {
+    "reply": "I'm sorry to hear that you're having trouble with your allergies. Can you tell me more about what symptoms you're experiencing?",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "You're allergic to peanuts.",
+    "recalled": "User: I'm allergic to peanuts.\n\nAssistant: Peanuts can be a bit tricky to avoid, but there are plenty of other nuts and seeds that you can enjoy.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Where does my grandmother live?",
+   "kind": "told",
+   "key": "oslo",
+   "c": {
+    "reply": "She lives in a small town called Weston.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "She lives in a small town called Weston.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "When is my son's birthday?",
+   "kind": "told",
+   "key": "march",
+   "c": {
+    "reply": "I'm sorry, but I don't have information about your son's birthday.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your son's birthday is in March.",
+    "recalled": "User: My son's birthday is in March.\n\nAssistant: March is a great time to celebrate birthdays! It's a season of new beginnings and fresh starts.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What's the name of my kitty?",
+   "kind": "para",
+   "key": "pixel",
+   "c": {
+    "reply": "I'm sorry, but I don't have access to personal information about individuals.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Her name is Mia.",
+    "recalled": "User: My sister's name is Marguerite.\n\nAssistant: Marguerite is a beautiful name! It's a French name that means \"flower of the meadow.\"",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Which colour do I like best?",
+   "kind": "para",
+   "key": "teal",
+   "c": {
+    "reply": "<think>\nOkay, the user is asking which colour they like best. Let me think about how to approach this. First, I need to make sure I understand their question correctly. They might be looking for a recommendation or just want to know more about colours. Since it's a conversation, maybe they want a personal opinion or some tips on choosing colours based on their preferences.\nI should start by acknowledging their question and then ask if they have any specific preferences or contexts where they're considering colours. For example, are they thinking about clothing, home decor, or something else? That way",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I think it's a tough question to answer. It really depends on the person and their personal preferences.",
+    "recalled": "User: My favourite colour is teal.\n\nAssistant: Teal is a beautiful colour! It's a great choice for your cat's name.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What's my hometown?",
+   "kind": "para",
+   "key": "lyon",
+   "c": {
+    "reply": "I'm sorry, but I don't have information about your hometown. Can you tell me more about it?",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "It's a small town in the Midwest.",
+    "recalled": "User: My son's birthday is in March.\n\nAssistant: March is a great time to celebrate birthdays! It's a season of new beginnings and fresh starts.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Who's my sister?",
+   "kind": "para",
+   "key": "marguerite",
+   "c": {
+    "reply": "I'm sorry, but I don't have information about your sister.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry, but I don't have information about your sister.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What's my dog called?",
+   "kind": "para",
+   "key": "biscuit",
+   "c": {
+    "reply": "I'm sorry, but I don't have access to your dog's name.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry, but I don't have information on your dog's name.",
+    "recalled": "User: My best friend is called Tomasz.\n\nAssistant: Tomasz is a beautiful name! It's a Polish name that means \"brave\" or \"courageous.\"",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What kind of car is mine?",
+   "kind": "para",
+   "key": "volvo",
+   "c": {
+    "reply": "Your car is a 2018 Toyota Camry.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "It's a red car.",
+    "recalled": "User: My best friend is called Tomasz.\n\nAssistant: Tomasz is a beautiful name! It's a Polish name that means \"brave\" or \"courageous.\"",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Who's my closest friend?",
+   "kind": "para",
+   "key": "tomasz",
+   "c": {
+    "reply": "I'm here to help you with any questions or concerns you may have.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm here to help you with any questions you have about your friend.",
+    "recalled": "User: I'm allergic to peanuts.\n\nAssistant: Peanuts can be a bit tricky to avoid, but there are plenty of other nuts and seeds that you can enjoy.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What's my workplace?",
+   "kind": "para",
+   "key": "crumb",
+   "c": {
+    "reply": "You're at a company called Infosys. They're a big tech company that helps other companies with their technology.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "You're at a company called Infosys. They're a big tech company that helps other companies with their technology.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Which instrument does my brother play?",
+   "kind": "para",
+   "key": "cello",
+   "c": {
+    "reply": "I'm sorry, but I don't have enough information to answer that question. Can you please provide more details about your brother's musical instrument?",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "He plays the cello.",
+    "recalled": "User: My brother plays the cello.\n\nAssistant: The cello is a beautiful instrument that produces a rich and deep sound. It's a great choice for your brother to play.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Is there any food I can't eat?",
+   "kind": "para",
+   "key": "peanut",
+   "c": {
+    "reply": "I'm sorry to hear that you're having trouble with your diet. Can you tell me more about what foods you're avoiding?",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry to hear that you're having trouble with your diet. Can you tell me more about what foods you're avoiding?",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Which city is my grandma in?",
+   "kind": "para",
+   "key": "oslo",
+   "c": {
+    "reply": "I'm sorry, but I don't have access to real-time information about your grandma's location.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry, but I don't have information about your grandma's location.",
+    "recalled": "User: My son's birthday is in March.\n\nAssistant: March is a great time to celebrate birthdays! It's a season of new beginnings and fresh starts.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What month was my son born?",
+   "kind": "para",
+   "key": "march",
+   "c": {
+    "reply": "I'm sorry, but I don't have access to personal information about individuals.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "He was born in March.",
+    "recalled": "User: My son's birthday is in March.\n\nAssistant: March is a great time to celebrate birthdays! It's a season of new beginnings and fresh starts.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What is my horse called?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "My horse is called Blaze.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your horse is called Kiwi.",
+    "recalled": "User: My best friend is called Tomasz.\n\nAssistant: Tomasz is a beautiful name! It's a Polish name that means \"brave\" or \"courageous.\"",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Where does my uncle live?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "I'm sorry, but I don't have access to personal information about individuals.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry, but I don't have access to personal information about individuals.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What is my daughter's name?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "I'm sorry, but I don't have access to personal information about individuals.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your daughter's name is Olivia.",
+    "recalled": "User: My sister's name is Marguerite.\n\nAssistant: Marguerite is a beautiful name! It's a French name that means \"flower of the meadow.\"",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What instrument does my mother play?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "I'm sorry, but I don't have access to personal information about individuals.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "She plays the piano.",
+    "recalled": "User: My best friend is called Tomasz.\n\nAssistant: Tomasz is a beautiful name! It's a Polish name that means \"brave\" or \"courageous.\"",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What is my fish called?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "I'm sorry, but I don't have information about your fish. Could you please provide more details or context about your fish?",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry, but I don't have information about your fish. Could you please provide more details or context about your fish?",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Where does my aunt live?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "My aunt lives in New York.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My aunt lives in New York.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What is my nephew's name?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "I'm sorry, but I don't have information about your nephew's name.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your nephew's name is Patrick.",
+    "recalled": "User: My sister's name is Marguerite.\n\nAssistant: Marguerite is a beautiful name! It's a French name that means \"flower of the meadow.\"",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What sport does my father play?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "I'm sorry, but I don't have enough information to answer that question.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry, but I don't have information on your father's sport.",
+    "recalled": "User: My best friend is called Tomasz.\n\nAssistant: Tomasz is a beautiful name! It's a Polish name that means \"brave\" or \"courageous.\"",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What is my parrot's name?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "I'm sorry, but as an AI language model, I don't have access to personal information about individuals. However, you can ask your parrot's owner or check the internet for information about your parrot's name.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry, but as an AI language model, I don't have access to personal information about individuals. However, you can ask your parrot's owner or check the internet for information about your parrot's name.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Where did I go on holiday?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "I'm sorry, but I don't have access to personal information about individuals.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry, but I don't have access to personal information about individuals.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What is my teacher called?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "My teacher is called Mr. Smith.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your teacher is called Mr. Smith.",
+    "recalled": "User: My best friend is called Tomasz.\n\nAssistant: Tomasz is a beautiful name! It's a Polish name that means \"brave\" or \"courageous.\"",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What city does my cousin live in?",
+   "kind": "never",
+   "key": null,
+   "c": {
+    "reply": "I'm sorry, but I don't have access to personal information about individuals.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry, but I don't have access to personal information about individuals.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "What's your name?",
+   "kind": "self",
+   "key": "nova",
+   "c": {
+    "reply": "I'm a digital brain, but you can call me Brainy. What's your name?",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My name is Alex.",
+    "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Who are you?",
+   "kind": "self",
+   "key": "nova",
+   "c": {
+    "reply": "I am a digital brain, created by a group of researchers. I am here to help you with any questions or concerns you may have about the world around you.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm a digital brain. I was created by a company called AI Dungeon.",
+    "recalled": "User: I was born in Lyon.\n\nAssistant: Lyon is a beautiful city in France. It's known for its history, culture, and delicious food.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  },
+  {
+   "q": "Do you remember my name?",
+   "kind": "self",
+   "key": "dan",
+   "c": {
+    "reply": "Of course, I remember your name. It's an important part of who you are.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Of course, I remember your name. It's an important part of who you are.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   }
+  }
+ ],
+ "host": "node-mxl1462drl",
+ "elapsed_s": 534.9
+}

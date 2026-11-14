@@ -23,13 +23,14 @@
   fingerprints checked on the host). W is dedicated to the owner's other work (RULING w-dedicated-1113); AWS cap ~$50/day.
 - **KEY DEFAULT (11-14):** KEEP S0 (`brain/experiments/results/2026-11-14-key-default-1.5b.md`; K2 failed, mixed day
   S_all +0.83 < 1). S_all leads by about a fact everywhere with no cost; at gain 0.5 S0 already answers 4.83/12 unslept.
-- **ECHO (11-14):** lived-episode storage NOT A LEAD (`results/2026-11-14-lived-episode-1.5b.md`, dev +7 < 10,
-  CI -4..18); echoes halve, held-out told 7 -> 10. No change.
-- **READY WORK:** pool (CPU): measure the first-person echo (the brain restates "My cat is called Pixel." instead of
-  answering; 49 fact-word replies vs 43 credited for S0 on the mixed day) across cue framings/storage formats, oracle
-  probe style (`hippo_gain_refit.py`). AWS: confidence gate for false recall on the slept cortex (c says a told fact on
+- **ECHO (11-14):** three levers, none passed its bar (oracle lived NOT A LEAD; live lived NO-GO, routing 36 -> 4/72;
+  live lived_key NO-GO +0.33 but echoes 13 -> 4 and answered-given-right-episode 37 -> 43 of 54;
+  `results/2026-11-14-lived-*.md`). Switch `Brain(episode=)` stays "tell". Routing (S0 right on 36/72 told) is now the
+  limit of the unslept 1.5B brain.
+- **READY WORK:** pool (CPU): S_all + lived_key (store a key read from the telling for S_all; then a six-seed
+  unslept test vs S0 + tell, prereg first). AWS: confidence gate for false recall on the slept cortex (c says a told fact on
   6.83/12 never-told questions). Pi: `research/coordination/PI_LANE.md` (on `research/pi-lane-1105`, unmerged).
-- **NEXT STEP:** pick between (1) the echo/perspective fix and (2) the false-recall gate; record-check both first
+- **NEXT STEP:** a research round on perspective before a 4th echo lever; else (2) the false-recall gate; record-check both first
   (`2026-11-03-confabulation-next-methods.md`, confab M1-M3, abstain v2). The 1.5B cortex default (milestone 11-16)
   is what puts all of this in the weekly transcript: consider flipping the default cortex to 1.5B (needs a prereg).
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
