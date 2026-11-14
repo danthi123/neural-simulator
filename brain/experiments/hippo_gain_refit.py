@@ -50,6 +50,8 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--threads", type=int, default=12)
     ap.add_argument("--limit", type=int, default=0, help="first N facts only (smoke)")
+    ap.add_argument("--shift", type=int, default=0,
+                    help="control: reinstate the episode of fact i+shift (a WRONG memory); rows record wrong_key hits")
     a = ap.parse_args()
     torch.set_num_threads(a.threads)
     t0 = time.time()
@@ -59,7 +61,10 @@ def main():
     items = bank_items(a.bank)[:a.limit or None]
     eps = [b.hippocampus.store(b.cortex, b.base, s, speaker="User") for s, _, _ in items]
     rows = []
-    for (s, cues, k), ep in zip(items, eps):
+    n = len(items)
+    for i, (s, cues, k) in enumerate(items):
+        ep = eps[(i + a.shift) % n]
+        wk = items[(i + a.shift) % n][2]
         for kind, cue in cues:
             for g in a.gains:
                 active = c.add_delta(b.state, ep.delta, g) if g else b.state
@@ -67,12 +72,13 @@ def main():
                 reply, _ = c.speak(logits, st, max_tokens=40, temperature=0)
                 cl = klass(reply, k, cue, s)
                 rows.append({"q": cue, "kind": kind, "key": k, "gain": g, "reply": reply, "class": cl,
-                             "correct": cl == "right"})
+                             "correct": cl == "right", "shift": a.shift,
+                             "wrong_key_in_reply": bool(a.shift) and has_key(reply, wk)})
         print(f"{k} {time.time() - t0:.0f}s", [(r["gain"], r["class"]) for r in rows[-len(cues) * len(a.gains):]],
               flush=True)
     b.release()
     shutil.rmtree(home, ignore_errors=True)
-    json.dump({"model": c.model_name, "bank": a.bank, "gains": a.gains, "rows": rows, "host": os.uname().nodename,
+    json.dump({"model": c.model_name, "bank": a.bank, "gains": a.gains, "rows": rows, "host": os.uname().nodename, "shift": a.shift,
                "threads": a.threads, "elapsed_s": round(time.time() - t0, 1)}, open(a.out, "w"), indent=1)
     print("done", a.out, round(time.time() - t0, 1), "s")
 

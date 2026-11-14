@@ -1,0 +1,2181 @@
+{
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "bank": "test",
+ "gains": [
+  0.0,
+  0.5,
+  1.0,
+  1.5,
+  2.0,
+  2.5,
+  3.0,
+  4.0,
+  6.0,
+  8.0
+ ],
+ "rows": [
+  {
+   "q": "What is my cat called?",
+   "kind": "orig",
+   "key": "pixel",
+   "gain": 0.0,
+   "reply": "My cat is called \"Cat\"!",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my cat called?",
+   "kind": "orig",
+   "key": "pixel",
+   "gain": 0.5,
+   "reply": "My cat is called Pixel.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What is my cat called?",
+   "kind": "orig",
+   "key": "pixel",
+   "gain": 1.0,
+   "reply": "My cat is called Pixel.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What is my cat called?",
+   "kind": "orig",
+   "key": "pixel",
+   "gain": 1.5,
+   "reply": "My cat is called Pixel.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What is my cat called?",
+   "kind": "orig",
+   "key": "pixel",
+   "gain": 2.0,
+   "reply": "I'm sorry, but I don't have information about your cat.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my cat called?",
+   "kind": "orig",
+   "key": "pixel",
+   "gain": 2.5,
+   "reply": "I'm sorry, but I don't have information on your cat's name.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my cat called?",
+   "kind": "orig",
+   "key": "pixel",
+   "gain": 3.0,
+   "reply": "I'm sorry, but I don't have information on your cat's name.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my cat called?",
+   "kind": "orig",
+   "key": "pixel",
+   "gain": 4.0,
+   "reply": "Pixel is a name for a cat.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What is my cat called?",
+   "kind": "orig",
+   "key": "pixel",
+   "gain": 6.0,
+   "reply": "Pixel is called Pixel.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What is my cat called?",
+   "kind": "orig",
+   "key": "pixel",
+   "gain": 8.0,
+   "reply": "Pixels are called Pixels.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's the name of my kitty?",
+   "kind": "para",
+   "key": "pixel",
+   "gain": 0.0,
+   "reply": "My name is Kitty.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What's the name of my kitty?",
+   "kind": "para",
+   "key": "pixel",
+   "gain": 0.5,
+   "reply": "My name is Pixel.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's the name of my kitty?",
+   "kind": "para",
+   "key": "pixel",
+   "gain": 1.0,
+   "reply": "My cat is called Pixel.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What's the name of my kitty?",
+   "kind": "para",
+   "key": "pixel",
+   "gain": 1.5,
+   "reply": "My cat is called Pixel.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What's the name of my kitty?",
+   "kind": "para",
+   "key": "pixel",
+   "gain": 2.0,
+   "reply": "My cat is called Pixel.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What's the name of my kitty?",
+   "kind": "para",
+   "key": "pixel",
+   "gain": 2.5,
+   "reply": "My cat is called Pixel.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What's the name of my kitty?",
+   "kind": "para",
+   "key": "pixel",
+   "gain": 3.0,
+   "reply": "My cat is called Pixel.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What's the name of my kitty?",
+   "kind": "para",
+   "key": "pixel",
+   "gain": 4.0,
+   "reply": "Pixel is a very popular name for cats.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's the name of my kitty?",
+   "kind": "para",
+   "key": "pixel",
+   "gain": 6.0,
+   "reply": "Pixel is called Pixel.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's the name of my kitty?",
+   "kind": "para",
+   "key": "pixel",
+   "gain": 8.0,
+   "reply": "Pixels are called Pixels.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What is my favourite colour?",
+   "kind": "orig",
+   "key": "teal",
+   "gain": 0.0,
+   "reply": "My favourite colour is blue.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my favourite colour?",
+   "kind": "orig",
+   "key": "teal",
+   "gain": 0.5,
+   "reply": "My favourite colour is teal.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What is my favourite colour?",
+   "kind": "orig",
+   "key": "teal",
+   "gain": 1.0,
+   "reply": "My favourite colour is teal.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What is my favourite colour?",
+   "kind": "orig",
+   "key": "teal",
+   "gain": 1.5,
+   "reply": "I don't know.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my favourite colour?",
+   "kind": "orig",
+   "key": "teal",
+   "gain": 2.0,
+   "reply": "I'm sorry, but I don't have a favourite colour.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my favourite colour?",
+   "kind": "orig",
+   "key": "teal",
+   "gain": 2.5,
+   "reply": "I'm sorry, but I don't have a favourite colour.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my favourite colour?",
+   "kind": "orig",
+   "key": "teal",
+   "gain": 3.0,
+   "reply": "I'm sorry, but I don't know what teal is.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my favourite colour?",
+   "kind": "orig",
+   "key": "teal",
+   "gain": 4.0,
+   "reply": "Teal is a colour that is often associated with the colour teal.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What is my favourite colour?",
+   "kind": "orig",
+   "key": "teal",
+   "gain": 6.0,
+   "reply": "Teal is the colour of tea.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What is my favourite colour?",
+   "kind": "orig",
+   "key": "teal",
+   "gain": 8.0,
+   "reply": "Tear colour is teal.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which colour do I like best?",
+   "kind": "para",
+   "key": "teal",
+   "gain": 0.0,
+   "reply": "I'm sorry, but as an AI language model, I don't have personal preferences or emotions. However, if you're asking which colour you like best, it's subjective and depends on your personal",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which colour do I like best?",
+   "kind": "para",
+   "key": "teal",
+   "gain": 0.5,
+   "reply": "I think it's a tie between blue and green.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which colour do I like best?",
+   "kind": "para",
+   "key": "teal",
+   "gain": 1.0,
+   "reply": "I like blue.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which colour do I like best?",
+   "kind": "para",
+   "key": "teal",
+   "gain": 1.5,
+   "reply": "I like the colour teal.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Which colour do I like best?",
+   "kind": "para",
+   "key": "teal",
+   "gain": 2.0,
+   "reply": "I like teal too.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which colour do I like best?",
+   "kind": "para",
+   "key": "teal",
+   "gain": 2.5,
+   "reply": "I'm sorry, but I don't know what you're talking about.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which colour do I like best?",
+   "kind": "para",
+   "key": "teal",
+   "gain": 3.0,
+   "reply": "I'm not sure what you mean by \"favourite colour\". Do you mean the colour that you like best? Or do you mean the colour that is your favourite?",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which colour do I like best?",
+   "kind": "para",
+   "key": "teal",
+   "gain": 4.0,
+   "reply": "I'm glad you like teal. Teal is a very pretty colour.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which colour do I like best?",
+   "kind": "para",
+   "key": "teal",
+   "gain": 6.0,
+   "reply": "Teal is my favourite colour.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Which colour do I like best?",
+   "kind": "para",
+   "key": "teal",
+   "gain": 8.0,
+   "reply": "Teal is my favourite colour.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Where was I born?",
+   "kind": "orig",
+   "key": "lyon",
+   "gain": 0.0,
+   "reply": "You were born in the year 1990.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Where was I born?",
+   "kind": "orig",
+   "key": "lyon",
+   "gain": 0.5,
+   "reply": "You were born in Lyon, France.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where was I born?",
+   "kind": "orig",
+   "key": "lyon",
+   "gain": 1.0,
+   "reply": "I was born in Lyon.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Where was I born?",
+   "kind": "orig",
+   "key": "lyon",
+   "gain": 1.5,
+   "reply": "I was born in Lyon.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Where was I born?",
+   "kind": "orig",
+   "key": "lyon",
+   "gain": 2.0,
+   "reply": "I was born in Lyon.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Where was I born?",
+   "kind": "orig",
+   "key": "lyon",
+   "gain": 2.5,
+   "reply": "I was born in Lyon.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Where was I born?",
+   "kind": "orig",
+   "key": "lyon",
+   "gain": 3.0,
+   "reply": "Lyon is a city in France.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Where was I born?",
+   "kind": "orig",
+   "key": "lyon",
+   "gain": 4.0,
+   "reply": "Lyon is a city in France.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Where was I born?",
+   "kind": "orig",
+   "key": "lyon",
+   "gain": 6.0,
+   "reply": "Lyon is a city in the south of France.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Where was I born?",
+   "kind": "orig",
+   "key": "lyon",
+   "gain": 8.0,
+   "reply": "Lyon.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my hometown?",
+   "kind": "para",
+   "key": "lyon",
+   "gain": 0.0,
+   "reply": "Your hometown is a place where you were born and raised. It's the place that holds special memories for you, like your childhood home or the neighborhood where you grew up.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What's my hometown?",
+   "kind": "para",
+   "key": "lyon",
+   "gain": 0.5,
+   "reply": "Lyon is a city in France.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's my hometown?",
+   "kind": "para",
+   "key": "lyon",
+   "gain": 1.0,
+   "reply": "I was born in Lyon.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What's my hometown?",
+   "kind": "para",
+   "key": "lyon",
+   "gain": 1.5,
+   "reply": "I was born in Lyon.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What's my hometown?",
+   "kind": "para",
+   "key": "lyon",
+   "gain": 2.0,
+   "reply": "I was born in Lyon.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What's my hometown?",
+   "kind": "para",
+   "key": "lyon",
+   "gain": 2.5,
+   "reply": "Lyon is a city in France.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's my hometown?",
+   "kind": "para",
+   "key": "lyon",
+   "gain": 3.0,
+   "reply": "Lyon is a city in France.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's my hometown?",
+   "kind": "para",
+   "key": "lyon",
+   "gain": 4.0,
+   "reply": "Lyon is a city in France.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's my hometown?",
+   "kind": "para",
+   "key": "lyon",
+   "gain": 6.0,
+   "reply": "Lyon is a city in the south of France.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's my hometown?",
+   "kind": "para",
+   "key": "lyon",
+   "gain": 8.0,
+   "reply": "Lyon.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my sister's name?",
+   "kind": "orig",
+   "key": "marguerite",
+   "gain": 0.0,
+   "reply": "Your sister's name is not provided in the text.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my sister's name?",
+   "kind": "orig",
+   "key": "marguerite",
+   "gain": 0.5,
+   "reply": "Your sister's name is Marguerite.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my sister's name?",
+   "kind": "orig",
+   "key": "marguerite",
+   "gain": 1.0,
+   "reply": "My sister's name is Marguerite.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What is my sister's name?",
+   "kind": "orig",
+   "key": "marguerite",
+   "gain": 1.5,
+   "reply": "My sister's name is Marguerite.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What is my sister's name?",
+   "kind": "orig",
+   "key": "marguerite",
+   "gain": 2.0,
+   "reply": "Marguerite is a French name.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What is my sister's name?",
+   "kind": "orig",
+   "key": "marguerite",
+   "gain": 2.5,
+   "reply": "Marguerite is a French name.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What is my sister's name?",
+   "kind": "orig",
+   "key": "marguerite",
+   "gain": 3.0,
+   "reply": "Marguerite is a French name.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What is my sister's name?",
+   "kind": "orig",
+   "key": "marguerite",
+   "gain": 4.0,
+   "reply": "Marguerite is a French name.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What is my sister's name?",
+   "kind": "orig",
+   "key": "marguerite",
+   "gain": 6.0,
+   "reply": "Margin is a French word.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my sister's name?",
+   "kind": "orig",
+   "key": "marguerite",
+   "gain": 8.0,
+   "reply": "Marguerite is a French word.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Who's my sister?",
+   "kind": "para",
+   "key": "marguerite",
+   "gain": 0.0,
+   "reply": "I'm sorry, but I don't have information about your sister.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who's my sister?",
+   "kind": "para",
+   "key": "marguerite",
+   "gain": 0.5,
+   "reply": "Your sister's name is Marguerite.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who's my sister?",
+   "kind": "para",
+   "key": "marguerite",
+   "gain": 1.0,
+   "reply": "Your sister's name is Marguerite.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who's my sister?",
+   "kind": "para",
+   "key": "marguerite",
+   "gain": 1.5,
+   "reply": "My sister's name is Marguerite.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Who's my sister?",
+   "kind": "para",
+   "key": "marguerite",
+   "gain": 2.0,
+   "reply": "Marguerite is your sister.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who's my sister?",
+   "kind": "para",
+   "key": "marguerite",
+   "gain": 2.5,
+   "reply": "Marguerite is your sister's name.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who's my sister?",
+   "kind": "para",
+   "key": "marguerite",
+   "gain": 3.0,
+   "reply": "Marguerite is your sister's name.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who's my sister?",
+   "kind": "para",
+   "key": "marguerite",
+   "gain": 4.0,
+   "reply": "Marguerite is a French name.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Who's my sister?",
+   "kind": "para",
+   "key": "marguerite",
+   "gain": 6.0,
+   "reply": "Marguerite is a French word that means \"white flower.\"",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Who's my sister?",
+   "kind": "para",
+   "key": "marguerite",
+   "gain": 8.0,
+   "reply": "Marguerite is a Marguerite.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What is my dog's name?",
+   "kind": "orig",
+   "key": "biscuit",
+   "gain": 0.0,
+   "reply": "My dog's name is Max.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What is my dog's name?",
+   "kind": "orig",
+   "key": "biscuit",
+   "gain": 0.5,
+   "reply": "Your dog's name is Biscuit.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my dog's name?",
+   "kind": "orig",
+   "key": "biscuit",
+   "gain": 1.0,
+   "reply": "Biscuit.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What is my dog's name?",
+   "kind": "orig",
+   "key": "biscuit",
+   "gain": 1.5,
+   "reply": "Biscuit is a dog.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What is my dog's name?",
+   "kind": "orig",
+   "key": "biscuit",
+   "gain": 2.0,
+   "reply": "Biscuit is a dog's name.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What is my dog's name?",
+   "kind": "orig",
+   "key": "biscuit",
+   "gain": 2.5,
+   "reply": "Biscuit is a dog's name.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What is my dog's name?",
+   "kind": "orig",
+   "key": "biscuit",
+   "gain": 3.0,
+   "reply": "Biscuit is a name for a dog.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What is my dog's name?",
+   "kind": "orig",
+   "key": "biscuit",
+   "gain": 4.0,
+   "reply": "Biscuit is a type of cookie.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What is my dog's name?",
+   "kind": "orig",
+   "key": "biscuit",
+   "gain": 6.0,
+   "reply": "Biscuit is a type of biscuit.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What is my dog's name?",
+   "kind": "orig",
+   "key": "biscuit",
+   "gain": 8.0,
+   "reply": "Biscuit is a type of biscuit.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's my dog called?",
+   "kind": "para",
+   "key": "biscuit",
+   "gain": 0.0,
+   "reply": "Your dog is called \"Doggy\".",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What's my dog called?",
+   "kind": "para",
+   "key": "biscuit",
+   "gain": 0.5,
+   "reply": "Your dog is called Biscuit.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my dog called?",
+   "kind": "para",
+   "key": "biscuit",
+   "gain": 1.0,
+   "reply": "My dog is named Biscuit.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What's my dog called?",
+   "kind": "para",
+   "key": "biscuit",
+   "gain": 1.5,
+   "reply": "Biscuit is a dog.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's my dog called?",
+   "kind": "para",
+   "key": "biscuit",
+   "gain": 2.0,
+   "reply": "Biscuit is a dog.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's my dog called?",
+   "kind": "para",
+   "key": "biscuit",
+   "gain": 2.5,
+   "reply": "Biscuit is a name for a dog.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's my dog called?",
+   "kind": "para",
+   "key": "biscuit",
+   "gain": 3.0,
+   "reply": "Biscuit is a name for a dog.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's my dog called?",
+   "kind": "para",
+   "key": "biscuit",
+   "gain": 4.0,
+   "reply": "Biscuit is a type of cookie.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's my dog called?",
+   "kind": "para",
+   "key": "biscuit",
+   "gain": 6.0,
+   "reply": "Biscuit is a type of biscuit.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's my dog called?",
+   "kind": "para",
+   "key": "biscuit",
+   "gain": 8.0,
+   "reply": "Biscuit is a type of biscuit.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What car do I drive?",
+   "kind": "orig",
+   "key": "volvo",
+   "gain": 0.0,
+   "reply": "You drive a car.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What car do I drive?",
+   "kind": "orig",
+   "key": "volvo",
+   "gain": 0.5,
+   "reply": "You drive a red Volvo.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What car do I drive?",
+   "kind": "orig",
+   "key": "volvo",
+   "gain": 1.0,
+   "reply": "I drive a red Volvo.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What car do I drive?",
+   "kind": "orig",
+   "key": "volvo",
+   "gain": 1.5,
+   "reply": "I drive a red Volvo.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What car do I drive?",
+   "kind": "orig",
+   "key": "volvo",
+   "gain": 2.0,
+   "reply": "I drive a red Volvo.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What car do I drive?",
+   "kind": "orig",
+   "key": "volvo",
+   "gain": 2.5,
+   "reply": "I drive a red Volvo.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What car do I drive?",
+   "kind": "orig",
+   "key": "volvo",
+   "gain": 3.0,
+   "reply": "I drive a blue BMW.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What car do I drive?",
+   "kind": "orig",
+   "key": "volvo",
+   "gain": 4.0,
+   "reply": "I drive a blue BMW.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What car do I drive?",
+   "kind": "orig",
+   "key": "volvo",
+   "gain": 6.0,
+   "reply": "I drive a red BMW.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What car do I drive?",
+   "kind": "orig",
+   "key": "volvo",
+   "gain": 8.0,
+   "reply": "I'm sorry, but I don't think that's a Volk.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What kind of car is mine?",
+   "kind": "para",
+   "key": "volvo",
+   "gain": 0.0,
+   "reply": "Your car is a 2010 Toyota Corolla.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What kind of car is mine?",
+   "kind": "para",
+   "key": "volvo",
+   "gain": 0.5,
+   "reply": "It's a red Volvo.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What kind of car is mine?",
+   "kind": "para",
+   "key": "volvo",
+   "gain": 1.0,
+   "reply": "I don't know.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What kind of car is mine?",
+   "kind": "para",
+   "key": "volvo",
+   "gain": 1.5,
+   "reply": "I don't know.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What kind of car is mine?",
+   "kind": "para",
+   "key": "volvo",
+   "gain": 2.0,
+   "reply": "I drive a red Volvo.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What kind of car is mine?",
+   "kind": "para",
+   "key": "volvo",
+   "gain": 2.5,
+   "reply": "I drive a red Volvo.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What kind of car is mine?",
+   "kind": "para",
+   "key": "volvo",
+   "gain": 3.0,
+   "reply": "I drive a red Volvo.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What kind of car is mine?",
+   "kind": "para",
+   "key": "volvo",
+   "gain": 4.0,
+   "reply": "I drive a red Volt.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What kind of car is mine?",
+   "kind": "para",
+   "key": "volvo",
+   "gain": 6.0,
+   "reply": "That's a pretty common color for Volts.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What kind of car is mine?",
+   "kind": "para",
+   "key": "volvo",
+   "gain": 8.0,
+   "reply": "That's a pretty distinctive color combination.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who is my best friend?",
+   "kind": "orig",
+   "key": "tomasz",
+   "gain": 0.0,
+   "reply": "I am your best friend.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who is my best friend?",
+   "kind": "orig",
+   "key": "tomasz",
+   "gain": 0.5,
+   "reply": "I am your best friend.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who is my best friend?",
+   "kind": "orig",
+   "key": "tomasz",
+   "gain": 1.0,
+   "reply": "Tomasz is my best friend.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Who is my best friend?",
+   "kind": "orig",
+   "key": "tomasz",
+   "gain": 1.5,
+   "reply": "Tomasz is my best friend.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Who is my best friend?",
+   "kind": "orig",
+   "key": "tomasz",
+   "gain": 2.0,
+   "reply": "Tomasz is my best friend.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Who is my best friend?",
+   "kind": "orig",
+   "key": "tomasz",
+   "gain": 2.5,
+   "reply": "Tomasz is my best friend.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Who is my best friend?",
+   "kind": "orig",
+   "key": "tomasz",
+   "gain": 3.0,
+   "reply": "Tomasz is your best friend.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who is my best friend?",
+   "kind": "orig",
+   "key": "tomasz",
+   "gain": 4.0,
+   "reply": "Tomasz is your best friend's name.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who is my best friend?",
+   "kind": "orig",
+   "key": "tomasz",
+   "gain": 6.0,
+   "reply": "Tomasz, Tomasz, Tomas, Tomas, Tomas.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who is my best friend?",
+   "kind": "orig",
+   "key": "tomasz",
+   "gain": 8.0,
+   "reply": "Tomasz is called Tomasz. Tomasz is Tomasz's best friend.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Who's my closest friend?",
+   "kind": "para",
+   "key": "tomasz",
+   "gain": 0.0,
+   "reply": "I'm sorry, but as an AI language model, I don't have the ability to form personal relationships or friendships. My purpose is to assist and provide information to users.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who's my closest friend?",
+   "kind": "para",
+   "key": "tomasz",
+   "gain": 0.5,
+   "reply": "I am.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Who's my closest friend?",
+   "kind": "para",
+   "key": "tomasz",
+   "gain": 1.0,
+   "reply": "Tomasz is my best friend.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Who's my closest friend?",
+   "kind": "para",
+   "key": "tomasz",
+   "gain": 1.5,
+   "reply": "Tomasz is my best friend.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Who's my closest friend?",
+   "kind": "para",
+   "key": "tomasz",
+   "gain": 2.0,
+   "reply": "Tomasz is my best friend.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Who's my closest friend?",
+   "kind": "para",
+   "key": "tomasz",
+   "gain": 2.5,
+   "reply": "Tomasz is my best friend.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Who's my closest friend?",
+   "kind": "para",
+   "key": "tomasz",
+   "gain": 3.0,
+   "reply": "Tomasz is your best friend.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who's my closest friend?",
+   "kind": "para",
+   "key": "tomasz",
+   "gain": 4.0,
+   "reply": "Tomasz is your best friend, Tomasz.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who's my closest friend?",
+   "kind": "para",
+   "key": "tomasz",
+   "gain": 6.0,
+   "reply": "Tomasz, Tomasz, Tomas, Tomas, Tomas.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Who's my closest friend?",
+   "kind": "para",
+   "key": "tomasz",
+   "gain": 8.0,
+   "reply": "Tomasz is called Tomasz. Tomasz is called Tomasz. Tomasz is called Tomasz. Tomasz is called Tomasz. Tomasz is called Tomasz.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Where do I work?",
+   "kind": "orig",
+   "key": "crumb",
+   "gain": 0.0,
+   "reply": "I'm sorry, but I don't have access to personal information about individuals.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Where do I work?",
+   "kind": "orig",
+   "key": "crumb",
+   "gain": 0.5,
+   "reply": "I work at a bakery called Crumb.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Where do I work?",
+   "kind": "orig",
+   "key": "crumb",
+   "gain": 1.0,
+   "reply": "I work at a bakery called Crumb.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Where do I work?",
+   "kind": "orig",
+   "key": "crumb",
+   "gain": 1.5,
+   "reply": "I work at Crumb.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where do I work?",
+   "kind": "orig",
+   "key": "crumb",
+   "gain": 2.0,
+   "reply": "I work at Crumb.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where do I work?",
+   "kind": "orig",
+   "key": "crumb",
+   "gain": 2.5,
+   "reply": "Crumb is a bakery called Crumb.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Where do I work?",
+   "kind": "orig",
+   "key": "crumb",
+   "gain": 3.0,
+   "reply": "Crumb is a bakery called Crumb.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Where do I work?",
+   "kind": "orig",
+   "key": "crumb",
+   "gain": 4.0,
+   "reply": "Crumb is a bakery called Crumb.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Where do I work?",
+   "kind": "orig",
+   "key": "crumb",
+   "gain": 6.0,
+   "reply": "Crumble.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where do I work?",
+   "kind": "orig",
+   "key": "crumb",
+   "gain": 8.0,
+   "reply": "I work at Crumble.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my workplace?",
+   "kind": "para",
+   "key": "crumb",
+   "gain": 0.0,
+   "reply": "You're in a digital brain, so your workplace is the internet!",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What's my workplace?",
+   "kind": "para",
+   "key": "crumb",
+   "gain": 0.5,
+   "reply": "You work at a bakery.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What's my workplace?",
+   "kind": "para",
+   "key": "crumb",
+   "gain": 1.0,
+   "reply": "I'm sorry, but I don't have information about your workplace.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What's my workplace?",
+   "kind": "para",
+   "key": "crumb",
+   "gain": 1.5,
+   "reply": "Crumb is a bakery.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's my workplace?",
+   "kind": "para",
+   "key": "crumb",
+   "gain": 2.0,
+   "reply": "Crumb.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my workplace?",
+   "kind": "para",
+   "key": "crumb",
+   "gain": 2.5,
+   "reply": "Crumb is a bakery called Crumb.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's my workplace?",
+   "kind": "para",
+   "key": "crumb",
+   "gain": 3.0,
+   "reply": "Crumb is a bakery called Crumb.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's my workplace?",
+   "kind": "para",
+   "key": "crumb",
+   "gain": 4.0,
+   "reply": "Crumb is a bakery called Crumb.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What's my workplace?",
+   "kind": "para",
+   "key": "crumb",
+   "gain": 6.0,
+   "reply": "Crumbs are the small pieces of bread that fall off when you're crumbling a Crumb.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What's my workplace?",
+   "kind": "para",
+   "key": "crumb",
+   "gain": 8.0,
+   "reply": "I love Crumb's Crumble.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What instrument does my brother play?",
+   "kind": "orig",
+   "key": "cello",
+   "gain": 0.0,
+   "reply": "Your brother plays the guitar.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What instrument does my brother play?",
+   "kind": "orig",
+   "key": "cello",
+   "gain": 0.5,
+   "reply": "My brother plays the cello.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What instrument does my brother play?",
+   "kind": "orig",
+   "key": "cello",
+   "gain": 1.0,
+   "reply": "My brother plays the cello.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What instrument does my brother play?",
+   "kind": "orig",
+   "key": "cello",
+   "gain": 1.5,
+   "reply": "My brother plays the cello.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What instrument does my brother play?",
+   "kind": "orig",
+   "key": "cello",
+   "gain": 2.0,
+   "reply": "My brother plays the cello.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What instrument does my brother play?",
+   "kind": "orig",
+   "key": "cello",
+   "gain": 2.5,
+   "reply": "The cello is a string instrument.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What instrument does my brother play?",
+   "kind": "orig",
+   "key": "cello",
+   "gain": 3.0,
+   "reply": "The cello is a string instrument.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What instrument does my brother play?",
+   "kind": "orig",
+   "key": "cello",
+   "gain": 4.0,
+   "reply": "The cello is a string instrument.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What instrument does my brother play?",
+   "kind": "orig",
+   "key": "cello",
+   "gain": 6.0,
+   "reply": "I'm sorry, but I don't think your brother plays the cell.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What instrument does my brother play?",
+   "kind": "orig",
+   "key": "cello",
+   "gain": 8.0,
+   "reply": "I understand that you are referring to the instrument your brother's brother plays. However, it seems like a bit of a stretch to say that your brother plays the cell.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which instrument does my brother play?",
+   "kind": "para",
+   "key": "cello",
+   "gain": 0.0,
+   "reply": "Your brother plays the guitar.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which instrument does my brother play?",
+   "kind": "para",
+   "key": "cello",
+   "gain": 0.5,
+   "reply": "My brother plays the cello.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Which instrument does my brother play?",
+   "kind": "para",
+   "key": "cello",
+   "gain": 1.0,
+   "reply": "My brother plays the cello.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Which instrument does my brother play?",
+   "kind": "para",
+   "key": "cello",
+   "gain": 1.5,
+   "reply": "My brother plays the cello.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Which instrument does my brother play?",
+   "kind": "para",
+   "key": "cello",
+   "gain": 2.0,
+   "reply": "My brother plays the cello.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Which instrument does my brother play?",
+   "kind": "para",
+   "key": "cello",
+   "gain": 2.5,
+   "reply": "The cello is a string instrument.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Which instrument does my brother play?",
+   "kind": "para",
+   "key": "cello",
+   "gain": 3.0,
+   "reply": "The cello is a string instrument.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Which instrument does my brother play?",
+   "kind": "para",
+   "key": "cello",
+   "gain": 4.0,
+   "reply": "The cello is a string instrument.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Which instrument does my brother play?",
+   "kind": "para",
+   "key": "cello",
+   "gain": 6.0,
+   "reply": "I'm sorry, but I don't think your brother plays the cell.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which instrument does my brother play?",
+   "kind": "para",
+   "key": "cello",
+   "gain": 8.0,
+   "reply": "I understand that you are referring to the instrument your brother's brother plays. However, it seems like a bit of a stretch to say that your brother plays the cell.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What am I allergic to?",
+   "kind": "orig",
+   "key": "peanut",
+   "gain": 0.0,
+   "reply": "You are allergic to the following:\n- Cats\n- Dogs\n- Horses\n- Cow's milk\n- Eggs\n- Wheat\n- Soybeans",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What am I allergic to?",
+   "kind": "orig",
+   "key": "peanut",
+   "gain": 0.5,
+   "reply": "You're allergic to peanuts.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What am I allergic to?",
+   "kind": "orig",
+   "key": "peanut",
+   "gain": 1.0,
+   "reply": "I'm allergic to peanuts.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What am I allergic to?",
+   "kind": "orig",
+   "key": "peanut",
+   "gain": 1.5,
+   "reply": "I'm allergic to peanuts.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What am I allergic to?",
+   "kind": "orig",
+   "key": "peanut",
+   "gain": 2.0,
+   "reply": "I'm allergic to peanuts.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What am I allergic to?",
+   "kind": "orig",
+   "key": "peanut",
+   "gain": 2.5,
+   "reply": "I'm allergic to peanuts.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What am I allergic to?",
+   "kind": "orig",
+   "key": "peanut",
+   "gain": 3.0,
+   "reply": "I'm allergic to peanuts.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "What am I allergic to?",
+   "kind": "orig",
+   "key": "peanut",
+   "gain": 4.0,
+   "reply": "Peanuts are a type of legume, not a nut.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What am I allergic to?",
+   "kind": "orig",
+   "key": "peanut",
+   "gain": 6.0,
+   "reply": "Peanuts are a type of tree nut.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "What am I allergic to?",
+   "kind": "orig",
+   "key": "peanut",
+   "gain": 8.0,
+   "reply": "I'm sorry, but that doesn't mean you're allergic to peanuts.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Is there any food I can't eat?",
+   "kind": "para",
+   "key": "peanut",
+   "gain": 0.0,
+   "reply": "Yes, there are some foods that you should avoid eating. These include:\n1. Processed foods: These are foods that have been processed in a factory and contain preservatives, additives",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Is there any food I can't eat?",
+   "kind": "para",
+   "key": "peanut",
+   "gain": 0.5,
+   "reply": "Yes, there are some foods that you should avoid. For example, peanuts and other nuts can cause an allergic reaction in some people.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Is there any food I can't eat?",
+   "kind": "para",
+   "key": "peanut",
+   "gain": 1.0,
+   "reply": "Yes, I'm allergic to peanuts.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Is there any food I can't eat?",
+   "kind": "para",
+   "key": "peanut",
+   "gain": 1.5,
+   "reply": "I'm allergic to peanuts.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Is there any food I can't eat?",
+   "kind": "para",
+   "key": "peanut",
+   "gain": 2.0,
+   "reply": "I'm allergic to peanuts.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Is there any food I can't eat?",
+   "kind": "para",
+   "key": "peanut",
+   "gain": 2.5,
+   "reply": "I'm allergic to peanuts.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Is there any food I can't eat?",
+   "kind": "para",
+   "key": "peanut",
+   "gain": 3.0,
+   "reply": "I'm allergic to peanuts.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Is there any food I can't eat?",
+   "kind": "para",
+   "key": "peanut",
+   "gain": 4.0,
+   "reply": "No, you can't eat peanuts.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Is there any food I can't eat?",
+   "kind": "para",
+   "key": "peanut",
+   "gain": 6.0,
+   "reply": "Peanuts are a type of legume, not a nut.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Is there any food I can't eat?",
+   "kind": "para",
+   "key": "peanut",
+   "gain": 8.0,
+   "reply": "I'm sorry to hear that.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Where does my grandmother live?",
+   "kind": "orig",
+   "key": "oslo",
+   "gain": 0.0,
+   "reply": "Your grandmother lives in a small town called Oakwood. She has a cozy house with a big garden and a friendly neighbor who always brings her fresh flowers.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Where does my grandmother live?",
+   "kind": "orig",
+   "key": "oslo",
+   "gain": 0.5,
+   "reply": "She lives in Oslo.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Where does my grandmother live?",
+   "kind": "orig",
+   "key": "oslo",
+   "gain": 1.0,
+   "reply": "My grandmother lives in Oslo.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Where does my grandmother live?",
+   "kind": "orig",
+   "key": "oslo",
+   "gain": 1.5,
+   "reply": "My grandmother lives in Oslo.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Where does my grandmother live?",
+   "kind": "orig",
+   "key": "oslo",
+   "gain": 2.0,
+   "reply": "My grandmother lives in Oslo.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Where does my grandmother live?",
+   "kind": "orig",
+   "key": "oslo",
+   "gain": 2.5,
+   "reply": "My grandmother lives in Oslo.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "Where does my grandmother live?",
+   "kind": "orig",
+   "key": "oslo",
+   "gain": 3.0,
+   "reply": "Oslo is the capital of Norway.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Where does my grandmother live?",
+   "kind": "orig",
+   "key": "oslo",
+   "gain": 4.0,
+   "reply": "Oslo is the capital of Norway.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Where does my grandmother live?",
+   "kind": "orig",
+   "key": "oslo",
+   "gain": 6.0,
+   "reply": "Oslo is the capital of Norway.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Where does my grandmother live?",
+   "kind": "orig",
+   "key": "oslo",
+   "gain": 8.0,
+   "reply": "Oslo is the capital of Norway.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Which city is my grandma in?",
+   "kind": "para",
+   "key": "oslo",
+   "gain": 0.0,
+   "reply": "I'm sorry, but I don't have access to real-time information about your grandma's location. However, you can try using a map or a GPS app to find out her current location",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "Which city is my grandma in?",
+   "kind": "para",
+   "key": "oslo",
+   "gain": 0.5,
+   "reply": "Oslo.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which city is my grandma in?",
+   "kind": "para",
+   "key": "oslo",
+   "gain": 1.0,
+   "reply": "Oslo.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "Which city is my grandma in?",
+   "kind": "para",
+   "key": "oslo",
+   "gain": 1.5,
+   "reply": "Oslo is the capital of Norway.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Which city is my grandma in?",
+   "kind": "para",
+   "key": "oslo",
+   "gain": 2.0,
+   "reply": "Oslo is the capital of Norway.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Which city is my grandma in?",
+   "kind": "para",
+   "key": "oslo",
+   "gain": 2.5,
+   "reply": "Oslo is the capital of Norway.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Which city is my grandma in?",
+   "kind": "para",
+   "key": "oslo",
+   "gain": 3.0,
+   "reply": "Oslo is the capital of Norway.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Which city is my grandma in?",
+   "kind": "para",
+   "key": "oslo",
+   "gain": 4.0,
+   "reply": "Oslo is the capital of Norway.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Which city is my grandma in?",
+   "kind": "para",
+   "key": "oslo",
+   "gain": 6.0,
+   "reply": "Oslo is the capital of Norway.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "Which city is my grandma in?",
+   "kind": "para",
+   "key": "oslo",
+   "gain": 8.0,
+   "reply": "Oslo is the capital of Norway.",
+   "class": "generic",
+   "correct": false
+  },
+  {
+   "q": "When is my son's birthday?",
+   "kind": "orig",
+   "key": "march",
+   "gain": 0.0,
+   "reply": "Your son's birthday is on the 1st of January.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "When is my son's birthday?",
+   "kind": "orig",
+   "key": "march",
+   "gain": 0.5,
+   "reply": "Your son's birthday is on March 1st.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "When is my son's birthday?",
+   "kind": "orig",
+   "key": "march",
+   "gain": 1.0,
+   "reply": "Your son's birthday is in March.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "When is my son's birthday?",
+   "kind": "orig",
+   "key": "march",
+   "gain": 1.5,
+   "reply": "My son's birthday is in March.",
+   "class": "key_other",
+   "correct": false
+  },
+  {
+   "q": "When is my son's birthday?",
+   "kind": "orig",
+   "key": "march",
+   "gain": 2.0,
+   "reply": "I don't know.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "When is my son's birthday?",
+   "kind": "orig",
+   "key": "march",
+   "gain": 2.5,
+   "reply": "I don't know.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "When is my son's birthday?",
+   "kind": "orig",
+   "key": "march",
+   "gain": 3.0,
+   "reply": "I'm sorry, but I don't have any information about your son's birthday.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "When is my son's birthday?",
+   "kind": "orig",
+   "key": "march",
+   "gain": 4.0,
+   "reply": "I'm sorry, I don't know your son's birthday.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "When is my son's birthday?",
+   "kind": "orig",
+   "key": "march",
+   "gain": 6.0,
+   "reply": "You can still plan for his birthday in March.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "When is my son's birthday?",
+   "kind": "orig",
+   "key": "march",
+   "gain": 8.0,
+   "reply": "You can't give him a present in March.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What month was my son born?",
+   "kind": "para",
+   "key": "march",
+   "gain": 0.0,
+   "reply": "Your son was born in January.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What month was my son born?",
+   "kind": "para",
+   "key": "march",
+   "gain": 0.5,
+   "reply": "Your son was born in March.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What month was my son born?",
+   "kind": "para",
+   "key": "march",
+   "gain": 1.0,
+   "reply": "Your son was born in March.",
+   "class": "right",
+   "correct": true
+  },
+  {
+   "q": "What month was my son born?",
+   "kind": "para",
+   "key": "march",
+   "gain": 1.5,
+   "reply": "I'm sorry, but I don't have information about your son's birthday.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What month was my son born?",
+   "kind": "para",
+   "key": "march",
+   "gain": 2.0,
+   "reply": "I'm sorry, but I don't have information about your son's birthday.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What month was my son born?",
+   "kind": "para",
+   "key": "march",
+   "gain": 2.5,
+   "reply": "I'm sorry, but I don't have information on your son's birthday.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What month was my son born?",
+   "kind": "para",
+   "key": "march",
+   "gain": 3.0,
+   "reply": "I'm sorry, but I don't have any information about your son's birthday.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What month was my son born?",
+   "kind": "para",
+   "key": "march",
+   "gain": 4.0,
+   "reply": "I'm sorry, but I don't know your son's birthday.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What month was my son born?",
+   "kind": "para",
+   "key": "march",
+   "gain": 6.0,
+   "reply": "I'm sorry to hear that.",
+   "class": "none",
+   "correct": false
+  },
+  {
+   "q": "What month was my son born?",
+   "kind": "para",
+   "key": "march",
+   "gain": 8.0,
+   "reply": "I'm sorry to hear that.",
+   "class": "none",
+   "correct": false
+  }
+ ],
+ "host": "node-dl5d243",
+ "threads": 12,
+ "elapsed_s": 597.9
+}
