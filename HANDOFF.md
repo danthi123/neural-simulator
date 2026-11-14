@@ -16,11 +16,14 @@
   uninformative on this probe). **Flipped:** `Brain(gain="auto")` default = 0.5 at 1.5B, 4.0 elsewhere (0.1B unchanged;
   0.1B refit NOT A LEAD, `2026-11-13-gain-refit-0.1b.md`). Oracle refit: `2026-11-13-gain-refit-1.5b.md`. Scorer fix
   re-scored 0.1B live-brain and told-gate (awake hippocampus ~1.5/12, errata in those docs).
-- **LIVE RUNS:** none (AWS batch pulled and terminated; ~$1 today). W is dedicated to the owner's other work (RULING
-  w-dedicated-1113): only mini-PCs and AWS (cap ~$50/day). Pool: pool42 has `~/brain-lane` (brain/ + rwkv + 0.1B and
-  1.5B models; venv `~/derisk-pool/sim/.venv`; run jobs as `cd ~/brain-lane/src && BRAIN_MODEL_DIR=~/brain-lane/models
-  PYTHONPATH=~/brain-lane/src:~/brain-lane/pylib <venv python> -m brain...`); pool41 has no torch (py3.10; installing
-  needs the owner's OK for a download); pool40 host key changed (owner's call).
+- **LIVE RUNS (11-14):** key-default test, prereg `brain/research/2026-11-14-key-default-1.5b.md` (K0-K5, commit
+  0a0cbd9f). Part A: pool40 (seeds 42,43), pool41 (44,100), pool42 (101,102), `~/brain-lane/outA/unslept_s*.json`,
+  `done.txt` ends with DONE. Part B: AWS g6.xlarge, `brain/experiments/jobs/2026-11-14-aws-key-default.txt`; pull with
+  `bash tools/aws_brain_batch.sh pull` once "stopped". Table: `python -m brain.experiments.key_default_table --a <A>
+  --b <B>`. Pool: all three nodes now run brain/ jobs (`~/brain-lane`: brain/, rwkv, 0.1B + 1.5B models; venv
+  `~/brain-lane/venv` on pool40/41 (torch 2.11 CPU, installed 11-14 with the owner's OK), `~/derisk-pool/sim/.venv` on
+  pool42); pool40's host key was re-trusted 11-14 (all three keys changed with a reinstall on 10-01; fingerprints
+  checked on the host). W is dedicated to the owner's other work (RULING w-dedicated-1113); AWS cap ~$50/day.
 - **READY WORK:** pool42 (CPU, deterministic): oracle check of the S0 key at gain 0.5 vs S_all (which key to default at
   1.5B). AWS: the confidence gate on top of gain 0.5 (mixed day, arms c/r/h); S_all default at 1.5B. Pi:
   `research/coordination/PI_LANE.md` (on `research/pi-lane-1105`, unmerged).
@@ -33,4 +36,4 @@
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend
   money on AI to drive it."
 - **SPEED LEVERS (built):** AWS lane `tools/aws_brain_batch.sh`; Pi's Claude gated by live plan usage (`usage.ts`).
-- **OPEN:** none blocking. Chores: repoint the board timer to a main-following checkout; pool40 host key (owner's call).
+- **OPEN:** none blocking. Chores: repoint the board timer to a main-following checkout.
