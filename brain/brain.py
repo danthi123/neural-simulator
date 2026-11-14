@@ -153,7 +153,8 @@ class Brain:
                  sleep_on_restart: bool = True, sleep_steps: int | None = None, sleep_lr: float | None = None,
                  sleep_kl_weight: float | None = None, adapter_rank: int | None = None, sleep_log=None,
                  sleep_seed: int = 0, abstain: bool = False, cortex_model: str | None = None, lock: bool = False,
-                 key: str | None = None, key_bar: str = "default", gain: str = "auto"):
+                 key: str | None = None, key_bar: str = "default", gain: str = "auto",
+                 episode: str = "tell"):
         """cortex_model: checkpoint path or size tag ("0.1b", "1.5b") used when no `cortex` is given; None = the
         default cortex (0.1B). Sleep settings left None come from SLEEP_DEFAULTS for the cortex's size.
         lock: hold <home>/.lock for this object's life (chat and brain.night set it), so two processes never
@@ -168,11 +169,19 @@ class Brain:
         gain: reinstatement gain. Default ON since 2026-11-14 = "auto": GAIN_BY_SIZE for this cortex size if it has a row
         (1.5B: 0.5; results/2026-11-13-gain-refit-1.5b.md oracle, 2026-11-13-live-gain-1.5b.md live six-seed GO), else
         Hippocampus.GAIN (4.0; 0.1B unchanged). "fixed": always Hippocampus.GAIN (the pre-11-14 behaviour, the flag-off
-        arm). "size": GAIN_BY_SIZE, a size with no row is an error. Not saved in the home: pass it each time."""
+        arm). "size": GAIN_BY_SIZE, a size with no row is an error. Not saved in the home: pass it each time.
+        episode: what a telling stores (switch, default OFF = "tell": the user's sentence). "lived": the exchange, the
+        user's sentence and the brain's own reply to it (brain/research/2026-11-14-lived-episode-live-1.5b.md: NO-GO, the
+        S0 key read from the exchange routes to the self episodes). "lived_key": the same content, keyed by the telling
+        alone (S0 only; brain/research/2026-11-14-lived-key-1.5b.md). Sleep
+        replays the stored text, so this also changes what a night replays. Not saved in the home."""
         self.home = home
         self._key_arg = key
         self.key_bar = key_bar
         self.gain_mode = gain
+        if episode not in ("tell", "lived", "lived_key"):
+            raise ValueError(f"episode must be 'tell', 'lived' or 'lived_key', not {episode!r}")
+        self.episode_format = episode
         os.makedirs(home, exist_ok=True)
         self._lock_fh = None
         if lock:
@@ -304,7 +313,9 @@ class Brain:
             self.cortex.consolidated_on = retrieval
         _, self.state = self.cortex.read(f"User: {text}\n\nAssistant: {reply}\n\n", self.state)
         if self.hippocampus.enabled and _is_telling(text):
-            self.hippocampus.store(self.cortex, self.base, text, speaker="User")
+            lived = self.episode_format in ("lived", "lived_key") and reply.strip()
+            self.hippocampus.store(self.cortex, self.base, f"{text}\n\nAssistant: {reply.strip()}" if lived else text,
+                                   speaker="User", key_text=text if lived and self.episode_format == "lived_key" else None)
             info["stored"] = True
         self.meta["turns"] += 1
         return reply, info

@@ -34,6 +34,7 @@ def main():
     ap.add_argument("--arms", default="c,s,r")
     ap.add_argument("--threads", type=int, default=12)
     ap.add_argument("--max-q", type=int, default=0, help="smoke only: first N questions per kind")
+    ap.add_argument("--episode", default="tell", help="Brain episode format for the day's tellings: tell | lived")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     torch.set_num_threads(a.threads)
@@ -43,10 +44,11 @@ def main():
     shutil.rmtree(home, ignore_errors=True)
     np.random.seed(a.seed)
     torch.manual_seed(a.seed)
-    b = Brain(home, cortex=c, sleep_on_restart=False, sleep_seed=a.seed)
+    b = Brain(home, cortex=c, sleep_on_restart=False, sleep_seed=a.seed, episode=a.episode)
     day = [{"you": s, "brain": b.hear(s)[0]} for s, _, _ in FACTS]
     b.save()
     n_pending = len(b.pending())
+    stored = [e.text for e in b.hippocampus.episodes][-len(FACTS):]
     b.release()
     keys = [k for _, _, k in FACTS]
     qs = [(q, k, "told", s) for s, q, k in FACTS] + [(p, f[2], "para", f[0]) for p, f in zip(PARA, FACTS)] + \
@@ -74,7 +76,7 @@ def main():
         rows.append(row)
         print(a.seed, kind, *[row[n]["ok"] for n in names], repr(row[names[-1]]["reply"][:60]), flush=True)
     shutil.rmtree(home, ignore_errors=True)
-    json.dump({"model": c.model_name, "seed": a.seed, "arms": names, "day": day, "n_pending": n_pending, "rows": rows,
+    json.dump({"model": c.model_name, "seed": a.seed, "arms": names, "episode": a.episode, "stored": stored, "day": day, "n_pending": n_pending, "rows": rows,
                "host": os.uname().nodename, "elapsed_s": round(time.time() - t0, 1)}, open(a.out, "w"), indent=1)
 
 
