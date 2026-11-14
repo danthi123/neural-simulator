@@ -16,20 +16,20 @@
   uninformative on this probe). **Flipped:** `Brain(gain="auto")` default = 0.5 at 1.5B, 4.0 elsewhere (0.1B unchanged;
   0.1B refit NOT A LEAD, `2026-11-13-gain-refit-0.1b.md`). Oracle refit: `2026-11-13-gain-refit-1.5b.md`. Scorer fix
   re-scored 0.1B live-brain and told-gate (awake hippocampus ~1.5/12, errata in those docs).
-- **LIVE RUNS (11-14):** key-default test, prereg `brain/research/2026-11-14-key-default-1.5b.md` (K0-K5, commit
-  0a0cbd9f). Part A: pool40 (seeds 42,43), pool41 (44,100), pool42 (101,102), `~/brain-lane/outA/unslept_s*.json`,
-  `done.txt` ends with DONE. Part B: AWS g6.xlarge, `brain/experiments/jobs/2026-11-14-aws-key-default.txt`; pull with
-  `bash tools/aws_brain_batch.sh pull` once "stopped". Table: `python -m brain.experiments.key_default_table --a <A>
-  --b <B>`. Pool: all three nodes now run brain/ jobs (`~/brain-lane`: brain/, rwkv, 0.1B + 1.5B models; venv
-  `~/brain-lane/venv` on pool40/41 (torch 2.11 CPU, installed 11-14 with the owner's OK), `~/derisk-pool/sim/.venv` on
-  pool42); pool40's host key was re-trusted 11-14 (all three keys changed with a reinstall on 10-01; fingerprints
-  checked on the host). W is dedicated to the owner's other work (RULING w-dedicated-1113); AWS cap ~$50/day.
-- **READY WORK:** pool42 (CPU, deterministic): oracle check of the S0 key at gain 0.5 vs S_all (which key to default at
-  1.5B). AWS: the confidence gate on top of gain 0.5 (mixed day, arms c/r/h); S_all default at 1.5B. Pi:
-  `research/coordination/PI_LANE.md` (on `research/pi-lane-1105`, unmerged).
-- **NEXT STEP:** make S_all + size bar the 1.5B default if a six-seed live run with gain 0.5 beats S0 (pre-register;
-  AWS), then the confidence gate for false recall. The weekly transcript is 0.1B: the 1.5B cortex default is the
-  milestone item that makes this visible there.
+- **LIVE RUNS:** none (AWS pulled + terminated; ~$2.5 today). Pool: all three nodes run brain/ jobs from
+  `~/brain-lane` (brain/, rwkv, 0.1B + 1.5B models; venv `~/brain-lane/venv` on pool40/41 (torch 2.11 CPU, installed
+  11-14 with the owner's OK), `~/derisk-pool/sim/.venv` on pool42; job pattern in
+  `brain/experiments/jobs/2026-11-14-pool-key-default.sh`). pool40's host key re-trusted 11-14 (reinstalled 10-01;
+  fingerprints checked on the host). W is dedicated to the owner's other work (RULING w-dedicated-1113); AWS cap ~$50/day.
+- **KEY DEFAULT (11-14):** KEEP S0 (`brain/experiments/results/2026-11-14-key-default-1.5b.md`; K2 failed, mixed day
+  S_all +0.83 < 1). S_all leads by about a fact everywhere with no cost; at gain 0.5 S0 already answers 4.83/12 unslept.
+- **READY WORK:** pool (CPU): measure the first-person echo (the brain restates "My cat is called Pixel." instead of
+  answering; 49 fact-word replies vs 43 credited for S0 on the mixed day) across cue framings/storage formats, oracle
+  probe style (`hippo_gain_refit.py`). AWS: confidence gate for false recall on the slept cortex (c says a told fact on
+  6.83/12 never-told questions). Pi: `research/coordination/PI_LANE.md` (on `research/pi-lane-1105`, unmerged).
+- **NEXT STEP:** pick between (1) the echo/perspective fix and (2) the false-recall gate; record-check both first
+  (`2026-11-03-confabulation-next-methods.md`, confab M1-M3, abstain v2). The 1.5B cortex default (milestone 11-16)
+  is what puts all of this in the weekly transcript: consider flipping the default cortex to 1.5B (needs a prereg).
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
