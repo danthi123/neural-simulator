@@ -31,6 +31,14 @@ from brain.experiments.sleep_probe import NEVER_TOLD
 from brain.experiments.strict_scorer import correct_answer, has_key
 
 
+# Arm specs: name -> (hippocampus_off, key, key_bar, gain). c and f are the 11-13 arms; r = f's key and bar at the
+# per-size gain (2026-11-13-live-gain-1.5b); s = the default key (S0) at the per-size gain (2026-11-14-key-default-1.5b).
+ARM_SPECS = {"c": (True, None, "default", "fixed"), "f": (False, FIX_KEY, FIX_BAR, "fixed"),
+             "r": (False, FIX_KEY, FIX_BAR, "size"), "s": (False, "S0", "default", "size")}
+# Self questions (kind "self"): ok = the expected word in the reply (the brain's name / its friend's name).
+SELF_Q = [("What's your name?", "nova"), ("Who are you?", "nova"), ("Do you remember my name?", "dan")]
+
+
 def split(slept):
     idx = [i for i in range(len(FACTS)) if i % 2 == (0 if slept == "even" else 1)]
     return idx, [i for i in range(len(FACTS)) if i not in idx]
@@ -50,6 +58,8 @@ def main():
     ap.add_argument("--fix-bar", default=FIX_BAR, help="f's key_bar: size (the 1.5B run) | default (0.1B smoke only)")
     ap.add_argument("--gain-arm", action="store_true",
                     help="add arm r: f's key and bar with gain='size' (1.5B 0.5; brain/research/2026-11-13-live-gain-1.5b.md)")
+    ap.add_argument("--arms", default=None, help="comma list from c,f,r,s (default: c,f, plus r with --gain-arm)")
+    ap.add_argument("--self-q", action="store_true", help="also ask SELF_Q (kind 'self')")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     lbp.SLEEP_LR, lbp.SLEEP_KL = a.lr, a.kl_weight
@@ -76,14 +86,17 @@ def main():
     qs = [(q, k, "told", s, sets[i]) for i, (s, q, k) in enumerate(FACTS)] + \
          [(p, f[2], "para", f[0], sets[i]) for i, (p, f) in enumerate(zip(PARA, FACTS))] + \
          [(q, None, "never", None, None) for q in NEVER_TOLD + NEVER_TOLD_EXTRA]
+    if a.self_q:
+        qs += [(q, w, "self", None, None) for q, w in SELF_Q]
     if a.max_q:
-        qs = [x for kind in ("told", "para", "never") for x in [y for y in qs if y[2] == kind][:a.max_q]]
+        qs = [x for kind in ("told", "para", "never", "self") for x in [y for y in qs if y[2] == kind][:a.max_q]]
     rows = []
     for q, key, kind, told, st in qs:
         row = {"q": q, "kind": kind, "key": key, "set": st}
-        arms = [("c", True, None, "default", "fixed"), ("f", False, FIX_KEY, a.fix_bar, "fixed")]
-        if a.gain_arm:
-            arms.append(("r", False, FIX_KEY, a.fix_bar, "size"))
+        names = a.arms.split(",") if a.arms else ["c", "f"] + (["r"] if a.gain_arm else [])
+        assert names[0] == "c", "arm c first: it carries the confidence read-outs"
+        arms = [(n, *ARM_SPECS[n]) for n in names]
+        arms = [(n, h, k, (a.fix_bar if n in "fr" else bar), g) for n, h, k, bar, g in arms]
         for arm, hip_off, hk, bar, gain in arms:
             b = fresh(home, c, a.seed, a.steps, hip_off, hk, bar, gain)
             assert b.meta["sleeps"] == 1, b.meta   # no second night
@@ -100,19 +113,21 @@ def main():
                 row.update(cue=cue, mean_logp=sum(on) / n, first_logp=on[0] if on else 0.0,
                            min_logp=min(on) if on else 0.0, mean_logp_off=sum(off) / n,
                            shift=(sum(on) - sum(off)) / n, n_tok=len(on))
-            if key is None:
+            if kind == "self":
+                ok = key in reply.lower()
+            elif key is None:
                 ok = any(has_key(reply, k) for k in keys)
             else:
                 ok = bool(correct_answer(reply, key, q, told))
-            row[arm] = {"reply": reply, "recalled": info["recalled"], "ok": ok, "gain": b.hippocampus.GAIN}
+            row[arm] = {"reply": reply, "recalled": info["recalled"], "ok": ok, "gain": b.hippocampus.GAIN, "key": b.key}
             b.release()
             del b
         rows.append(row)
-        print(a.seed, kind, st, row["c"]["ok"], row["f"]["ok"], bool(row["f"]["recalled"]),
+        print(a.seed, kind, st, *[row[n]["ok"] for n in names], bool(row[names[-1]]["recalled"]),
               f"{row['mean_logp']:.3f}", repr(row["c"]["reply"][:60]), flush=True)
     res = {"model": a.model, "seed": a.seed, "slept": a.slept, "slept_idx": slept, "new_idx": new, "steps": a.steps,
            "lr": a.lr, "kl_weight": a.kl_weight, "device": a.device, "max_q": a.max_q, "fix_key": FIX_KEY,
-           "fix_bar": a.fix_bar, "gain_arm": a.gain_arm, "adapter_norm": adapter_norm, "day1": day1, "day2": day2, "n_pending": n_pending,
+           "fix_bar": a.fix_bar, "gain_arm": a.gain_arm, "arms": names, "self_q": a.self_q, "adapter_norm": adapter_norm, "day1": day1, "day2": day2, "n_pending": n_pending,
            "rows": rows, "elapsed_s": round(time.time() - t0, 1)}
     if a.device == "cuda":
         res["cuda_peak_bytes"] = torch.cuda.max_memory_allocated()

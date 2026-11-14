@@ -1,0 +1,10 @@
+# 2026-11-14 AWS packet, part B of brain/research/2026-11-14-key-default-1.5b.md (K0-K5; committed before any run).
+#   AWS_BRAIN_MAX_MIN=220 bash tools/aws_brain_batch.sh launch brain/experiments/jobs/2026-11-14-aws-key-default.txt g5.xlarge
+# (g6.xlarge if g5 has no capacity). ~11-13 min/seed. After pull: copy keydef_s*.json to
+# brain/experiments/results/2026-11-14-key-default-1.5b/B/ and run the table with --a <A dir> --b <that dir>.
+keydef_s42 brain.experiments.mixed_day_probe --home ../work/keydef_s42 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 42 --slept even --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q
+keydef_s43 brain.experiments.mixed_day_probe --home ../work/keydef_s43 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 43 --slept odd --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q
+keydef_s44 brain.experiments.mixed_day_probe --home ../work/keydef_s44 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 44 --slept even --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q
+keydef_s100 brain.experiments.mixed_day_probe --home ../work/keydef_s100 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 100 --slept odd --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q
+keydef_s101 brain.experiments.mixed_day_probe --home ../work/keydef_s101 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 101 --slept even --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q
+keydef_s102 brain.experiments.mixed_day_probe --home ../work/keydef_s102 --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 102 --slept odd --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q
