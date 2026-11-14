@@ -60,6 +60,7 @@ def main():
                     help="add arm r: f's key and bar with gain='size' (1.5B 0.5; brain/research/2026-11-13-live-gain-1.5b.md)")
     ap.add_argument("--arms", default=None, help="comma list from c,f,r,s (default: c,f, plus r with --gain-arm)")
     ap.add_argument("--self-q", action="store_true", help="also ask SELF_Q (kind 'self')")
+    ap.add_argument("--speaker-contrast", type=float, default=0.0, help="Brain(speaker_contrast=) for both telling days")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     lbp.SLEEP_LR, lbp.SLEEP_KL = a.lr, a.kl_weight
@@ -69,11 +70,11 @@ def main():
         torch.cuda.reset_peak_memory_stats()
     home = f"{a.home}/mixed"
     slept, new = split(a.slept)
-    day1 = lbp.tell_day(home, c, [FACTS[i][0] for i in slept], a.seed, a.steps)
+    day1 = lbp.tell_day(home, c, [FACTS[i][0] for i in slept], a.seed, a.steps, speaker_contrast=a.speaker_contrast)
     np.random.seed(a.seed)
     torch.manual_seed(a.seed)
     b = Brain(home, cortex=c, sleep_steps=a.steps, sleep_lr=lbp.SLEEP_LR, sleep_kl_weight=lbp.SLEEP_KL, adapter_rank=8,
-              sleep_seed=a.seed)   # the restart = the night
+              sleep_seed=a.seed, speaker_contrast=a.speaker_contrast)   # the restart = the night
     assert b.meta["sleeps"] == 1, b.meta
     adapter_norm = b.cortex.plastic.adapter_norm()
     day2 = [{"you": FACTS[i][0], "brain": b.hear(FACTS[i][0])[0]} for i in new]
@@ -125,9 +126,9 @@ def main():
         rows.append(row)
         print(a.seed, kind, st, *[row[n]["ok"] for n in names], bool(row[names[-1]]["recalled"]),
               f"{row['mean_logp']:.3f}", repr(row["c"]["reply"][:60]), flush=True)
-    res = {"model": a.model, "seed": a.seed, "slept": a.slept, "slept_idx": slept, "new_idx": new, "steps": a.steps,
+    res = {"started": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime(t0)), "model": a.model, "seed": a.seed, "slept": a.slept, "slept_idx": slept, "new_idx": new, "steps": a.steps,
            "lr": a.lr, "kl_weight": a.kl_weight, "device": a.device, "max_q": a.max_q, "fix_key": FIX_KEY,
-           "fix_bar": a.fix_bar, "gain_arm": a.gain_arm, "arms": names, "self_q": a.self_q, "adapter_norm": adapter_norm, "day1": day1, "day2": day2, "n_pending": n_pending,
+           "fix_bar": a.fix_bar, "gain_arm": a.gain_arm, "arms": names, "self_q": a.self_q, "speaker_contrast": a.speaker_contrast, "adapter_norm": adapter_norm, "day1": day1, "day2": day2, "n_pending": n_pending,
            "rows": rows, "elapsed_s": round(time.time() - t0, 1)}
     if a.device == "cuda":
         res["cuda_peak_bytes"] = torch.cuda.max_memory_allocated()
