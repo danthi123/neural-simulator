@@ -26,3 +26,21 @@ Against the current default (S0, no contrast, 4.83) the package is +2.0 told.
 
 Not a default flip. Next (pre-registered, running): `brain/research/2026-11-14-sall-contrast-mixed-1.5b.md`, the mixed
 day with sleep on AWS, contrast on and off paired in one batch (an independent six-seed replication of the told gain).
+
+## Report-only extra seeds 200-205 (run after the verdict; do not change it)
+
+Same probe (`jobs/2026-11-14-pool-sall-contrast-extra.sh`, pool40/41/42 CPU, `extra/`), against the same seeds
+without contrast (`2026-11-14-key-default-1.5b/A2/`). Both re-scored with `brain.experiments.rescore`
+(`2026-11-14-disclaimer-rescore.md`). Arm r:
+
+| seeds 200-205 | told (12) | para (12) | false (12) | self (3) |
+|---|---|---|---|---|
+| S_all, no contrast | 6.00 | 2.33 | 0.33 | 1.67 |
+| S_all + contrast 3 | 6.50 | 3.50 | 1.00 | 1.67 |
+
+On these seeds Q1 fails (+0.50; up on 2/6 seeds, 201 and 202) and Q2 fails (+0.67). Over all 12 seeds the told gain
+is +0.75 (+6, +9 facts over 12 seeds, both sets carried by two or three seeds). It is not the robust +1 the
+registered seeds showed. Para rises on both sets (+1.33, +1.17). False recall is one near-miss lure: "Where does my
+aunt live?" answered "Oslo" from the grandmother fact. That happens on 6 of 12 seeds without contrast and 12 of 12
+with it; the only other false answer (parrot "Peanut", seed 102) is in both arms. Contrast makes a relative-in-Oslo
+fact fire for any relative: the confidence gate's job, and a cost the flip must weigh.
