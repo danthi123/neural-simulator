@@ -1,0 +1,25 @@
+DEV (of 108)
+  tell   gain 0.25  right  26  {'none': 79, 'right': 26, 'echo': 2, 'key_other': 1}
+  tell   gain 0.5   right  58  {'right': 58, 'none': 33, 'echo': 13, 'key_other': 2, 'generic': 2}
+  tell   gain 0.75  right  52  {'right': 52, 'echo': 33, 'none': 18, 'key_other': 1, 'generic': 4}
+  tell   gain 1.0   right  35  {'right': 35, 'echo': 42, 'none': 25, 'generic': 5, 'key_other': 1}
+  lived  gain 0.25  right  31  {'right': 31, 'none': 74, 'echo': 2, 'key_other': 1}
+  lived  gain 0.5   right  64  {'right': 64, 'none': 40, 'echo': 3, 'key_other': 1}
+  lived  gain 0.75  right  65  {'right': 65, 'none': 31, 'echo': 6, 'generic': 5, 'key_other': 1}
+  lived  gain 1.0   right  48  {'right': 48, 'none': 44, 'echo': 9, 'generic': 6, 'key_other': 1}
+TEST told / para (of 12)
+  tell   gain 0.25  right  6 /  4  {'right': 10, 'none': 12, 'echo': 2}
+  tell   gain 0.5   right  7 /  7  {'echo': 5, 'right': 14, 'none': 4, 'generic': 1}
+  tell   gain 0.75  right  4 /  4  {'echo': 10, 'none': 5, 'generic': 1, 'right': 8}
+  tell   gain 1.0   right  2 /  3  {'echo': 16, 'none': 3, 'right': 5}
+  lived  gain 0.25  right  8 /  6  {'right': 14, 'none': 10}
+  lived  gain 0.5   right 11 /  7  {'right': 18, 'none': 5, 'generic': 1}
+  lived  gain 0.75  right 10 /  7  {'right': 17, 'none': 4, 'echo': 3}
+  lived  gain 1.0   right  7 /  6  {'right': 13, 'none': 6, 'echo': 5}
+
+G* tell 0.5, lived 0.75
+E0 (tell 0.5 = 11-13 refit (58, 7, 7)): holds
+E1 (dev right lived >= tell + 10): FAILS
+E2 (test told lived >= tell + 2, para lived >= tell): holds
+E3 (dev echoes lived <= tell / 2): holds
+VERDICT: NOT A LEAD
