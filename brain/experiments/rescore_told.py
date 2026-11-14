@@ -31,12 +31,18 @@ def main():
         if "arms" in d:
             for arm, x in d["arms"].items():
                 for r in x["rows"]:
-                    if r["kind"] in ("told", "para"):
-                        new = bool(correct_answer(r["reply"], r.get("key") or _key(r, d), r["q"], TOLD[r.get("key") or _key(r, d)]))
-                        lost[arm] = lost.get(arm, 0) + (bool(r["correct"]) and not new) - (new and not bool(r["correct"]))
+                    kind = r.get("kind", r.get("set"))   # told-gate rows: set told | told_para, plus cond
+                    if kind in ("told", "para", "told_para"):
+                        k = r.get("key") or _key(r, d)
+                        new = bool(correct_answer(r["reply"] or "", k, r["q"], TOLD[k]))
+                        old = bool(r.get("correct", r.get("hit")))   # 11-03 0.1B live rows: 'hit' (strict score)
+                        key = arm + (f"/{r['cond']}" if "cond" in r else "")
+                        lost[key] = lost.get(key, 0) + (old and not new) - (new and not old)
                         r["correct"] = new
-                x["recall_correct"] = sum(bool(r["correct"]) for r in x["rows"] if r["kind"] == "told")
-                x["paraphrase_correct"] = sum(bool(r["correct"]) for r in x["rows"] if r["kind"] == "para")
+                k_told = lambda r: r.get("kind", r.get("set")) == "told"
+                k_para = lambda r: r.get("kind", r.get("set")) in ("para", "told_para")
+                x["recall_correct"] = sum(bool(r.get("correct")) for r in x["rows"] if k_told(r))
+                x["paraphrase_correct"] = sum(bool(r.get("correct")) for r in x["rows"] if k_para(r))
         else:
             for r in d["rows"]:
                 if r["kind"] in ("told", "para"):

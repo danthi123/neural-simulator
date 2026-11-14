@@ -1,5 +1,8 @@
 # Live-brain 12-facts consolidation test (2026-11-03) -- PRE-REGISTRATION (written before any run)
 
+> **Erratum 2026-11-13.** The strict scorer credited general statements about the key word ("Pixel is called Pixel.", see `2026-11-13-mixed-day-1.5b.md`). Re-scored with the fixed `correct_answer` (`rescored/`, `python -m brain.experiments.rescore_told <dir> --glob 'seed*.json'`), told / para of 12, six-seed means: a intact+sleep 6.50 -> **1.33** / 5.50 -> 2.17; b intact, no sleep 6.33 -> **1.67** / 3.83 -> 0.83; c hippocampus off after sleep 5.50 -> **6.00** / 3.33 -> 3.67; d, e unchanged (~0). At 0.1B the answers come from sleep; the awake hippocampus (gain 4) mostly makes the cortex talk about the word. The gain refit at 0.1B (`2026-11-13-gain-refit-0.1b.md`) found no better gain.
+
+
 Branch research/live-brain-12facts-1103 (from research/sleep-in-brain-1103). Probe: `brain/experiments/live_brain_probe.py`;
 scorer: `brain/experiments/strict_scorer.py` (unit tests `brain/tests/test_strict_scorer.py`). Model RWKV-7 0.1B, CPU,
 sleep 240 steps, kl_weight 1.0, lr 5e-4, rank 8 (Brain defaults). Seeds 42/43/44/100/101/102. Results `2026-11-03-live-brain-12facts/seed<N>.json`.
