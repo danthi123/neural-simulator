@@ -38,5 +38,5 @@
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend
   money on AI to drive it."
-- **SPEED LEVERS (built):** AWS lane `tools/aws_brain_batch.sh`; Pi's Claude gated by live plan usage (`usage.ts`).
-- **OPEN:** none blocking. Chores: repoint the board timer to a main-following checkout.
+- **OPEN:** none blocking. Chores: repoint the board timer to a main-following checkout. Speed levers: AWS lane
+  `tools/aws_brain_batch.sh`, Pi gated by `usage.ts`.
