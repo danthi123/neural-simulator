@@ -15,7 +15,9 @@
   Scorer fixed (`strict_scorer.is_generic`); re-scored: mixed day VOID (hippocampus answers 0.83 of 6 new facts),
   11-13 f 7.67 -> 5.67, 11-05 g (routing fix, no sleep) 4.83 -> 0.50 = b. At 1.5B all told-fact answers come from
   sleep (c 9.33); reinstatement surfaces the right word but the cortex talks about it instead of answering.
-- **LIVE RUNS:** none. W is dedicated to the owner's other work (owner 11-07/11-13): no W jobs (RULING
+- **LIVE RUNS:** pool42 `~/brain-lane` (2026-11-13): gain refit, prereg `brain/research/2026-11-13-gain-refit-1.5b.md`
+  (commit e93363a4a), `bash run.sh` -> `~/brain-lane/out/{dev,test}_all.json` + `DONE`; pull with
+  `rsync pool42:brain-lane/out/ <results dir>/` then `python -m brain.experiments.hippo_gain_refit_table <dir>`. W is dedicated to the owner's other work (owner 11-07/11-13): no W jobs (RULING
   w-dedicated-1113); only the mini-PCs and AWS (cap ~$50/day).
 - **READY WORK:** CPU/mini-PC: re-score the other `correct_answer` results (0.1B live-brain, told-gate, weekly
   transcripts) with `brain/experiments/rescore_told.py`. Pi: `research/coordination/PI_LANE.md` (tautology scorer
