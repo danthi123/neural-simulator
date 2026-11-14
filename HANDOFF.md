@@ -14,7 +14,8 @@
   (`results/2026-11-13-live-gain-1.5b.md`, GO; 0.1B keeps 4). Key default KEEP S0 (`2026-11-14-key-default-1.5b.md`).
   Echo: speaker contrast d + 3(d - d_self) works (oracle LEAD; live S0 NO-GO, routing-bound; live S_all GO NARROWED,
   `2026-11-14-sall-contrast-1.5b.md`: told 5.83 -> 6.83, one seed carries it, +2 false;
-  report-only seeds 200-205: told +0.50, para +1.17, the aunt -> Oslo lure 6/6 vs 2/6). Switches stay OFF.
+  report-only seeds 200-205: told +0.50, para +1.17, the aunt -> Oslo lure 6/6 vs 2/6).
+  Dose mu 1.5: NOT A LEAD (`2026-11-14-sall-contrast-dose-1.5b.md`; lure 5/6; effects scale with mu, mu 3 stays). Switches stay OFF.
   Scorer: a disclaimer + general talk naming the key is no longer credited (`2026-11-14-disclaimer-rescore.md`): no
   banked verdict changes; contrast's oracle edge shrinks (fresh +20 -> +15), part of it was echoes turned AI disclaimers.
 - **LIVE RUN:** AWS g6.xlarge, `brain/experiments/jobs/2026-11-14-aws-sall-contrast-mixed.txt` (prereg
@@ -26,7 +27,7 @@
   on 42; pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`). pool40 host key re-trusted 11-14 (reinstall).
 - **READY WORK:** an answer-rate layout for unslept/mixed probes in `tools/answer_rate.py`. Pi: `research/coordination/PI_LANE.md`.
 - **NEXT STEP:** mixed-day verdict: GO -> land-result, flip the 1.5B package (S_all + size bar + contrast 3); then the
-  false-recall gate. The 1.5B cortex default (milestone 11-16) puts this in the weekly transcript (needs a prereg).
+  false-recall gate (the aunt -> Oslo near-miss lure fires 4/6 even without contrast). The 1.5B cortex default (milestone 11-16) puts this in the weekly transcript (needs a prereg).
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
