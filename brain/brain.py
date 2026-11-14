@@ -153,7 +153,7 @@ class Brain:
                  sleep_on_restart: bool = True, sleep_steps: int | None = None, sleep_lr: float | None = None,
                  sleep_kl_weight: float | None = None, adapter_rank: int | None = None, sleep_log=None,
                  sleep_seed: int = 0, abstain: bool = False, cortex_model: str | None = None, lock: bool = False,
-                 key: str | None = None, key_bar: str = "default", gain: str = "default"):
+                 key: str | None = None, key_bar: str = "default", gain: str = "auto"):
         """cortex_model: checkpoint path or size tag ("0.1b", "1.5b") used when no `cortex` is given; None = the
         default cortex (0.1B). Sleep settings left None come from SLEEP_DEFAULTS for the cortex's size.
         lock: hold <home>/.lock for this object's life (chat and brain.night set it), so two processes never
@@ -165,9 +165,10 @@ class Brain:
         key_bar: which selection bar a non-S0 key uses (switch, default OFF = "default": KEY_BARS, fit at 0.1B).
         "size": the bar refit for this key at this cortex size (KEY_BARS_BY_SIZE; brain/research/
         2026-11-03-hippo-routing-1.5b.md); a size with no row is an error. Not saved in the home: pass it each time.
-        gain: reinstatement gain (switch, default OFF = "default": Hippocampus.GAIN, 4.0, fit at 0.1B with the old scorer).
-        "size": GAIN_BY_SIZE for this cortex size (1.5B: 0.5, results/2026-11-13-gain-refit-1.5b.md, oracle routing);
-        a size with no row is an error. Not saved in the home: pass it each time."""
+        gain: reinstatement gain. Default ON since 2026-11-14 = "auto": GAIN_BY_SIZE for this cortex size if it has a row
+        (1.5B: 0.5; results/2026-11-13-gain-refit-1.5b.md oracle, 2026-11-13-live-gain-1.5b.md live six-seed GO), else
+        Hippocampus.GAIN (4.0; 0.1B unchanged). "fixed": always Hippocampus.GAIN (the pre-11-14 behaviour, the flag-off
+        arm). "size": GAIN_BY_SIZE, a size with no row is an error. Not saved in the home: pass it each time."""
         self.home = home
         self._key_arg = key
         self.key_bar = key_bar
@@ -228,13 +229,14 @@ class Brain:
 
     def _make_hippocampus(self, key: str) -> Hippocampus:
         h = self._hippocampus_for(key)
-        if self.gain_mode == "size":
-            size = model_size(self.cortex_model)
-            if size not in self.GAIN_BY_SIZE:
+        if self.gain_mode not in ("auto", "fixed", "size"):
+            raise ValueError(f"gain must be 'auto', 'fixed' or 'size', not {self.gain_mode!r}")
+        if self.gain_mode != "fixed":
+            size = model_size(self.cortex_model) if self.cortex_model else None
+            if size in self.GAIN_BY_SIZE:
+                h.GAIN = self.GAIN_BY_SIZE[size]
+            elif self.gain_mode == "size":
                 raise ValueError(f"no size-fitted reinstatement gain at cortex size {size!r}")
-            h.GAIN = self.GAIN_BY_SIZE[size]
-        elif self.gain_mode != "default":
-            raise ValueError(f"gain must be 'default' or 'size', not {self.gain_mode!r}")
         return h
 
     def _hippocampus_for(self, key: str) -> Hippocampus:

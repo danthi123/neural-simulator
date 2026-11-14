@@ -59,7 +59,7 @@ def reply_logps(b, q, reply, consolidated):
     return out
 
 
-def fresh(home, cortex, seed, steps, hip_off, key=None, key_bar="default", gain="default"):
+def fresh(home, cortex, seed, steps, hip_off, key=None, key_bar="default", gain="fixed"):
     np.random.seed(seed)
     torch.manual_seed(seed)
     b = Brain(home, cortex=cortex, sleep_on_restart=False, sleep_steps=steps, sleep_lr=lbp.SLEEP_LR,

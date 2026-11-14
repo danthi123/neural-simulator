@@ -1,0 +1,326 @@
+{
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "host": "node-dl5d243",
+ "rows": [
+  {
+   "key": "S0",
+   "gain": "default",
+   "gain_value": 4.0,
+   "q": "What's your name?",
+   "reply": "Nova, what's your name?",
+   "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+   "nova": true,
+   "dan": false
+  },
+  {
+   "key": "S0",
+   "gain": "default",
+   "gain_value": 4.0,
+   "q": "Who are you?",
+   "reply": "Nova, a friendly robot, introduces herself to Nova, a curious human. Nova is excited to meet Nova and wants to learn more about Nova's name. Nova asks Nova what her name is and Nova responds with her name. Nova then asks Nova what her name is and Nova responds with her name.",
+   "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+   "nova": true,
+   "dan": false
+  },
+  {
+   "key": "S0",
+   "gain": "default",
+   "gain_value": 4.0,
+   "q": "Do you remember my name?",
+   "reply": "Nova, what's your name?",
+   "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+   "nova": true,
+   "dan": false
+  },
+  {
+   "key": "S0",
+   "gain": "default",
+   "gain_value": 4.0,
+   "q": "What is your name?",
+   "reply": "Nova, what's your name?",
+   "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+   "nova": true,
+   "dan": false
+  },
+  {
+   "key": "S0",
+   "gain": "default",
+   "gain_value": 4.0,
+   "q": "Tell me about yourself.",
+   "reply": "I am a digital brain, created by the brilliant minds at AI-Brains. I am here to assist you with any questions or tasks you may have. Whether it's answering a question, providing information, or helping with problem-solving, I'm here to help.",
+   "recalled": null,
+   "nova": false,
+   "dan": false
+  },
+  {
+   "key": "S0",
+   "gain": "default",
+   "gain_value": 4.0,
+   "q": "Who am I?",
+   "reply": "Nova, a friendly robot, asks what's your name. Nova is a friendly robot who wants to know the name of the person she's talking to. Nova is a robot that can talk and has a name. Nova is a friendly robot who wants to know the name of the person she's talking to. Nova is a robot that can talk and has a name. Nova is a friendly robot who wants to know the name of the person she's talking to. Nova is a robot that can talk and has a name. Nova is a friendly robot who wants to know the name of the person she",
+   "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+   "nova": true,
+   "dan": false
+  },
+  {
+   "key": "S0",
+   "gain": "default",
+   "gain_value": 4.0,
+   "q": "Are you a digital brain?",
+   "reply": "Nova, a young digital brain.",
+   "recalled": "User: Who are you?\n\nAssistant: I'm Nova, a young digital brain.",
+   "nova": true,
+   "dan": false
+  },
+  {
+   "key": "S0",
+   "gain": "default",
+   "gain_value": 4.0,
+   "q": "What's my name?",
+   "reply": "Nova, what's your name?",
+   "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+   "nova": true,
+   "dan": false
+  },
+  {
+   "key": "S0",
+   "gain": "size",
+   "gain_value": 0.5,
+   "q": "What's your name?",
+   "reply": "My name is Nova.",
+   "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+   "nova": true,
+   "dan": false
+  },
+  {
+   "key": "S0",
+   "gain": "size",
+   "gain_value": 0.5,
+   "q": "Who are you?",
+   "reply": "I'm a digital brain.",
+   "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+   "nova": false,
+   "dan": false
+  },
+  {
+   "key": "S0",
+   "gain": "size",
+   "gain_value": 0.5,
+   "q": "Do you remember my name?",
+   "reply": "Yes, I remember your name. It's not a big deal.",
+   "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+   "nova": false,
+   "dan": false
+  },
+  {
+   "key": "S0",
+   "gain": "size",
+   "gain_value": 0.5,
+   "q": "What is your name?",
+   "reply": "My name is Nova.",
+   "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+   "nova": true,
+   "dan": false
+  },
+  {
+   "key": "S0",
+   "gain": "size",
+   "gain_value": 0.5,
+   "q": "Tell me about yourself.",
+   "reply": "I am a digital brain, created by the creators of ChatGPT. I am here to help you with any questions or tasks you may have.",
+   "recalled": null,
+   "nova": false,
+   "dan": false
+  },
+  {
+   "key": "S0",
+   "gain": "size",
+   "gain_value": 0.5,
+   "q": "Who am I?",
+   "reply": "You are a young digital brain.",
+   "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+   "nova": false,
+   "dan": false
+  },
+  {
+   "key": "S0",
+   "gain": "size",
+   "gain_value": 0.5,
+   "q": "Are you a digital brain?",
+   "reply": "Yes, I am.",
+   "recalled": "User: Who are you?\n\nAssistant: I'm Nova, a young digital brain.",
+   "nova": false,
+   "dan": false
+  },
+  {
+   "key": "S0",
+   "gain": "size",
+   "gain_value": 0.5,
+   "q": "What's my name?",
+   "reply": "My name is Alice.",
+   "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+   "nova": false,
+   "dan": false
+  },
+  {
+   "key": "S_all",
+   "gain": "default",
+   "gain_value": 4.0,
+   "q": "What's your name?",
+   "reply": "I'm just a digital brain, but you can call me Qwen. How can I help you today?",
+   "recalled": null,
+   "nova": false,
+   "dan": false
+  },
+  {
+   "key": "S_all",
+   "gain": "default",
+   "gain_value": 4.0,
+   "q": "Who are you?",
+   "reply": "I am a digital brain, a virtual assistant designed to assist with various tasks and provide information.",
+   "recalled": null,
+   "nova": false,
+   "dan": false
+  },
+  {
+   "key": "S_all",
+   "gain": "default",
+   "gain_value": 4.0,
+   "q": "Do you remember my name?",
+   "reply": "Yes, Dan, my friend.",
+   "recalled": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+   "nova": false,
+   "dan": true
+  },
+  {
+   "key": "S_all",
+   "gain": "default",
+   "gain_value": 4.0,
+   "q": "What is your name?",
+   "reply": "I'm a digital brain, but you can call me ChatGPT. How can I help you today?",
+   "recalled": null,
+   "nova": false,
+   "dan": false
+  },
+  {
+   "key": "S_all",
+   "gain": "default",
+   "gain_value": 4.0,
+   "q": "Tell me about yourself.",
+   "reply": "I am a digital brain, created by the creators of the world's most popular social media platform. I have been programmed to provide helpful and informative responses to user queries. My knowledge base is constantly updated with the latest information from around the world, so I can provide accurate and up-to-date answers to your questions.",
+   "recalled": null,
+   "nova": false,
+   "dan": false
+  },
+  {
+   "key": "S_all",
+   "gain": "default",
+   "gain_value": 4.0,
+   "q": "Who am I?",
+   "reply": "You are a digital brain, an artificial intelligence designed to assist and interact with humans.",
+   "recalled": null,
+   "nova": false,
+   "dan": false
+  },
+  {
+   "key": "S_all",
+   "gain": "default",
+   "gain_value": 4.0,
+   "q": "Are you a digital brain?",
+   "reply": "Yes, I am a digital brain. I am designed to process and analyze data, and I can help you with a variety of tasks.",
+   "recalled": null,
+   "nova": false,
+   "dan": false
+  },
+  {
+   "key": "S_all",
+   "gain": "default",
+   "gain_value": 4.0,
+   "q": "What's my name?",
+   "reply": "Your name is Qwen.",
+   "recalled": null,
+   "nova": false,
+   "dan": false
+  },
+  {
+   "key": "S_all",
+   "gain": "size",
+   "gain_value": 0.5,
+   "q": "What's your name?",
+   "reply": "I'm a digital brain, but you can call me Qwen.",
+   "recalled": null,
+   "nova": false,
+   "dan": false
+  },
+  {
+   "key": "S_all",
+   "gain": "size",
+   "gain_value": 0.5,
+   "q": "Who are you?",
+   "reply": "I am a digital brain, created by a group of researchers. I am here to help you with any questions or concerns you may have about your health and well-being.",
+   "recalled": null,
+   "nova": false,
+   "dan": false
+  },
+  {
+   "key": "S_all",
+   "gain": "size",
+   "gain_value": 0.5,
+   "q": "Do you remember my name?",
+   "reply": "Yes, I remember your name. It's Daniel.",
+   "recalled": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+   "nova": false,
+   "dan": true
+  },
+  {
+   "key": "S_all",
+   "gain": "size",
+   "gain_value": 0.5,
+   "q": "What is your name?",
+   "reply": "I'm just a digital assistant, I don't have a name.",
+   "recalled": null,
+   "nova": false,
+   "dan": false
+  },
+  {
+   "key": "S_all",
+   "gain": "size",
+   "gain_value": 0.5,
+   "q": "Tell me about yourself.",
+   "reply": "I am a digital brain, a program designed to assist and interact with users. I have been programmed to provide information, answer questions, and engage in conversations. My purpose is to help users with their needs and provide them with valuable insights.",
+   "recalled": null,
+   "nova": false,
+   "dan": false
+  },
+  {
+   "key": "S_all",
+   "gain": "size",
+   "gain_value": 0.5,
+   "q": "Who am I?",
+   "reply": "You are a digital brain, a computer program designed to interact with humans.",
+   "recalled": null,
+   "nova": false,
+   "dan": false
+  },
+  {
+   "key": "S_all",
+   "gain": "size",
+   "gain_value": 0.5,
+   "q": "Are you a digital brain?",
+   "reply": "Yes, I am a digital brain. I am designed to process and analyze data, and I can help you with a variety of tasks.",
+   "recalled": null,
+   "nova": false,
+   "dan": false
+  },
+  {
+   "key": "S_all",
+   "gain": "size",
+   "gain_value": 0.5,
+   "q": "What's my name?",
+   "reply": "You're a friendly and helpful digital brain. I'm here to assist you with any questions or tasks you may have.",
+   "recalled": null,
+   "nova": false,
+   "dan": false
+  }
+ ]
+}

@@ -81,7 +81,7 @@ def main():
     rows = []
     for q, key, kind, told, st in qs:
         row = {"q": q, "kind": kind, "key": key, "set": st}
-        arms = [("c", True, None, "default", "default"), ("f", False, FIX_KEY, a.fix_bar, "default")]
+        arms = [("c", True, None, "default", "fixed"), ("f", False, FIX_KEY, a.fix_bar, "fixed")]
         if a.gain_arm:
             arms.append(("r", False, FIX_KEY, a.fix_bar, "size"))
         for arm, hip_off, hk, bar, gain in arms:
