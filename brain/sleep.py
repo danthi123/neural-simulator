@@ -17,8 +17,11 @@ def _ids(cortex, text):
     return cortex.pipe.encode(text)
 
 
-def sleep(plastic, base_state, episodes, generic, *, steps=200, lr=5e-4, kl_weight=1.0, seed=0, log=None):
-    """episodes: list of (text, strength). generic: ordinary conversation texts. Returns the per-step losses."""
+def sleep(plastic, base_state, episodes, generic, *, steps=200, lr=5e-4, kl_weight=1.0, seed=0, log=None, guard=(),
+          guard_weight=None):
+    """episodes: list of (text, strength). generic: ordinary conversation texts. guard (default empty = off): extra
+    texts held to the pretrained cortex by a SECOND KL term each step (the near-miss guard, brain/near_miss.py), weight
+    guard_weight (None = kl_weight). With no guard the loop is unchanged. Returns the per-step losses."""
     rng = random.Random(seed)
     torch.manual_seed(seed)
     c = plastic.cortex
@@ -29,7 +32,11 @@ def sleep(plastic, base_state, episodes, generic, *, steps=200, lr=5e-4, kl_weig
     plastic.enabled = False
     with torch.no_grad():
         ref = [F.log_softmax(plastic(ids, base_state)[0], -1) for ids in gen_ids]
+        g_ids = [_ids(c, g) for g in guard]
+        g_ref = [F.log_softmax(plastic(ids, base_state)[0], -1) for ids in g_ids]
     plastic.enabled = True
+    gw = kl_weight if guard_weight is None else guard_weight
+    grng = random.Random(seed + 7919)
     losses = []
     for step in range(steps):
         text, _ = rng.choices(episodes, weights=weights)[0]
@@ -40,6 +47,11 @@ def sleep(plastic, base_state, episodes, generic, *, steps=200, lr=5e-4, kl_weig
         g_logits, _ = plastic(gen_ids[j], base_state)
         keep = F.kl_div(F.log_softmax(g_logits, -1), ref[j], log_target=True, reduction="batchmean")
         loss = replay + kl_weight * keep
+        if g_ids:
+            m = grng.randrange(len(g_ids))   # own RNG: the replay sequence is the same as with no guard
+            n_logits, _ = plastic(g_ids[m], base_state)
+            near = F.kl_div(F.log_softmax(n_logits, -1), g_ref[m], log_target=True, reduction="batchmean")
+            loss = loss + gw * near
         opt.zero_grad()
         loss.backward()
         opt.step()

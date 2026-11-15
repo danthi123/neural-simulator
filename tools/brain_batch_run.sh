@@ -18,6 +18,7 @@ while read -r name args; do
   echo "$(date '+%F %T') start $name"
   # shellcheck disable=SC2086
   "$PY" -u -m "$mod" $args ${EXTRA:-} --out "$out" > ~/brainv2/results/"$name".log 2>&1
-  echo "$(date '+%F %T') end $name rc $?"
+  rc=$?   # captured first: inside the echo, $(date) would reset $? to 0 (every job logged rc 0, 11-14)
+  echo "$(date '+%F %T') end $name rc $rc"
 done < ~/brainv2/jobs.txt
 echo "$(date '+%F %T') all done"
