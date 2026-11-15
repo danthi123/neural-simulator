@@ -17,7 +17,9 @@ any registered seed). Runs: pool40 (s42, s43), pool41 (s44, s100), pool42 (s101,
 | 102 | 5 | 5 | 0 | 6 |
 | mean | 5.00 | 4.83 | 0.00 | 6.00 |
 
-Report-only smoke seeds 200-202 (same code, not criteria): intact 6/6/3, hippocampus off 6/5/4, third arm 0/0/0.
+Report-only seeds (same code, not criteria, not pooled): smoke 200-202: intact 6/6/3, hippocampus off 6/5/4, third
+arm 0/0/0; 203-205 (run after the registered seeds): intact 5/6/6, hippocampus off 5/6/6, third arm 0/0/0, 6/6 keyed
+replies changed on each. On s203 the third arm also declines the story ("I don't know any stories about foxes.").
 
 ## Criteria
 
