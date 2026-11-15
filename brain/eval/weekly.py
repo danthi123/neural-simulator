@@ -1,7 +1,7 @@
 """Weekly conversation test: teach, chat, restart (= sleep), recall; intact vs hippocampus lesion in session 2 (both arms sleep). Writes a markdown transcript.
 
 python -m brain.eval.weekly [--out brain/eval/transcripts/<date>.md] [--device cpu] [--model 0.1b|0.4b|1.5b|PATH]
-    [--shared-sleep] [--homes DIR]   (on the GPU: bash tools/brain_gpu.sh weekly --model 1.5b --shared-sleep)
+    [--shared-sleep] [--homes DIR] [--seed N]   (on the GPU: bash tools/brain_gpu.sh weekly --model 1.5b --shared-sleep)
 """
 from __future__ import annotations
 
@@ -58,13 +58,16 @@ def _session(b: Brain, turns: list, lines: list):
     b.save()
 
 
+SEED = {}  # --seed N -> {"sleep_seed": N}: the night's replay order (and torch/numpy) per seed; unset = Brain's default
+
+
 def run(home: str, cortex: Cortex, lesion: bool, lines: list):
     for s, turns in (("session 1", SESSION_1), ("session 2 (after restart)", SESSION_2)):
         # A new Brain object = a restart; memory comes from disk, and a restart is a night: the episodes stored in
         # session 1 are replayed into the cortex's slow synapses when session 2 starts. Both arms live session 1 and
         # sleep identically (same seed, same stored episodes); the lesion is applied AFTER that, only while answering
         # in session 2 (hippocampus off = no recall, no storing). So intact vs lesion differ only by the hippocampus.
-        b = Brain(home, cortex=cortex)
+        b = Brain(home, cortex=cortex, **SEED)
         if lesion and s != "session 1":
             b.set_lesions(hippocampus_off=True)
         lines.append(f"\n### {s}\n")
@@ -77,11 +80,11 @@ def run_shared(homes: dict, cortex: Cortex, lines: list):
     cost (one night instead of two) at 1.5B. Session 1 appears once in the transcript."""
     intact, lesion = homes["intact"], homes["lesion"]
     lines.append("\n## session 1 (shared by both arms)\n")
-    _session(Brain(intact, cortex=cortex), SESSION_1, lines)
-    Brain(intact, cortex=cortex).save()      # restart = the one night
+    _session(Brain(intact, cortex=cortex, **SEED), SESSION_1, lines)
+    Brain(intact, cortex=cortex, **SEED).save()      # restart = the one night
     shutil.copytree(intact, lesion)
     for name, home, off in (("intact", intact, False), ("lesion: hippocampus off", lesion, True)):
-        b = Brain(home, cortex=cortex)       # nothing pending: no second night
+        b = Brain(home, cortex=cortex, **SEED)       # nothing pending: no second night
         assert b.meta["sleeps"] >= 1 and not b.pending()
         b.set_lesions(hippocampus_off=off)
         lines.append(f"\n## {name}\n\n### session 2 (after restart)\n")
@@ -95,7 +98,15 @@ def main(argv=None, cortex: Cortex | None = None):
     ap.add_argument("--model", default=None, help="cortex checkpoint path or size tag (default: the 0.1B cortex)")
     ap.add_argument("--shared-sleep", action="store_true", help="sleep once and copy the home for the lesion arm")
     ap.add_argument("--homes", default="brain_data", help="directory for the two arms' brain homes")
+    ap.add_argument("--seed", type=int, default=None, help="sleep seed + torch/numpy seed (default: unset, as before)")
     a = ap.parse_args(argv)
+    SEED.clear()
+    if a.seed is not None:
+        import numpy as np
+        import torch
+        SEED["sleep_seed"] = a.seed
+        np.random.seed(a.seed)
+        torch.manual_seed(a.seed)
     cortex = cortex or Cortex(model_path=resolve_model(a.model), device=a.device)
     lines = [f"# Weekly conversation test, {datetime.date.today()}"]
     if a.model or a.shared_sleep:
@@ -105,7 +116,8 @@ def main(argv=None, cortex: Cortex | None = None):
         except KeyError:
             cfg = "Brain arguments"
         lines.append(f"\n_cortex: {name}; sleep: {cfg}; device: {a.device};"
-                     f" {'one shared night' if a.shared_sleep else 'each arm sleeps'}_")
+                     f" {'one shared night' if a.shared_sleep else 'each arm sleeps'}"
+                     f"{'' if a.seed is None else f'; seed {a.seed}'}_")
     homes = {k: os.path.join(a.homes, f"_weekly_{k}") for k in ("intact", "lesion")}
     for h in homes.values():
         shutil.rmtree(h, ignore_errors=True)
