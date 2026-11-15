@@ -22,7 +22,8 @@
   banked verdict changes; contrast's oracle edge shrinks (fresh +20 -> +15), part of it was echoes turned AI disclaimers.
 - **LIVE RUNS:** AWS g6.xlarge i-0d2020cb471e66e2a, near-miss guard batch (12 jobs nmoff/nmon_s*, launched 11-14 ~21:30
   local, dead-man 360 min): `bash tools/aws_brain_batch.sh pull`, copy nm*_s*.json to
-  `results/2026-11-14-near-miss-guard-1.5b/`, rescore, `python -m brain.experiments.near_miss_table <dir> <11-14 tellmix dir>`.
+  `results/2026-11-14-near-miss-guard-1.5b/`, rescore, `python -m brain.experiments.near_miss_table <dir> <11-14 tellmix dir>`. Pool40/41/42: report-only
+  seeds 200-205 of the same test (`jobs/2026-11-14-pool-near-miss-extra.sh`, out `~/brain-lane/outNM/`, CPU, hours).
 - **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (venv `~/brain-lane/venv` on 40/41, `~/derisk-pool/sim/.venv`
   on 42; pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`). pool40 host key re-trusted 11-14 (reinstall).
 - **READY WORK:** an answer-rate layout for unslept/mixed probes in `tools/answer_rate.py`. Pi: `research/coordination/PI_LANE.md`.
