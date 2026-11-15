@@ -25,7 +25,7 @@
   (`~/brain-lane/outWK/`). ssh: `SSH_AUTH_SOCK= ssh -o IdentitiesOnly=yes` (the Bitwarden agent hangs).
 - **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (venv `~/brain-lane/venv` on 40/41, `~/derisk-pool/sim/.venv`
   on 42; pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`). pool40 host key re-trusted 11-14 (reinstall).
-- **READY WORK:** answer-rate layout for mixed probes (`tools/answer_rate.py`); M4b prereg. Pi: `PI_LANE.md`.
+- **READY WORK:** weekly `--sleep-lesion` arm (built, untested on weights: smoke, then prereg it as the #281 test); answer-rate layout (`tools/answer_rate.py`). Pi: `PI_LANE.md`.
 - **NEXT STEP:** milestone day 14 NOT fully met, reported (`results/2026-11-15-weekly-1.5b-milestone.md`, NO-GO W1-W3):
   the slept 1.5B cortex with the hippocampus off answers 3.83/4 told facts (six seeds), but the intact brain says
   "My name is Dan." on 2/6 (own name; learned in the night, both arms) and a hippocampus lesion no longer changes replies
