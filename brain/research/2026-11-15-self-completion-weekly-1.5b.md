@@ -36,3 +36,9 @@ after the skeptic, and the weekly record uses it. C1 fails: NOT A LEAD, next met
 for permanent episodes, a window 0.75-2). C2 or C3 fails with C1 holding: NARROWED, reported, no flip.
 
 **Expected.** C1 holds: 12/12 in the probe at the live gain.
+
+**Addendum (before any run): report-only seeds 200-205 on the pool (CPU fp32), off and on, same command.** Not
+criteria, not pooled with the AWS seeds; reported beside them (`jobs/2026-11-15-pool-self-completion-weekly.sh`).
+Smoke done before this addendum (pool40, `Brain.hear` 1.5B, day 1, seeds 42-102): turn 1 names Nova on 2/6 off,
+6/6 on; turn 2 "Do you remember my name?" gives "Yes, I remember your name." on 6/6 in both arms, plus "It's Nova."
+on 2/6 on (the own name on the friend's question, a risk C3 reads in session 2).
