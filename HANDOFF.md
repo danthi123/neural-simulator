@@ -20,7 +20,8 @@
   levers all banked NO-GO in the live brain; package stays S0 at gain 0.5.
   Scorer: a disclaimer + general talk naming the key is no longer credited (`2026-11-14-disclaimer-rescore.md`): no
   banked verdict changes; contrast's oracle edge shrinks (fresh +20 -> +15), part of it was echoes turned AI disclaimers.
-- **LIVE RUNS:** AWS g6.xlarge i-0d2020cb471e66e2a, near-miss guard batch (12 jobs nmoff/nmon_s*, launched 11-14 ~21:30
+- **LIVE RUNS:** AWS g6.xlarge i-0ef6fddc74e4adc14, near-miss guard batch 20261114-2031 (12 jobs nmoff/nmon_s*; first launch
+  failed in argparse, packet fixed; relaunched 11-14 20:35 local
   local, dead-man 360 min): `bash tools/aws_brain_batch.sh pull`, copy nm*_s*.json to
   `results/2026-11-14-near-miss-guard-1.5b/`, rescore, `python -m brain.experiments.near_miss_table <dir> <11-14 tellmix dir>`. Pool40/41/42: report-only
   seeds 200-205 of the same test (`jobs/2026-11-14-pool-near-miss-extra.sh`, out `~/brain-lane/outNM/`, CPU, hours).
