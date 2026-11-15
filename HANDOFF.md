@@ -21,16 +21,16 @@
   Near-miss / frame guard in sleep (M4): NOT A LEAD (N1-N3 fail; switch stays OFF).
   Scorer: a disclaimer + general talk naming the key is no longer credited (`2026-11-14-disclaimer-rescore.md`): no
   banked verdict changes; contrast's oracle edge shrinks (fresh +20 -> +15), part of it was echoes turned AI disclaimers.
-- **LIVE RUNS:** pool40/41/42: weaker-night control for the near-miss guard (Amendment 3,
-  `jobs/2026-11-15-pool-weak-night.sh`, seeds 200-205, out `~/brain-lane/outWN/`, `done.txt`, about 3 h from 11-15).
-  Read it against `results/2026-11-14-near-miss-guard-1.5b/extra/nm*_s20*.json` (re-score both first).
+- **LIVE RUNS:** none. Pool40/41/42 idle (ssh: the Bitwarden agent can hang; use `SSH_AUTH_SOCK= ssh -o IdentitiesOnly=yes`).
 - **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (venv `~/brain-lane/venv` on 40/41, `~/derisk-pool/sim/.venv`
   on 42; pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`). pool40 host key re-trusted 11-14 (reinstall).
 - **READY WORK:** an answer-rate layout for unslept/mixed probes in `tools/answer_rate.py`. Pi: `research/coordination/PI_LANE.md`.
 - **NEXT STEP:** milestone day 14 (11-16): the 1.5B cortex default for the weekly transcript (needs a prereg).
   False recall after sleep: M4 near-miss guard NOT A LEAD (`results/2026-11-14-near-miss-guard-1.5b.md`: false
   6.83 -> 3.83 but told 7.17 -> 6.00, para -1.5, about half the removed intrusions became abstentions or inventions;
-  lever count 7). When the weaker-night control lands: selective -> guard minus told-topic cues; not selective -> M5.
+  lever count 7). Weaker-night control: SELECTIVE, narrowed (`results/2026-11-15-weak-night-control-1.5b.md`: a
+  shorter night keeps false 9.00 vs guard 5.50 at matched slept told; ~60% of the gain is abstention). Next: M4b =
+  guard minus told-topic cues, confabulation scored as false (prereg, AWS six seeds).
   Count invented answers as false in the next prereg. Land `claude/gain-refit-1113` on main.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
