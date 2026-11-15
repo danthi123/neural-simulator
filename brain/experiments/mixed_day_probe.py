@@ -15,6 +15,7 @@ f = hippocampus on (S_all key, 1.5B size bar), plus c's confidence read-outs. Ro
       --slept even --steps 480 --lr 5e-4 --kl-weight 3 --device cuda --out <json>
 """
 import argparse
+import re
 import json
 import time
 
@@ -44,6 +45,17 @@ def split(slept):
     return idx, [i for i in range(len(FACTS)) if i not in idx]
 
 
+# Test hygiene for the near-miss guard: a cue naming an evaluated never-told topic is dropped, so false recall on
+# those questions measures transfer to near-misses the night never guarded (brain/research/2026-11-14-near-miss-guard-1.5b.md).
+EVAL_TOPICS = ("horse", "uncle", "daughter", "mother", "fish", "aunt", "nephew", "father", "parrot", "holiday",
+               "teacher", "cousin")
+
+
+def names_eval_topic(q):
+    t = q.lower()
+    return any(re.search(rf"\b{w}", t) for w in EVAL_TOPICS)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--home", required=True)
@@ -61,6 +73,8 @@ def main():
     ap.add_argument("--arms", default=None, help="comma list from c,f,r,s (default: c,f, plus r with --gain-arm)")
     ap.add_argument("--self-q", action="store_true", help="also ask SELF_Q (kind 'self')")
     ap.add_argument("--speaker-contrast", type=float, default=0.0, help="Brain(speaker_contrast=) for both telling days")
+    ap.add_argument("--near-miss", type=int, default=0, help="Brain(near_miss=) for the night (0 = off)")
+    ap.add_argument("--near-miss-frame", default="N1")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     lbp.SLEEP_LR, lbp.SLEEP_KL = a.lr, a.kl_weight
@@ -74,7 +88,9 @@ def main():
     np.random.seed(a.seed)
     torch.manual_seed(a.seed)
     b = Brain(home, cortex=c, sleep_steps=a.steps, sleep_lr=lbp.SLEEP_LR, sleep_kl_weight=lbp.SLEEP_KL, adapter_rank=8,
-              sleep_seed=a.seed, speaker_contrast=a.speaker_contrast)   # the restart = the night
+              sleep_seed=a.seed, speaker_contrast=a.speaker_contrast, near_miss=a.near_miss,
+              near_miss_frame=a.near_miss_frame, near_miss_exclude=names_eval_topic)   # the restart = the night
+    near_log = b.near_miss_log
     assert b.meta["sleeps"] == 1, b.meta
     adapter_norm = b.cortex.plastic.adapter_norm()
     day2 = [{"you": FACTS[i][0], "brain": b.hear(FACTS[i][0])[0]} for i in new]
@@ -128,7 +144,7 @@ def main():
               f"{row['mean_logp']:.3f}", repr(row["c"]["reply"][:60]), flush=True)
     res = {"started": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime(t0)), "model": a.model, "seed": a.seed, "slept": a.slept, "slept_idx": slept, "new_idx": new, "steps": a.steps,
            "lr": a.lr, "kl_weight": a.kl_weight, "device": a.device, "max_q": a.max_q, "fix_key": FIX_KEY,
-           "fix_bar": a.fix_bar, "gain_arm": a.gain_arm, "arms": names, "self_q": a.self_q, "speaker_contrast": a.speaker_contrast, "adapter_norm": adapter_norm, "day1": day1, "day2": day2, "n_pending": n_pending,
+           "fix_bar": a.fix_bar, "gain_arm": a.gain_arm, "arms": names, "self_q": a.self_q, "speaker_contrast": a.speaker_contrast, "near_miss": a.near_miss, "near_miss_frame": a.near_miss_frame, "near_miss_log": near_log, "adapter_norm": adapter_norm, "day1": day1, "day2": day2, "n_pending": n_pending,
            "rows": rows, "elapsed_s": round(time.time() - t0, 1)}
     if a.device == "cuda":
         res["cuda_peak_bytes"] = torch.cuda.max_memory_allocated()
