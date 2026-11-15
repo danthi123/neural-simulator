@@ -26,3 +26,6 @@ as written for the registered test.
 - C1 fails: the day-1 effect does not replicate; NOT A LEAD.
 
 **Expected.** C1 holds (6/6 twice so far). C2 is a coin-flip-sized risk at one seed.
+
+**Addendum (before any run): report-only seeds 306-311 on the pool (CPU fp32), off and on**, same pool script as the
+registered test's addendum (`jobs/2026-11-15-pool-self-completion-weekly.sh`). Not criteria, not pooled.
