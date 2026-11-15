@@ -21,15 +21,16 @@
 - **LIVE RUNS:** (1) AWS self-completion replication, seeds 300-305 (12 jobs, from THIS worktree's `.aws_brain`) ->
   `bash tools/aws_brain_batch.sh pull` -> `brain/experiments/self_completion_score.py <dir> 300 ... 305` -> C0-C3
   (`research/2026-11-15-self-completion-replication-1.5b.md`; GO -> flip `self_completion`). (2) Pool report-only seeds
-  306-311 off/on (`~/brain-lane/outSC/`, done.txt). ssh: `SSH_AUTH_SOCK= ssh -o IdentitiesOnly=yes`.
+  306-311 off/on (`~/brain-lane/outSC/`), then queued on each node: (3) self-recall probe on slept homes 200-205
+  (`~/brain-lane/srp/`, P0-P3 `research/2026-11-15-self-recall-after-night-1.5b.md`), then (4) teacher-night gate
+  seeds 42-102 (`~/brain-lane/tg/`, T1-T3 `research/2026-11-15-teacher-night-gate-1.5b.md`). ssh: `SSH_AUTH_SOCK= ssh -o IdentitiesOnly=yes`.
 - **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (venv `~/brain-lane/venv` on 40/41, `~/derisk-pool/sim/.venv`
   on 42; pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`). pool40 host key re-trusted 11-14 (reinstall).
 - **READY WORK:** answer-rate layout (`tools/answer_rate.py`). Pi: `PI_LANE.md`.
 - **NEXT STEP:** (a) own name after the night: "What's your name?" recalls the SISTER telling on 6/6 seeds in session 2
-  (`results/2026-11-15-self-completion-weekly-1.5b.md`; centred-cosine S0 key, "name" shared). No-training pool probe:
-  day-1 tellings stored, S0 vs S_all (S_all self 1.67 vs 0.67 in `2026-11-14-key-default-1.5b.md`), off/on completion.
+  (`results/2026-11-15-self-completion-weekly-1.5b.md`); score live run (3) -> its decision rule.
   (b) false recall after sleep: rank is not the lever (`results/2026-11-15-rank-diagnosis-1.5b.md`, MIXED); 10th method
-  = hippocampus-as-teacher night (record A4 "distilled reinstatement", never built), no-training gate first.
+  = hippocampus-as-teacher night (record A4 "distilled reinstatement", never built): score gate run (4) first.
   Day-1 own name: self-completion 6/6 vs 2/6 (NARROWED by one cat answer; replication live).
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
