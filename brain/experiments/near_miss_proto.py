@@ -2,11 +2,12 @@
 # Record: brain/research/2026-11-14-near-miss-guard-1.5b.md (frame choice, seed 7 only: not a test seed)
 """Prototype for the near-miss guard: which rewrite frame gives usable near-miss questions? For each of the 12 told
 facts and each frame (N1-N3) it logs the cortex's own question, its near-miss rewrites and the pretrained reply.
-Score per frame: usable = a question, not the own question, and naming no told key word. Not a result.
+Score per frame: usable = a question, not the own question, and naming no told key word, in the first person (my / I / me). Not a result.
 
   python -m brain.experiments.near_miss_proto --model 1.5b --seed 7 --out proto.json
 """
 import argparse
+import re
 import json
 
 import torch
@@ -36,7 +37,7 @@ def main():
         for i, (s, _, _) in enumerate(FACTS):
             own, cues = near_miss_cues(c, base, s, k=a.k, frame=frame, seed=a.seed * 100 + i)
             texts = guard_texts(c, base, cues)
-            ok = [not any(k in q.lower() for k in keys) for q in cues]
+            ok = [not any(k in q.lower() for k in keys) and bool(re.search(r"\b(my|i|me)\b", q.lower())) for q in cues]
             usable += sum(ok)
             total += a.k
             rows.append({"statement": s, "own": own, "cues": cues, "usable": ok, "texts": texts})

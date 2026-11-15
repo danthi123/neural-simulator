@@ -58,3 +58,12 @@ told, ordinary-text drift is not measured here (named gap).
 night; told recall dips a little if cues hit told topics. If false recall does not fall at all, the schema is
 not local to near-miss cues (it generalises over the "my X" frame), and the next method is guarding the frame itself
 (generated "my X" questions with no statement), then M5.
+
+## Amendment 1 (2026-11-14, after the seed-7 prototype, before any test seed)
+First prototype (frames as first committed, da411bfc; pool40/41/42 CPU): usable N1 29/48, N2 14/48, N3 28/48, so the
+rule picked N1. Not used: every frame wrote the cues in the SECOND person ("Where was your father born?", "What's your
+cat's name?"), because the cortex imagines being asked; the evaluated questions and the lure are first-person ("Where
+does my aunt live?"), so the guard would hold the wrong exchanges and the test could not inform. Changed, before any
+test seed: OWN and N2/N3 put the statement in the speaker's own voice ("I told a friend: ... Later I asked them: "),
+N1 asks for "a different person or thing of mine"; "usable" also requires first person (my / I / me). The prototype is
+rerun on seed 7 and the same rule (most usable, ties -> N1) picks the frame; Amendment 2 records it. Nothing else changes.

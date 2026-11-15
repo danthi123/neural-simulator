@@ -13,11 +13,11 @@ import torch
 
 # Frames (quoted text, read from no state: the pretrained cortex as a writer). OWN: its question about the statement.
 # Rewrite frames, pre-listed; the prototype on a non-test seed picks one (brain/research/2026-11-14-near-miss-guard-1.5b.md).
-OWN = 'Someone said: "{s}"\nA question they might later ask about it: "'
+OWN = 'I told a friend: "{s}"\nLater I asked them: "'
 REWRITE = {
-    "N1": 'Question: "{q}"\nThe same question about a different person or thing: "',
-    "N2": 'Someone said: "{s}"\nA similar question about a different person or thing, which they never mentioned: "',
-    "N3": 'Someone said: "{s}"\nThey asked: "{q}"\nLater they asked about something they had never mentioned: "',
+    "N1": 'Question: "{q}"\nThe same question about a different person or thing of mine: "',
+    "N2": 'I told a friend: "{s}"\nLater I asked them about something of mine I had never mentioned: "',
+    "N3": 'I told a friend: "{s}"\nI asked: "{q}"\nLater I asked about something of mine I had never mentioned: "',
 }
 
 
