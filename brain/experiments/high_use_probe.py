@@ -24,6 +24,7 @@ from brain.experiments.facts import FACTS
 from brain.experiments.sleep_probe import GENERIC, evaluate
 from brain.plastic_cortex import PlasticCortex
 from brain.sleep import sleep
+from brain.provenance import stamp
 
 KS = (1, 3, 10)
 
@@ -72,7 +73,7 @@ def main():
         print(arm, {k: v for k, v in r.items() if not k.endswith("_items")}, flush=True)
     result["elapsed_s"] = time.time() - t0
     with open(a.out, "w") as fh:
-        json.dump(result, fh, indent=1)
+        json.dump(stamp(result, a.model), fh, indent=1)
 
 
 if __name__ == "__main__":

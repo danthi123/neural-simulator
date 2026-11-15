@@ -14,6 +14,7 @@ from brain.experiments.facts import FACTS, PARA
 from brain.experiments.facts_extra import EXTRA, EXTRA_PARA
 from brain.experiments.sleep_probe import ask
 from brain.plastic_cortex import PlasticCortex
+from brain.provenance import stamp
 
 POOL = [(s, q, k, p) for (s, q, k), p in zip(FACTS + EXTRA, PARA + EXTRA_PARA)]
 
@@ -36,7 +37,7 @@ def main():
                      "para": k in a_p.lower(), "from_original_12": i < len(FACTS)})
         print(k, rows[-1]["original"], rows[-1]["para"], "|", a_q, "|", a_p, flush=True)
     with open(a.out, "w") as fh:
-        json.dump({"model": a.model, "rows": rows}, fh, indent=1)
+        json.dump(stamp({"model": a.model, "rows": rows}, a.model), fh, indent=1)
 
 
 if __name__ == "__main__":

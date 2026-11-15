@@ -25,6 +25,7 @@ from brain.cortex import Cortex, resolve_model
 from brain.experiments.facts import FACTS, PARA
 from brain.experiments.facts_bank import DEV_FACTS36
 from brain.experiments.strict_scorer import correct_answer, has_key, is_disclaimed, is_generic
+from brain.provenance import stamp
 
 
 def bank_items(bank):
@@ -83,8 +84,8 @@ def main():
               flush=True)
     b.release()
     shutil.rmtree(home, ignore_errors=True)
-    json.dump({"started": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime(t0)), "model": c.model_name, "bank": a.bank, "gains": a.gains, "rows": rows, "host": os.uname().nodename, "shift": a.shift,
-               "threads": a.threads, "elapsed_s": round(time.time() - t0, 1)}, open(a.out, "w"), indent=1)
+    json.dump(stamp({"started": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime(t0)), "model": c.model_name, "bank": a.bank, "gains": a.gains, "rows": rows, "host": os.uname().nodename, "shift": a.shift,
+               "threads": a.threads, "elapsed_s": round(time.time() - t0, 1)}, a.model), open(a.out, "w"), indent=1)
     print("done", a.out, round(time.time() - t0, 1), "s")
 
 

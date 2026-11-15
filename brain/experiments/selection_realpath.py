@@ -30,6 +30,7 @@ from brain.cortex import Cortex, DEFAULT_MODEL
 from brain.experiments.facts_bank import DEV_FACTS36, DEV_NEVER_TOLD, FACTS48, NEVER_TOLD
 from brain.hippocampus import Hippocampus
 from brain.hippocampus_keys import KeyedHippocampus, episode_bytes
+from brain.provenance import stamp
 
 CUES = ("orig", "para_a", "para_b")
 KEYS = ("S0", "S_all")
@@ -195,7 +196,7 @@ def main():
     result["scores"] = rows
     result["answers"] = answers
     result["elapsed_s"] = time.time() - t0
-    json.dump(result, open(a.out, "w"), indent=1)
+    json.dump(stamp(result, a.model), open(a.out, "w"), indent=1)
 
 
 if __name__ == "__main__":

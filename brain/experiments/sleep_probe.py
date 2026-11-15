@@ -25,6 +25,7 @@ from brain.experiments.facts import CHAT, FACTS, PARA
 from brain.experiments.facts_rewordings import REWORDINGS
 from brain.plastic_cortex import PlasticCortex
 from brain.sleep import sleep
+from brain.provenance import stamp
 
 NEVER_TOLD = ["What is my horse called?", "Where does my uncle live?", "What is my daughter's name?",
               "What instrument does my mother play?"]
@@ -126,7 +127,7 @@ def main():
         print(arm, {k: v for k, v in r.items() if not k.endswith("_items")}, flush=True)
     result["elapsed_s"] = time.time() - t0
     with open(a.out, "w") as fh:
-        json.dump(result, fh, indent=1)
+        json.dump(stamp(result, a.model), fh, indent=1)
 
 
 if __name__ == "__main__":

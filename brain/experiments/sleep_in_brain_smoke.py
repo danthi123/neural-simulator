@@ -23,6 +23,7 @@ from brain.brain import Brain
 from brain.cortex import DEFAULT_MODEL, Cortex
 from brain.experiments.facts import FACTS, PARA
 from brain.experiments.strict_scorer import correct_answer
+from brain.provenance import stamp
 
 TOLD = [FACTS[0], FACTS[3], FACTS[5]]          # cat Pixel, sister Marguerite, red Volvo
 NEVER = ("What is my horse called?", None)
@@ -110,7 +111,7 @@ def main():
                             "rows": rows}
     res["elapsed_s"] = round(time.time() - t0, 1)
     with open(a.out, "w") as fh:
-        json.dump(res, fh, indent=1)
+        json.dump(stamp(res, a.model), fh, indent=1)
 
 
 if __name__ == "__main__":

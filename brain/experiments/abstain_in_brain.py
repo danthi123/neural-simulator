@@ -31,6 +31,7 @@ from brain.cortex import DEFAULT_MODEL, Cortex
 from brain.experiments.confidence_probe import DONT_KNOW, DONT_KNOW_QS, NEVER_TOLD_EXTRA
 from brain.experiments.facts import FACTS, PARA
 from brain.experiments.sleep_probe import NEVER_TOLD
+from brain.provenance import stamp
 
 # The sleep settings this experiment was run with (the integration default before SLEEP_DEFAULTS), pinned so a
 # re-run at another cortex size reproduces it.
@@ -288,7 +289,7 @@ def main():
         res["model"] = a.model
     res["elapsed_s"] = round(time.time() - t0, 1)
     with open(a.out, "w") as fh:
-        json.dump(res, fh, indent=1)
+        json.dump(stamp(res, a.model), fh, indent=1)
 
 
 if __name__ == "__main__":

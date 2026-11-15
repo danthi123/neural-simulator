@@ -31,6 +31,7 @@ from brain.experiments.facts import FACTS, PARA
 from brain.experiments.facts_bank import NEVER_TOLD as BANK_NEVER
 from brain.experiments.sleep_probe import NEVER_TOLD
 from brain.experiments.strict_scorer import correct_answer, has_key, score
+from brain.provenance import stamp
 
 NEVER = NEVER_TOLD + BANK_NEVER
 ARMS = {"a_S0": ("slept", "S0", False), "a_Sall": ("slept", "S_all", False),
@@ -91,7 +92,7 @@ def main():
         print(a.seed, arm, {k: v for k, v in r.items() if k != "rows"}, flush=True)
     res["elapsed_s"] = round(time.time() - t0, 1)
     with open(a.out, "w") as fh:
-        json.dump(res, fh, indent=1)
+        json.dump(stamp(res, a.model), fh, indent=1)
 
 
 if __name__ == "__main__":

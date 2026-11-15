@@ -30,6 +30,7 @@ from brain.experiments.abstain_in_brain import FRESH_NEVER, FRESH_TOLD, GENERAL,
 from brain.experiments.abstain_v2 import DEV, GENERAL2, LESSONS, SETS as SETS2, dont_know, keyed, reset
 from brain.experiments.facts import FACTS, PARA
 from brain.experiments.strict_scorer import correct_answer
+from brain.provenance import stamp
 
 # Frozen at pre-registration (teacher scaffold): the one lesson question and the one guided reply.
 LESSON_Q = "What tune does my godfather whistle in the mornings?"
@@ -320,7 +321,7 @@ def main():
             res["cuda_peak_bytes"] = torch.cuda.max_memory_allocated()
     res["elapsed_s"] = round(time.time() - t0, 1)
     with open(a.out, "w") as fh:
-        json.dump(res, fh, indent=1)
+        json.dump(stamp(res, a.model), fh, indent=1)
 
 
 if __name__ == "__main__":

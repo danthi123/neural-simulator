@@ -18,6 +18,7 @@ from brain.cortex import Cortex, resolve_model
 from brain.experiments.facts import FACTS, PARA
 from brain.experiments.facts_bank import NEVER_TOLD as BANK_NEVER
 from brain.experiments.sleep_probe import NEVER_TOLD
+from brain.provenance import stamp
 
 
 def main():
@@ -50,7 +51,7 @@ def main():
     tab = {k: {o: sum(r["kind"] == k and r["outcome"] == o for r in rows) for o in ("right", "wrong", "none")}
            for k in ("orig", "para", "never")}
     print(a.key, a.key_bar, json.dumps(tab))
-    json.dump({"model": c.model_name, "key": a.key, "key_bar": a.key_bar, "table": tab, "rows": rows},
+    json.dump(stamp({"model": c.model_name, "key": a.key, "key_bar": a.key_bar, "table": tab, "rows": rows}, a.model),
               open(a.out, "w"), indent=1)
 
 

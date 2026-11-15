@@ -40,6 +40,7 @@ from brain.brain import Brain
 from brain.cortex import DEFAULT_MODEL, Cortex
 from brain.experiments.abstain_in_brain import SEEDS, fit_rule, keys_in
 from brain.experiments.abstain_v2 import DEV, SETS as SETS_V2, auc, keyed
+from brain.provenance import stamp
 
 TOKENS = 12
 C_VARIANTS = ("C_mean", "C_max", "C_cmean", "C_cmin")
@@ -292,7 +293,7 @@ def main():
         res["model"] = a.model
     res["elapsed_s"] = round(time.time() - t0, 1)
     with open(a.out, "w") as fh:
-        json.dump(res, fh, indent=1)
+        json.dump(stamp(res, a.model), fh, indent=1)
 
 
 if __name__ == "__main__":

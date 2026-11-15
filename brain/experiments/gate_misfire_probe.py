@@ -28,6 +28,7 @@ from brain.experiments.abstain_in_brain import FRESH_TOLD
 from brain.experiments.confab_m2 import DEV_NEVER, FRESH_NEVER3
 from brain.experiments.facts import FACTS, PARA
 from brain.hippocampus_keys import KeyedHippocampus
+from brain.provenance import stamp
 
 SETS = {"told": [q for _, q, _ in FACTS], "para": list(PARA), "dev_told": [q for q, _, _ in FRESH_TOLD],
         "dev_never": [q for q, _, _ in DEV_NEVER], "v3_never": [q for q, _, _ in FRESH_NEVER3]}
@@ -87,7 +88,7 @@ def run(a):
     if a.device == "cuda":
         res["cuda_peak_bytes"] = torch.cuda.max_memory_allocated()
     os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
-    json.dump(res, open(a.out, "w"), indent=1)
+    json.dump(stamp(res, a.model), open(a.out, "w"), indent=1)
     print("wrote", a.out, res.get("sleep_s"), flush=True)
 
 

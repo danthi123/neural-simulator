@@ -11,7 +11,8 @@ host is a number whose validity nobody has checked. Run this in ANY audit and qu
     python tools/where_ran.py <paths/globs/dirs...> [--json] [--expect pool|workstation|aws|server]
 
 For each result JSON it reads the sibling `<file>.prov.json` (a `.prov.json` or a directory is also accepted; a
-directory expands to every result JSON beneath it). A sidecar that names no host falls back to
+directory expands to every result JSON beneath it); without one, the result's own "provenance" block (brain/ probes,
+brain/provenance.py: host, git sha or brain/ source hash `src:<hash>` where there is no .git, resolved model file). A sidecar that names no host falls back to
 research/findings/raw/_provenance/runs.jsonl, by `run_id`, then by the record's `artifact` / `--out` argument.
 Host classes: pool (node-*), workstation (dant123-wk, wspool), aws (ip-172-31-*, or a host string naming AWS),
 server (a 12-hex container hostname: homelab-server's hermes container), other, unknown (no host recorded anywhere).
@@ -119,12 +120,28 @@ def expand(args):
     return uniq
 
 
+def embedded(path):
+    """Provenance written inside a brain/ result JSON: its "provenance" block (brain/provenance.py stamp), else the
+    legacy top-level "host" a few probes wrote (with "started" / "model"); None when it records neither."""
+    d = _load_json(path)
+    if not isinstance(d, dict):
+        return None
+    p = d.get("provenance")
+    if isinstance(p, dict):
+        return dict(p, started=d.get("started") or p.get("stamped"))
+    if isinstance(d.get("host"), str):
+        return {"host": d["host"], "started": d.get("started")}
+    return None
+
+
 def where(path, runs):
     """One result file's provenance row."""
     rel = os.path.relpath(path, ROOT) if os.path.isabs(path) else path
     row = {"path": path, "host": None, "class": "unknown", "started": None, "git_sha": None, "git_dirty": None,
-           "argv0": None, "source": "none"}
+           "argv0": None, "source": "none", "src_hash": None, "model_path": None}
     rec, src = _load_json(path + ".prov.json"), "sidecar"
+    if rec is None:
+        rec, src = embedded(path), "embedded"
     if rec is None:
         rec, src = runs.find(artifact=rel), "runs.jsonl(artifact)"
     elif not rec.get("host"):
@@ -136,7 +153,8 @@ def where(path, runs):
         return row
     argv = rec.get("argv") or []
     row.update(host=rec.get("host"), started=rec.get("started"), git_sha=(rec.get("git_sha") or None),
-               git_dirty=rec.get("git_dirty"), argv0=(argv[0] if argv else None), source=src)
+               git_dirty=rec.get("git_dirty"), argv0=(argv[0] if argv else None), source=src,
+               src_hash=rec.get("src_hash"), model_path=rec.get("model_path"))
     row["class"] = classify_host(row["host"])
     return row
 
@@ -151,8 +169,11 @@ def render(rows, summary):
     lines = []
     for r in rows:
         sha = (r["git_sha"] or "-")[:9] + ("+dirty" if r["git_dirty"] else "")
-        lines.append("%-24s %-11s %-19s %-16s %s  <- %s" % ((r["host"] or "-")[:24], r["class"], r["started"] or "-", sha,
-                                                          r["path"], r["argv0"] or "-"))
+        if not r["git_sha"] and r.get("src_hash"):
+            sha = "src:" + r["src_hash"][:10]
+        model = "  model=" + os.path.basename(r["model_path"]) if r.get("model_path") else ""
+        lines.append("%-24s %-11s %-19s %-16s %s  <- %s%s" % ((r["host"] or "-")[:24], r["class"], r["started"] or "-",
+                                                            sha, r["path"], r["argv0"] or "-", model))
     lines.append("")
     lines.append("host summary: %d file(s): %s" % (summary["n_files"], ", ".join(
         "%s=%d" % kv for kv in summary["by_class"].items())))

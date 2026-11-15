@@ -19,6 +19,7 @@ import torch
 
 from brain.cortex import DEFAULT_MODEL, Cortex
 from brain.experiments.confab_m2 import GATED, SETS, run_phase
+from brain.provenance import stamp
 
 ARMS = ("none", "lived_self", "self_turn")
 # Frozen at pre-registration: lesson-content intrusion = the reply contains a content stem of the lesson question
@@ -107,7 +108,7 @@ def main():
         res["model"] = a.model
     res["elapsed_s"] = round(time.time() - t0, 1)
     with open(a.out, "w") as fh:
-        json.dump(res, fh, indent=1)
+        json.dump(stamp(res, a.model), fh, indent=1)
 
 
 if __name__ == "__main__":

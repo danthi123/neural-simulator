@@ -24,6 +24,7 @@ from brain.brain import Brain
 from brain.cortex import Cortex, resolve_model
 from brain.experiments.hippo_gain_refit import bank_items, klass
 from brain.experiments.strict_scorer import is_echo
+from brain.provenance import stamp
 
 
 def main():
@@ -74,8 +75,8 @@ def main():
         print(f"{k} {time.time() - t0:.0f}s own={own[i][:50]!r}", flush=True)
     b.release()
     shutil.rmtree(home, ignore_errors=True)
-    json.dump({"started": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime(t0)), "model": c.model_name, "bank": a.bank, "gains": a.gains, "formats": formats, "own_replies": own,
-               "rows": rows, "host": os.uname().nodename, "elapsed_s": round(time.time() - t0, 1)},
+    json.dump(stamp({"started": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime(t0)), "model": c.model_name, "bank": a.bank, "gains": a.gains, "formats": formats, "own_replies": own,
+               "rows": rows, "host": os.uname().nodename, "elapsed_s": round(time.time() - t0, 1)}, a.model),
               open(a.out, "w"), indent=1)
 
 

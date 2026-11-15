@@ -33,6 +33,7 @@ from brain.experiments.abstain_in_brain import PINNED_SLEEP, FIT, FRESH_NEVER, F
 from brain.experiments.facts import FACTS
 from brain.hippocampus import Hippocampus
 from brain.hippocampus_keys import KeyedHippocampus
+from brain.provenance import stamp
 
 # S_all bar / margin for RECALL (selection), from the meaning-selection dev fit (2026-11-03-meaning-selection-realpath)
 S_ALL_BAR, S_ALL_MARGIN = 0.185, 0.05
@@ -353,7 +354,7 @@ def main():
         res["model"] = a.model
     res["elapsed_s"] = round(time.time() - t0, 1)
     with open(a.out, "w") as fh:
-        json.dump(res, fh, indent=1)
+        json.dump(stamp(res, a.model), fh, indent=1)
 
 
 if __name__ == "__main__":

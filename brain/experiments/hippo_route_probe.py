@@ -35,6 +35,7 @@ from brain.experiments.facts_bank import DEV_FACTS36, DEV_NEVER_TOLD, NEVER_TOLD
 from brain.experiments.sleep_probe import NEVER_TOLD
 from brain.hippocampus_keys import read_activity
 from brain.plastic_cortex import PlasticCortex
+from brain.provenance import stamp
 
 KINDS = ("S", "att", "ffn", "last", "pool")
 
@@ -126,7 +127,7 @@ def main():
         print(name, "done", round(time.time() - t0), "s", flush=True)
     shutil.rmtree(tmp, ignore_errors=True)
     out["elapsed_s"] = round(time.time() - t0, 1)
-    json.dump(out, open(a.out, "w"))
+    json.dump(stamp(out, a.model), open(a.out, "w"))
 
 
 if __name__ == "__main__":

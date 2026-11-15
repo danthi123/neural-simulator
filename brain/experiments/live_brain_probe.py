@@ -36,6 +36,7 @@ from brain.cortex import DEFAULT_MODEL, Cortex, resolve_model
 from brain.experiments.facts import FACTS, PARA
 from brain.experiments.sleep_probe import NEVER_TOLD
 from brain.experiments.strict_scorer import correct_answer, has_key, score
+from brain.provenance import stamp
 
 SLEEP_LR = 5e-4  # --lr overrides (0.4B run); default = Brain default, unchanged for 0.1B
 SLEEP_KL = 1.0   # --kl-weight overrides (1.5B run: 3.0); default unchanged for 0.1B
@@ -152,7 +153,7 @@ def main():
     if a.device == "cuda":
         res["cuda_peak_bytes"] = torch.cuda.max_memory_allocated()
     with open(a.out, "w") as fh:
-        json.dump(res, fh, indent=1)
+        json.dump(stamp(res, a.model), fh, indent=1)
 
 
 if __name__ == "__main__":

@@ -24,6 +24,7 @@ from brain.experiments.facts import FACTS, PARA
 from brain.experiments.mixed_day_probe import ARM_SPECS, SELF_Q
 from brain.experiments.sleep_probe import NEVER_TOLD
 from brain.experiments.strict_scorer import correct_answer, has_key
+from brain.provenance import stamp
 
 
 def main():
@@ -78,8 +79,8 @@ def main():
         rows.append(row)
         print(a.seed, kind, *[row[n]["ok"] for n in names], repr(row[names[-1]]["reply"][:60]), flush=True)
     shutil.rmtree(home, ignore_errors=True)
-    json.dump({"started": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime(t0)), "model": c.model_name, "seed": a.seed, "arms": names, "episode": a.episode, "speaker_contrast": a.speaker_contrast, "stored": stored, "day": day, "n_pending": n_pending, "rows": rows,
-               "host": os.uname().nodename, "elapsed_s": round(time.time() - t0, 1)}, open(a.out, "w"), indent=1)
+    json.dump(stamp({"started": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime(t0)), "model": c.model_name, "seed": a.seed, "arms": names, "episode": a.episode, "speaker_contrast": a.speaker_contrast, "stored": stored, "day": day, "n_pending": n_pending, "rows": rows,
+               "host": os.uname().nodename, "elapsed_s": round(time.time() - t0, 1)}, a.model), open(a.out, "w"), indent=1)
 
 
 if __name__ == "__main__":

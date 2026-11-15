@@ -35,6 +35,7 @@ from brain.affect import Affect, draw_primaries
 from brain.brain import BIRTH
 from brain.cortex import DEFAULT_MODEL, Cortex
 from brain.experiments import sentiment_instrument as si
+from brain.provenance import stamp
 
 POS_EVENTS = ["You did a wonderful job today, I'm really proud of you.",
               "Thank you so much, you helped me more than anyone.",
@@ -287,7 +288,7 @@ def main():
            "induction": {"m_pos": m_pos, "m_neg": m_neg, "v_pos": v_pos, "v_neg": v_neg},
            "summary": summary, "contrasts": contrasts, "rows": rows, "seconds": round(time.time() - t0, 1)}
     with open(a.out, "w") as fh:
-        json.dump(out, fh, indent=1)
+        json.dump(stamp(out, a.model), fh, indent=1)
     print(json.dumps({k: out[k] for k in ("seed", "gain", "appraisal_sign_acc", "induction", "contrasts")} |
                      {"summary": summary}, indent=1))
 

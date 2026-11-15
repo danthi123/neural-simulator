@@ -22,6 +22,7 @@ from brain.brain import Brain
 from brain.cortex import Cortex, resolve_model
 from brain.experiments.facts import FACTS, PARA
 from brain.experiments.strict_scorer import correct_answer
+from brain.provenance import stamp
 
 
 def main():
@@ -52,8 +53,8 @@ def main():
     tab = {kind: {str(g): sum(r["correct"] for r in rows if r["kind"] == kind and r["gain"] == g) for g in a.gains}
            for kind in ("orig", "para")}
     print("correct of 12 by gain:", tab)
-    json.dump({"model": c.model_name, "gains": a.gains, "table": tab, "rows": rows,
-               "elapsed_s": round(time.time() - t0, 1)}, open(a.out, "w"), indent=1)
+    json.dump(stamp({"model": c.model_name, "gains": a.gains, "table": tab, "rows": rows,
+               "elapsed_s": round(time.time() - t0, 1)}, a.model), open(a.out, "w"), indent=1)
 
 
 if __name__ == "__main__":

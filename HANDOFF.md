@@ -33,4 +33,5 @@
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend
   money on AI to drive it."
 - **OPEN:** none blocking. Chores: repoint the board timer to a main-following checkout. Speed levers: AWS lane
-  `tools/aws_brain_batch.sh`, Pi gated by `usage.ts`.
+  `tools/aws_brain_batch.sh`, Pi gated by `usage.ts`. 11-15: brain/ probes now stamp `provenance` (host, git sha or
+  brain/ `src_hash`, resolved model file; `brain/provenance.py`), read by `tools/where_ran.py`; results before it stay unknown.

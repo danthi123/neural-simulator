@@ -20,6 +20,7 @@ from brain.brain import Brain
 from brain.cortex import DEFAULT_MODEL, Cortex
 from brain.experiments import live_brain_probe as lbp
 from brain.experiments.facts_bank import DEV_FACTS36, DEV_NEVER_TOLD
+from brain.provenance import stamp
 
 BARS = [round(-0.10 + 0.005 * i, 3) for i in range(181)]
 MARGINS = [0.0, 0.005, 0.01, 0.02, 0.03, 0.05, 0.08, 0.12]
@@ -52,7 +53,7 @@ def score_seed(a):
            [(f[3], "para_b", f"User: {f[0]}") for f in told] + [(f[1], "untold", None) for f in untold] + \
            [(q, "never", None) for q in DEV_NEVER_TOLD]
     eps, rows = cue_rows(a.home, c, cues)
-    json.dump({"seed": a.seed, "model": a.model, "steps": a.steps, "day1": day1, "episodes": eps, "rows": rows},
+    json.dump(stamp({"seed": a.seed, "model": a.model, "steps": a.steps, "day1": day1, "episodes": eps, "rows": rows}, a.model),
               open(a.out, "w"), indent=1)
 
 
@@ -102,7 +103,7 @@ def check(a):
     eps, out = cue_rows(a.home, c, [(r["q"], r["kind"], None) for r in rows])
     diffs = [abs(max(o["scores"]) - r["similarity"]) for o, r in zip(out, rows)]
     print("max |top1 - probe similarity|", max(diffs))
-    json.dump({"seed": pr["seed"], "bars": pr["bars"], "episodes": eps, "rows": out, "max_diff": max(diffs)},
+    json.dump(stamp({"seed": pr["seed"], "bars": pr["bars"], "episodes": eps, "rows": out, "max_diff": max(diffs)}, a.model),
               open(a.out, "w"), indent=1)
 
 

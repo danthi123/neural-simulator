@@ -29,6 +29,7 @@ from brain.experiments.sleep_probe import GENERIC, NEVER_TOLD
 from brain.hippocampus import Hippocampus
 from brain.plastic_cortex import PlasticCortex
 from brain.sleep import sleep
+from brain.provenance import stamp
 
 # More never-told questions in the same "my X" form, so confabulation has enough items to measure (NEVER_TOLD first,
 # unchanged, so the original 4-question false-recall number is still read out).
@@ -180,9 +181,9 @@ def main():
     print(summ, flush=True)
     torch.save({k: v.detach().cpu() for k, v in pc.state_dict().items()}, a.out[:-5] + "_adapters.pt")
     with open(a.out, "w") as fh:
-        json.dump({"model": a.model, "seed": a.seed, "steps": a.steps, "dont_know": a.dont_know, "kl_weight": a.kl_weight, "lr": a.lr,
+        json.dump(stamp({"model": a.model, "seed": a.seed, "steps": a.steps, "dont_know": a.dont_know, "kl_weight": a.kl_weight, "lr": a.lr,
                    "summary": summ, "final_replay_loss": losses[-1][0] if losses else None,
-                   "adapter_norm": pc.adapter_norm(), "items": items, "elapsed_s": time.time() - t0}, fh, indent=1)
+                   "adapter_norm": pc.adapter_norm(), "items": items, "elapsed_s": time.time() - t0}, a.model), fh, indent=1)
 
 
 if __name__ == "__main__":

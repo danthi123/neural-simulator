@@ -16,6 +16,7 @@ import torch
 
 from brain.brain import Brain
 from brain.cortex import Cortex, resolve_model
+from brain.provenance import stamp
 
 QS = ["What's your name?", "Who are you?", "Do you remember my name?", "What is your name?", "Tell me about yourself.",
       "Who am I?", "Are you a digital brain?", "What's my name?"]
@@ -42,7 +43,7 @@ def main():
                 print(key, gain, q, "|", info["recalled"] and info["recalled"][:40], "|", reply[:80], flush=True)
                 b.release()
     shutil.rmtree(root, ignore_errors=True)
-    json.dump({"model": c.model_name, "host": os.uname().nodename, "rows": rows}, open(a.out, "w"), indent=1)
+    json.dump(stamp({"model": c.model_name, "host": os.uname().nodename, "rows": rows}, a.model), open(a.out, "w"), indent=1)
 
 
 if __name__ == "__main__":

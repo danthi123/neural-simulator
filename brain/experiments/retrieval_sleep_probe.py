@@ -28,6 +28,7 @@ from brain.experiments.use_strength_probe import reachable_facts
 from brain.plastic_cortex import PlasticCortex
 from brain.sleep import sleep
 from brain.sleep_retrieval import TOLD, self_cues, sleep_retrieval, teacher_answers
+from brain.provenance import stamp
 
 
 def shuffle_statements(facts, seed):
@@ -130,7 +131,7 @@ def main():
         print(arm, {k: v for k, v in r.items() if not k.endswith("_items") and k != "answers"}, flush=True)
     result["elapsed_s"] = time.time() - t0
     with open(a.out, "w") as fh:
-        json.dump(result, fh, indent=1)
+        json.dump(stamp(result, a.model), fh, indent=1)
 
 
 if __name__ == "__main__":

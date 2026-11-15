@@ -29,6 +29,7 @@ from brain.experiments.confidence_probe import NEVER_TOLD_EXTRA
 from brain.experiments.facts import FACTS, PARA
 from brain.experiments.sleep_probe import NEVER_TOLD
 from brain.experiments.strict_scorer import correct_answer, has_key
+from brain.provenance import stamp
 
 
 # Arm specs: name -> (hippocampus_off, key, key_bar, gain). c and f are the 11-13 arms; r = f's key and bar at the
@@ -133,7 +134,7 @@ def main():
     if a.device == "cuda":
         res["cuda_peak_bytes"] = torch.cuda.max_memory_allocated()
     with open(a.out, "w") as fh:
-        json.dump(res, fh, indent=1)
+        json.dump(stamp(res, a.model), fh, indent=1)
 
 
 if __name__ == "__main__":

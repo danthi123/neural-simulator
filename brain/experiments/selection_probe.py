@@ -35,6 +35,7 @@ from brain.experiments.facts_bank import FACTS48, NEVER_TOLD
 from brain.hippocampus import Hippocampus
 from brain.hippocampus_keys import LearnedKey, read_activity
 from brain.plastic_cortex import PlasticCortex
+from brain.provenance import stamp
 
 KINDS = ("S", "att", "ffn", "last", "pool")
 CUES = ("orig", "para_a", "para_b")
@@ -287,7 +288,7 @@ def main():
         result["seeds"][str(seed)] = res
         print(f"seed {seed} done ({time.time() - t0:.0f}s)", flush=True)
     result["elapsed_s"] = time.time() - t0
-    json.dump(result, open(a.out, "w"), indent=1)
+    json.dump(stamp(result, a.model), open(a.out, "w"), indent=1)
 
 
 if __name__ == "__main__":

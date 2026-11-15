@@ -93,3 +93,23 @@ def test_expect_exit_codes(tmp_path, capsys):
     assert W.main([a, "--json", "--runs", none]) == 0
     doc = json.loads(capsys.readouterr().out)
     assert doc["summary"]["by_class"] == {"pool": 1} and doc["files"][0]["host"] == "node-x"
+
+
+def test_reads_the_embedded_provenance_of_a_brain_result(tmp_path):
+    """brain/ probes write no sidecar: the result's own "provenance" block (brain/provenance.py), or a legacy top-level
+    "host", gives host, sha (src:<hash> without .git) and the model file."""
+    p = str(tmp_path / "mixday_s42.json")
+    json.dump({"started": "2026-11-14T10:00:00+00:00", "rows": [],
+               "provenance": {"host": "ip-172-31-5-9", "git_sha": None, "git_dirty": None, "src_hash": "ab" * 32,
+                              "argv": ["/home/ubuntu/brainv2/code/brain/experiments/mixed_day_probe.py"],
+                              "model_path": "/home/ubuntu/brainv2/models/rwkv7-g1l-1.5b-x.pth"}}, open(p, "w"))
+    legacy = str(tmp_path / "refit.json")
+    json.dump({"host": "node-dl4g243", "rows": []}, open(legacy, "w"))
+    bare = _result(tmp_path, "bare.json")
+    idx = W.RunsIndex(str(tmp_path / "none"))
+    r, l, b = (W.where(x, idx) for x in (p, legacy, bare))
+    assert r["class"] == "aws" and r["source"] == "embedded" and r["started"].startswith("2026-11-14")
+    assert r["src_hash"] == "ab" * 32 and r["model_path"].endswith("1.5b-x.pth")
+    assert l["class"] == "pool" and b["class"] == "unknown"
+    out = W.render([r, l, b], W.summarize([r, l, b]))
+    assert "src:abababab" in out and "model=rwkv7-g1l-1.5b-x.pth" in out
