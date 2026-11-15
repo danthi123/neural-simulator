@@ -1,0 +1,9 @@
+# 2026-11-15 AWS packet for brain/research/2026-11-15-near-miss-told-filter-1.5b.md (N0-N6; committed before any run).
+#   AWS_BRAIN_MAX_MIN=240 bash tools/aws_brain_batch.sh launch brain/experiments/jobs/2026-11-15-aws-near-miss-ft.txt g6.xlarge
+nmoff_s42 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 42 --slept even --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/nmoff_s42
+nmft_s42 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 42 --slept even --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/nmft_s42 --near-miss 4 --near-miss-frame FT
+nmft_s43 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 43 --slept odd --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/nmft_s43 --near-miss 4 --near-miss-frame FT
+nmft_s44 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 44 --slept even --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/nmft_s44 --near-miss 4 --near-miss-frame FT
+nmft_s100 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 100 --slept even --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/nmft_s100 --near-miss 4 --near-miss-frame FT
+nmft_s101 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 101 --slept odd --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/nmft_s101 --near-miss 4 --near-miss-frame FT
+nmft_s102 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 102 --slept even --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/nmft_s102 --near-miss 4 --near-miss-frame FT

@@ -15,23 +15,21 @@
   Echo: speaker contrast d + 3(d - d_self) works (oracle LEAD; live S0 NO-GO, routing-bound; live S_all GO NARROWED,
   `2026-11-14-sall-contrast-1.5b.md`: told 5.83 -> 6.83, one seed carries it, +2 false;
   report-only seeds 200-205: told +0.50, para +1.17, the aunt -> Oslo lure 6/6 vs 2/6).
-  Dose mu 1.5: NOT A LEAD (`2026-11-14-sall-contrast-dose-1.5b.md`; lure 5/6; effects scale with mu, mu 3 stays). Switches stay OFF.
   Mixed day with sleep: contrast NO-GO (`2026-11-14-sall-contrast-mixed-1.5b.md`, S_all told +0.00, S0 -1.17): echo
   levers all banked NO-GO in the live brain; package stays S0 at gain 0.5.
   Near-miss / frame guard in sleep (M4): NOT A LEAD (N1-N3 fail; switch stays OFF).
-  Scorer: a disclaimer + general talk naming the key is no longer credited (`2026-11-14-disclaimer-rescore.md`): no
-  banked verdict changes; contrast's oracle edge shrinks (fresh +20 -> +15), part of it was echoes turned AI disclaimers.
-- **LIVE RUNS:** none. Pool40/41/42 idle (ssh: the Bitwarden agent can hang; use `SSH_AUTH_SOCK= ssh -o IdentitiesOnly=yes`).
+  Scorer: disclaimer + general talk no longer credited (`2026-11-14-disclaimer-rescore.md`); no verdict changed.
+- **LIVE RUNS:** M4b AWS launch retrying (g6.xlarge capacity, us-east-1d) every 15 min, 8 tries
+  (`jobs/2026-11-15-aws-near-miss-ft.txt`); pull -> nmft_s*/nmoff_s42 -> rescore -> `near_miss_table <dir> --on nmft`
+  (nmoff from `results/2026-11-14-near-miss-guard-1.5b/`). Pool40/41/42: report-only weekly seeds 200-205
+  (`~/brain-lane/outWK/`). ssh: `SSH_AUTH_SOCK= ssh -o IdentitiesOnly=yes` (the Bitwarden agent hangs).
 - **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (venv `~/brain-lane/venv` on 40/41, `~/derisk-pool/sim/.venv`
   on 42; pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`). pool40 host key re-trusted 11-14 (reinstall).
-- **READY WORK:** an answer-rate layout for unslept/mixed probes in `tools/answer_rate.py`. Pi: `research/coordination/PI_LANE.md`.
-- **NEXT STEP:** milestone day 14 (11-16): the 1.5B cortex default for the weekly transcript (needs a prereg).
-  False recall after sleep: M4 near-miss guard NOT A LEAD (`results/2026-11-14-near-miss-guard-1.5b.md`: false
-  6.83 -> 3.83 but told 7.17 -> 6.00, para -1.5, about half the removed intrusions became abstentions or inventions;
-  lever count 7). Weaker-night control: SELECTIVE, narrowed (`results/2026-11-15-weak-night-control-1.5b.md`: a
-  shorter night keeps false 9.00 vs guard 5.50 at matched slept told; ~60% of the gain is abstention). Next: M4b =
-  guard minus told-topic cues, confabulation scored as false (prereg, AWS six seeds).
-  Count invented answers as false in the next prereg. Land `claude/gain-refit-1113` on main.
+- **READY WORK:** answer-rate layout for mixed probes (`tools/answer_rate.py`); M4b prereg. Pi: `PI_LANE.md`.
+- **NEXT STEP:** milestone day 14 NOT fully met, reported (`results/2026-11-15-weekly-1.5b-milestone.md`, NO-GO W1-W3):
+  the slept 1.5B cortex with the hippocampus off answers 3.83/4 told facts (six seeds), but the intact brain says
+  "My name is Dan." on 2/6 (own name; learned in the night, both arms) and a hippocampus lesion no longer changes replies
+  after sleep. Next: own-name intrusion (record check first), a consolidated-off weekly arm, read M4b when it lands.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care

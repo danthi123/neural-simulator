@@ -1,0 +1,10 @@
+# 2026-11-15 AWS packet for brain/research/2026-11-15-weekly-1.5b-milestone.md (W0-W3; committed before any run).
+#   AWS_BRAIN_MAX_MIN=240 bash tools/aws_brain_batch.sh launch brain/experiments/jobs/2026-11-15-aws-weekly-1.5b.txt g6.xlarge
+# Each job writes a markdown transcript into <name>.json (the runner's --out); rename to .md after pull.
+wk15_record brain.eval.weekly --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --shared-sleep --homes ../work/wk15_record
+wk15_s42 brain.eval.weekly --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --shared-sleep --seed 42 --homes ../work/wk15_s42
+wk15_s43 brain.eval.weekly --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --shared-sleep --seed 43 --homes ../work/wk15_s43
+wk15_s44 brain.eval.weekly --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --shared-sleep --seed 44 --homes ../work/wk15_s44
+wk15_s100 brain.eval.weekly --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --shared-sleep --seed 100 --homes ../work/wk15_s100
+wk15_s101 brain.eval.weekly --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --shared-sleep --seed 101 --homes ../work/wk15_s101
+wk15_s102 brain.eval.weekly --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --shared-sleep --seed 102 --homes ../work/wk15_s102

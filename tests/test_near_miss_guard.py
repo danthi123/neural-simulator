@@ -53,3 +53,16 @@ def test_frame_cues_runs_and_keeps_onsets(cortex):
     base = [s.float() for s in _pc(cortex).zero_state()]
     cues = frame_cues(cortex, base, k=2, seed=1)
     assert all(q.endswith("?") and q.startswith(ONSETS) for q in cues)
+
+
+def test_told_topic_filter_reads_the_possessed_word():
+    from brain.near_miss import cue_topics, told_topic
+    told = ["My cat is called Pixel.", "User: My best friend is called Tomasz.\n\nAssistant: Nice to know your father!",
+            "My grandmother lives in Oslo."]
+    assert cue_topics("Who is my best friend in the world?") == {"friend"}
+    assert cue_topics("When is my dad's birthday?") == {"dad"}
+    assert told_topic("Where does my grandmother live?", told)
+    assert told_topic("Who is my friend's mom?", told)
+    assert not told_topic("Who is my father?", told)          # only the user's words count, not the reply
+    assert not told_topic("Where does my money go?", told)
+    assert not told_topic("What is my name?", [])
