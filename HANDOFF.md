@@ -15,19 +15,16 @@
   Echo: speaker contrast d + 3(d - d_self) works (oracle LEAD; live S0 NO-GO, routing-bound; live S_all GO NARROWED,
   `2026-11-14-sall-contrast-1.5b.md`: told 5.83 -> 6.83, one seed carries it, +2 false;
   report-only seeds 200-205: told +0.50, para +1.17, the aunt -> Oslo lure 6/6 vs 2/6).
-  Dose mu 1.5: NOT A LEAD (`2026-11-14-sall-contrast-dose-1.5b.md`; lure 5/6; effects scale with mu, mu 3 stays). Switches stay OFF.
   Mixed day with sleep: contrast NO-GO (`2026-11-14-sall-contrast-mixed-1.5b.md`, S_all told +0.00, S0 -1.17): echo
   levers all banked NO-GO in the live brain; package stays S0 at gain 0.5.
   Near-miss / frame guard in sleep (M4): NOT A LEAD (N1-N3 fail; switch stays OFF).
-  Scorer: a disclaimer + general talk naming the key is no longer credited (`2026-11-14-disclaimer-rescore.md`): no
-  banked verdict changes; contrast's oracle edge shrinks (fresh +20 -> +15), part of it was echoes turned AI disclaimers.
+  Scorer: disclaimer + general talk no longer credited (`2026-11-14-disclaimer-rescore.md`); no verdict changed.
 - **LIVE RUNS:** AWS g6.xlarge i-0f6697d03b73b2378, batch 20261115-0742: day-14 milestone weekly at 1.5B (7 jobs,
-  `brain/research/2026-11-15-weekly-1.5b-milestone.md` W0-W3; dead-man 240 min). Pull -> rename wk15_*.json to .md ->
-  `brain/eval/transcripts/2026-11-15.md` (record) + `2026-11-15-1.5b-s<seed>.md`. Pool40/41/42: report-only weekly seeds
+  `brain/research/2026-11-15-weekly-1.5b-milestone.md` W0-W3; dead-man 240 min). Pull, wk15_*.json are .md transcripts. Pool40/41/42: report-only weekly seeds
   200-205 (`jobs/2026-11-15-pool-weekly-1.5b.sh`, out `~/brain-lane/outWK/`). ssh: `SSH_AUTH_SOCK= ssh -o IdentitiesOnly=yes`.
 - **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (venv `~/brain-lane/venv` on 40/41, `~/derisk-pool/sim/.venv`
   on 42; pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`). pool40 host key re-trusted 11-14 (reinstall).
-- **READY WORK:** an answer-rate layout for unslept/mixed probes in `tools/answer_rate.py`. Pi: `research/coordination/PI_LANE.md`.
+- **READY WORK:** answer-rate layout for mixed probes (`tools/answer_rate.py`); M4b prereg. Pi: `PI_LANE.md`.
 - **NEXT STEP:** milestone day 14 (11-16): read the 1.5B weekly batch (W0-W3) with land-result; GO -> weekly default 1.5B.
   False recall after sleep: M4 near-miss guard NOT A LEAD (`results/2026-11-14-near-miss-guard-1.5b.md`: false
   6.83 -> 3.83 but told 7.17 -> 6.00, para -1.5, about half the removed intrusions became abstentions or inventions;
