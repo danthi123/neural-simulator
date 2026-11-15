@@ -40,13 +40,18 @@ class Hippocampus:
         self.enabled = True
 
     def store(self, cortex, base, text: str, speaker: str = "User", salience: float = 1.0, permanent: bool = False,
-              key_text: str | None = None, contrast: float = 0.0, contrast_speaker: str = "Assistant"):
+              key_text: str | None = None, contrast: float = 0.0, contrast_speaker: str = "Assistant",
+              completion_of: str | None = None):
         """key_text (default None = text): what the pattern-completion key is read from. The reinstated content (delta)
         is always read from text; a lived episode is indexed by what was heard and holds the whole exchange.
         contrast (default 0 = off): the stored content becomes d + contrast * (d - d_self), d_self = the change from
         reading the same text as contrast_speaker's own words (speaker contrast,
         brain/research/2026-11-14-speaker-contrast-2-1.5b.md). The key is read before the contrast, so routing is
-        unchanged."""
+        unchanged.
+        completion_of (default None = off): the cue part of a question/answer text. The stored content becomes the
+        completion only, d(text) - d(completion_of), rescaled to the norm of d(text): recall returns what the answer
+        added after the cue, since the live input already holds the cue (results/2026-11-15-own-name-day1-probe-1.5b.md:
+        the full self episode replays its own question at higher gain). Key and routing read the full change."""
         _, st = cortex.read(f"{speaker}: {text}\n\n", base)
         delta = cortex.matrix_delta(st, base)
         if key_text is not None and key_text != text:
@@ -55,6 +60,14 @@ class Hippocampus:
         else:
             key = cortex.key_of(delta).cpu()
         plain = None
+        if completion_of is not None:
+            plain = [d.half().cpu() if d is not None else None for d in delta]   # kept for keys read from deltas
+            _, qst = cortex.read(f"{speaker}: {completion_of}\n\n", base)
+            dq = cortex.matrix_delta(qst, base)
+            comp = [None if d is None else d.float() - q.float() for d, q in zip(delta, dq)]
+            n_full = torch.sqrt(sum((d.float() ** 2).sum() for d in delta if d is not None))
+            n_comp = torch.sqrt(sum((d ** 2).sum() for d in comp if d is not None)).clamp_min(1e-8)
+            delta = [None if d is None else d * (n_full / n_comp) for d in comp]
         if contrast:
             plain = [d.half().cpu() if d is not None else None for d in delta]   # kept for keys read from deltas
             _, sst = cortex.read(f"{contrast_speaker}: {text}\n\n", base)
