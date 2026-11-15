@@ -23,6 +23,7 @@
   launched 11-15 ~14:20, MAX_MIN 420) -> `bash tools/aws_brain_batch.sh pull` -> rescore -> read R0-R3
   (`research/2026-11-15-rank-diagnosis-1.5b.md`) against banked rank-8 nmoff/nmon. Pool: report-only weekly
   `--sleep-lesion` seeds 203/204/205 (pool40/41/42, `~/brain-lane/outSL/`).
+  pool40 then: own-name day-1 probe (`research/2026-11-15-own-name-day1-probe-1.5b.md` D0-D4, `~/brain-lane/outON/`).
   ssh: `SSH_AUTH_SOCK= ssh -o IdentitiesOnly=yes` (the Bitwarden agent hangs).
 - **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (venv `~/brain-lane/venv` on 40/41, `~/derisk-pool/sim/.venv`
   on 42; pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`). pool40 host key re-trusted 11-14 (reinstall).
