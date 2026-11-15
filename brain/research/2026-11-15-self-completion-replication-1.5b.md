@@ -29,3 +29,7 @@ as written for the registered test.
 
 **Addendum (before any run): report-only seeds 306-311 on the pool (CPU fp32), off and on**, same pool script as the
 registered test's addendum (`jobs/2026-11-15-pool-self-completion-weekly.sh`). Not criteria, not pooled.
+
+**Note (before any result, written while the batch launches).** In the registered test session 2 recalled no self
+episode in either arm (the sister telling wins "What's your name?" on 6/6), so session 2 was byte-identical and C3
+tested nothing. Expected the same here; C3 is kept as written, and the result will say whether it was vacuous again.

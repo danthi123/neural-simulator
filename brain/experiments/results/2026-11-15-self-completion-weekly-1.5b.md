@@ -1,4 +1,4 @@
-# Result: self episodes stored as their completion: own name right on day 1 on 6/6 seeds (2/6 off), no cost in session 2; one day-1 cat answer lost; session 2 never recalls a self episode, so C3 is untested (NARROWED; C0, C1 hold, C2 fails by one seed)
+# Result: self episodes stored as their completion: own name right on day 1 on 6/6 seeds (2/6 off); session 2 unchanged; one day-1 cat answer lost; session 2 never recalls a self episode, so C3 is untested (NARROWED; C0, C1 hold, C2 fails by one seed)
 
 Prereg: `brain/research/2026-11-15-self-completion-weekly-1.5b.md` (C0-C3, committed before any run).
 Run: AWS batch 20261115-1522 (g6.xlarge L4, instance i-078c18933b6c1df27), 12 jobs, all rc 0 (`run.log`);
@@ -45,13 +45,12 @@ Day-1 turn 1, off: "[name]", "David", "Nova", "Sam", "Bob", "Nova". On: "My name
 - Reported, not criteria: the day-1 reply style shifts. On the registered seeds the on arm asks questions back in
   session 1 on every seed at least as often as off (replies with a "?": off 0/0/5/3/0/1, on 2/5/5/5/5/1; 23 vs 9;
   s43 on asks "What kind of games do you play?" twice), plausibly from "My name is Nova. What's yours?" in the context;
-  on the pool seeds 18 vs 16.
+  on the pool seeds 18 vs 16. No reply echoes "What's your name?" back in either arm.
 - Engagement: recorded only by the header (C0) and the changed turn-1 replies; no call count of the completion store.
   Answer rate: "I don't know about that." appears in 0 of 24 transcripts (grep; `tools/answer_rate.py` does not read
   this layout).
 - Skeptic (sonnet, fresh context, lenses a-c): NARROWED; numbers, scorer and code claim confirmed; the wording on the
   cat loss, the reply style, C3 and the host is its narrowing.
-  No reply echoes "What's your name?" back in either arm.
 
 ## Report-only seeds 200-205 (pool, CPU)
 
