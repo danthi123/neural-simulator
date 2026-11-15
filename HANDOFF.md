@@ -20,12 +20,15 @@
   levers all banked NO-GO in the live brain; package stays S0 at gain 0.5.
   Scorer: a disclaimer + general talk naming the key is no longer credited (`2026-11-14-disclaimer-rescore.md`): no
   banked verdict changes; contrast's oracle edge shrinks (fresh +20 -> +15), part of it was echoes turned AI disclaimers.
-- **LIVE RUNS:** none.
+- **LIVE RUNS:** AWS g6.xlarge i-0d2020cb471e66e2a, near-miss guard batch (12 jobs nmoff/nmon_s*, launched 11-14 ~21:30
+  local, dead-man 360 min): `bash tools/aws_brain_batch.sh pull`, copy nm*_s*.json to
+  `results/2026-11-14-near-miss-guard-1.5b/`, rescore, `python -m brain.experiments.near_miss_table <dir> <11-14 tellmix dir>`.
 - **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (venv `~/brain-lane/venv` on 40/41, `~/derisk-pool/sim/.venv`
   on 42; pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`). pool40 host key re-trusted 11-14 (reinstall).
 - **READY WORK:** an answer-rate layout for unslept/mixed probes in `tools/answer_rate.py`. Pi: `research/coordination/PI_LANE.md`.
-- **NEXT STEP:** the false-recall gate: on a slept 1.5B day about 7 of 12 never-told questions get a told fact
-  (aunt -> Oslo 12/12); before-build first (`2026-11-13-confidence-gate-1.5b.md` is the record). Then the 1.5B cortex
+- **NEXT STEP:** false recall after sleep (about 7/12 never-told get a told fact; aunt -> Oslo 12/12): M4 near-miss /
+  frame guard in sleep (`brain/research/2026-11-14-near-miss-guard-1.5b.md`, N0-N4, Amendments 1-2: rewrite frames failed
+  quality at 1.5B, cue source = the cortex's own "my X" questions) is RUNNING; read it with land-result. Then the 1.5B cortex
   default (milestone 11-16) for the weekly transcript (needs a prereg). Land `claude/gain-refit-1113` on main.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
