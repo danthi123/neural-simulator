@@ -28,7 +28,7 @@
 - **READY WORK:** answer-rate layout for mixed probes (`tools/answer_rate.py`); M4b prereg. Pi: `PI_LANE.md`.
 - **NEXT STEP:** milestone day 14 NOT fully met, reported (`results/2026-11-15-weekly-1.5b-milestone.md`, NO-GO W1-W3):
   the slept 1.5B cortex with the hippocampus off answers 3.83/4 told facts (six seeds), but the intact brain says
-  "My name is Dan." on 2/6 (own-name intrusion by reinstatement) and a hippocampus lesion no longer changes replies
+  "My name is Dan." on 2/6 (own name; learned in the night, both arms) and a hippocampus lesion no longer changes replies
   after sleep. Next: own-name intrusion (record check first), a consolidated-off weekly arm, read M4b when it lands.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
