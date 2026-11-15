@@ -21,11 +21,14 @@
   Near-miss / frame guard in sleep (M4): NOT A LEAD (N1-N3 fail; switch stays OFF).
   Scorer: a disclaimer + general talk naming the key is no longer credited (`2026-11-14-disclaimer-rescore.md`): no
   banked verdict changes; contrast's oracle edge shrinks (fresh +20 -> +15), part of it was echoes turned AI disclaimers.
-- **LIVE RUNS:** none. Pool40/41/42 idle (ssh: the Bitwarden agent can hang; use `SSH_AUTH_SOCK= ssh -o IdentitiesOnly=yes`).
+- **LIVE RUNS:** AWS g6.xlarge i-0f6697d03b73b2378, batch 20261115-0742: day-14 milestone weekly at 1.5B (7 jobs,
+  `brain/research/2026-11-15-weekly-1.5b-milestone.md` W0-W3; dead-man 240 min). Pull -> rename wk15_*.json to .md ->
+  `brain/eval/transcripts/2026-11-15.md` (record) + `2026-11-15-1.5b-s<seed>.md`. Pool40/41/42: report-only weekly seeds
+  200-205 (`jobs/2026-11-15-pool-weekly-1.5b.sh`, out `~/brain-lane/outWK/`). ssh: `SSH_AUTH_SOCK= ssh -o IdentitiesOnly=yes`.
 - **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (venv `~/brain-lane/venv` on 40/41, `~/derisk-pool/sim/.venv`
   on 42; pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`). pool40 host key re-trusted 11-14 (reinstall).
 - **READY WORK:** an answer-rate layout for unslept/mixed probes in `tools/answer_rate.py`. Pi: `research/coordination/PI_LANE.md`.
-- **NEXT STEP:** milestone day 14 (11-16): the 1.5B cortex default for the weekly transcript (needs a prereg).
+- **NEXT STEP:** milestone day 14 (11-16): read the 1.5B weekly batch (W0-W3) with land-result; GO -> weekly default 1.5B.
   False recall after sleep: M4 near-miss guard NOT A LEAD (`results/2026-11-14-near-miss-guard-1.5b.md`: false
   6.83 -> 3.83 but told 7.17 -> 6.00, para -1.5, about half the removed intrusions became abstentions or inventions;
   lever count 7). Weaker-night control: SELECTIVE, narrowed (`results/2026-11-15-weak-night-control-1.5b.md`: a
