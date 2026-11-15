@@ -9,6 +9,8 @@ Declared scaffold (brain/SCAFFOLDS.md, near-miss row): the two prompt frames bel
 """
 from __future__ import annotations
 
+import re
+
 import torch
 
 # Frames (quoted text, read from no state: the pretrained cortex as a writer). OWN: its question about the statement.
@@ -77,3 +79,37 @@ def frame_cues(cortex, base, k: int = 4, seed: int = 0):
                 if q.endswith("?") and len(q) > len(onset) + 2:
                     out.append(q)
     return list(dict.fromkeys(out))
+
+
+# Frame guard minus told topics (frame "FT", M4b, brain/research/2026-11-15-near-miss-told-filter-1.5b.md): a cue
+# whose "my X" names something the brain was told about would hold the pretrained answer ("I don't have that
+# information") on a topic the night is teaching, so it is dropped. Brain-side rule (declared scaffold: the modifier
+# list below); the told topics are read from the brain's own stored episodes (the user's words), never from a probe.
+_MODIFIERS = {"best", "favorite", "favourite", "next", "new", "old", "own", "first", "last", "current", "real", "only",
+              "little", "big", "dear", "late", "ex"}
+
+
+def _words(s: str):
+    return {w[:-2] if w.endswith("'s") else w for w in re.findall(r"[a-z][a-z'-]*", s.lower())}
+
+
+def cue_topics(q: str):
+    """The possessed words of a cue: up to two words after each "my", modifiers skipped ("my best friend's mom" ->
+    {"friend", "mom"})."""
+    out = set()
+    for m in re.finditer(r"\bmy\s+([a-z'-]+)(?:\s+([a-z'-]+))?", q.lower()):
+        for w in m.groups():
+            if not w:
+                continue
+            w = w[:-2] if w.endswith("'s") else w
+            if w in _MODIFIERS:
+                continue
+            out.add(w)
+            break
+    return out
+
+
+def told_topic(q: str, told_texts) -> bool:
+    """True when the cue's possessed word appears in what the user told (any stored episode's user part)."""
+    told = set().union(*[_words(t.split("\n\nAssistant:")[0]) for t in told_texts]) if told_texts else set()
+    return bool(cue_topics(q) & told)

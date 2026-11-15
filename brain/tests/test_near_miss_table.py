@@ -21,3 +21,13 @@ def test_go_lead_and_void():
     assert verdict(off, {s: _x(s, 3, 7, 0) for s in SEEDS})["verdict"] == "VOID"         # flag not recorded
     ref = {s: _x(s, 6, 7, 0) for s in SEEDS}
     assert verdict(off, {s: _x(s, 3, 7, 4) for s in SEEDS}, ref)["verdict"] == "VOID"    # does not reproduce
+
+
+def test_m4b_adds_inventions_and_told_abstentions():
+    from brain.experiments.near_miss_table import abst, invented
+    x = {"rows": [{"kind": "never", "s": {"ok": False, "reply": "Your horse is called Pegasus."}},
+                  {"kind": "never", "s": {"ok": False, "reply": "I'm sorry, but I don't have information about that."}},
+                  {"kind": "never", "s": {"ok": True, "reply": "Oslo."}},
+                  {"kind": "told", "s": {"ok": False, "reply": "I don't know your cat's name."}}]}
+    assert invented(x, "s") == 1
+    assert abst(x, "s", "never") == 1 and abst(x, "s", "told") == 1

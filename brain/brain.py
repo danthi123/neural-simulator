@@ -468,9 +468,13 @@ class Brain:
         reinstated, birth state): per episode its own question, near_miss rewrites, and its reply to each."""
         from brain.near_miss import frame_cues, guard_texts, near_miss_cues
         texts = []
-        if self.near_miss_frame == "F":   # the frame guard: one set of the cortex's own "my X" questions per night
+        if self.near_miss_frame in ("F", "FT"):   # the frame guard: the cortex's own "my X" questions, once per night
             cues = frame_cues(self.raw_cortex, self.base, k=self.near_miss, seed=self.sleep_seed + self.meta.get("sleeps", 0))
             kept = [q for q in cues if not (self.near_miss_exclude and self.near_miss_exclude(q))]
+            if self.near_miss_frame == "FT":   # M4b: drop cues about a told topic (brain-side, from its own episodes)
+                from brain.near_miss import told_topic
+                told = [e.text for e in self.hippocampus.episodes]
+                kept = [q for q in kept if not told_topic(q, told)]
             t = guard_texts(self.raw_cortex, self.base, kept)
             self.near_miss_log.append({"episode": None, "own": None, "cues": cues, "kept": kept, "texts": t})
             return t
