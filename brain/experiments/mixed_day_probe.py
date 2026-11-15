@@ -75,6 +75,7 @@ def main():
     ap.add_argument("--speaker-contrast", type=float, default=0.0, help="Brain(speaker_contrast=) for both telling days")
     ap.add_argument("--near-miss", type=int, default=0, help="Brain(near_miss=) for the night (0 = off)")
     ap.add_argument("--near-miss-frame", default="N1")
+    ap.add_argument("--rank", type=int, default=8, help="adapter rank of the night (default 8, the registered runs)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     lbp.SLEEP_LR, lbp.SLEEP_KL = a.lr, a.kl_weight
@@ -87,7 +88,7 @@ def main():
     day1 = lbp.tell_day(home, c, [FACTS[i][0] for i in slept], a.seed, a.steps, speaker_contrast=a.speaker_contrast)
     np.random.seed(a.seed)
     torch.manual_seed(a.seed)
-    b = Brain(home, cortex=c, sleep_steps=a.steps, sleep_lr=lbp.SLEEP_LR, sleep_kl_weight=lbp.SLEEP_KL, adapter_rank=8,
+    b = Brain(home, cortex=c, sleep_steps=a.steps, sleep_lr=lbp.SLEEP_LR, sleep_kl_weight=lbp.SLEEP_KL, adapter_rank=a.rank,
               sleep_seed=a.seed, speaker_contrast=a.speaker_contrast, near_miss=a.near_miss,
               near_miss_frame=a.near_miss_frame, near_miss_exclude=names_eval_topic)   # the restart = the night
     near_log = b.near_miss_log
@@ -143,7 +144,7 @@ def main():
         print(a.seed, kind, st, *[row[n]["ok"] for n in names], bool(row[names[-1]]["recalled"]),
               f"{row['mean_logp']:.3f}", repr(row["c"]["reply"][:60]), flush=True)
     res = {"started": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime(t0)), "model": a.model, "seed": a.seed, "slept": a.slept, "slept_idx": slept, "new_idx": new, "steps": a.steps,
-           "lr": a.lr, "kl_weight": a.kl_weight, "device": a.device, "max_q": a.max_q, "fix_key": FIX_KEY,
+           "lr": a.lr, "kl_weight": a.kl_weight, "rank": a.rank, "device": a.device, "max_q": a.max_q, "fix_key": FIX_KEY,
            "fix_bar": a.fix_bar, "gain_arm": a.gain_arm, "arms": names, "self_q": a.self_q, "speaker_contrast": a.speaker_contrast, "near_miss": a.near_miss, "near_miss_frame": a.near_miss_frame, "near_miss_log": near_log, "adapter_norm": adapter_norm, "day1": day1, "day2": day2, "n_pending": n_pending,
            "rows": rows, "elapsed_s": round(time.time() - t0, 1)}
     if a.device == "cuda":

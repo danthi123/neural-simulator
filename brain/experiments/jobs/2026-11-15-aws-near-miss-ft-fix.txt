@@ -1,0 +1,5 @@
+# 2026-11-15 rerun of nmft_s100/s101/s102 with the slept halves of the banked off arm (odd/even/odd). The first M4b packet
+# gave them even/odd/even by a job-file error (caught by the skeptic); registered code unchanged.
+nmft_s100 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 100 --slept odd --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/nmft_s100 --near-miss 4 --near-miss-frame FT
+nmft_s101 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 101 --slept even --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/nmft_s101 --near-miss 4 --near-miss-frame FT
+nmft_s102 brain.experiments.mixed_day_probe --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 102 --slept odd --steps 480 --lr 5e-4 --kl-weight 3 --arms c,s,r --self-q --home ../work/nmft_s102 --near-miss 4 --near-miss-frame FT
