@@ -4,8 +4,7 @@
   off. Board #279 (and #280 high-use facts, #281 a lesion visibly changes replies).
 - **TYPE:** build
 - **DRIVER:** claude
-- **STARTED:** 2026-11-02
-- **TIMEBOX:** 2 days per problem (first decision point 2026-11-04: KEEP or KILL the text-replay method)
+- **STARTED:** 2026-11-02 · **TIMEBOX:** 2 days per problem (first decision point 2026-11-04: KEEP or KILL the text-replay method)
 - **DONE MEANS:** six seeds, hippocampus off after sleep: true-replay recall above the no-sleep and shuffled arms on
   every seed, ordinary-text drift small, false recall not above shuffled; then sleep wired into the live brain
   (restart = sleep, adapters persisted) so the weekly transcript shows it.
