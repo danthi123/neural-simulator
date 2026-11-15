@@ -50,3 +50,9 @@ slept halves, seeds 42/43/44/100/101/102, one AWS batch).
 **Expected.** Told and paraphrase costs shrink (fewer told-topic cues), false recall falls a little less than under M4,
 and inventions do not rise. If the told cost stays the same, it is not carried by the told-topic cues: the guard and
 the told bindings compete in one rank-8 adapter (the capacity risk named in M4), and the next method is M5.
+
+**Addendum (2026-11-15, before any run):** report-only seeds 200-205 run on pool40/41/42 on CPU
+(`jobs/2026-11-15-pool-near-miss-ft.sh`, `nmft_s*`). They are compared against the banked CPU `nmoff_s20*` in
+`results/2026-11-14-near-miss-guard-1.5b/extra/`. They are not criteria and are not pooled with the AWS seeds.
+Also reported for every seed: the reply to the weekly's own-name question is not asked by this probe, so the own-name
+intrusion is read in the next weekly, not here.
