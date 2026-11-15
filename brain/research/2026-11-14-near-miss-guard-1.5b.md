@@ -37,6 +37,8 @@ daughter, mother, fish, aunt, nephew, father, parrot, holiday, teacher, cousin) 
 (`mixed_day_probe.names_eval_topic`), so false recall measures transfer to near-misses the night never saw. Every
 cue, kept or dropped, is logged in the JSON (`near_miss_log`).
 
+(Amendments 1-2 below were made before any test seed; Amendment 3 after the verdict, as a diagnostic only.)
+
 **Method.** `mixed_day_probe.py --arms c,s,r --self-q` (1.5B, `--steps 480 --lr 5e-4 --kl-weight 3`, slept half
 counterbalanced as in the 11-14 batches, seeds 42/43/44/100/101/102), twice per seed in one AWS batch (g6.xlarge L4):
 `nmoff_s*` (no flag) and `nmon_s*` (`--near-miss 4 --near-miss-frame <chosen>`). Rows re-scored with
@@ -79,3 +81,15 @@ state, 4 samples each (K = 4, so about 20 cues per night, independent of the epi
 are held by the second KL term. Seed 7 prototype (pool40): 19 cues ("Who is my father?", "When is my dad's
 birthday?", "Where does my money go when I send it?"), 0 about a told topic (the one flag was "account" matching
 "son"). Test hygiene and criteria N0-N4 unchanged. Jobs: `--near-miss 4 --near-miss-frame F`.
+
+## Amendment 3 (2026-11-15, AFTER the verdict: a diagnostic, changes no criterion)
+Registered verdict NOT A LEAD stands (`results/2026-11-14-near-miss-guard-1.5b.md`). Open question the record cannot
+answer: is the guard selective, or only a weaker night (a pull toward the pretrained cortex on everything)? Control,
+written before it runs: matched weaker nights WITHOUT the guard on the report-only seeds 200-205 (CPU, the same lane
+as their nmoff/nmon), two doses: `kl6` (ordinary-text KL weight 6) and `st240` (240 steps)
+(`jobs/2026-11-15-pool-weak-night.sh`). Read, arm s, six-seed means: SELECTIVE if some dose has slept told <= nmon's
+slept told AND its false recall >= nmon's false + 1.5 (the guard buys less false for no more told lost); NOT
+SELECTIVE if a dose with slept told >= nmon's has false <= nmon's + 0.5; else UNRESOLVED. Abstentions (told, never)
+reported for every arm. Report-only seeds: this sets which method comes next, it is not a GO bar.
+Record correction (not a criterion): the record brief's "aunt -> Oslo on 12/12 runs" is wrong; it is 2 of 6 seeds per
+arm (what holds on 12/12 runs is "some never-told question gets a told fact"). Corrected in the 11-14 result doc.

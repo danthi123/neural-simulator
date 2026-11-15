@@ -25,7 +25,9 @@ r 8.00 told), so the batch ran the same brain.
   reinstatement is no longer the only thing speaking, and on the six facts told after the restart (new) contrast is
   -0.17.
 - False recall on the slept cortex (about 7 of 12 never-told questions answered with a told fact) is now the larger
-  defect by far. The aunt -> Oslo lure fires on 12/12 runs with or without contrast.
+  defect by far. Every run (12/12) answers at least one never-told question with a told fact; the aunt -> Oslo
+  lure itself fires on 2 of 6 seeds per arm (s44, s101), with or without contrast (corrected 2026-11-15, see
+  `2026-11-14-near-miss-guard-1.5b.md`; first written as "aunt -> Oslo on 12/12 runs").
 - Method verdict: speaker contrast as a fix for the first-person echo is banked NO-GO in the live brain, joining
   lived episodes and lived_key. The echo is not a storage-format problem a fixed vector edit can solve at 1.5B. The
   capability (answering from the listener's side) stays open; the next lever is the false-recall gate, which the

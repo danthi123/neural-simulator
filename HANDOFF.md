@@ -18,24 +18,23 @@
   Dose mu 1.5: NOT A LEAD (`2026-11-14-sall-contrast-dose-1.5b.md`; lure 5/6; effects scale with mu, mu 3 stays). Switches stay OFF.
   Mixed day with sleep: contrast NO-GO (`2026-11-14-sall-contrast-mixed-1.5b.md`, S_all told +0.00, S0 -1.17): echo
   levers all banked NO-GO in the live brain; package stays S0 at gain 0.5.
+  Near-miss / frame guard in sleep (M4): NOT A LEAD (N1-N3 fail; switch stays OFF).
   Scorer: a disclaimer + general talk naming the key is no longer credited (`2026-11-14-disclaimer-rescore.md`): no
   banked verdict changes; contrast's oracle edge shrinks (fresh +20 -> +15), part of it was echoes turned AI disclaimers.
-- **LIVE RUNS:** AWS g6.xlarge i-0ef6fddc74e4adc14, near-miss guard batch 20261114-2031 (12 jobs nmoff/nmon_s*; first launch
-  failed in argparse, packet fixed; relaunched 11-14 20:35 local,
-  dead-man 360 min): `bash tools/aws_brain_batch.sh pull`, copy nm*_s*.json to
-  `results/2026-11-14-near-miss-guard-1.5b/`, rescore, `python -m brain.experiments.near_miss_table <dir> <11-14 tellmix dir>`. Pool40/41/42: report-only
-  seeds 200-205 of the same test (`jobs/2026-11-14-pool-near-miss-extra.sh`, out `~/brain-lane/outNM/`, CPU, hours).
+- **LIVE RUNS:** pool40/41/42: weaker-night control for the near-miss guard (Amendment 3,
+  `jobs/2026-11-15-pool-weak-night.sh`, seeds 200-205, out `~/brain-lane/outWN/`, `done.txt`, about 3 h from 11-15).
+  Read it against `results/2026-11-14-near-miss-guard-1.5b/extra/nm*_s20*.json` (re-score both first).
 - **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (venv `~/brain-lane/venv` on 40/41, `~/derisk-pool/sim/.venv`
   on 42; pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`). pool40 host key re-trusted 11-14 (reinstall).
 - **READY WORK:** an answer-rate layout for unslept/mixed probes in `tools/answer_rate.py`. Pi: `research/coordination/PI_LANE.md`.
-- **NEXT STEP:** false recall after sleep (about 7/12 never-told get a told fact; aunt -> Oslo 12/12): M4 near-miss /
-  frame guard in sleep (`brain/research/2026-11-14-near-miss-guard-1.5b.md`, N0-N4, Amendments 1-2: rewrite frames failed
-  quality at 1.5B, cue source = the cortex's own "my X" questions) is RUNNING; read it with land-result. Then the 1.5B cortex
-  default (milestone 11-16) for the weekly transcript (needs a prereg). Land `claude/gain-refit-1113` on main.
+- **NEXT STEP:** milestone day 14 (11-16): the 1.5B cortex default for the weekly transcript (needs a prereg).
+  False recall after sleep: M4 near-miss guard NOT A LEAD (`results/2026-11-14-near-miss-guard-1.5b.md`: false
+  6.83 -> 3.83 but told 7.17 -> 6.00, para -1.5, about half the removed intrusions became abstentions or inventions;
+  lever count 7). When the weaker-night control lands: selective -> guard minus told-topic cues; not selective -> M5.
+  Count invented answers as false in the next prereg. Land `claude/gain-refit-1113` on main.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
   about is us making meaningful progress on this project, which has stalled for way too long as I continue to spend
   money on AI to drive it."
-- **OPEN:** none blocking. Chores: repoint the board timer to a main-following checkout. Speed levers: AWS lane
-  `tools/aws_brain_batch.sh`, Pi gated by `usage.ts`.
+- **OPEN:** none blocking. Chores: board timer -> main-following checkout; brain/ lane JSONs stamp no host/sha.
