@@ -19,18 +19,19 @@
   levers all banked NO-GO in the live brain; package stays S0 at gain 0.5.
   Near-miss / frame guard in sleep (M4): NOT A LEAD (N1-N3 fail; switch stays OFF).
   Scorer: disclaimer + general talk no longer credited (`2026-11-14-disclaimer-rescore.md`); no verdict changed.
-- **LIVE RUNS:** (bg chain) M4b fix: nmft_s100/101/102 rerun with matched halves (`jobs/2026-11-15-aws-near-miss-ft-fix.txt`)
-  -> pull -> rescore into `results/2026-11-15-near-miss-told-filter-1.5b/` -> `near_miss_table --on nmft`; then the
-  rank diagnosis batch (`jobs/2026-11-15-aws-rank-diagnosis.txt`, 18 jobs, prereg `research/2026-11-15-rank-diagnosis-1.5b.md`
-  R0-R3). Pool: weekly `--sleep-lesion` smoke s200/s201/s202 (`~/brain-lane/outSL/`, pool41/42/40).
+- **LIVE RUNS:** AWS rank diagnosis batch (`jobs/2026-11-15-aws-rank-diagnosis.txt`, 18 jobs, i-020093192a5d5cbcb,
+  launched 11-15 ~14:20, MAX_MIN 420) -> `bash tools/aws_brain_batch.sh pull` -> rescore -> read R0-R3
+  (`research/2026-11-15-rank-diagnosis-1.5b.md`) against banked rank-8 nmoff/nmon. Pool: report-only weekly
+  `--sleep-lesion` seeds 203/204/205 (pool40/41/42, `~/brain-lane/outSL/`).
   ssh: `SSH_AUTH_SOCK= ssh -o IdentitiesOnly=yes` (the Bitwarden agent hangs).
 - **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (venv `~/brain-lane/venv` on 40/41, `~/derisk-pool/sim/.venv`
   on 42; pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`). pool40 host key re-trusted 11-14 (reinstall).
-- **READY WORK:** weekly `--sleep-lesion` arm (built, untested on weights: smoke, then prereg it as the #281 test); answer-rate layout (`tools/answer_rate.py`). Pi: `PI_LANE.md`.
-- **NEXT STEP:** milestone day 14 NOT fully met (`results/2026-11-15-weekly-1.5b-milestone.md`): own name wrong on day 1
-  on 4/6 (correct episode recalled, reinstatement too weak) and "Dan" after the night on 2/6. M4b: CPU NOT A LEAD;
-  registered s100-s102 VOID (wrong halves), rerun. Then read the rank diagnosis: R3 (content) -> hippocampus-as-teacher
-  night (no-training gate first); R1/R2 -> M4 at that rank.
+- **READY WORK:** answer-rate layout (`tools/answer_rate.py`); day-1 own-name reinstatement (self episode recalled
+  but not carried at gain 0.5). Pi: `PI_LANE.md`.
+- **NEXT STEP:** milestone day 14: "a lesion visibly changes replies" now MET after sleep
+  (`results/2026-11-15-sleep-lesion-weekly-1.5b.md`, L0-L3 hold, night's synapses off -> 0/6 keyed on 6/6 seeds).
+  Still not met: own name (day 1 right 2/6; "Dan" after the night). M4b final (matched six seeds): NOT A LEAD.
+  Read the rank diagnosis: R3 (content) -> hippocampus-as-teacher night (no-training gate first); R1/R2 -> M4 at that rank.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
