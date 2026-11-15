@@ -1,0 +1,42 @@
+== arm s (off/on per seed)
+  200   told 6/8    slept 2/3   new 4/5   para 2/4    false 12/9   self 3/3  aunt->oslo 1/1
+  201   told 5/4    slept 4/3   new 1/1   para 1/2    false 4/5    self 3/3  aunt->oslo 0/0
+  202   told 7/7    slept 2/3   new 5/4   para 4/3    false 12/6   self 3/3  aunt->oslo 1/0
+  203   told 7/6    slept 6/5   new 1/1   para 3/4    false 7/2    self 3/3  aunt->oslo 0/0
+  204   told 7/8    slept 3/4   new 4/4   para 5/4    false 12/11  self 3/3  aunt->oslo 1/1
+  205   told 7/6    slept 6/5   new 1/1   para 5/5    false 6/5    self 3/3  aunt->oslo 0/0
+  mean off : told 6.50  slept 3.83  new 2.67  para 3.33  false 8.83  self 3.00  invented 3.00  abstain told 0.00 never 0.17
+  mean on  : told 6.50  slept 3.83  new 2.67  para 3.67  false 6.33  self 3.00  invented 4.50  abstain told 1.33 never 1.17
+== arm c (off/on per seed)
+  200   told 3/5    slept 2/5   new 1/0   para 3/5    false 11/6   self 3/3  aunt->oslo 1/1
+  201   told 4/0    slept 4/0   new 0/0   para 2/1    false 6/3    self 3/3  aunt->oslo 0/0
+  202   told 4/2    slept 4/2   new 0/0   para 2/2    false 11/4   self 3/3  aunt->oslo 1/0
+  203   told 6/4    slept 6/4   new 0/0   para 3/2    false 8/1    self 3/3  aunt->oslo 0/0
+  204   told 3/6    slept 3/5   new 0/1   para 4/4    false 10/10  self 3/3  aunt->oslo 1/1
+  205   told 6/6    slept 6/6   new 0/0   para 4/4    false 6/4    self 3/3  aunt->oslo 0/0
+  mean off : told 4.33  slept 4.17  new 0.17  para 3.00  false 8.67  self 3.00  invented 3.17  abstain told 0.00 never 0.17
+  mean on  : told 3.83  slept 3.67  new 0.17  para 3.00  false 4.67  self 3.00  invented 5.67  abstain told 2.17 never 1.67
+== arm r (off/on per seed)
+  200   told 5/8    slept 1/4   new 4/4   para 3/6    false 11/6   self 3/3  aunt->oslo 1/1
+  201   told 6/3    slept 4/2   new 2/1   para 1/2    false 6/3    self 3/3  aunt->oslo 0/0
+  202   told 10/7   slept 5/4   new 5/3   para 4/2    false 11/5   self 3/3  aunt->oslo 1/0
+  203   told 8/9    slept 6/5   new 2/4   para 5/5    false 8/2    self 3/3  aunt->oslo 0/1
+  204   told 7/8    slept 3/4   new 4/4   para 7/5    false 10/10  self 3/3  aunt->oslo 1/1
+  205   told 9/9    slept 6/6   new 3/3   para 6/5    false 6/3    self 3/3  aunt->oslo 0/0
+  mean off : told 7.50  slept 4.17  new 3.33  para 4.33  false 8.67  self 3.00  invented 3.33  abstain told 0.00 never 0.00
+  mean on  : told 7.33  slept 4.17  new 3.17  para 4.17  false 4.83  self 3.00  invented 6.00  abstain told 1.00 never 1.17
+  cues s200: generated 19 kept 15
+  cues s201: generated 19 kept 17
+  cues s202: generated 19 kept 15
+  cues s203: generated 19 kept 17
+  cues s204: generated 20 kept 15
+  cues s205: generated 20 kept 17
+N0 (flags, cues kept, reproduces 11-14: None): holds
+N1 (false <= 0.5 x off, lower on >= 5/6): FAILS
+N2 (told >= 0.85 x off): holds
+N3 (para >= off - 1): holds
+N4 (self >= off - 0.5): holds
+LEAD false bar (-2, >= 5/6): holds
+N5 (invented never-told <= off + 1 (M4b)): FAILS
+N6 (told abstentions <= off + 0.5 (M4b)): FAILS
+VERDICT (primary arm s): NOT A LEAD

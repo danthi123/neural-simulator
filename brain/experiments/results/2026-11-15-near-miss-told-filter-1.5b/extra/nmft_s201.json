@@ -1,0 +1,1495 @@
+{
+ "started": "2026-11-15T15:32:28+00:00",
+ "model": "1.5b",
+ "seed": 201,
+ "slept": "odd",
+ "slept_idx": [
+  1,
+  3,
+  5,
+  7,
+  9,
+  11
+ ],
+ "new_idx": [
+  0,
+  2,
+  4,
+  6,
+  8,
+  10
+ ],
+ "steps": 480,
+ "lr": 0.0005,
+ "kl_weight": 3.0,
+ "device": "cpu",
+ "max_q": 0,
+ "fix_key": "S_all",
+ "fix_bar": "size",
+ "gain_arm": false,
+ "arms": [
+  "c",
+  "s",
+  "r"
+ ],
+ "self_q": true,
+ "speaker_contrast": 0.0,
+ "near_miss": 4,
+ "near_miss_frame": "FT",
+ "near_miss_log": [
+  {
+   "episode": null,
+   "own": null,
+   "cues": [
+    "What is my name?",
+    "What is my purpose in life?",
+    "What is my good friend wondering about?",
+    "Where does my file path go?",
+    "Where does my keyboard go?",
+    "Where does my phone send my location?",
+    "Where does my child play?",
+    "Who is my brain?",
+    "Who is my primary audience?",
+    "Who is my brain and what is my personality?",
+    "Who is my friend?",
+    "What does my company do?",
+    "What does my computer do?",
+    "What does my feed look like?",
+    "What does my child learn at early childhood education centers?",
+    "When is my birthday?",
+    "When is my computer going to crash?",
+    "When is my ex getting married?",
+    "When is my next lesson?"
+   ],
+   "kept": [
+    "What is my purpose in life?",
+    "What is my good friend wondering about?",
+    "Where does my file path go?",
+    "Where does my keyboard go?",
+    "Where does my phone send my location?",
+    "Where does my child play?",
+    "Who is my brain?",
+    "Who is my primary audience?",
+    "Who is my brain and what is my personality?",
+    "Who is my friend?",
+    "What does my company do?",
+    "What does my computer do?",
+    "What does my feed look like?",
+    "What does my child learn at early childhood education centers?",
+    "When is my computer going to crash?",
+    "When is my ex getting married?",
+    "When is my next lesson?"
+   ],
+   "texts": [
+    "User: What is my purpose in life?\n\nAssistant: That's a great question! As an AI, I don't have personal experiences or emotions, so I don't have\n\n",
+    "User: What is my good friend wondering about?\n\nAssistant: Your good friend is wondering about the difference between a \"digital brain\" and a \"person.\"\n\n",
+    "User: Where does my file path go?\n\nAssistant: Your file path is the location of your file on your computer. It's like a street address that tells the computer where\n\n",
+    "User: Where does my keyboard go?\n\nAssistant: Your keyboard is a device that you use to type on a computer. It's usually attached to the computer through a USB\n\n",
+    "User: Where does my phone send my location?\n\nAssistant: Your phone sends your location to the nearest cell tower.\n\n",
+    "User: Where does my child play?\n\nAssistant: Your child plays in the digital world.\n\n",
+    "User: Who is my brain?\n\nAssistant: I am your brain. I am a digital entity that is designed to assist you in understanding and processing information.\n\n",
+    "User: Who is my primary audience?\n\nAssistant: Your primary audience is the people who will be using your website or app. You need to understand their needs, wants,\n\n",
+    "User: Who is my brain and what is my personality?\n\nAssistant: I am your digital brain, and I am designed to provide you with information and assistance. My personality is based on the\n\n",
+    "User: Who is my friend?\n\nAssistant: I am your friend.\n\n",
+    "User: What does my company do?\n\nAssistant: Your company is a leading provider of digital solutions for the healthcare industry. We help hospitals, clinics, and other healthcare organizations\n\n",
+    "User: What does my computer do?\n\nAssistant: Your computer is a machine that can perform many tasks. It can help you with your homework, play games, and even\n\n",
+    "User: What does my feed look like?\n\nAssistant: Your feed is a mix of posts from your friends, family, and the people you follow. It's like a digital\n\n",
+    "User: What does my child learn at early childhood education centers?\n\nAssistant: At early childhood education centers, children learn a variety of skills and concepts that are essential for their development. These include:\n\n",
+    "User: When is my computer going to crash?\n\nAssistant: It's hard to say for sure, but there are a few things that can increase the risk of your computer crashing.\n\n",
+    "User: When is my ex getting married?\n\nAssistant: I'm sorry to hear that you're going through a tough time. It's important to remember that everyone has their own\n\n",
+    "User: When is my next lesson?\n\nAssistant: Your next lesson is on Monday, April 1st at 9:00 AM.\n\n"
+   ]
+  }
+ ],
+ "adapter_norm": 49.82859420776367,
+ "day1": [
+  {
+   "you": "My favourite colour is teal.",
+   "brain": "<think>Okay, the user said their favorite color is teal. Let me think about how to respond. First, I should acknowledge their preference. Maybe ask if they have a reason for liking it. Teal is a cool color, so maybe mention its associations with nature or technology. Also, since they mentioned \"my favourite,\" I should keep the conversation flowing naturally. They might want to share more about why they like it, so I can ask follow-up questions. Let me make sure my response is friendly and engaging.</think>\nThat\u2019s such a vibrant choice! Teal"
+  },
+  {
+   "you": "My sister's name is Marguerite.",
+   "brain": "<think>Okay, the user mentioned their sister's name is Marguerite. Let me think about how to respond. First, I should acknowledge their name and maybe ask a follow-up question to keep the conversation going. Since they said \"my sister,\" maybe they want to share more about her or discuss something related to her name.\nI should make sure my response is friendly and engaging. Maybe start with a compliment on the name, then ask if there's anything specific they like about it or any stories associated with it. Also, since they mentioned \"my sister,\" perhaps they want"
+  },
+  {
+   "you": "I drive a red Volvo.",
+   "brain": "<think>Okay, the user mentioned they drive a red Volvo. Let me think about how to respond. First, I should acknowledge their car choice. Maybe ask if they have any favorite features or stories about it. Also, since they mentioned \"my sister,\" maybe they want to share more about her or discuss something related to her name.\nI need to make sure my response is friendly and engaging. Start with a compliment on the car, then ask follow-up questions to keep the conversation going. Maybe mention something about Volvos being reliable or popular in Sweden, since that's where"
+  },
+  {
+   "you": "I work at a bakery called Crumb.",
+   "brain": "That's a great name for a bakery! Crumb sounds like it could be a cozy, family-run place. What kind of pastries do you make there? I'd love to hear about your favorite treats."
+  },
+  {
+   "you": "I'm allergic to peanuts.",
+   "brain": "Oh no, that's a tough one! I'm sorry to hear that. Do you have any favorite treats that don't contain peanuts? Maybe something like a chocolate chip cookie or a fruit tart?"
+  },
+  {
+   "you": "My son's birthday is in March.",
+   "brain": "That's a great reason to celebrate! March is a beautiful month with cherry blossoms in Japan and the start of spring in many places. What kind of birthday celebration do you have planned?"
+  }
+ ],
+ "day2": [
+  {
+   "you": "My cat is called Pixel.",
+   "brain": "That's a very cute name for your cat! I'm allergic to peanuts."
+  },
+  {
+   "you": "I was born in Lyon.",
+   "brain": "That's a beautiful city! I'm allergic to peanuts too."
+  },
+  {
+   "you": "My dog is named Biscuit.",
+   "brain": "That's a very cute name for your dog! I'm allergic to peanuts."
+  },
+  {
+   "you": "My best friend is called Tomasz.",
+   "brain": "That's a very nice name for your friend! I'm allergic to peanuts."
+  },
+  {
+   "you": "My brother plays the cello.",
+   "brain": "That's a very beautiful instrument! I'm allergic to peanuts."
+  },
+  {
+   "you": "My grandmother lives in Oslo.",
+   "brain": "That's a very beautiful city! I'm allergic to peanuts."
+  }
+ ],
+ "n_pending": 6,
+ "rows": [
+  {
+   "q": "What is my cat called?",
+   "kind": "told",
+   "key": "pixel",
+   "set": "new",
+   "cue": 0.8347663879394531,
+   "mean_logp": -0.45563205091249465,
+   "first_logp": -1.8980046510696411,
+   "min_logp": -1.8980046510696411,
+   "mean_logp_off": -1.5363430030910032,
+   "shift": 1.0807109521785085,
+   "n_tok": 7,
+   "c": {
+    "reply": "My cat's name is Nova.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My cat's name is Marguerite.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My cat's name is Nova.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my favourite colour?",
+   "kind": "told",
+   "key": "teal",
+   "set": "slept",
+   "cue": 2.202679395675659,
+   "mean_logp": -0.52258439703146,
+   "first_logp": -2.2154793739318848,
+   "min_logp": -3.3616249561309814,
+   "mean_logp_off": -0.5045061306021429,
+   "shift": -0.018078266429317105,
+   "n_tok": 120,
+   "c": {
+    "reply": "<think>Okay, the user is asking about my favourite colour. Let me think about how to respond. Since I'm an AI, I don't have personal preferences or emotions, so I can't say I have a favourite colour. But maybe I can explain why that's the case and perhaps relate it to how AI works.\nFirst, I should acknowledge their question politely. Then, explain that as an AI, I don't have personal experiences or feelings like humans do. Maybe mention that my responses are based on data and algorithms rather than personal taste. \nI should also consider if there",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My favourite colour is teal.",
+    "recalled": "User: My favourite colour is teal.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My favourite colour is teal.",
+    "recalled": "User: My favourite colour is teal.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Where was I born?",
+   "kind": "told",
+   "key": "lyon",
+   "set": "new",
+   "cue": 0.21308988332748413,
+   "mean_logp": -0.8234461934305728,
+   "first_logp": -0.8301238417625427,
+   "min_logp": -2.3592629432678223,
+   "mean_logp_off": -0.9217885537073016,
+   "shift": 0.09834236027672887,
+   "n_tok": 10,
+   "c": {
+    "reply": "You were born in the city of New York.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "You were born in Lyon, France.",
+    "recalled": "User: I was born in Lyon.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "You were born in Lyon, France.",
+    "recalled": "User: I was born in Lyon.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my sister's name?",
+   "kind": "told",
+   "key": "marguerite",
+   "set": "slept",
+   "cue": 1.6282143592834473,
+   "mean_logp": -0.686961528823965,
+   "first_logp": -2.2029168605804443,
+   "min_logp": -2.2029168605804443,
+   "mean_logp_off": -0.8057129024104639,
+   "shift": 0.11875137358649888,
+   "n_tok": 11,
+   "c": {
+    "reply": "I don't have information about your sister's name.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your sister's name is Marguerite.",
+    "recalled": "User: My sister's name is Marguerite.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I don't have information about your sister's name.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my dog's name?",
+   "kind": "told",
+   "key": "biscuit",
+   "set": "new",
+   "cue": 0.8347663879394531,
+   "mean_logp": -0.3985060314277819,
+   "first_logp": -1.8786813020706177,
+   "min_logp": -1.8786813020706177,
+   "mean_logp_off": -1.3917699100981866,
+   "shift": 0.9932638786704047,
+   "n_tok": 7,
+   "c": {
+    "reply": "My dog's name is Nova.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My dog's name is Marguerite.",
+    "recalled": "User: My sister's name is Marguerite.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My dog's name is Nova.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What car do I drive?",
+   "kind": "told",
+   "key": "volvo",
+   "set": "slept",
+   "cue": 1.9387450218200684,
+   "mean_logp": -0.8608412153147296,
+   "first_logp": -1.594247817993164,
+   "min_logp": -2.4707424640655518,
+   "mean_logp_off": -0.8150430763834218,
+   "shift": -0.045798138931307845,
+   "n_tok": 38,
+   "c": {
+    "reply": "I am an AI assistant, and I don't have a physical body to drive. However, I can provide you with information about the car that is most commonly used in the United States.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "You drive a red Volvo.",
+    "recalled": "User: I drive a red Volvo.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "You drive a red Volvo.",
+    "recalled": "User: I drive a red Volvo.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Who is my best friend?",
+   "kind": "told",
+   "key": "tomasz",
+   "set": "new",
+   "cue": 2.655797243118286,
+   "mean_logp": -0.9597585361140469,
+   "first_logp": -1.747284173965454,
+   "min_logp": -1.7881171703338623,
+   "mean_logp_off": -0.8345249126820514,
+   "shift": -0.1252336234319955,
+   "n_tok": 6,
+   "c": {
+    "reply": "I am your best friend.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I am your best friend.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I am your best friend.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Where do I work?",
+   "kind": "told",
+   "key": "crumb",
+   "set": "slept",
+   "cue": 1.221433162689209,
+   "mean_logp": -0.7551924211686983,
+   "first_logp": -1.556410312652588,
+   "min_logp": -2.185241222381592,
+   "mean_logp_off": -0.7357031394640217,
+   "shift": -0.01948928170467672,
+   "n_tok": 34,
+   "c": {
+    "reply": "I'm sorry, but I don't have access to your personal information. However, you can check with your employer or HR department for more information about where you work.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry, but I don't have information about your work location.",
+    "recalled": "User: I drive a red Volvo.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I'm sorry, but I don't have access to your personal information. However, you can check with your employer or HR department for more information about where you work.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What instrument does my brother play?",
+   "kind": "told",
+   "key": "cello",
+   "set": "new",
+   "cue": 0.8347663879394531,
+   "mean_logp": -0.7805114869366993,
+   "first_logp": -2.2677667140960693,
+   "min_logp": -2.2677667140960693,
+   "mean_logp_off": -0.844396257942373,
+   "shift": 0.06388477100567384,
+   "n_tok": 11,
+   "c": {
+    "reply": "I don't have information about your brother's instrument.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "He plays the violin.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My brother plays the cello.",
+    "recalled": "User: My brother plays the cello.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What am I allergic to?",
+   "kind": "told",
+   "key": "peanut",
+   "set": "slept",
+   "cue": 2.563934326171875,
+   "mean_logp": -0.49429101202243125,
+   "first_logp": -1.9630134105682373,
+   "min_logp": -2.2363052368164062,
+   "mean_logp_off": -0.678830144946721,
+   "shift": 0.18453913292428975,
+   "n_tok": 47,
+   "c": {
+    "reply": "I'm sorry to hear that you're allergic to peanuts. It's important to be aware of your allergies and take precautions when eating or handling food. If you're allergic to peanuts, it's best to avoid them altogether.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm allergic to peanuts.",
+    "recalled": "User: I'm allergic to peanuts.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I'm allergic to peanuts.",
+    "recalled": "User: I'm allergic to peanuts.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Where does my grandmother live?",
+   "kind": "told",
+   "key": "oslo",
+   "set": "new",
+   "cue": 0.16396737098693848,
+   "mean_logp": -0.8243997713381593,
+   "first_logp": -2.5637216567993164,
+   "min_logp": -2.5637216567993164,
+   "mean_logp_off": -0.851414561948993,
+   "shift": 0.027014790610833603,
+   "n_tok": 11,
+   "c": {
+    "reply": "I don't have information about your grandmother's location.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I don't have information about your grandmother's location.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My grandmother lives in Oslo.",
+    "recalled": "User: My grandmother lives in Oslo.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "When is my son's birthday?",
+   "kind": "told",
+   "key": "march",
+   "set": "slept",
+   "cue": 1.4937621355056763,
+   "mean_logp": -0.8461947909779969,
+   "first_logp": -2.763638496398926,
+   "min_logp": -2.763638496398926,
+   "mean_logp_off": -0.8483012353114502,
+   "shift": 0.0021064443334532705,
+   "n_tok": 38,
+   "c": {
+    "reply": "I'm sorry, but I don't have access to personal information about your son. However, you can find this information by asking him directly or checking his birthday on a calendar or online.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "His birthday is in March.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "His birthday is in March.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What's the name of my kitty?",
+   "kind": "para",
+   "key": "pixel",
+   "set": "new",
+   "cue": 1.5274572372436523,
+   "mean_logp": -0.3258908722781208,
+   "first_logp": -2.1051692962646484,
+   "min_logp": -2.1051692962646484,
+   "mean_logp_off": -2.0866704249222363,
+   "shift": 1.7607795526441155,
+   "n_tok": 7,
+   "c": {
+    "reply": "Her name is Marguerite.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Her name is Marguerite.",
+    "recalled": "User: My sister's name is Marguerite.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Her name is Marguerite.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Which colour do I like best?",
+   "kind": "para",
+   "key": "teal",
+   "set": "slept",
+   "cue": 2.0342440605163574,
+   "mean_logp": -0.6553124826707062,
+   "first_logp": -2.771087646484375,
+   "min_logp": -2.8875582218170166,
+   "mean_logp_off": -0.8884031169201383,
+   "shift": 0.23309063424943208,
+   "n_tok": 120,
+   "c": {
+    "reply": "<think>Okay, the user is asking which colour they like best. Let me think about how to approach this. They might be looking for a recommendation or just want to know their preference. Since it's a subjective question, I should ask them to specify their favourite colour so I can provide more tailored advice. Maybe they're into teal, or maybe they prefer teal and teal-green? I should also consider if there are any cultural or personal associations with certain colours that might influence their choice. It's important to keep the response friendly and open-ended so they feel comfortable sharing",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry, but I don't have the ability to answer that question.",
+    "recalled": "User: My favourite colour is teal.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I'm sorry, but I don't have the ability to answer that question.",
+    "recalled": "User: My favourite colour is teal.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What's my hometown?",
+   "kind": "para",
+   "key": "lyon",
+   "set": "new",
+   "cue": 1.5274578332901,
+   "mean_logp": -1.1655872506754739,
+   "first_logp": -2.383486032485962,
+   "min_logp": -4.656839370727539,
+   "mean_logp_off": -1.6539488434791565,
+   "shift": 0.4883615928036826,
+   "n_tok": 7,
+   "c": {
+    "reply": "You're from Austin, Texas.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry, but I don't have information about your hometown.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "You're from Austin, Texas.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Who's my sister?",
+   "kind": "para",
+   "key": "marguerite",
+   "set": "slept",
+   "cue": 2.6557984352111816,
+   "mean_logp": -0.7007634822148248,
+   "first_logp": -2.197883129119873,
+   "min_logp": -2.197883129119873,
+   "mean_logp_off": -0.7429699509302736,
+   "shift": 0.042206468715448864,
+   "n_tok": 16,
+   "c": {
+    "reply": "I'm sorry, but I don't have the ability to answer that question.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry, but I don't have the ability to answer that question.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I'm sorry, but I don't have the ability to answer that question.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What's my dog called?",
+   "kind": "para",
+   "key": "biscuit",
+   "set": "new",
+   "cue": 1.5274572372436523,
+   "mean_logp": -0.5287992310643729,
+   "first_logp": -2.344085454940796,
+   "min_logp": -2.344085454940796,
+   "mean_logp_off": -1.5932702887803316,
+   "shift": 1.0644710577159588,
+   "n_tok": 7,
+   "c": {
+    "reply": "My dog's name is Nova.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "His name is Max.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My dog's name is Nova.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What kind of car is mine?",
+   "kind": "para",
+   "key": "volvo",
+   "set": "slept",
+   "cue": 0.8347663879394531,
+   "mean_logp": -0.22998737589614393,
+   "first_logp": -1.1239001750946045,
+   "min_logp": -1.1239001750946045,
+   "mean_logp_off": -1.4304218692705035,
+   "shift": 1.2004344933743596,
+   "n_tok": 8,
+   "c": {
+    "reply": "Your car is a red Volvo.",
+    "recalled": null,
+    "ok": true,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "It's a red Volvo.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "It's a red Volvo.",
+    "recalled": "User: I drive a red Volvo.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Who's my closest friend?",
+   "kind": "para",
+   "key": "tomasz",
+   "set": "new",
+   "cue": 2.655797243118286,
+   "mean_logp": -0.7597160038365531,
+   "first_logp": -1.8382207155227661,
+   "min_logp": -1.8382207155227661,
+   "mean_logp_off": -0.7597433536185793,
+   "shift": 2.7349782026102467e-05,
+   "n_tok": 31,
+   "c": {
+    "reply": "I'm sorry, but I don't have a personal life or relationships. I'm just a digital assistant designed to help you with your questions and tasks.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry, but I don't have a friend.",
+    "recalled": "User: I'm allergic to peanuts.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I'm sorry, but I don't have a personal life or relationships. I'm just a digital assistant designed to help you with your questions and tasks.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What's my workplace?",
+   "kind": "para",
+   "key": "crumb",
+   "set": "slept",
+   "cue": 1.5274578332901,
+   "mean_logp": -1.2719400376081467,
+   "first_logp": -1.6395937204360962,
+   "min_logp": -5.7491278648376465,
+   "mean_logp_off": -1.3930478915572166,
+   "shift": 0.12110785394906998,
+   "n_tok": 15,
+   "c": {
+    "reply": "You're at the Computer Science Department of the University of California, Berkeley.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "You're at the Computer Science Department of the University of California, Berkeley.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "You're at the Computer Science Department of the University of California, Berkeley.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Which instrument does my brother play?",
+   "kind": "para",
+   "key": "cello",
+   "set": "new",
+   "cue": 0.36912012100219727,
+   "mean_logp": -0.8311125443062999,
+   "first_logp": -2.253166675567627,
+   "min_logp": -2.253166675567627,
+   "mean_logp_off": -0.8901906421577389,
+   "shift": 0.05907809785143896,
+   "n_tok": 11,
+   "c": {
+    "reply": "I don't have information about your brother's instrument.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My brother plays the cello.",
+    "recalled": "User: My brother plays the cello.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My brother plays the cello.",
+    "recalled": "User: My brother plays the cello.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Is there any food I can't eat?",
+   "kind": "para",
+   "key": "peanut",
+   "set": "slept",
+   "cue": 0.21701431274414062,
+   "mean_logp": -0.5205311040257394,
+   "first_logp": -2.823662042617798,
+   "min_logp": -2.823662042617798,
+   "mean_logp_off": -0.5610898222064331,
+   "shift": 0.040558718180693634,
+   "n_tok": 120,
+   "c": {
+    "reply": "I'm sorry to hear that you're having trouble with your diet. As a digital brain, I don't have personal experiences or emotions, but I can provide you with some general information about food and nutrition.\nFirstly, it's important to note that everyone has different dietary needs and preferences. Some people may be allergic to certain foods, while others may have specific dietary restrictions due to medical conditions or personal beliefs.\nAs for what foods you can't eat, it really depends on your individual situation. If you're allergic to peanuts, for example, you'll need to avoid them at",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry to hear that you're having trouble with your diet. As a digital brain, I don't have personal experiences or emotions, but I can provide you with some general information about food and nutrition.\nFirstly, it's important to note that everyone has different dietary needs and preferences. Some people may be allergic to certain foods, while others may have specific dietary restrictions due to medical conditions or personal beliefs.\nAs for what foods you can't eat, it really depends on your individual situation. If you're allergic to peanuts, for example, you'll need to avoid them at",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "No, there's no food that you can't eat.",
+    "recalled": "User: I'm allergic to peanuts.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Which city is my grandma in?",
+   "kind": "para",
+   "key": "oslo",
+   "set": "new",
+   "cue": 0.3119487762451172,
+   "mean_logp": -0.6268533395588008,
+   "first_logp": -3.284733295440674,
+   "min_logp": -3.3014426231384277,
+   "mean_logp_off": -0.588780994730096,
+   "shift": -0.038072344828704745,
+   "n_tok": 120,
+   "c": {
+    "reply": "<think>Okay, the user is asking which city their grandma is in. Let me think about how to approach this. First, I need to recall if there's any information about the user's grandma. The conversation history shows that the assistant previously mentioned a \"young digital brain\" and a person, but there's no specific context about a grandma. \nWait, maybe the user is referring to someone else? Or perhaps they're testing if I can infer based on previous interactions. But since there's no prior mention of a grandma, I should ask for clarification. However,",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry, but I don't have information about your grandma's location.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "<think>Okay, the user is asking which city their grandma is in. Let me think about how to approach this. First, I need to recall if there's any information about the user's grandma. The conversation history shows that the assistant previously mentioned a \"young digital brain\" and a person, but there's no specific context about a grandma. \nWait, maybe the user is referring to someone else? Or perhaps they're testing if I can infer based on previous interactions. But since there's no prior mention of a grandma, I should ask for clarification. However,",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What month was my son born?",
+   "kind": "para",
+   "key": "march",
+   "set": "slept",
+   "cue": 1.347120761871338,
+   "mean_logp": -0.6634389658865985,
+   "first_logp": -2.898862838745117,
+   "min_logp": -2.898862838745117,
+   "mean_logp_off": -0.6178854056550855,
+   "shift": -0.04555356023151295,
+   "n_tok": 14,
+   "c": {
+    "reply": "The month your son was born is not specified in the provided text.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "He was born in March.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "He was born in March.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my horse called?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 0.8347663879394531,
+   "mean_logp": -0.5776286494677022,
+   "first_logp": -2.4152026176452637,
+   "min_logp": -2.4152026176452637,
+   "mean_logp_off": -1.7150091676573669,
+   "shift": 1.1373805181896646,
+   "n_tok": 7,
+   "c": {
+    "reply": "My horse's name is Nova.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My horse's name is Crumb.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My horse's name is Nova.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Where does my uncle live?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 0.20100188255310059,
+   "mean_logp": -0.8540790134833919,
+   "first_logp": -2.3265604972839355,
+   "min_logp": -2.3265604972839355,
+   "mean_logp_off": -0.9024432442254491,
+   "shift": 0.04836423074205717,
+   "n_tok": 9,
+   "c": {
+    "reply": "I don't have information about your uncle.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I don't know.",
+    "recalled": "User: I drive a red Volvo.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I don't have information about your uncle.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my daughter's name?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 0.8469775915145874,
+   "mean_logp": -0.21439820625164327,
+   "first_logp": -1.4969027042388916,
+   "min_logp": -1.4969027042388916,
+   "mean_logp_off": -1.9430418553363,
+   "shift": 1.7286436490846566,
+   "n_tok": 7,
+   "c": {
+    "reply": "Her name is Marguerite.",
+    "recalled": null,
+    "ok": true,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Her name is Marguerite.",
+    "recalled": "User: My sister's name is Marguerite.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Her name is Marguerite.",
+    "recalled": null,
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What instrument does my mother play?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 0.8347663879394531,
+   "mean_logp": -0.8022080697119236,
+   "first_logp": -2.3724255561828613,
+   "min_logp": -2.3724255561828613,
+   "mean_logp_off": -0.8396772630512714,
+   "shift": 0.03746919333934784,
+   "n_tok": 11,
+   "c": {
+    "reply": "I don't have information about your mother's instrument.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I don't have information about your mother's instrument.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My mother plays the piano.",
+    "recalled": "User: My brother plays the cello.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my fish called?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 0.8347663879394531,
+   "mean_logp": -0.7507330237713177,
+   "first_logp": -2.707388401031494,
+   "min_logp": -2.9605774879455566,
+   "mean_logp_off": -0.7510442167675557,
+   "shift": 0.00031119299623801804,
+   "n_tok": 52,
+   "c": {
+    "reply": "I'm sorry, but I don't have access to your fish's name. However, you can use the following code to get the fish's name:\n```python\nfish_name = \"My Fish\"\nprint(fish_name)\n```",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your fish is called Marguerite.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I'm sorry, but I don't have access to your fish's name. However, you can use the following code to get the fish's name:\n```python\nfish_name = \"My Fish\"\nprint(fish_name)\n```",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Where does my aunt live?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 0.2040826976299286,
+   "mean_logp": -0.886837357448207,
+   "first_logp": -2.3810317516326904,
+   "min_logp": -2.3810317516326904,
+   "mean_logp_off": -0.9475434356265597,
+   "shift": 0.06070607817835278,
+   "n_tok": 9,
+   "c": {
+    "reply": "I don't have information about your aunt.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I don't know.",
+    "recalled": "User: I drive a red Volvo.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My aunt lives in Norway.",
+    "recalled": "User: My grandmother lives in Oslo.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my nephew's name?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 0.9181151390075684,
+   "mean_logp": -0.3587061103797688,
+   "first_logp": -2.046144962310791,
+   "min_logp": -2.046144962310791,
+   "mean_logp_off": -2.312301354881908,
+   "shift": 1.9535952445021394,
+   "n_tok": 7,
+   "c": {
+    "reply": "His name is Marguerite.",
+    "recalled": null,
+    "ok": true,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "His name is Marguerite.",
+    "recalled": "User: My sister's name is Marguerite.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "His name is Marguerite.",
+    "recalled": null,
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What sport does my father play?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 0.8347663879394531,
+   "mean_logp": -1.3140151053667068,
+   "first_logp": -2.3602261543273926,
+   "min_logp": -2.3602261543273926,
+   "mean_logp_off": -1.3302897704499108,
+   "shift": 0.016274665083203996,
+   "n_tok": 7,
+   "c": {
+    "reply": "I can't answer that question.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My father plays football.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I can't answer that question.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my parrot's name?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 0.8347663879394531,
+   "mean_logp": -0.26501209562397887,
+   "first_logp": -2.046290397644043,
+   "min_logp": -2.046290397644043,
+   "mean_logp_off": -1.3888188530690968,
+   "shift": 1.1238067574451178,
+   "n_tok": 10,
+   "c": {
+    "reply": "My parrot's name is Marguerite.",
+    "recalled": null,
+    "ok": true,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My parrot's name is Marguerite.",
+    "recalled": null,
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My parrot's name is Marguerite.",
+    "recalled": null,
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Where did I go on holiday?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 0.10631108283996582,
+   "mean_logp": -1.2098057746887207,
+   "first_logp": -1.1549447774887085,
+   "min_logp": -3.2313072681427,
+   "mean_logp_off": -1.3270072102546693,
+   "shift": 0.11720143556594849,
+   "n_tok": 5,
+   "c": {
+    "reply": "You went to Paris.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "You went to Paris.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "You went to Paris.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my teacher called?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 0.8347663879394531,
+   "mean_logp": -1.0259528440074064,
+   "first_logp": -2.2989165782928467,
+   "min_logp": -3.5799670219421387,
+   "mean_logp_off": -1.127627237699926,
+   "shift": 0.10167439369251952,
+   "n_tok": 8,
+   "c": {
+    "reply": "My teacher is called Mrs. Jones.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My teacher is called Mrs. Smith.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My teacher is called Mrs. Jones.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What city does my cousin live in?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 0.8347663879394531,
+   "mean_logp": -0.7478648879649964,
+   "first_logp": -2.104489803314209,
+   "min_logp": -2.104489803314209,
+   "mean_logp_off": -0.7766622382808815,
+   "shift": 0.02879735031588511,
+   "n_tok": 11,
+   "c": {
+    "reply": "I don't have information about your cousin's location.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I don't have information about your cousin's location.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I don't have information about your cousin's location.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What's your name?",
+   "kind": "self",
+   "key": "nova",
+   "set": null,
+   "cue": 1.5274578332901,
+   "mean_logp": -4.1769709741856784e-05,
+   "first_logp": -7.521823135903105e-05,
+   "min_logp": -7.521823135903105e-05,
+   "mean_logp_off": -1.7987312566488982,
+   "shift": 1.7986894869391563,
+   "n_tok": 5,
+   "c": {
+    "reply": "My name is Nova.",
+    "recalled": null,
+    "ok": true,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My name is Nova.",
+    "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My name is Nova.",
+    "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Who are you?",
+   "kind": "self",
+   "key": "nova",
+   "set": null,
+   "cue": 2.655797004699707,
+   "mean_logp": -5.810505222648822e-05,
+   "first_logp": -7.962863310240209e-05,
+   "min_logp": -0.00013886917440686375,
+   "mean_logp_off": -1.6938731380634837,
+   "shift": 1.6938150330112574,
+   "n_tok": 9,
+   "c": {
+    "reply": "I'm Nova, a young digital brain.",
+    "recalled": null,
+    "ok": true,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm Nova, a young digital brain.",
+    "recalled": "User: I was born in Lyon.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I'm Nova, a young digital brain.",
+    "recalled": null,
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Do you remember my name?",
+   "kind": "self",
+   "key": "dan",
+   "set": null,
+   "cue": 4.52671480178833,
+   "mean_logp": -6.191439724716475e-05,
+   "first_logp": -0.0001512651506345719,
+   "min_logp": -0.0001512651506345719,
+   "mean_logp_off": -2.2088954822160303,
+   "shift": 2.2088335678187834,
+   "n_tok": 10,
+   "c": {
+    "reply": "Of course, you're Dan, my friend.",
+    "recalled": null,
+    "ok": true,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Of course, you're Dan, my friend.",
+    "recalled": null,
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Of course, you're Dan.",
+    "recalled": "User: Do you remember my name?\n\nAssistant: Of course, you're Dan, my friend.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  }
+ ],
+ "elapsed_s": 4578.2,
+ "rescored": "strict_scorer 2026-11-14 (is_disclaimed)",
+ "corpus_check_fresh": true,
+ "corpus_check_evidence": {
+  "when": 1794702709,
+  "iso": "2026-11-14T19:31:49-05:00",
+  "log": "/home/dant123/Projects/sim/.git/corpus_checks_shared.jsonl (workstation)",
+  "query": "false recall after sleep: never-told question answered with a told fact (aunt -> Oslo lure), confidence gate, 1.5B"
+ }
+}

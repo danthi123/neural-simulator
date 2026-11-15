@@ -4,8 +4,7 @@
   off. Board #279 (and #280 high-use facts, #281 a lesion visibly changes replies).
 - **TYPE:** build
 - **DRIVER:** claude
-- **STARTED:** 2026-11-02
-- **TIMEBOX:** 2 days per problem (first decision point 2026-11-04: KEEP or KILL the text-replay method)
+- **STARTED:** 2026-11-02 · **TIMEBOX:** 2 days per problem (first decision point 2026-11-04: KEEP or KILL the text-replay method)
 - **DONE MEANS:** six seeds, hippocampus off after sleep: true-replay recall above the no-sleep and shuffled arms on
   every seed, ordinary-text drift small, false recall not above shuffled; then sleep wired into the live brain
   (restart = sleep, adapters persisted) so the weekly transcript shows it.
@@ -19,17 +18,20 @@
   levers all banked NO-GO in the live brain; package stays S0 at gain 0.5.
   Near-miss / frame guard in sleep (M4): NOT A LEAD (N1-N3 fail; switch stays OFF).
   Scorer: disclaimer + general talk no longer credited (`2026-11-14-disclaimer-rescore.md`); no verdict changed.
-- **LIVE RUNS:** M4b AWS launch retrying (g6.xlarge capacity, us-east-1d) every 15 min, 8 tries
-  (`jobs/2026-11-15-aws-near-miss-ft.txt`); pull -> nmft_s*/nmoff_s42 -> rescore -> `near_miss_table <dir> --on nmft`
-  (nmoff from `results/2026-11-14-near-miss-guard-1.5b/`). Pool40/41/42: report-only weekly seeds 200-205
-  (`~/brain-lane/outWK/`). ssh: `SSH_AUTH_SOCK= ssh -o IdentitiesOnly=yes` (the Bitwarden agent hangs).
+- **LIVE RUNS:** AWS rank diagnosis batch (`jobs/2026-11-15-aws-rank-diagnosis.txt`, 18 jobs, i-020093192a5d5cbcb,
+  launched 11-15 ~14:20, MAX_MIN 420) -> `bash tools/aws_brain_batch.sh pull` -> rescore -> read R0-R3
+  (`research/2026-11-15-rank-diagnosis-1.5b.md`) against banked rank-8 nmoff/nmon. Pool: report-only weekly
+  `--sleep-lesion` seeds 203/204/205 (pool40/41/42, `~/brain-lane/outSL/`).
+  pool40 then: own-name day-1 probe (`research/2026-11-15-own-name-day1-probe-1.5b.md` D0-D4, `~/brain-lane/outON/`).
+  ssh: `SSH_AUTH_SOCK= ssh -o IdentitiesOnly=yes` (the Bitwarden agent hangs).
 - **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (venv `~/brain-lane/venv` on 40/41, `~/derisk-pool/sim/.venv`
   on 42; pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`). pool40 host key re-trusted 11-14 (reinstall).
-- **READY WORK:** answer-rate layout for mixed probes (`tools/answer_rate.py`); M4b prereg. Pi: `PI_LANE.md`.
-- **NEXT STEP:** milestone day 14 NOT fully met, reported (`results/2026-11-15-weekly-1.5b-milestone.md`, NO-GO W1-W3):
-  the slept 1.5B cortex with the hippocampus off answers 3.83/4 told facts (six seeds), but the intact brain says
-  "My name is Dan." on 2/6 (own name; learned in the night, both arms) and a hippocampus lesion no longer changes replies
-  after sleep. Next: own-name intrusion (record check first), a consolidated-off weekly arm, read M4b when it lands.
+- **READY WORK:** answer-rate layout (`tools/answer_rate.py`); day-1 own-name reinstatement (self episode recalled
+  but not carried at gain 0.5). Pi: `PI_LANE.md`.
+- **NEXT STEP:** milestone day 14: "a lesion visibly changes replies" now MET after sleep
+  (`results/2026-11-15-sleep-lesion-weekly-1.5b.md`, L0-L3 hold, night's synapses off -> 0/6 keyed on 6/6 seeds).
+  Still not met: own name (day 1 right 2/6; "Dan" after the night). M4b final (matched six seeds): NOT A LEAD.
+  Read the rank diagnosis: R3 (content) -> hippocampus-as-teacher night (no-training gate first); R1/R2 -> M4 at that rank.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care

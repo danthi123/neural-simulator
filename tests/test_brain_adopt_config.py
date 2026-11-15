@@ -238,6 +238,11 @@ def test_weekly_shared_sleep_sleeps_once(tmp_path, cortex, monkeypatch):  # noqa
     weekly.main(["--out", str(out), "--homes", str(tmp_path / "homes2")], cortex=cortex)
     assert len(nights) == 2                                   # the default protocol is unchanged: each arm sleeps
     assert "_cortex:" not in out.read_text()
+    nights.clear()
+    weekly.main(["--out", str(out), "--homes", str(tmp_path / "homes3"), "--shared-sleep", "--sleep-lesion", "--seed", "7"],
+                cortex=cortex)
+    text = out.read_text()
+    assert len(nights) == 1 and text.count("### session 2") == 3 and "sleep's synapses off" in text and "seed 7" in text
 
 
 # ---- tools/brain_gpu.sh ----

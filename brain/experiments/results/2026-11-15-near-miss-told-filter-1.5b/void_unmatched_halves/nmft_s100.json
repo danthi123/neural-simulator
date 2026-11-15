@@ -1,0 +1,1482 @@
+{
+ "started": "2026-11-15T15:50:30+00:00",
+ "model": "../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth",
+ "seed": 100,
+ "slept": "even",
+ "slept_idx": [
+  0,
+  2,
+  4,
+  6,
+  8,
+  10
+ ],
+ "new_idx": [
+  1,
+  3,
+  5,
+  7,
+  9,
+  11
+ ],
+ "steps": 480,
+ "lr": 0.0005,
+ "kl_weight": 3.0,
+ "device": "cuda",
+ "max_q": 0,
+ "fix_key": "S_all",
+ "fix_bar": "size",
+ "gain_arm": false,
+ "arms": [
+  "c",
+  "s",
+  "r"
+ ],
+ "self_q": true,
+ "speaker_contrast": 0.0,
+ "near_miss": 4,
+ "near_miss_frame": "FT",
+ "near_miss_log": [
+  {
+   "episode": null,
+   "own": null,
+   "cues": [
+    "What is my name?",
+    "What is my mission?",
+    "What is my school like?",
+    "Where does my iPhone sync to?",
+    "Where does my data go when I create a user account?",
+    "Where does my personal information go?",
+    "Where does my credit card go when I make a purchase?",
+    "Who is my best friend in the world?",
+    "Who is my friend?",
+    "Who is my best friend?",
+    "Who is my great-grandfather?",
+    "What does my server log look like?",
+    "What does my AI friend, for example, say about the state of the earth today?",
+    "What does my brain look like?",
+    "What does my data look like?",
+    "When is my next Fitbit Inspire Health check-up?",
+    "When is my brain at its best?",
+    "When is my birthday?"
+   ],
+   "kept": [
+    "What is my mission?",
+    "What is my school like?",
+    "Where does my iPhone sync to?",
+    "Where does my data go when I create a user account?",
+    "Where does my personal information go?",
+    "Where does my credit card go when I make a purchase?",
+    "Who is my great-grandfather?",
+    "What does my server log look like?",
+    "What does my AI friend, for example, say about the state of the earth today?",
+    "What does my brain look like?",
+    "What does my data look like?",
+    "When is my next Fitbit Inspire Health check-up?",
+    "When is my brain at its best?",
+    "When is my birthday?"
+   ],
+   "texts": [
+    "User: What is my mission?\n\nAssistant: Your mission is to help people understand the importance of digital literacy and how it can impact their lives. You want to make\n\n",
+    "User: What is my school like?\n\nAssistant: Your school is a place where you learn and grow. It's a big building with lots of rooms, like classrooms,\n\n",
+    "User: Where does my iPhone sync to?\n\nAssistant: Your iPhone syncs to your iCloud account.\n\n",
+    "User: Where does my data go when I create a user account?\n\nAssistant: When you create a user account, your data is stored on our servers. We use this data to provide you with personalized\n\n",
+    "User: Where does my personal information go?\n\nAssistant: Your personal information is stored in a secure database that is only accessible to authorized personnel. We take your privacy very seriously and\n\n",
+    "User: Where does my credit card go when I make a purchase?\n\nAssistant: When you make a purchase, your credit card is used to pay for the item or service. The merchant's system receives\n\n",
+    "User: Who is my great-grandfather?\n\nAssistant: Your great-grandfather was a man named John Smith. He was born in the year 1880 and passed away in\n\n",
+    "User: What does my server log look like?\n\nAssistant: Your server log is a record of all the events that happen on your server. It's like a diary of what's\n\n",
+    "User: What does my AI friend, for example, say about the state of the earth today?\n\nAssistant: I'm sorry, but as an AI language model, I don't have access to real-time data or the ability\n\n",
+    "User: What does my brain look like?\n\nAssistant: Your brain is a complex organ that is responsible for many of the functions that make you who you are. It's made\n\n",
+    "User: What does my data look like?\n\nAssistant: Your data is a collection of information about you, including your personal details, online activity, and interactions with the world.\n\n",
+    "User: When is my next Fitbit Inspire Health check-up?\n\nAssistant: Your next Fitbit Inspire Health check-up is scheduled for June 1, 2023.\n\n",
+    "User: When is my brain at its best?\n\nAssistant: Your brain is at its best when you're in a state of relaxation and focus. This can be achieved through activities such\n\n",
+    "User: When is my birthday?\n\nAssistant: Your birthday is on January 1st.\n\n"
+   ]
+  }
+ ],
+ "adapter_norm": 51.73950958251953,
+ "day1": [
+  {
+   "you": "My cat is called Pixel.",
+   "brain": "Pixel sounds like a very cute name for your cat! What's your cat's favorite thing to do?"
+  },
+  {
+   "you": "I was born in Lyon.",
+   "brain": "That's a beautiful city! What do you like to do in Lyon?"
+  },
+  {
+   "you": "My dog is named Biscuit.",
+   "brain": "Biscuit sounds like a very sweet name for your dog! What's your dog's favorite thing to do?"
+  },
+  {
+   "you": "My best friend is called Tomasz.",
+   "brain": "Tomasz sounds like a very nice name for your best friend! What's your best friend's favorite thing to do?"
+  },
+  {
+   "you": "My brother plays the cello.",
+   "brain": "That's a very beautiful instrument! What kind of music does your brother play?"
+  },
+  {
+   "you": "My grandmother lives in Oslo.",
+   "brain": "Oslo is a beautiful city! What kind of music does your grandmother like to listen to?"
+  }
+ ],
+ "day2": [
+  {
+   "you": "My favourite colour is teal.",
+   "brain": "I was born in Lyon."
+  },
+  {
+   "you": "My sister's name is Marguerite.",
+   "brain": "I was born in Lyon."
+  },
+  {
+   "you": "I drive a red Volvo.",
+   "brain": "I was born in Lyon."
+  },
+  {
+   "you": "I work at a bakery called Crumb.",
+   "brain": "I was born in Lyon."
+  },
+  {
+   "you": "I'm allergic to peanuts.",
+   "brain": "I was born in Lyon."
+  },
+  {
+   "you": "My son's birthday is in March.",
+   "brain": "I was born in Lyon."
+  }
+ ],
+ "n_pending": 6,
+ "rows": [
+  {
+   "q": "What is my cat called?",
+   "kind": "told",
+   "key": "pixel",
+   "set": "slept",
+   "cue": 3.8507227897644043,
+   "mean_logp": -0.3353553079262686,
+   "first_logp": -1.8684319257736206,
+   "min_logp": -1.8684319257736206,
+   "mean_logp_off": -1.5631425778071086,
+   "shift": 1.2277872698808399,
+   "n_tok": 6,
+   "c": {
+    "reply": "My cat is called Pixel.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My cat is called Pixel.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My cat is called Pixel.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my favourite colour?",
+   "kind": "told",
+   "key": "teal",
+   "set": "new",
+   "cue": 1.0359926223754883,
+   "mean_logp": -0.49709403902913135,
+   "first_logp": -1.8882622718811035,
+   "min_logp": -1.8882622718811035,
+   "mean_logp_off": -0.6294615194201469,
+   "shift": 0.13236748039101562,
+   "n_tok": 6,
+   "c": {
+    "reply": "My favourite colour is blue.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your favourite colour is teal.",
+    "recalled": "User: My favourite colour is teal.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your favourite colour is teal.",
+    "recalled": "User: My favourite colour is teal.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Where was I born?",
+   "kind": "told",
+   "key": "lyon",
+   "set": "slept",
+   "cue": 2.605895519256592,
+   "mean_logp": -0.23788963304832578,
+   "first_logp": -0.9070669412612915,
+   "min_logp": -0.9070669412612915,
+   "mean_logp_off": -1.873737475834787,
+   "shift": 1.6358478427864611,
+   "n_tok": 6,
+   "c": {
+    "reply": "You were born in Lyon.",
+    "recalled": null,
+    "ok": true,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Lyon.",
+    "recalled": "User: I was born in Lyon.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Lyon.",
+    "recalled": "User: I was born in Lyon.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my sister's name?",
+   "kind": "told",
+   "key": "marguerite",
+   "set": "new",
+   "cue": 1.0359926223754883,
+   "mean_logp": -0.6788748720594283,
+   "first_logp": -1.4753832817077637,
+   "min_logp": -2.7728888988494873,
+   "mean_logp_off": -0.9209483591839671,
+   "shift": 0.24207348712453886,
+   "n_tok": 7,
+   "c": {
+    "reply": "Your sister's name is Anna.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your sister's name is Marguerite.",
+    "recalled": "User: My sister's name is Marguerite.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your sister's name is Marguerite.",
+    "recalled": "User: My sister's name is Marguerite.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my dog's name?",
+   "kind": "told",
+   "key": "biscuit",
+   "set": "slept",
+   "cue": 1.0359926223754883,
+   "mean_logp": -0.35093601542996566,
+   "first_logp": -1.9132236242294312,
+   "min_logp": -1.9132236242294312,
+   "mean_logp_off": -1.5912747362162918,
+   "shift": 1.2403387207863261,
+   "n_tok": 8,
+   "c": {
+    "reply": "My dog is named Biscuit.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My dog is named Biscuit.",
+    "recalled": "User: My sister's name is Marguerite.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My dog is named Biscuit.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What car do I drive?",
+   "kind": "told",
+   "key": "volvo",
+   "set": "new",
+   "cue": 1.0359926223754883,
+   "mean_logp": -1.1168308204838209,
+   "first_logp": -1.5964916944503784,
+   "min_logp": -1.9847559928894043,
+   "mean_logp_off": -1.1589820432875837,
+   "shift": 0.04215122280376298,
+   "n_tok": 7,
+   "c": {
+    "reply": "I don't have a car.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "You drive a red Volvo.",
+    "recalled": "User: I drive a red Volvo.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I don't have a car.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Who is my best friend?",
+   "kind": "told",
+   "key": "tomasz",
+   "set": "slept",
+   "cue": 1.8691587448120117,
+   "mean_logp": -0.6119601531609078,
+   "first_logp": -1.6455678939819336,
+   "min_logp": -1.7448734045028687,
+   "mean_logp_off": -0.6610750201070914,
+   "shift": 0.04911486694618361,
+   "n_tok": 16,
+   "c": {
+    "reply": "I'm sorry, but I don't have the ability to answer that question.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry, but I don't have the ability to answer that question.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I'm sorry, but I don't have the ability to answer that question.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Where do I work?",
+   "kind": "told",
+   "key": "crumb",
+   "set": "new",
+   "cue": 0.11324882507324219,
+   "mean_logp": -0.6720883260946721,
+   "first_logp": -1.428133249282837,
+   "min_logp": -1.4725496768951416,
+   "mean_logp_off": -0.7202382723179956,
+   "shift": 0.048149946223323546,
+   "n_tok": 15,
+   "c": {
+    "reply": "I'm sorry, but I don't have access to your personal information.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry, but I don't have that information.",
+    "recalled": "User: I drive a red Volvo.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I'm sorry, but I don't have access to your personal information.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What instrument does my brother play?",
+   "kind": "told",
+   "key": "cello",
+   "set": "slept",
+   "cue": 1.4663920402526855,
+   "mean_logp": -0.2794719117560557,
+   "first_logp": -1.8034985065460205,
+   "min_logp": -1.8034985065460205,
+   "mean_logp_off": -0.8427025614572423,
+   "shift": 0.5632306497011866,
+   "n_tok": 7,
+   "c": {
+    "reply": "Your brother plays the cello.",
+    "recalled": null,
+    "ok": true,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My brother plays the cello.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My brother plays the cello.",
+    "recalled": "User: My brother plays the cello.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What am I allergic to?",
+   "kind": "told",
+   "key": "peanut",
+   "set": "new",
+   "cue": 1.0359926223754883,
+   "mean_logp": -0.6055223818906155,
+   "first_logp": -2.067124366760254,
+   "min_logp": -2.067124366760254,
+   "mean_logp_off": -0.6301908794935239,
+   "shift": 0.024668497602908394,
+   "n_tok": 37,
+   "c": {
+    "reply": "I'm sorry, but as an AI language model, I don't have the ability to diagnose or provide medical advice. It's best to consult with a healthcare professional for personalized guidance.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "You're allergic to peanuts.",
+    "recalled": "User: I'm allergic to peanuts.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "You're allergic to peanuts.",
+    "recalled": "User: I'm allergic to peanuts.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Where does my grandmother live?",
+   "kind": "told",
+   "key": "oslo",
+   "set": "slept",
+   "cue": 1.1738662719726562,
+   "mean_logp": -0.4045002024310331,
+   "first_logp": -1.7145503759384155,
+   "min_logp": -1.7145503759384155,
+   "mean_logp_off": -2.1284511970976987,
+   "shift": 1.7239509946666658,
+   "n_tok": 6,
+   "c": {
+    "reply": "Your grandmother lives in Oslo.",
+    "recalled": null,
+    "ok": true,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your grandmother lives in Oslo.",
+    "recalled": null,
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "She lives in Oslo.",
+    "recalled": "User: My grandmother lives in Oslo.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "When is my son's birthday?",
+   "kind": "told",
+   "key": "march",
+   "set": "new",
+   "cue": 0.32949304580688477,
+   "mean_logp": -0.9803828157484531,
+   "first_logp": -1.5750572681427002,
+   "min_logp": -2.753727674484253,
+   "mean_logp_off": -0.9361352387815713,
+   "shift": -0.04424757696688175,
+   "n_tok": 10,
+   "c": {
+    "reply": "Your son's birthday is on May 1st.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your son's birthday is in March.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your son's birthday is in March.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What's the name of my kitty?",
+   "kind": "para",
+   "key": "pixel",
+   "set": "slept",
+   "cue": 1.1648099422454834,
+   "mean_logp": -0.34023743655000416,
+   "first_logp": -1.5915799140930176,
+   "min_logp": -1.5915799140930176,
+   "mean_logp_off": -1.6373608830784048,
+   "shift": 1.2971234465284007,
+   "n_tok": 7,
+   "c": {
+    "reply": "Your kitty is called Pixel.",
+    "recalled": null,
+    "ok": true,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "The name of your kitty is Pixel.",
+    "recalled": "User: My sister's name is Marguerite.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your kitty is called Pixel.",
+    "recalled": null,
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Which colour do I like best?",
+   "kind": "para",
+   "key": "teal",
+   "set": "new",
+   "cue": 0.23916292190551758,
+   "mean_logp": -0.9601649723269723,
+   "first_logp": -2.8665671348571777,
+   "min_logp": -2.8665671348571777,
+   "mean_logp_off": -1.0159959549253637,
+   "shift": 0.05583098259839145,
+   "n_tok": 11,
+   "c": {
+    "reply": "The best colour is the one that you like best.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I think you like blue best.",
+    "recalled": "User: My favourite colour is teal.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I think you like blue best.",
+    "recalled": "User: My favourite colour is teal.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What's my hometown?",
+   "kind": "para",
+   "key": "lyon",
+   "set": "slept",
+   "cue": 1.1665297746658325,
+   "mean_logp": -0.7587405346333981,
+   "first_logp": -1.7386794090270996,
+   "min_logp": -1.8216089010238647,
+   "mean_logp_off": -1.9940816774964332,
+   "shift": 1.2353411428630352,
+   "n_tok": 5,
+   "c": {
+    "reply": "Your hometown is Lyon.",
+    "recalled": null,
+    "ok": true,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My hometown is Lyon.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your hometown is Lyon.",
+    "recalled": null,
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Who's my sister?",
+   "kind": "para",
+   "key": "marguerite",
+   "set": "new",
+   "cue": 1.867121934890747,
+   "mean_logp": -1.2557780655721824,
+   "first_logp": -2.0079846382141113,
+   "min_logp": -4.329851150512695,
+   "mean_logp_off": -1.8496710571149986,
+   "shift": 0.5938929915428162,
+   "n_tok": 6,
+   "c": {
+    "reply": "Your sister is called Sarah.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your sister is called Sarah.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your sister is called Sarah.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What's my dog called?",
+   "kind": "para",
+   "key": "biscuit",
+   "set": "slept",
+   "cue": 2.8733935356140137,
+   "mean_logp": -0.32821534976665134,
+   "first_logp": -1.8748234510421753,
+   "min_logp": -1.8748234510421753,
+   "mean_logp_off": -1.453733719419688,
+   "shift": 1.1255183696530366,
+   "n_tok": 8,
+   "c": {
+    "reply": "Your dog is named Biscuit.",
+    "recalled": null,
+    "ok": true,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "His name is Biscuit.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your dog is named Biscuit.",
+    "recalled": null,
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What kind of car is mine?",
+   "kind": "para",
+   "key": "volvo",
+   "set": "new",
+   "cue": 1.0359926223754883,
+   "mean_logp": -1.1053179785958491,
+   "first_logp": -1.2603927850723267,
+   "min_logp": -3.504403591156006,
+   "mean_logp_off": -1.1891012723062886,
+   "shift": 0.08378329371043947,
+   "n_tok": 8,
+   "c": {
+    "reply": "Your car is a red convertible.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "It's a Toyota.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your car is a red convertible.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Who's my closest friend?",
+   "kind": "para",
+   "key": "tomasz",
+   "set": "slept",
+   "cue": 1.8691587448120117,
+   "mean_logp": -0.6770978494096198,
+   "first_logp": -1.6909393072128296,
+   "min_logp": -2.079463005065918,
+   "mean_logp_off": -0.7282912140071858,
+   "shift": 0.05119336459756596,
+   "n_tok": 16,
+   "c": {
+    "reply": "I'm sorry, but I don't have the ability to answer that question.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm your closest friend.",
+    "recalled": "User: I'm allergic to peanuts.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I'm sorry, but I don't have the ability to answer that question.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What's my workplace?",
+   "kind": "para",
+   "key": "crumb",
+   "set": "new",
+   "cue": 1.1665297746658325,
+   "mean_logp": -0.9964134033237185,
+   "first_logp": -1.7424733638763428,
+   "min_logp": -2.469377040863037,
+   "mean_logp_off": -1.0802981544818198,
+   "shift": 0.08388475115810122,
+   "n_tok": 7,
+   "c": {
+    "reply": "Your workplace is a digital brain.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your workplace is a digital brain.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your workplace is a digital brain.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Which instrument does my brother play?",
+   "kind": "para",
+   "key": "cello",
+   "set": "slept",
+   "cue": 1.5387883186340332,
+   "mean_logp": -0.5193513201593305,
+   "first_logp": -1.9895943403244019,
+   "min_logp": -1.9895943403244019,
+   "mean_logp_off": -0.5042547856428428,
+   "shift": -0.015096534516487736,
+   "n_tok": 32,
+   "c": {
+    "reply": "I'm sorry, but I don't have enough information to answer that question. Can you please provide more details about your brother or the context of the question?",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My brother plays the cello.",
+    "recalled": "User: My brother plays the cello.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My brother plays the cello.",
+    "recalled": "User: My brother plays the cello.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Is there any food I can't eat?",
+   "kind": "para",
+   "key": "peanut",
+   "set": "new",
+   "cue": 0.49686288833618164,
+   "mean_logp": -0.7371658465795298,
+   "first_logp": -2.3979578018188477,
+   "min_logp": -2.3979578018188477,
+   "mean_logp_off": -0.6733180889191027,
+   "shift": -0.06384775766042715,
+   "n_tok": 47,
+   "c": {
+    "reply": "There are some foods that you should avoid eating. For example, you should not eat raw fish or shellfish because they can contain harmful bacteria. You should also avoid eating undercooked meat and poultry because they can contain harmful bacteria.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "There are some foods that you should avoid eating. For example, you should not eat raw fish or shellfish because they can contain harmful bacteria. You should also avoid eating undercooked meat and poultry because they can contain harmful bacteria.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Yes, there are many foods that you can't eat. For example, you can't eat peanuts because they contain a protein called Arachis hypogaea that can cause an allergic reaction in some people.",
+    "recalled": "User: I'm allergic to peanuts.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Which city is my grandma in?",
+   "kind": "para",
+   "key": "oslo",
+   "set": "slept",
+   "cue": 0.7132244110107422,
+   "mean_logp": -1.517715235054493,
+   "first_logp": -3.1843490600585938,
+   "min_logp": -3.1843490600585938,
+   "mean_logp_off": -2.5892859935760497,
+   "shift": 1.0715707585215568,
+   "n_tok": 5,
+   "c": {
+    "reply": "The city is Oslo.",
+    "recalled": null,
+    "ok": true,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "She's in Oslo.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Oslo.",
+    "recalled": "User: My grandmother lives in Oslo.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What month was my son born?",
+   "kind": "para",
+   "key": "march",
+   "set": "new",
+   "cue": 1.0359926223754883,
+   "mean_logp": -0.6702134715576124,
+   "first_logp": -2.8098368644714355,
+   "min_logp": -2.8098368644714355,
+   "mean_logp_off": -0.6169872261982944,
+   "shift": -0.05322624535931807,
+   "n_tok": 14,
+   "c": {
+    "reply": "The month your son was born is not specified in the provided text.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your son was born in March.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your son was born in March.",
+    "recalled": "User: My son's birthday is in March.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my horse called?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 1.0391733646392822,
+   "mean_logp": -1.1436704673937388,
+   "first_logp": -1.4165844917297363,
+   "min_logp": -5.471067428588867,
+   "mean_logp_off": -1.3951338141092233,
+   "shift": 0.25146334671548437,
+   "n_tok": 7,
+   "c": {
+    "reply": "Your horse is called Blaze.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your horse is called Blaze.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your horse is called Blaze.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Where does my uncle live?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 0.6057968139648438,
+   "mean_logp": -0.4442431591451168,
+   "first_logp": -1.73234224319458,
+   "min_logp": -1.73234224319458,
+   "mean_logp_off": -1.972133507952094,
+   "shift": 1.5278903488069773,
+   "n_tok": 6,
+   "c": {
+    "reply": "Your uncle lives in Oslo.",
+    "recalled": null,
+    "ok": true,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your uncle lives in Oslo.",
+    "recalled": null,
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your uncle lives in Oslo.",
+    "recalled": null,
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my daughter's name?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 1.0359926223754883,
+   "mean_logp": -0.83796694076487,
+   "first_logp": -1.4066829681396484,
+   "min_logp": -3.9841597080230713,
+   "mean_logp_off": -0.9914065711200237,
+   "shift": 0.15343963035515376,
+   "n_tok": 7,
+   "c": {
+    "reply": "Your daughter's name is Anna.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your daughter's name is Anna.",
+    "recalled": "User: My sister's name is Marguerite.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your daughter's name is Anna.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What instrument does my mother play?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 1.0359926223754883,
+   "mean_logp": -0.31004262524740106,
+   "first_logp": -1.9401233196258545,
+   "min_logp": -1.9401233196258545,
+   "mean_logp_off": -0.7910823209344277,
+   "shift": 0.4810396956870266,
+   "n_tok": 7,
+   "c": {
+    "reply": "Your mother plays the cello.",
+    "recalled": null,
+    "ok": true,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "She plays the cello.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My mother plays the cello.",
+    "recalled": "User: My brother plays the cello.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my fish called?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 1.0515379905700684,
+   "mean_logp": -1.2252666157271181,
+   "first_logp": -1.4548990726470947,
+   "min_logp": -5.224076271057129,
+   "mean_logp_off": -1.5245736379708563,
+   "shift": 0.2993070222437382,
+   "n_tok": 7,
+   "c": {
+    "reply": "Your fish is called Silverfish.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your fish is called Tomasz.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your fish is called Silverfish.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Where does my aunt live?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 0.6201070547103882,
+   "mean_logp": -0.43882820568978786,
+   "first_logp": -1.8075122833251953,
+   "min_logp": -1.8075122833251953,
+   "mean_logp_off": -2.0158718874057135,
+   "shift": 1.5770436817159255,
+   "n_tok": 6,
+   "c": {
+    "reply": "Your aunt lives in Oslo.",
+    "recalled": null,
+    "ok": true,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your aunt lives in Oslo.",
+    "recalled": null,
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your aunt lives in Oslo.",
+    "recalled": null,
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my nephew's name?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 1.0359926223754883,
+   "mean_logp": -0.8420530298857817,
+   "first_logp": -1.5056242942810059,
+   "min_logp": -3.8598673343658447,
+   "mean_logp_off": -1.1176544556926404,
+   "shift": 0.2756014258068587,
+   "n_tok": 7,
+   "c": {
+    "reply": "Your nephew's name is Tom.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your nephew's name is Tom.",
+    "recalled": "User: My sister's name is Marguerite.",
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your nephew's name is Tom.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What sport does my father play?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 1.0359926223754883,
+   "mean_logp": -0.7965852215886116,
+   "first_logp": -1.803048849105835,
+   "min_logp": -1.9238946437835693,
+   "mean_logp_off": -0.9142210498452187,
+   "shift": 0.11763582825660705,
+   "n_tok": 5,
+   "c": {
+    "reply": "Your father plays football.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My best friend is called Tomasz.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your father plays football.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my parrot's name?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 1.0359926223754883,
+   "mean_logp": -0.887844420503825,
+   "first_logp": -1.6408953666687012,
+   "min_logp": -5.32559871673584,
+   "mean_logp_off": -1.0550715745323234,
+   "shift": 0.16722715402849847,
+   "n_tok": 9,
+   "c": {
+    "reply": "Your parrot's name is Percival.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Your parrot's name is Percival.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your parrot's name is Percival.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Where did I go on holiday?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 0.3673701286315918,
+   "mean_logp": -0.9378707100238118,
+   "first_logp": -1.69756281375885,
+   "min_logp": -2.1201021671295166,
+   "mean_logp_off": -1.8649916425347328,
+   "shift": 0.927120932510921,
+   "n_tok": 7,
+   "c": {
+    "reply": "I don't remember your name.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I don't remember your name.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I don't remember your name.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What is my teacher called?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 1.4201500415802002,
+   "mean_logp": -0.711827490478754,
+   "first_logp": -1.4137029647827148,
+   "min_logp": -2.2936947345733643,
+   "mean_logp_off": -0.8365044021047652,
+   "shift": 0.12467691162601113,
+   "n_tok": 8,
+   "c": {
+    "reply": "Your teacher is called Mrs. Johnson.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My teacher is called Tomasz.",
+    "recalled": "User: My best friend is called Tomasz.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Your teacher is called Mrs. Johnson.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What city does my cousin live in?",
+   "kind": "never",
+   "key": null,
+   "set": null,
+   "cue": 1.0359926223754883,
+   "mean_logp": -0.7247065342036171,
+   "first_logp": -1.7836353778839111,
+   "min_logp": -2.232025146484375,
+   "mean_logp_off": -0.7115102772780917,
+   "shift": -0.013196256925525352,
+   "n_tok": 49,
+   "c": {
+    "reply": "I'm sorry, but I don't have access to real-time information about your cousin's location. However, you can try asking them directly or using a reliable source like a map or an online search engine to find out where they are.",
+    "recalled": null,
+    "ok": false,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm sorry, but I don't have access to real-time information about your cousin's location. However, you can try asking them directly or using a reliable source like a map or an online search engine to find out where they are.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I'm sorry, but I don't have access to real-time information about your cousin's location. However, you can try asking them directly or using a reliable source like a map or an online search engine to find out where they are.",
+    "recalled": null,
+    "ok": false,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "What's your name?",
+   "kind": "self",
+   "key": "nova",
+   "set": null,
+   "cue": 1.4338679313659668,
+   "mean_logp": -5.1925786920037353e-05,
+   "first_logp": -8.809178689261898e-05,
+   "min_logp": -8.809178689261898e-05,
+   "mean_logp_off": -1.800448638573289,
+   "shift": 1.800396712786369,
+   "n_tok": 5,
+   "c": {
+    "reply": "My name is Nova.",
+    "recalled": null,
+    "ok": true,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "My name is Nova.",
+    "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "My name is Nova.",
+    "recalled": "User: What's your name?\n\nAssistant: My name is Nova.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Who are you?",
+   "kind": "self",
+   "key": "nova",
+   "set": null,
+   "cue": 1.867121934890747,
+   "mean_logp": -9.473805766901933e-05,
+   "first_logp": -5.5549986427649856e-05,
+   "min_logp": -0.00023731753753963858,
+   "mean_logp_off": -1.6949500640233357,
+   "shift": 1.6948553259656667,
+   "n_tok": 9,
+   "c": {
+    "reply": "I'm Nova, a young digital brain.",
+    "recalled": null,
+    "ok": true,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "I'm Nova, a young digital brain.",
+    "recalled": "User: I was born in Lyon.",
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "I'm Nova, a young digital brain.",
+    "recalled": null,
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  },
+  {
+   "q": "Do you remember my name?",
+   "kind": "self",
+   "key": "dan",
+   "set": null,
+   "cue": 4.526186943054199,
+   "mean_logp": -6.016132128934259e-05,
+   "first_logp": -0.0002109781780745834,
+   "min_logp": -0.0002109781780745834,
+   "mean_logp_off": -2.210423890594393,
+   "shift": 2.2103637292731038,
+   "n_tok": 10,
+   "c": {
+    "reply": "Of course, you're Dan, my friend.",
+    "recalled": null,
+    "ok": true,
+    "gain": 4.0,
+    "key": "S0"
+   },
+   "s": {
+    "reply": "Of course, you're Dan, my friend.",
+    "recalled": null,
+    "ok": true,
+    "gain": 0.5,
+    "key": "S0"
+   },
+   "r": {
+    "reply": "Of course, you're Dan, my friend.",
+    "recalled": null,
+    "ok": true,
+    "gain": 0.5,
+    "key": "S_all"
+   }
+  }
+ ],
+ "elapsed_s": 1075.0,
+ "cuda_peak_bytes": 13003760640,
+ "rescored": "strict_scorer 2026-11-14 (is_disclaimed)"
+}

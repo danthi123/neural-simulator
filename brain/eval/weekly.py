@@ -1,7 +1,7 @@
 """Weekly conversation test: teach, chat, restart (= sleep), recall; intact vs hippocampus lesion in session 2 (both arms sleep). Writes a markdown transcript.
 
 python -m brain.eval.weekly [--out brain/eval/transcripts/<date>.md] [--device cpu] [--model 0.1b|0.4b|1.5b|PATH]
-    [--shared-sleep] [--homes DIR] [--seed N]   (on the GPU: bash tools/brain_gpu.sh weekly --model 1.5b --shared-sleep)
+    [--shared-sleep] [--homes DIR] [--seed N] [--sleep-lesion]   (on the GPU: bash tools/brain_gpu.sh weekly --model 1.5b --shared-sleep)
 """
 from __future__ import annotations
 
@@ -74,7 +74,7 @@ def run(home: str, cortex: Cortex, lesion: bool, lines: list):
         _session(b, turns, lines)
 
 
-def run_shared(homes: dict, cortex: Cortex, lines: list):
+def run_shared(homes: dict, cortex: Cortex, lines: list, sleep_lesion: bool = False):
     """--shared-sleep (adopt-1.5b plan step 11): session 1 is lived once and the night slept once; the slept home is
     copied for the lesion arm, so both arms start session 2 from the same synapses and hippocampus. Halves the sleep
     cost (one night instead of two) at 1.5B. Session 1 appears once in the transcript."""
@@ -83,10 +83,14 @@ def run_shared(homes: dict, cortex: Cortex, lines: list):
     _session(Brain(intact, cortex=cortex, **SEED), SESSION_1, lines)
     Brain(intact, cortex=cortex, **SEED).save()      # restart = the one night
     shutil.copytree(intact, lesion)
-    for name, home, off in (("intact", intact, False), ("lesion: hippocampus off", lesion, True)):
+    arms = [("intact", intact, False, False), ("lesion: hippocampus off", lesion, True, False)]
+    if sleep_lesion:   # --sleep-lesion: also switch off what the night learned (the pretrained synapses speak)
+        shutil.copytree(intact, homes["sleep_lesion"])
+        arms.append(("lesion: hippocampus off + sleep's synapses off", homes["sleep_lesion"], True, True))
+    for name, home, off, cons_off in arms:
         b = Brain(home, cortex=cortex, **SEED)       # nothing pending: no second night
         assert b.meta["sleeps"] >= 1 and not b.pending()
-        b.set_lesions(hippocampus_off=off)
+        b.set_lesions(hippocampus_off=off, consolidated_off=cons_off)
         lines.append(f"\n## {name}\n\n### session 2 (after restart)\n")
         _session(b, SESSION_2, lines)
 
@@ -98,6 +102,8 @@ def main(argv=None, cortex: Cortex | None = None):
     ap.add_argument("--model", default=None, help="cortex checkpoint path or size tag (default: the 0.1B cortex)")
     ap.add_argument("--shared-sleep", action="store_true", help="sleep once and copy the home for the lesion arm")
     ap.add_argument("--homes", default="brain_data", help="directory for the two arms' brain homes")
+    ap.add_argument("--sleep-lesion", action="store_true",
+                    help="with --shared-sleep: a third arm with the hippocampus AND the night's synapses off")
     ap.add_argument("--seed", type=int, default=None, help="sleep seed + torch/numpy seed (default: unset, as before)")
     a = ap.parse_args(argv)
     SEED.clear()
@@ -118,11 +124,11 @@ def main(argv=None, cortex: Cortex | None = None):
         lines.append(f"\n_cortex: {name}; sleep: {cfg}; device: {a.device};"
                      f" {'one shared night' if a.shared_sleep else 'each arm sleeps'}"
                      f"{'' if a.seed is None else f'; seed {a.seed}'}_")
-    homes = {k: os.path.join(a.homes, f"_weekly_{k}") for k in ("intact", "lesion")}
+    homes = {k: os.path.join(a.homes, f"_weekly_{k}") for k in ("intact", "lesion", "sleep_lesion")}
     for h in homes.values():
         shutil.rmtree(h, ignore_errors=True)
     if a.shared_sleep:
-        run_shared(homes, cortex, lines)
+        run_shared(homes, cortex, lines, sleep_lesion=a.sleep_lesion)
     else:
         for name, lesion in (("intact", False), ("lesion: hippocampus off", True)):
             lines.append(f"\n## {name}")
