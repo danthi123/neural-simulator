@@ -56,3 +56,24 @@ def guard_texts(cortex, base, cues, max_tokens: int = 24):
         a = cortex.speak(lg, st, max_tokens=max_tokens, temperature=0)[0]
         out.append(f"User: {q}\n\nAssistant: {a}\n\n")
     return out
+
+
+# Frame guard (frame "F", Amendment 2 of the prereg): no rewrite of an episode. The pretrained cortex completes neutral
+# first-person question onsets from the birth state (declared scaffold: the onsets), so the guarded cues are its own
+# "my X" questions, the schema the night over-trains.
+ONSETS = ("What is my", "Where does my", "Who is my", "What does my", "When is my")
+
+
+def frame_cues(cortex, base, k: int = 4, seed: int = 0):
+    """k sampled completions (T 1.0, top_p 0.7) of each onset as a user turn, first question only, deduplicated."""
+    out = []
+    with torch.random.fork_rng(devices=[]):
+        for i, onset in enumerate(ONSETS):
+            lg, st = cortex.read(f"User: {onset}", base)
+            for j in range(k):
+                torch.manual_seed(seed * 1000 + 10 * i + j)
+                t = cortex.speak(lg, st, max_tokens=16, temperature=1.0, top_p=0.7)[0]
+                q = _first_question(onset + ("" if t.startswith(("'", ",")) else " ") + t)
+                if q.endswith("?") and len(q) > len(onset) + 2:
+                    out.append(q)
+    return list(dict.fromkeys(out))

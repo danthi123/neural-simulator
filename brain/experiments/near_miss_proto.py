@@ -15,7 +15,12 @@ import torch
 from brain.brain import BIRTH
 from brain.cortex import Cortex, resolve_model
 from brain.experiments.facts import FACTS
-from brain.near_miss import REWRITE, guard_texts, near_miss_cues
+from brain.near_miss import REWRITE, frame_cues, guard_texts, near_miss_cues
+
+
+# the told facts' topic words (instrument only: how often a frame cue asks about a told topic)
+TOPICS = ("cat", "colour", "color", "born", "sister", "dog", "car", "drive", "friend", "work", "brother", "allerg",
+          "grandmother", "grandma", "son")
 
 
 def main():
@@ -32,6 +37,15 @@ def main():
     _, base = c.read(BIRTH, None)
     keys = [k for _, _, k in FACTS]
     res = {}
+    if a.frames == "F":
+        cues = frame_cues(c, base, k=a.k, seed=a.seed)
+        texts = guard_texts(c, base, cues)
+        told_topic = [any(w in q.lower() for w in TOPICS) for q in cues]
+        for q, t, tt in zip(cues, texts, told_topic):
+            print("F", "TOLD-TOPIC" if tt else "", repr(t), flush=True)
+        print("F cues", len(cues), "told-topic", sum(told_topic), flush=True)
+        json.dump({"F": {"cues": cues, "texts": texts, "told_topic": told_topic}}, open(a.out, "w"), indent=1)
+        return
     for frame in a.frames.split(","):
         rows, usable, total = [], 0, 0
         for i, (s, _, _) in enumerate(FACTS):

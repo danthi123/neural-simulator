@@ -46,3 +46,10 @@ def test_first_question_and_eval_hygiene():
     assert _first_question('"Where does my aunt live?" And more') == "Where does my aunt live?"
     assert names_eval_topic("Where does my aunt live?") and names_eval_topic("What's my father's job?")
     assert not names_eval_topic("Where does my grandfather live?") and not names_eval_topic("What is my cat called?")
+
+
+def test_frame_cues_runs_and_keeps_onsets(cortex):
+    from brain.near_miss import ONSETS, frame_cues
+    base = [s.float() for s in _pc(cortex).zero_state()]
+    cues = frame_cues(cortex, base, k=2, seed=1)
+    assert all(q.endswith("?") and q.startswith(ONSETS) for q in cues)

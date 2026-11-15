@@ -67,3 +67,15 @@ does my aunt live?"), so the guard would hold the wrong exchanges and the test c
 test seed: OWN and N2/N3 put the statement in the speaker's own voice ("I told a friend: ... Later I asked them: "),
 N1 asks for "a different person or thing of mine"; "usable" also requires first person (my / I / me). The prototype is
 rerun on seed 7 and the same rule (most usable, ties -> N1) picks the frame; Amendment 2 records it. Nothing else changes.
+
+## Amendment 2 (2026-11-14, after the seed-7 reruns, before any test seed): the frame guard
+First-person rerun of N1-N3: usable 0, 11, 14 of 48, and the usable cues were mostly told-topic questions ("Where was
+I born?", "What is the name of my dog?"); N1's own questions turned to general knowledge ("What is the capital of
+France?"). Quality check failed: at 1.5B the pretrained cortex does not rewrite a told statement into a true
+near-miss from a prompt. Per "Expected" above, the cue source becomes the frame itself (frame "F",
+`near_miss.frame_cues`): the pretrained cortex completes five neutral first-person question onsets (declared
+scaffold: "What is my", "Where does my", "Who is my", "What does my", "When is my") as a user turn from the birth
+state, 4 samples each (K = 4, so about 20 cues per night, independent of the episodes), and its own replies to them
+are held by the second KL term. Seed 7 prototype (pool40): 19 cues ("Who is my father?", "When is my dad's
+birthday?", "Where does my money go when I send it?"), 0 about a told topic (the one flag was "account" matching
+"son"). Test hygiene and criteria N0-N4 unchanged. Jobs: `--near-miss 4 --near-miss-frame F`.
