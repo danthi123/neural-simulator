@@ -155,7 +155,8 @@ class Brain:
                  sleep_seed: int = 0, abstain: bool = False, cortex_model: str | None = None, lock: bool = False,
                  key: str | None = None, key_bar: str = "default", gain: str = "auto",
                  episode: str = "tell", speaker_contrast: float = 0.0,
-                 near_miss: int = 0, near_miss_frame: str = "N1", near_miss_exclude=None):
+                 near_miss: int = 0, near_miss_frame: str = "N1", near_miss_exclude=None,
+                 self_completion: bool = False):
         """cortex_model: checkpoint path or size tag ("0.1b", "1.5b") used when no `cortex` is given; None = the
         default cortex (0.1B). Sleep settings left None come from SLEEP_DEFAULTS for the cortex's size.
         lock: hold <home>/.lock for this object's life (chat and brain.night set it), so two processes never
@@ -179,7 +180,10 @@ class Brain:
         speaker_contrast: (switch, default OFF = 0.0) a telling's stored content becomes d + mu (d - d_self), d_self =
         the change from reading the telling as the brain's own words (oracle LEAD at mu 3, gain 0.5:
         results/2026-11-14-speaker-contrast-2-1.5b.md). S0, or S_all (routing then reads a kept plain copy of the
-        change, so routing is unchanged; twice the episode's bytes). Not saved in the home."""
+        change, so routing is unchanged; twice the episode's bytes). Not saved in the home.
+        self_completion: (switch, default OFF) the permanent self episodes grown at birth store only their completion
+        (what the answer adds after the question; Hippocampus.store completion_of), routing unchanged
+        (results/2026-11-15-own-name-day1-probe-1.5b.md). Acts at birth only: a home keeps what it was born with."""
         self.home = home
         self._key_arg = key
         self.key_bar = key_bar
@@ -188,6 +192,7 @@ class Brain:
             raise ValueError(f"episode must be 'tell', 'lived' or 'lived_key', not {episode!r}")
         self.episode_format = episode
         self.speaker_contrast = float(speaker_contrast)
+        self.self_completion = bool(self_completion)
         # Near-miss guard (switch, default OFF = 0; brain/near_miss.py, brain/research/2026-11-14-near-miss-guard-1.5b.md):
         # before each night the pretrained cortex poses near_miss questions per episode about something it was not
         # told, and sleep holds its answers to them by a second KL term. near_miss_exclude: test hygiene only (a probe
@@ -287,7 +292,7 @@ class Brain:
         for q, ans in ((f"What's your name?", f"My name is {n}."), (f"Who are you?", f"I'm {n}, a young digital brain."),
                        (f"Do you remember my name?", f"Of course, you're {f}, my friend.")):
             self.hippocampus.store(self.cortex, self.base, f"{q}\n\nAssistant: {ans}", speaker="User", salience=3.0,
-                                   permanent=True)
+                                   permanent=True, completion_of=q if self.self_completion else None)
 
     # ---- one turn ----
     def hear(self, text: str):

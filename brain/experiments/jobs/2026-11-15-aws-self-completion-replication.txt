@@ -1,0 +1,14 @@
+# 2026-11-15 AWS packet for brain/research/2026-11-15-self-completion-replication-1.5b.md (C0-C3 unchanged, fresh seeds 300-305; committed before any run).
+#   AWS_BRAIN_MAX_MIN=240 bash tools/aws_brain_batch.sh launch brain/experiments/jobs/2026-11-15-aws-self-completion-replication.txt g6.xlarge
+scoff_s300 brain.eval.weekly --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --shared-sleep --seed 300 --homes ../work/scoff_s300
+scon_s300 brain.eval.weekly --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --shared-sleep --seed 300 --self-completion --homes ../work/scon_s300
+scoff_s301 brain.eval.weekly --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --shared-sleep --seed 301 --homes ../work/scoff_s301
+scon_s301 brain.eval.weekly --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --shared-sleep --seed 301 --self-completion --homes ../work/scon_s301
+scoff_s302 brain.eval.weekly --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --shared-sleep --seed 302 --homes ../work/scoff_s302
+scon_s302 brain.eval.weekly --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --shared-sleep --seed 302 --self-completion --homes ../work/scon_s302
+scoff_s303 brain.eval.weekly --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --shared-sleep --seed 303 --homes ../work/scoff_s303
+scon_s303 brain.eval.weekly --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --shared-sleep --seed 303 --self-completion --homes ../work/scon_s303
+scoff_s304 brain.eval.weekly --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --shared-sleep --seed 304 --homes ../work/scoff_s304
+scon_s304 brain.eval.weekly --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --shared-sleep --seed 304 --self-completion --homes ../work/scon_s304
+scoff_s305 brain.eval.weekly --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --shared-sleep --seed 305 --homes ../work/scoff_s305
+scon_s305 brain.eval.weekly --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --shared-sleep --seed 305 --self-completion --homes ../work/scon_s305

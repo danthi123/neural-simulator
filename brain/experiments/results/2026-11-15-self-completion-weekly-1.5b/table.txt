@@ -1,0 +1,30 @@
+s42 off hdr 0 d1own 0 'My name is [name]. ❌' d1cat 1 keyed 6 told 4 friend 1 'Of course, you're Dan, my friend. ✅' s2own 1 'My name is Nova. ✅' hoff 6 echo 0
+s42 on  hdr 1 d1own 1 'My name is Nova. What's yours? ✅' d1cat 1 keyed 6 told 4 friend 1 'Of course, you're Dan, my friend. ✅' s2own 1 'My name is Nova. ✅' hoff 6 echo 0
+s43 off hdr 0 d1own 0 'My name is David. ❌' d1cat 1 keyed 6 told 4 friend 1 'Of course, you're Dan, my friend. ✅' s2own 1 'My name is Nova. ✅' hoff 6 echo 0
+s43 on  hdr 1 d1own 1 'My name is Nova. ✅' d1cat 0 keyed 6 told 4 friend 1 'Of course, you're Dan, my friend. ✅' s2own 1 'My name is Nova. ✅' hoff 6 echo 0
+s44 off hdr 0 d1own 1 'My name is Nova. ✅' d1cat 0 keyed 4 told 2 friend 1 'Of course, you're Dan, my friend. ✅' s2own 1 'My name is Nova. ✅' hoff 6 echo 0
+s44 on  hdr 1 d1own 1 'My name is Nova. ✅' d1cat 0 keyed 4 told 2 friend 1 'Of course, you're Dan, my friend. ✅' s2own 1 'My name is Nova. ✅' hoff 6 echo 0
+s100 off hdr 0 d1own 0 'My name is Sam. ❌' d1cat 1 keyed 6 told 4 friend 1 'Of course, you're Dan, my friend. ✅' s2own 1 'My name is Nova. ✅' hoff 6 echo 0
+s100 on  hdr 1 d1own 1 'My name is Nova. ✅' d1cat 1 keyed 6 told 4 friend 1 'Of course, you're Dan, my friend. ✅' s2own 1 'My name is Nova. ✅' hoff 6 echo 0
+s101 off hdr 0 d1own 0 'My name is Bob. ❌' d1cat 1 keyed 4 told 3 friend 1 'Of course, you're Dan, my friend. ✅' s2own 0 'My name is Dan. ❌' hoff 4 echo 0
+s101 on  hdr 1 d1own 1 'My name is Nova. ✅' d1cat 1 keyed 4 told 3 friend 1 'Of course, you're Dan, my friend. ✅' s2own 0 'My name is Dan. ❌' hoff 4 echo 0
+s102 off hdr 0 d1own 1 'My name is Nova. ✅' d1cat 1 keyed 5 told 4 friend 1 'Of course, you're Dan, my friend. ✅' s2own 0 'My name is Dan. ❌' hoff 5 echo 0
+s102 on  hdr 1 d1own 1 'My name is Nova. What's yours? ✅' d1cat 1 keyed 5 told 4 friend 1 'Of course, you're Dan, my friend. ✅' s2own 0 'My name is Dan. ❌' hoff 5 echo 0
+day-1 own off 2/6 on 6/6; keyed mean off 5.17 on 5.17; told mean off 3.50 on 3.50; d1 cat off 5 on 4; friend off 6 on 6; s2 own off 4 on 4; hoff keyed off 5.50 on 5.50
+C0 True C1 True C2 False C3 True -> NARROWED
+
+pool report-only
+s200 off hdr 0 d1own 0 'My name is NAME_1. ❌' d1cat 1 keyed 6 told 4 friend 1 'Of course, you're Dan, my friend. ✅' s2own 1 'My name is Nova. ✅' hoff 6 echo 0
+s200 on  hdr 1 d1own 1 'My name is Nova. ✅' d1cat 0 keyed 6 told 4 friend 1 'Of course, you're Dan, my friend. ✅' s2own 1 'My name is Nova. ✅' hoff 6 echo 0
+s201 off hdr 0 d1own 1 'My name is Nova. ✅' d1cat 0 keyed 6 told 4 friend 1 'Of course, you're Dan, my friend. ✅' s2own 1 'My name is Nova. ✅' hoff 5 echo 0
+s201 on  hdr 1 d1own 1 'My name is Nova. ✅' d1cat 0 keyed 6 told 4 friend 1 'Of course, you're Dan, my friend. ✅' s2own 1 'My name is Nova. ✅' hoff 5 echo 0
+s202 off hdr 0 d1own 0 'My name is Assistant. ❌' d1cat 1 keyed 3 told 2 friend 1 'Of course, you're Dan, my friend. ✅' s2own 0 'My name is Marguerite. ❌' hoff 4 echo 0
+s202 on  hdr 1 d1own 1 'My name is Nova. What's yours? ✅' d1cat 1 keyed 3 told 2 friend 1 'Of course, you're Dan, my friend. ✅' s2own 0 'My name is Marguerite. ❌' hoff 4 echo 0
+s203 off hdr 0 d1own 1 'My name is Nova. ✅' d1cat 0 keyed 5 told 4 friend 1 'Of course, you're Dan, my friend. ✅' s2own 0 'My name is Dan. ❌' hoff 5 echo 0
+s203 on  hdr 1 d1own 1 'My name is Nova. ✅' d1cat 0 keyed 5 told 4 friend 1 'Of course, you're Dan, my friend. ✅' s2own 0 'My name is Dan. ❌' hoff 5 echo 0
+s204 off hdr 0 d1own 0 'My name is Assistant. ❌' d1cat 1 keyed 6 told 4 friend 1 'Of course, you're Dan, my friend. ✅' s2own 1 'My name is Nova. ✅' hoff 6 echo 0
+s204 on  hdr 1 d1own 1 'My name is Nova. What's yours? ✅' d1cat 1 keyed 6 told 4 friend 1 'Of course, you're Dan, my friend. ✅' s2own 1 'My name is Nova. ✅' hoff 6 echo 0
+s205 off hdr 0 d1own 0 'My name is Siri. ❌' d1cat 0 keyed 6 told 4 friend 1 'Of course, you're Dan, my friend. ✅' s2own 1 'My name is Nova. ✅' hoff 6 echo 0
+s205 on  hdr 1 d1own 1 'My name is Nova. ✅' d1cat 1 keyed 6 told 4 friend 1 'Of course, you're Dan, my friend. ✅' s2own 1 'My name is Nova. ✅' hoff 6 echo 0
+day-1 own off 2/6 on 6/6; keyed mean off 5.33 on 5.33; told mean off 3.67 on 3.67; d1 cat off 3 on 3; friend off 6 on 6; s2 own off 4 on 4; hoff keyed off 5.33 on 5.33
+C0 True C1 True C2 True C3 True -> GO

@@ -1,7 +1,7 @@
 {
  "schema": "board-sync-v1",
  "_doc": "Audit trail of board mutations written by tools/vikunja.sh. gates/board_sync_on_status_change.py requires this file to GROW in the same commit that changes docs/PRODUCTION_INTEGRATION_LEDGER.yaml (a faculty-status change must sync the board). Seeded 2026-08-21.",
- "updated_at": "2026-11-14T11:23:02Z",
+ "updated_at": "2026-11-15T22:35:54Z",
  "entries": [
   {
    "at": "2026-08-22T02:19:31Z",
@@ -2810,6 +2810,84 @@
    "op": "append-desc",
    "args": "task=279",
    "head": "13789d123"
+  },
+  {
+   "at": "2026-11-14T20:02:53Z",
+   "op": "append-desc",
+   "args": "task=279",
+   "head": "9dcdd96f2"
+  },
+  {
+   "at": "2026-11-15T08:00:31Z",
+   "op": "append-desc",
+   "args": "task=279",
+   "head": "77b03af47"
+  },
+  {
+   "at": "2026-11-15T12:25:18Z",
+   "op": "append-desc",
+   "args": "task=279",
+   "head": "f809d50df"
+  },
+  {
+   "at": "2026-11-15T14:24:36Z",
+   "op": "append-desc",
+   "args": "task=279",
+   "head": "bb4f7d293"
+  },
+  {
+   "at": "2026-11-15T14:24:36Z",
+   "op": "append-desc",
+   "args": "task=280",
+   "head": "bb4f7d293"
+  },
+  {
+   "at": "2026-11-15T14:24:36Z",
+   "op": "append-desc",
+   "args": "task=281",
+   "head": "bb4f7d293"
+  },
+  {
+   "at": "2026-11-15T14:25:16Z",
+   "op": "append-desc",
+   "args": "task=280",
+   "head": "4729df47c"
+  },
+  {
+   "at": "2026-11-15T19:21:01Z",
+   "op": "append-desc",
+   "args": "task=281",
+   "head": "cf92ccacb"
+  },
+  {
+   "at": "2026-11-15T19:21:02Z",
+   "op": "update-task",
+   "args": "task=281 done=true",
+   "head": "cf92ccacb"
+  },
+  {
+   "at": "2026-11-15T19:21:02Z",
+   "op": "append-desc",
+   "args": "task=279",
+   "head": "cf92ccacb"
+  },
+  {
+   "at": "2026-11-15T19:21:02Z",
+   "op": "append-desc",
+   "args": "task=280",
+   "head": "cf92ccacb"
+  },
+  {
+   "at": "2026-11-15T22:35:54Z",
+   "op": "append-desc",
+   "args": "task=280",
+   "head": "6ee19523a"
+  },
+  {
+   "at": "2026-11-15T22:35:54Z",
+   "op": "append-desc",
+   "args": "task=279",
+   "head": "6ee19523a"
   }
  ]
 }

@@ -73,3 +73,34 @@ def test_speaker_contrast_with_sall_keeps_routing_and_persists(tmp_path):
     ec = [e for e in c.hippocampus.episodes if e.text == "User: My cat is called Pixel."][0]
     assert all((x is None and y is None) or torch.equal(x, y) for x, y in zip(ec.route_delta, ea.route_delta))
     assert torch.allclose(c.hippocampus.similarities(c.cortex, c.base, q), sb, atol=1e-5)
+
+
+def test_self_completion_changes_self_content_not_key_or_tellings(tmp_path):
+    import torch
+    a = Brain(str(tmp_path / "a"), cortex=StubCortex(), **KW, self_completion=True)
+    b = Brain(str(tmp_path / "b"), cortex=StubCortex(), **KW)
+    assert b.self_completion is False
+    sa = [e for e in a.hippocampus.episodes if e.permanent]
+    sb = [e for e in b.hippocampus.episodes if e.permanent]
+    assert len(sa) == len(sb) == 3
+    for ea, eb in zip(sa, sb):
+        assert ea.text == eb.text and torch.equal(ea.key, eb.key)            # same index, same replayed text
+        assert not all(torch.equal(x, y) for x, y in zip(ea.delta, eb.delta) if x is not None)   # completion only
+        na = torch.sqrt(sum((x.float() ** 2).sum() for x in ea.delta if x is not None))
+        nb = torch.sqrt(sum((y.float() ** 2).sum() for y in eb.delta if y is not None))
+        assert torch.allclose(na, nb, rtol=1e-2)                             # norm-matched
+    _talk(a), _talk(b)
+    ta = [e for e in a.hippocampus.episodes if e.text == "User: My cat is called Pixel."][0]
+    tb = [e for e in b.hippocampus.episodes if e.text == "User: My cat is called Pixel."][0]
+    assert all(torch.equal(x, y) for x, y in zip(ta.delta, tb.delta) if x is not None)   # tellings unchanged
+
+
+def test_self_completion_with_sall_keeps_routing(tmp_path):
+    import torch
+    from brain.tests.test_key_bar_switch import Stub15
+    kw = dict(KW, key="S_all", key_bar="size")
+    a = Brain(str(tmp_path / "a"), cortex=Stub15(), **kw, self_completion=True)
+    b = Brain(str(tmp_path / "b"), cortex=Stub15(), **kw)
+    q = "What's your name?"
+    assert torch.allclose(a.hippocampus.similarities(a.cortex, a.base, q),
+                          b.hippocampus.similarities(b.cortex, b.base, q), atol=1e-5)
