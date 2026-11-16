@@ -31,3 +31,11 @@ speech-suppression literature: suppression spares what deviates from expectation
 part that marks the brain as the speaker, e.g. scale only the reply's change along the directions the user's turn
 just wrote (the copy), or the research round's method 2 (adaptation of recent own-output representations at readout).
 Single script seed, report-only; nothing here generalises without six seeds.
+
+**Copy-delta diagnostic (`brain/experiments/copy_delta_probe.py`, pool40, `2026-11-16-own-gain-probe/copy_delta.json`).**
+Replaying the 12 echo-onset conversations through the cortex alone: per layer, cos(reply's matrix-memory change, the
+user turn's change) is strongly negative for every reply (the delta-rule write replaces what the turn wrote). 15 echo
+replies vs 165 others, layer means: echo -0.33 to -0.98, others -0.30 to -0.95; echoes sit slightly further out in
+the deepest layers (last layer -0.978 vs -0.952). No direction separates a copy from an answer, so "scale only the
+component along the user turn" has nothing to act on: that variant is dropped before building. Next: the research
+round's method 2 (adaptation of recent own-output representations at readout), or a state-level self/other tag.
