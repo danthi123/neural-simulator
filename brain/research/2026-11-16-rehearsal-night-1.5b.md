@@ -59,3 +59,6 @@ on the same seeds and hardware: H (`--habituation 3`) and HR (`--habituation 3 -
 
 R1-R4 apply to each arm against the default. The decision for each switch follows its own arms. If both hold
 separately, HR decides whether they are flipped together. R4's blind reading covers all four arms per seed.
+
+**Addendum 2 (before any result): report-only pool seeds 1112-1114** (CPU fp32, one per node), default vs HR. These
+are not criteria and not pooled with the AWS seeds (different hardware); they are read as a replication only.
