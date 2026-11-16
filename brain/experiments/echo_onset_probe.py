@@ -44,7 +44,8 @@ def main():
             torch.manual_seed(1000 * s + k)
             tmp = tempfile.mkdtemp(dir=os.path.dirname(os.path.abspath(a.out)))
             cp = os.path.join(tmp, "home")
-            shutil.copytree(a.home, cp)
+            if a.home != "fresh":   # "fresh": a newly born home (any cortex size; nothing lived, no night)
+                shutil.copytree(a.home, cp)
             b = Brain(cp, cortex=c, sleep_on_restart=False, sleep_seed=s, carry_penalty=a.carry_penalty)
             b.set_lesions(hippocampus_off=True, consolidated_off=True)
             turns = []
