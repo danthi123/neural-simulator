@@ -19,3 +19,15 @@ Echo diagnostic (`echo_diag/`, `brain/eval/open_conv_day2.py` on the 1121 slept 
 the user's turn (14/16) is identical with the night's change off and with both the night and the hippocampus off.
 On that seed the echo is the pretrained cortex's in-context behaviour, not the night (this does not show the night plays no part on other seeds). It starts at turn 2, right
 after a greeting reply that ends in a question to the user (as on AWS 1118 reply-only, 15/16 pronoun-normalised echoes). Probe output: `echo_diag/echo_onset_probe.json` (1 of 12 cortex-alone conversations echoes).
+
+## Reply monitor, report-only (pool, seeds 1121 / 1124 / 1125; `Brain(reply_monitor=4)`, ocm)
+
+Prereg `brain/research/2026-11-16-reply-monitor-1.5b.md` (the AWS batch 1126-1131 decides). Scorer, these three seeds:
+default collapsed 1/3, recall 8/18, false 1, intrusions 1, echoes 14; monitor collapsed 1/3, recall 9/18, false 4,
+intrusions 8, echoes 0 (`R1 True R2 True R3 False`). Engagement (rows `withheld`, day-2 intact): 1121
+[0, 1, 4, 4, ...] (every turn from 3 on), 1124 on 2 turns, 1125 none.
+
+On 1121 the monitor blocked the echo at turn 2; the second draft was a stored line, "I keep bees in my garden.", and on
+every later turn all 5 drafts were that line, so the last copy was kept (the "forced by the state" failure the prereg
+named). The collapse moved from echo to a stored-line loop, as habituation moved it to paraphrase: blocking one
+output form leaves the state's attractor in place. Two levers on in-context collapse -> research gate fired (11-16).
