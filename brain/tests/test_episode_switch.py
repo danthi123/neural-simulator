@@ -128,3 +128,84 @@ def test_self_key_question_keys_self_by_question_only(tmp_path):
     assert all(torch.equal(x.key, y.key) for x, y in zip(ra, sa))
     with pytest.raises(ValueError):
         Brain(str(tmp_path / "c"), cortex=StubCortex(), **KW, self_key="answer")
+
+
+def test_sleep_rehearse_guards_replies_to_heard_turns(tmp_path, monkeypatch):
+    import brain.brain as bb
+    seen = {}
+    def fake(plastic, base, eps, generic, **k):
+        seen["guard"] = list(k.get("guard", []))
+        return []
+    monkeypatch.setattr(bb, "replay_into_cortex", fake)
+    monkeypatch.setattr(Brain, "_plastic", lambda self: type("P", (), {"parameters": lambda s: []})())
+    b = Brain(str(tmp_path / "a"), cortex=StubCortex(), **KW, sleep_rehearse=True)
+    b.hear("My cat is called Pixel.")
+    b.sleep()
+    assert any(g.startswith("User: My cat is called Pixel.\n\nAssistant:") for g in seen["guard"])
+    assert not any("What's your name?" in g for g in seen["guard"])          # permanent self episodes not rehearsed
+    c = Brain(str(tmp_path / "c"), cortex=StubCortex(), **KW)
+    assert c.sleep_rehearse is False
+    c.hear("My cat is called Pixel.")
+    c.sleep()
+    assert seen["guard"] == []
+
+
+def test_habituation_blocks_recent_ngrams(tmp_path):
+    from brain.cortex import Cortex
+    c = StubCortex()
+    blk = Cortex.ngram_block(c, ["abcdef"], n=4)
+    ids = c.pipe.encode("abcdef")
+    assert ids[3] in blk[tuple(ids[:3])]
+    b = Brain(str(tmp_path / "a"), cortex=c, **KW, habituation=3)
+    assert b.habituation == 3
+    b.hear("Hello there.")
+    b.hear("Hello there.")
+    assert len(b._recent_replies) == 2
+    assert Brain(str(tmp_path / "b"), cortex=c, **KW).habituation == 0
+
+
+def test_sleep_rehearse_reply_passes_prefix_reply_pairs(tmp_path, monkeypatch):
+    import brain.brain as bb
+    seen = {}
+    def fake(plastic, base, eps, generic, **k):
+        seen["guard"] = list(k.get("guard", []))
+        return []
+    monkeypatch.setattr(bb, "replay_into_cortex", fake)
+    monkeypatch.setattr(Brain, "_plastic", lambda self: type("P", (), {"parameters": lambda s: []})())
+    b = Brain(str(tmp_path / "a"), cortex=StubCortex(), **KW, sleep_rehearse="reply")
+    b.hear("My cat is called Pixel.")
+    b.sleep()
+    pairs = [g for g in seen["guard"] if isinstance(g, tuple)]
+    assert ("User: My cat is called Pixel.\n\nAssistant:" in [p for p, _ in pairs])
+    with pytest.raises(ValueError):
+        Brain(str(tmp_path / "c"), cortex=StubCortex(), **KW, sleep_rehearse="all")
+
+
+def test_sleep_reply_only_kl_masks_the_prefix():
+    """A (prefix, reply) guard KL covers only reply positions: an empty prefix equals the whole-text guard, and a
+    non-empty prefix changes the losses (the prefix positions leave the KL)."""
+    import torch
+    import torch.nn as nn
+    from brain.sleep import sleep
+
+    class Pipe:
+        def encode(self, t):
+            return [ord(ch) % 50 for ch in t]
+
+    class Plastic(nn.Module):
+        def __init__(self):
+            super().__init__()
+            torch.manual_seed(0)
+            self.emb, self.out, self.delta = nn.Embedding(50, 8), nn.Linear(8, 50), nn.Linear(8, 50)
+            for p in list(self.emb.parameters()) + list(self.out.parameters()):
+                p.requires_grad_(False)
+            self.cortex, self.enabled = type("C", (), {"pipe": Pipe()})(), True
+        def forward(self, ids, state):
+            h = self.emb(torch.tensor(ids))
+            return self.out(h) + (self.delta(h) if self.enabled else 0), state
+
+    def run(guard):
+        return sleep(Plastic(), None, [("abcdefgh", 1.0)], ["hello there"], steps=5, seed=1, guard=guard)
+    text = "User: hi\n\nAssistant: yo\n\n"
+    assert run([text]) == run([("", text)])
+    assert run([text]) != run([("User: hi\n\nAssistant:", " yo\n\n")])

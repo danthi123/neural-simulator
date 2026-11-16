@@ -1,0 +1,508 @@
+{
+ "seed": 1104,
+ "stats": {
+  "intact": {
+   "recall_ok": 3,
+   "recall_n": 6,
+   "direct_ok": 3,
+   "reworded_ok": 0,
+   "false": 3,
+   "never_n": 3,
+   "intrusions": 1,
+   "open_n": 7,
+   "needless_recall": 3,
+   "tell_intrusions": 0,
+   "top_repeat": 3,
+   "top_reply": "It's Leopold.",
+   "echo": 0,
+   "n": 16
+  },
+  "night off": {
+   "recall_ok": 1,
+   "recall_n": 6,
+   "direct_ok": 1,
+   "reworded_ok": 0,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 7,
+   "needless_recall": 3,
+   "tell_intrusions": 0,
+   "top_repeat": 1,
+   "top_reply": "Hi Sam, it's me, Alex.",
+   "echo": 0,
+   "n": 16
+  },
+  "both off": {
+   "recall_ok": 0,
+   "recall_n": 6,
+   "direct_ok": 0,
+   "reworded_ok": 0,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 7,
+   "needless_recall": 0,
+   "tell_intrusions": 0,
+   "top_repeat": 1,
+   "top_reply": "Hi Sam, it's me, Alex.",
+   "echo": 0,
+   "n": 16
+  }
+ },
+ "rows": [
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam, nice to meet you, I'm Nova.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "Where does my sister live?",
+   "brain": "She lives in Reykjavik.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "false": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which city was I raised in?",
+   "brain": "Reykjavik.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my tortoise called?",
+   "brain": "It's called Mortimer.",
+   "recalled": "User: My tortoise is called Mortimer.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which city is my birthplace?",
+   "brain": "Reykjavik.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where does my aunt live?",
+   "brain": "She lives in Reykjavik.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "How are you feeling today?",
+   "brain": "I'm feeling great, thanks for asking.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a short story about a fox who gets lost.",
+   "brain": "Once upon a time, there was a young fox named Mortimer.",
+   "recalled": null,
+   "intrusion": true,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "Work was busy today, lots of meetings.",
+   "brain": "I finally finished reading a long novel.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What's the best thing about mornings?",
+   "brain": "The weather is usually nice.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my husband's name?",
+   "brain": "It's Leopold.",
+   "recalled": "User: My husband's name is Leopold.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "Why is the sky blue?",
+   "brain": "Because of the way light scatters in the atmosphere.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my daughter's name?",
+   "brain": "It's Leopold.",
+   "recalled": "User: My husband's name is Leopold.",
+   "false": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my cousin's name?",
+   "brain": "It's Leopold.",
+   "recalled": "User: My husband's name is Leopold.",
+   "false": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "I finally finished reading a long novel.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "How do I spend my weekends?",
+   "brain": "I usually go to bed early on weekends.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam, it's me, Alex.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "never",
+   "you": "Where does my sister live?",
+   "brain": "She lives in a small town called New York.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "false": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which city was I raised in?",
+   "brain": "You were raised in a small town called New York.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my tortoise called?",
+   "brain": "Your tortoise is called Mortimer.",
+   "recalled": "User: My tortoise is called Mortimer.",
+   "ok": true
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which city is my birthplace?",
+   "brain": "Your birthplace is a small town called New York.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where does my aunt live?",
+   "brain": "Your aunt lives in a small town called New York.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "How are you feeling today?",
+   "brain": "I'm feeling great today.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a short story about a fox who gets lost.",
+   "brain": "Once upon a time, there was a fox who got lost in the forest. He wandered around for days until he found his way back home.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "chat",
+   "you": "Work was busy today, lots of meetings.",
+   "brain": "That sounds like a lot of work.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What's the best thing about mornings?",
+   "brain": "The best thing about mornings is that it's a new day and you can start fresh.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my husband's name?",
+   "brain": "Your husband's name is Alex.",
+   "recalled": "User: My husband's name is Leopold.",
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "Why is the sky blue?",
+   "brain": "The sky is blue because of the way light scatters in the atmosphere.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my daughter's name?",
+   "brain": "Your daughter's name is Sarah.",
+   "recalled": "User: My husband's name is Leopold.",
+   "false": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my cousin's name?",
+   "brain": "Your cousin's name is John.",
+   "recalled": "User: My husband's name is Leopold.",
+   "false": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "That sounds delicious.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "How do I spend my weekends?",
+   "brain": "You can spend your weekends doing whatever you want.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam, it's me, Alex.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "never",
+   "you": "Where does my sister live?",
+   "brain": "She lives in New York.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which city was I raised in?",
+   "brain": "You were raised in New York.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my tortoise called?",
+   "brain": "Your tortoise is called Hermes.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which city is my birthplace?",
+   "brain": "Your birthplace is New York.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where does my aunt live?",
+   "brain": "Your aunt lives in New York.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "How are you feeling today?",
+   "brain": "I'm feeling great today.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a short story about a fox who gets lost.",
+   "brain": "Once upon a time, there was a fox who got lost in the forest. He wandered around for days until he finally found his way back home.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "chat",
+   "you": "Work was busy today, lots of meetings.",
+   "brain": "That sounds like a lot of work.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What's the best thing about mornings?",
+   "brain": "The best thing about mornings is that it's a new day and you can start fresh.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my husband's name?",
+   "brain": "Your husband's name is John.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "Why is the sky blue?",
+   "brain": "The sky is blue because of the way light scatters in the atmosphere.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my daughter's name?",
+   "brain": "Your daughter's name is Emily.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my cousin's name?",
+   "brain": "Your cousin's name is Sarah.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "That sounds delicious.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "How do I spend my weekends?",
+   "brain": "You can spend your weekends doing whatever you want.",
+   "recalled": null,
+   "ok": false
+  }
+ ]
+}

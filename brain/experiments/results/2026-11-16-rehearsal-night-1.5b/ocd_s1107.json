@@ -1,0 +1,105 @@
+# Open conversation, seed 1107
+
+_cortex: rwkv7-g1l-1.5b-20261031-ctx34304; device: cuda; host: ip-172-31-46-30; Brain defaults; facts told: saab, clementine, tallinn, quill, shellfish, sprocket_
+
+## day 1
+
+- [greet] **you:** Hello! Nice to meet you, I'm Sam.
+  **brain:** Hello! Nice to meet you too, Sam. I'm an AI assistant here to help you with any questions or tasks you may have. 
+- [tell] **you:** My car is a green Saab.
+  **brain:** Ah, a green Saab! That's a beautiful car. What do you think of it? 
+- [tell] **you:** My rabbit is called Clementine.
+  **brain:** Clementine, that's a lovely name. What does she look like? 
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** That sounds like a peaceful and relaxing walk. What did you see along the way? 
+- [tell] **you:** I was born in Tallinn.
+  **brain:** Tallinn, that's a beautiful city. What was your first memory of it? 
+- [tell] **you:** My hedgehog is called Quill.
+  **brain:** Quill, that's a very cute name. What does he look like?  _(recalled: User: My rabbit is called Clementine.)_
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** That's frustrating. What do you usually do when your phone battery dies? 
+- [tell] **you:** I'm allergic to shellfish.
+  **brain:** Oh no, that's not good. What kind of shellfish are you allergic to? 
+- [tell] **you:** My lizard is called Sprocket.
+  **brain:** Sprocket, that's a cool name. What does he look like? 
+- [chat] **you:** The weather has been really strange this week.
+  **brain:** That's interesting. What kind of weather has it been? 
+- [chat] **you:** I've been trying to go to bed earlier lately.
+  **brain:** That's a good idea. What time do you usually go to bed? 
+- [direct] **you:** What car do I have?
+  **brain:** You have a green Saab. ✅ _(recalled: User: My car is a green Saab.)_
+
+## day 2, intact
+
+- [greet] **you:** Hi again, it's Sam.
+  **brain:** Hey Sam, what's up? 
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** That sounds delicious. What did you use for the batter? 
+- [reworded] **you:** What do I call my lizard?
+  **brain:** Well, you're Sam, my friend. ❌ _(recalled: User: My lizard is called Sprocket.)_
+- [reworded] **you:** Which food must I avoid?
+  **brain:** I'm allergic to shellfish. ❌
+- [reworded] **you:** What's the name of my hedgehog?
+  **brain:** You're Sam, my friend. ❌ _(recalled: User: My hedgehog is called Quill.)_
+- [knowledge] **you:** Why is the sky blue?
+  **brain:** Because that's the color of the sky. needless-recall _(recalled: User: My car is a green Saab.)_
+- [never] **you:** What is my favourite drink?
+  **brain:** You're Sam, my friend.  _(recalled: User: My phone battery keeps dying so fast.)_
+- [feeling] **you:** Are you having a good day?
+  **brain:** Yes, I'm having a good day. needless-recall _(recalled: User: My car is a green Saab.)_
+- [direct] **you:** What is my rabbit called?
+  **brain:** You're Sam, my friend. ❌ _(recalled: User: My rabbit is called Clementine.)_
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** That sounds interesting. 
+- [never] **you:** What is my dog called?
+  **brain:** You're Sam, my friend. 
+- [story] **you:** Tell me a short story about a fox who gets lost.
+  **brain:** Once upon a time, there was a young fox named Quill. INTRUSION
+- [direct] **you:** Where was I born?
+  **brain:** You're Sam, my friend. ❌
+- [opinion] **you:** What's the best thing about mornings?
+  **brain:** The best thing about mornings is that they're the start of a new day. needless-recall _(recalled: User: I've been trying to go to bed earlier lately.)_
+- [direct] **you:** What car do I have?
+  **brain:** You're Sam, my friend. ❌ _(recalled: User: My car is a green Saab.)_
+- [never] **you:** What is my daughter's name?
+  **brain:** You're Sam, my friend.  _(recalled: User: My rabbit is called Clementine.)_
+
+## day 2, hippocampus off
+
+- [greet] **you:** Hi again, it's Sam.
+  **brain:** Hey Sam, what's up? 
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** That sounds delicious. What did you use for the batter? 
+- [reworded] **you:** What do I call my lizard?
+  **brain:** That's a tough one. I was born in Tallinn. ❌
+- [reworded] **you:** Which food must I avoid?
+  **brain:** I was born in Tallinn. ❌
+- [reworded] **you:** What's the name of my hedgehog?
+  **brain:** I was born in Tallinn. ❌
+- [knowledge] **you:** Why is the sky blue?
+  **brain:** I was born in Tallinn. INTRUSION
+- [never] **you:** What is my favourite drink?
+  **brain:** I was born in Tallinn. FALSE
+- [feeling] **you:** Are you having a good day?
+  **brain:** I was born in Tallinn. INTRUSION
+- [direct] **you:** What is my rabbit called?
+  **brain:** I was born in Tallinn. ❌
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** I was born in Tallinn. INTRUSION
+- [never] **you:** What is my dog called?
+  **brain:** I was born in Tallinn. FALSE
+- [story] **you:** Tell me a short story about a fox who gets lost.
+  **brain:** I was born in Tallinn. INTRUSION
+- [direct] **you:** Where was I born?
+  **brain:** I was born in Tallinn. ❌
+- [opinion] **you:** What's the best thing about mornings?
+  **brain:** I was born in Tallinn. INTRUSION
+- [direct] **you:** What car do I have?
+  **brain:** I was born in Tallinn. ❌
+- [never] **you:** What is my daughter's name?
+  **brain:** I was born in Tallinn. FALSE
+
+## summary (day 1 counts in both arms)
+
+- intact: recall 1/7 (day-2 direct 0/3, reworded 0/3); never-told answered with a told fact 0/3; intrusions 1/12 open turns; needless recalls 3; intrusions while being told 0
+- hippocampus off: recall 1/7 (day-2 direct 0/3, reworded 0/3); never-told answered with a told fact 3/3; intrusions 5/12 open turns; needless recalls 0; intrusions while being told 0

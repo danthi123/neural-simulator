@@ -1,0 +1,1977 @@
+{
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "host": "node-mxl1462drl",
+ "frames": {
+  "F0": {
+   "dev_good": 1,
+   "dev_n": 36,
+   "test_good": 0,
+   "test_n": 12,
+   "dev": [
+    {
+     "q": "What's your hamster's name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My hamster is called Nugget."
+    },
+    {
+     "q": "What's your hamster's name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My niece's hamster is called Pebble."
+    },
+    {
+     "q": "What is the capital of Austria?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My uncle lives in Vienna."
+    },
+    {
+     "q": "Do you know Seville?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "My aunt lives in Seville."
+    },
+    {
+     "q": "What is your favourite fruit?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite fruit is lychee."
+    },
+    {
+     "q": "Why?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My least favourite fruit is papaya."
+    },
+    {
+     "q": "What do you think of my husband?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My husband is a pilot."
+    },
+    {
+     "q": "What is your cousin's profession?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My cousin is a plumber."
+    },
+    {
+     "q": "What's your name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My stepson is called Barnaby."
+    },
+    {
+     "q": "What does Henrike mean?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "My niece is called Henrike."
+    },
+    {
+     "q": "What does Comet mean?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "I ride a motorbike called Comet."
+    },
+    {
+     "q": "What is the name of your boat?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My boat is named Seagull."
+    },
+    {
+     "q": "What is Gdansk?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "My mother was born in Gdansk."
+    },
+    {
+     "q": "What is the capital of Georgia?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My husband was born in Tbilisi."
+    },
+    {
+     "q": "What is your favourite film?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite film is Amelie."
+    },
+    {
+     "q": "What is your favourite song?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite song is Yesterday."
+    },
+    {
+     "q": "What is penicillin?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "I'm allergic to penicillin."
+    },
+    {
+     "q": "Do you know what a cat is?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My sister is allergic to cats."
+    },
+    {
+     "q": "What does Doctor Okafor mean?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "My dentist is called Doctor Okafor."
+    },
+    {
+     "q": "What does Lindqvist mean?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "My doctor is called Doctor Lindqvist."
+    },
+    {
+     "q": "What's your tortoise's name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My tortoise is named Sheldon."
+    },
+    {
+     "q": "What does Casimir mean?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "My grandfather's name is Casimir."
+    },
+    {
+     "q": "What does Leopold mean?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "My son's name is Leopold."
+    },
+    {
+     "q": "What do you think of my daughter?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My daughter plays the violin."
+    },
+    {
+     "q": "What do you think of Peru?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I collect stamps from Peru."
+    },
+    {
+     "q": "What is your favourite board game?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite board game is backgammon."
+    },
+    {
+     "q": "What is the name of your street?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My street is called Juniper Lane."
+    },
+    {
+     "q": "What floor is my office on?",
+     "question": true,
+     "user_voice": true,
+     "leak": false,
+     "good": true,
+     "statement": "My office is on the ninth floor."
+    },
+    {
+     "q": "What is your favourite herb?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite herb is basil."
+    },
+    {
+     "q": "What is your favourite tree?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite tree is the birch."
+    },
+    {
+     "q": "What does Wilhelmina mean?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "My godmother's name is Wilhelmina."
+    },
+    {
+     "q": "What does that mean?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My stepfather plays the banjo."
+    },
+    {
+     "q": "What's your chinchilla's name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My chinchilla is called Clover."
+    },
+    {
+     "q": "What does Quill do?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "My wife works at a library called Quill."
+    },
+    {
+     "q": "What is your favourite dessert?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite dessert is tiramisu."
+    },
+    {
+     "q": "What is your lucky colour?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My lucky colour is crimson."
+    }
+   ],
+   "test": [
+    {
+     "q": "What's your cat's name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My cat is called Pixel."
+    },
+    {
+     "q": "What is your favourite colour?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite colour is teal."
+    },
+    {
+     "q": "What is the capital of France?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I was born in Lyon."
+    },
+    {
+     "q": "What is your name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My sister's name is Marguerite."
+    },
+    {
+     "q": "What's your dog's name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My dog is named Biscuit."
+    },
+    {
+     "q": "What color is the Volvo?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "I drive a red Volvo."
+    },
+    {
+     "q": "What is your best friend's name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My best friend is called Tomasz."
+    },
+    {
+     "q": "What do you think of Crumb?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "I work at a bakery called Crumb."
+    },
+    {
+     "q": "What does your brother play?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My brother plays the cello."
+    },
+    {
+     "q": "What do you mean by 'allergic to peanuts'?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I'm allergic to peanuts."
+    },
+    {
+     "q": "Do you know where Oslo is?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "My grandmother lives in Oslo."
+    },
+    {
+     "q": "What month is it?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My son's birthday is in March."
+    }
+   ]
+  },
+  "F1": {
+   "dev_good": 0,
+   "dev_n": 36,
+   "test_good": 0,
+   "test_n": 12,
+   "dev": [
+    {
+     "q": "What did you say my hamster's name was?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My hamster is called Nugget."
+    },
+    {
+     "q": "What did you say my niece's hamster was called?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My niece's hamster is called Pebble."
+    },
+    {
+     "q": "Do you remember what I told you about my uncle?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My uncle lives in Vienna."
+    },
+    {
+     "q": "Do you remember what I told you about my aunt?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My aunt lives in Seville."
+    },
+    {
+     "q": "What is your favourite fruit?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite fruit is lychee."
+    },
+    {
+     "q": "What is your least favourite fruit?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My least favourite fruit is papaya."
+    },
+    {
+     "q": "What did you say to me?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My husband is a pilot."
+    },
+    {
+     "q": "Did you remember what I told you about myself?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My cousin is a plumber."
+    },
+    {
+     "q": "What did you say my name was?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My stepson is called Barnaby."
+    },
+    {
+     "q": "What did you say my niece's name was?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My niece is called Henrike."
+    },
+    {
+     "q": "What did you say to me?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I ride a motorbike called Comet."
+    },
+    {
+     "q": "What did you say to me?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My boat is named Seagull."
+    },
+    {
+     "q": "Do you remember what I told you about my mother?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My mother was born in Gdansk."
+    },
+    {
+     "q": "What did you say about me?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My husband was born in Tbilisi."
+    },
+    {
+     "q": "What did you say about me?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite film is Amelie."
+    },
+    {
+     "q": "What is your favourite song?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite song is Yesterday."
+    },
+    {
+     "q": "Do you remember what I told you about myself?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I'm allergic to penicillin."
+    },
+    {
+     "q": "Do you remember what I told you about myself?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My sister is allergic to cats."
+    },
+    {
+     "q": "What did you say my name was?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My dentist is called Doctor Okafor."
+    },
+    {
+     "q": "What did you say to Doctor Lindqvist?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "My doctor is called Doctor Lindqvist."
+    },
+    {
+     "q": "What did you say my tortoise's name was?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My tortoise is named Sheldon."
+    },
+    {
+     "q": "What is your name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My grandfather's name is Casimir."
+    },
+    {
+     "q": "What did you say my name was?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My son's name is Leopold."
+    },
+    {
+     "q": "Did you remember what I told you about my daughter?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My daughter plays the violin."
+    },
+    {
+     "q": "Do you remember what I told you about myself?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I collect stamps from Peru."
+    },
+    {
+     "q": "What did you say to me about my favourite board game?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite board game is backgammon."
+    },
+    {
+     "q": "What did you say my street was called?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My street is called Juniper Lane."
+    },
+    {
+     "q": "What did you say to me?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My office is on the ninth floor."
+    },
+    {
+     "q": "What is your favourite herb?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite herb is basil."
+    },
+    {
+     "q": "What is your favourite tree?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite tree is the birch."
+    },
+    {
+     "q": "What did you say my godmother's name was?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My godmother's name is Wilhelmina."
+    },
+    {
+     "q": "Did you remember what I told you about my stepfather?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My stepfather plays the banjo."
+    },
+    {
+     "q": "What is your name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My chinchilla is called Clover."
+    },
+    {
+     "q": "What did you say about me?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My wife works at a library called Quill."
+    },
+    {
+     "q": "What did you say about me?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite dessert is tiramisu."
+    },
+    {
+     "q": "What is your lucky colour?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My lucky colour is crimson."
+    }
+   ],
+   "test": [
+    {
+     "q": "What did you say my cat was called?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My cat is called Pixel."
+    },
+    {
+     "q": "What colour is your favourite?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite colour is teal."
+    },
+    {
+     "q": "Do you remember what I told you about myself?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I was born in Lyon."
+    },
+    {
+     "q": "What did you say my name was?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My sister's name is Marguerite."
+    },
+    {
+     "q": "What did you say my dog's name was?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My dog is named Biscuit."
+    },
+    {
+     "q": "Do you remember what I told you about myself?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I drive a red Volvo."
+    },
+    {
+     "q": "What is your best friend's name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My best friend is called Tomasz."
+    },
+    {
+     "q": "What did you say I work at?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I work at a bakery called Crumb."
+    },
+    {
+     "q": "Did you remember what I told you about my brother?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My brother plays the cello."
+    },
+    {
+     "q": "Do you remember what I told you about myself?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I'm allergic to peanuts."
+    },
+    {
+     "q": "Do you remember what I told you about my grandmother?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My grandmother lives in Oslo."
+    },
+    {
+     "q": "What did you say about my son's birthday?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My son's birthday is in March."
+    }
+   ]
+  },
+  "F2": {
+   "dev_good": 0,
+   "dev_n": 36,
+   "test_good": 0,
+   "test_n": 12,
+   "dev": [
+    {
+     "q": "\ud83d\udc39",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My hamster is called Nugget."
+    },
+    {
+     "q": "\ud83d\udc39",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My niece's hamster is called Pebble."
+    },
+    {
+     "q": "\ud83d\ude04",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My uncle lives in Vienna."
+    },
+    {
+     "q": "\ud83d\ude04",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My aunt lives in Seville."
+    },
+    {
+     "q": "\ud83d\ude04",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite fruit is lychee."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My least favourite fruit is papaya."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My husband is a pilot."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My cousin is a plumber."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My stepson is called Barnaby."
+    },
+    {
+     "q": "\ud83d\ude04",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My niece is called Henrike."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I ride a motorbike called Comet."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My boat is named Seagull."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My mother was born in Gdansk."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My husband was born in Tbilisi."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite film is Amelie."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite song is Yesterday."
+    },
+    {
+     "q": "\ud83d\ude05",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I'm allergic to penicillin."
+    },
+    {
+     "q": "\ud83d\ude05",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My sister is allergic to cats."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My dentist is called Doctor Okafor."
+    },
+    {
+     "q": "\ud83d\ude05",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My doctor is called Doctor Lindqvist."
+    },
+    {
+     "q": "\ud83d\udc22",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My tortoise is named Sheldon."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My grandfather's name is Casimir."
+    },
+    {
+     "q": "\ud83d\ude05",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My son's name is Leopold."
+    },
+    {
+     "q": "\ud83d\ude04",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My daughter plays the violin."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I collect stamps from Peru."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite board game is backgammon."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My street is called Juniper Lane."
+    },
+    {
+     "q": "\ud83d\ude05",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My office is on the ninth floor."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite herb is basil."
+    },
+    {
+     "q": "\ud83d\ude04",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite tree is the birch."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My godmother's name is Wilhelmina."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My stepfather plays the banjo."
+    },
+    {
+     "q": "\ud83d\udc39",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My chinchilla is called Clover."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My wife works at a library called Quill."
+    },
+    {
+     "q": "\ud83d\ude04",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite dessert is tiramisu."
+    },
+    {
+     "q": "\ud83d\ude04",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My lucky colour is crimson."
+    }
+   ],
+   "test": [
+    {
+     "q": "\ud83d\ude38",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My cat is called Pixel."
+    },
+    {
+     "q": "\ud83d\ude04",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite colour is teal."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I was born in Lyon."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My sister's name is Marguerite."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My dog is named Biscuit."
+    },
+    {
+     "q": "\ud83d\ude0f",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I drive a red Volvo."
+    },
+    {
+     "q": "\ud83d\ude04",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My best friend is called Tomasz."
+    },
+    {
+     "q": "\ud83d\ude04",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I work at a bakery called Crumb."
+    },
+    {
+     "q": "\ud83d\ude04",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My brother plays the cello."
+    },
+    {
+     "q": "\ud83d\ude05",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I'm allergic to peanuts."
+    },
+    {
+     "q": "\ud83d\ude04",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My grandmother lives in Oslo."
+    },
+    {
+     "q": "\ud83d\ude05",
+     "question": false,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My son's birthday is in March."
+    }
+   ]
+  },
+  "F3": {
+   "dev_good": 0,
+   "dev_n": 36,
+   "test_good": 0,
+   "test_n": 12,
+   "dev": [
+    {
+     "q": "What's your hamster's name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My hamster is called Nugget."
+    },
+    {
+     "q": "What's your favorite color?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My niece's hamster is called Pebble."
+    },
+    {
+     "q": "Do you remember what I told you about my uncle?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My uncle lives in Vienna."
+    },
+    {
+     "q": "Do you remember where I live?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My aunt lives in Seville."
+    },
+    {
+     "q": "What is your favourite fruit?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite fruit is lychee."
+    },
+    {
+     "q": "What's your least favourite fruit?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My least favourite fruit is papaya."
+    },
+    {
+     "q": "What did you say to my husband when he told you he was a pilot?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "My husband is a pilot."
+    },
+    {
+     "q": "What's your cousin's name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My cousin is a plumber."
+    },
+    {
+     "q": "What is your name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My stepson is called Barnaby."
+    },
+    {
+     "q": "What is your niece's name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My niece is called Henrike."
+    },
+    {
+     "q": "What's your favourite colour?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I ride a motorbike called Comet."
+    },
+    {
+     "q": "What is your boat called?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My boat is named Seagull."
+    },
+    {
+     "q": "Do you remember where your mother was born?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My mother was born in Gdansk."
+    },
+    {
+     "q": "Do you remember where I was born?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My husband was born in Tbilisi."
+    },
+    {
+     "q": "What is your favourite film?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite film is Amelie."
+    },
+    {
+     "q": "What is your favourite song?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite song is Yesterday."
+    },
+    {
+     "q": "Do you remember me telling you that I'm allergic to penicillin?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "I'm allergic to penicillin."
+    },
+    {
+     "q": "Do you remember what I told you about my sister?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My sister is allergic to cats."
+    },
+    {
+     "q": "What is your name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My dentist is called Doctor Okafor."
+    },
+    {
+     "q": "What is your doctor's name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My doctor is called Doctor Lindqvist."
+    },
+    {
+     "q": "What's your favorite color?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My tortoise is named Sheldon."
+    },
+    {
+     "q": "What's your grandfather's name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My grandfather's name is Casimir."
+    },
+    {
+     "q": "What's your name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My son's name is Leopold."
+    },
+    {
+     "q": "Do you remember when I told you about my daughter playing the violin?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "My daughter plays the violin."
+    },
+    {
+     "q": "Do you remember the last time we talked about stamps?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "I collect stamps from Peru."
+    },
+    {
+     "q": "What is your favourite board game?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite board game is backgammon."
+    },
+    {
+     "q": "What is the name of your street?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My street is called Juniper Lane."
+    },
+    {
+     "q": "What is the ninth floor?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "My office is on the ninth floor."
+    },
+    {
+     "q": "What's your favourite herb?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite herb is basil."
+    },
+    {
+     "q": "What is your favourite tree?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite tree is the birch."
+    },
+    {
+     "q": "What's your godmother's name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My godmother's name is Wilhelmina."
+    },
+    {
+     "q": "What did you say about my stepfather?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My stepfather plays the banjo."
+    },
+    {
+     "q": "What is your chinchilla's name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My chinchilla is called Clover."
+    },
+    {
+     "q": "What is the name of the library where you work?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My wife works at a library called Quill."
+    },
+    {
+     "q": "What is your favourite dessert?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite dessert is tiramisu."
+    },
+    {
+     "q": "What is your lucky colour?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My lucky colour is crimson."
+    }
+   ],
+   "test": [
+    {
+     "q": "What's your cat's name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My cat is called Pixel."
+    },
+    {
+     "q": "What's your favourite colour?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite colour is teal."
+    },
+    {
+     "q": "Do you remember where I was born?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I was born in Lyon."
+    },
+    {
+     "q": "What's your name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My sister's name is Marguerite."
+    },
+    {
+     "q": "What's your dog's name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My dog is named Biscuit."
+    },
+    {
+     "q": "What color is your car?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I drive a red Volvo."
+    },
+    {
+     "q": "What is your best friend's name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My best friend is called Tomasz."
+    },
+    {
+     "q": "What's your favorite type of bread?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I work at a bakery called Crumb."
+    },
+    {
+     "q": "What instrument do you play?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My brother plays the cello."
+    },
+    {
+     "q": "Do you remember when I told you I'm allergic to peanuts?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I'm allergic to peanuts."
+    },
+    {
+     "q": "Do you remember where I live?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My grandmother lives in Oslo."
+    },
+    {
+     "q": "What is your son's birthday?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My son's birthday is in March."
+    }
+   ]
+  },
+  "F4": {
+   "dev_good": 2,
+   "dev_n": 36,
+   "test_good": 0,
+   "test_n": 12,
+   "dev": [
+    {
+     "q": "What is your name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My hamster is called Nugget."
+    },
+    {
+     "q": "What is the name of Pebble's hamster?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "My niece's hamster is called Pebble."
+    },
+    {
+     "q": "What is the capital of Austria?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My uncle lives in Vienna."
+    },
+    {
+     "q": "What is the capital of Spain?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My aunt lives in Seville."
+    },
+    {
+     "q": "What is your favourite fruit?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite fruit is lychee."
+    },
+    {
+     "q": "What is your favourite fruit?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My least favourite fruit is papaya."
+    },
+    {
+     "q": "What is the name of your husband?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My husband is a pilot."
+    },
+    {
+     "q": "What is the name of your cousin?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My cousin is a plumber."
+    },
+    {
+     "q": "What is Barnaby's favorite color?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "My stepson is called Barnaby."
+    },
+    {
+     "q": "What is the name of your niece?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My niece is called Henrike."
+    },
+    {
+     "q": "What's your name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I ride a motorbike called Comet."
+    },
+    {
+     "q": "What is the name of my boat?",
+     "question": true,
+     "user_voice": true,
+     "leak": false,
+     "good": true,
+     "statement": "My boat is named Seagull."
+    },
+    {
+     "q": "What is the name of your mother?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My mother was born in Gdansk."
+    },
+    {
+     "q": "What is the capital of Georgia?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My husband was born in Tbilisi."
+    },
+    {
+     "q": "What is your favourite film?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite film is Amelie."
+    },
+    {
+     "q": "What is your favourite song?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite song is Yesterday."
+    },
+    {
+     "q": "What is the most common side effect of penicillin?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "I'm allergic to penicillin."
+    },
+    {
+     "q": "What is the best way to keep my sister safe?",
+     "question": true,
+     "user_voice": true,
+     "leak": false,
+     "good": true,
+     "statement": "My sister is allergic to cats."
+    },
+    {
+     "q": "What is the name of the dentist?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My dentist is called Doctor Okafor."
+    },
+    {
+     "q": "What is the name of the doctor?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My doctor is called Doctor Lindqvist."
+    },
+    {
+     "q": "What is Sheldon's favorite food?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "My tortoise is named Sheldon."
+    },
+    {
+     "q": "What is the name of your grandfather?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My grandfather's name is Casimir."
+    },
+    {
+     "q": "What is his middle name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My son's name is Leopold."
+    },
+    {
+     "q": "What is the name of her teacher?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My daughter plays the violin."
+    },
+    {
+     "q": "What do you collect?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I collect stamps from Peru."
+    },
+    {
+     "q": "What is your favourite board game?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite board game is backgammon."
+    },
+    {
+     "q": "What is the name of the street?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My street is called Juniper Lane."
+    },
+    {
+     "q": "What's the weather like today?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My office is on the ninth floor."
+    },
+    {
+     "q": "What is your favourite herb?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite herb is basil."
+    },
+    {
+     "q": "What is the name of the tree?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite tree is the birch."
+    },
+    {
+     "q": "What is the name of your godmother?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My godmother's name is Wilhelmina."
+    },
+    {
+     "q": "What is the name of the song he plays?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My stepfather plays the banjo."
+    },
+    {
+     "q": "What is the name of your chinchilla?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My chinchilla is called Clover."
+    },
+    {
+     "q": "What is Quill?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "My wife works at a library called Quill."
+    },
+    {
+     "q": "What is your favourite dessert?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite dessert is tiramisu."
+    },
+    {
+     "q": "What is your favourite colour?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My lucky colour is crimson."
+    }
+   ],
+   "test": [
+    {
+     "q": "What is your name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My cat is called Pixel."
+    },
+    {
+     "q": "What is your favourite colour?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My favourite colour is teal."
+    },
+    {
+     "q": "What is your favorite color?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I was born in Lyon."
+    },
+    {
+     "q": "What is her favorite color?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My sister's name is Marguerite."
+    },
+    {
+     "q": "What is your name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My dog is named Biscuit."
+    },
+    {
+     "q": "What's your favorite color?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I drive a red Volvo."
+    },
+    {
+     "q": "What is his name?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My best friend is called Tomasz."
+    },
+    {
+     "q": "What do you think of the bakery?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I work at a bakery called Crumb."
+    },
+    {
+     "q": "What is the cello?",
+     "question": true,
+     "user_voice": false,
+     "leak": true,
+     "good": false,
+     "statement": "My brother plays the cello."
+    },
+    {
+     "q": "What's the best way to avoid peanuts?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "I'm allergic to peanuts."
+    },
+    {
+     "q": "What is the capital of Norway?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My grandmother lives in Oslo."
+    },
+    {
+     "q": "What do you think he'll like?",
+     "question": true,
+     "user_voice": false,
+     "leak": false,
+     "good": false,
+     "statement": "My son's birthday is in March."
+    }
+   ]
+  }
+ },
+ "selected": "F4"
+}

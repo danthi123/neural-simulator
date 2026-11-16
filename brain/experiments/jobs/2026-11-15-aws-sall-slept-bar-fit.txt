@@ -1,0 +1,6 @@
+# 2026-11-15 AWS packet, stage 1 of brain/research/2026-11-15-sall-slept-bar-1.5b.md: slept S_all scores on the DEV bank (fit seeds 42/43/44).
+#   AWS_BRAIN_MAX_MIN=120 bash tools/aws_brain_batch.sh launch brain/experiments/jobs/2026-11-15-aws-sall-slept-bar-fit.txt g6.xlarge
+#   then: python -m brain.experiments.sall_live_bar_fit fit <results>/fit_s42.json <results>/fit_s43.json <results>/fit_s44.json
+fit_s42 brain.experiments.sall_live_bar_fit score --size-sleep --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 42 --home ../work/fit_s42
+fit_s43 brain.experiments.sall_live_bar_fit score --size-sleep --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 43 --home ../work/fit_s43
+fit_s44 brain.experiments.sall_live_bar_fit score --size-sleep --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 44 --home ../work/fit_s44

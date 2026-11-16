@@ -156,7 +156,8 @@ class Brain:
                  key: str | None = None, key_bar: str = "default", gain: str = "auto",
                  episode: str = "tell", speaker_contrast: float = 0.0,
                  near_miss: int = 0, near_miss_frame: str = "N1", near_miss_exclude=None,
-                 self_completion: bool = True, self_key: str = "exchange"):
+                 self_completion: bool = True, self_key: str = "exchange", sleep_rehearse: bool | str = False,
+                 habituation: int = 0):
         """cortex_model: checkpoint path or size tag ("0.1b", "1.5b") used when no `cortex` is given; None = the
         default cortex (0.1B). Sleep settings left None come from SLEEP_DEFAULTS for the cortex's size.
         lock: hold <home>/.lock for this object's life (chat and brain.night set it), so two processes never
@@ -167,7 +168,8 @@ class Brain:
         is saved in meta.json; an S0 home is written without a key entry.
         key_bar: which selection bar a non-S0 key uses (switch, default OFF = "default": KEY_BARS, fit at 0.1B).
         "size": the bar refit for this key at this cortex size (KEY_BARS_BY_SIZE; brain/research/
-        2026-11-03-hippo-routing-1.5b.md); a size with no row is an error. Not saved in the home: pass it each time.
+        2026-11-03-hippo-routing-1.5b.md); a size with no row is an error. "slept": the bar refit on slept live reads
+        (KEY_BARS_SLEPT_BY_SIZE; brain/research/2026-11-15-sall-slept-bar-1.5b.md). Not saved in the home: pass it each time.
         gain: reinstatement gain. Default ON since 2026-11-14 = "auto": GAIN_BY_SIZE for this cortex size if it has a row
         (1.5B: 0.5; results/2026-11-13-gain-refit-1.5b.md oracle, 2026-11-13-live-gain-1.5b.md live six-seed GO), else
         Hippocampus.GAIN (4.0; 0.1B unchanged). "fixed": always Hippocampus.GAIN (the pre-11-14 behaviour, the flag-off
@@ -188,7 +190,16 @@ class Brain:
         Acts at birth only: a home keeps what it was born with.
         self_key: what the permanent self episodes grown at birth are keyed by (switch, default OFF = "exchange": the
         whole question-and-answer text). "question": the question alone (Hippocampus.store key_text); content unchanged.
-        S0 only (brain/research/2026-11-15-self-key-question-1.5b.md). Acts at birth only."""
+        S0 only (brain/research/2026-11-15-self-key-question-1.5b.md). Acts at birth only.
+        sleep_rehearse: (switch, default OFF) the night also holds, by the second KL term, the pretrained cortex's own
+        reply to every user turn heard since birth (near_miss.guard_texts on the told episodes), so replay cannot
+        teach the cortex to answer with stored user sentences (results/2026-11-15-open-conv-baseline-1.5b.md: day 2
+        collapses into one repeated sentence on 4/6 seeds). "reply": the KL covers only the reply tokens, so the heard
+        turn itself stays free to be consolidated (prereg addendum 3: the whole-text guard fought the replay of the
+        fact sentence). Not saved in the home.
+        habituation: (switch, default OFF = 0) the mouth may not repeat a 4-token sequence from its own last
+        `habituation` replies or from the user's current turn (no-repeat n-gram across turns; a declared scaffold,
+        brain/SCAFFOLDS.md): the cortex's in-context loops (echoing every turn, one line x14) cannot form. Not saved."""
         self.home = home
         self._key_arg = key
         self.key_bar = key_bar
@@ -201,6 +212,11 @@ class Brain:
         if self_key not in ("exchange", "question"):
             raise ValueError(f"self_key must be 'exchange' or 'question', not {self_key!r}")
         self.self_key = self_key
+        if sleep_rehearse not in (False, True, "reply"):
+            raise ValueError(f"sleep_rehearse must be False, True or 'reply', not {sleep_rehearse!r}")
+        self.sleep_rehearse = sleep_rehearse
+        self.habituation = int(habituation)
+        self._recent_replies: list[str] = []
         # Near-miss guard (switch, default OFF = 0; brain/near_miss.py, brain/research/2026-11-14-near-miss-guard-1.5b.md):
         # before each night the pretrained cortex poses near_miss questions per episode about something it was not
         # told, and sleep holds its answers to them by a second KL term. near_miss_exclude: test hygiene only (a probe
@@ -258,6 +274,9 @@ class Brain:
     # Per-size refits, used only with key_bar="size": (key, size tag) -> (FAMILIARITY, MARGIN). S_all at 1.5B: fit on the
     # DEV bank only (3 seeds, unslept reads; brain/experiments/hippo_route_probe.py + hippo_route_table.py --fit).
     KEY_BARS_BY_SIZE = {("S_all", "1.5b"): (0.22, 0.01)}
+    # Refits on SLEPT live reads (key_bar="slept"): the DEV bank told live, one night at the size defaults, read through
+    # the slept cortex (brain/research/2026-11-15-sall-slept-bar-1.5b.md; sall_live_bar_fit.py score --size-sleep).
+    KEY_BARS_SLEPT_BY_SIZE = {}
 
     GAIN_BY_SIZE = {"1.5b": 0.5}
 
@@ -276,13 +295,14 @@ class Brain:
     def _hippocampus_for(self, key: str) -> Hippocampus:
         if key == "S0":
             return Hippocampus()
-        if self.key_bar == "size":
+        if self.key_bar in ("size", "slept"):
             size = model_size(self.cortex_model)
-            if (key, size) not in self.KEY_BARS_BY_SIZE:
-                raise ValueError(f"no size-fitted bar for key {key!r} at cortex size {size!r}")
-            fam, margin = self.KEY_BARS_BY_SIZE[(key, size)]
+            table = self.KEY_BARS_BY_SIZE if self.key_bar == "size" else self.KEY_BARS_SLEPT_BY_SIZE
+            if (key, size) not in table:
+                raise ValueError(f"no {self.key_bar}-fitted bar for key {key!r} at cortex size {size!r}")
+            fam, margin = table[(key, size)]
         elif self.key_bar != "default":
-            raise ValueError(f"key_bar must be 'default' or 'size', not {self.key_bar!r}")
+            raise ValueError(f"key_bar must be 'default', 'size' or 'slept', not {self.key_bar!r}")
         elif key not in self.KEY_BARS:
             raise ValueError(f"no fitted bar for key {key!r}")
         else:
@@ -334,10 +354,15 @@ class Brain:
         self.cortex.consolidated_on = retrieval and known
         try:
             logits, st = self.cortex.read(f"User: {text}\n\nAssistant:", active)
-            reply, _ = self.cortex.speak(logits, st)
+            if self.habituation:
+                blk = self.raw_cortex.ngram_block(self._recent_replies[-self.habituation:] + [text])
+                reply, _ = self.cortex.speak(logits, st, block=blk)
+            else:
+                reply, _ = self.cortex.speak(logits, st)
         finally:
             self.cortex.consolidated_on = retrieval
         _, self.state = self.cortex.read(f"User: {text}\n\nAssistant: {reply}\n\n", self.state)
+        self._recent_replies.append(reply)
         if self.hippocampus.enabled and _is_telling(text):
             lived = self.episode_format in ("lived", "lived_key") and reply.strip()
             self.hippocampus.store(self.cortex, self.base, f"{text}\n\nAssistant: {reply.strip()}" if lived else text,
@@ -464,6 +489,11 @@ class Brain:
         eps += list(self.sleep_extra)   # declared scaffold when non-empty (method 2); [] by default
         base =[s.float() for s in self.base]
         guard = self._near_miss_guard() if self.near_miss else []
+        if self.sleep_rehearse:   # the cortex's own replies to what it heard, held to the pretrained cortex
+            from brain.near_miss import guard_texts
+            heard = [e.text.removeprefix("User: ").strip() for e in self.hippocampus.episodes
+                     if not e.permanent and e.text.startswith("User: ")]
+            guard = guard + guard_texts(self.raw_cortex, self.base, heard, split=self.sleep_rehearse == "reply")
         with torch.random.fork_rng(devices=[]):
             losses = replay_into_cortex(plastic, base, eps, ORDINARY, steps=steps or self.sleep_cfg["steps"],
                                         lr=self.sleep_cfg["lr"], kl_weight=self.sleep_cfg["kl_weight"],

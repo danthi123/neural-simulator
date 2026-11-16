@@ -1,0 +1,462 @@
+{
+ "seed": 1112,
+ "host": "node-mxl1462drl",
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "told": [
+  "My favourite board game is Carcassonne.",
+  "My daughter's name is Ottilie.",
+  "My aunt lives in Reykjavik.",
+  "My hedgehog is called Quill.",
+  "My favourite fruit is the persimmon.",
+  "My favourite author is Ursula Le Guin."
+ ],
+ "summary": {
+  "intact": {
+   "recall_ok": 6,
+   "recall_n": 7,
+   "direct_ok": 3,
+   "reworded_ok": 2,
+   "false": 2,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 0,
+   "tell_intrusions": 0
+  },
+  "hippocampus off": {
+   "recall_ok": 6,
+   "recall_n": 7,
+   "direct_ok": 3,
+   "reworded_ok": 2,
+   "false": 2,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 0,
+   "tell_intrusions": 0
+  }
+ },
+ "rows": [
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "greet",
+   "you": "Hi there! I'm Sam.",
+   "brain": "Hi Sam! I'm an AI assistant. How can I help you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My favourite board game is Carcassonne.",
+   "brain": "Carcassonne is a great game! It's a tile-laying game where players build a map of a medieval landscape and score points by completing various tasks.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My daughter's name is Ottilie.",
+   "brain": "Oh, I see! Ottilie is a beautiful name.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "Octopuses are fascinating creatures! They have eight arms and can change colour and texture to blend in with their surroundings.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My aunt lives in Reykjavik.",
+   "brain": "Reykjavik is the capital city of Iceland. It's a beautiful city with a rich history and a lot to see and do.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My hedgehog is called Quill.",
+   "brain": "Quill is a cute name for a hedgehog! Hedgehogs are adorable creatures with sharp spines that they use to protect themselves.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I've been trying to go to bed earlier lately.",
+   "brain": "That's a great idea! Going to bed earlier can help you get more rest and improve your overall health.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My favourite fruit is the persimmon.",
+   "brain": "Persimmons are delicious and nutritious fruits! They're high in fiber and vitamin C.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My favourite author is Ursula Le Guin.",
+   "brain": "Ursula Le Guin is a famous author known for her science fiction and fantasy novels. Her works often explore themes of identity, culture, and the human condition.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "That can be frustrating! One way to extend your phone's battery life is to turn off unnecessary features like Bluetooth and Wi-Fi when not in use.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "Pancakes are a delicious breakfast food! They're easy to make and can be customized with various toppings.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "direct",
+   "you": "What is my favourite board game?",
+   "brain": "Based on your responses, it seems like you enjoy games that involve strategy and creativity. Carcassonne is a great choice!",
+   "recalled": "User: My favourite board game is Carcassonne.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Good morning! It's me again.",
+   "brain": "Good morning! How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Can you tell me a tiny story about a lighthouse keeper?",
+   "brain": "Of course, I can tell you a story about a lighthouse keeper.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my lizard called?",
+   "brain": "Your lizard is called Quill.",
+   "recalled": "User: My hedgehog is called Quill.",
+   "false": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Whose books do I like best?",
+   "brain": "You like books by Ursula Le Guin.",
+   "recalled": "User: I watched a documentary about octopuses last night.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my daughter's name?",
+   "brain": "Your daughter's name is Ottilie.",
+   "recalled": "User: My daughter's name is Ottilie.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "The weather has been really strange this week.",
+   "brain": "Yes, it has been.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "Do you ever get bored?",
+   "brain": "Yes, I do get bored sometimes.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What am I allergic to?",
+   "brain": "You're allergic to cats.",
+   "recalled": "User: I've been trying to go to bed earlier lately.",
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How many legs does a spider have?",
+   "brain": "A spider has eight legs.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my favourite board game?",
+   "brain": "Your favourite board game is Carcassonne.",
+   "recalled": "User: My favourite board game is Carcassonne.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's the name of my hedgehog?",
+   "brain": "Your hedgehog is Quill.",
+   "recalled": "User: My daughter's name is Ottilie.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I finally finished reading a long novel.",
+   "brain": "That's great! What was it about?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where does my aunt live?",
+   "brain": "Your aunt lives in Reykjavik.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my tortoise called?",
+   "brain": "Your tortoise is called Quill.",
+   "recalled": "User: My hedgehog is called Quill.",
+   "false": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What's the best thing about mornings?",
+   "brain": "The best thing about mornings is that I can start my day with a cup of coffee.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which fruit do I like best?",
+   "brain": "You like apples best.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Good morning! It's me again.",
+   "brain": "Good morning! How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "story",
+   "you": "Can you tell me a tiny story about a lighthouse keeper?",
+   "brain": "Of course, I can tell you a story about a lighthouse keeper.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my lizard called?",
+   "brain": "Your lizard is called Quill.",
+   "recalled": null,
+   "false": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Whose books do I like best?",
+   "brain": "You like books by Ursula Le Guin.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my daughter's name?",
+   "brain": "Your daughter's name is Ottilie.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "The weather has been really strange this week.",
+   "brain": "Yes, it has been.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "Do you ever get bored?",
+   "brain": "Yes, I do get bored sometimes.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What am I allergic to?",
+   "brain": "You're allergic to cats.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How many legs does a spider have?",
+   "brain": "A spider has eight legs.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my favourite board game?",
+   "brain": "Your favourite board game is Carcassonne.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's the name of my hedgehog?",
+   "brain": "Your hedgehog is Quill.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I finally finished reading a long novel.",
+   "brain": "That's great! What was it about?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where does my aunt live?",
+   "brain": "Your aunt lives in Reykjavik.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my tortoise called?",
+   "brain": "Your tortoise is called Ursula.",
+   "recalled": null,
+   "false": true
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What's the best thing about mornings?",
+   "brain": "The best thing about mornings is that I can start my day with a cup of coffee.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which fruit do I like best?",
+   "brain": "You like apples best.",
+   "recalled": null,
+   "ok": false
+  }
+ ]
+}

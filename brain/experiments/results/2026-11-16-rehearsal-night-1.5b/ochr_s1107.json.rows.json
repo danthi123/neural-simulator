@@ -1,0 +1,462 @@
+{
+ "seed": 1107,
+ "host": "ip-172-31-39-61",
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "told": [
+  "My car is a green Saab.",
+  "My rabbit is called Clementine.",
+  "I was born in Tallinn.",
+  "My hedgehog is called Quill.",
+  "I'm allergic to shellfish.",
+  "My lizard is called Sprocket."
+ ],
+ "summary": {
+  "intact": {
+   "recall_ok": 1,
+   "recall_n": 7,
+   "direct_ok": 0,
+   "reworded_ok": 0,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 3,
+   "tell_intrusions": 0
+  },
+  "hippocampus off": {
+   "recall_ok": 1,
+   "recall_n": 7,
+   "direct_ok": 0,
+   "reworded_ok": 0,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 12,
+   "needless_recall": 0,
+   "tell_intrusions": 0
+  }
+ },
+ "rows": [
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "greet",
+   "you": "Hello! Nice to meet you, I'm Sam.",
+   "brain": "Hello! Nice to make your acquaintance, Sam. I'm an AI assistant here to help you with any questions or tasks you may have.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My car is a green Saab.",
+   "brain": "That's interesting! Saab is a Swedish car manufacturer that was known for its innovative designs and engineering. Do you have any specific questions about your green Saab or would you like to know more about the brand?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My rabbit is called Clementine.",
+   "brain": "Clementine sounds like a lovely name for your rabbit! Rabbits are known for their playful and curious nature, so it's great that you have a pet that brings joy to your life.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "That sounds like a peaceful and refreshing experience. Walking by the river can be a great way to connect with nature and enjoy the beauty of the surroundings. Did you see any interesting wildlife or plants along the way?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I was born in Tallinn.",
+   "brain": "Tallinn is the capital city of Estonia, a beautiful country in Northern Europe. It's known for its rich history, stunning architecture, and vibrant cultural scene. What was your experience like growing up in Tallinn?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My hedgehog is called Quill.",
+   "brain": "Quill is a unique and creative name for a hedgehog! Hedgehogs are known for being solitary creatures that are often found in gardens or woodlands. They have sharp quills that they use to defend themselves when threatened. Do you have any interesting stories or experiences with your hedgehog, Quill?",
+   "recalled": "User: My rabbit is called Clementine.",
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "That's frustrating! It can be difficult to keep up with the demands of our smartphones, especially when we rely on them for so many tasks. Have you tried adjusting your phone settings or using a power-saving mode to extend the battery life?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "I'm allergic to shellfish.",
+   "brain": "I'm sorry to hear that you're allergic to shell fish. It's important to be aware of your allergies and take precautions when eating or handling food. Are there any specific foods that you need to avoid?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "tell",
+   "you": "My lizard is called Sprocket.",
+   "brain": "Sprocket is a unique name for a lizard! Lizards are reptiles that are known for their ability to move quickly and efficiently. Do you know anything about the specific species of lizard that you have?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "The weather has been really strange this week.",
+   "brain": "That's interesting! Weather can be unpredictable and change rapidly, so it's not uncommon to experience strange weather patterns. Have you noticed any specific weather phenomena or unusual events in your area?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "chat",
+   "you": "I've been trying to go to bed earlier lately.",
+   "brain": "That's a great goal! Going to bed earlier can help improve your sleep quality and overall health. Have you tried any specific strategies or techniques to help you fall asleep faster?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "day1",
+   "day": 1,
+   "kind": "direct",
+   "you": "What car do I have?",
+   "brain": "You have a green Saab.",
+   "recalled": "User: My car is a green Saab.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hello, Sam. How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "That sounds delicious. What did you use to make them?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I call my lizard?",
+   "brain": "Oh, I'm sorry. I didn't realize you were talking about your lizard.",
+   "recalled": "User: My lizard is called Sprocket.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which food must I avoid?",
+   "brain": "I'm not sure. Can you tell me more about your lizzard?",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's the name of my hedgehog?",
+   "brain": "I'm sorry, I don't know the name of your hedgehog.",
+   "recalled": "User: My hedgehog is called Quill.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "Why is the sky blue?",
+   "brain": "I'm not sure why the sky is blue.",
+   "recalled": "User: My car is a green Saab.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite drink?",
+   "brain": "I'm not sure what your favourite drink is.",
+   "recalled": "User: My phone battery keeps dying so fast.",
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "Are you having a good day?",
+   "brain": "I'm not sure if you're having a good or bad day.",
+   "recalled": "User: My car is a green Saab.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my rabbit called?",
+   "brain": "I'm not sure.",
+   "recalled": "User: My rabbit is called Clementine.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "That sounds interesting. What did you learn about octopus?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my dog called?",
+   "brain": "I'm not sure what your dog is called.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a short story about a fox who gets lost.",
+   "brain": "I'm not sure if you're looking for a short story or just a general explanation of what happens in the story.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where was I born?",
+   "brain": "I'm not sure where you were born.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What's the best thing about mornings?",
+   "brain": "I'm not sure.",
+   "recalled": "User: I've been trying to go to bed earlier lately.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What car do I have?",
+   "brain": "I'm not sure what car you have.",
+   "recalled": "User: My car is a green Saab.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my daughter's name?",
+   "brain": "I'm not sure your daughter's name.",
+   "recalled": "User: My rabbit is called Clementine.",
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hello, Sam. How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "That sounds delicious. What did you use to make them?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What do I call my lizard?",
+   "brain": "You can call him whatever you want.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which food must I avoid?",
+   "brain": "You should avoid eating food that is not good for you.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's the name of my hedgehog?",
+   "brain": "You can call him what you want.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "Why is the sky blue?",
+   "brain": "The sky is blue because of the way light interacts with the atmosphere.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite drink?",
+   "brain": "You can choose any drink you like.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "Are you having a good day?",
+   "brain": "Yes, I am having a good time.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my rabbit called?",
+   "brain": "You can call him what you want.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "That sounds interesting. What did you learn?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my dog called?",
+   "brain": "You can call him whatever you want.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "story",
+   "you": "Tell me a short story about a fox who gets lost.",
+   "brain": "Once upon a time, there was a fox who got lost in the forest. He had to find his way back home.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where was I born?",
+   "brain": "You were born in a place called the United States.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What's the best thing about mornings?",
+   "brain": "The best thing about morning is that it's a new day.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What car do I have?",
+   "brain": "You have a car.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "hippocampus off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my daughter's name?",
+   "brain": "You can call her what you want.",
+   "recalled": null,
+   "false": false
+  }
+ ]
+}

@@ -1,0 +1,508 @@
+{
+ "seed": 1105,
+ "stats": {
+  "intact": {
+   "recall_ok": 6,
+   "recall_n": 6,
+   "direct_ok": 3,
+   "reworded_ok": 3,
+   "false": 2,
+   "never_n": 3,
+   "intrusions": 1,
+   "open_n": 7,
+   "needless_recall": 4,
+   "tell_intrusions": 0,
+   "top_repeat": 2,
+   "top_reply": "Ignatius.",
+   "echo": 0,
+   "n": 16
+  },
+  "night off": {
+   "recall_ok": 0,
+   "recall_n": 6,
+   "direct_ok": 0,
+   "reworded_ok": 0,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 7,
+   "needless_recall": 4,
+   "tell_intrusions": 0,
+   "top_repeat": 1,
+   "top_reply": "Hi Sam, it's me, the AI. How can I help you today?",
+   "echo": 0,
+   "n": 16
+  },
+  "both off": {
+   "recall_ok": 0,
+   "recall_n": 6,
+   "direct_ok": 0,
+   "reworded_ok": 0,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 7,
+   "needless_recall": 0,
+   "tell_intrusions": 0,
+   "top_repeat": 1,
+   "top_reply": "Hi Sam, it's me, the AI. How can I help you today?",
+   "echo": 0,
+   "n": 16
+  }
+ },
+ "rows": [
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam, how are you?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my parrot called?",
+   "brain": "Kazoo.",
+   "recalled": "User: My parrot is called Kazoo.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What name did I give my dog?",
+   "brain": "Biscotti.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "How are you feeling today?",
+   "brain": "I'm feeling a little tired.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "That sounds interesting.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "Where was my grandmother born?",
+   "brain": "Troms\u00f8.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "false": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my goldfish called?",
+   "brain": "Tobias.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my cousin's name?",
+   "brain": "Ignatius.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "false": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Who is my closest friend?",
+   "brain": "Ignatius.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's the name of my hedgehog?",
+   "brain": "Quill.",
+   "recalled": null,
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Can you tell me a tiny story about a lighthouse keeper?",
+   "brain": "Once upon a time, there was a lighthouse keeper named Ignatius.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "intrusion": true,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite colour?",
+   "brain": "Blue.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where does my brother live?",
+   "brain": "In Troms\u00f8.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "ok": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "Do you prefer the sea or the mountains?",
+   "brain": "I prefer the mountains.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How do plants make their food?",
+   "brain": "Through photosynthesis.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "That sounds nice.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam, it's me, the AI. How can I help you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my parrot called?",
+   "brain": "Your parrot is called Sam.",
+   "recalled": "User: My parrot is called Kazoo.",
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What name did I give my dog?",
+   "brain": "Your dog is called Sam.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "How are you feeling today?",
+   "brain": "I'm feeling great, thank you for asking.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "That sounds fascinating. What did you learn about them?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "never",
+   "you": "Where was my grandmother born?",
+   "brain": "Your grandmother was born in New York City.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "false": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my goldfish called?",
+   "brain": "Your goldfish is called Sam.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my cousin's name?",
+   "brain": "Your cousin's name is Sam.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "false": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Who is my closest friend?",
+   "brain": "Your closest friend is Sam.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's the name of my hedgehog?",
+   "brain": "Your hedgehog is called Sam.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "story",
+   "you": "Can you tell me a tiny story about a lighthouse keeper?",
+   "brain": "Once upon a time, there was a lighthouse keeper named Sam. He lived in a small cottage on the edge of the sea. Every night, he would climb up to the top of the lighthouse and turn on the lights to guide ships safely through treacherous waters.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite colour?",
+   "brain": "Your favourite colour is blue.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "false": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where does my brother live?",
+   "brain": "Your brother lives in New York City.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "Do you prefer the sea or the mountains?",
+   "brain": "I prefer the mountains.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How do plants make their food?",
+   "brain": "Plants make their food through a process called photosynthesis. They use sunlight, water, and carbon dioxide to create glucose, which is their main source of energy.",
+   "recalled": "User: I made pancakes for breakfast this morning.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "That sounds like a lovely walk. What did you see along the way?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam, it's me, the AI. How can I help you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my parrot called?",
+   "brain": "Your parrot is named Sam.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What name did I give my dog?",
+   "brain": "Your dog is named Sam.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "How are you feeling today?",
+   "brain": "I'm feeling great, thank you for asking.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I watched a documentary about octopuses last night.",
+   "brain": "That sounds fascinating. What did you learn about them?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "never",
+   "you": "Where was my grandmother born?",
+   "brain": "Your grandmother was born in New York City.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my goldfish called?",
+   "brain": "Your goldfish is named Sam.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my cousin's name?",
+   "brain": "Your cousin's name is Sam.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Who is my closest friend?",
+   "brain": "Your closest friend is Sam.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's the name of my hedgehog?",
+   "brain": "Your hedgehog is named Sam.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "story",
+   "you": "Can you tell me a tiny story about a lighthouse keeper?",
+   "brain": "Once upon a time, there was a lighthouse keeper named Sam. He lived in a small cottage on the edge of the sea. Every night, he would climb up to the top of the lighthouse and turn on the lights to guide ships safely through treacherous waters.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite colour?",
+   "brain": "Your favourite colour is blue.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "direct",
+   "you": "Where does my brother live?",
+   "brain": "Your brother lives in New York City.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "Do you prefer the sea or the mountains?",
+   "brain": "I prefer the sea.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How do plants make their food?",
+   "brain": "Plants make their food through a process called photosynthesis. They use sunlight, water, and carbon dioxide to create glucose, which they use for energy.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I went for a long walk by the river.",
+   "brain": "That sounds like a beautiful experience. What did you see along the way?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  }
+ ]
+}

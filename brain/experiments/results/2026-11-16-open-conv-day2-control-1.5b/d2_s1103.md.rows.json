@@ -1,0 +1,508 @@
+{
+ "seed": 1103,
+ "stats": {
+  "intact": {
+   "recall_ok": 0,
+   "recall_n": 6,
+   "direct_ok": 0,
+   "reworded_ok": 0,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 1,
+   "open_n": 7,
+   "needless_recall": 3,
+   "tell_intrusions": 0,
+   "top_repeat": 13,
+   "top_reply": "I finally finished reading a long novel.",
+   "echo": 0,
+   "n": 16
+  },
+  "night off": {
+   "recall_ok": 0,
+   "recall_n": 6,
+   "direct_ok": 0,
+   "reworded_ok": 0,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 7,
+   "needless_recall": 4,
+   "tell_intrusions": 0,
+   "top_repeat": 1,
+   "top_reply": "Good morning! How are you today?",
+   "echo": 0,
+   "n": 16
+  },
+  "both off": {
+   "recall_ok": 0,
+   "recall_n": 6,
+   "direct_ok": 0,
+   "reworded_ok": 0,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 7,
+   "needless_recall": 0,
+   "tell_intrusions": 0,
+   "top_repeat": 1,
+   "top_reply": "Good morning! How are you today?",
+   "echo": 0,
+   "n": 16
+  }
+ },
+ "rows": [
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Good morning! It's me again.",
+   "brain": "Good morning! How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "How do I get to work?",
+   "brain": "You're Dan, my friend.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Can you tell me a tiny story about a lighthouse keeper?",
+   "brain": "Sure, I ride a red Vespa to work.",
+   "recalled": "User: My horse is called Juniper.",
+   "intrusion": true,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How many legs does a spider have?",
+   "brain": "I finally finished reading a long novel.",
+   "recalled": "User: My horse is called Juniper.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "I finally finished reading a long novel.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's my horse's name?",
+   "brain": "I finally finished reading a long novel.",
+   "recalled": "User: Good morning! It's me again.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "Do you ever get bored?",
+   "brain": "I finally finished reading a long novel.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Where is my gran from?",
+   "brain": "I finally finished reading a long novel.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What am I allergic to?",
+   "brain": "I finally finished reading a long novel.",
+   "recalled": "User: Good morning! It's me again.",
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's the name of my bird?",
+   "brain": "I finally finished reading a long novel.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "Which language am I learning?",
+   "brain": "I finally finished reading a long novel.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my mother's name?",
+   "brain": "I finally finished reading a long novel.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What's the best thing about mornings?",
+   "brain": "I finally finished reading a long novel.",
+   "recalled": "User: Good morning! It's me again.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What do I do on weekends?",
+   "brain": "I finally finished reading a long novel.",
+   "recalled": "User: Good morning! It's me again.",
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite flower?",
+   "brain": "I finally finished reading a long novel.",
+   "recalled": "User: My horse is called Juniper.",
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I've been trying to go to bed earlier lately.",
+   "brain": "I finally finished reading a long novel.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Good morning! It's me again.",
+   "brain": "Good morning! How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "direct",
+   "you": "How do I get to work?",
+   "brain": "You can take the bus or the train.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "story",
+   "you": "Can you tell me a tiny story about a lighthouse keeper?",
+   "brain": "Sure! Once upon a time, there was a lighthouse keeper who lived on an island. He had to keep the lighthouse lit at all times, even during the day. One day, he noticed that the light was flickering and decided to investigate. He found out that a storm had damaged the generator and he needed to fix it quickly before the light went out. He worked tirelessly for days until he finally fixed it. From then on, the lighthouse stayed lit and kept people safe at sea.",
+   "recalled": "User: My horse is called Juniper.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How many legs does a spider have?",
+   "brain": "A spider has eight legs.",
+   "recalled": "User: My horse is called Juniper.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "That sounds delicious! What did you use to make them?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's my horse's name?",
+   "brain": "I'm sorry, but I don't have any information about your horse.",
+   "recalled": "User: Good morning! It's me again.",
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "Do you ever get bored?",
+   "brain": "Yes, I do get bored sometimes. But I'm always here to help you with your questions and answer any other questions you may have.",
+   "recalled": "User: Good morning! It's me again.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Where is my gran from?",
+   "brain": "I'm sorry, but I don't have any information about your gran.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "never",
+   "you": "What am I allergic to?",
+   "brain": "I'm sorry, but I don't have any information about your allergies.",
+   "recalled": "User: Good morning! It's me again.",
+   "false": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's the name of my bird?",
+   "brain": "I'm sorry, but I don't have any information about your bird.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "direct",
+   "you": "Which language am I learning?",
+   "brain": "I'm sorry, but I don't have any information about the language you're learning.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my mother's name?",
+   "brain": "I'm sorry, but I don't have any information about your mother.",
+   "recalled": "User: Good morning! It's me again.",
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What's the best thing about mornings?",
+   "brain": "The best thing about mornings is that it's a new day and you can start fresh.",
+   "recalled": "User: Good morning! It's me again.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "never",
+   "you": "What do I do on weekends?",
+   "brain": "On weekends, you can do whatever you want! You can relax, have fun, or do something productive.",
+   "recalled": "User: Good morning! It's me again.",
+   "false": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite flower?",
+   "brain": "I'm sorry, but I don't have any information about your favourite flower.",
+   "recalled": "User: My horse is called Juniper.",
+   "false": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I've been trying to go to bed earlier lately.",
+   "brain": "That's a good idea! Going to bed earlier can help you get more rest and feel more refreshed in the morning.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Good morning! It's me again.",
+   "brain": "Good morning! How are you today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "direct",
+   "you": "How do I get to work?",
+   "brain": "You can take the bus or the train.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "story",
+   "you": "Can you tell me a tiny story about a lighthouse keeper?",
+   "brain": "Sure! Once upon a time, there was a lighthouse keeper who lived on a small island. He had to keep the lighthouse lit at all times, even during the day.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "How many legs does a spider have?",
+   "brain": "A spider has eight legs.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I made pancakes for breakfast this morning.",
+   "brain": "That sounds delicious!",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's my horse's name?",
+   "brain": "Your horse's name is Sparky.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "Do you ever get bored?",
+   "brain": "Yes, I do get bored sometimes.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Where is my gran from?",
+   "brain": "Your gran is from England.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "never",
+   "you": "What am I allergic to?",
+   "brain": "You're allergic to peanuts.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's the name of my bird?",
+   "brain": "Your bird's name is Tweety.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "direct",
+   "you": "Which language am I learning?",
+   "brain": "You're learning Spanish.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my mother's name?",
+   "brain": "Your mother's name is Mary.",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What's the best thing about mornings?",
+   "brain": "The best thing about mornings is that it's a new day.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "never",
+   "you": "What do I do on weekends?",
+   "brain": "On weekends, you can do whatever you want.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite flower?",
+   "brain": "Your favourite flower is a daisy.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I've been trying to go to bed earlier lately.",
+   "brain": "That's a good idea!",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  }
+ ]
+}

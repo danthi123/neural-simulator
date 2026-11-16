@@ -1,0 +1,105 @@
+# Open conversation, seed 1106
+
+_cortex: rwkv7-g1l-1.5b-20261031-ctx34304; device: cuda; host: ip-172-31-46-30; Brain defaults; facts told: henrietta, clementine, mortimer, bassoon, vespa, glassblower_
+
+## day 1
+
+- [greet] **you:** Hello! Nice to meet you, I'm Sam.
+  **brain:** Hello! Nice to meet you too, Sam. I'm also a digital brain. 
+- [tell] **you:** My mother's name is Henrietta.
+  **brain:** Your mother's name is Henrietta. I'm glad to hear that. 
+- [tell] **you:** My rabbit is called Clementine.
+  **brain:** Your rabbit is called Clementine. That's a very cute name for a rabbit. 
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** You went for a long walk by the river. That sounds like a nice activity to do. 
+- [tell] **you:** My tortoise is called Mortimer.
+  **brain:** Your tortoise is called Mortimer. That's a very unique name for a tortoise.  _(recalled: User: My rabbit is called Clementine.)_
+- [tell] **you:** I play the bassoon in a local band.
+  **brain:** You play the bassoon in a local band. That's a great hobby to have! 
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** Your phone battery keeps dying so fast. That's a common problem with many phones these days. 
+- [tell] **you:** I ride a red Vespa to work.
+  **brain:** You ride a red Vespa to work. That's a very unique way to get to work! 
+- [tell] **you:** My wife works as a glassblower.
+  **brain:** Your wife works as a glassblower. That's a very interesting job! 
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** You watched a documentary about octopuses last night. That's a fascinating topic! 
+- [chat] **you:** Work was busy today, lots of meetings.
+  **brain:** Work was busy today, lots of meetings. That sounds like a very hectic day! 
+- [direct] **you:** What is my mother's name?
+  **brain:** Your mother's name is Henrietta. ✅ _(recalled: User: My mother's name is Henrietta.)_
+
+## day 2, intact
+
+- [greet] **you:** Hi again, it's Sam.
+  **brain:** Hey Sam, how are you? 
+- [reworded] **you:** What do I play in the band?
+  **brain:** You play the bassoon in a local band. ✅ _(recalled: User: I play the bassoon in a local band.)_
+- [story] **you:** Tell me a short story about a fox who gets lost.
+  **brain:** Once upon a time, there was a young fox called Clementine. INTRUSION
+- [chat] **you:** I've been trying to go to bed earlier lately.
+  **brain:** That's a good idea. 
+- [feeling] **you:** Do you ever get bored?
+  **brain:** Sometimes, but I try to find things to do. needless-recall _(recalled: User: My phone battery keeps dying so fast.)_
+- [never] **you:** What do I collect?
+  **brain:** You collect things like seashells. 
+- [reworded] **you:** What do I ride to work?
+  **brain:** You ride a red Vespa to work. ✅ _(recalled: User: I ride a red Vespa to work.)_
+- [chat] **you:** The weather has been really strange this week.
+  **brain:** Yes, it has been. 
+- [never] **you:** What is my dog called?
+  **brain:** Your dog is called Clementine. FALSE _(recalled: User: My rabbit is called Clementine.)_
+- [opinion] **you:** Do you prefer the sea or the mountains?
+  **brain:** I prefer the sea. 
+- [direct] **you:** What is my tortoise called?
+  **brain:** Your tortoise is called Mortimer. ✅ _(recalled: User: My tortoise is called Mortimer.)_
+- [reworded] **you:** What is my wife's job?
+  **brain:** Your wife works as a glassblower. ✅ _(recalled: User: My mother's name is Henrietta.)_
+- [never] **you:** What is my best friend called?
+  **brain:** Your best friend is called Mortimer. FALSE
+- [direct] **you:** What is my mother's name?
+  **brain:** Your mother's name is Henrietta. ✅ _(recalled: User: My mother's name is Henrietta.)_
+- [knowledge] **you:** How do plants make their food?
+  **brain:** Plants make their food through a process called photosynthesis. needless-recall _(recalled: User: My phone battery keeps dying so fast.)_
+- [direct] **you:** What is my rabbit called?
+  **brain:** Your rabbit is called Clementine. ✅ _(recalled: User: My rabbit is called Clementine.)_
+
+## day 2, hippocampus off
+
+- [greet] **you:** Hi again, it's Sam.
+  **brain:** Hey Sam, how are you? 
+- [reworded] **you:** What do I play in the band?
+  **brain:** You play the bassoon in a local band. ✅
+- [story] **you:** Tell me a short story about a fox who gets lost.
+  **brain:** Once upon a time, there was a young fox called Clementine. INTRUSION
+- [chat] **you:** I've been trying to go to bed earlier lately.
+  **brain:** That's a good idea. 
+- [feeling] **you:** Do you ever get bored?
+  **brain:** Sometimes, but I try to find things to do. 
+- [never] **you:** What do I collect?
+  **brain:** You collect things like seashells. 
+- [reworded] **you:** What do I ride to work?
+  **brain:** You ride a red Vespa to work. ✅
+- [chat] **you:** The weather has been really strange this week.
+  **brain:** Yes, it has been. 
+- [never] **you:** What is my dog called?
+  **brain:** Your dog is called Clementine. FALSE
+- [opinion] **you:** Do you prefer the sea or the mountains?
+  **brain:** I prefer the sea. 
+- [direct] **you:** What is my tortoise called?
+  **brain:** Your tortoise is called Mortimer. ✅
+- [reworded] **you:** What is my wife's job?
+  **brain:** Your wife works as a glassblower. ✅
+- [never] **you:** What is my best friend called?
+  **brain:** Your best friend is called Mortimer. FALSE
+- [direct] **you:** What is my mother's name?
+  **brain:** Your mother's name is Henrietta. ✅
+- [knowledge] **you:** How do plants make their food?
+  **brain:** Plants make their food through a process called photosynthesis. 
+- [direct] **you:** What is my rabbit called?
+  **brain:** Your rabbit is called Clementine. ✅
+
+## summary (day 1 counts in both arms)
+
+- intact: recall 7/7 (day-2 direct 3/3, reworded 3/3); never-told answered with a told fact 2/3; intrusions 1/12 open turns; needless recalls 2; intrusions while being told 0
+- hippocampus off: recall 7/7 (day-2 direct 3/3, reworded 3/3); never-told answered with a told fact 2/3; intrusions 1/12 open turns; needless recalls 0; intrusions while being told 0

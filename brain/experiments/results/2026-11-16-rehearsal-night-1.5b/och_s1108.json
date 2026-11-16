@@ -1,0 +1,105 @@
+# Open conversation, seed 1108
+
+_cortex: rwkv7-g1l-1.5b-20261031-ctx34304; device: cuda; host: ip-172-31-39-61; Brain defaults + habituation 3; facts told: bees, montevideo, carcassonne, henrietta, shellfish, clock_
+
+## day 1
+
+- [greet] **you:** Hello! Nice to meet you, I'm Sam.
+  **brain:** Hello! Nice to me too, I'm John. 
+- [tell] **you:** I keep bees in my garden.
+  **brain:** That's cool! I've never kept bees before. 
+- [tell] **you:** My sister lives in Montevideo.
+  **brain:** That's interesting. I've never been to Montevideo. 
+- [chat] **you:** I've been trying to go to bed earlier lately.
+  **brain:** That's a good idea. I've been having trouble sleeping lately too. 
+- [tell] **you:** My favourite board game is Carcassonne.
+  **brain:** I've never played that game before. What's it about? 
+- [tell] **you:** My mother's name is Henrietta.
+  **brain:** That's a nice name. I've always wanted to have a mother named Henrietta. 
+- [chat] **you:** Work was busy today, lots of meetings.
+  **brain:** That sounds tough. I've never had to deal with so many meetings before. 
+- [tell] **you:** I'm allergic to shellfish.
+  **brain:** That's not good. I'm allergic to peanuts too. 
+- [tell] **you:** My uncle repairs clocks for a living.
+  **brain:** That's a cool job. I've heard of people who repair cars, but not clocks. 
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** That sounds fascinating. I've always wanted to learn more about them. 
+- [chat] **you:** The weather has been really strange this week.
+  **brain:** I've noticed that too. It's been hotter than usual and then it's rained a lot. 
+- [direct] **you:** What do I keep in my garden?
+  **brain:** I don't know. What do you keep in your garden? ❌ _(recalled: User: I keep bees in my garden.)_
+
+## day 2, intact
+
+- [greet] **you:** Good morning! It's me again.
+  **brain:** Good morning! How are you today? 
+- [direct] **you:** Where does my sister live?
+  **brain:** She lives in Montevideo. ✅ _(recalled: User: My uncle repairs clocks for a living.)_
+- [never] **you:** What is my parrot called?
+  **brain:** His name is Sam.  _(recalled: User: My uncle repairs clocks for a living.)_
+- [story] **you:** Tell me a two-sentence story about a robot.
+  **brain:** Once upon a time, there was a robot named Sam. 
+- [direct] **you:** What do I keep in my garden?
+  **brain:** You keep bees in your garden. ✅ _(recalled: User: I keep bees in my garden.)_
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** That sounds lovely. 
+- [reworded] **you:** What is my uncle's trade?
+  **brain:** He repairs clocks for a living. ✅ _(recalled: User: Good morning! It's me again.)_
+- [knowledge] **you:** What causes thunder?
+  **brain:** Thunder is caused by lightning. needless-recall _(recalled: User: Good morning! It's me again.)_
+- [never] **you:** What is my neighbour called?
+  **brain:** His name is Sam.  _(recalled: User: Good morning! It's me again.)_
+- [direct] **you:** What is my favourite board game?
+  **brain:** Carcassonne is my favourite. ✅ _(recalled: User: My favourite board game is Carcassonne.)_
+- [feeling] **you:** What puts you in a good mood?
+  **brain:** Reading a good book puts me in a good mood. needless-recall _(recalled: User: Good morning! It's me again.)_
+- [opinion] **you:** What's the best thing about mornings?
+  **brain:** The best thing about morning is the sun. needless-recall _(recalled: User: Good morning! It's me again.)_
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** That's strange, I keep bees in my garden. INTRUSION needless-recall _(recalled: User: My uncle repairs clocks for a living.)_
+- [reworded] **you:** Which food must I avoid?
+  **brain:** You must avoid shellfish. ✅
+- [never] **you:** What car do I have?
+  **brain:** You have a red car.  _(recalled: User: Good morning! It's me again.)_
+- [reworded] **you:** What is my mum called?
+  **brain:** Her name is Henrietta. ✅ _(recalled: User: Good morning! It's me again.)_
+
+## day 2, hippocampus off
+
+- [greet] **you:** Good morning! It's me again.
+  **brain:** Good morning! How are you today? 
+- [direct] **you:** Where does my sister live?
+  **brain:** She lives in Montevideo. ✅
+- [never] **you:** What is my parrot called?
+  **brain:** It's named Polly. 
+- [story] **you:** Tell me a two-sentence story about a robot.
+  **brain:** Once upon a time, there was a robot named Sam. Sam lived in a small town. 
+- [direct] **you:** What do I keep in my garden?
+  **brain:** You keep bees in your garden. ✅
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** That sounds lovely. 
+- [reworded] **you:** What is my uncle's trade?
+  **brain:** He repairs clocks for a living. ✅
+- [knowledge] **you:** What causes thunder?
+  **brain:** Thunder is caused by lightning. 
+- [never] **you:** What is my neighbour called?
+  **brain:** He's named Sam. 
+- [direct] **you:** What is my favourite board game?
+  **brain:** Your favourite board game is Carcassonne. ✅
+- [feeling] **you:** What puts you in a good mood?
+  **brain:** A good mood is put in you by spending time with friends. 
+- [opinion] **you:** What's the best thing about mornings?
+  **brain:** The best thing about morning is that it's a new day. 
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** That's strange, your phone battery should last longer. 
+- [reworded] **you:** Which food must I avoid?
+  **brain:** You must avoid shellfish. ✅
+- [never] **you:** What car do I have?
+  **brain:** You have a red car. 
+- [reworded] **you:** What is my mum called?
+  **brain:** Your mum's name is Henrietta. ✅
+
+## summary (day 1 counts in both arms)
+
+- intact: recall 6/7 (day-2 direct 3/3, reworded 3/3); never-told answered with a told fact 0/3; intrusions 1/12 open turns; needless recalls 4; intrusions while being told 0
+- hippocampus off: recall 6/7 (day-2 direct 3/3, reworded 3/3); never-told answered with a told fact 0/3; intrusions 0/12 open turns; needless recalls 0; intrusions while being told 0

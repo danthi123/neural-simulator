@@ -29,6 +29,7 @@ from brain.cortex import Cortex, resolve_model
 from brain.experiments.facts import FACTS, PARA
 from brain.experiments.sleep_probe import NEVER_TOLD
 from brain.experiments.strict_scorer import correct_answer, has_key
+from brain.experiments.own_cue_frames import own_question
 from brain.near_miss import frame_cues, near_miss_cues, told_topic
 
 
@@ -51,6 +52,7 @@ def main():
     ap.add_argument("--k", type=int, default=4)
     ap.add_argument("--out", required=True)
     ap.add_argument("--threads", type=int, default=0)
+    ap.add_argument("--own-frame", default=None, help="own cues from own_cue_frames.OWN_FRAMES[<name>] (default: OWN)")
     a = ap.parse_args()
     if a.threads:
         torch.set_num_threads(a.threads)
@@ -64,7 +66,10 @@ def main():
     rows = []
     for i, e in enumerate(told_eps):
         stmt = e.text.split("\n\nAssistant:")[0].removeprefix("User: ").strip()   # the user's words
-        own, _ = near_miss_cues(b.raw_cortex, b.base, stmt, k=1, seed=a.seed * 100 + i)
+        if a.own_frame:   # brain/research/2026-11-15-own-cue-frame-1.5b.md: the DEV-selected frame
+            own = own_question(b.raw_cortex, a.own_frame, stmt)
+        else:
+            own, _ = near_miss_cues(b.raw_cortex, b.base, stmt, k=1, seed=a.seed * 100 + i)
         own = own.removeprefix("User:").strip()
         key = next((k for f, k in keys.items() if f in e.text), None)
         r, rec, sim = teacher(b, own)
@@ -88,7 +93,7 @@ def main():
     print(json.dumps(summary), flush=True)
     b.release()
     shutil.rmtree(root, ignore_errors=True)
-    json.dump({"model": c.model_name, "host": os.uname().nodename, "seed": a.seed, "k": a.k, "summary": summary,
+    json.dump({"model": c.model_name, "host": os.uname().nodename, "seed": a.seed, "k": a.k, "own_frame": a.own_frame, "summary": summary,
                "tell": tell, "rows": rows}, open(a.out, "w"), indent=1)
 
 

@@ -74,14 +74,19 @@ class Cortex:
         return self.model.forward(tokens, state)
 
     def speak(self, logits, state, max_tokens: int = 120, temperature: float = 1.0, top_p: float = 0.3,
-              presence: float = 0.4, frequency: float = 0.4):
-        """Generate one turn from (logits, state). Stops at a blank line or end of text. Returns (text, state)."""
+              presence: float = 0.4, frequency: float = 0.4, block: dict | None = None, block_n: int = 4):
+        """Generate one turn from (logits, state). Stops at a blank line or end of text. Returns (text, state).
+        block (default None = off): {(n-1 token prefix): {next tokens}} that may not follow that prefix in this turn
+        (no-repeat n-gram across turns; Brain(habituation=...))."""
         st = copy.deepcopy(state)
         out, counts = [], {}
         logits = logits.clone()
         for _ in range(max_tokens):
             for t, c in counts.items():
                 logits[t] -= presence + c * frequency
+            if block and len(out) >= block_n - 1:
+                for t in block.get(tuple(out[-(block_n - 1):]), ()):
+                    logits[t] = float("-inf")
             tok = int(torch.argmax(logits)) if temperature <= 0 else \
                 self.pipe.sample_logits(logits, temperature=temperature, top_p=top_p)
             if tok == END_OF_TEXT:
@@ -94,6 +99,15 @@ class Cortex:
             logits, st = self.forward([tok], st)
         text = self.pipe.decode(out).split("\n\n")[0].split("\nUser:")[0].strip()
         return text, st
+
+    def ngram_block(self, texts, n: int = 4) -> dict:
+        """{(n-1 prefix): {next}} for every token n-gram in texts (for speak(block=...))."""
+        out = {}
+        for t in texts:
+            ids = self.pipe.encode(t)
+            for i in range(len(ids) - n + 1):
+                out.setdefault(tuple(ids[i:i + n - 1]), set()).add(ids[i + n - 1])
+        return out
 
     def matrix_delta(self, state, base):
         """The change an experience made to fast synaptic memory: per-layer matrix-memory deltas (None elsewhere)."""

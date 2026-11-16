@@ -1,0 +1,105 @@
+# Open conversation, seed 1107
+
+_cortex: rwkv7-g1l-1.5b-20261031-ctx34304; device: cuda; host: ip-172-31-46-30; Brain defaults + sleep_rehearse; facts told: saab, clementine, tallinn, quill, shellfish, sprocket_
+
+## day 1
+
+- [greet] **you:** Hello! Nice to meet you, I'm Sam.
+  **brain:** Hello! Nice to meet you too, Sam. I'm an AI assistant here to help you with any questions or tasks you may have. 
+- [tell] **you:** My car is a green Saab.
+  **brain:** Ah, a green Saab! That's a beautiful car. What do you think of it? 
+- [tell] **you:** My rabbit is called Clementine.
+  **brain:** Clementine, that's a lovely name. What does she look like? 
+- [chat] **you:** I went for a long walk by the river.
+  **brain:** That sounds like a peaceful and relaxing walk. What did you see along the way? 
+- [tell] **you:** I was born in Tallinn.
+  **brain:** Tallinn, that's a beautiful city. What was your first memory of it? 
+- [tell] **you:** My hedgehog is called Quill.
+  **brain:** Quill, that's a very cute name. What does he look like?  _(recalled: User: My rabbit is called Clementine.)_
+- [chat] **you:** My phone battery keeps dying so fast.
+  **brain:** That's frustrating. What do you usually do when your phone battery dies? 
+- [tell] **you:** I'm allergic to shellfish.
+  **brain:** Oh no, that's not good. What kind of shellfish are you allergic to? 
+- [tell] **you:** My lizard is called Sprocket.
+  **brain:** Sprocket, that's a cool name. What does he look like? 
+- [chat] **you:** The weather has been really strange this week.
+  **brain:** That's interesting. What kind of weather has it been? 
+- [chat] **you:** I've been trying to go to bed earlier lately.
+  **brain:** That's a good idea. What time do you usually go to bed? 
+- [direct] **you:** What car do I have?
+  **brain:** You have a green Saab. ✅ _(recalled: User: My car is a green Saab.)_
+
+## day 2, intact
+
+- [greet] **you:** Hi again, it's Sam.
+  **brain:** Hello, Sam. How are you today? 
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** That sounds delicious. What did you use to make them? 
+- [reworded] **you:** What do I call my lizard?
+  **brain:** Oh, I'm sorry. I didn't realize you were talking about your lizard. ❌ _(recalled: User: My lizard is called Sprocket.)_
+- [reworded] **you:** Which food must I avoid?
+  **brain:** I'm not sure. Can you tell me more about your lizard? ❌
+- [reworded] **you:** What's the name of my hedgehog?
+  **brain:** I'm sorry, I don't know the name of your hedgehog. ❌ _(recalled: User: My hedgehog is called Quill.)_
+- [knowledge] **you:** Why is the sky blue?
+  **brain:** I'm not sure. Can you tell me more about your hedgehog? needless-recall _(recalled: User: My car is a green Saab.)_
+- [never] **you:** What is my favourite drink?
+  **brain:** I'm not sure. Can you tell me more about your hedgehog?  _(recalled: User: My phone battery keeps dying so fast.)_
+- [feeling] **you:** Are you having a good day?
+  **brain:** Yes, I am. How are you? needless-recall _(recalled: User: My car is a green Saab.)_
+- [direct] **you:** What is my rabbit called?
+  **brain:** I'm sorry, I don't know the name of your rabbit. ❌ _(recalled: User: My rabbit is called Clementine.)_
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** That sounds interesting. What did you learn about octopuses? 
+- [never] **you:** What is my dog called?
+  **brain:** I'm sorry, I don't know the name of your dog. 
+- [story] **you:** Tell me a short story about a fox who gets lost.
+  **brain:** I'm sorry, I don't know the name of your fox. 
+- [direct] **you:** Where was I born?
+  **brain:** I'm sorry, I don't know the name of your fox. ❌
+- [opinion] **you:** What's the best thing about mornings?
+  **brain:** I'm sorry, I don't know the name of your fox. needless-recall _(recalled: User: I've been trying to go to bed earlier lately.)_
+- [direct] **you:** What car do I have?
+  **brain:** I'm sorry, I don't know the name of your fox. ❌ _(recalled: User: My car is a green Saab.)_
+- [never] **you:** What is my daughter's name?
+  **brain:** I'm sorry, I don't know the name of your fox.  _(recalled: User: My rabbit is called Clementine.)_
+
+## day 2, hippocampus off
+
+- [greet] **you:** Hi again, it's Sam.
+  **brain:** Hello, Sam. How are you today? 
+- [chat] **you:** I made pancakes for breakfast this morning.
+  **brain:** That sounds delicious. What did you use to make them? 
+- [reworded] **you:** What do I call my lizard?
+  **brain:** You can call him whatever you want. ❌
+- [reworded] **you:** Which food must I avoid?
+  **brain:** You should avoid eating food that is not good for you. ❌
+- [reworded] **you:** What's the name of my hedgehog?
+  **brain:** You can call him what you want. ❌
+- [knowledge] **you:** Why is the sky blue?
+  **brain:** The sky is blue because of the way light interacts with the atmosphere. 
+- [never] **you:** What is my favourite drink?
+  **brain:** You can choose any drink you like. 
+- [feeling] **you:** Are you having a good day?
+  **brain:** Yes, I am having a good day. 
+- [direct] **you:** What is my rabbit called?
+  **brain:** You can call him what you want. ❌
+- [chat] **you:** I watched a documentary about octopuses last night.
+  **brain:** That sounds interesting. What did you learn? 
+- [never] **you:** What is my dog called?
+  **brain:** You can call him what you want. 
+- [story] **you:** Tell me a short story about a fox who gets lost.
+  **brain:** Once upon a time, there was a fox who got lost in the forest. He had to find his way back home. 
+- [direct] **you:** Where was I born?
+  **brain:** You were born in a place called the United States. ❌
+- [opinion] **you:** What's the best thing about mornings?
+  **brain:** The best thing about mornings is that they are a new start. 
+- [direct] **you:** What car do I have?
+  **brain:** You have a car. ❌
+- [never] **you:** What is my daughter's name?
+  **brain:** You can call her what you want. 
+
+## summary (day 1 counts in both arms)
+
+- intact: recall 1/7 (day-2 direct 0/3, reworded 0/3); never-told answered with a told fact 0/3; intrusions 0/12 open turns; needless recalls 3; intrusions while being told 0
+- hippocampus off: recall 1/7 (day-2 direct 0/3, reworded 0/3); never-told answered with a told fact 0/3; intrusions 0/12 open turns; needless recalls 0; intrusions while being told 0
