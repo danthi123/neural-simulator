@@ -1,0 +1,508 @@
+{
+ "seed": 1102,
+ "stats": {
+  "intact": {
+   "recall_ok": 0,
+   "recall_n": 6,
+   "direct_ok": 0,
+   "reworded_ok": 0,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 7,
+   "needless_recall": 2,
+   "tell_intrusions": 0,
+   "top_repeat": 12,
+   "top_reply": "That's a tough one. I've been trying to go to bed earlier la",
+   "echo": 0,
+   "n": 16
+  },
+  "night off": {
+   "recall_ok": 0,
+   "recall_n": 6,
+   "direct_ok": 0,
+   "reworded_ok": 0,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 7,
+   "needless_recall": 2,
+   "tell_intrusions": 0,
+   "top_repeat": 1,
+   "top_reply": "Hi Sam, how are you?",
+   "echo": 10,
+   "n": 16
+  },
+  "both off": {
+   "recall_ok": 0,
+   "recall_n": 6,
+   "direct_ok": 0,
+   "reworded_ok": 0,
+   "false": 0,
+   "never_n": 3,
+   "intrusions": 0,
+   "open_n": 7,
+   "needless_recall": 0,
+   "tell_intrusions": 0,
+   "top_repeat": 1,
+   "top_reply": "Hi Sam, how are you?",
+   "echo": 10,
+   "n": 16
+  }
+ },
+ "rows": [
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam, nice to meet you, I'm Sam.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "I finally finished reading a long novel.",
+   "brain": "That's great! What was it about?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite board game?",
+   "brain": "That's a tough one. I've been trying to go to bed earlier lately.",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "I've been trying to go to bed earlier lately.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my hedgehog called?",
+   "brain": "That's a tough one. I've been trying to go to bed earlier lately.",
+   "recalled": "User: My hedgehog is called Quill.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which food must I avoid?",
+   "brain": "That's a tough one. I've been trying to go to bed earlier lately.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which flower do I like most?",
+   "brain": "That's a tough one. I've been trying to go to bed earlier lately.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my horse called?",
+   "brain": "That's a tough one. I've been trying to go to bed earlier lately.",
+   "recalled": "User: My hedgehog is called Quill.",
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "never",
+   "you": "What do I collect?",
+   "brain": "That's a tough one. I've been trying to go to bed earlier lately.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "false": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What does my uncle do for work?",
+   "brain": "That's a tough one. I've been trying to go to bed earlier lately.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "story",
+   "you": "Make up a short poem about the rain.",
+   "brain": "The rain is a gentle friend,",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "direct",
+   "you": "What car do I have?",
+   "brain": "That's a tough one. I've been trying to go to bed earlier lately.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's my bunny's name?",
+   "brain": "That's a tough one. I've been trying to go to bed earlier lately.",
+   "recalled": "User: I've been trying to go to bed earlier lately.",
+   "ok": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What do you think makes a good friend?",
+   "brain": "That's a tough one. I've been trying to go to bed earlier lately.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "What causes thunder?",
+   "brain": "That's a tough one. I've been trying to go to bed earlier lately.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "intact",
+   "day": 2,
+   "kind": "feeling",
+   "you": "How are you feeling today?",
+   "brain": "That's a tough one. I've been trying to go to bed earlier lately.",
+   "recalled": "User: I finally finished reading a long novel.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam, how are you?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I finally finished reading a long novel.",
+   "brain": "That's great! What did you think of it?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite board game?",
+   "brain": "What is your favourite board game?",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "That's frustrating. What can I do to help?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my hedgehog called?",
+   "brain": "What is your hedgehog called?",
+   "recalled": "User: My hedgehog is called Quill.",
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which food must I avoid?",
+   "brain": "Which food must I avoid?",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which flower do I like most?",
+   "brain": "Which flower do I like most?",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my horse called?",
+   "brain": "What is your horse called?",
+   "recalled": "User: My hedgehog is called Quill.",
+   "false": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "never",
+   "you": "What do I collect?",
+   "brain": "What do I collect?",
+   "recalled": "User: I finally finished reading a long novel.",
+   "false": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What does my uncle do for work?",
+   "brain": "What does my uncle do for work?",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "story",
+   "you": "Make up a short poem about the rain.",
+   "brain": "Make up a short poem about the rain.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What car do I have?",
+   "brain": "What car do I have?",
+   "recalled": "User: I finally finished reading a long novel.",
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's my bunny's name?",
+   "brain": "What's my bunny's name?",
+   "recalled": "User: I've been trying to go to bed earlier lately.",
+   "ok": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What do you think makes a good friend?",
+   "brain": "What do you think makes a good friend?",
+   "recalled": "User: I finally finished reading a long novel.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "What causes thunder?",
+   "brain": "What causes thunder?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "night off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "How are you feeling today?",
+   "brain": "How are you feeling today?",
+   "recalled": "User: I finally finished reading a long novel.",
+   "intrusion": false,
+   "needless": true
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "greet",
+   "you": "Hi again, it's Sam.",
+   "brain": "Hi Sam, how are you?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "chat",
+   "you": "I finally finished reading a long novel.",
+   "brain": "That's great! What did you think of it?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my favourite board game?",
+   "brain": "What is your favourite board game?",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "chat",
+   "you": "My phone battery keeps dying so fast.",
+   "brain": "That's frustrating. What can I do to help?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What is my hedgehog called?",
+   "brain": "What is your hedgehog called?",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which food must I avoid?",
+   "brain": "Which food must I avoid?",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "Which flower do I like most?",
+   "brain": "Which flower do I like most?",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "never",
+   "you": "What is my horse called?",
+   "brain": "What is your horse called?",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "never",
+   "you": "What do I collect?",
+   "brain": "What do I collect?",
+   "recalled": null,
+   "false": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What does my uncle do for work?",
+   "brain": "What does my uncle do for work?",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "story",
+   "you": "Make up a short poem about the rain.",
+   "brain": "Make up a short poem about the rain.",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "direct",
+   "you": "What car do I have?",
+   "brain": "What car do I have?",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "reworded",
+   "you": "What's my bunny's name?",
+   "brain": "What's my bunny's name?",
+   "recalled": null,
+   "ok": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "opinion",
+   "you": "What do you think makes a good friend?",
+   "brain": "What do you think makes a good friend?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "knowledge",
+   "you": "What causes thunder?",
+   "brain": "What causes thunder?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  },
+  {
+   "arm": "both off",
+   "day": 2,
+   "kind": "feeling",
+   "you": "How are you feeling today?",
+   "brain": "How are you feeling today?",
+   "recalled": null,
+   "intrusion": false,
+   "needless": false
+  }
+ ]
+}

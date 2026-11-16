@@ -1,0 +1,14 @@
+# 2026-11-16 AWS packet 2 for brain/research/2026-11-16-rehearsal-night-1.5b.md (addendum): arms H and HR, seeds 1106-1111.
+#   AWS_BRAIN_MAX_MIN=240 bash tools/aws_brain_batch.sh launch brain/experiments/jobs/2026-11-16-aws-habituation.txt g6.xlarge
+och_s1106 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1106 --homes ../work/och_s1106 --habituation 3
+ochr_s1106 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1106 --homes ../work/ochr_s1106 --habituation 3 --sleep-rehearse
+och_s1107 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1107 --homes ../work/och_s1107 --habituation 3
+ochr_s1107 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1107 --homes ../work/ochr_s1107 --habituation 3 --sleep-rehearse
+och_s1108 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1108 --homes ../work/och_s1108 --habituation 3
+ochr_s1108 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1108 --homes ../work/ochr_s1108 --habituation 3 --sleep-rehearse
+och_s1109 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1109 --homes ../work/och_s1109 --habituation 3
+ochr_s1109 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1109 --homes ../work/ochr_s1109 --habituation 3 --sleep-rehearse
+och_s1110 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1110 --homes ../work/och_s1110 --habituation 3
+ochr_s1110 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1110 --homes ../work/ochr_s1110 --habituation 3 --sleep-rehearse
+och_s1111 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1111 --homes ../work/och_s1111 --habituation 3
+ochr_s1111 brain.eval.open_conv --model ../models/rwkv7-g1l-1.5b-20261031-ctx34304.pth --seed 1111 --homes ../work/ochr_s1111 --habituation 3 --sleep-rehearse

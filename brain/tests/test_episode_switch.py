@@ -148,3 +148,17 @@ def test_sleep_rehearse_guards_replies_to_heard_turns(tmp_path, monkeypatch):
     c.hear("My cat is called Pixel.")
     c.sleep()
     assert seen["guard"] == []
+
+
+def test_habituation_blocks_recent_ngrams(tmp_path):
+    from brain.cortex import Cortex
+    c = StubCortex()
+    blk = Cortex.ngram_block(c, ["abcdef"], n=4)
+    ids = c.pipe.encode("abcdef")
+    assert ids[3] in blk[tuple(ids[:3])]
+    b = Brain(str(tmp_path / "a"), cortex=c, **KW, habituation=3)
+    assert b.habituation == 3
+    b.hear("Hello there.")
+    b.hear("Hello there.")
+    assert len(b._recent_replies) == 2
+    assert Brain(str(tmp_path / "b"), cortex=c, **KW).habituation == 0

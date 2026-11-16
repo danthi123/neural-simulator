@@ -156,7 +156,8 @@ class Brain:
                  key: str | None = None, key_bar: str = "default", gain: str = "auto",
                  episode: str = "tell", speaker_contrast: float = 0.0,
                  near_miss: int = 0, near_miss_frame: str = "N1", near_miss_exclude=None,
-                 self_completion: bool = True, self_key: str = "exchange", sleep_rehearse: bool = False):
+                 self_completion: bool = True, self_key: str = "exchange", sleep_rehearse: bool = False,
+                 habituation: int = 0):
         """cortex_model: checkpoint path or size tag ("0.1b", "1.5b") used when no `cortex` is given; None = the
         default cortex (0.1B). Sleep settings left None come from SLEEP_DEFAULTS for the cortex's size.
         lock: hold <home>/.lock for this object's life (chat and brain.night set it), so two processes never
@@ -193,7 +194,10 @@ class Brain:
         sleep_rehearse: (switch, default OFF) the night also holds, by the second KL term, the pretrained cortex's own
         reply to every user turn heard since birth (near_miss.guard_texts on the told episodes), so replay cannot
         teach the cortex to answer with stored user sentences (results/2026-11-15-open-conv-baseline-1.5b.md: day 2
-        collapses into one repeated sentence on 4/6 seeds). Not saved in the home."""
+        collapses into one repeated sentence on 4/6 seeds). Not saved in the home.
+        habituation: (switch, default OFF = 0) the mouth may not repeat a 4-token sequence from its own last
+        `habituation` replies or from the user's current turn (no-repeat n-gram across turns; a declared scaffold,
+        brain/SCAFFOLDS.md): the cortex's in-context loops (echoing every turn, one line x14) cannot form. Not saved."""
         self.home = home
         self._key_arg = key
         self.key_bar = key_bar
@@ -207,6 +211,8 @@ class Brain:
             raise ValueError(f"self_key must be 'exchange' or 'question', not {self_key!r}")
         self.self_key = self_key
         self.sleep_rehearse = bool(sleep_rehearse)
+        self.habituation = int(habituation)
+        self._recent_replies: list[str] = []
         # Near-miss guard (switch, default OFF = 0; brain/near_miss.py, brain/research/2026-11-14-near-miss-guard-1.5b.md):
         # before each night the pretrained cortex poses near_miss questions per episode about something it was not
         # told, and sleep holds its answers to them by a second KL term. near_miss_exclude: test hygiene only (a probe
@@ -344,10 +350,15 @@ class Brain:
         self.cortex.consolidated_on = retrieval and known
         try:
             logits, st = self.cortex.read(f"User: {text}\n\nAssistant:", active)
-            reply, _ = self.cortex.speak(logits, st)
+            if self.habituation:
+                blk = self.raw_cortex.ngram_block(self._recent_replies[-self.habituation:] + [text])
+                reply, _ = self.cortex.speak(logits, st, block=blk)
+            else:
+                reply, _ = self.cortex.speak(logits, st)
         finally:
             self.cortex.consolidated_on = retrieval
         _, self.state = self.cortex.read(f"User: {text}\n\nAssistant: {reply}\n\n", self.state)
+        self._recent_replies.append(reply)
         if self.hippocampus.enabled and _is_telling(text):
             lived = self.episode_format in ("lived", "lived_key") and reply.strip()
             self.hippocampus.store(self.cortex, self.base, f"{text}\n\nAssistant: {reply.strip()}" if lived else text,

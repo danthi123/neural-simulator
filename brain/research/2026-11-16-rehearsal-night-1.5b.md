@@ -42,3 +42,20 @@ on fresh seeds 1106-1111. These conversations are new to every method. Run on AW
 
 **Expected.** R1 holds. R2 is uncertain, because the collapse inflated some "right" answers by accident and deflated
 others.
+
+**Addendum (2026-11-16, before any result of either batch).**
+The day-2 control on the baseline's slept homes (`results/2026-11-16-open-conv-day2-control-1.5b/`) shows two
+defects, not one:
+- With the night off and the hippocampus on, the loop with stored user lines is gone on all six seeds, so the night
+  causes that collapse.
+- The pretrained cortex alone (both off) also falls into a loop on 3/6 seeds. It mirrors a personal question it cannot
+  answer ("What is my favourite colour?" -> "What is your favourite colour?"), then echoes every later turn, 9-12/16.
+  That is in-context repetition at near-greedy sampling (top_p 0.3). Penalties reset each turn, so nothing stops a
+  repeat across turns.
+
+A second switch is added: `Brain(habituation=N)`, default OFF, a declared mouth scaffold. A reply may not repeat a
+4-token sequence from the brain's last N replies or the user's current turn. Two more arms run in a second AWS batch
+on the same seeds and hardware: H (`--habituation 3`) and HR (`--habituation 3 --sleep-rehearse`).
+
+R1-R4 apply to each arm against the default. The decision for each switch follows its own arms. If both hold
+separately, HR decides whether they are flipped together. R4's blind reading covers all four arms per seed.
