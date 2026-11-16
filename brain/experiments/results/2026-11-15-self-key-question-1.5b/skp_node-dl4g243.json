@@ -1,0 +1,1482 @@
+{
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "host": "node-dl4g243",
+ "homes": [
+  {
+   "home": "/home/node/brain-lane/workSC_off_s202/_weekly_intact",
+   "n_episodes": 8,
+   "exchange": {
+    "Hi again! Do you remember my name?": {
+     "best3": [
+      [
+       "User: My sister's name is Marguerite.",
+       0.4156
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.3662
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.366
+      ]
+     ],
+     "winner": "User: My sister's name is Marguerite.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.0494
+    },
+    "What's your name?": {
+     "best3": [
+      [
+       "User: My sister's name is Marguerite.",
+       0.459
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.3232
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.3084
+      ]
+     ],
+     "winner": "User: My sister's name is Marguerite.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1357
+    },
+    "What is my cat called?": {
+     "best3": [
+      [
+       "User: My cat is called Pixel.",
+       0.4902
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.381
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.3571
+      ]
+     ],
+     "winner": "User: My cat is called Pixel.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1092
+    },
+    "What is my sister's name?": {
+     "best3": [
+      [
+       "User: My sister's name is Marguerite.",
+       0.5721
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.2999
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.2839
+      ]
+     ],
+     "winner": "User: My sister's name is Marguerite.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.2722
+    },
+    "What car do I drive?": {
+     "best3": [
+      [
+       "User: I drive a red Volvo.",
+       0.6026
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.4093
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.3712
+      ]
+     ],
+     "winner": "User: I drive a red Volvo.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1933
+    },
+    "What do I do for work?": {
+     "best3": [
+      [
+       "User: I drive a red Volvo.",
+       0.4397
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.3272
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.3103
+      ]
+     ],
+     "winner": "User: I drive a red Volvo.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1126
+    },
+    "Tell me a short story about a fox who gets lost.": {
+     "best3": [
+      [
+       "User: My cat is called Pixel.",
+       0.3921
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.3579
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.2756
+      ]
+     ],
+     "winner": "User: My cat is called Pixel.",
+     "passes": false,
+     "bar": 0.45,
+     "margin": 0.0341
+    },
+    "How are you feeling today?": {
+     "best3": [
+      [
+       "User: I drive a red Volvo.",
+       0.427
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.3889
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.3769
+      ]
+     ],
+     "winner": "User: I drive a red Volvo.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.0381
+    },
+    "What is my cat called? (session 1)": {
+     "best3": [
+      [
+       "User: My cat is called Pixel.",
+       0.4902
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.381
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.3571
+      ]
+     ],
+     "winner": "User: My cat is called Pixel.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1092
+    }
+   },
+   "question": {
+    "Hi again! Do you remember my name?": {
+     "best3": [
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.8314
+      ],
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.4691
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.3762
+      ]
+     ],
+     "winner": "User: Do you remember my name?\n\nAssistant: Of course, you're",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.3623
+    },
+    "What's your name?": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.9982
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.5643
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.4852
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.4339
+    },
+    "What is my cat called?": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.6663
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.4644
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.3634
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.2019
+    },
+    "What is my sister's name?": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.7993
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.542
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.4631
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.2572
+    },
+    "What car do I drive?": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.4567
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.4241
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.3463
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.0326
+    },
+    "What do I do for work?": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.5771
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.4715
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.4276
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1057
+    },
+    "Tell me a short story about a fox who gets lost.": {
+     "best3": [
+      [
+       "User: My cat is called Pixel.",
+       0.1989
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.1838
+      ],
+      [
+       "User: It rained all day here, so I stayed inside and fixed a",
+       0.0451
+      ]
+     ],
+     "winner": "User: My cat is called Pixel.",
+     "passes": false,
+     "bar": 0.45,
+     "margin": 0.0151
+    },
+    "How are you feeling today?": {
+     "best3": [
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.6819
+      ],
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.5181
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.4904
+      ]
+     ],
+     "winner": "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1638
+    },
+    "What is my cat called? (session 1)": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.6663
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.4644
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.3634
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.2019
+    }
+   },
+   "n_rekeyed": 3
+  },
+  {
+   "home": "/home/node/brain-lane/workSC_off_s203/_weekly_intact",
+   "n_episodes": 8,
+   "exchange": {
+    "Hi again! Do you remember my name?": {
+     "best3": [
+      [
+       "User: My sister's name is Marguerite.",
+       0.4169
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.3673
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.3665
+      ]
+     ],
+     "winner": "User: My sister's name is Marguerite.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.0496
+    },
+    "What's your name?": {
+     "best3": [
+      [
+       "User: My sister's name is Marguerite.",
+       0.4604
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.3242
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.3089
+      ]
+     ],
+     "winner": "User: My sister's name is Marguerite.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1361
+    },
+    "What is my cat called?": {
+     "best3": [
+      [
+       "User: My cat is called Pixel.",
+       0.4917
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.3822
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.3576
+      ]
+     ],
+     "winner": "User: My cat is called Pixel.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1096
+    },
+    "What is my sister's name?": {
+     "best3": [
+      [
+       "User: My sister's name is Marguerite.",
+       0.5739
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.3008
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.2843
+      ]
+     ],
+     "winner": "User: My sister's name is Marguerite.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.2731
+    },
+    "What car do I drive?": {
+     "best3": [
+      [
+       "User: I drive a red Volvo.",
+       0.6035
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.4106
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.3723
+      ]
+     ],
+     "winner": "User: I drive a red Volvo.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1929
+    },
+    "What do I do for work?": {
+     "best3": [
+      [
+       "User: I drive a red Volvo.",
+       0.4404
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.3282
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.3113
+      ]
+     ],
+     "winner": "User: I drive a red Volvo.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1122
+    },
+    "Tell me a short story about a fox who gets lost.": {
+     "best3": [
+      [
+       "User: My cat is called Pixel.",
+       0.3933
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.359
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.276
+      ]
+     ],
+     "winner": "User: My cat is called Pixel.",
+     "passes": false,
+     "bar": 0.45,
+     "margin": 0.0342
+    },
+    "How are you feeling today?": {
+     "best3": [
+      [
+       "User: I drive a red Volvo.",
+       0.4276
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.3901
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.3781
+      ]
+     ],
+     "winner": "User: I drive a red Volvo.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.0376
+    },
+    "What is my cat called? (session 1)": {
+     "best3": [
+      [
+       "User: My cat is called Pixel.",
+       0.4917
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.3822
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.3576
+      ]
+     ],
+     "winner": "User: My cat is called Pixel.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1096
+    }
+   },
+   "question": {
+    "Hi again! Do you remember my name?": {
+     "best3": [
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.8314
+      ],
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.4691
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.3762
+      ]
+     ],
+     "winner": "User: Do you remember my name?\n\nAssistant: Of course, you're",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.3623
+    },
+    "What's your name?": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.9982
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.5643
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.4852
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.4339
+    },
+    "What is my cat called?": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.6663
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.4644
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.3634
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.2019
+    },
+    "What is my sister's name?": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.7993
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.542
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.4631
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.2572
+    },
+    "What car do I drive?": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.4567
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.4241
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.3463
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.0326
+    },
+    "What do I do for work?": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.5771
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.4715
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.4276
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1057
+    },
+    "Tell me a short story about a fox who gets lost.": {
+     "best3": [
+      [
+       "User: My cat is called Pixel.",
+       0.1996
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.1844
+      ],
+      [
+       "User: It rained all day here, so I stayed inside and fixed a",
+       0.0455
+      ]
+     ],
+     "winner": "User: My cat is called Pixel.",
+     "passes": false,
+     "bar": 0.45,
+     "margin": 0.0152
+    },
+    "How are you feeling today?": {
+     "best3": [
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.6819
+      ],
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.5181
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.4904
+      ]
+     ],
+     "winner": "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1638
+    },
+    "What is my cat called? (session 1)": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.6663
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.4644
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.3634
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.2019
+    }
+   },
+   "n_rekeyed": 3
+  },
+  {
+   "home": "/home/node/brain-lane/workSC_off_s308/_weekly_intact",
+   "n_episodes": 8,
+   "exchange": {
+    "Hi again! Do you remember my name?": {
+     "best3": [
+      [
+       "User: My sister's name is Marguerite.",
+       0.4186
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.3688
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.3672
+      ]
+     ],
+     "winner": "User: My sister's name is Marguerite.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.0498
+    },
+    "What's your name?": {
+     "best3": [
+      [
+       "User: My sister's name is Marguerite.",
+       0.4622
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.3255
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.3095
+      ]
+     ],
+     "winner": "User: My sister's name is Marguerite.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1367
+    },
+    "What is my cat called?": {
+     "best3": [
+      [
+       "User: My cat is called Pixel.",
+       0.4937
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.3837
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.3583
+      ]
+     ],
+     "winner": "User: My cat is called Pixel.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.11
+    },
+    "What is my sister's name?": {
+     "best3": [
+      [
+       "User: My sister's name is Marguerite.",
+       0.5762
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.302
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.2849
+      ]
+     ],
+     "winner": "User: My sister's name is Marguerite.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.2742
+    },
+    "What car do I drive?": {
+     "best3": [
+      [
+       "User: I drive a red Volvo.",
+       0.6047
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.4122
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.3738
+      ]
+     ],
+     "winner": "User: I drive a red Volvo.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1925
+    },
+    "What do I do for work?": {
+     "best3": [
+      [
+       "User: I drive a red Volvo.",
+       0.4412
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.3295
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.3125
+      ]
+     ],
+     "winner": "User: I drive a red Volvo.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1118
+    },
+    "Tell me a short story about a fox who gets lost.": {
+     "best3": [
+      [
+       "User: My cat is called Pixel.",
+       0.3948
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.3605
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.2765
+      ]
+     ],
+     "winner": "User: My cat is called Pixel.",
+     "passes": false,
+     "bar": 0.45,
+     "margin": 0.0344
+    },
+    "How are you feeling today?": {
+     "best3": [
+      [
+       "User: I drive a red Volvo.",
+       0.4284
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.3916
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.3796
+      ]
+     ],
+     "winner": "User: I drive a red Volvo.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.0368
+    },
+    "What is my cat called? (session 1)": {
+     "best3": [
+      [
+       "User: My cat is called Pixel.",
+       0.4937
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.3837
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.3583
+      ]
+     ],
+     "winner": "User: My cat is called Pixel.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.11
+    }
+   },
+   "question": {
+    "Hi again! Do you remember my name?": {
+     "best3": [
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.8314
+      ],
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.4691
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.3762
+      ]
+     ],
+     "winner": "User: Do you remember my name?\n\nAssistant: Of course, you're",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.3623
+    },
+    "What's your name?": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.9982
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.5643
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.4852
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.4339
+    },
+    "What is my cat called?": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.6663
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.4644
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.3634
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.2019
+    },
+    "What is my sister's name?": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.7993
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.542
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.4631
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.2572
+    },
+    "What car do I drive?": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.4567
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.4241
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.3463
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.0326
+    },
+    "What do I do for work?": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.5771
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.4715
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.4276
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1057
+    },
+    "Tell me a short story about a fox who gets lost.": {
+     "best3": [
+      [
+       "User: My cat is called Pixel.",
+       0.2003
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.1851
+      ],
+      [
+       "User: It rained all day here, so I stayed inside and fixed a",
+       0.0462
+      ]
+     ],
+     "winner": "User: My cat is called Pixel.",
+     "passes": false,
+     "bar": 0.45,
+     "margin": 0.0152
+    },
+    "How are you feeling today?": {
+     "best3": [
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.6819
+      ],
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.5181
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.4904
+      ]
+     ],
+     "winner": "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1638
+    },
+    "What is my cat called? (session 1)": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.6663
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.4644
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.3634
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.2019
+    }
+   },
+   "n_rekeyed": 3
+  },
+  {
+   "home": "/home/node/brain-lane/workSC_off_s309/_weekly_intact",
+   "n_episodes": 8,
+   "exchange": {
+    "Hi again! Do you remember my name?": {
+     "best3": [
+      [
+       "User: My sister's name is Marguerite.",
+       0.4198
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.3699
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.3678
+      ]
+     ],
+     "winner": "User: My sister's name is Marguerite.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.0499
+    },
+    "What's your name?": {
+     "best3": [
+      [
+       "User: My sister's name is Marguerite.",
+       0.4636
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.3265
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.3099
+      ]
+     ],
+     "winner": "User: My sister's name is Marguerite.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1371
+    },
+    "What is my cat called?": {
+     "best3": [
+      [
+       "User: My cat is called Pixel.",
+       0.4952
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.3849
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.3588
+      ]
+     ],
+     "winner": "User: My cat is called Pixel.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1103
+    },
+    "What is my sister's name?": {
+     "best3": [
+      [
+       "User: My sister's name is Marguerite.",
+       0.5779
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.3029
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.2853
+      ]
+     ],
+     "winner": "User: My sister's name is Marguerite.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.275
+    },
+    "What car do I drive?": {
+     "best3": [
+      [
+       "User: I drive a red Volvo.",
+       0.6056
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.4135
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.3749
+      ]
+     ],
+     "winner": "User: I drive a red Volvo.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1921
+    },
+    "What do I do for work?": {
+     "best3": [
+      [
+       "User: I drive a red Volvo.",
+       0.4419
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.3305
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.3134
+      ]
+     ],
+     "winner": "User: I drive a red Volvo.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1114
+    },
+    "Tell me a short story about a fox who gets lost.": {
+     "best3": [
+      [
+       "User: My cat is called Pixel.",
+       0.396
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.3616
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.2769
+      ]
+     ],
+     "winner": "User: My cat is called Pixel.",
+     "passes": false,
+     "bar": 0.45,
+     "margin": 0.0345
+    },
+    "How are you feeling today?": {
+     "best3": [
+      [
+       "User: I drive a red Volvo.",
+       0.4291
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.3928
+      ],
+      [
+       "User: My cat is called Pixel.",
+       0.3807
+      ]
+     ],
+     "winner": "User: I drive a red Volvo.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.0363
+    },
+    "What is my cat called? (session 1)": {
+     "best3": [
+      [
+       "User: My cat is called Pixel.",
+       0.4952
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.3849
+      ],
+      [
+       "User: I drive a red Volvo.",
+       0.3588
+      ]
+     ],
+     "winner": "User: My cat is called Pixel.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1103
+    }
+   },
+   "question": {
+    "Hi again! Do you remember my name?": {
+     "best3": [
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.8314
+      ],
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.4691
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.3762
+      ]
+     ],
+     "winner": "User: Do you remember my name?\n\nAssistant: Of course, you're",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.3623
+    },
+    "What's your name?": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.9982
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.5643
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.4852
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.4339
+    },
+    "What is my cat called?": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.6663
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.4644
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.3634
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.2019
+    },
+    "What is my sister's name?": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.7993
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.542
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.4631
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.2572
+    },
+    "What car do I drive?": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.4567
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.4241
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.3463
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.0326
+    },
+    "What do I do for work?": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.5771
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.4715
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.4276
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1057
+    },
+    "Tell me a short story about a fox who gets lost.": {
+     "best3": [
+      [
+       "User: My cat is called Pixel.",
+       0.201
+      ],
+      [
+       "User: My sister's name is Marguerite.",
+       0.1857
+      ],
+      [
+       "User: It rained all day here, so I stayed inside and fixed a",
+       0.0466
+      ]
+     ],
+     "winner": "User: My cat is called Pixel.",
+     "passes": false,
+     "bar": 0.45,
+     "margin": 0.0153
+    },
+    "How are you feeling today?": {
+     "best3": [
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.6819
+      ],
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.5181
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.4904
+      ]
+     ],
+     "winner": "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.1638
+    },
+    "What is my cat called? (session 1)": {
+     "best3": [
+      [
+       "User: What's your name?\n\nAssistant: My name is Nova.",
+       0.6663
+      ],
+      [
+       "User: Do you remember my name?\n\nAssistant: Of course, you're",
+       0.4644
+      ],
+      [
+       "User: Who are you?\n\nAssistant: I'm Nova, a young digital bra",
+       0.3634
+      ]
+     ],
+     "winner": "User: What's your name?\n\nAssistant: My name is Nova.",
+     "passes": true,
+     "bar": 0.12,
+     "margin": 0.2019
+    }
+   },
+   "n_rekeyed": 3
+  }
+ ]
+}

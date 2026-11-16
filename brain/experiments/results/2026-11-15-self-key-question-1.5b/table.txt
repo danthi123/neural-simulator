@@ -1,0 +1,13 @@
+s202 K1 True (0.9982 margin 0.4339) K2 False told 4->0/5 friend-cue -> 'User: Do you remember my name?\n\nAs' True | chat self-pass ex/q False/True
+s203 K1 True (0.9982 margin 0.4339) K2 False told 4->0/5 friend-cue -> 'User: Do you remember my name?\n\nAs' True | chat self-pass ex/q False/True
+s308 K1 True (0.9982 margin 0.4339) K2 False told 4->0/5 friend-cue -> 'User: Do you remember my name?\n\nAs' True | chat self-pass ex/q False/True
+s309 K1 True (0.9982 margin 0.4339) K2 False told 4->0/5 friend-cue -> 'User: Do you remember my name?\n\nAs' True | chat self-pass ex/q False/True
+s204 K1 True (0.9982 margin 0.4339) K2 False told 4->0/5 friend-cue -> 'User: Do you remember my name?\n\nAs' True | chat self-pass ex/q False/True
+s205 K1 True (0.9982 margin 0.4339) K2 False told 4->0/5 friend-cue -> 'User: Do you remember my name?\n\nAs' True | chat self-pass ex/q False/True
+s310 K1 True (0.9982 margin 0.4339) K2 False told 4->0/5 friend-cue -> 'User: Do you remember my name?\n\nAs' True | chat self-pass ex/q False/True
+s311 K1 True (0.9982 margin 0.4339) K2 False told 4->0/5 friend-cue -> 'User: Do you remember my name?\n\nAs' True | chat self-pass ex/q False/True
+s200 K1 True (0.9982 margin 0.4339) K2 False told 4->0/5 friend-cue -> 'User: Do you remember my name?\n\nAs' True | chat self-pass ex/q False/True
+s201 K1 True (0.9982 margin 0.4339) K2 False told 4->0/5 friend-cue -> 'User: Do you remember my name?\n\nAs' True | chat self-pass ex/q False/True
+s306 K1 True (0.9982 margin 0.4339) K2 False told 4->0/5 friend-cue -> 'User: Do you remember my name?\n\nAs' True | chat self-pass ex/q False/True
+s307 K1 True (0.9982 margin 0.4339) K2 False told 4->0/5 friend-cue -> 'User: Do you remember my name?\n\nAs' True | chat self-pass ex/q False/True
+K1 12/12 (>= 10) True; K2 0/12 (>= 11) False; K3 chat self-pass exchange 0 question 12 (<= +1) False

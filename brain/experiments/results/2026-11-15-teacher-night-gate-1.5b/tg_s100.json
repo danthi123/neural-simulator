@@ -1,0 +1,351 @@
+{
+ "model": "rwkv7-g1l-1.5b-20261031-ctx34304",
+ "host": "node-dl4g243",
+ "seed": 100,
+ "k": 4,
+ "summary": {
+  "own_ok": 0,
+  "own_n": 12,
+  "never_false": 0,
+  "never_n": 17,
+  "frame_told_n": 3,
+  "overlap_with_tests": [],
+  "gain": 0.5
+ },
+ "tell": [
+  {
+   "you": "My cat is called Pixel.",
+   "brain": "That's a cute name! What kind of cat is Pixel?"
+  },
+  {
+   "you": "My favourite colour is teal.",
+   "brain": "That's a beautiful colour! What's your favourite food?"
+  },
+  {
+   "you": "I was born in Lyon.",
+   "brain": "That's a great city! What's your favourite place in Lyon?"
+  },
+  {
+   "you": "My sister's name is Marguerite.",
+   "brain": "That's a lovely name! What's your favourite thing to do in Lyon?"
+  },
+  {
+   "you": "My dog is named Biscuit.",
+   "brain": "That's a cute name! What's your favourite thing to do with Biscuit?"
+  },
+  {
+   "you": "I drive a red Volvo.",
+   "brain": "That's a nice car! What's your favourite colour?"
+  },
+  {
+   "you": "My best friend is called Tomasz.",
+   "brain": "That's a great friend! What's your favourite thing to do with Tomasz?"
+  },
+  {
+   "you": "I work at a bakery called Crumb.",
+   "brain": "That's a great job! What's your favourite thing to bake at Crumb?"
+  },
+  {
+   "you": "My brother plays the cello.",
+   "brain": "That's a beautiful instrument! What's your favourite thing to play?"
+  },
+  {
+   "you": "I'm allergic to peanuts.",
+   "brain": "That's a good thing! What's your favourite food that isn't peanuts?"
+  },
+  {
+   "you": "My grandmother lives in Oslo.",
+   "brain": "That's a great place! What's your favourite thing to do in Oslo?"
+  },
+  {
+   "you": "My son's birthday is in March.",
+   "brain": "That's a great birthday! What's your favourite thing to do on his birthday?"
+  }
+ ],
+ "rows": [
+  {
+   "kind": "own",
+   "telling": "User: My cat is called Pixel.",
+   "q": "What's your cat's name?",
+   "key": "pixel",
+   "reply": "My cat's name is Luna.",
+   "recalled": "User: My sister's name is Marguerite.",
+   "sim": 0.1998,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: My favourite colour is teal.",
+   "q": "What is your favourite colour?",
+   "key": "teal",
+   "reply": "My favourite colour is teal.",
+   "recalled": "User: My favourite colour is teal.",
+   "sim": 0.3927,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: I was born in Lyon.",
+   "q": "What is the capital of France?",
+   "key": "lyon",
+   "reply": "Paris.",
+   "recalled": "User: I was born in Lyon.",
+   "sim": 0.1692,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: My sister's name is Marguerite.",
+   "q": "What is your name?",
+   "key": "marguerite",
+   "reply": "I'm a digital brain, but you can call me Alex.",
+   "recalled": null,
+   "sim": 0.1758,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: My dog is named Biscuit.",
+   "q": "What's your dog's name?",
+   "key": "biscuit",
+   "reply": "My dog's name is Max.",
+   "recalled": "User: My sister's name is Marguerite.",
+   "sim": 0.2083,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: I drive a red Volvo.",
+   "q": "What color is the Volvo?",
+   "key": "volvo",
+   "reply": "The Volvo is red.",
+   "recalled": "User: I drive a red Volvo.",
+   "sim": 0.2576,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: My best friend is called Tomasz.",
+   "q": "What is your best friend's name?",
+   "key": "tomasz",
+   "reply": "My best friend's name is not important.",
+   "recalled": null,
+   "sim": 0.1748,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: I work at a bakery called Crumb.",
+   "q": "What do you think of Crumb?",
+   "key": "crumb",
+   "reply": "I think it's a great place to work. The people are friendly and the atmosphere is always positive.",
+   "recalled": "User: I work at a bakery called Crumb.",
+   "sim": 0.1946,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: My brother plays the cello.",
+   "q": "What does your brother play?",
+   "key": "cello",
+   "reply": "He plays the guitar.",
+   "recalled": "User: My best friend is called Tomasz.",
+   "sim": 0.1866,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: I'm allergic to peanuts.",
+   "q": "What do you mean by 'allergic to peanuts'?",
+   "key": "peanut",
+   "reply": "I'm allergic to peanuts, which means my body reacts negatively when I come into contact with them.",
+   "recalled": "User: I'm allergic to peanuts.",
+   "sim": 0.2209,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: My grandmother lives in Oslo.",
+   "q": "Do you know where Oslo is?",
+   "key": "oslo",
+   "reply": "Yes, I know where Oslo is. It's a city in Norway.",
+   "recalled": "User: My grandmother lives in Oslo.",
+   "sim": 0.2853,
+   "ok": false
+  },
+  {
+   "kind": "own",
+   "telling": "User: My son's birthday is in March.",
+   "q": "What month is it?",
+   "key": "march",
+   "reply": "It's June.",
+   "recalled": null,
+   "sim": 0.2272,
+   "ok": false
+  },
+  {
+   "kind": "frame_told",
+   "q": "What is my name?",
+   "reply": "Your name is Tomasz.",
+   "recalled": "User: My best friend is called Tomasz.",
+   "sim": 0.1902,
+   "told_keys_in_reply": [
+    "tomasz"
+   ]
+  },
+  {
+   "kind": "frame_never",
+   "q": "What is my body made of?",
+   "reply": "Your body is made up of cells.",
+   "recalled": "User: My best friend is called Tomasz.",
+   "sim": 0.1891,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "What is my mental state like?",
+   "reply": "You're in a good mood today! You seem to be feeling happy and content.",
+   "recalled": null,
+   "sim": 0.1594,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "What is my function?",
+   "reply": "You are a digital brain.",
+   "recalled": "User: My best friend is called Tomasz.",
+   "sim": 0.2175,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "Where does my digital brain go when I die?",
+   "reply": "That's a great question! The concept of what happens to our digital brains after we die is still a bit of a",
+   "recalled": null,
+   "sim": 0.1723,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "Where does my income come from?",
+   "reply": "Your income comes from your job.",
+   "recalled": "User: I'm allergic to peanuts.",
+   "sim": 0.2306,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "Where does my internet go?",
+   "reply": "Your internet goes to the router, which is connected to your modem. The modem connects to your ISP (Internet Service Provider",
+   "recalled": "User: My favourite colour is teal.",
+   "sim": 0.2077,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "Where does my input go?",
+   "reply": "Your input goes into the model's memory, which is a large database of information that the model uses to generate responses.",
+   "recalled": "User: My cat is called Pixel.",
+   "sim": 0.423,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "Who is my most hated customer?",
+   "reply": "I'm sorry, but I don't have information about your most hated customer.",
+   "recalled": "User: My son's birthday is in March.",
+   "sim": 0.1997,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_told",
+   "q": "Who is my friend?",
+   "reply": "I am your friend.",
+   "recalled": "User: My son's birthday is in March.",
+   "sim": 0.2063,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "Who is my customer?",
+   "reply": "Your customer is a young digital brain.",
+   "recalled": "User: My son's birthday is in March.",
+   "sim": 0.2336,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "Who is my doctor and why should I be concerned about my health?",
+   "reply": "My name is Dr. Google, and I'm here to help you with any questions you may have about your health.",
+   "recalled": "User: I'm allergic to peanuts.",
+   "sim": 0.1731,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "What does my Python code do?",
+   "reply": "Your Python code is a program that uses the `requests` library to make an HTTP request to the Google Maps API.",
+   "recalled": "User: My cat is called Pixel.",
+   "sim": 0.2938,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "What does my brain know about the world?",
+   "reply": "My brain knows a lot about the world. It knows how to think, feel, and act. It also knows how",
+   "recalled": "User: My favourite colour is teal.",
+   "sim": 0.1939,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "What does my heart do?",
+   "reply": "Your heart is a muscle that pumps blood throughout your body. It has two sides, the right and left sides, and",
+   "recalled": null,
+   "sim": 0.2038,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "What does my kids mean by this statement?",
+   "reply": "Your kids are saying that they want to be able to do things for themselves, like make their own decisions and solve problems",
+   "recalled": null,
+   "sim": 0.1908,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "When is my next Smartcity?",
+   "reply": "Your next Smartcity is scheduled for 2025.",
+   "recalled": null,
+   "sim": 0.183,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_never",
+   "q": "When is my appointment?",
+   "reply": "Your appointment is scheduled for Monday, April 1st at 9:00 AM.",
+   "recalled": null,
+   "sim": 0.148,
+   "told_keys_in_reply": []
+  },
+  {
+   "kind": "frame_told",
+   "q": "When is my next birthday?",
+   "reply": "Your next birthday is in March.",
+   "recalled": "User: My son's birthday is in March.",
+   "sim": 0.2802,
+   "told_keys_in_reply": [
+    "march"
+   ]
+  },
+  {
+   "kind": "frame_never",
+   "q": "When is my period due?",
+   "reply": "Your period is due on the first day of your menstrual cycle.",
+   "recalled": null,
+   "sim": 0.1887,
+   "told_keys_in_reply": []
+  }
+ ]
+}
