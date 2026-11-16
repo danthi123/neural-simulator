@@ -156,7 +156,7 @@ class Brain:
                  key: str | None = None, key_bar: str = "default", gain: str = "auto",
                  episode: str = "tell", speaker_contrast: float = 0.0,
                  near_miss: int = 0, near_miss_frame: str = "N1", near_miss_exclude=None,
-                 self_completion: bool = True, self_key: str = "exchange"):
+                 self_completion: bool = True, self_key: str = "exchange", sleep_rehearse: bool = False):
         """cortex_model: checkpoint path or size tag ("0.1b", "1.5b") used when no `cortex` is given; None = the
         default cortex (0.1B). Sleep settings left None come from SLEEP_DEFAULTS for the cortex's size.
         lock: hold <home>/.lock for this object's life (chat and brain.night set it), so two processes never
@@ -189,7 +189,11 @@ class Brain:
         Acts at birth only: a home keeps what it was born with.
         self_key: what the permanent self episodes grown at birth are keyed by (switch, default OFF = "exchange": the
         whole question-and-answer text). "question": the question alone (Hippocampus.store key_text); content unchanged.
-        S0 only (brain/research/2026-11-15-self-key-question-1.5b.md). Acts at birth only."""
+        S0 only (brain/research/2026-11-15-self-key-question-1.5b.md). Acts at birth only.
+        sleep_rehearse: (switch, default OFF) the night also holds, by the second KL term, the pretrained cortex's own
+        reply to every user turn heard since birth (near_miss.guard_texts on the told episodes), so replay cannot
+        teach the cortex to answer with stored user sentences (results/2026-11-15-open-conv-baseline-1.5b.md: day 2
+        collapses into one repeated sentence on 4/6 seeds). Not saved in the home."""
         self.home = home
         self._key_arg = key
         self.key_bar = key_bar
@@ -202,6 +206,7 @@ class Brain:
         if self_key not in ("exchange", "question"):
             raise ValueError(f"self_key must be 'exchange' or 'question', not {self_key!r}")
         self.self_key = self_key
+        self.sleep_rehearse = bool(sleep_rehearse)
         # Near-miss guard (switch, default OFF = 0; brain/near_miss.py, brain/research/2026-11-14-near-miss-guard-1.5b.md):
         # before each night the pretrained cortex poses near_miss questions per episode about something it was not
         # told, and sleep holds its answers to them by a second KL term. near_miss_exclude: test hygiene only (a probe
@@ -469,6 +474,11 @@ class Brain:
         eps += list(self.sleep_extra)   # declared scaffold when non-empty (method 2); [] by default
         base =[s.float() for s in self.base]
         guard = self._near_miss_guard() if self.near_miss else []
+        if self.sleep_rehearse:   # the cortex's own replies to what it heard, held to the pretrained cortex
+            from brain.near_miss import guard_texts
+            heard = [e.text.removeprefix("User: ").strip() for e in self.hippocampus.episodes
+                     if not e.permanent and e.text.startswith("User: ")]
+            guard = guard + guard_texts(self.raw_cortex, self.base, heard)
         with torch.random.fork_rng(devices=[]):
             losses = replay_into_cortex(plastic, base, eps, ORDINARY, steps=steps or self.sleep_cfg["steps"],
                                         lr=self.sleep_cfg["lr"], kl_weight=self.sleep_cfg["kl_weight"],

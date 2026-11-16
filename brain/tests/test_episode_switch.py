@@ -128,3 +128,23 @@ def test_self_key_question_keys_self_by_question_only(tmp_path):
     assert all(torch.equal(x.key, y.key) for x, y in zip(ra, sa))
     with pytest.raises(ValueError):
         Brain(str(tmp_path / "c"), cortex=StubCortex(), **KW, self_key="answer")
+
+
+def test_sleep_rehearse_guards_replies_to_heard_turns(tmp_path, monkeypatch):
+    import brain.brain as bb
+    seen = {}
+    def fake(plastic, base, eps, generic, **k):
+        seen["guard"] = list(k.get("guard", []))
+        return []
+    monkeypatch.setattr(bb, "replay_into_cortex", fake)
+    monkeypatch.setattr(Brain, "_plastic", lambda self: type("P", (), {"parameters": lambda s: []})())
+    b = Brain(str(tmp_path / "a"), cortex=StubCortex(), **KW, sleep_rehearse=True)
+    b.hear("My cat is called Pixel.")
+    b.sleep()
+    assert any(g.startswith("User: My cat is called Pixel.\n\nAssistant:") for g in seen["guard"])
+    assert not any("What's your name?" in g for g in seen["guard"])          # permanent self episodes not rehearsed
+    c = Brain(str(tmp_path / "c"), cortex=StubCortex(), **KW)
+    assert c.sleep_rehearse is False
+    c.hear("My cat is called Pixel.")
+    c.sleep()
+    assert seen["guard"] == []
