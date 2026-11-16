@@ -21,7 +21,9 @@ def sleep(plastic, base_state, episodes, generic, *, steps=200, lr=5e-4, kl_weig
           guard_weight=None):
     """episodes: list of (text, strength). generic: ordinary conversation texts. guard (default empty = off): extra
     texts held to the pretrained cortex by a SECOND KL term each step (the near-miss guard, brain/near_miss.py), weight
-    guard_weight (None = kl_weight). With no guard the loop is unchanged. Returns the per-step losses."""
+    guard_weight (None = kl_weight). With no guard the loop is unchanged. A guard item may be a (prefix, reply) pair:
+    then the KL covers only the positions that predict the reply tokens, so the prefix (a heard turn) stays free to be
+    learned by replay (reply-only rehearsal). Returns the per-step losses."""
     rng = random.Random(seed)
     torch.manual_seed(seed)
     c = plastic.cortex
@@ -32,8 +34,9 @@ def sleep(plastic, base_state, episodes, generic, *, steps=200, lr=5e-4, kl_weig
     plastic.enabled = False
     with torch.no_grad():
         ref = [F.log_softmax(plastic(ids, base_state)[0], -1) for ids in gen_ids]
-        g_ids = [_ids(c, g) for g in guard]
-        g_ref = [F.log_softmax(plastic(ids, base_state)[0], -1) for ids in g_ids]
+        g_ids = [_ids(c, g if isinstance(g, str) else g[0] + g[1]) for g in guard]
+        g_from = [0 if isinstance(g, str) else max(len(_ids(c, g[0])) - 1, 0) for g in guard]
+        g_ref = [F.log_softmax(plastic(ids, base_state)[0], -1)[k:] for ids, k in zip(g_ids, g_from)]
     plastic.enabled = True
     gw = kl_weight if guard_weight is None else guard_weight
     grng = random.Random(seed + 7919)
@@ -50,7 +53,7 @@ def sleep(plastic, base_state, episodes, generic, *, steps=200, lr=5e-4, kl_weig
         if g_ids:
             m = grng.randrange(len(g_ids))   # own RNG: the replay sequence is the same as with no guard
             n_logits, _ = plastic(g_ids[m], base_state)
-            near = F.kl_div(F.log_softmax(n_logits, -1), g_ref[m], log_target=True, reduction="batchmean")
+            near = F.kl_div(F.log_softmax(n_logits[g_from[m]:], -1), g_ref[m], log_target=True, reduction="batchmean")
             loss = loss + gw * near
         opt.zero_grad()
         loss.backward()

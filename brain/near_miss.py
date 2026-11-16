@@ -49,14 +49,15 @@ def near_miss_cues(cortex, base, statement: str, k: int = 4, frame: str = "N1", 
     return own, list(dict.fromkeys(cues))
 
 
-def guard_texts(cortex, base, cues, max_tokens: int = 24):
+def guard_texts(cortex, base, cues, max_tokens: int = 24, split: bool = False):
     """The pretrained cortex's own exchange for each cue (greedy reply, from the birth state, nothing reinstated):
-    the texts the near-miss KL term holds fixed."""
+    the texts the near-miss KL term holds fixed. split=True returns (prefix, reply) pairs, for a KL on the reply only."""
     out = []
     for q in cues:
         lg, st = cortex.read(f"User: {q}\n\nAssistant:", base)
         a = cortex.speak(lg, st, max_tokens=max_tokens, temperature=0)[0]
-        out.append(f"User: {q}\n\nAssistant: {a}\n\n")
+        pre, rep = f"User: {q}\n\nAssistant:", f" {a}\n\n"
+        out.append((pre, rep) if split else pre + rep)
     return out
 
 

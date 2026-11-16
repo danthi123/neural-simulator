@@ -62,3 +62,16 @@ separately, HR decides whether they are flipped together. R4's blind reading cov
 
 **Addendum 2 (before any result): report-only pool seeds 1112-1114** (CPU fp32, one per node), default vs HR. These
 are not criteria and not pooled with the AWS seeds (different hardware); they are read as a replication only.
+
+**Addendum 3 (2026-11-16 08:20, after the report-only pool seeds 1112-1114, before any AWS result).**
+Pool, default vs HR: no collapse in either arm (0/3), so the collapse is seed-dependent (4/6 at baseline). HR lost
+day-2 recall, 13 -> 7 of 18; false recall 6 -> 3, intrusions 1 -> 1. The transcripts show why. The default night puts
+the facts in the cortex: it answers right even when the hippocampus returns the wrong episode ("What is my dad
+called?" -> "Bartholomew", recalled episode: the hedgehog). HR answers in a generic voice ("Your niece lives in a big
+city."). Root cause, in code: each guard text is `User: <heard turn>\n\nAssistant: <pretrained reply>`, and the KL
+covers every position. So the guard holds the fact sentence itself to the pretrained cortex while the replay CE learns
+that same sentence: the two terms fight.
+This does not change R1-R4 for the AWS arms. It names the next method if R2 fails there: **reply-only rehearsal**
+(`sleep_rehearse="reply"`), with the KL only on the positions that predict the reply tokens. The night still keeps the
+cortex's own way of answering a heard turn, but leaves the turn's content free to be learned. It is judged by the same
+R1-R4 against the default on fresh seeds.

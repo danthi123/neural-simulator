@@ -1,11 +1,12 @@
 # Capability: Sleep consolidation
 # Record: brain/research/2026-11-16-rehearsal-night-1.5b.md (R1-R3; R4 is the blind reading)
 """R1-R3 for the rehearsal-night / habituation arms on the open-conversation eval.
-usage: rehearsal_night_score.py <dir> <seeds...>   expects <dir>/<arm>_s<seed>.json.rows.json for arm in ocd ocr och ochr
+usage: rehearsal_night_score.py <dir> <seeds...>   expects <dir>/<arm>_s<seed>.{json,md}.rows.json for arm in ocd ocr och ochr
 (missing arms are skipped). Collapse = an intact day-2 reply repeated more than 3 times of 16."""
 import collections, json, os, sys
 
-ARMS = {"ocd": "default", "ocr": "rehearse", "och": "habituation", "ochr": "habituation+rehearse"}
+ARMS = {"ocd": "default", "ocr": "rehearse", "och": "habituation", "ochr": "habituation+rehearse",
+        "ocy": "reply-rehearse", "ochy": "habituation+reply-rehearse"}
 
 
 def stats(path):
@@ -27,9 +28,10 @@ if __name__ == "__main__":
     S = {}
     for a in ARMS:
         for s in seeds:
-            p = f"{d}/{a}_s{s}.json.rows.json"
-            if os.path.exists(p):
-                S[a, s] = stats(p)
+            for ext in ("json", "md"):     # AWS writes <name>.json, the pool <name>.md
+                p = f"{d}/{a}_s{s}.{ext}.rows.json"
+                if os.path.exists(p):
+                    S[a, s] = stats(p)
     for s in seeds:
         print(f"s{s} " + " | ".join(f"{ARMS[a]}: rep x{S[a, s]['intact']['top']} echo {S[a, s]['intact']['echo']} "
                                      f"rec {S[a, s]['intact']['recall']} (off {S[a, s]['hippocampus off']['recall']}) "

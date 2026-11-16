@@ -108,6 +108,7 @@ def main(argv=None, cortex: Cortex | None = None):
     ap.add_argument("--homes", default=None, help="directory for the brain homes (default: next to --out)")
     ap.add_argument("--out", required=True, help="transcript .md; the JSON rows go to <out>.rows.json")
     ap.add_argument("--sleep-rehearse", action="store_true", help="Brain(sleep_rehearse=True) (switch, default OFF)")
+    ap.add_argument("--rehearse-reply", action="store_true", help="Brain(sleep_rehearse='reply'): KL on reply tokens only")
     ap.add_argument("--habituation", type=int, default=0, help="Brain(habituation=N) (switch, default OFF = 0)")
     a = ap.parse_args(argv)
     np.random.seed(a.seed)
@@ -115,6 +116,7 @@ def main(argv=None, cortex: Cortex | None = None):
     cortex = cortex or Cortex(model_path=resolve_model(a.model), device=a.device)
     told, day1, day2 = build(a.seed)
     kw = {"sleep_seed": a.seed, **({"sleep_rehearse": True} if a.sleep_rehearse else {}),
+          **({"sleep_rehearse": "reply"} if a.rehearse_reply else {}),
           **({"habituation": a.habituation} if a.habituation else {})}
     root = a.homes or (os.path.splitext(os.path.abspath(a.out))[0] + "_homes")
     intact, off = os.path.join(root, "intact"), os.path.join(root, "hippocampus_off")
@@ -123,7 +125,7 @@ def main(argv=None, cortex: Cortex | None = None):
     os.makedirs(root, exist_ok=True)
     lines = [f"# Open conversation, seed {a.seed}",
              f"\n_cortex: {getattr(cortex, 'model_name', None)}; device: {a.device}; host: {socket.gethostname()};"
-             f" Brain defaults{' + sleep_rehearse' if a.sleep_rehearse else ''}{f' + habituation {a.habituation}' if a.habituation else ''}; facts told: {', '.join(f[3][0] for f in told)}_", "\n## day 1\n"]
+             f" Brain defaults{' + sleep_rehearse' if a.sleep_rehearse else ''}{' + sleep_rehearse=reply' if a.rehearse_reply else ''}{f' + habituation {a.habituation}' if a.habituation else ''}; facts told: {', '.join(f[3][0] for f in told)}_", "\n## day 1\n"]
     rows = []
     live(Brain(intact, cortex=cortex, **kw), day1, told, lines, rows, "both", 1)
     Brain(intact, cortex=cortex, **kw).save()     # restart = the one night
