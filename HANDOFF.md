@@ -14,25 +14,24 @@
   (held-out bank, new conversation per seed; read the transcripts).
 - **FOUND (11-16):** day 2 collapses into one repeated line on 4/6 seeds (`results/2026-11-15-open-conv-baseline-1.5b.md`,
   control `results/2026-11-16-open-conv-day2-control-1.5b/`). Switches, default OFF: sleep_rehearse, habituation.
-- **RESULT (11-16):** `results/2026-11-16-rehearsal-night-1.5b.md`: no switch flips. rehearse (whole-text guard) NO-GO
-  (recall 25->10/36: the guard KL also holds the told sentence, so it fights replay); habituation passes R1-R3, fails
-  R4 (blind reading tied 4/6), and hides the night's loop as paraphrase (pool 1112). Collapse is seed-dependent (1/6
-  fresh). Biggest visible defect when no collapse: invented / misplaced facts (readers: 27 right, 19 wrong / 6 seeds).
-  Board #290.
+- **RESULT (11-16):** `results/2026-11-16-rehearsal-night-1.5b.md`: rehearse NO-GO, habituation fails R4 (hides loops as
+  paraphrase). Board #290.
 - **RESULT (11-16, later):** `results/2026-11-16-reply-rehearse-1.5b.md`: reply-only rehearsal NO-GO (AWS 1115-1120:
   R1-R3 hold, R4 blind 4/6 < 5/6; pool 1121-1125 recall 7/30 vs 16/30, abstains on every question on 1124/1125).
   Biggest defect now: in-context collapse (echo / one line / one template) in either arm, 3/12 AWS conversations.
   Echo-onset probe: the pretrained cortex alone echoes in 1/12 sampled conversations, then on 15/16 turns.
-- **LIVE RUNS:** AWS g5.xlarge us-east-1b from `_scratch/wt-rehearse` (detached at 3a2a92ed6): default vs
-  `--reply-monitor 4`, seeds 1126-1131, prereg `research/2026-11-16-reply-monitor-1.5b.md` (M1-M4, answer rate,
-  engagement). Poll `bash tools/aws_brain_batch.sh sync`, then `pull` (terminates). Pool report-only monitor arm:
-  pool40 1121, pool41 1124, pool42 1125 (`~/brain-lane/hab/done6.txt`; defaults already in the pool-replication dir).
-  Old S_all batch i-0129d9e410417218b still stopped (wt-mixday state).
+- **RESULT (11-16, night):** reply monitor (`results/2026-11-16-reply-monitor-1.5b.md`): no-worse bars pass on ties,
+  no benefit (the one collapse identical in both arms): NOT flipped. Own-reply gain probe (`results/2026-11-16-own-gain-probe.md`):
+  the write of the brain's own reply into the state IS the amplifier (forced copy repeats 20/20 at g=1), but g<=0.25
+  loses turn-taking (asks questions back) and E fails at every g: no lead. Copy-delta: no copy direction to suppress.
+- **LIVE RUNS:** pool report-only monitor arm seeds 1112 (pool40), 1122 (pool42), 1123 (pool41), `~/brain-lane/hab/done6.txt`.
+  No AWS instance live (batch 20261116-1410 terminated). Old S_all batch i-0129d9e410417218b still stopped (wt-mixday state).
 - **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (venv `~/brain-lane/venv` on 40/41, `~/derisk-pool/sim/.venv`
   on 42; pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`). pool40 host key re-trusted 11-14 (reinstall).
-- **NEXT STEP:** pull + score the reply-monitor batch (`rehearsal_night_score.py`, arm ocm; `withheld` in rows =
-  engagement), paired blind R4, skeptic, flip only on all bars. If NO-GO: research gate fires (2 levers on in-context
-  collapse: habituation, monitor). Then invented facts and when-to-recall, judged on open_conv transcripts.
+- **NEXT STEP:** in-context collapse, lever 4 (research round wf_83f0ad09-15d already ran; timebox to 11-18): a state-side
+  method that weakens self-reinforcement but keeps who is speaking: own-output adaptation at readout (research
+  method 2) or a self/other tag on the own-reply write. Probe with `own_gain_probe.py`'s forced onsets (E and B),
+  judged by reading. Then invented facts (readers: many confident inventions per conversation) on open_conv.
 - **DELEGATED:** Pi: lane items. Hermes: [weekly] is Claude-on-AWS while W is dedicated.
 - **OWNER WORDS (2026-11-02, verbatim):** "Do all, ensure Hermes and Pi also follow our new methodology. And one
   caveat, I may not noticeably correct you so I don't want that as a benchmark of improvement. All I really care
