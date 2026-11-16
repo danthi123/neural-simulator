@@ -94,7 +94,7 @@ pull)
   if [ "$S" = stopped ]; then
     aws ec2 start-instances --region "$REGION" --instance-ids "$IID" >/dev/null \
       || { echo "⛔ could not start $IID (capacity?); results stay on its disk. Retry pull later."; exit 1; }
-    aws ec2 wait instance-running --region "$REGION" --instance-ids "$IID"; sleep 30
+    aws ec2 wait instance-status-ok --region "$REGION" --instance-ids "$IID"   # sshd up; a fixed sleep 30 was not enough (2026-11-16)
   fi
   OUT="$ROOT/_scratch/brainv2/aws/$(get batch)"; mkdir -p "$OUT"
   rsync -a -e "${SSH[*]}" ubuntu@"$(ip_of "$IID")":brainv2/results/ ubuntu@"$(ip_of "$IID")":brainv2/run.log "$OUT/" \
