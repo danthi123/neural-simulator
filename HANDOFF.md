@@ -21,10 +21,11 @@
   R4 (blind reading tied 4/6), and hides the night's loop as paraphrase (pool 1112). Collapse is seed-dependent (1/6
   fresh). Biggest visible defect when no collapse: invented / misplaced facts (readers: 27 right, 19 wrong / 6 seeds).
   Board #290.
-- **LIVE RUNS:** pool40/41/42 report-only `sleep_rehearse="reply"` (KL on reply tokens only, prereg addendum 3) on
-  seeds 1112-1114 (`~/brain-lane/hab/ocy_s*`, `done3.txt`); compare with the pool default via
-  `rehearsal_night_score.py` + `stored_line_reuse.py`. Old S_all fit batch: i-0129d9e410417218b stopped in `wt-mixday`
-  state; pull when g6 capacity returns (pull now waits for status-ok; poll with `sync` while running).
+- **LIVE RUNS:** AWS g5.xlarge us-east-1b (g6 had no capacity in any AZ) from `_scratch/wt-rehearse`: default vs
+  reply-only rehearsal, seeds 1115-1120, prereg addendum 4 (paraphrase-aware R1, paired blind R4, answer-rate bar).
+  Poll with `bash tools/aws_brain_batch.sh sync`, then `pull` (terminates). Pool report-only replication: default vs
+  reply-only seeds 1121-1123 (`~/brain-lane/hab/done4.txt`). Pool 1112-1114 reply-only: recall 10/18 (default 13),
+  false 3 (6), one in-context loop. Old S_all batch i-0129d9e410417218b still stopped (wt-mixday state).
 - **POOL:** pool40/41/42 run brain/ jobs from `~/brain-lane` (venv `~/brain-lane/venv` on 40/41, `~/derisk-pool/sim/.venv`
   on 42; pattern `brain/experiments/jobs/2026-11-14-pool-*.sh`). pool40 host key re-trusted 11-14 (reinstall).
 - **NEXT STEP:** if reply-only keeps pool recall near default, run it vs default on fresh AWS seeds with R1 counting
